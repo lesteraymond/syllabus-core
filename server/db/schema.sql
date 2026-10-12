@@ -80,6 +80,18 @@ CREATE TABLE IF NOT EXISTS co_po_mapping (
 );
 
 
+CREATE TABLE IF NOT EXISTS course_assignments (
+  assignment_id INT AUTO_INCREMENT PRIMARY KEY,
+  teacher_id INT NOT NULL,
+  syllabus_id INT NOT NULL,
+  term VARCHAR(30) NOT NULL,
+  status ENUM('ACTIVE', 'REVOKED') NOT NULL DEFAULT 'ACTIVE',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY unique_assignment (teacher_id, syllabus_id, term),
+  FOREIGN KEY (teacher_id) REFERENCES users(user_id) ON DELETE CASCADE,
+  FOREIGN KEY (syllabus_id) REFERENCES syllabi(syllabus_id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS remember_tokens (
   token_id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT NOT NULL,

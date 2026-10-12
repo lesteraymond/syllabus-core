@@ -37,7 +37,8 @@ app.locals.db = pool;
 
 app.use(restoreSession);
 
-app.use("/api/auth", require("./routes/auth"));
+const authRoutes = require("./routes/auth");
+app.use("/api/auth", authRoutes);
 app.use("/api/users", require("./routes/users"));
 app.use("/api/syllabi", require("./routes/syllabi"));
 app.use("/api/curriculum", require("./routes/curriculum"));
@@ -47,4 +48,14 @@ app.use("/api/mapping", require("./routes/mapping"));
 
 app.listen(PORT, () => {
 	console.log(`Server running on http://localhost:${PORT}`);
+	console.log("Auth endpoints:");
+	for (const layer of authRoutes.stack) {
+		if (!layer.route) continue;
+		for (const method of Object.keys(layer.route.methods)) {
+			console.log(`  ${method.toUpperCase().padEnd(5)} /api/auth${layer.route.path}`);
+		}
+	}
+	for (const key of ["GOOGLE_CLIENT_ID", "JWT_SECRET"]) {
+		if (!process.env[key]) console.warn(`WARNING: ${key} is not set in server/.env - Google sign-in will fail`);
+	}
 });

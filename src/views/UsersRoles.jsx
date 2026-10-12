@@ -2,15 +2,17 @@ import { useState, useEffect } from 'react';
 import { PageHead } from '../components/ui';
 import { users as usersApi } from '../lib/api';
 
+const ROLE_LABELS = { admin: 'Dean / Administrator', faculty: 'Faculty' };
 const ROLE_PERMISSIONS = {
   admin: 'Full access',
   faculty: 'Create + Submit',
 };
+const EMPTY_FORM = { email: '', password: '', firstName: '', lastName: '', role: 'faculty' };
 
 export default function UsersRoles({ notify }) {
   const [people, setPeople] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ email: '', password: '', firstName: '', lastName: '', role: 'faculty' });
+  const [form, setForm] = useState(EMPTY_FORM);
 
   const fetchUsers = () => usersApi.list().then(setPeople).catch(() => {});
 
@@ -20,38 +22,56 @@ export default function UsersRoles({ notify }) {
     e.preventDefault();
     try {
       await usersApi.create(form);
-      setForm({ email: '', password: '', firstName: '', lastName: '', role: 'faculty' });
+      setForm(EMPTY_FORM);
       setShowForm(false);
       fetchUsers();
-      notify('User created.');
+      notify('User pre-registered. They can now sign in with Google.');
     } catch (err) { notify('Failed: ' + err.message); }
   };
 
-  const deleteUser = async (id) => {
+  const removeUser = async (p) => {
+    if (!window.confirm('Remove ' + p.firstName + ' ' + p.lastName + '? They will no longer be able to sign in, and their syllabi will be deleted.')) return;
     try {
-      await usersApi.remove(id);
+      await usersApi.remove(p.id);
       fetchUsers();
-      notify('User deleted.');
+      notify('User removed.');
     } catch (err) { notify('Failed: ' + err.message); }
   };
 
   return (
     <>
-      <PageHead title="Users & Roles" subtitle="Manage user accounts and role profiles for the syllabus workflow." actions={<button className="btn primary" onClick={() => setShowForm(!showForm)}>{showForm ? 'Cancel' : '+ Add User'}</button>} />
+      <PageHead title="Users & Roles" subtitle="Only users listed here can sign in. Remove a user to revoke their access." actions={<button className="btn primary" onClick={() => setShowForm(!showForm)}>{showForm ? 'Cancel' : '+ Pre-register User'}</button>} />
       {showForm && (
-        <div className="card" style={{ marginBottom: 16, padding: 16 }}>
-          <form onSubmit={addUser} style={{ display: 'flex', gap: 8, alignItems: 'end', flexWrap: 'wrap' }}>
-            <label>First Name<input value={form.firstName} onChange={e => setForm({ ...form, firstName: e.target.value })} placeholder="Juan" required /></label>
-            <label>Last Name<input value={form.lastName} onChange={e => setForm({ ...form, lastName: e.target.value })} placeholder="Santos" required /></label>
-            <label>Email<input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="name@university.edu.ph" required /></label>
-            <label>Password<input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder="••••••••" required /></label>
-            <label>Role<select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}><option value="faculty">Faculty</option><option value="admin">Admin</option></select></label>
-            <button className="btn primary" type="submit">Save</button>
-          </form>
-        </div>
+        <form onSubmit={addUser} className="user-form-grid">
+            <div className="user-field">
+              <label htmlFor="user-first-name" className="user-label">First Name</label>
+              <input id="user-first-name" className="user-input" value={form.firstName} onChange={e => setForm({ ...form, firstName: e.target.value })} placeholder="Juan" required />
+            </div>
+            <div className="user-field">
+              <label htmlFor="user-last-name" className="user-label">Last Name</label>
+              <input id="user-last-name" className="user-input" value={form.lastName} onChange={e => setForm({ ...form, lastName: e.target.value })} placeholder="Santos" required />
+            </div>
+            <div className="user-field">
+              <label htmlFor="user-email" className="user-label">Institutional Email</label>
+              <input id="user-email" className="user-input" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="name@email.lcup.edu.ph" required />
+            </div>
+            <div className="user-field">
+              <label htmlFor="user-password" className="user-label">Initial Password</label>
+              <input id="user-password" className="user-input" type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder="••••••••" required />
+            </div>
+            <div className="user-field">
+              <label htmlFor="user-role" className="user-label">Role</label>
+              <select id="user-role" className="user-input" value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}><option value="faculty">Faculty</option><option value="admin">Dean / Administrator</option></select>
+            </div>
+          <div className="user-field user-field-action">
+            <button className="user-save-btn" type="submit">Save</button>
+          </div>
+        </form>
       )}
       <div className="table-card">
-        <table><thead><tr><th>User</th><th>Email</th><th>Role</th><th>Permissions</th><th></th></tr></thead><tbody>{people.map(p => <tr key={p.id}><td><strong>{p.firstName} {p.lastName}</strong></td><td><small>{p.email}</small></td><td>{p.role === 'admin' ? 'Administrator' : 'Faculty'}</td><td>{ROLE_PERMISSIONS[p.role] || 'Unknown'}</td><td><button className="btn danger" style={{ padding: '4px 10px', fontSize: '11px' }} onClick={() => deleteUser(p.id)}>Delete</button></td></tr>)}</tbody></table>
+        <div className="overflow-x-auto w-full">
+          <table><thead><tr><th>User</th><th>Email</th><th>Role</th><th>Permissions</th><th></th></tr></thead><tbody>{people.map(p => <tr key={p.id}><td><strong>{p.firstName} {p.lastName}</strong></td><td><small>{p.email}</small></td><td>{ROLE_LABELS[p.role] || p.role}</td><td>{ROLE_PERMISSIONS[p.role] || 'Unknown'}</td><td><button className="btn danger" style={{ padding: '4px 10px', fontSize: '11px' }} onClick={() => removeUser(p)}>Remove</button></td></tr>)}</tbody></table>
+        </div>
         {people.length === 0 && <div className="empty">No users found.</div>}
       </div>
     </>

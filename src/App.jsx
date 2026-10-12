@@ -24,6 +24,13 @@ import UsersRoles from './views/UsersRoles';
 export default function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  // Read synchronously so the first paint already has the saved width (no layout shift).
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try { return localStorage.getItem('sms_sidebar_collapsed') === 'true'; } catch { return false; }
+  });
+  useEffect(() => {
+    try { localStorage.setItem('sms_sidebar_collapsed', String(sidebarCollapsed)); } catch {}
+  }, [sidebarCollapsed]);
   const [page, setPage] = useState('dashboard');
   const [toast, setToast] = useState('');
   const [syllabi, setSyllabi] = useState([]);
@@ -97,6 +104,17 @@ export default function App() {
       return null;
     } catch (err) {
       return err.message || 'Invalid email or password.';
+    }
+  };
+
+  const handleGoogleLogin = async (idToken) => {
+    try {
+      const data = await auth.google(idToken);
+      setUser(formatUser(data.user));
+      setPage('dashboard');
+      return null;
+    } catch (err) {
+      return err.message || 'Google sign-in failed.';
     }
   };
 
@@ -197,11 +215,11 @@ export default function App() {
   const nav = navItems.filter(([, , , r]) => !r || r === user?.role);
 
   if (loading) return <div className="loading-screen"><div className="spinner" /><p>Loading...</p></div>;
-  if (!user) return <Login onLogin={handleLogin} />;
+  if (!user) return <Login onLogin={handleLogin} onGoogleLogin={handleGoogleLogin} />;
 
   return (
-    <div className="app-shell">
-      <Sidebar page={page} setPage={setPage} nav={nav} user={user} onLogout={handleLogout} />
+    <div className="app-shell" data-sidebar-collapsed={sidebarCollapsed ? 'true' : 'false'}>
+      <Sidebar page={page} setPage={setPage} nav={nav} collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(c => !c)} />
       <main className="workspace">
         <Topbar page={page} onLogout={handleLogout} user={user} unread={unread} threads={threads} msgDrop={msgDrop} setMsgDrop={setMsgDrop} setChatCode={setChatCode} markRead={markRead} />
         <div className="page-wrap">

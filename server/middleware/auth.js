@@ -63,15 +63,26 @@ async function restoreSession(req, res, next) {
   }
 }
 
-function requireAuth(req, res, next) {
-  if (!req.session.user) return res.status(401).json({ error: 'Not authenticated' });
-  next();
+// Offboarding: once an admin deletes the user row, a still-alive session stops working.
+async function requireAuth(req, res, next) {
+  try {
+    if (!req.session.user) return res.status(401).json({ error: 'Not authenticated' });
+    const [rows] = await req.app.locals.db.query('SELECT user_id FROM users WHERE user_id = ?', [req.session.user.id]);
+    if (rows.length === 0) {
+      return req.session.destroy(() => res.status(403).json({ message: 'Access Denied. Account not registered.', error: 'Access Denied. Account not registered.' }));
+    }
+    next();
+  } catch (err) {
+    next(err);
+  }
 }
 
 function requireAdmin(req, res, next) {
-  if (!req.session.user) return res.status(401).json({ error: 'Not authenticated' });
-  if (req.session.user.role !== 'admin') return res.status(403).json({ error: 'Admin access required' });
-  next();
+  requireAuth(req, res, (err) => {
+    if (err) return next(err);
+    if (req.session.user.role !== 'admin') return res.status(403).json({ error: 'Admin access required' });
+    next();
+  });
 }
 
 module.exports = { requireAuth, requireAdmin, restoreSession, issueRememberToken, revokeRememberToken, REMEMBER_MS };
