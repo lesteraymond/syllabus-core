@@ -78,3 +78,13 @@ CREATE TABLE IF NOT EXISTS co_po_mapping (
   UNIQUE KEY unique_mapping (curriculum_id, co_number, po_number),
   FOREIGN KEY (curriculum_id) REFERENCES curriculum(curriculum_id) ON DELETE CASCADE
 );
+
+
+CREATE TABLE IF NOT EXISTS remember_tokens (
+  token_id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  token_hash CHAR(64) NOT NULL UNIQUE,
+  expires_at DATETIME NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);

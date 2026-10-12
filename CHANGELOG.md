@@ -277,3 +277,39 @@ src/
 **Notes:**
 - Frontend-only for now — no backend wiring; COR file is held in component state, ready for FormData integration
 - Mobile-responsive layout for login/register was prototyped and removed (desktop layout remains as-is)
+
+---
+
+### v1.14.0 — Remember Me (Persistent Login)
+**By:** Raymond  
+**Date:** October 12, 2026
+
+**Backend:**
+- Added `remember_tokens` table (`token_hash`, `expires_at`, cascades on user delete) — run `npm run init-db` to create it
+- `POST /api/auth/login` now accepts `remember`; when true, issues a 30-day `remember_token` cookie (httpOnly, SameSite=Lax, secure in production) and extends the session cookie to 30 days
+- Tokens are random 32-byte values; only the SHA-256 hash is stored in the database
+- Added `restoreSession` middleware — restores the session from a valid remember cookie after a browser restart or server restart, and rotates the token on every use (single-use tokens)
+- Expired tokens are purged automatically when a remember cookie is checked
+- When "Remember me" is unchecked, the session is a browser-session cookie and any existing remember token is revoked
+- `POST /api/auth/logout` now deletes the remember token and clears the cookie
+
+**Frontend:**
+- Wired the "Remember me" checkbox on the login page and passed the value through `App.jsx` and `lib/api.js`
+
+**Fixes:**
+- Fixed Login submit handler not awaiting the async `onLogin`, which would have tried to render a Promise as the error message on failed login
+
+**Notes:**
+- The API server must be restarted after pulling this change (`npm run dev` does not auto-reload)
+
+---
+
+### v1.14.1 — Environment Template
+**By:** Raymond  
+**Date:** October 12, 2026
+
+- Added `server/.env.example` with placeholder values for `DB_HOST`, `DB_USER`, `DB_PASS`, `DB_NAME`, `SESSION_SECRET`, `PORT`, and `UPLOAD_DIR`
+- Cleared the values in the local `server/.env` (still gitignored) so no credentials or secrets remain in the working copy
+
+**Notes:**
+- To set up, copy `server/.env.example` to `server/.env` and fill in real values.

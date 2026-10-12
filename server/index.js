@@ -4,6 +4,7 @@ const cors = require("cors");
 const session = require("express-session");
 const path = require("path");
 const mysql = require("mysql2/promise");
+const { restoreSession } = require("./middleware/auth");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -33,6 +34,8 @@ const pool = mysql.createPool({
 });
 
 app.locals.db = pool;
+
+app.use(restoreSession);
 
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/users", require("./routes/users"));

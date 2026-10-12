@@ -89,9 +89,9 @@ export default function App() {
     if (user && syllabi.length > 0) fetchMessages();
   }, [user, syllabi, fetchMessages]);
 
-  const handleLogin = async (email, pass) => {
+  const handleLogin = async (email, pass, remember) => {
     try {
-      const data = await auth.login(email, pass);
+      const data = await auth.login(email, pass, remember);
       setUser(formatUser(data.user));
       setPage('dashboard');
       return null;

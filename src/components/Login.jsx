@@ -7,11 +7,12 @@ export default function Login({ onLogin }) {
   const [form, setForm] = useState({ user: '', pass: '' });
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState('');
+  const [remember, setRemember] = useState(false);
   const fill = (e, p) => { setForm({ user: e, pass: p }); setError(''); };
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     if (!form.user.trim() || !form.pass.trim()) { setError('Enter your username/email and password.'); return; }
-    const err = onLogin(form.user, form.pass);
+    const err = await onLogin(form.user, form.pass, remember);
     if (err) setError(err);
   };
   return (
@@ -36,7 +37,7 @@ export default function Login({ onLogin }) {
           <p className="muted">Use your institutional account to continue.</p>
           <label>Username or Email<input value={form.user} onChange={e => setForm({ ...form, user: e.target.value })} placeholder="name@university.edu.ph" /></label>
           <label className="pass-field">Password<span className="pass-input"><input type={showPass ? 'text' : 'password'} value={form.pass} onChange={e => setForm({ ...form, pass: e.target.value })} placeholder="••••••••" /><button type="button" className="eye-btn" onClick={() => setShowPass(!showPass)}>{showPass ? '◉' : '◎'}</button></span></label>
-          <div className="login-options"><label className="check"><input type="checkbox" /> Remember me</label><button type="button" className="link-btn">Forgot password?</button></div>
+          <div className="login-options"><label className="check"><input type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)} /> Remember me</label><button type="button" className="link-btn">Forgot password?</button></div>
           {error && <div className="form-error">{error}</div>}
           <button className="btn primary wide" type="submit">Sign In</button>
           <div className="register-cta">
@@ -44,7 +45,7 @@ export default function Login({ onLogin }) {
           </div>
           {/* <div className="or"><span />or<span /></div>
           <button className="btn outline wide" type="button" onClick={() => { onLogin('admin@university.edu.ph', 'admin123'); }}>Enter Demo System</button> */}
-          <div className="demo-accounts"><small>Demo accounts — <button type="button" onClick={() => fill('admin@university.edu.ph', 'admin123')}>admin@university.edu.ph / admin123</button> · <button type="button" onClick={() => fill('faculty@university.edu.ph', 'faculty123')}>faculty@university.edu.ph / faculty123</button></small></div>
+          {/* <div className="demo-accounts"><small>Demo accounts — <button type="button" onClick={() => fill('admin@university.edu.ph', 'admin123')}>admin@university.edu.ph / admin123</button> · <button type="button" onClick={() => fill('faculty@university.edu.ph', 'faculty123')}>faculty@university.edu.ph / faculty123</button></small></div> */}
           {/* <small>Front-end prototype • No live authentication</small> */}
         </form>
         )}

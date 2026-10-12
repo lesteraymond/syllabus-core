@@ -12,7 +12,7 @@ async function request(path, options = {}) {
 }
 
 export const auth = {
-  login: (email, password) => request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
+  login: (email, password, remember = false) => request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password, remember }) }),
   logout: () => request('/auth/logout', { method: 'POST' }),
   me: () => request('/auth/me'),
 };

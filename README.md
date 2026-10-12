@@ -53,4 +53,4 @@ npm run build
 
 ## Changelog
 
-See [CHANGELOG.md](CHANGELOG.md) for the full release history (v1.0.0 to v1.12.0).
+See [CHANGELOG.md](CHANGELOG.md) for the full release history (v1.0.0 to v1.14.1).
