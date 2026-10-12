@@ -260,44 +260,92 @@ select {
 	text-align: center;
 }
 .app-shell {
+	/* The layout owns the sidebar width; the sidebar and workspace both read it. */
+	--sidebar-width-expanded: 260px;
+	--sidebar-width-collapsed: 80px;
+	--sidebar-width: var(--sidebar-width-expanded);
+	--sidebar-ease: cubic-bezier(0.4, 0, 0.2, 1);
+	--sidebar-duration: 300ms; /* shared by width, content margin and the hamburger rotation */
 	display: flex;
+	align-items: stretch;
 	min-height: 100vh;
 }
+.app-shell[data-sidebar-collapsed="true"] {
+	--sidebar-width: var(--sidebar-width-collapsed);
+}
+
+/*
+ * Geometry: the sidebar has 16px side padding and every row has an icon column
+ * 48px wide (24px icon + 12px padding each side). 16 + 24 = 40 = half of the
+ * collapsed width, so icons are already centered when collapsed and never move.
+ * Only the container width changes; labels are clipped by overflow and fade out.
+ * No padding, gap, or max-width is animated, so no layout work happens per row.
+ */
 .sidebar {
 	position: fixed;
 	left: 0;
 	top: 0;
 	bottom: 0;
-	width: 230px;
+	width: var(--sidebar-width);
 	background: linear-gradient(180deg, #092b8d, #061b5d);
 	color: white;
 	display: flex;
 	flex-direction: column;
-	padding: 20px 14px;
+	padding: 20px 16px;
 	z-index: 10;
+	overflow-x: hidden;
+	overflow-y: auto;
+	white-space: nowrap;
+	will-change: width;
+	transition: width var(--sidebar-duration) var(--sidebar-ease);
 }
 .side-brand {
 	display: flex;
 	align-items: center;
 	gap: 10px;
-	padding: 0 9px 21px;
+	height: 56px;
+	padding-bottom: 21px;
+	box-sizing: content-box;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
-.side-brand img {
+.side-toggle {
+	flex: none;
 	width: 48px;
 	height: 48px;
+	display: grid;
+	place-items: center;
+	border: 0;
+	border-radius: 10px;
+	background: transparent;
+	color: #d8e0f6;
+	transition: background 0.18s;
+}
+.side-toggle:hover {
+	background: rgba(255, 255, 255, 0.12);
+}
+.side-toggle:focus-visible,
+.sidebar nav button:focus-visible {
+	outline: 2px solid #f2c66d;
+	outline-offset: 2px;
+}
+/* Hamburger: one full 360deg turn, driven by the same duration/easing as the width. */
+.side-toggle svg {
+	transform: translateZ(0) rotate(0deg);
+	will-change: transform;
+	transition: transform var(--sidebar-duration) var(--sidebar-ease);
+}
+.sidebar[data-collapsed="true"] .side-toggle svg {
+	transform: translateZ(0) rotate(360deg);
+}
+.side-logo {
+	width: 40px;
+	height: 40px;
+	flex: none;
 	object-fit: contain;
 }
-.side-brand div {
-	display: flex;
-	flex-direction: column;
-}
-.side-brand strong {
+.side-title {
 	font: 800 22px Manrope;
-}
-.side-brand small {
-	font-size: 12px;
-	color: #b9c7eb;
+	transition: opacity 200ms ease;
 }
 .sidebar nav {
 	display: flex;
@@ -311,12 +359,16 @@ select {
 	color: #d8e0f6;
 	display: flex;
 	align-items: center;
-	gap: 11px;
-	padding: 11px 12px;
+	gap: 8px;
+	height: 46px;
+	padding: 0 12px;
 	border-radius: 9px;
 	text-align: left;
 	font-size: 14px;
 	font-weight: 600;
+	white-space: nowrap;
+	overflow: hidden;
+	transition: background 0.18s;
 }
 .sidebar nav button:hover {
 	background: rgba(255, 255, 255, 0.08);
@@ -326,47 +378,42 @@ select {
 	color: #12285e;
 }
 .nav-icon {
-	width: 19px;
+	width: 24px;
+	flex: none;
 	text-align: center;
-	font-size: 17px;
+	font-size: 18px;
+	transition: transform 200ms ease;
 }
-.side-footer {
-	margin-top: auto;
-	border-top: 1px solid rgba(255, 255, 255, 0.12);
-	padding: 16px 8px 0;
-	display: flex;
-	gap: 9px;
-	align-items: center;
+.nav-label {
+	white-space: nowrap;
+	transition: opacity 200ms ease;
 }
-.mini-avatar,
+
+/* Collapsed: labels stay mounted, they just fade out and ignore the pointer. */
+.sidebar[data-collapsed="true"] .side-logo,
+.sidebar[data-collapsed="true"] .side-title,
+.sidebar[data-collapsed="true"] .nav-label {
+	opacity: 0;
+	pointer-events: none;
+}
+.sidebar[data-collapsed="true"] nav button:hover .nav-icon {
+	transform: scale(1.15);
+}
 .avatar {
 	border-radius: 50%;
 	display: grid;
 	place-items: center;
 	font-weight: 800;
 }
-.mini-avatar {
-	width: 35px;
-	height: 35px;
-	background: #f2c66d;
-	color: #173068;
-}
-.side-footer div:last-child {
-	display: flex;
-	flex-direction: column;
-}
-.side-footer strong {
-	font-size: 13px;
-}
-.side-footer small {
-	font-size: 11px;
-	color: #aebce0;
-	margin-top: 2px;
-}
 .workspace {
-	margin-left: 230px;
-	width: calc(100% - 230px);
+	flex: 1;
+	min-width: 0;
+	margin-left: var(--sidebar-width);
 	min-height: 100vh;
+	transition: margin-left var(--sidebar-duration) var(--sidebar-ease);
+}
+@media (prefers-reduced-motion: reduce) {
+	.sidebar, .workspace, .side-toggle svg, .nav-icon, .nav-label, .side-title { transition: none; }
 }
 .topbar {
 	height: 80px;
@@ -483,7 +530,8 @@ select {
 }
 .stat-grid {
 	display: grid;
-	grid-template-columns: repeat(6, 1fr);
+	/* Cards share the full row (no empty 6th column), so their text rarely re-wraps when the sidebar resizes. */
+	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
 	gap: 12px;
 	margin-bottom: 16px;
 }
@@ -497,6 +545,8 @@ select {
 	grid-template-columns: 35px 1fr;
 	grid-template-areas: "icon label" "icon value" "icon note";
 	column-gap: 11px;
+	min-height: 120px; /* fits the 2-line label case so the row height never changes with the sidebar */
+	align-content: start;
 }
 .stat-icon {
 	grid-area: icon;
@@ -551,6 +601,10 @@ select {
 	grid-template-columns: 1.35fr 1fr 0.8fr;
 	gap: 14px;
 	margin-bottom: 14px;
+}
+/* Keep the row height steady while the sidebar resizes the columns and text re-wraps. */
+.dashboard-grid:not(.lower) {
+	min-height: 290px;
 }
 .dashboard-grid.lower {
 	grid-template-columns: 1fr 1fr 1fr;
@@ -3131,4 +3185,92 @@ select {
 .pass-input input{width:100%;padding-right:36px}
 .eye-btn{position:absolute;right:8px;background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);padding:4px;line-height:1}
 .eye-btn:hover{color:var(--blue)}
+.google-btn-wrap {
+	position: relative;
+	width: 100%;
+}
+.google-btn-face {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	pointer-events: none;
+	box-sizing: border-box;
+}
+.google-btn-gsi {
+	position: absolute;
+	top: 0;
+	left: 0;
+	transform-origin: 0 0;
+	opacity: 0.01;
+	overflow: hidden;
+	cursor: pointer;
+}
+.google-btn-wrap:hover .google-btn-face {
+	transform: translateY(-1px);
+	box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
 
+/* Users & Roles: provision form (Tailwind-equivalent values) */
+.user-form-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 16px;
+	padding: 24px;
+	margin-bottom: 24px;
+	background: #fff;
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+@media (min-width: 768px) {
+	.user-form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+	.user-form-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.user-field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+.user-field-action {
+	align-items: stretch;
+	justify-content: flex-end;
+}
+.user-label {
+	font-size: 12px;
+	font-weight: 600;
+	color: #334155;
+	letter-spacing: 0.05em;
+}
+.user-input {
+	width: 100%;
+	padding: 8px 14px;
+	font-size: 14px;
+	background: #f8fafc;
+	border: 1px solid #cbd5e1;
+	border-radius: 8px;
+	transition: all 0.15s;
+}
+.user-input:focus {
+	outline: none;
+	background: #fff;
+	box-shadow: 0 0 0 2px #2563eb;
+}
+.user-save-btn {
+	width: 100%;
+	padding: 8px 16px;
+	font-size: 14px;
+	font-weight: 500;
+	color: #fff;
+	background: #1e3a8a;
+	border: 0;
+	border-radius: 8px;
+	transition: background-color 0.15s;
+}
+.user-save-btn:hover {
+	background: #1e40af;
+}
+.overflow-x-auto { overflow-x: auto; }
+.w-full { width: 100%; }

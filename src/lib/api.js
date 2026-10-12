@@ -1,26 +1,54 @@
-const API = 'http://localhost:3001/api';
+const API = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const TOKEN_KEY = 'sms_jwt';
+
+export const tokenStore = {
+  get: () => { try { return localStorage.getItem(TOKEN_KEY); } catch { return null; } },
+  set: (t) => { try { localStorage.setItem(TOKEN_KEY, t); } catch {} },
+  clear: () => { try { localStorage.removeItem(TOKEN_KEY); } catch {} },
+};
+
+// Adds Authorization: Bearer <jwt> when a token is stored.
+function authHeaders(extra = {}) {
+  const token = tokenStore.get();
+  return token ? { ...extra, Authorization: `Bearer ${token}` } : extra;
+}
 
 async function request(path, options = {}) {
-  const res = await fetch(`${API}${path}`, {
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json', ...options.headers },
-    ...options,
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Request failed');
+  let res;
+  try {
+    res = await fetch(`${API}${path}`, {
+      credentials: 'include',
+      ...options,
+      headers: authHeaders({ 'Content-Type': 'application/json', ...options.headers }),
+    });
+  } catch {
+    throw new Error('Cannot reach the server. Check that the API is running and try again.');
+  }
+  const data = await res.json().catch(() => ({}));
+  if (res.status === 401) tokenStore.clear(); // expired/invalid JWT
+  if (!res.ok) throw new Error(data.message || data.error || `Request failed (${res.status})`);
   return data;
 }
 
 export const auth = {
-  login: (email, password, remember = false) => request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password, remember }) }),
-  logout: () => request('/auth/logout', { method: 'POST' }),
+  login: async (email, password, remember = false) => {
+    const data = await request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password, remember }) });
+    if (data.token) tokenStore.set(data.token);
+    return data;
+  },
+  google: async (idToken) => {
+    const data = await request('/auth/google', { method: 'POST', body: JSON.stringify({ token: idToken }) });
+    tokenStore.set(data.token);
+    return data;
+  },
+  logout: async () => { tokenStore.clear(); return request('/auth/logout', { method: 'POST' }); },
   me: () => request('/auth/me'),
 };
 
 export const syllabi = {
   list: () => request('/syllabi'),
-  create: (formData) => fetch(`${API}/syllabi`, { method: 'POST', credentials: 'include', body: formData }).then(r => r.json()),
-  update: (id, data) => fetch(`${API}/syllabi/${id}`, { method: 'PUT', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }).then(r => r.json()),
+  create: (formData) => fetch(`${API}/syllabi`, { method: 'POST', credentials: 'include', headers: authHeaders(), body: formData }).then(r => r.json()),
+  update: (id, data) => fetch(`${API}/syllabi/${id}`, { method: 'PUT', credentials: 'include', headers: authHeaders({ 'Content-Type': 'application/json' }), body: JSON.stringify(data) }).then(r => r.json()),
   remove: (id) => request(`/syllabi/${id}`, { method: 'DELETE' }),
 };
 

@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import StudentRegister from './StudentRegister';
+import GoogleSignInButton from './GoogleSignInButton';
 
 
-export default function Login({ onLogin }) {
+export default function Login({ onLogin, onGoogleLogin }) {
   const [mode, setMode] = useState('login');
   const [form, setForm] = useState({ user: '', pass: '' });
   const [showPass, setShowPass] = useState(false);
@@ -40,6 +41,8 @@ export default function Login({ onLogin }) {
           <div className="login-options"><label className="check"><input type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)} /> Remember me</label><button type="button" className="link-btn">Forgot password?</button></div>
           {error && <div className="form-error">{error}</div>}
           <button className="btn primary wide" type="submit">Sign In</button>
+          <div className="or"><span />or<span /></div>
+          <GoogleSignInButton onCredential={async (idToken) => { setError(''); const err = await onGoogleLogin(idToken); if (err) setError(err); }} onError={setError} />
           <div className="register-cta">
             <button className="btn outline wide" type="button" onClick={() => setMode('register')}>Register (for Students)</button>
           </div>
