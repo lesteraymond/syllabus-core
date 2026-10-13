@@ -8,7 +8,7 @@ export const navItems = [
   ['dashboard', 'squaresFour', 'Dashboard', null],
   ['builder', 'pencilRuler', 'Syllabus Builder', 'faculty'],
   ['my-syllabi', 'notebook', 'My Syllabi', 'faculty'],
-  ['ai', 'sparkle', 'AI Checker', null],
+  ['ai', 'sparkle', 'AI Checker', 'admin'],
   ['mapping', 'gridFour', 'CO–PO Mapping', null],
   ['review', 'sealCheck', 'Review & Approval', 'admin'],
   ['courses', 'graduationCap', 'Subjects & CLOs', 'admin'],

@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { API_ORIGIN, syllabi as syllabiApi } from '../lib/api';
 import { STATUS_LABELS } from '../lib/syllabusRules';
 import { fmt } from '../lib/utils';
+import { useModalLayer } from './useModalLayer';
 
 const FIELD_LABELS = { title: 'title', courseCode: 'course code', curriculumId: 'curriculum', file: 'file', content: 'syllabus content' };
 
@@ -9,6 +10,8 @@ export default function VersionHistoryModal({ syllabus, onClose }) {
   const [versions, setVersions] = useState(null);
   const [error, setError] = useState('');
   const id = syllabus?.id;
+  const dialog = useRef(null);
+  useModalLayer(dialog, onClose, !!syllabus);
   useEffect(() => {
     if (!id) return undefined;
     let live = true;
@@ -23,7 +26,7 @@ export default function VersionHistoryModal({ syllabus, onClose }) {
   if (!syllabus) return null;
   return (
     <div className="overlay" onClick={onClose}>
-      <div className="modal vh-modal" onClick={e => e.stopPropagation()}>
+      <div className="modal vh-modal" role="dialog" aria-modal="true" aria-label="Version history" tabIndex={-1} ref={dialog} onClick={e => e.stopPropagation()}>
         <div className="modal-head"><div><h3>Version History</h3><small>{syllabus.courseCode} • {syllabus.title}</small></div><button className="icon-btn" onClick={onClose}>✕</button></div>
         <div className="modal-body">
           {error && <div className="empty">{error}</div>}

@@ -7,6 +7,7 @@ const { avatarUrlFor } = require('../lib/avatar');
 const { createNotification, notifyAdmins } = require('../lib/notify');
 const rules = require('../lib/syllabusRules');
 const assignments = require('../lib/assignments');
+const { validateReason, typeForStatus, MAX_LENGTH } = require('../lib/reviewComments');
 const router = express.Router();
 
 const storage = multer.diskStorage({
@@ -25,7 +26,7 @@ const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 router.get('/', requireAuth, async (req, res) => {
   try {
     const db = req.app.locals.db;
-    let query = `SELECT s.*, u.first_name, u.last_name, u.avatar_path, c.program_name FROM syllabi s JOIN users u ON s.user_id = u.user_id LEFT JOIN curriculum c ON s.curriculum_id = c.curriculum_id`;
+    let query = `SELECT s.*, u.first_name, u.last_name, u.avatar_path, c.program_name, co.title AS course_title, pr.code AS program_code FROM syllabi s JOIN users u ON s.user_id = u.user_id LEFT JOIN curriculum c ON s.curriculum_id = c.curriculum_id LEFT JOIN courses co ON co.course_id = s.course_id LEFT JOIN programs pr ON pr.program_id = co.program_id`;
     const params = [];
 
     if (req.session.user.role === 'faculty') {
@@ -54,6 +55,8 @@ router.get('/', requireAuth, async (req, res) => {
       faculty: `${r.first_name} ${r.last_name}`,
       ownerAvatarUrl: avatarUrlFor(r.user_id, r.avatar_path),
       program: r.program_name || '',
+      programCode: r.program_code || '', // the catalog program of the subject (the field above comes from the old curriculum)
+      courseTitle: r.course_title || '',
     })));
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -163,12 +166,16 @@ router.put('/:id', requireAuth, upload.single('file'), async (req, res) => {
         if (!rules.canChangeStatus(me)) throw httpError(403, 'Only administrators can change a syllabus status');
         if (!rules.STATUSES.includes(status)) throw httpError(400, 'Invalid status');
         if (hasContent) throw httpError(403, 'Administrators cannot edit syllabus content');
+        // Returning a syllabus for revision or rejecting it needs a reason; approving does not.
+        const reason = validateReason(status, adminComment);
         const fields = ['status = ?'];
         const params = [status];
         if (adminComment !== undefined) { fields.push('admin_comment = ?'); params.push(adminComment); }
         await conn.query(`UPDATE syllabi SET ${fields.join(', ')} WHERE syllabus_id = ?`, [...params, id]);
         const action = { approved: 'approve', rejected: 'reject', for_revision: 'revision', submitted: 'submit' }[status] || 'update';
         await conn.query('INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)', [id, me.id, action, `Status changed to ${status}`]);
+        // The reason is kept as a comment too, in the same transaction, so the thread and the status cannot disagree.
+        if (reason) await conn.query('INSERT INTO comments (syllabus_id, user_id, comment_text, comment_type) VALUES (?, ?, ?, ?)', [id, me.id, reason.slice(0, MAX_LENGTH), typeForStatus(status)]);
         return { kind: 'status', syl, status, comment: adminComment !== undefined ? adminComment : syl.admin_comment };
       }
 

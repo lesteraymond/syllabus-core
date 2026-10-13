@@ -5,6 +5,16 @@
 const test = require('node:test');
 const assert = require('node:assert');
 const express = require('express');
+const F = require('../lib/compliance/fixtures');
+
+// A form that follows the standard, built on the compliance fixture. A draft carries no catalog copy (the server adds it at submit),
+// and the fake catalog below has one CLO (id c1) for IT 204, so every ILO is tagged with that one.
+function conformingContent() {
+  const c = F.good();
+  delete c.catalog;
+  c.plan.forEach((r) => r.ilos.forEach((il) => { if (il.tags.length) il.tags = ['clo:c1']; }));
+  return c;
+}
 
 function makeDb() {
   const s = {
@@ -28,7 +38,7 @@ function makeDb() {
       { course_id: 20, code: 'IE 101', title: 'Work Study', program_id: 2, clos_version: 1 },
     ],
     clos: [{ course_id: 10, ega_nos: '1', po_nos: '1' }, { course_id: 20, ega_nos: '2', po_nos: '1' }],
-    syllabi: { 1: { syllabus_id: 1, user_id: 5, status: 'draft', version: 'v1.0', title: 'Programming 2', course_code: 'IT 204', course_id: 10, curriculum_id: null, file_path: null, content: JSON.stringify({ meta: { courseId: 10, program: 'BSIT', code: 'IT 204', title: 'Programming 2' } }) } },
+    syllabi: { 1: { syllabus_id: 1, user_id: 5, status: 'draft', version: 'v1.0', title: 'Programming 2', course_code: 'IT 204', course_id: 10, curriculum_id: null, file_path: null, content: JSON.stringify(conformingContent()) } },
     saved: [],
   };
   const prog = (where) => s.programs.find(where);

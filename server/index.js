@@ -44,6 +44,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", require("./routes/users"));
 app.use("/api/syllabi", require("./routes/syllabi"));
 app.use("/api/syllabi", require("./routes/syllabusContent"));
+app.use("/api/syllabi", require("./routes/comments"));
+app.use("/api", require("./routes/compliance"));
 app.use("/api/institution", require("./routes/institution"));
 app.use("/api/programs", require("./routes/programs"));
 app.use("/api/courses", require("./routes/courses"));
