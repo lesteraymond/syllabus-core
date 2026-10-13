@@ -1,8 +1,19 @@
 const crypto = require('crypto');
+const { avatarUrlFor } = require('../lib/avatar');
 
 const REMEMBER_COOKIE = 'remember_token';
 const REMEMBER_DAYS = 30;
 const REMEMBER_MS = REMEMBER_DAYS * 24 * 60 * 60 * 1000;
+
+// The one place a users row becomes the session/response user object.
+const toSessionUser = (row) => ({
+  id: row.user_id,
+  email: row.email,
+  role: row.role,
+  firstName: row.first_name,
+  lastName: row.last_name,
+  avatarUrl: avatarUrlFor(row.user_id, row.avatar_path),
+});
 
 const hash = (token) => crypto.createHash('sha256').update(token).digest('hex');
 
@@ -42,7 +53,7 @@ async function restoreSession(req, res, next) {
     if (!token) return next();
     const db = req.app.locals.db;
     const [rows] = await db.query(
-      `SELECT t.token_id, u.user_id, u.email, u.role, u.first_name, u.last_name
+      `SELECT t.token_id, u.user_id, u.email, u.role, u.first_name, u.last_name, u.avatar_path
        FROM remember_tokens t JOIN users u ON t.user_id = u.user_id
        WHERE t.token_hash = ? AND t.expires_at > NOW()`,
       [hash(token)]
@@ -54,7 +65,7 @@ async function restoreSession(req, res, next) {
     }
     const u = rows[0];
     await db.query('DELETE FROM remember_tokens WHERE token_id = ?', [u.token_id]);
-    req.session.user = { id: u.user_id, email: u.email, role: u.role, firstName: u.first_name, lastName: u.last_name };
+    req.session.user = toSessionUser(u);
     req.session.cookie.maxAge = REMEMBER_MS;
     await issueRememberToken(db, res, u.user_id);
     next();
@@ -85,4 +96,4 @@ function requireAdmin(req, res, next) {
   });
 }
 
-module.exports = { requireAuth, requireAdmin, restoreSession, issueRememberToken, revokeRememberToken, REMEMBER_MS };
+module.exports = { toSessionUser, requireAuth, requireAdmin, restoreSession, issueRememberToken, revokeRememberToken, REMEMBER_MS };

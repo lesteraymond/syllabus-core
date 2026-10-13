@@ -22,6 +22,8 @@ app.use(
 );
 
 const uploadsDir = path.join(__dirname, process.env.UPLOAD_DIR || "uploads");
+// Profile photos are private: they are only served by GET /api/users/:id/avatar (authorization checked).
+app.use("/uploads/avatars", (req, res) => res.sendStatus(404));
 app.use("/uploads", express.static(uploadsDir));
 
 const pool = mysql.createPool({
@@ -41,9 +43,14 @@ const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);
 app.use("/api/users", require("./routes/users"));
 app.use("/api/syllabi", require("./routes/syllabi"));
+app.use("/api/syllabi", require("./routes/syllabusContent"));
+app.use("/api/institution", require("./routes/institution"));
+app.use("/api/programs", require("./routes/programs"));
+app.use("/api/courses", require("./routes/courses"));
 app.use("/api/curriculum", require("./routes/curriculum"));
 app.use("/api/logs", require("./routes/logs"));
 app.use("/api/messages", require("./routes/messages"));
+app.use("/api/notifications", require("./routes/notifications"));
 app.use("/api/mapping", require("./routes/mapping"));
 
 app.listen(PORT, () => {

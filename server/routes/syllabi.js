@@ -3,6 +3,10 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { requireAuth } = require('../middleware/auth');
+const { avatarUrlFor } = require('../lib/avatar');
+const { createNotification, notifyAdmins } = require('../lib/notify');
+const rules = require('../lib/syllabusRules');
+const assignments = require('../lib/assignments');
 const router = express.Router();
 
 const storage = multer.diskStorage({
@@ -21,12 +25,14 @@ const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 router.get('/', requireAuth, async (req, res) => {
   try {
     const db = req.app.locals.db;
-    let query = `SELECT s.*, u.first_name, u.last_name, c.program_name FROM syllabi s JOIN users u ON s.user_id = u.user_id LEFT JOIN curriculum c ON s.curriculum_id = c.curriculum_id`;
+    let query = `SELECT s.*, u.first_name, u.last_name, u.avatar_path, c.program_name FROM syllabi s JOIN users u ON s.user_id = u.user_id LEFT JOIN curriculum c ON s.curriculum_id = c.curriculum_id`;
     const params = [];
 
     if (req.session.user.role === 'faculty') {
       query += ' WHERE s.user_id = ?';
       params.push(req.session.user.id);
+    } else {
+      query += " WHERE s.status <> 'draft'"; // drafts belong to their owner until submitted
     }
 
     query += ' ORDER BY s.uploaded_at DESC';
@@ -36,6 +42,7 @@ router.get('/', requireAuth, async (req, res) => {
       id: r.syllabus_id,
       userId: r.user_id,
       curriculumId: r.curriculum_id,
+      courseId: r.course_id,
       filePath: r.file_path,
       title: r.title,
       courseCode: r.course_code,
@@ -45,6 +52,7 @@ router.get('/', requireAuth, async (req, res) => {
       uploadedAt: r.uploaded_at,
       updatedAt: r.updated_at,
       faculty: `${r.first_name} ${r.last_name}`,
+      ownerAvatarUrl: avatarUrlFor(r.user_id, r.avatar_path),
       program: r.program_name || '',
     })));
   } catch (err) {
@@ -52,69 +60,232 @@ router.get('/', requireAuth, async (req, res) => {
   }
 });
 
+// ---- helpers for the write routes ----
+
+// Runs fn(conn) inside one transaction: commit on success, rollback (and rethrow) on any error.
+async function inTransaction(db, fn) {
+  const conn = await db.getConnection();
+  try {
+    await conn.beginTransaction();
+    const result = await fn(conn);
+    await conn.commit();
+    return result;
+  } catch (err) {
+    await conn.rollback().catch(() => {});
+    throw err;
+  } finally {
+    conn.release();
+  }
+}
+
+// An HTTP error that the route handler turns into a response.
+const httpError = (status, message) => Object.assign(new Error(message), { status });
+
+// Files are never overwritten (names are unique), so the only file we ever remove is one that was
+// uploaded by a request that then failed, so no version can ever point at a missing file.
+const discardUpload = async (file) => { if (file) await fs.promises.unlink(file.path).catch(() => {}); };
+
+const sendError = (res, err) => {
+  if (err.status) return res.status(err.status).json({ error: err.message });
+  console.error('SYLLABUS ERROR:', err);
+  return res.status(500).json({ error: err.message });
+};
+
+// MySQL here is not in strict mode and would silently cut long values, so reject them instead.
+const checkLengths = ({ title, courseCode }) => {
+  if (typeof title === 'string' && title.length > 255) throw httpError(400, 'Title is too long (max 255 characters)');
+  if (typeof courseCode === 'string' && courseCode.length > 50) throw httpError(400, 'Course code is too long (max 50 characters)');
+};
+
+const VERSION_COLUMNS = `(syllabus_id, version_label, title, course_code, curriculum_id, file_path, status_at_save, note, created_by)`;
+
 router.post('/', requireAuth, upload.single('file'), async (req, res) => {
+  let committed = false;
   try {
     const db = req.app.locals.db;
     const { title, courseCode, curriculumId } = req.body;
+    checkLengths({ title, courseCode });
+    await assignments.requireCourseCodeAccess(db, req.session.user, courseCode); // faculty: only an assigned course
     const filePath = req.file ? `/uploads/${req.file.filename}` : null;
 
-    const [result] = await db.query(
-      'INSERT INTO syllabi (user_id, curriculum_id, file_path, title, course_code, status) VALUES (?, ?, ?, ?, ?, ?)',
-      [req.session.user.id, curriculumId || null, filePath, title, courseCode, 'submitted']
-    );
+    const syllabusId = await inTransaction(db, async (conn) => {
+      const [result] = await conn.query(
+        'INSERT INTO syllabi (user_id, curriculum_id, file_path, title, course_code, status) VALUES (?, ?, ?, ?, ?, ?)',
+        [req.session.user.id, curriculumId || null, filePath, title, courseCode, 'submitted']
+      );
+      await conn.query(
+        `INSERT INTO syllabus_versions ${VERSION_COLUMNS} VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [result.insertId, 'v1.0', title, courseCode, curriculumId || null, filePath, 'submitted', 'Initial version', req.session.user.id]
+      );
+      await conn.query(
+        'INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)',
+        [result.insertId, req.session.user.id, 'upload', 'Syllabus uploaded']
+      );
+      return result.insertId;
+    });
+    committed = true;
 
-    await db.query(
-      'INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)',
-      [result.insertId, req.session.user.id, 'upload', 'Syllabus uploaded']
-    );
-
-    res.json({ id: result.insertId, message: 'Syllabus uploaded' });
+    await notifyAdmins(db, {
+      exceptUserId: req.session.user.id,
+      type: 'submission',
+      syllabusId,
+      title: `New syllabus submitted: ${courseCode || title || 'Untitled'}`,
+      body: `${req.session.user.firstName} ${req.session.user.lastName} submitted ${title || courseCode || 'a syllabus'} for review.`,
+    });
+    res.json({ id: syllabusId, message: 'Syllabus uploaded' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    if (!committed) await discardUpload(req.file);
+    sendError(res, err);
   }
 });
 
+// Two kinds of update share this route:
+//  - an admin changes the status (and optionally the reviewer comment): JSON body with `status`;
+//  - the owner edits the content (title, course code, curriculum, file, note): this creates a new version.
 router.put('/:id', requireAuth, upload.single('file'), async (req, res) => {
+  const db = req.app.locals.db;
+  const me = req.session.user;
+  let committed = false;
   try {
-    const db = req.app.locals.db;
-    const { title, courseCode, curriculumId, status, adminComment, version } = req.body;
-    const filePath = req.file ? `/uploads/${req.file.filename}` : undefined;
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id <= 0) throw httpError(404, 'Syllabus not found');
+    const { title, courseCode, curriculumId, note, status, adminComment } = req.body;
+    checkLengths({ title, courseCode });
+    const hasContent = title !== undefined || courseCode !== undefined || curriculumId !== undefined || !!req.file;
 
-    const fields = [];
-    const params = [];
+    const outcome = await inTransaction(db, async (conn) => {
+      const [rows] = await conn.query('SELECT * FROM syllabi WHERE syllabus_id = ? FOR UPDATE', [id]);
+      const syl = rows[0];
+      if (!syl || !rules.canView(me, syl)) throw httpError(404, 'Syllabus not found'); // never reveal it to non-participants
 
-    if (title !== undefined) { fields.push('title = ?'); params.push(title); }
-    if (courseCode !== undefined) { fields.push('course_code = ?'); params.push(courseCode); }
-    if (curriculumId !== undefined) { fields.push('curriculum_id = ?'); params.push(curriculumId); }
-    if (status !== undefined) { fields.push('status = ?'); params.push(status); }
-    if (adminComment !== undefined) { fields.push('admin_comment = ?'); params.push(adminComment); }
-    if (version !== undefined) { fields.push('version = ?'); params.push(version); }
-    if (filePath) { fields.push('file_path = ?'); params.push(filePath); }
+      // ---- status change: admin only ----
+      if (status !== undefined && status !== '') {
+        if (!rules.canChangeStatus(me)) throw httpError(403, 'Only administrators can change a syllabus status');
+        if (!rules.STATUSES.includes(status)) throw httpError(400, 'Invalid status');
+        if (hasContent) throw httpError(403, 'Administrators cannot edit syllabus content');
+        const fields = ['status = ?'];
+        const params = [status];
+        if (adminComment !== undefined) { fields.push('admin_comment = ?'); params.push(adminComment); }
+        await conn.query(`UPDATE syllabi SET ${fields.join(', ')} WHERE syllabus_id = ?`, [...params, id]);
+        const action = { approved: 'approve', rejected: 'reject', for_revision: 'revision', submitted: 'submit' }[status] || 'update';
+        await conn.query('INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)', [id, me.id, action, `Status changed to ${status}`]);
+        return { kind: 'status', syl, status, comment: adminComment !== undefined ? adminComment : syl.admin_comment };
+      }
 
-    if (fields.length === 0) return res.status(400).json({ error: 'No fields to update' });
+      // ---- content edit: the owner only ----
+      if (rules.isAdmin(me) && !rules.isOwner(me, syl)) throw httpError(403, 'Administrators cannot edit syllabus content');
+      if (!rules.canEdit(me, syl)) throw httpError(409, `This syllabus is ${syl.status.replace('_', ' ')} and can no longer be edited`);
 
-    params.push(req.params.id);
-    await db.query(`UPDATE syllabi SET ${fields.join(', ')} WHERE syllabus_id = ?`, params);
+      const next = {
+        title: title !== undefined ? title : syl.title,
+        courseCode: courseCode !== undefined ? courseCode : syl.course_code,
+        curriculumId: curriculumId !== undefined && curriculumId !== '' ? curriculumId : syl.curriculum_id,
+        filePath: req.file ? `/uploads/${req.file.filename}` : syl.file_path,
+      };
+      // Faculty: the syllabus's course (and the code being typed) must be assigned to them, or it is read-only.
+      if (syl.course_id) await assignments.requireCourseAccess(conn, me, syl.course_id);
+      await assignments.requireCourseCodeAccess(conn, me, next.courseCode);
+      const newStatus = rules.statusAfterOwnerEdit(syl.status);
+      const label = rules.nextVersionLabel(syl.version); // the client's version, if any, is ignored
+      const versionNote = (typeof note === 'string' && note.trim()) ? note.trim().slice(0, 1000) : 'Updated by author';
 
-    if (status) {
-      const actionMap = { approved: 'approve', rejected: 'reject', for_revision: 'revision', submitted: 'submit' };
-      const action = actionMap[status] || 'update';
-      await db.query('INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)', [req.params.id, req.session.user.id, action, `Status changed to ${status}`]);
+      await conn.query(
+        'UPDATE syllabi SET title = ?, course_code = ?, curriculum_id = ?, file_path = ?, status = ?, version = ? WHERE syllabus_id = ?',
+        [next.title, next.courseCode, next.curriculumId || null, next.filePath, newStatus, label, id]
+      );
+      await conn.query(
+        `INSERT INTO syllabus_versions ${VERSION_COLUMNS} VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [id, label, next.title, next.courseCode, next.curriculumId || null, next.filePath, newStatus, versionNote, me.id]
+      );
+      await conn.query(
+        'INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)',
+        [id, me.id, syl.status === 'for_revision' ? 'submit' : 'update', `Edited, saved as ${label}: ${versionNote}`.slice(0, 500)]
+      );
+      return { kind: 'edit', syl, label, courseCode: next.courseCode, previousStatus: syl.status };
+    });
+
+    committed = true;
+    // After the commit: notifications never affect the result.
+    if (outcome.kind === 'status') {
+      const decision = { approved: 'Syllabus approved', for_revision: 'Revision requested', rejected: 'Syllabus rejected' }[outcome.status];
+      if (decision && outcome.syl.user_id !== me.id) {
+        await createNotification(db, {
+          userId: outcome.syl.user_id,
+          type: 'status',
+          syllabusId: id,
+          title: `${decision}: ${outcome.syl.course_code || outcome.syl.title}`,
+          body: outcome.comment ? `Reviewer comment: ${outcome.comment}` : '',
+        });
+      }
+      return res.json({ message: 'Syllabus updated' });
     }
 
-    res.json({ message: 'Syllabus updated' });
+    if (outcome.previousStatus === 'under_review' || outcome.previousStatus === 'for_revision') {
+      await notifyAdmins(db, {
+        exceptUserId: me.id,
+        type: 'edit',
+        syllabusId: id,
+        title: outcome.previousStatus === 'under_review'
+          ? `Syllabus updated during review: ${outcome.courseCode} (${outcome.label})`
+          : `Syllabus resubmitted: ${outcome.courseCode} (${outcome.label})`,
+        body: `${me.firstName} ${me.lastName} saved a new version.`,
+      });
+    }
+    res.json({ message: 'Syllabus updated', version: outcome.label });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    if (!committed) await discardUpload(req.file); // a rejected or failed edit leaves no orphan file behind
+    sendError(res, err);
   }
 });
 
 router.delete('/:id', requireAuth, async (req, res) => {
   try {
     const db = req.app.locals.db;
-    await db.query('DELETE FROM syllabi WHERE syllabus_id = ?', [req.params.id]);
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id <= 0) throw httpError(404, 'Syllabus not found');
+    const [rows] = await db.query('SELECT syllabus_id, user_id, status FROM syllabi WHERE syllabus_id = ?', [id]);
+    if (!rows[0] || !rules.canDelete(req.session.user, rows[0])) throw httpError(404, 'Syllabus not found');
+    await db.query('DELETE FROM syllabi WHERE syllabus_id = ?', [id]);
     res.json({ message: 'Syllabus deleted' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    sendError(res, err);
+  }
+});
+
+// Version history: the owner and admins only. Newest first; `changed` lists the tracked fields that
+// differ from the previous version.
+router.get('/:id/versions', requireAuth, async (req, res) => {
+  try {
+    const db = req.app.locals.db;
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id <= 0) throw httpError(404, 'Syllabus not found');
+    const [syl] = await db.query('SELECT syllabus_id, user_id, status FROM syllabi WHERE syllabus_id = ?', [id]);
+    if (!syl[0] || !rules.canView(req.session.user, syl[0])) throw httpError(404, 'Syllabus not found');
+
+    const [rows] = await db.query(
+      `SELECT v.*, u.first_name, u.last_name
+       FROM syllabus_versions v JOIN users u ON u.user_id = v.created_by
+       WHERE v.syllabus_id = ?
+       ORDER BY v.created_at ASC, v.version_id ASC`,
+      [id]
+    );
+    const tracked = [['title', 'title'], ['course_code', 'courseCode'], ['curriculum_id', 'curriculumId'], ['file_path', 'file'], ['content', 'content']];
+    const versions = rows.map((r, i) => ({
+      id: r.version_id,
+      version: r.version_label,
+      title: r.title,
+      courseCode: r.course_code,
+      curriculumId: r.curriculum_id,
+      filePath: r.file_path,
+      statusAtSave: r.status_at_save,
+      note: r.note,
+      createdAt: r.created_at,
+      author: `${r.first_name} ${r.last_name}`,
+      changed: i === 0 ? [] : tracked.filter(([col]) => (r[col] ?? null) !== (rows[i - 1][col] ?? null)).map(([, name]) => name),
+    }));
+    res.json(versions.reverse());
+  } catch (err) {
+    sendError(res, err);
   }
 });
 

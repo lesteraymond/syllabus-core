@@ -1,6 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const { issueRememberToken, revokeRememberToken, REMEMBER_MS } = require('../middleware/auth');
+const { issueRememberToken, revokeRememberToken, toSessionUser, REMEMBER_MS } = require('../middleware/auth');
 const { OAuth2Client } = require('google-auth-library');
 const { signAccessToken, JWT_TTL } = require('../middleware/jwt');
 const router = express.Router();
@@ -41,7 +41,7 @@ router.post('/google', async (req, res) => {
 
     const db = req.app.locals.db;
     const [rows] = await db.query(
-      'SELECT user_id, email, role, first_name, last_name FROM users WHERE LOWER(email) = LOWER(?)',
+      'SELECT user_id, email, role, first_name, last_name, avatar_path FROM users WHERE LOWER(email) = LOWER(?)',
       [email]
     );
     const user = rows[0];
@@ -49,7 +49,7 @@ router.post('/google', async (req, res) => {
     if (!user) return fail(res, 403, 'Access Denied. Your account is not registered in the system.');
 
     // Also start the cookie session so the existing session-based routes keep working.
-    const sessionUser = { id: user.user_id, email: user.email, role: user.role, firstName: user.first_name, lastName: user.last_name };
+    const sessionUser = toSessionUser(user);
     req.session.user = sessionUser;
     res.json({ token: signAccessToken(user), tokenType: 'Bearer', expiresIn: JWT_TTL, user: sessionUser });
   } catch (error) {
@@ -70,7 +70,7 @@ router.post('/login', async (req, res) => {
     const valid = user.password_hash ? await bcrypt.compare(String(password || ''), user.password_hash) : false;
     if (!valid) return fail(res, 401, 'Invalid email or password');
 
-    const sessionUser = { id: user.user_id, email: user.email, role: user.role, firstName: user.first_name, lastName: user.last_name };
+    const sessionUser = toSessionUser(user);
     req.session.user = sessionUser;
     if (remember) {
       req.session.cookie.maxAge = REMEMBER_MS;

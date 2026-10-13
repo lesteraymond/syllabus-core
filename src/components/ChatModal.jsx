@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { Avatar } from './ui';
 
 export default function ChatModal({ code, syllabi, user, messages, sendMsg, markRead, deleteThread, onClose }) {
   const [input, setInput] = useState('');
@@ -9,8 +10,8 @@ export default function ChatModal({ code, syllabi, user, messages, sendMsg, mark
   const partner = useMemo(() => {
     if (!thread.length) return null;
     const otherMsg = thread.find(m => m.senderId !== user.id);
-    if (otherMsg) return { name: otherMsg.sender, initials: otherMsg.sender?.split(' ').map(w => w[0]).join('') || '?' };
-    return { name: syl?.faculty || 'Unknown', initials: syl?.faculty?.split(' ').map(w => w[0]).join('') || '?' };
+    if (otherMsg) return { name: otherMsg.sender, initials: otherMsg.sender?.split(' ').map(w => w[0]).join('') || '?', avatarUrl: otherMsg.senderAvatarUrl };
+    return { name: syl?.faculty || 'Unknown', initials: syl?.faculty?.split(' ').map(w => w[0]).join('') || '?', avatarUrl: user.role === 'admin' ? syl?.ownerAvatarUrl : null };
   }, [thread, user, syl]);
   useEffect(() => { markRead(code); }, [code, thread.length]);
   useEffect(() => { ref.current?.scrollIntoView({ behavior: 'smooth' }); }, [thread]);
@@ -19,7 +20,7 @@ export default function ChatModal({ code, syllabi, user, messages, sendMsg, mark
     <div className="overlay" onClick={onClose}>
       <div className="modal chat-modal" onClick={e => e.stopPropagation()}>
         <div className="modal-head">
-          <div className="chat-head-info"><div className="chat-av">{partner?.initials || '?'}</div><div><h3>{partner?.name || 'Unknown'}</h3><small>Syllabus: {syl?.code} • {syl?.title}</small></div></div>
+          <div className="chat-head-info"><Avatar className="chat-av" src={partner?.avatarUrl} name={partner?.name} initials={partner?.initials || '?'} /><div><h3>{partner?.name || 'Unknown'}</h3><small>Syllabus: {syl?.courseCode} • {syl?.title}</small></div></div>
           <div className="chat-head-actions"><button className="icon-btn" title="Delete conversation" onClick={() => setConfirmDel(true)}>🗑</button><button className="icon-btn" onClick={onClose}>✕</button></div>
         </div>
         {confirmDel && <div className="chat-del-confirm"><span>Delete all messages? This cannot be undone.</span><button className="btn ghost" onClick={() => setConfirmDel(false)}>Cancel</button><button className="btn danger" onClick={() => { deleteThread(code); onClose(); }}>Delete</button></div>}

@@ -1,5 +1,7 @@
 // Collapse state is owned by the parent layout (App). The sidebar only reflects it
 // through `data-collapsed`; every label stays mounted and is hidden with CSS only.
+import { Icon } from './ui';
+
 export default function Sidebar({ page, setPage, nav, collapsed, onToggle }) {
   return (
     <aside className="sidebar" data-collapsed={collapsed ? 'true' : 'false'} aria-label="Main navigation">
@@ -32,7 +34,7 @@ export default function Sidebar({ page, setPage, nav, collapsed, onToggle }) {
             aria-current={page === key ? 'page' : undefined}
             title={collapsed ? label : undefined}
           >
-            <span className="nav-icon" aria-hidden="true">{icon}</span>
+            <span className="nav-icon" aria-hidden="true"><Icon name={icon} size={22} /></span>
             <span className="nav-label">{label}</span>
           </button>
         ))}

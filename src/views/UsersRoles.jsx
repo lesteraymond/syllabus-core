@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { PageHead } from '../components/ui';
+import { Avatar, PageHead } from '../components/ui';
 import { users as usersApi } from '../lib/api';
+import AssignmentsPanel from './AssignmentsPanel';
 
 const ROLE_LABELS = { admin: 'Dean / Administrator', faculty: 'Faculty' };
 const ROLE_PERMISSIONS = {
@@ -9,10 +10,11 @@ const ROLE_PERMISSIONS = {
 };
 const EMPTY_FORM = { email: '', password: '', firstName: '', lastName: '', role: 'faculty' };
 
-export default function UsersRoles({ notify }) {
+export default function UsersRoles({ notify, onManageSubjects }) {
   const [people, setPeople] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
+  const [assigning, setAssigning] = useState(null); // the faculty member whose assignments are open
 
   const fetchUsers = () => usersApi.list().then(setPeople).catch(() => {});
 
@@ -70,10 +72,11 @@ export default function UsersRoles({ notify }) {
       )}
       <div className="table-card">
         <div className="overflow-x-auto w-full">
-          <table><thead><tr><th>User</th><th>Email</th><th>Role</th><th>Permissions</th><th></th></tr></thead><tbody>{people.map(p => <tr key={p.id}><td><strong>{p.firstName} {p.lastName}</strong></td><td><small>{p.email}</small></td><td>{ROLE_LABELS[p.role] || p.role}</td><td>{ROLE_PERMISSIONS[p.role] || 'Unknown'}</td><td><button className="btn danger" style={{ padding: '4px 10px', fontSize: '11px' }} onClick={() => removeUser(p)}>Remove</button></td></tr>)}</tbody></table>
+          <table><thead><tr><th>User</th><th>Email</th><th>Role</th><th>Permissions</th><th></th></tr></thead><tbody>{people.map(p => <tr key={p.id}><td><span className="user-cell"><Avatar src={p.avatarUrl} name={`${p.firstName} ${p.lastName}`} /><strong>{p.firstName} {p.lastName}</strong></span></td><td><small>{p.email}</small></td><td>{ROLE_LABELS[p.role] || p.role}</td><td>{ROLE_PERMISSIONS[p.role] || 'Unknown'}</td><td><span className="user-actions">{p.role === 'faculty' && <button className="btn outline" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => setAssigning(p)}>Assignments</button>}<button className="btn danger" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => removeUser(p)}>Remove</button></span></td></tr>)}</tbody></table>
         </div>
         {people.length === 0 && <div className="empty">No users found.</div>}
       </div>
+      {assigning && <AssignmentsPanel person={assigning} notify={notify} onManageSubjects={onManageSubjects} onClose={() => setAssigning(null)} />}
     </>
   );
 }

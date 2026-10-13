@@ -1,5 +1,7 @@
-import { useState } from 'react';
-import { PageHead, Field, Progress, Assessment, Policy } from '../components/ui';
+import { useEffect, useState } from 'react';
+import { users as usersApi } from '../lib/api';
+import { ASSIGNMENT_MESSAGES, assignmentState } from '../lib/syllabusRules';
+import { PageHead, Icon, Field, Progress, Assessment, Policy } from '../components/ui';
 
 function defaultSyllabus() { return { code: 'IT304', title: 'Data Analytics and Visualization', program: 'BSIT', semester: '6', category: 'Professional Course', credits: '3', contact: '2-3-0', prereq: 'Statistics for Computing', description: 'This course develops practical competencies in collecting, preparing, analyzing, and communicating data using modern analytics and visualization tools.', outcomes: ['Apply data preparation techniques to structured datasets.', 'Analyze datasets using appropriate descriptive and diagnostic methods.', 'Create effective visualizations that communicate evidence-based insights.', 'Evaluate analytical results using appropriate performance measures.'] }; }
 
@@ -29,7 +31,7 @@ function CourseInformation({ data, update, dragging, setDragging, handleFile }) 
 
 function CourseOutcomes({ data, update }) {
   const change = (i, v) => { const a = [...data.outcomes]; a[i] = v; update('outcomes', a); };
-  return <div><div className="info-banner">✦ AI Tip: Use measurable action verbs and align each outcome with an assessable student performance.</div>{data.outcomes.map((x, i) => <div className="outcome-row" key={i}><span>CO{i + 1}</span><textarea value={x} onChange={e => change(i, e.target.value)} /><button onClick={() => update('outcomes', data.outcomes.filter((_, j) => j !== i))}>×</button></div>)}<button className="btn outline" onClick={() => update('outcomes', [...data.outcomes, ''])}>+ Add Course Outcome</button></div>;
+  return <div><div className="info-banner"><Icon name="sparkle" size={16} /> AI Tip: Use measurable action verbs and align each outcome with an assessable student performance.</div>{data.outcomes.map((x, i) => <div className="outcome-row" key={i}><span>CO{i + 1}</span><textarea value={x} onChange={e => change(i, e.target.value)} /><button onClick={() => update('outcomes', data.outcomes.filter((_, j) => j !== i))}>×</button></div>)}<button className="btn outline" onClick={() => update('outcomes', [...data.outcomes, ''])}>+ Add Course Outcome</button></div>;
 }
 
 function WeeklyTopics() {
@@ -56,22 +58,36 @@ function Policies() {
 export default function SyllabusBuilder({ notify, onSubmit, editing, setEditing }) {
   const sections = ['Course Information', 'Course Outcomes', 'Weekly Topics', 'Assessment Plan', 'Grading System', 'References', 'Policies'];
   const [step, setStep] = useState(0);
+  // Faculty can submit only for a course an admin assigned to them (the server enforces it too).
+  const [mine, setMine] = useState(null);
+  useEffect(() => {
+    let live = true;
+    usersApi.myAssignments().then((a) => { if (live) setMine(a); }).catch(() => {});
+    return () => { live = false; };
+  }, []);
+  const state = assignmentState(mine); // 'none' | 'noSubject' | 'ok' | null
+  const noAccess = state === 'none' || state === 'noSubject';
   const [data, setData] = useState(() => {
-    if (editing) return editing;
+    if (editing) return { ...defaultSyllabus(), ...Object.fromEntries(Object.entries(editing).filter(([, v]) => v !== undefined)) };
     try { return JSON.parse(localStorage.getItem('scms-draft')) || defaultSyllabus(); } catch { return defaultSyllabus(); }
   });
   const update = (field, value) => setData({ ...data, [field]: value });
   const save = () => { localStorage.setItem('scms-draft', JSON.stringify(data)); notify('Draft saved to this browser.'); };
   const [dragging, setDragging] = useState(false);
-  const handleFile = (file) => { if (file) { update('fileName', file.name); notify(`File attached: ${file.name}`); } };
+  // The File itself is kept out of `data` (which is saved to localStorage as the draft).
+  const [file, setFile] = useState(null);
+  const handleFile = (f) => { if (f) { setFile(f); update('fileName', f.name); notify(`File attached: ${f.name}`); } };
+  const submit = () => onSubmit({ ...data, file });
   return (
     <>
-      <PageHead title="Syllabus Builder / Editor" subtitle="Create a standards-aligned syllabus using a guided institutional template." actions={<><button className="btn outline" onClick={save}>Save Draft</button><button className="btn outline" onClick={() => notify('Preview generated (demo).')}>Preview</button><button className="btn primary" onClick={() => onSubmit(data)}>Submit for Review</button></>} />
+      <PageHead title="Syllabus Builder / Editor" subtitle="Create a standards-aligned syllabus using a guided institutional template." actions={<><button className="btn outline" onClick={save}>Save Draft</button><button className="btn outline" onClick={() => notify('Preview generated (demo).')}>Preview</button><button className="btn primary" disabled={noAccess} title={noAccess ? ASSIGNMENT_MESSAGES[state] : ''} onClick={() => onSubmit(data)}>Submit for Review</button></>} />
+      {noAccess && <div className="info-banner warning">{ASSIGNMENT_MESSAGES[state]}</div>}
       <div className="course-strip"><span><small>Course Code</small><b>{data.code || '—'}</b></span><span><small>Course Title</small><b>{data.title || '—'}</b></span><span><small>Program</small><b>{data.program}</b></span><span><small>Semester</small><b>{data.semester}</b></span><span><small>Status</small><b className="status draft">Draft</b></span></div>
       <div className="editor-layout">
         <aside className="stepper">{sections.map((s, i) => <button key={s} className={step === i ? 'active' : ''} onClick={() => setStep(i)}><span>{i + 1}</span>{s}<i>{i < step ? '✓' : '›'}</i></button>)}</aside>
         <section className="editor-card">
-          <div className="editor-title"><div><span className="eyebrow">STEP {step + 1} OF {sections.length}</span><h2>{sections[step]}</h2></div><span className="autosave">● Auto-save enabled</span></div>
+          {editing && <div className="info-banner">{editing.status === 'under_review' ? 'This syllabus is under review. ' : ''}Your changes are saved as a new version ({editing.version || 'current'} stays in the history){editing.status === 'under_review' ? ' and the reviewer is notified' : ''}. Only the title, course code, curriculum and attached file are versioned; the other fields in this editor are not stored on the server.</div>}
+          <div className="editor-title"><div><span className="eyebrow">STEP {step + 1} OF {sections.length}</span><h2>{sections[step]}</h2></div><span className="autosave"><Icon name="floppyDisk" size={16} /> Auto-save enabled</span></div>
           {step === 0 && <CourseInformation data={data} update={update} dragging={dragging} setDragging={setDragging} handleFile={handleFile} />}
           {step === 1 && <CourseOutcomes data={data} update={update} />}
           {step === 2 && <WeeklyTopics />}
@@ -79,7 +95,8 @@ export default function SyllabusBuilder({ notify, onSubmit, editing, setEditing 
           {step === 4 && <GradingSystem />}
           {step === 5 && <References />}
           {step === 6 && <Policies />}
-          <div className="editor-footer"><button className="btn outline" disabled={step === 0} onClick={() => setStep(Math.max(0, step - 1))}>← Previous</button><div><button className="btn ghost" onClick={save}>Save Draft</button><button className="btn primary" onClick={() => step < sections.length - 1 ? setStep(step + 1) : onSubmit(data)}>{step < sections.length - 1 ? 'Save & Next →' : 'Finish Editing'}</button></div></div>
+          {step === 6 && editing && <Field label="What changed? (optional)" full><textarea rows="3" maxLength={1000} value={data.note || ''} onChange={e => update('note', e.target.value)} placeholder="Saved with this version in the history, e.g. Updated the grading rubric" /></Field>}
+          <div className="editor-footer"><button className="btn outline" disabled={step === 0} onClick={() => setStep(Math.max(0, step - 1))}>← Previous</button><div><button className="btn ghost" onClick={save}>Save Draft</button><button className="btn primary" disabled={noAccess && step === sections.length - 1} onClick={() => step < sections.length - 1 ? setStep(step + 1) : submit()}>{step < sections.length - 1 ? 'Save & Next →' : 'Finish Editing'}</button></div></div>
         </section>
       </div>
     </>

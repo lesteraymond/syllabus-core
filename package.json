@@ -6,13 +6,14 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node --test src/lib/syllabusModel.test.js src/lib/syllabusRules.test.js src/lib/assignmentSync.test.js server/lib/assignments.test.js server/routes/assignments.routes.test.js server/routes/enforcement.routes.test.js server/routes/catalog.routes.test.js"
   },
   "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
     "@vitejs/plugin-react": "latest",
-    "vite": "latest",
     "react": "latest",
-    "react-dom": "latest"
-  },
-  "devDependencies": {}
+    "react-dom": "latest",
+    "vite": "latest"
+  }
 }

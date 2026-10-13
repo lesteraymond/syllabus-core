@@ -1,3 +1,31 @@
+import { useState, useEffect } from 'react';
+import { API_ORIGIN } from '../lib/api';
+import { Notebook } from '@phosphor-icons/react/dist/csr/Notebook';
+import { SealCheck } from '@phosphor-icons/react/dist/csr/SealCheck';
+import { HourglassMedium } from '@phosphor-icons/react/dist/csr/HourglassMedium';
+import { NotePencil } from '@phosphor-icons/react/dist/csr/NotePencil';
+import { ShieldCheck } from '@phosphor-icons/react/dist/csr/ShieldCheck';
+import { GraduationCap } from '@phosphor-icons/react/dist/csr/GraduationCap';
+import { PaperPlaneTilt } from '@phosphor-icons/react/dist/csr/PaperPlaneTilt';
+import { SquaresFour } from '@phosphor-icons/react/dist/csr/SquaresFour';
+import { PencilRuler } from '@phosphor-icons/react/dist/csr/PencilRuler';
+import { Sparkle } from '@phosphor-icons/react/dist/csr/Sparkle';
+import { GridFour } from '@phosphor-icons/react/dist/csr/GridFour';
+import { Archive } from '@phosphor-icons/react/dist/csr/Archive';
+import { ChartBar } from '@phosphor-icons/react/dist/csr/ChartBar';
+import { DownloadSimple } from '@phosphor-icons/react/dist/csr/DownloadSimple';
+import { UsersThree } from '@phosphor-icons/react/dist/csr/UsersThree';
+import { GearSix } from '@phosphor-icons/react/dist/csr/GearSix';
+import { CaretRight } from '@phosphor-icons/react/dist/csr/CaretRight';
+import { Eye } from '@phosphor-icons/react/dist/csr/Eye';
+import { EyeSlash } from '@phosphor-icons/react/dist/csr/EyeSlash';
+import { Envelope } from '@phosphor-icons/react/dist/csr/Envelope';
+import { Bell } from '@phosphor-icons/react/dist/csr/Bell';
+import { MagnifyingGlass } from '@phosphor-icons/react/dist/csr/MagnifyingGlass';
+import { CheckCircle } from '@phosphor-icons/react/dist/csr/CheckCircle';
+import { Warning } from '@phosphor-icons/react/dist/csr/Warning';
+import { FloppyDisk } from '@phosphor-icons/react/dist/csr/FloppyDisk';
+
 export function Card({ title, action, children }) {
   return <div className="card"><div className="card-head"><h3>{title}</h3>{action && <span>{action}</span>}</div>{children}</div>;
 }
@@ -56,4 +84,25 @@ export function Assessment({ name, weight, cos }) {
 
 export function Policy({ title, text }) {
   return <div className="policy"><h3>{title}</h3><textarea defaultValue={text} /></div>;
+}
+
+// One icon set (Phosphor) for the whole UI. Only the icons listed here are bundled.
+// Decorative by default (aria-hidden); pass `label` when the icon alone conveys meaning.
+const ICONS = { notebook: Notebook, sealCheck: SealCheck, hourglassMedium: HourglassMedium, notePencil: NotePencil, shieldCheck: ShieldCheck, graduationCap: GraduationCap, paperPlaneTilt: PaperPlaneTilt, squaresFour: SquaresFour, pencilRuler: PencilRuler, sparkle: Sparkle, gridFour: GridFour, archive: Archive, chartBar: ChartBar, downloadSimple: DownloadSimple, usersThree: UsersThree, gearSix: GearSix, caretRight: CaretRight, eye: Eye, eyeSlash: EyeSlash, envelope: Envelope, bell: Bell, magnifyingGlass: MagnifyingGlass, checkCircle: CheckCircle, warning: Warning, floppyDisk: FloppyDisk };
+export function Icon({ name, size = 20, weight = 'duotone', label, className, ...rest }) {
+  const Glyph = ICONS[name];
+  if (!Glyph) return null;
+  return <Glyph size={size} weight={weight} className={className} {...(label ? { role: 'img', 'aria-label': label } : { 'aria-hidden': 'true' })} {...rest} />;
+}
+
+// Profile picture: shows the image, or the initials circle when there is no URL or it fails to load.
+// `src` is an API path (/api/users/:id/avatar?v=...); the browser sends the session cookie with the <img> request,
+// and the server answers 404 when the viewer isn't allowed to see it, which falls back to the initials.
+const initialsOf = (name) => (name || '').split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+export function Avatar({ src, name, initials, className = 'avatar' }) {
+  const [failed, setFailed] = useState(false);
+  useEffect(() => { setFailed(false); }, [src]);
+  const url = src && src.startsWith('/') ? `${API_ORIGIN}${src}` : src;
+  if (url && !failed) return <img className={className} src={url} alt={name} onError={() => setFailed(true)} />;
+  return <span className={className}>{initials ?? initialsOf(name)}</span>;
 }

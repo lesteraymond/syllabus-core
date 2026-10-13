@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { PageHead } from '../components/ui';
+import { Avatar, PageHead } from '../components/ui';
 
 export default function ReviewApproval({ syllabi, handleStatus, user, messages, setChatCode, markRead, setHistCode }) {
   const pending = useMemo(() => syllabi.filter(s => s.status === 'submitted' || s.status === 'under_review'), [syllabi]);
@@ -15,7 +15,7 @@ export default function ReviewApproval({ syllabi, handleStatus, user, messages, 
       <PageHead title="Review & Approval" subtitle="Review submissions, manage revision comments, and complete the approval workflow." actions={<span className="badge gold">{pending.length} Pending</span>} />
       <div className="review-layout">
         <section className="comments-card">
-          <div className="queue-list">{pending.map(s => { const unread = messages.filter(m => m.syllabusId === s.id && m.receiverId === user.id && !m.isRead).length; return <button key={s.id} className={`queue-item${sel?.id === s.id ? ' active' : ''}`} onClick={() => setSelected(s)}><div className="queue-info"><div className="queue-head"><strong>{s.courseCode}</strong>{unread > 0 && <span className="queue-dot" />}</div><p>{s.title}</p><small>{s.faculty} • {s.updatedAt}</small></div></button>; })}{pending.length === 0 && <div className="empty">All caught up! No pending syllabi.</div>}</div>
+          <div className="queue-list">{pending.map(s => { const unread = messages.filter(m => m.syllabusId === s.id && m.receiverId === user.id && !m.isRead).length; return <button key={s.id} className={`queue-item${sel?.id === s.id ? ' active' : ''}`} onClick={() => setSelected(s)}><Avatar src={s.ownerAvatarUrl} name={s.faculty} /><div className="queue-info"><div className="queue-head"><strong>{s.courseCode}</strong>{unread > 0 && <span className="queue-dot" />}</div><p>{s.title}</p><small>{s.faculty} • {s.updatedAt}</small></div></button>; })}{pending.length === 0 && <div className="empty">All caught up! No pending syllabi.</div>}</div>
           {sel && <>
             <div className="review-summary"><span><small>Course</small><b>{sel.courseCode} • {sel.title}</b></span><span><small>Version</small><b>{sel.version}</b></span><span><small>Submitted by</small><b>{sel.faculty}</b></span><span><small>Updated</small><b>{sel.updatedAt}</b></span><span><small>Status</small><b className={`status ${sel.status}`}>{labelMap[sel.status] || sel.status}</b></span></div>
             <div className="tabs"><button className="active">Reviewer Comments</button><button onClick={() => setHistCode(sel.id)}>Revision History</button></div>
