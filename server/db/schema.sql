@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
   role ENUM('faculty', 'admin') NOT NULL DEFAULT 'faculty',
   first_name VARCHAR(100) NOT NULL,
   last_name VARCHAR(100) NOT NULL,
+  avatar_path VARCHAR(255) NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -17,6 +18,77 @@ CREATE TABLE IF NOT EXISTS curriculum (
   learning_outcomes TEXT
 );
 
+CREATE TABLE IF NOT EXISTS programs (
+  program_id INT AUTO_INCREMENT PRIMARY KEY,
+  code VARCHAR(20) NOT NULL UNIQUE,
+  name VARCHAR(255) NOT NULL,
+  egas_version INT NOT NULL DEFAULT 1,
+  pos_version INT NOT NULL DEFAULT 1
+);
+
+-- Each program has its own expected graduate attributes (the school-wide institution_egas is only the default list).
+CREATE TABLE IF NOT EXISTS program_egas (
+  program_id INT NOT NULL,
+  ega_no INT NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  short_name VARCHAR(120) NOT NULL,
+  PRIMARY KEY (program_id, ega_no),
+  FOREIGN KEY (program_id) REFERENCES programs(program_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS program_outcomes (
+  program_id INT NOT NULL,
+  po_no INT NOT NULL,
+  short_name VARCHAR(120) NOT NULL,
+  outcome_text TEXT NOT NULL,
+  ega_nos VARCHAR(50) NOT NULL DEFAULT '',
+  PRIMARY KEY (program_id, po_no),
+  FOREIGN KEY (program_id) REFERENCES programs(program_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS courses (
+  course_id INT AUTO_INCREMENT PRIMARY KEY,
+  code VARCHAR(50) NOT NULL UNIQUE,
+  title VARCHAR(255) NOT NULL,
+  program_id INT NOT NULL,
+  clos_version INT NOT NULL DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (program_id) REFERENCES programs(program_id) ON DELETE RESTRICT
+);
+
+CREATE TABLE IF NOT EXISTS course_clos (
+  clo_id INT AUTO_INCREMENT PRIMARY KEY,
+  course_id INT NOT NULL,
+  sort_order INT NOT NULL DEFAULT 0,
+  title VARCHAR(255) NOT NULL DEFAULT '',
+  clo_level VARCHAR(40) NOT NULL,
+  statement TEXT NOT NULL,
+  ega_nos VARCHAR(50) NOT NULL DEFAULT '',
+  po_nos VARCHAR(100) NOT NULL DEFAULT '',
+  INDEX idx_course_clos (course_id, sort_order),
+  FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE
+);
+
+-- Faculty assignments: a faculty member can create and edit syllabi only for assigned courses.
+-- A course is assigned only if its program is assigned to the same user (kept by server/lib/assignments.js).
+CREATE TABLE IF NOT EXISTS faculty_programs (
+  user_id INT NOT NULL,
+  program_id INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, program_id),
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+  FOREIGN KEY (program_id) REFERENCES programs(program_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS faculty_courses (
+  user_id INT NOT NULL,
+  course_id INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, course_id),
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+  FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS syllabi (
   syllabus_id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT NOT NULL,
@@ -24,13 +96,18 @@ CREATE TABLE IF NOT EXISTS syllabi (
   file_path VARCHAR(500),
   title VARCHAR(255),
   course_code VARCHAR(50),
-  status ENUM('submitted', 'under_review', 'approved', 'rejected', 'for_revision') DEFAULT 'submitted',
+  status ENUM('submitted', 'under_review', 'approved', 'rejected', 'for_revision', 'draft') DEFAULT 'submitted',
   version VARCHAR(10) DEFAULT 'v1.0',
   admin_comment TEXT,
+  content LONGTEXT NULL,
+  content_schema_version INT NULL,
+  content_updated_at TIMESTAMP NULL,
+  course_id INT NULL,
   uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-  FOREIGN KEY (curriculum_id) REFERENCES curriculum(curriculum_id) ON DELETE SET NULL
+  FOREIGN KEY (curriculum_id) REFERENCES curriculum(curriculum_id) ON DELETE SET NULL,
+  FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS submission_logs (
@@ -80,6 +157,18 @@ CREATE TABLE IF NOT EXISTS co_po_mapping (
 );
 
 
+CREATE TABLE IF NOT EXISTS course_assignments (
+  assignment_id INT AUTO_INCREMENT PRIMARY KEY,
+  teacher_id INT NOT NULL,
+  syllabus_id INT NOT NULL,
+  term VARCHAR(30) NOT NULL,
+  status ENUM('ACTIVE', 'REVOKED') NOT NULL DEFAULT 'ACTIVE',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY unique_assignment (teacher_id, syllabus_id, term),
+  FOREIGN KEY (teacher_id) REFERENCES users(user_id) ON DELETE CASCADE,
+  FOREIGN KEY (syllabus_id) REFERENCES syllabi(syllabus_id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS remember_tokens (
   token_id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT NOT NULL,
@@ -87,4 +176,51 @@ CREATE TABLE IF NOT EXISTS remember_tokens (
   expires_at DATETIME NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS notifications (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  type VARCHAR(30) NOT NULL,
+  syllabus_id INT NULL,
+  title VARCHAR(255) NOT NULL,
+  body TEXT NULL,
+  is_read TINYINT(1) NOT NULL DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_notifications_user (user_id, is_read, created_at),
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+  FOREIGN KEY (syllabus_id) REFERENCES syllabi(syllabus_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS syllabus_versions (
+  version_id INT AUTO_INCREMENT PRIMARY KEY,
+  syllabus_id INT NOT NULL,
+  version_label VARCHAR(10) NOT NULL,
+  title VARCHAR(255),
+  course_code VARCHAR(50),
+  curriculum_id INT NULL,
+  file_path VARCHAR(500) NULL,
+  status_at_save VARCHAR(20) NOT NULL,
+  note TEXT NULL,
+  content LONGTEXT NULL,
+  created_by INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_versions_syllabus (syllabus_id, created_at),
+  FOREIGN KEY (syllabus_id) REFERENCES syllabi(syllabus_id) ON DELETE CASCADE,
+  FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS institution_settings (
+  setting_id TINYINT PRIMARY KEY,
+  vision TEXT NOT NULL,
+  mission_lead TEXT NOT NULL,
+  mission_items LONGTEXT NOT NULL,
+  version INT NOT NULL DEFAULT 1,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS institution_egas (
+  ega_no INT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  short_name VARCHAR(120) NOT NULL
 );

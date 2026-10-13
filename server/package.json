@@ -5,7 +5,16 @@
   "main": "index.js",
   "scripts": {
     "dev": "node index.js",
-    "init-db": "node db/init.js"
+    "init-db": "node db/init.js",
+    "migrate-google-auth": "node db/migrate-google-auth.js",
+    "migrate-avatar": "node db/migrate-avatar.js",
+    "migrate-avatars-private": "node db/migrate-avatars-private.js",
+    "migrate-notifications": "node db/migrate-notifications.js",
+    "migrate-syllabus-versions": "node db/migrate-syllabus-versions.js",
+    "migrate-builder": "node db/migrate-builder.js",
+    "migrate-assignments": "node db/migrate-assignments.js",
+    "migrate-program-egas": "node db/migrate-program-egas.js",
+    "seed-outcomes": "node db/seed-outcomes.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -13,7 +22,9 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
     "express-session": "^1.18.0",
-    "mysql2": "^3.11.0",
-    "multer": "^1.4.5-lts.1"
+    "google-auth-library": "^11.2.0",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.11.0"
   }
 }

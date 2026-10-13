@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Icon } from './ui';
 
 export default function StudentRegister({ onBack }) {
   const [form, setForm] = useState({ username: '', pass: '' });
@@ -41,7 +42,7 @@ export default function StudentRegister({ onBack }) {
       <label className="pass-field">Password
         <span className="pass-input">
           <input type={showPass ? 'text' : 'password'} value={form.pass} onChange={e => setForm({ ...form, pass: e.target.value })} placeholder="••••••••" />
-          <button type="button" className="eye-btn" onClick={() => setShowPass(!showPass)}>{showPass ? '◉' : '◎'}</button>
+          <button type="button" className="eye-btn" aria-label={showPass ? 'Hide password' : 'Show password'} onClick={() => setShowPass(!showPass)}><Icon name={showPass ? 'eyeSlash' : 'eye'} size={20} /></button>
         </span>
       </label>
       <label>Certificate of Registration (COR)

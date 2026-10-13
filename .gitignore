@@ -43,3 +43,6 @@ desktop.ini
 *.tmp
 *.temp
 *.bak
+
+# Private files (profile photos are served only through the authenticated API)
+server/private/

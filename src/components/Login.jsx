@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import StudentRegister from './StudentRegister';
+import GoogleSignInButton from './GoogleSignInButton';
+import { Icon } from './ui';
 
 
-export default function Login({ onLogin }) {
+export default function Login({ onLogin, onGoogleLogin }) {
   const [mode, setMode] = useState('login');
   const [form, setForm] = useState({ user: '', pass: '' });
   const [showPass, setShowPass] = useState(false);
@@ -23,7 +25,7 @@ export default function Login({ onLogin }) {
           <span className="eyebrow light">ACADEMIC QUALITY</span>
           <h1>Syllabus<br />Management System</h1>
           <p>Build, validate, review, approve, archive, and analyze undergraduate syllabi in one institutional workspace.</p>
-          <div className="feature-pills"><span>✦ AI Compliance</span><span>✓ Approval Workflow</span><span>⌗ CO–PO Mapping</span></div>
+          <div className="feature-pills"><span><Icon name="sparkle" size={16} /> AI Compliance</span><span><Icon name="sealCheck" size={16} /> Approval Workflow</span><span><Icon name="gridFour" size={16} /> CO–PO Mapping</span></div>
         </div>
       </section>
       <section className="login-panel">
@@ -36,10 +38,12 @@ export default function Login({ onLogin }) {
           <h2>Sign in to SMS</h2>
           <p className="muted">Use your institutional account to continue.</p>
           <label>Username or Email<input value={form.user} onChange={e => setForm({ ...form, user: e.target.value })} placeholder="name@university.edu.ph" /></label>
-          <label className="pass-field">Password<span className="pass-input"><input type={showPass ? 'text' : 'password'} value={form.pass} onChange={e => setForm({ ...form, pass: e.target.value })} placeholder="••••••••" /><button type="button" className="eye-btn" onClick={() => setShowPass(!showPass)}>{showPass ? '◉' : '◎'}</button></span></label>
+          <label className="pass-field">Password<span className="pass-input"><input type={showPass ? 'text' : 'password'} value={form.pass} onChange={e => setForm({ ...form, pass: e.target.value })} placeholder="••••••••" /><button type="button" className="eye-btn" aria-label={showPass ? 'Hide password' : 'Show password'} onClick={() => setShowPass(!showPass)}><Icon name={showPass ? 'eyeSlash' : 'eye'} size={20} /></button></span></label>
           <div className="login-options"><label className="check"><input type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)} /> Remember me</label><button type="button" className="link-btn">Forgot password?</button></div>
           {error && <div className="form-error">{error}</div>}
           <button className="btn primary wide" type="submit">Sign In</button>
+          <div className="or"><span />or<span /></div>
+          <GoogleSignInButton onCredential={async (idToken) => { setError(''); const err = await onGoogleLogin(idToken); if (err) setError(err); }} onError={setError} />
           <div className="register-cta">
             <button className="btn outline wide" type="button" onClick={() => setMode('register')}>Register (for Students)</button>
           </div>

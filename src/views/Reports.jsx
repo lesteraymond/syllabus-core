@@ -24,7 +24,7 @@ export default function Reports({ syllabi, user, notify }) {
     <>
       <PageHead title="Reports" subtitle="Generate compliance, accreditation, and historical reports for institutional review." />
       <div className="reports-grid">
-        <Card title="Faculty Compliance Report" action={<button className="btn outline" style={{ padding: '4px 8px', fontSize: '10px' }} onClick={genReport}>⇩ Download</button>}>
+        <Card title="Faculty Compliance Report" action={<button className="btn outline" style={{ padding: '4px 8px', fontSize: '12px' }} onClick={genReport}>⇩ Download</button>}>
           <p className="muted" style={{ marginBottom: 12 }}>Computed from live syllabus data.</p>
           {facultyData.map(f => <div className="report-row" key={f.name}><span>{f.name}</span><span>{f.total} total</span><span>{f.approved} approved</span><span className={f.rate >= 100 ? 'badge green' : 'badge gold'}>{f.rate}%</span></div>)}
         </Card>

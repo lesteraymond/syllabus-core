@@ -22,6 +22,8 @@ app.use(
 );
 
 const uploadsDir = path.join(__dirname, process.env.UPLOAD_DIR || "uploads");
+// Profile photos are private: they are only served by GET /api/users/:id/avatar (authorization checked).
+app.use("/uploads/avatars", (req, res) => res.sendStatus(404));
 app.use("/uploads", express.static(uploadsDir));
 
 const pool = mysql.createPool({
@@ -37,14 +39,30 @@ app.locals.db = pool;
 
 app.use(restoreSession);
 
-app.use("/api/auth", require("./routes/auth"));
+const authRoutes = require("./routes/auth");
+app.use("/api/auth", authRoutes);
 app.use("/api/users", require("./routes/users"));
 app.use("/api/syllabi", require("./routes/syllabi"));
+app.use("/api/syllabi", require("./routes/syllabusContent"));
+app.use("/api/institution", require("./routes/institution"));
+app.use("/api/programs", require("./routes/programs"));
+app.use("/api/courses", require("./routes/courses"));
 app.use("/api/curriculum", require("./routes/curriculum"));
 app.use("/api/logs", require("./routes/logs"));
 app.use("/api/messages", require("./routes/messages"));
+app.use("/api/notifications", require("./routes/notifications"));
 app.use("/api/mapping", require("./routes/mapping"));
 
 app.listen(PORT, () => {
 	console.log(`Server running on http://localhost:${PORT}`);
+	console.log("Auth endpoints:");
+	for (const layer of authRoutes.stack) {
+		if (!layer.route) continue;
+		for (const method of Object.keys(layer.route.methods)) {
+			console.log(`  ${method.toUpperCase().padEnd(5)} /api/auth${layer.route.path}`);
+		}
+	}
+	for (const key of ["GOOGLE_CLIENT_ID", "JWT_SECRET"]) {
+		if (!process.env[key]) console.warn(`WARNING: ${key} is not set in server/.env - Google sign-in will fail`);
+	}
 });

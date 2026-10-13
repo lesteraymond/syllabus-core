@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { PageHead, Recommendation } from '../components/ui';
+import { PageHead, Recommendation, Icon } from '../components/ui';
 
 const CHECKS = [
   { name: 'Format Compliance', key: 'format' },
@@ -10,7 +10,7 @@ const CHECKS = [
   { name: 'Reference Currency', key: 'refs' },
 ];
 
-const STATUS_LABELS = { submitted: 'Submitted', under_review: 'Under Review', for_revision: 'For Revision', approved: 'Approved', rejected: 'Rejected' };
+const STATUS_LABELS = { draft: 'Draft', submitted: 'Submitted', under_review: 'Under Review', for_revision: 'For Revision', approved: 'Approved', rejected: 'Rejected' };
 
 export default function AIChecker({ syllabi, user, notify }) {
   const mySyllabi = useMemo(() => user.role === 'faculty' ? syllabi.filter(s => s.userId === user.id) : syllabi, [syllabi, user]);
@@ -75,7 +75,7 @@ export default function AIChecker({ syllabi, user, notify }) {
 
   return (
     <>
-      <PageHead title="AI Syllabus Checker" subtitle="Automatically check institutional format, completeness, curriculum alignment, and quality indicators." actions={<button className="btn primary" onClick={run}>✦ Re-run AI Check</button>} />
+      <PageHead title="AI Syllabus Checker" subtitle="Automatically check institutional format, completeness, curriculum alignment, and quality indicators." actions={<button className="btn primary" onClick={run}><Icon name="sparkle" size={16} /> Re-run AI Check</button>} />
       <div className="check-strip">
         <span><small>Select Syllabus</small><b><select value={selectedId} onChange={e => { setSelectedId(e.target.value); setRan(false); }} style={{ border: 'none', background: 'transparent', fontWeight: 800, fontSize: 13, cursor: 'pointer', padding: 0, margin: 0, font: 'inherit', color: 'inherit', width: '100%' }}><option value="all">All Syllabi ({mySyllabi.length})</option>{mySyllabi.map(s => <option key={s.id} value={s.id}>{s.courseCode} — {s.title}</option>)}</select></b></span>
         {selectedSyllabus && <span><small>Status</small><b className={`status ${selectedSyllabus.status}`}>{STATUS_LABELS[selectedSyllabus.status] || selectedSyllabus.status}</b></span>}
@@ -85,9 +85,9 @@ export default function AIChecker({ syllabi, user, notify }) {
       <div className="ai-layout">
         <div className="score-card"><span>Overall AI Compliance</span><div className="big-ring" style={{ '--p': `${score * 3.6}deg` }}><div><strong>{score}%</strong><small>{score >= 90 ? 'Excellent' : score >= 70 ? 'Good' : 'Needs Work'}</small></div></div><p>{selectedSyllabus ? `${selectedSyllabus.courseCode} compliance estimate.` : 'Institutional compliance across all syllabi.'}</p><div className="score-delta">{ran ? '↑ Re-checked' : selectedId === 'all' ? 'Based on all syllabi' : 'Based on selected syllabus'}</div></div>
         <div className="check-table card"><div className="card-head"><h3>Compliance Areas</h3><span className="ai-badge">AI ANALYSIS</span></div>{checks.map(({ name, val, status }) => <div className="check-row" key={name}><div><strong>{name}</strong><div className="bar thin"><i style={{ width: `${val}%` }} /></div></div><b>{val}%</b><span className={status === 'good' ? 'check-ok' : 'check-warn'}>{status === 'good' ? '✓' : '!'}</span></div>)}</div>
-        <div className="recommend-card"><div className="recommend-head"><span>✦</span><div><h3>AI Recommendations</h3><p>Priority suggestions based on {selectedSyllabus ? 'this syllabus' : 'your syllabi'}.</p></div></div>{recommendations.map((r, i) => <Recommendation key={i} {...r} />)}</div>
+        <div className="recommend-card"><div className="recommend-head"><span><Icon name="sparkle" size={20} /></span><div><h3>AI Recommendations</h3><p>Priority suggestions based on {selectedSyllabus ? 'this syllabus' : 'your syllabi'}.</p></div></div>{recommendations.map((r, i) => <Recommendation key={i} {...r} />)}</div>
       </div>
-      <div className="ai-note">✦ AI suggestions support — but do not replace — faculty, curriculum committee, and academic quality review.</div>
+      <div className="ai-note"><Icon name="sparkle" size={16} /> AI suggestions support — but do not replace — faculty, curriculum committee, and academic quality review.</div>
     </>
   );
 }

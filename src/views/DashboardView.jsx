@@ -1,5 +1,16 @@
 import { useMemo } from 'react';
-import { PageHead, Card, Legend, Progress, QualityMini, Deadline, Donut } from '../components/ui';
+import { PageHead, Card, Icon, Legend, Progress, QualityMini, Deadline, Donut } from '../components/ui';
+
+// Stat card icon per label (Phosphor names, see Icon in ui.jsx)
+const STAT_ICONS = {
+  'My Submissions': 'notebook',
+  'Approved': 'sealCheck',
+  'Pending Review': 'hourglassMedium',
+  'For Revision': 'notePencil',
+  'AI Compliance Score': 'shieldCheck',
+  'Total Courses': 'graduationCap',
+  'Submitted Syllabi': 'paperPlaneTilt',
+};
 
 export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, setConfirm }) {
   const my = useMemo(() => syllabi.filter(s => s.userId === user.id), [syllabi, user]);
@@ -41,9 +52,9 @@ export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, set
   return (
     <>
       <PageHead title="Welcome back!" subtitle="Here's what is happening with your undergraduate syllabi." actions={<><select><option>AY 2026–2027</option><option>AY 2025–2026</option></select>{!isFac && <button className="btn primary" onClick={() => setPage('builder')}>+ New Syllabus</button>}</>} />
-      <section className="stat-grid">{stats.map(([a, b, c, d]) => <div className="stat-card" key={a}><div className={`stat-icon ${d}`}>{a === 'AI Compliance Score' ? '✦' : '●'}</div><span>{a}</span><strong>{b}</strong><small>{c}</small></div>)}</section>
+      <section className="stat-grid">{stats.map(([a, b, c, d]) => <div className="stat-card" key={a}><div className={`stat-icon ${d}`}><Icon name={STAT_ICONS[a]} size={20} /></div><span>{a}</span><strong>{b}</strong><small>{c}</small></div>)}</section>
       <section className="dashboard-grid">
-        <Card title="Recent Activity" action={<button className="btn ghost" style={{ padding: '4px 8px', fontSize: '10px' }} onClick={() => setConfirm({ title: 'Clear Logs', message: user.role === 'admin' ? 'Clear all activity logs?' : 'Clear your activity logs?', label: 'Clear', onConfirm: () => { clearLogs(); } })}>Clear Logs</button>}>
+        <Card title="Recent Activity" action={<button className="btn ghost" style={{ padding: '4px 8px', fontSize: '12px' }} onClick={() => setConfirm({ title: 'Clear Logs', message: user.role === 'admin' ? 'Clear all activity logs?' : 'Clear your activity logs?', label: 'Clear', onConfirm: () => { clearLogs(); } })}>Clear Logs</button>}>
           <div className="activity-list">
             {activityLogs.map((l, i) => <div className="activity" key={i}><span className={`activity-dot ${l.color}`} /><div><strong>{l.title}</strong><small>{l.meta}</small></div><span className={`badge ${l.color}`}>{l.badge}</span></div>)}
             {activityLogs.length === 0 && <div className="empty">No recent activity.</div>}
@@ -57,9 +68,9 @@ export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, set
         </Card>
         <Card title="Quick Actions">
           <div className="quick-actions">
-            <button onClick={() => setPage('ai')}><b>✦</b><span>Run AI Compliance Check<small>Validate format, alignment & completeness</small></span>›</button>
-            {isFac ? <button onClick={() => setPage('my-syllabi')}><b>▣</b><span>My Syllabi<small>{total} syllabi in your account</small></span>›</button> : <button onClick={() => setPage('review')}><b>✓</b><span>Review Pending Syllabi<small>{submitted + underReview} submissions awaiting review</small></span>›</button>}
-            <button onClick={() => setPage('mapping')}><b>⌗</b><span>Curriculum Mapping<small>Inspect CO–PO coverage matrix</small></span>›</button>
+            <button onClick={() => setPage('ai')}><b><Icon name="sparkle" size={20} /></b><span>Run AI Compliance Check<small>Validate format, alignment & completeness</small></span><Icon name="caretRight" size={16} /></button>
+            {isFac ? <button onClick={() => setPage('my-syllabi')}><b><Icon name="notebook" size={20} /></b><span>My Syllabi<small>{total} syllabi in your account</small></span><Icon name="caretRight" size={16} /></button> : <button onClick={() => setPage('review')}><b><Icon name="sealCheck" size={20} /></b><span>Review Pending Syllabi<small>{submitted + underReview} submissions awaiting review</small></span><Icon name="caretRight" size={16} /></button>}
+            <button onClick={() => setPage('mapping')}><b><Icon name="gridFour" size={20} /></b><span>Curriculum Mapping<small>Inspect CO–PO coverage matrix</small></span><Icon name="caretRight" size={16} /></button>
           </div>
         </Card>
       </section>
