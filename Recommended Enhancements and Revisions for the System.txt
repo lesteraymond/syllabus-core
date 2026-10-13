@@ -1,0 +1,71 @@
+﻿RECOMMENDED ENHANCEMENTS AND REVISIONS FOR THE SYSTEM
+
+
+1. Regular consultation with the system administrator is necessary to ensure that the system requirements, functionalities, and workflows are properly aligned with actual operational needs. Documented evidence of these consultations, such as meeting minutes, consultation forms, or screenshots, should be maintained for verification and monitoring purposes.
+
+
+2. Ensure that the system provides functionalities beyond basic Google Drive features. The system should demonstrate its own distinct processes, features, and value-added functionalities rather than merely serving as a repository for uploaded files.
+
+
+3. Ensure that the developers are familiar with and consistently use the appropriate terminology within the system. All technical terms, labels, menu names, and system functions should be clearly defined, accurate, and aligned with the terminology commonly used by the intended users and the institution.
+
+
+4. Provide sample syllabus records in the system for testing and demonstration purposes. The School Year should serve as one of the primary organizational structures for managing and retrieving syllabus records, with appropriate classifications for program, course, year level, and other relevant categories.
+
+
+5. Add appropriate system views and functionalities for the Secretary. The Secretary's interface should provide access to the information and functions necessary for their specific responsibilities, while ensuring that access is controlled according to their assigned role.
+
+
+6. Validate the AI-based syllabus content-checking functionality against institutional and departmental requirements. Since the proponents stated that the system can use AI to evaluate syllabus content, the AI-generated assessment should be based on the approved institutional and departmental syllabus standards, requirements, and prescribed content. The system should also clearly indicate the basis or criteria used by the AI in identifying deficiencies or recommending revisions.
+
+
+7. Provide a functionality for adding new courses and programs. The system should allow authorized users to create and manage new course and program records without requiring major modifications to the system's underlying structure.
+
+
+8. Strengthen the AI-powered functionality beyond simple content matching. The AI component should provide meaningful analysis of the syllabus content based on defined institutional and departmental criteria, such as completeness, alignment, required components, consistency, and compliance. The system should clearly distinguish AI-generated recommendations from validated institutional requirements.
+
+
+9. The student failed to attend the scheduled system demonstration, which affected the evaluation and validation of the proposed system.
+
+
+10. During the second scheduled demonstration, the group was incomplete because one member was absent. All group members are expected to participate in scheduled demonstrations and consultations to ensure that each member is familiar with the system and its development progress.
+
+
+11. There is a need for the proponents to establish proper and regular communication with the identified end-user. The absence of sufficient consultation and validation with the end-user resulted in discrepancies between the actual operational requirements and the features or content presented in the system. The proponents should verify the system requirements, terminology, processes, and content with the end-user to ensure that the system accurately reflects the intended institutional workflow.
+
+
+12. The proponents are advised to document all consultations and validations with the end-user through meeting minutes, consultation forms, screenshots, feedback forms, or other appropriate evidence. This documentation should demonstrate how the end-user's feedback was incorporated into the system.
+
+
+SYSTEM-FOCUSED RECOMMENDATIONS:
+
+
+Core Functionality & Features
+Ensure that the system provides functionalities beyond basic Google Drive features. The system should demonstrate its own distinct processes, features, and value-added functionalities rather than merely serving as a repository for uploaded files.
+
+
+Provide a functionality for adding new courses and programs. The system should allow authorized users to create and manage new course and program records without requiring major modifications to the system's underlying structure.
+
+
+User Interface, Roles, & Data Management
+Ensure that the developers are familiar with and consistently use the appropriate terminology within the system. All technical terms, labels, menu names, and system functions should be clearly defined, accurate, and aligned with the terminology commonly used by the intended users and the institution.
+
+
+Provide sample syllabus records in the system for testing and demonstration purposes. The School Year should serve as one of the primary organizational structures for managing and retrieving syllabus records, with appropriate classifications for program, course, year level, and other relevant categories.
+
+
+Add appropriate system views and functionalities for the Secretary. The Secretary's interface should provide access to the information and functions necessary for their specific responsibilities, while ensuring that access is controlled according to their assigned role.
+
+
+AI-Powered Functionality
+Validate the AI-based syllabus content-checking functionality against institutional and departmental requirements. Since the proponents stated that the system can use AI to evaluate syllabus content, the AI-generated assessment should be based on the approved institutional and departmental syllabus standards, requirements, and prescribed content. The system should also clearly indicate the basis or criteria used by the AI in identifying deficiencies or recommending revisions.
+
+
+ Strengthen the AI-powered functionality beyond simple content matching. The AI component should provide meaningful analysis of the syllabus content based on defined institutional and departmental criteria, such as completeness, alignment, required components, consistency, and compliance. The system should clearly distinguish AI-generated recommendations from validated institutional requirements.
+
+
+System Requirements & Validation
+Regular consultation with the system administrator is necessary to ensure that the system requirements, functionalities, and workflows are properly aligned with actual operational needs. (Note: While this involves a process, it directly dictates system alignment).
+
+
+Verify the system requirements, terminology, processes, and content with the end-user to ensure that the system accurately reflects the intended institutional workflow.
