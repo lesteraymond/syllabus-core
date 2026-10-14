@@ -7141,3 +7141,7 @@ html { scrollbar-gutter: stable; }
 .pw-rules { margin: 0; font-size: var(--text-xs); font-weight: var(--fw-medium); color: var(--muted); }
 .pw-sent { padding: 12px 14px; border-radius: 10px; background: #e6f5ee; color: #1d6f47; font-size: var(--text-sm); font-weight: var(--fw-medium); line-height: 1.5; }
 .pw-note { grid-column: 1 / -1; margin: 0; font-size: var(--text-sm); font-weight: var(--fw-medium); color: var(--muted); }
+
+/* Compliance card header: the Re-check button keeps its one-line label and size; the intro text takes the remaining width and wraps */
+.cmp-card-head > div { flex: 1 1 auto; min-width: 0; }
+.cmp-card-head > .btn { flex: none; align-self: flex-start; white-space: nowrap; }
