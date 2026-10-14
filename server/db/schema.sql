@@ -225,37 +225,75 @@ CREATE TABLE IF NOT EXISTS institution_egas (
   short_name VARCHAR(120) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS student_profiles (
-  user_id INT NOT NULL PRIMARY KEY,
-  student_id VARCHAR(30) NOT NULL UNIQUE,
-  student_name VARCHAR(255) NOT NULL,
-  program VARCHAR(255) NOT NULL,
-  year_level TINYINT NULL,
-  section VARCHAR(50) NULL,
-  school_year VARCHAR(20) NULL,
-  term VARCHAR(30) NULL,
-  cor_printed_at DATETIME NULL,
-  cor_image_path VARCHAR(255) NULL,
-  verification_status ENUM('verified', 'pending', 'rejected') NOT NULL DEFAULT 'pending',
-  verification_note VARCHAR(500) NULL,
-  verified_at TIMESTAMP NULL,
-  verified_by INT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-  FOREIGN KEY (verified_by) REFERENCES users(user_id) ON DELETE SET NULL
-);
+-- Compliance checks (server/lib/compliance): one run per check, its area scores, and its findings and recommendations.
 
-CREATE TABLE IF NOT EXISTS student_enrollments (
-  enrollment_id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL,
-  subject_code VARCHAR(50) NOT NULL,
-  subject_title VARCHAR(255) NOT NULL,
-  section VARCHAR(50) NULL,
-  school_year VARCHAR(20) NULL,
-  term VARCHAR(30) NULL,
-  course_id INT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  INDEX idx_enroll_user (user_id, school_year, term),
-  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-  FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE SET NULL
-);
+CREATE TABLE IF NOT EXISTS ai_check_runs (
+    run_id INT AUTO_INCREMENT PRIMARY KEY,
+    syllabus_id INT NOT NULL,
+    version_id INT NULL,
+    content_hash CHAR(64) NOT NULL,
+    standard_version VARCHAR(20) NOT NULL,
+    overall TINYINT UNSIGNED NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'scored',
+    passed TINYINT(1) NOT NULL DEFAULT 0,
+    conformant TINYINT(1) NOT NULL DEFAULT 0,
+    ai_status VARCHAR(20) NOT NULL DEFAULT 'none',
+    ai_error VARCHAR(255) NULL,
+    provider VARCHAR(40) NULL,
+    model VARCHAR(80) NULL,
+    prompt_version VARCHAR(20) NULL,
+    contact TEXT NULL,
+    created_by INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_runs_syllabus (syllabus_id, created_at),
+    INDEX idx_runs_hash (syllabus_id, content_hash, standard_version),
+    INDEX idx_runs_version (version_id),
+    FOREIGN KEY (syllabus_id) REFERENCES syllabi(syllabus_id) ON DELETE CASCADE,
+    FOREIGN KEY (version_id) REFERENCES syllabus_versions(version_id) ON DELETE SET NULL,
+    FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE SET NULL
+  );
+
+CREATE TABLE IF NOT EXISTS ai_check_area_scores (
+    run_id INT NOT NULL,
+    area_key VARCHAR(30) NOT NULL,
+    name VARCHAR(60) NOT NULL,
+    weight TINYINT UNSIGNED NOT NULL,
+    score TINYINT UNSIGNED NULL,
+    PRIMARY KEY (run_id, area_key),
+    FOREIGN KEY (run_id) REFERENCES ai_check_runs(run_id) ON DELETE CASCADE
+  );
+
+CREATE TABLE IF NOT EXISTS ai_findings (
+    finding_id INT AUTO_INCREMENT PRIMARY KEY,
+    run_id INT NOT NULL,
+    kind VARCHAR(16) NOT NULL,
+    source VARCHAR(8) NOT NULL,
+    area VARCHAR(30) NULL,
+    rule_id VARCHAR(20) NULL,
+    severity VARCHAR(10) NULL,
+    step VARCHAR(20) NULL,
+    path VARCHAR(255) NULL,
+    title VARCHAR(160) NULL,
+    message TEXT NOT NULL,
+    evidence TEXT NULL,
+    based_on TEXT NULL,
+    links TEXT NULL,
+    priority DECIMAL(6,2) NULL,
+    priority_level VARCHAR(10) NULL,
+    position SMALLINT NOT NULL DEFAULT 0,
+    INDEX idx_findings_run (run_id, kind, position),
+    FOREIGN KEY (run_id) REFERENCES ai_check_runs(run_id) ON DELETE CASCADE
+  );
+
+-- Which reviewer comments a faculty member has read (server/lib/commentReads.js).
+
+CREATE TABLE IF NOT EXISTS comment_reads (
+    user_id INT NOT NULL,
+    syllabus_id INT NOT NULL,
+    last_comment_id INT NOT NULL DEFAULT 0,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, syllabus_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (syllabus_id) REFERENCES syllabi(syllabus_id) ON DELETE CASCADE
+  );

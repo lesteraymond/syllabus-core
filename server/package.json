@@ -14,7 +14,8 @@
     "migrate-builder": "node db/migrate-builder.js",
     "migrate-assignments": "node db/migrate-assignments.js",
     "migrate-program-egas": "node db/migrate-program-egas.js",
-    "migrate-students": "node db/migrate-students.js",
+    "migrate-compliance": "node db/migrate-compliance.js",
+    "migrate-comment-reads": "node db/migrate-comment-reads.js",
     "seed-outcomes": "node db/seed-outcomes.js"
   },
   "dependencies": {
