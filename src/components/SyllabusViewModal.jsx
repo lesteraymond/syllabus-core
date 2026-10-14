@@ -4,17 +4,16 @@ import { STATUS_LABELS } from '../lib/syllabusRules';
 import { fileName, noFormMessage, programLabel, subjectLabel, toneStyle, versionOption } from '../lib/reviewView';
 import { Avatar } from './ui';
 import ReviewDocument from '../views/ReviewDocument';
-import CompliancePanel from '../views/CompliancePanel';
 import { useModalLayer } from './useModalLayer';
 
-// The reviewer's view of a submitted syllabus: who wrote it, for which program and subject, and the whole syllabus in a window, with
-// the compliance check in a second tab. `aside` is an optional panel shown beside the syllabus (Review & Approval puts the decision,
+// The reviewer's view of a submitted syllabus: who wrote it, for which program and subject, and the whole syllabus in a window. It has
+// no compliance check: an administrator checks a submission in the AI Checker, and Review & Approval is only the syllabus and the decision.
+// `aside` is an optional panel shown beside the syllabus (Review & Approval puts the decision,
 // comments and messages there); the window itself only reads.
 // The version picker opens an earlier submitted version. Esc and a click outside close it, and focus returns to what opened it.
-export default function SyllabusViewModal({ syllabusId, onClose, onChecked, aside, avatarUrl }) {
+export default function SyllabusViewModal({ syllabusId, onClose, aside, avatarUrl }) {
   const [payload, setPayload] = useState(null);
   const [versionId, setVersionId] = useState(null);
-  const [tab, setTab] = useState('syllabus');
   const [error, setError] = useState('');
   const dialog = useRef(null);
 
@@ -57,10 +56,6 @@ export default function SyllabusViewModal({ syllabusId, onClose, onChecked, asid
                 </label>
               )
               : <span className="cmp-small">{payload.version ? 'Version ' + payload.version.label : 'Saved form, not submitted yet'}</span>}
-            <div className="tabs svm-tabs" role="tablist">
-              <button type="button" role="tab" aria-selected={tab === 'syllabus'} className={tab === 'syllabus' ? 'active' : ''} onClick={() => setTab('syllabus')}>Syllabus</button>
-              <button type="button" role="tab" aria-selected={tab === 'compliance'} className={tab === 'compliance' ? 'active' : ''} onClick={() => setTab('compliance')}>Compliance Check</button>
-            </div>
           </div>
         )}
 
@@ -68,7 +63,7 @@ export default function SyllabusViewModal({ syllabusId, onClose, onChecked, asid
         <div className="modal-body svm-body">
           {error && <div className="info-banner warning" role="alert">{error}</div>}
           {!error && !payload && <div className="empty">Opening the syllabus…</div>}
-          {payload && tab === 'syllabus' && (payload.content
+          {payload && (payload.content
             ? <ReviewDocument content={payload.content} facultyName={s.facultyName} />
             : (
               <div className="svm-nofile">
@@ -77,7 +72,6 @@ export default function SyllabusViewModal({ syllabusId, onClose, onChecked, asid
                 {payload.file && /\.pdf$/i.test(payload.file.path) && <iframe className="svm-pdf" title="Uploaded syllabus" src={`${API_ORIGIN}${payload.file.path}`} />}
               </div>
             ))}
-          {payload && tab === 'compliance' && <CompliancePanel syllabusId={s.id} onChanged={onChecked} />}
         </div>
         {aside && <aside className="svm-aside" aria-label="Review">{aside}</aside>}
         </div>
