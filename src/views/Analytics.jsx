@@ -69,7 +69,7 @@ export default function Analytics({ syllabi, user }) {
         { n: '01', title: 'Your compliance score', text: `${compliance}% average across ${total} syllabi.` },
         { n: '02', title: 'Pending reviews', text: `${rev} syllabi currently under review.` },
         { n: '03', title: 'Needs attention', text: `${low} syllabi returned or rejected.` },
-        { n: '04', title: 'Tip', text: 'Use AI Checker to improve scores before submitting.' },
+        { n: '04', title: 'Tip', text: 'Use the compliance check in step 7 of the builder to improve scores before submitting.' },
       ];
     }
     return [

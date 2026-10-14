@@ -28,7 +28,7 @@ async function request(path, options = {}) {
   }
   const data = await res.json().catch(() => ({}));
   if (res.status === 401) tokenStore.clear(); // expired/invalid JWT
-  if (!res.ok) throw new Error(data.message || data.error || `Request failed (${res.status})`);
+  if (!res.ok) throw Object.assign(new Error(data.message || data.error || `Request failed (${res.status})`), { status: res.status, data });
   return data;
 }
 
@@ -81,6 +81,14 @@ export const syllabi = {
     return data;
   },
   versions: (id) => request(`/syllabi/${id}/versions`),
+  // A syllabus as a reviewer reads it: the submitted version (the latest, or `versionId`) with its content, who wrote it and for which program and subject.
+  review: (id, versionId) => request(`/syllabi/${id}/review${versionId ? '?version=' + versionId : ''}`),
+  // The reviewer's comment thread of a syllabus; only an administrator can add to it.
+  comments: (id) => request(`/syllabi/${id}/comments`),
+  // A faculty member's syllabi with comments: { installed, counts: { [syllabusId]: { total, unread } } }; unread is null until the migration is run.
+  commentSummary: () => request('/syllabi/comment-summary'),
+  markCommentsRead: (id) => request(`/syllabi/${id}/comments/read`, { method: 'POST' }),
+  addComment: (id, text) => request(`/syllabi/${id}/comments`, { method: 'POST', body: JSON.stringify({ text }) }),
   // Structured builder content: a draft is created lazily, then saved section by section.
   createDraft: () => request('/syllabi/drafts', { method: 'POST' }),
   getContent: (id) => request(`/syllabi/${id}/content`),
@@ -90,6 +98,14 @@ export const syllabi = {
 };
 
 // Institution and program outcomes (read-only for faculty).
+// Compliance checks (rules, plus AI recommendations when a model runs) stored by the server. `get` and `list` read stored runs;
+// `recheck` runs the rules: the owner on the saved draft, an administrator on the latest submitted version. The same content returns the stored run, `force` makes a new one.
+export const compliance = {
+  get: (id) => request(`/syllabi/${id}/compliance`),
+  recheck: (id, force = false) => request(`/syllabi/${id}/compliance/recheck`, { method: 'POST', body: JSON.stringify(force ? { force: true } : {}) }),
+  list: (syllabus = 'all') => request(`/compliance?syllabus=${encodeURIComponent(syllabus)}`),
+};
+
 export const outcomes = {
   institution: () => request('/institution/outcomes'),
   programs: () => request('/programs'),

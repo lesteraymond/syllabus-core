@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { courses as coursesApi, outcomes as outcomesApi, users as usersApi } from '../lib/api';
 import { hasUnsaved, mergeCatalog } from '../lib/assignmentSync';
-
+
 // Admin: choose the programs, then the subjects, a faculty member may create syllabi for. This panel only ASSIGNS what
 // already exists; subjects are created, edited and deleted in Subjects & CLOs.
 // Left: the programs (tick = assigned, click = look at its subjects). Right: that program's subjects.

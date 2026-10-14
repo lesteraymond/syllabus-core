@@ -68,7 +68,7 @@ export function useDraft(editing) {
   }, []);
 
   // Saves the changed sections. Resolves true when everything is on the server, false if a save failed.
-  // Callers that need the content saved first (submit, Check with AI) await it.
+  // Callers that need the content saved first (submit, Re-check) await it.
   const inflight = useRef(null);
   const flush = useCallback(() => {
     if (running.current) { again.current = true; return inflight.current; }

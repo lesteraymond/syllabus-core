@@ -1,6 +1,6 @@
 export default function ConfirmModal({ title, message, label, onConfirm, onClose }) {
   return (
-    <div className="overlay" onClick={onClose}>
+    <div className="overlay overlay-confirm" onClick={onClose}>
       <div className="modal confirm-modal" onClick={e => e.stopPropagation()}>
         <div className="confirm-icon">⚠</div>
         <h3>{title}</h3>

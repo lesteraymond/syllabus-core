@@ -22,7 +22,7 @@ export const STEPS = [
   { key: 'reqs', title: 'Course Requirements', form: 'VIII', sub: 'What students must complete. Suggestions come from your assessment tasks.' },
   { key: 'refs', title: 'References', form: 'IX', sub: 'Group references the way the form does. Older sources are marked.' },
   { key: 'grade', title: 'Grading System', form: 'X', sub: 'Components must total 100%. The formulas follow from them and from your exam rows.' },
-  { key: 'review', title: 'Review', form: 'Form', sub: 'Read the finished form. Sign-off names are filled in by the system when it is reviewed and approved.' },
+  { key: 'review', title: 'Review & Check', form: 'Form', sub: 'Check the finished form against the template and read it through. Sign-off names are filled in by the system when it is reviewed and approved.' },
 ];
 
 // ---- plain helpers (no catalog needed) ----
@@ -267,7 +267,7 @@ export function createModel({ institution, programs, year }) {
 
   // What still needs attention in a step, as { text, blocking, source, clo?, row? }.
   //  - blocking: true means the faculty member cannot move on (an empty required field, or admin-managed data that is missing);
-  //    false is advice only (it is shown but never blocks Next, Check with AI or Submit).
+  //    false is advice only (it is shown but never blocks Next, Re-check or Submit).
   //  - source: 'form' is something the faculty member fills in; 'admin' is data an administrator manages (vision, mission, the
   //    program's EGAs and POs, the subject's CLOs and their tags). Its wording is for the faculty member, who cannot fix it.
   // An empty list means the step is complete.
@@ -349,7 +349,7 @@ export function createModel({ institution, programs, year }) {
   const blockers = (d, key) => issues(d, key).filter((i) => i.blocking);
 
   // Step status: 'done' when nothing blocks it, 'attn' when visited with blockers, 'todo' otherwise. Advice never changes a
-  // status. Review is done only when steps 1-6 are, which is also what unlocks Check with AI and Submit.
+  // status. Review is done only when steps 1-6 are, which is also what unlocks Re-check and Submit.
   function stepStatuses(d, visited = {}) {
     const st = STEPS.map((s, i) => {
       if (s.key === 'review') return 'todo';

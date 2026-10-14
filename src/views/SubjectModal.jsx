@@ -3,7 +3,7 @@ import { courses as coursesApi, outcomes as outcomesApi } from '../lib/api';
 import { LEVELS, createModel } from '../lib/syllabusModel';
 import { CURRENT_SCHOOL_YEAR } from '../lib/schoolYear';
 import { Auto, Ic, OutcomePicker, Tag } from './builder2/parts';
-
+
 // Everything an administrator manages for one subject, in one modal. Five cards, each saved on its own:
 //   1. Vision and mission      school-wide
 //   2. Expected graduate attributes (EGAs)   this subject's program, shared by all its subjects

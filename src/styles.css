@@ -30,6 +30,13 @@
 	font-display: swap;
 	src: url("/fonts/nunito-latin.woff2") format("woff2");
 }
+@font-face {
+	font-family: "Nunito";
+	font-style: normal;
+	font-weight: 200 1000;
+	font-display: swap;
+	src: url("/fonts/nunito-latin.woff2") format("woff2");
+}
 
 :root {
 	--text-xs: 12px;

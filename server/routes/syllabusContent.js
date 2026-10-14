@@ -11,6 +11,8 @@ const assignments = require('../lib/assignments');
 const { loadOutcomes } = require('../lib/institution');
 const { findProgram, loadProgram } = require('../lib/programs');
 const { catalogGaps, gapsMessage } = require('../lib/catalogReady');
+const compliance = require('../lib/compliance/service');
+const { LABEL_SQL, labelsOf } = require('../lib/syllabusLabels');
 const router = express.Router();
 
 const MAX_CONTENT_BYTES = 512 * 1024;
@@ -149,6 +151,49 @@ router.put('/:id/content', requireAuth, async (req, res) => {
   } catch (err) { sendError(res, err); }
 });
 
+// Read a syllabus the way a reviewer does: the submitted version (the latest, or the one in ?version=), with who wrote it and for which
+// program and subject. Read-only. An admin may read any syllabus that is not a draft, the owner their own, anyone else gets a 404.
+// A syllabus uploaded as a file has no form: `content` is null and `file` says where the upload is.
+router.get('/:id/review', requireAuth, async (req, res) => {
+  try {
+    const db = req.app.locals.db;
+    const me = req.session.user;
+    const id = parseId(req.params.id);
+    const [rows] = await db.query(
+      'SELECT s.syllabus_id, s.user_id, s.status, s.version, s.title, s.course_code, s.file_path, s.content, ' + LABEL_SQL + ' WHERE s.syllabus_id = ?', [id]);
+    const syl = rows[0];
+    if (!syl || !rules.canView(me, syl)) throw httpError(404, 'Syllabus not found');
+
+    const [vrows] = await db.query(
+      'SELECT version_id, version_label, status_at_save, note, created_at, file_path, (content IS NOT NULL) AS has_form FROM syllabus_versions WHERE syllabus_id = ? ORDER BY version_id DESC', [id]);
+    const versions = vrows.map((v) => ({ id: v.version_id, label: v.version_label, statusAtSave: v.status_at_save, note: v.note || '', createdAt: v.created_at, filePath: v.file_path || null, hasForm: !!v.has_form }));
+
+    let chosen = versions[0] || null;
+    if (req.query.version !== undefined) {
+      const want = Number(req.query.version);
+      chosen = Number.isInteger(want) ? versions.find((v) => v.id === want) || null : null;
+      if (!chosen) throw httpError(404, 'Version not found'); // an id that is not one of this syllabus's versions
+    }
+
+    let raw = syl.content; // a syllabus with no stored version falls back to its own saved form
+    if (chosen) {
+      const [crow] = await db.query('SELECT content FROM syllabus_versions WHERE version_id = ? AND syllabus_id = ?', [chosen.id, id]);
+      raw = crow[0] ? crow[0].content : null;
+    }
+    let content = null;
+    if (raw) { try { content = JSON.parse(raw); } catch { content = null; } }
+    const filePath = chosen ? chosen.filePath : syl.file_path || null;
+    res.json({
+      syllabus: { id, userId: syl.user_id, status: syl.status, version: syl.version, courseCode: syl.course_code, title: syl.title, ...labelsOf(syl, content) },
+      version: chosen,
+      versions,
+      content,
+      catalog: content && content.catalog ? content.catalog : null,
+      file: filePath ? { path: filePath } : null,
+    });
+  } catch (err) { sendError(res, err); }
+});
+
 // Submit a draft for review, or save a new version of a syllabus that is already in the system.
 // Either way the form content as it is now is stored with the version, so the history can show what changed.
 //  - draft           -> first version (v1.0), status submitted, admins notified;
@@ -161,6 +206,7 @@ router.post('/:id/submit', requireAuth, async (req, res) => {
     const id = parseId(req.params.id);
     const note = typeof (req.body || {}).note === 'string' ? req.body.note.trim().slice(0, 1000) : '';
 
+    const complianceReady = await compliance.isInstalled(db);
     const outcome = await inTransaction(db, async (conn) => {
       const [rows] = await conn.query('SELECT * FROM syllabi WHERE syllabus_id = ? FOR UPDATE', [id]);
       const syl = rows[0];
@@ -186,6 +232,13 @@ router.post('/:id/submit', requireAuth, async (req, res) => {
         cloCount: (content.clos || []).length, programCode: cat.program ? cat.program.code : meta.program, subjectCode: meta.code,
       });
       if (gaps.length) throw httpError(409, gapsMessage(gaps));
+      // The form must follow the standard. A 'blocking' rule failing stops the submit (409 with the failed rules); anything
+      // else only warns, and the builder offers "Submit anyway". The run is stored with the version below.
+      const result = compliance.check(content, { catalog: content.catalog, preparedBy: `${me.firstName} ${me.lastName}` });
+      if (!result.conformance.ok) {
+        const g = compliance.gateError(result);
+        throw httpError(409, g.message, { failed: g.failed });
+      }
       const snapshot = JSON.stringify(content);
       if (Buffer.byteLength(snapshot, 'utf8') > MAX_CONTENT_BYTES) throw httpError(413, `This syllabus is too large to submit (limit ${MAX_CONTENT_BYTES / 1024} KB)`);
       await conn.query('UPDATE syllabi SET content = ?, content_updated_at = NOW() WHERE syllabus_id = ?', [snapshot, id]);
@@ -195,17 +248,25 @@ router.post('/:id/submit', requireAuth, async (req, res) => {
       const newStatus = rules.statusAfterOwnerEdit(syl.status);
       const versionNote = first ? 'Initial version' : (note || 'Updated by author');
       await conn.query('UPDATE syllabi SET status = ?, version = ? WHERE syllabus_id = ?', [newStatus, label, id]);
-      await conn.query(
+      const [versionRow] = await conn.query(
         `INSERT INTO syllabus_versions (syllabus_id, version_label, title, course_code, curriculum_id, file_path, status_at_save, note, content, created_by)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [id, label, content.meta.title, content.meta.code, syl.curriculum_id, syl.file_path, newStatus, versionNote, snapshot, me.id]
       );
+      // The compliance run is stored with the version, in the same transaction, once the tables exist: it is the authoritative one.
+      let runId = null;
+      if (complianceReady) runId = await compliance.storeRun(conn, { syllabusId: id, versionId: versionRow && versionRow.insertId ? versionRow.insertId : null, content, result, createdBy: me.id });
       await conn.query(
         'INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)',
         [id, me.id, first ? 'upload' : (syl.status === 'for_revision' ? 'submit' : 'update'), (first ? 'Syllabus submitted from the builder' : `Saved as ${label}: ${versionNote}`).slice(0, 500)]
       );
-      return { previous: syl.status, label, status: newStatus, courseCode: syl.course_code, title: syl.title };
+      return { previous: syl.status, label, status: newStatus, courseCode: syl.course_code, title: syl.title, runId, content, result };
     });
+
+    // After the commit, outside the transaction: the AI recommendations are a background job. They never delay or fail a submit.
+    if (outcome.runId && outcome.result.status === 'scored' && outcome.result.findings.length) {
+      compliance.startAiJob(db, { runId: outcome.runId, content: outcome.content, result: outcome.result, names: compliance.namesFor(me, outcome.content) });
+    }
 
     // After the commit: notifications never affect the result.
     const who = `${me.firstName} ${me.lastName}`;
@@ -224,3 +285,4 @@ router.post('/:id/submit', requireAuth, async (req, res) => {
 
 module.exports = router;
 module.exports.MAX_CONTENT_BYTES = MAX_CONTENT_BYTES;
+module.exports.catalogSnapshot = catalogSnapshot;

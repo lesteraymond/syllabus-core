@@ -14,6 +14,7 @@ import ReviewStep from './ReviewStep';
 import { useCatalog } from './useCatalog';
 import { useDraft } from './useDraft';
 import { prefersReducedMotion } from './parts';
+import { warningCount } from '../../lib/complianceView';
 
 // The step list: key, title, component, validate. The shell below only iterates this.
 const BODIES = { info: InfoStep, clos: ClosStep, plan: PlanStep, reqs: ReqStep, refs: RefsStep, grade: GradeStep, review: ReviewStep };
@@ -39,6 +40,12 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
   const [note, setNote] = useState('');
   const [courseList, setCourseList] = useState([]);
   const [busy, setBusy] = useState(false);
+  // Bumped by the footer's Re-check; the Review & Check step's compliance section re-runs the check when it changes.
+  const [checkTick, setCheckTick] = useState(0);
+  // The rules the server named when it refused a submit (the form does not follow the template).
+  const [submitFailed, setSubmitFailed] = useState([]);
+  // What the latest compliance run says: decides whether the submit button reads "Submit anyway" (warnings remain).
+  const [lastRun, setLastRun] = useState(null);
   // What an admin assigned to me (null while loading, and for admins): decides whether the form opens at all.
   const [mine, setMine] = useState(null);
   useEffect(() => {
@@ -116,13 +123,15 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
     if (!ok) notify('Could not save your changes. Check your connection and try again.');
     return ok;
   };
-  const checkWithAI = async () => {
-    setBusy(true);
-    if (await saveFirst()) setPage('ai');
-    setBusy(false);
+  // The check lives in this step now: Re-check runs it again in place and scrolls to it (nothing navigates away).
+  const recheck = () => {
+    setCheckTick((t) => t + 1);
+    const card = document.getElementById('cmp-card');
+    if (card) card.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
   };
   const submit = async () => {
     setBusy(true);
+    setSubmitFailed([]);
     try {
       if (!(await saveFirst())) return;
       const id = syllabusId();
@@ -130,6 +139,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
       const res = await syllabiApi.submitContent(id, note.trim());
       onSubmitted(res, existing);
     } catch (e) {
+      if (e.data && Array.isArray(e.data.failed)) setSubmitFailed(e.data.failed);
       notify('Submit failed: ' + e.message);
     } finally {
       setBusy(false);
@@ -147,6 +157,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
   const preparedBy = user ? user.name || (user.firstName + ' ' + user.lastName) : '';
   const doneCount = statuses.filter((x) => x === 'done').length;
   const cfg = STEP_CONFIG[step];
+  const warnings = warningCount(lastRun); // warnings the author would be submitting with: they never block, so this offers "Submit anyway"
   const Body = cfg.component;
   const issues = cfg.validate(draft, model);
   const blocking = gated ? issues.filter((i) => i.blocking) : [];
@@ -193,9 +204,9 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
             <span className={'autosave' + (save.state === 'error' ? ' error' : save.state === 'saved' ? '' : ' saving')} role="status">{saveText}{save.state === 'error' && <button type="button" className="link" onClick={saveNow}>Retry</button>}</span>
           </div>
           <fieldset disabled={!editable}>
-            <Body d={draft} apply={apply} model={model} programList={programList} courseList={courseList} onChooseCourse={onChooseCourse} onChooseProgram={onChooseProgram} filter={filter} setFilter={setFilter} onDeleteRow={onDeleteRow} go={go} preparedBy={preparedBy} existing={existing} note={note} setNote={setNote} />
+            <Body d={draft} apply={apply} model={model} programList={programList} courseList={courseList} onChooseCourse={onChooseCourse} onChooseProgram={onChooseProgram} filter={filter} setFilter={setFilter} onDeleteRow={onDeleteRow} go={go} preparedBy={preparedBy} existing={existing} note={note} setNote={setNote} syllabusId={syllabusId} saveFirst={saveFirst} canCheck={!!user && user.role === 'faculty' && !noAccess} checkTick={checkTick} submitFailed={submitFailed} onRun={setLastRun} />
           </fieldset>
-          {!nxt && !complete && <div className="step-hint" role="status">Finish the steps marked ! in the list. Check with AI and {existing ? 'saving a new version' : 'submitting'} unlock once steps 1 to 6 are complete.</div>}
+          {!nxt && !complete && <div className="step-hint" role="status">Finish the steps marked ! in the list. Review & Check: the compliance check and {existing ? 'saving a new version' : 'submitting'} unlock once steps 1 to 6 are complete.</div>}
           {step < 6 && mine_.length > 0 && (
             <div className="blockers" role="status">
               <b>To continue:</b>
@@ -209,14 +220,15 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
               <button type="button" className="btn outline" onClick={refreshCatalog}>Check again</button>
             </div>
           )}
+          {step === 6 && warnings > 0 && editable && <div className="step-hint advice" role="note">{warnings + (warnings === 1 ? ' warning remains' : ' warnings remain') + ' in the compliance check. They do not block you: the reviewer will see them, so fix what you can first.'}</div>}
           {step < 6 && advice.length > 0 && editable && <div className="step-hint advice" role="note">{'Suggestions: ' + advice.map((x) => x.text).join(' ')}</div>}
           <div className="editor-footer">
             <button type="button" className="btn outline" disabled={!prv} onClick={() => go(step - 1)}>{prv ? '← ' + prv.title : '← Previous'}</button>
             <div>
               {nxt && <button type="button" className="btn primary" disabled={blocking.length > 0} title={blocking.length ? 'Complete this step to continue' : undefined} onClick={() => go(step + 1)}>{'Next: ' + nxt.title + ' →'}</button>}
               {!nxt && <>
-                <button type="button" className="btn outline" disabled={!complete || busy || !editable} title={complete ? 'Open the AI Checker' : 'Complete steps 1 to 6 to unlock'} onClick={checkWithAI}>Check with AI</button>
-                <button type="button" className="btn primary" disabled={busy || !editable || !draft.meta.courseId || (gated && !complete)} title={gated && !complete ? 'Complete steps 1 to 6 to unlock' : undefined} onClick={submit}>{existing ? 'Save as new version' : 'Submit for review'}</button>
+                <button type="button" className="btn outline" disabled={!complete || busy || !editable} title={complete ? 'Run the compliance check again' : 'Complete steps 1 to 6 to unlock'} onClick={recheck}>Re-check</button>
+                <button type="button" className="btn primary" disabled={busy || !editable || !draft.meta.courseId || (gated && !complete)} title={gated && !complete ? 'Complete steps 1 to 6 to unlock' : undefined} onClick={submit}>{(existing ? 'Save as new version' : 'Submit') + (warnings > 0 ? ' anyway' : existing ? '' : ' for review')}</button>
               </>}
             </div>
           </div>

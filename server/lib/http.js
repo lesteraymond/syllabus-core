@@ -17,11 +17,11 @@ async function inTransaction(db, fn) {
   }
 }
 
-// An HTTP error that the route handler turns into a response.
-const httpError = (status, message) => Object.assign(new Error(message), { status });
+// An HTTP error that the route handler turns into a response. `body` adds fields next to `error` (for example the failed rules).
+const httpError = (status, message, body) => Object.assign(new Error(message), { status, body });
 
 const sendError = (res, err) => {
-  if (err.status) return res.status(err.status).json({ error: err.message });
+  if (err.status) return res.status(err.status).json({ error: err.message, ...(err.body || {}) });
   console.error('ROUTE ERROR:', err);
   return res.status(500).json({ error: err.message });
 };
