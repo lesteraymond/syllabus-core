@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ChatModal from './components/ChatModal';
 import ConfirmModal from './components/ConfirmModal';
+import ChangePassword from './components/ChangePassword';
 import Login from './components/Login';
 import Sidebar from './components/Sidebar';
 import SyllabusCommentsModal from './components/SyllabusCommentsModal';
@@ -9,7 +10,7 @@ import Topbar from './components/Topbar';
 import VersionHistoryModal from './components/VersionHistoryModal';
 import ReviewPanel from './views/ReviewPanel';
 import { navItems } from './data/initialData';
-import { auth, logs as logsApi, messages as messagesApi, notifications as notificationsApi, syllabi as syllabiApi } from './lib/api';
+import { auth, logs as logsApi, messages as messagesApi, notifications as notificationsApi, syllabi as syllabiApi, onPasswordChangeRequired } from './lib/api';
 import { commentNotificationIds, notificationTarget } from './lib/notificationRoute';
 import { canEditSyllabus, editBlockedReason } from './lib/syllabusRules';
 import { useNotificationPolling } from './lib/usePolling';
@@ -72,6 +73,7 @@ export default function App() {
   const handleAvatarChange = (avatarUrl) => setUser(u => ({ ...u, avatarUrl }));
 
   useEffect(() => {
+    onPasswordChangeRequired(() => setUser(u => (u && !u.mustChangePassword ? { ...u, mustChangePassword: true } : u))); // a call was refused: show the screen
     auth.me().then(data => {
       setUser(formatUser(data.user));
       setLoading(false);
@@ -113,7 +115,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (user && user.role !== 'student') {
+    if (user && user.role !== 'student' && !user.mustChangePassword) {
       fetchSyllabi();
       fetchLogs();
       fetchMessages();
@@ -126,7 +128,7 @@ export default function App() {
   // A draft created in the builder is not in this list yet: refresh when the faculty opens My Syllabi.
   useEffect(() => { if (user && page === 'my-syllabi') { fetchSyllabi(); if (user.role === 'faculty') fetchCommentCounts(); } }, [user, page, fetchSyllabi, fetchCommentCounts]);
 
-  useNotificationPolling(!!user, () => { fetchMessages(); fetchNotifications(); fetchSyllabi(); if (user.role === 'faculty') fetchCommentCounts(); });
+  useNotificationPolling(!!user && !user.mustChangePassword, () => { fetchMessages(); fetchNotifications(); fetchSyllabi(); if (user.role === 'faculty') fetchCommentCounts(); });
 
   const handleLogin = async (email, pass, remember) => {
     try {
@@ -294,6 +296,7 @@ export default function App() {
 
   if (loading) return <div className="loading-screen"><div className="spinner" /><p>Loading...</p></div>;
   if (!user) return <Login onLogin={handleLogin} onGoogleLogin={handleGoogleLogin} />;
+  if (user.mustChangePassword) return <ChangePassword user={user} onDone={() => setUser((u) => ({ ...u, mustChangePassword: false }))} onLogout={handleLogout} />;
   if (user.role === 'student') return <StudentHome user={user} onLogout={handleLogout} />;
 
   return (

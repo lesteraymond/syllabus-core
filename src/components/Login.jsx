@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import StudentRegister from './StudentRegister';
 import GoogleSignInButton from './GoogleSignInButton';
+import ForgotPassword from './ForgotPassword';
 import { Icon } from './ui';
 
 
@@ -31,6 +32,8 @@ export default function Login({ onLogin, onGoogleLogin }) {
       <section className="login-panel">
         {mode === 'register' ? (
           <StudentRegister onBack={() => setMode('login')} />
+        ) : mode === 'forgot' ? (
+          <ForgotPassword onBack={() => setMode('login')} />
         ) : (
         <form className="login-card" onSubmit={submit}>
           <img className="login-logo" src="/cite-logo.png" alt="College logo" />
@@ -39,7 +42,7 @@ export default function Login({ onLogin, onGoogleLogin }) {
           <p className="muted">Use your institutional account to continue.</p>
           <label>Username or Email<input value={form.user} onChange={e => setForm({ ...form, user: e.target.value })} placeholder="name@university.edu.ph" /></label>
           <label className="pass-field">Password<span className="pass-input"><input type={showPass ? 'text' : 'password'} value={form.pass} onChange={e => setForm({ ...form, pass: e.target.value })} placeholder="••••••••" /><button type="button" className="eye-btn" aria-label={showPass ? 'Hide password' : 'Show password'} onClick={() => setShowPass(!showPass)}><Icon name={showPass ? 'eyeSlash' : 'eye'} size={20} /></button></span></label>
-          <div className="login-options"><label className="check"><input type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)} /> Remember me</label><button type="button" className="link-btn">Forgot password?</button></div>
+          <div className="login-options"><label className="check"><input type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)} /> Remember me</label><button type="button" className="link-btn" onClick={() => setMode('forgot')}>Forgot password?</button></div>
           {error && <div className="form-error">{error}</div>}
           <button className="btn primary wide" type="submit">Sign In</button>
           <div className="or"><span />or<span /></div>
