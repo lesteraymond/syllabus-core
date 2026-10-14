@@ -1,7 +1,7 @@
 // Run: npm test
 import test from 'node:test';
 import assert from 'node:assert';
-import { runState, tone, ringAngle, basis, blockersOf, warningsOf, warningCount, headline, areaNames, groupFindings, scoreText, when, stepLabel, listBasis, STEP_INFO, rowState, actionLabel, timeOf, stamp, isLocked, needsCheck, canCheckNow, bulkTargets, filterRows, groupByFacultyProgram } from './complianceView.js';
+import { runState, tone, ringAngle, basis, blockersOf, warningsOf, warningCount, headline, areaNames, groupFindings, scoreText, when, stepLabel, listBasis, STEP_INFO, rowState, actionLabel, timeOf, stamp, isLocked, needsCheck, canCheckNow, rangeToInstants, rangeLabel, bulkTargets, filterRows, groupByFacultyProgram } from './complianceView.js';
 import { STEPS } from './syllabusModel.js';
 
 const area = (key, score) => ({ key, name: key.toUpperCase(), weight: 10, score });
@@ -183,4 +183,30 @@ test('only a syllabus with a form can be checked now; an uploaded file waits for
   assert.strictEqual(canCheckNow({ checkable: true }), true);
   assert.strictEqual(canCheckNow({ checkable: false }), false);
   assert.strictEqual(canCheckNow(null), false);
+});
+
+test('a date range becomes local-day instants: the start of the first day up to the start of the day after the last', () => {
+  const r = rangeToInstants('2026-03-02', '2026-03-02');
+  assert.strictEqual(new Date(r.from).getHours(), 0);
+  assert.strictEqual(new Date(r.to) - new Date(r.from), 24 * 3600 * 1000); // one day (these dates have no clock change)
+  assert.strictEqual(new Date(r.from).getDate(), 2);
+  assert.strictEqual(new Date(r.to).getDate(), 3);
+  assert.deepStrictEqual(rangeToInstants('', ''), { from: null, to: null });
+  assert.strictEqual(rangeToInstants('2026-03-02', '').to, null);
+  assert.strictEqual(rangeToInstants('', '2026-03-02').from, null);
+  assert.strictEqual(new Date(rangeToInstants('2026-02-27', '2026-02-28').to).getDate(), 1); // the day after the 28th crosses the month
+});
+
+test('an invalid range has no instants: an impossible date, or a range that ends before it starts', () => {
+  assert.strictEqual(rangeToInstants('2026-02-31', ''), null);
+  assert.strictEqual(rangeToInstants('abc', ''), null);
+  assert.strictEqual(rangeToInstants('2026-03-05', '2026-03-01'), null);
+});
+
+test('the range is named for the admin: a span, one day, or one open side', () => {
+  assert.strictEqual(rangeLabel('2026-10-01', '2026-10-14'), 'Oct 1, 2026 – Oct 14, 2026');
+  assert.strictEqual(rangeLabel('2026-10-14', '2026-10-14'), 'Oct 14, 2026');
+  assert.strictEqual(rangeLabel('2026-10-01', ''), 'Since Oct 1, 2026');
+  assert.strictEqual(rangeLabel('', '2026-10-14'), 'Until Oct 14, 2026');
+  assert.strictEqual(rangeLabel('', ''), '');
 });

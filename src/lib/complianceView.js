@@ -88,6 +88,35 @@ export function timeOf(createdAt) {
 }
 export const stamp = (createdAt) => (when(createdAt) && timeOf(createdAt) ? when(createdAt) + ', ' + timeOf(createdAt) : when(createdAt));
 
+// ---- the history's date filter ----
+// A range is two 'YYYY-MM-DD' strings from <input type="date">; either may be empty. The server wants instants: the start of the first
+// day and the start of the day after the last, in the admin's own time zone, so "Oct 14" means Oct 14 where they are.
+const dayStart = (ymd, plus = 0) => {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(ymd || ''));
+  if (!m) return null;
+  const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  if (d.getFullYear() !== Number(m[1]) || d.getMonth() !== Number(m[2]) - 1 || d.getDate() !== Number(m[3])) return null; // rejects 2026-02-31
+  d.setDate(d.getDate() + plus); // the day after may be in the next month: that is fine
+  return d;
+};
+// -> { from, to } as ISO strings (null for an open side), or null when a date is unreadable or the range ends before it starts.
+export function rangeToInstants(fromDate, toDate) {
+  const a = fromDate ? dayStart(fromDate) : null;
+  const b = toDate ? dayStart(toDate, 1) : null;
+  if ((fromDate && !a) || (toDate && !b)) return null;
+  if (a && b && a >= b) return null;
+  return { from: a ? a.toISOString() : null, to: b ? b.toISOString() : null };
+}
+const dayLabel = (ymd) => { const d = dayStart(ymd); return d ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''; };
+export function rangeLabel(fromDate, toDate) {
+  const a = dayLabel(fromDate);
+  const b = dayLabel(toDate);
+  if (a && b) return fromDate === toDate ? a : a + ' – ' + b;
+  if (a) return 'Since ' + a;
+  if (b) return 'Until ' + b;
+  return '';
+}
+
 // An approved syllabus is final: it is not checked again, but its stored checks can still be read.
 export const isLocked = (row) => !!row && row.status === 'approved';
 

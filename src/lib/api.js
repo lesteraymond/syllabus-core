@@ -104,7 +104,14 @@ export const compliance = {
   get: (id) => request(`/syllabi/${id}/compliance`),
   recheck: (id, force = false) => request(`/syllabi/${id}/compliance/recheck`, { method: 'POST', body: JSON.stringify(force ? { force: true } : {}) }),
   list: (syllabus = 'all') => request(`/compliance?syllabus=${encodeURIComponent(syllabus)}`),
-  history: (limit) => request(`/compliance/history${limit ? `?limit=${encodeURIComponent(limit)}` : ''}`), // admin: the checks of submitted versions, newest first
+  // admin: the latest check of each submitted syllabus, newest first. { limit, from, to }: from/to are ISO instants (from inclusive, to exclusive).
+  history: ({ limit, from, to } = {}) => {
+    const q = new URLSearchParams();
+    if (limit) q.set('limit', limit);
+    if (from) q.set('from', from);
+    if (to) q.set('to', to);
+    return request(`/compliance/history${q.toString() ? `?${q}` : ''}`);
+  },
   run: (runId) => request(`/compliance/runs/${encodeURIComponent(runId)}`), // admin: one stored run in full, an earlier one too
 };
 
