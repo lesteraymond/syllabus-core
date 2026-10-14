@@ -1,14 +1,15 @@
 import { useRef } from 'react';
 import { useModalLayer } from './useModalLayer';
 import ComplianceCard from '../views/ComplianceCard';
-import { ringAngle, runState, tone } from '../lib/complianceView';
+import { isLocked, ringAngle, runState, stamp, tone } from '../lib/complianceView';
 
 // One syllabus's stored compliance check, in a dialog: who and what it is, the score ring, the six areas, then the shared
 // ComplianceCard (recommendations, blockers, findings). It only displays; the page loads the run, polls while recommendations are
 // still being written, and runs the re-check.
 //   syllabus  { courseCode, courseTitle, title, facultyName, programCode, programName }     run   the stored run (or null)
 //   checking  true while a re-check runs      error   a message to show (for example the rate limit)
-export default function ComplianceModal({ syllabus, run, checking = false, error = '', onRecheck, onClose }) {
+//   isLatest  false when the run is an earlier check opened from the history: it is read-only, like any check of an approved syllabus
+export default function ComplianceModal({ syllabus, run, checking = false, isLatest = true, error = '', onRecheck, onClose }) {
   const dialog = useRef(null);
   useModalLayer(dialog, onClose); // Esc closes, focus stays inside and returns to the button that opened it
 
@@ -16,6 +17,9 @@ export default function ComplianceModal({ syllabus, run, checking = false, error
   const t = state === 'scored' ? tone(run.overall, run.passThreshold) : 'none';
   const program = syllabus.programCode ? syllabus.programCode + (syllabus.programName ? ' · ' + syllabus.programName : '') : (syllabus.programName || 'No program');
   const title = syllabus.courseTitle || syllabus.title;
+  const locked = isLocked(syllabus);
+  const canRecheck = !locked && isLatest;
+  const when = run ? stamp(run.createdAt) : '';
 
   return (
     <div className="overlay" onClick={onClose}>
@@ -24,11 +28,14 @@ export default function ComplianceModal({ syllabus, run, checking = false, error
           <div>
             <h3 id="cm-title">{syllabus.courseCode + (title ? ' — ' + title : '')}</h3>
             <small>{(syllabus.facultyName || 'Unknown faculty') + ' · ' + program}</small>
+            {when && <small className="cm-when">{'Checked ' + when}</small>}
           </div>
         </div>
 
         <div className="modal-body cm-body">
           {error && <div className="info-banner warning" role="alert">{error}</div>}
+          {!isLatest && <div className="info-banner cm-earlier">This is an earlier check. Newer results are in the history.</div>}
+          {isLatest && locked && <div className="info-banner cm-earlier">This syllabus is approved, so this check is final.</div>}
 
           <div className="cm-score">
             {state === 'scored'
@@ -55,7 +62,7 @@ export default function ComplianceModal({ syllabus, run, checking = false, error
 
         <div className="modal-foot cm-foot">
           <span className="cm-live" role="status" aria-live="polite">{checking ? 'Checking…' : ''}</span>
-          <button type="button" className="btn outline" disabled={checking} onClick={onRecheck}>{checking ? 'Checking…' : 'Re-check'}</button>
+          {canRecheck && <button type="button" className="btn outline" disabled={checking} onClick={onRecheck}>{checking ? 'Checking…' : 'Re-check'}</button>}
           <button type="button" className="btn primary" onClick={onClose}>Close</button>
         </div>
       </div>
