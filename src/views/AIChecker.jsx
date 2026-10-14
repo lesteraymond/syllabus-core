@@ -1,10 +1,23 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { PageHead } from '../components/ui';
 import { compliance as api } from '../lib/api';
-import { groupByFacultyProgram, listBasis, needsCheck } from '../lib/complianceView';
+import { groupByFacultyProgram, listBasis, needsCheck, rangeToInstants } from '../lib/complianceView';
 import SyllabusPicker from '../components/SyllabusPicker';
 import ComplianceModal from '../components/ComplianceModal';
 import CheckHistory from '../components/CheckHistory';
+
+// The history's date filter is kept in this browser, so it is still applied after a reload or a visit to another page, until the admin
+// changes or resets it. A view preference only: every read and write is guarded, and the page works without storage.
+const RANGE_KEY = 'sms.aiChecker.historyRange';
+const NO_RANGE = { from: '', to: '' };
+const readRange = () => {
+  try {
+    const r = JSON.parse(localStorage.getItem(RANGE_KEY) || 'null');
+    const ok = r && typeof r.from === 'string' && typeof r.to === 'string' && rangeToInstants(r.from, r.to) !== null;
+    return ok ? { from: r.from, to: r.to } : NO_RANGE;
+  } catch { return NO_RANGE; }
+};
+const writeRange = (r) => { try { if (r.from || r.to) localStorage.setItem(RANGE_KEY, JSON.stringify(r)); else localStorage.removeItem(RANGE_KEY); } catch { /* storage blocked: the filter just does not persist */ } };
 
 // The AI Checker page is the administrator's view of the compliance checks of submitted syllabi. The page is one picker
 // (Faculty, then Program, then Subject) of the syllabi still waiting for their first check; Check compliance runs it and opens the
@@ -18,6 +31,8 @@ export default function AIChecker({ user, notify }) {
   const [detail, setDetail] = useState(null); // { installed, syllabus, run, isLatest? } for that syllabus (isLatest is false for an earlier run)
   const [history, setHistory] = useState({ runs: [], loading: true, error: '' });
   const [opening, setOpening] = useState(null); // the history runId being opened
+  const [range, setRange] = useState(readRange);  // the history's applied date filter
+  const asked = useRef(0);                        // the newest history request: an older answer is ignored
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState({});       // syllabus id -> true while its check runs
@@ -25,18 +40,25 @@ export default function AIChecker({ user, notify }) {
   const loadList = useCallback(async () => { try { setList(await api.list('all')); setError(''); } catch (e) { setError(e.message); } }, []);
   const loadDetail = useCallback(async (id) => { try { setDetail(await api.list(id)); setError(''); return true; } catch (e) { setError(e.message); return false; } }, []);
 
+  // The cards already shown stay on screen while a new range loads, so the card does not jump.
   const loadHistory = useCallback(async () => {
-    try { const h = await api.history(); setHistory({ runs: h.runs || [], loading: false, error: '' }); } catch (e) { setHistory((x) => ({ ...x, loading: false, error: e.message })); }
-  }, []);
+    const mine = ++asked.current;
+    setHistory((x) => ({ ...x, loading: true }));
+    try {
+      const h = await api.history(rangeToInstants(range.from, range.to) || {});
+      if (mine === asked.current) setHistory({ runs: h.runs || [], loading: false, error: '' });
+    } catch (e) { if (mine === asked.current) setHistory((x) => ({ ...x, loading: false, error: e.message })); }
+  }, [range]);
 
   useEffect(() => {
     let live = true;
     setLoading(true);
     const done = () => { if (live) setLoading(false); };
-    loadHistory();
     loadList().then(done, done);
     return () => { live = false; };
-  }, [loadList, loadHistory]);
+  }, [loadList]);
+
+  useEffect(() => { loadHistory(); }, [loadHistory]); // on mount, and again whenever the applied range changes
 
   // While recommendations are still being written, look again every few seconds (for a bounded time).
   const pending = openId !== null && detail && detail.isLatest !== false && detail.run && detail.run.aiStatus === 'pending'; // an earlier run no longer changes
@@ -83,6 +105,7 @@ export default function AIChecker({ user, notify }) {
     loadHistory();
     say('Checked ' + row.courseCode + '. It is now in the history.');
   };
+  const applyRange = (r) => { const next = { from: r.from || '', to: r.to || '' }; setRange(next); writeRange(next); };
   // A history card: read that exact run (an earlier one, or an approved syllabus), then show it in the same dialog.
   const openRun = async (item) => {
     setOpening(item.runId);
@@ -111,7 +134,7 @@ export default function AIChecker({ user, notify }) {
 
       {installed && <SyllabusPicker groups={waiting} loading={loading} busy={working} onCheck={checkAndOpen} />}
 
-      {installed && <CheckHistory runs={history.runs} loading={history.loading} error={history.error} opening={opening} onOpen={openRun} />}
+      {installed && <CheckHistory runs={history.runs} loading={history.loading} error={history.error} opening={opening} onOpen={openRun} range={range} onApply={applyRange} onReset={() => applyRange(NO_RANGE)} />}
 
       {open && <ComplianceModal syllabus={open} run={detail.run} isLatest={detail.isLatest !== false} error={error} onClose={closeModal} />}
       <div className="ai-note">The check supports — but does not replace — faculty, curriculum committee, and academic quality review.</div>
