@@ -1,3 +1,4 @@
+import { phDate } from './phTime.js';
 // Plain helpers for the reviewer's queue and the syllabus modal. No React and no network, so they are tested on their own.
 import { STATUS_LABELS } from './syllabusRules.js';
 
@@ -27,10 +28,7 @@ export function fileName(path) {
   try { return decodeURIComponent(last); } catch { return last; }
 }
 
-const dateText = (d) => {
-  const t = new Date(String(d || '').replace(' ', 'T'));
-  return isNaN(t) ? '' : t.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-};
+const dateText = (d) => phDate(d); // Philippine time
 
 // One entry of the version picker: "v1.1 · Submitted · Jan 2, 2026 (current)".
 export function versionOption(v, isLatest) {

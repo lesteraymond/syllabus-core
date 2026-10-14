@@ -84,7 +84,7 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
             {threads.length === 0 && <div className="msg-empty">No conversations yet.</div>}
             {threads.map(t => <button key={t.code} className={`thread${t.unread ? ' unread' : ''}`} onClick={() => { setChatCode(t.code); markRead(t.code); setMsgDrop(false); }}>
               <Avatar className="thread-av" src={t.partner?.avatarUrl} name={t.partner?.name} initials={t.partner?.initials || '?'} />
-              <div className="thread-body"><div className="thread-top"><strong>{t.code}</strong><small>{t.lastTime}</small></div><p>{t.partner?.name || 'Unknown'}</p><span>{t.lastMsg}</span></div>
+              <div className="thread-body"><div className="thread-top"><strong>{t.code}</strong><small>{fmt(t.lastTime)}</small></div><p>{t.partner?.name || 'Unknown'}</p><span>{t.lastMsg}</span></div>
               {t.unread > 0 && <span className="thread-dot" />}
             </button>)}
           </div>}
@@ -96,7 +96,7 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
             <div className="notif-list">
               {(!notifications || notifications.items.length === 0) && <div className="msg-empty">No notifications yet.</div>}
               {notifications?.items.map(n => <button key={n.id} className={`thread notif-item${n.isRead ? '' : ' unread'}`} onClick={() => { setBellOpen(false); onOpenNotification(n); }}>
-                <div className="thread-body"><div className="thread-top"><strong>{n.title}</strong><small>{fmt(new Date(n.createdAt))}</small></div>{n.body && <p>{n.body}</p>}</div>
+                <div className="thread-body"><div className="thread-top"><strong>{n.title}</strong><small>{fmt(n.createdAt)}</small></div>{n.body && <p>{n.body}</p>}</div>
                 {!n.isRead && <span className="thread-dot" />}
               </button>)}
             </div>

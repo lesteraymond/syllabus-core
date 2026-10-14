@@ -44,12 +44,12 @@ export default function VersionHistoryModal({ syllabus, onClose }) {
                   <div className={`vh-dot ${i === 0 ? 'current' : ''}`} />
                   <div className="vh-content">
                     <div className="vh-head"><strong>Version {v.version}</strong><span className={`status ${v.statusAtSave.replaceAll('_', '-')}`}>{STATUS_LABELS[v.statusAtSave] || v.statusAtSave}</span>{i === 0 && <span className="vh-current">Current</span>}</div>
-                    <small>{fmt(new Date(v.createdAt))} • {v.author}</small>
+                    <small>{fmt(v.createdAt)} • {v.author}</small>
                     {v.note && <p>{v.note}</p>}
                     {v.changes && v.changes.text
                       ? <small className="vh-changes">{'Changed since the version before: ' + v.changes.text}</small>
                       : v.changed.length > 0 && <small>Changed: {v.changed.map(c => FIELD_LABELS[c] || c).join(', ')}</small>}
-                    {v.decision && <small className={'vh-decision ' + v.decision.action}>{DECISION_LABELS[v.decision.action] + ' by ' + v.decision.by + ' on ' + fmt(new Date(v.decision.at)) + (v.decision.reason ? ': ' + v.decision.reason : '')}</small>}
+                    {v.decision && <small className={'vh-decision ' + v.decision.action}>{DECISION_LABELS[v.decision.action] + ' by ' + v.decision.by + ' on ' + fmt(v.decision.at) + (v.decision.reason ? ': ' + v.decision.reason : '')}</small>}
                     {v.filePath && <small><a href={`${API_ORIGIN}${v.filePath}`} target="_blank" rel="noreferrer" download>Download file</a></small>}
                     <button type="button" className="btn outline vh-view" onClick={() => setViewing(v.id)}>{'View version ' + v.version}</button>
                   </div>

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { fmt } from '../lib/utils';
 import { PageHead } from '../components/ui';
 import { users as usersApi } from '../lib/api';
 import { commentBadge } from '../lib/notificationRoute';
@@ -24,7 +25,7 @@ export default function MySyllabi({ syllabi, user, messages, commentCounts = {},
       <div className="syl-grid">
         {my.map(s => { const lock = courseLockReason(user, mine, s); return <div className="syl-card" key={s.id}>
           <div className="syl-head"><div className="syl-info"><h4>{s.courseCode}</h4><p>{s.title}</p></div><span className={`status ${s.status}`}>{STATUS_LABELS[s.status] || s.status}</span></div>
-          <div className="syl-meta"><span>{s.program}</span><span>Updated {s.updatedAt}</span>{s.unreadCount > 0 && <span className="syl-unread">{s.unreadCount} unread</span>}</div>
+          <div className="syl-meta"><span>{s.program}</span><span>Updated {fmt(s.updatedAt)}</span>{s.unreadCount > 0 && <span className="syl-unread">{s.unreadCount} unread</span>}</div>
           {s.adminComment && (setCommentCode
             ? <button type="button" className="feedback-banner feedback-open" title="Open the reviewer comments" onClick={() => setCommentCode(s.id)}>💬 {s.adminComment}</button>
             : <div className="feedback-banner">💬 {s.adminComment}</div>)}

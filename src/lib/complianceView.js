@@ -1,3 +1,4 @@
+import { phDate, phDateTime, phDayStart, phTime } from './phTime.js';
 // Plain helpers for showing a stored compliance run (the shared ComplianceCard, the builder's Review & Check step, the admin overview
 // and Review & Approval). No React and no network, so they are tested on their own.
 //
@@ -73,41 +74,25 @@ export function groupFindings(run) {
   return (run.areas || []).filter((a) => by.has(a.key)).map((a) => ({ key: a.key, name: a.name, findings: by.get(a.key) }));
 }
 
-// "2026-01-05 10:30:00" or an ISO date -> "Jan 5, 2026"; anything unreadable -> ''.
-export function when(createdAt) {
-  if (!createdAt) return '';
-  const d = new Date(String(createdAt).replace(' ', 'T'));
-  return isNaN(d) ? '' : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
+// "2026-01-05 10:30:00" or an ISO date -> "Jan 5, 2026", in Philippine time; anything unreadable -> ''.
+export const when = (createdAt) => phDate(createdAt);
 
-// "Oct 14, 2026" + "3:42 PM": the day and the time a run was stored; anything unreadable -> ''.
-export function timeOf(createdAt) {
-  if (!createdAt) return '';
-  const d = new Date(String(createdAt).replace(' ', 'T'));
-  return isNaN(d) ? '' : d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-}
-export const stamp = (createdAt) => (when(createdAt) && timeOf(createdAt) ? when(createdAt) + ', ' + timeOf(createdAt) : when(createdAt));
+// "3:42 PM" in Philippine time: the time a run was stored; anything unreadable -> ''.
+export const timeOf = (createdAt) => phTime(createdAt);
+export const stamp = (createdAt) => phDateTime(createdAt);
 
 // ---- the history's date filter ----
-// A range is two 'YYYY-MM-DD' strings from <input type="date">; either may be empty. The server wants instants: the start of the first
-// day and the start of the day after the last, in the admin's own time zone, so "Oct 14" means Oct 14 where they are.
-const dayStart = (ymd, plus = 0) => {
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(ymd || ''));
-  if (!m) return null;
-  const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
-  if (d.getFullYear() !== Number(m[1]) || d.getMonth() !== Number(m[2]) - 1 || d.getDate() !== Number(m[3])) return null; // rejects 2026-02-31
-  d.setDate(d.getDate() + plus); // the day after may be in the next month: that is fine
-  return d;
-};
+// A range is two 'YYYY-MM-DD' strings from <input type="date">; either may be empty. The server wants instants: the start of the first day and
+// the start of the day after the last, in Philippine time, so "Oct 14" means Oct 14 in Manila for every admin.
 // -> { from, to } as ISO strings (null for an open side), or null when a date is unreadable or the range ends before it starts.
 export function rangeToInstants(fromDate, toDate) {
-  const a = fromDate ? dayStart(fromDate) : null;
-  const b = toDate ? dayStart(toDate, 1) : null;
+  const a = fromDate ? phDayStart(fromDate) : null;
+  const b = toDate ? phDayStart(toDate, 1) : null;
   if ((fromDate && !a) || (toDate && !b)) return null;
   if (a && b && a >= b) return null;
   return { from: a ? a.toISOString() : null, to: b ? b.toISOString() : null };
 }
-const dayLabel = (ymd) => { const d = dayStart(ymd); return d ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''; };
+const dayLabel = (ymd) => { const d = phDayStart(ymd); return d ? phDate(d) : ''; };
 export function rangeLabel(fromDate, toDate) {
   const a = dayLabel(fromDate);
   const b = dayLabel(toDate);

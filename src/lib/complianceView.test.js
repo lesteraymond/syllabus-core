@@ -186,12 +186,11 @@ test('only a syllabus with a form can be checked now; an uploaded file waits for
   assert.strictEqual(canCheckNow(null), false);
 });
 
-test('a date range becomes local-day instants: the start of the first day up to the start of the day after the last', () => {
+test('a date range becomes Philippine-day instants: the start of the first day up to the start of the day after the last', () => {
   const r = rangeToInstants('2026-03-02', '2026-03-02');
-  assert.strictEqual(new Date(r.from).getHours(), 0);
-  assert.strictEqual(new Date(r.to) - new Date(r.from), 24 * 3600 * 1000); // one day (these dates have no clock change)
-  assert.strictEqual(new Date(r.from).getDate(), 2);
-  assert.strictEqual(new Date(r.to).getDate(), 3);
+  assert.strictEqual(r.from, '2026-03-01T16:00:00.000Z'); // midnight in Manila, whatever the computer's own time zone
+  assert.strictEqual(r.to, '2026-03-02T16:00:00.000Z');
+  assert.strictEqual(new Date(r.to) - new Date(r.from), 24 * 3600 * 1000);
   assert.deepStrictEqual(rangeToInstants('', ''), { from: null, to: null });
   assert.strictEqual(rangeToInstants('2026-03-02', '').to, null);
   assert.strictEqual(rangeToInstants('', '2026-03-02').from, null);
