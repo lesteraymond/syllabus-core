@@ -4,16 +4,20 @@ import { compliance as api } from '../lib/api';
 import { groupByFacultyProgram, listBasis } from '../lib/complianceView';
 import SyllabusPicker from '../components/SyllabusPicker';
 import ComplianceModal from '../components/ComplianceModal';
+import CheckHistory from '../components/CheckHistory';
 
 // The AI Checker page is the administrator's view of the compliance checks of submitted syllabi. The page is one picker
 // (Faculty, then Program, then Subject); Check compliance runs the check if the syllabus has none, then opens the stored result in a
-// dialog, where it can be re-checked.
+// dialog, where it can be re-checked. Below it, the history lists every stored check; a card opens that exact check (an approved
+// syllabus is final: it can be viewed there, never checked again).
 // The rules run on the latest submitted version and the result is stored with it (what Review & Approval shows).
 // Faculty have no tab here: they check their own syllabus in step 7 of the builder (Review & Check).
 export default function AIChecker({ user, notify }) {
   const [list, setList] = useState(null);     // { installed, syllabi: [row], summary }
   const [openId, setOpenId] = useState(null); // the syllabus shown in the dialog
-  const [detail, setDetail] = useState(null); // { installed, syllabus, run } for that syllabus
+  const [detail, setDetail] = useState(null); // { installed, syllabus, run, isLatest? } for that syllabus (isLatest is false for an earlier run)
+  const [history, setHistory] = useState({ runs: [], loading: true, error: '' });
+  const [opening, setOpening] = useState(null); // the history runId being opened
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState({});       // syllabus id -> true while its check runs
@@ -21,16 +25,21 @@ export default function AIChecker({ user, notify }) {
   const loadList = useCallback(async () => { try { setList(await api.list('all')); setError(''); } catch (e) { setError(e.message); } }, []);
   const loadDetail = useCallback(async (id) => { try { setDetail(await api.list(id)); setError(''); return true; } catch (e) { setError(e.message); return false; } }, []);
 
+  const loadHistory = useCallback(async () => {
+    try { const h = await api.history(); setHistory({ runs: h.runs || [], loading: false, error: '' }); } catch (e) { setHistory((x) => ({ ...x, loading: false, error: e.message })); }
+  }, []);
+
   useEffect(() => {
     let live = true;
     setLoading(true);
     const done = () => { if (live) setLoading(false); };
+    loadHistory();
     loadList().then(done, done);
     return () => { live = false; };
-  }, [loadList]);
+  }, [loadList, loadHistory]);
 
   // While recommendations are still being written, look again every few seconds (for a bounded time).
-  const pending = openId !== null && detail && detail.run && detail.run.aiStatus === 'pending';
+  const pending = openId !== null && detail && detail.isLatest !== false && detail.run && detail.run.aiStatus === 'pending'; // an earlier run no longer changes
   useEffect(() => {
     if (!pending) return undefined;
     let tries = 0;
@@ -44,7 +53,7 @@ export default function AIChecker({ user, notify }) {
   if (!user || user.role !== 'admin') return <div className="empty">The compliance check is in step 7 of the Syllabus Builder.</div>;
 
   const say = (m) => { if (notify) notify(m); };
-  const reload = async () => { await loadList(); if (openId !== null) await loadDetail(openId); };
+  const reload = async () => { await loadList(); loadHistory(); if (openId !== null) await loadDetail(openId); };
 
   // Check (no stored check yet) or Re-check (make a new one). The server runs the rules on the latest submitted version.
   const runCheck = async (id, force) => {
@@ -71,7 +80,17 @@ export default function AIChecker({ user, notify }) {
     if (!ok) return;
     setOpenId(id);
     await loadList();
+    loadHistory();
     if (!row.run) say('Checked ' + row.courseCode + '.');
+  };
+  // A history card: read that exact run (an earlier one, or an approved syllabus's), then show it in the same dialog.
+  const openRun = async (item) => {
+    setOpening(item.runId);
+    setError('');
+    try {
+      setDetail(await api.run(item.runId));
+      setOpenId(item.syllabusId);
+    } catch (e) { setError(e.message); } finally { setOpening(null); }
   };
   const recheckOpen = async () => {
     if (await runCheck(openId, true)) {
@@ -99,7 +118,9 @@ export default function AIChecker({ user, notify }) {
 
       {installed && <SyllabusPicker groups={groups} loading={loading} busy={working} onCheck={checkAndOpen} />}
 
-      {open && <ComplianceModal syllabus={open} run={detail.run} checking={!!busy[openId]} error={error} onRecheck={recheckOpen} onClose={closeModal} />}
+      {installed && <CheckHistory runs={history.runs} loading={history.loading} error={history.error} opening={opening} onOpen={openRun} />}
+
+      {open && <ComplianceModal syllabus={open} run={detail.run} checking={!!busy[openId]} isLatest={detail.isLatest !== false} error={error} onRecheck={recheckOpen} onClose={closeModal} />}
       <div className="ai-note">The check supports — but does not replace — faculty, curriculum committee, and academic quality review.</div>
     </>
   );
