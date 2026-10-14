@@ -198,7 +198,7 @@ router.put('/:id', requireAuth, onePdf, async (req, res) => {
 
       // ---- content edit: the owner only ----
       if (rules.isAdmin(me) && !rules.isOwner(me, syl)) throw httpError(403, 'Administrators cannot edit syllabus content');
-      if (!rules.canEdit(me, syl)) throw httpError(409, `This syllabus is ${syl.status.replace('_', ' ')} and can no longer be edited`);
+      if (!rules.canEdit(me, syl)) throw httpError(409, rules.lockedMessage(syl));
 
       const next = {
         title: title !== undefined ? title : syl.title,

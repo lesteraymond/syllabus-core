@@ -355,6 +355,7 @@ test('a faculty member cannot read, list or re-check another one\'s runs; an adm
   assert.strictEqual(noVersion.status, 409);
   assert.strictEqual(noVersion.body.code, 'no_form');
   assert.strictEqual((await call(fay, 'GET', '/syllabi/999/compliance')).status, 404);
+  db.s.syllabi[1].status = 'for_revision'; // a submitted syllabus is locked: it is the one returned for revision that is submitted again
   assert.strictEqual((await call(fay, 'POST', '/syllabi/1/submit', {})).status, 200);
   assert.strictEqual((await call(admin, 'GET', '/syllabi/1/compliance')).body.run, null); // the submit stored the author's run: not an administrator's check
   assert.ok((await call(admin, 'POST', '/syllabi/1/compliance/recheck', {})).body.run); // the administrator checks it themselves
@@ -432,7 +433,7 @@ test('the stored run reads back whole: areas, findings with their rule and step,
 
 test('GET /compliance: an admin sees every submitted syllabus with the administrator\'s own check only, faculty only their own; averages skip unscored ones', () => withServer(async ({ call, db }) => {
   setContent(db, 1, conformingContent());
-  addSyllabus(db, 2, { user_id: 6, status: 'under_review', course_code: 'IT 205', content: JSON.stringify(conformingContent()) });
+  addSyllabus(db, 2, { user_id: 6, status: 'for_revision', course_code: 'IT 205', content: JSON.stringify(conformingContent()) });
   addSyllabus(db, 3, { user_id: 6, status: 'draft', course_code: 'IT 206', content: JSON.stringify(conformingContent()) });
   addSyllabus(db, 4, { user_id: 5, status: 'submitted', course_code: 'IT 207', content: JSON.stringify(F.empty()) });
   assert.strictEqual((await call(fay, 'POST', '/syllabi/1/submit', {})).status, 200);

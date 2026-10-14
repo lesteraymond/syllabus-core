@@ -125,7 +125,7 @@ router.put('/:id/content', requireAuth, async (req, res) => {
       const syl = rows[0];
       if (!syl || !rules.canView(me, syl)) throw httpError(404, 'Syllabus not found'); // never reveal it to non-participants
       if (!rules.isOwner(me, syl)) throw httpError(403, 'Only the owner can edit syllabus content');
-      if (!rules.canEdit(me, syl)) throw httpError(409, `This syllabus is ${syl.status.replace('_', ' ')} and can no longer be edited`);
+      if (!rules.canEdit(me, syl)) throw httpError(409, rules.lockedMessage(syl));
 
       await assignments.requireCourseAccess(conn, me, syl.course_id); // the syllabus's current course must be assigned
 
@@ -212,7 +212,7 @@ router.post('/:id/submit', requireAuth, async (req, res) => {
       const syl = rows[0];
       if (!syl || !rules.canView(me, syl)) throw httpError(404, 'Syllabus not found');
       if (!rules.isOwner(me, syl)) throw httpError(403, 'Only the owner can submit a syllabus');
-      if (!rules.canEdit(me, syl)) throw httpError(409, `This syllabus is ${syl.status.replace('_', ' ')} and can no longer be edited`);
+      if (!rules.canEdit(me, syl)) throw httpError(409, rules.lockedMessage(syl));
       await assignments.requireCourseAccess(conn, me, syl.course_id);
 
       let content = null;

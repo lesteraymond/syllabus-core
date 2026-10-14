@@ -1,5 +1,6 @@
 // Keep EDITABLE_STATUSES in sync with server/lib/syllabusRules.js: the Edit button and the server must agree.
-export const EDITABLE_STATUSES = ['draft', 'submitted', 'under_review', 'for_revision'];
+// A draft, or a syllabus the administrator returned for revision. Once submitted it is locked until the administrator returns it.
+export const EDITABLE_STATUSES = ['draft', 'for_revision'];
 
 export const STATUS_LABELS = { draft: 'Draft', submitted: 'Submitted', under_review: 'Under Review', for_revision: 'For Revision', approved: 'Approved', rejected: 'Rejected' };
 
@@ -8,7 +9,9 @@ export const canEditSyllabus = (user, syllabus) => user.id === syllabus.userId &
 
 export const editBlockedReason = (syllabus) => (EDITABLE_STATUSES.includes(syllabus.status)
   ? ''
-  : `${STATUS_LABELS[syllabus.status] || syllabus.status} syllabi can't be edited`);
+  : syllabus.status === 'submitted' || syllabus.status === 'under_review'
+    ? 'Submitted syllabi are locked. You can edit it again only if the administrator returns it for revision.'
+    : `${STATUS_LABELS[syllabus.status] || syllabus.status} syllabi can't be edited`);
 
 // "Subject" is the catalog item (IT 204, Programming 2); in this school a "course" is the program.
 export const NOT_ASSIGNED = 'This subject is no longer assigned to you.';

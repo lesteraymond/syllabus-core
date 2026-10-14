@@ -144,7 +144,7 @@ test('saving content for an unassigned course is refused (403), an assigned one 
   assert.strictEqual((await call(fay, 'PUT', '/syllabi/1/content', meta(10))).status, 200);
 }));
 
-test('a syllabus whose course is no longer assigned cannot be saved or submitted, and reads as not editable', () => withServer({ assigned: ASSIGNED, syllabi: { 2: row({ syllabus_id: 2, status: 'submitted', course_id: 11, content: JSON.stringify({ meta: { courseId: 11 } }) }) } }, async ({ call }) => {
+test('a syllabus whose course is no longer assigned cannot be saved or submitted, and reads as not editable', () => withServer({ assigned: ASSIGNED, syllabi: { 2: row({ syllabus_id: 2, status: 'for_revision', course_id: 11, content: JSON.stringify({ meta: { courseId: 11 } }) }) } }, async ({ call }) => {
   assert.strictEqual((await call(fay, 'PUT', '/syllabi/2/content', { sections: { description: [] } })).status, 403);
   assert.strictEqual((await call(fay, 'POST', '/syllabi/2/submit', {})).status, 403);
   const get = await call(fay, 'GET', '/syllabi/2/content');
@@ -153,7 +153,23 @@ test('a syllabus whose course is no longer assigned cannot be saved or submitted
   assert.match(get.body.lockedReason, /subject is not assigned to you/);
 }));
 
-test('the same syllabus is editable again once the admin assigns the course', () => withServer({ assigned: { 5: { programs: [1], courses: [10, 11] } }, syllabi: { 2: row({ syllabus_id: 2, status: 'submitted', course_id: 11 }) } }, async ({ call }) => {
+test('a submitted syllabus is locked: the owner cannot edit it until the administrator returns it for revision', () => withServer({ assigned: ASSIGNED, syllabi: { 6: row({ syllabus_id: 6, status: 'submitted', course_id: 10 }), 7: row({ syllabus_id: 7, status: 'under_review', course_id: 10 }), 8: row({ syllabus_id: 8, status: 'for_revision', course_id: 10 }), 9: row({ syllabus_id: 9, status: 'draft', course_id: 10 }) } }, async ({ call }) => {
+  for (const id of [6, 7]) {
+    const put = await call(fay, 'PUT', '/syllabi/' + id + '/content', { sections: { description: [] } });
+    assert.strictEqual(put.status, 409, 'content ' + id);
+    assert.match(put.body.error, /submitted and is locked.*returns it for revision/);
+    assert.strictEqual((await call(fay, 'PUT', '/syllabi/' + id, { title: 'New title' })).status, 409, 'legacy edit ' + id);
+    assert.strictEqual((await call(fay, 'POST', '/syllabi/' + id + '/submit', {})).status, 409, 'submit again ' + id);
+    const get = await call(fay, 'GET', '/syllabi/' + id + '/content');
+    assert.strictEqual(get.body.editable, false, 'editable ' + id);
+  }
+  for (const id of [8, 9]) { // a draft, or one returned for revision, can be edited
+    assert.strictEqual((await call(fay, 'GET', '/syllabi/' + id + '/content')).body.editable, true, 'editable ' + id);
+    assert.strictEqual((await call(fay, 'PUT', '/syllabi/' + id + '/content', { sections: { description: [] } })).status, 200, 'content ' + id);
+  }
+}));
+
+test('the same syllabus is editable again once the admin assigns the course', () => withServer({ assigned: { 5: { programs: [1], courses: [10, 11] } }, syllabi: { 2: row({ syllabus_id: 2, status: 'for_revision', course_id: 11 }) } }, async ({ call }) => {
   const get = await call(fay, 'GET', '/syllabi/2/content');
   assert.strictEqual(get.body.editable, true);
   assert.strictEqual(get.body.lockedReason, null);
@@ -179,7 +195,7 @@ test('legacy create: the course code must match an assigned course', () => withS
   assert.match(none.body.error, /No program or subject is assigned/);
 }));
 
-test('legacy edit by the owner needs an assigned course; an admin changing status is unaffected', () => withServer({ assigned: ASSIGNED, syllabi: { 4: row({ syllabus_id: 4, status: 'submitted', course_code: 'IT 204' }), 5: row({ syllabus_id: 5, status: 'submitted', course_code: 'IT 101' }) } }, async ({ call }) => {
+test('legacy edit by the owner needs an assigned course; an admin changing status is unaffected', () => withServer({ assigned: ASSIGNED, syllabi: { 4: row({ syllabus_id: 4, status: 'for_revision', course_code: 'IT 204' }), 5: row({ syllabus_id: 5, status: 'for_revision', course_code: 'IT 101' }) } }, async ({ call }) => {
   assert.strictEqual((await call(fay, 'PUT', '/syllabi/4', { title: 'New title' })).status, 403);
   assert.strictEqual((await call(fay, 'PUT', '/syllabi/5', { title: 'New title' })).status, 200);
   assert.strictEqual((await call(admin, 'PUT', '/syllabi/4', { status: 'approved' })).status, 200);
