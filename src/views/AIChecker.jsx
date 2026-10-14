@@ -1,21 +1,23 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PageHead } from '../components/ui';
 import { compliance as api } from '../lib/api';
-import { actionLabel, bulkTargets, filterRows, groupByFacultyProgram, listBasis, tone, ringAngle, when } from '../lib/complianceView';
-import ComplianceCard from './ComplianceCard';
+import { bulkTargets, filterRows, groupByFacultyProgram, listBasis, tone, ringAngle } from '../lib/complianceView';
+import SyllabusPicker from '../components/SyllabusPicker';
+import ComplianceModal from '../components/ComplianceModal';
 import CheckTree from './CheckTree';
 
 const STATUS_LABELS = { draft: 'Draft', submitted: 'Submitted', under_review: 'Under Review', for_revision: 'For Revision', approved: 'Approved', rejected: 'Rejected' };
 const NEEDS = [['all', 'All'], ['unchecked', 'Needs a check'], ['below', 'Below the pass line'], ['stale', 'Changed since checked']];
 
-// The AI Checker page is the administrator's view of the compliance checks of submitted syllabi. They are listed by faculty member,
-// then program, then subject, so one syllabus is easy to find. An admin can Check a syllabus that has no check yet, or Re-check one
-// that has: the rules run on the latest submitted version and the result is stored with it (what Review & Approval shows).
+// The AI Checker page is the administrator's view of the compliance checks of submitted syllabi. The page itself is one picker
+// (Faculty, then Program, then Subject); Check compliance runs the check if the syllabus has none, then opens the stored result in a
+// dialog, where it can be re-checked. The whole list, with the average and "Check unchecked", sits in a collapsed overview below.
+// The rules run on the latest submitted version and the result is stored with it (what Review & Approval shows).
 // Faculty have no tab here: they check their own syllabus in step 7 of the builder (Review & Check).
 export default function AIChecker({ user, notify }) {
-  const [selectedId, setSelectedId] = useState('all');
   const [list, setList] = useState(null);     // { installed, syllabi: [row], summary }
-  const [detail, setDetail] = useState(null); // { installed, syllabus, run } for one syllabus
+  const [openId, setOpenId] = useState(null); // the syllabus shown in the dialog
+  const [detail, setDetail] = useState(null); // { installed, syllabus, run } for that syllabus
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [filters, setFilters] = useState({ q: '', status: 'all', needs: 'all' });
@@ -23,24 +25,24 @@ export default function AIChecker({ user, notify }) {
   const [bulk, setBulk] = useState(null);     // { done, total } while "Check unchecked" runs
 
   const loadList = useCallback(async () => { try { setList(await api.list('all')); setError(''); } catch (e) { setError(e.message); } }, []);
-  const loadDetail = useCallback(async (id) => { try { setDetail(await api.list(id)); setError(''); } catch (e) { setError(e.message); } }, []);
+  const loadDetail = useCallback(async (id) => { try { setDetail(await api.list(id)); setError(''); return true; } catch (e) { setError(e.message); return false; } }, []);
 
   useEffect(() => {
     let live = true;
     setLoading(true);
     const done = () => { if (live) setLoading(false); };
-    (selectedId === 'all' ? loadList() : loadDetail(selectedId)).then(done, done);
+    loadList().then(done, done);
     return () => { live = false; };
-  }, [selectedId, loadList, loadDetail]);
+  }, [loadList]);
 
   // While recommendations are still being written, look again every few seconds (for a bounded time).
-  const pending = selectedId !== 'all' && detail && detail.run && detail.run.aiStatus === 'pending';
+  const pending = openId !== null && detail && detail.run && detail.run.aiStatus === 'pending';
   useEffect(() => {
     if (!pending) return undefined;
     let tries = 0;
-    const t = setInterval(() => { tries += 1; loadDetail(selectedId); if (tries >= 15) clearInterval(t); }, 2500);
+    const t = setInterval(() => { tries += 1; loadDetail(openId); if (tries >= 15) clearInterval(t); }, 2500);
     return () => clearInterval(t);
-  }, [pending, selectedId, loadDetail]);
+  }, [pending, openId, loadDetail]);
 
   const rows = list ? list.syllabi : [];
   const shown = useMemo(() => filterRows(rows, filters), [rows, filters]);
@@ -51,7 +53,7 @@ export default function AIChecker({ user, notify }) {
   if (!user || user.role !== 'admin') return <div className="empty">The compliance check is in step 7 of the Syllabus Builder.</div>;
 
   const say = (m) => { if (notify) notify(m); };
-  const reload = async () => { await loadList(); if (selectedId !== 'all') await loadDetail(selectedId); };
+  const reload = async () => { await loadList(); if (openId !== null) await loadDetail(openId); };
 
   // Check (no stored check yet) or Re-check (make a new one). The server runs the rules on the latest submitted version.
   const runCheck = async (id, force) => {
@@ -67,6 +69,32 @@ export default function AIChecker({ user, notify }) {
       setBusy((b) => { const n = { ...b }; delete n[id]; return n; });
     }
   };
+
+  // The picker's button: check it if it has no check, load the stored one if it has, then show it.
+  const checkAndOpen = async (row) => {
+    const id = row.syllabusId;
+    if (!row.run && !(await runCheck(id, false))) return;
+    setBusy((b) => ({ ...b, [id]: true }));
+    const ok = await loadDetail(id);
+    setBusy((b) => { const n = { ...b }; delete n[id]; return n; });
+    if (!ok) return;
+    setOpenId(id);
+    await loadList();
+    if (!row.run) say('Checked ' + row.courseCode + '.');
+  };
+  // From the overview: open a stored check; an uploaded file has none to show.
+  const openRow = (row) => {
+    if (!row.checkable) { say(row.courseCode + ' was submitted as an uploaded file, so there is no builder form to check.'); return; }
+    checkAndOpen(row);
+  };
+  const recheckOpen = async () => {
+    if (await runCheck(openId, true)) {
+      await reload();
+      const r = rows.find((x) => x.syllabusId === openId);
+      say('Checked ' + (r ? r.courseCode : 'the syllabus') + '.');
+    }
+  };
+  const closeModal = () => { setOpenId(null); setDetail(null); setError(''); };
   const checkOne = async (row) => { if (await runCheck(row.syllabusId, !!row.run)) { await reload(); say('Checked ' + row.courseCode + '.'); } };
   const checkAll = async () => {
     setBulk({ done: 0, total: targets.length });
@@ -81,46 +109,30 @@ export default function AIChecker({ user, notify }) {
     if (done) say('Checked ' + done + ' syllabus' + (done === 1 ? '' : 'es') + '.');
   };
 
-  const data = selectedId === 'all' ? list : detail;
-  const installed = !data || data.installed !== false;
+  const installed = !list || list.installed !== false;
   const summary = list && list.summary;
-  const one = selectedId !== 'all' && detail && detail.syllabus ? { ...detail.syllabus, run: detail.run } : null;
-  const run = detail && detail.run;
   const how = listBasis(rows.map((r) => r.run));
-  const working = bulk !== null || (one && busy[one.syllabusId]);
-
-  // The one button in the page header: Check / Re-check for the open syllabus, "Check unchecked" for the whole list.
-  const headerAction = !installed || loading ? null : one
-    ? (actionLabel(one)
-      ? <button type="button" className="btn primary" disabled={working} onClick={() => checkOne(one)}>{busy[one.syllabusId] ? 'Checking…' : actionLabel(one)}</button>
-      : <button type="button" className="btn primary" disabled title="This syllabus was submitted as an uploaded file, so there is no builder form to check.">Check</button>)
-    : <button type="button" className="btn primary" disabled={working || targets.length === 0} title={targets.length ? 'Run the check on every syllabus that has none yet' : 'Every syllabus with a form has been checked'} onClick={checkAll}>{bulk ? 'Checking ' + (bulk.done + 1) + ' of ' + bulk.total + '…' : 'Check unchecked' + (targets.length ? ' (' + targets.length + ')' : '')}</button>;
+  const working = bulk !== null || Object.keys(busy).length > 0;
+  const open = openId !== null && detail && detail.syllabus && detail.syllabus.syllabusId === openId
+    ? { ...(rows.find((r) => r.syllabusId === openId) || {}), ...detail.syllabus }
+    : null;
 
   return (
     <>
-      <PageHead title="AI Syllabus Checker" subtitle={'Check and re-check submitted syllabi against the template. The result is stored with the version a reviewer sees. Current method: ' + how + '.'} actions={headerAction} />
-      <div className="check-strip">
-        <span><small>Select Syllabus</small><b><select value={selectedId} onChange={(e) => setSelectedId(e.target.value)} style={{ border: 'none', background: 'transparent', fontWeight: 800, fontSize: 13, cursor: 'pointer', padding: 0, margin: 0, font: 'inherit', color: 'inherit', width: '100%' }}>
-          <option value="all">{'All submitted syllabi' + (list ? ' (' + rows.length + ')' : '')}</option>
-          {everyone.map((f) => (
-            <optgroup key={f.key} label={f.facultyName}>
-              {f.programs.flatMap((p) => p.rows.map((r) => <option key={r.syllabusId} value={r.syllabusId}>{(p.code || 'No program') + ' · ' + r.courseCode + ' — ' + r.title}</option>))}
-            </optgroup>
-          ))}
-        </select></b></span>
-        {one && <span><small>Faculty</small><b>{one.facultyName || '—'}</b></span>}
-        {one && <span><small>Program · Subject</small><b>{(one.programCode || 'No program') + ' · ' + one.courseCode}</b></span>}
-        {one && <span><small>Status</small><b className={'status ' + one.status}>{STATUS_LABELS[one.status] || one.status}</b></span>}
-        {run && <span><small>Checked</small><b>{when(run.createdAt) || '—'}</b></span>}
-        {!one && <span><small>Standard</small><b>Undergraduate Syllabus v4</b></span>}
-      </div>
+      <PageHead title="AI Syllabus Checker" subtitle={'Check and re-check submitted syllabi against the template. The result is stored with the version a reviewer sees. Current method: ' + how + '.'} />
 
-      {error && <div className="info-banner warning" role="alert">{error}</div>}
+      {!open && error && <div className="info-banner warning" role="alert">{error}</div>}
       {!error && !loading && !installed && <div className="info-banner warning">Compliance checks are not set up on this server yet. Ask an administrator to run the database update; until then nothing is stored.</div>}
-      {loading && <div className="empty">Loading stored checks…</div>}
 
-      {!loading && installed && selectedId === 'all' && (
-        <>
+      {installed && <SyllabusPicker groups={everyone} loading={loading} busy={working} onCheck={checkAndOpen} />}
+
+      {!loading && installed && (
+        <details className="pick-overview">
+          <summary>{'Overview of all syllabi' + (rows.length ? ' (' + rows.length + ')' : '')}</summary>
+          <div className="pick-overview-bar">
+            <span className="cmp-small">{summary && summary.scored ? summary.passed + ' of ' + summary.scored + ' scored syllabi meet the standard.' : 'No syllabus has been checked yet.'}</span>
+            <button type="button" className="btn outline" disabled={working || targets.length === 0} title={targets.length ? 'Run the check on every syllabus that has none yet' : 'Every syllabus with a form has been checked'} onClick={checkAll}>{bulk ? 'Checking ' + (bulk.done + 1) + ' of ' + bulk.total + '…' : 'Check unchecked' + (targets.length ? ' (' + targets.length + ')' : '')}</button>
+          </div>
           <div className="ai-layout cmp-all">
             <div className="score-card">
               <span>Average compliance</span>
@@ -156,19 +168,11 @@ export default function AIChecker({ user, notify }) {
             </div>
           </div>
 
-          <CheckTree groups={groups} total={rows.length} onOpen={(r) => setSelectedId(String(r.syllabusId))} onCheck={checkOne} busy={busy} working={working} />
-        </>
+          <CheckTree groups={groups} total={rows.length} onOpen={openRow} onCheck={checkOne} busy={busy} working={working} />
+        </details>
       )}
 
-      {!loading && installed && selectedId !== 'all' && detail && (
-        <div className="cmp-one">
-          <div className="cmp-one-head">
-            <p className="cmp-small">{run ? 'The check stored with the submitted version' + (run.checkedBy === 'admin' ? ', run by an administrator.' : '.') : one && !one.checkable ? 'This syllabus was submitted as an uploaded file, so there is no builder form to check.' : 'No check is stored with this syllabus yet. Use Check at the top right.'}</p>
-            <button type="button" className="btn outline" onClick={() => setSelectedId('all')}>← All syllabi</button>
-          </div>
-          <ComplianceCard run={run} />
-        </div>
-      )}
+      {open && <ComplianceModal syllabus={open} run={detail.run} checking={!!busy[openId]} error={error} onRecheck={recheckOpen} onClose={closeModal} />}
       <div className="ai-note">The check supports — but does not replace — faculty, curriculum committee, and academic quality review.</div>
     </>
   );
