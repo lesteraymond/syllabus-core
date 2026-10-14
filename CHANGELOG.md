@@ -726,3 +726,122 @@ Each program has its own expected graduate attributes (EGAs) and program outcome
 - To try the COR reader on its own, run `node scripts/ocr-cor-test.js [image]` in `server/`; it prints what is read from the images in `server/sample_cor/` (git-ignored; it holds real student data)
 - OCR cannot read the subject table on small or tilted photos, so subjects are best-effort and never decide a registration. A COR that cannot be confirmed goes to an administrator
 - `server/uploads/` is still served publicly; uploaded PDFs have unguessable names, but are not yet behind a permission check
+
+---
+
+### v1.30.0 — Typography Tokens and a Redesigned AI Checker
+**By:** JP Del Rosario
+**Date:** October 14, 2026
+
+**Typography (CSS only):**
+- Added font-weight (`--fw-*`) and letter-spacing (`--tracking-label`) tokens; shared primitives, page blocks and chips use them (no value change), and a clear type hierarchy applies to cards, tables and headings
+- Removed the duplicate `@font-face` blocks and the unused Inter and Manrope fonts
+
+**AI Checker (admin):**
+- The page is now a **picker plus a result dialog**: **SyllabusPicker** (Faculty, then Program, then Subject) and **ComplianceModal** (one stored check, with its date and time). The overview, bulk check and tree were removed
+- A syllabus is **checked once**. After the administrator's check it leaves the queue and goes to the **history**, one card per syllabus showing its latest check; clicking a card opens the exact stored scoring. Approved syllabi are locked and cannot be checked again
+- **Date filter** on the history (from inclusive, to exclusive; an open end is allowed). It is remembered until the administrator changes it or goes back to all dates
+- The queue offers only syllabi that still need a check (`needsCheck`, `canCheckNow`); the picker card fills the page width
+- Server: `GET` history with a date range and a single-run read; approved syllabi cannot be re-checked
+- The page scrollbar's space is reserved (`scrollbar-gutter: stable`) so the layout no longer jumps when a page gets long
+
+**Notes:**
+- No migration needed for this version
+
+---
+
+### v1.31.0 — Generated Passwords, Email and Forgot Password
+**By:** JP Del Rosario
+**Date:** October 14, 2026
+
+**Registering users:**
+- Adding a user no longer asks for a password: the system **generates one and emails it** (with the username) to the registered address. **Resend credentials** is on each user in Users & Roles
+- Resend sends the email **first** and saves the new password only if it was sent, so a failed email never locks anyone out
+- Only institutional addresses (**@email.lcup.edu.ph**) can be registered; the domain is checked on the server
+- When an email cannot be sent, the administrator is told why (sign-in refused, server unreachable, other)
+
+**Signing in:**
+- A generated password is **temporary**: the first sign-in forces a **change-password** screen, and nothing else in the app opens until it is changed (the API answers `403 password_change_required`)
+- **Forgot password** on the login page emails a 30-minute temporary password. It is kept separate (`password_temp`), so asking for one never locks out the real password
+- Passwords are generated and validated by one module with tests
+
+**Mail:**
+- Sent with `nodemailer` over SMTP (Gmail app password works). It never throws into a request, and the server warns at startup when no mail settings exist
+
+**Notes:**
+- In `server/`: `npm run migrate-passwords` (adds `must_change_password` and `password_temp`)
+- Fill `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS` and `MAIL_FROM` in `server/.env` (see `.env.example`); with `SMTP_HOST` empty nothing is sent
+- The demo accounts (`admin123` / `faculty123`) should be removed or given new passwords before real use
+
+---
+
+### v1.32.0 — Staged Review: AI Check First, Then the Administrator Decides
+**By:** JP Del Rosario
+**Date:** October 14, 2026
+
+**The flow:**
+- A faculty member **submits**, and the syllabus is **locked** (no editing) until the administrator returns it for revision. The builder and the My Syllabi card explain why (dimmed Edit and the reason)
+- The administrator **checks it in the AI Checker first**; only a syllabus the administrator has checked appears in **Review & Approval**, where the decision (approve, revision, reject) is made. The AI never approves anything
+- Review & Approval no longer has a compliance tab. A new version goes back to the checker queue
+- Only an **administrator's own check** counts as the administrator's check
+
+**Uploaded files:**
+- An uploaded PDF is **checked by the rules** like any syllabus (template matching is skipped until the corrected template and the AI key exist) and is labelled as an upload in Review & Approval
+- The review window's side panel keeps one size on every tab
+
+**Notes:**
+- AI template matching for uploaded files is deferred to the final stage
+
+---
+
+### v1.33.0 — Version Rules and Version History
+**By:** JP Del Rosario
+**Date:** October 14, 2026
+
+- **A version is saved only when the faculty member changed something**, and a **note is required** (at least 10 characters). Saving with no change says so and creates nothing
+- A syllabus returned for revision must change; the check of a new version is per version, so an unchanged or reverted syllabus never reuses an older version's check
+- The version history says **what changed** (by section, with word counts) and **what was decided** on each version, names the check of each version, and each version can be **opened and read**
+- Server: `versionChange` module (`changedSections`, `describeChanges`, `wordDelta`) with tests
+
+---
+
+### v1.34.0 — Philippine Time, Renames and Cleanups
+**By:** JP Del Rosario
+**Date:** October 14, 2026
+
+- **Every date and time is shown in Philippine time (Asia/Manila)**, in one module (`phTime.js`); times stored without a zone are read as Philippine time
+- **Subjects & CLOs** is now **Program & Subjects**
+- The **Version** column is removed from the repository table (the version history is beside it)
+- The step 7 **Re-check** button in the builder stays on one line
+- The unread number on the topbar icons is centered, larger and readable (the Messages icon's label says how many are unread; counts above 99 show `99+`)
+
+---
+
+### v1.35.0 — Chat Shows Who You Are Talking To
+**By:** JP Del Rosario
+**Date:** October 14, 2026
+
+- A conversation shows **who it is with from the first message**: real name, picture and role; a faculty member also shows program and subject, an administrator shows only the role. Role chip and subject line in the chat header and the message list
+- Server: `GET /api/messages/partners` names who each conversation is with
+- A faculty member can see the **picture of the administrator** they would message before any message is sent (narrow permission: only for a faculty member who owns a submitted syllabus)
+- A **draft has no conversation**: no Message button on drafts, and the chat window explains why if it is opened on one
+- Fix: an administrator in a chat no longer shows the faculty member's program and subject
+
+---
+
+### v1.36.0 — Dashboard: Recent Activity Is Your Own
+**By:** JP Del Rosario
+**Date:** October 14, 2026
+
+**Recent Activity:**
+- A timeline of sentences replaces the dots and pills: an icon tile (colored for decisions, grey for routine events), "**You approved FM 202**" with the course title beneath, the time on the right, grouped under **Today / Yesterday / a date**, in Philippine time (`activityView.js`, tested)
+- **Each account sees only its own activity.** `GET /api/logs` returns only the signed-in user's rows (up to 30), so no browser receives what someone else did. The dashboard reads it again each time it is opened
+- Empty states say what will appear. **Clear Logs** hides what was done up to now for that account, remembered per account, and deletes nothing
+- Fix: a first submission from the builder was logged as an upload; it is now logged as a submission (older rows are read correctly too)
+
+**Layout:**
+- The dashboard rows have a **fixed height** (320px and 250px) and the body of each card scrolls, so a long activity list never resizes its box or the others. The shared `Card` now wraps its content in a `card-body`
+- An earlier attempt (boxes at their own height) was reverted in favor of this
+
+**Notes:**
+- Restart the server after pulling. `npm test` now runs 352 tests
