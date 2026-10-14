@@ -187,11 +187,12 @@ async function latestRun(db, syllabusId, { adminOnly = false } = {}) {
   return rows[0] || null;
 }
 // A stored run for this exact content. `adminOnly` keeps to the administrator's checks, so an administrator's Check is never answered by
-// the run the faculty member's submit stored.
-async function cachedRun(db, syllabusId, hash, { adminOnly = false } = {}) {
+// the run the faculty member's submit stored. `versionId` keeps to the same version: every version needs its own check, so content that
+// returns to what an earlier version said (a revert) is checked again, not answered by that older version's run.
+async function cachedRun(db, syllabusId, hash, { adminOnly = false, versionId = null } = {}) {
   const [rows] = await db.query(
-    'SELECT * FROM ai_check_runs WHERE syllabus_id = ? AND content_hash = ? AND standard_version = ?' + (adminOnly ? ' AND ' + ADMIN_RUN_SQL : '') + ' ORDER BY run_id DESC LIMIT 1',
-    [syllabusId, hash, standard.version]
+    'SELECT * FROM ai_check_runs WHERE syllabus_id = ? AND content_hash = ? AND standard_version = ?' + (adminOnly ? ' AND ' + ADMIN_RUN_SQL : '') + (versionId !== null ? ' AND version_id = ?' : '') + ' ORDER BY run_id DESC LIMIT 1',
+    versionId !== null ? [syllabusId, hash, standard.version, versionId] : [syllabusId, hash, standard.version]
   );
   return rows[0] || null;
 }

@@ -219,6 +219,16 @@ router.put('/:id', requireAuth, onePdf, async (req, res) => {
       if (rules.isAdmin(me) && !rules.isOwner(me, syl)) throw httpError(403, 'Administrators cannot edit syllabus content');
       if (!rules.canEdit(me, syl)) throw httpError(409, rules.lockedMessage(syl));
 
+      // The same rule as the builder's submit: back from "For revision" only with a change (a new file, or a different title, code or
+      // curriculum), and a sentence saying what it is.
+      if (syl.status === 'for_revision') {
+        const changed = !!req.file
+          || (title !== undefined && title !== syl.title)
+          || (courseCode !== undefined && courseCode !== syl.course_code)
+          || (curriculumId !== undefined && curriculumId !== '' && String(curriculumId) !== String(syl.curriculum_id == null ? '' : syl.curriculum_id));
+        if (!changed) throw httpError(409, rules.UNCHANGED);
+        if (!(typeof note === 'string' && note.trim().length >= rules.MIN_NOTE)) throw httpError(400, rules.NEED_NOTE);
+      }
       const next = {
         title: title !== undefined ? title : syl.title,
         courseCode: courseCode !== undefined ? courseCode : syl.course_code,

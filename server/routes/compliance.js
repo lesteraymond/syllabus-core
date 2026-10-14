@@ -119,7 +119,7 @@ router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => 
     // The same content as an earlier run is not checked again, and does not count against the limit. An admin's check is stored with
     // the version, so only a run stored with a version can answer it.
     if (!(req.body && req.body.force === true)) {
-      const cached = await svc.cachedRun(db, syl.syllabus_id, hash, { adminOnly: !owner });
+      const cached = await svc.cachedRun(db, syl.syllabus_id, hash, { adminOnly: !owner, versionId: owner ? null : subject.versionId });
       if (cached) return res.json({ installed: true, cached: true, run: withChecker(await svc.loadDetail(db, cached, hash), syl.user_id) });
     }
     const slot = limiter.take('recheck:' + me.id);

@@ -169,6 +169,17 @@ test('a submitted syllabus is locked: the owner cannot edit it until the adminis
   }
 }));
 
+test('an uploaded-file syllabus back from "For revision" is saved again only with a change and a note about it', () => withServer({ assigned: ASSIGNED, syllabi: { 12: row({ syllabus_id: 12, status: 'for_revision', course_code: 'IT 101', title: 'Intro', file_path: '/uploads/a.pdf' }) } }, async ({ call }) => {
+  const put = (body) => call(fay, 'PUT', '/syllabi/12', body);
+  const none = await put({ note: 'I looked again at the file.' });
+  assert.strictEqual(none.status, 409);
+  assert.match(none.body.error, /Nothing has changed/);
+  assert.strictEqual((await put({ title: 'Intro', courseCode: 'IT 101', note: 'Same values sent again.' })).status, 409);
+  assert.strictEqual((await put({ title: 'Intro to IT' })).status, 400); // changed, but no note
+  assert.strictEqual((await put({ title: 'Intro to IT', note: 'short' })).status, 400);
+  assert.strictEqual((await put({ title: 'Intro to IT', note: 'Corrected the course title.' })).status, 200);
+}));
+
 test('the same syllabus is editable again once the admin assigns the course', () => withServer({ assigned: { 5: { programs: [1], courses: [10, 11] } }, syllabi: { 2: row({ syllabus_id: 2, status: 'for_revision', course_id: 11 }) } }, async ({ call }) => {
   const get = await call(fay, 'GET', '/syllabi/2/content');
   assert.strictEqual(get.body.editable, true);
@@ -196,8 +207,8 @@ test('legacy create: the course code must match an assigned course', () => withS
 }));
 
 test('legacy edit by the owner needs an assigned course; an admin changing status is unaffected', () => withServer({ assigned: ASSIGNED, syllabi: { 4: row({ syllabus_id: 4, status: 'for_revision', course_code: 'IT 204' }), 5: row({ syllabus_id: 5, status: 'for_revision', course_code: 'IT 101' }) } }, async ({ call }) => {
-  assert.strictEqual((await call(fay, 'PUT', '/syllabi/4', { title: 'New title' })).status, 403);
-  assert.strictEqual((await call(fay, 'PUT', '/syllabi/5', { title: 'New title' })).status, 200);
+  assert.strictEqual((await call(fay, 'PUT', '/syllabi/4', { title: 'New title', note: 'Changed the title.' })).status, 403);
+  assert.strictEqual((await call(fay, 'PUT', '/syllabi/5', { title: 'New title', note: 'Changed the title.' })).status, 200);
   assert.strictEqual((await call(admin, 'PUT', '/syllabi/4', { status: 'approved' })).status, 200);
 }));
 

@@ -12,6 +12,7 @@ const { loadOutcomes } = require('../lib/institution');
 const { findProgram, loadProgram } = require('../lib/programs');
 const { catalogGaps, gapsMessage } = require('../lib/catalogReady');
 const compliance = require('../lib/compliance/service');
+const { changedSections } = require('../lib/versionChange');
 const { LABEL_SQL, labelsOf } = require('../lib/syllabusLabels');
 const router = express.Router();
 
@@ -21,6 +22,7 @@ const MAX_CONTENT_BYTES = 512 * 1024;
 const SECTIONS = { meta: 'object', description: 'array', clos: 'array', plan: 'array', reqs: 'array', refs: 'object', grading: 'object' };
 const TAG = /^(clo|ega|po):[A-Za-z0-9_-]{1,40}$/;
 
+const parseJson = (text) => { try { return text ? JSON.parse(text) : null; } catch { return null; } };
 const isObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 
 // Shallow structural checks. What a tag points at is the client's rule; here we only keep malformed data out.
@@ -238,6 +240,13 @@ router.post('/:id/submit', requireAuth, async (req, res) => {
       if (!result.conformance.ok) {
         const g = compliance.gateError(result);
         throw httpError(409, g.message, { failed: g.failed });
+      }
+      // A resubmission after "For revision" is a new version only if the faculty member changed something, and says what.
+      if (syl.status === 'for_revision') {
+        const previous = await compliance.latestVersion(conn, id);
+        const before = previous ? parseJson(previous.content) : null;
+        if (before && changedSections(before, content).length === 0) throw httpError(409, rules.UNCHANGED, { code: 'unchanged' });
+        if (note.length < rules.MIN_NOTE) throw httpError(400, rules.NEED_NOTE, { code: 'need_note' });
       }
       const snapshot = JSON.stringify(content);
       if (Buffer.byteLength(snapshot, 'utf8') > MAX_CONTENT_BYTES) throw httpError(413, `This syllabus is too large to submit (limit ${MAX_CONTENT_BYTES / 1024} KB)`);
