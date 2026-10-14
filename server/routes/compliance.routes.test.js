@@ -123,12 +123,13 @@ function makeDb() {
       const inRange = (r) => { const t = Date.parse(r.created_at); return t >= lo && t < hi; };
       const latestOf = (id) => Math.max(...s.runs.filter((x) => x.syllabus_id === id && isAdminRun(x)).map((x) => x.run_id));
       return [s.runs.filter((r) => isAdminRun(r) && s.syllabi[r.syllabus_id].status !== 'draft' && r.run_id === latestOf(r.syllabus_id) && inRange(r)).reverse().slice(0, limit)
-        .map((r) => ({ ...labelled(s.syllabi[r.syllabus_id]), run_id: r.run_id, syllabus_id: r.syllabus_id, overall: r.overall, status: r.status, passed: r.passed, ai_status: r.ai_status, created_by: r.created_by, created_at: r.created_at, syllabus_status: s.syllabi[r.syllabus_id].status }))];
+        .map((r) => ({ ...labelled(s.syllabi[r.syllabus_id]), run_id: r.run_id, syllabus_id: r.syllabus_id, version_label: (s.versions.find((v) => v.version_id === r.version_id) || {}).version_label, overall: r.overall, status: r.status, passed: r.passed, ai_status: r.ai_status, created_by: r.created_by, created_at: r.created_at, syllabus_status: s.syllabi[r.syllabus_id].status }))];
     }
     if (sql.startsWith('SELECT u.first_name, u.last_name')) return [s.syllabi[p[0]] ? [labelled(s.syllabi[p[0]])] : []];
     if (sql.startsWith('SELECT first_name, last_name FROM users WHERE user_id')) return [s.people[p[0]] ? [s.people[p[0]]] : []];
     if (sql.startsWith('INSERT INTO syllabus_versions')) { const v = { version_id: s.versionId + s.versions.length, syllabus_id: p[0], version_label: p[1], content: p[8] }; s.versions.push(v); return [{ insertId: v.version_id }]; }
     if (sql.startsWith('SELECT version_id, version_label, content FROM syllabus_versions')) return [s.versions.filter((v) => v.syllabus_id === p[0]).slice(-1)];
+    if (sql.startsWith('SELECT version_label FROM syllabus_versions WHERE version_id')) return [s.versions.filter((v) => v.version_id === p[0]).map((v) => ({ version_label: v.version_label }))];
     if (sql.startsWith('SELECT file_path FROM syllabus_versions WHERE version_id')) return [s.versions.filter((v) => v.version_id === p[0]).map((v) => ({ file_path: v.file_path || null }))];
     if (sql.startsWith('SELECT v.syllabus_id, v.version_id, v.content')) return [p[0].map((id) => s.versions.filter((v) => v.syllabus_id === id).slice(-1)[0]).filter(Boolean)];
     if (sql.startsWith('UPDATE syllabi SET content')) { s.saved.push(JSON.parse(p[0])); s.syllabi[p[1]].content = p[0]; return [{}]; }
@@ -695,8 +696,10 @@ test('the history and the single-run read never show the run a faculty submit st
   const history = await call(admin, 'GET', '/compliance/history');
   assert.deepStrictEqual(history.body.runs.map((r) => r.runId), [mine.body.run.id]);
   assert.strictEqual(history.body.runs[0].checkedBy, 'admin');
+  assert.strictEqual(history.body.runs[0].versionLabel, 'v1.0'); // the card says which version the check was made on
   const read = await call(admin, 'GET', '/compliance/runs/' + mine.body.run.id);
   assert.strictEqual(read.status, 200);
+  assert.strictEqual(read.body.run.versionLabel, 'v1.0');
   assert.strictEqual(read.body.isLatest, true);
 }));
 

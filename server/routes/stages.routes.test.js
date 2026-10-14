@@ -5,6 +5,7 @@ const test = require('node:test');
 const assert = require('node:assert');
 const express = require('express');
 const svc = require('../lib/compliance/service');
+const F = require('../lib/compliance/fixtures');
 
 const admin = { id: 1, role: 'admin', firstName: 'Ann', lastName: 'A' };
 const fay = { id: 5, role: 'faculty', firstName: 'Fay', lastName: 'F' };
@@ -39,6 +40,9 @@ function makeDb(installed = true) {
       return [s.runs.filter((r) => p[0].includes(r.syllabus_id) && r.version_id !== null && r.created_by !== null && r.created_by !== s.syllabi[r.syllabus_id].user_id)
         .map((r) => ({ syllabus_id: r.syllabus_id, version_id: r.version_id }))];
     }
+    if (sql.startsWith('SELECT syllabus_id, user_id, status FROM syllabi WHERE syllabus_id')) return [s.syllabi[p[0]] ? [s.syllabi[p[0]]] : []];
+    if (sql.startsWith('SELECT v.*, u.first_name, u.last_name')) return [(s.history || []).filter((v) => v.syllabus_id === p[0]).map((v) => ({ first_name: 'Fay', last_name: 'F', ...v }))];
+    if (sql.startsWith('SELECT l.action, l.notes, l.action_date')) return [(s.logs || []).filter((l) => l.syllabus_id === p[0]).map((l) => ({ first_name: 'Ann', last_name: 'A', ...l }))];
     if (sql.startsWith('SELECT * FROM syllabi WHERE syllabus_id')) return [s.syllabi[p[0]] ? [{ ...s.syllabi[p[0]] }] : []];
     if (sql.startsWith('UPDATE syllabi SET status = ?')) { s.syllabi[p[p.length - 1]].status = p[0]; return [{}]; }
     if (/^(INSERT|UPDATE|DELETE)/.test(sql)) { s.logged.push(sql.slice(0, 40)); return [{}]; }
@@ -123,4 +127,32 @@ test('only an administrator\'s list carries the flag, and drafts stay out of it'
   const mine = await call(fay, 'GET', '/syllabi');
   assert.ok(mine.body.length > 0 && mine.body.every((x) => !('awaitingAiCheck' in x)));
   assert.ok(!(await call(admin, 'GET', '/syllabi')).body.some((x) => x.id === 3));
+}));
+
+test('the version history says what changed between versions and what the administrator decided, for the owner and the administrator', () => withServer(async ({ call, db }) => {
+  const a = F.good();
+  const b = F.good(); b.description[0].t += ' extra';
+  const c = F.good(); c.description[0].t += ' extra'; c.grading.rows[0].pct = 55; c.grading.rows[1].pct = 45;
+  const at = (n) => '2026-03-0' + n + 'T10:00:00Z';
+  const v = (id, label, content, day, note) => ({ version_id: id, syllabus_id: 1, version_label: label, title: 'Fundamentals of Mathematics', course_code: 'FM 202', curriculum_id: null, file_path: null, status_at_save: 'submitted', note, content: JSON.stringify(content), created_by: 5, created_at: at(day) });
+  db.s.history = [v(10, 'v1.0', a, 1, 'Initial version'), v(11, 'v1.1', b, 3, 'Added to the description.'), v(12, 'v1.2', c, 5, 'Changed the grading split.')];
+  db.s.logs = [
+    { syllabus_id: 1, action: 'revision', notes: 'Status changed to for_revision: Fix the description.', action_date: at(2) },
+    { syllabus_id: 1, action: 'revision', notes: 'Status changed to for_revision', action_date: at(4) }, // an older log line with no reason stored
+  ];
+  for (const who of [admin, fay]) {
+    const r = await call(who, 'GET', '/syllabi/1/versions');
+    assert.strictEqual(r.status, 200);
+    assert.deepStrictEqual(r.body.map((x) => x.version), ['v1.2', 'v1.1', 'v1.0']); // newest first, every version listed
+    const [v12, v11, v10] = r.body;
+    assert.strictEqual(v10.changes, null);
+    assert.strictEqual(v11.changes.text, 'Course description (1 word)');
+    assert.strictEqual(v12.changes.text, 'Grading system (4 words)'); // the grading split (two percentages out, two in), not the description
+    assert.deepStrictEqual(v12.changes.sections.map((x) => x.key), ['grading']);
+    assert.deepStrictEqual([v10.decision.action, v10.decision.reason, v10.decision.by], ['revision', 'Fix the description.', 'Ann A']);
+    assert.deepStrictEqual([v11.decision.action, v11.decision.reason], ['revision', '']);
+    assert.strictEqual(v12.decision, null);
+    assert.strictEqual(v11.note, 'Added to the description.'); // what the faculty member said they changed
+  }
+  assert.strictEqual((await call({ id: 6, role: 'faculty', firstName: 'Gus', lastName: 'G' }, 'GET', '/syllabi/1/versions')).status, 404);
 }));

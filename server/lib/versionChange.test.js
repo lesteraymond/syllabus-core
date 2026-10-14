@@ -58,3 +58,9 @@ test('word counts: a moved word is not counted twice, and repeats are counted', 
   assert.strictEqual(wordDelta('a b', 'a b b'), 1);
   assert.strictEqual(wordDelta({ x: 'one two' }, { x: 'one three' }), 2);
 });
+
+test('a changed number counts, so a new grading split shows how much changed', () => {
+  assert.strictEqual(wordDelta({ pct: 60 }, { pct: 55 }), 2);
+  const b = edit((c) => { c.grading.rows[0].pct = 55; c.grading.rows[1].pct = 45; });
+  assert.strictEqual(describeChanges(changedSections(base(), b)), 'Grading system (4 words)');
+});

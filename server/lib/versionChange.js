@@ -36,9 +36,10 @@ const section = (content, def) => {
   return normalize(raw === undefined ? null : raw);
 };
 
-// Every piece of text in a value, in order.
+// Every piece of text in a value, in order. A number counts as a word, so a changed grading split or unit count shows how much changed.
 function words(value, out = []) {
-  if (typeof value === 'string') value.split(' ').filter(Boolean).forEach((w) => out.push(w));
+  if (typeof value === 'number') out.push(String(value));
+  else if (typeof value === 'string') value.split(' ').filter(Boolean).forEach((w) => out.push(w));
   else if (Array.isArray(value)) value.forEach((v) => words(v, out));
   else if (isObject(value)) Object.keys(value).forEach((k) => words(value[k], out));
   return out;

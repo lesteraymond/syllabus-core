@@ -82,6 +82,12 @@ const instantOf = (raw, name) => {
   if (Number.isNaN(ms)) throw httpError(400, name + ' must be a valid date');
   return Math.floor(ms / 1000);
 };
+// The label ("v1.1") of the version a run was made on, for the dialogs that show one run.
+async function withVersionLabel(db, run) {
+  if (!run || run.versionId === null || run.versionId === undefined) return run;
+  const [rows] = await db.query('SELECT version_label FROM syllabus_versions WHERE version_id = ?', [run.versionId]);
+  return { ...run, versionLabel: rows[0] ? rows[0].version_label : '' };
+}
 const adminOnly = (me) => { if (!me || me.role !== 'admin') throw httpError(403, 'Only an administrator can read the check history'); };
 
 router.get('/syllabi/:id/compliance', requireAuth, async (req, res) => {
@@ -93,7 +99,7 @@ router.get('/syllabi/:id/compliance', requireAuth, async (req, res) => {
     const run = await svc.latestRun(db, syl.syllabus_id, { adminOnly: !rules.isOwner(me, syl) });
     if (!run) return res.json({ installed: true, run: null });
     const subject = await subjectOf(db, me, syl);
-    res.json({ installed: true, run: withChecker(await svc.loadDetail(db, run, hashOfSubject(subject)), syl.user_id) });
+    res.json({ installed: true, run: await withVersionLabel(db, withChecker(await svc.loadDetail(db, run, hashOfSubject(subject)), syl.user_id)) });
   } catch (err) { sendError(res, err); }
 });
 
@@ -120,7 +126,7 @@ router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => 
     // the version, so only a run stored with a version can answer it.
     if (!(req.body && req.body.force === true)) {
       const cached = await svc.cachedRun(db, syl.syllabus_id, hash, { adminOnly: !owner, versionId: owner ? null : subject.versionId });
-      if (cached) return res.json({ installed: true, cached: true, run: withChecker(await svc.loadDetail(db, cached, hash), syl.user_id) });
+      if (cached) return res.json({ installed: true, cached: true, run: await withVersionLabel(db, withChecker(await svc.loadDetail(db, cached, hash), syl.user_id)) });
     }
     const slot = limiter.take('recheck:' + me.id);
     if (!slot.ok) {
@@ -144,7 +150,7 @@ router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => 
       svc.startAiJob(db, { runId, content, result, names: svc.namesFor(author, content) });
     }
     const [rows] = await db.query('SELECT * FROM ai_check_runs WHERE run_id = ?', [runId]);
-    res.json({ installed: true, cached: false, run: withChecker(await svc.loadDetail(db, rows[0], hash), syl.user_id) });
+    res.json({ installed: true, cached: false, run: await withVersionLabel(db, withChecker(await svc.loadDetail(db, rows[0], hash), syl.user_id)) });
   } catch (err) { sendError(res, err); }
 });
 
@@ -245,7 +251,7 @@ router.get('/compliance/history', requireAuth, async (req, res) => {
     if (from !== null && to !== null && from > to) throw httpError(400, 'from must not be after to');
     if (!(await svc.isInstalled(db))) return res.json({ installed: false, runs: [] });
     const [rows] = await db.query(
-      'SELECT r.run_id, r.syllabus_id, r.overall, r.status, r.passed, r.ai_status, r.created_by, r.created_at, l.user_id, l.course_code, l.title, l.syllabus_status, l.first_name, l.last_name, l.course_title, l.program_code, l.program_name, l.curriculum_program '
+      'SELECT r.run_id, r.syllabus_id, r.version_id, (SELECT sv.version_label FROM syllabus_versions sv WHERE sv.version_id = r.version_id) AS version_label, r.overall, r.status, r.passed, r.ai_status, r.created_by, r.created_at, l.user_id, l.course_code, l.title, l.syllabus_status, l.first_name, l.last_name, l.course_title, l.program_code, l.program_name, l.curriculum_program '
       + 'FROM ai_check_runs r JOIN (SELECT s.syllabus_id, s.user_id, s.course_code, s.title, s.status AS syllabus_status, ' + LABEL_SQL + ") l ON l.syllabus_id = r.syllabus_id "
       + "WHERE r.version_id IS NOT NULL AND r.created_by IS NOT NULL AND r.created_by <> l.user_id AND l.syllabus_status <> 'draft' "
       + 'AND r.run_id = (SELECT MAX(r2.run_id) FROM ai_check_runs r2 WHERE r2.syllabus_id = r.syllabus_id AND r2.version_id IS NOT NULL AND r2.created_by IS NOT NULL AND r2.created_by <> l.user_id)'
@@ -256,7 +262,7 @@ router.get('/compliance/history', requireAuth, async (req, res) => {
     res.json({
       installed: true,
       runs: rows.map((r) => ({
-        runId: r.run_id, syllabusId: r.syllabus_id, courseCode: r.course_code, status: r.syllabus_status,
+        runId: r.run_id, syllabusId: r.syllabus_id, courseCode: r.course_code, status: r.syllabus_status, versionLabel: r.version_label || '',
         ...labelsOf(r, null),
         overall: r.overall === null || r.overall === undefined ? null : Number(r.overall), passed: !!r.passed, scored: r.status === 'scored',
         aiStatus: r.ai_status, checkedBy: r.created_by === null || r.created_by === undefined ? null : r.created_by === r.user_id ? 'author' : 'admin',
@@ -286,7 +292,7 @@ router.get('/compliance/runs/:runId', requireAuth, async (req, res) => {
     res.json({
       installed: true,
       syllabus: await baseOf(db, syl, subject),
-      run: withChecker(await svc.loadDetail(db, stored, hashOfSubject(subject)), syl.user_id),
+      run: await withVersionLabel(db, withChecker(await svc.loadDetail(db, stored, hashOfSubject(subject)), syl.user_id)),
       isLatest: !!latest && latest.run_id === stored.run_id,
     });
   } catch (err) { sendError(res, err); }

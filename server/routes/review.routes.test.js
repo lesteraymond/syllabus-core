@@ -32,6 +32,9 @@ function makeDb() {
     if (sql.startsWith('SELECT version_id, version_label, status_at_save')) {
       return [s.versions.filter((v) => v.syllabus_id === p[0]).sort((a, b) => b.version_id - a.version_id).map((v) => ({ ...v, has_form: v.content ? 1 : 0 }))];
     }
+    if (sql.startsWith('SELECT version_label, content FROM syllabus_versions WHERE syllabus_id')) { // the version before the one shown, for "what changed"
+      return [s.versions.filter((v) => v.syllabus_id === p[0] && v.version_id < p[1] && v.content).slice(-1).map((v) => ({ version_label: v.version_label, content: v.content }))];
+    }
     if (sql.startsWith('SELECT content FROM syllabus_versions WHERE version_id')) {
       return [s.versions.filter((v) => v.version_id === p[0] && v.syllabus_id === p[1]).map((v) => ({ content: v.content }))];
     }
@@ -136,4 +139,14 @@ test('the syllabus list carries programCode and courseTitle as NEW fields; nothi
   const upload = r.body.find((x) => x.id === 3);
   assert.deepStrictEqual([upload.programCode, upload.courseTitle, upload.program], ['', '', 'BS Information Technology']); // old rows still list, with the old field intact
   assert.ok(!r.body.some((x) => x.id === 2)); // drafts stay out of an admin's list
+}));
+
+test('the review read says what the faculty member changed since the version before: nothing for the first version, sections for a later one', () => withServer(async ({ call }) => {
+  const latest = await call(admin, '/1/review');
+  assert.strictEqual(latest.status, 200);
+  assert.strictEqual(latest.body.changes.from, 'v1.0');
+  assert.ok(Array.isArray(latest.body.changes.sections));
+  assert.strictEqual(typeof latest.body.changes.text, 'string');
+  assert.strictEqual((await call(admin, '/1/review?version=10')).body.changes, null); // the first version has nothing before it
+  assert.strictEqual((await call(admin, '/3/review')).body.changes, null); // an uploaded file has no form to compare
 }));

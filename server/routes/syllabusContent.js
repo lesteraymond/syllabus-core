@@ -12,7 +12,7 @@ const { loadOutcomes } = require('../lib/institution');
 const { findProgram, loadProgram } = require('../lib/programs');
 const { catalogGaps, gapsMessage } = require('../lib/catalogReady');
 const compliance = require('../lib/compliance/service');
-const { changedSections } = require('../lib/versionChange');
+const { changedSections, describeChanges } = require('../lib/versionChange');
 const { LABEL_SQL, labelsOf } = require('../lib/syllabusLabels');
 const router = express.Router();
 
@@ -95,7 +95,7 @@ router.get('/:id/content', requireAuth, async (req, res) => {
   try {
     const id = parseId(req.params.id);
     const [rows] = await req.app.locals.db.query(
-      'SELECT syllabus_id, user_id, status, version, content, content_schema_version, content_updated_at, course_id FROM syllabi WHERE syllabus_id = ?', [id]);
+      'SELECT syllabus_id, user_id, status, version, content, content_schema_version, content_updated_at, course_id, admin_comment FROM syllabi WHERE syllabus_id = ?', [id]);
     const syl = rows[0];
     if (!syl || !rules.canView(req.session.user, syl)) throw httpError(404, 'Syllabus not found');
     let content = null;
@@ -107,7 +107,10 @@ router.get('/:id/content', requireAuth, async (req, res) => {
       lockedReason = assignments.writeBlockedReason(req.session.user, await assignments.loadAssignments(req.app.locals.db, req.session.user.id), syl.course_id);
       if (lockedReason) editable = false;
     }
-    res.json({ id, status: syl.status, version: syl.version, content, schemaVersion: syl.content_schema_version, updatedAt: syl.content_updated_at, editable, lockedReason });
+    // Back from "For revision": the next submission becomes the next version, and the reviewer's note says what to change.
+    const revising = syl.status === 'for_revision';
+    res.json({ id, status: syl.status, version: syl.version, content, schemaVersion: syl.content_schema_version, updatedAt: syl.content_updated_at, editable, lockedReason,
+      ...(revising ? { nextVersion: rules.nextVersionLabel(syl.version), reviewerNote: syl.admin_comment || '' } : {}) });
   } catch (err) { sendError(res, err); }
 });
 
@@ -185,10 +188,20 @@ router.get('/:id/review', requireAuth, async (req, res) => {
     let content = null;
     if (raw) { try { content = JSON.parse(raw); } catch { content = null; } }
     const filePath = chosen ? chosen.filePath : syl.file_path || null;
+    // What the faculty member changed since the version before this one, so a reviewer can tell a real revision from a small edit.
+    let changes = null;
+    if (chosen && content) {
+      const [before] = await db.query('SELECT version_label, content FROM syllabus_versions WHERE syllabus_id = ? AND version_id < ? AND content IS NOT NULL ORDER BY version_id DESC LIMIT 1', [id, chosen.id]);
+      if (before[0]) {
+        const list = changedSections(parseJson(before[0].content), content);
+        changes = { from: before[0].version_label, sections: list, text: describeChanges(list) };
+      }
+    }
     res.json({
       syllabus: { id, userId: syl.user_id, status: syl.status, version: syl.version, courseCode: syl.course_code, title: syl.title, ...labelsOf(syl, content) },
       version: chosen,
       versions,
+      changes,
       content,
       catalog: content && content.catalog ? content.catalog : null,
       file: filePath ? { path: filePath } : null,

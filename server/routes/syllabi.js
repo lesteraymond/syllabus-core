@@ -9,6 +9,7 @@ const rules = require('../lib/syllabusRules');
 const assignments = require('../lib/assignments');
 const { validateReason, typeForStatus, MAX_LENGTH } = require('../lib/reviewComments');
 const compliance = require('../lib/compliance/service');
+const { changedSections, describeChanges } = require('../lib/versionChange');
 const router = express.Router();
 
 const storage = multer.diskStorage({
@@ -209,7 +210,7 @@ router.put('/:id', requireAuth, onePdf, async (req, res) => {
         if (adminComment !== undefined) { fields.push('admin_comment = ?'); params.push(adminComment); }
         await conn.query(`UPDATE syllabi SET ${fields.join(', ')} WHERE syllabus_id = ?`, [...params, id]);
         const action = { approved: 'approve', rejected: 'reject', for_revision: 'revision', submitted: 'submit' }[status] || 'update';
-        await conn.query('INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)', [id, me.id, action, `Status changed to ${status}`]);
+        await conn.query('INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)', [id, me.id, action, (`Status changed to ${status}` + (reason ? ': ' + reason : '')).slice(0, 500)]);
         // The reason is kept as a comment too, in the same transaction, so the thread and the status cannot disagree.
         if (reason) await conn.query('INSERT INTO comments (syllabus_id, user_id, comment_text, comment_type) VALUES (?, ?, ?, ?)', [id, me.id, reason.slice(0, MAX_LENGTH), typeForStatus(status)]);
         return { kind: 'status', syl, status, comment: adminComment !== undefined ? adminComment : syl.admin_comment };
@@ -331,6 +332,22 @@ router.get('/:id/versions', requireAuth, async (req, res) => {
        ORDER BY v.created_at ASC, v.version_id ASC`,
       [id]
     );
+    // What the administrator decided about a version (returned for revision, approved, rejected), with the reason: the decision belongs to
+    // the version that was newest when it was made.
+    const [logs] = await db.query(
+      "SELECT l.action, l.notes, l.action_date, u.first_name, u.last_name FROM submission_logs l JOIN users u ON u.user_id = l.user_id WHERE l.syllabus_id = ? AND l.action IN ('revision', 'approve', 'reject') ORDER BY l.action_date ASC, l.log_id ASC",
+      [id]
+    );
+    const decisionOf = (i) => {
+      const from = new Date(rows[i].created_at).getTime();
+      const to = i + 1 < rows.length ? new Date(rows[i + 1].created_at).getTime() : Infinity;
+      const mine = logs.filter((l) => { const t = new Date(l.action_date).getTime(); return t >= from && t < to; });
+      const l = mine[mine.length - 1];
+      if (!l) return null;
+      const m = /^Status changed to [a-z_]+(?:: ([\s\S]*))?$/.exec(l.notes || '');
+      return { action: l.action, at: l.action_date, by: `${l.first_name} ${l.last_name}`, reason: m && m[1] ? m[1] : '' };
+    };
+    const parse = (text) => { try { return text ? JSON.parse(text) : null; } catch { return null; } };
     const tracked = [['title', 'title'], ['course_code', 'courseCode'], ['curriculum_id', 'curriculumId'], ['file_path', 'file'], ['content', 'content']];
     const versions = rows.map((r, i) => ({
       id: r.version_id,
@@ -344,6 +361,9 @@ router.get('/:id/versions', requireAuth, async (req, res) => {
       createdAt: r.created_at,
       author: `${r.first_name} ${r.last_name}`,
       changed: i === 0 ? [] : tracked.filter(([col]) => (r[col] ?? null) !== (rows[i - 1][col] ?? null)).map(([, name]) => name),
+      // For a form: which sections the faculty member changed since the version before, and how much ("Course description (1 word)").
+      changes: i > 0 && r.content && rows[i - 1].content ? (() => { const list = changedSections(parse(rows[i - 1].content), parse(r.content)); return { sections: list, text: describeChanges(list) }; })() : null,
+      decision: decisionOf(i),
     }));
     res.json(versions.reverse());
   } catch (err) {
