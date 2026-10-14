@@ -46,7 +46,7 @@ export default function CheckHistory({ runs, loading = false, error = '', openin
       </div>
 
       <div className="hist-summary" aria-live="polite">
-        {active && !loading && !error && <><span className="chip">{'Showing ' + rangeLabel(range.from, range.to)}</span><span>{list.length + (list.length === 1 ? ' check' : ' checks')}</span></>}
+        {active && !loading && !error && <><span className="chip">{(range.from && range.to ? 'Showing ' : 'Showing checks ') + rangeLabel(range.from, range.to).replace(/^Since/, 'since').replace(/^Until/, 'until')}</span><span>{list.length + (list.length === 1 ? ' check' : ' checks')}</span></>}
       </div>
 
       {loading && list.length === 0 && <p className="hist-empty">Loading the history…</p>}
