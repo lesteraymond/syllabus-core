@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PageHead } from '../components/ui';
 import { compliance as api } from '../lib/api';
-import { groupByFacultyProgram, listBasis } from '../lib/complianceView';
+import { groupByFacultyProgram, listBasis, needsCheck } from '../lib/complianceView';
 import SyllabusPicker from '../components/SyllabusPicker';
 import ComplianceModal from '../components/ComplianceModal';
 import CheckHistory from '../components/CheckHistory';
 
 // The AI Checker page is the administrator's view of the compliance checks of submitted syllabi. The page is one picker
-// (Faculty, then Program, then Subject); Check compliance runs the check if the syllabus has none, then opens the stored result in a
-// dialog, where it can be re-checked. Below it, the history lists every stored check; a card opens that exact check (an approved
-// syllabus is final: it can be viewed there, never checked again).
+// (Faculty, then Program, then Subject) of the syllabi still waiting for their first check; Check compliance runs it and opens the
+// result in a dialog. A checked syllabus then leaves the picker and is in the history. Below it, the history lists every stored check; a card opens that exact check, read-only. An approved syllabus
+// is final and is in the Repository, not here.
 // The rules run on the latest submitted version and the result is stored with it (what Review & Approval shows).
 // Faculty have no tab here: they check their own syllabus in step 7 of the builder (Review & Check).
 export default function AIChecker({ user, notify }) {
@@ -48,19 +48,19 @@ export default function AIChecker({ user, notify }) {
   }, [pending, openId, loadDetail]);
 
   const rows = list ? list.syllabi : [];
-  const groups = useMemo(() => groupByFacultyProgram(rows), [rows]);
+  const waiting = useMemo(() => groupByFacultyProgram(rows.filter(needsCheck)), [rows]); // unchecked and not approved: what the picker offers
 
   if (!user || user.role !== 'admin') return <div className="empty">The compliance check is in step 7 of the Syllabus Builder.</div>;
 
   const say = (m) => { if (notify) notify(m); };
   const reload = async () => { await loadList(); loadHistory(); if (openId !== null) await loadDetail(openId); };
 
-  // Check (no stored check yet) or Re-check (make a new one). The server runs the rules on the latest submitted version.
-  const runCheck = async (id, force) => {
+  // The first check of a syllabus. The server runs the rules on the latest submitted version and stores the result with it.
+  const runCheck = async (id) => {
     setBusy((b) => ({ ...b, [id]: true }));
     setError('');
     try {
-      await api.recheck(id, force);
+      await api.recheck(id);
       return true;
     } catch (e) {
       setError(e.message);
@@ -70,10 +70,10 @@ export default function AIChecker({ user, notify }) {
     }
   };
 
-  // The picker's button: check it if it has no check, load the stored one if it has, then show it.
+  // The picker's button: run the check, then show the stored result. The syllabus then leaves the picker (it is in the history).
   const checkAndOpen = async (row) => {
     const id = row.syllabusId;
-    if (!row.run && !(await runCheck(id, false))) return;
+    if (!(await runCheck(id))) return;
     setBusy((b) => ({ ...b, [id]: true }));
     const ok = await loadDetail(id);
     setBusy((b) => { const n = { ...b }; delete n[id]; return n; });
@@ -81,9 +81,9 @@ export default function AIChecker({ user, notify }) {
     setOpenId(id);
     await loadList();
     loadHistory();
-    if (!row.run) say('Checked ' + row.courseCode + '.');
+    say('Checked ' + row.courseCode + '. It is now in the history.');
   };
-  // A history card: read that exact run (an earlier one, or an approved syllabus's), then show it in the same dialog.
+  // A history card: read that exact run (an earlier one, or an approved syllabus), then show it in the same dialog.
   const openRun = async (item) => {
     setOpening(item.runId);
     setError('');
@@ -91,13 +91,6 @@ export default function AIChecker({ user, notify }) {
       setDetail(await api.run(item.runId));
       setOpenId(item.syllabusId);
     } catch (e) { setError(e.message); } finally { setOpening(null); }
-  };
-  const recheckOpen = async () => {
-    if (await runCheck(openId, true)) {
-      await reload();
-      const r = rows.find((x) => x.syllabusId === openId);
-      say('Checked ' + (r ? r.courseCode : 'the syllabus') + '.');
-    }
   };
   const closeModal = () => { setOpenId(null); setDetail(null); setError(''); };
 
@@ -111,16 +104,16 @@ export default function AIChecker({ user, notify }) {
 
   return (
     <>
-      <PageHead title="AI Syllabus Checker" subtitle={'Check and re-check submitted syllabi against the template. The result is stored with the version a reviewer sees. Current method: ' + how + '.'} />
+      <PageHead title="AI Syllabus Checker" subtitle={'Check each submitted syllabus against the template. The result is stored with the version a reviewer sees. Current method: ' + how + '.'} />
 
       {!open && error && <div className="info-banner warning" role="alert">{error}</div>}
       {!error && !loading && !installed && <div className="info-banner warning">Compliance checks are not set up on this server yet. Ask an administrator to run the database update; until then nothing is stored.</div>}
 
-      {installed && <SyllabusPicker groups={groups} loading={loading} busy={working} onCheck={checkAndOpen} />}
+      {installed && <SyllabusPicker groups={waiting} loading={loading} busy={working} onCheck={checkAndOpen} />}
 
       {installed && <CheckHistory runs={history.runs} loading={history.loading} error={history.error} opening={opening} onOpen={openRun} />}
 
-      {open && <ComplianceModal syllabus={open} run={detail.run} checking={!!busy[openId]} isLatest={detail.isLatest !== false} error={error} onRecheck={recheckOpen} onClose={closeModal} />}
+      {open && <ComplianceModal syllabus={open} run={detail.run} isLatest={detail.isLatest !== false} error={error} onClose={closeModal} />}
       <div className="ai-note">The check supports — but does not replace — faculty, curriculum committee, and academic quality review.</div>
     </>
   );

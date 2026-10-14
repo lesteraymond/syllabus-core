@@ -7085,7 +7085,6 @@ table,
 /* The ring and the six areas are shown above, so the shared card's own copies are hidden here. */
 .cm-body .cmp-top .cmp-ring, .cm-body .cmp-areas { display: none; }
 .cm-foot { align-items: center; }
-.cm-live { margin-right: auto; font-size: var(--text-sm); font-weight: var(--fw-medium); color: var(--muted); }
 .pick-foot .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* AI Checker: check history (.hist-) and the dialog's timestamp / earlier-check note (.cm-) */
