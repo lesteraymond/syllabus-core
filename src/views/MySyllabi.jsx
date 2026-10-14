@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { fmt } from '../lib/utils';
+import { canChat } from '../lib/chatPartner';
 import { PageHead } from '../components/ui';
 import { users as usersApi } from '../lib/api';
 import { commentBadge } from '../lib/notificationRoute';
@@ -34,7 +35,7 @@ export default function MySyllabi({ syllabi, user, messages, commentCounts = {},
             {setCommentCode && (() => { const b = commentBadge(commentCounts[s.id]); return (
               <button className="btn outline syl-comments" title="Notes from your reviewer about this syllabus" onClick={() => setCommentCode(s.id)}>▤ Comments{b.text && <span className={'syl-badge' + (b.fresh ? ' fresh' : '')} aria-label={b.fresh ? b.text + ' new' : b.text + ' in total'}>{b.text}</span>}</button>
             ); })()}
-            <button className="btn outline" title="A conversation with your reviewer" onClick={() => { setChatCode(s.id); }}>✉ Message</button>
+            {canChat(s) && <button className="btn outline" title="A conversation with your reviewer" onClick={() => { setChatCode(s.id); }}>✉ Message</button>}
             <button className="btn outline" onClick={() => setHistCode(s.id)}>◷ History</button>
             <button className="btn danger" onClick={() => setConfirm({ title: 'Delete Syllabus?', message: `Are you sure you want to delete ${s.courseCode}? This cannot be undone.`, label: 'Delete', onConfirm: () => handleDelete(s.id) })}>🗑</button>
           </div>

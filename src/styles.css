@@ -7183,3 +7183,6 @@ html { scrollbar-gutter: stable; }
 .chat-head-info h3 { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; }
 .chat-role { padding: 2px 9px; border-radius: 99px; background: #eef2fb; color: var(--blue); font-size: var(--text-xs); font-weight: var(--fw-semibold); line-height: 1.5; }
 .thread-role { font-style: normal; color: var(--muted); font-weight: var(--fw-medium); }
+
+/* Chat window opened on a draft (it has no conversation): the sentence takes the place of the message list */
+.chat-draft { padding: 28px 22px; text-align: center; color: var(--muted); font-weight: var(--fw-medium); }

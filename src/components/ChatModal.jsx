@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { Avatar } from './ui';
 import ChatThread, { threadOf } from './ChatThread';
 import { useModalLayer } from './useModalLayer';
-import { partnerOf } from '../lib/chatPartner';
+import { DRAFT_CHAT_NOTE, canChat, partnerOf } from '../lib/chatPartner';
 
 export default function ChatModal({ code, syllabi, user, messages, partner: serverPartner, sendMsg, markRead, deleteThread, onClose }) {
   const [confirmDel, setConfirmDel] = useState(false);
@@ -20,7 +20,9 @@ export default function ChatModal({ code, syllabi, user, messages, partner: serv
           <div className="chat-head-actions"><button className="icon-btn" title="Delete conversation" onClick={() => setConfirmDel(true)}>🗑</button><button className="icon-btn" onClick={onClose}>✕</button></div>
         </div>
         {confirmDel && <div className="chat-del-confirm"><span>Delete all messages? This cannot be undone.</span><button className="btn ghost" onClick={() => setConfirmDel(false)}>Cancel</button><button className="btn danger" onClick={() => { deleteThread(code); onClose(); }}>Delete</button></div>}
-        <ChatThread code={code} syl={syl} user={user} messages={messages} sendMsg={sendMsg} markRead={markRead} />
+        {syl && !canChat(syl)
+          ? <div className="chat-empty chat-draft" role="status">{DRAFT_CHAT_NOTE}</div>
+          : <ChatThread code={code} syl={syl} user={user} messages={messages} sendMsg={sendMsg} markRead={markRead} />}
       </div>
     </div>
   );

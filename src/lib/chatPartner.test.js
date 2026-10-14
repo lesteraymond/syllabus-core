@@ -1,7 +1,7 @@
 // Run: npm test
 import test from 'node:test';
 import assert from 'node:assert';
-import { initialsOf, partnerOf, threadTitle } from './chatPartner.js';
+import { initialsOf, partnerOf, threadTitle, canChat, DRAFT_CHAT_NOTE } from './chatPartner.js';
 
 const fay = { id: 5, role: 'faculty' };
 const admin = { id: 1, role: 'admin' };
@@ -37,4 +37,11 @@ test('initials and the thread title read well, and a missing syllabus falls back
   assert.strictEqual(initialsOf(''), '');
   assert.strictEqual(threadTitle({ courseCode: 'FM 202', courseTitle: 'Fundamentals of Mathematics' }, 58), 'FM 202 • Fundamentals of Mathematics');
   assert.strictEqual(threadTitle(undefined, 58), 'Syllabus #58');
+});
+
+test('a draft has no conversation, and a submitted, returned, approved or rejected syllabus does', () => {
+  assert.strictEqual(canChat({ status: 'draft' }), false);
+  for (const status of ['submitted', 'under_review', 'for_revision', 'approved', 'rejected']) assert.strictEqual(canChat({ status }), true, status);
+  assert.strictEqual(canChat(undefined), false);
+  assert.match(DRAFT_CHAT_NOTE, /Submit it for review first/);
 });

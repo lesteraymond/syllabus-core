@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { fmt } from '../lib/utils';
+import { canChat } from '../lib/chatPartner';
 import { Avatar, PageHead, Field } from '../components/ui';
 
 const STATUS_OPTIONS = [
@@ -26,7 +27,7 @@ export default function Repository({ syllabi, user, notify, setChatCode, setHist
       </div>
       <div className="repo-stats"><span>All <b>{counts.All || 0}</b></span>{STATUS_OPTIONS.map(s => <span key={s.value}>{s.label} <b>{counts[s.value] || 0}</b></span>)}</div>
       <div className="table-card">
-        <table><thead><tr><th>Course</th><th>Program</th><th>Faculty</th><th>Status</th><th>Updated</th><th>Actions</th></tr></thead><tbody>{rows.map(x => <tr key={x.id}><td><strong>{x.courseCode}</strong><small>{x.title}</small></td><td>{x.program}</td><td><span className="user-cell"><Avatar src={x.ownerAvatarUrl} name={x.faculty} /><span>{x.faculty}</span></span></td><td><span className={`status ${x.status}`}>{STATUS_OPTIONS.find(s => s.value === x.status)?.label || x.status}</span></td><td>{fmt(x.updatedAt)}</td><td><button className="table-action" onClick={() => setChatCode(x.id)}>✉</button><button className="table-action" onClick={() => setHistCode(x.id)}>◷</button></td></tr>)}</tbody></table>
+        <table><thead><tr><th>Course</th><th>Program</th><th>Faculty</th><th>Status</th><th>Updated</th><th>Actions</th></tr></thead><tbody>{rows.map(x => <tr key={x.id}><td><strong>{x.courseCode}</strong><small>{x.title}</small></td><td>{x.program}</td><td><span className="user-cell"><Avatar src={x.ownerAvatarUrl} name={x.faculty} /><span>{x.faculty}</span></span></td><td><span className={`status ${x.status}`}>{STATUS_OPTIONS.find(s => s.value === x.status)?.label || x.status}</span></td><td>{fmt(x.updatedAt)}</td><td>{canChat(x) && <button className="table-action" onClick={() => setChatCode(x.id)}>✉</button>}<button className="table-action" onClick={() => setHistCode(x.id)}>◷</button></td></tr>)}</tbody></table>
         {rows.length === 0 && <div className="empty">No syllabi match your filters.</div>}
       </div>
     </>

@@ -24,3 +24,8 @@ export function partnerOf({ partner, messages = [], user, syl }) {
 
 // The line a thread in the message list is titled with: the subject, not the syllabus number.
 export const threadTitle = (syl, code) => (syl ? [syl.courseCode, syl.courseTitle || syl.title].filter(Boolean).join(' • ') : 'Syllabus #' + code);
+
+// A draft has no conversation: an administrator never sees a draft, so there is nobody to message until it is submitted. The server refuses
+// the chat for a draft too; this keeps the button away and says why if a chat is opened anyway.
+export const canChat = (syl) => !!syl && syl.status !== 'draft';
+export const DRAFT_CHAT_NOTE = 'A draft has no conversation. Submit it for review first, then you can message the administrator.';
