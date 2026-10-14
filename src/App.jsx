@@ -130,6 +130,8 @@ export default function App() {
 
   // Keep messages and notifications fresh without a reload (only polls while the tab is visible).
   // A draft created in the builder is not in this list yet: refresh when the faculty opens My Syllabi.
+  // Your own activity (Recent Activity) is read again whenever the dashboard is opened, so what you just did is there.
+  useEffect(() => { if (user && page === 'dashboard' && user.role !== 'student' && !user.mustChangePassword) fetchLogs(); }, [user, page, fetchLogs]);
   // The list says which submissions the administrator has checked: read it again when they open Review & Approval, so a check just made shows.
   useEffect(() => { if (user && user.role === 'admin' && (page === 'review' || page === 'ai')) fetchSyllabi(); }, [user, page, fetchSyllabi]);
   useEffect(() => { if (user && page === 'my-syllabi') { fetchSyllabi(); if (user.role === 'faculty') fetchCommentCounts(); } }, [user, page, fetchSyllabi, fetchCommentCounts]);
@@ -294,7 +296,7 @@ export default function App() {
     } catch (err) { notify('Delete failed: ' + err.message); }
   };
 
-  const clearLogs = () => { setLogs([]); notify('Activity logs cleared.'); };
+  const clearLogs = () => { setLogs([]); notify('Your activity list was cleared.'); };
 
   const nav = navItems.filter(([, , , r]) => !r || r === user?.role);
 

@@ -15,9 +15,11 @@ export const KINDS = {
 };
 const FALLBACK = { icon: 'notePencil', tone: 'quiet', verb: 'made a change to' };
 
-// -> { key, icon, tone, who, verb, subject, detail, time, iso, when }
-export function describeActivity(log, index = 0) {
-  const kind = KINDS[log && log.action] || FALLBACK;
+// -> { key, icon, tone, who, verb, subject, detail, time, iso, when }. `viewerId` is the signed-in user: their own actions read "You".
+export function describeActivity(log, index = 0, viewerId = null) {
+  // Older rows logged the first submission from the builder as an "upload"; its note says what it really was.
+  const submittedFromBuilder = log && log.action === 'upload' && /^Syllabus submitted from the builder/.test(String(log.notes || ''));
+  const kind = KINDS[submittedFromBuilder ? 'submit' : log && log.action] || FALLBACK;
   const code = String((log && log.courseCode) || '').trim();
   const title = String((log && log.title) || '').trim();
   const d = toDate(log && log.actionDate);
@@ -25,7 +27,7 @@ export function describeActivity(log, index = 0) {
     key: (log && log.id) || 'row-' + index,
     icon: kind.icon,
     tone: kind.tone,
-    who: String((log && log.user) || '').trim() || 'Someone',
+    who: viewerId !== null && log && log.userId === viewerId ? 'You' : String((log && log.user) || '').trim() || 'Someone',
     verb: kind.verb,
     subject: code || title || 'a syllabus',
     detail: code && title ? title : '', // the course title under the code, when there is both
@@ -54,4 +56,21 @@ export function groupByDay(items, now = new Date()) {
     else groups.push({ label, items: [it] });
   });
   return groups;
+}
+
+// "Clear Logs" hides what was done up to now from this account's list, in this browser (nothing is deleted: the history stays for every other
+// screen). Kept per account, so it holds after a refresh.
+const clearedKey = (userId) => 'sms.activityClearedAt.' + userId;
+export function readClearedAt(userId, storage = typeof localStorage !== 'undefined' ? localStorage : null) {
+  try { return (storage && storage.getItem(clearedKey(userId))) || ''; } catch { return ''; }
+}
+export function writeClearedAt(userId, at = new Date(), storage = typeof localStorage !== 'undefined' ? localStorage : null) {
+  const iso = at.toISOString();
+  try { if (storage) storage.setItem(clearedKey(userId), iso); } catch { /* storage blocked: it clears for this visit only */ }
+  return iso;
+}
+// The rows done after the clear; with no clear (or an unreadable date) all of them.
+export function afterCleared(logs, clearedAt) {
+  const t = clearedAt ? new Date(clearedAt).getTime() : NaN;
+  return Number.isNaN(t) ? logs : logs.filter((l) => { const d = toDate(l.actionDate); return d && d.getTime() > t; });
 }

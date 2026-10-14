@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { PageHead, Card, Icon, Legend, Progress, QualityMini, Deadline, Donut } from '../components/ui';
-import { describeActivity, groupByDay } from '../lib/activityView';
+import { afterCleared, describeActivity, groupByDay, readClearedAt, writeClearedAt } from '../lib/activityView';
 
 // Stat card icon per label (Phosphor names, see Icon in ui.jsx)
 const STAT_ICONS = {
@@ -30,10 +30,12 @@ export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, set
     : [['Total Courses', String(total), 'All syllabi', 'blue'], ['Submitted Syllabi', String(submitted), 'Awaiting review', 'teal'], ['Pending Review', String(underReview), 'Under review', 'gold'], ['Approved', String(approved), 'Accepted syllabi', 'green'], ['AI Compliance Score', `${compliance}%`, 'Institutional average', 'purple'], ['For Revision', String(forRevision), 'Needs changes', 'red']];
 
   // Recent Activity as sentences under Today / Yesterday / a date (see lib/activityView.js); times are Philippine time.
+  // Each account sees only its own activity: the server sends only that (GET /api/logs), and "Clear Logs" hides it up to now, per account.
+  const [cleared, setCleared] = useState(() => readClearedAt(user.id));
   const activityGroups = useMemo(() => {
-    const filtered = isFac ? logs.filter(l => l.userId === user.id) : logs;
-    return groupByDay(filtered.slice(0, 6).map(describeActivity));
-  }, [logs, isFac, user]);
+    const mine = afterCleared(logs.filter(l => l.userId === user.id), cleared);
+    return groupByDay(mine.slice(0, 6).map((l, i) => describeActivity(l, i, user.id)));
+  }, [logs, user, cleared]);
 
   const statusData = useMemo(() => {
     const g = Math.max(1, Math.round(approved / Math.max(total, 1) * 100));
@@ -56,7 +58,7 @@ export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, set
       <PageHead title="Welcome back!" subtitle="Here's what is happening with your undergraduate syllabi." actions={<><select><option>AY 2026–2027</option><option>AY 2025–2026</option></select>{!isFac && <button className="btn primary" onClick={() => setPage('builder')}>+ New Syllabus</button>}</>} />
       <section className="stat-grid">{stats.map(([a, b, c, d]) => <div className="stat-card" key={a}><div className={`stat-icon ${d}`}><Icon weight="regular" name={STAT_ICONS[a]} size={20} /></div><span>{a}</span><strong>{b}</strong><small>{c}</small></div>)}</section>
       <section className="dashboard-grid">
-        <Card title="Recent Activity" action={<button className="btn ghost" style={{ padding: '4px 8px', fontSize: '12px' }} onClick={() => setConfirm({ title: 'Clear Logs', message: user.role === 'admin' ? 'Clear all activity logs?' : 'Clear your activity logs?', label: 'Clear', onConfirm: () => { clearLogs(); } })}>Clear Logs</button>}>
+        <Card title="Recent Activity" action={<button className="btn ghost" style={{ padding: '4px 8px', fontSize: '12px' }} onClick={() => setConfirm({ title: 'Clear Logs', message: 'Clear your activity from this list? Nothing is deleted: it only hides what you did up to now.', label: 'Clear', onConfirm: () => { setCleared(writeClearedAt(user.id)); clearLogs(); } })}>Clear Logs</button>}>
           <div className="feed">
             {activityGroups.map((g) => (
               <section className="feed-day" key={g.label} aria-label={g.label}>
@@ -75,7 +77,7 @@ export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, set
                 </ol>
               </section>
             ))}
-            {activityGroups.length === 0 && <div className="empty">No recent activity.</div>}
+            {activityGroups.length === 0 && <div className="empty">{isFac ? 'Nothing yet. What you upload, submit and update appears here.' : 'Nothing yet. Your reviews and decisions appear here.'}</div>}
           </div>
         </Card>
         <Card title="Submission Status" action="View report">

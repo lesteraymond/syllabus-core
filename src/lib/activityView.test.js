@@ -1,7 +1,7 @@
 // Run: npm test. The dashboard's Recent Activity as sentences, grouped by Philippine day.
 import test from 'node:test';
 import assert from 'node:assert';
-import { describeActivity, dayLabel, groupByDay, KINDS } from './activityView.js';
+import { describeActivity, dayLabel, groupByDay, KINDS, afterCleared, readClearedAt, writeClearedAt } from './activityView.js';
 
 const log = (over = {}) => ({ id: 1, action: 'approve', user: 'Diana Evale', courseCode: 'FM 202', title: 'Fundamentals of Mathematics', actionDate: '2026-10-14T13:16:43.000Z', ...over });
 const NOW = new Date('2026-10-14T14:00:00.000Z'); // 10:00 PM on Oct 14 in Manila
@@ -43,4 +43,36 @@ test('rows are gathered under their day, in the order given', () => {
   const g = groupByDay(rows, NOW);
   assert.deepStrictEqual(g.map((x) => [x.label, x.items.length]), [['Today', 2], ['Yesterday', 1], ['Oct 9, 2026', 1]]);
   assert.deepStrictEqual(groupByDay([], NOW), []);
+});
+
+test('your own actions read "You", and nobody else\'s does', () => {
+  assert.strictEqual(describeActivity(log({ userId: 1 }), 0, 1).who, 'You');
+  assert.strictEqual(describeActivity(log({ userId: 1 }), 0, 5).who, 'Diana Evale');
+  assert.strictEqual(describeActivity(log({ userId: 1 }), 0).who, 'Diana Evale'); // no viewer given
+});
+
+test('Clear Logs hides what was done up to then and keeps what comes after, kept per account and surviving a refresh', () => {
+  const store = () => { const m = new Map(); return { getItem: (k) => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, v) }; };
+  const st = store();
+  assert.strictEqual(readClearedAt(1, st), '');
+  const at = writeClearedAt(1, new Date('2026-10-14T13:00:00.000Z'), st);
+  assert.strictEqual(at, '2026-10-14T13:00:00.000Z');
+  assert.strictEqual(readClearedAt(1, st), at);
+  assert.strictEqual(readClearedAt(2, st), ''); // another account is not affected
+  const rows = [log({ id: 1, actionDate: '2026-10-14T13:16:43.000Z' }), log({ id: 2, actionDate: '2026-10-14T12:00:00.000Z' }), log({ id: 3, actionDate: 'nope' })];
+  assert.deepStrictEqual(afterCleared(rows, at).map((r) => r.id), [1]);
+  assert.deepStrictEqual(afterCleared(rows, '').map((r) => r.id), [1, 2, 3]); // never cleared: everything
+  assert.deepStrictEqual(afterCleared(rows, 'not a date').map((r) => r.id), [1, 2, 3]);
+});
+
+test('blocked storage never breaks the list: nothing is remembered, nothing throws', () => {
+  const blocked = { getItem() { throw new Error('blocked'); }, setItem() { throw new Error('blocked'); } };
+  assert.strictEqual(readClearedAt(1, blocked), '');
+  assert.strictEqual(typeof writeClearedAt(1, new Date(), blocked), 'string');
+});
+
+test('a first submission from the builder reads "submitted", even in older rows that logged it as an upload; a real file upload stays "uploaded"', () => {
+  assert.strictEqual(describeActivity(log({ action: 'upload', notes: 'Syllabus submitted from the builder' })).verb, 'submitted');
+  assert.strictEqual(describeActivity(log({ action: 'upload', notes: 'Uploaded file, saved as v1.0: Initial version (uploaded file)' })).verb, 'uploaded');
+  assert.strictEqual(describeActivity(log({ action: 'upload', notes: 'Syllabus uploaded' })).verb, 'uploaded');
 });
