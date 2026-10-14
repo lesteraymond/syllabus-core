@@ -78,7 +78,7 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
       <div className="top-actions">
         <div className="search"><Icon name="magnifyingGlass" size={18} /><input placeholder="Search syllabus, course, faculty..." /></div>
         <div className="msg-wrap" ref={ref}>
-          <button className="icon-btn" title="Messages" aria-label="Messages" onClick={() => { setBellOpen(false); setMsgDrop(!msgDrop); }}><Icon name="envelope" size={20} />{unread > 0 && <span className="pill">{unread}</span>}</button>
+          <button className="icon-btn" title="Messages" aria-label={unread > 0 ? `Messages, ${unread} unread` : 'Messages'} onClick={() => { setBellOpen(false); setMsgDrop(!msgDrop); }}><Icon name="envelope" size={20} />{unread > 0 && <span className="pill" aria-hidden="true">{unread > 99 ? '99+' : unread}</span>}</button>
           {msgDrop && <div className="msg-drop">
             <div className="msg-drop-head"><strong>Messages</strong><span>{unread} unread</span></div>
             {threads.length === 0 && <div className="msg-empty">No conversations yet.</div>}
@@ -90,7 +90,7 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
           </div>}
         </div>
         <div className="msg-wrap" ref={bellRef}>
-          <button className="icon-btn" title="Notifications" aria-label={bellCount > 0 ? `Notifications, ${bellCount} unread` : 'Notifications'} aria-haspopup="true" aria-expanded={bellOpen} onClick={() => { setMsgDrop(false); setBellOpen(o => !o); }}><Icon name="bell" size={20} />{bellCount > 0 && <span className="pill">{bellCount > 99 ? '99+' : bellCount}</span>}</button>
+          <button className="icon-btn" title="Notifications" aria-label={bellCount > 0 ? `Notifications, ${bellCount} unread` : 'Notifications'} aria-haspopup="true" aria-expanded={bellOpen} onClick={() => { setMsgDrop(false); setBellOpen(o => !o); }}><Icon name="bell" size={20} />{bellCount > 0 && <span className="pill" aria-hidden="true">{bellCount > 99 ? '99+' : bellCount}</span>}</button>
           {bellOpen && <div className="msg-drop">
             <div className="msg-drop-head"><strong>Notifications</strong>{bellCount > 0 ? <button className="link-btn" onClick={onMarkAllNotificationsRead}>Mark all read</button> : <span>All caught up</span>}</div>
             <div className="notif-list">

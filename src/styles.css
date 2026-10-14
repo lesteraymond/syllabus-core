@@ -7186,3 +7186,7 @@ html { scrollbar-gutter: stable; }
 
 /* Chat window opened on a draft (it has no conversation): the sentence takes the place of the message list */
 .chat-draft { padding: 28px 22px; text-align: center; color: var(--muted); font-weight: var(--fw-medium); }
+
+/* The unread badge on the topbar's message and notification icons: a 20px circle (a pill for two digits) with the number centered. The old
+   16px badge had a 2px ring and an 18px text line inside 12px, so the digit sat low and its bottom was cut off. */
+.pill { box-sizing: border-box; display: flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; padding: 0 5px; top: -8px; right: -8px; z-index: 1; border: 2px solid #fff; background: #e53935; color: #fff; font-size: 11px; font-weight: var(--fw-bold); line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: 0; white-space: nowrap; }
