@@ -7090,8 +7090,3 @@ table,
 .cm-body .cmp-top .cmp-ring, .cm-body .cmp-areas { display: none; }
 .cm-foot { align-items: center; }
 .cm-live { margin-right: auto; font-size: var(--text-sm); font-weight: var(--fw-medium); color: var(--muted); }
-@media (max-width: 1180px) {
-	.pick-grid { grid-template-columns: 1fr; }
-	.cm-score { flex-direction: column; align-items: stretch; }
-	.cm-score .big-ring.cm-ring { margin: 0 auto; }
-}
