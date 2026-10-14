@@ -70,6 +70,12 @@ router.post('/login', async (req, res) => {
     const valid = user.password_hash ? await bcrypt.compare(String(password || ''), user.password_hash) : false;
     if (!valid) return fail(res, 401, 'Invalid email or password');
 
+    if (user.role === 'student') {
+      const [[profile]] = await db.query('SELECT verification_status FROM student_profiles WHERE user_id = ?', [user.user_id]);
+      if (!profile || profile.verification_status === 'pending') return fail(res, 403, 'Your registration is waiting for an administrator to verify your COR.');
+      if (profile.verification_status === 'rejected') return fail(res, 403, 'Your registration was rejected. Contact the administrator.');
+    }
+
     const sessionUser = toSessionUser(user);
     req.session.user = sessionUser;
     if (remember) {

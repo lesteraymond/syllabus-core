@@ -3866,3 +3866,12 @@ table,
 .bld2 .step-hint.advice { color: var(--muted); }
 .bld2 .stepper button.locked { opacity: 0.55; cursor: not-allowed; }
 .bld2 .sm-gap { margin-left: 8px; vertical-align: middle; }
+
+/* Student registration: the read-only scan result, and the student home. */
+.scan-list { margin: 0 0 12px; display: grid; gap: 8px; }
+.scan-list div { display: flex; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+.scan-list dt { color: var(--muted); font-size: var(--text-sm); }
+.scan-list dd { margin: 0; font-weight: 600; text-align: right; }
+.scan-list em { color: var(--muted); font-weight: 400; }
+.scan-subjects-title { margin: 14px 0 6px; font-size: var(--text-sm); }
+.scan-subjects { margin: 0 0 12px; padding-left: 18px; max-height: 160px; overflow-y: auto; font-size: var(--text-sm); }
