@@ -5691,7 +5691,7 @@ table,
 }
 .aic-state .chip {
 	font-size: 11px;
-	font-weight: var(--fw-semibold);
+	font-weight: var(--fw-medium);
 	padding: 3px 8px;
 	border-radius: 99px;
 	background: #f1f3f8;
@@ -6750,7 +6750,7 @@ table,
 .cmp-ring.none small { color: var(--muted); }
 .cmp-line { margin: 0 0 6px; font-weight: var(--fw-semibold); font-size: var(--text-sm); }
 .cmp-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; align-items: center; }
-.cmp .chip, .cmp-row .chip, .cmp-find .chip { font-size: 11px; font-weight: var(--fw-semibold); padding: 3px 8px; border-radius: 99px; background: #eef2fb; color: var(--blue); line-height: 1.4; }
+.cmp .chip, .cmp-row .chip, .cmp-find .chip { font-size: 11px; font-weight: var(--fw-medium); padding: 3px 8px; border-radius: 99px; background: #eef2fb; color: var(--blue); line-height: 1.4; }
 .cmp .chip.quiet, .cmp-row .chip.quiet { background: #f1f3f8; color: var(--muted); font-weight: var(--fw-medium); }
 .cmp .chip.stale, .cmp-row .chip.stale { background: #fff0d7; color: #8a5a0c; }
 .cmp .chip.basis.unavailable { background: #ffe8e8; color: #a53838; }
@@ -6806,7 +6806,7 @@ table,
 .aic-open b.good { color: var(--green); }
 .aic-open b.warn { color: #8a5a0c; }
 .aic-state { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
-.aic-state .chip { font-size: 11px; font-weight: var(--fw-semibold); padding: 3px 8px; border-radius: 99px; background: #f1f3f8; color: var(--muted); white-space: nowrap; }
+.aic-state .chip { font-size: 11px; font-weight: var(--fw-medium); padding: 3px 8px; border-radius: 99px; background: #f1f3f8; color: var(--muted); white-space: nowrap; }
 .aic-state .chip.stale { background: #fff0d7; color: #8a5a0c; }
 .aic-act { padding: 5px 10px; font-size: var(--text-xs); }
 .aic-act.none { display: block; }
