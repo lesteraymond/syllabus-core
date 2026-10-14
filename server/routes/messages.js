@@ -50,7 +50,8 @@ async function adminFor(db, syllabusId, meId) {
 
 // Who the signed-in user is talking to, for every syllabus they can message about, with the profile to show: name, picture, role, and the
 // syllabus's program and subject. Read from the users and the syllabus themselves (not from a message), so it is right before anyone has
-// written and follows a name or picture change. An administrator talks to the syllabus owner; an owner talks to the administrator already in
+// written and follows a name or picture change. Program and subject describe the faculty member, so only an administrator's read of a
+// faculty member carries them; the administrator shown to a faculty member is a name, a picture and a role. An administrator talks to the syllabus owner; an owner talks to the administrator already in
 // the thread, otherwise the first administrator (the same rule that decides where their message goes). Drafts have no conversation.
 const ADMIN_LABEL = 'Academic Administrator';
 router.get('/partners', requireAuth, async (req, res) => {
@@ -78,7 +79,7 @@ router.get('/partners', requireAuth, async (req, res) => {
       }
       const a = adminById.get(adminOf.get(r.syllabus_id));
       partners[r.syllabus_id] = a
-        ? { id: a.user_id, name: `${a.first_name} ${a.last_name}`, role: 'admin', roleLabel: ADMIN_LABEL, avatarUrl: avatarUrlFor(a.user_id, a.avatar_path), program, subject }
+        ? { id: a.user_id, name: `${a.first_name} ${a.last_name}`, role: 'admin', roleLabel: ADMIN_LABEL, avatarUrl: avatarUrlFor(a.user_id, a.avatar_path) } // program and subject are the faculty member's, never the administrator's
         : null; // no administrator account at all
     });
     res.json({ partners });

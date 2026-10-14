@@ -73,15 +73,14 @@ async function withServer(fn) {
   try { await fn({ db, call }); } finally { await new Promise((r) => server.close(r)); }
 }
 
-test('a faculty member sees the administrator\'s real name, picture and role, and the program and subject, before anyone has written', () => withServer(async ({ call }) => {
+test('a faculty member sees the administrator\'s real name, picture and role, and no program or subject, before anyone has written', () => withServer(async ({ call }) => {
   const r = await call(fay);
   assert.strictEqual(r.status, 200);
   assert.deepStrictEqual(Object.keys(r.body.partners), ['10']); // their own submitted syllabus only: no draft, nobody else's
   const p = r.body.partners[10];
   assert.deepStrictEqual([p.id, p.name, p.role, p.roleLabel], [1, 'Diana Evale', 'admin', 'Academic Administrator']); // the first administrator
   assert.strictEqual(p.avatarUrl, '/api/users/1/avatar?v=111'); // the picture is the administrator's own, and its version changes when they change it
-  assert.strictEqual(p.program, 'BSFM · Bachelor of Science in Financial Management');
-  assert.strictEqual(p.subject, 'FM 202 — Fundamentals of Mathematics');
+  assert.ok(!('program' in p) && !('subject' in p), 'program and subject describe the faculty member, never the administrator');
 }));
 
 test('an administrator sees the faculty member\'s name, picture and role, with the program and subject, for every submitted syllabus', () => withServer(async ({ call }) => {

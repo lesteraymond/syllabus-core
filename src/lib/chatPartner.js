@@ -14,8 +14,10 @@ export function partnerOf({ partner, messages = [], user, syl }) {
   if (partner && partner.name) {
     return { name: partner.name, initials: initialsOf(partner.name), avatarUrl: partner.avatarUrl || null, roleLabel: partner.roleLabel || '', program: partner.program || '', subject: partner.subject || '' };
   }
-  const subject = syl ? [syl.courseCode, syl.courseTitle || syl.title].filter(Boolean).join(' — ') : '';
-  const program = syl ? (syl.programCode ? syl.programCode + (syl.program ? ' · ' + syl.program : '') : syl.program || '') : '';
+  // Program and subject describe the faculty member, so they are shown only to an administrator (whose partner is the faculty member).
+  const showSyl = syl && user.role === 'admin';
+  const subject = showSyl ? [syl.courseCode, syl.courseTitle || syl.title].filter(Boolean).join(' — ') : '';
+  const program = showSyl ? (syl.programCode ? syl.programCode + (syl.program ? ' · ' + syl.program : '') : syl.program || '') : '';
   const other = messages.find((m) => m.senderId !== user.id);
   if (other) return { name: other.sender, initials: initialsOf(other.sender), avatarUrl: other.senderAvatarUrl || null, roleLabel: '', program, subject };
   if (user.role === 'admin' && syl && syl.faculty) return { name: syl.faculty, initials: initialsOf(syl.faculty), avatarUrl: syl.ownerAvatarUrl || null, roleLabel: 'Faculty', program, subject };
