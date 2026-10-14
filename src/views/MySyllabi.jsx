@@ -37,6 +37,7 @@ export default function MySyllabi({ syllabi, user, messages, commentCounts = {},
             <button className="btn outline" onClick={() => setHistCode(s.id)}>◷ History</button>
             <button className="btn danger" onClick={() => setConfirm({ title: 'Delete Syllabus?', message: `Are you sure you want to delete ${s.courseCode}? This cannot be undone.`, label: 'Delete', onConfirm: () => handleDelete(s.id) })}>🗑</button>
           </div>
+          {(s.status === 'submitted' || s.status === 'under_review') && <p className="syl-locked" role="note">{editBlockedReason(s)}</p>}
         </div>; })}
         {my.length === 0 && <div className="empty">No syllabi yet. Click "+ New Syllabus" to get started.</div>}
       </div>

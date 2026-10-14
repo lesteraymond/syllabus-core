@@ -10,7 +10,7 @@ export const canEditSyllabus = (user, syllabus) => user.id === syllabus.userId &
 export const editBlockedReason = (syllabus) => (EDITABLE_STATUSES.includes(syllabus.status)
   ? ''
   : syllabus.status === 'submitted' || syllabus.status === 'under_review'
-    ? 'Submitted syllabi are locked. You can edit it again only if the administrator returns it for revision.'
+    ? 'This syllabus was submitted and is locked. You can edit it again only if the administrator returns it for revision.'
     : `${STATUS_LABELS[syllabus.status] || syllabus.status} syllabi can't be edited`);
 
 // "Subject" is the catalog item (IT 204, Programming 2); in this school a "course" is the program.

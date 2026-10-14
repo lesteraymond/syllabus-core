@@ -7150,3 +7150,7 @@ html { scrollbar-gutter: stable; }
 .rv-waiting, .rp-check-first { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
 .rv-waiting .btn, .rp-check-first .btn { flex: none; white-space: nowrap; }
 .rp-check-first { flex-direction: column; align-items: stretch; }
+
+/* My Syllabi: a submitted syllabus is locked, and the card says so (the disabled Edit button is dimmed, with the reason below) */
+.syl-actions .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.syl-locked { margin: 10px 0 0; font-size: var(--text-xs); font-weight: var(--fw-medium); color: var(--muted); }
