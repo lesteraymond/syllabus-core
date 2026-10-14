@@ -112,6 +112,10 @@ function makeDb() {
       const rows = sql.includes('s.user_id = ?') ? all.filter((x) => x.user_id === p[0]) : all.filter((x) => x.status !== 'draft');
       return [rows.map((x) => { const r = labelled(x); if (!sql.includes('s.content,')) delete r.content; return r; })];
     }
+    if (sql.startsWith('SELECT r.run_id')) { // the history: runs stored with a version, newest first, with the syllabus's labels
+      return [s.runs.filter((r) => r.version_id !== null && s.syllabi[r.syllabus_id].status !== 'draft').reverse().slice(0, p[0])
+        .map((r) => ({ ...labelled(s.syllabi[r.syllabus_id]), run_id: r.run_id, syllabus_id: r.syllabus_id, overall: r.overall, status: r.status, passed: r.passed, ai_status: r.ai_status, created_by: r.created_by, created_at: r.created_at, syllabus_status: s.syllabi[r.syllabus_id].status }))];
+    }
     if (sql.startsWith('SELECT u.first_name, u.last_name')) return [s.syllabi[p[0]] ? [labelled(s.syllabi[p[0]])] : []];
     if (sql.startsWith('SELECT first_name, last_name FROM users WHERE user_id')) return [s.people[p[0]] ? [s.people[p[0]]] : []];
     if (sql.startsWith('INSERT INTO syllabus_versions')) { const v = { version_id: s.versionId + s.versions.length, syllabus_id: p[0], version_label: p[1], content: p[8] }; s.versions.push(v); return [{ insertId: v.version_id }]; }
@@ -493,7 +497,7 @@ test('a check an author made on the same content does not stand in for the admin
 }));
 
 test('a syllabus submitted as an uploaded file has no form to check: the admin is told why, and it is listed as not checkable', () => withServer(async ({ call, db }) => {
-  addSyllabus(db, 2, { user_id: 5, status: 'approved', course_code: 'IT304', title: 'Data Analytics', course_id: null, content: null });
+  addSyllabus(db, 2, { user_id: 5, status: 'submitted', course_code: 'IT304', title: 'Data Analytics', course_id: null, content: null });
   db.s.versions.push({ version_id: 600, syllabus_id: 2, version_label: 'v1.1', content: null });
   const r = await call(admin, 'POST', '/syllabi/2/compliance/recheck', {});
   assert.strictEqual(r.status, 409);
@@ -543,4 +547,73 @@ test('a syllabus with no stored run reads as run: null', () => withServer(async 
   const list = await call(fay, 'GET', '/compliance?syllabus=all');
   assert.strictEqual(list.body.syllabi[0].run, null);
   assert.strictEqual(list.body.summary.average, null);
+}));
+
+test('an approved syllabus cannot be checked again: 409 before the limiter is used, for the owner and the administrator', () => withServer(async ({ call, db }) => {
+  submittedBefore(db, 2);
+  assert.strictEqual((await call(admin, 'POST', '/syllabi/2/compliance/recheck', {})).status, 200); // checked before it is approved
+  db.s.syllabi[2].status = 'approved';
+  for (let i = 0; i < 12; i++) { // more than the limit: a refusal takes no slot
+    const r = await call(admin, 'POST', '/syllabi/2/compliance/recheck', { force: true });
+    assert.strictEqual(r.status, 409);
+    assert.strictEqual(r.body.code, 'approved');
+    assert.match(r.body.error, /approved, so it cannot be checked again/);
+  }
+  assert.strictEqual((await call(fay, 'POST', '/syllabi/2/compliance/recheck', {})).status, 409);
+  assert.strictEqual(db.s.runs.length, 1);
+  const read = await call(admin, 'GET', '/syllabi/2/compliance'); // reading the stored check stays open
+  assert.strictEqual(read.status, 200);
+  assert.ok(read.body.run);
+}));
+
+test('GET /compliance/history: admin only, newest first, drafts and draft-only checks left out, the limit capped', () => withServer(async ({ call, db }) => {
+  submittedBefore(db, 2);
+  submittedBefore(db, 3);
+  await call(admin, 'POST', '/syllabi/2/compliance/recheck', {});
+  await call(admin, 'POST', '/syllabi/2/compliance/recheck', { force: true });
+  await call(admin, 'POST', '/syllabi/3/compliance/recheck', {});
+  db.s.runs.push({ ...db.s.runs[0], run_id: 99, syllabus_id: 1, version_id: null }); // a draft check by an owner: not part of the history
+  const h = await call(admin, 'GET', '/compliance/history');
+  assert.strictEqual(h.status, 200);
+  assert.strictEqual(h.body.installed, true);
+  assert.deepStrictEqual(h.body.runs.map((r) => r.runId), [3, 2, 1]);
+  const top = h.body.runs[0];
+  assert.strictEqual(top.syllabusId, 3);
+  assert.strictEqual(top.checkedBy, 'admin');
+  assert.strictEqual(top.facultyName, 'Fay F');
+  assert.ok(top.createdAt && typeof top.overall === 'number' && top.scored === true);
+  assert.strictEqual((await call(admin, 'GET', '/compliance/history?limit=2')).body.runs.length, 2);
+  assert.strictEqual((await call(admin, 'GET', '/compliance/history?limit=100000')).body.runs.length, 3); // capped, not an error
+  assert.strictEqual((await call(fay, 'GET', '/compliance/history')).status, 403);
+  assert.strictEqual((await call(null, 'GET', '/compliance/history')).status, 401);
+}));
+
+test('GET /compliance/history before the migration: not installed, no runs', () => withServer({ installed: false }, async ({ call }) => {
+  assert.deepStrictEqual((await call(admin, 'GET', '/compliance/history')).body, { installed: false, runs: [] });
+}));
+
+test('GET /compliance/runs/:id: one stored run in full, an earlier one too, an approved syllabus as well; admin only', () => withServer(async ({ call, db }) => {
+  submittedBefore(db, 2);
+  const first = (await call(admin, 'POST', '/syllabi/2/compliance/recheck', {})).body.run;
+  const second = (await call(admin, 'POST', '/syllabi/2/compliance/recheck', { force: true })).body.run;
+  const old = await call(admin, 'GET', '/compliance/runs/' + first.id);
+  assert.strictEqual(old.status, 200);
+  assert.strictEqual(old.body.run.id, first.id);
+  assert.strictEqual(old.body.isLatest, false);
+  assert.strictEqual(old.body.syllabus.syllabusId, 2);
+  assert.ok(Array.isArray(old.body.run.areas) && old.body.run.areas.length === 6 && Array.isArray(old.body.run.findings));
+  assert.strictEqual((await call(admin, 'GET', '/compliance/runs/' + second.id)).body.isLatest, true);
+  db.s.syllabi[2].status = 'approved';
+  const approved = await call(admin, 'GET', '/compliance/runs/' + second.id);
+  assert.strictEqual(approved.status, 200);
+  assert.strictEqual(approved.body.syllabus.status, 'approved');
+  assert.strictEqual((await call(fay, 'GET', '/compliance/runs/' + second.id)).status, 403);
+  assert.strictEqual((await call(admin, 'GET', '/compliance/runs/9999')).status, 404);
+  assert.strictEqual((await call(admin, 'GET', '/compliance/runs/abc')).status, 404);
+}));
+
+test('GET /compliance/runs/:id before the migration: not installed', () => withServer({ installed: false }, async ({ call }) => {
+  const r = await call(admin, 'GET', '/compliance/runs/1');
+  assert.strictEqual(r.status, 200);
+  assert.strictEqual(r.body.installed, false);
 }));
