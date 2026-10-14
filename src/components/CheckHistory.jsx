@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { timeOf, when } from '../lib/complianceView';
+import { useEffect, useId, useState } from 'react';
+import { rangeLabel, rangeToInstants, timeOf, when } from '../lib/complianceView';
 
 const STATUS_LABELS = { draft: 'Draft', submitted: 'Submitted', under_review: 'Under Review', for_revision: 'For Revision', approved: 'Approved', rejected: 'Rejected' };
 const PAGE = 12;
@@ -8,9 +8,20 @@ const PAGE = 12;
 // in the result dialog. It only displays; the page loads the history and opens the run.
 //   runs     the items of GET /api/compliance/history      loading / error   the state of that request
 //   opening  the runId being opened (its card waits)       onOpen(run)       called with the item that was pressed
-export default function CheckHistory({ runs, loading = false, error = '', opening = null, onOpen }) {
+//   range    the applied date filter { from, to } ('YYYY-MM-DD' or '')      onApply(range) / onReset()   change or clear it
+// The filter has a draft of its own: nothing is filtered until Apply, and the applied range stays until it is changed or reset.
+export default function CheckHistory({ runs, loading = false, error = '', opening = null, onOpen, range = { from: '', to: '' }, onApply, onReset }) {
+  const uid = useId();
   const [shown, setShown] = useState(PAGE);
+  const [draft, setDraft] = useState(range);
   const list = runs || [];
+
+  useEffect(() => { setDraft(range); setShown(PAGE); }, [range.from, range.to]); // a new applied range: show it, and start from the first page
+
+  const active = !!(range.from || range.to);
+  const valid = rangeToInstants(draft.from, draft.to) !== null;
+  const changed = draft.from !== range.from || draft.to !== range.to;
+  const apply = (e) => { e.preventDefault(); if (valid && changed) onApply(draft); };
 
   // The score's tone in words as well as colour: "Meets the standard" / "Below the pass line" / "Not scored".
   const toneOf = (r) => (!r.scored || r.overall === null ? 'none' : r.passed ? 'good' : 'warn');
@@ -19,16 +30,35 @@ export default function CheckHistory({ runs, loading = false, error = '', openin
   return (
     <section className="card hist-card" aria-label="Check history">
       <div className="hist-head">
-        <h3>Check history</h3>
-        <p>Each checked subject appears once, newest first. Open one to see its scoring.</p>
+        <div>
+          <h3>Check history</h3>
+          <p>Each checked subject appears once, newest first. Open one to see its scoring.</p>
+        </div>
+        <form className="hist-filter" onSubmit={apply} aria-label="Filter the history by date">
+          <label htmlFor={uid + '-from'}>From</label>
+          <input id={uid + '-from'} type="date" value={draft.from} max={draft.to || undefined} onChange={(e) => setDraft({ ...draft, from: e.target.value })} />
+          <label htmlFor={uid + '-to'}>To</label>
+          <input id={uid + '-to'} type="date" value={draft.to} min={draft.from || undefined} onChange={(e) => setDraft({ ...draft, to: e.target.value })} />
+          <button type="submit" className="btn primary" disabled={!valid || !changed}>Apply</button>
+          {active && <button type="button" className="btn outline" onClick={onReset}>Reset</button>}
+          {!valid && <span className="hist-filter-error" role="alert">The From date is after the To date.</span>}
+        </form>
       </div>
 
-      {loading && <p className="hist-empty">Loading the history…</p>}
+      <div className="hist-summary" aria-live="polite">
+        {active && !loading && !error && <><span className="chip">{'Showing ' + rangeLabel(range.from, range.to)}</span><span>{list.length + (list.length === 1 ? ' check' : ' checks')}</span></>}
+      </div>
+
+      {loading && list.length === 0 && <p className="hist-empty">Loading the history…</p>}
       {!loading && error && <p className="hist-empty" role="alert">{error}</p>}
-      {!loading && !error && list.length === 0 && <p className="hist-empty">No syllabus has been checked yet.</p>}
+      {!loading && !error && list.length === 0 && (
+        active
+          ? <p className="hist-empty" aria-live="polite">No check was stored in this date range. <button type="button" className="hist-reset" onClick={onReset}>Reset</button></p>
+          : <p className="hist-empty">No syllabus has been checked yet.</p>
+      )}
 
       {list.length > 0 && (
-        <ul className="hist-grid">
+        <ul className={'hist-grid' + (loading ? ' is-busy' : '')} aria-busy={loading}>
           {list.slice(0, shown).map((r) => {
             const t = toneOf(r);
             const day = when(r.createdAt);
