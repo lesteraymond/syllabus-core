@@ -8,7 +8,7 @@ const ROLE_PERMISSIONS = {
   admin: 'Full access',
   faculty: 'Create + Submit',
 };
-const EMPTY_FORM = { email: '', password: '', firstName: '', lastName: '', role: 'faculty' };
+const EMPTY_FORM = { email: '', firstName: '', lastName: '', role: 'faculty' };
 
 export default function UsersRoles({ notify, onManageSubjects }) {
   const [people, setPeople] = useState([]);
@@ -23,11 +23,21 @@ export default function UsersRoles({ notify, onManageSubjects }) {
   const addUser = async (e) => {
     e.preventDefault();
     try {
-      await usersApi.create(form);
+      const made = await usersApi.create(form);
       setForm(EMPTY_FORM);
       setShowForm(false);
       fetchUsers();
-      notify('User pre-registered. They can now sign in with Google.');
+      notify(made.emailSent
+        ? 'User created. Their username and a temporary password were sent to ' + made.email + '.'
+        : 'User created, but the email could not be sent. Use "Resend credentials" once email is set up.');
+    } catch (err) { notify('Failed: ' + err.message); }
+  };
+
+  const resend = async (p) => {
+    if (!window.confirm('Send ' + p.firstName + ' ' + p.lastName + ' a new temporary password? It replaces their current password, and they must choose their own at the next sign-in.')) return;
+    try {
+      const r = await usersApi.resendCredentials(p.id);
+      notify(r.emailSent ? 'New credentials sent to ' + r.email + '.' : 'The email could not be sent. Check the mail settings on the server.');
     } catch (err) { notify('Failed: ' + err.message); }
   };
 
@@ -58,21 +68,18 @@ export default function UsersRoles({ notify, onManageSubjects }) {
               <input id="user-email" className="user-input" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="name@email.lcup.edu.ph" required />
             </div>
             <div className="user-field">
-              <label htmlFor="user-password" className="user-label">Initial Password</label>
-              <input id="user-password" className="user-input" type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder="••••••••" required />
-            </div>
-            <div className="user-field">
               <label htmlFor="user-role" className="user-label">Role</label>
               <select id="user-role" className="user-input" value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}><option value="faculty">Faculty</option><option value="admin">Dean / Administrator</option></select>
             </div>
           <div className="user-field user-field-action">
             <button className="user-save-btn" type="submit">Save</button>
           </div>
+          <p className="pw-note">A temporary password is generated and emailed to the user with their username (their email address). They choose their own password the first time they sign in.</p>
         </form>
       )}
       <div className="table-card">
         <div className="overflow-x-auto w-full">
-          <table><thead><tr><th>User</th><th>Email</th><th>Role</th><th>Permissions</th><th></th></tr></thead><tbody>{people.map(p => <tr key={p.id}><td><span className="user-cell"><Avatar src={p.avatarUrl} name={`${p.firstName} ${p.lastName}`} /><strong>{p.firstName} {p.lastName}</strong></span></td><td><small>{p.email}</small></td><td>{ROLE_LABELS[p.role] || p.role}</td><td>{ROLE_PERMISSIONS[p.role] || 'Unknown'}</td><td><span className="user-actions">{p.role === 'faculty' && <button className="btn outline" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => setAssigning(p)}>Assignments</button>}<button className="btn danger" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => removeUser(p)}>Remove</button></span></td></tr>)}</tbody></table>
+          <table><thead><tr><th>User</th><th>Email</th><th>Role</th><th>Permissions</th><th></th></tr></thead><tbody>{people.map(p => <tr key={p.id}><td><span className="user-cell"><Avatar src={p.avatarUrl} name={`${p.firstName} ${p.lastName}`} /><strong>{p.firstName} {p.lastName}</strong></span></td><td><small>{p.email}</small></td><td>{ROLE_LABELS[p.role] || p.role}</td><td>{ROLE_PERMISSIONS[p.role] || 'Unknown'}</td><td><span className="user-actions">{p.role === 'faculty' && <button className="btn outline" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => setAssigning(p)}>Assignments</button>}{ROLE_LABELS[p.role] && <button className="btn outline" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => resend(p)}>Resend credentials</button>}<button className="btn danger" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => removeUser(p)}>Remove</button></span></td></tr>)}</tbody></table>
         </div>
         {people.length === 0 && <div className="empty">No users found.</div>}
       </div>
