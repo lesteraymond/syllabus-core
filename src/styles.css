@@ -116,7 +116,7 @@ button {
 }
 .login-brand h1 {
 	font:
-		700 var(--text-hero) / 1.05 var(--font-display),
+		var(--fw-bold) var(--text-hero) / 1.05 var(--font-display),
 		sans-serif;
 	margin: 13px 0 22px;
 }
@@ -130,7 +130,7 @@ button {
 	display: inline-block;
 	font-size: var(--text-sm);
 	letter-spacing: 0.13em;
-	font-weight: 600;
+	font-weight: var(--fw-semibold);
 	color: var(--blue);
 }
 .eyebrow.light {
@@ -169,7 +169,7 @@ button {
 	object-fit: contain;
 }
 .login-card h2 {
-	font: 700 var(--text-xl) var(--font-display);
+	font: var(--fw-bold) var(--text-xl) var(--font-display);
 	line-height: 1.3;
 	margin: 0;
 }
@@ -181,7 +181,7 @@ button {
 	flex-direction: column;
 	gap: 7px;
 	font-size: var(--text-sm);
-	font-weight: 600;
+	font-weight: var(--fw-semibold);
 	color: #3e4960;
 }
 .login-card input,
@@ -221,7 +221,7 @@ select {
 	background: none;
 	color: var(--blue);
 	font-size: var(--text-sm);
-	font-weight: 600;
+	font-weight: var(--fw-semibold);
 }
 .form-error {
 	background: #fff1f1;
@@ -234,7 +234,7 @@ select {
 	border: 0;
 	border-radius: 9px;
 	padding: 11px 16px;
-	font-weight: 600;
+	font-weight: var(--fw-semibold);
 	transition: 0.18s;
 }
 .btn:hover {
@@ -373,7 +373,7 @@ a:focus-visible {
 	object-fit: contain;
 }
 .side-title {
-	font: 700 var(--text-lg) var(--font-display);
+	font: var(--fw-bold) var(--text-lg) var(--font-display);
 	line-height: 1.3;
 	transition: opacity 200ms ease;
 }
@@ -395,7 +395,7 @@ a:focus-visible {
 	border-radius: 9px;
 	text-align: left;
 	font-size: var(--text-sm);
-	font-weight: 600;
+	font-weight: var(--fw-semibold);
 	white-space: nowrap;
 	overflow: hidden;
 	transition: background 0.18s;
@@ -459,7 +459,7 @@ a:focus-visible {
 	z-index: 8;
 }
 .topbar h2 {
-	font: 700 var(--text-lg) var(--font-display);
+	font: var(--fw-bold) var(--text-lg) var(--font-display);
 	line-height: 1.3;
 	margin: 2px 0 0;
 }
@@ -516,7 +516,7 @@ a:focus-visible {
 	line-height: 1.25;
 }
 .profile-btn strong {
-	font-weight: 600;
+	font-weight: var(--fw-semibold);
 	font-size: var(--text-sm);
 }
 .profile-btn small {
@@ -530,7 +530,7 @@ a:focus-visible {
 	border-radius: 50%;
 	display: grid;
 	place-items: center;
-	font-weight: 700;
+	font-weight: var(--fw-bold);
 	background: #f3d8b5;
 	color: #7c4c12;
 	object-fit: cover;
@@ -554,7 +554,7 @@ a:focus-visible {
 	margin-bottom: 18px;
 }
 .page-head h1 {
-	font: 700 var(--text-xl) var(--font-display);
+	font: var(--fw-bold) var(--text-xl) var(--font-display);
 	line-height: 1.3;
 	margin: 0 0 5px;
 }
@@ -627,11 +627,11 @@ a:focus-visible {
 	grid-area: label;
 	font-size: var(--text-xs);
 	color: var(--muted);
-	font-weight: 600;
+	font-weight: var(--fw-semibold);
 }
 .stat-card strong {
 	grid-area: value;
-	font: 800 var(--text-lg) var(--font-display);
+	font: var(--fw-heavy) var(--text-lg) var(--font-display);
 	color: #10295f;
 }
 .stat-card small {
@@ -677,7 +677,7 @@ a:focus-visible {
 .card-head h3,
 .chart-card h3,
 .settings-card h3 {
-	font: 700 var(--text-sm) var(--font-display);
+	font: var(--fw-bold) var(--text-sm) var(--font-display);
 	line-height: 1.3;
 	margin: 0;
 }
@@ -722,7 +722,7 @@ a:focus-visible {
 	gap: 2px;
 }
 .activity strong {
-	font-weight: 600;
+	font-weight: var(--fw-semibold);
 	font-size: var(--text-sm);
 }
 .activity small {
@@ -736,7 +736,7 @@ a:focus-visible {
 	font-size: var(--text-xs);
 	padding: 4px 7px;
 	border-radius: 999px;
-	font-weight: 600;
+	font-weight: var(--fw-semibold);
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -806,7 +806,7 @@ a:focus-visible {
 	text-align: center;
 }
 .donut strong {
-	font: 700 var(--text-lg) var(--font-display);
+	font: var(--fw-bold) var(--text-lg) var(--font-display);
 }
 .donut small {
 	font-size: var(--text-xs);
@@ -863,12 +863,12 @@ a:focus-visible {
 	display: flex;
 	flex-direction: column;
 	font-size: var(--text-xs);
-	font-weight: 600;
+	font-weight: var(--fw-semibold);
 }
 .quick-actions small {
 	font-size: var(--text-xs);
 	color: var(--muted);
-	font-weight: 400;
+	font-weight: var(--fw-regular);
 	margin-top: 2px;
 }
 .progress-row {
@@ -922,7 +922,7 @@ a:focus-visible {
 	display: grid;
 	place-items: center;
 	color: var(--text);
-	font-weight: 600;
+	font-weight: var(--fw-semibold);
 }
 .deadline {
 	display: flex;
@@ -949,7 +949,7 @@ a:focus-visible {
 }
 .deadline span {
 	font-size: var(--text-xs);
-	font-weight: 600;
+	font-weight: var(--fw-semibold);
 }
 .deadline p {
 	margin: 0;
@@ -959,7 +959,7 @@ a:focus-visible {
 	gap: 3px;
 }
 .deadline strong {
-	font-weight: 600;
+	font-weight: var(--fw-semibold);
 	font-size: var(--text-xs);
 }
 .deadline small {
@@ -1043,12 +1043,12 @@ a:focus-visible {
 	place-items: center;
 	background: #eef2f8;
 	color: #61708b;
-	font-weight: 600;
+	font-weight: var(--fw-semibold);
 }
 .stepper button.active {
 	background: #eaf0ff;
 	color: var(--blue);
-	font-weight: 600;
+	font-weight: var(--fw-semibold);
 }
 .stepper button.active span {
 	background: var(--blue);
@@ -1070,14 +1070,14 @@ a:focus-visible {
 	margin-bottom: 16px;
 }
 .editor-title h2 {
-	font: 700 var(--text-lg) var(--font-display);
+	font: var(--fw-bold) var(--text-lg) var(--font-display);
 	line-height: 1.3;
 	margin: 3px 0;
 }
 .autosave {
 	font-size: var(--text-xs);
 	color: var(--green);
-	font-weight: 600;
+	font-weight: var(--fw-semibold);
 }
 .form-grid {
 	display: grid;
@@ -1094,7 +1094,7 @@ a:focus-visible {
 }
 .field span {
 	font-size: var(--text-xs);
-	font-weight: 600;
+	font-weight: var(--fw-semibold);
 	color: #4e5b73;
 }
 .field textarea {
@@ -1136,7 +1136,7 @@ a:focus-visible {
 .outcome-row > span {
 	background: #eaf0ff;
 	color: var(--blue);
-	font-weight: 600;
+	font-weight: var(--fw-semibold);
 	border-radius: 8px;
 	padding: 12px 6px;
 	text-align: center;
@@ -1175,7 +1175,7 @@ a:focus-visible {
 }
 .table-wrap th,
 .table-card th {
-	font-weight: 600;
+	font-weight: var(--fw-semibold);
 	background: #f8f9fc;
 	color: #6a758a;
 	font-size: var(--text-xs);
