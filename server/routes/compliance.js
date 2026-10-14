@@ -5,7 +5,7 @@
 //                                              the same content as an earlier run returns that run, { force: true } makes a new one
 //   GET  /api/compliance?syllabus=all|<id>     stored runs: an admin sees every submitted syllabus, faculty only their own, each with
 //                                              the faculty member, program and subject so the list can be grouped
-//   GET  /api/compliance/history               (admin) the newest checks of submitted versions, one item per run, to list as a history
+//   GET  /api/compliance/history               (admin) the latest check of each submitted syllabus, one item per syllabus, newest first
 //   GET  /api/compliance/runs/:runId           (admin) one stored run in full, whatever the syllabus's status (approved ones too)
 // An approved syllabus is final: it cannot be checked again, but its stored runs stay readable.
 // Runs are stored by the submit route (with the version, authoritative) and by the recheck route. Nothing here changes a syllabus.
@@ -198,8 +198,9 @@ router.get('/compliance', requireAuth, async (req, res) => {
   } catch (err) { sendError(res, err); }
 });
 
-// The history: every check stored with a submitted version (the ones a reviewer sees), newest first. A draft check an owner ran
-// afterwards is not part of it. Each item is a summary; the full run is read with /compliance/runs/:runId.
+// The history: one item per syllabus, its latest check stored with a submitted version (the one a reviewer sees), newest first. A
+// subject is checked once and appears once; older runs of it are not listed. A draft check an owner ran afterwards is not part of it.
+// Each item is a summary; the full run is read with /compliance/runs/:runId.
 router.get('/compliance/history', requireAuth, async (req, res) => {
   try {
     const db = req.app.locals.db;
@@ -210,7 +211,8 @@ router.get('/compliance/history', requireAuth, async (req, res) => {
     const [rows] = await db.query(
       'SELECT r.run_id, r.syllabus_id, r.overall, r.status, r.passed, r.ai_status, r.created_by, r.created_at, l.user_id, l.course_code, l.title, l.syllabus_status, l.first_name, l.last_name, l.course_title, l.program_code, l.program_name, l.curriculum_program '
       + 'FROM ai_check_runs r JOIN (SELECT s.syllabus_id, s.user_id, s.course_code, s.title, s.status AS syllabus_status, ' + LABEL_SQL + ") l ON l.syllabus_id = r.syllabus_id "
-      + "WHERE r.version_id IS NOT NULL AND l.syllabus_status <> 'draft' ORDER BY r.run_id DESC LIMIT ?",
+      + "WHERE r.version_id IS NOT NULL AND l.syllabus_status <> 'draft' "
+      + 'AND r.run_id = (SELECT MAX(r2.run_id) FROM ai_check_runs r2 WHERE r2.syllabus_id = r.syllabus_id AND r2.version_id IS NOT NULL) ORDER BY r.run_id DESC LIMIT ?',
       [limit]
     );
     res.json({

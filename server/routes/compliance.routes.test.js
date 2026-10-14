@@ -113,7 +113,8 @@ function makeDb() {
       return [rows.map((x) => { const r = labelled(x); if (!sql.includes('s.content,')) delete r.content; return r; })];
     }
     if (sql.startsWith('SELECT r.run_id')) { // the history: runs stored with a version, newest first, with the syllabus's labels
-      return [s.runs.filter((r) => r.version_id !== null && s.syllabi[r.syllabus_id].status !== 'draft').reverse().slice(0, p[0])
+      const latestOf = (id) => Math.max(...s.runs.filter((x) => x.syllabus_id === id && x.version_id !== null).map((x) => x.run_id));
+      return [s.runs.filter((r) => r.version_id !== null && s.syllabi[r.syllabus_id].status !== 'draft' && r.run_id === latestOf(r.syllabus_id)).reverse().slice(0, p[0])
         .map((r) => ({ ...labelled(s.syllabi[r.syllabus_id]), run_id: r.run_id, syllabus_id: r.syllabus_id, overall: r.overall, status: r.status, passed: r.passed, ai_status: r.ai_status, created_by: r.created_by, created_at: r.created_at, syllabus_status: s.syllabi[r.syllabus_id].status }))];
     }
     if (sql.startsWith('SELECT u.first_name, u.last_name')) return [s.syllabi[p[0]] ? [labelled(s.syllabi[p[0]])] : []];
@@ -566,7 +567,7 @@ test('an approved syllabus cannot be checked again: 409 before the limiter is us
   assert.ok(read.body.run);
 }));
 
-test('GET /compliance/history: admin only, newest first, drafts and draft-only checks left out, the limit capped', () => withServer(async ({ call, db }) => {
+test('GET /compliance/history: one item per syllabus (its latest check), newest first, drafts and draft-only checks left out, the limit capped', () => withServer(async ({ call, db }) => {
   submittedBefore(db, 2);
   submittedBefore(db, 3);
   await call(admin, 'POST', '/syllabi/2/compliance/recheck', {});
@@ -576,14 +577,14 @@ test('GET /compliance/history: admin only, newest first, drafts and draft-only c
   const h = await call(admin, 'GET', '/compliance/history');
   assert.strictEqual(h.status, 200);
   assert.strictEqual(h.body.installed, true);
-  assert.deepStrictEqual(h.body.runs.map((r) => r.runId), [3, 2, 1]);
+  assert.deepStrictEqual(h.body.runs.map((r) => r.runId), [3, 2]); // syllabus 2 was checked twice: only its latest run is listed
   const top = h.body.runs[0];
   assert.strictEqual(top.syllabusId, 3);
   assert.strictEqual(top.checkedBy, 'admin');
   assert.strictEqual(top.facultyName, 'Fay F');
   assert.ok(top.createdAt && typeof top.overall === 'number' && top.scored === true);
-  assert.strictEqual((await call(admin, 'GET', '/compliance/history?limit=2')).body.runs.length, 2);
-  assert.strictEqual((await call(admin, 'GET', '/compliance/history?limit=100000')).body.runs.length, 3); // capped, not an error
+  assert.strictEqual((await call(admin, 'GET', '/compliance/history?limit=1')).body.runs.length, 1);
+  assert.strictEqual((await call(admin, 'GET', '/compliance/history?limit=100000')).body.runs.length, 2); // capped, not an error
   assert.strictEqual((await call(fay, 'GET', '/compliance/history')).status, 403);
   assert.strictEqual((await call(null, 'GET', '/compliance/history')).status, 401);
 }));

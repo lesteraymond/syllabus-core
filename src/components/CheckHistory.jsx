@@ -20,7 +20,7 @@ export default function CheckHistory({ runs, loading = false, error = '', openin
     <section className="card hist-card" aria-label="Check history">
       <div className="hist-head">
         <h3>Check history</h3>
-        <p>Every check stored with a submitted syllabus, newest first. Open one to see its scoring.</p>
+        <p>Each checked subject appears once, newest first. Open one to see its scoring.</p>
       </div>
 
       {loading && <p className="hist-empty">Loading the history…</p>}
