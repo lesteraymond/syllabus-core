@@ -74,6 +74,7 @@ export default function SyllabusViewModal({ syllabusId, onClose, onChecked, asid
               <div className="svm-nofile">
                 <p>{noFormMessage(payload.file)}</p>
                 {payload.file && <p><a className="btn outline" href={`${API_ORIGIN}${payload.file.path}`} target="_blank" rel="noreferrer">{'Open ' + fileName(payload.file.path)}</a></p>}
+                {payload.file && /\.pdf$/i.test(payload.file.path) && <iframe className="svm-pdf" title="Uploaded syllabus" src={`${API_ORIGIN}${payload.file.path}`} />}
               </div>
             ))}
           {payload && tab === 'compliance' && <CompliancePanel syllabusId={s.id} onChanged={onChecked} />}

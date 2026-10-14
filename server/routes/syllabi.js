@@ -21,7 +21,24 @@ const storage = multer.diskStorage({
     cb(null, unique + path.extname(file.originalname));
   }
 });
-const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
+// Syllabus files are PDFs only: every reviewer and student can then open them in the browser.
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (path.extname(file.originalname).toLowerCase() === '.pdf' && file.mimetype === 'application/pdf') return cb(null, true);
+    const err = new Error('Only PDF files are accepted');
+    err.status = 400;
+    cb(err);
+  },
+});
+
+// multer's own errors (wrong file type, over 10MB) become a normal JSON error the app can show.
+const onePdf = (req, res, next) => upload.single('file')(req, res, (err) => {
+  if (!err) return next();
+  const message = err.code === 'LIMIT_FILE_SIZE' ? 'That file is larger than 10MB.' : err.message || 'The upload failed.';
+  res.status(err.status || 400).json({ message, error: message });
+});
 
 router.get('/', requireAuth, async (req, res) => {
   try {
@@ -102,7 +119,7 @@ const checkLengths = ({ title, courseCode }) => {
 
 const VERSION_COLUMNS = `(syllabus_id, version_label, title, course_code, curriculum_id, file_path, status_at_save, note, created_by)`;
 
-router.post('/', requireAuth, upload.single('file'), async (req, res) => {
+router.post('/', requireAuth, onePdf, async (req, res) => {
   let committed = false;
   try {
     const db = req.app.locals.db;
@@ -145,7 +162,7 @@ router.post('/', requireAuth, upload.single('file'), async (req, res) => {
 // Two kinds of update share this route:
 //  - an admin changes the status (and optionally the reviewer comment): JSON body with `status`;
 //  - the owner edits the content (title, course code, curriculum, file, note): this creates a new version.
-router.put('/:id', requireAuth, upload.single('file'), async (req, res) => {
+router.put('/:id', requireAuth, onePdf, async (req, res) => {
   const db = req.app.locals.db;
   const me = req.session.user;
   let committed = false;
@@ -193,8 +210,9 @@ router.put('/:id', requireAuth, upload.single('file'), async (req, res) => {
       if (syl.course_id) await assignments.requireCourseAccess(conn, me, syl.course_id);
       await assignments.requireCourseCodeAccess(conn, me, next.courseCode);
       const newStatus = rules.statusAfterOwnerEdit(syl.status);
-      const label = rules.nextVersionLabel(syl.version); // the client's version, if any, is ignored
-      const versionNote = (typeof note === 'string' && note.trim()) ? note.trim().slice(0, 1000) : 'Updated by author';
+      const first = syl.status === 'draft'; // a draft submitted as an uploaded file is the first version
+      const label = first ? 'v1.0' : rules.nextVersionLabel(syl.version); // the client's version, if any, is ignored
+      const versionNote = (typeof note === 'string' && note.trim()) ? note.trim().slice(0, 1000) : (first ? 'Initial version (uploaded file)' : 'Updated by author');
 
       await conn.query(
         'UPDATE syllabi SET title = ?, course_code = ?, curriculum_id = ?, file_path = ?, status = ?, version = ? WHERE syllabus_id = ?',
@@ -206,9 +224,9 @@ router.put('/:id', requireAuth, upload.single('file'), async (req, res) => {
       );
       await conn.query(
         'INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)',
-        [id, me.id, syl.status === 'for_revision' ? 'submit' : 'update', `Edited, saved as ${label}: ${versionNote}`.slice(0, 500)]
+        [id, me.id, first ? 'upload' : (syl.status === 'for_revision' ? 'submit' : 'update'), `${first ? 'Uploaded file, saved as' : 'Edited, saved as'} ${label}: ${versionNote}`.slice(0, 500)]
       );
-      return { kind: 'edit', syl, label, courseCode: next.courseCode, previousStatus: syl.status };
+      return { kind: 'edit', syl, label, title: next.title, courseCode: next.courseCode, previousStatus: syl.status };
     });
 
     committed = true;
@@ -227,7 +245,15 @@ router.put('/:id', requireAuth, upload.single('file'), async (req, res) => {
       return res.json({ message: 'Syllabus updated' });
     }
 
-    if (outcome.previousStatus === 'under_review' || outcome.previousStatus === 'for_revision') {
+    if (outcome.previousStatus === 'draft') {
+      await notifyAdmins(db, {
+        exceptUserId: me.id,
+        type: 'submission',
+        syllabusId: id,
+        title: `New syllabus submitted: ${outcome.courseCode || outcome.title || 'Untitled'}`,
+        body: `${me.firstName} ${me.lastName} submitted ${outcome.title || outcome.courseCode || 'a syllabus'} (uploaded file) for review.`,
+      });
+    } else if (outcome.previousStatus === 'under_review' || outcome.previousStatus === 'for_revision') {
       await notifyAdmins(db, {
         exceptUserId: me.id,
         type: 'edit',

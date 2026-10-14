@@ -22,8 +22,8 @@ function CourseInformation({ data, update, dragging, setDragging, handleFile }) 
         onDragLeave={() => setDragging(false)}
         onDrop={e => { e.preventDefault(); setDragging(false); handleFile(e.dataTransfer.files[0]); }}
         onClick={() => document.getElementById('file-input').click()}>
-        <input id="file-input" type="file" accept=".pdf,.doc,.docx" style={{ display: 'none' }} onChange={e => handleFile(e.target.files[0])} />
-        {data.fileName ? <><span className="drop-icon">📎</span><span className="drop-text">{data.fileName}</span><small>Click or drop to replace</small></> : <><span className="drop-icon">📄</span><span className="drop-text">Drag & drop your syllabus file here</span><small>PDF or Word document • Max 10MB</small></>}
+        <input id="file-input" type="file" accept=".pdf,application/pdf" style={{ display: 'none' }} onChange={e => handleFile(e.target.files[0])} />
+        {data.fileName ? <><span className="drop-icon">📎</span><span className="drop-text">{data.fileName}</span><small>Click or drop to replace</small></> : <><span className="drop-icon">📄</span><span className="drop-text">Drag & drop your syllabus file here</span><small>PDF only • Max 10MB</small></>}
       </div>
     </Field>
   </div>;

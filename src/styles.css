@@ -3730,7 +3730,6 @@ table,
 	margin-bottom: 6px;
 }
 
-<<<<<<< UI-Design
 /* ---- builder2, steps 4-7 ---- */
 .bld2 .item { display: grid; grid-template-columns: 34px minmax(0, 1fr) 28px; align-items: start; border-bottom: 1px solid var(--line); padding: 3px 0; }
 .bld2 .item .no { font: 500 13px var(--font-mono); color: var(--muted); padding: 9px 0 0 6px; }
@@ -3785,7 +3784,8 @@ table,
 	grid-template-columns: minmax(280px, 380px) minmax(0, 1fr);
 	gap: 14px;
 	align-items: start;
-=======
+}
+
 /* codes and tags: one Code, one Tag, used everywhere */
 .bld2 .code {
 	display: inline-grid;
@@ -3796,7 +3796,6 @@ table,
 	font: 600 11px var(--font-mono);
 	white-space: nowrap;
 	flex: none;
->>>>>>> staging
 }
 .bld2 .code.k0 {
 	background: var(--clo-0);
@@ -7024,3 +7023,28 @@ table,
 /* The dashboard icons are black: the stat tiles and the quick actions. The tinted tiles behind them keep their colours. */
 :root { --icon-black: #111111; }
 .stat-grid .stat-card .stat-icon, .quick-actions button b, .quick-actions button > svg { color: var(--icon-black); }
+
+/* The syllabus header: LCUP logo left, Testmark right, the school name centered (as in sample_syllabus). */
+.paper .paper-head { display: flex; justify-content: center; align-items: center; gap: 14px; }
+.paper .paper-head .c { flex: 0 1 auto; }
+.paper .paper-logo { width: 55px; height: 55px; object-fit: contain; flex: none; }
+.paper .paper-logo-wide { width: 70px; height: 45px; }
+
+/* Builder: "Fill in the form" / "Upload a file instead". The mode that opens slides in from its side. */
+.bld2-modes { display: inline-flex; gap: 4px; padding: 4px; margin: 0 0 14px; background: var(--th-gray); border-radius: 10px; max-width: 100%; }
+.bld2-modes button { border: 0; background: transparent; padding: 8px 14px; border-radius: 8px; font: 600 var(--text-sm) var(--font-body); color: var(--muted); cursor: pointer; }
+.bld2-modes button.active { background: var(--card); color: inherit; box-shadow: 0 1px 3px rgba(6, 18, 60, 0.15); }
+.bld2-slide { animation: bld2SlideLeft 0.28s ease-out; }
+.bld2-slide.bld2-from-right { animation-name: bld2SlideRight; }
+@keyframes bld2SlideLeft { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
+@keyframes bld2SlideRight { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .bld2-slide { animation: none; } }
+.up-panel .up-fields { border: 0; padding: 0; margin: 0; display: grid; gap: 14px; min-width: 0; }
+.up-preview { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.up-preview-bar { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--th-gray); font-size: var(--text-sm); }
+.up-preview iframe { display: block; width: 100%; height: 520px; border: 0; background: #fff; }
+.up-note { display: grid; gap: 6px; font-size: var(--text-sm); font-weight: 600; }
+.up-note textarea { font-weight: 400; }
+.up-actions { display: flex; justify-content: flex-end; }
+@media (max-width: 700px) { .up-preview iframe { height: 380px; } .bld2-modes { display: flex; } .bld2-modes button { flex: 1; padding: 10px 8px; } }
+.svm-pdf { display: block; width: 100%; height: 70vh; min-height: 420px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }

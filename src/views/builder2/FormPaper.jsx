@@ -15,7 +15,11 @@ export default function FormPaper({ d, model, preparedBy }) {
   const iloTags = (il) => il.tags.map((t) => { const i = model.tagInfo(d, t); return i.kind === 'clo' ? '[CLO' + i.no + ']' : '[' + i.label.replace(' ', '') + ']'; }).join(' ');
   return (
     <div className="paper">
-      <div className="c"><b style={{ fontSize: 14 }}>{INSTITUTION_NAME}</b><br />{INSTITUTION_ADDRESS}</div>
+      <div className="paper-head">
+        <img className="paper-logo" src="/lcup-logo.png" alt="LCUP logo" />
+        <div className="c"><b style={{ fontSize: 14 }}>{INSTITUTION_NAME}</b><br />{INSTITUTION_ADDRESS}</div>
+        <img className="paper-logo paper-logo-wide" src="/testmark-logo.png" alt="Testmark logo" />
+      </div>
       <div className="c" style={{ marginTop: 8 }}><b>{'SCHOOL YEAR ' + CURRENT_SCHOOL_YEAR.label}</b><br /><b>{COLLEGE_NAME.toUpperCase()}</b></div>
       <div className="kv2"><b>I.</b><b>COURSE CODE</b><span>:</span><span>{d.meta.code}</span></div>
       <div className="kv2"><b>II.</b><b>COURSE TITLE</b><span>:</span><b>{d.meta.title}</b></div>

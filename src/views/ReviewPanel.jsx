@@ -44,10 +44,12 @@ export default function ReviewPanel({ syllabus, user, messages, handleStatus, se
 
       {tab === 'decision' && (
         <div className="rp-pane">
-          <p className={'rp-status ' + (decidable ? 'waiting' : 'done')}>
-            <Icon name={decidable ? 'hourglassMedium' : 'checkCircle'} size={20} />
-            <span>{decidable ? 'Waiting for your decision' : 'This syllabus is ' + (STATUS_LABELS[syllabus.status] || syllabus.status).toLowerCase() + '. There is nothing to decide.'}</span>
-          </p>
+          {!decidable && (
+            <p className="rp-status done">
+              <Icon name="checkCircle" size={20} />
+              <span>{'This syllabus is ' + (STATUS_LABELS[syllabus.status] || syllabus.status).toLowerCase() + '. There is nothing to decide.'}</span>
+            </p>
+          )}
           <label className="rp-note"><span>Note to the faculty member</span>
             <textarea rows={5} maxLength={2000} value={note} disabled={!decidable || busy} onChange={(e) => { setNote(e.target.value); setProblem(''); setConfirming(null); }} placeholder="Optional for approval. Required to return for revision or reject." />
           </label>

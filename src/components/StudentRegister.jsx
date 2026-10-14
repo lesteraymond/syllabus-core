@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Icon } from './ui';
 import { students } from '../lib/api';
+import { useModalLayer } from './useModalLayer';
 
 const MAX_BYTES = 10 * 1024 * 1024;
 
 // Read-only: what the server read from the COR. The student confirms it or retakes the photo; nothing here can be typed.
-function ScanModal({ scan, busy, error, onConfirm, onRetake }) {
+function ScanModal({ scan, busy, error, onConfirm, onRetake, onClose }) {
+  const dialog = useRef(null);
+  useModalLayer(dialog, () => { if (!busy) onClose(); }); // Esc closes it, except while the account is being created
   const rows = [
     ['Student ID', scan.studentId],
     ['Name', scan.studentName],
@@ -18,9 +21,10 @@ function ScanModal({ scan, busy, error, onConfirm, onRetake }) {
   const sure = scan.bsit === 'yes' && scan.studentName && scan.schoolYear;
   return (
     <div className="overlay" role="presentation">
-      <div className="modal" role="dialog" aria-modal="true" aria-labelledby="scan-title">
+      <div className="modal" role="dialog" aria-modal="true" aria-labelledby="scan-title" tabIndex={-1} ref={dialog}>
         <div className="modal-head">
           <div><h3 id="scan-title">Is this your COR?</h3><small>This is what we read from your photo. It can't be edited here.</small></div>
+          <button type="button" className="icon-btn" aria-label="Close" title="Close" disabled={busy} onClick={onClose}>✕</button>
         </div>
         <div className="modal-body">
           <dl className="scan-list">
@@ -99,6 +103,7 @@ export default function StudentRegister({ onBack }) {
   };
 
   const retake = () => { setScan(null); setFile(null); setModalError(''); };
+  const closeModal = () => { setScan(null); setModalError(''); }; // keeps the chosen photo so they can scan it again
 
   if (done) {
     const verified = done.status === 'verified';
@@ -142,7 +147,7 @@ export default function StudentRegister({ onBack }) {
         <button className="btn primary wide" type="submit" disabled={scanning}>{scanning ? 'Reading your COR... this can take a few seconds' : 'Scan COR and continue'}</button>
         <button className="link-btn" type="button" onClick={onBack}>← Back to Sign In</button>
       </form>
-      {scan && <ScanModal scan={scan} busy={saving} error={modalError} onConfirm={confirm} onRetake={retake} />}
+      {scan && <ScanModal scan={scan} busy={saving} error={modalError} onConfirm={confirm} onRetake={retake} onClose={closeModal} />}
     </>
   );
 }

@@ -11,6 +11,7 @@ import ReqStep from './ReqStep';
 import RefsStep from './RefsStep';
 import GradeStep from './GradeStep';
 import ReviewStep from './ReviewStep';
+import UploadPanel from './UploadPanel';
 import { useCatalog } from './useCatalog';
 import { useDraft } from './useDraft';
 import { prefersReducedMotion } from './parts';
@@ -40,6 +41,8 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
   const [note, setNote] = useState('');
   const [courseList, setCourseList] = useState([]);
   const [busy, setBusy] = useState(false);
+  // 'form' (the seven steps) or 'upload' (submit a finished PDF instead). The draft lives in useDraft, so switching loses nothing.
+  const [mode, setMode] = useState('form');
   // Bumped by the footer's Re-check; the Review & Check step's compliance section re-runs the check when it changes.
   const [checkTick, setCheckTick] = useState(0);
   // The rules the server named when it refused a submit (the form does not follow the template).
@@ -146,6 +149,26 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
     }
   };
 
+  const submitFile = async (file, fileNote) => {
+    setBusy(true);
+    try {
+      if (!(await saveFirst())) return;
+      const id = syllabusId();
+      if (!id || !draft.meta.courseId) { notify('Choose a subject first.'); return; }
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('title', draft.meta.title || '');
+      fd.append('courseCode', draft.meta.code || '');
+      if (fileNote) fd.append('note', fileNote);
+      const res = await syllabiApi.edit(id, fd);
+      onSubmitted(res, existing);
+    } catch (e) {
+      notify('Upload failed: ' + e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
   // Faculty work only on what an admin assigned to them: the server sends just those programs. With none, the
   // builder stays closed; a syllabus whose course was un-assigned opens read-only with the reason.
   const state = !!user && user.role === 'faculty' ? assignmentState(mine) : null; // 'none' | 'noSubject' | 'ok' | null
@@ -171,6 +194,16 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
   return (
     <>
       <PageHead title="Syllabus Builder / Editor" subtitle="Fill in the institutional syllabus form step by step. Every part is connected to the others." actions={<button className="btn outline" onClick={saveNow}>Save now</button>} />
+      <div className="bld2-modes" role="tablist" aria-label="How to submit">
+        <button type="button" role="tab" aria-selected={mode === 'form'} className={mode === 'form' ? 'active' : ''} onClick={() => setMode('form')}>Fill in the form</button>
+        <button type="button" role="tab" aria-selected={mode === 'upload'} className={mode === 'upload' ? 'active' : ''} onClick={() => setMode('upload')}>Upload a file instead</button>
+      </div>
+      {mode === 'upload' && (
+        <div className="bld2-slide bld2-from-right">
+          <UploadPanel hasCourse={!!draft.meta.courseId} existing={existing} busy={busy} disabled={!editable} notify={notify} onSubmit={submitFile} onChooseCourse={() => { setMode('form'); setStep(0); }} />
+        </div>
+      )}
+      <div className={'bld2-slide bld2-from-left' + (mode === 'upload' ? ' bld2-hidden' : '')} hidden={mode === 'upload'}>
       <div className="course-strip">
         <span><small>Course Code</small><b className="mono">{draft.meta.code || '—'}</b></span>
         <span><small>Course Title</small><b>{draft.meta.title || '—'}</b></span>
@@ -233,6 +266,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
             </div>
           </div>
         </section>
+      </div>
       </div>
       {toast && <div className="bld2-toast" role="status"><span>{toast.msg}</span>{toast.action && <button type="button" onClick={toast.action.fn}>{toast.action.label}</button>}</div>}
     </>

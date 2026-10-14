@@ -63,7 +63,11 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password, remember } = req.body;
     const db = req.app.locals.db;
-    const [rows] = await db.query('SELECT * FROM users WHERE LOWER(email) = LOWER(?)', [String(email || '')]);
+    // A student ID may be typed with or without its dashes: 244233624 is the same as 24-4233-624.
+    const typed = String(email || '').trim();
+    const idMatch = typed.match(/^(\d{2})\s*-?\s*(\d{4})\s*-?\s*(\d{3})$/);
+    const login = idMatch ? `${idMatch[1]}-${idMatch[2]}-${idMatch[3]}` : typed;
+    const [rows] = await db.query('SELECT * FROM users WHERE LOWER(email) = LOWER(?)', [login]);
     const user = rows[0];
     if (!user) return fail(res, 403, 'Access Denied. Account not registered.');
 
