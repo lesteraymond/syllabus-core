@@ -1,4 +1,3 @@
-const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
@@ -8,10 +7,14 @@ const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { AVATAR_DIR, avatarRelPath, avatarFile, avatarUrlFor } = require('../lib/avatar');
 const { inTransaction } = require('../lib/http');
 const { createNotification } = require('../lib/notify');
+const { createLimiter } = require('../lib/rateLimit');
+const { generatePassword } = require('../lib/passwords');
+const mailer = require('../lib/mailer');
 const assignments = require('../lib/assignments');
 const router = express.Router();
 
 const ROLES = ['faculty', 'admin']; // admin = Dean / Academic Administrator
+const resendLimiter = createLimiter({ max: 10, windowMs: 10 * 60 * 1000 }); // per admin
 
 const fail = (res, status, message) => res.status(status).json({ message, error: message });
 
@@ -34,15 +37,15 @@ router.get('/', requireAdmin, async (req, res) => {
   }
 });
 
-// Admin registers a user. A password is optional: users normally sign in with Google, so
-// without one we store a random hash nobody can match (password_hash is NOT NULL).
+// Admin registers a user. The system makes the password and emails it with the username (the email address); the user must choose
+// their own at the first sign-in (must_change_password). The password is never in a response or a log. If the email cannot be sent the
+// user is still registered: the response says emailSent: false and "Resend credentials" tries again. Users normally sign in with Google too.
 router.post('/', requireAdmin, async (req, res) => {
   try {
     const firstName = String(req.body.first_name ?? req.body.firstName ?? '').trim();
     const lastName = String(req.body.last_name ?? req.body.lastName ?? '').trim();
     const email = String(req.body.email ?? '').trim().toLowerCase();
     const role = req.body.role ?? 'faculty';
-    const password = req.body.password ? String(req.body.password) : crypto.randomBytes(32).toString('hex');
 
     if (!firstName || !lastName || !email) return fail(res, 400, 'first_name, last_name and email are required');
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return fail(res, 400, 'Invalid email address');
@@ -52,12 +55,44 @@ router.post('/', requireAdmin, async (req, res) => {
     const [existing] = await db.query('SELECT user_id FROM users WHERE LOWER(email) = ?', [email]);
     if (existing.length) return fail(res, 409, 'A user with this email is already registered');
 
+    const password = generatePassword();
     const hash = await bcrypt.hash(password, 10);
     const [result] = await db.query(
-      'INSERT INTO users (email, password_hash, role, first_name, last_name) VALUES (?, ?, ?, ?, ?)',
+      'INSERT INTO users (email, password_hash, must_change_password, role, first_name, last_name) VALUES (?, ?, 1, ?, ?, ?)',
       [email, hash, role, firstName, lastName]
     );
-    res.status(201).json({ id: result.insertId, email, role, firstName, lastName });
+    const mail = await mailer.sendCredentials({ to: email, name: firstName, password, reason: 'welcome' });
+    res.status(201).json({ id: result.insertId, email, role, firstName, lastName, emailSent: mail.sent, ...(mail.sent ? {} : { emailReason: mail.reason }) });
+  } catch (err) {
+    console.error('USERS ERROR:', err);
+    fail(res, 500, err.message);
+  }
+});
+
+// Send a user new credentials: a new generated password replaces their current one and must be changed at the next sign-in.
+// For a lost or never-delivered email. Not for yourself, and not for a student (they sign in with their student ID).
+router.post('/:id/resend-credentials', requireAdmin, async (req, res) => {
+  try {
+    const db = req.app.locals.db;
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id <= 0) return fail(res, 404, 'User not found');
+    if (id === req.session.user.id) return fail(res, 400, 'You cannot reset your own password here.');
+    const slot = resendLimiter.take('resend:' + req.session.user.id);
+    if (!slot.ok) {
+      res.set('Retry-After', String(slot.retryAfterSec));
+      return fail(res, 429, 'You are sending too often. Try again in ' + slot.retryAfterSec + ' seconds.');
+    }
+    const [rows] = await db.query('SELECT user_id, email, role, first_name FROM users WHERE user_id = ?', [id]);
+    const user = rows[0];
+    if (!user) return fail(res, 404, 'User not found');
+    if (user.role === 'student' || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(user.email)) return fail(res, 400, 'This account signs in with a student ID, not an email address.');
+
+    const password = generatePassword();
+    await db.query('UPDATE users SET password_hash = ?, must_change_password = 1 WHERE user_id = ?', [await bcrypt.hash(password, 10), id]);
+    await db.query('DELETE FROM password_temp WHERE user_id = ?', [id]).catch(() => {});
+    await db.query('DELETE FROM remember_tokens WHERE user_id = ?', [id]);
+    const mail = await mailer.sendCredentials({ to: user.email, name: user.first_name, password, reason: 'welcome' });
+    res.json({ id, email: user.email, emailSent: mail.sent, ...(mail.sent ? {} : { emailReason: mail.reason }) });
   } catch (err) {
     console.error('USERS ERROR:', err);
     fail(res, 500, err.message);
@@ -269,3 +304,4 @@ router.delete('/:id', requireAdmin, async (req, res) => {
 });
 
 module.exports = router;
+module.exports.resendLimiter = resendLimiter;
