@@ -5,7 +5,8 @@
 //                                              the same content as an earlier run returns that run, { force: true } makes a new one
 //   GET  /api/compliance?syllabus=all|<id>     stored runs: an admin sees every submitted syllabus, faculty only their own, each with
 //                                              the faculty member, program and subject so the list can be grouped
-//   GET  /api/compliance/history               (admin) the latest check of each submitted syllabus, one item per syllabus, newest first
+//   GET  /api/compliance/history               (admin) the latest check of each submitted syllabus, one item per syllabus, newest first;
+//                                              ?from=&to= (ISO instants, from inclusive, to exclusive) keep the checks stored in that range
 //   GET  /api/compliance/runs/:runId           (admin) one stored run in full, whatever the syllabus's status (approved ones too)
 // An approved syllabus is final: it cannot be checked again, but its stored runs stay readable.
 // Runs are stored by the submit route (with the version, authoritative) and by the recheck route. Nothing here changes a syllabus.
@@ -62,6 +63,14 @@ async function baseOf(db, syl, subject) {
     ...labelsOf(meta || {}, subject.content), checkable: !!subject.content,
   };
 }
+// An optional ISO instant from the query string, as whole seconds for FROM_UNIXTIME. FROM_UNIXTIME answers in the database session's
+// time zone, which is how a TIMESTAMP column is read, so a day boundary is right whatever zone the server runs in.
+const instantOf = (raw, name) => {
+  if (raw === undefined || raw === '') return null;
+  const ms = Date.parse(String(raw));
+  if (Number.isNaN(ms)) throw httpError(400, name + ' must be a valid date');
+  return Math.floor(ms / 1000);
+};
 const adminOnly = (me) => { if (!me || me.role !== 'admin') throw httpError(403, 'Only an administrator can read the check history'); };
 
 router.get('/syllabi/:id/compliance', requireAuth, async (req, res) => {
@@ -207,13 +216,18 @@ router.get('/compliance/history', requireAuth, async (req, res) => {
     adminOnly(req.session.user);
     const asked = Number(req.query.limit);
     const limit = Number.isInteger(asked) && asked > 0 ? Math.min(asked, HISTORY_MAX) : HISTORY_DEFAULT;
+    const from = instantOf(req.query.from, 'from');
+    const to = instantOf(req.query.to, 'to');
+    if (from !== null && to !== null && from > to) throw httpError(400, 'from must not be after to');
     if (!(await svc.isInstalled(db))) return res.json({ installed: false, runs: [] });
     const [rows] = await db.query(
       'SELECT r.run_id, r.syllabus_id, r.overall, r.status, r.passed, r.ai_status, r.created_by, r.created_at, l.user_id, l.course_code, l.title, l.syllabus_status, l.first_name, l.last_name, l.course_title, l.program_code, l.program_name, l.curriculum_program '
       + 'FROM ai_check_runs r JOIN (SELECT s.syllabus_id, s.user_id, s.course_code, s.title, s.status AS syllabus_status, ' + LABEL_SQL + ") l ON l.syllabus_id = r.syllabus_id "
       + "WHERE r.version_id IS NOT NULL AND l.syllabus_status <> 'draft' "
-      + 'AND r.run_id = (SELECT MAX(r2.run_id) FROM ai_check_runs r2 WHERE r2.syllabus_id = r.syllabus_id AND r2.version_id IS NOT NULL) ORDER BY r.run_id DESC LIMIT ?',
-      [limit]
+      + 'AND r.run_id = (SELECT MAX(r2.run_id) FROM ai_check_runs r2 WHERE r2.syllabus_id = r.syllabus_id AND r2.version_id IS NOT NULL)'
+      + (from !== null ? ' AND r.created_at >= FROM_UNIXTIME(?)' : '') + (to !== null ? ' AND r.created_at < FROM_UNIXTIME(?)' : '')
+      + ' ORDER BY r.run_id DESC LIMIT ?',
+      [...(from !== null ? [from] : []), ...(to !== null ? [to] : []), limit]
     );
     res.json({
       installed: true,

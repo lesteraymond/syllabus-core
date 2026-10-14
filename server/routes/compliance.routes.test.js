@@ -113,8 +113,13 @@ function makeDb() {
       return [rows.map((x) => { const r = labelled(x); if (!sql.includes('s.content,')) delete r.content; return r; })];
     }
     if (sql.startsWith('SELECT r.run_id')) { // the history: runs stored with a version, newest first, with the syllabus's labels
+      let at = 0; // the placeholders after the first ?-free part: from, then to, then the limit, each only when the SQL has it
+      const lo = sql.includes('>= FROM_UNIXTIME') ? p[at++] * 1000 : -Infinity;
+      const hi = sql.includes('< FROM_UNIXTIME') ? p[at++] * 1000 : Infinity;
+      const limit = p[at];
+      const inRange = (r) => { const t = Date.parse(r.created_at); return t >= lo && t < hi; };
       const latestOf = (id) => Math.max(...s.runs.filter((x) => x.syllabus_id === id && x.version_id !== null).map((x) => x.run_id));
-      return [s.runs.filter((r) => r.version_id !== null && s.syllabi[r.syllabus_id].status !== 'draft' && r.run_id === latestOf(r.syllabus_id)).reverse().slice(0, p[0])
+      return [s.runs.filter((r) => r.version_id !== null && s.syllabi[r.syllabus_id].status !== 'draft' && r.run_id === latestOf(r.syllabus_id) && inRange(r)).reverse().slice(0, limit)
         .map((r) => ({ ...labelled(s.syllabi[r.syllabus_id]), run_id: r.run_id, syllabus_id: r.syllabus_id, overall: r.overall, status: r.status, passed: r.passed, ai_status: r.ai_status, created_by: r.created_by, created_at: r.created_at, syllabus_status: s.syllabi[r.syllabus_id].status }))];
     }
     if (sql.startsWith('SELECT u.first_name, u.last_name')) return [s.syllabi[p[0]] ? [labelled(s.syllabi[p[0]])] : []];
@@ -617,4 +622,42 @@ test('GET /compliance/runs/:id before the migration: not installed', () => withS
   const r = await call(admin, 'GET', '/compliance/runs/1');
   assert.strictEqual(r.status, 200);
   assert.strictEqual(r.body.installed, false);
+}));
+
+// The date filter. The mock db keeps a created_at per run, so a run can be placed on either side of a day boundary.
+const stampRuns = (db, stamps) => stamps.forEach((t, i) => { db.s.runs[i].created_at = t; });
+
+test('GET /compliance/history?from&to: a range keeps the checks stored in it (from inclusive, to exclusive), either side may be left out', () => withServer(async ({ call, db }) => {
+  submittedBefore(db, 2);
+  submittedBefore(db, 3);
+  submittedBefore(db, 4);
+  await call(admin, 'POST', '/syllabi/2/compliance/recheck', {});
+  await call(admin, 'POST', '/syllabi/3/compliance/recheck', {});
+  await call(admin, 'POST', '/syllabi/4/compliance/recheck', {});
+  stampRuns(db, ['2026-03-01T23:59:59Z', '2026-03-02T00:00:00Z', '2026-03-02T23:59:59Z']); // runs 1, 2, 3
+  const ids = async (q) => (await call(admin, 'GET', '/compliance/history' + q)).body.runs.map((r) => r.runId);
+  assert.deepStrictEqual(await ids(''), [3, 2, 1]);
+  assert.deepStrictEqual(await ids('?from=2026-03-02T00:00:00Z&to=2026-03-03T00:00:00Z'), [3, 2]); // one day: 00:00:00 in, the next midnight out
+  assert.deepStrictEqual(await ids('?from=2026-03-02T00:00:00Z'), [3, 2]);
+  assert.deepStrictEqual(await ids('?to=2026-03-02T00:00:00Z'), [1]);
+  assert.deepStrictEqual(await ids('?from=2026-04-01T00:00:00Z'), []); // nothing in range is an empty list, not an error
+  assert.deepStrictEqual(await ids('?from=&to='), [3, 2, 1]); // empty values mean no filter
+}));
+
+test('GET /compliance/history with a range still lists one item per syllabus: its latest check, and only if that one is in range', () => withServer(async ({ call, db }) => {
+  submittedBefore(db, 2);
+  await call(admin, 'POST', '/syllabi/2/compliance/recheck', {});
+  await call(admin, 'POST', '/syllabi/2/compliance/recheck', { force: true }); // an older run 1 and the latest run 2 of the same syllabus
+  stampRuns(db, ['2026-03-01T10:00:00Z', '2026-03-05T10:00:00Z']);
+  const ids = async (q) => (await call(admin, 'GET', '/compliance/history' + q)).body.runs.map((r) => r.runId);
+  assert.deepStrictEqual(await ids('?from=2026-03-01T00:00:00Z&to=2026-03-02T00:00:00Z'), []); // the older run is not listed even though it is in range
+  assert.deepStrictEqual(await ids('?from=2026-03-05T00:00:00Z&to=2026-03-06T00:00:00Z'), [2]);
+}));
+
+test('GET /compliance/history: a bad date or a range that ends before it starts is a 400; a filter does not lift the cap or the admin check', () => withServer(async ({ call }) => {
+  assert.strictEqual((await call(admin, 'GET', '/compliance/history?from=yesterday')).status, 400);
+  assert.strictEqual((await call(admin, 'GET', '/compliance/history?to=2026-13-45')).status, 400);
+  assert.strictEqual((await call(admin, 'GET', '/compliance/history?from=2026-03-05T00:00:00Z&to=2026-03-01T00:00:00Z')).status, 400);
+  assert.strictEqual((await call(admin, 'GET', '/compliance/history?from=2026-03-01T00:00:00Z&limit=100000')).status, 200);
+  assert.strictEqual((await call(fay, 'GET', '/compliance/history?from=2026-03-01T00:00:00Z')).status, 403);
 }));
