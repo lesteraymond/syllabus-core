@@ -15,6 +15,11 @@ function authHeaders(extra = {}) {
   return token ? { ...extra, Authorization: `Bearer ${token}` } : extra;
 }
 
+// The server refuses everything while a generated password is still to be replaced (403, code password_change_required). The app
+// registers one handler that shows the "choose your own password" screen; any call that hits it ends up there.
+let passwordChangeHandler = null;
+export const onPasswordChangeRequired = (fn) => { passwordChangeHandler = fn; };
+
 async function request(path, options = {}) {
   let res;
   try {
@@ -28,6 +33,7 @@ async function request(path, options = {}) {
   }
   const data = await res.json().catch(() => ({}));
   if (res.status === 401) tokenStore.clear(); // expired/invalid JWT
+  if (res.status === 403 && data.code === 'password_change_required' && passwordChangeHandler) passwordChangeHandler();
   if (!res.ok) throw Object.assign(new Error(data.message || data.error || `Request failed (${res.status})`), { status: res.status, data });
   return data;
 }
@@ -61,6 +67,10 @@ export const auth = {
   },
   logout: async () => { tokenStore.clear(); return request('/auth/logout', { method: 'POST' }); },
   me: () => request('/auth/me'),
+  // A temporary password is emailed; the answer is the same whether or not the email is registered.
+  forgotPassword: (email) => request('/auth/forgot-password', { method: 'POST', body: JSON.stringify({ email }) }),
+  // { newPassword } right after a generated password; { currentPassword, newPassword } otherwise.
+  changePassword: (body) => request('/auth/change-password', { method: 'POST', body: JSON.stringify(body) }),
 };
 
 export const syllabi = {
@@ -163,6 +173,8 @@ export const users = {
   list: () => request('/users'),
   create: (data) => request('/users', { method: 'POST', body: JSON.stringify(data) }),
   remove: (id) => request(`/users/${id}`, { method: 'DELETE' }),
+  // Email a user a new generated password (replaces the current one; they must choose their own at the next sign-in).
+  resendCredentials: (id) => request(`/users/${id}/resend-credentials`, { method: 'POST' }),
   // Programs and courses an admin assigned to a faculty member. Faculty can create syllabi only for these.
   myAssignments: () => request('/users/me/assignments'),
   assignments: (id) => request(`/users/${id}/assignments`),
