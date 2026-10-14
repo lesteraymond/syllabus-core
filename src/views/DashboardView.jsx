@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { PageHead, Card, Icon, Legend, Progress, QualityMini, Deadline, Donut } from '../components/ui';
+import { fmt } from '../lib/utils';
 
 // Stat card icon per label (Phosphor names, see Icon in ui.jsx)
 const STAT_ICONS = {
@@ -30,7 +31,12 @@ export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, set
 
   const activityLogs = useMemo(() => {
     const filtered = isFac ? logs.filter(l => l.userId === user.id) : logs;
-    return filtered.slice(0, 5);
+    // What happened, who did it, and when (Philippine time): the server sends the action and its date, the feed words them.
+    const WHAT = { upload: ['Uploaded', 'blue'], submit: ['Submitted', 'blue'], update: ['Updated', 'teal'], approve: ['Approved', 'green'], revision: ['Revision', 'gold'], reject: ['Rejected', 'purple'], delete: ['Deleted', 'purple'] };
+    return filtered.slice(0, 5).map((l) => {
+      const [badge, color] = WHAT[l.action] || [l.action || 'Activity', 'blue'];
+      return { ...l, title: [l.courseCode, l.title].filter(Boolean).join(' — ') || l.title || 'Syllabus', meta: [l.user, fmt(l.actionDate)].filter(Boolean).join(' • '), badge, color };
+    });
   }, [logs, isFac, user]);
 
   const statusData = useMemo(() => {
