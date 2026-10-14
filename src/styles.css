@@ -657,13 +657,17 @@ a:focus-visible {
 }
 .dashboard-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
-	align-items: start; /* each box keeps its own height: a tall one doesn't stretch its neighbours */
+	grid-template-columns: 1.35fr 1fr 0.8fr;
 	gap: 14px;
 	margin-bottom: 14px;
 }
-/* The one list that grows (Recent Activity) scrolls inside its card instead of making the whole row tall. */
-.feed { max-height: 420px; overflow-y: auto; padding-right: 4px; }
+/* Keep the row height steady while the sidebar resizes the columns and text re-wraps. */
+.dashboard-grid:not(.lower) {
+	min-height: 290px;
+}
+.dashboard-grid.lower {
+	grid-template-columns: 1fr 1fr 1fr;
+}
 .card,
 .table-card,
 .chart-card,
@@ -2017,6 +2021,12 @@ a:focus-visible {
 	}
 	.analytics-grid {
 		grid-template-columns: repeat(2, 1fr);
+	}
+	.dashboard-grid {
+		grid-template-columns: 1fr 1fr;
+	}
+	.dashboard-grid > .card:last-child {
+		grid-column: 1 / -1;
 	}
 	.search {
 		width: 200px;
