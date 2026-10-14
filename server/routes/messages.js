@@ -2,6 +2,7 @@ const express = require('express');
 const { requireAuth } = require('../middleware/auth');
 const { avatarUrlFor } = require('../lib/avatar');
 const { createNotification } = require('../lib/notify');
+const { LABEL_SQL, labelsOf } = require('../lib/syllabusLabels');
 const router = express.Router();
 
 const MAX_TEXT = 2000;
@@ -39,6 +40,45 @@ async function adminFor(db, syllabusId, meId) {
   const [admins] = await db.query("SELECT user_id FROM users WHERE role = 'admin' AND user_id <> ? ORDER BY user_id ASC LIMIT 1", [meId]);
   return admins[0]?.user_id ?? null;
 }
+
+// Who the signed-in user is talking to, for every syllabus they can message about, with the profile to show: name, picture, role, and the
+// syllabus's program and subject. Read from the users and the syllabus themselves (not from a message), so it is right before anyone has
+// written and follows a name or picture change. An administrator talks to the syllabus owner; an owner talks to the administrator already in
+// the thread, otherwise the first administrator (the same rule that decides where their message goes). Drafts have no conversation.
+const ADMIN_LABEL = 'Academic Administrator';
+router.get('/partners', requireAuth, async (req, res) => {
+  try {
+    const db = req.app.locals.db;
+    const me = req.session.user;
+    const isAdmin = me.role === 'admin';
+    const [rows] = await db.query(
+      'SELECT s.syllabus_id, s.user_id, s.course_code, s.title, u.avatar_path, ' + LABEL_SQL + " WHERE s.status <> 'draft'" + (isAdmin ? '' : ' AND s.user_id = ?') + ' ORDER BY s.syllabus_id DESC LIMIT 500',
+      isAdmin ? [] : [me.id]
+    );
+    const adminOf = new Map();
+    if (!isAdmin) for (const r of rows) adminOf.set(r.syllabus_id, await adminFor(db, r.syllabus_id, me.id));
+    const wanted = [...new Set([...adminOf.values()].filter(Boolean))];
+    const [admins] = wanted.length ? await db.query('SELECT user_id, first_name, last_name, avatar_path FROM users WHERE user_id IN (?)', [wanted]) : [[]];
+    const adminById = new Map(admins.map((a) => [a.user_id, a]));
+    const partners = {};
+    rows.forEach((r) => {
+      const labels = labelsOf(r, null);
+      const subject = [r.course_code, labels.courseTitle].filter(Boolean).join(' \u2014 ');
+      const program = labels.programCode ? labels.programCode + (labels.programName ? ' \u00b7 ' + labels.programName : '') : labels.programName || '';
+      if (isAdmin) {
+        partners[r.syllabus_id] = { id: r.user_id, name: labels.facultyName, role: 'faculty', roleLabel: 'Faculty', avatarUrl: avatarUrlFor(r.user_id, r.avatar_path), program, subject };
+        return;
+      }
+      const a = adminById.get(adminOf.get(r.syllabus_id));
+      partners[r.syllabus_id] = a
+        ? { id: a.user_id, name: `${a.first_name} ${a.last_name}`, role: 'admin', roleLabel: ADMIN_LABEL, avatarUrl: avatarUrlFor(a.user_id, a.avatar_path), program, subject }
+        : null; // no administrator account at all
+    });
+    res.json({ partners });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // Same message shape as the per-syllabus endpoint.
 const toMessage = (r) => ({ id: r.message_id, syllabusId: r.syllabus_id, senderId: r.sender_id, receiverId: r.receiver_id, text: r.message_text, isRead: r.is_read, time: r.created_at, sender: `${r.first_name} ${r.last_name}`, senderAvatarUrl: avatarUrlFor(r.sender_id, r.avatar_path) });
