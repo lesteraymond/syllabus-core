@@ -84,7 +84,7 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
             {threads.length === 0 && <div className="msg-empty">No conversations yet.</div>}
             {threads.map(t => <button key={t.code} className={`thread${t.unread ? ' unread' : ''}`} onClick={() => { setChatCode(t.code); markRead(t.code); setMsgDrop(false); }}>
               <Avatar className="thread-av" src={t.partner?.avatarUrl} name={t.partner?.name} initials={t.partner?.initials || '?'} />
-              <div className="thread-body"><div className="thread-top"><strong>{t.title}</strong><small>{fmt(t.lastTime)}</small></div><p>{t.partner?.name || 'Administrator'}{t.partner?.roleLabel && <em className="thread-role">{' · ' + t.partner.roleLabel}</em>}</p><span>{t.lastMsg}</span></div>
+              <div className="thread-body"><div className="thread-top"><strong>{t.title}</strong><small>{fmt(t.lastTime)}</small></div><p>{t.partner?.name || 'Unknown'}{t.partner?.roleLabel && <em className="thread-role">{' · ' + t.partner.roleLabel}</em>}</p><span>{t.lastMsg}</span></div>
               {t.unread > 0 && <span className="thread-dot" />}
             </button>)}
           </div>}
