@@ -7134,3 +7134,10 @@ table,
 /* Keep the page's scrollbar space reserved. Without it the layout jumps sideways whenever the scrollbar comes or goes: a dialog
    opens (it locks page scroll), or a page's content grows past or shrinks under the window height. */
 html { scrollbar-gutter: stable; }
+
+/* Generated passwords: the first-sign-in screen (.pw-page), the forgot-password confirmation and the note on the Add user form */
+.pw-page { min-height: 100vh; display: grid; place-items: center; padding: 40px 20px; background: radial-gradient(circle at top right, #f6e8d4 0, transparent 30%), white; }
+.pw-card { padding: 8px 0; }
+.pw-rules { margin: 0; font-size: var(--text-xs); font-weight: var(--fw-medium); color: var(--muted); }
+.pw-sent { padding: 12px 14px; border-radius: 10px; background: #e6f5ee; color: #1d6f47; font-size: var(--text-sm); font-weight: var(--fw-medium); line-height: 1.5; }
+.pw-note { grid-column: 1 / -1; margin: 0; font-size: var(--text-sm); font-weight: var(--fw-medium); color: var(--muted); }
