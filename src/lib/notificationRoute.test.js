@@ -16,8 +16,7 @@ test('for a faculty member, a reviewer comment or a decision opens that syllabus
 });
 
 test('anything else, or a notification without a syllabus, opens the page where syllabi live', () => {
-  assert.deepStrictEqual(notificationTarget(n('submission'), 'admin'), { kind: 'page', page: 'review' });
-  assert.deepStrictEqual(notificationTarget(n('edit'), 'admin'), { kind: 'page', page: 'review' });
+  assert.deepStrictEqual(notificationTarget(n('status'), 'admin'), { kind: 'page', page: 'review' });
   assert.deepStrictEqual(notificationTarget(n('comment'), 'admin'), { kind: 'page', page: 'review' }); // an admin wrote it; there is no thread to read
   assert.deepStrictEqual(notificationTarget(n('comment', null), 'faculty'), { kind: 'page', page: 'my-syllabi' });
   assert.deepStrictEqual(notificationTarget(n('message', null), 'faculty'), { kind: 'page', page: 'my-syllabi' });
@@ -40,4 +39,10 @@ test('the badge shows what is new, else the total, else nothing', () => {
   assert.deepStrictEqual(commentBadge({ total: 4, unread: null }), { text: '4', fresh: false }); // tracking not set up: the total only
   assert.deepStrictEqual(commentBadge({ total: 0, unread: 0 }), { text: '', fresh: false });
   assert.deepStrictEqual(commentBadge(undefined), { text: '', fresh: false });
+});
+
+test('for an administrator a new submission or a resubmission opens the AI Checker, where it is checked before it is reviewed', () => {
+  assert.deepStrictEqual(notificationTarget(n('submission'), 'admin'), { kind: 'page', page: 'ai' });
+  assert.deepStrictEqual(notificationTarget(n('edit'), 'admin'), { kind: 'page', page: 'ai' });
+  assert.deepStrictEqual(notificationTarget(n('submission'), 'faculty'), { kind: 'page', page: 'my-syllabi' });
 });

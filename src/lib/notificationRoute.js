@@ -1,10 +1,12 @@
 // Where clicking a notification should take you. A message opens that syllabus's chat; for a faculty member, a reviewer comment or a
 // decision on their syllabus opens that syllabus's comments (the decision's reason is in the thread); anything else opens the page where
-// the syllabus lives. Plain logic, so it is tested on its own; App.jsx acts on the answer.
+// the syllabus lives: for an administrator a new submission or a resubmission opens the AI Checker (it is checked there before it is
+// reviewed); a decision-related notification opens Review & Approval. Plain logic, so it is tested on its own; App.jsx acts on the answer.
 //   -> { kind: 'chat', id } | { kind: 'comments', id } | { kind: 'page', page }
 export function notificationTarget(n, role) {
   if (n.type === 'message' && n.syllabusId) return { kind: 'chat', id: n.syllabusId };
   if (role === 'faculty' && n.syllabusId && (n.type === 'comment' || n.type === 'status')) return { kind: 'comments', id: n.syllabusId };
+  if (role === 'admin' && (n.type === 'submission' || n.type === 'edit')) return { kind: 'page', page: 'ai' };
   return { kind: 'page', page: role === 'admin' ? 'review' : 'my-syllabi' };
 }
 

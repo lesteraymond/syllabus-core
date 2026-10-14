@@ -8,6 +8,7 @@ const { createNotification, notifyAdmins } = require('../lib/notify');
 const rules = require('../lib/syllabusRules');
 const assignments = require('../lib/assignments');
 const { validateReason, typeForStatus, MAX_LENGTH } = require('../lib/reviewComments');
+const compliance = require('../lib/compliance/service');
 const router = express.Router();
 
 const storage = multer.diskStorage({
@@ -40,6 +41,11 @@ const onePdf = (req, res, next) => upload.single('file')(req, res, (err) => {
   res.status(err.status || 400).json({ message, error: message });
 });
 
+// A submission goes to the AI Checker first and is decided in Review & Approval only after the administrator has checked it there. These
+// are the decisions that wait for that check (submitting, and moving to "under review", do not).
+const DECISIONS = ['approved', 'for_revision', 'rejected'];
+const CHECK_FIRST = 'Check this syllabus in the AI Checker before you decide on it.';
+
 router.get('/', requireAuth, async (req, res) => {
   try {
     const db = req.app.locals.db;
@@ -55,6 +61,14 @@ router.get('/', requireAuth, async (req, res) => {
 
     query += ' ORDER BY s.uploaded_at DESC';
     const [rows] = await db.query(query, params);
+
+    // For an administrator: which submissions still wait for their own AI check (checkable, and not checked on the newest version).
+    // Without the compliance tables nothing can be checked, so nothing waits.
+    const admin = req.session.user.role === 'admin';
+    let states = new Map();
+    if (admin && rows.length) {
+      try { if (await compliance.isInstalled(db)) states = await compliance.adminCheckStates(db, rows.map((r) => r.syllabus_id)); } catch { states = new Map(); }
+    }
 
     res.json(rows.map(r => ({
       id: r.syllabus_id,
@@ -74,6 +88,7 @@ router.get('/', requireAuth, async (req, res) => {
       program: r.program_name || '',
       programCode: r.program_code || '', // the catalog program of the subject (the field above comes from the old curriculum)
       courseTitle: r.course_title || '',
+      ...(admin ? { awaitingAiCheck: !!(states.get(r.syllabus_id) && states.get(r.syllabus_id).checkable && !states.get(r.syllabus_id).checked) } : {}),
     })));
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -183,6 +198,10 @@ router.put('/:id', requireAuth, onePdf, async (req, res) => {
         if (!rules.canChangeStatus(me)) throw httpError(403, 'Only administrators can change a syllabus status');
         if (!rules.STATUSES.includes(status)) throw httpError(400, 'Invalid status');
         if (hasContent) throw httpError(403, 'Administrators cannot edit syllabus content');
+        if (DECISIONS.includes(status) && await compliance.isInstalled(db)) { // the AI check comes first, then the administrator decides
+          const state = (await compliance.adminCheckStates(conn, [id])).get(id);
+          if (state && state.checkable && !state.checked) throw httpError(409, CHECK_FIRST);
+        }
         // Returning a syllabus for revision or rejecting it needs a reason; approving does not.
         const reason = validateReason(status, adminComment);
         const fields = ['status = ?'];
