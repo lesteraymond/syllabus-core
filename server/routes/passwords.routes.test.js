@@ -9,6 +9,7 @@ const session = require('express-session');
 const bcrypt = require('bcryptjs');
 
 process.env.JWT_SECRET = process.env.JWT_SECRET || 'test-secret';
+process.env.ALLOWED_EMAIL_DOMAIN = 'x.ph'; // the institution's domain for these tests (the real default is email.lcup.edu.ph)
 const mailer = require('../lib/mailer');
 const authRoutes = require('./auth');
 const userRoutes = require('./users');
@@ -244,6 +245,35 @@ test('Forgot password is rate limited per email and per address, with the same k
   for (let i = 0; i < 5; i++) await client()('POST', '/auth/forgot-password', { email: 'a' + i + '@x.ph' });
   assert.strictEqual((await client()('POST', '/auth/forgot-password', { email: 'other@x.ph' })).status, 429); // same address, many emails
 }));
+
+test('only an institutional address can be registered: another domain, a look-alike and a subdomain are refused', () => withServer(async ({ db, client }) => {
+  const sent = outbox();
+  const admin = client(); await admin.login('dean@x.ph', 'Dean-pass-1');
+  for (const email of ['gus@gmail.com', 'gus@x.ph.evil.com', 'gus@evil.x.ph', 'gus@xx.ph', 'x.ph', 'gus@x.ph@gmail.com']) {
+    const r = await admin('POST', '/users', { ...newUser, email });
+    assert.strictEqual(r.status, 400, email);
+  }
+  assert.match((await admin('POST', '/users', { ...newUser, email: 'gus@gmail.com' })).body.error, /institutional email address ending in @x\.ph/);
+  assert.strictEqual(sent.length, 0);
+  assert.ok(!db.s.users.some((u) => u.first_name === 'Gus'));
+  assert.strictEqual((await admin('POST', '/users', { ...newUser, email: 'GUS@X.PH' })).status, 201); // capitals are fine
+}));
+
+test('the domain comes from ALLOWED_EMAIL_DOMAIN and defaults to email.lcup.edu.ph', () => {
+  const { isSchoolEmail, domain } = require('../lib/emailDomain');
+  const old = process.env.ALLOWED_EMAIL_DOMAIN;
+  try {
+    delete process.env.ALLOWED_EMAIL_DOMAIN;
+    assert.strictEqual(domain(), 'email.lcup.edu.ph');
+    assert.strictEqual(isSchoolEmail('juan@email.lcup.edu.ph'), true);
+    assert.strictEqual(isSchoolEmail('Juan@Email.LCUP.edu.ph'), true);
+    assert.strictEqual(isSchoolEmail('juan@lcup.edu.ph'), false);
+    assert.strictEqual(isSchoolEmail('juan@evil.email.lcup.edu.ph'), false);
+    assert.strictEqual(isSchoolEmail(null), false);
+    process.env.ALLOWED_EMAIL_DOMAIN = '@Other.EDU';
+    assert.strictEqual(isSchoolEmail('a@other.edu'), true);
+  } finally { process.env.ALLOWED_EMAIL_DOMAIN = old; }
+});
 
 test('the existing sign-in answers are unchanged', () => withServer(async ({ client }) => {
   assert.strictEqual((await client().login('nobody@x.ph', 'x')).status, 403);

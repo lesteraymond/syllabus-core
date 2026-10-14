@@ -10,6 +10,7 @@ const { createNotification } = require('../lib/notify');
 const { createLimiter } = require('../lib/rateLimit');
 const { generatePassword } = require('../lib/passwords');
 const mailer = require('../lib/mailer');
+const { domain, isSchoolEmail } = require('../lib/emailDomain');
 const assignments = require('../lib/assignments');
 const router = express.Router();
 
@@ -49,6 +50,7 @@ router.post('/', requireAdmin, async (req, res) => {
 
     if (!firstName || !lastName || !email) return fail(res, 400, 'first_name, last_name and email are required');
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return fail(res, 400, 'Invalid email address');
+    if (!isSchoolEmail(email)) return fail(res, 400, 'Use an institutional email address ending in @' + domain() + '.');
     if (!ROLES.includes(role)) return fail(res, 400, 'Invalid role');
 
     const db = req.app.locals.db;

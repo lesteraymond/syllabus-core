@@ -65,7 +65,7 @@ export default function UsersRoles({ notify, onManageSubjects }) {
             </div>
             <div className="user-field">
               <label htmlFor="user-email" className="user-label">Institutional Email</label>
-              <input id="user-email" className="user-input" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="name@email.lcup.edu.ph" required />
+              <input id="user-email" className="user-input" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="name@email.lcup.edu.ph" pattern=".+@email\.lcup\.edu\.ph" title="An institutional address ending in @email.lcup.edu.ph" required />
             </div>
             <div className="user-field">
               <label htmlFor="user-role" className="user-label">Role</label>
@@ -74,7 +74,7 @@ export default function UsersRoles({ notify, onManageSubjects }) {
           <div className="user-field user-field-action">
             <button className="user-save-btn" type="submit">Save</button>
           </div>
-          <p className="pw-note">A temporary password is generated and emailed to the user with their username (their email address). They choose their own password the first time they sign in.</p>
+          <p className="pw-note">A temporary password is generated and emailed to the user with their username (their email address, which must end in @email.lcup.edu.ph). They choose their own password the first time they sign in.</p>
         </form>
       )}
       <div className="table-card">

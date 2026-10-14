@@ -4,11 +4,11 @@ const { issueRememberToken, revokeRememberToken, toSessionUser, requireSignedIn,
 const { createLimiter } = require('../lib/rateLimit');
 const { generatePassword, validatePassword } = require('../lib/passwords');
 const mailer = require('../lib/mailer');
+const { domain, isSchoolEmail } = require('../lib/emailDomain');
 const { OAuth2Client } = require('google-auth-library');
 const { signAccessToken, JWT_TTL } = require('../middleware/jwt');
 const router = express.Router();
 
-const ALLOWED_DOMAIN = process.env.ALLOWED_EMAIL_DOMAIN || 'email.lcup.edu.ph';
 const googleClient = new OAuth2Client();
 
 // "Forgot password" emails a temporary password. It is kept in password_temp, apart from the real one, and lasts TEMP_MINUTES: asking for
@@ -57,8 +57,8 @@ router.post('/google', async (req, res) => {
     }
 
     const email = (payload.email || '').toLowerCase();
-    if (!payload.email_verified || !email.endsWith(`@${ALLOWED_DOMAIN}`)) {
-      return fail(res, 403, `Access denied. Only @${ALLOWED_DOMAIN} accounts can sign in.`);
+    if (!payload.email_verified || !isSchoolEmail(email)) {
+      return fail(res, 403, `Access denied. Only @${domain()} accounts can sign in.`);
     }
 
     const db = req.app.locals.db;
