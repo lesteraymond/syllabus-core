@@ -257,7 +257,17 @@ router.get('/:id/avatar', requireAuth, async (req, res) => {
         'SELECT 1 FROM messages WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?) LIMIT 1',
         [viewer.id, targetId, targetId, viewer.id]
       );
-      if (shared.length === 0) return res.sendStatus(404);
+      let allowed = shared.length > 0;
+      if (!allowed) {
+        // Someone they have not written to yet: still the administrator who would receive their messages (the first administrator account)
+        // when they have a submitted syllabus, because the chat shows that administrator's profile from the first message. No one else.
+        const [[firstAdmin]] = await db.query("SELECT user_id FROM users WHERE role = 'admin' ORDER BY user_id ASC LIMIT 1");
+        if (firstAdmin && firstAdmin.user_id === targetId) {
+          const [owns] = await db.query("SELECT 1 FROM syllabi WHERE user_id = ? AND status <> 'draft' LIMIT 1", [viewer.id]);
+          allowed = owns.length > 0;
+        }
+      }
+      if (!allowed) return res.sendStatus(404);
     }
 
     const [rows] = await db.query('SELECT avatar_path FROM users WHERE user_id = ?', [targetId]);
