@@ -3,7 +3,7 @@ import { PageHead } from '../../components/ui';
 import { courses as coursesApi, syllabi as syllabiApi, users as usersApi } from '../../lib/api';
 import { STEPS, applyCourse, clearCourse, closEqual, syncClos } from '../../lib/syllabusModel';
 import { CURRENT_SCHOOL_YEAR } from '../../lib/schoolYear';
-import { ASSIGNMENT_MESSAGES, STATUS_LABELS, assignmentState } from '../../lib/syllabusRules';
+import { ASSIGNMENT_MESSAGES, STATUS_LABELS, assignmentState, editBlockedReason } from '../../lib/syllabusRules';
 import InfoStep from './InfoStep';
 import ClosStep from './ClosStep';
 import PlanStep from './PlanStep';
@@ -227,7 +227,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
         <section className="editor-card" aria-labelledby="bld2-title">
           {noAccess && <div className="info-banner warning">{accessMessage}</div>}
           {!noAccess && !load.editable && load.lockedReason && <div className="info-banner warning">{load.lockedReason} You can read this syllabus, but not change it until an administrator assigns the course to you again.</div>}
-          {!noAccess && !load.editable && !load.lockedReason && <div className="info-banner warning">This syllabus is {(STATUS_LABELS[load.status] || load.status).toLowerCase()} and can no longer be edited.</div>}
+          {!noAccess && !load.editable && !load.lockedReason && <div className="info-banner warning">{editBlockedReason({ status: load.status })}</div>}
           <div className="editor-title">
             <div>
               <span className="eyebrow">{'STEP ' + (step + 1) + ' OF ' + STEP_CONFIG.length + (cfg.form === 'Form' ? '' : ' · FORM SECTION ' + cfg.form)}</span>
