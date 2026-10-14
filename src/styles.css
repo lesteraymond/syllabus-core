@@ -661,10 +661,13 @@ a:focus-visible {
 	gap: 14px;
 	margin-bottom: 14px;
 }
-/* Keep the row height steady while the sidebar resizes the columns and text re-wraps. */
-.dashboard-grid:not(.lower) {
-	min-height: 290px;
-}
+/* Each row has a fixed height, so what is inside a box (a long activity list) never resizes the box or its neighbours: the header stays put
+   and the body of the card scrolls. */
+.dashboard-grid { grid-auto-rows: 320px; }
+.dashboard-grid.lower { grid-auto-rows: 250px; }
+.dashboard-grid > .card { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.dashboard-grid > .card > .card-body { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; padding-right: 4px; }
+.dashboard-grid > .card > .card-body:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 6px; }
 .dashboard-grid.lower {
 	grid-template-columns: 1fr 1fr 1fr;
 }

@@ -34,7 +34,7 @@ import { Warning } from '@phosphor-icons/react/dist/csr/Warning';
 import { FloppyDisk } from '@phosphor-icons/react/dist/csr/FloppyDisk';
 
 export function Card({ title, action, children }) {
-  return <div className="card"><div className="card-head"><h3>{title}</h3>{action && <span>{action}</span>}</div>{children}</div>;
+  return <div className="card"><div className="card-head"><h3>{title}</h3>{action && <span>{action}</span>}</div><div className="card-body">{children}</div></div>;
 }
 
 export function Legend({ color, text, value }) {

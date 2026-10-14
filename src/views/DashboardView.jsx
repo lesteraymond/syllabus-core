@@ -34,7 +34,7 @@ export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, set
   const [cleared, setCleared] = useState(() => readClearedAt(user.id));
   const activityGroups = useMemo(() => {
     const mine = afterCleared(logs.filter(l => l.userId === user.id), cleared);
-    return groupByDay(mine.slice(0, 6).map((l, i) => describeActivity(l, i, user.id)));
+    return groupByDay(mine.map((l, i) => describeActivity(l, i, user.id)));
   }, [logs, user, cleared]);
 
   const statusData = useMemo(() => {
