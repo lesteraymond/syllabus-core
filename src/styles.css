@@ -1,36 +1,4 @@
 @font-face {
-	font-family: "Inter";
-	font-style: normal;
-	font-weight: 400 700;
-	font-display: swap;
-	src: url("/fonts/inter-latin.woff2") format("woff2");
-	unicode-range:
-		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-	font-family: "Manrope";
-	font-style: normal;
-	font-weight: 600 800;
-	font-display: swap;
-	src: url("/fonts/manrope-latin.woff2") format("woff2");
-	unicode-range:
-		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-	font-family: "Nunito";
-	font-style: normal;
-	font-weight: 200 1000;
-	font-display: swap;
-	src: url("/fonts/nunito-latin.woff2") format("woff2");
-}
-@font-face {
-	font-family: "Nunito";
-	font-style: normal;
-	font-weight: 200 1000;
-	font-display: swap;
-	src: url("/fonts/nunito-latin.woff2") format("woff2");
-}
-@font-face {
 	font-family: "Nunito";
 	font-style: normal;
 	font-weight: 200 1000;
@@ -48,6 +16,12 @@
 	--text-hero: clamp(40px, 4vw, 64px);
 	--font-body: "SF Pro Rounded", ui-rounded, "Nunito", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 	--font-display: "SF Pro Rounded", ui-rounded, "Nunito", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+	--fw-regular: 400;
+	--fw-medium: 500;
+	--fw-semibold: 600;
+	--fw-bold: 700;
+	--fw-heavy: 800;
+	--tracking-label: 0.08em;
 	--blue: #0b2d8f;
 	--blue2: #1749bd;
 	--navy: #061a55;
