@@ -7165,3 +7165,16 @@ html { scrollbar-gutter: stable; }
 .rv-revising { display: grid; gap: 6px; }
 .rv-revising .rv-note { font-weight: var(--fw-semibold); }
 .hist-ver { margin-left: 8px; padding: 1px 8px; border-radius: 99px; background: #eef2fb; color: var(--blue); font-size: var(--text-xs); font-weight: var(--fw-semibold); }
+
+/* Review window, side panel: the same size on every tab. The tabs stay at the top, and the active tab (Decision, Comments or Messages) fills
+   the rest of the column and scrolls inside it, so switching tabs does not make the panel shorter or taller. Side by side only; on a narrow
+   screen the panel sits under the syllabus and keeps its natural height. */
+@media (min-width: 901px) {
+	.svm-split.has-aside > .svm-aside { display: flex; flex-direction: column; overflow: hidden; }
+	.svm-aside > .rp { flex: 1 1 auto; min-height: 0; }
+	.svm-aside .rp-pane { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding-right: 2px; }
+	.svm-aside .rp-chat { flex: 1 1 auto; min-height: 0; }
+	.svm-aside .rp-chat .chat-list { flex: 1 1 auto; min-height: 0; max-height: none; overflow-y: auto; }
+	.svm-aside .rp-pane > .ct { flex: 1 1 auto; min-height: 0; }
+	.svm-aside .rp-pane > .ct > .ct-list { flex: 1 1 auto; min-height: 0; max-height: none; }
+}
