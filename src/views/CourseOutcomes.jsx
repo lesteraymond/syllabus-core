@@ -42,7 +42,7 @@ export default function CourseOutcomes({ notify }) {
 
   return (
     <div className="bld2">
-      <PageHead title="Subjects & CLOs" subtitle="Open a subject to manage its program's graduate attributes and program outcomes, its course learning outcomes, and the school's vision and mission. Faculty see them read-only in the syllabus builder." actions={<button className="btn primary" onClick={() => setAdding(true)}>+ Add subject</button>} />
+      <PageHead title="Program & Subjects" subtitle="Open a subject to manage its program's graduate attributes and program outcomes, its course learning outcomes, and the school's vision and mission. Faculty see them read-only in the syllabus builder." actions={<button className="btn primary" onClick={() => setAdding(true)}>+ Add subject</button>} />
       {adding && (
         <div className="card ac-form">
           <div className="form-grid">

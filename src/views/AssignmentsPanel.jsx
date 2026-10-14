@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { courses as coursesApi, outcomes as outcomesApi, users as usersApi } from '../lib/api';
 import { hasUnsaved, mergeCatalog } from '../lib/assignmentSync';
-
+
 // Admin: choose the programs, then the subjects, a faculty member may create syllabi for. This panel only ASSIGNS what
-// already exists; subjects are created, edited and deleted in Subjects & CLOs.
+// already exists; subjects are created, edited and deleted in Program & Subjects.
 // Left: the programs (tick = assigned, click = look at its subjects). Right: that program's subjects.
 // Unticking a program drops its subjects (the server does the same). A program may have no subjects yet: it still saves,
 // and the faculty member waits for subjects to be assigned.
 // The programs and subjects are loaded every time the panel opens and again when the browser tab regains focus, so a
-// subject added in Subjects & CLOs shows up here; the admin's unsaved ticks are kept (see lib/assignmentSync.js).
+// subject added in Program & Subjects shows up here; the admin's unsaved ticks are kept (see lib/assignmentSync.js).
 export default function AssignmentsPanel({ person, onClose, notify, onManageSubjects }) {
   const [programs, setPrograms] = useState([]);
   const [courses, setCourses] = useState([]);
@@ -38,7 +38,7 @@ export default function AssignmentsPanel({ person, onClose, notify, onManageSubj
     return () => { live = false; };
   }, [person.id]);
 
-  // A subject added in Subjects & CLOs while this panel is open: re-fetch only the programs and subjects when the tab
+  // A subject added in Program & Subjects while this panel is open: re-fetch only the programs and subjects when the tab
   // regains focus, and merge them with the admin's current ticks.
   useEffect(() => {
     let live = true;
@@ -149,7 +149,7 @@ export default function AssignmentsPanel({ person, onClose, notify, onManageSubj
                       <button type="button" className="asg-link" disabled={!programOn || !rows.length} onClick={() => setAll(false)}>Clear</button>
                     </div>
                   </div>
-                  {!programOn && <p className="asg-note">{fp.code} is not assigned to {person.firstName} yet. Tick it on the left to assign its subjects. You can still add subjects to the catalog in Subjects & CLOs.</p>}
+                  {!programOn && <p className="asg-note">{fp.code} is not assigned to {person.firstName} yet. Tick it on the left to assign its subjects. You can still add subjects to the catalog in Program & Subjects.</p>}
                   <input className="asg-in asg-search" type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={'Search ' + fp.code + ' subjects'} aria-label="Search subjects" />
                   <div className="asg-scroll">
                     <table className="asg-ledger">

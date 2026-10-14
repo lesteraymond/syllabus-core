@@ -5086,7 +5086,7 @@ table,
 	}
 }
 
-/* Catalog tabs and the institution / program outcome editors (Subjects & CLOs) */
+/* Catalog tabs and the institution / program outcome editors (Program & Subjects) */
 
 .bld2 .ie-row {
 	display: grid;
@@ -5160,7 +5160,7 @@ table,
 	}
 }
 
-/* Subject modal (Subjects & CLOs): one card per thing an admin manages, each saved on its own */
+/* Subject modal (Program & Subjects): one card per thing an admin manages, each saved on its own */
 .sm-modal {
 	width: min(1080px, 97vw);
 	max-height: 94vh;
