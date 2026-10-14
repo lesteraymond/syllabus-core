@@ -12,6 +12,8 @@ import { NotePencil } from '@phosphor-icons/react/dist/csr/NotePencil';
 import { ShieldCheck } from '@phosphor-icons/react/dist/csr/ShieldCheck';
 import { GraduationCap } from '@phosphor-icons/react/dist/csr/GraduationCap';
 import { PaperPlaneTilt } from '@phosphor-icons/react/dist/csr/PaperPlaneTilt';
+import { UploadSimple } from '@phosphor-icons/react/dist/csr/UploadSimple';
+import { Trash } from '@phosphor-icons/react/dist/csr/Trash';
 import { SquaresFour } from '@phosphor-icons/react/dist/csr/SquaresFour';
 import { PencilRuler } from '@phosphor-icons/react/dist/csr/PencilRuler';
 import { Sparkle } from '@phosphor-icons/react/dist/csr/Sparkle';
@@ -93,7 +95,7 @@ export function Policy({ title, text }) {
 
 // One icon set (Phosphor) for the whole UI. Only the icons listed here are bundled.
 // Decorative by default (aria-hidden); pass `label` when the icon alone conveys meaning.
-const ICONS = { arrowUpRight: ArrowUpRight, arrowUUpLeft: ArrowUUpLeft, xCircle: XCircle, chatText: ChatCircleText, clockBack: ClockCounterClockwise, notebook: Notebook, sealCheck: SealCheck, hourglassMedium: HourglassMedium, notePencil: NotePencil, shieldCheck: ShieldCheck, graduationCap: GraduationCap, paperPlaneTilt: PaperPlaneTilt, squaresFour: SquaresFour, pencilRuler: PencilRuler, sparkle: Sparkle, gridFour: GridFour, archive: Archive, chartBar: ChartBar, downloadSimple: DownloadSimple, usersThree: UsersThree, gearSix: GearSix, caretRight: CaretRight, eye: Eye, eyeSlash: EyeSlash, envelope: Envelope, bell: Bell, magnifyingGlass: MagnifyingGlass, checkCircle: CheckCircle, warning: Warning, floppyDisk: FloppyDisk };
+const ICONS = { arrowUpRight: ArrowUpRight, arrowUUpLeft: ArrowUUpLeft, xCircle: XCircle, chatText: ChatCircleText, clockBack: ClockCounterClockwise, notebook: Notebook, sealCheck: SealCheck, hourglassMedium: HourglassMedium, notePencil: NotePencil, shieldCheck: ShieldCheck, graduationCap: GraduationCap, paperPlaneTilt: PaperPlaneTilt, uploadSimple: UploadSimple, trash: Trash, squaresFour: SquaresFour, pencilRuler: PencilRuler, sparkle: Sparkle, gridFour: GridFour, archive: Archive, chartBar: ChartBar, downloadSimple: DownloadSimple, usersThree: UsersThree, gearSix: GearSix, caretRight: CaretRight, eye: Eye, eyeSlash: EyeSlash, envelope: Envelope, bell: Bell, magnifyingGlass: MagnifyingGlass, checkCircle: CheckCircle, warning: Warning, floppyDisk: FloppyDisk };
 export function Icon({ name, size = 20, weight = 'duotone', label, className, ...rest }) {
   const Glyph = ICONS[name];
   if (!Glyph) return null;
