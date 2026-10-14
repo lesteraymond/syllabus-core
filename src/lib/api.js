@@ -104,6 +104,8 @@ export const compliance = {
   get: (id) => request(`/syllabi/${id}/compliance`),
   recheck: (id, force = false) => request(`/syllabi/${id}/compliance/recheck`, { method: 'POST', body: JSON.stringify(force ? { force: true } : {}) }),
   list: (syllabus = 'all') => request(`/compliance?syllabus=${encodeURIComponent(syllabus)}`),
+  history: (limit) => request(`/compliance/history${limit ? `?limit=${encodeURIComponent(limit)}` : ''}`), // admin: the checks of submitted versions, newest first
+  run: (runId) => request(`/compliance/runs/${encodeURIComponent(runId)}`), // admin: one stored run in full, an earlier one too
 };
 
 export const outcomes = {

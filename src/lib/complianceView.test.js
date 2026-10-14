@@ -1,7 +1,7 @@
 // Run: npm test
 import test from 'node:test';
 import assert from 'node:assert';
-import { runState, tone, ringAngle, basis, blockersOf, warningsOf, warningCount, headline, areaNames, groupFindings, scoreText, when, stepLabel, listBasis, STEP_INFO, rowState, actionLabel, bulkTargets, filterRows, groupByFacultyProgram } from './complianceView.js';
+import { runState, tone, ringAngle, basis, blockersOf, warningsOf, warningCount, headline, areaNames, groupFindings, scoreText, when, stepLabel, listBasis, STEP_INFO, rowState, actionLabel, timeOf, stamp, isLocked, bulkTargets, filterRows, groupByFacultyProgram } from './complianceView.js';
 import { STEPS } from './syllabusModel.js';
 
 const area = (key, score) => ({ key, name: key.toUpperCase(), weight: 10, score });
@@ -154,4 +154,19 @@ test('rows group by faculty, then program, then subject, each sorted, with a cou
 test('two faculty with the same name stay separate', () => {
   const g = groupByFacultyProgram([row(1, { userId: 1, facultyName: 'Sam Lee' }), row(2, { userId: 2, facultyName: 'Sam Lee' })]);
   assert.strictEqual(g.length, 2);
+});
+
+test('a run is stamped with its day and its time, and an unreadable date gives nothing', () => {
+  assert.match(when('2026-01-05 15:42:00'), /Jan 5, 2026/);
+  assert.match(timeOf('2026-01-05 15:42:00'), /^3:42\s?PM$/);
+  assert.match(stamp('2026-01-05 15:42:00'), /^Jan 5, 2026, 3:42\s?PM$/);
+  assert.strictEqual(timeOf(''), '');
+  assert.strictEqual(timeOf('not a date'), '');
+  assert.strictEqual(stamp(null), '');
+});
+
+test('an approved syllabus is locked: it cannot be checked again, whatever else is true of it', () => {
+  assert.strictEqual(isLocked({ status: 'approved' }), true);
+  ['submitted', 'under_review', 'for_revision', 'rejected', 'draft'].forEach((st) => assert.strictEqual(isLocked({ status: st }), false, st));
+  assert.strictEqual(isLocked(null), false);
 });

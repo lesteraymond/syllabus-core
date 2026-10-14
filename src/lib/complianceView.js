@@ -80,6 +80,17 @@ export function when(createdAt) {
   return isNaN(d) ? '' : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
+// "Oct 14, 2026" + "3:42 PM": the day and the time a run was stored; anything unreadable -> ''.
+export function timeOf(createdAt) {
+  if (!createdAt) return '';
+  const d = new Date(String(createdAt).replace(' ', 'T'));
+  return isNaN(d) ? '' : d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+}
+export const stamp = (createdAt) => (when(createdAt) && timeOf(createdAt) ? when(createdAt) + ', ' + timeOf(createdAt) : when(createdAt));
+
+// An approved syllabus is final: it is not checked again, but its stored checks can still be read.
+export const isLocked = (row) => !!row && row.status === 'approved';
+
 // A compact score for a list row: "92%" or "—".
 export const scoreText = (run) => (runState(run) === 'scored' ? run.overall + '%' : '—');
 
