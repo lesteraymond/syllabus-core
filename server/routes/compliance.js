@@ -1,5 +1,5 @@
 // Compliance checks of a syllabus against the form standard. Mounted on /api (the paths below are complete).
-//   GET  /api/syllabi/:id/compliance           the latest stored run of a syllabus (its owner, or an admin once it is submitted)
+//   GET  /api/syllabi/:id/compliance           the latest stored run of a syllabus (its owner: their own newest; an admin: the administrator's own check)
 //   POST /api/syllabi/:id/compliance/recheck   run the rules now: the owner on the saved draft, an admin on the latest submitted
 //                                              version (stored with that version, so it is the one reviewers see). Rate limited;
 //                                              the same content as an earlier run returns that run, { force: true } makes a new one
@@ -9,6 +9,8 @@
 //                                              ?from=&to= (ISO instants, from inclusive, to exclusive) keep the checks stored in that range
 //   GET  /api/compliance/runs/:runId           (admin) one stored run in full, whatever the syllabus's status (approved ones too)
 // An approved syllabus is final: it cannot be checked again, but its stored runs stay readable.
+// What counts for an administrator is the administrator's own check (svc.ADMIN_RUN_SQL). The run a faculty member's submit stores gates the
+// submit and is the faculty member's alone: it is never shown to an administrator, never counts as checked, and never answers an admin's Check.
 // Runs are stored by the submit route (with the version, authoritative) and by the recheck route. Nothing here changes a syllabus.
 const express = require('express');
 const { requireAuth } = require('../middleware/auth');
@@ -79,7 +81,7 @@ router.get('/syllabi/:id/compliance', requireAuth, async (req, res) => {
     const me = req.session.user;
     const syl = await loadVisible(db, me, parseId(req.params.id));
     if (!(await svc.isInstalled(db))) return res.json({ installed: false, run: null });
-    const run = await svc.latestRun(db, syl.syllabus_id, { versionOnly: !rules.isOwner(me, syl) });
+    const run = await svc.latestRun(db, syl.syllabus_id, { adminOnly: !rules.isOwner(me, syl) });
     if (!run) return res.json({ installed: true, run: null });
     const { content } = await subjectOf(db, me, syl);
     res.json({ installed: true, run: withChecker(await svc.loadDetail(db, run, content ? svc.hashOf(content) : null), syl.user_id) });
@@ -105,7 +107,7 @@ router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => 
     // The same content as an earlier run is not checked again, and does not count against the limit. An admin's check is stored with
     // the version, so only a run stored with a version can answer it.
     if (!(req.body && req.body.force === true)) {
-      const cached = await svc.cachedRun(db, syl.syllabus_id, hash, { versionOnly: !owner });
+      const cached = await svc.cachedRun(db, syl.syllabus_id, hash, { adminOnly: !owner });
       if (cached) return res.json({ installed: true, cached: true, run: withChecker(await svc.loadDetail(db, cached, hash), syl.user_id) });
     }
     const slot = limiter.take('recheck:' + me.id);
@@ -141,7 +143,7 @@ router.get('/compliance', requireAuth, async (req, res) => {
       const subject = await subjectOf(db, me, syl);
       const base = await baseOf(db, syl, subject);
       if (!installed) return res.json({ installed: false, syllabus: base, run: null });
-      const run = await svc.latestRun(db, syl.syllabus_id, { versionOnly: !rules.isOwner(me, syl) });
+      const run = await svc.latestRun(db, syl.syllabus_id, { adminOnly: !rules.isOwner(me, syl) });
       return res.json({ installed: true, syllabus: base, run: run ? withChecker(await svc.loadDetail(db, run, subject.content ? svc.hashOf(subject.content) : null), syl.user_id) : null });
     }
 
@@ -168,8 +170,8 @@ router.get('/compliance', requireAuth, async (req, res) => {
     let areasByRun = new Map();
     if (installed && syls.length) {
       const [runs] = await db.query(
-        // An admin sees the run stored with each submitted version; a faculty member sees their own newest run, re-checks included.
-        'SELECT r.* FROM ai_check_runs r JOIN (SELECT MAX(run_id) AS run_id FROM ai_check_runs WHERE syllabus_id IN (?)' + (me.role === 'admin' ? ' AND version_id IS NOT NULL' : '') + ' GROUP BY syllabus_id) m ON m.run_id = r.run_id',
+        // An admin sees the administrator's own check of each submitted syllabus; a faculty member sees their own newest run, re-checks included.
+        'SELECT r.* FROM ai_check_runs r JOIN (SELECT MAX(run_id) AS run_id FROM ai_check_runs WHERE syllabus_id IN (?)' + (me.role === 'admin' ? ' AND ' + svc.ADMIN_RUN_SQL : '') + ' GROUP BY syllabus_id) m ON m.run_id = r.run_id',
         [syls.map((s) => s.syllabus_id)]
       );
       runs.forEach((r) => latest.set(r.syllabus_id, r));
@@ -207,8 +209,8 @@ router.get('/compliance', requireAuth, async (req, res) => {
   } catch (err) { sendError(res, err); }
 });
 
-// The history: one item per syllabus, its latest check stored with a submitted version (the one a reviewer sees), newest first. A
-// subject is checked once and appears once; older runs of it are not listed. A draft check an owner ran afterwards is not part of it.
+// The history: one item per syllabus, the administrator's latest check of its submitted version, newest first. A subject is checked
+// once and appears once; older runs of it are not listed. What the faculty member's own submit or drafts stored is not part of it.
 // Each item is a summary; the full run is read with /compliance/runs/:runId.
 router.get('/compliance/history', requireAuth, async (req, res) => {
   try {
@@ -223,8 +225,8 @@ router.get('/compliance/history', requireAuth, async (req, res) => {
     const [rows] = await db.query(
       'SELECT r.run_id, r.syllabus_id, r.overall, r.status, r.passed, r.ai_status, r.created_by, r.created_at, l.user_id, l.course_code, l.title, l.syllabus_status, l.first_name, l.last_name, l.course_title, l.program_code, l.program_name, l.curriculum_program '
       + 'FROM ai_check_runs r JOIN (SELECT s.syllabus_id, s.user_id, s.course_code, s.title, s.status AS syllabus_status, ' + LABEL_SQL + ") l ON l.syllabus_id = r.syllabus_id "
-      + "WHERE r.version_id IS NOT NULL AND l.syllabus_status <> 'draft' "
-      + 'AND r.run_id = (SELECT MAX(r2.run_id) FROM ai_check_runs r2 WHERE r2.syllabus_id = r.syllabus_id AND r2.version_id IS NOT NULL)'
+      + "WHERE r.version_id IS NOT NULL AND r.created_by IS NOT NULL AND r.created_by <> l.user_id AND l.syllabus_status <> 'draft' "
+      + 'AND r.run_id = (SELECT MAX(r2.run_id) FROM ai_check_runs r2 WHERE r2.syllabus_id = r.syllabus_id AND r2.version_id IS NOT NULL AND r2.created_by IS NOT NULL AND r2.created_by <> l.user_id)'
       + (from !== null ? ' AND r.created_at >= FROM_UNIXTIME(?)' : '') + (to !== null ? ' AND r.created_at < FROM_UNIXTIME(?)' : '')
       + ' ORDER BY r.run_id DESC LIMIT ?',
       [...(from !== null ? [from] : []), ...(to !== null ? [to] : []), limit]
@@ -254,10 +256,11 @@ router.get('/compliance/runs/:runId', requireAuth, async (req, res) => {
     if (!(await svc.isInstalled(db))) return res.json({ installed: false, syllabus: null, run: null, isLatest: false });
     const [found] = await db.query('SELECT * FROM ai_check_runs WHERE run_id = ?', [runId]);
     const stored = found[0];
-    if (!stored || stored.version_id === null || stored.version_id === undefined) throw httpError(404, 'Check not found');
+    if (!stored || stored.version_id === null || stored.version_id === undefined || stored.created_by === null || stored.created_by === undefined) throw httpError(404, 'Check not found');
     const syl = await loadVisible(db, me, stored.syllabus_id);
+    if (stored.created_by === syl.user_id) throw httpError(404, 'Check not found'); // the faculty member's own run is not the administrator's to read
     const subject = await subjectOf(db, me, syl);
-    const latest = await svc.latestRun(db, syl.syllabus_id, { versionOnly: true });
+    const latest = await svc.latestRun(db, syl.syllabus_id, { adminOnly: true });
     res.json({
       installed: true,
       syllabus: await baseOf(db, syl, subject),

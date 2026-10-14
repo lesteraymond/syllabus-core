@@ -170,19 +170,25 @@ async function loadDetail(db, run, currentHash) {
   return out;
 }
 
-// The newest run of a syllabus. `versionOnly` keeps to the runs stored with a submitted version: those are the authoritative ones a
-// reviewer should see, not a draft check the owner ran afterwards.
-async function latestRun(db, syllabusId, { versionOnly = false } = {}) {
+// An administrator's check, as SQL on ai_check_runs: stored with a submitted version by someone other than the syllabus's owner. The run a
+// faculty member's own submit stores (it gates the submit) is not one: the administrator checks every submission themselves, in the AI
+// Checker, and only such a check counts for the administrator (the list, the history, the stored result).
+const ADMIN_RUN_SQL = 'version_id IS NOT NULL AND created_by IS NOT NULL AND created_by <> (SELECT s.user_id FROM syllabi s WHERE s.syllabus_id = ai_check_runs.syllabus_id)';
+
+// The newest run of a syllabus. `adminOnly` keeps to the administrator's checks (see ADMIN_RUN_SQL); without it the owner sees their own
+// newest run, a draft check included.
+async function latestRun(db, syllabusId, { adminOnly = false } = {}) {
   const [rows] = await db.query(
-    'SELECT * FROM ai_check_runs WHERE syllabus_id = ?' + (versionOnly ? ' AND version_id IS NOT NULL' : '') + ' ORDER BY run_id DESC LIMIT 1',
+    'SELECT * FROM ai_check_runs WHERE syllabus_id = ?' + (adminOnly ? ' AND ' + ADMIN_RUN_SQL : '') + ' ORDER BY run_id DESC LIMIT 1',
     [syllabusId]
   );
   return rows[0] || null;
 }
-// A stored run for this exact content. `versionOnly` keeps to runs stored with a submitted version (what an admin's check produces).
-async function cachedRun(db, syllabusId, hash, { versionOnly = false } = {}) {
+// A stored run for this exact content. `adminOnly` keeps to the administrator's checks, so an administrator's Check is never answered by
+// the run the faculty member's submit stored.
+async function cachedRun(db, syllabusId, hash, { adminOnly = false } = {}) {
   const [rows] = await db.query(
-    'SELECT * FROM ai_check_runs WHERE syllabus_id = ? AND content_hash = ? AND standard_version = ?' + (versionOnly ? ' AND version_id IS NOT NULL' : '') + ' ORDER BY run_id DESC LIMIT 1',
+    'SELECT * FROM ai_check_runs WHERE syllabus_id = ? AND content_hash = ? AND standard_version = ?' + (adminOnly ? ' AND ' + ADMIN_RUN_SQL : '') + ' ORDER BY run_id DESC LIMIT 1',
     [syllabusId, hash, standard.version]
   );
   return rows[0] || null;
@@ -197,6 +203,6 @@ async function latestVersion(db, syllabusId) {
 const hashOf = (content) => contentHash(content, standard.version);
 
 module.exports = {
-  standard, check, gateError, isInstalled, resetInstalledCache, storeRun, attachRecommendations,
+  ADMIN_RUN_SQL, standard, check, gateError, isInstalled, resetInstalledCache, storeRun, attachRecommendations,
   startAiJob, settled, getProvider, setProvider, namesFor, summarize, loadAreas, loadDetail, latestRun, cachedRun, latestVersion, hashOf, bandOf,
 };

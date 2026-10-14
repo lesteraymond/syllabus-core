@@ -46,6 +46,9 @@ function makeDb() {
     people: { 5: { first_name: 'Fay', last_name: 'F' }, 6: { first_name: 'Gus', last_name: 'G' } },
   };
   const prog = (where) => s.programs.find(where);
+  // svc.ADMIN_RUN_SQL: stored with a version, by someone other than the syllabus's owner
+  const isAdminRun = (r) => r.version_id !== null && r.created_by !== null && r.created_by !== undefined && r.created_by !== s.syllabi[r.syllabus_id].user_id;
+  const keep = (sql, r) => (!sql.includes('version_id IS NOT NULL') || r.version_id !== null) && (!sql.includes('created_by <>') || isAdminRun(r));
   const handle = (sql, p = []) => {
     if (sql.startsWith('SELECT user_id FROM users WHERE user_id')) return [[{ user_id: p[0] }]];
     if (sql.startsWith('SELECT vision')) return [[s.settings]];
@@ -99,10 +102,10 @@ function makeDb() {
       return [{}];
     }
     if (sql.startsWith("UPDATE ai_check_runs SET ai_status = 'failed'")) { Object.assign(s.runs.find((r) => r.run_id === p[1]), { ai_status: 'failed', ai_error: p[0] }); return [{}]; }
-    if (sql.startsWith('SELECT * FROM ai_check_runs WHERE syllabus_id = ? AND content_hash')) return [s.runs.filter((r) => r.syllabus_id === p[0] && r.content_hash === p[1] && r.standard_version === p[2] && (!sql.includes('version_id IS NOT NULL') || r.version_id !== null)).slice(-1)];
-    if (sql.startsWith('SELECT * FROM ai_check_runs WHERE syllabus_id')) return [s.runs.filter((r) => r.syllabus_id === p[0] && (!sql.includes('version_id IS NOT NULL') || r.version_id !== null)).slice(-1)];
+    if (sql.startsWith('SELECT * FROM ai_check_runs WHERE syllabus_id = ? AND content_hash')) return [s.runs.filter((r) => r.syllabus_id === p[0] && r.content_hash === p[1] && r.standard_version === p[2] && keep(sql, r)).slice(-1)];
+    if (sql.startsWith('SELECT * FROM ai_check_runs WHERE syllabus_id')) return [s.runs.filter((r) => r.syllabus_id === p[0] && keep(sql, r)).slice(-1)];
     if (sql.startsWith('SELECT * FROM ai_check_runs WHERE run_id')) return [s.runs.filter((r) => r.run_id === p[0])];
-    if (sql.startsWith('SELECT r.* FROM ai_check_runs')) return [p[0].map((id) => s.runs.filter((r) => r.syllabus_id === id && (!sql.includes('version_id IS NOT NULL') || r.version_id !== null)).slice(-1)[0]).filter(Boolean)];
+    if (sql.startsWith('SELECT r.* FROM ai_check_runs')) return [p[0].map((id) => s.runs.filter((r) => r.syllabus_id === id && keep(sql, r)).slice(-1)[0]).filter(Boolean)];
     if (sql.startsWith('SELECT run_id, area_key')) return [s.areas.filter((a) => p[0].includes(a.run_id))];
     if (sql.startsWith('SELECT * FROM ai_findings')) return [s.findings.filter((f) => f.run_id === p[0]).sort((x, y) => x.position - y.position)];
     // the list: one row per syllabus with the faculty member, program and subject the real query joins in
@@ -118,8 +121,8 @@ function makeDb() {
       const hi = sql.includes('< FROM_UNIXTIME') ? p[at++] * 1000 : Infinity;
       const limit = p[at];
       const inRange = (r) => { const t = Date.parse(r.created_at); return t >= lo && t < hi; };
-      const latestOf = (id) => Math.max(...s.runs.filter((x) => x.syllabus_id === id && x.version_id !== null).map((x) => x.run_id));
-      return [s.runs.filter((r) => r.version_id !== null && s.syllabi[r.syllabus_id].status !== 'draft' && r.run_id === latestOf(r.syllabus_id) && inRange(r)).reverse().slice(0, limit)
+      const latestOf = (id) => Math.max(...s.runs.filter((x) => x.syllabus_id === id && isAdminRun(x)).map((x) => x.run_id));
+      return [s.runs.filter((r) => isAdminRun(r) && s.syllabi[r.syllabus_id].status !== 'draft' && r.run_id === latestOf(r.syllabus_id) && inRange(r)).reverse().slice(0, limit)
         .map((r) => ({ ...labelled(s.syllabi[r.syllabus_id]), run_id: r.run_id, syllabus_id: r.syllabus_id, overall: r.overall, status: r.status, passed: r.passed, ai_status: r.ai_status, created_by: r.created_by, created_at: r.created_at, syllabus_status: s.syllabi[r.syllabus_id].status }))];
     }
     if (sql.startsWith('SELECT u.first_name, u.last_name')) return [s.syllabi[p[0]] ? [labelled(s.syllabi[p[0]])] : []];
@@ -353,10 +356,12 @@ test('a faculty member cannot read, list or re-check another one\'s runs; an adm
   assert.strictEqual(noVersion.body.code, 'no_form');
   assert.strictEqual((await call(fay, 'GET', '/syllabi/999/compliance')).status, 404);
   assert.strictEqual((await call(fay, 'POST', '/syllabi/1/submit', {})).status, 200);
-  assert.ok((await call(admin, 'GET', '/syllabi/1/compliance')).body.run); // now there is one stored with the version
+  assert.strictEqual((await call(admin, 'GET', '/syllabi/1/compliance')).body.run, null); // the submit stored the author's run: not an administrator's check
+  assert.ok((await call(admin, 'POST', '/syllabi/1/compliance/recheck', {})).body.run); // the administrator checks it themselves
+  assert.ok((await call(admin, 'GET', '/syllabi/1/compliance')).body.run); // and that one is what the administrator sees
 }));
 
-test('an admin reviewing a submission sees the run stored with that version, not a re-check the owner ran afterwards', () => withServer(async ({ call, db }) => {
+test('an admin sees only an administrator\'s check: not the run the faculty member\'s submit stored, nor a re-check the owner ran afterwards', () => withServer(async ({ call, db }) => {
   assert.strictEqual((await call(fay, 'POST', '/syllabi/1/submit', {})).status, 200);
   db.s.syllabi[1].status = 'submitted';
   const submitRun = db.s.runs[0].run_id;
@@ -365,14 +370,22 @@ test('an admin reviewing a submission sees the run stored with that version, not
   setContent(db, 1, edited);
   const recheck = await call(fay, 'POST', '/syllabi/1/compliance/recheck', {});
   assert.notStrictEqual(recheck.body.run.id, submitRun);
-  assert.strictEqual((await call(fay, 'GET', '/syllabi/1/compliance')).body.run.id, recheck.body.run.id); // the owner sees the newest
-  const seen = await call(admin, 'GET', '/syllabi/1/compliance');
-  assert.strictEqual(seen.body.run.id, submitRun); // the reviewer sees the one stored with the version
-  assert.strictEqual(seen.body.run.versionId, 77);
-  assert.strictEqual(seen.body.run.stale, false); // compared with the version the reviewer is looking at, not the author's edits in progress
-  assert.strictEqual((await call(admin, 'GET', '/compliance?syllabus=1')).body.run.id, submitRun);
-  assert.strictEqual((await call(admin, 'GET', '/compliance?syllabus=all')).body.syllabi[0].run.id, submitRun);
-  assert.strictEqual((await call(fay, 'GET', '/compliance?syllabus=all')).body.syllabi[0].run.id, recheck.body.run.id);
+  assert.strictEqual((await call(fay, 'GET', '/syllabi/1/compliance')).body.run.id, recheck.body.run.id); // the owner sees their newest
+  // nothing the faculty member ran counts for the administrator
+  assert.strictEqual((await call(admin, 'GET', '/syllabi/1/compliance')).body.run, null);
+  assert.strictEqual((await call(admin, 'GET', '/compliance?syllabus=1')).body.run, null);
+  assert.strictEqual((await call(admin, 'GET', '/compliance?syllabus=all')).body.syllabi[0].run, null);
+  // the administrator's own check is stored with the submitted version, says who made it, and is not stale against that version
+  const mine = await call(admin, 'POST', '/syllabi/1/compliance/recheck', {});
+  assert.strictEqual(mine.status, 200);
+  assert.strictEqual(mine.body.cached, false); // not answered by the run the submit stored, though the content is the same
+  assert.strictEqual(mine.body.run.checkedBy, 'admin');
+  assert.strictEqual(mine.body.run.versionId, 77);
+  assert.strictEqual(mine.body.run.stale, false);
+  assert.ok(![submitRun, recheck.body.run.id].includes(mine.body.run.id));
+  assert.strictEqual((await call(admin, 'GET', '/syllabi/1/compliance')).body.run.id, mine.body.run.id);
+  assert.strictEqual((await call(admin, 'GET', '/compliance?syllabus=all')).body.syllabi[0].run.id, mine.body.run.id);
+  assert.strictEqual((await call(admin, 'POST', '/syllabi/1/compliance/recheck', {})).body.cached, true); // now the administrator's own run answers the same content
 }));
 
 test('re-check is rate limited per user; answers from a stored run are not counted', () => withServer(async ({ call }) => {
@@ -417,7 +430,7 @@ test('the stored run reads back whole: areas, findings with their rule and step,
   assert.strictEqual(run.contact.hoursPerWeek, 5);
 }));
 
-test('GET /compliance: an admin sees every submitted syllabus (its version run), faculty only their own; averages skip unscored ones', () => withServer(async ({ call, db }) => {
+test('GET /compliance: an admin sees every submitted syllabus with the administrator\'s own check only, faculty only their own; averages skip unscored ones', () => withServer(async ({ call, db }) => {
   setContent(db, 1, conformingContent());
   addSyllabus(db, 2, { user_id: 6, status: 'under_review', course_code: 'IT 205', content: JSON.stringify(conformingContent()) });
   addSyllabus(db, 3, { user_id: 6, status: 'draft', course_code: 'IT 206', content: JSON.stringify(conformingContent()) });
@@ -427,11 +440,19 @@ test('GET /compliance: an admin sees every submitted syllabus (its version run),
   await call(fay, 'POST', '/syllabi/4/compliance/recheck', {}); // only a check, never submitted through the builder
   db.s.syllabi[1].status = 'submitted';
 
+  // after the submits no administrator has checked anything: every submitted syllabus is still waiting
+  const waiting = await call(admin, 'GET', '/compliance?syllabus=all');
+  assert.deepStrictEqual(waiting.body.syllabi.map((x) => x.run), [null, null, null]);
+  assert.strictEqual(waiting.body.summary.scored, 0);
+  assert.strictEqual(waiting.body.summary.unchecked, 2); // syllabi 1 and 2 have a form; syllabus 4 has no submitted version
+  assert.strictEqual((await call(admin, 'POST', '/syllabi/1/compliance/recheck', {})).status, 200);
+  assert.strictEqual((await call(admin, 'POST', '/syllabi/2/compliance/recheck', {})).status, 200);
+
   const adminList = await call(admin, 'GET', '/compliance?syllabus=all');
   assert.strictEqual(adminList.status, 200);
   assert.deepStrictEqual(adminList.body.syllabi.map((x) => x.syllabusId).sort(), [1, 2, 4]); // no draft
   assert.strictEqual(adminList.body.summary.count, 3);
-  assert.strictEqual(adminList.body.summary.scored, 2); // syllabus 4 has no run stored with a version
+  assert.strictEqual(adminList.body.summary.scored, 2); // syllabus 4 has no administrator's check
   const score = adminList.body.syllabi.find((x) => x.syllabusId === 1).run.overall; // syllabi 1 and 2 have the same content
   assert.strictEqual(adminList.body.syllabi.find((x) => x.syllabusId === 2).run.overall, score);
   assert.strictEqual(adminList.body.summary.average, score);
@@ -660,4 +681,19 @@ test('GET /compliance/history: a bad date or a range that ends before it starts 
   assert.strictEqual((await call(admin, 'GET', '/compliance/history?from=2026-03-05T00:00:00Z&to=2026-03-01T00:00:00Z')).status, 400);
   assert.strictEqual((await call(admin, 'GET', '/compliance/history?from=2026-03-01T00:00:00Z&limit=100000')).status, 200);
   assert.strictEqual((await call(fay, 'GET', '/compliance/history?from=2026-03-01T00:00:00Z')).status, 403);
+}));
+
+test('the history and the single-run read never show the run a faculty submit stored; only the administrator own check', () => withServer(async ({ call, db }) => {
+  assert.strictEqual((await call(fay, 'POST', '/syllabi/1/submit', {})).status, 200);
+  db.s.syllabi[1].status = 'submitted';
+  const submitRun = db.s.runs[0].run_id;
+  assert.deepStrictEqual((await call(admin, 'GET', '/compliance/history')).body.runs, []); // nothing is checked yet, though a run is stored
+  assert.strictEqual((await call(admin, 'GET', '/compliance/runs/' + submitRun)).status, 404); // and the author's run is not the administrator's to open
+  const mine = await call(admin, 'POST', '/syllabi/1/compliance/recheck', {});
+  const history = await call(admin, 'GET', '/compliance/history');
+  assert.deepStrictEqual(history.body.runs.map((r) => r.runId), [mine.body.run.id]);
+  assert.strictEqual(history.body.runs[0].checkedBy, 'admin');
+  const read = await call(admin, 'GET', '/compliance/runs/' + mine.body.run.id);
+  assert.strictEqual(read.status, 200);
+  assert.strictEqual(read.body.isLatest, true);
 }));
