@@ -12,6 +12,7 @@ import ReviewPanel from './views/ReviewPanel';
 import { navItems } from './data/initialData';
 import { auth, logs as logsApi, messages as messagesApi, notifications as notificationsApi, syllabi as syllabiApi, onPasswordChangeRequired } from './lib/api';
 import { commentNotificationIds, notificationTarget } from './lib/notificationRoute';
+import { partnerOf, threadTitle } from './lib/chatPartner';
 import { canEditSyllabus, editBlockedReason } from './lib/syllabusRules';
 import { useNotificationPolling } from './lib/usePolling';
 import AIChecker from './views/AIChecker';
@@ -51,6 +52,7 @@ export default function App() {
   const [syllabi, setSyllabi] = useState([]);
   const [logs, setLogs] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [partners, setPartners] = useState({}); // syllabus id -> who the conversation is with (the server's answer)
   const [editing, setEditing] = useState(null);
   const [chatCode, setChatCode] = useState(null);
   const [histCode, setHistCode] = useState(null);
@@ -96,7 +98,9 @@ export default function App() {
 
   const fetchMessages = useCallback(async () => {
     try {
-      setMessages(await messagesApi.listMine());
+      const [list, who] = await Promise.all([messagesApi.listMine(), messagesApi.partners().catch(() => ({ partners: {} }))]); // the profile read is optional: chat works without it
+      setMessages(list);
+      setPartners(who.partners || {});
     } catch (err) { console.error('Failed to fetch messages:', err); }
   }, []);
 
@@ -160,6 +164,7 @@ export default function App() {
     setSyllabi([]);
     setLogs([]);
     setMessages([]);
+    setPartners({});
     setNotifications({ items: [], unreadCount: 0 });
     setPage('dashboard');
     setEditing(null);
@@ -185,15 +190,11 @@ export default function App() {
       t.lastTime = last.time;
       t.unread = t.msgs.filter(m => m.receiverId === user.id && !m.isRead).length;
       const syl = syllabi.find(s => s.id === t.code);
-      const other = t.msgs.find(m => m.senderId !== user.id);
-      const initialsOf = (n) => n?.split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase();
-      t.partner = other
-        ? { name: other.sender, initials: initialsOf(other.sender), avatarUrl: other.senderAvatarUrl }
-        : (user.role === 'admin' && syl ? { name: syl.faculty, initials: initialsOf(syl.faculty), avatarUrl: syl.ownerAvatarUrl } : null);
-      t.title = syl ? `${syl.courseCode} • ${syl.title}` : `Syllabus #${t.code}`;
+      t.partner = partnerOf({ partner: partners[t.code], messages: t.msgs, user, syl });
+      t.title = threadTitle(syl, t.code);
       return t;
     }).sort((a, b) => new Date(b.lastTime) - new Date(a.lastTime));
-  }, [messages, user, syllabi]);
+  }, [messages, partners, user, syllabi]);
 
   const markRead = async (syllabusId) => {
     try { await messagesApi.markRead(syllabusId); } catch {}
@@ -325,7 +326,7 @@ export default function App() {
         </div>
       </main>
       {toast && <div className="toast">{toast}</div>}
-      {chatCode && <ChatModal code={chatCode} syllabi={syllabi} user={user} messages={messages} sendMsg={sendMsg} markRead={markRead} deleteThread={deleteThread} onClose={() => setChatCode(null)} />}
+      {chatCode && <ChatModal code={chatCode} syllabi={syllabi} user={user} messages={messages} partner={partners[chatCode]} sendMsg={sendMsg} markRead={markRead} deleteThread={deleteThread} onClose={() => setChatCode(null)} />}
       {histCode && <VersionHistoryModal syllabus={syllabi.find(s => s.id === histCode)} onClose={() => setHistCode(null)} />}
       {commentCode && (
         <SyllabusCommentsModal syllabus={syllabi.find((s) => s.id === commentCode)} viewerId={user.id} onClose={() => setCommentCode(null)}

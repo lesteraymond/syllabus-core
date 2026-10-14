@@ -156,6 +156,7 @@ export const logs = {
 
 export const messages = {
   listMine: () => request('/messages'), // every message I sent or received, in one request
+  partners: () => request('/messages/partners'), // who each conversation is with: name, picture, role, program and subject
   list: (syllabusId) => request(`/messages/${syllabusId}`),
   // The server decides the receiver. Old callers may still pass (syllabusId, receiverId, text); it is ignored.
   send: (syllabusId, ...rest) => request(`/messages/${syllabusId}`, { method: 'POST', body: JSON.stringify({ text: rest[rest.length - 1] }) }),
