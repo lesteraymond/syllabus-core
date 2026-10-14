@@ -7062,10 +7062,6 @@ table,
 .pick-meta { font-size: var(--text-sm); font-weight: var(--fw-medium); color: var(--muted); }
 .pick-note { flex-basis: 100%; font-size: var(--text-xs); font-weight: var(--fw-medium); color: var(--warn, #8a5a0c); }
 .pick-foot .btn { flex: none; }
-.pick-overview { margin-top: 20px; }
-.pick-overview > summary { cursor: pointer; font-weight: var(--fw-semibold); font-size: var(--text-sm); color: var(--blue); padding: 10px 0; }
-.pick-overview[open] > summary { margin-bottom: 6px; }
-.pick-overview-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
 
 .cm-modal { width: min(780px, 95vw); }
 .cm-head > div { min-width: 0; }
@@ -7090,3 +7086,4 @@ table,
 .cm-body .cmp-top .cmp-ring, .cm-body .cmp-areas { display: none; }
 .cm-foot { align-items: center; }
 .cm-live { margin-right: auto; font-size: var(--text-sm); font-weight: var(--fw-medium); color: var(--muted); }
+.pick-foot .btn:disabled { opacity: 0.5; cursor: not-allowed; }
