@@ -75,4 +75,5 @@ app.listen(PORT, () => {
 	for (const key of ["GOOGLE_CLIENT_ID", "JWT_SECRET"]) {
 		if (!process.env[key]) console.warn(`WARNING: ${key} is not set in server/.env - Google sign-in will fail`);
 	}
+	if (!require("./lib/mailer").configured()) console.warn("MAIL: SMTP_HOST and MAIL_FROM are not set in server/.env - no credentials or password emails will be sent.");
 });
