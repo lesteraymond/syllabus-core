@@ -13,6 +13,8 @@ const toSessionUser = (row) => ({
   firstName: row.first_name,
   lastName: row.last_name,
   avatarUrl: avatarUrlFor(row.user_id, row.avatar_path),
+  // true after a sign-in with a generated password: nothing else is open until the user has chosen their own (see requireAuth)
+  mustChangePassword: !!row.must_change_password,
 });
 
 const hash = (token) => crypto.createHash('sha256').update(token).digest('hex');
@@ -53,7 +55,7 @@ async function restoreSession(req, res, next) {
     if (!token) return next();
     const db = req.app.locals.db;
     const [rows] = await db.query(
-      `SELECT t.token_id, u.user_id, u.email, u.role, u.first_name, u.last_name, u.avatar_path
+      `SELECT t.token_id, u.*
        FROM remember_tokens t JOIN users u ON t.user_id = u.user_id
        WHERE t.token_hash = ? AND t.expires_at > NOW()`,
       [hash(token)]
@@ -75,18 +77,28 @@ async function restoreSession(req, res, next) {
 }
 
 // Offboarding: once an admin deletes the user row, a still-alive session stops working.
-async function requireAuth(req, res, next) {
-  try {
-    if (!req.session.user) return res.status(401).json({ error: 'Not authenticated' });
-    const [rows] = await req.app.locals.db.query('SELECT user_id FROM users WHERE user_id = ?', [req.session.user.id]);
-    if (rows.length === 0) {
-      return req.session.destroy(() => res.status(403).json({ message: 'Access Denied. Account not registered.', error: 'Access Denied. Account not registered.' }));
+// While the session carries mustChangePassword (signed in with a generated password) every API call is refused with 403 and
+// code 'password_change_required', except the routes that use requireSignedIn: choosing the new password, signing out, /auth/me.
+const PASSWORD_CHANGE = 'Choose your own password before you continue.';
+function makeRequireAuth({ allowPasswordChange }) {
+  return async function requireAuth(req, res, next) {
+    try {
+      if (!req.session.user) return res.status(401).json({ error: 'Not authenticated' });
+      const [rows] = await req.app.locals.db.query('SELECT user_id FROM users WHERE user_id = ?', [req.session.user.id]);
+      if (rows.length === 0) {
+        return req.session.destroy(() => res.status(403).json({ message: 'Access Denied. Account not registered.', error: 'Access Denied. Account not registered.' }));
+      }
+      if (req.session.user.mustChangePassword && !allowPasswordChange) {
+        return res.status(403).json({ code: 'password_change_required', message: PASSWORD_CHANGE, error: PASSWORD_CHANGE });
+      }
+      next();
+    } catch (err) {
+      next(err);
     }
-    next();
-  } catch (err) {
-    next(err);
-  }
+  };
 }
+const requireAuth = makeRequireAuth({ allowPasswordChange: false });
+const requireSignedIn = makeRequireAuth({ allowPasswordChange: true }); // signed in, even if a password change is still due
 
 function requireAdmin(req, res, next) {
   requireAuth(req, res, (err) => {
@@ -96,4 +108,4 @@ function requireAdmin(req, res, next) {
   });
 }
 
-module.exports = { toSessionUser, requireAuth, requireAdmin, restoreSession, issueRememberToken, revokeRememberToken, REMEMBER_MS };
+module.exports = { toSessionUser, requireAuth, requireSignedIn, requireAdmin, restoreSession, issueRememberToken, revokeRememberToken, REMEMBER_MS };
