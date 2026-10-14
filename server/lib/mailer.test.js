@@ -45,3 +45,13 @@ test('with no SMTP settings nothing is sent and the result says why; a failing t
   } finally { console.error = origErr; }
   assert.ok(logged.length === 1 && !logged.join('').includes('Secret-9xyz'));
 }));
+
+test('a failure is named for what to fix: login refused, server unreachable, or something else', env({ SMTP_HOST: 'h', MAIL_FROM: 'f@x.ph' }, async () => {
+  const origErr = console.error; console.error = () => {};
+  try {
+    for (const [code, reason] of [['EAUTH', 'auth'], ['ECONNECTION', 'unreachable'], ['ETIMEDOUT', 'unreachable'], ['ENOTFOUND', 'unreachable'], ['EENVELOPE', 'failed'], [undefined, 'failed']]) {
+      mailer.setTransport({ sendMail: async () => { throw Object.assign(new Error('x'), { code }); } });
+      assert.deepStrictEqual(await mailer.sendCredentials({ to: 'a@x.ph', name: 'A', password: 'Secret-9xyz' }), { sent: false, reason }, String(code));
+    }
+  } finally { console.error = origErr; }
+}));

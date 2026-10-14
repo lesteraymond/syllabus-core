@@ -50,7 +50,12 @@ function compose({ to, name, password, reason }) {
   return { subject, text, html };
 }
 
-// -> { sent: true } or { sent: false, reason: 'not_configured' | 'failed' }. The password is only ever in the message itself.
+// Why a send failed, in words the admin can act on: the mail server refused the login ('auth'), could not be reached ('unreachable'),
+// or something else ('failed'). Only the error's code is looked at; its text could repeat what was sent, so it is not passed on.
+const UNREACHABLE = ['ECONNECTION', 'ETIMEDOUT', 'ESOCKET', 'ECONNREFUSED', 'ENOTFOUND', 'EDNS', 'EAI_AGAIN'];
+const reasonOf = (err) => (err && err.code === 'EAUTH' ? 'auth' : err && UNREACHABLE.includes(err.code) ? 'unreachable' : 'failed');
+
+// -> { sent: true } or { sent: false, reason: 'not_configured' | 'auth' | 'unreachable' | 'failed' }. The password is only ever in the message itself.
 async function sendCredentials({ to, name, password, reason = 'welcome' }) {
   try {
     const t = getTransport();
@@ -61,8 +66,8 @@ async function sendCredentials({ to, name, password, reason = 'welcome' }) {
     await t.sendMail({ from: process.env.MAIL_FROM || 'no-reply@localhost', to, ...compose({ to, name, password, reason }) });
     return { sent: true };
   } catch (err) {
-    console.error('MAIL ERROR: could not send to ' + to + ': ' + (err && err.message)); // the message has no password: it is never put in an error
-    return { sent: false, reason: 'failed' };
+    console.error('MAIL ERROR: could not send to ' + to + ' (' + ((err && err.code) || 'no code') + '): ' + (err && err.message)); // the message has no password: it is never put in an error
+    return { sent: false, reason: reasonOf(err) };
   }
 }
 
