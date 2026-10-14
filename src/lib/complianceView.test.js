@@ -1,7 +1,7 @@
 // Run: npm test
 import test from 'node:test';
 import assert from 'node:assert';
-import { runState, tone, ringAngle, basis, blockersOf, warningsOf, warningCount, headline, areaNames, groupFindings, scoreText, when, stepLabel, listBasis, STEP_INFO, rowState, actionLabel, timeOf, stamp, isLocked, bulkTargets, filterRows, groupByFacultyProgram } from './complianceView.js';
+import { runState, tone, ringAngle, basis, blockersOf, warningsOf, warningCount, headline, areaNames, groupFindings, scoreText, when, stepLabel, listBasis, STEP_INFO, rowState, actionLabel, timeOf, stamp, isLocked, needsCheck, canCheckNow, bulkTargets, filterRows, groupByFacultyProgram } from './complianceView.js';
 import { STEPS } from './syllabusModel.js';
 
 const area = (key, score) => ({ key, name: key.toUpperCase(), weight: 10, score });
@@ -169,4 +169,18 @@ test('an approved syllabus is locked: it cannot be checked again, whatever else 
   assert.strictEqual(isLocked({ status: 'approved' }), true);
   ['submitted', 'under_review', 'for_revision', 'rejected', 'draft'].forEach((st) => assert.strictEqual(isLocked({ status: st }), false, st));
   assert.strictEqual(isLocked(null), false);
+});
+
+test('the checker queue is the unchecked syllabi that are not approved, uploaded files included', () => {
+  assert.strictEqual(needsCheck({ status: 'submitted', run: null, checkable: true }), true);
+  assert.strictEqual(needsCheck({ status: 'for_revision', run: null, checkable: false }), true); // an uploaded file waits too
+  assert.strictEqual(needsCheck({ status: 'submitted', run: { id: 1 } }), false); // checked once: it is in the history
+  assert.strictEqual(needsCheck({ status: 'approved', run: null }), false); // approved: in the Repository
+  assert.strictEqual(needsCheck(null), false);
+});
+
+test('only a syllabus with a form can be checked now; an uploaded file waits for template matching', () => {
+  assert.strictEqual(canCheckNow({ checkable: true }), true);
+  assert.strictEqual(canCheckNow({ checkable: false }), false);
+  assert.strictEqual(canCheckNow(null), false);
 });

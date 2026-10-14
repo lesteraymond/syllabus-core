@@ -91,6 +91,14 @@ export const stamp = (createdAt) => (when(createdAt) && timeOf(createdAt) ? when
 // An approved syllabus is final: it is not checked again, but its stored checks can still be read.
 export const isLocked = (row) => !!row && row.status === 'approved';
 
+// The checker's queue: a submitted syllabus with no stored check that is not approved yet. Once it is checked it moves to the history
+// and is not offered again; an approved one is final and lives in the Repository. An uploaded file belongs in the queue too.
+export const needsCheck = (row) => !!row && !isLocked(row) && !row.run;
+
+// Whether the check can be run now. A syllabus built in the form can. An uploaded file will be checked by matching it to the template,
+// which needs the AI service: until that is switched on it waits in the queue. This is the one place to change when it is.
+export const canCheckNow = (row) => !!row && !!row.checkable;
+
 // A compact score for a list row: "92%" or "—".
 export const scoreText = (run) => (runState(run) === 'scored' ? run.overall + '%' : '—');
 
