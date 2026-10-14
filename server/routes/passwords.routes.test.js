@@ -187,6 +187,25 @@ test('Resend credentials: a new password replaces the old one and must be change
   assert.strictEqual((await admin('POST', '/users/2/resend-credentials')).status, 429);
 }));
 
+test('Resend credentials changes nothing when the email cannot be sent, and says why', () => withServer(async ({ db, client }) => {
+  const admin = client(); await admin.login('dean@x.ph', 'Dean-pass-1');
+  const origErr = console.error; const origWarn = console.warn; console.error = () => {}; console.warn = () => {};
+  try {
+    mailer.setTransport(null); // no SMTP settings in the test environment
+    const none = await admin('POST', '/users/2/resend-credentials');
+    assert.deepStrictEqual([none.status, none.body.emailSent, none.body.emailReason], [200, false, 'not_configured']);
+    mailer.setTransport({ sendMail: async () => { throw Object.assign(new Error('bad login'), { code: 'EAUTH' }); } });
+    const bad = await admin('POST', '/users/2/resend-credentials');
+    assert.deepStrictEqual([bad.body.emailSent, bad.body.emailReason], [false, 'auth']);
+  } finally { console.error = origErr; console.warn = origWarn; }
+  assert.ok(bcrypt.compareSync('Fay-pass-12', db.s.users[1].password_hash), 'the password was not replaced');
+  assert.strictEqual(db.s.users[1].must_change_password, 0);
+  assert.deepStrictEqual(db.s.rememberDeletes, [], 'nobody was signed out');
+  const login = await client().login('fay@x.ph', 'Fay-pass-12');
+  assert.strictEqual(login.status, 200);
+  assert.strictEqual(login.body.user.mustChangePassword, false);
+}));
+
 test('Forgot password answers the same for a registered and an unknown email, and only a registered one gets mail', () => withServer(async ({ client }) => {
   const sent = outbox();
   const a = await client()('POST', '/auth/forgot-password', { email: 'fay@x.ph' });

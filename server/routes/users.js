@@ -71,8 +71,8 @@ router.post('/', requireAdmin, async (req, res) => {
   }
 });
 
-// Send a user new credentials: a new generated password replaces their current one and must be changed at the next sign-in.
-// For a lost or never-delivered email. Not for yourself, and not for a student (they sign in with their student ID).
+// Send a user new credentials: a new generated password replaces their current one and must be changed at the next sign-in. The
+// current password is only replaced once the email has gone out; if it cannot be sent, nothing changes. For a lost or never-delivered email. Not for yourself, and not for a student (they sign in with their student ID).
 router.post('/:id/resend-credentials', requireAdmin, async (req, res) => {
   try {
     const db = req.app.locals.db;
@@ -89,11 +89,14 @@ router.post('/:id/resend-credentials', requireAdmin, async (req, res) => {
     if (!user) return fail(res, 404, 'User not found');
     if (user.role === 'student' || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(user.email)) return fail(res, 400, 'This account signs in with a student ID, not an email address.');
 
+    // Send first, change the password only if the email went out: a failed send must never leave someone with a password nobody has seen.
     const password = generatePassword();
-    await db.query('UPDATE users SET password_hash = ?, must_change_password = 1 WHERE user_id = ?', [await bcrypt.hash(password, 10), id]);
-    await db.query('DELETE FROM password_temp WHERE user_id = ?', [id]).catch(() => {});
-    await db.query('DELETE FROM remember_tokens WHERE user_id = ?', [id]);
     const mail = await mailer.sendCredentials({ to: user.email, name: user.first_name, password, reason: 'welcome' });
+    if (mail.sent) {
+      await db.query('UPDATE users SET password_hash = ?, must_change_password = 1 WHERE user_id = ?', [await bcrypt.hash(password, 10), id]);
+      await db.query('DELETE FROM password_temp WHERE user_id = ?', [id]).catch(() => {});
+      await db.query('DELETE FROM remember_tokens WHERE user_id = ?', [id]);
+    }
     res.json({ id, email: user.email, emailSent: mail.sent, ...(mail.sent ? {} : { emailReason: mail.reason }) });
   } catch (err) {
     console.error('USERS ERROR:', err);
