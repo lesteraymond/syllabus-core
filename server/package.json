@@ -16,6 +16,7 @@
     "migrate-program-egas": "node db/migrate-program-egas.js",
     "migrate-compliance": "node db/migrate-compliance.js",
     "migrate-comment-reads": "node db/migrate-comment-reads.js",
+    "migrate-passwords": "node db/migrate-passwords.js",
     "seed-outcomes": "node db/seed-outcomes.js"
   },
   "dependencies": {

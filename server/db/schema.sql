@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS users (
   user_id INT AUTO_INCREMENT PRIMARY KEY,
   email VARCHAR(255) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
+  must_change_password TINYINT(1) NOT NULL DEFAULT 0,
   role ENUM('faculty', 'admin', 'student') NOT NULL DEFAULT 'faculty',
   first_name VARCHAR(100) NOT NULL,
   last_name VARCHAR(100) NOT NULL,
@@ -173,6 +174,14 @@ CREATE TABLE IF NOT EXISTS remember_tokens (
   token_id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT NOT NULL,
   token_hash CHAR(64) NOT NULL UNIQUE,
+  expires_at DATETIME NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS password_temp (
+  user_id INT NOT NULL PRIMARY KEY,
+  temp_hash VARCHAR(255) NOT NULL,
   expires_at DATETIME NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
