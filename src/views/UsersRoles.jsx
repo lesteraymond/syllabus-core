@@ -8,6 +8,14 @@ const ROLE_PERMISSIONS = {
   admin: 'Full access',
   faculty: 'Create + Submit',
 };
+// What to tell the admin when an email did not go out (the server sends a short reason, never anything secret).
+const MAIL_PROBLEM = {
+  not_configured: "Email isn't set up on the server yet: add the SMTP settings to server/.env and restart it.",
+  auth: 'The mail server rejected the username or password in server/.env.',
+  unreachable: 'The mail server could not be reached. Check SMTP_HOST and SMTP_PORT in server/.env.',
+  failed: 'The email could not be sent. See the server log for the reason.',
+};
+const mailProblem = (reason) => MAIL_PROBLEM[reason] || MAIL_PROBLEM.failed;
 const EMPTY_FORM = { email: '', firstName: '', lastName: '', role: 'faculty' };
 
 export default function UsersRoles({ notify, onManageSubjects }) {
@@ -29,7 +37,7 @@ export default function UsersRoles({ notify, onManageSubjects }) {
       fetchUsers();
       notify(made.emailSent
         ? 'User created. Their username and a temporary password were sent to ' + made.email + '.'
-        : 'User created, but the email could not be sent. Use "Resend credentials" once email is set up.');
+        : 'User created, but no email was sent. ' + mailProblem(made.emailReason) + ' Use "Resend credentials" once it works.');
     } catch (err) { notify('Failed: ' + err.message); }
   };
 
@@ -37,7 +45,7 @@ export default function UsersRoles({ notify, onManageSubjects }) {
     if (!window.confirm('Send ' + p.firstName + ' ' + p.lastName + ' a new temporary password? It replaces their current password, and they must choose their own at the next sign-in.')) return;
     try {
       const r = await usersApi.resendCredentials(p.id);
-      notify(r.emailSent ? 'New credentials sent to ' + r.email + '.' : 'The email could not be sent. Check the mail settings on the server.');
+      notify(r.emailSent ? 'New credentials sent to ' + r.email + '.' : 'Nothing was changed: the email could not be sent. ' + mailProblem(r.emailReason));
     } catch (err) { notify('Failed: ' + err.message); }
   };
 
