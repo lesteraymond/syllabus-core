@@ -7145,3 +7145,8 @@ html { scrollbar-gutter: stable; }
 /* Compliance card header: the Re-check button keeps its one-line label and size; the intro text takes the remaining width and wraps */
 .cmp-card-head > div { flex: 1 1 auto; min-width: 0; }
 .cmp-card-head > .btn { flex: none; align-self: flex-start; white-space: nowrap; }
+
+/* A submission is checked in the AI Checker first: the notices on the review board and in the decision panel */
+.rv-waiting, .rp-check-first { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.rv-waiting .btn, .rp-check-first .btn { flex: none; white-space: nowrap; }
+.rp-check-first { flex-direction: column; align-items: stretch; }

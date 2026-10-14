@@ -59,6 +59,10 @@ export const subjectLabel = (row) => [row.courseCode, row.courseTitle].filter(Bo
 // Only a syllabus that is waiting for a decision can be decided; the board lists exactly those.
 export const PENDING = ['submitted', 'under_review'];
 export const canDecide = (status) => PENDING.includes(status);
+// A submission is checked in the AI Checker first and decided here afterwards. `awaitingAiCheck` is the server's answer for an administrator:
+// the newest version has no check of the administrator's own yet. Such a submission is listed in the AI Checker, not on this board.
+export const waitsForCheck = (s) => !!s && PENDING.includes(s.status) && !!s.awaitingAiCheck;
+export const readyForReview = (s) => !!s && PENDING.includes(s.status) && !s.awaitingAiCheck;
 
 export const MIN_REASON = 5;
 // The three decisions: the label handleStatus expects, whether a written reason is required, and the sentence that asks to confirm.

@@ -204,7 +204,7 @@ router.get('/compliance', requireAuth, async (req, res) => {
       const content = formOf.get(s.syllabus_id) || null;
       return {
         syllabusId: s.syllabus_id, userId: s.user_id, courseCode: s.course_code, title: s.title, status: s.status, version: s.version,
-        ...labelsOf(s, content), checkable: !!content || fileOf.has(s.syllabus_id),
+        ...labelsOf(s, content), checkable: !!content || fileOf.has(s.syllabus_id), upload: fileOf.has(s.syllabus_id),
         run: run ? withChecker(svc.summarize(run, areasByRun.get(run.run_id) || [], content ? svc.hashOf(content) : null), s.user_id) : null,
       };
     });

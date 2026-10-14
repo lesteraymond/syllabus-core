@@ -126,6 +126,8 @@ export default function App() {
 
   // Keep messages and notifications fresh without a reload (only polls while the tab is visible).
   // A draft created in the builder is not in this list yet: refresh when the faculty opens My Syllabi.
+  // The list says which submissions the administrator has checked: read it again when they open Review & Approval, so a check just made shows.
+  useEffect(() => { if (user && user.role === 'admin' && (page === 'review' || page === 'ai')) fetchSyllabi(); }, [user, page, fetchSyllabi]);
   useEffect(() => { if (user && page === 'my-syllabi') { fetchSyllabi(); if (user.role === 'faculty') fetchCommentCounts(); } }, [user, page, fetchSyllabi, fetchCommentCounts]);
 
   useNotificationPolling(!!user && !user.mustChangePassword, () => { fetchMessages(); fetchNotifications(); fetchSyllabi(); if (user.role === 'faculty') fetchCommentCounts(); });
@@ -312,7 +314,7 @@ export default function App() {
           {page === 'my-syllabi' && <MySyllabi syllabi={syllabi} user={user} messages={messages} commentCounts={commentCounts} setCommentCode={setCommentCode} setEditing={setEditing} setPage={setPage} setHistCode={setHistCode} setChatCode={setChatCode} handleDelete={handleDelete} setConfirm={setConfirm} notify={notify} />}
           {page === 'ai' && user.role === 'admin' && <AIChecker user={user} notify={notify} />}
           {page === 'mapping' && <COPOMapping notify={notify} />}
-          {page === 'review' && <ReviewApproval syllabi={syllabi} setViewCode={setViewCode} />}
+          {page === 'review' && <ReviewApproval syllabi={syllabi} setViewCode={setViewCode} setPage={setPage} />}
           {page === 'repository' && <Repository syllabi={syllabi} user={user} notify={notify} setChatCode={setChatCode} setHistCode={setHistCode} />}
           {page === 'compliance' && <Compliance syllabi={syllabi} />}
           {page === 'analytics' && <Analytics syllabi={syllabi} user={user} />}
@@ -333,7 +335,7 @@ export default function App() {
         const open = syllabi.find((s) => s.id === viewCode);
         return (
           <SyllabusViewModal key={viewCode} syllabusId={viewCode} avatarUrl={open ? open.ownerAvatarUrl : null} onClose={() => setViewCode(null)}
-            aside={open ? <ReviewPanel key={viewCode} syllabus={open} user={user} messages={messages} handleStatus={handleStatus} sendMsg={sendMsg} markRead={markRead} onDecided={() => setViewCode(null)} onHistory={() => setHistCode(viewCode)} /> : null} />
+            aside={open ? <ReviewPanel key={viewCode} syllabus={open} user={user} messages={messages} handleStatus={handleStatus} sendMsg={sendMsg} markRead={markRead} onDecided={() => setViewCode(null)} onHistory={() => setHistCode(viewCode)} onOpenChecker={() => { setViewCode(null); setPage('ai'); }} /> : null} />
         );
       })()}
       {confirm && <ConfirmModal {...confirm} onClose={() => setConfirm(null)} />}

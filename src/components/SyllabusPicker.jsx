@@ -57,7 +57,7 @@ export default function SyllabusPicker({ groups, loading = false, busy = false, 
           <label htmlFor={uid + '-s'}>Subject</label>
           <select id={uid + '-s'} value={row ? syllabusId : ''} disabled={!program} onChange={(e) => setSyllabusId(e.target.value)}>
             <option value="">Choose a subject</option>
-            {program && program.rows.map((r) => <option key={r.syllabusId} value={String(r.syllabusId)}>{r.courseCode + ' — ' + (r.courseTitle || r.title) + (r.checkable ? '' : ' (uploaded file)')}</option>)}
+            {program && program.rows.map((r) => <option key={r.syllabusId} value={String(r.syllabusId)}>{r.courseCode + ' — ' + (r.courseTitle || r.title) + (r.upload ? ' (uploaded file)' : '')}</option>)}
           </select>
         </div>
       </div>
@@ -68,7 +68,8 @@ export default function SyllabusPicker({ groups, loading = false, busy = false, 
             <>
               <span className={'status ' + row.status}>{STATUS_LABELS[row.status] || row.status}</span>
               <span className="pick-meta">{busy ? 'Checking…' : (row.version ? row.version + ' · ' : '') + 'Not checked yet'}</span>
-              {!ready && <span className="pick-note">This syllabus was uploaded as a file. Matching it to the template needs the AI service, which is not switched on yet, so it waits here until it is.</span>}
+              {row.upload && <span className="pick-note">This syllabus was uploaded as a file, so only the file and its course details are checked. Matching it to the template needs the AI service, which is not switched on yet.</span>}
+              {!ready && !row.upload && <span className="pick-note">There is nothing in this syllabus that can be checked.</span>}
             </>
           ) : <span className="pick-meta">{loading ? 'Loading syllabi…' : empty ? 'Every submitted syllabus has been checked. See the history below.' : 'Nothing chosen yet.'}</span>}
         </div>

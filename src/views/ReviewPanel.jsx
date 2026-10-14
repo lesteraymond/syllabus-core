@@ -8,13 +8,14 @@ import { STATUS_LABELS } from '../lib/syllabusRules';
 // The reviewer's panel beside an open syllabus: decide (approve, return for revision, reject), comment, and message the faculty member.
 // Decisions go through the same handleStatus the page always used, and each asks for a second click to confirm. Returning for revision
 // and rejecting need a reason (the server insists on it too). When a decision goes through, `onDecided` closes the window.
-export default function ReviewPanel({ syllabus, user, messages, handleStatus, sendMsg, markRead, onDecided, onHistory }) {
+export default function ReviewPanel({ syllabus, user, messages, handleStatus, sendMsg, markRead, onDecided, onHistory, onOpenChecker }) {
   const [tab, setTab] = useState('decision');
   const [note, setNote] = useState('');
   const [confirming, setConfirming] = useState(null); // 'approve' | 'revise' | 'reject' | null
   const [problem, setProblem] = useState('');
   const [busy, setBusy] = useState(false);
-  const decidable = canDecide(syllabus.status);
+  const unchecked = !!syllabus.awaitingAiCheck; // not checked in the AI Checker yet: the server refuses a decision until it is
+  const decidable = canDecide(syllabus.status) && !unchecked;
   const unread = messages.filter((m) => m.syllabusId === syllabus.id && m.receiverId === user.id && !m.isRead).length;
 
   const ask = (key) => {
@@ -44,7 +45,13 @@ export default function ReviewPanel({ syllabus, user, messages, handleStatus, se
 
       {tab === 'decision' && (
         <div className="rp-pane">
-          {!decidable && (
+          {unchecked && canDecide(syllabus.status) && (
+            <div className="info-banner warning rp-check-first" role="status">
+              <span>This submission has not been checked in the AI Checker yet. Check it there first, then come back to read it and decide.</span>
+              {onOpenChecker && <button type="button" className="btn outline" onClick={onOpenChecker}>Open the AI Checker</button>}
+            </div>
+          )}
+          {!decidable && !unchecked && (
             <p className="rp-status done">
               <Icon name="checkCircle" size={20} />
               <span>{'This syllabus is ' + (STATUS_LABELS[syllabus.status] || syllabus.status).toLowerCase() + '. There is nothing to decide.'}</span>
