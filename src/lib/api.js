@@ -32,6 +32,22 @@ async function request(path, options = {}) {
   return data;
 }
 
+// Student registration: scan the COR (multipart), then register with only a password; the server keeps the scan.
+export const students = {
+  scan: async (file) => {
+    const fd = new FormData();
+    fd.append('cor', file);
+    let res;
+    try { res = await fetch(`${API}/students/scan`, { method: 'POST', credentials: 'include', body: fd }); }
+    catch { throw new Error('Cannot reach the server. Check that the API is running and try again.'); }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || data.error || `Scan failed (${res.status})`);
+    return data;
+  },
+  register: (password) => request('/students/register', { method: 'POST', body: JSON.stringify({ password }) }),
+  me: () => request('/students/me'),
+};
+
 export const auth = {
   login: async (email, password, remember = false) => {
     const data = await request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password, remember }) });

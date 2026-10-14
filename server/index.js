@@ -39,8 +39,16 @@ app.locals.db = pool;
 
 app.use(restoreSession);
 
+// Student accounts exist only to sign in and see their own profile: every other API is closed to them.
+app.use("/api", (req, res, next) => {
+	const u = req.session.user;
+	if (u && u.role === "student" && !/^\/(auth|students)(\/|$)/.test(req.path)) return res.status(403).json({ error: "Not available for student accounts" });
+	next();
+});
+
 const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);
+app.use("/api/students", require("./routes/students"));
 app.use("/api/users", require("./routes/users"));
 app.use("/api/syllabi", require("./routes/syllabi"));
 app.use("/api/syllabi", require("./routes/syllabusContent"));

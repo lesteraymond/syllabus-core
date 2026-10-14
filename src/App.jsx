@@ -6,6 +6,7 @@ import Sidebar from './components/Sidebar';
 import Topbar from './components/Topbar';
 import VersionHistoryModal from './components/VersionHistoryModal';
 import { navItems } from './data/initialData';
+import StudentHome from './views/StudentHome';
 import { auth, syllabi as syllabiApi, logs as logsApi, messages as messagesApi, notifications as notificationsApi } from './lib/api';
 import { useNotificationPolling } from './lib/usePolling';
 import { canEditSyllabus, editBlockedReason } from './lib/syllabusRules';
@@ -97,7 +98,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (user) {
+    if (user && user.role !== 'student') {
       fetchSyllabi();
       fetchLogs();
       fetchMessages();
@@ -107,9 +108,9 @@ export default function App() {
 
   // Keep messages and notifications fresh without a reload (only polls while the tab is visible).
   // A draft created in the builder is not in this list yet: refresh when the faculty opens My Syllabi.
-  useEffect(() => { if (user && page === 'my-syllabi') fetchSyllabi(); }, [user, page, fetchSyllabi]);
+  useEffect(() => { if (user && user.role !== 'student' && page === 'my-syllabi') fetchSyllabi(); }, [user, page, fetchSyllabi]);
 
-  useNotificationPolling(!!user, () => { fetchMessages(); fetchNotifications(); fetchSyllabi(); });
+  useNotificationPolling(!!user && user.role !== 'student', () => { fetchMessages(); fetchNotifications(); fetchSyllabi(); });
 
   const handleLogin = async (email, pass, remember) => {
     try {
@@ -268,6 +269,7 @@ export default function App() {
 
   if (loading) return <div className="loading-screen"><div className="spinner" /><p>Loading...</p></div>;
   if (!user) return <Login onLogin={handleLogin} onGoogleLogin={handleGoogleLogin} />;
+  if (user.role === 'student') return <StudentHome user={user} onLogout={handleLogout} />;
 
   return (
     <div className="app-shell" data-sidebar-collapsed={sidebarCollapsed ? 'true' : 'false'}>

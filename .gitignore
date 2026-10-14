@@ -46,3 +46,8 @@ desktop.ini
 
 # Private files (profile photos are served only through the authenticated API)
 server/private/
+
+# Sample CORs hold real student data
+server/sample_cor/
+# Language data tesseract.js downloads for COR scanning
+server/eng.traineddata
