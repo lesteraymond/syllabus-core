@@ -26,7 +26,7 @@ export default function ComplianceModal({ syllabus, run, isLatest = true, error 
           <div>
             <h3 id="cm-title">{syllabus.courseCode + (title ? ' — ' + title : '')}</h3>
             <small>{(syllabus.facultyName || 'Unknown faculty') + ' · ' + program}</small>
-            {when && <small className="cm-when">{'Checked ' + when}</small>}
+            {when && <small className="cm-when">{'Checked ' + when + (run && run.versionLabel ? ' · version ' + run.versionLabel : '')}</small>}
           </div>
         </div>
 

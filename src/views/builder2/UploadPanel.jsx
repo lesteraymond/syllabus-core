@@ -1,3 +1,4 @@
+import { MIN_NOTE } from '../../lib/syllabusRules';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 const MAX_BYTES = 10 * 1024 * 1024;
@@ -5,7 +6,7 @@ const MAX_BYTES = 10 * 1024 * 1024;
 // The "Upload a file" tab of the builder: submit a finished PDF as the syllabus instead of the form. The PDF is shown
 // before anything is sent, and nothing is submitted until the faculty member presses the button. The form draft is kept,
 // but only what is submitted counts: this PDF becomes what reviewers see.
-export default function UploadPanel({ hasCourse, existing, busy, disabled, onChooseCourse, onSubmit, notify }) {
+export default function UploadPanel({ hasCourse, existing, revising, busy, disabled, onChooseCourse, onSubmit, notify }) {
   const [file, setFile] = useState(null);
   const [note, setNote] = useState('');
   const [dragging, setDragging] = useState(false);
@@ -65,13 +66,13 @@ export default function UploadPanel({ hasCourse, existing, busy, disabled, onCho
           </div>
         )}
 
-        <label className="up-note">Note for the reviewer (optional)
+        <label className="up-note">{revising ? 'What did you change? (required)' : 'Note for the reviewer (optional)'}
           <textarea rows={3} maxLength={1000} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Anything the reviewer should know" />
         </label>
 
         <div className="info-banner">This file will be submitted as your syllabus. Anything you filled in on the form is kept as a draft, but it is not submitted.</div>
         <div className="up-actions">
-          <button type="button" className="btn primary" disabled={!file || !hasCourse || busy || disabled} onClick={() => onSubmit(file, note.trim())}>
+          <button type="button" className="btn primary" disabled={!file || !hasCourse || busy || disabled || (revising && note.trim().length < MIN_NOTE)} onClick={() => onSubmit(file, note.trim())}>
             {busy ? 'Uploading…' : existing ? 'Upload as new version' : 'Submit for review'}
           </button>
         </div>

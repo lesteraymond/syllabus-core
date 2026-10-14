@@ -7154,3 +7154,14 @@ html { scrollbar-gutter: stable; }
 /* My Syllabi: a submitted syllabus is locked, and the card says so (the disabled Edit button is dimmed, with the reason below) */
 .syl-actions .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .syl-locked { margin: 10px 0 0; font-size: var(--text-xs); font-weight: var(--fw-medium); color: var(--muted); }
+
+/* Versions: what changed, what was decided, and a way to read each one; the banner for a syllabus returned for revision */
+.vh-changes { display: block; margin-top: 4px; font-weight: var(--fw-semibold); color: var(--blue); }
+.vh-decision { display: block; margin-top: 4px; padding: 6px 10px; border-radius: 8px; background: #fff1d6; color: var(--warn, #8a5a0c); font-weight: var(--fw-medium); }
+.vh-decision.approve { background: #e6f5ee; color: #1d6f47; }
+.vh-decision.reject { background: #fdeaea; color: #a53838; }
+.vh-view { margin-top: 8px; padding: 4px 12px; font-size: var(--text-xs); }
+.svm-changes { font-weight: var(--fw-semibold); color: var(--blue); }
+.rv-revising { display: grid; gap: 6px; }
+.rv-revising .rv-note { font-weight: var(--fw-semibold); }
+.hist-ver { margin-left: 8px; padding: 1px 8px; border-radius: 99px; background: #eef2fb; color: var(--blue); font-size: var(--text-xs); font-weight: var(--fw-semibold); }

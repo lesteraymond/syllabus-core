@@ -2,6 +2,10 @@
 // A draft, or a syllabus the administrator returned for revision. Once submitted it is locked until the administrator returns it.
 export const EDITABLE_STATUSES = ['draft', 'for_revision'];
 
+// Back from "For revision", a submission needs a sentence saying what changed (the server insists on it too).
+export const MIN_NOTE = 10;
+export const noteMissing = (status, note) => status === 'for_revision' && String(note || '').trim().length < MIN_NOTE;
+
 export const STATUS_LABELS = { draft: 'Draft', submitted: 'Submitted', under_review: 'Under Review', for_revision: 'For Revision', approved: 'Approved', rejected: 'Rejected' };
 
 // Only the owner edits content, and only while the syllabus is in an editable status.

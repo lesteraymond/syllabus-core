@@ -1,3 +1,4 @@
+import { MIN_NOTE } from '../../lib/syllabusRules';
 import { STEPS } from '../../lib/syllabusModel';
 import FormPaper from './FormPaper';
 import ComplianceSection from './ComplianceSection';
@@ -5,7 +6,7 @@ import ComplianceSection from './ComplianceSection';
 // Step 7: Review & Check. The compliance check (it runs when the step opens), a read-only rendering of the finished form, the status
 // of steps 1 to 6 (each links back), and the sign-off block. Faculty fill in no revision date and no modifications list.
 // `submitFailed` are the rules the server named when it refused a submit.
-export default function ReviewStep({ d, model, go, preparedBy, existing, note, setNote, syllabusId, saveFirst, canCheck, checkTick, submitFailed, onRun }) {
+export default function ReviewStep({ d, model, go, preparedBy, existing, noteRequired, note, setNote, syllabusId, saveFirst, canCheck, checkTick, submitFailed, onRun }) {
   const openStep = (key) => go(STEPS.findIndex((s) => s.key === key));
   return (
     <>
@@ -45,8 +46,9 @@ export default function ReviewStep({ d, model, go, preparedBy, existing, note, s
         </div>
         {existing && (
           <label className="field" style={{ marginTop: 18 }}>
-            <span>What changed? (optional)</span>
-            <textarea rows="3" maxLength={1000} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Saved with this version in the history, e.g. Updated the grading components" />
+            <span>{noteRequired ? 'What did you change? (required)' : 'What changed? (optional)'}</span>
+            <textarea rows="3" maxLength={1000} value={note} aria-required={!!noteRequired} onChange={(e) => setNote(e.target.value)} placeholder="Saved with this version in the history, e.g. Updated the grading components" />
+            {noteRequired && note.trim().length < MIN_NOTE && <small className="hint">Write at least a sentence so the reviewer knows what to look at.</small>}
           </label>
         )}
       </div>

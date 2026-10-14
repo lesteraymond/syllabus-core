@@ -43,7 +43,7 @@ export function useDraft(editing) {
         if (idRef.current) {
           const r = await syllabiApi.getContent(idRef.current);
           content = r.content;
-          info = { editable: r.editable, status: r.status, version: r.version, lockedReason: r.lockedReason || '' };
+          info = { editable: r.editable, status: r.status, version: r.version, lockedReason: r.lockedReason || '', nextVersion: r.nextVersion || '', reviewerNote: r.reviewerNote || '' };
         }
         let d;
         if (content) {

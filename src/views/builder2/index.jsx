@@ -3,7 +3,7 @@ import { PageHead } from '../../components/ui';
 import { courses as coursesApi, syllabi as syllabiApi, users as usersApi } from '../../lib/api';
 import { STEPS, applyCourse, clearCourse, closEqual, syncClos } from '../../lib/syllabusModel';
 import { CURRENT_SCHOOL_YEAR } from '../../lib/schoolYear';
-import { ASSIGNMENT_MESSAGES, STATUS_LABELS, assignmentState, editBlockedReason } from '../../lib/syllabusRules';
+import { ASSIGNMENT_MESSAGES, STATUS_LABELS, assignmentState, editBlockedReason, noteMissing } from '../../lib/syllabusRules';
 import InfoStep from './InfoStep';
 import ClosStep from './ClosStep';
 import PlanStep from './PlanStep';
@@ -177,6 +177,8 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
   const editable = load.editable && !noAccess;
   const { statuses, complete } = model.stepStatuses(draft, visited);
   const existing = load.status !== 'draft';
+  const revising = load.status === 'for_revision'; // back from the reviewer: the next submission is a new version, with a note about the change
+  const needNote = noteMissing(load.status, note);
   const preparedBy = user ? user.name || (user.firstName + ' ' + user.lastName) : '';
   const doneCount = statuses.filter((x) => x === 'done').length;
   const cfg = STEP_CONFIG[step];
@@ -200,7 +202,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
       </div>
       {mode === 'upload' && (
         <div className="bld2-slide bld2-from-right">
-          <UploadPanel hasCourse={!!draft.meta.courseId} existing={existing} busy={busy} disabled={!editable} notify={notify} onSubmit={submitFile} onChooseCourse={() => { setMode('form'); setStep(0); }} />
+          <UploadPanel hasCourse={!!draft.meta.courseId} existing={existing} revising={revising} busy={busy} disabled={!editable} notify={notify} onSubmit={submitFile} onChooseCourse={() => { setMode('form'); setStep(0); }} />
         </div>
       )}
       <div className={'bld2-slide bld2-from-left' + (mode === 'upload' ? ' bld2-hidden' : '')} hidden={mode === 'upload'}>
@@ -227,6 +229,12 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
         <section className="editor-card" aria-labelledby="bld2-title">
           {noAccess && <div className="info-banner warning">{accessMessage}</div>}
           {!noAccess && !load.editable && load.lockedReason && <div className="info-banner warning">{load.lockedReason} You can read this syllabus, but not change it until an administrator assigns the course to you again.</div>}
+          {revising && editable && (
+            <div className="info-banner rv-revising" role="status">
+              <span><b>Returned for revision.</b>{' Your next submission becomes ' + (load.nextVersion || 'the next version') + ' once you change something; ' + (load.version || 'the version you submitted') + ' and every earlier version stay in the history.'}</span>
+              {load.reviewerNote && <span className="rv-note">{'Reviewer\'s note: ' + load.reviewerNote}</span>}
+            </div>
+          )}
           {!noAccess && !load.editable && !load.lockedReason && <div className="info-banner warning">{editBlockedReason({ status: load.status })}</div>}
           <div className="editor-title">
             <div>
@@ -237,7 +245,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
             <span className={'autosave' + (save.state === 'error' ? ' error' : save.state === 'saved' ? '' : ' saving')} role="status">{saveText}{save.state === 'error' && <button type="button" className="link" onClick={saveNow}>Retry</button>}</span>
           </div>
           <fieldset disabled={!editable}>
-            <Body d={draft} apply={apply} model={model} programList={programList} courseList={courseList} onChooseCourse={onChooseCourse} onChooseProgram={onChooseProgram} filter={filter} setFilter={setFilter} onDeleteRow={onDeleteRow} go={go} preparedBy={preparedBy} existing={existing} note={note} setNote={setNote} syllabusId={syllabusId} saveFirst={saveFirst} canCheck={!!user && user.role === 'faculty' && !noAccess} checkTick={checkTick} submitFailed={submitFailed} onRun={setLastRun} />
+            <Body d={draft} apply={apply} model={model} programList={programList} courseList={courseList} onChooseCourse={onChooseCourse} onChooseProgram={onChooseProgram} filter={filter} setFilter={setFilter} onDeleteRow={onDeleteRow} go={go} preparedBy={preparedBy} existing={existing} noteRequired={revising} note={note} setNote={setNote} syllabusId={syllabusId} saveFirst={saveFirst} canCheck={!!user && user.role === 'faculty' && !noAccess} checkTick={checkTick} submitFailed={submitFailed} onRun={setLastRun} />
           </fieldset>
           {!nxt && !complete && <div className="step-hint" role="status">Finish the steps marked ! in the list. Review & Check: the compliance check and {existing ? 'saving a new version' : 'submitting'} unlock once steps 1 to 6 are complete.</div>}
           {step < 6 && mine_.length > 0 && (
@@ -261,7 +269,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
               {nxt && <button type="button" className="btn primary" disabled={blocking.length > 0} title={blocking.length ? 'Complete this step to continue' : undefined} onClick={() => go(step + 1)}>{'Next: ' + nxt.title + ' →'}</button>}
               {!nxt && <>
                 <button type="button" className="btn outline" disabled={!complete || busy || !editable} title={complete ? 'Run the compliance check again' : 'Complete steps 1 to 6 to unlock'} onClick={recheck}>Re-check</button>
-                <button type="button" className="btn primary" disabled={busy || !editable || !draft.meta.courseId || (gated && !complete)} title={gated && !complete ? 'Complete steps 1 to 6 to unlock' : undefined} onClick={submit}>{(existing ? 'Save as new version' : 'Submit') + (warnings > 0 ? ' anyway' : existing ? '' : ' for review')}</button>
+                <button type="button" className="btn primary" disabled={busy || !editable || !draft.meta.courseId || (gated && !complete) || needNote} title={gated && !complete ? 'Complete steps 1 to 6 to unlock' : needNote ? 'Say what you changed (a sentence) first' : undefined} onClick={submit}>{(existing ? 'Save as new version' : 'Submit') + (warnings > 0 ? ' anyway' : existing ? '' : ' for review')}</button>
               </>}
             </div>
           </div>

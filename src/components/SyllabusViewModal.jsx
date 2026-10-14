@@ -11,9 +11,9 @@ import { useModalLayer } from './useModalLayer';
 // `aside` is an optional panel shown beside the syllabus (Review & Approval puts the decision,
 // comments and messages there); the window itself only reads.
 // The version picker opens an earlier submitted version. Esc and a click outside close it, and focus returns to what opened it.
-export default function SyllabusViewModal({ syllabusId, onClose, aside, avatarUrl }) {
+export default function SyllabusViewModal({ syllabusId, onClose, aside, avatarUrl, initialVersionId = null }) {
   const [payload, setPayload] = useState(null);
-  const [versionId, setVersionId] = useState(null);
+  const [versionId, setVersionId] = useState(initialVersionId); // a version chosen elsewhere (the history), else the newest
   const [error, setError] = useState('');
   const dialog = useRef(null);
 
@@ -56,6 +56,7 @@ export default function SyllabusViewModal({ syllabusId, onClose, aside, avatarUr
                 </label>
               )
               : <span className="cmp-small">{payload.version ? 'Version ' + payload.version.label : 'Saved form, not submitted yet'}</span>}
+            {payload.changes && <span className="cmp-small svm-changes">{payload.changes.text ? 'Changed since ' + payload.changes.from + ': ' + payload.changes.text : 'Nothing the faculty member wrote differs from ' + payload.changes.from + '.'}</span>}
           </div>
         )}
 

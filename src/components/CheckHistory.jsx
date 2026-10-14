@@ -72,7 +72,7 @@ export default function CheckHistory({ runs, loading = false, error = '', openin
                     <small>{toneText[t]}</small>
                   </span>
                   <span className="hist-main">
-                    <strong>{r.courseCode}</strong>
+                    <strong>{r.courseCode}{r.versionLabel && <span className="hist-ver">{r.versionLabel}</span>}</strong>
                     <span>{r.courseTitle}</span>
                     <small>{r.facultyName || 'Unknown faculty'}{r.programCode ? ' · ' + r.programCode : ''}</small>
                   </span>
