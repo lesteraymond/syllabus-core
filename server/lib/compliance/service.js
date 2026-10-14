@@ -11,6 +11,7 @@ const { recommend } = require('./recommend');
 const { MockProvider, LlmProvider } = require('./providers');
 const { inTransaction } = require('../http');
 const { schoolYearStart } = require('../schoolYear');
+const uploadCheck = require('./upload');
 
 // ---- is the database ready? (only a positive answer is remembered, so running the migration needs no restart) ----
 let installed = false;
@@ -38,8 +39,9 @@ function gateError(result) {
 const j = (v) => (v === undefined || v === null ? null : JSON.stringify(v));
 
 // Inside the caller's transaction. Returns the run id.
-async function storeRun(conn, { syllabusId, versionId = null, content, result, createdBy = null }) {
-  const aiStatus = result.status === 'scored' && result.findings.length ? 'pending' : 'none';
+// `ai: false` for a run that gets no AI step (an uploaded file has no form to describe to a provider): it stays 'none'.
+async function storeRun(conn, { syllabusId, versionId = null, content, result, createdBy = null, ai = true }) {
+  const aiStatus = ai && result.status === 'scored' && result.findings.length ? 'pending' : 'none';
   const [ins] = await conn.query(
     `INSERT INTO ai_check_runs (syllabus_id, version_id, content_hash, standard_version, overall, status, passed, conformant, ai_status, contact, created_by)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -194,6 +196,32 @@ async function cachedRun(db, syllabusId, hash, { adminOnly = false } = {}) {
   return rows[0] || null;
 }
 
+// ---- an uploaded file instead of a form ----
+// The rule check of a PDF upload (lib/compliance/upload.js). Its "content", for the hash that says whether a run is still current, is the
+// file's name and size: a re-upload is a new file, and a new version, so it is never answered by an older run.
+const uploadFingerprint = (filePath, facts) => ({ upload: { file: String(filePath || '').split('/').pop(), size: facts.size } });
+async function versionFile(db, versionId) {
+  const [rows] = await db.query('SELECT file_path FROM syllabus_versions WHERE version_id = ?', [versionId]);
+  return rows[0] && rows[0].file_path ? rows[0].file_path : null;
+}
+
+// ---- has the administrator checked what was submitted? ----
+// For each syllabus id: { checkable, checked }. checkable: its newest version has a form or a file the check can read. checked: the
+// administrator's own check (ADMIN_RUN_SQL) was made on that newest version, so a new version submitted since needs a new check.
+// A database without the tables yet has no checks, so every checkable syllabus reads as not checked.
+async function adminCheckStates(db, ids) {
+  const out = new Map();
+  if (!ids.length) return out;
+  const [versions] = await db.query(
+    'SELECT v.syllabus_id, v.version_id, (v.content IS NOT NULL OR v.file_path IS NOT NULL) AS checkable FROM syllabus_versions v JOIN (SELECT MAX(version_id) AS version_id FROM syllabus_versions WHERE syllabus_id IN (?) GROUP BY syllabus_id) m ON m.version_id = v.version_id',
+    [ids]
+  );
+  const [runs] = await db.query('SELECT DISTINCT syllabus_id, version_id FROM ai_check_runs WHERE syllabus_id IN (?) AND ' + ADMIN_RUN_SQL, [ids]);
+  const checkedOn = new Set(runs.map((r) => r.syllabus_id + ':' + r.version_id));
+  versions.forEach((v) => out.set(v.syllabus_id, { checkable: !!Number(v.checkable), checked: checkedOn.has(v.syllabus_id + ':' + v.version_id) }));
+  return out;
+}
+
 // The newest submitted version of a syllabus: what a reviewer is looking at. { version_id, version_label, content } or null.
 async function latestVersion(db, syllabusId) {
   const [rows] = await db.query('SELECT version_id, version_label, content FROM syllabus_versions WHERE syllabus_id = ? ORDER BY version_id DESC LIMIT 1', [syllabusId]);
@@ -203,6 +231,6 @@ async function latestVersion(db, syllabusId) {
 const hashOf = (content) => contentHash(content, standard.version);
 
 module.exports = {
-  ADMIN_RUN_SQL, standard, check, gateError, isInstalled, resetInstalledCache, storeRun, attachRecommendations,
+  ADMIN_RUN_SQL, adminCheckStates, uploadCheck, uploadFingerprint, versionFile, standard, check, gateError, isInstalled, resetInstalledCache, storeRun, attachRecommendations,
   startAiJob, settled, getProvider, setProvider, namesFor, summarize, loadAreas, loadDetail, latestRun, cachedRun, latestVersion, hashOf, bandOf,
 };

@@ -24,7 +24,7 @@ const router = express.Router();
 
 const NOT_SET_UP = 'Compliance checks are not set up on this server yet. Ask an administrator to run the database update.';
 const APPROVED = 'This syllabus is approved, so it cannot be checked again.';
-const NO_FORM_ADMIN = 'This syllabus was submitted as an uploaded file, so there is no builder form to check.';
+const NO_SUBJECT_ADMIN = 'This syllabus has neither a form nor an uploaded file to check.';
 const limiter = createLimiter({ max: 10, windowMs: 60 * 1000 });
 
 const parseId = (raw) => {
@@ -49,10 +49,19 @@ async function loadVisible(db, me, id) {
 // What a check reads, and what a stored run is compared with to tell whether it is out of date: the owner's saved draft, or for an
 // admin the latest submitted version (so a faculty member's edits in progress do not make a reviewed run look stale).
 async function subjectOf(db, me, syl) {
-  if (rules.isOwner(me, syl)) return { content: parseJson(syl.content), versionId: null, owner: true };
+  if (rules.isOwner(me, syl)) return { content: parseJson(syl.content), file: null, versionId: null, owner: true };
   const v = await svc.latestVersion(db, syl.syllabus_id);
-  return { content: v ? parseJson(v.content) : null, versionId: v ? v.version_id : null, owner: false };
+  const content = v ? parseJson(v.content) : null;
+  // A version with no form may be an uploaded file: an administrator's check then reads the file (its rules: lib/compliance/upload.js).
+  const file = v && !content ? await svc.versionFile(db, v.version_id) : null;
+  return { content, file, versionId: v ? v.version_id : null, owner: false };
 }
+// What a run is compared with to tell whether it is out of date: the form's hash, or the uploaded file's name and size.
+const hashOfSubject = (subject) => {
+  if (subject.content) return svc.hashOf(subject.content);
+  if (subject.file) return svc.hashOf(svc.uploadFingerprint(subject.file, { size: svc.uploadCheck.fileSize(subject.file) }));
+  return null;
+};
 
 // Who made a run: its author, or an administrator checking it afterwards.
 const withChecker = (run, ownerId) => ({ ...run, checkedBy: run.createdBy === null || run.createdBy === undefined ? null : run.createdBy === ownerId ? 'author' : 'admin' });
@@ -62,7 +71,7 @@ async function baseOf(db, syl, subject) {
   const [[meta]] = await db.query('SELECT ' + LABEL_SQL + ' WHERE s.syllabus_id = ?', [syl.syllabus_id]);
   return {
     syllabusId: syl.syllabus_id, userId: syl.user_id, courseCode: syl.course_code, title: syl.title, status: syl.status, version: syl.version,
-    ...labelsOf(meta || {}, subject.content), checkable: !!subject.content,
+    ...labelsOf(meta || {}, subject.content), checkable: !!(subject.content || subject.file),
   };
 }
 // An optional ISO instant from the query string, as whole seconds for FROM_UNIXTIME. FROM_UNIXTIME answers in the database session's
@@ -83,8 +92,8 @@ router.get('/syllabi/:id/compliance', requireAuth, async (req, res) => {
     if (!(await svc.isInstalled(db))) return res.json({ installed: false, run: null });
     const run = await svc.latestRun(db, syl.syllabus_id, { adminOnly: !rules.isOwner(me, syl) });
     if (!run) return res.json({ installed: true, run: null });
-    const { content } = await subjectOf(db, me, syl);
-    res.json({ installed: true, run: withChecker(await svc.loadDetail(db, run, content ? svc.hashOf(content) : null), syl.user_id) });
+    const subject = await subjectOf(db, me, syl);
+    res.json({ installed: true, run: withChecker(await svc.loadDetail(db, run, hashOfSubject(subject)), syl.user_id) });
   } catch (err) { sendError(res, err); }
 });
 
@@ -98,10 +107,13 @@ router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => 
     if (syl.status === 'approved') throw httpError(409, APPROVED, { code: 'approved' }); // before the limiter: a refusal costs nothing
     if (!(await svc.isInstalled(db))) throw httpError(503, NOT_SET_UP);
     const subject = await subjectOf(db, me, syl);
-    if (!subject.content) {
-      throw httpError(409, owner ? 'There is nothing to check yet. Save some of the form first.' : NO_FORM_ADMIN, { code: 'no_form' });
+    // A form is checked by the owner (their draft) or the administrator (the submitted version). Only the administrator checks an uploaded file.
+    const isUpload = !subject.content && !owner && !!subject.file;
+    if (!subject.content && !isUpload) {
+      throw httpError(409, owner ? 'There is nothing to check yet. Save some of the form first.' : NO_SUBJECT_ADMIN, { code: 'no_form' });
     }
-    const content = subject.content;
+    const facts = isUpload ? svc.uploadCheck.readFacts(subject.file) : null;
+    const content = isUpload ? svc.uploadFingerprint(subject.file, facts) : subject.content; // what the run's hash is made from
     const hash = svc.hashOf(content);
 
     // The same content as an earlier run is not checked again, and does not count against the limit. An admin's check is stored with
@@ -116,11 +128,17 @@ router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => 
       throw httpError(429, 'You are checking too often. Try again in ' + slot.retryAfterSec + ' seconds.');
     }
 
-    // Checked against the catalog as it is now: tags resolve against the program's current EGAs and POs, and a submitted syllabus
-    // is also compared with the catalog it was submitted with.
-    const result = svc.check(content, { catalog: await catalogSnapshot(db, content), preparedBy: owner ? fullName(me) : undefined });
-    const runId = await inTransaction(db, (conn) => svc.storeRun(conn, { syllabusId: syl.syllabus_id, versionId: subject.versionId, content, result, createdBy: me.id }));
-    if (result.status === 'scored' && result.findings.length) {
+    // A form is checked against the catalog as it is now: tags resolve against the program's current EGAs and POs, and a submitted syllabus
+    // is also compared with the catalog it was submitted with. An uploaded file is checked for the file and its course details.
+    const details = isUpload ? await baseOf(db, syl, subject) : null;
+    const result = isUpload
+      ? svc.uploadCheck.checkUpload(facts, { courseCode: syl.course_code, title: syl.title, programCode: details.programCode })
+      : svc.check(content, { catalog: await catalogSnapshot(db, content), preparedBy: owner ? fullName(me) : undefined });
+    const runId = await inTransaction(db, (conn) => svc.storeRun(conn, { syllabusId: syl.syllabus_id, versionId: subject.versionId, content, result, createdBy: me.id, ai: !isUpload }));
+    if (isUpload) {
+      // No AI step for a file; say what was not checked, so the administrator reads it against the template.
+      await svc.attachRecommendations(db, runId, { items: [svc.uploadCheck.PENDING_NOTE], ai: { status: 'failed', reason: 'not_configured' } });
+    } else if (result.status === 'scored' && result.findings.length) {
       const [people] = await db.query('SELECT first_name, last_name FROM users WHERE user_id = ?', [syl.user_id]);
       const author = people[0] ? { firstName: people[0].first_name, lastName: people[0].last_name } : null;
       svc.startAiJob(db, { runId, content, result, names: svc.namesFor(author, content) });
@@ -144,7 +162,7 @@ router.get('/compliance', requireAuth, async (req, res) => {
       const base = await baseOf(db, syl, subject);
       if (!installed) return res.json({ installed: false, syllabus: base, run: null });
       const run = await svc.latestRun(db, syl.syllabus_id, { adminOnly: !rules.isOwner(me, syl) });
-      return res.json({ installed: true, syllabus: base, run: run ? withChecker(await svc.loadDetail(db, run, subject.content ? svc.hashOf(subject.content) : null), syl.user_id) : null });
+      return res.json({ installed: true, syllabus: base, run: run ? withChecker(await svc.loadDetail(db, run, hashOfSubject(subject)), syl.user_id) : null });
     }
 
     const select = 'SELECT s.syllabus_id, s.user_id, s.course_code, s.title, s.status, s.version, ' + (me.role === 'admin' ? '' : 's.content, ') + LABEL_SQL;
@@ -154,13 +172,15 @@ router.get('/compliance', requireAuth, async (req, res) => {
 
     // What each syllabus is checked on: an admin reads the latest submitted version, a faculty member their own saved form.
     const formOf = new Map();
+    const fileOf = new Set(); // syllabi whose newest version is an uploaded file (no form)
+    const versionOf = new Map(); // syllabus id -> its newest version id
     if (syls.length) {
       if (me.role === 'admin') {
         const [vs] = await db.query(
-          'SELECT v.syllabus_id, v.content FROM syllabus_versions v JOIN (SELECT MAX(version_id) AS version_id FROM syllabus_versions WHERE syllabus_id IN (?) GROUP BY syllabus_id) m ON m.version_id = v.version_id',
+          'SELECT v.syllabus_id, v.version_id, v.content, v.file_path FROM syllabus_versions v JOIN (SELECT MAX(version_id) AS version_id FROM syllabus_versions WHERE syllabus_id IN (?) GROUP BY syllabus_id) m ON m.version_id = v.version_id',
           [syls.map((s) => s.syllabus_id)]
         );
-        vs.forEach((v) => formOf.set(v.syllabus_id, parseJson(v.content)));
+        vs.forEach((v) => { formOf.set(v.syllabus_id, parseJson(v.content)); versionOf.set(v.syllabus_id, v.version_id); if (!v.content && v.file_path) fileOf.add(v.syllabus_id); });
       } else {
         syls.forEach((s) => formOf.set(s.syllabus_id, parseJson(s.content)));
       }
@@ -178,11 +198,13 @@ router.get('/compliance', requireAuth, async (req, res) => {
       areasByRun = await svc.loadAreas(db, runs.map((r) => r.run_id));
     }
     const list = syls.map((s) => {
-      const run = latest.get(s.syllabus_id);
+      let run = latest.get(s.syllabus_id);
+      // The administrator's check counts for the version that was checked: after a new version is submitted the old check is history, not "checked".
+      if (run && me.role === 'admin' && versionOf.has(s.syllabus_id) && run.version_id !== versionOf.get(s.syllabus_id)) run = null;
       const content = formOf.get(s.syllabus_id) || null;
       return {
         syllabusId: s.syllabus_id, userId: s.user_id, courseCode: s.course_code, title: s.title, status: s.status, version: s.version,
-        ...labelsOf(s, content), checkable: !!content,
+        ...labelsOf(s, content), checkable: !!content || fileOf.has(s.syllabus_id),
         run: run ? withChecker(svc.summarize(run, areasByRun.get(run.run_id) || [], content ? svc.hashOf(content) : null), s.user_id) : null,
       };
     });
@@ -264,7 +286,7 @@ router.get('/compliance/runs/:runId', requireAuth, async (req, res) => {
     res.json({
       installed: true,
       syllabus: await baseOf(db, syl, subject),
-      run: withChecker(await svc.loadDetail(db, stored, subject.content ? svc.hashOf(subject.content) : null), syl.user_id),
+      run: withChecker(await svc.loadDetail(db, stored, hashOfSubject(subject)), syl.user_id),
       isLatest: !!latest && latest.run_id === stored.run_id,
     });
   } catch (err) { sendError(res, err); }

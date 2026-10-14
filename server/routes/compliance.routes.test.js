@@ -129,7 +129,8 @@ function makeDb() {
     if (sql.startsWith('SELECT first_name, last_name FROM users WHERE user_id')) return [s.people[p[0]] ? [s.people[p[0]]] : []];
     if (sql.startsWith('INSERT INTO syllabus_versions')) { const v = { version_id: s.versionId + s.versions.length, syllabus_id: p[0], version_label: p[1], content: p[8] }; s.versions.push(v); return [{ insertId: v.version_id }]; }
     if (sql.startsWith('SELECT version_id, version_label, content FROM syllabus_versions')) return [s.versions.filter((v) => v.syllabus_id === p[0]).slice(-1)];
-    if (sql.startsWith('SELECT v.syllabus_id, v.content FROM syllabus_versions')) return [p[0].map((id) => s.versions.filter((v) => v.syllabus_id === id).slice(-1)[0]).filter(Boolean)];
+    if (sql.startsWith('SELECT file_path FROM syllabus_versions WHERE version_id')) return [s.versions.filter((v) => v.version_id === p[0]).map((v) => ({ file_path: v.file_path || null }))];
+    if (sql.startsWith('SELECT v.syllabus_id, v.version_id, v.content')) return [p[0].map((id) => s.versions.filter((v) => v.syllabus_id === id).slice(-1)[0]).filter(Boolean)];
     if (sql.startsWith('UPDATE syllabi SET content')) { s.saved.push(JSON.parse(p[0])); s.syllabi[p[1]].content = p[0]; return [{}]; }
     if (/^(INSERT|UPDATE|DELETE)/.test(sql)) return [{}];
     throw new Error('unexpected query: ' + sql);
@@ -698,3 +699,69 @@ test('the history and the single-run read never show the run a faculty submit st
   assert.strictEqual(read.status, 200);
   assert.strictEqual(read.body.isLatest, true);
 }));
+
+// ---- a syllabus uploaded as a file: the administrator's rule check of the file and its course details ----
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const pdfText = (pages) => '%PDF-1.4\n' + Array.from({ length: pages }, (_, i) => `${i + 1} 0 obj\n<< /Type /Page >>\nendobj\n`).join('') + '%%EOF\n';
+const withUploads = async (files, fn) => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'uploads-'));
+  Object.entries(files).forEach(([name, text]) => fs.writeFileSync(path.join(dir, name), text, 'latin1'));
+  const old = process.env.UPLOAD_DIR;
+  process.env.UPLOAD_DIR = dir;
+  try { await fn(dir); } finally { if (old === undefined) delete process.env.UPLOAD_DIR; else process.env.UPLOAD_DIR = old; fs.rmSync(dir, { recursive: true, force: true }); }
+};
+const uploaded = (db, id, file, over = {}) => {
+  addSyllabus(db, id, { user_id: 5, status: 'submitted', course_code: 'FM 202', title: 'Fundamentals of Mathematics', content: null, file_path: file, ...over });
+  db.s.versions.push({ version_id: 600 + id, syllabus_id: id, version_label: 'v1.0', content: null, file_path: file });
+};
+
+test('an administrator can check an uploaded PDF by the rules: the file and its course details, with a note that the template match is not done', () => withUploads({ 'fm.pdf': pdfText(5) }, () => withServer(async ({ call, db }) => {
+  uploaded(db, 2, '/uploads/fm.pdf');
+  const list = await call(admin, 'GET', '/compliance?syllabus=all');
+  assert.strictEqual(list.body.syllabi.find((x) => x.syllabusId === 2).checkable, true); // an upload can be checked now
+  const r = await call(admin, 'POST', '/syllabi/2/compliance/recheck', {});
+  assert.strictEqual(r.status, 200);
+  assert.strictEqual(r.body.cached, false);
+  assert.strictEqual(r.body.run.checkedBy, 'admin');
+  assert.strictEqual(r.body.run.versionId, 602);
+  assert.strictEqual(r.body.run.overall, 100);
+  assert.strictEqual(r.body.run.stale, false);
+  assert.strictEqual(r.body.run.areas.find((a) => a.key === 'template').score, 100);
+  assert.ok(r.body.run.areas.filter((a) => a.key !== 'template').every((a) => a.score === null)); // the form's areas do not apply to a file
+  assert.strictEqual(r.body.run.aiStatus, 'none');
+  assert.deepStrictEqual(r.body.run.recommendations.map((x) => x.title), ['Matching to the template is not done yet']);
+  assert.strictEqual(db.s.runs[0].ai_status, 'none');
+  // the same file is answered by the stored run; the admin screens count it as checked
+  assert.strictEqual((await call(admin, 'POST', '/syllabi/2/compliance/recheck', {})).body.cached, true);
+  assert.strictEqual((await call(admin, 'GET', '/compliance?syllabus=all')).body.syllabi.find((x) => x.syllabusId === 2).run.overall, 100);
+  assert.strictEqual((await call(admin, 'GET', '/compliance/history')).body.runs[0].syllabusId, 2);
+  assert.strictEqual((await call(admin, 'GET', '/syllabi/2/compliance')).body.run.stale, false);
+})));
+
+test('an uploaded file that is missing or not a whole PDF fails the blocking rules but is still stored and shown', () => withUploads({ 'bad.pdf': 'not a pdf' }, () => withServer(async ({ call, db }) => {
+  uploaded(db, 2, '/uploads/bad.pdf');
+  uploaded(db, 3, '/uploads/gone.pdf');
+  const bad = await call(admin, 'POST', '/syllabi/2/compliance/recheck', {});
+  assert.strictEqual(bad.status, 200);
+  assert.deepStrictEqual(bad.body.run.findings.map((f) => f.ruleId), ['U-02']);
+  assert.strictEqual(bad.body.run.findings[0].severity, 'blocking');
+  assert.strictEqual(bad.body.run.passed, false);
+  const gone = await call(admin, 'POST', '/syllabi/3/compliance/recheck', {});
+  assert.deepStrictEqual(gone.body.run.findings.map((f) => f.ruleId), ['U-01']);
+  assert.strictEqual(db.s.runs.length, 2);
+})));
+
+test('a new upload (a new version) is not answered by the run of the old file, and only the administrator checks a file', () => withUploads({ 'v1.pdf': pdfText(3), 'v2.pdf': pdfText(6) }, () => withServer(async ({ call, db }) => {
+  uploaded(db, 2, '/uploads/v1.pdf');
+  const first = await call(admin, 'POST', '/syllabi/2/compliance/recheck', {});
+  assert.strictEqual((await call(fay, 'POST', '/syllabi/2/compliance/recheck', {})).status, 409); // the owner has no form to check, and files are the administrator's
+  db.s.versions.push({ version_id: 700, syllabus_id: 2, version_label: 'v1.1', content: null, file_path: '/uploads/v2.pdf' });
+  const list = await call(admin, 'GET', '/compliance?syllabus=all');
+  assert.strictEqual(list.body.syllabi.find((x) => x.syllabusId === 2).run, null); // the new version has not been checked
+  const second = await call(admin, 'POST', '/syllabi/2/compliance/recheck', {});
+  assert.strictEqual(second.body.cached, false);
+  assert.notStrictEqual(second.body.run.id, first.body.run.id);
+  assert.strictEqual(second.body.run.versionId, 700);
+})));
