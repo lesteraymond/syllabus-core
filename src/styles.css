@@ -7178,3 +7178,8 @@ html { scrollbar-gutter: stable; }
 	.svm-aside .rp-pane > .ct { flex: 1 1 auto; min-height: 0; }
 	.svm-aside .rp-pane > .ct > .ct-list { flex: 1 1 auto; min-height: 0; max-height: none; }
 }
+
+/* Chat: who the conversation is with (real name, role, program and subject) in the header and in the message list */
+.chat-head-info h3 { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; }
+.chat-role { padding: 2px 9px; border-radius: 99px; background: #eef2fb; color: var(--blue); font-size: var(--text-xs); font-weight: var(--fw-semibold); line-height: 1.5; }
+.thread-role { font-style: normal; color: var(--muted); font-weight: var(--fw-medium); }
