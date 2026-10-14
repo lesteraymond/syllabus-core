@@ -7,18 +7,25 @@ const router = express.Router();
 
 const MAX_TEXT = 2000;
 
-// Chat is per syllabus and only ever between the syllabus owner (faculty) and an admin.
+// Chat is per syllabus and only ever between the syllabus owner (faculty) and an admin. A draft has no conversation: an administrator
+// never sees a draft (so for them it does not exist), and its owner cannot message about it until it is submitted.
+const DRAFT_MESSAGE = 'A draft has no conversation. Submit it for review first, then you can message the administrator.';
 // Loads the syllabus and says whether the signed-in user may take part. Sends the error response itself
 // (404 missing syllabus, 403 not a participant) and returns null in that case.
 async function loadThread(req, res) {
   const id = Number(req.params.syllabusId);
   if (!Number.isInteger(id) || id <= 0) { res.status(404).json({ error: 'Syllabus not found' }); return null; }
   const db = req.app.locals.db;
-  const [rows] = await db.query('SELECT syllabus_id, user_id, course_code FROM syllabi WHERE syllabus_id = ?', [id]);
+  const [rows] = await db.query('SELECT syllabus_id, user_id, course_code, status FROM syllabi WHERE syllabus_id = ?', [id]);
   if (rows.length === 0) { res.status(404).json({ error: 'Syllabus not found' }); return null; }
   const me = req.session.user;
   const ownerId = rows[0].user_id;
   if (me.id !== ownerId && me.role !== 'admin') { res.status(403).json({ error: 'You are not part of this conversation' }); return null; }
+  if (rows[0].status === 'draft') {
+    if (me.role === 'admin' && me.id !== ownerId) { res.status(404).json({ error: 'Syllabus not found' }); return null; }
+    res.status(409).json({ error: DRAFT_MESSAGE, code: 'draft' });
+    return null;
+  }
   return { db, syllabusId: id, ownerId, courseCode: rows[0].course_code, me };
 }
 
@@ -91,7 +98,8 @@ router.get('/', requireAuth, async (req, res) => {
       SELECT m.*, u.first_name, u.last_name, u.avatar_path
       FROM messages m
       JOIN users u ON m.sender_id = u.user_id
-      WHERE m.sender_id = ? OR m.receiver_id = ?
+      JOIN syllabi s ON s.syllabus_id = m.syllabus_id
+      WHERE (m.sender_id = ? OR m.receiver_id = ?) AND s.status <> 'draft'
       ORDER BY m.created_at ASC, m.message_id ASC
     `, [me, me]);
     res.json(rows.map(toMessage));

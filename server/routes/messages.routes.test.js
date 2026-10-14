@@ -23,8 +23,10 @@ function makeDb() {
       12: { syllabus_id: 12, user_id: 6, status: 'approved', course_code: 'IT 101', title: 'Intro', course_title: 'Intro to IT', program_code: 'BSIT', program_name: 'BS Information Technology', curriculum_program: null },
     },
     messages: [], // { syllabus_id, sender_id, receiver_id, created_at }
+    notifications: 0,
   };
-  const handle = (sql, p = []) => {
+  const handle = (text, p = []) => {
+    const sql = String(text).replace(/\s+/g, ' ').trim(); // the routes write some queries over several lines
     if (sql.startsWith('SELECT user_id FROM users WHERE user_id')) return [s.users[p[0]] ? [{ user_id: p[0] }] : []];
     if (sql.startsWith('SELECT s.syllabus_id, s.user_id, s.course_code, s.title, u.avatar_path,')) {
       const mine = sql.includes('AND s.user_id = ?');
@@ -38,6 +40,18 @@ function makeDb() {
       return [Object.values(s.users).filter((u) => u.role === 'admin' && u.user_id !== p[0]).sort((a, b) => a.user_id - b.user_id).slice(0, 1).map((u) => ({ user_id: u.user_id }))];
     }
     if (sql.startsWith('SELECT user_id, first_name, last_name, avatar_path FROM users WHERE user_id IN')) return [p[0].map((id) => s.users[id]).filter(Boolean)];
+    // ---- the chat routes
+    if (sql.startsWith('SELECT syllabus_id, user_id, course_code, status FROM syllabi WHERE syllabus_id')) return [s.syllabi[p[0]] ? [s.syllabi[p[0]]] : []];
+    if (sql.startsWith('SELECT m.*, u.first_name, u.last_name, u.avatar_path')) {
+      const person = (id) => s.users[id];
+      const rows = sql.includes('JOIN syllabi s ON')
+        ? s.messages.filter((m) => (m.sender_id === p[0] || m.receiver_id === p[1]) && s.syllabi[m.syllabus_id].status !== 'draft')
+        : s.messages.filter((m) => m.syllabus_id === p[0]);
+      return [rows.map((m) => ({ message_id: m.message_id || 1, is_read: 0, created_at: '2026-03-01T10:00:00Z', message_text: m.text || 'hi', ...m, first_name: person(m.sender_id).first_name, last_name: person(m.sender_id).last_name, avatar_path: null }))];
+    }
+    if (sql.startsWith('INSERT INTO messages')) { s.messages.push({ message_id: s.messages.length + 100, syllabus_id: p[0], sender_id: p[1], receiver_id: p[2], text: p[3] }); return [{ insertId: s.messages.length + 99 }]; }
+    if (sql.startsWith('INSERT INTO notifications')) { s.notifications += 1; return [{}]; }
+    if (sql.startsWith('UPDATE messages SET is_read')) return [{}];
     throw new Error('unexpected query: ' + sql);
   };
   return { s, query: async (q, p) => handle(q, p) };
@@ -52,8 +66,8 @@ async function withServer(fn) {
   app.use('/api/messages', require('./messages'));
   const server = await new Promise((resolve) => { const sv = app.listen(0, () => resolve(sv)); });
   const base = `http://127.0.0.1:${server.address().port}/api/messages`;
-  const call = async (as, path = '/partners') => {
-    const res = await fetch(base + path, { headers: as ? { 'x-test-user': JSON.stringify(as) } : {} });
+  const call = async (as, path = '/partners', method = 'GET', body) => {
+    const res = await fetch(base + path, { method, headers: { 'Content-Type': 'application/json', ...(as ? { 'x-test-user': JSON.stringify(as) } : {}) }, body: body ? JSON.stringify(body) : undefined });
     return { status: res.status, body: await res.json().catch(() => ({})) };
   };
   try { await fn({ db, call }); } finally { await new Promise((r) => server.close(r)); }
@@ -114,4 +128,39 @@ test('/partners is its own route: it is not read as a syllabus id (which would b
   const r = await call(fay);
   assert.strictEqual(r.status, 200);
   assert.ok(r.body.partners && !r.body.error);
+}));
+
+test('a draft has no conversation: its owner is told to submit first, an administrator is told it does not exist, and nothing is stored', () => withServer(async ({ call, db }) => {
+  // syllabus 11 is Fay's draft
+  const read = await call(fay, '/11');
+  assert.strictEqual(read.status, 409);
+  assert.strictEqual(read.body.code, 'draft');
+  assert.match(read.body.error, /Submit it for review first/);
+  const send = await call(fay, '/11', 'POST', { text: 'Hello admin' });
+  assert.strictEqual(send.status, 409);
+  assert.strictEqual((await call(fay, '/read/11', 'PUT')).status, 409);
+  assert.strictEqual((await call(admin1, '/11')).status, 404); // an administrator never sees a draft
+  assert.strictEqual((await call(admin1, '/11', 'POST', { text: 'Hello Fay' })).status, 404);
+  assert.strictEqual((await call(gus, '/11', 'POST', { text: 'Hi' })).status, 403); // somebody else's draft: still not their conversation
+  assert.strictEqual(db.s.messages.length, 0, 'no message was stored');
+  assert.strictEqual(db.s.notifications, 0, 'and no administrator was notified about a syllabus they cannot see');
+}));
+
+test('a submitted syllabus still has its conversation for both sides, and a message notifies the other', () => withServer(async ({ call, db }) => {
+  const first = await call(fay, '/10', 'POST', { text: 'Please review.' });
+  assert.strictEqual(first.status, 200, JSON.stringify(first.body));
+  assert.strictEqual(db.s.messages.length, 1);
+  assert.strictEqual(db.s.messages[0].receiver_id, 1); // the first administrator
+  assert.strictEqual(db.s.notifications, 1);
+  assert.strictEqual((await call(admin1, '/10', 'POST', { text: 'Will do.' })).status, 200);
+  assert.strictEqual((await call(admin1, '/10')).status, 200);
+  assert.strictEqual((await call(fay, '/read/10', 'PUT')).status, 200);
+}));
+
+test('messages written about a syllabus while it was a draft are kept but not shown, and show once it is submitted', () => withServer(async ({ call, db }) => {
+  db.s.messages.push({ message_id: 26, syllabus_id: 11, sender_id: 5, receiver_id: 1, text: 'Written when it was a draft' });
+  db.s.messages.push({ message_id: 27, syllabus_id: 10, sender_id: 5, receiver_id: 1, text: 'Written about a submitted one' });
+  for (const who of [fay, admin1]) assert.deepStrictEqual((await call(who, '/')).body.map((m) => m.id), [27], who.role);
+  db.s.syllabi[11].status = 'submitted';
+  assert.deepStrictEqual((await call(admin1, '/')).body.map((m) => m.id).sort(), [26, 27]);
 }));
