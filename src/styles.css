@@ -7130,3 +7130,7 @@ table,
 .hist-reset { border: 0; background: none; padding: 0; font: inherit; font-weight: var(--fw-semibold); color: var(--blue); text-decoration: underline; cursor: pointer; }
 .hist-filter .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .hist-summary .chip { padding: 3px 10px; border-radius: 99px; background: #eef2fb; color: var(--blue); font-size: var(--text-xs); font-weight: var(--fw-semibold); }
+
+/* Keep the page's scrollbar space reserved. Without it the layout jumps sideways whenever the scrollbar comes or goes: a dialog
+   opens (it locks page scroll), or a page's content grows past or shrinks under the window height. */
+html { scrollbar-gutter: stable; }
