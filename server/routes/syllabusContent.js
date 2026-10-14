@@ -280,7 +280,7 @@ router.post('/:id/submit', requireAuth, async (req, res) => {
       if (complianceReady) runId = await compliance.storeRun(conn, { syllabusId: id, versionId: versionRow && versionRow.insertId ? versionRow.insertId : null, content, result, createdBy: me.id });
       await conn.query(
         'INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)',
-        [id, me.id, first ? 'upload' : (syl.status === 'for_revision' ? 'submit' : 'update'), (first ? 'Syllabus submitted from the builder' : `Saved as ${label}: ${versionNote}`).slice(0, 500)]
+        [id, me.id, first || syl.status === 'for_revision' ? 'submit' : 'update', (first ? 'Syllabus submitted from the builder' : `Saved as ${label}: ${versionNote}`).slice(0, 500)]
       );
       return { previous: syl.status, label, status: newStatus, courseCode: syl.course_code, title: syl.title, runId, content, result };
     });
