@@ -1,12 +1,38 @@
 // Run: npm test
 import test from 'node:test';
 import assert from 'node:assert';
-import { initialsOf, partnerOf, threadTitle, canChat, DRAFT_CHAT_NOTE } from './chatPartner.js';
+import { chatPartner, initialsOf, partnerOf, threadTitle, canChat, DRAFT_CHAT_NOTE } from './chatPartner.js';
 
 const fay = { id: 5, role: 'faculty' };
 const admin = { id: 1, role: 'admin' };
 const server = { id: 1, name: 'Diana Evale', roleLabel: 'Academic Administrator', avatarUrl: '/api/users/1/avatar?v=1' }; // an administrator: no program or subject
 const facultyEntry = { id: 5, name: 'Fay Faculty', roleLabel: 'Faculty', avatarUrl: null, program: 'BSFM · Financial Management', subject: 'FM 202 — Fundamentals of Mathematics' };
+
+test('chat header shows the syllabus owner to an administrator even with no messages or another administrator in the thread', () => {
+  const syl = { userId: 5, faculty: 'Fay Faculty', ownerAvatarUrl: '/fay.png' };
+  const expected = { name: 'Fay Faculty', initials: 'FF', avatarUrl: '/fay.png' };
+  assert.deepStrictEqual(chatPartner([], admin, syl), expected);
+  assert.deepStrictEqual(chatPartner([{ senderId: 2, sender: 'Other Admin', senderAvatarUrl: '/admin.png' }], admin, syl), expected);
+});
+
+test('faculty header uses the latest administrator message, independent of message order, and never their own message', () => {
+  const messages = [
+    { senderId: 2, senderRole: 'admin', sender: 'Latest Admin', senderAvatarUrl: '/latest.png', time: '2026-10-02' },
+    { senderId: 5, sender: 'Fay Faculty', time: '2026-10-03' },
+    { senderId: 1, senderRole: 'admin', sender: 'Older Admin', time: '2026-10-01' },
+  ];
+  const original = JSON.stringify(messages);
+  assert.deepStrictEqual(chatPartner(messages, fay, {}), { name: 'Latest Admin', initials: 'LA', avatarUrl: '/latest.png' });
+  assert.strictEqual(JSON.stringify(messages), original);
+});
+
+test('empty, unknown and self-only chat data have a useful generic partner', () => {
+  for (const messages of [[], [{ senderId: 5, sender: 'Fay Faculty' }], [{ senderId: 1, sender: 'Unknown' }]]) {
+    assert.deepStrictEqual(chatPartner(messages, fay, { faculty: 'Fay Faculty' }), { name: 'Administrator', initials: 'A', avatarUrl: null });
+  }
+  assert.strictEqual(chatPartner([], { ...admin, name: 'Ann', id: 1 }, { userId: 1, faculty: 'Ann' }).name, 'Faculty');
+  assert.strictEqual(chatPartner([{ senderId: 6, senderRole: 'faculty', sender: 'Colleague' }], fay, {}).name, 'Administrator');
+});
 
 test('the server\'s answer is used, so a faculty member sees the administrator before anyone has written, with a name and a role only', () => {
   const p = partnerOf({ partner: server, messages: [], user: fay, syl: { id: 10, faculty: 'Fay Faculty' } });

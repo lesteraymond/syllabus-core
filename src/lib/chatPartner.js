@@ -7,6 +7,27 @@
 
 export const initialsOf = (name) => String(name || '').split(' ').filter(Boolean).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
 
+// A reliable display identity even if the thread is empty or the partner profile request failed.
+export function chatPartner(thread, user, syl) {
+  const messages = Array.isArray(thread) ? thread : thread?.msgs || thread?.messages || [];
+  const selfName = user.name || [user.firstName, user.lastName].filter(Boolean).join(' ');
+  const usable = name => typeof name === 'string' && name.trim() && name.trim().toLowerCase() !== 'unknown' && (!selfName || name.trim() !== selfName.trim());
+  const result = (name, avatarUrl) => ({ name: name.trim(), initials: initialsOf(name), avatarUrl: avatarUrl || null });
+  if (user.role === 'admin') {
+    return syl && syl.userId !== user.id && usable(syl.faculty)
+      ? result(syl.faculty, syl.ownerAvatarUrl)
+      : result('Faculty', null);
+  }
+  const candidates = messages.map((message, index) => ({ message, index }))
+    .filter(({ message }) => message.senderId !== user.id && (!message.senderRole || message.senderRole === 'admin') && usable(message.sender));
+  candidates.sort((a, b) => {
+    const first = Date.parse(a.message.time), second = Date.parse(b.message.time);
+    return Number.isFinite(first) && Number.isFinite(second) ? first - second || a.index - b.index : a.index - b.index;
+  });
+  const latest = candidates.at(-1)?.message;
+  return latest ? result(latest.sender, latest.senderAvatarUrl) : result('Administrator', null);
+}
+
 // -> { name, initials, avatarUrl, roleLabel, program, subject } or null when nobody is known.
 //   partner  the server's entry for this syllabus (or undefined/null)      messages  the messages of this thread
 //   user     the signed-in user                                            syl       the syllabus row from the list (or undefined)

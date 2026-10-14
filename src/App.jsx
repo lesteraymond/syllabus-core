@@ -12,7 +12,7 @@ import ReviewPanel from './views/ReviewPanel';
 import { navItems } from './data/initialData';
 import { auth, logs as logsApi, messages as messagesApi, notifications as notificationsApi, syllabi as syllabiApi, onPasswordChangeRequired } from './lib/api';
 import { commentNotificationIds, notificationTarget } from './lib/notificationRoute';
-import { canChat, partnerOf, threadTitle } from './lib/chatPartner';
+import { canChat, chatPartner, partnerOf, threadTitle } from './lib/chatPartner';
 import { canEditSyllabus, editBlockedReason } from './lib/syllabusRules';
 import { useNotificationPolling } from './lib/usePolling';
 import AIChecker from './views/AIChecker';
@@ -193,7 +193,7 @@ export default function App() {
       t.unread = t.msgs.filter(m => m.receiverId === user.id && !m.isRead).length;
       const syl = syllabi.find(s => s.id === t.code);
       if (syl && !canChat(syl)) return null; // messages about a draft are not shown until it is submitted
-      t.partner = partnerOf({ partner: partners[t.code], messages: t.msgs, user, syl });
+      t.partner = { ...partnerOf({ partner: partners[t.code], messages: t.msgs, user, syl }), ...chatPartner(t.msgs, user, syl) };
       t.title = threadTitle(syl, t.code);
       return t;
     }).filter(Boolean).sort((a, b) => new Date(b.lastTime) - new Date(a.lastTime));
