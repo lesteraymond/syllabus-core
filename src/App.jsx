@@ -1,16 +1,17 @@
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import ChatModal from './components/ChatModal';
 import ConfirmModal from './components/ConfirmModal';
 import Login from './components/Login';
 import Sidebar from './components/Sidebar';
+import SyllabusCommentsModal from './components/SyllabusCommentsModal';
+import SyllabusViewModal from './components/SyllabusViewModal';
 import Topbar from './components/Topbar';
 import VersionHistoryModal from './components/VersionHistoryModal';
 import { navItems } from './data/initialData';
-import StudentHome from './views/StudentHome';
-import { auth, syllabi as syllabiApi, logs as logsApi, messages as messagesApi, notifications as notificationsApi } from './lib/api';
-import { useNotificationPolling } from './lib/usePolling';
+import { auth, logs as logsApi, messages as messagesApi, notifications as notificationsApi, syllabi as syllabiApi } from './lib/api';
+import { commentNotificationIds, notificationTarget } from './lib/notificationRoute';
 import { canEditSyllabus, editBlockedReason } from './lib/syllabusRules';
-import { fmt } from './lib/utils';
+import { useNotificationPolling } from './lib/usePolling';
 import AIChecker from './views/AIChecker';
 import Analytics from './views/Analytics';
 import COPOMapping from './views/COPOMapping';
@@ -21,10 +22,12 @@ import MySyllabi from './views/MySyllabi';
 import Reports from './views/Reports';
 import Repository from './views/Repository';
 import ReviewApproval from './views/ReviewApproval';
+import ReviewPanel from './views/ReviewPanel';
 import Settings from './views/Settings';
+import StudentHome from './views/StudentHome';
 import SyllabusBuilder from './views/SyllabusBuilder';
-import SyllabusBuilderV2 from './views/builder2';
 import UsersRoles from './views/UsersRoles';
+import SyllabusBuilderV2 from './views/builder2';
 
 // The rebuilt syllabus builder (src/views/builder2) is behind a flag until it is approved: the current builder stays
 // the default. Set VITE_NEW_BUILDER=true in .env to use the rebuilt one.
@@ -41,6 +44,8 @@ export default function App() {
     try { localStorage.setItem('sms_sidebar_collapsed', String(sidebarCollapsed)); } catch {}
   }, [sidebarCollapsed]);
   const [page, setPage] = useState('dashboard');
+  // The compliance check moved into step 7 of the builder: an old 'ai' link sends faculty there, and only admins have the overview.
+  useEffect(() => { if (user && user.role !== 'admin' && page === 'ai') setPage(user.role === 'faculty' ? 'builder' : 'dashboard'); }, [user, page]);
   const [toast, setToast] = useState('');
   const [syllabi, setSyllabi] = useState([]);
   const [logs, setLogs] = useState([]);
@@ -48,6 +53,9 @@ export default function App() {
   const [editing, setEditing] = useState(null);
   const [chatCode, setChatCode] = useState(null);
   const [histCode, setHistCode] = useState(null);
+  const [viewCode, setViewCode] = useState(null); // the syllabus open in the reviewer's window
+  const [commentCode, setCommentCode] = useState(null); // the syllabus whose reviewer comments a faculty member is reading
+  const [commentCounts, setCommentCounts] = useState({}); // { [syllabusId]: { total, unread } } for a faculty member's syllabi
   const [confirm, setConfirm] = useState(null);
   const [msgDrop, setMsgDrop] = useState(false);
   const [notifications, setNotifications] = useState({ items: [], unreadCount: 0 });
@@ -90,6 +98,13 @@ export default function App() {
     } catch (err) { console.error('Failed to fetch messages:', err); }
   }, []);
 
+  const fetchCommentCounts = useCallback(async () => {
+    try {
+      const r = await syllabiApi.commentSummary();
+      setCommentCounts(r.counts || {});
+    } catch (err) { console.error('Failed to fetch comment counts:', err); }
+  }, []);
+
   const fetchNotifications = useCallback(async () => {
     try {
       const data = await notificationsApi.list();
@@ -103,14 +118,15 @@ export default function App() {
       fetchLogs();
       fetchMessages();
       fetchNotifications();
+      if (user.role === 'faculty') fetchCommentCounts();
     }
-  }, [user, fetchSyllabi, fetchLogs, fetchMessages, fetchNotifications]);
+  }, [user, fetchSyllabi, fetchLogs, fetchMessages, fetchNotifications, fetchCommentCounts]);
 
   // Keep messages and notifications fresh without a reload (only polls while the tab is visible).
   // A draft created in the builder is not in this list yet: refresh when the faculty opens My Syllabi.
-  useEffect(() => { if (user && user.role !== 'student' && page === 'my-syllabi') fetchSyllabi(); }, [user, page, fetchSyllabi]);
+  useEffect(() => { if (user && page === 'my-syllabi') { fetchSyllabi(); if (user.role === 'faculty') fetchCommentCounts(); } }, [user, page, fetchSyllabi, fetchCommentCounts]);
 
-  useNotificationPolling(!!user && user.role !== 'student', () => { fetchMessages(); fetchNotifications(); fetchSyllabi(); });
+  useNotificationPolling(!!user, () => { fetchMessages(); fetchNotifications(); fetchSyllabi(); if (user.role === 'faculty') fetchCommentCounts(); });
 
   const handleLogin = async (email, pass, remember) => {
     try {
@@ -197,8 +213,16 @@ export default function App() {
   // Clicking a notification marks it read, then opens its chat or the page where the syllabus lives.
   const openNotification = (n) => {
     markNotificationRead(n.id);
-    if (n.type === 'message' && n.syllabusId) { setChatCode(n.syllabusId); markRead(n.syllabusId); return; }
-    setPage(user.role === 'admin' ? 'review' : 'my-syllabi');
+    const target = notificationTarget(n, user.role);
+    if (target.kind === 'chat') { setChatCode(target.id); markRead(target.id); return; }
+    if (target.kind === 'comments') { setCommentCode(target.id); return; }
+    setPage(target.page);
+  };
+
+  // Reading a syllabus's comments clears its badge now, and settles the bell's notifications about them.
+  const clearCommentBadge = (id) => {
+    setCommentCounts((c) => (c[id] && c[id].unread ? { ...c, [id]: { ...c[id], unread: 0 } } : c));
+    commentNotificationIds(notifications.items, id).forEach((nid) => markNotificationRead(nid));
   };
 
   const deleteThread = (code) => setMessages(ms => ms.filter(m => m.syllabusId !== Number(code)));
@@ -251,7 +275,8 @@ export default function App() {
       await fetchSyllabi();
       await fetchLogs();
       notify(`Syllabus ${status.toLowerCase()}.`);
-    } catch (err) { notify('Update failed: ' + err.message); }
+      return true;
+    } catch (err) { notify('Update failed: ' + err.message); return false; }
   };
 
   const handleDelete = async (id) => {
@@ -281,10 +306,10 @@ export default function App() {
           {page === 'builder' && (NEW_BUILDER
             ? <SyllabusBuilderV2 key={editing ? editing.syllabusId : 'new'} editing={editing} user={user} notify={notify} setPage={setPage} onSubmitted={handleBuilderSubmitted} />
             : <SyllabusBuilder notify={notify} onSubmit={submitSyllabus} editing={editing} setEditing={setEditing} />)}
-          {page === 'my-syllabi' && <MySyllabi syllabi={syllabi} user={user} messages={messages} setEditing={setEditing} setPage={setPage} setHistCode={setHistCode} setChatCode={setChatCode} handleDelete={handleDelete} setConfirm={setConfirm} notify={notify} />}
-          {page === 'ai' && <AIChecker syllabi={syllabi} user={user} notify={notify} />}
+          {page === 'my-syllabi' && <MySyllabi syllabi={syllabi} user={user} messages={messages} commentCounts={commentCounts} setCommentCode={setCommentCode} setEditing={setEditing} setPage={setPage} setHistCode={setHistCode} setChatCode={setChatCode} handleDelete={handleDelete} setConfirm={setConfirm} notify={notify} />}
+          {page === 'ai' && user.role === 'admin' && <AIChecker user={user} notify={notify} />}
           {page === 'mapping' && <COPOMapping notify={notify} />}
-          {page === 'review' && <ReviewApproval syllabi={syllabi} handleStatus={handleStatus} user={user} messages={messages} setChatCode={setChatCode} markRead={markRead} setHistCode={setHistCode} />}
+          {page === 'review' && <ReviewApproval syllabi={syllabi} setViewCode={setViewCode} />}
           {page === 'repository' && <Repository syllabi={syllabi} user={user} notify={notify} setChatCode={setChatCode} setHistCode={setHistCode} />}
           {page === 'compliance' && <Compliance syllabi={syllabi} />}
           {page === 'analytics' && <Analytics syllabi={syllabi} user={user} />}
@@ -297,6 +322,17 @@ export default function App() {
       {toast && <div className="toast">{toast}</div>}
       {chatCode && <ChatModal code={chatCode} syllabi={syllabi} user={user} messages={messages} sendMsg={sendMsg} markRead={markRead} deleteThread={deleteThread} onClose={() => setChatCode(null)} />}
       {histCode && <VersionHistoryModal syllabus={syllabi.find(s => s.id === histCode)} onClose={() => setHistCode(null)} />}
+      {commentCode && (
+        <SyllabusCommentsModal syllabus={syllabi.find((s) => s.id === commentCode)} viewerId={user.id} onClose={() => setCommentCode(null)}
+          onRead={(id) => { clearCommentBadge(id); }} onReply={(id) => { setCommentCode(null); setChatCode(id); markRead(id); }} />
+      )}
+      {viewCode && (() => {
+        const open = syllabi.find((s) => s.id === viewCode);
+        return (
+          <SyllabusViewModal key={viewCode} syllabusId={viewCode} avatarUrl={open ? open.ownerAvatarUrl : null} onClose={() => setViewCode(null)}
+            aside={open ? <ReviewPanel key={viewCode} syllabus={open} user={user} messages={messages} handleStatus={handleStatus} sendMsg={sendMsg} markRead={markRead} onDecided={() => setViewCode(null)} onHistory={() => setHistCode(viewCode)} /> : null} />
+        );
+      })()}
       {confirm && <ConfirmModal {...confirm} onClose={() => setConfirm(null)} />}
     </div>
   );
