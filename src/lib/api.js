@@ -197,6 +197,7 @@ export const users = {
   // Programs and courses an admin assigned to a faculty member. Faculty can create syllabi only for these.
   myAssignments: () => request('/users/me/assignments'),
   assignments: (id) => request(`/users/${id}/assignments`),
+  subjectHolders: () => request('/users/subject-holders'),
   saveAssignments: (id, body) => request(`/users/${id}/assignments`, { method: 'PUT', body: JSON.stringify(body) }),
   // Multipart upload: request() forces a JSON content type, so go direct and let the browser set the boundary.
   uploadAvatar: async (file) => {
@@ -215,7 +216,24 @@ export const users = {
   removeAvatar: () => request('/users/me/avatar', { method: 'DELETE' }),
 };
 
-export const mapping = {
-  get: (curriculumId) => request(`/mapping/${curriculumId}`),
-  save: (curriculumId, mappings) => request(`/mapping/${curriculumId}`, { method: 'PUT', body: JSON.stringify({ mappings }) }),
+
+// Time in the system, for the signed-in user only. `heartbeat` says "active now" (the server counts the time between beats);
+// `summary` is the last 7 or 30 days. `enabled: false` means tracking is off or not set up yet.
+export const usage = {
+  heartbeat: (options = {}) => request('/usage/heartbeat', { method: 'POST', ...options }),
+  summary: (days = 7) => request(`/usage/summary?days=${days === 30 ? 30 : 7}`),
 };
+
+// Subject submission deadlines. The administrator sets, changes and cancels them and reads each one's progress; a faculty member reads
+// only their own (`mine`). `enabled: false` in an answer means the tables are not set up yet (see docs/deadlines.md).
+export const deadlines = {
+  list: () => request('/deadlines'),
+  mine: () => request('/deadlines/mine'),
+  create: (courseId, body) => request(`/deadlines/course/${courseId}`, { method: 'POST', body: JSON.stringify(body) }),
+  update: (id, body) => request(`/deadlines/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
+  cancel: (id) => request(`/deadlines/${id}`, { method: 'DELETE' }),
+  progress: (id) => request(`/deadlines/${id}/progress`),
+  // Remind the faculty who have not submitted (or only `userIds`). -> { sent, emailed, skipped: [{ userId, reason }] }
+  remind: (id, userIds = []) => request(`/deadlines/${id}/remind`, { method: 'POST', body: JSON.stringify({ userIds }) }),
+};
+

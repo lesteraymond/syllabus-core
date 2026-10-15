@@ -3,6 +3,7 @@ import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useId, useMemo, useState } from 'react';
 import { canCheckNow } from '../lib/complianceView';
+import Select from './Select';
 
 const STATUS_LABELS = { draft: 'Draft', submitted: 'Submitted', under_review: 'Under Review', for_revision: 'For Revision', approved: 'Approved', rejected: 'Rejected' };
 
@@ -44,24 +45,24 @@ export default function SyllabusPicker({ groups, loading = false, busy = false, 
       <div className="pick-grid">
         <div className="pick-field">
           <label htmlFor={uid + '-f'}>{translateUI("ui.faculty_9ae050")}</label>
-          <select id={uid + '-f'} value={faculty ? facultyKey : ''} disabled={loading || empty} onChange={(e) => pickFaculty(e.target.value)}>
+          <Select id={uid + '-f'} value={faculty ? facultyKey : ''} disabled={loading || empty} onChange={(e) => pickFaculty(e.target.value)}>
             <option value="">{loading ? translateUI("ui.loading_33ce41") : empty ? translateUI("ui.nothing_is_waiting_for_a_check_28b41a") : translateUI("ui.choose_a_faculty_member_65ac86")}</option>
             {groups.map((f) => <option key={f.key} value={f.key}>{f.facultyName + ' (' + f.count + ')'}</option>)}
-          </select>
+          </Select>
         </div>
         <div className="pick-field">
           <label htmlFor={uid + '-p'}>{translateUI("ui.program_9d6800")}</label>
-          <select id={uid + '-p'} value={program ? programKey : ''} disabled={!faculty} onChange={(e) => pickProgram(e.target.value)}>
+          <Select id={uid + '-p'} value={program ? programKey : ''} disabled={!faculty} onChange={(e) => pickProgram(e.target.value)}>
             <option value="">{translateUI("ui.choose_a_program_2d5477")}</option>
             {faculty && faculty.programs.map((p) => <option key={p.key} value={p.key}>{p.code ? p.code + (p.name ? ' · ' + p.name : '') : translateUI("ui.no_program_d8600a")}</option>)}
-          </select>
+          </Select>
         </div>
         <div className="pick-field">
           <label htmlFor={uid + '-s'}>{translateUI("ui.subject_8d183d")}</label>
-          <select id={uid + '-s'} value={row ? syllabusId : ''} disabled={!program} onChange={(e) => setSyllabusId(e.target.value)}>
+          <Select id={uid + '-s'} value={row ? syllabusId : ''} disabled={!program} onChange={(e) => setSyllabusId(e.target.value)}>
             <option value="">{translateUI("ui.choose_a_subject_554b9c")}</option>
             {program && program.rows.map((r) => <option key={r.syllabusId} value={String(r.syllabusId)}>{r.courseCode + ' — ' + (r.courseTitle || r.title) + (r.upload ? ' (' + tr('uploaded file') + ')' : '')}</option>)}
-          </select>
+          </Select>
         </div>
       </div>
 

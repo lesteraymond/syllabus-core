@@ -142,6 +142,30 @@ async function describeAssignments(db, a) {
   };
 }
 
+// One subject has at most one faculty member (programs can be shared by many). Who holds which subject, for the admin screen:
+// [{ courseId, userId, name }].
+async function subjectHolders(db) {
+  const [rows] = await db.query(
+    'SELECT fc.course_id, fc.user_id, u.first_name, u.last_name FROM faculty_courses fc JOIN users u ON u.user_id = fc.user_id ORDER BY fc.course_id');
+  return rows.map((r) => ({ courseId: r.course_id, userId: r.user_id, name: (r.first_name + ' ' + r.last_name).trim() }));
+}
+
+// Refuses the save when any of `courseIds` is held by another faculty member. Call it in the same transaction as saveAssignments; the rows
+// are locked so two admins saving at once cannot both take the subject (the unique key on course_id is the last safety net).
+// -> throws a 409 that names each subject and its holder; nothing has been changed yet.
+async function assertSubjectsFree(conn, userId, courseIds) {
+  if (!courseIds.length) return;
+  const [rows] = await conn.query(
+    `SELECT fc.course_id, c.code, u.first_name, u.last_name FROM faculty_courses fc JOIN courses c ON c.course_id = fc.course_id
+     JOIN users u ON u.user_id = fc.user_id WHERE fc.course_id IN (?) AND fc.user_id <> ? ORDER BY c.code FOR UPDATE`, [courseIds, userId]);
+  if (!rows.length) return;
+  const held = rows.map((r) => ({ courseId: r.course_id, code: r.code, holder: (r.first_name + ' ' + r.last_name).trim() }));
+  const first = held[0];
+  const message = first.code + ' is already assigned to ' + first.holder + '. Remove it from them first; a subject has one faculty member.'
+    + (held.length > 1 ? ' (' + (held.length - 1) + ' more subject' + (held.length > 2 ? 's' : '') + ' are also taken.)' : '');
+  throw Object.assign(new Error(message), { status: 409, body: { code: 'subject_taken', conflicts: held } });
+}
+
 // Replaces a user's assignments with the already-normalized lists. Pass a transaction connection as `conn`.
 async function saveAssignments(conn, userId, { programIds, courseIds }) {
   await conn.query('DELETE FROM faculty_courses WHERE user_id = ?', [userId]);
@@ -154,6 +178,6 @@ module.exports = {
   MAX_PROGRAMS, MAX_COURSES, NOT_ASSIGNED, NOTHING_ASSIGNED, NO_SUBJECT_YET, EMPTY,
   assignedProgramIds, assignedCourseIds, canUseCourse, hasAnyAssignment,
   mayWriteSyllabus, writeBlockedReason, normalizeAssignments,
-  loadAssignments, loadCatalogIds, describeAssignments, saveAssignments,
+  loadAssignments, loadCatalogIds, describeAssignments, saveAssignments, subjectHolders, assertSubjectsFree,
   requireCourseAccess, requireCourseCodeAccess,
 };

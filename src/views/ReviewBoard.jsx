@@ -26,7 +26,7 @@ export default function ReviewBoard({ rows, total, onOpen, q, setQ }) {
                 <span className="rb-pill">{programLabel(r)}</span>
                 <strong className="rb-subject">{subjectLabel(r)}</strong>
                 <span className="rb-who">
-                  <Avatar src={r.raw.ownerAvatarUrl} name={r.facultyName} />
+                  <Avatar userId={r.raw.userId} src={r.raw.ownerAvatarUrl} name={r.facultyName} />
                   <span className="rb-name">{r.facultyName || translateUI("ui.unknown_faculty_753147")}</span>
                 </span>
                 <Icon name="arrowUpRight" size={18} className="rb-go" />

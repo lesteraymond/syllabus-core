@@ -37,6 +37,15 @@ const pool = mysql.createPool({
 
 app.locals.db = pool;
 require('./lib/catalogFileCleanup').startCleanup(pool);
+// Time usage: counted in memory, written in one batch about once a minute, and written out when the server stops.
+const usage = require('./lib/usage').createUsageService({ db: pool });
+app.locals.usage = usage;
+usage.start();
+// Deadline notices: the bell and an email when a deadline is set, changed or cancelled, and the automatic due-soon, due-today and missed ones.
+const deadlineNotices = require('./lib/deadlineNotices').createDeadlineNotifier({ db: pool, notify: require('./lib/notify').createNotification, mail: require('./lib/mailer').sendNotice });
+app.locals.deadlineNotices = deadlineNotices;
+deadlineNotices.start();
+for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => { Promise.all([usage.stop(), deadlineNotices.stop()]).finally(() => process.exit(0)); });
 
 app.use(restoreSession);
 
@@ -63,7 +72,8 @@ app.use("/api/curriculum", require("./routes/curriculum"));
 app.use("/api/logs", require("./routes/logs"));
 app.use("/api/messages", require("./routes/messages"));
 app.use("/api/notifications", require("./routes/notifications"));
-app.use("/api/mapping", require("./routes/mapping"));
+app.use("/api/usage", require("./routes/usage"));
+app.use("/api/deadlines", require("./routes/deadlines"));
 
 app.listen(PORT, () => {
 	console.log(`Server running on http://localhost:${PORT}`);

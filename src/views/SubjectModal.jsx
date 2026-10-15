@@ -7,6 +7,7 @@ import { courses as coursesApi } from '../lib/api';
 import { LEVELS, createModel } from '../lib/syllabusModel';
 import { CURRENT_SCHOOL_YEAR } from '../lib/schoolYear';
 import { Auto, Ic, OutcomePicker, Tag } from './builder2/parts';
+import Select from '../components/Select';
 
 
 // Everything an administrator manages for one subject, in one modal. Five cards, each saved on its own:
@@ -197,7 +198,7 @@ function ClosCard({ course, program, model, onSaved, onReload, setDirty, notify 
           <div><span className={'code lg k' + (i % 6)}>{translateUI("ui.clo_069efc") + (i + 1)}</span></div>
           <div>
             <div className="cap">
-              <select className="sel" value={c.level} aria-label={translateUI("ui.level_of_clo_c01e3f") + (i + 1)} onChange={(e) => { const v = e.target.value; edit((n) => { n[i].level = v; }); }}>{LEVELS.map((l) => <option key={l} value={l}>{tr(l)}</option>)}</select>
+              <Select className="sel" value={c.level} aria-label={translateUI("ui.level_of_clo_c01e3f") + (i + 1)} onChange={(e) => { const v = e.target.value; edit((n) => { n[i].level = v; }); }}>{LEVELS.map((l) => <option key={l} value={l}>{tr(l)}</option>)}</Select>
               <span style={{ marginLeft: 'auto', display: 'flex', gap: 2 }}>
                 <button type="button" className="ib" aria-label={translateUI("ui.move_clo_baa700") + (i + 1) + translateUI("ui.up_459409")} disabled={i === 0} onClick={() => edit((n) => { n.splice(i - 1, 0, n.splice(i, 1)[0]); })}><Ic n="up" /></button>
                 <button type="button" className="ib" aria-label={translateUI("ui.move_clo_baa700") + (i + 1) + translateUI("ui.down_edbf4b")} disabled={i === clos.length - 1} onClick={() => edit((n) => { n.splice(i + 1, 0, n.splice(i, 1)[0]); })}><Ic n="down" /></button>
@@ -233,29 +234,6 @@ function ClosCard({ course, program, model, onSaved, onReload, setDirty, notify 
           onClose={() => setPicker(null)}
           onToggle={(t) => { const no = Number(t.split(':')[1]); edit((n) => { const k = picker.kind === 'ega' ? 'egas' : 'pos'; n[picker.i][k] = toggle(n[picker.i][k], no); }); }} />
       )}
-    </Card>
-  );
-}
-
-// ---- 5. subject details ----
-function DetailsCard({ course, onSaved, onDeleted, setDirty, notify }) {
-  const [head, setHead] = useState({ code: course.code, title: course.title });
-  const [dirty, setD] = useState(false);
-  const [st, run] = useSave();
-  const mark = (v) => { setD(v); setDirty(v); };
-  const change = (k, v) => { setHead((h) => ({ ...h, [k]: v })); mark(true); };
-  const save = () => run(async () => { const saved = await coursesApi.update(course.id, head); mark(false); onSaved(saved); notify(translateUI("ui.subject_saved_9c680c")); });
-  const remove = async () => {
-    if (!window.confirm(tr('Delete ' + course.code + '? Syllabi that use it keep the outcomes they were saved with, but new drafts can no longer pick it.'))) return;
-    try { await coursesApi.remove(course.id); notify(translateUI("ui.subject_deleted_688bd2")); onDeleted(); } catch (e) { notify(translateUI("ui.delete_failed_c834e9") + e.message); }
-  };
-  return (
-    <Card title={translateUI("ui.subject_details_9e2fb9")} scope={tr(course.code + ' only')} dirty={dirty} st={st} onSave={save} onReload={() => {}} canSave={!!(head.code.trim() && head.title.trim())}>
-      <div className="form-grid">
-        <label className="field"><span>{translateUI("ui.subject_code_8e42db")}</span><input className="mono" value={head.code} maxLength={50} onChange={(e) => change('code', e.target.value)} /></label>
-        <label className="field"><span>{translateUI("ui.subject_title_dce28f")}</span><input value={head.title} maxLength={255} onChange={(e) => change('title', e.target.value)} /></label>
-      </div>
-      <button type="button" className="asg-link sm-del" onClick={remove}>{translateUI("ui.delete_this_subject_95c760")}</button>
     </Card>
   );
 }
@@ -321,20 +299,16 @@ export default function SubjectModal({ courseId, onClose, onChanged, notify }) {
           {!data && !error && <div className="empty">{translateUI("ui.loading_33ce41")}</div>}
           {data && (
             <div className="sm-stack">
-              <ClosCard key={'c' + course.id + '-' + course.version} course={course} program={data.program} model={model}
-                onSaved={(saved) => { patch({ course: saved }); onChanged(); }} onReload={reloadAll} setDirty={setDirtyFor('clos')} notify={notify} />
               <div className="sm-pair">
                 <EgaCard key={'e' + data.program.versions.egas} program={data.program} course={course}
                   onSaved={(saved) => { patch(subjectParts(saved)); onChanged(); }} onReload={reloadAll} setDirty={setDirtyFor('egas')} notify={notify} />
                 <PoCard key={'p' + data.program.versions.pos} program={data.program} course={course}
                   onSaved={(saved) => patch({ program: saved })} onReload={reloadAll} setDirty={setDirtyFor('pos')} notify={notify} />
               </div>
-              <div className="sm-pair">
-                <VisionCard key={'v' + data.inst.version} course={course} inst={data.inst}
-                  onSaved={(saved) => { patch(subjectParts(saved)); onChanged(); }} onReload={reloadAll} setDirty={setDirtyFor('vision')} notify={notify} />
-                <DetailsCard key={'d' + course.id} course={course}
-                  onSaved={(saved) => { patch({ course: { ...saved } }); onChanged(); }} onDeleted={() => { onChanged(); motion.dismiss(onClose); }} setDirty={setDirtyFor('details')} notify={notify} />
-              </div>
+              <ClosCard key={'c' + course.id + '-' + course.version} course={course} program={data.program} model={model}
+                onSaved={(saved) => { patch({ course: saved }); onChanged(); }} onReload={reloadAll} setDirty={setDirtyFor('clos')} notify={notify} />
+              <VisionCard key={'v' + data.inst.version} course={course} inst={data.inst}
+                onSaved={(saved) => { patch(subjectParts(saved)); onChanged(); }} onReload={reloadAll} setDirty={setDirtyFor('vision')} notify={notify} />
             </div>
           )}
         </div>

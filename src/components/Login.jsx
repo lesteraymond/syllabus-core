@@ -29,7 +29,7 @@ export default function Login({ onLogin, onGoogleLogin }) {
           <span className="eyebrow light">{translateUI("ui.academic_quality_93a706")}</span>
           <h1>{translateUI("ui.syllabus_1b731d")}<br />{translateUI("ui.management_system_738978")}</h1>
           <p>{translateUI("ui.build_validate_review_approve_archive_and_analyze_undergraduate_s_0aef77")}</p>
-          <div className="feature-pills"><span><Icon name="sparkle" size={16} />{translateUI("ui.ai_compliance_602783")}</span><span><Icon name="sealCheck" size={16} />{translateUI("ui.approval_workflow_cc8935")}</span><span><Icon name="gridFour" size={16} />{translateUI("ui.co_po_mapping_1af79e")}</span></div>
+          <div className="feature-pills"><span><Icon name="sparkle" size={16} />{translateUI("ui.ai_compliance_602783")}</span><span><Icon name="sealCheck" size={16} />{translateUI("ui.approval_workflow_cc8935")}</span></div>
         </div>
       </section>
       <section className="login-panel">

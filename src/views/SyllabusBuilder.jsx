@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { users as usersApi } from '../lib/api';
 import { ASSIGNMENT_MESSAGES, assignmentState } from '../lib/syllabusRules';
 import { PageHead, Icon, Field, Progress, Assessment, Policy } from '../components/ui';
+import Select from '../components/Select';
 
 function defaultSyllabus() { return { code: 'IT304', title: 'Data Analytics and Visualization', program: 'BSIT', semester: '6', category: 'Professional Course', credits: '3', contact: '2-3-0', prereq: 'Statistics for Computing', description: 'This course develops practical competencies in collecting, preparing, analyzing, and communicating data using modern analytics and visualization tools.', outcomes: ['Apply data preparation techniques to structured datasets.', 'Analyze datasets using appropriate descriptive and diagnostic methods.', 'Create effective visualizations that communicate evidence-based insights.', 'Evaluate analytical results using appropriate performance measures.'] }; }
 
@@ -12,8 +13,8 @@ function CourseInformation({ data, update, dragging, setDragging, handleFile }) 
   return <div className="form-grid">
     <Field label={translateUI("ui.course_code_e3df14")}><input value={data.code} onChange={e => update('code', e.target.value)} /></Field>
     <Field label={translateUI("ui.course_title_9dfea6")}><input value={data.title} onChange={e => update('title', e.target.value)} /></Field>
-    <Field label={translateUI("ui.program_2f03bb")}><select value={data.program} onChange={e => update('program', e.target.value)}><option value="BSIT">{translateUI("ui.bsit_7d8d4f")}</option><option value="BSIS">{translateUI("ui.bsis_fba0a3")}</option><option value="BSCS">{translateUI("ui.bscs_ee67dc")}</option><option value="BLIS">{translateUI("ui.blis_dcf8c9")}</option><option value="BSEMC">{translateUI("ui.bsemc_3a4792")}</option></select></Field>
-    <Field label={translateUI("ui.semester_3ccdf6")}><select value={data.semester} onChange={e => update('semester', e.target.value)}>{[1, 2, 3, 4, 5, 6, 7, 8].map(x => <option key={x}>{x}</option>)}</select></Field>
+    <Field label={translateUI("ui.program_2f03bb")}><Select value={data.program} onChange={e => update('program', e.target.value)}><option value="BSIT">{translateUI("ui.bsit_7d8d4f")}</option><option value="BSIS">{translateUI("ui.bsis_fba0a3")}</option><option value="BSCS">{translateUI("ui.bscs_ee67dc")}</option><option value="BLIS">{translateUI("ui.blis_dcf8c9")}</option><option value="BSEMC">{translateUI("ui.bsemc_3a4792")}</option></Select></Field>
+    <Field label={translateUI("ui.semester_3ccdf6")}><Select value={data.semester} onChange={e => update('semester', e.target.value)}>{[1, 2, 3, 4, 5, 6, 7, 8].map(x => <option key={x}>{x}</option>)}</Select></Field>
     <Field label={translateUI("ui.course_category_44003b")}><input value={data.category || ''} onChange={e => update('category', e.target.value)} /></Field>
     <Field label={translateUI("ui.credits_bfac50")}><input value={data.credits || ''} onChange={e => update('credits', e.target.value)} /></Field>
     <Field label={translateUI("ui.contact_hours_week_703323")}><input value={data.contact || ''} onChange={e => update('contact', e.target.value)} /></Field>
@@ -47,7 +48,7 @@ function AssessmentPlan() {
 }
 
 function GradingSystem() {
-  return <div className="two-col"><div className="subcard"><h3>{translateUI("ui.grading_components_631feb")}</h3><Progress label={translateUI("ui.class_standing_0a97c9")} value={40} /><Progress label={translateUI("ui.major_assessments_4d7f21")} value={30} /><Progress label={translateUI("ui.project_performance_96a2d4")} value={30} /></div><div className="subcard"><h3>{translateUI("ui.passing_transmutation_cbb7dc")}</h3><p className="muted">{translateUI("ui.configure_this_section_according_to_the_official_university_gradi_d406c5")}</p><Field label={translateUI("ui.minimum_passing_percentage_95b265")}><input defaultValue="75%" /></Field><Field label={translateUI("ui.rounding_rule_71d575")}><select><option value="Nearest whole number">{translateUI("ui.nearest_whole_number_78a5b6")}</option><option value="Two decimal places">{translateUI("ui.two_decimal_places_702af1")}</option></select></Field></div></div>;
+  return <div className="two-col"><div className="subcard"><h3>{translateUI("ui.grading_components_631feb")}</h3><Progress label={translateUI("ui.class_standing_0a97c9")} value={40} /><Progress label={translateUI("ui.major_assessments_4d7f21")} value={30} /><Progress label={translateUI("ui.project_performance_96a2d4")} value={30} /></div><div className="subcard"><h3>{translateUI("ui.passing_transmutation_cbb7dc")}</h3><p className="muted">{translateUI("ui.configure_this_section_according_to_the_official_university_gradi_d406c5")}</p><Field label={translateUI("ui.minimum_passing_percentage_95b265")}><input defaultValue="75%" /></Field><Field label={translateUI("ui.rounding_rule_71d575")}><Select><option value="Nearest whole number">{translateUI("ui.nearest_whole_number_78a5b6")}</option><option value="Two decimal places">{translateUI("ui.two_decimal_places_702af1")}</option></Select></Field></div></div>;
 }
 
 function References() {

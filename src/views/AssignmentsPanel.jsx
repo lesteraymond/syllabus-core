@@ -18,6 +18,7 @@ export default function AssignmentsPanel({ person, onClose, notify, onManageSubj
   const [courseSel, setCourseSel] = useState(new Set());
   const [focusId, setFocusId] = useState(null);
   const [query, setQuery] = useState('');
+  const [holders, setHolders] = useState(new Map());   // subject id -> { userId, name }: a subject has one faculty member
   const [state, setState] = useState({ loading: true, error: '', saving: false });
   const saved = useRef({ progSel: new Set(), courseSel: new Set() }); // what is saved on the server: unsaved ticks are compared with it
   const latest = useRef({ progSel, courseSel, focusId }); // the current selection, for the refresh below
@@ -25,9 +26,10 @@ export default function AssignmentsPanel({ person, onClose, notify, onManageSubj
 
   useEffect(() => {
     let live = true;
-    Promise.all([outcomesApi.programs(), coursesApi.list(), usersApi.assignments(person.id)])
-      .then(([p, c, a]) => {
+    Promise.all([outcomesApi.programs(), coursesApi.list(), usersApi.assignments(person.id), usersApi.subjectHolders().catch(() => ({ holders: [] }))])
+      .then(([p, c, a, h]) => {
         if (!live) return;
+        setHolders(new Map((h.holders || []).map((x) => [x.courseId, x])));
         setPrograms(p);
         setCourses(c);
         saved.current = { progSel: new Set(a.programIds), courseSel: new Set(a.courseIds) };
@@ -46,8 +48,9 @@ export default function AssignmentsPanel({ person, onClose, notify, onManageSubj
     let live = true;
     const refresh = () => {
       if (document.visibilityState !== 'visible') return;
-      Promise.all([outcomesApi.programs(), coursesApi.list()]).then(([p, c]) => {
+      Promise.all([outcomesApi.programs(), coursesApi.list(), usersApi.subjectHolders().catch(() => null)]).then(([p, c, h]) => {
         if (!live) return;
+        if (h) setHolders(new Map((h.holders || []).map((x) => [x.courseId, x])));
         const m = mergeCatalog({ programs: p, courses: c }, latest.current);
         setPrograms(m.programs); setCourses(m.courses); setProgSel(m.progSel); setCourseSel(m.courseSel); setFocusId(m.focusId);
       }).catch(() => {}); // offline: the list stays as it is
@@ -77,10 +80,13 @@ export default function AssignmentsPanel({ person, onClose, notify, onManageSubj
     setProgSel(next);
     if (on) setCourseSel(new Set([...courseSel].filter((id) => { const c = courses.find((x) => x.id === id); return !c || c.program !== p.code; })));
   };
-  const toggleCourse = (id) => { const next = new Set(courseSel); if (next.has(id)) next.delete(id); else next.add(id); setCourseSel(next); };
+  // Held by another faculty member: cannot be ticked here (they must let it go first).
+  const takenBy = (id) => { const h = holders.get(id); return h && h.userId !== person.id ? h : null; };
+  const toggleCourse = (id) => { if (takenBy(id)) return;
+    const next = new Set(courseSel); if (next.has(id)) next.delete(id); else next.add(id); setCourseSel(next); };
   const setAll = (on) => {
     const next = new Set(courseSel);
-    rows.forEach((c) => { if (on) next.add(c.id); else next.delete(c.id); });
+    rows.forEach((c) => { if (on) { if (!takenBy(c.id)) next.add(c.id); } else next.delete(c.id); });
     setCourseSel(next);
   };
 
@@ -159,9 +165,9 @@ export default function AssignmentsPanel({ person, onClose, notify, onManageSubj
                       <tbody>
                         {rows.map((c) => (
                           <tr key={c.id} className={courseSel.has(c.id) ? 'on' : ''}>
-                            <td className="asg-c0"><input type="checkbox" disabled={!programOn} checked={courseSel.has(c.id)} onChange={() => toggleCourse(c.id)} aria-label={translateUI("ui.assign_f1e181") + c.code} /></td>
+                            <td className="asg-c0"><input type="checkbox" disabled={!programOn || !!takenBy(c.id)} checked={courseSel.has(c.id)} onChange={() => toggleCourse(c.id)} aria-label={translateUI("ui.assign_f1e181") + c.code} /></td>
                             <td className="mono asg-codecell">{c.code}</td>
-                            <td>{c.title}</td>
+                            <td>{c.title}{takenBy(c.id) && <small className="asg-held"> {translateUI('assignments.heldBy', { name: takenBy(c.id).name })}</small>}</td>
                           </tr>
                         ))}
                         {!rows.length && <tr><td colSpan="3" className="asg-empty">{q ? translateUI("ui.no_subject_matches_your_search_d6a180") : <>{translateUI("ui.no_subjects_in_662f89")}{fp.code}{translateUI("ui.yet_add_them_in_subjects_amp_clos_then_assign_them_here_5ddd30")}{onManageSubjects && <> <button type="button" className="asg-link" onClick={goToSubjects}>{translateUI("ui.go_to_subjects_amp_clos_c825d0")}</button></>}</>}</td></tr>}

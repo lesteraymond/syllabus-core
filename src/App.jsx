@@ -20,10 +20,11 @@ import { auth, users as usersApi, logs as logsApi, messages as messagesApi, noti
 import { commentNotificationIds, notificationTarget } from './lib/notificationRoute';
 import { canChat, partnerOf, threadTitle } from './lib/chatPartner';
 import { canDeleteSyllabus, canEditSyllabus, editBlockedReason } from './lib/syllabusRules';
-import { useNotificationPolling } from './lib/usePolling';
+import { useNotificationPolling, usePeriodicRefresh } from './lib/usePolling';
+import { recordAvatar, seedAvatars } from './lib/avatarStore';
+import { useActiveTime } from './lib/useActiveTime';
 import AIChecker from './views/AIChecker';
 import Analytics from './views/Analytics';
-import COPOMapping from './views/COPOMapping';
 import Compliance from './views/Compliance';
 import CourseOutcomes from './views/CourseOutcomes';
 import Dashboard from './views/DashboardView';
@@ -66,7 +67,9 @@ export default function App() {
   const acceptUser = account => {
     languageRequest.current++; languageInFlight.current = false; setLanguageBusy(false);
     preferenceRef.current.reset(account.id, account.preferredLanguage);
-    setUser(formatUser(account));
+    const signedIn = formatUser(account);
+    seedAvatars([[signedIn.id, signedIn.avatarUrl]]);
+    setUser(signedIn);
   };
   const [loading, setLoading] = useState(true);
   const [loggingOut, setLoggingOut] = useState(false);
@@ -104,7 +107,11 @@ export default function App() {
     initials: `${u.firstName?.[0] || ''}${u.lastName?.[0] || ''}`,
   });
 
-  const handleAvatarChange = (avatarUrl) => setUser(u => u && !logoutPending.current ? { ...u, avatarUrl } : u);
+  // A new or removed photo is recorded for everyone who shows it (topbar, tables, chat headers), not only in the signed-in user.
+  const handleAvatarChange = (avatarUrl) => {
+    if (user && !logoutPending.current) recordAvatar(user.id, avatarUrl);
+    setUser(u => u && !logoutPending.current ? { ...u, avatarUrl } : u);
+  };
   const handleProfileChange = (profile) => setUser(current => current && current.id === profile.id && !logoutPending.current ? formatUser({ ...profile, preferredLanguage: current.preferredLanguage }) : current);
 
   useEffect(() => {
@@ -117,7 +124,9 @@ export default function App() {
 
   const fetchSyllabi = useCallback(async () => {
     try {
+      const startedAt = Date.now();
       const data = await syllabiApi.list();
+      seedAvatars(data.map(s => [s.userId, s.ownerAvatarUrl]), startedAt);
       setSyllabi(data);
     } catch (err) { console.error('Failed to fetch syllabi:', err); }
   }, []);
@@ -131,7 +140,9 @@ export default function App() {
 
   const fetchMessages = useCallback(async () => {
     try {
+      const startedAt = Date.now();
       const [list, who] = await Promise.all([messagesApi.listMine(), messagesApi.partners().catch(() => ({ partners: {} }))]); // the profile read is optional: chat works without it
+      seedAvatars([...Object.values(who.partners || {}).map(p => [p.id, p.avatarUrl]), ...list.map(m => [m.senderId, m.senderAvatarUrl])], startedAt);
       setMessages(list);
       setPartners(who.partners || {});
     } catch (err) { console.error('Failed to fetch messages:', err); }
@@ -169,6 +180,10 @@ export default function App() {
   useEffect(() => { if (user && user.role === 'admin' && (page === 'review' || page === 'ai')) fetchSyllabi(); }, [user, page, fetchSyllabi]);
   useEffect(() => { if (user && page === 'my-syllabi') { fetchSyllabi(); if (user.role === 'faculty') fetchCommentCounts(); } }, [user, page, fetchSyllabi, fetchCommentCounts]);
 
+  // Other people's new profile pictures arrive with the syllabus list and the message partners: read both again now and then, and when the tab comes back.
+  usePeriodicRefresh(!!user && user.role !== 'student' && !user.mustChangePassword && !loggingOut, () => { fetchSyllabi(); fetchMessages(); });
+  // Time in the system: a heartbeat while the tab is visible and the person is active (students have no dashboard and the server closes this to them).
+  useActiveTime(!!user && user.role !== 'student' && !user.mustChangePassword && !loggingOut);
   useNotificationPolling(!!user && !user.mustChangePassword && !loggingOut, () => { fetchMessages(); fetchNotifications(); fetchSyllabi(); if (user.role === 'faculty') fetchCommentCounts(); });
 
   const handleLogin = async (email, pass, remember) => {
@@ -370,7 +385,6 @@ export default function App() {
             : <SyllabusBuilder notify={notify} onSubmit={submitSyllabus} editing={editing} setEditing={setEditing} />)}
           {page === 'my-syllabi' && <MySyllabi syllabi={syllabi} user={user} messages={messages} commentCounts={commentCounts} setCommentCode={setCommentCode} setEditing={setEditing} setPage={setPage} setHistCode={setHistCode} setChatCode={setChatCode} handleDelete={handleDelete} setConfirm={setConfirm} notify={notify} />}
           {page === 'ai' && user.role === 'admin' && <AIChecker user={user} notify={notify} onApproved={async () => { await fetchSyllabi(); await fetchLogs(); notify(translateUI('publication.approvedRepository')); setEditing(null); setPage('repository'); }} onEditDraft={async id => { await syllabiApi.resumeDraft(id); setEditing({ syllabusId: id, status: 'draft' }); setPage('builder'); }} />}
-          {page === 'mapping' && <COPOMapping notify={notify} />}
           {page === 'review' && <ReviewApproval syllabi={syllabi} setViewCode={setViewCode} setPage={setPage} />}
           {page === 'repository' && <Repository syllabi={syllabi} user={user} notify={notify} setChatCode={setChatCode} setHistCode={setHistCode} />}
           {page === 'compliance' && <Compliance syllabi={syllabi} />}

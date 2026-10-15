@@ -1,0 +1,379 @@
+/* Brand theme. Loaded after styles.css, so these rules win on equal specificity; styles.css is untouched.
+   Palette is taken from the two logos in /public:
+     cobalt   the royal blue of the CITE border and the LCUP seal
+     navy     the lettering and the deep shades of both seals
+     gold     the shield and the crest
+     copper   the CITE medallion ring
+     crimson  the LCUP heart
+   Forest green is not in the logos; it is the one added colour, for "approved" and success.
+   To switch the redesign off, remove the `import './theme.css'` line in main.jsx. */
+
+/* ---- 1. Foundation: the same token names the app already reads, with brand values ---- */
+:root {
+	--blue: #1a2196;
+	--blue2: #2c36b4;
+	--navy: #0d1240;
+	--gold: #d9a441;
+	--peach: #e3a687;
+	--bg: #f8faf9;
+	--card: #ffffff;
+	/* Text hierarchy: near-black headings, dark body text, and a lighter gray for secondary text (still 4.5:1 or better). */
+	--ink: #0b0f1a;
+	--text: #111827;
+	--muted: #6b7280;
+	--line: #e3e7ea;
+	--green: #2f7d5b;
+	--teal: #a85a36;
+	--red: #b3262e;
+	--purple: #3f4bb8;
+	/* Type scale: a steady progression instead of 14 -> 20 -> 28. 12px stays the floor for readability. */
+	--text-xs: 12px;
+	--text-sm: 13px;
+	--text-base: 13px;
+	--text-md: 15px;
+	--text-lg: 17px;
+	--text-xl: 22px;
+
+	/* Density: sizes of the boxes the dashboard and shell are built from. */
+	/* One size for every dashboard title: the stat card label and the card h3 headings read this same value. */
+	--title-size: var(--text-sm);
+	--radius-card: 12px;
+	--card-pad: 14px;
+	--topbar-h: 64px;
+	--nav-item-h: 44px;
+	/* Sidebar gradient: starts at the logo's own cobalt so the seal blends in, and deepens to navy. */
+	--side-top: #2830b0;
+	--side-mid: #1a2196;
+	--side-bottom: #0f1658;
+	--shadow: 0 1px 2px rgba(13, 18, 64, 0.05), 0 6px 20px rgba(13, 18, 64, 0.05);
+
+	/* New: darker shades for icons and small marks, so they keep 3:1 or better on white. */
+	--gold-ink: #8f6310;
+	--copper-ink: #a85a36;
+	--tint-cobalt: #eceefb;
+	--tint-gold: #fbf1da;
+	--tint-copper: #f8e9df;
+	--tint-green: #e6f2ec;
+	--tint-crimson: #f8e7e8;
+}
+button:focus-visible,
+[role="button"]:focus-visible,
+a:focus-visible { outline-color: var(--blue2); }
+.workspace :is(h1, h2, h3, h4, h5) { color: var(--ink); }
+.workspace h3 { font-weight: var(--fw-heavy); }
+.page-head h1 { color: var(--ink); font-weight: var(--fw-heavy); letter-spacing: -0.01em; }
+.page-wrap { padding: 20px 24px 36px; }
+.card { padding: var(--card-pad); }
+.bar i { background: linear-gradient(90deg, var(--blue), var(--blue2)); }
+
+/* ---- 2. Shell: flat navy sidebar with a gold marker, warm topbar ---- */
+.app-shell { --sidebar-width-expanded: min(clamp(228px, 18vw, 248px), calc(100vw - 32px)); }
+.sidebar { padding-top: 16px; padding-bottom: 16px; background: linear-gradient(180deg, var(--side-top) 0%, var(--side-mid) 40%, var(--side-bottom) 100%); border-right: 1px solid rgba(255, 255, 255, 0.06); }
+.side-brand { height: 44px; padding-bottom: 16px; border-bottom-color: rgba(217, 164, 65, 0.3); }
+.sidebar-nav-scroll { margin-top: 12px; }
+.sidebar nav button { flex-basis: var(--nav-item-h); height: var(--nav-item-h); padding-top: 6px; padding-bottom: 6px; color: #cdd3ee; }
+.sidebar nav button:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
+.sidebar nav button.active { background: rgba(255, 255, 255, 0.09); color: #fff; box-shadow: inset 3px 0 0 var(--gold); }
+.sidebar nav button.active .nav-icon { color: var(--gold); }
+.topbar { height: var(--topbar-h); padding: 10px 24px; background: var(--bg); border-bottom-color: var(--line); }
+.search, .icon-btn { border-color: var(--line); }
+
+/* ---- 3. Dashboard: cards with a hierarchy ---- */
+.card, .table-card, .chart-card, .editor-card, .comments-card, .workflow-card, .settings-card { border-radius: var(--radius-card); }
+
+/* Summary cards: a large number; the icon is white on the same gradient as the sidebar. */
+.stat-grid .stat-card {
+	position: relative;
+	overflow: hidden;
+	padding: 12px 14px;
+	border-radius: var(--radius-card);
+	grid-template-columns: minmax(0, 1fr) auto;
+	grid-template-rows: minmax(28px, auto) 30px minmax(16px, auto);
+	grid-template-areas: "label icon" "value value" "note note";
+	column-gap: 10px;
+	min-height: 88px;
+}
+.stat-grid .stat-card .stat-icon { width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(160deg, var(--side-top), var(--side-mid) 55%, var(--side-bottom)); color: #ffffff; justify-self: end; align-self: center; }
+.stat-grid .stat-card span { align-self: center; color: var(--ink); font-weight: var(--fw-heavy); text-transform: none; letter-spacing: 0; font-size: var(--title-size); line-height: 1.3; }
+.stat-grid .stat-card strong { font-size: var(--text-xl); line-height: 1.1; letter-spacing: -0.01em; font-weight: var(--fw-semibold); color: var(--ink); font-variant-numeric: tabular-nums; align-self: center; }
+
+/* The dashboard rows are fixed height and the card bodies scroll, so a shorter row loses no content. */
+.dashboard-grid { grid-auto-rows: 280px; gap: 12px; }
+.dashboard-grid.lower { grid-auto-rows: 220px; }
+.stat-grid { gap: 10px; margin-bottom: 12px; }
+.stat-grid .stat-card small { font-size: var(--text-xs); }
+
+/* Content cards: a hairline under the header. */
+.dashboard-grid .card-head { border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 10px; }
+.dashboard-grid .card-head { min-height: 36px; }
+.dashboard-grid .card-head h3 { color: var(--ink); font-size: var(--title-size); line-height: 1.3; }
+
+/* Quick actions: a navy chip with a gold icon, matching the sidebar. */
+.quick-actions { gap: 6px; }
+.quick-actions button { padding: 8px 10px; background: #fff; border-color: var(--line); transition: border-color 0.18s, background-color 0.18s; }
+.quick-actions button:hover { border-color: var(--blue); background: var(--tint-cobalt); }
+.quick-actions button b { width: 28px; height: 28px; background: var(--navy); color: var(--gold); border-radius: 8px; }
+.quick-actions button > svg { color: var(--muted); }
+
+/* ---- 4. Controls shared by every screen: buttons, inputs, tables, tabs and status badges ---- */
+:root { --green-ink: #235f45; --copper-text: #8c4726; --tint-warm: #eef1f0; }
+
+.btn { padding: 9px 14px; border-radius: 8px; font-size: var(--text-sm); }
+.btn.primary { background: var(--blue); box-shadow: 0 1px 2px rgba(26, 33, 150, 0.28); }
+.btn.primary:hover { background: var(--blue2); }
+.btn.outline { background: #fff; color: var(--blue); border-color: #c4c7ec; }
+.btn.outline:hover { background: var(--tint-cobalt); }
+.btn.ghost { background: var(--tint-warm); color: var(--text); }
+.btn.ghost:hover { background: #e3e7e6; }
+.btn.danger { background: var(--tint-crimson); color: var(--red); border-color: #e7b7ba; }
+.btn.danger:hover { background: #f3d6d8; }
+.btn.success { background: var(--green); }
+
+.login-card input, .field input, .field select, .field textarea, .topbar input, select { border-color: #8a8880; border-radius: 8px; padding: 9px 11px; }
+.login-card input:focus, .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--blue2); box-shadow: 0 0 0 3px var(--tint-cobalt); }
+.form-error { background: var(--tint-crimson); color: #9b1f27; }
+
+.table-wrap th, .table-wrap td, .table-card th, .table-card td { padding: 9px 10px; border-bottom-color: #eceff0; }
+.table-wrap th, .table-card th { background: #f1f4f3; color: var(--muted); }
+
+.tabs button { color: var(--muted); }
+.tabs button.active { color: var(--navy); border-bottom-color: var(--gold); }
+
+
+/* ---- Status tags: a small rounded label with an icon, so the status reads without colour alone. Approved and Rejected are the end
+   states, so they are solid; the working states are light with a matching border. Both spellings (under-review / under_review)
+   are styled, because some screens pass the raw status. ---- */
+.status, .badge { height: 22px; padding: 0 8px 0 6px; gap: 5px; border: 1px solid transparent; border-radius: 6px; text-transform: none; letter-spacing: 0; font-size: var(--text-xs); font-weight: var(--fw-semibold); line-height: 1; }
+.badge { padding: 0 8px; }
+.status::before { content: none; width: 12px; height: 12px; flex: none; background: currentColor; -webkit-mask: var(--tag-icon) center / contain no-repeat; mask: var(--tag-icon) center / contain no-repeat; }
+.status.approved, .status.active { --tag-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E"); }
+.status.submitted { --tag-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 19V6M6 11l6-6 6 6'/%3E%3C/svg%3E"); }
+.status.under-review, .status.under_review { --tag-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8.5'/%3E%3Cpath d='M12 7.5v5l3 1.5'/%3E%3C/svg%3E"); }
+.status.for-revision, .status.for_revision { --tag-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 12a8 8 0 1 1-2.6-5.9'/%3E%3Cpath d='M20 4v4.5h-4.5'/%3E%3C/svg%3E"); }
+.status.rejected { --tag-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6.5 6.5l11 11M17.5 6.5l-11 11'/%3E%3C/svg%3E"); }
+.status.draft { --tag-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8' stroke-dasharray='3.2 3.2'/%3E%3C/svg%3E"); }
+.status.approved::before, .status.active::before, .status.submitted::before, .status.under-review::before, .status.under_review::before, .status.for-revision::before, .status.for_revision::before, .status.rejected::before, .status.draft::before { content: ""; }
+
+.badge.green, .status.approved, .status.active { background: var(--green-ink); color: #ffffff; border-color: var(--green-ink); }
+.badge.blue, .status.submitted { background: var(--tint-cobalt); color: var(--blue); border-color: #c4c7ec; }
+.badge.purple { background: var(--tint-cobalt); color: var(--purple); border-color: #c4c7ec; }
+.badge.gold, .status.under-review, .status.under_review { background: var(--tint-gold); color: var(--gold-ink); border-color: #ecd49a; }
+.badge.teal { background: var(--tint-copper); color: var(--copper-text); border-color: #efc9b4; }
+.status.for-revision, .status.for_revision { background: var(--tint-crimson); color: var(--red); border-color: #e7b7ba; }
+.status.rejected { background: #9b1f27; color: #ffffff; border-color: #9b1f27; }
+.status.draft { background: var(--tint-warm); color: #4b5563; border-color: #c4cac9; border-style: dashed; }
+
+/* Log out: light red on hover, solid red while pressed. */
+.logout { transition: background-color 0.15s, color 0.15s; }
+.logout:hover, .logout:focus-visible { background: var(--tint-crimson); color: var(--red); }
+.logout:active { background: var(--red); color: #fff; }
+
+/* ---- AI Checker: check history as a compact list. One row per check; the markup is the same button with the same spoken label.
+   The footer wrapper becomes transparent (display: contents), so its time and tags are columns of the row. ---- */
+.hist-card { container-type: inline-size; padding: 16px 18px; gap: 12px; }
+.hist-head h3 { font-size: var(--title-size); }
+.hist-grid { grid-template-columns: 1fr; gap: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #fff; }
+.hist-grid > li + li { border-top: 1px solid var(--line); }
+.hist-item {
+	grid-template-columns: 150px minmax(0, 1fr) auto 112px 10px;
+	align-items: center;
+	column-gap: 14px;
+	row-gap: 0;
+	padding: 10px 14px;
+	border: 0;
+	border-radius: 0;
+	background: #fff;
+	min-height: 64px;
+}
+.hist-item:hover { box-shadow: none; background: var(--tint-cobalt); }
+.hist-item:focus-visible { outline-offset: -2px; }
+.hist-item.good, .hist-item.warn { border-left: 0; }
+.hist-item::after { content: ""; grid-column: 5; grid-row: 1; width: 7px; height: 7px; border-top: 2px solid var(--muted); border-right: 2px solid var(--muted); transform: rotate(45deg); justify-self: end; }
+.hist-score { grid-column: 1; grid-row: 1; gap: 10px; align-items: center; }
+.hist-score b { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border-radius: 50%; border: 2px solid currentColor; font-weight: var(--fw-heavy); font-size: var(--text-sm); font-variant-numeric: tabular-nums; }
+.hist-item.good .hist-score b { background: var(--tint-green); color: var(--green-ink); }
+.hist-item.warn .hist-score b { background: var(--tint-gold); color: var(--gold-ink); }
+.hist-item.none .hist-score b { background: var(--tint-warm); color: #4b5563; }
+.hist-score small { max-width: 84px; line-height: 1.25; color: var(--muted); }
+.hist-main { grid-column: 2; grid-row: 1; }
+.hist-main strong { font-weight: var(--fw-bold); color: var(--ink); }
+.hist-main > span { font-size: var(--text-sm); color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hist-foot { display: contents; }
+.hist-foot time { grid-column: 4; grid-row: 1; text-align: right; white-space: nowrap; }
+.hist-tags { grid-column: 3; grid-row: 1; justify-content: flex-end; flex-wrap: nowrap; }
+@container (max-width: 640px) {
+	.hist-item { grid-template-columns: auto minmax(0, 1fr) 10px; row-gap: 6px; padding: 10px 12px; }
+	.hist-item::after { grid-column: 3; }
+	.hist-score { grid-column: 1; grid-row: 1; }
+	.hist-score small { display: none; }
+	.hist-main { grid-column: 2; grid-row: 1; }
+	.hist-main > span { white-space: normal; }
+	.hist-tags { grid-column: 2 / 4; grid-row: 2; justify-content: flex-start; flex-wrap: wrap; }
+	.hist-foot time { grid-column: 2 / 4; grid-row: 3; text-align: left; }
+}
+
+/* ---- Scrollbars are hidden everywhere. Wheel, touch and keyboard scrolling still work: only the bar is removed. ---- */
+html { scrollbar-gutter: auto; }
+* { scrollbar-width: none !important; -ms-overflow-style: none; }
+*::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
+/* ---- Dashboard: Time Usage card. Today's headline, a bar per day, three small figures. Responds to the card's own width. ---- */
+:root { --usage-today: #b9842a; }
+.usage-host { container-type: inline-size; }
+.usage { display: grid; gap: 10px; }
+.usage-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px 12px; flex-wrap: wrap; }
+.usage-hero { display: grid; line-height: 1.1; }
+.usage-hero strong { font-size: var(--text-xl); font-weight: var(--fw-semibold); letter-spacing: -0.01em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.usage-hero span { margin-top: 4px; font-size: var(--text-xs); color: var(--muted); }
+.usage-range { display: inline-flex; padding: 2px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+.usage-range button { border: 0; border-radius: 6px; padding: 4px 10px; background: transparent; color: var(--muted); font-size: var(--text-xs); font-weight: var(--fw-semibold); }
+.usage-range button.on { background: var(--blue); color: #ffffff; }
+.usage-chart { display: block; width: 100%; height: 84px; }
+.usage-bar { fill: var(--blue); }
+.usage-bar.today { fill: var(--usage-today); }
+.usage-bar.empty { fill: var(--line); }
+.usage-axis { display: flex; justify-content: space-between; margin-top: -4px; font-size: var(--text-xs); color: var(--muted); }
+.usage-axis span { flex: 1; text-align: center; }
+.usage-axis.sparse span { flex: none; }
+.usage-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0; padding-top: 8px; border-top: 1px solid var(--line); }
+.usage-stats dt { font-size: var(--text-xs); color: var(--muted); }
+.usage-stats dd { margin: 2px 0 0; font-size: var(--text-sm); font-weight: var(--fw-semibold); color: var(--ink); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.usage-note, .usage-foot { margin: 0; font-size: var(--text-xs); color: var(--muted); }
+@container (max-width: 300px) { .usage-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* ---- Dropdown (components/Select.jsx): the closed button and the open list. Where a screen sized the native <select> by tag
+   (.page-actions select, .pick-field select ...), the same size is given to the .select wrapper here. ---- */
+.select { position: relative; display: inline-block; max-width: 100%; vertical-align: middle; }
+.field > .select, .pick-field > .select, .language-settings .select, .aic-filter-row .select, .user-field .select { display: block; width: 100%; }
+.page-actions > .select { width: 180px; max-width: 100%; min-width: 0; }
+.svm-version .select, .settings-card .select { max-width: 100%; min-width: 0; }
+.repository-filters .field .select-trigger { height: 38px; }
+.language-settings .select-trigger { min-height: 42px; }
+
+.select-trigger { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 36px; padding: 7px 10px 7px 11px; border: 1px solid #8a8880; border-radius: 8px; background: #ffffff; color: var(--text); font: inherit; font-size: var(--text-sm); text-align: left; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
+.select-trigger:hover:not(:disabled) { border-color: #4b5563; }
+.select-trigger:focus-visible, .select-trigger[aria-expanded="true"] { outline: none; border-color: var(--blue2); box-shadow: 0 0 0 3px var(--tint-cobalt); }
+.select-trigger:disabled { background: #f1f4f3; color: #5b6270; border-color: var(--line); cursor: not-allowed; }
+.select-value { display: grid; flex: 1; min-width: 0; overflow: hidden; }
+.select-current { grid-area: 1 / 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.select-sizer { grid-area: 1 / 1; display: grid; height: 0; overflow: hidden; visibility: hidden; pointer-events: none; }
+.select-sizer > span { grid-area: 1 / 1; white-space: nowrap; }
+.select-chevron { flex: none; color: var(--muted); transition: transform 0.15s, color 0.15s; }
+.select-trigger:hover:not(:disabled) .select-chevron { color: var(--blue2); }
+.select-trigger[aria-expanded="true"] .select-chevron { transform: rotate(180deg); color: var(--blue2); }
+
+.select-panel { position: fixed; z-index: 10000; display: flex; flex-direction: column; padding: 4px; background: #ffffff; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 10px 30px rgba(13, 18, 64, 0.14), 0 2px 6px rgba(13, 18, 64, 0.08); overflow: hidden; }
+.select-hint { flex: none; margin-bottom: 4px; padding: 6px 10px 6px; border-bottom: 1px solid var(--line); font-size: var(--text-xs); color: var(--muted); }
+.select-list { min-height: 0; margin: 0; padding: 0; list-style: none; overflow-y: auto; }
+.select-option { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 34px; padding: 6px 10px; border-radius: 7px; font-size: var(--text-sm); color: var(--text); cursor: pointer; overflow-wrap: anywhere; }
+.select-option[data-active="true"] { background: var(--tint-cobalt); }
+.select-option.is-selected { color: var(--blue); font-weight: var(--fw-semibold); }
+.select-option.is-disabled { color: var(--muted); opacity: 0.6; cursor: not-allowed; }
+.select-check { flex: none; color: var(--blue); }
+.select-empty { padding: 10px; font-size: var(--text-xs); color: var(--muted); }
+
+/* Subjects table toolbar: the label above the program filter reads like a stat card title (same size and weight, sentence case).
+   Only that label: the subject count beside it is a different span. */
+.sm-toolbar .field > span { color: var(--ink); font-size: var(--title-size); font-weight: var(--fw-heavy); line-height: 1.3; text-transform: none; letter-spacing: 0; }
+
+/* The toolbar sits inside a card that already has its own padding, so it adds none at the sides or top: the label then starts where the
+   other card titles on the page start (the Programs title above it). The space below it and the divider line stay. */
+.sm-toolbar { padding: 0 0 12px; }
+
+/* Quick Actions: the icon lines up with the title however many lines the description takes, the arrow stays centred on the button, and
+   the height follows the text. The hidden second-language copy that StableLabel keeps for layout is dropped here: it made the button as
+   tall as the longer Tagalog text, leaving blank space under the English one. The dashboard rows are fixed height with scrolling bodies, so
+   a button that changes height with the language moves nothing else. */
+.quick-actions button { align-items: start; min-height: 56px; }
+.quick-actions button > svg:last-child { align-self: center; }
+.quick-actions .stable-label-reserve { display: none; }
+.quick-actions button > span { gap: 2px; line-height: 1.3; overflow-wrap: break-word; text-wrap: pretty; }
+
+/* Subject modal. The dark header keeps white text (the workspace heading colour must not reach it: it is also the Assignments header).
+   Cards in a row stretch to one height so their headers, bodies and Save footers line up, and their titles capitalise each word. */
+.workspace .asg-head h3 { color: #ffffff; }
+.sm-pair { align-items: stretch; }
+.sm-pair > .sm-card { display: flex; flex-direction: column; }
+.sm-pair > .sm-card > .sm-card-b { flex: 1; }
+.sm-card-h h4 { text-transform: capitalize; }
+
+/* The Actions column of the catalog tables (Programs and Subjects): one definition, so the two tables on the page share the same width,
+   the same left alignment for the header and the icons, and the same button spacing, and their icons stack in a straight line.
+   112px = two 34px buttons, the 8px gap and the cell padding. */
+.col-actions { width: 112px; min-width: 112px; white-space: nowrap; text-align: left; }
+.program-management-actions, .sm-actions { display: flex; flex-wrap: nowrap; gap: 8px; justify-content: flex-start; }
+.program-management-actions .icon-btn, .sm-actions .icon-btn { color: var(--blue); border-width: 2px; border-color: #b8c8ec; }
+.program-management-actions .icon-btn:hover, .sm-actions .icon-btn:hover { background: #eceefb; }
+.program-management-actions .icon-btn.is-delete, .sm-actions .icon-btn.is-delete { color: #c84848; border-color: #f2bebe; }
+.program-management-actions .icon-btn.is-delete:hover, .sm-actions .icon-btn.is-delete:hover { background: #fff3f3; }
+
+/* ---- Subject deadlines ---- */
+/* The deadline chip in a subject's row: set (dashed), upcoming, due today, done (everyone submitted) or failed (someone missed it). */
+.dl-chip { display: inline-flex; align-items: center; gap: 8px; max-width: 100%; padding: 5px 10px; border: 1px solid var(--line); border-radius: 8px; background: #ffffff; color: var(--text); font: inherit; font-size: var(--text-xs); text-align: left; cursor: pointer; transition: border-color 0.15s, background-color 0.15s; }
+.dl-chip:hover { border-color: var(--blue); background: var(--tint-cobalt); }
+.dl-chip:focus-visible { outline: 2px solid var(--blue2); outline-offset: 2px; }
+.dl-chip.tone-set { color: var(--blue); border-style: dashed; border-color: #c4c7ec; }
+.dl-chip-main { display: grid; line-height: 1.25; }
+.dl-chip-main b { font-weight: var(--fw-semibold); color: var(--ink); }
+.dl-chip-main small { color: var(--muted); }
+.dl-chip.tone-due_today { background: var(--tint-gold); border-color: #ecd49a; }
+.dl-chip.tone-due_today .dl-chip-main small { color: var(--gold-ink); }
+.dl-chip.tone-done { background: var(--tint-green); border-color: #b8d8c6; }
+.dl-chip.tone-done .dl-chip-main small { color: var(--green-ink); }
+.dl-chip.tone-failed { background: var(--tint-crimson); border-color: #e7b7ba; }
+.dl-chip.tone-failed .dl-chip-main small { color: #9b1f27; }
+
+/* The dialog: the form, then each faculty member's status. */
+.dl-dialog form { display: grid; gap: 12px; }
+.dl-dialog .field textarea { resize: vertical; min-height: 64px; }
+.dl-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.dl-advanced summary { cursor: pointer; font-size: var(--text-xs); font-weight: var(--fw-semibold); color: var(--muted); }
+.dl-advanced .field { margin-top: 8px; }
+.dl-progress { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+.dl-progress h4 { margin: 0 0 10px; font-size: var(--text-sm); font-weight: var(--fw-heavy); color: var(--ink); }
+.dl-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 0 0 12px; }
+.dl-stats > div { padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: #ffffff; }
+.dl-stats dt { font-size: var(--text-xs); color: var(--muted); }
+.dl-stats dd { margin: 2px 0 0; font-size: var(--text-lg); font-weight: var(--fw-semibold); color: var(--ink); font-variant-numeric: tabular-nums; }
+.dl-stats .is-failed dd { color: #9b1f27; }
+.dl-people { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.dl-people li { display: grid; grid-template-columns: minmax(0, 1fr) auto 34px; align-items: center; gap: 2px 12px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: #ffffff; }
+.dl-people .dl-name { font-size: var(--text-sm); font-weight: var(--fw-semibold); color: var(--ink); overflow-wrap: anywhere; }
+.dl-people small { grid-column: 1 / -1; font-size: var(--text-xs); color: var(--muted); }
+@media (max-width: 560px) { .dl-fields, .dl-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* The status tags of a requirement. Failed is solid like the other end states; the rest are light, with the same icons as the tags above. */
+.status.dl-upcoming, .status.dl-due_today { --tag-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8.5'/%3E%3Cpath d='M12 7.5v5l3 1.5'/%3E%3C/svg%3E"); }
+.status.dl-failed { --tag-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6.5 6.5l11 11M17.5 6.5l-11 11'/%3E%3C/svg%3E"); }
+.status.dl-submitted, .status.dl-submitted_late { --tag-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E"); }
+.status.dl-upcoming::before, .status.dl-due_today::before, .status.dl-failed::before, .status.dl-submitted::before, .status.dl-submitted_late::before { content: ""; }
+.status.dl-upcoming { background: var(--tint-cobalt); color: var(--blue); border-color: #c4c7ec; }
+.status.dl-due_today { background: var(--tint-gold); color: var(--gold-ink); border-color: #ecd49a; }
+.status.dl-failed { background: #9b1f27; color: #ffffff; border-color: #9b1f27; }
+.status.dl-submitted { background: var(--tint-green); color: var(--green-ink); border-color: #b8d8c6; }
+.status.dl-submitted_late { background: var(--tint-gold); color: var(--gold-ink); border-color: #ecd49a; }
+
+/* Upcoming Deadlines rows are buttons (they go to the page where the deadline is handled); a missed one is marked on the left. */
+.deadline.dl-row { width: 100%; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; transition: background-color 0.15s; }
+.deadline.dl-row:hover { background: var(--tint-cobalt); }
+.deadline.dl-row:focus-visible { outline: 2px solid var(--blue2); outline-offset: -2px; }
+.deadline.dl-row.is-failed > div { background: var(--tint-crimson); color: #9b1f27; }
+.deadline.dl-row small { color: var(--muted); font-size: var(--text-xs); }
+.deadline.dl-row:hover small { color: #4b5563; }
+.deadline.dl-row p { min-width: 0; }
+.deadline.dl-row strong { overflow-wrap: anywhere; color: var(--ink); }
+/* My Syllabi: the deadline of a syllabus's subject, above its details. */
+.syl-deadline { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-bottom: 8px; font-size: var(--text-xs); color: var(--muted); }
+.dl-progress-head { display: flex; align-items: center; justify-content: space-between; gap: 8px 12px; flex-wrap: wrap; margin-bottom: 10px; }
+.dl-progress-head h4 { margin: 0; }
+.dl-progress-head .btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; }
+.dl-remind { color: var(--blue); border-width: 2px; border-color: #b8c8ec; }
+.dl-remind:hover:not(:disabled) { background: #eceefb; }
+.dl-remind:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* A settled deadline: everyone assigned has submitted. */
+.dl-settled { margin: 8px 0 0; padding: 8px 12px; border-radius: 10px; background: var(--tint-green); color: var(--green-ink); font-size: var(--text-sm); }
+
+/* A subject another faculty member already holds (a subject has one faculty member). */
+.asg-held { display: inline-block; margin-left: 6px; color: var(--muted); font-size: var(--text-xs); }
+.asg-ledger tr:has(input:disabled:not(:checked)) td:not(.asg-c0) { opacity: 0.7; }

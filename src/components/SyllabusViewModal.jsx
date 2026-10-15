@@ -9,6 +9,7 @@ import { fileName, noFormMessage, programLabel, subjectLabel, toneStyle, version
 import { Avatar } from './ui';
 import ReviewDocument from '../views/ReviewDocument';
 import { useModalLayer } from './useModalLayer';
+import Select from './Select';
 
 // The reviewer's view of a submitted syllabus: who wrote it, for which program and subject, and the whole syllabus in a window. It has
 // no compliance check: an administrator checks a submission in the AI Checker, and Review & Approval is only the syllabus and the decision.
@@ -40,7 +41,7 @@ export default function SyllabusViewModal({ syllabusId, onClose, aside, avatarUr
     <div className="overlay" onClick={onClose}>
       <div className="modal svm-modal" role="dialog" aria-modal="true" aria-labelledby="svm-title" tabIndex={-1} ref={dialog} onClick={(e) => e.stopPropagation()}>
         <div className="modal-head svm-head" style={s ? toneStyle(s) : undefined}>
-          <Avatar className="avatar svm-av" src={avatarUrl} name={s ? s.facultyName : ''} />
+          <Avatar className="avatar svm-av" userId={s ? s.userId : undefined} src={avatarUrl} name={s ? s.facultyName : ''} />
           <div className="svm-who">
             <h3 id="svm-title">{s ? s.facultyName || translateUI("ui.syllabus_1b731d") : translateUI("ui.syllabus_1b731d")}</h3>
             {s ? <div className="svm-meta"><span className="rb-pill">{programLabel(s)}</span><span className="svm-subject">{subjectLabel(s)}</span></div> : <small>{translateUI("ui.opening_b1b853")}</small>}
@@ -54,9 +55,9 @@ export default function SyllabusViewModal({ syllabusId, onClose, aside, avatarUr
             {payload.versions.length > 1
               ? (
                 <label className="svm-version"><small>{translateUI("ui.version_2da600")}</small>
-                  <select value={payload.version ? payload.version.id : ''} onChange={(e) => setVersionId(Number(e.target.value))}>
+                  <Select value={payload.version ? payload.version.id : ''} onChange={(e) => setVersionId(Number(e.target.value))}>
                     {payload.versions.map((v) => <option key={v.id} value={v.id}>{versionOption(v, v.id === latestId)}</option>)}
-                  </select>
+                  </Select>
                 </label>
               )
               : <span className="cmp-small">{payload.version ? translateUI("ui.version_03283e") + payload.version.label : translateUI("ui.saved_form_not_submitted_yet_c3a777")}</span>}

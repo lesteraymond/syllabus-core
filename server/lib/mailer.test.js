@@ -55,3 +55,22 @@ test('a failure is named for what to fix: login refused, server unreachable, or 
     }
   } finally { console.error = origErr; }
 }));
+
+test('a notice email greets by name, lists its lines, links back to the app, and cannot be injected through them', env({ APP_URL: 'http://app.test/' }, async () => {
+  const t = fake(); mailer.setTransport(t);
+  const r = await mailer.sendNotice({ to: 'fay@x.ph', name: 'Fay', subject: 'New deadline: IT 204', lines: ['Submit by Oct 30.', 'Use <b>v4</b>.'] });
+  assert.deepStrictEqual(r, { sent: true });
+  const m = t.sent[0];
+  assert.strictEqual(m.to, 'fay@x.ph'); assert.strictEqual(m.subject, 'New deadline: IT 204');
+  assert.match(m.text, /^Hello Fay,/); assert.match(m.text, /Submit by Oct 30\./); assert.match(m.text, /Open the Syllabus Management System: http:\/\/app\.test$/m);
+  assert.doesNotMatch(m.html, /<b>v4/); assert.match(m.html, /&lt;b&gt;v4&lt;\/b&gt;/); assert.match(m.html, /href="http:\/\/app\.test"/);
+  assert.doesNotMatch(m.text + m.html, /password/i, 'a notice never carries a password');
+}));
+
+test('a notice email with no SMTP settings is not sent and says why, and a failing transport never throws', env({ SMTP_HOST: '', MAIL_FROM: '' }, async () => {
+  mailer.setTransport(null);
+  delete process.env.SMTP_HOST; delete process.env.MAIL_FROM;
+  assert.deepStrictEqual(await mailer.sendNotice({ to: 'a@x.ph', name: 'A', subject: 'S', lines: ['x'] }), { sent: false, reason: 'not_configured' });
+  mailer.setTransport(fake(true));
+  assert.deepStrictEqual(await mailer.sendNotice({ to: 'a@x.ph', name: 'A', subject: 'S', lines: ['x'] }), { sent: false, reason: 'failed' });
+}));

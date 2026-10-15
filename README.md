@@ -11,7 +11,6 @@ A comprehensive syllabus content management system for institutional undergradua
 - **My Syllabi** — Faculty view for managing own submissions (edit, delete, version history, messaging)
 - **Review & Approval** — Admin queue with approve/reject/revision workflow
 - **AI Syllabus Checker** — Simulated compliance scoring with recommendations
-- **CO-PO Mapping** — Interactive curriculum outcome matrix using I (Introduced), R (Reinforced), M (Mastered) alignment levels
 - **Repository** — Search and filter (Faculty sees own, Admin sees all)
 - **Compliance Monitoring** — Per-faculty compliance tracking
 - **Analytics** — Hand-rolled charts and quality metrics with animations (role-scoped: Faculty sees own, Admin sees all)
@@ -42,6 +41,7 @@ npm run dev        # starts API on http://localhost:3001
 ```bash
 npm run migrate-builder
 npm run migrate-assignments
+npm run migrate-subject-owner
 npm run migrate-program-egas
 npm run migrate-syllabus-versions
 npm run migrate-notifications

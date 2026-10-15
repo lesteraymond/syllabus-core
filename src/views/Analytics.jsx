@@ -4,6 +4,7 @@ import { t as translateUI } from "../i18n/index.js";
 import { useMemo } from 'react';
 import { ChartCard, Donut, Insight, Legend, PageHead, Progress } from '../components/ui';
 import { BRAND } from '../data/initialData';
+import Select from '../components/Select';
 
 function LineChart({ data }) {
   return <div><svg className="line-chart" viewBox="0 0 300 120"><g className="grid-lines">{[20, 50, 80, 110].map(y => <line key={y} x1="0" y1={y} x2="300" y2={y} />)}</g><polyline points={data.map(p => p.join(',')).join(' ')} fill="none" stroke={BRAND.blue} strokeWidth="3" />{data.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="4" fill="white" stroke={BRAND.blue} strokeWidth="3" />)}</svg><div className="axis-labels"><span>{translateUI("ui.mar_c4ba08")}</span><span>{translateUI("ui.apr_befde5")}</span><span>{translateUI("ui.may_c94f47")}</span><span>{translateUI("ui.jun_6d90df")}</span><span>{translateUI("ui.jul_b73755")}</span><span>{translateUI("ui.aug_75629a")}</span></div></div>;
@@ -85,7 +86,7 @@ export default function Analytics({ syllabi, user }) {
 
   return (
     <>
-      <PageHead title={isFaculty ? translateUI("ui.my_analytics_1ab328") : translateUI("ui.analytics_quality_dashboard_b85172")} subtitle={isFaculty ? translateUI("ui.track_your_personal_compliance_scores_and_submission_performance_b66964") : translateUI("ui.monitor_compliance_curriculum_coverage_submission_performance_and_78b463")} actions={<><select><option value="AY 2026–2027">{translateUI("ui.ay_2026_2027_830f3e")}</option><option value="AY 2025–2026">{translateUI("ui.ay_2025_2026_8b00a8")}</option></select><StableButton className="btn outline">{translateUI("ui.download_report_9f36e2")}</StableButton></>} />
+      <PageHead title={isFaculty ? translateUI("ui.my_analytics_1ab328") : translateUI("ui.analytics_quality_dashboard_b85172")} subtitle={isFaculty ? translateUI("ui.track_your_personal_compliance_scores_and_submission_performance_b66964") : translateUI("ui.monitor_compliance_curriculum_coverage_submission_performance_and_78b463")} actions={<><Select><option value="AY 2026–2027">{translateUI("ui.ay_2026_2027_830f3e")}</option><option value="AY 2025–2026">{translateUI("ui.ay_2025_2026_8b00a8")}</option></Select><StableButton className="btn outline">{translateUI("ui.download_report_9f36e2")}</StableButton></>} />
       <div className="analytics-grid">
         <ChartCard title={translateUI("ui.compliance_trend_2fa4a1")} subtitle={isFaculty ? translateUI("ui.your_ai_compliance_score_over_time_f2f70b") : translateUI("ui.average_ai_compliance_score_603cf2")}><LineChart data={lineData} /></ChartCard>
         <ChartCard title={translateUI("ui.outcome_coverage_5788ff")} subtitle={isFaculty ? translateUI("ui.your_syllabus_coverage_b60846") : translateUI("ui.coverage_across_approved_syllabi_923a95")}><DonutBreakdown {...donutData} /></ChartCard>

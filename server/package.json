@@ -20,7 +20,10 @@
     "migrate-passwords": "node db/migrate-passwords.js",
     "seed-outcomes": "node db/seed-outcomes.js",
     "migrate-program-management": "node db/migrate-program-management.js",
-    "migrate-subject-standards": "node db/migrate-subject-standards.js"
+    "migrate-subject-standards": "node db/migrate-subject-standards.js",
+    "migrate-usage": "node db/migrate-usage.js",
+    "migrate-deadlines": "node db/migrate-deadlines.js",
+    "migrate-subject-owner": "node db/migrate-subject-owner.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

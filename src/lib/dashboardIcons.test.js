@@ -10,23 +10,23 @@ const lum = (h) => { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255
 const contrast = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
 const rule = (sel) => { const m = css.match(new RegExp('(?:^|\\n)\\s*' + sel.replace(/[.*+?^${}()|[\]\\>]/g, '\\$&') + '\\s*\\{([^}]*)\\}')); return m ? m[1] : ''; };
 
-test('the dashboard icon colour is black, and it beats the old per-category colours', () => {
-  const black = (css.match(/--icon-black:\s*(#[0-9a-fA-F]{6})/) || [])[1];
-  assert.ok(black, '--icon-black is defined');
-  assert.ok(lum(black) < 0.01, 'it is black: ' + black);
-  assert.match(css, /\.stat-grid \.stat-card \.stat-icon, \.quick-actions button b, \.quick-actions button > svg \{ color: var\(--icon-black\); \}/);
-  // the old rules (.stat-icon.blue and so on) have specificity 0,2,0; the new one is 0,3,0 and so wins whatever the order
-  assert.ok(/\.stat-icon\.blue/.test(css), 'the old category colours are still there, outranked rather than deleted');
+const theme = readFileSync(new URL('../theme.css', import.meta.url), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+const token = (name, source = theme) => (source.match(new RegExp('--' + name + ': *(#[0-9a-fA-F]{6})')) || [])[1];
+
+test('the dashboard icons take their colour from the brand theme, and it beats the old black rule', () => {
+  // the theme loads after styles.css and uses the same specificity (0,3,0), so it wins for the stat tiles
+  assert.match(theme, /\.stat-grid \.stat-card \.stat-icon \{[^}]*color: #ffffff/);
+  assert.match(theme, /\.quick-actions button b \{[^}]*color: var\(--gold\)/);
+  assert.match(readFileSync(new URL('../main.jsx', import.meta.url), 'utf8'), /import '\.\/styles\.css';\s*import '\.\/theme\.css';/, 'theme.css is imported after styles.css');
 });
 
-test('black is readable on every tile the dashboard icons sit on (4.5:1)', () => {
-  const black = (css.match(/--icon-black:\s*(#[0-9a-fA-F]{6})/) || [])[1];
-  const tiles = ['blue', 'teal', 'gold', 'green', 'purple', 'red'].map((c) => [c, (rule('.stat-icon.' + c).match(/background:\s*(#[0-9a-fA-F]{6})/) || [])[1]]);
-  tiles.push(['quick action', (rule('.quick-actions b').match(/background:\s*(#[0-9a-fA-F]{6})/) || [])[1]]);
-  tiles.forEach(([n, bg]) => { assert.ok(bg, n + ' tile colour found'); assert.ok(contrast(black, bg) >= 4.5, n + ' tile: ' + contrast(black, bg).toFixed(1)); });
+test('the stat icons are white on the sidebar gradient, and readable on every stop of it', () => {
+  assert.match(theme, /\.stat-icon \{[^}]*background: linear-gradient\([^)]*var\(--side-top\)[^}]*var\(--side-bottom\)/);
+  ['side-top', 'side-mid', 'side-bottom'].forEach((stop) => assert.ok(contrast('#ffffff', token(stop)) >= 4.5, 'white icon on ' + stop + ': ' + contrast('#ffffff', token(stop)).toFixed(1)));
+  assert.ok(contrast(token('gold'), token('navy')) >= 4.5, 'gold icon on the navy quick-action chip: ' + contrast(token('gold'), token('navy')).toFixed(1));
 });
 
-test('every icon on the dashboard uses the solid weight, so black really is black', () => {
+test('every icon on the dashboard uses the regular weight, so the brand colours read cleanly', () => {
   const icons = dash.match(/<Icon\b[^>]*>/g) || [];
   assert.ok(icons.length >= 6, 'the dashboard icons were found: ' + icons.length);
   icons.forEach((i) => assert.match(i, /weight="regular"/, i));

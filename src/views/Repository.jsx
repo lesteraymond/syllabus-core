@@ -6,6 +6,7 @@ import { syllabi as syllabiApi } from '../lib/api';
 import { fmt } from '../lib/utils';
 import { canChat } from '../lib/chatPartner';
 import { Avatar, PageHead, Field } from '../components/ui';
+import Select from '../components/Select';
 
 // Builder syllabi use the catalog program; older uploads may only have a curriculum program.
 export const repositoryProgram = syllabus => syllabus.programCode?.trim() || syllabus.programName?.trim() || syllabus.program?.trim() || 'No program';
@@ -38,9 +39,9 @@ export default function Repository({ syllabi, user, notify, setChatCode, setHist
   const rows = useMemo(() => mySyllabi.filter(x => (filters.program === 'All' || repositoryProgram(x) === filters.program) && (`${x.courseCode} ${x.title} ${x.faculty}`.toLowerCase().includes(filters.q.trim().toLowerCase()))), [mySyllabi, filters]);
   return (
     <>
-      <PageHead title={translateUI("ui.syllabus_repository_95d8eb")} subtitle={isFaculty ? translateUI("ui.search_and_access_your_syllabi_approved_by_an_administrator_112b87") : translateUI("repository.approvedSubtitle")} actions={<StableButton className="btn outline" onClick={() => notify(translateUI("ui.repository_export_prepared_demo_02ceb3"))}>{translateUI("ui.export_list_b039ae")}</StableButton>} />
+      <PageHead title={translateUI("ui.syllabus_repository_95d8eb")} subtitle={isFaculty ? translateUI("ui.search_and_access_your_syllabi_approved_by_an_administrator_112b87") : translateUI("repository.approvedSubtitle")} actions={<><StableButton className="btn outline" onClick={() => notify(translateUI("ui.repository_export_prepared_demo_02ceb3"))}>{translateUI("ui.export_list_b039ae")}</StableButton></>} />
       <div className="filter-card repository-filters">
-        <Field label={translateUI("ui.program_9d6800")}><select value={filters.program} onChange={e => setFilters({ ...filters, program: e.target.value })}><option value="All">{translateUI("ui.all_6a7208")}</option>{programs.map(program => <option key={program} value={program}>{program === 'No program' ? translateUI("ui.no_program_d8600a") : program}</option>)}</select></Field>
+        <Field label={translateUI("ui.program_9d6800")}><Select value={filters.program} onChange={e => setFilters({ ...filters, program: e.target.value })}><option value="All">{translateUI("ui.all_6a7208")}</option>{programs.map(program => <option key={program} value={program}>{program === 'No program' ? translateUI("ui.no_program_d8600a") : program}</option>)}</Select></Field>
         <Field label={translateUI("ui.search_bce064")}><input value={filters.q} onChange={e => setFilters({ ...filters, q: e.target.value })} placeholder={translateUI("ui.course_code_title_or_faculty_1878e5")} /></Field>
         <StableButton className="btn ghost reset" onClick={() => setFilters({ program: 'All', q: '' })}>{translateUI("ui.reset_44c57a")}</StableButton>
       </div>
@@ -55,7 +56,7 @@ export default function Repository({ syllabi, user, notify, setChatCode, setHist
           <tbody>{rows.map(x => <tr key={x.id}>
             <td><strong>{x.courseCode}</strong><small>{x.title}</small></td>
             <td>{repositoryProgram(x) === 'No program' ? translateUI("ui.no_program_d8600a") : repositoryProgram(x)}</td>
-            <td><span className="user-cell"><Avatar src={x.ownerAvatarUrl} name={x.faculty} /><span>{x.faculty}</span></span></td>
+            <td><span className="user-cell"><Avatar userId={x.userId} src={x.ownerAvatarUrl} name={x.faculty} /><span>{x.faculty}</span></span></td>
             <td><span className={`status ${x.status}`}>{translateUI("ui.approved_afd61f")}</span></td>
             <td>{fmt(x.updatedAt)}</td>
             <td><div className="repository-actions">{canChat(x, user) && <button className="table-action" aria-label={translateUI("ui.open_chat_for_p0_633dd9", { p0: (x.courseCode) })} onClick={() => setChatCode(x.id)}>✉</button>}<button className="table-action" aria-label={translateUI("ui.view_history_for_p0_46396f", { p0: (x.courseCode) })} onClick={() => setHistCode(x.id)}>◷</button></div></td>
