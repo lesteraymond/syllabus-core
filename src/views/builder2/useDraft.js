@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import { phTime } from '../../lib/phTime';
 import { syllabi as syllabiApi } from '../../lib/api';
 import { SCHEMA_VERSION, clone, emptyDraft, hydrateContent } from '../../lib/syllabusModel';
 
@@ -14,7 +15,7 @@ function reducer(state, a) {
   return state;
 }
 
-const stamp = () => new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+const stamp = () => phTime(new Date()); // "Saved 3:44 PM", in Philippine time
 
 // One draft state object with a reducer, plus section-level autosave.
 //  - a brand-new syllabus has no server row until the first change; then a draft is created and every section saved;
@@ -43,7 +44,7 @@ export function useDraft(editing) {
         if (idRef.current) {
           const r = await syllabiApi.getContent(idRef.current);
           content = r.content;
-          info = { editable: r.editable, status: r.status, version: r.version, lockedReason: r.lockedReason || '' };
+          info = { editable: r.editable, status: r.status, version: r.version, lockedReason: r.lockedReason || '', nextVersion: r.nextVersion || '', reviewerNote: r.reviewerNote || '' };
         }
         let d;
         if (content) {

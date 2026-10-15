@@ -1,4 +1,4 @@
-// The Assignments modal keeps working while subjects are created in Subjects & CLOs. When the browser tab regains focus
+// The Assignments modal keeps working while subjects are created in Program & Subjects. When the browser tab regains focus
 // it re-fetches the programs and subjects and merges them with what the admin has ticked so far.
 // Pure functions, so they are unit-tested without React.
 

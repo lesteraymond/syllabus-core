@@ -8,6 +8,8 @@ const { createNotification, notifyAdmins } = require('../lib/notify');
 const rules = require('../lib/syllabusRules');
 const assignments = require('../lib/assignments');
 const { validateReason, typeForStatus, MAX_LENGTH } = require('../lib/reviewComments');
+const compliance = require('../lib/compliance/service');
+const { changedSections, describeChanges } = require('../lib/versionChange');
 const router = express.Router();
 
 const storage = multer.diskStorage({
@@ -21,7 +23,29 @@ const storage = multer.diskStorage({
     cb(null, unique + path.extname(file.originalname));
   }
 });
-const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
+// Syllabus files are PDFs only: every reviewer and student can then open them in the browser.
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (path.extname(file.originalname).toLowerCase() === '.pdf' && file.mimetype === 'application/pdf') return cb(null, true);
+    const err = new Error('Only PDF files are accepted');
+    err.status = 400;
+    cb(err);
+  },
+});
+
+// multer's own errors (wrong file type, over 10MB) become a normal JSON error the app can show.
+const onePdf = (req, res, next) => upload.single('file')(req, res, (err) => {
+  if (!err) return next();
+  const message = err.code === 'LIMIT_FILE_SIZE' ? 'That file is larger than 10MB.' : err.message || 'The upload failed.';
+  res.status(err.status || 400).json({ message, error: message });
+});
+
+// A submission goes to the AI Checker first and is decided in Review & Approval only after the administrator has checked it there. These
+// are the decisions that wait for that check (submitting, and moving to "under review", do not).
+const DECISIONS = ['approved', 'for_revision', 'rejected'];
+const CHECK_FIRST = 'Check this syllabus in the AI Checker before you decide on it.';
 
 router.get('/', requireAuth, async (req, res) => {
   try {
@@ -33,11 +57,23 @@ router.get('/', requireAuth, async (req, res) => {
       query += ' WHERE s.user_id = ?';
       params.push(req.session.user.id);
     } else {
-      query += " WHERE s.status <> 'draft'"; // drafts belong to their owner until submitted
+      query += " WHERE (s.status <> 'draft' OR s.user_id = ?)"; // only the administrator's own drafts are visible
+      params.push(req.session.user.id);
     }
+
+    // Repository reads are approved-only; the default list still powers the workflow tabs.
+    if (req.query.scope === 'repository') query += " AND s.status = 'approved'";
 
     query += ' ORDER BY s.uploaded_at DESC';
     const [rows] = await db.query(query, params);
+
+    // For an administrator: which submissions still wait for their own AI check (checkable, and not checked on the newest version).
+    // Without the compliance tables nothing can be checked, so nothing waits.
+    const admin = req.session.user.role === 'admin';
+    let states = new Map();
+    if (admin && rows.length) {
+      try { if (await compliance.isInstalled(db)) states = await compliance.adminCheckStates(db, rows.map((r) => r.syllabus_id)); } catch { states = new Map(); }
+    }
 
     res.json(rows.map(r => ({
       id: r.syllabus_id,
@@ -57,6 +93,7 @@ router.get('/', requireAuth, async (req, res) => {
       program: r.program_name || '',
       programCode: r.program_code || '', // the catalog program of the subject (the field above comes from the old curriculum)
       courseTitle: r.course_title || '',
+      ...(admin ? { awaitingAiCheck: !!(states.get(r.syllabus_id) && states.get(r.syllabus_id).checkable && !states.get(r.syllabus_id).checked) } : {}),
     })));
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -102,10 +139,11 @@ const checkLengths = ({ title, courseCode }) => {
 
 const VERSION_COLUMNS = `(syllabus_id, version_label, title, course_code, curriculum_id, file_path, status_at_save, note, created_by)`;
 
-router.post('/', requireAuth, upload.single('file'), async (req, res) => {
+router.post('/', requireAuth, onePdf, async (req, res) => {
   let committed = false;
   try {
     const db = req.app.locals.db;
+    if (rules.isAdmin(req.session.user)) throw httpError(403, 'Use the syllabus builder and AI Checker to publish your own syllabus.');
     const { title, courseCode, curriculumId } = req.body;
     checkLengths({ title, courseCode });
     await assignments.requireCourseCodeAccess(db, req.session.user, courseCode); // faculty: only an assigned course
@@ -145,7 +183,7 @@ router.post('/', requireAuth, upload.single('file'), async (req, res) => {
 // Two kinds of update share this route:
 //  - an admin changes the status (and optionally the reviewer comment): JSON body with `status`;
 //  - the owner edits the content (title, course code, curriculum, file, note): this creates a new version.
-router.put('/:id', requireAuth, upload.single('file'), async (req, res) => {
+router.put('/:id', requireAuth, onePdf, async (req, res) => {
   const db = req.app.locals.db;
   const me = req.session.user;
   let committed = false;
@@ -163,9 +201,15 @@ router.put('/:id', requireAuth, upload.single('file'), async (req, res) => {
 
       // ---- status change: admin only ----
       if (status !== undefined && status !== '') {
+        if (rules.isAdmin(me) && rules.isOwner(me,syl) && status === 'approved') throw httpError(409, 'Use the syllabus builder and AI Checker to publish your own syllabus.');
+        if (syl.status === 'draft') throw httpError(409, 'Complete the form and check it in AI Checker before publishing your draft.');
         if (!rules.canChangeStatus(me)) throw httpError(403, 'Only administrators can change a syllabus status');
         if (!rules.STATUSES.includes(status)) throw httpError(400, 'Invalid status');
         if (hasContent) throw httpError(403, 'Administrators cannot edit syllabus content');
+        if (DECISIONS.includes(status) && await compliance.isInstalled(db)) { // the AI check comes first, then the administrator decides
+          const state = (await compliance.adminCheckStates(conn, [id])).get(id);
+          if (state && state.checkable && !state.checked) throw httpError(409, CHECK_FIRST);
+        }
         // Returning a syllabus for revision or rejecting it needs a reason; approving does not.
         const reason = validateReason(status, adminComment);
         const fields = ['status = ?'];
@@ -173,16 +217,28 @@ router.put('/:id', requireAuth, upload.single('file'), async (req, res) => {
         if (adminComment !== undefined) { fields.push('admin_comment = ?'); params.push(adminComment); }
         await conn.query(`UPDATE syllabi SET ${fields.join(', ')} WHERE syllabus_id = ?`, [...params, id]);
         const action = { approved: 'approve', rejected: 'reject', for_revision: 'revision', submitted: 'submit' }[status] || 'update';
-        await conn.query('INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)', [id, me.id, action, `Status changed to ${status}`]);
+        await conn.query('INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)', [id, me.id, action, (`Status changed to ${status}` + (reason ? ': ' + reason : '')).slice(0, 500)]);
         // The reason is kept as a comment too, in the same transaction, so the thread and the status cannot disagree.
         if (reason) await conn.query('INSERT INTO comments (syllabus_id, user_id, comment_text, comment_type) VALUES (?, ?, ?, ?)', [id, me.id, reason.slice(0, MAX_LENGTH), typeForStatus(status)]);
         return { kind: 'status', syl, status, comment: adminComment !== undefined ? adminComment : syl.admin_comment };
       }
 
+      // Administrator-authored records publish only through the checked form transaction.
+      if (rules.isAdmin(me) && rules.isOwner(me,syl)) throw httpError(409, 'Use the syllabus builder and AI Checker to publish your own syllabus.');
       // ---- content edit: the owner only ----
       if (rules.isAdmin(me) && !rules.isOwner(me, syl)) throw httpError(403, 'Administrators cannot edit syllabus content');
-      if (!rules.canEdit(me, syl)) throw httpError(409, `This syllabus is ${syl.status.replace('_', ' ')} and can no longer be edited`);
+      if (!rules.canEdit(me, syl)) throw httpError(409, rules.lockedMessage(syl));
 
+      // The same rule as the builder's submit: back from "For revision" only with a change (a new file, or a different title, code or
+      // curriculum), and a sentence saying what it is.
+      if (syl.status === 'for_revision') {
+        const changed = !!req.file
+          || (title !== undefined && title !== syl.title)
+          || (courseCode !== undefined && courseCode !== syl.course_code)
+          || (curriculumId !== undefined && curriculumId !== '' && String(curriculumId) !== String(syl.curriculum_id == null ? '' : syl.curriculum_id));
+        if (!changed) throw httpError(409, rules.UNCHANGED);
+        if (!(typeof note === 'string' && note.trim().length >= rules.MIN_NOTE)) throw httpError(400, rules.NEED_NOTE);
+      }
       const next = {
         title: title !== undefined ? title : syl.title,
         courseCode: courseCode !== undefined ? courseCode : syl.course_code,
@@ -193,8 +249,9 @@ router.put('/:id', requireAuth, upload.single('file'), async (req, res) => {
       if (syl.course_id) await assignments.requireCourseAccess(conn, me, syl.course_id);
       await assignments.requireCourseCodeAccess(conn, me, next.courseCode);
       const newStatus = rules.statusAfterOwnerEdit(syl.status);
-      const label = rules.nextVersionLabel(syl.version); // the client's version, if any, is ignored
-      const versionNote = (typeof note === 'string' && note.trim()) ? note.trim().slice(0, 1000) : 'Updated by author';
+      const first = syl.status === 'draft'; // a draft submitted as an uploaded file is the first version
+      const label = first ? 'v1.0' : rules.nextVersionLabel(syl.version); // the client's version, if any, is ignored
+      const versionNote = (typeof note === 'string' && note.trim()) ? note.trim().slice(0, 1000) : (first ? 'Initial version (uploaded file)' : 'Updated by author');
 
       await conn.query(
         'UPDATE syllabi SET title = ?, course_code = ?, curriculum_id = ?, file_path = ?, status = ?, version = ? WHERE syllabus_id = ?',
@@ -206,9 +263,9 @@ router.put('/:id', requireAuth, upload.single('file'), async (req, res) => {
       );
       await conn.query(
         'INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)',
-        [id, me.id, syl.status === 'for_revision' ? 'submit' : 'update', `Edited, saved as ${label}: ${versionNote}`.slice(0, 500)]
+        [id, me.id, first ? 'upload' : (syl.status === 'for_revision' ? 'submit' : 'update'), `${first ? 'Uploaded file, saved as' : 'Edited, saved as'} ${label}: ${versionNote}`.slice(0, 500)]
       );
-      return { kind: 'edit', syl, label, courseCode: next.courseCode, previousStatus: syl.status };
+      return { kind: 'edit', syl, label, title: next.title, courseCode: next.courseCode, previousStatus: syl.status };
     });
 
     committed = true;
@@ -227,7 +284,15 @@ router.put('/:id', requireAuth, upload.single('file'), async (req, res) => {
       return res.json({ message: 'Syllabus updated' });
     }
 
-    if (outcome.previousStatus === 'under_review' || outcome.previousStatus === 'for_revision') {
+    if (outcome.previousStatus === 'draft') {
+      await notifyAdmins(db, {
+        exceptUserId: me.id,
+        type: 'submission',
+        syllabusId: id,
+        title: `New syllabus submitted: ${outcome.courseCode || outcome.title || 'Untitled'}`,
+        body: `${me.firstName} ${me.lastName} submitted ${outcome.title || outcome.courseCode || 'a syllabus'} (uploaded file) for review.`,
+      });
+    } else if (outcome.previousStatus === 'under_review' || outcome.previousStatus === 'for_revision') {
       await notifyAdmins(db, {
         exceptUserId: me.id,
         type: 'edit',
@@ -251,8 +316,15 @@ router.delete('/:id', requireAuth, async (req, res) => {
     const id = Number(req.params.id);
     if (!Number.isInteger(id) || id <= 0) throw httpError(404, 'Syllabus not found');
     const [rows] = await db.query('SELECT syllabus_id, user_id, status FROM syllabi WHERE syllabus_id = ?', [id]);
-    if (!rows[0] || !rules.canDelete(req.session.user, rows[0])) throw httpError(404, 'Syllabus not found');
-    await db.query('DELETE FROM syllabi WHERE syllabus_id = ?', [id]);
+    const me = req.session.user;
+    if (!rows[0] || !rules.canView(me, rows[0])) throw httpError(404, 'Syllabus not found');
+    if (!rules.canDelete(me, rows[0])) throw httpError(409, 'Only draft syllabi can be deleted by faculty.');
+    // Enforce the draft restriction in the mutation too: a concurrent submission must never be deleted.
+    const [result] = await db.query(
+      rules.isAdmin(me) ? 'DELETE FROM syllabi WHERE syllabus_id = ?' : "DELETE FROM syllabi WHERE syllabus_id = ? AND user_id = ? AND status = 'draft'",
+      rules.isAdmin(me) ? [id] : [id, me.id]
+    );
+    if (!result.affectedRows) throw httpError(409, 'This syllabus changed or was removed. Refresh your list before deleting.');
     res.json({ message: 'Syllabus deleted' });
   } catch (err) {
     sendError(res, err);
@@ -276,6 +348,22 @@ router.get('/:id/versions', requireAuth, async (req, res) => {
        ORDER BY v.created_at ASC, v.version_id ASC`,
       [id]
     );
+    // What the administrator decided about a version (returned for revision, approved, rejected), with the reason: the decision belongs to
+    // the version that was newest when it was made.
+    const [logs] = await db.query(
+      "SELECT l.action, l.notes, l.action_date, u.first_name, u.last_name FROM submission_logs l JOIN users u ON u.user_id = l.user_id WHERE l.syllabus_id = ? AND l.action IN ('revision', 'approve', 'reject') ORDER BY l.action_date ASC, l.log_id ASC",
+      [id]
+    );
+    const decisionOf = (i) => {
+      const from = new Date(rows[i].created_at).getTime();
+      const to = i + 1 < rows.length ? new Date(rows[i + 1].created_at).getTime() : Infinity;
+      const mine = logs.filter((l) => { const t = new Date(l.action_date).getTime(); return t >= from && t < to; });
+      const l = mine[mine.length - 1];
+      if (!l) return null;
+      const m = /^Status changed to [a-z_]+(?:: ([\s\S]*))?$/.exec(l.notes || '');
+      return { action: l.action, at: l.action_date, by: `${l.first_name} ${l.last_name}`, reason: m && m[1] ? m[1] : '' };
+    };
+    const parse = (text) => { try { return text ? JSON.parse(text) : null; } catch { return null; } };
     const tracked = [['title', 'title'], ['course_code', 'courseCode'], ['curriculum_id', 'curriculumId'], ['file_path', 'file'], ['content', 'content']];
     const versions = rows.map((r, i) => ({
       id: r.version_id,
@@ -289,6 +377,9 @@ router.get('/:id/versions', requireAuth, async (req, res) => {
       createdAt: r.created_at,
       author: `${r.first_name} ${r.last_name}`,
       changed: i === 0 ? [] : tracked.filter(([col]) => (r[col] ?? null) !== (rows[i - 1][col] ?? null)).map(([, name]) => name),
+      // For a form: which sections the faculty member changed since the version before, and how much ("Course description (1 word)").
+      changes: i > 0 && r.content && rows[i - 1].content ? (() => { const list = changedSections(parse(rows[i - 1].content), parse(r.content)); return { sections: list, text: describeChanges(list) }; })() : null,
+      decision: decisionOf(i),
     }));
     res.json(versions.reverse());
   } catch (err) {

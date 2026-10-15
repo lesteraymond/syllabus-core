@@ -1,3 +1,6 @@
+import StableButton from '../components/StableButton';
+import { tr } from "../i18n/index.js";
+import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useState } from 'react';
 import { students } from '../lib/api';
 
@@ -15,11 +18,11 @@ export default function StudentHome({ user, onLogout }) {
     <div className="login-page">
       <section className="login-panel" style={{ margin: '0 auto' }}>
         <div className="login-card register-card">
-          <img className="login-logo" src="/cite-logo.png" alt="College logo" />
-          <span className="eyebrow">STUDENT</span>
-          <h2>Welcome, {user.firstName}</h2>
-          {error && <div className="form-error">{error}</div>}
-          {!data && !error && <p className="muted">Loading your profile...</p>}
+          <img className="login-logo" src="/cite-logo.png" alt={translateUI("ui.college_logo_1df91f")} />
+          <span className="eyebrow">{translateUI("ui.student_71ad6e")}</span>
+          <h2>{translateUI("ui.welcome_a2513b")}{user.firstName}</h2>
+          {error && <div className="form-error">{tr(error)}</div>}
+          {!data && !error && <p className="muted">{translateUI("ui.loading_your_profile_f1468e")}</p>}
           {p && (
             <>
               <dl className="scan-list">
@@ -29,13 +32,13 @@ export default function StudentHome({ user, onLogout }) {
               </dl>
               {data.subjects.length > 0 && (
                 <>
-                  <h4>Enrolled subjects</h4>
+                  <h4>{translateUI("ui.enrolled_subjects_0ea329")}</h4>
                   <ul>{data.subjects.map((s, i) => <li key={i}><b>{s.subject_code}</b> {s.subject_title}</li>)}</ul>
                 </>
               )}
             </>
           )}
-          <button className="btn outline wide" type="button" onClick={onLogout}>Sign out</button>
+          <StableButton className="btn outline wide" type="button" onClick={onLogout}>{translateUI("ui.sign_out_dc1649")}</StableButton>
         </div>
       </section>
     </div>

@@ -1,17 +1,23 @@
-const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const { requireAuth, requireAdmin } = require('../middleware/auth');
+const { randomUUID } = require('node:crypto');
+const { requireAuth, requireAdmin, toSessionUser } = require('../middleware/auth');
+const googleProfile = require('../lib/googleProfile');
 const { AVATAR_DIR, avatarRelPath, avatarFile, avatarUrlFor } = require('../lib/avatar');
 const { inTransaction } = require('../lib/http');
 const { createNotification } = require('../lib/notify');
+const { createLimiter } = require('../lib/rateLimit');
+const { generatePassword } = require('../lib/passwords');
+const mailer = require('../lib/mailer');
+const { domain, isSchoolEmail } = require('../lib/emailDomain');
 const assignments = require('../lib/assignments');
 const router = express.Router();
 
 const ROLES = ['faculty', 'admin']; // admin = Dean / Academic Administrator
+const resendLimiter = createLimiter({ max: 10, windowMs: 10 * 60 * 1000 }); // per admin
 
 const fail = (res, status, message) => res.status(status).json({ message, error: message });
 
@@ -19,6 +25,42 @@ const toUser = (r) => ({
   id: r.user_id, email: r.email, role: r.role,
   firstName: r.first_name, lastName: r.last_name, createdAt: r.created_at,
   avatarUrl: avatarUrlFor(r.user_id, r.avatar_path),
+});
+
+// Account owners may update their name only; role and email remain administrator-managed.
+router.patch('/me/profile', requireAuth, async (req, res) => {
+  try {
+    const { firstName, lastName } = req.body || {};
+    if ([firstName, lastName].some(name => typeof name !== 'string' || !name.trim() || name.trim().length > 100 || /[\u0000-\u001f\u007f]/.test(name))) {
+      return fail(res, 400, 'Enter a first and last name, each between 1 and 100 characters.');
+    }
+    if (!ROLES.includes(req.session.user.role)) return fail(res, 403, 'Profile editing is available to faculty and administrators.');
+    const db = req.app.locals.db;
+    const [rows] = await db.query('SELECT user_id, email, role, first_name, last_name, avatar_path, must_change_password, preferred_language FROM users WHERE user_id = ?', [req.session.user.id]);
+    if (!rows[0]) return fail(res, 404, 'Account not found');
+    await db.query('UPDATE users SET first_name = ?, last_name = ? WHERE user_id = ?', [firstName.trim(), lastName.trim(), req.session.user.id]);
+    const user = toSessionUser({ ...rows[0], first_name: firstName.trim(), last_name: lastName.trim() });
+    req.session.user = user;
+    res.json({ user });
+  } catch (err) {
+    console.error('PROFILE UPDATE ERROR:', err);
+    fail(res, 500, 'Could not save your name. Please try again.');
+  }
+});
+
+// Preferences belong to the authenticated account; never accept a user id or admin settings here.
+router.patch('/me/preferences', requireAuth, async (req, res) => {
+  try {
+    if (!ROLES.includes(req.session.user.role)) return fail(res, 403, 'Language preferences are available to faculty and administrators.');
+    const body = req.body;
+    if (!body || Object.keys(body).some(key => key !== 'preferredLanguage') || !['en', 'tl'].includes(body.preferredLanguage)) {
+      return fail(res, 400, 'Choose English or Tagalog.');
+    }
+    const [result] = await req.app.locals.db.query('UPDATE users SET preferred_language = ? WHERE user_id = ?', [body.preferredLanguage, req.session.user.id]);
+    if (!result.affectedRows) return fail(res, 404, 'Account not found');
+    req.session.user.preferredLanguage = body.preferredLanguage;
+    res.json({ preferredLanguage: body.preferredLanguage });
+  } catch { fail(res, 500, 'Could not save your language preference. Please try again.'); }
 });
 
 // Registered users = the sign-in allowlist.
@@ -34,30 +76,66 @@ router.get('/', requireAdmin, async (req, res) => {
   }
 });
 
-// Admin registers a user. A password is optional: users normally sign in with Google, so
-// without one we store a random hash nobody can match (password_hash is NOT NULL).
+// Admin registers a user. The system makes the password and emails it with the username (the email address); the user must choose
+// their own at the first sign-in (must_change_password). The password is never in a response or a log. If the email cannot be sent the
+// user is still registered: the response says emailSent: false and "Resend credentials" tries again. Users normally sign in with Google too.
 router.post('/', requireAdmin, async (req, res) => {
   try {
     const firstName = String(req.body.first_name ?? req.body.firstName ?? '').trim();
     const lastName = String(req.body.last_name ?? req.body.lastName ?? '').trim();
     const email = String(req.body.email ?? '').trim().toLowerCase();
     const role = req.body.role ?? 'faculty';
-    const password = req.body.password ? String(req.body.password) : crypto.randomBytes(32).toString('hex');
 
     if (!firstName || !lastName || !email) return fail(res, 400, 'first_name, last_name and email are required');
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return fail(res, 400, 'Invalid email address');
+    if (!isSchoolEmail(email)) return fail(res, 400, 'Use an institutional email address ending in @' + domain() + '.');
     if (!ROLES.includes(role)) return fail(res, 400, 'Invalid role');
 
     const db = req.app.locals.db;
     const [existing] = await db.query('SELECT user_id FROM users WHERE LOWER(email) = ?', [email]);
     if (existing.length) return fail(res, 409, 'A user with this email is already registered');
 
+    const password = generatePassword();
     const hash = await bcrypt.hash(password, 10);
     const [result] = await db.query(
-      'INSERT INTO users (email, password_hash, role, first_name, last_name) VALUES (?, ?, ?, ?, ?)',
+      'INSERT INTO users (email, password_hash, must_change_password, role, first_name, last_name) VALUES (?, ?, 1, ?, ?, ?)',
       [email, hash, role, firstName, lastName]
     );
-    res.status(201).json({ id: result.insertId, email, role, firstName, lastName });
+    const mail = await mailer.sendCredentials({ to: email, name: firstName, password, reason: 'welcome' });
+    res.status(201).json({ id: result.insertId, email, role, firstName, lastName, emailSent: mail.sent, ...(mail.sent ? {} : { emailReason: mail.reason }) });
+  } catch (err) {
+    console.error('USERS ERROR:', err);
+    fail(res, 500, err.message);
+  }
+});
+
+// Send a user new credentials: a new generated password replaces their current one and must be changed at the next sign-in. The
+// current password is only replaced once the email has gone out; if it cannot be sent, nothing changes. For a lost or never-delivered email. Not for yourself, and not for a student (they sign in with their student ID).
+router.post('/:id/resend-credentials', requireAdmin, async (req, res) => {
+  try {
+    const db = req.app.locals.db;
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id <= 0) return fail(res, 404, 'User not found');
+    if (id === req.session.user.id) return fail(res, 400, 'You cannot reset your own password here.');
+    const slot = resendLimiter.take('resend:' + req.session.user.id);
+    if (!slot.ok) {
+      res.set('Retry-After', String(slot.retryAfterSec));
+      return fail(res, 429, 'You are sending too often. Try again in ' + slot.retryAfterSec + ' seconds.');
+    }
+    const [rows] = await db.query('SELECT user_id, email, role, first_name FROM users WHERE user_id = ?', [id]);
+    const user = rows[0];
+    if (!user) return fail(res, 404, 'User not found');
+    if (user.role === 'student' || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(user.email)) return fail(res, 400, 'This account signs in with a student ID, not an email address.');
+
+    // Send first, change the password only if the email went out: a failed send must never leave someone with a password nobody has seen.
+    const password = generatePassword();
+    const mail = await mailer.sendCredentials({ to: user.email, name: user.first_name, password, reason: 'welcome' });
+    if (mail.sent) {
+      await db.query('UPDATE users SET password_hash = ?, must_change_password = 1 WHERE user_id = ?', [await bcrypt.hash(password, 10), id]);
+      await db.query('DELETE FROM password_temp WHERE user_id = ?', [id]).catch(() => {});
+      await db.query('DELETE FROM remember_tokens WHERE user_id = ?', [id]);
+    }
+    res.json({ id, email: user.email, emailSent: mail.sent, ...(mail.sent ? {} : { emailReason: mail.reason }) });
   } catch (err) {
     console.error('USERS ERROR:', err);
     fail(res, 500, err.message);
@@ -149,6 +227,43 @@ function detectImageExt(buf) {
 
 const removeFile = async (file) => { if (file) await fs.promises.unlink(file).catch(() => {}); };
 
+async function saveAvatar(db, userId, buffer, ext) {
+  const [rows] = await db.query('SELECT avatar_path FROM users WHERE user_id = ?', [userId]);
+  if (!rows[0]) throw Object.assign(new Error('Account not found'), { status: 404 });
+  const oldPath = rows[0].avatar_path;
+  const name = `u${userId}-${randomUUID()}-${Date.now()}.${ext}`;
+  const newFile = path.join(AVATAR_DIR, name);
+  try {
+    await fs.promises.mkdir(AVATAR_DIR, { recursive: true });
+    await fs.promises.writeFile(newFile, buffer);
+    const avatarPath = avatarRelPath(name);
+    await db.query('UPDATE users SET avatar_path = ? WHERE user_id = ?', [avatarPath, userId]);
+    await removeFile(avatarFile(oldPath));
+    return avatarUrlFor(userId, avatarPath);
+  } catch (err) {
+    await removeFile(newFile);
+    throw err;
+  }
+}
+
+router.post('/me/avatar/google', requireAuth, async (req, res) => {
+  try {
+    const me = req.session.user;
+    if (!ROLES.includes(me.role)) return fail(res, 403, 'Photo sync is available to faculty and administrators.');
+    const db = req.app.locals.db;
+    const [rows] = await db.query('SELECT user_id, email, role, first_name, last_name, avatar_path, must_change_password, preferred_language FROM users WHERE user_id = ?', [me.id]);
+    if (!rows[0]) return fail(res, 404, 'Account not found');
+    const buffer = req.body?.accessToken !== undefined
+      ? await googleProfile.getGooglePhotoWithAccessToken(req.body.accessToken, rows[0].email)
+      : await googleProfile.getGooglePhoto(req.body?.token, rows[0].email);
+    const avatarUrl = await saveAvatar(db, me.id, buffer, 'webp');
+    req.session.user.avatarUrl = avatarUrl;
+    res.json({ avatarUrl });
+  } catch (err) {
+    fail(res, err.status || 500, err.status ? err.message : 'Could not sync your Google photo. Please try again.');
+  }
+});
+
 router.post('/me/avatar', requireAuth, (req, res) => {
   avatarUpload(req, res, async (uploadErr) => {
     if (uploadErr) {
@@ -157,7 +272,6 @@ router.post('/me/avatar', requireAuth, (req, res) => {
       console.error('AVATAR UPLOAD ERROR:', uploadErr);
       return fail(res, 400, 'The upload could not be processed.');
     }
-    let newFile = null;
     try {
       if (!req.file) return fail(res, 400, 'No image uploaded. Choose a JPEG, PNG or WebP file.');
       const ext = detectImageExt(req.file.buffer);
@@ -165,23 +279,10 @@ router.post('/me/avatar', requireAuth, (req, res) => {
 
       const userId = req.session.user.id;
       const db = req.app.locals.db;
-      const [rows] = await db.query('SELECT avatar_path FROM users WHERE user_id = ?', [userId]);
-      const oldPath = rows[0]?.avatar_path;
-
-      const name = `u${userId}-${Date.now()}.${ext}`;
-      await fs.promises.mkdir(AVATAR_DIR, { recursive: true });
-      newFile = path.join(AVATAR_DIR, name);
-      await fs.promises.writeFile(newFile, req.file.buffer);
-
-      const avatarPath = avatarRelPath(name);
-      await db.query('UPDATE users SET avatar_path = ? WHERE user_id = ?', [avatarPath, userId]);
-      await removeFile(avatarFile(oldPath)); // only after the new one is saved
-
-      const avatarUrl = avatarUrlFor(userId, avatarPath);
+      const avatarUrl = await saveAvatar(db, userId, req.file.buffer, ext);
       req.session.user.avatarUrl = avatarUrl;
       res.json({ avatarUrl });
     } catch (err) {
-      await removeFile(newFile);
       console.error('AVATAR ERROR:', err);
       fail(res, 500, 'Could not save your photo. Please try again.');
     }
@@ -217,7 +318,17 @@ router.get('/:id/avatar', requireAuth, async (req, res) => {
         'SELECT 1 FROM messages WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?) LIMIT 1',
         [viewer.id, targetId, targetId, viewer.id]
       );
-      if (shared.length === 0) return res.sendStatus(404);
+      let allowed = shared.length > 0;
+      if (!allowed) {
+        // Someone they have not written to yet: still the administrator who would receive their messages (the first administrator account)
+        // when they have a submitted syllabus, because the chat shows that administrator's profile from the first message. No one else.
+        const [[firstAdmin]] = await db.query("SELECT user_id FROM users WHERE role = 'admin' ORDER BY user_id ASC LIMIT 1");
+        if (firstAdmin && firstAdmin.user_id === targetId) {
+          const [owns] = await db.query("SELECT 1 FROM syllabi WHERE user_id = ? AND status <> 'draft' LIMIT 1", [viewer.id]);
+          allowed = owns.length > 0;
+        }
+      }
+      if (!allowed) return res.sendStatus(404);
     }
 
     const [rows] = await db.query('SELECT avatar_path FROM users WHERE user_id = ?', [targetId]);
@@ -269,3 +380,4 @@ router.delete('/:id', requireAdmin, async (req, res) => {
 });
 
 module.exports = router;
+module.exports.resendLimiter = resendLimiter;

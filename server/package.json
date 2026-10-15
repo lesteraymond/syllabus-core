@@ -4,9 +4,10 @@
   "description": "Backend API for Syllabus CMS Plus",
   "main": "index.js",
   "scripts": {
-    "dev": "node index.js",
+    "dev": "node --watch index.js",
     "init-db": "node db/init.js",
     "migrate-google-auth": "node db/migrate-google-auth.js",
+    "migrate-preferences": "node db/migrate-preferences.js",
     "migrate-avatar": "node db/migrate-avatar.js",
     "migrate-avatars-private": "node db/migrate-avatars-private.js",
     "migrate-notifications": "node db/migrate-notifications.js",
@@ -16,7 +17,10 @@
     "migrate-program-egas": "node db/migrate-program-egas.js",
     "migrate-compliance": "node db/migrate-compliance.js",
     "migrate-comment-reads": "node db/migrate-comment-reads.js",
-    "seed-outcomes": "node db/seed-outcomes.js"
+    "migrate-passwords": "node db/migrate-passwords.js",
+    "seed-outcomes": "node db/seed-outcomes.js",
+    "migrate-program-management": "node db/migrate-program-management.js",
+    "migrate-subject-standards": "node db/migrate-subject-standards.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -28,6 +32,7 @@
     "jsonwebtoken": "^9.0.3",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.11.0",
+    "nodemailer": "^10.1.1",
     "sharp": "^0.35.5",
     "tesseract.js": "^7.0.0"
   }

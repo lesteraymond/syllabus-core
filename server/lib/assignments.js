@@ -117,7 +117,7 @@ async function requireCourseCodeAccess(db, user, code) {
   const text = String(code || '').trim();
   if (text) {
     const [rows] = await db.query(
-      'SELECT 1 FROM faculty_courses fc JOIN courses c ON c.course_id = fc.course_id WHERE fc.user_id = ? AND LOWER(c.code) = LOWER(?) LIMIT 1',
+      'SELECT 1 FROM faculty_courses fc JOIN courses c ON c.course_id = fc.course_id WHERE fc.user_id = ? AND LOWER(c.code) = LOWER(?) LIMIT 1 FOR UPDATE',
       [user.id, text]
     );
     if (rows.length) return;

@@ -173,7 +173,13 @@ export function migrateContent(content) {
 export function createModel({ institution, programs, year }) {
   const poList = (d) => (programs[d.meta.program] || { pos: [] }).pos;
   // The EGAs of the syllabus's program (EGA numbers and names differ by program).
-  const egaList = (d) => { const p = programs[d.meta.program]; return p && p.egas && p.egas.length ? p.egas : institution.egas; };
+  const egaList = (d) => {
+    const p = programs[d.meta.program];
+    if (!p) return [];
+    // Only older saved catalogs without an EGA field use their institution snapshot.
+    return Array.isArray(p.egas) ? p.egas : institution.egas;
+  };
+  const hasOutcomeSelection = d => !!(d.meta.program && programs[d.meta.program] && (d.meta.courseId || d.catalog?.program?.code === d.meta.program));
 
   function tagInfo(d, t) {
     const p = parseTag(t);
@@ -350,14 +356,17 @@ export function createModel({ institution, programs, year }) {
 
   // Step status: 'done' when nothing blocks it, 'attn' when visited with blockers, 'todo' otherwise. Advice never changes a
   // status. Review is done only when steps 1-6 are, which is also what unlocks Re-check and Submit.
-  function stepStatuses(d, visited = {}) {
+  function stepStatuses(d, visited = {}, { sequential = false } = {}) {
     const st = STEPS.map((s, i) => {
       if (s.key === 'review') return 'todo';
       return blockers(d, s.key).length === 0 ? 'done' : (visited[i] ? 'attn' : 'todo');
     });
     const sixDone = st.slice(0, 6).every((x) => x === 'done');
     st[6] = sixDone ? 'done' : (visited[6] ? 'attn' : 'todo');
-    return { statuses: st, complete: sixDone };
+    const firstBlocked = st.slice(0, 6).findIndex(status => status !== 'done');
+    // Sequential faculty navigation: valid auto-loaded data must not mark an inaccessible step complete.
+    const statuses = sequential && firstBlocked >= 0 ? st.map((status, index) => index > firstBlocked ? 'locked' : status) : st;
+    return { statuses, complete: sixDone, firstBlocked };
   }
 
   // The first of steps 1-6 that still has a blocker (its index), or -1. The builder lets you go forward only up to it.
@@ -366,7 +375,8 @@ export function createModel({ institution, programs, year }) {
     return -1;
   }
 
-  return { institution, programs, year, poList, egaList, tagInfo, rowHits, coverage, removeClo, impliedEgas, missingEgas, formulas, refAge, suggestReqs, issues, blockers, firstBlocked, stepStatuses };
+  const outcomesReady = d => hasOutcomeSelection(d) && blockers(d, 'clos').length === 0;
+  return { institution, programs, year, outcomesReady, hasOutcomeSelection, poList, egaList, tagInfo, rowHits, coverage, removeClo, impliedEgas, missingEgas, formulas, refAge, suggestReqs, issues, blockers, firstBlocked, stepStatuses };
 }
 
 export const defaultModel = createModel({ institution: SEED_INSTITUTION, programs: SEED_PROGRAMS, year: CURRENT_SCHOOL_YEAR.startYear });

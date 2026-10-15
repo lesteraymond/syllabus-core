@@ -1,3 +1,4 @@
+const { blankStandards, readStandards, updateStandards } = require('../lib/subjectStandards');
 // Course catalog: course code, title, program and the course learning outcomes (CLOs).
 // Everyone signed in reads; only admins write. Faculty cannot change a course's CLOs: syllabus content
 // always takes them from here (see routes/syllabusContent.js).
@@ -5,9 +6,8 @@ const express = require('express');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { inTransaction, httpError, sendError } = require('../lib/http');
 const { LEVELS, cloKey, parseCloKey, loadCourse, loadClos } = require('../lib/courses');
-const { loadProgramEgas, isStale, STALE_MESSAGE } = require('../lib/programEgas');
+const { isStale, STALE_MESSAGE } = require('../lib/programEgas');
 const { createProgram, PROGRAM_CODE } = require('../lib/programs');
-const { loadOutcomes } = require('../lib/institution');
 const { catalogGaps } = require('../lib/catalogReady');
 const router = express.Router();
 
@@ -33,7 +33,7 @@ router.get('/', requireAuth, async (req, res) => {
     if (req.session.user.role !== 'admin') { conds.push('c.course_id IN (SELECT course_id FROM faculty_courses WHERE user_id = ?)'); params.push(req.session.user.id); }
     const where = conds.length ? 'WHERE ' + conds.join(' AND ') : '';
     const [rows] = await req.app.locals.db.query(
-      `SELECT c.course_id, c.code, c.title, c.program_id, p.code AS program_code, COUNT(k.clo_id) AS clo_count
+      `SELECT c.course_id, c.code, c.title, c.program_id, p.code AS program_code, COUNT(k.clo_id) AS clo_count, c.standards_json
        FROM courses c JOIN programs p ON p.program_id = c.program_id LEFT JOIN course_clos k ON k.course_id = c.course_id
        ${where} GROUP BY c.course_id, c.code, c.title, c.program_id, p.code ORDER BY c.code`, params);
     const list = rows.map((r) => ({ id: r.course_id, code: r.code, title: r.title, program: r.program_code, cloCount: Number(r.clo_count) }));
@@ -42,14 +42,12 @@ router.get('/', requireAuth, async (req, res) => {
     // EGAs and POs, the subject's CLOs). Faculty do not get this: their list is unchanged.
     if (req.session.user.role === 'admin') {
       const db = req.app.locals.db;
-      const inst = await loadOutcomes(db);
-      const count = async (table) => { const [r] = await db.query(`SELECT program_id, COUNT(*) AS n FROM ${table} GROUP BY program_id`); return new Map(r.map((x) => [x.program_id, Number(x.n)])); };
-      const [egas, pos] = [await count('program_egas'), await count('program_outcomes')];
       rows.forEach((r, i) => {
+        const standards = readStandards(r.standards_json);
         list[i].gaps = catalogGaps({
-          vision: inst.vision, mission: inst.mission,
-          egaCount: egas.get(r.program_id) || inst.egas.length, // a program without its own EGAs uses the school-wide list
-          poCount: pos.get(r.program_id) || 0, cloCount: list[i].cloCount,
+          vision: standards.vision, mission: standards.mission,
+          egaCount: standards.egas.length,
+          poCount: standards.pos.length, cloCount: list[i].cloCount,
           programCode: r.program_code, subjectCode: r.code,
         });
       });
@@ -92,7 +90,7 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
       }
       const [dup] = await conn.query('SELECT 1 FROM courses WHERE code = ?', [c]);
       if (dup.length) throw httpError(409, `${c} already exists`);
-      const [r] = await conn.query('INSERT INTO courses (code, title, program_id) VALUES (?, ?, ?)', [c, t, programId]);
+      const [r] = await conn.query('INSERT INTO courses (code, title, program_id, standards_json) VALUES (?, ?, ?, ?)', [c, t, programId, JSON.stringify(blankStandards())]);
       return { id: r.insertId, programCreated };
     });
     res.json({ ...(await loadCourse(db, made.id)), programCreated: made.programCreated });
@@ -137,9 +135,8 @@ router.put('/:id/clos', requireAuth, requireAdmin, async (req, res) => {
     if (!Array.isArray(clos) || clos.length > 20) throw httpError(400, 'Provide a list of up to 20 CLOs');
 
     // A CLO is tagged only with its own program's EGAs and POs.
-    const validEgas = new Set((await loadProgramEgas(db, course.program.id)).map((e) => e.no));
-    const [poRows] = await db.query('SELECT po_no FROM program_outcomes WHERE program_id = ?', [course.program.id]);
-    const validPos = new Set(poRows.map((p) => p.po_no));
+    const validEgas = new Set(course.standards.egas.map(e => e.no));
+    const validPos = new Set(course.standards.pos.map(p => p.no));
     const mine = new Set(course.clos.map((c) => c.id));
 
     const items = clos.map((c, i) => {
@@ -158,7 +155,9 @@ router.put('/:id/clos', requireAuth, requireAdmin, async (req, res) => {
 
     await inTransaction(db, async (conn) => {
       // Lock the subject and refuse a save from an out-of-date screen, so two admins never overwrite each other.
-      const [[locked]] = await conn.query('SELECT clos_version AS v FROM courses WHERE course_id = ? FOR UPDATE', [id]);
+      const [[locked]] = await conn.query('SELECT clos_version AS v, standards_json FROM courses WHERE course_id = ? FOR UPDATE', [id]);
+      const current = readStandards(locked.standards_json);
+      if (items.some(item => item.egas.some(n => !current.egas.some(e => e.no === n)) || item.pos.some(n => !current.pos.some(p => p.no === n)))) throw httpError(409, 'The subject setup changed. Reload before saving its CLOs.');
       if (isStale(version, locked.v)) throw httpError(409, STALE_MESSAGE);
       await conn.query('UPDATE courses SET clos_version = clos_version + 1 WHERE course_id = ?', [id]);
       const keep = new Set(keys);
@@ -177,4 +176,18 @@ router.put('/:id/clos', requireAuth, requireAdmin, async (req, res) => {
   } catch (err) { sendError(res, err); }
 });
 
+router.put('/:id/standards', requireAuth, requireAdmin, async (req,res) => {
+  try {
+    const id=parseId(req.params.id); const db=req.app.locals.db;
+    const { section, value, version }=req.body||{};
+    await inTransaction(db,async conn=>{
+      const [[row]]=await conn.query('SELECT standards_json FROM courses WHERE course_id = ? FOR UPDATE',[id]);
+      if (!row) throw httpError(404,'Subject not found');
+      const clos=await loadClos(conn,id);
+      const next=updateStandards(readStandards(row.standards_json),section,value,version,clos);
+      await conn.query('UPDATE courses SET standards_json = ? WHERE course_id = ?',[JSON.stringify(next),id]);
+    });
+    res.json(await loadCourse(db,id));
+  } catch(err) { sendError(res,err); }
+});
 module.exports = router;

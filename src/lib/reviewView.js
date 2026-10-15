@@ -1,3 +1,5 @@
+import { tr } from "../i18n/index.js";
+import { phDate } from './phTime.js';
 // Plain helpers for the reviewer's queue and the syllabus modal. No React and no network, so they are tested on their own.
 import { STATUS_LABELS } from './syllabusRules.js';
 
@@ -27,14 +29,11 @@ export function fileName(path) {
   try { return decodeURIComponent(last); } catch { return last; }
 }
 
-const dateText = (d) => {
-  const t = new Date(String(d || '').replace(' ', 'T'));
-  return isNaN(t) ? '' : t.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-};
+const dateText = (d) => phDate(d); // Philippine time
 
 // One entry of the version picker: "v1.1 · Submitted · Jan 2, 2026 (current)".
 export function versionOption(v, isLatest) {
-  return [v.label, STATUS_LABELS[v.statusAtSave] || v.statusAtSave, dateText(v.createdAt)].filter(Boolean).join(' · ') + (isLatest ? ' (current)' : '');
+  return [v.label, tr(STATUS_LABELS[v.statusAtSave] || v.statusAtSave), dateText(v.createdAt)].filter(Boolean).join(' · ') + (isLatest ? ' (' + tr('current') + ')' : '');
 }
 
 // "Fay F · BSIT · IT 204 — Computer Programming 2": who, which program, which subject.
@@ -53,12 +52,16 @@ export function noFormMessage(file) {
 // ---- the review board's cards, and the decision rules the right panel applies ----
 
 // A card shows exactly three things: who submitted, the program, and the subject.
-export const programLabel = (row) => (row.programCode ? row.programCode + (row.programName ? ' · ' + row.programName : '') : row.programName || 'No program');
-export const subjectLabel = (row) => [row.courseCode, row.courseTitle].filter(Boolean).join(' — ') || row.title || 'Untitled syllabus';
+export const programLabel = (row) => (row.programCode ? row.programCode + (row.programName ? ' · ' + row.programName : '') : row.programName || tr('No program'));
+export const subjectLabel = (row) => [row.courseCode, row.courseTitle].filter(Boolean).join(' — ') || row.title || tr('Untitled syllabus');
 
 // Only a syllabus that is waiting for a decision can be decided; the board lists exactly those.
 export const PENDING = ['submitted', 'under_review'];
 export const canDecide = (status) => PENDING.includes(status);
+// A submission is checked in the AI Checker first and decided here afterwards. `awaitingAiCheck` is the server's answer for an administrator:
+// the newest version has no check of the administrator's own yet. Such a submission is listed in the AI Checker, not on this board.
+export const waitsForCheck = (s) => !!s && PENDING.includes(s.status) && !!s.awaitingAiCheck;
+export const readyForReview = (s) => !!s && PENDING.includes(s.status) && !s.awaitingAiCheck;
 
 export const MIN_REASON = 5;
 // The three decisions: the label handleStatus expects, whether a written reason is required, and the sentence that asks to confirm.

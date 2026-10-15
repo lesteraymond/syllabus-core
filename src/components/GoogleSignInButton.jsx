@@ -1,30 +1,16 @@
+import { tr } from "../i18n/index.js";
 import { useEffect, useRef } from 'react';
+import { loadGoogleIdentity } from '../lib/googleIdentity';
 
 const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-const GSI_SRC = 'https://accounts.google.com/gsi/client';
-// Google's rendered button is 400px wide max and 40px tall (size: 'large').
+// Google's rendered button is 400px wide max and 40px tall.
 const GSI_W = 400;
 const GSI_H = 40;
-
-let gsiPromise;
-function loadGsi() {
-  if (window.google?.accounts?.id) return Promise.resolve();
-  gsiPromise ??= new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src = GSI_SRC;
-    s.async = true;
-    s.defer = true;
-    s.onload = resolve;
-    s.onerror = () => { gsiPromise = undefined; reject(new Error('Could not load Google Sign-In.')); };
-    document.head.appendChild(s);
-  });
-  return gsiPromise;
-}
 
 // The visible button is our own `.btn` (so size, radius, font and text match the
 // Sign In button). Google's official button is rendered invisibly on top of it,
 // stretched to cover it, so clicks still go through the real Google flow.
-export default function GoogleSignInButton({ onCredential, onError }) {
+export default function GoogleSignInButton({ onCredential, onError, label = 'Sign in with Google', loginHint }) {
   const wrapRef = useRef(null);
   const gsiRef = useRef(null);
   const cb = useRef({ onCredential, onError });
@@ -41,10 +27,11 @@ export default function GoogleSignInButton({ onCredential, onError }) {
       gsi.style.transform = `scale(${width / GSI_W}, ${height / GSI_H})`;
     };
 
-    loadGsi().then(() => {
+    loadGoogleIdentity().then(() => {
       if (cancelled) return;
       window.google.accounts.id.initialize({
         client_id: CLIENT_ID,
+        ...(loginHint ? { login_hint: loginHint } : {}),
         callback: (resp) => cb.current.onCredential(resp.credential), // resp.credential is the id_token
       });
       window.google.accounts.id.renderButton(gsi, { theme: 'outline', size: 'large', text: 'signin_with', width: GSI_W });
@@ -54,7 +41,7 @@ export default function GoogleSignInButton({ onCredential, onError }) {
     const ro = new ResizeObserver(fit);
     ro.observe(wrap);
     return () => { cancelled = true; ro.disconnect(); };
-  }, []);
+  }, [loginHint]);
 
   return (
     <div className="google-btn-wrap" ref={wrapRef}>
@@ -65,7 +52,7 @@ export default function GoogleSignInButton({ onCredential, onError }) {
           <path fill="#FBBC05" d="M10.5 28.7c-.5-1.5-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C.9 16.4 0 20.1 0 24s.9 7.6 2.6 10.8l7.9-6.1z" />
           <path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z" />
         </svg>
-        Sign in with Google
+        {tr(label)}
       </span>
       <div className="google-btn-gsi" ref={gsiRef} style={{ width: GSI_W, height: GSI_H }} />
     </div>

@@ -1,14 +1,25 @@
 // Keep EDITABLE_STATUSES in sync with server/lib/syllabusRules.js: the Edit button and the server must agree.
-export const EDITABLE_STATUSES = ['draft', 'submitted', 'under_review', 'for_revision'];
+// A draft, or a syllabus the administrator returned for revision. Once submitted it is locked until the administrator returns it.
+export const EDITABLE_STATUSES = ['draft', 'for_revision'];
+
+// Back from "For revision", a submission needs a sentence saying what changed (the server insists on it too).
+export const MIN_NOTE = 10;
+export const noteMissing = (status, note) => status === 'for_revision' && String(note || '').trim().length < MIN_NOTE;
 
 export const STATUS_LABELS = { draft: 'Draft', submitted: 'Submitted', under_review: 'Under Review', for_revision: 'For Revision', approved: 'Approved', rejected: 'Rejected' };
 
 // Only the owner edits content, and only while the syllabus is in an editable status.
 export const canEditSyllabus = (user, syllabus) => user.id === syllabus.userId && EDITABLE_STATUSES.includes(syllabus.status);
 
+// Keep in sync with server/lib/syllabusRules.js. Submission records stay in the review workflow.
+export const canDeleteSyllabus = (user, syllabus) => (user.role === 'admin' && (user.id === syllabus.userId || syllabus.status !== 'draft'))
+  || (user.role === 'faculty' && user.id === syllabus.userId && syllabus.status === 'draft');
+
 export const editBlockedReason = (syllabus) => (EDITABLE_STATUSES.includes(syllabus.status)
   ? ''
-  : `${STATUS_LABELS[syllabus.status] || syllabus.status} syllabi can't be edited`);
+  : syllabus.status === 'submitted' || syllabus.status === 'under_review'
+    ? 'This syllabus was submitted and is locked. You can edit it again only if the administrator returns it for revision.'
+    : `${STATUS_LABELS[syllabus.status] || syllabus.status} syllabi can't be edited`);
 
 // "Subject" is the catalog item (IT 204, Programming 2); in this school a "course" is the program.
 export const NOT_ASSIGNED = 'This subject is no longer assigned to you.';
@@ -49,4 +60,11 @@ export function toBuilderShape(s) {
     curriculumId: s.curriculumId,
     fileName: s.filePath ? decodeURIComponent(s.filePath.split('/').pop()) : '',
   };
+}
+
+// Approval is a separate administrator decision after reading a completed check of their own draft.
+export function canApproveAdminDraft(user, syllabus, run, isLatest = true) {
+  return !!(user?.role === 'admin' && syllabus?.userId === user.id && syllabus.status === 'under_review'
+    && isLatest && run?.id && run.syllabusId === syllabus.syllabusId && run.createdBy === user.id
+    && run.status === 'scored' && run.conformant && !run.stale && ['ok','none'].includes(run.aiStatus));
 }

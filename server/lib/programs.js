@@ -9,8 +9,15 @@ async function findProgram(db, idOrCode) {
   const [rows] = /^\d+$/.test(key)
     ? await db.query('SELECT program_id, code, name, egas_version, pos_version FROM programs WHERE program_id = ?', [Number(key)])
     : await db.query('SELECT program_id, code, name, egas_version, pos_version FROM programs WHERE code = ?', [key.toUpperCase()]);
-  if (!rows[0]) throw httpError(404, 'Program not found');
-  return rows[0];
+  if (rows[0]) return rows[0];
+  // Old codes resolve to the same stable program ID; submitted content stays unchanged.
+  if (!/^\d+$/.test(key)) {
+    try {
+      const [aliases] = await db.query('SELECT p.program_id, p.code, p.name, p.egas_version, p.pos_version FROM programs p JOIN program_code_aliases a ON a.program_id = p.program_id WHERE a.code = ? GROUP BY p.program_id, p.code, p.name, p.egas_version, p.pos_version', [key.toUpperCase()]);
+      if (aliases.length === 1) return aliases[0];
+    } catch (error) { if (error.code !== 'ER_NO_SUCH_TABLE') throw error; }
+  }
+  throw httpError(404, 'Program not found');
 }
 
 const parseEgas = (s) => String(s || '').split(',').map((x) => Number(x)).filter((n) => Number.isInteger(n) && n > 0);
@@ -36,13 +43,17 @@ const PROGRAM_CODE = /^[A-Z0-9-]{2,20}$/;
 const normalizeName = (s) => String(s || '').trim().replace(/\s+/g, ' ').toLowerCase();
 
 // Creates a program inside the caller's transaction (`conn`). The code is already trimmed and upper-cased. A new program has
-// no outcomes yet and starts from a copy of the school-wide default EGAs, so it behaves like every other program from the
-// first request. A name already used by another program is refused. Returns its id. A concurrent creation of the same code is
+// no EGAs or outcomes until an administrator configures them. A name already used by another program is refused. Returns its id. A concurrent creation of the same code is
 // the unique key's job: it becomes a 409.
 async function createProgram(conn, { code, name }) {
-  const [named] = await conn.query('SELECT code, name FROM programs');
+  const [named] = await conn.query('SELECT code, name FROM programs ORDER BY program_id FOR UPDATE');
   const taken = named.find((p) => normalizeName(p.name) === normalizeName(name));
   if (taken) throw httpError(409, `That name is already used by ${taken.code}.`);
+  // Never recycle a code retained by historical records from another program.
+  try {
+    const [aliases] = await conn.query('SELECT program_id FROM program_code_aliases WHERE code = ? FOR UPDATE', [code]);
+    if (aliases.length) throw httpError(409, 'That program code is reserved by existing records. Choose another code.');
+  } catch (error) { if (error.code !== 'ER_NO_SUCH_TABLE') throw error; }
   let result;
   try {
     [result] = await conn.query('INSERT INTO programs (code, name) VALUES (?, ?)', [code, name]);
@@ -50,7 +61,6 @@ async function createProgram(conn, { code, name }) {
     if (err && err.code === 'ER_DUP_ENTRY') throw httpError(409, 'That program was just created. Try again.');
     throw err;
   }
-  await conn.query('INSERT INTO program_egas (program_id, ega_no, name, short_name) SELECT ?, ega_no, name, short_name FROM institution_egas', [result.insertId]);
   return result.insertId;
 }
 

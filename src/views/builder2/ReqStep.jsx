@@ -1,3 +1,4 @@
+import { t as translateUI } from "../../i18n/index.js";
 import { Auto, Ic } from './parts';
 import { newId } from './useDraft';
 
@@ -24,17 +25,17 @@ export default function ReqStep({ d, apply, model }) {
       {d.reqs.map((r, i) => (
         <div className="item" key={r.id}>
           <span className="no">{(i + 1) + '.'}</span>
-          <Auto value={r.t} fid={r.id} placeholder="Requirement" label={'Requirement ' + (i + 1)} onChange={(v) => apply((x) => { x.reqs[i].t = v; return x; })} onKeyDown={keys(i)} />
-          <button type="button" className="ib del" aria-label="Remove requirement" onClick={() => apply((x) => { x.reqs.splice(i, 1); return x; })}><Ic n="x" /></button>
+          <Auto value={r.t} fid={r.id} placeholder={translateUI("ui.requirement_e9c366")} label={translateUI("ui.requirement_15c842") + (i + 1)} onChange={(v) => apply((x) => { x.reqs[i].t = v; return x; })} onKeyDown={keys(i)} />
+          <button type="button" className="ib del" aria-label={translateUI("ui.remove_requirement_425573")} onClick={() => apply((x) => { x.reqs.splice(i, 1); return x; })}><Ic n="x" /></button>
         </div>
       ))}
       <div style={{ marginTop: 8 }}>
-        <button type="button" className="link" onClick={() => { const n = { id: newId(), t: '' }; apply((x) => { x.reqs.push(n); return x; }); focusId(n.id); }}>+ Add requirement</button>
-        <span className="hint"> Enter adds the next line.</span>
+        <button type="button" className="link" onClick={() => { const n = { id: newId(), t: '' }; apply((x) => { x.reqs.push(n); return x; }); focusId(n.id); }}>{translateUI("ui.add_requirement_a73fac")}</button>
+        <span className="hint">{translateUI("ui.enter_adds_the_next_line_10a028")}</span>
       </div>
       {suggestions.length > 0 && (
         <div style={{ marginTop: 22 }}>
-          <span className="lbl">From your assessment tasks in step 3</span>
+          <span className="lbl">{translateUI("ui.from_your_assessment_tasks_in_step_3_860593")}</span>
           <div className="sugg">{suggestions.map((t) => <button type="button" key={t} onClick={() => apply((x) => { x.reqs.push({ id: newId(), t }); return x; })}>{'+ ' + t}</button>)}</div>
         </div>
       )}

@@ -168,6 +168,43 @@ test('step statuses: review is complete only when steps 1 to 6 are', () => {
   assert.equal(M.stepStatuses(d, {}).statuses[6], 'todo');
 });
 
+test('all seven completion statuses follow required fields, revoke on incomplete edits, and restore when fixed', () => {
+  const { d } = fixture();
+  d.reqs = ['Requirement A', 'Requirement B', 'Requirement C'].map(t => ({ id: newId(), t }));
+  Object.values(d.refs).forEach(group => { group.na = true; });
+  assert.deepEqual(M.stepStatuses(d, {}).statuses, Array(7).fill('done'));
+  const prereq = d.meta.prereq;
+  d.meta.prereq = '';
+  const incomplete = M.stepStatuses(d, { 0: 1, 6: 1 });
+  assert.equal(incomplete.statuses[0], 'attn');
+  assert.equal(incomplete.statuses[6], 'attn');
+  assert.equal(incomplete.complete, false);
+  d.meta.prereq = prereq;
+  assert.deepEqual(M.stepStatuses(d, { 0: 1, 6: 1 }).statuses, Array(7).fill('done'));
+});
+
+test('sequential step indicators do not check auto-loaded outcomes until earlier required fields are complete', () => {
+  const { d } = fixture();
+  d.meta.prereq = '';
+  assert.equal(M.stepStatuses(d).statuses[1], 'done', 'catalog outcomes are already valid');
+  const faculty = M.stepStatuses(d, { 0: 1 }, { sequential: true });
+  assert.equal(faculty.firstBlocked, 0);
+  assert.deepEqual(faculty.statuses, ['attn', 'locked', 'locked', 'locked', 'locked', 'locked', 'locked']);
+  assert.equal(faculty.statuses.filter(status => status === 'done').length, 0);
+  d.meta.prereq = 'None';
+  const unlocked = M.stepStatuses(d, { 0: 1 }, { sequential: true });
+  assert.equal(unlocked.firstBlocked, 3);
+  assert.deepEqual(unlocked.statuses.slice(0, 3), ['done', 'done', 'done']);
+  assert.equal(unlocked.statuses[3], 'todo');
+  assert.ok(unlocked.statuses.slice(4).every(status => status === 'locked'));
+  assert.equal(M.stepStatuses(d).statuses[5], 'done', 'non-sequential administrator inspection stays unrestricted');
+  d.reqs = ['A', 'B', 'C'].map(t => ({ id: newId(), t }));
+  Object.values(d.refs).forEach(group => { group.na = true; });
+  assert.deepEqual(M.stepStatuses(d, {}, { sequential: true }).statuses, Array(7).fill('done'));
+  d.meta.prereq = '';
+  assert.equal(M.stepStatuses(d, { 1: 1 }, { sequential: true }).statuses[1], 'locked', 'invalidating an earlier step removes later checks');
+});
+
 test('a new syllabus starts empty with one blank plan row', () => {
   const e = emptyDraft(newId);
   assert.equal(e.schemaVersion, SCHEMA_VERSION);
@@ -439,4 +476,17 @@ test('firstBlocked finds the first of steps 1 to 6 that still has a blocker; not
   d.meta.prereq = '';
   assert.equal(M.firstBlocked(d), 0);
   assert.equal(M.stepStatuses(d, {}).complete, false);
+});
+
+test('explicitly empty program EGAs never inherit defaults, and missing programs expose no attributes', () => {
+  const m=createModel({institution:INSTITUTION,programs:{NEW:{name:'New',egas:[],pos:[]}},year:2026});
+  assert.deepEqual(m.egaList({meta:{program:'NEW'}}),[]);
+  assert.deepEqual(m.egaList({meta:{program:''}}),[]);
+  assert.deepEqual(m.egaList({meta:{program:'UNKNOWN'}}),[]);
+});
+test('outcome selection requires both fields while retained catalog snapshots remain readable', () => {
+  const m=createModel({institution:INSTITUTION,programs:{BSIT:{name:'BSIT',egas:[],pos:[]}},year:2026});
+  for(const meta of [{program:'',courseId:1},{program:'BSIT',courseId:null},{program:'UNKNOWN',courseId:1}]) assert.equal(m.hasOutcomeSelection({meta}),false);
+  assert.equal(m.hasOutcomeSelection({meta:{program:'BSIT',courseId:1}}),true);
+  assert.equal(m.hasOutcomeSelection({meta:{program:'BSIT',courseId:null},catalog:{program:{code:'BSIT'}}}),true);
 });

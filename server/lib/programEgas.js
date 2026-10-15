@@ -1,10 +1,7 @@
-// A program's own expected graduate attributes (EGAs). Falls back to the school-wide default list (institution_egas)
-// for a program that has none of its own, so the builder never meets an empty list because of a missing copy.
+// A program's own expected graduate attributes (EGAs), explicitly configured by an administrator.
 async function loadProgramEgas(db, programId) {
   const [own] = await db.query('SELECT ega_no, name, short_name FROM program_egas WHERE program_id = ? ORDER BY ega_no', [programId]);
-  if (own.length) return own.map((e) => ({ no: e.ega_no, name: e.name, short: e.short_name }));
-  const [fallback] = await db.query('SELECT ega_no, name, short_name FROM institution_egas ORDER BY ega_no');
-  return fallback.map((e) => ({ no: e.ega_no, name: e.name, short: e.short_name }));
+  return own.map((e) => ({ no: e.ega_no, name: e.name, short: e.short_name }));
 }
 
 const egaNumbers = (egas) => new Set(egas.map((e) => e.no));

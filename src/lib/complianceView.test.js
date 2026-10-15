@@ -1,7 +1,7 @@
 // Run: npm test
 import test from 'node:test';
 import assert from 'node:assert';
-import { runState, tone, ringAngle, basis, blockersOf, warningsOf, warningCount, headline, areaNames, groupFindings, scoreText, when, stepLabel, listBasis, STEP_INFO, rowState, actionLabel, bulkTargets, filterRows, groupByFacultyProgram } from './complianceView.js';
+import { runState, tone, ringAngle, basis, blockersOf, warningsOf, warningCount, headline, areaNames, groupFindings, scoreText, when, stepLabel, listBasis, STEP_INFO, rowState, actionLabel, timeOf, stamp, isLocked, needsCheck, canCheckNow, rangeToInstants, rangeLabel, bulkTargets, filterRows, groupByFacultyProgram } from './complianceView.js';
 import { STEPS } from './syllabusModel.js';
 
 const area = (key, score) => ({ key, name: key.toUpperCase(), weight: 10, score });
@@ -154,4 +154,59 @@ test('rows group by faculty, then program, then subject, each sorted, with a cou
 test('two faculty with the same name stay separate', () => {
   const g = groupByFacultyProgram([row(1, { userId: 1, facultyName: 'Sam Lee' }), row(2, { userId: 2, facultyName: 'Sam Lee' })]);
   assert.strictEqual(g.length, 2);
+});
+
+test('a run is stamped with its day and its time, and an unreadable date gives nothing', () => {
+  assert.match(when('2026-01-05 15:42:00'), /Jan 5, 2026/);
+  assert.match(timeOf('2026-01-05 15:42:00'), /^3:42\s?PM$/);
+  assert.match(stamp('2026-01-05 15:42:00'), /^Jan 5, 2026, 3:42\s?PM$/);
+  assert.strictEqual(timeOf(''), '');
+  assert.strictEqual(timeOf('not a date'), '');
+  assert.strictEqual(stamp(null), '');
+});
+
+test('an approved syllabus is locked: it cannot be checked again, whatever else is true of it', () => {
+  assert.strictEqual(isLocked({ status: 'approved' }), true);
+  ['submitted', 'under_review', 'for_revision', 'rejected', 'draft'].forEach((st) => assert.strictEqual(isLocked({ status: st }), false, st));
+  assert.strictEqual(isLocked(null), false);
+});
+
+test('the checker queue is the unchecked syllabi that are not approved, uploaded files included', () => {
+  assert.strictEqual(needsCheck({ status: 'submitted', run: null, checkable: true }), true);
+  assert.strictEqual(needsCheck({ status: 'for_revision', run: null, checkable: false }), true); // an uploaded file waits too
+  assert.strictEqual(needsCheck({ status: 'submitted', run: { id: 1, stale: false } }), false); // checked once: it is in the history
+  assert.strictEqual(needsCheck({ status: 'submitted', run: { id: 1, stale: true } }), true); // a new version was submitted since: it needs a new check
+  assert.strictEqual(needsCheck({ status: 'approved', run: null }), false); // approved: in the Repository
+  assert.strictEqual(needsCheck(null), false);
+});
+
+test('only a syllabus with a form can be checked now; an uploaded file waits for template matching', () => {
+  assert.strictEqual(canCheckNow({ checkable: true }), true);
+  assert.strictEqual(canCheckNow({ checkable: false }), false);
+  assert.strictEqual(canCheckNow(null), false);
+});
+
+test('a date range becomes Philippine-day instants: the start of the first day up to the start of the day after the last', () => {
+  const r = rangeToInstants('2026-03-02', '2026-03-02');
+  assert.strictEqual(r.from, '2026-03-01T16:00:00.000Z'); // midnight in Manila, whatever the computer's own time zone
+  assert.strictEqual(r.to, '2026-03-02T16:00:00.000Z');
+  assert.strictEqual(new Date(r.to) - new Date(r.from), 24 * 3600 * 1000);
+  assert.deepStrictEqual(rangeToInstants('', ''), { from: null, to: null });
+  assert.strictEqual(rangeToInstants('2026-03-02', '').to, null);
+  assert.strictEqual(rangeToInstants('', '2026-03-02').from, null);
+  assert.strictEqual(new Date(rangeToInstants('2026-02-27', '2026-02-28').to).getDate(), 1); // the day after the 28th crosses the month
+});
+
+test('an invalid range has no instants: an impossible date, or a range that ends before it starts', () => {
+  assert.strictEqual(rangeToInstants('2026-02-31', ''), null);
+  assert.strictEqual(rangeToInstants('abc', ''), null);
+  assert.strictEqual(rangeToInstants('2026-03-05', '2026-03-01'), null);
+});
+
+test('the range is named for the admin: a span, one day, or one open side', () => {
+  assert.strictEqual(rangeLabel('2026-10-01', '2026-10-14'), 'Oct 1, 2026 – Oct 14, 2026');
+  assert.strictEqual(rangeLabel('2026-10-14', '2026-10-14'), 'Oct 14, 2026');
+  assert.strictEqual(rangeLabel('2026-10-01', ''), 'Since Oct 1, 2026');
+  assert.strictEqual(rangeLabel('', '2026-10-14'), 'Until Oct 14, 2026');
+  assert.strictEqual(rangeLabel('', ''), '');
 });

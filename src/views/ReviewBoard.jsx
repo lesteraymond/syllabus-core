@@ -1,3 +1,4 @@
+import { t as translateUI } from "../i18n/index.js";
 import { Avatar, Icon } from '../components/ui';
 import { programLabel, subjectLabel, toneStyle } from '../lib/reviewView';
 
@@ -13,10 +14,10 @@ export default function ReviewBoard({ rows, total, onOpen, q, setQ }) {
     <div className="rb">
       <label className="rb-searchbox">
         <Icon name="magnifyingGlass" size={18} />
-        <input type="search" placeholder="Search faculty, program or subject" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search the review board" />
+        <input type="search" placeholder={translateUI("ui.search_faculty_program_or_subject_92ad4a")} value={q} onChange={(e) => setQ(e.target.value)} aria-label={translateUI("ui.search_the_review_board_b45456")} />
       </label>
-      {total === 0 && <div className="empty">All caught up! No pending syllabi.</div>}
-      {total > 0 && rows.length === 0 && <div className="empty">No syllabus matches “{q}”.</div>}
+      {total === 0 && <div className="empty">{translateUI("ui.all_caught_up_no_pending_syllabi_88b06d")}</div>}
+      {total > 0 && rows.length === 0 && <div className="empty">{translateUI("ui.no_syllabus_matches_ade270")}{q}”.</div>}
       {rows.length > 0 && (
         <ul className="rb-grid">
           {rows.map((r) => (
@@ -26,7 +27,7 @@ export default function ReviewBoard({ rows, total, onOpen, q, setQ }) {
                 <strong className="rb-subject">{subjectLabel(r)}</strong>
                 <span className="rb-who">
                   <Avatar src={r.raw.ownerAvatarUrl} name={r.facultyName} />
-                  <span className="rb-name">{r.facultyName || 'Unknown faculty'}</span>
+                  <span className="rb-name">{r.facultyName || translateUI("ui.unknown_faculty_753147")}</span>
                 </span>
                 <Icon name="arrowUpRight" size={18} className="rb-go" />
               </button>

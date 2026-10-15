@@ -1,14 +1,16 @@
+import { tr } from "../i18n/index.js";
+import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { courses as coursesApi, outcomes as outcomesApi, users as usersApi } from '../lib/api';
 import { hasUnsaved, mergeCatalog } from '../lib/assignmentSync';
-
+
 // Admin: choose the programs, then the subjects, a faculty member may create syllabi for. This panel only ASSIGNS what
-// already exists; subjects are created, edited and deleted in Subjects & CLOs.
+// already exists; subjects are created, edited and deleted in Program & Subjects.
 // Left: the programs (tick = assigned, click = look at its subjects). Right: that program's subjects.
 // Unticking a program drops its subjects (the server does the same). A program may have no subjects yet: it still saves,
 // and the faculty member waits for subjects to be assigned.
 // The programs and subjects are loaded every time the panel opens and again when the browser tab regains focus, so a
-// subject added in Subjects & CLOs shows up here; the admin's unsaved ticks are kept (see lib/assignmentSync.js).
+// subject added in Program & Subjects shows up here; the admin's unsaved ticks are kept (see lib/assignmentSync.js).
 export default function AssignmentsPanel({ person, onClose, notify, onManageSubjects }) {
   const [programs, setPrograms] = useState([]);
   const [courses, setCourses] = useState([]);
@@ -38,7 +40,7 @@ export default function AssignmentsPanel({ person, onClose, notify, onManageSubj
     return () => { live = false; };
   }, [person.id]);
 
-  // A subject added in Subjects & CLOs while this panel is open: re-fetch only the programs and subjects when the tab
+  // A subject added in Program & Subjects while this panel is open: re-fetch only the programs and subjects when the tab
   // regains focus, and merge them with the admin's current ticks.
   useEffect(() => {
     let live = true;
@@ -83,7 +85,7 @@ export default function AssignmentsPanel({ person, onClose, notify, onManageSubj
   };
 
   const goToSubjects = () => {
-    if (hasUnsaved(saved.current, { progSel, courseSel }) && !window.confirm('Leave without saving your assignment changes?')) return;
+    if (hasUnsaved(saved.current, { progSel, courseSel }) && !window.confirm(tr('Leave without saving your assignment changes?'))) return;
     onClose();
     onManageSubjects();
   };
@@ -93,11 +95,11 @@ export default function AssignmentsPanel({ person, onClose, notify, onManageSubj
     try {
       const saved = await usersApi.saveAssignments(person.id, { programs: [...progSel], courses: [...courseSel] });
       const waiting = saved.courseIds.length === 0 && saved.programIds.length > 0;
-      notify(`Assignments saved for ${person.firstName} ${person.lastName}.` + (waiting ? ' No subject is assigned yet, so they cannot start a syllabus until you assign one.' : (saved.emptyPrograms && saved.emptyPrograms.length ? ` ${saved.emptyPrograms.map((p) => p.code).join(', ')} has no subjects yet.` : '')));
+      notify(translateUI("ui.assignments_saved_for_p0_p1_c93ea6", { p0: (person.firstName), p1: (person.lastName) }) + (waiting ? ' ' + tr('No subject is assigned yet, so they cannot start a syllabus until you assign one.') : (saved.emptyPrograms && saved.emptyPrograms.length ? ` ${saved.emptyPrograms.map((p) => p.code).join(', ')} has no subjects yet.` : '')));
       onClose();
     } catch (e) {
       setState((s) => ({ ...s, saving: false }));
-      notify('Failed: ' + e.message);
+      notify(translateUI("ui.failed_9500be") + e.message);
     }
   };
 
@@ -106,26 +108,26 @@ export default function AssignmentsPanel({ person, onClose, notify, onManageSubj
       <div className="modal asg-modal" role="dialog" aria-modal="true" aria-labelledby="asg-title" onClick={(e) => e.stopPropagation()}>
         <header className="asg-head">
           <div>
-            <span className="asg-eyebrow">Assignments</span>
+            <span className="asg-eyebrow">{translateUI("ui.assignments_057d58")}</span>
             <h3 id="asg-title">{person.firstName} {person.lastName}</h3>
             <small>{person.email}</small>
           </div>
-          <button type="button" className="asg-x" onClick={onClose} aria-label="Close">✕</button>
+          <button type="button" className="asg-x" onClick={onClose} aria-label={translateUI("ui.close_bbfa77")}>✕</button>
         </header>
 
         <div className="asg-body">
-          {state.loading && <div className="empty">Loading…</div>}
-          {state.error && <div className="info-banner warning">Could not load the assignments: {state.error}</div>}
+          {state.loading && <div className="empty">{translateUI("ui.loading_33ce41")}</div>}
+          {state.error && <div className="info-banner warning">{translateUI("ui.could_not_load_the_assignments_7525d7")}{tr(state.error)}</div>}
           {!state.loading && !state.error && (
             <div className="asg-grid">
-              <section className="asg-card" aria-label="Programs">
-                <h4 className="asg-h">Programs <small>{progSel.size} of {programs.length} assigned</small></h4>
+              <section className="asg-card" aria-label={translateUI("ui.programs_ab14d0")}>
+                <h4 className="asg-h">{translateUI("ui.programs_bbc93f")}<small>{progSel.size}{translateUI("ui.of_607f2d")}{programs.length}{translateUI("ui.assigned_cb6e65")}</small></h4>
                 <ul className="asg-list">
                   {programs.map((p) => {
                     const on = progSel.has(p.id);
                     return (
                       <li key={p.id} className={'asg-prog' + (on ? ' on' : '') + (p.id === focusId ? ' focus' : '')}>
-                        <input type="checkbox" checked={on} onChange={() => toggleProgram(p)} aria-label={'Assign ' + p.code + ' to ' + person.firstName} />
+                        <input type="checkbox" checked={on} onChange={() => toggleProgram(p)} aria-label={translateUI("ui.assign_f1e181") + p.code + translateUI("ui.to_3a59c4") + person.firstName} />
                         <button type="button" className="asg-prog-main" aria-current={p.id === focusId ? 'true' : undefined} onClick={() => setFocusId(p.id)}>
                           <span className="asg-code">{p.code}</span>
                           <span className="asg-count mono">{assignedIn(p.code)}/{inProgram(p.code).length}</span>
@@ -134,35 +136,35 @@ export default function AssignmentsPanel({ person, onClose, notify, onManageSubj
                       </li>
                     );
                   })}
-                  {programs.length === 0 && <li className="asg-empty">No programs exist yet.</li>}
+                  {programs.length === 0 && <li className="asg-empty">{translateUI("ui.no_programs_exist_yet_f41802")}</li>}
                 </ul>
-                <p className="asg-foot-note">Tick a program to assign it. The count is subjects assigned out of subjects in the catalog.</p>
+                <p className="asg-foot-note">{translateUI("ui.tick_a_program_to_assign_it_the_count_is_subjects_assigned_out_of_6c6499")}</p>
               </section>
 
-              <section className="asg-card" aria-label={fp ? 'Subjects of ' + fp.code : 'Subjects'}>
-                {!fp ? <div className="asg-empty">Choose a program to see its subjects.</div> : <>
+              <section className="asg-card" aria-label={fp ? translateUI("ui.subjects_of_08ca3f") + fp.code : translateUI("ui.subjects_278947")}>
+                {!fp ? <div className="asg-empty">{translateUI("ui.choose_a_program_to_see_its_subjects_bf5ee2")}</div> : <>
                   <div className="asg-subhead">
                     <div><span className="asg-code lg">{fp.code}</span><span className="asg-subname">{fp.name}</span></div>
                     <div className="asg-tools">
-                      <span className="asg-meta mono">{assignedIn(fp.code)} of {inProgram(fp.code).length} assigned</span>
-                      <button type="button" className="asg-link" disabled={!programOn || !rows.length} onClick={() => setAll(true)}>Select all</button>
-                      <button type="button" className="asg-link" disabled={!programOn || !rows.length} onClick={() => setAll(false)}>Clear</button>
+                      <span className="asg-meta mono">{assignedIn(fp.code)}{translateUI("ui.of_607f2d")}{inProgram(fp.code).length}{translateUI("ui.assigned_cb6e65")}</span>
+                      <button type="button" className="asg-link" disabled={!programOn || !rows.length} onClick={() => setAll(true)}>{translateUI("ui.select_all_913aff")}</button>
+                      <button type="button" className="asg-link" disabled={!programOn || !rows.length} onClick={() => setAll(false)}>{translateUI("ui.clear_719ea3")}</button>
                     </div>
                   </div>
-                  {!programOn && <p className="asg-note">{fp.code} is not assigned to {person.firstName} yet. Tick it on the left to assign its subjects. You can still add subjects to the catalog in Subjects & CLOs.</p>}
-                  <input className="asg-in asg-search" type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={'Search ' + fp.code + ' subjects'} aria-label="Search subjects" />
+                  {!programOn && <p className="asg-note">{fp.code}{translateUI("ui.is_not_assigned_to_914cca")}{person.firstName}{translateUI("ui.yet_tick_it_on_the_left_to_assign_its_subjects_you_can_still_add__b0b1ca")}</p>}
+                  <input className="asg-in asg-search" type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={translateUI("ui.search_736a49") + fp.code + translateUI("ui.subjects_4ad212")} aria-label={translateUI("ui.search_subjects_45c4dd")} />
                   <div className="asg-scroll">
                     <table className="asg-ledger">
-                      <thead><tr><th className="asg-c0"><span className="sr-only">Assigned</span></th><th>Code</th><th>Title</th></tr></thead>
+                      <thead><tr><th className="asg-c0"><span className="sr-only">{translateUI("ui.assigned_e24e82")}</span></th><th>{translateUI("ui.code_adac69")}</th><th>{translateUI("ui.title_768e0c")}</th></tr></thead>
                       <tbody>
                         {rows.map((c) => (
                           <tr key={c.id} className={courseSel.has(c.id) ? 'on' : ''}>
-                            <td className="asg-c0"><input type="checkbox" disabled={!programOn} checked={courseSel.has(c.id)} onChange={() => toggleCourse(c.id)} aria-label={'Assign ' + c.code} /></td>
+                            <td className="asg-c0"><input type="checkbox" disabled={!programOn} checked={courseSel.has(c.id)} onChange={() => toggleCourse(c.id)} aria-label={translateUI("ui.assign_f1e181") + c.code} /></td>
                             <td className="mono asg-codecell">{c.code}</td>
                             <td>{c.title}</td>
                           </tr>
                         ))}
-                        {!rows.length && <tr><td colSpan="3" className="asg-empty">{q ? 'No subject matches your search.' : <>No subjects in {fp.code} yet. Add them in Subjects &amp; CLOs, then assign them here.{onManageSubjects && <> <button type="button" className="asg-link" onClick={goToSubjects}>Go to Subjects &amp; CLOs</button></>}</>}</td></tr>}
+                        {!rows.length && <tr><td colSpan="3" className="asg-empty">{q ? translateUI("ui.no_subject_matches_your_search_d6a180") : <>{translateUI("ui.no_subjects_in_662f89")}{fp.code}{translateUI("ui.yet_add_them_in_subjects_amp_clos_then_assign_them_here_5ddd30")}{onManageSubjects && <> <button type="button" className="asg-link" onClick={goToSubjects}>{translateUI("ui.go_to_subjects_amp_clos_c825d0")}</button></>}</>}</td></tr>}
                       </tbody>
                     </table>
                   </div>
@@ -173,10 +175,10 @@ export default function AssignmentsPanel({ person, onClose, notify, onManageSubj
         </div>
 
         <footer className="asg-foot">
-          <span className="asg-summary mono">{progSel.size} program{progSel.size === 1 ? '' : 's'} · {courseSel.size} subject{courseSel.size === 1 ? '' : 's'}</span>
+          <span className="asg-summary mono">{tr(progSel.size + (progSel.size === 1 ? ' program' : ' programs'))} · {tr(courseSel.size + (courseSel.size === 1 ? ' subject' : ' subjects'))}</span>
           <div className="asg-actions">
-            <button type="button" className="asg-btn ghost" onClick={onClose}>Cancel</button>
-            <button type="button" className="asg-btn primary" disabled={state.loading || !!state.error || state.saving} onClick={save}>{state.saving ? 'Saving…' : 'Save assignments'}</button>
+            <button type="button" className="asg-btn ghost" onClick={onClose}>{translateUI("ui.cancel_77dfd2")}</button>
+            <button type="button" className="asg-btn primary" disabled={state.loading || !!state.error || state.saving} onClick={save}>{state.saving ? translateUI("ui.saving_56a228") : translateUI("ui.save_assignments_710200")}</button>
           </div>
         </footer>
       </div>

@@ -41,8 +41,11 @@ function makeDb() {
     syllabi: { 1: { syllabus_id: 1, user_id: 5, status: 'draft', version: 'v1.0', title: 'Programming 2', course_code: 'IT 204', course_id: 10, curriculum_id: null, file_path: null, content: JSON.stringify(conformingContent()) } },
     saved: [],
   };
+  for (const course of s.courses) course.standards_json = JSON.stringify({ vision:s.settings.vision, mission:{lead:s.settings.mission_lead,items:JSON.parse(s.settings.mission_items)}, egas:s.egas.filter(e=>e.program_id===course.program_id).map(e=>({no:e.ega_no,name:e.name,short:e.short_name})), pos:s.pos.filter(p=>p.program_id===course.program_id).map(p=>({no:p.po_no,short:p.short_name,text:p.outcome_text,egas:p.ega_nos.split(',').map(Number)})), versions:{vision:1,egas:1,pos:1} });
   const prog = (where) => s.programs.find(where);
   const handle = (sql, p = []) => {
+    if (sql.startsWith('SELECT standards_json FROM courses')) return [s.courses.filter(c=>c.course_id===p[0]).map(c=>({standards_json:c.standards_json}))];
+    if (sql.startsWith('UPDATE courses SET standards_json')) {s.courses.find(c=>c.course_id===p[1]).standards_json=p[0];return [{}];}
     if (sql.startsWith('SELECT user_id FROM users WHERE user_id')) return [[{ user_id: p[0] }]];
     if (sql.startsWith('SELECT vision')) return [[s.settings]];
     if (sql.startsWith('SELECT ega_no, name, short_name FROM institution_egas')) return [s.instEgas];
@@ -59,7 +62,7 @@ function makeDb() {
     if (sql.startsWith('SELECT code FROM courses WHERE program_id')) return [s.courses.filter((c) => c.program_id === p[0]).map((c) => ({ code: c.code }))];
     if (sql.startsWith('SELECT egas_version AS v')) return [[{ v: prog((x) => x.program_id === p[0]).egas_version }]];
     if (sql.startsWith('SELECT pos_version AS v')) return [[{ v: prog((x) => x.program_id === p[0]).pos_version }]];
-    if (sql.startsWith('SELECT clos_version AS v')) return [[{ v: s.courses.find((c) => c.course_id === p[0]).clos_version }]];
+    if (sql.startsWith('SELECT clos_version AS v')) { const c=s.courses.find(c=>c.course_id===p[0]); return [[{v:c.clos_version,standards_json:c.standards_json}]]; }
     if (sql.startsWith('INSERT INTO institution_settings')) { s.settings.version++; return [{}]; }
     if (sql.startsWith('UPDATE programs SET egas_version')) { prog((x) => x.program_id === p[0]).egas_version++; return [{}]; }
     if (sql.startsWith('UPDATE programs SET pos_version')) { prog((x) => x.program_id === p[0]).pos_version++; return [{}]; }
@@ -72,6 +75,7 @@ function makeDb() {
     if (sql.startsWith('SELECT clo_id')) return [s.clos.filter((k) => k.course_id === p[0]).map((k, i) => ({ clo_id: i + 1, title: '', clo_level: 'Enabling', statement: 's', ega_nos: k.ega_nos, po_nos: k.po_nos }))];
     if (sql.startsWith('SELECT course_id FROM faculty_courses')) return [[{ course_id: 10 }]];
     if (sql.startsWith('SELECT program_id FROM faculty_programs')) return [[{ program_id: 1 }]];
+    if (sql.startsWith('SELECT syllabus_id, user_id, status, title, course_code, content, course_id FROM syllabi WHERE')) return [s.syllabi[p[0]] ? [s.syllabi[p[0]]] : []];
     if (sql.startsWith('SELECT * FROM syllabi WHERE syllabus_id')) return [s.syllabi[p[0]] ? [s.syllabi[p[0]]] : []];
     if (sql.startsWith("SELECT user_id FROM users WHERE role = 'admin'")) return [[]];
     if (sql.startsWith('UPDATE syllabi SET content')) { s.saved.push(JSON.parse(p[0])); return [{}]; }
@@ -212,18 +216,20 @@ test('submitting stores a snapshot with the program\'s own EGAs and POs; faculty
 }));
 
 test('submit is refused with a clear 409 when the vision, mission, program EGAs or POs, or the subject CLOs are missing', () => withServer(async ({ call, db }) => {
-  db.s.settings.vision = '  ';
+  const setup=JSON.parse(db.s.courses[0].standards_json);
+  const update=()=>{db.s.courses[0].standards_json=JSON.stringify(setup);};
+  setup.vision='  ';update();
   const noVision = await call(fay, 'POST', '/syllabi/1/submit', {});
   assert.strictEqual(noVision.status, 409);
   assert.match(noVision.body.error, /administrator has not finished setting up this subject yet: the vision is missing/);
   assert.strictEqual(db.s.saved.length, 0);
-  db.s.settings.vision = 'V';
-  db.s.settings.mission_items = JSON.stringify(['', ' ']);
+  setup.vision='V';update();
+  setup.mission.items=['',' '];update();
   assert.match((await call(fay, 'POST', '/syllabi/1/submit', {})).body.error, /the mission is missing/);
-  db.s.settings.mission_items = JSON.stringify(['m1']);
-  db.s.pos = db.s.pos.filter((p) => p.program_id !== 1);
+  setup.mission.items=['m1'];update();
+  setup.pos=[];update();
   assert.match((await call(fay, 'POST', '/syllabi/1/submit', {})).body.error, /BSIT program outcomes is missing/);
-  db.s.egas = db.s.egas.filter((e) => e.program_id !== 1);
+  setup.egas=[];update();
   db.s.instEgas = [];
   const both = await call(fay, 'POST', '/syllabi/1/submit', {});
   assert.strictEqual(both.status, 409);
@@ -240,4 +246,38 @@ test('submit is refused when the subject has no learning outcomes, and works onc
   const ok = await call(fay, 'POST', '/syllabi/1/submit', {});
   assert.strictEqual(ok.status, 200);
   assert.strictEqual(db.s.saved.length, 1);
+}));
+
+test('saving an editable draft canonicalizes the program code from its assigned subject without rewriting other content', () => withServer(async ({ call, db }) => {
+  db.s.programs[0].code = 'NEW-IT';
+  const old = JSON.parse(db.s.syllabi[1].content);
+  const r = await call(fay, 'PUT', '/syllabi/1/content', { sections: { meta: { ...old.meta, courseId: 10, program: 'BSIT' } } });
+  assert.strictEqual(r.status, 200);
+  assert.strictEqual(db.s.saved[0].meta.program, 'NEW-IT');
+  assert.deepStrictEqual(db.s.saved[0].description, old.description);
+  assert.deepStrictEqual(db.s.saved[0].plan, old.plan);
+}));
+
+test('an unconfigured subject cannot submit despite configured program and institution values', () => withServer(async ({call,db}) => {
+  db.s.courses[0].standards_json=null;
+  const result=await call(fay,'POST','/syllabi/1/submit',{});
+  assert.strictEqual(result.status,409);assert.match(result.body.error,/graduate attributes/);
+}));
+
+test('subject standards are isolated, administrator-only and reject stale saves without overwriting other sections', () => withServer(async ({call,db}) => {
+  const sibling={...db.s.courses[0],course_id:30,code:'IT 300'};db.s.courses.push(sibling);
+  const before=JSON.parse(sibling.standards_json);
+  const value={vision:'Subject-specific vision',mission:{lead:'Subject-specific mission',items:['One purpose']}};
+  assert.strictEqual((await call(fay,'PUT','/courses/10/standards',{section:'vision',value,version:1})).status,403);
+  const saved=await call(admin,'PUT','/courses/10/standards',{section:'vision',value,version:1});
+  assert.strictEqual(saved.status,200);assert.strictEqual(saved.body.standards.vision,value.vision);
+  assert.deepStrictEqual(saved.body.standards.egas,before.egas);
+  assert.deepStrictEqual(JSON.parse(sibling.standards_json),before);
+  assert.strictEqual(db.s.settings.vision,'V');
+  assert.strictEqual((await call(admin,'PUT','/courses/10/standards',{section:'vision',value,version:1})).status,409);
+}));
+test('subject setup refuses dangling EGA/PO references and accepts independent numbering', () => withServer(async ({call,db}) => {
+  assert.strictEqual((await call(admin,'PUT','/courses/10/standards',{section:'egas',value:[ega(2)],version:1})).status,409);
+  assert.strictEqual((await call(admin,'PUT','/courses/10/standards',{section:'pos',value:[po(1,[99])],version:1})).status,400);
+  assert.strictEqual((await call(admin,'PUT','/courses/999/standards',{section:'vision',value:{},version:1})).status,404);
 }));

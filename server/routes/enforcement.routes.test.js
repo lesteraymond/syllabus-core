@@ -14,13 +14,21 @@ const COURSES = [
 const PROGRAMS = [{ program_id: 1, code: 'BSIT', name: 'BS IT', outcome_count: 10 }, { program_id: 2, code: 'BSIE', name: 'BS IE', outcome_count: 0 }];
 const USERS = new Set([1, 5, 6]);
 
-function makeDb({ assigned = {}, syllabi = {} } = {}) {
+function makeDb({ assigned = {}, syllabi = {}, beforeDelete } = {}) {
   // assigned: userId -> { programs: [], courses: [] }
   const queries = [];
   const egaCopies = []; // program ids that received a copy of the school-wide EGAs
   const mine = (uid) => assigned[uid] || { programs: [], courses: [] };
   const handle = (sql, params = []) => {
     queries.push(sql);
+    if (sql.startsWith('SELECT syllabus_id, user_id, status FROM syllabi WHERE')) return [syllabi[params[0]] ? [{ ...syllabi[params[0]] }] : []];
+    if (sql.startsWith('DELETE FROM syllabi WHERE syllabus_id')) {
+      beforeDelete?.(syllabi);
+      const target = syllabi[params[0]];
+      const allowed = target && (!sql.includes('AND status') || (target.user_id === params[1] && target.status === 'draft'));
+      if (allowed) delete syllabi[params[0]];
+      return [{ affectedRows: allowed ? 1 : 0 }];
+    }
     if (sql.startsWith('SELECT user_id FROM users WHERE user_id')) return [USERS.has(params[0]) ? [{ user_id: params[0] }] : []];
     if (sql.startsWith('SELECT program_id FROM faculty_programs')) return [mine(params[0]).programs.map((program_id) => ({ program_id }))];
     if (sql.startsWith('SELECT course_id FROM faculty_courses')) return [mine(params[0]).courses.map((course_id) => ({ course_id }))];
@@ -44,6 +52,7 @@ function makeDb({ assigned = {}, syllabi = {} } = {}) {
     }
     if (sql.startsWith('SELECT program_id FROM programs WHERE code')) { const p = PROGRAMS.find((x) => x.code === params[0]); return [p ? [{ program_id: p.program_id }] : []]; }
     if (sql.startsWith('SELECT 1 FROM courses WHERE code')) return [COURSES.filter((c) => c.code === params[0] && (params[1] === undefined || c.course_id !== params[1])).map(() => ({ 1: 1 }))];
+    if (sql.startsWith('SELECT program_id FROM program_code_aliases')) return [[]]; // these fixtures have no historical codes
     if (sql.startsWith('SELECT code, name FROM programs')) return [PROGRAMS.map((p) => ({ code: p.code, name: p.name }))];
     if (sql.startsWith('INSERT INTO programs')) {
       const [code, name] = params;
@@ -121,6 +130,46 @@ test('a faculty member with nothing assigned gets empty lists', () => withServer
   assert.deepStrictEqual((await call(gus, 'GET', '/programs')).body, []);
 }));
 
+test('faculty can delete their own draft, but no submitted or decided syllabus', async () => {
+  const statuses = ['draft', 'submitted', 'under_review', 'for_revision', 'approved', 'rejected'];
+  const syllabi = Object.fromEntries(statuses.map((status, index) => [index + 1, { syllabus_id: index + 1, user_id: 5, status }]));
+  await withServer({ syllabi }, async ({ call, db }) => {
+    for (let id = 2; id <= statuses.length; id++) {
+      const result = await call(fay, 'DELETE', '/syllabi/' + id);
+      assert.strictEqual(result.status, 409, statuses[id - 1]);
+      assert.match(result.body.error, /Only draft syllabi/);
+      assert.ok(syllabi[id]);
+    }
+    assert.ok(!db.queries.some(sql => sql.startsWith('DELETE FROM syllabi')));
+    assert.strictEqual((await call(gus, 'DELETE', '/syllabi/1')).status, 404);
+    assert.strictEqual((await call(null, 'DELETE', '/syllabi/1')).status, 401);
+    assert.strictEqual((await call(fay, 'DELETE', '/syllabi/1')).status, 200);
+    assert.ok(!syllabi[1]);
+  });
+});
+
+test('a draft submitted while deletion is pending is preserved by the conditional delete', async () => {
+  const syllabi = { 1: { syllabus_id: 1, user_id: 5, status: 'draft' } };
+  await withServer({ syllabi, beforeDelete: records => { records[1].status = 'submitted'; } }, async ({ call }) => {
+    const result = await call(fay, 'DELETE', '/syllabi/1');
+    assert.strictEqual(result.status, 409);
+    assert.strictEqual(syllabi[1].status, 'submitted');
+  });
+});
+
+test('administrators retain deletion access to submitted records and their own drafts only', async () => {
+  const statuses = ['submitted', 'under_review', 'for_revision', 'approved', 'rejected'];
+  const syllabi = Object.fromEntries(statuses.map((status, index) => [index + 1, { syllabus_id: index + 1, user_id: 5, status }]));
+  syllabi[10] = { syllabus_id: 10, user_id: 5, status: 'draft' };
+  syllabi[11] = { syllabus_id: 11, user_id: 1, status: 'draft' };
+  await withServer({ syllabi }, async ({ call }) => {
+    assert.strictEqual((await call(admin, 'DELETE', '/syllabi/10')).status, 404);
+    for (let id = 1; id <= statuses.length; id++) assert.strictEqual((await call(admin, 'DELETE', '/syllabi/' + id)).status, 200);
+    assert.strictEqual((await call(admin, 'DELETE', '/syllabi/11')).status, 200);
+    assert.ok(syllabi[10]);
+  });
+});
+
 test('starting a draft needs at least one assigned course (faculty); admins are never blocked', () => withServer({ assigned: ASSIGNED }, async ({ call }) => {
   assert.strictEqual((await call(fay, 'POST', '/syllabi/drafts')).status, 200);
   const none = await call(gus, 'POST', '/syllabi/drafts');
@@ -144,7 +193,7 @@ test('saving content for an unassigned course is refused (403), an assigned one 
   assert.strictEqual((await call(fay, 'PUT', '/syllabi/1/content', meta(10))).status, 200);
 }));
 
-test('a syllabus whose course is no longer assigned cannot be saved or submitted, and reads as not editable', () => withServer({ assigned: ASSIGNED, syllabi: { 2: row({ syllabus_id: 2, status: 'submitted', course_id: 11, content: JSON.stringify({ meta: { courseId: 11 } }) }) } }, async ({ call }) => {
+test('a syllabus whose course is no longer assigned cannot be saved or submitted, and reads as not editable', () => withServer({ assigned: ASSIGNED, syllabi: { 2: row({ syllabus_id: 2, status: 'for_revision', course_id: 11, content: JSON.stringify({ meta: { courseId: 11 } }) }) } }, async ({ call }) => {
   assert.strictEqual((await call(fay, 'PUT', '/syllabi/2/content', { sections: { description: [] } })).status, 403);
   assert.strictEqual((await call(fay, 'POST', '/syllabi/2/submit', {})).status, 403);
   const get = await call(fay, 'GET', '/syllabi/2/content');
@@ -153,7 +202,38 @@ test('a syllabus whose course is no longer assigned cannot be saved or submitted
   assert.match(get.body.lockedReason, /subject is not assigned to you/);
 }));
 
-test('the same syllabus is editable again once the admin assigns the course', () => withServer({ assigned: { 5: { programs: [1], courses: [10, 11] } }, syllabi: { 2: row({ syllabus_id: 2, status: 'submitted', course_id: 11 }) } }, async ({ call }) => {
+test('a submitted syllabus is locked: the owner cannot edit it until the administrator returns it for revision', () => withServer({ assigned: ASSIGNED, syllabi: { 6: row({ syllabus_id: 6, status: 'submitted', course_id: 10 }), 7: row({ syllabus_id: 7, status: 'under_review', course_id: 10 }), 8: row({ syllabus_id: 8, status: 'for_revision', course_id: 10 }), 9: row({ syllabus_id: 9, status: 'draft', course_id: 10 }) } }, async ({ call }) => {
+  for (const id of [6, 7]) {
+    const put = await call(fay, 'PUT', '/syllabi/' + id + '/content', { sections: { description: [] } });
+    assert.strictEqual(put.status, 409, 'content ' + id);
+    assert.match(put.body.error, /submitted and is locked.*returns it for revision/);
+    assert.strictEqual((await call(fay, 'PUT', '/syllabi/' + id, { title: 'New title' })).status, 409, 'legacy edit ' + id);
+    assert.strictEqual((await call(fay, 'POST', '/syllabi/' + id + '/submit', {})).status, 409, 'submit again ' + id);
+    const get = await call(fay, 'GET', '/syllabi/' + id + '/content');
+    assert.strictEqual(get.body.editable, false, 'editable ' + id);
+  }
+  const back = (await call(fay, 'GET', '/syllabi/8/content')).body; // returned for revision: told what the next version will be
+  assert.strictEqual(back.nextVersion, 'v1.1');
+  assert.strictEqual(back.reviewerNote, '');
+  assert.ok(!('nextVersion' in (await call(fay, 'GET', '/syllabi/6/content')).body));
+  for (const id of [8, 9]) { // a draft, or one returned for revision, can be edited
+    assert.strictEqual((await call(fay, 'GET', '/syllabi/' + id + '/content')).body.editable, true, 'editable ' + id);
+    assert.strictEqual((await call(fay, 'PUT', '/syllabi/' + id + '/content', { sections: { description: [] } })).status, 200, 'content ' + id);
+  }
+}));
+
+test('an uploaded-file syllabus back from "For revision" is saved again only with a change and a note about it', () => withServer({ assigned: ASSIGNED, syllabi: { 12: row({ syllabus_id: 12, status: 'for_revision', course_code: 'IT 101', title: 'Intro', file_path: '/uploads/a.pdf' }) } }, async ({ call }) => {
+  const put = (body) => call(fay, 'PUT', '/syllabi/12', body);
+  const none = await put({ note: 'I looked again at the file.' });
+  assert.strictEqual(none.status, 409);
+  assert.match(none.body.error, /Nothing has changed/);
+  assert.strictEqual((await put({ title: 'Intro', courseCode: 'IT 101', note: 'Same values sent again.' })).status, 409);
+  assert.strictEqual((await put({ title: 'Intro to IT' })).status, 400); // changed, but no note
+  assert.strictEqual((await put({ title: 'Intro to IT', note: 'short' })).status, 400);
+  assert.strictEqual((await put({ title: 'Intro to IT', note: 'Corrected the course title.' })).status, 200);
+}));
+
+test('the same syllabus is editable again once the admin assigns the course', () => withServer({ assigned: { 5: { programs: [1], courses: [10, 11] } }, syllabi: { 2: row({ syllabus_id: 2, status: 'for_revision', course_id: 11 }) } }, async ({ call }) => {
   const get = await call(fay, 'GET', '/syllabi/2/content');
   assert.strictEqual(get.body.editable, true);
   assert.strictEqual(get.body.lockedReason, null);
@@ -179,9 +259,9 @@ test('legacy create: the course code must match an assigned course', () => withS
   assert.match(none.body.error, /No program or subject is assigned/);
 }));
 
-test('legacy edit by the owner needs an assigned course; an admin changing status is unaffected', () => withServer({ assigned: ASSIGNED, syllabi: { 4: row({ syllabus_id: 4, status: 'submitted', course_code: 'IT 204' }), 5: row({ syllabus_id: 5, status: 'submitted', course_code: 'IT 101' }) } }, async ({ call }) => {
-  assert.strictEqual((await call(fay, 'PUT', '/syllabi/4', { title: 'New title' })).status, 403);
-  assert.strictEqual((await call(fay, 'PUT', '/syllabi/5', { title: 'New title' })).status, 200);
+test('legacy edit by the owner needs an assigned course; an admin changing status is unaffected', () => withServer({ assigned: ASSIGNED, syllabi: { 4: row({ syllabus_id: 4, status: 'for_revision', course_code: 'IT 204' }), 5: row({ syllabus_id: 5, status: 'for_revision', course_code: 'IT 101' }) } }, async ({ call }) => {
+  assert.strictEqual((await call(fay, 'PUT', '/syllabi/4', { title: 'New title', note: 'Changed the title.' })).status, 403);
+  assert.strictEqual((await call(fay, 'PUT', '/syllabi/5', { title: 'New title', note: 'Changed the title.' })).status, 200);
   assert.strictEqual((await call(admin, 'PUT', '/syllabi/4', { status: 'approved' })).status, 200);
 }));
 
@@ -214,14 +294,14 @@ test('a typed existing program code works as before, in any letter case, and its
   assert.strictEqual(db.egaCopies.length, 0);
 }));
 
-test('a new program code with a full name is created together with its first subject and starts with the default EGAs', () => withServer({ assigned: ASSIGNED }, async ({ call, db }) => {
+test('a new program code with a full name is created together with its first subject and requires explicit EGA setup', () => withServer({ assigned: ASSIGNED }, async ({ call, db }) => {
   const r = await addSubject(call, { code: 'CE 101', title: 'Statics', program: 'bsce', programName: '  BS   Civil Engineering ' });
   assert.strictEqual(r.status, 200);
   assert.strictEqual(r.body.programCreated, true);
   assert.strictEqual(r.body.program.code, 'BSCE');
   assert.strictEqual(r.body.program.name, 'BS Civil Engineering'); // trimmed, repeated spaces collapsed
   assert.strictEqual(r.body.code, 'CE 101');
-  assert.deepStrictEqual(db.egaCopies, [r.body.program.id]);
+  assert.deepStrictEqual(db.egaCopies, []);
   assert.ok((await call(admin, 'GET', '/programs')).body.some((p) => p.code === 'BSCE')); // listed like any other program
 }));
 
@@ -285,7 +365,7 @@ test('faculty cannot create a subject or a program', () => withServer({ assigned
 test('an admin\'s subject list says what is still missing for each subject; the faculty list is unchanged', () => withServer({ assigned: ASSIGNED }, async ({ call }) => {
   const admins = (await call(admin, 'GET', '/courses')).body;
   const it101 = admins.find((c) => c.code === 'IT 101');
-  assert.deepStrictEqual(it101.gaps, ['the learning outcomes of IT 101']); // vision, mission, BSIT EGAs and POs exist; no CLOs yet
+  assert.deepStrictEqual(it101.gaps, ['the vision','the mission','the BSIT graduate attributes (EGAs)','the BSIT program outcomes','the learning outcomes of IT 101']); // this subject has not been configured
   const ie = admins.find((c) => c.program === 'BSIE');
   assert.ok(ie.gaps.some((g) => /BSIE program outcomes/.test(g)));
   assert.ok((await call(fay, 'GET', '/courses')).body.every((c) => c.gaps === undefined));

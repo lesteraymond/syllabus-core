@@ -36,6 +36,7 @@ const pool = mysql.createPool({
 });
 
 app.locals.db = pool;
+require('./lib/catalogFileCleanup').startCleanup(pool);
 
 app.use(restoreSession);
 
@@ -50,6 +51,7 @@ const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);
 app.use("/api/students", require("./routes/students"));
 app.use("/api/users", require("./routes/users"));
+app.use("/api/settings", require("./routes/settings"));
 app.use("/api/syllabi", require("./routes/syllabi"));
 app.use("/api/syllabi", require("./routes/syllabusContent"));
 app.use("/api/syllabi", require("./routes/comments"));
@@ -75,4 +77,5 @@ app.listen(PORT, () => {
 	for (const key of ["GOOGLE_CLIENT_ID", "JWT_SECRET"]) {
 		if (!process.env[key]) console.warn(`WARNING: ${key} is not set in server/.env - Google sign-in will fail`);
 	}
+	if (!require("./lib/mailer").configured()) console.warn("MAIL: SMTP_HOST and MAIL_FROM are not set in server/.env - no credentials or password emails will be sent.");
 });

@@ -1,64 +1,94 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { canApproveAdminDraft } from '../lib/syllabusRules';
+import { tr } from "../i18n/index.js";
+import { t as translateUI } from "../i18n/index.js";
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { PageHead } from '../components/ui';
-import { compliance as api } from '../lib/api';
-import { actionLabel, bulkTargets, filterRows, groupByFacultyProgram, listBasis, tone, ringAngle, when } from '../lib/complianceView';
-import ComplianceCard from './ComplianceCard';
-import CheckTree from './CheckTree';
+import { compliance as api, syllabi as syllabiApi } from '../lib/api';
+import { groupByFacultyProgram, listBasis, needsCheck, rangeToInstants } from '../lib/complianceView';
+import SyllabusPicker from '../components/SyllabusPicker';
+import ComplianceModal from '../components/ComplianceModal';
+import CheckHistory from '../components/CheckHistory';
 
-const STATUS_LABELS = { draft: 'Draft', submitted: 'Submitted', under_review: 'Under Review', for_revision: 'For Revision', approved: 'Approved', rejected: 'Rejected' };
-const NEEDS = [['all', 'All'], ['unchecked', 'Needs a check'], ['below', 'Below the pass line'], ['stale', 'Changed since checked']];
+// The history's date filter is kept in this browser, so it is still applied after a reload or a visit to another page, until the admin
+// changes or resets it. A view preference only: every read and write is guarded, and the page works without storage.
+const RANGE_KEY = 'sms.aiChecker.historyRange';
+const NO_RANGE = { from: '', to: '' };
+const readRange = () => {
+  try {
+    const r = JSON.parse(localStorage.getItem(RANGE_KEY) || 'null');
+    const ok = r && typeof r.from === 'string' && typeof r.to === 'string' && rangeToInstants(r.from, r.to) !== null;
+    return ok ? { from: r.from, to: r.to } : NO_RANGE;
+  } catch { return NO_RANGE; }
+};
+const writeRange = (r) => { try { if (r.from || r.to) localStorage.setItem(RANGE_KEY, JSON.stringify(r)); else localStorage.removeItem(RANGE_KEY); } catch { /* storage blocked: the filter just does not persist */ } };
 
-// The AI Checker page is the administrator's view of the compliance checks of submitted syllabi. They are listed by faculty member,
-// then program, then subject, so one syllabus is easy to find. An admin can Check a syllabus that has no check yet, or Re-check one
-// that has: the rules run on the latest submitted version and the result is stored with it (what Review & Approval shows).
+// The AI Checker page is the administrator's view of the compliance checks of submitted syllabi. The page is one picker
+// (Faculty, then Program, then Subject) of the syllabi still waiting for their first check; Check compliance runs it and opens the
+// result in a dialog. A checked syllabus then leaves the picker and is in the history. Below it, the history lists every stored check; a card opens that exact check, read-only. An approved syllabus
+// is final and is in the Repository, not here.
+// The rules run on the latest submitted version and the result is stored with it (what Review & Approval shows).
 // Faculty have no tab here: they check their own syllabus in step 7 of the builder (Review & Check).
-export default function AIChecker({ user, notify }) {
-  const [selectedId, setSelectedId] = useState('all');
+export default function AIChecker({ user, notify, onEditDraft, onApproved }) {
   const [list, setList] = useState(null);     // { installed, syllabi: [row], summary }
-  const [detail, setDetail] = useState(null); // { installed, syllabus, run } for one syllabus
+  const [editingDraft, setEditingDraft] = useState(false);
+  const [approving, setApproving] = useState(false);
+  const approvalLock = useRef(false);
+  const [openId, setOpenId] = useState(null); // the syllabus shown in the dialog
+  const [detail, setDetail] = useState(null); // { installed, syllabus, run, isLatest? } for that syllabus (isLatest is false for an earlier run)
+  const [history, setHistory] = useState({ runs: [], loading: true, error: '' });
+  const [opening, setOpening] = useState(null); // the history runId being opened
+  const [range, setRange] = useState(readRange);  // the history's applied date filter
+  const asked = useRef(0);                        // the newest history request: an older answer is ignored
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [filters, setFilters] = useState({ q: '', status: 'all', needs: 'all' });
   const [busy, setBusy] = useState({});       // syllabus id -> true while its check runs
-  const [bulk, setBulk] = useState(null);     // { done, total } while "Check unchecked" runs
 
   const loadList = useCallback(async () => { try { setList(await api.list('all')); setError(''); } catch (e) { setError(e.message); } }, []);
-  const loadDetail = useCallback(async (id) => { try { setDetail(await api.list(id)); setError(''); } catch (e) { setError(e.message); } }, []);
+  const loadDetail = useCallback(async (id) => { try { setDetail(await api.list(id)); setError(''); return true; } catch (e) { setError(e.message); return false; } }, []);
+
+  // The cards already shown stay on screen while a new range loads, so the card does not jump.
+  const loadHistory = useCallback(async () => {
+    const mine = ++asked.current;
+    setHistory((x) => ({ ...x, loading: true }));
+    try {
+      const h = await api.history(rangeToInstants(range.from, range.to) || {});
+      if (mine === asked.current) setHistory({ runs: h.runs || [], loading: false, error: '' });
+    } catch (e) { if (mine === asked.current) setHistory((x) => ({ ...x, loading: false, error: e.message })); }
+  }, [range]);
 
   useEffect(() => {
     let live = true;
     setLoading(true);
     const done = () => { if (live) setLoading(false); };
-    (selectedId === 'all' ? loadList() : loadDetail(selectedId)).then(done, done);
+    loadList().then(done, done);
     return () => { live = false; };
-  }, [selectedId, loadList, loadDetail]);
+  }, [loadList]);
+
+  useEffect(() => { loadHistory(); }, [loadHistory]); // on mount, and again whenever the applied range changes
 
   // While recommendations are still being written, look again every few seconds (for a bounded time).
-  const pending = selectedId !== 'all' && detail && detail.run && detail.run.aiStatus === 'pending';
+  const pending = openId !== null && detail && detail.isLatest !== false && detail.run && detail.run.aiStatus === 'pending'; // an earlier run no longer changes
   useEffect(() => {
     if (!pending) return undefined;
     let tries = 0;
-    const t = setInterval(() => { tries += 1; loadDetail(selectedId); if (tries >= 15) clearInterval(t); }, 2500);
+    const t = setInterval(() => { tries += 1; loadDetail(openId); if (tries >= 15) clearInterval(t); }, 2500);
     return () => clearInterval(t);
-  }, [pending, selectedId, loadDetail]);
+  }, [pending, openId, loadDetail]);
 
-  const rows = list ? list.syllabi : [];
-  const shown = useMemo(() => filterRows(rows, filters), [rows, filters]);
-  const groups = useMemo(() => groupByFacultyProgram(shown), [shown]);
-  const everyone = useMemo(() => groupByFacultyProgram(rows), [rows]); // the picker lists all of them, whatever the filters say
-  const targets = useMemo(() => bulkTargets(rows), [rows]);
+  const rows = list ? list.syllabi.filter(row => row.status !== 'draft') : [];
+  const waiting = useMemo(() => groupByFacultyProgram(rows.filter(row => needsCheck(row) || (row.userId === user?.id && row.status === 'under_review'))), [rows, user?.id]); // unchecked and not approved: what the picker offers
 
-  if (!user || user.role !== 'admin') return <div className="empty">The compliance check is in step 7 of the Syllabus Builder.</div>;
+  if (!user || user.role !== 'admin') return <div className="empty">{translateUI("ui.the_compliance_check_is_in_step_7_of_the_syllabus_builder_1f3135")}</div>;
 
   const say = (m) => { if (notify) notify(m); };
-  const reload = async () => { await loadList(); if (selectedId !== 'all') await loadDetail(selectedId); };
+  const reload = async () => { await loadList(); loadHistory(); if (openId !== null) await loadDetail(openId); };
 
-  // Check (no stored check yet) or Re-check (make a new one). The server runs the rules on the latest submitted version.
-  const runCheck = async (id, force) => {
+  // The first check of a syllabus. The server runs the rules on the latest submitted version and stores the result with it.
+  const runCheck = async (id) => {
     setBusy((b) => ({ ...b, [id]: true }));
     setError('');
     try {
-      await api.recheck(id, force);
+      await api.recheck(id);
       return true;
     } catch (e) {
       setError(e.message);
@@ -67,109 +97,77 @@ export default function AIChecker({ user, notify }) {
       setBusy((b) => { const n = { ...b }; delete n[id]; return n; });
     }
   };
-  const checkOne = async (row) => { if (await runCheck(row.syllabusId, !!row.run)) { await reload(); say('Checked ' + row.courseCode + '.'); } };
-  const checkAll = async () => {
-    setBulk({ done: 0, total: targets.length });
-    let done = 0;
-    for (const row of targets) {
-      if (!(await runCheck(row.syllabusId, false))) break; // a rate limit or a problem stops the run; the message is shown
-      done += 1;
-      setBulk({ done, total: targets.length });
-    }
-    setBulk(null);
-    await reload();
-    if (done) say('Checked ' + done + ' syllabus' + (done === 1 ? '' : 'es') + '.');
+
+  // The picker's button: run the check, then show the stored result. The syllabus then leaves the picker (it is in the history).
+  const checkAndOpen = async (row) => {
+    const id = row.syllabusId;
+    if (!(await runCheck(id))) return;
+    setBusy((b) => ({ ...b, [id]: true }));
+    const ok = await loadDetail(id);
+    setBusy((b) => { const n = { ...b }; delete n[id]; return n; });
+    if (!ok) return;
+    setOpenId(id);
+    await loadList();
+    loadHistory();
+    say(row.userId === user.id && row.status === 'under_review' ? translateUI('publication.reviewResult') : 'Checked ' + row.courseCode + '. It is now in the history.');
   };
+  const applyRange = (r) => { const next = { from: r.from || '', to: r.to || '' }; setRange(next); writeRange(next); };
+  // A history card: read that exact run (an earlier one, or an approved syllabus), then show it in the same dialog.
+  const openRun = async (item) => {
+    setOpening(item.runId);
+    setError('');
+    try {
+      setDetail(await api.run(item.runId));
+      setOpenId(item.syllabusId);
+    } catch (e) { setError(e.message); } finally { setOpening(null); }
+  };
+  const closeModal = () => { if (approvalLock.current) return; setOpenId(null); setDetail(null); setError(''); };
 
-  const data = selectedId === 'all' ? list : detail;
-  const installed = !data || data.installed !== false;
-  const summary = list && list.summary;
-  const one = selectedId !== 'all' && detail && detail.syllabus ? { ...detail.syllabus, run: detail.run } : null;
-  const run = detail && detail.run;
+
+  const installed = !list || list.installed !== false;
   const how = listBasis(rows.map((r) => r.run));
-  const working = bulk !== null || (one && busy[one.syllabusId]);
+  const working = Object.keys(busy).length > 0;
+  const open = openId !== null && detail && detail.syllabus && detail.syllabus.syllabusId === openId
+    ? { ...(rows.find((r) => r.syllabusId === openId) || {}), ...detail.syllabus }
+    : null;
 
-  // The one button in the page header: Check / Re-check for the open syllabus, "Check unchecked" for the whole list.
-  const headerAction = !installed || loading ? null : one
-    ? (actionLabel(one)
-      ? <button type="button" className="btn primary" disabled={working} onClick={() => checkOne(one)}>{busy[one.syllabusId] ? 'Checking…' : actionLabel(one)}</button>
-      : <button type="button" className="btn primary" disabled title="This syllabus was submitted as an uploaded file, so there is no builder form to check.">Check</button>)
-    : <button type="button" className="btn primary" disabled={working || targets.length === 0} title={targets.length ? 'Run the check on every syllabus that has none yet' : 'Every syllabus with a form has been checked'} onClick={checkAll}>{bulk ? 'Checking ' + (bulk.done + 1) + ' of ' + bulk.total + '…' : 'Check unchecked' + (targets.length ? ' (' + targets.length + ')' : '')}</button>;
+  const ownSyllabus = open?.userId === user.id && open.status === 'under_review';
+  const approveEnabled = canApproveAdminDraft(user,open,detail?.run,detail?.isLatest !== false);
+  const editDraft = async () => {
+    if (approvalLock.current || !ownSyllabus || !onEditDraft) return;
+    approvalLock.current=true; setEditingDraft(true); setError('');
+    try { await onEditDraft(open.syllabusId); }
+    catch(error) { setError(error.message); }
+    finally { approvalLock.current=false; setEditingDraft(false); }
+  };
+  const approveDraft = async () => {
+    if (approvalLock.current || !approveEnabled) return;
+    approvalLock.current=true; setApproving(true); setError('');
+    try {
+      await syllabiApi.publishContent(open.syllabusId,undefined,detail.run.id);
+    } catch (e) {
+      setError(e.message); return;
+    } finally {
+      approvalLock.current=false; setApproving(false);
+    }
+    closeModal();
+    if (onApproved) await onApproved();
+    else { await loadList(); say(translateUI('publication.approvedRepository')); }
+  };
 
   return (
     <>
-      <PageHead title="AI Syllabus Checker" subtitle={'Check and re-check submitted syllabi against the template. The result is stored with the version a reviewer sees. Current method: ' + how + '.'} actions={headerAction} />
-      <div className="check-strip">
-        <span><small>Select Syllabus</small><b><select value={selectedId} onChange={(e) => setSelectedId(e.target.value)} style={{ border: 'none', background: 'transparent', fontWeight: 800, fontSize: 13, cursor: 'pointer', padding: 0, margin: 0, font: 'inherit', color: 'inherit', width: '100%' }}>
-          <option value="all">{'All submitted syllabi' + (list ? ' (' + rows.length + ')' : '')}</option>
-          {everyone.map((f) => (
-            <optgroup key={f.key} label={f.facultyName}>
-              {f.programs.flatMap((p) => p.rows.map((r) => <option key={r.syllabusId} value={r.syllabusId}>{(p.code || 'No program') + ' · ' + r.courseCode + ' — ' + r.title}</option>))}
-            </optgroup>
-          ))}
-        </select></b></span>
-        {one && <span><small>Faculty</small><b>{one.facultyName || '—'}</b></span>}
-        {one && <span><small>Program · Subject</small><b>{(one.programCode || 'No program') + ' · ' + one.courseCode}</b></span>}
-        {one && <span><small>Status</small><b className={'status ' + one.status}>{STATUS_LABELS[one.status] || one.status}</b></span>}
-        {run && <span><small>Checked</small><b>{when(run.createdAt) || '—'}</b></span>}
-        {!one && <span><small>Standard</small><b>Undergraduate Syllabus v4</b></span>}
-      </div>
+      <PageHead title={translateUI("ui.ai_syllabus_checker_0c99c9")} subtitle={translateUI("publication.checkerSubtitle") + tr(how) + '.'} />
 
-      {error && <div className="info-banner warning" role="alert">{error}</div>}
-      {!error && !loading && !installed && <div className="info-banner warning">Compliance checks are not set up on this server yet. Ask an administrator to run the database update; until then nothing is stored.</div>}
-      {loading && <div className="empty">Loading stored checks…</div>}
+      {!open && error && <div className="info-banner warning" role="alert">{tr(error)}</div>}
+      {!error && !loading && !installed && <div className="info-banner warning">{translateUI("ui.compliance_checks_are_not_set_up_on_this_server_yet_ask_an_admini_815abc")}</div>}
 
-      {!loading && installed && selectedId === 'all' && (
-        <>
-          <div className="ai-layout cmp-all">
-            <div className="score-card">
-              <span>Average compliance</span>
-              {summary && summary.average !== null
-                ? <div className={'big-ring ' + tone(summary.average, 79)} style={{ '--p': ringAngle(summary.average) }}><div><strong>{summary.average}%</strong><small>{summary.scored + ' of ' + summary.count + ' scored'}</small></div></div>
-                : <div className="cmp-ring none" style={{ margin: '22px auto' }}><div><strong>—</strong><small>No scores yet</small></div></div>}
-              <p>{summary && summary.scored ? summary.passed + ' of ' + summary.scored + ' scored syllabi meet the standard.' : 'No syllabus has been checked yet.'}{summary && summary.uploaded ? ' ' + summary.uploaded + ' uploaded as a file (nothing to check).' : ''}</p>
-            </div>
-            <div className="check-table card">
-              <div className="card-head"><h3>Compliance Areas</h3><span className="ai-badge">AVERAGE</span></div>
-              {summary && summary.areas.map((a) => (
-                <div className="check-row" key={a.key}>
-                  <div><strong>{a.name}</strong><div className="bar thin"><i style={{ width: (a.average === null ? 0 : a.average) + '%' }} /></div></div>
-                  <b>{a.average === null ? '—' : a.average + '%'}</b>
-                  <span className={a.average !== null && a.average >= 79 ? 'check-ok' : 'check-warn'}>{a.average !== null && a.average >= 79 ? '✓' : a.average === null ? '·' : '!'}</span>
-                </div>
-              ))}
-            </div>
-            <div className="recommend-card aic-filters">
-              <div className="recommend-head"><div><h3>Find a syllabus</h3><p>Search by faculty, program or subject.</p></div></div>
-              <input className="in" type="search" placeholder="Faculty, program or subject" value={filters.q} onChange={(e) => setFilters({ ...filters, q: e.target.value })} aria-label="Search syllabi" />
-              <div className="aic-filter-row">
-                <label><small>Needs</small>
-                  <select value={filters.needs} onChange={(e) => setFilters({ ...filters, needs: e.target.value })}>{NEEDS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select>
-                </label>
-                <label><small>Status</small>
-                  <select value={filters.status} onChange={(e) => setFilters({ ...filters, status: e.target.value })}>
-                    <option value="all">All</option>
-                    {Object.entries(STATUS_LABELS).filter(([k]) => k !== 'draft').map(([k, l]) => <option key={k} value={k}>{l}</option>)}
-                  </select>
-                </label>
-              </div>
-            </div>
-          </div>
+      {installed && <SyllabusPicker groups={waiting} loading={loading} busy={working} onCheck={checkAndOpen} />}
 
-          <CheckTree groups={groups} total={rows.length} onOpen={(r) => setSelectedId(String(r.syllabusId))} onCheck={checkOne} busy={busy} working={working} />
-        </>
-      )}
+      {installed && <CheckHistory runs={history.runs} loading={history.loading} error={history.error} opening={opening} onOpen={openRun} range={range} onApply={applyRange} onReset={() => applyRange(NO_RANGE)} />}
 
-      {!loading && installed && selectedId !== 'all' && detail && (
-        <div className="cmp-one">
-          <div className="cmp-one-head">
-            <p className="cmp-small">{run ? 'The check stored with the submitted version' + (run.checkedBy === 'admin' ? ', run by an administrator.' : '.') : one && !one.checkable ? 'This syllabus was submitted as an uploaded file, so there is no builder form to check.' : 'No check is stored with this syllabus yet. Use Check at the top right.'}</p>
-            <button type="button" className="btn outline" onClick={() => setSelectedId('all')}>← All syllabi</button>
-          </div>
-          <ComplianceCard run={run} />
-        </div>
-      )}
-      <div className="ai-note">The check supports — but does not replace — faculty, curriculum committee, and academic quality review.</div>
+      {open && <ComplianceModal syllabus={open} run={detail.run} isLatest={detail.isLatest !== false} error={tr(error)} onClose={closeModal} onOpenDraft={onEditDraft && ownSyllabus ? editDraft : undefined} onApprove={ownSyllabus ? approveDraft : undefined} approvalDisabled={!approveEnabled} approving={approving} editing={editingDraft} />}
+      <div className="ai-note">{translateUI("ui.the_check_supports_but_does_not_replace_faculty_curriculum_commit_e24080")}</div>
     </>
   );
 }

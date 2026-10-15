@@ -1,3 +1,5 @@
+import { tr } from "../../i18n/index.js";
+import { t as translateUI } from "../../i18n/index.js";
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 const PATHS = {
@@ -19,13 +21,13 @@ export function Auto({ value, onChange, className = 'cell', placeholder = '', la
     el.style.height = 'auto';
     el.style.height = el.scrollHeight + 'px';
   }, [value]);
-  return <textarea ref={ref} rows="1" className={className} value={value} placeholder={placeholder} aria-label={label || placeholder || 'Text'} data-fid={fid} onChange={(e) => onChange(e.target.value)} onKeyDown={onKeyDown} />;
+  return <textarea ref={ref} rows="1" className={className} value={value} placeholder={placeholder} aria-label={label || placeholder || translateUI("ui.text_c3328c")} data-fid={fid} onChange={(e) => onChange(e.target.value)} onKeyDown={onKeyDown} />;
 }
 
 // The code block of an outcome reference ("CLO 4", "EGA 2", "PO 3"). A CLO carries its own hue; EGA and PO are neutral.
 // `info` always comes from model.tagInfo(), so every reference in the builder is labelled the same way.
 export function Code({ info, size }) {
-  return <span className={'code' + (size ? ' ' + size : '') + (info.kind === 'clo' ? ' k' + (info.idx % 6) : ' ref')}>{info.label}</span>;
+  return <span className={'code' + (size ? ' ' + size : '') + (info.kind === 'clo' ? ' k' + (info.idx % 6) : ' ref')}>{tr(info.label)}</span>;
 }
 
 // Code + name, with the full statement on hover. Unresolvable tags render in the warning style (name struck through).
@@ -35,7 +37,7 @@ export function Tag({ info, onRemove }) {
     <span className={'tagc' + (info.ok ? '' : ' bad')} title={tip}>
       <Code info={info} />{' '}
       <span className="nm">{info.name}</span>
-      {onRemove && <button type="button" aria-label={'Remove ' + info.label} onClick={(e) => { e.stopPropagation(); onRemove(); }}>{'×'}</button>}
+      {onRemove && <button type="button" aria-label={translateUI("ui.remove_1680e3") + info.label} onClick={(e) => { e.stopPropagation(); onRemove(); }}>{'×'}</button>}
     </span>
   );
 }
@@ -76,21 +78,21 @@ export function OutcomePicker({ model, d, kinds, rect, title, selected, onToggle
   const any = groups.some((g) => g.items.length);
 
   return (
-    <div className="bld2-pop" ref={ref} style={style} role="dialog" aria-label={title || 'Tag outcomes'}>
-      <input type="search" className="in" value={q} placeholder="Search by name or number" aria-label="Search outcomes" onChange={(e) => setQ(e.target.value)} />
+    <div className="bld2-pop" ref={ref} style={style} role="dialog" aria-label={title || translateUI("ui.tag_outcomes_9af691")}>
+      <input type="search" className="in" value={q} placeholder={translateUI("ui.search_by_name_or_number_63632c")} aria-label={translateUI("ui.search_outcomes_3d2fd6")} onChange={(e) => setQ(e.target.value)} />
       {groups.filter((g) => !ql || g.items.length).map((g) => (
         <div key={g.kind}>
-          <h4>{g.title}</h4>
+          <h4>{tr(g.title)}</h4>
           {g.items.length ? g.items.map((it) => (
             <label key={it.tag} className="opt">
               <input type="checkbox" checked={selected.includes(it.tag)} onChange={() => onToggle(it.tag)} />
               <Code info={it.info} />
               <span><span className="on">{it.info.name}</span>{it.info.text && it.info.text !== it.info.name && <span className="ot">{it.info.text}</span>}</span>
             </label>
-          )) : <div className="none">{g.kind === 'po' && !pos.length ? 'No program outcomes loaded for ' + (d.meta.program || 'this program') + '.' : (g.kind === 'clo' && !d.clos.length ? 'No CLOs yet. Add them in step 2.' : 'No match.')}</div>}
+          )) : <div className="none">{g.kind === 'po' && !pos.length ? translateUI("ui.no_program_outcomes_loaded_for_23e032") + (d.meta.program || tr('this program')) + '.' : (g.kind === 'clo' && !d.clos.length ? tr('No CLOs yet. Add them in step 2.') : tr('No match.'))}</div>}
         </div>
       ))}
-      {!any && q && <div className="none">Nothing matches {'“'}{q}{'”'}.</div>}
+      {!any && q && <div className="none">{translateUI("ui.nothing_matches_019f8e")}{'“'}{q}{'”'}.</div>}
     </div>
   );
 }
@@ -100,7 +102,7 @@ export function CoverageStrip({ model, d, filter, onPick }) {
   const cov = model.coverage(d);
   if (!cov.length) return null;
   return (
-    <div className="cov" role="group" aria-label="CLO coverage">
+    <div className="cov" role="group" aria-label={translateUI("ui.clo_coverage_98ba99")}>
       {cov.map((c, i) => {
         const clo = d.clos[i];
         const on = filter === c.id;
@@ -108,11 +110,11 @@ export function CoverageStrip({ model, d, filter, onPick }) {
         c.weeks.forEach((w) => { ws[w] = 1; });
         return (
           <button type="button" key={c.id} className={'cv' + (on ? ' on' : '')} aria-pressed={on} onClick={() => onPick(c.id)}>
-            <span className="t"><span className={'code k' + (i % 6)}>{'CLO ' + (i + 1)}</span><span className="ti">{clo.title || 'Untitled'}</span></span>
-            <span className={'w' + (c.rows.length ? '' : ' none')}>{c.rows.length ? c.weeks.length + ' week' + (c.weeks.length === 1 ? '' : 's') + ' · ' + c.rows.length + ' row' + (c.rows.length === 1 ? '' : 's') : 'Not covered yet'}</span>
+            <span className="t"><span className={'code k' + (i % 6)}>{translateUI("ui.clo_069efc") + (i + 1)}</span><span className="ti">{clo.title || translateUI("ui.untitled_621521")}</span></span>
+            <span className={'w' + (c.rows.length ? '' : ' none')}>{c.rows.length ? tr(c.weeks.length + (c.weeks.length === 1 ? ' week' : ' weeks') + ' · ' + c.rows.length + (c.rows.length === 1 ? ' row' : ' rows')) : translateUI("ui.not_covered_yet_3a7d66")}</span>
             <span>
               <span className="ruler" aria-hidden="true">{Array.from({ length: 18 }, (_, k) => <i key={k + 1} className={ws[k + 1] ? 'k' + (i % 6) : ''} />)}</span>
-              <span className="rulerlbl" aria-hidden="true"><span>wk 1</span><span>18</span></span>
+              <span className="rulerlbl" aria-hidden="true"><span>{translateUI("ui.wk_1_474a85")}</span><span>18</span></span>
             </span>
           </button>
         );

@@ -1,3 +1,4 @@
+import { phDate, phDateTime, phDayStart, phTime } from './phTime.js';
 // Plain helpers for showing a stored compliance run (the shared ComplianceCard, the builder's Review & Check step, the admin overview
 // and Review & Approval). No React and no network, so they are tested on their own.
 //
@@ -73,12 +74,45 @@ export function groupFindings(run) {
   return (run.areas || []).filter((a) => by.has(a.key)).map((a) => ({ key: a.key, name: a.name, findings: by.get(a.key) }));
 }
 
-// "2026-01-05 10:30:00" or an ISO date -> "Jan 5, 2026"; anything unreadable -> ''.
-export function when(createdAt) {
-  if (!createdAt) return '';
-  const d = new Date(String(createdAt).replace(' ', 'T'));
-  return isNaN(d) ? '' : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+// "2026-01-05 10:30:00" or an ISO date -> "Jan 5, 2026", in Philippine time; anything unreadable -> ''.
+export const when = (createdAt) => phDate(createdAt);
+
+// "3:42 PM" in Philippine time: the time a run was stored; anything unreadable -> ''.
+export const timeOf = (createdAt) => phTime(createdAt);
+export const stamp = (createdAt) => phDateTime(createdAt);
+
+// ---- the history's date filter ----
+// A range is two 'YYYY-MM-DD' strings from <input type="date">; either may be empty. The server wants instants: the start of the first day and
+// the start of the day after the last, in Philippine time, so "Oct 14" means Oct 14 in Manila for every admin.
+// -> { from, to } as ISO strings (null for an open side), or null when a date is unreadable or the range ends before it starts.
+export function rangeToInstants(fromDate, toDate) {
+  const a = fromDate ? phDayStart(fromDate) : null;
+  const b = toDate ? phDayStart(toDate, 1) : null;
+  if ((fromDate && !a) || (toDate && !b)) return null;
+  if (a && b && a >= b) return null;
+  return { from: a ? a.toISOString() : null, to: b ? b.toISOString() : null };
 }
+const dayLabel = (ymd) => { const d = phDayStart(ymd); return d ? phDate(d) : ''; };
+export function rangeLabel(fromDate, toDate) {
+  const a = dayLabel(fromDate);
+  const b = dayLabel(toDate);
+  if (a && b) return fromDate === toDate ? a : a + ' – ' + b;
+  if (a) return 'Since ' + a;
+  if (b) return 'Until ' + b;
+  return '';
+}
+
+// An approved syllabus is final: it is not checked again, but its stored checks can still be read.
+export const isLocked = (row) => !!row && row.status === 'approved';
+
+// The checker's queue: a submitted syllabus the administrator has not checked yet (the run a faculty member's own submit stored is not
+// one: the list only carries the administrator's own checks), or whose check is out of date because a new version was submitted since.
+// Once it is checked it moves to the history; an approved one is final and lives in the Repository. An uploaded file belongs here too.
+export const needsCheck = (row) => !!row && !isLocked(row) && (!row.run || !!row.run.stale);
+
+// Whether the check can be run now. A syllabus built in the form can. An uploaded file will be checked by matching it to the template,
+// which needs the AI service: until that is switched on it waits in the queue. This is the one place to change when it is.
+export const canCheckNow = (row) => !!row && !!row.checkable;
 
 // A compact score for a list row: "92%" or "—".
 export const scoreText = (run) => (runState(run) === 'scored' ? run.overall + '%' : '—');

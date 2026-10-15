@@ -1,3 +1,5 @@
+import { tr } from "../i18n/index.js";
+import { t as translateUI } from "../i18n/index.js";
 import { useState, useEffect } from 'react';
 import { API_ORIGIN } from '../lib/api';
 import { Notebook } from '@phosphor-icons/react/dist/csr/Notebook';
@@ -12,6 +14,8 @@ import { NotePencil } from '@phosphor-icons/react/dist/csr/NotePencil';
 import { ShieldCheck } from '@phosphor-icons/react/dist/csr/ShieldCheck';
 import { GraduationCap } from '@phosphor-icons/react/dist/csr/GraduationCap';
 import { PaperPlaneTilt } from '@phosphor-icons/react/dist/csr/PaperPlaneTilt';
+import { UploadSimple } from '@phosphor-icons/react/dist/csr/UploadSimple';
+import { Trash } from '@phosphor-icons/react/dist/csr/Trash';
 import { SquaresFour } from '@phosphor-icons/react/dist/csr/SquaresFour';
 import { PencilRuler } from '@phosphor-icons/react/dist/csr/PencilRuler';
 import { Sparkle } from '@phosphor-icons/react/dist/csr/Sparkle';
@@ -31,8 +35,8 @@ import { CheckCircle } from '@phosphor-icons/react/dist/csr/CheckCircle';
 import { Warning } from '@phosphor-icons/react/dist/csr/Warning';
 import { FloppyDisk } from '@phosphor-icons/react/dist/csr/FloppyDisk';
 
-export function Card({ title, action, children }) {
-  return <div className="card"><div className="card-head"><h3>{title}</h3>{action && <span>{action}</span>}</div>{children}</div>;
+export function Card({ title, action, children, hideScrollbar = false }) {
+  return <div className="card"><div className="card-head"><h3>{title}</h3>{action && <span>{tr(action)}</span>}</div><div className={hideScrollbar ? 'card-body scrollbar-hidden' : 'card-body'} {...(hideScrollbar ? { tabIndex: 0, role: 'region', 'aria-label': title } : {})}>{children}</div></div>;
 }
 
 export function Legend({ color, text, value }) {
@@ -48,11 +52,11 @@ export function QualityMini({ label, value }) {
 }
 
 export function Deadline({ day, mon, title, note }) {
-  return <div className="deadline"><div><b>{day}</b><span>{mon}</span></div><p><strong>{title}</strong><small>{note}</small></p></div>;
+  return <div className="deadline"><div><b>{day}</b><span>{tr(mon)}</span></div><p><strong>{title}</strong><small>{note}</small></p></div>;
 }
 
 export function Donut({ value, centerTop, centerBottom }) {
-  return <div className="donut" style={{ '--p': `${value * 3.6}deg` }}><div><strong>{centerTop}</strong><small>{centerBottom}</small></div></div>;
+  return <div className="donut" style={{ '--p': `${value * 3.6}deg` }}><div><strong>{centerTop}</strong><small>{tr(centerBottom)}</small></div></div>;
 }
 
 export function Field({ label, full, children }) {
@@ -68,7 +72,7 @@ export function MetricBox({ label, value, note, alert }) {
 }
 
 export function Recommendation({ level, title, text }) {
-  return <div className="recommend"><span className={`priority ${level.toLowerCase()}`}>{level}</span><div><strong>{title}</strong><p>{text}</p></div></div>;
+  return <div className="recommend"><span className={`priority ${level.toLowerCase()}`}>{level}</span><div><strong>{tr(title)}</strong><p>{tr(text)}</p></div></div>;
 }
 
 export function ChartCard({ title, subtitle, children }) {
@@ -79,12 +83,12 @@ export function Insight({ n, title, text }) {
   return <div className="insight"><span>{n}</span><div><strong>{title}</strong><p>{text}</p></div></div>;
 }
 
-export function Toggle({ on, set, title, text }) {
-  return <button className="toggle-row" onClick={() => set(!on)}><span><strong>{title}</strong><small>{text}</small></span><i className={on ? 'on' : ''}><b /></i></button>;
+export function Toggle({ on, set, title, text, disabled }) {
+  return <button type="button" disabled={disabled} className="toggle-row" onClick={() => set(!on)}><span><strong>{title}</strong><small>{text}</small></span><i className={on ? 'on' : ''}><b /></i></button>;
 }
 
 export function Assessment({ name, weight, cos }) {
-  return <div className="assessment-item"><span className="drag">⋮⋮</span><div><strong>{name}</strong><small>Mapped outcomes: {cos}</small></div><b>{weight}</b><button>•••</button></div>;
+  return <div className="assessment-item"><span className="drag">⋮⋮</span><div><strong>{name}</strong><small>{translateUI("ui.mapped_outcomes_f695cc")}{cos}</small></div><b>{weight}</b><button>•••</button></div>;
 }
 
 export function Policy({ title, text }) {
@@ -93,7 +97,7 @@ export function Policy({ title, text }) {
 
 // One icon set (Phosphor) for the whole UI. Only the icons listed here are bundled.
 // Decorative by default (aria-hidden); pass `label` when the icon alone conveys meaning.
-const ICONS = { arrowUpRight: ArrowUpRight, arrowUUpLeft: ArrowUUpLeft, xCircle: XCircle, chatText: ChatCircleText, clockBack: ClockCounterClockwise, notebook: Notebook, sealCheck: SealCheck, hourglassMedium: HourglassMedium, notePencil: NotePencil, shieldCheck: ShieldCheck, graduationCap: GraduationCap, paperPlaneTilt: PaperPlaneTilt, squaresFour: SquaresFour, pencilRuler: PencilRuler, sparkle: Sparkle, gridFour: GridFour, archive: Archive, chartBar: ChartBar, downloadSimple: DownloadSimple, usersThree: UsersThree, gearSix: GearSix, caretRight: CaretRight, eye: Eye, eyeSlash: EyeSlash, envelope: Envelope, bell: Bell, magnifyingGlass: MagnifyingGlass, checkCircle: CheckCircle, warning: Warning, floppyDisk: FloppyDisk };
+const ICONS = { arrowUpRight: ArrowUpRight, arrowUUpLeft: ArrowUUpLeft, xCircle: XCircle, chatText: ChatCircleText, clockBack: ClockCounterClockwise, notebook: Notebook, sealCheck: SealCheck, hourglassMedium: HourglassMedium, notePencil: NotePencil, shieldCheck: ShieldCheck, graduationCap: GraduationCap, paperPlaneTilt: PaperPlaneTilt, uploadSimple: UploadSimple, trash: Trash, squaresFour: SquaresFour, pencilRuler: PencilRuler, sparkle: Sparkle, gridFour: GridFour, archive: Archive, chartBar: ChartBar, downloadSimple: DownloadSimple, usersThree: UsersThree, gearSix: GearSix, caretRight: CaretRight, eye: Eye, eyeSlash: EyeSlash, envelope: Envelope, bell: Bell, magnifyingGlass: MagnifyingGlass, checkCircle: CheckCircle, warning: Warning, floppyDisk: FloppyDisk };
 export function Icon({ name, size = 20, weight = 'duotone', label, className, ...rest }) {
   const Glyph = ICONS[name];
   if (!Glyph) return null;

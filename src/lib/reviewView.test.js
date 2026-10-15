@@ -1,7 +1,7 @@
 // Run: npm test
 import test from 'node:test';
 import assert from 'node:assert';
-import { toReviewRow, fileName, versionOption, headline, noFormMessage, programLabel, subjectLabel, canDecide, checkDecision, DECISIONS, commentTypeLabel, programTone, toneStyle, PROGRAM_COLORS } from './reviewView.js';
+import { toReviewRow, fileName, versionOption, headline, noFormMessage, programLabel, subjectLabel, canDecide, readyForReview, waitsForCheck, checkDecision, DECISIONS, commentTypeLabel, programTone, toneStyle, PROGRAM_COLORS } from './reviewView.js';
 import { readFileSync } from 'node:fs';
 import { groupByFacultyProgram, filterRows } from './complianceView.js';
 
@@ -137,4 +137,17 @@ test('the decision buttons are readable: the colours in the stylesheet pass 4.5:
 test('every decision has a label, a hint and an icon the app has', () => {
   Object.values(DECISIONS).forEach((d) => { assert.ok(d.label && d.hint && d.icon); });
   assert.deepStrictEqual(Object.values(DECISIONS).map((d) => d.icon), ['sealCheck', 'arrowUUpLeft', 'xCircle']);
+});
+
+test('a submission is on the review board only after the administrator checked it; until then it waits for the AI Checker', () => {
+  const waiting = { status: 'submitted', awaitingAiCheck: true };
+  const checked = { status: 'submitted', awaitingAiCheck: false };
+  assert.strictEqual(waitsForCheck(waiting), true);
+  assert.strictEqual(readyForReview(waiting), false);
+  assert.strictEqual(waitsForCheck(checked), false);
+  assert.strictEqual(readyForReview(checked), true);
+  assert.strictEqual(readyForReview({ status: 'under_review' }), true); // no flag (an older list, or nothing to check): not held back
+  assert.strictEqual(readyForReview({ status: 'approved', awaitingAiCheck: false }), false); // decided syllabi are not pending
+  assert.strictEqual(readyForReview({ status: 'for_revision' }), false); // with the faculty member
+  assert.strictEqual(waitsForCheck(null), false);
 });

@@ -7,15 +7,20 @@ const html = (t) => ({ __html: renderMarkup(t) });
 // light markup (bullets, bold) is applied. There is no revision date and no modifications checklist:
 // the system adds the revision date when the syllabus is approved. Reusable by the admin review.
 export default function FormPaper({ d, model, preparedBy }) {
-  const I = model.institution;
-  const egas = model.egaList(d); // this program's own EGAs
-  const pos = model.poList(d);
+  const selected = model.outcomesReady(d);
+  const I = selected ? model.institution : { vision: '', mission: { lead: '', items: [] } };
+  const egas = selected ? model.egaList(d) : []; // this program's own EGAs
+  const pos = selected ? model.poList(d) : [];
   const f = model.formulas(d);
   const cloTags = (c) => { const e = c.egas.join('&'); const po = c.pos.join(', '); return (e ? '[EGA ' + e + '] ' : '') + (po ? '[PO ' + po + ']' : ''); };
   const iloTags = (il) => il.tags.map((t) => { const i = model.tagInfo(d, t); return i.kind === 'clo' ? '[CLO' + i.no + ']' : '[' + i.label.replace(' ', '') + ']'; }).join(' ');
   return (
     <div className="paper">
-      <div className="c"><b style={{ fontSize: 14 }}>{INSTITUTION_NAME}</b><br />{INSTITUTION_ADDRESS}</div>
+      <div className="paper-head">
+        <img className="paper-logo" src="/lcup-logo.png" alt="LCUP logo" />
+        <div className="c"><b style={{ fontSize: 14 }}>{INSTITUTION_NAME}</b><br />{INSTITUTION_ADDRESS}</div>
+        <img className="paper-logo paper-logo-wide" src="/testmark-logo.png" alt="Testmark logo" />
+      </div>
       <div className="c" style={{ marginTop: 8 }}><b>{'SCHOOL YEAR ' + CURRENT_SCHOOL_YEAR.label}</b><br /><b>{COLLEGE_NAME.toUpperCase()}</b></div>
       <div className="kv2"><b>I.</b><b>COURSE CODE</b><span>:</span><span>{d.meta.code}</span></div>
       <div className="kv2"><b>II.</b><b>COURSE TITLE</b><span>:</span><b>{d.meta.title}</b></div>
