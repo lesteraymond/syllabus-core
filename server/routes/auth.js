@@ -63,7 +63,7 @@ router.post('/google', async (req, res) => {
 
     const db = req.app.locals.db;
     const [rows] = await db.query(
-      'SELECT user_id, email, role, first_name, last_name, avatar_path FROM users WHERE LOWER(email) = LOWER(?)',
+      'SELECT user_id, email, role, first_name, last_name, avatar_path, preferred_language FROM users WHERE LOWER(email) = LOWER(?)',
       [email]
     );
     const user = rows[0];
@@ -187,9 +187,15 @@ router.post('/change-password', requireSignedIn, async (req, res) => {
   }
 });
 
-router.get('/me', (req, res) => {
+router.get('/me', async (req, res) => {
   if (!req.session.user) return res.status(401).json({ error: 'Not authenticated' });
-  res.json({ user: req.session.user });
+  try {
+    // The account is authoritative, including preferences saved from another tab or device.
+    const [rows] = await req.app.locals.db.query('SELECT user_id, email, role, first_name, last_name, avatar_path, must_change_password, preferred_language FROM users WHERE user_id = ?', [req.session.user.id]);
+    if (!rows[0]) return res.status(401).json({ error: 'Not authenticated' });
+    req.session.user = toSessionUser(rows[0]);
+    res.json({ user: req.session.user });
+  } catch { fail(res, 500, 'Could not load your account. Please try again.'); }
 });
 
 module.exports = router;

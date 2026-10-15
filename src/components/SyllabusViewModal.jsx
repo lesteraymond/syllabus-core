@@ -1,3 +1,7 @@
+import StableButton from './StableButton';
+import { localizeChanges } from '../i18n/changes';
+import { tr } from "../i18n/index.js";
+import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useRef, useState } from 'react';
 import { API_ORIGIN, syllabi as syllabiApi } from '../lib/api';
 import { STATUS_LABELS } from '../lib/syllabusRules';
@@ -23,7 +27,7 @@ export default function SyllabusViewModal({ syllabusId, onClose, aside, avatarUr
     setError('');
     syllabiApi.review(syllabusId, versionId)
       .then((p) => { if (live) setPayload(p); })
-      .catch((e) => { if (live) setError(e.message || 'Could not open this syllabus.'); });
+      .catch((e) => { if (live) setError(e.message || translateUI("ui.could_not_open_this_syllabus_d06b9d")); });
     return () => { live = false; };
   }, [syllabusId, versionId]);
 
@@ -38,45 +42,45 @@ export default function SyllabusViewModal({ syllabusId, onClose, aside, avatarUr
         <div className="modal-head svm-head" style={s ? toneStyle(s) : undefined}>
           <Avatar className="avatar svm-av" src={avatarUrl} name={s ? s.facultyName : ''} />
           <div className="svm-who">
-            <h3 id="svm-title">{s ? s.facultyName || 'Syllabus' : 'Syllabus'}</h3>
-            {s ? <div className="svm-meta"><span className="rb-pill">{programLabel(s)}</span><span className="svm-subject">{subjectLabel(s)}</span></div> : <small>Opening…</small>}
+            <h3 id="svm-title">{s ? s.facultyName || translateUI("ui.syllabus_1b731d") : translateUI("ui.syllabus_1b731d")}</h3>
+            {s ? <div className="svm-meta"><span className="rb-pill">{programLabel(s)}</span><span className="svm-subject">{subjectLabel(s)}</span></div> : <small>{translateUI("ui.opening_b1b853")}</small>}
           </div>
-          <button type="button" className="icon-btn" onClick={onClose} aria-label="Close">✕</button>
+          <button type="button" className="icon-btn" onClick={onClose} aria-label={translateUI("ui.close_bbfa77")}>✕</button>
         </div>
 
         {s && (
           <div className="svm-bar">
-            <span className={'status ' + String(s.status).replaceAll('_', '-')}>{STATUS_LABELS[s.status] || s.status}</span>
+            <span className={'status ' + String(s.status).replaceAll('_', '-')}>{tr(STATUS_LABELS[s.status] || s.status)}</span>
             {payload.versions.length > 1
               ? (
-                <label className="svm-version"><small>Version</small>
+                <label className="svm-version"><small>{translateUI("ui.version_2da600")}</small>
                   <select value={payload.version ? payload.version.id : ''} onChange={(e) => setVersionId(Number(e.target.value))}>
                     {payload.versions.map((v) => <option key={v.id} value={v.id}>{versionOption(v, v.id === latestId)}</option>)}
                   </select>
                 </label>
               )
-              : <span className="cmp-small">{payload.version ? 'Version ' + payload.version.label : 'Saved form, not submitted yet'}</span>}
-            {payload.changes && <span className="cmp-small svm-changes">{payload.changes.text ? 'Changed since ' + payload.changes.from + ': ' + payload.changes.text : 'Nothing the faculty member wrote differs from ' + payload.changes.from + '.'}</span>}
+              : <span className="cmp-small">{payload.version ? translateUI("ui.version_03283e") + payload.version.label : translateUI("ui.saved_form_not_submitted_yet_c3a777")}</span>}
+            {payload.changes && <span className="cmp-small svm-changes">{payload.changes.text ? translateUI("ui.changed_since_737991") + payload.changes.from + ': ' + localizeChanges(payload.changes) : translateUI("ui.nothing_the_faculty_member_wrote_differs_from_a512f5") + payload.changes.from + '.'}</span>}
           </div>
         )}
 
         <div className={'svm-split' + (aside ? ' has-aside' : '')}>
         <div className="modal-body svm-body">
-          {error && <div className="info-banner warning" role="alert">{error}</div>}
-          {!error && !payload && <div className="empty">Opening the syllabus…</div>}
+          {error && <div className="info-banner warning" role="alert">{tr(error)}</div>}
+          {!error && !payload && <div className="empty">{translateUI("ui.opening_the_syllabus_51c75a")}</div>}
           {payload && (payload.content
             ? <ReviewDocument content={payload.content} facultyName={s.facultyName} />
             : (
               <div className="svm-nofile">
-                <p>{noFormMessage(payload.file)}</p>
-                {payload.file && <p><a className="btn outline" href={`${API_ORIGIN}${payload.file.path}`} target="_blank" rel="noreferrer">{'Open ' + fileName(payload.file.path)}</a></p>}
-                {payload.file && /\.pdf$/i.test(payload.file.path) && <iframe className="svm-pdf" title="Uploaded syllabus" src={`${API_ORIGIN}${payload.file.path}`} />}
+                <p>{tr(noFormMessage(payload.file))}</p>
+                {payload.file && <p><a className="btn outline" href={`${API_ORIGIN}${payload.file.path}`} target="_blank" rel="noreferrer">{translateUI("ui.open_79d37e") + fileName(payload.file.path)}</a></p>}
+                {payload.file && /\.pdf$/i.test(payload.file.path) && <iframe className="svm-pdf" title={translateUI("ui.uploaded_syllabus_73f85b")} src={`${API_ORIGIN}${payload.file.path}`} />}
               </div>
             ))}
         </div>
-        {aside && <aside className="svm-aside" aria-label="Review">{aside}</aside>}
+        {aside && <aside className="svm-aside" aria-label={translateUI("ui.review_e29a79")}>{aside}</aside>}
         </div>
-        <div className="modal-foot"><button type="button" className="btn outline" onClick={onClose}>Close</button></div>
+        <div className="modal-foot"><StableButton type="button" className="btn outline" onClick={onClose}>{translateUI("ui.close_bbfa77")}</StableButton></div>
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+import { tr } from "../i18n/index.js";
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 // Origin that serves /uploads (the API URL without its /api suffix).
 export const API_ORIGIN = API.replace(/\/api\/?$/, '');
@@ -34,7 +35,7 @@ async function request(path, options = {}) {
   const data = await res.json().catch(() => ({}));
   if (res.status === 401) tokenStore.clear(); // expired/invalid JWT
   if (res.status === 403 && data.code === 'password_change_required' && passwordChangeHandler) passwordChangeHandler();
-  if (!res.ok) throw Object.assign(new Error(data.message || data.error || `Request failed (${res.status})`), { status: res.status, data });
+  if (!res.ok) throw Object.assign(new Error(tr(data.message || data.error) || `Request failed (${res.status})`), { status: res.status, data });
   return data;
 }
 
@@ -47,7 +48,7 @@ export const students = {
     try { res = await fetch(`${API}/students/scan`, { method: 'POST', credentials: 'include', body: fd }); }
     catch { throw new Error('Cannot reach the server. Check that the API is running and try again.'); }
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.message || data.error || `Scan failed (${res.status})`);
+    if (!res.ok) throw new Error(tr(data.message || data.error) || `Scan failed (${res.status})`);
     return data;
   },
   register: (password) => request('/students/register', { method: 'POST', body: JSON.stringify({ password }) }),
@@ -75,6 +76,7 @@ export const auth = {
 
 export const syllabi = {
   list: () => request('/syllabi'),
+  repository: () => request('/syllabi?scope=repository'),
   create: (formData) => fetch(`${API}/syllabi`, { method: 'POST', credentials: 'include', headers: authHeaders(), body: formData }).then(r => r.json()),
   update: (id, data) => fetch(`${API}/syllabi/${id}`, { method: 'PUT', credentials: 'include', headers: authHeaders({ 'Content-Type': 'application/json' }), body: JSON.stringify(data) }).then(r => r.json()),
   remove: (id) => request(`/syllabi/${id}`, { method: 'DELETE' }),
@@ -87,7 +89,7 @@ export const syllabi = {
       throw new Error('Cannot reach the server. Check that the API is running and try again.');
     }
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.message || data.error || `Save failed (${res.status})`);
+    if (!res.ok) throw new Error(tr(data.message || data.error) || `Save failed (${res.status})`);
     return data;
   },
   versions: (id) => request(`/syllabi/${id}/versions`),
@@ -103,6 +105,9 @@ export const syllabi = {
   createDraft: () => request('/syllabi/drafts', { method: 'POST' }),
   getContent: (id) => request(`/syllabi/${id}/content`),
   // Submits a draft, or saves a new version of an existing syllabus (the current content is stored with it).
+  prepareCheck: id => request(`/syllabi/${id}/prepare-check`, { method: 'POST' }),
+  resumeDraft: id => request(`/syllabi/${id}/resume-draft`, { method: 'POST' }),
+  publishContent: (id, note, reviewedRunId) => request(`/syllabi/${id}/publish`, { method: 'POST', body: JSON.stringify({ note, reviewedRunId }) }),
   submitContent: (id, note) => request(`/syllabi/${id}/submit`, { method: 'POST', body: JSON.stringify({ note }) }),
   saveContent: (id, sections, schemaVersion) => request(`/syllabi/${id}/content`, { method: 'PUT', body: JSON.stringify({ sections, schemaVersion }) }),
 };
@@ -128,6 +133,9 @@ export const compliance = {
 export const outcomes = {
   institution: () => request('/institution/outcomes'),
   programs: () => request('/programs'),
+  renameProgram: (id, name, expectedName, code, expectedCode) => request(`/programs/${id}`, { method: 'PATCH', body: JSON.stringify({ name, expectedName, code, expectedCode }) }),
+  previewProgramDeletion: (id) => request(`/programs/${id}/deletion-preview`),
+  deleteProgram: (id, confirmation) => request(`/programs/${id}`, { method: 'DELETE', body: JSON.stringify(confirmation) }),
   program: (code) => request(`/programs/${encodeURIComponent(code)}/outcomes`),
   // Admin only. The server refuses to remove an EGA or PO that a CLO tag still points at (409, naming what uses it).
   saveInstitution: (body) => request('/institution/outcomes', { method: 'PUT', body: JSON.stringify(body) }),
@@ -138,6 +146,7 @@ export const outcomes = {
 
 // Course catalog: course code, title, program and the course learning outcomes (CLOs). Only admins write.
 export const courses = {
+  saveStandards: (id, section, value, version) => request(`/courses/${id}/standards`, { method: 'PUT', body: JSON.stringify({ section, value, version }) }),
   list: (program) => request(`/courses${program ? `?program=${encodeURIComponent(program)}` : ''}`),
   get: (id) => request(`/courses/${id}`),
   create: (data) => request('/courses', { method: 'POST', body: JSON.stringify(data) }),
@@ -170,7 +179,16 @@ export const notifications = {
   readAll: () => request('/notifications/read-all', { method: 'PUT' }),
 };
 
+export const adminSettings = {
+  get: () => request('/settings'),
+  save: (settings) => request('/settings', { method: 'PUT', body: JSON.stringify(settings) }),
+};
+
 export const users = {
+  updatePreferences: (preferredLanguage) => request('/users/me/preferences', { method: 'PATCH', body: JSON.stringify({ preferredLanguage }) }),
+  updateProfile: (data) => request('/users/me/profile', { method: 'PATCH', body: JSON.stringify(data) }),
+  syncGoogleAvatar: (token) => request('/users/me/avatar/google', { method: 'POST', body: JSON.stringify({ token }) }),
+  syncGoogleAvatarWithAccessToken: (accessToken) => request('/users/me/avatar/google', { method: 'POST', body: JSON.stringify({ accessToken }) }),
   list: () => request('/users'),
   create: (data) => request('/users', { method: 'POST', body: JSON.stringify(data) }),
   remove: (id) => request(`/users/${id}`, { method: 'DELETE' }),
@@ -191,7 +209,7 @@ export const users = {
       throw new Error('Cannot reach the server. Check that the API is running and try again.');
     }
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.message || data.error || `Upload failed (${res.status})`);
+    if (!res.ok) throw new Error(tr(data.message || data.error) || `Upload failed (${res.status})`);
     return data;
   },
   removeAvatar: () => request('/users/me/avatar', { method: 'DELETE' }),

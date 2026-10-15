@@ -1,0 +1,54 @@
+{
+  "test": "BSFM ADMIN WORKFLOW TEST — NOT FOR PUBLICATION",
+  "browserVerified": false,
+  "approved": false,
+  "administratorId": 1,
+  "program": "BSFM",
+  "subjectId": 9,
+  "subjectCode": "FM 202",
+  "subjectTitle": "Fundamentals of Mathematics",
+  "sections": [
+    {
+      "step": "info",
+      "blockers": []
+    },
+    {
+      "step": "clos",
+      "blockers": []
+    },
+    {
+      "step": "plan",
+      "blockers": []
+    },
+    {
+      "step": "reqs",
+      "blockers": []
+    },
+    {
+      "step": "refs",
+      "blockers": []
+    },
+    {
+      "step": "grade",
+      "blockers": []
+    }
+  ],
+  "syllabusId": 87,
+  "saved": true,
+  "draftExcludedFromAiChecker": true,
+  "handoffResponse": {
+    "status": 200,
+    "body": {
+      "version": "v1.0",
+      "status": "under_review"
+    }
+  },
+  "status": "under_review",
+  "aiCheckerAvailable": true,
+  "aiCheckRun": false,
+  "repositoryExcluded": true,
+  "planRows": 18,
+  "requirements": 4,
+  "gradingTotal": 100,
+  "completedAt": "2026-10-15T09:49:19.137Z"
+}

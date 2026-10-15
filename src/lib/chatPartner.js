@@ -11,6 +11,8 @@ export const initialsOf = (name) => String(name || '').split(' ').filter(Boolean
 //   partner  the server's entry for this syllabus (or undefined/null)      messages  the messages of this thread
 //   user     the signed-in user                                            syl       the syllabus row from the list (or undefined)
 export function partnerOf({ partner, messages = [], user, syl }) {
+  if (user?.role === 'admin' && syl && Number(syl.userId) === Number(user.id)) return null;
+  if (partner && Number(partner.id) === Number(user?.id)) return null;
   if (partner && partner.name) {
     return { name: partner.name, initials: initialsOf(partner.name), avatarUrl: partner.avatarUrl || null, roleLabel: partner.roleLabel || '', program: partner.program || '', subject: partner.subject || '' };
   }
@@ -29,5 +31,6 @@ export const threadTitle = (syl, code) => (syl ? [syl.courseCode, syl.courseTitl
 
 // A draft has no conversation: an administrator never sees a draft, so there is nobody to message until it is submitted. The server refuses
 // the chat for a draft too; this keeps the button away and says why if a chat is opened anyway.
-export const canChat = (syl) => !!syl && syl.status !== 'draft';
+export const canChat = (syl, user) => !!syl && syl.status !== 'draft' && !(user?.role === 'admin' && Number(syl.userId) === Number(user.id));
+export const SELF_CHAT_NOTE = 'Messaging is unavailable for your own administrator-created syllabus.';
 export const DRAFT_CHAT_NOTE = 'A draft has no conversation. Submit it for review first, then you can message the administrator.';

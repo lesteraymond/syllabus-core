@@ -229,9 +229,11 @@ async function latestVersion(db, syllabusId) {
   return rows[0] || null;
 }
 
+// Include the selected subject setup in administrator draft checks so setup edits invalidate publication checks.
+const publicationContent = (content,catalog) => ({ ...content, subjectCheckBasis: { institution: catalog.institution, program: catalog.program, subjectId: catalog.subjectId } });
 const hashOf = (content) => contentHash(content, standard.version);
 
 module.exports = {
-  ADMIN_RUN_SQL, adminCheckStates, uploadCheck, uploadFingerprint, versionFile, standard, check, gateError, isInstalled, resetInstalledCache, storeRun, attachRecommendations,
+  publicationContent, ADMIN_RUN_SQL, adminCheckStates, uploadCheck, uploadFingerprint, versionFile, standard, check, gateError, isInstalled, resetInstalledCache, storeRun, attachRecommendations,
   startAiJob, settled, getProvider, setProvider, namesFor, summarize, loadAreas, loadDetail, latestRun, cachedRun, latestVersion, hashOf, bandOf,
 };

@@ -1,3 +1,4 @@
+import { tr } from "../i18n/index.js";
 import { phDate } from './phTime.js';
 // Plain helpers for the reviewer's queue and the syllabus modal. No React and no network, so they are tested on their own.
 import { STATUS_LABELS } from './syllabusRules.js';
@@ -32,7 +33,7 @@ const dateText = (d) => phDate(d); // Philippine time
 
 // One entry of the version picker: "v1.1 · Submitted · Jan 2, 2026 (current)".
 export function versionOption(v, isLatest) {
-  return [v.label, STATUS_LABELS[v.statusAtSave] || v.statusAtSave, dateText(v.createdAt)].filter(Boolean).join(' · ') + (isLatest ? ' (current)' : '');
+  return [v.label, tr(STATUS_LABELS[v.statusAtSave] || v.statusAtSave), dateText(v.createdAt)].filter(Boolean).join(' · ') + (isLatest ? ' (' + tr('current') + ')' : '');
 }
 
 // "Fay F · BSIT · IT 204 — Computer Programming 2": who, which program, which subject.
@@ -51,8 +52,8 @@ export function noFormMessage(file) {
 // ---- the review board's cards, and the decision rules the right panel applies ----
 
 // A card shows exactly three things: who submitted, the program, and the subject.
-export const programLabel = (row) => (row.programCode ? row.programCode + (row.programName ? ' · ' + row.programName : '') : row.programName || 'No program');
-export const subjectLabel = (row) => [row.courseCode, row.courseTitle].filter(Boolean).join(' — ') || row.title || 'Untitled syllabus';
+export const programLabel = (row) => (row.programCode ? row.programCode + (row.programName ? ' · ' + row.programName : '') : row.programName || tr('No program'));
+export const subjectLabel = (row) => [row.courseCode, row.courseTitle].filter(Boolean).join(' — ') || row.title || tr('Untitled syllabus');
 
 // Only a syllabus that is waiting for a decision can be decided; the board lists exactly those.
 export const PENDING = ['submitted', 'under_review'];

@@ -26,6 +26,10 @@ async function loadThread(req, res) {
     res.status(409).json({ error: DRAFT_MESSAGE, code: 'draft' });
     return null;
   }
+  if (me.role === 'admin' && me.id === ownerId) {
+    res.status(409).json({ error: 'Messaging is unavailable for your own administrator-created syllabus.', code: 'self_chat' });
+    return null;
+  }
   return { db, syllabusId: id, ownerId, courseCode: rows[0].course_code, me };
 }
 
@@ -70,6 +74,7 @@ router.get('/partners', requireAuth, async (req, res) => {
     const adminById = new Map(admins.map((a) => [a.user_id, a]));
     const partners = {};
     rows.forEach((r) => {
+      if (isAdmin && r.user_id === me.id) return;
       const labels = labelsOf(r, null);
       const subject = [r.course_code, labels.courseTitle].filter(Boolean).join(' \u2014 ');
       const program = labels.programCode ? labels.programCode + (labels.programName ? ' \u00b7 ' + labels.programName : '') : labels.programName || '';
@@ -96,14 +101,14 @@ router.get('/', requireAuth, async (req, res) => {
   try {
     const me = req.session.user.id;
     const [rows] = await req.app.locals.db.query(`
-      SELECT m.*, u.first_name, u.last_name, u.avatar_path
+      SELECT m.*, u.first_name, u.last_name, u.avatar_path, s.user_id AS syllabus_owner_id
       FROM messages m
       JOIN users u ON m.sender_id = u.user_id
       JOIN syllabi s ON s.syllabus_id = m.syllabus_id
       WHERE (m.sender_id = ? OR m.receiver_id = ?) AND s.status <> 'draft'
       ORDER BY m.created_at ASC, m.message_id ASC
     `, [me, me]);
-    res.json(rows.map(toMessage));
+    res.json(rows.filter(r => r.sender_id !== r.receiver_id && !(req.session.user.role === 'admin' && r.syllabus_owner_id === me)).map(toMessage));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -4,9 +4,10 @@
   "description": "Backend API for Syllabus CMS Plus",
   "main": "index.js",
   "scripts": {
-    "dev": "node index.js",
+    "dev": "node --watch index.js",
     "init-db": "node db/init.js",
     "migrate-google-auth": "node db/migrate-google-auth.js",
+    "migrate-preferences": "node db/migrate-preferences.js",
     "migrate-avatar": "node db/migrate-avatar.js",
     "migrate-avatars-private": "node db/migrate-avatars-private.js",
     "migrate-notifications": "node db/migrate-notifications.js",
@@ -17,7 +18,9 @@
     "migrate-compliance": "node db/migrate-compliance.js",
     "migrate-comment-reads": "node db/migrate-comment-reads.js",
     "migrate-passwords": "node db/migrate-passwords.js",
-    "seed-outcomes": "node db/seed-outcomes.js"
+    "seed-outcomes": "node db/seed-outcomes.js",
+    "migrate-program-management": "node db/migrate-program-management.js",
+    "migrate-subject-standards": "node db/migrate-subject-standards.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

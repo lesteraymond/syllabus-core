@@ -1,3 +1,5 @@
+import StableButton from '../../components/StableButton';
+import { t as translateUI } from "../../i18n/index.js";
 import { MIN_NOTE } from '../../lib/syllabusRules';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -16,8 +18,8 @@ export default function UploadPanel({ hasCourse, existing, revising, busy, disab
 
   const pick = (f) => {
     if (!f) return;
-    if (!(f.type === 'application/pdf' || /\.pdf$/i.test(f.name))) { notify('Only PDF files are accepted.'); return; }
-    if (f.size > MAX_BYTES) { notify('That file is larger than 10MB.'); return; }
+    if (!(f.type === 'application/pdf' || /\.pdf$/i.test(f.name))) { notify(translateUI("ui.only_pdf_files_are_accepted_b07af1")); return; }
+    if (f.size > MAX_BYTES) { notify(translateUI("ui.that_file_is_larger_than_10mb_1b3a23")); return; }
     setFile(f);
   };
   const size = file ? (file.size / 1024 / 1024).toFixed(1) + ' MB' : '';
@@ -26,16 +28,15 @@ export default function UploadPanel({ hasCourse, existing, revising, busy, disab
     <section className="editor-card up-panel" aria-labelledby="up-title">
       <div className="editor-title">
         <div>
-          <span className="eyebrow">UPLOAD A FILE</span>
-          <h2 id="up-title">Submit your syllabus as a PDF</h2>
-          <p>Use this when your syllabus is already finished. The PDF is what reviewers will read, so the form is not needed.</p>
+          <span className="eyebrow">{translateUI("ui.upload_a_file_db7dd1")}</span>
+          <h2 id="up-title">{translateUI("ui.submit_your_syllabus_as_a_pdf_b41730")}</h2>
+          <p>{translateUI("ui.use_this_when_your_syllabus_is_already_finished_the_pdf_is_what_r_cf6dfc")}</p>
         </div>
       </div>
 
       {!hasCourse && (
-        <div className="info-banner warning">
-          Choose the subject first, so the syllabus is filed under the right course.{' '}
-          <button type="button" className="link-btn" onClick={onChooseCourse}>Choose it in the form</button>
+        <div className="info-banner warning">{translateUI("ui.choose_the_subject_first_so_the_syllabus_is_filed_under_the_right_54e15b")}{' '}
+          <button type="button" className="link-btn" onClick={onChooseCourse}>{translateUI("ui.choose_it_in_the_form_c92099")}</button>
         </div>
       )}
 
@@ -52,29 +53,29 @@ export default function UploadPanel({ hasCourse, existing, revising, busy, disab
         >
           <input ref={input} type="file" accept=".pdf,application/pdf" style={{ display: 'none' }} onChange={(e) => { pick(e.target.files[0]); e.target.value = ''; }} />
           {file
-            ? <><span className="drop-icon">📄</span><span className="drop-text">{file.name}</span><small>{size} • Click or drop to replace</small></>
-            : <><span className="drop-icon">📤</span><span className="drop-text">Drag and drop your syllabus here, or click to choose</span><small>PDF only • Max 10MB</small></>}
+            ? <><span className="drop-icon">📄</span><span className="drop-text">{file.name}</span><small>{size}{translateUI("ui.click_or_drop_to_replace_95d96b")}</small></>
+            : <><span className="drop-icon">📤</span><span className="drop-text">{translateUI("ui.drag_and_drop_your_syllabus_here_or_click_to_choose_5b8cda")}</span><small>{translateUI("ui.pdf_only_max_10mb_daa870")}</small></>}
         </div>
 
         {url && (
           <div className="up-preview">
             <div className="up-preview-bar">
-              <b>Preview</b>
-              <a href={url} target="_blank" rel="noreferrer">Open in a new tab</a>
+              <b>{translateUI("ui.preview_f1fbb2")}</b>
+              <a href={url} target="_blank" rel="noreferrer">{translateUI("ui.open_in_a_new_tab_b22f39")}</a>
             </div>
-            <iframe title="Preview of the selected PDF" src={url} />
+            <iframe title={translateUI("ui.preview_of_the_selected_pdf_1b26e7")} src={url} />
           </div>
         )}
 
-        <label className="up-note">{revising ? 'What did you change? (required)' : 'Note for the reviewer (optional)'}
-          <textarea rows={3} maxLength={1000} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Anything the reviewer should know" />
+        <label className="up-note">{revising ? translateUI("ui.what_did_you_change_required_c57040") : translateUI("ui.note_for_the_reviewer_optional_201228")}
+          <textarea rows={3} maxLength={1000} value={note} onChange={(e) => setNote(e.target.value)} placeholder={translateUI("ui.anything_the_reviewer_should_know_344e5b")} />
         </label>
 
-        <div className="info-banner">This file will be submitted as your syllabus. Anything you filled in on the form is kept as a draft, but it is not submitted.</div>
+        <div className="info-banner">{translateUI("ui.this_file_will_be_submitted_as_your_syllabus_anything_you_filled__2684db")}</div>
         <div className="up-actions">
-          <button type="button" className="btn primary" disabled={!file || !hasCourse || busy || disabled || (revising && note.trim().length < MIN_NOTE)} onClick={() => onSubmit(file, note.trim())}>
-            {busy ? 'Uploading…' : existing ? 'Upload as new version' : 'Submit for review'}
-          </button>
+          <StableButton type="button" className="btn primary" disabled={!file || !hasCourse || busy || disabled || (revising && note.trim().length < MIN_NOTE)} onClick={() => onSubmit(file, note.trim())}>
+            {busy ? translateUI("ui.uploading_d921a7") : existing ? translateUI("ui.upload_as_new_version_77fd0e") : translateUI("ui.submit_for_review_f7710d")}
+          </StableButton>
         </div>
       </fieldset>
     </section>

@@ -57,8 +57,12 @@ router.get('/', requireAuth, async (req, res) => {
       query += ' WHERE s.user_id = ?';
       params.push(req.session.user.id);
     } else {
-      query += " WHERE s.status <> 'draft'"; // drafts belong to their owner until submitted
+      query += " WHERE (s.status <> 'draft' OR s.user_id = ?)"; // only the administrator's own drafts are visible
+      params.push(req.session.user.id);
     }
+
+    // Repository reads are approved-only; the default list still powers the workflow tabs.
+    if (req.query.scope === 'repository') query += " AND s.status = 'approved'";
 
     query += ' ORDER BY s.uploaded_at DESC';
     const [rows] = await db.query(query, params);
@@ -139,6 +143,7 @@ router.post('/', requireAuth, onePdf, async (req, res) => {
   let committed = false;
   try {
     const db = req.app.locals.db;
+    if (rules.isAdmin(req.session.user)) throw httpError(403, 'Use the syllabus builder and AI Checker to publish your own syllabus.');
     const { title, courseCode, curriculumId } = req.body;
     checkLengths({ title, courseCode });
     await assignments.requireCourseCodeAccess(db, req.session.user, courseCode); // faculty: only an assigned course
@@ -196,6 +201,8 @@ router.put('/:id', requireAuth, onePdf, async (req, res) => {
 
       // ---- status change: admin only ----
       if (status !== undefined && status !== '') {
+        if (rules.isAdmin(me) && rules.isOwner(me,syl) && status === 'approved') throw httpError(409, 'Use the syllabus builder and AI Checker to publish your own syllabus.');
+        if (syl.status === 'draft') throw httpError(409, 'Complete the form and check it in AI Checker before publishing your draft.');
         if (!rules.canChangeStatus(me)) throw httpError(403, 'Only administrators can change a syllabus status');
         if (!rules.STATUSES.includes(status)) throw httpError(400, 'Invalid status');
         if (hasContent) throw httpError(403, 'Administrators cannot edit syllabus content');
@@ -216,6 +223,8 @@ router.put('/:id', requireAuth, onePdf, async (req, res) => {
         return { kind: 'status', syl, status, comment: adminComment !== undefined ? adminComment : syl.admin_comment };
       }
 
+      // Administrator-authored records publish only through the checked form transaction.
+      if (rules.isAdmin(me) && rules.isOwner(me,syl)) throw httpError(409, 'Use the syllabus builder and AI Checker to publish your own syllabus.');
       // ---- content edit: the owner only ----
       if (rules.isAdmin(me) && !rules.isOwner(me, syl)) throw httpError(403, 'Administrators cannot edit syllabus content');
       if (!rules.canEdit(me, syl)) throw httpError(409, rules.lockedMessage(syl));
@@ -307,8 +316,15 @@ router.delete('/:id', requireAuth, async (req, res) => {
     const id = Number(req.params.id);
     if (!Number.isInteger(id) || id <= 0) throw httpError(404, 'Syllabus not found');
     const [rows] = await db.query('SELECT syllabus_id, user_id, status FROM syllabi WHERE syllabus_id = ?', [id]);
-    if (!rows[0] || !rules.canDelete(req.session.user, rows[0])) throw httpError(404, 'Syllabus not found');
-    await db.query('DELETE FROM syllabi WHERE syllabus_id = ?', [id]);
+    const me = req.session.user;
+    if (!rows[0] || !rules.canView(me, rows[0])) throw httpError(404, 'Syllabus not found');
+    if (!rules.canDelete(me, rows[0])) throw httpError(409, 'Only draft syllabi can be deleted by faculty.');
+    // Enforce the draft restriction in the mutation too: a concurrent submission must never be deleted.
+    const [result] = await db.query(
+      rules.isAdmin(me) ? 'DELETE FROM syllabi WHERE syllabus_id = ?' : "DELETE FROM syllabi WHERE syllabus_id = ? AND user_id = ? AND status = 'draft'",
+      rules.isAdmin(me) ? [id] : [id, me.id]
+    );
+    if (!result.affectedRows) throw httpError(409, 'This syllabus changed or was removed. Refresh your list before deleting.');
     res.json({ message: 'Syllabus deleted' });
   } catch (err) {
     sendError(res, err);

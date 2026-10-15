@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { installLocalizedValidation } from './i18n/validation';
+import { tr } from "./i18n/index.js";
+import { t as translateUI } from "./i18n/index.js";
+import { getLanguage, setLanguage, subscribeLanguage } from './i18n';
+import { createLanguagePreference } from './i18n/preference';
+import { useLanguageTransition } from './i18n/useLanguageTransition';
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import ChatModal from './components/ChatModal';
 import ConfirmModal from './components/ConfirmModal';
 import ChangePassword from './components/ChangePassword';
@@ -10,10 +16,10 @@ import Topbar from './components/Topbar';
 import VersionHistoryModal from './components/VersionHistoryModal';
 import ReviewPanel from './views/ReviewPanel';
 import { navItems } from './data/initialData';
-import { auth, logs as logsApi, messages as messagesApi, notifications as notificationsApi, syllabi as syllabiApi, onPasswordChangeRequired } from './lib/api';
+import { auth, users as usersApi, logs as logsApi, messages as messagesApi, notifications as notificationsApi, syllabi as syllabiApi, onPasswordChangeRequired } from './lib/api';
 import { commentNotificationIds, notificationTarget } from './lib/notificationRoute';
 import { canChat, partnerOf, threadTitle } from './lib/chatPartner';
-import { canEditSyllabus, editBlockedReason } from './lib/syllabusRules';
+import { canDeleteSyllabus, canEditSyllabus, editBlockedReason } from './lib/syllabusRules';
 import { useNotificationPolling } from './lib/usePolling';
 import AIChecker from './views/AIChecker';
 import Analytics from './views/Analytics';
@@ -37,7 +43,34 @@ const NEW_BUILDER = import.meta.env.VITE_NEW_BUILDER === 'true';
 
 export default function App() {
   const [user, setUser] = useState(null);
+  const language = useSyncExternalStore(subscribeLanguage, getLanguage, () => 'en');
+  const languageShell = useLanguageTransition(language, user?.id);
+  useEffect(() => installLocalizedValidation(document), []);
+  const [languageBusy, setLanguageBusy] = useState(false);
+  const languageRequest = useRef(0);
+  const languageInFlight = useRef(false);
+  const preferenceRef = useRef(null);
+  if (!preferenceRef.current) preferenceRef.current = createLanguagePreference({
+    apply: setLanguage,
+    persist: usersApi.updatePreferences,
+    onSaved: (id, preferredLanguage) => setUser(current => current?.id === id ? { ...current, preferredLanguage } : current),
+  });
+  const changeLanguage = async next => {
+    if (languageInFlight.current) return;
+    languageInFlight.current = true;
+    const request = ++languageRequest.current;
+    setLanguageBusy(true);
+    try { await preferenceRef.current.change(next); }
+    finally { if (request === languageRequest.current) { languageInFlight.current = false; setLanguageBusy(false); } }
+  };
+  const acceptUser = account => {
+    languageRequest.current++; languageInFlight.current = false; setLanguageBusy(false);
+    preferenceRef.current.reset(account.id, account.preferredLanguage);
+    setUser(formatUser(account));
+  };
   const [loading, setLoading] = useState(true);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const logoutPending = useRef(false);
   // Read synchronously so the first paint already has the saved width (no layout shift).
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     try { return localStorage.getItem('sms_sidebar_collapsed') === 'true'; } catch { return false; }
@@ -63,21 +96,21 @@ export default function App() {
   const [msgDrop, setMsgDrop] = useState(false);
   const [notifications, setNotifications] = useState({ items: [], unreadCount: 0 });
 
-  const notify = (m) => { setToast(m); window.clearTimeout(window.__scmsToast); window.__scmsToast = window.setTimeout(() => setToast(''), 2400); };
+  const notify = (m) => { setToast(tr(m)); window.clearTimeout(window.__scmsToast); window.__scmsToast = window.setTimeout(() => setToast(''), 2400); };
 
   const formatUser = (u) => ({
     ...u,
     name: `${u.firstName} ${u.lastName}`,
     initials: `${u.firstName?.[0] || ''}${u.lastName?.[0] || ''}`,
-    dept: 'CITE',
   });
 
-  const handleAvatarChange = (avatarUrl) => setUser(u => ({ ...u, avatarUrl }));
+  const handleAvatarChange = (avatarUrl) => setUser(u => u && !logoutPending.current ? { ...u, avatarUrl } : u);
+  const handleProfileChange = (profile) => setUser(current => current && current.id === profile.id && !logoutPending.current ? formatUser({ ...profile, preferredLanguage: current.preferredLanguage }) : current);
 
   useEffect(() => {
     onPasswordChangeRequired(() => setUser(u => (u && !u.mustChangePassword ? { ...u, mustChangePassword: true } : u))); // a call was refused: show the screen
     auth.me().then(data => {
-      setUser(formatUser(data.user));
+      acceptUser(data.user);
       setLoading(false);
     }).catch(() => setLoading(false));
   }, []);
@@ -136,12 +169,12 @@ export default function App() {
   useEffect(() => { if (user && user.role === 'admin' && (page === 'review' || page === 'ai')) fetchSyllabi(); }, [user, page, fetchSyllabi]);
   useEffect(() => { if (user && page === 'my-syllabi') { fetchSyllabi(); if (user.role === 'faculty') fetchCommentCounts(); } }, [user, page, fetchSyllabi, fetchCommentCounts]);
 
-  useNotificationPolling(!!user && !user.mustChangePassword, () => { fetchMessages(); fetchNotifications(); fetchSyllabi(); if (user.role === 'faculty') fetchCommentCounts(); });
+  useNotificationPolling(!!user && !user.mustChangePassword && !loggingOut, () => { fetchMessages(); fetchNotifications(); fetchSyllabi(); if (user.role === 'faculty') fetchCommentCounts(); });
 
   const handleLogin = async (email, pass, remember) => {
     try {
       const data = await auth.login(email, pass, remember);
-      setUser(formatUser(data.user));
+      acceptUser(data.user);
       setPage('dashboard');
       return null;
     } catch (err) {
@@ -152,7 +185,7 @@ export default function App() {
   const handleGoogleLogin = async (idToken) => {
     try {
       const data = await auth.google(idToken);
-      setUser(formatUser(data.user));
+      acceptUser(data.user);
       setPage('dashboard');
       return null;
     } catch (err) {
@@ -161,17 +194,34 @@ export default function App() {
   };
 
   const handleLogout = async () => {
-    try { await auth.logout(); } catch {}
-    setUser(null);
-    setSyllabi([]);
-    setLogs([]);
-    setMessages([]);
-    setPartners({});
-    setNotifications({ items: [], unreadCount: 0 });
-    setPage('dashboard');
-    setEditing(null);
-    setChatCode(null);
-    setMsgDrop(false);
+    if (logoutPending.current) return;
+    logoutPending.current = true;
+    setLoggingOut(true);
+    try { await auth.logout(); } catch {
+      // Preserve local sign-out if the server cannot be reached; auth.logout clears the access token.
+    } finally {
+      languageRequest.current++; languageInFlight.current = false; setLanguageBusy(false);
+      preferenceRef.current.reset(null);
+      setUser(null);
+      setSyllabi([]);
+      setLogs([]);
+      setMessages([]);
+      setPartners({});
+      setNotifications({ items: [], unreadCount: 0 });
+      setCommentCounts({});
+      setPage('dashboard');
+      setEditing(null);
+      setChatCode(null);
+      setHistCode(null);
+      setViewCode(null);
+      setCommentCode(null);
+      setConfirm(null);
+      setMsgDrop(false);
+      window.clearTimeout(window.__scmsToast);
+      setToast('');
+      logoutPending.current = false;
+      setLoggingOut(false);
+    }
   };
 
   const unread = useMemo(() => messages.filter(m => m.receiverId === user?.id && !m.isRead).length, [messages, user]);
@@ -192,7 +242,7 @@ export default function App() {
       t.lastTime = last.time;
       t.unread = t.msgs.filter(m => m.receiverId === user.id && !m.isRead).length;
       const syl = syllabi.find(s => s.id === t.code);
-      if (syl && !canChat(syl)) return null; // messages about a draft are not shown until it is submitted
+      if (syl && !canChat(syl, user)) return null; // messages about a draft are not shown until it is submitted
       t.partner = partnerOf({ partner: partners[t.code], messages: t.msgs, user, syl });
       t.title = threadTitle(syl, t.code);
       return t;
@@ -257,20 +307,20 @@ export default function App() {
         if (!canEditSyllabus(user, existing)) { notify(editBlockedReason(existing) + '.'); return; }
         if (draft.note) formData.append('note', draft.note);
         const res = await syllabiApi.edit(existing.id, formData);
-        notify(`Syllabus saved as ${res.version}.`);
+        notify(translateUI("ui.syllabus_saved_as_p0_60fc5d", { p0: (res.version) }));
       } else {
         await syllabiApi.create(formData);
-        notify('Syllabus submitted for review.');
+        notify(translateUI("ui.syllabus_submitted_for_review_f317be"));
       }
       setEditing(null);
       await fetchSyllabi();
       setPage(user.role === 'faculty' ? 'my-syllabi' : 'repository');
-    } catch (err) { notify('Submit failed: ' + err.message); }
+    } catch (err) { notify(translateUI("ui.submit_failed_adb15a") + err.message); }
   };
 
   // The new builder has already saved the content and stored the version; this only refreshes and navigates.
   const handleBuilderSubmitted = async (res, wasExisting) => {
-    notify(wasExisting ? `Syllabus saved as ${res.version}.` : 'Syllabus submitted for review.');
+    notify(res.status === 'approved' ? translateUI('publication.published') : wasExisting ? translateUI("ui.syllabus_saved_as_p0_60fc5d", { p0: (res.version) }) : translateUI("ui.syllabus_submitted_for_review_f317be"));
     setEditing(null);
     await fetchSyllabi();
     setPage('my-syllabi');
@@ -282,41 +332,44 @@ export default function App() {
       await syllabiApi.update(id, { status: statusMap[status] || status, adminComment: comment || '' });
       await fetchSyllabi();
       await fetchLogs();
-      notify(`Syllabus ${status.toLowerCase()}.`);
+      notify(translateUI("ui.syllabus_p0_bf213e", { p0: (tr(status)) }));
       return true;
-    } catch (err) { notify('Update failed: ' + err.message); return false; }
+    } catch (err) { notify(translateUI("ui.update_failed_f7b7c9") + err.message); return false; }
   };
 
   const handleDelete = async (id) => {
+    const syllabus = syllabi.find(item => item.id === id);
+    if (!syllabus || !canDeleteSyllabus(user, syllabus)) { notify(translateUI("ui.only_draft_syllabi_can_be_deleted_by_faculty_832244")); return; }
     try {
       await syllabiApi.remove(id);
       await fetchSyllabi();
       await fetchLogs();
-      notify('Syllabus deleted.');
-    } catch (err) { notify('Delete failed: ' + err.message); }
+      notify(translateUI("ui.syllabus_deleted_638a8c"));
+    } catch (err) { notify(translateUI("ui.delete_failed_c834e9") + err.message); }
   };
 
-  const clearLogs = () => { setLogs([]); notify('Your activity list was cleared.'); };
+  const clearLogs = () => { setLogs([]); notify(translateUI("ui.your_activity_list_was_cleared_642fa2")); };
 
   const nav = navItems.filter(([, , , r]) => !r || r === user?.role);
 
-  if (loading) return <div className="loading-screen"><div className="spinner" /><p>Loading...</p></div>;
+  if (loggingOut) return <div className="loading-screen" role="status" aria-live="polite" aria-busy="true"><div className="spinner" aria-hidden="true" /><p>{translateUI("ui.logging_out_3df779")}</p></div>;
+  if (loading) return <div className="loading-screen"><div className="spinner" /><p>{translateUI("ui.loading_b04ba4")}</p></div>;
   if (!user) return <Login onLogin={handleLogin} onGoogleLogin={handleGoogleLogin} />;
   if (user.mustChangePassword) return <ChangePassword user={user} onDone={() => setUser((u) => ({ ...u, mustChangePassword: false }))} onLogout={handleLogout} />;
   if (user.role === 'student') return <StudentHome user={user} onLogout={handleLogout} />;
 
   return (
-    <div className="app-shell" data-sidebar-collapsed={sidebarCollapsed ? 'true' : 'false'}>
+    <div ref={languageShell} className="app-shell" data-sidebar-collapsed={sidebarCollapsed ? 'true' : 'false'}>
       <Sidebar page={page} setPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); }} nav={nav} collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(c => !c)} />
       <main className="workspace">
         <Topbar page={page} onLogout={handleLogout} user={user} unread={unread} threads={threads} msgDrop={msgDrop} setMsgDrop={setMsgDrop} setChatCode={setChatCode} markRead={markRead} notify={notify} onAvatarChange={handleAvatarChange} notifications={notifications} onOpenNotification={openNotification} onMarkAllNotificationsRead={markAllNotificationsRead} />
         <div className="page-wrap">
           {page === 'dashboard' && <Dashboard setPage={setPage} user={user} syllabi={syllabi} logs={logs} clearLogs={clearLogs} setConfirm={setConfirm} />}
-          {page === 'builder' && (NEW_BUILDER
+          {page === 'builder' && ((NEW_BUILDER || user.role === 'admin')
             ? <SyllabusBuilderV2 key={editing ? editing.syllabusId : 'new'} editing={editing} user={user} notify={notify} setPage={setPage} onSubmitted={handleBuilderSubmitted} />
             : <SyllabusBuilder notify={notify} onSubmit={submitSyllabus} editing={editing} setEditing={setEditing} />)}
           {page === 'my-syllabi' && <MySyllabi syllabi={syllabi} user={user} messages={messages} commentCounts={commentCounts} setCommentCode={setCommentCode} setEditing={setEditing} setPage={setPage} setHistCode={setHistCode} setChatCode={setChatCode} handleDelete={handleDelete} setConfirm={setConfirm} notify={notify} />}
-          {page === 'ai' && user.role === 'admin' && <AIChecker user={user} notify={notify} />}
+          {page === 'ai' && user.role === 'admin' && <AIChecker user={user} notify={notify} onApproved={async () => { await fetchSyllabi(); await fetchLogs(); notify(translateUI('publication.approvedRepository')); setEditing(null); setPage('repository'); }} onEditDraft={async id => { await syllabiApi.resumeDraft(id); setEditing({ syllabusId: id, status: 'draft' }); setPage('builder'); }} />}
           {page === 'mapping' && <COPOMapping notify={notify} />}
           {page === 'review' && <ReviewApproval syllabi={syllabi} setViewCode={setViewCode} setPage={setPage} />}
           {page === 'repository' && <Repository syllabi={syllabi} user={user} notify={notify} setChatCode={setChatCode} setHistCode={setHistCode} />}
@@ -324,11 +377,11 @@ export default function App() {
           {page === 'analytics' && <Analytics syllabi={syllabi} user={user} />}
           {page === 'reports' && <Reports syllabi={syllabi} user={user} notify={notify} />}
           {page === 'users' && <UsersRoles notify={notify} onManageSubjects={() => setPage('courses')} />}
-          {page === 'courses' && <CourseOutcomes notify={notify} />}
-          {page === 'settings' && <Settings notify={notify} />}
+          {page === 'courses' && user.role === 'admin' && <CourseOutcomes notify={notify} onCatalogChanged={() => { fetchSyllabi(); fetchLogs(); fetchMessages(); fetchNotifications(); }} />}
+          {page === 'settings' && <Settings user={user} notify={notify} onAvatarChange={handleAvatarChange} onProfileChange={handleProfileChange} language={language} languageBusy={languageBusy} onLanguageChange={changeLanguage} />}
         </div>
       </main>
-      {toast && <div className="toast">{toast}</div>}
+      {toast && <div className="toast">{tr(toast)}</div>}
       {chatCode && <ChatModal code={chatCode} syllabi={syllabi} user={user} messages={messages} partner={partners[chatCode]} sendMsg={sendMsg} markRead={markRead} deleteThread={deleteThread} onClose={() => setChatCode(null)} />}
       {histCode && <VersionHistoryModal syllabus={syllabi.find(s => s.id === histCode)} onClose={() => setHistCode(null)} />}
       {commentCode && (

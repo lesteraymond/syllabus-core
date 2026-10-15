@@ -7,9 +7,10 @@ const html = (t) => ({ __html: renderMarkup(t) });
 // light markup (bullets, bold) is applied. There is no revision date and no modifications checklist:
 // the system adds the revision date when the syllabus is approved. Reusable by the admin review.
 export default function FormPaper({ d, model, preparedBy }) {
-  const I = model.institution;
-  const egas = model.egaList(d); // this program's own EGAs
-  const pos = model.poList(d);
+  const selected = model.outcomesReady(d);
+  const I = selected ? model.institution : { vision: '', mission: { lead: '', items: [] } };
+  const egas = selected ? model.egaList(d) : []; // this program's own EGAs
+  const pos = selected ? model.poList(d) : [];
   const f = model.formulas(d);
   const cloTags = (c) => { const e = c.egas.join('&'); const po = c.pos.join(', '); return (e ? '[EGA ' + e + '] ' : '') + (po ? '[PO ' + po + ']' : ''); };
   const iloTags = (il) => il.tags.map((t) => { const i = model.tagInfo(d, t); return i.kind === 'clo' ? '[CLO' + i.no + ']' : '[' + i.label.replace(' ', '') + ']'; }).join(' ');

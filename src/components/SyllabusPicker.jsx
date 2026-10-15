@@ -1,3 +1,6 @@
+import StableButton from './StableButton';
+import { tr } from "../i18n/index.js";
+import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useId, useMemo, useState } from 'react';
 import { canCheckNow } from '../lib/complianceView';
 
@@ -33,31 +36,31 @@ export default function SyllabusPicker({ groups, loading = false, busy = false, 
   const ready = canCheckNow(row);
 
   return (
-    <section className="card pick-card" aria-label="Choose a syllabus to check">
+    <section className="card pick-card" aria-label={translateUI("ui.choose_a_syllabus_to_check_b6f6d2")}>
       <div className="pick-head">
-        <h3>Choose a syllabus</h3>
-        <p>Syllabi waiting for their first check. Once checked, a syllabus moves to the history below.</p>
+        <h3>{translateUI("ui.choose_a_syllabus_cd5a79")}</h3>
+        <p>{translateUI("ui.syllabi_waiting_for_their_first_check_once_checked_a_syllabus_mov_d3e75a")}</p>
       </div>
       <div className="pick-grid">
         <div className="pick-field">
-          <label htmlFor={uid + '-f'}>Faculty</label>
+          <label htmlFor={uid + '-f'}>{translateUI("ui.faculty_9ae050")}</label>
           <select id={uid + '-f'} value={faculty ? facultyKey : ''} disabled={loading || empty} onChange={(e) => pickFaculty(e.target.value)}>
-            <option value="">{loading ? 'Loading…' : empty ? 'Nothing is waiting for a check' : 'Choose a faculty member'}</option>
+            <option value="">{loading ? translateUI("ui.loading_33ce41") : empty ? translateUI("ui.nothing_is_waiting_for_a_check_28b41a") : translateUI("ui.choose_a_faculty_member_65ac86")}</option>
             {groups.map((f) => <option key={f.key} value={f.key}>{f.facultyName + ' (' + f.count + ')'}</option>)}
           </select>
         </div>
         <div className="pick-field">
-          <label htmlFor={uid + '-p'}>Program</label>
+          <label htmlFor={uid + '-p'}>{translateUI("ui.program_9d6800")}</label>
           <select id={uid + '-p'} value={program ? programKey : ''} disabled={!faculty} onChange={(e) => pickProgram(e.target.value)}>
-            <option value="">Choose a program</option>
-            {faculty && faculty.programs.map((p) => <option key={p.key} value={p.key}>{p.code ? p.code + (p.name ? ' · ' + p.name : '') : 'No program'}</option>)}
+            <option value="">{translateUI("ui.choose_a_program_2d5477")}</option>
+            {faculty && faculty.programs.map((p) => <option key={p.key} value={p.key}>{p.code ? p.code + (p.name ? ' · ' + p.name : '') : translateUI("ui.no_program_d8600a")}</option>)}
           </select>
         </div>
         <div className="pick-field">
-          <label htmlFor={uid + '-s'}>Subject</label>
+          <label htmlFor={uid + '-s'}>{translateUI("ui.subject_8d183d")}</label>
           <select id={uid + '-s'} value={row ? syllabusId : ''} disabled={!program} onChange={(e) => setSyllabusId(e.target.value)}>
-            <option value="">Choose a subject</option>
-            {program && program.rows.map((r) => <option key={r.syllabusId} value={String(r.syllabusId)}>{r.courseCode + ' — ' + (r.courseTitle || r.title) + (r.upload ? ' (uploaded file)' : '')}</option>)}
+            <option value="">{translateUI("ui.choose_a_subject_554b9c")}</option>
+            {program && program.rows.map((r) => <option key={r.syllabusId} value={String(r.syllabusId)}>{r.courseCode + ' — ' + (r.courseTitle || r.title) + (r.upload ? ' (' + tr('uploaded file') + ')' : '')}</option>)}
           </select>
         </div>
       </div>
@@ -66,14 +69,14 @@ export default function SyllabusPicker({ groups, loading = false, busy = false, 
         <div className="pick-info" aria-live="polite">
           {row ? (
             <>
-              <span className={'status ' + row.status}>{STATUS_LABELS[row.status] || row.status}</span>
-              <span className="pick-meta">{busy ? 'Checking…' : (row.version ? row.version + ' · ' : '') + 'Not checked yet'}</span>
-              {row.upload && <span className="pick-note">This syllabus was uploaded as a file, so only the file and its course details are checked. Matching it to the template needs the AI service, which is not switched on yet.</span>}
-              {!ready && !row.upload && <span className="pick-note">There is nothing in this syllabus that can be checked.</span>}
+              <span className={'status ' + row.status}>{tr(STATUS_LABELS[row.status] || row.status)}</span>
+              <span className="pick-meta">{busy ? translateUI("ui.checking_820d60") : (row.version ? row.version + ' · ' : '') + translateUI("ui.not_checked_yet_82bd72")}</span>
+              {row.upload && <span className="pick-note">{translateUI("ui.this_syllabus_was_uploaded_as_a_file_so_only_the_file_and_its_cou_b947f8")}</span>}
+              {!ready && !row.upload && <span className="pick-note">{translateUI("ui.there_is_nothing_in_this_syllabus_that_can_be_checked_32e258")}</span>}
             </>
-          ) : <span className="pick-meta">{loading ? 'Loading syllabi…' : empty ? 'Every submitted syllabus has been checked. See the history below.' : 'Nothing chosen yet.'}</span>}
+          ) : <span className="pick-meta">{loading ? translateUI("ui.loading_syllabi_264639") : empty ? translateUI("ui.every_submitted_syllabus_has_been_checked_see_the_history_below_4c13bf") : translateUI("ui.nothing_chosen_yet_a7c4c2")}</span>}
         </div>
-        <button type="button" className="btn primary" disabled={!row || !ready || busy} onClick={() => onCheck(row)}>{busy ? 'Checking…' : 'Check compliance'}</button>
+        <StableButton type="button" className="btn primary" disabled={!row || !ready || busy} onClick={() => onCheck(row)}>{busy ? translateUI("ui.checking_820d60") : translateUI("ui.check_compliance_342b8f")}</StableButton>
       </div>
     </section>
   );

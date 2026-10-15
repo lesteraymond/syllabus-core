@@ -31,6 +31,8 @@ function makeDb() {
   };
   const byId = (id) => s.users.find((u) => u.user_id === id);
   const handle = (sql, p = []) => {
+    if (sql.startsWith('SELECT user_id, email, role, first_name, last_name, avatar_path, must_change_password')) return [s.users.filter((u) => u.user_id === p[0]).map(u => ({ ...u }))];
+    if (sql.startsWith('UPDATE users SET first_name = ?, last_name = ?')) { Object.assign(byId(p[2]), { first_name: p[0], last_name: p[1] }); return [{ affectedRows: 1 }]; }
     if (sql.startsWith('SELECT user_id FROM users WHERE user_id')) return [s.users.filter((u) => u.user_id === p[0]).map((u) => ({ user_id: u.user_id }))];
     if (sql.startsWith('SELECT * FROM users WHERE LOWER(email)')) return [s.users.filter((u) => u.email.toLowerCase() === String(p[0]).toLowerCase())];
     if (sql.startsWith('SELECT user_id FROM users WHERE LOWER(email)')) return [s.users.filter((u) => u.email.toLowerCase() === p[0]).map((u) => ({ user_id: u.user_id }))];
@@ -88,6 +90,18 @@ async function withServer(fn) {
 }
 
 const newUser = { firstName: 'Gus', lastName: 'G', email: 'Gus@X.ph', role: 'faculty' };
+
+test('a saved profile name is reflected in the current session and survives the next sign-in', () => withServer(async ({ client }) => {
+  const user = client();
+  await user.login('fay@x.ph', 'Fay-pass-12');
+  const saved = await user('PATCH', '/users/me/profile', { firstName: 'Faye', lastName: 'Updated', role: 'admin' });
+  assert.strictEqual(saved.status, 200);
+  const current = await user('GET', '/auth/me');
+  assert.deepStrictEqual([current.body.user.firstName, current.body.user.lastName, current.body.user.role], ['Faye', 'Updated', 'faculty']);
+  await user('POST', '/auth/logout');
+  const next = await user.login('fay@x.ph', 'Fay-pass-12');
+  assert.deepStrictEqual([next.body.user.firstName, next.body.user.lastName, next.body.user.role], ['Faye', 'Updated', 'faculty']);
+}));
 
 test('registering a user makes a password, emails it with the username, and never returns it', () => withServer(async ({ db, client }) => {
   const sent = outbox();

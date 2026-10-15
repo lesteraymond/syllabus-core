@@ -10,6 +10,7 @@ const toSessionUser = (row) => ({
   id: row.user_id,
   email: row.email,
   role: row.role,
+  preferredLanguage: row.preferred_language === 'tl' ? 'tl' : 'en',
   firstName: row.first_name,
   lastName: row.last_name,
   avatarUrl: avatarUrlFor(row.user_id, row.avatar_path),

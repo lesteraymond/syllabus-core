@@ -1,3 +1,5 @@
+import StableButton from '../../components/StableButton';
+import { t as translateUI } from "../../i18n/index.js";
 import { useState } from 'react';
 import { clone, renderMarkup, weekSet } from '../../lib/syllabusModel';
 import { Auto, CoverageStrip, Ic, OutcomePicker, Tag } from './parts';
@@ -39,18 +41,18 @@ export default function PlanStep({ d, apply, model, filter, setFilter, onDeleteR
       <div className="tbar">
         <div className="filterline">
           {filter
-            ? <><span>{'Showing ' + shown.length + ' of ' + d.plan.length + ' rows that build'}</span><Tag info={model.tagInfo(d, 'clo:' + filter)} /><button type="button" className="link" onClick={() => setFilter(null)}>Clear filter</button></>
-            : <span><span className="mono" style={{ color: 'var(--text)', fontWeight: 600 }}>{weeks + ' of 18'}</span> weeks covered. Use <span className="mono">-</span> for bullets and <span className="mono">**bold**</span> for labels.</span>}
+            ? <><span>{translateUI("ui.showing_85a4af") + shown.length + translateUI("ui.of_607f2d") + d.plan.length + translateUI("ui.rows_that_build_fd23e7")}</span><Tag info={model.tagInfo(d, 'clo:' + filter)} /><button type="button" className="link" onClick={() => setFilter(null)}>{translateUI("ui.clear_filter_b667d6")}</button></>
+            : <span><span className="mono" style={{ color: 'var(--text)', fontWeight: 600 }}>{weeks + translateUI("ui.of_18_7cd558")}</span>{translateUI("ui.weeks_covered_use_f7d2f0")}<span className="mono">-</span>{translateUI("ui.for_bullets_and_58b7a5")}<span className="mono">{translateUI("ui.bold_40b7d4")}</span>{translateUI("ui.for_labels_b0d83a")}</span>}
         </div>
-        <div className="seg" role="group" aria-label="Cell view">
-          <button type="button" aria-pressed={edit} onClick={() => setMode('edit')}>Edit</button>
-          <button type="button" aria-pressed={!edit} onClick={() => setMode('fmt')}>Formatted</button>
+        <div className="seg" role="group" aria-label={translateUI("ui.cell_view_163f49")}>
+          <button type="button" aria-pressed={edit} onClick={() => setMode('edit')}>{translateUI("ui.edit_530164")}</button>
+          <button type="button" aria-pressed={!edit} onClick={() => setMode('fmt')}>{translateUI("ui.formatted_f26356")}</button>
         </div>
       </div>
       <div className="scroll">
         <table className="ledger plan">
           <colgroup><col style={{ width: '96px' }} /><col style={{ width: '31%' }} /><col style={{ width: '14%' }} /><col style={{ width: '17%' }} /><col style={{ width: '15%' }} /><col /></colgroup>
-          <thead><tr><th>Week</th><th>Intended learning outcomes</th><th>Course contents</th><th>Learning activities</th><th>Assessment tasks</th><th>Values to integrate</th></tr></thead>
+          <thead><tr><th>{translateUI("ui.week_f82be6")}</th><th>{translateUI("ui.intended_learning_outcomes_7e7669")}</th><th>{translateUI("ui.course_contents_1b687b")}</th><th>{translateUI("ui.learning_activities_87fc76")}</th><th>{translateUI("ui.assessment_tasks_795936")}</th><th>{translateUI("ui.values_to_integrate_bf0acd")}</th></tr></thead>
           <tbody>
             {shown.map((r) => {
               const full = d.plan.findIndex((y) => y.id === r.id);
@@ -60,15 +62,15 @@ export default function PlanStep({ d, apply, model, filter, setFilter, onDeleteR
                   <td>
                     <div className="wkc">
                       {edit
-                        ? <input className="cell" value={r.week} data-fid={r.id} aria-label="Week" placeholder="Week" onChange={(e) => { const v = e.target.value; updRow(r.id, (x) => { x.week = v; }); }} />
-                        : <div className="fmt mono" style={{ fontWeight: 600 }}>{'Wk ' + r.week}</div>}
-                      {edit && <select className="kind" value={r.kind} aria-label="Row type" onChange={(e) => { const v = e.target.value; updRow(r.id, (x) => { x.kind = v; }); }}><option value="lesson">LESSON</option><option value="exam">EXAM</option></select>}
+                        ? <input className="cell" value={r.week} data-fid={r.id} aria-label={translateUI("ui.week_f82be6")} placeholder={translateUI("ui.week_f82be6")} onChange={(e) => { const v = e.target.value; updRow(r.id, (x) => { x.week = v; }); }} />
+                        : <div className="fmt mono" style={{ fontWeight: 600 }}>{translateUI("ui.wk_1e49a0") + r.week}</div>}
+                      {edit && <select className="kind" value={r.kind} aria-label={translateUI("ui.row_type_91d899")} onChange={(e) => { const v = e.target.value; updRow(r.id, (x) => { x.kind = v; }); }}><option value="lesson">{translateUI("ui.lesson_0bb7c8")}</option><option value="exam">{translateUI("ui.exam_c7e542")}</option></select>}
                       {edit && (
                         <div className="racts">
-                          <button type="button" className="ib" aria-label="Move up" disabled={full === 0} onClick={() => move(r.id, -1)}><Ic n="up" /></button>
-                          <button type="button" className="ib" aria-label="Move down" disabled={full === d.plan.length - 1} onClick={() => move(r.id, 1)}><Ic n="down" /></button>
-                          <button type="button" className="ib" aria-label="Duplicate row" onClick={() => apply((x) => { const c = clone(r); c.id = newId(); c.week = ''; c.ilos.forEach((il) => { il.id = newId(); }); x.plan.splice(full + 1, 0, c); return x; })}><Ic n="copy" /></button>
-                          <button type="button" className="ib del" aria-label="Delete row" onClick={() => onDeleteRow(r.id)}><Ic n="trash" /></button>
+                          <button type="button" className="ib" aria-label={translateUI("ui.move_up_b4f57c")} disabled={full === 0} onClick={() => move(r.id, -1)}><Ic n="up" /></button>
+                          <button type="button" className="ib" aria-label={translateUI("ui.move_down_260ff8")} disabled={full === d.plan.length - 1} onClick={() => move(r.id, 1)}><Ic n="down" /></button>
+                          <button type="button" className="ib" aria-label={translateUI("ui.duplicate_row_d66d5f")} onClick={() => apply((x) => { const c = clone(r); c.id = newId(); c.week = ''; c.ilos.forEach((il) => { il.id = newId(); }); x.plan.splice(full + 1, 0, c); return x; })}><Ic n="copy" /></button>
+                          <button type="button" className="ib del" aria-label={translateUI("ui.delete_row_fcf3f8")} onClick={() => onDeleteRow(r.id)}><Ic n="trash" /></button>
                         </div>
                       )}
                     </div>
@@ -76,40 +78,40 @@ export default function PlanStep({ d, apply, model, filter, setFilter, onDeleteR
                   <td>
                     {exam
                       ? (edit
-                        ? <Auto value={r.ilos[0] ? r.ilos[0].text : ''} placeholder="Review of topics" label="Review topics" onChange={(v) => updRow(r.id, (x) => { if (!x.ilos[0]) x.ilos.push(newIlo()); x.ilos[0].text = v; })} />
+                        ? <Auto value={r.ilos[0] ? r.ilos[0].text : ''} placeholder={translateUI("ui.review_of_topics_235cbc")} label={translateUI("ui.review_topics_520343")} onChange={(v) => updRow(r.id, (x) => { if (!x.ilos[0]) x.ilos.push(newIlo()); x.ilos[0].text = v; })} />
                         : <Formatted text={r.ilos[0] ? r.ilos[0].text : ''} />)
                       : <>
                         {r.ilos.map((il, j) => (
                           <div className="ilo" key={il.id}>
-                            <span className="lb">{'ILO' + (j + 1)}</span>
+                            <span className="lb">{translateUI("ui.ilo_080517") + (j + 1)}</span>
                             {edit
-                              ? <Auto value={il.text} placeholder="Start with a verb" label={'ILO ' + (j + 1) + ' of week ' + r.week} onChange={(v) => updRow(r.id, (x) => { x.ilos[j].text = v; })} />
+                              ? <Auto value={il.text} placeholder={translateUI("ui.start_with_a_verb_6b1d63")} label={translateUI("ui.ilo_f12fa1") + (j + 1) + translateUI("ui.of_week_60075b") + r.week} onChange={(v) => updRow(r.id, (x) => { x.ilos[j].text = v; })} />
                               : <div className="fmt">{il.text || '—'}</div>}
                             <div className="tagrow">
                               {il.tags.map((t) => <Tag key={t} info={model.tagInfo(d, t)} onRemove={edit ? () => updRow(r.id, (x) => { x.ilos[j].tags = x.ilos[j].tags.filter((v) => v !== t); }) : null} />)}
-                              {edit && <button type="button" className="tagbtn" aria-label={'Tag outcomes for ILO ' + (j + 1)} onClick={(e) => setPicker({ row: r.id, ilo: il.id, rect: e.currentTarget.getBoundingClientRect() })}>+ Tag</button>}
-                              {edit && r.ilos.length > 1 && <button type="button" className="ib del" aria-label="Remove ILO" onClick={() => updRow(r.id, (x) => { x.ilos.splice(j, 1); })}><Ic n="x" /></button>}
+                              {edit && <button type="button" className="tagbtn" aria-label={translateUI("ui.tag_outcomes_for_ilo_5f768a") + (j + 1)} onClick={(e) => setPicker({ row: r.id, ilo: il.id, rect: e.currentTarget.getBoundingClientRect() })}>{translateUI("ui.tag_eae765")}</button>}
+                              {edit && r.ilos.length > 1 && <button type="button" className="ib del" aria-label={translateUI("ui.remove_ilo_4d0e7b")} onClick={() => updRow(r.id, (x) => { x.ilos.splice(j, 1); })}><Ic n="x" /></button>}
                             </div>
                           </div>
                         ))}
-                        {edit && <button type="button" className="link" onClick={() => updRow(r.id, (x) => { x.ilos.push(newIlo()); })}>+ ILO</button>}
+                        {edit && <button type="button" className="link" onClick={() => updRow(r.id, (x) => { x.ilos.push(newIlo()); })}>{translateUI("ui.ilo_b41960")}</button>}
                       </>}
                   </td>
                   {CELLS.map(([f, ph]) => (
                     <td key={f}>{edit
-                      ? <Auto value={r[f]} placeholder={ph} label={f + ' of week ' + r.week} onChange={(v) => updRow(r.id, (x) => { x[f] = v; })} />
+                      ? <Auto value={r[f]} placeholder={ph} label={f + translateUI("ui.of_week_60075b") + r.week} onChange={(v) => updRow(r.id, (x) => { x[f] = v; })} />
                       : <Formatted text={r[f]} />}</td>
                   ))}
                 </tr>
               );
             })}
-            {!shown.length && <tr><td colSpan="6" style={{ padding: 24, color: 'var(--muted)' }}>{filter ? 'No rows build this CLO yet. Tag an ILO with it, or clear the filter.' : 'No rows yet.'}</td></tr>}
+            {!shown.length && <tr><td colSpan="6" style={{ padding: 24, color: 'var(--muted)' }}>{filter ? translateUI("ui.no_rows_build_this_clo_yet_tag_an_ilo_with_it_or_clear_the_filter_f917f8") : translateUI("ui.no_rows_yet_a2e4b6")}</td></tr>}
           </tbody>
         </table>
       </div>
-      {edit && <div className="addrow"><button type="button" className="btn outline" onClick={() => addRow('lesson')}>+ Add week</button><button type="button" className="btn outline" onClick={() => addRow('exam')}>+ Add exam row</button></div>}
+      {edit && <div className="addrow"><StableButton type="button" className="btn outline" onClick={() => addRow('lesson')}>{translateUI("ui.add_week_3a833d")}</StableButton><StableButton type="button" className="btn outline" onClick={() => addRow('exam')}>{translateUI("ui.add_exam_row_19d3c0")}</StableButton></div>}
       {picker && pil && (
-        <OutcomePicker model={model} d={d} kinds={['clo', 'ega', 'po']} rect={picker.rect} title="Tag outcomes" selected={pil.tags} onClose={() => setPicker(null)}
+        <OutcomePicker model={model} d={d} kinds={['clo', 'ega', 'po']} rect={picker.rect} title={translateUI("ui.tag_outcomes_9af691")} selected={pil.tags} onClose={() => setPicker(null)}
           onToggle={(t) => updRow(picker.row, (x) => { const il = x.ilos.find((y) => y.id === picker.ilo); if (il) il.tags = il.tags.includes(t) ? il.tags.filter((v) => v !== t) : [...il.tags, t]; })} />
       )}
     </div>

@@ -1,6 +1,9 @@
+import { canApproveAdminDraft } from '../lib/syllabusRules';
+import { tr } from "../i18n/index.js";
+import { t as translateUI } from "../i18n/index.js";
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { PageHead } from '../components/ui';
-import { compliance as api } from '../lib/api';
+import { compliance as api, syllabi as syllabiApi } from '../lib/api';
 import { groupByFacultyProgram, listBasis, needsCheck, rangeToInstants } from '../lib/complianceView';
 import SyllabusPicker from '../components/SyllabusPicker';
 import ComplianceModal from '../components/ComplianceModal';
@@ -25,8 +28,11 @@ const writeRange = (r) => { try { if (r.from || r.to) localStorage.setItem(RANGE
 // is final and is in the Repository, not here.
 // The rules run on the latest submitted version and the result is stored with it (what Review & Approval shows).
 // Faculty have no tab here: they check their own syllabus in step 7 of the builder (Review & Check).
-export default function AIChecker({ user, notify }) {
+export default function AIChecker({ user, notify, onEditDraft, onApproved }) {
   const [list, setList] = useState(null);     // { installed, syllabi: [row], summary }
+  const [editingDraft, setEditingDraft] = useState(false);
+  const [approving, setApproving] = useState(false);
+  const approvalLock = useRef(false);
   const [openId, setOpenId] = useState(null); // the syllabus shown in the dialog
   const [detail, setDetail] = useState(null); // { installed, syllabus, run, isLatest? } for that syllabus (isLatest is false for an earlier run)
   const [history, setHistory] = useState({ runs: [], loading: true, error: '' });
@@ -69,10 +75,10 @@ export default function AIChecker({ user, notify }) {
     return () => clearInterval(t);
   }, [pending, openId, loadDetail]);
 
-  const rows = list ? list.syllabi : [];
-  const waiting = useMemo(() => groupByFacultyProgram(rows.filter(needsCheck)), [rows]); // unchecked and not approved: what the picker offers
+  const rows = list ? list.syllabi.filter(row => row.status !== 'draft') : [];
+  const waiting = useMemo(() => groupByFacultyProgram(rows.filter(row => needsCheck(row) || (row.userId === user?.id && row.status === 'under_review'))), [rows, user?.id]); // unchecked and not approved: what the picker offers
 
-  if (!user || user.role !== 'admin') return <div className="empty">The compliance check is in step 7 of the Syllabus Builder.</div>;
+  if (!user || user.role !== 'admin') return <div className="empty">{translateUI("ui.the_compliance_check_is_in_step_7_of_the_syllabus_builder_1f3135")}</div>;
 
   const say = (m) => { if (notify) notify(m); };
   const reload = async () => { await loadList(); loadHistory(); if (openId !== null) await loadDetail(openId); };
@@ -103,7 +109,7 @@ export default function AIChecker({ user, notify }) {
     setOpenId(id);
     await loadList();
     loadHistory();
-    say('Checked ' + row.courseCode + '. It is now in the history.');
+    say(row.userId === user.id && row.status === 'under_review' ? translateUI('publication.reviewResult') : 'Checked ' + row.courseCode + '. It is now in the history.');
   };
   const applyRange = (r) => { const next = { from: r.from || '', to: r.to || '' }; setRange(next); writeRange(next); };
   // A history card: read that exact run (an earlier one, or an approved syllabus), then show it in the same dialog.
@@ -115,7 +121,7 @@ export default function AIChecker({ user, notify }) {
       setOpenId(item.syllabusId);
     } catch (e) { setError(e.message); } finally { setOpening(null); }
   };
-  const closeModal = () => { setOpenId(null); setDetail(null); setError(''); };
+  const closeModal = () => { if (approvalLock.current) return; setOpenId(null); setDetail(null); setError(''); };
 
 
   const installed = !list || list.installed !== false;
@@ -125,19 +131,43 @@ export default function AIChecker({ user, notify }) {
     ? { ...(rows.find((r) => r.syllabusId === openId) || {}), ...detail.syllabus }
     : null;
 
+  const ownSyllabus = open?.userId === user.id && open.status === 'under_review';
+  const approveEnabled = canApproveAdminDraft(user,open,detail?.run,detail?.isLatest !== false);
+  const editDraft = async () => {
+    if (approvalLock.current || !ownSyllabus || !onEditDraft) return;
+    approvalLock.current=true; setEditingDraft(true); setError('');
+    try { await onEditDraft(open.syllabusId); }
+    catch(error) { setError(error.message); }
+    finally { approvalLock.current=false; setEditingDraft(false); }
+  };
+  const approveDraft = async () => {
+    if (approvalLock.current || !approveEnabled) return;
+    approvalLock.current=true; setApproving(true); setError('');
+    try {
+      await syllabiApi.publishContent(open.syllabusId,undefined,detail.run.id);
+    } catch (e) {
+      setError(e.message); return;
+    } finally {
+      approvalLock.current=false; setApproving(false);
+    }
+    closeModal();
+    if (onApproved) await onApproved();
+    else { await loadList(); say(translateUI('publication.approvedRepository')); }
+  };
+
   return (
     <>
-      <PageHead title="AI Syllabus Checker" subtitle={'Check each submitted syllabus against the template. The result is stored with the version a reviewer sees. Current method: ' + how + '.'} />
+      <PageHead title={translateUI("ui.ai_syllabus_checker_0c99c9")} subtitle={translateUI("publication.checkerSubtitle") + tr(how) + '.'} />
 
-      {!open && error && <div className="info-banner warning" role="alert">{error}</div>}
-      {!error && !loading && !installed && <div className="info-banner warning">Compliance checks are not set up on this server yet. Ask an administrator to run the database update; until then nothing is stored.</div>}
+      {!open && error && <div className="info-banner warning" role="alert">{tr(error)}</div>}
+      {!error && !loading && !installed && <div className="info-banner warning">{translateUI("ui.compliance_checks_are_not_set_up_on_this_server_yet_ask_an_admini_815abc")}</div>}
 
       {installed && <SyllabusPicker groups={waiting} loading={loading} busy={working} onCheck={checkAndOpen} />}
 
       {installed && <CheckHistory runs={history.runs} loading={history.loading} error={history.error} opening={opening} onOpen={openRun} range={range} onApply={applyRange} onReset={() => applyRange(NO_RANGE)} />}
 
-      {open && <ComplianceModal syllabus={open} run={detail.run} isLatest={detail.isLatest !== false} error={error} onClose={closeModal} />}
-      <div className="ai-note">The check supports — but does not replace — faculty, curriculum committee, and academic quality review.</div>
+      {open && <ComplianceModal syllabus={open} run={detail.run} isLatest={detail.isLatest !== false} error={tr(error)} onClose={closeModal} onOpenDraft={onEditDraft && ownSyllabus ? editDraft : undefined} onApprove={ownSyllabus ? approveDraft : undefined} approvalDisabled={!approveEnabled} approving={approving} editing={editingDraft} />}
+      <div className="ai-note">{translateUI("ui.the_check_supports_but_does_not_replace_faculty_curriculum_commit_e24080")}</div>
     </>
   );
 }

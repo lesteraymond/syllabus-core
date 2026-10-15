@@ -13,7 +13,9 @@ const isOwner = (user, syllabus) => user.id === syllabus.user_id;
 const isAdmin = (user) => user.role === 'admin';
 
 const canView = (user, syllabus) => isOwner(user, syllabus) || (isAdmin(user) && syllabus.status !== 'draft');
-const canDelete = canView;
+// Faculty may discard only their own drafts. Keep existing administrator access unchanged.
+const canDelete = (user, syllabus) => (isAdmin(user) && canView(user, syllabus))
+  || (user.role === 'faculty' && isOwner(user, syllabus) && syllabus.status === 'draft');
 const canEdit = (user, syllabus) => isOwner(user, syllabus) && EDITABLE_STATUSES.includes(syllabus.status);
 const canChangeStatus = isAdmin; // under_review / approved / for_revision / rejected
 

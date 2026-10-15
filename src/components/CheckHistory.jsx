@@ -1,3 +1,6 @@
+import StableButton from './StableButton';
+import { tr } from "../i18n/index.js";
+import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useId, useState } from 'react';
 import { rangeLabel, rangeToInstants, timeOf, when } from '../lib/complianceView';
 
@@ -28,33 +31,33 @@ export default function CheckHistory({ runs, loading = false, error = '', openin
   const toneText = { good: 'Meets the standard', warn: 'Below the pass line', none: 'Not scored' };
 
   return (
-    <section className="card hist-card" aria-label="Check history">
+    <section className="card hist-card" aria-label={translateUI("ui.check_history_087c5b")}>
       <div className="hist-head">
         <div>
-          <h3>Check history</h3>
-          <p>Each checked subject appears once, newest first. Open one to see its scoring.</p>
+          <h3>{translateUI("ui.check_history_087c5b")}</h3>
+          <p>{translateUI("ui.each_checked_subject_appears_once_newest_first_open_one_to_see_it_468518")}</p>
         </div>
-        <form className="hist-filter" onSubmit={apply} aria-label="Filter the history by date">
-          <label htmlFor={uid + '-from'}>From</label>
+        <form className="hist-filter" onSubmit={apply} aria-label={translateUI("ui.filter_the_history_by_date_771c36")}>
+          <label htmlFor={uid + '-from'}>{translateUI("ui.from_3f6605")}</label>
           <input id={uid + '-from'} type="date" value={draft.from} max={draft.to || undefined} onChange={(e) => setDraft({ ...draft, from: e.target.value })} />
-          <label htmlFor={uid + '-to'}>To</label>
+          <label htmlFor={uid + '-to'}>{translateUI("ui.to_ae79ea")}</label>
           <input id={uid + '-to'} type="date" value={draft.to} min={draft.from || undefined} onChange={(e) => setDraft({ ...draft, to: e.target.value })} />
-          <button type="submit" className="btn primary" disabled={!valid || !changed}>Apply</button>
-          {active && <button type="button" className="btn outline" onClick={onReset}>Reset</button>}
-          {!valid && <span className="hist-filter-error" role="alert">The From date is after the To date.</span>}
+          <StableButton type="submit" className="btn primary" disabled={!valid || !changed}>{translateUI("ui.apply_cfea41")}</StableButton>
+          {active && <StableButton type="button" className="btn outline" onClick={onReset}>{translateUI("ui.reset_44c57a")}</StableButton>}
+          {!valid && <span className="hist-filter-error" role="alert">{translateUI("ui.the_from_date_is_after_the_to_date_2c84ad")}</span>}
         </form>
       </div>
 
       <div className="hist-summary" aria-live="polite">
-        {active && !loading && !error && <><span className="chip">{(range.from && range.to ? 'Showing ' : 'Showing checks ') + rangeLabel(range.from, range.to).replace(/^Since/, 'since').replace(/^Until/, 'until')}</span><span>{list.length + (list.length === 1 ? ' check' : ' checks')}</span></>}
+        {active && !loading && !error && <><span className="chip">{tr((range.from && range.to ? 'Showing ' : 'Showing checks ') + tr(rangeLabel(range.from, range.to)))}</span><span>{tr(list.length + (list.length === 1 ? ' check' : ' checks'))}</span></>}
       </div>
 
-      {loading && list.length === 0 && <p className="hist-empty">Loading the history…</p>}
-      {!loading && error && <p className="hist-empty" role="alert">{error}</p>}
+      {loading && list.length === 0 && <p className="hist-empty">{translateUI("ui.loading_the_history_8f2942")}</p>}
+      {!loading && error && <p className="hist-empty" role="alert">{tr(error)}</p>}
       {!loading && !error && list.length === 0 && (
         active
-          ? <p className="hist-empty" aria-live="polite">No check was stored in this date range. <button type="button" className="hist-reset" onClick={onReset}>Reset</button></p>
-          : <p className="hist-empty">No syllabus has been checked yet.</p>
+          ? <p className="hist-empty" aria-live="polite">{translateUI("ui.no_check_was_stored_in_this_date_range_548438")}<button type="button" className="hist-reset" onClick={onReset}>{translateUI("ui.reset_44c57a")}</button></p>
+          : <p className="hist-empty">{translateUI("ui.no_syllabus_has_been_checked_yet_ec0425")}</p>
       )}
 
       {list.length > 0 && (
@@ -66,21 +69,21 @@ export default function CheckHistory({ runs, loading = false, error = '', openin
             return (
               <li key={r.runId}>
                 <button type="button" className={'hist-item ' + t} disabled={opening === r.runId} onClick={() => onOpen(r)}
-                  aria-label={r.courseCode + ', ' + (r.facultyName || 'unknown faculty') + ', ' + (r.overall === null ? 'not scored' : r.overall + ' percent, ' + toneText[t]) + ', checked ' + day + ' ' + time}>
+                  aria-label={r.courseCode + ', ' + (r.facultyName || tr('unknown faculty')) + ', ' + (r.overall === null ? tr('not scored') : r.overall + ' ' + tr('percent') + ', ' + tr(toneText[t])) + translateUI("ui.checked_d42130") + day + ' ' + time}>
                   <span className="hist-score">
                     <b>{r.overall === null ? '—' : r.overall + '%'}</b>
-                    <small>{toneText[t]}</small>
+                    <small>{tr(toneText[t])}</small>
                   </span>
                   <span className="hist-main">
                     <strong>{r.courseCode}{r.versionLabel && <span className="hist-ver">{r.versionLabel}</span>}</strong>
                     <span>{r.courseTitle}</span>
-                    <small>{r.facultyName || 'Unknown faculty'}{r.programCode ? ' · ' + r.programCode : ''}</small>
+                    <small>{r.facultyName || translateUI("ui.unknown_faculty_753147")}{r.programCode ? ' · ' + r.programCode : ''}</small>
                   </span>
                   <span className="hist-foot">
                     <time dateTime={r.createdAt || undefined}>{day}{time ? ' · ' + time : ''}</time>
                     <span className="hist-tags">
-                      <span className={'status ' + r.status}>{STATUS_LABELS[r.status] || r.status}</span>
-                      <span className="chip quiet">{r.checkedBy === 'admin' ? 'By administrator' : r.checkedBy === 'author' ? 'On submit' : 'Checked'}</span>
+                      <span className={'status ' + r.status}>{tr(STATUS_LABELS[r.status] || r.status)}</span>
+                      <span className="chip quiet">{r.checkedBy === 'admin' ? translateUI("ui.by_administrator_c55e2e") : r.checkedBy === 'author' ? translateUI("ui.on_submit_952d52") : translateUI("ui.checked_b2bc0c")}</span>
                     </span>
                   </span>
                 </button>
@@ -90,7 +93,7 @@ export default function CheckHistory({ runs, loading = false, error = '', openin
         </ul>
       )}
 
-      {list.length > shown && <button type="button" className="btn outline hist-more" onClick={() => setShown(shown + PAGE)}>{'Show more (' + (list.length - shown) + ' more)'}</button>}
+      {list.length > shown && <StableButton type="button" className="btn outline hist-more" onClick={() => setShown(shown + PAGE)}>{translateUI("ui.show_more_ada6d7") + (list.length - shown) + translateUI("ui.more_5ca940")}</StableButton>}
     </section>
   );
 }

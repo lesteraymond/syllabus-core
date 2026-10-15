@@ -1,34 +1,68 @@
-import { useMemo, useState } from 'react';
+import StableButton from '../components/StableButton';
+import { tr } from "../i18n/index.js";
+import { t as translateUI } from "../i18n/index.js";
+import { useEffect, useMemo, useState } from 'react';
+import { syllabi as syllabiApi } from '../lib/api';
 import { fmt } from '../lib/utils';
 import { canChat } from '../lib/chatPartner';
 import { Avatar, PageHead, Field } from '../components/ui';
 
-const STATUS_OPTIONS = [
-  { value: 'submitted', label: 'Submitted' },
-  { value: 'under_review', label: 'Under Review' },
-  { value: 'for_revision', label: 'For Revision' },
-  { value: 'approved', label: 'Approved' },
-  { value: 'rejected', label: 'Rejected' },
-];
+// Builder syllabi use the catalog program; older uploads may only have a curriculum program.
+export const repositoryProgram = syllabus => syllabus.programCode?.trim() || syllabus.programName?.trim() || syllabus.program?.trim() || 'No program';
 
 export default function Repository({ syllabi, user, notify, setChatCode, setHistCode }) {
-  const mySyllabi = useMemo(() => user.role === 'faculty' ? syllabi.filter(s => s.userId === user.id) : syllabi, [syllabi, user]);
-  const [filters, setFilters] = useState({ program: 'All', status: 'All', q: '' });
-  const rows = useMemo(() => mySyllabi.filter(x => (filters.program === 'All' || x.program === filters.program) && (filters.status === 'All' || x.status === filters.status) && (`${x.courseCode} ${x.title} ${x.faculty}`.toLowerCase().includes(filters.q.toLowerCase()))), [mySyllabi, filters]);
-  const counts = useMemo(() => { const c = { All: mySyllabi.length }; mySyllabi.forEach(s => { c[s.status] = (c[s.status] || 0) + 1; }); return c; }, [mySyllabi]);
+  const isFaculty = user.role === 'faculty';
+  const [repository, setRepository] = useState({ ownerId: null, rows: [], loading: true, error: '' });
+  // Read on entry and after the shared list refreshes (including notification polling after approval).
+  useEffect(() => {
+    if (!isFaculty) return;
+    let active = true;
+    setRepository(current => ({ ...current, loading: true, error: '' }));
+    syllabiApi.repository().then(rows => {
+      if (active) setRepository({ ownerId: user.id, rows, loading: false, error: '' });
+    }).catch(error => {
+      if (active) setRepository({ ownerId: user.id, rows: [], loading: false, error: error.message });
+    });
+    return () => { active = false; };
+  }, [isFaculty, user.id, syllabi]);
+  const mySyllabi = useMemo(() => isFaculty
+    ? (repository.ownerId === user.id ? repository.rows.filter(s => s.userId === user.id && s.status === 'approved') : [])
+    : syllabi.filter(s => s.status === 'approved'), [isFaculty, repository, syllabi, user.id]);
+  const [filters, setFilters] = useState({ program: 'All', q: '' });
+  const programs = useMemo(() => [...new Set(mySyllabi.map(repositoryProgram))].sort((a, b) => a.localeCompare(b)), [mySyllabi]);
+  useEffect(() => {
+    if (isFaculty && (repository.loading || repository.error || repository.ownerId !== user.id)) return;
+    setFilters(current => current.program !== 'All' && !programs.includes(current.program)
+      ? { ...current, program: 'All' } : current);
+  }, [isFaculty, programs, repository.loading, repository.error, repository.ownerId, user.id]);
+  const rows = useMemo(() => mySyllabi.filter(x => (filters.program === 'All' || repositoryProgram(x) === filters.program) && (`${x.courseCode} ${x.title} ${x.faculty}`.toLowerCase().includes(filters.q.trim().toLowerCase()))), [mySyllabi, filters]);
   return (
     <>
-      <PageHead title="Syllabus Repository" subtitle="Search and access current and archived syllabus versions across undergraduate programs." actions={<button className="btn outline" onClick={() => notify('Repository export prepared (demo).')}>⇩ Export List</button>} />
-      <div className="filter-card">
-        <Field label="Program"><select value={filters.program} onChange={e => setFilters({ ...filters, program: e.target.value })}><option>All</option><option>Information Technology</option><option>Computer Science</option><option>Computer Engineering</option></select></Field>
-        <Field label="Status"><select value={filters.status} onChange={e => setFilters({ ...filters, status: e.target.value })}><option>All</option>{STATUS_OPTIONS.map(x => <option key={x.value} value={x.value}>{x.label}</option>)}</select></Field>
-        <Field label="Search"><input value={filters.q} onChange={e => setFilters({ ...filters, q: e.target.value })} placeholder="Course code, title or faculty" /></Field>
-        <button className="btn ghost reset" onClick={() => setFilters({ program: 'All', status: 'All', q: '' })}>Reset</button>
+      <PageHead title={translateUI("ui.syllabus_repository_95d8eb")} subtitle={isFaculty ? translateUI("ui.search_and_access_your_syllabi_approved_by_an_administrator_112b87") : translateUI("repository.approvedSubtitle")} actions={<StableButton className="btn outline" onClick={() => notify(translateUI("ui.repository_export_prepared_demo_02ceb3"))}>{translateUI("ui.export_list_b039ae")}</StableButton>} />
+      <div className="filter-card repository-filters">
+        <Field label={translateUI("ui.program_9d6800")}><select value={filters.program} onChange={e => setFilters({ ...filters, program: e.target.value })}><option value="All">{translateUI("ui.all_6a7208")}</option>{programs.map(program => <option key={program} value={program}>{program === 'No program' ? translateUI("ui.no_program_d8600a") : program}</option>)}</select></Field>
+        <Field label={translateUI("ui.search_bce064")}><input value={filters.q} onChange={e => setFilters({ ...filters, q: e.target.value })} placeholder={translateUI("ui.course_code_title_or_faculty_1878e5")} /></Field>
+        <StableButton className="btn ghost reset" onClick={() => setFilters({ program: 'All', q: '' })}>{translateUI("ui.reset_44c57a")}</StableButton>
       </div>
-      <div className="repo-stats"><span>All <b>{counts.All || 0}</b></span>{STATUS_OPTIONS.map(s => <span key={s.value}>{s.label} <b>{counts[s.value] || 0}</b></span>)}</div>
-      <div className="table-card">
-        <table><thead><tr><th>Course</th><th>Program</th><th>Faculty</th><th>Status</th><th>Updated</th><th>Actions</th></tr></thead><tbody>{rows.map(x => <tr key={x.id}><td><strong>{x.courseCode}</strong><small>{x.title}</small></td><td>{x.program}</td><td><span className="user-cell"><Avatar src={x.ownerAvatarUrl} name={x.faculty} /><span>{x.faculty}</span></span></td><td><span className={`status ${x.status}`}>{STATUS_OPTIONS.find(s => s.value === x.status)?.label || x.status}</span></td><td>{fmt(x.updatedAt)}</td><td>{canChat(x) && <button className="table-action" onClick={() => setChatCode(x.id)}>✉</button>}<button className="table-action" onClick={() => setHistCode(x.id)}>◷</button></td></tr>)}</tbody></table>
-        {rows.length === 0 && <div className="empty">No syllabi match your filters.</div>}
+      <div className="repo-stats"><span>{translateUI("ui.approved_afd61f")}<b>{rows.length}</b></span></div>
+      <div className="table-card repository-table">
+        <table>
+          <colgroup>
+            <col className="repo-course" /><col className="repo-program" /><col className="repo-faculty" />
+            <col className="repo-status" /><col className="repo-updated" /><col className="repo-actions" />
+          </colgroup>
+          <thead><tr><th scope="col">{translateUI("ui.course_d82b56")}</th><th scope="col">{translateUI("ui.program_9d6800")}</th><th scope="col">{translateUI("ui.faculty_9ae050")}</th><th scope="col">{translateUI("ui.status_bae7d5")}</th><th scope="col">{translateUI("ui.updated_f2f857")}</th><th scope="col">{translateUI("ui.actions_c3cd63")}</th></tr></thead>
+          <tbody>{rows.map(x => <tr key={x.id}>
+            <td><strong>{x.courseCode}</strong><small>{x.title}</small></td>
+            <td>{repositoryProgram(x) === 'No program' ? translateUI("ui.no_program_d8600a") : repositoryProgram(x)}</td>
+            <td><span className="user-cell"><Avatar src={x.ownerAvatarUrl} name={x.faculty} /><span>{x.faculty}</span></span></td>
+            <td><span className={`status ${x.status}`}>{translateUI("ui.approved_afd61f")}</span></td>
+            <td>{fmt(x.updatedAt)}</td>
+            <td><div className="repository-actions">{canChat(x, user) && <button className="table-action" aria-label={translateUI("ui.open_chat_for_p0_633dd9", { p0: (x.courseCode) })} onClick={() => setChatCode(x.id)}>✉</button>}<button className="table-action" aria-label={translateUI("ui.view_history_for_p0_46396f", { p0: (x.courseCode) })} onClick={() => setHistCode(x.id)}>◷</button></div></td>
+          </tr>)}</tbody>
+        </table>
+        {isFaculty && repository.error && <div className="empty" role="alert">{translateUI("ui.unable_to_load_approved_syllabi_cd0cc5")}{tr(repository.error)}</div>}
+        {rows.length === 0 && !(isFaculty && repository.error) && <div className="empty">{isFaculty && repository.loading ? translateUI("ui.loading_approved_syllabi_3ad229") : isFaculty && mySyllabi.length === 0 ? translateUI("ui.no_approved_syllabi_yet_your_syllabus_will_appear_here_once_an_ad_b167c3") : translateUI("ui.no_syllabi_match_your_filters_e09598")}</div>}
       </div>
     </>
   );

@@ -45,11 +45,13 @@ function makeDb() {
     installed: true, runs: [], areas: [], findings: [], versionId: 77, versions: [],
     people: { 5: { first_name: 'Fay', last_name: 'F' }, 6: { first_name: 'Gus', last_name: 'G' } },
   };
+  for (const course of s.courses) course.standards_json = JSON.stringify({ vision:s.settings.vision, mission:{lead:s.settings.mission_lead,items:JSON.parse(s.settings.mission_items)}, egas:s.egas.filter(e=>e.program_id===course.program_id).map(e=>({no:e.ega_no,name:e.name,short:e.short_name})), pos:s.pos.filter(p=>p.program_id===course.program_id).map(p=>({no:p.po_no,short:p.short_name,text:p.outcome_text,egas:p.ega_nos.split(',').map(Number)})), versions:{vision:1,egas:1,pos:1} });
   const prog = (where) => s.programs.find(where);
   // svc.ADMIN_RUN_SQL: stored with a version, by someone other than the syllabus's owner
   const isAdminRun = (r) => r.version_id !== null && r.created_by !== null && r.created_by !== undefined && r.created_by !== s.syllabi[r.syllabus_id].user_id;
   const keep = (sql, r) => (!sql.includes('version_id IS NOT NULL') || r.version_id !== null) && (!sql.includes('created_by <>') || isAdminRun(r));
   const handle = (sql, p = []) => {
+    if (sql.startsWith('SELECT syllabus_id, user_id, status, title, course_code, content, course_id FROM syllabi')) return [s.syllabi[p[0]] ? [s.syllabi[p[0]]] : []];
     if (sql.startsWith('SELECT user_id FROM users WHERE user_id')) return [[{ user_id: p[0] }]];
     if (sql.startsWith('SELECT vision')) return [[s.settings]];
     if (sql.startsWith('SELECT ega_no, name, short_name FROM institution_egas')) return [s.instEgas];
@@ -66,7 +68,7 @@ function makeDb() {
     if (sql.startsWith('SELECT code FROM courses WHERE program_id')) return [s.courses.filter((c) => c.program_id === p[0]).map((c) => ({ code: c.code }))];
     if (sql.startsWith('SELECT egas_version AS v')) return [[{ v: prog((x) => x.program_id === p[0]).egas_version }]];
     if (sql.startsWith('SELECT pos_version AS v')) return [[{ v: prog((x) => x.program_id === p[0]).pos_version }]];
-    if (sql.startsWith('SELECT clos_version AS v')) return [[{ v: s.courses.find((c) => c.course_id === p[0]).clos_version }]];
+    if (sql.startsWith('SELECT clos_version AS v')) { const c=s.courses.find(c=>c.course_id===p[0]); return [[{v:c.clos_version,standards_json:c.standards_json}]]; }
     if (sql.startsWith('INSERT INTO institution_settings')) { s.settings.version++; return [{}]; }
     if (sql.startsWith('UPDATE programs SET egas_version')) { prog((x) => x.program_id === p[0]).egas_version++; return [{}]; }
     if (sql.startsWith('UPDATE programs SET pos_version')) { prog((x) => x.program_id === p[0]).pos_version++; return [{}]; }
@@ -112,7 +114,7 @@ function makeDb() {
     const labelled = (x) => ({ ...x, ...(s.people[x.user_id] || { first_name: '', last_name: '' }), course_title: x.course_id ? 'Computer Programming 2' : null, program_code: x.course_id ? 'BSIT' : null, program_name: x.course_id ? 'BS Information Technology' : null, curriculum_program: null });
     if (sql.startsWith('SELECT s.syllabus_id, s.user_id')) {
       const all = Object.values(s.syllabi);
-      const rows = sql.includes('s.user_id = ?') ? all.filter((x) => x.user_id === p[0]) : all.filter((x) => x.status !== 'draft');
+      const rows = sql.includes("s.status <> 'draft' OR") ? all.filter(x=>x.status!=='draft'||x.user_id===p[0]) : sql.includes('s.user_id = ?') ? all.filter((x) => x.user_id === p[0]) : all.filter((x) => x.status !== 'draft');
       return [rows.map((x) => { const r = labelled(x); if (!sql.includes('s.content,')) delete r.content; return r; })];
     }
     if (sql.startsWith('SELECT r.run_id')) { // the history: runs stored with a version, newest first, with the syllabus's labels
@@ -132,7 +134,8 @@ function makeDb() {
     if (sql.startsWith('SELECT version_label FROM syllabus_versions WHERE version_id')) return [s.versions.filter((v) => v.version_id === p[0]).map((v) => ({ version_label: v.version_label }))];
     if (sql.startsWith('SELECT file_path FROM syllabus_versions WHERE version_id')) return [s.versions.filter((v) => v.version_id === p[0]).map((v) => ({ file_path: v.file_path || null }))];
     if (sql.startsWith('SELECT v.syllabus_id, v.version_id, v.content')) return [p[0].map((id) => s.versions.filter((v) => v.syllabus_id === id).slice(-1)[0]).filter(Boolean)];
-    if (sql.startsWith('UPDATE syllabi SET content')) { s.saved.push(JSON.parse(p[0])); s.syllabi[p[1]].content = p[0]; return [{}]; }
+    if (sql.startsWith('UPDATE syllabi SET status = ?, version')) { if(s.trackStatus) Object.assign(s.syllabi[p[2]],{status:p[0],version:p[1]});return [{}]; }
+    if (sql.startsWith('UPDATE syllabi SET content')) { s.saved.push(JSON.parse(p[0])); s.syllabi[p[p.length - 1]].content = p[0]; return [{}]; }
     if (/^(INSERT|UPDATE|DELETE)/.test(sql)) return [{}];
     throw new Error('unexpected query: ' + sql);
   };
@@ -327,7 +330,7 @@ test('a vision changed by an admin after a submit shows as a blocking failure on
   const ok = await call(fay, 'POST', '/syllabi/1/compliance/recheck', { force: true });
   assert.strictEqual(ok.body.run.conformant, true);
 
-  db.s.settings.vision = 'A new vision';
+  const setup=JSON.parse(db.s.courses[0].standards_json);setup.vision='A new vision';db.s.courses[0].standards_json=JSON.stringify(setup);
   const re = await call(fay, 'POST', '/syllabi/1/compliance/recheck', { force: true });
   assert.strictEqual(re.body.run.conformant, false);
   const f = re.body.run.findings.find((x) => x.ruleId === 'T-09');
@@ -825,4 +828,58 @@ test('content that returns to what an earlier version said is a new version and 
   assert.strictEqual(third.body.run.versionId, 79);
   assert.ok((await call(admin, 'GET', '/compliance?syllabus=all')).body.syllabi.find((x) => x.syllabusId === 1).run);
   assert.strictEqual((await call(admin, 'POST', '/syllabi/1/compliance/recheck', {})).body.cached, true); // the same version is answered by its own run
+}));
+
+test('admin drafts cannot enter AI Checker; completed forms require an explicit handoff and approval', () => withServer(async ({call,db}) => {
+  const draft=JSON.parse(db.s.syllabi[1].content);const course=await require('../lib/courses').loadCourse(db,10);draft.clos=course.clos;Object.assign(draft.meta,{code:course.code,title:course.title,program:course.program.code});db.s.syllabi[1].content=JSON.stringify(draft);
+  db.s.syllabi[1].user_id=admin.id;db.s.people[admin.id]={first_name:'Ann',last_name:'A'};db.s.trackStatus=true;
+  const list=await call(admin,'GET','/compliance?syllabus=all');
+  assert.strictEqual(list.status,200);assert.ok(!list.body.syllabi.some(row=>row.syllabusId===1));
+  assert.strictEqual((await call(admin,'POST','/syllabi/1/compliance/recheck',{})).status,409);assert.strictEqual(db.s.runs.length,0);
+  assert.strictEqual((await call(admin,'POST','/syllabi/1/publish',{})).status,409);
+  assert.strictEqual((await call(fay,'POST','/syllabi/1/prepare-check',{})).status,403);
+  assert.strictEqual((await call({id:2,role:'admin'},'POST','/syllabi/1/prepare-check',{})).status,404);
+  assert.strictEqual((await call(admin,'POST','/syllabi/1/prepare-check',{})).status,200);
+  assert.strictEqual(db.s.syllabi[1].status,'under_review');assert.strictEqual(db.s.runs.length,0);
+  const queued=await call(admin,'GET','/compliance?syllabus=all');assert.ok(queued.body.syllabi.some(row=>row.syllabusId===1&&row.status==='under_review'));
+  const check=await call(admin,'POST','/syllabi/1/compliance/recheck',{});
+  assert.strictEqual(check.status,200);await svc.settled();
+  assert.strictEqual(db.s.syllabi[1].status,'under_review'); // a check never approves
+  const state=db.s.runs[0].ai_status;
+  for (const ai_status of ['pending','failed']) { db.s.runs[0].ai_status=ai_status; assert.strictEqual((await call(admin,'POST','/syllabi/1/publish',{})).status,409); }
+  db.s.runs[0].ai_status=state;
+  const newest=await call(admin,'POST','/syllabi/1/compliance/recheck',{force:true});await svc.settled();
+  assert.strictEqual((await call(admin,'POST','/syllabi/1/publish',{reviewedRunId:check.body.run.id})).status,409);
+  assert.strictEqual((await call(admin,'POST','/syllabi/1/publish',{reviewedRunId:'invalid'})).status,400);
+  const published=await call(admin,'POST','/syllabi/1/publish',{reviewedRunId:newest.body.run.id});
+  assert.strictEqual(published.status,200,JSON.stringify(published.body));assert.strictEqual(published.body.status,'approved');
+  assert.strictEqual(db.s.syllabi[1].status,'approved');assert.strictEqual(db.s.versions.length,1);
+  assert.strictEqual((await call(admin,'POST','/syllabi/1/publish',{})).status,409);
+}));
+test('incomplete admin forms remain drafts; returning for edits removes the item and invalidates its old check', () => withServer(async ({call,db}) => {
+  db.s.syllabi[1].user_id=admin.id;db.s.trackStatus=true;
+  const original=JSON.parse(db.s.syllabi[1].content);const course=await require('../lib/courses').loadCourse(db,10);original.clos=course.clos;Object.assign(original.meta,{code:course.code,title:course.title,program:course.program.code});
+  const incomplete=structuredClone(original);incomplete.grading.rows[0].pct=1;db.s.syllabi[1].content=JSON.stringify(incomplete);
+  const refused=await call(admin,'POST','/syllabi/1/prepare-check',{});assert.strictEqual(refused.status,409);assert.ok(refused.body.failed.length);assert.strictEqual(db.s.syllabi[1].status,'draft');
+  db.s.syllabi[1].content=JSON.stringify(original);
+  assert.strictEqual((await call(admin,'POST','/syllabi/1/prepare-check',{})).status,200);
+  assert.strictEqual((await call(admin,'POST','/syllabi/1/compliance/recheck',{})).status,200);await svc.settled();
+  assert.strictEqual((await call(fay,'POST','/syllabi/1/resume-draft',{})).status,403);
+  assert.strictEqual((await call(admin,'POST','/syllabi/1/resume-draft',{})).status,200);
+  assert.strictEqual(db.s.syllabi[1].status,'draft');
+  assert.ok(!(await call(admin,'GET','/compliance?syllabus=all')).body.syllabi.some(row=>row.syllabusId===1));
+  assert.strictEqual((await call(admin,'POST','/syllabi/1/compliance/recheck',{})).status,409);
+  assert.strictEqual((await call(admin,'POST','/syllabi/1/prepare-check',{})).status,200);
+  assert.strictEqual((await call(admin,'POST','/syllabi/1/publish',{})).status,409); // a new review cycle requires another check even without edits
+  assert.strictEqual(db.s.versions.length,1); // no duplicate revision for an unchanged form
+  const prior = db.s.versions[0].content;
+  assert.strictEqual((await call(admin,'POST','/syllabi/1/resume-draft',{})).status,200);
+  const revised=JSON.parse(db.s.syllabi[1].content);revised.description.push('Additional administrator revision after AI review.');
+  const saved=await call(admin,'PUT','/syllabi/1/content',{sections:{description:revised.description}});
+  assert.strictEqual(saved.status,200,JSON.stringify(saved.body));
+  assert.strictEqual(db.s.versions.length,1); // autosave leaves history untouched
+  const next=await call(admin,'POST','/syllabi/1/prepare-check',{});
+  assert.strictEqual(next.status,200,JSON.stringify(next.body));assert.strictEqual(next.body.version,'v1.1');
+  assert.strictEqual(db.s.versions.length,2);assert.strictEqual(db.s.versions[0].content,prior);
+  assert.ok(JSON.parse(db.s.versions[1].content).description.includes('Additional administrator revision after AI review.'));
 }));

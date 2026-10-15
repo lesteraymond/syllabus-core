@@ -40,7 +40,8 @@ function makeDb() {
     }
     if (sql.startsWith('SELECT s.*, u.first_name')) {
       const all = Object.values(s.syllabi);
-      return [(sql.includes('s.user_id = ?') ? all.filter((x) => x.user_id === p[0]) : all.filter((x) => x.status !== 'draft'))
+      const visible = sql.includes("s.status <> 'draft' OR") ? all.filter(x=>x.status!=='draft'||x.user_id===p[0]) : sql.includes('s.user_id = ?') ? all.filter((x) => x.user_id === p[0]) : all.filter((x) => x.status !== 'draft');
+      return [visible.filter((x) => !sql.includes("AND s.status = 'approved'") || x.status === 'approved')
         .map((x) => ({ ...x, ...NAMES[x.user_id], avatar_path: null, program_name: x.curriculum_program, course_id: null, curriculum_id: null, admin_comment: null, uploaded_at: '2026-01-01', updated_at: '2026-01-02' }))];
     }
     throw new Error('unexpected query: ' + sql);
@@ -68,6 +69,23 @@ async function withServer(fn) {
 const admin = { id: 1, role: 'admin', firstName: 'Ann', lastName: 'A' };
 const fay = { id: 5, role: 'faculty', firstName: 'Fay', lastName: 'F' };
 const gus = { id: 6, role: 'faculty', firstName: 'Gus', lastName: 'G' };
+
+test('faculty repository includes only their approved syllabi, while the workflow list retains every status', () => withServer(async ({ call, db }) => {
+  for (const [i, status] of ['draft', 'submitted', 'under_review', 'for_revision', 'rejected', 'approved'].entries()) {
+    db.s.syllabi[20 + i] = { ...db.s.syllabi[1], syllabus_id: 20 + i, status };
+  }
+  const repository = await call(fay, '/?scope=repository&status=submitted');
+  assert.strictEqual(repository.status, 200);
+  assert.deepStrictEqual(repository.body.map(x => x.id), [25]);
+  assert.ok(repository.body.every(x => x.userId === fay.id && x.status === 'approved'));
+  const workflow = await call(fay, '/');
+  assert.strictEqual(workflow.status, 200);
+  assert.deepStrictEqual(new Set(workflow.body.map(x => x.status)), new Set(['draft', 'submitted', 'under_review', 'for_revision', 'rejected', 'approved']));
+  db.s.syllabi[20].status = 'approved'; // the existing approval transaction changes the same record
+  assert.deepStrictEqual((await call(fay, '/?scope=repository')).body.map(x => x.id), [20, 25]);
+  assert.deepStrictEqual((await call(gus, '/?scope=repository')).body.map(x => x.id), [3, 4]);
+  assert.strictEqual((await call(null, '/?scope=repository')).status, 401);
+}));
 
 test('an admin reads the latest SUBMITTED version, not the author\'s working copy, with the faculty member, program and subject', () => withServer(async ({ call }) => {
   const r = await call(admin, '/1/review');
@@ -149,4 +167,22 @@ test('the review read says what the faculty member changed since the version bef
   assert.strictEqual(typeof latest.body.changes.text, 'string');
   assert.strictEqual((await call(admin, '/1/review?version=10')).body.changes, null); // the first version has nothing before it
   assert.strictEqual((await call(admin, '/3/review')).body.changes, null); // an uploaded file has no form to compare
+}));
+
+test('administrator repository scope includes only approved syllabi while workflow lists retain pending reviews', () => withServer(async ({call}) => {
+  const repository=await call(admin,'/?scope=repository');
+  assert.strictEqual(repository.status,200);
+  assert.deepStrictEqual(repository.body.map(row=>row.id),[3,4]);
+  assert.ok(repository.body.every(row=>row.status==='approved'));
+  const workflow=await call(admin,'/');
+  assert.ok(workflow.body.some(row=>row.status==='submitted'));
+  assert.ok(workflow.body.some(row=>row.status==='under_review'));
+}));
+
+test('administrator list includes only their own drafts alongside submitted records', () => withServer(async ({call,db})=>{
+  db.s.syllabi[9]={...db.s.syllabi[2],syllabus_id:9,user_id:admin.id};
+  const list=await call(admin,'/');assert.strictEqual(list.status,200);
+  assert.ok(list.body.some(row=>row.id===9&&row.status==='draft'));
+  assert.ok(!list.body.some(row=>row.id===2));
+  assert.ok((await call(admin,'/?scope=repository')).body.every(row=>row.status==='approved'));
 }));

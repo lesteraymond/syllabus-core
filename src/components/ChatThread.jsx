@@ -1,3 +1,5 @@
+import StableButton from './StableButton';
+import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { fmt } from '../lib/utils';
 
@@ -17,11 +19,11 @@ export default function ChatThread({ code, syl, user, messages, sendMsg, markRea
   return (
     <>
       <div className="chat-list">
-        {thread.length === 0 && <div className="chat-empty">No messages yet. Start a conversation.</div>}
-        {thread.map(m => { const isMe = m.senderId === user.id; return <div key={m.id} className={`chat-msg ${isMe ? 'me' : 'them'}`}><div className="chat-bubble">{m.text}</div><div className="chat-meta"><span>{fmt(m.time)}</span>{isMe && <span className="chat-receipt">{m.isRead ? '✓ Read' : '✓ Sent'}</span>}</div></div>; })}
+        {thread.length === 0 && <div className="chat-empty">{translateUI("ui.no_messages_yet_start_a_conversation_d5ea96")}</div>}
+        {thread.map(m => { const isMe = m.senderId === user.id; return <div key={m.id} className={`chat-msg ${isMe ? 'me' : 'them'}`}><div className="chat-bubble">{m.text}</div><div className="chat-meta"><span>{fmt(m.time)}</span>{isMe && <span className="chat-receipt">{m.isRead ? translateUI("ui.read_927abf") : translateUI("ui.sent_610540")}</span>}</div></div>; })}
         <div ref={ref} />
       </div>
-      <form className="chat-composer" onSubmit={send}><input value={input} onChange={e => setInput(e.target.value)} placeholder="Type a message..." /><button className="btn primary" type="submit">Send</button></form>
+      <form className="chat-composer" onSubmit={send}><input value={input} onChange={e => setInput(e.target.value)} placeholder={translateUI("ui.type_a_message_09bdff")} /><StableButton className="btn primary" type="submit">{translateUI("ui.send_9bc257")}</StableButton></form>
     </>
   );
 }

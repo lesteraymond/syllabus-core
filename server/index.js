@@ -36,6 +36,7 @@ const pool = mysql.createPool({
 });
 
 app.locals.db = pool;
+require('./lib/catalogFileCleanup').startCleanup(pool);
 
 app.use(restoreSession);
 
@@ -50,6 +51,7 @@ const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);
 app.use("/api/students", require("./routes/students"));
 app.use("/api/users", require("./routes/users"));
+app.use("/api/settings", require("./routes/settings"));
 app.use("/api/syllabi", require("./routes/syllabi"));
 app.use("/api/syllabi", require("./routes/syllabusContent"));
 app.use("/api/syllabi", require("./routes/comments"));

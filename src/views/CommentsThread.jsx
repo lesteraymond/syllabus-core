@@ -1,3 +1,6 @@
+import StableButton from '../components/StableButton';
+import { tr } from "../i18n/index.js";
+import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useRef, useState } from 'react';
 import { syllabi as syllabiApi } from '../lib/api';
 import { commentTypeLabel } from '../lib/reviewView';
@@ -39,21 +42,21 @@ export default function CommentsThread({ syllabusId, canWrite, viewerId, onLoade
   return (
     <div className="ct">
       <div className="ct-list" aria-live="polite">
-        {comments === null && <p className="cmp-small">Loading comments…</p>}
-        {comments && comments.length === 0 && <p className="cmp-small">No comments yet.</p>}
+        {comments === null && <p className="cmp-small">{translateUI("ui.loading_comments_a1458a")}</p>}
+        {comments && comments.length === 0 && <p className="cmp-small">{translateUI("ui.no_comments_yet_207b24")}</p>}
         {(comments || []).map((c) => (
           <article className={'ct-item ' + c.type} key={c.id}>
-            <header><strong>{c.author.name || 'Reviewer'}</strong>{c.type !== 'comment' && <span className="ct-type">{commentTypeLabel(c.type)}</span>}{lastRead !== null && c.id > lastRead && c.author.id !== viewerId && <span className="ct-new">New</span>}<small>{when(c.createdAt)}</small></header>
+            <header><strong>{c.author.name || translateUI("ui.reviewer_a74f16")}</strong>{c.type !== 'comment' && <span className="ct-type">{tr(commentTypeLabel(c.type))}</span>}{lastRead !== null && c.id > lastRead && c.author.id !== viewerId && <span className="ct-new">{translateUI("ui.new_6403f2")}</span>}<small>{when(c.createdAt)}</small></header>
             <p>{c.text}</p>
           </article>
         ))}
         <div ref={end} />
       </div>
-      {error && <div className="info-banner warning" role="alert">{error}</div>}
+      {error && <div className="info-banner warning" role="alert">{tr(error)}</div>}
       {canWrite && (
         <form className="ct-form" onSubmit={add}>
-          <textarea value={text} maxLength={2000} rows={3} onChange={(e) => setText(e.target.value)} placeholder="Add a comment for the faculty member…" aria-label="New comment" />
-          <button type="submit" className="btn primary" disabled={busy || !text.trim()}>{busy ? 'Adding…' : 'Add comment'}</button>
+          <textarea value={text} maxLength={2000} rows={3} onChange={(e) => setText(e.target.value)} placeholder={translateUI("ui.add_a_comment_for_the_faculty_member_3f0231")} aria-label={translateUI("ui.new_comment_af65ae")} />
+          <StableButton type="submit" className="btn primary" disabled={busy || !text.trim()}>{busy ? translateUI("ui.adding_ffb2e6") : translateUI("ui.add_comment_7d3764")}</StableButton>
         </form>
       )}
     </div>

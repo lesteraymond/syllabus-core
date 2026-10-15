@@ -10,7 +10,15 @@ const { inTransaction, httpError, sendError } = require('../lib/http');
 const { findProgram, loadProgram } = require('../lib/programs');
 const { loadProgramEgas, isStale, STALE_MESSAGE } = require('../lib/programEgas');
 const { egasInUse, posInUse, inUseMessages, inUseError, subjectsOf } = require('../lib/catalogUse');
+const management = require('../lib/programManagement');
+const { processCleanup } = require('../lib/catalogFileCleanup');
 const router = express.Router();
+const catalogId = raw => { const id = Number(raw); if (!Number.isInteger(id) || id <= 0) throw httpError(404, 'Program not found'); return id; };
+const managementError = (res, error) => {
+  if (['ER_LOCK_DEADLOCK', 'ER_LOCK_WAIT_TIMEOUT', 'ER_DUP_ENTRY', 'ER_ROW_IS_REFERENCED_2', 'ER_NO_REFERENCED_ROW_2'].includes(error.code)) return res.status(409).json({ error: 'The catalog changed. Reload and try again.', code: 'preview_required' });
+  if (error.code === 'ER_NO_SUCH_TABLE') return res.status(503).json({ error: 'Program management is not set up. Ask an administrator to run the database migration.' });
+  return sendError(res, error);
+};
 
 router.get('/', requireAuth, async (req, res) => {
   try {
@@ -121,4 +129,19 @@ router.put('/:id/outcomes', requireAuth, requireAdmin, async (req, res) => {
   } catch (err) { sendError(res, err); }
 });
 
+router.patch('/:id', requireAdmin, async (req, res) => {
+  try { res.json(await management.rename(req.app.locals.db, catalogId(req.params.id), req.session.user.id, req.body || {})); }
+  catch (error) { managementError(res, error); }
+});
+router.get('/:id/deletion-preview', requireAdmin, async (req, res) => {
+  try { res.json(await management.preview(req.app.locals.db, catalogId(req.params.id), req.session.user.id)); }
+  catch (error) { managementError(res, error); }
+});
+router.delete('/:id', requireAdmin, async (req, res) => {
+  try {
+    const result = await management.remove(req.app.locals.db, catalogId(req.params.id), req.session.user.id, req.body || {});
+    const cleanup = await processCleanup(req.app.locals.db).catch(() => ({ pending: 1 }));
+    res.json({ ...result, fileCleanupPending: cleanup.pending > 0 });
+  } catch (error) { managementError(res, error); }
+});
 module.exports = router;

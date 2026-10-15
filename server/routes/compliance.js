@@ -49,7 +49,11 @@ async function loadVisible(db, me, id) {
 // What a check reads, and what a stored run is compared with to tell whether it is out of date: the owner's saved draft, or for an
 // admin the latest submitted version (so a faculty member's edits in progress do not make a reviewed run look stale).
 async function subjectOf(db, me, syl) {
-  if (rules.isOwner(me, syl)) return { content: parseJson(syl.content), file: null, versionId: null, owner: true };
+  if (rules.isOwner(me, syl)) {
+    let content = parseJson(syl.content);
+    if (me.role === 'admin' && content) content = svc.publicationContent(content, await catalogSnapshot(db,content));
+    return { content, file: null, versionId: null, owner: true };
+  }
   const v = await svc.latestVersion(db, syl.syllabus_id);
   const content = v ? parseJson(v.content) : null;
   // A version with no form may be an uploaded file: an administrator's check then reads the file (its rules: lib/compliance/upload.js).
@@ -109,6 +113,7 @@ router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => 
     const me = req.session.user;
     const syl = await loadVisible(db, me, parseId(req.params.id));
     const owner = rules.isOwner(me, syl);
+    if (me.role === 'admin' && syl.status === 'draft') throw httpError(409,'Drafts stay in My Syllabi. Complete the form and send it to AI Checker first.');
     if (!owner && me.role !== 'admin') throw httpError(403, 'Only the owner or an administrator can check a syllabus');
     if (syl.status === 'approved') throw httpError(409, APPROVED, { code: 'approved' }); // before the limiter: a refusal costs nothing
     if (!(await svc.isInstalled(db))) throw httpError(503, NOT_SET_UP);
@@ -171,7 +176,7 @@ router.get('/compliance', requireAuth, async (req, res) => {
       return res.json({ installed: true, syllabus: base, run: run ? withChecker(await svc.loadDetail(db, run, hashOfSubject(subject)), syl.user_id) : null });
     }
 
-    const select = 'SELECT s.syllabus_id, s.user_id, s.course_code, s.title, s.status, s.version, ' + (me.role === 'admin' ? '' : 's.content, ') + LABEL_SQL;
+    const select = 'SELECT s.syllabus_id, s.user_id, s.course_code, s.title, s.status, s.version, ' + 's.content, ' + LABEL_SQL;
     const [syls] = me.role === 'admin'
       ? await db.query(select + " WHERE s.status <> 'draft' ORDER BY u.last_name, u.first_name, s.syllabus_id DESC LIMIT 500")
       : await db.query(select + ' WHERE s.user_id = ? ORDER BY s.syllabus_id DESC LIMIT 500', [me.id]);
@@ -192,6 +197,13 @@ router.get('/compliance', requireAuth, async (req, res) => {
       }
     }
 
+    if (me.role === 'admin') {
+      for (const syl of syls.filter(s => s.user_id === me.id)) {
+        const own=await subjectOf(db,me,syl);
+        formOf.set(syl.syllabus_id,own.content);
+        versionOf.delete(syl.syllabus_id);
+      }
+    }
     const latest = new Map();
     let areasByRun = new Map();
     if (installed && syls.length) {
@@ -202,6 +214,12 @@ router.get('/compliance', requireAuth, async (req, res) => {
       );
       runs.forEach((r) => latest.set(r.syllabus_id, r));
       areasByRun = await svc.loadAreas(db, runs.map((r) => r.run_id));
+    }
+    if (installed && me.role === 'admin') {
+      for (const syl of syls.filter(s=>s.user_id===me.id)) {
+        const ownRun=await svc.latestRun(db,syl.syllabus_id);
+        if(ownRun) latest.set(syl.syllabus_id,ownRun);
+      }
     }
     const list = syls.map((s) => {
       let run = latest.get(s.syllabus_id);

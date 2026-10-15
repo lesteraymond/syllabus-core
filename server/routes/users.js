@@ -3,7 +3,9 @@ const path = require('path');
 const multer = require('multer');
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const { requireAuth, requireAdmin } = require('../middleware/auth');
+const { randomUUID } = require('node:crypto');
+const { requireAuth, requireAdmin, toSessionUser } = require('../middleware/auth');
+const googleProfile = require('../lib/googleProfile');
 const { AVATAR_DIR, avatarRelPath, avatarFile, avatarUrlFor } = require('../lib/avatar');
 const { inTransaction } = require('../lib/http');
 const { createNotification } = require('../lib/notify');
@@ -23,6 +25,42 @@ const toUser = (r) => ({
   id: r.user_id, email: r.email, role: r.role,
   firstName: r.first_name, lastName: r.last_name, createdAt: r.created_at,
   avatarUrl: avatarUrlFor(r.user_id, r.avatar_path),
+});
+
+// Account owners may update their name only; role and email remain administrator-managed.
+router.patch('/me/profile', requireAuth, async (req, res) => {
+  try {
+    const { firstName, lastName } = req.body || {};
+    if ([firstName, lastName].some(name => typeof name !== 'string' || !name.trim() || name.trim().length > 100 || /[\u0000-\u001f\u007f]/.test(name))) {
+      return fail(res, 400, 'Enter a first and last name, each between 1 and 100 characters.');
+    }
+    if (!ROLES.includes(req.session.user.role)) return fail(res, 403, 'Profile editing is available to faculty and administrators.');
+    const db = req.app.locals.db;
+    const [rows] = await db.query('SELECT user_id, email, role, first_name, last_name, avatar_path, must_change_password, preferred_language FROM users WHERE user_id = ?', [req.session.user.id]);
+    if (!rows[0]) return fail(res, 404, 'Account not found');
+    await db.query('UPDATE users SET first_name = ?, last_name = ? WHERE user_id = ?', [firstName.trim(), lastName.trim(), req.session.user.id]);
+    const user = toSessionUser({ ...rows[0], first_name: firstName.trim(), last_name: lastName.trim() });
+    req.session.user = user;
+    res.json({ user });
+  } catch (err) {
+    console.error('PROFILE UPDATE ERROR:', err);
+    fail(res, 500, 'Could not save your name. Please try again.');
+  }
+});
+
+// Preferences belong to the authenticated account; never accept a user id or admin settings here.
+router.patch('/me/preferences', requireAuth, async (req, res) => {
+  try {
+    if (!ROLES.includes(req.session.user.role)) return fail(res, 403, 'Language preferences are available to faculty and administrators.');
+    const body = req.body;
+    if (!body || Object.keys(body).some(key => key !== 'preferredLanguage') || !['en', 'tl'].includes(body.preferredLanguage)) {
+      return fail(res, 400, 'Choose English or Tagalog.');
+    }
+    const [result] = await req.app.locals.db.query('UPDATE users SET preferred_language = ? WHERE user_id = ?', [body.preferredLanguage, req.session.user.id]);
+    if (!result.affectedRows) return fail(res, 404, 'Account not found');
+    req.session.user.preferredLanguage = body.preferredLanguage;
+    res.json({ preferredLanguage: body.preferredLanguage });
+  } catch { fail(res, 500, 'Could not save your language preference. Please try again.'); }
 });
 
 // Registered users = the sign-in allowlist.
@@ -189,6 +227,43 @@ function detectImageExt(buf) {
 
 const removeFile = async (file) => { if (file) await fs.promises.unlink(file).catch(() => {}); };
 
+async function saveAvatar(db, userId, buffer, ext) {
+  const [rows] = await db.query('SELECT avatar_path FROM users WHERE user_id = ?', [userId]);
+  if (!rows[0]) throw Object.assign(new Error('Account not found'), { status: 404 });
+  const oldPath = rows[0].avatar_path;
+  const name = `u${userId}-${randomUUID()}-${Date.now()}.${ext}`;
+  const newFile = path.join(AVATAR_DIR, name);
+  try {
+    await fs.promises.mkdir(AVATAR_DIR, { recursive: true });
+    await fs.promises.writeFile(newFile, buffer);
+    const avatarPath = avatarRelPath(name);
+    await db.query('UPDATE users SET avatar_path = ? WHERE user_id = ?', [avatarPath, userId]);
+    await removeFile(avatarFile(oldPath));
+    return avatarUrlFor(userId, avatarPath);
+  } catch (err) {
+    await removeFile(newFile);
+    throw err;
+  }
+}
+
+router.post('/me/avatar/google', requireAuth, async (req, res) => {
+  try {
+    const me = req.session.user;
+    if (!ROLES.includes(me.role)) return fail(res, 403, 'Photo sync is available to faculty and administrators.');
+    const db = req.app.locals.db;
+    const [rows] = await db.query('SELECT user_id, email, role, first_name, last_name, avatar_path, must_change_password, preferred_language FROM users WHERE user_id = ?', [me.id]);
+    if (!rows[0]) return fail(res, 404, 'Account not found');
+    const buffer = req.body?.accessToken !== undefined
+      ? await googleProfile.getGooglePhotoWithAccessToken(req.body.accessToken, rows[0].email)
+      : await googleProfile.getGooglePhoto(req.body?.token, rows[0].email);
+    const avatarUrl = await saveAvatar(db, me.id, buffer, 'webp');
+    req.session.user.avatarUrl = avatarUrl;
+    res.json({ avatarUrl });
+  } catch (err) {
+    fail(res, err.status || 500, err.status ? err.message : 'Could not sync your Google photo. Please try again.');
+  }
+});
+
 router.post('/me/avatar', requireAuth, (req, res) => {
   avatarUpload(req, res, async (uploadErr) => {
     if (uploadErr) {
@@ -197,7 +272,6 @@ router.post('/me/avatar', requireAuth, (req, res) => {
       console.error('AVATAR UPLOAD ERROR:', uploadErr);
       return fail(res, 400, 'The upload could not be processed.');
     }
-    let newFile = null;
     try {
       if (!req.file) return fail(res, 400, 'No image uploaded. Choose a JPEG, PNG or WebP file.');
       const ext = detectImageExt(req.file.buffer);
@@ -205,23 +279,10 @@ router.post('/me/avatar', requireAuth, (req, res) => {
 
       const userId = req.session.user.id;
       const db = req.app.locals.db;
-      const [rows] = await db.query('SELECT avatar_path FROM users WHERE user_id = ?', [userId]);
-      const oldPath = rows[0]?.avatar_path;
-
-      const name = `u${userId}-${Date.now()}.${ext}`;
-      await fs.promises.mkdir(AVATAR_DIR, { recursive: true });
-      newFile = path.join(AVATAR_DIR, name);
-      await fs.promises.writeFile(newFile, req.file.buffer);
-
-      const avatarPath = avatarRelPath(name);
-      await db.query('UPDATE users SET avatar_path = ? WHERE user_id = ?', [avatarPath, userId]);
-      await removeFile(avatarFile(oldPath)); // only after the new one is saved
-
-      const avatarUrl = avatarUrlFor(userId, avatarPath);
+      const avatarUrl = await saveAvatar(db, userId, req.file.buffer, ext);
       req.session.user.avatarUrl = avatarUrl;
       res.json({ avatarUrl });
     } catch (err) {
-      await removeFile(newFile);
       console.error('AVATAR ERROR:', err);
       fail(res, 500, 'Could not save your photo. Please try again.');
     }

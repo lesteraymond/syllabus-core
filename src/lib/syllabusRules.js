@@ -11,6 +11,10 @@ export const STATUS_LABELS = { draft: 'Draft', submitted: 'Submitted', under_rev
 // Only the owner edits content, and only while the syllabus is in an editable status.
 export const canEditSyllabus = (user, syllabus) => user.id === syllabus.userId && EDITABLE_STATUSES.includes(syllabus.status);
 
+// Keep in sync with server/lib/syllabusRules.js. Submission records stay in the review workflow.
+export const canDeleteSyllabus = (user, syllabus) => (user.role === 'admin' && (user.id === syllabus.userId || syllabus.status !== 'draft'))
+  || (user.role === 'faculty' && user.id === syllabus.userId && syllabus.status === 'draft');
+
 export const editBlockedReason = (syllabus) => (EDITABLE_STATUSES.includes(syllabus.status)
   ? ''
   : syllabus.status === 'submitted' || syllabus.status === 'under_review'
@@ -56,4 +60,11 @@ export function toBuilderShape(s) {
     curriculumId: s.curriculumId,
     fileName: s.filePath ? decodeURIComponent(s.filePath.split('/').pop()) : '',
   };
+}
+
+// Approval is a separate administrator decision after reading a completed check of their own draft.
+export function canApproveAdminDraft(user, syllabus, run, isLatest = true) {
+  return !!(user?.role === 'admin' && syllabus?.userId === user.id && syllabus.status === 'under_review'
+    && isLatest && run?.id && run.syllabusId === syllabus.syllabusId && run.createdBy === user.id
+    && run.status === 'scored' && run.conformant && !run.stale && ['ok','none'].includes(run.aiStatus));
 }

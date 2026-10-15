@@ -6,8 +6,8 @@ export const mappingRows = [
 
 export const navItems = [
   ['dashboard', 'squaresFour', 'Dashboard', null],
-  ['builder', 'pencilRuler', 'Syllabus Builder', 'faculty'],
-  ['my-syllabi', 'notebook', 'My Syllabi', 'faculty'],
+  ['builder', 'pencilRuler', 'Syllabus Builder', null],
+  ['my-syllabi', 'notebook', 'My Syllabi', null],
   ['ai', 'sparkle', 'AI Checker', 'admin'],
   ['mapping', 'gridFour', 'CO–PO Mapping', null],
   ['review', 'sealCheck', 'Review & Approval', 'admin'],

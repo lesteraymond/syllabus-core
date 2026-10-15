@@ -1,3 +1,5 @@
+import StableButton from '../components/StableButton';
+import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useState } from 'react';
 import { MetricBox, PageHead } from '../components/ui';
 import { mappingRows } from '../data/initialData';
@@ -45,8 +47,8 @@ export default function COPOMapping({ notify }) {
     map.forEach((row, r) => row.forEach((v, c) => { if (v) mappings.push({ co: r + 1, po: c + 1, level: v }); }));
     try {
       await mappingApi.save(selectedCurriculum, mappings);
-      notify('CO–PO mapping saved.');
-    } catch (err) { notify('Save failed: ' + err.message); }
+      notify(translateUI("ui.co_po_mapping_saved_7c94af"));
+    } catch (err) { notify(translateUI("ui.save_failed_4322fa") + err.message); }
   };
 
   const filled = map.flat().filter(Boolean).length;
@@ -60,15 +62,15 @@ export default function COPOMapping({ notify }) {
 
   return (
     <>
-      <PageHead title="CO–PO Mapping" subtitle="Map course outcomes to program outcomes and visualize curriculum coverage." actions={<><button className="btn outline" onClick={() => notify('Matrix exported (demo).')}>⇩ Export Matrix</button><button className="btn primary" onClick={saveMapping}>Save Mapping</button></>} />
+      <PageHead title={translateUI("ui.co_po_mapping_434c47")} subtitle={translateUI("ui.map_course_outcomes_to_program_outcomes_and_visualize_curriculum__16709f")} actions={<><StableButton className="btn outline" onClick={() => notify(translateUI("ui.matrix_exported_demo_aaea21"))}>{translateUI("ui.export_matrix_953011")}</StableButton><StableButton className="btn primary" onClick={saveMapping}>{translateUI("ui.save_mapping_5d0c0d")}</StableButton></>} />
       <div className="mapping-meta">
-        <span><small>Curriculum</small><b><select value={selectedCurriculum || ''} onChange={e => setSelectedCurriculum(Number(e.target.value))}>{curricula.map(c => <option key={c.id} value={c.id}>{c.programName} — Year {c.yearLevel}, {c.semester}</option>)}</select></b></span>
-        <div className="mapping-legend"><em className="m-i">I</em> Introduced <em className="m-r">R</em> Reinforced <em className="m-m">M</em> Mastered</div>
+        <span><small>{translateUI("ui.curriculum_233649")}</small><b><select value={selectedCurriculum || ''} onChange={e => setSelectedCurriculum(Number(e.target.value))}>{curricula.map(c => <option key={c.id} value={c.id}>{c.programName}{translateUI("ui.year_8cad48")}{c.yearLevel}, {c.semester}</option>)}</select></b></span>
+        <div className="mapping-legend"><em className="m-i">I</em>{translateUI("ui.introduced_e5d3f0")}<em className="m-r">R</em>{translateUI("ui.reinforced_7b0381")}<em className="m-m">M</em>{translateUI("ui.mastered_62a415")}</div>
       </div>
-      {loading ? <div className="empty">Loading mapping...</div> : (
-        <div className="matrix-card"><div className="matrix-scroll"><table className="matrix"><thead><tr><th>Course Outcomes</th>{Array.from({ length: PO_COUNT }, (_, i) => <th key={i}>PO{i + 1}</th>)}</tr></thead><tbody>{mappingRows.slice(0, CO_COUNT).map((row, r) => <tr key={r}><td>{row}</td>{map[r].map((v, c) => <td key={c}><button title="Click to cycle I/R/M" className={v ? `map-cell ${v.toLowerCase()}` : 'map-cell'} onClick={() => cycle(r, c)}>{v || '·'}</button></td>)}</tr>)}</tbody></table></div><div className="matrix-footer"><div><span>Mapping Strength</span><div className="bar"><i style={{ width: `${strength}%` }} /></div></div><strong>{strength}%</strong><p>Tip: click any matrix cell to cycle through blank → I → R → M.</p></div></div>
+      {loading ? <div className="empty">{translateUI("ui.loading_mapping_efff61")}</div> : (
+        <div className="matrix-card"><div className="matrix-scroll"><table className="matrix"><thead><tr><th>{translateUI("ui.course_outcomes_a04e0d")}</th>{Array.from({ length: PO_COUNT }, (_, i) => <th key={i}>{translateUI("ui.po_eea0c0")}{i + 1}</th>)}</tr></thead><tbody>{mappingRows.slice(0, CO_COUNT).map((row, r) => <tr key={r}><td>{row}</td>{map[r].map((v, c) => <td key={c}><button title={translateUI("ui.click_to_cycle_i_r_m_ad4738")} className={v ? `map-cell ${v.toLowerCase()}` : 'map-cell'} onClick={() => cycle(r, c)}>{v || '·'}</button></td>)}</tr>)}</tbody></table></div><div className="matrix-footer"><div><span>{translateUI("ui.mapping_strength_4a945d")}</span><div className="bar"><i style={{ width: `${strength}%` }} /></div></div><strong>{strength}%</strong><p>{translateUI("ui.tip_click_any_matrix_cell_to_cycle_through_blank_i_r_m_613811")}</p></div></div>
       )}
-      <div className="coverage-grid"><MetricBox label="Outcomes with Mapping" value={`${mappedCOs} / ${CO_COUNT}`} note={mappedCOs === CO_COUNT ? 'All COs mapped' : 'Some COs unmapped'} /><MetricBox label="POs Addressed" value={`${mappedPOs} / ${PO_COUNT}`} note="Curriculum coverage" /><MetricBox label="Mastery Links" value={String(masteryLinks)} note="Mastered relationships" /><MetricBox label="Alignment Flags" value={String(unmappedPOs > 3 ? 1 : 0)} note={unmappedPOs > 3 ? `Review PO${mappedPOs + 1}–PO${PO_COUNT} coverage` : 'Coverage looks good'} alert={unmappedPOs > 3} /></div>
+      <div className="coverage-grid"><MetricBox label={translateUI("ui.outcomes_with_mapping_99fcee")} value={`${mappedCOs} / ${CO_COUNT}`} note={mappedCOs === CO_COUNT ? translateUI("ui.all_cos_mapped_73c13d") : translateUI("ui.some_cos_unmapped_feb38a")} /><MetricBox label={translateUI("ui.pos_addressed_23af2c")} value={`${mappedPOs} / ${PO_COUNT}`} note={translateUI("ui.curriculum_coverage_edfa22")} /><MetricBox label={translateUI("ui.mastery_links_ea0ce8")} value={String(masteryLinks)} note={translateUI("ui.mastered_relationships_0aa586")} /><MetricBox label={translateUI("ui.alignment_flags_e50d5b")} value={String(unmappedPOs > 3 ? 1 : 0)} note={unmappedPOs > 3 ? translateUI("ui.review_po_p0_po_p1_coverage_a41ae4", { p0: (mappedPOs + 1), p1: (PO_COUNT) }) : translateUI("ui.coverage_looks_good_91cfb8")} alert={unmappedPOs > 3} /></div>
     </>
   );
 }

@@ -1,12 +1,17 @@
+import { useActionExit } from '../lib/catalogMotion';
+import StableButton from '../components/StableButton';
+import { tr } from "../i18n/index.js";
+import { t as translateUI } from "../i18n/index.js";
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { courses as coursesApi, outcomes as outcomesApi } from '../lib/api';
+import { courses as coursesApi } from '../lib/api';
 import { LEVELS, createModel } from '../lib/syllabusModel';
 import { CURRENT_SCHOOL_YEAR } from '../lib/schoolYear';
 import { Auto, Ic, OutcomePicker, Tag } from './builder2/parts';
-
+
+
 // Everything an administrator manages for one subject, in one modal. Five cards, each saved on its own:
 //   1. Vision and mission      school-wide
-//   2. Expected graduate attributes (EGAs)   this subject's program, shared by all its subjects
+//   2. Expected graduate attributes (EGAs)   this subject
 //   3. Program outcomes (POs)  this subject's program, shared by all its subjects
 //   4. Course learning outcomes (CLOs)       this subject only; tagged with the program's EGAs and POs
 //   5. Subject details         this subject only
@@ -44,23 +49,23 @@ function useSave() {
 function Card({ title, scope, note, dirty, st, onSave, onReload, canSave = true, saveLabel = 'Save', children }) {
   return (
     <section className="sm-card">
-      <header className="sm-card-h"><h4>{title}</h4><span className="sm-scope">{scope}</span></header>
-      {note && <p className="sm-note">{note}</p>}
+      <header className="sm-card-h"><h4>{title}</h4><span className="sm-scope">{tr(scope)}</span></header>
+      {note && <p className="sm-note">{tr(note)}</p>}
       <div className="sm-card-b">{children}</div>
       <footer className="sm-card-f">
-        <span className="hint" role="status">{dirty ? 'Unsaved changes' : 'All changes saved'}</span>
+        <span className="hint" role="status">{dirty ? translateUI("ui.unsaved_changes_292672") : translateUI("ui.all_changes_saved_9595b7")}</span>
         {st.stale
-          ? <span className="sm-stale" role="alert">This was changed by someone else. Reload to see the latest. <button type="button" className="asg-link" onClick={onReload}>Reload</button></span>
-          : st.error && <span className="ie-err" role="alert">{st.error}</span>}
-        <button type="button" className="asg-btn primary sm" disabled={!dirty || st.busy || !canSave} onClick={onSave}>{st.busy ? 'Saving…' : saveLabel}</button>
+          ? <span className="sm-stale" role="alert">{translateUI("ui.this_was_changed_by_someone_else_reload_to_see_the_latest_88df1e")}<button type="button" className="asg-link" onClick={onReload}>{translateUI("ui.reload_cce715")}</button></span>
+          : st.error && <span className="ie-err" role="alert">{tr(st.error)}</span>}
+        <button type="button" className="asg-btn primary sm" disabled={!dirty || st.busy || !canSave} onClick={onSave}>{st.busy ? translateUI("ui.saving_56a228") : tr(saveLabel)}</button>
       </footer>
     </section>
   );
 }
 
 // ---- 1. vision and mission (school-wide) ----
-function VisionCard({ inst, onSaved, onReload, setDirty, notify }) {
-  const [form, setForm] = useState(() => ({ vision: inst.vision, lead: inst.mission.lead, items: inst.mission.items.map((t) => ({ key: ++tmp, t })) }));
+function VisionCard({ course, inst, onSaved, onReload, setDirty, notify }) {
+  const [form, setForm] = useState(() => ({ vision: inst.vision, lead: inst.mission.lead, items: (inst.mission.items.length ? inst.mission.items : ['']).map(t => ({ key: ++tmp, t })) }));
   const [dirty, setD] = useState(false);
   const [st, run] = useSave();
   const mark = (v) => { setD(v); setDirty(v); };
@@ -68,36 +73,31 @@ function VisionCard({ inst, onSaved, onReload, setDirty, notify }) {
   const move = (i, d) => edit((n) => { const j = i + d; if (j >= 0 && j < n.items.length) n.items.splice(j, 0, n.items.splice(i, 1)[0]); });
   const valid = form.vision.trim() && form.lead.trim() && form.items.length && form.items.every((x) => x.t.trim());
   const save = () => run(async () => {
-    const saved = await outcomesApi.saveInstitution({ vision: form.vision, mission: { lead: form.lead, items: form.items.map((x) => x.t) }, egas: inst.egas, version: inst.version });
-    mark(false); onSaved(saved); notify('Vision and mission saved. They apply to every program.');
+    const saved = await coursesApi.saveStandards(course.id, 'vision', { vision: form.vision, mission: { lead: form.lead, items: form.items.map(x => x.t) } }, inst.version);
+    mark(false); onSaved(saved); notify(translateUI('outcomes.subjectSaved'));
   });
   return (
-    <Card title="Vision and mission" scope="School-wide · all programs" dirty={dirty} st={st} onSave={save} onReload={onReload} canSave={!!valid}>
-      <label className="field full"><span>Vision</span><Auto className="in" value={form.vision} label="Vision" placeholder="The institution's vision" onChange={(v) => edit((n) => { n.vision = v; })} /></label>
-      <label className="field full" style={{ marginTop: 10 }}><span>Mission, introduction</span><Auto className="in" value={form.lead} label="Mission introduction" placeholder="... programs and services that will enable them to:" onChange={(v) => edit((n) => { n.lead = v; })} /></label>
-      <span className="lbl" style={{ marginTop: 10 }}>Mission statements</span>
+    <Card title={translateUI("ui.vision_and_mission_4c8752")} scope={tr(course.code + ' only')} dirty={dirty} st={st} onSave={save} onReload={onReload} canSave={!!valid}>
+      <label className="field full"><span>{translateUI("ui.vision_40b090")}</span><Auto className="in" value={form.vision} label={translateUI("ui.vision_40b090")} placeholder={translateUI('ui.vision_40b090')} onChange={(v) => edit((n) => { n.vision = v; })} /></label>
+      <label className="field full" style={{ marginTop: 10 }}><span>{translateUI("ui.mission_introduction_873ac6")}</span><Auto className="in" value={form.lead} label={translateUI("ui.mission_introduction_8acfc4")} placeholder={translateUI("ui.programs_and_services_that_will_enable_them_to_2162c1")} onChange={(v) => edit((n) => { n.lead = v; })} /></label>
+      <span className="lbl" style={{ marginTop: 10 }}>{translateUI("ui.mission_statements_5e2923")}</span>
       {form.items.map((x, i) => (
         <div className="ie-row" key={x.key}>
           <span className="mono ie-no">{i + 1}.</span>
-          <Auto className="in" value={x.t} label={'Mission statement ' + (i + 1)} placeholder="Mission statement" onChange={(v) => edit((n) => { n.items[i].t = v; })} />
+          <Auto className="in" value={x.t} label={translateUI("ui.mission_statement_45b2a8") + (i + 1)} placeholder={translateUI("ui.mission_statement_0ccc0c")} onChange={(v) => edit((n) => { n.items[i].t = v; })} />
           <span className="ie-tools">
-            <button type="button" className="ib" aria-label="Move up" disabled={i === 0} onClick={() => move(i, -1)}><Ic n="up" /></button>
-            <button type="button" className="ib" aria-label="Move down" disabled={i === form.items.length - 1} onClick={() => move(i, 1)}><Ic n="down" /></button>
-            <button type="button" className="ib del" aria-label="Remove statement" disabled={form.items.length < 2} onClick={() => edit((n) => { n.items.splice(i, 1); })}><Ic n="trash" /></button>
+            <button type="button" className="ib" aria-label={translateUI("ui.move_up_b4f57c")} disabled={i === 0} onClick={() => move(i, -1)}><Ic n="up" /></button>
+            <button type="button" className="ib" aria-label={translateUI("ui.move_down_260ff8")} disabled={i === form.items.length - 1} onClick={() => move(i, 1)}><Ic n="down" /></button>
+            <button type="button" className="ib del" aria-label={translateUI("ui.remove_statement_100039")} disabled={form.items.length < 2} onClick={() => edit((n) => { n.items.splice(i, 1); })}><Ic n="trash" /></button>
           </span>
         </div>
       ))}
-      <button type="button" className="link" disabled={form.items.length >= 20} onClick={() => edit((n) => { n.items.push({ key: ++tmp, t: '' }); })}>+ Add mission statement</button>
+      <button type="button" className="link" disabled={form.items.length >= 20} onClick={() => edit((n) => { n.items.push({ key: ++tmp, t: '' }); })}>{translateUI("ui.add_mission_statement_0ad1c2")}</button>
     </Card>
   );
 }
 
-const sharedNote = (program, course) => {
-  const others = program.subjects.filter((c) => c !== course.code);
-  return others.length ? `Shared with ${others.length} other ${program.code} subject${others.length === 1 ? '' : 's'}: ${others.slice(0, 6).join(', ')}${others.length > 6 ? '…' : ''}. A change here applies to all of them.` : `Only ${course.code} uses these in ${program.code} for now.`;
-};
-
-// ---- 2. EGAs (this program) ----
+// ---- 2. EGAs (this subject) ----
 function EgaCard({ program, course, onSaved, onReload, setDirty, notify }) {
   const [rows, setRows] = useState(() => program.egas.map((e) => ({ key: ++tmp, ...e })));
   const [dirty, setD] = useState(false);
@@ -105,31 +105,29 @@ function EgaCard({ program, course, onSaved, onReload, setDirty, notify }) {
   const mark = (v) => { setD(v); setDirty(v); };
   const edit = (fn) => { setRows((c) => { const n = c.map((x) => ({ ...x })); fn(n); return n; }); mark(true); };
   const valid = rows.length && rows.every((e) => e.name.trim() && e.short.trim());
-  const removed = program.egas.filter((e) => !rows.some((r) => r.no === e.no));
   const save = () => {
-    if (removed.length && program.subjects.length > 1 && !window.confirm(`${removed.map((e) => 'EGA ' + e.no).join(', ')} will be removed for all ${program.subjects.length} ${program.code} subjects. Continue?`)) return Promise.resolve();
     return run(async () => {
-      const saved = await outcomesApi.saveProgramEgas(program.code, rows.map((e) => ({ no: e.no, name: e.name, short: e.short })), program.versions.egas);
-      mark(false); onSaved(saved); notify(`${program.code} EGAs saved.`);
+      const saved = await coursesApi.saveStandards(course.id, 'egas', rows.map(e => ({ no: e.no, name: e.name, short: e.short })), program.versions.egas);
+      mark(false); onSaved(saved); notify(translateUI('outcomes.setupSaved'));
     });
   };
   return (
-    <Card title="Expected graduate attributes" scope={program.code + ' · all subjects'} note={sharedNote(program, course)} dirty={dirty} st={st} onSave={save} onReload={onReload} canSave={!!valid}>
-      <p className="hint">The number is fixed once saved: program outcomes and CLOs point at it. One that is still tagged cannot be removed.</p>
+    <Card title={translateUI("ui.expected_graduate_attributes_86f980")} scope={tr(course.code + ' only')} dirty={dirty} st={st} onSave={save} onReload={onReload} canSave={!!valid}>
+      <p className="hint">{translateUI("ui.the_number_is_fixed_once_saved_program_outcomes_and_clos_point_at_b96124")}</p>
       {rows.map((e, i) => (
         <div className="ie-ega" key={e.key}>
-          <span className="code ref mono">{'EGA ' + e.no}</span>
-          <input className="in" value={e.name} maxLength={255} placeholder="Full name" aria-label={'Name of EGA ' + e.no} onChange={(ev) => { const v = ev.target.value; edit((n) => { n[i].name = v; }); }} />
-          <input className="in" value={e.short} maxLength={120} placeholder="Short name" aria-label={'Short name of EGA ' + e.no} onChange={(ev) => { const v = ev.target.value; edit((n) => { n[i].short = v; }); }} />
-          <button type="button" className="ib del" aria-label={'Remove EGA ' + e.no} disabled={rows.length < 2} onClick={() => edit((n) => { n.splice(i, 1); })}><Ic n="trash" /></button>
+          <span className="code ref mono">{translateUI("ui.ega_4f085b") + e.no}</span>
+          <input className="in" value={e.name} maxLength={255} placeholder={translateUI("ui.full_name_eeb692")} aria-label={translateUI("ui.name_of_ega_3dfa90") + e.no} onChange={(ev) => { const v = ev.target.value; edit((n) => { n[i].name = v; }); }} />
+          <input className="in" value={e.short} maxLength={120} placeholder={translateUI("ui.short_name_feb5a9")} aria-label={translateUI("ui.short_name_of_ega_231166") + e.no} onChange={(ev) => { const v = ev.target.value; edit((n) => { n[i].short = v; }); }} />
+          <button type="button" className="ib del" aria-label={translateUI("ui.remove_ega_8c32e7") + e.no} disabled={rows.length < 2} onClick={() => edit((n) => { n.splice(i, 1); })}><Ic n="trash" /></button>
         </div>
       ))}
-      <button type="button" className="link" disabled={rows.length >= 20} onClick={() => edit((n) => { n.push({ key: ++tmp, no: Math.max(0, ...n.map((r) => r.no), ...program.egas.map((r) => r.no)) + 1, name: '', short: '' }); })}>+ Add EGA</button>
+      <button type="button" className="link" disabled={rows.length >= 20} onClick={() => edit((n) => { n.push({ key: ++tmp, no: Math.max(0, ...n.map((r) => r.no), ...program.egas.map((r) => r.no)) + 1, name: '', short: '' }); })}>{translateUI("ui.add_ega_270a20")}</button>
     </Card>
   );
 }
 
-// ---- 3. program outcomes (this program) ----
+// ---- 3. program outcomes (this subject) ----
 function PoCard({ program, course, onSaved, onReload, setDirty, notify }) {
   const [rows, setRows] = useState(() => program.pos.map((p) => ({ key: ++tmp, ...p, egas: [...p.egas] })));
   const [dirty, setD] = useState(false);
@@ -138,37 +136,35 @@ function PoCard({ program, course, onSaved, onReload, setDirty, notify }) {
   const edit = (fn) => { setRows((c) => { const n = c.map((x) => ({ ...x, egas: [...x.egas] })); fn(n); return n; }); mark(true); };
   const toggleEga = (i, no) => edit((n) => { n[i].egas = n[i].egas.includes(no) ? n[i].egas.filter((v) => v !== no) : [...n[i].egas, no].sort((a, b) => a - b); });
   const valid = rows.every((r) => r.short.trim() && r.text.trim());
-  const removed = program.pos.filter((p) => !rows.some((r) => r.no === p.no));
   const save = () => {
-    if (removed.length && program.subjects.length > 1 && !window.confirm(`${removed.map((p) => 'PO ' + p.no).join(', ')} will be removed for all ${program.subjects.length} ${program.code} subjects. Continue?`)) return Promise.resolve();
     return run(async () => {
-      const saved = await outcomesApi.saveProgram(program.code, rows.map((r) => ({ no: r.no, short: r.short, text: r.text, egas: r.egas })), program.versions.pos);
-      mark(false); onSaved(saved); notify(`${program.code} program outcomes saved.`);
+      const saved = await coursesApi.saveStandards(course.id, 'pos', rows.map(r => ({ no: r.no, short: r.short, text: r.text, egas: r.egas })), program.versions.pos);
+      mark(false); onSaved(saved); notify(translateUI('outcomes.setupSaved'));
     });
   };
   return (
-    <Card title="Program outcomes" scope={program.code + ' · all subjects'} note={sharedNote(program, course)} dirty={dirty} st={st} onSave={save} onReload={onReload} canSave={!!valid}>
-      <p className="hint">The number is fixed once saved. One that a subject's CLO is tagged with cannot be removed.</p>
-      {!rows.length && <div className="info-banner warning">No program outcomes for {program.code} yet. Faculty see an empty list until you add them.</div>}
+    <Card title={translateUI("ui.program_outcomes_858de9")} scope={tr(course.code + ' only')} dirty={dirty} st={st} onSave={save} onReload={onReload} canSave={!!valid}>
+      <p className="hint">{translateUI("ui.the_number_is_fixed_once_saved_one_that_a_subject_s_clo_is_tagged_542d3f")}</p>
+      {!rows.length && <div className="info-banner warning">{translateUI("ui.no_program_outcomes_for_3d5a81")}{program.code}{translateUI("ui.yet_faculty_see_an_empty_list_until_you_add_them_6295d9")}</div>}
       {rows.map((r, i) => (
         <div className="ie-po" key={r.key}>
-          <span className="code ref mono">{'PO ' + r.no}</span>
+          <span className="code ref mono">{translateUI("ui.po_3756d6") + r.no}</span>
           <div>
-            <input className="in" value={r.short} maxLength={120} placeholder="Short name" aria-label={'Short name of PO ' + r.no} onChange={(e) => { const v = e.target.value; edit((n) => { n[i].short = v; }); }} />
-            <div style={{ marginTop: 8 }}><Auto className="in" value={r.text} label={'Statement of PO ' + r.no} placeholder="Full statement" onChange={(v) => edit((n) => { n[i].text = v; })} /></div>
-            <div className="ie-egas" role="group" aria-label={'EGAs supported by PO ' + r.no}>
-              <span className="hint">Supports</span>
+            <input className="in" value={r.short} maxLength={120} placeholder={translateUI("ui.short_name_feb5a9")} aria-label={translateUI("ui.short_name_of_po_452bca") + r.no} onChange={(e) => { const v = e.target.value; edit((n) => { n[i].short = v; }); }} />
+            <div style={{ marginTop: 8 }}><Auto className="in" value={r.text} label={translateUI("ui.statement_of_po_0182b3") + r.no} placeholder={translateUI("ui.full_statement_0c9d6a")} onChange={(v) => edit((n) => { n[i].text = v; })} /></div>
+            <div className="ie-egas" role="group" aria-label={translateUI("ui.egas_supported_by_po_44a405") + r.no}>
+              <span className="hint">{translateUI("ui.supports_da0eed")}</span>
               {program.egas.map((e) => (
                 <label key={e.no} className={'ie-chip' + (r.egas.includes(e.no) ? ' on' : '')} title={e.name}>
-                  <input type="checkbox" checked={r.egas.includes(e.no)} onChange={() => toggleEga(i, e.no)} />{'EGA ' + e.no}
+                  <input type="checkbox" checked={r.egas.includes(e.no)} onChange={() => toggleEga(i, e.no)} />{translateUI("ui.ega_4f085b") + e.no}
                 </label>
               ))}
             </div>
           </div>
-          <button type="button" className="ib del" aria-label={'Remove PO ' + r.no} onClick={() => edit((n) => { n.splice(i, 1); })}><Ic n="trash" /></button>
+          <button type="button" className="ib del" aria-label={translateUI("ui.remove_po_ffe9b3") + r.no} onClick={() => edit((n) => { n.splice(i, 1); })}><Ic n="trash" /></button>
         </div>
       ))}
-      <button type="button" className="link" disabled={rows.length >= 50} onClick={() => edit((n) => { n.push({ key: ++tmp, no: Math.max(0, ...n.map((r) => r.no), ...program.pos.map((r) => r.no)) + 1, short: '', text: '', egas: [] }); })}>+ Add program outcome</button>
+      <button type="button" className="link" disabled={rows.length >= 50} onClick={() => edit((n) => { n.push({ key: ++tmp, no: Math.max(0, ...n.map((r) => r.no), ...program.pos.map((r) => r.no)) + 1, short: '', text: '', egas: [] }); })}>{translateUI("ui.add_program_outcome_cd9147")}</button>
     </Card>
   );
 }
@@ -186,53 +182,53 @@ function ClosCard({ course, program, model, onSaved, onReload, setDirty, notify 
   const pc = picker && clos[picker.i];
   const valid = clos.every((c) => c.statement.trim());
   const remove = (i) => {
-    if (clos[i].id && !window.confirm('Delete CLO ' + (i + 1) + '? ILOs in saved syllabi that are tagged with it will show the tag as unresolved until faculty fix them.')) return;
+    if (clos[i].id && !window.confirm(tr('Delete CLO ' + (i + 1) + '? ILOs in saved syllabi that are tagged with it will show the tag as unresolved until faculty fix them.'))) return;
     edit((n) => { n.splice(i, 1); });
   };
   const save = () => run(async () => {
     const saved = await coursesApi.saveClos(course.id, clos.map((c) => ({ id: c.id, title: c.title, level: c.level, statement: c.statement, egas: c.egas, pos: c.pos })), course.version);
-    mark(false); onSaved(saved); notify('Learning outcomes saved. Faculty see them the next time they open the subject.');
+    mark(false); onSaved(saved); notify(translateUI("ui.learning_outcomes_saved_faculty_see_them_the_next_time_they_open__956f63"));
   });
   return (
-    <Card title="Course learning outcomes" scope={course.code + ' only'} dirty={dirty} st={st} onSave={save} onReload={onReload} canSave={!!valid} saveLabel="Save outcomes">
-      {!clos.length && <div className="info-banner warning">This subject has no learning outcomes yet. Faculty cannot tag their ILOs until you add them.</div>}
+    <Card title={translateUI("ui.course_learning_outcomes_503861")} scope={tr(course.code + ' only')} dirty={dirty} st={st} onSave={save} onReload={onReload} canSave={!!valid} saveLabel={tr("Save outcomes")}>
+      {!clos.length && <div className="info-banner warning">{translateUI("ui.this_subject_has_no_learning_outcomes_yet_faculty_cannot_tag_thei_0cb03e")}</div>}
       {clos.map((c, i) => (
         <div className="clorow" key={c.key || c.tmp}>
-          <div><span className={'code lg k' + (i % 6)}>{'CLO ' + (i + 1)}</span></div>
+          <div><span className={'code lg k' + (i % 6)}>{translateUI("ui.clo_069efc") + (i + 1)}</span></div>
           <div>
             <div className="cap">
-              <select className="sel" value={c.level} aria-label={'Level of CLO ' + (i + 1)} onChange={(e) => { const v = e.target.value; edit((n) => { n[i].level = v; }); }}>{LEVELS.map((l) => <option key={l}>{l}</option>)}</select>
+              <select className="sel" value={c.level} aria-label={translateUI("ui.level_of_clo_c01e3f") + (i + 1)} onChange={(e) => { const v = e.target.value; edit((n) => { n[i].level = v; }); }}>{LEVELS.map((l) => <option key={l} value={l}>{tr(l)}</option>)}</select>
               <span style={{ marginLeft: 'auto', display: 'flex', gap: 2 }}>
-                <button type="button" className="ib" aria-label={'Move CLO ' + (i + 1) + ' up'} disabled={i === 0} onClick={() => edit((n) => { n.splice(i - 1, 0, n.splice(i, 1)[0]); })}><Ic n="up" /></button>
-                <button type="button" className="ib" aria-label={'Move CLO ' + (i + 1) + ' down'} disabled={i === clos.length - 1} onClick={() => edit((n) => { n.splice(i + 1, 0, n.splice(i, 1)[0]); })}><Ic n="down" /></button>
-                <button type="button" className="ib del" aria-label={'Delete CLO ' + (i + 1)} onClick={() => remove(i)}><Ic n="trash" /></button>
+                <button type="button" className="ib" aria-label={translateUI("ui.move_clo_baa700") + (i + 1) + translateUI("ui.up_459409")} disabled={i === 0} onClick={() => edit((n) => { n.splice(i - 1, 0, n.splice(i, 1)[0]); })}><Ic n="up" /></button>
+                <button type="button" className="ib" aria-label={translateUI("ui.move_clo_baa700") + (i + 1) + translateUI("ui.down_edbf4b")} disabled={i === clos.length - 1} onClick={() => edit((n) => { n.splice(i + 1, 0, n.splice(i, 1)[0]); })}><Ic n="down" /></button>
+                <button type="button" className="ib del" aria-label={translateUI("ui.delete_clo_3a0c81") + (i + 1)} onClick={() => remove(i)}><Ic n="trash" /></button>
               </span>
             </div>
-            <input className="in" value={c.title} maxLength={255} placeholder="Descriptor, e.g. Foundational Knowledge" aria-label={'Title of CLO ' + (i + 1)} onChange={(e) => { const v = e.target.value; edit((n) => { n[i].title = v; }); }} />
-            <div style={{ marginTop: 8 }}><Auto className="in" value={c.statement} label={'Statement of CLO ' + (i + 1)} placeholder="What students will be able to do" onChange={(v) => edit((n) => { n[i].statement = v; })} /></div>
+            <input className="in" value={c.title} maxLength={255} placeholder={translateUI("ui.descriptor_e_g_foundational_knowledge_3cc9d7")} aria-label={translateUI("ui.title_of_clo_04eb8b") + (i + 1)} onChange={(e) => { const v = e.target.value; edit((n) => { n[i].title = v; }); }} />
+            <div style={{ marginTop: 8 }}><Auto className="in" value={c.statement} label={translateUI("ui.statement_of_clo_13551f") + (i + 1)} placeholder={translateUI("ui.what_students_will_be_able_to_do_b7a91b")} onChange={(v) => edit((n) => { n[i].statement = v; })} /></div>
           </div>
           <div className="col2">
-            <span className="lbl">Expected graduate attributes</span>
+            <span className="lbl">{translateUI("ui.expected_graduate_attributes_86f980")}</span>
             <div className="tags">
               {c.egas.map((no) => <Tag key={'e' + no} info={model.tagInfo(pseudo, 'ega:' + no)} onRemove={() => edit((n) => { n[i].egas = n[i].egas.filter((v) => v !== no); })} />)}
-              <button type="button" className="tagbtn" onClick={(e) => setPicker({ i, kind: 'ega', rect: e.currentTarget.getBoundingClientRect() })}>+ EGA</button>
+              <button type="button" className="tagbtn" onClick={(e) => setPicker({ i, kind: 'ega', rect: e.currentTarget.getBoundingClientRect() })}>{translateUI("ui.ega_10b364")}</button>
             </div>
-            <span className="lbl" style={{ marginTop: 12 }}>Program outcomes</span>
+            <span className="lbl" style={{ marginTop: 12 }}>{translateUI("ui.program_outcomes_858de9")}</span>
             <div className="tags">
               {c.pos.map((no) => <Tag key={'p' + no} info={model.tagInfo(pseudo, 'po:' + no)} onRemove={() => edit((n) => { n[i].pos = n[i].pos.filter((v) => v !== no); })} />)}
-              <button type="button" className="tagbtn" onClick={(e) => setPicker({ i, kind: 'po', rect: e.currentTarget.getBoundingClientRect() })}>+ PO</button>
+              <button type="button" className="tagbtn" onClick={(e) => setPicker({ i, kind: 'po', rect: e.currentTarget.getBoundingClientRect() })}>{translateUI("ui.po_279301")}</button>
             </div>
             {model.missingEgas(pseudo, c).length > 0 && (
-              <div className="taghint" style={{ marginTop: 8 }}>The program outcomes you chose support {model.missingEgas(pseudo, c).map((g) => (
-                <button type="button" className="link" key={g} onClick={() => edit((n) => { n[i].egas = toggle(n[i].egas, g); })}>{'+ EGA ' + g + ' ' + model.egaList(pseudo).find((e) => e.no === g).short}</button>
+              <div className="taghint" style={{ marginTop: 8 }}>{translateUI("ui.the_program_outcomes_you_chose_support_de50e2")}{model.missingEgas(pseudo, c).map((g) => (
+                <button type="button" className="link" key={g} onClick={() => edit((n) => { n[i].egas = toggle(n[i].egas, g); })}>{translateUI("ui.ega_aa8fbe") + g + ' ' + model.egaList(pseudo).find((e) => e.no === g).short}</button>
               ))}</div>
             )}
           </div>
         </div>
       ))}
-      <button type="button" className="btn outline" disabled={clos.length >= 20} onClick={() => edit((n) => { n.push({ tmp: ++tmp, id: null, title: '', level: 'Enabling', statement: '', egas: [], pos: [] }); })}>+ Add CLO</button>
+      <StableButton type="button" className="btn outline" disabled={clos.length >= 20} onClick={() => edit((n) => { n.push({ tmp: ++tmp, id: null, title: '', level: 'Enabling', statement: '', egas: [], pos: [] }); })}>{translateUI("ui.add_clo_0485ad")}</StableButton>
       {picker && pc && (
-        <OutcomePicker model={model} d={pseudo} kinds={[picker.kind]} rect={picker.rect} title="Tag outcomes"
+        <OutcomePicker model={model} d={pseudo} kinds={[picker.kind]} rect={picker.rect} title={translateUI("ui.tag_outcomes_9af691")}
           selected={(picker.kind === 'ega' ? pc.egas : pc.pos).map((no) => picker.kind + ':' + no)}
           onClose={() => setPicker(null)}
           onToggle={(t) => { const no = Number(t.split(':')[1]); edit((n) => { const k = picker.kind === 'ega' ? 'egas' : 'pos'; n[picker.i][k] = toggle(n[picker.i][k], no); }); }} />
@@ -248,33 +244,35 @@ function DetailsCard({ course, onSaved, onDeleted, setDirty, notify }) {
   const [st, run] = useSave();
   const mark = (v) => { setD(v); setDirty(v); };
   const change = (k, v) => { setHead((h) => ({ ...h, [k]: v })); mark(true); };
-  const save = () => run(async () => { const saved = await coursesApi.update(course.id, head); mark(false); onSaved(saved); notify('Subject saved.'); });
+  const save = () => run(async () => { const saved = await coursesApi.update(course.id, head); mark(false); onSaved(saved); notify(translateUI("ui.subject_saved_9c680c")); });
   const remove = async () => {
-    if (!window.confirm('Delete ' + course.code + '? Syllabi that use it keep the outcomes they were saved with, but new drafts can no longer pick it.')) return;
-    try { await coursesApi.remove(course.id); notify('Subject deleted.'); onDeleted(); } catch (e) { notify('Delete failed: ' + e.message); }
+    if (!window.confirm(tr('Delete ' + course.code + '? Syllabi that use it keep the outcomes they were saved with, but new drafts can no longer pick it.'))) return;
+    try { await coursesApi.remove(course.id); notify(translateUI("ui.subject_deleted_688bd2")); onDeleted(); } catch (e) { notify(translateUI("ui.delete_failed_c834e9") + e.message); }
   };
   return (
-    <Card title="Subject details" scope={course.code + ' only'} dirty={dirty} st={st} onSave={save} onReload={() => {}} canSave={!!(head.code.trim() && head.title.trim())}>
+    <Card title={translateUI("ui.subject_details_9e2fb9")} scope={tr(course.code + ' only')} dirty={dirty} st={st} onSave={save} onReload={() => {}} canSave={!!(head.code.trim() && head.title.trim())}>
       <div className="form-grid">
-        <label className="field"><span>Subject code</span><input className="mono" value={head.code} maxLength={50} onChange={(e) => change('code', e.target.value)} /></label>
-        <label className="field"><span>Subject title</span><input value={head.title} maxLength={255} onChange={(e) => change('title', e.target.value)} /></label>
+        <label className="field"><span>{translateUI("ui.subject_code_8e42db")}</span><input className="mono" value={head.code} maxLength={50} onChange={(e) => change('code', e.target.value)} /></label>
+        <label className="field"><span>{translateUI("ui.subject_title_dce28f")}</span><input value={head.title} maxLength={255} onChange={(e) => change('title', e.target.value)} /></label>
       </div>
-      <button type="button" className="asg-link sm-del" onClick={remove}>Delete this subject</button>
+      <button type="button" className="asg-link sm-del" onClick={remove}>{translateUI("ui.delete_this_subject_95c760")}</button>
     </Card>
   );
 }
 
+function subjectParts(course) {
+  const setup=course.standards;
+  return { course, inst: { vision: setup.vision, mission: setup.mission, egas: setup.egas, version: setup.versions.vision }, program: { ...course.program, egas: setup.egas, pos: setup.pos, versions: setup.versions, subjects: [{id:course.id,code:course.code,title:course.title}] } };
+}
 export default function SubjectModal({ courseId, onClose, onChanged, notify }) {
+  const dialogRef = useRef(null);
+  const motion = useActionExit(dialogRef);
   const [data, setData] = useState(null); // { course, program, inst }
   const [error, setError] = useState('');
   const dirty = useRef({});
   const setDirtyFor = (key) => (v) => { dirty.current[key] = v; };
 
-  const load = useCallback(async () => {
-    const course = await coursesApi.get(courseId);
-    const [program, inst] = await Promise.all([outcomesApi.program(course.program.code), outcomesApi.institution()]);
-    return { course, program, inst };
-  }, [courseId]);
+  const load = useCallback(async () => subjectParts(await coursesApi.get(courseId)), [courseId]);
   useEffect(() => {
     let live = true;
     load().then((d) => { if (live) setData(d); }).catch((e) => { if (live) setError(e.message); });
@@ -282,9 +280,10 @@ export default function SubjectModal({ courseId, onClose, onChanged, notify }) {
   }, [load]);
 
   const guardedClose = useCallback(() => {
-    if (Object.values(dirty.current).some(Boolean) && !window.confirm('Close without saving your changes?')) return;
-    onClose();
-  }, [onClose]);
+    if (motion.isClosing()) return;
+    if (Object.values(dirty.current).some(Boolean) && !window.confirm(tr('Close without saving your changes?'))) return;
+    motion.dismiss(onClose);
+  }, [onClose, motion.dismiss]);
   useEffect(() => {
     const key = (e) => { if (e.key === 'Escape' && !document.querySelector('.bld2-pop')) guardedClose(); };
     window.addEventListener('keydown', key);
@@ -298,50 +297,50 @@ export default function SubjectModal({ courseId, onClose, onChanged, notify }) {
   }) : null), [data]);
 
   const patch = (part) => setData((d) => ({ ...d, ...part }));
-  const reloadAll = async () => { try { setData(await load()); dirty.current = {}; } catch (e) { notify('Could not reload: ' + e.message); } };
+  const reloadAll = async () => { try { setData(await load()); dirty.current = {}; } catch (e) { notify(translateUI("ui.could_not_reload_6fda26") + e.message); } };
   const course = data && data.course;
 
   return (
-    <div className="overlay" onClick={guardedClose}>
-      <div className="modal sm-modal" role="dialog" aria-modal="true" aria-labelledby="sm-title" onClick={(e) => e.stopPropagation()}>
+    <div className="overlay catalog-overlay" onClick={guardedClose}>
+      <div ref={dialogRef} inert={motion.closing || undefined} className="modal sm-modal catalog-surface" role="dialog" aria-modal="true" aria-labelledby="sm-title" onClick={(e) => e.stopPropagation()}>
         <header className="asg-head">
           <div>
-            <span className="asg-eyebrow">{data ? data.program.code + ' · ' + data.program.name : 'Subject'}</span>
-            <h3 id="sm-title">{course ? course.code + ' · ' + course.title : 'Loading…'}</h3>
-            <small>Vision, mission, graduate attributes, program outcomes and course learning outcomes. Faculty see them read-only in the syllabus builder.</small>
+            <span className="asg-eyebrow">{data ? data.program.code + ' · ' + data.program.name : translateUI("ui.subject_8d183d")}</span>
+            <h3 id="sm-title">{course ? course.code + ' · ' + course.title : translateUI("ui.loading_33ce41")}</h3>
+            <small>{translateUI("ui.vision_mission_graduate_attributes_program_outcomes_and_course_le_8288c7")}</small>
           </div>
-          <button type="button" className="asg-x" onClick={guardedClose} aria-label="Close">✕</button>
+          <button type="button" className="asg-x" onClick={guardedClose} aria-label={translateUI("ui.close_bbfa77")}>✕</button>
         </header>
         <div className="asg-body sm-body">
           {data && setupGaps(data).length > 0 && (
             <div className="info-banner warning" role="status">
-              <b>Setup incomplete.</b> Faculty cannot finish the Learning Outcomes step, or submit a syllabus for this subject, until these are added: {setupGaps(data).join(', ')}.
+              <b>{translateUI("ui.setup_incomplete_2c31f4")}</b>{translateUI("ui.faculty_cannot_finish_the_learning_outcomes_step_or_submit_a_syll_e79eee")}{setupGaps(data).join(', ')}.
             </div>
           )}
-          {error && <div className="info-banner warning">Could not open the subject: {error}</div>}
-          {!data && !error && <div className="empty">Loading…</div>}
+          {error && <div className="info-banner warning">{translateUI("ui.could_not_open_the_subject_feb4d2")}{tr(error)}</div>}
+          {!data && !error && <div className="empty">{translateUI("ui.loading_33ce41")}</div>}
           {data && (
             <div className="sm-stack">
               <ClosCard key={'c' + course.id + '-' + course.version} course={course} program={data.program} model={model}
                 onSaved={(saved) => { patch({ course: saved }); onChanged(); }} onReload={reloadAll} setDirty={setDirtyFor('clos')} notify={notify} />
               <div className="sm-pair">
                 <EgaCard key={'e' + data.program.versions.egas} program={data.program} course={course}
-                  onSaved={(saved) => patch({ program: saved })} onReload={reloadAll} setDirty={setDirtyFor('egas')} notify={notify} />
+                  onSaved={(saved) => { patch(subjectParts(saved)); onChanged(); }} onReload={reloadAll} setDirty={setDirtyFor('egas')} notify={notify} />
                 <PoCard key={'p' + data.program.versions.pos} program={data.program} course={course}
                   onSaved={(saved) => patch({ program: saved })} onReload={reloadAll} setDirty={setDirtyFor('pos')} notify={notify} />
               </div>
               <div className="sm-pair">
-                <VisionCard key={'v' + data.inst.version} inst={data.inst}
-                  onSaved={(saved) => patch({ inst: saved })} onReload={reloadAll} setDirty={setDirtyFor('vision')} notify={notify} />
+                <VisionCard key={'v' + data.inst.version} course={course} inst={data.inst}
+                  onSaved={(saved) => { patch(subjectParts(saved)); onChanged(); }} onReload={reloadAll} setDirty={setDirtyFor('vision')} notify={notify} />
                 <DetailsCard key={'d' + course.id} course={course}
-                  onSaved={(saved) => { patch({ course: { ...saved } }); onChanged(); }} onDeleted={() => { onChanged(); onClose(); }} setDirty={setDirtyFor('details')} notify={notify} />
+                  onSaved={(saved) => { patch({ course: { ...saved } }); onChanged(); }} onDeleted={() => { onChanged(); motion.dismiss(onClose); }} setDirty={setDirtyFor('details')} notify={notify} />
               </div>
             </div>
           )}
         </div>
         <footer className="asg-foot">
-          <span className="asg-summary">Each section saves on its own.</span>
-          <button type="button" className="asg-btn ghost" onClick={guardedClose}>Close</button>
+          <span className="asg-summary">{translateUI("ui.each_section_saves_on_its_own_c077f8")}</span>
+          <button type="button" className="asg-btn ghost" onClick={guardedClose}>{translateUI("ui.close_bbfa77")}</button>
         </footer>
       </div>
     </div>

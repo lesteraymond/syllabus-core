@@ -1,15 +1,20 @@
+import StableButton from '../components/StableButton';
+import { tr } from "../i18n/index.js";
+import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useMemo, useState } from 'react';
 import { fmt } from '../lib/utils';
 import { canChat } from '../lib/chatPartner';
 import { PageHead } from '../components/ui';
-import { users as usersApi } from '../lib/api';
+import { users as usersApi, syllabi as syllabiApi } from '../lib/api';
 import { commentBadge } from '../lib/notificationRoute';
-import { ASSIGNMENT_MESSAGES, assignmentState, canEditSyllabus, courseLockReason, editBlockedReason, toBuilderShape } from '../lib/syllabusRules';
+import { ASSIGNMENT_MESSAGES, assignmentState, canDeleteSyllabus, canEditSyllabus, courseLockReason, editBlockedReason, toBuilderShape } from '../lib/syllabusRules';
 
 const STATUS_LABELS = { draft: 'Draft', submitted: 'Submitted', under_review: 'Under Review', for_revision: 'For Revision', approved: 'Approved', rejected: 'Rejected' };
 
 export default function MySyllabi({ syllabi, user, messages, commentCounts = {}, setEditing, setPage, setHistCode, setChatCode, setCommentCode, handleDelete, setConfirm, notify }) {
   // Programs and subjects an admin assigned to me: a syllabus whose subject is not in the list is read-only.
+  const isFaculty = user.role === 'faculty';
+  const [resuming, setResuming] = useState(null);
   const [mine, setMine] = useState(null);
   useEffect(() => {
     let live = true;
@@ -17,31 +22,32 @@ export default function MySyllabi({ syllabi, user, messages, commentCounts = {},
     return () => { live = false; };
   }, []);
   const state = assignmentState(mine); // 'none' | 'noSubject' | 'ok' | null
-  const nothingAssigned = state === 'none' || state === 'noSubject';
+  const nothingAssigned = user.role === 'faculty' && (state === 'none' || state === 'noSubject');
   const my = useMemo(() => syllabi.filter(s => s.userId === user.id).map(s => ({ ...s, unreadCount: messages.filter(m => m.syllabusId === s.id && m.receiverId === user.id && !m.isRead).length })), [syllabi, user, messages]);
   return (
     <>
-      <PageHead title="My Syllabi" subtitle="View and manage your submitted syllabi." actions={<button className="btn primary" disabled={nothingAssigned} title={nothingAssigned ? ASSIGNMENT_MESSAGES[state] : ''} onClick={() => { setEditing(null); setPage('builder'); }}>+ New Syllabus</button>} />
-      {nothingAssigned && <div className="info-banner warning">{ASSIGNMENT_MESSAGES[state]} You can create a syllabus once a subject is assigned to you.</div>}
+      <PageHead title={translateUI("ui.my_syllabi_3da1e8")} subtitle={translateUI("publication.mySubtitle")} actions={<StableButton className="btn primary" disabled={nothingAssigned} title={nothingAssigned ? tr(ASSIGNMENT_MESSAGES[state]) : ''} onClick={() => { setEditing(null); setPage('builder'); }}>{translateUI("ui.new_syllabus_c4c7a9")}</StableButton>} />
+      {nothingAssigned && <div className="info-banner warning">{tr(ASSIGNMENT_MESSAGES[state])}{translateUI("ui.you_can_create_a_syllabus_once_a_subject_is_assigned_to_you_b8383e")}</div>}
       <div className="syl-grid">
-        {my.map(s => { const lock = courseLockReason(user, mine, s); return <div className="syl-card" key={s.id}>
-          <div className="syl-head"><div className="syl-info"><h4>{s.courseCode}</h4><p>{s.title}</p></div><span className={`status ${s.status}`}>{STATUS_LABELS[s.status] || s.status}</span></div>
-          <div className="syl-meta"><span>{s.program}</span><span>Updated {fmt(s.updatedAt)}</span>{s.unreadCount > 0 && <span className="syl-unread">{s.unreadCount} unread</span>}</div>
-          {s.adminComment && (setCommentCode
-            ? <button type="button" className="feedback-banner feedback-open" title="Open the reviewer comments" onClick={() => setCommentCode(s.id)}>💬 {s.adminComment}</button>
+        {my.map(s => { const lock = courseLockReason(user, mine, s); const isDraft = s.status === 'draft'; const resumable = user.role === 'admin' && s.userId === user.id && s.status === 'under_review'; return <div className="syl-card" key={s.id}>
+          <div className="syl-head"><div className="syl-info"><h4>{s.courseCode}</h4><p>{s.title}</p></div><span className={`status ${s.status}`}>{tr(STATUS_LABELS[s.status] || s.status)}</span></div>
+          <div className="syl-meta"><span>{s.programCode || s.program}</span><span>{translateUI("ui.updated_c95815")}{fmt(s.updatedAt)}</span>{isFaculty && s.unreadCount > 0 && <span className="syl-unread">{s.unreadCount}{translateUI("ui.unread_2630a7")}</span>}</div>
+          {isFaculty && !isDraft && s.adminComment && (setCommentCode
+            ? <button type="button" className="feedback-banner feedback-open" title={translateUI("ui.open_the_reviewer_comments_1c484a")} onClick={() => setCommentCode(s.id)}>💬 {s.adminComment}</button>
             : <div className="feedback-banner">💬 {s.adminComment}</div>)}
           <div className="syl-actions">
-            <button className="btn outline" disabled={!canEditSyllabus(user, s) || !!lock} title={lock || (canEditSyllabus(user, s) ? 'Edit this syllabus (saved as a new version)' : editBlockedReason(s))} onClick={() => { setEditing(toBuilderShape(s)); setPage('builder'); }}>✎ Edit</button>
-            {setCommentCode && (() => { const b = commentBadge(commentCounts[s.id]); return (
-              <button className="btn outline syl-comments" title="Notes from your reviewer about this syllabus" onClick={() => setCommentCode(s.id)}>▤ Comments{b.text && <span className={'syl-badge' + (b.fresh ? ' fresh' : '')} aria-label={b.fresh ? b.text + ' new' : b.text + ' in total'}>{b.text}</span>}</button>
+            <StableButton className="btn outline" disabled={resuming === s.id || (!canEditSyllabus(user, s) && !resumable) || !!lock} title={tr(lock || (canEditSyllabus(user, s) || resumable ? 'Edit this syllabus (saved as a new version)' : editBlockedReason(s)))} onClick={async () => { if (resuming !== null) return; setResuming(s.id); try { if (resumable) await syllabiApi.resumeDraft(s.id); setEditing(toBuilderShape(resumable ? { ...s, status: 'draft' } : s)); setPage('builder'); } catch(error) { notify?.(tr(error.message)); } finally { setResuming(null); } }}>{translateUI("ui.edit_79cae4")}</StableButton>
+            {resumable && <StableButton className="btn outline" onClick={() => setPage('ai')}>{translateUI('publication.checkDraft')}</StableButton>}
+            {isFaculty && !isDraft && setCommentCode && (() => { const b = commentBadge(commentCounts[s.id]); return (
+              <StableButton className="btn outline syl-comments" title={translateUI("ui.notes_from_your_reviewer_about_this_syllabus_6ace96")} onClick={() => setCommentCode(s.id)}>{translateUI("ui.comments_e445b9")}{b.text && <span className={'syl-badge' + (b.fresh ? ' fresh' : '')} aria-label={b.fresh ? b.text + translateUI("ui.new_7cebfd") : b.text + translateUI("ui.in_total_ed532f")}>{b.text}</span>}</StableButton>
             ); })()}
-            {canChat(s) && <button className="btn outline" title="A conversation with your reviewer" onClick={() => { setChatCode(s.id); }}>✉ Message</button>}
-            <button className="btn outline" onClick={() => setHistCode(s.id)}>◷ History</button>
-            <button className="btn danger" onClick={() => setConfirm({ title: 'Delete Syllabus?', message: `Are you sure you want to delete ${s.courseCode}? This cannot be undone.`, label: 'Delete', onConfirm: () => handleDelete(s.id) })}>🗑</button>
+            {isFaculty && canChat(s, user) && <StableButton className="btn outline" title={translateUI("ui.a_conversation_with_your_reviewer_0032bd")} onClick={() => { setChatCode(s.id); }}>{translateUI("ui.message_890761")}</StableButton>}
+            {(!isDraft || user.role === 'admin') && <StableButton className="btn outline" onClick={() => setHistCode(s.id)}>{translateUI("ui.history_fefbcc")}</StableButton>}
+            {canDeleteSyllabus(user, s) && <StableButton className="btn danger" aria-label={translateUI("ui.delete_p0_b3e049", { p0: (s.courseCode || 'draft syllabus') })} onClick={() => setConfirm({ title: translateUI("ui.delete_syllabus_db7e53"), message: translateUI("ui.are_you_sure_you_want_to_delete_p0_this_cannot_be_undone_efea10", { p0: (s.courseCode) }), label: 'Delete', onConfirm: () => handleDelete(s.id) })}>🗑</StableButton>}
           </div>
-          {(s.status === 'submitted' || s.status === 'under_review') && <p className="syl-locked" role="note">{editBlockedReason(s)}</p>}
+          {!resumable && (s.status === 'submitted' || s.status === 'under_review') && <p className="syl-locked" role="note">{tr(editBlockedReason(s))}</p>}
         </div>; })}
-        {my.length === 0 && <div className="empty">No syllabi yet. Click "+ New Syllabus" to get started.</div>}
+        {my.length === 0 && <div className="empty">{translateUI("ui.no_syllabi_yet_click_new_syllabus_to_get_started_2e4bc9")}</div>}
       </div>
     </>
   );

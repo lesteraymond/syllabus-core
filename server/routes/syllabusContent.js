@@ -2,17 +2,15 @@
 // per syllabus, written section by section so autosave sends only what changed.
 // Mounted on /api/syllabi after routes/syllabi.js (different paths, so the two never overlap).
 const express = require('express');
-const { requireAuth } = require('../middleware/auth');
+const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { inTransaction, httpError, sendError } = require('../lib/http');
 const { notifyAdmins } = require('../lib/notify');
 const rules = require('../lib/syllabusRules');
 const { loadCourse } = require('../lib/courses');
 const assignments = require('../lib/assignments');
-const { loadOutcomes } = require('../lib/institution');
-const { findProgram, loadProgram } = require('../lib/programs');
 const { catalogGaps, gapsMessage } = require('../lib/catalogReady');
 const compliance = require('../lib/compliance/service');
-const { changedSections, describeChanges } = require('../lib/versionChange');
+const { changedSections, describeChanges, normalize } = require('../lib/versionChange');
 const { LABEL_SQL, labelsOf } = require('../lib/syllabusLabels');
 const router = express.Router();
 
@@ -61,9 +59,9 @@ const parseId = (raw) => {
 // admins edit, so whatever the client sent for them is replaced. No course chosen means no CLOs.
 async function applyCatalog(db, content) {
   const courseId = content.meta && Number.isInteger(content.meta.courseId) ? content.meta.courseId : null;
-  const course = courseId ? await loadCourse(db, courseId) : null;
+  const course = courseId ? await loadCourse(db, courseId, { lock: true }) : null;
   if (courseId && !course) throw httpError(400, 'That course does not exist');
-  if (course) { content.meta.code = course.code; content.meta.title = course.title; }
+  if (course) { content.meta.code = course.code; content.meta.title = course.title; content.meta.program = course.program.code; }
   content.clos = course ? course.clos : [];
   return course;
 }
@@ -72,10 +70,13 @@ async function applyCatalog(db, content) {
 // syllabus shows these texts (not the live ones), so a later admin edit does not rewrite what was reviewed or approved.
 // Drafts have none and always show the live data. Clients cannot send this key: validateSections refuses it.
 async function catalogSnapshot(db, content) {
-  const institution = await loadOutcomes(db);
-  let program = null;
-  try { program = await loadProgram(db, await findProgram(db, content.meta && content.meta.program ? content.meta.program : '')); } catch { program = null; }
-  return { institution, program: program ? { code: program.code, name: program.name, egas: program.egas, pos: program.pos } : null, savedAt: new Date().toISOString() };
+  const course = content?.meta?.courseId ? await loadCourse(db,content.meta.courseId) : null;
+  const standards = course ? course.standards : require('../lib/subjectStandards').blankStandards();
+  return {
+    institution: { vision: standards.vision, mission: standards.mission, egas: standards.egas },
+    program: course ? { code: course.program.code, name: course.program.name, egas: standards.egas, pos: standards.pos } : null,
+    subjectId: course?.id || null, savedAt: new Date().toISOString(),
+  };
 }
 
 // A new, empty draft. It is the owner's alone: admins never see drafts and no one is notified.
@@ -214,20 +215,45 @@ router.get('/:id/review', requireAuth, async (req, res) => {
 //  - draft           -> first version (v1.0), status submitted, admins notified;
 //  - submitted / under review / for revision -> next version label; for revision becomes submitted again.
 // Approved and rejected syllabi are locked (409). Body: { note? }.
-router.post('/:id/submit', requireAuth, async (req, res) => {
+// Completed administrator revisions are immutable. Review cycles and snapshot timestamps
+// invalidate AI checks, but do not create duplicate content versions.
+function adminRevisionContent(content) {
+  const { reviewCycle, signoff, catalog, ...form } = content || {};
+  const { savedAt, ...standards } = catalog || {};
+  return normalize({ ...form, catalog: standards });
+}
+async function saveAdminRevision(conn, syl, content, me) {
+  const previous = await compliance.latestVersion(conn, syl.syllabus_id);
+  if (previous && JSON.stringify(adminRevisionContent(parseJson(previous.content))) === JSON.stringify(adminRevisionContent(content))) {
+    return previous.version_label;
+  }
+  const label = previous ? rules.nextVersionLabel(previous.version_label) : 'v1.0';
+  await conn.query(
+    `INSERT INTO syllabus_versions (syllabus_id, version_label, title, course_code, curriculum_id, file_path, status_at_save, note, content, created_by)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [syl.syllabus_id, label, content.meta.title, content.meta.code, syl.curriculum_id, syl.file_path, 'under_review',
+      previous ? 'Administrator revision prepared for AI check' : 'Administrator syllabus prepared for AI check', JSON.stringify(content), me.id]
+  );
+  return label;
+}
+
+async function finalizeSyllabus(req, res, publishing = false, preparing = false) {
   try {
     const db = req.app.locals.db;
     const me = req.session.user;
     const id = parseId(req.params.id);
     const note = typeof (req.body || {}).note === 'string' ? req.body.note.trim().slice(0, 1000) : '';
 
+    if (!publishing && !preparing && rules.isAdmin(me)) throw httpError(403, 'Administrators publish their own drafts after an AI check.');
     const complianceReady = await compliance.isInstalled(db);
+    if (publishing && !complianceReady) throw httpError(503, 'AI Checker must be set up before publishing.');
     const outcome = await inTransaction(db, async (conn) => {
       const [rows] = await conn.query('SELECT * FROM syllabi WHERE syllabus_id = ? FOR UPDATE', [id]);
       const syl = rows[0];
       if (!syl || !rules.canView(me, syl)) throw httpError(404, 'Syllabus not found');
       if (!rules.isOwner(me, syl)) throw httpError(403, 'Only the owner can submit a syllabus');
-      if (!rules.canEdit(me, syl)) throw httpError(409, rules.lockedMessage(syl));
+      if (publishing && syl.status !== 'under_review') throw httpError(409, 'Complete the form and send it to AI Checker before approving.');
+      if (!rules.canEdit(me, syl) && !(publishing && rules.isAdmin(me) && syl.status === 'under_review')) throw httpError(409, rules.lockedMessage(syl));
       await assignments.requireCourseAccess(conn, me, syl.course_id);
 
       let content = null;
@@ -254,6 +280,33 @@ router.post('/:id/submit', requireAuth, async (req, res) => {
         const g = compliance.gateError(result);
         throw httpError(409, g.message, { failed: g.failed });
       }
+      if (preparing) {
+        content.reviewCycle=(Number(content.reviewCycle)||0)+1;
+        const json=JSON.stringify(content);
+        if (Buffer.byteLength(json,'utf8')>MAX_CONTENT_BYTES) throw httpError(413,'This syllabus is too large to save.');
+        await conn.query('UPDATE syllabi SET content = ?, content_updated_at = NOW() WHERE syllabus_id = ?',[json,id]);
+        const label = await saveAdminRevision(conn, syl, content, me);
+        await conn.query('UPDATE syllabi SET status = ?, version = ? WHERE syllabus_id = ?',['under_review',label,id]);
+        await conn.query('INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)',[id,me.id,'update','Completed administrator syllabus sent to AI Checker']);
+        return {preparing:true,status:'under_review',label};
+      }
+      if (publishing) {
+        const reviewedRunId=req.body?.reviewedRunId;
+        if (reviewedRunId !== undefined && (!Number.isInteger(reviewedRunId) || reviewedRunId <= 0)) throw httpError(400,'Invalid AI check reference.');
+        const checkContent=compliance.publicationContent(content,content.catalog);
+        const checked=await compliance.cachedRun(conn,id,compliance.hashOf(checkContent));
+        if (reviewedRunId !== undefined && checked?.run_id !== reviewedRunId) throw httpError(409,'The AI check changed. Open the current result before approving.');
+        if (!checked || checked.created_by !== me.id || !checked.conformant || checked.status !== 'scored' || !['ok','none'].includes(checked.ai_status)) throw httpError(409,'Check the current saved form in AI Checker and wait for the check to finish before publishing.');
+      }
+      if (publishing) {
+        // Approval records a decision about the checked revision, not another edit.
+        // Also supports completed admin syllabi created before revision snapshots existed.
+        const label = await saveAdminRevision(conn, syl, content, me);
+        await conn.query('UPDATE syllabi SET status = ?, version = ? WHERE syllabus_id = ?', ['approved', label, id]);
+        await conn.query('INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)',
+          [id, me.id, 'approve', 'Administrator published syllabus after AI check']);
+        return { label, status: 'approved' };
+      }
       // A resubmission after "For revision" is a new version only if the faculty member changed something, and says what.
       if (syl.status === 'for_revision') {
         const previous = await compliance.latestVersion(conn, id);
@@ -265,10 +318,10 @@ router.post('/:id/submit', requireAuth, async (req, res) => {
       if (Buffer.byteLength(snapshot, 'utf8') > MAX_CONTENT_BYTES) throw httpError(413, `This syllabus is too large to submit (limit ${MAX_CONTENT_BYTES / 1024} KB)`);
       await conn.query('UPDATE syllabi SET content = ?, content_updated_at = NOW() WHERE syllabus_id = ?', [snapshot, id]);
 
-      const first = syl.status === 'draft';
+      const first = syl.status === 'draft' || (publishing && !(await compliance.latestVersion(conn,id)));
       const label = first ? 'v1.0' : rules.nextVersionLabel(syl.version);
-      const newStatus = rules.statusAfterOwnerEdit(syl.status);
-      const versionNote = first ? 'Initial version' : (note || 'Updated by author');
+      const newStatus = publishing ? 'approved' : rules.statusAfterOwnerEdit(syl.status);
+      const versionNote = publishing ? 'Published by administrator after AI check' : first ? 'Initial version' : (note || 'Updated by author');
       await conn.query('UPDATE syllabi SET status = ?, version = ? WHERE syllabus_id = ?', [newStatus, label, id]);
       const [versionRow] = await conn.query(
         `INSERT INTO syllabus_versions (syllabus_id, version_label, title, course_code, curriculum_id, file_path, status_at_save, note, content, created_by)
@@ -280,10 +333,12 @@ router.post('/:id/submit', requireAuth, async (req, res) => {
       if (complianceReady) runId = await compliance.storeRun(conn, { syllabusId: id, versionId: versionRow && versionRow.insertId ? versionRow.insertId : null, content, result, createdBy: me.id });
       await conn.query(
         'INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)',
-        [id, me.id, first || syl.status === 'for_revision' ? 'submit' : 'update', (first ? 'Syllabus submitted from the builder' : `Saved as ${label}: ${versionNote}`).slice(0, 500)]
+        [id, me.id, publishing ? 'approve' : first || syl.status === 'for_revision' ? 'submit' : 'update', (publishing ? 'Administrator published syllabus after AI check' : first ? 'Syllabus submitted from the builder' : `Saved as ${label}: ${versionNote}`).slice(0, 500)]
       );
       return { previous: syl.status, label, status: newStatus, courseCode: syl.course_code, title: syl.title, runId, content, result };
     });
+
+    if (outcome.preparing) return res.json({version:outcome.label,status:outcome.status});
 
     // After the commit, outside the transaction: the AI recommendations are a background job. They never delay or fail a submit.
     if (outcome.runId && outcome.result.status === 'scored' && outcome.result.findings.length) {
@@ -292,9 +347,9 @@ router.post('/:id/submit', requireAuth, async (req, res) => {
 
     // After the commit: notifications never affect the result.
     const who = `${me.firstName} ${me.lastName}`;
-    if (outcome.previous === 'draft') {
+    if (!publishing && outcome.previous === 'draft') {
       await notifyAdmins(db, { exceptUserId: me.id, type: 'submission', syllabusId: id, title: `New syllabus submitted: ${outcome.courseCode || outcome.title}`, body: `${who} submitted ${outcome.title || outcome.courseCode} for review.` });
-    } else if (outcome.previous === 'under_review' || outcome.previous === 'for_revision') {
+    } else if (!publishing && (outcome.previous === 'under_review' || outcome.previous === 'for_revision')) {
       await notifyAdmins(db, {
         exceptUserId: me.id, type: 'edit', syllabusId: id,
         title: outcome.previous === 'under_review' ? `Syllabus updated during review: ${outcome.courseCode} (${outcome.label})` : `Syllabus resubmitted: ${outcome.courseCode} (${outcome.label})`,
@@ -303,8 +358,28 @@ router.post('/:id/submit', requireAuth, async (req, res) => {
     }
     res.json({ version: outcome.label, status: outcome.status });
   } catch (err) { sendError(res, err); }
-});
+}
+router.post('/:id/submit', requireAuth, (req,res) => finalizeSyllabus(req,res));
+router.post('/:id/prepare-check', requireAuth, requireAdmin, (req,res) => finalizeSyllabus(req,res,false,true));
+router.post('/:id/publish', requireAuth, requireAdmin, (req,res) => finalizeSyllabus(req,res,true));
 
+router.post('/:id/resume-draft', requireAuth, requireAdmin, async (req,res)=>{
+  try {
+    const id=parseId(req.params.id);const me=req.session.user;
+    await inTransaction(req.app.locals.db,async conn=>{
+      const [[syl]]=await conn.query('SELECT * FROM syllabi WHERE syllabus_id = ? FOR UPDATE',[id]);
+      if(!syl || !rules.canView(me,syl)) throw httpError(404,'Syllabus not found');
+      if(!rules.isOwner(me,syl)) throw httpError(403,'Only the owner can edit syllabus content');
+      if(syl.status!=='under_review') throw httpError(409,'Only a syllabus waiting for an AI decision can return to draft.');
+      // Preserve older completed syllabi before the first editable save overwrites them.
+      const content = parseJson(syl.content);
+      const label = content?.meta ? await saveAdminRevision(conn, syl, content, me) : syl.version;
+      await conn.query('UPDATE syllabi SET status = ?, version = ? WHERE syllabus_id = ?',['draft',label,id]);
+      await conn.query('INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)',[id,me.id,'update','Administrator returned syllabus to draft for editing']);
+    });
+    res.json({status:'draft'});
+  }catch(error){sendError(res,error);}
+});
 module.exports = router;
 module.exports.MAX_CONTENT_BYTES = MAX_CONTENT_BYTES;
 module.exports.catalogSnapshot = catalogSnapshot;

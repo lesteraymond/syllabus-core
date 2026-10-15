@@ -1,3 +1,6 @@
+import StableButton from '../components/StableButton';
+import { tr } from "../i18n/index.js";
+import { t as translateUI } from "../i18n/index.js";
 import { useMemo, useState } from 'react';
 import { PageHead } from '../components/ui';
 import { filterRows } from '../lib/complianceView';
@@ -17,11 +20,11 @@ export default function ReviewApproval({ syllabi, setViewCode, setPage }) {
   const shown = useMemo(() => filterRows(rows, { q }), [rows, q]);
   return (
     <>
-      <PageHead title="Review & Approval" subtitle="Open a submission to read it, then approve it, return it for revision, or reject it." actions={<span className="badge gold">{pending.length} Pending</span>} />
+      <PageHead title={translateUI("ui.review_approval_c4c871")} subtitle={translateUI("ui.open_a_submission_to_read_it_then_approve_it_return_it_for_revisi_2dbe01")} actions={<span className="badge gold">{pending.length}{translateUI("ui.pending_b6d850")}</span>} />
       {waiting > 0 && (
         <div className="info-banner rv-waiting" role="status">
-          <span>{waiting + (waiting === 1 ? ' submission is' : ' submissions are') + ' waiting for the AI Checker. Check ' + (waiting === 1 ? 'it' : 'them') + ' there first; then ' + (waiting === 1 ? 'it appears' : 'they appear') + ' here for your decision.'}</span>
-          {setPage && <button type="button" className="btn outline" onClick={() => setPage('ai')}>Open the AI Checker</button>}
+          <span>{tr(waiting + (waiting === 1 ? ' submission is' : ' submissions are')) + translateUI("ui.waiting_for_the_ai_checker_check_37ebe7") + tr(waiting === 1 ? 'it' : 'them') + translateUI("ui.there_first_then_9f79fd") + tr(waiting === 1 ? 'it appears' : 'they appear') + translateUI("ui.here_for_your_decision_b13f6c")}</span>
+          {setPage && <StableButton type="button" className="btn outline" onClick={() => setPage('ai')}>{translateUI("ui.open_the_ai_checker_ea8956")}</StableButton>}
         </div>
       )}
       <ReviewBoard rows={shown} total={pending.length} onOpen={(r) => setViewCode(r.syllabusId)} q={q} setQ={setQ} />

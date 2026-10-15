@@ -1,3 +1,4 @@
+import { getLocale } from '../i18n/store.js';
 // Every date and time the app shows is Philippine time (Asia/Manila, UTC+8, no daylight saving), whatever the viewer's computer is set to.
 // One place, so a timestamp reads the same on every screen and for every user. Plain functions, tested on their own.
 export const PH_TZ = 'Asia/Manila';
@@ -15,7 +16,7 @@ export function toDate(value) {
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
-const formatter = (opts) => new Intl.DateTimeFormat('en-US', { timeZone: PH_TZ, ...opts });
+const formatter = (opts) => new Intl.DateTimeFormat(getLocale(), { timeZone: PH_TZ, ...opts });
 const clean = (text) => text.replace(/[  ]/g, ' '); // newer ICU puts a narrow no-break space before AM/PM
 
 // "Oct 14, 2026"

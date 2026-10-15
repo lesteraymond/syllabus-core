@@ -50,3 +50,13 @@ test('a draft has no conversation, and a submitted, returned, approved or reject
   assert.strictEqual(canChat(undefined), false);
   assert.match(DRAFT_CHAT_NOTE, /Submit it for review first/);
 });
+
+test('an administrator cannot message themselves about their own syllabus in any status',()=>{
+  for(const status of ['draft','submitted','under_review','for_revision','approved','rejected']) {
+    const syl={userId:admin.id,status,faculty:'Own administrator'};
+    assert.strictEqual(canChat(syl,admin),false);
+    assert.strictEqual(partnerOf({partner:{id:admin.id,name:'Own administrator'},user:admin,syl}),null);
+  }
+  assert.strictEqual(canChat({userId:fay.id,status:'approved'},admin),true);
+  assert.strictEqual(canChat({userId:fay.id,status:'submitted'},fay),true);
+});

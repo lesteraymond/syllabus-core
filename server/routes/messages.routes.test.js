@@ -47,7 +47,7 @@ function makeDb() {
       const rows = sql.includes('JOIN syllabi s ON')
         ? s.messages.filter((m) => (m.sender_id === p[0] || m.receiver_id === p[1]) && s.syllabi[m.syllabus_id].status !== 'draft')
         : s.messages.filter((m) => m.syllabus_id === p[0]);
-      return [rows.map((m) => ({ message_id: m.message_id || 1, is_read: 0, created_at: '2026-03-01T10:00:00Z', message_text: m.text || 'hi', ...m, first_name: person(m.sender_id).first_name, last_name: person(m.sender_id).last_name, avatar_path: null }))];
+      return [rows.map((m) => ({ message_id: m.message_id || 1, is_read: 0, created_at: '2026-03-01T10:00:00Z', message_text: m.text || 'hi', ...m, syllabus_owner_id: s.syllabi[m.syllabus_id].user_id, first_name: person(m.sender_id).first_name, last_name: person(m.sender_id).last_name, avatar_path: null }))];
     }
     if (sql.startsWith('INSERT INTO messages')) { s.messages.push({ message_id: s.messages.length + 100, syllabus_id: p[0], sender_id: p[1], receiver_id: p[2], text: p[3] }); return [{ insertId: s.messages.length + 99 }]; }
     if (sql.startsWith('INSERT INTO notifications')) { s.notifications += 1; return [{}]; }
@@ -162,4 +162,18 @@ test('messages written about a syllabus while it was a draft are kept but not sh
   for (const who of [fay, admin1]) assert.deepStrictEqual((await call(who, '/')).body.map((m) => m.id), [27], who.role);
   db.s.syllabi[11].status = 'submitted';
   assert.deepStrictEqual((await call(admin1, '/')).body.map((m) => m.id).sort(), [26, 27]);
+}));
+
+test('an admin has no messaging partner or thread on their own completed syllabus and cannot send themselves a message',()=>withServer(async({call,db})=>{
+  db.s.syllabi[13]={...db.s.syllabi[10],syllabus_id:13,user_id:admin1.id,status:'approved'};
+  assert.ok(!(await call(admin1)).body.partners[13]);
+  const count=db.s.messages.length;
+  for(const [method,path,body] of [['GET','/13'],['POST','/13',{text:'Self message',receiverId:admin1.id}],['PUT','/read/13']]) {
+    const response=await call(admin1,path,method,body);
+    assert.strictEqual(response.status,409);assert.strictEqual(response.body.code,'self_chat');
+  }
+  assert.strictEqual(db.s.messages.length,count);assert.strictEqual(db.s.notifications,0);
+  db.s.messages.push({syllabus_id:13,sender_id:admin1.id,receiver_id:admin1.id});
+  assert.deepStrictEqual((await call(admin1,'/')).body,[]);
+  assert.strictEqual((await call(admin1,'/10','POST',{text:'Faculty conversation'})).status,200);
 }));
