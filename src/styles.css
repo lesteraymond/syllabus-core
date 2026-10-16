@@ -433,7 +433,6 @@ a:focus-visible {
 	width: 24px;
 	flex: none;
 	text-align: center;
-	font-size: 18px;
 	transition: transform 200ms ease;
 }
 .nav-label {
@@ -526,11 +525,6 @@ a:focus-visible {
 }
 .icon-btn {
 	position: relative;
-	border: 1px solid #e3e7ea;
-	background: #fff;
-	border-radius: 9px;
-	width: 38px;
-	height: 38px;
 }
 .dot {
 	position: absolute;
@@ -906,7 +900,6 @@ a:focus-visible {
 	border-radius: 10px;
 	padding: 11px;
 	display: grid;
-	grid-template-columns: 32px 1fr auto;
 	align-items: center;
 	text-align: left;
 	gap: 8px;
@@ -2074,7 +2067,6 @@ a:focus-visible {
 }
 .profile-name-form .btn {
 	justify-self: end;
-	min-width: 132px;
 	white-space: nowrap;
 }
 @container (max-width: 540px) {
@@ -2153,7 +2145,6 @@ a:focus-visible {
 	box-shadow: 0 12px 34px rgba(0, 0, 0, 0.24);
 	font-size: var(--text-sm);
 	z-index: 99;
-	animation: pop 0.22s ease-out;
 }
 @keyframes pop {
 	from {
@@ -2221,7 +2212,6 @@ a:focus-visible {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	animation: pop 0.18s ease-out;
 }
 .modal-head {
 	display: flex;
@@ -2355,19 +2345,8 @@ a:focus-visible {
 }
 .pill {
 	position: absolute;
-	top: -5px;
-	right: -5px;
-	background: #b3262e;
-	color: white;
-	font-size: var(--text-xs);
-	font-weight: var(--fw-semibold);
-	min-width: 16px;
-	height: 16px;
 	border-radius: 99px;
-	display: grid;
 	place-items: center;
-	padding: 0 4px;
-	border: 2px solid white;
 }
 .msg-drop {
 	position: absolute;
@@ -3813,61 +3792,11 @@ table,
 	margin-bottom: 6px;
 }
 
-/* ---- builder2, steps 4-7 ---- */
-.bld2 .item { display: grid; grid-template-columns: 34px minmax(0, 1fr) 28px; align-items: start; border-bottom: 1px solid var(--line); padding: 3px 0; }
-.bld2 .item .no { font: var(--fw-medium) 13px var(--font-mono); color: var(--muted); padding: 9px 0 0 6px; }
-.bld2 .item .ib { opacity: 0; margin-top: 4px; }
-.bld2 .item:hover .ib, .bld2 .item:focus-within .ib { opacity: 1; }
-.bld2 .sugg { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-.bld2 .sugg button { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 4px 11px; font-size: var(--text-xs); }
-.bld2 .sugg button:hover { background: var(--row-sel); }
-.bld2 .age { font: var(--fw-medium) 11px var(--font-mono); background: var(--warn-bg); color: var(--warn); border-radius: 6px; padding: 2px 7px; margin: 7px 4px 0; white-space: nowrap; height: fit-content; }
-.bld2 .grp { margin-bottom: 20px; }
-.bld2 .grp-h { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-.bld2 .grp-h h3 { font: var(--fw-semibold) 12px var(--font-body); letter-spacing: 0.07em; text-transform: uppercase; margin: 0; color: var(--muted); }
-.bld2 .na { display: flex; gap: 6px; align-items: center; font-size: var(--text-xs); color: var(--muted); }
-.bld2 .gbar { display: flex; height: 14px; border-radius: 7px; overflow: hidden; background: var(--line); margin: 14px 0 4px; }
-.bld2 .gbar i { display: block; border-right: 2px solid var(--card); }
-.bld2 .gbar i:nth-child(1) { background: var(--clo-0); } .bld2 .gbar i:nth-child(2) { background: var(--clo-1); } .bld2 .gbar i:nth-child(3) { background: var(--clo-2); }
-.bld2 .gbar i:nth-child(4) { background: var(--clo-3); } .bld2 .gbar i:nth-child(5) { background: var(--clo-4); } .bld2 .gbar i:nth-child(n+6) { background: var(--clo-5); }
-.bld2 .grow { display: grid; grid-template-columns: 34px minmax(0, 1fr) 84px 96px 28px; gap: 0 8px; align-items: start; border-bottom: 1px solid var(--line); padding: 3px 0; }
-.bld2 .grow .cell.mono { text-align: center; }
-.bld2 .total { display: flex; justify-content: flex-end; gap: 12px; align-items: center; padding: 10px 0; font-weight: var(--fw-semibold); }
-.bld2 .total .mono { font-size: 18px; }
-.bld2 .total.bad .mono { color: var(--warn); }
-.bld2 .eq { background: var(--th-gray); border-radius: 10px; padding: 14px 16px; font: var(--fw-medium) 14px/1.9 var(--font-mono); margin-top: 14px; }
-.bld2 .eq .l { color: var(--muted); font-family: var(--font-body); font-size: var(--text-xs); }
-.bld2 .sw { display: flex; gap: 8px; align-items: center; font-size: var(--text-xs); margin-top: 10px; }
-
-.bld2 .rv { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 20px; align-items: start; }
-.bld2 .chk { display: grid; gap: 4px; }
-.bld2 .chk button { display: grid; grid-template-columns: 26px 1fr; gap: 8px; align-items: start; border: 0; background: transparent; text-align: left; padding: 8px; border-radius: 8px; font-size: var(--text-xs); }
-.bld2 .chk button:hover { background: var(--row-sel); }
-.bld2 .chk .iss { font-size: 12px; color: var(--warn); margin-top: 2px; font-weight: var(--fw-regular); }
-.bld2 .chkdot { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font: var(--fw-semibold) 11px var(--font-mono); background: #e1f4ea; color: #235f45; }
-.bld2 .chkdot.w { background: var(--warn-bg); color: var(--warn); }
-.bld2 .sig { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; margin-top: 10px; }
-.bld2 .sig div { border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px; font-size: var(--text-xs); }
-.bld2 .sig b { display: block; font-size: var(--text-xs); margin-top: 3px; color: var(--muted); font-style: italic; font-weight: var(--fw-medium); }
+/* ---- builder2, steps 4-7 ---- */ .bld2 .gbar i:nth-child(n+6) { background: var(--clo-5); }
 
 /* The finished form is a document: it stays white on any theme. */
-:is(.bld2, .svm-paper) .paper { background: #ffffff; color: #111827; font-family: Arial, Helvetica, "Liberation Sans", sans-serif; font-size: 11.5px; line-height: 1.4; padding: 22px 26px; border: 1px solid #c9d2e4; border-radius: 4px; min-width: 640px; }
-:is(.bld2, .svm-paper) .paper table { border-collapse: collapse; width: 100%; margin-block: 6px; table-layout: fixed; }
-:is(.bld2, .svm-paper) .paper th, :is(.bld2, .svm-paper) .paper td { border: 1px solid #2b2f3a; padding: 4px 5px; vertical-align: top; text-align: left; background: transparent; color: #111827; font-size: 11.5px; font-weight: 400; }
-:is(.bld2, .svm-paper) .paper th { text-align: center; font-weight: 700; }
-:is(.bld2, .svm-paper) .paper ul { margin: 2px 0; padding-left: 15px; }
-:is(.bld2, .svm-paper) .paper .c { text-align: center; }
-:is(.bld2, .svm-paper) .paper .m { color: #5b6475; font-style: italic; }
-:is(.bld2, .svm-paper) .paper .kv2 { display: grid; grid-template-columns: 34px 150px 12px 1fr; margin-block: 3px; }
-@media (max-width: 900px) { .bld2 .rv { grid-template-columns: minmax(0, 1fr); } }
 
 /* ---- Courses & CLOs (admin) ---- */
-.ac-layout {
-	display: grid;
-	grid-template-columns: minmax(280px, 380px) minmax(0, 1fr);
-	gap: 14px;
-	align-items: start;
-}
 
 /* codes and tags: one Code, one Tag, used everywhere */
 .bld2 .code {
@@ -5357,856 +5286,18 @@ table,
 }
 
 /* Builder: what stops a faculty member from moving on */
-.bld2 .blockers {
-	margin-top: 18px;
-	padding: 12px 14px;
-	border: 1px solid var(--line);
-	border-left: 3px solid var(--blue2);
-	border-radius: 0 10px 10px 0;
-	background: var(--th-gray);
-	font-size: var(--text-sm);
-}
-.bld2 .blockers.admin {
-	border-left-color: var(--gold);
-	background: var(--warn-bg);
-	color: var(--warn);
-}
-.bld2 .blockers ul {
-	margin: 6px 0 0;
-	padding-left: 18px;
-}
-.bld2 .blockers li {
-	margin: 2px 0;
-}
-.bld2 .blockers .btn {
-	margin-top: 10px;
-	padding: 6px 12px;
-}
-.bld2 .step-hint.advice {
-	color: var(--muted);
-}
-.bld2 .stepper button.locked {
-	opacity: 0.55;
-	cursor: not-allowed;
-}
-.bld2 .sm-gap {
-	margin-left: 8px;
-	vertical-align: middle;
-}
 
 /* Compliance check: the shared card (builder step 7, admin overview, Review & Approval) and its pieces (additive). */
-.cmp-card {
-	margin: 0 0 18px;
-	padding: 18px;
-	background: var(--card);
-	border: 1px solid var(--line);
-	border-radius: 12px;
-}
-.cmp-card-head {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-	gap: 14px;
-	margin-bottom: 10px;
-}
-.cmp-card-head h3 {
-	margin: 0 0 2px;
-	font: var(--fw-bold) var(--text-md) var(--font-display);
-}
-.cmp-small {
-	margin: 4px 0;
-	font-size: var(--text-xs);
-	color: var(--muted);
-	line-height: 1.5;
-}
-.cmp-top {
-	display: flex;
-	gap: 18px;
-	align-items: center;
-	margin-bottom: 8px;
-}
-.cmp-ring {
-	width: 120px;
-	height: 120px;
-	margin: 0;
-	flex: none;
-}
-.cmp-ring > div {
-	width: 88px;
-	height: 88px;
-}
-.cmp-ring strong {
-	font-size: var(--text-lg);
-}
-.cmp-ring small {
-	font-size: 11px;
-	max-width: 80px;
-	line-height: 1.2;
-}
-.cmp-ring.warn {
-	background: conic-gradient(var(--gold) 0 var(--p), #e3e7ea var(--p));
-}
-.cmp-ring.warn small {
-	color: #8f6310;
-}
-.cmp-ring.none {
-	border-radius: 50%;
-	border: 2px dashed var(--line);
-	display: grid;
-	place-items: center;
-	background: transparent;
-}
-.cmp-ring.none > div {
-	display: grid;
-	place-content: center;
-	text-align: center;
-	background: transparent;
-}
-.cmp-ring.none small {
-	color: var(--muted);
-}
-.cmp-line {
-	margin: 0 0 6px;
-	font-weight: var(--fw-semibold);
-	font-size: var(--text-sm);
-}
-.cmp-chips {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 6px;
-	margin-top: 6px;
-	align-items: center;
-}
-.cmp .chip,
-.cmp-row .chip,
-.cmp-find .chip {
-	font-size: 11px;
-	font-weight: var(--fw-semibold);
-	padding: 3px 8px;
-	border-radius: 99px;
-	background: #eceefb;
-	color: var(--blue);
-	line-height: 1.4;
-}
-.cmp .chip.quiet,
-.cmp-row .chip.quiet {
-	background: #f1f4f3;
-	color: var(--muted);
-	font-weight: var(--fw-medium);
-}
-.cmp .chip.stale,
-.cmp-row .chip.stale {
-	background: #fff0d7;
-	color: #8f6310;
-}
-.cmp .chip.basis.unavailable {
-	background: #ffe8e8;
-	color: #9b1f27;
-}
-.cmp .chip.basis.ai {
-	background: #efeaff;
-	color: var(--purple);
-}
-.cmp .chip.src.rule,
-.cmp-find .chip.src.rule {
-	background: #e7f3ff;
-	color: #3f68a8;
-}
-.cmp .chip.src.ai {
-	background: #efeaff;
-	color: var(--purple);
-}
-.cmp-step {
-	font: inherit;
-	font-size: 11px;
-	font-weight: var(--fw-semibold);
-	color: var(--blue);
-	background: transparent;
-	border: 0;
-	padding: 0 2px;
-	cursor: pointer;
-	text-decoration: underline;
-}
-.cmp-step.plain {
-	color: var(--muted);
-	text-decoration: none;
-	cursor: default;
-	font-weight: var(--fw-medium);
-}
-.cmp-areas {
-	margin-top: 6px;
-}
-.cmp-block {
-	margin: 12px 0;
-	padding: 10px 14px;
-	background: #fff3f3;
-	border: 1px solid #f2bebe;
-	border-radius: 10px;
-	color: #7a2a2a;
-	font-size: var(--text-xs);
-}
-.cmp-block ul {
-	margin: 6px 0 0 18px;
-	padding: 0;
-}
-.cmp-recs {
-	margin-top: 12px;
-}
-.cmp-recs h4 {
-	margin: 0 0 4px;
-	font: var(--fw-bold) var(--text-sm) var(--font-display);
-}
-.cmp-recs .recommend p {
-	margin: 2px 0;
-	font-size: var(--text-xs);
-	color: var(--muted);
-	line-height: 1.5;
-}
-.cmp-find {
-	margin-top: 12px;
-	font-size: var(--text-xs);
-}
-.cmp-find summary {
-	cursor: pointer;
-	font-weight: var(--fw-semibold);
-	color: var(--blue);
-}
-.cmp-find h5 {
-	margin: 10px 0 2px;
-	font-size: var(--text-xs);
-}
-.cmp-find ul {
-	margin: 2px 0 0 18px;
-	padding: 0;
-	color: var(--muted);
-}
-.cmp-find li {
-	margin: 3px 0;
-}
-.cmp-one-head {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	gap: 12px;
-	margin-bottom: 10px;
-}
-.cmp-one {
-	background: var(--card);
-	border: 1px solid var(--line);
-	border-radius: 12px;
-	padding: 18px;
-	box-shadow: var(--shadow);
-}
-.cmp-review {
-	margin-top: 10px;
-}
-.cmp-all .cmp-ring.none {
-	width: 170px;
-	height: 170px;
-}
-.cmp-all .cmp-ring.none > div {
-	width: 125px;
-	height: 125px;
-}
-.cmp-row {
-	display: grid;
-	grid-template-columns: 1fr auto auto;
-	gap: 8px;
-	align-items: center;
-	width: 100%;
-	text-align: left;
-	padding: 10px 0;
-	border: 0;
-	border-bottom: 1px solid #e3e7ea;
-	background: transparent;
-	cursor: pointer;
-	font: inherit;
-	color: inherit;
-}
-.cmp-row:last-child {
-	border-bottom: 0;
-}
-.cmp-row small {
-	display: block;
-	color: var(--muted);
-	font-size: var(--text-xs);
-}
-.cmp-row b.good,
-.cmp-badge.good {
-	color: var(--green);
-}
-.cmp-row b.warn,
-.cmp-badge.warn {
-	color: #8f6310;
-}
-.cmp-badge {
-	margin-left: auto;
-	align-self: center;
-	font-size: var(--text-xs);
-	font-weight: var(--fw-bold);
-	padding: 3px 8px;
-	border-radius: 99px;
-	background: #f1f4f3;
-}
-.cmp-badge.good {
-	background: #e2f6eb;
-}
-.cmp-badge.warn {
-	background: #fff0d7;
-}
-@media (max-width: 640px) {
-	.cmp-top {
-		flex-direction: column;
-		align-items: flex-start;
-	}
-	.cmp-card-head {
-		flex-direction: column;
-	}
-}
 
 /* AI Checker (admin): the list of submitted syllabi by faculty, program and subject, and its filters (additive). */
-.aic-filters .in {
-	width: 100%;
-	margin: 6px 0 8px;
-}
-.aic-filter-row {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 10px;
-}
-.aic-filter-row label small {
-	display: block;
-	color: var(--muted);
-	font-size: var(--text-xs);
-	margin-bottom: 3px;
-}
-.aic-filter-row select {
-	width: 100%;
-}
-.aic-tree {
-	margin-top: 14px;
-	padding: 6px 16px 14px;
-}
-.aic-faculty {
-	padding: 12px 0 4px;
-	border-bottom: 1px solid var(--line);
-}
-.aic-faculty:last-child {
-	border-bottom: 0;
-}
-.aic-faculty > header {
-	display: flex;
-	align-items: baseline;
-	justify-content: space-between;
-	gap: 12px;
-	flex-wrap: wrap;
-}
-.aic-faculty h4 {
-	margin: 0;
-	font: var(--fw-bold) var(--text-md) var(--font-display);
-}
-.aic-program {
-	margin: 8px 0 6px 12px;
-	padding-left: 12px;
-	border-left: 3px solid var(--line);
-}
-.aic-program h5 {
-	margin: 0 0 4px;
-	font-size: var(--text-xs);
-	letter-spacing: 0.3px;
-	text-transform: uppercase;
-	color: var(--muted);
-}
-.aic-row {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) auto 92px;
-	gap: 10px;
-	align-items: center;
-	padding: 7px 0;
-	border-bottom: 1px solid #e3e7ea;
-}
-.aic-row:last-child {
-	border-bottom: 0;
-}
-.aic-open {
-	display: flex;
-	justify-content: space-between;
-	gap: 10px;
-	align-items: center;
-	text-align: left;
-	background: transparent;
-	border: 0;
-	padding: 0;
-	cursor: pointer;
-	font: inherit;
-	color: inherit;
-	min-width: 0;
-}
-.aic-open strong {
-	display: block;
-}
-.aic-open small {
-	display: block;
-	color: var(--muted);
-	font-size: var(--text-xs);
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-.aic-open b {
-	font-size: var(--text-sm);
-}
-.aic-open b.good {
-	color: var(--green);
-}
-.aic-open b.warn {
-	color: #8f6310;
-}
-.aic-state {
-	display: flex;
-	gap: 6px;
-	flex-wrap: wrap;
-	justify-content: flex-end;
-}
-.aic-state .chip {
-	font-size: 11px;
-	font-weight: var(--fw-medium);
-	padding: 3px 8px;
-	border-radius: 99px;
-	background: #f1f4f3;
-	color: var(--muted);
-	white-space: nowrap;
-}
-.aic-state .chip.stale {
-	background: #fff0d7;
-	color: #8f6310;
-}
-.aic-act {
-	padding: 5px 10px;
-	font-size: var(--text-xs);
-}
-.aic-act.none {
-	display: block;
-}
-@media (max-width: 720px) {
-	.aic-row {
-		grid-template-columns: 1fr auto;
-	}
-	.aic-state {
-		grid-column: 1 / -1;
-		justify-content: flex-start;
-	}
-}
 
 /* Review & Approval: the queue by faculty, program and subject, and the window that shows a submitted syllabus (additive). */
-.rq {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-	max-height: 420px;
-	overflow-y: auto;
-	padding-right: 4px;
-}
-.rq-search {
-	width: 100%;
-	margin: 0 0 8px;
-	position: sticky;
-	top: 0;
-	z-index: 1;
-}
-.rq-faculty {
-	padding: 8px 0 2px;
-	border-bottom: 1px solid var(--line);
-}
-.rq-faculty:last-child {
-	border-bottom: 0;
-}
-.rq-faculty > header {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	margin-bottom: 4px;
-}
-.rq-faculty h4 {
-	margin: 0;
-	font: var(--fw-bold) var(--text-sm) var(--font-display);
-}
-.rq-faculty header small {
-	color: var(--muted);
-	font-size: var(--text-xs);
-}
-.rq-program {
-	margin: 4px 0 6px 14px;
-	padding-left: 10px;
-	border-left: 3px solid var(--line);
-}
-.rq-program h5 {
-	margin: 0 0 3px;
-	font-size: var(--text-xs);
-	letter-spacing: 0.3px;
-	text-transform: uppercase;
-	color: var(--muted);
-}
-.rq-row {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	width: 100%;
-	text-align: left;
-	padding: 8px 10px;
-	margin: 2px 0;
-	border: 1px solid transparent;
-	border-radius: 9px;
-	background: transparent;
-	cursor: pointer;
-	font: inherit;
-	color: inherit;
-}
-.rq-row:hover {
-	background: #f4f7fd;
-	border-color: var(--line);
-}
-.rq-row:focus-visible {
-	outline: 2px solid var(--blue2);
-	outline-offset: 1px;
-}
-.rq-row.active {
-	background: #eef3fd;
-	border-color: #c9d6f3;
-}
-.rq-main {
-	flex: 1;
-	min-width: 0;
-}
-.rq-main strong {
-	display: block;
-}
-.rq-main small {
-	display: block;
-	color: var(--muted);
-	font-size: var(--text-xs);
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-.rq-view {
-	font-size: var(--text-xs);
-	font-weight: var(--fw-semibold);
-	color: var(--blue);
-	opacity: 0.7;
-}
-.rq-row:hover .rq-view,
-.rq-row:focus-visible .rq-view {
-	opacity: 1;
-	text-decoration: underline;
-}
-
-.svm-modal {
-	width: min(1120px, 96vw);
-	height: 92vh;
-	max-height: 92vh;
-}
-.svm-modal:focus {
-	outline: none;
-}
-.svm-bar {
-	display: flex;
-	align-items: center;
-	gap: 14px;
-	flex-wrap: wrap;
-	padding: 10px 22px;
-	border-bottom: 1px solid var(--line);
-}
-.svm-version {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-}
-.svm-version small {
-	color: var(--muted);
-	font-size: var(--text-xs);
-}
-.svm-body {
-	background: var(--bg);
-}
-.svm-paper {
-	overflow-x: auto;
-}
-.svm-paper .paper {
-	margin: 0 auto;
-}
-.svm-nofile {
-	max-width: 520px;
-	margin: 40px auto;
-	padding: 22px;
-	background: var(--card);
-	border: 1px solid var(--line);
-	border-radius: 12px;
-	text-align: center;
-}
-.svm-nofile p {
-	color: var(--muted);
-	line-height: 1.6;
-}
-@media (max-width: 720px) {
-	.svm-modal {
-		width: 100vw;
-		height: 100vh;
-		max-height: 100vh;
-		border-radius: 0;
-	}
-	.svm-tabs {
-		margin-left: 0;
-	}
-}
 
 /* Review & Approval, reworked: a board of cards, and a window with the syllabus on one side and the review panel on the other.
    Everything here is built to stay flexible: grids reflow with minmax, every flex child can shrink (min-width: 0), long names and
    notes wrap instead of pushing into a neighbour, and the two sides of the window stack on narrow screens. (Additive.) */
-.rb {
-	display: flex;
-	flex-direction: column;
-	gap: 14px;
-	min-width: 0;
-}
-.rb-grid {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
-	gap: 14px;
-}
-.rb-grid > li {
-	min-width: 0;
-	display: flex;
-}
 
-.svm-modal {
-	width: min(1280px, 96vw);
-	height: min(92vh, 920px);
-	max-height: 92vh;
-	min-width: 0;
-}
-.svm-modal .modal-head > div {
-	min-width: 0;
-}
-.svm-modal .modal-head h3,
-.svm-modal .modal-head small {
-	overflow-wrap: anywhere;
-}
-.svm-bar > * {
-	min-width: 0;
-}
-.svm-version select {
-	max-width: 100%;
-}
-.svm-split {
-	display: flex;
-	flex: 1 1 auto;
-	min-height: 0;
-	min-width: 0;
-}
-.svm-split > .svm-body {
-	flex: 1 1 0;
-	min-width: 0;
-	overflow: auto;
-}
-.svm-aside {
-	flex: 0 0 clamp(300px, 30%, 400px);
-	min-width: 0;
-	overflow-y: auto;
-	padding: 14px;
-	background: var(--card);
-	border-left: 1px solid var(--line);
-}
-@media (max-width: 900px) {
-	.svm-split.has-aside {
-		flex-direction: column;
-		overflow-y: auto;
-	}
-	.svm-split.has-aside > .svm-body {
-		flex: none;
-		overflow: visible;
-	}
-	.svm-split.has-aside > .svm-aside {
-		flex: none;
-		overflow: visible;
-		border-left: 0;
-		border-top: 1px solid var(--line);
-	}
-}
-@media (max-width: 720px) {
-	.svm-modal {
-		width: 100vw;
-		height: 100vh;
-		max-height: 100vh;
-		border-radius: 0;
-	}
-}
-
-.rp {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-	min-width: 0;
-}
-.rp-pane {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-	min-width: 0;
-}
-.rp-note {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-	font-size: var(--text-xs);
-	color: var(--muted);
-}
-.rp-note textarea,
-.ct-form textarea {
-	width: 100%;
-	min-width: 0;
-	box-sizing: border-box;
-	resize: vertical;
-	font: inherit;
-	font-size: var(--text-sm);
-	padding: 10px;
-	color: var(--text);
-	background: #fff;
-	border: 1px solid var(--line);
-	border-radius: 9px;
-}
-.rp-note textarea {
-	min-height: 96px;
-	max-height: 40vh;
-}
-.ct-form textarea {
-	min-height: 70px;
-	max-height: 30vh;
-}
-.rp-actions {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-}
-.rp-link {
-	align-self: flex-start;
-	background: none;
-	border: 0;
-	padding: 0;
-	color: var(--blue);
-	font: inherit;
-	font-size: var(--text-xs);
-	text-decoration: underline;
-	cursor: pointer;
-}
-.rp-chat {
-	gap: 0;
-	border: 1px solid var(--line);
-	border-radius: 10px;
-	overflow: hidden;
-}
-.rp-chat .chat-list {
-	flex: none;
-	min-height: 200px;
-	max-height: min(360px, 45vh);
-}
-.rp-chat .chat-composer,
-.rp-chat .chat-composer input {
-	min-width: 0;
-}
-
-.ct {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-	min-width: 0;
-}
-.ct-list {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	max-height: min(340px, 45vh);
-	overflow-y: auto;
-}
-.ct-item {
-	padding: 10px 12px;
-	min-width: 0;
-	background: #fff;
-	border: 1px solid var(--line);
-	border-radius: 10px;
-}
-.ct-item.revision {
-	border-color: #f2d9a6;
-	background: #fffaf0;
-}
-.ct-item.rejection {
-	border-color: #f2bebe;
-	background: #fff5f5;
-}
-.ct-item.approval {
-	border-color: #bfe5cf;
-	background: #f4fbf7;
-}
-.ct-item header {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 4px 10px;
-	align-items: baseline;
-}
-.ct-item header small {
-	margin-left: auto;
-	color: var(--muted);
-}
-.ct-item p {
-	margin: 4px 0 0;
-	font-size: var(--text-sm);
-	line-height: 1.5;
-	white-space: pre-wrap;
-	overflow-wrap: anywhere;
-}
-.ct-type {
-	padding: 2px 7px;
-	border-radius: 99px;
-	background: #eceefb;
-	color: var(--blue);
-	font-size: 11px;
-	font-weight: var(--fw-bold);
-}
-.ct-form {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-}
-.ct-form .btn {
-	align-self: flex-end;
-}
-
-/* the compliance card inside the window must also shrink instead of overflowing */
-.cmp-top {
-	flex-wrap: wrap;
-}
-.cmp-head {
-	flex: 1 1 220px;
-	min-width: 0;
-}
-.cmp .check-row {
-	grid-template-columns: minmax(0, 1fr) 46px 28px;
-}
-.cmp-recs .recommend {
-	grid-template-columns: 56px minmax(0, 1fr);
-}
-.cmp-recs .recommend > div,
-.cmp-block li,
-.cmp-find li {
-	min-width: 0;
-	overflow-wrap: anywhere;
-}
-.overlay-confirm {
-	z-index: 90;
-} /* above every stacked modal, below the toast */
+/* the compliance card inside the window must also shrink instead of overflowing */ /* above every stacked modal, below the toast */
 
 /* ============================================================================================================================
    Review & Approval: the look. One block, so it can be tuned in one place. Brand colours come from the app tokens; each program
@@ -6214,120 +5305,29 @@ table,
    flexible; nothing here sets a fixed width. Neutral colours use the theme tokens so the dark theme keeps working; the decision
    colours carry their own background so their contrast does not depend on the theme (a test checks the pairs).
    ========================================================================================================================== */
-.rb,
-.rp,
-.svm-modal {
-	--rv-radius: 18px;
-	--rv-approve: #17794d;
-	--rv-approve-ink: #ffffff;
-	--rv-revise: #8f6310;
-	--rv-revise-bg: #fff4dc;
-	--rv-reject: #a8262a;
-	--rv-reject-bg: #fdecec;
-	--rv-shadow:
-		0 1px 2px rgba(15, 35, 85, 0.05), 0 10px 28px rgba(15, 35, 85, 0.07);
-}
 
 /* the board search */
-.rb-searchbox {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	width: 100%;
-	max-width: 440px;
-	padding: 0 14px;
-	min-height: 46px;
-	background: var(--card);
-	border: 1px solid var(--line);
-	border-radius: 14px;
-	box-shadow: 0 1px 2px rgba(15, 35, 85, 0.04);
-	color: var(--muted);
-}
-.rb-searchbox:focus-within {
-	border-color: var(--blue2);
-	box-shadow: 0 0 0 3px rgba(23, 73, 189, 0.15);
-}
-.rb-searchbox input {
-	flex: 1 1 0;
-	min-width: 0;
-	border: 0;
-	outline: 0;
-	background: transparent;
-	color: var(--text);
-	font: inherit;
-	font-size: var(--text-sm);
-	padding: 10px 0;
-}
-.rb-grid {
-	gap: 16px;
-}
 
 /* a card: the program is its colour, the subject is its headline, the faculty member signs it */
 .rb-card {
-	position: relative;
-	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
 	gap: 12px;
-	width: 100%;
-	min-width: 0;
-	min-height: 156px;
-	padding: 22px 20px 18px;
 	overflow: hidden;
-	text-align: left;
-	font: inherit;
-	color: inherit;
-	cursor: pointer;
-	background: var(--bg);
-	border: 1px solid var(--line);
-	border-radius: var(--rv-radius);
-	box-shadow: var(--rv-shadow);
-	transition:
-		transform 0.16s ease,
-		box-shadow 0.16s ease,
-		border-color 0.16s ease;
 }
 .rb-card {
 	border-color: color-mix(in srgb, var(--tone) 24%, var(--line));
 }
 .rb-card::before {
-	content: "";
 	position: absolute;
 	inset: 0 0 auto 0;
 	height: 5px;
 	background: var(--tone);
 }
-.rb-card:hover {
-	transform: translateY(-3px);
-	border-color: var(--tone);
-	box-shadow:
-		0 2px 4px rgba(15, 35, 85, 0.06),
-		0 16px 34px rgba(15, 35, 85, 0.13);
-}
-.rb-card:focus-visible {
-	outline: 3px solid var(--tone);
-	outline-offset: 3px;
-}
 .rb-pill {
-	display: inline-flex;
-	max-width: 100%;
-	padding: 4px 11px;
 	border-radius: 99px;
-	background: var(--tone-soft);
-	color: var(--tone);
-	font-size: 12px;
-	font-weight: var(--fw-bold);
-	line-height: 1.35;
-	letter-spacing: 0.2px;
-	overflow-wrap: anywhere;
-}
-.rb-subject {
-	font: var(--fw-bold) 19px / 1.28 var(--font-display);
-	color: var(--text);
-	overflow-wrap: anywhere;
 }
 .rb-who {
-	display: flex;
 	align-items: center;
 	gap: 10px;
 	width: 100%;
@@ -6337,248 +5337,36 @@ table,
 	border-top: 1px dashed color-mix(in srgb, var(--tone) 30%, var(--line));
 }
 .rb-who .avatar {
-	width: 38px;
-	height: 38px;
 	flex: none;
-	background: var(--tone-soft);
-	color: var(--tone);
-	border: 2px solid var(--bg);
-	box-shadow: 0 0 0 2px var(--tone);
-	font-size: 13px;
 }
 .rb-name {
 	flex: 1 1 0;
-	min-width: 0;
-	font-size: var(--text-sm);
 	font-weight: var(--fw-semibold);
-	color: var(--muted);
-	overflow-wrap: anywhere;
 }
 .rb-go {
-	position: absolute;
-	top: 16px;
-	right: 16px;
-	color: var(--tone);
-	opacity: 0;
 	transform: translate(-4px, 4px);
-	transition:
-		opacity 0.16s ease,
-		transform 0.16s ease;
 }
 .rb-card:hover .rb-go,
 .rb-card:focus-visible .rb-go {
-	opacity: 1;
 	transform: none;
-}
-@media (prefers-reduced-motion: reduce) {
-	.rb-card,
-	.rb-go {
-		transition: none;
-	}
-	.rb-card:hover {
-		transform: none;
-	}
 }
 
 /* the window header */
-.svm-head {
-	align-items: center;
-	gap: 14px;
-	padding: 18px 22px;
-	background: linear-gradient(180deg, var(--tone-soft), var(--card));
-	border-bottom: 1px solid color-mix(in srgb, var(--tone) 22%, var(--line));
-	box-shadow: inset 0 4px 0 var(--tone);
-}
-.svm-av {
-	width: 52px;
-	height: 52px;
-	flex: none;
-	font-size: 17px;
-	background: var(--tone-soft);
-	color: var(--tone);
-	border: 3px solid var(--card);
-	box-shadow: 0 0 0 2px var(--tone);
-}
-.svm-who {
-	flex: 1 1 0;
-	min-width: 0;
-}
-.svm-who h3 {
-	margin: 0 0 6px;
-	font: var(--fw-bold) 20px / 1.2 var(--font-display);
-}
-.svm-meta {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 6px 10px;
-}
-.svm-subject {
-	font-size: var(--text-sm);
-	color: var(--text);
-	font-weight: var(--fw-semibold);
-	overflow-wrap: anywhere;
-	min-width: 0;
-}
-.svm-bar {
-	background: var(--card);
-}
-.svm-tabs {
-	display: inline-flex;
-	gap: 4px;
-	padding: 4px;
-	border-radius: 12px;
-	background: color-mix(in srgb, var(--muted) 12%, var(--card));
-	border: 0;
-}
-.svm-tabs button {
-	min-height: 36px;
-	padding: 0 14px;
-	border: 0;
-	border-radius: 9px;
-	background: transparent;
-	color: var(--muted);
-	font: inherit;
-	font-size: var(--text-sm);
-	font-weight: var(--fw-semibold);
-	cursor: pointer;
-}
-.svm-tabs button.active {
-	background: var(--card);
-	color: var(--text);
-	box-shadow: 0 1px 3px rgba(15, 35, 85, 0.16);
-}
-.svm-tabs button:focus-visible {
-	outline: 2px solid var(--blue2);
-	outline-offset: 1px;
-}
 
 /* the panel */
-.rp-tabs {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 4px;
-	padding: 4px;
-	border-radius: 14px;
-	background: color-mix(in srgb, var(--muted) 12%, var(--card));
-	border: 0;
-}
-.rp-tabs button {
-	flex: 1 1 auto;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: 7px;
-	min-height: 40px;
-	padding: 0 12px;
-	border: 0;
-	border-radius: 10px;
-	background: transparent;
-	color: var(--muted);
-	font: inherit;
-	font-size: var(--text-sm);
-	font-weight: var(--fw-semibold);
-	cursor: pointer;
-	white-space: nowrap;
-}
-.rp-tabs button.active {
-	background: var(--card);
-	color: var(--text);
-	box-shadow: 0 1px 3px rgba(15, 35, 85, 0.16);
-}
-.rp-tabs button:focus-visible {
-	outline: 2px solid var(--blue2);
-	outline-offset: 1px;
-}
-.rp-count {
-	min-width: 20px;
-	padding: 0 6px;
-	border-radius: 99px;
-	background: var(--rv-reject);
-	color: #fff;
-	font-size: 11px;
-	font-weight: var(--fw-bold);
-	line-height: 20px;
-	text-align: center;
-}
-.rp-status {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	margin: 0;
-	padding: 12px 14px;
-	border-radius: 12px;
-	font-size: var(--text-sm);
-	font-weight: var(--fw-semibold);
-	line-height: 1.4;
-}
-.rp-status.waiting {
-	background: var(--rv-revise-bg);
-	color: var(--rv-revise);
-}
-.rp-status.done {
-	background: color-mix(in srgb, var(--muted) 12%, var(--card));
-	color: var(--muted);
-}
-.rp-status svg {
-	flex: none;
-}
 
 /* the three decisions: one solid primary, one warm outline, one quiet red */
-.rp-actions {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-}
 .act {
-	display: flex;
-	align-items: center;
-	gap: 14px;
-	width: 100%;
-	min-height: 60px;
-	padding: 10px 16px;
-	border-radius: 14px;
-	text-align: left;
-	font: inherit;
-	cursor: pointer;
-	border: 1.5px solid transparent;
 	transition:
 		transform 0.12s ease,
 		box-shadow 0.12s ease;
 }
-.act > span {
-	display: flex;
-	flex-direction: column;
-	gap: 1px;
-	min-width: 0;
-}
-.act strong {
-	font-size: var(--text-sm);
-	font-weight: var(--fw-bold);
-	line-height: 1.25;
-	overflow-wrap: anywhere;
-}
-.act small {
-	font-size: 12px;
-	font-weight: var(--fw-medium);
-	line-height: 1.35;
-	opacity: 0.9;
-	overflow-wrap: anywhere;
-}
-.act svg {
-	flex: none;
-}
 .act:hover:not(:disabled) {
 	transform: translateY(-1px);
-	box-shadow: 0 8px 18px rgba(15, 35, 85, 0.14);
 }
 .act:focus-visible {
 	outline: 3px solid var(--blue2);
 	outline-offset: 2px;
-}
-.act:disabled {
-	opacity: 0.45;
-	cursor: not-allowed;
 }
 .act-approve {
 	background: var(--rv-approve);
@@ -6608,199 +5396,11 @@ table,
 }
 
 /* the second click: a sheet in the decision own colour */
-.rp-confirm {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-	padding: 14px;
-	border-radius: 14px;
-	border: 1.5px solid;
-	font-size: var(--text-sm);
-	line-height: 1.45;
-}
-.rp-confirm > p {
-	display: flex;
-	gap: 10px;
-	align-items: flex-start;
-	margin: 0;
-	font-weight: var(--fw-semibold);
-}
-.rp-confirm > p svg {
-	flex: none;
-}
-.rp-confirm > div {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
-	justify-content: flex-end;
-}
-.rp-confirm.approve {
-	background: color-mix(in srgb, var(--rv-approve) 9%, #fff);
-	border-color: var(--rv-approve);
-	color: #0f4f32;
-}
-.rp-confirm.revise {
-	background: var(--rv-revise-bg);
-	border-color: var(--rv-revise);
-	color: var(--rv-revise);
-}
-.rp-confirm.reject {
-	background: var(--rv-reject-bg);
-	border-color: var(--rv-reject);
-	color: var(--rv-reject);
-}
-.rp-cancel,
-.rp-go {
-	min-height: 44px;
-	padding: 0 18px;
-	border-radius: 12px;
-	font: inherit;
-	font-size: var(--text-sm);
-	font-weight: var(--fw-bold);
-	cursor: pointer;
-}
-.rp-cancel {
-	background: #fff;
-	border: 1.5px solid currentColor;
-	color: inherit;
-}
-.rp-go {
-	border: 1.5px solid transparent;
-	color: #fff;
-}
-.rp-confirm.approve .rp-go {
-	background: var(--rv-approve);
-}
-.rp-confirm.revise .rp-go {
-	background: var(--rv-revise);
-}
-.rp-confirm.reject .rp-go {
-	background: var(--rv-reject);
-}
-.rp-cancel:disabled,
-.rp-go:disabled {
-	opacity: 0.55;
-	cursor: not-allowed;
-}
-.rp-cancel:focus-visible,
-.rp-go:focus-visible {
-	outline: 3px solid var(--blue2);
-	outline-offset: 2px;
-}
-.rp-link {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	min-height: 36px;
-}
 
 /* comments: the reason of a decision reads as a coloured note */
-.ct-item {
-	border-radius: 12px;
-	border-left-width: 4px;
-}
-.ct-type {
-	background: color-mix(in srgb, var(--muted) 14%, var(--card));
-	color: var(--text);
-}
-.ct-item.revision {
-	border-left-color: var(--rv-revise);
-}
-.ct-item.rejection {
-	border-left-color: var(--rv-reject);
-}
-.ct-item.approval {
-	border-left-color: var(--rv-approve);
-}
-.ct-item.comment {
-	border-left-color: var(--blue2);
-}
 
 /* Faculty: the Comments button on a card, the window that shows a reviewer comments, and the New marker (additive).
    Everything wraps and shrinks like the rest of the review screens: nothing here has a fixed width. */
-.feedback-open {
-	display: block;
-	width: 100%;
-	text-align: left;
-	font: inherit;
-	font-size: var(--text-xs);
-	cursor: pointer;
-	overflow-wrap: anywhere;
-}
-.feedback-open:hover {
-	border-color: #e9c780;
-	background: #fff2d6;
-}
-.feedback-open:focus-visible {
-	outline: 2px solid var(--blue2);
-	outline-offset: 2px;
-}
-.syl-comments {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-}
-.syl-badge {
-	min-width: 20px;
-	padding: 0 6px;
-	border-radius: 99px;
-	background: color-mix(in srgb, var(--muted) 16%, var(--card));
-	color: var(--text);
-	font-size: 11px;
-	font-weight: var(--fw-bold);
-	line-height: 18px;
-	text-align: center;
-}
-.syl-badge.fresh {
-	background: var(--red);
-	color: #fff;
-}
-
-.fc-modal {
-	width: min(620px, 96vw);
-	max-height: min(88vh, 760px);
-	min-width: 0;
-}
-.fc-title {
-	min-width: 0;
-}
-.fc-title h3,
-.fc-title small {
-	overflow-wrap: anywhere;
-}
-.fc-body {
-	min-width: 0;
-	background: var(--bg);
-}
-.fc-hint {
-	margin: 0 0 12px;
-	font-size: var(--text-xs);
-	color: var(--muted);
-	line-height: 1.5;
-}
-.fc-body .ct-list {
-	max-height: none;
-	overflow: visible;
-}
-.modal-foot {
-	flex-wrap: wrap;
-}
-.ct-new {
-	padding: 2px 8px;
-	border-radius: 99px;
-	background: var(--red);
-	color: #fff;
-	font-size: 11px;
-	font-weight: var(--fw-bold);
-}
-@media (max-width: 720px) {
-	.fc-modal {
-		width: 100vw;
-		max-height: 100vh;
-		height: 100vh;
-		border-radius: 0;
-	}
-}
 
 /* Builder: what stops a faculty member from moving on */
 .bld2 .blockers { margin-top: 18px; padding: 12px 14px; border: 1px solid var(--line); border-left: 3px solid var(--blue2); border-radius: 0 10px 10px 0; background: var(--th-gray); font-size: var(--text-sm); }
@@ -6910,8 +5510,6 @@ table,
 .rq-main small { display: block; color: var(--muted); font-size: var(--text-xs); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rq-view { font-size: var(--text-xs); font-weight: var(--fw-semibold); color: var(--blue); opacity: 0.7; }
 .rq-row:hover .rq-view, .rq-row:focus-visible .rq-view { opacity: 1; text-decoration: underline; }
-
-.svm-modal { width: min(1120px, 96vw); height: 92vh; max-height: 92vh; }
 .svm-modal:focus { outline: none; }
 .svm-bar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 10px 22px; border-bottom: 1px solid var(--line); }
 .svm-version { display: flex; align-items: center; gap: 8px; }
@@ -6921,13 +5519,13 @@ table,
 .svm-paper .paper { margin: 0 auto; }
 .svm-nofile { max-width: 520px; margin: 40px auto; padding: 22px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; text-align: center; }
 .svm-nofile p { color: var(--muted); line-height: 1.6; }
-@media (max-width: 720px) { .svm-modal { width: 100vw; height: 100vh; max-height: 100vh; border-radius: 0; } .svm-tabs { margin-left: 0; } }
+@media (max-width: 720px) { .svm-tabs { margin-left: 0; } }
 
 /* Review & Approval, reworked: a board of cards, and a window with the syllabus on one side and the review panel on the other.
    Everything here is built to stay flexible: grids reflow with minmax, every flex child can shrink (min-width: 0), long names and
    notes wrap instead of pushing into a neighbour, and the two sides of the window stack on narrow screens. (Additive.) */
 .rb { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
-.rb-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 14px; }
+.rb-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); }
 .rb-grid > li { min-width: 0; display: flex; }
 
 .svm-modal { width: min(1280px, 96vw); height: min(92vh, 920px); max-height: 92vh; min-width: 0; }
@@ -6951,7 +5549,6 @@ table,
 .rp-note textarea, .ct-form textarea { width: 100%; min-width: 0; box-sizing: border-box; resize: vertical; font: inherit; font-size: var(--text-sm); padding: 10px; color: var(--text); background: #fff; border: 1px solid var(--line); border-radius: 9px; }
 .rp-note textarea { min-height: 96px; max-height: 40vh; }
 .ct-form textarea { min-height: 70px; max-height: 30vh; }
-.rp-actions { display: flex; flex-direction: column; gap: 8px; }
 .rp-link { align-self: flex-start; background: none; border: 0; padding: 0; color: var(--blue); font: inherit; font-size: var(--text-xs); text-decoration: underline; cursor: pointer; }
 .rp-chat { gap: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
 .rp-chat .chat-list { flex: none; min-height: 200px; max-height: min(360px, 45vh); }
@@ -6959,14 +5556,14 @@ table,
 
 .ct { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .ct-list { display: flex; flex-direction: column; gap: 8px; max-height: min(340px, 45vh); overflow-y: auto; }
-.ct-item { padding: 10px 12px; min-width: 0; background: #fff; border: 1px solid var(--line); border-radius: 10px; }
+.ct-item { padding: 10px 12px; min-width: 0; background: #fff; border: 1px solid var(--line); }
 .ct-item.revision { border-color: #f2d9a6; background: #fffaf0; }
 .ct-item.rejection { border-color: #f2bebe; background: #fff5f5; }
 .ct-item.approval { border-color: #bfe5cf; background: #f4fbf7; }
 .ct-item header { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
 .ct-item header small { margin-left: auto; color: var(--muted); }
 .ct-item p { margin: 4px 0 0; font-size: var(--text-sm); line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
-.ct-type { padding: 2px 7px; border-radius: 99px; background: #eceefb; color: var(--blue); font-size: 11px; font-weight: var(--fw-bold); }
+.ct-type { padding: 2px 7px; border-radius: 99px; font-size: 11px; font-weight: var(--fw-bold); }
 .ct-form { display: flex; flex-direction: column; gap: 8px; }
 .ct-form .btn { align-self: flex-end; }
 
@@ -6996,7 +5593,6 @@ table,
 .rb-searchbox { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 440px; padding: 0 14px; min-height: 46px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 1px 2px rgba(15, 35, 85, 0.04); color: var(--muted); }
 .rb-searchbox:focus-within { border-color: var(--blue2); box-shadow: 0 0 0 3px rgba(23, 73, 189, 0.15); }
 .rb-searchbox input { flex: 1 1 0; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--text); font: inherit; font-size: var(--text-sm); padding: 10px 0; }
-.rb-grid { gap: 16px; }
 
 /* a card: the same tile as the dashboard .stat-card (white, 1px line, 12px radius, --shadow, 35px icon chip on the left, uppercase muted
    label, bold navy value, small muted note). Program = label, subject = value, faculty = chip + note. The markup is unchanged: .rb-who is
