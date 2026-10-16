@@ -1,4 +1,4 @@
-import { GROUPS, renderMarkup } from '../../lib/syllabusModel';
+import { GROUPS, PLAN_HEADINGS, renderMarkup } from '../../lib/syllabusModel';
 import { CURRENT_SCHOOL_YEAR, COLLEGE_NAME, INSTITUTION_NAME, INSTITUTION_ADDRESS } from '../../lib/schoolYear';
 
 const html = (t) => ({ __html: renderMarkup(t) });
@@ -45,7 +45,7 @@ export default function FormPaper({ d, model, preparedBy }) {
       <table>
         <colgroup><col style={{ width: '12%' }} /><col style={{ width: '22%' }} /><col style={{ width: '15%' }} /><col style={{ width: '18%' }} /><col style={{ width: '17%' }} /><col /></colgroup>
         <tbody>
-          <tr><th>SCHEDULE</th><th>INTENDED LEARNING OUTCOMES (ILO)</th><th>COURSE CONTENTS</th><th>SUGGESTED LEARNING ACTIVITIES</th><th>SUGGESTED ASSESSMENT TASKS</th><th>EXPECTED VALUE/S TO BE INTEGRATED</th></tr>
+          <tr><th>SCHEDULE</th>{Object.values(PLAN_HEADINGS).map((h) => <th key={h}>{h.toUpperCase()}</th>)}</tr>
           {d.plan.map((r) => (
             <tr key={r.id}>
               <td>{'Week ' + r.week}</td>

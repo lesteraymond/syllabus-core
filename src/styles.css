@@ -2814,6 +2814,11 @@ table,
 .bld2 .plan {
 	@apply tw:[min-width:900px] tw:table-fixed;
 }
+/* The text in the plan's cells starts where its column heading starts. A cell is an input or block with its own inset (a 1px border and
+   7px of padding), which put the text 8px to the right of the heading; the field is pulled back by that inset, so the hover and focus
+   box still sits inside the cell's own padding. The ILO column has its own label layout and is left alone. */
+.bld2 .plan td > .cell, .bld2 .plan .wkc > .cell { @apply tw:[margin-inline:-8px] tw:[width:calc(100%_+_16px)]; }
+.bld2 .plan td > .fmt, .bld2 .plan .wkc > .fmt { @apply tw:[margin-inline:-7px]; }
 .bld2 .cell {
 	@apply tw:block tw:w-full tw:[border:1px_solid_transparent] tw:[background:transparent];
 	@apply tw:[border-radius:6px] tw:[padding:4px_7px] tw:resize-none tw:overflow-hidden tw:[line-height:1.5];

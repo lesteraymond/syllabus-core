@@ -53,7 +53,7 @@ export default function PlanStep({ d, apply, model, filter, setFilter, onDeleteR
       <div className="scroll">
         <table className="ledger plan">
           <colgroup><col style={{ width: '96px' }} /><col style={{ width: '31%' }} /><col style={{ width: '14%' }} /><col style={{ width: '17%' }} /><col style={{ width: '15%' }} /><col /></colgroup>
-          <thead><tr><th>{translateUI("ui.week_f82be6")}</th><th>{translateUI("ui.intended_learning_outcomes_7e7669")}</th><th>{translateUI("ui.course_contents_1b687b")}</th><th>{translateUI("ui.learning_activities_87fc76")}</th><th>{translateUI("ui.assessment_tasks_795936")}</th><th>{translateUI("ui.values_to_integrate_bf0acd")}</th></tr></thead>
+          <thead><tr><th>{translateUI("ui.week_f82be6")}</th><th>{translateUI("plan.heading.ilo")}</th><th>{translateUI("plan.heading.contents")}</th><th>{translateUI("plan.heading.activities")}</th><th>{translateUI("plan.heading.tasks")}</th><th>{translateUI("plan.heading.values")}</th></tr></thead>
           <tbody>
             {shown.map((r) => {
               const full = d.plan.findIndex((y) => y.id === r.id);

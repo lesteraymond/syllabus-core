@@ -1684,3 +1684,13 @@ const datePicker = {
   "builder.draftSaved": ["Draft saved. You can continue it from My Syllabi.", "Na-save ang draft. Maaari mo itong ipagpatuloy sa My Syllabi."],
 };
 for (const [key, [en, tl]] of Object.entries(datePicker)) { extraEn[key] = en; extraTl[key] = tl; }
+
+// The learning plan's column headings (src/lib/syllabusModel.js PLAN_HEADINGS is the English wording of the institutional form).
+const planHeadings = {
+  "plan.heading.ilo": ["Intended Learning Outcomes (ILO)", "Mga Inaasahang Kinalabasan ng Pagkatuto (ILO)"],
+  "plan.heading.contents": ["Course Contents", "Nilalaman ng Kurso"],
+  "plan.heading.activities": ["Suggested Learning Activities", "Mga Iminumungkahing Gawain sa Pagkatuto"],
+  "plan.heading.tasks": ["Suggested Assessment Tasks", "Mga Iminumungkahing Gawain sa Pagtatasa"],
+  "plan.heading.values": ["Expected Value/s To Be Integrated", "Inaasahang Pagpapahalaga na Isasama"],
+};
+for (const [key, [en, tl]] of Object.entries(planHeadings)) { extraEn[key] = en; extraTl[key] = tl; }
