@@ -87,7 +87,7 @@ export default function PlanStep({ d, apply, model, filter, setFilter, onDeleteR
                             <span className="lb">{translateUI("ui.ilo_080517") + (j + 1)}</span>
                             {edit
                               ? <Auto value={il.text} placeholder={translateUI("ui.start_with_a_verb_6b1d63")} label={translateUI("ui.ilo_f12fa1") + (j + 1) + translateUI("ui.of_week_60075b") + r.week} onChange={(v) => updRow(r.id, (x) => { x.ilos[j].text = v; })} />
-                              : <div className="fmt">{il.text || '—'}</div>}
+                              : <div className="fmt typed-text">{il.text || '—'}</div>}
                             <div className="tagrow">
                               {il.tags.map((t) => <Tag key={t} info={model.tagInfo(d, t)} onRemove={edit ? () => updRow(r.id, (x) => { x.ilos[j].tags = x.ilos[j].tags.filter((v) => v !== t); }) : null} />)}
                               {edit && <button type="button" className="tagbtn" aria-label={translateUI("ui.tag_outcomes_for_ilo_5f768a") + (j + 1)} onClick={(e) => setPicker({ row: r.id, ilo: il.id, rect: e.currentTarget.getBoundingClientRect() })}>{translateUI("ui.tag_eae765")}</button>}

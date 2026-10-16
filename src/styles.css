@@ -2837,6 +2837,12 @@ table,
 	@apply tw:[padding:4px_7px] tw:[font-size:var(--text-sm)];
 	@apply tw:[line-height:1.5];
 }
+.bld2 .fmt {
+	@apply tw:wrap-anywhere;
+}
+.bld2 .typed-text {
+	@apply tw:whitespace-pre-line;
+}
 .bld2 .fmt ul {
 	@apply tw:[margin:2px_0] tw:[padding-left:18px];
 }
@@ -3170,6 +3176,14 @@ table,
 :is(.bld2, .svm-paper) .paper th {
 	text-align: center;
 	font-weight: 700;
+}
+/* Text a person typed can hold a very long word or a line break. A word that does not fit breaks inside its cell instead of running into
+   the next column, and typed line breaks stay line breaks (a text box shows them, so the finished form must too). */
+:is(.bld2, .svm-paper) .paper {
+	overflow-wrap: anywhere;
+}
+:is(.bld2, .svm-paper) .paper .typed-text {
+	white-space: pre-line;
 }
 :is(.bld2, .svm-paper) .paper ul {
 	margin: 2px 0;
