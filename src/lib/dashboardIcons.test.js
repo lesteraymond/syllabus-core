@@ -17,7 +17,9 @@ test('the dashboard icons take their colour from the brand theme, and it beats t
   // the theme loads after styles.css and uses the same specificity (0,3,0), so it wins for the stat tiles
   assert.match(theme, /\.stat-grid \.stat-card \.stat-icon \{[^}]*color: #ffffff/);
   assert.match(theme, /\.quick-actions button b \{[^}]*color: var\(--gold\)/);
-  assert.match(readFileSync(new URL('../main.jsx', import.meta.url), 'utf8'), /import '\.\/styles\.css';\s*import '\.\/theme\.css';/, 'theme.css is imported after styles.css');
+  // main.jsx loads one entry, tailwind.css, which imports styles.css and then theme.css into the same (legacy) layer: the order is what counts
+  assert.match(readFileSync(new URL('../main.jsx', import.meta.url), 'utf8'), /import '\.\/tailwind\.css';/, 'the app loads the stylesheet entry');
+  assert.match(readFileSync(new URL('../tailwind.css', import.meta.url), 'utf8'), /@import "\.\/styles\.css" layer\(legacy\);\s*@import "\.\/theme\.css" layer\(legacy\);/, 'theme.css is imported after styles.css, in the same layer');
 });
 
 test('the stat icons are white on the sidebar gradient, and readable on every stop of it', () => {
