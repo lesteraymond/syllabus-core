@@ -75,7 +75,7 @@ function makeDb() {
     if (sql.startsWith('SELECT clo_id')) return [s.clos.filter((k) => k.course_id === p[0]).map((k, i) => ({ clo_id: i + 1, title: '', clo_level: 'Enabling', statement: 's', ega_nos: k.ega_nos, po_nos: k.po_nos }))];
     if (sql.startsWith('SELECT course_id FROM faculty_courses')) return [[{ course_id: 10 }]];
     if (sql.startsWith('SELECT program_id FROM faculty_programs')) return [[{ program_id: 1 }]];
-    if (sql.startsWith('SELECT syllabus_id, user_id, status, title, course_code, content, course_id FROM syllabi WHERE')) return [s.syllabi[p[0]] ? [s.syllabi[p[0]]] : []];
+    if (sql.startsWith('SELECT syllabus_id, user_id, status, title, course_code, content, course_id, archived_at FROM syllabi WHERE')) return [s.syllabi[p[0]] ? [s.syllabi[p[0]]] : []];
     if (sql.startsWith('SELECT * FROM syllabi WHERE syllabus_id')) return [s.syllabi[p[0]] ? [s.syllabi[p[0]]] : []];
     if (sql.startsWith("SELECT user_id FROM users WHERE role = 'admin'")) return [[]];
     if (sql.startsWith('UPDATE syllabi SET content')) { s.saved.push(JSON.parse(p[0])); return [{}]; }

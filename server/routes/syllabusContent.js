@@ -8,6 +8,7 @@ const { notifyAdmins } = require('../lib/notify');
 const rules = require('../lib/syllabusRules');
 const { loadCourse } = require('../lib/courses');
 const assignments = require('../lib/assignments');
+const subjectLock = require('../lib/subjectLock');
 const { catalogGaps, gapsMessage } = require('../lib/catalogReady');
 const compliance = require('../lib/compliance/service');
 const { changedSections, describeChanges, normalize } = require('../lib/versionChange');
@@ -96,7 +97,7 @@ router.get('/:id/content', requireAuth, async (req, res) => {
   try {
     const id = parseId(req.params.id);
     const [rows] = await req.app.locals.db.query(
-      'SELECT syllabus_id, user_id, status, version, content, content_schema_version, content_updated_at, course_id, admin_comment FROM syllabi WHERE syllabus_id = ?', [id]);
+      'SELECT syllabus_id, user_id, status, version, content, content_schema_version, content_updated_at, course_id, archived_at, admin_comment FROM syllabi WHERE syllabus_id = ?', [id]);
     const syl = rows[0];
     if (!syl || !rules.canView(req.session.user, syl)) throw httpError(404, 'Syllabus not found');
     let content = null;
@@ -109,7 +110,7 @@ router.get('/:id/content', requireAuth, async (req, res) => {
       if (lockedReason) editable = false;
     }
     // Back from "For revision": the next submission becomes the next version, and the reviewer's note says what to change.
-    const revising = syl.status === 'for_revision';
+    const revising = rules.isReturned(syl.status);
     res.json({ id, status: syl.status, version: syl.version, content, schemaVersion: syl.content_schema_version, updatedAt: syl.content_updated_at, editable, lockedReason,
       ...(revising ? { nextVersion: rules.nextVersionLabel(syl.version), reviewerNote: syl.admin_comment || '' } : {}) });
   } catch (err) { sendError(res, err); }
@@ -127,7 +128,7 @@ router.put('/:id/content', requireAuth, async (req, res) => {
     const version = Number.isInteger(schemaVersion) && schemaVersion > 0 && schemaVersion < 1000 ? schemaVersion : 2;
 
     const saved = await inTransaction(db, async (conn) => {
-      const [rows] = await conn.query('SELECT syllabus_id, user_id, status, title, course_code, content, course_id FROM syllabi WHERE syllabus_id = ? FOR UPDATE', [id]);
+      const [rows] = await conn.query('SELECT syllabus_id, user_id, status, title, course_code, content, course_id, archived_at FROM syllabi WHERE syllabus_id = ? FOR UPDATE', [id]);
       const syl = rows[0];
       if (!syl || !rules.canView(me, syl)) throw httpError(404, 'Syllabus not found'); // never reveal it to non-participants
       if (!rules.isOwner(me, syl)) throw httpError(403, 'Only the owner can edit syllabus content');
@@ -141,6 +142,7 @@ router.put('/:id/content', requireAuth, async (req, res) => {
       // and so must the course being chosen
       if (merged.meta && Number.isInteger(merged.meta.courseId)) await assignments.requireCourseAccess(conn, me, merged.meta.courseId);
       const course = await applyCatalog(conn, merged);
+      if (course && course.id !== syl.course_id) await subjectLock.assertSubjectFree(conn, me, course.id, id); // one syllabus for each subject
       const json = JSON.stringify(merged);
       if (Buffer.byteLength(json, 'utf8') > MAX_CONTENT_BYTES) throw httpError(413, `This syllabus is too large to save (limit ${MAX_CONTENT_BYTES / 1024} KB)`);
 
@@ -308,7 +310,7 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
         return { label, status: 'approved' };
       }
       // A resubmission after "For revision" is a new version only if the faculty member changed something, and says what.
-      if (syl.status === 'for_revision') {
+      if (rules.isReturned(syl.status)) {
         const previous = await compliance.latestVersion(conn, id);
         const before = previous ? parseJson(previous.content) : null;
         if (before && changedSections(before, content).length === 0) throw httpError(409, rules.UNCHANGED, { code: 'unchanged' });
@@ -333,7 +335,7 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
       if (complianceReady) runId = await compliance.storeRun(conn, { syllabusId: id, versionId: versionRow && versionRow.insertId ? versionRow.insertId : null, content, result, createdBy: me.id });
       await conn.query(
         'INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)',
-        [id, me.id, publishing ? 'approve' : first || syl.status === 'for_revision' ? 'submit' : 'update', (publishing ? 'Administrator published syllabus after AI check' : first ? 'Syllabus submitted from the builder' : `Saved as ${label}: ${versionNote}`).slice(0, 500)]
+        [id, me.id, publishing ? 'approve' : first || rules.isReturned(syl.status) ? 'submit' : 'update', (publishing ? 'Administrator published syllabus after AI check' : first ? 'Syllabus submitted from the builder' : `Saved as ${label}: ${versionNote}`).slice(0, 500)]
       );
       return { previous: syl.status, label, status: newStatus, courseCode: syl.course_code, title: syl.title, runId, content, result };
     });
@@ -349,7 +351,7 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
     const who = `${me.firstName} ${me.lastName}`;
     if (!publishing && outcome.previous === 'draft') {
       await notifyAdmins(db, { exceptUserId: me.id, type: 'submission', syllabusId: id, title: `New syllabus submitted: ${outcome.courseCode || outcome.title}`, body: `${who} submitted ${outcome.title || outcome.courseCode} for review.` });
-    } else if (!publishing && (outcome.previous === 'under_review' || outcome.previous === 'for_revision')) {
+    } else if (!publishing && (outcome.previous === 'under_review' || rules.isReturned(outcome.previous))) {
       await notifyAdmins(db, {
         exceptUserId: me.id, type: 'edit', syllabusId: id,
         title: outcome.previous === 'under_review' ? `Syllabus updated during review: ${outcome.courseCode} (${outcome.label})` : `Syllabus resubmitted: ${outcome.courseCode} (${outcome.label})`,

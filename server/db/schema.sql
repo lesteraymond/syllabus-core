@@ -107,6 +107,7 @@ CREATE TABLE IF NOT EXISTS syllabi (
   content_schema_version INT NULL,
   content_updated_at TIMESTAMP NULL,
   course_id INT NULL,
+  archived_at DATETIME NULL, -- set when the subject is assigned to another faculty member: read-only, out of the working lists
   uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,

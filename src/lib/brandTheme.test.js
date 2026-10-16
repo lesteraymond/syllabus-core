@@ -231,7 +231,7 @@ test('faculty see deadlines on the dashboard card and on each of their syllabi, 
   const dash = readFileSync(new URL('../views/DashboardView.jsx', import.meta.url), 'utf8');
   const mine = readFileSync(new URL('../views/MySyllabi.jsx', import.meta.url), 'utf8');
   assert.ok(dash.includes('<UpcomingDeadlines role={user.role}') && !dash.includes('<Deadline day='), 'real deadlines replace the sample ones');
-  assert.ok(mine.includes('deadlinesApi.mine()') && mine.includes("user.role !== 'faculty'") && mine.includes('deadlineOfSyllabus(deadlines, s)'), 'each faculty syllabus shows its subject\'s deadline');
+  assert.ok(mine.includes('deadlinesApi.mine()') && mine.includes("user.role !== 'faculty'") && mine.includes('deadlineForCard(deadlines, s)'), 'each faculty syllabus shows its subject\'s deadline');
   assert.ok(contrast('#4b5563', token('tint-cobalt')) >= 4.5 && theme.includes('.deadline.dl-row:hover small { color: #4b5563; }'), 'row notes stay readable on the hover fill');
   assert.ok(contrast('#9b1f27', token('tint-crimson')) >= 4.5, 'the date box of a missed deadline');
 });

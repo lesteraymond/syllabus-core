@@ -94,7 +94,7 @@ export function useDraft(editing) {
         } while (again.current);
         return true;
       } catch (e) {
-        setSave((s) => ({ ...s, state: 'error', message: e.message }));
+        setSave((s) => ({ ...s, state: 'error', message: e.message, code: e.data && e.data.code }));
         return false;
       } finally {
         running.current = false;

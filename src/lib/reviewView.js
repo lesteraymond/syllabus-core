@@ -68,7 +68,7 @@ export const MIN_REASON = 5;
 export const DECISIONS = {
   approve: { status: 'Approved', label: 'Approve syllabus', hint: 'Locks it from further edits', icon: 'sealCheck', reason: false, confirm: 'Approve this syllabus? It will be locked from further edits.' },
   revise: { status: 'For Revision', label: 'Return for revision', hint: 'The faculty member edits and resubmits', icon: 'arrowUUpLeft', reason: true, confirm: 'Return this syllabus to the faculty member for revision?' },
-  reject: { status: 'Rejected', label: 'Reject', hint: 'Closes this submission', icon: 'xCircle', reason: true, confirm: 'Reject this syllabus? The faculty member is told why.' },
+  reject: { status: 'Rejected', label: 'Reject', hint: 'Sent back; it can still be edited', icon: 'xCircle', reason: true, confirm: 'Reject this syllabus? The faculty member is told why and can edit and submit it again.' },
 };
 
 // '' when the decision may go ahead, otherwise what is missing. A return for revision or a rejection needs a reason.
