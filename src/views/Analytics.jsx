@@ -1,13 +1,17 @@
+import StableButton from '../components/StableButton';
+import { tr } from "../i18n/index.js";
+import { t as translateUI } from "../i18n/index.js";
 import { useMemo } from 'react';
 import { ChartCard, Donut, Insight, Legend, PageHead, Progress } from '../components/ui';
 import { BRAND } from '../data/initialData';
+import Select from '../components/Select';
 
 function LineChart({ data }) {
-  return <div><svg className="line-chart" viewBox="0 0 300 120"><g className="grid-lines">{[20, 50, 80, 110].map(y => <line key={y} x1="0" y1={y} x2="300" y2={y} />)}</g><polyline points={data.map(p => p.join(',')).join(' ')} fill="none" stroke={BRAND.blue} strokeWidth="3" />{data.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="4" fill="white" stroke={BRAND.blue} strokeWidth="3" />)}</svg><div className="axis-labels"><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span></div></div>;
+  return <div><svg className="line-chart" viewBox="0 0 300 120"><g className="grid-lines">{[20, 50, 80, 110].map(y => <line key={y} x1="0" y1={y} x2="300" y2={y} />)}</g><polyline points={data.map(p => p.join(',')).join(' ')} fill="none" stroke={BRAND.blue} strokeWidth="3" />{data.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="4" fill="white" stroke={BRAND.blue} strokeWidth="3" />)}</svg><div className="axis-labels"><span>{translateUI("ui.mar_c4ba08")}</span><span>{translateUI("ui.apr_befde5")}</span><span>{translateUI("ui.may_c94f47")}</span><span>{translateUI("ui.jun_6d90df")}</span><span>{translateUI("ui.jul_b73755")}</span><span>{translateUI("ui.aug_75629a")}</span></div></div>;
 }
 
 function DonutBreakdown({ value, high, med, low }) {
-  return <div className="donut-panel analytics"><Donut value={value} centerTop={`${value}%`} centerBottom="Average" /><div className="legend"><Legend color="var(--blue)" text="High (80–100%)" value={`${high}%`} /><Legend color="var(--gold)" text="Medium (50–79%)" value={`${med}%`} /><Legend color="var(--red)" text="Low (<50%)" value={`${low}%`} /></div></div>;
+  return <div className="donut-panel analytics"><Donut value={value} centerTop={`${value}%`} centerBottom={tr("Average")} /><div className="legend"><Legend color="var(--blue)" text={translateUI("ui.high_80_100_234a35")} value={`${high}%`} /><Legend color="var(--gold)" text={translateUI("ui.medium_50_79_d47c66")} value={`${med}%`} /><Legend color="var(--red)" text={translateUI("ui.low_50_979304")} value={`${low}%`} /></div></div>;
 }
 
 function BarChart({ data }) {
@@ -15,11 +19,11 @@ function BarChart({ data }) {
 }
 
 function ReferenceChart({ data }) {
-  return <div className="donut-panel analytics"><div className="donut refs"><div><strong>{data.current}%</strong><small>≤ 10 years</small></div></div><div className="legend"><Legend color="var(--blue)" text="0–5 years" value={`${data.young}%`} /><Legend color="var(--gold)" text="6–10 years" value={`${data.mid}%`} /><Legend color="var(--red)" text=">10 years" value={`${data.old}%`} /></div></div>;
+  return <div className="donut-panel analytics"><div className="donut refs"><div><strong>{data.current}%</strong><small>{translateUI("ui.10_years_cf5ed9")}</small></div></div><div className="legend"><Legend color="var(--blue)" text={translateUI("ui.0_5_years_56523b")} value={`${data.young}%`} /><Legend color="var(--gold)" text={translateUI("ui.6_10_years_4da687")} value={`${data.mid}%`} /><Legend color="var(--red)" text={translateUI("ui.10_years_86387f")} value={`${data.old}%`} /></div></div>;
 }
 
 function RadarLike({ data }) {
-  return <div className="radar-like">{data.map(([l, v]) => <Progress key={l} label={l} value={v} />)}</div>;
+  return <div className="radar-like">{data.map(([l, v]) => <Progress key={l} label={tr(l)} value={v} />)}</div>;
 }
 
 export default function Analytics({ syllabi, user }) {
@@ -69,7 +73,7 @@ export default function Analytics({ syllabi, user }) {
         { n: '01', title: 'Your compliance score', text: `${compliance}% average across ${total} syllabi.` },
         { n: '02', title: 'Pending reviews', text: `${rev} syllabi currently under review.` },
         { n: '03', title: 'Needs attention', text: `${low} syllabi returned or rejected.` },
-        { n: '04', title: 'Tip', text: 'Use AI Checker to improve scores before submitting.' },
+        { n: '04', title: 'Tip', text: 'Use the compliance check in step 7 of the builder to improve scores before submitting.' },
       ];
     }
     return [
@@ -82,16 +86,16 @@ export default function Analytics({ syllabi, user }) {
 
   return (
     <>
-      <PageHead title={isFaculty ? 'My Analytics' : 'Analytics & Quality Dashboard'} subtitle={isFaculty ? 'Track your personal compliance scores and submission performance.' : 'Monitor compliance, curriculum coverage, submission performance, and syllabus quality trends.'} actions={<><select><option>AY 2026–2027</option><option>AY 2025–2026</option></select><button className="btn outline">⇩ Download Report</button></>} />
+      <PageHead title={isFaculty ? translateUI("ui.my_analytics_1ab328") : translateUI("ui.analytics_quality_dashboard_b85172")} subtitle={isFaculty ? translateUI("ui.track_your_personal_compliance_scores_and_submission_performance_b66964") : translateUI("ui.monitor_compliance_curriculum_coverage_submission_performance_and_78b463")} actions={<><Select><option value="AY 2026–2027">{translateUI("ui.ay_2026_2027_830f3e")}</option><option value="AY 2025–2026">{translateUI("ui.ay_2025_2026_8b00a8")}</option></Select><StableButton className="btn outline">{translateUI("ui.download_report_9f36e2")}</StableButton></>} />
       <div className="analytics-grid">
-        <ChartCard title="Compliance Trend" subtitle={isFaculty ? 'Your AI compliance score over time' : 'Average AI compliance score'}><LineChart data={lineData} /></ChartCard>
-        <ChartCard title="Outcome Coverage" subtitle={isFaculty ? 'Your syllabus coverage' : 'Coverage across approved syllabi'}><DonutBreakdown {...donutData} /></ChartCard>
-        <ChartCard title="Submission Completion" subtitle={isFaculty ? 'Your submissions' : 'By program'}><BarChart data={barData} /></ChartCard>
-        <ChartCard title="Reference Currency" subtitle="Age of cited learning resources"><ReferenceChart data={refData} /></ChartCard>
+        <ChartCard title={translateUI("ui.compliance_trend_2fa4a1")} subtitle={isFaculty ? translateUI("ui.your_ai_compliance_score_over_time_f2f70b") : translateUI("ui.average_ai_compliance_score_603cf2")}><LineChart data={lineData} /></ChartCard>
+        <ChartCard title={translateUI("ui.outcome_coverage_5788ff")} subtitle={isFaculty ? translateUI("ui.your_syllabus_coverage_b60846") : translateUI("ui.coverage_across_approved_syllabi_923a95")}><DonutBreakdown {...donutData} /></ChartCard>
+        <ChartCard title={translateUI("ui.submission_completion_b3968d")} subtitle={isFaculty ? translateUI("ui.your_submissions_e58b57") : translateUI("ui.by_program_11a420")}><BarChart data={barData} /></ChartCard>
+        <ChartCard title={translateUI("ui.reference_currency_7c7576")} subtitle={translateUI("ui.age_of_cited_learning_resources_2711b5")}><ReferenceChart data={refData} /></ChartCard>
       </div>
       <div className="analytics-grid two">
-        <ChartCard title="Quality Dimensions" subtitle={isFaculty ? 'Your quality scores' : 'Average percentage scores by program'}><RadarLike data={radarData} /></ChartCard>
-        <ChartCard title="Actionable Insights" subtitle={isFaculty ? 'Tips for your submissions' : 'AI-generated quality observations'}><div className="insights">{insights.map(i => <Insight key={i.n} {...i} />)}</div></ChartCard>
+        <ChartCard title={translateUI("ui.quality_dimensions_41c80b")} subtitle={isFaculty ? translateUI("ui.your_quality_scores_8f5d5e") : translateUI("ui.average_percentage_scores_by_program_3c980a")}><RadarLike data={radarData} /></ChartCard>
+        <ChartCard title={translateUI("ui.actionable_insights_9816fd")} subtitle={isFaculty ? translateUI("ui.tips_for_your_submissions_76ea2a") : translateUI("ui.ai_generated_quality_observations_82b3fd")}><div className="insights">{insights.map(i => <Insight key={i.n} {...i} title={tr(i.title)} text={tr(i.text)} />)}</div></ChartCard>
       </div>
     </>
   );

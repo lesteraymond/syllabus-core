@@ -148,6 +148,10 @@ syllabus-cms-plus/
 |---------|-------------|
 | `npm run dev` | Start API server |
 | `npm run init-db` | Initialize/reset database |
+| `npm run migrate-students` | Add the student role and COR tables (existing databases) |
+| `node scripts/ocr-cor-test.js [image]` | Try the COR reader on `server/sample_cor/` or an image |
+
+The other `npm run migrate-*` scripts upgrade older databases; each is safe to run again.
 
 ---
 
@@ -167,8 +171,12 @@ syllabus-cms-plus/
 | GET | /api/messages/:id | Get messages |
 | POST | /api/messages/:id | Send message |
 | PUT | /api/messages/read/:id | Mark as read |
+| POST | /api/students/scan | Read a COR photo (public) |
+| POST | /api/students/register | Create the student account from the scan (public) |
+| GET | /api/students/me | A student's profile and subjects |
+| GET | /api/students/pending | Registrations waiting for review (admin) |
+| GET | /api/students/:id/cor | The COR photo of a pending student (admin) |
+| POST | /api/students/:id/verify | Approve or reject a pending student (admin) |
 | GET | /api/users | List users (admin) |
 | POST | /api/users | Create user (admin) |
 | DELETE | /api/users/:id | Delete user (admin) |
-| GET | /api/mapping/:id | Get CO–PO mapping |
-| PUT | /api/mapping/:id | Save CO–PO mapping |

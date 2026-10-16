@@ -22,6 +22,8 @@ app.use(
 );
 
 const uploadsDir = path.join(__dirname, process.env.UPLOAD_DIR || "uploads");
+// Profile photos are private: they are only served by GET /api/users/:id/avatar (authorization checked).
+app.use("/uploads/avatars", (req, res) => res.sendStatus(404));
 app.use("/uploads", express.static(uploadsDir));
 
 const pool = mysql.createPool({
@@ -34,17 +36,44 @@ const pool = mysql.createPool({
 });
 
 app.locals.db = pool;
+require('./lib/catalogFileCleanup').startCleanup(pool);
+// Time usage: counted in memory, written in one batch about once a minute, and written out when the server stops.
+const usage = require('./lib/usage').createUsageService({ db: pool });
+app.locals.usage = usage;
+usage.start();
+// Deadline notices: the bell and an email when a deadline is set, changed or cancelled, and the automatic due-soon, due-today and missed ones.
+const deadlineNotices = require('./lib/deadlineNotices').createDeadlineNotifier({ db: pool, notify: require('./lib/notify').createNotification, mail: require('./lib/mailer').sendNotice });
+app.locals.deadlineNotices = deadlineNotices;
+deadlineNotices.start();
+for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => { Promise.all([usage.stop(), deadlineNotices.stop()]).finally(() => process.exit(0)); });
 
 app.use(restoreSession);
 
+// Student accounts exist only to sign in and see their own profile: every other API is closed to them.
+app.use("/api", (req, res, next) => {
+	const u = req.session.user;
+	if (u && u.role === "student" && !/^\/(auth|students)(\/|$)/.test(req.path)) return res.status(403).json({ error: "Not available for student accounts" });
+	next();
+});
+
 const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);
+app.use("/api/students", require("./routes/students"));
 app.use("/api/users", require("./routes/users"));
+app.use("/api/settings", require("./routes/settings"));
 app.use("/api/syllabi", require("./routes/syllabi"));
+app.use("/api/syllabi", require("./routes/syllabusContent"));
+app.use("/api/syllabi", require("./routes/comments"));
+app.use("/api", require("./routes/compliance"));
+app.use("/api/institution", require("./routes/institution"));
+app.use("/api/programs", require("./routes/programs"));
+app.use("/api/courses", require("./routes/courses"));
 app.use("/api/curriculum", require("./routes/curriculum"));
 app.use("/api/logs", require("./routes/logs"));
 app.use("/api/messages", require("./routes/messages"));
-app.use("/api/mapping", require("./routes/mapping"));
+app.use("/api/notifications", require("./routes/notifications"));
+app.use("/api/usage", require("./routes/usage"));
+app.use("/api/deadlines", require("./routes/deadlines"));
 
 app.listen(PORT, () => {
 	console.log(`Server running on http://localhost:${PORT}`);
@@ -58,4 +87,5 @@ app.listen(PORT, () => {
 	for (const key of ["GOOGLE_CLIENT_ID", "JWT_SECRET"]) {
 		if (!process.env[key]) console.warn(`WARNING: ${key} is not set in server/.env - Google sign-in will fail`);
 	}
+	if (!require("./lib/mailer").configured()) console.warn("MAIL: SMTP_HOST and MAIL_FROM are not set in server/.env - no credentials or password emails will be sent.");
 });

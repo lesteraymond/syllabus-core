@@ -421,3 +421,600 @@ src/
 - Stat cards are taller on wide screens than before (about 91px before, 120px now)
 - Around 1100px wide the bottom row can still change height slightly; only the dashboard page was checked
 - Tried and reverted: animating only the sidebar with the content snapping to its final width, and sliding the content with a transform (content laid out once at its final width); both felt worse than the content gliding with the sidebar
+
+---
+
+### v1.18.0 — Accessibility, Typography & Icon System
+**By:** JP Del Rosario  
+**Date:** October 13, 2026
+
+**Accessibility & color (`styles.css`):**
+- Darkened `--muted` to `#5f6b82` and replaced four light-grey text colors with it; input borders are now about 3:1 on white
+- Darkened status text (green, gold/amber, draft, for-revision, priority-high) so every badge, priority pill, map cell and warning meets 4.5:1 on its tint; `.btn.success` is now `#1c8250`
+- Added a global keyboard focus ring for buttons, `role="button"` elements and links
+
+**Typography:**
+- Self-hosted Inter and Manrope (latin woff2 in `public/fonts/`, `font-display: swap`); removed the Google Fonts `@import`
+- Added `--font-body` / `--font-display` and a type scale (`--text-xs` 12 → `--text-hero`); no text is smaller than 12px, tables, forms and body text are 14px
+- Weights: page, modal and card titles 700; item titles, table headers, labels, buttons and badges 600; descriptions 400; 800 only for the large stat numbers. Bold `strong` / `th` text that relied on browser defaults now declares its weight
+- Added `font-variant-numeric: tabular-nums` to tables, matrix cells, progress values, score rings and stat numbers; heading line-height 1.3, body 1.5
+- Widened the AI-checker priority circle to 56px so "MEDIUM" fits at 12px
+
+**Icons:**
+- Added `@phosphor-icons/react` and an `Icon` component in `ui.jsx` (duotone by default; decorative icons are `aria-hidden`, meaningful ones take a `label`); icons are imported one by one
+- Replaced the text glyphs in the sidebar nav, stat cards, Quick Actions, topbar (search, messages, notifications), login feature pills and the password show/hide buttons (Login and Student Register); `navItems` now holds icon names
+- Show/hide password buttons have `aria-label`s
+
+**Notes:**
+- The JS bundle grew by about 90 KB (24 KB gzipped) because each Phosphor icon ships every weight
+- Brand-color tokens and recoloring the stat tiles were proposed but not applied
+
+---
+
+### v1.19.0 — Profile Pictures
+**By:** JP Del Rosario  
+**Date:** October 13, 2026
+
+**Topbar:**
+- Fixed the avatar / name / role alignment: one merged `.avatar` rule (circular, `flex: none`, `object-fit: cover`), flex row with a 10px gap, text block centered with `line-height: 1.25`; verified at 1280px and 1920px
+- Clicking the profile opens a menu with Change photo and Remove photo (hidden when there is no photo); `aria-haspopup` / `aria-expanded`, Escape closes it and returns focus, outside click closes it
+
+**Client:**
+- `src/lib/avatar.js`: crops to a square, resizes to 256×256 and exports WebP (JPEG fallback); rejects files over 5 MB; errors show in the toast
+- `Avatar` component (`ui.jsx`): shows the photo, or initials when there is none or it fails to load; `api.js` gets `users.uploadAvatar` / `users.removeAvatar`; `App.jsx` updates the topbar without a reload
+
+**Server:**
+- `users.avatar_path` (nullable) in `schema.sql` plus `db/migrate-avatar.js` (`npm run migrate-avatar`)
+- `POST /api/users/me/avatar` (multer, one `avatar` file, 2 MB) and `DELETE /api/users/me/avatar`: the file type is checked from the first bytes (JPEG, PNG, WebP only; SVG and renamed files are rejected), saved as `u<id>-<timestamp>.<ext>`, and the old file is deleted after the new one is saved; there is no user id in the URL, so only your own photo can change
+- `toSessionUser(row)` builds the user object for `/google`, `/login` and session restore, so `avatarUrl` is everywhere
+
+---
+
+### v1.19.1 — Profile Photo Visibility & Moderation
+**By:** JP Del Rosario  
+**Date:** October 13, 2026
+
+- Photos are stored in `server/private/avatars/` (gitignored), outside the public `/uploads` folder, and `/uploads/avatars/*` now returns 404
+- `GET /api/users/:id/avatar` requires login and allows an admin, the owner, or someone who shares a message thread with that user; everyone else gets 404. Sent with `Cache-Control: private, max-age=86400`, an ETag and `nosniff`
+- Added `avatarUrl` to `GET /api/users`, `ownerAvatarUrl` to `GET /api/syllabi` and `senderAvatarUrl` to the messages responses (one shared `avatarUrlFor` helper in `server/lib/avatar.js`)
+- Photos now show in the Users & Roles table, Review & Approval queue, Repository, chat thread list and chat header; the thread list now gets a real `partner`
+- `DELETE /api/users/:id/avatar` (admin only) removes any photo and is recorded in the server log
+- `db/migrate-avatars-private.js` (`npm run migrate-avatars-private`, supports `--dry-run`) moves existing files into the private folder and makes `avatar_path` relative; run it once and restart the API
+
+**Notes:**
+- `<img>` sends the session cookie when the front end and API share a site (as in dev); on different sites photos would fall back to initials
+- Moderation is not written to `submission_logs`, which needs a syllabus and has a fixed action list
+
+---
+
+### v1.20.0 — Server-Enforced Chat Rules
+**By:** JP Del Rosario  
+**Date:** October 13, 2026
+
+- Chat is per syllabus and only between the syllabus owner and an admin; this is now enforced on the server (`loadThread` helper in `routes/messages.js`)
+- `GET /:syllabusId` and `PUT /read/:syllabusId` return 404 for a missing syllabus and 403 for non-participants
+- `POST /:syllabusId` ignores any `receiverId` from the client: an admin writes to the owner; the owner writes to the admin already in the thread, otherwise the first admin account; text is trimmed, required and limited to 2000 characters
+- `App.jsx` no longer hard-codes receivers (admin → owner or id 2, faculty → id 1); `messages.send` still accepts the old three-argument call and ignores the receiver
+
+---
+
+### v1.21.0 — Notifications & Live Refresh
+**By:** JP Del Rosario  
+**Date:** October 13, 2026
+
+**Messages:**
+- `GET /api/messages` returns every message I sent or received in one request; `App.jsx` loads messages with it instead of one request per syllabus, and no longer waits for syllabi to load
+- Fixed the blank "Syllabus: • title" line in the chat header (`syl.code` → `syl.courseCode`)
+
+**Notifications:**
+- New `notifications` table (`schema.sql`, `db/migrate-notifications.js`, `npm run migrate-notifications`) with an index on `(user_id, is_read, created_at)`
+- `server/lib/notify.js`: `createNotification` and `notifyAdmins` never throw, so a failed notification can't break a message, status change or submission
+- Created on: a new message (to the receiver), Approved / For Revision / Rejected (to the syllabus owner, including the reviewer comment), and a new submission (to every admin)
+- Endpoints: `GET /api/notifications`, `GET /api/notifications/summary`, `PUT /api/notifications/:id/read` (mine only) and `PUT /api/notifications/read-all`
+- The topbar bell shows a real unread badge and a dropdown (reuses `.msg-drop` / `.thread`) with Mark all read; clicking an item marks it read and opens the chat, or My Syllabi / Review & Approval
+
+**Live refresh:**
+- `useNotificationPolling` checks `/notifications/summary` every 25 seconds, only while the tab is visible, and refetches messages, notifications and syllabi when something changed; it stops on logout and unmount
+
+**Notes:**
+- Messages and notifications live in the database, so they stay after logout; the chat's Delete button only hides a conversation on screen
+- Run `npm run migrate-avatar`, `npm run migrate-avatars-private` and `npm run migrate-notifications` (in `server/`) on any database that doesn't have them yet
+- Syllabus version history and owner edit rules were reviewed but not built
+
+---
+
+### v1.22.0 — Faculty Program & Subject Assignments
+**By:** JP Del Rosario  
+**Date:** October 13, 2026
+
+An admin assigns programs, then subjects, to each faculty member. A faculty member can create and edit syllabi only for assigned subjects. In this school a "course" is the program, so the catalog item the app used to call a course (IT 204, Programming 2) is now called a **subject** everywhere users see it (the sidebar item is now "Subjects & CLOs"). Code, tables and API paths keep their old names (`courses`, `courseId`, `faculty_courses`).
+
+**Database:**
+- New tables `faculty_programs(user_id, program_id)` and `faculty_courses(user_id, course_id)` (pair is the primary key, both cascade on delete), in `schema.sql` and `db/migrate-assignments.js` (`npm run migrate-assignments`, supports `--dry-run`). The older `course_assignments` table is untouched
+
+**Rules (`server/lib/assignments.js`, pure and unit-tested):**
+- A subject can be assigned only if its program is assigned to the same user; removing a program drops that program's subjects in the same save; only faculty are assignable; admins are never restricted; lists are capped at 20 programs and 200 subjects
+- Guards `requireCourseAccess` (builder syllabi, by subject id) and `requireCourseCodeAccess` (legacy syllabi, by subject code)
+- Three states with their own messages: nothing assigned, a program but no subject yet ("A program is assigned to you, but no subject yet. Ask an administrator."), and subject not assigned
+
+**Admin API (`routes/users.js`):**
+- `GET` / `PUT /api/users/:id/assignments` (admin only, faculty targets only, `{ programs, courses }` replaced in one transaction; the response adds `dropped`, `changed` and `emptyPrograms`; saving a program that has no subjects yet is allowed)
+- `GET /api/users/me/assignments` (an admin gets `unrestricted: true`); registered before the `/:id` routes
+- The faculty member gets an `assignment` notification when their assignments change
+
+**Enforcement:**
+- `GET /api/courses` and `GET /api/programs` return only assigned items to faculty; admins still see everything. `GET /courses/:id` and `/programs/:id/outcomes` stay open
+- `POST /api/syllabi/drafts`, `PUT /:id/content`, `POST /:id/submit` and the legacy `POST /api/syllabi` and owner `PUT /:id` return 403 for an unassigned subject. A syllabus whose subject is later un-assigned becomes read-only for its owner (`GET /:id/content` returns `editable: false` and `lockedReason`) and is editable again when re-assigned. Non-owners still get 404
+- `GET /api/syllabi` now also returns `courseId`
+
+**UI:**
+- Users & Roles: an **Assignments** button per faculty member opens a modal (programs on the left with tick-to-assign and counts, the focused program's subjects on the right with search, Select all and Clear). Navy header with a gold rule; only assigns, it does not create subjects
+- Faculty: banners and disabled actions in My Syllabi ("+ New Syllabus", Edit with the reason), the builder and the previous builder when nothing is assigned or only a program is
+- The rebuilt builder (`src/views/builder2`) is now behind `VITE_NEW_BUILDER=true` in `.env`; the previous builder is the default again
+
+**Tests:**
+- `npm test` now also runs `server/lib/assignments.test.js`, `server/routes/assignments.routes.test.js`, `server/routes/enforcement.routes.test.js` and `src/lib/syllabusRules.test.js` (fake-database route tests, no MySQL needed)
+
+**Notes:**
+- Run `npm run migrate-assignments` (in `server/`), then restart the API server
+- On release every faculty member is locked out of creating and editing until an admin assigns them a program and a subject: assign first, then announce
+- Not built: terms or school years on assignments, backfilling assignments from existing syllabi, removing `course_assignments`
+
+---
+
+### v1.23.0 — Admin-Managed Catalog Per Program, Subject Modal
+**By:** JP Del Rosario  
+**Date:** October 13, 2026
+
+Each program has its own expected graduate attributes (EGAs) and program outcomes (POs); each subject has its own course learning outcomes (CLOs), tagged only with its program's EGAs and POs. Vision and mission stay school-wide. Faculty see all of it read-only in the syllabus builder, with no lock icons or "set by an administrator" labels.
+
+**Database:**
+- New table `program_egas(program_id, ega_no, name, short_name)`; `db/migrate-program-egas.js` (`npm run migrate-program-egas`, supports `--dry-run`) copies the school-wide EGAs into every program that has none and adds version counters (`programs.egas_version`, `programs.pos_version`, `courses.clos_version`, `institution_settings.version`). `schema.sql` and `db/seed-outcomes.js` do the same for fresh installs. A program without its own EGAs falls back to the school-wide list
+
+**API:**
+- `GET /api/programs/:id/outcomes` also returns the program's `egas`, its `versions` and the `subjects` that share them; new `PUT /api/programs/:id/egas`; `PUT .../outcomes` allows a PO to map only to its own program's EGAs; `PUT /api/courses/:id/clos` checks CLO tags against the subject's own program; `PUT /api/institution/outcomes` carries a version
+- Stale saves: every save sends the version it loaded; a save from an out-of-date screen gets 409 "This was changed by someone else. Reload to see the latest." and changes nothing (optional for older callers)
+- Removing an EGA or PO that a CLO of that program's subjects (or a PO) still uses gets 409 naming what uses it (`lib/catalogUse.js`); nothing outside the program is affected
+- A submitted syllabus stores a snapshot of the vision, mission, program EGAs and POs (`content.catalog`); a syllabus that can no longer be edited shows those saved texts instead of the live ones. Clients cannot send that key
+- Shared code moved to `lib/institution.js`, `lib/programs.js` and `lib/programEgas.js`
+
+**Subjects & CLOs (admin):**
+- The Institution and Program outcomes tabs are replaced by a **subject modal**: click a subject to manage, in independent cards that each save on their own, its CLOs (with the "+ EGA" suggestion from the chosen POs), its program's EGAs, its program's POs, the school's vision and mission, and the subject details with Delete. Each card says what it affects ("BSIT, all subjects" or "School-wide") and which other subjects share it; a stale save keeps what was typed and offers Reload; closing with unsaved changes asks first
+- The list has a program filter. **+ Add subject** now takes a typed program code and full name: an existing code is used as it is (its name is filled in), a new code creates the program together with its first subject in one transaction (`createProgram`), starting with the default EGAs; a name already used by another code is 409 and a failed subject leaves no program behind
+- The Assignments modal only assigns: its create-subject features were removed. It reloads programs and subjects when the browser tab regains focus without losing unsaved ticks (`src/lib/assignmentSync.js`), and an empty program offers "Go to Subjects & CLOs"
+
+**Syllabus builder:**
+- The rules module resolves EGA tags from the syllabus's program (`createModel`, `egaList`); the tag picker, Learning Outcomes table and finished form follow
+- The vision, mission, EGAs, POs and the subject's CLOs are re-fetched when the Learning Outcomes step opens and when the browser tab regains focus (`useCatalog`)
+
+**Notes:**
+- Run `npm run migrate-program-egas` (in `server/`) before restarting the API server
+- Not built: renumbering EGAs or POs, a delete-program route, bulk import of subjects
+
+---
+
+### v1.24.0 — Builder Blocks Next on Missing Required or Admin Data
+**By:** JP Del Rosario  
+**Date:** October 13, 2026
+
+- Every issue from `model.issues` now says whether it **blocks** and who must fix it (`source: 'form'` or `'admin'`); new `model.blockers` and `model.firstBlocked`. Advice never blocks: fewer than 18 weeks, a CLO not covered by any ILO, fewer than 3 exam rows
+- Blocking: an empty program, subject, prerequisite, units or description; no lesson with an ILO, a blank week, an ILO without a CLO tag or an unresolved tag; fewer than 3 requirements; an empty reference group; no grading components, a total other than 100 or an empty override; and, as admin data in step 2, a missing vision, mission, program EGAs or POs, a subject without CLOs, or a CLO without a statement or EGA/PO tag (or tagged with one that no longer exists)
+- Builder: **Next** is disabled while the step has a blocker, with a "To continue:" list; admin items read "...has not been added yet. Please ask your administrator." with a **Check again** button; the stepper blocks jumping forward past the first incomplete step (going back is always allowed); blockers are recomputed live, so a step locks again if an admin removes data. A step counts as done when nothing blocks it, and Check with AI and Submit unlock once steps 1 to 6 have no blockers. Read-only syllabi are never gated
+- `POST /api/syllabi/:id/submit` returns 409 when the vision, mission, the program's EGAs or POs, or the subject's CLOs are missing (`lib/catalogReady.js`)
+- Admins: the Subjects & CLOs list shows a **Setup incomplete** badge (hover for what is missing; `GET /api/courses` adds `gaps` for admins only), and the subject modal lists what faculty are waiting for
+
+**Notes:**
+- In the current database several subjects have no learning outcomes yet, so faculty working on them are held at step 2 until an admin adds them
+- `npm test` runs 105 tests
+
+---
+
+### v1.25.0 — Compliance Check Merged Into the Syllabus Builder
+**By:** JP Del Rosario  
+**Date:** October 14, 2026
+
+**Standard and rules:**
+- The Undergraduate Syllabus v4 form is data: `server/lib/compliance/standard-v4.json` holds 47 rules (`id`, `area`, `step`, `severity` blocking / major / minor, `weight`, `check`, `params`, `message`, `fix`), sections I–X, the six Learning Plan columns, six areas (Format Compliance 20, Content Completeness 20, CO–PO Alignment 20, Assessment Alignment 15, Contact Hours 10, Reference Currency 15) and a pass line of 79. What the IT 204 sample syllabus does not state (weights, pass line, 18 weeks, 1 lecture unit = 1 hour and 1 lab unit = 3 hours a week, 10-year reference age) is listed under `assumptions` for the curriculum office to confirm
+- Pure rule engine `server/lib/compliance/rules.js` (19 check kinds) with a browser copy `src/lib/complianceRules.js` and a parity test that runs both on the same fixtures. A rule's score is the share of its items that pass, an area is the weighted mean of its rules, the overall the weighted mean of the areas. A nearly empty syllabus reports **not enough content**, never 0%. Reference age is measured from the school year (`SCHOOL_YEAR_START`, default 2026), never from the clock, so the same content always scores the same
+- Blocking rules: required fields, tags that resolve, an ILO without a CLO tag, grading that does not total 100, fewer than 3 requirements, an empty reference group, CLOs without EGA or PO tags, and the vision, mission, EGAs and POs of a submitted syllabus differing from the catalog. Everything else only warns
+
+**Gate and storage:**
+- `POST /api/syllabi/:id/submit` returns 409 with `failed: [{ id, ruleId, step, path, message }]` when a blocking rule fails; warnings never block (the builder offers **Submit anyway**)
+- The run is stored with the version in the same transaction (`ai_check_runs`, `ai_check_area_scores`, `ai_findings`); until the migration is run, submit still works and nothing is stored
+- Recommendations: `AiProvider` interface, `MockProvider`, and an `LlmProvider` stub that is never called. Output must cite real findings, is capped at 7, its priority is the area score gap × weight (never the model's), and a failing provider falls back to rule-based text. The AI step runs as a background job after the commit. Names, emails and phone numbers are masked and the sign-off is never sent. `COMPLIANCE_AI_PROVIDER=mock|llm` selects the provider; unset means a plain **Rule-based check**
+
+**Routes:**
+- `GET /api/syllabi/:id/compliance` (latest stored run with a `stale` flag), `POST /api/syllabi/:id/compliance/recheck` (the owner on the saved draft, an administrator on the latest submitted version, stored with that version; an unchanged syllabus returns its stored run; 10 new runs a minute per user) and `GET /api/compliance?syllabus=all|<id>` (admins see every submitted syllabus, faculty their own, each with faculty member, program and subject)
+- Administrators read the run stored with the submitted version, not a check the author ran afterwards, and are not told it is out of date by edits in progress
+
+**Screens:**
+- Builder step 7 is now **Review & Check**: a compliance card (ring, six areas, what blocks a submit, recommendations marked Rule or AI, the findings behind them, a stale badge, an **AI unavailable** state), a check that runs when the step opens, and an in-place **Re-check**; nothing navigates to another tab
+- Faculty no longer have an AI Checker tab; an old `ai` link sends them to the builder. For administrators it is a read-only overview: the average and per-area averages, and every submitted syllabus listed by faculty member, then program, then subject, with **Check**, **Re-check** and **Check unchecked** and a search. Syllabi submitted as an uploaded file have no builder form and show as **Uploaded file**
+- The same card is shared by the builder, the admin overview and Review & Approval
+
+**Notes:**
+- Run `npm run migrate-compliance` (in `server/`) before using it; it is idempotent and touches no data
+- Not built: a real language model (the provider is a stub), a delete for stored runs
+
+---
+
+### v1.26.0 — Review & Approval Board, Syllabus Window and Reviewer Comments
+**By:** JP Del Rosario  
+**Date:** October 14, 2026
+
+**Review & Approval:**
+- The page is a board of cards, one for each syllabus waiting for a decision. A card shows only the program, the subject and who submitted it; the program decides its color. A search finds a syllabus by faculty member, program or subject
+- Clicking a card opens a window with the submitted syllabus in the same table format as builder step 7 (a version picker opens earlier versions; an uploaded file shows an Open link), a Compliance Check tab, and a panel beside it with **Decision**, **Comments** and **Messages** tabs. The panel stacks under the syllabus on narrow screens
+- Decisions keep the existing `handleStatus`; each asks for a second click to confirm, and returning for revision or rejecting needs a written reason of at least 5 characters (checked in the panel and by the server). When a decision goes through the window closes
+
+**Comments:**
+- `GET` and `POST /api/syllabi/:id/comments` use the existing `comments` table (no migration): an administrator writes, the owner reads, everyone else gets 404, and the faculty member is notified. The reason given with a decision is saved as a typed comment (revision, rejection, approval) in the same transaction as the status change
+- Messages and comments are separate: messages are the two-way chat, comments are the reviewer's notes. The chat thread was extracted from `ChatModal` into a shared `ChatThread`
+
+**Server:**
+- `GET /api/syllabi/:id/review[?version=]` is a read-only view of the submitted version, with who wrote it and for which program and subject; a version that is not the syllabus's own is 404. The syllabus list gains `programCode` and `courseTitle` as new fields. Program and subject naming moved into `server/lib/syllabusLabels.js`, shared with the compliance routes
+
+**Windows:**
+- A modal stack (`src/lib/modalStack.js`, `useModalLayer`) fixes Revision History opening behind the syllabus window: the newest modal is on top, the ones beneath are inert, Esc closes only the top one (not while text is typed in a field), Tab stays inside it, focus returns to what opened it, and the page does not scroll until the last one closes. The confirm popup is above all of them
+- The form's table styling now also applies inside the window, so it looks exactly like step 7
+
+**Notes:**
+- The old summary, tabs and workflow card on the page are gone; their actions live in the window's panel
+
+---
+
+### v1.27.0 — Faculty Comments With Unread Tracking
+**By:** JP Del Rosario  
+**Date:** October 14, 2026
+
+- Faculty have a **Comments** button on each My Syllabi card, beside Message and History: a red number for new comments, a grey total when none are new. It opens a read-only window with the thread, **New** markers and **Reply by message** (replies go through the chat). The yellow decision note on the card opens it too
+- A comment or decision notification now opens that syllabus's comments directly (`notificationTarget`), and reading them settles the matching bell notifications
+- `GET /api/syllabi/comment-summary` and `POST /api/syllabi/:id/comments/read` (owner only, only ever moves forward); `GET /:id/comments` also returns `lastReadId`
+- New table `comment_reads` (`server/db/comment-reads-ddl.js`, also in `schema.sql`) remembers the last comment each faculty member has read
+
+**Notes:**
+- Run `npm run migrate-comment-reads` (in `server/`) for exact unread counts. Until then faculty still see their comments and the button shows the total instead
+
+---
+
+### v1.28.0 — Interface Polish: Background, Dashboard Icons and Typeface
+**By:** JP Del Rosario  
+**Date:** October 14, 2026
+
+- **Background:** the page background is `#f8faf9` (the `--bg` variable, now also used by the review and comments windows) and the review board cards use the same color, flat; their colored top bar, border and program pill still set them apart. The sidebar is untouched (all 19 sidebar rules are identical to the previous commit)
+- **Dashboard icons** are black (`--icon-black`) and use the solid icon weight; the tinted tiles behind them keep their colors. Only the stat tiles and the quick actions are affected
+- **Typeface:** `--font-body` and `--font-display` are `"SF Pro Rounded", ui-rounded, "Nunito", -apple-system, BlinkMacSystemFont, system-ui, sans-serif`. Nunito (a rounded font, SIL Open Font License) is hosted in `public/fonts` with its license so Windows, Android and Chrome on Mac get a rounded font too, while Safari and iPhone keep SF Pro Rounded. The Inter and Manrope files are kept but no longer used; the printed syllabus form stays Arial
+
+**Notes:**
+- `npm test` runs 242 tests
+- To set up a copy of this branch: run `npm run migrate-compliance` and `npm run migrate-comment-reads` in `server/` (both optional features degrade gracefully until then), set `COMPLIANCE_AI_PROVIDER=mock` to see AI-labelled recommendations in development, and restart the API server
+
+---
+
+### v1.29.0 — Student Registration From the COR, Upload a File Tab, Logos
+**By:** Raymond  
+**Date:** October 14, 2026
+
+**Student registration (verified from the Certificate of Registration):**
+- Register (for Students) asks for a photo of the COR and a password. The student ID read from the COR is the username; it can be typed with or without its dashes (`244233624` = `24-4233-624`)
+- The server reads the photo with OCR (`tesseract.js`, `sharp`) and parses the student ID, name, program, year level, section, term and school year, and the enrolled subjects when the table is readable (`server/lib/corOcr.js`, `corParser.js`). A photo that is sideways or upside down is turned upright by reading it in each direction and keeping the one that yields the most usable fields
+- A read-only **Is this your COR?** window shows what was read. Nothing in it can be edited; the client only ever sends the password, and the student ID, name and program come from the server's own scan. The student confirms, retakes the photo or closes the window (Esc and the ✕ button)
+- **Verified automatically** when the program reads as Information Technology (or a BSIT section is on the subject rows), the name and the term are readable. Anything doubtful becomes **pending** instead of being rejected, with the COR kept privately (`server/private/cor`) for an administrator; a verified student's photo is deleted and only the extracted fields are kept
+- New `student` role, plus `student_profiles` and `student_enrollments` (enrolled subjects, linked to the course catalog when the code or title matches). Students can sign in only when verified; pending and rejected students get a clear message
+- Students are shut out of every API except `/api/auth` and `/api/students`. A signed-in student sees a simple home page with their profile and enrolled subjects
+- Admin endpoints for the pending queue exist (`GET /api/students/pending`, `GET /:id/cor`, `POST /:id/verify`); the review page for them is not built yet
+- 15 scans per address per hour; photos up to 10MB (JPG, PNG or WebP)
+
+**Syllabus builder: Upload a file instead:**
+- Two tabs above the editor: **Fill in the form** and **Upload a file instead**. The editor slides out and the upload tab slides in (no animation with reduced motion). The form draft and the current step are kept when switching
+- The upload tab takes a PDF (up to 10MB), shows a preview before anything is sent, and submits it as the syllabus with an optional note for the reviewer. It needs the subject chosen in step 1 first
+- **Syllabus files are PDF only** (server and both builders). A rejected upload now returns a readable JSON message instead of an HTML error page
+- A draft submitted as a file is `v1.0` (it was `v1.1`), is logged as an upload, and notifies the administrators
+- The review window shows an uploaded PDF inline, not just a link
+
+**Interface:**
+- The syllabus header shows the LCUP logo on the left and the Testmark logo on the right, beside the school name (`public/lcup-logo.png`, `testmark-logo.png`, resized from `sample_syllabus`). It is in the shared `FormPaper`, so the builder's review step and the reviewer's window both get it
+- **Esc** closes every modal. The delete-confirm popup and the COR window were the two that did not
+- Removed the "Waiting for your decision" line from the Decision tab of Review & Approval
+
+**Fixes:**
+- A missing `JWT_SECRET` made Google sign-in and login return 500; `server/.env.example` now lists `GOOGLE_CLIENT_ID` and `JWT_SECRET`
+- Merge leftovers after PR #4: duplicate imports in `App.jsx` and conflict markers in `styles.css`
+
+**Notes:**
+- In `server/`: `npm install`, then `npm run migrate-students` (and run the earlier migrations first on an older database: `migrate-builder`, `migrate-assignments`, `migrate-program-egas`, `migrate-syllabus-versions`, `migrate-notifications`), then restart the API server
+- To try the COR reader on its own, run `node scripts/ocr-cor-test.js [image]` in `server/`; it prints what is read from the images in `server/sample_cor/` (git-ignored; it holds real student data)
+- OCR cannot read the subject table on small or tilted photos, so subjects are best-effort and never decide a registration. A COR that cannot be confirmed goes to an administrator
+- `server/uploads/` is still served publicly; uploaded PDFs have unguessable names, but are not yet behind a permission check
+
+---
+
+### v1.30.0 — Typography Tokens and a Redesigned AI Checker
+**By:** JP Del Rosario
+**Date:** October 14, 2026
+
+**Typography (CSS only):**
+- Added font-weight (`--fw-*`) and letter-spacing (`--tracking-label`) tokens; shared primitives, page blocks and chips use them (no value change), and a clear type hierarchy applies to cards, tables and headings
+- Removed the duplicate `@font-face` blocks and the unused Inter and Manrope fonts
+
+**AI Checker (admin):**
+- The page is now a **picker plus a result dialog**: **SyllabusPicker** (Faculty, then Program, then Subject) and **ComplianceModal** (one stored check, with its date and time). The overview, bulk check and tree were removed
+- A syllabus is **checked once**. After the administrator's check it leaves the queue and goes to the **history**, one card per syllabus showing its latest check; clicking a card opens the exact stored scoring. Approved syllabi are locked and cannot be checked again
+- **Date filter** on the history (from inclusive, to exclusive; an open end is allowed). It is remembered until the administrator changes it or goes back to all dates
+- The queue offers only syllabi that still need a check (`needsCheck`, `canCheckNow`); the picker card fills the page width
+- Server: `GET` history with a date range and a single-run read; approved syllabi cannot be re-checked
+- The page scrollbar's space is reserved (`scrollbar-gutter: stable`) so the layout no longer jumps when a page gets long
+
+**Notes:**
+- No migration needed for this version
+
+---
+
+### v1.31.0 — Generated Passwords, Email and Forgot Password
+**By:** JP Del Rosario
+**Date:** October 14, 2026
+
+**Registering users:**
+- Adding a user no longer asks for a password: the system **generates one and emails it** (with the username) to the registered address. **Resend credentials** is on each user in Users & Roles
+- Resend sends the email **first** and saves the new password only if it was sent, so a failed email never locks anyone out
+- Only institutional addresses (**@email.lcup.edu.ph**) can be registered; the domain is checked on the server
+- When an email cannot be sent, the administrator is told why (sign-in refused, server unreachable, other)
+
+**Signing in:**
+- A generated password is **temporary**: the first sign-in forces a **change-password** screen, and nothing else in the app opens until it is changed (the API answers `403 password_change_required`)
+- **Forgot password** on the login page emails a 30-minute temporary password. It is kept separate (`password_temp`), so asking for one never locks out the real password
+- Passwords are generated and validated by one module with tests
+
+**Mail:**
+- Sent with `nodemailer` over SMTP (Gmail app password works). It never throws into a request, and the server warns at startup when no mail settings exist
+
+**Notes:**
+- In `server/`: `npm run migrate-passwords` (adds `must_change_password` and `password_temp`)
+- Fill `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS` and `MAIL_FROM` in `server/.env` (see `.env.example`); with `SMTP_HOST` empty nothing is sent
+- The demo accounts (`admin123` / `faculty123`) should be removed or given new passwords before real use
+
+---
+
+### v1.32.0 — Staged Review: AI Check First, Then the Administrator Decides
+**By:** JP Del Rosario
+**Date:** October 14, 2026
+
+**The flow:**
+- A faculty member **submits**, and the syllabus is **locked** (no editing) until the administrator returns it for revision. The builder and the My Syllabi card explain why (dimmed Edit and the reason)
+- The administrator **checks it in the AI Checker first**; only a syllabus the administrator has checked appears in **Review & Approval**, where the decision (approve, revision, reject) is made. The AI never approves anything
+- Review & Approval no longer has a compliance tab. A new version goes back to the checker queue
+- Only an **administrator's own check** counts as the administrator's check
+
+**Uploaded files:**
+- An uploaded PDF is **checked by the rules** like any syllabus (template matching is skipped until the corrected template and the AI key exist) and is labelled as an upload in Review & Approval
+- The review window's side panel keeps one size on every tab
+
+**Notes:**
+- AI template matching for uploaded files is deferred to the final stage
+
+---
+
+### v1.33.0 — Version Rules and Version History
+**By:** JP Del Rosario
+**Date:** October 14, 2026
+
+- **A version is saved only when the faculty member changed something**, and a **note is required** (at least 10 characters). Saving with no change says so and creates nothing
+- A syllabus returned for revision must change; the check of a new version is per version, so an unchanged or reverted syllabus never reuses an older version's check
+- The version history says **what changed** (by section, with word counts) and **what was decided** on each version, names the check of each version, and each version can be **opened and read**
+- Server: `versionChange` module (`changedSections`, `describeChanges`, `wordDelta`) with tests
+
+---
+
+### v1.34.0 — Philippine Time, Renames and Cleanups
+**By:** JP Del Rosario
+**Date:** October 14, 2026
+
+- **Every date and time is shown in Philippine time (Asia/Manila)**, in one module (`phTime.js`); times stored without a zone are read as Philippine time
+- **Subjects & CLOs** is now **Program & Subjects**
+- The **Version** column is removed from the repository table (the version history is beside it)
+- The step 7 **Re-check** button in the builder stays on one line
+- The unread number on the topbar icons is centered, larger and readable (the Messages icon's label says how many are unread; counts above 99 show `99+`)
+
+---
+
+### v1.35.0 — Chat Shows Who You Are Talking To
+**By:** JP Del Rosario
+**Date:** October 14, 2026
+
+- A conversation shows **who it is with from the first message**: real name, picture and role; a faculty member also shows program and subject, an administrator shows only the role. Role chip and subject line in the chat header and the message list
+- Server: `GET /api/messages/partners` names who each conversation is with
+- A faculty member can see the **picture of the administrator** they would message before any message is sent (narrow permission: only for a faculty member who owns a submitted syllabus)
+- A **draft has no conversation**: no Message button on drafts, and the chat window explains why if it is opened on one
+- Fix: an administrator in a chat no longer shows the faculty member's program and subject
+
+---
+
+### v1.36.0 — Dashboard: Recent Activity Is Your Own
+**By:** JP Del Rosario
+**Date:** October 14, 2026
+
+**Recent Activity:**
+- A timeline of sentences replaces the dots and pills: an icon tile (colored for decisions, grey for routine events), "**You approved FM 202**" with the course title beneath, the time on the right, grouped under **Today / Yesterday / a date**, in Philippine time (`activityView.js`, tested)
+- **Each account sees only its own activity.** `GET /api/logs` returns only the signed-in user's rows (up to 30), so no browser receives what someone else did. The dashboard reads it again each time it is opened
+- Empty states say what will appear. **Clear Logs** hides what was done up to now for that account, remembered per account, and deletes nothing
+- Fix: a first submission from the builder was logged as an upload; it is now logged as a submission (older rows are read correctly too)
+
+**Layout:**
+- The dashboard rows have a **fixed height** (320px and 250px) and the body of each card scrolls, so a long activity list never resizes its box or the others. The shared `Card` now wraps its content in a `card-body`
+- An earlier attempt (boxes at their own height) was reverted in favor of this
+
+**Notes:**
+- Restart the server after pulling. `npm test` now runs 352 tests
+
+
+---
+
+### v1.37.0 — Account Settings, Localization, Catalog Management and Administrator Authoring
+**Date:** October 15, 2026
+
+**Settings and Google Workspace photo sync:**
+- Shared faculty/admin profile settings place Edit Profile and Save Profile beside the profile name, using consistent system buttons and responsive layout.
+- Faculty Settings contains profile and language preferences. Institutional Standard and AI & Notifications are administrator-only; GET/PUT /api/settings enforce administrator authorization.
+- The profile menu starts Google Workspace photo access directly, replacing the expanding inline verification panel. Access tokens remain in memory, pending requests are shared, and cancelled/failed imports keep the current photo. Google may still require its own account/consent popup.
+- The server verifies the Google account and imports the authenticated user's photo without accepting another account's identity.
+
+**English and Tagalog:**
+- Added centralized dictionaries, stable keys, interpolation, English fallback, and locale-aware formatting in Philippine time. Interface labels across both roles include navigation, forms, dialogs, validation, notifications, loading/empty states, and generated report headings.
+- Language changes apply immediately, persist to the authenticated account, and restore on sign-in/refresh. Existing accounts default to English. Failed preference saves visibly roll back; stale responses cannot change another account's language.
+- Language changes use a short presentation transition without remounting editors or resetting focus; reduced motion, logout, and account changes cancel motion appropriately.
+- Shared buttons reserve space for both language labels. Sidebar collapse, navigation labels, topbar slots, and dashboard grids retain stable geometry with longer Tagalog labels.
+- Academic content, stored program/subject names, messages, reviewer notes, uploaded files, and the official syllabus document retain their original text. Arbitrary free-text AI output and unknown third-party/server messages use source-language fallback.
+
+**Program and subject management:**
+- Administrators can rename program names and codes while keeping numeric IDs, subject relationships, and faculty assignments stable. Historical name/code aliases preserve older references; submitted snapshots remain unchanged.
+- Program deletion previews subjects, syllabi, versions, assignments, and files, including approved syllabi. Stage one requires an acknowledgement checkbox before Delete Program; stage two requires the exact code and final acknowledgement. Preview tokens, administrator authorization, expiry, impact checks, and transaction locks are enforced server-side.
+- Cascading deletion retains unrelated programs and accounts. Uploaded PDF cleanup runs only after commit, checks remaining references and storage boundaries, and retries failures through a persistent cleanup queue.
+- Program dialogs, count alignment, add-subject cancellation, and row movement use coordinated motion and cleanup to avoid flashes and closing glitches. Reduced-motion preferences are respected.
+- Faculty still need an assigned subject inside an assigned program; program-only assignment cannot create a syllabus.
+
+**Subject-specific learning-outcome setup:**
+- Each subject stores separate vision, mission, EGA and PO values in courses.standards_json; CLOs remain in course_clos with stable IDs. Newly created subjects start with blank setup rather than inheriting unrelated defaults.
+- Additive migration copies existing setup into independent subject records. Section version checks reject stale saves and prevent removal of referenced outcomes.
+- Learning Outcomes and preview content require program and subject selection and complete subject setup. Catalog edits never rewrite previously saved submission snapshots.
+
+**Administrator syllabus workflow and version history:**
+- Admin My Syllabi stores personal drafts; other users' drafts remain private. Administrators may navigate builder steps in any order, but the server requires a complete form before handoff to AI Checker.
+- Removed the embedded AI checker from the administrator builder and the My checked drafts card from AI Checker. Incomplete admin drafts cannot be checked or published.
+- Save and continue hands a completed admin syllabus to the AI Checker tab in under_review status. An AI check does not approve it automatically: the owner explicitly chooses Approve & Add to Repository or Edit Syllabus.
+- Returning to edit restores draft status and removes the item from the checker queue. A server-managed review cycle invalidates earlier checks; pending, failed, stale, mismatched, or another administrator's checks cannot approve the current revision.
+- Completed administrator revisions are preserved as immutable version snapshots. A changed form handed back to AI Checker gets the next version; autosaves, unchanged forms and approval do not create duplicate content versions. Older completed records are snapshotted before returning to draft for editing.
+- Admin My Syllabi hides faculty-only Comments, reviewer-feedback banners, Message and unread badges. History remains available, including while editing a returned draft.
+
+**Repository and messaging:**
+- Faculty and administrator Repository use the same table/filter layout, show approved syllabi only, and omit the redundant status filter. Program cells and filters use current catalog labels with legacy fallbacks.
+- Shared chat eligibility, Repository actions, message dropdown filtering and chat guards prevent administrators from messaging themselves about their own syllabi. The API rejects those threads, omits self-partners and hides historical self-messages from the message list.
+- Bidirectional administrator/faculty messaging on faculty-owned submitted syllabi remains available. Version History remains independent of messaging.
+
+**Scrolling:**
+- Sidebar, Quick Actions and Upcoming Deadlines hide scrollbar tracks while preserving native overflow scrolling. The two dashboard panels are keyboard-focusable, labelled regions with visible focus.
+- Scoped native scroll-behavior: smooth applies to these areas, with an automatic reduced-motion fallback. Mouse-wheel and touch motion remain browser-controlled; no global wheel interception was introduced.
+
+**Validation and deployment:**
+- Current automated verification: 459 passing tests (414 domain/API/motion checks, 22 localization/preference checks and 23 rendered UI checks). Translation audit passes with 1,602 bilingual keys. Production build passes with the existing large-bundle warning.
+- Live localhost:5173 checks confirmed the app entry and transformed/direct stylesheet return HTTP 200 after the scrolling update. This does not constitute visual browser verification.
+- An explicit local BSFM administrator workflow test completed the form, saved it and verified handoff/checker availability without running an AI check or approving it. This was API/MySQL verification, not browser form filling; the local demonstration record is not a production seed.
+- Before starting the updated API on an existing database, run from server/: npm run migrate-preferences, npm run migrate-program-management, and npm run migrate-subject-standards. Earlier migrations remain prerequisites for older installations. Restart the API after deployment; server development mode uses Node watch mode.
+- Architecture and migration details are in docs/localization.md, docs/program-management.md and docs/admin-authoring-and-subject-standards.md.
+
+**Planned work, not implemented:**
+- Program-wide submission deadlines scoped to school year and semester, assignment-aware progress, and faculty notifications/reminders are planned only. Upcoming Deadlines still contains fixed sample entries; no deadline API, persistence or scheduler exists yet.
+- docs/claude-program-deadlines-ui.md contains the UI-first Claude handoff for System-Improvement. It requires isolated mock data and preserves the existing system architecture; it does not authorize real deadline delivery or backend work.
+
+---
+
+### v1.38.0 — Brand Theme, Time Usage, Profile Picture Sync, Custom Dropdowns and Dashboard Redesign
+**Date:** October 16, 2026
+
+**Brand theme and density (src/theme.css):**
+- Added src/theme.css, imported after styles.css, as a separate layer: removing the one import line in main.jsx switches the redesign off. It re-values the existing design tokens (--blue, --gold, --bg, --line, --text, --muted and others) so components needed no changes.
+- Palette taken from the two logos in /public: cobalt blue, deep navy, gold, copper and crimson, plus one added forest green for approved and success. Page background is rgb(248, 250, 249); card, table and divider borders are a light neutral gray; the topbar uses the page background.
+- Sidebar uses a gradient from the logo's cobalt at the top to deep navy, with a gold marker and gold icon on the active item. Menu text stays at 4.5:1 or better on every stop.
+- Tighter type scale (12 / 13 / 13 / 15 / 17 / 22 px) and smaller boxes: stat cards, dashboard rows, topbar, sidebar width and nav items, page and card padding.
+- Text hierarchy: near-black headings (--ink), dark body text, and a lighter gray (--muted, still 4.5:1) for secondary text. Card h3 headings and stat card titles share one size token (--title-size) and weight 800; stat numbers use weight 600.
+- Buttons, inputs, tables, tabs and the Log out button (light red on hover, solid red while pressed) use the brand colors. 132 leftover hard-coded cool-gray and old-blue colors in styles.css were replaced with brand equivalents; the printed syllabus paper, print rules and the dark-theme block were left as they were.
+- Scrollbars are hidden everywhere (scrollbar-width: none with !important, so per-element thin scrollbars no longer show). Wheel, touch and keyboard scrolling are unchanged.
+- The old black-icon test was rewritten for the new icon colors; new brandTheme tests check text, badge, tint, sidebar-gradient and chart contrast, that the theme sets no typeface, and that the type scale only grows with 12px as its floor.
+
+**Dashboard:**
+- Stat cards: a large number, a title in sentence case (new sentenceCase helper that keeps acronyms such as AI; works on translated labels), and the icon on a 28px tile with the sidebar gradient, white icon, level with the title. The colored left strip and the gold tick before card titles were removed.
+- Administrator dashboard has its own five cards: Programs, Subjects, Under Review (submitted and under-review faculty syllabi), Approved and For Revision. Programs and Subjects are counted from the existing /programs and /courses calls; the syllabus cards update with the existing refresh. The AI compliance, Total Courses and Submitted Syllabi cards were removed for administrators; faculty keep their own five cards.
+- Five custom SVG icons (program, subject, under review, approved, revise) were added in components/customIcons.jsx and registered in the Icon registry, drawn in currentColor.
+- Quick Actions: the icon lines up with the title however many lines the description takes, the arrow stays centered, the height follows the text (the fixed 86px minimum and the reserved second-language copy are gone in this card), and words break only when they cannot fit.
+- The Submission Status donut card and its code were removed. Donut and Legend remain for Analytics.
+
+**Time Usage card (replaces Submission Status):**
+- New usage_daily table (one row per user per Philippine day) and POST /api/usage/heartbeat and GET /api/usage/summary?days=7|30; no existing endpoint changed. Each user reads and adds only their own time; student accounts are never tracked.
+- The browser sends a heartbeat every 30 seconds only while the tab is visible and there was input in the last 5 minutes (src/lib/activity.js, useActiveTime.js). The server credits the time since that user's previous beat (capped at 90 seconds, per user so two tabs count once, 120-second silence starts a new session, beats under 10 seconds apart ignored), keeps it in memory, and writes every user in one batched statement about once a minute and at shutdown. A crash loses at most the last minute.
+- The card shows today's active time, a 7/30-day bar chart (today highlighted), average session, active days and busiest day, with empty, loading, error and not-set-up states in English and Tagalog.
+- Kill switch: USAGE_TRACKING=off in server/.env. Until the migration has run the endpoints answer enabled: false and the card says tracking is not set up. Details in docs/time-usage.md.
+
+**Profile pictures stay in sync:**
+- New avatar store (src/lib/avatarStore.js): every picture of a user reads the newest known photo, compared by upload time, so a new or removed photo shows at once in the topbar, Settings, Repository, Review board, syllabus dialog, chat header and message list. A stale list response cannot undo a newer upload.
+- Avatar accepts an optional userId (otherwise read from the URL). The chat partner now carries the user id. The syllabus list and message partners are read into the store each time they load, and refreshed every 60 seconds while the tab is visible and when it becomes visible again, so other people's changes appear without a reload.
+- The Compliance tab shows each faculty member's photo (or initials) with the shared Avatar, and groups cards by account instead of by name, so two people with the same name are no longer merged.
+
+**Custom dropdowns:**
+- New Select component (components/Select.jsx) replaces all 20 native selects in 14 files with the same props and option children; onChange still receives event.target.value as a string. The open list is a rounded panel with hover, a check on the chosen option, disabled options, opening upward when there is no room and rendering above modals.
+- Keyboard and accessibility: combobox button with a listbox, aria-activedescendant, Up/Down/Home/End/PageUp/PageDown, Enter or Space, Escape closes only the list (not the dialog around it), Tab leaves, type-ahead on short lists and filter-as-you-type with a hint on lists longer than 10. Touch screens keep the native picker. Widths set for the old tag selectors were carried over in the theme.
+- Option reading and the keyboard/filter rules are unit-tested (selectModel.test.js); five existing UI tests were updated to the new markup while still checking each option's stored value and language.
+
+**AI Checker and Subjects and Programs:**
+- Check History is a compact list: one row per check with a colored score circle, course, faculty, status and checked-by tags, date and a chevron, replacing the tall cards with a colored left stripe; below 640px the row wraps to two lines. The markup, spoken labels, filter and Show more are unchanged.
+- Status tags are small rounded labels with an icon (check, up arrow, clock, circular arrow, x, dashed circle): Approved and Rejected are solid, the working states are light with a matching border. Fixed a bug where Under Review and For Revision tags had no color on My Syllabi, Check History, the syllabus picker and the builder, because those screens pass under_review and for_revision while the CSS only styled the hyphenated names; both spellings are styled now.
+- Program Management: Rename and Delete are icon buttons (pencil and trash, blue and red with 2px borders) centered under a centered Actions header.
+- The Subjects table toolbar label now reads Subjects by program (English and Tagalog), with the same size and weight as the stat titles, and the toolbar no longer adds its own padding so the label lines up with the Programs title.
+
+**Validation and deployment:**
+- Current automated verification: 539 passing tests (484 domain/API/helper checks, 22 localization/preference checks and 33 rendered UI checks), including the new server tests for time counting and the usage routes. The translation audit passes. Production build passes.
+- No visual browser verification was performed for these changes, and the open dropdown list, the Time Usage chart and heartbeat against a live database were not exercised in a browser; the project has no browser test tooling.
+- Before using Time Usage on an existing database, run from server/: npm run migrate-usage, then restart the API. Fresh installs get the table from schema.sql.
+
+---
+
+### v1.39.0 — Subject Deadlines, Subject Actions in the Table and Subject Modal Updates
+**Date:** October 16, 2026
+
+**Subject deadlines (docs/deadlines.md):**
+- An administrator sets a submission deadline for a subject and term (school year and semester chosen from lists, due date and time in Philippine Time, optional instructions). It applies to every faculty member assigned to the subject, each against their own submission; a person assigned later has it too. Late submissions stay allowed and nothing about permissions, the builder, the AI check or approval changed.
+- A requirement is worked out each time, never stored: Upcoming, Due today, Failed to submit (past due, nothing submitted), Submitted, or Submitted late. A submission is the first non-draft version the faculty member saved for that subject at or after the deadline's start date (the moment it was set by default), so last term's syllabus does not satisfy this term. A subject nobody is assigned to shows as "no faculty assigned", not as failures.
+- New tables subject_deadlines and deadline_notices, and new routes under /api/deadlines (list, set, change, cancel, progress, remind, and a faculty member's own). Times are TIMESTAMPs read as epoch seconds, so the database server's time zone cannot shift a deadline. Until npm run migrate-deadlines has run, the routes answer enabled: false and the screens stay as they were.
+- Subjects and Programs gets a Deadline column: a chip with the due date and how many have submitted (red if someone failed to submit, green when all have). Clicking it opens a dialog to set, change or cancel the deadline and to see each assigned faculty member's status.
+- The dashboard's Upcoming Deadlines card shows real deadlines instead of fixed sample entries, most urgent first: a faculty member's own status per subject, the administrator's submitted and failed counts. My Syllabi cards show the deadline of their subject and its status.
+- Faculty who have not submitted are told on the notification bell and by email when a deadline is set, changed or cancelled, when the administrator presses Remind (per person or everyone; once per person every 6 hours), and automatically when it is due within 3 days, due today, and missed. Each automatic notice is sent once per person and deadline, and moving the due time starts them over. Emails follow the Email notifications setting and use the existing SMTP settings; the bell always works. A failed notice never undoes the save. DEADLINE_NOTICES=off turns notices off; the automatic check runs in the API process every 15 minutes.
+- New status tags for the deadline states, a new email type (never carries a password), and a notification type that opens My Syllabi (faculty) or Subjects and Programs (administrator).
+- Not built: a deadline banner inside the syllabus builder, and choosing a deadline while creating a subject.
+
+**Subject management:**
+- Edit and delete a subject moved from the Subject Details card in the subject modal to a last Actions column in the Subjects table (pencil and trash, with edit and delete dialogs built like the Programs ones). The Subject Details card is gone from the modal; Vision and Mission takes the full width.
+- The Programs and Subjects tables share one Actions column definition: the same width, left-aligned header and icons, so the two columns line up.
+- Subject modal: the title in the dark header is white again (the theme's heading color had reached it, and the Assignments modal header); Course Learning Outcomes sits below the Expected Graduate Attributes and Program Outcomes row; cards in a row share one height; card titles capitalize each word.
+- The five dashboard icon SVGs are kept in docs/icons with a README (the app reads the copies in customIcons.jsx, not these files).
+
+**Validation and deployment:**
+- Current automated verification: 614 passing tests (551 domain/API/helper checks, 22 localization/preference checks and 41 rendered UI checks), including new tests for the deadline rules, the notices and their timing, the routes, and the screens in both languages. The translation audit passes. Production build passes.
+- No visual browser verification was performed, and no email was sent through a real SMTP server: the notices are tested with a fake bell and a fake mailer.
+- Before using deadlines on an existing database, run from server/: npm run migrate-deadlines, then restart the API. Fresh installs get the tables from schema.sql.
+
+
+### Unreleased — Remove CO–PO Mapping Page
+**Date:** October 16, 2026
+
+- Removed the CO–PO Mapping page and its sidebar item for faculty and administrators, the dashboard Curriculum Mapping shortcut, and the login feature label.
+- Removed the dedicated view, matrix demo data, mapping API client, Express route/mount, mapping-only metric component, styles and unused bilingual strings. Removed the legacy mapping table definition from the fresh-install schema and its active API documentation.
+- Existing database mapping records were not dropped. Subject CLO/PO relationships, learning-plan alignment, printed syllabus content and AI compliance rules remain available to their existing workflows.
+- Added rendered regressions for faculty/admin navigation, dashboard shortcuts and login labels in English and Tagalog.
+- Validation: domain/API regressions, English/Tagalog rendered UI checks, localization audit and production build pass.
+
+---
+
+### v1.40.0 — Settled Deadlines
+**Date:** October 16, 2026
+
+- A deadline is now settled automatically when every faculty member assigned to the subject has submitted (on time or late). The chip and the dashboard row say Settled, the dialog explains it, and the API returns `settled`.
+- It is computed from the progress numbers, so nothing is stored or migrated; a faculty member assigned later reopens it by themselves. Cancel stays for deadlines set by mistake.
+- Validation: rule, API and rendered UI tests (English/Tagalog), and the production build pass.
+
+---
+
+### v1.41.0 — One Subject, One Faculty Member
+**Date:** October 16, 2026
+
+- A subject can now be assigned to only one faculty member. Programs can still be assigned to many.
+- The Assignments screen shows a subject held by another faculty member as disabled with the holder's name; the administrator removes it from them first. Select all skips those subjects.
+- The server refuses a save that would take a held subject (409 `subject_taken`, naming the subject and holder) and changes nothing; a new `GET /api/users/subject-holders` feeds the screen.
+- New unique key `unique_course_owner` on `faculty_courses.course_id` (schema.sql and `npm run migrate-subject-owner`, which stops and lists any subject that is still shared, and changes no data), so two administrators saving at once cannot both take a subject.
+- Validation: library, API, concurrency and migration dry-run checks, and the production build pass.
+
+---
+
+### v1.42.0 — Reminder Button and Toast
+**Date:** October 16, 2026
+
+- The deadline dialog's "Remind everyone pending" button is now called **Reminder** (**Paalala** in Tagalog). It still reminds only the faculty on that one subject's deadline who have not submitted.
+- Clicking Reminder, or the bell next to a faculty member, now shows a toast: "Reminder sent to Fay Cruz.", "Reminder sent to 3 faculty.", or why nobody was reminded (already reminded recently, already submitted, or nobody needs one). The toast shows above the open dialog, in English and Tagalog.
+- Validation: toast wording rules covered by tests, and the production build passes.
