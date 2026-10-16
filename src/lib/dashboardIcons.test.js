@@ -2,6 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert';
 import { readFileSync } from 'node:fs';
+import { compiledAppCss } from './compiledCss.js';
 
 const css = readFileSync(new URL('../styles.css', import.meta.url), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
 const dash = readFileSync(new URL('../views/DashboardView.jsx', import.meta.url), 'utf8');
@@ -34,7 +35,8 @@ test('every icon on the dashboard uses the regular weight, so the brand colours 
   icons.forEach((i) => assert.match(i, /weight="regular"/, i));
 });
 
-test('the sidebar and the other screens are not touched by the dashboard rule', () => {
-  const sel = css.match(/[^{}]*--icon-black[^{}]*\{|[^{}]*color: var\(--icon-black\)[^{}]*/g).join(' ');
+test('the sidebar and the other screens are not touched by the dashboard rule', async () => {
+  const compiled = await compiledAppCss(); // what the rule does once Tailwind has resolved styles.css, however it is written
+  const sel = compiled.match(/[^{}]*--icon-black[^{}]*\{|[^{}]*color: var\(--icon-black\)[^{}]*/g).join(' ');
   assert.ok(!/\.sidebar|\.nav-|\.page-wrap|\.card\b/.test(sel.replace(/\.stat-card/g, '')), 'only stat tiles and quick actions: ' + sel.slice(0, 200));
 });
