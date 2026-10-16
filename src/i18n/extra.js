@@ -1661,3 +1661,16 @@ const deadlineRemind = {
   "deadline.cancelledNotified": ["Deadline cancelled. {count} faculty notified.", "Nakansela ang takdang petsa. {count} guro ang naabisuhan."],
 };
 for (const [key, [en, tl]] of Object.entries(deadlineRemind)) { extraEn[key] = en; extraTl[key] = tl; }
+
+// The date picker (components/DatePicker.jsx).
+const datePicker = {
+  "date.choose": ["Select date", "Pumili ng petsa"],
+  "date.chooseDateTime": ["Select date and time", "Pumili ng petsa at oras"],
+  "date.prevMonth": ["Previous month", "Nakaraang buwan"],
+  "date.nextMonth": ["Next month", "Susunod na buwan"],
+  "date.today": ["Today", "Ngayon"],
+  "date.clear": ["Clear", "Burahin"],
+  "date.done": ["Done", "Tapos na"],
+  "date.time": ["Time", "Oras"],
+};
+for (const [key, [en, tl]] of Object.entries(datePicker)) { extraEn[key] = en; extraTl[key] = tl; }
