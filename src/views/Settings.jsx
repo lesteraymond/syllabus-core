@@ -7,6 +7,7 @@ import { Avatar, PageHead, Field } from '../components/ui';
 import { useGooglePhotoSync } from '../lib/useGooglePhotoSync';
 import { users as usersApi, adminSettings } from '../lib/api';
 import { AVATAR_ACCEPT, prepareAvatar } from '../lib/avatar';
+import Select from '../components/Select';
 
 export default function Settings({ user, notify, onAvatarChange, onProfileChange, language, languageBusy, onLanguageChange }) {
   const isAdmin = user.role === 'admin';
@@ -104,7 +105,7 @@ export default function Settings({ user, notify, onAvatarChange, onProfileChange
           <div className="profile-photo-container">
             <input ref={fileRef} type="file" accept={AVATAR_ACCEPT} onChange={pickPhoto} hidden />
             <div className="profile-photo-row">
-              <Avatar className="avatar settings-avatar" src={user.avatarUrl} name={user.name} initials={user.initials} />
+              <Avatar className="avatar settings-avatar" userId={user.id} src={user.avatarUrl} name={user.name} initials={user.initials} />
               <div className="profile-photo-details">
                 <h4>{translateUI("ui.profile_picture_aeb837")}</h4>
                 <div className="profile-photo-actions">
@@ -134,11 +135,11 @@ export default function Settings({ user, notify, onAvatarChange, onProfileChange
       <section className="settings-card language-settings" aria-busy={languageBusy}>
         <h3>{translateUI("ui.language_89b86a")}</h3>
         <p className="muted">{translateUI("ui.choose_the_language_used_throughout_the_system_your_preference_is_312fa8")}</p>
-        <Field label={translateUI("ui.display_language_73de4c")}><select value={language} disabled={languageBusy} onChange={async event => {
+        <Field label={translateUI("ui.display_language_73de4c")}><Select value={language} disabled={languageBusy} onChange={async event => {
           setLanguageError('');
           try { await onLanguageChange(event.target.value); }
           catch (error) { setLanguageError(error.message || translateUI("ui.could_not_save_your_language_preference_please_try_again_479b33")); }
-        }}><option value="en" lang="en">{translateUI("ui.english_649df0")}</option><option value="tl" lang="tl">{translateUI("ui.tagalog_68ddd9")}</option></select></Field>
+        }}><option value="en" lang="en">{translateUI("ui.english_649df0")}</option><option value="tl" lang="tl">{translateUI("ui.tagalog_68ddd9")}</option></Select></Field>
         <p className="language-save-status muted" role="status" aria-live="polite">{languageBusy ? translateUI("ui.saving_language_preference_e4f88d") : languageError ? tr('Language change was not saved. Your previous language has been restored.') : translateUI("ui.language_preference_saved_automatically_b4db96")}</p>
         {languageError && <div className="form-error" role="alert">{tr(languageError)}</div>}
       </section>

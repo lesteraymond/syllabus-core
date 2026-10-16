@@ -168,10 +168,16 @@ async function findFaculty(db, rawId) {
 }
 
 const sendAssignmentsError = (res, err) => {
-  if (err.status) return fail(res, err.status, err.message);
+  if (err.status) return res.status(err.status).json({ message: err.message, error: err.message, ...(err.body || {}) });
+  if (err && err.code === 'ER_DUP_ENTRY') return fail(res, 409, 'A subject was just assigned to someone else. Reload and try again; a subject has one faculty member.');
   console.error('ASSIGNMENTS ERROR:', err);
   return fail(res, 500, err.message);
 };
+
+// Who holds each subject (one faculty member per subject), so the assignment screen can show it before the admin ticks.
+router.get('/subject-holders', requireAdmin, async (req, res) => {
+  try { res.json({ holders: await assignments.subjectHolders(req.app.locals.db) }); } catch (err) { sendAssignmentsError(res, err); }
+});
 
 router.get('/:id/assignments', requireAdmin, async (req, res) => {
   try {
@@ -189,7 +195,10 @@ router.put('/:id/assignments', requireAdmin, async (req, res) => {
     const catalog = await assignments.loadCatalogIds(db);
     const next = assignments.normalizeAssignments(req.body, catalog);
     const before = await assignments.loadAssignments(db, user.user_id);
-    await inTransaction(db, (conn) => assignments.saveAssignments(conn, user.user_id, next));
+    await inTransaction(db, async (conn) => {
+      await assignments.assertSubjectsFree(conn, user.user_id, next.courseIds);   // a subject has one faculty member
+      await assignments.saveAssignments(conn, user.user_id, next);
+    });
 
     const same = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
     const changed = !same(before.programIds, next.programIds) || !same(before.courseIds, next.courseIds);

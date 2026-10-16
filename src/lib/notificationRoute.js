@@ -5,6 +5,8 @@
 //   -> { kind: 'chat', id } | { kind: 'comments', id } | { kind: 'page', page }
 export function notificationTarget(n, role) {
   if (n.type === 'message' && n.syllabusId) return { kind: 'chat', id: n.syllabusId };
+  // A deadline is about a subject, not a syllabus: faculty go to their syllabi (where the subject's syllabus is started or edited).
+  if (n.type === 'deadline') return { kind: 'page', page: role === 'admin' ? 'courses' : 'my-syllabi' };
   if (role === 'faculty' && n.syllabusId && (n.type === 'comment' || n.type === 'status')) return { kind: 'comments', id: n.syllabusId };
   if (role === 'admin' && (n.type === 'submission' || n.type === 'edit')) return { kind: 'page', page: 'ai' };
   return { kind: 'page', page: role === 'admin' ? 'review' : 'my-syllabi' };

@@ -3,6 +3,7 @@ import { Field } from '../../components/ui';
 import { CURRENT_SCHOOL_YEAR, COLLEGE_NAME } from '../../lib/schoolYear';
 import { Auto, Ic } from './parts';
 import { newId } from './useDraft';
+import Select from '../../components/Select';
 
 // Step 1: Course Information (form sections I-V).
 export default function InfoStep({ d, apply, model, programList, courseList, onChooseCourse, onChooseProgram }) {
@@ -12,10 +13,10 @@ export default function InfoStep({ d, apply, model, programList, courseList, onC
   return (
     <div className="form-grid">
       <Field label={translateUI("ui.program_2f03bb")}>
-        <select value={m.program} onChange={(e) => onChooseProgram(e.target.value)} aria-label={translateUI("ui.program_9d6800")}>
+        <Select value={m.program} onChange={(e) => onChooseProgram(e.target.value)} aria-label={translateUI("ui.program_9d6800")}>
           <option value="">{translateUI("ui.choose_a_program_2d5477")}</option>
           {programList.map((p) => <option key={p.code} value={p.code}>{p.code + ' – ' + p.name}</option>)}
-        </select>
+        </Select>
         <span className="linkline">
           {!m.program ? translateUI("ui.choosing_a_program_loads_its_program_outcomes_into_step_2_9e3350")
             : loaded ? <>{translateUI("ui.loads_7a0d36")}<b className="mono">{loaded + translateUI("ui.program_outcomes_9989b2")}</b>{translateUI("ui.into_step_2_cd03a4")}</>
@@ -23,10 +24,10 @@ export default function InfoStep({ d, apply, model, programList, courseList, onC
         </span>
       </Field>
       <Field label={translateUI("ui.subject_i_ii_0cd15b")}>
-        <select value={m.courseId || ''} onChange={(e) => onChooseCourse(e.target.value ? Number(e.target.value) : null)} aria-label={translateUI("ui.subject_8d183d")} disabled={!m.program || !courseList.length}>
+        <Select value={m.courseId || ''} onChange={(e) => onChooseCourse(e.target.value ? Number(e.target.value) : null)} aria-label={translateUI("ui.subject_8d183d")} disabled={!m.program || !courseList.length}>
           <option value="">{!m.program ? translateUI("ui.choose_a_program_first_43fce3") : courseList.length ? translateUI("ui.choose_a_subject_554b9c") : translateUI("ui.no_subjects_yet_1e06ee")}</option>
           {courseList.map((c) => <option key={c.id} value={c.id}>{c.code + ' \u2013 ' + c.title}</option>)}
-        </select>
+        </Select>
         <span className="linkline">
           {!m.program ? translateUI("ui.subjects_are_listed_by_program_41c330")
             : !courseList.length ? <span style={{ color: 'var(--warn)' }}>{translateUI("ui.no_subjects_have_been_added_for_679751")}{m.program}{translateUI("ui.yet_an_administrator_adds_them_a9bb24")}</span>

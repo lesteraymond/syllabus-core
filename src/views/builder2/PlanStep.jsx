@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { clone, renderMarkup, weekSet } from '../../lib/syllabusModel';
 import { Auto, CoverageStrip, Ic, OutcomePicker, Tag } from './parts';
 import { newId } from './useDraft';
+import Select from '../../components/Select';
 
 const newIlo = () => ({ id: newId(), text: '', tags: [] });
 const CELLS = [['contents', 'Topics covered'], ['activities', '- One per line'], ['tasks', '- One per line'], ['values', '**Core value**']];
@@ -64,7 +65,7 @@ export default function PlanStep({ d, apply, model, filter, setFilter, onDeleteR
                       {edit
                         ? <input className="cell" value={r.week} data-fid={r.id} aria-label={translateUI("ui.week_f82be6")} placeholder={translateUI("ui.week_f82be6")} onChange={(e) => { const v = e.target.value; updRow(r.id, (x) => { x.week = v; }); }} />
                         : <div className="fmt mono" style={{ fontWeight: 600 }}>{translateUI("ui.wk_1e49a0") + r.week}</div>}
-                      {edit && <select className="kind" value={r.kind} aria-label={translateUI("ui.row_type_91d899")} onChange={(e) => { const v = e.target.value; updRow(r.id, (x) => { x.kind = v; }); }}><option value="lesson">{translateUI("ui.lesson_0bb7c8")}</option><option value="exam">{translateUI("ui.exam_c7e542")}</option></select>}
+                      {edit && <Select className="kind" value={r.kind} aria-label={translateUI("ui.row_type_91d899")} onChange={(e) => { const v = e.target.value; updRow(r.id, (x) => { x.kind = v; }); }}><option value="lesson">{translateUI("ui.lesson_0bb7c8")}</option><option value="exam">{translateUI("ui.exam_c7e542")}</option></Select>}
                       {edit && (
                         <div className="racts">
                           <button type="button" className="ib" aria-label={translateUI("ui.move_up_b4f57c")} disabled={full === 0} onClick={() => move(r.id, -1)}><Ic n="up" /></button>

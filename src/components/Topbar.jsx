@@ -87,7 +87,7 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
             <div className="msg-drop-head"><strong>{translateUI("ui.messages_f1702b")}</strong><span>{unread}{translateUI("ui.unread_2630a7")}</span></div>
             {threads.length === 0 && <div className="msg-empty">{translateUI("ui.no_conversations_yet_265928")}</div>}
             {threads.map(t => <button key={t.code} className={`thread${t.unread ? ' unread' : ''}`} onClick={() => { setChatCode(t.code); markRead(t.code); setMsgDrop(false); }}>
-              <Avatar className="thread-av" src={t.partner?.avatarUrl} name={t.partner?.name} initials={t.partner?.initials || '?'} />
+              <Avatar className="thread-av" userId={t.partner?.id} src={t.partner?.avatarUrl} name={t.partner?.name} initials={t.partner?.initials || '?'} />
               <div className="thread-body"><div className="thread-top"><strong>{t.title}</strong><small>{fmt(t.lastTime)}</small></div><p>{t.partner?.name || translateUI("ui.unknown_bc7819")}{t.partner?.roleLabel && <em className="thread-role">{' · ' + tr(t.partner.roleLabel)}</em>}</p><span>{t.lastMsg}</span></div>
               {t.unread > 0 && <span className="thread-dot" />}
             </button>)}
@@ -107,7 +107,7 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
           </div>}
         </div>
         <div className="profile-wrap" ref={profRef}>
-          <button className="profile-btn" title={user.name} ref={profBtnRef} aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(o => !o)}><Avatar src={user.avatarUrl} name={user.name} initials={user.initials} /><span><strong>{user.name}</strong><small>{tr(ROLE_LABELS[user.role] || user.role || translateUI("ui.unknown_role_476868"))}</small></span></button>
+          <button className="profile-btn" title={user.name} ref={profBtnRef} aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(o => !o)}><Avatar userId={user.id} src={user.avatarUrl} name={user.name} initials={user.initials} /><span><strong>{user.name}</strong><small>{tr(ROLE_LABELS[user.role] || user.role || translateUI("ui.unknown_role_476868"))}</small></span></button>
           {menuOpen && <div className="profile-menu" role="menu" aria-label={translateUI("ui.profile_photo_33f385")}>
             <button type="button" role="menuitem" disabled={busy} onClick={() => { setMenuOpen(false); fileRef.current?.click(); }}>{translateUI("ui.change_photo_ed5690")}</button>
             {user.avatarUrl && <button type="button" role="menuitem" disabled={busy} onClick={removePhoto}>{translateUI("ui.remove_photo_c8f5ed")}</button>}

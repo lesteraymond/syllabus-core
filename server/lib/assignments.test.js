@@ -115,3 +115,26 @@ test('loadAssignments reads both tables', async () => {
   const conn = { query: async (sql) => [sql.includes('faculty_programs') ? [{ program_id: 1 }] : [{ course_id: 10 }, { course_id: 11 }]] };
   assert.deepStrictEqual(await A.loadAssignments(conn, 5), { programIds: [1], courseIds: [10, 11] });
 });
+
+test('assertSubjectsFree passes when nobody else holds the subjects, and skips the query for none', async () => {
+  const calls = [];
+  const conn = { query: async (sql, params) => { calls.push([sql, params]); return [[]]; } };
+  await A.assertSubjectsFree(conn, 5, []);
+  assert.strictEqual(calls.length, 0);
+  await A.assertSubjectsFree(conn, 5, [10, 11]);
+  assert.strictEqual(calls.length, 1);
+  assert.match(calls[0][0], /FOR UPDATE/, 'the rows are locked for the transaction');
+  assert.deepStrictEqual(calls[0][1], [[10, 11], 5]);
+});
+
+test('assertSubjectsFree names the holder and counts the rest', async () => {
+  const rows = [{ course_id: 10, code: 'IT 101', first_name: 'Fay', last_name: 'Cruz' }, { course_id: 11, code: 'IT 204', first_name: 'Gus', last_name: 'Lim' }, { course_id: 12, code: 'IT 310', first_name: 'Gus', last_name: 'Lim' }];
+  const conn = { query: async () => [rows] };
+  await assert.rejects(() => A.assertSubjectsFree(conn, 7, [10, 11, 12]), (e) => e.status === 409 && e.body.code === 'subject_taken' && e.body.conflicts.length === 3
+    && /^IT 101 is already assigned to Fay Cruz\./.test(e.message) && /\(2 more subjects are also taken\.\)/.test(e.message));
+});
+
+test('subjectHolders lists each subject with its faculty member', async () => {
+  const conn = { query: async () => [[{ course_id: 10, user_id: 5, first_name: 'Fay', last_name: 'Cruz' }]] };
+  assert.deepStrictEqual(await A.subjectHolders(conn), [{ courseId: 10, userId: 5, name: 'Fay Cruz' }]);
+});

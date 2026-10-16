@@ -27,6 +27,17 @@ function makeDb() {
     if (sql.startsWith('SELECT program_id FROM faculty_programs')) return [rowsOf(store.programs, params[0]).map((program_id) => ({ program_id }))];
     if (sql.startsWith('SELECT course_id FROM faculty_courses')) return [rowsOf(store.courses, params[0]).map((course_id) => ({ course_id }))];
     if (sql.startsWith('SELECT program_id, code, name FROM programs WHERE program_id IN')) return [PROGRAMS.filter((p) => params[0].includes(p.program_id))];
+    // who holds a subject (the one-faculty-per-subject rule): rows of other users for the courses asked about, and every holder
+    if (sql.startsWith('SELECT fc.course_id, c.code')) {
+      const out = [];
+      store.courses.forEach((set, uid) => { if (uid !== params[1]) set.forEach((cid) => { if (params[0].includes(cid)) { const c = COURSES.find((x) => x.course_id === cid); out.push({ course_id: cid, code: c.code, first_name: USERS[uid].first_name, last_name: USERS[uid].last_name }); } }); });
+      return [out.sort((x, y) => x.code.localeCompare(y.code))];
+    }
+    if (sql.startsWith('SELECT fc.course_id, fc.user_id')) {
+      const out = [];
+      store.courses.forEach((set, uid) => set.forEach((cid) => out.push({ course_id: cid, user_id: uid, first_name: USERS[uid].first_name, last_name: USERS[uid].last_name })));
+      return [out.sort((x, y) => x.course_id - y.course_id)];
+    }
     if (sql.startsWith('SELECT c.course_id')) return [COURSES.filter((c) => params[0].includes(c.course_id))];
     if (sql.startsWith('DELETE FROM faculty_courses')) { store.courses.delete(params[0]); return [{}]; }
     if (sql.startsWith('DELETE FROM faculty_programs')) { store.programs.delete(params[0]); return [{}]; }
@@ -103,11 +114,11 @@ test('a faculty member with nothing assigned gets empty lists', () => withServer
 
 test('removing a program removes its courses for that user only', () => withServer(async ({ call }) => {
   await call(admin, 'PUT', '/5/assignments', { programs: [1, 2], courses: [10, 20] });
-  await call(admin, 'PUT', '/6/assignments', { programs: [1, 2], courses: [10, 20] });
+  await call(admin, 'PUT', '/6/assignments', { programs: [1, 2], courses: [11] });   // a subject has one faculty member, so Gus holds a different one
   const put = await call(admin, 'PUT', '/5/assignments', { programs: [1], courses: [10, 20] });
   assert.deepStrictEqual(put.body.courseIds, [10]);
   assert.deepStrictEqual(put.body.dropped, [20]);
-  assert.deepStrictEqual((await call(admin, 'GET', '/6/assignments')).body.courseIds, [10, 20]);
+  assert.deepStrictEqual((await call(admin, 'GET', '/6/assignments')).body.courseIds, [11]);
 }));
 
 test('a program with no subjects in the catalog saves fine and is reported as empty', () => withServer(async ({ call, db }) => {
@@ -143,4 +154,57 @@ test('the faculty member is notified only when something changed', () => withSer
   const again = await call(admin, 'PUT', '/5/assignments', { programs: [1], courses: [10] });
   assert.strictEqual(again.body.changed, false);
   assert.strictEqual(db.store.notes.length, 1);
+}));
+
+test('a subject has one faculty member: saving one that another faculty member holds is refused, and nothing is changed', () => withServer(async ({ call, db }) => {
+  assert.strictEqual((await call(admin, 'PUT', '/5/assignments', { programs: [1], courses: [10, 11] })).status, 200);
+  const taken = await call(admin, 'PUT', '/6/assignments', { programs: [1], courses: [11] });
+  assert.strictEqual(taken.status, 409);
+  assert.strictEqual(taken.body.code, 'subject_taken');
+  assert.match(taken.body.error, /IT 204 is already assigned to Fay Faculty\. Remove it from them first; a subject has one faculty member\./);
+  assert.deepStrictEqual(taken.body.conflicts, [{ courseId: 11, code: 'IT 204', holder: 'Fay Faculty' }]);
+  assert.strictEqual(db.store.courses.get(6), undefined, 'the refused save left Gus untouched');
+  assert.deepStrictEqual([...db.store.courses.get(5)], [10, 11], 'and Fay keeps hers');
+  assert.strictEqual(db.store.notes.filter((n) => n.userId === 6).length, 0, 'nobody is told about a save that did not happen');
+}));
+
+test('a refused save is all or nothing, and says how many more subjects are taken', () => withServer(async ({ call, db }) => {
+  await call(admin, 'PUT', '/5/assignments', { programs: [1], courses: [10, 11] });
+  const r = await call(admin, 'PUT', '/6/assignments', { programs: [1], courses: [10, 11] });
+  assert.strictEqual(r.status, 409);
+  assert.match(r.body.error, /\(1 more subject are also taken\.\)/);
+  assert.strictEqual(r.body.conflicts.length, 2);
+  assert.strictEqual(db.store.courses.get(6), undefined);
+}));
+
+test('once the holder lets go, the subject can be assigned to someone else; saving your own subjects again is fine', () => withServer(async ({ call }) => {
+  await call(admin, 'PUT', '/5/assignments', { programs: [1], courses: [10, 11] });
+  assert.strictEqual((await call(admin, 'PUT', '/5/assignments', { programs: [1], courses: [10, 11] })).status, 200, 'the holder re-saving is not a conflict');
+  assert.strictEqual((await call(admin, 'PUT', '/5/assignments', { programs: [1], courses: [10] })).status, 200);
+  assert.strictEqual((await call(admin, 'PUT', '/6/assignments', { programs: [1], courses: [11] })).status, 200);
+}));
+
+test('a program can be assigned to many faculty even though a subject cannot', () => withServer(async ({ call }) => {
+  assert.strictEqual((await call(admin, 'PUT', '/5/assignments', { programs: [1], courses: [10] })).status, 200);
+  const second = await call(admin, 'PUT', '/6/assignments', { programs: [1], courses: [11] });
+  assert.strictEqual(second.status, 200);
+  assert.deepStrictEqual(second.body.programIds, [1]);
+}));
+
+test('the admin screen can see who holds each subject; faculty cannot', () => withServer(async ({ call }) => {
+  await call(admin, 'PUT', '/5/assignments', { programs: [1], courses: [10] });
+  await call(admin, 'PUT', '/6/assignments', { programs: [1], courses: [11] });
+  const r = await call(admin, 'GET', '/subject-holders');
+  assert.strictEqual(r.status, 200);
+  assert.deepStrictEqual(r.body.holders, [{ courseId: 10, userId: 5, name: 'Fay Faculty' }, { courseId: 11, userId: 6, name: 'Gus Faculty' }]);
+  assert.strictEqual((await call(fay, 'GET', '/subject-holders')).status, 403);
+  assert.strictEqual((await call(null, 'GET', '/subject-holders')).status, 401);
+}));
+
+test('two admins saving the same subject at the same moment: the database refuses the second with a clear 409', () => withServer(async ({ call, db }) => {
+  const original = db.getConnection;
+  db.getConnection = async () => { const c = await original(); const q = c.query; c.query = async (sql, p) => { if (String(sql).startsWith('INSERT INTO faculty_courses')) throw Object.assign(new Error('Duplicate entry'), { code: 'ER_DUP_ENTRY' }); return q(sql, p); }; return c; };
+  const r = await call(admin, 'PUT', '/6/assignments', { programs: [1], courses: [11] });
+  assert.strictEqual(r.status, 409);
+  assert.match(r.body.error, /just assigned to someone else/);
 }));

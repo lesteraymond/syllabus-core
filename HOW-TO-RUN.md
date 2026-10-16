@@ -180,5 +180,3 @@ The other `npm run migrate-*` scripts upgrade older databases; each is safe to r
 | GET | /api/users | List users (admin) |
 | POST | /api/users | Create user (admin) |
 | DELETE | /api/users/:id | Delete user (admin) |
-| GET | /api/mapping/:id | Get CO–PO mapping |
-| PUT | /api/mapping/:id | Save CO–PO mapping |

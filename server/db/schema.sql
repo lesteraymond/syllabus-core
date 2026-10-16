@@ -88,6 +88,7 @@ CREATE TABLE IF NOT EXISTS faculty_courses (
   course_id INT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (user_id, course_id),
+  UNIQUE KEY unique_course_owner (course_id),   -- a subject has at most one faculty member
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
   FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE
 );
@@ -146,17 +147,6 @@ CREATE TABLE IF NOT EXISTS messages (
   FOREIGN KEY (syllabus_id) REFERENCES syllabi(syllabus_id) ON DELETE CASCADE,
   FOREIGN KEY (sender_id) REFERENCES users(user_id) ON DELETE CASCADE,
   FOREIGN KEY (receiver_id) REFERENCES users(user_id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS co_po_mapping (
-  mapping_id INT AUTO_INCREMENT PRIMARY KEY,
-  curriculum_id INT NOT NULL,
-  co_number INT NOT NULL,
-  po_number INT NOT NULL,
-  level ENUM('I', 'R', 'M') DEFAULT NULL,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  UNIQUE KEY unique_mapping (curriculum_id, co_number, po_number),
-  FOREIGN KEY (curriculum_id) REFERENCES curriculum(curriculum_id) ON DELETE CASCADE
 );
 
 
@@ -322,3 +312,45 @@ CREATE TABLE IF NOT EXISTS catalog_events (event_id INT AUTO_INCREMENT PRIMARY K
 CREATE TABLE IF NOT EXISTS catalog_file_cleanup (file_path VARCHAR(500) PRIMARY KEY, attempts INT NOT NULL DEFAULT 0, last_error VARCHAR(255) NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
 
 CREATE TABLE IF NOT EXISTS program_code_aliases (code VARCHAR(20) PRIMARY KEY, program_id INT NOT NULL, FOREIGN KEY (program_id) REFERENCES programs(program_id) ON DELETE CASCADE);
+
+-- Time usage: active seconds per user per day (see lib/usage.js). Written in one batch about once a minute.
+CREATE TABLE IF NOT EXISTS usage_daily (
+  user_id INT NOT NULL,
+  usage_date DATE NOT NULL,
+  active_seconds INT NOT NULL DEFAULT 0,
+  session_count SMALLINT NOT NULL DEFAULT 0,
+  longest_session_seconds INT NOT NULL DEFAULT 0,
+  PRIMARY KEY (user_id, usage_date),
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+-- Subject deadlines (see lib/deadlines.js). A submission counts if it was made at or after opens_at.
+CREATE TABLE IF NOT EXISTS subject_deadlines (
+  deadline_id INT AUTO_INCREMENT PRIMARY KEY,
+  course_id INT NOT NULL,
+  term VARCHAR(30) NOT NULL,
+  due_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  opens_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  instructions VARCHAR(1000) NULL,
+  created_by INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  cancelled_at TIMESTAMP NULL DEFAULT NULL,
+  UNIQUE KEY unique_subject_term (course_id, term),
+  INDEX idx_deadlines_due (cancelled_at, due_at),
+  FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE,
+  FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS deadline_notices (
+  notice_id INT AUTO_INCREMENT PRIMARY KEY,
+  deadline_id INT NOT NULL,
+  user_id INT NOT NULL,
+  kind ENUM('created', 'updated', 'cancelled', 'before', 'due', 'missed', 'manual') NOT NULL,
+  sent_by INT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_notices_lookup (deadline_id, user_id, kind, created_at),
+  FOREIGN KEY (deadline_id) REFERENCES subject_deadlines(deadline_id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+

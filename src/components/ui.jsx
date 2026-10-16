@@ -1,6 +1,7 @@
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useSyncExternalStore } from 'react';
+import { resolveAvatar, subscribeAvatars } from '../lib/avatarStore';
 import { API_ORIGIN } from '../lib/api';
 import { Notebook } from '@phosphor-icons/react/dist/csr/Notebook';
 import { ArrowUpRight } from '@phosphor-icons/react/dist/csr/ArrowUpRight';
@@ -34,6 +35,9 @@ import { MagnifyingGlass } from '@phosphor-icons/react/dist/csr/MagnifyingGlass'
 import { CheckCircle } from '@phosphor-icons/react/dist/csr/CheckCircle';
 import { Warning } from '@phosphor-icons/react/dist/csr/Warning';
 import { FloppyDisk } from '@phosphor-icons/react/dist/csr/FloppyDisk';
+import { CalendarBlank } from '@phosphor-icons/react/dist/csr/CalendarBlank';
+import { BellRinging } from '@phosphor-icons/react/dist/csr/BellRinging';
+import { ProgramIcon, SubjectIcon, UnderReviewIcon, ApprovedIcon, ReviseIcon } from './customIcons';
 
 export function Card({ title, action, children, hideScrollbar = false }) {
   return <div className="card"><div className="card-head"><h3>{title}</h3>{action && <span>{tr(action)}</span>}</div><div className={hideScrollbar ? 'card-body scrollbar-hidden' : 'card-body'} {...(hideScrollbar ? { tabIndex: 0, role: 'region', 'aria-label': title } : {})}>{children}</div></div>;
@@ -67,10 +71,6 @@ export function PageHead({ title, subtitle, actions }) {
   return <div className="page-head"><div><h1>{title}</h1><p>{subtitle}</p></div><div className="page-actions">{actions}</div></div>;
 }
 
-export function MetricBox({ label, value, note, alert }) {
-  return <div className={`metric-box ${alert ? 'alert' : ''}`}><span>{label}</span><strong>{value}</strong><small>{note}</small></div>;
-}
-
 export function Recommendation({ level, title, text }) {
   return <div className="recommend"><span className={`priority ${level.toLowerCase()}`}>{level}</span><div><strong>{tr(title)}</strong><p>{tr(text)}</p></div></div>;
 }
@@ -97,7 +97,7 @@ export function Policy({ title, text }) {
 
 // One icon set (Phosphor) for the whole UI. Only the icons listed here are bundled.
 // Decorative by default (aria-hidden); pass `label` when the icon alone conveys meaning.
-const ICONS = { arrowUpRight: ArrowUpRight, arrowUUpLeft: ArrowUUpLeft, xCircle: XCircle, chatText: ChatCircleText, clockBack: ClockCounterClockwise, notebook: Notebook, sealCheck: SealCheck, hourglassMedium: HourglassMedium, notePencil: NotePencil, shieldCheck: ShieldCheck, graduationCap: GraduationCap, paperPlaneTilt: PaperPlaneTilt, uploadSimple: UploadSimple, trash: Trash, squaresFour: SquaresFour, pencilRuler: PencilRuler, sparkle: Sparkle, gridFour: GridFour, archive: Archive, chartBar: ChartBar, downloadSimple: DownloadSimple, usersThree: UsersThree, gearSix: GearSix, caretRight: CaretRight, eye: Eye, eyeSlash: EyeSlash, envelope: Envelope, bell: Bell, magnifyingGlass: MagnifyingGlass, checkCircle: CheckCircle, warning: Warning, floppyDisk: FloppyDisk };
+const ICONS = { arrowUpRight: ArrowUpRight, arrowUUpLeft: ArrowUUpLeft, xCircle: XCircle, chatText: ChatCircleText, clockBack: ClockCounterClockwise, notebook: Notebook, sealCheck: SealCheck, hourglassMedium: HourglassMedium, notePencil: NotePencil, shieldCheck: ShieldCheck, graduationCap: GraduationCap, paperPlaneTilt: PaperPlaneTilt, uploadSimple: UploadSimple, trash: Trash, squaresFour: SquaresFour, pencilRuler: PencilRuler, sparkle: Sparkle, gridFour: GridFour, archive: Archive, chartBar: ChartBar, downloadSimple: DownloadSimple, usersThree: UsersThree, gearSix: GearSix, caretRight: CaretRight, eye: Eye, eyeSlash: EyeSlash, envelope: Envelope, bell: Bell, magnifyingGlass: MagnifyingGlass, checkCircle: CheckCircle, warning: Warning, floppyDisk: FloppyDisk, calendarBlank: CalendarBlank, bellRinging: BellRinging, program: ProgramIcon, subject: SubjectIcon, underReview: UnderReviewIcon, approved: ApprovedIcon, revise: ReviseIcon };
 export function Icon({ name, size = 20, weight = 'duotone', label, className, ...rest }) {
   const Glyph = ICONS[name];
   if (!Glyph) return null;
@@ -108,10 +108,13 @@ export function Icon({ name, size = 20, weight = 'duotone', label, className, ..
 // `src` is an API path (/api/users/:id/avatar?v=...); the browser sends the session cookie with the <img> request,
 // and the server answers 404 when the viewer isn't allowed to see it, which falls back to the initials.
 const initialsOf = (name) => (name || '').split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase();
-export function Avatar({ src, name, initials, className = 'avatar' }) {
+// `userId` is optional: without it the user is read from the URL itself. The picture shown is the newest one known for that user (see lib/avatarStore.js).
+export function Avatar({ src, name, initials, className = 'avatar', userId }) {
   const [failed, setFailed] = useState(false);
-  useEffect(() => { setFailed(false); }, [src]);
-  const url = src && src.startsWith('/') ? `${API_ORIGIN}${src}` : src;
+  const current = () => resolveAvatar(userId, src);
+  const shown = useSyncExternalStore(subscribeAvatars, current, current);
+  useEffect(() => { setFailed(false); }, [shown]);
+  const url = shown && shown.startsWith('/') ? `${API_ORIGIN}${shown}` : shown;
   if (url && !failed) return <img className={className} src={url} alt={name} onError={() => setFailed(true)} />;
   return <span className={className}>{initials ?? initialsOf(name)}</span>;
 }

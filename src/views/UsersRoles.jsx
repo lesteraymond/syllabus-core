@@ -6,6 +6,7 @@ import { Avatar, PageHead } from '../components/ui';
 import { users as usersApi } from '../lib/api';
 import AssignmentsPanel from './AssignmentsPanel';
 import { ROLE_LABELS } from '../lib/roles';
+import Select from '../components/Select';
 
 const ROLE_PERMISSIONS = {
   admin: 'Full access',
@@ -80,7 +81,7 @@ export default function UsersRoles({ notify, onManageSubjects }) {
             </div>
             <div className="user-field">
               <label htmlFor="user-role" className="user-label">{translateUI("ui.role_c3f104")}</label>
-              <select id="user-role" className="user-input" value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}><option value="faculty">{tr(ROLE_LABELS.faculty)}</option><option value="admin">{tr(ROLE_LABELS.admin)}</option></select>
+              <Select id="user-role" className="user-input" value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}><option value="faculty">{tr(ROLE_LABELS.faculty)}</option><option value="admin">{tr(ROLE_LABELS.admin)}</option></Select>
             </div>
           <div className="user-field user-field-action">
             <button className="user-save-btn" type="submit">{translateUI("ui.save_efc007")}</button>

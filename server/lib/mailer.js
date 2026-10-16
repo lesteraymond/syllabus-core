@@ -71,4 +71,31 @@ async function sendCredentials({ to, name, password, reason = 'welcome' }) {
   }
 }
 
-module.exports = { sendCredentials, setTransport, compose, configured };
+// A notice email: a subject, a few lines of text and a link back to the app. Used for deadlines and reminders.
+function composeNotice({ name, subject, lines, linkText }) {
+  const url = loginUrl();
+  const first = String(name || '').trim() || 'there';
+  const label = linkText || 'Open the Syllabus Management System';
+  const text = ['Hello ' + first + ',', '', ...lines, '', ...(url ? [label + ': ' + url, ''] : []), 'Syllabus Management System'].join('\n');
+  const html = '<p>Hello ' + esc(first) + ',</p>' + lines.map((l) => '<p>' + esc(l) + '</p>').join('')
+    + (url ? '<p><a href="' + esc(url) + '">' + esc(label) + '</a></p>' : '');
+  return { subject, text, html };
+}
+
+// -> { sent: true } or { sent: false, reason }, like sendCredentials: it never throws, and a mail problem never undoes what it was about.
+async function sendNotice({ to, name, subject, lines, linkText }) {
+  try {
+    const t = getTransport();
+    if (!t) {
+      console.warn('MAIL: SMTP is not configured (SMTP_HOST, MAIL_FROM), so no email was sent to ' + to);
+      return { sent: false, reason: 'not_configured' };
+    }
+    await t.sendMail({ from: process.env.MAIL_FROM || 'no-reply@localhost', to, ...composeNotice({ name, subject, lines, linkText }) });
+    return { sent: true };
+  } catch (err) {
+    console.error('MAIL ERROR: could not send to ' + to + ' (' + ((err && err.code) || 'no code') + '): ' + (err && err.message));
+    return { sent: false, reason: reasonOf(err) };
+  }
+}
+
+module.exports = { sendCredentials, sendNotice, setTransport, compose, composeNotice, configured };

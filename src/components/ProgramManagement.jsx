@@ -2,6 +2,7 @@ import CatalogModalPortal from './CatalogModalPortal';
 import { useActionExit, useCatalogMotion, useSurfaceMotion } from '../lib/catalogMotion';
 import { useEffect, useRef, useState } from 'react';
 import StableButton from './StableButton';
+import { Icon } from './ui';
 import { useModalLayer } from './useModalLayer';
 import { outcomes } from '../lib/api';
 import { t, tr } from '../i18n';
@@ -109,10 +110,10 @@ export default function ProgramManagement({ programs, onChanged, notify }) {
   return <section className="card program-management" aria-labelledby="program-management-title">
     <div className="card-head"><h3 id="program-management-title" ref={heading} tabIndex={-1}>{t('programs.heading')}</h3></div>
     {refreshError && <div className="form-error" role="alert">{refreshError}<StableButton type="button" className="btn outline" onClick={async () => { try { await onChanged(); setRefreshError(''); } catch (error) { setRefreshError(tr(error.message)); } }}>{t('ui.reload_cce715')}</StableButton></div>}
-    <div className="table-wrap" ref={table}><table><thead><tr><th>{t('ui.program_code_18ae83')}</th><th>{t('ui.program_name_699413')}</th><th>{t('ui.actions_c3cd63')}</th></tr></thead><tbody>
-      {programs.map(program => <tr key={program.id} data-catalog-row={'program-' + program.id}><td className="mono">{program.code}</td><td>{program.name}</td><td><div className="program-management-actions">
-        <StableButton className="btn outline" type="button" aria-label={t('programs.renameTitle', { code: program.code })} onClick={() => setSelected({ program, mode: 'rename' })}>{t('programs.rename')}</StableButton>
-        <StableButton className="btn danger" type="button" aria-label={t('programs.deleteTitle', { code: program.code })} onClick={() => setSelected({ program, mode: 'delete' })}>{t('programs.delete')}</StableButton>
+    <div className="table-wrap" ref={table}><table><thead><tr><th>{t('ui.program_code_18ae83')}</th><th>{t('ui.program_name_699413')}</th><th className="col-actions">{t('ui.actions_c3cd63')}</th></tr></thead><tbody>
+      {programs.map(program => <tr key={program.id} data-catalog-row={'program-' + program.id}><td className="mono">{program.code}</td><td>{program.name}</td><td className="col-actions"><div className="program-management-actions">
+        <button className="icon-btn" type="button" title={t('programs.rename')} aria-label={t('programs.renameTitle', { code: program.code })} onClick={() => setSelected({ program, mode: 'rename' })}><Icon name="notePencil" size={18} weight="regular" /></button>
+        <button className="icon-btn is-delete" type="button" title={t('programs.delete')} aria-label={t('programs.deleteTitle', { code: program.code })} onClick={() => setSelected({ program, mode: 'delete' })}><Icon name="trash" size={18} weight="regular" /></button>
       </div></td></tr>)}
       {!programs.length && <tr><td colSpan="3">{t('programs.empty')}</td></tr>}
     </tbody></table></div>

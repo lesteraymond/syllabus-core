@@ -1508,3 +1508,156 @@ extraTl["history.savedRevisions"] = "Pinapanatili ang mga na-save na bersyon at 
 
 extraEn["chat.ownAdminUnavailable"] = "Messaging is unavailable for your own administrator-created syllabus.";
 extraTl["chat.ownAdminUnavailable"] = "Hindi magagamit ang pagmemensahe para sa sarili mong silabus na ginawa bilang administrador.";
+
+// Administrator dashboard summary cards.
+extraEn["dashboard.admin.programsNote"] = "In the catalog";
+extraTl["dashboard.admin.programsNote"] = "Nasa katalogo";
+extraEn["dashboard.admin.subjectsNote"] = "Across all programs";
+extraTl["dashboard.admin.subjectsNote"] = "Sa lahat ng programa";
+
+// Dashboard "Time Usage" card.
+extraEn["dashboard.usage.title"] = "Time Usage";
+extraTl["dashboard.usage.title"] = "Oras ng Paggamit";
+extraEn["dashboard.usage.today"] = "Active today";
+extraTl["dashboard.usage.today"] = "Aktibo ngayon";
+extraEn["dashboard.usage.avgDay"] = "Average per active day";
+extraTl["dashboard.usage.avgDay"] = "Karaniwan bawat aktibong araw";
+extraEn["dashboard.usage.avgSession"] = "Average session";
+extraTl["dashboard.usage.avgSession"] = "Karaniwang sesyon";
+extraEn["dashboard.usage.activeDays"] = "Active days";
+extraTl["dashboard.usage.activeDays"] = "Mga aktibong araw";
+extraEn["dashboard.usage.activeDaysValue"] = "{active} of {total}";
+extraTl["dashboard.usage.activeDaysValue"] = "{active} sa {total}";
+extraEn["dashboard.usage.busiest"] = "Busiest day";
+extraTl["dashboard.usage.busiest"] = "Pinakaabalang araw";
+extraEn["dashboard.usage.range"] = "Time range";
+extraTl["dashboard.usage.range"] = "Saklaw ng panahon";
+extraEn["dashboard.usage.range7"] = "7 days";
+extraTl["dashboard.usage.range7"] = "7 araw";
+extraEn["dashboard.usage.range30"] = "30 days";
+extraTl["dashboard.usage.range30"] = "30 araw";
+extraEn["dashboard.usage.note"] = "Counts only while this tab is open and you are active.";
+extraTl["dashboard.usage.note"] = "Binibilang lamang habang bukas ang tab na ito at aktibo ka.";
+extraEn["dashboard.usage.empty"] = "Your active time will appear here as you use the system.";
+extraTl["dashboard.usage.empty"] = "Lalabas dito ang iyong aktibong oras habang ginagamit mo ang sistema.";
+extraEn["dashboard.usage.off"] = "Time tracking is not set up yet.";
+extraTl["dashboard.usage.off"] = "Hindi pa naka-set up ang pagsubaybay ng oras.";
+extraEn["dashboard.usage.error"] = "Could not load your time usage.";
+extraTl["dashboard.usage.error"] = "Hindi ma-load ang iyong paggamit ng oras.";
+extraEn["dashboard.usage.retry"] = "Try again";
+extraTl["dashboard.usage.retry"] = "Subukan muli";
+extraEn["dashboard.usage.chartLabel"] = "Active time per day. {summary}";
+extraTl["dashboard.usage.chartLabel"] = "Aktibong oras bawat araw. {summary}";
+extraEn["dashboard.usage.loading"] = "Loading your time usage";
+extraTl["dashboard.usage.loading"] = "Nilo-load ang iyong paggamit ng oras";
+
+// Dropdown (components/Select.jsx).
+extraEn["select.typeToFilter"] = "Type to filter";
+extraTl["select.typeToFilter"] = "Mag-type para mag-filter";
+extraEn["select.filtering"] = "Filter: {query}";
+extraTl["select.filtering"] = "Salain: {query}";
+extraEn["select.noMatches"] = "No matches";
+extraTl["select.noMatches"] = "Walang tugma";
+
+// Subjects and Programs: the label above the program filter of the subjects table.
+extraEn["subjects.byProgram"] = "Subjects by program";
+extraTl["subjects.byProgram"] = "Mga asignatura ayon sa programa";
+
+// Subjects table: edit and delete a subject from its row (they were the "Subject Details" card in the subject modal).
+extraEn["subjects.edit"] = "Edit";
+extraTl["subjects.edit"] = "I-edit";
+extraEn["subjects.delete"] = "Delete";
+extraTl["subjects.delete"] = "Burahin";
+extraEn["subjects.editTitle"] = "Edit subject {code}";
+extraTl["subjects.editTitle"] = "I-edit ang asignaturang {code}";
+extraEn["subjects.deleteTitle"] = "Delete subject {code}";
+extraTl["subjects.deleteTitle"] = "Burahin ang asignaturang {code}";
+extraEn["subjects.editNote"] = "Change the subject code and title. Its outcomes and syllabi stay as they are.";
+extraTl["subjects.editNote"] = "Baguhin ang kodigo at pamagat ng asignatura. Mananatili ang mga kinalabasan at silabus nito.";
+extraEn["subjects.deleteNote"] = "{code} will be removed. Syllabi that use it keep the outcomes they were saved with, but new drafts can no longer pick it.";
+extraTl["subjects.deleteNote"] = "Aalisin ang {code}. Pananatilihin ng mga silabus na gumagamit nito ang mga kinalabasang naka-save sa kanila, ngunit hindi na ito mapipili ng mga bagong draft.";
+extraEn["subjects.deleteAction"] = "Delete subject";
+extraTl["subjects.deleteAction"] = "Burahin ang asignatura";
+extraEn["subjects.deleting"] = "Deleting…";
+extraTl["subjects.deleting"] = "Binubura…";
+
+// Subject deadlines: the administrator's chip and dialog (and, later, the faculty's cards).
+const deadlineText = {
+  "deadline.column": ["Deadline", "Takdang petsa"],
+  "deadline.set": ["Set deadline", "Magtakda ng petsa"],
+  "deadline.chipProgress": ["{done} of {total} submitted", "{done} sa {total} ang nakapagpasa"],
+  "assignments.heldBy": ["Assigned to {name}", "Nakatalaga kay {name}"],
+  "deadline.chipNobody": ["No faculty assigned", "Walang nakatalagang guro"],
+  "deadline.chipSettled": ["Settled", "Naayos na"],
+  "deadline.settledNote": ["Settled: every assigned faculty member has submitted, so nothing is left to wait for. It reopens by itself if someone else is assigned to this subject.", "Naayos na: nakapagpasa na ang lahat ng nakatalagang guro, kaya wala nang hinihintay. Awtomatiko itong magbubukas muli kung may ibang itatalaga sa subject na ito."],
+  "deadline.chipLabel": ["Deadline for {code}: {summary}", "Takdang petsa para sa {code}: {summary}"],
+  "deadline.chipSet": ["Set a deadline for {code}", "Magtakda ng petsa para sa {code}"],
+  "deadline.dialogTitle": ["Deadline for {code}", "Takdang petsa para sa {code}"],
+  "deadline.dialogNote": ["Every faculty member assigned to this subject must submit a syllabus by this date. Late submissions are still accepted and marked late.", "Dapat magpasa ng silabus ang bawat gurong nakatalaga sa asignaturang ito bago ang petsang ito. Tinatanggap pa rin ang huling pagpasa at namamarkahang huli."],
+  "deadline.term": ["Term", "Termino"],
+  "deadline.newTerm": ["New term", "Bagong termino"],
+  "deadline.schoolYear": ["School year", "Taong panuruan"],
+  "deadline.semester": ["Semester", "Semestre"],
+  "deadline.sem.first": ["1st Semester", "Unang Semestre"],
+  "deadline.sem.second": ["2nd Semester", "Ikalawang Semestre"],
+  "deadline.sem.summer": ["Summer", "Tag-init"],
+  "deadline.dueAt": ["Due date and time (Philippine Time)", "Takdang petsa at oras (Oras sa Pilipinas)"],
+  "deadline.instructions": ["Instructions for faculty (optional)", "Mga tagubilin para sa mga guro (opsyonal)"],
+  "deadline.advanced": ["Advanced", "Karagdagang opsyon"],
+  "deadline.opensAt": ["Count submissions made from", "Bilangin ang mga pagpasang ginawa mula"],
+  "deadline.opensHint": ["A submission made before this date does not count toward this deadline.", "Hindi binibilang sa takdang petsang ito ang pagpasang ginawa bago ang petsang ito."],
+  "deadline.save": ["Save deadline", "I-save ang takdang petsa"],
+  "deadline.saved": ["Deadline saved.", "Na-save ang takdang petsa."],
+  "deadline.cancelDeadline": ["Cancel deadline", "Kanselahin ang takdang petsa"],
+  "deadline.cancelConfirm": ["Click again to cancel this deadline", "I-click muli para kanselahin ang takdang petsa"],
+  "deadline.cancelled": ["Deadline cancelled.", "Nakansela ang takdang petsa."],
+  "deadline.close": ["Close", "Isara"],
+  "deadline.progress": ["Faculty progress", "Pag-usad ng mga guro"],
+  "deadline.stat.submitted": ["On time", "Sa oras"],
+  "deadline.stat.late": ["Late", "Huli"],
+  "deadline.stat.waiting": ["Waiting", "Naghihintay"],
+  "deadline.stat.failed": ["Failed", "Hindi nakapagpasa"],
+  "deadline.unassigned": ["No faculty member is assigned to this subject yet. Assign one in Users and Roles; they will then have this deadline.", "Wala pang gurong nakatalaga sa asignaturang ito. Magtalaga sa Users and Roles; magkakaroon na sila ng takdang petsang ito."],
+  "deadline.submittedOn": ["Submitted {date}", "Naipasa noong {date}"],
+  "deadline.notSubmitted": ["Not submitted yet", "Hindi pa naipasa"],
+  "deadline.loading": ["Loading progress", "Nilo-load ang pag-usad"],
+  "deadline.loadError": ["Could not load the progress.", "Hindi ma-load ang pag-usad."],
+  "deadline.status.upcoming": ["Upcoming", "Paparating"],
+  "deadline.status.due_today": ["Due today", "Takdang petsa ngayon"],
+  "deadline.status.failed": ["Failed to submit", "Hindi nakapagpasa"],
+  "deadline.status.submitted": ["Submitted", "Naipasa"],
+  "deadline.status.submitted_late": ["Submitted late", "Naipasa nang huli"],
+};
+for (const [key, [en, tl]] of Object.entries(deadlineText)) { extraEn[key] = en; extraTl[key] = tl; }
+
+extraEn["deadline.invalidDue"] = "Enter a valid due date and time.";
+extraTl["deadline.invalidDue"] = "Maglagay ng wastong takdang petsa at oras.";
+extraEn["deadline.notSetUp"] = "Deadlines are not set up yet. Ask the administrator to run the database migration.";
+extraTl["deadline.notSetUp"] = "Hindi pa naka-set up ang mga takdang petsa. Ipatakbo sa administrator ang database migration.";
+
+const deadlineMore = {
+  "deadline.dueOn": ["Due {date}", "Takdang petsa: {date}"],
+  "deadline.failedCount": ["{count} failed", "{count} ang hindi nakapagpasa"],
+  "deadline.cardOff": ["Deadlines are not set up yet.", "Hindi pa naka-set up ang mga takdang petsa."],
+  "deadline.cardEmptyFaculty": ["No deadlines for your subjects yet.", "Wala pang takdang petsa para sa iyong mga asignatura."],
+  "deadline.cardEmptyAdmin": ["No deadlines set yet. Set one from Programs and Subjects.", "Wala pang takdang petsa. Magtakda mula sa Programs and Subjects."],
+};
+for (const [key, [en, tl]] of Object.entries(deadlineMore)) { extraEn[key] = en; extraTl[key] = tl; }
+
+const deadlineRemind = {
+  "deadline.remind": ["Remind", "Paalalahanan"],
+  "deadline.remindAll": ["Reminder", "Paalala"],
+  "deadline.remindLabel": ["Remind {name}", "Paalalahanan si {name}"],
+  "deadline.lastReminded": ["Reminded {date}", "Napaalalahanan noong {date}"],
+  "deadline.remindDone": ["Reminded {sent} by notification and {emailed} by email.", "{sent} ang naabisuhan sa notification at {emailed} sa email."],
+  "deadline.remindSkipped": ["{count} skipped: already submitted, or reminded in the last 6 hours.", "{count} ang nilaktawan: naipasa na, o napaalalahanan sa nakalipas na 6 na oras."],
+  "deadline.toastSentOne": ["Reminder sent to {name}.", "Naipadala na ang paalala kay {name}."],
+  "deadline.toastSent": ["Reminder sent to {count} faculty.", "Naipadala na ang paalala sa {count} guro."],
+  "deadline.toastCooling": ["Already reminded recently. Try again later.", "Napaalalahanan na kamakailan. Subukan muli mamaya."],
+  "deadline.toastSubmitted": ["Already submitted, so no reminder was sent.", "Naipasa na, kaya walang ipinadalang paalala."],
+  "deadline.remindNobody": ["Nobody needs a reminder right now.", "Walang kailangang paalalahanan ngayon."],
+  "deadline.remindFailed": ["Could not send the reminder.", "Hindi maipadala ang paalala."],
+  "deadline.savedNotified": ["Deadline saved. {count} faculty notified.", "Na-save ang takdang petsa. {count} guro ang naabisuhan."],
+  "deadline.cancelledNotified": ["Deadline cancelled. {count} faculty notified.", "Nakansela ang takdang petsa. {count} guro ang naabisuhan."],
+};
+for (const [key, [en, tl]] of Object.entries(deadlineRemind)) { extraEn[key] = en; extraTl[key] = tl; }

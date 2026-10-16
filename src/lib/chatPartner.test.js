@@ -10,9 +10,9 @@ const facultyEntry = { id: 5, name: 'Fay Faculty', roleLabel: 'Faculty', avatarU
 
 test('the server\'s answer is used, so a faculty member sees the administrator before anyone has written, with a name and a role only', () => {
   const p = partnerOf({ partner: server, messages: [], user: fay, syl: { id: 10, faculty: 'Fay Faculty' } });
-  assert.deepStrictEqual(p, { name: 'Diana Evale', initials: 'DE', avatarUrl: '/api/users/1/avatar?v=1', roleLabel: 'Academic Administrator', program: '', subject: '' });
+  assert.deepStrictEqual(p, { id: server.id, name: 'Diana Evale', initials: 'DE', avatarUrl: '/api/users/1/avatar?v=1', roleLabel: 'Academic Administrator', program: '', subject: '' });
   // and the administrator sees the faculty member with the program and subject
-  assert.deepStrictEqual(partnerOf({ partner: facultyEntry, messages: [], user: admin }), { name: 'Fay Faculty', initials: 'FF', avatarUrl: null, roleLabel: 'Faculty', program: 'BSFM · Financial Management', subject: 'FM 202 — Fundamentals of Mathematics' });
+  assert.deepStrictEqual(partnerOf({ partner: facultyEntry, messages: [], user: admin }), { id: facultyEntry.id, name: 'Fay Faculty', initials: 'FF', avatarUrl: null, roleLabel: 'Faculty', program: 'BSFM · Financial Management', subject: 'FM 202 — Fundamentals of Mathematics' });
 });
 
 test('it wins over an older name in a message, so a changed name or picture shows without a new message', () => {
@@ -59,4 +59,10 @@ test('an administrator cannot message themselves about their own syllabus in any
   }
   assert.strictEqual(canChat({userId:fay.id,status:'approved'},admin),true);
   assert.strictEqual(canChat({userId:fay.id,status:'submitted'},fay),true);
+});
+
+test('the partner carries the user id, so their picture can be kept in step with every other place it shows', () => {
+  assert.strictEqual(partnerOf({ partner: server, messages: [], user: fay }).id, server.id);
+  assert.strictEqual(partnerOf({ partner: null, messages: [{ senderId: 1, sender: 'Diana Evale' }], user: fay, syl: { id: 3 } }).id, 1);
+  assert.strictEqual(partnerOf({ partner: undefined, messages: [], user: admin, syl: { id: 3, userId: 9, faculty: 'Fay Faculty' } }).id, 9);
 });

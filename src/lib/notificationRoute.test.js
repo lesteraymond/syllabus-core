@@ -46,3 +46,9 @@ test('for an administrator a new submission or a resubmission opens the AI Check
   assert.deepStrictEqual(notificationTarget(n('edit'), 'admin'), { kind: 'page', page: 'ai' });
   assert.deepStrictEqual(notificationTarget(n('submission'), 'faculty'), { kind: 'page', page: 'my-syllabi' });
 });
+
+test('a deadline notice opens the syllabi of a faculty member, or the subjects of an administrator, and has no syllabus to open', () => {
+  assert.deepStrictEqual(notificationTarget(n('deadline', null), 'faculty'), { kind: 'page', page: 'my-syllabi' });
+  assert.deepStrictEqual(notificationTarget(n('deadline', null), 'admin'), { kind: 'page', page: 'courses' });
+  assert.deepStrictEqual(notificationTarget(n('deadline', 7), 'faculty'), { kind: 'page', page: 'my-syllabi' }, 'never a comments thread');
+});
