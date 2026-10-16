@@ -55,7 +55,7 @@ Fill in `server/.env`:
 | `COMPLIANCE_AI_PROVIDER` | optional: `mock` shows AI-labelled recommendations in development; unset = plain rule-based check |
 | `SCHOOL_YEAR_START` | optional, default `2026` (used to measure reference age) |
 
-> Restart the API server after pulling changes: `npm run dev` does not auto-reload.
+> `npm run dev` restarts the API on file changes. After running a migration, restart it by hand.
 
 You should see:
 ```
@@ -69,6 +69,7 @@ If your database was created before the latest changes, run the migrations you a
 ```bash
 cd server
 npm run migrate-google-auth
+npm run migrate-preferences
 npm run migrate-avatar
 npm run migrate-avatars-private
 npm run migrate-notifications
@@ -79,9 +80,15 @@ npm run migrate-program-egas
 npm run migrate-compliance
 npm run migrate-comment-reads
 npm run migrate-students
+npm run migrate-passwords
+npm run migrate-program-management
+npm run migrate-subject-standards
+npm run migrate-usage
+npm run migrate-deadlines
+npm run migrate-subject-owner
 ```
 
-- `migrate-avatars-private`, `migrate-assignments` and `migrate-program-egas` support `--dry-run` (e.g. `npm run migrate-assignments -- --dry-run`)
+- `migrate-avatars-private`, `migrate-assignments`, `migrate-program-egas` and `migrate-subject-owner` support `--dry-run` (e.g. `npm run migrate-assignments -- --dry-run`)
 - `migrate-compliance` and `migrate-comment-reads` are optional: the features degrade gracefully (submit still works, unread counts show totals) until they are run
 - After `migrate-assignments`, faculty cannot create or edit syllabi until an admin assigns them a program and a subject (Users & Roles, Assignments button)
 
@@ -221,7 +228,7 @@ syllabus-cms-plus/
 ### Backend (`server/`)
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start the API server (http://localhost:3001). It does not auto-reload: restart it after pulling changes |
+| `npm run dev` | Start the API server (http://localhost:3001). It restarts when files change |
 | `npm run init-db` | Create the database, tables and seed data |
 | `npm run seed-outcomes` | Load the institution's vision, mission, EGAs, programs and the BSIT program outcomes. Only inserts what is missing; run it after `migrate-builder`. Supports `--dry-run` |
 | `node scripts/ocr-cor-test.js [image]` | Try the COR reader on the images in `server/sample_cor/` (git-ignored) or on a given image; prints the fields it read |
@@ -232,6 +239,7 @@ Each one upgrades an older database, is safe to run again, and touches no existi
 | Command | What it adds |
 |---------|--------------|
 | `npm run migrate-google-auth` | `course_assignments` table |
+| `npm run migrate-preferences` | Language preferences and administrator settings |
 | `npm run migrate-avatar` | `users.avatar_path` for profile photos |
 | `npm run migrate-avatars-private` | Moves existing profile photos into the private folder and makes `avatar_path` relative. Supports `--dry-run` |
 | `npm run migrate-notifications` | `notifications` table |
@@ -242,6 +250,12 @@ Each one upgrades an older database, is safe to run again, and touches no existi
 | `npm run migrate-compliance` | Compliance check tables (optional: submit still works without it) |
 | `npm run migrate-comment-reads` | `comment_reads` for unread comment counts (optional: faculty see totals until it is run) |
 | `npm run migrate-students` | The `student` role, `student_profiles` and `student_enrollments` for COR registration (needs `migrate-builder`). Supports `--dry-run` |
+| `npm run migrate-passwords` | `users.must_change_password` and the `password_temp` table |
+| `npm run migrate-program-management` | Program management tables; existing records are kept |
+| `npm run migrate-subject-standards` | `courses.standards_json`; existing standards are kept as independent copies |
+| `npm run migrate-usage` | `usage_daily` table for the dashboard time card |
+| `npm run migrate-deadlines` | `subject_deadlines` and `deadline_notices` tables |
+| `npm run migrate-subject-owner` | Unique key on `faculty_courses.course_id` (one subject, one faculty member). Stops and lists any subject held by more than one faculty. Supports `--dry-run` |
 
 Where a script says it supports `--dry-run`, add it after `--` to only report what would change, e.g. `npm run migrate-assignments -- --dry-run`.
 
