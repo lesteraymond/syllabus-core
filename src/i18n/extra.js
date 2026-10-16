@@ -1661,3 +1661,36 @@ const deadlineRemind = {
   "deadline.cancelledNotified": ["Deadline cancelled. {count} faculty notified.", "Nakansela ang takdang petsa. {count} guro ang naabisuhan."],
 };
 for (const [key, [en, tl]] of Object.entries(deadlineRemind)) { extraEn[key] = en; extraTl[key] = tl; }
+
+// The date picker (components/DatePicker.jsx).
+const datePicker = {
+  "date.choose": ["Select date", "Pumili ng petsa"],
+  "date.chooseDateTime": ["Select date and time", "Pumili ng petsa at oras"],
+  "date.prevMonth": ["Previous month", "Nakaraang buwan"],
+  "date.nextMonth": ["Next month", "Susunod na buwan"],
+  "date.today": ["Today", "Ngayon"],
+  "date.clear": ["Clear", "Burahin"],
+  "date.done": ["Done", "Tapos na"],
+  "date.time": ["Time", "Oras"],
+  "review.rejectHint": ["Sent back; it can still be edited", "Ibabalik; maaari pa itong baguhin"],
+  "review.rejectConfirm": ["Reject this syllabus? The faculty member is told why and can edit and submit it again.", "I-reject ang silabus na ito? Sasabihin sa guro kung bakit at maaari niya itong baguhin at ipasa muli."],
+  "builder.rejectedTitle": ["Rejected: edit and submit again. ", "Na-reject: baguhin at ipasa muli. "],
+  "builder.openMySyllabi": ["Open My Syllabi", "Buksan ang My Syllabi"],
+  "builder.subjectTaken": ["you already have a syllabus ({status})", "may silabus ka na ({status})"],
+  "builder.subjectHasDraft": ["you already have a draft", "may draft ka na"],
+  "syllabi.showArchived": ["Show archived ({count})", "Ipakita ang naka-archive ({count})"],
+  "syllabi.archivedTag": ["Archived", "Naka-archive"],
+  "builder.saveAsDraft": ["Save as draft", "I-save bilang draft"],
+  "builder.draftSaved": ["Draft saved. You can continue it from My Syllabi.", "Na-save ang draft. Maaari mo itong ipagpatuloy sa My Syllabi."],
+};
+for (const [key, [en, tl]] of Object.entries(datePicker)) { extraEn[key] = en; extraTl[key] = tl; }
+
+// The learning plan's column headings (src/lib/syllabusModel.js PLAN_HEADINGS is the English wording of the institutional form).
+const planHeadings = {
+  "plan.heading.ilo": ["Intended Learning Outcomes (ILO)", "Mga Inaasahang Kinalabasan ng Pagkatuto (ILO)"],
+  "plan.heading.contents": ["Course Contents", "Nilalaman ng Kurso"],
+  "plan.heading.activities": ["Suggested Learning Activities", "Mga Iminumungkahing Gawain sa Pagkatuto"],
+  "plan.heading.tasks": ["Suggested Assessment Tasks", "Mga Iminumungkahing Gawain sa Pagtatasa"],
+  "plan.heading.values": ["Expected Value/s To Be Integrated", "Inaasahang Pagpapahalaga na Isasama"],
+};
+for (const [key, [en, tl]] of Object.entries(planHeadings)) { extraEn[key] = en; extraTl[key] = tl; }

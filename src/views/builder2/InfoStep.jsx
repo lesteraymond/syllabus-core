@@ -1,4 +1,6 @@
 import { t as translateUI } from "../../i18n/index.js";
+import { tr } from "../../i18n/index.js";
+import { STATUS_LABELS } from '../../lib/syllabusRules';
 import { Field } from '../../components/ui';
 import { CURRENT_SCHOOL_YEAR, COLLEGE_NAME } from '../../lib/schoolYear';
 import { Auto, Ic } from './parts';
@@ -26,7 +28,7 @@ export default function InfoStep({ d, apply, model, programList, courseList, onC
       <Field label={translateUI("ui.subject_i_ii_0cd15b")}>
         <Select value={m.courseId || ''} onChange={(e) => onChooseCourse(e.target.value ? Number(e.target.value) : null)} aria-label={translateUI("ui.subject_8d183d")} disabled={!m.program || !courseList.length}>
           <option value="">{!m.program ? translateUI("ui.choose_a_program_first_43fce3") : courseList.length ? translateUI("ui.choose_a_subject_554b9c") : translateUI("ui.no_subjects_yet_1e06ee")}</option>
-          {courseList.map((c) => <option key={c.id} value={c.id}>{c.code + ' \u2013 ' + c.title}</option>)}
+          {courseList.map((c) => { const taken = c.taken && c.id !== m.courseId ? c.taken : null; return <option key={c.id} value={c.id} disabled={!!taken}>{c.code + ' – ' + c.title + (taken ? ' · ' + (taken.status === 'draft' ? translateUI("builder.subjectHasDraft") : translateUI("builder.subjectTaken", { status: tr(STATUS_LABELS[taken.status] || taken.status) })) : '')}</option>; })}
         </Select>
         <span className="linkline">
           {!m.program ? translateUI("ui.subjects_are_listed_by_program_41c330")

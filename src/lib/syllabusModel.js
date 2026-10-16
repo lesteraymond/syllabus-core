@@ -15,6 +15,17 @@ export const SCHEMA_VERSION = 2;
 
 export const LEVELS = ['Introductory', 'Enabling', 'Demonstrating', 'Integration of Values'];
 export const GROUPS = [['books', 'Books'], ['program', 'Internet Programming'], ['online', 'Internet References'], ['electronics', 'Electronics']];
+// The column headings of the learning plan (form section VII) in the wording of the institutional form. The printed form shows them in
+// capitals (views/builder2/FormPaper.jsx); the builder's Learning Plan step shows them as written, in the user's language, from the
+// plan.heading.* keys in src/i18n/extra.js, whose English must say exactly this (a test checks it). The first column is the Schedule
+// on the form and the week number in the builder, so it is not listed here.
+export const PLAN_HEADINGS = {
+  ilo: 'Intended Learning Outcomes (ILO)',
+  contents: 'Course Contents',
+  activities: 'Suggested Learning Activities',
+  tasks: 'Suggested Assessment Tasks',
+  values: 'Expected Value/s To Be Integrated',
+};
 export const STEPS = [
   { key: 'info', title: 'Course Information', form: 'I–V', sub: 'Identify the course. School year and college are filled in for you.' },
   { key: 'clos', title: 'Learning Outcomes', form: 'VI', sub: 'The institution’s vision, mission, graduate attributes and program outcomes, then your course learning outcomes tagged to them.' },

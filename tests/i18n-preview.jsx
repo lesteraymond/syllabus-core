@@ -9,7 +9,7 @@ import { adminSettings } from '../src/lib/api';
 import { navItems } from '../src/data/initialData';
 import { createLanguagePreference } from '../src/i18n/preference';
 import { getLanguage, subscribeLanguage, setLanguage } from '../src/i18n';
-import '../src/styles.css';
+import '../src/tailwind.css'; // styles.css uses @apply, so it is loaded through the entry that defines the utilities
 const config = { template: 'Undergraduate Syllabus v4', academicYear: '2026–2027', department: 'College of Information Technology and Engineering', aiChecking: true, strictValidation: false, emailNotifications: true };
 adminSettings.get = async () => ({ settings: config });
 adminSettings.save = async settings => ({ settings });

@@ -53,7 +53,7 @@ export default function PlanStep({ d, apply, model, filter, setFilter, onDeleteR
       <div className="scroll">
         <table className="ledger plan">
           <colgroup><col style={{ width: '96px' }} /><col style={{ width: '31%' }} /><col style={{ width: '14%' }} /><col style={{ width: '17%' }} /><col style={{ width: '15%' }} /><col /></colgroup>
-          <thead><tr><th>{translateUI("ui.week_f82be6")}</th><th>{translateUI("ui.intended_learning_outcomes_7e7669")}</th><th>{translateUI("ui.course_contents_1b687b")}</th><th>{translateUI("ui.learning_activities_87fc76")}</th><th>{translateUI("ui.assessment_tasks_795936")}</th><th>{translateUI("ui.values_to_integrate_bf0acd")}</th></tr></thead>
+          <thead><tr><th>{translateUI("ui.week_f82be6")}</th><th>{translateUI("plan.heading.ilo")}</th><th>{translateUI("plan.heading.contents")}</th><th>{translateUI("plan.heading.activities")}</th><th>{translateUI("plan.heading.tasks")}</th><th>{translateUI("plan.heading.values")}</th></tr></thead>
           <tbody>
             {shown.map((r) => {
               const full = d.plan.findIndex((y) => y.id === r.id);
@@ -87,7 +87,7 @@ export default function PlanStep({ d, apply, model, filter, setFilter, onDeleteR
                             <span className="lb">{translateUI("ui.ilo_080517") + (j + 1)}</span>
                             {edit
                               ? <Auto value={il.text} placeholder={translateUI("ui.start_with_a_verb_6b1d63")} label={translateUI("ui.ilo_f12fa1") + (j + 1) + translateUI("ui.of_week_60075b") + r.week} onChange={(v) => updRow(r.id, (x) => { x.ilos[j].text = v; })} />
-                              : <div className="fmt">{il.text || '—'}</div>}
+                              : <div className="fmt typed-text">{il.text || '—'}</div>}
                             <div className="tagrow">
                               {il.tags.map((t) => <Tag key={t} info={model.tagInfo(d, t)} onRemove={edit ? () => updRow(r.id, (x) => { x.ilos[j].tags = x.ilos[j].tags.filter((v) => v !== t); }) : null} />)}
                               {edit && <button type="button" className="tagbtn" aria-label={translateUI("ui.tag_outcomes_for_ilo_5f768a") + (j + 1)} onClick={(e) => setPicker({ row: r.id, ilo: il.id, rect: e.currentTarget.getBoundingClientRect() })}>{translateUI("ui.tag_eae765")}</button>}

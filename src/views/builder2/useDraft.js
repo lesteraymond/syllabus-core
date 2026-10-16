@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { phTime } from '../../lib/phTime';
 import { syllabi as syllabiApi } from '../../lib/api';
+import { saveOnce } from '../../lib/draftSave';
 import { SCHEMA_VERSION, clone, emptyDraft, hydrateContent } from '../../lib/syllabusModel';
 
 export const newId = () => 'k' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -80,21 +81,16 @@ export function useDraft(editing) {
           again.current = false;
           const d = latest.current;
           if (!d || !touched.current) break;
-          const changed = SECTIONS.filter((k) => JSON.stringify(d[k]) !== savedJson.current[k]);
-          if (!changed.length) { pending.current = false; setSave((x) => (x.state === 'pending' ? { ...x, state: 'saved' } : x)); break; }
           setSave((s) => ({ ...s, state: 'saving' }));
-          if (!idRef.current) idRef.current = (await syllabiApi.createDraft()).id;
-          const sections = {};
-          const sent = {};
-          changed.forEach((k) => { sections[k] = d[k]; sent[k] = JSON.stringify(d[k]); });
-          await syllabiApi.saveContent(idRef.current, sections, SCHEMA_VERSION);
-          Object.assign(savedJson.current, sent);
+          // lib/draftSave.js: only changed sections go up; no row exists before a subject is chosen; a refused first save removes its row again
+          const result = await saveOnce({ api: syllabiApi, d, idRef, saved: savedJson, sections: SECTIONS, schemaVersion: SCHEMA_VERSION });
+          if (result !== 'saved') { pending.current = false; setSave((x) => (x.state === 'pending' || x.state === 'saving' ? { ...x, state: 'saved' } : x)); break; }
           setSave({ state: 'saved', time: stamp() });
           if (!again.current) pending.current = SECTIONS.some((k) => JSON.stringify(latest.current[k]) !== savedJson.current[k]);
         } while (again.current);
         return true;
       } catch (e) {
-        setSave((s) => ({ ...s, state: 'error', message: e.message }));
+        setSave((s) => ({ ...s, state: 'error', message: e.message, code: e.data && e.data.code }));
         return false;
       } finally {
         running.current = false;

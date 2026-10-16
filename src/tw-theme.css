@@ -1,0 +1,44 @@
+/* The Tailwind theme: every value points at an existing design token (theme.css), never at a literal, so a utility can only produce
+   something from the design system. Loaded by tailwind.css with the tw prefix. Add a token here when a component needs one that is
+   missing; do not paste a colour or size. */
+@theme {
+  --spacing: 4px;
+
+  --color-brand: var(--blue);
+  --color-brand-2: var(--blue2);
+  --color-navy: var(--navy);
+  --color-gold: var(--gold);
+  --color-page: var(--bg);
+  --color-card: var(--card);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-red: var(--red);
+  --color-green: var(--green);
+  --color-teal: var(--teal);
+  --color-purple: var(--purple);
+  --color-tint-cobalt: var(--tint-cobalt);
+  --color-tint-crimson: var(--tint-crimson);
+  --color-tint-gold: var(--tint-gold);
+  --color-tint-green: var(--tint-green);
+
+  --text-xs: var(--text-xs);
+  --text-sm: var(--text-sm);
+  --text-base: var(--text-base);
+  --text-md: var(--text-md);
+  --text-lg: var(--text-lg);
+  --text-xl: var(--text-xl);
+
+  --font-weight-regular: var(--fw-regular);
+  --font-weight-medium: var(--fw-medium);
+  --font-weight-semibold: var(--fw-semibold);
+  --font-weight-bold: var(--fw-bold);
+  --font-weight-heavy: var(--fw-heavy);
+
+  --font-body: var(--font-body);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
+
+  --radius-card: var(--radius-card);
+  --shadow-card: var(--shadow);
+}
