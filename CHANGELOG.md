@@ -1177,8 +1177,9 @@ Each program has its own expected graduate attributes (EGAs) and program outcome
 **Date:** October 18, 2026
 
 **Navigation:**
-- Below 768px the left sidebar is replaced by a top bar (logo, "SMS" and the message, bell, avatar and Log out buttons) with an accordion card under it. The card shows the current page and a chevron; tapping it opens the full list of links in the sidebar's blue styling and pushes the content down. It starts closed, and closes on picking a page, on Esc and when the window grows past 768px. New `MobileNav` component; `App.jsx` owns its open state and shows either `Sidebar` or `MobileNav` (`useMediaQuery`), both fed by the same `nav` list, so menu items go to the same pages on every screen.
+- Below 768px the left sidebar is replaced by a top bar (logo, "CITE" and the message, bell, avatar and Log out buttons) with an accordion card under it. The card shows the current page and a chevron; tapping it opens the full list of links in the sidebar's blue styling and pushes the content down. It starts closed, and closes on picking a page, on Esc and when the window grows past 768px. New `MobileNav` component; `App.jsx` owns its open state and shows either `Sidebar` or `MobileNav` (`useMediaQuery`), both fed by the same `nav` list, so menu items go to the same pages on every screen.
 - At 768px and wider the sidebar and topbar are unchanged.
+- The brand text in that top bar is "CITE" (new `ui.cite_brand_5b2e91` key, English and Tagalog); the desktop sidebar still reads "SMS".
 
 **Layout:**
 - `body { min-width: 1100px }` made phones and tablets lay the page out 1100px wide, so no responsive rule could apply. It is lifted below 1100px.
