@@ -1,0 +1,266 @@
+/* Responsive layer. Loaded last in the legacy layer, so it only adds rules for narrow viewports and never changes desktop (>= 1024px).
+   Breakpoint contract: phone < 640px, tablet 640-1023px, desktop >= 1024px. New responsive rules go here, not into styles.css. */
+
+/* Dynamic viewport units: 100vh is taller than the visible area on phones while the browser bars are showing. */
+@supports (height: 100dvh) {
+	.app-shell,
+	.workspace { min-height: 100dvh; }
+}
+
+/* styles.css gives the body min-width: 1100px, which makes phones and tablets lay the page out 1100px wide. Lift it below that width. */
+@media (max-width: 1099.98px) {
+	body { min-width: 0; }
+}
+
+.topbar-brand { display: none; }
+
+/* Tablet and below: page content spacing. (The desktop sidebar stays down to 768px; it starts on its narrow rail below 1024px.) */
+@media (max-width: 1023.98px) {
+	.page-wrap { padding: 20px 20px 40px; }
+	.page-head { flex-wrap: wrap; gap: 12px; }
+	.page-actions { flex-wrap: wrap; }
+	.msg-drop { width: min(340px, calc(100vw - 32px)); }
+	.toast { right: 16px; left: 16px; bottom: max(16px, env(safe-area-inset-bottom)); }
+	/* The long eyebrow wrapped to three lines in the 80px topbar; keep it on one line and let it truncate. */
+	.topbar-heading { flex: 1 1 0; min-width: 0; }
+	.topbar-heading .eyebrow { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+	.top-actions { flex: none; }
+}
+
+/* Below md (768px): no sidebar. A brand bar with the actions sits on top, followed by the accordion card; both are in the page flow, so
+   opening the accordion pushes the content down. The content area uses the full width. */
+@media (max-width: 767.98px) {
+	.workspace { margin-left: 0; }
+	.topbar {
+		position: relative;
+		height: auto;
+		min-height: 64px;
+		padding: 10px 12px;
+		gap: 8px;
+	}
+	.topbar-brand { display: flex; align-items: center; gap: 8px; min-width: 0; color: var(--navy, #12285e); }
+	.topbar-brand img { width: 36px; height: 36px; flex: none; object-fit: contain; }
+	.topbar-brand strong { font: var(--fw-bold) var(--text-lg) var(--font-display); line-height: 1.3; }
+	.topbar-heading,
+	.search { display: none; }
+	.top-actions { flex: none; gap: 6px; }
+	.top-actions .icon-btn { width: 40px; height: 40px; }
+	/* Dropdowns anchor to the bar (full width) instead of to their small button. */
+	.msg-wrap { position: static; }
+	.msg-drop { top: calc(100% - 6px); left: 12px; right: 12px; width: auto; }
+
+	/* The sidebar, folded into the page: the same blue panel and link styling, collapsing to a header with the current page. */
+	.mnav {
+		margin: 12px 12px 0;
+		background: linear-gradient(180deg, #092b8d, #061b5d);
+		color: #fff;
+		border-radius: 16px;
+		box-shadow: 0 8px 22px rgba(6, 18, 60, 0.25);
+		overflow: hidden;
+	}
+	.mnav-card {
+		display: grid;
+		grid-template-columns: 40px minmax(0, 1fr) 20px;
+		align-items: center;
+		gap: 12px;
+		width: 100%;
+		min-height: 64px;
+		padding: 12px 16px;
+		text-align: left;
+		background: transparent;
+		color: #fff;
+		border: 0;
+		cursor: pointer;
+	}
+	.mnav-tile { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: rgba(255, 255, 255, 0.14); color: #fff; }
+	.mnav-heading { display: grid; min-width: 0; line-height: 1.25; }
+	.mnav-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--text-sm); font-weight: var(--fw-bold); text-transform: uppercase; letter-spacing: var(--tracking-label); }
+	.mnav-heading small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--text-xs); color: #c3cdee; }
+	.mnav-chevron { transition: transform 200ms ease; }
+	.mnav[data-open="true"] .mnav-chevron { transform: rotate(180deg); }
+	.mnav-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 220ms ease; }
+	.mnav[data-open="true"] .mnav-panel { grid-template-rows: 1fr; }
+	.mnav-list {
+		min-height: 0;
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+		padding: 0 10px;
+	}
+	.mnav[data-open="true"] .mnav-list { padding: 4px 10px 12px; max-height: 70dvh; overflow-y: auto; border-top: 1px solid rgba(255, 255, 255, 0.12); }
+	.mnav-list button {
+		display: grid;
+		grid-template-columns: 24px minmax(0, 1fr);
+		align-items: center;
+		gap: 12px;
+		flex: none;
+		min-height: 48px;
+		padding: 8px 12px;
+		text-align: left;
+		background: transparent;
+		color: #d8e0f6;
+		border: 0;
+		border-radius: 9px;
+		font-size: var(--text-sm);
+		font-weight: var(--fw-semibold);
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-label);
+	}
+	.mnav-list button:hover { background: rgba(255, 255, 255, 0.08); }
+	.mnav-list button.active { background: linear-gradient(90deg, #d79a2b, #e6b75f); color: #12285e; }
+}
+
+/* Phone */
+@media (max-width: 639.98px) {
+	.page-wrap { padding: 16px 12px 32px; }
+	.page-head { flex-direction: column; align-items: stretch; }
+	/* styles.css gives these a flex-basis (280px) meant for a row; in a column it would become a height. */
+	.page-head > div:first-child,
+	.page-head .page-actions { flex: 0 0 auto; }
+	.page-actions > * { flex: 1 1 auto; }
+}
+
+/* ---- Sign-in, register and forgot-password (they share .login-page) ---- */
+/* Small laptops: the two columns still fit, but the big logo circle left the text too little room and it was cut off. */
+@media (max-width: 1279.98px) {
+	.login-brand { padding: 56px 5vw; gap: 28px; }
+	.login-brand > div:last-child { min-width: 0; }
+	.brand-orb { width: 170px; height: 170px; min-width: 170px; padding: 14px; }
+	.login-brand h1 { font-size: clamp(30px, 3.6vw, 46px); overflow-wrap: anywhere; }
+	.login-brand p { font-size: var(--text-base); overflow-wrap: anywhere; }
+	.login-panel { padding: 40px 28px; }
+}
+/* Tablet and phone: the blue brand side is dropped and the form takes the whole screen (the form already carries the logo and the title). */
+@media (max-width: 1099.98px) {
+	.login-page { grid-template-columns: minmax(0, 1fr); min-height: 100dvh; overflow-x: clip; }
+	.login-brand { display: none; }
+	.login-panel { padding: 40px 24px; align-items: center; min-height: 100dvh; }
+}
+@media (max-width: 639.98px) {
+	.login-panel { padding: 24px 16px; }
+	.login-card { gap: 12px; }
+}
+
+/* ---- Phase 2: shared primitives ---- */
+
+/* Tablet and phone: wide data scrolls inside its card instead of crushing the columns or the page. */
+@media (max-width: 1023.98px) {
+	/* The syllabus table (.syllabus-table, the .bld2 ledgers, the form paper) lays itself out with its own flex/fixed sizing, so it is excluded here. */
+	.table-wrap:not(.syllabus-table),
+	.table-card { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+	.table-wrap:not(.syllabus-table) table,
+	.table-card table { min-width: 640px; }
+	.dashboard-grid.lower,
+	.pick-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.review-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+	.report-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.ai-layout { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Syllabus builder wizard (the form around the paper). Fields use 1fr tracks, which grow to a select's intrinsic width and push the card out. */
+@media (max-width: 1023.98px) {
+	.editor-layout { grid-template-columns: 200px minmax(0, 1fr); }
+	.form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.form-grid > *,
+	.field { min-width: 0; }
+	.field input,
+	.field select,
+	.field textarea { max-width: 100%; min-width: 0; }
+	.editor-card { min-height: 0; }
+	.course-strip,
+	.check-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+	.course-strip span,
+	.check-strip span { border-bottom: 1px solid var(--line); min-width: 0; overflow-wrap: anywhere; }
+}
+@media (max-width: 639.98px) {
+	.editor-layout { grid-template-columns: minmax(0, 1fr); }
+	/* The seven steps become one swipeable row above the form instead of a 300px column. */
+	.stepper { display: flex; gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 8px; scrollbar-width: thin; }
+	.stepper button { flex: 0 0 auto; width: auto; white-space: nowrap; min-height: 44px; }
+	.bld2 .stepper .prog { flex: none; align-self: center; margin: 0; padding: 0 8px; border-top: 0; white-space: nowrap; }
+	.editor-card { padding: 14px; }
+	.editor-title { flex-wrap: wrap; gap: 6px; }
+	.course-strip,
+	.check-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.course-strip > span:last-child:nth-child(odd),
+	.check-strip > span:last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+
+/* Dashboard: on desktop every row has a fixed height and each card scrolls inside it. Below 1024px the cards size to their content
+   (with a cap so a long activity feed still scrolls inside its card) instead of being cut off at a fixed 320px / 250px. */
+@media (max-width: 1023.98px) {
+	.dashboard-grid,
+	.dashboard-grid.lower { grid-auto-rows: auto; gap: 12px; }
+	.dashboard-grid > .card { min-height: 220px; }
+	.dashboard-grid > .card > .card-body { max-height: 380px; flex: 0 1 auto; }
+	.dashboard-grid > .card > .card-body.scrollbar-hidden { max-height: none; }
+	.stat-grid { grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); }
+}
+@media (max-width: 639.98px) {
+	.dashboard-grid > .card { min-height: 0; }
+	.dashboard-grid > .card > .card-body { max-height: 320px; }
+	.dashboard-grid .card-head { flex-wrap: wrap; row-gap: 8px; }
+	.dashboard-grid .card-head > span { max-width: 100%; }
+	.quick-actions button { min-height: 72px; }
+	.feed-item { grid-template-columns: 32px minmax(0, 1fr); }
+	.feed-item time { grid-column: 2; padding-top: 0; }
+	.usage-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Phone: single-column forms and grids, full-screen sheets for modals. */
+@media (max-width: 639.98px) {
+	.form-grid,
+	.two-col,
+	.syl-grid,
+	.comp-grid,
+	.analytics-grid,
+	.dashboard-grid,
+	.dashboard-grid.lower,
+	.pick-grid,
+	.sm-pair,
+	.cm-areas,
+	.review-summary,
+	.reports-grid,
+	.analytics-grid.two { grid-template-columns: minmax(0, 1fr); }
+	.reports-grid .card:nth-child(3) { grid-column: auto; }
+	.report-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.field.full { grid-column: auto; }
+	.filter-card { grid-template-columns: minmax(0, 1fr); }
+	.stat-grid { grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); }
+	.stat-grid > .stat-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
+
+	.overlay:not(.overlay-confirm) { padding: 0; align-items: stretch; justify-items: stretch; }
+	.overlay .modal:not(.confirm-modal) {
+		width: 100vw;
+		max-width: 100vw;
+		height: 100dvh;
+		max-height: 100dvh;
+		border-radius: 0;
+	}
+	.modal-head { padding: 14px 16px; }
+	.modal-body { padding: 16px; }
+	.modal-foot { padding: 12px 16px max(12px, env(safe-area-inset-bottom)); flex-wrap: wrap; }
+	.modal-foot .btn { flex: 1 1 auto; }
+	.confirm-modal { width: min(400px, 92vw); padding: 24px 20px; }
+	.confirm-actions { flex-wrap: wrap; }
+	.confirm-actions .btn { flex: 1 1 auto; }
+	.program-dialog { max-height: 100dvh; }
+}
+
+/* Touch devices: comfortable tap targets without changing the mouse layout. */
+@media (pointer: coarse) {
+	.icon-btn { width: 44px; height: 44px; }
+	.profile-btn,
+	.logout { min-height: 44px; }
+	.profile-menu button { min-height: 44px; }
+	/* 16px keeps iOS Safari from zooming the page when a field gets focus. */
+	input:not([type="checkbox"]):not([type="radio"]),
+	select,
+	textarea { font-size: max(16px, 1em); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mnav-panel,
+	.mnav-chevron { transition: none; }
+}
