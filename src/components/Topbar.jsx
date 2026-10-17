@@ -9,7 +9,7 @@ import { navItems } from '../data/initialData';
 import { fmt } from '../lib/utils';
 import { ROLE_LABELS } from '../lib/roles';
 
-export default function Topbar({ page, onLogout, user, unread, threads, msgDrop, setMsgDrop, setChatCode, markRead, notify, onAvatarChange, notifications, onOpenNotification, onMarkAllNotificationsRead }) {
+export default function Topbar({ onMenu, navOpen, page, onLogout, user, unread, threads, msgDrop, setMsgDrop, setChatCode, markRead, notify, onAvatarChange, notifications, onOpenNotification, onMarkAllNotificationsRead }) {
   const title = navItems.find(([k]) => k === page)?.[2] || 'Dashboard';
   const ref = useRef(null);
   useEffect(() => {
@@ -78,6 +78,7 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
 
   return (
     <header className="topbar">
+      <button type="button" className="nav-burger" onClick={onMenu} aria-expanded={!!navOpen} aria-label={translateUI("ui.open_menu_8c2e71")}><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><line x1="4" y1="6" x2="20" y2="6" /><line x1="4" y1="12" x2="20" y2="12" /><line x1="4" y1="18" x2="20" y2="18" /></svg></button>
       <div className="topbar-heading"><span className="eyebrow">{translateUI("ui.syllabus_management_system_e49cab")}</span>{page === 'dashboard' && <h2>{tr(title)}</h2>}</div>
       <div className="top-actions">
         <div className="search"><Icon name="magnifyingGlass" size={18} /><input placeholder={translateUI("ui.search_syllabus_course_faculty_67a24a")} /></div>

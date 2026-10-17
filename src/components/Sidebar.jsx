@@ -5,7 +5,7 @@ import { t as translateUI } from "../i18n/index.js";
 // through `data-collapsed`; every label stays mounted and is hidden with CSS only.
 import { Icon } from './ui';
 
-export default function Sidebar({ page, setPage, nav, collapsed, onToggle }) {
+export default function Sidebar({ page, setPage, nav, collapsed, onToggle, onLogout }) {
   const navigationId = useId();
   return (
     <aside className="sidebar" data-collapsed={collapsed ? 'true' : 'false'} aria-label={translateUI("ui.main_navigation_efd197")}>
@@ -46,6 +46,7 @@ export default function Sidebar({ page, setPage, nav, collapsed, onToggle }) {
         ))}
       </nav>
       </div>
+      <button type="button" className="side-logout" onClick={onLogout}>{translateUI("ui.log_out_6e78c9")}</button>
     </aside>
   );
 }
