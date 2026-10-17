@@ -1018,3 +1018,24 @@ Each program has its own expected graduate attributes (EGAs) and program outcome
 - The deadline dialog's "Remind everyone pending" button is now called **Reminder** (**Paalala** in Tagalog). It still reminds only the faculty on that one subject's deadline who have not submitted.
 - Clicking Reminder, or the bell next to a faculty member, now shows a toast: "Reminder sent to Fay Cruz.", "Reminder sent to 3 faculty.", or why nobody was reminded (already reminded recently, already submitted, or nobody needs one). The toast shows above the open dialog, in English and Tagalog.
 - Validation: toast wording rules covered by tests, and the production build passes.
+
+---
+
+### v1.43.0 — Responsive Layout and Sidebar Drawer
+**Date:** October 18, 2026
+
+**Responsive layout:**
+- New `src/responsive.css`, imported last so it overrides the desktop rules. Breakpoints: sm 640, md 768, lg 1024, xl 1280. Nothing forces a minimum page width any more (the body had `min-width: 1100px`, which made phones scroll sideways).
+- Grids step down by width: dashboard, analytics, syllabus cards, filters, the AI Checker and the review screens go from several columns to one on phones. Page padding and heading sizes scale with the screen.
+- Wide tables scroll inside their card instead of being clipped. The syllabus preview and the builder's plan and grading tables scroll sideways in their own box on phones.
+- Modals use the dynamic viewport height and a smaller margin; their footer buttons stack full width on phones. The message and notification dropdowns become full-width sheets under the top bar.
+- Touch screens get 44px tap targets and 16px inputs, so iOS does not zoom when a field is tapped.
+
+**Menu on small screens:**
+- Below 1024px the sidebar becomes an **off-canvas drawer** that slides in from the left. The burger in the top bar opens it; the hamburger in the drawer, a tap on the dimmed backdrop, Escape, or choosing a page closes it. The desktop sidebar is unchanged.
+- Log out moves to the bottom of the menu on small screens; the top bar button stays on desktop. The top bar loses its wrapped "Syllabus Management System" label on phones so the title, messages, notifications and avatar fit.
+
+**Login:**
+- On phones and tablets the login is a single column that fits one screen: the blue brand panel is hidden, and the header (logo, "Syllabus Management System", "Sign in to SMS") is centered. Register and Forgot password use the same centered header. Desktop keeps the two-panel layout.
+- New interface strings "Open menu" and "Close menu" in English and Tagalog.
+- Validation: localization audit and production build pass; layout checked in headless Chrome and on a phone-sized viewport.
