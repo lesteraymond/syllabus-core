@@ -78,6 +78,7 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
 
   return (
     <header className="topbar">
+      <div className="topbar-brand"><img src="/cite-logo.png" alt={translateUI("ui.cict_logo_dee290")} /><strong>{translateUI("ui.sms_9e10d4")}</strong></div>
       <div className="topbar-heading"><span className="eyebrow">{translateUI("ui.syllabus_management_system_e49cab")}</span>{page === 'dashboard' && <h2>{tr(title)}</h2>}</div>
       <div className="top-actions">
         <div className="search"><Icon name="magnifyingGlass" size={18} /><input placeholder={translateUI("ui.search_syllabus_course_faculty_67a24a")} /></div>
