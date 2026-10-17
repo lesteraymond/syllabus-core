@@ -5,7 +5,7 @@ import { t as translateUI } from "../i18n/index.js";
 // through `data-collapsed`; every label stays mounted and is hidden with CSS only.
 import { Icon } from './ui';
 
-export default function Sidebar({ page, setPage, nav, collapsed, onToggle }) {
+export default function Sidebar({ page, setPage, nav, collapsed, onToggle, onLogout }) {
   const navigationId = useId();
   return (
     <aside className="sidebar" data-collapsed={collapsed ? 'true' : 'false'} aria-label={translateUI("ui.main_navigation_efd197")}>
@@ -29,6 +29,9 @@ export default function Sidebar({ page, setPage, nav, collapsed, onToggle }) {
         <img className="side-logo" src="/cite-logo.png" alt={translateUI("ui.cict_logo_dee290")} />
         <strong className="side-title">{translateUI("ui.sms_9e10d4")}</strong>
       </div>
+      <button type="button" className="side-close" onClick={onToggle} aria-label={translateUI("ui.close_menu_5d1f3a")} title={translateUI("ui.close_menu_5d1f3a")}>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18" /><line x1="18" y1="6" x2="6" y2="18" /></svg>
+      </button>
       <div className="sidebar-nav-scroll scrollbar-hidden">
       <nav id={navigationId}>
         {nav.map(([key, icon, label]) => (
@@ -46,6 +49,7 @@ export default function Sidebar({ page, setPage, nav, collapsed, onToggle }) {
         ))}
       </nav>
       </div>
+      <button type="button" className="side-logout" onClick={onLogout}>{translateUI("ui.log_out_6e78c9")}</button>
     </aside>
   );
 }

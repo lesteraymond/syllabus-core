@@ -1,0 +1,222 @@
+/* Responsive layer. Imported last (main.jsx) so it overrides the desktop rules in styles.css / theme.css.
+ *
+ * Breakpoints (same names as Tailwind):
+ *   sm 640 · md 768 · lg 1024 · xl 1280
+ * Phones/tablets < lg get an off-canvas sidebar drawer; grids step down xl → lg → md → sm.
+ * Max-width queries use .98 so they never overlap the matching min-width query.
+ */
+
+/* ---------- Foundations (all sizes) ---------- */
+html { -webkit-text-size-adjust: 100%; }
+body { min-width: 0; overflow-x: clip; } /* was min-width: 1100px, which forced sideways scrolling */
+img, svg, video, canvas, iframe { max-width: 100%; }
+img, video { height: auto; }
+input, select, textarea { max-width: 100%; }
+.page-wrap { padding: clamp(14px, 3vw, 25px) clamp(14px, 3vw, 27px) 45px; min-width: 0; }
+.page-head h1 { font-size: clamp(1.25rem, 1rem + 1.2vw, var(--text-xl)); }
+.table-card { overflow-x: auto; }               /* was overflow: hidden, which clipped wide tables */
+.table-wrap, .table-card, .repository-table { -webkit-overflow-scrolling: touch; }
+.syl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.nav-burger, .nav-backdrop, .side-logout, .side-close, .login-sysname { display: none; }
+
+/* Touch devices: 44px hit areas */
+@media (pointer: coarse) {
+  .btn, .icon-btn, .tabs button, .side-toggle, .nav-burger { min-height: 44px; }
+  .icon-btn, .nav-burger { min-width: 44px; }
+  input, select, textarea { font-size: max(16px, 1em); } /* stops iOS zooming on focus */
+}
+
+/* ---------- < xl (1280): wide desktop grids relax ---------- */
+@media (max-width: 1279.98px) {
+  .report-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ---------- < lg (1024): sidebar becomes a drawer ---------- */
+@media (max-width: 1023.98px) {
+  /* Floating dropdown card under the top bar (was an off-canvas drawer). The desktop "collapsed" state does not apply. */
+  .app-shell,
+  .app-shell[data-sidebar-collapsed="true"] { --sidebar-width: var(--sidebar-width-expanded); }
+  .sidebar {
+    z-index: 45;
+    inset: 66px auto auto 12px;
+    width: min(290px, calc(100vw - 24px));
+    max-height: calc(100vh - 82px);
+    max-height: calc(100dvh - 82px);
+    padding: 10px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+    transform-origin: top left;
+    visibility: hidden;
+    will-change: auto;
+    box-shadow: 0 18px 48px rgba(6, 18, 60, 0.4);
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
+  }
+  .app-shell[data-nav-open="true"] .sidebar {
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+  .side-brand { display: none; } /* the burger in the top bar already toggles the menu */
+  .sidebar-nav-scroll { width: 100%; margin-top: 0; padding-bottom: 0; }
+  .sidebar nav { width: 100%; }
+  .nav-label { width: auto; font-size: var(--text-xs); letter-spacing: 0.04em; }
+  .sidebar nav { gap: 2px; }
+  .sidebar nav button { flex-basis: 42px; height: 42px; padding: 6px 10px; }
+  .sidebar[data-collapsed="true"] .nav-label { opacity: 1; pointer-events: auto; }
+  .workspace { margin-left: 0; }
+
+  .nav-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 44;
+    border: 0;
+    background: rgba(9, 20, 50, 0.45);
+  }
+  .nav-burger {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 42px;
+    height: 42px;
+    border: 1px solid #e3e7ea;
+    border-radius: 9px;
+    background: #fff;
+    color: var(--text);
+  }
+  .nav-burger:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+  .topbar { height: auto; min-height: 64px; padding: 10px clamp(12px, 3vw, 27px); gap: 10px; }
+  .topbar-heading { height: auto; }
+  .top-actions { gap: 6px; }
+  .search { display: none; }
+  .topbar .logout { display: none; } /* Log out lives at the bottom of the menu instead */
+  .side-close {
+    display: grid;
+    place-items: center;
+    flex: none;
+    align-self: flex-end;
+    width: 32px;
+    height: 32px;
+    margin: 0 0 2px;
+    border: 0;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+  .side-close:hover { background: rgba(255, 255, 255, 0.2); }
+  .side-close:focus-visible { outline: 2px solid #f2c66d; outline-offset: 2px; }
+  .side-logout {
+    display: block;
+    flex: none;
+    width: 100%;
+    margin-top: 8px;
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font-size: var(--text-xs);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .side-logout:hover { background: rgba(255, 255, 255, 0.1); }
+  .side-logout:focus-visible { outline: 2px solid #f2c66d; outline-offset: 2px; }
+
+  /* Two-pane screens stack */
+  .ai-layout,
+  .editor-layout,
+  .review-layout { grid-template-columns: minmax(0, 1fr); }
+  .review-summary { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
+  .dashboard-grid,
+  .dashboard-grid.lower { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pick-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .filter-card,
+  .filter-card.repository-filters { grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr)); }
+
+  /* Login: brand panel stacks above the form */
+  .login-page { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; }
+  .login-brand { display: none; } /* no blue header on phones/tablets; the form carries the logo and title */
+  /* Centered header block above the full-width form */
+  .login-card .login-logo { align-self: center; }
+  .login-card > .eyebrow { align-self: center; }
+  .login-card > .login-welcome { display: none; } /* the full system name replaces it, since the brand panel is hidden */
+  .login-card > .login-sysname { display: inline-block; text-align: center; }
+  .login-card > h2, .login-card > p, .login-card > small { text-align: center; }
+  .login-panel { padding: clamp(12px, 3vh, 40px) clamp(16px, 5vw, 50px); min-height: 0; overflow-y: auto; } /* scrolls only if a tall form (register) cannot fit */
+}
+
+/* ---------- < md (768) ---------- */
+@media (max-width: 767.98px) {
+  .dashboard-grid,
+  .dashboard-grid.lower,
+  .analytics-grid,
+  .analytics-grid.two,
+  .syl-grid,
+  .reports-grid,
+  .comp-grid,
+  .insights,
+  .policy-grid { grid-template-columns: minmax(0, 1fr); }
+  .check-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .page-head .page-actions { width: 100%; }
+  .page-head .page-actions > .btn { flex: 1 1 auto; }
+  .tabs { overflow-x: auto; scrollbar-width: none; }
+  .tabs button { flex: none; white-space: nowrap; }
+
+  /* Modals */
+  .overlay { padding: 8px; }
+  .modal { max-height: 94vh; max-height: 94dvh; }
+  .modal-head, .modal-foot { padding-inline: 16px; }
+  .modal-body { padding: 16px; }
+  .chat-modal { height: min(520px, 90dvh); }
+
+  /* Dropdowns in the topbar become full-width sheets under it */
+  .msg-drop { position: fixed; top: 72px; left: 12px; right: 12px; width: auto; max-height: calc(100dvh - 88px); overflow-y: auto; }
+}
+
+/* ---------- < sm (640) ---------- */
+@media (max-width: 639.98px) {
+  .topbar .profile-btn span:last-child { display: none; }
+  .topbar { min-height: 60px; gap: 8px; }
+  .topbar-heading .eyebrow { display: none; } /* the three-line wrapped label crowded the title */
+  .topbar-heading h2 { margin: 0; font-size: var(--text-md); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .report-stats,
+  .pick-grid,
+  .cm-areas,
+  .form-grid,
+  .two-col,
+  .aic-filter-row,
+  .report-row,
+  .profile-name-form { grid-template-columns: minmax(0, 1fr); }
+  .profile-name-form .btn { min-width: 0; width: 100%; }
+
+  /* Dialog footers: stacked, full-width, primary action first */
+  .modal-foot { flex-direction: column-reverse; align-items: stretch; }
+  .modal-foot > .btn { width: 100%; }
+
+  /* Wide editor tables scroll inside their card instead of the page */
+  .bld2 .ledger, .bld2 .plan { min-width: 640px; }
+  :is(.bld2, .svm-paper) .paper { min-width: 560px; }
+  .repository-table table { min-width: 720px; }
+
+  /* Grading row: label gets its own line */
+  .bld2 .grow { grid-template-columns: 34px minmax(0, 1fr) minmax(0, 1fr) 28px; row-gap: 4px; }
+  .bld2 .grow > :nth-child(2) { grid-column: 2 / 4; }
+  .bld2 .grow > :nth-child(3) { grid-column: 2; grid-row: 2; }
+  .bld2 .grow > :nth-child(4) { grid-column: 3 / 5; grid-row: 2; }
+  .bld2 .grow > :nth-child(5) { grid-column: 4; grid-row: 1; }
+}
+
+/* ---------- Large desktops (≥ 1536): keep line lengths sane ---------- */
+@media (min-width: 1536px) {
+  .page-wrap { max-width: 1680px; margin-inline: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar { transition: none; }
+}

@@ -81,6 +81,14 @@ export default function App() {
   useEffect(() => {
     try { localStorage.setItem('sms_sidebar_collapsed', String(sidebarCollapsed)); } catch {}
   }, [sidebarCollapsed]);
+  // Below the lg breakpoint the sidebar is an off-canvas drawer; Escape or a nav choice closes it.
+  const [navOpen, setNavOpen] = useState(false);
+  useEffect(() => {
+    if (!navOpen) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape') setNavOpen(false); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [navOpen]);
   const [page, setPage] = useState('dashboard');
   // The compliance check moved into step 7 of the builder: an old 'ai' link sends faculty there, and only admins have the overview.
   useEffect(() => { if (user && user.role !== 'admin' && page === 'ai') setPage(user.role === 'faculty' ? 'builder' : 'dashboard'); }, [user, page]);
@@ -374,10 +382,11 @@ export default function App() {
   if (user.role === 'student') return <StudentHome user={user} onLogout={handleLogout} />;
 
   return (
-    <div ref={languageShell} className="app-shell" data-sidebar-collapsed={sidebarCollapsed ? 'true' : 'false'}>
-      <Sidebar page={page} setPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); }} nav={nav} collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(c => !c)} />
+    <div ref={languageShell} className="app-shell" data-sidebar-collapsed={sidebarCollapsed ? 'true' : 'false'} data-nav-open={navOpen ? 'true' : 'false'}>
+      <Sidebar page={page} setPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); setNavOpen(false); }} nav={nav} onLogout={handleLogout} collapsed={sidebarCollapsed} onToggle={() => (window.matchMedia('(max-width: 1023.98px)').matches ? setNavOpen(false) : setSidebarCollapsed(c => !c))} />
+      {navOpen && <button type="button" className="nav-backdrop" aria-label={translateUI("ui.close_menu_5d1f3a")} onClick={() => setNavOpen(false)} />}
       <main className="workspace">
-        <Topbar page={page} onLogout={handleLogout} user={user} unread={unread} threads={threads} msgDrop={msgDrop} setMsgDrop={setMsgDrop} setChatCode={setChatCode} markRead={markRead} notify={notify} onAvatarChange={handleAvatarChange} notifications={notifications} onOpenNotification={openNotification} onMarkAllNotificationsRead={markAllNotificationsRead} />
+        <Topbar onMenu={() => setNavOpen(true)} navOpen={navOpen} page={page} onLogout={handleLogout} user={user} unread={unread} threads={threads} msgDrop={msgDrop} setMsgDrop={setMsgDrop} setChatCode={setChatCode} markRead={markRead} notify={notify} onAvatarChange={handleAvatarChange} notifications={notifications} onOpenNotification={openNotification} onMarkAllNotificationsRead={markAllNotificationsRead} />
         <div className="page-wrap">
           {page === 'dashboard' && <Dashboard setPage={setPage} user={user} syllabi={syllabi} logs={logs} clearLogs={clearLogs} setConfirm={setConfirm} />}
           {page === 'builder' && ((NEW_BUILDER || user.role === 'admin')

@@ -40,7 +40,8 @@ export default function Login({ onLogin, onGoogleLogin }) {
         ) : (
         <form className="login-card" onSubmit={submit}>
           <img className="login-logo" src="/cite-logo.png" alt={translateUI("ui.college_logo_1df91f")} />
-          <span className="eyebrow">{translateUI("ui.welcome_back_593f1e")}</span>
+          <span className="eyebrow login-welcome">{translateUI("ui.welcome_back_593f1e")}</span>
+          <span className="eyebrow login-sysname">{translateUI("ui.syllabus_management_system_e49cab")}</span>
           <h2>{translateUI("ui.sign_in_to_sms_52fec0")}</h2>
           <p className="muted">{translateUI("ui.use_your_institutional_account_to_continue_143ca3")}</p>
           <label>{translateUI("ui.username_or_email_728ae0")}<input value={form.user} onChange={e => setForm({ ...form, user: e.target.value })} placeholder={translateUI("ui.name_university_edu_ph_4d6969")} /></label>
