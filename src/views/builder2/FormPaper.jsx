@@ -8,7 +8,7 @@ const html = (t) => ({ __html: renderMarkup(t) });
 // the system adds the revision date when the syllabus is approved. Reusable by the admin review.
 export default function FormPaper({ d, model, preparedBy }) {
   const selected = model.outcomesReady(d);
-  const I = selected ? model.institution : { vision: '', mission: { lead: '', items: [] } };
+  const I = selected ? model.institutionFor(d) : { vision: '', mission: { lead: '', items: [] } };
   const egas = selected ? model.egaList(d) : []; // this program's own EGAs
   const pos = selected ? model.poList(d) : [];
   const f = model.formulas(d);

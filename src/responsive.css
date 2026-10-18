@@ -45,6 +45,10 @@
 	.search { display: none; }
 	.top-actions { flex: none; gap: 6px; }
 	.top-actions .icon-btn { width: 40px; height: 40px; }
+	/* Log out is icon-only here; the button keeps its aria-label, so assistive tech still announces it. */
+	.topbar .logout { width: 40px; height: 40px; min-height: 0; padding: 0; }
+	.topbar .logout .stable-label { display: none; }
+	.topbar .logout svg { display: block; flex: none; }
 	/* Dropdowns anchor to the bar (full width) instead of to their small button. */
 	.msg-wrap { position: static; }
 	.msg-drop { top: calc(100% - 6px); left: 12px; right: 12px; width: auto; }
@@ -52,7 +56,8 @@
 	/* The sidebar, folded into the page: the same blue panel and link styling, collapsing to a header with the current page. */
 	.mnav {
 		margin: 12px 12px 0;
-		background: linear-gradient(180deg, #092b8d, #061b5d);
+		/* Same gradient tokens as the desktop sidebar (theme.css), so the two stay one colour if the theme changes. */
+		background: linear-gradient(180deg, var(--side-top) 0%, var(--side-mid) 40%, var(--side-bottom) 100%);
 		color: #fff;
 		border-radius: 16px;
 		box-shadow: 0 8px 22px rgba(6, 18, 60, 0.25);
@@ -122,13 +127,15 @@
 }
 
 /* ---- Sign-in, register and forgot-password (they share .login-page) ---- */
-/* Small laptops: the two columns still fit, but the big logo circle left the text too little room and it was cut off. */
-@media (max-width: 1279.98px) {
-	.login-brand { padding: 56px 5vw; gap: 28px; }
+/* Laptops: the two columns are equal, so the half-width brand side gets a smaller logo circle and heading to keep the text from being cut off. */
+@media (max-width: 1599.98px) {
+	.login-brand { padding: 56px 4vw; gap: 28px; }
 	.login-brand > div:last-child { min-width: 0; }
 	.brand-orb { width: 170px; height: 170px; min-width: 170px; padding: 14px; }
-	.login-brand h1 { font-size: clamp(30px, 3.6vw, 46px); overflow-wrap: anywhere; }
+	.login-brand h1 { font-size: clamp(28px, 3vw, 46px); overflow-wrap: anywhere; }
 	.login-brand p { font-size: var(--text-base); overflow-wrap: anywhere; }
+}
+@media (max-width: 1279.98px) {
 	.login-panel { padding: 40px 28px; }
 }
 /* Tablet and phone: the blue brand side is dropped and the form takes the whole screen (the form already carries the logo and the title). */

@@ -113,7 +113,7 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
           </div>}
           <input ref={fileRef} type="file" accept={AVATAR_ACCEPT} hidden onChange={pickPhoto} />
         </div>
-        <StableButton className="logout" onClick={onLogout}>{translateUI("ui.log_out_6e78c9")}</StableButton>
+        <StableButton className="logout" aria-label={translateUI("ui.log_out_6e78c9")} onClick={onLogout}><Icon name="signOut" size={18} />{translateUI("ui.log_out_6e78c9")}</StableButton>
       </div>
     </header>
   );

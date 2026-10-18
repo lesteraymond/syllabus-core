@@ -1201,9 +1201,51 @@ Each program has its own expected graduate attributes (EGAs) and program outcome
 - Sign-in form: the placeholder text in the username/email and password fields is removed; both keep their visible labels.
 - Top bar: the page heading ("Dashboard") next to the "Syllabus Management System" label is removed; `Topbar.jsx` no longer looks up the page title.
 - Top bar: the messages and notifications buttons use a soft grey for their icons (the same grey as the search box) instead of near-black, with a light blue tint on hover and keyboard focus. Only `.top-actions .icon-btn` is affected, so the icon buttons in tables and dialogs keep their colours.
+- Top bar: the Log out button has a sign-out icon before its label (new `signOut` entry in the `Icon` registry). The button still reserves room for the longest language's label, so it does not change width when the language switches.
+- Top bar: below 768px the Log out button shows only its icon (a 40px square like the message and bell buttons). The button has an `aria-label` at every size, so screen readers still announce "Log out".
+- The phone accordion menu now uses the desktop sidebar's own gradient (the `--side-top`, `--side-mid` and `--side-bottom` theme tokens) instead of its own hard-coded blues, so the two are the same colour and follow any theme change.
 - Between 1100px and 1280px the brand text was cut off by the large logo circle; the circle and spacing now shrink and the text wraps. Below 1100px the blue brand side is dropped and only the sign-in form shows (also Register, Forgot password and the first-login screens, which share the page). The brand banner's decorative circles no longer widen the phone page.
 
 **Validation and deployment:**
 - 683 passing automated tests (617 domain/API/helper checks, 22 localization/preference checks and 44 rendered UI checks); the localization audit and the production build pass. No new test file was added for the responsive layer.
 - Checked in a headless Edge browser, not by eye on a real device: all 12 admin pages and the 7 faculty pages at 360px (and the admin pages at 768px) with no horizontal overflow, live resizing while logged in, the accordion open and closed, the login at 360 to 1440px, and the Assignments and chat modals and the messages dropdown at 360px. Student Home and Change Password were not run live (no student account), the Program dialog did not open in the check, and the builder's paper view was deliberately left as is.
+- No server, API, route or database change.
+
+---
+
+### v1.53.0 — Time-of-Day Greeting, New Action Icons and Cleaner Comment Cards
+**Date:** October 18, 2026
+
+**Dashboard:**
+- The heading greets by the Manila time of day instead of "Welcome back": "Good morning, {name}!" (5:00-11:59), "Good afternoon, {name}!" (12:00-17:59) and "Good evening, {name}!" (18:00-4:59), with Tagalog versions. Without a name it reads "Good morning!" and so on. Six new `dashboard.good*` keys.
+- The period comes from two new pure functions in `src/lib/phTime.js` (`phHour`, `dayPeriod`), so it follows Philippine time whatever the viewer's computer clock says. The dashboard checks again every minute and changes at 12:00 and 18:00 while it stays open. `TypewriterText` is unchanged.
+- Time Usage card: the chart is 56px high (was 84px) and the gaps between its blocks are tighter, so the whole card fits without scrolling in the dashboard's fixed-height row. Nothing was removed from the card. Only the `.usage-*` rules in `theme.css` changed.
+
+**Icons:**
+- New `bin` (delete), `pencilSquare` (rename/edit) and `denied` (rejected) icons, drawn from `docs/icons/bin-svgrepo-com.svg`, `pencil-square-svgrepo-com.svg` and `denied-svgrepo-com.svg` in `customIcons.jsx` with `currentColor`, and registered in the `Icon` list in `ui.jsx`. The app still does not read the SVG files themselves. SVG Repo icons carry their own licences, so check these three allow use in this project.
+- The rename/edit and delete buttons in Program Management and Subject Actions, the delete-conversation button in the chat (it was a 🗑 emoji and now has an `aria-label`), and the delete buttons on outcome and plan rows in the new builder use the new icons. The unused Phosphor `Trash` icon and the builder's own trash path are removed.
+- The rename/edit and delete buttons use soft grey icons and a light border; Delete turns red only on hover and keyboard focus.
+- Recent Activity: approved entries use the Approved stat card's icon, returned-for-revision entries use the For Revision stat card's icon, rejected entries use `denied` and deleted entries use `bin`.
+- Review panel: the Approve, Return for revision and Reject decision buttons (and their confirmation line) use the `approved`, `revise` and `denied` icons.
+- The one-line hint under each decision button in the review panel is no longer shown (the confirmation sentence is unchanged).
+
+**Login and top bar:**
+- The sign-in screen's blue brand panel and the form are two equal columns (they were 1.15 : 0.85). The brand panel's padding is smaller and, below 1600px, its logo circle and heading shrink so "Management" is not cut off. `StudentHome`, which shares `.login-page`, is unchanged apart from the equal grid.
+- The Log out button is text only on normal screens. Its icon shows only below 768px, where the button is an icon-only square, as before. The label text is centred in its box.
+
+**My Syllabi:**
+- The delete button on each card was a 🗑 emoji and now uses the `bin` icon. In the old builder's reference rows the text ✎ and × are the `pencilSquare` and `bin` icons, with "Edit" and "Delete" labels from existing translations.
+- The Edit, History, Check in AI Checker and Delete buttons are soft white-grey at rest and take their colour only on hover and keyboard focus (blue for Edit, History and Check in AI Checker; red for Delete). New `syl-quiet` and `syl-delete` classes in `theme.css`, used only on those buttons; the Comments and Message buttons are unchanged.
+
+**Student registration:**
+- The registration form (`StudentRegister.jsx`) no longer shows the college logo or the "Student Registration" label above its "Create your account" heading. The logo on Change password and Student home, and the other `eyebrow` labels, are unchanged.
+
+**Review comments:**
+- A reviewer comment card (`CommentsThread`) no longer picks up the old comment list's `.comment` grid layout (a plain comment carried the class `comment`), which squeezed the name and date into a 34px column. A plain comment now has no type class.
+- The coloured left strip and the tinted backgrounds for revision, rejection and approval comments are removed: every comment is the same white card with a thin border. The name sits on the left, the date on the right, and the type and "New" chips next to the name, all vertically centred.
+
+**Validation and deployment:**
+- 684 passing automated tests (618 domain/API/helper checks, 22 localization/preference checks and 44 rendered UI checks); the localization audit and the production build pass. Updated assertions that pinned the old icon names, the old "Welcome back" heading and the red delete colour; added a test for the greeting's boundaries (4:59, 5:00, 11:59, 12:00, 17:59, 18:00 and a non-Manila clock).
+- `scripts/fill-it301-api.cjs` can sign in from `FILL_EMAIL` and `FILL_PASSWORD` (never printed or saved) and reports why a sign-in fails. It is a developer script, not part of the app.
+- Checked in a headless Chrome with sample data (icons, login at 1100-1920px, Time Usage in English and Filipino at four widths, top bar, activity feed). Not checked by eye on the live signed-in pages (review panel, comments, dashboard).
 - No server, API, route or database change.

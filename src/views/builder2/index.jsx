@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { LockSimple } from '@phosphor-icons/react/dist/csr/LockSimple';
 import { PageHead } from '../../components/ui';
 import { courses as coursesApi, syllabi as syllabiApi, users as usersApi } from '../../lib/api';
-import { STEPS, applyCourse, clearCourse, closEqual, syncClos } from '../../lib/syllabusModel';
+import { STEPS, applyCourse, clearCourse } from '../../lib/syllabusModel';
 import { CURRENT_SCHOOL_YEAR } from '../../lib/schoolYear';
 import { ASSIGNMENT_MESSAGES, STATUS_LABELS, assignmentState, editBlockedReason, isReturned, noteMissing } from '../../lib/syllabusRules';
 import InfoStep from './InfoStep';
@@ -33,10 +33,9 @@ const STEP_CONFIG = STEPS.map((s) => ({
 // driven by the rules in src/lib/syllabusModel.js. It is used when VITE_NEW_BUILDER=true; until then the previous builder is the default.
 export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSubmitted }) {
   const { draft, apply, set, save, saveNow, load, syllabusId } = useDraft(editing);
-  // A syllabus that can no longer be edited (approved, rejected, or its subject is un-assigned) shows the vision, mission,
-  // EGAs and program outcomes saved when it was submitted. Anything still editable shows the live ones and keeps them fresh.
+  // Locked syllabi retain their submitted catalog. Step 2's syllabus-owned values always take precedence in the model.
   const frozen = !!draft && !load.loading && !load.editable && !!draft.catalog;
-  const { model, programList, loading: catalogLoading, error: catalogError, refresh: refreshCatalog, version: catalogVersion, resolvedProgramCode } = useCatalog(draft ? draft.meta.program : '', { snapshot: frozen ? draft.catalog : null, live: !frozen, courseId: draft?.meta.courseId });
+  const { model, programList, loading: catalogLoading, error: catalogError, refresh: refreshCatalog, resolvedProgramCode } = useCatalog(draft ? draft.meta.program : '', { snapshot: frozen ? draft.catalog : null, live: !frozen, courseId: draft?.meta.courseId });
   useEffect(() => {
     if (load.editable && !frozen && resolvedProgramCode && draft?.meta.program !== resolvedProgramCode) {
       apply(current => ({ ...current, meta: { ...current.meta, program: resolvedProgramCode } }));
@@ -76,18 +75,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
     return () => { live = false; };
   }, [program, courseTick]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // The course learning outcomes always come from the catalog: when the draft opens, and whenever an
-  // administrator has changed them, the draft's copy is refreshed (the server enforces the same on every save).
-  const courseId = draft ? draft.meta.courseId : null;
-  const draftRef = useRef(draft);
-  draftRef.current = draft;
-  useEffect(() => {
-    if (!courseId) return undefined;
-    let live = true;
-    coursesApi.get(courseId).then((c) => { if (live && draftRef.current && !closEqual(draftRef.current.clos, c.clos)) apply((x) => syncClos(x, c.clos)); }).catch(() => {});
-    return () => { live = false; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [courseId, load.loading, catalogVersion]);
+  // Step 2 belongs to this draft. Catalog refreshes must never replace the author's edits.
 
   // A subject has one syllabus: when the server refuses the subject just chosen (it already has one, or this person already has a draft
   // for it), take it off the form and say where the existing one is. Nothing was saved, so there is nothing to undo on the server.
@@ -127,6 +115,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
   };
   const undo = (prev) => ({ label: 'Undo', fn: () => { set(prev); setToast(null); } });
   const onChooseCourse = async (id) => {
+    if (draft.meta.courseId && id !== draft.meta.courseId && !window.confirm(translateUI('outcomes.changeSubject'))) return;
     if (!id) { set(clearCourse(draft)); return; }
     try {
       const c = await coursesApi.get(id);
@@ -134,6 +123,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
     } catch (e) { notify(translateUI("ui.could_not_load_that_subject_8e9791") + e.message); }
   };
   const onChooseProgram = (code) => {
+    if (draft.meta.courseId && code !== draft.meta.program && !window.confirm(translateUI('outcomes.changeSubject'))) return;
     // The course belongs to a program: a different program means choosing the course again.
     set({ ...clearCourse(draft), meta: { ...clearCourse(draft).meta, program: code, prereq: draft.meta.prereq } });
   };
@@ -277,7 +267,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
             <span className={'autosave' + (save.state === 'error' ? ' error' : save.state === 'saved' ? '' : ' saving')} role="status">{tr(saveText)}{save.state === 'error' && <button type="button" className="link" onClick={saveNow}>{translateUI("ui.retry_9f5cd8")}</button>}</span>
           </div>
           <fieldset disabled={!editable || busy}>
-            <Body d={draft} apply={apply} model={model} programList={programList} courseList={courseList} onChooseCourse={onChooseCourse} onChooseProgram={onChooseProgram} filter={filter} setFilter={setFilter} onDeleteRow={onDeleteRow} go={go} preparedBy={preparedBy} existing={existing} noteRequired={revising} note={note} setNote={setNote} syllabusId={syllabusId} saveFirst={saveFirst} showCompliance={!isAdmin} canCheck={!!user && user.role === 'faculty' && !noAccess} checkTick={checkTick} submitFailed={submitFailed} onRun={setLastRun} />
+            <Body d={draft} apply={apply} editable={editable} model={model} programList={programList} courseList={courseList} onChooseCourse={onChooseCourse} onChooseProgram={onChooseProgram} filter={filter} setFilter={setFilter} onDeleteRow={onDeleteRow} go={go} preparedBy={preparedBy} existing={existing} noteRequired={revising} note={note} setNote={setNote} syllabusId={syllabusId} saveFirst={saveFirst} showCompliance={!isAdmin} canCheck={!!user && user.role === 'faculty' && !noAccess} checkTick={checkTick} submitFailed={submitFailed} onRun={setLastRun} />
           </fieldset>
           {!nxt && !complete && <div className="step-hint" role="status">{translateUI("ui.finish_the_steps_marked_in_the_list_review_check_the_compliance_c_31bb82")}{existing ? translateUI("ui.saving_a_new_version_a8d794") : translateUI("ui.submitting_8ee0db")}{translateUI("ui.unlock_once_steps_1_to_6_are_complete_f983eb")}</div>}
           {step < 6 && mine_.length > 0 && (

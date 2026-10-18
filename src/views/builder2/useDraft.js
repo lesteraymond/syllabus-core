@@ -7,7 +7,7 @@ import { SCHEMA_VERSION, clone, emptyDraft, hydrateContent } from '../../lib/syl
 export const newId = () => 'k' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 
 // Top-level sections of the draft that are saved to the server (the server decides `signoff`).
-const SECTIONS = ['meta', 'description', 'clos', 'plan', 'reqs', 'refs', 'grading'];
+const SECTIONS = ['meta', 'outcomes', 'description', 'clos', 'plan', 'reqs', 'refs', 'grading'];
 const DEBOUNCE_MS = 800;
 
 function reducer(state, a) {
@@ -41,17 +41,19 @@ export function useDraft(editing) {
     (async () => {
       try {
         let content = null;
+        let adoptedOutcomes = false;
         let info = { editable: true, status: 'draft', version: 'v1.0' };
         if (idRef.current) {
           const r = await syllabiApi.getContent(idRef.current);
           content = r.content;
+          adoptedOutcomes = r.adoptedOutcomes;
           info = { editable: r.editable, status: r.status, version: r.version, lockedReason: r.lockedReason || '', nextVersion: r.nextVersion || '', reviewerNote: r.reviewerNote || '' };
         }
         let d;
         if (content) {
           d = hydrateContent(content, newId);
           // Only sections that exist on the server count as saved; a missing one is saved with the next change.
-          SECTIONS.forEach((k) => { if (content[k] !== undefined) savedJson.current[k] = JSON.stringify(d[k]); });
+          SECTIONS.forEach((k) => { if (content[k] !== undefined && !(adoptedOutcomes && ['outcomes', 'clos'].includes(k))) savedJson.current[k] = JSON.stringify(d[k]); });
         } else {
           d = emptyDraft(newId);
           // An older syllabus has no stored content yet: start from what the list already knows.

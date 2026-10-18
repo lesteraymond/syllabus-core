@@ -9,6 +9,7 @@ const rules = require('../lib/syllabusRules');
 const { loadCourse } = require('../lib/courses');
 const assignments = require('../lib/assignments');
 const subjectLock = require('../lib/subjectLock');
+const { outcomesFrom, validateOutcomes } = require('../lib/syllabusOutcomes');
 const { catalogGaps, gapsMessage } = require('../lib/catalogReady');
 const compliance = require('../lib/compliance/service');
 const { changedSections, describeChanges, normalize } = require('../lib/versionChange');
@@ -17,8 +18,7 @@ const router = express.Router();
 
 const MAX_CONTENT_BYTES = 512 * 1024;
 // Top-level keys of the content document. `signoff` is deliberately absent: the system sets it, faculty do not.
-// `clos` is accepted but never trusted: the course learning outcomes always come from the course catalog (admin-managed).
-const SECTIONS = { meta: 'object', description: 'array', clos: 'array', plan: 'array', reqs: 'array', refs: 'object', grading: 'object' };
+const SECTIONS = { meta: 'object', outcomes: 'object', description: 'array', clos: 'array', plan: 'array', reqs: 'array', refs: 'object', grading: 'object' };
 const TAG = /^(clo|ega|po):[A-Za-z0-9_-]{1,40}$/;
 
 const parseJson = (text) => { try { return text ? JSON.parse(text) : null; } catch { return null; } };
@@ -56,23 +56,31 @@ const parseId = (raw) => {
   return id;
 };
 
-// Makes the content agree with the course catalog: the course's code, title and CLOs are constant data that only
-// admins edit, so whatever the client sent for them is replaced. No course chosen means no CLOs.
+// Only course identity is catalog-managed. Updated clients save their own Step 2 content.
+// Preserve the legacy contract for clients/drafts that have not adopted syllabus-owned outcomes yet.
 async function applyCatalog(db, content) {
   const courseId = content.meta && Number.isInteger(content.meta.courseId) ? content.meta.courseId : null;
   const course = courseId ? await loadCourse(db, courseId, { lock: true }) : null;
   if (courseId && !course) throw httpError(400, 'That course does not exist');
   if (course) { content.meta.code = course.code; content.meta.title = course.title; content.meta.program = course.program.code; }
-  content.clos = course ? course.clos : [];
+  if (!content.outcomes) content.clos = course ? course.clos : [];
+  else {
+    validateOutcomes(content.outcomes, content.clos || [], content.plan || []);
+    const o = content.outcomes;
+    if (!course && (content.clos?.length || o.egas.length || o.pos.length || o.vision.trim() || o.mission.lead.trim() || o.mission.items.length)) throw httpError(400, 'Choose a subject before editing learning outcomes.');
+    content.catalog = snapshotFrom(content, course);
+  }
   return course;
 }
 
-// The vision, mission, EGAs and the program's outcomes as they are when a syllabus is submitted. Once submitted, the
-// syllabus shows these texts (not the live ones), so a later admin edit does not rewrite what was reviewed or approved.
-// Drafts have none and always show the live data. Clients cannot send this key: validateSections refuses it.
+// Build the trusted display snapshot from authored Step 2 values and catalog identity.
+// Legacy content keeps its existing catalog behavior until adopted in the editable builder.
 async function catalogSnapshot(db, content) {
   const course = content?.meta?.courseId ? await loadCourse(db,content.meta.courseId) : null;
-  const standards = course ? course.standards : require('../lib/subjectStandards').blankStandards();
+  return snapshotFrom(content, course);
+}
+function snapshotFrom(content, course) {
+  const standards = content.outcomes || course?.standards || require('../lib/subjectStandards').blankStandards();
   return {
     institution: { vision: standards.vision, mission: standards.mission, egas: standards.egas },
     program: course ? { code: course.program.code, name: course.program.name, egas: standards.egas, pos: standards.pos } : null,
@@ -105,13 +113,21 @@ router.get('/:id/content', requireAuth, async (req, res) => {
     // The owner may edit only while the course is assigned to them (an admin can assign it again).
     let editable = rules.canEdit(req.session.user, syl);
     let lockedReason = null;
+    let adoptedOutcomes = false;
     if (editable && !rules.isAdmin(req.session.user)) {
       lockedReason = assignments.writeBlockedReason(req.session.user, await assignments.loadAssignments(req.app.locals.db, req.session.user.id), syl.course_id);
       if (lockedReason) editable = false;
     }
+    if (editable && content?.meta?.courseId && !content.outcomes) {
+      const course = await loadCourse(req.app.locals.db, content.meta.courseId);
+      content.outcomes = outcomesFrom(content, course);
+      if (!content.clos?.length) content.clos = course?.clos || [];
+      content.schemaVersion = 3;
+      adoptedOutcomes = true;
+    }
     // Back from "For revision": the next submission becomes the next version, and the reviewer's note says what to change.
     const revising = rules.isReturned(syl.status);
-    res.json({ id, status: syl.status, version: syl.version, content, schemaVersion: syl.content_schema_version, updatedAt: syl.content_updated_at, editable, lockedReason,
+    res.json({ id, status: syl.status, version: syl.version, content, adoptedOutcomes, schemaVersion: syl.content_schema_version, updatedAt: syl.content_updated_at, editable, lockedReason,
       ...(revising ? { nextVersion: rules.nextVersionLabel(syl.version), reviewerNote: syl.admin_comment || '' } : {}) });
   } catch (err) { sendError(res, err); }
 });
@@ -263,18 +279,18 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
       const meta = content && content.meta;
       if (!meta || !Number.isInteger(meta.courseId)) throw httpError(400, 'Choose a course before submitting');
       await assignments.requireCourseAccess(conn, me, meta.courseId);
-      // The version records the course outcomes as they are in the catalog now.
+      // Validate authored outcomes and snapshot the exact values being submitted.
       await applyCatalog(conn, content);
+      if (content.outcomes) validateOutcomes(content.outcomes, content.clos || [], content.plan || [], { complete: true });
       content.catalog = await catalogSnapshot(conn, content);
-      // The syllabus is built from what an administrator sets up. Without it the faculty member could not have completed the
-      // Learning Outcomes step, so refuse here too (the builder also blocks it).
+      // Legacy clients still receive their catalog setup checks; new clients complete these fields in Step 2.
       const cat = content.catalog;
       const gaps = catalogGaps({
         vision: cat.institution.vision, mission: cat.institution.mission,
         egaCount: cat.program ? cat.program.egas.length : 0, poCount: cat.program ? cat.program.pos.length : 0,
         cloCount: (content.clos || []).length, programCode: cat.program ? cat.program.code : meta.program, subjectCode: meta.code,
       });
-      if (gaps.length) throw httpError(409, gapsMessage(gaps));
+      if (gaps.length) throw httpError(409, content.outcomes ? 'Complete Vision, Mission, EGA, PO and CLO in step 2 before submitting.' : gapsMessage(gaps));
       // The form must follow the standard. A 'blocking' rule failing stops the submit (409 with the failed rules); anything
       // else only warns, and the builder offers "Submit anyway". The run is stored with the version below.
       const result = compliance.check(content, { catalog: content.catalog, preparedBy: `${me.firstName} ${me.lastName}` });

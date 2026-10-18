@@ -5,13 +5,13 @@ import { phDate, phTime, toDate } from './phTime.js';
 
 // What each action looks like. Decisions carry a color; routine events stay quiet so the decisions stand out.
 export const KINDS = {
-  approve: { icon: 'sealCheck', tone: 'good', verb: 'approved' },
-  revision: { icon: 'arrowUUpLeft', tone: 'warn', verb: 'returned for revision' },
-  reject: { icon: 'xCircle', tone: 'bad', verb: 'rejected' },
+  approve: { icon: 'approved', tone: 'good', verb: 'approved' },
+  revision: { icon: 'revise', tone: 'warn', verb: 'returned for revision' },
+  reject: { icon: 'denied', tone: 'bad', verb: 'rejected' },
   submit: { icon: 'paperPlaneTilt', tone: 'info', verb: 'submitted' },
   upload: { icon: 'uploadSimple', tone: 'info', verb: 'uploaded' },
   update: { icon: 'notePencil', tone: 'quiet', verb: 'updated' },
-  delete: { icon: 'trash', tone: 'quiet', verb: 'deleted' },
+  delete: { icon: 'bin', tone: 'quiet', verb: 'deleted' },
 };
 const FALLBACK = { icon: 'notePencil', tone: 'quiet', verb: 'made a change to' };
 
