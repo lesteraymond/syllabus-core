@@ -30,8 +30,6 @@ export default function ForgotPassword({ onBack }) {
 
   return (
     <form className="login-card" onSubmit={submit} noValidate>
-      <img className="login-logo" src="/cite-logo.png" alt={translateUI("ui.college_logo_1df91f")} />
-      <span className="eyebrow">{translateUI("ui.forgot_password_5ed117")}</span>
       <h2>{translateUI("ui.get_a_temporary_password_c137bb")}</h2>
       {sentTo ? (
         <>
@@ -41,7 +39,7 @@ export default function ForgotPassword({ onBack }) {
         </>
       ) : (
         <>
-          <p className="muted">{translateUI("ui.type_the_email_address_you_were_registered_with_we_will_email_you_b27a78")}</p>
+          <p className="muted">{translateUI("ui.type_your_registered_email_address_4e92a6")}</p>
           <label htmlFor={uid + '-email'}>{translateUI("ui.email_2f707b")}<input id={uid + '-email'} type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={translateUI("ui.name_university_edu_ph_4d6969")} autoFocus />
           </label>
           {error && <div className="form-error" role="alert">{tr(error)}</div>}
