@@ -40,7 +40,7 @@ export default function ForgotPassword({ onBack }) {
       ) : (
         <>
           <p className="muted">{translateUI("ui.type_your_registered_email_address_4e92a6")}</p>
-          <label htmlFor={uid + '-email'}>{translateUI("ui.email_2f707b")}<input id={uid + '-email'} type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={translateUI("ui.name_university_edu_ph_4d6969")} autoFocus />
+          <label htmlFor={uid + '-email'}><input id={uid + '-email'} aria-label={translateUI("ui.email_2f707b")} type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={translateUI("ui.name_university_edu_ph_4d6969")} autoFocus />
           </label>
           {error && <div className="form-error" role="alert">{tr(error)}</div>}
           <StableButton className="btn primary wide" type="submit" disabled={busy}>{busy ? translateUI("ui.sending_cf7655") : translateUI("ui.send_temporary_password_02ad7e")}</StableButton>
