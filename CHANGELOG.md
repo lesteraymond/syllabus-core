@@ -1199,6 +1199,7 @@ Each program has its own expected graduate attributes (EGAs) and program outcome
 - Forgot password: the line under the heading no longer has a bottom margin, so it sits closer to the email field (a new `login-card-forgot` class on that form only).
 - Forgot password: the grey placeholder text in the email field is removed; the field keeps its `aria-label`.
 - Sign-in form: the placeholder text in the username/email and password fields is removed; both keep their visible labels.
+- Top bar: the page heading ("Dashboard") next to the "Syllabus Management System" label is removed; `Topbar.jsx` no longer looks up the page title.
 - Between 1100px and 1280px the brand text was cut off by the large logo circle; the circle and spacing now shrink and the text wraps. Below 1100px the blue brand side is dropped and only the sign-in form shows (also Register, Forgot password and the first-login screens, which share the page). The brand banner's decorative circles no longer widen the phone page.
 
 **Validation and deployment:**
