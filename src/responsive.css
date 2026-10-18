@@ -187,6 +187,12 @@
 	.check-strip > span:last-child:nth-child(odd) { grid-column: 1 / -1; }
 }
 
+/* Stat cards: a short last row stretches to the full width instead of leaving a gap on the right. */
+@media (max-width: 1250px) {
+	.stat-grid { display: flex; flex-wrap: wrap; }
+	.stat-grid > .stat-card { flex: 1 1 min(200px, 100%); }
+}
+
 /* Dashboard: on desktop every row has a fixed height and each card scrolls inside it. Below 1024px the cards size to their content
    (with a cap so a long activity feed still scrolls inside its card) instead of being cut off at a fixed 320px / 250px. */
 @media (max-width: 1023.98px) {
@@ -195,7 +201,6 @@
 	.dashboard-grid > .card { min-height: 220px; }
 	.dashboard-grid > .card > .card-body { max-height: 380px; flex: 0 1 auto; }
 	.dashboard-grid > .card > .card-body.scrollbar-hidden { max-height: none; }
-	.stat-grid { grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); }
 }
 @media (max-width: 639.98px) {
 	.dashboard-grid > .card { min-height: 0; }
@@ -227,8 +232,7 @@
 	.report-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 	.field.full { grid-column: auto; }
 	.filter-card { grid-template-columns: minmax(0, 1fr); }
-	.stat-grid { grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); }
-	.stat-grid > .stat-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
+	.stat-grid > .stat-card { flex-basis: min(150px, 100%); }
 
 	.overlay:not(.overlay-confirm) { padding: 0; align-items: stretch; justify-items: stretch; }
 	.overlay .modal:not(.confirm-modal) {
