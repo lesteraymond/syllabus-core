@@ -55,7 +55,8 @@
 	/* The sidebar, folded into the page: the same blue panel and link styling, collapsing to a header with the current page. */
 	.mnav {
 		margin: 12px 12px 0;
-		background: linear-gradient(180deg, #092b8d, #061b5d);
+		/* Same gradient tokens as the desktop sidebar (theme.css), so the two stay one colour if the theme changes. */
+		background: linear-gradient(180deg, var(--side-top) 0%, var(--side-mid) 40%, var(--side-bottom) 100%);
 		color: #fff;
 		border-radius: 16px;
 		box-shadow: 0 8px 22px rgba(6, 18, 60, 0.25);
