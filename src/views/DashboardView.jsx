@@ -10,6 +10,7 @@ import TypewriterText from '../components/TypewriterText';
 import { courses as coursesApi, outcomes as outcomesApi } from '../lib/api';
 import { adminStatCards } from '../lib/adminDashboardStats';
 import { sentenceCase } from '../lib/sentenceCase';
+import { dayPeriod } from '../lib/phTime';
 import Select from '../components/Select';
 
 // Stat card icon per label (Phosphor names, see Icon in ui.jsx)
@@ -29,9 +30,14 @@ const STAT_ICONS = {
 export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, setConfirm }) {
   // Settings updates this shared profile after a successful save.
   const name = user.firstName?.trim();
-  const greeting = name
-    ? translateUI('dashboard.welcomeBack', { name })
-    : translateUI('ui.welcome_back_1c5b34');
+  // Morning, afternoon or evening on the Manila clock (checked again each minute, so a dashboard left open changes at 12:00 and 18:00).
+  const [period, setPeriod] = useState(() => dayPeriod());
+  useEffect(() => {
+    const timer = window.setInterval(() => setPeriod(dayPeriod()), 60000);
+    return () => window.clearInterval(timer);
+  }, []);
+  const key = 'dashboard.good' + period[0].toUpperCase() + period.slice(1);
+  const greeting = name ? translateUI(key, { name }) : translateUI(key + 'NoName');
   const my = useMemo(() => syllabi.filter(s => s.userId === user.id), [syllabi, user]);
   const isFac = user.role === 'faculty';
   const data = isFac ? my : syllabi;

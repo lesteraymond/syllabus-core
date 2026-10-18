@@ -78,7 +78,7 @@ export default function ReviewPanel({ syllabus, user, messages, handleStatus, se
               {Object.entries(DECISIONS).map(([key, d]) => (
                 <button type="button" key={key} className={'btn act act-' + key + ' ' + ACT_BUTTON[key]} disabled={!decidable || busy} onClick={() => ask(key)}>
                   <Icon name={d.icon} size={24} />
-                  <span><strong>{tr(d.label)}</strong><small>{tr(d.hint)}</small></span>
+                  <span><strong>{tr(d.label)}</strong></span>
                 </button>
               ))}
             </div>

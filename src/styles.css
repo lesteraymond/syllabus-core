@@ -73,10 +73,10 @@ small {
 	@apply tw:[color:var(--muted)] tw:[font-weight:var(--fw-medium)];
 }
 .login-page {
-	@apply tw:min-h-screen tw:grid tw:[grid-template-columns:1.15fr_0.85fr] tw:[background:white];
+	@apply tw:min-h-screen tw:grid tw:[grid-template-columns:minmax(0,_1fr)_minmax(0,_1fr)] tw:[background:white];
 }
 .login-brand {
-	@apply tw:relative tw:overflow-hidden tw:flex tw:items-center tw:[gap:42px] tw:[padding:70px_7vw] tw:[color:white] tw:[background:linear-gradient(140deg,_#061a55_0%,_#0b2d8f_58%,_#2c36b4_100%)];
+	@apply tw:relative tw:overflow-hidden tw:flex tw:items-center tw:[gap:42px] tw:[padding:70px_5vw] tw:[color:white] tw:[background:linear-gradient(140deg,_#061a55_0%,_#0b2d8f_58%,_#2c36b4_100%)];
 }
 .login-brand:before,
 .login-brand:after {
@@ -3801,10 +3801,7 @@ table,
 .ct { @apply tw:flex tw:flex-col tw:[gap:10px] tw:[min-width:0]; }
 .ct-list { @apply tw:flex tw:flex-col tw:[gap:8px] tw:[max-height:min(340px,_45vh)] tw:overflow-y-auto; }
 .ct-item { @apply tw:[padding:10px_12px] tw:[min-width:0] tw:[background:#fff] tw:[border:1px_solid_var(--line)]; }
-.ct-item.revision { @apply tw:[border-color:#f2d9a6] tw:[background:#fffaf0]; }
-.ct-item.rejection { @apply tw:[border-color:#f2bebe] tw:[background:#fff5f5]; }
-.ct-item.approval { @apply tw:[border-color:#bfe5cf] tw:[background:#f4fbf7]; }
-.ct-item header { @apply tw:flex tw:flex-wrap tw:[gap:4px_10px] tw:items-baseline; }
+.ct-item header { @apply tw:flex tw:flex-wrap tw:[gap:4px_10px] tw:items-center; }
 .ct-item header small { @apply tw:ml-auto tw:[color:var(--muted)]; }
 .ct-item p { @apply tw:[margin:4px_0_0] tw:[font-size:var(--text-sm)]; @apply tw:[line-height:1.5] tw:whitespace-pre-wrap tw:wrap-anywhere; }
 .ct-type { @apply tw:[padding:2px_7px] tw:[border-radius:99px] tw:[font-size:11px]; @apply tw:[font-weight:var(--fw-bold)]; }
@@ -3898,12 +3895,10 @@ table,
 .rp-link { @apply tw:inline-flex tw:items-center tw:[gap:6px] tw:[min-height:36px]; }
 
 /* comments: the reason of a decision reads as a coloured note */
-.ct-item { @apply tw:[border-radius:12px]; @apply tw:[border-left-width:4px]; }
+.ct-item { @apply tw:[border-radius:10px]; }
+.ct-item header strong { @apply tw:[font-size:var(--text-sm)]; @apply tw:[font-weight:var(--fw-semibold)]; @apply tw:[line-height:1.3]; }
+.ct-item header small { @apply tw:[font-size:var(--text-xs)]; }
 .ct-type { background: color-mix(in srgb, var(--muted) 14%, var(--card)); color: var(--text); }
-.ct-item.revision { @apply tw:[border-left-color:var(--rv-revise)]; }
-.ct-item.rejection { @apply tw:[border-left-color:var(--rv-reject)]; }
-.ct-item.approval { @apply tw:[border-left-color:var(--rv-approve)]; }
-.ct-item.comment { @apply tw:[border-left-color:var(--blue2)]; }
 
 /* Faculty: the Comments button on a card, the window that shows a reviewer comments, and the New marker (additive).
    Everything wraps and shrinks like the rest of the review screens: nothing here has a fixed width. */
@@ -4164,8 +4159,10 @@ html { scrollbar-gutter: stable; }
 }
 .topbar .logout { @apply tw:[min-height:40px] tw:flex-none; }
 .topbar .logout { @apply tw:inline-flex tw:items-center tw:justify-center tw:[gap:8px]; }
-/* The label box is as wide as the longest language's text; left-align it so the text sits next to the icon. */
-.topbar .logout .stable-label > span { text-align: left; }
+/* The label box is as wide as the longest language's text; centre the text in it (there is no icon beside it on normal screens). */
+.topbar .logout .stable-label > span { text-align: center; }
+/* Normal screens: the button is text only. The icon appears when the bar goes icon-only (responsive.css). */
+.topbar .logout svg { display: none; }
 .page-head > div:first-child { @apply tw:[flex:1_1_280px] tw:[min-width:0]; }
 .page-head .page-actions { @apply tw:[flex:0_1_auto] tw:max-w-full; }
 .stat-card { @apply tw:[min-width:0]; }

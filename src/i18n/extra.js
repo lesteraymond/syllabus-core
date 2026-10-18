@@ -1517,6 +1517,18 @@ extraTl["dashboard.admin.subjectsNote"] = "Sa lahat ng programa";
 
 // Dashboard "Time Usage" card.
 extraEn["dashboard.usage.title"] = "Time Usage";
+extraEn["dashboard.goodMorning"] = "Good morning, {name}!";
+extraTl["dashboard.goodMorning"] = "Magandang umaga, {name}!";
+extraEn["dashboard.goodMorningNoName"] = "Good morning!";
+extraTl["dashboard.goodMorningNoName"] = "Magandang umaga!";
+extraEn["dashboard.goodAfternoon"] = "Good afternoon, {name}!";
+extraTl["dashboard.goodAfternoon"] = "Magandang hapon, {name}!";
+extraEn["dashboard.goodAfternoonNoName"] = "Good afternoon!";
+extraTl["dashboard.goodAfternoonNoName"] = "Magandang hapon!";
+extraEn["dashboard.goodEvening"] = "Good evening, {name}!";
+extraTl["dashboard.goodEvening"] = "Magandang gabi, {name}!";
+extraEn["dashboard.goodEveningNoName"] = "Good evening!";
+extraTl["dashboard.goodEveningNoName"] = "Magandang gabi!";
 extraEn['outcomes.authoringNote'] = 'Create the Vision, Mission, EGA, PO and CLO for this syllabus. Changes save automatically.';
 extraEn['outcomes.saveInvalid'] = 'Invalid learning outcomes. Check the fields and outcome mappings in step 2.';
 extraTl['outcomes.saveInvalid'] = 'Hindi wasto ang mga kinalabasan ng pagkatuto. Suriin ang mga field at pagmamapa sa hakbang 2.';

@@ -11,12 +11,18 @@ const sectionKeys = ['meta', 'outcomes', 'description', 'clos', 'plan', 'reqs', 
 const blank = value => !String(value ?? '').trim();
 const clone = value => JSON.parse(JSON.stringify(value));
 async function main() {
-  const readme = await fs.readFile(path.join(root, 'README.md'), 'utf8');
-  const demo = readme.match(/^\| Admin \(Dean\) \|\s*([^|]+)\|\s*([^|]+)\|/m);
-  if (!demo) throw new Error('The documented demo login is unavailable.');
+  // Sign in as yourself: FILL_EMAIL and FILL_PASSWORD (read from the environment, never printed or saved). Without them, the documented demo login is used.
+  let demo;
+  if (process.env.FILL_EMAIL && process.env.FILL_PASSWORD) demo = [null, process.env.FILL_EMAIL, process.env.FILL_PASSWORD];
+  else {
+    const readme = await fs.readFile(path.join(root, 'README.md'), 'utf8');
+    demo = readme.match(/^\| Admin \(Dean\) \|\s*([^|]+)\|\s*([^|]+)\|/m);
+    if (!demo) throw new Error('The documented demo login is unavailable.');
+  }
   const loginResponse = await fetch(base + '/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: demo[1].trim(), password: demo[2].trim() }) });
   const login = await loginResponse.json();
-  if (!loginResponse.ok || login.user.mustChangePassword) throw new Error('An authenticated owner session is required.');
+  if (!loginResponse.ok) throw new Error('Sign-in failed (' + loginResponse.status + '): ' + (login.message || login.error || 'no reason given'));
+  if (login.user.mustChangePassword) throw new Error('That account must change its password in the app first.');
   // Protected endpoints use the signed session cookie. Tokens/cookies never leave this process.
   const headers = { 'Content-Type': 'application/json', Cookie: loginResponse.headers.getSetCookie().map(value => value.split(';')[0]).join('; ') };
   const request = async (url, options = {}) => {

@@ -8,6 +8,7 @@ import { createModel, emptyDraft } from '../src/lib/syllabusModel';
 import ProgramManagement, { DeletionImpact, ProgramDialog } from '../src/components/ProgramManagement';
 import StableButton from '../src/components/StableButton';
 import { t } from '../src/i18n';
+import { dayPeriod } from '../src/lib/phTime';
 import React from 'react';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -70,22 +71,26 @@ test('navigation, dashboard summaries and roles switch language while account na
 });
 test('dashboard typewriter greetings use the current saved account name for both roles and languages', () => {
   const render = account => renderToStaticMarkup(<Dashboard user={account} syllabi={[]} logs={[]} setPage={noop} clearLogs={noop} setConfirm={noop} />);
+  // The greeting depends on the Manila time of day, so the expected words come from the same period.
+  const period = dayPeriod();
+  const en = { morning: 'Good morning', afternoon: 'Good afternoon', evening: 'Good evening' }[period];
+  const tl = { morning: 'Magandang umaga', afternoon: 'Magandang hapon', evening: 'Magandang gabi' }[period];
   for (const role of ['faculty', 'admin']) {
     setLanguage('en');
     const before = render({ ...user, role });
-    assert.ok(before.includes('class="typewriter-accessible">Welcome back, Approved!</span>'));
+    assert.ok(before.includes(`class="typewriter-accessible">${en}, Approved!</span>`));
     const renamed = { ...user, role, firstName: 'Ana', lastName: 'Cruz', name: 'Ana Cruz' };
     const after = render(renamed);
-    assert.ok(after.includes('class="typewriter-accessible">Welcome back, Ana!</span>'));
-    assert.doesNotMatch(after, /Welcome back, Approved!|Welcome back, Ana Cruz!/);
+    assert.ok(after.includes(`class="typewriter-accessible">${en}, Ana!</span>`));
+    assert.doesNotMatch(after, new RegExp(`${en}, Approved!|${en}, Ana Cruz!`));
     setLanguage('tl');
-    assert.ok(render({ ...user, role }).includes('Maligayang pagbabalik, Approved!'));
-    assert.ok(render(renamed).includes('Maligayang pagbabalik, Ana!'));
+    assert.ok(render({ ...user, role }).includes(`${tl}, Approved!`));
+    assert.ok(render(renamed).includes(`${tl}, Ana!`));
     setLanguage('en');
-    assert.ok(render({ ...renamed, firstName: '  Ana Maria  ' }).includes('Welcome back, Ana Maria!'));
-    assert.ok(render({ ...renamed, firstName: undefined }).includes('class="typewriter-accessible">Welcome back!</span>'));
-    assert.ok(render({ ...user, role, name: '', firstName: '', lastName: '' }).includes('class="typewriter-accessible">Welcome back!</span>'));
-    assert.ok(render({ ...renamed, firstName: '<Ana & Maria>' }).includes('Welcome back, &lt;Ana &amp; Maria&gt;!'));
+    assert.ok(render({ ...renamed, firstName: '  Ana Maria  ' }).includes(`${en}, Ana Maria!`));
+    assert.ok(render({ ...renamed, firstName: undefined }).includes(`class="typewriter-accessible">${en}!</span>`));
+    assert.ok(render({ ...user, role, name: '', firstName: '', lastName: '' }).includes(`class="typewriter-accessible">${en}!</span>`));
+    assert.ok(render({ ...renamed, firstName: '<Ana & Maria>' }).includes(`${en}, &lt;Ana &amp; Maria&gt;!`));
   }
 });
 

@@ -5,6 +5,7 @@ import { clone, renderMarkup, weekSet } from '../../lib/syllabusModel';
 import { Auto, CoverageStrip, Ic, OutcomePicker, Tag } from './parts';
 import { newId } from './useDraft';
 import Select from '../../components/Select';
+import { Icon } from '../../components/ui';
 
 const newIlo = () => ({ id: newId(), text: '', tags: [] });
 const CELLS = [['contents', 'Topics covered'], ['activities', '- One per line'], ['tasks', '- One per line'], ['values', '**Core value**']];
@@ -71,7 +72,7 @@ export default function PlanStep({ d, apply, model, filter, setFilter, onDeleteR
                           <button type="button" className="ib" aria-label={translateUI("ui.move_up_b4f57c")} disabled={full === 0} onClick={() => move(r.id, -1)}><Ic n="up" /></button>
                           <button type="button" className="ib" aria-label={translateUI("ui.move_down_260ff8")} disabled={full === d.plan.length - 1} onClick={() => move(r.id, 1)}><Ic n="down" /></button>
                           <button type="button" className="ib" aria-label={translateUI("ui.duplicate_row_d66d5f")} onClick={() => apply((x) => { const c = clone(r); c.id = newId(); c.week = ''; c.ilos.forEach((il) => { il.id = newId(); }); x.plan.splice(full + 1, 0, c); return x; })}><Ic n="copy" /></button>
-                          <button type="button" className="ib del" aria-label={translateUI("ui.delete_row_fcf3f8")} onClick={() => onDeleteRow(r.id)}><Ic n="trash" /></button>
+                          <button type="button" className="ib del" aria-label={translateUI("ui.delete_row_fcf3f8")} onClick={() => onDeleteRow(r.id)}><Icon name="bin" size={16} /></button>
                         </div>
                       )}
                     </div>

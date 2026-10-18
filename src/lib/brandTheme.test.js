@@ -175,7 +175,7 @@ test('subject edit and delete moved from the modal to a last, left-aligned Actio
   assert.ok(table.includes('className="col-actions"') && table.includes('<SubjectRowActions'), 'each row has the actions');
   assert.ok(table.includes('colSpan={deadlineState.enabled ? 5 : 4}'), 'the empty row spans every column, the Deadline one too once it is shown');
   assert.ok(theme.includes('.col-actions { width: 112px; min-width: 112px; white-space: nowrap; text-align: left; }'), 'the header and cells are left-aligned');
-  assert.ok(theme.includes('.sm-actions .icon-btn.is-delete { color: #c84848;'), 'delete is red, like the Programs card');
+  assert.ok(theme.includes('.sm-actions .icon-btn { color: #9aa3b2;') && theme.includes('.sm-actions .icon-btn.is-delete:hover') && theme.includes('color: #c84848;'), 'the icons are soft grey, and delete turns red on hover, like the Programs card');
   const actions = readFileSync(new URL('../components/SubjectActions.jsx', import.meta.url), 'utf8');
   assert.ok(actions.includes('e.stopPropagation()') && actions.includes('onKeyDown: (e) => e.stopPropagation()'), 'clicking a button does not also open the row');
 });

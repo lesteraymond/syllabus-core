@@ -1,8 +1,9 @@
 import { t, tr } from '../../i18n';
 import { LEVELS } from '../../lib/syllabusModel';
 import { newId } from './useDraft';
-import { Auto, Ic, CoverageStrip } from './parts';
+import { Auto, CoverageStrip } from './parts';
 import Select from '../../components/Select';
+import { Icon } from '../../components/ui';
 import StableButton from '../../components/StableButton';
 import ReadOnlyOutcomes from './ReadOnlyOutcomes';
 
@@ -26,7 +27,7 @@ export default function ClosStep({ d, model, apply, editable = !!apply }) {
       <input type="checkbox" checked={values.includes(row.no)} onChange={() => onChange(toggle(values, row.no))} />{label + ' ' + row.no}
     </label>)}
   </div>;
-  const removeButton = (label, disabled, onClick) => <button type="button" className="ib del" aria-label={label} title={disabled ? t('outcomes.inUse') : label} disabled={disabled} onClick={onClick}><Ic n="trash" /></button>;
+  const removeButton = (label, disabled, onClick) => <button type="button" className="ib del" aria-label={label} title={disabled ? t('outcomes.inUse') : label} disabled={disabled} onClick={onClick}><Icon name="bin" size={16} /></button>;
   return <div className="sm-stack learning-outcomes-editor">
     <p className="hint">{t('outcomes.authoringNote')}</p>
     <section className="sm-card">
