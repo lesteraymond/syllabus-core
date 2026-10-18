@@ -36,17 +36,26 @@ function createUsageBuffer(tuning = TUNING) {
     const user = live.get(userId);
     const date = phDate(nowMs);
     if (!user || nowMs - user.lastBeatAt > tuning.SESSION_GAP_MS) {
-      live.set(userId, { lastBeatAt: nowMs, sessionSeconds: 0 });
+      live.set(userId, { lastBeatAt: nowMs, sessionSeconds: 0, sessionDate: date });
       cell(userId, date).sessions += 1;
       return { credited: 0, newSession: true };
     }
     if (nowMs - user.lastBeatAt < tuning.BEAT_MIN_MS) return { credited: 0, ignored: true };
     const credited = Math.min(Math.round((nowMs - user.lastBeatAt) / 1000), tuning.BEAT_CAP_S);
+    // Split the credited interval at Philippine midnight instead of moving yesterday's seconds into today.
+    let cursor = nowMs - credited * 1000;
+    while (cursor < nowMs) {
+      const day = phDate(cursor);
+      const end = Math.min(nowMs, Date.parse(addDays(day, 1) + 'T00:00:00+08:00'));
+      const seconds = Math.round(end / 1000) - Math.round(cursor / 1000);
+      const c = cell(userId, day);
+      if (day !== user.sessionDate) { c.sessions += 1; user.sessionDate = day; }
+      user.sessionSeconds += seconds;
+      c.seconds += seconds;
+      c.longest = Math.max(c.longest, user.sessionSeconds);
+      cursor = end;
+    }
     user.lastBeatAt = nowMs;
-    user.sessionSeconds += credited;
-    const c = cell(userId, date);
-    c.seconds += credited;
-    c.longest = Math.max(c.longest, user.sessionSeconds);
     return { credited };
   }
 
@@ -84,7 +93,7 @@ function createUsageService({ db, now = Date.now, tuning = TUNING, log = console
     return { enabled: true };
   }
 
-  async function flush() {
+  async function writePending() {
     const rows = buffer.drain();
     if (!rows.length) return 0;
     try {
@@ -108,12 +117,12 @@ function createUsageService({ db, now = Date.now, tuning = TUNING, log = console
     try { await db.query('DELETE FROM usage_daily WHERE usage_date < ?', [addDays(today, -tuning.KEEP_DAYS)]); } catch (err) { noTable(err); }
   }
 
-  async function summary(userId, days) {
+  async function readSummary(userId, days) {
     if (!on()) return { enabled: false };
     const span = days === 30 ? 30 : 7;
     const today = phDate(now());
     const from = addDays(today, -(span - 1));
-    const key = userId + '|' + span;
+    const key = userId + '|' + span + '|' + today;
     let hit = cache.get(key);
     if (!hit || now() - hit.at > tuning.CACHE_MS) {
       try {
@@ -129,8 +138,8 @@ function createUsageService({ db, now = Date.now, tuning = TUNING, log = console
     }
     const byDate = new Map();
     const add = (date, seconds, sessions) => { const c = byDate.get(date) || { seconds: 0, sessions: 0 }; c.seconds += seconds; c.sessions += sessions; byDate.set(date, c); };
-    hit.rows.forEach((r) => add(r.d, Number(r.active_seconds), Number(r.session_count)));
-    buffer.pendingFor(userId).filter((r) => r.date >= from).forEach((r) => add(r.date, r.seconds, r.sessions));
+    hit.rows.filter((r) => r.d >= from && r.d <= today).forEach((r) => add(r.d, Number(r.active_seconds), Number(r.session_count)));
+    buffer.pendingFor(userId).filter((r) => r.date >= from && r.date <= today).forEach((r) => add(r.date, r.seconds, r.sessions));
 
     const series = [];
     for (let i = 0; i < span; i++) { const date = addDays(from, i); series.push({ date, seconds: (byDate.get(date) || { seconds: 0 }).seconds }); }
@@ -147,6 +156,17 @@ function createUsageService({ db, now = Date.now, tuning = TUNING, log = console
       hasData: totalSeconds > 0,
     };
   }
+
+  // A summary must not read between draining the buffer and committing its write.
+  // Serialize database operations; heartbeats still add to memory without waiting.
+  let operation = Promise.resolve();
+  const serialize = (run) => {
+    const result = operation.then(run);
+    operation = result.catch(() => {});
+    return result;
+  };
+  const flush = () => serialize(writePending);
+  const summary = (userId, days) => serialize(() => readSummary(userId, days));
 
   function start() {
     if (timer || env.USAGE_TRACKING === 'off') return;

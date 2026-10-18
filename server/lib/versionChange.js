@@ -77,6 +77,11 @@ function changedSections(previous, next) {
     if (def.unit) item.rows = rowDelta(a, b);
     out.push(item);
   });
+  if (previous?.outcomes || next?.outcomes) {
+    const authored = c => normalize({ outcomes: c?.outcomes || (c?.catalog ? { vision: c.catalog.institution?.vision, mission: c.catalog.institution?.mission, egas: c.catalog.program?.egas || c.catalog.institution?.egas || [], pos: c.catalog.program?.pos || [] } : null), clos: c?.clos || [] });
+    const a = authored(previous), b = authored(next);
+    if (!same(a, b)) out.push({ key: 'outcomes', label: 'Learning outcomes', words: wordDelta(a, b) });
+  }
   return out;
 }
 
