@@ -38,7 +38,7 @@ export default function Login({ onLogin, onGoogleLogin }) {
         ) : mode === 'forgot' ? (
           <ForgotPassword onBack={() => setMode('login')} />
         ) : (
-        <form className="login-card" onSubmit={submit}>
+        <form className="login-card login-card-signin" onSubmit={submit}>
           <span className="eyebrow">{translateUI("ui.welcome_back_593f1e")}</span>
           <h2>{translateUI("ui.sign_in_to_sms_52fec0")}</h2>
           <p className="muted">{translateUI("ui.use_your_institutional_account_to_continue_143ca3")}</p>

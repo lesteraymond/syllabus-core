@@ -1192,6 +1192,7 @@ Each program has its own expected graduate attributes (EGAs) and program outcome
 
 **Login:**
 - The logo above the sign-in form is removed (the brand panel keeps its own logo on wide screens). The logo on the Forgot password, Change password, Student register and Student home screens is unchanged.
+- The "Welcome back" label, the "Sign in to SMS" heading and the line under it are centred on the sign-in form. It uses a new `login-card-signin` class on that form only, so Forgot password, Change password and Student register keep their alignment.
 - Between 1100px and 1280px the brand text was cut off by the large logo circle; the circle and spacing now shrink and the text wraps. Below 1100px the blue brand side is dropped and only the sign-in form shows (also Register, Forgot password and the first-login screens, which share the page). The brand banner's decorative circles no longer widen the phone page.
 
 **Validation and deployment:**

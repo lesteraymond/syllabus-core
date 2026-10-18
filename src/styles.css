@@ -144,6 +144,11 @@ small {
 .login-card p {
 	@apply tw:[margin:-4px_0_16px];
 }
+/* Sign-in form only: the heading block is centred (the other login-card screens keep their left alignment). */
+.login-card-signin > .eyebrow { align-self: center; }
+.login-card-signin > .eyebrow,
+.login-card-signin > h2,
+.login-card-signin > p { text-align: center; }
 .login-card label:not(.check) {
 	@apply tw:flex tw:flex-col tw:[gap:7px] tw:[font-size:var(--text-sm)];
 	@apply tw:[font-weight:var(--fw-semibold)] tw:[color:#3e4960];
