@@ -1237,6 +1237,9 @@ Each program has its own expected graduate attributes (EGAs) and program outcome
 - The delete button on each card was a 🗑 emoji and now uses the `bin` icon. In the old builder's reference rows the text ✎ and × are the `pencilSquare` and `bin` icons, with "Edit" and "Delete" labels from existing translations.
 - The Edit, History, Check in AI Checker and Delete buttons are soft white-grey at rest and take their colour only on hover and keyboard focus (blue for Edit, History and Check in AI Checker; red for Delete). New `syl-quiet` and `syl-delete` classes in `theme.css`, used only on those buttons; the Comments and Message buttons are unchanged.
 
+**Student registration:**
+- The registration form (`StudentRegister.jsx`) no longer shows the college logo or the "Student Registration" label above its "Create your account" heading. The logo on Change password and Student home, and the other `eyebrow` labels, are unchanged.
+
 **Review comments:**
 - A reviewer comment card (`CommentsThread`) no longer picks up the old comment list's `.comment` grid layout (a plain comment carried the class `comment`), which squeezed the name and date into a 34px column. A plain comment now has no type class.
 - The coloured left strip and the tinted backgrounds for revision, rejection and approval comments are removed: every comment is the same white card with a thin border. The name sits on the left, the date on the right, and the type and "New" chips next to the name, all vertically centred.
