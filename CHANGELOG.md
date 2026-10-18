@@ -1202,6 +1202,7 @@ Each program has its own expected graduate attributes (EGAs) and program outcome
 - Top bar: the page heading ("Dashboard") next to the "Syllabus Management System" label is removed; `Topbar.jsx` no longer looks up the page title.
 - Top bar: the messages and notifications buttons use a soft grey for their icons (the same grey as the search box) instead of near-black, with a light blue tint on hover and keyboard focus. Only `.top-actions .icon-btn` is affected, so the icon buttons in tables and dialogs keep their colours.
 - Top bar: the Log out button has a sign-out icon before its label (new `signOut` entry in the `Icon` registry). The button still reserves room for the longest language's label, so it does not change width when the language switches.
+- Top bar: below 768px the Log out button shows only its icon (a 40px square like the message and bell buttons). The button has an `aria-label` at every size, so screen readers still announce "Log out".
 - Between 1100px and 1280px the brand text was cut off by the large logo circle; the circle and spacing now shrink and the text wraps. Below 1100px the blue brand side is dropped and only the sign-in form shows (also Register, Forgot password and the first-login screens, which share the page). The brand banner's decorative circles no longer widen the phone page.
 
 **Validation and deployment:**
