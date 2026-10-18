@@ -4163,6 +4163,9 @@ html { scrollbar-gutter: stable; }
 	@apply tw:whitespace-nowrap tw:overflow-hidden tw:text-ellipsis;
 }
 .topbar .logout { @apply tw:[min-height:40px] tw:flex-none; }
+.topbar .logout { @apply tw:inline-flex tw:items-center tw:justify-center tw:[gap:8px]; }
+/* The label box is as wide as the longest language's text; left-align it so the text sits next to the icon. */
+.topbar .logout .stable-label > span { text-align: left; }
 .page-head > div:first-child { @apply tw:[flex:1_1_280px] tw:[min-width:0]; }
 .page-head .page-actions { @apply tw:[flex:0_1_auto] tw:max-w-full; }
 .stat-card { @apply tw:[min-width:0]; }
