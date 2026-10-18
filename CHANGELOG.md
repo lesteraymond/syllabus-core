@@ -1233,6 +1233,10 @@ Each program has its own expected graduate attributes (EGAs) and program outcome
 - The sign-in screen's blue brand panel and the form are two equal columns (they were 1.15 : 0.85). The brand panel's padding is smaller and, below 1600px, its logo circle and heading shrink so "Management" is not cut off. `StudentHome`, which shares `.login-page`, is unchanged apart from the equal grid.
 - The Log out button is text only on normal screens. Its icon shows only below 768px, where the button is an icon-only square, as before. The label text is centred in its box.
 
+**My Syllabi:**
+- The delete button on each card was a 🗑 emoji and now uses the `bin` icon. In the old builder's reference rows the text ✎ and × are the `pencilSquare` and `bin` icons, with "Edit" and "Delete" labels from existing translations.
+- The Edit, History, Check in AI Checker and Delete buttons are soft white-grey at rest and take their colour only on hover and keyboard focus (blue for Edit, History and Check in AI Checker; red for Delete). New `syl-quiet` and `syl-delete` classes in `theme.css`, used only on those buttons; the Comments and Message buttons are unchanged.
+
 **Review comments:**
 - A reviewer comment card (`CommentsThread`) no longer picks up the old comment list's `.comment` grid layout (a plain comment carried the class `comment`), which squeezed the name and date into a 34px column. A plain comment now has no type class.
 - The coloured left strip and the tinted backgrounds for revision, rejection and approval comments are removed: every comment is the same white card with a thin border. The name sits on the left, the date on the right, and the type and "New" chips next to the name, all vertically centred.

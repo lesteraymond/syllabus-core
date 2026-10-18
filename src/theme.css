@@ -352,6 +352,12 @@ html { scrollbar-gutter: auto; }
    112px = two 34px buttons, the 8px gap and the cell padding. */
 .col-actions { width: 112px; min-width: 112px; white-space: nowrap; text-align: left; }
 .program-management-actions, .sm-actions { display: flex; flex-wrap: nowrap; gap: 8px; justify-content: flex-start; }
+/* My Syllabi Edit, History and Delete buttons: soft white-grey at rest; blue (Edit, History) or red (Delete) only on hover and keyboard focus. */
+.btn.outline.syl-quiet { background: #f1f4f3; color: #7b8494; border-color: var(--line); }
+.btn.outline.syl-quiet:hover:not(:disabled), .btn.outline.syl-quiet:focus-visible { background: var(--tint-cobalt); color: var(--blue); border-color: #c4c7ec; }
+.btn.danger.syl-delete { background: #f1f4f3; color: #7b8494; border-color: var(--line); }
+.btn.danger.syl-delete:hover, .btn.danger.syl-delete:focus-visible { background: var(--tint-crimson); color: var(--red); border-color: #e7b7ba; }
+
 /* Rename/edit and delete buttons: soft white-grey icons and borders; delete turns red only on hover/focus as the warning. */
 .program-management-actions .icon-btn, .sm-actions .icon-btn { color: #9aa3b2; border-width: 1px; border-color: var(--line); }
 .program-management-actions .icon-btn:hover, .sm-actions .icon-btn:hover, .program-management-actions .icon-btn:focus-visible, .sm-actions .icon-btn:focus-visible { background: #f1f4f3; color: #5d6981; }

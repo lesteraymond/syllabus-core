@@ -4,7 +4,7 @@ import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useMemo, useState } from 'react';
 import { fmt } from '../lib/utils';
 import { canChat } from '../lib/chatPartner';
-import { PageHead } from '../components/ui';
+import { PageHead, Icon } from '../components/ui';
 import { users as usersApi, syllabi as syllabiApi } from '../lib/api';
 import { commentBadge } from '../lib/notificationRoute';
 import { ASSIGNMENT_MESSAGES, assignmentState, canDeleteSyllabus, canEditSyllabus, courseLockReason, editBlockedReason, toBuilderShape } from '../lib/syllabusRules';
@@ -56,15 +56,15 @@ export default function MySyllabi({ syllabi, user, messages, commentCounts = {},
           {isFaculty && !isDraft && s.adminComment && (setCommentCode
             ? <button type="button" className="feedback-banner feedback-open" title={translateUI("ui.open_the_reviewer_comments_1c484a")} onClick={() => setCommentCode(s.id)}>💬 {s.adminComment}</button>
             : <div className="feedback-banner">💬 {s.adminComment}</div>)}
-          {s.archived ? <><p className="syl-locked" role="note">{tr(editBlockedReason(s))}</p><div className="syl-actions"><StableButton className="btn outline" onClick={() => setHistCode(s.id)}>{translateUI("ui.history_fefbcc")}</StableButton></div></> : <div className="syl-actions">
-            <StableButton className="btn outline" disabled={resuming === s.id || (!canEditSyllabus(user, s) && !resumable) || !!lock} title={tr(lock || (canEditSyllabus(user, s) || resumable ? 'Edit this syllabus (saved as a new version)' : editBlockedReason(s)))} onClick={async () => { if (resuming !== null) return; setResuming(s.id); try { if (resumable) await syllabiApi.resumeDraft(s.id); setEditing(toBuilderShape(resumable ? { ...s, status: 'draft' } : s)); setPage('builder'); } catch(error) { notify?.(tr(error.message)); } finally { setResuming(null); } }}>{translateUI("ui.edit_79cae4")}</StableButton>
-            {resumable && <StableButton className="btn outline" onClick={() => setPage('ai')}>{translateUI('publication.checkDraft')}</StableButton>}
+          {s.archived ? <><p className="syl-locked" role="note">{tr(editBlockedReason(s))}</p><div className="syl-actions"><StableButton className="btn outline syl-quiet" onClick={() => setHistCode(s.id)}>{translateUI("ui.history_fefbcc")}</StableButton></div></> : <div className="syl-actions">
+            <StableButton className="btn outline syl-quiet" disabled={resuming === s.id || (!canEditSyllabus(user, s) && !resumable) || !!lock} title={tr(lock || (canEditSyllabus(user, s) || resumable ? 'Edit this syllabus (saved as a new version)' : editBlockedReason(s)))} onClick={async () => { if (resuming !== null) return; setResuming(s.id); try { if (resumable) await syllabiApi.resumeDraft(s.id); setEditing(toBuilderShape(resumable ? { ...s, status: 'draft' } : s)); setPage('builder'); } catch(error) { notify?.(tr(error.message)); } finally { setResuming(null); } }}>{translateUI("ui.edit_79cae4")}</StableButton>
+            {resumable && <StableButton className="btn outline syl-quiet" onClick={() => setPage('ai')}>{translateUI('publication.checkDraft')}</StableButton>}
             {isFaculty && !isDraft && setCommentCode && (() => { const b = commentBadge(commentCounts[s.id]); return (
               <StableButton className="btn outline syl-comments" title={translateUI("ui.notes_from_your_reviewer_about_this_syllabus_6ace96")} onClick={() => setCommentCode(s.id)}>{translateUI("ui.comments_e445b9")}{b.text && <span className={'syl-badge' + (b.fresh ? ' fresh' : '')} aria-label={b.fresh ? b.text + translateUI("ui.new_7cebfd") : b.text + translateUI("ui.in_total_ed532f")}>{b.text}</span>}</StableButton>
             ); })()}
             {isFaculty && canChat(s, user) && <StableButton className="btn outline" title={translateUI("ui.a_conversation_with_your_reviewer_0032bd")} onClick={() => { setChatCode(s.id); }}>{translateUI("ui.message_890761")}</StableButton>}
-            {(!isDraft || user.role === 'admin') && <StableButton className="btn outline" onClick={() => setHistCode(s.id)}>{translateUI("ui.history_fefbcc")}</StableButton>}
-            {canDeleteSyllabus(user, s) && <StableButton className="btn danger" aria-label={translateUI("ui.delete_p0_b3e049", { p0: (s.courseCode || 'draft syllabus') })} onClick={() => setConfirm({ title: translateUI("ui.delete_syllabus_db7e53"), message: translateUI("ui.are_you_sure_you_want_to_delete_p0_this_cannot_be_undone_efea10", { p0: (s.courseCode) }), label: 'Delete', onConfirm: () => handleDelete(s.id) })}>🗑</StableButton>}
+            {(!isDraft || user.role === 'admin') && <StableButton className="btn outline syl-quiet" onClick={() => setHistCode(s.id)}>{translateUI("ui.history_fefbcc")}</StableButton>}
+            {canDeleteSyllabus(user, s) && <StableButton className="btn danger syl-delete" aria-label={translateUI("ui.delete_p0_b3e049", { p0: (s.courseCode || 'draft syllabus') })} onClick={() => setConfirm({ title: translateUI("ui.delete_syllabus_db7e53"), message: translateUI("ui.are_you_sure_you_want_to_delete_p0_this_cannot_be_undone_efea10", { p0: (s.courseCode) }), label: 'Delete', onConfirm: () => handleDelete(s.id) })}><Icon name="bin" size={18} /></StableButton>}
           </div>}
           {!resumable && !s.archived && (s.status === 'submitted' || s.status === 'under_review') && <p className="syl-locked" role="note">{tr(editBlockedReason(s))}</p>}
         </div>; })}
