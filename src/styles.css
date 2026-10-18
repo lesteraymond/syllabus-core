@@ -144,6 +144,13 @@ small {
 .login-card p {
 	@apply tw:[margin:-4px_0_16px];
 }
+/* Sign-in form only: the heading block is centred (the other login-card screens keep their left alignment). */
+.login-card-signin > .eyebrow { align-self: center; }
+.login-card-signin > .eyebrow,
+.login-card-signin > h2,
+.login-card-signin > p { text-align: center; }
+/* Forgot password only: the intro line sits right above the field (the form's flex gap still separates them). */
+.login-card-forgot > p.muted { margin-bottom: 0; }
 .login-card label:not(.check) {
 	@apply tw:flex tw:flex-col tw:[gap:7px] tw:[font-size:var(--text-sm)];
 	@apply tw:[font-weight:var(--fw-semibold)] tw:[color:#3e4960];
@@ -4147,6 +4154,9 @@ html { scrollbar-gutter: stable; }
 .top-actions .search { @apply tw:shrink-0; }
 .top-actions .search input { @apply tw:[min-width:0]; }
 .top-actions .icon-btn { @apply tw:flex-none; }
+/* Messages and notifications buttons: soft grey glyphs (same grey as the search box) on the top bar instead of near-black ones. */
+.top-actions .icon-btn { color: var(--muted); }
+.top-actions .icon-btn:hover, .top-actions .icon-btn:focus-visible { background: var(--tint-cobalt); }
 .topbar .profile-btn { @apply tw:[min-height:42px]; }
 .topbar .profile-btn span:last-child { @apply tw:[width:160px]; @apply tw:[min-width:0]; }
 .topbar .profile-btn strong, .topbar .profile-btn small {

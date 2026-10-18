@@ -5,12 +5,10 @@ import { useEffect, useRef, useState } from 'react';
 import { Avatar, Icon } from './ui';
 import { users as usersApi } from '../lib/api';
 import { AVATAR_ACCEPT, prepareAvatar } from '../lib/avatar';
-import { navItems } from '../data/initialData';
 import { fmt } from '../lib/utils';
 import { ROLE_LABELS } from '../lib/roles';
 
 export default function Topbar({ page, onLogout, user, unread, threads, msgDrop, setMsgDrop, setChatCode, markRead, notify, onAvatarChange, notifications, onOpenNotification, onMarkAllNotificationsRead }) {
-  const title = navItems.find(([k]) => k === page)?.[2] || 'Dashboard';
   const ref = useRef(null);
   useEffect(() => {
     const h = (e) => { if (ref.current && !ref.current.contains(e.target)) setMsgDrop(false); };
@@ -78,7 +76,8 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
 
   return (
     <header className="topbar">
-      <div className="topbar-heading"><span className="eyebrow">{translateUI("ui.syllabus_management_system_e49cab")}</span>{page === 'dashboard' && <h2>{tr(title)}</h2>}</div>
+      <div className="topbar-brand"><img src="/cite-logo.png" alt={translateUI("ui.cict_logo_dee290")} /><strong>{translateUI("ui.cite_brand_5b2e91")}</strong></div>
+      <div className="topbar-heading"><span className="eyebrow">{translateUI("ui.syllabus_management_system_e49cab")}</span></div>
       <div className="top-actions">
         <div className="search"><Icon name="magnifyingGlass" size={18} /><input placeholder={translateUI("ui.search_syllabus_course_faculty_67a24a")} /></div>
         <div className="msg-wrap" ref={ref}>
