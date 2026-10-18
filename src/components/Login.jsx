@@ -39,7 +39,6 @@ export default function Login({ onLogin, onGoogleLogin }) {
           <ForgotPassword onBack={() => setMode('login')} />
         ) : (
         <form className="login-card" onSubmit={submit}>
-          <img className="login-logo" src="/cite-logo.png" alt={translateUI("ui.college_logo_1df91f")} />
           <span className="eyebrow">{translateUI("ui.welcome_back_593f1e")}</span>
           <h2>{translateUI("ui.sign_in_to_sms_52fec0")}</h2>
           <p className="muted">{translateUI("ui.use_your_institutional_account_to_continue_143ca3")}</p>
