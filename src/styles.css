@@ -149,6 +149,8 @@ small {
 .login-card-signin > .eyebrow,
 .login-card-signin > h2,
 .login-card-signin > p { text-align: center; }
+/* Forgot password only: the intro line sits right above the field (the form's flex gap still separates them). */
+.login-card-forgot > p.muted { margin-bottom: 0; }
 .login-card label:not(.check) {
 	@apply tw:flex tw:flex-col tw:[gap:7px] tw:[font-size:var(--text-sm)];
 	@apply tw:[font-weight:var(--fw-semibold)] tw:[color:#3e4960];

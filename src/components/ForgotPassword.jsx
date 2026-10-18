@@ -29,7 +29,7 @@ export default function ForgotPassword({ onBack }) {
   };
 
   return (
-    <form className="login-card" onSubmit={submit} noValidate>
+    <form className="login-card login-card-forgot" onSubmit={submit} noValidate>
       <h2>{translateUI("ui.get_a_temporary_password_c137bb")}</h2>
       {sentTo ? (
         <>

@@ -1196,6 +1196,7 @@ Each program has its own expected graduate attributes (EGAs) and program outcome
 - The sign-in heading reads "Sign in to Login" (new `ui.sign_in_to_login_7c41d8` key, English and Tagalog).
 - Forgot password: the logo and the "Forgot password" label are removed, and the line under the heading reads "Type your email address you were registered with." (new `ui.type_your_registered_email_address_4e92a6` key, English and Tagalog). The sent-confirmation state is unchanged.
 - Forgot password: the visible "Email" label above the field is removed. The field keeps an `aria-label` and its placeholder, so screen readers still announce it.
+- Forgot password: the line under the heading no longer has a bottom margin, so it sits closer to the email field (a new `login-card-forgot` class on that form only).
 - Between 1100px and 1280px the brand text was cut off by the large logo circle; the circle and spacing now shrink and the text wraps. Below 1100px the blue brand side is dropped and only the sign-in form shows (also Register, Forgot password and the first-login screens, which share the page). The brand banner's decorative circles no longer widen the phone page.
 
 **Validation and deployment:**
