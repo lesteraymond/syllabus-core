@@ -193,6 +193,17 @@
 	.stat-grid > .stat-card { flex: 1 1 min(200px, 100%); }
 }
 
+/* Two-column card grids: an odd last card takes the whole row instead of leaving an empty half. */
+@media (max-width: 1250px) {
+	.dashboard-grid.lower { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.dashboard-grid.lower > .card:last-child:nth-child(odd),
+	.syl-grid > :last-child:nth-child(odd),
+	.comp-grid > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+@media (max-width: 1023.98px) {
+	.pick-grid > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+
 /* Dashboard: on desktop every row has a fixed height and each card scrolls inside it. Below 1024px the cards size to their content
    (with a cap so a long activity feed still scrolls inside its card) instead of being cut off at a fixed 320px / 250px. */
 @media (max-width: 1023.98px) {

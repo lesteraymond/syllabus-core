@@ -1187,6 +1187,7 @@ Each program has its own expected graduate attributes (EGAs) and program outcome
 - Tables scroll sideways inside their card with a 640px minimum width. The syllabus table (`.syllabus-table`), the builder's ledgers and the form paper are excluded and keep their own layout.
 - Form grids, Reports, Analytics, the compliance summary and the builder's wizard (step list becomes a swipeable row on phones, course strip reflows) go to one or two columns. Modals become full-screen sheets on phones; confirm dialogs stay centred. The messages dropdown anchors to the full-width bar. Touch devices get 44px targets and 16px field text (no iOS zoom).
 - Dashboard stat cards no longer leave an empty gap on the right: below 1250px the row is a wrapping flex row, so a short last row (for example 3 + 2 cards, or 2 + 2 + 1 on a phone) stretches to the full width.
+- The same fix for the other card grids: an odd last card in the dashboard's lower row, My Syllabi, Compliance and the checker's picker now takes the whole row below 1250px (1024px for the picker) instead of leaving an empty half. The dashboard's lower row was still three columns at 1024-1250px and is now two.
 - All of it is in a new `src/responsive.css`, imported last in the legacy layer, so `styles.css` and `theme.css` are untouched and desktop rules do not change.
 
 **Login:**
