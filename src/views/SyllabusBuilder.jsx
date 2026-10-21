@@ -40,7 +40,7 @@ function CourseOutcomes({ data, update }) {
 
 function WeeklyTopics() {
   const rows = [['1', 'Course orientation; data analytics lifecycle', 'Lecture + diagnostic activity', 'Orientation quiz'], ['2', 'Data collection, quality, ethics, privacy', 'Case discussion', 'Reflection'], ['3–4', 'Data cleaning and transformation', 'Hands-on laboratory', 'Lab exercise'], ['5–6', 'Exploratory data analysis', 'Guided analysis', 'Practical test'], ['7–8', 'Data visualization principles', 'Studio workshop', 'Dashboard critique'], ['9', 'Midterm assessment', 'Assessment', 'Midterm'], ['10–12', 'Statistical and diagnostic analytics', 'Lecture + lab', 'Case analysis'], ['13–15', 'Dashboard development and storytelling', 'Project workshop', 'Project milestone'], ['16', 'Project presentation and synthesis', 'Presentation', 'Final project']];
-  return <div className="table-wrap"><table><thead><tr><th>{translateUI("ui.week_f82be6")}</th><th>{translateUI("ui.topic_content_4891dc")}</th><th>{translateUI("ui.teaching_learning_activity_16041e")}</th><th>{translateUI("ui.assessment_ef136f")}</th></tr></thead><tbody>{rows.map(r => <tr key={r[0]}>{r.map((c, i) => <td key={i}>{c}</td>)}</tr>)}</tbody></table></div>;
+  return <div className="table-wrap syllabus-table"><table><thead><tr><th>{translateUI("ui.week_f82be6")}</th><th>{translateUI("ui.topic_content_4891dc")}</th><th>{translateUI("ui.teaching_learning_activity_16041e")}</th><th>{translateUI("ui.assessment_ef136f")}</th></tr></thead><tbody>{rows.map(r => <tr key={r[0]}>{r.map((c, i) => <td key={i}>{c}</td>)}</tr>)}</tbody></table></div>;
 }
 
 function AssessmentPlan() {
@@ -52,7 +52,7 @@ function GradingSystem() {
 }
 
 function References() {
-  return <div><div className="info-banner warning">{translateUI("ui.2_references_are_more_than_10_years_old_the_ai_checker_will_flag__315174")}</div>{['Provost, F. & Fawcett, T. (2013). Data Science for Business. O\'Reilly.', 'Knaflic, C. N. (2015). Storytelling with Data. Wiley.', 'Wilke, C. O. (2019). Fundamentals of Data Visualization. O\'Reilly.', 'VanderPlas, J. (2023). Python Data Science Handbook, 2nd ed. O\'Reilly.'].map((x, i) => <div className="reference" key={x}><span>{i + 1}</span><p>{x}</p><button>✎</button><button>×</button></div>)}<StableButton className="btn outline">{translateUI("ui.add_reference_75edb4")}</StableButton></div>;
+  return <div><div className="info-banner warning">{translateUI("ui.2_references_are_more_than_10_years_old_the_ai_checker_will_flag__315174")}</div>{['Provost, F. & Fawcett, T. (2013). Data Science for Business. O\'Reilly.', 'Knaflic, C. N. (2015). Storytelling with Data. Wiley.', 'Wilke, C. O. (2019). Fundamentals of Data Visualization. O\'Reilly.', 'VanderPlas, J. (2023). Python Data Science Handbook, 2nd ed. O\'Reilly.'].map((x, i) => <div className="reference" key={x}><span>{i + 1}</span><p>{x}</p><button type="button" aria-label={translateUI("ui.edit_530164")}><Icon name="pencilSquare" size={16} /></button><button type="button" aria-label={translateUI("ui.delete_f6fdbe")}><Icon name="bin" size={16} /></button></div>)}<StableButton className="btn outline">{translateUI("ui.add_reference_75edb4")}</StableButton></div>;
 }
 
 function Policies() {

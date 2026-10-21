@@ -77,6 +77,8 @@ export const auth = {
 export const syllabi = {
   list: () => request('/syllabi'),
   repository: () => request('/syllabi?scope=repository'),
+  // Syllabi archived when their subject went to another faculty member: read-only records, left out of every other list.
+  archived: (scope) => request('/syllabi?archived=1' + (scope === 'repository' ? '&scope=repository' : '')),
   create: (formData) => fetch(`${API}/syllabi`, { method: 'POST', credentials: 'include', headers: authHeaders(), body: formData }).then(r => r.json()),
   update: (id, data) => fetch(`${API}/syllabi/${id}`, { method: 'PUT', credentials: 'include', headers: authHeaders({ 'Content-Type': 'application/json' }), body: JSON.stringify(data) }).then(r => r.json()),
   remove: (id) => request(`/syllabi/${id}`, { method: 'DELETE' }),
@@ -147,7 +149,8 @@ export const outcomes = {
 // Course catalog: course code, title, program and the course learning outcomes (CLOs). Only admins write.
 export const courses = {
   saveStandards: (id, section, value, version) => request(`/courses/${id}/standards`, { method: 'PUT', body: JSON.stringify({ section, value, version }) }),
-  list: (program) => request(`/courses${program ? `?program=${encodeURIComponent(program)}` : ''}`),
+  // forSyllabus: { except } asks the server to mark the subjects that already have a syllabus (`taken`); except is the one being edited.
+  list: (program, forSyllabus) => request(`/courses?${[program ? `program=${encodeURIComponent(program)}` : '', forSyllabus ? `taken=1&except=${Number(forSyllabus.except) || 0}` : ''].filter(Boolean).join('&')}`),
   get: (id) => request(`/courses/${id}`),
   create: (data) => request('/courses', { method: 'POST', body: JSON.stringify(data) }),
   update: (id, data) => request(`/courses/${id}`, { method: 'PUT', body: JSON.stringify(data) }),

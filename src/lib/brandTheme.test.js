@@ -163,29 +163,19 @@ test('quick actions keep the icon level with the title, size to their text, and 
   assert.ok(!/\.quick-actions[^{]*\{[^}]*min-height: 86px/.test(theme), 'the theme does not bring back the 86px minimum');
 });
 
-test('the subject modal: white header title, Course Learning Outcomes below the attributes and outcomes row, equal cards, capitalised titles', () => {
-  const source = readFileSync(new URL('../views/SubjectModal.jsx', import.meta.url), 'utf8');
-  const at = (tag) => source.indexOf('<' + tag + ' ');
-  assert.ok(at('EgaCard') > 0 && at('PoCard') > at('EgaCard'), 'attributes then outcomes');
-  assert.ok(at('ClosCard') > at('PoCard'), 'Course Learning Outcomes sits below Expected Graduate Attributes and Program Outcomes');
-  assert.ok(at('VisionCard') > at('ClosCard'), 'Vision and Mission and Subject Details come after');
-  assert.equal(source.split('<ClosCard ').length - 1, 1, 'the card is rendered once');
-  assert.ok(theme.includes('.workspace .asg-head h3 { color: #ffffff; }'), 'the modal title is white');
-  assert.ok(contrast('#ffffff', token('navy')) >= 7, 'white title on the navy header');
-  assert.ok(theme.includes('.sm-pair { align-items: stretch; }') && theme.includes('.sm-pair > .sm-card > .sm-card-b { flex: 1; }'), 'cards in a row share one height and keep their footers level');
+test('Step 2 authoring reuses the builder card styles and stacks the editors within its available width', () => {
+  assert.ok(theme.includes('.learning-outcomes-editor .sm-pair { grid-template-columns: minmax(0, 1fr); }'));
+  assert.ok(theme.includes('.learning-outcomes-editor .sm-card { min-width: 0; }'));
   assert.ok(theme.includes('.sm-card-h h4 { text-transform: capitalize; }'), 'the first letter of every word is a capital');
 });
 
 test('subject edit and delete moved from the modal to a last, left-aligned Actions column in the subjects table', () => {
-  const modal = readFileSync(new URL('../views/SubjectModal.jsx', import.meta.url), 'utf8');
   const table = readFileSync(new URL('../views/CourseOutcomes.jsx', import.meta.url), 'utf8');
-  assert.ok(!modal.includes('DetailsCard') && !modal.includes("'details'"), 'the Subject Details card is gone from the modal');
-  assert.ok(modal.includes('<VisionCard') && !modal.slice(modal.lastIndexOf('<ClosCard'), modal.indexOf('</div>', modal.lastIndexOf('<VisionCard'))).includes('sm-pair'), 'Vision and Mission stands alone, full width');
-  assert.ok(table.indexOf('ui.clos_a33483') < table.indexOf('ui.actions_c3cd63'), 'Actions is the last column');
+  assert.ok(!table.includes('SubjectModal') && !table.includes('ui.clos_a33483'), 'the admin table no longer opens learning-outcome authoring');
   assert.ok(table.includes('className="col-actions"') && table.includes('<SubjectRowActions'), 'each row has the actions');
-  assert.ok(table.includes('colSpan={deadlineState.enabled ? 6 : 5}'), 'the empty row spans every column, the Deadline one too once it is shown');
+  assert.ok(table.includes('colSpan={deadlineState.enabled ? 5 : 4}'), 'the empty row spans every column, the Deadline one too once it is shown');
   assert.ok(theme.includes('.col-actions { width: 112px; min-width: 112px; white-space: nowrap; text-align: left; }'), 'the header and cells are left-aligned');
-  assert.ok(theme.includes('.sm-actions .icon-btn.is-delete { color: #c84848;'), 'delete is red, like the Programs card');
+  assert.ok(theme.includes('.sm-actions .icon-btn { color: #9aa3b2;') && theme.includes('.sm-actions .icon-btn.is-delete:hover') && theme.includes('color: #c84848;'), 'the icons are soft grey, and delete turns red on hover, like the Programs card');
   const actions = readFileSync(new URL('../components/SubjectActions.jsx', import.meta.url), 'utf8');
   assert.ok(actions.includes('e.stopPropagation()') && actions.includes('onKeyDown: (e) => e.stopPropagation()'), 'clicking a button does not also open the row');
 });
@@ -220,7 +210,7 @@ test('deadline tags and chips keep readable text on their fills (4.5:1)', () => 
 test('the Deadline column and dialog are wired into the subjects table, shown only once deadlines are set up', () => {
   const table = readFileSync(new URL('../views/CourseOutcomes.jsx', import.meta.url), 'utf8');
   assert.ok(table.includes('deadlineState.enabled && <th>') && table.includes('deadlineState.enabled && <td><DeadlineChip'), 'header and cell only when enabled');
-  assert.ok(table.indexOf('ui.program_9d6800') < table.indexOf('deadline.column') && table.indexOf('deadline.column') < table.indexOf('ui.clos_a33483'), 'the column sits between Program and CLOs');
+  assert.ok(table.indexOf('ui.program_9d6800') < table.indexOf('deadline.column') && table.indexOf('deadline.column') < table.indexOf('ui.actions_c3cd63'), 'the column sits between Program and Actions');
   assert.ok(table.includes('<DeadlineDialog') && table.includes('deadlinesApi.list()'), 'the dialog and the list are loaded');
   const dialog = readFileSync(new URL('../components/DeadlineDialog.jsx', import.meta.url), 'utf8');
   assert.ok(dialog.includes('e.stopPropagation()') && dialog.includes('onKeyDown: (e) => e.stopPropagation()'), 'using the chip does not also open the row');
@@ -231,7 +221,7 @@ test('faculty see deadlines on the dashboard card and on each of their syllabi, 
   const dash = readFileSync(new URL('../views/DashboardView.jsx', import.meta.url), 'utf8');
   const mine = readFileSync(new URL('../views/MySyllabi.jsx', import.meta.url), 'utf8');
   assert.ok(dash.includes('<UpcomingDeadlines role={user.role}') && !dash.includes('<Deadline day='), 'real deadlines replace the sample ones');
-  assert.ok(mine.includes('deadlinesApi.mine()') && mine.includes("user.role !== 'faculty'") && mine.includes('deadlineOfSyllabus(deadlines, s)'), 'each faculty syllabus shows its subject\'s deadline');
+  assert.ok(mine.includes('deadlinesApi.mine()') && mine.includes("user.role !== 'faculty'") && mine.includes('deadlineForCard(deadlines, s)'), 'each faculty syllabus shows its subject\'s deadline');
   assert.ok(contrast('#4b5563', token('tint-cobalt')) >= 4.5 && theme.includes('.deadline.dl-row:hover small { color: #4b5563; }'), 'row notes stay readable on the hover fill');
   assert.ok(contrast('#9b1f27', token('tint-crimson')) >= 4.5, 'the date box of a missed deadline');
 });

@@ -17,7 +17,9 @@ const COURSES = [
 ];
 
 function makeDb() {
-  const store = { programs: new Map(), courses: new Map(), notes: [] };
+  // syllabi: { id, userId, courseId, status, updatedAt, archived } so a subject changing hands can be followed end to end;
+  // archivals: each time a subject given to someone archives what others wrote
+  const store = { programs: new Map(), courses: new Map(), notes: [], archivals: [], syllabi: [] };
   const rowsOf = (m, id) => [...(m.get(id) || [])].sort((a, b) => a - b);
   const handle = (sql, params = []) => {
     if (sql.startsWith('SELECT user_id FROM users WHERE user_id')) return [USERS[params[0]] ? [{ user_id: params[0] }] : []];
@@ -39,6 +41,22 @@ function makeDb() {
       return [out.sort((x, y) => x.course_id - y.course_id)];
     }
     if (sql.startsWith('SELECT c.course_id')) return [COURSES.filter((c) => params[0].includes(c.course_id))];
+    if (sql.startsWith('UPDATE syllabi s JOIN users o')) {
+      store.archivals.push({ courseIds: params[0], userId: params[1] });
+      const hit = store.syllabi.filter((r) => params[0].includes(r.courseId) && r.userId !== params[1] && !r.archived);
+      hit.forEach((r) => { r.archived = true; });
+      return [{ affectedRows: hit.length }];
+    }
+    if (sql.startsWith('SELECT syllabus_id, course_id, status, updated_at FROM syllabi')) {
+      return [store.syllabi.filter((r) => params[0].includes(r.courseId) && r.userId === params[1] && r.archived).map((r) => ({ syllabus_id: r.id, course_id: r.courseId, status: r.status, updated_at: r.updatedAt }))];
+    }
+    if (sql.startsWith('SELECT DISTINCT course_id FROM syllabi')) {
+      return [[...new Set(store.syllabi.filter((r) => params[0].includes(r.courseId) && r.userId === params[1] && !r.archived).map((r) => r.courseId))].map((course_id) => ({ course_id }))];
+    }
+    if (sql.startsWith('UPDATE syllabi SET archived_at = NULL')) {
+      store.syllabi.filter((r) => params[0].includes(r.id)).forEach((r) => { r.archived = false; });
+      return [{ affectedRows: params[0].length }];
+    }
     if (sql.startsWith('DELETE FROM faculty_courses')) { store.courses.delete(params[0]); return [{}]; }
     if (sql.startsWith('DELETE FROM faculty_programs')) { store.programs.delete(params[0]); return [{}]; }
     if (sql.startsWith('INSERT INTO faculty_programs')) { params[0].forEach(([u, p]) => store.programs.set(u, (store.programs.get(u) || new Set()).add(p))); return [{}]; }
@@ -166,6 +184,36 @@ test('a subject has one faculty member: saving one that another faculty member h
   assert.strictEqual(db.store.courses.get(6), undefined, 'the refused save left Gus untouched');
   assert.deepStrictEqual([...db.store.courses.get(5)], [10, 11], 'and Fay keeps hers');
   assert.strictEqual(db.store.notes.filter((n) => n.userId === 6).length, 0, 'nobody is told about a save that did not happen');
+}));
+
+test('a subject given to a faculty member archives what others wrote for it; saving the same subjects again, or taking one away, archives nothing', () => withServer(async ({ call, db }) => {
+  await call(admin, 'PUT', '/5/assignments', { programs: [1], courses: [10, 11] });
+  assert.deepStrictEqual(db.store.archivals, [{ courseIds: [10, 11], userId: 5 }], 'Fay is given both subjects');
+  await call(admin, 'PUT', '/5/assignments', { programs: [1], courses: [10, 11] });
+  assert.strictEqual(db.store.archivals.length, 1, 'saving what she already has changes nothing');
+  await call(admin, 'PUT', '/5/assignments', { programs: [1], courses: [10] });
+  assert.strictEqual(db.store.archivals.length, 1, 'taking IT 204 away from her archives nothing yet: nobody has it');
+  await call(admin, 'PUT', '/6/assignments', { programs: [1], courses: [11] });
+  assert.deepStrictEqual(db.store.archivals[1], { courseIds: [11], userId: 6 }, 'giving IT 204 to Gus archives what Fay wrote for it');
+  await call(admin, 'PUT', '/5/assignments', { programs: [1], courses: [10, 11] }); // refused: Gus holds it
+  assert.strictEqual(db.store.archivals.length, 2, 'a refused save archives nothing');
+}));
+
+test('a subject that comes back to the faculty member it was archived from brings one of their syllabi back, and archives the new holder\'s', () => withServer(async ({ call, db }) => {
+  const syl = (id, userId, status, updatedAt) => ({ id, userId, courseId: 11, status, updatedAt, archived: false });
+  const flags = () => Object.fromEntries(db.store.syllabi.map((r) => [r.id, r.archived]));
+  await call(admin, 'PUT', '/5/assignments', { programs: [1], courses: [10, 11] });
+  db.store.syllabi.push(syl(1, 5, 'approved', '2026-10-14T10:00:00Z'), syl(2, 5, 'draft', '2026-10-16T10:00:00Z'));
+  await call(admin, 'PUT', '/5/assignments', { programs: [1], courses: [10] }); // IT 204 taken away from Fay: nobody has it yet
+  assert.deepStrictEqual(flags(), { 1: false, 2: false }, 'taking it away archives nothing');
+  await call(admin, 'PUT', '/6/assignments', { programs: [1], courses: [11] }); // given to Gus
+  assert.deepStrictEqual(flags(), { 1: true, 2: true }, 'Fay\'s syllabi leave the working lists');
+  db.store.syllabi.push(syl(3, 6, 'draft', '2026-10-17T10:00:00Z')); // Gus starts his own
+  await call(admin, 'PUT', '/6/assignments', { programs: [1], courses: [] }); // Gus lets go
+  await call(admin, 'PUT', '/5/assignments', { programs: [1], courses: [10, 11] }); // and it goes back to Fay
+  assert.deepStrictEqual(flags(), { 1: false, 2: true, 3: true }, 'Fay\'s approved one is active again (not the draft: one for each subject); Gus\'s is archived');
+  await call(admin, 'PUT', '/5/assignments', { programs: [1], courses: [10, 11] });
+  assert.deepStrictEqual(flags(), { 1: false, 2: true, 3: true }, 'saving the same subjects again changes nothing');
 }));
 
 test('a refused save is all or nothing, and says how many more subjects are taken', () => withServer(async ({ call, db }) => {

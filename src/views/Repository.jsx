@@ -26,9 +26,17 @@ export default function Repository({ syllabi, user, notify, setChatCode, setHist
     });
     return () => { active = false; };
   }, [isFaculty, user.id, syllabi]);
-  const mySyllabi = useMemo(() => isFaculty
+  // Approved syllabi archived when their subject went to another faculty member: shown only on request, read-only.
+  const [archivedRows, setArchivedRows] = useState([]);
+  const [showArchived, setShowArchived] = useState(false);
+  useEffect(() => {
+    let live = true;
+    syllabiApi.archived('repository').then((rows) => { if (live) setArchivedRows(rows.filter(s => s.status === 'approved' && (!isFaculty || s.userId === user.id))); }).catch(() => {});
+    return () => { live = false; };
+  }, [isFaculty, user.id, syllabi]);
+  const mySyllabi = useMemo(() => [...(isFaculty
     ? (repository.ownerId === user.id ? repository.rows.filter(s => s.userId === user.id && s.status === 'approved') : [])
-    : syllabi.filter(s => s.status === 'approved'), [isFaculty, repository, syllabi, user.id]);
+    : syllabi.filter(s => s.status === 'approved')), ...(showArchived ? archivedRows : [])], [isFaculty, repository, syllabi, user.id, showArchived, archivedRows]);
   const [filters, setFilters] = useState({ program: 'All', q: '' });
   const programs = useMemo(() => [...new Set(mySyllabi.map(repositoryProgram))].sort((a, b) => a.localeCompare(b)), [mySyllabi]);
   useEffect(() => {
@@ -45,6 +53,7 @@ export default function Repository({ syllabi, user, notify, setChatCode, setHist
         <Field label={translateUI("ui.search_bce064")}><input value={filters.q} onChange={e => setFilters({ ...filters, q: e.target.value })} placeholder={translateUI("ui.course_code_title_or_faculty_1878e5")} /></Field>
         <StableButton className="btn ghost reset" onClick={() => setFilters({ program: 'All', q: '' })}>{translateUI("ui.reset_44c57a")}</StableButton>
       </div>
+      {archivedRows.length > 0 && <label className="syl-archive-toggle"><input type="checkbox" checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} />{translateUI("syllabi.showArchived", { count: archivedRows.length })}</label>}
       <div className="repo-stats"><span>{translateUI("ui.approved_afd61f")}<b>{rows.length}</b></span></div>
       <div className="table-card repository-table">
         <table>
@@ -57,9 +66,9 @@ export default function Repository({ syllabi, user, notify, setChatCode, setHist
             <td><strong>{x.courseCode}</strong><small>{x.title}</small></td>
             <td>{repositoryProgram(x) === 'No program' ? translateUI("ui.no_program_d8600a") : repositoryProgram(x)}</td>
             <td><span className="user-cell"><Avatar userId={x.userId} src={x.ownerAvatarUrl} name={x.faculty} /><span>{x.faculty}</span></span></td>
-            <td><span className={`status ${x.status}`}>{translateUI("ui.approved_afd61f")}</span></td>
+            <td><span className="syl-tags"><span className={`status ${x.status}`}>{translateUI("ui.approved_afd61f")}</span>{x.archived && <span className="status archived">{translateUI("syllabi.archivedTag")}</span>}</span></td>
             <td>{fmt(x.updatedAt)}</td>
-            <td><div className="repository-actions">{canChat(x, user) && <button className="table-action" aria-label={translateUI("ui.open_chat_for_p0_633dd9", { p0: (x.courseCode) })} onClick={() => setChatCode(x.id)}>✉</button>}<button className="table-action" aria-label={translateUI("ui.view_history_for_p0_46396f", { p0: (x.courseCode) })} onClick={() => setHistCode(x.id)}>◷</button></div></td>
+            <td><div className="repository-actions">{canChat(x, user) && !x.archived && <button className="table-action" aria-label={translateUI("ui.open_chat_for_p0_633dd9", { p0: (x.courseCode) })} onClick={() => setChatCode(x.id)}>✉</button>}<button className="table-action" aria-label={translateUI("ui.view_history_for_p0_46396f", { p0: (x.courseCode) })} onClick={() => setHistCode(x.id)}>◷</button></div></td>
           </tr>)}</tbody>
         </table>
         {isFaculty && repository.error && <div className="empty" role="alert">{translateUI("ui.unable_to_load_approved_syllabi_cd0cc5")}{tr(repository.error)}</div>}

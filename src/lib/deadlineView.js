@@ -98,3 +98,14 @@ export const sortForAdmin = (list, now = Date.now()) => [...list].sort((a, b) =>
 // The deadline a faculty member's syllabus belongs to: the one for its subject that matters now (see currentDeadline).
 export const deadlineOfSyllabus = (deadlines, syllabus, now = Date.now()) =>
   syllabus && syllabus.courseId ? currentDeadline((deadlines || []).filter((d) => d.courseId === syllabus.courseId), now) : null;
+
+// The deadline chip on one My Syllabi card. A deadline is about the subject, and "submitted" is worked out from every version this
+// faculty member ever sent for it, so a second syllabus row for the same subject (a new draft beside one already submitted or approved)
+// would carry a "Submitted" chip next to its own "Draft" badge. A draft has not been submitted, so on a draft card that answer is left
+// out; waiting, due today and failed still show, because they are about the date, and they stay true for a draft.
+const SATISFIED = ['submitted', 'submitted_late'];
+export const deadlineForCard = (deadlines, syllabus, now = Date.now()) => {
+  if (syllabus && syllabus.archived) return null; // a record from before the subject was reassigned: the deadline is the new faculty member's
+  const d = deadlineOfSyllabus(deadlines, syllabus, now);
+  return d && syllabus.status === 'draft' && SATISFIED.includes(d.status) ? null : d;
+};

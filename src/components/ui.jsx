@@ -16,8 +16,8 @@ import { ShieldCheck } from '@phosphor-icons/react/dist/csr/ShieldCheck';
 import { GraduationCap } from '@phosphor-icons/react/dist/csr/GraduationCap';
 import { PaperPlaneTilt } from '@phosphor-icons/react/dist/csr/PaperPlaneTilt';
 import { UploadSimple } from '@phosphor-icons/react/dist/csr/UploadSimple';
-import { Trash } from '@phosphor-icons/react/dist/csr/Trash';
 import { SquaresFour } from '@phosphor-icons/react/dist/csr/SquaresFour';
+import { SignOut } from '@phosphor-icons/react/dist/csr/SignOut';
 import { PencilRuler } from '@phosphor-icons/react/dist/csr/PencilRuler';
 import { Sparkle } from '@phosphor-icons/react/dist/csr/Sparkle';
 import { GridFour } from '@phosphor-icons/react/dist/csr/GridFour';
@@ -37,7 +37,7 @@ import { Warning } from '@phosphor-icons/react/dist/csr/Warning';
 import { FloppyDisk } from '@phosphor-icons/react/dist/csr/FloppyDisk';
 import { CalendarBlank } from '@phosphor-icons/react/dist/csr/CalendarBlank';
 import { BellRinging } from '@phosphor-icons/react/dist/csr/BellRinging';
-import { ProgramIcon, SubjectIcon, UnderReviewIcon, ApprovedIcon, ReviseIcon } from './customIcons';
+import { ProgramIcon, SubjectIcon, UnderReviewIcon, ApprovedIcon, ReviseIcon, BinIcon, PencilSquareIcon, DeniedIcon } from './customIcons';
 
 export function Card({ title, action, children, hideScrollbar = false }) {
   return <div className="card"><div className="card-head"><h3>{title}</h3>{action && <span>{tr(action)}</span>}</div><div className={hideScrollbar ? 'card-body scrollbar-hidden' : 'card-body'} {...(hideScrollbar ? { tabIndex: 0, role: 'region', 'aria-label': title } : {})}>{children}</div></div>;
@@ -97,7 +97,7 @@ export function Policy({ title, text }) {
 
 // One icon set (Phosphor) for the whole UI. Only the icons listed here are bundled.
 // Decorative by default (aria-hidden); pass `label` when the icon alone conveys meaning.
-const ICONS = { arrowUpRight: ArrowUpRight, arrowUUpLeft: ArrowUUpLeft, xCircle: XCircle, chatText: ChatCircleText, clockBack: ClockCounterClockwise, notebook: Notebook, sealCheck: SealCheck, hourglassMedium: HourglassMedium, notePencil: NotePencil, shieldCheck: ShieldCheck, graduationCap: GraduationCap, paperPlaneTilt: PaperPlaneTilt, uploadSimple: UploadSimple, trash: Trash, squaresFour: SquaresFour, pencilRuler: PencilRuler, sparkle: Sparkle, gridFour: GridFour, archive: Archive, chartBar: ChartBar, downloadSimple: DownloadSimple, usersThree: UsersThree, gearSix: GearSix, caretRight: CaretRight, eye: Eye, eyeSlash: EyeSlash, envelope: Envelope, bell: Bell, magnifyingGlass: MagnifyingGlass, checkCircle: CheckCircle, warning: Warning, floppyDisk: FloppyDisk, calendarBlank: CalendarBlank, bellRinging: BellRinging, program: ProgramIcon, subject: SubjectIcon, underReview: UnderReviewIcon, approved: ApprovedIcon, revise: ReviseIcon };
+const ICONS = { signOut: SignOut, arrowUpRight: ArrowUpRight, arrowUUpLeft: ArrowUUpLeft, xCircle: XCircle, chatText: ChatCircleText, clockBack: ClockCounterClockwise, notebook: Notebook, sealCheck: SealCheck, hourglassMedium: HourglassMedium, notePencil: NotePencil, shieldCheck: ShieldCheck, graduationCap: GraduationCap, paperPlaneTilt: PaperPlaneTilt, uploadSimple: UploadSimple, squaresFour: SquaresFour, pencilRuler: PencilRuler, sparkle: Sparkle, gridFour: GridFour, archive: Archive, chartBar: ChartBar, downloadSimple: DownloadSimple, usersThree: UsersThree, gearSix: GearSix, caretRight: CaretRight, eye: Eye, eyeSlash: EyeSlash, envelope: Envelope, bell: Bell, magnifyingGlass: MagnifyingGlass, checkCircle: CheckCircle, warning: Warning, floppyDisk: FloppyDisk, calendarBlank: CalendarBlank, bellRinging: BellRinging, program: ProgramIcon, subject: SubjectIcon, underReview: UnderReviewIcon, approved: ApprovedIcon, revise: ReviseIcon, bin: BinIcon, pencilSquare: PencilSquareIcon, denied: DeniedIcon };
 export function Icon({ name, size = 20, weight = 'duotone', label, className, ...rest }) {
   const Glyph = ICONS[name];
   if (!Glyph) return null;

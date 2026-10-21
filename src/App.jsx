@@ -13,6 +13,8 @@ import Sidebar from './components/Sidebar';
 import SyllabusCommentsModal from './components/SyllabusCommentsModal';
 import SyllabusViewModal from './components/SyllabusViewModal';
 import Topbar from './components/Topbar';
+import MobileNav from './components/MobileNav';
+import { useMediaQuery, NARROW_QUERY } from './lib/useMediaQuery';
 import VersionHistoryModal from './components/VersionHistoryModal';
 import ReviewPanel from './views/ReviewPanel';
 import { navItems } from './data/initialData';
@@ -81,6 +83,17 @@ export default function App() {
   useEffect(() => {
     try { localStorage.setItem('sms_sidebar_collapsed', String(sidebarCollapsed)); } catch {}
   }, [sidebarCollapsed]);
+  // Below md (768px) the sidebar is replaced by an accordion card under the top bar (MobileNav). Its open state lives here, and it closes on
+  // navigation, on Esc and when the screen grows back to desktop.
+  const narrow = useMediaQuery(NARROW_QUERY);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  useEffect(() => { if (!narrow) setMobileNavOpen(false); }, [narrow]);
+  useEffect(() => {
+    if (!narrow || !mobileNavOpen) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape') setMobileNavOpen(false); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [narrow, mobileNavOpen]);
   const [page, setPage] = useState('dashboard');
   // The compliance check moved into step 7 of the builder: an old 'ai' link sends faculty there, and only admins have the overview.
   useEffect(() => { if (user && user.role !== 'admin' && page === 'ai') setPage(user.role === 'faculty' ? 'builder' : 'dashboard'); }, [user, page]);
@@ -375,9 +388,10 @@ export default function App() {
 
   return (
     <div ref={languageShell} className="app-shell" data-sidebar-collapsed={sidebarCollapsed ? 'true' : 'false'}>
-      <Sidebar page={page} setPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); }} nav={nav} collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(c => !c)} />
+      {!narrow && <Sidebar page={page} setPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); }} nav={nav} collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(c => !c)} />}
       <main className="workspace">
         <Topbar page={page} onLogout={handleLogout} user={user} unread={unread} threads={threads} msgDrop={msgDrop} setMsgDrop={setMsgDrop} setChatCode={setChatCode} markRead={markRead} notify={notify} onAvatarChange={handleAvatarChange} notifications={notifications} onOpenNotification={openNotification} onMarkAllNotificationsRead={markAllNotificationsRead} />
+        {narrow && <MobileNav page={page} setPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); setMobileNavOpen(false); }} nav={nav} open={mobileNavOpen} onToggle={() => setMobileNavOpen(o => !o)} />}
         <div className="page-wrap">
           {page === 'dashboard' && <Dashboard setPage={setPage} user={user} syllabi={syllabi} logs={logs} clearLogs={clearLogs} setConfirm={setConfirm} />}
           {page === 'builder' && ((NEW_BUILDER || user.role === 'admin')

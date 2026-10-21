@@ -75,8 +75,8 @@ function makeDb() {
     if (sql.startsWith('SELECT clo_id')) return [s.clos.filter((k) => k.course_id === p[0]).map((k, i) => ({ clo_id: i + 1, title: '', clo_level: 'Enabling', statement: 's', ega_nos: k.ega_nos, po_nos: k.po_nos }))];
     if (sql.startsWith('SELECT course_id FROM faculty_courses')) return [[{ course_id: 10 }]];
     if (sql.startsWith('SELECT program_id FROM faculty_programs')) return [[{ program_id: 1 }]];
-    if (sql.startsWith('SELECT syllabus_id, user_id, status, title, course_code, content, course_id FROM syllabi WHERE')) return [s.syllabi[p[0]] ? [s.syllabi[p[0]]] : []];
-    if (sql.startsWith('SELECT * FROM syllabi WHERE syllabus_id')) return [s.syllabi[p[0]] ? [s.syllabi[p[0]]] : []];
+    if (sql.startsWith('SELECT syllabus_id, user_id, status, title, course_code, content, course_id, archived_at FROM syllabi WHERE')) return [s.syllabi[p[0]] ? [s.syllabi[p[0]]] : []];
+    if (sql.startsWith('SELECT * FROM syllabi WHERE syllabus_id') || sql.startsWith('SELECT syllabus_id, user_id, status, version, content')) return [s.syllabi[p[0]] ? [s.syllabi[p[0]]] : []];
     if (sql.startsWith("SELECT user_id FROM users WHERE role = 'admin'")) return [[]];
     if (sql.startsWith('UPDATE syllabi SET content')) { s.saved.push(JSON.parse(p[0])); return [{}]; }
     if (/^(INSERT|UPDATE|DELETE)/.test(sql)) return [{}];
@@ -111,6 +111,91 @@ const inst = (over = {}) => ({ vision: 'New vision', mission: { lead: 'New lead'
 const ega = (no, name = 'EGA ' + no) => ({ no, name, short: name });
 const po = (no, egas, text = 'Statement') => ({ no, short: 'PO ' + no, text, egas });
 const clo = (egas, pos) => ({ title: 'T', level: 'Enabling', statement: 'S', egas, pos });
+
+const ownSections = content => ({
+  outcomes: { vision: 'Faculty vision', mission: { lead: 'Faculty mission', items: ['Support learning'] }, egas: [ega(1)], pos: [po(1, [1])] },
+  clos: [{ id: 'facultyClo', ...clo([1], [1]) }],
+  plan: content.plan.map(row => ({ ...row, ilos: row.ilos.map(il => ({ ...il, tags: il.tags.length ? ['clo:facultyClo'] : [] })) })),
+});
+
+test('faculty Step 2 edits survive saves and submission without changing the subject catalog', () => withServer(async ({ call, db }) => {
+  const original = db.s.courses[0].standards_json;
+  const sections = ownSections(JSON.parse(db.s.syllabi[1].content));
+  const save = await call(fay, 'PUT', '/syllabi/1/content', { sections, schemaVersion: 3 });
+  assert.strictEqual(save.status, 200, JSON.stringify(save.body));
+  const saved = db.s.saved.at(-1);
+  assert.deepStrictEqual(saved.outcomes, sections.outcomes);
+  assert.deepStrictEqual(saved.clos, sections.clos);
+  assert.strictEqual(saved.catalog.institution.vision, 'Faculty vision');
+  assert.strictEqual(db.s.courses[0].standards_json, original);
+  db.s.syllabi[1].content = JSON.stringify(saved);
+  // Empty catalog setup cannot overwrite or block a syllabus with its own complete Step 2.
+  db.s.courses[0].standards_json = null;
+  const again = await call(fay, 'PUT', '/syllabi/1/content', { sections: { description: saved.description }, schemaVersion: 3 });
+  assert.strictEqual(again.status, 200);
+  assert.deepStrictEqual(db.s.saved.at(-1).clos, sections.clos);
+  const submit = await call(fay, 'POST', '/syllabi/1/submit', {});
+  assert.strictEqual(submit.status, 200, JSON.stringify(submit.body));
+  assert.strictEqual(db.s.saved.at(-1).catalog.institution.vision, 'Faculty vision');
+}));
+
+test('Step 2 edits remain owner-only and decided records are immutable', () => withServer(async ({ call, db }) => {
+  const sections = ownSections(JSON.parse(db.s.syllabi[1].content));
+  const body = { sections, schemaVersion: 3 };
+  assert.strictEqual((await call({ id: 6, role: 'faculty' }, 'PUT', '/syllabi/1/content', body)).status, 404);
+  assert.strictEqual((await call(admin, 'PUT', '/syllabi/1/content', body)).status, 404);
+  assert.strictEqual((await call(null, 'PUT', '/syllabi/1/content', body)).status, 401);
+  db.s.syllabi[1].status = 'approved';
+  assert.strictEqual((await call(fay, 'PUT', '/syllabi/1/content', body)).status, 409);
+  assert.strictEqual(db.s.saved.length, 0);
+}));
+
+test('Step 2 rejects malformed and dangling mappings while allowing incomplete autosaves', () => withServer(async ({ call, db }) => {
+  const sections = ownSections(JSON.parse(db.s.syllabi[1].content));
+  const invalid = JSON.parse(JSON.stringify(sections));
+  invalid.outcomes.egas = [];
+  assert.strictEqual((await call(fay, 'PUT', '/syllabi/1/content', { sections: invalid })).status, 400);
+  invalid.outcomes = sections.outcomes;
+  invalid.clos[0].id = null;
+  assert.strictEqual((await call(fay, 'PUT', '/syllabi/1/content', { sections: invalid })).status, 400);
+  sections.outcomes.vision = '';
+  const save = await call(fay, 'PUT', '/syllabi/1/content', { sections, schemaVersion: 3 });
+  assert.strictEqual(save.status, 200);
+  db.s.syllabi[1].content = JSON.stringify(db.s.saved.at(-1));
+  assert.strictEqual((await call(fay, 'POST', '/syllabi/1/submit', {})).status, 409);
+}));
+
+test('clearing the subject autosaves a blank Step 2 without retaining the prior syllabus outcomes', () => withServer(async ({ call, db }) => {
+  const content = JSON.parse(db.s.syllabi[1].content);
+  Object.assign(content, ownSections(content));
+  db.s.syllabi[1].content = JSON.stringify(content);
+  const sections = {
+    meta: { ...content.meta, courseId: null, code: '', title: '' },
+    outcomes: { vision: '', mission: { lead: '', items: [] }, egas: [], pos: [] },
+    clos: [],
+    plan: content.plan.map(row => ({ ...row, ilos: row.ilos.map(il => ({ ...il, tags: [] })) })),
+  };
+  const result = await call(fay, 'PUT', '/syllabi/1/content', { sections, schemaVersion: 3 });
+  assert.strictEqual(result.status, 200, JSON.stringify(result.body));
+  assert.deepStrictEqual(db.s.saved.at(-1).outcomes, sections.outcomes);
+  assert.strictEqual(db.s.saved.at(-1).catalog.program, null);
+}));
+
+test('opening an editable legacy syllabus adopts its saved snapshot without rewriting database history', () => withServer(async ({ call, db }) => {
+  const content = JSON.parse(db.s.syllabi[1].content);
+  content.catalog = { institution: { vision: 'Previously reviewed vision', mission: { lead: 'Mission', items: ['Purpose'] } }, program: { code: 'BSIT', egas: [ega(1)], pos: [po(1, [1])] } };
+  db.s.syllabi[1].content = JSON.stringify(content);
+  const before = db.s.syllabi[1].content;
+  const read = await call(fay, 'GET', '/syllabi/1/content');
+  assert.strictEqual(read.status, 200, JSON.stringify(read.body));
+  assert.strictEqual(read.body.adoptedOutcomes, true);
+  assert.strictEqual(read.body.content.outcomes.vision, 'Previously reviewed vision');
+  assert.strictEqual(db.s.syllabi[1].content, before);
+  db.s.syllabi[1].status = 'approved';
+  const locked = await call(fay, 'GET', '/syllabi/1/content');
+  assert.strictEqual(locked.body.adoptedOutcomes, false);
+  assert.ok(!locked.body.content.outcomes);
+}));
 
 test('a program returns its own EGAs, its POs, the versions and the subjects that share them', () => withServer(async ({ call }) => {
   const it = (await call(admin, 'GET', '/programs/BSIT/outcomes')).body;
