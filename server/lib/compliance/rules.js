@@ -318,7 +318,7 @@ function evaluate(content, standard, ctx = {}) {
   const snapshot = c.catalog && typeof c.catalog === 'object' ? c.catalog : null;
   const live = ctx.catalog && typeof ctx.catalog === 'object' ? ctx.catalog : null;
   // Tags resolve against what the syllabus is shown with: its stored copy once submitted, otherwise the live catalog.
-  const prog = c.outcomes || (snapshot && snapshot.program ? snapshot.program : (live && live.program ? live.program : null));
+  const prog = snapshot && snapshot.program ? snapshot.program : (live && live.program ? live.program : null);
   const poList = prog && Array.isArray(prog.pos) ? prog.pos : null;
   const egaList = prog && Array.isArray(prog.egas) ? prog.egas : null;
 

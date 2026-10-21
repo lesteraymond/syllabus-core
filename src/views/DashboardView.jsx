@@ -10,7 +10,6 @@ import TypewriterText from '../components/TypewriterText';
 import { courses as coursesApi, outcomes as outcomesApi } from '../lib/api';
 import { adminStatCards } from '../lib/adminDashboardStats';
 import { sentenceCase } from '../lib/sentenceCase';
-import { dayPeriod } from '../lib/phTime';
 import Select from '../components/Select';
 
 // Stat card icon per label (Phosphor names, see Icon in ui.jsx)
@@ -28,16 +27,6 @@ const STAT_ICONS = {
 };
 
 export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, setConfirm }) {
-  // Settings updates this shared profile after a successful save.
-  const name = user.firstName?.trim();
-  // Morning, afternoon or evening on the Manila clock (checked again each minute, so a dashboard left open changes at 12:00 and 18:00).
-  const [period, setPeriod] = useState(() => dayPeriod());
-  useEffect(() => {
-    const timer = window.setInterval(() => setPeriod(dayPeriod()), 60000);
-    return () => window.clearInterval(timer);
-  }, []);
-  const key = 'dashboard.good' + period[0].toUpperCase() + period.slice(1);
-  const greeting = name ? translateUI(key, { name }) : translateUI(key + 'NoName');
   const my = useMemo(() => syllabi.filter(s => s.userId === user.id), [syllabi, user]);
   const isFac = user.role === 'faculty';
   const data = isFac ? my : syllabi;
@@ -84,7 +73,7 @@ export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, set
 
   return (
     <>
-      <PageHead title={<TypewriterText text={greeting} />} subtitle={translateUI("ui.here_s_what_is_happening_with_your_undergraduate_syllabi_834d17")} actions={<>{!isFac && <StableButton className="btn primary" onClick={() => setPage('builder')}>{translateUI("ui.new_syllabus_c4c7a9")}</StableButton>}</>} />
+      <PageHead title={<TypewriterText text={translateUI("ui.welcome_back_1c5b34")} />} subtitle={translateUI("ui.here_s_what_is_happening_with_your_undergraduate_syllabi_834d17")} actions={<>{!isFac && <StableButton className="btn primary" onClick={() => setPage('builder')}>{translateUI("ui.new_syllabus_c4c7a9")}</StableButton>}</>} />
       <section className="stat-grid">{stats.map(([a, b, c, d]) => <div className="stat-card" key={a}><div className={`stat-icon ${d}`}><Icon weight="regular" name={STAT_ICONS[a]} size={20} /></div><span>{sentenceCase(tr(a))}</span><strong>{b}</strong><small>{tr(c)}</small></div>)}</section>
       <section className="dashboard-grid">
         <Card title={translateUI("ui.recent_activity_8aebf3")} action={<StableButton className="btn ghost" style={{ padding: '4px 8px', fontSize: '12px' }} onClick={() => setConfirm({ title: translateUI("ui.clear_logs_7c3089"), message: translateUI("ui.clear_your_activity_from_this_list_nothing_is_deleted_it_only_hid_fb5d0d"), label: 'Clear', onConfirm: () => { setCleared(writeClearedAt(user.id)); clearLogs(); } })}>{translateUI("ui.clear_logs_7c3089")}</StableButton>}>
