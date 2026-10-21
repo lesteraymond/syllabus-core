@@ -40,7 +40,7 @@ function CourseOutcomes({ data, update }) {
 
 function WeeklyTopics() {
   const rows = [['1', 'Course orientation; data analytics lifecycle', 'Lecture + diagnostic activity', 'Orientation quiz'], ['2', 'Data collection, quality, ethics, privacy', 'Case discussion', 'Reflection'], ['3–4', 'Data cleaning and transformation', 'Hands-on laboratory', 'Lab exercise'], ['5–6', 'Exploratory data analysis', 'Guided analysis', 'Practical test'], ['7–8', 'Data visualization principles', 'Studio workshop', 'Dashboard critique'], ['9', 'Midterm assessment', 'Assessment', 'Midterm'], ['10–12', 'Statistical and diagnostic analytics', 'Lecture + lab', 'Case analysis'], ['13–15', 'Dashboard development and storytelling', 'Project workshop', 'Project milestone'], ['16', 'Project presentation and synthesis', 'Presentation', 'Final project']];
-  return <div className="table-wrap"><table><thead><tr><th>{translateUI("ui.week_f82be6")}</th><th>{translateUI("ui.topic_content_4891dc")}</th><th>{translateUI("ui.teaching_learning_activity_16041e")}</th><th>{translateUI("ui.assessment_ef136f")}</th></tr></thead><tbody>{rows.map(r => <tr key={r[0]}>{r.map((c, i) => <td key={i}>{c}</td>)}</tr>)}</tbody></table></div>;
+  return <div className="table-wrap syllabus-table"><table><thead><tr><th>{translateUI("ui.week_f82be6")}</th><th>{translateUI("ui.topic_content_4891dc")}</th><th>{translateUI("ui.teaching_learning_activity_16041e")}</th><th>{translateUI("ui.assessment_ef136f")}</th></tr></thead><tbody>{rows.map(r => <tr key={r[0]}>{r.map((c, i) => <td key={i}>{c}</td>)}</tr>)}</tbody></table></div>;
 }
 
 function AssessmentPlan() {

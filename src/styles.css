@@ -109,14 +109,9 @@ small {
 	bottom: -440px;
 }
 .brand-orb {
-	width: 260px;
-	height: 260px;
-	min-width: 260px;
-	border-radius: 50%;
-	padding: 18px;
-	background: rgba(255, 255, 255, 0.1);
-	box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
-	backdrop-filter: blur(7px);
+	@apply tw:[width:260px];
+	@apply tw:[height:260px];
+	@apply tw:[min-width:260px] tw:[padding:18px];
 }
 .brand-orb img {
 	width: 100%;
