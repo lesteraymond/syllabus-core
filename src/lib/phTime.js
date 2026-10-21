@@ -52,3 +52,14 @@ export function phDayStart(ymd, plusDays = 0) {
   if (check.getUTCFullYear() !== y || check.getUTCMonth() !== mo - 1 || check.getUTCDate() !== d) return null;
   return new Date(Date.UTC(y, mo - 1, d + plusDays, -PH_OFFSET_HOURS)); // midnight in Manila is 16:00 UTC the day before
 }
+
+// The hour (0-23) on the Manila clock, whatever the viewer's computer is set to.
+export function phHour(now = new Date()) {
+  const part = new Intl.DateTimeFormat('en-US', { timeZone: PH_TZ, hour: 'numeric', hourCycle: 'h23' }).formatToParts(now).find((x) => x.type === 'hour');
+  return Number(part.value) % 24;
+}
+// Which greeting fits the Manila time of day: 5:00-11:59 morning, 12:00-17:59 afternoon, 18:00-4:59 evening.
+export function dayPeriod(now = new Date()) {
+  const hour = phHour(now);
+  return hour >= 5 && hour < 12 ? 'morning' : hour >= 12 && hour < 18 ? 'afternoon' : 'evening';
+}

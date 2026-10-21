@@ -38,10 +38,8 @@ export default function Login({ onLogin, onGoogleLogin }) {
         ) : mode === 'forgot' ? (
           <ForgotPassword onBack={() => setMode('login')} />
         ) : (
-        <form className="login-card" onSubmit={submit}>
-          <img className="login-logo" src="/cite-logo.png" alt={translateUI("ui.college_logo_1df91f")} />
-          <span className="eyebrow">{translateUI("ui.welcome_back_593f1e")}</span>
-          <h2>{translateUI("ui.sign_in_to_sms_52fec0")}</h2>
+        <form className="login-card login-card-signin" onSubmit={submit}>
+          <h2>{translateUI("ui.sign_in_to_login_7c41d8")}</h2>
           <p className="muted">{translateUI("ui.use_your_institutional_account_to_continue_143ca3")}</p>
           <label>{translateUI("ui.username_or_email_728ae0")}<input value={form.user} onChange={e => setForm({ ...form, user: e.target.value })} placeholder={translateUI("ui.name_university_edu_ph_4d6969")} /></label>
           <label className="pass-field">{translateUI("ui.password_8be3c9")}<span className="pass-input"><input type={showPass ? 'text' : 'password'} value={form.pass} onChange={e => setForm({ ...form, pass: e.target.value })} placeholder="••••••••" /><button type="button" className="eye-btn" aria-label={showPass ? translateUI("ui.hide_password_e40123") : translateUI("ui.show_password_044b85")} onClick={() => setShowPass(!showPass)}><Icon name={showPass ? 'eyeSlash' : 'eye'} size={20} /></button></span></label>

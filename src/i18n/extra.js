@@ -1517,6 +1517,18 @@ extraTl["dashboard.admin.subjectsNote"] = "Sa lahat ng programa";
 
 // Dashboard "Time Usage" card.
 extraEn["dashboard.usage.title"] = "Time Usage";
+extraEn["dashboard.goodMorning"] = "Good morning, {name}!";
+extraTl["dashboard.goodMorning"] = "Magandang umaga, {name}!";
+extraEn["dashboard.goodMorningNoName"] = "Good morning!";
+extraTl["dashboard.goodMorningNoName"] = "Magandang umaga!";
+extraEn["dashboard.goodAfternoon"] = "Good afternoon, {name}!";
+extraTl["dashboard.goodAfternoon"] = "Magandang hapon, {name}!";
+extraEn["dashboard.goodAfternoonNoName"] = "Good afternoon!";
+extraTl["dashboard.goodAfternoonNoName"] = "Magandang hapon!";
+extraEn["dashboard.goodEvening"] = "Good evening, {name}!";
+extraTl["dashboard.goodEvening"] = "Magandang gabi, {name}!";
+extraEn["dashboard.goodEveningNoName"] = "Good evening!";
+extraTl["dashboard.goodEveningNoName"] = "Magandang gabi!";
 extraTl["dashboard.usage.title"] = "Oras ng Paggamit";
 extraEn["dashboard.usage.today"] = "Active today";
 extraTl["dashboard.usage.today"] = "Aktibo ngayon";
