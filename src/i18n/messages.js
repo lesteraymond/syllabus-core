@@ -1,6 +1,5 @@
 // Stable keys shared by every interface; user content is never sent for translation.
 export const en = {
-  "dashboard.welcomeBack": "Welcome back, {name}!",
   "ui.syllabus_saved_as_p0_60fc5d": "Syllabus saved as {p0}.",
   "ui.syllabus_submitted_for_review_f317be": "Syllabus submitted for review.",
   "ui.submit_failed_adb15a": "Submit failed: ",
@@ -73,7 +72,6 @@ export const en = {
   "ui.your_current_password_still_works_until_you_do_e6c36b": "Your current password still works until you do.",
   "ui.back_to_sign_in_4da821": "Back to sign in",
   "ui.type_the_email_address_you_were_registered_with_we_will_email_you_b27a78": "Type the email address you were registered with. We will email you a temporary password.",
-  "ui.type_your_registered_email_address_4e92a6": "Type your email address you were registered with.",
   "ui.email_2f707b": "Email ",
   "ui.name_university_edu_ph_4d6969": "name@university.edu.ph",
   "ui.sending_cf7655": "Sending…",
@@ -87,7 +85,6 @@ export const en = {
   "ui.approval_workflow_cc8935": " Approval Workflow",
   "ui.welcome_back_593f1e": "WELCOME BACK",
   "ui.sign_in_to_sms_52fec0": "Sign in to SMS",
-  "ui.sign_in_to_login_7c41d8": "Sign in to Login",
   "ui.use_your_institutional_account_to_continue_143ca3": "Use your institutional account to continue.",
   "ui.username_or_email_728ae0": "Username or Email",
   "ui.password_8be3c9": "Password",
@@ -103,7 +100,6 @@ export const en = {
   "ui.collapse_sidebar_9e6876": "Collapse sidebar",
   "ui.cict_logo_dee290": "CICT logo",
   "ui.sms_9e10d4": "SMS",
-  "ui.cite_brand_5b2e91": "CITE",
   "ui.is_this_your_cor_1d57c8": "Is this your COR?",
   "ui.this_is_what_we_read_from_your_photo_it_can_t_be_edited_here_c24d4b": "This is what we read from your photo. It can't be edited here.",
   "ui.not_readable_c35717": "Not readable",
@@ -852,7 +848,6 @@ export const en = {
   "ui.no_users_found_e611ef": "No users found."
 };
 export const tl = {
-  "dashboard.welcomeBack": "Maligayang pagbabalik, {name}!",
   "ui.syllabus_saved_as_p0_60fc5d": "Na-save ang silabus bilang {p0}.",
   "ui.syllabus_submitted_for_review_f317be": "Naipasa ang silabus para sa pagsusuri.",
   "ui.submit_failed_adb15a": "Hindi naipasa: ",
@@ -925,7 +920,6 @@ export const tl = {
   "ui.your_current_password_still_works_until_you_do_e6c36b": "Magagamit pa rin ang kasalukuyan mong password hanggang mapalitan mo ito.",
   "ui.back_to_sign_in_4da821": "Bumalik sa pag-sign in",
   "ui.type_the_email_address_you_were_registered_with_we_will_email_you_b27a78": "I-type ang email address na ginamit sa pagpaparehistro. Padadalhan ka namin ng pansamantalang password.",
-  "ui.type_your_registered_email_address_4e92a6": "I-type ang email address na ginamit mo sa pagpaparehistro.",
   "ui.email_2f707b": "Email ",
   "ui.name_university_edu_ph_4d6969": "name@university.edu.ph",
   "ui.sending_cf7655": "Ipinapadala…",
@@ -939,7 +933,6 @@ export const tl = {
   "ui.approval_workflow_cc8935": " Proseso ng pag-apruba",
   "ui.welcome_back_593f1e": "MALIGAYANG PAGBALIK",
   "ui.sign_in_to_sms_52fec0": "Mag-sign in sa SMS",
-  "ui.sign_in_to_login_7c41d8": "Mag-sign in sa Login",
   "ui.use_your_institutional_account_to_continue_143ca3": "Gamitin ang iyong account sa institusyon upang magpatuloy.",
   "ui.username_or_email_728ae0": "Username o Email",
   "ui.password_8be3c9": "Password",
@@ -955,7 +948,6 @@ export const tl = {
   "ui.collapse_sidebar_9e6876": "Paliitin ang sidebar",
   "ui.cict_logo_dee290": "Logo ng CICT",
   "ui.sms_9e10d4": "SMS",
-  "ui.cite_brand_5b2e91": "CITE",
   "ui.is_this_your_cor_1d57c8": "Ito ba ang iyong COR?",
   "ui.this_is_what_we_read_from_your_photo_it_can_t_be_edited_here_c24d4b": "Ito ang nabasa namin mula sa iyong larawan. Hindi ito maaaring baguhin dito.",
   "ui.not_readable_c35717": "Hindi mabasa",

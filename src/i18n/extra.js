@@ -1376,8 +1376,8 @@ Object.assign(extraTl, {"programs.renameNote":"Maaaring baguhin ang kodigo at pa
 extraEn["repository.approvedSubtitle"] = "Search and access syllabi approved by an administrator.";
 extraTl["repository.approvedSubtitle"] = "Maghanap at tingnan ang mga silabus na inaprubahan ng administrador.";
 
-extraEn["outcomes.chooseProgramSubject"] = "Choose a program and subject in Step 1 before creating learning outcomes.";
-extraTl["outcomes.chooseProgramSubject"] = "Pumili muna ng programa at asignatura sa Hakbang 1 bago gumawa ng mga kinalabasan ng pagkatuto.";
+extraEn["outcomes.chooseProgramSubject"] = "Choose a program and subject in Step 1 to load the learning outcomes configured by an administrator.";
+extraTl["outcomes.chooseProgramSubject"] = "Pumili muna ng programa at asignatura sa Hakbang 1 upang makita ang mga kinalabasan ng pagkatuto na itinakda ng administrador.";
 
 extraEn["publication.publish"] = "Publish syllabus";
 extraTl["publication.publish"] = "Ilathala ang silabus";
@@ -1400,8 +1400,8 @@ extraTl["outcomes.subjectIncomplete"] = "Kailangang kumpletuhin ng administrador
 extraEn["outcomes.setupSaved"] = "Subject outcomes saved.";
 extraTl["outcomes.setupSaved"] = "Na-save ang mga kinalabasan ng asignatura.";
 
-extraEn["outcomes.subjectSubtitle"] = "Manage programs, subject details, assignments and deadlines. Faculty write learning outcomes in syllabus builder Step 2.";
-extraTl["outcomes.subjectSubtitle"] = "Pamahalaan ang mga programa, detalye ng asignatura, takdang asignatura at takdang petsa. Gagawin ng guro ang mga kinalabasan ng pagkatuto sa Hakbang 2 ng tagabuo ng silabus.";
+extraEn["outcomes.subjectSubtitle"] = "Open a subject to configure its own vision, mission, EGAs, POs and CLOs.";
+extraTl["outcomes.subjectSubtitle"] = "Buksan ang asignatura upang itakda ang sarili nitong bisyon, misyon, EGA, PO at CLO.";
 
 extraEn["publication.mySubtitle"] = "Manage your drafts and saved syllabi.";
 extraTl["publication.mySubtitle"] = "Pamahalaan ang iyong mga burador at naka-save na silabus.";
@@ -1517,50 +1517,6 @@ extraTl["dashboard.admin.subjectsNote"] = "Sa lahat ng programa";
 
 // Dashboard "Time Usage" card.
 extraEn["dashboard.usage.title"] = "Time Usage";
-extraEn["dashboard.goodMorning"] = "Good morning, {name}!";
-extraTl["dashboard.goodMorning"] = "Magandang umaga, {name}!";
-extraEn["dashboard.goodMorningNoName"] = "Good morning!";
-extraTl["dashboard.goodMorningNoName"] = "Magandang umaga!";
-extraEn["dashboard.goodAfternoon"] = "Good afternoon, {name}!";
-extraTl["dashboard.goodAfternoon"] = "Magandang hapon, {name}!";
-extraEn["dashboard.goodAfternoonNoName"] = "Good afternoon!";
-extraTl["dashboard.goodAfternoonNoName"] = "Magandang hapon!";
-extraEn["dashboard.goodEvening"] = "Good evening, {name}!";
-extraTl["dashboard.goodEvening"] = "Magandang gabi, {name}!";
-extraEn["dashboard.goodEveningNoName"] = "Good evening!";
-extraTl["dashboard.goodEveningNoName"] = "Magandang gabi!";
-extraEn['outcomes.authoringNote'] = 'Create the Vision, Mission, EGA, PO and CLO for this syllabus. Changes save automatically.';
-extraEn['outcomes.saveInvalid'] = 'Invalid learning outcomes. Check the fields and outcome mappings in step 2.';
-extraTl['outcomes.saveInvalid'] = 'Hindi wasto ang mga kinalabasan ng pagkatuto. Suriin ang mga field at pagmamapa sa hakbang 2.';
-extraEn['outcomes.submitIncomplete'] = 'Complete Vision, Mission, EGA, PO and CLO in step 2 before submitting.';
-extraTl['outcomes.submitIncomplete'] = 'Kumpletuhin ang Vision, Mission, EGA, PO at CLO sa hakbang 2 bago isumite.';
-extraEn['outcomes.changeLabel'] = 'Learning outcomes';
-extraTl['outcomes.changeLabel'] = 'Mga kinalabasan ng pagkatuto';
-extraTl['outcomes.authoringNote'] = 'Gawin ang Vision, Mission, EGA, PO at CLO para sa silabus na ito. Awtomatikong nase-save ang mga pagbabago.';
-extraEn['outcomes.inUse'] = 'Remove the dependent outcome mappings first.';
-extraTl['outcomes.inUse'] = 'Alisin muna ang mga pagmamapang gumagamit ng kinalabasang ito.';
-extraEn['outcomes.authorInStep2'] = 'Create your learning outcomes in step 2.';
-extraTl['outcomes.authorInStep2'] = 'Gawin ang iyong mga kinalabasan ng pagkatuto sa hakbang 2.';
-extraEn['outcomes.subjectIdentity'] = 'The subject supplies the course code and title. Learning outcomes are edited in step 2.';
-extraTl['outcomes.subjectIdentity'] = 'Mula sa asignatura ang code at pamagat ng kurso. Baguhin ang mga kinalabasan ng pagkatuto sa hakbang 2.';
-extraEn['outcomes.subjectCreated'] = 'Subject added. Faculty create its syllabus learning outcomes in step 2.';
-extraTl['outcomes.subjectCreated'] = 'Naidagdag ang asignatura. Gagawin ng guro ang mga kinalabasan ng pagkatuto ng silabus sa hakbang 2.';
-extraEn['outcomes.changeSubject'] = 'Changing the subject replaces this syllabus’s learning outcomes with the selected subject’s starting values. Continue?';
-extraTl['outcomes.changeSubject'] = 'Papalitan ng pagbabago ng asignatura ang mga kinalabasan ng pagkatuto sa silabus ng panimulang datos ng napiling asignatura. Magpatuloy?';
-extraEn['outcomes.visionRequired'] = 'Add the vision in step 2.';
-extraTl['outcomes.visionRequired'] = 'Ilagay ang bisyon sa hakbang 2.';
-extraEn['outcomes.missionRequired'] = 'Complete the mission in step 2.';
-extraTl['outcomes.missionRequired'] = 'Kumpletuhin ang misyon sa hakbang 2.';
-extraEn['outcomes.egasRequired'] = 'Complete the EGA names and short names in step 2.';
-extraTl['outcomes.egasRequired'] = 'Kumpletuhin ang mga pangalan at maikling pangalan ng EGA sa hakbang 2.';
-extraEn['outcomes.posRequired'] = 'Complete the PO statements and short names in step 2.';
-extraTl['outcomes.posRequired'] = 'Kumpletuhin ang mga pahayag at maikling pangalan ng PO sa hakbang 2.';
-extraEn['outcomes.closRequired'] = 'Complete the CLO statements and EGA and PO mappings in step 2.';
-extraTl['outcomes.closRequired'] = 'Kumpletuhin ang mga pahayag ng CLO at pagmamapa ng EGA at PO sa hakbang 2.';
-extraEn['outcomes.mappingsRequired'] = 'Fix the outcome mappings in step 2.';
-extraTl['outcomes.mappingsRequired'] = 'Ayusin ang pagmamapa ng mga kinalabasan sa hakbang 2.';
-extraEn["dashboard.usage.selectDay"] = "Hover over a bar to see total usage in hours and minutes.";
-extraTl["dashboard.usage.selectDay"] = "Itapat ang pointer sa bar upang makita ang kabuuang oras at minuto ng paggamit.";
 extraTl["dashboard.usage.title"] = "Oras ng Paggamit";
 extraEn["dashboard.usage.today"] = "Active today";
 extraTl["dashboard.usage.today"] = "Aktibo ngayon";
@@ -1705,36 +1661,3 @@ const deadlineRemind = {
   "deadline.cancelledNotified": ["Deadline cancelled. {count} faculty notified.", "Nakansela ang takdang petsa. {count} guro ang naabisuhan."],
 };
 for (const [key, [en, tl]] of Object.entries(deadlineRemind)) { extraEn[key] = en; extraTl[key] = tl; }
-
-// The date picker (components/DatePicker.jsx).
-const datePicker = {
-  "date.choose": ["Select date", "Pumili ng petsa"],
-  "date.chooseDateTime": ["Select date and time", "Pumili ng petsa at oras"],
-  "date.prevMonth": ["Previous month", "Nakaraang buwan"],
-  "date.nextMonth": ["Next month", "Susunod na buwan"],
-  "date.today": ["Today", "Ngayon"],
-  "date.clear": ["Clear", "Burahin"],
-  "date.done": ["Done", "Tapos na"],
-  "date.time": ["Time", "Oras"],
-  "review.rejectHint": ["Sent back; it can still be edited", "Ibabalik; maaari pa itong baguhin"],
-  "review.rejectConfirm": ["Reject this syllabus? The faculty member is told why and can edit and submit it again.", "I-reject ang silabus na ito? Sasabihin sa guro kung bakit at maaari niya itong baguhin at ipasa muli."],
-  "builder.rejectedTitle": ["Rejected: edit and submit again. ", "Na-reject: baguhin at ipasa muli. "],
-  "builder.openMySyllabi": ["Open My Syllabi", "Buksan ang My Syllabi"],
-  "builder.subjectTaken": ["you already have a syllabus ({status})", "may silabus ka na ({status})"],
-  "builder.subjectHasDraft": ["you already have a draft", "may draft ka na"],
-  "syllabi.showArchived": ["Show archived ({count})", "Ipakita ang naka-archive ({count})"],
-  "syllabi.archivedTag": ["Archived", "Naka-archive"],
-  "builder.saveAsDraft": ["Save as draft", "I-save bilang draft"],
-  "builder.draftSaved": ["Draft saved. You can continue it from My Syllabi.", "Na-save ang draft. Maaari mo itong ipagpatuloy sa My Syllabi."],
-};
-for (const [key, [en, tl]] of Object.entries(datePicker)) { extraEn[key] = en; extraTl[key] = tl; }
-
-// The learning plan's column headings (src/lib/syllabusModel.js PLAN_HEADINGS is the English wording of the institutional form).
-const planHeadings = {
-  "plan.heading.ilo": ["Intended Learning Outcomes (ILO)", "Mga Inaasahang Kinalabasan ng Pagkatuto (ILO)"],
-  "plan.heading.contents": ["Course Contents", "Nilalaman ng Kurso"],
-  "plan.heading.activities": ["Suggested Learning Activities", "Mga Iminumungkahing Gawain sa Pagkatuto"],
-  "plan.heading.tasks": ["Suggested Assessment Tasks", "Mga Iminumungkahing Gawain sa Pagtatasa"],
-  "plan.heading.values": ["Expected Value/s To Be Integrated", "Inaasahang Pagpapahalaga na Isasama"],
-};
-for (const [key, [en, tl]] of Object.entries(planHeadings)) { extraEn[key] = en; extraTl[key] = tl; }
