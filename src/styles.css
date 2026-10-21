@@ -97,7 +97,7 @@ small {
 .brand-orb {
 	@apply tw:[width:260px];
 	@apply tw:[height:260px];
-	@apply tw:[min-width:260px] tw:[border-radius:50%] tw:[padding:18px] tw:[background:rgba(255,_255,_255,_0.1)] tw:[box-shadow:0_25px_60px_rgba(0,_0,_0,_0.2)] tw:[backdrop-filter:blur(7px)];
+	@apply tw:[min-width:260px] tw:[padding:18px];
 }
 .brand-orb img {
 	@apply tw:w-full;
