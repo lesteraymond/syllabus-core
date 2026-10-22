@@ -44,7 +44,7 @@ function good() {
     description: [{ id: 'd1', t: words(60) }],
     clos,
     plan,
-    reqs: [{ id: 'q1', t: 'Class attendance' }, { id: 'q2', t: 'Quizzes' }, { id: 'q3', t: 'Examinations' }, { id: 'q4', t: 'Programming project' }],
+    reqs: [{ id: 'q1', t: 'Class attendance' }, { id: 'q2', t: 'Quizzes' }, { id: 'q3', t: 'Examinations' }, { id: 'q4', t: 'Programming project' }, { id: 'q5', t: 'Students who need accommodations, for example because of a disability, tell the instructor early so that accessible formats can be arranged' }],
     refs: {
       books: { na: false, items: [{ id: 'b1', t: 'Balti, H., & Galloway, A. (2021). Job ready Java. John Wiley & Sons.' }, { id: 'b2', t: 'Boyarsky, J. (2020). OCP Java. Sybex.' }] },
       program: { na: false, items: [{ id: 'p1', t: 'Oracle (2023). The Java tutorials.' }] },

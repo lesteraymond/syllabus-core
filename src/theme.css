@@ -445,10 +445,13 @@ html { scrollbar-gutter: auto; }
 
 /* The compliance ring while a check runs: it starts at 0%, a spinner turns around it, and the fill and number climb to the score. */
 .cmp-ring { position: relative; }
-/* The score ring is blue from 0% to the final score and stays blue. Only the spinner turning around it changes colour: blue while the rules
+/* The score ring is blue from 0% to the final score and stays blue (red when the score is below the pass line, see below). Only the spinner turning around it changes colour: blue while the rules
    check, green while the AI is writing its recommendations. The spinner's colour is a registered property so it eases between the two. */
 .cmp .cmp-ring, .cmp .cmp-ring.good, .cmp .cmp-ring.warn, .cmp .cmp-ring.warm { background: conic-gradient(var(--blue2) 0 var(--p), #e3e7ea var(--p)); }
 .cmp .cmp-ring strong, .cmp .cmp-ring small, .cmp .cmp-ring.good small, .cmp .cmp-ring.warn small, .cmp .cmp-ring.warm small { color: var(--blue2); }
+/* A score below the pass line is red, so a low result is not mistaken for a good one. */
+.cmp .cmp-ring.warn { background: conic-gradient(var(--red) 0 var(--p), #e3e7ea var(--p)); }
+.cmp .cmp-ring.warn strong, .cmp .cmp-ring.warn small { color: var(--red); }
 @property --spin { syntax: '<color>'; inherits: false; initial-value: #2c36b4; }
 .cmp-spin { --spin: var(--blue2); transition: --spin 0.7s ease; }
 .cmp-spin.ai { --spin: var(--green); }

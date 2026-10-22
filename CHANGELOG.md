@@ -1414,3 +1414,18 @@ Each program has its own expected graduate attributes (EGAs) and program outcome
 
 - A repeated requirement, reference or grading component (D-04 to D-06) used to appear three times: as an AI/rule recommendation, as a finding, and under "Still needs you". The recommendation that cited only those findings is now left out; the finding stays (it carries the score).
 - New suggested change for D-06: a grading component named twice is merged into one, with the percentages added, so the total stays 100%. (A repeated requirement or reference already had a removal suggestion.) These three no longer fall under "Still needs you".
+
+---
+
+### v1.60.0 — Rule I-01: Support for Diverse Learners (Standard v9)
+**Date:** October 22, 2026
+
+- New rule **I-01** (Content Completeness, minor, 2 points, never blocks a submit): the syllabus must say how the course supports diverse learners, including students with disabilities. It passes when the description, a requirement or any lesson's content, activities or task mentions accommodations, accessibility, disability, inclusion, diverse learners, special needs or education, assistive tools, PWD, learning differences or reasonable adjustments (the word list is in `standard-v4.json` and editable in the developer rule editor).
+- Suggested change: when it fails, the author is offered a standard requirement ("Students who need learning accommodations ... tell the instructor early so that accessible formats and reasonable adjustments can be arranged") to add, which they can accept, reject or replace with their own wording.
+- The standard is now **v9** (69 rules). Scores stored earlier stay until a syllabus is checked again. The sample syllabi script's requirements include the statement; the five syllabi already in the database were made before it and will show this finding until re-checked and fixed.
+- English and Filipino texts; tests for the rule and its suggestion.
+
+### v1.60.1 — Red Score Ring Below the Pass Line
+**Date:** October 22, 2026
+
+- The score ring in the AI Checker and Review & Check is now red when the score is below the pass line (it stayed blue for every score). At or above the line it is still blue. The Analytics band donut already showed Low in red.
