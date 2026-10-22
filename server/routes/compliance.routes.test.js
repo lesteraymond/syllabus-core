@@ -51,7 +51,7 @@ function makeDb() {
   const isAdminRun = (r) => r.version_id !== null && r.created_by !== null && r.created_by !== undefined && r.created_by !== s.syllabi[r.syllabus_id].user_id;
   const keep = (sql, r) => (!sql.includes('version_id IS NOT NULL') || r.version_id !== null) && (!sql.includes('created_by <>') || isAdminRun(r));
   const handle = (sql, p = []) => {
-    if (sql.startsWith('SELECT syllabus_id, user_id, status, title, course_code, content, course_id FROM syllabi')) return [s.syllabi[p[0]] ? [s.syllabi[p[0]]] : []];
+    if (sql.startsWith('SELECT syllabus_id, user_id, status, title, course_code, content, course_id, archived_at FROM syllabi')) return [s.syllabi[p[0]] ? [s.syllabi[p[0]]] : []];
     if (sql.startsWith('SELECT user_id FROM users WHERE user_id')) return [[{ user_id: p[0] }]];
     if (sql.startsWith('SELECT vision')) return [[s.settings]];
     if (sql.startsWith('SELECT ega_no, name, short_name FROM institution_egas')) return [s.instEgas];
@@ -97,7 +97,9 @@ function makeDb() {
       else p[0].forEach(([run_id, kind, source, area, title, message, step, based_on, links, priority, priority_level, position]) => s.findings.push({ run_id, kind, source, area, title, message, step, based_on, links, priority, priority_level, position }));
       return [{}];
     }
-    if (sql.startsWith('DELETE FROM ai_findings')) { s.findings = s.findings.filter((f) => !(f.run_id === p[0] && f.kind === 'recommendation')); return [{}]; }
+    if (sql.startsWith('DELETE FROM ai_findings')) { const kind = sql.includes("'finding'") ? 'finding' : 'recommendation'; s.findings = s.findings.filter((f) => !(f.run_id === p[0] && f.kind === kind)); return [{}]; }
+    if (sql.startsWith('DELETE FROM ai_check_area_scores')) { s.areas = s.areas.filter((a) => a.run_id !== p[0]); return [{}]; }
+    if (sql.startsWith('UPDATE ai_check_runs SET overall = ?')) { const [overall, status, passed, conformant, id] = p; Object.assign(s.runs.find((r) => r.run_id === id), { overall, status, passed, conformant }); return [{}]; }
     if (sql.startsWith('UPDATE ai_check_runs SET ai_status = ?, ai_error = ?, provider')) {
       const [ai_status, ai_error, provider, model, prompt_version, id] = p;
       Object.assign(s.runs.find((r) => r.run_id === id), { ai_status, ai_error, provider, model, prompt_version });
@@ -221,7 +223,7 @@ test('submit stores the run with the version, its area scores and findings, then
   const run = db.s.runs[0];
   assert.strictEqual(run.version_id, 77);
   assert.strictEqual(run.syllabus_id, 1);
-  assert.strictEqual(run.standard_version, 'v4');
+  assert.strictEqual(run.standard_version, 'v7');
   assert.match(run.content_hash, /^[0-9a-f]{64}$/);
   assert.strictEqual(run.created_by, 5);
   assert.deepStrictEqual(db.s.areas.map((a) => a.area_key), ['template', 'completeness', 'co_po', 'assessment', 'contact_hours', 'reference_currency']);
@@ -883,3 +885,52 @@ test('incomplete admin forms remain drafts; returning for edits removes the item
   assert.strictEqual(db.s.versions.length,2);assert.strictEqual(db.s.versions[0].content,prior);
   assert.ok(JSON.parse(db.s.versions[1].content).description.includes('Additional administrator revision after AI review.'));
 }));
+
+test('the AI judges the fields: a placeholder description it flags lowers the score, shows as an AI finding, and the recommendations are written from it', () => {
+  const { LlmProvider } = require('../lib/compliance/providers');
+  require('../lib/compliance/meaning').clearVerdictCache();
+  const prompts = [];
+  const client = { complete: async (prompt) => {
+    prompts.push(prompt);
+    if (prompt.includes('ITEMS:')) return JSON.stringify([{ id: 'desc', reason: 'placeholder text, nothing about the course' }]);
+    return JSON.stringify([{ title: 'Rewrite the course description', text: 'Describe what the course covers.', basedOn: ['J-01:description'] }]);
+  } };
+  return withServer({ provider: new LlmProvider({ client, model: 'test-model' }) }, async ({ call, db }) => {
+    setContent(db, 1, withGaps(conformingContent()));
+    const r = await call(fay, 'POST', '/syllabi/1/compliance/recheck', {});
+    assert.strictEqual(r.status, 200);
+    assert.strictEqual(r.body.run.aiStatus, 'pending', 'a clean run still waits for the AI to judge the fields');
+    const before = r.body.run.overall;
+    await svc.settled();
+    const run = db.s.runs[0];
+    assert.strictEqual(run.ai_status, 'ok');
+    assert.strictEqual(run.model, 'test-model');
+    assert.ok(run.overall < before, 'the score fell once the AI flagged the description: ' + run.overall + ' < ' + before);
+    const ai = db.s.findings.filter((f) => f.kind === 'finding' && f.source === 'ai');
+    assert.deepStrictEqual(ai.map((f) => f.rule_id), ['J-01']);
+    assert.match(ai[0].message, /placeholder text, nothing about the course/);
+    const recs = db.s.findings.filter((f) => f.kind === 'recommendation');
+    assert.ok(recs.some((f) => f.title === 'Rewrite the course description'));
+    assert.strictEqual(prompts.length, 2, 'one call to judge the fields, one for the recommendations');
+    assert.strictEqual(db.s.areas.filter((a) => a.run_id === run.run_id).length, 6, 'the area scores were replaced, not doubled');
+    const read = await call(fay, 'GET', '/syllabi/1/compliance');
+    assert.strictEqual(read.body.run.overall, run.overall);
+    assert.ok(read.body.run.findings.some((f) => f.ruleId === 'J-01' && f.source === 'ai'));
+  });
+});
+
+test('if the AI cannot judge the fields, the rules\' own score stands and the run records that the AI failed', () => {
+  const { LlmProvider } = require('../lib/compliance/providers');
+  require('../lib/compliance/meaning').clearVerdictCache();
+  const client = { complete: async (prompt) => { if (prompt.includes('ITEMS:')) throw Object.assign(new Error('down'), { code: 'http_503' }); return '[]'; } };
+  return withServer({ provider: new LlmProvider({ client, model: 'm' }) }, async ({ call, db }) => {
+    setContent(db, 1, withGaps(conformingContent()));
+    const r = await call(fay, 'POST', '/syllabi/1/compliance/recheck', {});
+    const before = r.body.run.overall;
+    await svc.settled();
+    const run = db.s.runs[0];
+    assert.strictEqual(run.overall, before);
+    assert.ok(!db.s.findings.some((f) => f.source === 'ai' && f.kind === 'finding'));
+    assert.strictEqual(run.ai_status, 'failed');
+  });
+});

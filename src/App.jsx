@@ -35,7 +35,8 @@ import Reports from './views/Reports';
 import Repository from './views/Repository';
 import ReviewApproval from './views/ReviewApproval';
 import Settings from './views/Settings';
-import StudentHome from './views/StudentHome';
+import StudentDashboard from './views/StudentDashboard';
+import StudentSyllabi from './views/StudentSyllabi';
 import SyllabusBuilder from './views/SyllabusBuilder';
 import UsersRoles from './views/UsersRoles';
 import SyllabusBuilderV2 from './views/builder2';
@@ -94,7 +95,14 @@ export default function App() {
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [narrow, mobileNavOpen]);
-  const [page, setPage] = useState('dashboard');
+  // The open tab survives a reload (kept per browser tab). The builder is left out because it needs the syllabus being edited, which is not saved.
+  const PAGE_KEY = 'scms.page';
+  const [page, setPage] = useState(() => {
+    try { const saved = window.sessionStorage.getItem(PAGE_KEY); return navItems.some(([id]) => id === saved) && saved !== 'builder' ? saved : 'dashboard'; } catch { return 'dashboard'; }
+  });
+  useEffect(() => { try { window.sessionStorage.setItem(PAGE_KEY, page); } catch { /* private window: the tab simply is not remembered */ } }, [page]);
+  // A saved tab this account may not open (another role signed in on this browser tab) falls back to the dashboard.
+  useEffect(() => { if (user && page !== 'ai' && !navItems.some(([id, , , r]) => id === page && (!r || r === user.role)) && page !== 'builder') setPage('dashboard'); }, [user, page]);
   // The compliance check moved into step 7 of the builder: an old 'ai' link sends faculty there, and only admins have the overview.
   useEffect(() => { if (user && user.role !== 'admin' && page === 'ai') setPage(user.role === 'faculty' ? 'builder' : 'dashboard'); }, [user, page]);
   const [toast, setToast] = useState('');
@@ -105,6 +113,7 @@ export default function App() {
   const [editing, setEditing] = useState(null);
   const [chatCode, setChatCode] = useState(null);
   const [histCode, setHistCode] = useState(null);
+  const [facultyFocus, setFacultyFocus] = useState(''); // a faculty name picked in the top bar search: the Compliance page then shows only that person
   const [viewCode, setViewCode] = useState(null); // the syllabus open in the reviewer's window
   const [commentCode, setCommentCode] = useState(null); // the syllabus whose reviewer comments a faculty member is reading
   const [commentCounts, setCommentCounts] = useState({}); // { [syllabusId]: { total, unread } } for a faculty member's syllabi
@@ -378,22 +387,25 @@ export default function App() {
 
   const clearLogs = () => { setLogs([]); notify(translateUI("ui.your_activity_list_was_cleared_642fa2")); };
 
-  const nav = navItems.filter(([, , , r]) => !r || r === user?.role);
+  const isStudent = user?.role === 'student';
+  const studentPage = isStudent ? (page === 'student-syllabi' ? page : 'student-dashboard') : page;
+  const nav = navItems.filter(([, , , r]) => isStudent ? r === 'student' : !r || r === user?.role);
 
   if (loggingOut) return <div className="loading-screen" role="status" aria-live="polite" aria-busy="true"><div className="spinner" aria-hidden="true" /><p>{translateUI("ui.logging_out_3df779")}</p></div>;
   if (loading) return <div className="loading-screen"><div className="spinner" /><p>{translateUI("ui.loading_b04ba4")}</p></div>;
   if (!user) return <Login onLogin={handleLogin} onGoogleLogin={handleGoogleLogin} />;
   if (user.mustChangePassword) return <ChangePassword user={user} onDone={() => setUser((u) => ({ ...u, mustChangePassword: false }))} onLogout={handleLogout} />;
-  if (user.role === 'student') return <StudentHome user={user} onLogout={handleLogout} />;
 
   return (
     <div ref={languageShell} className="app-shell" data-sidebar-collapsed={sidebarCollapsed ? 'true' : 'false'}>
-      {!narrow && <Sidebar page={page} setPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); }} nav={nav} collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(c => !c)} />}
+      {!narrow && <Sidebar page={studentPage} setPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); }} nav={nav} collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(c => !c)} />}
       <main className="workspace">
-        <Topbar page={page} onLogout={handleLogout} user={user} unread={unread} threads={threads} msgDrop={msgDrop} setMsgDrop={setMsgDrop} setChatCode={setChatCode} markRead={markRead} notify={notify} onAvatarChange={handleAvatarChange} notifications={notifications} onOpenNotification={openNotification} onMarkAllNotificationsRead={markAllNotificationsRead} />
-        {narrow && <MobileNav page={page} setPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); setMobileNavOpen(false); }} nav={nav} open={mobileNavOpen} onToggle={() => setMobileNavOpen(o => !o)} />}
+        <Topbar page={studentPage} readOnly={isStudent} onLogout={handleLogout} user={user} syllabi={syllabi} onSearchSyllabus={(id) => { if (user.role === 'faculty') setPage('my-syllabi'); else setViewCode(id); }} onSearchFaculty={(name) => { setFacultyFocus(name); setPage('compliance'); }} onSearchSubject={() => setPage('courses')} unread={unread} threads={threads} msgDrop={msgDrop} setMsgDrop={setMsgDrop} setChatCode={setChatCode} markRead={markRead} notify={notify} onAvatarChange={handleAvatarChange} notifications={notifications} onOpenNotification={openNotification} onMarkAllNotificationsRead={markAllNotificationsRead} />
+        {narrow && <MobileNav page={studentPage} setPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); setMobileNavOpen(false); }} nav={nav} open={mobileNavOpen} onToggle={() => setMobileNavOpen(o => !o)} />}
         <div className="page-wrap">
-          {page === 'dashboard' && <Dashboard setPage={setPage} user={user} syllabi={syllabi} logs={logs} clearLogs={clearLogs} setConfirm={setConfirm} />}
+          {isStudent && studentPage === 'student-dashboard' && <StudentDashboard user={user} setPage={setPage} setViewCode={setViewCode} />}
+          {isStudent && studentPage === 'student-syllabi' && <StudentSyllabi setViewCode={setViewCode} />}
+          {!isStudent && page === 'dashboard' && <Dashboard setPage={setPage} user={user} syllabi={syllabi} logs={logs} clearLogs={clearLogs} setConfirm={setConfirm} />}
           {page === 'builder' && ((NEW_BUILDER || user.role === 'admin')
             ? <SyllabusBuilderV2 key={editing ? editing.syllabusId : 'new'} editing={editing} user={user} notify={notify} setPage={setPage} onSubmitted={handleBuilderSubmitted} />
             : <SyllabusBuilder notify={notify} onSubmit={submitSyllabus} editing={editing} setEditing={setEditing} />)}
@@ -401,8 +413,8 @@ export default function App() {
           {page === 'ai' && user.role === 'admin' && <AIChecker user={user} notify={notify} onApproved={async () => { await fetchSyllabi(); await fetchLogs(); notify(translateUI('publication.approvedRepository')); setEditing(null); setPage('repository'); }} onEditDraft={async id => { await syllabiApi.resumeDraft(id); setEditing({ syllabusId: id, status: 'draft' }); setPage('builder'); }} />}
           {page === 'review' && <ReviewApproval syllabi={syllabi} setViewCode={setViewCode} setPage={setPage} />}
           {page === 'repository' && <Repository syllabi={syllabi} user={user} notify={notify} setChatCode={setChatCode} setHistCode={setHistCode} />}
-          {page === 'compliance' && <Compliance syllabi={syllabi} />}
-          {page === 'analytics' && <Analytics syllabi={syllabi} user={user} />}
+          {page === 'compliance' && <Compliance syllabi={syllabi} focus={facultyFocus} onClearFocus={() => setFacultyFocus('')} />}
+          {page === 'analytics' && <Analytics syllabi={syllabi} user={user} notify={notify} setPage={setPage} />}
           {page === 'reports' && <Reports syllabi={syllabi} user={user} notify={notify} />}
           {page === 'users' && <UsersRoles notify={notify} onManageSubjects={() => setPage('courses')} />}
           {page === 'courses' && user.role === 'admin' && <CourseOutcomes notify={notify} onCatalogChanged={() => { fetchSyllabi(); fetchLogs(); fetchMessages(); fetchNotifications(); }} />}

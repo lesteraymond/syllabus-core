@@ -104,11 +104,49 @@ test('saveAssignments replaces both lists in order and skips empty inserts', asy
   const calls = [];
   const conn = { query: async (sql, params) => { calls.push([sql.split(' ').slice(0, 3).join(' '), params]); return [[]]; } };
   await A.saveAssignments(conn, 5, { programIds: [1], courseIds: [10, 11] });
-  assert.deepStrictEqual(calls.map((c) => c[0]), ['DELETE FROM faculty_courses', 'DELETE FROM faculty_programs', 'INSERT INTO faculty_programs', 'INSERT INTO faculty_courses']);
-  assert.deepStrictEqual(calls[3][1], [[[5, 10], [5, 11]]]);
+  assert.deepStrictEqual(calls.map((c) => c[0]), ['SELECT course_id FROM', 'DELETE FROM faculty_courses', 'DELETE FROM faculty_programs', 'INSERT INTO faculty_programs', 'INSERT INTO faculty_courses', 'UPDATE syllabi s', 'SELECT syllabus_id, course_id,'],
+    'what she held is read first; the subjects she is newly given archive what others wrote, then look for what she wrote herself');
+  assert.deepStrictEqual(calls[4][1], [[[5, 10], [5, 11]]]);
+  assert.deepStrictEqual(calls[5][1], [[10, 11], 5]);
   calls.length = 0;
   await A.saveAssignments(conn, 5, { programIds: [], courseIds: [] });
-  assert.strictEqual(calls.length, 2);
+  assert.deepStrictEqual(calls.map((c) => c[0]), ['SELECT course_id FROM', 'DELETE FROM faculty_courses', 'DELETE FROM faculty_programs'], 'nothing given, so nothing archived');
+});
+
+test('only subjects newly given are archived over, and only the syllabi of other faculty members', async () => {
+  const calls = [];
+  const conn = { query: async (sql, params) => { calls.push([sql, params]); return sql.startsWith('SELECT') ? [sql.startsWith('SELECT course_id') ? [{ course_id: 10 }] : []] : [{ affectedRows: 2 }]; } };
+  await A.saveAssignments(conn, 5, { programIds: [], courseIds: [10, 11] });
+  const update = calls.find((c) => c[0].startsWith('UPDATE syllabi'));
+  assert.deepStrictEqual(update[1], [[11], 5], 'IT 101 was hers already, so only subject 11 is newly given');
+  assert.match(update[0], /s\.user_id <> \? AND s\.archived_at IS NULL AND o\.role = 'faculty'/);
+  assert.strictEqual(await A.archiveReassigned(conn, 5, []), 0, 'no subjects, no query');
+  assert.strictEqual(await A.archiveReassigned(conn, 5, [11]), 2);
+});
+
+test('a subject given back brings one archived syllabus back: submitted-or-later before a draft, then the most recently changed', () => {
+  const row = (syllabus_id, course_id, status, updated_at) => ({ syllabus_id, course_id, status, updated_at });
+  const rows = [row(75, 9, 'draft', '2026-10-16T10:00:00Z'), row(58, 9, 'approved', '2026-10-14T10:00:00Z'), row(89, 9, 'approved', '2026-10-15T10:00:00Z'), row(93, 9, 'draft', '2026-10-16T11:00:00Z')];
+  assert.deepStrictEqual(A.pickRestorable(rows), [89], 'an approved one beats a newer draft, and the newer approved one wins');
+  assert.deepStrictEqual(A.pickRestorable([row(75, 9, 'draft', '2026-10-16T10:00:00Z'), row(93, 9, 'draft', '2026-10-16T11:00:00Z')]), [93], 'only drafts: the latest');
+  assert.deepStrictEqual(A.pickRestorable([row(5, 9, 'draft', '2026-10-16T10:00:00Z'), row(6, 9, 'draft', '2026-10-16T10:00:00Z')]), [6], 'a tie goes to the higher id');
+  assert.deepStrictEqual(A.pickRestorable([row(58, 9, 'approved', '2026-10-14T10:00:00Z'), row(70, 12, 'draft', '2026-10-14T10:00:00Z')]).sort(), [58, 70], 'one for each subject');
+  assert.deepStrictEqual(A.pickRestorable(rows, [9]), [], 'a subject on which the person already has an active syllabus brings nothing back');
+  assert.deepStrictEqual(A.pickRestorable([]), []);
+  assert.deepStrictEqual(A.pickRestorable(undefined), []);
+});
+
+test('restoreReturned brings back only what pickRestorable chose, in one update, and does nothing when there is nothing archived', async () => {
+  const calls = [];
+  const archived = [{ syllabus_id: 58, course_id: 9, status: 'approved', updated_at: '2026-10-14T10:00:00Z' }, { syllabus_id: 75, course_id: 9, status: 'draft', updated_at: '2026-10-16T10:00:00Z' }];
+  const conn = { query: async (sql, params) => { calls.push([sql, params]); return sql.includes('archived_at IS NOT NULL') ? [archived] : sql.startsWith('SELECT DISTINCT') ? [[]] : [{ affectedRows: 1 }]; } };
+  assert.deepStrictEqual(await A.restoreReturned(conn, 26, [9]), [58]);
+  const update = calls.find((c) => c[0].startsWith('UPDATE syllabi SET archived_at = NULL'));
+  assert.deepStrictEqual(update[1], [[58]]);
+  calls.length = 0;
+  assert.deepStrictEqual(await A.restoreReturned({ query: async (s) => { calls.push(s); return [[]]; } }, 26, [9]), []);
+  assert.strictEqual(calls.length, 1, 'no archived syllabus: one read and no update');
+  assert.deepStrictEqual(await A.restoreReturned(conn, 26, []), []);
 });
 
 test('loadAssignments reads both tables', async () => {

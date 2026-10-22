@@ -80,14 +80,60 @@ test('two tabs of the same user count once: time is credited per user, not per t
   assert.strictEqual(b.drain()[0].seconds, 60);
 });
 
-test('users are counted separately, and the time after midnight in Manila goes to the next day', () => {
+test('users are counted separately and midnight splits credits between Philippine days', () => {
   const b = createUsageBuffer();
   const late = Date.UTC(2026, 9, 14, 15, 59, 40);
   b.beat(1, late); b.beat(2, late);
   b.beat(1, late + 30 * SEC);
   b.beat(2, late + 31 * SEC);
-  const rows = b.drain().filter((r) => r.seconds > 0).sort((x, y) => x.userId - y.userId);
-  assert.deepStrictEqual(rows.map((r) => [r.userId, r.date, r.seconds]), [[1, '2026-10-15', 30], [2, '2026-10-15', 31]]);
+  const rows = b.drain().sort((x, y) => x.userId - y.userId || x.date.localeCompare(y.date));
+  assert.deepStrictEqual(rows.map((r) => [r.userId, r.date, r.seconds, r.sessions]), [[1, '2026-10-14', 20, 1], [1, '2026-10-15', 10, 1], [2, '2026-10-14', 20, 1], [2, '2026-10-15', 11, 1]]);
+});
+
+test('an interval ending exactly at midnight counts a session on the next active day', () => {
+  const b = createUsageBuffer();
+  const midnight = Date.UTC(2026, 9, 14, 16);
+  b.beat(1, midnight - 30000); b.beat(1, midnight); b.beat(1, midnight + 30000);
+  assert.deepStrictEqual(b.drain().map(r => [r.date, r.seconds, r.sessions]), [['2026-10-14', 30, 1], ['2026-10-15', 30, 1]]);
+});
+
+test('a summary during a database flush waits for committed credits without dropping or doubling time', async () => {
+  const db = makeDb();
+  const query = db.query.bind(db);
+  let release;
+  const writing = new Promise(resolve => { release = resolve; });
+  let started;
+  const entered = new Promise(resolve => { started = resolve; });
+  db.query = async (sql, params) => {
+    if (sql.includes('INSERT INTO usage_daily')) { started(); await writing; }
+    return query(sql, params);
+  };
+  let clock = T0;
+  const usage = createUsageService({ db, now: () => clock, log: quiet });
+  usage.heartbeat(1); clock += 30000; usage.heartbeat(1);
+  await usage.summary(1, 7); // populate the pre-flush cache
+  const flushing = usage.flush();
+  await entered;
+  const reading = usage.summary(1, 7);
+  clock += 30000; usage.heartbeat(1); // keep accepting input during the write
+  release();
+  await flushing;
+  assert.strictEqual((await reading).todaySeconds, 60);
+  await usage.flush();
+  assert.strictEqual((await usage.summary(1, 7)).todaySeconds, 60);
+});
+
+test('midnight refreshes the cached range and excludes expired days from session averages', async () => {
+  const db = makeDb();
+  db.stored.push({ user_id: 1, usage_date: '2026-10-08', active_seconds: 600, session_count: 10 });
+  db.stored.push({ user_id: 1, usage_date: '2026-10-14', active_seconds: 600, session_count: 1 });
+  let clock = Date.UTC(2026, 9, 14, 15, 59, 59);
+  const usage = createUsageService({ db, now: () => clock, log: quiet });
+  assert.strictEqual((await usage.summary(1, 7)).totalSeconds, 1200);
+  clock += 2000;
+  const summary = await usage.summary(1, 7);
+  assert.strictEqual(summary.totalSeconds, 600);
+  assert.strictEqual(summary.avgSessionSeconds, 600);
 });
 
 test('flush writes everyone in one statement, and nothing at all when nothing is waiting', async () => {

@@ -5,12 +5,11 @@ import { useEffect, useRef, useState } from 'react';
 import { Avatar, Icon } from './ui';
 import { users as usersApi } from '../lib/api';
 import { AVATAR_ACCEPT, prepareAvatar } from '../lib/avatar';
-import { navItems } from '../data/initialData';
 import { fmt } from '../lib/utils';
 import { ROLE_LABELS } from '../lib/roles';
+import GlobalSearch from './GlobalSearch';
 
-export default function Topbar({ page, onLogout, user, unread, threads, msgDrop, setMsgDrop, setChatCode, markRead, notify, onAvatarChange, notifications, onOpenNotification, onMarkAllNotificationsRead }) {
-  const title = navItems.find(([k]) => k === page)?.[2] || 'Dashboard';
+export default function Topbar({ page, onLogout, user, unread, threads, msgDrop, setMsgDrop, setChatCode, markRead, notify, onAvatarChange, notifications, onOpenNotification, onMarkAllNotificationsRead, readOnly = false, syllabi = [], onSearchSyllabus, onSearchFaculty, onSearchSubject }) {
   const ref = useRef(null);
   useEffect(() => {
     const h = (e) => { if (ref.current && !ref.current.contains(e.target)) setMsgDrop(false); };
@@ -79,9 +78,10 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
   return (
     <header className="topbar">
       <div className="topbar-brand"><img src="/cite-logo.png" alt={translateUI("ui.cict_logo_dee290")} /><strong>{translateUI("ui.cite_brand_5b2e91")}</strong></div>
-      <div className="topbar-heading"><span className="eyebrow">{translateUI("ui.syllabus_management_system_e49cab")}</span>{page === 'dashboard' && <h2>{tr(title)}</h2>}</div>
+      <div className="topbar-heading"><span className="eyebrow">{translateUI("ui.syllabus_management_system_e49cab")}</span></div>
       <div className="top-actions">
-        <div className="search"><Icon name="magnifyingGlass" size={18} /><input placeholder={translateUI("ui.search_syllabus_course_faculty_67a24a")} /></div>
+        <GlobalSearch role={user.role} syllabi={syllabi} onSyllabus={onSearchSyllabus} onFaculty={onSearchFaculty} onSubject={onSearchSubject} />
+        {!readOnly && <>
         <div className="msg-wrap" ref={ref}>
           <button className="icon-btn" title={translateUI("ui.messages_f1702b")} aria-label={unread > 0 ? translateUI("ui.messages_p0_unread_f09423", { p0: (unread) }) : translateUI("ui.messages_f1702b")} onClick={() => { setBellOpen(false); setMsgDrop(!msgDrop); }}><Icon name="envelope" size={20} />{unread > 0 && <span className="pill" aria-hidden="true">{unread > 99 ? '99+' : unread}</span>}</button>
           {msgDrop && <div className="msg-drop">
@@ -107,15 +107,16 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
             </div>
           </div>}
         </div>
+        </>}
         <div className="profile-wrap" ref={profRef}>
-          <button className="profile-btn" title={user.name} ref={profBtnRef} aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(o => !o)}><Avatar userId={user.id} src={user.avatarUrl} name={user.name} initials={user.initials} /><span><strong>{user.name}</strong><small>{tr(ROLE_LABELS[user.role] || user.role || translateUI("ui.unknown_role_476868"))}</small></span></button>
-          {menuOpen && <div className="profile-menu" role="menu" aria-label={translateUI("ui.profile_photo_33f385")}>
+          <button className="profile-btn" title={user.name} ref={profBtnRef} aria-haspopup={readOnly ? undefined : "menu"} aria-expanded={readOnly ? undefined : menuOpen} onClick={() => !readOnly && setMenuOpen(o => !o)}><Avatar userId={user.id} src={user.avatarUrl} name={user.name} initials={user.initials} /><span><strong>{user.name}</strong><small>{tr(ROLE_LABELS[user.role] || user.role || translateUI("ui.unknown_role_476868"))}</small></span></button>
+          {menuOpen && !readOnly && <div className="profile-menu" role="menu" aria-label={translateUI("ui.profile_photo_33f385")}>
             <button type="button" role="menuitem" disabled={busy} onClick={() => { setMenuOpen(false); fileRef.current?.click(); }}>{translateUI("ui.change_photo_ed5690")}</button>
             {user.avatarUrl && <button type="button" role="menuitem" disabled={busy} onClick={removePhoto}>{translateUI("ui.remove_photo_c8f5ed")}</button>}
           </div>}
           <input ref={fileRef} type="file" accept={AVATAR_ACCEPT} hidden onChange={pickPhoto} />
         </div>
-        <StableButton className="logout" onClick={onLogout}>{translateUI("ui.log_out_6e78c9")}</StableButton>
+        <StableButton className="logout" aria-label={translateUI("ui.log_out_6e78c9")} onClick={onLogout}><Icon name="signOut" size={18} />{translateUI("ui.log_out_6e78c9")}</StableButton>
       </div>
     </header>
   );

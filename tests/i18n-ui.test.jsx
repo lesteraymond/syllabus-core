@@ -8,6 +8,7 @@ import { createModel, emptyDraft } from '../src/lib/syllabusModel';
 import ProgramManagement, { DeletionImpact, ProgramDialog } from '../src/components/ProgramManagement';
 import StableButton from '../src/components/StableButton';
 import { t } from '../src/i18n';
+import { dayPeriod } from '../src/lib/phTime';
 import React from 'react';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -45,7 +46,7 @@ test('administrator settings load only in the administrator branch and keep real
   assert.match(parent, /Loading administrator settings/);
   const html = renderToStaticMarkup(<AdministrativeSettings administration={admin} adminBusy={false} updateAdmin={noop} />);
   assert.match(html, /Institutional Standard/); assert.match(html, /AI &amp; Notifications/);
-  assert.match(html, /<span class="select-current">Undergraduate Syllabus v4<\/span>/); assert.match(html, /role="combobox"/);
+  assert.match(html, /<output class="static-value">Undergraduate Syllabus v4<\/output>/); assert.match(html, /value="2026–2027"/); assert.doesNotMatch(html, /role="combobox"/);
 });
 test('Tagalog settings translate labels, keep account names and setting values, and expose saving accessibly', () => {
   setLanguage('tl');
@@ -56,7 +57,7 @@ test('Tagalog settings translate labels, keep account names and setting values, 
   assert.match(html, /aria-live="polite"/);
   const cards = renderToStaticMarkup(<AdministrativeSettings administration={admin} adminBusy={false} updateAdmin={noop} />);
   assert.match(cards, /Pamantayan ng Institusyon/); assert.match(cards, /AI at mga Abiso/);
-  assert.match(cards, /<span data-value="Undergraduate Syllabus v4">Silabus ng Undergraduate v4<\/span>/); assert.match(cards, /<span class="select-current">Silabus ng Undergraduate v4<\/span>/);
+  assert.match(cards, /Pamantayang ginagamit sa pagsusuri/); assert.match(cards, /<output class="static-value">Undergraduate Syllabus v4<\/output>/);
   assert.match(cards, /Original English Department/);
 });
 test('navigation, dashboard summaries and roles switch language while account names stay original', () => {
@@ -68,6 +69,31 @@ test('navigation, dashboard summaries and roles switch language while account na
   const topbar = renderToStaticMarkup(<Topbar user={user} page="settings" unread={0} threads={[]} msgDrop={false} onLogout={noop} setMsgDrop={noop} notifications={{ unreadCount: 0, items: [] }} />);
   assert.match(topbar, /Approved Settings/); assert.match(topbar, /Guro/); assert.match(topbar, /Mag-sign out/);
 });
+test('dashboard typewriter greetings use the current saved account name for both roles and languages', () => {
+  const render = account => renderToStaticMarkup(<Dashboard user={account} syllabi={[]} logs={[]} setPage={noop} clearLogs={noop} setConfirm={noop} />);
+  // The greeting depends on the Manila time of day, so the expected words come from the same period.
+  const period = dayPeriod();
+  const en = { morning: 'Good morning', afternoon: 'Good afternoon', evening: 'Good evening' }[period];
+  const tl = { morning: 'Magandang umaga', afternoon: 'Magandang hapon', evening: 'Magandang gabi' }[period];
+  for (const role of ['faculty', 'admin']) {
+    setLanguage('en');
+    const before = render({ ...user, role });
+    assert.ok(before.includes(`class="typewriter-accessible">${en}, Approved!</span>`));
+    const renamed = { ...user, role, firstName: 'Ana', lastName: 'Cruz', name: 'Ana Cruz' };
+    const after = render(renamed);
+    assert.ok(after.includes(`class="typewriter-accessible">${en}, Ana!</span>`));
+    assert.doesNotMatch(after, new RegExp(`${en}, Approved!|${en}, Ana Cruz!`));
+    setLanguage('tl');
+    assert.ok(render({ ...user, role }).includes(`${tl}, Approved!`));
+    assert.ok(render(renamed).includes(`${tl}, Ana!`));
+    setLanguage('en');
+    assert.ok(render({ ...renamed, firstName: '  Ana Maria  ' }).includes(`${en}, Ana Maria!`));
+    assert.ok(render({ ...renamed, firstName: undefined }).includes(`class="typewriter-accessible">${en}!</span>`));
+    assert.ok(render({ ...user, role, name: '', firstName: '', lastName: '' }).includes(`class="typewriter-accessible">${en}!</span>`));
+    assert.ok(render({ ...renamed, firstName: '<Ana & Maria>' }).includes(`${en}, &lt;Ana &amp; Maria&gt;!`));
+  }
+});
+
 test('the admin dashboard shows its own five summary cards; faculty keeps theirs', () => {
   setLanguage('en');
   const render = role => renderToStaticMarkup(<Dashboard user={{ ...user, role }} syllabi={[{ id: 1, userId: 9, status: 'submitted' }, { id: 2, userId: 9, status: 'approved' }]} logs={[]} setPage={noop} clearLogs={noop} setConfirm={noop} />);
@@ -131,11 +157,19 @@ test('the time usage card shows today, a bar per day and the averages, in Englis
   const en = renderToStaticMarkup(<TimeUsageReady data={data} days={7} onDays={noop} locale="en" />);
   assert.match(en, /2h 14m/); assert.match(en, /Active today/); assert.match(en, /Average session/);
   assert.equal((en.match(/<rect /g) || []).length, 7); assert.match(en, /class="usage-bar today"/);
+  assert.equal((en.match(/class="usage-day"/g) || []).length, 7);
+  assert.match(en, /aria-label="Fri Oct 9: 1h" aria-describedby=/);
+  assert.equal((en.match(/role="tooltip"/g) || []).length, 7);
+  assert.match(en, /role="tooltip" class="usage-tooltip"[^>]*>1h<\/span>/);
+  assert.match(en, /class="usage-tooltip" data-align="start"/);
+  assert.match(en, /class="usage-tooltip" data-align="end"/);
+  assert.doesNotMatch(en, /class="usage-detail"/);
   assert.match(en, /5 of 7/); assert.match(en, /aria-pressed="true"[^>]*>7 days/);
   assert.match(en, /role="img" aria-label="Active time per day\. /);
   setLanguage('tl');
   const tl = renderToStaticMarkup(<TimeUsageReady data={data} days={7} onDays={noop} locale="fil" />);
   assert.match(tl, /Aktibo ngayon/); assert.match(tl, /5 sa 7/); assert.match(tl, /7 araw/);
+  assert.match(tl, /Itapat ang pointer sa bar upang makita ang kabuuang oras at minuto ng paggamit/);
   setLanguage('en');
   assert.match(renderToStaticMarkup(<TimeUsageReady data={{ ...data, hasData: false, todaySeconds: 0, totalSeconds: 0, activeDays: 0, avgPerActiveDay: 0, avgSessionSeconds: 0, busiest: null, days: data.days.map(d => ({ ...d, seconds: 0 })) }} days={7} onDays={noop} locale="en" />), /Your active time will appear here/);
   assert.match(renderToStaticMarkup(<TimeUsageCard />), /Loading your time usage/);
@@ -457,6 +491,25 @@ test('admin navigation and My Syllabi expose personal drafts without an AI Check
   assert.ok(navItems.some(([page,,,role])=>page==='my-syllabi'&&!role));
   const html=renderToStaticMarkup(<MySyllabi user={{...user,role:'admin'}} syllabi={[{id:1,userId:user.id,status:'draft',courseCode:'OWN-DRAFT',title:'Own draft'},{id:2,userId:99,status:'draft',courseCode:'PRIVATE-OTHER',title:'Other draft'}]} messages={[]} setPage={noop} setEditing={noop} setHistCode={noop} setChatCode={noop} setConfirm={noop} handleDelete={noop} />);
   assert.match(html,/OWN-DRAFT/);assert.doesNotMatch(html,/PRIVATE-OTHER/);assert.doesNotMatch(html,/Check in AI Checker/);
+});
+
+test('Step 2 exposes all five editors even when empty and previews the syllabus-owned values', () => {
+  const d = emptyDraft(() => 'one');
+  Object.assign(d.meta, { program: 'BSIT', courseId: 10 });
+  d.outcomes = { vision: '', mission: { lead: '', items: [] }, egas: [], pos: [] };
+  const model = createModel({ institution: { vision: 'Catalog vision sentinel', mission: { lead: '', items: [] }, egas: [] }, programs: { BSIT: { pos: [], egas: [] } }, year: 2026 });
+  for (const language of ['en', 'tl']) {
+    setLanguage(language);
+    const html = renderToStaticMarkup(<ClosStep d={d} model={model} apply={noop} />);
+    for (const key of ['ui.vision_40b090', 'ui.mission_introduction_873ac6', 'ui.add_ega_270a20', 'ui.add_program_outcome_cd9147', 'ui.add_clo_0485ad']) assert.ok(html.includes(t(key)));
+    assert.match(html, /<textarea/); assert.doesNotMatch(html, /sm-modal|catalog-surface|Catalog vision sentinel/);
+  }
+  d.outcomes = { vision: 'Faculty vision sentinel', mission: { lead: 'Faculty mission sentinel', items: ['Purpose'] }, egas: [{ no: 1, name: 'Faculty EGA', short: 'EGA' }], pos: [{ no: 1, text: 'Faculty PO', short: 'PO', egas: [1] }] };
+  d.clos = [{ id: 'own1', title: 'Faculty CLO', level: 'Enabling', statement: 'Learn this', egas: [1], pos: [1] }];
+  const paper = renderToStaticMarkup(<FormPaper d={d} model={model} preparedBy="Faculty" />);
+  assert.match(paper, /Faculty vision sentinel|Faculty mission sentinel/); assert.doesNotMatch(paper, /Catalog vision sentinel/);
+  const locked = renderToStaticMarkup(<ClosStep d={d} model={model} apply={noop} editable={false} />);
+  assert.match(locked, /Faculty vision sentinel/); assert.doesNotMatch(locked, /<textarea|Add CLO/);
 });
 test('learning outcomes remain hidden while any subject setup section is incomplete',()=>{
   const d=emptyDraft(()=>1);Object.assign(d.meta,{program:'BSIT',courseId:10});

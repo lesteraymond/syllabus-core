@@ -1,4 +1,12 @@
-# Administrator authoring and subject setup
+# Syllabus authoring and subject setup
+
+Vision, Mission, EGAs, POs and CLOs are authored in syllabus builder Step 2 (Learning Outcomes). Faculty edit these values inside the existing builder; they use the same section autosave, ownership/assignment restrictions and submission workflow as the rest of the form. Administrators retain program/subject identity, assignment, deadline and review controls. The old SubjectModal authoring entry point has been removed from Program & Subjects.
+
+Schema version 3 adds an `outcomes` section to the existing syllabus JSON: `{ vision, mission: { lead, items }, egas, pos }`. CLOs retain their existing `clos` section and stable string IDs. This needs no database schema migration. Choosing a subject copies its existing starting values once; later catalog refreshes never overwrite faculty edits. Selecting a different subject resets outcome mappings, with confirmation in the builder. Read-only/approved syllabi and version history retain their original content.
+
+An editable legacy syllabus adopts the submitted snapshot when present, otherwise its selected subject's existing values. Reading does not write to the database. The API marks this adoption so the next autosave persists both outcomes and CLOs, even if only another section was edited. Legacy catalog endpoints and stored subject setup remain for compatibility; they do not overwrite syllabus-owned outcomes.
+
+Server validation accepts incomplete text for draft autosave, rejects malformed or dangling outcome references, and requires complete Step 2 content on submission. Preview, learning-plan tags, compliance checks, stale-check hashes and revision comparisons use syllabus-owned values. Learning-outcome-only revisions now count as actual changes. Every new submission snapshots those exact authored values for review.
 
 Administrators can navigate builder steps in any order. My Syllabi lists their own drafts and saved syllabi. Other people's drafts remain private. Faculty keep their assignment restrictions and sequential navigation.
 
@@ -6,9 +14,9 @@ Administrator workflow: drafts remain in My Syllabi and cannot be checked throug
 
 The administrator checks the completed syllabus, then explicitly chooses Approve & Add to Repository, or Edit Syllabus. Editing returns it to Draft before the builder opens, removes it from AI Checker, and keeps its earlier checks in storage. A new handoff increments a server-managed review cycle, so a previous check cannot approve the next cycle even when no text changed. The server also rejects approval if content or subject setup changed, the check is pending/failed, or the result ID differs from the one the administrator reviewed. Published syllabi are locked and appear in Repository.
 
-Each subject stores its own vision, mission, EGAs and POs in courses.standards_json. CLOs remain in course_clos, with stable IDs. Programs organize subjects; changing a subject's setup does not update sibling subjects or institution/program defaults. Each setup section has its own version counter. Saves lock the subject row, reject stale versions, and refuse removal of outcomes still referenced by that subject's POs or CLOs. CLO saves validate against that subject's own EGA/PO numbers under the same lock.
+Legacy subject setup remains in courses.standards_json and course_clos. Programs organize subjects. Those catalog values are starting values for a new syllabus, rather than the source of subsequent faculty edits. Existing legacy version counters and protections remain in place for older API clients.
 
-Learning Outcomes and the preview show the selected subject's setup only after program and subject selection and complete learning-outcome setup. Submitted snapshots keep their original texts, including older snapshots without subject-scoped data.
+Step 2 opens its editors after program and subject selection, including when no outcomes exist yet. The finished-form preview is populated after required learning-outcome fields are complete. Submitted snapshots keep their original texts, including older snapshots without subject-scoped data.
 
 ## Database update
 

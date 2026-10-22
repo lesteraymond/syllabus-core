@@ -25,8 +25,8 @@ test('a MySQL time with no zone is the database clock, which is Philippine time:
 });
 
 test('the compact form used in lists and notifications', () => {
-  assert.strictEqual(phCompact('2026-10-14T12:18:04.000Z'), '14 Oct 2026 • 8:18 PM');
-  assert.strictEqual(phCompact('2026-10-14T03:05:00.000Z'), '14 Oct 2026 • 11:05 AM');
+  assert.strictEqual(phCompact('2026-10-14T12:18:04.000Z'), '14 Oct 2026 · 8:18 PM');
+  assert.strictEqual(phCompact('2026-10-14T03:05:00.000Z'), '14 Oct 2026 · 11:05 AM');
   assert.strictEqual(phCompact(null), '');
 });
 

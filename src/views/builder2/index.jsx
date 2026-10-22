@@ -5,9 +5,9 @@ import { useEffect, useRef, useState } from 'react';
 import { LockSimple } from '@phosphor-icons/react/dist/csr/LockSimple';
 import { PageHead } from '../../components/ui';
 import { courses as coursesApi, syllabi as syllabiApi, users as usersApi } from '../../lib/api';
-import { STEPS, applyCourse, clearCourse, closEqual, syncClos } from '../../lib/syllabusModel';
+import { STEPS, applyCourse, clearCourse } from '../../lib/syllabusModel';
 import { CURRENT_SCHOOL_YEAR } from '../../lib/schoolYear';
-import { ASSIGNMENT_MESSAGES, STATUS_LABELS, assignmentState, editBlockedReason, noteMissing } from '../../lib/syllabusRules';
+import { ASSIGNMENT_MESSAGES, STATUS_LABELS, assignmentState, editBlockedReason, isReturned, noteMissing } from '../../lib/syllabusRules';
 import InfoStep from './InfoStep';
 import ClosStep from './ClosStep';
 import PlanStep from './PlanStep';
@@ -33,22 +33,27 @@ const STEP_CONFIG = STEPS.map((s) => ({
 // driven by the rules in src/lib/syllabusModel.js. It is used when VITE_NEW_BUILDER=true; until then the previous builder is the default.
 export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSubmitted }) {
   const { draft, apply, set, save, saveNow, load, syllabusId } = useDraft(editing);
-  // A syllabus that can no longer be edited (approved, rejected, or its subject is un-assigned) shows the vision, mission,
-  // EGAs and program outcomes saved when it was submitted. Anything still editable shows the live ones and keeps them fresh.
+  // Locked syllabi retain their submitted catalog. Step 2's syllabus-owned values always take precedence in the model.
   const frozen = !!draft && !load.loading && !load.editable && !!draft.catalog;
-  const { model, programList, loading: catalogLoading, error: catalogError, refresh: refreshCatalog, version: catalogVersion, resolvedProgramCode } = useCatalog(draft ? draft.meta.program : '', { snapshot: frozen ? draft.catalog : null, live: !frozen, courseId: draft?.meta.courseId });
+  const { model, programList, loading: catalogLoading, error: catalogError, refresh: refreshCatalog, resolvedProgramCode } = useCatalog(draft ? draft.meta.program : '', { snapshot: frozen ? draft.catalog : null, live: !frozen, courseId: draft?.meta.courseId });
   useEffect(() => {
     if (load.editable && !frozen && resolvedProgramCode && draft?.meta.program !== resolvedProgramCode) {
       apply(current => ({ ...current, meta: { ...current.meta, program: resolvedProgramCode } }));
     }
   }, [resolvedProgramCode, draft?.meta.program, load.editable, frozen]);
   const [step, setStep] = useState(0);
+  // On a phone the steps are one swipeable row: keep the open step in view (sideways only, the page does not jump).
+  useEffect(() => {
+    const open = document.querySelector('.stepper button.active');
+    if (open && open.scrollIntoView) open.scrollIntoView({ inline: 'center', block: 'nearest', behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+  }, [step]);
   const [visited, setVisited] = useState({ 0: 1 });
   const [filter, setFilter] = useState(null);
   const [toast, setToast] = useState(null);
   const toastTimer = useRef(null);
   const [note, setNote] = useState('');
   const [courseList, setCourseList] = useState([]);
+  const [courseTick, setCourseTick] = useState(0); // bumped to read the subject list again (after the server refuses a subject)
   const [busy, setBusy] = useState(false);
   // 'form' (the seven steps) or 'upload' (submit a finished PDF instead). The draft lives in useDraft, so switching loses nothing.
   const [mode, setMode] = useState('form');
@@ -71,22 +76,22 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
   useEffect(() => {
     if (!program) { setCourseList([]); return undefined; }
     let live = true;
-    coursesApi.list(program).then((l) => { if (live) setCourseList(l); }).catch(() => { if (live) setCourseList([]); });
+    coursesApi.list(program, { except: syllabusId() }).then((l) => { if (live) setCourseList(l); }).catch(() => { if (live) setCourseList([]); });
     return () => { live = false; };
-  }, [program]);
+  }, [program, courseTick]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // The course learning outcomes always come from the catalog: when the draft opens, and whenever an
-  // administrator has changed them, the draft's copy is refreshed (the server enforces the same on every save).
-  const courseId = draft ? draft.meta.courseId : null;
-  const draftRef = useRef(draft);
-  draftRef.current = draft;
+  // Step 2 belongs to this draft. Catalog refreshes must never replace the author's edits.
+
+  // A subject has one syllabus: when the server refuses the subject just chosen (it already has one, or this person already has a draft
+  // for it), take it off the form and say where the existing one is. Nothing was saved, so there is nothing to undo on the server.
   useEffect(() => {
-    if (!courseId) return undefined;
-    let live = true;
-    coursesApi.get(courseId).then((c) => { if (live && draftRef.current && !closEqual(draftRef.current.clos, c.clos)) apply((x) => syncClos(x, c.clos)); }).catch(() => {});
-    return () => { live = false; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [courseId, load.loading, catalogVersion]);
+    if (save.state !== 'error' || save.code !== 'syllabus_exists' || !draft || !draft.meta.courseId) return;
+    set(clearCourse(draft));
+    setCourseTick((n) => n + 1); // the list now shows that subject as taken
+    setToast({ msg: save.message, action: { label: translateUI('builder.openMySyllabi'), fn: () => setPage('my-syllabi') } });
+    clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToast(null), 10000);
+  }, [save]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (load.loading || catalogLoading) return <div className="empty">{translateUI("ui.loading_the_syllabus_builder_e89b32")}</div>;
   if (load.error || catalogError) return <div className="info-banner warning">{translateUI("ui.could_not_open_the_builder_7169ab")}{tr(load.error || catalogError)}</div>;
@@ -115,6 +120,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
   };
   const undo = (prev) => ({ label: 'Undo', fn: () => { set(prev); setToast(null); } });
   const onChooseCourse = async (id) => {
+    if (draft.meta.courseId && id !== draft.meta.courseId && !window.confirm(translateUI('outcomes.changeSubject'))) return;
     if (!id) { set(clearCourse(draft)); return; }
     try {
       const c = await coursesApi.get(id);
@@ -122,6 +128,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
     } catch (e) { notify(translateUI("ui.could_not_load_that_subject_8e9791") + e.message); }
   };
   const onChooseProgram = (code) => {
+    if (draft.meta.courseId && code !== draft.meta.program && !window.confirm(translateUI('outcomes.changeSubject'))) return;
     // The course belongs to a program: a different program means choosing the course again.
     set({ ...clearCourse(draft), meta: { ...clearCourse(draft).meta, program: code, prereq: draft.meta.prereq } });
   };
@@ -137,6 +144,14 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
     const ok = await saveNow();
     if (!ok) notify(translateUI("ui.could_not_save_your_changes_check_your_connection_and_try_again_17b0b0"));
     return ok;
+  };
+  // "Save as draft": everything goes to the server, then the draft is waiting in My Syllabi (which re-reads the list on open).
+  // A form with nothing entered has no draft yet, so it stays here instead of opening an empty list.
+  const saveDraft = async () => {
+    if (!(await saveFirst())) return;
+    if (!syllabusId()) { notify(translateUI("ui.choose_a_subject_first_24357e")); return; }
+    notify(translateUI("builder.draftSaved"));
+    setPage('my-syllabi');
   };
   // The check lives in this step now: Re-check runs it again in place and scrolls to it (nothing navigates away).
   const recheck = () => {
@@ -189,8 +204,19 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
   const accessMessage = state === 'noSubject' ? ASSIGNMENT_MESSAGES.noSubject : ASSIGNMENT_MESSAGES.none;
   const editable = load.editable && !noAccess;
   const existing = load.status !== 'draft';
-  const revising = load.status === 'for_revision'; // back from the reviewer: the next submission is a new version, with a note about the change
+  const revising = isReturned(load.status); // back from the reviewer: the next submission is a new version, with a note about the change
   const needNote = noteMissing(load.status, note);
+  // Why the main button cannot go yet. The button stays clickable so a click always answers with this reason, instead of doing nothing.
+  const whyNot = !draft.meta.courseId ? translateUI("ui.choose_a_subject_first_24357e")
+    : !complete ? translateUI("ui.complete_steps_1_to_6_to_unlock_b21a68")
+    : needNote ? translateUI("ui.say_what_you_changed_a_sentence_first_01ece1") : '';
+  const onPrimary = () => {
+    if (!whyNot) return submit();
+    notify(whyNot);
+    const box = document.querySelector('.rv textarea');
+    if (needNote && box) { box.scrollIntoView({ behavior: 'smooth', block: 'center' }); box.focus(); }
+    return undefined;
+  };
   const preparedBy = user ? user.name || (user.firstName + ' ' + user.lastName) : '';
   const doneCount = statuses.filter((x) => x === 'done').length;
   const cfg = STEP_CONFIG[step];
@@ -207,7 +233,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
 
   return (
     <>
-      <PageHead title={translateUI("ui.syllabus_builder_editor_ac6179")} subtitle={translateUI("ui.fill_in_the_institutional_syllabus_form_step_by_step_every_part_i_35903f")} actions={<StableButton className="btn outline" onClick={saveNow}>{translateUI("ui.save_now_3989b7")}</StableButton>} />
+      <PageHead title={translateUI("ui.syllabus_builder_editor_ac6179")} subtitle={translateUI("ui.fill_in_the_institutional_syllabus_form_step_by_step_every_part_i_35903f")} actions={<StableButton className="btn outline" disabled={!load.editable} onClick={saveDraft}>{translateUI("builder.saveAsDraft")}</StableButton>} />
       <div className="bld2-modes" role="tablist" aria-label={translateUI("ui.how_to_submit_0e4bbb")}>
         <button type="button" role="tab" aria-selected={mode === 'form'} className={mode === 'form' ? 'active' : ''} onClick={() => setMode('form')}>{translateUI("ui.fill_in_the_form_e4aa1f")}</button>
         {!isAdmin && <button type="button" role="tab" aria-selected={mode === 'upload'} className={mode === 'upload' ? 'active' : ''} onClick={() => setMode('upload')}>{translateUI("ui.upload_a_file_instead_eaad9b")}</button>}
@@ -243,7 +269,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
           {!noAccess && !load.editable && load.lockedReason && <div className="info-banner warning">{tr(load.lockedReason)}{translateUI("ui.you_can_read_this_syllabus_but_not_change_it_until_an_administrat_4f4ecd")}</div>}
           {revising && editable && (
             <div className="info-banner rv-revising" role="status">
-              <span><b>{translateUI("ui.returned_for_revision_d2426a")}</b>{translateUI("ui.your_next_submission_becomes_d37d36") + (load.nextVersion || tr('the next version')) + translateUI("ui.once_you_change_something_b3eaf9") + (load.version || tr('the version you submitted')) + translateUI("ui.and_every_earlier_version_stay_in_the_history_f8dfa6")}</span>
+              <span><b>{load.status === 'rejected' ? translateUI("builder.rejectedTitle") : translateUI("ui.returned_for_revision_d2426a")}</b>{translateUI("ui.your_next_submission_becomes_d37d36") + (load.nextVersion || tr('the next version')) + translateUI("ui.once_you_change_something_b3eaf9") + (load.version || tr('the version you submitted')) + translateUI("ui.and_every_earlier_version_stay_in_the_history_f8dfa6")}</span>
               {load.reviewerNote && <span className="rv-note">{translateUI("ui.reviewer_s_note_573dfd") + load.reviewerNote}</span>}
             </div>
           )}
@@ -257,7 +283,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
             <span className={'autosave' + (save.state === 'error' ? ' error' : save.state === 'saved' ? '' : ' saving')} role="status">{tr(saveText)}{save.state === 'error' && <button type="button" className="link" onClick={saveNow}>{translateUI("ui.retry_9f5cd8")}</button>}</span>
           </div>
           <fieldset disabled={!editable || busy}>
-            <Body d={draft} apply={apply} model={model} programList={programList} courseList={courseList} onChooseCourse={onChooseCourse} onChooseProgram={onChooseProgram} filter={filter} setFilter={setFilter} onDeleteRow={onDeleteRow} go={go} preparedBy={preparedBy} existing={existing} noteRequired={revising} note={note} setNote={setNote} syllabusId={syllabusId} saveFirst={saveFirst} showCompliance={!isAdmin} canCheck={!!user && user.role === 'faculty' && !noAccess} checkTick={checkTick} submitFailed={submitFailed} onRun={setLastRun} />
+            <Body d={draft} apply={apply} editable={editable} model={model} programList={programList} courseList={courseList} onChooseCourse={onChooseCourse} onChooseProgram={onChooseProgram} filter={filter} setFilter={setFilter} onDeleteRow={onDeleteRow} go={go} preparedBy={preparedBy} existing={existing} noteRequired={revising} note={note} setNote={setNote} syllabusId={syllabusId} saveFirst={saveFirst} showCompliance={!isAdmin} canCheck={!!user && user.role === 'faculty' && !noAccess} checkTick={checkTick} submitFailed={submitFailed} onRun={setLastRun} />
           </fieldset>
           {!nxt && !complete && <div className="step-hint" role="status">{translateUI("ui.finish_the_steps_marked_in_the_list_review_check_the_compliance_c_31bb82")}{existing ? translateUI("ui.saving_a_new_version_a8d794") : translateUI("ui.submitting_8ee0db")}{translateUI("ui.unlock_once_steps_1_to_6_are_complete_f983eb")}</div>}
           {step < 6 && mine_.length > 0 && (
@@ -275,13 +301,14 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
           )}
           {!isAdmin && step === 6 && warnings > 0 && editable && <div className="step-hint advice" role="note">{tr(warnings + (warnings === 1 ? ' warning remains' : ' warnings remain')) + translateUI("ui.in_the_compliance_check_they_do_not_block_you_the_reviewer_will_s_d35203")}</div>}
           {step < 6 && advice.length > 0 && editable && <div className="step-hint advice" role="note">{translateUI("ui.suggestions_73fedd") + advice.map((x) => tr(x.text)).join(' ')}</div>}
+          {!nxt && editable && whyNot && <div className="step-hint advice" role="status">{whyNot}</div>}
           <div className="editor-footer">
             {prv && <StableButton type="button" className="btn outline" onClick={() => go(step - 1)}>{'← ' + titleOf(prv)}</StableButton>}
             <div>
               {nxt && <StableButton type="button" className="btn primary" disabled={blocking.length > 0} title={blocking.length ? translateUI("ui.complete_this_step_to_continue_71b565") : undefined} onClick={() => go(step + 1)}>{translateUI("ui.next_94377f") + titleOf(nxt) + ' →'}</StableButton>}
               {!nxt && <>
                 {!isAdmin && <StableButton type="button" className="btn outline" disabled={!complete || busy || !editable} title={complete ? translateUI("ui.run_the_compliance_check_again_49661e") : translateUI("ui.complete_steps_1_to_6_to_unlock_b21a68")} onClick={recheck}>{translateUI("ui.re_check_9cf055")}</StableButton>}
-                <StableButton type="button" className="btn primary" disabled={busy || !editable || !draft.meta.courseId || !complete || needNote} title={!complete ? translateUI("ui.complete_steps_1_to_6_to_unlock_b21a68") : needNote ? translateUI("ui.say_what_you_changed_a_sentence_first_01ece1") : undefined} onClick={submit}>{isAdmin ? translateUI('publication.continueToCheck') : tr(existing ? (warnings > 0 ? 'Save as new version anyway' : 'Save as new version') : (warnings > 0 ? 'Submit anyway' : 'Submit for review'))}</StableButton>
+                <StableButton type="button" className="btn primary" disabled={busy || !editable} aria-disabled={!!whyNot || undefined} title={whyNot || undefined} onClick={onPrimary}>{isAdmin ? translateUI('publication.continueToCheck') : tr(existing ? (warnings > 0 ? 'Save as new version anyway' : 'Save as new version') : (warnings > 0 ? 'Submit anyway' : 'Submit for review'))}</StableButton>
               </>}
             </div>
           </div>

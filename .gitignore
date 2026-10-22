@@ -27,6 +27,7 @@ bun-debug.log*
 
 # Testing / coverage
 coverage/
+.api-test-backups/
 
 # OS files
 .DS_Store

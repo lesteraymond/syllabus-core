@@ -1,74 +1,101 @@
-import { tr } from "../../i18n/index.js";
-import { t as translateUI } from "../../i18n/index.js";
-import { useState } from 'react';
-import { CoverageStrip, Tag } from './parts';
+import { t, tr } from '../../i18n';
+import { LEVELS } from '../../lib/syllabusModel';
+import { newId } from './useDraft';
+import { Auto, CoverageStrip } from './parts';
+import Select from '../../components/Select';
+import { Icon } from '../../components/ui';
+import StableButton from '../../components/StableButton';
+import ReadOnlyOutcomes from './ReadOnlyOutcomes';
 
-// Step 2: Learning Outcomes (form section VI). Vision, mission, EGAs and program outcomes are institution data;
-// the course learning outcomes (CLOs) are the course's own constant data from the course catalog. Both are
-// read-only here: only an administrator edits them. Faculty tag their ILOs with them in step 3.
-export default function ClosStep({ d, model }) {
-  const I = model.institution;
-  const egas = model.egaList(d); // this program's own EGAs
-  const pos = model.poList(d);
-  const [active, setActive] = useState(null);
-  const [flash, setFlash] = useState(null);
-
-  const jump = (id) => {
-    const el = document.getElementById('clo-' + id);
-    if (!el) return;
-    el.scrollIntoView({ behavior: window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
-    setFlash(id);
-    setTimeout(() => setFlash(null), 900);
-  };
-  const act = active ? d.clos.find((c) => c.id === active) : null;
-  const usersOf = (kind, no) => d.clos.map((c, i) => ((kind === 'ega' ? c.egas : c.pos).includes(no) ? i : -1)).filter((i) => i > -1);
-  const hl = (kind, no) => (act && (kind === 'ega' ? act.egas : act.pos).includes(no) ? ' hl' : '');
-  const Used = ({ list }) => <span className="used" aria-label={translateUI("ui.used_by_f5060a")}>{list.map((i) => <span key={i} className={'code sm k' + (i % 6)}>{translateUI("ui.clo_069efc") + (i + 1)}</span>)}</span>;
-
-  if (!model.hasOutcomeSelection(d)) return <div className="info-banner" role="status">{translateUI("outcomes.chooseProgramSubject")}</div>;
-
-  if (!model.outcomesReady(d)) return <div className="info-banner warning" role="status">{translateUI('outcomes.subjectIncomplete')}</div>;
-
-  return (
-    <div>
-      <div className="vm" aria-label={translateUI("ui.vision_and_mission_4c8752")}>
-        <div><span className="lbl">{translateUI("ui.vision_40b090")}</span><p>{I.vision}</p></div>
-        <div><span className="lbl">{translateUI("ui.mission_e4698d")}</span><p>{I.mission.lead}</p><ul>{I.mission.items.map((t, k) => <li key={k}>{t}</li>)}</ul></div>
+// Step 2 edits the same draft as the other builder steps; it never writes the subject catalog.
+export default function ClosStep({ d, model, apply, editable = !!apply }) {
+  if (!editable) return <ReadOnlyOutcomes d={d} model={model} />;
+  if (!model.hasOutcomeSelection(d)) return <div className="info-banner" role="status">{t('outcomes.chooseProgramSubject')}</div>;
+  const o = d.outcomes || { ...model.institutionFor(d), egas: model.egaList(d), pos: model.poList(d) };
+  const edit = fn => apply(next => {
+    if (!next.outcomes) next.outcomes = JSON.parse(JSON.stringify(o));
+    fn(next.outcomes, next);
+    return next;
+  });
+  const toggle = (values, no) => values.includes(no) ? values.filter(n => n !== no) : [...values, no].sort((a, b) => a - b);
+  const usesTag = tag => d.plan.some(row => row.ilos.some(il => il.tags.includes(tag)));
+  const egaUsed = no => o.pos.some(p => p.egas.includes(no)) || d.clos.some(c => c.egas.includes(no)) || usesTag('ega:' + no);
+  const poUsed = no => d.clos.some(c => c.pos.includes(no)) || usesTag('po:' + no);
+  const nextNo = rows => Math.max(0, ...rows.map(row => row.no)) + 1;
+  const mapChoices = (rows, values, onChange, label) => <div className="ie-egas" role="group" aria-label={label}>
+    {rows.map(row => <label className={'ie-chip' + (values.includes(row.no) ? ' on' : '')} key={row.no} title={row.name || row.text}>
+      <input type="checkbox" checked={values.includes(row.no)} onChange={() => onChange(toggle(values, row.no))} />{label + ' ' + row.no}
+    </label>)}
+  </div>;
+  const removeButton = (label, disabled, onClick) => <button type="button" className="ib del" aria-label={label} title={disabled ? t('outcomes.inUse') : label} disabled={disabled} onClick={onClick}><Icon name="bin" size={16} /></button>;
+  return <div className="sm-stack learning-outcomes-editor">
+    <p className="hint">{t('outcomes.authoringNote')}</p>
+    <section className="sm-card">
+      <header className="sm-card-h"><h4>{t('ui.vision_and_mission_4c8752')}</h4></header>
+      <div className="sm-card-b">
+        <label className="field"><span>{t('ui.vision_40b090')}</span><Auto className="in" value={o.vision} label={t('ui.vision_40b090')} onChange={value => edit(x => { x.vision = value; })} /></label>
+        <label className="field"><span>{t('ui.mission_introduction_873ac6')}</span><Auto className="in" value={o.mission.lead} label={t('ui.mission_introduction_8acfc4')} onChange={value => edit(x => { x.mission.lead = value; })} /></label>
+        <span className="lbl">{t('ui.mission_statements_5e2923')}</span>
+        {o.mission.items.map((text, i) => <div className="ie-row" key={i}>
+          <span className="mono ie-no">{i + 1}</span>
+          <Auto className="in" value={text} label={t('ui.mission_statement_45b2a8') + (i + 1)} onChange={value => edit(x => { x.mission.items[i] = value; })} />
+          {removeButton(t('ui.remove_statement_100039') + (i + 1), false, () => edit(x => { x.mission.items.splice(i, 1); }))}
+        </div>)}
+        <button type="button" className="link" disabled={o.mission.items.length >= 50} onClick={() => edit(x => { x.mission.items.push(''); })}>{t('ui.add_mission_statement_0ad1c2')}</button>
       </div>
-
-      <div className="refwrap">
-        <table className="ledger refs">
-          <thead><tr><th style={{ width: '38%' }}>{translateUI("ui.expected_graduate_attributes_86f980")}</th><th>{translateUI("ui.program_outcomes_b86d07") + (d.meta.program || tr('no program chosen'))}</th></tr></thead>
-          <tbody><tr>
-            <td>{egas.map((e) => <div key={e.no} className={'refi' + hl('ega', e.no)}><span className="cd">{translateUI("ui.ega_4f085b") + e.no}</span><span className="rt">{e.name}</span><Used list={usersOf('ega', e.no)} /></div>)}</td>
-            <td>{pos.length ? pos.map((o) => (
-              <div key={o.no} className={'refi' + hl('po', o.no)}><span className="cd">{translateUI("ui.po_3756d6") + o.no}</span><span className="rt">{o.text + ' '}{o.egas.map((g) => <span className="map" key={g}>{translateUI("ui.ega_7bee0f") + g + '] '}</span>)}</span><Used list={usersOf('po', o.no)} /></div>
-            )) : <div className="hint" style={{ padding: '8px 0' }}>{d.meta.program ? translateUI("ui.no_program_outcomes_are_loaded_for_db8e64") + d.meta.program + translateUI("ui.an_administrator_adds_them_in_institution_settings_ddb051") : translateUI("ui.choose_a_program_in_step_1_to_load_its_program_outcomes_d121f2")}</div>}</td>
-          </tr></tbody>
-        </table>
-        <div className="hint" style={{ marginTop: 6 }}>{translateUI("ui.the_badges_show_which_of_the_course_learning_outcomes_use_each_at_6463d4")}</div>
-      </div>
-
-      <h3 className="sech">{translateUI("ui.course_learning_outcomes_503861") + (d.meta.code ? ' \u00b7 ' + d.meta.code : '')}</h3>
-      {!d.meta.courseId && <div className="info-banner">{translateUI("ui.choose_a_subject_in_step_1_to_load_its_learning_outcomes_017d6f")}</div>}
-      {d.meta.courseId && !d.clos.length && <div className="info-banner warning">{translateUI("ui.no_learning_outcomes_are_defined_for_abd5b1")}{d.meta.code}{translateUI("ui.yet_an_administrator_adds_them_in_subjects_amp_clos_2e8b78")}</div>}
-      <CoverageStrip model={model} d={d} filter={null} onPick={jump} />
-      {d.clos.map((c, i) => (
-        <div className={'clorow' + (flash === c.id ? ' flash' : '')} id={'clo-' + c.id} key={c.id} onMouseEnter={() => setActive(c.id)} onMouseLeave={() => setActive(null)} onFocus={() => setActive(c.id)} tabIndex={0}>
-          <div><span className={'code lg k' + (i % 6)}>{translateUI("ui.clo_069efc") + (i + 1)}</span></div>
+    </section>
+    <div className="sm-pair">
+      <section className="sm-card">
+        <header className="sm-card-h"><h4>{t('ui.expected_graduate_attributes_86f980')}</h4></header>
+        <div className="sm-card-b">
+          {o.egas.map((e, i) => <div className="ie-ega" key={e.no}>
+            <span className="code ref mono">{t('ui.ega_4f085b') + e.no}</span>
+            <input className="in" value={e.name} maxLength={255} placeholder={t('ui.full_name_eeb692')} aria-label={t('ui.name_of_ega_3dfa90') + e.no} onChange={event => { const value = event.target.value; edit(x => { x.egas[i].name = value; }); }} />
+            <input className="in" value={e.short} maxLength={120} placeholder={t('ui.short_name_feb5a9')} aria-label={t('ui.short_name_of_ega_231166') + e.no} onChange={event => { const value = event.target.value; edit(x => { x.egas[i].short = value; }); }} />
+            {removeButton(t('ui.remove_ega_8c32e7') + e.no, egaUsed(e.no), () => edit(x => { x.egas.splice(i, 1); }))}
+          </div>)}
+          <button type="button" className="link" disabled={o.egas.length >= 20} onClick={() => edit(x => { x.egas.push({ no: nextNo(x.egas), name: '', short: '' }); })}>{t('ui.add_ega_270a20')}</button>
+        </div>
+      </section>
+      <section className="sm-card">
+        <header className="sm-card-h"><h4>{t('ui.program_outcomes_858de9')}</h4></header>
+        <div className="sm-card-b">
+          {o.pos.map((p, i) => <div className="ie-po" key={p.no}>
+            <span className="code ref mono">{t('ui.po_3756d6') + p.no}</span>
+            <div>
+              <input className="in" value={p.short} maxLength={120} placeholder={t('ui.short_name_feb5a9')} aria-label={t('ui.short_name_of_po_452bca') + p.no} onChange={event => { const value = event.target.value; edit(x => { x.pos[i].short = value; }); }} />
+              <Auto className="in" value={p.text} label={t('ui.statement_of_po_0182b3') + p.no} onChange={value => edit(x => { x.pos[i].text = value; })} />
+              {mapChoices(o.egas, p.egas, values => edit(x => { x.pos[i].egas = values; }), t('ui.ega_4f085b'))}
+            </div>
+            {removeButton(t('ui.remove_po_ffe9b3') + p.no, poUsed(p.no), () => edit(x => { x.pos.splice(i, 1); }))}
+          </div>)}
+          <button type="button" className="link" disabled={o.pos.length >= 50} onClick={() => edit(x => { x.pos.push({ no: nextNo(x.pos), short: '', text: '', egas: [] }); })}>{t('ui.add_program_outcome_cd9147')}</button>
+        </div>
+      </section>
+    </div>
+    <section className="sm-card">
+      <header className="sm-card-h"><h4>{t('ui.course_learning_outcomes_503861')}</h4></header>
+      <div className="sm-card-b">
+        {d.clos.map((c, i) => <div className="clorow" id={'clo-' + c.id} key={c.id}>
+          <span className={'code lg k' + i % 6}>{t('ui.clo_069efc') + (i + 1)}</span>
           <div>
-            <div className="cap"><strong>{c.level}</strong>{c.title && <span className="hint">{' (' + c.title + ')'}</span>}</div>
-            <p style={{ margin: 0, lineHeight: 1.5 }}>{c.statement}</p>
+            <div className="cap">
+              <Select className="sel" value={c.level} aria-label={t('ui.level_of_clo_c01e3f') + (i + 1)} onChange={event => { const value = event.target.value; edit((x, next) => { next.clos[i].level = value; }); }}>{LEVELS.map(level => <option key={level} value={level}>{tr(level)}</option>)}</Select>
+              {removeButton(t('ui.delete_clo_3a0c81') + (i + 1), usesTag('clo:' + c.id), () => edit((x, next) => { next.clos.splice(i, 1); }))}
+            </div>
+            <input className="in" value={c.title} maxLength={255} placeholder={t('ui.descriptor_e_g_foundational_knowledge_3cc9d7')} aria-label={t('ui.title_of_clo_04eb8b') + (i + 1)} onChange={event => { const value = event.target.value; edit((x, next) => { next.clos[i].title = value; }); }} />
+            <Auto className="in" value={c.statement} label={t('ui.statement_of_clo_13551f') + (i + 1)} onChange={value => edit((x, next) => { next.clos[i].statement = value; })} />
           </div>
           <div className="col2">
-            <span className="lbl">{translateUI("ui.expected_graduate_attributes_86f980")}</span>
-            <div className="tags">{c.egas.length ? c.egas.map((n) => <Tag key={'e' + n} info={model.tagInfo(d, 'ega:' + n)} />) : <span className="hint">{translateUI("ui.none_6eef66")}</span>}</div>
-            <span className="lbl" style={{ marginTop: 12 }}>{translateUI("ui.program_outcomes_858de9")}</span>
-            <div className="tags">{c.pos.length ? c.pos.map((n) => <Tag key={'p' + n} info={model.tagInfo(d, 'po:' + n)} />) : <span className="hint">{translateUI("ui.none_6eef66")}</span>}</div>
+            <span className="lbl">{t('ui.expected_graduate_attributes_86f980')}</span>
+            {mapChoices(o.egas, c.egas, values => edit((x, next) => { next.clos[i].egas = values; }), t('ui.ega_4f085b'))}
+            <span className="lbl">{t('ui.program_outcomes_858de9')}</span>
+            {mapChoices(o.pos, c.pos, values => edit((x, next) => { next.clos[i].pos = values; }), t('ui.po_3756d6'))}
           </div>
-        </div>
-      ))}
-      <p className="legend">{translateUI("ui.clo_numbers_follow_the_order_in_the_subject_catalog_in_step_3_you_bbf7d3")}</p>
-    </div>
-  );
+        </div>)}
+        <StableButton type="button" className="btn outline" disabled={d.clos.length >= 20} onClick={() => edit((x, next) => { next.clos.push({ id: newId(), title: '', level: 'Enabling', statement: '', egas: [], pos: [] }); })}>{t('ui.add_clo_0485ad')}</StableButton>
+        <CoverageStrip model={model} d={d} filter={null} onPick={id => document.getElementById('clo-' + id)?.scrollIntoView({ block: 'center' })} />
+      </div>
+    </section>
+  </div>;
 }

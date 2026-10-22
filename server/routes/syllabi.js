@@ -6,6 +6,7 @@ const { requireAuth } = require('../middleware/auth');
 const { avatarUrlFor } = require('../lib/avatar');
 const { createNotification, notifyAdmins } = require('../lib/notify');
 const rules = require('../lib/syllabusRules');
+const subjectLock = require('../lib/subjectLock');
 const assignments = require('../lib/assignments');
 const { validateReason, typeForStatus, MAX_LENGTH } = require('../lib/reviewComments');
 const compliance = require('../lib/compliance/service');
@@ -53,13 +54,19 @@ router.get('/', requireAuth, async (req, res) => {
     let query = `SELECT s.*, u.first_name, u.last_name, u.avatar_path, c.program_name, co.title AS course_title, pr.code AS program_code FROM syllabi s JOIN users u ON s.user_id = u.user_id LEFT JOIN curriculum c ON s.curriculum_id = c.curriculum_id LEFT JOIN courses co ON co.course_id = s.course_id LEFT JOIN programs pr ON pr.program_id = co.program_id`;
     const params = [];
 
-    if (req.session.user.role === 'faculty') {
+    if (req.session.user.role === 'student') {
+      // A student reads every approved syllabus, whatever subject it is (not only the subjects on their COR).
+      query += " WHERE s.status = 'approved'";
+    } else if (req.session.user.role === 'faculty') {
       query += ' WHERE s.user_id = ?';
       params.push(req.session.user.id);
     } else {
       query += " WHERE (s.status <> 'draft' OR s.user_id = ?)"; // only the administrator's own drafts are visible
       params.push(req.session.user.id);
     }
+
+    // Archived syllabi (the subject went to another faculty member) are out of every working list; ?archived=1 asks for only those.
+    query += req.query.archived === '1' ? ' AND s.archived_at IS NOT NULL' : ' AND s.archived_at IS NULL';
 
     // Repository reads are approved-only; the default list still powers the workflow tabs.
     if (req.query.scope === 'repository') query += " AND s.status = 'approved'";
@@ -80,6 +87,7 @@ router.get('/', requireAuth, async (req, res) => {
       userId: r.user_id,
       curriculumId: r.curriculum_id,
       courseId: r.course_id,
+      archived: !!r.archived_at,
       filePath: r.file_path,
       title: r.title,
       courseCode: r.course_code,
@@ -150,9 +158,15 @@ router.post('/', requireAuth, onePdf, async (req, res) => {
     const filePath = req.file ? `/uploads/${req.file.filename}` : null;
 
     const syllabusId = await inTransaction(db, async (conn) => {
+      // One syllabus for each subject (lib/subjectLock.js). This route takes the subject as text, so find the catalog subject it names; when
+      // there is one, it is checked and stored on the row, so the rule also counts this syllabus from now on.
+      const code = String(courseCode || '').trim();
+      const [named] = code ? await conn.query('SELECT course_id FROM courses WHERE code = ?', [code]) : [[]];
+      const courseId = named.length === 1 ? named[0].course_id : null;
+      if (courseId) await subjectLock.assertSubjectFree(conn, req.session.user, courseId, 0);
       const [result] = await conn.query(
-        'INSERT INTO syllabi (user_id, curriculum_id, file_path, title, course_code, status) VALUES (?, ?, ?, ?, ?, ?)',
-        [req.session.user.id, curriculumId || null, filePath, title, courseCode, 'submitted']
+        'INSERT INTO syllabi (user_id, curriculum_id, file_path, title, course_code, course_id, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [req.session.user.id, curriculumId || null, filePath, title, courseCode, courseId, 'submitted']
       );
       await conn.query(
         `INSERT INTO syllabus_versions ${VERSION_COLUMNS} VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -201,6 +215,7 @@ router.put('/:id', requireAuth, onePdf, async (req, res) => {
 
       // ---- status change: admin only ----
       if (status !== undefined && status !== '') {
+        if (rules.isArchived(syl)) throw httpError(409, rules.ARCHIVED_MESSAGE);
         if (rules.isAdmin(me) && rules.isOwner(me,syl) && status === 'approved') throw httpError(409, 'Use the syllabus builder and AI Checker to publish your own syllabus.');
         if (syl.status === 'draft') throw httpError(409, 'Complete the form and check it in AI Checker before publishing your draft.');
         if (!rules.canChangeStatus(me)) throw httpError(403, 'Only administrators can change a syllabus status');
@@ -231,7 +246,7 @@ router.put('/:id', requireAuth, onePdf, async (req, res) => {
 
       // The same rule as the builder's submit: back from "For revision" only with a change (a new file, or a different title, code or
       // curriculum), and a sentence saying what it is.
-      if (syl.status === 'for_revision') {
+      if (rules.isReturned(syl.status)) {
         const changed = !!req.file
           || (title !== undefined && title !== syl.title)
           || (courseCode !== undefined && courseCode !== syl.course_code)
@@ -263,7 +278,7 @@ router.put('/:id', requireAuth, onePdf, async (req, res) => {
       );
       await conn.query(
         'INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)',
-        [id, me.id, first ? 'upload' : (syl.status === 'for_revision' ? 'submit' : 'update'), `${first ? 'Uploaded file, saved as' : 'Edited, saved as'} ${label}: ${versionNote}`.slice(0, 500)]
+        [id, me.id, first ? 'upload' : (rules.isReturned(syl.status) ? 'submit' : 'update'), `${first ? 'Uploaded file, saved as' : 'Edited, saved as'} ${label}: ${versionNote}`.slice(0, 500)]
       );
       return { kind: 'edit', syl, label, title: next.title, courseCode: next.courseCode, previousStatus: syl.status };
     });
@@ -292,7 +307,7 @@ router.put('/:id', requireAuth, onePdf, async (req, res) => {
         title: `New syllabus submitted: ${outcome.courseCode || outcome.title || 'Untitled'}`,
         body: `${me.firstName} ${me.lastName} submitted ${outcome.title || outcome.courseCode || 'a syllabus'} (uploaded file) for review.`,
       });
-    } else if (outcome.previousStatus === 'under_review' || outcome.previousStatus === 'for_revision') {
+    } else if (outcome.previousStatus === 'under_review' || rules.isReturned(outcome.previousStatus)) {
       await notifyAdmins(db, {
         exceptUserId: me.id,
         type: 'edit',

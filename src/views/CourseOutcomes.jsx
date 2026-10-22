@@ -6,19 +6,15 @@ import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { PageHead } from '../components/ui';
 import { courses as coursesApi, deadlines as deadlinesApi, outcomes as outcomesApi } from '../lib/api';
-import SubjectModal from './SubjectModal';
 import { SubjectDialog, SubjectRowActions } from '../components/SubjectActions';
 import { DeadlineChip, DeadlineDialog } from '../components/DeadlineDialog';
 import { currentDeadline, groupByCourse } from '../lib/deadlineView';
 import Select from '../components/Select';
 
-// Admin screen: the subject catalog. The list shows every subject; opening one shows everything an administrator manages
-// for it in one modal (vision and mission, the program's EGAs and POs, the subject's CLOs and details). Different
-// programs and subjects have their own; faculty see them read-only in the syllabus builder.
+// Administrators manage program/subject identity and deadlines here. Learning-outcome authoring lives in builder Step 2.
 export default function CourseOutcomes({ notify, onCatalogChanged }) {
   const [list, setList] = useState([]);
   const [programs, setPrograms] = useState([]);
-  const [openId, setOpenId] = useState(null);
   const [deadlineState, setDeadlineState] = useState({ enabled: false, list: [] });   // enabled turns true once the deadline tables exist
   const [deadlineFor, setDeadlineFor] = useState(null);   // the subject whose deadline dialog is open
   const [target, setTarget] = useState(null);       // { subject, mode: 'edit' | 'delete' }: the dialog opened from a row
@@ -67,8 +63,7 @@ export default function CourseOutcomes({ notify, onCatalogChanged }) {
       const c = await coursesApi.create({ program: programCode, programName: isNew ? form.programName.trim() : undefined, code: form.code, title: form.title });
       await refreshCatalog();
       await formMotion.dismiss(() => { setAdding(false); setForm(blank); });
-      setOpenId(c.id);
-      notify(c.programCreated ? translateUI("ui.program_p0_created_and_subject_added_add_its_outcomes_below_a9b6e2", { p0: (c.program.code) }) : translateUI("ui.subject_added_add_its_learning_outcomes_below_ad8a1c"));
+      notify(translateUI('outcomes.subjectCreated'));
     } catch (e) { setFormError(e.message); } finally { setBusy(false); }
   };
 
@@ -104,16 +99,26 @@ export default function CourseOutcomes({ notify, onCatalogChanged }) {
           </label>
           <span className="hint">{tr(shown.length + (shown.length === 1 ? ' subject' : ' subjects'))}</span>
         </div>
-        <div ref={tableRef} className="table-wrap">
+        <ul className="sm-cards">
+          {shown.map((c) => (
+            <li key={c.id}>
+              <div className="sm-card-head"><div><strong className="mono">{c.code}</strong><span>{c.title}</span></div><span className="chip quiet">{c.program}</span></div>
+              {deadlineState.enabled && <div className="sm-card-deadline"><DeadlineChip subject={c} deadline={currentDeadline(deadlinesByCourse.get(c.id))} onOpen={() => setDeadlineFor(c)} /></div>}
+              <div className="sm-card-actions"><SubjectRowActions subject={c} onEdit={() => setTarget({ subject: c, mode: 'edit' })} onDelete={() => setTarget({ subject: c, mode: 'delete' })} /></div>
+            </li>
+          ))}
+          {!shown.length && <li className="sm-card-empty">{filter ? translateUI("ui.no_subjects_in_p0_yet_4d9c7b", { p0: (filter) }) : translateUI("ui.no_subjects_yet_add_one_to_start_c6c29e")}</li>}
+        </ul>
+        <div ref={tableRef} className="table-wrap sm-table">
           <table>
-            <thead><tr><th>{translateUI("ui.code_adac69")}</th><th>{translateUI("ui.title_768e0c")}</th><th>{translateUI("ui.program_9d6800")}</th>{deadlineState.enabled && <th>{translateUI("deadline.column")}</th>}<th className="sm-r">{translateUI("ui.clos_a33483")}</th><th className="col-actions">{translateUI("ui.actions_c3cd63")}</th></tr></thead>
+            <thead><tr><th>{translateUI("ui.code_adac69")}</th><th>{translateUI("ui.title_768e0c")}</th><th>{translateUI("ui.program_9d6800")}</th>{deadlineState.enabled && <th>{translateUI("deadline.column")}</th>}<th className="col-actions">{translateUI("ui.actions_c3cd63")}</th></tr></thead>
             <tbody>
               {shown.map((c) => (
-                <tr key={c.id} data-catalog-row={'subject-' + c.id} className="ac-row" onClick={() => setOpenId(c.id)} tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter') setOpenId(c.id); }}>
-                  <td className="mono">{c.code}</td><td>{c.title}{c.gaps && c.gaps.length > 0 && <span className="badge gold sm-gap" title={translateUI("ui.missing_276f5d") + c.gaps.join(', ')}>{translateUI("ui.setup_incomplete_7eeb25")}</span>}</td><td>{c.program}</td>{deadlineState.enabled && <td><DeadlineChip subject={c} deadline={currentDeadline(deadlinesByCourse.get(c.id))} onOpen={() => setDeadlineFor(c)} /></td>}<td className="mono sm-r">{c.cloCount}</td><td className="col-actions"><SubjectRowActions subject={c} onEdit={() => setTarget({ subject: c, mode: 'edit' })} onDelete={() => setTarget({ subject: c, mode: 'delete' })} /></td>
+                <tr key={c.id} data-catalog-row={'subject-' + c.id}>
+                  <td className="mono">{c.code}</td><td>{c.title}</td><td>{c.program}</td>{deadlineState.enabled && <td><DeadlineChip subject={c} deadline={currentDeadline(deadlinesByCourse.get(c.id))} onOpen={() => setDeadlineFor(c)} /></td>}<td className="col-actions"><SubjectRowActions subject={c} onEdit={() => setTarget({ subject: c, mode: 'edit' })} onDelete={() => setTarget({ subject: c, mode: 'delete' })} /></td>
                 </tr>
               ))}
-              {!shown.length && <tr><td colSpan={deadlineState.enabled ? 6 : 5} style={{ color: 'var(--muted)', padding: 18 }}>{filter ? translateUI("ui.no_subjects_in_p0_yet_4d9c7b", { p0: (filter) }) : translateUI("ui.no_subjects_yet_add_one_to_start_c6c29e")}</td></tr>}
+              {!shown.length && <tr><td colSpan={deadlineState.enabled ? 5 : 4} style={{ color: 'var(--muted)', padding: 18 }}>{filter ? translateUI("ui.no_subjects_in_p0_yet_4d9c7b", { p0: (filter) }) : translateUI("ui.no_subjects_yet_add_one_to_start_c6c29e")}</td></tr>}
             </tbody>
           </table>
         </div>
@@ -122,7 +127,6 @@ export default function CourseOutcomes({ notify, onCatalogChanged }) {
         onChanged={(kind, notices) => { setDeadlineFor(null); loadDeadlines(); const told = notices && notices.notified ? notices.notified : 0;
           notify(told ? translateUI(kind === 'saved' ? 'deadline.savedNotified' : 'deadline.cancelledNotified', { count: told }) : translateUI(kind === 'saved' ? 'deadline.saved' : 'deadline.cancelled')); }} />}
       {target && <SubjectDialog key={target.subject.id + target.mode} {...target} onClose={() => setTarget(null)} onComplete={(mode) => { setTarget(null); refresh(); onCatalogChanged?.(); notify(translateUI(mode === 'edit' ? 'ui.subject_saved_9c680c' : 'ui.subject_deleted_688bd2')); }} />}
-      {openId && <SubjectModal key={openId} courseId={openId} notify={notify} onChanged={refresh} onClose={() => setOpenId(null)} />}
     </div>
   );
 }

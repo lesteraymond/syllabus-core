@@ -15,8 +15,8 @@ import { t, tr } from '../i18n';
 export function SubjectRowActions({ subject, onEdit, onDelete }) {
   const own = (action) => ({ onClick: (e) => { e.stopPropagation(); action(); }, onKeyDown: (e) => e.stopPropagation() });
   return <div className="sm-actions">
-    <button type="button" className="icon-btn" title={t('subjects.edit')} aria-label={t('subjects.editTitle', { code: subject.code })} {...own(onEdit)}><Icon name="notePencil" size={18} weight="regular" /></button>
-    <button type="button" className="icon-btn is-delete" title={t('subjects.delete')} aria-label={t('subjects.deleteTitle', { code: subject.code })} {...own(onDelete)}><Icon name="trash" size={18} weight="regular" /></button>
+    <button type="button" className="icon-btn" title={t('subjects.edit')} aria-label={t('subjects.editTitle', { code: subject.code })} {...own(onEdit)}><Icon name="pencilSquare" size={18} /></button>
+    <button type="button" className="icon-btn is-delete" title={t('subjects.delete')} aria-label={t('subjects.deleteTitle', { code: subject.code })} {...own(onDelete)}><Icon name="bin" size={18} /></button>
   </div>;
 }
 

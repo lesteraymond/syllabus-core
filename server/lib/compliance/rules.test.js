@@ -262,3 +262,96 @@ test('an unusable unit count is flagged and no hours are computed', () => {
   assert.ok(ids(r).includes('H-01'));
   assert.strictEqual(r.contact.termHours, null);
 });
+
+// ---- the LCUP syllabus rules (standard v5) ----
+
+test('rule 2: the vision, mission and EGAs must be the LCUP\'s, whoever edited them; spacing, case and line endings do not matter', () => {
+  const lcup = standard.constants.institution;
+  const own = (edit) => {
+    const c = F.good();
+    delete c.catalog; // a draft: it is shown its own outcomes
+    c.outcomes = { vision: lcup.vision, mission: JSON.parse(JSON.stringify(lcup.mission)), egas: lcup.egas.map((e) => ({ ...e, short: 'x' })), pos: [] };
+    if (edit) edit(c.outcomes);
+    return c;
+  };
+  assert.deepStrictEqual(ids(run(own())).filter((id) => /^T-(28|29|30)$/.test(id)), []);
+  const loose = own((o) => { o.vision = '  ' + lcup.vision.toUpperCase().replace(/ /g, '  ') + '.. '; o.mission.items[5] = o.mission.items[5].replace(/\.$/, ''); o.egas[1].name = lcup.egas[1].name.replace('Augustinian-Marian', 'Augustinian - Marian'); });
+  assert.deepStrictEqual(ids(run(loose)).filter((id) => /^T-(28|29|30)$/.test(id)), []);
+  const edited = own((o) => { o.vision = 'A different vision.'; o.mission.items.pop(); o.egas[2].name = 'Something else'; });
+  const r = run(edited);
+  assert.ok(ids(r).includes('T-28') && ids(r).includes('T-29'));
+  assert.deepStrictEqual(r.findings.filter((f) => f.ruleId === 'T-30').map((f) => f.path), ['outcomes.egas.3']);
+  assert.ok(!blocking(r).some((id) => /^T-(28|29|30)$/.test(id)), 'it warns, it does not stop a submit');
+});
+
+test('rule 2 reads the stored copy of a submitted syllabus and is skipped when there is nothing to compare', () => {
+  const c = F.good();
+  c.catalog.institution.vision = 'Changed after submit.';
+  assert.ok(ids(run(c)).includes('T-28'));
+  const draft = F.good();
+  delete draft.catalog;
+  assert.ok(!ids(evaluate(draft, standard, { year: F.YEAR })).some((id) => /^T-(28|29|30)$/.test(id)));
+});
+
+test('rule 4: an ILO must sit under a CLO that builds an EGA (or carry an EGA tag itself)', () => {
+  const c = F.good();
+  c.clos[0].egas = [];
+  const r = run(c);
+  assert.ok(ids(r).includes('P-06'));
+  assert.ok(r.findings.filter((f) => f.ruleId === 'P-06').every((f) => /^plan\[\d+\]\.ilos\[0\]$/.test(f.path)));
+  c.plan.filter((row) => row.kind === 'lesson' && row.ilos[0].tags[0] === 'clo:c1').forEach((row) => row.ilos[0].tags.push('ega:1'));
+  assert.ok(!ids(run(c)).includes('P-06'));
+  const noClo = F.good();
+  noClo.plan[0].ilos[0].tags = [];
+  assert.ok(!ids(run(noClo)).includes('P-06'), 'an ILO with no CLO at all is T-13\'s finding, not a second one');
+});
+
+test('rule 5: content, activities and assessment must talk about the ILO (or, for activities and tasks, the lesson topic)', () => {
+  const c = F.good();
+  c.plan[0].ilos[0].text = 'Explain how operating systems manage memory';
+  c.plan[0].contents = 'Process scheduling and memory management';
+  c.plan[0].activities = 'Group singing and a sports day';
+  c.plan[0].tasks = '- Compare memory management in two operating systems';
+  const r = run(c);
+  const hit = (rule) => r.findings.some((f) => f.ruleId === rule && f.path.startsWith('plan[0].'));
+  assert.ok(!hit('A-05'), 'content shares memory');
+  assert.ok(hit('A-06'), 'activities share nothing');
+  assert.ok(!hit('A-07'), 'the task shares memory and operating');
+  assert.ok(r.findings.filter((f) => /^A-0[567]$/.test(f.ruleId)).every((f) => f.severity === 'minor'));
+  assert.ok(!r.findings.some((f) => /^A-0[567]$/.test(f.ruleId) && /^plan\[(5|11|17)\]/.test(f.path)), 'exam rows are not checked');
+  c.plan[0].activities = '';
+  assert.ok(!run(c).findings.some((f) => f.ruleId === 'A-06' && f.path === 'plan[0].activities'), 'a blank column is the plan columns\' finding');
+});
+
+test('rule 6: each lesson names at least one of the six LCUP core values', () => {
+  const c = F.good();
+  c.plan[0].values = 'Honesty, Respect';
+  c.plan[1].values = 'Respect and community-orientedness';
+  c.plan[2].values = 'Missionary Spirit';
+  c.plan[3].values = 'INTERIORITY';
+  c.plan[4].values = '';
+  const r = run(c);
+  assert.deepStrictEqual(r.findings.filter((f) => f.ruleId === 'C-05').map((f) => f.path), ['plan[0].values']);
+  assert.ok(ids(r).includes('T-16'), 'a blank cell is still the plan column rule\'s');
+  assert.strictEqual(standard.constants.coreValues.length, 6);
+});
+
+test('filler references ("test") do not count as references, and do not raise the score', () => {
+  const real = [{ id: 'b1', t: 'Rosen, K. (2019). Discrete Mathematics and Its Applications (8th ed.). McGraw-Hill.' }];
+  const base = F.good();
+  base.refs = { books: { na: false, items: real.slice() }, program: { na: true, items: [] }, online: { na: true, items: [] }, electronics: { na: true, items: [] } };
+  const padded = JSON.parse(JSON.stringify(base));
+  padded.refs.books.items.push({ id: 'b2', t: 'test' }, { id: 'b3', t: 'test' });
+  const a = run(base);
+  const b = run(padded);
+  assert.ok(ids(a).includes('C-04'), 'one real reference is fewer than 3');
+  assert.ok(ids(b).includes('C-04'), 'two "test" lines do not make it 3');
+  assert.deepStrictEqual(b.findings.filter((f) => f.ruleId === 'R-04').map((f) => f.path), ['refs.books.items[1]', 'refs.books.items[2]']);
+  assert.ok(area(b, 'reference_currency').score <= area(a, 'reference_currency').score, 'padding never helps');
+  assert.ok(area(b, 'completeness').score <= area(a, 'completeness').score);
+  const none = F.good();
+  none.refs.books.items = [{ id: 'x', t: 'test' }];
+  none.refs.program = { na: true, items: [] };
+  none.refs.online = { na: true, items: [] };
+  assert.ok(ids(run(none)).includes('R-01'), 'only filler means no references');
+});

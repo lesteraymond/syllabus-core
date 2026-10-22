@@ -45,7 +45,7 @@ export default function CommentsThread({ syllabusId, canWrite, viewerId, onLoade
         {comments === null && <p className="cmp-small">{translateUI("ui.loading_comments_a1458a")}</p>}
         {comments && comments.length === 0 && <p className="cmp-small">{translateUI("ui.no_comments_yet_207b24")}</p>}
         {(comments || []).map((c) => (
-          <article className={'ct-item ' + c.type} key={c.id}>
+          <article className={'ct-item' + (c.type === 'comment' ? '' : ' ' + c.type)} key={c.id}>
             <header><strong>{c.author.name || translateUI("ui.reviewer_a74f16")}</strong>{c.type !== 'comment' && <span className="ct-type">{tr(commentTypeLabel(c.type))}</span>}{lastRead !== null && c.id > lastRead && c.author.id !== viewerId && <span className="ct-new">{translateUI("ui.new_6403f2")}</span>}<small>{when(c.createdAt)}</small></header>
             <p>{c.text}</p>
           </article>

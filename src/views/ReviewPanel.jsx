@@ -8,6 +8,9 @@ import CommentsThread from './CommentsThread';
 import { DECISIONS, canDecide, checkDecision } from '../lib/reviewView';
 import { STATUS_LABELS } from '../lib/syllabusRules';
 
+// Each decision is drawn with the system button that already says what it is: success (go ahead), outline (send back), danger (close).
+const ACT_BUTTON = { approve: 'success', revise: 'outline', reject: 'danger' };
+
 // The reviewer's panel beside an open syllabus: decide (approve, return for revision, reject), comment, and message the faculty member.
 // Decisions go through the same handleStatus the page always used, and each asks for a second click to confirm. Returning for revision
 // and rejecting need a reason (the server insists on it too). When a decision goes through, `onDecided` closes the window.
@@ -73,9 +76,9 @@ export default function ReviewPanel({ syllabus, user, messages, handleStatus, se
           {!confirming && (
             <div className="rp-actions">
               {Object.entries(DECISIONS).map(([key, d]) => (
-                <button type="button" key={key} className={'act act-' + key} disabled={!decidable || busy} onClick={() => ask(key)}>
+                <button type="button" key={key} className={'btn act act-' + key + ' ' + ACT_BUTTON[key]} disabled={!decidable || busy} onClick={() => ask(key)}>
                   <Icon name={d.icon} size={24} />
-                  <span><strong>{tr(d.label)}</strong><small>{tr(d.hint)}</small></span>
+                  <span><strong>{tr(d.label)}</strong></span>
                 </button>
               ))}
             </div>

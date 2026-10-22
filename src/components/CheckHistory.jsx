@@ -1,4 +1,5 @@
 import StableButton from './StableButton';
+import DatePicker from './DatePicker';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useId, useState } from 'react';
@@ -39,9 +40,9 @@ export default function CheckHistory({ runs, loading = false, error = '', openin
         </div>
         <form className="hist-filter" onSubmit={apply} aria-label={translateUI("ui.filter_the_history_by_date_771c36")}>
           <label htmlFor={uid + '-from'}>{translateUI("ui.from_3f6605")}</label>
-          <input id={uid + '-from'} type="date" value={draft.from} max={draft.to || undefined} onChange={(e) => setDraft({ ...draft, from: e.target.value })} />
+          <DatePicker id={uid + '-from'} type="date" value={draft.from} max={draft.to || undefined} onChange={(e) => setDraft({ ...draft, from: e.target.value })} />
           <label htmlFor={uid + '-to'}>{translateUI("ui.to_ae79ea")}</label>
-          <input id={uid + '-to'} type="date" value={draft.to} min={draft.from || undefined} onChange={(e) => setDraft({ ...draft, to: e.target.value })} />
+          <DatePicker id={uid + '-to'} type="date" value={draft.to} min={draft.from || undefined} onChange={(e) => setDraft({ ...draft, to: e.target.value })} />
           <StableButton type="submit" className="btn primary" disabled={!valid || !changed}>{translateUI("ui.apply_cfea41")}</StableButton>
           {active && <StableButton type="button" className="btn outline" onClick={onReset}>{translateUI("ui.reset_44c57a")}</StableButton>}
           {!valid && <span className="hist-filter-error" role="alert">{translateUI("ui.the_from_date_is_after_the_to_date_2c84ad")}</span>}

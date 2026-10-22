@@ -1018,3 +1018,282 @@ Each program has its own expected graduate attributes (EGAs) and program outcome
 - The deadline dialog's "Remind everyone pending" button is now called **Reminder** (**Paalala** in Tagalog). It still reminds only the faculty on that one subject's deadline who have not submitted.
 - Clicking Reminder, or the bell next to a faculty member, now shows a toast: "Reminder sent to Fay Cruz.", "Reminder sent to 3 faculty.", or why nobody was reminded (already reminded recently, already submitted, or nobody needs one). The toast shows above the open dialog, in English and Tagalog.
 - Validation: toast wording rules covered by tests, and the production build passes.
+
+---
+
+### v1.43.0 — Review & Approval Matches the System's Cards, Buttons and Page Action
+**Date:** October 16, 2026
+
+**Board cards:**
+- A card is now the same tile as the dashboard stat cards: white surface, 1px line, 12px radius, the shared shadow, a 35px avatar chip on the left, the program as an uppercase muted label in the brand blue, the subject as a bold black title, and the faculty member as a small muted note. The program colour stays on the chip. The coloured top bar, the dashed divider, the 18px radius and the avatar ring are gone.
+- Hover deepens the shadow, as on every other card; the corner arrow is always faintly visible and fully visible on hover or keyboard focus.
+
+**Review window and decision panel:**
+- The window header no longer has the coloured strip along its top or a coloured ring around the avatar; the title is black.
+- Approve, Return for revision and Reject use the system buttons (`btn success`, `btn outline`, `btn danger`) with their icon, label and one-line hint. The second-click confirmation is a quiet white sheet with an accent edge in the decision's colour; Confirm is its only filled control.
+- The pending count in the page header is a stat-style tile (bold number, muted uppercase label) instead of a gold badge.
+
+**Not changed:** the component props and handlers, the review flow, and the `--rv-*` decision colours that a test checks for contrast. The cards' hover lift has never moved the card since this restyle: the fade-in animation's fill mode overrides the hover `transform`. It was left as it is.
+
+**Validation and deployment:**
+- Build and tests pass. No visual browser verification by eye was performed.
+
+---
+
+### v1.44.0 — Themed Date Picker
+**Date:** October 16, 2026
+
+- The browser's own calendar, which cannot be styled, is replaced by a `DatePicker` built like the custom dropdown: the same props and the same `event.target.value` string as `<input type="date">` and `datetime-local`, so call sites changed by one tag. It is used for the deadline dialog's due date and time and "opens on" date, and for Check History's From and To dates.
+- A month grid of six Sunday-first weeks (the panel never changes height), previous and next month, today ringed and the chosen day filled, days outside `min` and `max` disabled, Today and Clear buttons, and a time field with a Done button on the date-and-time version. A day chosen before any time uses 17:00. "Today" is the Philippine day whatever the computer's zone is.
+- Keyboard: arrows, Home, End, Page Up and Page Down move between days; Esc closes only the calendar, not the dialog behind it; Tab stays inside it. A required field still blocks form submission. Touch screens keep the native control.
+- The calendar rules (reading and writing the values, the month grid, the keys, the limits, Philippine today) are in `src/lib/datePickerModel.js` with 8 tests. English and Tagalog labels are in `src/i18n/extra.js`. The field exposes `data-type` and `data-value` so the server-rendered deadline dialog test still sees the type and value.
+
+**Validation and deployment:**
+- Build and tests pass. The calendar popup was not opened in a browser by eye.
+
+---
+
+### v1.45.0 — One Syllabus per Subject per Faculty Member
+**Date:** October 16, 2026
+
+**The rule:**
+- A faculty member can have only one syllabus on a subject, in any state (draft, submitted, under review, returned for revision, approved or rejected); a second draft on the same subject is refused. A subject is assigned to one faculty member, so a syllabus written by someone else does not count: a subject an administrator reassigns is free for its new faculty member.
+- The server enforces it where a draft takes its subject (`PUT /api/syllabi/:id/content`, inside the save's transaction after the subject row is locked, so two tabs cannot both claim it) and in the legacy `POST /api/syllabi` (it resolves the course code to the catalog subject, checks it and now stores `course_id`). A refusal is 409 with code `syllabus_exists`, `existingId` and `existingStatus` (the assignment screen's `subject_taken` keeps its own meaning). New `server/lib/subjectLock.js`.
+- Drafts that already share a subject are left alone: the rule applies when a subject is chosen, not to existing rows.
+
+**Syllabus Builder:**
+- The subject list marks subjects the person already has a syllabus on: greyed out with "you already have a syllabus (Approved)" or "you already have a draft" (`GET /api/courses?taken=1&except=<syllabus id>`; the subject being edited is never greyed by itself).
+- If the server still refuses a pick, the subject is taken off the form and a toast explains it with an "Open My Syllabi" button.
+- "Save now" is now **Save as draft** (Tagalog "I-save bilang draft"): it saves, shows "Draft saved. You can continue it from My Syllabi.", and opens My Syllabi, where the draft already appears. With no subject chosen it stays and asks for one; it is disabled when the syllabus cannot be edited.
+
+**Rejected syllabi can be edited:**
+- A syllabus the administrator rejects is edited and submitted again like one returned for revision, because a rejected syllabus can no longer be replaced by a new draft on its subject. A resubmission must change something and say what changed. New shared rule `isReturned` on the server (`server/lib/syllabusRules.js`) and client (`src/lib/syllabusRules.js`); the builder banner reads "Rejected: edit and submit again."; Reject's hint is now "Sent back; it can still be edited". Approved remains final.
+
+**My Syllabi:**
+- A draft card no longer shows the subject's "Submitted" deadline chip. That chip is worked out for the subject from any non-draft version the faculty member ever sent for it, so a new draft beside an earlier submission carried it next to its own Draft badge. `deadlineForCard` leaves Submitted and Submitted late off a draft card; the date-based states still show.
+
+**Validation and deployment:**
+- 590 passing domain/API/helper tests at this commit, including new tests for the rule, the messages, the subject list marking, the legacy route and the rejected state. The new SQL was also run read-only against the development database.
+- No visual browser verification was performed.
+
+---
+
+### v1.46.0 — Archive and Restore When a Subject Is Reassigned
+**Date:** October 16, 2026
+
+- When an administrator gives a subject to a faculty member, the syllabi other faculty members wrote for it are archived in the same save: they keep their owner (the former faculty member's name stays on them), versions and logs, become read-only, and leave every working list (Review & Approval, the AI Checker, the dashboards, the Repository). Administrators' own syllabi are not archived. It happens when a subject is given, not when it is taken away, so removing a subject from someone and adding it back loses nothing.
+- When a subject is given back to a faculty member whose syllabus was archived, exactly one of their archived syllabi on it returns to active: a submitted-or-later one before a draft, then the most recently changed. The rest stay archived as history, and a subject on which the person already has an active syllabus restores nothing. The new holder's syllabus is archived in the same save, so a subject always has one active syllabus.
+- An archived syllabus cannot be edited or decided on (409), does not count toward the one-syllabus rule, and carries no deadline chip.
+- `GET /api/syllabi` leaves archived syllabi out and adds `archived` to each row; `?archived=1` returns only those. My Syllabi and the Repository get a "Show archived (n)" checkbox; archived cards are tagged Archived and offer History only. A former faculty member sees all of theirs; an administrator sees archived approved syllabi in the Repository.
+- **Migration:** new nullable column `syllabi.archived_at`. Run from `server/`: `npm run migrate-archive` (idempotent; fresh installs get it from `schema.sql`). Run it before restarting the API, because every syllabus list reads the column.
+- Not built: no notification to the former faculty member; an archived syllabus that was not approved is visible only to its former owner.
+
+**Validation and deployment:**
+- Tests for the archive and restore queries, the choice of which syllabus returns, and a full round trip (A holds it, B is given it, it returns to A). Run against the development database inside a rolled-back transaction, giving FM 202 to another faculty member archived four syllabi and left the administrator's untouched; giving it back restored one.
+- No visual browser verification was performed.
+
+---
+
+### v1.47.0 — Stylesheet Cleanup
+**Date:** October 16, 2026
+
+- `src/styles.css` shrank from 7,411 to 6,007 lines (188 KB to 157 KB): 1,020 declarations and 291 emptied rules that a later rule with the identical selector and at-rule context fully overrides are removed, most of them from a superseded copy of the Review & Approval styles. `!important` declarations and fallback pairs inside one rule were left alone, and `theme.css` had nothing to remove.
+- The cascade is unchanged: all 4,572 selector-and-property winners and their order are identical, and a headless-browser comparison of the computed style of 1,295 elements at 1400px and 600px wide shows no difference.
+- The file was not split by feature: rules for one feature are scattered across layers, and reordering them can change which rule wins.
+
+**Validation and deployment:**
+- Build and tests pass.
+
+---
+
+### v1.48.0 — Tailwind CSS: Setup, Review Board Pilot and styles.css in @apply
+**Date:** October 16, 2026
+
+**Setup (no visual change):**
+- Added `tailwindcss` and `@tailwindcss/vite` 4.3.3 (exact versions) and pinned `vite` 8.3.4, `react` and `react-dom` 19.3.0 and `@vitejs/plugin-react` 6.1.2, which were `latest`.
+- `src/main.jsx` loads one entry, `src/tailwind.css`: layer order `theme < base < legacy < components < utilities`, with `styles.css` and `theme.css` in the `legacy` layer, in the same order as before. No Tailwind reset (Preflight) and no Tailwind default theme are loaded; `src/tw-theme.css` maps a small set of utilities onto the existing design tokens, and every Tailwind class is prefixed `tw:` so none can collide with an existing class name or variable. With no `tw:` class in the code the bundle contains no Tailwind CSS.
+- Tailwind's compiler adds an `@supports (color: color-mix(in lab, red, red))` fallback around each existing `color-mix()` declaration (10 in the built CSS). Browsers that support `color-mix` are unaffected.
+
+**Pilot — the Review & Approval cards in utilities:**
+- `ReviewBoard`'s cards use `tw:` utilities in place of the `.rb-card`, `.rb-subject`, `.rb-who`, `.rb-name` and `.rb-go` rules (`.rb-pill` stays, the review window uses it). The program colour still arrives as `--tone` and `--tone-soft` from `toneStyle()`.
+- Compared in a real browser against the original (server-rendered, 1400px and 600px wide, with and without reduced motion, at rest, hovered and keyboard-focused): identical in every element's box and computed style over 344 checks; only a dead `flex-direction` on a grid container was ignored.
+- It cost more than it saved: 91 classes, 46 of them arbitrary values; the markup for six cards grew from 1.1 KB to 1.9 KB gzipped and the CSS by about 1 KB gzipped. Converting bespoke components to utilities in their markup is therefore not planned; Tailwind is for new components and for components that are being rewritten anyway.
+
+**Migration of `styles.css` to `@apply`:**
+- Each rule keeps its class name, selector and place in the file; its declarations become `@apply` statements: a real utility when one emits exactly that declaration (`tw:grid`), otherwise an arbitrary property with the identical text (`tw:[padding:14px]`). 1,349 of 1,429 rules and 4,308 declarations were converted (1,186 as real utilities, 3,122 as arbitrary properties). Custom properties, `!important`, vendor prefixes, quoted and `url()` values, fallback pairs, the six rules that use `color-mix()`, the printed syllabus form (`.paper`) and the base element rules stay plain. `theme.css` is not converted. No markup changed; the file went from 6,006 to 4,201 lines and the bundle stayed 149 KB.
+- Two properties of one family (`border` and `border-color`, `padding` and `padding-right`, `font` and `line-height`) never share an `@apply`, because Tailwind reorders the utilities inside one statement; no variants (`hover:`, `md:`) are used, because `hover:` adds a `(hover: hover)` media wrapper.
+- Proven equivalent: compiled by Tailwind, all 1,662 rules match in selector, context and position, 5,341 declarations match in value and 614 interacting pairs keep their order; the two builds give identical computed styles for 1,289 elements at 1400px and 600px wide.
+- New tooling: `scripts/css-to-apply.mjs` (deterministic and idempotent), `scripts/css-equivalence.mjs` and `scripts/css-browser-compare.mjs`, as `npm run css:to-apply`, `css:equivalence` and `css:browser-compare`; `docs/css-conventions.md` explains how the file is written and how to change it. A test that read `styles.css` as text now reads the compiled CSS through `src/lib/compiledCss.js`, and the i18n preview page loads the stylesheet through `tailwind.css`.
+
+**Validation and deployment:**
+- 590 passing domain/API/helper tests at these commits. The dev server was started and compiles the converted stylesheet.
+- No visual browser verification by eye was performed. Restart a running dev server after pulling.
+
+---
+
+### v1.49.0 — No Draft Until a Subject Is Chosen
+**Date:** October 16, 2026
+
+- A new syllabus no longer gets a row on the server until it has a subject, so opening "New Syllabus" and leaving, or picking only a program, leaves no empty draft in My Syllabi. What was typed before the subject is kept in the form and goes up with the first save.
+- If that first save is refused because the person already has a syllabus on the subject, the row it just created is deleted again. A draft that already existed, or any other failure, keeps its row, so a retry reuses it instead of creating a second one.
+- The one pass of the autosave moved out of the hook into `src/lib/draftSave.js` so its rules are tested on their own (10 tests); `useDraft.js` keeps the timing and the screen state.
+- Existing subject-less drafts in a database (four near-empty ones in the development database) are not removed by this change.
+
+**Validation and deployment:**
+- Current automated verification: 676 passing tests (610 domain/API/helper checks, 22 localization/preference checks and 44 rendered UI checks); the production build passes.
+- No visual browser verification by eye was performed for the changes in v1.43.0 to v1.49.0; the layout comparisons above were made with a headless browser. Before using v1.46.0 on an existing database, run from `server/`: `npm run migrate-archive`, then restart the API.
+
+---
+
+### v1.50.0 — Learning Plan: Full Column Headings and Text Aligned Under Them
+**Date:** October 16, 2026
+
+- The Learning Plan step's column headings were shortened versions of the institutional form's, in sentence case ("Learning activities", "Values to integrate"). They now read as the form does, with every word capitalised: **Intended Learning Outcomes (ILO)**, **Course Contents**, **Suggested Learning Activities**, **Suggested Assessment Tasks** and **Expected Value/s To Be Integrated**, in English and Tagalog (new `plan.heading.*` keys). The first column stays "Week", because it holds the week number; the printed form prints "SCHEDULE" and "Week N".
+- The wording has one source, `PLAN_HEADINGS` in `src/lib/syllabusModel.js`. The printed form builds its capital-letter headings from it (its header row is unchanged), and a test keeps the English translations equal to it.
+- The text in every cell started 8px to the right of its column heading (7px in the Formatted view), because each cell is an input with its own 1px border and 7px of padding. The field is now pulled back by that inset, so the text starts under its heading in every column and row, in the edit and Formatted views, at 1000px and 1400px wide. The ILO lesson rows already lined up and are untouched.
+- Tagalog headings capitalise each word except the connectors "ng" and "sa".
+
+**Validation and deployment:**
+- 604 passing domain/API/helper tests at this commit, including four new tests (the printed headings, the English wording, the Tagalog translations and the alignment rule). The alignment was measured in a real browser: the distance from each heading's text to its cell's text went from 8px to 0 in every cell.
+- No visual browser verification by eye was performed on the live builder.
+
+---
+
+### v1.51.0 — Typed Text Keeps Its Line Breaks and Wraps in the Formatted View and the Finished Form
+**Date:** October 16, 2026
+
+- A line break typed into an ILO (or a course description paragraph) showed in the text box but collapsed into one run-on sentence in the Learning Plan's Formatted view and in the Review step's printed table, because that text was rendered as plain text. The other cells keep their lines because they go through the markup renderer.
+- A very long word ran out of its cell and across the next column (about 290px in a test, over the next column's text in the Formatted view and across the cell border in the printed form). The text box wraps only because browsers wrap textareas natively; table cells had no wrapping rule.
+- A `typed-text` class now marks text a person typed (the ILO in the Formatted view; the lesson and exam ILOs and the description paragraphs in the printed form) and keeps its line breaks (`white-space: pre-line`); long words break inside the printed form and the plan's cells (`overflow-wrap: anywhere`). The text stays literal, so asterisks and dashes typed in an ILO are not turned into bold or bullets. The reviewer's window uses the same printed form and is fixed too.
+- Not audited: other screens that show typed text outside the Learning Plan and the printed form.
+
+**Validation and deployment:**
+- 607 passing domain/API/helper tests at this commit, including three new tests (the wrapping and line-break rules in the compiled CSS, for the finished form and the Formatted view, and that the components mark typed text). Reproduced and checked in a real browser by typing a line break and a 100-character word into an ILO, pressing Formatted and opening the printed form: two lines and a wrapped word, with no content running past a cell.
+- No visual browser verification by eye was performed on the live builder.
+
+---
+
+### v1.52.0 — Responsive Layout for Phone, Tablet and Desktop
+**Date:** October 18, 2026
+
+**Navigation:**
+- Below 768px the left sidebar is replaced by a top bar (logo, "CITE" and the message, bell, avatar and Log out buttons) with an accordion card under it. The card shows the current page and a chevron; tapping it opens the full list of links in the sidebar's blue styling and pushes the content down. It starts closed, and closes on picking a page, on Esc and when the window grows past 768px. New `MobileNav` component; `App.jsx` owns its open state and shows either `Sidebar` or `MobileNav` (`useMediaQuery`), both fed by the same `nav` list, so menu items go to the same pages on every screen.
+- At 768px and wider the sidebar and topbar are unchanged.
+- The brand text in that top bar is "CITE" (new `ui.cite_brand_5b2e91` key, English and Tagalog); the desktop sidebar title uses the same key, so the brand reads "CITE" on every screen size (logo and CITE in the sidebar on desktop, in the top bar on phones).
+
+**Layout:**
+- `body { min-width: 1100px }` made phones and tablets lay the page out 1100px wide, so no responsive rule could apply. It is lifted below 1100px.
+- Dashboard cards size to their content below 1024px (they were cut off at fixed 320px and 250px rows) and stack to one column on phones. Stat cards, the activity feed and the time-usage card reflow.
+- Tables scroll sideways inside their card with a 640px minimum width. The syllabus table (`.syllabus-table`), the builder's ledgers and the form paper are excluded and keep their own layout.
+- Form grids, Reports, Analytics, the compliance summary and the builder's wizard (step list becomes a swipeable row on phones, course strip reflows) go to one or two columns. Modals become full-screen sheets on phones; confirm dialogs stay centred. The messages dropdown anchors to the full-width bar. Touch devices get 44px targets and 16px field text (no iOS zoom).
+- Dashboard stat cards no longer leave an empty gap on the right: below 1250px the row is a wrapping flex row, so a short last row (for example 3 + 2 cards, or 2 + 2 + 1 on a phone) stretches to the full width.
+- The same fix for the other card grids: an odd last card in the dashboard's lower row, My Syllabi, Compliance and the checker's picker now takes the whole row below 1250px (1024px for the picker) instead of leaving an empty half. The dashboard's lower row was still three columns at 1024-1250px and is now two.
+- All of it is in a new `src/responsive.css`, imported last in the legacy layer, so `styles.css` and `theme.css` are untouched and desktop rules do not change.
+
+**Login:**
+- The logo above the sign-in form is removed (the brand panel keeps its own logo on wide screens). The logo on the Forgot password, Change password, Student register and Student home screens is unchanged.
+- The "Welcome back" label, the "Sign in to SMS" heading and the line under it are centred on the sign-in form. It uses a new `login-card-signin` class on that form only, so Forgot password, Change password and Student register keep their alignment.
+- The sign-in heading reads "Sign in to Login" (new `ui.sign_in_to_login_7c41d8` key, English and Tagalog).
+- Forgot password: the logo and the "Forgot password" label are removed, and the line under the heading reads "Type your email address you were registered with." (new `ui.type_your_registered_email_address_4e92a6` key, English and Tagalog). The sent-confirmation state is unchanged.
+- Forgot password: the visible "Email" label above the field is removed. The field keeps an `aria-label` and its placeholder, so screen readers still announce it.
+- Forgot password: the line under the heading no longer has a bottom margin, so it sits closer to the email field (a new `login-card-forgot` class on that form only).
+- Forgot password: the grey placeholder text in the email field is removed; the field keeps its `aria-label`.
+- Sign-in form: the placeholder text in the username/email and password fields is removed; both keep their visible labels.
+- Top bar: the page heading ("Dashboard") next to the "Syllabus Management System" label is removed; `Topbar.jsx` no longer looks up the page title.
+- Top bar: the messages and notifications buttons use a soft grey for their icons (the same grey as the search box) instead of near-black, with a light blue tint on hover and keyboard focus. Only `.top-actions .icon-btn` is affected, so the icon buttons in tables and dialogs keep their colours.
+- Top bar: the Log out button has a sign-out icon before its label (new `signOut` entry in the `Icon` registry). The button still reserves room for the longest language's label, so it does not change width when the language switches.
+- Top bar: below 768px the Log out button shows only its icon (a 40px square like the message and bell buttons). The button has an `aria-label` at every size, so screen readers still announce "Log out".
+- The phone accordion menu now uses the desktop sidebar's own gradient (the `--side-top`, `--side-mid` and `--side-bottom` theme tokens) instead of its own hard-coded blues, so the two are the same colour and follow any theme change.
+- Between 1100px and 1280px the brand text was cut off by the large logo circle; the circle and spacing now shrink and the text wraps. Below 1100px the blue brand side is dropped and only the sign-in form shows (also Register, Forgot password and the first-login screens, which share the page). The brand banner's decorative circles no longer widen the phone page.
+
+**Validation and deployment:**
+- 683 passing automated tests (617 domain/API/helper checks, 22 localization/preference checks and 44 rendered UI checks); the localization audit and the production build pass. No new test file was added for the responsive layer.
+- Checked in a headless Edge browser, not by eye on a real device: all 12 admin pages and the 7 faculty pages at 360px (and the admin pages at 768px) with no horizontal overflow, live resizing while logged in, the accordion open and closed, the login at 360 to 1440px, and the Assignments and chat modals and the messages dropdown at 360px. Student Home and Change Password were not run live (no student account), the Program dialog did not open in the check, and the builder's paper view was deliberately left as is.
+- No server, API, route or database change.
+
+---
+
+### v1.53.0 — Time-of-Day Greeting, New Action Icons and Cleaner Comment Cards
+**Date:** October 18, 2026
+
+**Dashboard:**
+- The heading greets by the Manila time of day instead of "Welcome back": "Good morning, {name}!" (5:00-11:59), "Good afternoon, {name}!" (12:00-17:59) and "Good evening, {name}!" (18:00-4:59), with Tagalog versions. Without a name it reads "Good morning!" and so on. Six new `dashboard.good*` keys.
+- The period comes from two new pure functions in `src/lib/phTime.js` (`phHour`, `dayPeriod`), so it follows Philippine time whatever the viewer's computer clock says. The dashboard checks again every minute and changes at 12:00 and 18:00 while it stays open. `TypewriterText` is unchanged.
+- Time Usage card: the chart is 56px high (was 84px) and the gaps between its blocks are tighter, so the whole card fits without scrolling in the dashboard's fixed-height row. Nothing was removed from the card. Only the `.usage-*` rules in `theme.css` changed.
+
+**Icons:**
+- New `bin` (delete), `pencilSquare` (rename/edit) and `denied` (rejected) icons, drawn from `docs/icons/bin-svgrepo-com.svg`, `pencil-square-svgrepo-com.svg` and `denied-svgrepo-com.svg` in `customIcons.jsx` with `currentColor`, and registered in the `Icon` list in `ui.jsx`. The app still does not read the SVG files themselves. SVG Repo icons carry their own licences, so check these three allow use in this project.
+- The rename/edit and delete buttons in Program Management and Subject Actions, the delete-conversation button in the chat (it was a 🗑 emoji and now has an `aria-label`), and the delete buttons on outcome and plan rows in the new builder use the new icons. The unused Phosphor `Trash` icon and the builder's own trash path are removed.
+- The rename/edit and delete buttons use soft grey icons and a light border; Delete turns red only on hover and keyboard focus.
+- Recent Activity: approved entries use the Approved stat card's icon, returned-for-revision entries use the For Revision stat card's icon, rejected entries use `denied` and deleted entries use `bin`.
+- Review panel: the Approve, Return for revision and Reject decision buttons (and their confirmation line) use the `approved`, `revise` and `denied` icons.
+- The one-line hint under each decision button in the review panel is no longer shown (the confirmation sentence is unchanged).
+
+**Login and top bar:**
+- The sign-in screen's blue brand panel and the form are two equal columns (they were 1.15 : 0.85). The brand panel's padding is smaller and, below 1600px, its logo circle and heading shrink so "Management" is not cut off. `StudentHome`, which shares `.login-page`, is unchanged apart from the equal grid.
+- The Log out button is text only on normal screens. Its icon shows only below 768px, where the button is an icon-only square, as before. The label text is centred in its box.
+
+**My Syllabi:**
+- The delete button on each card was a 🗑 emoji and now uses the `bin` icon. In the old builder's reference rows the text ✎ and × are the `pencilSquare` and `bin` icons, with "Edit" and "Delete" labels from existing translations.
+- The Edit, History, Check in AI Checker and Delete buttons are soft white-grey at rest and take their colour only on hover and keyboard focus (blue for Edit, History and Check in AI Checker; red for Delete). New `syl-quiet` and `syl-delete` classes in `theme.css`, used only on those buttons; the Comments and Message buttons are unchanged.
+
+**Student registration:**
+- The registration form (`StudentRegister.jsx`) no longer shows the college logo or the "Student Registration" label above its "Create your account" heading. The logo on Change password and Student home, and the other `eyebrow` labels, are unchanged.
+
+**Review comments:**
+- A reviewer comment card (`CommentsThread`) no longer picks up the old comment list's `.comment` grid layout (a plain comment carried the class `comment`), which squeezed the name and date into a 34px column. A plain comment now has no type class.
+- The coloured left strip and the tinted backgrounds for revision, rejection and approval comments are removed: every comment is the same white card with a thin border. The name sits on the left, the date on the right, and the type and "New" chips next to the name, all vertically centred.
+
+**Validation and deployment:**
+- 684 passing automated tests (618 domain/API/helper checks, 22 localization/preference checks and 44 rendered UI checks); the localization audit and the production build pass. Updated assertions that pinned the old icon names, the old "Welcome back" heading and the red delete colour; added a test for the greeting's boundaries (4:59, 5:00, 11:59, 12:00, 17:59, 18:00 and a non-Manila clock).
+- `scripts/fill-it301-api.cjs` can sign in from `FILL_EMAIL` and `FILL_PASSWORD` (never printed or saved) and reports why a sign-in fails. It is a developer script, not part of the app.
+- Checked in a headless Chrome with sample data (icons, login at 1100-1920px, Time Usage in English and Filipino at four widths, top bar, activity feed). Not checked by eye on the live signed-in pages (review panel, comments, dashboard).
+- No server, API, route or database change.
+
+---
+
+### v1.54.0 — AI Checker, Student Role, Real Analytics, PDF Reports, Search and the Developer Rule Editor
+**Date:** October 22, 2026
+
+**AI Checker and compliance standard:**
+- The compliance check runs on the "Undergraduate Syllabus v7" standard (61 rules in `server/lib/compliance/standard-v4.json`: pass mark 79, six scored areas). The AI step judges whether the text means something (`meaning.js`, rules J-01 to J-05) and writes the recommendations. Providers: OpenRouter (default model `minimax/minimax-m3.1-flash:free`) and Gemini (`gemini-3.1-flash-lite`), chosen from the keys in `.env`; masked names and emails only leave the server. Verdicts are cached by text so an unchanged field keeps its score.
+- Each AI check is written to Recent Activity ("ran an AI check on ..., AI check score NN%").
+- The compliance dialog: the score ring counts up from 0, the five area bars fill smoothly, the priority chip is a small circle, and the row and week numbers in a recommendation are buttons that open the Learning Plan step and flash that row.
+- Administrators can read the standard: Settings, Institutional Standard, **View standard** (`GET /api/settings/standard`, admin only). It shows the pass mark, the bands, how the score works, the areas with their weights, all 61 rules (message, explanation, severity, points, a search box, total points) and a legend for the rule codes (T-, C-, P-, A-, H-, R-, J-), plus the values still waiting for the curriculum office.
+- Settings: the standard and the department are read-only (the standard always names the checker's own standard; the department is the College of Information Technology and Engineering). The academic year is the only editable value and is typed as two consecutive years (for example 2026-2027).
+
+**Developer rule editor (new, hidden):**
+- `http://localhost:3001/dev/rules` is a page of its own, not linked from the app, behind `DEV_EDITOR_PASSWORD` in `server/.env` (at least 8 characters; with none set the editor is off). A correct password opens it for 30 minutes; five wrong ones lock that address for ten minutes.
+- It edits the pass mark, score bands, area weights, eight numeric limits, and per rule the points, severity, message, explanation, numeric parameters and whether the rule counts. A save applies at once (no restart) and gives the standard a new version label (v7.1, v7.2, ...) so stored checks of older rules are never reused as current. "Reset to file" removes the edits. Every change is kept in a history (`standard_changes` table, created on first use and in `schema.sql`).
+- Edits live in the database (`app_settings` key `standard_overrides`) on top of the standard file: `server/lib/compliance/overrides.js` and `overridesStore.js`, route `server/routes/devRules.js`, page `server/views/rule-editor.html`. New rules and new kinds of check still need code.
+
+**Students and the COR scan:**
+- New **student** role: students register with a COR photo, wait for approval, and then see their enrolled subjects. A student can open every approved syllabus (not only those of their own subjects), read-only, from Syllabi.
+- The COR is read by an AI vision model instead of OCR (`server/lib/corAi.js`): it first decides whether the image is a COR, reads the fields, and the server checks them (ID format, BSIT program, subject codes). It retries a busy provider once and tries a second Gemini model. There is no silent fallback to OCR. `COR_READER=ocr` brings the Tesseract reader back for testing.
+- Sections no longer show "/TBA" (a printed "BSIT4B/TBA" is stored as "BSIT4B").
+
+**Dashboard and Analytics:**
+- Both are built from the stored compliance checks instead of sample numbers: average score, trend, score bands, scores by program (or by subject for faculty), quality by area, reference currency and the insights. Tooltips appear straight away, the donuts are clickable (the tooltip follows the colour you pick) and the average counts up.
+- The chart that showed program scores was titled "Submission Completion"; it is now "Average Compliance Score".
+- The actionable insights are buttons that take you to the AI Checker, Reviews or My Syllabi, and the subtitle says they come from the stored checks.
+
+**Reports (PDF):**
+- **Download report** on Analytics builds a PDF: summary, submission status, score bands, scores by area, scores by month, scores by program, the syllabi below the pass mark (code and title in separate columns), insights and signature lines, with the syllabus header (LCUP and Testmark logos, school year, College of Information Technology and Engineering).
+- The Faculty Compliance Report downloads a PDF (summary, per-faculty table, who is not compliant, each faculty member's syllabi). The Compliance page, the Reports card and the PDF share one counting rule (`src/lib/facultyCompliance.js`): a syllabus counts once it is submitted or approved; drafts and returned ones do not. 2 are required per faculty member.
+- **Historical Exports** lists the school terms that have checks (`GET /api/compliance/terms`) with a Download PDF button each; `GET /api/compliance?schoolYear=2026-2027&semester=1st Semester` returns each syllabus's newest check inside that term. Terms follow Philippine time: the school year starts in June (Summer June-July, 1st Semester August-December, 2nd Semester January-May). The status table of a past term is as of the date generated.
+- The PDF library (`jspdf`, `jspdf-autotable`) loads only when a download is pressed.
+
+**Search, navigation and the builder:**
+- The top bar search works: syllabi (code, title, faculty, program), and for administrators also faculty (opens Compliance filtered to that person) and subjects. Faculty search their own syllabi; students search the approved ones. Arrow keys, Enter and Escape work.
+- The page you are on survives a reload (kept per browser tab; the builder is not restored). Reloading or closing the tab in the Syllabus Builder asks first once anything was typed.
+- "Save and continue to AI Checker" / "Submit" explains why it cannot go yet (a note above the button, not only a short toast). On phones the seven steps are a swipeable row that keeps the open step in view.
+- Timestamps in the activity feed use a lighter separator dot.
+
+**Mobile:**
+- Student subjects and the student repository, the syllabus preview and the compliance dialog (floating windows, not full screen), Program & Subjects, the repository, check history (a date filter that fits) and the notifications list were reworked for phone widths. A horizontal line separates notifications.
+
+**Validation and deployment:**
+- 747 passing automated tests (681 domain/API/helper checks, 22 localization/preference checks and 44 rendered UI checks); the localization audit and the production build pass.
+- New tests: `analyticsView`, `reportView`, `facultyCompliance`, `searchView`, `terms`, `corAi`, `overrides`, the rule editor routes, and the settings and standard routes.
+- Not checked in a real browser or on a phone: the PDFs were drawn and viewed from Node, the rule editor page was checked against a stand-in DOM, and the layout changes were not reviewed on a device.
+- New dependencies: `jspdf`, `jspdf-autotable`. New environment variables: `DEV_EDITOR_PASSWORD`, `COR_READER`, `COR_AI_MODEL` (see `server/.env.example`). New table: `standard_changes` (created on first use; also in `schema.sql`).

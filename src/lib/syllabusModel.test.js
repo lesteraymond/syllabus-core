@@ -37,6 +37,19 @@ test('tags resolve to a code and a name', () => {
   assert.ok(M.tagInfo(d, 'po:3').ok);
 });
 
+test('syllabus-owned outcomes override the live catalog and survive selecting the same subject', () => {
+  const { d } = fixture();
+  d.outcomes = { vision: 'Own vision', mission: { lead: 'Own mission', items: ['Purpose'] }, egas: [{ no: 1, name: 'Own EGA', short: 'Own' }], pos: [{ no: 1, short: 'Own PO', text: 'Own statement', egas: [1] }] };
+  assert.strictEqual(M.institutionFor(d).vision, 'Own vision');
+  assert.strictEqual(M.tagInfo(d, 'ega:1').text, 'Own EGA');
+  assert.strictEqual(M.tagInfo(d, 'po:1').text, 'Own statement');
+  const again = applyCourse(d, catalogCourse(d.meta.courseId, d.meta.code, []));
+  assert.deepEqual(again.clos, d.clos);
+  assert.deepEqual(again.outcomes, d.outcomes);
+  d.outcomes.vision = '';
+  assert.ok(M.blockers(d, 'clos').some(issue => issue.source === 'form' && issue.text.includes('vision')));
+});
+
 test('tags that point at nothing resolve as not ok', () => {
   const { d } = fixture();
   assert.equal(M.tagInfo(d, 'clo:gone').ok, false);
@@ -253,7 +266,7 @@ test('partial stored content is filled with defaults so the builder never sees a
 
 const catalogCourse = (id, code, clos) => ({ id, code, title: 'Title of ' + code, program: { code: 'BSIT' }, clos });
 
-test('choosing a course loads its code, title, program and CLOs; faculty never type them', () => {
+test('choosing a course copies its starting values without sharing mutable data', () => {
   const e = emptyDraft(newId);
   const c = catalogCourse(5, 'IT 204', [{ id: 'c10', title: 'A', level: 'Introductory', statement: 's', egas: [1], pos: [1] }, { id: 'c11', title: 'B', level: 'Enabling', statement: 's', egas: [1], pos: [3] }]);
   const d = applyCourse(e, c);
@@ -265,11 +278,11 @@ test('choosing a course loads its code, title, program and CLOs; faculty never t
   assert.equal(c.clos[0].statement, 's', 'the catalog entry is not shared with the draft');
 });
 
-test('changing the course drops CLO tags of the old course but keeps EGA and PO tags', () => {
+test('changing the course drops all old outcome tags; selecting the same course preserves edits', () => {
   let d = applyCourse(emptyDraft(newId), catalogCourse(1, 'IT 204', [{ id: 'c1', title: 'A', level: 'Enabling', statement: 's', egas: [], pos: [] }]));
   d.plan[0].ilos[0].tags = ['clo:c1', 'ega:2', 'po:4'];
   const d2 = applyCourse(d, catalogCourse(2, 'IT 205', [{ id: 'c9', title: 'Z', level: 'Enabling', statement: 's', egas: [], pos: [] }]));
-  assert.deepEqual(d2.plan[0].ilos[0].tags, ['ega:2', 'po:4']);
+  assert.deepEqual(d2.plan[0].ilos[0].tags, []);
   const same = applyCourse(d, catalogCourse(1, 'IT 204', d.clos));
   assert.deepEqual(same.plan[0].ilos[0].tags, ['clo:c1', 'ega:2', 'po:4'], 're-applying the same course keeps its tags');
 });
@@ -282,23 +295,23 @@ test('when an administrator deletes a CLO, the tag stays and shows as unresolved
   assert.equal(synced.plan[0].ilos[1].tags.includes('clo:' + c2), true);
 });
 
-test('step 1 asks for a subject; step 2 tells faculty to ask their administrator for missing learning outcomes', () => {
+test('step 1 asks for a subject; step 2 directs the author to complete missing outcomes', () => {
   const e = emptyDraft(newId);
   e.meta.program = 'BSIT';
   assert.ok(M.issues(e, 'info').some((i) => /Choose a subject/.test(i.text)));
   assert.ok(M.issues(e, 'clos').some((i) => /Choose a subject in step 1/.test(i.text)));
   const noClos = applyCourse(e, catalogCourse(3, 'IT 999', []));
-  assert.ok(M.issues(noClos, 'clos').some((i) => /No learning outcomes have been added for IT 999 yet. Please ask your administrator/.test(i.text)));
+  assert.ok(M.issues(noClos, 'clos').some((i) => /Complete the CLO statements/.test(i.text) && i.source === 'form'));
   assert.ok(!M.issues(noClos, 'info').some((i) => /Choose a subject/.test(i.text)));
 });
 
-test('clearing the course removes code, title, CLOs and CLO tags only', () => {
+test('clearing the course removes its identity and all outcome mappings, preserving authored course details', () => {
   const { d } = fixture();
   d.plan[0].ilos[0].tags.push('po:2');
   const c = clearCourse(d);
   assert.deepEqual([c.meta.courseId, c.meta.code, c.meta.title, c.clos.length], [null, '', '', 0]);
   assert.ok(c.plan.every((r) => r.ilos.every((il) => il.tags.every((t) => !t.startsWith('clo:')))));
-  assert.ok(c.plan[0].ilos[0].tags.includes('po:2') && c.plan[0].ilos[1].tags.includes('ega:3'));
+  assert.ok(c.plan.every(r => r.ilos.every(il => il.tags.length === 0)));
   assert.equal(c.meta.prereq, d.meta.prereq, 'faculty-entered fields stay');
 });
 
@@ -399,7 +412,7 @@ test('step 2 blocks, as admin data, when the vision, mission, EGAs, POs or CLOs 
   const noPos = withCatalog(INSTITUTION, { BSIT: { name: 'BS IT', pos: [] } });
   assert.ok(noPos.blockers(d, 'clos').some((i) => /No program outcomes have been added for BSIT yet/.test(i.text) && i.source === 'admin'));
   const noClos = applyCourse(d, catalogCourse(3, 'IT 999', []));
-  assert.ok(M.blockers(noClos, 'clos').some((i) => /No learning outcomes have been added for IT 999 yet/.test(i.text) && i.source === 'admin'));
+  assert.ok(M.blockers(noClos, 'clos').some((i) => /Complete the CLO statements/.test(i.text) && i.source === 'form'));
 });
 
 test('step 2 blocks on a CLO with no statement or tags, or tagged with an EGA or PO that no longer exists', () => {

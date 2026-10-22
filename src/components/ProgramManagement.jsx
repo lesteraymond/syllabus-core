@@ -112,8 +112,8 @@ export default function ProgramManagement({ programs, onChanged, notify }) {
     {refreshError && <div className="form-error" role="alert">{refreshError}<StableButton type="button" className="btn outline" onClick={async () => { try { await onChanged(); setRefreshError(''); } catch (error) { setRefreshError(tr(error.message)); } }}>{t('ui.reload_cce715')}</StableButton></div>}
     <div className="table-wrap" ref={table}><table><thead><tr><th>{t('ui.program_code_18ae83')}</th><th>{t('ui.program_name_699413')}</th><th className="col-actions">{t('ui.actions_c3cd63')}</th></tr></thead><tbody>
       {programs.map(program => <tr key={program.id} data-catalog-row={'program-' + program.id}><td className="mono">{program.code}</td><td>{program.name}</td><td className="col-actions"><div className="program-management-actions">
-        <button className="icon-btn" type="button" title={t('programs.rename')} aria-label={t('programs.renameTitle', { code: program.code })} onClick={() => setSelected({ program, mode: 'rename' })}><Icon name="notePencil" size={18} weight="regular" /></button>
-        <button className="icon-btn is-delete" type="button" title={t('programs.delete')} aria-label={t('programs.deleteTitle', { code: program.code })} onClick={() => setSelected({ program, mode: 'delete' })}><Icon name="trash" size={18} weight="regular" /></button>
+        <button className="icon-btn" type="button" title={t('programs.rename')} aria-label={t('programs.renameTitle', { code: program.code })} onClick={() => setSelected({ program, mode: 'rename' })}><Icon name="pencilSquare" size={18} /></button>
+        <button className="icon-btn is-delete" type="button" title={t('programs.delete')} aria-label={t('programs.deleteTitle', { code: program.code })} onClick={() => setSelected({ program, mode: 'delete' })}><Icon name="bin" size={18} /></button>
       </div></td></tr>)}
       {!programs.length && <tr><td colSpan="3">{t('programs.empty')}</td></tr>}
     </tbody></table></div>

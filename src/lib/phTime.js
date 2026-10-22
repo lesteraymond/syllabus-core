@@ -35,12 +35,12 @@ export function phDateTime(value) {
   const time = phTime(value);
   return day && time ? day + ', ' + time : day;
 }
-// "14 Oct 2026 • 3:44 PM": the compact form the lists and notifications use.
+// "14 Oct 2026 · 3:44 PM": the compact form the lists and notifications use.
 export function phCompact(value) {
   const d = toDate(value);
   if (!d) return '';
   const p = Object.fromEntries(formatter({ day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }).formatToParts(d).map((x) => [x.type, x.value]));
-  return p.day + ' ' + p.month + ' ' + p.year + ' • ' + p.hour + ':' + p.minute + ' ' + String(p.dayPeriod || '').toUpperCase();
+  return p.day + ' ' + p.month + ' ' + p.year + ' · ' + p.hour + ':' + p.minute + ' ' + String(p.dayPeriod || '').toUpperCase();
 }
 
 // The start of a Philippine calendar day ('YYYY-MM-DD') as an instant, plus a number of days. null for a date that does not exist (2026-02-31).

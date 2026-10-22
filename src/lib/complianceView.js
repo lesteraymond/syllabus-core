@@ -39,7 +39,7 @@ export const ringAngle = (score) => Math.max(0, Math.min(100, Number(score) || 0
 // and a model that failed shows as unavailable (the recommendations are then the rules' own).
 export function basis(run) {
   if (!run) return { kind: 'none', label: '', note: '' };
-  if (run.aiStatus === 'pending') return { kind: 'pending', label: 'Rule-based check', note: 'The rule check is done. Recommendations are still being written.' };
+  if (run.aiStatus === 'pending') return { kind: 'pending', label: 'Provisional score', note: 'The rule check is done. The score can still change when the AI has checked the fields, and the recommendations are still being written.' };
   if (run.aiStatus === 'failed') return { kind: 'unavailable', label: 'AI unavailable', note: 'AI suggestions are not available right now, so these recommendations come from the rules.' };
   if (run.aiStatus === 'ok') return { kind: 'ai', label: 'AI-assisted check', note: '' };
   return { kind: 'rule', label: 'Rule-based check', note: '' };

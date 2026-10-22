@@ -9,6 +9,7 @@ const { LEVELS, cloKey, parseCloKey, loadCourse, loadClos } = require('../lib/co
 const { isStale, STALE_MESSAGE } = require('../lib/programEgas');
 const { createProgram, PROGRAM_CODE } = require('../lib/programs');
 const { catalogGaps } = require('../lib/catalogReady');
+const { takenBySubject } = require('../lib/subjectLock');
 const router = express.Router();
 
 const parseId = (raw) => {
@@ -51,6 +52,14 @@ router.get('/', requireAuth, async (req, res) => {
           programCode: r.program_code, subjectCode: r.code,
         });
       });
+    }
+    // The builder asks (?taken=1) which subjects this person already has a syllabus on, so it can grey them out instead of failing after the pick.
+    // ?except= is the syllabus being edited: its own subject is not "taken" by itself.
+    if (req.query.taken === '1' && list.length) {
+      const except = Number(req.query.except) > 0 ? Number(req.query.except) : 0;
+      const [held] = await req.app.locals.db.query('SELECT syllabus_id, course_id, user_id, status FROM syllabi WHERE course_id IN (?) AND syllabus_id <> ? AND user_id = ? AND archived_at IS NULL', [list.map((c) => c.id), except, req.session.user.id]);
+      const taken = takenBySubject(held, req.session.user);
+      list.forEach((c) => { if (taken.has(c.id)) c.taken = taken.get(c.id); });
     }
     res.json(list);
   } catch (err) { sendError(res, err); }

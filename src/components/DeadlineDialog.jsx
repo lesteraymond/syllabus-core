@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import CatalogModalPortal from './CatalogModalPortal';
 import StableButton from './StableButton';
 import Select from './Select';
+import DatePicker from './DatePicker';
 import { Icon } from './ui';
 import { useModalLayer } from './useModalLayer';
 import { useActionExit } from '../lib/catalogMotion';
@@ -172,7 +173,7 @@ export function DeadlineDialog({ subject, deadlines, onClose, onChanged, onRemin
           </label>
         </div>
         <label className="field"><span>{t('deadline.dueAt')}</span>
-          <input type="datetime-local" value={form.dueAt} required disabled={busy} onChange={(e) => change('dueAt', e.target.value)} />
+          <DatePicker type="datetime-local" value={form.dueAt} required disabled={busy} onChange={(e) => change('dueAt', e.target.value)} />
         </label>
         <label className="field"><span>{t('deadline.instructions')}</span>
           <textarea rows={3} maxLength={1000} value={form.instructions} disabled={busy} onChange={(e) => change('instructions', e.target.value)} />
@@ -180,7 +181,7 @@ export function DeadlineDialog({ subject, deadlines, onClose, onChanged, onRemin
         <details className="dl-advanced">
           <summary>{t('deadline.advanced')}</summary>
           <label className="field"><span>{t('deadline.opensAt')}</span>
-            <input type="date" value={form.opensAt} disabled={busy} onChange={(e) => change('opensAt', e.target.value)} />
+            <DatePicker type="date" value={form.opensAt} disabled={busy} onChange={(e) => change('opensAt', e.target.value)} />
             <small className="hint">{t('deadline.opensHint')}</small>
           </label>
         </details>

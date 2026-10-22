@@ -209,9 +209,13 @@ export const CHECKS = {
   referenceAge(X, p) {
     const list = [];
     X.K.refGroups.forEach((g) => arr(obj(obj(X.c.refs)[g.key]).items).forEach((x, k) => { if (!blank(obj(x).t)) list.push({ g: g.key, k, t: text(obj(x).t) }); }));
-    if (p.mode === 'count') return [item(list.length >= p.min, 'refs', { have: list.length, need: p.min }, { have: list.length, need: p.min })];
-    if (p.mode === 'any') return [item(list.length > 0, 'refs')];
     const yearOf = (t) => { const m = t.match(/\b(19|20)\d{2}\b/); return m ? +m[0] : null; };
+    // Only an entry that reads like a citation counts: long enough, several words, and a year or a link. "test" does not.
+    const longEnough = (t) => t.trim().length >= X.K.minReferenceChars && words(t) >= X.K.minReferenceWords;
+    const real = list.filter((r) => longEnough(r.t) && (yearOf(r.t) !== null || /https?:\/\//i.test(r.t)));
+    if (p.mode === 'count') return [item(real.length >= p.min, 'refs', { have: real.length, need: p.min }, { have: real.length, need: p.min })];
+    if (p.mode === 'any') return [item(real.length > 0, 'refs')];
+    if (p.mode === 'citation') return list.map((r) => item(longEnough(r.t), 'refs.' + r.g + '.items[' + r.k + ']', { text: clip(r.t, 60) }, { reference: clip(r.t, 120) }));
     if (p.mode === 'dated') return list.map((r) => item(yearOf(r.t) !== null, 'refs.' + r.g + '.items[' + r.k + ']', { text: clip(r.t, 60) }, { reference: clip(r.t, 120) }));
     if (X.year === null) return [];
     const limit = p.maxAgeYears || X.K.referenceMaxAgeYears;
@@ -250,6 +254,79 @@ export const CHECKS = {
       const ok = p.requireColumn ? rows.some(({ r }) => !blank(r[p.requireColumn])) : rows.length > 0;
       return item(ok, 'clos[' + i + ']', { n: i + 1 });
     });
+  },
+
+  // The vision, mission and EGAs a syllabus shows are the LCUP's, word for word: spacing, capital letters, dashes and the ending
+  // punctuation of a line are ignored. It reads what the syllabus is shown with (its own outcomes, else its stored copy once
+  // submitted, else the live catalog) and is skipped when none of those is available.
+  equalsInstitution(X, p) {
+    const K = X.K.institution;
+    const own = X.c.outcomes && typeof X.c.outcomes === 'object' && !Array.isArray(X.c.outcomes) ? X.c.outcomes : null;
+    const from = X.snapshot || X.live;
+    if (!own && !from) return [];
+    const inst = own || obj(obj(from).institution);
+    const egas = own ? own.egas : obj(obj(from).program).egas;
+    const norm = (s) => text(s).toLowerCase().replace(/[‐-―]/g, '-').replace(/\s*-\s*/g, '-').replace(/\s+/g, ' ').trim()
+      .replace(/[\s;.,:]+$/, '').replace(/\s+and$/, '').replace(/[\s;.,:]+$/, '');
+    if (p.field === 'vision') {
+      return [item(norm(inst.vision) === norm(K.vision), 'outcomes.vision', {}, { found: clip(inst.vision, 160) })];
+    }
+    if (p.field === 'mission') {
+      const m = obj(inst.mission);
+      const want = [K.mission.lead].concat(K.mission.items);
+      const have = [m.lead].concat(arr(m.items));
+      const hits = want.filter((w, k) => norm(w) === norm(have[k])).length;
+      return [item(hits / Math.max(want.length, have.length), 'outcomes.mission', {}, { expected: want.length, matching: hits })];
+    }
+    return K.egas.map((k) => {
+      const found = arr(egas).find((e) => Number(obj(e).no) === k.no);
+      return item(!!found && norm(obj(found).name) === norm(k.name), 'outcomes.egas.' + k.no, { no: k.no }, { found: found ? clip(obj(found).name, 100) : '' });
+    });
+  },
+
+  // Every ILO sits under a CLO that builds a graduate attribute (or is tagged with an EGA itself). An ILO with no CLO tag is T-13's.
+  iloEgaChain(X) {
+    const out = [];
+    X.lessons.forEach(({ r, i }) => arr(r.ilos).forEach((il0, j) => {
+      const il = obj(il0);
+      const ids = iloClos(il);
+      if (blank(il.text) || !ids.length) return;
+      const ownEga = arr(il.tags).some((t) => parseTag(t).kind === 'ega');
+      const viaClo = ids.some((id) => arr(obj(X.clos.find((k) => String(obj(k).id) === id)).egas).length > 0);
+      out.push(item(ownEga || viaClo, 'plan[' + i + '].ilos[' + j + ']', { where: weekLabel(r) + ', ILO' + (j + 1) }));
+    }));
+    return out;
+  },
+
+  // A rough, deterministic test that a lesson's content, activities or assessment task talk about its ILO: they share at least one
+  // meaningful word (the first letters of each word, so "algorithm" and "algorithms" match). Activities and tasks may also use the
+  // lesson's own topic. A blank column is A-01's finding, not this one.
+  iloAlignment(X, p) {
+    const A = X.K.alignment;
+    const stop = new Set(A.stopwords);
+    const stems = (s) => new Set(text(s).toLowerCase().split(/[^a-z0-9]+/).filter((w) => w.length >= A.minWordLength && !stop.has(w)).map((w) => w.slice(0, A.stemLength)));
+    const out = [];
+    X.lessons.forEach(({ r, i }) => {
+      const ilo = arr(r.ilos).map((il) => text(obj(il).text)).join(' ');
+      if (blank(ilo) || blank(r[p.column])) return;
+      const want = stems(ilo);
+      if (p.column !== 'contents') stems(r.contents).forEach((s) => want.add(s));
+      out.push(item([...stems(r[p.column])].some((s) => want.has(s)), 'plan[' + i + '].' + p.column, { where: weekLabel(r) }, { column: p.column }));
+    });
+    return out;
+  },
+
+  // Each lesson's expected values name at least one of the six LCUP core values. A blank cell is the plan columns' finding.
+  coreValues(X) {
+    const res = X.K.coreValues.map((v) => new RegExp(v.pattern, 'i'));
+    return X.lessons.filter(({ r }) => !blank(r.values)).map(({ r, i }) => item(res.some((re) => re.test(text(r.values))), 'plan[' + i + '].values', { where: weekLabel(r) }));
+  },
+
+  // The AI's verdict on whether a field means something (see meaning.js): one item per field it looked at, failed when it said the
+  // field is not meaningful. Without verdicts (no AI configured, or it failed) the rule does not apply and the scores are the rules' own.
+  aiJudged(X, p) {
+    return arr(X.ctx.judged).map(obj).filter((e) => e.kind === p.kind && typeof e.path === 'string')
+      .map((e) => item(e.ok === true, e.path, { what: text(e.what), reason: clip(e.reason, 120) || 'no reason given' }, { reason: clip(e.reason, 160) }));
   },
 
   examRowsPerTerm(X) {
@@ -292,7 +369,7 @@ export function evaluate(content, standard, ctx = {}) {
   const snapshot = c.catalog && typeof c.catalog === 'object' ? c.catalog : null;
   const live = ctx.catalog && typeof ctx.catalog === 'object' ? ctx.catalog : null;
   // Tags resolve against what the syllabus is shown with: its stored copy once submitted, otherwise the live catalog.
-  const prog = snapshot && snapshot.program ? snapshot.program : (live && live.program ? live.program : null);
+  const prog = c.outcomes || (snapshot && snapshot.program ? snapshot.program : (live && live.program ? live.program : null));
   const poList = prog && Array.isArray(prog.pos) ? prog.pos : null;
   const egaList = prog && Array.isArray(prog.egas) ? prog.egas : null;
 

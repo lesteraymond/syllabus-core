@@ -1,7 +1,7 @@
 {
   "id": "undergraduate-syllabus",
-  "version": "v4",
-  "title": "Undergraduate Syllabus v4",
+  "version": "v7",
+  "title": "Undergraduate Syllabus v7",
   "form": "PRE-VPAA FO 001 (011)",
   "source": "Derived from the finished IT 204 Computer Programming 2 syllabus (IT204-Programming2-EOMS-1.pdf), src/views/builder2/FormPaper.jsx (the layout and tag conventions the form prints), src/lib/syllabusModel.js (the rules the builder already enforces) and the admin catalog. docs/reference/ has no template PDF. The sample states no scores, so every value listed in `assumptions` and every rule with a `note` is a project decision for the curriculum office to confirm.",
 
@@ -14,6 +14,149 @@
 
   "constants": {
     "weeksPerTerm": 18,
+    "institution": {
+      "vision": "Moved by the Spirit of the Risen Christ, La Consolacion University Philippines, envisions itself to become a catalyst for the wholistic transformational development of Catholic Augustinian Marian graduates rooted in Gospel values.",
+      "mission": {
+        "lead": "To achieve the above vision, LCUP commits itself to generate and make available to its Augustinian Marian students, programs and services that will make them:",
+        "items": [
+          "exhibit academic and technical competence in their respective areas of discipline in the local and international environment;",
+          "demonstrate their knowledge, critical thinking and creativity by exploring the various avenues of learning and searching for truth;",
+          "live the Gospel values in the varied aspects of their personal and professional lives;",
+          "manifest their willingness to serve specially the marginalized sector of our society;",
+          "demonstrate productivity in various areas of learning as responsible citizens of the society; and",
+          "develop individuals who are resilient, inclusive and responsive to be socio-economic realities of the Philippines and the complexities of the global environment."
+        ]
+      },
+      "egas": [
+        {
+          "no": 1,
+          "name": "Critical and Creative thinker"
+        },
+        {
+          "no": 2,
+          "name": "Competent Catholic Augustinian-Marian Professional"
+        },
+        {
+          "no": 3,
+          "name": "Socially Responsive Steward"
+        },
+        {
+          "no": 4,
+          "name": "Transformative Lifelong learner"
+        }
+      ]
+    },
+    "coreValues": [
+      {
+        "key": "compassion",
+        "name": "Compassion",
+        "pattern": "compassion"
+      },
+      {
+        "key": "courage",
+        "name": "Courage",
+        "pattern": "courage"
+      },
+      {
+        "key": "community",
+        "name": "Community-orientedness",
+        "pattern": "community[- ]?orient"
+      },
+      {
+        "key": "humility",
+        "name": "Humility",
+        "pattern": "humility"
+      },
+      {
+        "key": "interiority",
+        "name": "Interiority",
+        "pattern": "interiority"
+      },
+      {
+        "key": "missionary",
+        "name": "Missionary Spirit",
+        "pattern": "missionar"
+      }
+    ],
+    "alignment": {
+      "minWordLength": 4,
+      "stemLength": 5,
+      "stopwords": [
+        "about",
+        "above",
+        "after",
+        "also",
+        "among",
+        "and",
+        "any",
+        "are",
+        "based",
+        "been",
+        "being",
+        "between",
+        "both",
+        "can",
+        "class",
+        "course",
+        "each",
+        "from",
+        "have",
+        "into",
+        "more",
+        "most",
+        "other",
+        "such",
+        "than",
+        "that",
+        "their",
+        "them",
+        "then",
+        "these",
+        "they",
+        "this",
+        "those",
+        "through",
+        "using",
+        "used",
+        "use",
+        "were",
+        "when",
+        "where",
+        "which",
+        "while",
+        "will",
+        "with",
+        "within",
+        "would",
+        "your",
+        "student",
+        "students",
+        "topic",
+        "topics",
+        "week",
+        "lesson",
+        "activity",
+        "activities",
+        "task",
+        "tasks",
+        "exercise",
+        "exercises",
+        "discussion",
+        "lecture",
+        "quiz",
+        "examination",
+        "exam",
+        "written",
+        "assessment",
+        "understand",
+        "explain",
+        "describe",
+        "identify",
+        "apply",
+        "demonstrate",
+        "discuss"
+      ]
+    },
     "hoursPerLectureUnit": 1,
     "hoursPerLabUnit": 3,
     "maxUnitsPerPart": 6,
@@ -23,6 +166,8 @@
     "minIloWords": 4,
     "minReferences": 3,
     "referenceMaxAgeYears": 10,
+    "minReferenceChars": 25,
+    "minReferenceWords": 3,
     "terms": [
       { "key": "prelim", "label": "Prelim", "pattern": "prelim" },
       { "key": "midterm", "label": "Midterm", "pattern": "midterm" },
@@ -124,6 +269,184 @@
 
     { "id": "R-01", "area": "reference_currency", "step": "refs", "severity": "major", "weight": 2, "check": "referenceAge", "params": { "mode": "any" }, "message": "There are no references.", "fix": "Add references" },
     { "id": "R-02", "area": "reference_currency", "step": "refs", "severity": "minor", "weight": 2, "check": "referenceAge", "params": { "mode": "dated" }, "message": "A reference has no year: \"{text}\".", "fix": "Add the year to each reference" },
-    { "id": "R-03", "area": "reference_currency", "step": "refs", "severity": "major", "weight": 4, "check": "referenceAge", "params": { "mode": "current", "maxAgeYears": 10 }, "message": "A reference is {age} years old ({year}); the limit is {limit}: \"{text}\".", "fix": "Replace the outdated references", "note": "Age is measured from the school year the syllabus belongs to, never from today's date." }
+    { "id": "R-03", "area": "reference_currency", "step": "refs", "severity": "major", "weight": 4, "check": "referenceAge", "params": { "mode": "current", "maxAgeYears": 10 }, "message": "A reference is {age} years old ({year}); the limit is {limit}: \"{text}\".", "fix": "Replace the outdated references", "note": "Age is measured from the school year the syllabus belongs to, never from today's date." },
+    {
+      "id": "T-28",
+      "area": "template",
+      "step": "clos",
+      "severity": "major",
+      "weight": 2,
+      "check": "equalsInstitution",
+      "params": {
+        "field": "vision"
+      },
+      "message": "The vision is not the LCUP vision.",
+      "fix": "Use the LCUP vision exactly as it is written"
+    },
+    {
+      "id": "T-29",
+      "area": "template",
+      "step": "clos",
+      "severity": "major",
+      "weight": 2,
+      "check": "equalsInstitution",
+      "params": {
+        "field": "mission"
+      },
+      "message": "The mission is not the LCUP mission.",
+      "fix": "Use the LCUP mission exactly as it is written"
+    },
+    {
+      "id": "T-30",
+      "area": "template",
+      "step": "clos",
+      "severity": "major",
+      "weight": 2,
+      "check": "equalsInstitution",
+      "params": {
+        "field": "egas"
+      },
+      "message": "EGA {no} is missing or is not worded as the LCUP graduate attribute.",
+      "fix": "Use the four LCUP graduate attributes exactly as they are written"
+    },
+    {
+      "id": "P-06",
+      "area": "co_po",
+      "step": "plan",
+      "severity": "major",
+      "weight": 2,
+      "check": "iloEgaChain",
+      "params": {},
+      "message": "{where} is not under a CLO that builds a graduate attribute (EGA).",
+      "fix": "Put every ILO under a CLO that is tagged with an EGA"
+    },
+    {
+      "id": "A-05",
+      "area": "assessment",
+      "step": "plan",
+      "severity": "minor",
+      "weight": 2,
+      "check": "iloAlignment",
+      "params": {
+        "column": "contents"
+      },
+      "message": "{where}: the course content does not relate to its ILO.",
+      "fix": "Write the course content so it covers what the ILO says"
+    },
+    {
+      "id": "A-06",
+      "area": "assessment",
+      "step": "plan",
+      "severity": "minor",
+      "weight": 2,
+      "check": "iloAlignment",
+      "params": {
+        "column": "activities"
+      },
+      "message": "{where}: the learning activities do not relate to its ILO.",
+      "fix": "Plan learning activities that practise what the ILO says"
+    },
+    {
+      "id": "A-07",
+      "area": "assessment",
+      "step": "plan",
+      "severity": "minor",
+      "weight": 2,
+      "check": "iloAlignment",
+      "params": {
+        "column": "tasks"
+      },
+      "message": "{where}: the assessment task does not relate to its ILO.",
+      "fix": "Assess what the ILO says, not something else"
+    },
+    {
+      "id": "C-05",
+      "area": "completeness",
+      "step": "plan",
+      "severity": "minor",
+      "weight": 2,
+      "check": "coreValues",
+      "params": {},
+      "message": "{where} names none of the six LCUP core values.",
+      "fix": "Name at least one LCUP core value in every lesson"
+    },
+    {
+      "id": "R-04",
+      "area": "reference_currency",
+      "step": "refs",
+      "severity": "minor",
+      "weight": 2,
+      "check": "referenceAge",
+      "params": {
+        "mode": "citation"
+      },
+      "message": "A reference is too short to be a citation: \"{text}\".",
+      "fix": "Write each reference as a full citation (author, year, title, publisher)"
+    },
+    {
+      "id": "J-01",
+      "area": "completeness",
+      "step": "info",
+      "severity": "major",
+      "weight": 2,
+      "check": "aiJudged",
+      "params": {
+        "kind": "description"
+      },
+      "message": "{what}: the AI found no meaningful content ({reason}).",
+      "fix": "Write a real course description"
+    },
+    {
+      "id": "J-02",
+      "area": "completeness",
+      "step": "reqs",
+      "severity": "minor",
+      "weight": 1,
+      "check": "aiJudged",
+      "params": {
+        "kind": "requirement"
+      },
+      "message": "{what}: the AI found no meaningful content ({reason}).",
+      "fix": "Write requirements a student could follow"
+    },
+    {
+      "id": "J-03",
+      "area": "reference_currency",
+      "step": "refs",
+      "severity": "major",
+      "weight": 2,
+      "check": "aiJudged",
+      "params": {
+        "kind": "reference"
+      },
+      "message": "{what}: the AI found no meaningful content ({reason}).",
+      "fix": "Use real, full citations"
+    },
+    {
+      "id": "J-04",
+      "area": "completeness",
+      "step": "plan",
+      "severity": "minor",
+      "weight": 2,
+      "check": "aiJudged",
+      "params": {
+        "kind": "ilo"
+      },
+      "message": "{what}: the AI found no meaningful content ({reason}).",
+      "fix": "Write each ILO as something the student will do"
+    },
+    {
+      "id": "J-05",
+      "area": "assessment",
+      "step": "plan",
+      "severity": "major",
+      "weight": 3,
+      "check": "aiJudged",
+      "params": {
+        "kind": "alignment"
+      },
+      "message": "{what}: the AI found no meaningful content ({reason}).",
+      "fix": "Make the content, activities and tasks match the ILO"
+    }
   ]
 }

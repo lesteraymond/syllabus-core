@@ -13,6 +13,18 @@ test('the same syllabus is unchanged, whatever the system filled in around it', 
   assert.deepStrictEqual(changedSections(base(), b), [], 'catalog, outcomes, sign-off and the catalog-supplied code and title are not the faculty member\'s');
 });
 
+test('syllabus-owned outcome and CLO edits count as a revision while adoption alone does not', () => {
+  const before = base();
+  const own = { ...before, outcomes: { vision: before.catalog.institution.vision, mission: before.catalog.institution.mission, egas: before.catalog.program.egas || before.catalog.institution.egas || [], pos: before.catalog.program.pos } };
+  assert.deepStrictEqual(changedSections(before, own), []);
+  const edited = JSON.parse(JSON.stringify(own));
+  edited.outcomes.vision = 'The faculty revised the vision';
+  assert.deepStrictEqual(changedSections(own, edited).map(row => row.key), ['outcomes']);
+  const cloEdit = JSON.parse(JSON.stringify(own));
+  cloEdit.clos[0].statement = 'The faculty revised a CLO';
+  assert.deepStrictEqual(changedSections(own, cloEdit).map(row => row.key), ['outcomes']);
+});
+
 test('spacing, blank lines and row ids are not changes', () => {
   const b = edit((c) => {
     c.description[0].t = '  ' + c.description[0].t.replace(/ /g, '   ') + '\n\n';

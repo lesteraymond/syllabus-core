@@ -1,0 +1,26 @@
+/* The stylesheet entry (src/main.jsx). Tailwind v4 is set up here to change nothing on its own; the app's own CSS (styles.css, theme.css)
+   stays exactly as it was and keeps winning wherever the two meet.
+
+   Layers, lowest to highest priority:  theme < base < legacy < components < utilities
+   - legacy is the app's existing CSS. Putting it in a layer changes nothing for it (nothing else is unlayered), but it lets utilities, which
+     are in a higher layer, override it where a component opts in, without specificity fights.
+   - Tailwind's default theme is NOT loaded (no palette, no sizes, no animations: its keyframes would duplicate the app's own, such as
+     spin). The only theme is tw-theme.css, and every value in it points at an existing design token, so a utility can only ever produce
+     something from the design system, and the tokens in theme.css stay the single source of truth.
+   - Preflight (Tailwind's CSS reset) is deliberately not imported: it would restyle every button, heading and list in the app.
+   - Everything Tailwind adds is prefixed (tw:flex, tw:p-4, var(--tw-...)), so no utility can collide with an existing class name (there are
+     737 of them) or an existing --variable. With no tw: classes in the code, Tailwind generates no CSS at all.
+
+   The prefix is declared on the tw-theme.css import: Tailwind only reads it there, and without it every plain word in the source (fixed,
+   relative, block, hidden, table, border ...) would become a utility in a layer above the app's own CSS.
+
+   Using it: write tw: classes in a component (className="tw:flex tw:gap-3 tw:text-muted"). A token that is missing is added to
+   tw-theme.css, pointing at the existing variable, never as a new literal value. */
+@layer theme, base, legacy, components, utilities;
+
+@import "./tw-theme.css" layer(theme) prefix(tw);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@import "./styles.css" layer(legacy);
+@import "./theme.css" layer(legacy);
+@import "./responsive.css" layer(legacy);

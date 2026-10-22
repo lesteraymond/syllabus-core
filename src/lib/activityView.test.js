@@ -9,7 +9,7 @@ const NOW = new Date('2026-10-14T14:00:00.000Z'); // 10:00 PM on Oct 14 in Manil
 test('a log row reads as a sentence: who, what, which syllabus, with the course title beneath', () => {
   const a = describeActivity(log());
   assert.deepStrictEqual([a.who, a.verb, a.subject, a.detail, a.time], ['Diana Evale', 'approved', 'FM 202', 'Fundamentals of Mathematics', '9:16 PM']);
-  assert.deepStrictEqual([a.icon, a.tone], ['sealCheck', 'good']);
+  assert.deepStrictEqual([a.icon, a.tone], ['approved', 'good']);
   assert.strictEqual(a.iso, '2026-10-14T13:16:43.000Z');
 });
 

@@ -12,7 +12,7 @@ const { groupByRule, describe } = require('./providers');
 
 const TITLE_MAX = 120;
 const TEXT_MAX = 500;
-const PROVIDER_TIMEOUT_MS = 20000;
+const PROVIDER_TIMEOUT_MS = 45000;
 
 // ---- keeping names and emails out of what a provider sees ----
 // Masked: email addresses, phone numbers, titled names ("Prof. Juan Dela Cruz", "Dr. Reyes"), and any name the caller lists

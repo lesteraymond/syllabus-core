@@ -14,6 +14,7 @@ const sharp = require('sharp');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { inTransaction, httpError, sendError } = require('../lib/http');
 const { PRIVATE_ROOT } = require('../lib/avatar');
+const { extractCor } = require('../lib/corAi');
 const { readText } = require('../lib/corOcr');
 const { parseCor } = require('../lib/corParser');
 const router = express.Router();
@@ -48,7 +49,14 @@ const publicScan = (p) => ({
 router.post('/scan', rateLimit, upload.single('cor'), async (req, res) => {
   try {
     if (!req.file) throw httpError(400, 'Choose a photo of your COR.');
-    const parsed = parseCor(await readText(req.file.buffer));
+    // The uploaded photo is read by the AI alone: a missing key or a provider failure is reported, never guessed around.
+    // COR_READER=ocr is for testing only: it reads the photo with Tesseract OCR instead (no AI, nothing leaves the server).
+    let parsed;
+    if (process.env.COR_READER === 'ocr') parsed = parseCor(await readText(req.file.buffer));
+    else {
+      try { parsed = await extractCor(req.file.buffer); } catch (err) { console.warn('COR AI read failed:', err.message); throw httpError(503, 'We could not read your COR right now (' + String(err.message || 'unknown error').replace(/\.$/, '').slice(0, 140) + '). Try again in a moment.'); }
+      if (!parsed) throw httpError(503, 'COR scanning is not available right now. Ask an administrator.');
+    }
     if (!parsed.studentId) throw httpError(422, 'We could not read the student ID on your COR. Retake the photo: full page, flat, in good light.');
     await fs.promises.mkdir(COR_DIR, { recursive: true });
     const file = `${crypto.randomBytes(12).toString('hex')}.jpg`;

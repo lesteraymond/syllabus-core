@@ -59,6 +59,85 @@ export const extraEn = {
   "system.a_syllabus_c19cde": "a syllabus",
   "system.approved_c9560d": "approved",
   "system.returned_for_revision_1c5609": "returned for revision",
+  "activity.ai_check": "ran an AI check on",
+  "activity.ai_check_score": "AI check score",
+  "analytics.bar_title": "Average Compliance Score",
+  "analytics.go_ai": "Open AI Checker",
+  "analytics.go_review": "Open reviews",
+  "analytics.go_mine": "Open my syllabi",
+  "analytics.insights_sub": "From the stored compliance checks",
+  "analytics.bar_by_subject": "By subject",
+  "reports.term_counts": "{p0} checks · {p1} syllabi",
+  "reports.term_download": "Download PDF",
+  "reports.term_none": "No checked syllabi yet. A term appears here once a syllabus has been checked in it.",
+  "reports.term_failed": "That report could not be created. Try again.",
+  "reports.term_loading": "Loading terms...",
+  "search.syllabi": "Matching syllabi",
+  "search.faculty": "Matching faculty",
+  "search.subjects": "Matching subjects",
+  "search.syllabi_count": "{p0} syllabi",
+  "search.none": "No results for \"{p0}\"",
+  "search.showing": "Showing {p0}",
+  "search.show_all": "Show all",
+  "settings.standard_label": "Compliance standard in use",
+  "settings.standard_note": "Set by the AI Checker's standard. It cannot be changed here.",
+  "settings.department_label": "Department",
+  "settings.department_note": "This system serves one department only.",
+  "settings.year_label": "Current academic year",
+  "settings.year_note": "The only setting here you can change. Type two consecutive years, like 2026–2027.",
+  "settings.year_invalid": "Enter the academic year as two consecutive years, like 2026–2027.",
+  "standard.how_title": "How the score works",
+  "standard.how_1": "Every rule looks at one part of the syllabus. It earns its weight in points, or part of it when only some of the items it checks are right. A rule that does not apply to a syllabus is skipped.",
+  "standard.how_2": "An area's score is the points its rules earned out of the points they could have earned, as a percentage.",
+  "standard.how_3": "The overall score averages the area scores, each counted by its area weight.",
+  "standard.how_4": "A syllabus passes when its overall score reaches the pass mark and no blocking rule failed. If too little is written, it is reported as not enough content and gets no score.",
+  "standard.area_template": "Whether the form is filled in as the template requires: course details, sections, grading and the learning plan layout.",
+  "standard.area_completeness": "Whether the course description, outcomes, requirements and references are written in enough detail to be useful.",
+  "standard.area_co_po": "Whether every course outcome is tied to a graduate attribute and a program outcome that really belong together.",
+  "standard.area_assessment": "Whether each course outcome is assessed, and examinations and grading are in place.",
+  "standard.area_contact_hours": "Whether the learning plan covers the weeks and hours that the credit units call for.",
+  "standard.area_reference_currency": "Whether the references are recent enough and carry a year.",
+  "standard.legend_blocking": "Blocks submission: the syllabus cannot pass while it fails.",
+  "standard.legend_major": "Major issue: costs points and is flagged to fix first.",
+  "standard.legend_minor": "Minor issue: costs a few points and is a suggestion.",
+  "standard.col_code": "Rule code",
+  "standard.col_rule": "What the rule says",
+  "standard.col_explain": "Explanation",
+  "standard.col_severity": "Severity",
+  "standard.col_area": "Scoring area",
+  "standard.col_area_weight": "Area weight",
+  "standard.col_weight": "Points",
+  "standard.total_weight": "Total of the area weights",
+  "standard.total_points": "Total points of the rules listed",
+  "standard.codes_title": "Reading the rule codes",
+  "standard.code_T": "Format: the form follows the template (course details, sections, grading, plan layout).",
+  "standard.code_C": "Completeness: the description, outcomes, requirements and references have enough written.",
+  "standard.code_P": "CO–PO alignment: course outcomes are tied to valid graduate attributes and program outcomes.",
+  "standard.code_A": "Assessment: course outcomes are assessed, with examinations and grading in place.",
+  "standard.code_H": "Contact hours: the learning plan covers the weeks and hours the credit units call for.",
+  "standard.code_R": "References: each reference is present, dated and recent enough.",
+  "standard.code_J": "Meaning checks: the AI reads what was written and flags filler, placeholders or text unrelated to its part. The rule then turns that into points.",
+  "standard.code_count": "{p0} rules",
+  "standard.view": "View standard",
+  "standard.title_note": "What the AI Checker applies. Read-only: changes are made by the developers.",
+  "standard.form_label": "Form",
+  "standard.pass_mark": "Pass mark",
+  "standard.score_bands": "Score bands",
+  "standard.areas_title": "Areas and their weights",
+  "standard.rules_title": "Rules the checker applies",
+  "standard.search_rules": "Search the rules",
+  "standard.pending_title": "Pending confirmation by the curriculum office",
+  "standard.pending_note": "These values are project decisions that have not been confirmed yet.",
+  "standard.no_match": "No rule matches your search.",
+  "standard.failed": "The standard could not be loaded. Try again.",
+  "standard.loading": "Loading the standard...",
+  "standard.close": "Close standard",
+  "standard.sev_blocking": "Blocks submission",
+  "standard.sev_major": "Major issue",
+  "standard.sev_minor": "Minor issue",
+  "standard.rule_weight": "Rule weight",
+  "report.saved": "Report downloaded.",
+  "report.failed": "The report could not be created. Try again.",
   "system.rejected_1f087a": "rejected",
   "system.submitted_fda437": "submitted",
   "system.uploaded_f40369": "uploaded",
@@ -702,6 +781,85 @@ export const extraTl = {
   "system.a_syllabus_c19cde": "isang silabus",
   "system.approved_c9560d": "nag-apruba ng",
   "system.returned_for_revision_1c5609": "nagbalik para baguhin ang",
+  "activity.ai_check": "nagpatakbo ng AI check sa",
+  "activity.ai_check_score": "Marka ng AI check",
+  "analytics.bar_title": "Karaniwang Marka ng Pagsunod",
+  "analytics.go_ai": "Buksan ang AI Checker",
+  "analytics.go_review": "Buksan ang mga review",
+  "analytics.go_mine": "Buksan ang aking mga syllabus",
+  "analytics.insights_sub": "Mula sa mga nakaimbak na compliance check",
+  "analytics.bar_by_subject": "Ayon sa asignatura",
+  "reports.term_counts": "{p0} check · {p1} syllabus",
+  "reports.term_download": "I-download ang PDF",
+  "reports.term_none": "Wala pang nasuring syllabus. Lalabas dito ang isang termino kapag may nasuri na.",
+  "reports.term_failed": "Hindi nagawa ang ulat. Subukan muli.",
+  "reports.term_loading": "Kinukuha ang mga termino...",
+  "search.syllabi": "Mga tugmang syllabus",
+  "search.faculty": "Mga tugmang guro",
+  "search.subjects": "Mga tugmang asignatura",
+  "search.syllabi_count": "{p0} syllabus",
+  "search.none": "Walang resulta para sa \"{p0}\"",
+  "search.showing": "Ipinapakita: {p0}",
+  "search.show_all": "Ipakita lahat",
+  "settings.standard_label": "Pamantayang ginagamit sa pagsusuri",
+  "settings.standard_note": "Itinakda ng pamantayan ng AI Checker. Hindi ito mababago rito.",
+  "settings.department_label": "Departamento",
+  "settings.department_note": "Isang departamento lamang ang pinaglilingkuran ng sistemang ito.",
+  "settings.year_label": "Kasalukuyang taong akademiko",
+  "settings.year_note": "Ito lamang ang maaari mong baguhin dito. Maglagay ng dalawang magkasunod na taon, tulad ng 2026–2027.",
+  "settings.year_invalid": "Ilagay ang taong akademiko bilang dalawang magkasunod na taon, tulad ng 2026–2027.",
+  "standard.how_title": "Paano gumagana ang marka",
+  "standard.how_1": "Tinitingnan ng bawat tuntunin ang isang bahagi ng syllabus. Nakukuha nito ang timbang nito bilang puntos, o bahagi lamang kapag ilan lang sa sinusuri nito ang tama. Nilalaktawan ang tuntuning hindi naaangkop sa isang syllabus.",
+  "standard.how_2": "Ang marka ng isang lugar ay ang puntos na nakuha ng mga tuntunin nito mula sa kabuuang puntos na maaaring makuha, bilang porsyento.",
+  "standard.how_3": "Ang kabuuang marka ay ang average ng mga marka ng lugar, ayon sa timbang ng bawat lugar.",
+  "standard.how_4": "Pumapasa ang syllabus kapag umabot ang kabuuang marka sa pasadong marka at walang humaharang na tuntuning bumagsak. Kung kulang ang nakasulat, iuulat itong kulang ang nilalaman at walang marka.",
+  "standard.area_template": "Kung napunan ang form ayon sa hinihingi ng template: detalye ng kurso, mga seksyon, grading at ayos ng learning plan.",
+  "standard.area_completeness": "Kung sapat ang detalye ng paglalarawan ng kurso, mga outcome, mga kailangan at mga sanggunian para maging kapaki-pakinabang.",
+  "standard.area_co_po": "Kung ang bawat course outcome ay nakatali sa graduate attribute at program outcome na talagang magkaugnay.",
+  "standard.area_assessment": "Kung nasusuri ang bawat course outcome, at may eksaminasyon at grading.",
+  "standard.area_contact_hours": "Kung sakop ng learning plan ang mga linggo at oras na hinihingi ng credit units.",
+  "standard.area_reference_currency": "Kung sapat ang pagiging bago ng mga sanggunian at may taon ang mga ito.",
+  "standard.legend_blocking": "Humaharang sa pagsumite: hindi makakapasa ang syllabus habang bumabagsak ito.",
+  "standard.legend_major": "Malaking isyu: nababawasan ang puntos at unang dapat ayusin.",
+  "standard.legend_minor": "Maliit na isyu: kaunting puntos ang nababawas at mungkahi lamang.",
+  "standard.col_code": "Code ng tuntunin",
+  "standard.col_rule": "Ano ang sinasabi ng tuntunin",
+  "standard.col_explain": "Paliwanag",
+  "standard.col_severity": "Bigat ng isyu",
+  "standard.col_area": "Lugar ng pagmamarka",
+  "standard.col_area_weight": "Timbang ng lugar",
+  "standard.col_weight": "Puntos",
+  "standard.total_weight": "Kabuuan ng mga timbang ng lugar",
+  "standard.total_points": "Kabuuang puntos ng mga tuntuning nakalista",
+  "standard.codes_title": "Pagbasa sa mga code ng tuntunin",
+  "standard.code_T": "Format: sinusunod ng form ang template (detalye ng kurso, mga seksyon, grading, ayos ng plan).",
+  "standard.code_C": "Kumpleto: sapat ang nakasulat sa paglalarawan, mga outcome, mga kailangan at mga sanggunian.",
+  "standard.code_P": "CO–PO: nakatali ang mga course outcome sa wastong graduate attribute at program outcome.",
+  "standard.code_A": "Assessment: nasusuri ang mga course outcome, at may eksaminasyon at grading.",
+  "standard.code_H": "Contact hours: sakop ng learning plan ang mga linggo at oras na hinihingi ng credit units.",
+  "standard.code_R": "Mga sanggunian: may sanggunian, may taon, at sapat ang pagiging bago.",
+  "standard.code_J": "Pagsusuri ng kahulugan: binabasa ng AI ang nakasulat at tinatanda ang palamuti, placeholder o tekstong walang kaugnayan. Ginagawa itong puntos ng tuntunin.",
+  "standard.code_count": "{p0} tuntunin",
+  "standard.view": "Tingnan ang pamantayan",
+  "standard.title_note": "Ang ipinapatupad ng AI Checker. Basahin lamang: ang mga developer ang nagbabago nito.",
+  "standard.form_label": "Form",
+  "standard.pass_mark": "Pasadong marka",
+  "standard.score_bands": "Mga antas ng marka",
+  "standard.areas_title": "Mga lugar at ang kanilang timbang",
+  "standard.rules_title": "Mga tuntuning ipinapatupad ng checker",
+  "standard.search_rules": "Maghanap sa mga tuntunin",
+  "standard.pending_title": "Naghihintay ng kumpirmasyon ng curriculum office",
+  "standard.pending_note": "Ang mga halagang ito ay mga desisyon ng proyekto na hindi pa nakukumpirma.",
+  "standard.no_match": "Walang tuntuning tumutugma sa iyong paghahanap.",
+  "standard.failed": "Hindi ma-load ang pamantayan. Subukan muli.",
+  "standard.loading": "Kinukuha ang pamantayan...",
+  "standard.close": "Isara ang pamantayan",
+  "standard.sev_blocking": "Humaharang sa pagsumite",
+  "standard.sev_major": "Malaking isyu",
+  "standard.sev_minor": "Maliit na isyu",
+  "standard.rule_weight": "Timbang ng tuntunin",
+  "report.saved": "Na-download na ang ulat.",
+  "report.failed": "Hindi nagawa ang ulat. Subukan muli.",
   "system.rejected_1f087a": "tumanggi sa",
   "system.submitted_fda437": "nagpasa ng",
   "system.uploaded_f40369": "nag-upload ng",
@@ -1375,9 +1533,13 @@ Object.assign(extraTl, {"programs.renameNote":"Maaaring baguhin ang kodigo at pa
 
 extraEn["repository.approvedSubtitle"] = "Search and access syllabi approved by an administrator.";
 extraTl["repository.approvedSubtitle"] = "Maghanap at tingnan ang mga silabus na inaprubahan ng administrador.";
+extraEn["student.view"] = "View";
+extraTl["student.view"] = "Tingnan";
+extraEn["student.subtitle"] = "Search and read all approved syllabi.";
+extraTl["student.subtitle"] = "Maghanap at magbasa ng lahat ng aprubadong silabus.";
 
-extraEn["outcomes.chooseProgramSubject"] = "Choose a program and subject in Step 1 to load the learning outcomes configured by an administrator.";
-extraTl["outcomes.chooseProgramSubject"] = "Pumili muna ng programa at asignatura sa Hakbang 1 upang makita ang mga kinalabasan ng pagkatuto na itinakda ng administrador.";
+extraEn["outcomes.chooseProgramSubject"] = "Choose a program and subject in Step 1 before creating learning outcomes.";
+extraTl["outcomes.chooseProgramSubject"] = "Pumili muna ng programa at asignatura sa Hakbang 1 bago gumawa ng mga kinalabasan ng pagkatuto.";
 
 extraEn["publication.publish"] = "Publish syllabus";
 extraTl["publication.publish"] = "Ilathala ang silabus";
@@ -1400,8 +1562,8 @@ extraTl["outcomes.subjectIncomplete"] = "Kailangang kumpletuhin ng administrador
 extraEn["outcomes.setupSaved"] = "Subject outcomes saved.";
 extraTl["outcomes.setupSaved"] = "Na-save ang mga kinalabasan ng asignatura.";
 
-extraEn["outcomes.subjectSubtitle"] = "Open a subject to configure its own vision, mission, EGAs, POs and CLOs.";
-extraTl["outcomes.subjectSubtitle"] = "Buksan ang asignatura upang itakda ang sarili nitong bisyon, misyon, EGA, PO at CLO.";
+extraEn["outcomes.subjectSubtitle"] = "Manage programs, subject details, assignments and deadlines. Faculty write learning outcomes in syllabus builder Step 2.";
+extraTl["outcomes.subjectSubtitle"] = "Pamahalaan ang mga programa, detalye ng asignatura, takdang asignatura at takdang petsa. Gagawin ng guro ang mga kinalabasan ng pagkatuto sa Hakbang 2 ng tagabuo ng silabus.";
 
 extraEn["publication.mySubtitle"] = "Manage your drafts and saved syllabi.";
 extraTl["publication.mySubtitle"] = "Pamahalaan ang iyong mga burador at naka-save na silabus.";
@@ -1529,6 +1691,38 @@ extraEn["dashboard.goodEvening"] = "Good evening, {name}!";
 extraTl["dashboard.goodEvening"] = "Magandang gabi, {name}!";
 extraEn["dashboard.goodEveningNoName"] = "Good evening!";
 extraTl["dashboard.goodEveningNoName"] = "Magandang gabi!";
+extraEn['outcomes.authoringNote'] = 'Create the Vision, Mission, EGA, PO and CLO for this syllabus. Changes save automatically.';
+extraEn['outcomes.saveInvalid'] = 'Invalid learning outcomes. Check the fields and outcome mappings in step 2.';
+extraTl['outcomes.saveInvalid'] = 'Hindi wasto ang mga kinalabasan ng pagkatuto. Suriin ang mga field at pagmamapa sa hakbang 2.';
+extraEn['outcomes.submitIncomplete'] = 'Complete Vision, Mission, EGA, PO and CLO in step 2 before submitting.';
+extraTl['outcomes.submitIncomplete'] = 'Kumpletuhin ang Vision, Mission, EGA, PO at CLO sa hakbang 2 bago isumite.';
+extraEn['outcomes.changeLabel'] = 'Learning outcomes';
+extraTl['outcomes.changeLabel'] = 'Mga kinalabasan ng pagkatuto';
+extraTl['outcomes.authoringNote'] = 'Gawin ang Vision, Mission, EGA, PO at CLO para sa silabus na ito. Awtomatikong nase-save ang mga pagbabago.';
+extraEn['outcomes.inUse'] = 'Remove the dependent outcome mappings first.';
+extraTl['outcomes.inUse'] = 'Alisin muna ang mga pagmamapang gumagamit ng kinalabasang ito.';
+extraEn['outcomes.authorInStep2'] = 'Create your learning outcomes in step 2.';
+extraTl['outcomes.authorInStep2'] = 'Gawin ang iyong mga kinalabasan ng pagkatuto sa hakbang 2.';
+extraEn['outcomes.subjectIdentity'] = 'The subject supplies the course code and title. Learning outcomes are edited in step 2.';
+extraTl['outcomes.subjectIdentity'] = 'Mula sa asignatura ang code at pamagat ng kurso. Baguhin ang mga kinalabasan ng pagkatuto sa hakbang 2.';
+extraEn['outcomes.subjectCreated'] = 'Subject added. Faculty create its syllabus learning outcomes in step 2.';
+extraTl['outcomes.subjectCreated'] = 'Naidagdag ang asignatura. Gagawin ng guro ang mga kinalabasan ng pagkatuto ng silabus sa hakbang 2.';
+extraEn['outcomes.changeSubject'] = 'Changing the subject replaces this syllabus’s learning outcomes with the selected subject’s starting values. Continue?';
+extraTl['outcomes.changeSubject'] = 'Papalitan ng pagbabago ng asignatura ang mga kinalabasan ng pagkatuto sa silabus ng panimulang datos ng napiling asignatura. Magpatuloy?';
+extraEn['outcomes.visionRequired'] = 'Add the vision in step 2.';
+extraTl['outcomes.visionRequired'] = 'Ilagay ang bisyon sa hakbang 2.';
+extraEn['outcomes.missionRequired'] = 'Complete the mission in step 2.';
+extraTl['outcomes.missionRequired'] = 'Kumpletuhin ang misyon sa hakbang 2.';
+extraEn['outcomes.egasRequired'] = 'Complete the EGA names and short names in step 2.';
+extraTl['outcomes.egasRequired'] = 'Kumpletuhin ang mga pangalan at maikling pangalan ng EGA sa hakbang 2.';
+extraEn['outcomes.posRequired'] = 'Complete the PO statements and short names in step 2.';
+extraTl['outcomes.posRequired'] = 'Kumpletuhin ang mga pahayag at maikling pangalan ng PO sa hakbang 2.';
+extraEn['outcomes.closRequired'] = 'Complete the CLO statements and EGA and PO mappings in step 2.';
+extraTl['outcomes.closRequired'] = 'Kumpletuhin ang mga pahayag ng CLO at pagmamapa ng EGA at PO sa hakbang 2.';
+extraEn['outcomes.mappingsRequired'] = 'Fix the outcome mappings in step 2.';
+extraTl['outcomes.mappingsRequired'] = 'Ayusin ang pagmamapa ng mga kinalabasan sa hakbang 2.';
+extraEn["dashboard.usage.selectDay"] = "Hover over a bar to see total usage in hours and minutes.";
+extraTl["dashboard.usage.selectDay"] = "Itapat ang pointer sa bar upang makita ang kabuuang oras at minuto ng paggamit.";
 extraTl["dashboard.usage.title"] = "Oras ng Paggamit";
 extraEn["dashboard.usage.today"] = "Active today";
 extraTl["dashboard.usage.today"] = "Aktibo ngayon";
@@ -1673,3 +1867,110 @@ const deadlineRemind = {
   "deadline.cancelledNotified": ["Deadline cancelled. {count} faculty notified.", "Nakansela ang takdang petsa. {count} guro ang naabisuhan."],
 };
 for (const [key, [en, tl]] of Object.entries(deadlineRemind)) { extraEn[key] = en; extraTl[key] = tl; }
+
+// The date picker (components/DatePicker.jsx).
+const datePicker = {
+  "date.choose": ["Select date", "Pumili ng petsa"],
+  "date.chooseDateTime": ["Select date and time", "Pumili ng petsa at oras"],
+  "date.prevMonth": ["Previous month", "Nakaraang buwan"],
+  "date.nextMonth": ["Next month", "Susunod na buwan"],
+  "date.today": ["Today", "Ngayon"],
+  "date.clear": ["Clear", "Burahin"],
+  "date.done": ["Done", "Tapos na"],
+  "date.time": ["Time", "Oras"],
+  "review.rejectHint": ["Sent back; it can still be edited", "Ibabalik; maaari pa itong baguhin"],
+  "review.rejectConfirm": ["Reject this syllabus? The faculty member is told why and can edit and submit it again.", "I-reject ang silabus na ito? Sasabihin sa guro kung bakit at maaari niya itong baguhin at ipasa muli."],
+  "builder.rejectedTitle": ["Rejected: edit and submit again. ", "Na-reject: baguhin at ipasa muli. "],
+  "builder.openMySyllabi": ["Open My Syllabi", "Buksan ang My Syllabi"],
+  "builder.subjectTaken": ["you already have a syllabus ({status})", "may silabus ka na ({status})"],
+  "builder.subjectHasDraft": ["you already have a draft", "may draft ka na"],
+  "syllabi.showArchived": ["Show archived ({count})", "Ipakita ang naka-archive ({count})"],
+  "syllabi.archivedTag": ["Archived", "Naka-archive"],
+  "builder.saveAsDraft": ["Save as draft", "I-save bilang draft"],
+  "builder.draftSaved": ["Draft saved. You can continue it from My Syllabi.", "Na-save ang draft. Maaari mo itong ipagpatuloy sa My Syllabi."],
+};
+for (const [key, [en, tl]] of Object.entries(datePicker)) { extraEn[key] = en; extraTl[key] = tl; }
+
+// The learning plan's column headings (src/lib/syllabusModel.js PLAN_HEADINGS is the English wording of the institutional form).
+const planHeadings = {
+  "plan.heading.ilo": ["Intended Learning Outcomes (ILO)", "Mga Inaasahang Kinalabasan ng Pagkatuto (ILO)"],
+  "plan.heading.contents": ["Course Contents", "Nilalaman ng Kurso"],
+  "plan.heading.activities": ["Suggested Learning Activities", "Mga Iminumungkahing Gawain sa Pagkatuto"],
+  "plan.heading.tasks": ["Suggested Assessment Tasks", "Mga Iminumungkahing Gawain sa Pagtatasa"],
+  "plan.heading.values": ["Expected Value/s To Be Integrated", "Inaasahang Pagpapahalaga na Isasama"],
+};
+for (const [key, [en, tl]] of Object.entries(planHeadings)) { extraEn[key] = en; extraTl[key] = tl; }
+extraEn["student.ay"] = "AY {year}";
+extraTl["student.ay"] = "AY {year}";
+extraEn["student.studentId"] = "Student ID";
+extraTl["student.studentId"] = "ID ng mag-aaral";
+extraEn["student.yearSection"] = "Year & section";
+extraTl["student.yearSection"] = "Taon at seksyon";
+extraEn["student.year"] = "Year {n}";
+extraTl["student.year"] = "Taon {n}";
+extraEn["student.fromCor"] = "From your COR";
+extraTl["student.fromCor"] = "Mula sa iyong COR";
+extraEn["student.term"] = "Term";
+extraTl["student.term"] = "Termino";
+extraEn["student.currentTerm"] = "Current term";
+extraTl["student.currentTerm"] = "Kasalukuyang termino";
+extraEn["student.subjects"] = "Subjects";
+extraTl["student.subjects"] = "Mga asignatura";
+extraEn["student.enrolled"] = "Enrolled this term";
+extraTl["student.enrolled"] = "Naka-enrol ngayong termino";
+extraEn["student.dashSubtitle"] = "Your enrollment details and the subjects on your COR.";
+extraTl["student.dashSubtitle"] = "Ang detalye ng iyong enrollment at ang mga asignaturang nasa iyong COR.";
+extraEn["student.noSubjects"] = "No subjects were read from your COR.";
+extraTl["student.noSubjects"] = "Walang asignaturang nabasa mula sa iyong COR.";
+extraEn["student.viewSyllabus"] = "View syllabus";
+extraTl["student.viewSyllabus"] = "Tingnan ang silabus";
+extraEn["student.noSyllabus"] = "No approved syllabus yet";
+extraTl["student.noSyllabus"] = "Wala pang inaprubahang silabus";
+extraEn["system.week_names_no_core_value"] = "Week {week} names none of the six LCUP core values.";
+extraTl["system.week_names_no_core_value"] = "Walang binanggit na alinman sa anim na pangunahing pagpapahalaga ng LCUP sa Linggo {week}.";
+
+// Rules T-28 to T-30, P-06, A-05 to A-07 and C-05 (compliance standard v5).
+const ruleMessagesV5 = {
+  "rule.t28.message": ["The vision is not the LCUP vision.", "Hindi ito ang bisyon ng LCUP."],
+  "rule.t28.fix": ["Use the LCUP vision exactly as it is written", "Gamitin ang bisyon ng LCUP nang eksakto sa pagkakasulat"],
+  "rule.t29.message": ["The mission is not the LCUP mission.", "Hindi ito ang misyon ng LCUP."],
+  "rule.t29.fix": ["Use the LCUP mission exactly as it is written", "Gamitin ang misyon ng LCUP nang eksakto sa pagkakasulat"],
+  "rule.t30.message": ["EGA {no} is missing or is not worded as the LCUP graduate attribute.", "Wala ang EGA {no} o hindi ito nakasulat tulad ng inaasahang katangian ng nagtapos ng LCUP."],
+  "rule.t30.fix": ["Use the four LCUP graduate attributes exactly as they are written", "Gamitin ang apat na inaasahang katangian ng nagtapos ng LCUP nang eksakto sa pagkakasulat"],
+  "rule.p06.message": ["{where} is not under a CLO that builds a graduate attribute (EGA).", "Ang {where} ay hindi nasa ilalim ng CLO na nagpapaunlad ng katangian ng nagtapos (EGA)."],
+  "rule.p06.fix": ["Put every ILO under a CLO that is tagged with an EGA", "Ilagay ang bawat ILO sa ilalim ng CLO na may tag na EGA"],
+  "rule.a05.message": ["{where}: the course content does not relate to its ILO.", "{where}: hindi nauugnay ang nilalaman ng kurso sa ILO nito."],
+  "rule.a05.fix": ["Write the course content so it covers what the ILO says", "Isulat ang nilalaman ng kurso para saklawin ang sinasabi ng ILO"],
+  "rule.a06.message": ["{where}: the learning activities do not relate to its ILO.", "{where}: hindi nauugnay ang mga gawain sa pagkatuto sa ILO nito."],
+  "rule.a06.fix": ["Plan learning activities that practise what the ILO says", "Magplano ng mga gawaing nagsasanay sa sinasabi ng ILO"],
+  "rule.a07.message": ["{where}: the assessment task does not relate to its ILO.", "{where}: hindi nauugnay ang gawaing pagtatasa sa ILO nito."],
+  "rule.a07.fix": ["Assess what the ILO says, not something else", "Tasahin ang sinasabi ng ILO, hindi ibang bagay"],
+  "rule.c05.message": ["{where} names none of the six LCUP core values.", "Walang binanggit na alinman sa anim na pangunahing pagpapahalaga ng LCUP ang {where}."],
+  "rule.r04.message": ["A reference is too short to be a citation: \"{text}\".", "Masyadong maikli ang sanggunian para maging sipi: \"{text}\"."],
+  "rule.r04.fix": ["Write each reference as a full citation (author, year, title, publisher)", "Isulat ang bawat sanggunian bilang buong sipi (may-akda, taon, pamagat, tagapaglathala)"],
+  "rule.j.message": ["{what}: the AI found no meaningful content ({reason}).", "{what}: walang makabuluhang nilalamang nakita ang AI ({reason})."],
+  "rule.j01.fix": ["Write a real course description", "Sumulat ng tunay na paglalarawan ng kurso"],
+  "rule.j02.fix": ["Write requirements a student could follow", "Sumulat ng mga kinakailangang masusunod ng mag-aaral"],
+  "rule.j03.fix": ["Use real, full citations", "Gumamit ng totoo at buong mga sipi"],
+  "rule.j04.fix": ["Write each ILO as something the student will do", "Isulat ang bawat ILO bilang gagawin ng mag-aaral"],
+  "rule.j05.fix": ["Make the content, activities and tasks match the ILO", "Iayon sa ILO ang nilalaman, mga gawain at mga gawaing pagtatasa"],
+  "rule.c05.fix": ["Name at least one LCUP core value in every lesson", "Magbanggit ng kahit isang pangunahing pagpapahalaga ng LCUP sa bawat aralin"],
+};
+for (const [key, [en, tl]] of Object.entries(ruleMessagesV5)) { extraEn[key] = en; extraTl[key] = tl; }
+
+// The live status line of the compliance check in the builder.
+const checkStatus = {
+  "check.status.checking": ["Checking your syllabus\u2026", "Sinusuri ang iyong silabus\u2026"],
+  "check.status.writing": ["Rule check done at {time}. The AI is writing recommendations\u2026", "Tapos na ang pagsusuri ng mga tuntunin ({time}). Isinusulat pa ng AI ang mga rekomendasyon\u2026"],
+  "check.status.ai": ["Checked at {time}. AI recommendations are ready.", "Nasuri noong {time}. Handa na ang mga rekomendasyon ng AI."],
+  "check.status.noAi": ["Checked at {time}. The AI is unavailable, so the recommendations come from the rules.", "Nasuri noong {time}. Hindi available ang AI, kaya mula sa mga tuntunin ang mga rekomendasyon."],
+  "check.status.rules": ["Checked at {time}.", "Nasuri noong {time}."],
+};
+for (const [key, [en, tl]] of Object.entries(checkStatus)) { extraEn[key] = en; extraTl[key] = tl; }
+
+// While the AI is still checking the fields, the score on screen is only the rules' own.
+const provisional = {
+  "check.provisional.label": ["Provisional score", "Pansamantalang marka"],
+  "check.provisional.note": ["The rule check is done. The score can still change when the AI has checked the fields, and the recommendations are still being written.", "Tapos na ang pagsusuri ng mga tuntunin. Maaari pang magbago ang marka kapag nasuri na ng AI ang mga field, at isinusulat pa ang mga rekomendasyon."],
+};
+for (const [key, [en, tl]] of Object.entries(provisional)) { extraEn[key] = en; extraTl[key] = tl; }

@@ -13,4 +13,6 @@ export const navItems = [
   ['reports', 'downloadSimple', 'Reports', null],
   ['users', 'usersThree', 'Users & Roles', 'admin'],
   ['settings', 'gearSix', 'Settings', null],
+  ['student-dashboard', 'squaresFour', 'Dashboard', 'student'],
+  ['student-syllabi', 'archive', 'Syllabi', 'student'],
 ];
