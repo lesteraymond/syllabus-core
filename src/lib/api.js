@@ -121,6 +121,7 @@ export const compliance = {
   get: (id) => request(`/syllabi/${id}/compliance`),
   recheck: (id, force = false) => request(`/syllabi/${id}/compliance/recheck`, { method: 'POST', body: JSON.stringify(force ? { force: true } : {}) }),
   list: (syllabus = 'all', term = null) => request(`/compliance?syllabus=${encodeURIComponent(syllabus)}${term ? `&schoolYear=${encodeURIComponent(term.schoolYear)}&semester=${encodeURIComponent(term.semester)}` : ''}`),
+  suggest: (id) => request(`/syllabi/${id}/suggestions`, { method: 'POST', body: '{}' }), // AI rewordings of what the latest check found weak: { suggestions: [{ id, path, label, before, after, why }] }
   terms: () => request('/compliance/terms'), // the school terms that have checks: [{ schoolYear, semester, checks, syllabi }]
   // admin: the latest check of each submitted syllabus, newest first. { limit, from, to }: from/to are ISO instants (from inclusive, to exclusive).
   history: ({ limit, from, to } = {}) => {

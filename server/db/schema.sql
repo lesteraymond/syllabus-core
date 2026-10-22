@@ -50,13 +50,27 @@ CREATE TABLE IF NOT EXISTS program_outcomes (
 
 CREATE TABLE IF NOT EXISTS courses (
   course_id INT AUTO_INCREMENT PRIMARY KEY,
-  code VARCHAR(50) NOT NULL UNIQUE,
+  code VARCHAR(50) NOT NULL,
   title VARCHAR(255) NOT NULL,
   program_id INT NOT NULL,
   clos_version INT NOT NULL DEFAULT 1,
   standards_json LONGTEXT NULL,
+  lecture_units DECIMAL(3,1) NULL, -- the credit units the curriculum prints; the syllabus form's Credit Units (V) is filled from them
+  lab_units DECIMAL(3,1) NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY unique_program_code (program_id, code), -- a code only has to be unique within its program
   FOREIGN KEY (program_id) REFERENCES programs(program_id) ON DELETE RESTRICT
+);
+
+-- A subject's prerequisites in printed order: a link to another subject, or just the printed label (3rd Yr, PATHFit 1 ...). See db/prerequisites-ddl.js.
+CREATE TABLE IF NOT EXISTS course_prerequisites (
+  course_id INT NOT NULL,
+  position INT NOT NULL,
+  prereq_course_id INT NULL,
+  label VARCHAR(60) NOT NULL,
+  PRIMARY KEY (course_id, position),
+  FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE,
+  FOREIGN KEY (prereq_course_id) REFERENCES courses(course_id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS course_clos (

@@ -9,7 +9,7 @@ import ComplianceSection from './ComplianceSection';
 // Step 7: Review & Check. The compliance check (it runs when the step opens), a read-only rendering of the finished form, the status
 // of steps 1 to 6 (each links back), and the sign-off block. Faculty fill in no revision date and no modifications list.
 // `submitFailed` are the rules the server named when it refused a submit.
-export default function ReviewStep({ d, model, go, preparedBy, existing, noteRequired, note, setNote, syllabusId, saveFirst, canCheck, checkTick, submitFailed, onRun, showCompliance = true }) {
+export default function ReviewStep({ d, apply, editable, model, go, preparedBy, existing, noteRequired, note, setNote, syllabusId, saveFirst, canCheck, checkTick, submitFailed, onRun, showCompliance = true }) {
   // `target.row` (a plan row index) also scrolls to that row once its step is on screen and flashes it.
   const openStep = (key, target) => {
     go(STEPS.findIndex((s) => s.key === key));
@@ -30,7 +30,7 @@ export default function ReviewStep({ d, model, go, preparedBy, existing, noteReq
         <ul>{submitFailed.map((c) => <li key={c.id}>{tr(c.message)}</li>)}</ul>
       </div>
     )}
-    {showCompliance ? <ComplianceSection syllabusId={syllabusId} saveFirst={saveFirst} canCheck={canCheck} tick={checkTick} onOpenStep={openStep} onRun={onRun} /> : <div className="info-banner" role="note">{translateUI('publication.checkInTab')}</div>}
+    {showCompliance ? <ComplianceSection syllabusId={syllabusId} saveFirst={saveFirst} canCheck={canCheck} tick={checkTick} onOpenStep={openStep} onRun={onRun} d={d} apply={apply} editable={editable} /> : <div className="info-banner" role="note">{translateUI('publication.checkInTab')}</div>}
     <div className="rv">
       <div>
         <span className="lbl">{translateUI("ui.step_status_dc70c2")}</span>

@@ -59,6 +59,7 @@ function makeDb() {
     if (sql.startsWith('SELECT po_no, short_name')) return [s.pos.filter((x) => x.program_id === p[0])];
     if (sql.startsWith('SELECT o.po_no, o.ega_nos')) return [s.pos.filter((x) => x.program_id === p[0]).map((x) => ({ po_no: x.po_no, ega_nos: x.ega_nos, program_code: prog((y) => y.program_id === p[0]).code }))];
     if (sql.startsWith('SELECT c.code, k.ega_nos, k.po_nos')) return [s.clos.filter((k) => s.courses.find((c) => c.course_id === k.course_id).program_id === p[0]).map((k) => ({ code: s.courses.find((c) => c.course_id === k.course_id).code, ega_nos: k.ega_nos, po_nos: k.po_nos }))];
+    if (sql.startsWith('SELECT course_id, code, title FROM courses WHERE program_id')) return [s.courses.filter((c) => c.program_id === p[0] && c.course_id !== p[1]).map((c) => ({ course_id: c.course_id, code: c.code, title: c.title }))];
     if (sql.startsWith('SELECT code FROM courses WHERE program_id')) return [s.courses.filter((c) => c.program_id === p[0]).map((c) => ({ code: c.code }))];
     if (sql.startsWith('SELECT egas_version AS v')) return [[{ v: prog((x) => x.program_id === p[0]).egas_version }]];
     if (sql.startsWith('SELECT pos_version AS v')) return [[{ v: prog((x) => x.program_id === p[0]).pos_version }]];
@@ -80,6 +81,7 @@ function makeDb() {
     if (sql.startsWith("SELECT user_id FROM users WHERE role = 'admin'")) return [[]];
     if (sql.startsWith('UPDATE syllabi SET content')) { s.saved.push(JSON.parse(p[0])); return [{}]; }
     if (/^(INSERT|UPDATE|DELETE)/.test(sql)) return [{}];
+    if (/FROM course_prerequisites/.test(sql)) return [[]]; // a subject's prerequisites: none set
     throw new Error('unexpected query: ' + sql);
   };
   const conn = { query: async (q, p) => handle(q, p), beginTransaction: async () => {}, commit: async () => {}, rollback: async () => {}, release: () => {} };
@@ -365,4 +367,20 @@ test('subject setup refuses dangling EGA/PO references and accepts independent n
   assert.strictEqual((await call(admin,'PUT','/courses/10/standards',{section:'egas',value:[ega(2)],version:1})).status,409);
   assert.strictEqual((await call(admin,'PUT','/courses/10/standards',{section:'pos',value:[po(1,[99])],version:1})).status,400);
   assert.strictEqual((await call(admin,'PUT','/courses/999/standards',{section:'vision',value:{},version:1})).status,404);
+}));
+
+test('a subject comes with the other subjects of its program, for the syllabus form\'s pre-requisite dropdown', () => withServer(async ({ call, db }) => {
+  assert.deepEqual((await call(admin, 'GET', '/courses/10')).body.programSubjects, []); // the only subject of its program
+  db.s.courses.push({ course_id: 30, code: 'IT 301', title: 'Networks', program_id: 1, clos_version: 1 }, { course_id: 31, code: 'IT 205', title: 'HCI', program_id: 1, clos_version: 1 });
+  const got = (await call(admin, 'GET', '/courses/10')).body;
+  assert.deepEqual(got.programSubjects, [{ id: 30, code: 'IT 301', title: 'Networks' }, { id: 31, code: 'IT 205', title: 'HCI' }]); // not itself, not another program's (IE 101)
+}));
+
+test('a subject carries the credit units the curriculum prints, or null when they have not been loaded', () => withServer(async ({ call, db }) => {
+  assert.strictEqual((await call(admin, 'GET', '/courses/10')).body.units, null);
+  db.s.courses[0].lecture_units = '2.0';
+  db.s.courses[0].lab_units = '1.0';
+  assert.deepStrictEqual((await call(admin, 'GET', '/courses/10')).body.units, { lecture: 2, lab: 1 });
+  db.s.courses[0].lab_units = null; // half loaded counts as not loaded
+  assert.strictEqual((await call(admin, 'GET', '/courses/10')).body.units, null);
 }));

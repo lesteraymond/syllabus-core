@@ -139,6 +139,7 @@ function makeDb() {
     if (sql.startsWith('UPDATE syllabi SET status = ?, version')) { if(s.trackStatus) Object.assign(s.syllabi[p[2]],{status:p[0],version:p[1]});return [{}]; }
     if (sql.startsWith('UPDATE syllabi SET content')) { s.saved.push(JSON.parse(p[0])); s.syllabi[p[p.length - 1]].content = p[0]; return [{}]; }
     if (/^(INSERT|UPDATE|DELETE)/.test(sql)) return [{}];
+    if (/FROM course_prerequisites/.test(sql)) return [[]]; // a subject's prerequisites: none set
     throw new Error('unexpected query: ' + sql);
   };
   const conn = { query: async (q, p) => handle(q, p), beginTransaction: async () => {}, commit: async () => {}, rollback: async () => {}, release: () => {} };
@@ -223,7 +224,7 @@ test('submit stores the run with the version, its area scores and findings, then
   const run = db.s.runs[0];
   assert.strictEqual(run.version_id, 77);
   assert.strictEqual(run.syllabus_id, 1);
-  assert.strictEqual(run.standard_version, 'v7');
+  assert.strictEqual(run.standard_version, 'v8');
   assert.match(run.content_hash, /^[0-9a-f]{64}$/);
   assert.strictEqual(run.created_by, 5);
   assert.deepStrictEqual(db.s.areas.map((a) => a.area_key), ['template', 'completeness', 'co_po', 'assessment', 'contact_hours', 'reference_currency']);
@@ -932,5 +933,71 @@ test('if the AI cannot judge the fields, the rules\' own score stands and the ru
     assert.strictEqual(run.overall, before);
     assert.ok(!db.s.findings.some((f) => f.source === 'ai' && f.kind === 'finding'));
     assert.strictEqual(run.ai_status, 'failed');
+  });
+});
+
+// ---- suggested fixes (suggest.js, fixes.js): the owner asks, nothing in the form changes ----
+const LONG = 'This course introduces students to programming. They learn variables, loops, functions and simple data structures, practise them in weekly laboratory work, and build small programs that solve everyday problems, working alone and in pairs.';
+const suggestingProvider = (calls = []) => Object.assign(new MockProvider(), {
+  judge: async (prompt) => {
+    if (!/fix the parts of a course syllabus/.test(prompt)) return '[]'; // the meaning check: everything is fine
+    calls.push(prompt);
+    const item = JSON.parse(prompt.split('ITEMS: ')[1]).find((x) => x.role === 'course description');
+    return JSON.stringify(item ? [{ id: item.id, text: LONG, why: 'Added what the course covers.' }] : []);
+  },
+});
+const withProblems = (db) => { const c = conformingContent(); c.description = [{ t: 'A programming course.' }]; c.grading.rows[0].pct += 10; setContent(db, 1, c); return c; };
+
+test('suggestions: the owner gets the fixes, the score they would give and what is left; the form is not changed', () => withServer({ provider: suggestingProvider() }, async ({ call, db }) => {
+  withProblems(db);
+  const before = db.s.syllabi[1].content;
+  await call(fay, 'POST', '/syllabi/1/compliance/recheck', {});
+  const got = await call(fay, 'POST', '/syllabi/1/suggestions', {});
+  assert.strictEqual(got.status, 200);
+  assert.strictEqual(got.body.ai, 'ok');
+  const kinds = got.body.suggestions.map((x) => x.kind).sort();
+  assert.deepStrictEqual(kinds, ['grading', 'institution', 'institution', 'text']); // the test form's vision and mission are not the LCUP's
+  const text = got.body.suggestions.find((x) => x.kind === 'text');
+  assert.deepStrictEqual([text.changes[0].before, text.changes[0].after], ['A programming course.', LONG]);
+  assert.ok(got.body.suggestions.every((x) => x.id && x.ops.length && Array.isArray(x.covers)));
+  assert.ok(got.body.score.after > got.body.score.now, JSON.stringify(got.body.score));
+  assert.ok(Array.isArray(got.body.remaining));
+  assert.strictEqual(db.s.syllabi[1].content, before);
+}));
+
+test('suggestions: only the owner, only after a current check, and not on an approved syllabus', () => withServer({ provider: suggestingProvider() }, async ({ call, db }) => {
+  const c = withProblems(db);
+  assert.strictEqual((await call(fay, 'POST', '/syllabi/1/suggestions', {})).body.code, 'no_check');
+  await call(fay, 'POST', '/syllabi/1/compliance/recheck', {});
+  assert.strictEqual((await call(gus, 'POST', '/syllabi/1/suggestions', {})).status, 404); // another faculty member cannot even see it
+  c.description = [{ t: 'Changed after the check.' }];
+  setContent(db, 1, c);
+  assert.strictEqual((await call(fay, 'POST', '/syllabi/1/suggestions', {})).body.code, 'stale');
+  await call(fay, 'POST', '/syllabi/1/compliance/recheck', {});
+  db.s.syllabi[1].status = 'approved';
+  assert.strictEqual((await call(fay, 'POST', '/syllabi/1/suggestions', {})).body.code, 'approved');
+}));
+
+test('suggestions: without an AI provider the fixes that need no AI still come', () => withServer({ provider: null }, async ({ call, db }) => {
+  withProblems(db);
+  await call(fay, 'POST', '/syllabi/1/compliance/recheck', {});
+  const got = await call(fay, 'POST', '/syllabi/1/suggestions', {});
+  assert.strictEqual(got.status, 200);
+  assert.strictEqual(got.body.ai, 'unavailable');
+  assert.deepStrictEqual(got.body.suggestions.map((x) => x.kind), ['grading', 'institution', 'institution']);
+}));
+
+test('suggestions: asking again for the same text uses the remembered answer; the owner is masked in the prompt', () => {
+  const calls = [];
+  return withServer({ provider: suggestingProvider(calls) }, async ({ call, db }) => {
+    require('../lib/compliance/suggest').clearCache();
+    const c = conformingContent();
+    c.description = [{ t: 'Prepared by Fay F. A programming course.' }];
+    setContent(db, 1, c);
+    await call(fay, 'POST', '/syllabi/1/compliance/recheck', {});
+    await call(fay, 'POST', '/syllabi/1/suggestions', {});
+    await call(fay, 'POST', '/syllabi/1/suggestions', {});
+    assert.strictEqual(calls.length, 1);
+    assert.doesNotMatch(calls[0], /Fay/);
   });
 });
