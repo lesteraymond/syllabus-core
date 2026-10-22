@@ -33,6 +33,7 @@ cp .env.example .env     # then fill in the values (see below)
 npm install
 npm run init-db
 npm run migrate-students
+npm run seed-curriculum   # optional: the programs and subjects of the curriculum
 npm run dev
 ```
 
@@ -40,6 +41,7 @@ npm run dev
 - `npm install` — installs backend dependencies (includes `sharp`, which shrinks the COR photo before the AI reads it)
 - `npm run init-db` — creates the database, tables, and seed data (run once)
 - `npm run migrate-students` — adds the student role and the COR tables (`schema.sql` does not create them, so run it on fresh installs too)
+- `npm run seed-curriculum` — optional: loads the programs (BSIT, BSIT-CS, BSCPE, BSIE) and each program's subjects with credit units and linked prerequisites. A fresh `init-db` already creates the tables it needs (`course_prerequisites`, credit units, a subject code unique per program), so `migrate-prerequisites`, `migrate-credit-units` and `migrate-course-code-per-program` are only for databases made before them (see Upgrading an existing database)
 - `npm run dev` — starts the API server on **http://localhost:3001**
 
 Fill in `server/.env`:
