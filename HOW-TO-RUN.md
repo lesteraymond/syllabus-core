@@ -177,10 +177,10 @@ Restart the API server (an old process has no `/api/auth/google`). "Access Denie
 
 ### The developer rule editor
 
-Set `DEV_EDITOR_PASSWORD` in `server/.env`, restart the API and open **http://localhost:3001/dev/rules**. It is not linked from the app and needs no app sign-in, only the password (open for 30 minutes; five wrong tries lock the address for ten). It changes the compliance standard's pass mark, bands, area weights, limits and each rule's points, severity, message, explanation, numbers and on/off switch. A save takes effect at once and gives the standard a new version (v8.1, v8.2, ...). "Reset to file" removes all edits; the history keeps them. The edits are stored in the database (`app_settings`, `standard_changes`), on top of `server/lib/compliance/standard-v4.json`. The `standard_changes` table is created the first time the editor saves (it is also in `schema.sql`).
+Set `DEV_EDITOR_PASSWORD` in `server/.env`, restart the API and open **http://localhost:3001/dev/rules**. It is not linked from the app and needs no app sign-in, only the password (open for 30 minutes; five wrong tries lock the address for ten). It changes the compliance standard's pass mark, bands, area weights, limits and each rule's points, severity, message, explanation, numbers and on/off switch. A save takes effect at once and gives the standard a new version (v9.1, v9.2, ...). "Reset to file" removes all edits; the history keeps them. The edits are stored in the database (`app_settings`, `standard_changes`), on top of `server/lib/compliance/standard-v4.json`. The `standard_changes` table is created the first time the editor saves (it is also in `schema.sql`).
 
-### The AI Checker standard is v8 (68 rules)
-Seven rules (D-01 to D-07) find repeated data inside one syllabus. They are in `server/lib/compliance/standard-v4.json` and need no migration or setting. Scores stored before the upgrade stay as they were until a syllabus is checked again. If you saved edits in the developer rule editor on v7, "Reset to file" brings in the new rules (the history keeps your edits).
+### The AI Checker standard is v9 (69 rules)
+Seven rules (D-01 to D-07) find repeated data inside one syllabus, and I-01 asks that a syllabus says how it supports diverse learners (students with disabilities and others). They are in `server/lib/compliance/standard-v4.json` and need no migration or setting. Scores stored before the upgrade stay as they were until a syllabus is checked again. If you saved edits in the developer rule editor on v7, "Reset to file" brings in the new rules (the history keeps your edits).
 
 ### "Table ... doesn't exist" or a missing column
 Your database is behind. Run the migrations in *Upgrading an existing database*, then restart the API server.

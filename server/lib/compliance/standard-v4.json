@@ -1,7 +1,7 @@
 {
   "id": "undergraduate-syllabus",
-  "version": "v8",
-  "title": "Undergraduate Syllabus v8",
+  "version": "v9",
+  "title": "Undergraduate Syllabus v9",
   "form": "PRE-VPAA FO 001 (011)",
   "source": "Derived from the finished IT 204 Computer Programming 2 syllabus (IT204-Programming2-EOMS-1.pdf), src/views/builder2/FormPaper.jsx (the layout and tag conventions the form prints), src/lib/syllabusModel.js (the rules the builder already enforces) and the admin catalog. docs/reference/ has no template PDF. The sample states no scores, so every value listed in `assumptions` and every rule with a `note` is a project decision for the curriculum office to confirm.",
 
@@ -524,6 +524,30 @@
       "params": {"mode": "description", "minWords": 6},
       "message": "The course description {what}.",
       "fix": "Write the course description in your own words, without repeating"
+    },
+    {
+      "id": "I-01",
+      "area": "completeness",
+      "step": "reqs",
+      "severity": "minor",
+      "weight": 2,
+      "check": "inclusion",
+      "params": {
+        "patterns": [
+          "accommodat",
+          "accessib",
+          "disabilit",
+          "inclusi",
+          "diverse (learner|student)",
+          "special (need|educ)",
+          "assistive",
+          "\\bPWDs?\\b",
+          "learning differences",
+          "reasonable (adjustment|arrangement)"
+        ]
+      },
+      "message": "Nothing in the syllabus says how it supports diverse learners, including students with disabilities.",
+      "fix": "State how the course accommodates diverse learners, such as students with disabilities"
     }
   ]
 }

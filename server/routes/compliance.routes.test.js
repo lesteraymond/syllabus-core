@@ -224,7 +224,7 @@ test('submit stores the run with the version, its area scores and findings, then
   const run = db.s.runs[0];
   assert.strictEqual(run.version_id, 77);
   assert.strictEqual(run.syllabus_id, 1);
-  assert.strictEqual(run.standard_version, 'v8');
+  assert.strictEqual(run.standard_version, 'v9');
   assert.match(run.content_hash, /^[0-9a-f]{64}$/);
   assert.strictEqual(run.created_by, 5);
   assert.deepStrictEqual(db.s.areas.map((a) => a.area_key), ['template', 'completeness', 'co_po', 'assessment', 'contact_hours', 'reference_currency']);

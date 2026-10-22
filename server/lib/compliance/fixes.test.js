@@ -125,3 +125,27 @@ test('a grading component named twice is merged, keeping the total at 100', () =
   assert.equal(c.grading.rows.filter((r) => r.label === first.label).length, 1);
   assert.equal(evaluate(c, standard, F.ctx()).findings.filter((f) => f.ruleId === 'D-06').length, 0);
 });
+
+test('I-01: a syllabus with no word on diverse learners fails, and the suggested requirement fixes it', () => {
+  const F = require('./fixtures');
+  const standard = require('./standard-v4.json');
+  const { evaluate } = require('./rules');
+  const ops = require('./formOps');
+  const { deterministic } = require('./fixes');
+  const c = F.good();
+  assert.equal(evaluate(c, standard, F.ctx()).findings.filter((f) => f.ruleId === 'I-01').length, 0);
+  c.reqs.pop();
+  const found = evaluate(c, standard, F.ctx());
+  assert.equal(found.conformance.ok, true, 'it only warns');
+  assert.equal(found.findings.filter((f) => f.ruleId === 'I-01').length, 1);
+  const out = deterministic(c, found.findings, standard).filter((s) => s.rules.includes('I-01'));
+  assert.equal(out.length, 1);
+  assert.ok(ops.applyOps(c, out[0].ops));
+  assert.equal(evaluate(c, standard, F.ctx()).findings.filter((f) => f.ruleId === 'I-01').length, 0);
+  const inPlan = F.good();
+  inPlan.reqs.pop();
+  inPlan.plan[0].activities = '- Lecture with captioned slides and alternative formats';
+  assert.equal(evaluate(inPlan, standard, F.ctx()).findings.filter((f) => f.ruleId === 'I-01').length, 1, 'captioned slides alone is not one of the words');
+  inPlan.plan[0].activities = '- Accessible lecture materials for every learner';
+  assert.equal(evaluate(inPlan, standard, F.ctx()).findings.filter((f) => f.ruleId === 'I-01').length, 0);
+});

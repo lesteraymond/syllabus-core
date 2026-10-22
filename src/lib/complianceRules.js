@@ -357,6 +357,17 @@ export const CHECKS = {
     const doubled = Object.keys(X.weekHits).map(Number).filter((w) => X.weekHits[w] > 1).sort((a, b) => a - b);
     return [item(doubled.length === 0, 'plan', { s: doubled.length > 1 ? 's' : '', weeks: doubled.join(', '), verb: doubled.length > 1 ? '' : 's' }, { weeks: doubled })];
   },
+  // The syllabus says it is open to diverse learners, including students with disabilities: any of the description, the requirements or the
+  // plan's own columns mentions accommodations, accessibility or inclusion (the standard's `patterns`, matched without regard to case).
+  inclusion(X, p) {
+    const parts = [arr(X.c.description).map((x) => text(obj(x).t)).join(' '), arr(X.c.reqs).map((x) => text(obj(x).t)).join(' ')];
+    X.plan.forEach((r) => parts.push(text(obj(r).contents), text(obj(r).activities), text(obj(r).tasks)));
+    const all = parts.join(' ');
+    if (blank(all) && !X.plan.length) return [];
+    const hit = arr(p.patterns).find((re) => new RegExp(re, 'i').test(all));
+    return [item(!!hit, 'reqs', {}, { matched: hit || null })];
+  },
+
   // Repeated data inside one syllabus. Each mode lists the things it looked at in the order they appear; one that repeats an earlier one (the same
   // words, or a near-copy sharing `threshold` of its words) fails, and says which one it repeats. Very short text is only compared whole, since
   // "Quiz" appearing twice is not a copy. `minWords` is how long a text must be to count.

@@ -6,6 +6,7 @@
 //   a missing Prelim / Midterm / Final examination row -> add it at its week
 //   an empty ILO before a filled one              -> remove the empty one
 //   a requirement or a reference listed twice      -> remove the repeat
+//   no word on diverse learners                   -> add a standard accommodation requirement
 //   a grading component listed twice               -> merge them into one, adding their percentages
 //   Learning Plan rows out of week order          -> sort them
 //   the vision, mission or a graduate attribute that is not the LCUP's wording -> the LCUP's wording, from the standard
@@ -171,6 +172,19 @@ function repeatedGrading(content, findings) {
   return ops.length ? [suggestion({ kind: 'grading', label: 'Grading system', rules: ['D-06'], covers: cover(fs), why: 'The same component is listed more than once, so the rows are merged and their percentages added.', changes, ops, expect })] : [];
 }
 
+// The accommodation statement added for I-01. It is the only wording the checker itself supplies, so the author can reject it and write their own.
+const INCLUSION_REQUIREMENT = 'Students who need learning accommodations, for example because of a disability or other learning needs, tell the instructor early so that accessible formats and reasonable adjustments can be arranged.';
+function inclusion(content, findings) {
+  const fs = find(findings, 'I-01');
+  if (!fs.length || !Array.isArray(content.reqs)) return [];
+  return [suggestion({
+    kind: 'text', label: 'Requirements', rules: ['I-01'], covers: cover(fs),
+    why: 'The syllabus says nothing about diverse learners; a requirement tells students how accommodations are arranged.',
+    changes: [{ before: '(no statement on accommodations)', after: INCLUSION_REQUIREMENT }],
+    ops: [{ op: 'insert', path: 'reqs', beforeId: null, value: { id: 'ai-inclusion', t: INCLUSION_REQUIREMENT } }],
+  })];
+}
+
 function planOrder(content, findings) {
   const fs = find(findings, 'T-18');
   if (!fs.length) return [];
@@ -221,7 +235,7 @@ function institutionText(content, findings, standard) {
 }
 
 function deterministic(content, findings, standard) {
-  return [...gradingFix(content, findings), ...requirementNumbers(content, findings), ...examRows(content, findings, standard), ...emptyIlos(content, findings), ...repeatedItems(content, findings), ...repeatedGrading(content, findings), ...planOrder(content, findings), ...institutionText(content, findings, standard)];
+  return [...gradingFix(content, findings), ...requirementNumbers(content, findings), ...examRows(content, findings, standard), ...emptyIlos(content, findings), ...repeatedItems(content, findings), ...repeatedGrading(content, findings), ...inclusion(content, findings), ...planOrder(content, findings), ...institutionText(content, findings, standard)];
 }
 
 module.exports = { deterministic, suggestion, stablePath };
