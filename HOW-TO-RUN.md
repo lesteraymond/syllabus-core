@@ -177,7 +177,10 @@ Restart the API server (an old process has no `/api/auth/google`). "Access Denie
 
 ### The developer rule editor
 
-Set `DEV_EDITOR_PASSWORD` in `server/.env`, restart the API and open **http://localhost:3001/dev/rules**. It is not linked from the app and needs no app sign-in, only the password (open for 30 minutes; five wrong tries lock the address for ten). It changes the compliance standard's pass mark, bands, area weights, limits and each rule's points, severity, message, explanation, numbers and on/off switch. A save takes effect at once and gives the standard a new version (v7.1, v7.2, ...). "Reset to file" removes all edits; the history keeps them. The edits are stored in the database (`app_settings`, `standard_changes`), on top of `server/lib/compliance/standard-v4.json`. The `standard_changes` table is created the first time the editor saves (it is also in `schema.sql`).
+Set `DEV_EDITOR_PASSWORD` in `server/.env`, restart the API and open **http://localhost:3001/dev/rules**. It is not linked from the app and needs no app sign-in, only the password (open for 30 minutes; five wrong tries lock the address for ten). It changes the compliance standard's pass mark, bands, area weights, limits and each rule's points, severity, message, explanation, numbers and on/off switch. A save takes effect at once and gives the standard a new version (v8.1, v8.2, ...). "Reset to file" removes all edits; the history keeps them. The edits are stored in the database (`app_settings`, `standard_changes`), on top of `server/lib/compliance/standard-v4.json`. The `standard_changes` table is created the first time the editor saves (it is also in `schema.sql`).
+
+### The AI Checker standard is v8 (68 rules)
+Seven rules (D-01 to D-07) find repeated data inside one syllabus. They are in `server/lib/compliance/standard-v4.json` and need no migration or setting. Scores stored before the upgrade stay as they were until a syllabus is checked again. If you saved edits in the developer rule editor on v7, "Reset to file" brings in the new rules (the history keeps your edits).
 
 ### "Table ... doesn't exist" or a missing column
 Your database is behind. Run the migrations in *Upgrading an existing database*, then restart the API server.
@@ -239,6 +242,8 @@ syllabus-cms-plus/
 | `npm run dev` | Start the API server (http://localhost:3001). It restarts when files change |
 | `npm run init-db` | Create the database, tables and seed data |
 | `npm run seed-outcomes` | Load the institution's vision, mission, EGAs, programs and the BSIT program outcomes. Only inserts what is missing; run it after `migrate-builder`. Supports `--dry-run` |
+| `npm run seed-curriculum` | Load the programs and each program's subjects with their prerequisites from `db/curriculum-data.js` (the curricula in `/curriculum`). Needs `migrate-prerequisites`, `migrate-course-code-per-program` and `migrate-credit-units`. Adds only; `-- --dry-run` reports, `-- --no-updates` leaves existing subject titles alone |
+| `node scripts/sample-syllabi.js` | Make five sample syllabi (BSIT x2, BSIT-CS, BSCPE, BSIE) through the app's own API routes: it first fills what the catalog lacks for those subjects (school vision and mission, program EGAs and outcomes, subject setup and CLOs), then builds, submits and (for three of them) approves the syllabi. Offline AI step; skips a subject that already has a syllabus |
 | `node scripts/cor-ai-test.js [image]` | Try the AI COR reader on the images in `server/sample_cor/` (git-ignored) or on a given image; prints the fields it read |
 
 ### Database migrations (`server/`)
@@ -263,6 +268,9 @@ Each one upgrades an older database, is safe to run again, and touches no existi
 | `npm run migrate-subject-standards` | `courses.standards_json`; existing standards are kept as independent copies |
 | `npm run migrate-usage` | `usage_daily` table for the dashboard time card |
 | `npm run migrate-deadlines` | `subject_deadlines` and `deadline_notices` tables |
+| `npm run migrate-course-code-per-program` | Makes a subject code unique within its program instead of across the catalog (same ENGEC or IS-CITE in several programs). Changes no rows |
+| `npm run migrate-credit-units` | `courses.lecture_units` and `lab_units`: the credit units a subject carries, which fill the syllabus form's Credit Units (V) |
+| `npm run migrate-prerequisites` | `course_prerequisites` table: a subject's prerequisites, linked to other subjects (needs `migrate-builder`) |
 | `npm run migrate-subject-owner` | Unique key on `faculty_courses.course_id` (one subject, one faculty member). Stops and lists any subject held by more than one faculty. Supports `--dry-run` |
 
 Where a script says it supports `--dry-run`, add it after `--` to only report what would change, e.g. `npm run migrate-assignments -- --dry-run`.
@@ -296,6 +304,7 @@ Where a script says it supports `--dry-run`, add it after `--` to only report wh
 | GET/POST | /api/syllabi/:id/comments | Reviewer comments |
 | GET | /api/syllabi/:id/compliance | Stored compliance check |
 | POST | /api/syllabi/:id/compliance/recheck | Re-run the compliance check |
+| POST | /api/syllabi/:id/suggestions | Suggested fixes for what the latest check found, the score with all of them, and what is left (owner only; needs a current check; the word-writing fixes need an AI key) |
 | GET | /api/compliance | Compliance overview (admin: all, faculty: own) |
 | GET | /api/compliance?schoolYear=2026-2027&semester=1st Semester | The same for a past term: each syllabus's newest check inside it |
 | GET | /api/compliance/terms | School terms that have checks (for the Historical Exports list) |

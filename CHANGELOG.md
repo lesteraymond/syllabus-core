@@ -1297,3 +1297,120 @@ Each program has its own expected graduate attributes (EGAs) and program outcome
 - New tests: `analyticsView`, `reportView`, `facultyCompliance`, `searchView`, `terms`, `corAi`, `overrides`, the rule editor routes, and the settings and standard routes.
 - Not checked in a real browser or on a phone: the PDFs were drawn and viewed from Node, the rule editor page was checked against a stand-in DOM, and the layout changes were not reviewed on a device.
 - New dependencies: `jspdf`, `jspdf-autotable`. New environment variables: `DEV_EDITOR_PASSWORD`, `COR_READER`, `COR_AI_MODEL` (see `server/.env.example`). New table: `standard_changes` (created on first use; also in `schema.sql`).
+
+---
+
+### v1.55.0 — Automatic AI Suggestions for Everything the Check Found
+**Date:** October 22, 2026
+
+**Review & Check step (faculty):**
+- When a check finishes and found something, a **Suggested changes** card appears under it on its own (no button): the server works out a fix for every finding that can be fixed. Each suggestion shows where it is, the rule codes it answers, why, and the text now beside the suggested text, with **Accept suggestion** and **Reject suggestion**. **Accept all N suggestions** and **Reject all suggestions** do the whole list; **Refresh suggestions** asks again.
+- The card says what the rule-based score would be with every suggestion applied ("from 81% to 97%"); the AI's meaning check runs again at the next re-check.
+- Accepting writes the change into the form (the normal autosave follows). **Undo this change** puts it back. A suggestion is not applied when the author edited that part meanwhile. Rejections are remembered per syllabus in this browser and are not offered again until that part of the form changes.
+- **Still needs you** lists the findings no suggestion can fix, with a link to the step.
+
+**What is fixed, and how:**
+- Without AI (always, even with no AI key): grading that does not total 100% is scaled to 100 (T-24); a typed requirement number is removed (T-20); a missing Prelim, Midterm or Final examination row is added at week 6, 12 or 18 (A-03); an empty ILO before a filled one is removed (T-17); Learning Plan rows are put in week order (T-18). The vision, mission and graduate attributes are set to the LCUP wording the standard holds (T-28, T-29, T-30).
+- With the AI, from what the syllabus already says (its title, outcomes, ILOs, contents and grading): a missing or thin description (T-04, C-01, J-01), ILO wording (C-02, J-04), requirements (J-02), content, activities or assessment tasks that do not match their ILO (A-05, A-06, A-07, J-05), empty lesson cells (T-16, A-01), a lesson that names no core value (C-05), and missing requirements (T-19, drafted from the grading components).
+- Not fixable by a suggestion, so a full score is not always reachable: references (a rewritten or invented citation would be false), course details, outcomes, tags, a stored copy of the catalog's vision, mission, EGAs and POs that differs from the live catalog (T-09 to T-12, resubmit to refresh it), the sign-off, credit units, missing grading components and weeks the plan does not cover. These are listed under "Still needs you".
+
+**Server:**
+- `POST /api/syllabi/:id/suggestions` (the owner only; 404 for anyone else, 409 on an approved syllabus). It needs a current check (`no_check`, or `stale` when the form changed since it) and answers with `{ suggestions, ai, score: { now, after }, remaining }`. `ai` is `ok`, `none` (nothing needed words), `unavailable` (no provider) or `failed`. Limited to 10 requests a minute per person.
+- A suggestion is a list of small edits (`formOps.js`: set, insert, remove, reorder, sort by week) addressed by item ids, so accepting one does not break the others. The same code is in `server/lib/compliance/formOps.js` and `src/lib/formOps.js`, and `formOps.parity.test.js` keeps them the same. The server applies all suggestions to a copy and re-runs the rules to give the score above.
+- `fixes.js` holds the fixes that need no AI; `suggest.js` asks the AI in batches of 10 items (at most 40 items per request), checks what comes back (a known item, a sensible length, at least the words the standard asks of a description or ILO, a real core value) and masks names and emails first. Answers are remembered by the text and problem they answered, so asking again costs no tokens.
+
+**LCUP wording:**
+- The mission the standard compares a syllabus with (T-29) is now the LCUP's current text ("LCUP commits to generate and make available to all persons and communities programs and services that will enable them to: ...", six items); the vision is unchanged. The seed data (`src/data/outcomesSeed.js`) carries the same vision and mission, so a fresh database starts with the wording the checker expects.
+- The Syllabus Builder puts the LCUP vision and mission in by itself: choosing a subject fills them with the LCUP wording (not the subject's older starting values), and opening an editable draft that carries different text replaces it and saves the correction on its own (no "unsaved changes" warning, since the author typed nothing). Submitted versions, and read-only previews of them, are not rewritten. In step 2 (Learning Outcomes) the vision, the mission introduction and the mission statements are shown greyed out and cannot be edited; the "add" and "remove statement" controls for the mission are gone, and a note says the LCUP vision and mission are fixed and added for you.
+
+**Validation and deployment:**
+- 778 passing automated tests (712 domain/API/helper checks, 22 localization/preference checks and 44 rendered UI checks); the localization audit and the production build pass. New: `formOps` and its parity test, `fixes`, `suggest` (with stand-in AI replies that, once applied, clear the findings they answer), `suggestionView` and four route tests.
+- Not tried against a real AI provider or in a browser. In a trial with a stand-in provider a deliberately weak syllabus went from 88 to 97 by the rules, with only a reference and two alignment findings left; a real model may need a second round for alignment.
+- No database change.
+
+---
+
+### v1.56.0 — Programs and Subjects from the Curriculum, with Linked Prerequisites
+**Date:** October 22, 2026
+
+**Programs and subjects (the `curriculum/` photos):**
+- The registrar's "Courses Curriculum" print-outs in `curriculum/` (BSIT 2022-2023, BSIT with Specialization in Cyber Security 2025-2026, BSCPE and BSIE 2022-2023) were read and typed into `server/db/curriculum-data.js`. `npm run seed-curriculum` (from `server/`) loads them: **four programs** for the program dropdown (BSIT, BSIT-CS, BSCPE and BSIE; the existing BSIT and BSIE keep their names) and **every program's own subjects**, each belonging to its program: BSIT 31, BSIT-CS 40, BSCPE 42, BSIE 40 (these include the sample subjects that were already there).
+- **A subject code is now unique within its program, not across the catalog** (`npm run migrate-course-code-per-program` replaces the unique key on `courses(code)` with one on `courses(program_id, code)`; `schema.sql` and the subject routes follow). So the same ENGEC, ENGBOHS, CAD, TECHPREN-CITE or IS-CITE exists in each program that prints it, each with its own prerequisites and syllabi, and IT 204 can be a different subject in BSIT and in Cyber Security. Subjects an earlier import added with a suffix (IT 202-CS, IT 302-IT) were given their printed code back. Adding a subject whose code another program uses is allowed; the same code twice in one program is still refused ("IT 101 already exists in BSIT").
+- General education (GE, PATHFit, NSTP, TH) is not imported: a prerequisite that names one is kept as its printed label. The math and science subjects (MA 7, MA 8, MA 9DE, CHEMENG, PHYENG) are imported for BSCPE and BSIE. Codes are written one way ("IT-204" is "IT 204"); a few typos in the print-out are corrected in the titles.
+- An existing subject with the same code in the same program but another title is retitled (IT102 "Computer Programming 1" became "Discrete Mathematics"); its CLOs, standards and syllabi are untouched. `--dry-run` only reports and `--no-updates` leaves existing titles and codes alone. The script adds, never deletes, and a second run changes nothing.
+- A COR line that matches a code used in several programs is matched to the subject listed first (the lowest id).
+- The old sample subjects that are not in any curriculum (IT103 and IT104 in BSIT, "IT 302 History of IE" in BSIE) were removed from the database on request, so the catalog is exactly the 150 curriculum subjects. Syllabi #3, #4, #5, #6 and #8 stayed (with their saved content) but lost their link to a subject, and the 3 faculty assignments and 6 CLOs of those subjects went with them.
+- New programs and subjects start with no graduate attributes, program outcomes or CLOs: an administrator sets those up in Program & Subjects before faculty can use a subject, as for any new subject.
+
+**Prerequisites linked to the subject:**
+- New table `course_prerequisites` (`npm run migrate-prerequisites`; also in `schema.sql`): one row per printed prerequisite, in order, either a link to another subject of the same program or, when it is not a subject of the catalog (3rd Yr, PATHFit 1 ...), its printed label. A subject with no prerequisite says "None".
+- `GET /api/courses/:id` now returns `prerequisites` and `prerequisiteText` (for example "IT 202 – Computer Programming 1 (Fundamentals of Programming); 3rd Yr": each linked subject as its current code and name, a year standing as printed, separated by "; " because a subject's name can contain commas; null when nothing is set).
+- The Syllabus Builder fills **Pre-requisite (IV)** with it when the subject is chosen, or when the field is still empty, and a catalog with nothing set leaves it as typed. The field is a **dropdown with checkboxes and a search box**: "None", the year standings (2nd Yr, 3rd Yr, 4th Yr) and every other subject of the chosen program (code and title), several at once. The syllabus still keeps plain text ("IT 202 – Computer Programming 1; 3rd Yr"), so the finished form, the checker and older syllabi are unchanged; text an author wrote that is not in the list stays selected under "As already written" until it is unticked, and older text with bare codes and commas ("IT 202, 3rd Yr") is still read. `GET /api/courses/:id` also returns `programSubjects` (id, code and title of the program's other subjects) for it.
+- Prerequisite links are not editable in the app yet: they come from the curriculum import.
+
+**Credit units filled in by the subject:**
+- Each subject carries the lecture and laboratory units the curriculum prints (new columns `courses.lecture_units` and `lab_units`; `npm run migrate-credit-units`; loaded by `npm run seed-curriculum` for all 150 subjects of the four curricula). The rows were placed using each semester's printed total as a check, so the units match the photos' totals; the same subject can have different units in different programs (for example IT-ELEC1 is 2/1 in BSIT and 0/1 in Cyber Security).
+- `GET /api/courses/:id` returns `units: { lecture, lab }` (null when not loaded). The Syllabus Builder fills **Credit Units (V)** with them when the subject is chosen, or for a box that is still empty; the author can still change them, and a subject without units leaves the boxes as typed. A zero is a real value (OFFTOOLS is 0 lecture, 1 laboratory).
+
+**Validation and deployment:**
+- 798 passing automated tests (732 domain/API/helper checks, 22 localization/preference checks and 44 rendered UI checks); the localization audit and the production build pass. New: the import planner (per-program codes, retitling, suffix repair, idempotence, and checks of the real curricula, including that every BSIE subject asked about is in BSIE), the prerequisite loader and the builder fill.
+- The photos are phone pictures taken at an angle, so a prerequisite was placed on the row it lines up with. Please check these against the printed curriculum: BSIE COMPRO (shown with PHYENG while FUNELC-IE has none), BSIE STATIE1 (none) and ADEMAIE (MA 7), and BSCPE CpE 304 and CpE 305 (CpE 305 Operating System shows ENGDA).
+- New scripts `npm run migrate-prerequisites`, `npm run migrate-course-code-per-program`, `npm run migrate-credit-units` and `npm run seed-curriculum`, in that order; restart the API server after the migrations.
+
+---
+
+### v1.57.0 — Student Views Read the Catalog
+**Date:** October 22, 2026
+
+**Student view (Syllabi and Dashboard):**
+- A student's **Syllabi** list and the **Repository** show each syllabus's subject as the catalog has it now: the subject's current code and title and its program (code and full name), with the syllabus's faculty member (already read live). A renamed or recoded subject reads the same everywhere. A syllabus with no catalog subject keeps its own text; the faculty and admin working lists are unchanged (`GET /api/syllabi` for a student, or `?scope=repository`, now returns `programName` too).
+- A student's **enrolled subjects** (read from the COR) are tied to the catalog. `GET /api/students/me` links subjects that were not in the catalog when the COR was read (the curriculum import added them) and returns, for each, the catalog's `code`, `title`, `program`, `programName` and `faculty` (the faculty member who holds the subject) next to what the COR printed (`subject_code`, `subject_title`). A COR code is matched ignoring spaces, hyphens and case ("IT-401" is "IT 401"); when a code exists in several programs the student's own program wins (the section tells it: BSIT4B is BSIT, BSITCS4A is BSIT-CS). The new COR registration uses the same matching.
+- The student **Dashboard** lists each enrolled subject with the catalog's code and title (not the COR's capitals), its program and its faculty, and finds the approved syllabus through the linked subject instead of comparing code text ("IT-401" did not match "IT 401" before, so the View button never showed).
+- Run on your database: the 7 enrolled subjects of the one student were linked to BSIT's subjects (CAPSPRO 2, IT 401 to 404, IT-ELEC3, IT-ELEC4).
+- Note: the Syllabi tab is empty until a syllabus is approved, because all syllabi were cleared.
+
+**Validation and deployment:**
+- 801 passing automated tests (737 domain/API/helper checks, 22 localization/preference checks and 44 rendered UI checks); the localization audit and the production build pass. New: `server/lib/enrollments.js` tests (matching, program preference, linking, faculty) and a list test for the live catalog values.
+- No schema change. Not checked in a browser.
+
+---
+
+### v1.58.0 — Sample Syllabi from Four Programs
+**Date:** October 22, 2026
+
+- New developer script `server/scripts/sample-syllabi.js` (data in `sample-syllabi-data.js`; `node scripts/sample-syllabi.js` from `server/`). It makes five sample syllabi through the application's own API routes, run in the script's process against your database with a supplied session, so no password is needed: IT 204 Computer Programming 2 and IT 302 Information Management 1 (BSIT), CS 303 Essential Security Principles (BSIT-CS), CpE 301 Logic Circuit and Design (BSCPE) and IE 302 Quality Management System (BSIE). Each has its subject's CLOs, units and pre-requisite, 15 weekly lessons with tagged ILOs, Prelim, Midterm and Final rows, requirements, real textbook references from the last ten years and a grading of 100%.
+- Before that it fills what the catalog lacked for those subjects: the school vision, mission and EGAs where missing, each program's EGAs and program outcomes (BSIT uses the seed's ten; BSIT-CS, BSCPE and BSIE get six each), and each subject's setup and three CLOs. Nothing that already existed is changed.
+- Statuses: IT 204, CS 303 and CpE 301 are approved after the administrator's check (scores 99%, 100% and 100%), IE 302 is submitted and waits in Review & Approval, IT 302 stays a draft. The AI step uses the offline provider, so it costs no tokens.
+- A subject that already has a syllabus of that faculty member is skipped, so the script can be run again.
+- No application code changed. 801 passing automated tests.
+
+---
+
+### v1.58.1 — Opening Review & Check No Longer Re-checks
+**Date:** October 22, 2026
+
+- The Review & Check step (step 7 of the Syllabus Builder) used to run the compliance check by itself every time it was opened, which could mean a new check (and AI tokens) each time. It now only shows the stored check. A syllabus that has not been checked says "Not checked yet"; **Re-check** (in the check card and in the footer) runs a new one. Suggested changes appear once a current check exists.
+- Coming back to Review & Check from another step also re-checked: the step remembered "first run" with a flag that React's double-run of effects in development turned into a press of Re-check. It now compares the footer button's counter with the one it was opened with, so only a real press of Re-check runs a new check.
+
+---
+
+### v1.59.0 — Duplicate-Data Rules (Standard v8)
+**Date:** October 22, 2026
+
+- The AI Checker's standard is now **v8**, with seven new rules (D-01 to D-07) that find data repeated inside one syllabus. They compare text after ignoring case, punctuation, bullets and bold markers, and treat a text sharing about 85% of another's words as a copy. Very short text (under 4 words) only counts as a copy when it is the same, and examination rows are left alone, so "- Quiz" in two lessons is not flagged.
+  - **D-01** (major, 2 points): the same ILO in two weeks.
+  - **D-02** (minor): the same course content, learning activities or assessment task in two lessons.
+  - **D-03** (minor): a lesson whose columns are the same text as each other.
+  - **D-04** (minor): a requirement listed twice. **D-05** (minor): a reference listed twice. **D-06** (minor): a grading component named twice.
+  - **D-07** (minor): a course description that repeats a sentence or copies a CLO word for word.
+- They belong to Content Completeness, never block a submit, and each finding names the item it repeats.
+- Suggested changes: a repeated requirement or reference is offered for removal (the first stays). The others need rewording, so the author writes them.
+- English and Filipino texts for all seven rules. Stored scores stay as they were until a syllabus is checked again.
+- New tests for each rule (`duplicates.test.js`) and for the removal suggestion. Copying between syllabi (part 2) is not built.
+
+
+### v1.59.1 — Less Repetition in the Check Result
+**Date:** October 22, 2026
+
+- A repeated requirement, reference or grading component (D-04 to D-06) used to appear three times: as an AI/rule recommendation, as a finding, and under "Still needs you". The recommendation that cited only those findings is now left out; the finding stays (it carries the score).
+- New suggested change for D-06: a grading component named twice is merged into one, with the percentages added, so the total stays 100%. (A repeated requirement or reference already had a removal suggestion.) These three no longer fall under "Still needs you".
