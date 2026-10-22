@@ -1,101 +1,137 @@
 import StableButton from '../components/StableButton';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { ChartCard, Donut, Insight, Legend, PageHead, Progress } from '../components/ui';
 import { BRAND } from '../data/initialData';
 import Select from '../components/Select';
+import { buildAnalytics } from '../lib/analyticsView';
+import { useComplianceRows } from '../lib/useComplianceRows';
+import { buildReport } from '../lib/reportView';
 
 function LineChart({ data }) {
-  return <div><svg className="line-chart" viewBox="0 0 300 120"><g className="grid-lines">{[20, 50, 80, 110].map(y => <line key={y} x1="0" y1={y} x2="300" y2={y} />)}</g><polyline points={data.map(p => p.join(',')).join(' ')} fill="none" stroke={BRAND.blue} strokeWidth="3" />{data.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="4" fill="white" stroke={BRAND.blue} strokeWidth="3" />)}</svg><div className="axis-labels"><span>{translateUI("ui.mar_c4ba08")}</span><span>{translateUI("ui.apr_befde5")}</span><span>{translateUI("ui.may_c94f47")}</span><span>{translateUI("ui.jun_6d90df")}</span><span>{translateUI("ui.jul_b73755")}</span><span>{translateUI("ui.aug_75629a")}</span></div></div>;
+  const [tip, setTip] = useState(null); // { left, top, text } in the chart's own box, set from the dot that is hovered
+  if (!data.length) return <div className="empty">{translateUI("ui.no_program_data_yet_c5b890")}</div>;
+  const step = data.length > 1 ? 275 / (data.length - 1) : 0;
+  const pts = data.map((p, i) => [data.length > 1 ? 10 + i * step : 150, 110 - Math.max(0, Math.min(100, p.value))]);
+  const show = (e, i) => {
+    const box = e.currentTarget.ownerSVGElement.parentElement.getBoundingClientRect();
+    const dot = e.currentTarget.getBoundingClientRect();
+    setTip({ left: dot.left + dot.width / 2 - box.left, top: dot.top - box.top, text: data[i].label + ': ' + data[i].value + '%' });
+  };
+  return <div className="line-wrap" onMouseLeave={() => setTip(null)}><svg className="line-chart" viewBox="0 0 300 120"><g className="grid-lines">{[20, 50, 80, 110].map(y => <line key={y} x1="0" y1={y} x2="300" y2={y} />)}</g><polyline points={pts.map(p => p.join(',')).join(' ')} fill="none" stroke={BRAND.blue} strokeWidth="3" />{pts.map(([x, y], i) => <g key={i}><circle cx={x} cy={y} r="4" fill="white" stroke={BRAND.blue} strokeWidth="3" /><circle className="line-hit" cx={x} cy={y} r="11" fill="transparent" onMouseEnter={(e) => show(e, i)} onFocus={(e) => show(e, i)} onMouseLeave={() => setTip(null)} /></g>)}</svg>{tip && <div className="line-tip" style={{ left: tip.left, top: tip.top }} role="tooltip">{tip.text}</div>}<div className="axis-labels">{data.map((p, i) => <span key={i}>{p.label}</span>)}</div></div>;
 }
 
-function DonutBreakdown({ value, high, med, low }) {
-  return <div className="donut-panel analytics"><Donut value={value} centerTop={`${value}%`} centerBottom={tr("Average")} /><div className="legend"><Legend color="var(--blue)" text={translateUI("ui.high_80_100_234a35")} value={`${high}%`} /><Legend color="var(--gold)" text={translateUI("ui.medium_50_79_d47c66")} value={`${med}%`} /><Legend color="var(--red)" text={translateUI("ui.low_50_979304")} value={`${low}%`} /></div></div>;
+// A donut of the three score bands. Clicking a colour (the ring or its legend row) selects it: the centre and the tooltip above the ring
+// then describe that band, and clicking it again goes back to the average. `parts` is [{ key, color, label, pct, tip }].
+function BandDonut({ average, averageText, averageTip, parts }) {
+  const [picked, setPicked] = useState(null);
+  const [hot, setHot] = useState(null); // the colour under the pointer: its tooltip shows at once (an SVG <title> waits a moment)
+  const sel = parts.find((x) => x.key === picked) || null;
+  const shownTip = parts.find((x) => x.key === (hot || picked)) || null;
+  const R = 45;
+  let at = 0;
+  const arcs = parts.map((x) => { const arc = { ...x, from: at }; at += x.pct; return arc; });
+  const pick = (key) => setPicked((k) => (k === key ? null : key));
+  const tip = shownTip ? shownTip.tip : averageTip;
+  return (
+    <div className="donut-panel analytics">
+      <div className={'band-donut' + (shownTip ? ' picked' : '')} data-tip={shownTip ? tip : undefined}>
+        <svg viewBox="0 0 120 120" role="img" aria-label={tip}>
+          <circle cx="60" cy="60" r={R} fill="none" stroke="#e3e7ea" strokeWidth="18" />
+          {average !== null && arcs.filter((x) => x.pct > 0).map((x) => (
+            <circle key={x.key} cx="60" cy="60" r={R} fill="none" stroke={x.color} strokeWidth={picked === x.key ? 22 : 18} pathLength="100"
+              strokeDasharray={x.pct + ' ' + (100 - x.pct)} strokeDashoffset={-x.from} transform="rotate(-90 60 60)"
+              className={'band-arc' + (picked && picked !== x.key ? ' dim' : '')} onClick={() => pick(x.key)} onMouseEnter={() => setHot(x.key)} onMouseLeave={() => setHot(null)} style={{ cursor: 'pointer' }} />
+          ))}
+        </svg>
+        <div className="band-center"><strong>{sel ? sel.pct + '%' : averageText}</strong><small>{sel ? sel.label.replace(/\s*\(.*\)\s*$/, '') : tr('Average')}</small></div>
+      </div>
+      <div className="legend">
+        {parts.map((x) => (
+          <button type="button" key={x.key} onMouseEnter={() => setHot(x.key)} onMouseLeave={() => setHot(null)} className={'legend-pick' + (picked === x.key ? ' on' : '')} onClick={() => pick(x.key)} aria-pressed={picked === x.key}>
+            <Legend color={x.color} text={x.label} value={x.pct + '%'} />
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const bandParts = ({ high, med, low }, what) => [
+  { key: 'high', color: 'var(--blue)', label: translateUI("ui.high_80_100_234a35"), pct: high, tip: `${high}% ${what} scored 80% or more` },
+  { key: 'med', color: 'var(--gold)', label: translateUI("ui.medium_50_79_d47c66"), pct: med, tip: `${med}% ${what} scored from 50% to 79%` },
+  { key: 'low', color: 'var(--red)', label: translateUI("ui.low_50_979304"), pct: low, tip: `${low}% ${what} scored under 50%` },
+];
+
+function DonutBreakdown({ value, high, med, low, scored }) {
+  return <BandDonut average={scored ? value : null} averageText={`${value}%`} averageTip={`Average compliance score: ${value}%`} parts={bandParts({ high, med, low }, 'of checked syllabi')} />;
 }
 
 function BarChart({ data }) {
-  return <div className="bars">{data.map(([x, v]) => <div className="bar-col" key={x}><span>{v}%</span><i style={{ height: `${v}%` }} /><small>{x}</small></div>)}</div>;
+  if (!data.length) return <div className="empty">{translateUI("ui.no_program_data_yet_c5b890")}</div>;
+  return <div className="bars">{data.map(([x, v]) => <div className="bar-col" key={x} data-tip={`${x}: ${v}% compliance`}><span>{v}%</span><i style={{ height: `${v}%` }} /><small>{x}</small></div>)}</div>;
 }
 
 function ReferenceChart({ data }) {
-  return <div className="donut-panel analytics"><div className="donut refs"><div><strong>{data.current}%</strong><small>{translateUI("ui.10_years_cf5ed9")}</small></div></div><div className="legend"><Legend color="var(--blue)" text={translateUI("ui.0_5_years_56523b")} value={`${data.young}%`} /><Legend color="var(--gold)" text={translateUI("ui.6_10_years_4da687")} value={`${data.mid}%`} /><Legend color="var(--red)" text={translateUI("ui.10_years_86387f")} value={`${data.old}%`} /></div></div>;
+  return <BandDonut average={data.value} averageText={data.value === null ? '—' : `${data.value}%`} averageTip={data.value === null ? 'No reference scores yet' : `Average Reference Currency score: ${data.value}%`} parts={bandParts(data, 'of syllabi on references')} />;
 }
 
 function RadarLike({ data }) {
-  return <div className="radar-like">{data.map(([l, v]) => <Progress key={l} label={tr(l)} value={v} />)}</div>;
+  return <div className="radar-like">{data.map(([l, v]) => <Progress key={l} label={tr(l)} value={v === null ? 0 : v} tip={v === null ? `${l}: not scored yet` : `${l}: ${v}% average`} />)}</div>;
 }
 
-export default function Analytics({ syllabi, user }) {
-  const mySyllabi = useMemo(() => user.role === 'faculty' ? syllabi.filter(s => s.ownerId === user.id) : syllabi, [syllabi, user]);
-  const approved = mySyllabi.filter(s => s.status === 'Approved').length;
-  const total = mySyllabi.length;
-  const compliance = total ? Math.round((approved / total) * 100) : 0;
+export default function Analytics({ syllabi, user, notify = () => {}, setPage = () => {} }) {
   const isFaculty = user.role === 'faculty';
+  const { rows } = useComplianceRows();
+  const a = useMemo(() => buildAnalytics(rows, { isFaculty }), [rows, isFaculty]);
+  const [saving, setSaving] = useState(false);
+  const download = async () => {
+    setSaving(true);
+    try {
+      const { downloadReport } = await import('../lib/reportPdf');
+      await downloadReport(buildReport(rows, { user }));
+      notify(translateUI('report.saved'));
+    } catch (err) {
+      console.error('Report download failed', err);
+      notify(translateUI('report.failed') + ' (' + String(err && err.message ? err.message : err).slice(0, 80) + ')');
+    } finally { setSaving(false); }
+  };
+  const total = a.count;
+  const compliance = a.average === null ? 0 : a.average;
+  const donutData = { value: compliance, scored: a.scoredCount > 0, ...a.bands };
+  const barData = a.bars;
+  const refData = a.references;
+  const radarData = a.areas;
+  const lineData = a.trend;
 
-  const lineData = useMemo(() => {
-    const base = compliance;
-    return [[10, base - 15], [65, base - 10], [120, base - 5], [175, base], [230, base + 2], [285, base + 5]].map(([x, y]) => [x, Math.max(10, Math.min(110, y))]);
-  }, [compliance]);
-
-  const donutData = useMemo(() => {
-    const high = Math.round(approved / Math.max(total, 1) * 100);
-    const med = Math.round(mySyllabi.filter(s => s.status === 'Under Review').length / Math.max(total, 1) * 100);
-    const low = 100 - high - med;
-    return { value: compliance, high, med, low };
-  }, [compliance, approved, total, mySyllabi]);
-
-  const barData = useMemo(() => {
-    if (isFaculty) return mySyllabi.map(s => [s.code, s.status === 'Approved' ? 100 : s.status === 'Under Review' ? 60 : 30]);
-    const programs = {};
-    mySyllabi.forEach(s => { if (!programs[s.program]) programs[s.program] = { total: 0, approved: 0 }; programs[s.program].total++; if (s.status === 'Approved') programs[s.program].approved++; });
-    return Object.entries(programs).map(([p, d]) => [p, Math.round((d.approved / d.total) * 100)]);
-  }, [mySyllabi, isFaculty]);
-
-  const refData = useMemo(() => {
-    const young = Math.round(total * 0.28) || 0;
-    const mid = Math.round(total * 0.40) || 0;
-    const old = total - young - mid;
-    const current = total ? Math.round(((young + mid * 0.5) / total) * 100) : 0;
-    return { young, mid, old, current };
-  }, [total]);
-
-  const radarData = useMemo(() => {
-    if (isFaculty) return [['Format', compliance], ['Complete', compliance], ['CO–PO', compliance], ['Assessment', compliance], ['References', compliance]];
-    return [['Format', compliance], ['Complete', compliance], ['CO–PO', compliance], ['Assessment', compliance], ['References', compliance]];
-  }, [compliance, isFaculty]);
-
+  // Observations worked out from the stored checks (the numbers above), in plain sentences.
   const insights = useMemo(() => {
-    if (isFaculty) {
-      const rev = mySyllabi.filter(s => s.status === 'Under Review').length;
-      const low = mySyllabi.filter(s => s.status === 'Returned' || s.status === 'Rejected').length;
-      return [
-        { n: '01', title: 'Your compliance score', text: `${compliance}% average across ${total} syllabi.` },
-        { n: '02', title: 'Pending reviews', text: `${rev} syllabi currently under review.` },
-        { n: '03', title: 'Needs attention', text: `${low} syllabi returned or rejected.` },
-        { n: '04', title: 'Tip', text: 'Use the compliance check in step 7 of the builder to improve scores before submitting.' },
-      ];
-    }
-    return [
-      { n: '01', title: 'BSIT has the highest compliance', text: '93% average compliance; maintain current review cadence.' },
-      { n: '02', title: 'Assessment alignment needs attention', text: '21% of reviewed syllabi have incomplete CO-to-assessment mapping.' },
-      { n: '03', title: 'References should be refreshed', text: '32% of references are older than ten years across active syllabi.' },
-      { n: '04', title: 'Approval backlog is manageable', text: '18 syllabi remain under review; 6 are already overdue.' },
-    ];
-  }, [isFaculty, compliance, total, mySyllabi]);
+    const i = a.insights;
+    const check = isFaculty ? 'my-syllabi' : 'ai';
+    const checkGo = isFaculty ? 'analytics.go_mine' : 'analytics.go_ai';
+    if (!a.scoredCount) return [{ page: check, go: checkGo, n: '01', title: 'No scored checks yet', text: isFaculty ? 'Run the compliance check in step 7 of the builder to see your scores here.' : 'Check a submitted syllabus in the AI Checker to see scores here.' }];
+    const out = [{ page: check, go: checkGo, n: '01', title: isFaculty ? 'Your compliance score' : 'Average compliance', text: `${a.average}% average across ${a.scoredCount} checked ${a.scoredCount === 1 ? 'syllabus' : 'syllabi'}.` }];
+    if (i.lowest) out.push({ page: check, go: checkGo, n: '02', title: `${i.lowest[0]} needs attention`, text: `It is the weakest area, at ${i.lowest[1]}% on average.` });
+    out.push({ page: check, go: checkGo, n: '03', title: 'Below the pass line', text: i.belowPass ? `${i.belowPass} ${i.belowPass === 1 ? 'syllabus is' : 'syllabi are'} under the 79% pass line.` : 'Every checked syllabus meets the pass line.' });
+    out.push(isFaculty
+      ? { page: 'my-syllabi', go: 'analytics.go_mine', n: '04', title: 'Pending and returned', text: `${i.waiting} awaiting review, ${i.returned} returned or rejected, ${i.unchecked} not checked yet.` }
+      : { page: 'review', go: 'analytics.go_review', n: '04', title: 'Review backlog', text: `${i.waiting} awaiting a decision, ${i.unchecked} not checked yet${i.best ? `; ${i.best[0]} has the highest average (${i.best[1]}%).` : '.'}` });
+    return out;
+  }, [a, isFaculty]);
 
   return (
     <>
-      <PageHead title={isFaculty ? translateUI("ui.my_analytics_1ab328") : translateUI("ui.analytics_quality_dashboard_b85172")} subtitle={isFaculty ? translateUI("ui.track_your_personal_compliance_scores_and_submission_performance_b66964") : translateUI("ui.monitor_compliance_curriculum_coverage_submission_performance_and_78b463")} actions={<><Select><option value="AY 2026–2027">{translateUI("ui.ay_2026_2027_830f3e")}</option><option value="AY 2025–2026">{translateUI("ui.ay_2025_2026_8b00a8")}</option></Select><StableButton className="btn outline">{translateUI("ui.download_report_9f36e2")}</StableButton></>} />
+      <PageHead title={isFaculty ? translateUI("ui.my_analytics_1ab328") : translateUI("ui.analytics_quality_dashboard_b85172")} subtitle={isFaculty ? translateUI("ui.track_your_personal_compliance_scores_and_submission_performance_b66964") : translateUI("ui.monitor_compliance_curriculum_coverage_submission_performance_and_78b463")} actions={<><Select><option value="AY 2026–2027">{translateUI("ui.ay_2026_2027_830f3e")}</option><option value="AY 2025–2026">{translateUI("ui.ay_2025_2026_8b00a8")}</option></Select><StableButton className="btn outline" disabled={saving || !rows.length} onClick={download}>{translateUI("ui.download_report_9f36e2")}</StableButton></>} />
       <div className="analytics-grid">
         <ChartCard title={translateUI("ui.compliance_trend_2fa4a1")} subtitle={isFaculty ? translateUI("ui.your_ai_compliance_score_over_time_f2f70b") : translateUI("ui.average_ai_compliance_score_603cf2")}><LineChart data={lineData} /></ChartCard>
         <ChartCard title={translateUI("ui.outcome_coverage_5788ff")} subtitle={isFaculty ? translateUI("ui.your_syllabus_coverage_b60846") : translateUI("ui.coverage_across_approved_syllabi_923a95")}><DonutBreakdown {...donutData} /></ChartCard>
-        <ChartCard title={translateUI("ui.submission_completion_b3968d")} subtitle={isFaculty ? translateUI("ui.your_submissions_e58b57") : translateUI("ui.by_program_11a420")}><BarChart data={barData} /></ChartCard>
+        <ChartCard title={translateUI("analytics.bar_title")} subtitle={isFaculty ? translateUI("analytics.bar_by_subject") : translateUI("ui.by_program_11a420")}><BarChart data={barData} /></ChartCard>
         <ChartCard title={translateUI("ui.reference_currency_7c7576")} subtitle={translateUI("ui.age_of_cited_learning_resources_2711b5")}><ReferenceChart data={refData} /></ChartCard>
       </div>
       <div className="analytics-grid two">
         <ChartCard title={translateUI("ui.quality_dimensions_41c80b")} subtitle={isFaculty ? translateUI("ui.your_quality_scores_8f5d5e") : translateUI("ui.average_percentage_scores_by_program_3c980a")}><RadarLike data={radarData} /></ChartCard>
-        <ChartCard title={translateUI("ui.actionable_insights_9816fd")} subtitle={isFaculty ? translateUI("ui.tips_for_your_submissions_76ea2a") : translateUI("ui.ai_generated_quality_observations_82b3fd")}><div className="insights">{insights.map(i => <Insight key={i.n} {...i} title={tr(i.title)} text={tr(i.text)} />)}</div></ChartCard>
+        <ChartCard title={translateUI("ui.actionable_insights_9816fd")} subtitle={isFaculty ? translateUI("ui.tips_for_your_submissions_76ea2a") : translateUI("analytics.insights_sub")}><div className="insights">{insights.map(({ page, go, ...i }) => <Insight key={i.n} {...i} title={tr(i.title)} text={tr(i.text)} go={translateUI(go)} onClick={() => setPage(page)} />)}</div></ChartCard>
       </div>
     </>
   );

@@ -2,4 +2,5 @@
 export const ROLE_LABELS = Object.freeze({
   admin: 'Academics Administrator',
   faculty: 'Faculty',
+  student: 'Student',
 });

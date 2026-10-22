@@ -166,18 +166,65 @@ async function assertSubjectsFree(conn, userId, courseIds) {
   throw Object.assign(new Error(message), { status: 409, body: { code: 'subject_taken', conflicts: held } });
 }
 
+// A subject given to a faculty member is theirs to write now. What other faculty members wrote for it before is archived: it keeps its
+// owner (so the name on it stays the former faculty member's), its versions and its logs, becomes read-only, and leaves the working
+// lists. This runs when the subject is given, not when it is taken away, so removing a subject from someone and then adding it back to
+// them loses nothing; and when it is given back to the person it was archived from, that syllabus returns (restoreReturned). Administrators' own syllabi are not touched. Returns how many were archived.
+async function archiveReassigned(conn, userId, courseIds) {
+  if (!courseIds.length) return 0;
+  const [result] = await conn.query(
+    `UPDATE syllabi s JOIN users o ON o.user_id = s.user_id SET s.archived_at = NOW()
+     WHERE s.course_id IN (?) AND s.user_id <> ? AND s.archived_at IS NULL AND o.role = 'faculty'`, [courseIds, userId]);
+  return result && result.affectedRows ? result.affectedRows : 0;
+}
+
+// The other half: a subject given back to a faculty member whose syllabus was archived when it went elsewhere brings that syllabus back,
+// so they carry on from where they were. A subject has one syllabus for each person, and a person can have several archived on one subject
+// (from before that rule), so exactly one returns for each subject: a submitted-or-later one before a draft, then the most recently
+// changed. The rest stay archived as history. A subject on which the person already has an active syllabus brings nothing back.
+// `archived` are the person's archived rows on those subjects ({ syllabus_id, course_id, status, updated_at }); `activeCourseIds` the
+// subjects where they already have an active one. -> the syllabus ids to bring back.
+function pickRestorable(archived, activeCourseIds = []) {
+  const active = new Set(activeCourseIds);
+  const stamp = (r) => { const t = new Date(r.updated_at).getTime(); return Number.isFinite(t) ? t : 0; };
+  const rank = (r) => [r.status === 'draft' ? 0 : 1, stamp(r), r.syllabus_id];
+  const better = (a, b) => { const x = rank(a); const y = rank(b); return x[0] !== y[0] ? x[0] > y[0] : x[1] !== y[1] ? x[1] > y[1] : x[2] > y[2]; };
+  const best = new Map();
+  for (const r of archived || []) {
+    if (active.has(r.course_id)) continue;
+    if (!best.has(r.course_id) || better(r, best.get(r.course_id))) best.set(r.course_id, r);
+  }
+  return [...best.values()].map((r) => r.syllabus_id);
+}
+
+async function restoreReturned(conn, userId, courseIds) {
+  if (!courseIds.length) return [];
+  const [archived] = await conn.query(
+    'SELECT syllabus_id, course_id, status, updated_at FROM syllabi WHERE course_id IN (?) AND user_id = ? AND archived_at IS NOT NULL', [courseIds, userId]);
+  if (!Array.isArray(archived) || !archived.length) return [];
+  const [active] = await conn.query('SELECT DISTINCT course_id FROM syllabi WHERE course_id IN (?) AND user_id = ? AND archived_at IS NULL', [courseIds, userId]);
+  const ids = pickRestorable(archived, (Array.isArray(active) ? active : []).map((r) => r.course_id));
+  if (ids.length) await conn.query('UPDATE syllabi SET archived_at = NULL WHERE syllabus_id IN (?)', [ids]);
+  return ids;
+}
+
 // Replaces a user's assignments with the already-normalized lists. Pass a transaction connection as `conn`.
 async function saveAssignments(conn, userId, { programIds, courseIds }) {
+  const [before] = await conn.query('SELECT course_id FROM faculty_courses WHERE user_id = ?', [userId]);
+  const had = new Set((before || []).map((r) => r.course_id));
+  const added = courseIds.filter((id) => !had.has(id));
   await conn.query('DELETE FROM faculty_courses WHERE user_id = ?', [userId]);
   await conn.query('DELETE FROM faculty_programs WHERE user_id = ?', [userId]);
   if (programIds.length) await conn.query('INSERT INTO faculty_programs (user_id, program_id) VALUES ?', [programIds.map((p) => [userId, p])]);
   if (courseIds.length) await conn.query('INSERT INTO faculty_courses (user_id, course_id) VALUES ?', [courseIds.map((c) => [userId, c])]);
+  await archiveReassigned(conn, userId, added); // what others wrote for the subjects now given goes away ...
+  await restoreReturned(conn, userId, added); // ... and what this person wrote for them earlier comes back
 }
 
 module.exports = {
   MAX_PROGRAMS, MAX_COURSES, NOT_ASSIGNED, NOTHING_ASSIGNED, NO_SUBJECT_YET, EMPTY,
   assignedProgramIds, assignedCourseIds, canUseCourse, hasAnyAssignment,
   mayWriteSyllabus, writeBlockedReason, normalizeAssignments,
-  loadAssignments, loadCatalogIds, describeAssignments, saveAssignments, subjectHolders, assertSubjectsFree,
+  loadAssignments, loadCatalogIds, describeAssignments, saveAssignments, archiveReassigned, restoreReturned, pickRestorable, subjectHolders, assertSubjectsFree,
   requireCourseAccess, requireCourseCodeAccess,
 };

@@ -2,9 +2,11 @@ import StableButton from '../../components/StableButton';
 import { t as translateUI } from "../../i18n/index.js";
 import { useState } from 'react';
 import { clone, renderMarkup, weekSet } from '../../lib/syllabusModel';
+import { CORE_VALUES, hasCoreValue, toggleCoreValue } from '../../lib/coreValues';
 import { Auto, CoverageStrip, Ic, OutcomePicker, Tag } from './parts';
 import { newId } from './useDraft';
 import Select from '../../components/Select';
+import { Icon } from '../../components/ui';
 
 const newIlo = () => ({ id: newId(), text: '', tags: [] });
 const CELLS = [['contents', 'Topics covered'], ['activities', '- One per line'], ['tasks', '- One per line'], ['values', '**Core value**']];
@@ -53,13 +55,13 @@ export default function PlanStep({ d, apply, model, filter, setFilter, onDeleteR
       <div className="scroll">
         <table className="ledger plan">
           <colgroup><col style={{ width: '96px' }} /><col style={{ width: '31%' }} /><col style={{ width: '14%' }} /><col style={{ width: '17%' }} /><col style={{ width: '15%' }} /><col /></colgroup>
-          <thead><tr><th>{translateUI("ui.week_f82be6")}</th><th>{translateUI("ui.intended_learning_outcomes_7e7669")}</th><th>{translateUI("ui.course_contents_1b687b")}</th><th>{translateUI("ui.learning_activities_87fc76")}</th><th>{translateUI("ui.assessment_tasks_795936")}</th><th>{translateUI("ui.values_to_integrate_bf0acd")}</th></tr></thead>
+          <thead><tr><th>{translateUI("ui.week_f82be6")}</th><th>{translateUI("plan.heading.ilo")}</th><th>{translateUI("plan.heading.contents")}</th><th>{translateUI("plan.heading.activities")}</th><th>{translateUI("plan.heading.tasks")}</th><th>{translateUI("plan.heading.values")}</th></tr></thead>
           <tbody>
             {shown.map((r) => {
               const full = d.plan.findIndex((y) => y.id === r.id);
               const exam = r.kind === 'exam';
               return (
-                <tr key={r.id} className={exam ? 'exam' : ''}>
+                <tr key={r.id} className={exam ? 'exam' : ''} data-plan-row={full}>
                   <td>
                     <div className="wkc">
                       {edit
@@ -71,7 +73,7 @@ export default function PlanStep({ d, apply, model, filter, setFilter, onDeleteR
                           <button type="button" className="ib" aria-label={translateUI("ui.move_up_b4f57c")} disabled={full === 0} onClick={() => move(r.id, -1)}><Ic n="up" /></button>
                           <button type="button" className="ib" aria-label={translateUI("ui.move_down_260ff8")} disabled={full === d.plan.length - 1} onClick={() => move(r.id, 1)}><Ic n="down" /></button>
                           <button type="button" className="ib" aria-label={translateUI("ui.duplicate_row_d66d5f")} onClick={() => apply((x) => { const c = clone(r); c.id = newId(); c.week = ''; c.ilos.forEach((il) => { il.id = newId(); }); x.plan.splice(full + 1, 0, c); return x; })}><Ic n="copy" /></button>
-                          <button type="button" className="ib del" aria-label={translateUI("ui.delete_row_fcf3f8")} onClick={() => onDeleteRow(r.id)}><Ic n="trash" /></button>
+                          <button type="button" className="ib del" aria-label={translateUI("ui.delete_row_fcf3f8")} onClick={() => onDeleteRow(r.id)}><Icon name="bin" size={16} /></button>
                         </div>
                       )}
                     </div>
@@ -87,7 +89,7 @@ export default function PlanStep({ d, apply, model, filter, setFilter, onDeleteR
                             <span className="lb">{translateUI("ui.ilo_080517") + (j + 1)}</span>
                             {edit
                               ? <Auto value={il.text} placeholder={translateUI("ui.start_with_a_verb_6b1d63")} label={translateUI("ui.ilo_f12fa1") + (j + 1) + translateUI("ui.of_week_60075b") + r.week} onChange={(v) => updRow(r.id, (x) => { x.ilos[j].text = v; })} />
-                              : <div className="fmt">{il.text || '—'}</div>}
+                              : <div className="fmt typed-text">{il.text || '—'}</div>}
                             <div className="tagrow">
                               {il.tags.map((t) => <Tag key={t} info={model.tagInfo(d, t)} onRemove={edit ? () => updRow(r.id, (x) => { x.ilos[j].tags = x.ilos[j].tags.filter((v) => v !== t); }) : null} />)}
                               {edit && <button type="button" className="tagbtn" aria-label={translateUI("ui.tag_outcomes_for_ilo_5f768a") + (j + 1)} onClick={(e) => setPicker({ row: r.id, ilo: il.id, rect: e.currentTarget.getBoundingClientRect() })}>{translateUI("ui.tag_eae765")}</button>}
@@ -101,7 +103,12 @@ export default function PlanStep({ d, apply, model, filter, setFilter, onDeleteR
                   {CELLS.map(([f, ph]) => (
                     <td key={f}>{edit
                       ? <Auto value={r[f]} placeholder={ph} label={f + translateUI("ui.of_week_60075b") + r.week} onChange={(v) => updRow(r.id, (x) => { x[f] = v; })} />
-                      : <Formatted text={r[f]} />}</td>
+                      : <Formatted text={r[f]} />}
+                      {edit && f === 'values' && !exam && (
+                        <div className="valchips">
+                          {CORE_VALUES.map((v) => <button type="button" key={v.key} className="valchip" aria-pressed={hasCoreValue(r.values, v)} onClick={() => updRow(r.id, (x) => { x.values = toggleCoreValue(x.values, v); })}>{v.name}</button>)}
+                        </div>
+                      )}</td>
                   ))}
                 </tr>
               );

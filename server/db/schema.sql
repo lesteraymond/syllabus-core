@@ -107,6 +107,7 @@ CREATE TABLE IF NOT EXISTS syllabi (
   content_schema_version INT NULL,
   content_updated_at TIMESTAMP NULL,
   course_id INT NULL,
+  archived_at DATETIME NULL, -- set when the subject is assigned to another faculty member: read-only, out of the working lists
   uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
@@ -304,6 +305,9 @@ CREATE TABLE IF NOT EXISTS app_settings (
   setting_value TEXT NOT NULL,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+-- The developer rule editor's change history (see lib/compliance/overridesStore.js); the current edits live in app_settings ('standard_overrides').
+CREATE TABLE IF NOT EXISTS standard_changes (change_id INT AUTO_INCREMENT PRIMARY KEY, who VARCHAR(80) NOT NULL, rev INT NOT NULL, kind VARCHAR(10) NOT NULL, changes LONGTEXT NOT NULL, changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, INDEX idx_standard_changes_time (changed_at));
 
 CREATE TABLE IF NOT EXISTS program_name_aliases (program_id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY (program_id, name), FOREIGN KEY (program_id) REFERENCES programs(program_id) ON DELETE CASCADE);
 

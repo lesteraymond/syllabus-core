@@ -8,6 +8,8 @@ const { notifyAdmins } = require('../lib/notify');
 const rules = require('../lib/syllabusRules');
 const { loadCourse } = require('../lib/courses');
 const assignments = require('../lib/assignments');
+const subjectLock = require('../lib/subjectLock');
+const { outcomesFrom, validateOutcomes } = require('../lib/syllabusOutcomes');
 const { catalogGaps, gapsMessage } = require('../lib/catalogReady');
 const compliance = require('../lib/compliance/service');
 const { changedSections, describeChanges, normalize } = require('../lib/versionChange');
@@ -16,8 +18,7 @@ const router = express.Router();
 
 const MAX_CONTENT_BYTES = 512 * 1024;
 // Top-level keys of the content document. `signoff` is deliberately absent: the system sets it, faculty do not.
-// `clos` is accepted but never trusted: the course learning outcomes always come from the course catalog (admin-managed).
-const SECTIONS = { meta: 'object', description: 'array', clos: 'array', plan: 'array', reqs: 'array', refs: 'object', grading: 'object' };
+const SECTIONS = { meta: 'object', outcomes: 'object', description: 'array', clos: 'array', plan: 'array', reqs: 'array', refs: 'object', grading: 'object' };
 const TAG = /^(clo|ega|po):[A-Za-z0-9_-]{1,40}$/;
 
 const parseJson = (text) => { try { return text ? JSON.parse(text) : null; } catch { return null; } };
@@ -55,23 +56,31 @@ const parseId = (raw) => {
   return id;
 };
 
-// Makes the content agree with the course catalog: the course's code, title and CLOs are constant data that only
-// admins edit, so whatever the client sent for them is replaced. No course chosen means no CLOs.
+// Only course identity is catalog-managed. Updated clients save their own Step 2 content.
+// Preserve the legacy contract for clients/drafts that have not adopted syllabus-owned outcomes yet.
 async function applyCatalog(db, content) {
   const courseId = content.meta && Number.isInteger(content.meta.courseId) ? content.meta.courseId : null;
   const course = courseId ? await loadCourse(db, courseId, { lock: true }) : null;
   if (courseId && !course) throw httpError(400, 'That course does not exist');
   if (course) { content.meta.code = course.code; content.meta.title = course.title; content.meta.program = course.program.code; }
-  content.clos = course ? course.clos : [];
+  if (!content.outcomes) content.clos = course ? course.clos : [];
+  else {
+    validateOutcomes(content.outcomes, content.clos || [], content.plan || []);
+    const o = content.outcomes;
+    if (!course && (content.clos?.length || o.egas.length || o.pos.length || o.vision.trim() || o.mission.lead.trim() || o.mission.items.length)) throw httpError(400, 'Choose a subject before editing learning outcomes.');
+    content.catalog = snapshotFrom(content, course);
+  }
   return course;
 }
 
-// The vision, mission, EGAs and the program's outcomes as they are when a syllabus is submitted. Once submitted, the
-// syllabus shows these texts (not the live ones), so a later admin edit does not rewrite what was reviewed or approved.
-// Drafts have none and always show the live data. Clients cannot send this key: validateSections refuses it.
+// Build the trusted display snapshot from authored Step 2 values and catalog identity.
+// Legacy content keeps its existing catalog behavior until adopted in the editable builder.
 async function catalogSnapshot(db, content) {
   const course = content?.meta?.courseId ? await loadCourse(db,content.meta.courseId) : null;
-  const standards = course ? course.standards : require('../lib/subjectStandards').blankStandards();
+  return snapshotFrom(content, course);
+}
+function snapshotFrom(content, course) {
+  const standards = content.outcomes || course?.standards || require('../lib/subjectStandards').blankStandards();
   return {
     institution: { vision: standards.vision, mission: standards.mission, egas: standards.egas },
     program: course ? { code: course.program.code, name: course.program.name, egas: standards.egas, pos: standards.pos } : null,
@@ -96,7 +105,7 @@ router.get('/:id/content', requireAuth, async (req, res) => {
   try {
     const id = parseId(req.params.id);
     const [rows] = await req.app.locals.db.query(
-      'SELECT syllabus_id, user_id, status, version, content, content_schema_version, content_updated_at, course_id, admin_comment FROM syllabi WHERE syllabus_id = ?', [id]);
+      'SELECT syllabus_id, user_id, status, version, content, content_schema_version, content_updated_at, course_id, archived_at, admin_comment FROM syllabi WHERE syllabus_id = ?', [id]);
     const syl = rows[0];
     if (!syl || !rules.canView(req.session.user, syl)) throw httpError(404, 'Syllabus not found');
     let content = null;
@@ -104,13 +113,21 @@ router.get('/:id/content', requireAuth, async (req, res) => {
     // The owner may edit only while the course is assigned to them (an admin can assign it again).
     let editable = rules.canEdit(req.session.user, syl);
     let lockedReason = null;
+    let adoptedOutcomes = false;
     if (editable && !rules.isAdmin(req.session.user)) {
       lockedReason = assignments.writeBlockedReason(req.session.user, await assignments.loadAssignments(req.app.locals.db, req.session.user.id), syl.course_id);
       if (lockedReason) editable = false;
     }
+    if (editable && content?.meta?.courseId && !content.outcomes) {
+      const course = await loadCourse(req.app.locals.db, content.meta.courseId);
+      content.outcomes = outcomesFrom(content, course);
+      if (!content.clos?.length) content.clos = course?.clos || [];
+      content.schemaVersion = 3;
+      adoptedOutcomes = true;
+    }
     // Back from "For revision": the next submission becomes the next version, and the reviewer's note says what to change.
-    const revising = syl.status === 'for_revision';
-    res.json({ id, status: syl.status, version: syl.version, content, schemaVersion: syl.content_schema_version, updatedAt: syl.content_updated_at, editable, lockedReason,
+    const revising = rules.isReturned(syl.status);
+    res.json({ id, status: syl.status, version: syl.version, content, adoptedOutcomes, schemaVersion: syl.content_schema_version, updatedAt: syl.content_updated_at, editable, lockedReason,
       ...(revising ? { nextVersion: rules.nextVersionLabel(syl.version), reviewerNote: syl.admin_comment || '' } : {}) });
   } catch (err) { sendError(res, err); }
 });
@@ -127,7 +144,7 @@ router.put('/:id/content', requireAuth, async (req, res) => {
     const version = Number.isInteger(schemaVersion) && schemaVersion > 0 && schemaVersion < 1000 ? schemaVersion : 2;
 
     const saved = await inTransaction(db, async (conn) => {
-      const [rows] = await conn.query('SELECT syllabus_id, user_id, status, title, course_code, content, course_id FROM syllabi WHERE syllabus_id = ? FOR UPDATE', [id]);
+      const [rows] = await conn.query('SELECT syllabus_id, user_id, status, title, course_code, content, course_id, archived_at FROM syllabi WHERE syllabus_id = ? FOR UPDATE', [id]);
       const syl = rows[0];
       if (!syl || !rules.canView(me, syl)) throw httpError(404, 'Syllabus not found'); // never reveal it to non-participants
       if (!rules.isOwner(me, syl)) throw httpError(403, 'Only the owner can edit syllabus content');
@@ -141,6 +158,7 @@ router.put('/:id/content', requireAuth, async (req, res) => {
       // and so must the course being chosen
       if (merged.meta && Number.isInteger(merged.meta.courseId)) await assignments.requireCourseAccess(conn, me, merged.meta.courseId);
       const course = await applyCatalog(conn, merged);
+      if (course && course.id !== syl.course_id) await subjectLock.assertSubjectFree(conn, me, course.id, id); // one syllabus for each subject
       const json = JSON.stringify(merged);
       if (Buffer.byteLength(json, 'utf8') > MAX_CONTENT_BYTES) throw httpError(413, `This syllabus is too large to save (limit ${MAX_CONTENT_BYTES / 1024} KB)`);
 
@@ -166,13 +184,16 @@ router.get('/:id/review', requireAuth, async (req, res) => {
     const me = req.session.user;
     const id = parseId(req.params.id);
     const [rows] = await db.query(
-      'SELECT s.syllabus_id, s.user_id, s.status, s.version, s.title, s.course_code, s.file_path, s.content, ' + LABEL_SQL + ' WHERE s.syllabus_id = ?', [id]);
+      'SELECT s.syllabus_id, s.user_id, s.status, s.version, s.title, s.course_code, s.file_path, s.content, s.course_id, ' + LABEL_SQL + ' WHERE s.syllabus_id = ?', [id]);
     const syl = rows[0];
-    if (!syl || !rules.canView(me, syl)) throw httpError(404, 'Syllabus not found');
+    // A student reads any approved syllabus.
+    const studentReads = me.role === 'student' && !!syl && syl.status === 'approved';
+    if (!syl || !(rules.canView(me, syl) || studentReads)) throw httpError(404, 'Syllabus not found');
 
     const [vrows] = await db.query(
       'SELECT version_id, version_label, status_at_save, note, created_at, file_path, (content IS NOT NULL) AS has_form FROM syllabus_versions WHERE syllabus_id = ? ORDER BY version_id DESC', [id]);
-    const versions = vrows.map((v) => ({ id: v.version_id, label: v.version_label, statusAtSave: v.status_at_save, note: v.note || '', createdAt: v.created_at, filePath: v.file_path || null, hasForm: !!v.has_form }));
+    let versions = vrows.map((v) => ({ id: v.version_id, label: v.version_label, statusAtSave: v.status_at_save, note: v.note || '', createdAt: v.created_at, filePath: v.file_path || null, hasForm: !!v.has_form }));
+    if (studentReads) versions = versions.slice(0, 1).map((v) => ({ ...v, note: '' })); // only the current version, without the review notes
 
     let chosen = versions[0] || null;
     if (req.query.version !== undefined) {
@@ -195,7 +216,7 @@ router.get('/:id/review', requireAuth, async (req, res) => {
       const [before] = await db.query('SELECT version_label, content FROM syllabus_versions WHERE syllabus_id = ? AND version_id < ? AND content IS NOT NULL ORDER BY version_id DESC LIMIT 1', [id, chosen.id]);
       if (before[0]) {
         const list = changedSections(parseJson(before[0].content), content);
-        changes = { from: before[0].version_label, sections: list, text: describeChanges(list) };
+        if (!studentReads) changes = { from: before[0].version_label, sections: list, text: describeChanges(list) };
       }
     }
     res.json({
@@ -261,18 +282,18 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
       const meta = content && content.meta;
       if (!meta || !Number.isInteger(meta.courseId)) throw httpError(400, 'Choose a course before submitting');
       await assignments.requireCourseAccess(conn, me, meta.courseId);
-      // The version records the course outcomes as they are in the catalog now.
+      // Validate authored outcomes and snapshot the exact values being submitted.
       await applyCatalog(conn, content);
+      if (content.outcomes) validateOutcomes(content.outcomes, content.clos || [], content.plan || [], { complete: true });
       content.catalog = await catalogSnapshot(conn, content);
-      // The syllabus is built from what an administrator sets up. Without it the faculty member could not have completed the
-      // Learning Outcomes step, so refuse here too (the builder also blocks it).
+      // Legacy clients still receive their catalog setup checks; new clients complete these fields in Step 2.
       const cat = content.catalog;
       const gaps = catalogGaps({
         vision: cat.institution.vision, mission: cat.institution.mission,
         egaCount: cat.program ? cat.program.egas.length : 0, poCount: cat.program ? cat.program.pos.length : 0,
         cloCount: (content.clos || []).length, programCode: cat.program ? cat.program.code : meta.program, subjectCode: meta.code,
       });
-      if (gaps.length) throw httpError(409, gapsMessage(gaps));
+      if (gaps.length) throw httpError(409, content.outcomes ? 'Complete Vision, Mission, EGA, PO and CLO in step 2 before submitting.' : gapsMessage(gaps));
       // The form must follow the standard. A 'blocking' rule failing stops the submit (409 with the failed rules); anything
       // else only warns, and the builder offers "Submit anyway". The run is stored with the version below.
       const result = compliance.check(content, { catalog: content.catalog, preparedBy: `${me.firstName} ${me.lastName}` });
@@ -308,7 +329,7 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
         return { label, status: 'approved' };
       }
       // A resubmission after "For revision" is a new version only if the faculty member changed something, and says what.
-      if (syl.status === 'for_revision') {
+      if (rules.isReturned(syl.status)) {
         const previous = await compliance.latestVersion(conn, id);
         const before = previous ? parseJson(previous.content) : null;
         if (before && changedSections(before, content).length === 0) throw httpError(409, rules.UNCHANGED, { code: 'unchanged' });
@@ -333,7 +354,7 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
       if (complianceReady) runId = await compliance.storeRun(conn, { syllabusId: id, versionId: versionRow && versionRow.insertId ? versionRow.insertId : null, content, result, createdBy: me.id });
       await conn.query(
         'INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)',
-        [id, me.id, publishing ? 'approve' : first || syl.status === 'for_revision' ? 'submit' : 'update', (publishing ? 'Administrator published syllabus after AI check' : first ? 'Syllabus submitted from the builder' : `Saved as ${label}: ${versionNote}`).slice(0, 500)]
+        [id, me.id, publishing ? 'approve' : first || rules.isReturned(syl.status) ? 'submit' : 'update', (publishing ? 'Administrator published syllabus after AI check' : first ? 'Syllabus submitted from the builder' : `Saved as ${label}: ${versionNote}`).slice(0, 500)]
       );
       return { previous: syl.status, label, status: newStatus, courseCode: syl.course_code, title: syl.title, runId, content, result };
     });
@@ -341,15 +362,16 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
     if (outcome.preparing) return res.json({version:outcome.label,status:outcome.status});
 
     // After the commit, outside the transaction: the AI recommendations are a background job. They never delay or fail a submit.
-    if (outcome.runId && outcome.result.status === 'scored' && outcome.result.findings.length) {
-      compliance.startAiJob(db, { runId: outcome.runId, content: outcome.content, result: outcome.result, names: compliance.namesFor(me, outcome.content) });
+    if (outcome.runId && outcome.result.status === 'scored' && (outcome.result.findings.length || compliance.canJudge())) {
+      compliance.startAiJob(db, { runId: outcome.runId, content: outcome.content, result: outcome.result, names: compliance.namesFor(me, outcome.content),
+        rescore: (judged) => compliance.check(outcome.content, { catalog: outcome.content.catalog, preparedBy: `${me.firstName} ${me.lastName}`, judged }) });
     }
 
     // After the commit: notifications never affect the result.
     const who = `${me.firstName} ${me.lastName}`;
     if (!publishing && outcome.previous === 'draft') {
       await notifyAdmins(db, { exceptUserId: me.id, type: 'submission', syllabusId: id, title: `New syllabus submitted: ${outcome.courseCode || outcome.title}`, body: `${who} submitted ${outcome.title || outcome.courseCode} for review.` });
-    } else if (!publishing && (outcome.previous === 'under_review' || outcome.previous === 'for_revision')) {
+    } else if (!publishing && (outcome.previous === 'under_review' || rules.isReturned(outcome.previous))) {
       await notifyAdmins(db, {
         exceptUserId: me.id, type: 'edit', syllabusId: id,
         title: outcome.previous === 'under_review' ? `Syllabus updated during review: ${outcome.courseCode} (${outcome.label})` : `Syllabus resubmitted: ${outcome.courseCode} (${outcome.label})`,

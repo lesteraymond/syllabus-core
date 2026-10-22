@@ -64,7 +64,7 @@ test('deadlines are grouped by subject and keep their order', () => {
   assert.equal(groupByCourse(undefined).size, 0);
 });
 
-import { dueParts, sortForFaculty, sortForAdmin, deadlineOfSyllabus } from './deadlineView.js';
+import { dueParts, sortForFaculty, sortForAdmin, deadlineOfSyllabus, deadlineForCard } from './deadlineView.js';
 
 test('the date box shows the Philippine day and the short month', () => {
   assert.deepEqual(dueParts('2026-10-30T08:00:00.000Z', 'en'), { day: '30', month: 'Oct' });
@@ -98,6 +98,16 @@ test('a syllabus finds the deadline of its own subject, and none without a subje
   assert.equal(deadlineOfSyllabus(deadlines, { courseId: 99 }, NOW), null);
   assert.equal(deadlineOfSyllabus(deadlines, { courseId: null }, NOW), null);
   assert.equal(deadlineOfSyllabus(undefined, { courseId: 10 }, NOW), null);
+});
+
+test('a draft card never says Submitted, whatever the faculty member sent for the subject before; other cards and other states are untouched', () => {
+  const dl = (status) => [{ id: 1, courseId: 9, dueAt: at(5), status }];
+  assert.equal(deadlineForCard(dl('submitted'), { courseId: 9, status: 'draft' }, NOW), null);
+  assert.equal(deadlineForCard(dl('submitted_late'), { courseId: 9, status: 'draft' }, NOW), null);
+  for (const status of ['upcoming', 'due_today', 'failed']) assert.equal(deadlineForCard(dl(status), { courseId: 9, status: 'draft' }, NOW).status, status, status + ' still shows on a draft');
+  for (const status of ['submitted', 'under_review', 'for_revision', 'approved']) assert.equal(deadlineForCard(dl('submitted'), { courseId: 9, status }, NOW).status, 'submitted', status + ' card keeps it');
+  assert.equal(deadlineForCard(dl('submitted'), { courseId: null, status: 'draft' }, NOW), null, 'no subject, no deadline');
+  assert.equal(deadlineForCard(dl('upcoming'), { courseId: 9, status: 'approved', archived: true }, NOW), null, 'an archived record carries no deadline');
 });
 
 test('a deadline is settled when faculty are assigned and every one has submitted', () => {

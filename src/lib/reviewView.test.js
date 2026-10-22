@@ -136,7 +136,7 @@ test('the decision buttons are readable: the colours in the stylesheet pass 4.5:
 
 test('every decision has a label, a hint and an icon the app has', () => {
   Object.values(DECISIONS).forEach((d) => { assert.ok(d.label && d.hint && d.icon); });
-  assert.deepStrictEqual(Object.values(DECISIONS).map((d) => d.icon), ['sealCheck', 'arrowUUpLeft', 'xCircle']);
+  assert.deepStrictEqual(Object.values(DECISIONS).map((d) => d.icon), ['approved', 'revise', 'denied']);
 });
 
 test('a submission is on the review board only after the administrator checked it; until then it waits for the AI Checker', () => {

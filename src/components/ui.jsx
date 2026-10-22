@@ -16,8 +16,8 @@ import { ShieldCheck } from '@phosphor-icons/react/dist/csr/ShieldCheck';
 import { GraduationCap } from '@phosphor-icons/react/dist/csr/GraduationCap';
 import { PaperPlaneTilt } from '@phosphor-icons/react/dist/csr/PaperPlaneTilt';
 import { UploadSimple } from '@phosphor-icons/react/dist/csr/UploadSimple';
-import { Trash } from '@phosphor-icons/react/dist/csr/Trash';
 import { SquaresFour } from '@phosphor-icons/react/dist/csr/SquaresFour';
+import { SignOut } from '@phosphor-icons/react/dist/csr/SignOut';
 import { PencilRuler } from '@phosphor-icons/react/dist/csr/PencilRuler';
 import { Sparkle } from '@phosphor-icons/react/dist/csr/Sparkle';
 import { GridFour } from '@phosphor-icons/react/dist/csr/GridFour';
@@ -37,30 +37,30 @@ import { Warning } from '@phosphor-icons/react/dist/csr/Warning';
 import { FloppyDisk } from '@phosphor-icons/react/dist/csr/FloppyDisk';
 import { CalendarBlank } from '@phosphor-icons/react/dist/csr/CalendarBlank';
 import { BellRinging } from '@phosphor-icons/react/dist/csr/BellRinging';
-import { ProgramIcon, SubjectIcon, UnderReviewIcon, ApprovedIcon, ReviseIcon } from './customIcons';
+import { ProgramIcon, SubjectIcon, UnderReviewIcon, ApprovedIcon, ReviseIcon, BinIcon, PencilSquareIcon, DeniedIcon } from './customIcons';
 
-export function Card({ title, action, children, hideScrollbar = false }) {
-  return <div className="card"><div className="card-head"><h3>{title}</h3>{action && <span>{tr(action)}</span>}</div><div className={hideScrollbar ? 'card-body scrollbar-hidden' : 'card-body'} {...(hideScrollbar ? { tabIndex: 0, role: 'region', 'aria-label': title } : {})}>{children}</div></div>;
+export function Card({ title, action, onAction, children, hideScrollbar = false }) {
+  return <div className="card"><div className="card-head"><h3>{title}</h3>{action && (onAction ? <button type="button" className="card-action" onClick={onAction}>{tr(action)}</button> : <span>{tr(action)}</span>)}</div><div className={hideScrollbar ? 'card-body scrollbar-hidden' : 'card-body'} {...(hideScrollbar ? { tabIndex: 0, role: 'region', 'aria-label': title } : {})}>{children}</div></div>;
 }
 
-export function Legend({ color, text, value }) {
-  return <div className="legend-row"><span className="legend-label"><i style={{ background: color }} />{text}</span><strong>{value}</strong></div>;
+export function Legend({ color, text, value, tip }) {
+  return <div className="legend-row" data-tip={tip}><span className="legend-label"><i style={{ background: color }} />{text}</span><strong>{value}</strong></div>;
 }
 
-export function Progress({ label, value }) {
-  return <div className="progress-row"><div><span>{label}</span><b>{value}%</b></div><div className="bar"><i style={{ width: `${value}%` }} /></div></div>;
+export function Progress({ label, value, tip }) {
+  return <div className="progress-row" data-tip={tip}><div><span>{label}</span><b>{value}%</b></div><div className="bar"><i style={{ width: `${value}%` }} /></div></div>;
 }
 
-export function QualityMini({ label, value }) {
-  return <div className="quality-mini"><div className="quality-ring" style={{ '--p': `${value * 3.6}deg` }}><span>{value}</span></div><span>{label}</span></div>;
+export function QualityMini({ label, value, pass = 79 }) {
+  return <div className={'quality-mini' + (value >= pass ? ' pass' : '')}><div className="quality-ring" style={{ '--p': `${value * 3.6}deg` }}><span>{value}</span></div><span>{label}</span></div>;
 }
 
 export function Deadline({ day, mon, title, note }) {
   return <div className="deadline"><div><b>{day}</b><span>{tr(mon)}</span></div><p><strong>{title}</strong><small>{note}</small></p></div>;
 }
 
-export function Donut({ value, centerTop, centerBottom }) {
-  return <div className="donut" style={{ '--p': `${value * 3.6}deg` }}><div><strong>{centerTop}</strong><small>{tr(centerBottom)}</small></div></div>;
+export function Donut({ value, centerTop, centerBottom, tip }) {
+  return <div className="donut" data-tip={tip} style={{ '--p': `${value * 3.6}deg` }}><div><strong>{centerTop}</strong><small>{tr(centerBottom)}</small></div></div>;
 }
 
 export function Field({ label, full, children }) {
@@ -79,8 +79,10 @@ export function ChartCard({ title, subtitle, children }) {
   return <div className="chart-card"><div><h3>{title}</h3><p>{subtitle}</p></div>{children}</div>;
 }
 
-export function Insight({ n, title, text }) {
-  return <div className="insight"><span>{n}</span><div><strong>{title}</strong><p>{text}</p></div></div>;
+// With `onClick` the card is a button that takes the reader to the place the insight is about; `go` names that place.
+export function Insight({ n, title, text, onClick, go }) {
+  const body = <><span>{n}</span><div><strong>{title}</strong><p>{text}</p>{onClick && go && <small className="insight-go">{go} ›</small>}</div></>;
+  return onClick ? <button type="button" className="insight insight-link" onClick={onClick}>{body}</button> : <div className="insight">{body}</div>;
 }
 
 export function Toggle({ on, set, title, text, disabled }) {
@@ -97,7 +99,7 @@ export function Policy({ title, text }) {
 
 // One icon set (Phosphor) for the whole UI. Only the icons listed here are bundled.
 // Decorative by default (aria-hidden); pass `label` when the icon alone conveys meaning.
-const ICONS = { arrowUpRight: ArrowUpRight, arrowUUpLeft: ArrowUUpLeft, xCircle: XCircle, chatText: ChatCircleText, clockBack: ClockCounterClockwise, notebook: Notebook, sealCheck: SealCheck, hourglassMedium: HourglassMedium, notePencil: NotePencil, shieldCheck: ShieldCheck, graduationCap: GraduationCap, paperPlaneTilt: PaperPlaneTilt, uploadSimple: UploadSimple, trash: Trash, squaresFour: SquaresFour, pencilRuler: PencilRuler, sparkle: Sparkle, gridFour: GridFour, archive: Archive, chartBar: ChartBar, downloadSimple: DownloadSimple, usersThree: UsersThree, gearSix: GearSix, caretRight: CaretRight, eye: Eye, eyeSlash: EyeSlash, envelope: Envelope, bell: Bell, magnifyingGlass: MagnifyingGlass, checkCircle: CheckCircle, warning: Warning, floppyDisk: FloppyDisk, calendarBlank: CalendarBlank, bellRinging: BellRinging, program: ProgramIcon, subject: SubjectIcon, underReview: UnderReviewIcon, approved: ApprovedIcon, revise: ReviseIcon };
+const ICONS = { signOut: SignOut, arrowUpRight: ArrowUpRight, arrowUUpLeft: ArrowUUpLeft, xCircle: XCircle, chatText: ChatCircleText, clockBack: ClockCounterClockwise, notebook: Notebook, sealCheck: SealCheck, hourglassMedium: HourglassMedium, notePencil: NotePencil, shieldCheck: ShieldCheck, graduationCap: GraduationCap, paperPlaneTilt: PaperPlaneTilt, uploadSimple: UploadSimple, squaresFour: SquaresFour, pencilRuler: PencilRuler, sparkle: Sparkle, gridFour: GridFour, archive: Archive, chartBar: ChartBar, downloadSimple: DownloadSimple, usersThree: UsersThree, gearSix: GearSix, caretRight: CaretRight, eye: Eye, eyeSlash: EyeSlash, envelope: Envelope, bell: Bell, magnifyingGlass: MagnifyingGlass, checkCircle: CheckCircle, warning: Warning, floppyDisk: FloppyDisk, calendarBlank: CalendarBlank, bellRinging: BellRinging, program: ProgramIcon, subject: SubjectIcon, underReview: UnderReviewIcon, approved: ApprovedIcon, revise: ReviseIcon, bin: BinIcon, pencilSquare: PencilSquareIcon, denied: DeniedIcon };
 export function Icon({ name, size = 20, weight = 'duotone', label, className, ...rest }) {
   const Glyph = ICONS[name];
   if (!Glyph) return null;

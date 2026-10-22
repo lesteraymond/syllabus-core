@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { phTime } from '../../lib/phTime';
 import { syllabi as syllabiApi } from '../../lib/api';
+import { saveOnce } from '../../lib/draftSave';
 import { SCHEMA_VERSION, clone, emptyDraft, hydrateContent } from '../../lib/syllabusModel';
 
 export const newId = () => 'k' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 
 // Top-level sections of the draft that are saved to the server (the server decides `signoff`).
-const SECTIONS = ['meta', 'description', 'clos', 'plan', 'reqs', 'refs', 'grading'];
+const SECTIONS = ['meta', 'outcomes', 'description', 'clos', 'plan', 'reqs', 'refs', 'grading'];
 const DEBOUNCE_MS = 800;
 
 function reducer(state, a) {
@@ -40,17 +41,19 @@ export function useDraft(editing) {
     (async () => {
       try {
         let content = null;
+        let adoptedOutcomes = false;
         let info = { editable: true, status: 'draft', version: 'v1.0' };
         if (idRef.current) {
           const r = await syllabiApi.getContent(idRef.current);
           content = r.content;
+          adoptedOutcomes = r.adoptedOutcomes;
           info = { editable: r.editable, status: r.status, version: r.version, lockedReason: r.lockedReason || '', nextVersion: r.nextVersion || '', reviewerNote: r.reviewerNote || '' };
         }
         let d;
         if (content) {
           d = hydrateContent(content, newId);
           // Only sections that exist on the server count as saved; a missing one is saved with the next change.
-          SECTIONS.forEach((k) => { if (content[k] !== undefined) savedJson.current[k] = JSON.stringify(d[k]); });
+          SECTIONS.forEach((k) => { if (content[k] !== undefined && !(adoptedOutcomes && ['outcomes', 'clos'].includes(k))) savedJson.current[k] = JSON.stringify(d[k]); });
         } else {
           d = emptyDraft(newId);
           // An older syllabus has no stored content yet: start from what the list already knows.
@@ -80,21 +83,16 @@ export function useDraft(editing) {
           again.current = false;
           const d = latest.current;
           if (!d || !touched.current) break;
-          const changed = SECTIONS.filter((k) => JSON.stringify(d[k]) !== savedJson.current[k]);
-          if (!changed.length) { pending.current = false; setSave((x) => (x.state === 'pending' ? { ...x, state: 'saved' } : x)); break; }
           setSave((s) => ({ ...s, state: 'saving' }));
-          if (!idRef.current) idRef.current = (await syllabiApi.createDraft()).id;
-          const sections = {};
-          const sent = {};
-          changed.forEach((k) => { sections[k] = d[k]; sent[k] = JSON.stringify(d[k]); });
-          await syllabiApi.saveContent(idRef.current, sections, SCHEMA_VERSION);
-          Object.assign(savedJson.current, sent);
+          // lib/draftSave.js: only changed sections go up; no row exists before a subject is chosen; a refused first save removes its row again
+          const result = await saveOnce({ api: syllabiApi, d, idRef, saved: savedJson, sections: SECTIONS, schemaVersion: SCHEMA_VERSION });
+          if (result !== 'saved') { pending.current = false; setSave((x) => (x.state === 'pending' || x.state === 'saving' ? { ...x, state: 'saved' } : x)); break; }
           setSave({ state: 'saved', time: stamp() });
           if (!again.current) pending.current = SECTIONS.some((k) => JSON.stringify(latest.current[k]) !== savedJson.current[k]);
         } while (again.current);
         return true;
       } catch (e) {
-        setSave((s) => ({ ...s, state: 'error', message: e.message }));
+        setSave((s) => ({ ...s, state: 'error', message: e.message, code: e.data && e.data.code }));
         return false;
       } finally {
         running.current = false;
@@ -119,7 +117,8 @@ export function useDraft(editing) {
   useEffect(() => () => { clearTimeout(timer.current); if (touched.current) flush(); }, [flush]);
 
   useEffect(() => {
-    const warn = (e) => { if (pending.current) { flush(); e.preventDefault(); e.returnValue = ''; } };
+    // Asks before a reload or tab close once anything was typed here (even if autosave has caught up); a save still pending is sent first.
+    const warn = (e) => { if (touched.current || pending.current) { if (pending.current) flush(); e.preventDefault(); e.returnValue = ''; } };
     window.addEventListener('beforeunload', warn);
     return () => window.removeEventListener('beforeunload', warn);
   }, [flush]);

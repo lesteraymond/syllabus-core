@@ -123,8 +123,6 @@ export default function StudentRegister({ onBack }) {
   return (
     <>
       <form className="login-card register-card" onSubmit={submit}>
-        <img className="login-logo" src="/cite-logo.png" alt={translateUI("ui.college_logo_1df91f")} />
-        <span className="eyebrow">{translateUI("ui.student_registration_ef00b6")}</span>
         <h2>{translateUI("ui.create_your_account_4046b5")}</h2>
         <p className="muted">{translateUI("ui.for_bsit_students_we_read_your_cor_to_verify_your_enrollment_and__bed562")}</p>
         <label>{translateUI("ui.certificate_of_registration_cor_0ef71c")}<div className={`dropzone compact${dragging ? ' dragging' : ''}${file ? ' has-file' : ''}`}

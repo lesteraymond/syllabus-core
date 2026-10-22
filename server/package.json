@@ -24,6 +24,7 @@
     "migrate-subject-standards": "node db/migrate-subject-standards.js",
     "migrate-usage": "node db/migrate-usage.js",
     "migrate-deadlines": "node db/migrate-deadlines.js",
+    "migrate-archive": "node db/migrate-archive.js",
     "migrate-subject-owner": "node db/migrate-subject-owner.js"
   },
   "dependencies": {

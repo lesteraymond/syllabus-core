@@ -21,7 +21,7 @@ function makeDb({ assigned = {}, syllabi = {}, beforeDelete } = {}) {
   const mine = (uid) => assigned[uid] || { programs: [], courses: [] };
   const handle = (sql, params = []) => {
     queries.push(sql);
-    if (sql.startsWith('SELECT syllabus_id, user_id, status FROM syllabi WHERE')) return [syllabi[params[0]] ? [{ ...syllabi[params[0]] }] : []];
+    if (sql.startsWith('SELECT syllabus_id, user_id, status FROM syllabi WHERE') && !sql.includes('WHERE course_id')) return [syllabi[params[0]] ? [{ ...syllabi[params[0]] }] : []];
     if (sql.startsWith('DELETE FROM syllabi WHERE syllabus_id')) {
       beforeDelete?.(syllabi);
       const target = syllabi[params[0]];
@@ -53,6 +53,9 @@ function makeDb({ assigned = {}, syllabi = {}, beforeDelete } = {}) {
     if (sql.startsWith('SELECT program_id FROM programs WHERE code')) { const p = PROGRAMS.find((x) => x.code === params[0]); return [p ? [{ program_id: p.program_id }] : []]; }
     if (sql.startsWith('SELECT 1 FROM courses WHERE code')) return [COURSES.filter((c) => c.code === params[0] && (params[1] === undefined || c.course_id !== params[1])).map(() => ({ 1: 1 }))];
     if (sql.startsWith('SELECT program_id FROM program_code_aliases')) return [[]]; // these fixtures have no historical codes
+    // one syllabus for each subject (lib/subjectLock.js): the subject a code names, and the syllabi already on a subject
+    if (sql.startsWith('SELECT course_id FROM courses WHERE code')) return [COURSES.filter((c) => c.code.toLowerCase() === String(params[0]).toLowerCase()).map((c) => ({ course_id: c.course_id }))];
+    if (sql.startsWith('SELECT syllabus_id, user_id, status FROM syllabi WHERE course_id')) return [Object.values(syllabi).filter((r) => r.course_id === params[0] && r.syllabus_id !== params[1] && r.user_id === params[2]).map((r) => ({ syllabus_id: r.syllabus_id, user_id: r.user_id, status: r.status }))];
     if (sql.startsWith('SELECT code, name FROM programs')) return [PROGRAMS.map((p) => ({ code: p.code, name: p.name }))];
     if (sql.startsWith('INSERT INTO programs')) {
       const [code, name] = params;
@@ -257,6 +260,12 @@ test('legacy create: the course code must match an assigned course', () => withS
   const none = await call(gus, 'POST', '/syllabi', { title: 'Intro', courseCode: 'IT 101' });
   assert.strictEqual(none.status, 403);
   assert.match(none.body.error, /No program or subject is assigned/);
+}));
+
+test('legacy create: a subject the person already has a syllabus on cannot get another', () => withServer({ assigned: ASSIGNED, syllabi: { 9: row({ syllabus_id: 9, user_id: 5, course_id: 10, status: 'submitted' }) } }, async ({ call }) => {
+  const again = await call(fay, 'POST', '/syllabi', { title: 'Intro again', courseCode: 'IT 101' });
+  assert.strictEqual(again.status, 409);
+  assert.match(again.body.error, /already have a syllabus for this subject \(Submitted\)/);
 }));
 
 test('legacy edit by the owner needs an assigned course; an admin changing status is unaffected', () => withServer({ assigned: ASSIGNED, syllabi: { 4: row({ syllabus_id: 4, status: 'for_revision', course_code: 'IT 204' }), 5: row({ syllabus_id: 5, status: 'for_revision', course_code: 'IT 101' }) } }, async ({ call }) => {

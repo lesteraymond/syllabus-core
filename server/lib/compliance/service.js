@@ -9,9 +9,12 @@ const { evaluate } = require('./rules');
 const { contentHash } = require('./hash');
 const { recommend } = require('./recommend');
 const { MockProvider, LlmProvider } = require('./providers');
+const { createGeminiClient } = require('./geminiClient');
+const { createOpenRouterClient } = require('./openrouterClient');
 const { inTransaction } = require('../http');
 const { schoolYearStart } = require('../schoolYear');
 const uploadCheck = require('./upload');
+const { judgeContent } = require('./meaning');
 
 // ---- is the database ready? (only a positive answer is remembered, so running the migration needs no restart) ----
 let installed = false;
@@ -24,7 +27,8 @@ const resetInstalledCache = () => { installed = false; };
 
 // ---- running the rules ----
 // `catalog` is the live { institution, program } (see catalogSnapshot in routes/syllabusContent.js); `preparedBy` the owner's name.
-const check = (content, { catalog, preparedBy } = {}) => evaluate(content, standard, { year: schoolYearStart(), catalog, preparedBy });
+// `judged` is the AI's verdict on the fields (see meaning.js); without it those rules do not apply.
+const check = (content, { catalog, preparedBy, judged } = {}) => evaluate(content, standard, { year: schoolYearStart(), catalog, preparedBy, judged });
 
 // The 409 a blocking failure turns into: a message and the rules that failed, so the builder can show each next to its step.
 function gateError(result) {
@@ -41,7 +45,7 @@ const j = (v) => (v === undefined || v === null ? null : JSON.stringify(v));
 // Inside the caller's transaction. Returns the run id.
 // `ai: false` for a run that gets no AI step (an uploaded file has no form to describe to a provider): it stays 'none'.
 async function storeRun(conn, { syllabusId, versionId = null, content, result, createdBy = null, ai = true }) {
-  const aiStatus = ai && result.status === 'scored' && result.findings.length ? 'pending' : 'none';
+  const aiStatus = ai && result.status === 'scored' && (result.findings.length || canJudge()) ? 'pending' : 'none';
   const [ins] = await conn.query(
     `INSERT INTO ai_check_runs (syllabus_id, version_id, content_hash, standard_version, overall, status, passed, conformant, ai_status, contact, created_by)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -49,13 +53,28 @@ async function storeRun(conn, { syllabusId, versionId = null, content, result, c
   );
   const runId = ins.insertId;
   await conn.query('INSERT INTO ai_check_area_scores (run_id, area_key, name, weight, score) VALUES ?', [result.areas.map((a) => [runId, a.key, a.name, a.weight, a.score])]);
-  if (result.findings.length) {
-    await conn.query(
-      'INSERT INTO ai_findings (run_id, kind, source, area, rule_id, severity, step, path, message, evidence, position) VALUES ?',
-      [result.findings.map((f, i) => [runId, 'finding', 'rule', f.area, f.ruleId, f.severity, f.step, f.path.slice(0, 255), f.message, j(f.evidence), i])]
-    );
-  }
+  await insertFindings(conn, runId, result.findings);
   return runId;
+}
+
+// A finding is the rules' own, or the AI's verdict that a field is not meaningful (rules J-01 to J-05).
+async function insertFindings(conn, runId, findings) {
+  if (!findings.length) return;
+  await conn.query(
+    'INSERT INTO ai_findings (run_id, kind, source, area, rule_id, severity, step, path, message, evidence, position) VALUES ?',
+    [findings.map((f, i) => [runId, 'finding', /^J-/.test(f.ruleId) ? 'ai' : 'rule', f.area, f.ruleId, f.severity, f.step, f.path.slice(0, 255), f.message, j(f.evidence), i])]
+  );
+}
+
+// The run again, scored with the AI's verdicts: the score, the six area scores and the findings are replaced by the new result.
+async function applyJudgment(db, runId, result) {
+  await inTransaction(db, async (conn) => {
+    await conn.query('UPDATE ai_check_runs SET overall = ?, status = ?, passed = ?, conformant = ? WHERE run_id = ?', [result.overall, result.status, result.passed ? 1 : 0, result.conformance.ok ? 1 : 0, runId]);
+    await conn.query('DELETE FROM ai_check_area_scores WHERE run_id = ?', [runId]);
+    await conn.query('INSERT INTO ai_check_area_scores (run_id, area_key, name, weight, score) VALUES ?', [result.areas.map((a) => [runId, a.key, a.name, a.weight, a.score])]);
+    await conn.query("DELETE FROM ai_findings WHERE run_id = ? AND kind = 'finding'", [runId]);
+    await insertFindings(conn, runId, result.findings);
+  });
 }
 
 // The recommendations, and what the AI step ended up doing, saved against a run. No provider configured is not an error: the
@@ -82,20 +101,50 @@ async function attachRecommendations(db, runId, rec) {
 let provider;
 function getProvider() {
   if (provider !== undefined) return provider;
-  const name = String(process.env.COMPLIANCE_AI_PROVIDER || '').toLowerCase();
-  provider = name === 'mock' ? new MockProvider() : name === 'llm' ? new LlmProvider() : null;
+  // COMPLIANCE_AI_PROVIDER picks one ('mock', 'llm' = an unconfigured stub, 'openrouter', 'gemini', or 'off'). Unset, an
+  // OPENROUTER_API_KEY selects OpenRouter, else a GEMINI_API_KEY selects Gemini.
+  const name = String(process.env.COMPLIANCE_AI_PROVIDER || (process.env.OPENROUTER_API_KEY ? 'openrouter' : process.env.GEMINI_API_KEY ? 'gemini' : '')).toLowerCase();
+  if (name === 'openrouter' && process.env.OPENROUTER_API_KEY) {
+    const client = createOpenRouterClient({ apiKey: process.env.OPENROUTER_API_KEY, ...(process.env.OPENROUTER_MODEL ? { model: process.env.OPENROUTER_MODEL } : {}) });
+    provider = new LlmProvider({ client, model: client.model });
+  } else if (name === 'gemini' && process.env.GEMINI_API_KEY) {
+    const client = createGeminiClient({ apiKey: process.env.GEMINI_API_KEY, ...(process.env.GEMINI_MODEL ? { model: process.env.GEMINI_MODEL } : {}) });
+    provider = new LlmProvider({ client, model: client.model });
+  } else {
+    provider = name === 'mock' ? new MockProvider() : name === 'llm' ? new LlmProvider() : null;
+  }
   return provider;
 }
 const setProvider = (p) => { provider = p; };
+// Whether the configured provider can judge the fields (a real model can; the offline one cannot).
+const canJudge = () => { const p = getProvider(); return !!p && typeof p.judge === 'function'; };
 
 const pending = new Set();
 // Runs after the request that caused it has answered. It never throws; a failure leaves the run with ai_status 'failed'.
 // `names` are people named on the syllabus (the owner and the sign-off): they are masked in what a provider sees.
-function startAiJob(db, { runId, content, result, names = [], timeoutMs }) {
+// `rescore(judged)` is the same check run again with the AI's verdicts. The job: the AI judges the fields, the run is scored again with
+// its verdicts, then recommendations are written from what is still wrong. A failed judging step only means no verdicts: the rules' own
+// score stands and the recommendations are still written.
+function startAiJob(db, { runId, content, result, names = [], timeoutMs, rescore }) {
   const job = (async () => {
     try {
-      const rec = await recommend({ provider: getProvider(), result, content, standard, names, ...(timeoutMs ? { timeoutMs } : {}) });
-      await attachRecommendations(db, runId, rec);
+      const p = getProvider();
+      let current = result;
+      let judgeError = null;
+      if (rescore && canJudge()) {
+        try {
+          const judged = await judgeContent({ provider: p, content, names, ...(timeoutMs ? { timeoutMs } : {}) });
+          if (judged && judged.length) { current = rescore(judged); await applyJudgment(db, runId, current); }
+        } catch (err) { judgeError = err; console.error('COMPLIANCE AI JUDGE:', err.message); }
+      }
+      if (current.findings.length) {
+        const rec = await recommend({ provider: p, result: current, content, standard, names, ...(timeoutMs ? { timeoutMs } : {}) });
+        await attachRecommendations(db, runId, rec);
+      } else {
+        // Nothing left to fix: the run is "AI-assisted" when the AI looked at the fields, and failed when it could not.
+        await db.query('UPDATE ai_check_runs SET ai_status = ?, ai_error = ?, provider = ?, model = ?, prompt_version = ? WHERE run_id = ?',
+          [judgeError ? 'failed' : 'ok', judgeError ? ((judgeError.code || 'error') + ': ' + judgeError.message).slice(0, 255) : null, p.name || null, p.model || null, p.promptVersion || null, runId]);
+      }
     } catch (err) {
       console.error('COMPLIANCE AI JOB:', err.message);
       try { await db.query("UPDATE ai_check_runs SET ai_status = 'failed', ai_error = ? WHERE run_id = ?", [String(err.message).slice(0, 255), runId]); } catch { /* nothing more to do */ }
@@ -235,5 +284,5 @@ const hashOf = (content) => contentHash(content, standard.version);
 
 module.exports = {
   publicationContent, ADMIN_RUN_SQL, adminCheckStates, uploadCheck, uploadFingerprint, versionFile, standard, check, gateError, isInstalled, resetInstalledCache, storeRun, attachRecommendations,
-  startAiJob, settled, getProvider, setProvider, namesFor, summarize, loadAreas, loadDetail, latestRun, cachedRun, latestVersion, hashOf, bandOf,
+  startAiJob, canJudge, applyJudgment, settled, getProvider, setProvider, namesFor, summarize, loadAreas, loadDetail, latestRun, cachedRun, latestVersion, hashOf, bandOf,
 };

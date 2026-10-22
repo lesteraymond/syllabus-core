@@ -72,3 +72,23 @@ test('admin approval requires their draft and the current completed check withou
   assert.strictEqual(canApproveAdminDraft(user,{...syllabus,status:'draft'},run),false);
   assert.strictEqual(canApproveAdminDraft(user,syllabus,null),false);
 });
+
+test('a rejected syllabus is edited and sent again, like one returned for revision; submitted and approved stay locked', async () => {
+  const { canEditSyllabus, isReturned, noteMissing, editBlockedReason } = await import('./syllabusRules.js');
+  const owner = { id: 7, role: 'faculty' };
+  for (const status of ['draft', 'for_revision', 'rejected']) assert.equal(canEditSyllabus(owner, { userId: 7, status }), true, status);
+  for (const status of ['submitted', 'under_review', 'approved']) assert.equal(canEditSyllabus(owner, { userId: 7, status }), false, status);
+  assert.equal(isReturned('rejected'), true);
+  assert.equal(isReturned('approved'), false);
+  assert.equal(noteMissing('rejected', ''), true, 'a resubmission after a rejection also says what changed');
+  assert.equal(noteMissing('draft', ''), false);
+  assert.equal(editBlockedReason({ status: 'rejected' }), '');
+});
+
+test('an archived syllabus (its subject went to another faculty member) is read-only for its former owner', async () => {
+  const { canEditSyllabus, editBlockedReason } = await import('./syllabusRules.js');
+  const owner = { id: 7, role: 'faculty' };
+  for (const status of ['draft', 'for_revision', 'rejected']) assert.equal(canEditSyllabus(owner, { userId: 7, status, archived: true }), false, status);
+  assert.match(editBlockedReason({ status: 'draft', archived: true }), /archived because its subject was assigned to another faculty member/);
+  assert.equal(canEditSyllabus(owner, { userId: 7, status: 'draft', archived: false }), true);
+});
