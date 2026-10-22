@@ -2028,7 +2028,7 @@ const ruleMessagesV5 = {
   "rule.j05.fix": ["Make the content, activities and tasks match the ILO", "Iayon sa ILO ang nilalaman, mga gawain at mga gawaing pagtatasa"],
   "rule.c05.fix": ["Name at least one LCUP core value in every lesson", "Magbanggit ng kahit isang pangunahing pagpapahalaga ng LCUP sa bawat aralin"],
 };
-// Rules D-01 to D-07, repeated data inside one syllabus (compliance standard v8).
+// Rules D-01 to D-07, repeated data inside one syllabus (standard v8), and I-01, support for diverse learners (standard v9).
 const ruleMessagesV8 = {
   "rule.d01.message": ["{where} has the same ILO as {other}: \"{text}\".", "Ang {where} ay may parehong ILO ng {other}: \"{text}\"."],
   "rule.d01.fix": ["Write each lesson's own ILO; do not repeat one", "Isulat ang sariling ILO ng bawat aralin; huwag magpaulit"],
@@ -2043,6 +2043,8 @@ const ruleMessagesV8 = {
   "rule.d06.message": ["The grading component \"{label}\" is listed more than once.", "Higit sa isang beses nakalista ang bahagi ng pagmamarka na \"{label}\"."],
   "rule.d06.fix": ["Merge or rename the repeated grading component", "Pagsamahin o palitan ang pangalan ng paulit-ulit na bahagi ng pagmamarka"],
   "rule.d07.message": ["The course description {what}.", "Ang paglalarawan ng kurso ay {what}."],
+  "rule.i01.message": ["Nothing in the syllabus says how it supports diverse learners, including students with disabilities.", "Walang sinasabi ang silabus kung paano nito sinusuportahan ang iba't ibang mag-aaral, kasama ang mga may kapansanan."],
+  "rule.i01.fix": ["State how the course accommodates diverse learners, such as students with disabilities", "Sabihin kung paano tinutugunan ng kurso ang iba't ibang mag-aaral, tulad ng mga may kapansanan"],
   "rule.d07.fix": ["Write the course description in your own words, without repeating", "Isulat ang paglalarawan ng kurso sa sarili mong salita, nang walang pag-uulit"],
 };
 for (const [key, [en, tl]] of Object.entries({ ...ruleMessagesV5, ...ruleMessagesV8 })) { extraEn[key] = en; extraTl[key] = tl; }

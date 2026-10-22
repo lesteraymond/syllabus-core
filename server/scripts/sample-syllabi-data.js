@@ -58,7 +58,7 @@ const SUBJECTS = [
       'Apply | Common design patterns | common design patterns such as singleton and factory',
       'Develop | Mini project: object-oriented application | a small application using object-oriented design',
     ],
-    reqs: ['Laboratory exercises submitted on time', 'Three quizzes and a written examination for each term', 'Object-oriented programming project with a demonstration', 'Attendance of at least 80% of the scheduled sessions'],
+    reqs: ['Laboratory exercises submitted on time', 'Three quizzes and a written examination for each term', 'Object-oriented programming project with a demonstration', 'Attendance of at least 80% of the scheduled sessions', 'Students who need learning accommodations, for example because of a disability, tell the instructor early so that accessible formats and reasonable adjustments can be arranged'],
     refs: {
       books: ['Deitel, P., & Deitel, H. (2018). Java How to Program, Early Objects (11th ed.). Pearson.', 'Horstmann, C. S. (2019). Core Java, Volume I: Fundamentals (11th ed.). Pearson.'],
       program: [], online: ['Oracle. (2024). The Java Tutorials. https://docs.oracle.com/javase/tutorial/'], electronics: [],
@@ -90,7 +90,7 @@ const SUBJECTS = [
       'Apply | Database security and administration | user privileges, backup and recovery',
       'Present | Database implementation project | a working database and its queries for a case',
     ],
-    reqs: ['Laboratory exercises in SQL', 'Quizzes and a written examination for each term', 'Database design and implementation project', 'Attendance of at least 80% of the scheduled sessions'],
+    reqs: ['Laboratory exercises in SQL', 'Quizzes and a written examination for each term', 'Database design and implementation project', 'Attendance of at least 80% of the scheduled sessions', 'Students who need learning accommodations, for example because of a disability, tell the instructor early so that accessible formats and reasonable adjustments can be arranged'],
     refs: {
       books: ['Coronel, C., & Morris, S. (2018). Database Systems: Design, Implementation, & Management (13th ed.). Cengage Learning.', 'Elmasri, R., & Navathe, S. B. (2016). Fundamentals of Database Systems (7th ed.). Pearson.'],
       program: [], online: ['W3Schools. (2024). SQL Tutorial. https://www.w3schools.com/sql/'], electronics: [],
@@ -122,7 +122,7 @@ const SUBJECTS = [
       'Discuss | Laws and ethics in security | the laws and ethical duties of security professionals',
       'Evaluate | Security assessment case study | the security of an organization in a case study',
     ],
-    reqs: ['Security exercises and a lab journal', 'Quizzes and a written examination for each term', 'Security assessment case study report and presentation', 'Attendance of at least 80% of the scheduled sessions'],
+    reqs: ['Security exercises and a lab journal', 'Quizzes and a written examination for each term', 'Security assessment case study report and presentation', 'Attendance of at least 80% of the scheduled sessions', 'Students who need learning accommodations, for example because of a disability, tell the instructor early so that accessible formats and reasonable adjustments can be arranged'],
     refs: {
       books: ['Stallings, W., & Brown, L. (2018). Computer Security: Principles and Practice (4th ed.). Pearson.', 'Whitman, M. E., & Mattord, H. J. (2018). Principles of Information Security (6th ed.). Cengage Learning.'],
       program: [], online: ['National Institute of Standards and Technology. (2018). Framework for Improving Critical Infrastructure Cybersecurity, Version 1.1. https://www.nist.gov/cyberframework'], electronics: [],
@@ -154,7 +154,7 @@ const SUBJECTS = [
       'Simulate | Circuit simulation and testing | circuits with a simulator and test them against a specification',
       'Present | Digital design project | a working digital circuit that meets a given specification',
     ],
-    reqs: ['Laboratory experiments with a written report', 'Quizzes and a written examination for each term', 'Digital design project with a demonstration', 'Attendance of at least 80% of the scheduled sessions'],
+    reqs: ['Laboratory experiments with a written report', 'Quizzes and a written examination for each term', 'Digital design project with a demonstration', 'Attendance of at least 80% of the scheduled sessions', 'Students who need learning accommodations, for example because of a disability, tell the instructor early so that accessible formats and reasonable adjustments can be arranged'],
     refs: {
       books: ['Mano, M. M., & Ciletti, M. D. (2017). Digital Design: With an Introduction to the Verilog HDL, VHDL, and SystemVerilog (6th ed.). Pearson.', 'Tocci, R. J., Widmer, N. S., & Moss, G. L. (2016). Digital Systems: Principles and Applications (12th ed.). Pearson.'],
       program: [], online: ['Intel. (2024). Quartus Prime design software documentation. https://www.intel.com/content/www/us/en/products/details/fpga/development-tools/quartus-prime.html'], electronics: [],
@@ -186,7 +186,7 @@ const SUBJECTS = [
       'Discuss | Supplier quality and customer focus | supplier quality management and customer focus',
       'Present | Quality improvement case study | a quality improvement proposal for an industrial case',
     ],
-    reqs: ['Problem sets and case exercises', 'Quizzes and a written examination for each term', 'Quality improvement case study report and presentation', 'Attendance of at least 80% of the scheduled sessions'],
+    reqs: ['Problem sets and case exercises', 'Quizzes and a written examination for each term', 'Quality improvement case study report and presentation', 'Attendance of at least 80% of the scheduled sessions', 'Students who need learning accommodations, for example because of a disability, tell the instructor early so that accessible formats and reasonable adjustments can be arranged'],
     refs: {
       books: ['Montgomery, D. C. (2019). Introduction to Statistical Quality Control (8th ed.). Wiley.', 'Evans, J. R., & Lindsay, W. M. (2017). Managing for Quality and Performance Excellence (10th ed.). Cengage Learning.'],
       program: [], online: ['International Organization for Standardization. (2015). ISO 9001:2015 Quality management systems: Requirements. https://www.iso.org/standard/62085.html'], electronics: [],
