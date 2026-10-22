@@ -118,6 +118,12 @@ export function emptyDraft(newId) {
     signoff: {},
   };
 }
+// The LCUP's own vision and mission. Every syllabus carries them word for word (the AI Checker's rules T-28 and T-29), so the builder puts
+// them in by itself instead of leaving them to be typed or copied from a subject's older starting values.
+export const LCUP = { vision: SEED_INSTITUTION.vision, mission: SEED_INSTITUTION.mission };
+export const hasLcup = (o) => !!o && o.vision === LCUP.vision && JSON.stringify(o.mission) === JSON.stringify(LCUP.mission);
+export const withLcup = (o) => ({ ...o, vision: LCUP.vision, mission: clone(LCUP.mission) });
+
 // Selecting a subject copies its legacy starting values into this syllabus. Faculty edit their own copy in Step 2.
 // `course` is the catalog entry { id, code, title, program: { code }, clos: [{ id, title, level, statement, egas, pos }] }.
 // Choosing a different course resets outcome mappings; selecting the same one preserves authored values.
@@ -127,12 +133,21 @@ export function applyCourse(d, course) {
   n.meta.code = course.code;
   n.meta.title = course.title;
   n.meta.program = course.program.code;
+  // The subject's prerequisites (the catalog's, e.g. "IT 202, 3rd Yr") are put in Pre-requisite (IV) when the subject is chosen, or when the field
+  // is still empty. The author may change it afterwards. Nothing is put in when the catalog has none set (course.prerequisiteText is null).
+  if (typeof course.prerequisiteText === 'string' && (d.meta.courseId !== course.id || !String(n.meta.prereq || '').trim())) n.meta.prereq = course.prerequisiteText;
+  // Credit Units (V) come from the curriculum's units for the subject the same way: when it is chosen, and for any box still empty.
+  if (course.units && Number.isFinite(course.units.lecture) && Number.isFinite(course.units.lab)) {
+    const sameSubject = d.meta.courseId === course.id;
+    if (!sameSubject || !String(n.meta.lecture || '').trim()) n.meta.lecture = String(course.units.lecture);
+    if (!sameSubject || !String(n.meta.lab || '').trim()) n.meta.lab = String(course.units.lab);
+  }
   if (d.meta.courseId === course.id && d.outcomes) return n;
   delete n.catalog;
   n.clos = clone(course.clos);
   const setup = course.standards || { vision: '', mission: { lead: '', items: [] }, egas: [], pos: [] };
   // Copy existing subject values once; all subsequent edits belong to this syllabus.
-  n.outcomes = clone({ vision: setup.vision, mission: setup.mission, egas: setup.egas, pos: setup.pos });
+  n.outcomes = withLcup(clone({ egas: setup.egas, pos: setup.pos }));
   const ids = new Set(n.clos.map((c) => c.id));
   n.plan.forEach((r) => r.ilos.forEach((il) => { il.tags = d.meta.courseId && d.meta.courseId !== course.id ? [] : il.tags.filter((t) => t.indexOf('clo:') !== 0 || ids.has(parseTag(t).id)); }));
   return n;

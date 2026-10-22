@@ -2,7 +2,7 @@ import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { phTime } from '../../lib/phTime';
 import { syllabi as syllabiApi } from '../../lib/api';
 import { saveOnce } from '../../lib/draftSave';
-import { SCHEMA_VERSION, clone, emptyDraft, hydrateContent } from '../../lib/syllabusModel';
+import { SCHEMA_VERSION, clone, emptyDraft, hydrateContent, hasLcup, withLcup } from '../../lib/syllabusModel';
 
 export const newId = () => 'k' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 
@@ -30,6 +30,7 @@ export function useDraft(editing) {
   const latest = useRef(null);
   const savedJson = useRef({}); // section -> JSON last confirmed on the server
   const touched = useRef(false);
+  const autoFixed = useRef(false); // the builder corrected something itself (the LCUP vision and mission): it is saved even though the author typed nothing
   const timer = useRef(null);
   const running = useRef(false);
   const again = useRef(false);
@@ -54,6 +55,11 @@ export function useDraft(editing) {
           d = hydrateContent(content, newId);
           // Only sections that exist on the server count as saved; a missing one is saved with the next change.
           SECTIONS.forEach((k) => { if (content[k] !== undefined && !(adoptedOutcomes && ['outcomes', 'clos'].includes(k))) savedJson.current[k] = JSON.stringify(d[k]); });
+          // The vision and mission are the LCUP's, put in word for word. What is stored stays 'unsaved' so the corrected text is saved too.
+          if (info.editable && d.outcomes && !hasLcup(d.outcomes)) {
+            d = { ...d, outcomes: withLcup(d.outcomes) };
+            autoFixed.current = true;
+          }
         } else {
           d = emptyDraft(newId);
           // An older syllabus has no stored content yet: start from what the list already knows.
@@ -63,6 +69,7 @@ export function useDraft(editing) {
         latest.current = d;
         dispatch({ type: 'SET', v: d });
         setLoad({ loading: false, error: '', ...info });
+        if (autoFixed.current) setTimeout(() => flush(), 0);
       } catch (e) {
         if (live) setLoad({ loading: false, error: e.message, editable: false, status: 'draft', version: '' });
       }
@@ -82,12 +89,13 @@ export function useDraft(editing) {
         do {
           again.current = false;
           const d = latest.current;
-          if (!d || !touched.current) break;
+          if (!d || !(touched.current || autoFixed.current)) break;
           setSave((s) => ({ ...s, state: 'saving' }));
           // lib/draftSave.js: only changed sections go up; no row exists before a subject is chosen; a refused first save removes its row again
           const result = await saveOnce({ api: syllabiApi, d, idRef, saved: savedJson, sections: SECTIONS, schemaVersion: SCHEMA_VERSION });
           if (result !== 'saved') { pending.current = false; setSave((x) => (x.state === 'pending' || x.state === 'saving' ? { ...x, state: 'saved' } : x)); break; }
           setSave({ state: 'saved', time: stamp() });
+          autoFixed.current = false;
           if (!again.current) pending.current = SECTIONS.some((k) => JSON.stringify(latest.current[k]) !== savedJson.current[k]);
         } while (again.current);
         return true;

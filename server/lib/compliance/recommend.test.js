@@ -206,3 +206,17 @@ test('the prompt carries the LCUP rules and the six core values, and still cites
   assert.match(prompt, /basedOn/);
   assert.ok(prompt.length < 4000, 'the shared part stays short');
 });
+
+test('a recommendation that only repeats a requirement, reference or grading duplicate is left out', () => {
+  const c = F.good();
+  c.grading.rows.push({ id: 'gdup', label: c.grading.rows[0].label, pct: 0 });
+  c.reqs.push({ id: 'dupq', t: c.reqs[0].t });
+  const result = resultOf(c);
+  const rules = result.findings.map((f) => f.ruleId);
+  assert.ok(rules.includes('D-06') && rules.includes('D-04'));
+  assert.deepEqual(ruleRecommendations(result, standard), []);
+  c.plan.filter((r) => r.kind === 'lesson')[1].ilos[0].text = c.plan.filter((r) => r.kind === 'lesson')[0].ilos[0].text;
+  const withIlo = ruleRecommendations(resultOf(c), standard);
+  assert.equal(withIlo.length, 1);
+  assert.deepEqual(withIlo[0].basedOn.map((id) => id.split(':')[0]), ['D-01']);
+});

@@ -357,6 +357,75 @@ export const CHECKS = {
     const doubled = Object.keys(X.weekHits).map(Number).filter((w) => X.weekHits[w] > 1).sort((a, b) => a - b);
     return [item(doubled.length === 0, 'plan', { s: doubled.length > 1 ? 's' : '', weeks: doubled.join(', '), verb: doubled.length > 1 ? '' : 's' }, { weeks: doubled })];
   },
+  // Repeated data inside one syllabus. Each mode lists the things it looked at in the order they appear; one that repeats an earlier one (the same
+  // words, or a near-copy sharing `threshold` of its words) fails, and says which one it repeats. Very short text is only compared whole, since
+  // "Quiz" appearing twice is not a copy. `minWords` is how long a text must be to count.
+  duplicates(X, p) {
+    const minWords = p.minWords || 1;
+    const threshold = p.threshold || 0.85;
+    const norm = (s) => text(s).split('\n').map(stripMarkup).join(' ').toLowerCase().replace(/https?:\/\/\S+/g, ' ').replace(/[^a-z0-9À-ɏ ]+/g, ' ').replace(/\s+/g, ' ').trim();
+    const toks = (s) => norm(s).split(' ').filter(Boolean);
+    const similar = (a, b) => {
+      if (a.length === 0 || b.length === 0) return 0;
+      if (a.length < 4 || b.length < 4) return a.join(' ') === b.join(' ') ? 1 : 0; // short text: only the same words count
+      const B = new Set(b);
+      const common = new Set(a.filter((w) => B.has(w))).size;
+      return common / (new Set(a).size + B.size - common);
+    };
+    // entries: [{ t, path, vars }] -> an item per entry; an entry that repeats an earlier one fails and names it.
+    const scan = (entries, describe) => {
+      const seen = [];
+      return entries.filter((e) => toks(e.t).length >= minWords).map((e) => {
+        const mine = toks(e.t);
+        const hit = seen.find((s) => similar(mine, s.tokens) >= threshold);
+        seen.push({ tokens: mine, e });
+        return hit ? item(false, e.path, describe(e, hit.e), { text: clip(e.t, 100), repeats: clip(hit.e.t, 100) }) : item(true, e.path, describe(e, e));
+      });
+    };
+    const lessonCells = (col) => X.lessons.map(({ r, i }) => ({ t: r[col], path: 'plan[' + i + '].' + col, where: weekLabel(r) })).filter((e) => !blank(e.t));
+    const label = { contents: 'course content', activities: 'learning activities', tasks: 'assessment task' };
+
+    if (p.mode === 'ilo') {
+      const entries = [];
+      X.lessons.forEach(({ r, i }) => arr(r.ilos).forEach((il, j) => { if (!blank(obj(il).text)) entries.push({ t: obj(il).text, path: 'plan[' + i + '].ilos[' + j + ']', where: weekLabel(r) + ', ILO' + (j + 1) }); }));
+      return scan(entries, (e, o) => ({ where: e.where, other: o.where, text: clip(e.t, 60) }));
+    }
+    if (p.mode === 'cells') {
+      return ['contents', 'activities', 'tasks'].flatMap((col) => scan(lessonCells(col), (e, o) => ({ where: e.where, other: o.where, column: label[col] })));
+    }
+    if (p.mode === 'sameRow') {
+      return X.lessons.map(({ r, i }) => {
+        const cols = ['contents', 'activities', 'tasks'].filter((c) => toks(r[c]).length >= minWords);
+        for (let a = 0; a < cols.length; a++) for (let b = a + 1; b < cols.length; b++) {
+          if (similar(toks(r[cols[a]]), toks(r[cols[b]])) >= threshold) return item(false, 'plan[' + i + ']', { where: weekLabel(r), a: label[cols[a]], b: label[cols[b]] }, { columns: [cols[a], cols[b]] });
+        }
+        return item(true, 'plan[' + i + ']', { where: weekLabel(r), a: '', b: '' });
+      });
+    }
+    if (p.mode === 'requirements') {
+      const entries = arr(X.c.reqs).map((r, i) => ({ t: obj(r).t, path: 'reqs[' + i + ']', n: i + 1 })).filter((e) => !blank(e.t));
+      return scan(entries, (e, o) => ({ n: e.n, m: o.n, text: clip(e.t, 60) }));
+    }
+    if (p.mode === 'references') {
+      const entries = [];
+      X.K.refGroups.forEach((g) => arr(obj(obj(X.c.refs)[g.key]).items).forEach((x, k) => { if (!blank(obj(x).t)) entries.push({ t: obj(x).t, path: 'refs.' + g.key + '.items[' + k + ']' }); }));
+      return scan(entries, (e) => ({ text: clip(e.t, 70) }));
+    }
+    if (p.mode === 'grading') {
+      const entries = arr(obj(X.c.grading).rows).map((g, i) => ({ t: obj(g).label, path: 'grading.rows[' + i + ']' })).filter((e) => !blank(e.t));
+      return scan(entries, (e) => ({ label: clip(e.t, 50) }));
+    }
+    // description: a sentence written twice, or a course learning outcome copied into it word for word.
+    const desc = arr(X.c.description).map((x) => text(obj(x).t)).join(' ').trim();
+    if (blank(desc)) return [];
+    const sentences = desc.split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter((s) => toks(s).length >= (p.minWords || 6));
+    const kept = new Set();
+    const repeated = sentences.find((s) => { const k = toks(s).join(' '); if (kept.has(k)) return true; kept.add(k); return false; });
+    const whole = norm(desc);
+    const copied = X.clos.findIndex((k) => toks(obj(k).statement).length >= (p.minWords || 6) && whole.indexOf(norm(obj(k).statement)) >= 0);
+    const what = repeated ? 'repeats a sentence: "' + clip(repeated, 60) + '"' : copied >= 0 ? 'copies the statement of CLO ' + (copied + 1) + ' word for word' : '';
+    return [item(!what, 'description', { what }, { repeated: repeated ? clip(repeated, 100) : '', clo: copied >= 0 ? copied + 1 : null })];
+  },
 };
 
 export function evaluate(content, standard, ctx = {}) {

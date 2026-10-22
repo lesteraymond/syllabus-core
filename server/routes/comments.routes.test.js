@@ -55,6 +55,7 @@ function makeDb() {
       return [{}];
     }
     if (sql.startsWith('INSERT INTO submission_logs')) { s.logs.push(p); return [{}]; }
+    if (/FROM course_prerequisites/.test(sql)) return [[]]; // a subject's prerequisites: none set
     throw new Error('unexpected query: ' + sql);
   };
   const conn = { query: async (q, p) => handle(q, p), beginTransaction: async () => {}, commit: async () => {}, rollback: async () => {}, release: () => {} };

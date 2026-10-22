@@ -3,6 +3,7 @@ import { tr } from "../../i18n/index.js";
 import { STATUS_LABELS } from '../../lib/syllabusRules';
 import { Field } from '../../components/ui';
 import { CURRENT_SCHOOL_YEAR, COLLEGE_NAME } from '../../lib/schoolYear';
+import PrereqPicker from './PrereqPicker';
 import { Auto, Ic } from './parts';
 import { newId } from './useDraft';
 import Select from '../../components/Select';
@@ -39,7 +40,7 @@ export default function InfoStep({ d, apply, model, programList, courseList, onC
           <input className="mono" inputMode="numeric" value={m.lab} onChange={(e) => setM('lab', e.target.value)} aria-label={translateUI("ui.laboratory_units_067e02")} maxLength={4} style={{ width: 74, textAlign: 'center' }} /><span>{translateUI("ui.unit_laboratory_60e5a6")}</span>
         </span>
       </Field>
-      <Field label={translateUI("ui.pre_requisite_iv_1c46d5")} full><input value={m.prereq} onChange={(e) => setM('prereq', e.target.value)} aria-label={translateUI("ui.pre_requisite_d4ec8c")} maxLength={255} /></Field>
+      <Field label={translateUI("ui.pre_requisite_iv_1c46d5")} full><PrereqPicker value={m.prereq} courseId={m.courseId} onChange={(v) => setM('prereq', v)} /></Field>
       <div className="field full">
         <span>{translateUI("ui.course_description_iii_db7708")}</span>
         {d.description.map((x, i) => (

@@ -33,15 +33,14 @@ export default function ClosStep({ d, model, apply, editable = !!apply }) {
     <section className="sm-card">
       <header className="sm-card-h"><h4>{t('ui.vision_and_mission_4c8752')}</h4></header>
       <div className="sm-card-b">
-        <label className="field"><span>{t('ui.vision_40b090')}</span><Auto className="in" value={o.vision} label={t('ui.vision_40b090')} onChange={value => edit(x => { x.vision = value; })} /></label>
-        <label className="field"><span>{t('ui.mission_introduction_873ac6')}</span><Auto className="in" value={o.mission.lead} label={t('ui.mission_introduction_8acfc4')} onChange={value => edit(x => { x.mission.lead = value; })} /></label>
+        <p className="hint">{t('outcomes.lcupFixed')}</p>
+        <label className="field"><span>{t('ui.vision_40b090')}</span><Auto className="in" readOnly value={o.vision} label={t('ui.vision_40b090')} onChange={() => {}} /></label>
+        <label className="field"><span>{t('ui.mission_introduction_873ac6')}</span><Auto className="in" readOnly value={o.mission.lead} label={t('ui.mission_introduction_8acfc4')} onChange={() => {}} /></label>
         <span className="lbl">{t('ui.mission_statements_5e2923')}</span>
         {o.mission.items.map((text, i) => <div className="ie-row" key={i}>
           <span className="mono ie-no">{i + 1}</span>
-          <Auto className="in" value={text} label={t('ui.mission_statement_45b2a8') + (i + 1)} onChange={value => edit(x => { x.mission.items[i] = value; })} />
-          {removeButton(t('ui.remove_statement_100039') + (i + 1), false, () => edit(x => { x.mission.items.splice(i, 1); }))}
+          <Auto className="in" readOnly value={text} label={t('ui.mission_statement_45b2a8') + (i + 1)} onChange={() => {}} />
         </div>)}
-        <button type="button" className="link" disabled={o.mission.items.length >= 50} onClick={() => edit(x => { x.mission.items.push(''); })}>{t('ui.add_mission_statement_0ad1c2')}</button>
       </div>
     </section>
     <div className="sm-pair">

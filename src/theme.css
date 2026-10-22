@@ -636,3 +636,46 @@ button.insight-link { width: 100%; text-align: left; font: inherit; color: inher
 .std-body th.num { text-align: right; }
 .std-body th { white-space: nowrap; }
 .std-body tfoot th { background: #f1f4f3; border-top: 2px solid var(--line); }
+
+/* Suggested changes in the builder's Review & Check step. */
+.sug-card { margin-top: 16px; padding: 16px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); display: grid; gap: 10px; }
+.sug-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.sug-head h3 { margin: 0; }
+.sug-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+.sug-item { border: 1px solid var(--line); border-radius: 10px; padding: 12px; display: grid; gap: 8px; }
+.sug-top { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+.sug-diff { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.sug-diff p { margin: 2px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: var(--text-sm); }
+.sug-diff small { color: var(--muted); font-size: var(--text-xs); font-weight: var(--fw-semibold); text-transform: uppercase; letter-spacing: .04em; }
+.sug-before, .sug-after { padding: 8px 10px; border-radius: 8px; }
+.sug-before { background: #f4f6f8; }
+.sug-after { background: #eaf6ee; }
+.sug-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.sug-item.applied { border-color: #9bd2ae; }
+.sug-item.outdated { opacity: .75; }
+@media (max-width: 640px) { .sug-diff { grid-template-columns: minmax(0, 1fr); } }
+.sug-gain { margin: 0; padding: 8px 12px; border-radius: 8px; background: #eaf6ee; font-size: var(--text-sm); }
+.sug-applied { margin: 0; font-size: var(--text-sm); }
+.sug-col { grid-column: 1 / -1; font-size: var(--text-sm); }
+.sug-left { display: grid; gap: 6px; padding-top: 6px; border-top: 1px solid var(--line); }
+.sug-left h4 { margin: 0; font-size: var(--text-sm); }
+.sug-left ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: var(--text-sm); }
+
+/* The LCUP vision and mission in the builder's step 2: shown, not editable. */
+.learning-outcomes-editor textarea.in[readonly] { background: #f1f4f3; color: var(--muted); cursor: default; resize: none; }
+
+/* Pre-requisite (IV) as a dropdown with checkboxes. */
+.prereq-trigger { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.prereq-trigger:disabled { background: #f1f4f3; cursor: not-allowed; }
+.prereq-trigger > span { min-width: 0; overflow-wrap: anywhere; }
+.prereq-pop { position: fixed; z-index: 2000; display: grid; gap: 6px; padding: 8px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 12px 32px rgba(15, 23, 42, .18); }
+.prereq-search { width: 100%; }
+.prereq-list { max-height: 260px; overflow-y: auto; display: grid; gap: 2px; }
+.prereq-opt { display: flex; align-items: flex-start; gap: 8px; padding: 6px 8px; border-radius: 8px; cursor: pointer; font-size: var(--text-sm); }
+.prereq-opt:hover { background: #eceefb; }
+.prereq-opt small { display: block; color: var(--muted); font-size: var(--text-xs); }
+.prereq-group { margin: 6px 8px 0; font-size: var(--text-xs); font-weight: var(--fw-semibold); letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.prereq-note { margin: 4px 8px; font-size: var(--text-sm); color: var(--muted); }
+
+/* A student's enrolled subject: its program and the faculty member who holds it. */
+.stu-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 2px; font-size: var(--text-xs); color: var(--muted); }

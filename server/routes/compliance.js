@@ -21,6 +21,8 @@ const svc = require('../lib/compliance/service');
 const { catalogSnapshot } = require('./syllabusContent');
 const { LABEL_SQL, labelsOf } = require('../lib/syllabusLabels');
 const terms = require('../lib/terms');
+const suggest = require('../lib/compliance/suggest');
+const formOps = require('../lib/compliance/formOps');
 const router = express.Router();
 
 const NOT_SET_UP = 'Compliance checks are not set up on this server yet. Ask an administrator to run the database update.';
@@ -160,6 +162,57 @@ router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => 
     }
     const [rows] = await db.query('SELECT * FROM ai_check_runs WHERE run_id = ?', [runId]);
     res.json({ installed: true, cached: false, run: await withVersionLabel(db, withChecker(await svc.loadDetail(db, rows[0], hash), syl.user_id)) });
+  } catch (err) { sendError(res, err); }
+});
+
+// Suggested fixes for what the latest check found wrong (suggest.js): the author reads each one and accepts or rejects it in the builder, and
+// nothing here changes the form. Needs a current check, since the suggestions answer its findings. Fixes that need no AI always come; those that
+// need words come when an AI provider is configured (`ai` says what happened). It also says what the score would be with every suggestion
+// applied (the rules only; the AI's meaning check runs again at the next check) and which findings no suggestion can fix.
+router.post('/syllabi/:id/suggestions', requireAuth, async (req, res) => {
+  try {
+    const db = req.app.locals.db;
+    const me = req.session.user;
+    const syl = await loadVisible(db, me, parseId(req.params.id));
+    if (!rules.isOwner(me, syl)) throw httpError(403, 'Only the owner can ask for suggestions on a syllabus');
+    if (syl.status === 'approved') throw httpError(409, APPROVED, { code: 'approved' });
+    if (!(await svc.isInstalled(db))) throw httpError(503, NOT_SET_UP);
+    const subject = await subjectOf(db, me, syl);
+    if (!subject.content) throw httpError(409, 'There is nothing to improve yet. Save some of the form first.', { code: 'no_form' });
+    const run = await svc.latestRun(db, syl.syllabus_id);
+    if (!run) throw httpError(409, 'Check the syllabus first: the suggestions answer what the check found.', { code: 'no_check' });
+    const detail = await svc.loadDetail(db, run, hashOfSubject(subject));
+    if (detail.stale) throw httpError(409, 'The form changed since the last check. Re-check it first, then ask again.', { code: 'stale' });
+    const slot = limiter.take('suggest:' + me.id);
+    if (!slot.ok) {
+      res.set('Retry-After', String(slot.retryAfterSec));
+      throw httpError(429, 'You are asking too often. Try again in ' + slot.retryAfterSec + ' seconds.');
+    }
+    const [people] = await db.query('SELECT first_name, last_name FROM users WHERE user_id = ?', [syl.user_id]);
+    const author = people[0] ? { firstName: people[0].first_name, lastName: people[0].last_name } : null;
+    const provider = svc.getProvider();
+    const made = await suggest.generate({ provider, content: subject.content, findings: detail.findings, standard: svc.standard, names: svc.namesFor(author, subject.content) });
+
+    // The score with every suggestion that fits applied, by the rules alone, against the same measure of the form as it is now.
+    const catalog = await catalogSnapshot(db, subject.content);
+    const patched = JSON.parse(JSON.stringify(subject.content));
+    made.suggestions.forEach((x) => { if (formOps.holds(patched, x.expect)) formOps.applyOps(patched, x.ops); });
+    const preparedBy = fullName(me);
+    const now = svc.check(subject.content, { catalog, preparedBy });
+    const after = svc.check(patched, { catalog, preparedBy });
+
+    const covered = new Set(made.suggestions.flatMap((x) => x.covers));
+    const left = new Map();
+    detail.findings.filter((f) => !covered.has(f.ruleId + '|' + f.path)).forEach((f) => {
+      const e = left.get(f.ruleId) || { ruleId: f.ruleId, area: f.area, severity: f.severity, step: f.step, count: 0, message: f.message };
+      e.count += 1;
+      left.set(f.ruleId, e);
+    });
+    res.json({
+      suggestions: made.suggestions, ai: made.ai, runId: run.run_id,
+      score: { now: now.overall, after: after.overall },
+      remaining: [...left.values()].sort((a, b) => ({ blocking: 0, major: 1, minor: 2 }[a.severity] ?? 3) - ({ blocking: 0, major: 1, minor: 2 }[b.severity] ?? 3)),
+    });
   } catch (err) { sendError(res, err); }
 });
 

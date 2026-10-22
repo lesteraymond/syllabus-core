@@ -67,9 +67,12 @@ router.get('/', requireAuth, async (req, res) => {
 
 router.get('/:id', requireAuth, async (req, res) => {
   try {
-    const course = await loadCourse(req.app.locals.db, parseId(req.params.id));
+    const db = req.app.locals.db;
+    const course = await loadCourse(db, parseId(req.params.id));
     if (!course) throw httpError(404, 'Subject not found');
-    res.json(course);
+    // The other subjects of the same program (code and title only): the syllabus form offers them as pre-requisites.
+    const [others] = await db.query('SELECT course_id, code, title FROM courses WHERE program_id = ? AND course_id <> ? ORDER BY code', [course.program.id, course.id]);
+    res.json({ ...course, programSubjects: others.map((r) => ({ id: r.course_id, code: r.code, title: r.title })) });
   } catch (err) { sendError(res, err); }
 });
 
@@ -97,8 +100,8 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
         programId = await createProgram(conn, { code: progCode, name });
         programCreated = true;
       }
-      const [dup] = await conn.query('SELECT 1 FROM courses WHERE code = ?', [c]);
-      if (dup.length) throw httpError(409, `${c} already exists`);
+      const [dup] = await conn.query('SELECT 1 FROM courses WHERE code = ? AND program_id = ?', [c, programId]);
+      if (dup.length) throw httpError(409, `${c} already exists in ${progCode}`);
       const [r] = await conn.query('INSERT INTO courses (code, title, program_id, standards_json) VALUES (?, ?, ?, ?)', [c, t, programId, JSON.stringify(blankStandards())]);
       return { id: r.insertId, programCreated };
     });
@@ -115,7 +118,7 @@ router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
     const c = text(code, 50, 'Subject code');
     const t = text(title, 255, 'Subject title');
     if (!(await loadCourse(db, id))) throw httpError(404, 'Subject not found');
-    const [dup] = await db.query('SELECT 1 FROM courses WHERE code = ? AND course_id <> ?', [c, id]);
+    const [dup] = await db.query('SELECT 1 FROM courses WHERE code = ? AND course_id <> ? AND program_id = (SELECT program_id FROM (SELECT program_id FROM courses WHERE course_id = ?) x)', [c, id, id]);
     if (dup.length) throw httpError(409, `${c} already exists`);
     await db.query('UPDATE courses SET code = ?, title = ? WHERE course_id = ?', [c, t, id]);
     res.json(await loadCourse(db, id));

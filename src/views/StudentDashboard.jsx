@@ -21,7 +21,9 @@ export default function StudentDashboard({ user, setPage, setViewCode }) {
     return () => { live = false; };
   }, []);
   const p = data && data.profile;
-  const byCode = useMemo(() => new Map(approved.map(s => [String(s.courseCode || '').trim().toLowerCase(), s])), [approved]);
+  // A subject finds its approved syllabus through the catalog subject it is linked to; a subject the catalog does not have yet falls back to the code.
+  const byCourse = useMemo(() => new Map(approved.filter(s => s.courseId).map(s => [s.courseId, s])), [approved]);
+  const byCode = useMemo(() => new Map(approved.map(s => [String(s.courseCode || '').replace(/[^a-z0-9]/gi, '').toLowerCase(), s])), [approved]);
   const term = p ? [p.term, p.school_year && translateUI('student.ay', { year: p.school_year })].filter(Boolean).join(', ') : '';
   const stats = p ? [
     ['graduationCap', 'blue', translateUI('student.studentId'), p.student_id, p.program],
@@ -41,12 +43,13 @@ export default function StudentDashboard({ user, setPage, setViewCode }) {
             {data.subjects.length === 0 && <div className="empty">{translateUI('student.noSubjects')}</div>}
             <ul className="stu-subjects">
               {data.subjects.map((s, i) => {
-                const syl = byCode.get(String(s.subject_code || '').trim().toLowerCase());
+                const syl = (s.courseId && byCourse.get(s.courseId)) || byCode.get(String(s.code || s.subject_code || '').replace(/[^a-z0-9]/gi, '').toLowerCase());
                 return <li key={i}>
                   <div className="stu-subject-main">
-                    <strong>{s.subject_code}</strong>
-                    <small>{titleCase(s.subject_title)}</small>
+                    <strong>{s.code || s.subject_code}</strong>
+                    <small>{s.title || titleCase(s.subject_title)}</small>
                     {s.section && <span className="stu-section">{String(s.section).split('/')[0]}</span>}
+                    {(s.program || s.faculty) && <span className="stu-meta">{s.program && <span className="chip quiet">{s.program}</span>}{s.faculty && <span>{s.faculty}</span>}</span>}
                   </div>
                   {syl
                     ? <StableButton className="btn outline" onClick={() => setViewCode(syl.id)}>{translateUI('student.viewSyllabus')}</StableButton>

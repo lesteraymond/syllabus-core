@@ -3,20 +3,24 @@ import { tr } from "../../i18n/index.js";
 import { t as translateUI } from "../../i18n/index.js";
 import { useEffect, useRef } from 'react';
 import ComplianceCard from '../ComplianceCard';
+import SuggestionsPanel from './SuggestionsPanel';
 import { useCompliance } from './useCompliance';
 import { timeOf } from '../../lib/complianceView';
 
-// The compliance check inside the Review & Check step. Opening the step runs the rule check on what is saved (an unchanged
-// syllabus just shows its stored run); "Re-check" runs it again, in place, and so does the footer's Re-check (it bumps `tick`).
+// The compliance check inside the Review & Check step. Opening the step only shows the stored check (nothing is run, so opening it costs
+// nothing); "Re-check" runs the check on what is saved, in place, and so does the footer's Re-check (it bumps `tick`).
 // `canCheck` is false for a syllabus the viewer cannot re-check: then it only shows the stored run.
 // `onRun` tells the builder what the latest run says, so the submit button can say "Submit anyway" when warnings remain.
-export default function ComplianceSection({ syllabusId, saveFirst, canCheck, tick, onOpenStep, onRun }) {
+export default function ComplianceSection({ syllabusId, saveFirst, canCheck, tick, onOpenStep, onRun, d, apply, editable }) {
   const { run, installed, busy, error, load, check } = useCompliance({ syllabusId, saveFirst });
 
-  useEffect(() => { if (canCheck) check(false); else load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  const first = useRef(true);
+  useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps  // opening the step only reads the stored check; Re-check runs a new one
+  // A new check runs only when the footer's Re-check changes `tick`, not when the step is opened again (the step is built anew each time you come
+  // back to it, and in development React runs an effect twice on mount, which a "first run" flag mistook for a press of Re-check).
+  const seenTick = useRef(tick);
   useEffect(() => {
-    if (first.current) { first.current = false; return; }
+    if (seenTick.current === tick) return;
+    seenTick.current = tick;
     if (canCheck) check(true);
   }, [tick]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { if (onRun) onRun(run); }, [run]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -43,6 +47,7 @@ export default function ComplianceSection({ syllabusId, saveFirst, canCheck, tic
       {error && <div className="info-banner warning" role="alert">{tr(error)}</div>}
       {installed && !run && !error && <p className="cmp-small">{busy ? translateUI("ui.checking_your_syllabus_1278c5") : translateUI("ui.not_checked_yet_8ea64e")}</p>}
       {installed && (run || busy) && <ComplianceCard run={run} onOpenStep={onOpenStep} checking={busy} />}
+      {canCheck && installed && run && !busy && <SuggestionsPanel run={run} d={d} apply={apply} editable={editable} syllabusId={syllabusId} onOpenStep={onOpenStep} onRecheck={() => check(true)} />}
     </section>
   );
 }

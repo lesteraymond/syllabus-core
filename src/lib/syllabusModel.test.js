@@ -2,7 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  defaultModel as M, createModel, emptyDraft, migrateContent, hydrateContent, applyCourse, syncClos, clearCourse, SCHEMA_VERSION, STEPS,
+  defaultModel as M, createModel, emptyDraft, migrateContent, hydrateContent, applyCourse, LCUP, hasLcup, withLcup, syncClos, clearCourse, SCHEMA_VERSION, STEPS,
   weekNums, weekSet, renderMarkup, esc, abbr, gradeTotal, clone,
 } from './syllabusModel.js';
 import { INSTITUTION, PROGRAMS } from '../data/outcomesSeed.js';
@@ -245,7 +245,7 @@ test('migrating old ILOs from clos:[ids] to tags', () => {
 test('seed data matches the form: 4 EGAs, 10 BSIT outcomes, every PO maps to a real EGA', () => {
   assert.equal(INSTITUTION.egas.length, 4);
   assert.equal(PROGRAMS.BSIT.pos.length, 10);
-  assert.equal(INSTITUTION.mission.items.length, 5);
+  assert.equal(INSTITUTION.mission.items.length, 6);
   assert.ok(PROGRAMS.BSIT.pos.every((p) => p.egas.length && p.egas.every((e) => INSTITUTION.egas.some((x) => x.no === e))));
   assert.deepEqual(M.poList({ meta: { program: 'BSCS' } }), []);
 });
@@ -502,4 +502,45 @@ test('outcome selection requires both fields while retained catalog snapshots re
   for(const meta of [{program:'',courseId:1},{program:'BSIT',courseId:null},{program:'UNKNOWN',courseId:1}]) assert.equal(m.hasOutcomeSelection({meta}),false);
   assert.equal(m.hasOutcomeSelection({meta:{program:'BSIT',courseId:1}}),true);
   assert.equal(m.hasOutcomeSelection({meta:{program:'BSIT',courseId:null},catalog:{program:{code:'BSIT'}}}),true);
+});
+
+test('choosing a subject puts in the LCUP vision and mission itself, whatever the subject\'s older starting values say', () => {
+  const course = { id: 7, code: 'IT 204', title: 'Programming 2', program: { code: 'BSIT' }, clos: [], standards: { vision: 'An old placeholder vision.', mission: { lead: 'Old lead:', items: ['Old item.'] }, egas: [], pos: [] } };
+  const d = applyCourse(emptyDraft(newId), course);
+  assert.equal(d.outcomes.vision, LCUP.vision);
+  assert.deepEqual(d.outcomes.mission, LCUP.mission);
+  assert.equal(hasLcup(d.outcomes), true);
+  assert.equal(hasLcup({ vision: 'An old placeholder vision.', mission: LCUP.mission }), false);
+  const fixed = withLcup({ vision: 'x', mission: { lead: 'y', items: [] }, egas: [{ no: 1 }], pos: [] });
+  assert.deepEqual([fixed.vision, fixed.egas], [LCUP.vision, [{ no: 1 }]]); // only the vision and mission change
+  assert.notEqual(fixed.mission, LCUP.mission); // a copy, so editing the draft never edits the seed
+});
+
+test('choosing a subject fills Pre-requisite (IV) from the catalog, only when it is chosen or still empty, and never from a catalog that has none set', () => {
+  const course = (extra) => ({ id: 7, code: 'IT 302', title: 'Information Management 1', program: { code: 'BSIT' }, clos: [], standards: { vision: '', mission: { lead: '', items: [] }, egas: [], pos: [] }, ...extra });
+  const first = applyCourse(emptyDraft(newId), course({ prerequisiteText: 'IT 202 – Computer Programming 1; 3rd Yr' }));
+  assert.equal(first.meta.prereq, 'IT 202 – Computer Programming 1; 3rd Yr');
+  first.meta.prereq = 'IT 202 and consent of the instructor'; // the author's own wording
+  assert.equal(applyCourse(first, course({ prerequisiteText: 'IT 202 – Computer Programming 1; 3rd Yr' })).meta.prereq, 'IT 202 and consent of the instructor');
+  const blanked = { ...first, meta: { ...first.meta, prereq: '' } };
+  assert.equal(applyCourse(blanked, course({ prerequisiteText: 'IT 202 – Computer Programming 1; 3rd Yr' })).meta.prereq, 'IT 202 – Computer Programming 1; 3rd Yr');
+  const other = applyCourse(first, course({ id: 8, prerequisiteText: 'None' }));
+  assert.equal(other.meta.prereq, 'None'); // a different subject: its own prerequisites
+  assert.equal(applyCourse(emptyDraft(newId), course({ prerequisiteText: null })).meta.prereq, '');
+  assert.equal(applyCourse(emptyDraft(newId), course({})).meta.prereq, '');
+});
+
+test('choosing a subject fills Credit Units (V) from the curriculum, only when it is chosen or a box is still empty, and never from a catalog without them', () => {
+  const course = (extra) => ({ id: 7, code: 'IT 302', title: 'Information Management 1', program: { code: 'BSIT' }, clos: [], standards: { vision: '', mission: { lead: '', items: [] }, egas: [], pos: [] }, ...extra });
+  const first = applyCourse(emptyDraft(newId), course({ units: { lecture: 2, lab: 1 } }));
+  assert.deepEqual([first.meta.lecture, first.meta.lab], ['2', '1']);
+  first.meta.lecture = '3'; // the author's own value
+  const again = applyCourse(first, course({ units: { lecture: 2, lab: 1 } }));
+  assert.deepEqual([again.meta.lecture, again.meta.lab], ['3', '1']);
+  const blank = applyCourse({ ...first, meta: { ...first.meta, lecture: '', lab: '' } }, course({ units: { lecture: 2, lab: 1 } }));
+  assert.deepEqual([blank.meta.lecture, blank.meta.lab], ['2', '1']);
+  const other = applyCourse(first, course({ id: 8, units: { lecture: 0, lab: 1 } }));
+  assert.deepEqual([other.meta.lecture, other.meta.lab], ['0', '1']); // a different subject: its own units, a zero is kept
+  const none = applyCourse(emptyDraft(newId), course({ units: null }));
+  assert.deepEqual([none.meta.lecture, none.meta.lab], ['', '']);
 });

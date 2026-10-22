@@ -17,6 +17,7 @@ const { PRIVATE_ROOT } = require('../lib/avatar');
 const { extractCor } = require('../lib/corAi');
 const { readText } = require('../lib/corOcr');
 const { parseCor } = require('../lib/corParser');
+const { matchCourses, syncEnrollments, enrolledSubjects, programOfSection } = require('../lib/enrollments');
 const router = express.Router();
 
 const COR_DIR = path.join(PRIVATE_ROOT, 'cor');
@@ -67,13 +68,10 @@ router.post('/scan', rateLimit, upload.single('cor'), async (req, res) => {
   } catch (err) { sendError(res, err); }
 });
 
-// Courses of the catalog that a COR subject matches: by code (spaces and case ignored), else by exact title.
-async function matchCourses(db, subjects) {
-  const [courses] = await db.query('SELECT course_id, code, title FROM courses');
-  const key = (s) => String(s).toUpperCase().replace(/[^A-Z0-9]/g, '');
-  const byCode = new Map(courses.map((c) => [key(c.code), c.course_id]));
-  const byTitle = new Map(courses.map((c) => [key(c.title), c.course_id]));
-  return subjects.map((s) => byCode.get(key(s.code)) || byTitle.get(key(s.title)) || null);
+// The program a student belongs to, from the section the COR prints ("BSIT4B" is BSIT): the subjects of that program are preferred when a code is shared.
+async function programOf(db, section) {
+  const [programs] = await db.query('SELECT code FROM programs');
+  return programOfSection(section, programs.map((p) => p.code));
 }
 
 router.post('/register', rateLimit, async (req, res) => {
@@ -95,7 +93,7 @@ router.post('/register', rateLimit, async (req, res) => {
     // "INSULAR, RAYMOND LESTER" -> last name before the comma, the given names after it.
     const [last, given] = p.studentName && p.studentName.includes(',') ? p.studentName.split(',').map((x) => x.trim()) : [p.studentId, 'Student'];
     const hash = await bcrypt.hash(password, 10);
-    const courseIds = await matchCourses(db, p.subjects);
+    const courseIds = await matchCourses(db, p.subjects, await programOf(db, p.section));
 
     await inTransaction(db, async (conn) => {
       const [taken] = await conn.query('SELECT user_id FROM users WHERE LOWER(email) = LOWER(?)', [p.studentId]);
@@ -125,8 +123,10 @@ router.get('/me', requireAuth, async (req, res) => {
     if (req.session.user.role !== 'student') throw httpError(403, 'Students only');
     const db = req.app.locals.db;
     const [[profile]] = await db.query('SELECT student_id, student_name, program, year_level, section, school_year, term, verification_status FROM student_profiles WHERE user_id = ?', [req.session.user.id]);
-    const [subjects] = await db.query('SELECT subject_code, subject_title, section FROM student_enrollments WHERE user_id = ? ORDER BY enrollment_id', [req.session.user.id]);
-    res.json({ profile: profile || null, subjects });
+    // Subjects that were not in the catalog when the COR was read are linked now that they are, and each comes with the catalog's own code,
+    // title, program and faculty (lib/enrollments.js).
+    await syncEnrollments(db, req.session.user.id, await programOf(db, profile && profile.section));
+    res.json({ profile: profile || null, subjects: await enrolledSubjects(db, req.session.user.id) });
   } catch (err) { sendError(res, err); }
 });
 

@@ -51,7 +51,12 @@ function makeDb({ assigned = {}, syllabi = {}, beforeDelete } = {}) {
       return [PROGRAMS.filter((p) => !filtered || mine(params[0]).programs.includes(p.program_id))];
     }
     if (sql.startsWith('SELECT program_id FROM programs WHERE code')) { const p = PROGRAMS.find((x) => x.code === params[0]); return [p ? [{ program_id: p.program_id }] : []]; }
-    if (sql.startsWith('SELECT 1 FROM courses WHERE code')) return [COURSES.filter((c) => c.code === params[0] && (params[1] === undefined || c.course_id !== params[1])).map(() => ({ 1: 1 }))];
+    // A subject code is unique within its program: create passes (code, program id), a rename passes (code, own id, own id).
+    if (sql.startsWith('SELECT 1 FROM courses WHERE code')) {
+      const rename = sql.includes('course_id <>');
+      const home = rename ? (COURSES.find((c) => c.course_id === params[1]) || {}).program_id : params[1];
+      return [COURSES.filter((c) => c.code === params[0] && c.program_id === home && (!rename || c.course_id !== params[1])).map(() => ({ 1: 1 }))];
+    }
     if (sql.startsWith('SELECT program_id FROM program_code_aliases')) return [[]]; // these fixtures have no historical codes
     // one syllabus for each subject (lib/subjectLock.js): the subject a code names, and the syllabi already on a subject
     if (sql.startsWith('SELECT course_id FROM courses WHERE code')) return [COURSES.filter((c) => c.code.toLowerCase() === String(params[0]).toLowerCase()).map((c) => ({ course_id: c.course_id }))];
@@ -80,6 +85,7 @@ function makeDb({ assigned = {}, syllabi = {}, beforeDelete } = {}) {
     if (sql.startsWith("SELECT user_id FROM users WHERE role = 'admin'")) return [[]];
     if (sql.startsWith('INSERT')) return [{ insertId: 100 }];
     if (sql.startsWith('UPDATE')) return [{}];
+    if (/FROM course_prerequisites/.test(sql)) return [[]]; // a subject's prerequisites: none set
     throw new Error('unexpected query: ' + sql);
   };
   // A transaction that really rolls back: what was added since beginTransaction is removed again.
@@ -285,6 +291,10 @@ test('an admin can add a subject to a program; faculty cannot; duplicates and un
   const dup = await call(admin, 'POST', '/courses', { code: 'IT 101', title: 'Again', program: 'BSIT' });
   assert.strictEqual(dup.status, 409);
   assert.match(dup.body.error, /already exists/);
+  // The same code in another program is a different subject, not a duplicate.
+  const other = await call(admin, 'POST', '/courses', { code: 'IT 101', title: 'Introduction to Industrial Engineering', program: 'BSIE' });
+  assert.strictEqual(other.status, 200);
+  assert.strictEqual(other.body.program.code, 'BSIE');
   assert.strictEqual((await call(admin, 'POST', '/courses', { code: 'ZZ 1', title: 'X', program: 'NOPE' })).status, 400);
   const empty = await call(admin, 'POST', '/courses', { code: '', title: 'X', program: 'BSIT' });
   assert.strictEqual(empty.status, 400);
@@ -341,12 +351,13 @@ test('a program name already used by another code is 409, ignoring case and extr
   assert.strictEqual(db.egaCopies.length, 0);
 }));
 
-test('a duplicate subject code is 409 and does not leave a new program behind', () => withServer({ assigned: ASSIGNED }, async ({ call, db }) => {
+test('a subject code another program already uses is allowed in a new program, which is created with it', () => withServer({ assigned: ASSIGNED }, async ({ call, db }) => {
   const before = PROGRAMS.length;
-  const r = await addSubject(call, { code: 'IT 101', title: 'Again', program: 'BSAR', programName: 'BS Architecture' });
-  assert.strictEqual(r.status, 409);
-  assert.match(r.body.error, /already exists/);
-  assert.strictEqual(PROGRAMS.length, before);
+  const r = await addSubject(call, { code: 'IT 101', title: 'Introduction to Architecture', program: 'BSAR', programName: 'BS Architecture' });
+  assert.strictEqual(r.status, 200);
+  assert.strictEqual(r.body.programCreated, true);
+  assert.strictEqual(r.body.program.code, 'BSAR');
+  assert.strictEqual(PROGRAMS.length, before + 1);
   assert.strictEqual(db.egaCopies.length, 0);
 }));
 
