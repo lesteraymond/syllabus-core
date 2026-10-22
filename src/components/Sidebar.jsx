@@ -27,7 +27,7 @@ export default function Sidebar({ page, setPage, nav, collapsed, onToggle }) {
           </svg>
         </button>
         <img className="side-logo" src="/cite-logo.png" alt={translateUI("ui.cict_logo_dee290")} />
-        <strong className="side-title">{translateUI("ui.sms_9e10d4")}</strong>
+        <strong className="side-title">{translateUI("ui.cite_brand_5b2e91")}</strong>
       </div>
       <div className="sidebar-nav-scroll scrollbar-hidden">
       <nav id={navigationId}>

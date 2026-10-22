@@ -12,6 +12,8 @@ import { adminStatCards } from '../lib/adminDashboardStats';
 import { sentenceCase } from '../lib/sentenceCase';
 import { dayPeriod } from '../lib/phTime';
 import Select from '../components/Select';
+import { buildAnalytics } from '../lib/analyticsView';
+import { useComplianceRows } from '../lib/useComplianceRows';
 
 // Stat card icon per label (Phosphor names, see Icon in ui.jsx)
 const STAT_ICONS = {
@@ -28,6 +30,7 @@ const STAT_ICONS = {
 };
 
 export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, setConfirm }) {
+  // Settings updates this shared profile after a successful save.
   const name = user.firstName?.trim();
   // Morning, afternoon or evening on the Manila clock (checked again each minute, so a dashboard left open changes at 12:00 and 18:00).
   const [period, setPeriod] = useState(() => dayPeriod());
@@ -46,7 +49,11 @@ export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, set
   const underReview = data.filter(s => s.status === 'under_review').length;
   const forRevision = data.filter(s => s.status === 'for_revision').length;
   const total = data.length;
-  const compliance = total ? Math.round((approved / total) * 100) : 0;
+  // The compliance numbers come from the stored AI checks (the average of the latest score of each checked syllabus), not from how many are approved.
+  const { rows: checkRows } = useComplianceRows();
+  const checks = useMemo(() => buildAnalytics(checkRows, { isFaculty: isFac }), [checkRows, isFac]);
+  const compliance = checks.average === null ? 0 : checks.average;
+  const areaOf = (label) => { const e = checks.areas.find(([l]) => l === label); return e && e[1] !== null ? e[1] : 0; };
 
   // Admin summary cards also count the catalog. Read once when the dashboard opens; a failed read shows a dash, never breaks the page.
   const [catalogCounts, setCatalogCounts] = useState({ programs: null, subjects: null });
@@ -59,7 +66,7 @@ export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, set
   }, [user.role]);
 
   const stats = isFac
-    ? [['My Submissions', String(total), 'Total uploaded', 'blue'], ['Approved', String(approved), 'Accepted syllabi', 'green'], ['Pending Review', String(submitted + underReview), 'Awaiting decision', 'gold'], ['For Revision', String(forRevision), 'Needs changes', 'teal'], ['AI Compliance Score', `${compliance}%`, 'Your compliance rate', 'purple']]
+    ? [['My Submissions', String(total), 'Total uploaded', 'blue'], ['Approved', String(approved), 'Accepted syllabi', 'green'], ['Pending Review', String(submitted + underReview), 'Awaiting decision', 'gold'], ['For Revision', String(forRevision), 'Needs changes', 'teal'], ['AI Compliance Score', checks.average === null ? '—' : `${compliance}%`, checks.average === null ? 'Not checked yet' : 'Average of your checks', 'purple']]
     : adminStatCards({ programs: catalogCounts.programs, subjects: catalogCounts.subjects, syllabi });
 
   // Recent Activity as sentences under Today / Yesterday / a date (see lib/activityView.js); times are Philippine time.
@@ -70,16 +77,15 @@ export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, set
     return groupByDay(mine.map((l, i) => describeActivity(l, i, user.id)));
   }, [logs, user, cleared]);
 
+  // Average check score per program, from the stored checks (highest first). A program with no scored syllabus is not listed.
   const programs = useMemo(() => {
-    const map = {};
-    syllabi.forEach(s => {
-      if (!s.program) return;
-      if (!map[s.program]) map[s.program] = { total: 0, approved: 0 };
-      map[s.program].total++;
-      if (s.status === 'approved') map[s.program].approved++;
+    const map = new Map();
+    checkRows.forEach(r => {
+      if (!r.programCode || !r.run || typeof r.run.overall !== 'number') return;
+      map.set(r.programCode, [...(map.get(r.programCode) || []), r.run.overall]);
     });
-    return Object.entries(map).map(([p, d]) => [p, d.total ? Math.round((d.approved / d.total) * 100) : 0]).sort((a, b) => b[1] - a[1]);
-  }, [syllabi]);
+    return [...map.entries()].map(([p, xs]) => [p, Math.round(xs.reduce((x, y) => x + y, 0) / xs.length)]).sort((x, y) => y[1] - x[1]);
+  }, [checkRows]);
 
   return (
     <>
@@ -114,18 +120,18 @@ export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, set
         <Card title={translateUI("ui.quick_actions_c40810")} hideScrollbar>
           <div className="quick-actions">
             <button onClick={() => setPage(isFac ? 'builder' : 'ai')}><b><Icon weight="regular" name="sparkle" size={20} /></b><span><StableLabel>{isFac ? translateUI("ui.check_a_syllabus_f9c218") : translateUI("ui.compliance_overview_f4109d")}</StableLabel><small><StableLabel>{isFac ? translateUI("ui.run_the_compliance_check_in_step_7_of_the_builder_d861f3") : translateUI("ui.read_the_stored_check_of_each_submitted_syllabus_921a70")}</StableLabel></small></span><Icon weight="regular" name="caretRight" size={16} /></button>
-            {isFac ? <button onClick={() => setPage('my-syllabi')}><b><Icon weight="regular" name="notebook" size={20} /></b><span><StableLabel>{translateUI("ui.my_syllabi_3da1e8")}</StableLabel><small>{total}<StableLabel>{translateUI("ui.syllabi_in_your_account_732cf8")}</StableLabel></small></span><Icon weight="regular" name="caretRight" size={16} /></button> : <button onClick={() => setPage('review')}><b><Icon weight="regular" name="sealCheck" size={20} /></b><span><StableLabel>{translateUI("ui.review_pending_syllabi_bf50c2")}</StableLabel><small>{submitted + underReview}<StableLabel>{translateUI("ui.submissions_awaiting_review_31080a")}</StableLabel></small></span><Icon weight="regular" name="caretRight" size={16} /></button>}
+            {isFac ? <button onClick={() => setPage('my-syllabi')}><b><Icon weight="regular" name="notebook" size={20} /></b><span><StableLabel>{translateUI("ui.my_syllabi_3da1e8")}</StableLabel><small>{total}{' '}<StableLabel>{translateUI("ui.syllabi_in_your_account_732cf8")}</StableLabel></small></span><Icon weight="regular" name="caretRight" size={16} /></button> : <button onClick={() => setPage('review')}><b><Icon weight="regular" name="sealCheck" size={20} /></b><span><StableLabel>{translateUI("ui.review_pending_syllabi_bf50c2")}</StableLabel><small>{submitted + underReview}{' '}<StableLabel>{translateUI("ui.submissions_awaiting_review_31080a")}</StableLabel></small></span><Icon weight="regular" name="caretRight" size={16} /></button>}
           </div>
         </Card>
       </section>
       <section className="dashboard-grid lower">
-        <Card title={translateUI("ui.program_compliance_943fac")} action={tr("View analytics")}>
+        <Card title={translateUI("ui.program_compliance_943fac")} action={tr("View analytics")} onAction={() => setPage('analytics')}>
           {programs.length > 0
             ? programs.map(([p, v]) => <Progress key={p} label={p} value={v} />)
             : <div className="empty">{translateUI("ui.no_program_data_yet_c5b890")}</div>
           }
         </Card>
-        <Card title={translateUI("ui.ai_quality_snapshot_c296aa")}><QualityMini label={translateUI("ui.format_041a5d")} value={compliance || 0} /><QualityMini label={translateUI("ui.completeness_778184")} value={compliance || 0} /><QualityMini label={translateUI("ui.co_po_9c8106")} value={compliance || 0} /><QualityMini label={translateUI("ui.assessment_ef136f")} value={compliance || 0} /></Card>
+        <Card title={translateUI("ui.ai_quality_snapshot_c296aa")}><QualityMini label={translateUI("ui.format_041a5d")} value={areaOf('Format')} /><QualityMini label={translateUI("ui.completeness_778184")} value={areaOf('Complete')} /><QualityMini label={translateUI("ui.co_po_9c8106")} value={areaOf('CO–PO')} /><QualityMini label={translateUI("ui.assessment_ef136f")} value={areaOf('Assessment')} /></Card>
         <Card title={translateUI("ui.upcoming_deadlines_b56518")} hideScrollbar><UpcomingDeadlines role={user.role} onOpen={() => setPage(isFac ? 'my-syllabi' : 'courses')} /></Card>
       </section>
     </>

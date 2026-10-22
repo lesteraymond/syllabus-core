@@ -8,13 +8,25 @@
 // `egas` (an older snapshot, a test fixture) uses the institution's list.
 // `defaultModel` (below) uses the seed data and the configured school year.
 import { INSTITUTION as SEED_INSTITUTION, PROGRAMS as SEED_PROGRAMS } from '../data/outcomesSeed.js';
+import { namesCoreValue } from './coreValues.js';
 import { CURRENT_SCHOOL_YEAR } from './schoolYear.js';
 
 // Bump when the stored content shape changes, and add a step to migrateContent.
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 export const LEVELS = ['Introductory', 'Enabling', 'Demonstrating', 'Integration of Values'];
 export const GROUPS = [['books', 'Books'], ['program', 'Internet Programming'], ['online', 'Internet References'], ['electronics', 'Electronics']];
+// The column headings of the learning plan (form section VII) in the wording of the institutional form. The printed form shows them in
+// capitals (views/builder2/FormPaper.jsx); the builder's Learning Plan step shows them as written, in the user's language, from the
+// plan.heading.* keys in src/i18n/extra.js, whose English must say exactly this (a test checks it). The first column is the Schedule
+// on the form and the week number in the builder, so it is not listed here.
+export const PLAN_HEADINGS = {
+  ilo: 'Intended Learning Outcomes (ILO)',
+  contents: 'Course Contents',
+  activities: 'Suggested Learning Activities',
+  tasks: 'Suggested Assessment Tasks',
+  values: 'Expected Value/s To Be Integrated',
+};
 export const STEPS = [
   { key: 'info', title: 'Course Information', form: 'I–V', sub: 'Identify the course. School year and college are filled in for you.' },
   { key: 'clos', title: 'Learning Outcomes', form: 'VI', sub: 'The institution’s vision, mission, graduate attributes and program outcomes, then your course learning outcomes tagged to them.' },
@@ -106,29 +118,35 @@ export function emptyDraft(newId) {
     signoff: {},
   };
 }
-// The course learning outcomes (CLOs) are constant data per course, like EGAs and program outcomes: only an
-// administrator edits them, in the course catalog. A syllabus takes them from the catalog; faculty never type them.
+// Selecting a subject copies its legacy starting values into this syllabus. Faculty edit their own copy in Step 2.
 // `course` is the catalog entry { id, code, title, program: { code }, clos: [{ id, title, level, statement, egas, pos }] }.
-// Choosing a course sets code, title, program and CLOs, and drops CLO tags that point at the previous course's outcomes.
+// Choosing a different course resets outcome mappings; selecting the same one preserves authored values.
 export function applyCourse(d, course) {
   const n = clone(d);
   n.meta.courseId = course.id;
   n.meta.code = course.code;
   n.meta.title = course.title;
   n.meta.program = course.program.code;
+  if (d.meta.courseId === course.id && d.outcomes) return n;
+  delete n.catalog;
   n.clos = clone(course.clos);
+  const setup = course.standards || { vision: '', mission: { lead: '', items: [] }, egas: [], pos: [] };
+  // Copy existing subject values once; all subsequent edits belong to this syllabus.
+  n.outcomes = clone({ vision: setup.vision, mission: setup.mission, egas: setup.egas, pos: setup.pos });
   const ids = new Set(n.clos.map((c) => c.id));
-  n.plan.forEach((r) => r.ilos.forEach((il) => { il.tags = il.tags.filter((t) => t.indexOf('clo:') !== 0 || ids.has(parseTag(t).id)); }));
+  n.plan.forEach((r) => r.ilos.forEach((il) => { il.tags = d.meta.courseId && d.meta.courseId !== course.id ? [] : il.tags.filter((t) => t.indexOf('clo:') !== 0 || ids.has(parseTag(t).id)); }));
   return n;
 }
-// Unchooses the course (for example when the program changes): no code, title or CLOs, and no CLO tags.
+// Unchooses the course (for example when the program changes), clearing its outcome data and mappings.
 export function clearCourse(d) {
   const n = clone(d);
   n.meta.courseId = null;
   n.meta.code = '';
   n.meta.title = '';
   n.clos = [];
-  n.plan.forEach((r) => r.ilos.forEach((il) => { il.tags = il.tags.filter((t) => t.indexOf('clo:') !== 0); }));
+  n.outcomes = { vision: '', mission: { lead: '', items: [] }, egas: [], pos: [] };
+  delete n.catalog;
+  n.plan.forEach((r) => r.ilos.forEach((il) => { il.tags = []; }));
   return n;
 }
 // Refreshes the CLOs from the catalog after an administrator edited them. Tags are kept: one that now points at a
@@ -171,15 +189,17 @@ export function migrateContent(content) {
 
 // ---- rules that depend on the catalog ----
 export function createModel({ institution, programs, year }) {
-  const poList = (d) => (programs[d.meta.program] || { pos: [] }).pos;
+  const institutionFor = d => d.outcomes || institution;
+  const poList = (d) => d.outcomes?.pos || (programs[d.meta.program] || { pos: [] }).pos;
   // The EGAs of the syllabus's program (EGA numbers and names differ by program).
   const egaList = (d) => {
+    if (d.outcomes) return d.outcomes.egas;
     const p = programs[d.meta.program];
     if (!p) return [];
     // Only older saved catalogs without an EGA field use their institution snapshot.
     return Array.isArray(p.egas) ? p.egas : institution.egas;
   };
-  const hasOutcomeSelection = d => !!(d.meta.program && programs[d.meta.program] && (d.meta.courseId || d.catalog?.program?.code === d.meta.program));
+  const hasOutcomeSelection = d => !!(d.meta.program && (programs[d.meta.program] || d.outcomes) && (d.meta.courseId || d.catalog?.program?.code === d.meta.program));
 
   function tagInfo(d, t) {
     const p = parseTag(t);
@@ -281,8 +301,19 @@ export function createModel({ institution, programs, year }) {
   function issues(d, key) {
     const o = [];
     const form = (text, extra) => o.push({ text, blocking: true, source: 'form', ...extra });
-    const admin = (text, extra) => o.push({ text, blocking: true, source: 'admin', ...extra });
+    const admin = (text, extra) => o.push({ text: d.outcomes ? text.replace(' Please ask your administrator.', '') : text, blocking: true, source: d.outcomes ? 'form' : 'admin', ...extra });
     const advice = (text, extra) => o.push({ text, blocking: false, source: 'form', ...extra });
+    if (key === 'clos' && d.outcomes) {
+      const own = d.outcomes;
+      if (!d.meta.courseId) form('Choose a subject.');
+      if (blank(own.vision)) form('Add the vision in step 2.');
+      if (blank(own.mission.lead) || !own.mission.items.length || own.mission.items.some(blank)) form('Complete the mission in step 2.');
+      if (!own.egas.length || own.egas.some(e => blank(e.name) || blank(e.short))) form('Complete the EGA names and short names in step 2.');
+      if (!own.pos.length || own.pos.some(p => blank(p.text) || blank(p.short))) form('Complete the PO statements and short names in step 2.');
+      if (!d.clos.length || d.clos.some(c => blank(c.statement) || !LEVELS.includes(c.level) || !c.egas.length || !c.pos.length)) form('Complete the CLO statements and EGA and PO mappings in step 2.');
+      if (own.pos.some(p => p.egas.some(no => !own.egas.some(e => e.no === no))) || d.clos.some(c => c.egas.some(no => !own.egas.some(e => e.no === no)) || c.pos.some(no => !own.pos.some(p => p.no === no)))) form('Fix the outcome mappings in step 2.');
+      return o;
+    }
     if (key === 'info') {
       if (!d.meta.program) form('Choose a program.');
       else if (!d.meta.courseId) form('Choose a subject.');
@@ -294,8 +325,9 @@ export function createModel({ institution, programs, year }) {
       const pos = poList(d);
       const egas = egaList(d);
       const program = d.meta.program || 'this program';
-      if (blank(institution.vision)) admin('The vision has not been added yet. Please ask your administrator.');
-      const mission = institution.mission || { lead: '', items: [] };
+      const own = institutionFor(d);
+      if (blank(own.vision)) admin(d.outcomes ? 'Add the vision in step 2.' : 'The vision has not been added yet. Please ask your administrator.');
+      const mission = own.mission || { lead: '', items: [] };
       if (blank(mission.lead) || !(mission.items || []).some((t) => !blank(t))) admin('The mission has not been added yet. Please ask your administrator.');
       if (!d.meta.courseId) form('Choose a subject in step 1 to load its learning outcomes.');
       if (d.meta.program) {
@@ -320,6 +352,7 @@ export function createModel({ institution, programs, year }) {
       d.plan.forEach((r) => {
         if (blank(r.week)) form('A row has no week. Enter the week, or delete the row.', { row: r.id });
         if (r.kind !== 'lesson') return;
+        if (!blank(r.values) && !namesCoreValue(r.values)) advice('Week ' + (r.week || '?') + ' names none of the six LCUP core values.', { row: r.id });
         if (!r.ilos.some((il) => il.text.trim())) form('Week ' + (r.week || '?') + ' has no learning outcome (ILO).', { row: r.id });
         r.ilos.forEach((il, j) => {
           const w = 'Week ' + (r.week || '?') + ', ILO' + (j + 1);
@@ -376,7 +409,7 @@ export function createModel({ institution, programs, year }) {
   }
 
   const outcomesReady = d => hasOutcomeSelection(d) && blockers(d, 'clos').length === 0;
-  return { institution, programs, year, outcomesReady, hasOutcomeSelection, poList, egaList, tagInfo, rowHits, coverage, removeClo, impliedEgas, missingEgas, formulas, refAge, suggestReqs, issues, blockers, firstBlocked, stepStatuses };
+  return { institution, institutionFor, programs, year, outcomesReady, hasOutcomeSelection, poList, egaList, tagInfo, rowHits, coverage, removeClo, impliedEgas, missingEgas, formulas, refAge, suggestReqs, issues, blockers, firstBlocked, stepStatuses };
 }
 
 export const defaultModel = createModel({ institution: SEED_INSTITUTION, programs: SEED_PROGRAMS, year: CURRENT_SCHOOL_YEAR.startYear });

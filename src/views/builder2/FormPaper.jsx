@@ -1,4 +1,4 @@
-import { GROUPS, renderMarkup } from '../../lib/syllabusModel';
+import { GROUPS, PLAN_HEADINGS, renderMarkup } from '../../lib/syllabusModel';
 import { CURRENT_SCHOOL_YEAR, COLLEGE_NAME, INSTITUTION_NAME, INSTITUTION_ADDRESS } from '../../lib/schoolYear';
 
 const html = (t) => ({ __html: renderMarkup(t) });
@@ -8,7 +8,7 @@ const html = (t) => ({ __html: renderMarkup(t) });
 // the system adds the revision date when the syllabus is approved. Reusable by the admin review.
 export default function FormPaper({ d, model, preparedBy }) {
   const selected = model.outcomesReady(d);
-  const I = selected ? model.institution : { vision: '', mission: { lead: '', items: [] } };
+  const I = selected ? model.institutionFor(d) : { vision: '', mission: { lead: '', items: [] } };
   const egas = selected ? model.egaList(d) : []; // this program's own EGAs
   const pos = selected ? model.poList(d) : [];
   const f = model.formulas(d);
@@ -25,7 +25,7 @@ export default function FormPaper({ d, model, preparedBy }) {
       <div className="kv2"><b>I.</b><b>COURSE CODE</b><span>:</span><span>{d.meta.code}</span></div>
       <div className="kv2"><b>II.</b><b>COURSE TITLE</b><span>:</span><b>{d.meta.title}</b></div>
       <div className="kv2"><b>III.</b><b>COURSE DESCRIPTION</b><span>:</span><span /></div>
-      {d.description.filter((x) => x.t.trim()).map((x) => <p key={x.id} style={{ margin: '4px 0 4px 34px', textAlign: 'justify' }}>{x.t}</p>)}
+      {d.description.filter((x) => x.t.trim()).map((x) => <p key={x.id} className="typed-text" style={{ margin: '4px 0 4px 34px', textAlign: 'justify' }}>{x.t}</p>)}
       <div className="kv2"><b>IV.</b><b>PRE-REQUISITE</b><span>:</span><span>{d.meta.prereq}</span></div>
       <div className="kv2"><b>V.</b><b>CREDIT UNITS</b><span>:</span><span>{d.meta.lecture + ' units lecture / ' + d.meta.lab + ' unit laboratory'}</span></div>
       <div className="kv2"><b>VI.</b><b>COURSE LEARNING OUTCOMES:</b><span /><span /></div>
@@ -45,11 +45,11 @@ export default function FormPaper({ d, model, preparedBy }) {
       <table>
         <colgroup><col style={{ width: '12%' }} /><col style={{ width: '22%' }} /><col style={{ width: '15%' }} /><col style={{ width: '18%' }} /><col style={{ width: '17%' }} /><col /></colgroup>
         <tbody>
-          <tr><th>SCHEDULE</th><th>INTENDED LEARNING OUTCOMES (ILO)</th><th>COURSE CONTENTS</th><th>SUGGESTED LEARNING ACTIVITIES</th><th>SUGGESTED ASSESSMENT TASKS</th><th>EXPECTED VALUE/S TO BE INTEGRATED</th></tr>
+          <tr><th>SCHEDULE</th>{Object.values(PLAN_HEADINGS).map((h) => <th key={h}>{h.toUpperCase()}</th>)}</tr>
           {d.plan.map((r) => (
             <tr key={r.id}>
               <td>{'Week ' + r.week}</td>
-              <td>{r.kind === 'exam' ? (r.ilos[0] ? r.ilos[0].text : '') : r.ilos.map((il, j) => <div key={il.id} style={{ marginBottom: 4 }}><b>{'ILO' + (j + 1) + ': '}</b>{il.text + ' '}<b>{iloTags(il)}</b></div>)}</td>
+              <td>{r.kind === 'exam' ? <div className="typed-text">{r.ilos[0] ? r.ilos[0].text : ''}</div> : r.ilos.map((il, j) => <div key={il.id} className="typed-text" style={{ marginBottom: 4 }}><b>{'ILO' + (j + 1) + ': '}</b>{il.text + ' '}<b>{iloTags(il)}</b></div>)}</td>
               <td dangerouslySetInnerHTML={html(r.contents)} />
               <td dangerouslySetInnerHTML={html(r.activities)} />
               <td dangerouslySetInnerHTML={html(r.tasks)} />

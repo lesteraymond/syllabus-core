@@ -1,24 +1,28 @@
 // Keep EDITABLE_STATUSES in sync with server/lib/syllabusRules.js: the Edit button and the server must agree.
-// A draft, or a syllabus the administrator returned for revision. Once submitted it is locked until the administrator returns it.
-export const EDITABLE_STATUSES = ['draft', 'for_revision'];
+// A draft, or a syllabus the administrator sent back (for revision, or rejected: a subject has one syllabus for each person, so it is edited and sent
+// again, not replaced by a new draft). Once submitted it is locked until the administrator sends it back.
+export const RETURNED_STATUSES = ['for_revision', 'rejected'];
+export const EDITABLE_STATUSES = ['draft', ...RETURNED_STATUSES];
+export const isReturned = (status) => RETURNED_STATUSES.includes(status);
 
 // Back from "For revision", a submission needs a sentence saying what changed (the server insists on it too).
 export const MIN_NOTE = 10;
-export const noteMissing = (status, note) => status === 'for_revision' && String(note || '').trim().length < MIN_NOTE;
+export const noteMissing = (status, note) => isReturned(status) && String(note || '').trim().length < MIN_NOTE;
 
 export const STATUS_LABELS = { draft: 'Draft', submitted: 'Submitted', under_review: 'Under Review', for_revision: 'For Revision', approved: 'Approved', rejected: 'Rejected' };
 
 // Only the owner edits content, and only while the syllabus is in an editable status.
-export const canEditSyllabus = (user, syllabus) => user.id === syllabus.userId && EDITABLE_STATUSES.includes(syllabus.status);
+export const canEditSyllabus = (user, syllabus) => user.id === syllabus.userId && EDITABLE_STATUSES.includes(syllabus.status) && !syllabus.archived;
 
 // Keep in sync with server/lib/syllabusRules.js. Submission records stay in the review workflow.
 export const canDeleteSyllabus = (user, syllabus) => (user.role === 'admin' && (user.id === syllabus.userId || syllabus.status !== 'draft'))
   || (user.role === 'faculty' && user.id === syllabus.userId && syllabus.status === 'draft');
 
-export const editBlockedReason = (syllabus) => (EDITABLE_STATUSES.includes(syllabus.status)
+export const ARCHIVED_REASON = 'This syllabus is archived because its subject was assigned to another faculty member. You can still read it.';
+export const editBlockedReason = (syllabus) => (syllabus.archived ? ARCHIVED_REASON : EDITABLE_STATUSES.includes(syllabus.status)
   ? ''
   : syllabus.status === 'submitted' || syllabus.status === 'under_review'
-    ? 'This syllabus was submitted and is locked. You can edit it again only if the administrator returns it for revision.'
+    ? 'This syllabus was submitted and is locked. You can edit it again only if the administrator sends it back.'
     : `${STATUS_LABELS[syllabus.status] || syllabus.status} syllabi can't be edited`);
 
 // "Subject" is the catalog item (IT 204, Programming 2); in this school a "course" is the program.

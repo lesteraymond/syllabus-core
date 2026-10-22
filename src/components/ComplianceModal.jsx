@@ -2,6 +2,7 @@ import StableButton from './StableButton';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
 import { useRef } from 'react';
+import { useCountUp } from '../lib/useCountUp';
 import { useModalLayer } from './useModalLayer';
 import ComplianceCard from '../views/ComplianceCard';
 import { isLocked, ringAngle, runState, stamp, tone } from '../lib/complianceView';
@@ -11,12 +12,26 @@ import { isLocked, ringAngle, runState, stamp, tone } from '../lib/complianceVie
 // and after that its check is opened from the history. The page loads the run and polls while recommendations are still being written.
 //   syllabus  { courseCode, courseTitle, title, facultyName, programCode, programName }     run   the stored run (or null)
 //   error     a message to show      isLatest  false when the run is an earlier check opened from the history
+// One of the six areas: the bar and its number climb from 0 together, one row after another (like the card's).
+function CmArea({ a, at, index }) {
+  const delay = 120 + index * 110;
+  const shown = useCountUp(a.score === null ? 0 : a.score, { delay, duration: 1100 });
+  return (
+    <div className={'cm-area ' + at}>
+      <span>{tr(a.name)}</span>
+      <b>{a.score === null ? '—' : shown + '%'}</b>
+      <div className="bar thin" role="img" aria-label={tr(a.name) + ' ' + (a.score === null ? tr('not scored') : a.score + ' ' + tr('percent'))}><i className="area-fill" style={{ width: (a.score === null ? 0 : a.score) + '%', transitionDelay: delay + 'ms' }} /></div>
+    </div>
+  );
+}
+
 export default function ComplianceModal({ syllabus, run, isLatest = true, error = '', onClose, onOpenDraft, onApprove, approvalDisabled = true, approving = false, editing = false }) {
   const dialog = useRef(null);
   useModalLayer(dialog, onClose); // Esc closes, focus stays inside and returns to the button that opened it
 
   const actionBusy = approving || editing;
   const state = runState(run);
+  const shown = useCountUp(state === 'scored' ? run.overall : 0); // the score counts up from 0 when the dialog opens
   const t = state === 'scored' ? tone(run.overall, run.passThreshold) : 'none';
   const program = syllabus.programCode ? syllabus.programCode + (syllabus.programName ? ' · ' + syllabus.programName : '') : (syllabus.programName || 'No program');
   const title = syllabus.courseTitle || syllabus.title;
@@ -41,20 +56,11 @@ export default function ComplianceModal({ syllabus, run, isLatest = true, error 
 
           <div className="cm-score">
             {state === 'scored'
-              ? <div className={'big-ring cm-ring ' + t} style={{ '--p': ringAngle(run.overall) }} role="img" aria-label={translateUI("ui.compliance_score_7a084d") + run.overall + translateUI("ui.percent_c72154") + tr(run.band)}><div><strong>{run.overall}%</strong><small>{tr(run.band)}</small></div></div>
+              ? <div className={'big-ring cm-ring ' + t} style={{ '--p': ringAngle(shown) }} role="img" aria-label={translateUI("ui.compliance_score_7a084d") + run.overall + translateUI("ui.percent_c72154") + tr(run.band)}><div><strong>{shown}%</strong><small>{tr(run.band)}</small></div></div>
               : <div className="big-ring cm-ring none" role="img" aria-label={translateUI("ui.no_score_yet_3662ab")}><div><strong>—</strong><small>{state === 'insufficient' ? translateUI("ui.not_enough_content_1c0e67") : translateUI("ui.not_checked_22705e")}</small></div></div>}
             {run && (
               <div className="cm-areas">
-                {run.areas.map((a) => {
-                  const at = a.score === null ? 'none' : tone(a.score, run.passThreshold);
-                  return (
-                    <div className={'cm-area ' + at} key={a.key}>
-                      <span>{tr(a.name)}</span>
-                      <b>{a.score === null ? '—' : a.score + '%'}</b>
-                      <div className="bar thin" role="img" aria-label={tr(a.name) + ' ' + (a.score === null ? tr('not scored') : a.score + ' ' + tr('percent'))}><i style={{ width: (a.score === null ? 0 : a.score) + '%' }} /></div>
-                    </div>
-                  );
-                })}
+                {run.areas.map((a, i) => <CmArea key={a.key} a={a} at={a.score === null ? 'none' : tone(a.score, run.passThreshold)} index={i} />)}
               </div>
             )}
           </div>

@@ -35,7 +35,7 @@ test('the basis of a check is "Rule-based check" until a model has run', () => {
   assert.strictEqual(basis(scored()).label, 'Rule-based check');
   assert.strictEqual(basis(scored()).kind, 'rule');
   assert.strictEqual(basis(scored({ aiStatus: 'pending' })).kind, 'pending');
-  assert.strictEqual(basis(scored({ aiStatus: 'pending' })).label, 'Rule-based check');
+  assert.strictEqual(basis(scored({ aiStatus: 'pending' })).label, 'Provisional score');
   const bad = basis(scored({ aiStatus: 'failed' }));
   assert.deepStrictEqual([bad.kind, bad.label], ['unavailable', 'AI unavailable']);
   assert.match(bad.note, /come from the rules/);

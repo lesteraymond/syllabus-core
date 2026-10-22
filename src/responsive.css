@@ -45,6 +45,10 @@
 	.search { display: none; }
 	.top-actions { flex: none; gap: 6px; }
 	.top-actions .icon-btn { width: 40px; height: 40px; }
+	/* Log out is icon-only here; the button keeps its aria-label, so assistive tech still announces it. */
+	.topbar .logout { width: 40px; height: 40px; min-height: 0; padding: 0; }
+	.topbar .logout .stable-label { display: none; }
+	.topbar .logout svg { display: block; flex: none; }
 	/* Dropdowns anchor to the bar (full width) instead of to their small button. */
 	.msg-wrap { position: static; }
 	.msg-drop { top: calc(100% - 6px); left: 12px; right: 12px; width: auto; }
@@ -123,13 +127,15 @@
 }
 
 /* ---- Sign-in, register and forgot-password (they share .login-page) ---- */
-/* Small laptops: the two columns still fit, but the big logo circle left the text too little room and it was cut off. */
-@media (max-width: 1279.98px) {
-	.login-brand { padding: 56px 5vw; gap: 28px; }
+/* Laptops: the two columns are equal, so the half-width brand side gets a smaller logo circle and heading to keep the text from being cut off. */
+@media (max-width: 1599.98px) {
+	.login-brand { padding: 56px 4vw; gap: 28px; }
 	.login-brand > div:last-child { min-width: 0; }
 	.brand-orb { width: 170px; height: 170px; min-width: 170px; padding: 14px; }
-	.login-brand h1 { font-size: clamp(30px, 3.6vw, 46px); overflow-wrap: anywhere; }
+	.login-brand h1 { font-size: clamp(28px, 3vw, 46px); overflow-wrap: anywhere; }
 	.login-brand p { font-size: var(--text-base); overflow-wrap: anywhere; }
+}
+@media (max-width: 1279.98px) {
 	.login-panel { padding: 40px 28px; }
 }
 /* Tablet and phone: the blue brand side is dropped and the form takes the whole screen (the form already carries the logo and the title). */
@@ -177,8 +183,8 @@
 @media (max-width: 639.98px) {
 	.editor-layout { grid-template-columns: minmax(0, 1fr); }
 	/* The seven steps become one swipeable row above the form instead of a 300px column. */
-	.stepper { display: flex; gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 8px; scrollbar-width: thin; }
-	.stepper button { flex: 0 0 auto; width: auto; white-space: nowrap; min-height: 44px; }
+	.stepper { display: flex; gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 8px; scrollbar-width: thin; min-width: 0; max-width: 100%; touch-action: pan-x pan-y; overscroll-behavior-x: contain; scroll-snap-type: x proximity; }
+	.stepper button { flex: 0 0 auto; width: auto; white-space: nowrap; min-height: 44px; scroll-snap-align: center; }
 	.bld2 .stepper .prog { flex: none; align-self: center; margin: 0; padding: 0 8px; border-top: 0; white-space: nowrap; }
 	.editor-card { padding: 14px; }
 	.editor-title { flex-wrap: wrap; gap: 6px; }
@@ -186,6 +192,23 @@
 	.check-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 	.course-strip > span:last-child:nth-child(odd),
 	.check-strip > span:last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+
+/* Stat cards: a short last row stretches to the full width instead of leaving a gap on the right. */
+@media (max-width: 1250px) {
+	.stat-grid { display: flex; flex-wrap: wrap; }
+	.stat-grid > .stat-card { flex: 1 1 min(200px, 100%); }
+}
+
+/* Two-column card grids: an odd last card takes the whole row instead of leaving an empty half. */
+@media (max-width: 1250px) {
+	.dashboard-grid.lower { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.dashboard-grid.lower > .card:last-child:nth-child(odd),
+	.syl-grid > :last-child:nth-child(odd),
+	.comp-grid > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+@media (max-width: 1023.98px) {
+	.pick-grid > :last-child:nth-child(odd) { grid-column: 1 / -1; }
 }
 
 /* Dashboard: on desktop every row has a fixed height and each card scrolls inside it. Below 1024px the cards size to their content
@@ -196,7 +219,6 @@
 	.dashboard-grid > .card { min-height: 220px; }
 	.dashboard-grid > .card > .card-body { max-height: 380px; flex: 0 1 auto; }
 	.dashboard-grid > .card > .card-body.scrollbar-hidden { max-height: none; }
-	.stat-grid { grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); }
 }
 @media (max-width: 639.98px) {
 	.dashboard-grid > .card { min-height: 0; }
@@ -228,16 +250,16 @@
 	.report-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 	.field.full { grid-column: auto; }
 	.filter-card { grid-template-columns: minmax(0, 1fr); }
-	.stat-grid { grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); }
-	.stat-grid > .stat-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
+	.stat-grid > .stat-card { flex-basis: min(150px, 100%); }
 
-	.overlay:not(.overlay-confirm) { padding: 0; align-items: stretch; justify-items: stretch; }
+	/* A dialog on a phone floats with a margin round it (the page shows behind it) instead of filling the screen. */
+	.overlay:not(.overlay-confirm) { padding: 14px; align-items: center; justify-items: center; }
 	.overlay .modal:not(.confirm-modal) {
-		width: 100vw;
-		max-width: 100vw;
-		height: 100dvh;
-		max-height: 100dvh;
-		border-radius: 0;
+		width: 100%;
+		max-width: 100%;
+		height: auto;
+		max-height: calc(100dvh - 28px);
+		border-radius: 16px;
 	}
 	.modal-head { padding: 14px 16px; }
 	.modal-body { padding: 16px; }
@@ -264,4 +286,23 @@
 @media (prefers-reduced-motion: reduce) {
 	.mnav-panel,
 	.mnav-chevron { transition: none; }
+}
+
+/* Dialogs that are a fixed-height window (the syllabus preview, the compliance check) keep that height on a phone instead of shrinking to their content. */
+@media (max-width: 767.98px) {
+	.overlay:not(.overlay-confirm) .modal.svm-modal,
+	.overlay:not(.overlay-confirm) .modal.cm-modal { height: min(84dvh, 760px); }
+}
+
+/* Check history's date filter on a phone: FROM and TO side by side, each label above its picker, and Apply (and Reset) under them at full width. */
+@media (max-width: 767.98px) {
+	.hist-filter { display: grid; grid-template-columns: 1fr 1fr; column-gap: 10px; row-gap: 6px; justify-content: stretch; align-items: end; width: 100%; }
+	.hist-filter > label { text-align: left; }
+	.hist-filter > :nth-child(1) { grid-column: 1; grid-row: 1; }
+	.hist-filter > :nth-child(2) { grid-column: 1; grid-row: 2; }
+	.hist-filter > :nth-child(3) { grid-column: 2; grid-row: 1; }
+	.hist-filter > :nth-child(4) { grid-column: 2; grid-row: 2; }
+	.hist-filter > .btn { grid-column: 1 / -1; width: 100%; margin-top: 4px; }
+	.hist-filter .dp { width: 100%; }
+	.hist-filter-error { grid-column: 1 / -1; text-align: left; }
 }

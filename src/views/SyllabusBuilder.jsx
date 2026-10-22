@@ -52,7 +52,7 @@ function GradingSystem() {
 }
 
 function References() {
-  return <div><div className="info-banner warning">{translateUI("ui.2_references_are_more_than_10_years_old_the_ai_checker_will_flag__315174")}</div>{['Provost, F. & Fawcett, T. (2013). Data Science for Business. O\'Reilly.', 'Knaflic, C. N. (2015). Storytelling with Data. Wiley.', 'Wilke, C. O. (2019). Fundamentals of Data Visualization. O\'Reilly.', 'VanderPlas, J. (2023). Python Data Science Handbook, 2nd ed. O\'Reilly.'].map((x, i) => <div className="reference" key={x}><span>{i + 1}</span><p>{x}</p><button>✎</button><button>×</button></div>)}<StableButton className="btn outline">{translateUI("ui.add_reference_75edb4")}</StableButton></div>;
+  return <div><div className="info-banner warning">{translateUI("ui.2_references_are_more_than_10_years_old_the_ai_checker_will_flag__315174")}</div>{['Provost, F. & Fawcett, T. (2013). Data Science for Business. O\'Reilly.', 'Knaflic, C. N. (2015). Storytelling with Data. Wiley.', 'Wilke, C. O. (2019). Fundamentals of Data Visualization. O\'Reilly.', 'VanderPlas, J. (2023). Python Data Science Handbook, 2nd ed. O\'Reilly.'].map((x, i) => <div className="reference" key={x}><span>{i + 1}</span><p>{x}</p><button type="button" aria-label={translateUI("ui.edit_530164")}><Icon name="pencilSquare" size={16} /></button><button type="button" aria-label={translateUI("ui.delete_f6fdbe")}><Icon name="bin" size={16} /></button></div>)}<StableButton className="btn outline">{translateUI("ui.add_reference_75edb4")}</StableButton></div>;
 }
 
 function Policies() {

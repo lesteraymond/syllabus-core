@@ -1,14 +1,35 @@
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
+import { useCountUp } from '../lib/useCountUp';
 import { SOURCE_LABEL, STEP_INFO, areaNames, basis, blockersOf, groupFindings, headline, runState, stepLabel, tone, ringAngle, when } from '../lib/complianceView';
 
+// One of the six area scores. Its bar and its number climb together from 0 to the score, one row after another, and drop back to 0 while a
+// check is running (the same as the ring above).
+function AreaRow({ a, passThreshold, index, checking }) {
+  const at = a.score === null ? 'none' : tone(a.score, passThreshold);
+  const target = a.score === null || checking ? 0 : a.score;
+  const delay = checking ? 0 : 120 + index * 110;
+  const shown = useCountUp(target, { delay, duration: 1100 });
+  return (
+    <div className="check-row">
+      <div><strong>{tr(a.name)}</strong><div className="bar thin"><i className="area-fill" style={{ width: target + '%', transitionDelay: delay + 'ms' }} /></div></div>
+      <b>{a.score === null ? '—' : shown + '%'}</b>
+      <span className={at === 'good' ? 'check-ok' : 'check-warn'} aria-label={at === 'good' ? translateUI("ui.on_track_464e43") : at === 'warn' ? translateUI("ui.needs_work_def443") : translateUI("ui.not_scored_4e720d")}>{at === 'good' ? '✓' : at === 'warn' ? '!' : '·'}</span>
+    </div>
+  );
+}
 
 // One stored compliance run, shown the same way everywhere: the Review & Check step of the builder, the admin overview and Review &
 // Approval. The ring, the six areas, what blocks a submit, the recommendations (each marked Rule or AI, each linked to its step), and
 // the findings behind the score. It only displays; fetching and re-checking belong to the screen that uses it.
 //   onOpenStep(stepKey)  when given, a step name becomes a button that jumps there (the builder); otherwise it is plain text.
-export default function ComplianceCard({ run, onOpenStep, showFindings = true }) {
+// `checking` is true while a check is running: the ring shows 0% with a spinner, then the score climbs to its value when the run arrives.
+// The spinner keeps turning while the AI is still checking the fields (the score can still move, see basis()).
+export default function ComplianceCard({ run, onOpenStep, showFindings = true, checking = false }) {
   const state = runState(run);
+  const scored = state === 'scored';
+  const shown = useCountUp(scored && !checking ? run.overall : 0);
+  const loading = checking || (!!run && run.aiStatus === 'pending');
   const t = state === 'scored' ? tone(run.overall, run.passThreshold) : 'none';
   const how = basis(run);
   const blockers = blockersOf(run);
@@ -23,8 +44,11 @@ export default function ComplianceCard({ run, onOpenStep, showFindings = true })
   return (
     <div className="cmp">
       <div className="cmp-top">
-        {state === 'scored'
-          ? <div className={'big-ring cmp-ring ' + t} style={{ '--p': ringAngle(run.overall) }} role="img" aria-label={translateUI("ui.compliance_score_7a084d") + run.overall + translateUI("ui.percent_c72154") + tr(run.band)}><div><strong>{run.overall}%</strong><small>{tr(run.band)}</small></div></div>
+        {scored || checking
+          ? <div className={'big-ring cmp-ring ' + (scored ? t : 'warm') + (loading ? ' loading' : '')} style={{ '--p': ringAngle(shown) }} role="img" aria-busy={loading} aria-label={checking ? translateUI("ui.checking_820d60") : translateUI("ui.compliance_score_7a084d") + run.overall + translateUI("ui.percent_c72154") + tr(run.band)}>
+            <div><strong>{shown}%</strong><small>{checking ? translateUI("ui.checking_820d60") : tr(run.band)}</small></div>
+            {loading && <span className={'cmp-spin' + (checking ? '' : ' ai')} aria-hidden="true" />}
+          </div>
           : <div className="cmp-ring none" role="img" aria-label={translateUI("ui.no_score_yet_3662ab")}><div><strong>—</strong><small>{state === 'insufficient' ? translateUI("ui.not_enough_content_1c0e67") : translateUI("ui.not_checked_22705e")}</small></div></div>}
         <div className="cmp-head">
           <p className="cmp-line">{tr(headline(run))}</p>
@@ -42,16 +66,7 @@ export default function ComplianceCard({ run, onOpenStep, showFindings = true })
 
       {run && (
         <div className="cmp-areas">
-          {run.areas.map((a) => {
-            const at = a.score === null ? 'none' : tone(a.score, run.passThreshold);
-            return (
-              <div className="check-row" key={a.key}>
-                <div><strong>{tr(a.name)}</strong><div className="bar thin"><i style={{ width: (a.score === null ? 0 : a.score) + '%' }} /></div></div>
-                <b>{a.score === null ? '—' : a.score + '%'}</b>
-                <span className={at === 'good' ? 'check-ok' : 'check-warn'} aria-label={at === 'good' ? translateUI("ui.on_track_464e43") : at === 'warn' ? translateUI("ui.needs_work_def443") : translateUI("ui.not_scored_4e720d")}>{at === 'good' ? '✓' : at === 'warn' ? '!' : '·'}</span>
-              </div>
-            );
-          })}
+          {run.areas.map((a, i) => <AreaRow key={a.key} a={a} passThreshold={run.passThreshold} index={i} checking={checking} />)}
         </div>
       )}
 
@@ -77,7 +92,15 @@ export default function ComplianceCard({ run, onOpenStep, showFindings = true })
                   {stepRef(r.step)}
                   {areaNames(run, r).map((n) => <span className="chip quiet" key={n}>{tr(n)}</span>)}
                   {(r.clos || []).length > 0 && <span className="chip quiet">{translateUI("ui.clo_069efc") + r.clos.join(', ')}</span>}
-                  {(r.rows || []).length > 0 && <span className="chip quiet">{tr(r.rows.length > 1 ? 'Rows' : 'Row') + ' ' + r.rows.map((x) => x + 1).join(', ')}</span>}
+                  {(r.rows || []).length > 0 && (
+                    <span className="chip quiet"><span>{tr(r.rows.length > 1 ? 'Rows' : 'Row') + ' '}
+                      {r.rows.map((x, k) => (
+                        <span key={x}>{k > 0 && ', '}{onOpenStep && r.step
+                          ? <button type="button" className="cmp-rowlink" onClick={() => onOpenStep(r.step, { row: x })}>{x + 1}</button>
+                          : x + 1}</span>
+                      ))}
+                    </span></span>
+                  )}
                 </div>
               </div>
             </div>
@@ -92,7 +115,7 @@ export default function ComplianceCard({ run, onOpenStep, showFindings = true })
           {groupFindings(run).map((g) => (
             <div key={g.key}>
               <h5>{tr(g.name)}</h5>
-              <ul>{g.findings.map((f) => <li key={f.id}><span className="chip src rule">{f.severity === 'blocking' ? translateUI("ui.rule_blocks_submit_a7fc69") : translateUI("ui.rule_78e179")}</span> {tr(f.message)} {stepRef(f.step)}</li>)}</ul>
+              <ul>{g.findings.map((f) => <li key={f.id}><span className={'chip src ' + (f.source === 'ai' ? 'ai' : 'rule')}>{f.source === 'ai' ? tr(SOURCE_LABEL.ai) : f.severity === 'blocking' ? translateUI("ui.rule_blocks_submit_a7fc69") : translateUI("ui.rule_78e179")}</span> {tr(f.message)} {stepRef(f.step)}</li>)}</ul>
             </div>
           ))}
         </details>

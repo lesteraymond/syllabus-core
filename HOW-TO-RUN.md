@@ -37,7 +37,7 @@ npm run dev
 ```
 
 - `cp .env.example .env` — creates your local config (`.env` is git-ignored; on Windows use `copy`)
-- `npm install` — installs backend dependencies (includes `tesseract.js` and `sharp` for the COR reader)
+- `npm install` — installs backend dependencies (includes `sharp`, which shrinks the COR photo before the AI reads it)
 - `npm run init-db` — creates the database, tables, and seed data (run once)
 - `npm run migrate-students` — adds the student role and the COR tables (`schema.sql` does not create them, so run it on fresh installs too)
 - `npm run dev` — starts the API server on **http://localhost:3001**
@@ -54,6 +54,9 @@ Fill in `server/.env`:
 | `CURRENT_TERM`, `ALLOWED_EMAIL_DOMAIN` | optional (domain defaults to `email.lcup.edu.ph`) |
 | `COMPLIANCE_AI_PROVIDER` | optional: `mock` shows AI-labelled recommendations in development; unset = plain rule-based check |
 | `SCHOOL_YEAR_START` | optional, default `2026` (used to measure reference age) |
+| `GEMINI_API_KEY`, `OPENROUTER_API_KEY` | optional: the AI step of the compliance check and the COR reader. Without a key the check is rule-based and a student COR cannot be read |
+| `COR_READER`, `COR_AI_MODEL` | optional: `COR_READER=ocr` reads the COR with Tesseract (testing only); `COR_AI_MODEL` names another vision model |
+| `DEV_EDITOR_PASSWORD` | optional, at least 8 characters: switches on the developer rule editor at `/dev/rules` (see below). Leave empty to keep it off |
 
 > `npm run dev` restarts the API on file changes. After running a migration, restart it by hand.
 
@@ -172,11 +175,15 @@ DB_NAME=syllabus_cms_plus
 ### Google sign-in says 404 or "Access Denied"
 Restart the API server (an old process has no `/api/auth/google`). "Access Denied" means the email is not in Users & Roles.
 
+### The developer rule editor
+
+Set `DEV_EDITOR_PASSWORD` in `server/.env`, restart the API and open **http://localhost:3001/dev/rules**. It is not linked from the app and needs no app sign-in, only the password (open for 30 minutes; five wrong tries lock the address for ten). It changes the compliance standard's pass mark, bands, area weights, limits and each rule's points, severity, message, explanation, numbers and on/off switch. A save takes effect at once and gives the standard a new version (v7.1, v7.2, ...). "Reset to file" removes all edits; the history keeps them. The edits are stored in the database (`app_settings`, `standard_changes`), on top of `server/lib/compliance/standard-v4.json`. The `standard_changes` table is created the first time the editor saves (it is also in `schema.sql`).
+
 ### "Table ... doesn't exist" or a missing column
 Your database is behind. Run the migrations in *Upgrading an existing database*, then restart the API server.
 
 ### Student registration cannot read the COR
-Make sure `npm install` was run in `server/` (OCR needs `tesseract.js` and `sharp`) and that `server/eng.traineddata` exists. Test the reader on its own with `node scripts/ocr-cor-test.js [image]`. Small or tilted photos may not yield the subject list; the registration then goes to an administrator.
+The COR is read by the AI, so `GEMINI_API_KEY` or `OPENROUTER_API_KEY` must be set in the root `.env` (OpenRouter uses the paid `google/gemma-3-27b-it` unless `COR_AI_MODEL` names another vision model). Test the reader on its own with `node scripts/cor-ai-test.js [image]`. To test with the old OCR reader instead (no AI), set `COR_READER=ocr` in `server/.env` and run `node scripts/ocr-cor-test.js [image]`; it needs `server/eng.traineddata`. A blurry photo may not yield the subject list; the registration then goes to an administrator.
 
 ### Port already in use
 Change the port in `server/.env`:
@@ -205,7 +212,8 @@ syllabus-cms-plus/
 │   ├── routes/
 │   ├── middleware/
 │   ├── lib/            ← rules, compliance engine, COR OCR
-│   ├── scripts/        ← ocr-cor-test.js
+│   ├── views/          ← the developer rule editor page
+│   ├── scripts/        ← cor-ai-test.js
 │   ├── db/             ← schema, seed, migrations
 │   ├── private/        ← avatars and COR photos (git-ignored, not public)
 │   └── uploads/        ← syllabus PDFs
@@ -231,7 +239,7 @@ syllabus-cms-plus/
 | `npm run dev` | Start the API server (http://localhost:3001). It restarts when files change |
 | `npm run init-db` | Create the database, tables and seed data |
 | `npm run seed-outcomes` | Load the institution's vision, mission, EGAs, programs and the BSIT program outcomes. Only inserts what is missing; run it after `migrate-builder`. Supports `--dry-run` |
-| `node scripts/ocr-cor-test.js [image]` | Try the COR reader on the images in `server/sample_cor/` (git-ignored) or on a given image; prints the fields it read |
+| `node scripts/cor-ai-test.js [image]` | Try the AI COR reader on the images in `server/sample_cor/` (git-ignored) or on a given image; prints the fields it read |
 
 ### Database migrations (`server/`)
 Each one upgrades an older database, is safe to run again, and touches no existing data. Run the ones you are missing, in this order, then restart the API server.
@@ -289,6 +297,11 @@ Where a script says it supports `--dry-run`, add it after `--` to only report wh
 | GET | /api/syllabi/:id/compliance | Stored compliance check |
 | POST | /api/syllabi/:id/compliance/recheck | Re-run the compliance check |
 | GET | /api/compliance | Compliance overview (admin: all, faculty: own) |
+| GET | /api/compliance?schoolYear=2026-2027&semester=1st Semester | The same for a past term: each syllabus's newest check inside it |
+| GET | /api/compliance/terms | School terms that have checks (for the Historical Exports list) |
+| GET | /api/settings/standard | The compliance standard, read-only (admin) |
+| GET/PUT | /api/settings | Administrator settings (admin) |
+| GET | /dev/rules | The developer rule editor page (needs `DEV_EDITOR_PASSWORD`); its API is under `/dev/rules/api/` |
 | GET | /api/messages | All my messages |
 | GET | /api/notifications | My notifications |
 | PUT | /api/notifications/read-all | Mark all read |

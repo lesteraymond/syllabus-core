@@ -197,3 +197,12 @@ test('schema.sql and the migration define the same compliance tables, with the c
   assert.ok(ddl[0].includes('FOREIGN KEY (syllabus_id)') && ddl[0].includes('FOREIGN KEY (version_id)'));
   assert.ok(ddl[1].includes('area_key') && ddl[2].includes('rule_id') && ddl[2].includes('step'));
 });
+
+test('the prompt carries the LCUP rules and the six core values, and still cites findings only', () => {
+  const { buildPrompt } = require('./providers');
+  const prompt = buildPrompt([{ id: 'C-05:plan[0].values', ruleId: 'C-05' }], {}, standard);
+  ['Compassion', 'Courage', 'Community-orientedness', 'Humility', 'Interiority', 'Missionary Spirit'].forEach((v) => assert.ok(prompt.includes(v), v));
+  assert.match(prompt, /EGA/);
+  assert.match(prompt, /basedOn/);
+  assert.ok(prompt.length < 4000, 'the shared part stays short');
+});
