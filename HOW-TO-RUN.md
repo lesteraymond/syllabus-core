@@ -33,6 +33,7 @@ cp .env.example .env     # then fill in the values (see below)
 npm install
 npm run init-db
 npm run migrate-students
+npm run seed-curriculum   # optional: the programs and subjects of the curriculum
 npm run dev
 ```
 
@@ -40,6 +41,7 @@ npm run dev
 - `npm install` — installs backend dependencies (includes `sharp`, which shrinks the COR photo before the AI reads it)
 - `npm run init-db` — creates the database, tables, and seed data (run once)
 - `npm run migrate-students` — adds the student role and the COR tables (`schema.sql` does not create them, so run it on fresh installs too)
+- `npm run seed-curriculum` — optional: loads the programs (BSIT, BSIT-CS, BSCPE, BSIE) and each program's subjects with credit units and linked prerequisites. A fresh `init-db` already creates the tables it needs (`course_prerequisites`, credit units, a subject code unique per program), so `migrate-prerequisites`, `migrate-credit-units` and `migrate-course-code-per-program` are only for databases made before them (see Upgrading an existing database)
 - `npm run dev` — starts the API server on **http://localhost:3001**
 
 Fill in `server/.env`:
@@ -88,10 +90,16 @@ npm run migrate-program-management
 npm run migrate-subject-standards
 npm run migrate-usage
 npm run migrate-deadlines
+npm run migrate-archive
 npm run migrate-subject-owner
+npm run migrate-course-code-per-program
+npm run migrate-credit-units
+npm run migrate-prerequisites
+npm run seed-curriculum   # optional: the programs and subjects of the curriculum folder, with their prerequisites and credit units
 ```
 
 - `migrate-avatars-private`, `migrate-assignments`, `migrate-program-egas` and `migrate-subject-owner` support `--dry-run` (e.g. `npm run migrate-assignments -- --dry-run`)
+- `seed-curriculum` is optional and needs the three migrations above it. It loads the programs, subjects (with credit units) and linked prerequisites from `server/db/curriculum-data.js`, adds what is missing and updates matching codes. `node scripts/sample-syllabi.js` can then make five sample syllabi
 - `migrate-compliance` and `migrate-comment-reads` are optional: the features degrade gracefully (submit still works, unread counts show totals) until they are run
 - After `migrate-assignments`, faculty cannot create or edit syllabi until an admin assigns them a program and a subject (Users & Roles, Assignments button)
 
@@ -271,6 +279,7 @@ Each one upgrades an older database, is safe to run again, and touches no existi
 | `npm run migrate-course-code-per-program` | Makes a subject code unique within its program instead of across the catalog (same ENGEC or IS-CITE in several programs). Changes no rows |
 | `npm run migrate-credit-units` | `courses.lecture_units` and `lab_units`: the credit units a subject carries, which fill the syllabus form's Credit Units (V) |
 | `npm run migrate-prerequisites` | `course_prerequisites` table: a subject's prerequisites, linked to other subjects (needs `migrate-builder`) |
+| `npm run migrate-archive` | `syllabi.archived_at`: a syllabus whose subject is given to another faculty member is archived (read-only, under the former owner) instead of deleted |
 | `npm run migrate-subject-owner` | Unique key on `faculty_courses.course_id` (one subject, one faculty member). Stops and lists any subject held by more than one faculty. Supports `--dry-run` |
 
 Where a script says it supports `--dry-run`, add it after `--` to only report what would change, e.g. `npm run migrate-assignments -- --dry-run`.
