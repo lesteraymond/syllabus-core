@@ -29,7 +29,8 @@
     "migrate-prerequisites": "node db/migrate-prerequisites.js",
     "migrate-credit-units": "node db/migrate-credit-units.js",
     "migrate-course-code-per-program": "node db/migrate-course-code-per-program.js",
-    "seed-curriculum": "node db/seed-curriculum.js"
+    "seed-curriculum": "node db/seed-curriculum.js",
+    "purge-old-subjects": "node db/purge-old-subjects.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

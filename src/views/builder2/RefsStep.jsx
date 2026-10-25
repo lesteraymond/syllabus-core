@@ -15,7 +15,7 @@ export default function RefsStep({ d, apply, model }) {
       {GROUPS.map(([key, title]) => {
         const grp = d.refs[key];
         return (
-          <div className="grp" key={key}>
+          <div className="grp" key={key} data-ref-group={key}>
             <div className="grp-h">
               <h3>{tr(title)}<span className="mono" style={{ marginLeft: 8, fontWeight: 500 }}>{grp.items.filter((x) => x.t.trim()).length}</span></h3>
               <label className="na"><input type="checkbox" checked={grp.na} onChange={(e) => { const v = e.target.checked; apply((x) => { x.refs[key].na = v; return x; }); }} />{translateUI("ui.not_applicable_67c4d0")}</label>
@@ -25,7 +25,7 @@ export default function RefsStep({ d, apply, model }) {
                 {grp.items.map((r, i) => {
                   const a = model.refAge(r.t);
                   return (
-                    <div className="item" style={{ gridTemplateColumns: '8px minmax(0,1fr) auto 28px' }} key={r.id}>
+                    <div className="item" style={{ gridTemplateColumns: '8px minmax(0,1fr) auto 28px' }} key={r.id} data-ref-item={key + ':' + i}>
                       <span />
                       <Auto value={r.t} fid={r.id} placeholder={translateUI("ui.reference_db1c78")} label={tr(title) + translateUI("ui.reference_523d48") + (i + 1)}
                         onChange={(v) => apply((x) => { x.refs[key].items[i].t = v; return x; })}

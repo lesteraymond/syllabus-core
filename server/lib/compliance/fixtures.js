@@ -26,7 +26,7 @@ const ilo = (id, textValue, tags) => ({ id, text: textValue, tags });
 // those POs imply, current references, grading 60 + 40, and the catalog snapshot equal to the live catalog (which carries the LCUP vision, mission and EGAs).
 function good() {
   const clos = [1, 2, 3, 4].map((n) => ({
-    id: 'c' + n, title: 'Outcome ' + n, level: 'Introductory', statement: 'Statement ' + n,
+    id: 'c' + n, title: 'Outcome ' + n, level: 'Introductory', statement: 'Statement ' + n + ' on computer programming',
     egas: [1, 2], pos: [1, 2], // PO 1 maps to EGA 1 and PO 2 to EGA 2, so EGAs 1 and 2 are what the POs imply
   }));
   const plan = [];
@@ -35,7 +35,8 @@ function good() {
       plan.push({ id: 'x' + w, kind: 'exam', week: String(w), ilos: [ilo('xi' + w, '', [])], contents: ['PRELIM', 'MIDTERM', 'FINAL'][w / 6 - 1] + ' EXAMINATION', activities: '', tasks: '', values: '' });
     } else {
       const c = 'c' + (((w - 1) % 4) + 1);
-      plan.push({ id: 'r' + w, kind: 'lesson', week: String(w), ilos: [ilo('i' + w, 'Explain topic number ' + w + ' clearly', ['clo:' + c])], contents: 'Topic number ' + w, activities: 'Lecture on topic number ' + w, tasks: '- Quiz on topic number ' + w, values: 'Core Value: Courage' });
+      const topic = w === 1 ? 'course orientation' : 'topic number ' + w;
+      plan.push({ id: 'r' + w, kind: 'lesson', week: String(w), ilos: [ilo('i' + w, 'Explain ' + topic + ' clearly', ['clo:' + c])], contents: topic, activities: 'Lecture on ' + topic, tasks: '- Quiz on ' + topic, values: 'Core Value: Courage' });
     }
   }
   return {

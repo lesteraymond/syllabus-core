@@ -255,10 +255,10 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
         <nav className="stepper" aria-label={translateUI("ui.steps_cdde4f")}>
           {STEP_CONFIG.map((s, i) => {
             const k = statuses[i];
-            const mark = k === 'locked' ? <LockSimple size={14} aria-hidden="true" /> : k === 'done' ? '✓' : i === step ? '›' : k === 'attn' ? '!' : '›';
+            const mark = k === 'locked' ? <LockSimple size={14} aria-hidden="true" /> : k === 'done' ? '✓' : k === 'warn' ? '!' : i === step ? '›' : k === 'attn' ? '!' : '›';
             return (
-              <button key={s.key} type="button" className={(i === step ? 'active ' : '') + (k === 'locked' || k === 'done' || (i !== step && k !== 'todo') ? k : '')} aria-current={i === step ? 'step' : undefined} aria-disabled={!canGo(i) || undefined} title={!canGo(i) ? translateUI("ui.finish_step_316523") + (firstBlocked + 1) + translateUI("ui.first_faeaef") : undefined} onClick={() => go(i)}>
-                <span>{i + 1}</span>{titleOf(s)}<i aria-label={k === 'locked' ? translateUI("ui.locked_adec79") : k === 'done' ? translateUI("ui.complete_0737c2") : i !== step && k === 'attn' ? translateUI("ui.needs_attention_3ad98d") : undefined}>{mark}</i>
+              <button key={s.key} type="button" className={(i === step ? 'active ' : '') + (k === 'locked' || k === 'done' || k === 'warn' || (i !== step && k !== 'todo') ? k : '')} aria-current={i === step ? 'step' : undefined} aria-disabled={!canGo(i) || undefined} title={!canGo(i) ? translateUI("ui.finish_step_316523") + (firstBlocked + 1) + translateUI("ui.first_faeaef") : undefined} onClick={() => go(i)}>
+                <span>{i + 1}</span>{titleOf(s)}<i aria-label={k === 'locked' ? translateUI("ui.locked_adec79") : k === 'done' ? translateUI("ui.complete_0737c2") : k === 'warn' ? translateUI('bld.step_warn') : i !== step && k === 'attn' ? translateUI("ui.needs_attention_3ad98d") : undefined}>{mark}</i>
               </button>
             );
           })}

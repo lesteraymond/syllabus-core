@@ -41,7 +41,7 @@ export default function InfoStep({ d, apply, model, programList, courseList, onC
         </span>
       </Field>
       <Field label={translateUI("ui.pre_requisite_iv_1c46d5")} full><PrereqPicker value={m.prereq} courseId={m.courseId} onChange={(v) => setM('prereq', v)} /></Field>
-      <div className="field full">
+      <div className="field full" data-desc>
         <span>{translateUI("ui.course_description_iii_db7708")}</span>
         {d.description.map((x, i) => (
           <div key={x.id} style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 28px', gap: 6, marginBottom: 8, alignItems: 'start' }}>

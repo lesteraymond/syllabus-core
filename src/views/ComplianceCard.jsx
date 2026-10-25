@@ -1,7 +1,7 @@
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
 import { useCountUp } from '../lib/useCountUp';
-import { SOURCE_LABEL, STEP_INFO, areaNames, basis, blockersOf, groupFindings, headline, runState, stepLabel, tone, ringAngle, when } from '../lib/complianceView';
+import { REVISION_LABEL, SOURCE_LABEL, STEP_INFO, areaNames, basis, blockersOf, groupFindings, headline, runState, stepLabel, targetsIn, tone, ringAngle, when } from '../lib/complianceView';
 
 // One of the six area scores. Its bar and its number climb together from 0 to the score, one row after another, and drop back to 0 while a
 // check is running (the same as the ring above).
@@ -34,15 +34,17 @@ export default function ComplianceCard({ run, onOpenStep, showFindings = true, c
   const how = basis(run);
   const blockers = blockersOf(run);
   const recs = (run && run.recommendations) || [];
-  const stepRef = (key) => {
+  // `paths` are the form paths the item is about: the link then highlights only those places in the step (week 7's row, one requirement...).
+  const stepRef = (key, paths) => {
     if (!STEP_INFO[key]) return null;
+    const targets = targetsIn(key, paths);
     return onOpenStep
-      ? <button type="button" className="cmp-step" onClick={() => onOpenStep(key)}>{tr(stepLabel(key))}</button>
+      ? <button type="button" className="cmp-step" onClick={() => onOpenStep(key, targets.length ? { targets } : undefined)}>{tr(stepLabel(key))}</button>
       : <span className="cmp-step plain">{tr(stepLabel(key))}</span>;
   };
 
-  return (
-    <div className="cmp">
+  const summary = (
+    <>
       <div className="cmp-top">
         {scored || checking
           ? <div className={'big-ring cmp-ring ' + (scored ? t : 'warm') + (loading ? ' loading' : '')} style={{ '--p': ringAngle(shown) }} role="img" aria-busy={loading} aria-label={checking ? translateUI("ui.checking_820d60") : translateUI("ui.compliance_score_7a084d") + run.overall + translateUI("ui.percent_c72154") + tr(run.band)}>
@@ -69,27 +71,44 @@ export default function ComplianceCard({ run, onOpenStep, showFindings = true, c
           {run.areas.map((a, i) => <AreaRow key={a.key} a={a} passThreshold={run.passThreshold} index={i} checking={checking} />)}
         </div>
       )}
-
+    </>
+  );
+  const detail = (
+    <>
       {blockers.length > 0 && (
         <div className="cmp-block" role="alert">
           <b>{translateUI("ui.these_stop_the_syllabus_from_being_submitted_cff5cf")}</b>
-          <ul>{blockers.map((f) => <li key={f.id}>{tr(f.message)} {stepRef(f.step)}</li>)}</ul>
+          <ul>{blockers.map((f) => <li key={f.id}>{tr(f.message)} {stepRef(f.step, [f.path])}</li>)}</ul>
         </div>
       )}
 
-      {recs.length > 0 && (
+      {loading && (checking || recs.length === 0) && (
+        <div className="cmp-recs" aria-busy="true">
+          <h4>{translateUI("ui.recommendations_4faa65")}</h4>
+          <p className="cmp-status sug-busy" role="status" aria-live="polite"><span className="sug-spin" aria-hidden="true" />{translateUI('cmp.recs_busy')}</p>
+          {[0, 1, 2, 3].map((i) => (
+            <div className="rec-skel" key={i} aria-hidden="true" style={{ '--i': i }}>
+              <span className="dot" />
+              <div><span className="bar w60" /><span className="bar" /><span className="bar w30" /></div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {recs.length > 0 && !checking && (
         <div className="cmp-recs">
           <h4>{translateUI("ui.recommendations_4faa65")}</h4>
           {how.note && <p className="cmp-small">{tr(how.note)}</p>}
+          {recs.some((r) => r.source === 'ai') && <p className="cmp-small cmp-ai-warn" role="note">{translateUI('cmp.ai_mistakes')}</p>}
           {recs.map((r, i) => (
-            <div className="recommend" key={i}>
-              <span className={'priority ' + String(r.level || 'low').toLowerCase()}>{tr(r.level)}</span>
+            <div className="recommend pop" key={i} style={{ '--i': i }}>
+              <span className={'priority ' + String(r.level || 'low').toLowerCase()}>{tr(REVISION_LABEL[r.level] || r.level)}</span>
               <div>
                 <strong>{tr(r.title)}</strong>
                 <p>{tr(r.text)}</p>
                 <div className="cmp-chips">
                   <span className={'chip src ' + r.source}>{tr(SOURCE_LABEL[r.source] || r.source)}</span>
-                  {stepRef(r.step)}
+                  {stepRef(r.step, [...(r.basedOn || []).map((b) => String(b).slice(String(b).indexOf(':') + 1)), ...(r.rows || []).map((x) => 'plan[' + x + ']')])}
                   {areaNames(run, r).map((n) => <span className="chip quiet" key={n}>{tr(n)}</span>)}
                   {(r.clos || []).length > 0 && <span className="chip quiet">{translateUI("ui.clo_069efc") + r.clos.join(', ')}</span>}
                   {(r.rows || []).length > 0 && (
@@ -115,11 +134,18 @@ export default function ComplianceCard({ run, onOpenStep, showFindings = true, c
           {groupFindings(run).map((g) => (
             <div key={g.key}>
               <h5>{tr(g.name)}</h5>
-              <ul>{g.findings.map((f) => <li key={f.id}><span className={'chip src ' + (f.source === 'ai' ? 'ai' : 'rule')}>{f.source === 'ai' ? tr(SOURCE_LABEL.ai) : f.severity === 'blocking' ? translateUI("ui.rule_blocks_submit_a7fc69") : translateUI("ui.rule_78e179")}</span> {tr(f.message)} {stepRef(f.step)}</li>)}</ul>
+              <ul>{g.findings.map((f) => <li key={f.id}><span className={'chip src ' + (f.source === 'ai' ? 'ai' : 'rule')}>{f.source === 'ai' ? tr(SOURCE_LABEL.ai) : f.severity === 'blocking' ? translateUI("ui.rule_blocks_submit_a7fc69") : translateUI("ui.rule_78e179")}</span> {tr(f.message)} {stepRef(f.step, [f.path])}</li>)}</ul>
             </div>
           ))}
         </details>
       )}
+    </>
+  );
+
+  return (
+    <div className="cmp">
+      {summary}
+      {detail}
     </div>
   );
 }

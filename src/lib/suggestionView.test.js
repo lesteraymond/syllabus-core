@@ -39,3 +39,20 @@ test('rejections are remembered per syllabus and survive a broken store', () => 
   assert.deepEqual([...loadRejected(7, { getItem: () => { throw new Error('blocked'); } })], []);
   assert.doesNotThrow(() => saveRejected(7, new Set(['x']), { setItem: () => { throw new Error('blocked'); } }));
 });
+
+import { editableAt, withEdits } from './suggestionView.js';
+
+test('the suggested text of a text fix can be edited before it is accepted', () => {
+  const s = { id: 'e1', changes: [{ before: '1. Attend', after: 'Attend' }], expect: [{ path: 'reqs[id=q1].t', value: '1. Attend' }], ops: [{ op: 'set', path: 'reqs[id=q1].t', value: 'Attend' }] };
+  assert.equal(editableAt(s, 0), 'set');
+  const c = form();
+  const t = trial(c, withEdits(s, { 0: '  Attend all classes  ' }));
+  assert.equal(t.ok, true);
+  assert.equal(s.ops[0].value, 'Attend');
+  const ins = { id: 'e2', changes: [{ before: '', after: 'Be kind' }], ops: [{ op: 'insert', path: 'reqs', beforeId: null, value: { id: 'x', t: 'Be kind' } }] };
+  assert.equal(editableAt(ins, 0), 'insert');
+  assert.equal(withEdits(ins, { 0: 'Be kind to all' }).ops[0].value.t, 'Be kind to all');
+  assert.equal(withEdits(s, { 0: '   ' }), s); // an empty edit is ignored
+  const grading2 = { id: 'e3', changes: [{ before: '50%', after: '40%' }], ops: [{ op: 'set', path: 'grading.rows[id=g2].pct', value: 40 }] };
+  assert.equal(editableAt(grading2, 0), null); // a number is not text
+});

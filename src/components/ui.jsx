@@ -3,6 +3,7 @@ import { t as translateUI } from "../i18n/index.js";
 import { useState, useEffect, useSyncExternalStore } from 'react';
 import { resolveAvatar, subscribeAvatars } from '../lib/avatarStore';
 import { API_ORIGIN } from '../lib/api';
+import { REVISION_LABEL } from '../lib/complianceView';
 import { Notebook } from '@phosphor-icons/react/dist/csr/Notebook';
 import { ArrowUpRight } from '@phosphor-icons/react/dist/csr/ArrowUpRight';
 import { ArrowUUpLeft } from '@phosphor-icons/react/dist/csr/ArrowUUpLeft';
@@ -72,7 +73,7 @@ export function PageHead({ title, subtitle, actions }) {
 }
 
 export function Recommendation({ level, title, text }) {
-  return <div className="recommend"><span className={`priority ${level.toLowerCase()}`}>{level}</span><div><strong>{tr(title)}</strong><p>{tr(text)}</p></div></div>;
+  return <div className="recommend"><span className={`priority ${level.toLowerCase()}`}>{tr(REVISION_LABEL[level] || level)}</span><div><strong>{tr(title)}</strong><p>{tr(text)}</p></div></div>;
 }
 
 export function ChartCard({ title, subtitle, children }) {

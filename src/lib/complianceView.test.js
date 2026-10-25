@@ -210,3 +210,24 @@ test('the range is named for the admin: a span, one day, or one open side', () =
   assert.strictEqual(rangeLabel('', '2026-10-14'), 'Until Oct 14, 2026');
   assert.strictEqual(rangeLabel('', ''), '');
 });
+
+import { targetOf, targetsIn, selectorOf } from './complianceView.js';
+
+test('a finding path points at just the place it is about, so a link can highlight that', () => {
+  assert.deepEqual(targetOf('plan[6].ilos[0]'), { row: 6 });
+  assert.deepEqual(targetOf('plan[2].activities'), { row: 2 });
+  assert.deepEqual(targetOf('reqs[4]'), { req: 4 });
+  assert.deepEqual(targetOf('refs.books.items[1]'), { ref: 'books', item: 1 });
+  assert.deepEqual(targetOf('refs.books'), { ref: 'books' });
+  assert.deepEqual(targetOf('grading.rows[0]'), { grade: 0 });
+  assert.deepEqual(targetOf('description'), { desc: true });
+  assert.equal(targetOf('refs'), null);
+  assert.equal(targetOf(''), null);
+  // only the targets that sit in the step the link opens, once each
+  assert.deepEqual(targetsIn('plan', ['plan[6].ilos[0]', 'plan[6].tasks', 'plan[10]', 'reqs[0]', 'description']), [{ row: 6 }, { row: 10 }]);
+  assert.deepEqual(targetsIn('reqs', ['plan[6]', 'reqs[4]']), [{ req: 4 }]);
+  assert.equal(selectorOf({ row: 6 }), '[data-plan-row="6"]');
+  assert.equal(selectorOf({ ref: 'online', item: 2 }), '[data-ref-item="online:2"]');
+  assert.equal(selectorOf({ ref: 'online' }), '[data-ref-group="online"]');
+  assert.equal(selectorOf({ desc: true }), '[data-desc]');
+});

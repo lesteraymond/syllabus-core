@@ -215,7 +215,7 @@ test('a recommendation that only repeats a requirement, reference or grading dup
   const rules = result.findings.map((f) => f.ruleId);
   assert.ok(rules.includes('D-06') && rules.includes('D-04'));
   assert.deepEqual(ruleRecommendations(result, standard), []);
-  c.plan.filter((r) => r.kind === 'lesson')[1].ilos[0].text = c.plan.filter((r) => r.kind === 'lesson')[0].ilos[0].text;
+  c.plan.filter((r) => r.kind === 'lesson')[3].ilos[0].text = c.plan.filter((r) => r.kind === 'lesson')[2].ilos[0].text;
   const withIlo = ruleRecommendations(resultOf(c), standard);
   assert.equal(withIlo.length, 1);
   assert.deepEqual(withIlo[0].basedOn.map((id) => id.split(':')[0]), ['D-01']);

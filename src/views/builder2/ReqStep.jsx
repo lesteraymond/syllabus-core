@@ -23,7 +23,7 @@ export default function ReqStep({ d, apply, model }) {
   return (
     <div>
       {d.reqs.map((r, i) => (
-        <div className="item" key={r.id}>
+        <div className="item" key={r.id} data-req-row={i}>
           <span className="no">{(i + 1) + '.'}</span>
           <Auto value={r.t} fid={r.id} placeholder={translateUI("ui.requirement_e9c366")} label={translateUI("ui.requirement_15c842") + (i + 1)} onChange={(v) => apply((x) => { x.reqs[i].t = v; return x; })} onKeyDown={keys(i)} />
           <button type="button" className="ib del" aria-label={translateUI("ui.remove_requirement_425573")} onClick={() => apply((x) => { x.reqs.splice(i, 1); return x; })}><Ic n="x" /></button>

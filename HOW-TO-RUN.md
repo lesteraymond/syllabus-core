@@ -54,8 +54,10 @@ Fill in `server/.env`:
 | `GOOGLE_CLIENT_ID` | must match the frontend `VITE_GOOGLE_CLIENT_ID` (only needed for Google sign-in) |
 | `PORT`, `UPLOAD_DIR` | API port (default 3001) and upload folder |
 | `CURRENT_TERM`, `ALLOWED_EMAIL_DOMAIN` | optional (domain defaults to `email.lcup.edu.ph`) |
-| `COMPLIANCE_AI_PROVIDER` | optional: `mock` shows AI-labelled recommendations in development; unset = plain rule-based check |
+| `GROQ_API_KEY`, `GROQ_MODEL` | optional: the AI step of the compliance check on Groq. The model id is required (no default); blank logs an error in the console and the check stays rule-based |
+| `COMPLIANCE_AI_PROVIDER` | optional: `groq`, `openrouter`, `gemini` pick the AI; `mock` shows AI-labelled recommendations in development; unset = the first key that is set (Groq, then OpenRouter, then Gemini), none = plain rule-based check |
 | `SCHOOL_YEAR_START` | optional, default `2026` (used to measure reference age) |
+| `OPENROUTER_MODEL` | required when `OPENROUTER_API_KEY` is set: the OpenRouter model id the AI step uses. Blank logs an error in the console and the check stays rule-based |
 | `GEMINI_API_KEY`, `OPENROUTER_API_KEY` | optional: the AI step of the compliance check and the COR reader. Without a key the check is rule-based and a student COR cannot be read |
 | `COR_READER`, `COR_AI_MODEL` | optional: `COR_READER=ocr` reads the COR with Tesseract (testing only); `COR_AI_MODEL` names another vision model |
 | `DEV_EDITOR_PASSWORD` | optional, at least 8 characters: switches on the developer rule editor at `/dev/rules` (see below). Leave empty to keep it off |
@@ -187,7 +189,10 @@ Restart the API server (an old process has no `/api/auth/google`). "Access Denie
 
 Set `DEV_EDITOR_PASSWORD` in `server/.env`, restart the API and open **http://localhost:3001/dev/rules**. It is not linked from the app and needs no app sign-in, only the password (open for 30 minutes; five wrong tries lock the address for ten). It changes the compliance standard's pass mark, bands, area weights, limits and each rule's points, severity, message, explanation, numbers and on/off switch. A save takes effect at once and gives the standard a new version (v9.1, v9.2, ...). "Reset to file" removes all edits; the history keeps them. The edits are stored in the database (`app_settings`, `standard_changes`), on top of `server/lib/compliance/standard-v4.json`. The `standard_changes` table is created the first time the editor saves (it is also in `schema.sql`).
 
-### The AI Checker standard is v9 (69 rules)
+### The AI Checker standard is v10 (70 rules, 100 points)
+The rules follow the curriculum office's updated rules (`txt-files/updated-rules`, summarised in `txt-files/syllabus_rules.txt`). New: W-01 and W-02 (week 1 is the course orientation, week 2 starts the first topic), P-07 (a CLO relates to the course title) and R-05 (APA 7th edition references). A-05 to A-07 now check the course content against the course title and ILO, and the assessment task against the content and activities. T-09 to T-11 are gone (T-28 to T-30 check the LCUP vision, mission and EGAs). The rule points add up to 100. Nothing to migrate; scores stored earlier stay until a syllabus is checked again.
+
+The v9 notes follow.
 Seven rules (D-01 to D-07) find repeated data inside one syllabus, and I-01 asks that a syllabus says how it supports diverse learners (students with disabilities and others). They are in `server/lib/compliance/standard-v4.json` and need no migration or setting. Scores stored before the upgrade stay as they were until a syllabus is checked again. If you saved edits in the developer rule editor on v7, "Reset to file" brings in the new rules (the history keeps your edits).
 
 ### "Table ... doesn't exist" or a missing column
@@ -251,8 +256,7 @@ syllabus-cms-plus/
 | `npm run init-db` | Create the database, tables and seed data |
 | `npm run seed-outcomes` | Load the institution's vision, mission, EGAs, programs and the BSIT program outcomes. Only inserts what is missing; run it after `migrate-builder`. Supports `--dry-run` |
 | `npm run seed-curriculum` | Load the programs and each program's subjects with their prerequisites from `db/curriculum-data.js` (the curricula in `/curriculum`). Needs `migrate-prerequisites`, `migrate-course-code-per-program` and `migrate-credit-units`. Adds only; `-- --dry-run` reports, `-- --no-updates` leaves existing subject titles alone |
-| `node scripts/sample-syllabi.js` | Make five sample syllabi (BSIT x2, BSIT-CS, BSCPE, BSIE) through the app's own API routes: it first fills what the catalog lacks for those subjects (school vision and mission, program EGAs and outcomes, subject setup and CLOs), then builds, submits and (for three of them) approves the syllabi. Offline AI step; skips a subject that already has a syllabus |
-| `node scripts/cor-ai-test.js [image]` | Try the AI COR reader on the images in `server/sample_cor/` (git-ignored) or on a given image; prints the fields it read |
+| `node scripts/cor-ai-test.js [image]` | Try the AI COR reader on the images in a given folder or on a given image; prints the fields it read |
 
 ### Database migrations (`server/`)
 Each one upgrades an older database, is safe to run again, and touches no existing data. Run the ones you are missing, in this order, then restart the API server.

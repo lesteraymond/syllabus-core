@@ -285,6 +285,18 @@ export const CHECKS = {
   },
 
   // Every ILO sits under a CLO that builds a graduate attribute (or is tagged with an EGA itself). An ILO with no CLO tag is T-13's.
+  // A reference written the APA 7th edition way: the year sits in brackets after the author and ends with a full stop, "Author. (2021). Title."
+  // A reference too short to be a citation is R-04's finding, not this one.
+  referenceApa(X, p) {
+    const out = [];
+    X.K.refGroups.forEach((g) => arr(obj(obj(X.c.refs)[g.key]).items).forEach((x, k) => {
+      const t = text(obj(x).t);
+      if (blank(t) || t.trim().length < X.K.minReferenceChars || words(t) < X.K.minReferenceWords) return;
+      out.push(item(new RegExp(p.pattern).test(t), 'refs.' + g.key + '.items[' + k + ']', { text: clip(t, 60) }, { reference: clip(t, 120) }));
+    }));
+    return out;
+  },
+
   iloEgaChain(X) {
     const out = [];
     X.lessons.forEach(({ r, i }) => arr(r.ilos).forEach((il0, j) => {
@@ -307,13 +319,36 @@ export const CHECKS = {
     const stems = (s) => new Set(text(s).toLowerCase().split(/[^a-z0-9]+/).filter((w) => w.length >= A.minWordLength && !stop.has(w)).map((w) => w.slice(0, A.stemLength)));
     const out = [];
     X.lessons.forEach(({ r, i }) => {
-      const ilo = arr(r.ilos).map((il) => text(obj(il).text)).join(' ');
-      if (blank(ilo) || blank(r[p.column])) return;
-      const want = stems(ilo);
-      if (p.column !== 'contents') stems(r.contents).forEach((s) => want.add(s));
-      out.push(item([...stems(r[p.column])].some((s) => want.has(s)), 'plan[' + i + '].' + p.column, { where: weekLabel(r) }, { column: p.column }));
+      if (blank(r[p.column])) return;
+      // What the column is built on: the course title, the lesson's ILOs, its course content or its activities (`against`).
+      const src = { title: X.meta.title, ilo: arr(r.ilos).map((il) => text(obj(il).text)).join(' '), contents: r.contents, activities: r.activities };
+      const want = new Set();
+      p.against.forEach((k) => stems(src[k]).forEach((s) => want.add(s)));
+      if (!want.size) return;
+      out.push(item([...stems(r[p.column])].some((s) => want.has(s)), 'plan[' + i + '].' + p.column, { where: weekLabel(r) }, { column: p.column, against: p.against }));
     });
     return out;
+  },
+
+  // Week 1 is the course orientation; the first topic starts in week 2. `mode` is 'orientation' (the row for `week` says orientation) or
+  // 'topic' (it has course content that is not an orientation). A week with no lesson row is H-02's finding, not this one.
+  weekTopic(X, p) {
+    const row = X.lessons.find(({ r }) => weekNums(r.week).indexOf(p.week) > -1);
+    if (!row) return [];
+    const oriented = new RegExp(p.pattern, 'i').test(text(row.r.contents));
+    const ok = p.mode === 'orientation' ? oriented : !blank(row.r.contents) && !oriented;
+    return [item(ok, 'plan[' + row.i + '].contents', { week: p.week }, { week: p.week })];
+  },
+
+  // Each course learning outcome is about the course: its title or statement shares a meaningful word with the course title.
+  cloTitle(X) {
+    const A = X.K.alignment;
+    const stop = new Set(A.stopwords);
+    const stems = (s) => new Set(text(s).toLowerCase().split(/[^a-z0-9]+/).filter((w) => w.length >= A.minWordLength && !stop.has(w)).map((w) => w.slice(0, A.stemLength)));
+    const want = stems(X.meta.title);
+    if (!want.size) return [];
+    return X.clos.map((k0, i) => ({ k: obj(k0), i })).filter(({ k }) => !blank(k.statement))
+      .map(({ k, i }) => item([...stems(k.title + ' ' + k.statement)].some((s) => want.has(s)), 'clos[' + i + '].statement', { n: i + 1 }));
   },
 
   // Each lesson's expected values name at least one of the six LCUP core values. A blank cell is the plan columns' finding.

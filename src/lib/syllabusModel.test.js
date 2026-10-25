@@ -174,7 +174,7 @@ test('step statuses: review is complete only when steps 1 to 6 are', () => {
   assert.equal(STEPS.length, 7);
   const { d } = fixture();
   assert.equal(M.stepStatuses(d, {}).statuses[0], 'done');
-  assert.equal(M.stepStatuses(d, {}).statuses[5], 'done', 'advice alone (fewer than 3 exam rows) does not hold a step back');
+  assert.equal(M.stepStatuses(d, {}).statuses[5], 'warn', 'advice alone (fewer than 3 exam rows) shows a warning but does not hold a step back');
   d.grading.rows = []; // a blocking problem
   assert.equal(M.stepStatuses(d, {}).statuses[5], 'todo', 'unvisited step with blockers');
   assert.equal(M.stepStatuses(d, { 5: 1 }).statuses[5], 'attn');
@@ -185,7 +185,10 @@ test('all seven completion statuses follow required fields, revoke on incomplete
   const { d } = fixture();
   d.reqs = ['Requirement A', 'Requirement B', 'Requirement C'].map(t => ({ id: newId(), t }));
   Object.values(d.refs).forEach(group => { group.na = true; });
-  assert.deepEqual(M.stepStatuses(d, {}).statuses, Array(7).fill('done'));
+  // plan, references and grading still have advice (a short plan, no references, exam rows): a warning, not a block
+  const WARNED = ['done', 'done', 'warn', 'done', 'warn', 'warn', 'warn'];
+  assert.deepEqual(M.stepStatuses(d, {}).statuses, WARNED);
+  assert.equal(M.stepStatuses(d, {}).complete, true, 'warnings do not hold Review back');
   const prereq = d.meta.prereq;
   d.meta.prereq = '';
   const incomplete = M.stepStatuses(d, { 0: 1, 6: 1 });
@@ -193,7 +196,7 @@ test('all seven completion statuses follow required fields, revoke on incomplete
   assert.equal(incomplete.statuses[6], 'attn');
   assert.equal(incomplete.complete, false);
   d.meta.prereq = prereq;
-  assert.deepEqual(M.stepStatuses(d, { 0: 1, 6: 1 }).statuses, Array(7).fill('done'));
+  assert.deepEqual(M.stepStatuses(d, { 0: 1, 6: 1 }).statuses, WARNED);
 });
 
 test('sequential step indicators do not check auto-loaded outcomes until earlier required fields are complete', () => {
@@ -207,13 +210,13 @@ test('sequential step indicators do not check auto-loaded outcomes until earlier
   d.meta.prereq = 'None';
   const unlocked = M.stepStatuses(d, { 0: 1 }, { sequential: true });
   assert.equal(unlocked.firstBlocked, 3);
-  assert.deepEqual(unlocked.statuses.slice(0, 3), ['done', 'done', 'done']);
+  assert.deepEqual(unlocked.statuses.slice(0, 3), ['done', 'done', 'warn']);
   assert.equal(unlocked.statuses[3], 'todo');
   assert.ok(unlocked.statuses.slice(4).every(status => status === 'locked'));
-  assert.equal(M.stepStatuses(d).statuses[5], 'done', 'non-sequential administrator inspection stays unrestricted');
+  assert.equal(M.stepStatuses(d).statuses[5], 'warn', 'non-sequential administrator inspection stays unrestricted');
   d.reqs = ['A', 'B', 'C'].map(t => ({ id: newId(), t }));
   Object.values(d.refs).forEach(group => { group.na = true; });
-  assert.deepEqual(M.stepStatuses(d, {}, { sequential: true }).statuses, Array(7).fill('done'));
+  assert.deepEqual(M.stepStatuses(d, {}, { sequential: true }).statuses, ['done', 'done', 'warn', 'done', 'warn', 'warn', 'warn']);
   d.meta.prereq = '';
   assert.equal(M.stepStatuses(d, { 1: 1 }, { sequential: true }).statuses[1], 'locked', 'invalidating an earlier step removes later checks');
 });
@@ -382,7 +385,7 @@ test('every issue says whether it blocks and who must fix it; advice never block
   assert.match(M.issues(d, 'grade').filter((i) => !i.blocking).map((i) => i.text).join(' '), /Only 0 of 3/);
   assert.deepEqual(M.blockers(d, 'plan'), []); // advice alone does not block
   assert.deepEqual(M.blockers(d, 'grade'), []);
-  assert.equal(M.stepStatuses(d, {}).statuses[2], 'done');
+  assert.equal(M.stepStatuses(d, {}).statuses[2], 'warn'); // advice shows a warning, never a block
 });
 
 test('step 1 blocks on an empty program, subject, prerequisite, units or description', () => {
@@ -543,4 +546,28 @@ test('choosing a subject fills Credit Units (V) from the curriculum, only when i
   assert.deepEqual([other.meta.lecture, other.meta.lab], ['0', '1']); // a different subject: its own units, a zero is kept
   const none = applyCourse(emptyDraft(newId), course({ units: null }));
   assert.deepEqual([none.meta.lecture, none.meta.lab], ['', '']);
+});
+
+test('references: fewer than 3 listed is advice (a warning on the step), and 3 clears it', () => {
+  const { d } = fixture();
+  Object.values(d.refs).forEach((g) => { g.na = true; g.items = []; });
+  assert.match(M.issues(d, 'refs').filter((i) => !i.blocking).map((i) => i.text).join(' '), /Only 0 of at least 3 references/);
+  assert.deepEqual(M.blockers(d, 'refs'), []);
+  assert.equal(M.stepStatuses(d, {}).statuses[4], 'warn');
+  d.refs.books = { na: false, items: ['A', 'B', 'C'].map((t) => ({ id: newId(), t })) };
+  assert.deepEqual(M.issues(d, 'refs').filter((i) => !i.blocking), []);
+  assert.equal(M.stepStatuses(d, {}).statuses[4], 'done');
+});
+
+test('grading: the passing grade defaults to 50% and must be a percent from 1 to 100', () => {
+  const { d } = fixture();
+  assert.equal(emptyDraft(newId).grading.passing, '50');
+  assert.equal(d.grading.passing, '50');
+  assert.deepEqual(M.blockers(d, 'grade').filter((i) => /passing grade/.test(i.text)), []);
+  for (const bad of ['', '0', '101', 'abc']) {
+    d.grading.passing = bad;
+    assert.ok(M.blockers(d, 'grade').some((i) => /passing grade/.test(i.text)), 'blocked for "' + bad + '"');
+  }
+  d.grading.passing = '75';
+  assert.deepEqual(M.blockers(d, 'grade').filter((i) => /passing grade/.test(i.text)), []);
 });

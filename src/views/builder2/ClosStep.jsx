@@ -19,12 +19,11 @@ export default function ClosStep({ d, model, apply, editable = !!apply }) {
   });
   const toggle = (values, no) => values.includes(no) ? values.filter(n => n !== no) : [...values, no].sort((a, b) => a - b);
   const usesTag = tag => d.plan.some(row => row.ilos.some(il => il.tags.includes(tag)));
-  const egaUsed = no => o.pos.some(p => p.egas.includes(no)) || d.clos.some(c => c.egas.includes(no)) || usesTag('ega:' + no);
   const poUsed = no => d.clos.some(c => c.pos.includes(no)) || usesTag('po:' + no);
   const nextNo = rows => Math.max(0, ...rows.map(row => row.no)) + 1;
   const mapChoices = (rows, values, onChange, label) => <div className="ie-egas" role="group" aria-label={label}>
-    {rows.map(row => <label className={'ie-chip' + (values.includes(row.no) ? ' on' : '')} key={row.no} title={row.name || row.text}>
-      <input type="checkbox" checked={values.includes(row.no)} onChange={() => onChange(toggle(values, row.no))} />{label + ' ' + row.no}
+    {rows.map(row => <label className={'ie-chip' + (values.includes(row.no) ? ' on' : '')} key={row.no} data-tip={row.name || row.text || undefined}>
+      <input type="checkbox" aria-label={label + ' ' + row.no + (row.name || row.text ? ': ' + (row.name || row.text) : '')} checked={values.includes(row.no)} onChange={() => onChange(toggle(values, row.no))} />{label + ' ' + row.no}
     </label>)}
   </div>;
   const removeButton = (label, disabled, onClick) => <button type="button" className="ib del" aria-label={label} title={disabled ? t('outcomes.inUse') : label} disabled={disabled} onClick={onClick}><Icon name="bin" size={16} /></button>;
@@ -47,13 +46,11 @@ export default function ClosStep({ d, model, apply, editable = !!apply }) {
       <section className="sm-card">
         <header className="sm-card-h"><h4>{t('ui.expected_graduate_attributes_86f980')}</h4></header>
         <div className="sm-card-b">
-          {o.egas.map((e, i) => <div className="ie-ega" key={e.no}>
+          <p className="hint">{t('outcomes.egaFixed')}</p>
+          {o.egas.map(e => <div className="ie-ega fixed" key={e.no}>
             <span className="code ref mono">{t('ui.ega_4f085b') + e.no}</span>
-            <input className="in" value={e.name} maxLength={255} placeholder={t('ui.full_name_eeb692')} aria-label={t('ui.name_of_ega_3dfa90') + e.no} onChange={event => { const value = event.target.value; edit(x => { x.egas[i].name = value; }); }} />
-            <input className="in" value={e.short} maxLength={120} placeholder={t('ui.short_name_feb5a9')} aria-label={t('ui.short_name_of_ega_231166') + e.no} onChange={event => { const value = event.target.value; edit(x => { x.egas[i].short = value; }); }} />
-            {removeButton(t('ui.remove_ega_8c32e7') + e.no, egaUsed(e.no), () => edit(x => { x.egas.splice(i, 1); }))}
+            <input className="in" readOnly value={e.name} aria-label={t('ui.name_of_ega_3dfa90') + e.no} />
           </div>)}
-          <button type="button" className="link" disabled={o.egas.length >= 20} onClick={() => edit(x => { x.egas.push({ no: nextNo(x.egas), name: '', short: '' }); })}>{t('ui.add_ega_270a20')}</button>
         </div>
       </section>
       <section className="sm-card">

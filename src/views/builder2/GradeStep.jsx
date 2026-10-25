@@ -19,23 +19,32 @@ export default function GradeStep({ d, apply, model }) {
     <div>
       <div>
         {g.rows.map((r, i) => (
-          <div className="grow" key={r.id}>
-            <span className="mono" style={{ padding: '8px 0 0 6px', color: 'var(--muted)' }}>{(i + 1) + '.'}</span>
-            <input className="cell" value={r.label} placeholder={translateUI("ui.component_c92c52")} aria-label={translateUI("ui.component_c92c52")} onChange={(e) => { const v = e.target.value; upd((x) => { x.rows[i].label = v; }); }} />
-            <input className="cell mono" value={r.abbr} placeholder={translateUI("ui.abbr_b9bce8")} aria-label={translateUI("ui.abbreviation_cd4378")} maxLength={8} onChange={(e) => { const v = e.target.value.toUpperCase(); upd((x) => { x.rows[i].abbr = v; }); }} />
-            <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              <input className="cell mono" inputMode="decimal" value={r.pct} aria-label={(r.label || tr('Component')) + translateUI("ui.percent_dff0eb")} onChange={(e) => { const v = e.target.value; if (PCT.test(v)) upd((x) => { x.rows[i].pct = v; }); }} />
-              <span className="mono">%</span>
-            </span>
-            <button type="button" className="ib del" aria-label={translateUI("ui.remove_component_200c43")} onClick={() => upd((x) => { x.rows.splice(i, 1); })}><Ic n="x" /></button>
+          <div className="gcomp" key={r.id} data-grade-row={i}>
+            <div className="grow">
+              <span className="mono" style={{ padding: '8px 0 0 6px', color: 'var(--muted)' }}>{(i + 1) + '.'}</span>
+              <input className="cell" value={r.label} placeholder={translateUI("ui.component_c92c52")} aria-label={translateUI("ui.component_c92c52")} onChange={(e) => { const v = e.target.value; upd((x) => { x.rows[i].label = v; }); }} />
+              <input className="cell mono" value={r.abbr} placeholder={translateUI("ui.abbr_b9bce8")} aria-label={translateUI("ui.abbreviation_cd4378")} maxLength={8} onChange={(e) => { const v = e.target.value.toUpperCase(); upd((x) => { x.rows[i].abbr = v; }); }} />
+              <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                <input className="cell mono" inputMode="decimal" value={r.pct} aria-label={(r.label || tr('Component')) + translateUI("ui.percent_dff0eb")} onChange={(e) => { const v = e.target.value; if (PCT.test(v)) upd((x) => { x.rows[i].pct = v; }); }} />
+                <span className="mono">%</span>
+              </span>
+              <button type="button" className="ib del" aria-label={translateUI("ui.remove_component_200c43")} onClick={() => upd((x) => { x.rows.splice(i, 1); })}><Ic n="x" /></button>
+            </div>
+            <input className="cell gparts" value={r.parts || ''} placeholder={translateUI('grade.parts_placeholder')} aria-label={(r.label || tr('Component')) + ': ' + translateUI('grade.parts')} onChange={(e) => { const v = e.target.value; upd((x) => { x.rows[i].parts = v; }); }} />
           </div>
         ))}
       </div>
-      <button type="button" className="link" onClick={() => upd((x) => { x.rows.push({ id: newId(), label: '', abbr: '', pct: '' }); })}>{translateUI("ui.add_component_2364b5")}</button>
+      <button type="button" className="link" onClick={() => upd((x) => { x.rows.push({ id: newId(), label: '', abbr: '', pct: '', parts: '' }); })}>{translateUI("ui.add_component_2364b5")}</button>
       <div className="gbar" role="img" aria-label={translateUI("ui.weights_cd9b0c") + g.rows.map((r) => (r.label || 'Component') + ' ' + (Number(r.pct) || 0) + '%').join(', ')}>
         {g.rows.map((r) => <i key={r.id} style={{ width: Math.min(100, Number(r.pct) || 0) + '%' }} />)}
       </div>
       <div className={'total' + (total === 100 ? '' : ' bad')}><span>{translateUI("ui.total_b25928")}</span><span className="mono">{total + '%'}</span>{total !== 100 && <span className="hint">{translateUI("ui.should_be_100_655251")}</span>}</div>
+      <label className="field gpass"><span>{translateUI('grade.passing')}</span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <input className="cell mono" inputMode="decimal" value={g.passing == null ? '' : g.passing} aria-label={translateUI('grade.passing')} onChange={(e) => { const v = e.target.value; if (PCT.test(v)) upd((x) => { x.passing = v; }); }} />
+          <span className="mono">%</span>
+        </span>
+      </label>
       <div className="eq" aria-live="polite">
         <div>{f.term}</div>
         <div>{f.final}</div>

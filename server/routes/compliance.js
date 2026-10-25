@@ -191,7 +191,7 @@ router.post('/syllabi/:id/suggestions', requireAuth, async (req, res) => {
     const [people] = await db.query('SELECT first_name, last_name FROM users WHERE user_id = ?', [syl.user_id]);
     const author = people[0] ? { firstName: people[0].first_name, lastName: people[0].last_name } : null;
     const provider = svc.getProvider();
-    const made = await suggest.generate({ provider, content: subject.content, findings: detail.findings, standard: svc.standard, names: svc.namesFor(author, subject.content) });
+    const made = await suggest.generate({ provider, content: subject.content, findings: detail.findings, standard: svc.standard, names: svc.namesFor(author, subject.content), refresh: !!(req.body && req.body.refresh === true) });
 
     // The score with every suggestion that fits applied, by the rules alone, against the same measure of the form as it is now.
     const catalog = await catalogSnapshot(db, subject.content);

@@ -114,7 +114,7 @@ export function emptyDraft(newId) {
     plan: [blankRow(newId)],
     reqs: [],
     refs: { books: { na: false, items: [] }, program: { na: false, items: [] }, online: { na: false, items: [] }, electronics: { na: false, items: [] } },
-    grading: { rows: [], override: { on: false, term: '', final: '' } },
+    grading: { rows: [], override: { on: false, term: '', final: '' }, passing: '50' },
     signoff: {},
   };
 }
@@ -388,11 +388,15 @@ export function createModel({ institution, programs, year }) {
         const grp = d.refs[g[0]];
         if (!grp.na && !grp.items.some((x) => x.t.trim())) form(g[1] + ' has no entries. Add one or mark it not applicable.');
       });
+      const listed = GROUPS.reduce((n, g) => n + (d.refs[g[0]].na ? 0 : d.refs[g[0]].items.filter((x) => x.t.trim()).length), 0);
+      if (listed < 3) advice('Only ' + listed + ' of at least 3 references are listed.');
     }
     if (key === 'grade') {
       const t = gradeTotal(d);
       if (t !== 100) form('Components total ' + t + '%, not 100%.');
       if (!d.grading.rows.length) form('Add grading components.');
+      const passing = Number(d.grading.passing);
+      if (blank(d.grading.passing) || !(passing > 0 && passing <= 100)) form('Enter the passing grade as a percent from 1 to 100.');
       const ex = examRows(d).length;
       if (ex < 3) advice('Only ' + ex + ' of 3 grading terms have an exam row in the Learning Plan.');
       if (d.grading.override.on && (!d.grading.override.term.trim() || !d.grading.override.final.trim())) form('Override formulas cannot be empty.');
@@ -402,16 +406,19 @@ export function createModel({ institution, programs, year }) {
   // Only the problems that stop the faculty member from moving on.
   const blockers = (d, key) => issues(d, key).filter((i) => i.blocking);
 
-  // Step status: 'done' when nothing blocks it, 'attn' when visited with blockers, 'todo' otherwise. Advice never changes a
-  // status. Review is done only when steps 1-6 are, which is also what unlocks Re-check and Submit.
+  // Step status: 'done' when the step has nothing left to fix, 'warn' when nothing blocks it but advice remains (shown with a warning sign,
+  // and it never holds the author back), 'attn' when visited with blockers, 'todo' otherwise. Review is done only when steps 1-6 are
+  // (done or warn), which is also what unlocks Re-check and Submit.
   function stepStatuses(d, visited = {}, { sequential = false } = {}) {
     const st = STEPS.map((s, i) => {
       if (s.key === 'review') return 'todo';
-      return blockers(d, s.key).length === 0 ? 'done' : (visited[i] ? 'attn' : 'todo');
+      if (blockers(d, s.key).length) return visited[i] ? 'attn' : 'todo';
+      return issues(d, s.key).length ? 'warn' : 'done';
     });
-    const sixDone = st.slice(0, 6).every((x) => x === 'done');
-    st[6] = sixDone ? 'done' : (visited[6] ? 'attn' : 'todo');
-    const firstBlocked = st.slice(0, 6).findIndex(status => status !== 'done');
+    const passes = (x) => x === 'done' || x === 'warn';
+    const sixDone = st.slice(0, 6).every(passes);
+    st[6] = sixDone ? (st.slice(0, 6).includes('warn') ? 'warn' : 'done') : (visited[6] ? 'attn' : 'todo');
+    const firstBlocked = st.slice(0, 6).findIndex(status => !passes(status));
     // Sequential faculty navigation: valid auto-loaded data must not mark an inaccessible step complete.
     const statuses = sequential && firstBlocked >= 0 ? st.map((status, index) => index > firstBlocked ? 'locked' : status) : st;
     return { statuses, complete: sixDone, firstBlocked };

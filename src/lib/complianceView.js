@@ -8,6 +8,8 @@ import { phDate, phDateTime, phDayStart, phTime } from './phTime.js';
 // areas, rows, clos, priority, level }], contact }.
 
 export const SOURCE_LABEL = { rule: 'Rule', ai: 'AI' };
+// A recommendation's level is stored as High, Medium or Low; it is shown as what the reviewer should do about it.
+export const REVISION_LABEL = { High: 'For revision', Medium: 'For minor revision', Low: 'For improvement' };
 
 // The builder's steps by key: the number and title a finding or recommendation is linked to.
 export const STEP_INFO = {
@@ -19,6 +21,36 @@ export const STEP_INFO = {
   grade: { n: 6, title: 'Grading System' },
   review: { n: 7, title: 'Review & Check' },
 };
+// Where a finding's path points in the form, so a link can highlight just that: { row } a Learning Plan row (any column or ILO of it),
+// { req } a requirement, { ref, item? } a reference group or one reference, { grade } a grading row, { desc } the course description.
+// null when the path names nothing the steps show on its own (the whole step is highlighted then).
+export function targetOf(path) {
+  const p = String(path || '');
+  let m;
+  if ((m = /^plan\[(\d+)\]/.exec(p))) return { row: Number(m[1]) };
+  if ((m = /^reqs\[(\d+)\]/.exec(p))) return { req: Number(m[1]) };
+  if ((m = /^refs\.([A-Za-z]+)\.items\[(\d+)\]/.exec(p))) return { ref: m[1], item: Number(m[2]) };
+  if ((m = /^refs\.([A-Za-z]+)/.exec(p))) return { ref: m[1] };
+  if ((m = /^grading\.rows\[(\d+)\]/.exec(p))) return { grade: Number(m[1]) };
+  if (/^description/.test(p)) return { desc: true };
+  return null;
+}
+const STEP_OF = { row: 'plan', req: 'reqs', ref: 'refs', grade: 'grade', desc: 'info' };
+export const stepOfTarget = (t) => STEP_OF[Object.keys(t || {}).find((k) => STEP_OF[k])] || null;
+// The targets of `paths` that sit in step `stepKey`, without repeats.
+export function targetsIn(stepKey, paths) {
+  const seen = new Set();
+  return (paths || []).map(targetOf).filter((t) => t && stepOfTarget(t) === stepKey && !seen.has(JSON.stringify(t)) && seen.add(JSON.stringify(t)));
+}
+// The element a target is drawn as (the steps mark it with a data attribute).
+export function selectorOf(t) {
+  if (t.row != null) return '[data-plan-row="' + t.row + '"]';
+  if (t.req != null) return '[data-req-row="' + t.req + '"]';
+  if (t.ref) return t.item != null ? '[data-ref-item="' + t.ref + ':' + t.item + '"]' : '[data-ref-group="' + t.ref + '"]';
+  if (t.grade != null) return '[data-grade-row="' + t.grade + '"]';
+  if (t.desc) return '[data-desc]';
+  return null;
+}
 export const stepLabel = (key) => (STEP_INFO[key] ? 'Step ' + STEP_INFO[key].n + ': ' + STEP_INFO[key].title : '');
 
 // 'none' (never checked), 'insufficient' (not enough written to score) or 'scored'.

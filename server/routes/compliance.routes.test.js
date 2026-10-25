@@ -224,7 +224,7 @@ test('submit stores the run with the version, its area scores and findings, then
   const run = db.s.runs[0];
   assert.strictEqual(run.version_id, 77);
   assert.strictEqual(run.syllabus_id, 1);
-  assert.strictEqual(run.standard_version, 'v9');
+  assert.strictEqual(run.standard_version, 'v10');
   assert.match(run.content_hash, /^[0-9a-f]{64}$/);
   assert.strictEqual(run.created_by, 5);
   assert.deepStrictEqual(db.s.areas.map((a) => a.area_key), ['template', 'completeness', 'co_po', 'assessment', 'contact_hours', 'reference_currency']);
@@ -327,7 +327,7 @@ test('editing the content marks the last run stale, and a re-check makes a fresh
   assert.strictEqual(fresh.body.run.stale, false);
 }));
 
-test('a vision changed by an admin after a submit shows as a blocking failure on re-check, and a new submit picks up the new text', () => withServer(async ({ call, db }) => {
+test('a vision changed by an admin after a submit no longer blocks on re-check (the LCUP vision is a constant), and a new submit picks up the new text', () => withServer(async ({ call, db }) => {
   assert.strictEqual((await call(fay, 'POST', '/syllabi/1/submit', {})).status, 200);
   assert.strictEqual(db.s.saved[0].catalog.institution.vision, 'V');
   const ok = await call(fay, 'POST', '/syllabi/1/compliance/recheck', { force: true });
@@ -335,10 +335,7 @@ test('a vision changed by an admin after a submit shows as a blocking failure on
 
   const setup=JSON.parse(db.s.courses[0].standards_json);setup.vision='A new vision';db.s.courses[0].standards_json=JSON.stringify(setup);
   const re = await call(fay, 'POST', '/syllabi/1/compliance/recheck', { force: true });
-  assert.strictEqual(re.body.run.conformant, false);
-  const f = re.body.run.findings.find((x) => x.ruleId === 'T-09');
-  assert.strictEqual(f.severity, 'blocking');
-  assert.match(f.message, /not the school's current vision/);
+  assert.strictEqual(re.body.run.conformant, true);
 
   const again = await call(fay, 'POST', '/syllabi/1/submit', {}); // submitting again takes the current text
   assert.strictEqual(again.status, 200);
@@ -912,7 +909,8 @@ test('the AI judges the fields: a placeholder description it flags lowers the sc
     assert.match(ai[0].message, /placeholder text, nothing about the course/);
     const recs = db.s.findings.filter((f) => f.kind === 'recommendation');
     assert.ok(recs.some((f) => f.title === 'Rewrite the course description'));
-    assert.strictEqual(prompts.length, 2, 'one call to judge the fields, one for the recommendations');
+    assert.strictEqual(prompts.length, 3, 'one call to judge the fields, one for the recommendations, one for the suggested changes (written alongside them)');
+    assert.ok(prompts.some((q) => q.includes('fix the parts of a course syllabus')), 'the suggested changes are prepared with the recommendations');
     assert.strictEqual(db.s.areas.filter((a) => a.run_id === run.run_id).length, 6, 'the area scores were replaced, not doubled');
     const read = await call(fay, 'GET', '/syllabi/1/compliance');
     assert.strictEqual(read.body.run.overall, run.overall);

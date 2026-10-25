@@ -966,16 +966,15 @@ a:focus-visible {
 	@apply tw:[font-size:var(--text-xs)] tw:[color:var(--muted)] tw:[margin:2px_0];
 }
 .recommend {
-	@apply tw:grid tw:[grid-template-columns:56px_1fr] tw:[gap:8px] tw:[padding:10px_0] tw:[border-bottom:1px_solid_#e3e7ea];
+	@apply tw:grid tw:[grid-template-columns:96px_1fr] tw:[gap:8px] tw:[padding:10px_0] tw:[border-bottom:1px_solid_#e3e7ea];
 }
 .recommend:last-child {
 	@apply tw:[border:0];
 }
 .recommend .priority {
-	@apply tw:[width:56px];
-	@apply tw:[height:56px] tw:[border-radius:50%] tw:[font-size:10px];
-	@apply tw:[font-weight:var(--fw-semibold)] tw:[padding:0] tw:flex tw:items-center tw:justify-center tw:uppercase tw:[letter-spacing:0.2px];
-	@apply tw:[line-height:1.1] tw:text-center;
+	@apply tw:[width:100%] tw:[min-height:30px] tw:[align-self:start] tw:[border-radius:8px] tw:[font-size:10px];
+	@apply tw:[font-weight:var(--fw-semibold)] tw:[padding:6px_4px] tw:flex tw:items-center tw:justify-center tw:uppercase tw:[letter-spacing:0.2px];
+	@apply tw:[line-height:1.2] tw:text-center tw:whitespace-normal;
 }
 .priority.high {
 	@apply tw:[background:#ffe8e8] tw:[color:#9b1f27];
@@ -2537,10 +2536,12 @@ table,
 .bld2 .stepper button.done i {
 	@apply tw:[color:var(--green)] tw:[font-weight:var(--fw-bold)];
 }
+.bld2 .stepper button.warn i,
 .bld2 .stepper button.attn i {
 	@apply tw:[color:var(--warn)] tw:[font-weight:var(--fw-bold)];
 }
 .bld2 .stepper button.done:not(.active) span,
+.bld2 .stepper button.warn:not(.active) span,
 .bld2 .stepper button.attn:not(.active) span {
 	@apply tw:[background:var(--th-gray)];
 }
@@ -3088,6 +3089,10 @@ table,
 .bld2 .gbar i:nth-child(n + 6) {
 	@apply tw:[background:var(--clo-5)];
 }
+.bld2 .gcomp { display: grid; gap: 4px; margin-bottom: 6px; }
+.bld2 .gcomp .gparts { margin-left: 34px; width: calc(100% - 34px); font-size: var(--text-xs); }
+.bld2 .gpass { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.bld2 .gpass .cell { width: 80px; }
 .bld2 .grow {
 	@apply tw:grid tw:[grid-template-columns:34px_minmax(0,_1fr)_84px_96px_28px] tw:[gap:0_8px] tw:[align-items:start] tw:[border-bottom:1px_solid_var(--line)] tw:[padding:3px_0];
 }
@@ -3812,7 +3817,7 @@ table,
 .cmp-top { @apply tw:flex-wrap; }
 .cmp-head { @apply tw:[flex:1_1_220px] tw:[min-width:0]; }
 .cmp .check-row { @apply tw:[grid-template-columns:minmax(0,_1fr)_46px_28px]; }
-.cmp-recs .recommend { @apply tw:[grid-template-columns:56px_minmax(0,_1fr)]; }
+.cmp-recs .recommend { @apply tw:[grid-template-columns:96px_minmax(0,_1fr)]; }
 .cmp-recs .recommend > div, .cmp-block li, .cmp-find li { @apply tw:[min-width:0] tw:wrap-anywhere; }
 .overlay-confirm { @apply tw:[z-index:90]; } /* above every stacked modal, below the toast */
 

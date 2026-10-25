@@ -2,6 +2,7 @@ import { tr } from "../../i18n/index.js";
 import { t as translateUI } from "../../i18n/index.js";
 import { MIN_NOTE } from '../../lib/syllabusRules';
 import { STEPS } from '../../lib/syllabusModel';
+import { selectorOf } from '../../lib/complianceView';
 import FormPaper from './FormPaper';
 import ComplianceSection from './ComplianceSection';
 
@@ -10,16 +11,24 @@ import ComplianceSection from './ComplianceSection';
 // of steps 1 to 6 (each links back), and the sign-off block. Faculty fill in no revision date and no modifications list.
 // `submitFailed` are the rules the server named when it refused a submit.
 export default function ReviewStep({ d, apply, editable, model, go, preparedBy, existing, noteRequired, note, setNote, syllabusId, saveFirst, canCheck, checkTick, submitFailed, onRun, showCompliance = true }) {
-  // `target.row` (a plan row index) also scrolls to that row once its step is on screen and flashes it.
+  // Every link to a step highlights where it lands: the step in the list at the side, and the step's own card (or, for `target.row`, a
+  // plan row, which is also scrolled to once its step is on screen).
+  const pulse = (el, cls) => { if (!el) return; el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); setTimeout(() => el.classList.remove(cls), 1800); };
   const openStep = (key, target) => {
-    go(STEPS.findIndex((s) => s.key === key));
-    if (!target || target.row == null) return;
+    const at = STEPS.findIndex((s) => s.key === key);
+    go(at);
     setTimeout(() => {
-      const tr = document.querySelector('[data-plan-row="' + target.row + '"]');
-      if (!tr) return;
-      tr.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      tr.classList.add('row-flash');
-      setTimeout(() => tr.classList.remove('row-flash'), 1800);
+      pulse(document.querySelectorAll('.bld2 .stepper button')[at], 'step-flash');
+      // Only what the link is about: one or more rows, a requirement, a reference, a grading row or the description. The whole card only
+      // when the link names nothing smaller (or what it names is not on screen).
+      const list = target ? (target.targets || (target.row != null ? [{ row: target.row }] : [])) : [];
+      const found = list.map((t) => { const sel = selectorOf(t); return sel ? document.querySelector(sel) : null; }).filter(Boolean);
+      if (found.length) {
+        found[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        found.forEach((el) => pulse(el, el.tagName === 'TR' ? 'row-flash' : 'target-flash'));
+        return;
+      }
+      pulse(document.querySelector('.bld2 .editor-card'), 'card-flash');
     }, 150);
   };
   return (

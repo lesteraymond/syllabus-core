@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { GROUPS, PLAN_HEADINGS, renderMarkup } from '../../lib/syllabusModel';
 import { CURRENT_SCHOOL_YEAR, COLLEGE_NAME, INSTITUTION_NAME, INSTITUTION_ADDRESS } from '../../lib/schoolYear';
 
@@ -6,6 +7,9 @@ const html = (t) => ({ __html: renderMarkup(t) });
 // The finished form, read-only, laid out like the institutional form. All free text is escaped before the
 // light markup (bullets, bold) is applied. There is no revision date and no modifications checklist:
 // the system adds the revision date when the syllabus is approved. Reusable by the admin review.
+// A percent as the form prints it: nothing typed stays empty (never 0%).
+const pctText = (v) => (String(v == null ? '' : v).trim() === '' || Number.isNaN(Number(v)) ? '' : Number(v) + '%');
+
 export default function FormPaper({ d, model, preparedBy }) {
   const selected = model.outcomesReady(d);
   const I = selected ? model.institutionFor(d) : { vision: '', mission: { lead: '', items: [] } };
@@ -71,10 +75,19 @@ export default function FormPaper({ d, model, preparedBy }) {
         );
       })}
       <div className="kv2" style={{ marginTop: 10 }}><b>X.</b><b>GRADING SYSTEM</b><span>:</span><span /></div>
-      <div style={{ marginLeft: 34 }}>
-        {d.grading.rows.map((r, i) => <div key={r.id}>{(i + 1) + '. ' + r.label + '  ' + (Number(r.pct) || 0) + '%'}</div>)}
-        <div>{f.term.replace('Term Grade = ', 'Term Grade: ')}</div>
-        <div>{f.final.replace('Final Rating = ', 'Final Rating: ')}</div>
+      <div style={{ marginLeft: 34, display: 'grid', gridTemplateColumns: '28px minmax(0, 1fr) minmax(0, 1.4fr)', rowGap: 2 }}>
+        {d.grading.rows.map((r, i) => {
+          const parts = String(r.parts || '').split(',').map((x) => x.trim()).filter(Boolean);
+          return (
+            <Fragment key={r.id}>
+              <span>{(i + 1) + '.'}</span><span>{r.label}</span><span>{pctText(r.pct)}</span>
+              {parts.map((p, k) => <Fragment key={k}><span /><span style={{ paddingLeft: 8 }}>{p}</span><span /></Fragment>)}
+            </Fragment>
+          );
+        })}
+        <span>{(d.grading.rows.length + 1) + '.'}</span><span>Term Grade</span><span>{f.term.replace('Term Grade = ', '')}</span>
+        <span>{(d.grading.rows.length + 2) + '.'}</span><span>Final Rating</span><span style={{ textDecoration: 'underline' }}>{f.final.replace('Final Rating = ', '')}</span>
+        <span><b>{(d.grading.rows.length + 3) + '.'}</b></span><span><b>Passing Grade:</b></span><span><b>{pctText(d.grading.passing)}</b></span>
       </div>
       <table style={{ marginTop: 14 }}><tbody><tr>
         <td>Prepared by:<br /><br /><b>{preparedBy}</b></td>

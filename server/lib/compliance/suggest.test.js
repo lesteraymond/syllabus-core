@@ -95,6 +95,31 @@ test('answers are remembered, so asking again costs nothing', async () => {
   assert.deepEqual(a.suggestions.map((x) => x.id), b.suggestions.map((x) => x.id));
 });
 
+test('refresh asks the AI again instead of using what was remembered, and keeps the newest answer', async () => {
+  const { c } = weak();
+  let calls = 0;
+  const provider = { judge: async (prompt) => { calls += 1; return JSON.stringify([{ id: idOf(prompt, 'field', 'program'), text: 'Version ' + calls + ' of this course introduces students to programming. They learn variables, loops, functions and simple data structures through guided exercises, apply them in small programs, and show what they have learned through quizzes, hands-on laboratory work, a final project and written examinations during the term.', why: 'w' }]); } };
+  await S.generate({ provider, content: c, findings: check(c).findings, standard });
+  const again = await S.generate({ provider, content: c, findings: check(c).findings, standard, refresh: true });
+  assert.equal(calls, 2);
+  assert.ok(again.suggestions.some((x) => x.changes.some((ch) => /Version 2/.test(ch.after))));
+  const later = await S.generate({ provider, content: c, findings: check(c).findings, standard });
+  assert.equal(calls, 2, 'the refreshed answer is what is remembered now');
+  assert.ok(later.suggestions.some((x) => x.changes.some((ch) => /Version 2/.test(ch.after))));
+});
+
+test('I-01 (diverse learners) gets no suggestion, with or without an AI: it is only a warning', async () => {
+  const c = F.good();
+  c.reqs.pop();
+  const findings = check(c).findings;
+  assert.ok(findings.some((f) => f.ruleId === 'I-01'));
+  assert.ok(!S.planItems(c, findings, standard).some((it) => [...it.rules].includes('I-01')), 'nothing is asked of the AI for it');
+  const withAi = await S.generate({ provider: reply(() => []), content: c, findings, standard });
+  assert.ok(!withAi.suggestions.some((x) => x.rules.includes('I-01')));
+  const noAi = await S.generate({ provider: null, content: c, findings, standard });
+  assert.ok(!noAi.suggestions.some((x) => x.rules.includes('I-01')));
+});
+
 test('without an AI the fixes that need none still come, and the rest are said to be unavailable', async () => {
   const { c } = weak();
   c.grading.rows[0].pct = 70;

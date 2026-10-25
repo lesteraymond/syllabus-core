@@ -38,20 +38,13 @@ test('a conforming syllabus scores 100 everywhere, has no findings, and passes',
   assert.deepStrictEqual(r.contact, { lecture: 2, lab: 1, hoursPerWeek: 5, termHours: 90, weeksPlanned: 18, weeksExpected: 18 });
 });
 
-test('a changed vision blocks: the stored copy no longer equals the catalog', () => {
+test('the school-wide vision, mission and EGAs are the LCUP constants (T-28 to T-30); only a changed program outcome blocks against the catalog', () => {
   const ctx = F.ctx();
   ctx.catalog.institution.vision = 'A different vision.';
-  const r = run(F.good(), ctx);
-  assert.deepStrictEqual(blocking(r), ['T-09']);
-  assert.strictEqual(r.passed, false);
-  assert.match(r.findings[0].message, /not the school's current vision/);
-  assert.strictEqual(r.findings[0].evidence.field, 'vision');
-  const mission = F.ctx();
-  mission.catalog.institution.mission.items.push('a new line');
-  assert.deepStrictEqual(blocking(run(F.good(), mission)), ['T-10']);
-  const eg = F.ctx();
-  eg.catalog.program.egas[0].name = 'Renamed';
-  assert.deepStrictEqual(blocking(run(F.good(), eg)), ['T-11']);
+  assert.deepStrictEqual(blocking(run(F.good(), ctx)), []);
+  const bad = F.good();
+  bad.catalog.institution.vision = 'A different vision.';
+  assert.ok(ids(run(bad)).includes('T-28'));
   const po = F.ctx();
   po.catalog.program.pos[0].text = 'Edited outcome';
   assert.deepStrictEqual(blocking(run(F.good(), po)), ['T-12']);
@@ -354,4 +347,40 @@ test('filler references ("test") do not count as references, and do not raise th
   none.refs.program = { na: true, items: [] };
   none.refs.online = { na: true, items: [] };
   assert.ok(ids(run(none)).includes('R-01'), 'only filler means no references');
+});
+
+test('updated rules: week 1 is the orientation and the first topic starts in week 2', () => {
+  assert.ok(!ids(run(F.good())).includes('W-01') && !ids(run(F.good())).includes('W-02'));
+  const c = F.good();
+  c.plan[0].contents = 'Introduction to loops';
+  c.plan[1].contents = 'Course orientation';
+  const r = run(c);
+  assert.ok(ids(r).includes('W-01') && ids(r).includes('W-02'));
+  assert.ok(r.findings.filter((f) => f.ruleId === 'W-01').every((f) => f.path === 'plan[0].contents'));
+});
+
+test('updated rules: the course content is about the course title, and the task about the content and activities', () => {
+  const c = F.good();
+  c.plan[2].ilos[0].text = 'Explain recursion clearly';
+  c.plan[2].contents = 'Computer programming basics';
+  c.plan[2].activities = 'Lecture on recursion';
+  c.plan[2].tasks = '- Quiz on recursion';
+  const hit = (rule) => run(c).findings.some((f) => f.ruleId === rule && f.path.startsWith('plan[2].'));
+  assert.ok(!hit('A-05'), 'the content shares the course title');
+  assert.ok(!hit('A-07'), 'the task shares the activity');
+  c.plan[2].tasks = '- Group singing';
+  assert.ok(hit('A-07'));
+  c.plan[2].contents = 'Gardening';
+  assert.ok(hit('A-05'));
+});
+
+test('updated rules: a CLO is about the course, and a reference is in APA 7th edition format', () => {
+  const c = F.good();
+  assert.ok(!ids(run(c)).includes('P-07') && !ids(run(c)).includes('R-05'));
+  c.clos[0].title = 'Outcome 1';
+  c.clos[0].statement = 'Cook rice';
+  c.refs.books.items[0].t = 'Balti and Galloway, Job ready Java, John Wiley, 2021';
+  const r = run(c);
+  assert.deepEqual(r.findings.filter((f) => f.ruleId === 'P-07').map((f) => f.path), ['clos[0].statement']);
+  assert.deepEqual(r.findings.filter((f) => f.ruleId === 'R-05').map((f) => f.path), ['refs.books.items[0]']);
 });

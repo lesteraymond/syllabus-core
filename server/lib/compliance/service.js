@@ -8,9 +8,11 @@ const standard = require('./standard-v4.json');
 const { evaluate } = require('./rules');
 const { contentHash } = require('./hash');
 const { recommend } = require('./recommend');
+const suggest = require('./suggest');
 const { MockProvider, LlmProvider } = require('./providers');
 const { createGeminiClient } = require('./geminiClient');
 const { createOpenRouterClient } = require('./openrouterClient');
+const { createGroqClient } = require('./groqClient');
 const { inTransaction } = require('../http');
 const { schoolYearStart } = require('../schoolYear');
 const uploadCheck = require('./upload');
@@ -101,12 +103,27 @@ async function attachRecommendations(db, runId, rec) {
 let provider;
 function getProvider() {
   if (provider !== undefined) return provider;
-  // COMPLIANCE_AI_PROVIDER picks one ('mock', 'llm' = an unconfigured stub, 'openrouter', 'gemini', or 'off'). Unset, an
+  // COMPLIANCE_AI_PROVIDER picks one ('mock', 'llm' = an unconfigured stub, 'groq', 'openrouter', 'gemini', or 'off'). Unset, a GROQ_API_KEY selects Groq, else an
   // OPENROUTER_API_KEY selects OpenRouter, else a GEMINI_API_KEY selects Gemini.
-  const name = String(process.env.COMPLIANCE_AI_PROVIDER || (process.env.OPENROUTER_API_KEY ? 'openrouter' : process.env.GEMINI_API_KEY ? 'gemini' : '')).toLowerCase();
+  const name = String(process.env.COMPLIANCE_AI_PROVIDER || (process.env.GROQ_API_KEY ? 'groq' : process.env.OPENROUTER_API_KEY ? 'openrouter' : process.env.GEMINI_API_KEY ? 'gemini' : '')).toLowerCase();
   if (name === 'openrouter' && process.env.OPENROUTER_API_KEY) {
-    const client = createOpenRouterClient({ apiKey: process.env.OPENROUTER_API_KEY, ...(process.env.OPENROUTER_MODEL ? { model: process.env.OPENROUTER_MODEL } : {}) });
-    provider = new LlmProvider({ client, model: client.model });
+    try {
+      const client = createOpenRouterClient({ apiKey: process.env.OPENROUTER_API_KEY, model: (process.env.OPENROUTER_MODEL || '').trim() });
+      provider = new LlmProvider({ client, model: client.model });
+    } catch (err) {
+      // No model in .env: say so in the console and run the check without the AI step (rule-based text) instead of guessing a model.
+      console.error('[AI Checker] ' + err.message);
+      provider = null;
+    }
+  } else if (name === 'groq' && process.env.GROQ_API_KEY) {
+    try {
+      const client = createGroqClient({ apiKey: process.env.GROQ_API_KEY, model: (process.env.GROQ_MODEL || '').trim() });
+      provider = new LlmProvider({ client, model: client.model });
+    } catch (err) {
+      // No model in .env: say so in the console and run the check without the AI step (rule-based text) instead of guessing a model.
+      console.error('[AI Checker] ' + err.message);
+      provider = null;
+    }
   } else if (name === 'gemini' && process.env.GEMINI_API_KEY) {
     const client = createGeminiClient({ apiKey: process.env.GEMINI_API_KEY, ...(process.env.GEMINI_MODEL ? { model: process.env.GEMINI_MODEL } : {}) });
     provider = new LlmProvider({ client, model: client.model });
@@ -138,7 +155,12 @@ function startAiJob(db, { runId, content, result, names = [], timeoutMs, rescore
         } catch (err) { judgeError = err; console.error('COMPLIANCE AI JUDGE:', err.message); }
       }
       if (current.findings.length) {
+        // The suggested changes are written at the same time as the recommendations (they answer the same findings) and remembered by
+        // suggest.js, so the author's request for them, made when the recommendations arrive, is answered at once. A failure here is
+        // not an error: the request writes them itself.
+        const warm = suggest.generate({ provider: p, content, findings: current.findings, standard, names, ...(timeoutMs ? { timeoutMs } : {}) }).catch(() => null);
         const rec = await recommend({ provider: p, result: current, content, standard, names, ...(timeoutMs ? { timeoutMs } : {}) });
+        await warm;
         await attachRecommendations(db, runId, rec);
       } else {
         // Nothing left to fix: the run is "AI-assisted" when the AI looked at the fields, and failed when it could not.

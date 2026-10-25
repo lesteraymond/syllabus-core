@@ -6,14 +6,15 @@
 const { ProviderError } = require('./providers');
 
 const ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
-// A free model; OPENROUTER_MODEL changes it without a code change. Free models are rate limited, which is why 429 and 503 get one retry.
-const DEFAULT_MODEL = 'minimax/minimax-m3.1-flash:free';
+// The model comes from OPENROUTER_MODEL in .env (no built-in default, so switching models is only an .env change). Free models are rate
+// limited, which is why 429 and 503 get one retry.
 // Recommendations are a few short items, so the reply is capped to keep token use small. This model "thinks" before it answers, and at
 // the default effort that thinking alone used a 1024-token cap and left no answer: low effort answers in about 600 tokens.
 const MAX_OUTPUT_TOKENS = 2048;
 
-function createOpenRouterClient({ apiKey, model = DEFAULT_MODEL, timeoutMs = 45000, retryDelayMs = 2000, fetchImpl = globalThis.fetch } = {}) {
+function createOpenRouterClient({ apiKey, model, timeoutMs = 45000, retryDelayMs = 2000, fetchImpl = globalThis.fetch } = {}) {
   if (!apiKey) throw new ProviderError('not_configured', 'OPENROUTER_API_KEY is not set.');
+  if (!model) throw new ProviderError('not_configured', 'OPENROUTER_MODEL is not set. Put the OpenRouter model id in .env (for example OPENROUTER_MODEL=vendor/model-name).');
 
   async function attempt(prompt, temperature) {
     const controller = new AbortController();
@@ -53,4 +54,4 @@ function createOpenRouterClient({ apiKey, model = DEFAULT_MODEL, timeoutMs = 450
   };
 }
 
-module.exports = { createOpenRouterClient, DEFAULT_MODEL };
+module.exports = { createOpenRouterClient };

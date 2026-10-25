@@ -1,10 +1,16 @@
 Syllabus rules (maybe for ai)
+Updated from txt-files/updated-rules (the old rules list is replaced by this one). The checks live in server/lib/compliance/standard-v4.json (standard v10).
 
 
-1. bawat program may bawat program outcome
-2. EGA constant pati mission vision
-3. CLO ginagawa ni facultry (dapat align sa EGA and program outcome)
-4. ILO need pasok sa CLO, EGA.
-5. Course content, Suggested learning teaching learning activites, and suggested assessment task (align dapat sa ILO)
-6. expected to be integrated (anong core values ng lcup dapat connected)
-7. course requirements dapat complete
+1. Outcome-based education. PO = policies, standards, and guidelines (PSG or CMO of CHED for the program, e.g. the Information Technology PSG/CMO and the CHED standard PO website). Bawat program may bawat program outcome.
+2. EGA ay given by school (constant, pati vision at mission).                                   [T-28, T-29, T-30]
+3. PO nakabase sa EGA pero depende sa program.                                                  [T-12, P-02, P-03]
+4. CLO ginagawa ni faculty: dapat nakaalign sa course title at PO, at nakaconnect kay EGA.      [P-01, P-02, P-07]
+5. Course content: nakabase sa course title at per week. Mauuna siya gawin bago si ILO.         [A-05]
+6. ILO: nakaconnect sa course content (para magawa si ILO) at nakaconnect rin sa CLO.           [P-05, P-06, T-13, A-05, A-06]
+7. Suggested learning activity: nakabase sa course content, nakaconnect sa ILO, at may option para sa diverse learners.  [A-06, I-01]
+8. Suggested assessment task: nakabase sa course content at suggested activity.                 [A-07]
+9. Six core Marian values: i-identify kung anong values ang pasok sa per week na ILO.           [C-05]
+10. Week 1 = course orientation sa course content. Week 2 = start na ng first topic.            [W-01, W-02]
+11. References: chine-check ng AI kung nakaAPA 7th edition format.                              [R-04, R-05, J-03]
+12. Course requirements dapat complete.                                                          [T-19, D-04]

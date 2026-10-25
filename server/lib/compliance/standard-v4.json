@@ -1,7 +1,7 @@
 {
   "id": "undergraduate-syllabus",
-  "version": "v9",
-  "title": "Undergraduate Syllabus v9",
+  "version": "v10",
+  "title": "Undergraduate Syllabus v10",
   "form": "PRE-VPAA FO 001 (011)",
   "source": "Derived from the finished IT 204 Computer Programming 2 syllabus (IT204-Programming2-EOMS-1.pdf), src/views/builder2/FormPaper.jsx (the layout and tag conventions the form prints), src/lib/syllabusModel.js (the rules the builder already enforces) and the admin catalog. docs/reference/ has no template PDF. The sample states no scores, so every value listed in `assumptions` and every rule with a `note` is a project decision for the curriculum office to confirm.",
 
@@ -215,22 +215,19 @@
   ],
 
   "rules": [
-    { "id": "T-01", "area": "template", "step": "info", "severity": "blocking", "weight": 3, "check": "nonEmpty", "params": { "path": "meta.code" }, "message": "Course code (I) is empty.", "fix": "Enter the course code" },
-    { "id": "T-02", "area": "template", "step": "info", "severity": "blocking", "weight": 3, "check": "nonEmpty", "params": { "path": "meta.title" }, "message": "Course title (II) is empty.", "fix": "Enter the course title" },
+    { "id": "T-01", "area": "template", "step": "info", "severity": "blocking", "weight": 2, "check": "nonEmpty", "params": { "path": "meta.code" }, "message": "Course code (I) is empty.", "fix": "Enter the course code" },
+    { "id": "T-02", "area": "template", "step": "info", "severity": "blocking", "weight": 2, "check": "nonEmpty", "params": { "path": "meta.title" }, "message": "Course title (II) is empty.", "fix": "Enter the course title" },
     { "id": "T-03", "area": "template", "step": "info", "severity": "blocking", "weight": 2, "check": "nonEmpty", "params": { "path": "meta.program" }, "message": "Program is empty.", "fix": "Choose the program" },
-    { "id": "T-04", "area": "template", "step": "info", "severity": "blocking", "weight": 3, "check": "nonEmpty", "params": { "path": "description", "items": "t" }, "message": "Course description (III) is empty.", "fix": "Write the course description" },
+    { "id": "T-04", "area": "template", "step": "info", "severity": "blocking", "weight": 2, "check": "nonEmpty", "params": { "path": "description", "items": "t" }, "message": "Course description (III) is empty.", "fix": "Write the course description" },
     { "id": "T-05", "area": "template", "step": "info", "severity": "blocking", "weight": 2, "check": "nonEmpty", "params": { "path": "meta.prereq" }, "message": "Pre-requisite (IV) is empty.", "fix": "Enter the pre-requisite" },
     { "id": "T-06", "area": "template", "step": "info", "severity": "blocking", "weight": 2, "check": "nonEmpty", "params": { "paths": ["meta.lecture", "meta.lab"], "numeric": true }, "message": "Lecture and laboratory units (V) are not both entered.", "fix": "Enter the lecture and laboratory units" },
-    { "id": "T-07", "area": "template", "step": "clos", "severity": "blocking", "weight": 3, "check": "nonEmpty", "params": { "path": "clos", "minItems": 1 }, "message": "There are no course learning outcomes (VI).", "fix": "Ask an administrator to add the course learning outcomes" },
-    { "id": "T-08", "area": "template", "step": "plan", "severity": "blocking", "weight": 3, "check": "nonEmpty", "params": { "path": "plan", "minItems": 1, "where": "lessonWithIlo" }, "message": "The Learning Plan (VII) has no lesson with a learning outcome (ILO).", "fix": "Add a lesson with a learning outcome (ILO)" },
+    { "id": "T-07", "area": "template", "step": "clos", "severity": "blocking", "weight": 2, "check": "nonEmpty", "params": { "path": "clos", "minItems": 1 }, "message": "There are no course learning outcomes (VI).", "fix": "Ask an administrator to add the course learning outcomes" },
+    { "id": "T-08", "area": "template", "step": "plan", "severity": "blocking", "weight": 2, "check": "nonEmpty", "params": { "path": "plan", "minItems": 1, "where": "lessonWithIlo" }, "message": "The Learning Plan (VII) has no lesson with a learning outcome (ILO).", "fix": "Add a lesson with a learning outcome (ILO)" },
 
-    { "id": "T-09", "area": "template", "step": "clos", "severity": "blocking", "weight": 3, "check": "equalsCatalog", "params": { "field": "vision" }, "message": "The vision in this syllabus is not the school's current vision.", "fix": "Resubmit so the syllabus carries the current vision", "note": "A draft has no stored copy (it always shows the live text) and a submit stores the live text, so this fails only if the stored snapshot differs from the live catalog, for example when an admin edited it after the syllabus was submitted." },
-    { "id": "T-10", "area": "template", "step": "clos", "severity": "blocking", "weight": 3, "check": "equalsCatalog", "params": { "field": "mission" }, "message": "The mission in this syllabus is not the school's current mission.", "fix": "Resubmit so the syllabus carries the current mission" },
-    { "id": "T-11", "area": "template", "step": "clos", "severity": "blocking", "weight": 3, "check": "equalsCatalog", "params": { "field": "egas" }, "message": "The graduate attributes (EGAs) in this syllabus are not the program's current ones.", "fix": "Resubmit so the syllabus carries the current graduate attributes" },
-    { "id": "T-12", "area": "template", "step": "clos", "severity": "blocking", "weight": 3, "check": "equalsCatalog", "params": { "field": "pos" }, "message": "The program outcomes (POs) in this syllabus are not the program's current ones.", "fix": "Resubmit so the syllabus carries the current program outcomes" },
+    { "id": "T-12", "area": "template", "step": "clos", "severity": "blocking", "weight": 2, "check": "equalsCatalog", "params": { "field": "pos" }, "message": "The program outcomes (POs) in this syllabus are not the program's current ones.", "fix": "Resubmit so the syllabus carries the current program outcomes" },
 
-    { "id": "T-13", "area": "template", "step": "plan", "severity": "blocking", "weight": 3, "check": "tagsResolve", "params": { "mode": "cloTagPresent" }, "message": "{where} has no CLO tag.", "fix": "Tag every ILO with the CLO it builds" },
-    { "id": "T-14", "area": "template", "step": "plan", "severity": "blocking", "weight": 3, "check": "tagsResolve", "params": { "mode": "resolve" }, "message": "{where} has a tag that no longer resolves: {tag}.", "fix": "Fix the outcome tags that no longer resolve" },
+    { "id": "T-13", "area": "template", "step": "plan", "severity": "blocking", "weight": 2, "check": "tagsResolve", "params": { "mode": "cloTagPresent" }, "message": "{where} has no CLO tag.", "fix": "Tag every ILO with the CLO it builds" },
+    { "id": "T-14", "area": "template", "step": "plan", "severity": "blocking", "weight": 2, "check": "tagsResolve", "params": { "mode": "resolve" }, "message": "{where} has a tag that no longer resolves: {tag}.", "fix": "Fix the outcome tags that no longer resolve" },
     { "id": "T-15", "area": "template", "step": "plan", "severity": "blocking", "weight": 1, "check": "columnsFilled", "params": { "mode": "present", "columns": ["week", "ilos", "contents", "activities", "tasks", "values"] }, "message": "Learning Plan row {row} is missing the column: {missing}.", "fix": "Complete the Learning Plan columns" },
     { "id": "T-16", "area": "template", "step": "plan", "severity": "major", "weight": 2, "check": "columnsFilled", "params": { "mode": "filled", "rows": "lesson", "columns": ["contents", "activities", "tasks", "values"] }, "message": "{where} has nothing in: {missing}.", "fix": "Fill in the empty Learning Plan columns", "note": "The builder only advises about empty columns, so this is major, not blocking." },
     { "id": "T-17", "area": "template", "step": "plan", "severity": "minor", "weight": 1, "check": "iloNumbering", "params": {}, "message": "{where} has an empty ILO before a filled one, so the printed numbering has a gap.", "fix": "Remove the empty ILO between filled ones", "note": "ILO numbers are generated by position (ILO1, ILO2, ...), so the only way to break the numbering is an empty ILO between filled ones." },
@@ -238,44 +235,44 @@
 
     { "id": "T-19", "area": "template", "step": "reqs", "severity": "blocking", "weight": 2, "check": "numberedRequirements", "params": { "mode": "count", "min": 3 }, "message": "Course requirements (VIII): {have} listed, at least {need} needed.", "fix": "List at least three course requirements" },
     { "id": "T-20", "area": "template", "step": "reqs", "severity": "minor", "weight": 1, "check": "numberedRequirements", "params": { "mode": "noManualNumber" }, "message": "Requirement \"{text}\" starts with its own number; the form numbers the list for you.", "fix": "Remove the typed numbers from the requirements" },
-    { "id": "T-21", "area": "template", "step": "refs", "severity": "blocking", "weight": 3, "check": "referenceGroups", "params": { "mode": "filledOrNa" }, "message": "References ({letter}. {title}) has no entries and is not marked not applicable.", "fix": "Fill in each reference group or mark it not applicable" },
+    { "id": "T-21", "area": "template", "step": "refs", "severity": "blocking", "weight": 2, "check": "referenceGroups", "params": { "mode": "filledOrNa" }, "message": "References ({letter}. {title}) has no entries and is not marked not applicable.", "fix": "Fill in each reference group or mark it not applicable" },
     { "id": "T-22", "area": "template", "step": "refs", "severity": "minor", "weight": 1, "check": "referenceGroups", "params": { "mode": "naConsistent" }, "message": "References ({letter}. {title}) is marked not applicable but has entries.", "fix": "Resolve the reference group marked not applicable that has entries" },
     { "id": "T-23", "area": "template", "step": "grade", "severity": "blocking", "weight": 2, "check": "nonEmpty", "params": { "path": "grading.rows", "minItems": 1 }, "message": "The Grading System (X) has no components.", "fix": "Add the grading components" },
-    { "id": "T-24", "area": "template", "step": "grade", "severity": "blocking", "weight": 4, "check": "gradingTotal", "params": { "total": 100 }, "message": "The grading components total {total}%, not {need}%.", "fix": "Make the grading components total 100%" },
+    { "id": "T-24", "area": "template", "step": "grade", "severity": "blocking", "weight": 3, "check": "gradingTotal", "params": { "total": 100 }, "message": "The grading components total {total}%, not {need}%.", "fix": "Make the grading components total 100%" },
     { "id": "T-25", "area": "template", "step": "grade", "severity": "blocking", "weight": 2, "check": "gradingFormula", "params": { "mode": "overrideFilled" }, "message": "The override formulas cannot be empty.", "fix": "Fill in the override formulas or switch them off" },
     { "id": "T-26", "area": "template", "step": "grade", "severity": "major", "weight": 2, "check": "gradingFormula", "params": { "mode": "wording" }, "message": "The {which} formula does not mention {missing}.", "fix": "Make the grading formulas name every component and exam term", "note": "The Term Grade formula must list every grading component with its percentage; the Final Rating formula must name every examination term." },
     { "id": "T-27", "area": "template", "step": "review", "severity": "minor", "weight": 1, "check": "signoffRoles", "params": {}, "message": "The sign-off block is not as the form requires: {problem}.", "fix": "Check the sign-off block", "note": "UNSURE. The preparer comes from the owner's account and the other two roles are added by the system, so this can only fail when the stored sign-off holds names a faculty member should not enter." },
 
-    { "id": "C-01", "area": "completeness", "step": "info", "severity": "major", "weight": 2, "check": "textLength", "params": { "target": "description", "minWords": 30 }, "message": "The course description is {words} {nouns}; about {need} are expected.", "fix": "Expand the course description" },
-    { "id": "C-02", "area": "completeness", "step": "plan", "severity": "minor", "weight": 2, "check": "textLength", "params": { "target": "ilo", "minWords": 4 }, "message": "{where} is only {words} {nouns}; an ILO states what the student will do.", "fix": "Write fuller learning outcomes (ILOs)" },
+    { "id": "C-01", "area": "completeness", "step": "info", "severity": "major", "weight": 1, "check": "textLength", "params": { "target": "description", "minWords": 30 }, "message": "The course description is {words} {nouns}; about {need} are expected.", "fix": "Expand the course description" },
+    { "id": "C-02", "area": "completeness", "step": "plan", "severity": "minor", "weight": 1, "check": "textLength", "params": { "target": "ilo", "minWords": 4 }, "message": "{where} is only {words} {nouns}; an ILO states what the student will do.", "fix": "Write fuller learning outcomes (ILOs)" },
     { "id": "C-03", "area": "completeness", "step": "clos", "severity": "minor", "weight": 1, "check": "textLength", "params": { "target": "clo", "minWords": 1 }, "message": "CLO {n} has no {missing}.", "fix": "Ask an administrator to complete the CLO titles and statements" },
     { "id": "C-04", "area": "completeness", "step": "refs", "severity": "minor", "weight": 1, "check": "referenceAge", "params": { "mode": "count", "min": 3 }, "message": "There are {have} references; at least {need} are expected.", "fix": "Add more references" },
 
-    { "id": "P-01", "area": "co_po", "step": "clos", "severity": "blocking", "weight": 3, "check": "cloConventions", "params": { "mode": "egaTagged" }, "message": "CLO {n} is not tagged with a valid graduate attribute (EGA).", "fix": "Ask an administrator to tag each CLO with graduate attributes", "note": "Admin-managed data; the builder already holds faculty at step 2 for this." },
-    { "id": "P-02", "area": "co_po", "step": "clos", "severity": "blocking", "weight": 3, "check": "cloConventions", "params": { "mode": "poTagged" }, "message": "CLO {n} is not tagged with a valid program outcome (PO).", "fix": "Ask an administrator to tag each CLO with program outcomes", "note": "Admin-managed data; the builder already holds faculty at step 2 for this." },
-    { "id": "P-03", "area": "co_po", "step": "clos", "severity": "major", "weight": 2, "check": "cloConventions", "params": { "mode": "poImpliesEga" }, "message": "CLO {n} is tagged PO {po}, which maps to EGA {ega}, but EGA {ega} is not tagged.", "fix": "Ask an administrator to tag the EGAs the POs imply" },
+    { "id": "P-01", "area": "co_po", "step": "clos", "severity": "blocking", "weight": 2, "check": "cloConventions", "params": { "mode": "egaTagged" }, "message": "CLO {n} is not tagged with a valid graduate attribute (EGA).", "fix": "Ask an administrator to tag each CLO with graduate attributes", "note": "Admin-managed data; the builder already holds faculty at step 2 for this." },
+    { "id": "P-02", "area": "co_po", "step": "clos", "severity": "blocking", "weight": 2, "check": "cloConventions", "params": { "mode": "poTagged" }, "message": "CLO {n} is not tagged with a valid program outcome (PO).", "fix": "Ask an administrator to tag each CLO with program outcomes", "note": "Admin-managed data; the builder already holds faculty at step 2 for this." },
+    { "id": "P-03", "area": "co_po", "step": "clos", "severity": "major", "weight": 1, "check": "cloConventions", "params": { "mode": "poImpliesEga" }, "message": "CLO {n} is tagged PO {po}, which maps to EGA {ega}, but EGA {ega} is not tagged.", "fix": "Ask an administrator to tag the EGAs the POs imply" },
     { "id": "P-04", "area": "co_po", "step": "clos", "severity": "minor", "weight": 1, "check": "cloConventions", "params": { "mode": "format" }, "message": "CLO {n}'s tags would not print as {format}: numbers must be unique and in order.", "fix": "Ask an administrator to put the CLO tags in order" },
-    { "id": "P-05", "area": "co_po", "step": "plan", "severity": "major", "weight": 3, "check": "cloCoverage", "params": { "requireColumn": null }, "message": "CLO {n} is not built by any ILO in the Learning Plan.", "fix": "Cover every course outcome in the Learning Plan" },
+    { "id": "P-05", "area": "co_po", "step": "plan", "severity": "major", "weight": 2, "check": "cloCoverage", "params": { "requireColumn": null }, "message": "CLO {n} is not built by any ILO in the Learning Plan.", "fix": "Cover every course outcome in the Learning Plan" },
 
-    { "id": "A-01", "area": "assessment", "step": "plan", "severity": "major", "weight": 3, "check": "columnsFilled", "params": { "mode": "filled", "rows": "lesson", "columns": ["tasks"] }, "message": "{where} has no assessment task.", "fix": "Add an assessment task to every lesson" },
-    { "id": "A-02", "area": "assessment", "step": "plan", "severity": "major", "weight": 3, "check": "cloCoverage", "params": { "requireColumn": "tasks" }, "message": "CLO {n} is not assessed: no week that builds it has an assessment task.", "fix": "Assess every course learning outcome" },
-    { "id": "A-03", "area": "assessment", "step": "plan", "severity": "major", "weight": 3, "check": "examRowsPerTerm", "params": {}, "message": "There is no {term} examination row in the Learning Plan.", "fix": "Add the missing examination rows" },
-    { "id": "A-04", "area": "assessment", "step": "grade", "severity": "major", "weight": 2, "check": "gradingHasExam", "params": {}, "message": "The grading system has no examination component.", "fix": "Include an examination in the grading system" },
+    { "id": "A-01", "area": "assessment", "step": "plan", "severity": "major", "weight": 2, "check": "columnsFilled", "params": { "mode": "filled", "rows": "lesson", "columns": ["tasks"] }, "message": "{where} has no assessment task.", "fix": "Add an assessment task to every lesson" },
+    { "id": "A-02", "area": "assessment", "step": "plan", "severity": "major", "weight": 2, "check": "cloCoverage", "params": { "requireColumn": "tasks" }, "message": "CLO {n} is not assessed: no week that builds it has an assessment task.", "fix": "Assess every course learning outcome" },
+    { "id": "A-03", "area": "assessment", "step": "plan", "severity": "major", "weight": 2, "check": "examRowsPerTerm", "params": {}, "message": "There is no {term} examination row in the Learning Plan.", "fix": "Add the missing examination rows" },
+    { "id": "A-04", "area": "assessment", "step": "grade", "severity": "major", "weight": 1, "check": "gradingHasExam", "params": {}, "message": "The grading system has no examination component.", "fix": "Include an examination in the grading system" },
 
-    { "id": "H-01", "area": "contact_hours", "step": "info", "severity": "major", "weight": 2, "check": "contactUnits", "params": {}, "message": "The credit units are not usable: lecture {lecture}, laboratory {lab}.", "fix": "Correct the credit units" },
-    { "id": "H-02", "area": "contact_hours", "step": "plan", "severity": "major", "weight": 4, "check": "weeksCover", "params": { "mode": "cover", "from": 1, "to": 18 }, "message": "The plan covers {planned} of {expected} weeks{hours}.", "fix": "Plan the full term" },
-    { "id": "H-03", "area": "contact_hours", "step": "plan", "severity": "major", "weight": 2, "check": "weeksCover", "params": { "mode": "range", "from": 1, "to": 18 }, "message": "Row {row} has a week that is not within 1 to {to}: \"{week}\".", "fix": "Fix the weeks outside the term" },
+    { "id": "H-01", "area": "contact_hours", "step": "info", "severity": "major", "weight": 1, "check": "contactUnits", "params": {}, "message": "The credit units are not usable: lecture {lecture}, laboratory {lab}.", "fix": "Correct the credit units" },
+    { "id": "H-02", "area": "contact_hours", "step": "plan", "severity": "major", "weight": 3, "check": "weeksCover", "params": { "mode": "cover", "from": 1, "to": 18 }, "message": "The plan covers {planned} of {expected} weeks{hours}.", "fix": "Plan the full term" },
+    { "id": "H-03", "area": "contact_hours", "step": "plan", "severity": "major", "weight": 1, "check": "weeksCover", "params": { "mode": "range", "from": 1, "to": 18 }, "message": "Row {row} has a week that is not within 1 to {to}: \"{week}\".", "fix": "Fix the weeks outside the term" },
     { "id": "H-04", "area": "contact_hours", "step": "plan", "severity": "minor", "weight": 1, "check": "weeksCover", "params": { "mode": "overlap" }, "message": "Week{s} {weeks} appear{verb} in more than one row.", "fix": "Resolve the weeks used by more than one row" },
 
-    { "id": "R-01", "area": "reference_currency", "step": "refs", "severity": "major", "weight": 2, "check": "referenceAge", "params": { "mode": "any" }, "message": "There are no references.", "fix": "Add references" },
-    { "id": "R-02", "area": "reference_currency", "step": "refs", "severity": "minor", "weight": 2, "check": "referenceAge", "params": { "mode": "dated" }, "message": "A reference has no year: \"{text}\".", "fix": "Add the year to each reference" },
-    { "id": "R-03", "area": "reference_currency", "step": "refs", "severity": "major", "weight": 4, "check": "referenceAge", "params": { "mode": "current", "maxAgeYears": 10 }, "message": "A reference is {age} years old ({year}); the limit is {limit}: \"{text}\".", "fix": "Replace the outdated references", "note": "Age is measured from the school year the syllabus belongs to, never from today's date." },
+    { "id": "R-01", "area": "reference_currency", "step": "refs", "severity": "major", "weight": 1, "check": "referenceAge", "params": { "mode": "any" }, "message": "There are no references.", "fix": "Add references" },
+    { "id": "R-02", "area": "reference_currency", "step": "refs", "severity": "minor", "weight": 1, "check": "referenceAge", "params": { "mode": "dated" }, "message": "A reference has no year: \"{text}\".", "fix": "Add the year to each reference" },
+    { "id": "R-03", "area": "reference_currency", "step": "refs", "severity": "major", "weight": 3, "check": "referenceAge", "params": { "mode": "current", "maxAgeYears": 10 }, "message": "A reference is {age} years old ({year}); the limit is {limit}: \"{text}\".", "fix": "Replace the outdated references", "note": "Age is measured from the school year the syllabus belongs to, never from today's date." },
     {
       "id": "T-28",
       "area": "template",
       "step": "clos",
       "severity": "major",
-      "weight": 2,
+      "weight": 1,
       "check": "equalsInstitution",
       "params": {
         "field": "vision"
@@ -288,7 +285,7 @@
       "area": "template",
       "step": "clos",
       "severity": "major",
-      "weight": 2,
+      "weight": 1,
       "check": "equalsInstitution",
       "params": {
         "field": "mission"
@@ -301,7 +298,7 @@
       "area": "template",
       "step": "clos",
       "severity": "major",
-      "weight": 2,
+      "weight": 1,
       "check": "equalsInstitution",
       "params": {
         "field": "egas"
@@ -314,7 +311,7 @@
       "area": "co_po",
       "step": "plan",
       "severity": "major",
-      "weight": 2,
+      "weight": 1,
       "check": "iloEgaChain",
       "params": {},
       "message": "{where} is not under a CLO that builds a graduate attribute (EGA).",
@@ -325,23 +322,25 @@
       "area": "assessment",
       "step": "plan",
       "severity": "minor",
-      "weight": 2,
+      "weight": 1,
       "check": "iloAlignment",
       "params": {
-        "column": "contents"
+        "column": "contents",
+        "against": ["title","ilo"]
       },
-      "message": "{where}: the course content does not relate to its ILO.",
-      "fix": "Write the course content so it covers what the ILO says"
+      "message": "{where}: the course content does not relate to the course title or its ILO.",
+      "fix": "Write the course content about the course title and what the ILO says"
     },
     {
       "id": "A-06",
       "area": "assessment",
       "step": "plan",
       "severity": "minor",
-      "weight": 2,
+      "weight": 1,
       "check": "iloAlignment",
       "params": {
-        "column": "activities"
+        "column": "activities",
+        "against": ["ilo","contents"]
       },
       "message": "{where}: the learning activities do not relate to its ILO.",
       "fix": "Plan learning activities that practise what the ILO says"
@@ -351,20 +350,21 @@
       "area": "assessment",
       "step": "plan",
       "severity": "minor",
-      "weight": 2,
+      "weight": 1,
       "check": "iloAlignment",
       "params": {
-        "column": "tasks"
+        "column": "tasks",
+        "against": ["contents","activities"]
       },
-      "message": "{where}: the assessment task does not relate to its ILO.",
-      "fix": "Assess what the ILO says, not something else"
+      "message": "{where}: the assessment task does not relate to the course content or the learning activities.",
+      "fix": "Assess what the course content and the learning activities cover"
     },
     {
       "id": "C-05",
       "area": "completeness",
       "step": "plan",
       "severity": "minor",
-      "weight": 2,
+      "weight": 1,
       "check": "coreValues",
       "params": {},
       "message": "{where} names none of the six LCUP core values.",
@@ -375,7 +375,7 @@
       "area": "reference_currency",
       "step": "refs",
       "severity": "minor",
-      "weight": 2,
+      "weight": 1,
       "check": "referenceAge",
       "params": {
         "mode": "citation"
@@ -388,7 +388,7 @@
       "area": "completeness",
       "step": "info",
       "severity": "major",
-      "weight": 2,
+      "weight": 1,
       "check": "aiJudged",
       "params": {
         "kind": "description"
@@ -414,7 +414,7 @@
       "area": "reference_currency",
       "step": "refs",
       "severity": "major",
-      "weight": 2,
+      "weight": 1,
       "check": "aiJudged",
       "params": {
         "kind": "reference"
@@ -427,7 +427,7 @@
       "area": "completeness",
       "step": "plan",
       "severity": "minor",
-      "weight": 2,
+      "weight": 1,
       "check": "aiJudged",
       "params": {
         "kind": "ilo"
@@ -440,7 +440,7 @@
       "area": "assessment",
       "step": "plan",
       "severity": "major",
-      "weight": 3,
+      "weight": 2,
       "check": "aiJudged",
       "params": {
         "kind": "alignment"
@@ -453,7 +453,7 @@
       "area": "completeness",
       "step": "plan",
       "severity": "major",
-      "weight": 2,
+      "weight": 1,
       "check": "duplicates",
       "params": {"mode": "ilo", "minWords": 3, "threshold": 0.85},
       "message": "{where} has the same ILO as {other}: \"{text}\".",
@@ -530,7 +530,7 @@
       "area": "completeness",
       "step": "reqs",
       "severity": "minor",
-      "weight": 2,
+      "weight": 1,
       "check": "inclusion",
       "params": {
         "patterns": [
@@ -548,6 +548,50 @@
       },
       "message": "Nothing in the syllabus says how it supports diverse learners, including students with disabilities.",
       "fix": "State how the course accommodates diverse learners, such as students with disabilities"
+    },
+    {
+      "id": "W-01",
+      "area": "completeness",
+      "step": "plan",
+      "severity": "major",
+      "weight": 1,
+      "check": "weekTopic",
+      "params": {"mode":"orientation","week":1,"pattern":"orient"},
+      "message": "Week 1 is not the course orientation.",
+      "fix": "Make the course content of week 1 the course orientation"
+    },
+    {
+      "id": "W-02",
+      "area": "completeness",
+      "step": "plan",
+      "severity": "major",
+      "weight": 1,
+      "check": "weekTopic",
+      "params": {"mode":"topic","week":2,"pattern":"orient"},
+      "message": "Week 2 does not start the first topic.",
+      "fix": "Start the first topic in week 2"
+    },
+    {
+      "id": "P-07",
+      "area": "co_po",
+      "step": "clos",
+      "severity": "minor",
+      "weight": 1,
+      "check": "cloTitle",
+      "params": {},
+      "message": "CLO {n} does not relate to the course title.",
+      "fix": "Write the course outcome about what this course teaches"
+    },
+    {
+      "id": "R-05",
+      "area": "reference_currency",
+      "step": "refs",
+      "severity": "minor",
+      "weight": 1,
+      "check": "referenceApa",
+      "params": {"pattern":"\\(((19|20)\\d{2}[a-z]?(, [A-Z][a-z]+( \\d{1,2})?)?|n\\.d\\.)\\)\\."},
+      "message": "A reference is not in APA 7th edition format: \"{text}\".",
+      "fix": "Write each reference in APA 7th edition: Author. (Year). Title. Publisher."
     }
   ]
 }

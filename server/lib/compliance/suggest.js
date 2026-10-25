@@ -188,13 +188,14 @@ function toSuggestion(it, r, content) {
   return suggestion({ kind: 'reqs', label: it.label, why: r.why, rules, covers, changes: rows.map((x) => ({ before: '', after: x.t })), ops: rows.map((x) => ({ op: 'insert', path: 'reqs', beforeId: null, value: x })) });
 }
 
-async function generate({ provider, content, findings, standard, names = [], timeoutMs = PROVIDER_TIMEOUT_MS }) {
+// `refresh` skips what was remembered for these items and asks the AI again (the author pressed Refresh); the new answers replace the old.
+async function generate({ provider, content, findings, standard, names = [], timeoutMs = PROVIDER_TIMEOUT_MS, refresh = false }) {
   const fixed = deterministic(content, findings, standard);
   const items = planItems(content, findings, standard).map((it) => (it.kind === 'reqs' ? { ...it, existing: arr(content.reqs).map((r) => text(obj(r).t)).filter(Boolean) } : it));
   if (!items.length) return { suggestions: fixed, ai: 'none' };
   if (!provider || typeof provider.judge !== 'function') return { suggestions: fixed, ai: 'unavailable' };
   const ctx = JSON.stringify(courseContext(content, names));
-  const fresh = items.filter((it) => !CACHE.has(keyOf(it, ctx)));
+  const fresh = refresh ? items : items.filter((it) => !CACHE.has(keyOf(it, ctx)));
   let ai = 'ok';
   try {
     for (let i = 0; i < fresh.length; i += CHUNK) {

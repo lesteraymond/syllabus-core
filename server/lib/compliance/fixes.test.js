@@ -126,11 +126,10 @@ test('a grading component named twice is merged, keeping the total at 100', () =
   assert.equal(evaluate(c, standard, F.ctx()).findings.filter((f) => f.ruleId === 'D-06').length, 0);
 });
 
-test('I-01: a syllabus with no word on diverse learners fails, and the suggested requirement fixes it', () => {
+test('I-01: a syllabus with no word on diverse learners only gets a warning, and no fix is suggested for it', () => {
   const F = require('./fixtures');
   const standard = require('./standard-v4.json');
   const { evaluate } = require('./rules');
-  const ops = require('./formOps');
   const { deterministic } = require('./fixes');
   const c = F.good();
   assert.equal(evaluate(c, standard, F.ctx()).findings.filter((f) => f.ruleId === 'I-01').length, 0);
@@ -138,10 +137,7 @@ test('I-01: a syllabus with no word on diverse learners fails, and the suggested
   const found = evaluate(c, standard, F.ctx());
   assert.equal(found.conformance.ok, true, 'it only warns');
   assert.equal(found.findings.filter((f) => f.ruleId === 'I-01').length, 1);
-  const out = deterministic(c, found.findings, standard).filter((s) => s.rules.includes('I-01'));
-  assert.equal(out.length, 1);
-  assert.ok(ops.applyOps(c, out[0].ops));
-  assert.equal(evaluate(c, standard, F.ctx()).findings.filter((f) => f.ruleId === 'I-01').length, 0);
+  assert.deepEqual(deterministic(c, found.findings, standard).filter((s) => s.rules.includes('I-01')), [], 'what a syllabus promises about accommodations is the author to write');
   const inPlan = F.good();
   inPlan.reqs.pop();
   inPlan.plan[0].activities = '- Lecture with captioned slides and alternative formats';

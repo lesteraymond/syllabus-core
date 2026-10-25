@@ -4,7 +4,7 @@ import { t as translateUI } from "../../i18n/index.js";
 import { useEffect, useRef, useState } from 'react';
 import { compliance as api } from '../../lib/api';
 import { applyOps } from '../../lib/formOps';
-import { trial, applyAll, loadRejected, saveRejected } from '../../lib/suggestionView';
+import { trial, applyAll, editableAt, withEdits, loadRejected, saveRejected } from '../../lib/suggestionView';
 
 // "Suggested changes": when a check finishes, the server works out a fix for everything it found that can be fixed (no AI needed for some, the
 // AI writes the words for the rest) and says what the score would be with all of them. The author accepts or rejects each, or accepts all.
@@ -15,18 +15,20 @@ export default function SuggestionsPanel({ run, d, apply, editable, syllabusId, 
   const [phase, setPhase] = useState('idle'); // idle | loading | done | error
   const [error, setError] = useState('');
   const [state, setState] = useState({}); // suggestion id -> 'applied' | 'rejected' | 'outdated'
+  const [edits, setEdits] = useState({}); // suggestion id -> { change index -> the text the author typed }
   const [undoOps, setUndoOps] = useState({}); // suggestion id -> the operations that undo it
   const [rejected, setRejected] = useState(() => loadRejected(syllabusId() || 'new'));
   const asked = useRef(null); // the run the suggestions were asked for
 
   const ready = !!run && run.status === 'scored' && !run.stale && run.aiStatus !== 'pending' && Array.isArray(run.findings) && run.findings.length > 0;
-  const load = async () => {
+  const load = async (refresh = false) => {
     const id = syllabusId();
     if (!id) return;
     setPhase('loading'); setError('');
+    setData(null); setState({}); setUndoOps({}); setEdits({}); // the old list goes at once; the new one replaces it when it arrives
     try {
-      const res = await api.suggest(id);
-      setData(res); setState({}); setUndoOps({}); setPhase('done');
+      const res = await api.suggest(id, refresh === true);
+      setData(res); setState({}); setUndoOps({}); setEdits({}); setPhase('done');
     } catch (e) { setError(e.message); setPhase('error'); }
   };
   // Automatic: each new check that has something to fix asks once.
@@ -36,7 +38,9 @@ export default function SuggestionsPanel({ run, d, apply, editable, syllabusId, 
     load();
   }, [ready, editable, run && run.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (!run || (!data && phase === 'idle')) return null;
+  // While the AI still writes the recommendations the suggested changes are being written too: show them loading together.
+  const waiting = !data && phase === 'idle' && editable && !!run && run.status === 'scored' && !run.stale && run.aiStatus === 'pending' && Array.isArray(run.findings) && run.findings.length > 0;
+  if (!run || (!data && phase === 'idle' && !waiting)) return null;
 
   const stateOf = (s) => state[s.id] || (rejected.has(s.id) ? 'rejected' : 'new');
   const all = data ? data.suggestions : [];
@@ -44,17 +48,21 @@ export default function SuggestionsPanel({ run, d, apply, editable, syllabusId, 
   const hidden = all.filter((s) => stateOf(s) === 'rejected').length;
   const shown = all.filter((s) => stateOf(s) !== 'rejected');
 
-  const accept = (s) => {
+  const edited = (s) => withEdits(s, edits[s.id]);
+  const setEdit = (s, i, text) => setEdits((x) => ({ ...x, [s.id]: { ...x[s.id], [i]: text } }));
+  const accept = (s0) => {
+    const s = edited(s0);
     const t = trial(d, s);
-    if (!t.ok) { setState((x) => ({ ...x, [s.id]: 'outdated' })); return; }
+    if (!t.ok) { setState((x) => ({ ...x, [s0.id]: 'outdated' })); return; }
     apply((x) => { applyOps(x, s.ops); return x; });
-    setState((x) => ({ ...x, [s.id]: 'applied' }));
-    setUndoOps((x) => ({ ...x, [s.id]: t.undo }));
+    setState((x) => ({ ...x, [s0.id]: 'applied' }));
+    setUndoOps((x) => ({ ...x, [s0.id]: t.undo }));
   };
   const acceptAll = () => {
     const copy = JSON.parse(JSON.stringify(d));
-    const done = applyAll(copy, open);
-    apply((x) => { applyAll(x, open); return x; });
+    const list = open.map(edited);
+    const done = applyAll(copy, list);
+    apply((x) => { applyAll(x, list); return x; });
     setState((x) => { const n = { ...x }; open.forEach((s) => { n[s.id] = done.some((a) => a.id === s.id) ? 'applied' : 'outdated'; }); return n; });
     setUndoOps((x) => { const n = { ...x }; done.forEach((a) => { n[a.id] = a.undo; }); return n; });
   };
@@ -74,24 +82,37 @@ export default function SuggestionsPanel({ run, d, apply, editable, syllabusId, 
     setRejected(next); saveRejected(syllabusId() || 'new', next);
   };
   const restore = () => { const next = new Set(); setRejected(next); saveRejected(syllabusId() || 'new', next); };
+  // The Refresh button starts over: what was rejected comes back too (a new check on its own keeps the rejections).
+  const refresh = () => { if (run) asked.current = run.id; restore(); load(true); }; // on its own: the automatic ask for this check is not made again afterwards
 
   const appliedCount = all.filter((s) => state[s.id] === 'applied').length;
   const gain = data && data.score && data.score.now !== null && data.score.after !== null ? data.score : null;
 
   return (
-    <section className="sug-card" id="sug-card" aria-labelledby="sug-title" aria-busy={phase === 'loading'}>
+    <section className="sug-card" id="sug-card" aria-labelledby="sug-title" aria-busy={phase === 'loading' || waiting}>
       <div className="sug-head">
         <div>
           <h3 id="sug-title">{translateUI('suggest.title')}</h3>
           <p className="cmp-small">{translateUI('suggest.note')}</p>
+          <p className="cmp-small cmp-ai-warn" role="note">{translateUI('cmp.ai_mistakes')}</p>
         </div>
         <div className="sug-actions">
           {open.length > 1 && <StableButton type="button" className="btn primary" disabled={!editable} onClick={acceptAll}>{translateUI('suggest.accept_all', { p0: open.length })}</StableButton>}
           {open.length > 1 && <StableButton type="button" className="btn outline" onClick={rejectAll}>{translateUI('suggest.reject_all')}</StableButton>}
-          <StableButton type="button" className="btn outline" disabled={phase === 'loading' || !editable} onClick={load}>{translateUI('suggest.refresh')}</StableButton>
+          <StableButton type="button" className="btn outline" disabled={phase === 'loading' || !editable} onClick={refresh}>{translateUI('suggest.refresh')}</StableButton>
         </div>
       </div>
-      {phase === 'loading' && <p className="cmp-status" role="status" aria-live="polite">{translateUI('suggest.busy')}</p>}
+      {(phase === 'loading' || waiting) && (
+        <div className="sug-loading" aria-busy="true">
+          <p className="cmp-status sug-busy" role="status" aria-live="polite"><span className="sug-spin" aria-hidden="true" />{translateUI('suggest.busy')}</p>
+          {[0, 1, 2].map((i) => (
+            <div className="sug-skel" key={i} aria-hidden="true" style={{ '--i': i }}>
+              <span className="bar w40" />
+              <div className="sug-skel-pair"><span className="blk" /><span className="blk" /></div>
+            </div>
+          ))}
+        </div>
+      )}
       {phase === 'error' && <div className="info-banner warning" role="alert">{tr(error)}</div>}
       {data && gain && gain.after > gain.now && <p className="sug-gain" role="status">{translateUI('suggest.gain', { p0: gain.now, p1: gain.after })}</p>}
       {data && data.ai === 'unavailable' && <div className="info-banner" role="note">{translateUI('suggest.no_ai')}</div>}
@@ -115,7 +136,11 @@ export default function SuggestionsPanel({ run, d, apply, editable, syllabusId, 
                   <div className="sug-diff" key={i}>
                     {c.title && <strong className="sug-col">{tr(c.title)}</strong>}
                     <div className="sug-before"><small>{translateUI('suggest.now')}</small><p>{c.before || translateUI('suggest.empty')}</p></div>
-                    <div className="sug-after"><small>{translateUI('suggest.suggested')}</small><p>{c.after}</p></div>
+                    <div className="sug-after"><small>{translateUI('suggest.suggested')}</small>
+                      {st === 'new' && editable && editableAt(s, i)
+                        ? <textarea aria-label={translateUI('suggest.edit')} rows={Math.min(8, Math.max(2, Math.ceil(c.after.length / 60)))} value={edits[s.id] && edits[s.id][i] !== undefined ? edits[s.id][i] : c.after} onChange={(e) => setEdit(s, i, e.target.value)} />
+                        : <p>{c.after}</p>}
+                    </div>
                   </div>
                 ))}
                 {st === 'new' && (

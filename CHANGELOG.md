@@ -1439,3 +1439,36 @@ Each program has its own expected graduate attributes (EGAs) and program outcome
 **Date:** October 22, 2026
 
 - The score ring in the AI Checker and Review & Check is now red when the score is below the pass line (it stayed blue for every score). At or above the line it is still blue. The Analytics band donut already showed Low in red.
+
+
+---
+
+### v1.61.0 — Updated Rules from the Curriculum Office (Standard v10)
+**By:** Raymond  
+**Date:** October 25, 2026
+
+- The AI Checker's standard is now **v10** (70 rules), written from the updated rules in `txt-files/updated-rules`. `txt-files/syllabus_rules.txt` is rewritten as the new rule list, each rule tagged with the checks that enforce it.
+- New rules: **W-01** (week 1 is the course orientation), **W-02** (week 2 starts the first topic), **P-07** (each CLO relates to the course title) and **R-05** (each reference is in APA 7th edition format, `Author. (Year). Title.`). The AI reference check is also told to flag references that are clearly not APA 7th edition.
+- Changed: **A-05** (course content relates to the course title or its ILO), **A-06** (activities relate to the ILO or the course content) and **A-07** (the assessment task relates to the course content or the activities, no longer the ILO). The AI check now also flags expected core values that clearly do not fit the week's ILO.
+- Removed **T-09**, **T-10** and **T-11** (stored vision, mission and EGAs against the catalog); **T-28** to **T-30** check the LCUP constants. A vision changed after a submit no longer blocks a re-check. T-12 still compares program outcomes with the catalog.
+- The rule points now add up to **100** (they were 145): 1 point stays 1, 2 becomes 1 (blocking and major ones keep 2 until the total is 100), 3 becomes 2, 4 becomes 3. A conforming syllabus still scores 100; other scores can move by a few points. The standard's title reads "Undergraduate Syllabus v10".
+- English and Filipino texts for the new and reworded rules; tests for W-01, W-02, P-07, R-05 and the new alignment checks. Stored scores stay until a syllabus is checked again.
+
+### v1.61.1 — Recommendation Labels
+**By:** Raymond  
+**Date:** October 25, 2026
+
+- A recommendation's badge no longer reads High, Medium or Low. It reads "For revision", "For minor revision" or "For improvement" (English and Filipino). The stored level is unchanged.
+- The badge is a wider rounded box whose text wraps between words, so long labels no longer overlap the recommendation text.
+
+### v1.61.2 — Groq, Skeletons and Passing Grade
+**By:** Raymond  
+**Date:** October 23, 2026
+
+- Groq is a new AI provider for the compliance check (`GROQ_API_KEY`, `GROQ_MODEL`; see HOW-TO-RUN.md and `server/.env.example`). Provider order is Groq, then OpenRouter, then Gemini; `COMPLIANCE_AI_PROVIDER` can pick one. The OpenRouter model id (`OPENROUTER_MODEL`) is now required.
+- Suggested changes are written at the same time as the recommendations, and skeleton placeholders show while the AI writes. Clicking Refresh while they load does not send a second request.
+- Rule I-01 is AI-only: the system no longer supplies a fixed accommodation wording, and the AI's wordings differ from each other.
+- Findings and recommendations link to the exact field in the plan, and the step button and editor card flash when a link is followed.
+- Grading step: a passing grade field and a clearer layout of the grade components; the field stays empty, not 0%, until a value is typed.
+- Analytics: the Average Compliance Score bars share the card width so the end bars are not cut off.
+- The old sample syllabi and their scripts were removed.

@@ -467,6 +467,14 @@ html { scrollbar-gutter: auto; }
 .cmp-rowlink { font: inherit; color: var(--blue); background: transparent; border: 0; padding: 0 1px; cursor: pointer; text-decoration: underline; }
 .cmp-rowlink:hover { color: var(--blue2); }
 tr.row-flash > td { animation: row-flash 1.8s ease-out; }
+.bld2 .stepper button.step-flash { animation: step-flash 1.8s ease-out; }
+.bld2 .editor-card.card-flash { animation: card-flash 1.8s ease-out; }
+.target-flash { animation: target-flash 1.8s ease-out; border-radius: 8px; }
+@keyframes target-flash { 0%, 35% { background: #fff2db; box-shadow: 0 0 0 3px #fff2db; } 100% { background: transparent; box-shadow: 0 0 0 3px transparent; } }
+@media (prefers-reduced-motion: reduce) { .target-flash { animation: none; } }
+@keyframes step-flash { 0%, 35% { background: #fff2db; box-shadow: 0 0 0 2px #f0b44c inset; } 100% { background: transparent; box-shadow: 0 0 0 2px transparent inset; } }
+@keyframes card-flash { 0%, 35% { box-shadow: 0 0 0 3px #f0b44c, 0 0 18px #f0b44c66; } 100% { box-shadow: 0 0 0 3px transparent, 0 0 18px transparent; } }
+@media (prefers-reduced-motion: reduce) { .bld2 .stepper button.step-flash, .bld2 .editor-card.card-flash { animation: none; } }
 @keyframes row-flash { 0%, 40% { background: #fff2db; } 100% { background: transparent; } }
 
 /* A horizontal line between notifications (the shared .thread rule resets its border). */
@@ -481,6 +489,18 @@ tr.row-flash > td { animation: row-flash 1.8s ease-out; }
   line-height: 1.3; white-space: nowrap; pointer-events: none; box-shadow: 0 4px 14px rgba(15, 20, 40, 0.22);
 }
 .analytics-grid .legend-row[data-tip]:hover::after { left: auto; right: 0; transform: none; }
+/* The EGA / PO chips of Step 2: the full name in a tooltip that wraps, and opens from the chip's left edge. */
+.bld2 .ie-chip[data-tip] { position: relative; }
+.bld2 .ie-chip[data-tip]:hover::after {
+  content: attr(data-tip); position: absolute; left: 0; bottom: calc(100% + 6px); z-index: 30; width: max-content; max-width: 280px; white-space: normal;
+  padding: 5px 9px; border-radius: 6px; background: var(--ink, #1c2430); color: #fff; font-size: var(--text-xs); font-weight: var(--fw-medium, 500);
+  line-height: 1.3; pointer-events: none; box-shadow: 0 4px 14px rgba(15, 20, 40, 0.22);
+}
+
+/* Recommendations pop in one after another (each waits for the one before it); a viewer who asks for less motion gets them at once. */
+@keyframes rec-pop { 0% { opacity: 0; transform: translateY(10px) scale(0.96); } 70% { opacity: 1; transform: translateY(0) scale(1.015); } 100% { opacity: 1; transform: none; } }
+.cmp-recs .recommend.pop { animation: rec-pop 0.45s cubic-bezier(0.2, 0.8, 0.3, 1) both; animation-delay: calc(var(--i, 0) * 0.3s + 0.1s); }
+@media (prefers-reduced-motion: reduce) { .cmp-recs .recommend.pop { animation: none; } }
 
 /* The band donut: an SVG ring of three colours you can click, with the centre text laid over the hole. */
 .band-donut { position: relative; width: 115px; height: 115px; flex: none; }
@@ -586,8 +606,12 @@ tr.row-flash > td { animation: row-flash 1.8s ease-out; }
   .repository-table:not(.stu-repo) tbody tr:last-child { margin-bottom: 0; }
 }
 
-/* Few bars sit close together in the middle of the card; each bar keeps its width. */
-.bars { justify-content: center; gap: 10%; }
+/* The bars share the card's width and never run past it (they used to, and the end bars were cut off): few of them sit together in the middle
+   at a readable width, many shrink to fit. A label stays on one line (the tooltip has the full name). */
+.bars { justify-content: center; gap: 8px; }
+.bars > .bar-col { flex: 1 1 0; min-width: 0; width: auto; max-width: 92px; }
+.bars .bar-col small, .bars .bar-col span { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
+.bars .bar-col small { font-size: 11px; }
 
 /* An insight that links somewhere is a button that looks like the plain card. */
 button.insight-link { width: 100%; text-align: left; font: inherit; color: inherit; background: transparent; cursor: pointer; }
@@ -653,10 +677,31 @@ button.insight-link { width: 100%; text-align: left; font: inherit; color: inher
 .sug-before, .sug-after { padding: 8px 10px; border-radius: 8px; }
 .sug-before { background: #f4f6f8; }
 .sug-after { background: #eaf6ee; }
+.sug-after textarea { width: 100%; box-sizing: border-box; margin-top: 2px; padding: 6px 8px; font: inherit; font-size: var(--text-sm); border: 1px solid var(--line); border-radius: 6px; background: #fff; resize: vertical; overflow-wrap: anywhere; }
 .sug-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .sug-item.applied { border-color: #9bd2ae; }
 .sug-item.outdated { opacity: .75; }
 @media (max-width: 640px) { .sug-diff { grid-template-columns: minmax(0, 1fr); } }
+.cmp-ai-warn { color: var(--muted); font-style: italic; }
+/* Suggested changes while the AI writes them: a spinner with the status line, and three placeholder cards that shimmer. */
+.sug-loading { display: grid; gap: 12px; }
+.sug-busy { display: flex; align-items: center; gap: 8px; margin: 0; }
+.sug-spin { width: 16px; height: 16px; flex: none; border-radius: 50%; border: 2.5px solid color-mix(in srgb, var(--green) 25%, transparent); border-top-color: var(--green); animation: cmp-spin 0.8s linear infinite; }
+.sug-skel { border: 1px solid var(--line); border-radius: 10px; padding: 12px; display: grid; gap: 10px; }
+.sug-skel .bar, .sug-skel .blk { display: block; border-radius: 6px; background: linear-gradient(90deg, #eef1f0 25%, #f8faf9 45%, #eef1f0 65%); background-size: 200% 100%; animation: sug-shimmer 1.4s ease-in-out infinite; animation-delay: calc(var(--i, 0) * 0.15s); }
+.sug-skel .bar { height: 12px; }
+.sug-skel .bar.w40 { width: 40%; }
+.sug-skel-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.sug-skel .blk { height: 54px; }
+.rec-skel { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); }
+.rec-skel .dot, .rec-skel .bar { display: block; background: linear-gradient(90deg, #eef1f0 25%, #f8faf9 45%, #eef1f0 65%); background-size: 200% 100%; animation: sug-shimmer 1.4s ease-in-out infinite; animation-delay: calc(var(--i, 0) * 0.15s); }
+.rec-skel .dot { width: 56px; height: 56px; border-radius: 50%; }
+.rec-skel .bar { height: 11px; border-radius: 6px; margin: 6px 0; }
+.rec-skel .bar.w60 { width: 60%; }
+.rec-skel .bar.w30 { width: 30%; }
+@media (prefers-reduced-motion: reduce) { .rec-skel .dot, .rec-skel .bar { animation: none; } }
+@keyframes sug-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .sug-spin { animation-duration: 3s; } .sug-skel .bar, .sug-skel .blk { animation: none; } }
 .sug-gain { margin: 0; padding: 8px 12px; border-radius: 8px; background: #eaf6ee; font-size: var(--text-sm); }
 .sug-applied { margin: 0; font-size: var(--text-sm); }
 .sug-col { grid-column: 1 / -1; font-size: var(--text-sm); }
@@ -666,6 +711,8 @@ button.insight-link { width: 100%; text-align: left; font: inherit; color: inher
 
 /* The LCUP vision and mission in the builder's step 2: shown, not editable. */
 .learning-outcomes-editor textarea.in[readonly] { background: #f1f4f3; color: var(--muted); cursor: default; resize: none; }
+.learning-outcomes-editor input.in[readonly] { background: #f1f4f3; color: var(--muted); cursor: default; }
+.learning-outcomes-editor .ie-ega.fixed { grid-template-columns: auto minmax(0, 1fr); }
 
 /* Pre-requisite (IV) as a dropdown with checkboxes. */
 .prereq-trigger { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: inherit; font: inherit; text-align: left; cursor: pointer; }

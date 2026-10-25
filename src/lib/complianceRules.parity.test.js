@@ -28,10 +28,7 @@ test('they implement the same checks', () => {
   assert.deepStrictEqual(Object.keys(clientChecks).sort(), Object.keys(server.CHECKS).sort());
 });
 
-test('they agree on the four named failures', () => {
-  const vision = F.ctx();
-  vision.catalog.institution.vision = 'Another vision';
-  assert.strictEqual(both(F.good(), vision).conformance.failed[0].ruleId, 'T-09');
+test('they agree on the three named failures', () => {
   const noTag = F.good();
   noTag.plan[0].ilos[0].tags = [];
   assert.strictEqual(both(noTag).conformance.failed[0].ruleId, 'T-13');

@@ -14,7 +14,7 @@ test('with no edits the effective standard is the file, and apply leaves it as i
 });
 
 test('validate keeps only what differs from the file', () => {
-  const r = o.validate({ passThreshold: 79, rules: { 'T-24': { weight: 4, severity: 'blocking' }, 'T-01': { weight: 5 } } });
+  const r = o.validate({ passThreshold: 79, rules: { 'T-24': { weight: 3, severity: 'blocking' }, 'T-01': { weight: 5 } } });
   assert.deepEqual(r.errors, []);
   assert.deepEqual(r.doc, { rules: { 'T-01': { weight: 5 } } });
 });
