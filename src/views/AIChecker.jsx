@@ -1,13 +1,17 @@
-import { canApproveAdminDraft } from '../lib/syllabusRules';
+import { canApproveAdminDraft, STATUS_LABELS, isReturned, noteMissing } from '../lib/syllabusRules';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { PageHead } from '../components/ui';
+import StableButton from '../components/StableButton';
+import Select from '../components/Select';
 import { compliance as api, syllabi as syllabiApi } from '../lib/api';
-import { groupByFacultyProgram, listBasis, needsCheck, rangeToInstants } from '../lib/complianceView';
+import { groupByFacultyProgram, listBasis, needsCheck, rangeToInstants, warningCount } from '../lib/complianceView';
 import SyllabusPicker from '../components/SyllabusPicker';
 import ComplianceModal from '../components/ComplianceModal';
 import CheckHistory from '../components/CheckHistory';
+import ComplianceSection from './builder2/ComplianceSection';
+import { canSubmitHybrid, applySuggestion } from '../lib/hybridCheck';
 import { useAiGate } from '../lib/checkPolicy';
 
 // The history's date filter is kept in this browser, so it is still applied after a reload or a visit to another page, until the admin
@@ -23,13 +27,167 @@ const readRange = () => {
 };
 const writeRange = (r) => { try { if (r.from || r.to) localStorage.setItem(RANGE_KEY, JSON.stringify(r)); else localStorage.removeItem(RANGE_KEY); } catch { /* storage blocked: the filter just does not persist */ } };
 
-// The AI Checker page is the administrator's view of the compliance checks of submitted syllabi. The page is one picker
-// (Faculty, then Program, then Subject) of the syllabi still waiting for their first check; Check compliance runs it and opens the
-// result in a dialog. A checked syllabus then leaves the picker and is in the history. Below it, the history lists every stored check; a card opens that exact check, read-only. An approved syllabus
-// is final and is in the Repository, not here.
-// The rules run on the latest submitted version and the result is stored with it (what Review & Approval shows).
-// Faculty have no tab here: they check their own syllabus in step 7 of the builder (Review & Check).
-export default function AIChecker({ user, notify, onEditDraft, onApproved }) {
+function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, notify, onSubmitted }) {
+  const uid = useId();
+  const aiGate = useAiGate();
+  const mine = useMemo(() => syllabi.filter(s => s.userId === user.id), [syllabi, user.id]);
+  const [selectedId, setSelectedId] = useState(() => editing?.syllabusId || mine[0]?.id || null);
+  const [doc, setDoc] = useState({ loading: false, error: '', content: null, editable: false, status: 'draft', version: 'v1.0' });
+  const [lastRun, setLastRun] = useState(null);
+  const [note, setNote] = useState('');
+  const [submitFailed, setSubmitFailed] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (editing?.syllabusId) setSelectedId(editing.syllabusId);
+    else if (!selectedId && mine.length > 0) setSelectedId(mine[0].id);
+  }, [editing?.syllabusId, mine, selectedId]);
+
+  useEffect(() => {
+    if (!selectedId) {
+      setDoc({ loading: false, error: '', content: null, editable: false, status: 'draft', version: 'v1.0' });
+      setLastRun(null);
+      setSubmitFailed([]);
+      return undefined;
+    }
+    let live = true;
+    setDoc(prev => ({ ...prev, loading: true, error: '' }));
+    setLastRun(null);
+    setSubmitFailed([]);
+    syllabiApi.getContent(selectedId).then(res => {
+      if (!live) return;
+      setDoc({ loading: false, error: '', content: res.content || null, editable: !!res.editable, status: res.status || 'draft', version: res.version || 'v1.0' });
+    }).catch(err => {
+      if (!live) return;
+      setDoc({ loading: false, error: err.message || '', content: null, editable: false, status: 'draft', version: 'v1.0' });
+    });
+    return () => { live = false; };
+  }, [selectedId]);
+
+  const receiveRun = useCallback((run) => {
+    setLastRun(run ? { ...run, draftSignature: doc.content ? JSON.stringify(doc.content) : '' } : null);
+  }, [doc.content]);
+
+  const applyDraftRecommendation = async (patch) => {
+    if (!selectedId || !doc.content) return false;
+    const next = applySuggestion(doc.content, patch, { requireOriginal: true });
+    setLastRun(null);
+    await syllabiApi.saveContent(selectedId, next, next.schemaVersion || 3);
+    setDoc(prev => ({ ...prev, content: next }));
+    return true;
+  };
+
+  const openBuilder = () => {
+    if (!selectedId) return;
+    setEditing?.({ syllabusId: selectedId, status: doc.status });
+    setPage?.('builder');
+  };
+
+  const existing = doc.status !== 'draft';
+  const revising = isReturned(doc.status);
+  const needNote = noteMissing(doc.status, note);
+  const warnings = warningCount(lastRun);
+  const selectedRow = mine.find(s => s.id === selectedId) || null;
+  const activeStatus = selectedRow?.status || doc.status;
+
+  const submitChecked = async () => {
+    if (!selectedId || submitting) return;
+    setSubmitting(true);
+    setSubmitFailed([]);
+    try {
+      const res = await syllabiApi.submitContent(selectedId, note.trim());
+      if (onSubmitted) await onSubmitted(res, existing);
+    } catch (e) {
+      if (e.data && Array.isArray(e.data.failed)) setSubmitFailed(e.data.failed);
+      notify?.(translateUI("ui.submit_failed_adb15a") + e.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <>
+      <PageHead title={translateUI("ui.ai_syllabus_checker_0c99c9")} subtitle={translateUI("ui.checked_against_the_undergraduate_syllabus_form_only_a_form_that__68429a")} />
+      {!selectedId && mine.length === 0 ? (
+        <div className="empty">{translateUI("ui.no_syllabi_yet_click_new_syllabus_to_get_started_2e4bc9")}</div>
+      ) : (
+        <>
+          <section className="card pick-card" aria-label={translateUI("ui.choose_a_syllabus_to_check_b6f6d2")}>
+            <div className="pick-head">
+              <h3>{translateUI("ui.choose_a_syllabus_cd5a79")}</h3>
+            </div>
+            <div className="pick-grid">
+              <div className="pick-field">
+                <label htmlFor={uid + '-s'}>{translateUI("ui.subject_8d183d")}</label>
+                <Select id={uid + '-s'} value={selectedId ? String(selectedId) : ''} onChange={e => setSelectedId(e.target.value ? Number(e.target.value) : null)}>
+                  <option value="">{translateUI("ui.choose_a_subject_554b9c")}</option>
+                  {mine.map(s => <option key={s.id} value={String(s.id)}>{(s.courseCode || '—') + (s.title ? ' — ' + s.title : '')}</option>)}
+                </Select>
+              </div>
+            </div>
+            <div className="pick-foot">
+              <div className="pick-info" aria-live="polite">
+                {selectedId && <span className={'status ' + activeStatus}>{tr(STATUS_LABELS[activeStatus] || activeStatus)}</span>}
+              </div>
+              <StableButton type="button" className="btn outline" disabled={!selectedId} onClick={openBuilder}>{translateUI('publication.editDraft')}</StableButton>
+            </div>
+          </section>
+
+          {doc.error && <div className="info-banner warning" role="alert">{tr(doc.error)}</div>}
+          {submitFailed.length > 0 && (
+            <div className="blockers" role="alert">
+              <b>{translateUI("ui.the_server_did_not_accept_this_submit_fix_these_first_31d8e3")}</b>
+              <ul>{submitFailed.map(c => <li key={c.id}>{tr(c.message)}</li>)}</ul>
+            </div>
+          )}
+
+          {selectedId && (
+            <ComplianceSection
+              key={selectedId}
+              syllabusId={() => selectedId}
+              saveFirst={async () => true}
+              canCheck={doc.editable}
+              onOpenStep={openBuilder}
+              onRun={receiveRun}
+              onApplyDraft={doc.editable && doc.content ? applyDraftRecommendation : undefined}
+            />
+          )}
+
+          {revising && doc.editable && (
+            <label className="field" style={{ marginBottom: 14 }}>
+              <span>{translateUI("ui.what_did_you_change_required_c57040")}</span>
+              <textarea rows="3" maxLength={1000} value={note} aria-required="true" onChange={e => setNote(e.target.value)} placeholder={translateUI("ui.saved_with_this_version_in_the_history_e_g_updated_the_grading_co_4d98a9")} />
+              {needNote && <small className="hint">{translateUI("ui.write_at_least_a_sentence_so_the_reviewer_knows_what_to_look_at_3f7338")}</small>}
+            </label>
+          )}
+
+          {warnings > 0 && doc.editable && <div className="step-hint advice" role="note">{tr(warnings + (warnings === 1 ? ' warning remains' : ' warnings remain')) + translateUI("ui.in_the_compliance_check_they_do_not_block_you_the_reviewer_will_s_d35203")}</div>}
+
+          {selectedId && doc.editable && (
+            <div className="editor-footer">
+              <StableButton type="button" className="btn outline" onClick={openBuilder}>{translateUI('publication.editDraft')}</StableButton>
+              <StableButton
+                type="button"
+                className="btn primary"
+                disabled={submitting || !doc.content || needNote || !canSubmitHybrid(lastRun, JSON.stringify(doc.content), aiGate)}
+                title={!doc.content || !canSubmitHybrid(lastRun, JSON.stringify(doc.content), aiGate) ? translateUI(aiGate === 'advisory' ? 'hybrid.hardGateRequired' : 'hybrid.required') : undefined}
+                onClick={submitChecked}
+              >
+                {existing ? translateUI('hybrid.submitVersion') : translateUI('hybrid.submit')}
+              </StableButton>
+            </div>
+          )}
+        </>
+      )}
+      <div className="ai-note">{translateUI("ui.the_check_supports_but_does_not_replace_faculty_curriculum_commit_e24080")}</div>
+    </>
+  );
+}
+
+// The AI Checker page is the administrator's view of the compliance checks of submitted syllabi, and the faculty member's
+// dedicated tab for checking and submitting their syllabus drafts.
+export default function AIChecker({ user, syllabi = [], editing, setEditing, setPage, notify, onSubmitted, onEditDraft, onApproved }) {
+  const isAdmin = user?.role === 'admin';
   const aiGate = useAiGate(); // 'advisory': the administrator decides after reading the check; 'required': a completed AI check too
   const [list, setList] = useState(null);     // { installed, syllabi: [row], summary }
   const [editingDraft, setEditingDraft] = useState(false);
@@ -60,17 +218,18 @@ export default function AIChecker({ user, notify, onEditDraft, onApproved }) {
   }, [range]);
 
   useEffect(() => {
+    if (!isAdmin) return undefined;
     let live = true;
     setLoading(true);
     const done = () => { if (live) setLoading(false); };
     loadList().then(done, done);
     return () => { live = false; };
-  }, [loadList]);
+  }, [isAdmin, loadList]);
 
-  useEffect(() => { loadHistory(); }, [loadHistory]); // on mount, and again whenever the applied range changes
+  useEffect(() => { if (isAdmin) loadHistory(); }, [isAdmin, loadHistory]); // on mount, and again whenever the applied range changes
 
   // While recommendations are still being written, look again every few seconds (for a bounded time).
-  const pending = openId !== null && detail && detail.isLatest !== false && detail.run && detail.run.aiStatus === 'pending'; // an earlier run no longer changes
+  const pending = isAdmin && openId !== null && detail && detail.isLatest !== false && detail.run && detail.run.aiStatus === 'pending'; // an earlier run no longer changes
   useEffect(() => {
     if (!pending) return undefined;
     let tries = 0;
@@ -83,13 +242,16 @@ export default function AIChecker({ user, notify, onEditDraft, onApproved }) {
 
   // A check started before this page was left is still running on the server (the row says so): keep the button waiting, look again until it
   // ends, then refresh the history so the new check appears.
-  const remoteChecking = rows.some((row) => row.checking);
+  const remoteChecking = isAdmin && rows.some((row) => row.checking);
   useEffect(() => {
     if (!remoteChecking) return undefined;
     const timer = setInterval(loadList, 3000);
     return () => { clearInterval(timer); loadHistory(); };
   }, [remoteChecking, loadList, loadHistory]);
 
+  if (user?.role === 'faculty') {
+    return <FacultyAIChecker user={user} syllabi={syllabi} editing={editing} setEditing={setEditing} setPage={setPage} notify={notify} onSubmitted={onSubmitted} />;
+  }
   if (!user || user.role !== 'admin') return <div className="empty">{translateUI("ui.the_compliance_check_is_in_step_7_of_the_syllabus_builder_1f3135")}</div>;
 
   const say = (m) => { if (notify) notify(m); };

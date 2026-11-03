@@ -96,7 +96,7 @@ export default function App() {
   }, [narrow, mobileNavOpen]);
   const [page, setPage] = useState('dashboard');
   // The compliance check moved into step 7 of the builder: an old 'ai' link sends faculty there, and only admins have the overview.
-  useEffect(() => { if (user && user.role !== 'admin' && page === 'ai') setPage(user.role === 'faculty' ? 'builder' : 'dashboard'); }, [user, page]);
+  useEffect(() => { if (user && user.role !== 'admin' && user.role !== 'faculty' && page === 'ai') setPage('dashboard'); }, [user, page]);
   const [toast, setToast] = useState('');
   const [syllabi, setSyllabi] = useState([]);
   const [logs, setLogs] = useState([]);
@@ -396,10 +396,10 @@ export default function App() {
 
           {page === 'dashboard' && <Dashboard setPage={setPage} user={user} syllabi={syllabi} logs={logs} clearLogs={clearLogs} setConfirm={setConfirm} />}
           {page === 'builder' && ((NEW_BUILDER || user.role === 'admin')
-            ? <SyllabusBuilderV2 key={editing ? editing.syllabusId : 'new'} editing={editing} user={user} notify={notify} setPage={setPage} onSubmitted={handleBuilderSubmitted} />
+            ? <SyllabusBuilderV2 key={editing ? editing.syllabusId : 'new'} editing={editing} user={user} notify={notify} setPage={setPage} onSubmitted={handleBuilderSubmitted} onOpenChecker={async (draftRef) => { await fetchSyllabi(); setEditing(draftRef); }} />
             : <SyllabusBuilder notify={notify} onSubmit={submitSyllabus} editing={editing} setEditing={setEditing} />)}
           {page === 'my-syllabi' && <MySyllabi syllabi={syllabi} user={user} messages={messages} commentCounts={commentCounts} setCommentCode={setCommentCode} setEditing={setEditing} setPage={setPage} setHistCode={setHistCode} setChatCode={setChatCode} handleDelete={handleDelete} setConfirm={setConfirm} notify={notify} />}
-          {page === 'ai' && user.role === 'admin' && <AIChecker user={user} notify={notify} onApproved={async () => { await fetchSyllabi(); await fetchLogs(); notify(translateUI('publication.approvedRepository')); setEditing(null); setPage('repository'); }} onEditDraft={async id => { await syllabiApi.resumeDraft(id); setEditing({ syllabusId: id, status: 'draft' }); setPage('builder'); }} />}
+          {page === 'ai' && (user.role === 'admin' || user.role === 'faculty') && <AIChecker user={user} syllabi={syllabi} editing={editing} setEditing={setEditing} setPage={setPage} notify={notify} onSubmitted={handleBuilderSubmitted} onApproved={async () => { await fetchSyllabi(); await fetchLogs(); notify(translateUI('publication.approvedRepository')); setEditing(null); setPage('repository'); }} onEditDraft={async id => { await syllabiApi.resumeDraft(id); setEditing({ syllabusId: id, status: 'draft' }); setPage('builder'); }} />}
           {page === 'review' && <ReviewApproval syllabi={syllabi} setViewCode={setViewCode} setPage={setPage} />}
           {page === 'repository' && <Repository syllabi={syllabi} user={user} notify={notify} setChatCode={setChatCode} setHistCode={setHistCode} />}
           {page === 'compliance' && <Compliance syllabi={syllabi} />}

@@ -34,7 +34,7 @@ const STEP_CONFIG = STEPS.map((s) => ({
 
 // The new syllabus builder: same shell as the current one (course strip, stepper, "Step N of 7" card, auto-save status),
 // driven by the rules in src/lib/syllabusModel.js. It is used when VITE_NEW_BUILDER=true; until then the previous builder is the default.
-export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSubmitted }) {
+export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSubmitted, onOpenChecker }) {
   const { draft, apply, set, setAndSave, save, saveNow, load, syllabusId } = useDraft(editing);
   const importBase = useRef(null);
   const importIdentity = useRef(null);
@@ -112,7 +112,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
   // administrator has not added). Going back is always allowed, and a read-only syllabus is never gated.
   const gated = load.editable && !!user && user.role === 'faculty';
   const isAdmin = user?.role === 'admin';
-  const titleOf = item => isAdmin && item.key === 'review' ? translateUI('publication.reviewSyllabus') : tr(item.title);
+  const titleOf = item => item.key === 'review' ? translateUI('publication.reviewSyllabus') : tr(item.title);
   const { statuses, complete, firstBlocked: blockedStep } = model.stepStatuses(draft, visited, { sequential: gated });
   const firstBlocked = gated ? blockedStep : -1; // the first of steps 1-6 with a blocker, or -1
   const canGo = (i) => !gated || firstBlocked < 0 || i <= firstBlocked;
@@ -173,8 +173,8 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
       const id = syllabusId();
       if (!id) { notify(translateUI("ui.choose_a_subject_first_24357e")); return; }
       if (isAdmin) { await syllabiApi.prepareCheck(id); setPage('ai'); return; }
-      const res = await syllabiApi.submitContent(id, note.trim());
-      onSubmitted(res, existing);
+      if (onOpenChecker) await onOpenChecker({ syllabusId: id, status: load.status });
+      setPage('ai');
     } catch (e) {
       if (e.data && Array.isArray(e.data.failed)) setSubmitFailed(e.data.failed);
       notify(translateUI("ui.submit_failed_adb15a") + e.message);
@@ -228,7 +228,9 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
         // through the normal checker if another check or the provider blocks it.
         notify(translateUI('pdfImport.savedCheckFailed', { message: error.message }));
       }
+      if (onOpenChecker) await onOpenChecker({ syllabusId: syllabusId(), status: load.status });
       setMode('form'); setStep(6);
+      setPage('ai');
       return true;
     } finally { setBusy(false); }
   };
@@ -303,12 +305,12 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
             <div>
               <span className="eyebrow">{translateUI("ui.step_c5964d") + (step + 1) + translateUI("ui.of_f69649") + STEP_CONFIG.length + (cfg.form === 'Form' ? '' : ' · ' + tr('FORM SECTION') + ' ' + cfg.form)}</span>
               <h2 id="bld2-title">{titleOf(cfg)}</h2>
-              <p>{isAdmin && cfg.key === 'review' ? translateUI('publication.reviewDescription') : tr(cfg.sub)}</p>
+              <p>{cfg.key === 'review' ? translateUI('publication.reviewDescription') : tr(cfg.sub)}</p>
             </div>
             <span className={'autosave' + (save.state === 'error' ? ' error' : save.state === 'saved' ? '' : ' saving')} role="status">{tr(saveText)}{save.state === 'error' && <button type="button" className="link" onClick={saveNow}>{translateUI("ui.retry_9f5cd8")}</button>}</span>
           </div>
           <fieldset disabled={!editable || busy}>
-            <Body d={draft} apply={apply} editable={editable} model={model} programList={programList} courseList={courseList} onChooseCourse={onChooseCourse} onChooseProgram={onChooseProgram} filter={filter} setFilter={setFilter} onDeleteRow={onDeleteRow} go={go} preparedBy={preparedBy} existing={existing} noteRequired={revising} note={note} setNote={setNote} syllabusId={syllabusId} saveFirst={saveFirst} showCompliance={!isAdmin} canCheck={!!user && user.role === 'faculty' && !noAccess} submitFailed={submitFailed} onRun={receiveRun} onApplyDraft={editable ? applyDraftRecommendation : undefined} />
+            <Body d={draft} apply={apply} editable={editable} model={model} programList={programList} courseList={courseList} onChooseCourse={onChooseCourse} onChooseProgram={onChooseProgram} filter={filter} setFilter={setFilter} onDeleteRow={onDeleteRow} go={go} preparedBy={preparedBy} existing={existing} noteRequired={revising} note={note} setNote={setNote} syllabusId={syllabusId} saveFirst={saveFirst} showCompliance={false} canCheck={!!user && user.role === 'faculty' && !noAccess} submitFailed={submitFailed} onRun={receiveRun} onApplyDraft={editable ? applyDraftRecommendation : undefined} />
           </fieldset>
           {!nxt && !complete && <div className="step-hint" role="status">{translateUI("ui.finish_the_steps_marked_in_the_list_review_check_the_compliance_c_31bb82")}{existing ? translateUI("ui.saving_a_new_version_a8d794") : translateUI("ui.submitting_8ee0db")}{translateUI("ui.unlock_once_steps_1_to_6_are_complete_f983eb")}</div>}
           {step < 6 && mine_.length > 0 && (
@@ -331,7 +333,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
             <div>
               {nxt && <StableButton type="button" className="btn primary" disabled={blocking.length > 0} title={blocking.length ? translateUI("ui.complete_this_step_to_continue_71b565") : undefined} onClick={() => go(step + 1)}>{translateUI("ui.next_94377f") + titleOf(nxt) + ' →'}</StableButton>}
               {!nxt && <>
-                <StableButton type="button" className="btn primary" disabled={busy || !editable || !draft.meta.courseId || !complete || needNote || (!isAdmin && !canSubmitHybrid(lastRun, JSON.stringify(draft), aiGate))} title={!isAdmin && !canSubmitHybrid(lastRun, JSON.stringify(draft), aiGate) ? translateUI(aiGate === 'advisory' ? 'hybrid.hardGateRequired' : 'hybrid.required') : undefined} onClick={submit}>{isAdmin ? translateUI('publication.continueToCheck') : existing ? translateUI('hybrid.submitVersion') : translateUI('hybrid.submit')}</StableButton>
+                <StableButton type="button" className="btn primary" disabled={busy || !editable || !draft.meta.courseId || !complete} onClick={submit}>{translateUI('publication.continueToCheck')}</StableButton>
               </>}
             </div>
           </div>
