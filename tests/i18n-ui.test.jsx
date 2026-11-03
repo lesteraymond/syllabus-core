@@ -30,6 +30,10 @@ import Topbar from '../src/components/Topbar';
 import Dashboard from '../src/views/DashboardView';
 import Repository, { repositoryProgram } from '../src/views/Repository';
 import { navItems } from '../src/data/initialData';
+import { roleAllows } from '../src/lib/roles';
+import ReviewPanel from '../src/views/ReviewPanel';
+import ReviewApproval from '../src/views/ReviewApproval';
+import { tr } from '../src/i18n';
 import { setLanguage } from '../src/i18n';
 const user = { id: 1, role: 'faculty', email: 'person@example.invalid', firstName: 'Approved', lastName: 'Settings', name: 'Approved Settings', initials: 'AS' };
 const noop = () => {};
@@ -335,7 +339,7 @@ test('collapsed navigation keeps every destination accessible in English and Tag
   for (const language of ['en', 'tl']) {
     setLanguage(language);
     for (const role of ['faculty', 'admin']) {
-      const items = navItems.filter(([, , , allowedRole]) => !allowedRole || allowedRole === role);
+      const items = navItems.filter(([, , , allowedRole]) => roleAllows(allowedRole, role));
       for (const collapsed of [false, true]) {
         const html = renderToStaticMarkup(<Sidebar page="settings" setPage={noop} nav={items} collapsed={collapsed} onToggle={noop} />);
         assert.equal((html.match(/<button /g) || []).length, items.length + 1);
@@ -489,7 +493,7 @@ test('learning outcomes and preview hide catalog text until both program and sub
 });
 
 test('admin navigation and My Syllabi expose personal drafts without an AI Checker action',()=>{
-  assert.ok(navItems.some(([page,,,role])=>page==='my-syllabi'&&!role));
+  assert.ok(navItems.some(([page,,,role])=>page==='my-syllabi'&&roleAllows(role,'admin')&&roleAllows(role,'faculty')));
   const html=renderToStaticMarkup(<MySyllabi user={{...user,role:'admin'}} syllabi={[{id:1,userId:user.id,status:'draft',courseCode:'OWN-DRAFT',title:'Own draft'},{id:2,userId:99,status:'draft',courseCode:'PRIVATE-OTHER',title:'Other draft'}]} messages={[]} setPage={noop} setEditing={noop} setHistCode={noop} setChatCode={noop} setConfirm={noop} handleDelete={noop} />);
   assert.match(html,/OWN-DRAFT/);assert.doesNotMatch(html,/PRIVATE-OTHER/);assert.doesNotMatch(html,/Check in AI Checker/);
 });
@@ -537,7 +541,9 @@ test('AI results expose an explicit approval and edit choice with busy and unava
 });
 
 test('builder review omits the embedded AI section by default and places AI Checker 3rd in the sidebar for both roles',()=>{
-  assert.deepEqual(navItems.slice(0,4).map(([page,,,role])=>[page,role]),[['dashboard',null],['builder',null],['ai',null],['my-syllabi',null]]);
+  assert.deepEqual(navItems.slice(0,4).map(([page])=>page),['dashboard','builder','ai','my-syllabi']);
+  for (const role of ['faculty','admin']) assert.deepEqual(navItems.filter(([,,,gate])=>roleAllows(gate,role)).slice(0,4).map(([page])=>page),['dashboard','builder','ai','my-syllabi']); // the first four stay in this order for both authoring roles
+  for (const role of ['asst_vpaa','lic_director','vpaa']) { const pages=navItems.filter(([,,,gate])=>roleAllows(gate,role)).map(([page])=>page); assert.ok(pages.includes('ai')&&pages.includes('review')&&!pages.includes('builder')&&!pages.includes('my-syllabi')&&!pages.includes('users')&&!pages.includes('courses'), role); }
   const d=emptyDraft(()=>1);
   const model=createModel({institution:{vision:'',mission:{lead:'',items:[]},egas:[]},programs:{},year:2026});
   for(const language of ['en','tl']){
@@ -587,7 +593,7 @@ test('CO–PO Mapping has no navigation, dashboard shortcut or login feature for
   for(const language of ['en','tl']) {
     setLanguage(language);
     for(const role of ['faculty','admin']) {
-      const account={...user,role};const items=navItems.filter(([, , , allowed])=>!allowed||allowed===role);
+      const account={...user,role};const items=navItems.filter(([, , , allowed])=>roleAllows(allowed,role));
       const sidebar=renderToStaticMarkup(<Sidebar page="dashboard" setPage={noop} nav={items} collapsed={false} onToggle={noop}/>);
       const dashboard=renderToStaticMarkup(<Dashboard user={account} syllabi={[]} logs={[]} setPage={noop} clearLogs={noop} setConfirm={noop}/>);
       assert.doesNotMatch(sidebar+dashboard,/CO[–-]PO Mapping|Curriculum Mapping|Pagmamapa ng CO[–-]PO|Pagmamapa ng kurikulum/i);
@@ -770,3 +776,41 @@ test('the printable verdict panel hides stale withheld corrections and translate
   } finally { setLanguage('en'); }
 });
 
+test('the review panel: the dean, the Asst. VPAA and the LIC Director clear their check and cannot approve; the VPAA approves only after all three, in both languages', () => {
+  const stages = (d, a, l) => ({ dean: { cleared: d, by: d ? 'Diana Evale' : '' }, asst_vpaa: { cleared: a, by: a ? 'Asa Vee' : '' }, lic_director: { cleared: l, by: l ? 'Lia Director' : '' }, allCleared: d && a && l });
+  const syl = (st, over = {}) => ({ id: 7, userId: 5, status: 'under_review', awaitingAiCheck: false, myStageCleared: false, stages: st, ...over });
+  const panel = (role, id, s) => renderToStaticMarkup(<ReviewPanel syllabus={s} user={{ ...user, role, id }} messages={[]} handleStatus={noop} handleClear={noop} sendMsg={noop} markRead={noop} onDecided={noop} />);
+  for (const language of ['en', 'tl']) {
+    setLanguage(language);
+    for (const [role, id] of [['admin', 1], ['asst_vpaa', 2], ['lic_director', 3]]) {
+      const html = panel(role, id, syl(stages(false, false, false)));
+      assert.ok(html.includes(t('reviewChain.action.clear')), role + ' can clear their check');
+      assert.ok(html.includes(tr('Return for revision')), role + ' can send it back');
+      assert.ok(!html.includes(tr('Approve syllabus')) && !html.includes(tr('Reject')), role + ' never sees approve or reject');
+      assert.ok(html.includes(t('reviewChain.stage.dean')) && html.includes(t('reviewChain.stage.asst_vpaa')), 'the stages are shown');
+      assert.ok(!panel(role, id, syl(stages(false, false, false), { myStageCleared: true })).includes(t('reviewChain.action.clear')), role + ' cannot clear twice');
+      assert.ok(!panel(role, id, syl(stages(false, false, false), { awaitingAiCheck: true })).includes('act-approve'), 'not before the AI check');
+    }
+    const early = panel('vpaa', 4, syl(stages(true, false, true)));
+    assert.ok(early.includes(tr('Approve syllabus')) && !early.includes(t('reviewChain.action.clear')), 'the VPAA has no stage to clear');
+    assert.match(early.match(/<button[^>]*act-approve[^>]*>/)[0], /disabled/, 'approve waits for the third stage');
+    assert.ok(early.includes(t('reviewChain.waitingFor', { stages: tr('Asst. VPAA') })));
+    const ready = panel('vpaa', 4, syl(stages(true, true, true)));
+    assert.doesNotMatch(ready.match(/<button[^>]*act-approve[^>]*>/)[0], /disabled/);
+    assert.ok(ready.includes(tr('Reject')) && ready.includes('Diana Evale') && ready.includes('Lia Director'));
+  }
+});
+
+test('Review & Approval lists, for each role, what needs that person now', () => {
+  const rows = [
+    { id: 1, userId: 5, faculty: 'Fay Faculty', status: 'under_review', awaitingAiCheck: false, myStageCleared: false, readyForApproval: false, courseCode: 'IT 101', courseTitle: 'Open check', programCode: 'BSIT' },
+    { id: 2, userId: 5, faculty: 'Fay Faculty', status: 'under_review', awaitingAiCheck: false, myStageCleared: true, readyForApproval: true, courseCode: 'IT 202', courseTitle: 'Ready for the VPAA', programCode: 'BSIT' },
+  ];
+  setLanguage('en');
+  const forDean = renderToStaticMarkup(<ReviewApproval syllabi={rows} user={{ ...user, role: 'admin', id: 1 }} setViewCode={noop} setPage={noop} />);
+  assert.ok(forDean.includes('Open check') && !forDean.includes('Ready for the VPAA'));
+  assert.ok(forDean.includes(t('reviewChain.restReviewer', { count: 1 })));
+  const forVpaa = renderToStaticMarkup(<ReviewApproval syllabi={rows} user={{ ...user, role: 'vpaa', id: 4 }} setViewCode={noop} setPage={noop} />);
+  assert.ok(forVpaa.includes('Ready for the VPAA') && !forVpaa.includes('Open check'));
+  assert.ok(forVpaa.includes(t('reviewChain.restApprover', { count: 1 })));
+});

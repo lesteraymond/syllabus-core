@@ -5,6 +5,7 @@
 // carries the version the screen loaded: a save from an out-of-date screen is refused with 409, so two admins never
 // overwrite each other. Removing an EGA or PO that a CLO of the program's subjects still uses is refused too.
 const express = require('express');
+const { isReviewer } = require('../lib/roles');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { inTransaction, httpError, sendError } = require('../lib/http');
 const { findProgram, loadResolvedProgram, requireOwnOutcomes, inheritedFrom } = require('../lib/programs');
@@ -24,7 +25,7 @@ const managementError = (res, error) => {
 router.get('/', requireAuth, async (req, res) => {
   try {
     // Faculty see only the programs an admin assigned to them; admins see every program.
-    const mine = req.session.user.role !== 'admin';
+    const mine = !isReviewer(req.session.user); // reviewers (dean, Asst. VPAA, LIC Director, VPAA) read every program
     const [rows] = await req.app.locals.db.query(
       `SELECT p.program_id, p.code, p.name, COUNT(o.po_no) AS outcome_count
        FROM programs p LEFT JOIN program_outcomes o ON o.program_id = p.program_id

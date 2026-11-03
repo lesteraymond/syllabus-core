@@ -134,6 +134,17 @@ test('only an administrator registers users, and the usual checks still apply', 
   assert.strictEqual((await admin('POST', '/users', { ...newUser, email: 'not-an-email' })).status, 400);
 }));
 
+test('the dean registers the three review roles too; the role of the account that registers cannot be borrowed by a reviewer', () => withServer(async ({ db, client }) => {
+  outbox();
+  const admin = client(); await admin.login('dean@x.ph', 'Dean-pass-1');
+  for (const role of ['asst_vpaa', 'lic_director', 'vpaa']) {
+    const made = await admin('POST', '/users', { ...newUser, email: role + '@x.ph', role });
+    assert.strictEqual(made.status, 201, role);
+    assert.strictEqual(db.s.users.find((u) => u.email === role + '@x.ph').role, role);
+  }
+  assert.strictEqual((await admin('POST', '/users', { ...newUser, email: 'who@x.ph', role: 'superuser' })).status, 400);
+}));
+
 test('if the email cannot go out the user is still registered, and the response says so', () => withServer(async ({ db, client }) => {
   mailer.setTransport({ sendMail: async () => { throw new Error('smtp down'); } });
   const origErr = console.error; console.error = () => {};

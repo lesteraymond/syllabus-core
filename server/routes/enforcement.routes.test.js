@@ -6,6 +6,7 @@ const test = require('node:test');
 const assert = require('node:assert');
 const express = require('express');
 const compliance = require('../lib/compliance/service');
+const reviewStages = require('../lib/reviewStages');
 const F = require('../lib/compliance/fixtures');
 
 const normalizeSql = sql => String(sql).replace(/\s+/g, ' ').trim();
@@ -23,9 +24,9 @@ const COURSES = [
   { course_id: 20, code: 'IE 101', title: 'Work Study', program_id: 2, program_code: 'BSIE', program_name: 'BSIE' },
 ];
 const PROGRAMS = [{ program_id: 1, code: 'BSIT', name: 'BS IT', outcome_count: 10 }, { program_id: 2, code: 'BSIE', name: 'BS IE', outcome_count: 0 }];
-const USERS = new Set([1, 5, 6]);
+const USERS = new Set([1, 5, 6, 9]);
 
-function makeDb({ assigned = {}, syllabi = {}, beforeDelete, complianceInstalled = false, syllabusVersions = [], adminRuns = [], masterData = null } = {}) {
+function makeDb({ assigned = {}, syllabi = {}, beforeDelete, complianceInstalled = false, syllabusVersions = [], adminRuns = [], masterData = null, stages = [], chainInstalled = true } = {}) {
   // assigned: userId -> { programs: [], courses: [] }
   const queries = [];
   const writes = [];
@@ -125,6 +126,10 @@ function makeDb({ assigned = {}, syllabi = {}, beforeDelete, complianceInstalled
     if (sql.startsWith('SELECT clo_id')) return [[]];
     if (sql.startsWith('SELECT syllabus_id, user_id, status, version, content')) return [syllabi[params[0]] ? [syllabi[params[0]]] : []];
     if (sql.startsWith('SELECT syllabus_id, user_id, status, title, course_code, content, course_id') || sql.startsWith('SELECT * FROM syllabi WHERE syllabus_id')) return [syllabi[params[0]] ? [syllabi[params[0]]] : []];
+    // the review chain (lib/reviewStages.js): the stage table, the newest version of each syllabus, and the stages cleared
+    if (sql.startsWith('SELECT 1 FROM syllabus_review_stages')) { if (!chainInstalled) throw Object.assign(new Error("Table 'syllabus_review_stages' doesn't exist"), { code: 'ER_NO_SUCH_TABLE' }); return [[]]; }
+    if (sql.startsWith('SELECT syllabus_id, MAX(version_id) AS version_id FROM syllabus_versions')) return [(params[0] || []).map(id => syllabusVersions.filter(v => v.syllabus_id === id).slice(-1)[0]).filter(Boolean).map(v => ({ syllabus_id: v.syllabus_id, version_id: v.version_id }))];
+    if (sql.startsWith('SELECT s.syllabus_id, s.version_id, s.stage')) return [stages.filter(r => (params[0] || []).includes(r.syllabus_id)).map(r => ({ reviewer_id: 1, note: '', cleared_at: null, first_name: 'Rev', last_name: 'Iewer', ...r }))];
     if (sql.startsWith("SELECT user_id FROM users WHERE role = 'admin'")) return [[]];
     if (PO_REFERENCE_TABLE.test(sql)) {
       if (MISSING_PO_REFERENCE_SQL.has(normalizeSql(sql))) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' });
@@ -154,6 +159,7 @@ function makeDb({ assigned = {}, syllabi = {}, beforeDelete, complianceInstalled
 async function withServer(opts, fn) {
   const db = makeDb(opts);
   compliance.resetInstalledCache();
+  reviewStages.resetInstalledCache();
   const app = express();
   app.use(express.json());
   app.use((req, res, next) => { const h = req.headers['x-test-user']; req.session = h ? { user: JSON.parse(h) } : {}; next(); });
@@ -173,6 +179,8 @@ async function withServer(opts, fn) {
 
 const admin = { id: 1, role: 'admin', firstName: 'Ada', lastName: 'Admin' };
 const fay = { id: 5, role: 'faculty', firstName: 'Fay', lastName: 'Faculty' };
+const vpaa = { id: 9, role: 'vpaa', firstName: 'Vee', lastName: 'Paa' };
+const allStages = (syllabusId, versionId) => ['dean', 'asst_vpaa', 'lic_director'].map(stage => ({ syllabus_id: syllabusId, version_id: versionId, stage }));
 const gus = { id: 6, role: 'faculty', firstName: 'Gus', lastName: 'Faculty' };
 const row = (over) => ({ syllabus_id: 1, user_id: 5, status: 'draft', version: 'v1.0', title: '', course_code: '', course_id: null, content: null, content_schema_version: null, content_updated_at: null, curriculum_id: null, file_path: null, ...over });
 const meta = (courseId) => ({ sections: { meta: { courseId, code: 'X', title: 'Y' } } });
@@ -368,27 +376,28 @@ test('the structured builder rejects assigning a subject that already has this f
     'the failed assignment was not saved');
 }));
 
-test('legacy edits enforce course assignment and the structured alignment gate; faculty cannot approve', () => withServer({ assigned: ASSIGNED, syllabi: { 4: row({ syllabus_id: 4, status: 'for_revision', course_code: 'IT 204' }), 5: row({ syllabus_id: 5, status: 'for_revision', course_code: 'IT 101' }) } }, async ({ call }) => {
+test('legacy edits enforce course assignment and the structured alignment gate; faculty cannot approve', () => withServer({ assigned: ASSIGNED, syllabusVersions: [{ syllabus_id: 4, version_id: 40, content: null, file_path: null }], stages: allStages(4, 40), syllabi: { 4: row({ syllabus_id: 4, status: 'for_revision', course_code: 'IT 204' }), 5: row({ syllabus_id: 5, status: 'for_revision', course_code: 'IT 101' }) } }, async ({ call }) => {
   assert.strictEqual((await call(fay, 'PUT', '/syllabi/4', { title: 'New title', note: 'Changed the title.' })).status, 403);
   const assigned = await call(fay, 'PUT', '/syllabi/5', { title: 'New title', note: 'Changed the title.' });
   assert.strictEqual(assigned.status, 409);
   assert.strictEqual(assigned.body.code, 'alignment_required');
   const unauthorized = await call(fay, 'PUT', '/syllabi/5', { status: 'approved' });
   assert.strictEqual(unauthorized.status, 403);
-  assert.match(unauthorized.body.error, /Only administrators can change a syllabus status/);
-  const missingForm = await call(admin, 'PUT', '/syllabi/4', { status: 'approved' });
+  assert.match(unauthorized.body.error, /Only reviewers can change a syllabus status/);
+  assert.strictEqual((await call(admin, 'PUT', '/syllabi/4', { status: 'approved' })).status, 403); // the dean never approves
+  const missingForm = await call(vpaa, 'PUT', '/syllabi/4', { status: 'approved' });
   assert.strictEqual(missingForm.status, 409);
   assert.strictEqual(missingForm.body.code, 'alignment_required');
 }));
 
-test('an authorized administrator can approve a checked structured syllabus after the real deterministic gate passes', async () => {
+test('the VPAA can approve a checked, cleared structured syllabus after the real deterministic gate passes', async () => {
   const previousGate = process.env.SYLLABUS_CHECK_AI_GATE;
   process.env.SYLLABUS_CHECK_AI_GATE = 'advisory';
   try {
     const fixture = validApprovalFixture();
     const syllabi = { 44: fixture.syllabus };
-    await withServer({ assigned: ASSIGNED, syllabi, complianceInstalled: true, syllabusVersions: fixture.syllabusVersions, adminRuns: fixture.adminRuns, masterData: fixture.masterData }, async ({ call, db }) => {
-      const approved = await call(admin, 'PUT', '/syllabi/44', { status: 'approved' });
+    await withServer({ assigned: ASSIGNED, syllabi, complianceInstalled: true, syllabusVersions: fixture.syllabusVersions, adminRuns: fixture.adminRuns, masterData: fixture.masterData, stages: allStages(44, 144) }, async ({ call, db }) => {
+      const approved = await call(vpaa, 'PUT', '/syllabi/44', { status: 'approved' });
       assert.strictEqual(approved.status, 200, JSON.stringify(approved.body));
       assert.strictEqual(syllabi[44].status, 'approved');
       assert.ok(db.queries.some(sql => sql.startsWith('SELECT 1 FROM ai_check_runs LIMIT 1')));
@@ -404,7 +413,7 @@ test('an authorized administrator can approve a checked structured syllabus afte
   }
 });
 
-test('an administrator approval is still rejected when the actual curriculum hard gate fails', async () => {
+test('a VPAA approval is still rejected when the actual curriculum hard gate fails', async () => {
   const previousGate = process.env.SYLLABUS_CHECK_AI_GATE;
   process.env.SYLLABUS_CHECK_AI_GATE = 'advisory';
   try {
@@ -414,8 +423,8 @@ test('an administrator approval is still rejected when the actual curriculum har
     fixture.syllabus.content = JSON.stringify(invalid);
     fixture.syllabusVersions[0].content = fixture.syllabus.content;
     const syllabi = { 44: fixture.syllabus };
-    await withServer({ assigned: ASSIGNED, syllabi, complianceInstalled: true, syllabusVersions: fixture.syllabusVersions, adminRuns: fixture.adminRuns, masterData: fixture.masterData }, async ({ call, db }) => {
-      const refused = await call(admin, 'PUT', '/syllabi/44', { status: 'approved' });
+    await withServer({ assigned: ASSIGNED, syllabi, complianceInstalled: true, syllabusVersions: fixture.syllabusVersions, adminRuns: fixture.adminRuns, masterData: fixture.masterData, stages: allStages(44, 144) }, async ({ call, db }) => {
+      const refused = await call(vpaa, 'PUT', '/syllabi/44', { status: 'approved' });
       assert.strictEqual(refused.status, 409);
       assert.strictEqual(refused.body.code, 'syllabus_hard_gate');
       assert.strictEqual(syllabi[44].status, 'submitted');

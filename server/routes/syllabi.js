@@ -9,6 +9,7 @@ const rules = require('../lib/syllabusRules');
 const assignments = require('../lib/assignments');
 const { validateReason, typeForStatus, MAX_LENGTH } = require('../lib/reviewComments');
 const compliance = require('../lib/compliance/service');
+const reviewStages = require('../lib/reviewStages');
 const { changedSections, describeChanges } = require('../lib/versionChange');
 const router = express.Router();
 
@@ -53,11 +54,11 @@ router.get('/', requireAuth, async (req, res) => {
     let query = `SELECT s.*, u.first_name, u.last_name, u.avatar_path, c.program_name, co.title AS course_title, pr.code AS program_code FROM syllabi s JOIN users u ON s.user_id = u.user_id LEFT JOIN curriculum c ON s.curriculum_id = c.curriculum_id LEFT JOIN courses co ON co.course_id = s.course_id LEFT JOIN programs pr ON pr.program_id = co.program_id`;
     const params = [];
 
-    if (req.session.user.role === 'faculty') {
+    if (!rules.isReviewer(req.session.user)) {
       query += ' WHERE s.user_id = ?';
       params.push(req.session.user.id);
     } else {
-      query += " WHERE (s.status <> 'draft' OR s.user_id = ?)"; // only the administrator's own drafts are visible
+      query += " WHERE (s.status <> 'draft' OR s.user_id = ?)"; // a reviewer sees every submitted syllabus, and only their own drafts
       params.push(req.session.user.id);
     }
 
@@ -70,13 +71,19 @@ router.get('/', requireAuth, async (req, res) => {
     query += ' ORDER BY s.uploaded_at DESC';
     const [rows] = await db.query(query, params);
 
-    // For an administrator: which submissions still wait for their own AI check (checkable, and not checked on the newest version).
-    // Without the compliance tables nothing can be checked, so nothing waits.
-    const admin = req.session.user.role === 'admin';
+    // For a reviewer: which submissions still wait for the AI check (checkable, and not checked on the newest version), and how far each has
+    // come in the review chain. Without the compliance tables nothing can be checked, so nothing waits; without the stage table no stage is cleared.
+    const me = req.session.user;
+    const reviewer = rules.isReviewer(me);
+    const myStage = require('../lib/roles').stageOf(me);
     let states = new Map();
-    if (admin && rows.length) {
-      try { if (await compliance.isInstalled(db)) states = await compliance.adminCheckStates(db, rows.map((r) => r.syllabus_id)); } catch { states = new Map(); }
+    let stages = new Map();
+    if (rows.length) {
+      const ids = rows.map((r) => r.syllabus_id);
+      if (reviewer) try { if (await compliance.isInstalled(db)) states = await compliance.adminCheckStates(db, ids); } catch { states = new Map(); }
+      try { stages = await reviewStages.stagesOf(db, ids); } catch { stages = new Map(); }
     }
+    const stageFlags = (st) => ({ dean: st.dean.cleared, asst_vpaa: st.asst_vpaa.cleared, lic_director: st.lic_director.cleared });
 
     res.json(rows.map(r => ({
       id: r.syllabus_id,
@@ -97,7 +104,11 @@ router.get('/', requireAuth, async (req, res) => {
       program: r.program_name || '',
       programCode: r.program_code || '', // the catalog program of the subject (the field above comes from the old curriculum)
       courseTitle: r.course_title || '',
-      ...(admin ? { awaitingAiCheck: !!(states.get(r.syllabus_id) && states.get(r.syllabus_id).checkable && !states.get(r.syllabus_id).checked) } : {}),
+      ...(reviewer ? { awaitingAiCheck: !!(states.get(r.syllabus_id) && states.get(r.syllabus_id).checkable && !states.get(r.syllabus_id).checked) } : {}),
+      // The review chain: a reviewer sees every stage with who cleared it; the owner sees only which stages are cleared.
+      ...(stages.get(r.syllabus_id) && r.status !== 'draft' ? (reviewer
+        ? { stages: stages.get(r.syllabus_id), myStageCleared: myStage ? stages.get(r.syllabus_id)[myStage].cleared : null, readyForApproval: stages.get(r.syllabus_id).allCleared && ['submitted', 'under_review'].includes(r.status) }
+        : r.user_id === me.id ? { reviewProgress: stageFlags(stages.get(r.syllabus_id)) } : {}) : {}),
     })));
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -145,7 +156,7 @@ const checkLengths = ({ title, courseCode }) => {
 router.post('/', requireAuth, onePdf, async (req, res) => {
   try {
     const db = req.app.locals.db;
-    if (rules.isAdmin(req.session.user)) throw httpError(403, 'Use the syllabus builder and AI Checker to publish your own syllabus.');
+    if (rules.isReviewer(req.session.user)) throw httpError(403, 'Use the syllabus builder and AI Checker to publish your own syllabus.');
     const { title, courseCode } = req.body;
     checkLengths({ title, courseCode });
     await assignments.requireCourseCodeAccess(db, req.session.user, courseCode); // faculty: only an assigned course
@@ -178,9 +189,10 @@ router.put('/:id', requireAuth, onePdf, async (req, res) => {
       // ---- status change: admin only ----
       if (status !== undefined && status !== '') {
         if (rules.isArchived(syl)) throw httpError(409, rules.ARCHIVED_MESSAGE);
-        if (rules.isAdmin(me) && rules.isOwner(me,syl) && status === 'approved') throw httpError(409, 'Use the syllabus builder and AI Checker to publish your own syllabus.');
+        if (!rules.isReviewer(me)) throw httpError(403, 'Only reviewers can change a syllabus status');
+        if (rules.isOwner(me, syl) && status === 'approved') throw httpError(409, 'Send your own syllabus for review from the AI Checker. The VPAA approves it after the dean, the Asst. VPAA and the LIC Director have cleared it.');
         if (syl.status === 'draft') throw httpError(409, 'Complete the form and check it in AI Checker before publishing your draft.');
-        if (!rules.canChangeStatus(me)) throw httpError(403, 'Only administrators can change a syllabus status');
+        if (!rules.canSetStatus(me, status)) throw httpError(403, 'Only the VPAA can approve or reject a syllabus. The dean, the Asst. VPAA and the LIC Director clear their check, or return the syllabus for revision.');
         if (!rules.STATUSES.includes(status)) throw httpError(400, 'Invalid status');
         if (hasContent) throw httpError(403, 'Administrators cannot edit syllabus content');
         if (DECISIONS.includes(status) && await compliance.isInstalled(db)) { // the AI check comes first, then the administrator decides
@@ -188,6 +200,10 @@ router.put('/:id', requireAuth, onePdf, async (req, res) => {
           if (state && state.checkable && !state.checked) throw httpError(409, CHECK_FIRST);
         }
         if (status === 'approved') {
+          // The chain comes first: the dean, the Asst. VPAA and the LIC Director must each have cleared the newest version.
+          if (!(await reviewStages.isInstalled(db))) throw httpError(503, 'The review chain is not set up on this server yet. Ask an administrator to run the database update.');
+          const chain = (await reviewStages.stagesOf(conn, [id])).get(id);
+          if (!chain || !chain.allCleared) throw httpError(409, 'The dean, the Asst. VPAA and the LIC Director must each clear this syllabus before it can be approved.', { code: 'STAGES_PENDING' });
           // Mandatory verification also covers legacy approval endpoints.
           const version = await compliance.latestVersion(conn, id);
           let form;
@@ -211,7 +227,7 @@ router.put('/:id', requireAuth, onePdf, async (req, res) => {
       // Administrator-authored records publish only through the checked form transaction.
       if (rules.isAdmin(me) && rules.isOwner(me,syl)) throw httpError(409, 'Use the syllabus builder and AI Checker to publish your own syllabus.');
       // ---- content edit: the owner only ----
-      if (rules.isAdmin(me) && !rules.isOwner(me, syl)) throw httpError(403, 'Administrators cannot edit syllabus content');
+      if (rules.isReviewer(me) && !rules.isOwner(me, syl)) throw httpError(403, 'Reviewers cannot edit syllabus content');
       if (!rules.canEdit(me, syl)) throw httpError(409, rules.lockedMessage(syl));
 
       // The same rule as the builder's submit: back from "For revision" only with a change (a new file, or a different title, code or

@@ -1,4 +1,5 @@
 import { canApproveAdminDraft, STATUS_LABELS, isReturned, noteMissing } from '../lib/syllabusRules';
+import { isReviewer } from '../lib/roles';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
@@ -187,7 +188,7 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
 // The AI Checker page is the administrator's view of the compliance checks of submitted syllabi, and the faculty member's
 // dedicated tab for checking and submitting their syllabus drafts.
 export default function AIChecker({ user, syllabi = [], editing, setEditing, setPage, notify, onSubmitted, onEditDraft, onApproved }) {
-  const isAdmin = user?.role === 'admin';
+  const reviewer = isReviewer(user?.role); // the dean, the Asst. VPAA, the LIC Director and the VPAA check submitted syllabi here
   const aiGate = useAiGate(); // 'advisory': the administrator decides after reading the check; 'required': a completed AI check too
   const [list, setList] = useState(null);     // { installed, syllabi: [row], summary }
   const [editingDraft, setEditingDraft] = useState(false);
@@ -218,18 +219,18 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
   }, [range]);
 
   useEffect(() => {
-    if (!isAdmin) return undefined;
+    if (!reviewer) return undefined;
     let live = true;
     setLoading(true);
     const done = () => { if (live) setLoading(false); };
     loadList().then(done, done);
     return () => { live = false; };
-  }, [isAdmin, loadList]);
+  }, [reviewer, loadList]);
 
-  useEffect(() => { if (isAdmin) loadHistory(); }, [isAdmin, loadHistory]); // on mount, and again whenever the applied range changes
+  useEffect(() => { if (reviewer) loadHistory(); }, [reviewer, loadHistory]); // on mount, and again whenever the applied range changes
 
   // While recommendations are still being written, look again every few seconds (for a bounded time).
-  const pending = isAdmin && openId !== null && detail && detail.isLatest !== false && detail.run && detail.run.aiStatus === 'pending'; // an earlier run no longer changes
+  const pending = reviewer && openId !== null && detail && detail.isLatest !== false && detail.run && detail.run.aiStatus === 'pending'; // an earlier run no longer changes
   useEffect(() => {
     if (!pending) return undefined;
     let tries = 0;
@@ -242,7 +243,7 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
 
   // A check started before this page was left is still running on the server (the row says so): keep the button waiting, look again until it
   // ends, then refresh the history so the new check appears.
-  const remoteChecking = isAdmin && rows.some((row) => row.checking);
+  const remoteChecking = reviewer && rows.some((row) => row.checking);
   useEffect(() => {
     if (!remoteChecking) return undefined;
     const timer = setInterval(loadList, 3000);
@@ -252,7 +253,7 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
   if (user?.role === 'faculty') {
     return <FacultyAIChecker user={user} syllabi={syllabi} editing={editing} setEditing={setEditing} setPage={setPage} notify={notify} onSubmitted={onSubmitted} />;
   }
-  if (!user || user.role !== 'admin') return <div className="empty">{translateUI("ui.the_compliance_check_is_in_step_7_of_the_syllabus_builder_1f3135")}</div>;
+  if (!user || !isReviewer(user.role)) return <div className="empty">{translateUI("ui.the_compliance_check_is_in_step_7_of_the_syllabus_builder_1f3135")}</div>;
 
   const say = (m) => { if (notify) notify(m); };
   const reload = async () => { await loadList(); loadHistory(); if (openId !== null) await loadDetail(openId); };

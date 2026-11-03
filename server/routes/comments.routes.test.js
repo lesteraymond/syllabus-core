@@ -6,7 +6,7 @@ const assert = require('node:assert');
 const express = require('express');
 require('../lib/syllabuscheck/legacy-storage-test-helper')();
 
-const PEOPLE = { 1: { first_name: 'Ann', last_name: 'A', role: 'admin' }, 5: { first_name: 'Fay', last_name: 'F', role: 'faculty' }, 6: { first_name: 'Gus', last_name: 'G', role: 'faculty' } };
+const PEOPLE = { 1: { first_name: 'Ann', last_name: 'A', role: 'admin' }, 5: { first_name: 'Fay', last_name: 'F', role: 'faculty' }, 6: { first_name: 'Gus', last_name: 'G', role: 'faculty' }, 9: { first_name: 'Vee', last_name: 'Paa', role: 'vpaa' } };
 
 function makeDb() {
   const s = {
@@ -23,6 +23,10 @@ function makeDb() {
     if (sql.startsWith('SELECT user_id FROM users WHERE user_id')) return [[{ user_id: p[0] }]];
     if (sql.startsWith('SELECT syllabus_id, user_id, status, title, course_code FROM syllabi')) return [s.syllabi[p[0]] ? [s.syllabi[p[0]]] : []];
     if (sql.startsWith('SELECT * FROM syllabi WHERE syllabus_id')) return [s.syllabi[p[0]] ? [s.syllabi[p[0]]] : []];
+    // the review chain: every syllabus has its newest version (1) cleared by all three stages, so the VPAA may decide
+    if (sql.startsWith('SELECT 1 FROM syllabus_review_stages')) return [[]];
+    if (sql.startsWith('SELECT syllabus_id, MAX(version_id) AS version_id FROM syllabus_versions')) return [p[0].map((id) => ({ syllabus_id: id, version_id: 1 }))];
+    if (sql.startsWith('SELECT s.syllabus_id, s.version_id, s.stage')) return [p[0].flatMap((id) => ['dean', 'asst_vpaa', 'lic_director'].map((stage) => ({ syllabus_id: id, version_id: 1, stage, reviewer_id: 1, note: '', cleared_at: null, first_name: 'Rev', last_name: 'Iewer' })))];
     if (sql.startsWith('SELECT version_id, version_label, content FROM syllabus_versions')) return [[{ version_id: 1, content: '{}' }]];
     if (sql.startsWith('SELECT c.comment_id') && sql.includes('WHERE c.syllabus_id')) return [s.comments.filter((c) => c.syllabus_id === p[0]).sort((a, b) => a.created_at - b.created_at || a.comment_id - b.comment_id).map(joined)];
     if (sql.startsWith('SELECT c.comment_id') && sql.includes('WHERE c.comment_id')) return [s.comments.filter((c) => c.comment_id === p[0]).map(joined)];
@@ -87,6 +91,7 @@ async function withServer(opts, fn) {
 const admin = { id: 1, role: 'admin', firstName: 'Ann', lastName: 'A' };
 const fay = { id: 5, role: 'faculty', firstName: 'Fay', lastName: 'F' };
 const gus = { id: 6, role: 'faculty', firstName: 'Gus', lastName: 'G' };
+const vpaa = { id: 9, role: 'vpaa', firstName: 'Vee', lastName: 'Paa' };
 
 test('an admin adds a comment; it comes back with its author, the owner can read the thread, and the owner is notified', () => withServer(async ({ call, db }) => {
   const r = await call(admin, 'POST', '/1/comments', { text: '  Please check the grading section.  ' });
@@ -126,36 +131,36 @@ test('nobody can read or write on a syllabus they cannot see: other faculty, and
 }));
 
 test('approving needs no reason, but a note is kept as an approval comment', () => withServer(async ({ call, db }) => {
-  const plain = await call(admin, 'PUT', '/1', { status: 'approved' });
+  const plain = await call(vpaa, 'PUT', '/1', { status: 'approved' });
   assert.strictEqual(plain.status, 200);
   assert.strictEqual(db.s.syllabi[1].status, 'approved');
   assert.strictEqual(db.s.comments.length, 0); // nothing to record
   db.s.syllabi[3].status = 'under_review';
-  const noted = await call(admin, 'PUT', '/3', { status: 'approved', adminComment: '  Well organised.  ' });
+  const noted = await call(vpaa, 'PUT', '/3', { status: 'approved', adminComment: '  Well organised.  ' });
   assert.strictEqual(noted.status, 200);
-  assert.deepStrictEqual(db.s.comments.map((c) => [c.syllabus_id, c.user_id, c.comment_type, c.comment_text]), [[3, 1, 'approval', 'Well organised.']]);
+  assert.deepStrictEqual(db.s.comments.map((c) => [c.syllabus_id, c.user_id, c.comment_type, c.comment_text]), [[3, 9, 'approval', 'Well organised.']]);
   assert.strictEqual(db.s.syllabi[3].admin_comment, '  Well organised.  '); // what the route has always stored
 }));
 
 test('returning for revision or rejecting needs a reason of at least 5 characters, and nothing changes without one', () => withServer(async ({ call, db }) => {
   for (const status of ['for_revision', 'rejected']) {
     for (const adminComment of [undefined, '', '    ', 'no', 'four']) {
-      const r = await call(admin, 'PUT', '/1', adminComment === undefined ? { status } : { status, adminComment });
+      const r = await call(vpaa, 'PUT', '/1', adminComment === undefined ? { status } : { status, adminComment });
       assert.strictEqual(r.status, 400, status + ' / ' + String(adminComment));
       assert.match(r.body.error, /at least 5 characters/);
     }
   }
-  assert.strictEqual((await call(admin, 'PUT', '/1', { status: 'for_revision', adminComment: 'x'.repeat(2001) })).status, 400);
+  assert.strictEqual((await call(vpaa, 'PUT', '/1', { status: 'for_revision', adminComment: 'x'.repeat(2001) })).status, 400);
   assert.strictEqual(db.s.syllabi[1].status, 'submitted'); // untouched
   assert.strictEqual(db.s.comments.length, 0);
   assert.strictEqual(db.s.logs.length, 0);
 }));
 
 test('a valid reason is saved as a revision or rejection comment, and the faculty member is told with the reason', () => withServer(async ({ call, db }) => {
-  const rev = await call(admin, 'PUT', '/1', { status: 'for_revision', adminComment: 'Add the missing weeks.' });
+  const rev = await call(vpaa, 'PUT', '/1', { status: 'for_revision', adminComment: 'Add the missing weeks.' });
   assert.strictEqual(rev.status, 200);
   assert.strictEqual(db.s.syllabi[1].status, 'for_revision');
-  const rej = await call(admin, 'PUT', '/3', { status: 'rejected', adminComment: 'Does not follow the template.' });
+  const rej = await call(vpaa, 'PUT', '/3', { status: 'rejected', adminComment: 'Does not follow the template.' });
   assert.strictEqual(rej.status, 200);
   assert.deepStrictEqual(db.s.comments.map((c) => [c.syllabus_id, c.comment_type, c.comment_text]), [[1, 'revision', 'Add the missing weeks.'], [3, 'rejection', 'Does not follow the template.']]);
   assert.deepStrictEqual(db.s.notifications.map((n) => [n.user_id, n.type, n.title.split(':')[0]]), [[5, 'status', 'Revision requested'], [6, 'status', 'Syllabus rejected']]);
@@ -165,8 +170,10 @@ test('a valid reason is saved as a revision or rejection comment, and the facult
   assert.deepStrictEqual((await call(fay, 'GET', '/1/comments')).body.comments.map((c) => c.type), ['revision', 'comment']);
 }));
 
-test('only an administrator can decide; a faculty member cannot, whatever they send', () => withServer(async ({ call, db }) => {
+test('only the VPAA can approve or reject; a faculty member cannot decide, and the dean cannot approve, whatever they send', () => withServer(async ({ call, db }) => {
   assert.strictEqual((await call(fay, 'PUT', '/1', { status: 'approved', adminComment: 'I approve my own' })).status, 403);
+  assert.strictEqual((await call(admin, 'PUT', '/1', { status: 'approved', adminComment: 'Looks fine to me' })).status, 403);
+  assert.strictEqual((await call(admin, 'PUT', '/1', { status: 'rejected', adminComment: 'Not acceptable.' })).status, 403);
   assert.strictEqual(db.s.syllabi[1].status, 'submitted');
   assert.strictEqual(db.s.comments.length, 0);
 }));

@@ -76,7 +76,7 @@ router.post('/:id/comments', requireAuth, async (req, res) => {
     const db = req.app.locals.db;
     const me = req.session.user;
     const syl = await loadVisible(db, me, parseId(req.params.id));
-    if (!rules.isAdmin(me)) throw httpError(403, 'Only administrators can add reviewer comments');
+    if (!rules.isReviewer(me)) throw httpError(403, 'Only reviewers can add reviewer comments');
     const text = validateComment((req.body || {}).text);
     const [ins] = await db.query('INSERT INTO comments (syllabus_id, user_id, comment_text, comment_type) VALUES (?, ?, ?, ?)', [syl.syllabus_id, me.id, text, 'comment']);
     const [rows] = await db.query(SELECT + ' WHERE c.comment_id = ?', [ins.insertId]);

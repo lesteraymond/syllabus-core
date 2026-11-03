@@ -4,7 +4,8 @@
 const express = require('express');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { inTransaction, httpError, sendError } = require('../lib/http');
-const { notifyAdmins } = require('../lib/notify');
+const { notifyAdmins, notifyRoles } = require('../lib/notify');
+const reviewStages = require('../lib/reviewStages');
 const rules = require('../lib/syllabusRules');
 const { loadCourse } = require('../lib/courses');
 const assignments = require('../lib/assignments');
@@ -265,13 +266,14 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
 
     if (!publishing && !preparing && rules.isAdmin(me)) throw httpError(403, 'Administrators publish their own drafts after an AI check.');
     const complianceReady = await compliance.isInstalled(db);
-    if (publishing && !complianceReady) throw httpError(503, 'AI Checker must be set up before publishing.');
+    if (publishing && !complianceReady) throw httpError(503, 'AI Checker must be set up before sending for review.');
+    if (publishing && !(await reviewStages.isInstalled(db))) throw httpError(503, 'The review chain is not set up on this server yet. Ask an administrator to run the database update.');
     const outcome = await inTransaction(db, async (conn) => {
       const [rows] = await conn.query('SELECT * FROM syllabi WHERE syllabus_id = ? FOR UPDATE', [id]);
       const syl = rows[0];
       if (!syl || !rules.canView(me, syl)) throw httpError(404, 'Syllabus not found');
       if (!rules.isOwner(me, syl)) throw httpError(403, 'Only the owner can submit a syllabus');
-      if (publishing && syl.status !== 'under_review') throw httpError(409, 'Complete the form and send it to AI Checker before approving.');
+      if (publishing && syl.status !== 'under_review') throw httpError(409, 'Complete the form and send it to AI Checker before sending it for review.');
       if (!rules.canEdit(me, syl) && !(publishing && rules.isAdmin(me) && syl.status === 'under_review')) throw httpError(409, rules.lockedMessage(syl));
       await assignments.requireCourseAccess(conn, me, syl.course_id);
 
@@ -320,16 +322,20 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
         const checkContent=compliance.publicationContent(content,content.catalog);
         const checked=await compliance.cachedRun(conn,id,compliance.hashOf(checkContent));
         if (reviewedRunId !== undefined && checked?.run_id !== reviewedRunId) throw httpError(409,'The AI check changed. Open the current result before approving.');
-        if (!checked || checked.created_by !== me.id || !checked.conformant || checked.status !== 'scored' || checked.ai_status !== 'ok') throw httpError(409,'Check the current saved form in AI Checker and wait for Gemini alignment to finish before publishing.');
+        if (!checked || checked.created_by !== me.id || !checked.conformant || checked.status !== 'scored' || checked.ai_status !== 'ok') throw httpError(409,'Check the current saved form in AI Checker and wait for Gemini alignment to finish before sending it for review.');
       }
       if (publishing) {
-        // Approval records a decision about the checked revision, not another edit.
+        // The dean's own syllabus is not approved here: only the VPAA approves. Sending it for review records the checked revision and clears
+        // the dean's stage (the author is the dean); the Asst. VPAA and the LIC Director clear theirs, then the VPAA decides.
         // Also supports completed admin syllabi created before revision snapshots existed.
         const label = await saveAdminRevision(conn, syl, content, me);
-        await conn.query('UPDATE syllabi SET status = ?, version = ? WHERE syllabus_id = ?', ['approved', label, id]);
+        const revision = await compliance.latestVersion(conn, id);
+        if (!revision) throw httpError(409, 'This syllabus has no saved version to send for review.');
+        await reviewStages.clear(conn, { syllabusId: id, versionId: revision.version_id, stage: 'dean', reviewerId: me.id, note: 'Author' });
+        await conn.query('UPDATE syllabi SET status = ?, version = ? WHERE syllabus_id = ?', ['under_review', label, id]);
         await conn.query('INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)',
-          [id, me.id, 'approve', 'Administrator published syllabus after AI check']);
-        return { label, status: 'approved' };
+          [id, me.id, 'submit', 'Administrator sent syllabus for review after AI check']);
+        return { label, status: 'under_review', sentForReview: true, courseCode: syl.course_code, title: syl.title };
       }
       // A resubmission after "For revision" is a new version only if the faculty member changed something, and says what.
       if (rules.isReturned(syl.status)) {
@@ -363,6 +369,11 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
     });
 
     if (outcome.preparing) return res.json({version:outcome.label,status:outcome.status});
+    if (outcome.sentForReview) {
+      // After the commit: the other two reviewers hear about it; the VPAA when all three have cleared it.
+      await notifyRoles(db, ['asst_vpaa', 'lic_director'], { exceptUserId: me.id, type: 'submission', syllabusId: id, title: `Syllabus sent for review: ${outcome.courseCode || outcome.title}`, body: `${me.firstName} ${me.lastName} sent ${outcome.title || outcome.courseCode} for review.` });
+      return res.json({ version: outcome.label, status: outcome.status });
+    }
 
     // After the commit, outside the transaction: the AI recommendations are a background job. They never delay or fail a submit.
     if (outcome.runId && !outcome.result.hybrid && outcome.result.status === 'scored' && outcome.result.findings.length) {
@@ -372,13 +383,17 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
     // After the commit: notifications never affect the result.
     const who = `${me.firstName} ${me.lastName}`;
     if (!publishing && outcome.previous === 'draft') {
-      await notifyAdmins(db, { exceptUserId: me.id, type: 'submission', syllabusId: id, title: `New syllabus submitted: ${outcome.courseCode || outcome.title}`, body: `${who} submitted ${outcome.title || outcome.courseCode} for review.` });
+      const submitted = { exceptUserId: me.id, type: 'submission', syllabusId: id, title: `New syllabus submitted: ${outcome.courseCode || outcome.title}`, body: `${who} submitted ${outcome.title || outcome.courseCode} for review.` };
+      await notifyAdmins(db, submitted);
+      await notifyRoles(db, ['asst_vpaa', 'lic_director'], submitted);
     } else if (!publishing && (outcome.previous === 'under_review' || rules.isReturned(outcome.previous))) {
-      await notifyAdmins(db, {
+      const edited = {
         exceptUserId: me.id, type: 'edit', syllabusId: id,
         title: outcome.previous === 'under_review' ? `Syllabus updated during review: ${outcome.courseCode} (${outcome.label})` : `Syllabus resubmitted: ${outcome.courseCode} (${outcome.label})`,
         body: `${who} saved a new version.`,
-      });
+      };
+      await notifyAdmins(db, edited);
+      await notifyRoles(db, ['asst_vpaa', 'lic_director'], edited);
     }
     res.json({ version: outcome.label, status: outcome.status, score: outcome.result?.score, deductions: outcome.result?.hybrid?.deductions });
   } catch (err) { sendError(res, err); }

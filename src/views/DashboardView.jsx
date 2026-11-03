@@ -9,6 +9,7 @@ import { afterCleared, describeActivity, groupByDay, readClearedAt, writeCleared
 import TypewriterText from '../components/TypewriterText';
 import { compliance as complianceApi, courses as coursesApi, outcomes as outcomesApi } from '../lib/api';
 import { adminStatCards } from '../lib/adminDashboardStats';
+import { isReviewer, roleAllows } from '../lib/roles';
 import { aiAverage, approval, areaAverages, programScores } from '../lib/complianceStats';
 import { sentenceCase } from '../lib/sentenceCase';
 import { dayPeriod } from '../lib/phTime';
@@ -64,7 +65,7 @@ export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, set
 
   const availableNav = useMemo(() => {
     return navItems
-      .filter(([k, , , r]) => k !== 'dashboard' && (!r || r === user?.role))
+      .filter(([k, , , r]) => k !== 'dashboard' && roleAllows(r, user?.role))
       .map(([k, icon, label]) => ({
         key: k,
         icon,
@@ -114,7 +115,7 @@ export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, set
   // Admin summary cards also count the catalog. Read once when the dashboard opens; a failed read shows a dash, never breaks the page.
   const [catalogCounts, setCatalogCounts] = useState({ programs: null, subjects: null });
   useEffect(() => {
-    if (user.role !== 'admin') return undefined;
+    if (!isReviewer(user.role)) return undefined;
     let live = true;
     const count = request => request.then(rows => (Array.isArray(rows) ? rows.length : null), () => null);
     Promise.all([count(outcomesApi.programs()), count(coursesApi.list())]).then(([programs, subjects]) => { if (live) setCatalogCounts({ programs, subjects }); });
@@ -226,7 +227,7 @@ export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, set
           }
         </Card>
         <Card title={translateUI("ui.ai_quality_snapshot_c296aa")}>{snapshot.map(a => <QualityMini key={a.key} label={translateUI(SNAPSHOT_LABELS[a.key])} value={a.average} />)}<p className="cmp-small">{translateUI(snapshot.some(a => a.average !== null) ? "dashboard.stats.snapshotNote" : "dashboard.stats.noScore")}</p></Card>
-        <Card title={translateUI("ui.upcoming_deadlines_b56518")} hideScrollbar><UpcomingDeadlines role={user.role} onOpen={() => setPage(isFac ? 'my-syllabi' : 'courses')} /></Card>
+        {(isFac || user.role === 'admin') && <Card title={translateUI("ui.upcoming_deadlines_b56518")} hideScrollbar><UpcomingDeadlines role={user.role} onOpen={() => setPage(isFac ? 'my-syllabi' : 'courses')} /></Card>}
       </section>
       </div>
       {customizeOpen && (
