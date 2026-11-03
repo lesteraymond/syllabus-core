@@ -75,6 +75,22 @@ export const auth = {
 };
 
 export const syllabi = {
+  pdfImportConfig: ({ signal } = {}) => request('/syllabi/pdf-import/config', { signal }),
+  importPdf: async (id, file) => {
+    const body = new FormData(); body.append('file', file);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 150000);
+    try {
+      const res = await fetch(`${API}/syllabi/${id}/import-pdf`, { method: 'POST', credentials: 'include', headers: authHeaders(), body, signal: controller.signal });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw Object.assign(new Error(data.error || 'pdfImport.failed'), { status: res.status, data });
+      if (!data.fields || !Array.isArray(data.pages)) throw new Error('pdfImport.failed');
+      return data;
+    } catch (error) {
+      if (error.name === 'AbortError') throw new Error('pdfImport.timeout');
+      throw error;
+    } finally { clearTimeout(timeout); }
+  },
   list: () => request('/syllabi'),
   repository: () => request('/syllabi?scope=repository'),
   // Syllabi archived when their subject went to another faculty member: read-only records, left out of every other list.
@@ -160,6 +176,14 @@ export const courses = {
 
 export const curriculum = {
   list: () => request('/curriculum'),
+};
+
+export const syllabusCheck = {
+  status: () => request('/syllabus-check/status'),
+  decisions: (runId) => request(`/syllabus-check/runs/${runId}/decisions`),
+  // Check one AI recommendation against every relationship its text touches, and get the text to use (nothing is saved or applied).
+  refine: (runId, suggestionId) => request(`/syllabus-check/runs/${runId}/suggestions/${encodeURIComponent(suggestionId)}/refine`, { method: 'POST' }),
+  decide: (runId, body) => request(`/syllabus-check/runs/${runId}/decisions`, { method: 'POST', body: JSON.stringify(body) }),
 };
 
 export const logs = {

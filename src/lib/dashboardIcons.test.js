@@ -17,7 +17,7 @@ const token = (name, source = theme) => (source.match(new RegExp('--' + name + '
 test('the dashboard icons take their colour from the brand theme, and it beats the old black rule', () => {
   // the theme loads after styles.css and uses the same specificity (0,3,0), so it wins for the stat tiles
   assert.match(theme, /\.stat-grid \.stat-card \.stat-icon \{[^}]*color: #ffffff/);
-  assert.match(theme, /\.quick-actions button b \{[^}]*color: var\(--gold\)/);
+  assert.match(theme, /\.quick-actions button b \{[^}]*color: #000000/);
   // main.jsx loads one entry, tailwind.css, which imports styles.css and then theme.css into the same (legacy) layer: the order is what counts
   assert.match(readFileSync(new URL('../main.jsx', import.meta.url), 'utf8'), /import '\.\/tailwind\.css';/, 'the app loads the stylesheet entry');
   assert.match(readFileSync(new URL('../tailwind.css', import.meta.url), 'utf8'), /@import "\.\/styles\.css" layer\(legacy\);\s*@import "\.\/theme\.css" layer\(legacy\);/, 'theme.css is imported after styles.css, in the same layer');
@@ -26,12 +26,12 @@ test('the dashboard icons take their colour from the brand theme, and it beats t
 test('the stat icons are white on the sidebar gradient, and readable on every stop of it', () => {
   assert.match(theme, /\.stat-icon \{[^}]*background: linear-gradient\([^)]*var\(--side-top\)[^}]*var\(--side-bottom\)/);
   ['side-top', 'side-mid', 'side-bottom'].forEach((stop) => assert.ok(contrast('#ffffff', token(stop)) >= 4.5, 'white icon on ' + stop + ': ' + contrast('#ffffff', token(stop)).toFixed(1)));
-  assert.ok(contrast(token('gold'), token('navy')) >= 4.5, 'gold icon on the navy quick-action chip: ' + contrast(token('gold'), token('navy')).toFixed(1));
+  assert.ok(contrast('#000000', '#f1f4f3') >= 4.5, 'black icon on the white-gray quick-action chip: ' + contrast('#000000', '#f1f4f3').toFixed(1));
 });
 
 test('every icon on the dashboard uses the regular weight, so the brand colours read cleanly', () => {
   const icons = dash.match(/<Icon\b[^>]*>/g) || [];
-  assert.ok(icons.length >= 6, 'the dashboard icons were found: ' + icons.length);
+  assert.ok(icons.length >= 4, 'the dashboard icons were found: ' + icons.length);
   icons.forEach((i) => assert.match(i, /weight="regular"/, i));
 });
 

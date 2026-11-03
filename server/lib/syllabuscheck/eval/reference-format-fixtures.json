@@ -1,0 +1,235 @@
+{
+ "version": "format-1",
+ "status": "DRAFT - synthetic references with author-written expectations, NOT reviewed by a librarian or faculty",
+ "reviewStatus": "unreviewed",
+ "provenance": "Every reference below is invented for testing (invented authors, 'Example' publishers, a DOI in the reserved example range); none is a real work. The expectations apply the APA 7 rules as the assistant understands them and must be confirmed. Italics cannot be checked in plain text and are not part of any expectation.",
+ "items": [
+  {
+   "id": "book-ok",
+   "text": "Rivera, M. A., & Santos, J. B. (2021). Fundamentals of Java programming (2nd ed.). Example University Press.",
+   "expectedKind": "book",
+   "expectedStatus": "PASS",
+   "expectedIssues": [],
+   "note": "A well-formed book.",
+   "origin": "format-1",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "journal-ok",
+   "text": "Doe, J., & Lee, K. (2020). A study of loops. Journal of Example Computing, 12(3), 45-67. https://doi.org/10.1234/example.2020.45",
+   "expectedKind": "journal",
+   "expectedStatus": "PASS",
+   "expectedIssues": [],
+   "note": "A well-formed journal article with a DOI link.",
+   "origin": "format-1",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "journal-doi-prefix",
+   "text": "Doe, J., & Lee, K. (2020). A study of loops. Journal of Example Computing, 12(3), 45-67. doi:10.1234/example.2020.45",
+   "expectedKind": "journal",
+   "expectedStatus": "FAIL",
+   "expectedIssues": [
+    "DOI_FORM"
+   ],
+   "note": "APA 7 writes a DOI as an https://doi.org/ link.",
+   "origin": "format-1",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "author-and",
+   "text": "Doe, J. and Lee, K. (2020). A study of loops. Journal of Example Computing, 12(3), 45-67.",
+   "expectedKind": "journal",
+   "expectedStatus": "FAIL",
+   "expectedIssues": [
+    "AUTHOR_AND"
+   ],
+   "note": "The last author is joined with \"&\".",
+   "origin": "format-1",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "author-no-comma",
+   "text": "Smith, J. & Lee, K. (2020). Some title. Example Press.",
+   "expectedKind": "book",
+   "expectedStatus": "FAIL",
+   "expectedIssues": [
+    "AUTHOR_COMMA"
+   ],
+   "note": "A comma goes before \"&\".",
+   "origin": "format-1",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "book-location",
+   "text": "Doe, J. (2019). Title here. New York, NY: Example Press.",
+   "expectedKind": "book",
+   "expectedStatus": "FAIL",
+   "expectedIssues": [
+    "BOOK_LOCATION"
+   ],
+   "note": "APA 7 omits the place of publication.",
+   "origin": "format-1",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "no-date",
+   "text": "Doe, J. Title here. Example Press.",
+   "expectedKind": "book",
+   "expectedStatus": "FAIL",
+   "expectedIssues": [
+    "DATE_MISSING"
+   ],
+   "note": "No (year).",
+   "origin": "format-1",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "date-no-period",
+   "text": "Doe, J. (2019) Title here. Example Press.",
+   "expectedKind": "book",
+   "expectedStatus": "FAIL",
+   "expectedIssues": [
+    "DATE_PERIOD"
+   ],
+   "note": "The date needs a period.",
+   "origin": "format-1",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "journal-no-pages",
+   "text": "Doe, J. (2020). A study of loops. Journal of Example Computing, 12(3).",
+   "expectedKind": "journal",
+   "expectedStatus": "FAIL",
+   "expectedIssues": [
+    "JOURNAL_PAGES"
+   ],
+   "note": "Pages or an article number are required.",
+   "origin": "format-1",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "website-ok",
+   "text": "Example Health Agency. (2022). Example guidance page. https://www.example.org/guidance",
+   "expectedKind": "official",
+   "expectedStatus": "PASS",
+   "expectedIssues": [],
+   "note": "An organization as author with a link.",
+   "origin": "format-1",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "future-year",
+   "text": "Doe, J. (2099). A paper. Example Press.",
+   "expectedKind": "book",
+   "expectedStatus": "FAIL",
+   "expectedIssues": [
+    "DATE_RANGE"
+   ],
+   "note": "An impossible year.",
+   "origin": "format-1",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "conference-unsure",
+   "text": "Doe, J. (2018). A paper title. In Proceedings of the Example Conference (pp. 10-20). Example Society.",
+   "expectedKind": "conference",
+   "expectedStatus": "NEEDS_REVIEW",
+   "expectedIssues": [],
+   "note": "The kind is clear but the checker is only moderately sure, so it asks for a look rather than passing it.",
+   "origin": "format-1",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "chapter-ok",
+   "text": "Lee, A. (2018). A chapter title. In B. Kim (Ed.), Book of examples (pp. 10-25). Example Press.",
+   "expectedKind": "chapter",
+   "expectedStatus": "PASS",
+   "expectedIssues": [],
+   "note": "A chapter in an edited book.",
+   "origin": "format-1",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "chapter-no-pages",
+   "text": "Lee, A. (2018). A chapter title. In B. Kim (Ed.), Book of examples. Example Press.",
+   "expectedKind": "chapter",
+   "expectedStatus": "FAIL",
+   "expectedIssues": [
+    "CHAPTER_PAGES"
+   ],
+   "note": "The page range of a chapter is required.",
+   "origin": "format-1",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "report-ok",
+   "text": "Example Institute. (2021). Study of examples (Report No. 12). Example Institute. https://www.example.org/r12",
+   "expectedKind": "report",
+   "expectedStatus": "PASS",
+   "expectedIssues": [],
+   "note": "A numbered report by a group author.",
+   "origin": "format-1",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "quoted-title",
+   "text": "Doe, J. (2019). \"A quoted title\". Journal of Example Computing, 3(1), 1-9.",
+   "expectedKind": "journal",
+   "expectedStatus": "FAIL",
+   "expectedIssues": [
+    "TITLE_QUOTES"
+   ],
+   "note": "APA 7 does not quote article titles.",
+   "origin": "format-1",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "mla-accessed",
+   "text": "Java Tutorial. https://www.example.com/java/. Accessed 2 Aug. 2024.",
+   "expectedKind": "website",
+   "expectedStatus": "FAIL",
+   "expectedIssues": [
+    "DATE_MISSING",
+    "ACCESSED"
+   ],
+   "note": "MLA-style access date and no APA date.",
+   "origin": "format-1",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  }
+ ]
+}

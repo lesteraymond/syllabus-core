@@ -8,6 +8,7 @@ import { groupByFacultyProgram, listBasis, needsCheck, rangeToInstants } from '.
 import SyllabusPicker from '../components/SyllabusPicker';
 import ComplianceModal from '../components/ComplianceModal';
 import CheckHistory from '../components/CheckHistory';
+import { useAiGate } from '../lib/checkPolicy';
 
 // The history's date filter is kept in this browser, so it is still applied after a reload or a visit to another page, until the admin
 // changes or resets it. A view preference only: every read and write is guarded, and the page works without storage.
@@ -29,6 +30,7 @@ const writeRange = (r) => { try { if (r.from || r.to) localStorage.setItem(RANGE
 // The rules run on the latest submitted version and the result is stored with it (what Review & Approval shows).
 // Faculty have no tab here: they check their own syllabus in step 7 of the builder (Review & Check).
 export default function AIChecker({ user, notify, onEditDraft, onApproved }) {
+  const aiGate = useAiGate(); // 'advisory': the administrator decides after reading the check; 'required': a completed AI check too
   const [list, setList] = useState(null);     // { installed, syllabi: [row], summary }
   const [editingDraft, setEditingDraft] = useState(false);
   const [approving, setApproving] = useState(false);
@@ -42,6 +44,7 @@ export default function AIChecker({ user, notify, onEditDraft, onApproved }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState({});       // syllabus id -> true while its check runs
+  const checkLocks = useRef(new Set());
 
   const loadList = useCallback(async () => { try { setList(await api.list('all')); setError(''); } catch (e) { setError(e.message); } }, []);
   const loadDetail = useCallback(async (id) => { try { setDetail(await api.list(id)); setError(''); return true; } catch (e) { setError(e.message); return false; } }, []);
@@ -78,6 +81,15 @@ export default function AIChecker({ user, notify, onEditDraft, onApproved }) {
   const rows = list ? list.syllabi.filter(row => row.status !== 'draft') : [];
   const waiting = useMemo(() => groupByFacultyProgram(rows.filter(row => needsCheck(row) || (row.userId === user?.id && row.status === 'under_review'))), [rows, user?.id]); // unchecked and not approved: what the picker offers
 
+  // A check started before this page was left is still running on the server (the row says so): keep the button waiting, look again until it
+  // ends, then refresh the history so the new check appears.
+  const remoteChecking = rows.some((row) => row.checking);
+  useEffect(() => {
+    if (!remoteChecking) return undefined;
+    const timer = setInterval(loadList, 3000);
+    return () => { clearInterval(timer); loadHistory(); };
+  }, [remoteChecking, loadList, loadHistory]);
+
   if (!user || user.role !== 'admin') return <div className="empty">{translateUI("ui.the_compliance_check_is_in_step_7_of_the_syllabus_builder_1f3135")}</div>;
 
   const say = (m) => { if (notify) notify(m); };
@@ -85,6 +97,8 @@ export default function AIChecker({ user, notify, onEditDraft, onApproved }) {
 
   // The first check of a syllabus. The server runs the rules on the latest submitted version and stores the result with it.
   const runCheck = async (id) => {
+    if (checkLocks.current.has(id)) return false;
+    checkLocks.current.add(id);
     setBusy((b) => ({ ...b, [id]: true }));
     setError('');
     try {
@@ -94,6 +108,7 @@ export default function AIChecker({ user, notify, onEditDraft, onApproved }) {
       setError(e.message);
       return false;
     } finally {
+      checkLocks.current.delete(id);
       setBusy((b) => { const n = { ...b }; delete n[id]; return n; });
     }
   };
@@ -126,13 +141,13 @@ export default function AIChecker({ user, notify, onEditDraft, onApproved }) {
 
   const installed = !list || list.installed !== false;
   const how = listBasis(rows.map((r) => r.run));
-  const working = Object.keys(busy).length > 0;
+  const working = Object.keys(busy).length > 0 || remoteChecking;
   const open = openId !== null && detail && detail.syllabus && detail.syllabus.syllabusId === openId
     ? { ...(rows.find((r) => r.syllabusId === openId) || {}), ...detail.syllabus }
     : null;
 
   const ownSyllabus = open?.userId === user.id && open.status === 'under_review';
-  const approveEnabled = canApproveAdminDraft(user,open,detail?.run,detail?.isLatest !== false);
+  const approveEnabled = canApproveAdminDraft(user,open,detail?.run,detail?.isLatest !== false,aiGate);
   const editDraft = async () => {
     if (approvalLock.current || !ownSyllabus || !onEditDraft) return;
     approvalLock.current=true; setEditingDraft(true); setError('');

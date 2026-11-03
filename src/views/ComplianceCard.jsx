@@ -1,17 +1,26 @@
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
-import { SOURCE_LABEL, STEP_INFO, areaNames, basis, blockersOf, groupFindings, headline, runState, stepLabel, tone, ringAngle, when } from '../lib/complianceView';
+import { SOURCE_LABEL, STEP_INFO, areaNames, basis, blockersOf, groupFindings, headline, provisionalOf, runState, stepLabel, tone, ringAngle, when } from '../lib/complianceView';
+import HybridCheckPanel from '../components/HybridCheckPanel';
+import VerdictPanel from '../components/VerdictPanel';
+import { useAiGate } from '../lib/checkPolicy';
+import {isAcademicV2} from '../lib/academicEvaluation';
+import AcademicEvaluationPanel from '../components/AcademicEvaluationPanel';
 
 
 // One stored compliance run, shown the same way everywhere: the Review & Check step of the builder, the admin overview and Review &
 // Approval. The ring, the six areas, what blocks a submit, the recommendations (each marked Rule or AI, each linked to its step), and
 // the findings behind the score. It only displays; fetching and re-checking belong to the screen that uses it.
 //   onOpenStep(stepKey)  when given, a step name becomes a button that jumps there (the builder); otherwise it is plain text.
-export default function ComplianceCard({ run, onOpenStep, showFindings = true }) {
+//   checking             true while a check is running: the ring shows progress instead of a score that is about to change.
+export default function ComplianceCard({ run, checking = false, onOpenStep, showFindings = true, onApplyDraft }) {
   const state = runState(run);
   const t = state === 'scored' ? tone(run.overall, run.passThreshold) : 'none';
   const how = basis(run);
-  const blockers = blockersOf(run);
+  const provisional = provisionalOf(run); // an unfinished check still shows its score so far, labelled as provisional
+  const aiGate = useAiGate();
+  if(isAcademicV2(run))return <AcademicEvaluationPanel run={run} onApplyDraft={onApplyDraft}/>;
+  const blockers = blockersOf(run, aiGate);
   const recs = (run && run.recommendations) || [];
   const stepRef = (key) => {
     if (!STEP_INFO[key]) return null;
@@ -22,13 +31,22 @@ export default function ComplianceCard({ run, onOpenStep, showFindings = true })
 
   return (
     <div className="cmp">
+      <HybridCheckPanel run={run} onApplyDraft={onApplyDraft} />
+      <VerdictPanel run={run} />
       <div className="cmp-top">
-        {state === 'scored'
+        {checking
+          ? <div className="big-ring cmp-ring checking" style={{ '--p': '0deg' }} role="img" aria-label={translateUI("ui.checking_your_syllabus_1278c5")}><div><strong aria-hidden="true">…</strong><small>{translateUI("ui.checking_820d60")}</small></div></div>
+          : state === 'scored'
           ? <div className={'big-ring cmp-ring ' + t} style={{ '--p': ringAngle(run.overall) }} role="img" aria-label={translateUI("ui.compliance_score_7a084d") + run.overall + translateUI("ui.percent_c72154") + tr(run.band)}><div><strong>{run.overall}%</strong><small>{tr(run.band)}</small></div></div>
-          : <div className="cmp-ring none" role="img" aria-label={translateUI("ui.no_score_yet_3662ab")}><div><strong>—</strong><small>{state === 'insufficient' ? translateUI("ui.not_enough_content_1c0e67") : translateUI("ui.not_checked_22705e")}</small></div></div>}
+          : provisional
+          ? <div className="big-ring cmp-ring provisional" style={{ '--p': ringAngle(provisional.score) }} role="img" aria-label={translateUI('hybrid.provisionalAria', { score: provisional.score })}><div><strong>{provisional.score}%</strong><small>{translateUI('hybrid.provisional')}</small></div></div>
+          : <div className="cmp-ring none" role="img" aria-label={translateUI("ui.no_score_yet_3662ab")}><div><strong>—</strong><small>{state === 'incomplete' ? translateUI('hybrid.incomplete') : state === 'insufficient' ? translateUI("ui.not_enough_content_1c0e67") : translateUI("ui.not_checked_22705e")}</small></div></div>}
         <div className="cmp-head">
-          <p className="cmp-line">{tr(headline(run))}</p>
+          <p className="cmp-line">{provisional
+            ? translateUI(provisional.rule ? 'hybrid.provisionalRule' : provisional.total ? 'hybrid.provisionalCoverage' : 'hybrid.provisionalPlain', { verified: provisional.verified, total: provisional.total })
+            : aiGate === 'advisory' && state === 'incomplete' && blockers.length === 0 ? translateUI('hybrid.advisoryIncomplete') : tr(headline(run))}</p>
           <div className="cmp-chips">
+            {run?.hybrid && run.hybrid.alignment.status !== 'completed' && <span className="hy-pill warn">{translateUI('hybrid.alignment', { status: translateUI(`hybrid.status.${run.hybrid.alignment.status}`) })}</span>}
             {run && how.label && <span className={'chip basis ' + how.kind}>{tr(how.label)}</span>}
             {run && run.checkedBy === 'admin' && <span className="chip quiet">{translateUI("ui.checked_by_an_administrator_2cf77d")}</span>}
             {run && run.stale && <span className="chip stale">{translateUI("ui.out_of_date_the_syllabus_changed_after_this_check_384297")}</span>}
@@ -92,7 +110,7 @@ export default function ComplianceCard({ run, onOpenStep, showFindings = true })
           {groupFindings(run).map((g) => (
             <div key={g.key}>
               <h5>{tr(g.name)}</h5>
-              <ul>{g.findings.map((f) => <li key={f.id}><span className="chip src rule">{f.severity === 'blocking' ? translateUI("ui.rule_blocks_submit_a7fc69") : translateUI("ui.rule_78e179")}</span> {tr(f.message)} {stepRef(f.step)}</li>)}</ul>
+              <ul>{g.findings.map((f) => <li key={f.id} className={f.severity === 'blocking' ? 'blocking' : undefined}><span className="chip src rule">{f.severity === 'blocking' ? translateUI("ui.rule_blocks_submit_a7fc69") : translateUI("ui.rule_78e179")}</span> {tr(f.message)} {stepRef(f.step)}</li>)}</ul>
             </div>
           ))}
         </details>

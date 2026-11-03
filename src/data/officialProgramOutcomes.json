@@ -1,0 +1,384 @@
+{
+  "version": "lcup-po-2026-10-29",
+  "authorization": "User instruction 2026-10-29: IT101 / IE403 / CPE404 authoritative",
+  "programs": {
+    "BSIT": {
+      "sourceFile": "docs/academic-references/IT-101-Introduction-to-Computing-.pdf",
+      "sha256": "0375ce27ff4b1059c569a73cf8c77211de016aaeedbebe13de2efc6fe330fa14",
+      "outcomes": [
+        {
+          "no": 1,
+          "short": "PO 1",
+          "text": "Articulate and discuss the latest developments in the specific field of practice;",
+          "egas": [],
+          "sourcePages": [
+            2
+          ],
+          "raw": "PO1. Articulate and discuss the\nlatest developments in the specific\nfield of practice;"
+        },
+        {
+          "no": 2,
+          "short": "PO 2",
+          "text": "Effectively communicate orally and in writing using both English and Filipino;",
+          "egas": [],
+          "sourcePages": [
+            2
+          ],
+          "raw": "PO2. Effectively communicate\norally and in writing using both\nEnglish and Filipino;"
+        },
+        {
+          "no": 3,
+          "short": "PO 3",
+          "text": "Work effectively and independently in multi-disciplinary and multi-cultural teams;",
+          "egas": [],
+          "sourcePages": [
+            2
+          ],
+          "raw": "PO3. Work effectively and\nindependently in multi-disciplinary\nand multi-cultural teams;"
+        },
+        {
+          "no": 4,
+          "short": "PO 4",
+          "text": "Act in recognition of professional, social ethical responsibility;",
+          "egas": [],
+          "sourcePages": [
+            2
+          ],
+          "raw": "PO4. Act in recognition of\nprofessional, social ethical\nresponsibility;"
+        },
+        {
+          "no": 5,
+          "short": "PO 5",
+          "text": "Preserve and promote “Filipino historical and cultural heritage;",
+          "egas": [],
+          "sourcePages": [
+            2
+          ],
+          "raw": "PO5. Preserve and promote\n“Filipino historical and cultural\nheritage;"
+        },
+        {
+          "no": 6,
+          "short": "PO 6",
+          "text": "Analyze complex problems, and identify and define the computing requirements needed to design and appropriate solution;",
+          "egas": [],
+          "sourcePages": [
+            2,
+            3
+          ],
+          "raw": "PO6. Analyze complex problems,\nand identify and define the\ncomputing requirements needed to\ndesign and appropriate solution;"
+        },
+        {
+          "no": 7,
+          "short": "PO 7",
+          "text": "Apply computing and other knowledge domains to address real-world problems;",
+          "egas": [],
+          "sourcePages": [
+            3
+          ],
+          "raw": "PO7. Apply computing and other\nknowledge domains to address\nreal-world problems;"
+        },
+        {
+          "no": 8,
+          "short": "PO 8",
+          "text": "Design and develop computing solutions using a system-level perspective;",
+          "egas": [],
+          "sourcePages": [
+            3
+          ],
+          "raw": "PO8. Design and develop\ncomputing solutions using a\nsystem-level perspective;"
+        },
+        {
+          "no": 9,
+          "short": "PO 9",
+          "text": "Utilize modern computing tools.",
+          "egas": [],
+          "sourcePages": [
+            3
+          ],
+          "raw": "PO9. Utilize modern computing\ntools."
+        }
+      ],
+      "ambiguities": []
+    },
+    "BSIE": {
+      "sourceFile": "docs/academic-references/IE-403-Operation-Management.pdf",
+      "sha256": "bdb90b9b09eaf505e13bc82cfc1fdc51e283901455064617997d0426592c57a4",
+      "outcomes": [
+        {
+          "no": 1,
+          "short": "PO 1",
+          "text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+          "egas": [],
+          "sourcePages": [
+            2
+          ],
+          "raw": "PO1. Ability to apply knowledge of\nmathematics and science to solve\ncomplex engineering problems;"
+        },
+        {
+          "no": 2,
+          "short": "PO 2",
+          "text": "Ability to design and conduct experiments, as well as to analyze and interpret data.",
+          "egas": [],
+          "sourcePages": [
+            2
+          ],
+          "raw": "PO2. Ability to design and conduct\nexperiments, as well as to analyze and\ninterpret data."
+        },
+        {
+          "no": 3,
+          "short": "PO 3",
+          "text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+          "egas": [],
+          "sourcePages": [
+            2
+          ],
+          "raw": "PO3. Ability to design a system,\ncomponent, or process to meet desired\nneeds within realistic constraints such as\neconomic, environmental, social, political,\nethical, health and safety,\nmanufacturability and sustainability, in\naccordance with standards."
+        },
+        {
+          "no": 4,
+          "short": "PO 4",
+          "text": "Ability to function on multidisciplinary teams;",
+          "egas": [],
+          "sourcePages": [
+            2
+          ],
+          "raw": "PO4. Ability to function on\nmultidisciplinary teams;"
+        },
+        {
+          "no": 5,
+          "short": "PO 5",
+          "text": "Ability to identify; formulate, and solve complex engineering problems.",
+          "egas": [],
+          "sourcePages": [
+            2
+          ],
+          "raw": "PO5. Ability to identify; formulate, and\nsolve complex engineering problems."
+        },
+        {
+          "no": 6,
+          "short": "PO 6",
+          "text": "Understanding of professional and ethical responsibility.",
+          "egas": [],
+          "sourcePages": [
+            2
+          ],
+          "raw": "PO6. Understanding of professional and\nethical responsibility."
+        },
+        {
+          "no": 7,
+          "short": "PO 7",
+          "text": "Ability to communicate effectively.",
+          "egas": [],
+          "sourcePages": [
+            2
+          ],
+          "raw": "PO7. Ability to communicate effectively."
+        },
+        {
+          "no": 8,
+          "short": "PO 8",
+          "text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+          "egas": [],
+          "sourcePages": [
+            2,
+            3
+          ],
+          "raw": "PO8. Broad education necessary to\nunderstand the impact of engineering\nsolutions in a global, economic,\nenvironmental, and societal context."
+        },
+        {
+          "no": 9,
+          "short": "PO 9",
+          "text": "Recognition of the need for, and an ability to engage in life-long learning;",
+          "egas": [],
+          "sourcePages": [
+            3
+          ],
+          "raw": "PO9. Recognition of the need for, and\nan ability to engage in life-long learning;"
+        },
+        {
+          "no": 10,
+          "short": "PO 10",
+          "text": "Knowledge of contemporary issues.",
+          "egas": [],
+          "sourcePages": [
+            3
+          ],
+          "raw": "PO10. Knowledge of contemporary\nissues."
+        },
+        {
+          "no": 11,
+          "short": "PO 11",
+          "text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and",
+          "egas": [],
+          "sourcePages": [
+            3
+          ],
+          "raw": "PO11. Ability to use techniques, skills\nand modern engineering tools necessary\nfor engineering practice; and"
+        },
+        {
+          "no": 12,
+          "short": "PO 12",
+          "text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in multidisciplinary environments.",
+          "egas": [],
+          "sourcePages": [
+            3
+          ],
+          "raw": "PO12. Knowledge and understanding of\nengineering and management principles\nas a member and leader in a team, to\nmanage projects and in multidisciplinary\nenvironments."
+        },
+        {
+          "no": 13,
+          "short": "PO 13",
+          "text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+          "egas": [],
+          "sourcePages": [
+            3
+          ],
+          "raw": "PO13: Ability to design, develop,\nimplement and improve integrated system\nthat include people materials,\nimplementation, equipment and energy."
+        }
+      ],
+      "ambiguities": []
+    },
+    "BSCPE": {
+      "sourceFile": "docs/academic-references/CPE-404-Digital-Signal-Processing.pdf",
+      "sha256": "9e16f9d0524b5a328ce992306a7897b4a5d6cd70933a388fa01412e427ab754a",
+      "outcomes": [
+        {
+          "no": 1,
+          "short": "PO 1",
+          "text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+          "egas": [],
+          "sourcePages": [
+            2
+          ],
+          "raw": "PO1. Ability to apply knowledge of\nmathematics and science to solve\ncomplex engineering problems;"
+        },
+        {
+          "no": 2,
+          "short": "PO 2",
+          "text": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+          "egas": [],
+          "sourcePages": [
+            2
+          ],
+          "raw": "PO2. Ability to design and conduct\nexperiments, as well as to analyze and\ninterpret data;"
+        },
+        {
+          "no": 3,
+          "short": "PO 3",
+          "text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+          "egas": [],
+          "sourcePages": [
+            2
+          ],
+          "raw": "PO3. Ability to design a system,\ncomponent, or process to meet desired\nneeds within realistic constraints such as\neconomic, environmental,\nsocial, political, ethical, health and\nsafety, manufacturability and\nsustainability, in accordance with\nstandards."
+        },
+        {
+          "no": 4,
+          "short": "PO 4",
+          "text": "Ability to function on multidisciplinary teams;",
+          "egas": [],
+          "sourcePages": [
+            2,
+            3
+          ],
+          "raw": "PO4. Ability to function on\nmultidisciplinary teams;"
+        },
+        {
+          "no": 5,
+          "short": "PO 5",
+          "text": "Ability to identify; formulate, and solve complex engineering problems;",
+          "egas": [],
+          "sourcePages": [
+            3
+          ],
+          "raw": "PO5. Ability to identify; formulate, and\nsolve complex engineering problems;"
+        },
+        {
+          "no": 6,
+          "short": "PO 6",
+          "text": "Understanding of professional and ethical responsibility.",
+          "egas": [],
+          "sourcePages": [
+            3
+          ],
+          "raw": "PO6. Understanding of professional and\nethical responsibility."
+        },
+        {
+          "no": 7,
+          "short": "PO 7",
+          "text": "Ability to communicate effectively;",
+          "egas": [],
+          "sourcePages": [
+            3
+          ],
+          "raw": "PO7. Ability to communicate effectively;"
+        },
+        {
+          "no": 8,
+          "short": "PO 8",
+          "text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+          "egas": [],
+          "sourcePages": [
+            3
+          ],
+          "raw": "PO8. Broad education necessary to\nunderstand the impact of engineering\nsolutions in a global, economic,\nenvironmental, and societal context."
+        },
+        {
+          "no": 9,
+          "short": "PO 9",
+          "text": "Recognition of the need for, and an ability to engage in life-long learning;",
+          "egas": [],
+          "sourcePages": [
+            3
+          ],
+          "raw": "PO9. Recognition of the need for, and\nan ability to engage in life-long learning;"
+        },
+        {
+          "no": 10,
+          "short": "PO 10",
+          "text": "Knowledge of contemporary issues;",
+          "egas": [],
+          "sourcePages": [
+            3
+          ],
+          "raw": "PO10. Knowledge of contemporary\nissues;"
+        },
+        {
+          "no": 11,
+          "short": "PO 11",
+          "text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and",
+          "egas": [],
+          "sourcePages": [
+            3
+          ],
+          "raw": "PO11. Ability to use techniques, skills\nand modern engineering tools necessary\nfor engineering practice; and"
+        },
+        {
+          "no": 12,
+          "short": "PO 12",
+          "text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in multidisciplinary environments.",
+          "egas": [],
+          "sourcePages": [
+            3
+          ],
+          "raw": "PO12. Knowledge and understanding of\nengineering and management principles\nas a member and leader in a team, to\nmanage projects and in\nmultidisciplinary environments."
+        },
+        {
+          "no": 13,
+          "short": "PO 13",
+          "text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+          "egas": [],
+          "sourcePages": [
+            3
+          ],
+          "raw": "PO13: Ability to design, develop,\nimplement and improve integrated system\nthat include people materials,\nimplementation, equipment and energy."
+        }
+      ],
+      "ambiguities": []
+    },
+    "BSIT-CYBERSECURITY": {
+      "inheritsFrom": "BSIT",
+      "curriculum": "2025-2026 (unchanged; not an outcome source)"
+    }
+  }
+}

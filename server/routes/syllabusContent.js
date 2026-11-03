@@ -62,6 +62,7 @@ async function applyCatalog(db, content) {
   const courseId = content.meta && Number.isInteger(content.meta.courseId) ? content.meta.courseId : null;
   const course = courseId ? await loadCourse(db, courseId, { lock: true }) : null;
   if (courseId && !course) throw httpError(400, 'That course does not exist');
+  if(course?.standards?.poReference && !content.outcomes && require('../lib/programPoReferences').hasPoMappings(content)) throw httpError(409,'This legacy draft must explicitly adopt its authored PO context before saving. Existing mappings were not replaced.',{code:'legacy_po_adoption_required'});
   if (course) { content.meta.code = course.code; content.meta.title = course.title; content.meta.program = course.program.code; }
   if (!content.outcomes) content.clos = course ? course.clos : [];
   else {
@@ -279,6 +280,11 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
       const meta = content && content.meta;
       if (!meta || !Number.isInteger(meta.courseId)) throw httpError(400, 'Choose a course before submitting');
       await assignments.requireCourseAccess(conn, me, meta.courseId);
+      // The checker uses institutional/program masters, never the author's own snapshot.
+      // Validate raw saved identity before applyCatalog can overwrite it.
+      const verifiedResult = await compliance.requireHybrid(conn, id,
+        publishing ? compliance.publicationContent(content, await catalogSnapshot(conn, content)) : content,
+        { hardOnly: preparing });
       // Validate authored outcomes and snapshot the exact values being submitted.
       await applyCatalog(conn, content);
       if (content.outcomes) validateOutcomes(content.outcomes, content.clos || [], content.plan || [], { complete: true });
@@ -293,7 +299,7 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
       if (gaps.length) throw httpError(409, content.outcomes ? 'Complete Vision, Mission, EGA, PO and CLO in step 2 before submitting.' : gapsMessage(gaps));
       // The form must follow the standard. A 'blocking' rule failing stops the submit (409 with the failed rules); anything
       // else only warns, and the builder offers "Submit anyway". The run is stored with the version below.
-      const result = compliance.check(content, { catalog: content.catalog, preparedBy: `${me.firstName} ${me.lastName}` });
+      const result = verifiedResult || compliance.check(content, { catalog: content.catalog, preparedBy: `${me.firstName} ${me.lastName}` });
       if (!result.conformance.ok) {
         const g = compliance.gateError(result);
         throw httpError(409, g.message, { failed: g.failed });
@@ -314,7 +320,7 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
         const checkContent=compliance.publicationContent(content,content.catalog);
         const checked=await compliance.cachedRun(conn,id,compliance.hashOf(checkContent));
         if (reviewedRunId !== undefined && checked?.run_id !== reviewedRunId) throw httpError(409,'The AI check changed. Open the current result before approving.');
-        if (!checked || checked.created_by !== me.id || !checked.conformant || checked.status !== 'scored' || !['ok','none'].includes(checked.ai_status)) throw httpError(409,'Check the current saved form in AI Checker and wait for the check to finish before publishing.');
+        if (!checked || checked.created_by !== me.id || !checked.conformant || checked.status !== 'scored' || checked.ai_status !== 'ok') throw httpError(409,'Check the current saved form in AI Checker and wait for Gemini alignment to finish before publishing.');
       }
       if (publishing) {
         // Approval records a decision about the checked revision, not another edit.
@@ -359,7 +365,7 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
     if (outcome.preparing) return res.json({version:outcome.label,status:outcome.status});
 
     // After the commit, outside the transaction: the AI recommendations are a background job. They never delay or fail a submit.
-    if (outcome.runId && outcome.result.status === 'scored' && outcome.result.findings.length) {
+    if (outcome.runId && !outcome.result.hybrid && outcome.result.status === 'scored' && outcome.result.findings.length) {
       compliance.startAiJob(db, { runId: outcome.runId, content: outcome.content, result: outcome.result, names: compliance.namesFor(me, outcome.content) });
     }
 
@@ -374,7 +380,7 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
         body: `${who} saved a new version.`,
       });
     }
-    res.json({ version: outcome.label, status: outcome.status });
+    res.json({ version: outcome.label, status: outcome.status, score: outcome.result?.score, deductions: outcome.result?.hybrid?.deductions });
   } catch (err) { sendError(res, err); }
 }
 router.post('/:id/submit', requireAuth, (req,res) => finalizeSyllabus(req,res));

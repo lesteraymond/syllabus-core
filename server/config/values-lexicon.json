@@ -1,0 +1,6 @@
+{
+  "version": "values-lexicon-1",
+  "status": "PROPOSED - vocabulary seen in the uploaded LCUP syllabi, grouped by the assistant. Not an institutional list and not an official mapping. Editable. A word in a list only says what KIND of expression it is; it never says which core value it supports.",
+  "supportingValues": ["respect", "honesty", "cooperation", "patience", "understanding", "appreciation", "obedience", "open mindedness", "open-mindedness", "diligence", "accuracy", "exactness", "active participation and involvement", "work ethics", "responsibility", "teamwork", "kindness", "integrity", "perseverance", "self awareness", "self-awareness"],
+  "competencies": ["critical thinking", "analytical skills", "interpersonal skills", "leadership skills", "skills and competencies", "problem solving", "problem-solving", "communication skills", "creativity", "creative thinking", "technical skills", "decision making", "decision-making"]
+}

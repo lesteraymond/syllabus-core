@@ -1,0 +1,414 @@
+{
+  "importedAt": "2026-10-22T03:53:55.018Z",
+  "backup": ".api-test-backups\\local-reference-seed-1792641234812.json",
+  "sourceSha256": {
+    "BSIT-1.jpeg": "a71664c8ad1a47d1d97b1d75d2b199edacb9762362b2067f1fb0f60d205a6877",
+    "BSIT-2.jpeg": "0d7812a46615671e6b7a47c093cb14cb516ecbe2cefab5c85fbe2c68e6b8360f",
+    "BSIE-1.jpeg": "cd5bd50fd4dfb1daead0e78fe670aaac5824247690b4bfb610a1365d05f05133",
+    "BSIE-2 (1).jpeg": "92cabc29bc21d1fcc029a0eb583c3a8a06eac3b41fb8e4401697f66ff5ff9a17",
+    "BSCPE-1.jpeg": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc",
+    "BSCPE-2.jpeg": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22",
+    "BSIT-Cybersecurity-1.jpeg": "afa2f17df048e96585686cac8f415fb7cf172af138d955ee5eaabbc99d5cb09f",
+    "BSIT-Cybersecurity-2.jpeg": "bbccdfc55aa2a712c7ce7ed386e22528e7ad56020b3c0f05c27244f3924a748a",
+    "IE402-SYSTEM-ENGINEERINGS.pdf": "44ca6d48c77d0b04055cf330717b9381b64d3b7fb8674be727aa2eb4a1807569",
+    "CPE-304-Fundamentals-of-Mixed-Signals-and-Sensors.pdf": "f68eb5bedb77d31b153b23dc354ef457c9a349b7fca64ba5a46578230982a4a2",
+    "IT-202-Programming-1.pdf": "6376fe94981ae65f25054234e1ae63cd50be8f70f12b774ea72949e07d561845"
+  },
+  "cybersecurityOutcomePolicy": "Existing BSIT POs shared by explicit user instruction",
+  "existingPopulatedOutcomeSetsPreserved": true,
+  "sourceOutcomeSnapshots": {
+    "BSIE": {
+      "file": "IE402-SYSTEM-ENGINEERINGS.pdf",
+      "pages": [
+        2,
+        3,
+        4
+      ],
+      "egas": [
+        {
+          "no": 1,
+          "name": "Critical and Creative thinker",
+          "short": "Critical and Creative Thinker"
+        },
+        {
+          "no": 2,
+          "name": "Competent Catholic Augustinian-Marian Professional",
+          "short": "Competent Professional"
+        },
+        {
+          "no": 3,
+          "name": "Socially Responsive Steward",
+          "short": "Socially Responsive Steward"
+        },
+        {
+          "no": 4,
+          "name": "Transformative Lifelong learner",
+          "short": "Transformative Lifelong Learner"
+        }
+      ],
+      "pos": [
+        {
+          "no": 1,
+          "short": "PO 1",
+          "text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+          "egas": []
+        },
+        {
+          "no": 2,
+          "short": "PO 2",
+          "text": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+          "egas": []
+        },
+        {
+          "no": 3,
+          "short": "PO 3",
+          "text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+          "egas": []
+        },
+        {
+          "no": 4,
+          "short": "PO 4",
+          "text": "Ability to function on multidisciplinary teams",
+          "egas": []
+        },
+        {
+          "no": 5,
+          "short": "PO 5",
+          "text": "Ability to identify; formulate, and solve complex engineering problems;",
+          "egas": []
+        },
+        {
+          "no": 6,
+          "short": "PO 6",
+          "text": "Understanding of professional and ethical responsibility.",
+          "egas": []
+        },
+        {
+          "no": 7,
+          "short": "PO 7",
+          "text": "Ability to communicate effectively",
+          "egas": []
+        },
+        {
+          "no": 8,
+          "short": "PO 8",
+          "text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+          "egas": []
+        },
+        {
+          "no": 9,
+          "short": "PO 9",
+          "text": "Recognition of the need for, and an ability to engage in life-long learning;",
+          "egas": []
+        },
+        {
+          "no": 10,
+          "short": "PO 10",
+          "text": "Knowledge of contemporary issues;",
+          "egas": []
+        },
+        {
+          "no": 11,
+          "short": "PO 11",
+          "text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and;",
+          "egas": []
+        },
+        {
+          "no": 12,
+          "short": "PO 12",
+          "text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in",
+          "egas": [],
+          "sourceIncomplete": true
+        },
+        {
+          "no": 13,
+          "short": "PO 13",
+          "text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+          "egas": []
+        }
+      ],
+      "warnings": [
+        "PO12 ends mid-sentence in the source; preserved without an invented completion.",
+        "The source does not provide a standalone PO-to-EGA crosswalk."
+      ]
+    },
+    "BSCPE": {
+      "file": "CPE-304-Fundamentals-of-Mixed-Signals-and-Sensors.pdf",
+      "pages": [
+        2,
+        3
+      ],
+      "egas": [
+        {
+          "no": 1,
+          "name": "Critical and Creative thinker",
+          "short": "Critical and Creative Thinker"
+        },
+        {
+          "no": 2,
+          "name": "Competent Catholic Augustinian-Marian Professional",
+          "short": "Competent Professional"
+        },
+        {
+          "no": 3,
+          "name": "Socially Responsive Steward",
+          "short": "Socially Responsive Steward"
+        },
+        {
+          "no": 4,
+          "name": "Transformative Lifelong learner",
+          "short": "Transformative Lifelong Learner"
+        }
+      ],
+      "pos": [
+        {
+          "no": 1,
+          "short": "PO 1",
+          "text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+          "egas": []
+        },
+        {
+          "no": 2,
+          "short": "PO 2",
+          "text": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+          "egas": []
+        },
+        {
+          "no": 3,
+          "short": "PO 3",
+          "text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+          "egas": []
+        },
+        {
+          "no": 4,
+          "short": "PO 4",
+          "text": "Ability to function on multidisciplinary teams",
+          "egas": []
+        },
+        {
+          "no": 5,
+          "short": "PO 5",
+          "text": "Ability to identify; formulate, and solve complex engineering problems;",
+          "egas": []
+        },
+        {
+          "no": 6,
+          "short": "PO 6",
+          "text": "Understanding of professional and ethical responsibility.",
+          "egas": []
+        },
+        {
+          "no": 7,
+          "short": "PO 7",
+          "text": "Ability to communicate effectively",
+          "egas": []
+        },
+        {
+          "no": 8,
+          "short": "PO 8",
+          "text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+          "egas": []
+        },
+        {
+          "no": 9,
+          "short": "PO 9",
+          "text": "Recognition of the need for, and an ability to engage in life-long learning;",
+          "egas": []
+        },
+        {
+          "no": 10,
+          "short": "PO 10",
+          "text": "Knowledge of contemporary issues;",
+          "egas": []
+        },
+        {
+          "no": 11,
+          "short": "PO 11",
+          "text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and",
+          "egas": []
+        },
+        {
+          "no": 12,
+          "short": "PO 12",
+          "text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in",
+          "egas": [],
+          "sourceIncomplete": true
+        },
+        {
+          "no": 13,
+          "short": "PO 13",
+          "text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+          "egas": []
+        }
+      ],
+      "warnings": [
+        "PO12 ends mid-sentence in the source; preserved without an invented completion.",
+        "The source does not provide a standalone PO-to-EGA crosswalk."
+      ]
+    },
+    "BSIT": {
+      "file": "IT-202-Programming-1.pdf",
+      "pages": [
+        2,
+        3
+      ],
+      "egas": [
+        {
+          "no": 1,
+          "name": "Critical and Creative thinker",
+          "short": "Critical and Creative Thinker"
+        },
+        {
+          "no": 2,
+          "name": "Competent Catholic Augustinian-Marian Professional",
+          "short": "Competent Professional"
+        },
+        {
+          "no": 3,
+          "name": "Socially Responsive Steward",
+          "short": "Socially Responsive Steward"
+        },
+        {
+          "no": 4,
+          "name": "Transformative Lifelong learner",
+          "short": "Transformative Lifelong Learner"
+        }
+      ],
+      "pos": [
+        {
+          "no": 1,
+          "short": "PO 1",
+          "text": "Articulate and discuss the latest developments in the specific field of practice;",
+          "egas": []
+        },
+        {
+          "no": 2,
+          "short": "PO 2",
+          "text": "Effectively communicate orally and in writing using both English and Filipino;",
+          "egas": []
+        },
+        {
+          "no": 3,
+          "short": "PO 3",
+          "text": "Work effectively and independently in multi-disciplinary and multi-cultural teams;",
+          "egas": []
+        },
+        {
+          "no": 4,
+          "short": "PO 4",
+          "text": "Act in recognition of professional, social ethical responsibility;",
+          "egas": []
+        },
+        {
+          "no": 5,
+          "short": "PO 5",
+          "text": "Preserve and promote “Filipino historical and cultural heritage;",
+          "egas": []
+        },
+        {
+          "no": 6,
+          "short": "PO 6",
+          "text": "Analyze complex problems, and identify and define the computing requirements needed to design and appropriate solution;",
+          "egas": []
+        },
+        {
+          "no": 7,
+          "short": "PO 7",
+          "text": "Apply computing and other knowledge domains to address real-world problems;",
+          "egas": []
+        },
+        {
+          "no": 8,
+          "short": "PO 8",
+          "text": "Design and develop computing solutions using a system-level perspective;",
+          "egas": []
+        },
+        {
+          "no": 9,
+          "short": "PO 9",
+          "text": "Utilize modern computing tools.",
+          "egas": []
+        }
+      ],
+      "warnings": [
+        "The nine PDF outcomes differ in count and numbering from the existing ten BSIT database outcomes; preserve the existing set rather than merge incompatible numbering."
+      ]
+    }
+  },
+  "verification": [
+    {
+      "program": "BSIT",
+      "curriculumYear": "2022-2023",
+      "curriculumSubjects": 53,
+      "catalogSubjects": 53,
+      "pos": 10,
+      "egas": 4,
+      "curriculumTerms": 8,
+      "referenceId": 1,
+      "referenceStatus": "approved",
+      "lectureUnits": 138,
+      "labUnits": 18,
+      "totalUnits": 156,
+      "databaseVerified": true,
+      "sourceWarnings": [
+        "The nine PDF outcomes differ in count and numbering from the existing ten BSIT database outcomes; preserve the existing set rather than merge incompatible numbering."
+      ]
+    },
+    {
+      "program": "BSIE",
+      "curriculumYear": "2022-2023",
+      "curriculumSubjects": 63,
+      "catalogSubjects": 63,
+      "pos": 13,
+      "egas": 4,
+      "curriculumTerms": 8,
+      "referenceId": 2,
+      "referenceStatus": "approved",
+      "lectureUnits": 172,
+      "labUnits": 14,
+      "totalUnits": 186,
+      "databaseVerified": true,
+      "sourceWarnings": [
+        "PO12 ends mid-sentence in the source; preserved without an invented completion.",
+        "The source does not provide a standalone PO-to-EGA crosswalk."
+      ]
+    },
+    {
+      "program": "BSCPE",
+      "curriculumYear": "2022-2023",
+      "curriculumSubjects": 66,
+      "catalogSubjects": 66,
+      "pos": 13,
+      "egas": 4,
+      "curriculumTerms": 8,
+      "referenceId": 3,
+      "referenceStatus": "approved",
+      "lectureUnits": 160,
+      "labUnits": 27,
+      "totalUnits": 187,
+      "databaseVerified": true,
+      "sourceWarnings": [
+        "PO12 ends mid-sentence in the source; preserved without an invented completion.",
+        "The source does not provide a standalone PO-to-EGA crosswalk."
+      ]
+    },
+    {
+      "program": "BSIT-CYBERSECURITY",
+      "curriculumYear": "2025-2026",
+      "curriculumSubjects": 61,
+      "catalogSubjects": 61,
+      "pos": 10,
+      "egas": 4,
+      "curriculumTerms": 9,
+      "referenceId": 4,
+      "referenceStatus": "approved",
+      "lectureUnits": 155,
+      "labUnits": 21,
+      "totalUnits": 176,
+      "databaseVerified": true,
+      "sourceWarnings": [
+        "BSIT outcomes shared with Cybersecurity by explicit user instruction; not extracted from Cybersecurity images."
+      ]
+    }
+  ]
+}

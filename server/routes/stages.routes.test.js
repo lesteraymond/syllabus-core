@@ -4,6 +4,7 @@
 const test = require('node:test');
 const assert = require('node:assert');
 const express = require('express');
+require('../lib/syllabuscheck/legacy-storage-test-helper')();
 const svc = require('../lib/compliance/service');
 const F = require('../lib/compliance/fixtures');
 
@@ -28,6 +29,7 @@ function makeDb(installed = true) {
   const handle = (sql, p = []) => {
     if (sql.startsWith('SELECT user_id FROM users WHERE user_id')) return [[{ user_id: p[0] }]];
     if (sql.startsWith('SELECT 1 FROM ai_check_runs')) { if (!s.installed) throw new Error("Table 'ai_check_runs' doesn't exist"); return [[]]; }
+    if (sql.startsWith('SELECT version_id, version_label, content FROM syllabus_versions')) return [[...s.versions.filter(v => v.syllabus_id === p[0]).slice(-1)]];
     if (sql.startsWith('SELECT s.*, u.first_name')) {
       return [Object.values(s.syllabi).filter((x) => x.status !== 'draft').map((x) => ({ ...x, first_name: 'Fay', last_name: 'F', avatar_path: null, program_name: null, course_title: x.title, program_code: 'BSFM' }))];
     }
@@ -47,6 +49,7 @@ function makeDb(installed = true) {
     if (sql.startsWith('UPDATE syllabi SET status = ?')) { s.syllabi[p[p.length - 1]].status = p[0]; return [{}]; }
     if (/^(INSERT|UPDATE|DELETE)/.test(sql)) { s.logged.push(sql.slice(0, 40)); return [{}]; }
     if (sql.startsWith("SELECT user_id FROM users WHERE role = 'admin'")) return [[]];
+    if (/program_outcome_sources/.test(sql)) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' }); // not migrated yet
     throw new Error('unexpected query: ' + sql);
   };
   const conn = { query: async (q, p) => handle(q, p), beginTransaction: async () => {}, commit: async () => {}, rollback: async () => {}, release: () => {} };
@@ -113,14 +116,15 @@ test('a new version needs a new check: the old one, made on an earlier version, 
   assert.strictEqual((await call(admin, 'PUT', '/syllabi/1', { status: 'approved' })).status, 200);
 }));
 
-test('a submission with nothing the check can read is not held back (it would wait forever), and is not marked as waiting', () => withServer(async ({ call }) => {
+test('a submission without structured content cannot be approved', () => withServer(async ({ call }) => {
   assert.strictEqual((await listed(call, 2)).awaitingAiCheck, false);
-  assert.strictEqual((await call(admin, 'PUT', '/syllabi/2', { status: 'approved' })).status, 200);
+  assert.strictEqual((await call(admin, 'PUT', '/syllabi/2', { status: 'approved' })).status, 409);
 }));
 
-test('before the compliance tables exist nothing can be checked, so nothing waits and decisions work as they always did', () => withServer({ installed: false }, async ({ call }) => {
+test('missing compliance tables cannot be used to bypass the mandatory approval gate', t => withServer({ installed: false }, async ({ call }) => {
+  t.mock.method(svc, 'requireHybrid', require('../lib/syllabuscheck/legacy-storage-test-helper').realRequireHybrid);
   assert.strictEqual((await listed(call, 1)).awaitingAiCheck, false);
-  assert.strictEqual((await call(admin, 'PUT', '/syllabi/1', { status: 'approved' })).status, 200);
+  assert.strictEqual((await call(admin, 'PUT', '/syllabi/1', { status: 'approved' })).status, 503);
 }));
 
 test('only an administrator\'s list carries the flag, and drafts stay out of it', () => withServer(async ({ call }) => {
