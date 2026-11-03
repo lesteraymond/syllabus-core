@@ -7,7 +7,7 @@ import ComplianceSection from './ComplianceSection';
 
 // Step 7: Review & Check. The compliance controls and a read-only rendering of the finished form.
 // `submitFailed` are the rules the server named when it refused a submit.
-export default function ReviewStep({ d, model, go, preparedBy, syllabusId, saveFirst, canCheck, submitFailed, onRun, onApplyDraft, showCompliance = true }) {
+export default function ReviewStep({ d, model, go, preparedBy, syllabusId, saveFirst, canCheck, submitFailed, onRun, onApplyDraft, showCompliance = false }) {
   const openStep = (key) => go(STEPS.findIndex((s) => s.key === key));
   return (
     <>

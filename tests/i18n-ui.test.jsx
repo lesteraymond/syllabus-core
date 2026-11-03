@@ -536,19 +536,17 @@ test('AI results expose an explicit approval and edit choice with busy and unava
   }
 });
 
-test('administrator builder review omits the embedded AI section while faculty keeps it',()=>{
+test('builder review omits the embedded AI section by default and places AI Checker 3rd in the sidebar for both roles',()=>{
+  assert.deepEqual(navItems.slice(0,4).map(([page,,,role])=>[page,role]),[['dashboard',null],['builder',null],['ai',null],['my-syllabi',null]]);
   const d=emptyDraft(()=>1);
   const model=createModel({institution:{vision:'',mission:{lead:'',items:[]},egas:[]},programs:{},year:2026});
   for(const language of ['en','tl']){
     setLanguage(language);
     const props={d,model,go:noop,preparedBy:'Original author',existing:false,note:'',setNote:noop,syllabusId:()=>null,saveFirst:noop,canCheck:false,submitFailed:[]};
-    const admin=renderToStaticMarkup(<ReviewStep {...props} showCompliance={false}/>);
-    assert.doesNotMatch(admin,/id="cmp-card"/);
-    assert.ok(admin.includes(t('publication.checkInTab')));
-    assert.match(admin,/Original author/);assert.match(admin,/class="paper"/);
-    const faculty=renderToStaticMarkup(<ReviewStep {...props}/>);
-    assert.match(faculty,/id="cmp-card"/);
-    assert.ok(!faculty.includes(t('publication.checkInTab')));
+    const review=renderToStaticMarkup(<ReviewStep {...props}/>);
+    assert.doesNotMatch(review,/id="cmp-card"/);
+    assert.ok(review.includes(t('publication.checkInTab')));
+    assert.match(review,/Original author/);assert.match(review,/class="paper"/);
   }
 });
 

@@ -201,11 +201,11 @@ test(`builder scans a dirty draft without saving old text, then saves before exp
       assert.match(host.querySelector('.up-panel [role=alert]').textContent, /draft could not be saved/);
       await act(async () => button('Apply and AI CHECK').click());
       assert.equal(aiChecks, 1, 'retry saves and checks without forcing another PDF scan');
-      assert.ok(host.querySelector('#cmp-card'));
+      assert.ok(host.querySelector('.paper'));
     } else {
       assert.deepEqual(order, ['save', 'check']);
       assert.equal(aiChecks, 1);
-      assert.ok(host.querySelector('#cmp-card'));
+      assert.ok(host.querySelector('.paper'));
       if (outcome === 'check-failed') assert.ok(notices.some(message => message.includes('imported draft was saved') && message.includes('Another check is running')));
       else assert.ok(notices.some(message => message.includes('Imported syllabus checked')));
     }
