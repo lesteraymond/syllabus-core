@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS users (
   email VARCHAR(255) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   must_change_password TINYINT(1) NOT NULL DEFAULT 0,
-  role ENUM('faculty', 'admin', 'student') NOT NULL DEFAULT 'faculty',
+  role ENUM('faculty', 'admin', 'student', 'asst_vpaa', 'lic_director', 'vpaa') NOT NULL DEFAULT 'faculty',
   first_name VARCHAR(100) NOT NULL,
   last_name VARCHAR(100) NOT NULL,
   avatar_path VARCHAR(255) NULL,
@@ -392,4 +392,19 @@ CREATE TABLE IF NOT EXISTS syllabus_check_decisions (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (run_id) REFERENCES ai_check_runs(run_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+  );
+
+-- Review chain: who cleared which stage (dean, Asst. VPAA, LIC Director) of which version of a syllabus. The VPAA approves once all three are cleared.
+CREATE TABLE IF NOT EXISTS syllabus_review_stages (
+    stage_id INT AUTO_INCREMENT PRIMARY KEY,
+    syllabus_id INT NOT NULL,
+    version_id INT NOT NULL,
+    stage ENUM('dean', 'asst_vpaa', 'lic_director') NOT NULL,
+    reviewer_id INT NOT NULL,
+    note TEXT NULL,
+    cleared_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uniq_stage_per_version (syllabus_id, version_id, stage),
+    INDEX idx_stage_syllabus (syllabus_id),
+    FOREIGN KEY (syllabus_id) REFERENCES syllabi(syllabus_id) ON DELETE CASCADE,
+    FOREIGN KEY (reviewer_id) REFERENCES users(user_id) ON DELETE CASCADE
   );

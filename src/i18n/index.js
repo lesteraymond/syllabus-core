@@ -6,8 +6,9 @@ import { pdfImportEn, pdfImportTl } from './pdfImport.js';
 import { dashboardStatsEn, dashboardStatsTl } from './dashboardStats.js';
 import { lessonAuthoringEn, lessonAuthoringTl } from './lessonAuthoring.js';
 import {academicV2En,academicV2Tl} from './academicV2.js';
-const en = { ...baseEn, ...extraEn, ...hybridEn, ...pdfImportEn, ...dashboardStatsEn, ...lessonAuthoringEn, ...academicV2En };
-const tl = { ...baseTl, ...extraTl, ...hybridTl, ...pdfImportTl, ...dashboardStatsTl, ...lessonAuthoringTl, ...academicV2Tl };
+import { reviewChainEn, reviewChainTl } from './reviewChain.js';
+const en = { ...baseEn, ...extraEn, ...hybridEn, ...pdfImportEn, ...dashboardStatsEn, ...lessonAuthoringEn, ...academicV2En, ...reviewChainEn };
+const tl = { ...baseTl, ...extraTl, ...hybridTl, ...pdfImportTl, ...dashboardStatsTl, ...lessonAuthoringTl, ...academicV2Tl, ...reviewChainTl };
 export { getLanguage, getLocale, setLanguage, subscribeLanguage, normalizeLanguage } from './store.js';
 export const dictionaries = { en, tl };
 export function translate(key, values = {}, language = getLanguage()) {

@@ -133,6 +133,10 @@ function makeDb() {
     }
     if (sql.startsWith('SELECT u.first_name, u.last_name')) return [s.syllabi[p[0]] ? [labelled(s.syllabi[p[0]])] : []];
     if (sql.startsWith('SELECT first_name, last_name FROM users WHERE user_id')) return [s.people[p[0]] ? [s.people[p[0]]] : []];
+    // the review chain: a dean who sends their own syllabus for review clears the dean stage (lib/reviewStages.js)
+    if (sql.startsWith('SELECT 1 FROM syllabus_review_stages')) return [[]];
+    if (sql.startsWith('SELECT user_id FROM users WHERE role IN (?)')) return [[]]; // nobody to notify in these fixtures
+    if (sql.startsWith('INSERT INTO syllabus_review_stages')) { s.stages = s.stages || []; if (!s.stages.some((r) => r.syllabus_id === p[0] && r.version_id === p[1] && r.stage === p[2])) s.stages.push({ syllabus_id: p[0], version_id: p[1], stage: p[2], reviewer_id: p[3] }); return [{}]; }
     if (sql.startsWith('INSERT INTO syllabus_versions')) { const v = { version_id: s.versionId + s.versions.length, syllabus_id: p[0], version_label: p[1], content: p[8] }; s.versions.push(v); return [{ insertId: v.version_id }]; }
     if (sql.startsWith('SELECT version_id, version_label, content FROM syllabus_versions')) return [s.versions.filter((v) => v.syllabus_id === p[0]).slice(-1)];
     if (sql.startsWith('SELECT version_label FROM syllabus_versions WHERE version_id')) return [s.versions.filter((v) => v.version_id === p[0]).map((v) => ({ version_label: v.version_label }))];
@@ -885,7 +889,7 @@ test('content that returns to what an earlier version said is a new version and 
   assert.strictEqual((await call(admin, 'POST', '/syllabi/1/compliance/recheck', {})).body.cached, false); // the same version is answered by its own run
 }));
 
-test('admin drafts cannot enter AI Checker; completed forms require an explicit handoff and approval', () => withServer(async ({call,db}) => {
+test('admin drafts cannot enter AI Checker; completed forms require an explicit handoff, and sending for review clears only the dean stage (the VPAA approves)', () => withServer(async ({call,db}) => {
   const draft=JSON.parse(db.s.syllabi[1].content);const course=await require('../lib/courses').loadCourse(db,10);draft.clos=course.clos;Object.assign(draft.meta,{code:course.code,title:course.title,program:course.program.code});db.s.syllabi[1].content=JSON.stringify(draft);
   db.s.syllabi[1].user_id=admin.id;db.s.people[admin.id]={first_name:'Ann',last_name:'A'};db.s.trackStatus=true;
   const list=await call(admin,'GET','/compliance?syllabus=all');
@@ -907,9 +911,11 @@ test('admin drafts cannot enter AI Checker; completed forms require an explicit 
   assert.strictEqual((await call(admin,'POST','/syllabi/1/publish',{reviewedRunId:check.body.run.id})).status,409);
   assert.strictEqual((await call(admin,'POST','/syllabi/1/publish',{reviewedRunId:'invalid'})).status,400);
   const published=await call(admin,'POST','/syllabi/1/publish',{reviewedRunId:newest.body.run.id});
-  assert.strictEqual(published.status,200,JSON.stringify(published.body));assert.strictEqual(published.body.status,'approved');
-  assert.strictEqual(db.s.syllabi[1].status,'approved');assert.strictEqual(db.s.versions.length,1);
-  assert.strictEqual((await call(admin,'POST','/syllabi/1/publish',{})).status,409);
+  assert.strictEqual(published.status,200,JSON.stringify(published.body));assert.strictEqual(published.body.status,'under_review');
+  assert.strictEqual(db.s.syllabi[1].status,'under_review');assert.strictEqual(db.s.versions.length,1); // the dean never approves their own syllabus
+  assert.deepStrictEqual(db.s.stages.map((r)=>[r.syllabus_id,r.stage,r.reviewer_id]),[[1,'dean',admin.id]]);
+  assert.ok(db.s.activity.some((a)=>a.action==='submit'&&/sent syllabus for review/.test(a.notes)));assert.ok(!db.s.activity.some((a)=>a.action==='approve'));
+  assert.strictEqual((await call(admin,'POST','/syllabi/1/publish',{})).status,200);assert.strictEqual(db.s.stages.length,1); // sending again clears the same stage, not another
 }));
 test('incomplete admin forms remain drafts; returning for edits removes the item and invalidates its old check', () => withServer(async ({call,db}) => {
   db.s.syllabi[1].user_id=admin.id;db.s.trackStatus=true;

@@ -52,3 +52,15 @@ test('a deadline notice opens the syllabi of a faculty member, or the subjects o
   assert.deepStrictEqual(notificationTarget(n('deadline', null), 'admin'), { kind: 'page', page: 'courses' });
   assert.deepStrictEqual(notificationTarget(n('deadline', 7), 'faculty'), { kind: 'page', page: 'my-syllabi' }, 'never a comments thread');
 });
+
+// ---- the review chain's roles
+test('reviewers open the AI Checker for a new submission, the VPAA and every reviewer open Review & Approval for a ready syllabus', () => {
+  for (const role of ['admin', 'asst_vpaa', 'lic_director']) {
+    assert.deepStrictEqual(notificationTarget({ type: 'submission', syllabusId: 1 }, role), { kind: 'page', page: 'ai' }, role);
+    assert.deepStrictEqual(notificationTarget({ type: 'edit', syllabusId: 1 }, role), { kind: 'page', page: 'ai' }, role);
+  }
+  assert.deepStrictEqual(notificationTarget({ type: 'chain', syllabusId: 1 }, 'vpaa'), { kind: 'page', page: 'review' });
+  assert.deepStrictEqual(notificationTarget({ type: 'submission', syllabusId: 1 }, 'vpaa'), { kind: 'page', page: 'review' });
+  assert.deepStrictEqual(notificationTarget({ type: 'status', syllabusId: 1 }, 'lic_director'), { kind: 'page', page: 'review' });
+  assert.deepStrictEqual(notificationTarget({ type: 'message', syllabusId: 1 }, 'vpaa'), { kind: 'chat', id: 1 });
+});

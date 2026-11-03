@@ -16,7 +16,7 @@ const { domain, isSchoolEmail } = require('../lib/emailDomain');
 const assignments = require('../lib/assignments');
 const router = express.Router();
 
-const ROLES = ['faculty', 'admin']; // admin = Dean / Academic Administrator
+const { STAFF_ROLES: ROLES, isReviewer } = require('../lib/roles'); // admin = Dean / Academic Administrator; asst_vpaa, lic_director and vpaa review in the approval chain
 const resendLimiter = createLimiter({ max: 10, windowMs: 10 * 60 * 1000 }); // per admin
 
 const fail = (res, status, message) => res.status(status).json({ message, error: message });
@@ -148,7 +148,7 @@ router.post('/:id/resend-credentials', requireAdmin, async (req, res) => {
 router.get('/me/assignments', requireAuth, async (req, res) => {
   try {
     const me = req.session.user;
-    if (me.role === 'admin') return res.json({ unrestricted: true, programIds: [], courseIds: [], programs: [], courses: [] });
+    if (isReviewer(me)) return res.json({ unrestricted: true, programIds: [], courseIds: [], programs: [], courses: [] });
     const db = req.app.locals.db;
     res.json({ unrestricted: false, ...(await assignments.describeAssignments(db, await assignments.loadAssignments(db, me.id))) });
   } catch (err) {
@@ -322,7 +322,7 @@ router.get('/:id/avatar', requireAuth, async (req, res) => {
     const viewer = req.session.user;
     const db = req.app.locals.db;
 
-    if (viewer.role !== 'admin' && viewer.id !== targetId) {
+    if (!isReviewer(viewer) && viewer.id !== targetId) {
       const [shared] = await db.query(
         'SELECT 1 FROM messages WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?) LIMIT 1',
         [viewer.id, targetId, targetId, viewer.id]

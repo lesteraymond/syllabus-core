@@ -98,6 +98,9 @@ export const syllabi = {
   create: (formData) => fetch(`${API}/syllabi`, { method: 'POST', credentials: 'include', headers: authHeaders(), body: formData }).then(r => r.json()),
   update: (id, data) => fetch(`${API}/syllabi/${id}`, { method: 'PUT', credentials: 'include', headers: authHeaders({ 'Content-Type': 'application/json' }), body: JSON.stringify(data) }).then(r => r.json()),
   remove: (id) => request(`/syllabi/${id}`, { method: 'DELETE' }),
+  // The review chain: a reviewer (dean, Asst. VPAA, LIC Director) clears their own stage on the newest version; `stages` says who cleared which.
+  clearStage: (id, note) => request(`/syllabi/${id}/stage-clear`, { method: 'POST', body: JSON.stringify(note ? { note } : {}) }),
+  stages: (id) => request(`/syllabi/${id}/stages`),
   // Owner edit: multipart (optional file + note). Errors throw, unlike create/update above.
   edit: async (id, formData) => {
     let res;

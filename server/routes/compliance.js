@@ -58,7 +58,7 @@ async function loadVisible(db, me, id) {
 async function subjectOf(db, me, syl) {
   if (rules.isOwner(me, syl)) {
     let content = parseJson(syl.content);
-    if (me.role === 'admin' && content) content = svc.publicationContent(content, await catalogSnapshot(db,content));
+    if (rules.isReviewer(me) && content) content = svc.publicationContent(content, await catalogSnapshot(db,content));
     return { content, file: null, versionId: null, owner: true };
   }
   const v = await svc.latestVersion(db, syl.syllabus_id);
@@ -99,7 +99,7 @@ async function withVersionLabel(db, run) {
   const [rows] = await db.query('SELECT version_label FROM syllabus_versions WHERE version_id = ?', [run.versionId]);
   return { ...run, versionLabel: rows[0] ? rows[0].version_label : '' };
 }
-const adminOnly = (me) => { if (!me || me.role !== 'admin') throw httpError(403, 'Only an administrator can read the check history'); };
+const adminOnly = (me) => { if (!rules.isReviewer(me)) throw httpError(403, 'Only a reviewer can read the check history'); };
 
 router.get('/syllabi/:id/compliance', requireAuth, async (req, res) => {
   try {
@@ -122,8 +122,8 @@ router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => 
     const me = req.session.user;
     const syl = await loadVisible(db, me, parseId(req.params.id));
     const owner = rules.isOwner(me, syl);
-    if (me.role === 'admin' && syl.status === 'draft') throw httpError(409,'Drafts stay in My Syllabi. Complete the form and send it to AI Checker first.');
-    if (!owner && me.role !== 'admin') throw httpError(403, 'Only the owner or an administrator can check a syllabus');
+    if (rules.isReviewer(me) && syl.status === 'draft') throw httpError(409,'Drafts stay in My Syllabi. Complete the form and send it to AI Checker first.');
+    if (!owner && !rules.isReviewer(me)) throw httpError(403, 'Only the owner or a reviewer can check a syllabus');
     if (syl.status === 'approved') throw httpError(409, APPROVED, { code: 'approved' }); // before the limiter: a refusal costs nothing
     if (!(await svc.isInstalled(db))) throw httpError(503, NOT_SET_UP);
     const subject = await subjectOf(db, me, syl);
@@ -204,7 +204,7 @@ router.get('/compliance', requireAuth, async (req, res) => {
     }
 
     const select = 'SELECT s.syllabus_id, s.user_id, s.course_code, s.title, s.status, s.version, ' + 's.content, ' + LABEL_SQL;
-    const [syls] = me.role === 'admin'
+    const [syls] = rules.isReviewer(me)
       ? await db.query(select + " WHERE s.status <> 'draft' ORDER BY u.last_name, u.first_name, s.syllabus_id DESC LIMIT 500")
       : await db.query(select + ' WHERE s.user_id = ? ORDER BY s.syllabus_id DESC LIMIT 500', [me.id]);
 
@@ -213,7 +213,7 @@ router.get('/compliance', requireAuth, async (req, res) => {
     const fileOf = new Set(); // syllabi whose newest version is an uploaded file (no form)
     const versionOf = new Map(); // syllabus id -> its newest version id
     if (syls.length) {
-      if (me.role === 'admin') {
+      if (rules.isReviewer(me)) {
         const [vs] = await db.query(
           'SELECT v.syllabus_id, v.version_id, v.content, v.file_path FROM syllabus_versions v JOIN (SELECT MAX(version_id) AS version_id FROM syllabus_versions WHERE syllabus_id IN (?) GROUP BY syllabus_id) m ON m.version_id = v.version_id',
           [syls.map((s) => s.syllabus_id)]
@@ -224,7 +224,7 @@ router.get('/compliance', requireAuth, async (req, res) => {
       }
     }
 
-    if (me.role === 'admin') {
+    if (rules.isReviewer(me)) {
       for (const syl of syls.filter(s => s.user_id === me.id)) {
         const own=await subjectOf(db,me,syl);
         formOf.set(syl.syllabus_id,own.content);
@@ -236,13 +236,13 @@ router.get('/compliance', requireAuth, async (req, res) => {
     if (installed && syls.length) {
       const [runs] = await db.query(
         // An admin sees the administrator's own check of each submitted syllabus; a faculty member sees their own newest run, re-checks included.
-        'SELECT r.* FROM ai_check_runs r JOIN (SELECT MAX(run_id) AS run_id FROM ai_check_runs WHERE syllabus_id IN (?)' + (me.role === 'admin' ? ' AND ' + svc.ADMIN_RUN_SQL : '') + ' GROUP BY syllabus_id) m ON m.run_id = r.run_id',
+        'SELECT r.* FROM ai_check_runs r JOIN (SELECT MAX(run_id) AS run_id FROM ai_check_runs WHERE syllabus_id IN (?)' + (rules.isReviewer(me) ? ' AND ' + svc.ADMIN_RUN_SQL : '') + ' GROUP BY syllabus_id) m ON m.run_id = r.run_id',
         [syls.map((s) => s.syllabus_id)]
       );
       runs.forEach((r) => latest.set(r.syllabus_id, r));
       areasByRun = await svc.loadAreas(db, runs.map((r) => r.run_id));
     }
-    if (installed && me.role === 'admin') {
+    if (installed && rules.isReviewer(me)) {
       for (const syl of syls.filter(s=>s.user_id===me.id)) {
         const ownRun=await svc.latestRun(db,syl.syllabus_id);
         if(ownRun) latest.set(syl.syllabus_id,ownRun);
@@ -251,7 +251,7 @@ router.get('/compliance', requireAuth, async (req, res) => {
     const list = syls.map((s) => {
       let run = latest.get(s.syllabus_id);
       // The administrator's check counts for the version that was checked: after a new version is submitted the old check is history, not "checked".
-      if (run && me.role === 'admin' && versionOf.has(s.syllabus_id) && run.version_id !== versionOf.get(s.syllabus_id)) run = null;
+      if (run && rules.isReviewer(me) && versionOf.has(s.syllabus_id) && run.version_id !== versionOf.get(s.syllabus_id)) run = null;
       const content = formOf.get(s.syllabus_id) || null;
       return {
         syllabusId: s.syllabus_id, userId: s.user_id, courseCode: s.course_code, title: s.title, status: s.status, version: s.version,

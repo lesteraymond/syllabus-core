@@ -2,6 +2,7 @@ import { installLocalizedValidation } from './i18n/validation';
 import { tr } from "./i18n/index.js";
 import { t as translateUI } from "./i18n/index.js";
 import { getLanguage, setLanguage, subscribeLanguage } from './i18n';
+import { isReviewer, roleAllows } from './lib/roles';
 import { createLanguagePreference } from './i18n/preference';
 import { useLanguageTransition } from './i18n/useLanguageTransition';
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
@@ -96,7 +97,7 @@ export default function App() {
   }, [narrow, mobileNavOpen]);
   const [page, setPage] = useState('dashboard');
   // The compliance check moved into step 7 of the builder: an old 'ai' link sends faculty there, and only admins have the overview.
-  useEffect(() => { if (user && user.role !== 'admin' && user.role !== 'faculty' && page === 'ai') setPage('dashboard'); }, [user, page]);
+  useEffect(() => { if (user && !isReviewer(user.role) && user.role !== 'faculty' && page === 'ai') setPage('dashboard'); }, [user, page]);
   const [toast, setToast] = useState('');
   const [syllabi, setSyllabi] = useState([]);
   const [logs, setLogs] = useState([]);
@@ -190,7 +191,7 @@ export default function App() {
   // Your own activity (Recent Activity) is read again whenever the dashboard is opened, so what you just did is there.
   useEffect(() => { if (user && page === 'dashboard' && user.role !== 'student' && !user.mustChangePassword) fetchLogs(); }, [user, page, fetchLogs]);
   // The list says which submissions the administrator has checked: read it again when they open Review & Approval, so a check just made shows.
-  useEffect(() => { if (user && user.role === 'admin' && (page === 'review' || page === 'ai')) fetchSyllabi(); }, [user, page, fetchSyllabi]);
+  useEffect(() => { if (user && isReviewer(user.role) && (page === 'review' || page === 'ai')) fetchSyllabi(); }, [user, page, fetchSyllabi]);
   useEffect(() => { if (user && page === 'my-syllabi') { fetchSyllabi(); if (user.role === 'faculty') fetchCommentCounts(); } }, [user, page, fetchSyllabi, fetchCommentCounts]);
 
   // Other people's new profile pictures arrive with the syllabus list and the message partners: read both again now and then, and when the tab comes back.
@@ -357,12 +358,24 @@ export default function App() {
   const handleStatus = async (id, status, comment) => {
     try {
       const statusMap = { Approved: 'approved', 'For Revision': 'for_revision', Rejected: 'rejected', Submitted: 'submitted' };
-      await syllabiApi.update(id, { status: statusMap[status] || status, adminComment: comment || '' });
+      const result = await syllabiApi.update(id, { status: statusMap[status] || status, adminComment: comment || '' });
+      if (result && result.error) throw new Error(tr(result.error)); // a refusal (only the VPAA approves; the three checks must be cleared first)
       await fetchSyllabi();
       await fetchLogs();
       notify(translateUI("ui.syllabus_p0_bf213e", { p0: (tr(status)) }));
       return true;
     } catch (err) { notify(translateUI("ui.update_failed_f7b7c9") + err.message); return false; }
+  };
+
+  // A reviewer (dean, Asst. VPAA, LIC Director) clears their own stage of the review chain; the VPAA approves once all three have.
+  const handleClear = async (id, note) => {
+    try {
+      await syllabiApi.clearStage(id, note);
+      await fetchSyllabi();
+      await fetchLogs();
+      notify(translateUI('reviewChain.cleared'));
+      return true;
+    } catch (err) { notify(translateUI("ui.update_failed_f7b7c9") + tr(err.message)); return false; }
   };
 
   const handleDelete = async (id) => {
@@ -378,7 +391,7 @@ export default function App() {
 
   const clearLogs = () => { setLogs([]); notify(translateUI("ui.your_activity_list_was_cleared_642fa2")); };
 
-  const nav = navItems.filter(([, , , r]) => !r || r === user?.role);
+  const nav = navItems.filter(([, , , r]) => roleAllows(r, user?.role));
 
   if (loggingOut) return <div className="loading-screen" role="status" aria-live="polite" aria-busy="true"><div className="spinner" aria-hidden="true" /><p>{translateUI("ui.logging_out_3df779")}</p></div>;
   if (loading) return <div className="loading-screen"><div className="spinner" /><p>{translateUI("ui.loading_b04ba4")}</p></div>;
@@ -399,8 +412,8 @@ export default function App() {
             ? <SyllabusBuilderV2 key={editing ? editing.syllabusId : 'new'} editing={editing} user={user} notify={notify} setPage={setPage} onSubmitted={handleBuilderSubmitted} onOpenChecker={async (draftRef) => { await fetchSyllabi(); setEditing(draftRef); }} />
             : <SyllabusBuilder notify={notify} onSubmit={submitSyllabus} editing={editing} setEditing={setEditing} />)}
           {page === 'my-syllabi' && <MySyllabi syllabi={syllabi} user={user} messages={messages} commentCounts={commentCounts} setCommentCode={setCommentCode} setEditing={setEditing} setPage={setPage} setHistCode={setHistCode} setChatCode={setChatCode} handleDelete={handleDelete} setConfirm={setConfirm} notify={notify} />}
-          {page === 'ai' && (user.role === 'admin' || user.role === 'faculty') && <AIChecker user={user} syllabi={syllabi} editing={editing} setEditing={setEditing} setPage={setPage} notify={notify} onSubmitted={handleBuilderSubmitted} onApproved={async () => { await fetchSyllabi(); await fetchLogs(); notify(translateUI('publication.approvedRepository')); setEditing(null); setPage('repository'); }} onEditDraft={async id => { await syllabiApi.resumeDraft(id); setEditing({ syllabusId: id, status: 'draft' }); setPage('builder'); }} />}
-          {page === 'review' && <ReviewApproval syllabi={syllabi} setViewCode={setViewCode} setPage={setPage} />}
+          {page === 'ai' && (isReviewer(user.role) || user.role === 'faculty') && <AIChecker user={user} syllabi={syllabi} editing={editing} setEditing={setEditing} setPage={setPage} notify={notify} onSubmitted={handleBuilderSubmitted} onApproved={async () => { await fetchSyllabi(); await fetchLogs(); notify(translateUI('publication.approvedRepository')); setEditing(null); setPage('my-syllabi'); }} onEditDraft={async id => { await syllabiApi.resumeDraft(id); setEditing({ syllabusId: id, status: 'draft' }); setPage('builder'); }} />}
+          {page === 'review' && <ReviewApproval syllabi={syllabi} user={user} setViewCode={setViewCode} setPage={setPage} />}
           {page === 'repository' && <Repository syllabi={syllabi} user={user} notify={notify} setChatCode={setChatCode} setHistCode={setHistCode} />}
           {page === 'compliance' && <Compliance syllabi={syllabi} />}
           {page === 'analytics' && <Analytics syllabi={syllabi} user={user} />}
@@ -421,7 +434,7 @@ export default function App() {
         const open = syllabi.find((s) => s.id === viewCode);
         return (
           <SyllabusViewModal key={viewCode} syllabusId={viewCode} avatarUrl={open ? open.ownerAvatarUrl : null} onClose={() => setViewCode(null)}
-            aside={open ? <ReviewPanel key={viewCode} syllabus={open} user={user} messages={messages} handleStatus={handleStatus} sendMsg={sendMsg} markRead={markRead} onDecided={() => setViewCode(null)} onHistory={() => setHistCode(viewCode)} onOpenChecker={() => { setViewCode(null); setPage('ai'); }} /> : null} />
+            aside={open ? <ReviewPanel key={viewCode} syllabus={open} user={user} messages={messages} handleStatus={handleStatus} handleClear={handleClear} sendMsg={sendMsg} markRead={markRead} onDecided={() => setViewCode(null)} onHistory={() => setHistCode(viewCode)} onOpenChecker={() => { setViewCode(null); setPage('ai'); }} /> : null} />
         );
       })()}
       {confirm && <ConfirmModal {...confirm} onClose={() => setConfirm(null)} />}

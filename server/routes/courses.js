@@ -3,6 +3,7 @@ const { blankStandards, readStandards, updateStandards } = require('../lib/subje
 // Everyone signed in reads; only admins write. Faculty cannot change a course's CLOs: syllabus content
 // always takes them from here (see routes/syllabusContent.js).
 const express = require('express');
+const { isReviewer } = require('../lib/roles');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { inTransaction, httpError, sendError } = require('../lib/http');
 const { LEVELS, cloKey, parseCloKey, loadCourse, loadClos } = require('../lib/courses');
@@ -31,7 +32,7 @@ router.get('/', requireAuth, async (req, res) => {
     const conds = [];
     if (req.query.program) { conds.push('p.code = ?'); params.push(String(req.query.program).toUpperCase()); }
     // Faculty see only the courses an admin assigned to them; admins see every course.
-    if (req.session.user.role !== 'admin') { conds.push('c.course_id IN (SELECT course_id FROM faculty_courses WHERE user_id = ?)'); params.push(req.session.user.id); }
+    if (!isReviewer(req.session.user)) { conds.push('c.course_id IN (SELECT course_id FROM faculty_courses WHERE user_id = ?)'); params.push(req.session.user.id); }
     const where = conds.length ? 'WHERE ' + conds.join(' AND ') : '';
     const [rows] = await req.app.locals.db.query(
       `SELECT c.course_id, c.code, c.title, c.program_id, p.code AS program_code, COUNT(k.clo_id) AS clo_count, c.standards_json

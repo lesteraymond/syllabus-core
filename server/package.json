@@ -23,6 +23,7 @@
     "migrate-compliance": "node db/migrate-compliance.js",
     "migrate-comment-reads": "node db/migrate-comment-reads.js",
     "migrate-students": "node db/migrate-students.js",
+    "migrate-review-stages": "node db/migrate-review-stages.js",
     "migrate-passwords": "node db/migrate-passwords.js",
     "seed-outcomes": "node db/seed-outcomes.js",
     "migrate-program-management": "node db/migrate-program-management.js",

@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const { avatarUrlFor } = require('../lib/avatar');
+const { isReviewer, isApprover } = require('../lib/roles');
 
 const REMEMBER_COOKIE = 'remember_token';
 const REMEMBER_DAYS = 30;
@@ -109,4 +110,20 @@ function requireAdmin(req, res, next) {
   });
 }
 
-module.exports = { toSessionUser, requireAuth, requireSignedIn, requireAdmin, restoreSession, issueRememberToken, revokeRememberToken, REMEMBER_MS };
+// The people who check and review submitted syllabi (admin/dean, Asst. VPAA, LIC Director, VPAA), and the one who approves (VPAA).
+function requireReviewer(req, res, next) {
+  requireAuth(req, res, (err) => {
+    if (err) return next(err);
+    if (!isReviewer(req.session.user)) return res.status(403).json({ error: 'Reviewer access required' });
+    next();
+  });
+}
+function requireApprover(req, res, next) {
+  requireAuth(req, res, (err) => {
+    if (err) return next(err);
+    if (!isApprover(req.session.user)) return res.status(403).json({ error: 'Only the VPAA can do this' });
+    next();
+  });
+}
+
+module.exports = { toSessionUser, requireAuth, requireSignedIn, requireAdmin, requireReviewer, requireApprover, restoreSession, issueRememberToken, revokeRememberToken, REMEMBER_MS };

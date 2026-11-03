@@ -2,6 +2,7 @@ import { tr } from "../i18n/index.js";
 import { phDate } from './phTime.js';
 // Plain helpers for the reviewer's queue and the syllabus modal. No React and no network, so they are tested on their own.
 import { STATUS_LABELS } from './syllabusRules.js';
+import { STAGES, isApprover, stageOf } from './roles.js';
 
 // A row of GET /api/syllabi, shaped for groupByFacultyProgram / filterRows (src/lib/complianceView.js): faculty member, program,
 // subject. A syllabus from the builder has a catalog program (`programCode`); an old upload may only have the curriculum's program
@@ -62,6 +63,28 @@ export const canDecide = (status) => PENDING.includes(status);
 // the newest version has no check of the administrator's own yet. Such a submission is listed in the AI Checker, not on this board.
 export const waitsForCheck = (s) => !!s && PENDING.includes(s.status) && !!s.awaitingAiCheck;
 export const readyForReview = (s) => !!s && PENDING.includes(s.status) && !s.awaitingAiCheck;
+
+// The review chain. The dean (admin), the Asst. VPAA and the LIC Director each check a submission and clear their own stage (or send it back
+// for revision); the VPAA approves once all three are cleared on the newest version. The server decides; these only shape the screens.
+//   s.stages           { dean, asst_vpaa, lic_director: { cleared, by, at }, allCleared } (a reviewer's list only)
+//   s.myStageCleared   did this reviewer already clear their own stage on the newest version
+//   s.readyForApproval all three cleared, and still waiting for the VPAA
+// The queue is what needs this person now: a stage reviewer's open checks, or the VPAA's approvals. `rest` is what is still with others.
+// A reviewer never checks their own syllabus (a dean who wrote one sends it for review).
+export function reviewQueue(list, role, userId) {
+  const open = (list || []).filter((s) => readyForReview(s) && s.userId !== userId);
+  if (isApprover(role)) return { queue: open.filter((s) => s.readyForApproval), rest: open.filter((s) => !s.readyForApproval) };
+  if (!stageOf(role)) return { queue: [], rest: [] };
+  return { queue: open.filter((s) => !s.myStageCleared), rest: open.filter((s) => s.myStageCleared) };
+}
+// The stages that have not been cleared yet, in the order the form lists them. [] when nothing is known.
+export const openStages = (s) => (s && s.stages ? STAGES.filter((stage) => !s.stages[stage].cleared) : []);
+// What the person may do with an open syllabus: the VPAA decides; the others clear their stage or send it back. A reviewer who wrote the
+// syllabus themselves can do neither (it is already cleared by authoring).
+export const decisionKeysFor = (role) => (isApprover(role) ? ['approve', 'revise', 'reject'] : ['revise']);
+export const canClearStage = (role, s, userId) => !!stageOf(role) && !!s && canDecide(s.status) && !s.awaitingAiCheck && !s.myStageCleared && s.userId !== userId;
+export const canApprove = (role, s) => isApprover(role) && !!s && canDecide(s.status) && !s.awaitingAiCheck && !!(s.stages && s.stages.allCleared);
+export const CLEAR = { label: 'Clear my check', hint: 'Passes it on to the VPAA once all three have', icon: 'approved', confirm: 'Clear your check of this syllabus? It goes to the VPAA once the dean, the Asst. VPAA and the LIC Director have all cleared it.' };
 
 export const MIN_REASON = 5;
 // The three decisions: the label handleStatus expects, whether a written reason is required, and the sentence that asks to confirm.

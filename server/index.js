@@ -65,6 +65,7 @@ app.use("/api/syllabi", require("./routes/syllabi"));
 app.use("/api/syllabi", require("./routes/syllabusContent"));
 app.use("/api/syllabi", require("./routes/pdfImport"));
 app.use("/api/syllabi", require("./routes/comments"));
+app.use("/api/syllabi", require("./routes/reviewChain"));
 app.use("/api", require("./routes/compliance"));
 app.use("/api/syllabus-check", require("./routes/syllabusCheck"));
 app.use("/api/institution", require("./routes/institution"));
