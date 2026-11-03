@@ -17,6 +17,7 @@ function makeDb() {
       if (sql.startsWith('SELECT user_id FROM users WHERE user_id')) return [[{ user_id: p[0] }]];
       if (sql.startsWith('SELECT DATE_FORMAT')) return [stored.filter((r) => r.user_id === p[0] && r.usage_date >= p[1]).map((r) => ({ d: r.usage_date, active_seconds: r.active_seconds, session_count: r.session_count }))];
       if (sql.startsWith('INSERT INTO usage_daily') || sql.startsWith('DELETE FROM usage_daily')) return [{}];
+      if (/program_outcome_sources/.test(sql)) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' }); // not migrated yet
       throw new Error('unexpected query: ' + sql);
     },
   };

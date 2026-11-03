@@ -7,7 +7,7 @@ const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { inTransaction, httpError, sendError } = require('../lib/http');
 const { LEVELS, cloKey, parseCloKey, loadCourse, loadClos } = require('../lib/courses');
 const { isStale, STALE_MESSAGE } = require('../lib/programEgas');
-const { createProgram, PROGRAM_CODE } = require('../lib/programs');
+const { createProgram, PROGRAM_CODE, requireOwnOutcomes, inheritStandards, findProgram } = require('../lib/programs');
 const { catalogGaps } = require('../lib/catalogReady');
 const { takenBySubject } = require('../lib/subjectLock');
 const router = express.Router();
@@ -97,7 +97,7 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
         programId = await createProgram(conn, { code: progCode, name });
         programCreated = true;
       }
-      const [dup] = await conn.query('SELECT 1 FROM courses WHERE code = ?', [c]);
+      const [dup] = await conn.query('SELECT 1 FROM courses WHERE code = ? AND program_id = ?', [c, programId]);
       if (dup.length) throw httpError(409, `${c} already exists`);
       const [r] = await conn.query('INSERT INTO courses (code, title, program_id, standards_json) VALUES (?, ?, ?, ?)', [c, t, programId, JSON.stringify(blankStandards())]);
       return { id: r.insertId, programCreated };
@@ -114,8 +114,9 @@ router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
     const { code, title } = req.body || {};
     const c = text(code, 50, 'Subject code');
     const t = text(title, 255, 'Subject title');
-    if (!(await loadCourse(db, id))) throw httpError(404, 'Subject not found');
-    const [dup] = await db.query('SELECT 1 FROM courses WHERE code = ? AND course_id <> ?', [c, id]);
+    const course = await loadCourse(db, id);
+    if (!course) throw httpError(404, 'Subject not found');
+    const [dup] = await db.query('SELECT 1 FROM courses WHERE code = ? AND course_id <> ? AND program_id = ?', [c, id, course.program.id]);
     if (dup.length) throw httpError(409, `${c} already exists`);
     await db.query('UPDATE courses SET code = ?, title = ? WHERE course_id = ?', [c, t, id]);
     res.json(await loadCourse(db, id));
@@ -164,8 +165,8 @@ router.put('/:id/clos', requireAuth, requireAdmin, async (req, res) => {
 
     await inTransaction(db, async (conn) => {
       // Lock the subject and refuse a save from an out-of-date screen, so two admins never overwrite each other.
-      const [[locked]] = await conn.query('SELECT clos_version AS v, standards_json FROM courses WHERE course_id = ? FOR UPDATE', [id]);
-      const current = readStandards(locked.standards_json);
+      const [[locked]] = await conn.query('SELECT clos_version AS v, standards_json, program_id FROM courses WHERE course_id = ? FOR UPDATE', [id]);
+      const current = await inheritStandards(conn, locked.program_id, readStandards(locked.standards_json));
       if (items.some(item => item.egas.some(n => !current.egas.some(e => e.no === n)) || item.pos.some(n => !current.pos.some(p => p.no === n)))) throw httpError(409, 'The subject setup changed. Reload before saving its CLOs.');
       if (isStale(version, locked.v)) throw httpError(409, STALE_MESSAGE);
       await conn.query('UPDATE courses SET clos_version = clos_version + 1 WHERE course_id = ?', [id]);
@@ -190,8 +191,11 @@ router.put('/:id/standards', requireAuth, requireAdmin, async (req,res) => {
     const id=parseId(req.params.id); const db=req.app.locals.db;
     const { section, value, version }=req.body||{};
     await inTransaction(db,async conn=>{
-      const [[row]]=await conn.query('SELECT standards_json FROM courses WHERE course_id = ? FOR UPDATE',[id]);
+      const [[row]]=await conn.query('SELECT standards_json, program_id FROM courses WHERE course_id = ? FOR UPDATE',[id]);
       if (!row) throw httpError(404,'Subject not found');
+      // A specialization's EGAs and POs come from the program it inherits from; only vision and mission are subject-level.
+      if (section === 'egas' || section === 'pos') { await requireOwnOutcomes(conn, await findProgram(conn, row.program_id)); }
+      if (section === 'pos') await require('../lib/programPoReferences').requireMutable(conn,row.program_id);
       const clos=await loadClos(conn,id);
       const next=updateStandards(readStandards(row.standards_json),section,value,version,clos);
       await conn.query('UPDATE courses SET standards_json = ? WHERE course_id = ?',[JSON.stringify(next),id]);

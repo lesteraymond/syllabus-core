@@ -47,12 +47,16 @@ export function Legend({ color, text, value }) {
   return <div className="legend-row"><span className="legend-label"><i style={{ background: color }} />{text}</span><strong>{value}</strong></div>;
 }
 
-export function Progress({ label, value }) {
-  return <div className="progress-row"><div><span>{label}</span><b>{value}%</b></div><div className="bar"><i style={{ width: `${value}%` }} /></div></div>;
+// `value` is a percentage, or null when there is nothing to measure yet (shown as a dash with an empty bar). `note` is a small line under the bar.
+export function Progress({ label, value, note }) {
+  const known = Number.isFinite(value);
+  return <div className="progress-row"><div><span>{label}</span><b>{known ? `${value}%` : '—'}</b></div><div className="bar"><i style={{ width: `${known ? value : 0}%` }} /></div>{note && <small className="progress-note">{note}</small>}</div>;
 }
 
+// `value` is 0-100, or null when no syllabus has a score for this area yet.
 export function QualityMini({ label, value }) {
-  return <div className="quality-mini"><div className="quality-ring" style={{ '--p': `${value * 3.6}deg` }}><span>{value}</span></div><span>{label}</span></div>;
+  const known = Number.isFinite(value);
+  return <div className="quality-mini"><div className="quality-ring" style={{ '--p': `${known ? value * 3.6 : 0}deg` }}><span>{known ? value : '—'}</span></div><span>{label}</span></div>;
 }
 
 export function Deadline({ day, mon, title, note }) {

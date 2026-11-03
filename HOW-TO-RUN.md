@@ -86,9 +86,11 @@ npm run migrate-subject-standards
 npm run migrate-usage
 npm run migrate-deadlines
 npm run migrate-subject-owner
+npm run migrate-activity-log
 ```
 
 - `migrate-avatars-private`, `migrate-assignments`, `migrate-program-egas` and `migrate-subject-owner` support `--dry-run` (e.g. `npm run migrate-assignments -- --dry-run`)
+- `migrate-activity-log` lets Recent Activity record AI checks and answers to recommendations. Without it everything still works; those two kinds of activity are just not written (the server console says so once).
 - `migrate-compliance` and `migrate-comment-reads` are optional: the features degrade gracefully (submit still works, unread counts show totals) until they are run
 - After `migrate-assignments`, faculty cannot create or edit syllabi until an admin assigns them a program and a subject (Users & Roles, Assignments button)
 

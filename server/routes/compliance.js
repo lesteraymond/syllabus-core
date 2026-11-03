@@ -2,7 +2,7 @@
 //   GET  /api/syllabi/:id/compliance           the latest stored run of a syllabus (its owner: their own newest; an admin: the administrator's own check)
 //   POST /api/syllabi/:id/compliance/recheck   run the rules now: the owner on the saved draft, an admin on the latest submitted
 //                                              version (stored with that version, so it is the one reviewers see). Rate limited;
-//                                              the same content as an earlier run returns that run, { force: true } makes a new one
+//                                              one evaluation at a time across all users of this server
 //   GET  /api/compliance?syllabus=all|<id>     stored runs: an admin sees every submitted syllabus, faculty only their own, each with
 //                                              the faculty member, program and subject so the list can be grouped
 //   GET  /api/compliance/history               (admin) the latest check of each submitted syllabus, one item per syllabus, newest first;
@@ -14,6 +14,7 @@
 // Runs are stored by the submit route (with the version, authoritative) and by the recheck route. Nothing here changes a syllabus.
 const express = require('express');
 const { requireAuth } = require('../middleware/auth');
+const activity = require('../lib/activity');
 const { inTransaction, httpError, sendError } = require('../lib/http');
 const { createLimiter } = require('../lib/rateLimit');
 const rules = require('../lib/syllabusRules');
@@ -26,6 +27,12 @@ const NOT_SET_UP = 'Compliance checks are not set up on this server yet. Ask an 
 const APPROVED = 'This syllabus is approved, so it cannot be checked again.';
 const NO_SUBJECT_ADMIN = 'This syllabus has neither a form nor an uploaded file to check.';
 const limiter = createLimiter({ max: 10, windowMs: 60 * 1000 });
+// Syllabi whose check is running right now. A page that was left and opened again asks (GET .../compliance `checking`) so it can show the
+// check as running and pick up the result, instead of looking idle while the server is still working.
+const runningChecks = new Set();
+// Shared by the builder and admin routes, not scoped to a user or syllabus.
+// Acquisition is synchronous so two requests cannot both enter the evaluator.
+const activeChecks = new WeakSet();
 
 const parseId = (raw) => {
   const id = Number(raw);
@@ -100,14 +107,16 @@ router.get('/syllabi/:id/compliance', requireAuth, async (req, res) => {
     const me = req.session.user;
     const syl = await loadVisible(db, me, parseId(req.params.id));
     if (!(await svc.isInstalled(db))) return res.json({ installed: false, run: null });
+    const checking = runningChecks.has(syl.syllabus_id);
     const run = await svc.latestRun(db, syl.syllabus_id, { adminOnly: !rules.isOwner(me, syl) });
-    if (!run) return res.json({ installed: true, run: null });
+    if (!run) return res.json({ installed: true, run: null, checking });
     const subject = await subjectOf(db, me, syl);
-    res.json({ installed: true, run: await withVersionLabel(db, withChecker(await svc.loadDetail(db, run, hashOfSubject(subject)), syl.user_id)) });
+    res.json({ installed: true, checking, run: await withVersionLabel(db, withChecker(await svc.loadDetail(db, run, hashOfSubject(subject)), syl.user_id)) });
   } catch (err) { sendError(res, err); }
 });
 
 router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => {
+  let releaseCheck, runningId, removeAbortListeners = () => {};
   try {
     const db = req.app.locals.db;
     const me = req.session.user;
@@ -123,16 +132,20 @@ router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => 
     if (!subject.content && !isUpload) {
       throw httpError(409, owner ? 'There is nothing to check yet. Save some of the form first.' : NO_SUBJECT_ADMIN, { code: 'no_form' });
     }
+    const scope = req.app;
+    if (activeChecks.has(scope)) {
+      throw httpError(409, 'An AI check is already running. Wait until it finishes before starting another.', { code: 'ai_check_in_progress' });
+    }
+    activeChecks.add(scope);
+    runningId = syl.syllabus_id;
+    runningChecks.add(runningId);
+    releaseCheck = () => activeChecks.delete(scope);
+
     const facts = isUpload ? svc.uploadCheck.readFacts(subject.file) : null;
     const content = isUpload ? svc.uploadFingerprint(subject.file, facts) : subject.content; // what the run's hash is made from
     const hash = svc.hashOf(content);
 
-    // The same content as an earlier run is not checked again, and does not count against the limit. An admin's check is stored with
-    // the version, so only a run stored with a version can answer it.
-    if (!(req.body && req.body.force === true)) {
-      const cached = await svc.cachedRun(db, syl.syllabus_id, hash, { adminOnly: !owner, versionId: owner ? null : subject.versionId });
-      if (cached) return res.json({ installed: true, cached: true, run: await withVersionLabel(db, withChecker(await svc.loadDetail(db, cached, hash), syl.user_id)) });
-    }
+    // Explicit checks re-verify mutable external links and current official references.
     const slot = limiter.take('recheck:' + me.id);
     if (!slot.ok) {
       res.set('Retry-After', String(slot.retryAfterSec));
@@ -142,21 +155,35 @@ router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => 
     // A form is checked against the catalog as it is now: tags resolve against the program's current EGAs and POs, and a submitted syllabus
     // is also compared with the catalog it was submitted with. An uploaded file is checked for the file and its course details.
     const details = isUpload ? await baseOf(db, syl, subject) : null;
+    const checkController = new AbortController();
+    const abortIfDisconnected = () => { if (!res.writableEnded) checkController.abort(new Error('The Re-Check client disconnected.')); };
+    req.once('aborted', abortIfDisconnected);
+    res.once('close', abortIfDisconnected);
+    removeAbortListeners = () => { req.removeListener('aborted', abortIfDisconnected); res.removeListener('close', abortIfDisconnected); };
+    if (req.aborted) abortIfDisconnected();
     const result = isUpload
       ? svc.uploadCheck.checkUpload(facts, { courseCode: syl.course_code, title: syl.title, programCode: details.programCode })
-      : svc.check(content, { catalog: await catalogSnapshot(db, content), preparedBy: owner ? fullName(me) : undefined });
+      : await svc.checkHybrid(db, content, { syllabusId: syl.syllabus_id, signal: checkController.signal });
     const runId = await inTransaction(db, (conn) => svc.storeRun(conn, { syllabusId: syl.syllabus_id, versionId: subject.versionId, content, result, createdBy: me.id, ai: !isUpload }));
+    // The person who ran the check sees it in their Recent Activity (the same record that an administrator's check and an author's check share).
+    await activity.record(db, { syllabusId: syl.syllabus_id, userId: me.id, action: 'check', notes: activity.checkNote(result) });
     if (isUpload) {
       // No AI step for a file; say what was not checked, so the administrator reads it against the template.
       await svc.attachRecommendations(db, runId, { items: [svc.uploadCheck.PENDING_NOTE], ai: { status: 'failed', reason: 'not_configured' } });
-    } else if (result.status === 'scored' && result.findings.length) {
+    } else if (!result.hybrid && result.status === 'scored' && result.findings.length) {
       const [people] = await db.query('SELECT first_name, last_name FROM users WHERE user_id = ?', [syl.user_id]);
       const author = people[0] ? { firstName: people[0].first_name, lastName: people[0].last_name } : null;
-      svc.startAiJob(db, { runId, content, result, names: svc.namesFor(author, content) });
+      const job = svc.startAiJob(db, { runId, content, result, names: svc.namesFor(author, content) });
+      // Legacy reports can finish in the background. Keep their slot until the
+      // provider settles even if the HTTP response has already been sent.
+      const releaseJob = releaseCheck;
+      Promise.resolve(job).then(releaseJob, releaseJob);
+      releaseCheck = null;
     }
     const [rows] = await db.query('SELECT * FROM ai_check_runs WHERE run_id = ?', [runId]);
     res.json({ installed: true, cached: false, run: await withVersionLabel(db, withChecker(await svc.loadDetail(db, rows[0], hash), syl.user_id)) });
   } catch (err) { sendError(res, err); }
+  finally { removeAbortListeners(); if (runningId !== undefined) runningChecks.delete(runningId); if (releaseCheck) releaseCheck(); }
 });
 
 router.get('/compliance', requireAuth, async (req, res) => {
@@ -228,7 +255,7 @@ router.get('/compliance', requireAuth, async (req, res) => {
       const content = formOf.get(s.syllabus_id) || null;
       return {
         syllabusId: s.syllabus_id, userId: s.user_id, courseCode: s.course_code, title: s.title, status: s.status, version: s.version,
-        ...labelsOf(s, content), checkable: !!content || fileOf.has(s.syllabus_id), upload: fileOf.has(s.syllabus_id),
+        ...labelsOf(s, content), checkable: !!content || fileOf.has(s.syllabus_id), upload: fileOf.has(s.syllabus_id), checking: runningChecks.has(s.syllabus_id),
         run: run ? withChecker(svc.summarize(run, areasByRun.get(run.run_id) || [], content ? svc.hashOf(content) : null), s.user_id) : null,
       };
     });

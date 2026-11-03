@@ -1249,3 +1249,24 @@ Each program has its own expected graduate attributes (EGAs) and program outcome
 - `scripts/fill-it301-api.cjs` can sign in from `FILL_EMAIL` and `FILL_PASSWORD` (never printed or saved) and reports why a sign-in fails. It is a developer script, not part of the app.
 - Checked in a headless Chrome with sample data (icons, login at 1100-1920px, Time Usage in English and Filipino at four widths, top bar, activity feed). Not checked by eye on the live signed-in pages (review panel, comments, dashboard).
 - No server, API, route or database change.
+
+---
+
+### v1.54.0 — Quick Actions Customization and Dashboard Viewport Stability
+**Date:** October 31, 2026
+
+**Dashboard Quick Actions:**
+- Added `CustomizeQuickActionsModal.jsx` allowing users (Faculty and Admin) to customize which navigation action shortcuts appear on their Dashboard Quick Actions card.
+- Synchronized shortcuts with sidebar navigation items, honoring user roles and permissions, and persisted selections in `localStorage` under a user-scoped key (`quick_actions_{userId}`).
+- Updated Quick Action shortcut buttons: icon container background changed to soft white-gray (`bg-slate-100`), icon foreground changed to black (`text-slate-900` / `#0f172a`), providing high contrast and visual hierarchy.
+- Removed the numeric syllabus count badge from the "My Syllabi" shortcut button while preserving the descriptive subtitle ("Syllabi in your account" in English, "Silabus sa iyong account" in Tagalog).
+- Resolved text overlapping and layout breakage when switching to Tagalog by enforcing 2-line text clamping (`-webkit-line-clamp: 2`), flexible container heights (`min-height: 52px; max-height: 72px`), and text truncation without spilling into adjacent buttons.
+
+**Dashboard Viewport & Scroll Stability:**
+- Refined desktop single-viewport layout in `src/responsive.css` so the dashboard remains static, clean, and unfragmented without unwanted card-level scrollbars, while maintaining responsive fluid scaling across device breakpoints.
+- Eliminated vertical overflow scrolling inside the Quick Actions card and the Time Usage stat card across both English and Tagalog by constraining `.card:has(.usage-host) > .card-body` with `overflow-y: hidden` and tightening `<dt>` typography line heights.
+
+**Validation and deployment:**
+- Automated test suite passed with 100% success rate (`npm test`).
+- Localization audit passed with 0 missing translations and 0 hardcoded strings (`npm run test:localization`).
+- Production Vite build compiled cleanly into `dist/` with 0 errors (`npm run build`).

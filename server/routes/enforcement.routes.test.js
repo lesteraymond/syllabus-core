@@ -5,6 +5,17 @@
 const test = require('node:test');
 const assert = require('node:assert');
 const express = require('express');
+const compliance = require('../lib/compliance/service');
+const F = require('../lib/compliance/fixtures');
+
+const normalizeSql = sql => String(sql).replace(/\s+/g, ' ').trim();
+const MISSING_PO_REFERENCE_SQL = new Set([
+  'SELECT p.program_id, p.code, p.name, p.egas_version, p.pos_version FROM program_outcome_sources s JOIN programs p ON p.program_id = s.source_program_id WHERE s.program_id = ?',
+  'SELECT p.program_id AS id, p.code, p.name FROM program_outcome_sources s JOIN programs p ON p.program_id = s.program_id WHERE s.source_program_id = ? ORDER BY p.code',
+  'SELECT r.reference_id, r.version_label, r.source_file, r.source_sha256, r.outcomes_json FROM program_po_reference_active a JOIN program_po_reference_versions r ON r.reference_id = a.reference_id WHERE a.program_id = ?',
+  "SELECT migration_id, details_json FROM program_po_reference_remediation WHERE entity_type='syllabus' AND entity_id=? AND status='needs_review'",
+].map(normalizeSql));
+const PO_REFERENCE_TABLE = /\b(?:program_outcome_sources|program_po_reference_(?:active|versions|remediation))\b/i;
 
 const COURSES = [
   { course_id: 10, code: 'IT 101', title: 'Intro', program_id: 1, program_code: 'BSIT', program_name: 'BSIT' },
@@ -14,13 +25,50 @@ const COURSES = [
 const PROGRAMS = [{ program_id: 1, code: 'BSIT', name: 'BS IT', outcome_count: 10 }, { program_id: 2, code: 'BSIE', name: 'BS IE', outcome_count: 0 }];
 const USERS = new Set([1, 5, 6]);
 
-function makeDb({ assigned = {}, syllabi = {}, beforeDelete } = {}) {
+function makeDb({ assigned = {}, syllabi = {}, beforeDelete, complianceInstalled = false, syllabusVersions = [], adminRuns = [], masterData = null } = {}) {
   // assigned: userId -> { programs: [], courses: [] }
   const queries = [];
+  const writes = [];
   const egaCopies = []; // program ids that received a copy of the school-wide EGAs
   const mine = (uid) => assigned[uid] || { programs: [], courses: [] };
   const handle = (sql, params = []) => {
     queries.push(sql);
+    if (/^(INSERT|UPDATE|DELETE)\b/i.test(sql)) writes.push({ sql, params: [...params] });
+    if (normalizeSql(sql) === 'SELECT 1 FROM ai_check_runs LIMIT 1') {
+      if (!complianceInstalled) throw Object.assign(new Error("Table 'ai_check_runs' doesn't exist"), { code: 'ER_NO_SUCH_TABLE' });
+      return [[{ 1: 1 }]];
+    }
+    if (sql.startsWith('SELECT v.syllabus_id, v.version_id, (v.content IS NOT NULL')) {
+      const ids = params[0] || [];
+      return [syllabusVersions.filter(v => ids.includes(v.syllabus_id)).map(v => ({ syllabus_id: v.syllabus_id, version_id: v.version_id, checkable: v.content || v.file_path ? 1 : 0 }))];
+    }
+    if (sql.startsWith('SELECT DISTINCT syllabus_id, version_id FROM ai_check_runs')) {
+      const ids = params[0] || [];
+      return [adminRuns.filter(r => ids.includes(r.syllabus_id) && r.version_id !== null && r.created_by !== null && r.created_by !== syllabi[r.syllabus_id]?.user_id)
+        .map(r => ({ syllabus_id: r.syllabus_id, version_id: r.version_id }))];
+    }
+    if (sql.startsWith('SELECT version_id, version_label, content FROM syllabus_versions')) {
+      return [syllabusVersions.filter(v => v.syllabus_id === params[0]).slice().sort((a, b) => a.version_id - b.version_id).slice(-1)];
+    }
+    if (masterData && sql.startsWith('SELECT vision, mission_lead, mission_items, version FROM institution_settings')) {
+      return [[{ vision: masterData.institution.vision, mission_lead: masterData.institution.mission.lead, mission_items: JSON.stringify(masterData.institution.mission.items), version: 1 }]];
+    }
+    if (masterData && sql.startsWith('SELECT ega_no, name, short_name FROM institution_egas ORDER BY ega_no')) {
+      return [masterData.institution.egas.map(e => ({ ega_no: e.no, name: e.name, short_name: e.short }))];
+    }
+    if (masterData && sql.startsWith('SELECT program_id, code, name, egas_version, pos_version FROM programs WHERE code = ?')) {
+      const p = masterData.program;
+      return [p.code === params[0] ? [{ program_id: p.program_id, code: p.code, name: p.name, egas_version: 1, pos_version: 1 }] : []];
+    }
+    if (masterData && sql.startsWith('SELECT po_no, short_name, outcome_text, ega_nos FROM program_outcomes WHERE program_id = ?')) {
+      return [masterData.program.pos.map(o => ({ po_no: o.no, short_name: o.short, outcome_text: o.text, ega_nos: o.egas.join(',') }))];
+    }
+    if (masterData && sql.startsWith('SELECT ega_no, name, short_name FROM program_egas WHERE program_id = ?')) {
+      return [masterData.program.egas.map(e => ({ ega_no: e.no, name: e.name, short_name: e.short }))];
+    }
+    if (masterData && sql.startsWith("SELECT reference_id, program_code, curriculum_year, source, courses_json FROM syllabus_check_curricula WHERE status = 'approved' ORDER BY reference_id")) {
+      return [masterData.curricula];
+    }
     if (sql.startsWith('SELECT syllabus_id, user_id, status FROM syllabi WHERE') && !sql.includes('WHERE course_id')) return [syllabi[params[0]] ? [{ ...syllabi[params[0]] }] : []];
     if (sql.startsWith('DELETE FROM syllabi WHERE syllabus_id')) {
       beforeDelete?.(syllabi);
@@ -51,7 +99,7 @@ function makeDb({ assigned = {}, syllabi = {}, beforeDelete } = {}) {
       return [PROGRAMS.filter((p) => !filtered || mine(params[0]).programs.includes(p.program_id))];
     }
     if (sql.startsWith('SELECT program_id FROM programs WHERE code')) { const p = PROGRAMS.find((x) => x.code === params[0]); return [p ? [{ program_id: p.program_id }] : []]; }
-    if (sql.startsWith('SELECT 1 FROM courses WHERE code')) return [COURSES.filter((c) => c.code === params[0] && (params[1] === undefined || c.course_id !== params[1])).map(() => ({ 1: 1 }))];
+    if (sql.startsWith('SELECT 1 FROM courses WHERE code')) return [COURSES.filter((c) => c.code === params[0] && (!sql.includes('course_id <>') || c.course_id !== params[1]) && c.program_id === params[sql.includes('course_id <>') ? 2 : 1]).map(() => ({ 1: 1 }))];
     if (sql.startsWith('SELECT program_id FROM program_code_aliases')) return [[]]; // these fixtures have no historical codes
     // one syllabus for each subject (lib/subjectLock.js): the subject a code names, and the syllabi already on a subject
     if (sql.startsWith('SELECT course_id FROM courses WHERE code')) return [COURSES.filter((c) => c.code.toLowerCase() === String(params[0]).toLowerCase()).map((c) => ({ course_id: c.course_id }))];
@@ -78,7 +126,16 @@ function makeDb({ assigned = {}, syllabi = {}, beforeDelete } = {}) {
     if (sql.startsWith('SELECT syllabus_id, user_id, status, version, content')) return [syllabi[params[0]] ? [syllabi[params[0]]] : []];
     if (sql.startsWith('SELECT syllabus_id, user_id, status, title, course_code, content, course_id') || sql.startsWith('SELECT * FROM syllabi WHERE syllabus_id')) return [syllabi[params[0]] ? [syllabi[params[0]]] : []];
     if (sql.startsWith("SELECT user_id FROM users WHERE role = 'admin'")) return [[]];
+    if (PO_REFERENCE_TABLE.test(sql)) {
+      if (MISSING_PO_REFERENCE_SQL.has(normalizeSql(sql))) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' });
+      throw new Error('unexpected query: ' + sql);
+    }
     if (sql.startsWith('INSERT')) return [{ insertId: 100 }];
+    if (sql.startsWith('UPDATE syllabi SET status = ?')) {
+      const record = syllabi[params[params.length - 1]];
+      if (record) record.status = params[0];
+      return [{ affectedRows: record ? 1 : 0 }];
+    }
     if (sql.startsWith('UPDATE')) return [{}];
     throw new Error('unexpected query: ' + sql);
   };
@@ -91,11 +148,12 @@ function makeDb({ assigned = {}, syllabi = {}, beforeDelete } = {}) {
     rollback: async () => { if (snap) { PROGRAMS.length = snap.programs; COURSES.length = snap.courses; egaCopies.length = snap.copies; snap = null; } },
     release: () => {},
   };
-  return { queries, egaCopies, query: async (s, p) => handle(s, p), getConnection: async () => conn };
+  return { queries, writes, egaCopies, query: async (s, p) => handle(s, p), getConnection: async () => conn };
 }
 
 async function withServer(opts, fn) {
   const db = makeDb(opts);
+  compliance.resetInstalledCache();
   const app = express();
   app.use(express.json());
   app.use((req, res, next) => { const h = req.headers['x-test-user']; req.session = h ? { user: JSON.parse(h) } : {}; next(); });
@@ -110,7 +168,7 @@ async function withServer(opts, fn) {
     const res = await fetch(base + path, { method, headers: { 'Content-Type': 'application/json', ...(as ? { 'x-test-user': JSON.stringify(as) } : {}) }, body: body ? JSON.stringify(body) : undefined });
     return { status: res.status, body: await res.json().catch(() => ({})) };
   };
-  try { await fn({ db, call }); } finally { await new Promise((r) => server.close(r)); }
+  try { await fn({ db, call }); } finally { await new Promise((r) => server.close(r)); compliance.resetInstalledCache(); }
 }
 
 const admin = { id: 1, role: 'admin', firstName: 'Ada', lastName: 'Admin' };
@@ -119,6 +177,34 @@ const gus = { id: 6, role: 'faculty', firstName: 'Gus', lastName: 'Faculty' };
 const row = (over) => ({ syllabus_id: 1, user_id: 5, status: 'draft', version: 'v1.0', title: '', course_code: '', course_id: null, content: null, content_schema_version: null, content_updated_at: null, curriculum_id: null, file_path: null, ...over });
 const meta = (courseId) => ({ sections: { meta: { courseId, code: 'X', title: 'Y' } } });
 const ASSIGNED = { 5: { programs: [1], courses: [10] } };
+
+function validApprovalFixture() {
+  const content = F.good();
+  content.meta.courseId = 11;
+  content.meta.yearLevel = '2';
+  const catalog = F.catalog();
+  const syllabusId = 44, versionId = 144, savedContent = JSON.stringify(content);
+  return {
+    syllabus: row({ syllabus_id: syllabusId, user_id: 5, status: 'submitted', version: 'v1.0', title: content.meta.title, course_code: content.meta.code, course_id: 11, content: savedContent }),
+    syllabusVersions: [{ syllabus_id: syllabusId, version_id: versionId, version_label: 'v1.0', content: savedContent, file_path: null }],
+    adminRuns: [{ syllabus_id: syllabusId, version_id: versionId, created_by: 1 }],
+    masterData: {
+      institution: { ...catalog.institution, egas: catalog.program.egas },
+      program: { ...catalog.program, program_id: 1, code: 'BSIT', name: 'BS IT' },
+      curricula: [{ reference_id: 1, program_code: 'BSIT', curriculum_year: 'test-2026', source: 'fixture', courses_json: JSON.stringify([{ code: 'IT 204', title: content.meta.title, prereq: content.meta.prereq, lecture: 2, lab: 1, yearLevel: 2 }]) }],
+    },
+  };
+}
+
+test('the fake DB reports only the four exact unavailable PO-reference queries as missing tables', async () => {
+  const db = makeDb();
+  for (const sql of MISSING_PO_REFERENCE_SQL) {
+    await assert.rejects(db.query(sql), error => error.code === 'ER_NO_SUCH_TABLE');
+  }
+  const malformed = [...MISSING_PO_REFERENCE_SQL][0] + ' /* unexpected clause */';
+  await assert.rejects(db.query(malformed), /unexpected query:/);
+  await assert.rejects(db.query('UPDATE program_outcome_sources SET source_program_id = ?'), /unexpected query:/);
+});
 
 test('faculty see only their assigned courses and programs; admins see all', () => withServer({ assigned: ASSIGNED }, async ({ call }) => {
   assert.deepStrictEqual((await call(fay, 'GET', '/courses')).body.map((c) => c.code), ['IT 101']);
@@ -233,7 +319,9 @@ test('an uploaded-file syllabus back from "For revision" is saved again only wit
   assert.strictEqual((await put({ title: 'Intro', courseCode: 'IT 101', note: 'Same values sent again.' })).status, 409);
   assert.strictEqual((await put({ title: 'Intro to IT' })).status, 400); // changed, but no note
   assert.strictEqual((await put({ title: 'Intro to IT', note: 'short' })).status, 400);
-  assert.strictEqual((await put({ title: 'Intro to IT', note: 'Corrected the course title.' })).status, 200);
+  const refused = await put({ title: 'Intro to IT', note: 'Corrected the course title.' });
+  assert.strictEqual(refused.status, 409);
+  assert.strictEqual(refused.body.code, 'alignment_required');
 }));
 
 test('the same syllabus is editable again once the admin assigns the course', () => withServer({ assigned: { 5: { programs: [1], courses: [10, 11] } }, syllabi: { 2: row({ syllabus_id: 2, status: 'for_revision', course_id: 11 }) } }, async ({ call }) => {
@@ -253,8 +341,11 @@ test('another faculty member still gets 404 on someone else\'s syllabus', () => 
   assert.strictEqual((await call(gus, 'POST', '/syllabi/1/submit', {})).status, 404);
 }));
 
-test('legacy create: the course code must match an assigned course', () => withServer({ assigned: ASSIGNED }, async ({ call }) => {
-  assert.strictEqual((await call(fay, 'POST', '/syllabi', { title: 'Intro', courseCode: 'it 101' })).status, 200);
+test('legacy create: an assigned course reaches the explicit builder-only gate; unassigned courses are refused', () => withServer({ assigned: ASSIGNED }, async ({ call, db }) => {
+  const legacy = await call(fay, 'POST', '/syllabi', { title: 'Intro', courseCode: 'it 101' });
+  assert.strictEqual(legacy.status, 409);
+  assert.strictEqual(legacy.body.code, 'alignment_required');
+  assert.ok(db.queries.some(sql => sql.startsWith('SELECT 1 FROM faculty_courses fc JOIN courses c')));
   assert.strictEqual((await call(fay, 'POST', '/syllabi', { title: 'P2', courseCode: 'IT 204' })).status, 403);
   assert.strictEqual((await call(fay, 'POST', '/syllabi', { title: 'No code', courseCode: '' })).status, 403);
   const none = await call(gus, 'POST', '/syllabi', { title: 'Intro', courseCode: 'IT 101' });
@@ -262,17 +353,79 @@ test('legacy create: the course code must match an assigned course', () => withS
   assert.match(none.body.error, /No program or subject is assigned/);
 }));
 
-test('legacy create: a subject the person already has a syllabus on cannot get another', () => withServer({ assigned: ASSIGNED, syllabi: { 9: row({ syllabus_id: 9, user_id: 5, course_id: 10, status: 'submitted' }) } }, async ({ call }) => {
-  const again = await call(fay, 'POST', '/syllabi', { title: 'Intro again', courseCode: 'IT 101' });
+test('the structured builder rejects assigning a subject that already has this faculty member\'s syllabus', () => withServer({ assigned: ASSIGNED, syllabi: {
+  9: row({ syllabus_id: 9, user_id: 5, course_id: 10, status: 'submitted' }),
+  13: row({ syllabus_id: 13, user_id: 5, course_id: null, status: 'draft' }),
+} }, async ({ call, db }) => {
+  const again = await call(fay, 'PUT', '/syllabi/13/content', meta(10));
   assert.strictEqual(again.status, 409);
-  assert.match(again.body.error, /already have a syllabus for this subject \(Submitted\)/);
+  assert.strictEqual(again.body.code, 'syllabus_exists');
+  assert.strictEqual(again.body.existingId, 9);
+  assert.strictEqual(again.body.existingStatus, 'submitted');
+  assert.ok(db.queries.some(sql => sql.startsWith('SELECT syllabus_id, user_id, status FROM syllabi WHERE course_id')),
+    'the duplicate syllabus query ran before the request was rejected');
+  assert.ok(!db.writes.some(write => write.sql.startsWith('UPDATE syllabi SET content =')),
+    'the failed assignment was not saved');
 }));
 
-test('legacy edit by the owner needs an assigned course; an admin changing status is unaffected', () => withServer({ assigned: ASSIGNED, syllabi: { 4: row({ syllabus_id: 4, status: 'for_revision', course_code: 'IT 204' }), 5: row({ syllabus_id: 5, status: 'for_revision', course_code: 'IT 101' }) } }, async ({ call }) => {
+test('legacy edits enforce course assignment and the structured alignment gate; faculty cannot approve', () => withServer({ assigned: ASSIGNED, syllabi: { 4: row({ syllabus_id: 4, status: 'for_revision', course_code: 'IT 204' }), 5: row({ syllabus_id: 5, status: 'for_revision', course_code: 'IT 101' }) } }, async ({ call }) => {
   assert.strictEqual((await call(fay, 'PUT', '/syllabi/4', { title: 'New title', note: 'Changed the title.' })).status, 403);
-  assert.strictEqual((await call(fay, 'PUT', '/syllabi/5', { title: 'New title', note: 'Changed the title.' })).status, 200);
-  assert.strictEqual((await call(admin, 'PUT', '/syllabi/4', { status: 'approved' })).status, 200);
+  const assigned = await call(fay, 'PUT', '/syllabi/5', { title: 'New title', note: 'Changed the title.' });
+  assert.strictEqual(assigned.status, 409);
+  assert.strictEqual(assigned.body.code, 'alignment_required');
+  const unauthorized = await call(fay, 'PUT', '/syllabi/5', { status: 'approved' });
+  assert.strictEqual(unauthorized.status, 403);
+  assert.match(unauthorized.body.error, /Only administrators can change a syllabus status/);
+  const missingForm = await call(admin, 'PUT', '/syllabi/4', { status: 'approved' });
+  assert.strictEqual(missingForm.status, 409);
+  assert.strictEqual(missingForm.body.code, 'alignment_required');
 }));
+
+test('an authorized administrator can approve a checked structured syllabus after the real deterministic gate passes', async () => {
+  const previousGate = process.env.SYLLABUS_CHECK_AI_GATE;
+  process.env.SYLLABUS_CHECK_AI_GATE = 'advisory';
+  try {
+    const fixture = validApprovalFixture();
+    const syllabi = { 44: fixture.syllabus };
+    await withServer({ assigned: ASSIGNED, syllabi, complianceInstalled: true, syllabusVersions: fixture.syllabusVersions, adminRuns: fixture.adminRuns, masterData: fixture.masterData }, async ({ call, db }) => {
+      const approved = await call(admin, 'PUT', '/syllabi/44', { status: 'approved' });
+      assert.strictEqual(approved.status, 200, JSON.stringify(approved.body));
+      assert.strictEqual(syllabi[44].status, 'approved');
+      assert.ok(db.queries.some(sql => sql.startsWith('SELECT 1 FROM ai_check_runs LIMIT 1')));
+      assert.ok(db.queries.some(sql => sql.startsWith('SELECT v.syllabus_id, v.version_id, (v.content IS NOT NULL')),
+        'approval required the administrator check for the current version');
+      assert.ok(db.queries.some(sql => sql.startsWith('SELECT reference_id, program_code, curriculum_year, source, courses_json FROM syllabus_check_curricula')),
+        'approval reached the real curriculum-backed hard check');
+      assert.ok(db.writes.some(write => write.sql.startsWith('UPDATE syllabi SET status = ?') && write.params[0] === 'approved'));
+    });
+  } finally {
+    if (previousGate === undefined) delete process.env.SYLLABUS_CHECK_AI_GATE;
+    else process.env.SYLLABUS_CHECK_AI_GATE = previousGate;
+  }
+});
+
+test('an administrator approval is still rejected when the actual curriculum hard gate fails', async () => {
+  const previousGate = process.env.SYLLABUS_CHECK_AI_GATE;
+  process.env.SYLLABUS_CHECK_AI_GATE = 'advisory';
+  try {
+    const fixture = validApprovalFixture();
+    const invalid = JSON.parse(fixture.syllabus.content);
+    invalid.meta.code = 'IT 999';
+    fixture.syllabus.content = JSON.stringify(invalid);
+    fixture.syllabusVersions[0].content = fixture.syllabus.content;
+    const syllabi = { 44: fixture.syllabus };
+    await withServer({ assigned: ASSIGNED, syllabi, complianceInstalled: true, syllabusVersions: fixture.syllabusVersions, adminRuns: fixture.adminRuns, masterData: fixture.masterData }, async ({ call, db }) => {
+      const refused = await call(admin, 'PUT', '/syllabi/44', { status: 'approved' });
+      assert.strictEqual(refused.status, 409);
+      assert.strictEqual(refused.body.code, 'syllabus_hard_gate');
+      assert.strictEqual(syllabi[44].status, 'submitted');
+      assert.ok(!db.writes.some(write => write.sql.startsWith('UPDATE syllabi SET status = ?')));
+    });
+  } finally {
+    if (previousGate === undefined) delete process.env.SYLLABUS_CHECK_AI_GATE;
+    else process.env.SYLLABUS_CHECK_AI_GATE = previousGate;
+  }
+});
 
 test('an admin can add a subject to a program; faculty cannot; duplicates and unknown programs are refused', () => withServer({ assigned: ASSIGNED }, async ({ call }) => {
   const made = await call(admin, 'POST', '/courses', { code: 'IT 301', title: 'Networks', program: 'bsit' });
@@ -341,12 +494,19 @@ test('a program name already used by another code is 409, ignoring case and extr
   assert.strictEqual(db.egaCopies.length, 0);
 }));
 
-test('a duplicate subject code is 409 and does not leave a new program behind', () => withServer({ assigned: ASSIGNED }, async ({ call, db }) => {
+test('a shared subject code is allowed in a different program but remains unique within that program', () => withServer({ assigned: ASSIGNED }, async ({ call, db }) => {
   const before = PROGRAMS.length;
   const r = await addSubject(call, { code: 'IT 101', title: 'Again', program: 'BSAR', programName: 'BS Architecture' });
-  assert.strictEqual(r.status, 409);
-  assert.match(r.body.error, /already exists/);
-  assert.strictEqual(PROGRAMS.length, before);
+  assert.strictEqual(r.status, 200);
+  assert.strictEqual(r.body.program.code, 'BSAR');
+  assert.strictEqual(PROGRAMS.length, before + 1);
+  const duplicate = await addSubject(call, { code: 'IT 101', title: 'Again', program: 'BSAR' });
+  assert.strictEqual(duplicate.status, 409);
+  assert.match(duplicate.body.error, /already exists/);
+  const sameProgramRename = await call(admin, 'PUT', '/courses/10', { code: 'IT 204', title: 'Duplicate' });
+  assert.strictEqual(sameProgramRename.status, 409);
+  const otherProgramRename = await call(admin, 'PUT', `/courses/${r.body.id}`, { code: 'IT 204', title: 'Shared code' });
+  assert.strictEqual(otherProgramRename.status, 200);
   assert.strictEqual(db.egaCopies.length, 0);
 }));
 

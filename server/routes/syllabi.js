@@ -4,9 +4,8 @@ const path = require('path');
 const fs = require('fs');
 const { requireAuth } = require('../middleware/auth');
 const { avatarUrlFor } = require('../lib/avatar');
-const { createNotification, notifyAdmins } = require('../lib/notify');
+const { createNotification } = require('../lib/notify');
 const rules = require('../lib/syllabusRules');
-const subjectLock = require('../lib/subjectLock');
 const assignments = require('../lib/assignments');
 const { validateReason, typeForStatus, MAX_LENGTH } = require('../lib/reviewComments');
 const compliance = require('../lib/compliance/service');
@@ -124,14 +123,14 @@ async function inTransaction(db, fn) {
 }
 
 // An HTTP error that the route handler turns into a response.
-const httpError = (status, message) => Object.assign(new Error(message), { status });
+const httpError = (status, message, body) => Object.assign(new Error(message), { status, body });
 
 // Files are never overwritten (names are unique), so the only file we ever remove is one that was
 // uploaded by a request that then failed, so no version can ever point at a missing file.
 const discardUpload = async (file) => { if (file) await fs.promises.unlink(file.path).catch(() => {}); };
 
 const sendError = (res, err) => {
-  if (err.status) return res.status(err.status).json({ error: err.message });
+  if (err.status) return res.status(err.status).json({ error: err.message, ...(err.body || {}) });
   console.error('SYLLABUS ERROR:', err);
   return res.status(500).json({ error: err.message });
 };
@@ -142,51 +141,17 @@ const checkLengths = ({ title, courseCode }) => {
   if (typeof courseCode === 'string' && courseCode.length > 50) throw httpError(400, 'Course code is too long (max 50 characters)');
 };
 
-const VERSION_COLUMNS = `(syllabus_id, version_label, title, course_code, curriculum_id, file_path, status_at_save, note, created_by)`;
-
+// Keep the legacy endpoint as an explicit refusal, so old clients cannot submit unchecked files.
 router.post('/', requireAuth, onePdf, async (req, res) => {
-  let committed = false;
   try {
     const db = req.app.locals.db;
     if (rules.isAdmin(req.session.user)) throw httpError(403, 'Use the syllabus builder and AI Checker to publish your own syllabus.');
-    const { title, courseCode, curriculumId } = req.body;
+    const { title, courseCode } = req.body;
     checkLengths({ title, courseCode });
     await assignments.requireCourseCodeAccess(db, req.session.user, courseCode); // faculty: only an assigned course
-    const filePath = req.file ? `/uploads/${req.file.filename}` : null;
-
-    const syllabusId = await inTransaction(db, async (conn) => {
-      // One syllabus for each subject (lib/subjectLock.js). This route takes the subject as text, so find the catalog subject it names; when
-      // there is one, it is checked and stored on the row, so the rule also counts this syllabus from now on.
-      const code = String(courseCode || '').trim();
-      const [named] = code ? await conn.query('SELECT course_id FROM courses WHERE code = ?', [code]) : [[]];
-      const courseId = named.length === 1 ? named[0].course_id : null;
-      if (courseId) await subjectLock.assertSubjectFree(conn, req.session.user, courseId, 0);
-      const [result] = await conn.query(
-        'INSERT INTO syllabi (user_id, curriculum_id, file_path, title, course_code, course_id, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
-        [req.session.user.id, curriculumId || null, filePath, title, courseCode, courseId, 'submitted']
-      );
-      await conn.query(
-        `INSERT INTO syllabus_versions ${VERSION_COLUMNS} VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [result.insertId, 'v1.0', title, courseCode, curriculumId || null, filePath, 'submitted', 'Initial version', req.session.user.id]
-      );
-      await conn.query(
-        'INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)',
-        [result.insertId, req.session.user.id, 'upload', 'Syllabus uploaded']
-      );
-      return result.insertId;
-    });
-    committed = true;
-
-    await notifyAdmins(db, {
-      exceptUserId: req.session.user.id,
-      type: 'submission',
-      syllabusId,
-      title: `New syllabus submitted: ${courseCode || title || 'Untitled'}`,
-      body: `${req.session.user.firstName} ${req.session.user.lastName} submitted ${title || courseCode || 'a syllabus'} for review.`,
-    });
-    res.json({ id: syllabusId, message: 'Syllabus uploaded' });
+    throw httpError(409, 'File-only submissions cannot bypass mandatory Gemini alignment. Complete the structured builder form and run the hybrid check before submitting.', { code: 'alignment_required' });
   } catch (err) {
-    if (!committed) await discardUpload(req.file);
+    await discardUpload(req.file);
     sendError(res, err);
   }
 });
@@ -221,6 +186,14 @@ router.put('/:id', requireAuth, onePdf, async (req, res) => {
         if (DECISIONS.includes(status) && await compliance.isInstalled(db)) { // the AI check comes first, then the administrator decides
           const state = (await compliance.adminCheckStates(conn, [id])).get(id);
           if (state && state.checkable && !state.checked) throw httpError(409, CHECK_FIRST);
+        }
+        if (status === 'approved') {
+          // Mandatory verification also covers legacy approval endpoints.
+          const version = await compliance.latestVersion(conn, id);
+          let form;
+          try { form = JSON.parse(version?.content || syl.content || 'null'); } catch { form = null; }
+          if (!form) throw httpError(409, 'A verified structured syllabus is required before approval.', { code: 'alignment_required' });
+          await compliance.requireHybrid(conn, id, form);
         }
         // Returning a syllabus for revision or rejecting it needs a reason; approving does not.
         const reason = validateReason(status, adminComment);
@@ -260,24 +233,7 @@ router.put('/:id', requireAuth, onePdf, async (req, res) => {
       // Faculty: the syllabus's course (and the code being typed) must be assigned to them, or it is read-only.
       if (syl.course_id) await assignments.requireCourseAccess(conn, me, syl.course_id);
       await assignments.requireCourseCodeAccess(conn, me, next.courseCode);
-      const newStatus = rules.statusAfterOwnerEdit(syl.status);
-      const first = syl.status === 'draft'; // a draft submitted as an uploaded file is the first version
-      const label = first ? 'v1.0' : rules.nextVersionLabel(syl.version); // the client's version, if any, is ignored
-      const versionNote = (typeof note === 'string' && note.trim()) ? note.trim().slice(0, 1000) : (first ? 'Initial version (uploaded file)' : 'Updated by author');
-
-      await conn.query(
-        'UPDATE syllabi SET title = ?, course_code = ?, curriculum_id = ?, file_path = ?, status = ?, version = ? WHERE syllabus_id = ?',
-        [next.title, next.courseCode, next.curriculumId || null, next.filePath, newStatus, label, id]
-      );
-      await conn.query(
-        `INSERT INTO syllabus_versions ${VERSION_COLUMNS} VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [id, label, next.title, next.courseCode, next.curriculumId || null, next.filePath, newStatus, versionNote, me.id]
-      );
-      await conn.query(
-        'INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)',
-        [id, me.id, first ? 'upload' : (rules.isReturned(syl.status) ? 'submit' : 'update'), `${first ? 'Uploaded file, saved as' : 'Edited, saved as'} ${label}: ${versionNote}`.slice(0, 500)]
-      );
-      return { kind: 'edit', syl, label, title: next.title, courseCode: next.courseCode, previousStatus: syl.status };
+      throw httpError(409, 'Use the structured builder form and complete mandatory Gemini alignment before submission.', { code: 'alignment_required' });
     });
 
     committed = true;
@@ -296,26 +252,6 @@ router.put('/:id', requireAuth, onePdf, async (req, res) => {
       return res.json({ message: 'Syllabus updated' });
     }
 
-    if (outcome.previousStatus === 'draft') {
-      await notifyAdmins(db, {
-        exceptUserId: me.id,
-        type: 'submission',
-        syllabusId: id,
-        title: `New syllabus submitted: ${outcome.courseCode || outcome.title || 'Untitled'}`,
-        body: `${me.firstName} ${me.lastName} submitted ${outcome.title || outcome.courseCode || 'a syllabus'} (uploaded file) for review.`,
-      });
-    } else if (outcome.previousStatus === 'under_review' || rules.isReturned(outcome.previousStatus)) {
-      await notifyAdmins(db, {
-        exceptUserId: me.id,
-        type: 'edit',
-        syllabusId: id,
-        title: outcome.previousStatus === 'under_review'
-          ? `Syllabus updated during review: ${outcome.courseCode} (${outcome.label})`
-          : `Syllabus resubmitted: ${outcome.courseCode} (${outcome.label})`,
-        body: `${me.firstName} ${me.lastName} saved a new version.`,
-      });
-    }
-    res.json({ message: 'Syllabus updated', version: outcome.label });
   } catch (err) {
     if (!committed) await discardUpload(req.file); // a rejected or failed edit leaves no orphan file behind
     sendError(res, err);

@@ -22,7 +22,6 @@ export default function ComplianceModal({ syllabus, run, isLatest = true, error 
   const title = syllabus.courseTitle || syllabus.title;
   const locked = isLocked(syllabus);
   const when = run ? stamp(run.createdAt) : '';
-
   return (
     <div className="overlay" onClick={onClose}>
       <div className="modal cm-modal" role="dialog" aria-modal="true" aria-labelledby="cm-title" aria-busy={actionBusy || undefined} tabIndex={-1} ref={dialog} onClick={(e) => e.stopPropagation()}>
@@ -42,7 +41,7 @@ export default function ComplianceModal({ syllabus, run, isLatest = true, error 
           <div className="cm-score">
             {state === 'scored'
               ? <div className={'big-ring cm-ring ' + t} style={{ '--p': ringAngle(run.overall) }} role="img" aria-label={translateUI("ui.compliance_score_7a084d") + run.overall + translateUI("ui.percent_c72154") + tr(run.band)}><div><strong>{run.overall}%</strong><small>{tr(run.band)}</small></div></div>
-              : <div className="big-ring cm-ring none" role="img" aria-label={translateUI("ui.no_score_yet_3662ab")}><div><strong>—</strong><small>{state === 'insufficient' ? translateUI("ui.not_enough_content_1c0e67") : translateUI("ui.not_checked_22705e")}</small></div></div>}
+              : <div className="big-ring cm-ring none" role="img" aria-label={translateUI("ui.no_score_yet_3662ab")}><div><strong>—</strong><small>{state === 'incomplete' ? translateUI('hybrid.incomplete') : state === 'insufficient' ? translateUI("ui.not_enough_content_1c0e67") : translateUI("ui.not_checked_22705e")}</small></div></div>}
             {run && (
               <div className="cm-areas">
                 {run.areas.map((a) => {

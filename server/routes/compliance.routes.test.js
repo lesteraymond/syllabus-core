@@ -5,6 +5,8 @@
 const test = require('node:test');
 const assert = require('node:assert');
 const express = require('express');
+// The hybrid precondition is independently tested; this suite exercises legacy storage and recommendation rendering.
+require('../lib/syllabuscheck/legacy-storage-test-helper')();
 const F = require('../lib/compliance/fixtures');
 const svc = require('../lib/compliance/service');
 const { MockProvider, ProviderError } = require('../lib/compliance/providers');
@@ -42,6 +44,7 @@ function makeDb() {
     clos: [{ course_id: 10, ega_nos: '1', po_nos: '1' }, { course_id: 20, ega_nos: '2', po_nos: '1' }],
     syllabi: { 1: { syllabus_id: 1, user_id: 5, status: 'draft', version: 'v1.0', title: 'Programming 2', course_code: 'IT 204', course_id: 10, curriculum_id: null, file_path: null, content: JSON.stringify(conformingContent()) } },
     saved: [],
+    activity: [], // rows written to the activity log (submission_logs)
     installed: true, runs: [], areas: [], findings: [], versionId: 77, versions: [],
     people: { 5: { first_name: 'Fay', last_name: 'F' }, 6: { first_name: 'Gus', last_name: 'G' } },
   };
@@ -51,6 +54,7 @@ function makeDb() {
   const isAdminRun = (r) => r.version_id !== null && r.created_by !== null && r.created_by !== undefined && r.created_by !== s.syllabi[r.syllabus_id].user_id;
   const keep = (sql, r) => (!sql.includes('version_id IS NOT NULL') || r.version_id !== null) && (!sql.includes('created_by <>') || isAdminRun(r));
   const handle = (sql, p = []) => {
+    if (/FROM program_po_reference_(active|remediation)/.test(sql)) throw Object.assign(new Error('reference schema not migrated'),{code:'ER_NO_SUCH_TABLE'});
     if (sql.startsWith('SELECT syllabus_id, user_id, status, title, course_code, content, course_id, archived_at FROM syllabi')) return [s.syllabi[p[0]] ? [s.syllabi[p[0]]] : []];
     if (sql.startsWith('SELECT user_id FROM users WHERE user_id')) return [[{ user_id: p[0] }]];
     if (sql.startsWith('SELECT vision')) return [[s.settings]];
@@ -136,7 +140,9 @@ function makeDb() {
     if (sql.startsWith('SELECT v.syllabus_id, v.version_id, v.content')) return [p[0].map((id) => s.versions.filter((v) => v.syllabus_id === id).slice(-1)[0]).filter(Boolean)];
     if (sql.startsWith('UPDATE syllabi SET status = ?, version')) { if(s.trackStatus) Object.assign(s.syllabi[p[2]],{status:p[0],version:p[1]});return [{}]; }
     if (sql.startsWith('UPDATE syllabi SET content')) { s.saved.push(JSON.parse(p[0])); s.syllabi[p[p.length - 1]].content = p[0]; return [{}]; }
+    if (sql.startsWith('INSERT INTO submission_logs')) { s.activity.push({ syllabusId: p[0], userId: p[1], action: p[2], notes: p[3] }); return [{ insertId: s.activity.length }]; }
     if (/^(INSERT|UPDATE|DELETE)/.test(sql)) return [{}];
+    if (/program_outcome_sources/.test(sql)) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' }); // not migrated yet
     throw new Error('unexpected query: ' + sql);
   };
   const conn = { query: async (q, p) => handle(q, p), beginTransaction: async () => {}, commit: async () => {}, rollback: async () => {}, release: () => {} };
@@ -173,6 +179,54 @@ const gus = { id: 6, role: 'faculty', firstName: 'Gus', lastName: 'G' };
 const setContent = (db, id, content) => { db.s.syllabi[id].content = JSON.stringify(content); };
 const addSyllabus = (db, id, over) => { db.s.syllabi[id] = { ...db.s.syllabi[1], syllabus_id: id, ...over }; };
 const withGaps = (c) => { c.plan[2].tasks = ''; return c; }; // one lesson without an assessment task: a warning, so there is something to recommend
+
+for (const failFirst of [false, true]) {
+  test(`overlapping checks are blocked across accounts and the slot is released after ${failFirst ? 'failure' : 'completion'}`, async (t) => withServer(async ({ call, db }) => {
+    addSyllabus(db, 2, { user_id: gus.id });
+    const original = svc.checkHybrid;
+    let enter, release;
+    const entered = new Promise(resolve => { enter = resolve; });
+    const waiting = new Promise(resolve => { release = resolve; });
+    let evaluations = 0;
+    t.mock.method(svc, 'checkHybrid', async (...args) => {
+      evaluations++;
+      if (evaluations === 1) {
+        enter();
+        await waiting;
+        if (failFirst) throw Object.assign(new Error('Test provider unavailable'), { status: 503 });
+      }
+      return original(...args);
+    });
+    const first = call(fay, 'POST', '/syllabi/1/compliance/recheck', {});
+    try {
+      await entered;
+      for (const [user, id] of [[fay, 1], [gus, 2]]) {
+        const blocked = await call(user, 'POST', `/syllabi/${id}/compliance/recheck`, { force: true });
+        assert.strictEqual(blocked.status, 409);
+        assert.strictEqual(blocked.body.code, 'ai_check_in_progress');
+        assert.match(blocked.body.error, /already running/);
+      }
+      assert.strictEqual(evaluations, 1);
+      assert.strictEqual(db.s.runs.length, 0);
+      // Reading reports stays available, without starting another evaluation.
+      const reading = await call(fay, 'GET', '/syllabi/1/compliance');
+      assert.strictEqual(reading.status, 200);
+      assert.strictEqual(reading.body.checking, true, 'a page opened again can see that this syllabus is being checked');
+      assert.strictEqual((await call(gus, 'GET', '/syllabi/2/compliance')).body.checking, false, 'another syllabus is not');
+      assert.strictEqual(evaluations, 1);
+    } finally {
+      release();
+      const finished = await first;
+      assert.strictEqual((await call(fay, 'GET', '/syllabi/1/compliance')).body.checking, false, 'the flag clears when the check ends');
+      assert.strictEqual(finished.status, failFirst ? 503 : 200);
+      await svc.settled();
+    }
+    const next = await call(gus, 'POST', '/syllabi/2/compliance/recheck', {});
+    assert.strictEqual(next.status, 200);
+    assert.strictEqual(evaluations, 2);
+    assert.strictEqual(db.s.runs.length, failFirst ? 1 : 2);
+  }));
+}
 
 test('grading that does not total 100, or an ILO with no CLO tag, blocks the submit: 409 with the failed rules, nothing saved', () => withServer(async ({ call, db }) => {
   const c = conformingContent();
@@ -221,7 +275,7 @@ test('submit stores the run with the version, its area scores and findings, then
   const run = db.s.runs[0];
   assert.strictEqual(run.version_id, 77);
   assert.strictEqual(run.syllabus_id, 1);
-  assert.strictEqual(run.standard_version, 'v4');
+  assert.strictEqual(run.standard_version, svc.standard.version);
   assert.match(run.content_hash, /^[0-9a-f]{64}$/);
   assert.strictEqual(run.created_by, 5);
   assert.deepStrictEqual(db.s.areas.map((a) => a.area_key), ['template', 'completeness', 'co_po', 'assessment', 'contact_hours', 'reference_currency']);
@@ -278,8 +332,9 @@ test('the provider never sees the owner by name: the server masks it', () => wit
   assert.match(seen[0], /\[name\]/);
 }));
 
-test('before the migration is run, submit still works, nothing is stored, and the compliance routes say it is not set up', () => withServer({ installed: false }, async ({ call, db }) => {
-  assert.strictEqual((await call(fay, 'POST', '/syllabi/1/submit', {})).status, 200);
+test('before migration, mandatory verification blocks submission and checker routes report setup is required', t => withServer({ installed: false }, async ({ call, db }) => {
+  t.mock.method(svc, 'requireHybrid', require('../lib/syllabuscheck/legacy-storage-test-helper').realRequireHybrid);
+  assert.strictEqual((await call(fay, 'POST', '/syllabi/1/submit', {})).status, 503);
   assert.strictEqual(db.s.runs.length, 0);
   const got = await call(fay, 'GET', '/syllabi/1/compliance');
   assert.deepStrictEqual([got.status, got.body.installed, got.body.run], [200, false, null]);
@@ -296,9 +351,9 @@ test('re-check: the same content gives the same run and does not use the limit; 
   assert.strictEqual(first.body.cached, false);
   assert.strictEqual(first.body.run.stale, false);
   const again = await call(fay, 'POST', '/syllabi/1/compliance/recheck', {});
-  assert.strictEqual(again.body.cached, true);
-  assert.strictEqual(again.body.run.id, first.body.run.id);
-  assert.strictEqual(db.s.runs.length, 1);
+  assert.strictEqual(again.body.cached, false);
+  assert.notStrictEqual(again.body.run.id, first.body.run.id);
+  assert.strictEqual(db.s.runs.length, 2);
   const forced = await call(fay, 'POST', '/syllabi/1/compliance/recheck', { force: true });
   assert.strictEqual(forced.body.cached, false);
   assert.notStrictEqual(forced.body.run.id, first.body.run.id);
@@ -391,16 +446,16 @@ test('an admin sees only an administrator\'s check: not the run the faculty memb
   assert.ok(![submitRun, recheck.body.run.id].includes(mine.body.run.id));
   assert.strictEqual((await call(admin, 'GET', '/syllabi/1/compliance')).body.run.id, mine.body.run.id);
   assert.strictEqual((await call(admin, 'GET', '/compliance?syllabus=all')).body.syllabi[0].run.id, mine.body.run.id);
-  assert.strictEqual((await call(admin, 'POST', '/syllabi/1/compliance/recheck', {})).body.cached, true); // now the administrator's own run answers the same content
+  assert.strictEqual((await call(admin, 'POST', '/syllabi/1/compliance/recheck', {})).body.cached, false); // now the administrator's own run answers the same content
 }));
 
-test('re-check is rate limited per user; answers from a stored run are not counted', () => withServer(async ({ call }) => {
+test('every explicit re-check revalidates external state and counts against the rate limit', () => withServer(async ({ call }) => {
   for (let i = 0; i < 10; i++) assert.strictEqual((await call(fay, 'POST', '/syllabi/1/compliance/recheck', { force: true })).status, 200, 'call ' + i);
   const blocked = await call(fay, 'POST', '/syllabi/1/compliance/recheck', { force: true });
   assert.strictEqual(blocked.status, 429);
   assert.match(blocked.body.error, /too often/);
   assert.ok(Number(blocked.headers.get('retry-after')) >= 1);
-  assert.strictEqual((await call(fay, 'POST', '/syllabi/1/compliance/recheck', {})).status, 200);
+  assert.strictEqual((await call(fay, 'POST', '/syllabi/1/compliance/recheck', {})).status, 429);
 }));
 
 test('a nearly empty syllabus is "not enough content": no score, no AI call', () => withServer(async ({ call, db }) => {
@@ -494,8 +549,8 @@ test('an admin can check a submitted syllabus that has no stored run: the run is
   assert.strictEqual(db.s.runs[0].created_by, 1);
   // the same version is answered from the stored run; Re-check makes a new one with the same score
   const again = await call(admin, 'POST', '/syllabi/2/compliance/recheck', {});
-  assert.strictEqual(again.body.cached, true);
-  assert.strictEqual(again.body.run.id, first.body.run.id);
+  assert.strictEqual(again.body.cached, false);
+  assert.notStrictEqual(again.body.run.id, first.body.run.id);
   const forced = await call(admin, 'POST', '/syllabi/2/compliance/recheck', { force: true });
   assert.strictEqual(forced.body.cached, false);
   assert.strictEqual(forced.body.run.overall, first.body.run.overall);
@@ -576,7 +631,7 @@ test('administrator checks are rate limited like any other, and a draft cannot b
 }));
 
 test('a syllabus with no stored run reads as run: null', () => withServer(async ({ call }) => {
-  assert.deepStrictEqual((await call(fay, 'GET', '/syllabi/1/compliance')).body, { installed: true, run: null });
+  assert.deepStrictEqual((await call(fay, 'GET', '/syllabi/1/compliance')).body, { installed: true, run: null, checking: false });
   const list = await call(fay, 'GET', '/compliance?syllabus=all');
   assert.strictEqual(list.body.syllabi[0].run, null);
   assert.strictEqual(list.body.summary.average, null);
@@ -740,7 +795,7 @@ test('an administrator can check an uploaded PDF by the rules: the file and its 
   assert.deepStrictEqual(r.body.run.recommendations.map((x) => x.title), ['Matching to the template is not done yet']);
   assert.strictEqual(db.s.runs[0].ai_status, 'none');
   // the same file is answered by the stored run; the admin screens count it as checked
-  assert.strictEqual((await call(admin, 'POST', '/syllabi/2/compliance/recheck', {})).body.cached, true);
+  assert.strictEqual((await call(admin, 'POST', '/syllabi/2/compliance/recheck', {})).body.cached, false);
   assert.strictEqual((await call(admin, 'GET', '/compliance?syllabus=all')).body.syllabi.find((x) => x.syllabusId === 2).run.overall, 100);
   assert.strictEqual((await call(admin, 'GET', '/compliance/history')).body.runs[0].syllabusId, 2);
   assert.strictEqual((await call(admin, 'GET', '/syllabi/2/compliance')).body.run.stale, false);
@@ -827,7 +882,7 @@ test('content that returns to what an earlier version said is a new version and 
   assert.strictEqual(third.body.cached, false); // not answered by the v1.0 run, though the content is the same
   assert.strictEqual(third.body.run.versionId, 79);
   assert.ok((await call(admin, 'GET', '/compliance?syllabus=all')).body.syllabi.find((x) => x.syllabusId === 1).run);
-  assert.strictEqual((await call(admin, 'POST', '/syllabi/1/compliance/recheck', {})).body.cached, true); // the same version is answered by its own run
+  assert.strictEqual((await call(admin, 'POST', '/syllabi/1/compliance/recheck', {})).body.cached, false); // the same version is answered by its own run
 }));
 
 test('admin drafts cannot enter AI Checker; completed forms require an explicit handoff and approval', () => withServer(async ({call,db}) => {
@@ -882,4 +937,17 @@ test('incomplete admin forms remain drafts; returning for edits removes the item
   assert.strictEqual(next.status,200,JSON.stringify(next.body));assert.strictEqual(next.body.version,'v1.1');
   assert.strictEqual(db.s.versions.length,2);assert.strictEqual(db.s.versions[0].content,prior);
   assert.ok(JSON.parse(db.s.versions[1].content).description.includes('Additional administrator revision after AI review.'));
+}));
+
+test('every AI check is recorded in the activity log of the person who ran it, with the outcome', () => withServer({}, async ({ call, db }) => {
+  const re = await call(fay, 'POST', '/syllabi/1/compliance/recheck', {});
+  assert.strictEqual(re.status, 200);
+  assert.strictEqual(db.s.activity.length, 1);
+  const row = db.s.activity[0];
+  assert.deepStrictEqual([row.syllabusId, row.userId, row.action], [1, 5, 'check']);
+  assert.match(row.notes, /^AI check: /);
+  // A check that is refused is not an activity: nothing ran.
+  const before = db.s.activity.length;
+  assert.strictEqual((await call(gus, 'POST', '/syllabi/1/compliance/recheck', {})).status, 404);
+  assert.strictEqual(db.s.activity.length, before);
 }));

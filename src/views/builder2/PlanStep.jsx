@@ -1,7 +1,8 @@
 import StableButton from '../../components/StableButton';
 import { t as translateUI } from "../../i18n/index.js";
 import { useState } from 'react';
-import { clone, renderMarkup, weekSet } from '../../lib/syllabusModel';
+import { blankRow, clone, renderMarkup, weekSet } from '../../lib/syllabusModel';
+import { orderedLesson, canCreateIlo, canEditLessonField } from '../../lib/lessonAuthoring';
 import { Auto, CoverageStrip, Ic, OutcomePicker, Tag } from './parts';
 import { newId } from './useDraft';
 import Select from '../../components/Select';
@@ -30,7 +31,7 @@ export default function PlanStep({ d, apply, model, filter, setFilter, onDeleteR
   });
   const addRow = (kind) => {
     const mx = Math.max(0, ...Object.keys(weekSet(d.plan)).map(Number));
-    const r = { id: newId(), kind, week: String(mx + 1), ilos: [newIlo()], contents: kind === 'exam' ? '**EXAMINATION**' : '', activities: kind === 'exam' ? '- Examination' : '', tasks: '', values: '' };
+    const r = { ...blankRow(newId,kind), week: String(mx + 1), contents: kind === 'exam' ? '**EXAMINATION**' : '', activities: kind === 'exam' ? '- Examination' : '' };
     apply((x) => { x.plan.push(r); return x; });
     setTimeout(() => { const el = document.querySelector('[data-fid="' + r.id + '"]'); if (el) el.focus(); }, 40);
   };
@@ -59,6 +60,7 @@ export default function PlanStep({ d, apply, model, filter, setFilter, onDeleteR
             {shown.map((r) => {
               const full = d.plan.findIndex((y) => y.id === r.id);
               const exam = r.kind === 'exam';
+              const orderHint = orderedLesson(r) ? `lesson-order-${r.id}` : undefined;
               return (
                 <tr key={r.id} className={exam ? 'exam' : ''}>
                   <td>
@@ -71,7 +73,7 @@ export default function PlanStep({ d, apply, model, filter, setFilter, onDeleteR
                         <div className="racts">
                           <button type="button" className="ib" aria-label={translateUI("ui.move_up_b4f57c")} disabled={full === 0} onClick={() => move(r.id, -1)}><Ic n="up" /></button>
                           <button type="button" className="ib" aria-label={translateUI("ui.move_down_260ff8")} disabled={full === d.plan.length - 1} onClick={() => move(r.id, 1)}><Ic n="down" /></button>
-                          <button type="button" className="ib" aria-label={translateUI("ui.duplicate_row_d66d5f")} onClick={() => apply((x) => { const c = clone(r); c.id = newId(); c.week = ''; c.ilos.forEach((il) => { il.id = newId(); }); x.plan.splice(full + 1, 0, c); return x; })}><Ic n="copy" /></button>
+                          <button type="button" className="ib" aria-label={translateUI("ui.duplicate_row_d66d5f")} onClick={() => apply((x) => { const c = clone(r); c.id = newId(); c.week = ''; if(c.kind !== 'exam')c.authoringOrder=1; c.ilos.forEach((il) => { il.id = newId(); }); x.plan.splice(full + 1, 0, c); return x; })}><Ic n="copy" /></button>
                           <button type="button" className="ib del" aria-label={translateUI("ui.delete_row_fcf3f8")} onClick={() => onDeleteRow(r.id)}><Icon name="bin" size={16} /></button>
                         </div>
                       )}
@@ -83,11 +85,12 @@ export default function PlanStep({ d, apply, model, filter, setFilter, onDeleteR
                         ? <Auto value={r.ilos[0] ? r.ilos[0].text : ''} placeholder={translateUI("ui.review_of_topics_235cbc")} label={translateUI("ui.review_topics_520343")} onChange={(v) => updRow(r.id, (x) => { if (!x.ilos[0]) x.ilos.push(newIlo()); x.ilos[0].text = v; })} />
                         : <Formatted text={r.ilos[0] ? r.ilos[0].text : ''} />)
                       : <>
+                        {edit && orderHint && <p className="hint" id={orderHint}>{translateUI('plan.order')} {translateUI('plan.preserved')}</p>}
                         {r.ilos.map((il, j) => (
                           <div className="ilo" key={il.id}>
                             <span className="lb">{translateUI("ui.ilo_080517") + (j + 1)}</span>
                             {edit
-                              ? <Auto value={il.text} placeholder={translateUI("ui.start_with_a_verb_6b1d63")} label={translateUI("ui.ilo_f12fa1") + (j + 1) + translateUI("ui.of_week_60075b") + r.week} onChange={(v) => updRow(r.id, (x) => { x.ilos[j].text = v; })} />
+                              ? <Auto value={il.text} disabled={!canEditLessonField(r,'ilo',il.text)} describedBy={orderHint} placeholder={translateUI("ui.start_with_a_verb_6b1d63")} label={translateUI("ui.ilo_f12fa1") + (j + 1) + translateUI("ui.of_week_60075b") + r.week} onChange={(v) => updRow(r.id, (x) => { if(canEditLessonField(x,'ilo',x.ilos[j].text))x.ilos[j].text = v; })} />
                               : <div className="fmt typed-text">{il.text || '—'}</div>}
                             <div className="tagrow">
                               {il.tags.map((t) => <Tag key={t} info={model.tagInfo(d, t)} onRemove={edit ? () => updRow(r.id, (x) => { x.ilos[j].tags = x.ilos[j].tags.filter((v) => v !== t); }) : null} />)}
@@ -96,12 +99,13 @@ export default function PlanStep({ d, apply, model, filter, setFilter, onDeleteR
                             </div>
                           </div>
                         ))}
-                        {edit && <button type="button" className="link" onClick={() => updRow(r.id, (x) => { x.ilos.push(newIlo()); })}>{translateUI("ui.ilo_b41960")}</button>}
+                        {edit && <button type="button" className="link" disabled={!canCreateIlo(r)} title={!canCreateIlo(r)?translateUI('plan.contentFirst'):undefined} aria-describedby={orderHint} onClick={() => updRow(r.id, (x) => { if(canCreateIlo(x))x.ilos.push(newIlo()); })}>{translateUI("ui.ilo_b41960")}</button>}
+                        {edit && !canCreateIlo(r) && <p className="hint">{translateUI('plan.contentFirst')}</p>}
                       </>}
                   </td>
                   {CELLS.map(([f, ph]) => (
                     <td key={f}>{edit
-                      ? <Auto value={r[f]} placeholder={ph} label={f + translateUI("ui.of_week_60075b") + r.week} onChange={(v) => updRow(r.id, (x) => { x[f] = v; })} />
+                      ? <><Auto value={r[f]} disabled={!canEditLessonField(r,f)} describedBy={orderHint} placeholder={ph} label={translateUI('plan.heading.'+f) + translateUI("ui.of_week_60075b") + r.week} onChange={(v) => updRow(r.id, (x) => { if(canEditLessonField(x,f))x[f] = v; })} />{!canEditLessonField(r,f) && <p className="hint">{translateUI(f==='activities'?'plan.iloFirst':'plan.activityFirst')}</p>}</>
                       : <Formatted text={r[f]} />}</td>
                   ))}
                 </tr>

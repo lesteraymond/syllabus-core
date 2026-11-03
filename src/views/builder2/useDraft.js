@@ -124,7 +124,15 @@ export function useDraft(editing) {
 
   const apply = useCallback((fn) => { touched.current = true; dispatch({ type: 'PATCH', fn }); }, []);
   const set = useCallback((v) => { touched.current = true; dispatch({ type: 'SET', v }); }, []);
+  // Recommendation acceptance needs an immediate save of this exact value;
+  // waiting for the render effect would let saveNow flush the previous draft.
+  const setAndSave = useCallback((v) => {
+    touched.current = true; latest.current = v; pending.current = true;
+    dispatch({ type: 'SET', v });
+    clearTimeout(timer.current);
+    return flush();
+  }, [flush]);
   const saveNow = useCallback(() => { clearTimeout(timer.current); return flush(); }, [flush]);
 
-  return { draft, apply, set, save, saveNow, load, syllabusId: () => idRef.current };
+  return { draft, apply, set, setAndSave, save, saveNow, load, syllabusId: () => idRef.current };
 }

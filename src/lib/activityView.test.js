@@ -76,3 +76,15 @@ test('a first submission from the builder reads "submitted", even in older rows 
   assert.strictEqual(describeActivity(log({ action: 'upload', notes: 'Uploaded file, saved as v1.0: Initial version (uploaded file)' })).verb, 'uploaded');
   assert.strictEqual(describeActivity(log({ action: 'upload', notes: 'Syllabus uploaded' })).verb, 'uploaded');
 });
+
+test('an AI check and an answer to a recommendation read as sentences, with the verb that says what the person did', () => {
+  const check = describeActivity(log({ action: 'check', notes: 'AI check: score 97%; 2 recommendations' }), 0, 7);
+  assert.deepStrictEqual([check.verb, check.icon, check.tone], ['ran an AI check on', 'sparkle', 'info']);
+  const verb = (notes) => describeActivity(log({ action: 'recommend', notes })).verb;
+  assert.strictEqual(verb('Accepted recommendation: plan[3].tasks'), 'accepted a recommendation on');
+  assert.strictEqual(verb('Edited and applied recommendation: clos[0].statement'), 'edited and applied a recommendation on');
+  assert.strictEqual(verb('Rejected recommendation: plan[3].tasks'), 'rejected a recommendation on');
+  assert.strictEqual(verb('Undid recommendation: plan[3].tasks'), 'undid a recommendation on');
+  assert.strictEqual(verb('something else'), 'answered a recommendation on');
+  assert.strictEqual(verb(null), 'answered a recommendation on');
+});

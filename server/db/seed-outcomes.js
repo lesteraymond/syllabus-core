@@ -1,5 +1,5 @@
-// Loads the institution's vision, mission, EGAs, programs and the BSIT program outcomes from
-// src/data/outcomesSeed.js (copied from the institutional form). Idempotent and non-destructive:
+// Loads institution defaults and source-verified PO seeds from src/data/outcomesSeed.js.
+// It never corrects an existing PO set; use the explicit versioned migration. Idempotent:
 // it only inserts what is missing, so anything an admin has edited is never overwritten.
 // Use --dry-run to only report. Run migrate-builder first.
 require('dotenv').config();
@@ -49,6 +49,7 @@ async function seed() {
       await run('INSERT INTO program_egas (program_id, ega_no, name, short_name) VALUES ?', [INSTITUTION.egas.map((e) => [id, e.no, e.name, e.short])]);
       say(`  ${code} EGAs: copied ${INSTITUTION.egas.length} from the school-wide list`);
     }
+    if (prog.outcomeSource) { say(`${code}: uses ${prog.outcomeSource}; install the versioned official PO migration, never create a copied set.`); continue; }
     if (!prog.pos.length) continue;
     const [[{ n }]] = await conn.query('SELECT COUNT(*) AS n FROM program_outcomes WHERE program_id = ?', [id || 0]);
     if (n > 0) { say(`  ${code} outcomes: ${n} already present, left as is`); continue; }
@@ -58,8 +59,9 @@ async function seed() {
   }
 
   for (const course of COURSES) {
+    if(course.legacyPoReference){say(`course ${course.code}: historical CLO mappings require faculty review; not seeded under new PO numbering`);continue;}
     const [prog] = await conn.query('SELECT program_id FROM programs WHERE code = ?', [course.program]);
-    const [existing] = await conn.query('SELECT course_id FROM courses WHERE code = ?', [course.code]);
+    const [existing] = await conn.query('SELECT course_id FROM courses WHERE code = ? AND program_id = ?', [course.code, prog[0]?.program_id || 0]);
     let courseId = existing[0] && existing[0].course_id;
     if (courseId) say(`course ${course.code}: already present`);
     else if (!prog[0]) { say(`course ${course.code}: skipped, program ${course.program} is missing`); continue; }

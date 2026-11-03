@@ -52,6 +52,7 @@ function makeDb() {
       s.users.push(u);
       return [{ insertId: u.user_id }];
     }
+    if (/program_outcome_sources/.test(sql)) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' }); // not migrated yet
     throw new Error('unexpected query: ' + sql);
   };
   return { s, query: async (q, p) => handle(q, p) };

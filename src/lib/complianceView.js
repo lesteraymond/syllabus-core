@@ -1,4 +1,5 @@
 import { phDate, phDateTime, phDayStart, phTime } from './phTime.js';
+import { hardGatesOf } from './hybridCheck.js';
 // Plain helpers for showing a stored compliance run (the shared ComplianceCard, the builder's Review & Check step, the admin overview
 // and Review & Approval). No React and no network, so they are tested on their own.
 //
@@ -24,6 +25,7 @@ export const stepLabel = (key) => (STEP_INFO[key] ? 'Step ' + STEP_INFO[key].n +
 // 'none' (never checked), 'insufficient' (not enough written to score) or 'scored'.
 export function runState(run) {
   if (!run) return 'none';
+  if (run.status === 'incomplete' || (run.hybrid && !run.hybrid.ready && !run.hybrid.critical)) return 'incomplete';
   return run.status === 'insufficient' || run.overall === null || run.overall === undefined ? 'insufficient' : 'scored';
 }
 
@@ -40,12 +42,19 @@ export const ringAngle = (score) => Math.max(0, Math.min(100, Number(score) || 0
 export function basis(run) {
   if (!run) return { kind: 'none', label: '', note: '' };
   if (run.aiStatus === 'pending') return { kind: 'pending', label: 'Rule-based check', note: 'The rule check is done. Recommendations are still being written.' };
-  if (run.aiStatus === 'failed') return { kind: 'unavailable', label: 'AI unavailable', note: 'AI suggestions are not available right now, so these recommendations come from the rules.' };
+  if (run.aiStatus === 'failed') {
+    // The model answered but some relationships could not be verified: the AI worked, the check is only unfinished. "Unavailable" is for a model that gave nothing.
+    const judged = (run.hybrid?.alignment?.judgements || []).filter((j) => !j.unverified && j.label !== 'INSUFFICIENT_EVIDENCE').length;
+    const total = (run.hybrid?.alignment?.judgements || []).length;
+    if (judged > 0) return { kind: 'stale', label: 'AI check incomplete', note: judged + ' of ' + total + ' relationships were checked by the AI. Click Re-check to finish the rest.' };
+    return { kind: 'unavailable', label: 'AI unavailable', note: 'AI suggestions are not available right now, so these recommendations come from the rules.' };
+  }
   if (run.aiStatus === 'ok') return { kind: 'ai', label: 'AI-assisted check', note: '' };
   return { kind: 'rule', label: 'Rule-based check', note: '' };
 }
 
-export const blockersOf = (run) => (run && run.findings ? run.findings.filter((f) => f.severity === 'blocking') : []);
+// What stops a submit. Under the advisory policy the AI's findings and the network checks are advice, so only the coded hard gates count.
+export const blockersOf = (run, gate = 'required') => (gate === 'advisory' ? hardGatesOf(run) : (run && run.findings ? run.findings.filter((f) => f.severity === 'blocking') : []));
 export const warningsOf = (run) => (run && run.findings ? run.findings.filter((f) => f.severity !== 'blocking') : []);
 
 // How many warnings the author would be submitting with. Only a current run counts: a stale one describes an older syllabus.
@@ -55,6 +64,7 @@ export const warningCount = (run) => (run && !run.stale ? warningsOf(run).length
 export function headline(run) {
   const st = runState(run);
   if (st === 'none') return 'Not checked yet.';
+  if (st === 'incomplete') return 'Verification incomplete. No final AI score is available.';
   if (st === 'insufficient') return 'Not enough written yet to give a score. Fill in more of the form.';
   const blockers = blockersOf(run).length;
   if (blockers) return blockers + ' ' + (blockers === 1 ? 'problem stops' : 'problems stop') + ' this syllabus from being submitted.';
@@ -115,6 +125,36 @@ export const needsCheck = (row) => !!row && !isLocked(row) && (!row.run || !!row
 export const canCheckNow = (row) => !!row && !!row.checkable;
 
 // A compact score for a list row: "92%" or "—".
+// The score of a check that could not be finished (some of the AI's answers are missing, or a required rule fails): the base score minus the
+// points for the verdicts that WERE reached. Shown, labelled provisional, beside the recommendations; it is never the official score, never
+// passes, and never unlocks a submit. It is shown only when the AI really checked a meaningful share of the syllabus: with nothing (or almost
+// nothing) checked the figure would just be the fixed-rules score and would look like an AI result it is not. null when there is nothing honest to show.
+export const PROVISIONAL_MIN_COVERAGE = 0.5;
+export function provisionalOf(run) {
+  if (!run || runState(run) !== 'incomplete') return null;
+  const h = run.hybrid;
+  if (!h || h.critical || !Number.isFinite(h.provisionalScore)) return null;
+  // A report made before coverage was recorded cannot say how much the AI checked, so no figure is shown for it (a new check records it).
+  const c = h.alignment && h.alignment.coverage;
+  if (!c || !c.verified || (c.total && c.verified / c.total < PROVISIONAL_MIN_COVERAGE)) return null;
+  const { verified, total } = c;
+  return { score: h.provisionalScore, verified, total, rule: h.summary ? h.summary.status === 'mandatory_open' : false };
+}
+
+// The advisory verdict (server verdict.js) of a run, or null for a report saved before it existed or one whose builder failed. Display only.
+export function verdictOf(run) {
+  const v = run && run.hybrid && run.hybrid.verdict;
+  return v && !v.unavailable && v.overall ? v : null;
+}
+// Findings worth showing first: failures, then reviews, then what could not be checked. Grouped counts for the headline come from the server.
+const VERDICT_ORDER = { FAIL: 0, NEEDS_REVIEW: 1, NOT_CHECKED: 2, NOT_APPLICABLE: 3, PASS: 4 };
+const SEVERITY_ORDER = { CRITICAL: 0, MAJOR: 1, MINOR: 2, INFO: 3 };
+export function verdictIssues(v) {
+  return ((v && v.findings) || [])
+    .filter((f) => f.status === 'FAIL' || (f.status === 'NEEDS_REVIEW' && f.severity !== 'INFO') || f.explanationReview?.length || f.draftReview?.length || f.draftWarnings?.length)
+    .sort((a, b) => VERDICT_ORDER[a.status] - VERDICT_ORDER[b.status] || SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity]);
+}
+
 export const scoreText = (run) => (runState(run) === 'scored' ? run.overall + '%' : '—');
 
 // The label of the check across a list of runs: "Rule-based check" until a model has run on at least one of them.

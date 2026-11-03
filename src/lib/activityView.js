@@ -12,7 +12,11 @@ export const KINDS = {
   upload: { icon: 'uploadSimple', tone: 'info', verb: 'uploaded' },
   update: { icon: 'notePencil', tone: 'quiet', verb: 'updated' },
   delete: { icon: 'bin', tone: 'quiet', verb: 'deleted' },
+  check: { icon: 'sparkle', tone: 'info', verb: 'ran an AI check on' },
+  recommend: { icon: 'checkCircle', tone: 'quiet', verb: 'answered a recommendation on' },
 };
+// What a person did with a recommendation, from the first word of the note the server wrote ("Accepted recommendation: plan[3].tasks").
+const RECOMMEND_VERBS = { Accepted: 'accepted a recommendation on', Edited: 'edited and applied a recommendation on', Rejected: 'rejected a recommendation on', Undid: 'undid a recommendation on' };
 const FALLBACK = { icon: 'notePencil', tone: 'quiet', verb: 'made a change to' };
 
 // -> { key, icon, tone, who, verb, subject, detail, time, iso, when }. `viewerId` is the signed-in user: their own actions read "You".
@@ -28,7 +32,7 @@ export function describeActivity(log, index = 0, viewerId = null) {
     icon: kind.icon,
     tone: kind.tone,
     who: viewerId !== null && log && log.userId === viewerId ? 'You' : String((log && log.user) || '').trim() || 'Someone',
-    verb: kind.verb,
+    verb: (log && log.action === 'recommend' && RECOMMEND_VERBS[String(log.notes || '').split(' ')[0]]) || kind.verb,
     subject: code || title || 'a syllabus',
     detail: code && title ? title : '', // the course title under the code, when there is both
     time: phTime(d),

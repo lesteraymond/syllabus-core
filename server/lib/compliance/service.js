@@ -12,6 +12,69 @@ const { MockProvider, LlmProvider } = require('./providers');
 const { inTransaction } = require('../http');
 const { schoolYearStart } = require('../schoolYear');
 const uploadCheck = require('./upload');
+const hybridEngine = require('../syllabuscheck/engine');
+const hybridRepo = require('../syllabuscheck/repository');
+const { httpError } = require('../http');
+const { verifiedAlignment, createRequestBudget } = require('../syllabuscheck/gemini');
+const { aiGate } = require('../syllabuscheck/policy');
+const { titleDecisionChanged } = require('../syllabuscheck/titles');
+const academicV2Activation = require('../syllabuscheck/academicV2Activation');
+const academicV2 = require('../syllabuscheck/academicPolicyV2');
+// Invalidate legacy cached scores; they contain no semantic verification.
+standard.version = hybridEngine.VERSION;
+
+async function checkHybrid(db, content, options = {}) {
+  if (options.academicPolicy === require('../../../src/data/academicPolicyV2.json').id) require('../syllabuscheck/academicV2Input').validateInput(content, {});
+  const masters = await hybridRepo.mastersFor(db, content, {syllabusId:options.syllabusId});
+  if (options.academicPolicy && options.academicPolicy !== 'legacy') {
+    const result = await hybridEngine.run(content, masters, options);
+    result.referenceHash = masters.fingerprint;
+    return result; // no legacy history, deductions, report writes or gate use
+  }
+  // When the caller names the syllabus, the AI is only asked about what changed since its earlier checks (SYLLABUS_CHECK_REUSE=off asks everything).
+  const env = options.env || process.env;
+  const requestBudget = options.requestBudget || createRequestBudget(env);
+  const reuse = options.syllabusId && env.SYLLABUS_CHECK_REUSE !== 'off' ? await hybridRepo.reusableJudgements(db, options.syllabusId) : undefined;
+  // What the author already corrected: lets the checker tell an unresolved problem from a new one and stop after a few attempts.
+  const history = options.syllabusId ? await hybridRepo.correctionHistory(db, options.syllabusId) : undefined;
+  const result = await hybridEngine.run(content, masters, { ...options, requestBudget, reuse, history });
+  if (academicV2Activation.enabled(env)) {
+    try {
+      result.hybrid.academicV2 = await academicV2.evaluateIntegrated(content, masters, hybridEngine.coded, { env, syllabusId: options.syllabusId, requestBudget, signal: options.signal, ...(options.transport ? { transport: options.transport } : {}) });
+      if (result.hybrid.academicV2?.academic?.suggestions?.length) {
+        const existingIds = new Set((result.hybrid.suggestions || []).map(s => s.id));
+        result.hybrid.suggestions = [
+          ...(result.hybrid.suggestions || []),
+          ...result.hybrid.academicV2.academic.suggestions.filter(s => !existingIds.has(s.id))
+        ];
+      }
+    } catch (error) {
+      result.hybrid.academicV2 = { version: academicV2.POLICY.id, mode: 'live-application', status: 'not_evaluated',
+        contracts: { policy: academicV2.POLICY.id }, alignment: { status: 'not_evaluated', reason: `Policy V2 could not prepare this academic check: ${error.message}` },
+        academic: { policyVersion: academicV2.POLICY.id, disposition: 'NOT_EVALUATED', requirements: [], relationships: [], remediation: { actions: [], rootReviews: [] },
+          coverage: { required: 0, supported: 0, notEvaluated: 0 }, provenance: { kind: 'live-application', liveModelCalls: 0, networkRequests: 0, facultyValidated: false } } };
+    }
+  }
+  result.referenceHash = masters.fingerprint;
+  return result;
+}
+async function requireHybrid(db, syllabusId, content, { hardOnly = false } = {}) {
+  if (!(await isInstalled(db))) throw httpError(503, 'AI Checker must be set up before submission or publishing.');
+  const masters = await hybridRepo.mastersFor(db, content, {syllabusId});
+  const hard = hybridEngine.coded(content, masters);
+  const failed = hard.findings.filter(f => f.severity === 'blocking');
+  if (failed.length) throw httpError(409, failed.find(f => f.ruleId === 'CUR-CODE')?.message || failed[0].message, { code: 'syllabus_hard_gate', score: hard.critical ? 0 : null, failed });
+  // The coded hard gates above always apply. A completed AI check is only required when the policy says so: otherwise the AI's
+  // judgements and recommendations are advice, and the author (to submit) or the administrator (to approve) decides.
+  if (hardOnly || aiGate() === 'advisory') return;
+  const cached = await cachedRun(db, syllabusId, contentHash(content, standard.version));
+  const report = cached ? await hybridRepo.readReport(db, cached.run_id) : null;
+  const checkedAt = Date.parse(report?.hybrid?.checkedAt || '');
+  if (!report || report.fingerprint !== masters.fingerprint || !report.hybrid?.ready || report.hybrid.synthetic || !verifiedAlignment(report.hybrid.alignment) || !Number.isFinite(checkedAt) || Date.now() - checkedAt > 30 * 60 * 1000) {
+    throw httpError(409, 'Complete active AI alignment and reference checks on the current saved form before submission. Checks expire after 30 minutes or any content/reference change.', { code: 'alignment_required', score: report?.score ?? null });
+  }
+  return report;
+}
 
 // ---- is the database ready? (only a positive answer is remembered, so running the migration needs no restart) ----
 let installed = false;
@@ -41,13 +104,19 @@ const j = (v) => (v === undefined || v === null ? null : JSON.stringify(v));
 // Inside the caller's transaction. Returns the run id.
 // `ai: false` for a run that gets no AI step (an uploaded file has no form to describe to a provider): it stays 'none'.
 async function storeRun(conn, { syllabusId, versionId = null, content, result, createdBy = null, ai = true }) {
-  const aiStatus = ai && result.status === 'scored' && result.findings.length ? 'pending' : 'none';
+  if (require('../syllabuscheck/academicPolicyV2').isV2(result)) throw httpError(409, 'Offline Policy V2 previews cannot be stored as official runs.', {code:'academic_preview_not_official'});
+  const aiStatus = result.hybrid ? result.hybrid.alignment.status === 'completed' ? 'ok' : 'failed' : ai && result.status === 'scored' && result.findings.length ? 'pending' : 'none';
   const [ins] = await conn.query(
     `INSERT INTO ai_check_runs (syllabus_id, version_id, content_hash, standard_version, overall, status, passed, conformant, ai_status, contact, created_by)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [syllabusId, versionId, contentHash(content, standard.version), standard.version, result.overall, result.status, result.passed ? 1 : 0, result.conformance.ok ? 1 : 0, aiStatus, j(result.contact), createdBy]
   );
   const runId = ins.insertId;
+  if (result.hybrid) {
+    await hybridRepo.saveReport(conn, runId, result, result.referenceHash);
+    const alignment = result.hybrid.alignment;
+    await conn.query('UPDATE ai_check_runs SET provider = ?, model = ?, ai_error = ? WHERE run_id = ?', [alignment.provider || null, alignment.model || null, alignment.reason?.slice(0, 255) || null, runId]);
+  }
   await conn.query('INSERT INTO ai_check_area_scores (run_id, area_key, name, weight, score) VALUES ?', [result.areas.map((a) => [runId, a.key, a.name, a.weight, a.score])]);
   if (result.findings.length) {
     await conn.query(
@@ -158,6 +227,34 @@ async function loadDetail(db, run, currentHash) {
   const areas = (await loadAreas(db, [run.run_id])).get(run.run_id) || [];
   const [rows] = await db.query('SELECT * FROM ai_findings WHERE run_id = ? ORDER BY position', [run.run_id]);
   const out = summarize(run, areas, currentHash);
+  const report = /^hybrid-\d+$/.test(run.standard_version) ? await hybridRepo.readReport(db, run.run_id) : null;
+  if (report) {
+    out.hybrid = report.hybrid;
+    out.score = report.score;
+    out.provider = report.hybrid.alignment.provider || null;
+    out.model = report.hybrid.alignment.model || null;
+    out.aiError = report.hybrid.alignment.reason || null;
+    out.referenceHash = report.fingerprint;
+    // Normalize historical partial reports too: they used to expose their coded
+    // baseline as an AI score even though Gemini had never evaluated the form.
+    if (!report.hybrid.ready && !report.hybrid.critical) {
+      out.hybrid = { ...out.hybrid, score: null };
+      out.score = out.overall = out.band = null;
+      out.status = 'incomplete';
+      out.passed = false;
+    }
+    const masters = await hybridRepo.mastersFor(db, { meta: report.hybrid.checkedMeta });
+    const checkedTime = Date.parse(report.hybrid.checkedAt);
+    // A check goes out of date when the rules or the official references changed since it was made. It also expires after 30 minutes, but
+    // only where a fresh AI check is a gate to submit ('required'); as advice it stays valid until the syllabus itself changes (that is
+    // `stale` above, from the content hash), so an unchanged syllabus keeps its score instead of showing "incomplete".
+    const aged = aiGate() === 'required' && Date.now() - checkedTime > 30 * 60 * 1000;
+    // A report whose title decision the title policy in force would now make differently (the policy was switched after the check) is out of date.
+    if (titleDecisionChanged(report) || run.standard_version !== hybridEngine.VERSION || masters.fingerprint !== report.fingerprint || !Number.isFinite(checkedTime) || aged) {
+      out.stale = true;
+      out.hybrid = { ...out.hybrid, ready: false };
+    }
+  }
   out.findings = rows.filter((r) => r.kind === 'finding').map((r) => ({
     id: r.rule_id + ':' + r.path, area: r.area, source: r.source, ruleId: r.rule_id, severity: r.severity, step: r.step, path: r.path, message: r.message, evidence: parse(r.evidence) || {},
   }));
@@ -169,6 +266,7 @@ async function loadDetail(db, run, currentHash) {
       priority: r.priority === null ? null : Number(r.priority), level: r.priority_level,
     };
   });
+  if (report) out.findings = report.findings;
   return out;
 }
 
@@ -234,6 +332,7 @@ const publicationContent = (content,catalog) => ({ ...content, subjectCheckBasis
 const hashOf = (content) => contentHash(content, standard.version);
 
 module.exports = {
+  checkHybrid, requireHybrid,
   publicationContent, ADMIN_RUN_SQL, adminCheckStates, uploadCheck, uploadFingerprint, versionFile, standard, check, gateError, isInstalled, resetInstalledCache, storeRun, attachRecommendations,
   startAiJob, settled, getProvider, setProvider, namesFor, summarize, loadAreas, loadDetail, latestRun, cachedRun, latestVersion, hashOf, bandOf,
 };

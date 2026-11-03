@@ -3115,7 +3115,7 @@ table,
 }
 
 .bld2 .rv {
-	@apply tw:grid tw:[grid-template-columns:260px_minmax(0,_1fr)] tw:[gap:20px] tw:[align-items:start];
+	@apply tw:grid tw:[grid-template-columns:minmax(0,_1fr)] tw:[gap:20px] tw:[align-items:start];
 }
 .bld2 .chk {
 	@apply tw:grid tw:[gap:4px];
@@ -3208,12 +3208,6 @@ table,
 	grid-template-columns: 34px 150px 12px 1fr;
 	margin-block: 3px;
 }
-@media (max-width: 900px) {
-	.bld2 .rv {
-		@apply tw:[grid-template-columns:minmax(0,_1fr)];
-	}
-}
-
 /* ---- Courses & CLOs (admin) ---- */
 .ac-layout {
 	@apply tw:grid tw:[grid-template-columns:minmax(280px,_380px)_minmax(0,_1fr)] tw:[gap:14px] tw:[align-items:start];

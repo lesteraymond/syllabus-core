@@ -1,4 +1,5 @@
 import { weekNums, parseTag, lines, stripMarkup, abbr, examName } from './syllabusModel.js';
+import presence from '../../shared/contentPresence.cjs';
 // The compliance rule engine: pure, deterministic, no database, no network, no clock.
 //   evaluate(content, standard, ctx) -> result
 //
@@ -24,7 +25,7 @@ const iloClos = (il) => (il.tags || []).filter((t) => String(t).indexOf('clo:') 
 const arr = (x) => (Array.isArray(x) ? x : []);
 const obj = (x) => (x && typeof x === 'object' && !Array.isArray(x) ? x : {});
 const text = (x) => (x == null ? '' : String(x));
-const blank = (x) => !text(x).trim();
+const blank = (x) => !presence.hasContent(x);
 const words = (s) => text(s).trim().split(/\s+/).filter(Boolean).length;
 const at = (o, path) => path.split('.').reduce((v, k) => (v == null ? undefined : v[k]), o);
 const clip = (s, n) => text(s).replace(/\s+/g, ' ').trim().slice(0, n);

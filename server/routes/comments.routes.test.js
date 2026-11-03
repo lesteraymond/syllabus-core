@@ -4,6 +4,7 @@
 const test = require('node:test');
 const assert = require('node:assert');
 const express = require('express');
+require('../lib/syllabuscheck/legacy-storage-test-helper')();
 
 const PEOPLE = { 1: { first_name: 'Ann', last_name: 'A', role: 'admin' }, 5: { first_name: 'Fay', last_name: 'F', role: 'faculty' }, 6: { first_name: 'Gus', last_name: 'G', role: 'faculty' } };
 
@@ -22,6 +23,7 @@ function makeDb() {
     if (sql.startsWith('SELECT user_id FROM users WHERE user_id')) return [[{ user_id: p[0] }]];
     if (sql.startsWith('SELECT syllabus_id, user_id, status, title, course_code FROM syllabi')) return [s.syllabi[p[0]] ? [s.syllabi[p[0]]] : []];
     if (sql.startsWith('SELECT * FROM syllabi WHERE syllabus_id')) return [s.syllabi[p[0]] ? [s.syllabi[p[0]]] : []];
+    if (sql.startsWith('SELECT version_id, version_label, content FROM syllabus_versions')) return [[{ version_id: 1, content: '{}' }]];
     if (sql.startsWith('SELECT c.comment_id') && sql.includes('WHERE c.syllabus_id')) return [s.comments.filter((c) => c.syllabus_id === p[0]).sort((a, b) => a.created_at - b.created_at || a.comment_id - b.comment_id).map(joined)];
     if (sql.startsWith('SELECT c.comment_id') && sql.includes('WHERE c.comment_id')) return [s.comments.filter((c) => c.comment_id === p[0]).map(joined)];
     if (sql.startsWith('INSERT INTO comments')) {
@@ -55,6 +57,7 @@ function makeDb() {
       return [{}];
     }
     if (sql.startsWith('INSERT INTO submission_logs')) { s.logs.push(p); return [{}]; }
+    if (/program_outcome_sources/.test(sql)) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' }); // not migrated yet
     throw new Error('unexpected query: ' + sql);
   };
   const conn = { query: async (q, p) => handle(q, p), beginTransaction: async () => {}, commit: async () => {}, rollback: async () => {}, release: () => {} };
