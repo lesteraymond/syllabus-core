@@ -1,13 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import { CORE_VALUES, hasCoreValue, namesCoreValue, toggleCoreValue } from './coreValues.js';
 
 const [courage, community, missionary] = ['courage', 'community', 'missionary'].map((k) => CORE_VALUES.find((v) => v.key === k));
 
-test('the builder list is the same six values the AI Checker uses', async () => {
-  const standard = JSON.parse(await readFile(new URL('../../server/lib/compliance/standard-v4.json', import.meta.url), 'utf8'));
-  assert.deepEqual(CORE_VALUES, standard.constants.coreValues);
+test('the builder list is the same six values the AI Checker uses', () => {
+  const { VALUE_NAMES } = createRequire(import.meta.url)('../../server/lib/syllabuscheck/values.js');
+  assert.deepEqual(CORE_VALUES.map((v) => v.name), [...VALUE_NAMES]);
   assert.equal(CORE_VALUES.length, 6);
 });
 

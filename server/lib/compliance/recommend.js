@@ -12,7 +12,7 @@ const { groupByRule, describe } = require('./providers');
 
 const TITLE_MAX = 120;
 const TEXT_MAX = 500;
-const PROVIDER_TIMEOUT_MS = 45000;
+const PROVIDER_TIMEOUT_MS = 20000;
 
 // ---- keeping names and emails out of what a provider sees ----
 // Masked: email addresses, phone numbers, titled names ("Prof. Juan Dela Cruz", "Dr. Reyes"), and any name the caller lists
@@ -94,14 +94,9 @@ function priorityOf(areaKeys, result, standard) {
   return { value, level: value >= s.highAt ? 'High' : value >= s.mediumAt ? 'Medium' : 'Low' };
 }
 
-// A finding that is only a repeated requirement, reference or grading component (D-04 to D-06) is already worded by its rule and has its own
-// suggested change that removes or merges the repeat, so a recommendation that cites nothing else would only say it a third time.
-const SELF_EXPLAINING = /^D-0[456]:/;
-
 function finish(items, result, standard) {
   const byId = new Map(result.findings.map((f) => [f.id, f]));
   return items
-    .filter((it) => !it.basedOn.every((id) => SELF_EXPLAINING.test(id)))
     .map((it) => {
       const cited = it.basedOn.map((id) => byId.get(id));
       const links = linksOf(cited);
