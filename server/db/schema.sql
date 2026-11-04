@@ -55,22 +55,9 @@ CREATE TABLE IF NOT EXISTS courses (
   program_id INT NOT NULL,
   clos_version INT NOT NULL DEFAULT 1,
   standards_json LONGTEXT NULL,
-  lecture_units DECIMAL(3,1) NULL, -- the credit units the curriculum prints; the syllabus form's Credit Units (V) is filled from them
-  lab_units DECIMAL(3,1) NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE KEY unique_program_code (program_id, code), -- a code only has to be unique within its program
+  UNIQUE KEY courses_program_code (program_id, code),
   FOREIGN KEY (program_id) REFERENCES programs(program_id) ON DELETE RESTRICT
-);
-
--- A subject's prerequisites in printed order: a link to another subject, or just the printed label (3rd Yr, PATHFit 1 ...). See db/prerequisites-ddl.js.
-CREATE TABLE IF NOT EXISTS course_prerequisites (
-  course_id INT NOT NULL,
-  position INT NOT NULL,
-  prereq_course_id INT NULL,
-  label VARCHAR(60) NOT NULL,
-  PRIMARY KEY (course_id, position),
-  FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE,
-  FOREIGN KEY (prereq_course_id) REFERENCES courses(course_id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS course_clos (
@@ -319,9 +306,6 @@ CREATE TABLE IF NOT EXISTS app_settings (
   setting_value TEXT NOT NULL,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
-
--- The developer rule editor's change history (see lib/compliance/overridesStore.js); the current edits live in app_settings ('standard_overrides').
-CREATE TABLE IF NOT EXISTS standard_changes (change_id INT AUTO_INCREMENT PRIMARY KEY, who VARCHAR(80) NOT NULL, rev INT NOT NULL, kind VARCHAR(10) NOT NULL, changes LONGTEXT NOT NULL, changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, INDEX idx_standard_changes_time (changed_at));
 
 CREATE TABLE IF NOT EXISTS program_name_aliases (program_id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY (program_id, name), FOREIGN KEY (program_id) REFERENCES programs(program_id) ON DELETE CASCADE);
 

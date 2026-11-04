@@ -9,18 +9,7 @@ import ComplianceSection from './ComplianceSection';
 // Step 7: Review & Check. The compliance controls and a read-only rendering of the finished form.
 // `submitFailed` are the rules the server named when it refused a submit.
 export default function ReviewStep({ d, model, go, preparedBy, editable, noteRequired, note = '', setNote, syllabusId, saveFirst, canCheck, submitFailed, onRun, onApplyDraft, showCompliance = false }) {
-  // `target.row` (a plan row index) also scrolls to that row once its step is on screen and flashes it.
-  const openStep = (key, target) => {
-    go(STEPS.findIndex((s) => s.key === key));
-    if (!target || target.row == null) return;
-    setTimeout(() => {
-      const tr = document.querySelector('[data-plan-row="' + target.row + '"]');
-      if (!tr) return;
-      tr.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      tr.classList.add('row-flash');
-      setTimeout(() => tr.classList.remove('row-flash'), 1800);
-    }, 150);
-  };
+  const openStep = (key) => go(STEPS.findIndex((s) => s.key === key));
   const needNote = noteRequired && note.trim().length < MIN_NOTE;
   return (
     <>

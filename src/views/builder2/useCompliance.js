@@ -67,7 +67,7 @@ export function useCompliance({ syllabusId, saveFirst }) {
     const timer = setInterval(async () => {
       tries += 1;
       try { apply(await api.get(syllabusId())); } catch { /* try again on the next tick */ }
-      if (tries >= 24) clearInterval(timer); // 60 s: a little longer than the server's 45 s limit on the AI step
+      if (tries >= 15) clearInterval(timer);
     }, 2500);
     return () => clearInterval(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps

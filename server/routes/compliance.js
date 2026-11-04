@@ -21,7 +21,6 @@ const rules = require('../lib/syllabusRules');
 const svc = require('../lib/compliance/service');
 const { catalogSnapshot } = require('./syllabusContent');
 const { LABEL_SQL, labelsOf } = require('../lib/syllabusLabels');
-const terms = require('../lib/terms');
 const router = express.Router();
 
 const NOT_SET_UP = 'Compliance checks are not set up on this server yet. Ask an administrator to run the database update.';
@@ -193,9 +192,6 @@ router.get('/compliance', requireAuth, async (req, res) => {
     const me = req.session.user;
     const which = String(req.query.syllabus || 'all');
     if (which !== 'all' && !/^\d+$/.test(which)) throw httpError(400, 'syllabus must be "all" or a syllabus id');
-    // A past term (reports): each syllabus's newest check made inside it, and only the syllabi that were checked then.
-    const past = req.query.schoolYear || req.query.semester ? terms.rangeOf(req.query.schoolYear, req.query.semester) : null;
-    if ((req.query.schoolYear || req.query.semester) && !past) throw httpError(400, 'schoolYear and semester must name a term, e.g. 2026-2027 and 1st Semester');
     const installed = await svc.isInstalled(db);
 
     if (which !== 'all') {
@@ -240,22 +236,22 @@ router.get('/compliance', requireAuth, async (req, res) => {
     if (installed && syls.length) {
       const [runs] = await db.query(
         // An admin sees the administrator's own check of each submitted syllabus; a faculty member sees their own newest run, re-checks included.
-        'SELECT r.* FROM ai_check_runs r JOIN (SELECT MAX(run_id) AS run_id FROM ai_check_runs WHERE syllabus_id IN (?)' + (rules.isReviewer(me) ? ' AND ' + svc.ADMIN_RUN_SQL : '') + (past ? ' AND created_at >= ? AND created_at < ?' : '') + ' GROUP BY syllabus_id) m ON m.run_id = r.run_id',
-        past ? [syls.map((s) => s.syllabus_id), past.from, past.to] : [syls.map((s) => s.syllabus_id)]
+        'SELECT r.* FROM ai_check_runs r JOIN (SELECT MAX(run_id) AS run_id FROM ai_check_runs WHERE syllabus_id IN (?)' + (rules.isReviewer(me) ? ' AND ' + svc.ADMIN_RUN_SQL : '') + ' GROUP BY syllabus_id) m ON m.run_id = r.run_id',
+        [syls.map((s) => s.syllabus_id)]
       );
       runs.forEach((r) => latest.set(r.syllabus_id, r));
       areasByRun = await svc.loadAreas(db, runs.map((r) => r.run_id));
     }
-    if (installed && rules.isReviewer(me) && !past) {
+    if (installed && rules.isReviewer(me)) {
       for (const syl of syls.filter(s=>s.user_id===me.id)) {
         const ownRun=await svc.latestRun(db,syl.syllabus_id);
         if(ownRun) latest.set(syl.syllabus_id,ownRun);
       }
     }
-    const list0 = syls.map((s) => {
+    const list = syls.map((s) => {
       let run = latest.get(s.syllabus_id);
       // The administrator's check counts for the version that was checked: after a new version is submitted the old check is history, not "checked".
-      if (!past && run && rules.isReviewer(me) && versionOf.has(s.syllabus_id) && run.version_id !== versionOf.get(s.syllabus_id)) run = null;
+      if (run && rules.isReviewer(me) && versionOf.has(s.syllabus_id) && run.version_id !== versionOf.get(s.syllabus_id)) run = null;
       const content = formOf.get(s.syllabus_id) || null;
       return {
         syllabusId: s.syllabus_id, userId: s.user_id, courseCode: s.course_code, title: s.title, status: s.status, version: s.version,
@@ -263,7 +259,6 @@ router.get('/compliance', requireAuth, async (req, res) => {
         run: run ? withChecker(svc.summarize(run, areasByRun.get(run.run_id) || [], content ? svc.hashOf(content) : null), s.user_id) : null,
       };
     });
-    const list = past ? list0.filter((x) => x.run) : list0;
 
     // Averages over the syllabi that have a score (a run with "not enough content", or a file upload, has none).
     const scored = list.filter((x) => x.run && x.run.overall !== null);
@@ -284,31 +279,6 @@ router.get('/compliance', requireAuth, async (req, res) => {
         })),
       },
     });
-  } catch (err) { sendError(res, err); }
-});
-
-// The school terms that have checks in them (newest first) with how many checks and syllabi each holds: what the Reports page lists.
-// An administrator counts the administrator's checks of submitted versions, a faculty member their own syllabi's.
-router.get('/compliance/terms', requireAuth, async (req, res) => {
-  try {
-    const db = req.app.locals.db;
-    const me = req.session.user;
-    if (!(await svc.isInstalled(db))) return res.json({ terms: [] });
-    const scope = me.role === 'admin' ? ' AND ' + svc.ADMIN_RUN_SQL.replace(/ai_check_runs\./g, 'r.') : ' AND s.user_id = ?';
-    const [runs] = await db.query(
-      'SELECT r.syllabus_id, r.created_at FROM ai_check_runs r JOIN syllabi s ON s.syllabus_id = r.syllabus_id WHERE r.overall IS NOT NULL' + (me.role === 'admin' ? " AND s.status <> 'draft'" : '') + scope + ' ORDER BY r.created_at DESC LIMIT 20000',
-      me.role === 'admin' ? [] : [me.id]
-    );
-    const byTerm = new Map();
-    runs.forEach((r) => {
-      const t = terms.termOf(r.created_at);
-      const key = t.schoolYear + '|' + t.semester;
-      const e = byTerm.get(key) || { ...t, checks: 0, syllabi: new Set() };
-      e.checks += 1; e.syllabi.add(r.syllabus_id);
-      byTerm.set(key, e);
-    });
-    const order = (t) => Number(t.schoolYear.slice(0, 4)) * 10 + terms.SEMESTERS.indexOf(t.semester);
-    res.json({ terms: [...byTerm.values()].map((e) => ({ schoolYear: e.schoolYear, semester: e.semester, checks: e.checks, syllabi: e.syllabi.size })).sort((a, b) => order(b) - order(a)) });
   } catch (err) { sendError(res, err); }
 });
 

@@ -14,7 +14,6 @@ const lastScores = new Map();
 // the findings behind the score. It only displays; fetching and re-checking belong to the screen that uses it.
 //   onOpenStep(stepKey)  when given, a step name becomes a button that jumps there (the builder); otherwise it is plain text.
 //   checking             true while a check is running: the ring shows progress instead of a score that is about to change.
-//   onOpenStep(stepKey, { row })  a recommendation's row number jumps to that row of the plan (the builder).
 export default function ComplianceCard({ run, checking = false, onOpenStep, showFindings = true, onApplyDraft }) {
   const state = runState(run);
   const t = state === 'scored' ? tone(run.overall, run.passThreshold) : 'none';
@@ -107,15 +106,7 @@ export default function ComplianceCard({ run, checking = false, onOpenStep, show
                   {stepRef(r.step)}
                   {areaNames(run, r).map((n) => <span className="chip quiet" key={n}>{tr(n)}</span>)}
                   {(r.clos || []).length > 0 && <span className="chip quiet">{translateUI("ui.clo_069efc") + r.clos.join(', ')}</span>}
-                  {(r.rows || []).length > 0 && (
-                    <span className="chip quiet"><span>{tr(r.rows.length > 1 ? 'Rows' : 'Row') + ' '}
-                      {r.rows.map((x, k) => (
-                        <span key={x}>{k > 0 && ', '}{onOpenStep && r.step
-                          ? <button type="button" className="cmp-rowlink" onClick={() => onOpenStep(r.step, { row: x })}>{x + 1}</button>
-                          : x + 1}</span>
-                      ))}
-                    </span></span>
-                  )}
+                  {(r.rows || []).length > 0 && <span className="chip quiet">{tr(r.rows.length > 1 ? 'Rows' : 'Row') + ' ' + r.rows.map((x) => x + 1).join(', ')}</span>}
                 </div>
               </div>
             </div>
@@ -130,7 +121,7 @@ export default function ComplianceCard({ run, checking = false, onOpenStep, show
           {groupFindings(run).map((g) => (
             <div key={g.key}>
               <h5>{tr(g.name)}</h5>
-              <ul>{g.findings.map((f) => <li key={f.id} className={f.severity === 'blocking' ? 'blocking' : undefined}><span className={'chip src ' + (f.source === 'ai' ? 'ai' : 'rule')}>{f.source === 'ai' ? tr(SOURCE_LABEL.ai) : f.severity === 'blocking' ? translateUI("ui.rule_blocks_submit_a7fc69") : translateUI("ui.rule_78e179")}</span> {tr(f.message)} {stepRef(f.step)}</li>)}</ul>
+              <ul>{g.findings.map((f) => <li key={f.id} className={f.severity === 'blocking' ? 'blocking' : undefined}><span className="chip src rule">{f.severity === 'blocking' ? translateUI("ui.rule_blocks_submit_a7fc69") : translateUI("ui.rule_78e179")}</span> {tr(f.message)} {stepRef(f.step)}</li>)}</ul>
             </div>
           ))}
         </details>
