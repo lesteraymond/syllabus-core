@@ -12,6 +12,7 @@ export const ROLE_LABELS = Object.freeze({
   asst_vpaa: 'Asst. Vice President for Academic Affairs',
   lic_director: 'LIC Director',
   vpaa: 'Vice President for Academic Affairs',
+  student: 'Student',
 });
 
 export const STAGES = Object.freeze(['dean', 'asst_vpaa', 'lic_director']);

@@ -101,14 +101,26 @@ test('administrative settings require server-side administrator access and persi
   const admin = client(), faculty = client();
   await admin('/auth/login', 'POST', { email: 'admin@x.ph', password: 'Test-pass-12' });
   await faculty('/auth/login', 'POST', { email: 'faculty@x.ph', password: 'Test-pass-12' });
-  const config = { ...settings.DEFAULTS, department: 'Custom department', strictValidation: true };
+  const config = { ...settings.DEFAULTS, strictValidation: true };
   assert.equal((await faculty('/settings')).status, 403);
   assert.equal((await faculty('/settings', 'PUT', config)).status, 403);
+  // The standard is readable by an administrator only, and it is the checker's own.
+  assert.equal((await faculty('/settings/standard')).status, 403);
+  const std = (await admin('/settings/standard')).body.standard;
+  assert.equal(std.title, settings.DEFAULTS.template);
+  assert.equal(std.passThreshold, 79);
+  assert.ok(std.rules.length > 50 && std.areas.length === 6);
+  // What is still a project decision reads as sentences, not field names.
+  assert.ok(std.pending.length > 0 && std.pending.every(x => !/[\[\]_]|constants\./.test(x)));
   assert.deepEqual((await admin('/settings')).body.settings, settings.DEFAULTS);
   assert.equal((await admin('/settings', 'PUT', config)).status, 200);
   assert.deepEqual((await admin('/settings')).body.settings, config);
   assert.equal((await admin('/settings', 'PUT', { ...config, aiChecking: 'yes' })).status, 400);
   assert.equal((await admin('/settings', 'PUT', { ...config, role: 'faculty' })).status, 400);
+  // One department only: any other name is refused, and so is a template or year the system does not use.
+  assert.equal((await admin('/settings', 'PUT', { ...config, department: 'Custom department' })).status, 400);
+  // The academic year is the one editable value, and it must be two consecutive years.
+  assert.equal((await admin('/settings', 'PUT', { ...config, academicYear: '2026–2028' })).status, 400);
   failWrites(true);
   assert.equal((await admin('/settings', 'PUT', { ...config, strictValidation: false })).status, 500);
   assert.deepEqual((await admin('/settings')).body.settings, config);

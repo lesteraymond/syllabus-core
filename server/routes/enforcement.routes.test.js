@@ -142,6 +142,7 @@ function makeDb({ assigned = {}, syllabi = {}, beforeDelete, complianceInstalled
       return [{ affectedRows: record ? 1 : 0 }];
     }
     if (sql.startsWith('UPDATE')) return [{}];
+    if (/FROM course_prerequisites/.test(sql)) return [[]]; // a subject's prerequisites: none set
     throw new Error('unexpected query: ' + sql);
   };
   // A transaction that really rolls back: what was added since beginTransaction is removed again.
@@ -447,6 +448,10 @@ test('an admin can add a subject to a program; faculty cannot; duplicates and un
   const dup = await call(admin, 'POST', '/courses', { code: 'IT 101', title: 'Again', program: 'BSIT' });
   assert.strictEqual(dup.status, 409);
   assert.match(dup.body.error, /already exists/);
+  // The same code in another program is a different subject, not a duplicate.
+  const other = await call(admin, 'POST', '/courses', { code: 'IT 101', title: 'Introduction to Industrial Engineering', program: 'BSIE' });
+  assert.strictEqual(other.status, 200);
+  assert.strictEqual(other.body.program.code, 'BSIE');
   assert.strictEqual((await call(admin, 'POST', '/courses', { code: 'ZZ 1', title: 'X', program: 'NOPE' })).status, 400);
   const empty = await call(admin, 'POST', '/courses', { code: '', title: 'X', program: 'BSIT' });
   assert.strictEqual(empty.status, 400);
@@ -507,6 +512,7 @@ test('a shared subject code is allowed in a different program but remains unique
   const before = PROGRAMS.length;
   const r = await addSubject(call, { code: 'IT 101', title: 'Again', program: 'BSAR', programName: 'BS Architecture' });
   assert.strictEqual(r.status, 200);
+  assert.strictEqual(r.body.programCreated, true);
   assert.strictEqual(r.body.program.code, 'BSAR');
   assert.strictEqual(PROGRAMS.length, before + 1);
   const duplicate = await addSubject(call, { code: 'IT 101', title: 'Again', program: 'BSAR' });

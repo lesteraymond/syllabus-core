@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Rule editor</title>
+<style>
+  :root { --ink: #1b2430; --muted: #5d6978; --line: #d5dae2; --bg: #f4f6f8; --card: #fff; --brand: #1f3f73; --bad: #b4372f; --good: #1f7a4d; --chg: #fff6d6; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); background: var(--bg); }
+  main { max-width: 1200px; margin: 0 auto; padding: 20px 16px 60px; }
+  h1 { margin: 0 0 2px; font-size: 22px; }
+  h2 { margin: 0 0 10px; font-size: 15px; }
+  p { margin: 0; }
+  .muted { color: var(--muted); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin-top: 16px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  button { font: inherit; padding: 7px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); cursor: pointer; }
+  button.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
+  button.danger { color: var(--bad); border-color: var(--bad); }
+  button:disabled { opacity: .5; cursor: default; }
+  input, select, textarea { font: inherit; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: #fff; color: var(--ink); }
+  input[type=number] { width: 80px; }
+  textarea { width: 100%; resize: vertical; min-height: 44px; }
+  .chg { background: var(--chg); }
+  .msg { margin-top: 12px; padding: 10px 12px; border-radius: 8px; }
+  .msg.err { background: #f8e4e2; color: var(--bad); }
+  .msg.ok { background: #e4f3ea; color: var(--good); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px 20px; }
+  .field { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+  .bands { display: flex; flex-wrap: wrap; gap: 10px 24px; }
+  .band { display: flex; align-items: center; gap: 8px; }
+  .band input:first-child { width: 190px; }
+  .scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 7px 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { font-size: 12px; color: var(--muted); white-space: nowrap; }
+  td.code { font-family: ui-monospace, Menlo, monospace; white-space: nowrap; }
+  td.num { white-space: nowrap; }
+  .params label { display: flex; gap: 6px; align-items: center; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .params input { width: 64px; }
+  td.code { font-family: ui-monospace, Menlo, monospace; white-space: nowrap; }
+  td.num { white-space: nowrap; }
+  .params label { display: flex; gap: 6px; align-items: center; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .params input { width: 64px; }
+  .off { opacity: .5; }
+  .pill { font-size: 11px; padding: 1px 7px; border-radius: 99px; border: 1px solid var(--line); }
+  details summary { cursor: pointer; }
+  ul.changes { margin: 6px 0 0; padding-left: 18px; color: var(--muted); font-size: 13px; }
+  #gate { max-width: 360px; margin: 14vh auto 0; }
+  #gate input { width: 100%; margin: 10px 0; }
+</style>
+</head>
+<body>
+<main id="app"><p class="muted">Loading...</p></main>
+<script>
+(function () {
+  'use strict';
+  var BASE = location.pathname.replace(/\/+$/, '');
+  var app = document.getElementById('app');
+  var data = null;   // what the server last sent
+  var draft = null;  // the values being edited
+  var ui = { q: '', area: '', onlyChanged: false, message: null };
+
+  function h(tag, attrs) {
+    var el = document.createElement(tag);
+    Object.keys(attrs || {}).forEach(function (k) {
+      var v = attrs[k];
+      if (v === false || v == null) return;
+      if (k.slice(0, 2) === 'on') el.addEventListener(k.slice(2), v);
+      else if (k === 'class') el.className = v;
+      else if (k === 'value') el.value = v;
+      else el.setAttribute(k, v === true ? '' : v);
+    });
+    (function add(list) {
+      for (var i = 0; i < list.length; i++) {
+        var c = list[i];
+        if (c == null || c === false) continue;
+        if (Array.isArray(c)) add(c); // a list of rows or options
+        else el.appendChild(typeof c === 'string' || typeof c === 'number' ? document.createTextNode(String(c)) : c);
+      }
+    })(Array.prototype.slice.call(arguments, 2));
+    return el;
+  }
+  function api(path, method, body) {
+    return fetch(BASE + '/api/' + path, { method: method || 'GET', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: body === undefined ? undefined : JSON.stringify(body) })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) throw new Error(j.message || ('Request failed (' + r.status + ')')); return j; }); });
+  }
+  var clone = function (x) { return JSON.parse(JSON.stringify(x)); };
+  var same = function (a, b) { return JSON.stringify(a) === JSON.stringify(b); };
+  var dirty = function () { return !same(draft, data.effective); };
+  var say = function (kind, text) { ui.message = text ? { kind: kind, text: text } : null; };
+
+  // ---- the password gate
+  function gate(note) {
+    var input = h('input', { type: 'password', autocomplete: 'current-password', 'aria-label': 'Developer password', placeholder: 'Developer password' });
+    var msg = h('p', { class: 'msg err', hidden: !note }, note || '');
+    function go(e) {
+      e.preventDefault();
+      api('unlock', 'POST', { password: input.value }).then(start).catch(function (err) { msg.hidden = false; msg.textContent = err.message; input.value = ''; input.focus(); });
+    }
+    app.replaceChildren(h('form', { id: 'gate', class: 'card', onsubmit: go },
+      h('h1', {}, 'Rule editor'),
+      h('p', { class: 'muted' }, 'For developers. Enter the developer password to continue.'),
+      input, h('button', { class: 'primary', type: 'submit' }, 'Open'), msg));
+    input.focus();
+  }
+
+  // ---- loading
+  function start() {
+    return api('status').then(function (s) {
+      if (!s.configured) { app.replaceChildren(h('p', { class: 'msg err' }, 'The rule editor is switched off: set DEV_EDITOR_PASSWORD in server/.env and restart the server.')); return; }
+      if (!s.unlocked) return gate();
+      return refresh();
+    }).catch(function (err) { app.replaceChildren(h('p', { class: 'msg err' }, err.message)); });
+  }
+  function refresh() {
+    return api('data').then(function (d) { data = d; draft = clone(d.effective); render(); }).catch(function (err) { if (/password/i.test(err.message)) gate(); else app.replaceChildren(h('p', { class: 'msg err' }, err.message)); });
+  }
+
+  // ---- saving
+  function toDoc() {
+    var doc = { passThreshold: draft.passThreshold, bands: draft.bands, areas: {}, constants: draft.constants, rules: {} };
+    draft.areas.forEach(function (a) { doc.areas[a.key] = { weight: a.weight }; });
+    draft.rules.forEach(function (r) { doc.rules[r.id] = { weight: r.weight, severity: r.severity, message: r.message, fix: r.fix, enabled: r.enabled, params: numeric(r.params) }; });
+    return doc;
+  }
+  function numeric(p) { var o = {}; Object.keys(p || {}).forEach(function (k) { if (typeof p[k] === 'number') o[k] = p[k]; }); return o; }
+  function save() {
+    api('data', 'PUT', { doc: toDoc() }).then(function (d) {
+      data = d; draft = clone(d.effective);
+      say('ok', d.changed ? 'Saved. The checker now uses version ' + d.version + '. Syllabi are re-scored the next time they are checked.' : 'Nothing changed.'); render();
+    }).catch(function (err) { say('err', err.message); render(); });
+  }
+  function resetAll() {
+    if (!window.confirm('Put every value back to what the standard file says? Your edits are removed (the history keeps them).')) return;
+    api('reset', 'POST', {}).then(function (d) { data = d; draft = clone(d.effective); say('ok', 'Reset to the standard file (version ' + d.version + ').'); render(); }).catch(function (err) { say('err', err.message); render(); });
+  }
+  function lock() { api('lock', 'POST', {}).then(function () { gate(); }); }
+
+  // ---- inputs
+  function num(value, base, onchange, extra) {
+    return h('input', Object.assign({ type: 'number', value: String(value), class: value !== base ? 'chg' : '', step: 1, onchange: function (e) { var v = Number(e.target.value); onchange(isNaN(v) ? 0 : v); render(true); } }, extra || {}));
+  }
+  function field(label, control) { return h('label', { class: 'field' }, h('span', {}, label), control); }
+
+  // ---- the page
+  function scoring() {
+    return h('section', { class: 'card' }, h('h2', {}, 'Scoring'),
+      h('div', { class: 'grid' }, field('Pass mark (%)', num(draft.passThreshold, data.base.passThreshold, function (v) { draft.passThreshold = v; }))),
+      h('p', { class: 'muted', style: 'margin:12px 0 6px' }, 'Score bands, highest first. Each band starts at the score on the right and runs up to the next band.'),
+      h('div', { class: 'bands' }, draft.bands.map(function (b, i) {
+        var base = data.base.bands[i];
+        return h('div', { class: 'band' },
+          h('input', { value: b.label, class: b.label !== base.label ? 'chg' : '', 'aria-label': 'Band ' + (i + 1) + ' label', onchange: function (e) { b.label = e.target.value; render(true); } }),
+          h('span', { class: 'muted' }, 'starts at'),
+          num(b.min, base.min, function (v) { b.min = v; }, { 'aria-label': 'Band ' + (i + 1) + ' starts at' }));
+      })));
+  }
+  function areas() {
+    var total = draft.areas.reduce(function (n, a) { return n + a.weight; }, 0);
+    return h('section', { class: 'card' }, h('h2', {}, 'Areas and weights'),
+      h('div', { class: 'grid' }, draft.areas.map(function (a, i) { return field(a.name, num(a.weight, data.base.areas[i].weight, function (v) { a.weight = v; })); })),
+      h('p', { class: 'muted', style: 'margin-top:8px' }, 'Total weight: ' + total + ' (the overall score is an average by these weights, so it does not have to be 100).'));
+  }
+  function limits() {
+    return h('section', { class: 'card' }, h('h2', {}, 'Limits'),
+      h('div', { class: 'grid' }, Object.keys(draft.constants).map(function (k) { return field(k, num(draft.constants[k], data.base.constants[k], function (v) { draft.constants[k] = v; })); })),
+      h('p', { class: 'muted', style: 'margin-top:8px' }, 'Some rules keep their own copy of a number (the "Numbers" column below). Change both where they mean the same thing.'));
+  }
+  function ruleRow(r) {
+    var b = data.base.rules.find(function (x) { return x.id === r.id; });
+    var pk = Object.keys(numeric(r.params));
+    var holes = (b.message.match(/\{[^}]+\}/g) || []).join(' ');
+    return h('tr', { class: r.enabled ? '' : 'off' },
+      h('td', { class: 'code' }, r.id, h('div', { class: 'muted' }, r.area)),
+      h('td', {}, h('input', { type: 'checkbox', checked: r.enabled, class: r.enabled !== b.enabled ? 'chg' : '', 'aria-label': r.id + ' counts', onchange: function (e) { r.enabled = e.target.checked; render(true); } })),
+      h('td', { class: 'num' }, num(r.weight, b.weight, function (v) { r.weight = v; }, { 'aria-label': r.id + ' points' })),
+      h('td', {}, h('select', { class: r.severity !== b.severity ? 'chg' : '', 'aria-label': r.id + ' severity', onchange: function (e) { r.severity = e.target.value; render(true); } },
+        ['blocking', 'major', 'minor'].map(function (s) { return h('option', { value: s, selected: s === r.severity }, s); }))),
+      h('td', {}, h('textarea', { class: r.message !== b.message ? 'chg' : '', 'aria-label': r.id + ' message', onchange: function (e) { r.message = e.target.value; render(true); } }, r.message),
+        holes ? h('div', { class: 'muted' }, 'May use: ' + holes) : null),
+      h('td', {}, h('textarea', { class: r.fix !== (b.fix || '') ? 'chg' : '', 'aria-label': r.id + ' explanation', onchange: function (e) { r.fix = e.target.value; render(true); } }, r.fix)),
+      h('td', { class: 'params' }, pk.map(function (k) { return h('label', {}, k, num(r.params[k], b.params[k], function (v) { r.params[k] = v; })); })),
+      h('td', {}, same(rulePart(r), rulePart(b)) ? null : h('button', { onclick: function () { Object.assign(r, clone(rulePart(b))); render(true); } }, 'Undo')));
+  }
+  function rulePart(r) { return { enabled: r.enabled, weight: r.weight, severity: r.severity, message: r.message, fix: r.fix || '', params: r.params }; }
+  function rules() {
+    var q = ui.q.toLowerCase().split(/\s+/).filter(Boolean);
+    var shown = draft.rules.filter(function (r) {
+      var b = data.base.rules.find(function (x) { return x.id === r.id; });
+      if (ui.area && r.area !== ui.area) return false;
+      if (ui.onlyChanged && same(rulePart(r), rulePart(b))) return false;
+      var hay = (r.id + ' ' + r.message + ' ' + r.fix).toLowerCase();
+      return q.every(function (w) { return hay.indexOf(w) >= 0; });
+    });
+    var pts = shown.reduce(function (n, r) { return n + (r.enabled ? r.weight : 0); }, 0);
+    return h('section', { class: 'card' }, h('h2', {}, 'Rules (' + shown.length + ' of ' + draft.rules.length + ')'),
+      h('div', { class: 'row', style: 'margin-bottom:10px' },
+        h('input', { placeholder: 'Search the rules', value: ui.q, 'aria-label': 'Search the rules', oninput: function (e) { ui.q = e.target.value; render(true, 'search'); } }),
+        h('select', { 'aria-label': 'Area', onchange: function (e) { ui.area = e.target.value; render(true); } }, h('option', { value: '' }, 'All areas'),
+          draft.areas.map(function (a) { return h('option', { value: a.key, selected: ui.area === a.key }, a.name); })),
+        h('label', { class: 'row' }, h('input', { type: 'checkbox', checked: ui.onlyChanged, onchange: function (e) { ui.onlyChanged = e.target.checked; render(true); } }), 'Only rules I changed')),
+      h('div', { class: 'scroll' }, h('table', {},
+        h('thead', {}, h('tr', {}, ['Code', 'Counts', 'Points', 'Severity', 'Message', 'Explanation', 'Numbers', ''].map(function (t) { return h('th', {}, t); }))),
+        h('tbody', {}, shown.map(ruleRow)),
+        h('tfoot', {}, h('tr', {}, h('th', { colspan: 2 }, 'Total points listed'), h('th', {}, pts), h('th', { colspan: 5 }, ''))))));
+  }
+  function when(iso) { var d = new Date(iso); return isNaN(d) ? '' : d.toLocaleString(); }
+  function describe(c) {
+    var f = function (v) { return typeof v === 'object' ? JSON.stringify(v) : String(v); };
+    return c.target + ' · ' + c.field + ': ' + f(c.from) + ' → ' + f(c.to);
+  }
+  function history() {
+    return h('section', { class: 'card' }, h('h2', {}, 'History'),
+      data.history.length ? data.history.map(function (e) {
+        return h('details', {}, h('summary', {}, '#' + e.rev + ' · ' + (e.kind === 'reset' ? 'reset to file' : 'saved') + ' · ' + e.by + ' · ' + when(e.at) + ' · ' + e.changes.length + ' change' + (e.changes.length === 1 ? '' : 's')),
+          h('ul', { class: 'changes' }, e.changes.map(function (c) { return h('li', {}, describe(c)); })));
+      }) : h('p', { class: 'muted' }, 'No edits yet. The checker is using the standard file as it is.'));
+  }
+
+  var pending = null;
+  function render(keepScroll, focus) {
+    var y = window.scrollY;
+    var head = h('div', { class: 'bar' },
+      h('div', {}, h('h1', {}, 'Rule editor'),
+        h('p', { class: 'muted' }, 'Compliance standard in use: ' + data.version + (data.edited ? ' (edited from file ' + data.baseVersion + ')' : ' (as in the file)') + '. Changes apply to every new check at once.')),
+      h('div', { class: 'row' },
+        h('button', { class: 'primary', disabled: !dirty(), onclick: save }, 'Save changes'),
+        h('button', { disabled: !dirty(), onclick: function () { draft = clone(data.effective); say(null); render(true); } }, 'Discard'),
+        h('button', { class: 'danger', disabled: !data.edited, onclick: resetAll }, 'Reset to file'),
+        h('button', { onclick: lock }, 'Lock')));
+    app.replaceChildren.apply(app, [head, ui.message ? h('p', { class: 'msg ' + ui.message.kind }, ui.message.text) : null, scoring(), areas(), limits(), rules(), history()].filter(Boolean)); // replaceChildren turns null into the text "null"
+    if (keepScroll) window.scrollTo(0, y);
+    if (focus === 'search') { var s = app.querySelector('input[aria-label="Search the rules"]'); if (s) { s.focus(); s.setSelectionRange(s.value.length, s.value.length); } }
+  }
+
+  window.addEventListener('beforeunload', function (e) { if (data && draft && dirty()) { e.preventDefault(); e.returnValue = ''; } });
+  start();
+})();
+</script>
+</body>
+</html>
