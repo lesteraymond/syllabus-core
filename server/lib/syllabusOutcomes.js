@@ -1,16 +1,19 @@
 // Syllabus-owned learning outcomes. Legacy catalog data is copied only on first edit.
 const { httpError } = require('./http');
 const { LEVELS } = require('./courses');
+const { assertContentBasis } = require('./programPoReferences');
+const { hasContent } = require('../../shared/contentPresence.cjs');
 const blankOutcomes = () => ({ vision: '', mission: { lead: '', items: [] }, egas: [], pos: [] });
 function outcomesFrom(content, course) {
   if (content.outcomes) return content.outcomes;
+  if(course?.standards?.poReference && !content.catalog?.program?.pos) assertContentBasis(content,course.standards.poReference);
   const snapshot = content.catalog;
   const source = snapshot?.institution ? {
     ...snapshot.institution,
     egas: snapshot.program?.egas || snapshot.institution.egas || [],
     pos: snapshot.program?.pos || [],
   } : course?.standards || blankOutcomes();
-  return JSON.parse(JSON.stringify({ vision: source.vision || '', mission: { lead: source.mission?.lead || '', items: source.mission?.items || [] }, egas: source.egas || [], pos: source.pos || [] }));
+  return JSON.parse(JSON.stringify({ vision: source.vision || '', mission: { lead: source.mission?.lead || '', items: source.mission?.items || [] }, egas: source.egas || [], pos: content.catalog?.program?.pos || source.pos || [] }));
 }
 function validateOutcomes(outcomes, clos, plan = [], { complete = false } = {}) {
   const object = v => v && typeof v === 'object' && !Array.isArray(v);
@@ -42,7 +45,7 @@ function validateOutcomes(outcomes, clos, plan = [], { complete = false } = {}) 
     const [kind, id] = tag.split(':');
     if ((kind === 'clo' && !ids.has(id)) || (kind === 'ega' && !egas.has(Number(id))) || (kind === 'po' && !pos.has(Number(id)))) fail();
   }
-  if (complete && (!outcomes.vision.trim() || !outcomes.mission.lead.trim() || !outcomes.mission.items.length || outcomes.mission.items.some(t => !t.trim()) || !outcomes.egas.length || outcomes.egas.some(e => !e.name.trim() || !e.short.trim()) || !outcomes.pos.length || outcomes.pos.some(p => !p.text.trim() || !p.short.trim()) || !clos.length || clos.some(c => !c.statement.trim() || !c.egas.length || !c.pos.length))) {
+  if (complete && (!hasContent(outcomes.vision) || !hasContent(outcomes.mission.lead) || !outcomes.mission.items.length || outcomes.mission.items.some(t => !hasContent(t)) || !outcomes.egas.length || outcomes.egas.some(e => !hasContent(e.name) || !hasContent(e.short)) || !outcomes.pos.length || outcomes.pos.some(p => !hasContent(p.text) || !hasContent(p.short)) || !clos.length || clos.some(c => !hasContent(c.statement) || !c.egas.length || !c.pos.length))) {
     throw httpError(409, 'Complete Vision, Mission, EGA, PO and CLO in step 2 before submitting.');
   }
 }

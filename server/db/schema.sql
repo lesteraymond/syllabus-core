@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS users (
   email VARCHAR(255) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   must_change_password TINYINT(1) NOT NULL DEFAULT 0,
-  role ENUM('faculty', 'admin', 'student') NOT NULL DEFAULT 'faculty',
+  role ENUM('faculty', 'admin', 'student', 'asst_vpaa', 'lic_director', 'vpaa') NOT NULL DEFAULT 'faculty',
   first_name VARCHAR(100) NOT NULL,
   last_name VARCHAR(100) NOT NULL,
   avatar_path VARCHAR(255) NULL,
@@ -133,7 +133,7 @@ CREATE TABLE IF NOT EXISTS submission_logs (
   log_id INT AUTO_INCREMENT PRIMARY KEY,
   syllabus_id INT NOT NULL,
   user_id INT NOT NULL,
-  action ENUM('upload', 'update', 'submit', 'approve', 'reject', 'revision', 'delete') NOT NULL,
+  action ENUM('upload', 'update', 'submit', 'approve', 'reject', 'revision', 'delete', 'check', 'recommend') NOT NULL,
   action_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   notes TEXT,
   FOREIGN KEY (syllabus_id) REFERENCES syllabi(syllabus_id) ON DELETE CASCADE,
@@ -331,6 +331,10 @@ CREATE TABLE IF NOT EXISTS catalog_file_cleanup (file_path VARCHAR(500) PRIMARY 
 
 CREATE TABLE IF NOT EXISTS program_code_aliases (code VARCHAR(20) PRIMARY KEY, program_id INT NOT NULL, FOREIGN KEY (program_id) REFERENCES programs(program_id) ON DELETE CASCADE);
 
+-- A specialization that shares another program's authoritative Program Outcomes (e.g. BSIT-CYBERSECURITY -> BSIT). The checker reads the source
+-- program's POs; the specialization keeps its own program id, code, name and curriculum. Additive: no row here means the program uses its own POs.
+CREATE TABLE IF NOT EXISTS program_outcome_sources (program_id INT PRIMARY KEY, source_program_id INT NOT NULL, specialization VARCHAR(120) NULL, FOREIGN KEY (program_id) REFERENCES programs(program_id) ON DELETE CASCADE, FOREIGN KEY (source_program_id) REFERENCES programs(program_id) ON DELETE RESTRICT);
+
 -- Time usage: active seconds per user per day (see lib/usage.js). Written in one batch about once a minute.
 CREATE TABLE IF NOT EXISTS usage_daily (
   user_id INT NOT NULL,
@@ -372,3 +376,51 @@ CREATE TABLE IF NOT EXISTS deadline_notices (
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
+
+
+-- Hybrid syllabus verification
+CREATE TABLE IF NOT EXISTS syllabus_check_curricula (
+    reference_id INT AUTO_INCREMENT PRIMARY KEY,
+    program_code VARCHAR(40) NOT NULL,
+    curriculum_year VARCHAR(40) NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'draft',
+    source VARCHAR(500) NOT NULL,
+    courses_json LONGTEXT NOT NULL,
+    created_by INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY curriculum_version (program_code, curriculum_year)
+  );
+
+CREATE TABLE IF NOT EXISTS syllabus_check_reports (
+    run_id INT PRIMARY KEY,
+    reference_hash CHAR(64) NOT NULL,
+    report_json LONGTEXT NOT NULL,
+    FOREIGN KEY (run_id) REFERENCES ai_check_runs(run_id) ON DELETE CASCADE
+  );
+
+CREATE TABLE IF NOT EXISTS syllabus_check_decisions (
+    decision_id INT AUTO_INCREMENT PRIMARY KEY,
+    run_id INT NOT NULL,
+    suggestion_id VARCHAR(255) NOT NULL,
+    action VARCHAR(20) NOT NULL,
+    edited_text TEXT NULL,
+    user_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (run_id) REFERENCES ai_check_runs(run_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+  );
+
+-- Review chain: who cleared which stage (dean, Asst. VPAA, LIC Director) of which version of a syllabus. The VPAA approves once all three are cleared.
+CREATE TABLE IF NOT EXISTS syllabus_review_stages (
+    stage_id INT AUTO_INCREMENT PRIMARY KEY,
+    syllabus_id INT NOT NULL,
+    version_id INT NOT NULL,
+    stage ENUM('dean', 'asst_vpaa', 'lic_director') NOT NULL,
+    reviewer_id INT NOT NULL,
+    note TEXT NULL,
+    cleared_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uniq_stage_per_version (syllabus_id, version_id, stage),
+    INDEX idx_stage_syllabus (syllabus_id),
+    FOREIGN KEY (syllabus_id) REFERENCES syllabi(syllabus_id) ON DELETE CASCADE,
+    FOREIGN KEY (reviewer_id) REFERENCES users(user_id) ON DELETE CASCADE
+  );

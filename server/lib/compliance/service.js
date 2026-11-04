@@ -9,12 +9,72 @@ const { evaluate } = require('./rules');
 const { contentHash } = require('./hash');
 const { recommend } = require('./recommend');
 const { MockProvider, LlmProvider } = require('./providers');
-const { createGeminiClient } = require('./geminiClient');
-const { createOpenRouterClient } = require('./openrouterClient');
 const { inTransaction } = require('../http');
 const { schoolYearStart } = require('../schoolYear');
 const uploadCheck = require('./upload');
-const { judgeContent } = require('./meaning');
+const hybridEngine = require('../syllabuscheck/engine');
+const hybridRepo = require('../syllabuscheck/repository');
+const { httpError } = require('../http');
+const { verifiedAlignment, createRequestBudget } = require('../syllabuscheck/gemini');
+const { aiGate } = require('../syllabuscheck/policy');
+const { titleDecisionChanged } = require('../syllabuscheck/titles');
+const academicV2Activation = require('../syllabuscheck/academicV2Activation');
+const academicV2 = require('../syllabuscheck/academicPolicyV2');
+// Invalidate legacy cached scores; they contain no semantic verification.
+standard.version = hybridEngine.VERSION;
+
+async function checkHybrid(db, content, options = {}) {
+  if (options.academicPolicy === require('../../../src/data/academicPolicyV2.json').id) require('../syllabuscheck/academicV2Input').validateInput(content, {});
+  const masters = await hybridRepo.mastersFor(db, content, {syllabusId:options.syllabusId});
+  if (options.academicPolicy && options.academicPolicy !== 'legacy') {
+    const result = await hybridEngine.run(content, masters, options);
+    result.referenceHash = masters.fingerprint;
+    return result; // no legacy history, deductions, report writes or gate use
+  }
+  // When the caller names the syllabus, the AI is only asked about what changed since its earlier checks (SYLLABUS_CHECK_REUSE=off asks everything).
+  const env = options.env || process.env;
+  const requestBudget = options.requestBudget || createRequestBudget(env);
+  const reuse = options.syllabusId && env.SYLLABUS_CHECK_REUSE !== 'off' ? await hybridRepo.reusableJudgements(db, options.syllabusId) : undefined;
+  // What the author already corrected: lets the checker tell an unresolved problem from a new one and stop after a few attempts.
+  const history = options.syllabusId ? await hybridRepo.correctionHistory(db, options.syllabusId) : undefined;
+  const result = await hybridEngine.run(content, masters, { ...options, requestBudget, reuse, history });
+  if (academicV2Activation.enabled(env)) {
+    try {
+      result.hybrid.academicV2 = await academicV2.evaluateIntegrated(content, masters, hybridEngine.coded, { env, syllabusId: options.syllabusId, requestBudget, signal: options.signal, ...(options.transport ? { transport: options.transport } : {}) });
+      if (result.hybrid.academicV2?.academic?.suggestions?.length) {
+        const existingIds = new Set((result.hybrid.suggestions || []).map(s => s.id));
+        result.hybrid.suggestions = [
+          ...(result.hybrid.suggestions || []),
+          ...result.hybrid.academicV2.academic.suggestions.filter(s => !existingIds.has(s.id))
+        ];
+      }
+    } catch (error) {
+      result.hybrid.academicV2 = { version: academicV2.POLICY.id, mode: 'live-application', status: 'not_evaluated',
+        contracts: { policy: academicV2.POLICY.id }, alignment: { status: 'not_evaluated', reason: `Policy V2 could not prepare this academic check: ${error.message}` },
+        academic: { policyVersion: academicV2.POLICY.id, disposition: 'NOT_EVALUATED', requirements: [], relationships: [], remediation: { actions: [], rootReviews: [] },
+          coverage: { required: 0, supported: 0, notEvaluated: 0 }, provenance: { kind: 'live-application', liveModelCalls: 0, networkRequests: 0, facultyValidated: false } } };
+    }
+  }
+  result.referenceHash = masters.fingerprint;
+  return result;
+}
+async function requireHybrid(db, syllabusId, content, { hardOnly = false } = {}) {
+  if (!(await isInstalled(db))) throw httpError(503, 'AI Checker must be set up before submission or publishing.');
+  const masters = await hybridRepo.mastersFor(db, content, {syllabusId});
+  const hard = hybridEngine.coded(content, masters);
+  const failed = hard.findings.filter(f => f.severity === 'blocking');
+  if (failed.length) throw httpError(409, failed.find(f => f.ruleId === 'CUR-CODE')?.message || failed[0].message, { code: 'syllabus_hard_gate', score: hard.critical ? 0 : null, failed });
+  // The coded hard gates above always apply. A completed AI check is only required when the policy says so: otherwise the AI's
+  // judgements and recommendations are advice, and the author (to submit) or the administrator (to approve) decides.
+  if (hardOnly || aiGate() === 'advisory') return;
+  const cached = await cachedRun(db, syllabusId, contentHash(content, standard.version));
+  const report = cached ? await hybridRepo.readReport(db, cached.run_id) : null;
+  const checkedAt = Date.parse(report?.hybrid?.checkedAt || '');
+  if (!report || report.fingerprint !== masters.fingerprint || !report.hybrid?.ready || report.hybrid.synthetic || !verifiedAlignment(report.hybrid.alignment) || !Number.isFinite(checkedAt) || Date.now() - checkedAt > 30 * 60 * 1000) {
+    throw httpError(409, 'Complete active AI alignment and reference checks on the current saved form before submission. Checks expire after 30 minutes or any content/reference change.', { code: 'alignment_required', score: report?.score ?? null });
+  }
+  return report;
+}
 
 // ---- is the database ready? (only a positive answer is remembered, so running the migration needs no restart) ----
 let installed = false;
@@ -27,8 +87,7 @@ const resetInstalledCache = () => { installed = false; };
 
 // ---- running the rules ----
 // `catalog` is the live { institution, program } (see catalogSnapshot in routes/syllabusContent.js); `preparedBy` the owner's name.
-// `judged` is the AI's verdict on the fields (see meaning.js); without it those rules do not apply.
-const check = (content, { catalog, preparedBy, judged } = {}) => evaluate(content, standard, { year: schoolYearStart(), catalog, preparedBy, judged });
+const check = (content, { catalog, preparedBy } = {}) => evaluate(content, standard, { year: schoolYearStart(), catalog, preparedBy });
 
 // The 409 a blocking failure turns into: a message and the rules that failed, so the builder can show each next to its step.
 function gateError(result) {
@@ -45,36 +104,27 @@ const j = (v) => (v === undefined || v === null ? null : JSON.stringify(v));
 // Inside the caller's transaction. Returns the run id.
 // `ai: false` for a run that gets no AI step (an uploaded file has no form to describe to a provider): it stays 'none'.
 async function storeRun(conn, { syllabusId, versionId = null, content, result, createdBy = null, ai = true }) {
-  const aiStatus = ai && result.status === 'scored' && (result.findings.length || canJudge()) ? 'pending' : 'none';
+  if (require('../syllabuscheck/academicPolicyV2').isV2(result)) throw httpError(409, 'Offline Policy V2 previews cannot be stored as official runs.', {code:'academic_preview_not_official'});
+  const aiStatus = result.hybrid ? result.hybrid.alignment.status === 'completed' ? 'ok' : 'failed' : ai && result.status === 'scored' && result.findings.length ? 'pending' : 'none';
   const [ins] = await conn.query(
     `INSERT INTO ai_check_runs (syllabus_id, version_id, content_hash, standard_version, overall, status, passed, conformant, ai_status, contact, created_by)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [syllabusId, versionId, contentHash(content, standard.version), standard.version, result.overall, result.status, result.passed ? 1 : 0, result.conformance.ok ? 1 : 0, aiStatus, j(result.contact), createdBy]
   );
   const runId = ins.insertId;
+  if (result.hybrid) {
+    await hybridRepo.saveReport(conn, runId, result, result.referenceHash);
+    const alignment = result.hybrid.alignment;
+    await conn.query('UPDATE ai_check_runs SET provider = ?, model = ?, ai_error = ? WHERE run_id = ?', [alignment.provider || null, alignment.model || null, alignment.reason?.slice(0, 255) || null, runId]);
+  }
   await conn.query('INSERT INTO ai_check_area_scores (run_id, area_key, name, weight, score) VALUES ?', [result.areas.map((a) => [runId, a.key, a.name, a.weight, a.score])]);
-  await insertFindings(conn, runId, result.findings);
+  if (result.findings.length) {
+    await conn.query(
+      'INSERT INTO ai_findings (run_id, kind, source, area, rule_id, severity, step, path, message, evidence, position) VALUES ?',
+      [result.findings.map((f, i) => [runId, 'finding', 'rule', f.area, f.ruleId, f.severity, f.step, f.path.slice(0, 255), f.message, j(f.evidence), i])]
+    );
+  }
   return runId;
-}
-
-// A finding is the rules' own, or the AI's verdict that a field is not meaningful (rules J-01 to J-05).
-async function insertFindings(conn, runId, findings) {
-  if (!findings.length) return;
-  await conn.query(
-    'INSERT INTO ai_findings (run_id, kind, source, area, rule_id, severity, step, path, message, evidence, position) VALUES ?',
-    [findings.map((f, i) => [runId, 'finding', /^J-/.test(f.ruleId) ? 'ai' : 'rule', f.area, f.ruleId, f.severity, f.step, f.path.slice(0, 255), f.message, j(f.evidence), i])]
-  );
-}
-
-// The run again, scored with the AI's verdicts: the score, the six area scores and the findings are replaced by the new result.
-async function applyJudgment(db, runId, result) {
-  await inTransaction(db, async (conn) => {
-    await conn.query('UPDATE ai_check_runs SET overall = ?, status = ?, passed = ?, conformant = ? WHERE run_id = ?', [result.overall, result.status, result.passed ? 1 : 0, result.conformance.ok ? 1 : 0, runId]);
-    await conn.query('DELETE FROM ai_check_area_scores WHERE run_id = ?', [runId]);
-    await conn.query('INSERT INTO ai_check_area_scores (run_id, area_key, name, weight, score) VALUES ?', [result.areas.map((a) => [runId, a.key, a.name, a.weight, a.score])]);
-    await conn.query("DELETE FROM ai_findings WHERE run_id = ? AND kind = 'finding'", [runId]);
-    await insertFindings(conn, runId, result.findings);
-  });
 }
 
 // The recommendations, and what the AI step ended up doing, saved against a run. No provider configured is not an error: the
@@ -101,50 +151,20 @@ async function attachRecommendations(db, runId, rec) {
 let provider;
 function getProvider() {
   if (provider !== undefined) return provider;
-  // COMPLIANCE_AI_PROVIDER picks one ('mock', 'llm' = an unconfigured stub, 'openrouter', 'gemini', or 'off'). Unset, an
-  // OPENROUTER_API_KEY selects OpenRouter, else a GEMINI_API_KEY selects Gemini.
-  const name = String(process.env.COMPLIANCE_AI_PROVIDER || (process.env.OPENROUTER_API_KEY ? 'openrouter' : process.env.GEMINI_API_KEY ? 'gemini' : '')).toLowerCase();
-  if (name === 'openrouter' && process.env.OPENROUTER_API_KEY) {
-    const client = createOpenRouterClient({ apiKey: process.env.OPENROUTER_API_KEY, ...(process.env.OPENROUTER_MODEL ? { model: process.env.OPENROUTER_MODEL } : {}) });
-    provider = new LlmProvider({ client, model: client.model });
-  } else if (name === 'gemini' && process.env.GEMINI_API_KEY) {
-    const client = createGeminiClient({ apiKey: process.env.GEMINI_API_KEY, ...(process.env.GEMINI_MODEL ? { model: process.env.GEMINI_MODEL } : {}) });
-    provider = new LlmProvider({ client, model: client.model });
-  } else {
-    provider = name === 'mock' ? new MockProvider() : name === 'llm' ? new LlmProvider() : null;
-  }
+  const name = String(process.env.COMPLIANCE_AI_PROVIDER || '').toLowerCase();
+  provider = name === 'mock' ? new MockProvider() : name === 'llm' ? new LlmProvider() : null;
   return provider;
 }
 const setProvider = (p) => { provider = p; };
-// Whether the configured provider can judge the fields (a real model can; the offline one cannot).
-const canJudge = () => { const p = getProvider(); return !!p && typeof p.judge === 'function'; };
 
 const pending = new Set();
 // Runs after the request that caused it has answered. It never throws; a failure leaves the run with ai_status 'failed'.
 // `names` are people named on the syllabus (the owner and the sign-off): they are masked in what a provider sees.
-// `rescore(judged)` is the same check run again with the AI's verdicts. The job: the AI judges the fields, the run is scored again with
-// its verdicts, then recommendations are written from what is still wrong. A failed judging step only means no verdicts: the rules' own
-// score stands and the recommendations are still written.
-function startAiJob(db, { runId, content, result, names = [], timeoutMs, rescore }) {
+function startAiJob(db, { runId, content, result, names = [], timeoutMs }) {
   const job = (async () => {
     try {
-      const p = getProvider();
-      let current = result;
-      let judgeError = null;
-      if (rescore && canJudge()) {
-        try {
-          const judged = await judgeContent({ provider: p, content, names, ...(timeoutMs ? { timeoutMs } : {}) });
-          if (judged && judged.length) { current = rescore(judged); await applyJudgment(db, runId, current); }
-        } catch (err) { judgeError = err; console.error('COMPLIANCE AI JUDGE:', err.message); }
-      }
-      if (current.findings.length) {
-        const rec = await recommend({ provider: p, result: current, content, standard, names, ...(timeoutMs ? { timeoutMs } : {}) });
-        await attachRecommendations(db, runId, rec);
-      } else {
-        // Nothing left to fix: the run is "AI-assisted" when the AI looked at the fields, and failed when it could not.
-        await db.query('UPDATE ai_check_runs SET ai_status = ?, ai_error = ?, provider = ?, model = ?, prompt_version = ? WHERE run_id = ?',
-          [judgeError ? 'failed' : 'ok', judgeError ? ((judgeError.code || 'error') + ': ' + judgeError.message).slice(0, 255) : null, p.name || null, p.model || null, p.promptVersion || null, runId]);
-      }
+      const rec = await recommend({ provider: getProvider(), result, content, standard, names, ...(timeoutMs ? { timeoutMs } : {}) });
+      await attachRecommendations(db, runId, rec);
     } catch (err) {
       console.error('COMPLIANCE AI JOB:', err.message);
       try { await db.query("UPDATE ai_check_runs SET ai_status = 'failed', ai_error = ? WHERE run_id = ?", [String(err.message).slice(0, 255), runId]); } catch { /* nothing more to do */ }
@@ -207,6 +227,34 @@ async function loadDetail(db, run, currentHash) {
   const areas = (await loadAreas(db, [run.run_id])).get(run.run_id) || [];
   const [rows] = await db.query('SELECT * FROM ai_findings WHERE run_id = ? ORDER BY position', [run.run_id]);
   const out = summarize(run, areas, currentHash);
+  const report = /^hybrid-\d+$/.test(run.standard_version) ? await hybridRepo.readReport(db, run.run_id) : null;
+  if (report) {
+    out.hybrid = report.hybrid;
+    out.score = report.score;
+    out.provider = report.hybrid.alignment.provider || null;
+    out.model = report.hybrid.alignment.model || null;
+    out.aiError = report.hybrid.alignment.reason || null;
+    out.referenceHash = report.fingerprint;
+    // Normalize historical partial reports too: they used to expose their coded
+    // baseline as an AI score even though Gemini had never evaluated the form.
+    if (!report.hybrid.ready && !report.hybrid.critical) {
+      out.hybrid = { ...out.hybrid, score: null };
+      out.score = out.overall = out.band = null;
+      out.status = 'incomplete';
+      out.passed = false;
+    }
+    const masters = await hybridRepo.mastersFor(db, { meta: report.hybrid.checkedMeta });
+    const checkedTime = Date.parse(report.hybrid.checkedAt);
+    // A check goes out of date when the rules or the official references changed since it was made. It also expires after 30 minutes, but
+    // only where a fresh AI check is a gate to submit ('required'); as advice it stays valid until the syllabus itself changes (that is
+    // `stale` above, from the content hash), so an unchanged syllabus keeps its score instead of showing "incomplete".
+    const aged = aiGate() === 'required' && Date.now() - checkedTime > 30 * 60 * 1000;
+    // A report whose title decision the title policy in force would now make differently (the policy was switched after the check) is out of date.
+    if (titleDecisionChanged(report) || run.standard_version !== hybridEngine.VERSION || masters.fingerprint !== report.fingerprint || !Number.isFinite(checkedTime) || aged) {
+      out.stale = true;
+      out.hybrid = { ...out.hybrid, ready: false };
+    }
+  }
   out.findings = rows.filter((r) => r.kind === 'finding').map((r) => ({
     id: r.rule_id + ':' + r.path, area: r.area, source: r.source, ruleId: r.rule_id, severity: r.severity, step: r.step, path: r.path, message: r.message, evidence: parse(r.evidence) || {},
   }));
@@ -218,6 +266,7 @@ async function loadDetail(db, run, currentHash) {
       priority: r.priority === null ? null : Number(r.priority), level: r.priority_level,
     };
   });
+  if (report) out.findings = report.findings;
   return out;
 }
 
@@ -283,6 +332,7 @@ const publicationContent = (content,catalog) => ({ ...content, subjectCheckBasis
 const hashOf = (content) => contentHash(content, standard.version);
 
 module.exports = {
+  checkHybrid, requireHybrid,
   publicationContent, ADMIN_RUN_SQL, adminCheckStates, uploadCheck, uploadFingerprint, versionFile, standard, check, gateError, isInstalled, resetInstalledCache, storeRun, attachRecommendations,
-  startAiJob, canJudge, applyJudgment, settled, getProvider, setProvider, namesFor, summarize, loadAreas, loadDetail, latestRun, cachedRun, latestVersion, hashOf, bandOf,
+  startAiJob, settled, getProvider, setProvider, namesFor, summarize, loadAreas, loadDetail, latestRun, cachedRun, latestVersion, hashOf, bandOf,
 };

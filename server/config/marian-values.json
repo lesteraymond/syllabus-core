@@ -1,0 +1,34 @@
+{
+  "version": "lcup-core-values-2026-10-25",
+  "source": "https://lcup.edu.ph/mission-vision.php (section CORE VALUES)",
+  "retrievedAt": "2026-10-25",
+  "pageSha256": "8421a05450bf2ca819e0c87164723737d182dadb0ea0d6375645ba3c01991b13",
+  "approval": "pending_approval",
+  "approvalNote": "Text copied from the university website by the assistant. It has NOT been confirmed by the institution as the approved wording for syllabus checking. The page text had an encoding fault where an apostrophe should be; it was read as a typographic apostrophe. St. Augustine epigraphs are not part of the definitions and are left out. Until the institution confirms, findings that use these definitions stay advisory.",
+  "values": [
+    {
+      "name": "Compassion",
+      "definition": "Compassion is love in action. It means going beyond sympathy and extending genuine care by understanding the feelings of others, recognizing their needs, and responding with kindness. Through compassion, we reflect God’s love by becoming instruments of comfort and support to those who are most in need."
+    },
+    {
+      "name": "Courage",
+      "definition": "Courage is the strength to stand firm in truth and goodness. It is the freedom to express one’s thoughts responsibly, the boldness to give and receive fraternal correction, and the integrity to choose what is right even when it is difficult or unpopular. Rooted in Gospel values, courage empowers us to live authentically and faithfully in service of God and others."
+    },
+    {
+      "name": "Community-orientedness",
+      "definition": "We believe in the power of unity. By fostering friendship, mutual trust, and respect, we build a community that is interdependent and socially responsive. This value challenges each of us to go beyond personal interests, working together with dedication and shared responsibility to achieve common goals that uplift both the University and society."
+    },
+    {
+      "name": "Humility",
+      "definition": "Humility allows us to see ourselves and others through the lens of truth and grace. It teaches us to acknowledge both our strengths and limitations, to welcome correction with openness, and to use every experience as an opportunity for growth. Above all, humility reminds us to be grateful to God who created each of us uniquely for a purpose greater than ourselves."
+    },
+    {
+      "name": "Interiority",
+      "definition": "Interiority is the practice of turning inward, encountering our true selves, and allowing God’s presence to transform us. Through prayer, reflection, and contemplative silence, we confront our weaknesses and sinfulness, but also rediscover our dignity as children of God. This journey within leads us to an authentic relationship with Him and guides us to live with clarity and peace."
+    },
+    {
+      "name": "Missionary Spirit",
+      "definition": "A missionary spirit calls us to live beyond ourselves, reaching out to others with faith, hope, and love. It is the boldness to respond to the needs of the times, the willingness to witness Christ through our words and actions, and the passion to work for the common good. This spirit drives us to be agents of transformation in the world."
+    }
+  ]
+}

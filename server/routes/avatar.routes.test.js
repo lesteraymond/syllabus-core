@@ -41,6 +41,7 @@ function makeDb() {
     if (sql.startsWith("SELECT user_id FROM users WHERE role = 'admin' ORDER BY user_id ASC LIMIT 1")) return [Object.values(s.users).filter((u) => u.role === 'admin').sort((a, b) => a.user_id - b.user_id).slice(0, 1).map((u) => ({ user_id: u.user_id }))];
     if (sql.startsWith("SELECT 1 FROM syllabi WHERE user_id = ? AND status <> 'draft'")) return [s.syllabi.filter((x) => x.user_id === p[0] && x.status !== 'draft').map(() => ({ 1: 1 }))];
     if (sql.startsWith('SELECT avatar_path FROM users WHERE user_id')) return [s.users[p[0]] ? [{ avatar_path: s.users[p[0]].avatar_path }] : []];
+    if (/program_outcome_sources/.test(sql)) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' }); // not migrated yet
     throw new Error('unexpected query: ' + sql);
   };
   return { s, query: async (q, p) => handle(q, p) };

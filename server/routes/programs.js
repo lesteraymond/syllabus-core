@@ -5,12 +5,14 @@
 // carries the version the screen loaded: a save from an out-of-date screen is refused with 409, so two admins never
 // overwrite each other. Removing an EGA or PO that a CLO of the program's subjects still uses is refused too.
 const express = require('express');
+const { isReviewer } = require('../lib/roles');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { inTransaction, httpError, sendError } = require('../lib/http');
-const { findProgram, loadProgram } = require('../lib/programs');
+const { findProgram, loadResolvedProgram, requireOwnOutcomes, inheritedFrom } = require('../lib/programs');
 const { loadProgramEgas, isStale, STALE_MESSAGE } = require('../lib/programEgas');
 const { egasInUse, posInUse, inUseMessages, inUseError, subjectsOf } = require('../lib/catalogUse');
 const management = require('../lib/programManagement');
+const poReferences = require('../lib/programPoReferences');
 const { processCleanup } = require('../lib/catalogFileCleanup');
 const router = express.Router();
 const catalogId = raw => { const id = Number(raw); if (!Number.isInteger(id) || id <= 0) throw httpError(404, 'Program not found'); return id; };
@@ -23,7 +25,7 @@ const managementError = (res, error) => {
 router.get('/', requireAuth, async (req, res) => {
   try {
     // Faculty see only the programs an admin assigned to them; admins see every program.
-    const mine = req.session.user.role !== 'admin';
+    const mine = !isReviewer(req.session.user); // reviewers (dean, Asst. VPAA, LIC Director, VPAA) read every program
     const [rows] = await req.app.locals.db.query(
       `SELECT p.program_id, p.code, p.name, COUNT(o.po_no) AS outcome_count
        FROM programs p LEFT JOIN program_outcomes o ON o.program_id = p.program_id
@@ -31,7 +33,13 @@ router.get('/', requireAuth, async (req, res) => {
        GROUP BY p.program_id, p.code, p.name ORDER BY p.code`,
       mine ? [req.session.user.id] : []
     );
-    res.json(rows.map((r) => ({ id: r.program_id, code: r.code, name: r.name, outcomeCount: Number(r.outcome_count) })));
+    const result=[];
+    for(const row of rows){
+      const source=await inheritedFrom(req.app.locals.db,{program_id:row.program_id});
+      const count=source?(await loadResolvedProgram(req.app.locals.db,source)).pos.length:Number(row.outcome_count);
+      result.push({id:row.program_id,code:row.code,name:row.name,outcomeCount:count});
+    }
+    res.json(result);
   } catch (err) { sendError(res, err); }
 });
 
@@ -41,7 +49,7 @@ router.get('/:id/outcomes', requireAuth, async (req, res) => {
   try {
     const db = req.app.locals.db;
     const program = await findProgram(db, req.params.id);
-    res.json({ ...(await loadProgram(db, program)), subjects: await subjectsOf(db, program.program_id) });
+    res.json({ ...(await loadResolvedProgram(db, program)), subjects: await subjectsOf(db, program.program_id) });
   } catch (err) { sendError(res, err); }
 });
 
@@ -62,6 +70,7 @@ router.put('/:id/egas', requireAuth, requireAdmin, async (req, res) => {
   try {
     const db = req.app.locals.db;
     const program = await findProgram(db, req.params.id);
+    await requireOwnOutcomes(db, program);
     const { egas, version } = req.body || {};
     if (!Array.isArray(egas) || !egas.length || egas.length > 20) throw httpError(400, 'Provide 1 to 20 EGAs');
     const seen = new Set();
@@ -86,7 +95,7 @@ router.put('/:id/egas', requireAuth, requireAdmin, async (req, res) => {
       await conn.query('UPDATE programs SET egas_version = egas_version + 1 WHERE program_id = ?', [program.program_id]);
     });
     const fresh = await findProgram(db, program.program_id);
-    res.json({ ...(await loadProgram(db, fresh)), subjects: await subjectsOf(db, program.program_id) });
+    res.json({ ...(await loadResolvedProgram(db, fresh)), subjects: await subjectsOf(db, program.program_id) });
   } catch (err) { sendError(res, err); }
 });
 
@@ -95,6 +104,8 @@ router.put('/:id/outcomes', requireAuth, requireAdmin, async (req, res) => {
   try {
     const db = req.app.locals.db;
     const program = await findProgram(db, req.params.id);
+    await requireOwnOutcomes(db, program);
+    await poReferences.requireMutable(db,program.program_id);
     const { pos, version } = req.body || {};
     if (!Array.isArray(pos) || pos.length > 50) throw httpError(400, 'Provide a list of up to 50 program outcomes');
     const validEgas = new Set((await loadProgramEgas(db, program.program_id)).map((e) => e.no));
@@ -125,7 +136,7 @@ router.put('/:id/outcomes', requireAuth, requireAdmin, async (req, res) => {
       await conn.query('UPDATE programs SET pos_version = pos_version + 1 WHERE program_id = ?', [program.program_id]);
     });
     const fresh = await findProgram(db, program.program_id);
-    res.json({ ...(await loadProgram(db, fresh)), subjects: await subjectsOf(db, program.program_id) });
+    res.json({ ...(await loadResolvedProgram(db, fresh)), subjects: await subjectsOf(db, program.program_id) });
   } catch (err) { sendError(res, err); }
 });
 

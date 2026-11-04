@@ -4,7 +4,7 @@ Syllabus management system for undergraduate programs. React + Vite, Node.js + E
 
 ## Features
 
-- **Roles** — Faculty, Admin and Student
+- **Roles** — Faculty, Admin (dean), Asst. VPAA, LIC Director, VPAA and Student. The dean, the Asst. VPAA and the LIC Director check and review; only the VPAA approves (`docs/review-chain.md`)
 - **Sign-in** — Email and password, Google (allowlist), Remember me
 - **Syllabus Builder** — 7-step form, or upload a PDF instead (with preview)
 - **Student registration** — Upload a COR; an AI vision model reads it and the server checks the student is BSIT

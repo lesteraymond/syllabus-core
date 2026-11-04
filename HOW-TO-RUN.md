@@ -58,7 +58,6 @@ Fill in `server/.env`:
 | `SCHOOL_YEAR_START` | optional, default `2026` (used to measure reference age) |
 | `GEMINI_API_KEY`, `OPENROUTER_API_KEY` | optional: the AI step of the compliance check and the COR reader. Without a key the check is rule-based and a student COR cannot be read |
 | `COR_READER`, `COR_AI_MODEL` | optional: `COR_READER=ocr` reads the COR with Tesseract (testing only); `COR_AI_MODEL` names another vision model |
-| `DEV_EDITOR_PASSWORD` | optional, at least 8 characters: switches on the developer rule editor at `/dev/rules` (see below). Leave empty to keep it off |
 
 > `npm run dev` restarts the API on file changes. After running a migration, restart it by hand.
 
@@ -92,13 +91,17 @@ npm run migrate-usage
 npm run migrate-deadlines
 npm run migrate-archive
 npm run migrate-subject-owner
+npm run migrate-activity-log
+npm run migrate-review-stages
 npm run migrate-course-code-per-program
 npm run migrate-credit-units
 npm run migrate-prerequisites
 npm run seed-curriculum   # optional: the programs and subjects of the curriculum folder, with their prerequisites and credit units
 ```
 
-- `migrate-avatars-private`, `migrate-assignments`, `migrate-program-egas` and `migrate-subject-owner` support `--dry-run` (e.g. `npm run migrate-assignments -- --dry-run`)
+- `migrate-review-stages` adds the VPAA, Asst. VPAA and LIC Director roles and the table that records who cleared which review stage (see `docs/review-chain.md`); until it is run nothing can be approved
+- `migrate-avatars-private`, `migrate-assignments`, `migrate-program-egas`, `migrate-subject-owner` and `migrate-review-stages` support `--dry-run` (e.g. `npm run migrate-assignments -- --dry-run`)
+- `migrate-activity-log` lets Recent Activity record AI checks and answers to recommendations. Without it everything still works; those two kinds of activity are just not written (the server console says so once).
 - `seed-curriculum` is optional and needs the three migrations above it. It loads the programs, subjects (with credit units) and linked prerequisites from `server/db/curriculum-data.js`, adds what is missing and updates matching codes. `node scripts/sample-syllabi.js` can then make five sample syllabi
 - `migrate-compliance` and `migrate-comment-reads` are optional: the features degrade gracefully (submit still works, unread counts show totals) until they are run
 - After `migrate-assignments`, faculty cannot create or edit syllabi until an admin assigns them a program and a subject (Users & Roles, Assignments button)
@@ -182,13 +185,6 @@ DB_NAME=syllabus_cms_plus
 
 ### Google sign-in says 404 or "Access Denied"
 Restart the API server (an old process has no `/api/auth/google`). "Access Denied" means the email is not in Users & Roles.
-
-### The developer rule editor
-
-Set `DEV_EDITOR_PASSWORD` in `server/.env`, restart the API and open **http://localhost:3001/dev/rules**. It is not linked from the app and needs no app sign-in, only the password (open for 30 minutes; five wrong tries lock the address for ten). It changes the compliance standard's pass mark, bands, area weights, limits and each rule's points, severity, message, explanation, numbers and on/off switch. A save takes effect at once and gives the standard a new version (v9.1, v9.2, ...). "Reset to file" removes all edits; the history keeps them. The edits are stored in the database (`app_settings`, `standard_changes`), on top of `server/lib/compliance/standard-v4.json`. The `standard_changes` table is created the first time the editor saves (it is also in `schema.sql`).
-
-### The AI Checker standard is v9 (69 rules)
-Seven rules (D-01 to D-07) find repeated data inside one syllabus, and I-01 asks that a syllabus says how it supports diverse learners (students with disabilities and others). They are in `server/lib/compliance/standard-v4.json` and need no migration or setting. Scores stored before the upgrade stay as they were until a syllabus is checked again. If you saved edits in the developer rule editor on v7, "Reset to file" brings in the new rules (the history keeps your edits).
 
 ### "Table ... doesn't exist" or a missing column
 Your database is behind. Run the migrations in *Upgrading an existing database*, then restart the API server.
@@ -319,7 +315,6 @@ Where a script says it supports `--dry-run`, add it after `--` to only report wh
 | GET | /api/compliance/terms | School terms that have checks (for the Historical Exports list) |
 | GET | /api/settings/standard | The compliance standard, read-only (admin) |
 | GET/PUT | /api/settings | Administrator settings (admin) |
-| GET | /dev/rules | The developer rule editor page (needs `DEV_EDITOR_PASSWORD`); its API is under `/dev/rules/api/` |
 | GET | /api/messages | All my messages |
 | GET | /api/notifications | My notifications |
 | PUT | /api/notifications/read-all | Mark all read |

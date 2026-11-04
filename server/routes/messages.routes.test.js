@@ -52,6 +52,7 @@ function makeDb() {
     if (sql.startsWith('INSERT INTO messages')) { s.messages.push({ message_id: s.messages.length + 100, syllabus_id: p[0], sender_id: p[1], receiver_id: p[2], text: p[3] }); return [{ insertId: s.messages.length + 99 }]; }
     if (sql.startsWith('INSERT INTO notifications')) { s.notifications += 1; return [{}]; }
     if (sql.startsWith('UPDATE messages SET is_read')) return [{}];
+    if (/program_outcome_sources/.test(sql)) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' }); // not migrated yet
     throw new Error('unexpected query: ' + sql);
   };
   return { s, query: async (q, p) => handle(q, p) };

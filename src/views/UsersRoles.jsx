@@ -5,12 +5,15 @@ import { useState, useEffect } from 'react';
 import { Avatar, PageHead } from '../components/ui';
 import { users as usersApi } from '../lib/api';
 import AssignmentsPanel from './AssignmentsPanel';
-import { ROLE_LABELS } from '../lib/roles';
+import { ROLE_LABELS, STAFF_ROLES } from '../lib/roles';
 import Select from '../components/Select';
 
 const ROLE_PERMISSIONS = {
   admin: 'Full access',
   faculty: 'Create + Submit',
+  asst_vpaa: 'Check and review',
+  lic_director: 'Check and review',
+  vpaa: 'Review and approve',
 };
 // What to tell the admin when an email did not go out (the server sends a short reason, never anything secret).
 const MAIL_PROBLEM = {
@@ -81,7 +84,7 @@ export default function UsersRoles({ notify, onManageSubjects }) {
             </div>
             <div className="user-field">
               <label htmlFor="user-role" className="user-label">{translateUI("ui.role_c3f104")}</label>
-              <Select id="user-role" className="user-input" value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}><option value="faculty">{tr(ROLE_LABELS.faculty)}</option><option value="admin">{tr(ROLE_LABELS.admin)}</option></Select>
+              <Select id="user-role" className="user-input" value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}>{STAFF_ROLES.map(r => <option key={r} value={r}>{tr(ROLE_LABELS[r])}</option>)}</Select>
             </div>
           <div className="user-field user-field-action">
             <button className="user-save-btn" type="submit">{translateUI("ui.save_efc007")}</button>

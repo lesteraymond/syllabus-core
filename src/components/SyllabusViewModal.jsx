@@ -32,6 +32,15 @@ export default function SyllabusViewModal({ syllabusId, onClose, aside, avatarUr
     return () => { live = false; };
   }, [syllabusId, versionId]);
 
+  // Who cleared which stage of the review chain, and who approved: the form's sign-off block. A failed read leaves the block as it was.
+  const [signoffs, setSignoffs] = useState(null);
+  const status = payload && payload.syllabus ? payload.syllabus.status : null;
+  useEffect(() => {
+    let live = true;
+    syllabiApi.stages(syllabusId).then((r) => { if (live) setSignoffs(r && r.enabled !== false ? r : null); }, () => { if (live) setSignoffs(null); });
+    return () => { live = false; };
+  }, [syllabusId, status]);
+
   // Esc, Tab, focus, scroll and stacking above or below other modals are handled by the shared layer (see useModalLayer).
   useModalLayer(dialog, onClose);
 
@@ -70,7 +79,7 @@ export default function SyllabusViewModal({ syllabusId, onClose, aside, avatarUr
           {error && <div className="info-banner warning" role="alert">{tr(error)}</div>}
           {!error && !payload && <div className="empty">{translateUI("ui.opening_the_syllabus_51c75a")}</div>}
           {payload && (payload.content
-            ? <ReviewDocument content={payload.content} facultyName={s.facultyName} />
+            ? <ReviewDocument content={payload.content} facultyName={s.facultyName} signoffs={signoffs} />
             : (
               <div className="svm-nofile">
                 <p>{tr(noFormMessage(payload.file))}</p>

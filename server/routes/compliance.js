@@ -2,7 +2,7 @@
 //   GET  /api/syllabi/:id/compliance           the latest stored run of a syllabus (its owner: their own newest; an admin: the administrator's own check)
 //   POST /api/syllabi/:id/compliance/recheck   run the rules now: the owner on the saved draft, an admin on the latest submitted
 //                                              version (stored with that version, so it is the one reviewers see). Rate limited;
-//                                              the same content as an earlier run returns that run, { force: true } makes a new one
+//                                              one evaluation at a time across all users of this server
 //   GET  /api/compliance?syllabus=all|<id>     stored runs: an admin sees every submitted syllabus, faculty only their own, each with
 //                                              the faculty member, program and subject so the list can be grouped
 //   GET  /api/compliance/history               (admin) the latest check of each submitted syllabus, one item per syllabus, newest first;
@@ -14,6 +14,7 @@
 // Runs are stored by the submit route (with the version, authoritative) and by the recheck route. Nothing here changes a syllabus.
 const express = require('express');
 const { requireAuth } = require('../middleware/auth');
+const activity = require('../lib/activity');
 const { inTransaction, httpError, sendError } = require('../lib/http');
 const { createLimiter } = require('../lib/rateLimit');
 const rules = require('../lib/syllabusRules');
@@ -21,14 +22,18 @@ const svc = require('../lib/compliance/service');
 const { catalogSnapshot } = require('./syllabusContent');
 const { LABEL_SQL, labelsOf } = require('../lib/syllabusLabels');
 const terms = require('../lib/terms');
-const suggest = require('../lib/compliance/suggest');
-const formOps = require('../lib/compliance/formOps');
 const router = express.Router();
 
 const NOT_SET_UP = 'Compliance checks are not set up on this server yet. Ask an administrator to run the database update.';
 const APPROVED = 'This syllabus is approved, so it cannot be checked again.';
 const NO_SUBJECT_ADMIN = 'This syllabus has neither a form nor an uploaded file to check.';
 const limiter = createLimiter({ max: 10, windowMs: 60 * 1000 });
+// Syllabi whose check is running right now. A page that was left and opened again asks (GET .../compliance `checking`) so it can show the
+// check as running and pick up the result, instead of looking idle while the server is still working.
+const runningChecks = new Set();
+// Shared by the builder and admin routes, not scoped to a user or syllabus.
+// Acquisition is synchronous so two requests cannot both enter the evaluator.
+const activeChecks = new WeakSet();
 
 const parseId = (raw) => {
   const id = Number(raw);
@@ -54,7 +59,7 @@ async function loadVisible(db, me, id) {
 async function subjectOf(db, me, syl) {
   if (rules.isOwner(me, syl)) {
     let content = parseJson(syl.content);
-    if (me.role === 'admin' && content) content = svc.publicationContent(content, await catalogSnapshot(db,content));
+    if (rules.isReviewer(me) && content) content = svc.publicationContent(content, await catalogSnapshot(db,content));
     return { content, file: null, versionId: null, owner: true };
   }
   const v = await svc.latestVersion(db, syl.syllabus_id);
@@ -95,7 +100,7 @@ async function withVersionLabel(db, run) {
   const [rows] = await db.query('SELECT version_label FROM syllabus_versions WHERE version_id = ?', [run.versionId]);
   return { ...run, versionLabel: rows[0] ? rows[0].version_label : '' };
 }
-const adminOnly = (me) => { if (!me || me.role !== 'admin') throw httpError(403, 'Only an administrator can read the check history'); };
+const adminOnly = (me) => { if (!rules.isReviewer(me)) throw httpError(403, 'Only a reviewer can read the check history'); };
 
 router.get('/syllabi/:id/compliance', requireAuth, async (req, res) => {
   try {
@@ -103,21 +108,23 @@ router.get('/syllabi/:id/compliance', requireAuth, async (req, res) => {
     const me = req.session.user;
     const syl = await loadVisible(db, me, parseId(req.params.id));
     if (!(await svc.isInstalled(db))) return res.json({ installed: false, run: null });
+    const checking = runningChecks.has(syl.syllabus_id);
     const run = await svc.latestRun(db, syl.syllabus_id, { adminOnly: !rules.isOwner(me, syl) });
-    if (!run) return res.json({ installed: true, run: null });
+    if (!run) return res.json({ installed: true, run: null, checking });
     const subject = await subjectOf(db, me, syl);
-    res.json({ installed: true, run: await withVersionLabel(db, withChecker(await svc.loadDetail(db, run, hashOfSubject(subject)), syl.user_id)) });
+    res.json({ installed: true, checking, run: await withVersionLabel(db, withChecker(await svc.loadDetail(db, run, hashOfSubject(subject)), syl.user_id)) });
   } catch (err) { sendError(res, err); }
 });
 
 router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => {
+  let releaseCheck, runningId, removeAbortListeners = () => {};
   try {
     const db = req.app.locals.db;
     const me = req.session.user;
     const syl = await loadVisible(db, me, parseId(req.params.id));
     const owner = rules.isOwner(me, syl);
-    if (me.role === 'admin' && syl.status === 'draft') throw httpError(409,'Drafts stay in My Syllabi. Complete the form and send it to AI Checker first.');
-    if (!owner && me.role !== 'admin') throw httpError(403, 'Only the owner or an administrator can check a syllabus');
+    if (rules.isReviewer(me) && syl.status === 'draft') throw httpError(409,'Drafts stay in My Syllabi. Complete the form and send it to AI Checker first.');
+    if (!owner && !rules.isReviewer(me)) throw httpError(403, 'Only the owner or a reviewer can check a syllabus');
     if (syl.status === 'approved') throw httpError(409, APPROVED, { code: 'approved' }); // before the limiter: a refusal costs nothing
     if (!(await svc.isInstalled(db))) throw httpError(503, NOT_SET_UP);
     const subject = await subjectOf(db, me, syl);
@@ -126,16 +133,20 @@ router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => 
     if (!subject.content && !isUpload) {
       throw httpError(409, owner ? 'There is nothing to check yet. Save some of the form first.' : NO_SUBJECT_ADMIN, { code: 'no_form' });
     }
+    const scope = req.app;
+    if (activeChecks.has(scope)) {
+      throw httpError(409, 'An AI check is already running. Wait until it finishes before starting another.', { code: 'ai_check_in_progress' });
+    }
+    activeChecks.add(scope);
+    runningId = syl.syllabus_id;
+    runningChecks.add(runningId);
+    releaseCheck = () => activeChecks.delete(scope);
+
     const facts = isUpload ? svc.uploadCheck.readFacts(subject.file) : null;
     const content = isUpload ? svc.uploadFingerprint(subject.file, facts) : subject.content; // what the run's hash is made from
     const hash = svc.hashOf(content);
 
-    // The same content as an earlier run is not checked again, and does not count against the limit. An admin's check is stored with
-    // the version, so only a run stored with a version can answer it.
-    if (!(req.body && req.body.force === true)) {
-      const cached = await svc.cachedRun(db, syl.syllabus_id, hash, { adminOnly: !owner, versionId: owner ? null : subject.versionId });
-      if (cached) return res.json({ installed: true, cached: true, run: await withVersionLabel(db, withChecker(await svc.loadDetail(db, cached, hash), syl.user_id)) });
-    }
+    // Explicit checks re-verify mutable external links and current official references.
     const slot = limiter.take('recheck:' + me.id);
     if (!slot.ok) {
       res.set('Retry-After', String(slot.retryAfterSec));
@@ -145,75 +156,35 @@ router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => 
     // A form is checked against the catalog as it is now: tags resolve against the program's current EGAs and POs, and a submitted syllabus
     // is also compared with the catalog it was submitted with. An uploaded file is checked for the file and its course details.
     const details = isUpload ? await baseOf(db, syl, subject) : null;
-    const catalog = isUpload ? null : await catalogSnapshot(db, content);
+    const checkController = new AbortController();
+    const abortIfDisconnected = () => { if (!res.writableEnded) checkController.abort(new Error('The Re-Check client disconnected.')); };
+    req.once('aborted', abortIfDisconnected);
+    res.once('close', abortIfDisconnected);
+    removeAbortListeners = () => { req.removeListener('aborted', abortIfDisconnected); res.removeListener('close', abortIfDisconnected); };
+    if (req.aborted) abortIfDisconnected();
     const result = isUpload
       ? svc.uploadCheck.checkUpload(facts, { courseCode: syl.course_code, title: syl.title, programCode: details.programCode })
-      : svc.check(content, { catalog, preparedBy: owner ? fullName(me) : undefined });
+      : await svc.checkHybrid(db, content, { syllabusId: syl.syllabus_id, signal: checkController.signal });
     const runId = await inTransaction(db, (conn) => svc.storeRun(conn, { syllabusId: syl.syllabus_id, versionId: subject.versionId, content, result, createdBy: me.id, ai: !isUpload }));
-    // The check shows in the signed-in user's Recent Activity ("AI check:" in the note is how the dashboard tells it from an edit).
-    await db.query('INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)', [syl.syllabus_id, me.id, 'update', 'AI check: ' + (result.status === 'scored' ? result.overall + '%' : 'not scored')]).catch(() => {});
+    // The person who ran the check sees it in their Recent Activity (the same record that an administrator's check and an author's check share).
+    await activity.record(db, { syllabusId: syl.syllabus_id, userId: me.id, action: 'check', notes: activity.checkNote(result) });
     if (isUpload) {
       // No AI step for a file; say what was not checked, so the administrator reads it against the template.
       await svc.attachRecommendations(db, runId, { items: [svc.uploadCheck.PENDING_NOTE], ai: { status: 'failed', reason: 'not_configured' } });
-    } else if (result.status === 'scored' && (result.findings.length || svc.canJudge())) {
+    } else if (!result.hybrid && result.status === 'scored' && result.findings.length) {
       const [people] = await db.query('SELECT first_name, last_name FROM users WHERE user_id = ?', [syl.user_id]);
       const author = people[0] ? { firstName: people[0].first_name, lastName: people[0].last_name } : null;
-      svc.startAiJob(db, { runId, content, result, names: svc.namesFor(author, content), rescore: (judged) => svc.check(content, { catalog, preparedBy: owner ? fullName(me) : undefined, judged }) });
+      const job = svc.startAiJob(db, { runId, content, result, names: svc.namesFor(author, content) });
+      // Legacy reports can finish in the background. Keep their slot until the
+      // provider settles even if the HTTP response has already been sent.
+      const releaseJob = releaseCheck;
+      Promise.resolve(job).then(releaseJob, releaseJob);
+      releaseCheck = null;
     }
     const [rows] = await db.query('SELECT * FROM ai_check_runs WHERE run_id = ?', [runId]);
     res.json({ installed: true, cached: false, run: await withVersionLabel(db, withChecker(await svc.loadDetail(db, rows[0], hash), syl.user_id)) });
   } catch (err) { sendError(res, err); }
-});
-
-// Suggested fixes for what the latest check found wrong (suggest.js): the author reads each one and accepts or rejects it in the builder, and
-// nothing here changes the form. Needs a current check, since the suggestions answer its findings. Fixes that need no AI always come; those that
-// need words come when an AI provider is configured (`ai` says what happened). It also says what the score would be with every suggestion
-// applied (the rules only; the AI's meaning check runs again at the next check) and which findings no suggestion can fix.
-router.post('/syllabi/:id/suggestions', requireAuth, async (req, res) => {
-  try {
-    const db = req.app.locals.db;
-    const me = req.session.user;
-    const syl = await loadVisible(db, me, parseId(req.params.id));
-    if (!rules.isOwner(me, syl)) throw httpError(403, 'Only the owner can ask for suggestions on a syllabus');
-    if (syl.status === 'approved') throw httpError(409, APPROVED, { code: 'approved' });
-    if (!(await svc.isInstalled(db))) throw httpError(503, NOT_SET_UP);
-    const subject = await subjectOf(db, me, syl);
-    if (!subject.content) throw httpError(409, 'There is nothing to improve yet. Save some of the form first.', { code: 'no_form' });
-    const run = await svc.latestRun(db, syl.syllabus_id);
-    if (!run) throw httpError(409, 'Check the syllabus first: the suggestions answer what the check found.', { code: 'no_check' });
-    const detail = await svc.loadDetail(db, run, hashOfSubject(subject));
-    if (detail.stale) throw httpError(409, 'The form changed since the last check. Re-check it first, then ask again.', { code: 'stale' });
-    const slot = limiter.take('suggest:' + me.id);
-    if (!slot.ok) {
-      res.set('Retry-After', String(slot.retryAfterSec));
-      throw httpError(429, 'You are asking too often. Try again in ' + slot.retryAfterSec + ' seconds.');
-    }
-    const [people] = await db.query('SELECT first_name, last_name FROM users WHERE user_id = ?', [syl.user_id]);
-    const author = people[0] ? { firstName: people[0].first_name, lastName: people[0].last_name } : null;
-    const provider = svc.getProvider();
-    const made = await suggest.generate({ provider, content: subject.content, findings: detail.findings, standard: svc.standard, names: svc.namesFor(author, subject.content) });
-
-    // The score with every suggestion that fits applied, by the rules alone, against the same measure of the form as it is now.
-    const catalog = await catalogSnapshot(db, subject.content);
-    const patched = JSON.parse(JSON.stringify(subject.content));
-    made.suggestions.forEach((x) => { if (formOps.holds(patched, x.expect)) formOps.applyOps(patched, x.ops); });
-    const preparedBy = fullName(me);
-    const now = svc.check(subject.content, { catalog, preparedBy });
-    const after = svc.check(patched, { catalog, preparedBy });
-
-    const covered = new Set(made.suggestions.flatMap((x) => x.covers));
-    const left = new Map();
-    detail.findings.filter((f) => !covered.has(f.ruleId + '|' + f.path)).forEach((f) => {
-      const e = left.get(f.ruleId) || { ruleId: f.ruleId, area: f.area, severity: f.severity, step: f.step, count: 0, message: f.message };
-      e.count += 1;
-      left.set(f.ruleId, e);
-    });
-    res.json({
-      suggestions: made.suggestions, ai: made.ai, runId: run.run_id,
-      score: { now: now.overall, after: after.overall },
-      remaining: [...left.values()].sort((a, b) => ({ blocking: 0, major: 1, minor: 2 }[a.severity] ?? 3) - ({ blocking: 0, major: 1, minor: 2 }[b.severity] ?? 3)),
-    });
-  } catch (err) { sendError(res, err); }
+  finally { removeAbortListeners(); if (runningId !== undefined) runningChecks.delete(runningId); if (releaseCheck) releaseCheck(); }
 });
 
 router.get('/compliance', requireAuth, async (req, res) => {
@@ -237,7 +208,7 @@ router.get('/compliance', requireAuth, async (req, res) => {
     }
 
     const select = 'SELECT s.syllabus_id, s.user_id, s.course_code, s.title, s.status, s.version, ' + 's.content, ' + LABEL_SQL;
-    const [syls] = me.role === 'admin'
+    const [syls] = rules.isReviewer(me)
       ? await db.query(select + " WHERE s.status <> 'draft' ORDER BY u.last_name, u.first_name, s.syllabus_id DESC LIMIT 500")
       : await db.query(select + ' WHERE s.user_id = ? ORDER BY s.syllabus_id DESC LIMIT 500', [me.id]);
 
@@ -246,7 +217,7 @@ router.get('/compliance', requireAuth, async (req, res) => {
     const fileOf = new Set(); // syllabi whose newest version is an uploaded file (no form)
     const versionOf = new Map(); // syllabus id -> its newest version id
     if (syls.length) {
-      if (me.role === 'admin') {
+      if (rules.isReviewer(me)) {
         const [vs] = await db.query(
           'SELECT v.syllabus_id, v.version_id, v.content, v.file_path FROM syllabus_versions v JOIN (SELECT MAX(version_id) AS version_id FROM syllabus_versions WHERE syllabus_id IN (?) GROUP BY syllabus_id) m ON m.version_id = v.version_id',
           [syls.map((s) => s.syllabus_id)]
@@ -257,7 +228,7 @@ router.get('/compliance', requireAuth, async (req, res) => {
       }
     }
 
-    if (me.role === 'admin') {
+    if (rules.isReviewer(me)) {
       for (const syl of syls.filter(s => s.user_id === me.id)) {
         const own=await subjectOf(db,me,syl);
         formOf.set(syl.syllabus_id,own.content);
@@ -269,13 +240,13 @@ router.get('/compliance', requireAuth, async (req, res) => {
     if (installed && syls.length) {
       const [runs] = await db.query(
         // An admin sees the administrator's own check of each submitted syllabus; a faculty member sees their own newest run, re-checks included.
-        'SELECT r.* FROM ai_check_runs r JOIN (SELECT MAX(run_id) AS run_id FROM ai_check_runs WHERE syllabus_id IN (?)' + (me.role === 'admin' ? ' AND ' + svc.ADMIN_RUN_SQL : '') + (past ? ' AND created_at >= ? AND created_at < ?' : '') + ' GROUP BY syllabus_id) m ON m.run_id = r.run_id',
+        'SELECT r.* FROM ai_check_runs r JOIN (SELECT MAX(run_id) AS run_id FROM ai_check_runs WHERE syllabus_id IN (?)' + (rules.isReviewer(me) ? ' AND ' + svc.ADMIN_RUN_SQL : '') + (past ? ' AND created_at >= ? AND created_at < ?' : '') + ' GROUP BY syllabus_id) m ON m.run_id = r.run_id',
         past ? [syls.map((s) => s.syllabus_id), past.from, past.to] : [syls.map((s) => s.syllabus_id)]
       );
       runs.forEach((r) => latest.set(r.syllabus_id, r));
       areasByRun = await svc.loadAreas(db, runs.map((r) => r.run_id));
     }
-    if (installed && me.role === 'admin' && !past) {
+    if (installed && rules.isReviewer(me) && !past) {
       for (const syl of syls.filter(s=>s.user_id===me.id)) {
         const ownRun=await svc.latestRun(db,syl.syllabus_id);
         if(ownRun) latest.set(syl.syllabus_id,ownRun);
@@ -284,11 +255,11 @@ router.get('/compliance', requireAuth, async (req, res) => {
     const list0 = syls.map((s) => {
       let run = latest.get(s.syllabus_id);
       // The administrator's check counts for the version that was checked: after a new version is submitted the old check is history, not "checked".
-      if (!past && run && me.role === 'admin' && versionOf.has(s.syllabus_id) && run.version_id !== versionOf.get(s.syllabus_id)) run = null;
+      if (!past && run && rules.isReviewer(me) && versionOf.has(s.syllabus_id) && run.version_id !== versionOf.get(s.syllabus_id)) run = null;
       const content = formOf.get(s.syllabus_id) || null;
       return {
         syllabusId: s.syllabus_id, userId: s.user_id, courseCode: s.course_code, title: s.title, status: s.status, version: s.version,
-        ...labelsOf(s, content), checkable: !!content || fileOf.has(s.syllabus_id), upload: fileOf.has(s.syllabus_id),
+        ...labelsOf(s, content), checkable: !!content || fileOf.has(s.syllabus_id), upload: fileOf.has(s.syllabus_id), checking: runningChecks.has(s.syllabus_id),
         run: run ? withChecker(svc.summarize(run, areasByRun.get(run.run_id) || [], content ? svc.hashOf(content) : null), s.user_id) : null,
       };
     });

@@ -1,0 +1,9 @@
+{
+  "id": "academic-evaluation-v2-preview-1",
+  "mode": "offline-preview",
+  "official": false,
+  "authority": "User original LCUP academic requirements",
+  "weeklyTypes": ["Content-course", "Content-ILO", "ILO-CLO", "Content-activity", "ILO-activity", "Content-assessment", "Activity-assessment"],
+  "dispositions": ["SUPPORTED_BY_SUPPLIED_EVIDENCE", "REQUIRES_REVISION", "FACULTY_REVIEW", "PARTIALLY_EVALUATED", "NOT_EVALUATED"],
+  "classifications": ["Introductory", "Enabling", "Demonstrating", "Integration of Values"]
+}

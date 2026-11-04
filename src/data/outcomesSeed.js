@@ -1,6 +1,7 @@
-// Seed data copied from the institutional form (via the builder prototype). The vision and mission are the LCUP's current wording and are the same
-// text the AI Checker's standard (server/lib/compliance/standard-v4.json, rules T-28 and T-29) compares a syllabus with. Admin-managed once Phase B
-// moves it into the database; `short` is the display name shown in tags and an admin can edit it.
+// Institution/EGA prototype text is retained. The vision and mission are the LCUP's current wording and are the same text the
+// AI Checker's standard (server/lib/compliance/standard-v4.json, rules T-28 and T-29) compares a syllabus with. POs use the
+// user-designated official PDF version. Existing databases are corrected only by the explicit versioned migration.
+import officialPoReferences from './officialProgramOutcomes.json' with { type: 'json' };
 export const INSTITUTION = {
   vision: 'Moved by the Spirit of the Risen Christ, La Consolacion University Philippines, envisions itself to become a catalyst for the wholistic transformational development of Catholic Augustinian Marian graduates rooted in Gospel values.',
   mission: {
@@ -22,21 +23,14 @@ export const INSTITUTION = {
   ],
 };
 
-const PO_BSIT = [
-  { no: 1, short: 'Apply computing knowledge', text: 'Apply computing and other knowledge domains to address realworld problems.', egas: [1] },
-  { no: 2, short: 'Analyze and define requirements', text: 'Analyze complex problems and identify and define the computing requirements needed to design an appropriate solution.', egas: [1] },
-  { no: 3, short: 'Design computing solutions', text: 'Design and develop computing solutions using a system-level perspective.', egas: [1] },
-  { no: 4, short: 'Ethical IT professional', text: 'Demonstrate ethical behavior as an IT Professional and sensitivity to the impact of technology in the society.', egas: [2] },
-  { no: 5, short: 'Augustinian virtues and CSR', text: 'Show Augustinian virtues/ethical values and the understanding and appreciation of corporate social responsibility.', egas: [2] },
-  { no: 6, short: 'Multi-disciplinary teamwork', text: 'Work effectively and independently in multi-disciplinary and multi-cultural teams.', egas: [4] },
-  { no: 7, short: 'Impact on society', text: 'Understand the impact of their work on society and strive to ensure that their actions contribute positively on the community.', egas: [3] },
-  { no: 8, short: 'Latest developments in the field', text: 'Articulate and discuss the latest developments in the specific field of practice.', egas: [1, 4] },
-  { no: 9, short: 'Professional and social ethics', text: 'Act in recognition of professional, social and ethical.', egas: [2] },
-  { no: 10, short: 'Ethical leadership', text: 'Demonstrate ethical leadership and social responsibility by integrating sustainability, inclusivity, mental well-being and peace-building principles into academic, professional and community engagements, ensuring holistic development and societal transformation.', egas: [3] },
-];
+const officialPos = code => officialPoReferences.programs[code].outcomes.map(({no,short,text})=>({no,short,text,egas:[]}));
+const PO_BSIT = officialPos('BSIT');
 
 export const PROGRAMS = {
   BSIT: { name: 'BS Information Technology', pos: PO_BSIT },
+  'BSIT-CYBERSECURITY': { name: 'BS Information Technology with Specialization in Cyber Security', pos: PO_BSIT, outcomeSource: 'BSIT' },
+  BSIE: { name: 'BS Industrial Engineering', pos: officialPos('BSIE') },
+  BSCPE: { name: 'BS Computer Engineering', pos: officialPos('BSCPE') },
   BSIS: { name: 'BS Information Systems', pos: [] },
   BSCS: { name: 'BS Computer Science', pos: [] },
   BLIS: { name: 'BS Library and Information Science', pos: [] },
@@ -45,11 +39,13 @@ export const PROGRAMS = {
 
 // Course catalog seed: the course learning outcomes are constant data per course (admin-managed once loaded).
 // IT 204 is copied from the corrected syllabus template (IT204-Programming2-EOMS). The template tags CLO 2, 3 and 4
-// with PO 11 and PO 14, which are not in the BSIT list of ten outcomes, so those two tags are left out here
-// rather than invented: an administrator decides what they should map to.
+// with PO 11 and PO 14. These historic tags were omitted from the old ten-PO seed.
+// Retain this legacy example for history; seeders must not adopt its number mappings
+// under the official nine-PO reference without faculty review.
 export const COURSES = [
   {
     code: 'IT 204',
+    legacyPoReference: 'pre-2026-10-29; faculty mapping review required',
     title: 'Computer Programming 2',
     program: 'BSIT',
     clos: [

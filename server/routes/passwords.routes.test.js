@@ -52,6 +52,7 @@ function makeDb() {
       s.users.push(u);
       return [{ insertId: u.user_id }];
     }
+    if (/program_outcome_sources/.test(sql)) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' }); // not migrated yet
     throw new Error('unexpected query: ' + sql);
   };
   return { s, query: async (q, p) => handle(q, p) };
@@ -131,6 +132,17 @@ test('only an administrator registers users, and the usual checks still apply', 
   assert.strictEqual((await admin('POST', '/users', { ...newUser, email: 'fay@x.ph' })).status, 409);
   assert.strictEqual((await admin('POST', '/users', { ...newUser, role: 'student' })).status, 400);
   assert.strictEqual((await admin('POST', '/users', { ...newUser, email: 'not-an-email' })).status, 400);
+}));
+
+test('the dean registers the three review roles too; the role of the account that registers cannot be borrowed by a reviewer', () => withServer(async ({ db, client }) => {
+  outbox();
+  const admin = client(); await admin.login('dean@x.ph', 'Dean-pass-1');
+  for (const role of ['asst_vpaa', 'lic_director', 'vpaa']) {
+    const made = await admin('POST', '/users', { ...newUser, email: role + '@x.ph', role });
+    assert.strictEqual(made.status, 201, role);
+    assert.strictEqual(db.s.users.find((u) => u.email === role + '@x.ph').role, role);
+  }
+  assert.strictEqual((await admin('POST', '/users', { ...newUser, email: 'who@x.ph', role: 'superuser' })).status, 400);
 }));
 
 test('if the email cannot go out the user is still registered, and the response says so', () => withServer(async ({ db, client }) => {

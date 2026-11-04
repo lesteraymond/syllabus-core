@@ -102,7 +102,7 @@ export const examRows = (d) => d.plan.filter((r) => r.kind === 'exam');
 // ---- stored content: new drafts and upgrades ----
 const blank = (newId) => ({ id: newId(), text: '', tags: [] });
 export function blankRow(newId, kind = 'lesson') {
-  return { id: newId(), kind, week: '', ilos: [blank(newId)], contents: '', activities: '', tasks: '', values: '' };
+  return { id: newId(), kind, week: '', ilos: kind === 'exam' ? [blank(newId)] : [], ...(kind === 'exam' ? {} : {authoringOrder:1}), contents: '', activities: '', tasks: '', values: '' };
 }
 // A new syllabus starts empty: one blank description paragraph, one blank plan row. `newId` makes stable ids.
 export function emptyDraft(newId) {

@@ -1,5 +1,5 @@
-// The six LCUP core values the "Expected Value/s to be Integrated" column draws from (txt-files/lcup_core_values.txt). The AI Checker's
-// rule C-05 reads the same list from server/lib/compliance/standard-v4.json; coreValues.test.js checks the two agree.
+// The six LCUP core values the "Expected Value/s to be Integrated" column draws from (txt-files/lcup_core_values.txt). The AI Checker
+// uses the same list (server/lib/syllabuscheck/values.js); coreValues.test.js checks the two agree.
 export const CORE_VALUES = [
   { key: 'compassion', name: 'Compassion', pattern: 'compassion' },
   { key: 'courage', name: 'Courage', pattern: 'courage' },

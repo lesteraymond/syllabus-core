@@ -1,7 +1,12 @@
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
 import { useCountUp } from '../lib/useCountUp';
-import { SOURCE_LABEL, STEP_INFO, areaNames, basis, blockersOf, groupFindings, headline, runState, stepLabel, tone, ringAngle, when } from '../lib/complianceView';
+import { SOURCE_LABEL, STEP_INFO, areaNames, basis, blockersOf, groupFindings, headline, provisionalOf, runState, stepLabel, tone, ringAngle, when } from '../lib/complianceView';
+import HybridCheckPanel from '../components/HybridCheckPanel';
+import VerdictPanel from '../components/VerdictPanel';
+import { useAiGate } from '../lib/checkPolicy';
+import {isAcademicV2} from '../lib/academicEvaluation';
+import AcademicEvaluationPanel from '../components/AcademicEvaluationPanel';
 
 // One of the six area scores. Its bar and its number climb together from 0 to the score, one row after another, and drop back to 0 while a
 // check is running (the same as the ring above).
@@ -25,14 +30,17 @@ function AreaRow({ a, passThreshold, index, checking }) {
 //   onOpenStep(stepKey)  when given, a step name becomes a button that jumps there (the builder); otherwise it is plain text.
 // `checking` is true while a check is running: the ring shows 0% with a spinner, then the score climbs to its value when the run arrives.
 // The spinner keeps turning while the AI is still checking the fields (the score can still move, see basis()).
-export default function ComplianceCard({ run, onOpenStep, showFindings = true, checking = false }) {
+export default function ComplianceCard({ run, checking = false, onOpenStep, showFindings = true, onApplyDraft }) {
   const state = runState(run);
   const scored = state === 'scored';
   const shown = useCountUp(scored && !checking ? run.overall : 0);
   const loading = checking || (!!run && run.aiStatus === 'pending');
   const t = state === 'scored' ? tone(run.overall, run.passThreshold) : 'none';
   const how = basis(run);
-  const blockers = blockersOf(run);
+  const provisional = provisionalOf(run); // an unfinished check still shows its score so far, labelled as provisional
+  const aiGate = useAiGate();
+  if(isAcademicV2(run))return <AcademicEvaluationPanel run={run} onApplyDraft={onApplyDraft}/>;
+  const blockers = blockersOf(run, aiGate);
   const recs = (run && run.recommendations) || [];
   const stepRef = (key) => {
     if (!STEP_INFO[key]) return null;
@@ -43,16 +51,23 @@ export default function ComplianceCard({ run, onOpenStep, showFindings = true, c
 
   return (
     <div className="cmp">
+      <HybridCheckPanel run={run} onApplyDraft={onApplyDraft} />
+      <VerdictPanel run={run} />
       <div className="cmp-top">
         {scored || checking
           ? <div className={'big-ring cmp-ring ' + (scored ? t : 'warm') + (loading ? ' loading' : '')} style={{ '--p': ringAngle(shown) }} role="img" aria-busy={loading} aria-label={checking ? translateUI("ui.checking_820d60") : translateUI("ui.compliance_score_7a084d") + run.overall + translateUI("ui.percent_c72154") + tr(run.band)}>
             <div><strong>{shown}%</strong><small>{checking ? translateUI("ui.checking_820d60") : tr(run.band)}</small></div>
             {loading && <span className={'cmp-spin' + (checking ? '' : ' ai')} aria-hidden="true" />}
           </div>
-          : <div className="cmp-ring none" role="img" aria-label={translateUI("ui.no_score_yet_3662ab")}><div><strong>—</strong><small>{state === 'insufficient' ? translateUI("ui.not_enough_content_1c0e67") : translateUI("ui.not_checked_22705e")}</small></div></div>}
+          : provisional
+          ? <div className="big-ring cmp-ring provisional" style={{ '--p': ringAngle(provisional.score) }} role="img" aria-label={translateUI('hybrid.provisionalAria', { score: provisional.score })}><div><strong>{provisional.score}%</strong><small>{translateUI('hybrid.provisional')}</small></div></div>
+          : <div className="cmp-ring none" role="img" aria-label={translateUI("ui.no_score_yet_3662ab")}><div><strong>—</strong><small>{state === 'incomplete' ? translateUI('hybrid.incomplete') : state === 'insufficient' ? translateUI("ui.not_enough_content_1c0e67") : translateUI("ui.not_checked_22705e")}</small></div></div>}
         <div className="cmp-head">
-          <p className="cmp-line">{tr(headline(run))}</p>
+          <p className="cmp-line">{provisional
+            ? translateUI(provisional.rule ? 'hybrid.provisionalRule' : provisional.total ? 'hybrid.provisionalCoverage' : 'hybrid.provisionalPlain', { verified: provisional.verified, total: provisional.total })
+            : aiGate === 'advisory' && state === 'incomplete' && blockers.length === 0 ? translateUI('hybrid.advisoryIncomplete') : tr(headline(run))}</p>
           <div className="cmp-chips">
+            {run?.hybrid && run.hybrid.alignment.status !== 'completed' && <span className="hy-pill warn">{translateUI('hybrid.alignment', { status: translateUI(`hybrid.status.${run.hybrid.alignment.status}`) })}</span>}
             {run && how.label && <span className={'chip basis ' + how.kind}>{tr(how.label)}</span>}
             {run && run.checkedBy === 'admin' && <span className="chip quiet">{translateUI("ui.checked_by_an_administrator_2cf77d")}</span>}
             {run && run.stale && <span className="chip stale">{translateUI("ui.out_of_date_the_syllabus_changed_after_this_check_384297")}</span>}
@@ -115,7 +130,7 @@ export default function ComplianceCard({ run, onOpenStep, showFindings = true, c
           {groupFindings(run).map((g) => (
             <div key={g.key}>
               <h5>{tr(g.name)}</h5>
-              <ul>{g.findings.map((f) => <li key={f.id}><span className={'chip src ' + (f.source === 'ai' ? 'ai' : 'rule')}>{f.source === 'ai' ? tr(SOURCE_LABEL.ai) : f.severity === 'blocking' ? translateUI("ui.rule_blocks_submit_a7fc69") : translateUI("ui.rule_78e179")}</span> {tr(f.message)} {stepRef(f.step)}</li>)}</ul>
+              <ul>{g.findings.map((f) => <li key={f.id} className={f.severity === 'blocking' ? 'blocking' : undefined}><span className={'chip src ' + (f.source === 'ai' ? 'ai' : 'rule')}>{f.source === 'ai' ? tr(SOURCE_LABEL.ai) : f.severity === 'blocking' ? translateUI("ui.rule_blocks_submit_a7fc69") : translateUI("ui.rule_78e179")}</span> {tr(f.message)} {stepRef(f.step)}</li>)}</ul>
             </div>
           ))}
         </details>
