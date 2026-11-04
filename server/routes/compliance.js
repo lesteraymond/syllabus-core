@@ -21,6 +21,9 @@ const rules = require('../lib/syllabusRules');
 const svc = require('../lib/compliance/service');
 const { catalogSnapshot } = require('./syllabusContent');
 const { LABEL_SQL, labelsOf } = require('../lib/syllabusLabels');
+const terms = require('../lib/terms');
+const suggest = require('../lib/compliance/suggest');
+const formOps = require('../lib/compliance/formOps');
 const router = express.Router();
 
 const NOT_SET_UP = 'Compliance checks are not set up on this server yet. Ask an administrator to run the database update.';
@@ -161,6 +164,7 @@ router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => 
     res.once('close', abortIfDisconnected);
     removeAbortListeners = () => { req.removeListener('aborted', abortIfDisconnected); res.removeListener('close', abortIfDisconnected); };
     if (req.aborted) abortIfDisconnected();
+    const catalog = isUpload ? null : await catalogSnapshot(db, content);
     const result = isUpload
       ? svc.uploadCheck.checkUpload(facts, { courseCode: syl.course_code, title: syl.title, programCode: details.programCode })
       : await svc.checkHybrid(db, content, { syllabusId: syl.syllabus_id, signal: checkController.signal });
@@ -170,10 +174,10 @@ router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => 
     if (isUpload) {
       // No AI step for a file; say what was not checked, so the administrator reads it against the template.
       await svc.attachRecommendations(db, runId, { items: [svc.uploadCheck.PENDING_NOTE], ai: { status: 'failed', reason: 'not_configured' } });
-    } else if (!result.hybrid && result.status === 'scored' && result.findings.length) {
+    } else if (!result.hybrid && result.status === 'scored' && (result.findings.length || svc.canJudge())) {
       const [people] = await db.query('SELECT first_name, last_name FROM users WHERE user_id = ?', [syl.user_id]);
       const author = people[0] ? { firstName: people[0].first_name, lastName: people[0].last_name } : null;
-      const job = svc.startAiJob(db, { runId, content, result, names: svc.namesFor(author, content) });
+      const job = svc.startAiJob(db, { runId, content, result, names: svc.namesFor(author, content), rescore: (judged) => svc.check(content, { catalog, preparedBy: owner ? fullName(me) : undefined, judged }) });
       // Legacy reports can finish in the background. Keep their slot until the
       // provider settles even if the HTTP response has already been sent.
       const releaseJob = releaseCheck;
@@ -186,12 +190,66 @@ router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => 
   finally { removeAbortListeners(); if (runningId !== undefined) runningChecks.delete(runningId); if (releaseCheck) releaseCheck(); }
 });
 
+// Suggested fixes for what the latest check found wrong (suggest.js): the author reads each one and accepts or rejects it in the builder, and
+// nothing here changes the form. Needs a current check, since the suggestions answer its findings. Fixes that need no AI always come; those that
+// need words come when an AI provider is configured (`ai` says what happened). It also says what the score would be with every suggestion
+// applied (the rules only; the AI's meaning check runs again at the next check) and which findings no suggestion can fix.
+router.post('/syllabi/:id/suggestions', requireAuth, async (req, res) => {
+  try {
+    const db = req.app.locals.db;
+    const me = req.session.user;
+    const syl = await loadVisible(db, me, parseId(req.params.id));
+    if (!rules.isOwner(me, syl)) throw httpError(403, 'Only the owner can ask for suggestions on a syllabus');
+    if (syl.status === 'approved') throw httpError(409, APPROVED, { code: 'approved' });
+    if (!(await svc.isInstalled(db))) throw httpError(503, NOT_SET_UP);
+    const subject = await subjectOf(db, me, syl);
+    if (!subject.content) throw httpError(409, 'There is nothing to improve yet. Save some of the form first.', { code: 'no_form' });
+    const run = await svc.latestRun(db, syl.syllabus_id);
+    if (!run) throw httpError(409, 'Check the syllabus first: the suggestions answer what the check found.', { code: 'no_check' });
+    const detail = await svc.loadDetail(db, run, hashOfSubject(subject));
+    if (detail.stale) throw httpError(409, 'The form changed since the last check. Re-check it first, then ask again.', { code: 'stale' });
+    const slot = limiter.take('suggest:' + me.id);
+    if (!slot.ok) {
+      res.set('Retry-After', String(slot.retryAfterSec));
+      throw httpError(429, 'You are asking too often. Try again in ' + slot.retryAfterSec + ' seconds.');
+    }
+    const [people] = await db.query('SELECT first_name, last_name FROM users WHERE user_id = ?', [syl.user_id]);
+    const author = people[0] ? { firstName: people[0].first_name, lastName: people[0].last_name } : null;
+    const provider = svc.getProvider();
+    const made = await suggest.generate({ provider, content: subject.content, findings: detail.findings, standard: svc.standard, names: svc.namesFor(author, subject.content) });
+
+    // The score with every suggestion that fits applied, by the rules alone, against the same measure of the form as it is now.
+    const catalog = await catalogSnapshot(db, subject.content);
+    const patched = JSON.parse(JSON.stringify(subject.content));
+    made.suggestions.forEach((x) => { if (formOps.holds(patched, x.expect)) formOps.applyOps(patched, x.ops); });
+    const preparedBy = fullName(me);
+    const now = svc.check(subject.content, { catalog, preparedBy });
+    const after = svc.check(patched, { catalog, preparedBy });
+
+    const covered = new Set(made.suggestions.flatMap((x) => x.covers));
+    const left = new Map();
+    detail.findings.filter((f) => !covered.has(f.ruleId + '|' + f.path)).forEach((f) => {
+      const e = left.get(f.ruleId) || { ruleId: f.ruleId, area: f.area, severity: f.severity, step: f.step, count: 0, message: f.message };
+      e.count += 1;
+      left.set(f.ruleId, e);
+    });
+    res.json({
+      suggestions: made.suggestions, ai: made.ai, runId: run.run_id,
+      score: { now: now.overall, after: after.overall },
+      remaining: [...left.values()].sort((a, b) => ({ blocking: 0, major: 1, minor: 2 }[a.severity] ?? 3) - ({ blocking: 0, major: 1, minor: 2 }[b.severity] ?? 3)),
+    });
+  } catch (err) { sendError(res, err); }
+});
+
 router.get('/compliance', requireAuth, async (req, res) => {
   try {
     const db = req.app.locals.db;
     const me = req.session.user;
     const which = String(req.query.syllabus || 'all');
     if (which !== 'all' && !/^\d+$/.test(which)) throw httpError(400, 'syllabus must be "all" or a syllabus id');
+    // A past term (reports): each syllabus's newest check made inside it, and only the syllabi that were checked then.
+    const past = req.query.schoolYear || req.query.semester ? terms.rangeOf(req.query.schoolYear, req.query.semester) : null;
+    if ((req.query.schoolYear || req.query.semester) && !past) throw httpError(400, 'schoolYear and semester must name a term, e.g. 2026-2027 and 1st Semester');
     const installed = await svc.isInstalled(db);
 
     if (which !== 'all') {
@@ -236,22 +294,22 @@ router.get('/compliance', requireAuth, async (req, res) => {
     if (installed && syls.length) {
       const [runs] = await db.query(
         // An admin sees the administrator's own check of each submitted syllabus; a faculty member sees their own newest run, re-checks included.
-        'SELECT r.* FROM ai_check_runs r JOIN (SELECT MAX(run_id) AS run_id FROM ai_check_runs WHERE syllabus_id IN (?)' + (rules.isReviewer(me) ? ' AND ' + svc.ADMIN_RUN_SQL : '') + ' GROUP BY syllabus_id) m ON m.run_id = r.run_id',
-        [syls.map((s) => s.syllabus_id)]
+        'SELECT r.* FROM ai_check_runs r JOIN (SELECT MAX(run_id) AS run_id FROM ai_check_runs WHERE syllabus_id IN (?)' + (rules.isReviewer(me) ? ' AND ' + svc.ADMIN_RUN_SQL : '') + (past ? ' AND created_at >= ? AND created_at < ?' : '') + ' GROUP BY syllabus_id) m ON m.run_id = r.run_id',
+        past ? [syls.map((s) => s.syllabus_id), past.from, past.to] : [syls.map((s) => s.syllabus_id)]
       );
       runs.forEach((r) => latest.set(r.syllabus_id, r));
       areasByRun = await svc.loadAreas(db, runs.map((r) => r.run_id));
     }
-    if (installed && rules.isReviewer(me)) {
+    if (installed && rules.isReviewer(me) && !past) {
       for (const syl of syls.filter(s=>s.user_id===me.id)) {
         const ownRun=await svc.latestRun(db,syl.syllabus_id);
         if(ownRun) latest.set(syl.syllabus_id,ownRun);
       }
     }
-    const list = syls.map((s) => {
+    const list0 = syls.map((s) => {
       let run = latest.get(s.syllabus_id);
       // The administrator's check counts for the version that was checked: after a new version is submitted the old check is history, not "checked".
-      if (run && rules.isReviewer(me) && versionOf.has(s.syllabus_id) && run.version_id !== versionOf.get(s.syllabus_id)) run = null;
+      if (!past && run && rules.isReviewer(me) && versionOf.has(s.syllabus_id) && run.version_id !== versionOf.get(s.syllabus_id)) run = null;
       const content = formOf.get(s.syllabus_id) || null;
       return {
         syllabusId: s.syllabus_id, userId: s.user_id, courseCode: s.course_code, title: s.title, status: s.status, version: s.version,
@@ -259,6 +317,7 @@ router.get('/compliance', requireAuth, async (req, res) => {
         run: run ? withChecker(svc.summarize(run, areasByRun.get(run.run_id) || [], content ? svc.hashOf(content) : null), s.user_id) : null,
       };
     });
+    const list = past ? list0.filter((x) => x.run) : list0;
 
     // Averages over the syllabi that have a score (a run with "not enough content", or a file upload, has none).
     const scored = list.filter((x) => x.run && x.run.overall !== null);
@@ -279,6 +338,31 @@ router.get('/compliance', requireAuth, async (req, res) => {
         })),
       },
     });
+  } catch (err) { sendError(res, err); }
+});
+
+// The school terms that have checks in them (newest first) with how many checks and syllabi each holds: what the Reports page lists.
+// An administrator counts the administrator's checks of submitted versions, a faculty member their own syllabi's.
+router.get('/compliance/terms', requireAuth, async (req, res) => {
+  try {
+    const db = req.app.locals.db;
+    const me = req.session.user;
+    if (!(await svc.isInstalled(db))) return res.json({ terms: [] });
+    const scope = me.role === 'admin' ? ' AND ' + svc.ADMIN_RUN_SQL.replace(/ai_check_runs\./g, 'r.') : ' AND s.user_id = ?';
+    const [runs] = await db.query(
+      'SELECT r.syllabus_id, r.created_at FROM ai_check_runs r JOIN syllabi s ON s.syllabus_id = r.syllabus_id WHERE r.overall IS NOT NULL' + (me.role === 'admin' ? " AND s.status <> 'draft'" : '') + scope + ' ORDER BY r.created_at DESC LIMIT 20000',
+      me.role === 'admin' ? [] : [me.id]
+    );
+    const byTerm = new Map();
+    runs.forEach((r) => {
+      const t = terms.termOf(r.created_at);
+      const key = t.schoolYear + '|' + t.semester;
+      const e = byTerm.get(key) || { ...t, checks: 0, syllabi: new Set() };
+      e.checks += 1; e.syllabi.add(r.syllabus_id);
+      byTerm.set(key, e);
+    });
+    const order = (t) => Number(t.schoolYear.slice(0, 4)) * 10 + terms.SEMESTERS.indexOf(t.semester);
+    res.json({ terms: [...byTerm.values()].map((e) => ({ schoolYear: e.schoolYear, semester: e.semester, checks: e.checks, syllabi: e.syllabi.size })).sort((a, b) => order(b) - order(a)) });
   } catch (err) { sendError(res, err); }
 });
 

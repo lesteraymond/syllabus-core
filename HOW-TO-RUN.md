@@ -33,13 +33,15 @@ cp .env.example .env     # then fill in the values (see below)
 npm install
 npm run init-db
 npm run migrate-students
+npm run seed-curriculum   # optional: the programs and subjects of the curriculum
 npm run dev
 ```
 
 - `cp .env.example .env` — creates your local config (`.env` is git-ignored; on Windows use `copy`)
-- `npm install` — installs backend dependencies (includes `tesseract.js` and `sharp` for the COR reader)
+- `npm install` — installs backend dependencies (includes `sharp`, which shrinks the COR photo before the AI reads it)
 - `npm run init-db` — creates the database, tables, and seed data (run once)
 - `npm run migrate-students` — adds the student role and the COR tables (`schema.sql` does not create them, so run it on fresh installs too)
+- `npm run seed-curriculum` — optional: loads the programs (BSIT, BSIT-CS, BSCPE, BSIE) and each program's subjects with credit units and linked prerequisites. A fresh `init-db` already creates the tables it needs (`course_prerequisites`, credit units, a subject code unique per program), so `migrate-prerequisites`, `migrate-credit-units` and `migrate-course-code-per-program` are only for databases made before them (see Upgrading an existing database)
 - `npm run dev` — starts the API server on **http://localhost:3001**
 
 Fill in `server/.env`:
@@ -54,6 +56,9 @@ Fill in `server/.env`:
 | `CURRENT_TERM`, `ALLOWED_EMAIL_DOMAIN` | optional (domain defaults to `email.lcup.edu.ph`) |
 | `COMPLIANCE_AI_PROVIDER` | optional: `mock` shows AI-labelled recommendations in development; unset = plain rule-based check |
 | `SCHOOL_YEAR_START` | optional, default `2026` (used to measure reference age) |
+| `GEMINI_API_KEY`, `OPENROUTER_API_KEY` | optional: the AI step of the compliance check and the COR reader. Without a key the check is rule-based and a student COR cannot be read |
+| `COR_READER`, `COR_AI_MODEL` | optional: `COR_READER=ocr` reads the COR with Tesseract (testing only); `COR_AI_MODEL` names another vision model |
+| `DEV_EDITOR_PASSWORD` | optional, at least 8 characters: switches on the developer rule editor at `/dev/rules` (see below). Leave empty to keep it off |
 
 > `npm run dev` restarts the API on file changes. After running a migration, restart it by hand.
 
@@ -85,14 +90,20 @@ npm run migrate-program-management
 npm run migrate-subject-standards
 npm run migrate-usage
 npm run migrate-deadlines
+npm run migrate-archive
 npm run migrate-subject-owner
 npm run migrate-activity-log
 npm run migrate-review-stages
+npm run migrate-course-code-per-program
+npm run migrate-credit-units
+npm run migrate-prerequisites
+npm run seed-curriculum   # optional: the programs and subjects of the curriculum folder, with their prerequisites and credit units
 ```
 
 - `migrate-review-stages` adds the VPAA, Asst. VPAA and LIC Director roles and the table that records who cleared which review stage (see `docs/review-chain.md`); until it is run nothing can be approved
 - `migrate-avatars-private`, `migrate-assignments`, `migrate-program-egas`, `migrate-subject-owner` and `migrate-review-stages` support `--dry-run` (e.g. `npm run migrate-assignments -- --dry-run`)
 - `migrate-activity-log` lets Recent Activity record AI checks and answers to recommendations. Without it everything still works; those two kinds of activity are just not written (the server console says so once).
+- `seed-curriculum` is optional and needs the three migrations above it. It loads the programs, subjects (with credit units) and linked prerequisites from `server/db/curriculum-data.js`, adds what is missing and updates matching codes. `node scripts/sample-syllabi.js` can then make five sample syllabi
 - `migrate-compliance` and `migrate-comment-reads` are optional: the features degrade gracefully (submit still works, unread counts show totals) until they are run
 - After `migrate-assignments`, faculty cannot create or edit syllabi until an admin assigns them a program and a subject (Users & Roles, Assignments button)
 
@@ -176,11 +187,18 @@ DB_NAME=syllabus_cms_plus
 ### Google sign-in says 404 or "Access Denied"
 Restart the API server (an old process has no `/api/auth/google`). "Access Denied" means the email is not in Users & Roles.
 
+### The developer rule editor
+
+Set `DEV_EDITOR_PASSWORD` in `server/.env`, restart the API and open **http://localhost:3001/dev/rules**. It is not linked from the app and needs no app sign-in, only the password (open for 30 minutes; five wrong tries lock the address for ten). It changes the compliance standard's pass mark, bands, area weights, limits and each rule's points, severity, message, explanation, numbers and on/off switch. A save takes effect at once and gives the standard a new version (v9.1, v9.2, ...). "Reset to file" removes all edits; the history keeps them. The edits are stored in the database (`app_settings`, `standard_changes`), on top of `server/lib/compliance/standard-v4.json`. The `standard_changes` table is created the first time the editor saves (it is also in `schema.sql`).
+
+### The AI Checker standard is v9 (69 rules)
+Seven rules (D-01 to D-07) find repeated data inside one syllabus, and I-01 asks that a syllabus says how it supports diverse learners (students with disabilities and others). They are in `server/lib/compliance/standard-v4.json` and need no migration or setting. Scores stored before the upgrade stay as they were until a syllabus is checked again. If you saved edits in the developer rule editor on v7, "Reset to file" brings in the new rules (the history keeps your edits).
+
 ### "Table ... doesn't exist" or a missing column
 Your database is behind. Run the migrations in *Upgrading an existing database*, then restart the API server.
 
 ### Student registration cannot read the COR
-Make sure `npm install` was run in `server/` (OCR needs `tesseract.js` and `sharp`) and that `server/eng.traineddata` exists. Test the reader on its own with `node scripts/ocr-cor-test.js [image]`. Small or tilted photos may not yield the subject list; the registration then goes to an administrator.
+The COR is read by the AI, so `GEMINI_API_KEY` or `OPENROUTER_API_KEY` must be set in the root `.env` (OpenRouter uses the paid `google/gemma-3-27b-it` unless `COR_AI_MODEL` names another vision model). Test the reader on its own with `node scripts/cor-ai-test.js [image]`. To test with the old OCR reader instead (no AI), set `COR_READER=ocr` in `server/.env` and run `node scripts/ocr-cor-test.js [image]`; it needs `server/eng.traineddata`. A blurry photo may not yield the subject list; the registration then goes to an administrator.
 
 ### Port already in use
 Change the port in `server/.env`:
@@ -209,7 +227,8 @@ syllabus-cms-plus/
 │   ├── routes/
 │   ├── middleware/
 │   ├── lib/            ← rules, compliance engine, COR OCR
-│   ├── scripts/        ← ocr-cor-test.js
+│   ├── views/          ← the developer rule editor page
+│   ├── scripts/        ← cor-ai-test.js
 │   ├── db/             ← schema, seed, migrations
 │   ├── private/        ← avatars and COR photos (git-ignored, not public)
 │   └── uploads/        ← syllabus PDFs
@@ -235,7 +254,9 @@ syllabus-cms-plus/
 | `npm run dev` | Start the API server (http://localhost:3001). It restarts when files change |
 | `npm run init-db` | Create the database, tables and seed data |
 | `npm run seed-outcomes` | Load the institution's vision, mission, EGAs, programs and the BSIT program outcomes. Only inserts what is missing; run it after `migrate-builder`. Supports `--dry-run` |
-| `node scripts/ocr-cor-test.js [image]` | Try the COR reader on the images in `server/sample_cor/` (git-ignored) or on a given image; prints the fields it read |
+| `npm run seed-curriculum` | Load the programs and each program's subjects with their prerequisites from `db/curriculum-data.js` (the curricula in `/curriculum`). Needs `migrate-prerequisites`, `migrate-course-code-per-program` and `migrate-credit-units`. Adds only; `-- --dry-run` reports, `-- --no-updates` leaves existing subject titles alone |
+| `node scripts/sample-syllabi.js` | Make five sample syllabi (BSIT x2, BSIT-CS, BSCPE, BSIE) through the app's own API routes: it first fills what the catalog lacks for those subjects (school vision and mission, program EGAs and outcomes, subject setup and CLOs), then builds, submits and (for three of them) approves the syllabi. Offline AI step; skips a subject that already has a syllabus |
+| `node scripts/cor-ai-test.js [image]` | Try the AI COR reader on the images in `server/sample_cor/` (git-ignored) or on a given image; prints the fields it read |
 
 ### Database migrations (`server/`)
 Each one upgrades an older database, is safe to run again, and touches no existing data. Run the ones you are missing, in this order, then restart the API server.
@@ -259,6 +280,10 @@ Each one upgrades an older database, is safe to run again, and touches no existi
 | `npm run migrate-subject-standards` | `courses.standards_json`; existing standards are kept as independent copies |
 | `npm run migrate-usage` | `usage_daily` table for the dashboard time card |
 | `npm run migrate-deadlines` | `subject_deadlines` and `deadline_notices` tables |
+| `npm run migrate-course-code-per-program` | Makes a subject code unique within its program instead of across the catalog (same ENGEC or IS-CITE in several programs). Changes no rows |
+| `npm run migrate-credit-units` | `courses.lecture_units` and `lab_units`: the credit units a subject carries, which fill the syllabus form's Credit Units (V) |
+| `npm run migrate-prerequisites` | `course_prerequisites` table: a subject's prerequisites, linked to other subjects (needs `migrate-builder`) |
+| `npm run migrate-archive` | `syllabi.archived_at`: a syllabus whose subject is given to another faculty member is archived (read-only, under the former owner) instead of deleted |
 | `npm run migrate-subject-owner` | Unique key on `faculty_courses.course_id` (one subject, one faculty member). Stops and lists any subject held by more than one faculty. Supports `--dry-run` |
 
 Where a script says it supports `--dry-run`, add it after `--` to only report what would change, e.g. `npm run migrate-assignments -- --dry-run`.
@@ -292,7 +317,13 @@ Where a script says it supports `--dry-run`, add it after `--` to only report wh
 | GET/POST | /api/syllabi/:id/comments | Reviewer comments |
 | GET | /api/syllabi/:id/compliance | Stored compliance check |
 | POST | /api/syllabi/:id/compliance/recheck | Re-run the compliance check |
+| POST | /api/syllabi/:id/suggestions | Suggested fixes for what the latest check found, the score with all of them, and what is left (owner only; needs a current check; the word-writing fixes need an AI key) |
 | GET | /api/compliance | Compliance overview (admin: all, faculty: own) |
+| GET | /api/compliance?schoolYear=2026-2027&semester=1st Semester | The same for a past term: each syllabus's newest check inside it |
+| GET | /api/compliance/terms | School terms that have checks (for the Historical Exports list) |
+| GET | /api/settings/standard | The compliance standard, read-only (admin) |
+| GET/PUT | /api/settings | Administrator settings (admin) |
+| GET | /dev/rules | The developer rule editor page (needs `DEV_EDITOR_PASSWORD`); its API is under `/dev/rules/api/` |
 | GET | /api/messages | All my messages |
 | GET | /api/notifications | My notifications |
 | PUT | /api/notifications/read-all | Mark all read |

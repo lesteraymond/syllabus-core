@@ -2,15 +2,17 @@
 // Syllabus content fixtures for the compliance tests (server and browser parity). Each call returns a fresh object.
 // Shaped like the builder's stored content (src/lib/syllabusModel.js emptyDraft) plus the `catalog` snapshot a submit adds.
 
+const { constants } = require('./standard-v4.json');
+
 const YEAR = 2026;
 
 // The live catalog the fixtures were "submitted" against: school-wide vision and mission, and the BSIT program's own EGAs and POs.
 function catalog() {
   return {
-    institution: { vision: 'A leading university of Gospel values.', mission: { lead: 'Moved by the Spirit, we form learners to:', items: ['exhibit academic competence', 'serve the marginalized'] } },
+    institution: { vision: constants.institution.vision, mission: JSON.parse(JSON.stringify(constants.institution.mission)) },
     program: {
       code: 'BSIT', name: 'BS Information Technology',
-      egas: [1, 2, 3, 4].map((no) => ({ no, name: 'Attribute ' + no, short: 'A' + no })),
+      egas: constants.institution.egas.map(({ no, name }) => ({ no, name, short: 'EGA ' + no })),
       pos: [1, 2, 3, 4, 5].map((no) => ({ no, short: 'PO ' + no, text: 'Program outcome ' + no, egas: [((no - 1) % 4) + 1] })),
     },
   };
@@ -21,7 +23,7 @@ const words = (n) => Array.from({ length: n }, (_, i) => 'word' + i).join(' ');
 const ilo = (id, textValue, tags) => ({ id, text: textValue, tags });
 
 // A conforming IT 204 style syllabus: 18 weeks, Prelim / Midterm / Final rows, tagged ILOs, CLOs mapped to POs and to the EGAs
-// those POs imply, current references, grading 60 + 40, and the catalog snapshot equal to the live catalog.
+// those POs imply, current references, grading 60 + 40, and the catalog snapshot equal to the live catalog (which carries the LCUP vision, mission and EGAs).
 function good() {
   const clos = [1, 2, 3, 4].map((n) => ({
     id: 'c' + n, title: 'Outcome ' + n, level: 'Introductory', statement: 'Statement ' + n,
@@ -33,7 +35,7 @@ function good() {
       plan.push({ id: 'x' + w, kind: 'exam', week: String(w), ilos: [ilo('xi' + w, '', [])], contents: ['PRELIM', 'MIDTERM', 'FINAL'][w / 6 - 1] + ' EXAMINATION', activities: '', tasks: '', values: '' });
     } else {
       const c = 'c' + (((w - 1) % 4) + 1);
-      plan.push({ id: 'r' + w, kind: 'lesson', week: String(w), ilos: [ilo('i' + w, 'Explain topic number ' + w + ' clearly', ['clo:' + c])], contents: 'Topic ' + w, activities: 'Lecture ' + w, tasks: '- Quiz ' + w, values: 'Core Value: Courage' });
+      plan.push({ id: 'r' + w, kind: 'lesson', week: String(w), ilos: [ilo('i' + w, 'Explain topic number ' + w + ' clearly', ['clo:' + c])], contents: 'Topic number ' + w, activities: 'Lecture on topic number ' + w, tasks: '- Quiz on topic number ' + w, values: 'Core Value: Courage' });
     }
   }
   return {
@@ -42,7 +44,7 @@ function good() {
     description: [{ id: 'd1', t: words(60) }],
     clos,
     plan,
-    reqs: [{ id: 'q1', t: 'Class attendance' }, { id: 'q2', t: 'Quizzes' }, { id: 'q3', t: 'Examinations' }, { id: 'q4', t: 'Programming project' }],
+    reqs: [{ id: 'q1', t: 'Class attendance' }, { id: 'q2', t: 'Quizzes' }, { id: 'q3', t: 'Examinations' }, { id: 'q4', t: 'Programming project' }, { id: 'q5', t: 'Students who need accommodations, for example because of a disability, tell the instructor early so that accessible formats can be arranged' }],
     refs: {
       books: { na: false, items: [{ id: 'b1', t: 'Balti, H., & Galloway, A. (2021). Job ready Java. John Wiley & Sons.' }, { id: 'b2', t: 'Boyarsky, J. (2020). OCP Java. Sybex.' }] },
       program: { na: false, items: [{ id: 'p1', t: 'Oracle (2023). The Java tutorials.' }] },

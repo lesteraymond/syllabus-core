@@ -8,7 +8,7 @@
 // A provider never sees a name or an email (see buildExcerpt) and never sets a priority, a step or a score: those come from the
 // rules. An item that does not cite a real finding is thrown away.
 
-const PROMPT_VERSION = 'p1';
+const PROMPT_VERSION = 'p2';
 
 class ProviderError extends Error {
   constructor(code, message) { super(message); this.name = 'ProviderError'; this.code = code; }
@@ -49,6 +49,12 @@ class LlmProvider {
     if (!this._client || typeof this._client.complete !== 'function') throw new ProviderError('not_configured', 'No AI client is configured.');
     return parseItems(await this._client.complete(buildPrompt(findings, excerpt, standard)));
   }
+  // Raw text for a prompt that meaning.js built: which fields are not meaningful. The offline MockProvider has no judge, so a check
+  // without a real model simply has no verdicts.
+  async judge(prompt) {
+    if (!this._client || typeof this._client.complete !== 'function') throw new ProviderError('not_configured', 'No AI client is configured.');
+    return this._client.complete(prompt, { temperature: 0 });
+  }
 }
 
 function groupByRule(findings) {
@@ -59,10 +65,22 @@ function groupByRule(findings) {
 // The first finding's message, plus how many more are like it.
 const describe = (items) => items[0].message + (items.length > 1 ? ' ' + (items.length - 1) + ' more like this.' : '');
 
+// What the college expects of a syllabus, so the recommendations speak its language (the rules come from the college's own checklist and
+// the six core values from its core-values text). Short on purpose: it is sent with every request.
+function lcupContext(standard) {
+  const c = standard.constants || {};
+  const values = (c.coreValues || []).map((v) => v.name).join(', ');
+  return 'Context (La Consolacion University Philippines): the vision, mission and the four graduate attributes (EGAs) are fixed institution text. '
+    + 'Faculty write the course learning outcomes (CLOs), and each CLO must align with an EGA and a program outcome. Every ILO belongs under a CLO and an EGA. '
+    + 'The course content, learning activities and assessment tasks of a week must match that week\'s ILO. Each lesson names at least one LCUP core value' + (values ? ' (' + values + ')' : '') + '. '
+    + 'Write for the faculty member who wrote the syllabus: plain English, name the week or step, and say what to change.';
+}
+
 function buildPrompt(findings, excerpt, standard) {
   return [
     'You review a university course syllabus against the ' + standard.title + ' standard.',
     'Prompt version: ' + PROMPT_VERSION + '.',
+    lcupContext(standard),
     'Using only the findings below, write at most ' + standard.recommendations.max + ' short, concrete recommendations for the author.',
     'Reply with JSON only: an array of { "title": string, "text": string, "basedOn": [finding ids] }.',
     'Every item must cite at least one finding id in basedOn. Do not give a priority, a score, a step or an area: those are set by the rules.',
