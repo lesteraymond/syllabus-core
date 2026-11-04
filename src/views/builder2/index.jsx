@@ -165,7 +165,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
     notify(translateUI("builder.draftSaved"));
     setPage('my-syllabi');
   };
-  const submit = async () => {
+  const openChecker = async () => {
     setBusy(true);
     setSubmitFailed([]);
     try {
@@ -175,6 +175,23 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
       if (isAdmin) { await syllabiApi.prepareCheck(id); setPage('ai'); return; }
       if (onOpenChecker) await onOpenChecker({ syllabusId: id, status: load.status });
       setPage('ai');
+    } catch (e) {
+      if (e.data && Array.isArray(e.data.failed)) setSubmitFailed(e.data.failed);
+      notify(translateUI("ui.submit_failed_adb15a") + e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+  const submit = async () => {
+    setBusy(true);
+    setSubmitFailed([]);
+    try {
+      if (!(await saveFirst())) return;
+      const id = syllabusId();
+      if (!id) { notify(translateUI("ui.choose_a_subject_first_24357e")); return; }
+      if (isAdmin) { await syllabiApi.prepareCheck(id); setPage('ai'); return; }
+      const res = await syllabiApi.submitContent(id, note.trim());
+      if (onSubmitted) await onSubmitted(res, existing);
     } catch (e) {
       if (e.data && Array.isArray(e.data.failed)) setSubmitFailed(e.data.failed);
       notify(translateUI("ui.submit_failed_adb15a") + e.message);
@@ -332,8 +349,12 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
             {prv && <StableButton type="button" className="btn outline" onClick={() => go(step - 1)}>{'← ' + titleOf(prv)}</StableButton>}
             <div>
               {nxt && <StableButton type="button" className="btn primary" disabled={blocking.length > 0} title={blocking.length ? translateUI("ui.complete_this_step_to_continue_71b565") : undefined} onClick={() => go(step + 1)}>{translateUI("ui.next_94377f") + titleOf(nxt) + ' →'}</StableButton>}
-              {!nxt && <>
-                <StableButton type="button" className="btn primary" disabled={busy || !editable || !draft.meta.courseId || !complete} onClick={submit}>{translateUI('publication.continueToCheck')}</StableButton>
+              {!nxt && isAdmin && (
+                <StableButton type="button" className="btn primary" disabled={busy || !editable || !draft.meta.courseId || !complete} onClick={openChecker}>{translateUI('publication.continueToCheck')}</StableButton>
+              )}
+              {!nxt && !isAdmin && <>
+                <StableButton type="button" className="btn outline" disabled={busy || !editable || !draft.meta.courseId || !complete} onClick={openChecker}>{translateUI('publication.continueToCheck')}</StableButton>
+                <StableButton type="button" className="btn primary" disabled={busy || !editable || !draft.meta.courseId || !complete || needNote || !canSubmitHybrid(lastRun, JSON.stringify(draft), 'advisory')} title={!canSubmitHybrid(lastRun, JSON.stringify(draft), 'advisory') ? translateUI('hybrid.hardGateRequired') : undefined} onClick={submit}>{existing ? translateUI('hybrid.submitVersion') : translateUI('hybrid.submit')}</StableButton>
               </>}
             </div>
           </div>

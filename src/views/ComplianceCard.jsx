@@ -7,6 +7,7 @@ import { useAiGate } from '../lib/checkPolicy';
 import {isAcademicV2} from '../lib/academicEvaluation';
 import AcademicEvaluationPanel from '../components/AcademicEvaluationPanel';
 
+const lastScores = new Map();
 
 // One stored compliance run, shown the same way everywhere: the Review & Check step of the builder, the admin overview and Review &
 // Approval. The ring, the six areas, what blocks a submit, the recommendations (each marked Rule or AI, each linked to its step), and
@@ -22,6 +23,32 @@ export default function ComplianceCard({ run, checking = false, onOpenStep, show
   if(isAcademicV2(run))return <AcademicEvaluationPanel run={run} onApplyDraft={onApplyDraft}/>;
   const blockers = blockersOf(run, aiGate);
   const recs = (run && run.recommendations) || [];
+  const memKey = run?.syllabusId ?? run?.id ?? 'default';
+  const currentScore = checking
+    ? null
+    : state === 'scored'
+      ? Math.max(0, Math.min(100, Number(run.overall) || 0))
+      : provisional
+        ? Math.max(0, Math.min(100, Number(provisional.score) || 0))
+        : null;
+  let ringStyle = { '--p': '0deg', '--target-p': '0deg', '--from-p': '0deg', '--water': '28%', '--from-water': '12%' };
+  let flowClass = '';
+  if (currentScore !== null) {
+    const prev = lastScores.get(memKey);
+    const hasChanged = typeof prev === 'number' && prev !== currentScore;
+    const isHigher = hasChanged ? currentScore > prev : t === 'good';
+    const fromScore = hasChanged ? prev : (isHigher ? 0 : 100);
+    const targetAngle = state === 'scored' ? ringAngle(run.overall) : ringAngle(provisional.score);
+    flowClass = isHigher ? ' is-filling' : ' is-draining';
+    ringStyle = {
+      '--p': targetAngle,
+      '--target-p': targetAngle,
+      '--from-p': `${Math.round(fromScore * 3.6)}deg`,
+      '--water': `${currentScore}%`,
+      '--from-water': `${fromScore}%`,
+    };
+    lastScores.set(memKey, currentScore);
+  }
   const stepRef = (key) => {
     if (!STEP_INFO[key]) return null;
     return onOpenStep
@@ -31,15 +58,14 @@ export default function ComplianceCard({ run, checking = false, onOpenStep, show
 
   return (
     <div className="cmp">
-      <HybridCheckPanel run={run} onApplyDraft={onApplyDraft} />
       <VerdictPanel run={run} />
       <div className="cmp-top">
         {checking
-          ? <div className="big-ring cmp-ring checking" style={{ '--p': '0deg' }} role="img" aria-label={translateUI("ui.checking_your_syllabus_1278c5")}><div><strong aria-hidden="true">…</strong><small>{translateUI("ui.checking_820d60")}</small></div></div>
+          ? <div className="big-ring cmp-ring checking" style={ringStyle} role="img" aria-label={translateUI("ui.checking_your_syllabus_1278c5")}><div><strong aria-hidden="true">…</strong><small>{translateUI("ui.checking_820d60")}</small></div></div>
           : state === 'scored'
-          ? <div className={'big-ring cmp-ring ' + t} style={{ '--p': ringAngle(run.overall) }} role="img" aria-label={translateUI("ui.compliance_score_7a084d") + run.overall + translateUI("ui.percent_c72154") + tr(run.band)}><div><strong>{run.overall}%</strong><small>{tr(run.band)}</small></div></div>
+          ? <div className={'big-ring cmp-ring ' + t + flowClass} style={ringStyle} role="img" aria-label={translateUI("ui.compliance_score_7a084d") + run.overall + translateUI("ui.percent_c72154") + tr(run.band)}><div><strong>{run.overall}%</strong><small>{tr(run.band)}</small></div></div>
           : provisional
-          ? <div className="big-ring cmp-ring provisional" style={{ '--p': ringAngle(provisional.score) }} role="img" aria-label={translateUI('hybrid.provisionalAria', { score: provisional.score })}><div><strong>{provisional.score}%</strong><small>{translateUI('hybrid.provisional')}</small></div></div>
+          ? <div className={'big-ring cmp-ring provisional' + flowClass} style={ringStyle} role="img" aria-label={translateUI('hybrid.provisionalAria', { score: provisional.score })}><div><strong>{provisional.score}%</strong><small>{translateUI('hybrid.provisional')}</small></div></div>
           : <div className="cmp-ring none" role="img" aria-label={translateUI("ui.no_score_yet_3662ab")}><div><strong>—</strong><small>{state === 'incomplete' ? translateUI('hybrid.incomplete') : state === 'insufficient' ? translateUI("ui.not_enough_content_1c0e67") : translateUI("ui.not_checked_22705e")}</small></div></div>}
         <div className="cmp-head">
           <p className="cmp-line">{provisional
@@ -57,21 +83,6 @@ export default function ComplianceCard({ run, checking = false, onOpenStep, show
           )}
         </div>
       </div>
-
-      {run && (
-        <div className="cmp-areas">
-          {run.areas.map((a) => {
-            const at = a.score === null ? 'none' : tone(a.score, run.passThreshold);
-            return (
-              <div className="check-row" key={a.key}>
-                <div><strong>{tr(a.name)}</strong><div className="bar thin"><i style={{ width: (a.score === null ? 0 : a.score) + '%' }} /></div></div>
-                <b>{a.score === null ? '—' : a.score + '%'}</b>
-                <span className={at === 'good' ? 'check-ok' : 'check-warn'} aria-label={at === 'good' ? translateUI("ui.on_track_464e43") : at === 'warn' ? translateUI("ui.needs_work_def443") : translateUI("ui.not_scored_4e720d")}>{at === 'good' ? '✓' : at === 'warn' ? '!' : '·'}</span>
-              </div>
-            );
-          })}
-        </div>
-      )}
 
       {blockers.length > 0 && (
         <div className="cmp-block" role="alert">
@@ -115,6 +126,7 @@ export default function ComplianceCard({ run, checking = false, onOpenStep, show
           ))}
         </details>
       )}
+      <HybridCheckPanel run={run} onApplyDraft={onApplyDraft} />
     </div>
   );
 }

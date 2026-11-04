@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { t } from '../i18n';
+import { t, tr } from '../i18n';
 import { integratedAcademicV2Of, isAcademicV2Preview } from '../lib/academicEvaluation';
 import { syllabusCheck } from '../lib/api';
-import { decideSuggestion, undoSuggestion } from '../lib/hybridCheck';
+import { decideSuggestion } from '../lib/hybridCheck';
 import { memoryOf } from '../lib/panelMemory';
-import { canRefine } from '../lib/hybridView';
+import { canRefine, suggestionSection } from '../lib/hybridView';
 
 const without = (map, key) => { const next = { ...map }; delete next[key]; return next; };
 const status = value => t('academicV2.status.' + value);
@@ -90,8 +90,7 @@ export default function AcademicEvaluationPanel({ run, onApplyDraft }) {
   }, [run?.id, !!onApplyDraft]);
 
   const isHandled = s => decisions[s.id] === 'accept' || decisions[s.id] === 'edit';
-  const appliedOf = s => appliedValue[s.id] ?? (decisions[s.id] === 'edit' ? decisionText[s.id] : s.replacement);
-  const canUndo = s => !!onApplyDraft && !s.originalMissing && Object.hasOwn(s, 'originalValue');
+  const isRejected = s => decisions[s.id] === 'reject';
 
   const decide = async (suggestion, action) => {
     if (decisionLock.current) return;
@@ -101,20 +100,13 @@ export default function AcademicEvaluationPanel({ run, onApplyDraft }) {
     try {
       const recordDecision = body => syllabusCheck.decide(run.id, body);
       const id = suggestion.id;
-      if (action === 'undo' || (action === 'reject' && isHandled(suggestion))) {
-        await undoSuggestion({ suggestion, appliedValue: appliedOf(suggestion), applyDraft: onApplyDraft, recordDecision });
-        setAppliedValue(current => without(current, id));
-        setEditsKept(current => without(current, id));
-        setDecisions(current => ({ ...current, [id]: 'undo' }));
-      } else {
-        const rw = refined[id];
-        const textToApply = action === 'edit' ? edits[id] : suggestion.replacement;
-        const verificationToken = rw?.status === 'verified' && rw.text === textToApply ? rw.verificationToken : undefined;
-        const result = await decideSuggestion({ suggestion, action, editedText: edits[id], verificationToken, applyDraft: onApplyDraft, recordDecision });
-        if (result.applied) setAppliedValue(current => ({ ...current, [id]: action === 'edit' ? edits[id] : suggestion.replacement }));
-        setDecisionText(current => ({ ...current, [id]: action === 'edit' ? edits[id] : null }));
-        setDecisions(current => ({ ...current, [id]: result.decision.action }));
-      }
+      const rw = refined[id];
+      const textToApply = action === 'edit' ? edits[id] : suggestion.replacement;
+      const verificationToken = rw?.status === 'verified' && rw.text === textToApply ? rw.verificationToken : undefined;
+      const result = await decideSuggestion({ suggestion, action, editedText: edits[id], verificationToken, applyDraft: onApplyDraft, recordDecision });
+      if (result.applied) setAppliedValue(current => ({ ...current, [id]: action === 'edit' ? edits[id] : suggestion.replacement }));
+      setDecisionText(current => ({ ...current, [id]: action === 'edit' ? edits[id] : null }));
+      setDecisions(current => ({ ...current, [id]: result.decision.action }));
     } catch (e) {
       const message = e.message?.startsWith('hybrid.') ? t(e.message) : e.message;
       const text = e.draftSaved ? t('hybrid.savedDecisionFailed', { message }) : message;
@@ -127,11 +119,12 @@ export default function AcademicEvaluationPanel({ run, onApplyDraft }) {
   const refine = async (suggestion) => {
     if (refining || decisionLock.current) return;
     const id = suggestion.id;
+    const draftText = edits[id] ?? suggestion.replacement;
     setRefining(id); setErrors(current => without(current, id)); setRefined(current => without(current, id));
     const mem = run?.id ? memoryOf(run.id) : null;
-    const job = syllabusCheck.refine(run.id, id).then(out => {
+    const job = syllabusCheck.refine(run.id, id, draftText).then(out => {
       if (mem) mem.refined = { ...mem.refined, [id]: out };
-      if (out.status === 'verified' && out.usedRewrite) {
+      if (out.status === 'verified' && typeof out.text === 'string') {
         if (mem) mem.edits = { ...mem.edits, [id]: out.text };
       }
       return { out };
@@ -141,7 +134,7 @@ export default function AcademicEvaluationPanel({ run, onApplyDraft }) {
     if (error) setErrors(current => ({ ...current, [id]: error.message || t('hybrid.refineFailed') }));
     else {
       setRefined(cur => ({ ...cur, [id]: out }));
-      if (out.status === 'verified' && out.usedRewrite) setEdits(cur => ({ ...cur, [id]: out.text }));
+      if (out.status === 'verified' && typeof out.text === 'string') setEdits(cur => ({ ...cur, [id]: out.text }));
     }
     setRefining('');
   };
@@ -196,11 +189,12 @@ export default function AcademicEvaluationPanel({ run, onApplyDraft }) {
               {a.correction} <small>{(a.relationshipIds || []).join(', ')} · {t('academicV2.humanReviewOnly')}</small>
             </li>;
           }
+          if (isRejected(s)) return null;
           const handled = isHandled(s);
           const decided = decisions[s.id];
           const stale = !Object.hasOwn(s, 'originalValue');
           const shown = edits[s.id] ?? s.replacement;
-          const canEdit = !!(edits[s.id] ?? s.replacement)?.trim();
+          const hasEdit = typeof edits[s.id] === 'string' && !!edits[s.id].trim() && edits[s.id] !== s.replacement;
           const rw = refined[s.id];
           const currentText = edits[s.id] ?? s.replacement;
           const isVerified = !!rw && rw.status === 'verified' && rw.text === currentText;
@@ -211,9 +205,7 @@ export default function AcademicEvaluationPanel({ run, onApplyDraft }) {
             return <li key={a.id} className="hy-rec decided">
               <div className="hy-rec-head">
                 <strong>{s.title || a.correction}</strong>
-                {s.path && <span className="hy-pill quiet">{s.path}</span>}
-                <span className="hy-pill good" role="status">{t('hybrid.appliedSaved')}</span>
-                {canUndo(s) && <button type="button" className="btn ghost" disabled={busy} onClick={() => decide(s, 'undo')}>{working === s.id ? t('hybrid.applying') : t('hybrid.undo')}</button>}
+                {s.path && <span className="hy-pill">{suggestionSection(s.path, { tr, t })}</span>}
               </div>
               {errors[s.id] && <div className="hy-err" role="alert">{errors[s.id]}</div>}
             </li>;
@@ -222,8 +214,7 @@ export default function AcademicEvaluationPanel({ run, onApplyDraft }) {
           return <li key={a.id} className={'hy-rec' + (decided ? ' decided ' + decided : '')}>
             <div className="hy-rec-head">
               <strong>{s.title || a.correction}</strong>
-              {s.path && <span className="hy-pill quiet">{s.path}</span>}
-              {decided && <span className="hy-pill quiet" role="status">{t('hybrid.decision.' + decided)}</span>}
+              {s.path && <span className="hy-pill">{suggestionSection(s.path, { tr, t })}</span>}
             </div>
             {a.field && <p><strong>{t('academicV2.correctionTarget')}:</strong> {a.field}{a.path ? ` · ${a.path}` : ''}</p>}
             <p className="hy-why">{s.text || a.correction} <small>{(a.relationshipIds || []).join(', ')} · {t('academicV2.humanReviewOnly')}</small></p>
@@ -245,8 +236,7 @@ export default function AcademicEvaluationPanel({ run, onApplyDraft }) {
               </details>}
             </div>}
             <div className="hy-actions">
-              <button type="button" className="btn primary" disabled={busy || stale || !ready || refining === s.id || !isVerified} onClick={() => decide(s, useRewrite ? 'edit' : 'accept')}>{working === s.id ? t('hybrid.applying') : t(useRewrite ? 'hybrid.applyVerified' : 'hybrid.accept')}</button>
-              {typeof s.replacement === 'string' && <button type="button" className="btn outline" disabled={busy || stale || !ready || !canEdit || refining === s.id || !isVerified} onClick={() => decide(s, 'edit')}>{t('hybrid.editApply')}</button>}
+              <button type="button" className="btn primary" disabled={busy || stale || !ready || refining === s.id || !isVerified} onClick={() => decide(s, (useRewrite || hasEdit) ? 'edit' : 'accept')}>{working === s.id ? t('hybrid.applying') : t(useRewrite ? 'hybrid.applyVerified' : 'hybrid.accept')}</button>
               {checkable && <button type="button" className="btn outline" disabled={busy || !!refining || !ready} onClick={() => refine(s)}>{refining === s.id ? t('hybrid.refining') : t('hybrid.refine')}</button>}
               <button type="button" className="btn ghost" disabled={busy || !ready} onClick={() => decide(s, 'reject')}>{t('hybrid.reject')}</button>
             </div>
