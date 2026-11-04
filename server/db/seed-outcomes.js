@@ -61,7 +61,7 @@ async function seed() {
   for (const course of COURSES) {
     if(course.legacyPoReference){say(`course ${course.code}: historical CLO mappings require faculty review; not seeded under new PO numbering`);continue;}
     const [prog] = await conn.query('SELECT program_id FROM programs WHERE code = ?', [course.program]);
-    const [existing] = await conn.query('SELECT course_id FROM courses WHERE code = ? AND program_id = ?', [course.code, prog[0] && prog[0].program_id]);
+    const [existing] = await conn.query('SELECT course_id FROM courses WHERE code = ? AND program_id = ?', [course.code, prog[0]?.program_id || 0]);
     let courseId = existing[0] && existing[0].course_id;
     if (courseId) say(`course ${course.code}: already present`);
     else if (!prog[0]) { say(`course ${course.code}: skipped, program ${course.program} is missing`); continue; }

@@ -51,7 +51,7 @@ test('administrator settings load only in the administrator branch and keep real
   assert.match(parent, /Loading administrator settings/);
   const html = renderToStaticMarkup(<AdministrativeSettings administration={admin} adminBusy={false} updateAdmin={noop} />);
   assert.match(html, /Institutional Standard/); assert.match(html, /AI &amp; Notifications/);
-  assert.match(html, /<output class="static-value">Undergraduate Syllabus v4<\/output>/); assert.match(html, /value="2026–2027"/); assert.doesNotMatch(html, /role="combobox"/);
+  assert.match(html, /<span class="select-current">Undergraduate Syllabus v4<\/span>/); assert.match(html, /role="combobox"/);
 });
 test('Tagalog settings translate labels, keep account names and setting values, and expose saving accessibly', () => {
   setLanguage('tl');
@@ -62,7 +62,7 @@ test('Tagalog settings translate labels, keep account names and setting values, 
   assert.match(html, /aria-live="polite"/);
   const cards = renderToStaticMarkup(<AdministrativeSettings administration={admin} adminBusy={false} updateAdmin={noop} />);
   assert.match(cards, /Pamantayan ng Institusyon/); assert.match(cards, /AI at mga Abiso/);
-  assert.match(cards, /Pamantayang ginagamit sa pagsusuri/); assert.match(cards, /<output class="static-value">Undergraduate Syllabus v4<\/output>/);
+  assert.match(cards, /<span data-value="Undergraduate Syllabus v4">Silabus ng Undergraduate v4<\/span>/); assert.match(cards, /<span class="select-current">Silabus ng Undergraduate v4<\/span>/);
   assert.match(cards, /Original English Department/);
 });
 test('navigation, dashboard summaries and roles switch language while account names stay original', () => {

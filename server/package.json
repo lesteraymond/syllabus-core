@@ -31,12 +31,8 @@
     "migrate-usage": "node db/migrate-usage.js",
     "migrate-deadlines": "node db/migrate-deadlines.js",
     "migrate-archive": "node db/migrate-archive.js",
-    "migrate-subject-owner": "node db/migrate-subject-owner.js",
     "migrate-activity-log": "node db/migrate-activity-log.js",
-    "migrate-prerequisites": "node db/migrate-prerequisites.js",
-    "migrate-credit-units": "node db/migrate-credit-units.js",
-    "migrate-course-code-per-program": "node db/migrate-course-code-per-program.js",
-    "seed-curriculum": "node db/seed-curriculum.js"
+    "migrate-subject-owner": "node db/migrate-subject-owner.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "1.3.0",

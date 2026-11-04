@@ -39,32 +39,32 @@ import { CalendarBlank } from '@phosphor-icons/react/dist/csr/CalendarBlank';
 import { BellRinging } from '@phosphor-icons/react/dist/csr/BellRinging';
 import { ProgramIcon, SubjectIcon, UnderReviewIcon, ApprovedIcon, ReviseIcon, BinIcon, PencilSquareIcon, DeniedIcon } from './customIcons';
 
-export function Card({ title, action, onAction, children, hideScrollbar = false }) {
-  return <div className="card"><div className="card-head"><h3>{title}</h3>{action && (onAction ? <button type="button" className="card-action" onClick={onAction}>{tr(action)}</button> : <span>{tr(action)}</span>)}</div><div className={hideScrollbar ? 'card-body scrollbar-hidden' : 'card-body'} {...(hideScrollbar ? { tabIndex: 0, role: 'region', 'aria-label': title } : {})}>{children}</div></div>;
+export function Card({ title, action, children, hideScrollbar = false }) {
+  return <div className="card"><div className="card-head"><h3>{title}</h3>{action && <span>{tr(action)}</span>}</div><div className={hideScrollbar ? 'card-body scrollbar-hidden' : 'card-body'} {...(hideScrollbar ? { tabIndex: 0, role: 'region', 'aria-label': title } : {})}>{children}</div></div>;
 }
 
-export function Legend({ color, text, value, tip }) {
-  return <div className="legend-row" data-tip={tip}><span className="legend-label"><i style={{ background: color }} />{text}</span><strong>{value}</strong></div>;
+export function Legend({ color, text, value }) {
+  return <div className="legend-row"><span className="legend-label"><i style={{ background: color }} />{text}</span><strong>{value}</strong></div>;
 }
 
 // `value` is a percentage, or null when there is nothing to measure yet (shown as a dash with an empty bar). `note` is a small line under the bar.
-export function Progress({ label, value, note, tip }) {
+export function Progress({ label, value, note }) {
   const known = Number.isFinite(value);
-  return <div className="progress-row" data-tip={tip}><div><span>{label}</span><b>{known ? `${value}%` : '—'}</b></div><div className="bar"><i style={{ width: `${known ? value : 0}%` }} /></div>{note && <small className="progress-note">{note}</small>}</div>;
+  return <div className="progress-row"><div><span>{label}</span><b>{known ? `${value}%` : '—'}</b></div><div className="bar"><i style={{ width: `${known ? value : 0}%` }} /></div>{note && <small className="progress-note">{note}</small>}</div>;
 }
 
 // `value` is 0-100, or null when no syllabus has a score for this area yet.
-export function QualityMini({ label, value, pass = 79 }) {
+export function QualityMini({ label, value }) {
   const known = Number.isFinite(value);
-  return <div className={'quality-mini' + (known && value >= pass ? ' pass' : '')}><div className="quality-ring" style={{ '--p': `${known ? value * 3.6 : 0}deg` }}><span>{known ? value : '—'}</span></div><span>{label}</span></div>;
+  return <div className="quality-mini"><div className="quality-ring" style={{ '--p': `${known ? value * 3.6 : 0}deg` }}><span>{known ? value : '—'}</span></div><span>{label}</span></div>;
 }
 
 export function Deadline({ day, mon, title, note }) {
   return <div className="deadline"><div><b>{day}</b><span>{tr(mon)}</span></div><p><strong>{title}</strong><small>{note}</small></p></div>;
 }
 
-export function Donut({ value, centerTop, centerBottom, tip }) {
-  return <div className="donut" data-tip={tip} style={{ '--p': `${value * 3.6}deg` }}><div><strong>{centerTop}</strong><small>{tr(centerBottom)}</small></div></div>;
+export function Donut({ value, centerTop, centerBottom }) {
+  return <div className="donut" style={{ '--p': `${value * 3.6}deg` }}><div><strong>{centerTop}</strong><small>{tr(centerBottom)}</small></div></div>;
 }
 
 export function Field({ label, full, children }) {
@@ -83,10 +83,8 @@ export function ChartCard({ title, subtitle, children }) {
   return <div className="chart-card"><div><h3>{title}</h3><p>{subtitle}</p></div>{children}</div>;
 }
 
-// With `onClick` the card is a button that takes the reader to the place the insight is about; `go` names that place.
-export function Insight({ n, title, text, onClick, go }) {
-  const body = <><span>{n}</span><div><strong>{title}</strong><p>{text}</p>{onClick && go && <small className="insight-go">{go} ›</small>}</div></>;
-  return onClick ? <button type="button" className="insight insight-link" onClick={onClick}>{body}</button> : <div className="insight">{body}</div>;
+export function Insight({ n, title, text }) {
+  return <div className="insight"><span>{n}</span><div><strong>{title}</strong><p>{text}</p></div></div>;
 }
 
 export function Toggle({ on, set, title, text, disabled }) {
