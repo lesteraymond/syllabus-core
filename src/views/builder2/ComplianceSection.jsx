@@ -4,6 +4,7 @@ import { t as translateUI } from "../../i18n/index.js";
 import { useEffect, useState } from 'react';
 import ComplianceCard from '../ComplianceCard';
 import { useCompliance } from './useCompliance';
+import { timeOf } from '../../lib/complianceView';
 
 // Opening the review step only loads the saved report. Provider calls start
 // exclusively from the single AI CHECK action, including in React Strict Mode.
@@ -36,6 +37,15 @@ export default function ComplianceSection({ syllabusId, saveFirst, canCheck, onO
         <div className="hy-stale" role="status">
           <span>{translateUI(legacy && !changed ? 'hybrid.refreshSuggestions' : 'hybrid.recheckBanner')}</span>
         </div>
+      )}
+      {installed && (busy || run) && (
+        <p className="cmp-status" role="status" aria-live="polite">
+          {busy ? translateUI('check.status.checking')
+            : run.aiStatus === 'pending' ? translateUI('check.status.writing', { time: timeOf(run.createdAt) })
+            : run.aiStatus === 'ok' ? translateUI('check.status.ai', { time: timeOf(run.createdAt) })
+            : run.aiStatus === 'failed' ? translateUI('check.status.noAi', { time: timeOf(run.createdAt) })
+            : translateUI('check.status.rules', { time: timeOf(run.createdAt) })}
+        </p>
       )}
       {!installed && <div className="info-banner warning">{translateUI('hybrid.unavailable')}</div>}
       {error && <div className="info-banner warning" role="alert">{tr(error)}</div>}

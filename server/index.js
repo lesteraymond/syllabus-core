@@ -1,4 +1,6 @@
 require("dotenv").config();
+// The Gemini key for the AI Checker may sit in the project's root .env (next to the Vite settings); values already set are kept.
+require("dotenv").config({ path: require("path").join(__dirname, "..", ".env") });
 const express = require("express");
 const cors = require("cors");
 const session = require("express-session");
@@ -49,10 +51,12 @@ for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => { Promise
 
 app.use(restoreSession);
 
-// Student accounts exist only to sign in and see their own profile: every other API is closed to them.
+// Student accounts can sign in, see their own profile and read approved syllabi: every other API is closed to them.
 app.use("/api", (req, res, next) => {
 	const u = req.session.user;
-	if (u && u.role === "student" && !/^\/(auth|students)(\/|$)/.test(req.path)) return res.status(403).json({ error: "Not available for student accounts" });
+	// ...except reading the approved syllabi (the list and one syllabus to read).
+	const readsSyllabi = req.method === "GET" && /^\/syllabi(\/\d+\/review)?\/?$/.test(req.path);
+	if (u && u.role === "student" && !readsSyllabi && !/^\/(auth|students)(\/|$)/.test(req.path)) return res.status(403).json({ error: "Not available for student accounts" });
 	next();
 });
 
