@@ -101,7 +101,9 @@ function makeDb() {
       else p[0].forEach(([run_id, kind, source, area, title, message, step, based_on, links, priority, priority_level, position]) => s.findings.push({ run_id, kind, source, area, title, message, step, based_on, links, priority, priority_level, position }));
       return [{}];
     }
-    if (sql.startsWith('DELETE FROM ai_findings')) { s.findings = s.findings.filter((f) => !(f.run_id === p[0] && f.kind === 'recommendation')); return [{}]; }
+    if (sql.startsWith('DELETE FROM ai_findings')) { const kind = sql.includes("'finding'") ? 'finding' : 'recommendation'; s.findings = s.findings.filter((f) => !(f.run_id === p[0] && f.kind === kind)); return [{}]; }
+    if (sql.startsWith('DELETE FROM ai_check_area_scores')) { s.areas = s.areas.filter((a) => a.run_id !== p[0]); return [{}]; }
+    if (sql.startsWith('UPDATE ai_check_runs SET overall = ?')) { const [overall, status, passed, conformant, id] = p; Object.assign(s.runs.find((r) => r.run_id === id), { overall, status, passed, conformant }); return [{}]; }
     if (sql.startsWith('UPDATE ai_check_runs SET ai_status = ?, ai_error = ?, provider')) {
       const [ai_status, ai_error, provider, model, prompt_version, id] = p;
       Object.assign(s.runs.find((r) => r.run_id === id), { ai_status, ai_error, provider, model, prompt_version });
@@ -147,6 +149,7 @@ function makeDb() {
     if (sql.startsWith('INSERT INTO submission_logs')) { s.activity.push({ syllabusId: p[0], userId: p[1], action: p[2], notes: p[3] }); return [{ insertId: s.activity.length }]; }
     if (/^(INSERT|UPDATE|DELETE)/.test(sql)) return [{}];
     if (/program_outcome_sources/.test(sql)) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' }); // not migrated yet
+    if (/FROM course_prerequisites/.test(sql)) return [[]]; // a subject's prerequisites: none set
     throw new Error('unexpected query: ' + sql);
   };
   const conn = { query: async (q, p) => handle(q, p), beginTransaction: async () => {}, commit: async () => {}, rollback: async () => {}, release: () => {} };
@@ -957,3 +960,4 @@ test('every AI check is recorded in the activity log of the person who ran it, w
   assert.strictEqual((await call(gus, 'POST', '/syllabi/1/compliance/recheck', {})).status, 404);
   assert.strictEqual(db.s.activity.length, before);
 }));
+
