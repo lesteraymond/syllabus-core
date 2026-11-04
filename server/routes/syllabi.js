@@ -51,13 +51,10 @@ const CHECK_FIRST = 'Check this syllabus in the AI Checker before you decide on 
 router.get('/', requireAuth, async (req, res) => {
   try {
     const db = req.app.locals.db;
-    let query = `SELECT s.*, u.first_name, u.last_name, u.avatar_path, c.program_name, co.title AS course_title, co.code AS course_code_live, pr.code AS program_code, pr.name AS program_full_name FROM syllabi s JOIN users u ON s.user_id = u.user_id LEFT JOIN curriculum c ON s.curriculum_id = c.curriculum_id LEFT JOIN courses co ON co.course_id = s.course_id LEFT JOIN programs pr ON pr.program_id = co.program_id`;
+    let query = `SELECT s.*, u.first_name, u.last_name, u.avatar_path, c.program_name, co.title AS course_title, pr.code AS program_code FROM syllabi s JOIN users u ON s.user_id = u.user_id LEFT JOIN curriculum c ON s.curriculum_id = c.curriculum_id LEFT JOIN courses co ON co.course_id = s.course_id LEFT JOIN programs pr ON pr.program_id = co.program_id`;
     const params = [];
 
-    if (req.session.user.role === 'student') {
-      // A student reads every approved syllabus, whatever subject it is (not only the subjects on their COR).
-      query += " WHERE s.status = 'approved'";
-    } else if (!rules.isReviewer(req.session.user)) {
+    if (!rules.isReviewer(req.session.user)) {
       query += ' WHERE s.user_id = ?';
       params.push(req.session.user.id);
     } else {
@@ -88,9 +85,6 @@ router.get('/', requireAuth, async (req, res) => {
     }
     const stageFlags = (st) => ({ dean: st.dean.cleared, asst_vpaa: st.asst_vpaa.cleared, lic_director: st.lic_director.cleared });
 
-    // The student's lists and the repository show the subject as the catalog has it now (code, title, program), so a renamed or recoded subject
-    // reads the same everywhere; a syllabus with no catalog subject keeps its own text. Faculty and admin working lists are unchanged.
-    const live = req.session.user.role === 'student' || req.query.scope === 'repository';
     res.json(rows.map(r => ({
       id: r.syllabus_id,
       userId: r.user_id,
@@ -98,8 +92,8 @@ router.get('/', requireAuth, async (req, res) => {
       courseId: r.course_id,
       archived: !!r.archived_at,
       filePath: r.file_path,
-      title: live && r.course_title ? r.course_title : r.title,
-      courseCode: live && r.course_code_live ? r.course_code_live : r.course_code,
+      title: r.title,
+      courseCode: r.course_code,
       status: r.status,
       version: r.version,
       adminComment: r.admin_comment,
@@ -109,7 +103,6 @@ router.get('/', requireAuth, async (req, res) => {
       ownerAvatarUrl: avatarUrlFor(r.user_id, r.avatar_path),
       program: r.program_name || '',
       programCode: r.program_code || '', // the catalog program of the subject (the field above comes from the old curriculum)
-      programName: r.program_full_name || '',
       courseTitle: r.course_title || '',
       ...(reviewer ? { awaitingAiCheck: !!(states.get(r.syllabus_id) && states.get(r.syllabus_id).checkable && !states.get(r.syllabus_id).checked) } : {}),
       // The review chain: a reviewer sees every stage with who cleared it; the owner sees only which stages are cleared.

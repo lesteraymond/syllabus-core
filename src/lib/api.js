@@ -139,8 +139,7 @@ export const syllabi = {
 export const compliance = {
   get: (id) => request(`/syllabi/${id}/compliance`),
   recheck: (id, force = false) => request(`/syllabi/${id}/compliance/recheck`, { method: 'POST', body: JSON.stringify(force ? { force: true } : {}) }),
-  list: (syllabus = 'all', term = null) => request(`/compliance?syllabus=${encodeURIComponent(syllabus)}${term ? `&schoolYear=${encodeURIComponent(term.schoolYear)}&semester=${encodeURIComponent(term.semester)}` : ''}`),
-  terms: () => request('/compliance/terms'), // the school terms that have checks: [{ schoolYear, semester, checks, syllabi }]
+  list: (syllabus = 'all') => request(`/compliance?syllabus=${encodeURIComponent(syllabus)}`),
   // admin: the latest check of each submitted syllabus, newest first. { limit, from, to }: from/to are ISO instants (from inclusive, to exclusive).
   history: ({ limit, from, to } = {}) => {
     const q = new URLSearchParams();
@@ -216,7 +215,6 @@ export const notifications = {
 export const adminSettings = {
   get: () => request('/settings'),
   save: (settings) => request('/settings', { method: 'PUT', body: JSON.stringify(settings) }),
-  standard: () => request('/settings/standard'), // the compliance standard, read-only
 };
 
 export const users = {

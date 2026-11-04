@@ -99,17 +99,7 @@ export default function CourseOutcomes({ notify, onCatalogChanged }) {
           </label>
           <span className="hint">{tr(shown.length + (shown.length === 1 ? ' subject' : ' subjects'))}</span>
         </div>
-        <ul className="sm-cards">
-          {shown.map((c) => (
-            <li key={c.id}>
-              <div className="sm-card-head"><div><strong className="mono">{c.code}</strong><span>{c.title}</span></div><span className="chip quiet">{c.program}</span></div>
-              {deadlineState.enabled && <div className="sm-card-deadline"><DeadlineChip subject={c} deadline={currentDeadline(deadlinesByCourse.get(c.id))} onOpen={() => setDeadlineFor(c)} /></div>}
-              <div className="sm-card-actions"><SubjectRowActions subject={c} onEdit={() => setTarget({ subject: c, mode: 'edit' })} onDelete={() => setTarget({ subject: c, mode: 'delete' })} /></div>
-            </li>
-          ))}
-          {!shown.length && <li className="sm-card-empty">{filter ? translateUI("ui.no_subjects_in_p0_yet_4d9c7b", { p0: (filter) }) : translateUI("ui.no_subjects_yet_add_one_to_start_c6c29e")}</li>}
-        </ul>
-        <div ref={tableRef} className="table-wrap sm-table">
+        <div ref={tableRef} className="table-wrap">
           <table>
             <thead><tr><th>{translateUI("ui.code_adac69")}</th><th>{translateUI("ui.title_768e0c")}</th><th>{translateUI("ui.program_9d6800")}</th>{deadlineState.enabled && <th>{translateUI("deadline.column")}</th>}<th className="col-actions">{translateUI("ui.actions_c3cd63")}</th></tr></thead>
             <tbody>
