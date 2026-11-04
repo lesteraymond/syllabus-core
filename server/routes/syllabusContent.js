@@ -379,9 +379,8 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
     }
 
     // After the commit, outside the transaction: the AI recommendations are a background job. They never delay or fail a submit.
-    if (outcome.runId && !outcome.result.hybrid && outcome.result.status === 'scored' && (outcome.result.findings.length || compliance.canJudge())) {
-      compliance.startAiJob(db, { runId: outcome.runId, content: outcome.content, result: outcome.result, names: compliance.namesFor(me, outcome.content),
-        rescore: (judged) => compliance.check(outcome.content, { catalog: outcome.content.catalog, preparedBy: `${me.firstName} ${me.lastName}`, judged }) });
+    if (outcome.runId && !outcome.result.hybrid && outcome.result.status === 'scored' && outcome.result.findings.length) {
+      compliance.startAiJob(db, { runId: outcome.runId, content: outcome.content, result: outcome.result, names: compliance.namesFor(me, outcome.content) });
     }
 
     // After the commit: notifications never affect the result.

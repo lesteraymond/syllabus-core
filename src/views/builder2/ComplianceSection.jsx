@@ -3,7 +3,6 @@ import { tr } from "../../i18n/index.js";
 import { t as translateUI } from "../../i18n/index.js";
 import { useEffect, useState } from 'react';
 import ComplianceCard from '../ComplianceCard';
-import SuggestionsPanel from './SuggestionsPanel';
 import { useCompliance } from './useCompliance';
 import { timeOf } from '../../lib/complianceView';
 
@@ -11,7 +10,7 @@ import { timeOf } from '../../lib/complianceView';
 // exclusively from the single AI CHECK action, including in React Strict Mode.
 // `canCheck` is false for a syllabus the viewer cannot re-check: then it only shows the stored run.
 // `onRun` tells the builder what the latest run says, so the submit button can say "Submit anyway" when warnings remain.
-export default function ComplianceSection({ syllabusId, saveFirst, canCheck, onOpenStep, onRun, onApplyDraft, d, apply: applyForm, editable }) {
+export default function ComplianceSection({ syllabusId, saveFirst, canCheck, onOpenStep, onRun, onApplyDraft }) {
   const { run, installed, busy, error, load, check } = useCompliance({ syllabusId, saveFirst });
   // True once a recommendation has been applied: the stored result no longer describes the syllabus until it is checked again.
   const [changed, setChanged] = useState(false);
@@ -53,8 +52,6 @@ export default function ComplianceSection({ syllabusId, saveFirst, canCheck, onO
       {installed && !run && !error && !busy && <p className="cmp-small">{translateUI("ui.not_checked_yet_8ea64e")}</p>}
       {/* `busy` is the same value that disables and relabels the button above, so the ring and the button start and stop together. */}
       {installed && (run || busy) && <ComplianceCard run={run} checking={busy} onOpenStep={onOpenStep} onApplyDraft={apply} />}
-      {/* The rule-based check's suggested fixes; a hybrid run carries its own suggestions in the card above. */}
-      {canCheck && installed && run && !run.hybrid && !busy && <SuggestionsPanel run={run} d={d} apply={applyForm} editable={editable} syllabusId={syllabusId} onOpenStep={onOpenStep} onRecheck={recheck} />}
     </section>
   );
 }
