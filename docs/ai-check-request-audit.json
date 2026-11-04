@@ -1,0 +1,32 @@
+{
+  "testedAt": "2026-10-22T04:32:27.058Z",
+  "syllabusId": 101,
+  "simulated": true,
+  "actualOpenRouterRequests": 0,
+  "relationships": 74,
+  "batchSize": 4,
+  "simulatedRequestsPerEvaluation": 19,
+  "batchSizes": [
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    2
+  ],
+  "duplicateRelationships": 0,
+  "submissionAuthorized": false
+}

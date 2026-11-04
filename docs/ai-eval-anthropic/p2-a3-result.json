@@ -1,0 +1,1130 @@
+{
+  "items": 9,
+  "runs": 2,
+  "answered": 18,
+  "invalid": 0,
+  "invalidRate": 0,
+  "notAttempted": 0,
+  "agreement": 1,
+  "falsePositiveRate": 0,
+  "falseNegativeRate": 0,
+  "counts": {
+    "clearAligned": 4,
+    "falsePositive": 0,
+    "clearNot": 10,
+    "falseNegative": 0
+  },
+  "confusion": {
+    "ALIGNED": {
+      "ALIGNED": 4,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "PARTIAL": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "FLAGGED": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 2,
+      "NOT_ALIGNED": 8,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    }
+  },
+  "partialAccuracy": null,
+  "approvalAccuracy": 1,
+  "byDiscipline": {
+    "engineering": {
+      "items": 5,
+      "answered": 10,
+      "agree": 10,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "computing": {
+      "items": 4,
+      "answered": 8,
+      "agree": 8,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "byCategory": {
+    "clear-positive": {
+      "items": 2,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "keyword-overlap": {
+      "items": 2,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "wrong-po-mapping": {
+      "items": 3,
+      "answered": 6,
+      "agree": 6,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "real-faculty-clo": {
+      "items": 2,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "stability": 1,
+  "byType": {
+    "CLO-PO": {
+      "items": 9,
+      "answered": 18,
+      "agree": 18,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "disagreements": [],
+  "structuredFields": {
+    "answers": 0,
+    "withFields": 0,
+    "missing": 0,
+    "malformed": 0,
+    "contradictory": 0,
+    "notAssessed": 0,
+    "perField": {},
+    "note": "Expectations are provisional. Only an assessed field is compared with them: a field that was not assessed, missing, malformed or in a self-contradictory answer is counted by its state, never as agreement. INSUFFICIENT_EVIDENCE answers are left out."
+  },
+  "model": "anthropic/claude-sonnet-5-5",
+  "promptVersion": "alignment-10",
+  "provider": "anthropic",
+  "evaluationOnly": true,
+  "modelsReturned": {
+    "claude-sonnet-5-5": 6
+  },
+  "adapterUsage": {
+    "requests": 6,
+    "attempts": 6,
+    "timedOut": 0,
+    "inputTokens": 3096,
+    "outputTokens": 4611,
+    "thinkingTokens": 0,
+    "cacheCreationInputTokens": 3728,
+    "cacheReadInputTokens": 18640,
+    "thinkingReports": {
+      "nonzero": 0,
+      "zero": 6,
+      "unavailable": 0
+    },
+    "stopReasons": {
+      "end_turn": 6
+    },
+    "enumCaseOnly": 0,
+    "estimatedUsd": 0.063486,
+    "priceAsOf": "2026-10-27"
+  },
+  "dataset": {
+    "name": "stage-a",
+    "version": "stage-a-2",
+    "split": "all",
+    "reviewStatus": "unreviewed"
+  },
+  "configuration": {
+    "stageFlags": {
+      "a": false,
+      "b": false,
+      "b3": false,
+      "b4": false,
+      "c1": false,
+      "c2": false,
+      "d1": false,
+      "d2": false
+    },
+    "promptVariant": "current",
+    "trim": false,
+    "minItems": false,
+    "timeoutMs": 180000,
+    "anthropic": {
+      "model": "claude-sonnet-5-5",
+      "thinking": "adaptive",
+      "thinkingParameter": {
+        "type": "adaptive"
+      },
+      "effort": "high",
+      "maxTokens": 16000,
+      "maxRetries": 2,
+      "promptCache": true,
+      "evaluationOnly": true
+    }
+  },
+  "retries": {
+    "batches": 6,
+    "requests": 6,
+    "invalidAnswers": 0,
+    "finalUnverified": 0,
+    "providerErrors": 0,
+    "notSent": 0,
+    "retryRate": 0,
+    "invalidAnswerRate": 0
+  },
+  "relationshipMetrics": {
+    "planned": 18,
+    "attempted": 18,
+    "neverAttempted": 0,
+    "verified": 18,
+    "recovered": 0,
+    "unresolved": 0,
+    "unresolvedRate": 0,
+    "coverage": 1,
+    "attemptedShare": 1,
+    "firstAttempt": {
+      "answered": 18,
+      "refused": 0,
+      "validationFailureRate": 0,
+      "noAnswerFirst": 0
+    },
+    "rawResponseErrors": {
+      "answers": 6,
+      "invalidAnswers": 0,
+      "refusedJudgements": 0,
+      "requestsWithoutAnswer": 0
+    },
+    "aspectCoverage": null
+  },
+  "completion": {
+    "maxUnresolved": 0.2,
+    "unresolvedRate": 0,
+    "coverage": 1,
+    "stopped": null,
+    "state": "complete",
+    "usableForAgreement": true,
+    "reason": "every planned relationship was attempted; 0 of 18 remain unresolved (0%), within the 20% limit"
+  },
+  "schema": {
+    "minItems": false,
+    "emptyAnswers": 0,
+    "minItemsNotEnforced": false
+  },
+  "answerReview": {
+    "advisory": true,
+    "note": "Counts are heuristic review warnings, not verified academic errors. Labels, fields, validation and agreement are unchanged by these warnings.",
+    "counts": {
+      "explanationReview": {},
+      "draftReview": {},
+      "draftWarnings": {}
+    },
+    "flaggedAnswers": []
+  },
+  "quality": {
+    "mode": {
+      "id": "A",
+      "name": "legacy academic alignment benchmark",
+      "stagesOn": [],
+      "recommendationField": false
+    },
+    "note": "Expectations are provisional (developer-written, not reviewed by faculty). These measures compare the answers with those expectations and with the prompt's own rules; they are not faculty accuracy, and the Bloom and mapping measures are heuristics for review.",
+    "answers": {
+      "attempted": 18,
+      "verified": 18,
+      "unverified": 0,
+      "scored": 18
+    },
+    "agreement": {
+      "strict": {
+        "answers": 8,
+        "agree": 8,
+        "rate": 1
+      },
+      "permissive": {
+        "answers": 18,
+        "agree": 18,
+        "rate": 1
+      }
+    },
+    "falseApprovals": {
+      "clearNotAligned": 10,
+      "judgedAligned": 0,
+      "rate": 0,
+      "ids": []
+    },
+    "falseRejections": {
+      "clearAligned": 4,
+      "judgedOtherwise": 0,
+      "rate": 0,
+      "byLabel": {},
+      "ids": []
+    },
+    "insufficientEvidence": {
+      "answers": 0,
+      "accepted": 0,
+      "notAccepted": 0,
+      "rate": 0,
+      "ids": []
+    },
+    "bloom": {
+      "answers": 18,
+      "notApplicable": 0,
+      "levelRuleConflicts": {
+        "aligned": 6,
+        "breakingTheRule": 0,
+        "ids": []
+      },
+      "levelGapItems": {
+        "answers": 0,
+        "gapShown": 0,
+        "gapNotShown": 0,
+        "notApplicable": 0
+      },
+      "sameStatement": {
+        "repeated": 2,
+        "differentLevels": 0,
+        "examples": []
+      },
+      "acrossRuns": {
+        "compared": 9,
+        "changed": 1
+      },
+      "refusedInvalidLevel": 0
+    },
+    "recommendations": {
+      "proposals": {
+        "NO_CHANGE": 6,
+        "REWRITE_TEXT": 12
+      },
+      "asExpected": {
+        "withAnExpectation": 14,
+        "matches": 8,
+        "byExpected": {
+          "NO_CHANGE": {
+            "NO_CHANGE": 4
+          },
+          "REWRITE_TEXT": {
+            "REWRITE_TEXT": 4
+          },
+          "RETAG_OUTCOME": {
+            "REWRITE_TEXT": 6
+          }
+        }
+      },
+      "unsupported": {
+        "rewriteForClearAligned": 0,
+        "rewriteWhereRetagExpected": 6,
+        "draftHeldBackByReview": 0,
+        "refusals": {},
+        "total": 6,
+        "ids": {
+          "rewriteForClearAligned": [],
+          "rewriteWhereRetagExpected": [
+            "cp-bscpe-wrongpo#1",
+            "cp-bscpe-wrongpo#2",
+            "cp-bsit-wrongpo#1",
+            "cp-bsit-wrongpo#2",
+            "cp-bsie-wrongpo#1",
+            "cp-bsie-wrongpo#2"
+          ],
+          "draftHeldBackByReview": []
+        }
+      }
+    },
+    "mappingRemedy": {
+      "retagExpected": {
+        "answers": 6,
+        "failing": 6,
+        "proposals": {
+          "REWRITE_TEXT": 6
+        },
+        "rewritesTowardSource": 6,
+        "answersById": [
+          {
+            "id": "cp-bscpe-wrongpo",
+            "run": 1,
+            "label": "NOT_ALIGNED",
+            "proposal": "REWRITE_TEXT",
+            "sourceWords": 2,
+            "draft": "Communicate effectively the calibration procedure and measurement tolerance of a sensor through a clear written technical report and an oral presentation to an engineering audience."
+          },
+          {
+            "id": "cp-bscpe-wrongpo",
+            "run": 2,
+            "label": "NOT_ALIGNED",
+            "proposal": "REWRITE_TEXT",
+            "sourceWords": 2,
+            "draft": "Communicate the results of a sensor calibration effectively by presenting the measurement tolerance in a written technical report and an oral presentation to engineering peers."
+          },
+          {
+            "id": "cp-bsit-wrongpo",
+            "run": 1,
+            "label": "NOT_ALIGNED",
+            "proposal": "REWRITE_TEXT",
+            "sourceWords": 6,
+            "draft": "Develop and test Java programs that use loops and conditional statements to preserve and promote Filipino historical and cultural heritage, such as a program that catalogs and displays Philippine heritage sites or festivals."
+          },
+          {
+            "id": "cp-bsit-wrongpo",
+            "run": 2,
+            "label": "NOT_ALIGNED",
+            "proposal": "REWRITE_TEXT",
+            "sourceWords": 5,
+            "draft": "Develop and test Java programs that use loops and conditional statements to present and promote Filipino historical and cultural heritage, such as a program that displays facts about local festivals or heritage sites."
+          },
+          {
+            "id": "cp-bsie-wrongpo",
+            "run": 1,
+            "label": "NOT_ALIGNED",
+            "proposal": "REWRITE_TEXT",
+            "sourceWords": 2,
+            "draft": "Collaborate effectively in a multidisciplinary team to develop a system requirements specification and a functional decomposition for an engineered system, integrating the inputs of members from different disciplines and stakeholders."
+          },
+          {
+            "id": "cp-bsie-wrongpo",
+            "run": 2,
+            "label": "NOT_ALIGNED",
+            "proposal": "REWRITE_TEXT",
+            "sourceWords": 2,
+            "draft": "Collaborate effectively on a multidisciplinary team to develop a system requirements specification and a functional decomposition for an engineered system, integrating the inputs of team members from different disciplines."
+          }
+        ]
+      },
+      "remapCandidates": {
+        "rule": "CLO-PO or CLO-EGA, not ambiguous, ALIGNED not accepted, category clear-negative or wrong-program: faculty to confirm whether a re-tag or a rewrite is right; never scored",
+        "answers": 0,
+        "failing": 0,
+        "proposals": {},
+        "rewritesTowardSource": 0,
+        "answersById": []
+      },
+      "rewrites": {
+        "drafts": 12,
+        "towardSource": 12,
+        "threshold": 2
+      }
+    },
+    "evidence": {
+      "sides": {
+        "exact": 36
+      },
+      "exactRate": 1,
+      "judgementsReturned": 18,
+      "refusedForQuotes": 0,
+      "refusedRate": 0,
+      "byCode": {}
+    },
+    "refusalCodes": {},
+    "operations": {
+      "requests": 6,
+      "latencyMs": {
+        "answers": 6,
+        "median": 5198,
+        "p90": 6941,
+        "max": 6941
+      },
+      "tokens": {
+        "input": 3096,
+        "cacheWrite": 3728,
+        "cacheRead": 18640,
+        "output": 4611,
+        "thinking": 0,
+        "thinkingReports": {
+          "nonzero": 0,
+          "zero": 6,
+          "unavailable": 0
+        }
+      },
+      "estimatedCost": 0.063486,
+      "notEstimated": 0,
+      "chargedByGuard": 0.06535,
+      "estimatedPerVerifiedRelationship": 0.003527
+    }
+  },
+  "limits": {
+    "budget": 15,
+    "maxCost": 0.55,
+    "maxTransient": 3,
+    "maxUnproductive": 37,
+    "maxUnresolved": 0.2,
+    "minSample": 8,
+    "warnInvalid": 6,
+    "maxInvalid": 3,
+    "accounting": "reconcile",
+    "maxTokens": 16000,
+    "totalCap": 1.669372,
+    "spendRegister": "docs\\ai-eval-anthropic\\spend-register.json",
+    "maxOutputTokens": null
+  },
+  "failures": [],
+  "perItem": {
+    "cp-bscpe-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "cp-bscpe-keyword": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cp-bscpe-wrongpo": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "cp-bsit-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "cp-bsit-keyword": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "cp-bsit-wrongpo": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "cp-bsit-real3": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "cp-bsie-wrongpo": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "cp-bsie-real2": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ]
+  },
+  "ranAt": "2026-10-27T18:25:49.810Z",
+  "answers": [
+    {
+      "cp-bsit-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "Utilize modern computing tools.",
+        "targetQuote": "using an integrated development environment",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The CLO practises using a modern computing tool (an IDE) to write, compile and debug Java programs, at Apply level.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "cp-bsit-keyword": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Analyze complex problems, and identify and define the computing requirements",
+        "targetQuote": "Memorize the keywords and syntax of the Java language.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Analyze",
+        "targetBloom": "Remember",
+        "explanation": "The PO asks for analysing complex problems and identifying and defining computing requirements for a solution (Analyze). The CLO only asks to memorize keywords and syntax (Remember), which is a lower Bloom level. It has no analysis verb, and it does not mention problems, requirements or solution design. It shares only the computing field.",
+        "recommendation": null,
+        "draft": "Analyze programming problems and identify and define the computing requirements, including inputs, processing and outputs, needed to design a Java solution.",
+        "aspects": null
+      },
+      "cp-bsit-wrongpo": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Preserve and promote “Filipino historical and cultural heritage;",
+        "targetQuote": "Develop and test Java programs that use loops and conditional statements.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The PO is about preserving and promoting Filipino historical and cultural heritage. The CLO is about developing and testing Java programs with loops and conditionals. The subject matter is unrelated, and the CLO has no verb or object concerning heritage or culture.",
+        "recommendation": null,
+        "draft": "Develop and test Java programs that use loops and conditional statements to preserve and promote Filipino historical and cultural heritage, such as a program that catalogs and displays Philippine heritage sites or festivals.",
+        "aspects": null
+      },
+      "cp-bsit-real3": {
+        "label": "ALIGNED",
+        "sourceQuote": "multi-disciplinary and multi-cultural teams",
+        "targetQuote": "Collaborate effectively within multi-disciplinary and culturally diverse teams",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The CLO collaborates in multi-disciplinary, culturally diverse teams to build Java solutions, which matches the PO's teamwork and subject.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "cp-bsie-wrongpo": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Ability to function on multidisciplinary teams",
+        "targetQuote": "Develop a system requirements specification and a functional decomposition for an engineered system.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Create",
+        "explanation": "The PO asks for the ability to function on multidisciplinary teams (a teamwork/collaboration competency). The CLO is about developing a requirements specification and functional decomposition, which is a technical design task. It has no teamwork verb (collaborate, contribute, work with), no mention of team roles or of multiple disciplines, and no team setting. The subject matter is different: the PO's object is team functioning, the CLO's is system documents. Bloom level: the PO is Apply, and the CLO is Create, so the level is not the problem, but verb and subject do not match.",
+        "recommendation": null,
+        "draft": "Collaborate effectively in a multidisciplinary team to develop a system requirements specification and a functional decomposition for an engineered system, integrating the inputs of members from different disciplines and stakeholders.",
+        "aspects": null
+      },
+      "cp-bsie-real2": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "design a system, component, or process to meet desired needs within realistic constraints",
+        "targetQuote": "analyze, design, and optimize complex systems, integrating various components such as people, materials, technology, and information",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Create",
+        "explanation": "The CLO shares the PO's design focus (design complex systems, integrating components), and its Bloom level (Analyze/Create) is not lower than the PO's (Create). Gaps: (1) it does not address meeting desired needs, since no needs or requirements are named; (2) it names no realistic constraints (economic, environmental, social, political, ethical, health and safety, manufacturability, sustainability); (3) it does not mention working in accordance with standards. The PO's object is a design that meets needs within constraints, while the CLO speaks only of optimizing complex systems.",
+        "recommendation": null,
+        "draft": "Apply critical and creative thinking skills to analyze, design, and optimize complex systems that meet stakeholder needs, integrating various components such as people, materials, technology, and information within realistic economic, environmental, social, ethical, health and safety, manufacturability, and sustainability constraints, in accordance with applicable standards.",
+        "aspects": null
+      },
+      "cp-bscpe-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "design and conduct experiments",
+        "targetQuote": "Design and conduct experiments to characterize sensor accuracy",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Create",
+        "explanation": "The CLO names designing and conducting experiments and analyzing and interpreting data, on sensor accuracy.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "cp-bscpe-keyword": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+        "targetQuote": "Discuss experiments in the history of sensor technology.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Understand",
+        "explanation": "The CLO shares only the word 'experiments'. Its verb 'Discuss' is Understand level, below the PO's Create/Analyze level. It does not design or conduct experiments. It does not analyze or interpret data. It treats the history of sensor technology rather than doing experimental work on sensors or signal circuits.",
+        "recommendation": null,
+        "draft": "Design and conduct experiments on sensors and signal conversion circuits, and analyze and interpret the measurement data to evaluate sensor performance.",
+        "aspects": null
+      },
+      "cp-bscpe-wrongpo": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Ability to communicate effectively",
+        "targetQuote": "Calibrate a sensor and record its measurement tolerance.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The PO asks for effective communication. The CLO is about calibrating a sensor and recording its tolerance, which is a technical measurement task. It has no communicating verb (present, report, explain) and no audience or medium. Recording a value is not communicating effectively.",
+        "recommendation": null,
+        "draft": "Communicate effectively the calibration procedure and measurement tolerance of a sensor through a clear written technical report and an oral presentation to an engineering audience.",
+        "aspects": null
+      }
+    },
+    {
+      "cp-bsit-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "Utilize modern computing tools",
+        "targetQuote": "using an integrated development environment",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "Writing, compiling and debugging in an IDE applies a modern computing tool at Apply level.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "cp-bsit-keyword": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Analyze complex problems, and identify and define the computing requirements",
+        "targetQuote": "Memorize the keywords and syntax of the Java language.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Analyze",
+        "targetBloom": "Remember",
+        "explanation": "The PO asks to analyze complex problems and identify and define computing requirements for a solution (Analyze). The CLO only asks to memorize Java keywords and syntax (Remember), which is a lower Bloom level and has no analysis verb. It also never mentions problems, requirements or designing a solution, so it shares only the programming topic.",
+        "recommendation": null,
+        "draft": "Analyze programming problems, identify and define their computing requirements, and design Java solutions that apply the language's keywords and syntax correctly.",
+        "aspects": null
+      },
+      "cp-bsit-wrongpo": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Preserve and promote “Filipino historical and cultural heritage",
+        "targetQuote": "Develop and test Java programs that use loops and conditional statements.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Create",
+        "explanation": "The PO is about preserving and promoting Filipino historical and cultural heritage (Apply/Evaluate, cultural subject). The CLO is about developing and testing Java programs with loops and conditionals, a different subject with no cultural heritage content, verb or object.",
+        "recommendation": null,
+        "draft": "Develop and test Java programs that use loops and conditional statements to present and promote Filipino historical and cultural heritage, such as a program that displays facts about local festivals or heritage sites.",
+        "aspects": null
+      },
+      "cp-bsit-real3": {
+        "label": "ALIGNED",
+        "sourceQuote": "Work effectively and independently in multi-disciplinary and multi-cultural teams",
+        "targetQuote": "Collaborate effectively within multi-disciplinary and culturally diverse teams",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The CLO has students collaborate in multi-disciplinary and culturally diverse teams to build Java solutions, matching the PO's teamwork competency.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "cp-bsie-wrongpo": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Ability to function on multidisciplinary teams",
+        "targetQuote": "Develop a system requirements specification and a functional decomposition for an engineered system.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Create",
+        "explanation": "The PO asks for the ability to function on multidisciplinary teams (a teamwork/collaboration competency, roughly Apply). The CLO is a technical Create-level task: developing a requirements specification and functional decomposition. It has (1) no teamwork or collaboration verb or competency, (2) no multidisciplinary context or team roles, and (3) a different subject, since it concerns the technical artifacts and not working with others. The CLO shares no key action or object with the PO.",
+        "recommendation": null,
+        "draft": "Collaborate effectively on a multidisciplinary team to develop a system requirements specification and a functional decomposition for an engineered system, integrating the inputs of team members from different disciplines.",
+        "aspects": null
+      },
+      "cp-bsie-real2": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Ability to design a system, component, or process to meet desired needs within realistic constraints",
+        "targetQuote": "Apply critical and creative thinking skills to analyze, design, and optimize complex systems",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Create",
+        "explanation": "The CLO matches the PO's core: it designs and optimizes systems (Create level), and the object is an engineered system in the same discipline. Gaps: (1) it never mentions meeting desired needs or stakeholder needs; (2) it names none of the realistic constraints the PO lists (economic, environmental, social, political, ethical, health and safety, manufacturability, sustainability); (3) it does not mention working in accordance with standards.",
+        "recommendation": null,
+        "draft": "Apply critical and creative thinking skills to analyze, design, and optimize complex systems that integrate people, materials, technology, and information to meet desired stakeholder needs within realistic constraints such as economic, environmental, social, ethical, health and safety, manufacturability, and sustainability, in accordance with applicable standards.",
+        "aspects": null
+      },
+      "cp-bscpe-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "design and conduct experiments",
+        "targetQuote": "Design and conduct experiments to characterize sensor accuracy",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Create",
+        "explanation": "The CLO has design, conduct, analyze and interpret on sensor experiments.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "cp-bscpe-keyword": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+        "targetQuote": "Discuss experiments in the history of sensor technology.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Understand",
+        "explanation": "The CLO shares the word 'experiments' but its verb 'Discuss' is Understand level, below the PO's design/conduct (Create) and analyze/interpret (Analyze). It has no designing or conducting of experiments, no analysis or interpretation of data, and its subject is the history of sensor technology, not experimentation on sensors or signal circuits in this course.",
+        "recommendation": null,
+        "draft": "Design and conduct experiments on sensors and signal conversion circuits, and analyze and interpret the measurement data to draw conclusions about sensor performance.",
+        "aspects": null
+      },
+      "cp-bscpe-wrongpo": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Ability to communicate effectively",
+        "targetQuote": "Calibrate a sensor and record its measurement tolerance.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The PO is about communicating effectively, but the CLO is about calibrating a sensor and recording tolerance. It has no communication verb (e.g. report, present, document for an audience) and no communication competency, and its Bloom level (Apply) is a technical procedure, not communication. Only a technical subject is shared, with no communication object.",
+        "recommendation": null,
+        "draft": "Communicate the results of a sensor calibration effectively by presenting the measurement tolerance in a written technical report and an oral presentation to engineering peers.",
+        "aspects": null
+      }
+    }
+  ],
+  "usage": {
+    "requests": 6,
+    "thisRun": 6,
+    "model": 6,
+    "priceLookups": 0,
+    "keyChecks": 0,
+    "invalidAnswers": 0,
+    "unproductiveInARow": 0,
+    "transient": 0,
+    "promptTokens": 25464,
+    "completionTokens": 4611,
+    "cachedTokens": 18640,
+    "reportedCost": 0,
+    "charged": 0.06535,
+    "accounting": {
+      "rule": "reconcile",
+      "requests": {
+        "reconciled": 6,
+        "conservative": 0,
+        "worst_case": 0,
+        "refused": 0
+      },
+      "chargedConservatively": 0.120747
+    },
+    "warnings": [],
+    "limits": {
+      "maxRequests": 15,
+      "maxCost": 0.55,
+      "maxTransient": 3,
+      "maxInvalid": 3,
+      "warnInvalid": 6,
+      "maxUnproductive": 37,
+      "maxTokens": null
+    },
+    "stopped": null,
+    "anthropic": {
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "prices": {
+        "model": "claude-sonnet-5-5",
+        "asOf": "2026-10-27",
+        "geoFactor": 1.1,
+        "perMillionTokens": {
+          "input": 2,
+          "output": 10,
+          "cacheRead": 0.2,
+          "listedCacheRead": 0.1,
+          "cacheWrite5m": 2.5,
+          "cacheWrite1h": 4
+        }
+      },
+      "modelsReturned": {
+        "claude-sonnet-5-5": 6
+      },
+      "inputTokens": 3096,
+      "cacheCreationInputTokens": 3728,
+      "cacheReadInputTokens": 18640,
+      "outputTokens": 4611,
+      "thinkingTokens": 0,
+      "thinkingReports": {
+        "nonzero": 0,
+        "zero": 6,
+        "unavailable": 0
+      },
+      "thinkingBlocks": 0,
+      "atListPrices": 0.063486,
+      "estimatedCost": 0.063486,
+      "notEstimated": 0,
+      "chargedThisRun": 0.06535,
+      "outputTokensCharged": 4611,
+      "stopReasons": {
+        "end_turn": 6
+      },
+      "refusalCategories": {},
+      "inferenceGeo": {
+        "global": 6
+      },
+      "serviceTier": {
+        "standard": 6
+      },
+      "errors": {},
+      "latencyMs": {
+        "answers": 6,
+        "median": 5198,
+        "p90": 6941,
+        "max": 6941
+      },
+      "limits": {
+        "maxOutputTokens": null,
+        "register": {
+          "cap": 1.669372,
+          "chargedByEveryLedger": 0.084722
+        }
+      }
+    }
+  },
+  "prices": {
+    "provider": "anthropic",
+    "model": "claude-sonnet-5-5",
+    "asOf": "2026-10-27",
+    "geoFactor": 1.1,
+    "input": 0.000002,
+    "output": 0.00001,
+    "cacheRead": 2.0000000000000002e-7,
+    "listedCacheRead": 1.0000000000000001e-7,
+    "cacheWrite5m": 0.0000025,
+    "cacheWrite1h": 0.000004
+  },
+  "requests": [
+    {
+      "n": 1,
+      "ids": [
+        "cp-bsit-aligned",
+        "cp-bsit-keyword",
+        "cp-bsit-wrongpo",
+        "cp-bsit-real3"
+      ],
+      "status": 200,
+      "ms": 6941,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDCJPf5XoFHhesHdYXb",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.21567425,
+      "usage": {
+        "promptTokens": 4323,
+        "completionTokens": 853,
+        "reasoningTokens": 0,
+        "cachedTokens": 0,
+        "reportedCost": null,
+        "costAtListPrices": 0.01904,
+        "estimatedCost": 0.01904,
+        "inputTokens": 595,
+        "cacheCreationInputTokens": 3728,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 0,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.01904,
+      "conservativeCharge": 0.02127125,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cp-bsit-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"The CLO practises using a modern computing tool (an IDE) to write, compile and debug Java programs, at Apply level.\",\"sourceQuote\":\"Utilize modern computing tools.\",\"targetQuote\":\"using an integrated development environment\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\"},{\"id\":\"cp-bsit-keyword\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The PO asks for analysing complex problems and identifying and defining computing requirements for a solution (Analyze). The CLO only asks to memorize keywords and syntax (Remember), which is a lower Bloom level. It has no analysis verb, and it does not mention problems, requirements or solution design. It shares only the computing field.\",\"sourceQuote\":\"Analyze complex problems, and identify and define the computing requirements\",\"targetQuote\":\"Memorize the keywords and syntax of the Java language.\",\"sourceBloom\":\"Analyze\",\"targetBloom\":\"Remember\",\"draft\":\"Analyze programming problems and identify and define the computing requirements, including inputs, processing and outputs, needed to design a Java solution.\"},{\"id\":\"cp-bsit-wrongpo\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The PO is about preserving and promoting Filipino historical and cultural heritage. The CLO is about developing and testing Java programs with loops and conditionals. The subject matter is unrelated, and the CLO has no verb or object concerning heritage or culture.\",\"sourceQuote\":\"Preserve and promote “Filipino historical and cultural heritage;\",\"targetQuote\":\"Develop and test Java programs that use loops and conditional statements.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"Develop and test Java programs that use loops and conditional statements to preserve and promote Filipino historical and cultural heritage, such as a program that catalogs and displays Philippine heritage sites or festivals.\"},{\"id\":\"cp-bsit-real3\",\"label\":\"ALIGNED\",\"explanation\":\"The CLO collaborates in multi-disciplinary, culturally diverse teams to build Java solutions, which matches the PO's teamwork and subject.\",\"sourceQuote\":\"multi-disciplinary and multi-cultural teams\",\"targetQuote\":\"Collaborate effectively within multi-disciplinary and culturally diverse teams\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\"}]}"
+    },
+    {
+      "n": 2,
+      "ids": [
+        "cp-bsie-wrongpo",
+        "cp-bsie-real2"
+      ],
+      "status": 200,
+      "ms": 6527,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDCob5NYhhmh3rf6ie5",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.2148025,
+      "usage": {
+        "promptTokens": 4179,
+        "completionTokens": 802,
+        "reasoningTokens": 0,
+        "cachedTokens": 3728,
+        "reportedCost": null,
+        "costAtListPrices": 0.0092948,
+        "estimatedCost": 0.0092948,
+        "inputTokens": 451,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 3728,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0096676,
+      "conservativeCharge": 0.02031425,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cp-bsie-wrongpo\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The PO asks for the ability to function on multidisciplinary teams (a teamwork/collaboration competency). The CLO is about developing a requirements specification and functional decomposition, which is a technical design task. It has no teamwork verb (collaborate, contribute, work with), no mention of team roles or of multiple disciplines, and no team setting. The subject matter is different: the PO's object is team functioning, the CLO's is system documents. Bloom level: the PO is Apply, and the CLO is Create, so the level is not the problem, but verb and subject do not match.\",\"sourceQuote\":\"Ability to function on multidisciplinary teams\",\"targetQuote\":\"Develop a system requirements specification and a functional decomposition for an engineered system.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Create\",\"draft\":\"Collaborate effectively in a multidisciplinary team to develop a system requirements specification and a functional decomposition for an engineered system, integrating the inputs of members from different disciplines and stakeholders.\"},{\"id\":\"cp-bsie-real2\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The CLO shares the PO's design focus (design complex systems, integrating components), and its Bloom level (Analyze/Create) is not lower than the PO's (Create). Gaps: (1) it does not address meeting desired needs, since no needs or requirements are named; (2) it names no realistic constraints (economic, environmental, social, political, ethical, health and safety, manufacturability, sustainability); (3) it does not mention working in accordance with standards. The PO's object is a design that meets needs within constraints, while the CLO speaks only of optimizing complex systems.\",\"sourceQuote\":\"design a system, component, or process to meet desired needs within realistic constraints\",\"targetQuote\":\"analyze, design, and optimize complex systems, integrating various components such as people, materials, technology, and information\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Create\",\"draft\":\"Apply critical and creative thinking skills to analyze, design, and optimize complex systems that meet stakeholder needs, integrating various components such as people, materials, technology, and information within realistic economic, environmental, social, ethical, health and safety, manufacturability, and sustainability constraints, in accordance with applicable standards.\"}]}"
+    },
+    {
+      "n": 3,
+      "ids": [
+        "cp-bscpe-aligned",
+        "cp-bscpe-keyword",
+        "cp-bscpe-wrongpo"
+      ],
+      "status": 200,
+      "ms": 5070,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDDHUd5QrHbPtrTXwPd",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.21486575,
+      "usage": {
+        "promptTokens": 4230,
+        "completionTokens": 673,
+        "reasoningTokens": 0,
+        "cachedTokens": 3728,
+        "reportedCost": null,
+        "costAtListPrices": 0.0081068,
+        "estimatedCost": 0.0081068,
+        "inputTokens": 502,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 3728,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0084796,
+      "conservativeCharge": 0.0190355,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cp-bscpe-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"The CLO names designing and conducting experiments and analyzing and interpreting data, on sensor accuracy.\",\"sourceQuote\":\"design and conduct experiments\",\"targetQuote\":\"Design and conduct experiments to characterize sensor accuracy\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Create\",\"draft\":\"\"},{\"id\":\"cp-bscpe-keyword\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The CLO shares only the word 'experiments'. Its verb 'Discuss' is Understand level, below the PO's Create/Analyze level. It does not design or conduct experiments. It does not analyze or interpret data. It treats the history of sensor technology rather than doing experimental work on sensors or signal circuits.\",\"sourceQuote\":\"Ability to design and conduct experiments, as well as to analyze and interpret data;\",\"targetQuote\":\"Discuss experiments in the history of sensor technology.\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Understand\",\"draft\":\"Design and conduct experiments on sensors and signal conversion circuits, and analyze and interpret the measurement data to evaluate sensor performance.\"},{\"id\":\"cp-bscpe-wrongpo\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The PO asks for effective communication. The CLO is about calibrating a sensor and recording its tolerance, which is a technical measurement task. It has no communicating verb (present, report, explain) and no audience or medium. Recording a value is not communicating effectively.\",\"sourceQuote\":\"Ability to communicate effectively\",\"targetQuote\":\"Calibrate a sensor and record its measurement tolerance.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"Communicate effectively the calibration procedure and measurement tolerance of a sensor through a clear written technical report and an oral presentation to an engineering audience.\"}]}"
+    },
+    {
+      "n": 4,
+      "ids": [
+        "cp-bsit-aligned",
+        "cp-bsit-keyword",
+        "cp-bsit-wrongpo",
+        "cp-bsit-real3"
+      ],
+      "status": 200,
+      "ms": 5840,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDDg5QgiydXPv6cWCUB",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.21567425,
+      "usage": {
+        "promptTokens": 4323,
+        "completionTokens": 852,
+        "reasoningTokens": 0,
+        "cachedTokens": 3728,
+        "reportedCost": null,
+        "costAtListPrices": 0.0100828,
+        "estimatedCost": 0.0100828,
+        "inputTokens": 595,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 3728,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0104556,
+      "conservativeCharge": 0.02126025,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cp-bsit-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"Writing, compiling and debugging in an IDE applies a modern computing tool at Apply level.\",\"sourceQuote\":\"Utilize modern computing tools\",\"targetQuote\":\"using an integrated development environment\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\"},{\"id\":\"cp-bsit-keyword\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The PO asks to analyze complex problems and identify and define computing requirements for a solution (Analyze). The CLO only asks to memorize Java keywords and syntax (Remember), which is a lower Bloom level and has no analysis verb. It also never mentions problems, requirements or designing a solution, so it shares only the programming topic.\",\"sourceQuote\":\"Analyze complex problems, and identify and define the computing requirements\",\"targetQuote\":\"Memorize the keywords and syntax of the Java language.\",\"sourceBloom\":\"Analyze\",\"targetBloom\":\"Remember\",\"draft\":\"Analyze programming problems, identify and define their computing requirements, and design Java solutions that apply the language's keywords and syntax correctly.\"},{\"id\":\"cp-bsit-wrongpo\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The PO is about preserving and promoting Filipino historical and cultural heritage (Apply/Evaluate, cultural subject). The CLO is about developing and testing Java programs with loops and conditionals, a different subject with no cultural heritage content, verb or object.\",\"sourceQuote\":\"Preserve and promote “Filipino historical and cultural heritage\",\"targetQuote\":\"Develop and test Java programs that use loops and conditional statements.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Create\",\"draft\":\"Develop and test Java programs that use loops and conditional statements to present and promote Filipino historical and cultural heritage, such as a program that displays facts about local festivals or heritage sites.\"},{\"id\":\"cp-bsit-real3\",\"label\":\"ALIGNED\",\"explanation\":\"The CLO has students collaborate in multi-disciplinary and culturally diverse teams to build Java solutions, matching the PO's teamwork competency.\",\"sourceQuote\":\"Work effectively and independently in multi-disciplinary and multi-cultural teams\",\"targetQuote\":\"Collaborate effectively within multi-disciplinary and culturally diverse teams\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\"}]}"
+    },
+    {
+      "n": 5,
+      "ids": [
+        "cp-bsie-wrongpo",
+        "cp-bsie-real2"
+      ],
+      "status": 200,
+      "ms": 5198,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDE6AkoPRhH3bcAh1xw",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.2148025,
+      "usage": {
+        "promptTokens": 4179,
+        "completionTokens": 726,
+        "reasoningTokens": 0,
+        "cachedTokens": 3728,
+        "reportedCost": null,
+        "costAtListPrices": 0.0085348,
+        "estimatedCost": 0.0085348,
+        "inputTokens": 451,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 3728,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0089076,
+      "conservativeCharge": 0.01947825,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cp-bsie-wrongpo\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The PO asks for the ability to function on multidisciplinary teams (a teamwork/collaboration competency, roughly Apply). The CLO is a technical Create-level task: developing a requirements specification and functional decomposition. It has (1) no teamwork or collaboration verb or competency, (2) no multidisciplinary context or team roles, and (3) a different subject, since it concerns the technical artifacts and not working with others. The CLO shares no key action or object with the PO.\",\"sourceQuote\":\"Ability to function on multidisciplinary teams\",\"targetQuote\":\"Develop a system requirements specification and a functional decomposition for an engineered system.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Create\",\"draft\":\"Collaborate effectively on a multidisciplinary team to develop a system requirements specification and a functional decomposition for an engineered system, integrating the inputs of team members from different disciplines.\"},{\"id\":\"cp-bsie-real2\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The CLO matches the PO's core: it designs and optimizes systems (Create level), and the object is an engineered system in the same discipline. Gaps: (1) it never mentions meeting desired needs or stakeholder needs; (2) it names none of the realistic constraints the PO lists (economic, environmental, social, political, ethical, health and safety, manufacturability, sustainability); (3) it does not mention working in accordance with standards.\",\"sourceQuote\":\"Ability to design a system, component, or process to meet desired needs within realistic constraints\",\"targetQuote\":\"Apply critical and creative thinking skills to analyze, design, and optimize complex systems\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Create\",\"draft\":\"Apply critical and creative thinking skills to analyze, design, and optimize complex systems that integrate people, materials, technology, and information to meet desired stakeholder needs within realistic constraints such as economic, environmental, social, ethical, health and safety, manufacturability, and sustainability, in accordance with applicable standards.\"}]}"
+    },
+    {
+      "n": 6,
+      "ids": [
+        "cp-bscpe-aligned",
+        "cp-bscpe-keyword",
+        "cp-bscpe-wrongpo"
+      ],
+      "status": 200,
+      "ms": 4983,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDEURi4Y3Y5s7uCSBCB",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.21486575,
+      "usage": {
+        "promptTokens": 4230,
+        "completionTokens": 705,
+        "reasoningTokens": 0,
+        "cachedTokens": 3728,
+        "reportedCost": null,
+        "costAtListPrices": 0.0084268,
+        "estimatedCost": 0.0084268,
+        "inputTokens": 502,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 3728,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0087996,
+      "conservativeCharge": 0.0193875,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cp-bscpe-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"The CLO has design, conduct, analyze and interpret on sensor experiments.\",\"sourceQuote\":\"design and conduct experiments\",\"targetQuote\":\"Design and conduct experiments to characterize sensor accuracy\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Create\",\"draft\":\"\"},{\"id\":\"cp-bscpe-keyword\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The CLO shares the word 'experiments' but its verb 'Discuss' is Understand level, below the PO's design/conduct (Create) and analyze/interpret (Analyze). It has no designing or conducting of experiments, no analysis or interpretation of data, and its subject is the history of sensor technology, not experimentation on sensors or signal circuits in this course.\",\"sourceQuote\":\"Ability to design and conduct experiments, as well as to analyze and interpret data;\",\"targetQuote\":\"Discuss experiments in the history of sensor technology.\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Understand\",\"draft\":\"Design and conduct experiments on sensors and signal conversion circuits, and analyze and interpret the measurement data to draw conclusions about sensor performance.\"},{\"id\":\"cp-bscpe-wrongpo\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The PO is about communicating effectively, but the CLO is about calibrating a sensor and recording tolerance. It has no communication verb (e.g. report, present, document for an audience) and no communication competency, and its Bloom level (Apply) is a technical procedure, not communication. Only a technical subject is shared, with no communication object.\",\"sourceQuote\":\"Ability to communicate effectively\",\"targetQuote\":\"Calibrate a sensor and record its measurement tolerance.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"Communicate the results of a sensor calibration effectively by presenting the measurement tolerance in a written technical report and an oral presentation to engineering peers.\"}]}"
+    }
+  ],
+  "stopped": null,
+  "isolation": {
+    "dataModulesLoaded": [],
+    "processEnvStageFlags": []
+  }
+}

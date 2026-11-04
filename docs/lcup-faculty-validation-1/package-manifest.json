@@ -1,0 +1,126 @@
+{
+  "version": "lcup-faculty-validation-1",
+  "built": "2026-10-29",
+  "inputs": [
+    {
+      "file": "docs/lcup-academic-benchmark/package/cases.json",
+      "sha256": "6d2a6ab6dea98c46c2f83680a3633d69a7b9fa2a7c219fc414f09fbbf571b2f6"
+    },
+    {
+      "file": "docs/lcup-academic-benchmark/package/adjudication-template.json",
+      "sha256": "d1038bfa25a212e18860eb258d51a8500072782ce412cb6fc011e2f2124616d9"
+    },
+    {
+      "file": "docs/lcup-academic-benchmark/package/model-results.template.json",
+      "sha256": "165e9c5c1fd380f7114b822b3ca06bdbdbc080fe9d6ccac2aec660f9c7d45c20"
+    }
+  ],
+  "benchmarkHash": "ebd12920a890971b8c7fb481cc6bc9b469ec7dd4c2001134f6833cc31009bbf7",
+  "files": [
+    {
+      "file": "coordinator-only/adjudication.template.json",
+      "sha256": "ee4f2d714bc985c5201a835be046260979907476444d053462aad655294234d9",
+      "bytes": 9963,
+      "origin": "generated",
+      "audience": "research coordinator only"
+    },
+    {
+      "file": "coordinator-only/faculty-claude-comparison-template.xlsx",
+      "sha256": "1ba036da4bd8fee5d78acc5a94a66bb0cb5c15e79e0c310021286f8152e89fd4",
+      "bytes": 80009,
+      "origin": "generated",
+      "audience": "research coordinator only"
+    },
+    {
+      "file": "coordinator-only/missing-mappings-and-non-evaluable.md",
+      "sha256": "08deecf14f391a48029410094dcd882414615c81bec7ea6c9bb8317cc6efa1a5",
+      "bytes": 6129,
+      "origin": "generated",
+      "audience": "research coordinator only"
+    },
+    {
+      "file": "coordinator-only/model-results.template.json",
+      "sha256": "6f20017a1f5c17d6a39a194591f125c356d1b2fb6d746dfb4fdeccdbfa164d4e",
+      "bytes": 992,
+      "origin": "generated",
+      "audience": "research coordinator only"
+    },
+    {
+      "file": "coordinator-only/selection-record.json",
+      "sha256": "68978187090611eca23d38f501a5e6865803c5c2fd928024be4b81cb8f47eb23",
+      "bytes": 14638,
+      "origin": "generated",
+      "audience": "research coordinator only"
+    },
+    {
+      "file": "coordinator-only/selection-record.md",
+      "sha256": "aa4f6769598057cf11fb4098b4cb43d83b1094888f7edf1885658f9c70980ceb",
+      "bytes": 10815,
+      "origin": "generated",
+      "audience": "research coordinator only"
+    },
+    {
+      "file": "coordinator-only/validation-dataset.json",
+      "sha256": "32d6083fd431b020b2c0f7b25e2751125dc078b2f73f44bf27a4303ff1449371",
+      "bytes": 144992,
+      "origin": "generated",
+      "audience": "research coordinator only"
+    },
+    {
+      "file": "for-reviewers/academic-evaluation-rubric.md",
+      "sha256": "b3446854c396f16a40d043f356bf06af7c79c05a762130e9ea2dead33e47541f",
+      "bytes": 16216,
+      "origin": "generated",
+      "audience": "faculty reviewers"
+    },
+    {
+      "file": "for-reviewers/case-booklet.html",
+      "sha256": "d6df67c7bf9e5f1ec995ef876618032e85f611e30b00ef0ace9a31aa913e28ba",
+      "bytes": 92030,
+      "origin": "generated",
+      "audience": "faculty reviewers"
+    },
+    {
+      "file": "for-reviewers/faculty-evaluation-form-CpE304.xlsx",
+      "sha256": "09748113655d1823e7ffb053be4658e1257b8461532b5797ef32b917b8a3f3a5",
+      "bytes": 37767,
+      "origin": "generated",
+      "audience": "faculty reviewers"
+    },
+    {
+      "file": "for-reviewers/faculty-evaluation-form-IE402.xlsx",
+      "sha256": "93fdce27576cfb8c242e31fcea0f8b2dcd63bdfb54b365cadd9bec4b7bdbb29d",
+      "bytes": 44749,
+      "origin": "generated",
+      "audience": "faculty reviewers"
+    },
+    {
+      "file": "for-reviewers/faculty-evaluation-form-IT202.xlsx",
+      "sha256": "99f29ea98b77449d3730a95220cf43e8a3acb0cc2f4de898f1b0f64bd4342eec",
+      "bytes": 39468,
+      "origin": "generated",
+      "audience": "faculty reviewers"
+    },
+    {
+      "file": "for-reviewers/faculty-evaluation-form.xlsx",
+      "sha256": "0a331e2aca793864b6db16f0cf2759d519863ee7834c5d73ebee6ab48062b85f",
+      "bytes": 55063,
+      "origin": "generated",
+      "audience": "faculty reviewers"
+    },
+    {
+      "file": "institutional-definitions-and-evidence-gaps.md",
+      "sha256": "de7d74d9b166e14b5872020ac231dcb496bc51a69c33662ff98281de01aade86",
+      "bytes": 13391,
+      "origin": "authored",
+      "audience": "research team"
+    },
+    {
+      "file": "README.md",
+      "sha256": "6ff73b812d21e5b240d9ee4a28d0f537bf31f7dae78e8ef6558b6f2f6bd2d49e",
+      "bytes": 17588,
+      "origin": "authored",
+      "audience": "research team"
+    }
+  ]
+}

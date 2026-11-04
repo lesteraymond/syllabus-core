@@ -1,0 +1,1171 @@
+{
+  "stage": "E.5 targeted BSIE verification",
+  "ranAt": "2026-10-25T17:03:17.351Z",
+  "mode": "live",
+  "resumedFrom": null,
+  "ledger": {
+    "file": "docs/ai-eval-stage-e5-bsie-ledger.json",
+    "previous": {
+      "ledger": "docs/ai-eval-stage-e4-ledger.json",
+      "requests": 8,
+      "charged": 0.0327021,
+      "transient": 1,
+      "invalid": 4,
+      "closedAt": "2026-10-25T17:01:29.196Z",
+      "closedBecause": "Stage E.4 Phase 1 (re-run) reached its invalid-answer stop condition: 4 answers failed validation (the limit for 10 requests; the last: not_answered, AI omitted alignment judgements). Root causes addressed in Stage E.5 (docs/stage-e5-reference-evidence.md)."
+    }
+  },
+  "model": "openrouter/minimax/minimax-m3.1-flash",
+  "promptVersion": "alignment-12ab34c1c2d1d2-r6",
+  "variant": "current",
+  "promptSha256": "74560449269104ffad79faf2db51eedd23164e2088b75f0876814ad2c523b5a9",
+  "promptTrimmed": false,
+  "stagesOnInThisProcessOnly": {
+    "a": true,
+    "b": true,
+    "b3": true,
+    "b4": true,
+    "c1": true,
+    "c2": true,
+    "d1": true,
+    "d2": true
+  },
+  "limits": {
+    "maxRequests": 5,
+    "maxCost": 0.05,
+    "maxTokens": "production (8192)",
+    "maxInvalid": 3,
+    "maxTransient": 3,
+    "sequential": true
+  },
+  "stopped": "3 answer(s) failed validation (the last: quote_not_found: AI evidence is not present in the supplied text (source quote))",
+  "prices": {
+    "prompt": 3e-7,
+    "completion": 0.0000012,
+    "reasoning": 0,
+    "request": 0,
+    "cacheWrite": 0,
+    "endpoints": [
+      {
+        "provider": "Relace",
+        "tag": "relace/fp4",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 9e-8,
+        "completion": 5e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "InferenceNet",
+        "tag": "inference-net/fp4",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1e-7,
+        "completion": 5.5e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "InferenceNet",
+        "tag": "inference-net/fp4/us",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1e-7,
+        "completion": 5.5e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "GMICloud",
+        "tag": "gmicloud/fp8",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.425e-7,
+        "completion": 5.7e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.425e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "DigitalOcean",
+        "tag": "digitalocean",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Novita",
+        "tag": "novita/fp16",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "Nebius",
+        "tag": "nebius/fp4",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Wafer",
+        "tag": "wafer/nvfp4",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "ModelRun",
+        "tag": "modelrun/fp4",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Parasail",
+        "tag": "parasail/fp8",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Together",
+        "tag": "together",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Minimax",
+        "tag": "minimax",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "SambaNova",
+        "tag": "sambanova",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 3e-7,
+        "completion": 0.0000012,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 3e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      }
+    ],
+    "readAt": "2026-10-25T17:02:40.404Z"
+  },
+  "requests": {
+    "total": 5,
+    "model": 4,
+    "priceLookups": 1,
+    "attemptsSent": 4,
+    "retries": 2
+  },
+  "responses": {
+    "verified": 1,
+    "invalid": 3,
+    "errors": 0,
+    "timeouts": 0,
+    "schemaProblems": 0,
+    "truncated": 0
+  },
+  "usage": {
+    "promptTokens": 28631,
+    "completionTokens": 2210,
+    "reasoningTokens": 0,
+    "cachedTokens": 20608,
+    "reportedCost": 0.00222388,
+    "charged": 0.0112413
+  },
+  "items": [
+    {
+      "id": "cc-syseng-aligned",
+      "course": "syseng",
+      "type": "Course-CLO",
+      "dataset": "stage-a@stage-a-2",
+      "category": "clear-positive",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "ALIGNED"
+      ],
+      "why": "Requirements analysis and system design are key topics of the description; the verbs are observable.",
+      "verdict": "ALIGNED",
+      "matchesProvisional": true,
+      "schemaValid": true,
+      "evidence": {
+        "source": "exact",
+        "target": "exact",
+        "valid": true
+      },
+      "recommendation": {
+        "type": "NO_CHANGE",
+        "expected": "NO_CHANGE",
+        "matchesExpected": true,
+        "status": "none needed"
+      },
+      "aspects": {
+        "required": {},
+        "responsible": "none",
+        "invalid": [],
+        "missing": [],
+        "contradictions": [],
+        "offType": [
+          "carriedBy=none",
+          "coreValue=none"
+        ],
+        "expected": null
+      },
+      "bloom": {
+        "source": "N/A",
+        "target": "Create"
+      },
+      "explanation": "The CLO asks students to produce a system requirements specification and functional decomposition, which is exactly the requirements analysis and systems design work the course description promises.",
+      "attempts": [
+        1
+      ],
+      "retries": 0,
+      "verifiedInRequest": 2,
+      "verifiedAfterCorrection": false
+    },
+    {
+      "id": "cp-bsie-real2",
+      "course": "syseng",
+      "type": "CLO-PO",
+      "dataset": "stage-a@stage-a-2",
+      "category": "real-faculty-clo",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "ALIGNED",
+        "PARTIALLY_ALIGNED"
+      ],
+      "why": "CLO 2 of the sample IE 402 syllabus, which maps it to POs 2-5 (here PO 3, system design): plausible, contestable.",
+      "verdict": "PARTIALLY_ALIGNED",
+      "matchesProvisional": true,
+      "schemaValid": true,
+      "evidence": {
+        "source": "exact",
+        "target": "exact",
+        "valid": true
+      },
+      "recommendation": {
+        "type": "REWRITE_TEXT",
+        "expected": null,
+        "matchesExpected": null,
+        "status": "proposed rewrite",
+        "draft": "Apply critical and creative thinking skills to analyze and design complex systems that meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+        "safety": [],
+        "draftReview": []
+      },
+      "aspects": {
+        "required": {},
+        "responsible": "none",
+        "invalid": [],
+        "missing": [],
+        "contradictions": [],
+        "offType": [
+          "carriedBy=none",
+          "coreValue=none"
+        ],
+        "expected": null
+      },
+      "bloom": {
+        "source": "Create",
+        "target": "Apply"
+      },
+      "explanation": "The CLO statement does contain the PO's key action verb and object (\"design ... complex systems\"), and its subject matter is systems engineering, so the topic and the discipline match. Two gaps remain: (1) the PO's level is design under realistic constraints (economic, environmental, social, political, ethical, health and safety, manufacturability, sustainability) and in accordance with standards, while the CLO's Bloom level is Apply (\"analyze, design, and optimize\") and it never mentions meeting desired needs within realistic constraints or in accordance with standards; (2) the CLO adds \"critical and creative thinking skills\" and the component list \"people, materials, technology, and information\", which the PO does not state and which the CLO does not need. The draft keeps the author's design/analysis competence and adds the constraint and standards element the PO requires.",
+      "attempts": [
+        1,
+        2
+      ],
+      "retries": 1,
+      "verifiedInRequest": 3,
+      "verifiedAfterCorrection": true
+    },
+    {
+      "id": "wi-syseng-unrelated",
+      "course": "syseng",
+      "type": "Content-ILO",
+      "dataset": "stage-b@stage-b-1",
+      "category": "off-subject",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "NOT_ALIGNED"
+      ],
+      "why": "A programming outcome for a requirements week.",
+      "verdict": "NOT_ALIGNED",
+      "matchesProvisional": true,
+      "schemaValid": true,
+      "evidence": {
+        "source": "exact",
+        "target": "exact",
+        "valid": true
+      },
+      "recommendation": {
+        "type": "REWRITE_TEXT",
+        "expected": "REWRITE_TEXT",
+        "matchesExpected": true,
+        "status": "proposed rewrite",
+        "draft": "Write verifiable system requirements for a given scenario and trace them to the stakeholder needs from which they derive.",
+        "safety": [],
+        "draftReview": []
+      },
+      "aspects": {
+        "required": {},
+        "responsible": "ilo",
+        "invalid": [],
+        "missing": [],
+        "contradictions": [],
+        "offType": [
+          "carriedBy=none",
+          "coreValue=none"
+        ],
+        "expected": null
+      },
+      "bloom": {
+        "source": "N/A",
+        "target": "Apply"
+      },
+      "explanation": "The ILO asks for Java programming, a subject this systems engineering course does not teach, and it is unrelated to the week's content on stakeholder needs, requirements specification and traceability; it also names no systems engineering performance at all.",
+      "attempts": [
+        1
+      ],
+      "retries": 0,
+      "verifiedInRequest": 2,
+      "verifiedAfterCorrection": false
+    },
+    {
+      "id": "ic-syseng-ok",
+      "course": "syseng",
+      "type": "ILO-CLO",
+      "dataset": "stage-b3@stage-b3-1",
+      "category": "clear-positive",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "ALIGNED"
+      ],
+      "why": "A step toward the requirements specification.",
+      "verdict": "ALIGNED",
+      "matchesProvisional": true,
+      "schemaValid": true,
+      "evidence": {
+        "source": "exact",
+        "target": "exact",
+        "valid": true
+      },
+      "recommendation": {
+        "type": "NO_CHANGE",
+        "expected": "NO_CHANGE",
+        "matchesExpected": true,
+        "status": "none needed"
+      },
+      "aspects": {
+        "required": {},
+        "responsible": "none",
+        "invalid": [],
+        "missing": [],
+        "contradictions": [],
+        "offType": [
+          "carriedBy=none",
+          "coreValue=none"
+        ],
+        "expected": null
+      },
+      "bloom": {
+        "source": "Create",
+        "target": "Apply"
+      },
+      "explanation": "Writing verifiable requirements for a scenario is a smaller step toward producing the system requirements specification and functional decomposition the CLO states, at a lower Bloom level in the same subject.",
+      "attempts": [
+        1
+      ],
+      "retries": 0,
+      "verifiedInRequest": 2,
+      "verifiedAfterCorrection": false
+    },
+    {
+      "id": "af-syseng-irrelevant",
+      "course": "syseng",
+      "type": "Activity-fit",
+      "dataset": "stage-c@stage-c-2",
+      "category": "off-subject",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "NOT_ALIGNED"
+      ],
+      "why": "A programming activity in a requirements lesson.",
+      "verdict": "NOT_ALIGNED",
+      "matchesProvisional": true,
+      "schemaValid": true,
+      "evidence": {
+        "source": "exact",
+        "target": "exact",
+        "valid": true
+      },
+      "recommendation": {
+        "type": "REWRITE_TEXT",
+        "expected": "REWRITE_TEXT",
+        "matchesExpected": true,
+        "status": "proposed rewrite",
+        "draft": "- Guided workshop: teams draft verifiable system requirements for a given scenario and check each requirement for clarity and testability.",
+        "safety": [],
+        "draftReview": []
+      },
+      "aspects": {
+        "required": {
+          "teaching": "not_assessed",
+          "learnerSupport": "not_assessed"
+        },
+        "responsible": "activity",
+        "invalid": [],
+        "missing": [],
+        "contradictions": [],
+        "offType": [],
+        "expected": {
+          "teaching": {
+            "provisional": "weak",
+            "got": "not_assessed",
+            "matches": false
+          }
+        }
+      },
+      "bloom": {
+        "source": "Apply",
+        "target": "N/A"
+      },
+      "explanation": "The lesson's ILO is to write verifiable system requirements, but the only activity is a lecture and drill on Java loops, which is a different subject (programming) and practises no requirement-writing; nothing in the activities develops the ILO's skill, and the lecture alone cannot reach the Apply level. The activity must be replaced by one on this week's content.",
+      "attempts": [
+        3,
+        4
+      ],
+      "retries": 1,
+      "verifiedInRequest": 5,
+      "verifiedAfterCorrection": true
+    },
+    {
+      "id": "as-syseng-good",
+      "course": "syseng",
+      "type": "Assessment-fit",
+      "dataset": "stage-c@stage-c-2",
+      "category": "clear-positive",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "ALIGNED"
+      ],
+      "why": "Produces an artifact that is marked against the ILO.",
+      "verdict": "ALIGNED",
+      "matchesProvisional": true,
+      "schemaValid": true,
+      "evidence": {
+        "source": "exact",
+        "target": "exact",
+        "valid": true
+      },
+      "recommendation": {
+        "type": "NO_CHANGE",
+        "expected": "NO_CHANGE",
+        "matchesExpected": true,
+        "status": "none needed"
+      },
+      "aspects": {
+        "required": {
+          "measures": "yes",
+          "evidence": "observable",
+          "level": "matches"
+        },
+        "responsible": "none",
+        "invalid": [],
+        "missing": [],
+        "contradictions": [],
+        "offType": [],
+        "expected": {
+          "measures": {
+            "provisional": "yes",
+            "got": "yes",
+            "matches": true
+          },
+          "evidence": {
+            "provisional": "observable",
+            "got": "observable",
+            "matches": true
+          }
+        }
+      },
+      "bloom": {
+        "source": "Apply",
+        "target": "Apply"
+      },
+      "explanation": "The task asks students to produce a requirements specification with verifiable requirements for the case, which is exactly the observable performance the ILO states, at the same Apply level and on this week's content.",
+      "attempts": [
+        3,
+        4
+      ],
+      "retries": 1,
+      "verifiedInRequest": 5,
+      "verifiedAfterCorrection": true
+    },
+    {
+      "id": "vu-syseng-community",
+      "course": "syseng",
+      "type": "Value-use",
+      "dataset": "stage-d1@stage-d1-1",
+      "category": "clear-positive",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "ALIGNED"
+      ],
+      "why": "The value is lived in how the requirements are produced.",
+      "verdict": "ALIGNED",
+      "matchesProvisional": true,
+      "schemaValid": true,
+      "evidence": {
+        "source": "exact",
+        "target": "exact",
+        "valid": true
+      },
+      "recommendation": {
+        "type": "NO_CHANGE",
+        "expected": "NO_CHANGE",
+        "matchesExpected": true,
+        "status": "none needed"
+      },
+      "aspects": {
+        "required": {
+          "valueUse": "integrated",
+          "carriedBy": "not_assessed",
+          "valueFit": "fits"
+        },
+        "responsible": "none",
+        "invalid": [],
+        "missing": [],
+        "contradictions": [],
+        "offType": [],
+        "expected": {
+          "valueUse": {
+            "provisional": "integrated",
+            "got": "integrated",
+            "matches": true
+          },
+          "valueFit": {
+            "provisional": "fits",
+            "got": "fits",
+            "matches": true
+          }
+        }
+      },
+      "bloom": {
+        "source": "Apply",
+        "target": "N/A"
+      },
+      "explanation": "The value statement names what students actually do in this lesson: in the stakeholder-interview workshop they write requirements from the community stakeholder's needs rather than their own preferences, so Community-orientedness is lived through the activity and the requirements document.",
+      "attempts": [
+        3,
+        4
+      ],
+      "retries": 1,
+      "verifiedInRequest": 5,
+      "verifiedAfterCorrection": true
+    },
+    {
+      "id": "rr-syseng-unrelated",
+      "course": "syseng",
+      "type": "Ref-relevance",
+      "dataset": "stage-d2@stage-d2-1",
+      "category": "unrelated",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "NOT_ALIGNED"
+      ],
+      "why": "Another subject.",
+      "verdict": "NOT VERIFIED",
+      "matchesProvisional": null,
+      "schemaValid": null,
+      "evidence": null,
+      "recommendation": {
+        "status": "not verified"
+      },
+      "aspects": null,
+      "bloom": null,
+      "explanation": null,
+      "attempts": [
+        3,
+        4,
+        5
+      ],
+      "retries": 1,
+      "verifiedInRequest": null,
+      "verifiedAfterCorrection": null
+    }
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "course": "syseng",
+      "batch": "syseng#1",
+      "ids": [
+        "cc-syseng-aligned",
+        "cp-bsie-real2",
+        "wi-syseng-unrelated",
+        "ic-syseng-ok"
+      ],
+      "outcome": "invalid",
+      "error": "AI recommendation NO_CHANGE contradicts the label PARTIALLY_ALIGNED",
+      "errorClass": "contract",
+      "code": "recommendation_conflicts_label",
+      "rejected": [
+        {
+          "id": "cp-bsie-real2",
+          "reason": "AI recommendation NO_CHANGE contradicts the label PARTIALLY_ALIGNED",
+          "code": "recommendation_conflicts_label"
+        }
+      ],
+      "request": 2,
+      "truncated": false,
+      "schemaProblems": [],
+      "verifiedIds": [
+        "cc-syseng-aligned",
+        "wi-syseng-unrelated",
+        "ic-syseng-ok"
+      ]
+    },
+    {
+      "attempt": 2,
+      "course": "syseng",
+      "batch": "syseng#1",
+      "ids": [
+        "cp-bsie-real2"
+      ],
+      "corrections": [
+        {
+          "id": "cp-bsie-real2",
+          "refused": [
+            "recommendation_conflicts_label"
+          ]
+        }
+      ],
+      "outcome": "verified",
+      "request": 3,
+      "truncated": false,
+      "schemaProblems": [],
+      "verifiedIds": [
+        "cp-bsie-real2"
+      ]
+    },
+    {
+      "attempt": 3,
+      "course": "syseng",
+      "batch": "syseng#2",
+      "ids": [
+        "af-syseng-irrelevant",
+        "as-syseng-good",
+        "vu-syseng-community",
+        "rr-syseng-unrelated"
+      ],
+      "outcome": "invalid",
+      "error": "AI omitted alignment judgements",
+      "errorClass": "coverage",
+      "code": "empty_answer",
+      "rejected": [
+        {
+          "id": "af-syseng-irrelevant",
+          "reason": "not answered: the judgements list is empty",
+          "code": "empty_answer"
+        },
+        {
+          "id": "as-syseng-good",
+          "reason": "not answered: the judgements list is empty",
+          "code": "empty_answer"
+        },
+        {
+          "id": "vu-syseng-community",
+          "reason": "not answered: the judgements list is empty",
+          "code": "empty_answer"
+        },
+        {
+          "id": "rr-syseng-unrelated",
+          "reason": "not answered: the judgements list is empty",
+          "code": "empty_answer"
+        }
+      ],
+      "request": 4,
+      "truncated": false,
+      "schemaProblems": [],
+      "verifiedIds": []
+    },
+    {
+      "attempt": 4,
+      "course": "syseng",
+      "batch": "syseng#2",
+      "ids": [
+        "af-syseng-irrelevant",
+        "as-syseng-good",
+        "vu-syseng-community",
+        "rr-syseng-unrelated"
+      ],
+      "corrections": [
+        {
+          "id": "af-syseng-irrelevant",
+          "refused": [
+            "empty_answer"
+          ]
+        },
+        {
+          "id": "as-syseng-good",
+          "refused": [
+            "empty_answer"
+          ]
+        },
+        {
+          "id": "vu-syseng-community",
+          "refused": [
+            "empty_answer"
+          ]
+        },
+        {
+          "id": "rr-syseng-unrelated",
+          "refused": [
+            "empty_answer"
+          ]
+        }
+      ],
+      "outcome": "invalid",
+      "error": "AI evidence is not present in the supplied text (source quote)",
+      "errorClass": "evidence",
+      "code": "quote_not_found",
+      "rejected": [
+        {
+          "id": "rr-syseng-unrelated",
+          "reason": "AI evidence is not present in the supplied text (source quote)",
+          "code": "quote_not_found",
+          "problems": [
+            {
+              "code": "quote_not_found",
+              "side": "source"
+            }
+          ],
+          "given": {
+            "sourceQuote": "Requirements analysis, systems design, integration, project management, and performance evaluation",
+            "targetQuote": "A history of medieval architecture"
+          }
+        }
+      ],
+      "request": 5,
+      "truncated": false,
+      "schemaProblems": [],
+      "verifiedIds": [
+        "af-syseng-irrelevant",
+        "as-syseng-good",
+        "vu-syseng-community"
+      ]
+    },
+    {
+      "attempt": 5,
+      "course": "syseng",
+      "batch": "syseng#2",
+      "ids": [
+        "rr-syseng-unrelated"
+      ],
+      "corrections": [
+        {
+          "id": "rr-syseng-unrelated",
+          "refused": [
+            "quote_not_found"
+          ]
+        }
+      ],
+      "outcome": "not sent",
+      "error": "not sent: 3 answer(s) failed validation (the last: quote_not_found: AI evidence is not present in the supplied text (source quote))",
+      "request": null,
+      "verifiedIds": []
+    }
+  ],
+  "http": [
+    {
+      "n": 1,
+      "kind": "price-lookup",
+      "at": "2026-10-25T17:02:39.788Z",
+      "ms": 565,
+      "status": 200
+    },
+    {
+      "n": 2,
+      "kind": "model",
+      "at": "2026-10-25T17:02:40.407Z",
+      "worst": 0.020289,
+      "inputBound": 34862,
+      "maxTokens": 8192,
+      "bodyBytes": 34606,
+      "ids": [
+        "cc-syseng-aligned",
+        "cp-bsie-real2",
+        "wi-syseng-unrelated",
+        "ic-syseng-ok"
+      ],
+      "promptSha256": "74560449269104ffad79faf2db51eedd23164e2088b75f0876814ad2c523b5a9",
+      "fullPrompt": true,
+      "responseFormat": "json_schema",
+      "strict": true,
+      "ms": 4159,
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "X-Generation-Id,X-Provider-Name,request-id,cf-ray",
+        "cache-control": "private",
+        "cf-cache-status": "DYNAMIC",
+        "cf-ray": "a502ca4e7bdc1483-HKG",
+        "content-encoding": "gzip",
+        "content-type": "application/json",
+        "date": "Sun, 25 Oct 2026 17:02:44 GMT",
+        "expires": "Sun, 25 Oct 2026 17:02:44 GMT",
+        "permissions-policy": "payment=(self \"https://checkout.stripe.com\" \"https://connect-js.stripe.com\" \"https://js.stripe.com\" \"https://*.js.stripe.com\" \"https://hooks.stripe.com\"), payment=(self \"https://checkout.stripe.com\" \"",
+        "referrer-policy": "no-referrer, strict-origin-when-cross-origin, no-referrer, strict-origin-when-cross-origin",
+        "server": "cloudflare",
+        "vary": "Accept-Encoding",
+        "x-content-type-options": "nosniff",
+        "x-generation-id": "gen-1792947760-L33L2MwjJRCg643oITRK"
+      },
+      "usage": {
+        "promptTokens": 7071,
+        "completionTokens": 905,
+        "reasoningTokens": 0,
+        "cachedTokens": 128,
+        "reportedCost": 0.00119333,
+        "costAtListPrices": 0.0032073
+      },
+      "charged": 0.0032073,
+      "provider": "InferenceNet",
+      "modelReturned": "minimax/minimax-m3.1-flash",
+      "generationId": "gen-1792947760-L33L2MwjJRCg643oITRK",
+      "finishReason": "stop",
+      "content": "{\"judgements\":[{\"valueUse\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"teaching\":\"not_assessed\",\"targetQuote\":\"Develop a system requirements specification and a functional decomposition for an engineered system.\",\"targetBloom\":\"Create\",\"sourceQuote\":\"Key topics include requirements analysis, systems design, integration, project management, and performance evaluation.\",\"sourceBloom\":\"N/A\",\"responsible\":\"none\",\"relevance\":\"not_assessed\",\"recommendation\":\"NO_CHANGE\",\"measures\":\"not_assessed\",\"level\":\"not_assessed\",\"learnerSupport\":\"not_assessed\",\"label\":\"ALIGNED\",\"integration\":\"not_assessed\",\"id\":\"cc-syseng-aligned\",\"explanation\":\"The CLO asks students to produce a system requirements specification and functional decomposition, which is exactly the requirements analysis and systems design work the course description promises.\",\"evidence\":\"not_assessed\",\"draft\":\"\",\"coreValue\":\"none\",\"carriedBy\":\"none\",\"basis\":\"not_assessed\"},{\"valueUse\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"teaching\":\"not_assessed\",\"targetQuote\":\"Apply critical and creative thinking skills to analyze, design, and optimize complex systems\",\"targetBloom\":\"Apply\",\"sourceQuote\":\"Ability to design a system, component, or process to meet desired needs within realistic constraints\",\"sourceBloom\":\"Create\",\"responsible\":\"none\",\"relevance\":\"not_assessed\",\"recommendation\":\"NO_CHANGE\",\"measures\":\"not_assessed\",\"level\":\"not_assessed\",\"learnerSupport\":\"not_assessed\",\"label\":\"PARTIALLY_ALIGNED\",\"integration\":\"not_assessed\",\"id\":\"cp-bsie-real2\",\"explanation\":\"The CLO's verb 'apply' sits one level below the PO's 'design ... to meet desired needs within realistic constraints', and the CLO never mentions meeting desired needs or working within realistic constraints (economic, environmental, social, safety, manufacturability, sustainability) or standards; it also omits the PO's component/process scope and the 'critical and creative thinking' framing. The subject matter (systems analysis and design) does match the PO.\",\"evidence\":\"not_assessed\",\"draft\":\"Apply critical and creative thinking skills to analyze, design, and optimize complex systems, integrating various components such as people, materials, technology, and information, so that the resulting system meets desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.\",\"coreValue\":\"none\",\"carriedBy\":\"none\",\"basis\":\"not_assessed\"},{\"valueUse\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"teaching\":\"not_assessed\",\"targetQuote\":\"Write Java methods that return values.\",\"targetBloom\":\"Apply\",\"sourceQuote\":\"Week 4: Requirements analysis: stakeholder needs, system requirements specification and traceability\",\"sourceBloom\":\"N/A\",\"responsible\":\"ilo\",\"relevance\":\"not_assessed\",\"recommendation\":\"REWRITE_TEXT\",\"measures\":\"not_assessed\",\"level\":\"not_assessed\",\"learnerSupport\":\"not_assessed\",\"label\":\"NOT_ALIGNED\",\"integration\":\"not_assessed\",\"id\":\"wi-syseng-unrelated\",\"explanation\":\"The ILO asks for Java programming, a subject this systems engineering course does not teach, and it is unrelated to the week's content on stakeholder needs, requirements specification and traceability; it also names no systems engineering performance at all.\",\"evidence\":\"not_assessed\",\"draft\":\"Write verifiable system requirements for a given scenario and trace them to the stakeholder needs from which they derive.\",\"coreValue\":\"none\",\"carriedBy\":\"none\",\"basis\":\"not_assessed\"},{\"valueUse\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"teaching\":\"not_assessed\",\"targetQuote\":\"Write verifiable system requirements for a given scenario.\",\"targetBloom\":\"Apply\",\"sourceQuote\":\"Develop a system requirements specification and a functional decomposition for an engineered system.\",\"sourceBloom\":\"Create\",\"responsible\":\"none\",\"relevance\":\"not_assessed\",\"recommendation\":\"NO_CHANGE\",\"measures\":\"not_assessed\",\"level\":\"not_assessed\",\"learnerSupport\":\"not_assessed\",\"label\":\"ALIGNED\",\"integration\":\"not_assessed\",\"id\":\"ic-syseng-ok\",\"explanation\":\"Writing verifiable requirements for a scenario is a smaller step toward producing the system requirements specification and functional decomposition the CLO states, at a lower Bloom level in the same subject.\",\"evidence\":\"not_assessed\",\"draft\":\"\",\"coreValue\":\"none\",\"carriedBy\":\"none\",\"basis\":\"not_assessed\"}]}"
+    },
+    {
+      "n": 3,
+      "kind": "model",
+      "at": "2026-10-25T17:02:57.776Z",
+      "worst": 0.0199701,
+      "inputBound": 33799,
+      "maxTokens": 8192,
+      "bodyBytes": 33543,
+      "ids": [
+        "cp-bsie-real2"
+      ],
+      "promptSha256": "74560449269104ffad79faf2db51eedd23164e2088b75f0876814ad2c523b5a9",
+      "fullPrompt": true,
+      "responseFormat": "json_schema",
+      "strict": true,
+      "ms": 968,
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "X-Generation-Id,X-Provider-Name,request-id,cf-ray",
+        "cache-control": "private",
+        "cf-cache-status": "DYNAMIC",
+        "cf-ray": "a502cabb7cf91483-HKG",
+        "content-encoding": "gzip",
+        "content-type": "application/json",
+        "date": "Sun, 25 Oct 2026 17:02:58 GMT",
+        "expires": "Sun, 25 Oct 2026 17:02:58 GMT",
+        "permissions-policy": "payment=(self \"https://checkout.stripe.com\" \"https://connect-js.stripe.com\" \"https://js.stripe.com\" \"https://*.js.stripe.com\" \"https://hooks.stripe.com\"), payment=(self \"https://checkout.stripe.com\" \"",
+        "referrer-policy": "no-referrer, strict-origin-when-cross-origin, no-referrer, strict-origin-when-cross-origin",
+        "server": "cloudflare",
+        "vary": "Accept-Encoding",
+        "x-content-type-options": "nosniff",
+        "x-generation-id": "gen-1792947777-qqBFZX7O8QExTN9T9aHD"
+      },
+      "usage": {
+        "promptTokens": 6899,
+        "completionTokens": 469,
+        "reasoningTokens": 0,
+        "cachedTokens": 6656,
+        "reportedCost": 0.00034881,
+        "costAtListPrices": 0.0026325
+      },
+      "charged": 0.0026325,
+      "provider": "InferenceNet",
+      "modelReturned": "minimax/minimax-m3.1-flash",
+      "generationId": "gen-1792947777-qqBFZX7O8QExTN9T9aHD",
+      "finishReason": "stop",
+      "content": "{\n  \"judgements\": [\n    {\n      \"valueUse\": \"not_assessed\",\n      \"valueFit\": \"not_assessed\",\n      \"teaching\": \"not_assessed\",\n      \"targetQuote\": \"Apply critical and creative thinking skills to analyze, design, and optimize complex systems\",\n      \"targetBloom\": \"Apply\",\n      \"sourceQuote\": \"Ability to design a system, component, or process to meet desired needs within realistic constraints\",\n      \"sourceBloom\": \"Create\",\n      \"responsible\": \"none\",\n      \"relevance\": \"not_assessed\",\n      \"recommendation\": \"REWRITE_TEXT\",\n      \"measures\": \"not_assessed\",\n      \"level\": \"not_assessed\",\n      \"learnerSupport\": \"not_assessed\",\n      \"label\": \"PARTIALLY_ALIGNED\",\n      \"integration\": \"not_assessed\",\n      \"id\": \"cp-bsie-real2\",\n      \"explanation\": \"The CLO statement does contain the PO's key action verb and object (\\\"design ... complex systems\\\"), and its subject matter is systems engineering, so the topic and the discipline match. Two gaps remain: (1) the PO's level is design under realistic constraints (economic, environmental, social, political, ethical, health and safety, manufacturability, sustainability) and in accordance with standards, while the CLO's Bloom level is Apply (\\\"analyze, design, and optimize\\\") and it never mentions meeting desired needs within realistic constraints or in accordance with standards; (2) the CLO adds \\\"critical and creative thinking skills\\\" and the component list \\\"people, materials, technology, and information\\\", which the PO does not state and which the CLO does not need. The draft keeps the author's design/analysis competence and adds the constraint and standards element the PO requires.\",\n      \"evidence\": \"not_assessed\",\n      \"draft\": \"Apply critical and creative thinking skills to analyze and design complex systems that meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.\",\n      \"coreValue\": \"none\",\n      \"carriedBy\": \"none\"\n   \n    ,\n      \"basis\": \"not_assessed\"\n    }\n  ]\n}"
+    },
+    {
+      "n": 4,
+      "kind": "model",
+      "at": "2026-10-25T17:03:05.383Z",
+      "worst": 0.0205359,
+      "inputBound": 35685,
+      "maxTokens": 8192,
+      "bodyBytes": 35429,
+      "ids": [
+        "af-syseng-irrelevant",
+        "as-syseng-good",
+        "vu-syseng-community",
+        "rr-syseng-unrelated"
+      ],
+      "promptSha256": "74560449269104ffad79faf2db51eedd23164e2088b75f0876814ad2c523b5a9",
+      "fullPrompt": true,
+      "responseFormat": "json_schema",
+      "strict": true,
+      "ms": 941,
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "X-Generation-Id,X-Provider-Name,request-id,cf-ray",
+        "cache-control": "private",
+        "cf-cache-status": "DYNAMIC",
+        "cf-ray": "a502caea6efb1483-HKG",
+        "content-encoding": "gzip",
+        "content-type": "application/json",
+        "date": "Sun, 25 Oct 2026 17:03:06 GMT",
+        "expires": "Sun, 25 Oct 2026 17:03:06 GMT",
+        "permissions-policy": "payment=(self \"https://checkout.stripe.com\" \"https://connect-js.stripe.com\" \"https://js.stripe.com\" \"https://*.js.stripe.com\" \"https://hooks.stripe.com\"), payment=(self \"https://checkout.stripe.com\" \"",
+        "referrer-policy": "no-referrer, strict-origin-when-cross-origin, no-referrer, strict-origin-when-cross-origin",
+        "server": "cloudflare",
+        "vary": "Accept-Encoding",
+        "x-content-type-options": "nosniff",
+        "x-generation-id": "gen-1792947785-uuk3Sznivv50gXKh9Wys"
+      },
+      "usage": {
+        "promptTokens": 7242,
+        "completionTokens": 6,
+        "reasoningTokens": 0,
+        "cachedTokens": 6656,
+        "reportedCost": 0.00012846,
+        "costAtListPrices": 0.0021798
+      },
+      "charged": 0.0021798,
+      "provider": "InferenceNet",
+      "modelReturned": "minimax/minimax-m3.1-flash",
+      "generationId": "gen-1792947785-uuk3Sznivv50gXKh9Wys",
+      "finishReason": "stop",
+      "content": "{\"judgements\":[]}"
+    },
+    {
+      "n": 5,
+      "kind": "model",
+      "at": "2026-10-25T17:03:06.583Z",
+      "worst": 0.0207909,
+      "inputBound": 36535,
+      "maxTokens": 8192,
+      "bodyBytes": 36279,
+      "ids": [
+        "af-syseng-irrelevant",
+        "as-syseng-good",
+        "vu-syseng-community",
+        "rr-syseng-unrelated"
+      ],
+      "promptSha256": "74560449269104ffad79faf2db51eedd23164e2088b75f0876814ad2c523b5a9",
+      "fullPrompt": true,
+      "responseFormat": "json_schema",
+      "strict": true,
+      "ms": 1472,
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "X-Generation-Id,X-Provider-Name,request-id,cf-ray",
+        "cache-control": "private",
+        "cf-cache-status": "DYNAMIC",
+        "cf-ray": "a502caf1ea851483-HKG",
+        "content-encoding": "gzip",
+        "content-type": "application/json",
+        "date": "Sun, 25 Oct 2026 17:03:07 GMT",
+        "expires": "Sun, 25 Oct 2026 17:03:07 GMT",
+        "permissions-policy": "payment=(self \"https://checkout.stripe.com\" \"https://connect-js.stripe.com\" \"https://js.stripe.com\" \"https://*.js.stripe.com\" \"https://hooks.stripe.com\"), payment=(self \"https://checkout.stripe.com\" \"",
+        "referrer-policy": "no-referrer, strict-origin-when-cross-origin, no-referrer, strict-origin-when-cross-origin",
+        "server": "cloudflare",
+        "vary": "Accept-Encoding",
+        "x-content-type-options": "nosniff",
+        "x-generation-id": "gen-1792947786-mwSoVXf0aObzVfeqqUvB"
+      },
+      "usage": {
+        "promptTokens": 7419,
+        "completionTokens": 830,
+        "reasoningTokens": 0,
+        "cachedTokens": 7168,
+        "reportedCost": 0.00055328,
+        "costAtListPrices": 0.0032217
+      },
+      "charged": 0.0032217,
+      "provider": "InferenceNet",
+      "modelReturned": "minimax/minimax-m3.1-flash",
+      "generationId": "gen-1792947786-mwSoVXf0aObzVfeqqUvB",
+      "finishReason": "stop",
+      "content": "{\"judgements\":[{\"valueUse\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"teaching\":\"not_assessed\",\"targetQuote\":\"Lecture and drill on Java loops.\",\"targetBloom\":\"N/A\",\"sourceQuote\":\"Write verifiable system requirements for a given scenario.\",\"sourceBloom\":\"Apply\",\"responsible\":\"activity\",\"relevance\":\"not_assessed\",\"recommendation\":\"REWRITE_TEXT\",\"measures\":\"not_assessed\",\"level\":\"not_assessed\",\"learnerSupport\":\"not_assessed\",\"label\":\"NOT_ALIGNED\",\"integration\":\"not_assessed\",\"id\":\"af-syseng-irrelevant\",\"explanation\":\"The lesson's ILO is to write verifiable system requirements, but the only activity is a lecture and drill on Java loops, which is a different subject (programming) and practises no requirement-writing; nothing in the activities develops the ILO's skill, and the lecture alone cannot reach the Apply level. The activity must be replaced by one on this week's content.\",\"evidence\":\"not_assessed\",\"draft\":\"- Guided workshop: teams draft verifiable system requirements for a given scenario and check each requirement for clarity and testability.\" ,\"coreValue\":\"not_assessed\",\"carriedBy\":\"not_assessed\",\"basis\":\"not_assessed\"},{\"valueUse\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"teaching\":\"not_assessed\",\"targetQuote\":\"Write a requirements specification (at least five verifiable requirements) for the case\",\"targetBloom\":\"Apply\",\"sourceQuote\":\"Write verifiable system requirements for a given scenario.\",\"sourceBloom\":\"Apply\",\"responsible\":\"none\",\"relevance\":\"not_assessed\",\"recommendation\":\"NO_CHANGE\",\"measures\":\"yes\",\"level\":\"matches\",\"learnerSupport\":\"not_assessed\",\"label\":\"ALIGNED\",\"integration\":\"not_assessed\",\"id\":\"as-syseng-good\",\"explanation\":\"The task asks students to produce a requirements specification with verifiable requirements for the case, which is exactly the observable performance the ILO states, at the same Apply level and on this week's content.\",\"evidence\":\"observable\",\"draft\":\"\",\"coreValue\":\"not_assessed\",\"carriedBy\":\"not_assessed\",\"basis\":\"not_assessed\"},{\"valueUse\":\"integrated\",\"valueFit\":\"fits\",\"teaching\":\"not_assessed\",\"targetQuote\":\"teams write requirements that reflect the stakeholder's needs from the interview\",\"targetBloom\":\"N/A\",\"sourceQuote\":\"teams interview a stakeholder from a community case and draft requirements\",\"sourceBloom\":\"Apply\",\"responsible\":\"none\",\"relevance\":\"not_assessed\",\"recommendation\":\"NO_CHANGE\",\"measures\":\"not_assessed\",\"level\":\"not_assessed\",\"learnerSupport\":\"not_assessed\",\"label\":\"ALIGNED\",\"integration\":\"not_assessed\",\"id\":\"vu-syseng-community\",\"explanation\":\"The value statement names what students actually do in this lesson: in the stakeholder-interview workshop they write requirements from the community stakeholder's needs rather than their own preferences, so Community-orientedness is lived through the activity and the requirements document.\",\"evidence\":\"not_assessed\",\"draft\":\"\",\"coreValue\":\"not_assessed\",\"carriedBy\":\"not_assessed\",\"basis\":\"not_assessed\"},{\"valueUse\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"teaching\":\"not_assessed\",\"targetQuote\":\"A history of medieval architecture\",\"targetBloom\":\"N/A\",\"sourceQuote\":\"Requirements analysis, systems design, integration, project management, and performance evaluation\",\"sourceBloom\":\"N/A\",\"responsible\":\"none\",\"relevance\":\"unrelated\",\"recommendation\":\"REVIEW_REQUIRED\",\"measures\":\"not_assessed\",\"level\":\"not_assessed\",\"learnerSupport\":\"not_assessed\",\"label\":\"NOT_ALIGNED\",\"integration\":\"not_assessed\",\"id\":\"rr-syseng-unrelated\",\"explanation\":\"The entry's title concerns medieval architecture, a subject unrelated to systems engineering and to the weekly topics (systems thinking, life-cycle models, requirements analysis, functional decomposition, trade studies, verification and validation); the title alone shows no connection to the course.\",\"evidence\":\"not_assessed\",\"draft\":\"\",\"coreValue\":\"not_assessed\",\"carriedBy\":\"not_assessed\",\"basis\":\"title_only\"}]}"
+    }
+  ],
+  "isolation": {
+    "forbiddenModulesLoaded": [],
+    "processEnvStageFlags": []
+  },
+  "note": "Expected verdicts and recommendations are provisional (developer-written, unreviewed by faculty). A match is not faculty-verified accuracy, and an answer that was never verified is not a PASS.",
+  "summary": {
+    "answers": {
+      "sent": 4,
+      "verified": 1,
+      "invalid": 3,
+      "errors": 0
+    },
+    "judgements": {
+      "asked": 13,
+      "valid": 7,
+      "refused": 6
+    },
+    "refusalReasons": {
+      "recommendation_conflicts_label": 1,
+      "empty_answer": 4,
+      "quote_not_found": 1
+    },
+    "relationships": {
+      "asked": 8,
+      "verified": 7,
+      "neverVerified": [
+        "rr-syseng-unrelated"
+      ]
+    },
+    "sends": {
+      "retries": 2,
+      "mostForOneRelationship": 2,
+      "relationshipsSentAgain": 5
+    },
+    "recommendations": {
+      "verified": {
+        "NO_CHANGE": 4,
+        "REWRITE_TEXT": 3
+      },
+      "asProvisionallyExpected": 6,
+      "withAnExpectation": 6,
+      "retags": [],
+      "rewrites": [
+        {
+          "id": "cp-bsie-real2",
+          "expected": null,
+          "status": "proposed rewrite"
+        },
+        {
+          "id": "wi-syseng-unrelated",
+          "expected": "REWRITE_TEXT",
+          "status": "proposed rewrite"
+        },
+        {
+          "id": "af-syseng-irrelevant",
+          "expected": "REWRITE_TEXT",
+          "status": "proposed rewrite"
+        }
+      ]
+    },
+    "budget": {
+      "requests": {
+        "cap": 5,
+        "used": 5,
+        "remaining": 0
+      },
+      "dollars": {
+        "cap": 0.05,
+        "chargedAgainstCap": 0.0112413,
+        "remainingUnderCap": 0.0387587,
+        "providerReported": 0.00222388
+      }
+    }
+  },
+  "comparison": {
+    "baseline": "docs/ai-eval-stage-e4-smoke-resume.json",
+    "baselineStage": "E.4 smoke (Phase 1 re-run)",
+    "baselinePromptVersion": "alignment-12ab34c1c2d1d2-r5",
+    "attemptsCompared": 2,
+    "note": "only the baseline attempts that asked a relationship this run asked",
+    "before": {
+      "answers": {
+        "sent": 1,
+        "verified": 0,
+        "invalid": 1,
+        "errors": 0
+      },
+      "judgements": {
+        "asked": 4,
+        "valid": 0,
+        "refused": 4
+      },
+      "refusalReasons": {
+        "not_answered": 4
+      },
+      "relationships": {
+        "asked": 4,
+        "verified": 0,
+        "neverVerified": [
+          "cc-syseng-aligned",
+          "cp-bsie-real2",
+          "wi-syseng-unrelated",
+          "ic-syseng-ok"
+        ]
+      },
+      "sends": {
+        "retries": 0,
+        "mostForOneRelationship": 1,
+        "relationshipsSentAgain": 0
+      }
+    }
+  }
+}

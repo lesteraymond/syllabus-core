@@ -1,0 +1,719 @@
+PAGE 1
+La Consolacion University Philippines 
+Valenzuela St., Capitol View Park Subdivision, Bulihan, City of Malolos, Bulacan 
+SCHOOL YEAR 2025-2026 
+COLLEGE OF INFORMATION TECHNOLOGY AND ENGINEERING 
+I.   COURSE CODE   :   CPE-404 
+II.   COURSE TITLE   :   Digital Signal Processing 
+III.   COURSE DESCRIPTION   : 
+This course provides students with a comprehensive understanding of the fundamental concepts and practical applications
+of Digital Signal Processing (DSP) using modern computational tools such as MATLAB. Topics include discrete-time signals
+and systems, sampling, z-transforms, Fourier analysis, filter design, and signal reconstruction. Emphasis is placed on
+applying mathematical and engineering principles to real-world signal processing problems, including audio, image, and
+communication systems. 
+The course integrates Marian Augustinian values, fostering not only intellectual and technical competence but also ethical
+responsibility and social awareness. Students are encouraged to embody truth, unity, and charity through collaborative
+projects, demonstrating both technical proficiency and moral integrity as future Christo-centric Catholic professionals in the
+field of computer engineering. 
+IV.   PRE-REQUISITE   :   CPE-303 
+V.   CREDIT UNITS   :   3   Units Lecture,   1   Laboratory 
+VI.   COURSE LEARNING OUTCOMES: 
+Vision   Mission 
+PAGE 2
+Moved by the Spirit of the Risen Christ, La Consolacion 
+University   Philippines,   envisions   itself   to   become   a
+catalyst for the wholistic transformational development
+of   Catholic   Augustinian   Marian   graduates   rooted   in
+Gospel values. 
+To achieve the above vision, LCUP commits itself to
+generate and make available to its Augustinian Marian
+students, programs and services that will make them: 
+●   exhibit academic and technical competence in their
+respective   areas   of   discipline   in   the   local   and
+international environment; 
+●   demonstrate   their   knowledge,   critical   thinking   and
+creativity by exploring the various avenues of learning
+and searching for truth; 
+●   live the Gospel values in the varied aspects of their
+personal and professional lives; 
+●   manifest   their   willingness   to   serve   specially   the
+marginalized sector of our society; 
+●   demonstrate productivity in various areas of learning as
+responsible citizens of the society; and 
+●   develop individuals who are resilient,   inclusive and
+responsive   to   be   socio-economic   realities   of   the
+Philippines   and   the   complexities   of   the   global
+environment. 
+EXPECTED GRADUATE
+ATTRIBUTES 
+PROGRAM OUTCOMES   COURSE LEARNING
+OUTCOMES 
+EGA 1: Critical and Creative thinker 
+EGA 2: Competent   Catholic Augustinian-
+Marian Professional 
+EGA 3: Socially Responsive Steward 
+EGA 4: Transformative Lifelong learner 
+PO1.   Ability to apply knowledge of
+mathematics and science to solve
+complex engineering problems; 
+PO2.   Ability to design and conduct
+experiments, as well as to analyze and
+interpret data;
+PO3.   Ability to design a system,
+component, or process to meet desired
+needs within realistic constraints such as
+economic, environmental, 
+social, political, ethical, health and
+safety, manufacturability and
+sustainability, in accordance with
+standards.
+PO4.   Ability to function on 
+CLO1:   identify the engineering
+fundamentals   to   analyze
+discrete-time   signals   and
+systems   using   computational
+tools. 
+[EGA1] [PO1, PO2, PO3, PO5] 
+CLO2:   Demonstrate   ethical
+responsibility   and
+professionalism in designing DSP
+systems   that   uphold   social,
+environmental,   and   moral
+standards.and   communicate
+technical ideas effecfively 
+EGA1] [PO8, PO7, PO12] 
+PAGE 3
+multidisciplinary teams;
+PO5.   Ability to identify; formulate, and
+solve complex engineering problems;
+PO6.   Understanding of professional and
+ethical responsibility.
+PO7.   Ability to communicate effectively;
+PO8.   Broad education necessary to
+understand the impact of engineering
+solutions in a global, economic,
+environmental, and societal context.
+PO9.   Recognition of the need for, and
+an ability to engage in life-long learning;
+PO10. Knowledge of contemporary
+issues;
+PO11. Ability to use techniques, skills
+and modern engineering tools necessary
+for engineering practice; and
+PO12. Knowledge and understanding of
+engineering and management principles
+as a member and leader in a team, to
+manage projects and in 
+multidisciplinary environments. 
+PO13:   Ability   to   design,   develop,
+implement and improve integrated system
+that   include   people   materials,
+implementation, equipment and energy. 
+CLO3:   Evaluate the societal and
+environmental   impacts   of   DSP
+technologies,   ensuring
+responsible   innovation   in
+engineering solutions. 
+[EGA3] [PO8, PO10] 
+CLO4:   Engage   in   continuous
+learning   and   exploration   of
+emerging   DSP   techniques   and
+tools   to   adapt   to   technological
+advancements. 
+[EGA4] [PO 9, PO11] 
+VII.   LEARNING PLAN: 
+PAGE 4
+SCHEDULE   INTENDED LEARNING
+OUTCOMES   COURSE CONTENTS   SUGGESTED LEARNING
+ACTIVITIES 
+SUGGESTED
+ASSESSMENT TASKS 
+EXPECTED
+VALUE/S TO BE
+INTEGRATED 
+Week 1   I. Orientation 
+•   Introduction to
+the Course
+Contents 
+•   Course
+Requirements
+and Activities 
+•   Course
+Objectives 
+•   Grading System
+and Policies on
+Absences,
+Tardiness and
+Examinations 
+•   Setting and
+sharing of
+Expectations from
+the Course 
+•   Discussion on the
+Vision, Mission
+and Goals of
+LCUP and of CITE 
+•   Presentation of
+Course Objectives
+and Contents,
+Course
+Requirements and
+Activities 
+Review of Policies on
+Absences, Tardiness,
+Examinations,
+Grading System 
+•   Statement of
+Expectations 
+•   Review of Course
+Contents,
+Objectives,
+Activities and
+Assessment
+Tools 
+•   Review of
+Policies on
+Absences,
+Tardiness,
+Examinations,
+Grading System 
+•   Understanding 
+•   Open
+mindedness 
+•   Respect 
+•   Obedience 
+Week 2-3 
+ILO1: Show
+understanding, and
+deep appreciation on
+the nature and
+components of digital
+signal processing. 
+[CLO1] 
+ILO2: Show
+understanding in the
+fundamental
+concepts of digital
+signal processing. 
+[CLO1] 
+II.Introduction to
+Digital Signal
+Processing 
+•   What is signal
+processing 
+•   Need of
+processing 
+•   Categories 
+•   Advantages of
+digital over
+analog 
+•   Filters-analog &
+digital 
+•   Comparison 
+Lecture-Discussion
+using Power Point
+presentation 
+•   Quiz on the
+topics discussed 
+Activity on the
+application of DSP 
+•   Cooperation 
+•   Understanding 
+•   Active
+participation and
+involvement 
+•   Open
+mindedness 
+PAGE 5
+ILO3: Show
+understanding in
+practical   appli
+cation of DSP. 
+[CLO3][CLO4] 
+ILO4: Demonstrate
+the Filipino-Catholic
+Augustinian
+Spirituality through
+value webbing. 
+[CLO2] 
+•   Digital filters-
+types 
+• 
+Confidence in
+answering and
+participating in
+classroom
+discussion 
+Week 4-5 
+ILO1: Show
+understanding, and
+deep appreciation on
+the nature and
+components of digital
+signal processing. 
+[CLO2] 
+ILO2: Show
+understanding in the
+fundamental
+concepts of digital
+signal processing. 
+[CLO2] 
+ILO4: Demonstrate
+the Filipino-Catholic
+Augustinian
+Spirituality through
+value webbing. 
+[CLO2] 
+III. Application of
+Digital Signal
+Processing 
+•   FIR & IIR 
+•   Advantages-
+disadvantages 
+•   Applications of dsp 
+•   Simple illustrations 
+•   Various types of
+DSP 
+•   Microprocessor &
+signal processor 
+•   Architecture 
+•   Integrators 
+•   Companding 
+•   Bandwidth 
+•   Restriction 
+•   Sensors 
+•   Transducers 
+• 
+Lecture-Discussion
+using Power Point
+Presentation 
+Quiz on the topics
+discussed 
+•   Patience 
+•   Understandin
+g 
+•   Resourcefuln
+ess 
+•   Open
+mindedness 
+Active
+participation and
+involvement 
+PAGE 6
+Week 6 
+•   Preliminary
+Examination 
+Preliminary Examination   •   Understandin
+g 
+•   Honesty 
+Problem-Solving 
+WEEK 7-8 
+ILO1: Show
+understanding, and
+deep appreciation on
+the nature and
+components of digital
+signal processing. 
+[CLO1] 
+ILO2: Show
+understanding in the
+fundamental
+concepts of digital
+signal processing. 
+[CLO1] 
+ILO4: Demonstrate
+the Filipino-Catholic
+Augustinian
+Spirituality through
+value webbing. 
+[CLO2] 
+IV. Converting Analog
+to Digital Signals 
+•   Block diagram of
+DSP 
+•   Digital signal
+processor 
+•   Systems that
+process digital
+signals 
+•   Application of DSP 
+•   Sampling 
+•   Sampling interval 
+•   Short hand notation
+forsamples 
+•   Ways to represent
+sample signals 
+•   Sampling instant 
+• 
+•   Lecture-
+Discussion using
+Power Point
+Presentation 
+Quiz on the topics
+discussed 
+•   Patience 
+•   Understandin
+g 
+•   Resourcefuln
+ess 
+•   Open
+mindedness 
+Active
+participation and
+involvement 
+Week 9-11 
+ILO1: Show
+understanding, and
+deep appreciation on
+the nature and
+components of digital
+signal processing. 
+[CLO1] 
+ILO2: Show
+understanding in the
+fundamental
+concepts of digital
+signal processing. 
+[CLO1] 
+V. Introduction to
+MATLAB 
+•   MATLAB
+Command Window 
+•   Arithmetic
+Operations with
+Scalars Operation
+Symbol 
+•   Order of
+Precedence
+Parentheses 
+•   Lecture-
+Discussion
+using
+PowerPoint
+Presentation 
+•   Discovery
+Learning 
+Problem solving 
+•   Recitation 
+Seatwork 
+•   Patience 
+•   Understandin
+g 
+•   Resourcefuln
+ess 
+•   Open
+mindedness 
+•   Active
+participation
+and
+involvement 
+PAGE 7
+ILO3: Show
+understanding in
+practical   appli
+cation of DSP. 
+[CLO3][CLO4] 
+ILO4:   Demonstrate
+the   Filipino-Catholic
+Augustinian
+Spirituality   through
+value webbing 
+[CLO3] 
+Exponentiation
+Multiplication 
+•   Display Formats 
+•   Command
+Description format 
+•   Math functions -
+Function
+Description 
+•   Trigonometric math
+functions 
+•   Defining scalar
+variables 
+•   Useful MATLAB
+commands 
+•   Rules about
+variable names 
+•   Predefined
+variables 
+•   Array List of
+numbers arranged
+in row and/or
+columns 
+•   Creating vector 
+Creating 2D
+array(matrix) 
+Week 12 
+Midterm Examination   Midterm Examinatio
+n 
+•   Understan
+ding 
+•   Honesty 
+Problem-
+Solving 
+Week 13 
+ILO2: Show
+understanding in the
+fundamental
+concepts of digital
+signal processing. 
+[CLO1] 
+VI. Correlation 
+•   Definition 
+•   Autocorrelation 
+•   Cross correlation 
+•   3 operation of
+correlation 
+•   Lecture-
+Discussion 
+•   Discovery
+Learning 
+•   Recitation 
+•   Quiz 
+Seatwork 
+•   Patience 
+•   Understan
+ding 
+•   Resourcef
+ulness 
+PAGE 8
+ILO3: Show
+understanding in
+practical   appli
+cation of DSP. 
+[CLO3] [CLO4] 
+ILO4:   Demonstrate
+the   Filipino-Catholic
+Augustinian
+Spirituality   through
+value webbing. 
+[CLO2] 
+•   Calculating and
+graphing of cross-
+correlation
+between two
+signals 
+•   Calculating and
+graphing of
+autocorrelation 
+•   Conclusion on
+correlation 
+•   Deterministic
+signals 
+Random noise 
+•   Open
+mindedne
+ss 
+Active
+participation
+and
+involvement 
+Week 14 
+ILO2: Show
+understanding in the
+fundamental
+concepts of digital
+signal processing. 
+[CLO1] 
+ILO4: Demonstrate
+the Filipino-Catholic
+Augustinian
+Spirituality through
+value webbing. 
+[CLO2] 
+VII. Decibel Unit 
+•   The Bel unit 
+•   Computation of dB 
+•   Quantization Error 
+•   Application of
+digital system in
+accordance to the
+number of bits 
+•   Tolerance of
+Decibel in human
+hearing 
+•   Aliasing 
+•   Anti-aliasing filter 
+•   Amplifiers 
+•   Filter 
+•   Lecture-
+Discussion 
+Problem-Solving 
+•   Recitation 
+Quiz 
+•   Patience 
+•   Understandin
+g 
+•   Resourcefuln
+ess 
+•   Open
+mindedness 
+Active
+participation
+and
+involvement 
+Week 15 
+ILO2: Show
+understanding in the
+fundamental
+concepts of digital
+signal processing. 
+[CLO1] 
+ILO3: Show
+understanding in 
+VIII. Convolution 
+•   Definition 
+•   Flipping 
+•   Formula for
+convolution 
+•   Calculating and
+graphing of
+convolution 
+•   Lecture-
+Discussion 
+Problem-Solving 
+•   Recitation 
+Quiz 
+•   Patience 
+•   Understandin
+g 
+•   Resourcefuln
+ess 
+•   Open
+mindedness 
+PAGE 9
+practical   appli
+cation of DSP. 
+[CLO3][CLO4] 
+ILO4: Demonstrate
+the Filipino-Catholic
+Augustinian
+Spirituality through
+value webbing. 
+[CLO2] 
+•   Application of
+convolution 
+Active
+participation
+and
+involvement 
+Week 16-
+17 
+ILO2: Show
+understanding in the
+fundamental
+concepts of digital
+signal processing. 
+[CLO1] 
+ILO3: Show
+understanding in
+practical   appli
+cation of DSP. 
+[CLO3][CLO4] 
+ILO4: Demonstrate
+the Filipino-Catholic
+Augustinian
+Spirituality through
+value webbing. 
+[CLO2] 
+IX. Periodic
+Functions 
+•   Definition 
+•   Relationship
+between period
+and frequency 
+•   Prime example of
+periodic functions 
+•   Sinusoidal wave 
+•   Amplitude of
+sinusoidal wave 
+•   Fundamental and
+Nth harmonics 
+•   Time domain and
+frequency domain 
+Constructing a
+waveform with sine
+waves 
+•   Lecture-
+Discussion 
+•   Presentation of
+different waves
+in MATLAB 
+Problem Solving 
+•   Recitation 
+•   Quiz 
+Seatwork 
+•   Patience 
+•   Understandin
+g 
+•   Resourcefuln
+ess 
+•   Open
+mindedness 
+Active
+participation
+and
+involvement 
+Week 18   Final Examination   Final Examination   •   Understan
+ding 
+•   Honesty 
+•   Problem-
+Solving 
+PAGE 10
+VIII.   COURSE REQUIREMENTS   : 
+1.   Attendance 
+2.   Oral presentation of assigned topic 
+3.   Participation in class 
+4.   Project Submission 
+5.   Periodic written examination 
+IX. REFERENCES: 
+A. INTERNET REFERENCES 
+Proakis, J. G., & Manolakis, D. G. (2021).   Digital signal processing: Principles, algorithms, and applications   (5th ed.).
+Pearson. 
+B.   JOURNALS: 
+Zou, C., & Wang, S. (2024). Robust quaternion elastic-net for hypercomplex signal recovery.   Digital Signal Processing .   ACM
+Digital Library 
+Niu, Z. (2024). Learnable digital signal processing: A new benchmark of performance.   Nature Photonics .   Nature 
+Gomes de Sousa, D., Alves, C. S. M., da Silva, V. L., & Ferreira Neto, N. A. (2025). Digital Signal Processing from Classical
+Coherent Systems to Continuous-Variable QKD: A Review of Cross-Domain Techniques, Applications, and
+Challenges.   arXiv .   arXiv 
+Hayes, B., Shier, J., Fazekas, G., McPherson, A., & Saitis, C. (2023). A Review of Differentiable Digital Signal Processing for
+Music & Speech Synthesis.   arXiv .   arXiv 
+Muda, L., Begam, M., & Elamvazuthi, I. (2010). Voice Recognition Algorithms using Mel Frequency Cepstral Coefficient
+(MFCC) and Dynamic Time Warping (DTW) Techniques.   arXiv . 
+X.   GRADING SYSTEM   : 
+1.   Class Standing   60% 
+Quizzes/Recitation 
+Group Participation 
+Seat Work 
+2.   Examination   40 % 
+3.   Term Grade   CS [60%) + TE [40%) 
+4.   Final Rating   Prelim Grade + Midterm Grade + Final Grade 
+PAGE 11
+3 
+Prepared by: 
+ENGR. GLAZEN CAREY M. PEREZ 
+Faculty/Date 
+Checked and Reviewed by: 
+EDNA F. DAYAO, DIT 
+Dean/Date 
+ROSALYN S. GALVEZ, PhD., LPT 
+Asst. Vice President for Academic Affairs-Date 
+References Certified by: 
+MARIA MERCEDEZ M. HAZ, PhD., RL 
+LIC Director/Date 
+Approved by: 
+JAY MARK B. SANTOS, PhD, LPT 
+Vice President for Academic Affairs-Date 
+Revision Date: 
+Modifications: 
+__Learning Outcomes 
+__Course Contents 
+__Suggested Learning Activities 
+__Suggested Assessment 
+__Expected Values to be Integrated 
+__Course Requirements 
+__References 
+__Grading System 
+PRE - VPAA   – FO – 001 (011) 

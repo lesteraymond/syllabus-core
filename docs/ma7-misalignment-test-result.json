@@ -1,0 +1,208 @@
+{
+  "account": "jprizal.delrosario@email.lcup.edu.ph",
+  "syllabusId": 101,
+  "subject": {
+    "id": 25,
+    "code": "MA 7",
+    "title": "DIFFERENTIAL CALCULUS",
+    "program": "BSIE",
+    "cloCount": 0
+  },
+  "status": "draft",
+  "sourceVerification": {
+    "file": "reference-data/BSIE-1.jpeg",
+    "page": 1,
+    "program": "BSIE",
+    "curriculumYear": "2022-2023",
+    "yearLevel": 1,
+    "semester": 1,
+    "code": "MA 7",
+    "title": "DIFFERENTIAL CALCULUS",
+    "lectureUnits": 3,
+    "labUnits": 0,
+    "prerequisiteCell": "blank",
+    "method": "Visual verification against the supplied curriculum image; not an approved database import."
+  },
+  "createdClos": [
+    {
+      "id": "ma7_101_clo1",
+      "title": "Cosmetics brand recall",
+      "level": "Introductory",
+      "statement": "Memorize and recite cosmetic brand names from a product catalog.",
+      "egas": [
+        3
+      ],
+      "pos": [
+        1
+      ]
+    },
+    {
+      "id": "ma7_101_clo2",
+      "title": "Costume color recall",
+      "level": "Enabling",
+      "statement": "Identify the names of costume colors in a dance-performance photograph.",
+      "egas": [
+        4
+      ],
+      "pos": [
+        2
+      ]
+    },
+    {
+      "id": "ma7_101_clo3",
+      "title": "Floral decoration",
+      "level": "Demonstrating",
+      "statement": "Reproduce a decorative bouquet from a sample photograph using color and shape.",
+      "egas": [
+        2
+      ],
+      "pos": [
+        1
+      ]
+    },
+    {
+      "id": "ma7_101_clo4",
+      "title": "Cooking vocabulary",
+      "level": "Integration of Values",
+      "statement": "Recall the names of kitchen utensils and cake decorations from a picture list.",
+      "egas": [
+        1
+      ],
+      "pos": [
+        2
+      ]
+    }
+  ],
+  "intendedMismatches": [
+    "All calculus ILOs map to unrelated cosmetics, costumes, flowers or kitchen-vocabulary CLOs.",
+    "CLO EGA tags are syntactically valid but intentionally do not demonstrate the designated graduate attributes.",
+    "Weeks 4, 9, 14 and 17 pair mathematical objectives with dance activities and flower/costume recall quizzes."
+  ],
+  "runId": 225,
+  "score": 97,
+  "ready": false,
+  "alignment": {
+    "status": "not_evaluated",
+    "reason": "Resolve the hard gates before Gemini alignment can run.",
+    "judgements": []
+  },
+  "findings": [
+    {
+      "id": "P-03:clos[0].egas",
+      "area": "co_po",
+      "source": "rule",
+      "ruleId": "P-03",
+      "severity": "major",
+      "step": "clos",
+      "path": "clos[0].egas",
+      "message": "CLO 1 is tagged PO 1, which maps to EGA 1, but EGA 1 is not tagged.",
+      "evidence": {
+        "missing": [
+          {
+            "po": "1",
+            "ega": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "P-03:clos[1].egas",
+      "area": "co_po",
+      "source": "rule",
+      "ruleId": "P-03",
+      "severity": "major",
+      "step": "clos",
+      "path": "clos[1].egas",
+      "message": "CLO 2 is tagged PO 2, which maps to EGA 2, but EGA 2 is not tagged.",
+      "evidence": {
+        "missing": [
+          {
+            "po": "2",
+            "ega": 2
+          },
+          {
+            "po": "2",
+            "ega": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "P-03:clos[2].egas",
+      "area": "co_po",
+      "source": "rule",
+      "ruleId": "P-03",
+      "severity": "major",
+      "step": "clos",
+      "path": "clos[2].egas",
+      "message": "CLO 3 is tagged PO 1, which maps to EGA 1, but EGA 1 is not tagged.",
+      "evidence": {
+        "missing": [
+          {
+            "po": "1",
+            "ega": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "P-03:clos[3].egas",
+      "area": "co_po",
+      "source": "rule",
+      "ruleId": "P-03",
+      "severity": "major",
+      "step": "clos",
+      "path": "clos[3].egas",
+      "message": "CLO 4 is tagged PO 2, which maps to EGA 2, but EGA 2 is not tagged.",
+      "evidence": {
+        "missing": [
+          {
+            "po": "2",
+            "ega": 2
+          },
+          {
+            "po": "2",
+            "ega": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "CUR-REF:meta.program",
+      "ruleId": "CUR-REF",
+      "path": "meta.program",
+      "message": "Official approved curriculum unavailable for BSIE. Submission is blocked until it is supplied.",
+      "severity": "blocking",
+      "area": "template",
+      "step": "info",
+      "source": "rule"
+    },
+    {
+      "id": "PO-MASTER:outcomes.pos",
+      "ruleId": "PO-MASTER",
+      "path": "outcomes.pos",
+      "message": "Official program outcomes are unavailable; program alignment cannot be verified.",
+      "severity": "blocking",
+      "area": "template",
+      "step": "clos",
+      "source": "rule"
+    },
+    {
+      "id": "AI-REQUIRED:review",
+      "ruleId": "AI-REQUIRED",
+      "path": "review",
+      "step": "review",
+      "area": "assessment",
+      "severity": "blocking",
+      "source": "rule",
+      "message": "Gemini alignment must complete before submission. Resolve the hard gates before Gemini alignment can run."
+    }
+  ],
+  "deductions": [],
+  "officialProgramPosAvailable": false,
+  "reportPersisted": true,
+  "draftUnchangedByChecker": true,
+  "submitted": false,
+  "backup": ".api-test-backups\\ma7-before-test-101-1792621814899.json",
+  "testedAt": "2026-10-21T22:30:15.002Z"
+}

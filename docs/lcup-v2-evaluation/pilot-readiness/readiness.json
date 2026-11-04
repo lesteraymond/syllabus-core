@@ -1,0 +1,1101 @@
+{
+  "version": "lcup-v2-pilot-readiness-1",
+  "generatedAt": "2026-10-29T00:46:01.612Z",
+  "official": false,
+  "paidRequestsMade": 0,
+  "pilotExecuted": false,
+  "smokePreservation": {
+    "note": "Hashes of the original smoke run as written on 2026-10-29 00:13 UTC. Verify with sha256; nothing in this list may change.",
+    "runId": "live-smoke-REVIEWED",
+    "preparedHash": "61ca84192d21e28126b14b3f2a2480d0e9c466c13dc90d36fe1ae4cfa14ec09d",
+    "policyVersion": "academic-evaluation-v2-preview-1",
+    "promptVersion": "alignment-12ab34c1c2c3d1d2req1-r8-rubric-academic-evaluation-v2-preview-1",
+    "rawTranscriptHash": "64ae4723ebd76c19a00d37c9a3849a318e16cc8965f64d17db2ca91ba2b1491b",
+    "systemPromptSha256": "ce55c382fea170608a04adaef8056afd7e6981f254e43d77b01a57312dad672a",
+    "systemPromptChars": 43177,
+    "promptSourceFingerprints": {
+      "server/lib/syllabuscheck/gemini.js": "b747e32a9b8ea79227c44b048793b35e639619d8a2788286952efddbebec91ea",
+      "server/lib/syllabuscheck/variants.js": "a9ba7eac42a34c1b44fa96ac6b9c79208d0706ad1562434365bb6312874a3825",
+      "server/lib/syllabuscheck/stages.js": "52dc77afc351d4c8add28e5030b29c464644c61631515caf54352e7c8ebdfd37",
+      "server/lib/syllabuscheck/academicV2Plan.js": "2800c782657dcc5855de981dda41be0e11b32a61056a3995d6a35b45d86fc6f1",
+      "server/lib/syllabuscheck/anthropicClient.js": "53917e36fa51a4676ea8df056f2056bba67b809db489d04ced1ce8050a0b02c7",
+      "server/lib/syllabuscheck/evidencePresence.js": "3e7e50a2824ce00cfc03ebceaf5dddae7f8c9c9fe3c02b592def0c7993c11699",
+      "shared/contentPresence.cjs": "105ddd2683d3063c2270722ccee4b85c818a4832a22ff75bb1b6cc0f7baf5181"
+    },
+    "modelRequested": "claude-sonnet-5-5",
+    "modelsReturned": {
+      "claude-sonnet-5-5": 3
+    },
+    "requestIds": [
+      "req_011CgVZZzHvkxbXAQTXiXGt4",
+      "req_011CgVZaZyiyDQryHUHHk7g5",
+      "req_011CgVZb4f9NLkpQhyeDYigh"
+    ],
+    "cost": {
+      "estimatedAtListPrices": 0.0653151,
+      "guardCharged": 0.0684257,
+      "chargedConservatively": 0.15541075,
+      "spendRegisterEntry": {
+        "model": "claude-sonnet-5-5",
+        "requests": 3,
+        "charged": 0.0684257,
+        "outputTokens": 1807,
+        "updatedAt": "2026-10-29T00:13:57.790Z"
+      },
+      "registerTotalNow": 1.3525116
+    },
+    "files": {
+      "docs/lcup-v2-evaluation/live-smoke-REVIEWED/authorization.json": "f549d502f4bd556762a7db8b0d8ebbd4eb299e98957f7f742f4b5292d44c824c",
+      "docs/lcup-v2-evaluation/live-smoke-REVIEWED/benchmark-model-input.json": "5c65f4136def9a7659a8d468e0a0ce8c73d4c8bace640c28c3f005d430a904ac",
+      "docs/lcup-v2-evaluation/live-smoke-REVIEWED/ledger.json": "e31e21e95ea1a4a0c52488e4858726c8bf20a75caf586c8d5c3fcc3103035b49",
+      "docs/lcup-v2-evaluation/live-smoke-REVIEWED/plan.json": "2df264d21496a4828486952829575b243ac1276f6d4e2d05b594c0d7d33a12d9",
+      "docs/lcup-v2-evaluation/live-smoke-REVIEWED/raw/001.json": "0ed8896d1459d200735eb97f26cbaecca23d2423912dbe0249db07bbf3741128",
+      "docs/lcup-v2-evaluation/live-smoke-REVIEWED/raw/001.request.json": "cd66ec69a7ae0bfdd1f82ab76c60114a1e045e9f1b9b5260b2759099903f21a0",
+      "docs/lcup-v2-evaluation/live-smoke-REVIEWED/raw/002.json": "2f08bd42eeeea9089a870c4e2aaf7fe5c265ffbd7f52a911cc523f78d2fd376d",
+      "docs/lcup-v2-evaluation/live-smoke-REVIEWED/raw/002.request.json": "92c969e0a897be233ff2fd33c012167c40cd129b89e8d10d440d0212a465a644",
+      "docs/lcup-v2-evaluation/live-smoke-REVIEWED/raw/003.json": "2e5ea27bb2de31bd71b7737cc8b0587b6c3b52908534cf978ef73bedfd8380bb",
+      "docs/lcup-v2-evaluation/live-smoke-REVIEWED/raw/003.request.json": "a73903c690ad63f478bbd927b132f86f4316ddd3169780aa5fa01bb9388dadb1",
+      "docs/lcup-v2-evaluation/live-smoke-REVIEWED/results.json": "891e74128e562c1ff00a5a3fa98aa9a5cf08c60479cf81df9abc764d17717dd3",
+      "docs/lcup-v2-evaluation/live-smoke-REVIEWED/review-report.json": "75caef1d78f284a8db6fa5d6813b0e130603026b00b6c5a4eb25aaa5f27eabc9",
+      "docs/lcup-v2-evaluation/live-smoke-REVIEWED/review-report.md": "60d9e294d500bf2ae4786099b32a1479c4a63be06180344fb45304af791b0bac",
+      "docs/lcup-v2-evaluation/authorization.smoke.REVIEWED.json": "f549d502f4bd556762a7db8b0d8ebbd4eb299e98957f7f742f4b5292d44c824c"
+    },
+    "overwriteProtection": [
+      "run.cjs refuses an existing --out folder (freshDirectory)",
+      "pipeline/report writes use flag wx (no overwrite)",
+      "the pilot writes to docs/lcup-v2-evaluation/live-pilot-REVIEWED, a different folder"
+    ]
+  },
+  "pilotVerification": {
+    "verdict": "ALL CHECKS PASSED",
+    "failures": [],
+    "promptVersion": "alignment-12ab34c1c2c3d1d2req1-r8-rubric-academic-evaluation-v2-preview-1",
+    "coverage": [
+      {
+        "type": "Content-course",
+        "cases": [
+          "BM1-S01-003",
+          "BM1-S08-003",
+          "BM1-S15-003"
+        ],
+        "programs": [
+          "BSIT",
+          "BSIT-CYBERSECURITY",
+          "BSIE"
+        ],
+        "contrasts": [
+          "coherent-candidate",
+          "partial-scope-candidate",
+          "unrelated-content-candidate"
+        ],
+        "sourceKinds": [
+          "synthetic"
+        ]
+      },
+      {
+        "type": "Content-ILO",
+        "cases": [
+          "BM1-S07-004",
+          "BM1-S14-004",
+          "BM1-S21-004"
+        ],
+        "programs": [
+          "BSIT-CYBERSECURITY",
+          "BSIE",
+          "BSCPE"
+        ],
+        "contrasts": [
+          "coherent-candidate",
+          "partial-scope-candidate",
+          "unrelated-content-candidate"
+        ],
+        "sourceKinds": [
+          "synthetic"
+        ]
+      },
+      {
+        "type": "ILO-CLO",
+        "cases": [
+          "BM1-S13-001",
+          "BM1-S20-001",
+          "BM1-S03-001"
+        ],
+        "programs": [
+          "BSIE",
+          "BSCPE",
+          "BSIT"
+        ],
+        "contrasts": [
+          "coherent-candidate",
+          "partial-scope-candidate",
+          "unrelated-content-candidate"
+        ],
+        "sourceKinds": [
+          "synthetic"
+        ]
+      },
+      {
+        "type": "Content-activity",
+        "cases": [
+          "BM1-S19-005",
+          "BM1-S02-005",
+          "BM1-S09-005"
+        ],
+        "programs": [
+          "BSCPE",
+          "BSIT",
+          "BSIT-CYBERSECURITY"
+        ],
+        "contrasts": [
+          "coherent-candidate",
+          "partial-scope-candidate",
+          "unrelated-content-candidate"
+        ],
+        "sourceKinds": [
+          "synthetic"
+        ]
+      },
+      {
+        "type": "ILO-activity",
+        "cases": [
+          "BM1-S01-002",
+          "BM1-S08-002",
+          "BM1-S15-002"
+        ],
+        "programs": [
+          "BSIT",
+          "BSIT-CYBERSECURITY",
+          "BSIE"
+        ],
+        "contrasts": [
+          "coherent-candidate",
+          "partial-scope-candidate",
+          "unrelated-content-candidate"
+        ],
+        "sourceKinds": [
+          "synthetic"
+        ]
+      },
+      {
+        "type": "Content-assessment",
+        "cases": [
+          "BM1-S07-006",
+          "BM1-S14-006",
+          "BM1-S21-006"
+        ],
+        "programs": [
+          "BSIT-CYBERSECURITY",
+          "BSIE",
+          "BSCPE"
+        ],
+        "contrasts": [
+          "coherent-candidate",
+          "partial-scope-candidate",
+          "unrelated-content-candidate"
+        ],
+        "sourceKinds": [
+          "synthetic"
+        ]
+      },
+      {
+        "type": "Activity-assessment",
+        "cases": [
+          "BM1-S13-007",
+          "BM1-S20-007",
+          "BM1-S03-007"
+        ],
+        "programs": [
+          "BSIE",
+          "BSCPE",
+          "BSIT"
+        ],
+        "contrasts": [
+          "coherent-candidate",
+          "partial-scope-candidate",
+          "unrelated-content-candidate"
+        ],
+        "sourceKinds": [
+          "synthetic"
+        ]
+      }
+    ],
+    "requests": [
+      {
+        "n": 1,
+        "caseIds": [
+          "BM1-S01-003",
+          "BM1-S01-002"
+        ],
+        "types": [
+          "Content-course",
+          "ILO-activity"
+        ],
+        "targetPaths": [
+          "plan[2].contents",
+          "plan[2].activities"
+        ],
+        "systemSha": "ce55c382fea17060",
+        "userChars": 1420,
+        "inputBound": 51465,
+        "worst": 0.186585,
+        "bodySha256": "ee528e978f110d25e3736fdea2df68dbdfd76321e8c06cd856d1444dc9748c34"
+      },
+      {
+        "n": 2,
+        "caseIds": [
+          "BM1-S08-003",
+          "BM1-S08-002"
+        ],
+        "types": [
+          "Content-course",
+          "ILO-activity"
+        ],
+        "targetPaths": [
+          "plan[2].contents",
+          "plan[2].activities"
+        ],
+        "systemSha": "ce55c382fea17060",
+        "userChars": 1577,
+        "inputBound": 51622,
+        "worst": 0.187017,
+        "bodySha256": "497a14e705776cbcd497f9cdbee120edc30ed898d9fb6c2f34c8b6cacae52a22"
+      },
+      {
+        "n": 3,
+        "caseIds": [
+          "BM1-S15-003",
+          "BM1-S15-002"
+        ],
+        "types": [
+          "Content-course",
+          "ILO-activity"
+        ],
+        "targetPaths": [
+          "plan[2].contents",
+          "plan[2].activities"
+        ],
+        "systemSha": "ce55c382fea17060",
+        "userChars": 1385,
+        "inputBound": 51430,
+        "worst": 0.186489,
+        "bodySha256": "09d39aa5e89ed3d8faae2b51be31256a7c0ca93328f3e17c7eb759d2d5d6a374"
+      },
+      {
+        "n": 4,
+        "caseIds": [
+          "BM1-S07-004",
+          "BM1-S07-006"
+        ],
+        "types": [
+          "Content-ILO",
+          "Content-assessment"
+        ],
+        "targetPaths": [
+          "plan[2].ilos[0].text",
+          null
+        ],
+        "systemSha": "ce55c382fea17060",
+        "userChars": 1357,
+        "inputBound": 51395,
+        "worst": 0.186392,
+        "bodySha256": "a99e146e4741a83c6c0c94fe6dea5cf26b395d55e9ed0fa04016ce7645fa588a"
+      },
+      {
+        "n": 5,
+        "caseIds": [
+          "BM1-S14-004",
+          "BM1-S14-006"
+        ],
+        "types": [
+          "Content-ILO",
+          "Content-assessment"
+        ],
+        "targetPaths": [
+          "plan[2].ilos[0].text",
+          null
+        ],
+        "systemSha": "ce55c382fea17060",
+        "userChars": 1355,
+        "inputBound": 51393,
+        "worst": 0.186387,
+        "bodySha256": "0572f81097131777305074f671128a48cfc14015198b866268372fac7feaca65"
+      },
+      {
+        "n": 6,
+        "caseIds": [
+          "BM1-S21-004",
+          "BM1-S21-006"
+        ],
+        "types": [
+          "Content-ILO",
+          "Content-assessment"
+        ],
+        "targetPaths": [
+          "plan[2].ilos[0].text",
+          null
+        ],
+        "systemSha": "ce55c382fea17060",
+        "userChars": 1175,
+        "inputBound": 51213,
+        "worst": 0.185892,
+        "bodySha256": "4f4d3c9366a9c6f529f194ec36a0e1223392cca4bc6253b048728e8060b72cfb"
+      },
+      {
+        "n": 7,
+        "caseIds": [
+          "BM1-S13-001",
+          "BM1-S13-007"
+        ],
+        "types": [
+          "ILO-CLO",
+          "Activity-assessment"
+        ],
+        "targetPaths": [
+          "plan[2].ilos[0].text",
+          null
+        ],
+        "systemSha": "ce55c382fea17060",
+        "userChars": 1387,
+        "inputBound": 51425,
+        "worst": 0.186475,
+        "bodySha256": "834f2c9ecde71274cdd67381b3e1403226e02c31063c9ff8940c55161f19597d"
+      },
+      {
+        "n": 8,
+        "caseIds": [
+          "BM1-S20-001",
+          "BM1-S20-007"
+        ],
+        "types": [
+          "ILO-CLO",
+          "Activity-assessment"
+        ],
+        "targetPaths": [
+          "plan[2].ilos[0].text",
+          null
+        ],
+        "systemSha": "ce55c382fea17060",
+        "userChars": 1241,
+        "inputBound": 51279,
+        "worst": 0.186073,
+        "bodySha256": "ad451d4c596789df007d0bc52c22ddfe920a947a7770ffc57a59b65a80a3dc04"
+      },
+      {
+        "n": 9,
+        "caseIds": [
+          "BM1-S03-001",
+          "BM1-S03-007"
+        ],
+        "types": [
+          "ILO-CLO",
+          "Activity-assessment"
+        ],
+        "targetPaths": [
+          "plan[2].ilos[0].text",
+          null
+        ],
+        "systemSha": "ce55c382fea17060",
+        "userChars": 1168,
+        "inputBound": 51206,
+        "worst": 0.185873,
+        "bodySha256": "678acf836aaf1e8063fc76b9f877c5f9f8e1cfd8333e8e9cc5d3f71c77b07658"
+      },
+      {
+        "n": 10,
+        "caseIds": [
+          "BM1-S19-005"
+        ],
+        "types": [
+          "Content-activity"
+        ],
+        "targetPaths": [
+          null
+        ],
+        "systemSha": "ce55c382fea17060",
+        "userChars": 1003,
+        "inputBound": 51017,
+        "worst": 0.185353,
+        "bodySha256": "6f2f7c62b11b97b475beef52070565c751881e1b87697293ece88f0a7bfcf74c"
+      },
+      {
+        "n": 11,
+        "caseIds": [
+          "BM1-S02-005"
+        ],
+        "types": [
+          "Content-activity"
+        ],
+        "targetPaths": [
+          null
+        ],
+        "systemSha": "ce55c382fea17060",
+        "userChars": 941,
+        "inputBound": 50955,
+        "worst": 0.185182,
+        "bodySha256": "cdae70d1f8de7a8df303b25d29bb64c5d456bdff25f8706196aa309e2db5b009"
+      },
+      {
+        "n": 12,
+        "caseIds": [
+          "BM1-S09-005"
+        ],
+        "types": [
+          "Content-activity"
+        ],
+        "targetPaths": [
+          null
+        ],
+        "systemSha": "ce55c382fea17060",
+        "userChars": 994,
+        "inputBound": 51008,
+        "worst": 0.185328,
+        "bodySha256": "156280abd034f88a156ed65f77f06d5e9e027c7cb80d687aff0184340f50a19f"
+      }
+    ],
+    "systemPrompts": [
+      {
+        "systemSha": "ce55c382fea17060",
+        "chars": 43177,
+        "requests": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "types": [
+          "Content-course",
+          "ILO-activity",
+          "Content-ILO",
+          "Content-assessment",
+          "ILO-CLO",
+          "Activity-assessment",
+          "Content-activity"
+        ],
+        "sameAsSmokeAsSent": true
+      }
+    ],
+    "sameSystemPromptAsSmokeAsSent": true,
+    "sameBodiesAsFrozenDryPilotFinal": true,
+    "budget": {
+      "limits": {
+        "maxRequests": 12,
+        "maxInputTokens": 1440000,
+        "maxInputTokensPerRequest": 120000,
+        "maxOutputTokens": 49152,
+        "maxOutputTokensPerRequest": 4096,
+        "maxCost": 2.5
+      },
+      "initialRequests": 12,
+      "budgetFitsInitial": true,
+      "worstCaseTotal": 2.233,
+      "worstRequest": 0.187017,
+      "initialInputBound": 615408,
+      "runnerEstimate": {
+        "low": 0.1662,
+        "high": 0.9781
+      },
+      "smokeCalibration": {
+        "userCharsPerToken": 3.01,
+        "systemCharsPerToken": 2.78,
+        "outputPerRelationship": [
+          548,
+          668,
+          591
+        ],
+        "thinkingTokens": [
+          0,
+          0,
+          0
+        ]
+      },
+      "projectedFromSmoke": {
+        "typical": 0.1924,
+        "highOutputNoThinking": 0.2062,
+        "withThinking2000PerRequest": 0.4462
+      },
+      "outputCapCheck": {
+        "largestRelationshipsPerRequest": 2,
+        "expectedOutputLargestRequest": 1336,
+        "withThinking2000": 3336,
+        "cap": 4096
+      },
+      "register": {
+        "total": 1.3525116,
+        "cap": 10,
+        "afterWorstCase": 3.5856
+      }
+    },
+    "receipts": {
+      "smokeReceiptForPilot": "refused: Explicit matching live authorization receipt required; no request sent",
+      "pilotReceiptShape": "passed"
+    },
+    "mockedStopControls": {
+      "all-valid": {
+        "requestsSent": 12,
+        "ledgerRequests": 12,
+        "verifiedJudgments": 21,
+        "attempted": 21,
+        "notAttempted": 0,
+        "stopReason": null,
+        "provenance": "synthetic-test-only",
+        "mockRegisterCharged": 0.01584
+      },
+      "one-of-two-invalid-in-request-1": {
+        "requestsSent": 1,
+        "ledgerRequests": 1,
+        "verifiedJudgments": 1,
+        "attempted": 2,
+        "notAttempted": 19,
+        "stopReason": "Unresolved/invalid/provider result; stop for review",
+        "provenance": "synthetic-test-only",
+        "mockRegisterCharged": 0.00132
+      },
+      "truncated-at-max-tokens-in-request-2": {
+        "requestsSent": 2,
+        "ledgerRequests": 2,
+        "verifiedJudgments": 2,
+        "attempted": 4,
+        "notAttempted": 17,
+        "stopReason": "Unresolved/invalid/provider result; stop for review",
+        "provenance": "synthetic-test-only",
+        "mockRegisterCharged": 0.046596
+      },
+      "http-529-overloaded-in-request-1": {
+        "requestsSent": 1,
+        "ledgerRequests": 1,
+        "verifiedJudgments": 0,
+        "attempted": 2,
+        "notAttempted": 19,
+        "stopReason": "Unresolved/invalid/provider result; stop for review",
+        "provenance": "synthetic-test-only",
+        "mockRegisterCharged": 0.18658475
+      },
+      "realSpendRegisterUnchanged": true
+    },
+    "mockOutputs": "tmp\\lcup-v2-evaluation-claude-pilot-mocks-1793234366885"
+  },
+  "contextRisk": {
+    "smoke": [
+      {
+        "id": "BM1-IT202-096",
+        "scope": "smoke",
+        "type": "Content-ILO",
+        "program": "BSIT",
+        "targetPath": "plan[0].ilos[0].text",
+        "fieldLevelCorrectionPossible": true,
+        "unsentFieldsOfSameWeek": [
+          "activities",
+          "tasks",
+          "values"
+        ],
+        "ilo": {
+          "printedCloLabel": "[CLO1]",
+          "cloTags": [
+            "clo:it202_clo1"
+          ],
+          "sameStatementInOtherWeeks": [],
+          "sameNumberDifferentStatement": [
+            "week 2",
+            "week 3-4",
+            "week 4-5",
+            "week 9-11",
+            "week 14",
+            "week 16-17"
+          ],
+          "mappedCloStatements": [
+            "CLO 1: Define and analyze the computing requirements needed for an effective solution that is ess"
+          ]
+        }
+      },
+      {
+        "id": "BM1-IE402-074",
+        "scope": "smoke",
+        "type": "Content-ILO",
+        "program": "BSIE",
+        "targetPath": "plan[0].ilos[0].text",
+        "fieldLevelCorrectionPossible": true,
+        "unsentFieldsOfSameWeek": [
+          "activities",
+          "tasks",
+          "values"
+        ],
+        "ilo": {
+          "printedCloLabel": "[CLO 4]",
+          "cloTags": [
+            "clo:ie402_clo4"
+          ],
+          "sameStatementInOtherWeeks": [],
+          "sameNumberDifferentStatement": [
+            "week 12-14"
+          ],
+          "mappedCloStatements": [
+            "CLO 4: Demonstrate the Filipino- Catholic Augustinian Spirituality through value webbing."
+          ]
+        }
+      },
+      {
+        "id": "BM1-CPE304-051",
+        "scope": "smoke",
+        "type": "Content-ILO",
+        "program": "BSCPE",
+        "targetPath": "plan[1].ilos[0].text",
+        "fieldLevelCorrectionPossible": true,
+        "unsentFieldsOfSameWeek": [
+          "activities",
+          "tasks",
+          "values",
+          "other ILOs of the week"
+        ],
+        "ilo": {
+          "printedCloLabel": "[CLO1]",
+          "cloTags": [
+            "clo:cpe304_clo1"
+          ],
+          "sameStatementInOtherWeeks": [
+            "week 7-8"
+          ],
+          "sameNumberDifferentStatement": [
+            "week 4-5"
+          ],
+          "mappedCloStatements": [
+            "CLO 1: Identify the design process of electronic circuits and systems and conduct experiments inv"
+          ]
+        }
+      }
+    ],
+    "pilot": [
+      {
+        "id": "BM1-S01-003",
+        "scope": "pilot",
+        "type": "Content-course",
+        "program": "BSIT",
+        "targetPath": "plan[2].contents",
+        "fieldLevelCorrectionPossible": true,
+        "unsentFieldsOfSameWeek": [
+          "activities",
+          "tasks",
+          "values"
+        ],
+        "sameTextInOtherWeeks": [
+          "week 2",
+          "week 4",
+          "week 5",
+          "week 7",
+          "week 8",
+          "week 9",
+          "week 10",
+          "week 11",
+          "week 13",
+          "week 14",
+          "week 15",
+          "week 16",
+          "week 17"
+        ]
+      },
+      {
+        "id": "BM1-S08-003",
+        "scope": "pilot",
+        "type": "Content-course",
+        "program": "BSIT-CYBERSECURITY",
+        "targetPath": "plan[2].contents",
+        "fieldLevelCorrectionPossible": true,
+        "unsentFieldsOfSameWeek": [
+          "activities",
+          "tasks",
+          "values"
+        ],
+        "sameTextInOtherWeeks": []
+      },
+      {
+        "id": "BM1-S15-003",
+        "scope": "pilot",
+        "type": "Content-course",
+        "program": "BSIE",
+        "targetPath": "plan[2].contents",
+        "fieldLevelCorrectionPossible": true,
+        "unsentFieldsOfSameWeek": [
+          "activities",
+          "tasks",
+          "values"
+        ],
+        "sameTextInOtherWeeks": []
+      },
+      {
+        "id": "BM1-S07-004",
+        "scope": "pilot",
+        "type": "Content-ILO",
+        "program": "BSIT-CYBERSECURITY",
+        "targetPath": "plan[2].ilos[0].text",
+        "fieldLevelCorrectionPossible": true,
+        "unsentFieldsOfSameWeek": [
+          "activities",
+          "tasks",
+          "values"
+        ],
+        "ilo": {
+          "printedCloLabel": null,
+          "cloTags": [
+            "clo:c2"
+          ],
+          "sameStatementInOtherWeeks": [
+            "week 2",
+            "week 4",
+            "week 5",
+            "week 7",
+            "week 8",
+            "week 9",
+            "week 10",
+            "week 11",
+            "week 13",
+            "week 14",
+            "week 15",
+            "week 16",
+            "week 17"
+          ],
+          "sameNumberDifferentStatement": [],
+          "mappedCloStatements": [
+            "Outcome 2: Integrate two supplied services using the stated data contract and verify error handling."
+          ]
+        }
+      },
+      {
+        "id": "BM1-S14-004",
+        "scope": "pilot",
+        "type": "Content-ILO",
+        "program": "BSIE",
+        "targetPath": "plan[2].ilos[0].text",
+        "fieldLevelCorrectionPossible": true,
+        "unsentFieldsOfSameWeek": [
+          "activities",
+          "tasks",
+          "values"
+        ],
+        "ilo": {
+          "printedCloLabel": null,
+          "cloTags": [
+            "clo:c2"
+          ],
+          "sameStatementInOtherWeeks": [
+            "week 2",
+            "week 4",
+            "week 5",
+            "week 7",
+            "week 8",
+            "week 9",
+            "week 10",
+            "week 11",
+            "week 13",
+            "week 14",
+            "week 15",
+            "week 16",
+            "week 17"
+          ],
+          "sameNumberDifferentStatement": [],
+          "mappedCloStatements": [
+            "Outcome 2: Derive verifiable system requirements and identify interfaces for the stated engineering s"
+          ]
+        }
+      },
+      {
+        "id": "BM1-S21-004",
+        "scope": "pilot",
+        "type": "Content-ILO",
+        "program": "BSCPE",
+        "targetPath": "plan[2].ilos[0].text",
+        "fieldLevelCorrectionPossible": true,
+        "unsentFieldsOfSameWeek": [
+          "activities",
+          "tasks",
+          "values"
+        ],
+        "ilo": {
+          "printedCloLabel": null,
+          "cloTags": [
+            "clo:c2"
+          ],
+          "sameStatementInOtherWeeks": [],
+          "sameNumberDifferentStatement": [],
+          "mappedCloStatements": [
+            "Outcome 2: Measure a sensor signal and explain how conditioning and sampling affect the observed data"
+          ]
+        }
+      },
+      {
+        "id": "BM1-S13-001",
+        "scope": "pilot",
+        "type": "ILO-CLO",
+        "program": "BSIE",
+        "targetPath": "plan[2].ilos[0].text",
+        "fieldLevelCorrectionPossible": true,
+        "unsentFieldsOfSameWeek": [
+          "contents",
+          "activities",
+          "tasks",
+          "values"
+        ],
+        "ilo": {
+          "printedCloLabel": null,
+          "cloTags": [
+            "clo:c2"
+          ],
+          "sameStatementInOtherWeeks": [
+            "week 2",
+            "week 4",
+            "week 5",
+            "week 7",
+            "week 8",
+            "week 9",
+            "week 10",
+            "week 11",
+            "week 13",
+            "week 14",
+            "week 15",
+            "week 16",
+            "week 17"
+          ],
+          "sameNumberDifferentStatement": [],
+          "mappedCloStatements": [
+            "Outcome 2: Derive verifiable system requirements and identify interfaces for the stated engineering s"
+          ]
+        }
+      },
+      {
+        "id": "BM1-S20-001",
+        "scope": "pilot",
+        "type": "ILO-CLO",
+        "program": "BSCPE",
+        "targetPath": "plan[2].ilos[0].text",
+        "fieldLevelCorrectionPossible": true,
+        "unsentFieldsOfSameWeek": [
+          "contents",
+          "activities",
+          "tasks",
+          "values"
+        ],
+        "ilo": {
+          "printedCloLabel": null,
+          "cloTags": [
+            "clo:c2"
+          ],
+          "sameStatementInOtherWeeks": [
+            "week 2",
+            "week 4",
+            "week 5",
+            "week 7",
+            "week 8",
+            "week 9",
+            "week 10",
+            "week 11",
+            "week 13",
+            "week 14",
+            "week 15",
+            "week 16",
+            "week 17"
+          ],
+          "sameNumberDifferentStatement": [],
+          "mappedCloStatements": [
+            "Outcome 2: Measure a sensor signal and explain how conditioning and sampling affect the observed data"
+          ]
+        }
+      },
+      {
+        "id": "BM1-S03-001",
+        "scope": "pilot",
+        "type": "ILO-CLO",
+        "program": "BSIT",
+        "targetPath": "plan[2].ilos[0].text",
+        "fieldLevelCorrectionPossible": true,
+        "unsentFieldsOfSameWeek": [
+          "contents",
+          "activities",
+          "tasks",
+          "values"
+        ],
+        "ilo": {
+          "printedCloLabel": null,
+          "cloTags": [
+            "clo:c2"
+          ],
+          "sameStatementInOtherWeeks": [],
+          "sameNumberDifferentStatement": [],
+          "mappedCloStatements": [
+            "Outcome 2: Implement and test Java if/else statements for the stated input-validation rules."
+          ]
+        }
+      },
+      {
+        "id": "BM1-S19-005",
+        "scope": "pilot",
+        "type": "Content-activity",
+        "program": "BSCPE",
+        "targetPath": null,
+        "fieldLevelCorrectionPossible": false,
+        "unsentFieldsOfSameWeek": [
+          "tasks",
+          "values"
+        ]
+      },
+      {
+        "id": "BM1-S02-005",
+        "scope": "pilot",
+        "type": "Content-activity",
+        "program": "BSIT",
+        "targetPath": null,
+        "fieldLevelCorrectionPossible": false,
+        "unsentFieldsOfSameWeek": [
+          "tasks",
+          "values"
+        ]
+      },
+      {
+        "id": "BM1-S09-005",
+        "scope": "pilot",
+        "type": "Content-activity",
+        "program": "BSIT-CYBERSECURITY",
+        "targetPath": null,
+        "fieldLevelCorrectionPossible": false,
+        "unsentFieldsOfSameWeek": [
+          "tasks",
+          "values"
+        ]
+      },
+      {
+        "id": "BM1-S01-002",
+        "scope": "pilot",
+        "type": "ILO-activity",
+        "program": "BSIT",
+        "targetPath": "plan[2].activities",
+        "fieldLevelCorrectionPossible": true,
+        "unsentFieldsOfSameWeek": [
+          "contents",
+          "tasks",
+          "values"
+        ],
+        "sameTextInOtherWeeks": [
+          "week 1",
+          "week 2",
+          "week 4",
+          "week 5",
+          "week 7",
+          "week 8",
+          "week 9",
+          "week 10",
+          "week 11",
+          "week 13",
+          "week 14",
+          "week 15",
+          "week 16",
+          "week 17"
+        ]
+      },
+      {
+        "id": "BM1-S08-002",
+        "scope": "pilot",
+        "type": "ILO-activity",
+        "program": "BSIT-CYBERSECURITY",
+        "targetPath": "plan[2].activities",
+        "fieldLevelCorrectionPossible": true,
+        "unsentFieldsOfSameWeek": [
+          "contents",
+          "tasks",
+          "values"
+        ],
+        "sameTextInOtherWeeks": []
+      },
+      {
+        "id": "BM1-S15-002",
+        "scope": "pilot",
+        "type": "ILO-activity",
+        "program": "BSIE",
+        "targetPath": "plan[2].activities",
+        "fieldLevelCorrectionPossible": true,
+        "unsentFieldsOfSameWeek": [
+          "contents",
+          "tasks",
+          "values"
+        ],
+        "sameTextInOtherWeeks": []
+      },
+      {
+        "id": "BM1-S07-006",
+        "scope": "pilot",
+        "type": "Content-assessment",
+        "program": "BSIT-CYBERSECURITY",
+        "targetPath": null,
+        "fieldLevelCorrectionPossible": false,
+        "unsentFieldsOfSameWeek": [
+          "activities",
+          "values"
+        ]
+      },
+      {
+        "id": "BM1-S14-006",
+        "scope": "pilot",
+        "type": "Content-assessment",
+        "program": "BSIE",
+        "targetPath": null,
+        "fieldLevelCorrectionPossible": false,
+        "unsentFieldsOfSameWeek": [
+          "activities",
+          "values"
+        ]
+      },
+      {
+        "id": "BM1-S21-006",
+        "scope": "pilot",
+        "type": "Content-assessment",
+        "program": "BSCPE",
+        "targetPath": null,
+        "fieldLevelCorrectionPossible": false,
+        "unsentFieldsOfSameWeek": [
+          "activities",
+          "values"
+        ]
+      },
+      {
+        "id": "BM1-S13-007",
+        "scope": "pilot",
+        "type": "Activity-assessment",
+        "program": "BSIE",
+        "targetPath": null,
+        "fieldLevelCorrectionPossible": false,
+        "unsentFieldsOfSameWeek": [
+          "contents",
+          "values"
+        ]
+      },
+      {
+        "id": "BM1-S20-007",
+        "scope": "pilot",
+        "type": "Activity-assessment",
+        "program": "BSCPE",
+        "targetPath": null,
+        "fieldLevelCorrectionPossible": false,
+        "unsentFieldsOfSameWeek": [
+          "contents",
+          "values"
+        ]
+      },
+      {
+        "id": "BM1-S03-007",
+        "scope": "pilot",
+        "type": "Activity-assessment",
+        "program": "BSIT",
+        "targetPath": null,
+        "fieldLevelCorrectionPossible": false,
+        "unsentFieldsOfSameWeek": [
+          "contents",
+          "values"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,362 @@
+{
+ "version": "stage-d2-2",
+ "status": "DRAFT - synthetic examples with author-written labels, NOT faculty-reviewed",
+ "reviewStatus": "unreviewed",
+ "provenance": "Course identity and descriptions: the repository's records and the sample syllabi (as in stage-a-dataset.json). The lessons, value statements and references are SYNTHETIC examples written by the assistant; every reference uses an invented author and an 'Example' publisher and is NOT a real work. The institution's definitions of the six core values are not available to the checker, so the Value-use items assume none is supplied. Expected verdicts are the assistant's, unreviewed by faculty; nothing here measures agreement with faculty.",
+ "splits": {
+  "dev": "All items. No held-out split."
+ },
+ "categories": [
+  "clear-positive",
+  "tangential",
+  "unrelated",
+  "cannot-tell",
+  "ambiguous",
+  "venue-support",
+  "venue-keyword-trap",
+  "venue-web-publisher",
+  "venue-only-policy-gap"
+ ],
+ "courses": {
+  "prog1": {
+   "code": "IT 202",
+   "title": "Computer Programming 1 (Fundamentals of Programming)",
+   "program": "BSIT",
+   "yearLevel": "2",
+   "discipline": "computing",
+   "description": "This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications."
+  },
+  "syseng": {
+   "code": "IE 402",
+   "title": "Systems Engineering",
+   "program": "BSIE",
+   "yearLevel": "4",
+   "discipline": "engineering",
+   "description": "This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation."
+  },
+  "sensors": {
+   "code": "CPE 304",
+   "title": "Fundamentals of Mixed Signals and Sensors",
+   "program": "BSCPE",
+   "yearLevel": "3",
+   "discipline": "engineering",
+   "description": "This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included."
+  }
+ },
+ "note": "Relevance only, judged from the citation (authors, title, source). Format and authenticity are separate questions: see reference-format-fixtures.json and the checker's authenticity field. A trap never accepts ALIGNED. Offline E.7 follow-up: original labels and relevance expectations are unchanged. Basis expectations use only the bibliographic entry, never external claims about the venue or author. All expectations require faculty/librarian review. One venue-only diagnostic has no expected label or basis and is excluded from agreement until the schema policy is decided.",
+ "items": [
+  {
+   "id": "rr-prog1-relevant",
+   "origin": "stage-d2-1",
+   "type": "Ref-relevance",
+   "split": "dev",
+   "course": "prog1",
+   "category": "clear-positive",
+   "source": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nDescription: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.\nWeekly topics:\nWeek 1: Java basics: variables, data types and operators\nWeek 2: Conditional statements\nWeek 3: Loops\nWeek 4: Methods\nWeek 5: Arrays\nWeek 6: Debugging and testing",
+   "target": "Rivera, M. A., & Santos, J. B. (2021). Fundamentals of Java programming (2nd ed.). Example University Press.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The title concerns the course subject.",
+   "expectedAspects": {
+    "relevance": "relevant",
+    "basis": "title_only"
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectationStatus": "provisional"
+  },
+  {
+   "id": "rr-prog1-tangential",
+   "origin": "stage-d2-1",
+   "type": "Ref-relevance",
+   "split": "dev",
+   "course": "prog1",
+   "category": "tangential",
+   "source": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nDescription: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.\nWeekly topics:\nWeek 1: Java basics: variables, data types and operators\nWeek 2: Conditional statements\nWeek 3: Loops\nWeek 4: Methods\nWeek 5: Arrays\nWeek 6: Debugging and testing",
+   "target": "Dela Cruz, P. (2019). Database design and normalization. Example Press.",
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "A computing title, but not a topic this course teaches.",
+   "expectedAspects": {
+    "relevance": "tangential",
+    "basis": "title_only"
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectationStatus": "provisional"
+  },
+  {
+   "id": "rr-prog1-unrelated",
+   "origin": "stage-d2-1",
+   "type": "Ref-relevance",
+   "split": "dev",
+   "course": "prog1",
+   "category": "unrelated",
+   "source": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nDescription: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.\nWeekly topics:\nWeek 1: Java basics: variables, data types and operators\nWeek 2: Conditional statements\nWeek 3: Loops\nWeek 4: Methods\nWeek 5: Arrays\nWeek 6: Debugging and testing",
+   "target": "Reyes, L. (2018). Principles of marketing management. Example Press.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "Another subject.",
+   "expectedAspects": {
+    "relevance": "unrelated",
+    "basis": "title_only"
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectationStatus": "provisional"
+  },
+  {
+   "id": "rr-prog1-cannot-tell",
+   "origin": "stage-d2-1",
+   "type": "Ref-relevance",
+   "split": "dev",
+   "course": "prog1",
+   "category": "cannot-tell",
+   "source": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nDescription: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.\nWeekly topics:\nWeek 1: Java basics: variables, data types and operators\nWeek 2: Conditional statements\nWeek 3: Loops\nWeek 4: Methods\nWeek 5: Arrays\nWeek 6: Debugging and testing",
+   "target": "Santos, R. (2020). Essentials. Example Press.",
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "The title alone does not show the subject.",
+   "expectedAspects": {
+    "relevance": "cannot_tell",
+    "basis": "insufficient"
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectationStatus": "provisional"
+  },
+  {
+   "id": "rr-syseng-relevant",
+   "origin": "stage-d2-1",
+   "type": "Ref-relevance",
+   "split": "dev",
+   "course": "syseng",
+   "category": "clear-positive",
+   "source": "Course: IE 402 - Systems Engineering\nDescription: This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation.\nWeekly topics:\nWeek 1: Systems thinking\nWeek 2: Life-cycle models\nWeek 3: Requirements analysis\nWeek 4: Functional decomposition\nWeek 5: Systems design and trade studies\nWeek 6: Verification and validation",
+   "target": "Garcia, T. (2020). Systems engineering: Requirements, design and verification. Example Press.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The title names the course topics.",
+   "expectedAspects": {
+    "relevance": "relevant",
+    "basis": "title_only"
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectationStatus": "provisional"
+  },
+  {
+   "id": "rr-syseng-unrelated",
+   "origin": "stage-d2-1",
+   "type": "Ref-relevance",
+   "split": "dev",
+   "course": "syseng",
+   "category": "unrelated",
+   "source": "Course: IE 402 - Systems Engineering\nDescription: This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation.\nWeekly topics:\nWeek 1: Systems thinking\nWeek 2: Life-cycle models\nWeek 3: Requirements analysis\nWeek 4: Functional decomposition\nWeek 5: Systems design and trade studies\nWeek 6: Verification and validation",
+   "target": "Lim, H. (2017). A history of medieval architecture. Example Press.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "Another subject.",
+   "expectedAspects": {
+    "relevance": "unrelated",
+    "basis": "title_only"
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectationStatus": "provisional"
+  },
+  {
+   "id": "rr-sensors-relevant",
+   "origin": "stage-d2-1",
+   "type": "Ref-relevance",
+   "split": "dev",
+   "course": "sensors",
+   "category": "clear-positive",
+   "source": "Course: CPE 304 - Fundamentals of Mixed Signals and Sensors\nDescription: This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included.\nWeekly topics:\nWeek 1: Operational amplifier basics\nWeek 2: Amplifier circuits\nWeek 3: Signal conditioning\nWeek 4: Analog-to-digital converters\nWeek 5: Sensors and transducers\nWeek 6: Interfacing sensors with a microcontroller",
+   "target": "Cruz, A., & Tan, B. (2022). Operational amplifiers and sensor signal conditioning. Example Press.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The title names course topics.",
+   "expectedAspects": {
+    "relevance": "relevant",
+    "basis": "title_only"
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectationStatus": "provisional"
+  },
+  {
+   "id": "rr-sensors-tangential",
+   "origin": "stage-d2-1",
+   "type": "Ref-relevance",
+   "split": "dev",
+   "course": "sensors",
+   "category": "tangential",
+   "source": "Course: CPE 304 - Fundamentals of Mixed Signals and Sensors\nDescription: This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included.\nWeekly topics:\nWeek 1: Operational amplifier basics\nWeek 2: Amplifier circuits\nWeek 3: Signal conditioning\nWeek 4: Analog-to-digital converters\nWeek 5: Sensors and transducers\nWeek 6: Interfacing sensors with a microcontroller",
+   "target": "Ong, K. (2016). Digital logic fundamentals. Example Press.",
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Related electronics, but not the topics of this course.",
+   "expectedAspects": {
+    "relevance": "tangential",
+    "basis": "title_only"
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectationStatus": "provisional"
+  },
+  {
+   "id": "rr-sensors-web",
+   "origin": "stage-d2-1",
+   "type": "Ref-relevance",
+   "split": "dev",
+   "course": "sensors",
+   "category": "ambiguous",
+   "source": "Course: CPE 304 - Fundamentals of Mixed Signals and Sensors\nDescription: This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included.\nWeekly topics:\nWeek 1: Operational amplifier basics\nWeek 2: Amplifier circuits\nWeek 3: Signal conditioning\nWeek 4: Analog-to-digital converters\nWeek 5: Sensors and transducers\nWeek 6: Interfacing sensors with a microcontroller",
+   "target": "Example Instruments. (2023). Sensor interfacing application note [Web page]. https://www.example.com/app-note",
+   "accept": [
+    "ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "A vendor note on interfacing sensors: relevant to one topic; the citation alone cannot show its depth.",
+   "expectedAspects": {
+    "relevance": [
+     "relevant",
+     "tangential"
+    ],
+    "basis": [
+     "title_only",
+     "title_and_venue"
+    ]
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "ambiguous": true,
+   "expectationStatus": "provisional"
+  },
+  {
+   "origin": "stage-d2-2",
+   "type": "Ref-relevance",
+   "split": "dev",
+   "source": "Course: CPE 304 - Fundamentals of Mixed Signals and Sensors\nDescription: This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included.\nWeekly topics:\nWeek 1: Operational amplifier basics\nWeek 2: Amplifier circuits\nWeek 3: Signal conditioning\nWeek 4: Analog-to-digital converters\nWeek 5: Sensors and transducers\nWeek 6: Interfacing sensors with a microcontroller",
+   "expectationStatus": "provisional",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "id": "rr-sensors-venue-journal",
+   "course": "sensors",
+   "category": "venue-support",
+   "target": "Lopez, C. (2021). Conditioning circuits for strain gauges. Example Journal of Sensors and Signal Conditioning, 4(2), 1-10.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Both the circuit-conditioning title and the journal name identify course topics; the venue name supplies subject information, not proof of quality or authenticity.",
+   "expectedAspects": {
+    "relevance": "relevant",
+    "basis": "title_and_venue"
+   }
+  },
+  {
+   "origin": "stage-d2-2",
+   "type": "Ref-relevance",
+   "split": "dev",
+   "source": "Course: CPE 304 - Fundamentals of Mixed Signals and Sensors\nDescription: This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included.\nWeekly topics:\nWeek 1: Operational amplifier basics\nWeek 2: Amplifier circuits\nWeek 3: Signal conditioning\nWeek 4: Analog-to-digital converters\nWeek 5: Sensors and transducers\nWeek 6: Interfacing sensors with a microcontroller",
+   "expectationStatus": "provisional",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "id": "rr-sensors-venue-other-field",
+   "course": "sensors",
+   "category": "venue-keyword-trap",
+   "target": "Reyes, D. (2020). Sensor data in retail analytics. Example Journal of Marketing, 7(1), 15-30.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "The word sensor alone is not a match for circuit instruction; the title and marketing venue indicate a different application field. The depth of any useful overlap is provisional.",
+   "expectedAspects": {
+    "relevance": [
+     "tangential",
+     "unrelated"
+    ],
+    "basis": [
+     "title_and_venue",
+     "title_only"
+    ]
+   }
+  },
+  {
+   "origin": "stage-d2-2",
+   "type": "Ref-relevance",
+   "split": "dev",
+   "source": "Course: CPE 304 - Fundamentals of Mixed Signals and Sensors\nDescription: This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included.\nWeekly topics:\nWeek 1: Operational amplifier basics\nWeek 2: Amplifier circuits\nWeek 3: Signal conditioning\nWeek 4: Analog-to-digital converters\nWeek 5: Sensors and transducers\nWeek 6: Interfacing sensors with a microcontroller",
+   "expectationStatus": "provisional",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "id": "rr-sensors-venue-web",
+   "course": "sensors",
+   "category": "venue-web-publisher",
+   "target": "Example Sensor Standards Association. (2022). Interfacing guide [Web page]. https://www.example.org/interfacing",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The interfacing title and the sensor association named as group author together identify the subject. The name establishes neither official authority nor verified standards status.",
+   "expectedAspects": {
+    "relevance": "relevant",
+    "basis": "title_and_venue"
+   }
+  },
+  {
+   "origin": "stage-d2-2",
+   "type": "Ref-relevance",
+   "split": "dev",
+   "source": "Course: IE 402 - Systems Engineering\nDescription: This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation.\nWeekly topics:\nWeek 1: Systems thinking\nWeek 2: Life-cycle models\nWeek 3: Requirements analysis\nWeek 4: Functional decomposition\nWeek 5: Systems design and trade studies\nWeek 6: Verification and validation",
+   "expectationStatus": "pending_faculty_decision",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "id": "rr-syseng-venue-only",
+   "course": "syseng",
+   "category": "venue-only-policy-gap",
+   "target": "Santos, R. (2019). Essentials. Example Journal of Systems Engineering, 2(3), 40-52.",
+   "accept": [],
+   "why": "The generic title supplies no subject information while the journal name does. The current basis enum has no venue_only value; faculty/librarian policy is needed before an academic label or basis is scored.",
+   "expectedAspects": {},
+   "excludeFromAgreement": true,
+   "pendingDecision": "Can venue-only information support a relevance judgment, and which existing or future basis value represents it?"
+  }
+ ],
+ "baselineVersion": "stage-d2-1",
+ "basisRule": {
+  "status": "provisional - requires faculty/librarian review",
+  "title_only": "The title indicates the subject but the named venue does not.",
+  "title_and_venue": "The title and the venue name each indicate the subject (or the other field for an unrelated entry).",
+  "insufficient": "The entry does not indicate enough about the subject.",
+  "limitation": "The current enum has no venue_only basis. A generic title with a telling venue is a diagnostic, not a scored academic expectation."
+ },
+ "changeLog": [
+  {
+   "stage": "E.7 offline follow-up",
+   "reviewedBy": null,
+   "change": "Preserve stage-d2-1 source texts, labels and relevance expectations; add provisional basis to its nine items and four venue diagnostics. Exclude venue-only diagnostic from agreement pending a schema/policy decision."
+  }
+ ]
+}

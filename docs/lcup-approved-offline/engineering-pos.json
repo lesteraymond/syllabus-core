@@ -1,0 +1,449 @@
+[
+  {
+    "key": "ie402",
+    "file": "IE402-SYSTEM-ENGINEERINGS.pdf",
+    "sha256": "44ca6d48c77d0b04055cf330717b9381b64d3b7fb8674be727aa2eb4a1807569",
+    "pos": [
+      {
+        "no": 1,
+        "raw": "PO1. Ability to apply knowledge of\nmathematics and science to solve\ncomplex engineering problems;",
+        "text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "no": 2,
+        "raw": "PO2. Ability to design and\nconduct experiments, as well as to\nanalyze and interpret data;",
+        "text": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "no": 3,
+        "raw": "PO3. Ability to design a system,\ncomponent, or process to meet\ndesired needs within realistic\nconstraints such as economic,\nenvironmental, social,\npolitical, ethical, health and safety,\nmanufacturability and\nsustainability, in accordance with\nstandards.",
+        "text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "no": 4,
+        "raw": "PO4. Ability to function on\nmultidisciplinary teams",
+        "text": "Ability to function on multidisciplinary teams",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 5,
+        "raw": "PO5. Ability to identify; formulate,\nand solve complex engineering\nproblems;",
+        "text": "Ability to identify; formulate, and solve complex engineering problems;",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 6,
+        "raw": "PO6. Understanding of\nprofessional and ethical\nresponsibility.",
+        "text": "Understanding of professional and ethical responsibility.",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 7,
+        "raw": "PO7. Ability to communicate\neffectively",
+        "text": "Ability to communicate effectively",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 8,
+        "raw": "PO8. Broad education necessary\nto understand the impact of\nengineering solutions in a global,\neconomic, environmental, and\nsocietal context.",
+        "text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 9,
+        "raw": "PO9. Recognition of the need for,\nand an ability to engage in life-long\nlearning;",
+        "text": "Recognition of the need for, and an ability to engage in life-long learning;",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 10,
+        "raw": "PO10. Knowledge of\ncontemporary issues;",
+        "text": "Knowledge of contemporary issues;",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 11,
+        "raw": "PO11. Ability to use techniques,\nskills and modern engineering tools\nnecessary for engineering practice;\nand;",
+        "text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and;",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 12,
+        "raw": "PO12. Knowledge and\nunderstanding of engineering and\nmanagement principles as a\nmember and leader in a team, to\nmanage projects and in",
+        "text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 13,
+        "raw": "PO13: Ability to design, develop,\nimplement and improve integrated\nsystem that include people\nmaterials, implementation,\nequipment and energy.",
+        "text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+        "pages": [
+          3,
+          4
+        ]
+      }
+    ]
+  },
+  {
+    "key": "cpe304",
+    "file": "CPE-304-Fundamentals-of-Mixed-Signals-and-Sensors.pdf",
+    "sha256": "f68eb5bedb77d31b153b23dc354ef457c9a349b7fca64ba5a46578230982a4a2",
+    "pos": [
+      {
+        "no": 1,
+        "raw": "PO1. Ability to apply knowledge of\nmathematics and science to solve\ncomplex engineering problems;",
+        "text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "no": 2,
+        "raw": "PO2. Ability to design and conduct\nexperiments, as well as to analyze and\ninterpret data;",
+        "text": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "no": 3,
+        "raw": "PO3. Ability to design a system,\ncomponent, or process to meet desired\nneeds within realistic constraints such as\neconomic, environmental, social,\npolitical, ethical, health and safety,\nmanufacturability and sustainability, in\naccordance with standards.",
+        "text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "no": 4,
+        "raw": "PO4. Ability to function on\nmultidisciplinary teams",
+        "text": "Ability to function on multidisciplinary teams",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "no": 5,
+        "raw": "PO5. Ability to identify; formulate, and\nsolve complex engineering problems;",
+        "text": "Ability to identify; formulate, and solve complex engineering problems;",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "no": 6,
+        "raw": "PO6. Understanding of professional and\nethical responsibility.",
+        "text": "Understanding of professional and ethical responsibility.",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "no": 7,
+        "raw": "PO7. Ability to communicate effectively",
+        "text": "Ability to communicate effectively",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "no": 8,
+        "raw": "PO8. Broad education necessary to\nunderstand the impact of engineering\nsolutions in a global, economic,\nenvironmental, and societal context.",
+        "text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 9,
+        "raw": "PO9. Recognition of the need for, and an\nability to engage in life-long learning;",
+        "text": "Recognition of the need for, and an ability to engage in life-long learning;",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 10,
+        "raw": "PO10. Knowledge of contemporary\nissues;",
+        "text": "Knowledge of contemporary issues;",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 11,
+        "raw": "PO11. Ability to use techniques, skills and\nmodern engineering tools necessary for\nengineering practice; and",
+        "text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 12,
+        "raw": "PO12. Knowledge and understanding of\nengineering and management principles\nas a member and leader in a team, to\nmanage projects and in",
+        "text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 13,
+        "raw": "PO13: Ability to design, develop,\nimplement and improve integrated system\nthat include people materials,\nimplementation, equipment and energy.",
+        "text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+        "pages": [
+          3
+        ]
+      }
+    ]
+  },
+  {
+    "key": "ie403",
+    "file": "IE-403-Operation-Management.pdf",
+    "sha256": "bdb90b9b09eaf505e13bc82cfc1fdc51e283901455064617997d0426592c57a4",
+    "pos": [
+      {
+        "no": 1,
+        "raw": "PO1. Ability to apply knowledge of\nmathematics and science to solve\ncomplex engineering problems;",
+        "text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "no": 2,
+        "raw": "PO2. Ability to design and conduct\nexperiments, as well as to analyze and\ninterpret data.",
+        "text": "Ability to design and conduct experiments, as well as to analyze and interpret data.",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "no": 3,
+        "raw": "PO3. Ability to design a system,\ncomponent, or process to meet desired\nneeds within realistic constraints such as\neconomic, environmental, social, political,\nethical, health and safety,\nmanufacturability and sustainability, in\naccordance with standards.",
+        "text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "no": 4,
+        "raw": "PO4. Ability to function on\nmultidisciplinary teams;",
+        "text": "Ability to function on multidisciplinary teams;",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "no": 5,
+        "raw": "PO5. Ability to identify; formulate, and\nsolve complex engineering problems.",
+        "text": "Ability to identify; formulate, and solve complex engineering problems.",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "no": 6,
+        "raw": "PO6. Understanding of professional and\nethical responsibility.",
+        "text": "Understanding of professional and ethical responsibility.",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "no": 7,
+        "raw": "PO7. Ability to communicate effectively.",
+        "text": "Ability to communicate effectively.",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "no": 8,
+        "raw": "PO8. Broad education necessary to\nunderstand the impact of engineering\nsolutions in a global, economic,\nenvironmental, and societal context.",
+        "text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+        "pages": [
+          2,
+          3
+        ]
+      },
+      {
+        "no": 9,
+        "raw": "PO9. Recognition of the need for, and\nan ability to engage in life-long learning;",
+        "text": "Recognition of the need for, and an ability to engage in life-long learning;",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 10,
+        "raw": "PO10. Knowledge of contemporary\nissues.",
+        "text": "Knowledge of contemporary issues.",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 11,
+        "raw": "PO11. Ability to use techniques, skills\nand modern engineering tools necessary\nfor engineering practice; and",
+        "text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 12,
+        "raw": "PO12. Knowledge and understanding of\nengineering and management principles\nas a member and leader in a team, to\nmanage projects and in multidisciplinary\nenvironments.",
+        "text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in multidisciplinary environments.",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 13,
+        "raw": "PO13: Ability to design, develop,\nimplement and improve integrated system\nthat include people materials,\nimplementation, equipment and energy.",
+        "text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+        "pages": [
+          3
+        ]
+      }
+    ]
+  },
+  {
+    "key": "cpe404",
+    "file": "CPE-404-Digital-Signal-Processing.pdf",
+    "sha256": "9e16f9d0524b5a328ce992306a7897b4a5d6cd70933a388fa01412e427ab754a",
+    "pos": [
+      {
+        "no": 1,
+        "raw": "PO1. Ability to apply knowledge of\nmathematics and science to solve\ncomplex engineering problems;",
+        "text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "no": 2,
+        "raw": "PO2. Ability to design and conduct\nexperiments, as well as to analyze and\ninterpret data;",
+        "text": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "no": 3,
+        "raw": "PO3. Ability to design a system,\ncomponent, or process to meet desired\nneeds within realistic constraints such as\neconomic, environmental,\nsocial, political, ethical, health and\nsafety, manufacturability and\nsustainability, in accordance with\nstandards.",
+        "text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+        "pages": [
+          2
+        ]
+      },
+      {
+        "no": 4,
+        "raw": "PO4. Ability to function on\nmultidisciplinary teams;",
+        "text": "Ability to function on multidisciplinary teams;",
+        "pages": [
+          2,
+          3
+        ]
+      },
+      {
+        "no": 5,
+        "raw": "PO5. Ability to identify; formulate, and\nsolve complex engineering problems;",
+        "text": "Ability to identify; formulate, and solve complex engineering problems;",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 6,
+        "raw": "PO6. Understanding of professional and\nethical responsibility.",
+        "text": "Understanding of professional and ethical responsibility.",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 7,
+        "raw": "PO7. Ability to communicate effectively;",
+        "text": "Ability to communicate effectively;",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 8,
+        "raw": "PO8. Broad education necessary to\nunderstand the impact of engineering\nsolutions in a global, economic,\nenvironmental, and societal context.",
+        "text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 9,
+        "raw": "PO9. Recognition of the need for, and\nan ability to engage in life-long learning;",
+        "text": "Recognition of the need for, and an ability to engage in life-long learning;",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 10,
+        "raw": "PO10. Knowledge of contemporary\nissues;",
+        "text": "Knowledge of contemporary issues;",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 11,
+        "raw": "PO11. Ability to use techniques, skills\nand modern engineering tools necessary\nfor engineering practice; and",
+        "text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 12,
+        "raw": "PO12. Knowledge and understanding of\nengineering and management principles\nas a member and leader in a team, to\nmanage projects and in\nmultidisciplinary environments.",
+        "text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in multidisciplinary environments.",
+        "pages": [
+          3
+        ]
+      },
+      {
+        "no": 13,
+        "raw": "PO13: Ability to design, develop,\nimplement and improve integrated system\nthat include people materials,\nimplementation, equipment and energy.",
+        "text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+        "pages": [
+          3
+        ]
+      }
+    ]
+  }
+]

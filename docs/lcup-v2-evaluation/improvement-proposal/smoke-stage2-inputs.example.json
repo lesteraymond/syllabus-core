@@ -1,0 +1,461 @@
+{
+  "version": "lcup-v2-stage2-input-examples-1",
+  "generatedAt": "2026-10-29T02:03:49.941Z",
+  "status": "DRAFT INPUT EXAMPLES - never sent",
+  "note": "The exact user-message object the draft Stage 2 request would carry for each smoke case. Stage 1 fields are copied from live-smoke-REVIEWED/results.json; dependencies are built by code from the frozen benchmark context.",
+  "examples": [
+    {
+      "caseId": "BM1-IT202-096",
+      "userMessageChars": 6277,
+      "worstCaseDollars": 0.091476,
+      "input": {
+        "relationship": {
+          "id": "row0-ilo0-contentilo",
+          "type": "Content-ILO",
+          "rewritableField": "plan[0].ilos[0].text",
+          "source": "Week 1: I. Orientation\nA. Introduction to the\nCourse Contents\nB. Course\nRequirements and\nActivities\nC. Course Objectives\nGrading System and\nPolicies on Absences,\nTardiness and\nExaminations",
+          "target": "ILO 1: Demonstrate a clear understanding of the course structure, expectations, and key programming concepts in Java, including how these skills align with real- world IT challenges and professional ethical standards. [CLO1]"
+        },
+        "stage1": {
+          "label": "PARTIALLY_ALIGNED",
+          "explanation": "The ILO is about this week's orientation (course structure, expectations), so it is on topic. But it has four gaps. First, \"Demonstrate a clear understanding\" is vague and gives no observable performance. Second, it asks for \"key programming concepts in Java\" and for alignment with \"real- world IT challenges and professional ethical standards\", and the Week 1 content (orientation, requirements, objectives, grading and policies) teaches none of these. Third, the Bloom level is too high for an orientation. Fourth, it is too broad to guide teaching or assessment.",
+          "sourceQuote": "Course\nRequirements and\nActivities",
+          "targetQuote": "Demonstrate a clear understanding of the course structure, expectations, and key programming concepts in Java",
+          "sourceBloom": "Remember",
+          "targetBloom": "Understand",
+          "recommendation": "REWRITE_TEXT",
+          "draft": "ILO 1: Describe the course structure, objectives, requirements, grading system and policies on absences, tardiness and examinations, and state what is expected of students in learning Java programming."
+        },
+        "course": {
+          "code": "IT 202",
+          "title": "Computer Programming 1",
+          "program": "BSIT",
+          "yearLevel": "",
+          "description": "This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications. In line with La Consolacion University Philippines' commitment to forming Christo-centric Catholic professionals , the course integrates Marian Augustinian values in each lesson, ensuring that students not only achieve intellectual growth but also cultivate moral and ethical responsibility in the digital age. This holistic approach nurtures individuals who contribute positively to society, embodying community, humility, and love of service , as exemplified by the Blessed Virgin Mary and Saint Augustine. By the end of the course, students will have created their own Java applications, demonstrating both technical proficiency and a sense of purpose rooted in their Catholic faith.",
+          "clos": [
+            {
+              "clo": "CLO 1",
+              "level": "Introductory",
+              "statement": "Define and analyze the computing requirements needed for an effective solution that is essential for developing holistic and impactful solutions."
+            },
+            {
+              "clo": "CLO 2",
+              "level": "Introductory",
+              "statement": " Incorporate ethical standards and social responsibility into technical designs, ensuring that solutions serve the common good, in line with Marian and Augustinian principles of truth and compassion. "
+            },
+            {
+              "clo": "CLO 3",
+              "level": "Introductory",
+              "statement": "Collaborate effectively within multi-disciplinary and culturally diverse teams to develop Java- based programming solutions that address social challenges, demonstrating social responsibility and cultural sensitivity."
+            },
+            {
+              "clo": "CLO 4",
+              "level": "Introductory",
+              "statement": "Demonstrate the Filipino- Catholic Augustinian Spirituality through value webbing."
+            }
+          ]
+        },
+        "dependencies": [
+          {
+            "id": "D1",
+            "kind": "printed_labels",
+            "field": "plan[0].ilos[0].text",
+            "numberPrefix": "ILO 1:",
+            "cloLabels": [
+              "[CLO1]"
+            ]
+          },
+          {
+            "id": "D2",
+            "kind": "same_number_other_statement",
+            "number": "1",
+            "weeks": [
+              "2",
+              "3-4",
+              "4-5",
+              "9-11",
+              "14",
+              "16-17"
+            ]
+          },
+          {
+            "id": "D3",
+            "kind": "week_row",
+            "week": "1",
+            "fields": {
+              "activities": "• Setting and sharing of Expectations from the Course • Discussion on the Vision, Mission and Goals of LCUP and of CITE • Presentation of Course Objectives and Contents, Course Requirements and Activities Review of Policies on Absences, Tardiness, Examinations, Grading System",
+              "tasks": "• Statement of Expectations • Review of Course Contents, Objectives, Activities and Assessment Tools • Review of Policies on Absences, Tardiness, Examinations, Grading System",
+              "values": "• Compassion • Courage • Open mindedness • Respect • Obedience"
+            },
+            "otherIlos": []
+          },
+          {
+            "id": "D4",
+            "kind": "mapped_clos",
+            "clos": [
+              {
+                "clo": "CLO 1",
+                "level": "Introductory",
+                "statement": "Define and analyze the computing requirements needed for an effective solution that is essential for developing holistic and impactful solutions.",
+                "pos": [
+                  1,
+                  2,
+                  3,
+                  6,
+                  8
+                ],
+                "egas": [
+                  "Critical and Creative thinker",
+                  "Socially Responsive Steward",
+                  "Transformative Lifelong learner"
+                ],
+                "poReference": "held"
+              }
+            ]
+          },
+          {
+            "id": "D5",
+            "kind": "clo_coverage",
+            "clo": "CLO 1",
+            "otherIlosTagged": 9,
+            "ilos": [
+              {
+                "week": "2",
+                "text": "LO1. Explain the basic concepts and principles of Java programming, [CLO 1]"
+              },
+              {
+                "week": "3-4",
+                "text": "ILO1: Demonstrate the skills by knowing the syntax and semantics of Java. of Language. [CLO 1,2]"
+              },
+              {
+                "week": "4-5",
+                "text": "ILO 1: Inference read and write data using Java streams [CLO 1] [CLO 2]"
+              },
+              {
+                "week": "7-8",
+                "text": "ILO3: Understand the fundamentals of structured logic using decisions, loops, and array manipulation. [CLO 1] [CLO3]"
+              },
+              {
+                "week": "9-11",
+                "text": "ILO1: Utilize various looping constructs (for, while, do-while) in Java to execute repeated tasks, and design programs that efficiently handle repetitive processes and iterations, incorporating loops to solve real-world problems. CLO1 CLO2, CLO3"
+              },
+              {
+                "week": "13",
+                "text": "ILO4: declare, initialize, and manipulate arrays in Java, effectively using one- dimensional and multi-dimensional arrays to store, retrieve, and process data in various applications [CLO1] [CLO2]"
+              },
+              {
+                "week": "14",
+                "text": "ILO1: Apply various string manipulation methods in Java. [CLO 1-2] ."
+              },
+              {
+                "week": "15",
+                "text": "ILO4: Demonstrate the skills by knowing the syntax and semantics of Java. [CLO1-2]"
+              },
+              {
+                "week": "15",
+                "text": "ILO5: Build robust applications using Java console code. [CLO 1-2]"
+              }
+            ],
+            "moreNotListed": 0
+          }
+        ]
+      }
+    },
+    {
+      "caseId": "BM1-IE402-074",
+      "userMessageChars": 7560,
+      "worstCaseDollars": 0.094955,
+      "input": {
+        "relationship": {
+          "id": "row0-ilo0-contentilo",
+          "type": "Content-ILO",
+          "rewritableField": "plan[0].ilos[0].text",
+          "source": "Week 1: I. COURSE\nORIENTATION\nA. Introduction to the\nCourse Contents\nB. Course\nRequirements\nand Activities\nC. Course\nObjectives\nD. Grading System\nand Policies on\nAbsences,\nTardiness and\nExaminations",
+          "target": "ILO10: Demonstrate the Augustinian, Marian and missionary Christ- centered Spirituality through value webbing. [CLO 4]"
+        },
+        "stage1": {
+          "label": "NOT_ALIGNED",
+          "explanation": "The source (Week 1 content) is a course orientation: course contents, requirements and activities, objectives, grading system and policies on absences, tardiness and examinations. The target ILO asks students to demonstrate Augustinian, Marian and missionary Christ-centered Spirituality through value webbing. (1) The ILO is not about this week's content: nothing in the orientation teaches or introduces spirituality or value webbing. (2) The verb 'Demonstrate' is observable, but the performance (value webbing) is not specified and nothing in the content prepares it. (3) A Demonstrating-level performance on spirituality is far above what an orientation week can teach. (4) The ILO brings in a skill, value webbing, that the content never teaches. It belongs to a later value-integration lesson or to the course CLO, not to the orientation. The ILO should be about the orientation content, such as the course objectives and requirements.",
+          "sourceQuote": "C. Course\nObjectives",
+          "targetQuote": "Demonstrate the Augustinian, Marian and missionary Christ- centered Spirituality through value webbing",
+          "sourceBloom": "Remember",
+          "targetBloom": "Apply",
+          "recommendation": "REWRITE_TEXT",
+          "draft": "ILO10: Explain the course objectives, requirements, grading system and policies on absences, tardiness and examinations of Systems Engineering, including how Marian Augustinian values are integrated into the course. [CLO 4]"
+        },
+        "course": {
+          "code": "IE-402",
+          "title": "Systems Engineering",
+          "program": "BSIE",
+          "yearLevel": "",
+          "description": "This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation. Students will develop skills in modeling and optimizing systems that integrate people, processes, and technology. They will explore methods for ensuring that systems are efficient, reliable, and adaptable across various industries, such as manufacturing, healthcare, and logistics. This course prepares BSIE students to play a vital role in creating systems that maximize performance, minimize waste, and support organizational goals. Beyond technical knowledge, the course integrates Marian Augustinian values into each lesson, fostering the development of students as Christo-centric Catholic professionals. The curriculum not only aims for intellectual growth but also instills a commitment to ethical decision-making, social responsibility, and compassionate service. Students will be equipped with the knowledge and values necessary to thrive as professionals in the field of Industrial Engineering.",
+          "clos": [
+            {
+              "clo": "CLO 1",
+              "level": "Introductory",
+              "statement": "Demonstrate knowledge and understanding of engineering and management principles by effectively leading and collaborating within teams, managing projects, and engaging in multidisciplinary environments."
+            },
+            {
+              "clo": "CLO 2",
+              "level": "Introductory",
+              "statement": "Apply critical and creative thinking skills to analyze, design, and optimize complex systems, integrating various components such as people, materials, technology, and information."
+            },
+            {
+              "clo": "CLO 3",
+              "level": "Introductory",
+              "statement": "Develop the ability to identify and solve systems engineering challenges, making decisions that improve performance, enhance efficiency, and support sustainable practices across diverse industries."
+            },
+            {
+              "clo": "CLO 4",
+              "level": "Introductory",
+              "statement": "Demonstrate the Filipino- Catholic Augustinian Spirituality through value webbing."
+            }
+          ]
+        },
+        "dependencies": [
+          {
+            "id": "D1",
+            "kind": "printed_labels",
+            "field": "plan[0].ilos[0].text",
+            "numberPrefix": "ILO10:",
+            "cloLabels": [
+              "[CLO 4]"
+            ]
+          },
+          {
+            "id": "D2",
+            "kind": "same_number_other_statement",
+            "number": "10",
+            "weeks": [
+              "12-14"
+            ]
+          },
+          {
+            "id": "D3",
+            "kind": "week_row",
+            "week": "1",
+            "fields": {
+              "activities": "• Setting and sharing of Expectations from the Course • Discussion on the Vision, Mission and Goals of LCUP and of CITE • Presentation of Course Objectives and Contents, Course Requirements and Activities • Review of Policies on Absences, Tardiness, Examinations, Grading System",
+              "tasks": "• Statement of Expectations • Review of Course Contents, Objectives, Activities and Assessment Tools • Review of Policies on Absences, Tardiness, Examinations, Grading System",
+              "values": "• Interiority • Respect • Obedience"
+            },
+            "otherIlos": []
+          },
+          {
+            "id": "D4",
+            "kind": "mapped_clos",
+            "clos": [
+              {
+                "clo": "CLO 4",
+                "level": "Introductory",
+                "statement": "Demonstrate the Filipino- Catholic Augustinian Spirituality through value webbing.",
+                "pos": [
+                  4,
+                  5
+                ],
+                "egas": [
+                  "Competent Catholic Augustinian-Marian Professional"
+                ],
+                "poReference": "held"
+              }
+            ]
+          },
+          {
+            "id": "D5",
+            "kind": "clo_coverage",
+            "clo": "CLO 4",
+            "otherIlosTagged": 10,
+            "ilos": [
+              {
+                "week": "10-11",
+                "text": "ILO6: Create and interpret a WBS to organize and manage project components, identifying key deliverables and tasks for effective project planning and control. [CLO 3] [CLO4]"
+              },
+              {
+                "week": "10-11",
+                "text": "ILO7: Apply modeling and simulation techniques to analyze system behavior, test potential solutions, and predict outcomes in a controlled virtual environment. [CLO 3] [CLO4]"
+              },
+              {
+                "week": "10-11",
+                "text": "ILO8:Identify, assess, and manage risks within a systems project, developing risk mitigation strategies to minimize potential negative impacts on project outcomes. [CLO 3] [CLO4]"
+              },
+              {
+                "week": "12-14",
+                "text": "ILO9: Formulate a comprehensive systems engineering plan that outlines objectives, resources, timelines, and milestones to guide system development from inception through completion. [CLO 3] [CLO4]"
+              },
+              {
+                "week": "12-14",
+                "text": "ILO10: Evaluate essential management considerations—such as resource allocation, risk assessment, and stakeholder engagement—and their impact on project success, applying these principles to real or simulated project scenarios. [CLO 3] [CLO4]"
+              },
+              {
+                "week": "15-17",
+                "text": "ILO11: Analyze and evaluate multiple design alternatives through trade space exploration, applying criteria to select the optimal concept based on performance, feasibility, and stakeholder needs. [CLO 3] [CLO4]"
+              },
+              {
+                "week": "15-17",
+                "text": "ILO 12: Develop and execute experiments to validate design assumptions, analyze system behaviors, and refine solutions, demonstrating an understanding of experimental design and data collection principles. [CLO 3] [CLO4]"
+              },
+              {
+                "week": "15-17",
+                "text": "ILO 13: Identify critical factors in system design that influence performance consistency, and apply robust design techniques to improve reliability under varying conditions (Robust Design I). [CLO 3] [CLO4]"
+              },
+              {
+                "week": "15-17",
+                "text": "ILO14: Utilize advanced robust design methods to enhance system resilience, focusing on minimizing performance variability in complex, multi-variable systems (Robust Design II). [CLO 3] [CLO4]"
+              },
+              {
+                "week": "18",
+                "text": "[CLO 3] [CLO 4]"
+              }
+            ],
+            "moreNotListed": 0
+          }
+        ]
+      }
+    },
+    {
+      "caseId": "BM1-CPE304-051",
+      "userMessageChars": 5921,
+      "worstCaseDollars": 0.090547,
+      "input": {
+        "relationship": {
+          "id": "row1-ilo0-contentilo",
+          "type": "Content-ILO",
+          "rewritableField": "plan[1].ilos[0].text",
+          "source": "Week 2-3: II. Introduction to\nElectronic System\n• History of\nElectronics\n• Electronic Signals\nand Notation\n• Classifications of\nElectronic\nSystems\n• Specifications of\nElectronic\nSystems\n• Design of\nElectronic\nSystems\n• Design of\nElectronic Circuits\n• Electronic\nDevices\n• Emerging\nElectronics\nDifferential\nAmplifiers\n• Introduction to\nDifferential\nAmplifiers\n• Block Diagram\n• Differential Gain\n• Common Mode\nGain\n• CMRR\n• Configuration of\ndifferential\namplifiers",
+          "target": "ILO1: To develop skills in analysis and design of both analog and digital circuits [CLO1]"
+        },
+        "stage1": {
+          "label": "PARTIALLY_ALIGNED",
+          "explanation": "The target ILO is related to the source content, but it has several gaps. (1) \"To develop skills\" is not an observable, assessable student performance; it names no action the student can show. (2) \"both analog and digital circuits\" is broader than the source content, which covers electronic systems, design of circuits and differential amplifiers (differential gain, common mode gain, CMRR, configurations) and teaches no digital circuit content. (3) The ILO names neither the differential amplifier topics nor the electronic system design topics the week actually teaches, so it is too vague to guide teaching and assessment. (4) \"analysis and design\" needs a stated object and expected evidence, and the history, notation and classification topics only support this at a lower level.",
+          "sourceQuote": "Design of\nElectronic Circuits",
+          "targetQuote": "develop skills in analysis and design of both analog and digital circuits",
+          "sourceBloom": "Understand",
+          "targetBloom": "Create",
+          "recommendation": "REWRITE_TEXT",
+          "draft": "ILO1: Analyze the differential gain, common mode gain and CMRR of a differential amplifier configuration, and apply the electronic system design process to specify a simple analog circuit. [CLO1]"
+        },
+        "course": {
+          "code": "CpE 304",
+          "title": "Fundamentals of Mixed Signals and Sensors",
+          "program": "BSCPE",
+          "yearLevel": "",
+          "description": "This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included. Anchored in the Marian and Augustinian values of truth (veritas), unity (unitas), and charity (caritas), the course encourages students to design technology that promotes social responsibility, collaboration, and compassion. Through hands-on projects, learners will not only develop technical proficiency but also embody ethical stewardship — using their knowledge to create solutions that serve the needs of others and contribute to the common good.",
+          "clos": [
+            {
+              "clo": "CLO 1",
+              "level": "Introductory",
+              "statement": "Identify the design process of electronic circuits and systems and conduct experiments involving sensors and mixed-signal systems, analyze data, and interpret results to improve performance and reliability."
+            },
+            {
+              "clo": "CLO 2",
+              "level": "Introductory",
+              "statement": "Develop analytical and design skills for both analog and digital electronic circuit and implement sensor-based systems that integrate hardware and software components while considering economic, environmental, and ethical constraints."
+            },
+            {
+              "clo": "CLO 3",
+              "level": "Introductory",
+              "statement": "Analyze and apply the behavior of passive components in AC circuits and their instrumentation applications in multidisciplinary teams to design, test, and optimize mixed-signal and sensor applications for engineering solutions"
+            },
+            {
+              "clo": "CLO 4",
+              "level": "Introductory",
+              "statement": "Exhibit lifelong learning, precision, and ethical responsibility in performing measurements and calibration tasks. Engage in continuous learning by exploring emerging technologies and trends in sensors, instrumentation, and mixed-signal design for future innovation"
+            }
+          ]
+        },
+        "dependencies": [
+          {
+            "id": "D1",
+            "kind": "printed_labels",
+            "field": "plan[1].ilos[0].text",
+            "numberPrefix": "ILO1:",
+            "cloLabels": [
+              "[CLO1]"
+            ]
+          },
+          {
+            "id": "D2",
+            "kind": "same_text_other_weeks",
+            "count": 1,
+            "weeks": [
+              {
+                "week": "7-8",
+                "path": "plan[4].ilos[0].text",
+                "contents": "IV. Analog to Digital Conversion Digital to Analog Conversion • Sampling • Quantization • encoding"
+              }
+            ],
+            "moreWeeks": []
+          },
+          {
+            "id": "D3",
+            "kind": "same_number_other_statement",
+            "number": "1",
+            "weeks": [
+              "4-5"
+            ]
+          },
+          {
+            "id": "D4",
+            "kind": "week_row",
+            "week": "2-3",
+            "fields": {
+              "activities": "• Lecture- Discussion using PowerPoint",
+              "tasks": "• Quiz on the topics discussed",
+              "values": "• Cooperation • Understanding • Critical Thinking • Active participation and involvement"
+            },
+            "otherIlos": [
+              {
+                "text": "ILO2: Understand the design process of electronic circuits and systems. [CLO1]",
+                "clos": [
+                  "CLO 1"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "D5",
+            "kind": "mapped_clos",
+            "clos": [
+              {
+                "clo": "CLO 1",
+                "level": "Introductory",
+                "statement": "Identify the design process of electronic circuits and systems and conduct experiments involving sensors and mixed-signal systems, analyze data, and interpret results to improve performance and reliability.",
+                "pos": [
+                  1,
+                  2,
+                  3,
+                  5
+                ],
+                "egas": [
+                  "Critical and Creative thinker"
+                ],
+                "poReference": "held"
+              }
+            ]
+          },
+          {
+            "id": "D6",
+            "kind": "clo_coverage",
+            "clo": "CLO 1",
+            "otherIlosTagged": 3,
+            "ilos": [
+              {
+                "week": "2-3",
+                "text": "ILO2: Understand the design process of electronic circuits and systems. [CLO1]"
+              },
+              {
+                "week": "4-5",
+                "text": "ILO1: Show one’s knowledge on the fundamental elements of amplifiers.[CLO1, CLO2]"
+              },
+              {
+                "week": "4-5",
+                "text": "ILO2: Refresh and expand the understanding of basic electrical components and the basic terms used in electricity as required for instrumentation. .[CLO1, CLO2]"
+              }
+            ],
+            "moreNotListed": 0
+          }
+        ]
+      }
+    }
+  ]
+}

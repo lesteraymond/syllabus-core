@@ -1,0 +1,22 @@
+{
+  "version": "lcup-v2-controlled-evaluation-1",
+  "approved": false,
+  "approvedBy": null,
+  "receiptId": null,
+  "approvedAt": null,
+  "expiresAt": null,
+  "preparedHash": "d6e2f2f551067433115a345edad3ccf114e4cd26ddf38b5cefc4354f8f1a09e2",
+  "policyVersion": "academic-evaluation-v2-preview-1",
+  "recommendation": "lcup-v2-recommendation-2",
+  "scope": "smoke",
+  "model": "claude-sonnet-5-5",
+  "limits": {
+    "maxRequests": 6,
+    "maxInputTokens": 600000,
+    "maxInputTokensPerRequest": 120000,
+    "maxOutputTokens": 24576,
+    "maxOutputTokensPerRequest": 4096,
+    "maxCost": 2
+  },
+  "note": "UNAPPROVED TEMPLATE. Separate explicit user authorization is required before a live receipt is supplied. This template cannot authorize a request."
+}

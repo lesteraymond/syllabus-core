@@ -1,0 +1,291 @@
+{
+  "items": 15,
+  "runs": 2,
+  "answered": 30,
+  "invalid": 0,
+  "invalidRate": 0,
+  "agreement": 0.867,
+  "falsePositiveRate": 0.125,
+  "falseNegativeRate": 0,
+  "counts": {
+    "clearAligned": 16,
+    "falsePositive": 2,
+    "clearNot": 8,
+    "falseNegative": 0
+  },
+  "confusion": {
+    "ALIGNED": {
+      "ALIGNED": 14,
+      "PARTIALLY_ALIGNED": 2,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "PARTIAL": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "FLAGGED": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 6,
+      "NOT_ALIGNED": 2,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    }
+  },
+  "partialAccuracy": null,
+  "approvalAccuracy": 0.875,
+  "byDiscipline": {
+    "computing": {
+      "items": 7,
+      "answered": 14,
+      "agree": 12,
+      "invalid": 0,
+      "agreement": 0.857
+    },
+    "engineering": {
+      "items": 8,
+      "answered": 16,
+      "agree": 14,
+      "invalid": 0,
+      "agreement": 0.875
+    }
+  },
+  "byCategory": {
+    "clear-positive": {
+      "items": 4,
+      "answered": 8,
+      "agree": 6,
+      "invalid": 0,
+      "agreement": 0.75
+    },
+    "few-weeks": {
+      "items": 2,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "multiweek": {
+      "items": 1,
+      "answered": 2,
+      "agree": 2,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "values-clo": {
+      "items": 5,
+      "answered": 10,
+      "agree": 10,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "misleading-tags": {
+      "items": 1,
+      "answered": 2,
+      "agree": 2,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "gap": {
+      "items": 1,
+      "answered": 2,
+      "agree": 0,
+      "invalid": 0,
+      "agreement": 0
+    },
+    "untagged-support": {
+      "items": 1,
+      "answered": 2,
+      "agree": 2,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "stability": 1,
+  "byType": {
+    "CLO-coverage": {
+      "items": 15,
+      "answered": 30,
+      "agree": 26,
+      "invalid": 0,
+      "agreement": 0.867
+    }
+  },
+  "disagreements": [
+    {
+      "id": "cv-prog1-clo3-gap",
+      "type": "CLO-coverage",
+      "accept": [
+        "NOT_ALIGNED"
+      ],
+      "got": [
+        "PARTIALLY_ALIGNED",
+        "PARTIALLY_ALIGNED"
+      ]
+    },
+    {
+      "id": "cv-syseng-clo3",
+      "type": "CLO-coverage",
+      "accept": [
+        "ALIGNED"
+      ],
+      "got": [
+        "PARTIALLY_ALIGNED",
+        "PARTIALLY_ALIGNED"
+      ]
+    }
+  ],
+  "model": "openrouter/minimax/minimax-m3.1-flash",
+  "promptVersion": "alignment-124",
+  "dataset": {
+    "name": "stage-b4",
+    "version": "stage-b4-1",
+    "split": "all",
+    "reviewStatus": "unreviewed"
+  },
+  "retries": {
+    "batches": 6,
+    "requests": 9,
+    "firstAttemptInvalid": 3,
+    "finalUnverified": 0,
+    "providerErrors": 0,
+    "retryRate": 0.5,
+    "firstAttemptInvalidRate": 0.333
+  },
+  "failures": [
+    {
+      "run": 1,
+      "course": "prog1",
+      "ids": [
+        "cv-prog1-clo1",
+        "cv-prog1-clo2-oneweek",
+        "cv-prog1-clo3-multiweek",
+        "cv-prog1-clo4-values",
+        "cv-prog1-clo4-namedonly",
+        "cv-prog1-clo2-misleadingtags",
+        "cv-prog1-clo3-gap"
+      ],
+      "error": "AI evidence is not present in the supplied text (target quote)",
+      "rejected": [
+        {
+          "id": "cv-prog1-clo1",
+          "reason": "AI evidence is not present in the supplied text (target quote)"
+        },
+        {
+          "id": "cv-prog1-clo3-gap",
+          "reason": "AI evidence is not present in the supplied text (target quote)"
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "course": "prog1",
+      "ids": [
+        "cv-prog1-clo1",
+        "cv-prog1-clo3-gap"
+      ],
+      "error": "AI evidence is not present in the supplied text (target quote)",
+      "rejected": [
+        {
+          "id": "cv-prog1-clo3-gap",
+          "reason": "AI evidence is not present in the supplied text (target quote)"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "course": "prog1",
+      "ids": [
+        "cv-prog1-clo1",
+        "cv-prog1-clo2-oneweek",
+        "cv-prog1-clo3-multiweek",
+        "cv-prog1-clo4-values",
+        "cv-prog1-clo4-namedonly",
+        "cv-prog1-clo2-misleadingtags",
+        "cv-prog1-clo3-gap"
+      ],
+      "error": "AI evidence is not present in the supplied text (target quote)",
+      "rejected": [
+        {
+          "id": "cv-prog1-clo1",
+          "reason": "AI evidence is not present in the supplied text (target quote)"
+        }
+      ]
+    }
+  ],
+  "perItem": {
+    "cv-prog1-clo1": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "cv-prog1-clo2-oneweek": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cv-prog1-clo3-multiweek": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "cv-prog1-clo4-values": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "cv-prog1-clo4-namedonly": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cv-prog1-clo2-misleadingtags": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "cv-prog1-clo3-gap": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cv-syseng-clo1": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "cv-syseng-clo3": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cv-syseng-clo4-novalues": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cv-syseng-clo4-values": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "cv-sensors-clo1": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "cv-sensors-clo2-oneweek": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cv-sensors-clo3-untagged": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cv-sensors-clo4-values": [
+      "ALIGNED",
+      "ALIGNED"
+    ]
+  },
+  "ranAt": "2026-10-24T18:17:18.144Z",
+  "usage": {
+    "requests": 9,
+    "promptTokens": 33630,
+    "completionTokens": 4612,
+    "cost": 0.004928,
+    "unreported": 0,
+    "budget": 30
+  }
+}

@@ -1,0 +1,213 @@
+{
+  "requests": 19,
+  "charged": 0.00733556,
+  "conservative": 0.0174831,
+  "accounting": "reconcile",
+  "transient": 1,
+  "invalid": 1,
+  "unproductive": 1,
+  "entries": [
+    {
+      "n": 1,
+      "kind": "key-check",
+      "at": "2026-10-26T07:22:49.720Z",
+      "error": "network: fetch failed"
+    },
+    {
+      "n": 2,
+      "kind": "key-check",
+      "at": "2026-10-26T07:23:18.614Z",
+      "status": 200
+    },
+    {
+      "n": 3,
+      "kind": "price-lookup",
+      "at": "2026-10-26T07:23:19.141Z",
+      "status": 200
+    },
+    {
+      "n": 4,
+      "kind": "model",
+      "at": "2026-10-26T07:23:19.260Z",
+      "status": 200,
+      "worst": 0.0155055,
+      "charged": 0.00097497,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.0019845,
+      "ids": [
+        "af-prog1-good",
+        "af-prog1-irrelevant",
+        "as-prog1-good",
+        "as-prog1-recall-quiz"
+      ]
+    },
+    {
+      "n": 5,
+      "kind": "model",
+      "at": "2026-10-26T07:23:23.293Z",
+      "status": 200,
+      "worst": 0.0151257,
+      "charged": 0.00065693,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.0017538,
+      "ids": [
+        "af-prog1-conceptual-lecture-ok",
+        "as-prog1-too-high"
+      ]
+    },
+    {
+      "n": 6,
+      "kind": "model",
+      "at": "2026-10-26T07:23:34.374Z",
+      "status": 200,
+      "worst": 0.0150042,
+      "charged": 0.00065892,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.0013524,
+      "ids": [
+        "as-syseng-essay"
+      ]
+    },
+    {
+      "n": 7,
+      "kind": "model",
+      "at": "2026-10-26T07:23:37.585Z",
+      "status": 200,
+      "worst": 0.0149937,
+      "charged": 0.00065265,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.0013053,
+      "ids": [
+        "af-sensors-passive"
+      ]
+    },
+    {
+      "n": 8,
+      "kind": "key-check",
+      "at": "2026-10-26T08:15:18.175Z",
+      "status": 200
+    },
+    {
+      "n": 9,
+      "kind": "price-lookup",
+      "at": "2026-10-26T08:15:18.753Z",
+      "status": 200
+    },
+    {
+      "n": 10,
+      "kind": "model",
+      "at": "2026-10-26T08:15:18.872Z",
+      "status": 200,
+      "worst": 0.0165918,
+      "charged": 0.00104637,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.0021273,
+      "ids": [
+        "af-prog1-good",
+        "af-prog1-irrelevant",
+        "as-prog1-good",
+        "as-prog1-recall-quiz"
+      ]
+    },
+    {
+      "n": 11,
+      "kind": "model",
+      "at": "2026-10-26T08:16:18.960Z",
+      "status": 200,
+      "worst": 0.0164871,
+      "charged": 0.00077103,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.0020637,
+      "ids": [
+        "as-prog1-conceptual-ok",
+        "af-prog1-conceptual-lecture-ok",
+        "af-prog1-lab-unused",
+        "as-prog1-too-high"
+      ]
+    },
+    {
+      "n": 12,
+      "kind": "model",
+      "at": "2026-10-26T08:17:23.662Z",
+      "status": 200,
+      "worst": 0.0160905,
+      "charged": 0.00074232,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.0015192,
+      "ids": [
+        "as-syseng-essay"
+      ]
+    },
+    {
+      "n": 13,
+      "kind": "model",
+      "at": "2026-10-26T08:18:37.792Z",
+      "status": 200,
+      "worst": 0.0164331,
+      "charged": 0.00033107,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.0018015,
+      "ids": [
+        "af-sensors-good",
+        "af-sensors-passive",
+        "as-sensors-good"
+      ]
+    },
+    {
+      "n": 14,
+      "kind": "key-check",
+      "at": "2026-10-26T08:41:57.808Z",
+      "status": 200
+    },
+    {
+      "n": 15,
+      "kind": "price-lookup",
+      "at": "2026-10-26T08:41:58.330Z",
+      "status": 200
+    },
+    {
+      "n": 16,
+      "kind": "model",
+      "at": "2026-10-26T08:41:58.409Z",
+      "status": 200,
+      "worst": 0.0165234,
+      "charged": 0.00085693,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.0022521,
+      "ids": [
+        "af-prog1-passive",
+        "af-prog1-single-format",
+        "af-prog1-alternatives",
+        "af-prog1-week1"
+      ]
+    },
+    {
+      "n": 17,
+      "kind": "key-check",
+      "at": "2026-10-26T09:49:06.544Z",
+      "status": 200
+    },
+    {
+      "n": 18,
+      "kind": "price-lookup",
+      "at": "2026-10-26T09:49:07.048Z",
+      "status": 200
+    },
+    {
+      "n": 19,
+      "kind": "model",
+      "at": "2026-10-26T09:49:07.140Z",
+      "status": 200,
+      "worst": 0.0165453,
+      "charged": 0.00064437,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.0013233,
+      "ids": [
+        "af-prog1-passive",
+        "af-prog1-single-format",
+        "af-prog1-alternatives",
+        "as-prog1-recall-quiz"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1201 @@
+{
+  "version": "lcup-approved-offline-1",
+  "source": {
+    "file": "docs/academic-references/IE402-SYSTEM-ENGINEERINGS.pdf",
+    "sha256": "44ca6d48c77d0b04055cf330717b9381b64d3b7fb8674be727aa2eb4a1807569",
+    "pages": 12
+  },
+  "key": "ie402",
+  "content": {
+    "schemaVersion": 3,
+    "meta": {
+      "program": "BSIE",
+      "code": "IE-402",
+      "title": "Systems Engineering",
+      "schoolYear": "2025-2026",
+      "curriculumYear": "",
+      "yearLevel": "",
+      "prereq": "4th Year Standing",
+      "lecture": "",
+      "lab": ""
+    },
+    "outcomes": {
+      "vision": "Moved by the Spirit of the Risen Christ, La Consolacion University Philippines, envisions itself to become a catalyst for the wholistic transformational development of Catholic Augustinian Marian graduates rooted in Gospel values.",
+      "mission": {
+        "lead": "To achieve the above vision, LCUP commits itself to generate and make available to its Augustinian Marian students, programs and services that will make them:",
+        "items": [
+          "exhibit academic and technical competence in their respective areas of discipline in the local and international environment;",
+          "demonstrate their knowledge, critical thinking and creativity by exploring the various avenues of learning and searching for truth;",
+          "manifest their willingness to serve specially the marginalized sector of our society;",
+          "demonstrate productivity in various areas of learning as responsible citizens of the society; and",
+          "live the Gospel values in the varied aspects of their personal and professional lives"
+        ]
+      },
+      "egas": [
+        {
+          "no": 1,
+          "name": "Critical and Creative thinker",
+          "short": "Critical and Creative thinker"
+        },
+        {
+          "no": 2,
+          "name": "Competent Catholic Augustinian-Marian Professional",
+          "short": "Competent Catholic Augustinian-Marian Professional"
+        },
+        {
+          "no": 3,
+          "name": "Socially Responsive Steward",
+          "short": "Socially Responsive Steward"
+        },
+        {
+          "no": 4,
+          "name": "Transformative Lifelong learner",
+          "short": "Transformative Lifelong learner"
+        }
+      ],
+      "pos": [
+        {
+          "no": 1,
+          "text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+          "short": "PO 1",
+          "egas": []
+        },
+        {
+          "no": 2,
+          "text": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+          "short": "PO 2",
+          "egas": []
+        },
+        {
+          "no": 3,
+          "text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+          "short": "PO 3",
+          "egas": []
+        },
+        {
+          "no": 4,
+          "text": "Ability to function on multidisciplinary teams",
+          "short": "PO 4",
+          "egas": []
+        },
+        {
+          "no": 5,
+          "text": "Ability to identify; formulate, and solve complex engineering problems;",
+          "short": "PO 5",
+          "egas": []
+        },
+        {
+          "no": 6,
+          "text": "Understanding of professional and ethical responsibility.",
+          "short": "PO 6",
+          "egas": []
+        },
+        {
+          "no": 7,
+          "text": "Ability to communicate effectively",
+          "short": "PO 7",
+          "egas": []
+        },
+        {
+          "no": 8,
+          "text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+          "short": "PO 8",
+          "egas": []
+        },
+        {
+          "no": 9,
+          "text": "Recognition of the need for, and an ability to engage in life-long learning;",
+          "short": "PO 9",
+          "egas": []
+        },
+        {
+          "no": 10,
+          "text": "Knowledge of contemporary issues;",
+          "short": "PO 10",
+          "egas": []
+        },
+        {
+          "no": 11,
+          "text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and;",
+          "short": "PO 11",
+          "egas": []
+        },
+        {
+          "no": 12,
+          "text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in",
+          "short": "PO 12",
+          "egas": []
+        },
+        {
+          "no": 13,
+          "text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+          "short": "PO 13",
+          "egas": []
+        }
+      ]
+    },
+    "description": [
+      {
+        "id": "ie402_desc",
+        "t": "This course introduces students to the principles and practices of systems engineering, focusing on the analysis,\ndesign, and management of complex systems. Through a blend of theoretical concepts and practical applications, students\nlearn   how   to   approach   and   solve   large-scale   engineering   problems   involving   multiple   components,   stakeholders,   and\noperational constraints. Key topics include requirements analysis, systems design, integration, project management, and\nperformance evaluation. \nStudents will develop skills in modeling and optimizing systems that integrate people, processes, and technology. They\nwill explore methods for ensuring that systems are efficient, reliable, and adaptable across various industries, such as\nmanufacturing, healthcare, and logistics. This course prepares BSIE students to play a vital role in creating systems that\nmaximize performance, minimize waste, and support organizational goals. \nBeyond   technical   knowledge,   the   course   integrates   Marian   Augustinian   values   into   each   lesson,   fostering   the\ndevelopment of students as Christo-centric Catholic professionals. The curriculum not only aims for intellectual growth but also\ninstills a commitment to ethical decision-making, social responsibility, and compassionate service. Students will be equipped\nwith the knowledge and values necessary to thrive as professionals in the field of Industrial Engineering."
+      }
+    ],
+    "clos": [
+      {
+        "id": "ie402_clo1",
+        "title": "CLO 1",
+        "level": "Introductory",
+        "statement": "Demonstrate knowledge and understanding of engineering and management principles by effectively leading and collaborating within teams, managing projects, and engaging in multidisciplinary environments.",
+        "pos": [
+          1,
+          3
+        ],
+        "egas": [
+          1
+        ]
+      },
+      {
+        "id": "ie402_clo2",
+        "title": "CLO 2",
+        "level": "Introductory",
+        "statement": "Apply critical and creative thinking skills to analyze, design, and optimize complex systems, integrating various components such as people, materials, technology, and information.",
+        "pos": [
+          2,
+          3,
+          4,
+          5
+        ],
+        "egas": [
+          1
+        ]
+      },
+      {
+        "id": "ie402_clo3",
+        "title": "CLO 3",
+        "level": "Introductory",
+        "statement": "Develop the ability to identify and solve systems engineering challenges, making decisions that improve performance, enhance efficiency, and support sustainable practices across diverse industries.",
+        "pos": [
+          2,
+          3,
+          5,
+          6,
+          7
+        ],
+        "egas": [
+          1,
+          2
+        ]
+      },
+      {
+        "id": "ie402_clo4",
+        "title": "CLO 4",
+        "level": "Introductory",
+        "statement": "Demonstrate the Filipino- Catholic Augustinian Spirituality through value webbing.",
+        "pos": [
+          4,
+          5
+        ],
+        "egas": [
+          2
+        ]
+      }
+    ],
+    "plan": [
+      {
+        "id": "ie402_r1",
+        "week": "1",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ie402_r1_i1",
+            "text": "ILO10: Demonstrate the Augustinian, Marian and missionary Christ- centered Spirituality through value webbing. [CLO 4]",
+            "tags": [
+              "clo:ie402_clo4"
+            ]
+          }
+        ],
+        "contents": "I. COURSE\nORIENTATION\nA. Introduction to the\nCourse Contents\nB. Course\nRequirements\nand Activities\nC. Course\nObjectives\nD. Grading System\nand Policies on\nAbsences,\nTardiness and\nExaminations",
+        "activities": "• Setting and sharing of\nExpectations from the\nCourse\n• Discussion on the\nVision, Mission and\nGoals of LCUP and of\nCITE\n• Presentation of\nCourse Objectives\nand Contents, Course\nRequirements and\nActivities\n• Review of Policies on\nAbsences, Tardiness,\nExaminations,\nGrading System",
+        "tasks": "• Statement of\nExpectations\n• Review of Course\nContents,\nObjectives, Activities\nand Assessment\nTools\n• Review of Policies\non Absences,\nTardiness,\nExaminations,\nGrading System",
+        "values": "• Interiority\n• Respect\n• Obedience"
+      },
+      {
+        "id": "ie402_r2",
+        "week": "2-3",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ie402_r2_i1",
+            "text": "ILO1: Describe fundamental principles of systems engineering, including system life cycles, requirements analysis, and systems thinking. [CLO 1], [CLO 2]",
+            "tags": [
+              "clo:ie402_clo1",
+              "clo:ie402_clo2"
+            ]
+          },
+          {
+            "id": "ie402_r2_i2",
+            "text": "ILO2: Develop basic system designs that incorporate requirements from multiple disciplines, including human factors, technology, and organizational needs. [CLO 1], [CLO 2]",
+            "tags": [
+              "clo:ie402_clo1",
+              "clo:ie402_clo2"
+            ]
+          }
+        ],
+        "contents": "Introduction to\nSystems Engineering\n• Introduction to\nSystems\nEngineering\nManagement\n• Systems\nEngineering\nManagement in\nDoD Acquisition",
+        "activities": "Lecture and Case Study\nAnalysis\nActivity: Present a\nlecture on the basics of\nsystems engineering\nmanagement, followed by\nan analysis of a real-\nworld case study in\nsystems engineering,\nsuch as a notable DoD\nacquisition project.\nInteractive Discussion\nand Q&A\nActivity: Facilitate an\ninteractive class\ndiscussion on the key\nprinciples of systems\nengineering management\nand its importance in\nlarge-scale projects,\nespecially in high-stakes\nenvironments like\ndefense.",
+        "tasks": "Quiz on\nFundamental\nConcepts\nConduct a quiz\ncovering key concepts\nand terminology in\nsystems engineering\nmanagement,\nincluding its\nprinciples, life cycle\nstages, and specific\napplications in DoD\nacquisition.\nCase Study Analysis\nReport\nProvide a case study\non a DoD acquisition\nproject or a similar\nlarge-scale systems\nengineering project.\nStudents will analyze\nand write a report\ncovering the systems\nengineering\nmanagement\nchallenges and\nsolutions highlighted\nin the case.",
+        "values": "• Understanding\nand patience\nin\nlearning\n• Creative and\ncritical thinking\n• Analytical\nthinking\n• Good active\nparticipation\nand\ninvolvement\n• Appreciation\n• Effective and\nefficient\nmanagement\nof resources\n• Appreciation\n• Awareness\n• Courage and\nHumility"
+      },
+      {
+        "id": "ie402_r3",
+        "week": "4",
+        "kind": "exam",
+        "ilos": [
+          {
+            "id": "ie402_r3_i1",
+            "text": "[ILO 1], [ILO 2]",
+            "tags": []
+          }
+        ],
+        "contents": "PRELIMINARY EXAM",
+        "activities": "Examination covering\nthe topics discussed",
+        "tasks": "Examination\nresults",
+        "values": "Courage and\nHumility"
+      },
+      {
+        "id": "ie402_r4",
+        "week": "5-8",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ie402_r4_i1",
+            "text": "ILO3: Summarize the overall systems engineering process, explaining each phase from requirements analysis to verification and process outputs. [CLO1][CLO2]",
+            "tags": [
+              "clo:ie402_clo1",
+              "clo:ie402_clo2"
+            ]
+          },
+          {
+            "id": "ie402_r4_i2",
+            "text": "ILO4: Analyze and define system requirements based on stakeholder needs, constraints, and project objectives. [CLO2][CLO3]",
+            "tags": [
+              "clo:ie402_clo2",
+              "clo:ie402_clo3"
+            ]
+          },
+          {
+            "id": "ie402_r4_i3",
+            "text": "ILO5: Recognize key outputs of the systems engineering process, such as documentation, specifications, and test reports, and evaluate their role in supporting successful project outcomes. [CLO2][CLO3]",
+            "tags": [
+              "clo:ie402_clo2",
+              "clo:ie402_clo3"
+            ]
+          }
+        ],
+        "contents": "The Systems\nEngineering Process\n• Systems\nEngineering\nProcess Overview\n• Requirements\nAnalysis\n• Functional\nAnalysis and\nAllocation\n• Design Synthesis\n• Verification\n• Systems\nEngineering\nProcess Outputs",
+        "activities": "Group Workshop on\nFunctional Analysis\nand Allocation\nActivity: In small groups,\nstudents will break down\nsystem requirements into\nfunctional components\nand allocate these to\nhypothetical subsystems.\nGroup Workshop on\nFunctional Analysis\nand Allocation\nIn small groups, students\nwill break down system\nrequirements into\nfunctional components\nand allocate these to\nhypothetical subsystems.\nReflection Assignment\non Process Outputs\nHave students reflect on\nthe outputs generated at\neach stage of the\nsystems engineering\nprocess and discuss how\nthese support project\nsuccess.",
+        "tasks": "Requirements\nAnalysis Report\nAssign students a\nhypothetical project\nscenario where they\nmust identify, analyze,\nand document key\nsystem requirements\nbased on provided\nstakeholder needs.\nFunctional Analysis\nand Allocation\nDiagram\nDescription: Have\nstudents create a\nfunctional flow\ndiagram for a system\nbased on a given set\nof requirements,\nbreaking down\nfunctions and\nallocating them to\nsubsystems.\nDesign Synthesis\nProject\nDescription: Assign a\ndesign synthesis task\nwhere students create\nan initial design for a\nsystem, explaining\nhow the design\nintegrates functional\nrequirements and\nmeets project goals.",
+        "values": "• Understandin\ng and\npatience in\nlearning\n• Creative and\ncritical\nthinking\n• Analytical\nthinking\n• Good and\nactive\nparticipation\nand\ninvolvement\n• Appreciation\n• Effective and\nefficient\nmanagement\nof resources\n• Problem\nsolving skills\n•"
+      },
+      {
+        "id": "ie402_r5",
+        "week": "9",
+        "kind": "exam",
+        "ilos": [
+          {
+            "id": "ie402_r5_i1",
+            "text": "[ILO 3], [ILO 4] [ILO5]",
+            "tags": []
+          }
+        ],
+        "contents": "MIDTERM EXAM",
+        "activities": "• Examination covering\nthe topics discussed",
+        "tasks": "• Examination\nresults",
+        "values": "• Skills and\nCompetencies\n• Critical\nThinking\n• Honesty"
+      },
+      {
+        "id": "ie402_r6",
+        "week": "10-11",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ie402_r6_i1",
+            "text": "ILO6: Create and interpret a WBS to organize and manage project components, identifying key deliverables and tasks for effective project planning and control. [CLO 3] [CLO4]",
+            "tags": [
+              "clo:ie402_clo3",
+              "clo:ie402_clo4"
+            ]
+          },
+          {
+            "id": "ie402_r6_i2",
+            "text": "ILO7: Apply modeling and simulation techniques to analyze system behavior, test potential solutions, and predict outcomes in a controlled virtual environment. [CLO 3] [CLO4]",
+            "tags": [
+              "clo:ie402_clo3",
+              "clo:ie402_clo4"
+            ]
+          },
+          {
+            "id": "ie402_r6_i3",
+            "text": "ILO8:Identify, assess, and manage risks within a systems project, developing risk mitigation strategies to minimize potential negative impacts on project outcomes. [CLO 3] [CLO4]",
+            "tags": [
+              "clo:ie402_clo3",
+              "clo:ie402_clo4"
+            ]
+          }
+        ],
+        "contents": "Systems Analysis\nand Control\n• Work\nBreakdown\nStructure\n• Configuration\nManagement\n• Technical\nReviews and\nAudits\n• Trade Studies\n• Modeling and\nSimulation\n• Metrics\n• Risk\nManagement",
+        "activities": "Interactive Workshop\non Work Breakdown\nStructure (WBS)\nCreation\nActivity: Conduct an\ninteractive workshop\nwhere students create a\nWBS for a hypothetical\nproject, breaking down\ntasks and identifying\ndeliverables.\nCase Study on\nConfiguration\nManagement\nActivity: Present a case\nstudy demonstrating\nconfiguration\nmanagement principles\nand practices in a real-\nworld project. Have\nstudents discuss the role\nof configuration\nmanagement in\nmaintaining system\nconsistency.\nRisk Management\nAnalysis Activity\nActivity: Present a\nproject scenario and ask\nstudents to identify\npotential risks, assess\ntheir impact and\nprobability, and develop\nmitigation strategies.",
+        "tasks": "Peer Review of\nExperimental Design\nand Robustness\nPlan\nAsk students to peer\nreview each other’s\nexperimental design\nproposals and\nrobustness plans,\nproviding constructive\nfeedback on\nmethodology and\napproach.\nRisk Assessment\nand Mitigation in\nRobust Design\nAssign a task where\nstudents assess\npotential risks to\nrobustness in a\nsystem design and\ndevelop mitigation\nstrategies to address\nthese risks.",
+        "values": "• Understanding\nand patience\nin learning\n• Creative and\ncritical thinking\n• Analytical\nthinking\n• Good and\nactive\nparticipation\nand\ninvolvement\n• Appreciation\n• Effective and\nefficient\nmanagement\nof resources\n• Problem\nsolving skills"
+      },
+      {
+        "id": "ie402_r7",
+        "week": "12-14",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ie402_r7_i1",
+            "text": "ILO9: Formulate a comprehensive systems engineering plan that outlines objectives, resources, timelines, and milestones to guide system development from inception through completion. [CLO 3] [CLO4]",
+            "tags": [
+              "clo:ie402_clo3",
+              "clo:ie402_clo4"
+            ]
+          },
+          {
+            "id": "ie402_r7_i2",
+            "text": "ILO10: Evaluate essential management considerations—such as resource allocation, risk assessment, and stakeholder engagement—and their impact on project success, applying these principles to real or simulated project scenarios. [CLO 3] [CLO4]",
+            "tags": [
+              "clo:ie402_clo3",
+              "clo:ie402_clo4"
+            ]
+          }
+        ],
+        "contents": "Planning, Organizing\nand Managing\n• Systems\nEngineering\nPlanning\n• Product\nImprovement\nStrategies\n• Organizing and\nIntegrating\nSystem\nDevelopment\n• Contractual\nConsiderations\n• Management\nConsiderations\nand Summary",
+        "activities": "Workshop on Systems\nEngineering Planning\nConduct a hands-on\nworkshop where students\noutline a systems\nengineering plan for a\nhypothetical project. They\nshould include project\nobjectives, resource\nallocation, timeline\nplanning, and key\nmilestones.\nProduct Improvement\nStrategy Brainstorming\nSession\nIn groups, students\nbrainstorm and propose\nstrategies for iterative\nproduct improvement in a\ngiven scenario, focusing\non design, functionality,\nand customer feedback\nloops.",
+        "tasks": "Systems\nEngineering Plan\nDevelopment\nTask: Have students\ncreate a\ncomprehensive\nsystems engineering\nplan for a hypothetical\nproject. This plan\nshould include\nobjectives, resource\nallocation, timeline,\nmilestones, risk\nassessment, and\nproject phases.\nProduct\nImprovement\nStrategy Proposal\nTask: Ask students to\ndevelop a proposal for\na product\nimprovement strategy\nfor an existing system,\nidentifying areas for\nenhancement and\nproposing solutions to\nimprove quality,\nefficiency, and user\nsatisfaction.",
+        "values": "• Active\nparticipation\nand\ninvolvement\n• Active\nparticipation\nand\ninvolvement\n• Critical\nThinking\n• Patience\n• Understandin\ng\n• Critical\nAnalysis\n• Logical\nThinking"
+      },
+      {
+        "id": "ie402_r8",
+        "week": "15-17",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ie402_r8_i1",
+            "text": "ILO11: Analyze and evaluate multiple design alternatives through trade space exploration, applying criteria to select the optimal concept based on performance, feasibility, and stakeholder needs. [CLO 3] [CLO4]",
+            "tags": [
+              "clo:ie402_clo3",
+              "clo:ie402_clo4"
+            ]
+          },
+          {
+            "id": "ie402_r8_i2",
+            "text": "ILO 12: Develop and execute experiments to validate design assumptions, analyze system behaviors, and refine solutions, demonstrating an understanding of experimental design and data collection principles. [CLO 3] [CLO4]",
+            "tags": [
+              "clo:ie402_clo3",
+              "clo:ie402_clo4"
+            ]
+          },
+          {
+            "id": "ie402_r8_i3",
+            "text": "ILO 13: Identify critical factors in system design that influence performance consistency, and apply robust design techniques to improve reliability under varying conditions (Robust Design I). [CLO 3] [CLO4]",
+            "tags": [
+              "clo:ie402_clo3",
+              "clo:ie402_clo4"
+            ]
+          },
+          {
+            "id": "ie402_r8_i4",
+            "text": "ILO14: Utilize advanced robust design methods to enhance system resilience, focusing on minimizing performance variability in complex, multi-variable systems (Robust Design II). [CLO 3] [CLO4]",
+            "tags": [
+              "clo:ie402_clo3",
+              "clo:ie402_clo4"
+            ]
+          }
+        ],
+        "contents": "Application\n• Systems\nEngineering As\nHuman Activity\n• Trade Space\nExploration\nConcept\nSelection\n• Experiments\n• Robust Design I\n• Robust Design\nII",
+        "activities": "Case Study Discussion:\nSystems Engineering\nas a Human Activity\nProvide a case study that\nhighlights the role of\nhuman factors in systems\nengineering, including\nteam dynamics,\nstakeholder involvement,\nand ethical\nconsiderations. Facilitate\na class discussion on the\nhuman-centered aspects\nand their impact on\nproject outcomes.\nDesign and Conduct\nExperiments Activity\nAssign students a mini-\nproject to design and\nconduct an experiment to\nvalidate a system\ncomponent or process.\nThey should identify the\nobjective, develop a\nmethodology, collect\ndata, and analyze results\nto inform design\nimprovements.\nRobust Design\nBrainstorming Session\n(Robust Design I)\nIn small groups, students\nbrainstorm how to apply\nbasic robust design\nprinciples to make a\nsystem more stable\nunder varying conditions.\nThey discuss factors that\ninfluence system stability\nand propose design\nadjustments to minimize\nvariability.\nAdvanced Robust\nDesign Project (Robust\nDesign II)\nActivity: For a more\ncomplex project, students\napply advanced robust\ndesign techniques to a\nhypothetical or real-world\nsystem. They identify and\ncontrol multiple variables\nto minimize performance\nvariation across diverse\nscenarios.",
+        "tasks": "Robust Design I –\nSystem Evaluation\nand Improvement\nProposal\nTask: Have students\napply basic robust\ndesign techniques to\nevaluate a system\nand propose design\nchanges that would\nmake it more stable\nunder varying\nconditions. They\nshould identify critical\nfactors that affect\nperformance and\nsuggest\nimprovements to\nminimize variability.\nRobust Design II –\nAdvanced Design\nAnalysis\nTask: For a more\ncomplex system,\nstudents should apply\nadvanced robust\ndesign methods to\nassess and improve\nthe system’s\nperformance. They\nwill use tools such as\ndesign of experiments\n(DOE) to explore\nmultiple design\nvariables and their\ninteractions.\nRobust Design\nReport (I & II)\nTask: Students will\nsubmit a report for\neach part of the\nrobust design\napplication, detailing\nthe steps taken to\nassess and improve\nsystem performance.\nFor Robust Design I,\nthey will focus on\nbasic principles, and\nfor Robust Design II,\nthey will apply\nadvanced techniques\nto optimize the\nsystem.",
+        "values": "• Skills and\nCompetencies\n• Critical\nThinking\n• Honesty"
+      },
+      {
+        "id": "ie402_r9",
+        "week": "18",
+        "kind": "exam",
+        "ilos": [
+          {
+            "id": "ie402_r9_i1",
+            "text": "[CLO 3] [CLO 4]",
+            "tags": [
+              "clo:ie402_clo3",
+              "clo:ie402_clo4"
+            ]
+          }
+        ],
+        "contents": "FINAL EXAMINATION",
+        "activities": "• Examination on\nthe topics discussed\nduring the Final Term",
+        "tasks": "",
+        "values": "• Skills and\nCompetencies\n• Critical\nThinking\n• Honesty"
+      }
+    ],
+    "reqs": [
+      {
+        "id": "ie402_q1",
+        "t": "1. Class attendance"
+      },
+      {
+        "id": "ie402_q2",
+        "t": "2. Recitations"
+      },
+      {
+        "id": "ie402_q3",
+        "t": "3. Quizzes"
+      },
+      {
+        "id": "ie402_q4",
+        "t": "4. Examinations"
+      },
+      {
+        "id": "ie402_q5",
+        "t": "5. Compilation of activity reports"
+      }
+    ],
+    "refs": {
+      "books": {
+        "na": false,
+        "items": [
+          {
+            "id": "ie402_ref1",
+            "t": "Awari, G. K., and Warjurkar, S. V. (2022). Ethics in information technology: a practical guide. CRC Press.\nTK 5105.878 A93 2022"
+          },
+          {
+            "id": "ie402_ref2",
+            "t": "Bernard, M. (2022). Future skills: the 20 skills and competencies everyone needs to succeed in a digital world. John Wiley\n& Sons, Inc. T 65.3 M37 2022"
+          },
+          {
+            "id": "ie402_ref3",
+            "t": "Delfanti, A. (2019). Introduction to digital media. Wiley. QA 76.575 D48 2019"
+          }
+        ]
+      },
+      "program": {
+        "na": false,
+        "items": []
+      },
+      "online": {
+        "na": false,
+        "items": [
+          {
+            "id": "ie402_ref4",
+            "t": "MIT Open Courseware (2024). “Introduction to Design Computing”\nhttps://ocw.mit.edu/courses/4-500-introduction-to-design-computing-fall-2008/download/ Massachusetts Institute of\nTechnology"
+          },
+          {
+            "id": "ie402_ref5",
+            "t": "Primiero, G. (2019). Introduction.” On the Foundations of Computing , pp. 1 – 4., doi:10.1093/oso/9780198835646.003.0001."
+          },
+          {
+            "id": "ie402_ref6",
+            "t": "Jianwen, C. and Wakil, K. (2019), \"A model for evaluating the vital factors affecting cloud computing adoption: Analysis of the\nservices sector\", Kybernetes , doi:10.1108/K-06-2019-0434"
+          },
+          {
+            "id": "ie402_ref7",
+            "t": "Yang, F., Akanbi, T., Chong, O. W., Zhang, J., Debs, L., Chen, Y., & Hubbard, B. J. (2024). Project-Based Introduction to\nComputing in Construction Management Curriculum: A Case Study. Journal of Civil Engineering Education , 150 (1).\nhttps://doi.org/10.1061/JCEECD.EIENG-1905"
+          }
+        ]
+      },
+      "electronics": {
+        "na": false,
+        "items": []
+      }
+    },
+    "grading": {
+      "rows": [
+        {
+          "id": "ie402_g0",
+          "label": "Class Standing",
+          "abbr": "",
+          "pct": "60"
+        },
+        {
+          "id": "ie402_g1",
+          "label": "Examination",
+          "abbr": "",
+          "pct": "40"
+        }
+      ],
+      "override": {
+        "on": false,
+        "term": "",
+        "final": ""
+      }
+    }
+  },
+  "evidence": {
+    "identity": {
+      "program": "BSIE",
+      "basis": "User-specified degree; matched within that program in frozen database export. Degree code is not printed in the college header.",
+      "schoolYear": "2025-2026",
+      "schoolYearPages": [
+        1
+      ],
+      "curriculumYear": null,
+      "curriculumYearReason": "Not stated in PDF; school year is not curriculum year."
+    },
+    "fields": {
+      "code": {
+        "raw": "IE-402",
+        "pages": [
+          1
+        ]
+      },
+      "title": {
+        "raw": "Systems Engineering",
+        "pages": [
+          1
+        ]
+      },
+      "description": {
+        "raw": "This course introduces students to the principles and practices of systems engineering, focusing on the analysis,\ndesign, and management of complex systems. Through a blend of theoretical concepts and practical applications, students\nlearn   how   to   approach   and   solve   large-scale   engineering   problems   involving   multiple   components,   stakeholders,   and\noperational constraints. Key topics include requirements analysis, systems design, integration, project management, and\nperformance evaluation. \nStudents will develop skills in modeling and optimizing systems that integrate people, processes, and technology. They\nwill explore methods for ensuring that systems are efficient, reliable, and adaptable across various industries, such as\nmanufacturing, healthcare, and logistics. This course prepares BSIE students to play a vital role in creating systems that\nmaximize performance, minimize waste, and support organizational goals. \nBeyond   technical   knowledge,   the   course   integrates   Marian   Augustinian   values   into   each   lesson,   fostering   the\ndevelopment of students as Christo-centric Catholic professionals. The curriculum not only aims for intellectual growth but also\ninstills a commitment to ethical decision-making, social responsibility, and compassionate service. Students will be equipped\nwith the knowledge and values necessary to thrive as professionals in the field of Industrial Engineering.",
+        "pages": [
+          1
+        ],
+        "adaptation": "Read between source-stream section headings, not y-sorted importer text."
+      },
+      "credits": {
+        "raw": "3 units",
+        "pages": [
+          1
+        ]
+      },
+      "reqs": {
+        "raw": "1. Class attendance\n2. Recitations\n3. Quizzes\n4. Examinations\n5. Compilation of activity reports",
+        "pages": [
+          10
+        ]
+      },
+      "refs": {
+        "raw": "A. BOOKS\nAwari, G. K., and Warjurkar, S. V. (2022). Ethics in information technology: a practical guide. CRC Press.\nTK 5105.878 A93 2022\nBernard, M. (2022). Future skills: the 20 skills and competencies everyone needs to succeed in a digital world. John Wiley\n& Sons, Inc. T 65.3 M37 2022\nDelfanti, A. (2019). Introduction to digital media. Wiley. QA 76.575 D48 2019\nB. INTERNET REFERENCES\nMIT Open Courseware (2024). “Introduction to Design Computing”\nhttps://ocw.mit.edu/courses/4-500-introduction-to-design-computing-fall-2008/download/ Massachusetts Institute of\nTechnology\n\nC. JOURNALS\nPrimiero, G. (2019). Introduction.” On the Foundations of Computing , pp. 1 – 4., doi:10.1093/oso/9780198835646.003.0001.\nJianwen, C. and Wakil, K. (2019), \"A model for evaluating the vital factors affecting cloud computing adoption: Analysis of the\nservices sector\", Kybernetes , doi:10.1108/K-06-2019-0434\nYang, F., Akanbi, T., Chong, O. W., Zhang, J., Debs, L., Chen, Y., & Hubbard, B. J. (2024). Project-Based Introduction to\nComputing in Construction Management Curriculum: A Case Study. Journal of Civil Engineering Education , 150 (1).\nhttps://doi.org/10.1061/JCEECD.EIENG-1905",
+        "pages": [
+          10,
+          11
+        ]
+      },
+      "prereq": {
+        "raw": "4 th   Year Standing",
+        "pages": [
+          1
+        ],
+        "adaptation": "Superscript th rejoined to 4; no wording change."
+      },
+      "grading": {
+        "raw": "1.\tClass Standing\t60%\n2.\tExamination\t40 %\n3.\tTerm Grade\tCS (60%) + TE (40%)\n4.\tFinal Rating\tPrelim Grade + Midterm Grade + Final Grade\n3",
+        "pages": [
+          11
+        ]
+      },
+      "vision": {
+        "raw": "Moved by the Spirit of the Risen Christ, La Consolacion University Philippines, envisions itself to become a catalyst for the wholistic transformational development of Catholic Augustinian Marian graduates rooted in Gospel values.",
+        "pages": [
+          2
+        ]
+      },
+      "mission": {
+        "raw": "To achieve the above vision, LCUP commits itself to generate and make available to its Augustinian Marian students, programs and services that will make them:\n● exhibit academic and technical competence in their respective areas of discipline in the local and international environment;\n● demonstrate their knowledge, critical thinking and creativity by exploring the various avenues of learning and searching for truth;\n● manifest their willingness to serve specially the marginalized sector of our society;\n● demonstrate productivity in various areas of learning as responsible citizens of the society; and\n● live the Gospel values in the varied aspects of their personal and professional lives",
+        "pages": [
+          2
+        ]
+      }
+    },
+    "outcomes": {
+      "PO1": {
+        "raw": "PO1. Ability to apply knowledge of\nmathematics and science to solve\ncomplex engineering problems;",
+        "pages": [
+          2
+        ]
+      },
+      "PO2": {
+        "raw": "PO2. Ability to design and\nconduct experiments, as well as to\nanalyze and interpret data;",
+        "pages": [
+          2
+        ]
+      },
+      "PO3": {
+        "raw": "PO3. Ability to design a system,\ncomponent, or process to meet\ndesired needs within realistic\nconstraints such as economic,\nenvironmental, social,\npolitical, ethical, health and safety,\nmanufacturability and\nsustainability, in accordance with\nstandards.",
+        "pages": [
+          2
+        ]
+      },
+      "PO4": {
+        "raw": "PO4. Ability to function on\nmultidisciplinary teams",
+        "pages": [
+          3
+        ]
+      },
+      "PO5": {
+        "raw": "PO5. Ability to identify; formulate,\nand solve complex engineering\nproblems;",
+        "pages": [
+          3
+        ]
+      },
+      "PO6": {
+        "raw": "PO6. Understanding of\nprofessional and ethical\nresponsibility.",
+        "pages": [
+          3
+        ]
+      },
+      "PO7": {
+        "raw": "PO7. Ability to communicate\neffectively",
+        "pages": [
+          3
+        ]
+      },
+      "PO8": {
+        "raw": "PO8. Broad education necessary\nto understand the impact of\nengineering solutions in a global,\neconomic, environmental, and\nsocietal context.",
+        "pages": [
+          3
+        ]
+      },
+      "PO9": {
+        "raw": "PO9. Recognition of the need for,\nand an ability to engage in life-long\nlearning;",
+        "pages": [
+          3
+        ]
+      },
+      "PO10": {
+        "raw": "PO10. Knowledge of\ncontemporary issues;",
+        "pages": [
+          3
+        ]
+      },
+      "PO11": {
+        "raw": "PO11. Ability to use techniques,\nskills and modern engineering tools\nnecessary for engineering practice;\nand;",
+        "pages": [
+          3
+        ]
+      },
+      "PO12": {
+        "raw": "PO12. Knowledge and\nunderstanding of engineering and\nmanagement principles as a\nmember and leader in a team, to\nmanage projects and in",
+        "pages": [
+          3
+        ]
+      },
+      "PO13": {
+        "raw": "PO13: Ability to design, develop,\nimplement and improve integrated\nsystem that include people\nmaterials, implementation,\nequipment and energy.",
+        "pages": [
+          3,
+          4
+        ]
+      },
+      "EGA1": {
+        "raw": "EGA 1: Critical and Creative thinker",
+        "pages": [
+          2
+        ]
+      },
+      "EGA2": {
+        "raw": "EGA 2: Competent Catholic\nAugustinian-Marian Professional",
+        "pages": [
+          2
+        ]
+      },
+      "EGA3": {
+        "raw": "EGA 3: Socially Responsive Steward",
+        "pages": [
+          2
+        ]
+      },
+      "EGA4": {
+        "raw": "EGA 4: Transformative Lifelong learner",
+        "pages": [
+          2
+        ]
+      },
+      "CLO1": {
+        "raw": "CLO 1: Demonstrate knowledge and\nunderstanding of engineering and\nmanagement principles by effectively\nleading and collaborating within\nteams, managing projects, and\nengaging in multidisciplinary\nenvironments. [EGA 1] [PO 1,3]",
+        "pages": [
+          2
+        ]
+      },
+      "CLO2": {
+        "raw": "CLO 2: Apply critical and creative\nthinking skills to analyze, design, and\noptimize complex systems,\nintegrating various components such\nas people, materials, technology,\nand information. [EGA 1] [PO 2,3, 4,\n5]",
+        "pages": [
+          2
+        ]
+      },
+      "CLO3": {
+        "raw": "CLO 3: Develop the ability to identify\nand solve systems engineering\nchallenges, making decisions that\nimprove performance, enhance\nefficiency, and support sustainable\npractices across diverse industries.\n[EGA 1, 2] [PO 2, 3. 5, 6,7]",
+        "pages": [
+          3
+        ]
+      },
+      "CLO4": {
+        "raw": "CLO 4. Demonstrate the Filipino-\nCatholic Augustinian Spirituality\nthrough value webbing.\n[EGA 2] [PO 4,5]",
+        "pages": [
+          3
+        ]
+      }
+    },
+    "plan": [
+      {
+        "week": "1",
+        "chunks": [
+          {
+            "page": 4,
+            "cells": [
+              "Week 1",
+              "ILO10: Demonstrate\nthe Augustinian,\nMarian and\nmissionary Christ-\ncentered Spirituality\nthrough value\nwebbing.\n[CLO 4]",
+              "I. COURSE\nORIENTATION\nA. Introduction to the\nCourse Contents\nB. Course\nRequirements\nand Activities\nC. Course\nObjectives\nD. Grading System\nand Policies on\nAbsences,\nTardiness and\nExaminations",
+              "• Setting and sharing of\nExpectations from the\nCourse\n• Discussion on the\nVision, Mission and\nGoals of LCUP and of\nCITE\n• Presentation of\nCourse Objectives\nand Contents, Course\nRequirements and\nActivities\n• Review of Policies on\nAbsences, Tardiness,\nExaminations,\nGrading System",
+              "• Statement of\nExpectations\n• Review of Course\nContents,\nObjectives, Activities\nand Assessment\nTools\n• Review of Policies\non Absences,\nTardiness,\nExaminations,\nGrading System",
+              "• Interiority\n• Respect\n• Obedience"
+            ],
+            "box": [
+              36.320001220703126,
+              234.8699951171875,
+              766.1935137580423,
+              486.5500030517578
+            ]
+          }
+        ],
+        "pages": [
+          4
+        ],
+        "cells": [
+          "Week 1",
+          "ILO10: Demonstrate\nthe Augustinian,\nMarian and\nmissionary Christ-\ncentered Spirituality\nthrough value\nwebbing.\n[CLO 4]",
+          "I. COURSE\nORIENTATION\nA. Introduction to the\nCourse Contents\nB. Course\nRequirements\nand Activities\nC. Course\nObjectives\nD. Grading System\nand Policies on\nAbsences,\nTardiness and\nExaminations",
+          "• Setting and sharing of\nExpectations from the\nCourse\n• Discussion on the\nVision, Mission and\nGoals of LCUP and of\nCITE\n• Presentation of\nCourse Objectives\nand Contents, Course\nRequirements and\nActivities\n• Review of Policies on\nAbsences, Tardiness,\nExaminations,\nGrading System",
+          "• Statement of\nExpectations\n• Review of Course\nContents,\nObjectives, Activities\nand Assessment\nTools\n• Review of Policies\non Absences,\nTardiness,\nExaminations,\nGrading System",
+          "• Interiority\n• Respect\n• Obedience"
+        ]
+      },
+      {
+        "week": "2-3",
+        "chunks": [
+          {
+            "page": 4,
+            "cells": [
+              "Week 2-3",
+              "ILO1: Describe\nfundamental\nprinciples of systems\nengineering,\nincluding system life\ncycles, requirements",
+              "Introduction to\nSystems Engineering\n• Introduction to\nSystems\nEngineering",
+              "Lecture and Case Study\nAnalysis\nActivity: Present a\nlecture on the basics of\nsystems engineering\nmanagement, followed by",
+              "Quiz on\nFundamental\nConcepts\nConduct a quiz\ncovering key concepts\nand terminology in",
+              "• Understanding\nand patience\nin\nlearning\n• Creative and\ncritical thinking"
+            ],
+            "box": [
+              36.333334604899086,
+              487.3499984741211,
+              766.1949844360352,
+              570.1749992370605
+            ]
+          },
+          {
+            "page": 5,
+            "cells": [
+              "",
+              "analysis, and\nsystems thinking.\n[CLO 1], [CLO 2]\nILO2: Develop basic\nsystem designs that\nincorporate\nrequirements from\nmultiple disciplines,\nincluding human\nfactors, technology,\nand organizational\nneeds.\n[CLO 1], [CLO 2]",
+              "Management\n• Systems\nEngineering\nManagement in\nDoD Acquisition",
+              "an analysis of a real-\nworld case study in\nsystems engineering,\nsuch as a notable DoD\nacquisition project.\nInteractive Discussion\nand Q&A\nActivity: Facilitate an\ninteractive class\ndiscussion on the key\nprinciples of systems\nengineering management\nand its importance in\nlarge-scale projects,\nespecially in high-stakes\nenvironments like\ndefense.",
+              "systems engineering\nmanagement,\nincluding its\nprinciples, life cycle\nstages, and specific\napplications in DoD\nacquisition.\nCase Study Analysis\nReport\nProvide a case study\non a DoD acquisition\nproject or a similar\nlarge-scale systems\nengineering project.\nStudents will analyze\nand write a report\ncovering the systems\nengineering\nmanagement\nchallenges and\nsolutions highlighted\nin the case.",
+              "• Analytical\nthinking\n• Good active\nparticipation\nand\ninvolvement\n• Appreciation\n• Effective and\nefficient\nmanagement\nof resources\n• Appreciation\n• Awareness\n• Courage and\nHumility"
+            ],
+            "box": [
+              36,
+              51.22998046875,
+              766.1792858035066,
+              382.5299987792969
+            ]
+          }
+        ],
+        "pages": [
+          4,
+          5
+        ],
+        "cells": [
+          "Week 2-3",
+          "ILO1: Describe\nfundamental\nprinciples of systems\nengineering,\nincluding system life\ncycles, requirements\nanalysis, and\nsystems thinking.\n[CLO 1], [CLO 2]\nILO2: Develop basic\nsystem designs that\nincorporate\nrequirements from\nmultiple disciplines,\nincluding human\nfactors, technology,\nand organizational\nneeds.\n[CLO 1], [CLO 2]",
+          "Introduction to\nSystems Engineering\n• Introduction to\nSystems\nEngineering\nManagement\n• Systems\nEngineering\nManagement in\nDoD Acquisition",
+          "Lecture and Case Study\nAnalysis\nActivity: Present a\nlecture on the basics of\nsystems engineering\nmanagement, followed by\nan analysis of a real-\nworld case study in\nsystems engineering,\nsuch as a notable DoD\nacquisition project.\nInteractive Discussion\nand Q&A\nActivity: Facilitate an\ninteractive class\ndiscussion on the key\nprinciples of systems\nengineering management\nand its importance in\nlarge-scale projects,\nespecially in high-stakes\nenvironments like\ndefense.",
+          "Quiz on\nFundamental\nConcepts\nConduct a quiz\ncovering key concepts\nand terminology in\nsystems engineering\nmanagement,\nincluding its\nprinciples, life cycle\nstages, and specific\napplications in DoD\nacquisition.\nCase Study Analysis\nReport\nProvide a case study\non a DoD acquisition\nproject or a similar\nlarge-scale systems\nengineering project.\nStudents will analyze\nand write a report\ncovering the systems\nengineering\nmanagement\nchallenges and\nsolutions highlighted\nin the case.",
+          "• Understanding\nand patience\nin\nlearning\n• Creative and\ncritical thinking\n• Analytical\nthinking\n• Good active\nparticipation\nand\ninvolvement\n• Appreciation\n• Effective and\nefficient\nmanagement\nof resources\n• Appreciation\n• Awareness\n• Courage and\nHumility"
+        ]
+      },
+      {
+        "week": "4",
+        "chunks": [
+          {
+            "page": 5,
+            "cells": [
+              "WEEK 4",
+              "[ILO 1], [ILO 2]",
+              "PRELIMINARY EXAM",
+              "Examination covering\nthe topics discussed",
+              "Examination\nresults",
+              "Courage and\nHumility"
+            ],
+            "box": [
+              36.24000091552735,
+              383.1199951171875,
+              766.2271292550223,
+              424.52000427246094
+            ]
+          }
+        ],
+        "pages": [
+          5
+        ],
+        "cells": [
+          "WEEK 4",
+          "[ILO 1], [ILO 2]",
+          "PRELIMINARY EXAM",
+          "Examination covering\nthe topics discussed",
+          "Examination\nresults",
+          "Courage and\nHumility"
+        ]
+      },
+      {
+        "week": "5-8",
+        "chunks": [
+          {
+            "page": 5,
+            "cells": [
+              "WEEK 5-8",
+              "ILO3: Summarize the\noverall systems\nengineering process,\nexplaining each\nphase from\nrequirements\nanalysis to\nverification and\nprocess outputs.\n[CLO1][CLO2]",
+              "The Systems\nEngineering Process\n• Systems\nEngineering\nProcess Overview\n• Requirements\nAnalysis\n• Functional\nAnalysis and\nAllocation\n• Design Synthesis",
+              "Group Workshop on\nFunctional Analysis\nand Allocation\nActivity: In small groups,\nstudents will break down\nsystem requirements into\nfunctional components\nand allocate these to\nhypothetical subsystems.\nGroup Workshop on\nFunctional Analysis",
+              "Requirements\nAnalysis Report\nAssign students a\nhypothetical project\nscenario where they\nmust identify, analyze,\nand document key\nsystem requirements\nbased on provided\nstakeholder needs.",
+              "• Understandin\ng and\npatience in\nlearning\n• Creative and\ncritical\nthinking\n• Analytical\nthinking\n• Good and\nactive"
+            ],
+            "box": [
+              36.320001220703126,
+              425.3249969482422,
+              766.1853684645432,
+              577.1749992370605
+            ]
+          },
+          {
+            "page": 6,
+            "cells": [
+              "",
+              "ILO4: Analyze and\ndefine system\nrequirements based\non stakeholder\nneeds, constraints,\nand project\nobjectives.\n[CLO2][CLO3]\nILO5: Recognize key\noutputs of the\nsystems engineering\nprocess, such as\ndocumentation,\nspecifications, and\ntest reports, and\nevaluate their role in\nsupporting\nsuccessful project\noutcomes.\n[CLO2][CLO3]",
+              "• Verification\n• Systems\nEngineering\nProcess Outputs",
+              "and Allocation\nIn small groups, students\nwill break down system\nrequirements into\nfunctional components\nand allocate these to\nhypothetical subsystems.\nReflection Assignment\non Process Outputs\nHave students reflect on\nthe outputs generated at\neach stage of the\nsystems engineering\nprocess and discuss how\nthese support project\nsuccess.",
+              "Functional Analysis\nand Allocation\nDiagram\nDescription: Have\nstudents create a\nfunctional flow\ndiagram for a system\nbased on a given set\nof requirements,\nbreaking down\nfunctions and\nallocating them to\nsubsystems.\nDesign Synthesis\nProject\nDescription: Assign a\ndesign synthesis task\nwhere students create\nan initial design for a\nsystem, explaining\nhow the design\nintegrates functional\nrequirements and\nmeets project goals.",
+              "participation\nand\ninvolvement\n• Appreciation\n• Effective and\nefficient\nmanagement\nof resources\n• Problem\nsolving skills\n•"
+            ],
+            "box": [
+              36,
+              51.22998046875,
+              766.1853684645432,
+              396.3300018310547
+            ]
+          }
+        ],
+        "pages": [
+          5,
+          6
+        ],
+        "cells": [
+          "WEEK 5-8",
+          "ILO3: Summarize the\noverall systems\nengineering process,\nexplaining each\nphase from\nrequirements\nanalysis to\nverification and\nprocess outputs.\n[CLO1][CLO2]\nILO4: Analyze and\ndefine system\nrequirements based\non stakeholder\nneeds, constraints,\nand project\nobjectives.\n[CLO2][CLO3]\nILO5: Recognize key\noutputs of the\nsystems engineering\nprocess, such as\ndocumentation,\nspecifications, and\ntest reports, and\nevaluate their role in\nsupporting\nsuccessful project\noutcomes.\n[CLO2][CLO3]",
+          "The Systems\nEngineering Process\n• Systems\nEngineering\nProcess Overview\n• Requirements\nAnalysis\n• Functional\nAnalysis and\nAllocation\n• Design Synthesis\n• Verification\n• Systems\nEngineering\nProcess Outputs",
+          "Group Workshop on\nFunctional Analysis\nand Allocation\nActivity: In small groups,\nstudents will break down\nsystem requirements into\nfunctional components\nand allocate these to\nhypothetical subsystems.\nGroup Workshop on\nFunctional Analysis\nand Allocation\nIn small groups, students\nwill break down system\nrequirements into\nfunctional components\nand allocate these to\nhypothetical subsystems.\nReflection Assignment\non Process Outputs\nHave students reflect on\nthe outputs generated at\neach stage of the\nsystems engineering\nprocess and discuss how\nthese support project\nsuccess.",
+          "Requirements\nAnalysis Report\nAssign students a\nhypothetical project\nscenario where they\nmust identify, analyze,\nand document key\nsystem requirements\nbased on provided\nstakeholder needs.\nFunctional Analysis\nand Allocation\nDiagram\nDescription: Have\nstudents create a\nfunctional flow\ndiagram for a system\nbased on a given set\nof requirements,\nbreaking down\nfunctions and\nallocating them to\nsubsystems.\nDesign Synthesis\nProject\nDescription: Assign a\ndesign synthesis task\nwhere students create\nan initial design for a\nsystem, explaining\nhow the design\nintegrates functional\nrequirements and\nmeets project goals.",
+          "• Understandin\ng and\npatience in\nlearning\n• Creative and\ncritical\nthinking\n• Analytical\nthinking\n• Good and\nactive\nparticipation\nand\ninvolvement\n• Appreciation\n• Effective and\nefficient\nmanagement\nof resources\n• Problem\nsolving skills\n•"
+        ]
+      },
+      {
+        "week": "9",
+        "chunks": [
+          {
+            "page": 6,
+            "cells": [
+              "WEEK 9",
+              "[ILO 3], [ILO 4] [ILO5]",
+              "MIDTERM EXAM",
+              "• Examination covering\nthe topics discussed",
+              "• Examination\nresults",
+              "• Skills and\nCompetencies\n• Critical\nThinking\n• Honesty"
+            ],
+            "box": [
+              36.30000114440918,
+              396.9250030517578,
+              766.1935137580423,
+              468.3500061035156
+            ]
+          }
+        ],
+        "pages": [
+          6
+        ],
+        "cells": [
+          "WEEK 9",
+          "[ILO 3], [ILO 4] [ILO5]",
+          "MIDTERM EXAM",
+          "• Examination covering\nthe topics discussed",
+          "• Examination\nresults",
+          "• Skills and\nCompetencies\n• Critical\nThinking\n• Honesty"
+        ]
+      },
+      {
+        "week": "10-11",
+        "chunks": [
+          {
+            "page": 6,
+            "cells": [
+              "Week 10-11",
+              "ILO6: Create and\ninterpret a WBS to\norganize and manage\nproject components,\nidentifying key\ndeliverables and\ntasks for effective\nproject planning and",
+              "Systems Analysis\nand Control\n• Work\nBreakdown\nStructure\n• Configuration\nManagement",
+              "Interactive Workshop\non Work Breakdown\nStructure (WBS)\nCreation\nActivity: Conduct an\ninteractive workshop\nwhere students create a\nWBS for a hypothetical",
+              "Peer Review of\nExperimental Design\nand Robustness\nPlan\nAsk students to peer\nreview each other’s\nexperimental design\nproposals and",
+              "• Understanding\nand patience\nin learning\n• Creative and\ncritical thinking\n• Analytical\nthinking\n• Good and"
+            ],
+            "box": [
+              36.34666798909505,
+              469.14500427246094,
+              766.1881658380681,
+              579.5750007629395
+            ]
+          },
+          {
+            "page": 7,
+            "cells": [
+              "",
+              "control.\n[CLO 3] [CLO4]\nILO7: Apply modeling\nand simulation\ntechniques to analyze\nsystem behavior, test\npotential solutions,\nand predict outcomes\nin a controlled virtual\nenvironment.\n[CLO 3] [CLO4]\nILO8:Identify, assess,\nand manage risks\nwithin a systems\nproject, developing\nrisk mitigation\nstrategies to minimize\npotential negative\nimpacts on project\noutcomes.\n[CLO 3] [CLO4]",
+              "• Technical\nReviews and\nAudits\n• Trade Studies\n• Modeling and\nSimulation\n• Metrics\n• Risk\nManagement",
+              "project, breaking down\ntasks and identifying\ndeliverables.\nCase Study on\nConfiguration\nManagement\nActivity: Present a case\nstudy demonstrating\nconfiguration\nmanagement principles\nand practices in a real-\nworld project. Have\nstudents discuss the role\nof configuration\nmanagement in\nmaintaining system\nconsistency.\nRisk Management\nAnalysis Activity\nActivity: Present a\nproject scenario and ask\nstudents to identify\npotential risks, assess\ntheir impact and\nprobability, and develop\nmitigation strategies.",
+              "robustness plans,\nproviding constructive\nfeedback on\nmethodology and\napproach.\nRisk Assessment\nand Mitigation in\nRobust Design\nAssign a task where\nstudents assess\npotential risks to\nrobustness in a\nsystem design and\ndevelop mitigation\nstrategies to address\nthese risks.",
+              "active\nparticipation\nand\ninvolvement\n• Appreciation\n• Effective and\nefficient\nmanagement\nof resources\n• Problem\nsolving skills"
+            ],
+            "box": [
+              36,
+              51.219970703125,
+              766.1866505940756,
+              451.5500030517578
+            ]
+          }
+        ],
+        "pages": [
+          6,
+          7
+        ],
+        "cells": [
+          "Week 10-11",
+          "ILO6: Create and\ninterpret a WBS to\norganize and manage\nproject components,\nidentifying key\ndeliverables and\ntasks for effective\nproject planning and\ncontrol.\n[CLO 3] [CLO4]\nILO7: Apply modeling\nand simulation\ntechniques to analyze\nsystem behavior, test\npotential solutions,\nand predict outcomes\nin a controlled virtual\nenvironment.\n[CLO 3] [CLO4]\nILO8:Identify, assess,\nand manage risks\nwithin a systems\nproject, developing\nrisk mitigation\nstrategies to minimize\npotential negative\nimpacts on project\noutcomes.\n[CLO 3] [CLO4]",
+          "Systems Analysis\nand Control\n• Work\nBreakdown\nStructure\n• Configuration\nManagement\n• Technical\nReviews and\nAudits\n• Trade Studies\n• Modeling and\nSimulation\n• Metrics\n• Risk\nManagement",
+          "Interactive Workshop\non Work Breakdown\nStructure (WBS)\nCreation\nActivity: Conduct an\ninteractive workshop\nwhere students create a\nWBS for a hypothetical\nproject, breaking down\ntasks and identifying\ndeliverables.\nCase Study on\nConfiguration\nManagement\nActivity: Present a case\nstudy demonstrating\nconfiguration\nmanagement principles\nand practices in a real-\nworld project. Have\nstudents discuss the role\nof configuration\nmanagement in\nmaintaining system\nconsistency.\nRisk Management\nAnalysis Activity\nActivity: Present a\nproject scenario and ask\nstudents to identify\npotential risks, assess\ntheir impact and\nprobability, and develop\nmitigation strategies.",
+          "Peer Review of\nExperimental Design\nand Robustness\nPlan\nAsk students to peer\nreview each other’s\nexperimental design\nproposals and\nrobustness plans,\nproviding constructive\nfeedback on\nmethodology and\napproach.\nRisk Assessment\nand Mitigation in\nRobust Design\nAssign a task where\nstudents assess\npotential risks to\nrobustness in a\nsystem design and\ndevelop mitigation\nstrategies to address\nthese risks.",
+          "• Understanding\nand patience\nin learning\n• Creative and\ncritical thinking\n• Analytical\nthinking\n• Good and\nactive\nparticipation\nand\ninvolvement\n• Appreciation\n• Effective and\nefficient\nmanagement\nof resources\n• Problem\nsolving skills"
+        ]
+      },
+      {
+        "week": "12-14",
+        "chunks": [
+          {
+            "page": 7,
+            "cells": [
+              "Week 12-14",
+              "ILO9: Formulate a\ncomprehensive\nsystems engineering\nplan that outlines\nobjectives, resources,\ntimelines, and\nmilestones to guide\nsystem development\nfrom inception",
+              "Planning, Organizing\nand Managing\n• Systems\nEngineering\nPlanning\n• Product\nImprovement\nStrategies",
+              "Workshop on Systems\nEngineering Planning\nConduct a hands-on\nworkshop where students\noutline a systems\nengineering plan for a\nhypothetical project. They\nshould include project\nobjectives, resource",
+              "Systems\nEngineering Plan\nDevelopment\nTask: Have students\ncreate a\ncomprehensive\nsystems engineering\nplan for a hypothetical\nproject. This plan",
+              "• Active\nparticipation\nand\ninvolvement\n• Active\nparticipation\nand\ninvolvement\n• Critical"
+            ],
+            "box": [
+              36.35000133514404,
+              452.14500427246094,
+              766.1899841308593,
+              578.7750015258789
+            ]
+          },
+          {
+            "page": 8,
+            "cells": [
+              "",
+              "through completion.\n[CLO 3] [CLO4]\nILO10: Evaluate\nessential\nmanagement\nconsiderations—such\nas resource\nallocation, risk\nassessment, and\nstakeholder\nengagement—and\ntheir impact on\nproject success,\napplying these\nprinciples to real or\nsimulated project\nscenarios.\n[CLO 3] [CLO4]",
+              "• Organizing and\nIntegrating\nSystem\nDevelopment\n• Contractual\nConsiderations\n• Management\nConsiderations\nand Summary",
+              "allocation, timeline\nplanning, and key\nmilestones.\nProduct Improvement\nStrategy Brainstorming\nSession\nIn groups, students\nbrainstorm and propose\nstrategies for iterative\nproduct improvement in a\ngiven scenario, focusing\non design, functionality,\nand customer feedback\nloops.",
+              "should include\nobjectives, resource\nallocation, timeline,\nmilestones, risk\nassessment, and\nproject phases.\nProduct\nImprovement\nStrategy Proposal\nTask: Ask students to\ndevelop a proposal for\na product\nimprovement strategy\nfor an existing system,\nidentifying areas for\nenhancement and\nproposing solutions to\nimprove quality,\nefficiency, and user\nsatisfaction.",
+              "Thinking\n• Patience\n• Understandin\ng\n• Critical\nAnalysis\n• Logical\nThinking"
+            ],
+            "box": [
+              36,
+              51.22998046875,
+              766.1853684645432,
+              354.8999938964844
+            ]
+          }
+        ],
+        "pages": [
+          7,
+          8
+        ],
+        "cells": [
+          "Week 12-14",
+          "ILO9: Formulate a\ncomprehensive\nsystems engineering\nplan that outlines\nobjectives, resources,\ntimelines, and\nmilestones to guide\nsystem development\nfrom inception\nthrough completion.\n[CLO 3] [CLO4]\nILO10: Evaluate\nessential\nmanagement\nconsiderations—such\nas resource\nallocation, risk\nassessment, and\nstakeholder\nengagement—and\ntheir impact on\nproject success,\napplying these\nprinciples to real or\nsimulated project\nscenarios.\n[CLO 3] [CLO4]",
+          "Planning, Organizing\nand Managing\n• Systems\nEngineering\nPlanning\n• Product\nImprovement\nStrategies\n• Organizing and\nIntegrating\nSystem\nDevelopment\n• Contractual\nConsiderations\n• Management\nConsiderations\nand Summary",
+          "Workshop on Systems\nEngineering Planning\nConduct a hands-on\nworkshop where students\noutline a systems\nengineering plan for a\nhypothetical project. They\nshould include project\nobjectives, resource\nallocation, timeline\nplanning, and key\nmilestones.\nProduct Improvement\nStrategy Brainstorming\nSession\nIn groups, students\nbrainstorm and propose\nstrategies for iterative\nproduct improvement in a\ngiven scenario, focusing\non design, functionality,\nand customer feedback\nloops.",
+          "Systems\nEngineering Plan\nDevelopment\nTask: Have students\ncreate a\ncomprehensive\nsystems engineering\nplan for a hypothetical\nproject. This plan\nshould include\nobjectives, resource\nallocation, timeline,\nmilestones, risk\nassessment, and\nproject phases.\nProduct\nImprovement\nStrategy Proposal\nTask: Ask students to\ndevelop a proposal for\na product\nimprovement strategy\nfor an existing system,\nidentifying areas for\nenhancement and\nproposing solutions to\nimprove quality,\nefficiency, and user\nsatisfaction.",
+          "• Active\nparticipation\nand\ninvolvement\n• Active\nparticipation\nand\ninvolvement\n• Critical\nThinking\n• Patience\n• Understandin\ng\n• Critical\nAnalysis\n• Logical\nThinking"
+        ]
+      },
+      {
+        "week": "15-17",
+        "chunks": [
+          {
+            "page": 8,
+            "cells": [
+              "Week 15-17",
+              "ILO11: Analyze and\nevaluate multiple\ndesign alternatives\nthrough trade space\nexploration, applying\ncriteria to select the\noptimal concept\nbased on\nperformance,\nfeasibility, and\nstakeholder needs.\n[CLO 3] [CLO4]\nILO 12: Develop and\nexecute experiments\nto validate design",
+              "Application\n• Systems\nEngineering As\nHuman Activity\n• Trade Space\nExploration\nConcept\nSelection\n• Experiments\n• Robust Design I\n• Robust Design\nII",
+              "Case Study Discussion:\nSystems Engineering\nas a Human Activity\nProvide a case study that\nhighlights the role of\nhuman factors in systems\nengineering, including\nteam dynamics,\nstakeholder involvement,\nand ethical\nconsiderations. Facilitate\na class discussion on the\nhuman-centered aspects\nand their impact on\nproject outcomes.",
+              "Robust Design I –\nSystem Evaluation\nand Improvement\nProposal\nTask: Have students\napply basic robust\ndesign techniques to\nevaluate a system\nand propose design\nchanges that would\nmake it more stable\nunder varying\nconditions. They\nshould identify critical\nfactors that affect\nperformance and",
+              "• Skills and\nCompetencies\n• Critical\nThinking\n• Honesty"
+            ],
+            "box": [
+              36.311112297905815,
+              355.4949951171875,
+              766.1935137580423,
+              576.375
+            ]
+          },
+          {
+            "page": 9,
+            "cells": [
+              "",
+              "assumptions, analyze\nsystem behaviors,\nand refine solutions,\ndemonstrating an\nunderstanding of\nexperimental design\nand data collection\nprinciples.\n[CLO 3] [CLO4]\nILO 13: Identify\ncritical factors in\nsystem design that\ninfluence\nperformance\nconsistency, and\napply robust design\ntechniques to\nimprove reliability\nunder varying\nconditions (Robust\nDesign I).\n[CLO 3] [CLO4]\nILO14: Utilize\nadvanced robust\ndesign methods to\nenhance system\nresilience, focusing\non minimizing\nperformance\nvariability in complex,\nmulti-variable\nsystems (Robust\nDesign II).\n[CLO 3] [CLO4]",
+              "",
+              "Design and Conduct\nExperiments Activity\nAssign students a mini-\nproject to design and\nconduct an experiment to\nvalidate a system\ncomponent or process.\nThey should identify the\nobjective, develop a\nmethodology, collect\ndata, and analyze results\nto inform design\nimprovements.\nRobust Design\nBrainstorming Session\n(Robust Design I)\nIn small groups, students\nbrainstorm how to apply\nbasic robust design\nprinciples to make a\nsystem more stable\nunder varying conditions.\nThey discuss factors that\ninfluence system stability\nand propose design\nadjustments to minimize\nvariability.\nAdvanced Robust\nDesign Project (Robust\nDesign II)\nActivity: For a more\ncomplex project, students\napply advanced robust\ndesign techniques to a\nhypothetical or real-world\nsystem. They identify and",
+              "suggest\nimprovements to\nminimize variability.\nRobust Design II –\nAdvanced Design\nAnalysis\nTask: For a more\ncomplex system,\nstudents should apply\nadvanced robust\ndesign methods to\nassess and improve\nthe system’s\nperformance. They\nwill use tools such as\ndesign of experiments\n(DOE) to explore\nmultiple design\nvariables and their\ninteractions.\nRobust Design\nReport (I & II)\nTask: Students will\nsubmit a report for\neach part of the\nrobust design\napplication, detailing\nthe steps taken to\nassess and improve\nsystem performance.\nFor Robust Design I,\nthey will focus on\nbasic principles, and\nfor Robust Design II,\nthey will apply",
+              ""
+            ],
+            "box": [
+              36,
+              51.2249755859375,
+              766.3699951171875,
+              575.7750015258789
+            ]
+          },
+          {
+            "page": 10,
+            "cells": [
+              "",
+              "",
+              "",
+              "control multiple variables\nto minimize performance\nvariation across diverse\nscenarios.",
+              "advanced techniques\nto optimize the\nsystem.",
+              ""
+            ],
+            "box": [
+              36,
+              51.2249755859375,
+              766.3699951171875,
+              120.25
+            ]
+          }
+        ],
+        "pages": [
+          8,
+          9,
+          10
+        ],
+        "cells": [
+          "Week 15-17",
+          "ILO11: Analyze and\nevaluate multiple\ndesign alternatives\nthrough trade space\nexploration, applying\ncriteria to select the\noptimal concept\nbased on\nperformance,\nfeasibility, and\nstakeholder needs.\n[CLO 3] [CLO4]\nILO 12: Develop and\nexecute experiments\nto validate design\nassumptions, analyze\nsystem behaviors,\nand refine solutions,\ndemonstrating an\nunderstanding of\nexperimental design\nand data collection\nprinciples.\n[CLO 3] [CLO4]\nILO 13: Identify\ncritical factors in\nsystem design that\ninfluence\nperformance\nconsistency, and\napply robust design\ntechniques to\nimprove reliability\nunder varying\nconditions (Robust\nDesign I).\n[CLO 3] [CLO4]\nILO14: Utilize\nadvanced robust\ndesign methods to\nenhance system\nresilience, focusing\non minimizing\nperformance\nvariability in complex,\nmulti-variable\nsystems (Robust\nDesign II).\n[CLO 3] [CLO4]",
+          "Application\n• Systems\nEngineering As\nHuman Activity\n• Trade Space\nExploration\nConcept\nSelection\n• Experiments\n• Robust Design I\n• Robust Design\nII",
+          "Case Study Discussion:\nSystems Engineering\nas a Human Activity\nProvide a case study that\nhighlights the role of\nhuman factors in systems\nengineering, including\nteam dynamics,\nstakeholder involvement,\nand ethical\nconsiderations. Facilitate\na class discussion on the\nhuman-centered aspects\nand their impact on\nproject outcomes.\nDesign and Conduct\nExperiments Activity\nAssign students a mini-\nproject to design and\nconduct an experiment to\nvalidate a system\ncomponent or process.\nThey should identify the\nobjective, develop a\nmethodology, collect\ndata, and analyze results\nto inform design\nimprovements.\nRobust Design\nBrainstorming Session\n(Robust Design I)\nIn small groups, students\nbrainstorm how to apply\nbasic robust design\nprinciples to make a\nsystem more stable\nunder varying conditions.\nThey discuss factors that\ninfluence system stability\nand propose design\nadjustments to minimize\nvariability.\nAdvanced Robust\nDesign Project (Robust\nDesign II)\nActivity: For a more\ncomplex project, students\napply advanced robust\ndesign techniques to a\nhypothetical or real-world\nsystem. They identify and\ncontrol multiple variables\nto minimize performance\nvariation across diverse\nscenarios.",
+          "Robust Design I –\nSystem Evaluation\nand Improvement\nProposal\nTask: Have students\napply basic robust\ndesign techniques to\nevaluate a system\nand propose design\nchanges that would\nmake it more stable\nunder varying\nconditions. They\nshould identify critical\nfactors that affect\nperformance and\nsuggest\nimprovements to\nminimize variability.\nRobust Design II –\nAdvanced Design\nAnalysis\nTask: For a more\ncomplex system,\nstudents should apply\nadvanced robust\ndesign methods to\nassess and improve\nthe system’s\nperformance. They\nwill use tools such as\ndesign of experiments\n(DOE) to explore\nmultiple design\nvariables and their\ninteractions.\nRobust Design\nReport (I & II)\nTask: Students will\nsubmit a report for\neach part of the\nrobust design\napplication, detailing\nthe steps taken to\nassess and improve\nsystem performance.\nFor Robust Design I,\nthey will focus on\nbasic principles, and\nfor Robust Design II,\nthey will apply\nadvanced techniques\nto optimize the\nsystem.",
+          "• Skills and\nCompetencies\n• Critical\nThinking\n• Honesty"
+        ]
+      },
+      {
+        "week": "18",
+        "chunks": [
+          {
+            "page": 10,
+            "cells": [
+              "Week 18",
+              "[CLO 3] [CLO 4]",
+              "FINAL EXAMINATION",
+              "• Examination on\nthe topics discussed\nduring the Final Term",
+              "",
+              "• Skills and\nCompetencies\n• Critical\nThinking\n• Honesty"
+            ],
+            "box": [
+              36.28571537562779,
+              120.85501098632812,
+              766.1922064887153,
+              206.27999877929688
+            ]
+          }
+        ],
+        "pages": [
+          10
+        ],
+        "cells": [
+          "Week 18",
+          "[CLO 3] [CLO 4]",
+          "FINAL EXAMINATION",
+          "• Examination on\nthe topics discussed\nduring the Final Term",
+          "",
+          "• Skills and\nCompetencies\n• Critical\nThinking\n• Honesty"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "heading": "A. BOOKS",
+        "raw": "Awari, G. K., and Warjurkar, S. V. (2022). Ethics in information technology: a practical guide. CRC Press.\nTK 5105.878 A93 2022\nBernard, M. (2022). Future skills: the 20 skills and competencies everyone needs to succeed in a digital world. John Wiley\n& Sons, Inc. T 65.3 M37 2022\nDelfanti, A. (2019). Introduction to digital media. Wiley. QA 76.575 D48 2019",
+        "items": [
+          "Awari, G. K., and Warjurkar, S. V. (2022). Ethics in information technology: a practical guide. CRC Press.\nTK 5105.878 A93 2022",
+          "Bernard, M. (2022). Future skills: the 20 skills and competencies everyone needs to succeed in a digital world. John Wiley\n& Sons, Inc. T 65.3 M37 2022",
+          "Delfanti, A. (2019). Introduction to digital media. Wiley. QA 76.575 D48 2019"
+        ],
+        "builderGroup": "books",
+        "pages": [
+          10
+        ]
+      },
+      {
+        "heading": "B. INTERNET REFERENCES",
+        "raw": "MIT Open Courseware (2024). “Introduction to Design Computing”\nhttps://ocw.mit.edu/courses/4-500-introduction-to-design-computing-fall-2008/download/ Massachusetts Institute of\nTechnology",
+        "items": [
+          "MIT Open Courseware (2024). “Introduction to Design Computing”\nhttps://ocw.mit.edu/courses/4-500-introduction-to-design-computing-fall-2008/download/ Massachusetts Institute of\nTechnology"
+        ],
+        "builderGroup": "online",
+        "pages": [
+          10
+        ]
+      },
+      {
+        "heading": "C. JOURNALS",
+        "raw": "Primiero, G. (2019). Introduction.” On the Foundations of Computing , pp. 1 – 4., doi:10.1093/oso/9780198835646.003.0001.\nJianwen, C. and Wakil, K. (2019), \"A model for evaluating the vital factors affecting cloud computing adoption: Analysis of the\nservices sector\", Kybernetes , doi:10.1108/K-06-2019-0434\nYang, F., Akanbi, T., Chong, O. W., Zhang, J., Debs, L., Chen, Y., & Hubbard, B. J. (2024). Project-Based Introduction to\nComputing in Construction Management Curriculum: A Case Study. Journal of Civil Engineering Education , 150 (1).\nhttps://doi.org/10.1061/JCEECD.EIENG-1905",
+        "items": [
+          "Primiero, G. (2019). Introduction.” On the Foundations of Computing , pp. 1 – 4., doi:10.1093/oso/9780198835646.003.0001.",
+          "Jianwen, C. and Wakil, K. (2019), \"A model for evaluating the vital factors affecting cloud computing adoption: Analysis of the\nservices sector\", Kybernetes , doi:10.1108/K-06-2019-0434",
+          "Yang, F., Akanbi, T., Chong, O. W., Zhang, J., Debs, L., Chen, Y., & Hubbard, B. J. (2024). Project-Based Introduction to\nComputing in Construction Management Curriculum: A Case Study. Journal of Civil Engineering Education , 150 (1).\nhttps://doi.org/10.1061/JCEECD.EIENG-1905"
+        ],
+        "builderGroup": "online",
+        "pages": [
+          11
+        ]
+      }
+    ]
+  },
+  "reviewNotes": [
+    "No PO-EGA crosswalk supplied; all PO.egas remain empty.",
+    "CLO level is an unsourced builder enum default (Introductory); no academic level judgment.",
+    "Whitespace and soft line wraps normalized in checker text. Original tokens, exact cell lines and page references retained in source/evidence.",
+    "No curriculum year or year level is printed; blank in source content.",
+    "EGA short labels are display metadata; exact master comparison can detect display differences.",
+    "PO12 ends mid-sentence in baseline; supporting PDF completion is NOT inserted.",
+    "3 units states only total units; source lecture/lab split is unresolved. Builder-context scenario uses the catalog split explicitly.",
+    "Production page y-sorting appends prerequisite superscript th to description and leaves 4 Year Standing. Offline adapter reads source stream and rejoins the superscript; production remains unchanged.",
+    "Source Journals retained as a source category in evidence; projected to builder online because schema has no Journals group. No absent group is silently marked N/A."
+  ],
+  "readiness": {
+    "deterministic": true,
+    "aiEvaluation": false,
+    "reason": "Faculty semantics and institutional references unresolved; external transmission not authorized."
+  }
+}

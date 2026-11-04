@@ -1,0 +1,173 @@
+{
+  "status": "offline_guard_replay_only_not_a_model_evaluation",
+  "baseline": "docs/ai-eval-stage-e8-c-canary-resume.json",
+  "baselinePrompt": "alignment-12c1c2-r7",
+  "correctedStageCPrompt": "alignment-12c1c2-r8",
+  "requestContext": "Each saved request is replayed against its original unchanged pairs, not all dataset siblings.",
+  "preservedJudgments": 8,
+  "changedLabels": 0,
+  "changedStructuredAspects": 0,
+  "protectedBaselineFilesUnchanged": 11,
+  "paidRequests": 0,
+  "newProviderCost": 0,
+  "draftWithholding": [
+    "af-prog1-irrelevant",
+    "af-prog1-conceptual-lecture-ok",
+    "af-sensors-passive"
+  ],
+  "advisoryOnlyDrafts": [
+    "as-prog1-recall-quiz"
+  ],
+  "note": "This verifies static review behavior on historical r7 answers. It does not measure what r8 will answer or faculty-verified accuracy. Saved reports are not rewritten.",
+  "answers": [
+    {
+      "id": "af-prog1-good",
+      "label": "ALIGNED",
+      "originalLabelPreserved": true,
+      "oldDraftReview": [],
+      "explanationReview": [],
+      "draftReview": [],
+      "draftWarnings": [],
+      "reviewEvidence": null
+    },
+    {
+      "id": "af-prog1-irrelevant",
+      "label": "NOT_ALIGNED",
+      "originalLabelPreserved": true,
+      "oldDraftReview": [
+        "copies_other_relationship"
+      ],
+      "explanationReview": [],
+      "draftReview": [
+        "assumes_resource",
+        "copies_other_relationship"
+      ],
+      "draftWarnings": [],
+      "reviewEvidence": {
+        "explanation": [],
+        "draft": [
+          {
+            "code": "assumes_resource",
+            "evidence": "laboratory"
+          },
+          {
+            "code": "assumes_resource",
+            "evidence": "starter file"
+          },
+          {
+            "code": "copies_other_relationship",
+            "evidence": "programs in pairs with a starter file for students who want a",
+            "from": "af-prog1-good"
+          }
+        ]
+      }
+    },
+    {
+      "id": "as-prog1-good",
+      "label": "ALIGNED",
+      "originalLabelPreserved": true,
+      "oldDraftReview": [],
+      "explanationReview": [],
+      "draftReview": [],
+      "draftWarnings": [],
+      "reviewEvidence": null
+    },
+    {
+      "id": "as-prog1-recall-quiz",
+      "label": "NOT_ALIGNED",
+      "originalLabelPreserved": true,
+      "oldDraftReview": [
+        "copies_other_relationship"
+      ],
+      "explanationReview": [],
+      "draftReview": [],
+      "draftWarnings": [
+        "borrowed_wording"
+      ],
+      "reviewEvidence": {
+        "explanation": [],
+        "draft": [],
+        "draftWarnings": [
+          {
+            "code": "borrowed_wording",
+            "evidence": "programming task write and test a java program that uses if else",
+            "from": "as-prog1-good",
+            "advisory": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "af-prog1-conceptual-lecture-ok",
+      "label": "PARTIALLY_ALIGNED",
+      "originalLabelPreserved": true,
+      "oldDraftReview": [],
+      "explanationReview": [
+        "practical_requirement"
+      ],
+      "draftReview": [
+        "assumes_resource",
+        "unnecessary_practical"
+      ],
+      "draftWarnings": [],
+      "reviewEvidence": {
+        "explanation": [
+          {
+            "code": "practical_requirement",
+            "evidence": "laboratory 1 for this lesson"
+          }
+        ],
+        "draft": [
+          {
+            "code": "assumes_resource",
+            "evidence": "Laboratory"
+          },
+          {
+            "code": "unnecessary_practical",
+            "evidence": "Laboratory practice"
+          }
+        ]
+      }
+    },
+    {
+      "id": "as-prog1-too-high",
+      "label": "NOT_ALIGNED",
+      "originalLabelPreserved": true,
+      "oldDraftReview": [],
+      "explanationReview": [],
+      "draftReview": [],
+      "draftWarnings": [],
+      "reviewEvidence": null
+    },
+    {
+      "id": "as-syseng-essay",
+      "label": "NOT_ALIGNED",
+      "originalLabelPreserved": true,
+      "oldDraftReview": [],
+      "explanationReview": [],
+      "draftReview": [],
+      "draftWarnings": [],
+      "reviewEvidence": null
+    },
+    {
+      "id": "af-sensors-passive",
+      "label": "NOT_ALIGNED",
+      "originalLabelPreserved": true,
+      "oldDraftReview": [],
+      "explanationReview": [],
+      "draftReview": [
+        "assumes_resource"
+      ],
+      "draftWarnings": [],
+      "reviewEvidence": {
+        "explanation": [],
+        "draft": [
+          {
+            "code": "assumes_resource",
+            "evidence": "laboratory"
+          }
+        ]
+      }
+    }
+  ]
+}

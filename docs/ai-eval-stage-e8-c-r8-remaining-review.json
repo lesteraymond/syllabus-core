@@ -1,0 +1,727 @@
+{
+  "status": "stopped_for_unflagged_resource_assumption",
+  "result": "docs/ai-eval-stage-e8-c-r8-remaining.json",
+  "ledgerSnapshot": "docs/ai-eval-stage-e8-c-ledger-before-remaining.json",
+  "scope": {
+    "dataset": "stage-c-2",
+    "ids": [
+      "af-prog1-passive",
+      "af-prog1-single-format",
+      "af-prog1-alternatives",
+      "af-prog1-week1",
+      "af-syseng-good",
+      "af-syseng-irrelevant",
+      "as-prog1-essay",
+      "as-prog1-bare-name",
+      "as-prog1-keywords",
+      "as-prog1-accessible",
+      "as-prog1-week1",
+      "as-syseng-good",
+      "as-sensors-quiz",
+      "af-prog1-multiweek",
+      "as-prog1-vague-evidence",
+      "as-prog1-multiweek"
+    ],
+    "excludedPriorR8": [
+      "af-prog1-good",
+      "af-prog1-irrelevant",
+      "af-sensors-good",
+      "af-sensors-passive",
+      "as-prog1-good",
+      "as-prog1-recall-quiz",
+      "as-prog1-conceptual-ok",
+      "as-syseng-essay",
+      "as-sensors-good",
+      "af-prog1-conceptual-lecture-ok",
+      "af-prog1-lab-unused",
+      "as-prog1-too-high"
+    ],
+    "limits": {
+      "additionalRequests": 20,
+      "additionalCost": 0.05,
+      "cumulativeRequests": 33,
+      "cumulativeCost": 0.05583426
+    }
+  },
+  "completion": {
+    "maxUnresolved": 0.2,
+    "unresolvedRate": 0,
+    "coverage": 0.25,
+    "stopped": "academic operator stop: Unsupported resource bypass in af-prog1-single-format: draft assumes worked examples and syntax notes available, but own lesson provides no such evidence and no warning or withholding code was recorded.",
+    "state": "incomplete",
+    "usableForAgreement": false,
+    "reason": "12 of 16 planned relationships were never attempted (stopped: academic operator stop: Unsupported resource bypass in af-prog1-single-format: draft assumes worked examples and syntax notes available, but own lesson provides no such evidence and no warning or withholding code was recorded.); they are not evaluated"
+  },
+  "summary": {
+    "planned": 16,
+    "attempted": 4,
+    "verified": 4,
+    "neverAttempted": 12,
+    "provisionalLabelAgreement": {
+      "agree": 4,
+      "evaluated": 4
+    },
+    "falseApprovals": {
+      "count": 0,
+      "provisionallyNegativeEvaluated": 2
+    },
+    "falseRejections": {
+      "count": 0,
+      "provisionallyPositiveEvaluated": 2
+    },
+    "exactQuotes": {
+      "matched": 8,
+      "totalEvaluatedQuotes": 8
+    },
+    "structuredFields": {
+      "requiredAmongVerified": 8,
+      "assessedAmongVerified": 8,
+      "expectedFieldComparisons": 7,
+      "expectedFieldAgreements": 6
+    },
+    "explanationReview": {
+      "definiteInventedScenarioFactsFound": 0,
+      "inferenceCautionRelationships": 1,
+      "cautionCaseIds": [
+        "af-prog1-single-format"
+      ],
+      "note": "Manual caution about stronger-than-evidence inferences, separate from structural validity and provisional label agreement. No claim of faculty-verified explanation accuracy."
+    },
+    "recommendations": {
+      "generated": 2,
+      "unsupportedGenerated": 2,
+      "correctlyWithheldUnsupported": 1,
+      "allWithheld": 1,
+      "unsafeBypass": 1,
+      "facultyReviewReady": 0,
+      "usableRateAmongAllGeneratedDrafts": 0,
+      "advisoryOnlyBenignSimilarity": 0,
+      "confirmedUnwarrantedHardWithholdingFound": 0,
+      "note": "Manual unreviewed quality classifications, not an estimate of precision, accuracy or confirmed resource availability."
+    }
+  },
+  "usage": {
+    "requests": 3,
+    "keyChecks": 1,
+    "priceLookups": 1,
+    "modelRequests": 1,
+    "retries": 0,
+    "promptTokens": 4367,
+    "cachedPromptTokens": 128,
+    "completionTokens": 785,
+    "reasoningTokens": 0,
+    "providerReportedCost": 0.00085693,
+    "charged": 0.00085693,
+    "conservativeComparison": 0.0022521
+  },
+  "failuresAndRecovery": {
+    "firstAttemptFailures": 0,
+    "recovered": 0,
+    "finalUnresolved": 0,
+    "neverAttempted": 12
+  },
+  "bypassEvidence": {
+    "id": "af-prog1-single-format",
+    "quotation": "with the notes available",
+    "supportingOwnLessonEvidence": "No syntax notes or worked-example resource is supplied in this relationship.",
+    "draftReview": [],
+    "draftWarnings": [],
+    "decision": "Not faculty-usable under the approved resource-grounding requirement. This does not prove that notes are unavailable or that faculty could not create them.",
+    "applicationBoundary": "The draft passes the recommendation-quality reviewer and would be eligible if upstream checks permit. It was not displayed in production or applied."
+  },
+  "integrity": {
+    "protectedFilesUnchanged": 45,
+    "historicalLedgerEntriesUnchanged": 13,
+    "newlyPreservedRawJudgments": 4,
+    "changedLabelsOrAspects": 0,
+    "dataModulesLoaded": []
+  },
+  "records": [
+    {
+      "id": "af-prog1-passive",
+      "type": "Activity-fit",
+      "course": "prog1",
+      "cohort": "remaining_16_case_scope",
+      "status": "verified",
+      "provisionalAcceptedLabels": [
+        "PARTIALLY_ALIGNED",
+        "NOT_ALIGNED"
+      ],
+      "provisionalExpectedAspects": {
+        "teaching": "weak"
+      },
+      "facultyVerified": false,
+      "academicDecision": {
+        "label": "NOT_ALIGNED",
+        "explanation": "The ILO requires learners to develop and test Java programs using if-else and switch, i.e. practical skill demonstration at Create level. The activity is a slide lecture in which students only listen and copy syntax, so no learner writes, runs or tests a conditional program; the competence is never practised. The lecture may support the syntax knowledge, but it does not develop the stated performance, so nothing in the activities develops the skill.",
+        "aspects": {
+          "values": {
+            "teaching": "weak",
+            "learnerSupport": "limited",
+            "measures": "not_assessed",
+            "evidence": "not_assessed",
+            "level": "not_assessed",
+            "responsible": "activity"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "labelAgreement": true,
+      "exactEvidence": {
+        "source": "Develop and test Java programs that use if-else and switch statements to make decisions",
+        "target": "students listen and copy the syntax",
+        "sourceExact": true,
+        "targetExact": true
+      },
+      "structuredCoverage": {
+        "fields": {
+          "teaching": "assessed",
+          "learnerSupport": "assessed"
+        },
+        "assessed": [
+          "teaching",
+          "learnerSupport"
+        ],
+        "unassessed": [],
+        "decisive": []
+      },
+      "provisionalFieldComparisons": [
+        {
+          "key": "teaching",
+          "expected": "weak",
+          "got": "weak",
+          "agrees": true
+        }
+      ],
+      "explanationReviewNotes": [],
+      "generatedRecommendation": "- Lecture on Java conditional statements using slides, showing worked examples of if, if-else, nested if and switch.\n- Laboratory practice in which each student writes, runs and tests small Java programs that use if-else and switch to make decisions, with the instructor demonstrating one program first and providing annotated code samples for review.",
+      "recommendationStatus": "withheld",
+      "academicAppropriateness": "Pedagogical direction may be reasonable, but the unqualified resource premise is unsupported; not a usable correction under this evaluation policy.",
+      "unsupportedResourcesParticipantsOrCompetencies": [
+        "Unqualified laboratory access",
+        "Annotated samples need faculty provision; the whole draft is already withheld"
+      ],
+      "draftReview": [
+        "assumes_resource"
+      ],
+      "draftWarnings": [],
+      "reviewEvidence": {
+        "explanation": [],
+        "draft": [
+          {
+            "code": "assumes_resource",
+            "evidence": "Laboratory"
+          }
+        ]
+      },
+      "facultyUsableRecommendation": false,
+      "usabilityMeaning": "A faculty-review-ready proposal, not an accepted or automatically applied revision. Withheld drafts never count as usable."
+    },
+    {
+      "id": "af-prog1-single-format",
+      "type": "Activity-fit",
+      "course": "prog1",
+      "cohort": "remaining_16_case_scope",
+      "status": "verified",
+      "provisionalAcceptedLabels": [
+        "PARTIALLY_ALIGNED"
+      ],
+      "provisionalExpectedAspects": {
+        "teaching": "sound",
+        "learnerSupport": "limited"
+      },
+      "facultyVerified": false,
+      "academicDecision": {
+        "label": "PARTIALLY_ALIGNED",
+        "explanation": "The activity does have students write if-else programs, so it practises the action verb and subject, but it stops at Apply: the ILO asks learners to develop AND test programs, and a timed test from memory gives no opportunity to run and test the program or to use switch. It also offers a single format with no alternative route for learners who cannot code under time pressure, and no reference material or worked examples to support recall of syntax. The gap is the missing testing step and the missing switch practice, plus the single-format support.",
+        "aspects": {
+          "values": {
+            "teaching": "weak",
+            "learnerSupport": "limited",
+            "measures": "not_assessed",
+            "evidence": "not_assessed",
+            "level": "not_assessed",
+            "responsible": "activity"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "labelAgreement": true,
+      "exactEvidence": {
+        "source": "Develop and test Java programs that use if-else and switch statements to make decisions",
+        "target": "Individual timed coding test in which students write if-else programs from memory",
+        "sourceExact": true,
+        "targetExact": true
+      },
+      "structuredCoverage": {
+        "fields": {
+          "teaching": "assessed",
+          "learnerSupport": "assessed"
+        },
+        "assessed": [
+          "teaching",
+          "learnerSupport"
+        ],
+        "unassessed": [],
+        "decisive": []
+      },
+      "provisionalFieldComparisons": [
+        {
+          "key": "teaching",
+          "expected": "sound",
+          "got": "weak",
+          "agrees": false
+        },
+        {
+          "key": "learnerSupport",
+          "expected": "limited",
+          "got": "limited",
+          "agrees": true
+        }
+      ],
+      "explanationReviewNotes": [
+        "The response treats omitted run/testing detail as no opportunity to run/test; that is stronger than the text establishes.",
+        "teaching=weak differs from the provisional teaching=sound expectation; the PARTIALLY_ALIGNED label still agrees. This aspect needs faculty review."
+      ],
+      "generatedRecommendation": "- Individual coding exercise in which students write if-else and switch programs from worked examples and syntax notes, then run and test each program against several inputs and correct any faulty logic; students who prefer not to work under time pressure may complete the same exercise untimed with the notes available.",
+      "recommendationStatus": "unsupported_bypass_stop_required",
+      "academicAppropriateness": "Pedagogical direction may be reasonable, but the unqualified resource premise is unsupported; not a usable correction under this evaluation policy.",
+      "unsupportedResourcesParticipantsOrCompetencies": [
+        "Syntax notes used as an available resource without own-lesson evidence; reviewer emitted no warning or withholding"
+      ],
+      "draftReview": [],
+      "draftWarnings": [],
+      "reviewEvidence": null,
+      "facultyUsableRecommendation": false,
+      "usabilityMeaning": "A faculty-review-ready proposal, not an accepted or automatically applied revision. Withheld drafts never count as usable."
+    },
+    {
+      "id": "af-prog1-alternatives",
+      "type": "Activity-fit",
+      "course": "prog1",
+      "cohort": "remaining_16_case_scope",
+      "status": "verified",
+      "provisionalAcceptedLabels": [
+        "ALIGNED"
+      ],
+      "provisionalExpectedAspects": {
+        "teaching": "sound",
+        "learnerSupport": "adequate"
+      },
+      "facultyVerified": false,
+      "academicDecision": {
+        "label": "ALIGNED",
+        "explanation": "The guided demonstration plus laboratory pair programming lets learners actually write, run and test if-else and switch programs, matching the Create-level practical competence, and the recorded demonstration, annotated samples and solo-or-pair option give adequate learner support.",
+        "aspects": {
+          "values": {
+            "teaching": "sound",
+            "learnerSupport": "adequate",
+            "measures": "not_assessed",
+            "evidence": "not_assessed",
+            "level": "not_assessed",
+            "responsible": "none"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "labelAgreement": true,
+      "exactEvidence": {
+        "source": "Develop and test Java programs that use if-else and switch statements to make decisions",
+        "target": "pair programming in the laboratory",
+        "sourceExact": true,
+        "targetExact": true
+      },
+      "structuredCoverage": {
+        "fields": {
+          "teaching": "assessed",
+          "learnerSupport": "assessed"
+        },
+        "assessed": [
+          "teaching",
+          "learnerSupport"
+        ],
+        "unassessed": [],
+        "decisive": []
+      },
+      "provisionalFieldComparisons": [
+        {
+          "key": "teaching",
+          "expected": "sound",
+          "got": "sound",
+          "agrees": true
+        },
+        {
+          "key": "learnerSupport",
+          "expected": "adequate",
+          "got": "adequate",
+          "agrees": true
+        }
+      ],
+      "explanationReviewNotes": [],
+      "generatedRecommendation": null,
+      "recommendationStatus": "not_needed",
+      "academicAppropriateness": "No correction requested.",
+      "unsupportedResourcesParticipantsOrCompetencies": [],
+      "draftReview": [],
+      "draftWarnings": [],
+      "reviewEvidence": null,
+      "facultyUsableRecommendation": null,
+      "usabilityMeaning": "A faculty-review-ready proposal, not an accepted or automatically applied revision. Withheld drafts never count as usable."
+    },
+    {
+      "id": "af-prog1-week1",
+      "type": "Activity-fit",
+      "course": "prog1",
+      "cohort": "remaining_16_case_scope",
+      "status": "verified",
+      "provisionalAcceptedLabels": [
+        "ALIGNED"
+      ],
+      "provisionalExpectedAspects": {
+        "teaching": "sound",
+        "learnerSupport": [
+          "adequate",
+          "not_applicable"
+        ]
+      },
+      "facultyVerified": false,
+      "academicDecision": {
+        "label": "ALIGNED",
+        "explanation": "This is a Week 1 orientation whose activities set expectations, present the objectives and review policies and grading, which is exactly what the descriptive ILO asks for.",
+        "aspects": {
+          "values": {
+            "teaching": "sound",
+            "learnerSupport": "not_applicable",
+            "measures": "not_assessed",
+            "evidence": "not_assessed",
+            "level": "not_assessed",
+            "responsible": "none"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "labelAgreement": true,
+      "exactEvidence": {
+        "source": "Describe the course objectives, requirements and grading system",
+        "target": "presentation of the course objectives",
+        "sourceExact": true,
+        "targetExact": true
+      },
+      "structuredCoverage": {
+        "fields": {
+          "teaching": "assessed",
+          "learnerSupport": "assessed"
+        },
+        "assessed": [
+          "teaching",
+          "learnerSupport"
+        ],
+        "unassessed": [],
+        "decisive": []
+      },
+      "provisionalFieldComparisons": [
+        {
+          "key": "teaching",
+          "expected": "sound",
+          "got": "sound",
+          "agrees": true
+        },
+        {
+          "key": "learnerSupport",
+          "expected": [
+            "adequate",
+            "not_applicable"
+          ],
+          "got": "not_applicable",
+          "agrees": true
+        }
+      ],
+      "explanationReviewNotes": [],
+      "generatedRecommendation": null,
+      "recommendationStatus": "not_needed",
+      "academicAppropriateness": "No correction requested.",
+      "unsupportedResourcesParticipantsOrCompetencies": [],
+      "draftReview": [],
+      "draftWarnings": [],
+      "reviewEvidence": null,
+      "facultyUsableRecommendation": null,
+      "usabilityMeaning": "A faculty-review-ready proposal, not an accepted or automatically applied revision. Withheld drafts never count as usable."
+    },
+    {
+      "id": "af-syseng-good",
+      "type": "Activity-fit",
+      "course": "syseng",
+      "cohort": "remaining_16_case_scope",
+      "status": "not_attempted",
+      "provisionalAcceptedLabels": [
+        "ALIGNED"
+      ],
+      "provisionalExpectedAspects": {
+        "teaching": "sound"
+      },
+      "facultyVerified": false,
+      "academicDecision": null,
+      "labelAgreement": null,
+      "exactEvidence": null,
+      "structuredCoverage": null,
+      "generatedRecommendation": null,
+      "recommendationStatus": "not_evaluated",
+      "facultyUsableRecommendation": null,
+      "note": "Never sent after the operator safety stop; not an academic failure or an unresolved attempted answer."
+    },
+    {
+      "id": "af-syseng-irrelevant",
+      "type": "Activity-fit",
+      "course": "syseng",
+      "cohort": "remaining_16_case_scope",
+      "status": "not_attempted",
+      "provisionalAcceptedLabels": [
+        "NOT_ALIGNED"
+      ],
+      "provisionalExpectedAspects": {
+        "teaching": "weak"
+      },
+      "facultyVerified": false,
+      "academicDecision": null,
+      "labelAgreement": null,
+      "exactEvidence": null,
+      "structuredCoverage": null,
+      "generatedRecommendation": null,
+      "recommendationStatus": "not_evaluated",
+      "facultyUsableRecommendation": null,
+      "note": "Never sent after the operator safety stop; not an academic failure or an unresolved attempted answer."
+    },
+    {
+      "id": "as-prog1-essay",
+      "type": "Assessment-fit",
+      "course": "prog1",
+      "cohort": "remaining_16_case_scope",
+      "status": "not_attempted",
+      "provisionalAcceptedLabels": [
+        "NOT_ALIGNED"
+      ],
+      "provisionalExpectedAspects": {
+        "measures": "no"
+      },
+      "facultyVerified": false,
+      "academicDecision": null,
+      "labelAgreement": null,
+      "exactEvidence": null,
+      "structuredCoverage": null,
+      "generatedRecommendation": null,
+      "recommendationStatus": "not_evaluated",
+      "facultyUsableRecommendation": null,
+      "note": "Never sent after the operator safety stop; not an academic failure or an unresolved attempted answer."
+    },
+    {
+      "id": "as-prog1-bare-name",
+      "type": "Assessment-fit",
+      "course": "prog1",
+      "cohort": "remaining_16_case_scope",
+      "status": "not_attempted",
+      "provisionalAcceptedLabels": [
+        "PARTIALLY_ALIGNED"
+      ],
+      "provisionalExpectedAspects": {
+        "evidence": "vague"
+      },
+      "facultyVerified": false,
+      "academicDecision": null,
+      "labelAgreement": null,
+      "exactEvidence": null,
+      "structuredCoverage": null,
+      "generatedRecommendation": null,
+      "recommendationStatus": "not_evaluated",
+      "facultyUsableRecommendation": null,
+      "note": "Never sent after the operator safety stop; not an academic failure or an unresolved attempted answer."
+    },
+    {
+      "id": "as-prog1-keywords",
+      "type": "Assessment-fit",
+      "course": "prog1",
+      "cohort": "remaining_16_case_scope",
+      "status": "not_attempted",
+      "provisionalAcceptedLabels": [
+        "PARTIALLY_ALIGNED",
+        "NOT_ALIGNED"
+      ],
+      "provisionalExpectedAspects": {
+        "measures": [
+          "no",
+          "partly"
+        ],
+        "level": "too_low"
+      },
+      "facultyVerified": false,
+      "academicDecision": null,
+      "labelAgreement": null,
+      "exactEvidence": null,
+      "structuredCoverage": null,
+      "generatedRecommendation": null,
+      "recommendationStatus": "not_evaluated",
+      "facultyUsableRecommendation": null,
+      "note": "Never sent after the operator safety stop; not an academic failure or an unresolved attempted answer."
+    },
+    {
+      "id": "as-prog1-accessible",
+      "type": "Assessment-fit",
+      "course": "prog1",
+      "cohort": "remaining_16_case_scope",
+      "status": "not_attempted",
+      "provisionalAcceptedLabels": [
+        "ALIGNED"
+      ],
+      "provisionalExpectedAspects": {
+        "measures": "yes",
+        "evidence": "observable"
+      },
+      "facultyVerified": false,
+      "academicDecision": null,
+      "labelAgreement": null,
+      "exactEvidence": null,
+      "structuredCoverage": null,
+      "generatedRecommendation": null,
+      "recommendationStatus": "not_evaluated",
+      "facultyUsableRecommendation": null,
+      "note": "Never sent after the operator safety stop; not an academic failure or an unresolved attempted answer."
+    },
+    {
+      "id": "as-prog1-week1",
+      "type": "Assessment-fit",
+      "course": "prog1",
+      "cohort": "remaining_16_case_scope",
+      "status": "not_attempted",
+      "provisionalAcceptedLabels": [
+        "ALIGNED"
+      ],
+      "provisionalExpectedAspects": {
+        "measures": "yes"
+      },
+      "facultyVerified": false,
+      "academicDecision": null,
+      "labelAgreement": null,
+      "exactEvidence": null,
+      "structuredCoverage": null,
+      "generatedRecommendation": null,
+      "recommendationStatus": "not_evaluated",
+      "facultyUsableRecommendation": null,
+      "note": "Never sent after the operator safety stop; not an academic failure or an unresolved attempted answer."
+    },
+    {
+      "id": "as-syseng-good",
+      "type": "Assessment-fit",
+      "course": "syseng",
+      "cohort": "remaining_16_case_scope",
+      "status": "not_attempted",
+      "provisionalAcceptedLabels": [
+        "ALIGNED"
+      ],
+      "provisionalExpectedAspects": {
+        "measures": "yes",
+        "evidence": "observable"
+      },
+      "facultyVerified": false,
+      "academicDecision": null,
+      "labelAgreement": null,
+      "exactEvidence": null,
+      "structuredCoverage": null,
+      "generatedRecommendation": null,
+      "recommendationStatus": "not_evaluated",
+      "facultyUsableRecommendation": null,
+      "note": "Never sent after the operator safety stop; not an academic failure or an unresolved attempted answer."
+    },
+    {
+      "id": "as-sensors-quiz",
+      "type": "Assessment-fit",
+      "course": "sensors",
+      "cohort": "remaining_16_case_scope",
+      "status": "not_attempted",
+      "provisionalAcceptedLabels": [
+        "NOT_ALIGNED"
+      ],
+      "provisionalExpectedAspects": {
+        "measures": "no"
+      },
+      "facultyVerified": false,
+      "academicDecision": null,
+      "labelAgreement": null,
+      "exactEvidence": null,
+      "structuredCoverage": null,
+      "generatedRecommendation": null,
+      "recommendationStatus": "not_evaluated",
+      "facultyUsableRecommendation": null,
+      "note": "Never sent after the operator safety stop; not an academic failure or an unresolved attempted answer."
+    },
+    {
+      "id": "af-prog1-multiweek",
+      "type": "Activity-fit",
+      "course": "prog1",
+      "cohort": "remaining_16_case_scope",
+      "status": "not_attempted",
+      "provisionalAcceptedLabels": [
+        "ALIGNED"
+      ],
+      "provisionalExpectedAspects": {
+        "teaching": "sound"
+      },
+      "facultyVerified": false,
+      "academicDecision": null,
+      "labelAgreement": null,
+      "exactEvidence": null,
+      "structuredCoverage": null,
+      "generatedRecommendation": null,
+      "recommendationStatus": "not_evaluated",
+      "facultyUsableRecommendation": null,
+      "note": "Never sent after the operator safety stop; not an academic failure or an unresolved attempted answer."
+    },
+    {
+      "id": "as-prog1-vague-evidence",
+      "type": "Assessment-fit",
+      "course": "prog1",
+      "cohort": "remaining_16_case_scope",
+      "status": "not_attempted",
+      "provisionalAcceptedLabels": [
+        "PARTIALLY_ALIGNED"
+      ],
+      "provisionalExpectedAspects": {
+        "evidence": "vague"
+      },
+      "facultyVerified": false,
+      "academicDecision": null,
+      "labelAgreement": null,
+      "exactEvidence": null,
+      "structuredCoverage": null,
+      "generatedRecommendation": null,
+      "recommendationStatus": "not_evaluated",
+      "facultyUsableRecommendation": null,
+      "note": "Never sent after the operator safety stop; not an academic failure or an unresolved attempted answer."
+    },
+    {
+      "id": "as-prog1-multiweek",
+      "type": "Assessment-fit",
+      "course": "prog1",
+      "cohort": "remaining_16_case_scope",
+      "status": "not_attempted",
+      "provisionalAcceptedLabels": [
+        "ALIGNED"
+      ],
+      "provisionalExpectedAspects": {
+        "measures": "yes",
+        "evidence": "observable"
+      },
+      "facultyVerified": false,
+      "academicDecision": null,
+      "labelAgreement": null,
+      "exactEvidence": null,
+      "structuredCoverage": null,
+      "generatedRecommendation": null,
+      "recommendationStatus": "not_evaluated",
+      "facultyUsableRecommendation": null,
+      "note": "Never sent after the operator safety stop; not an academic failure or an unresolved attempted answer."
+    }
+  ]
+}

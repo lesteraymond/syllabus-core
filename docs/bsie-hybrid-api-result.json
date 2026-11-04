@@ -1,0 +1,97 @@
+{
+  "testedAt": "2026-10-21T22:20:40.734Z",
+  "syllabusId": 100,
+  "runId": 220,
+  "score": 85,
+  "ready": false,
+  "alignment": {
+    "status": "not_evaluated",
+    "reason": "Resolve the hard gates before Gemini alignment can run.",
+    "judgements": []
+  },
+  "deductions": [
+    {
+      "id": "VALUE:plan[0].values",
+      "points": 1,
+      "reason": "Missing core value"
+    },
+    {
+      "id": "VALUE:plan[1].values",
+      "points": 1,
+      "reason": "Missing core value"
+    },
+    {
+      "id": "VALUE:plan[2].values",
+      "points": 1,
+      "reason": "Missing core value"
+    },
+    {
+      "id": "VALUE:plan[3].values",
+      "points": 1,
+      "reason": "Missing core value"
+    },
+    {
+      "id": "VALUE:plan[4].values",
+      "points": 1,
+      "reason": "Missing core value"
+    },
+    {
+      "id": "VALUE:plan[6].values",
+      "points": 1,
+      "reason": "Missing core value"
+    },
+    {
+      "id": "VALUE:plan[7].values",
+      "points": 1,
+      "reason": "Missing core value"
+    },
+    {
+      "id": "VALUE:plan[8].values",
+      "points": 1,
+      "reason": "Missing core value"
+    },
+    {
+      "id": "VALUE:plan[9].values",
+      "points": 1,
+      "reason": "Missing core value"
+    },
+    {
+      "id": "VALUE:plan[10].values",
+      "points": 1,
+      "reason": "Missing core value"
+    },
+    {
+      "id": "VALUE:plan[12].values",
+      "points": 1,
+      "reason": "Missing core value"
+    },
+    {
+      "id": "VALUE:plan[13].values",
+      "points": 1,
+      "reason": "Missing core value"
+    },
+    {
+      "id": "VALUE:plan[14].values",
+      "points": 1,
+      "reason": "Missing core value"
+    },
+    {
+      "id": "VALUE:plan[15].values",
+      "points": 1,
+      "reason": "Missing core value"
+    },
+    {
+      "id": "VALUE:plan[16].values",
+      "points": 1,
+      "reason": "Missing core value"
+    }
+  ],
+  "hardFailures": [
+    "Official approved curriculum unavailable for BSIE. Submission is blocked until it is supplied.",
+    "Official program outcomes are unavailable; program alignment cannot be verified.",
+    "Gemini alignment must complete before submission. Resolve the hard gates before Gemini alignment can run."
+  ],
+  "reportPersisted": true,
+  "draftUnchanged": true,
+  "submitted": false
+}

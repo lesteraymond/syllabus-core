@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Syllabus Management System — 25s showcase</title>
+<style>
+@font-face{font-family:"Nunito";font-weight:200 1000;src:url("assets/nunito-latin.woff2") format("woff2")}
+:root{--blue:#1a2196;--blue2:#2c36b4;--navy:#0d1240;--gold:#d9a441;--white:#fff;--bg:#f8faf9;--green:#2f7d5b}
+*{box-sizing:border-box;margin:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:var(--navy);font-family:"Nunito",sans-serif}
+#stage{position:absolute;inset:0;overflow:hidden;background:radial-gradient(1200px 800px at 75% 20%,#2830b0 0%,#1a2196 38%,#0d1240 100%)}
+.abs{position:absolute}
+.scene{position:absolute;inset:0;will-change:opacity}
+.dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.07) 2px,transparent 2.5px);background-size:48px 48px}
+.glow{position:absolute;border-radius:50%;filter:blur(90px)}
+.mask{overflow:hidden;display:block;padding:0 .06em}
+.mask>span{display:inline-block;will-change:transform}
+.h1{color:#fff;font-weight:900;letter-spacing:-.035em;line-height:.98}
+.eyebrow{font-weight:800;letter-spacing:.22em;color:var(--gold);font-size:30px;text-transform:uppercase}
+.sub{color:#c9cffa;font-weight:600;font-size:38px;line-height:1.3}
+.card{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;border-radius:28px;overflow:hidden;background:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.18),0 60px 120px rgba(4,8,40,.55)}
+.card img{position:absolute;inset:0;width:1920px;height:1080px}
+.persp{position:absolute;inset:0;perspective:2400px}
+.chip{position:absolute;padding:14px 26px;border-radius:999px;background:#fff;color:var(--navy);font-weight:800;font-size:30px;box-shadow:0 14px 40px rgba(4,8,40,.35);display:flex;gap:12px;align-items:center;white-space:nowrap}
+.chip i{width:16px;height:16px;border-radius:50%;background:var(--green);display:block}
+.tile{position:absolute;width:120px;height:158px;border-radius:14px;background:#fff;box-shadow:0 18px 40px rgba(4,8,40,.4);padding:14px 12px}
+.tile b{display:block;height:12px;border-radius:6px;background:var(--blue);width:60%;margin-bottom:14px}
+.tile u{display:block;height:8px;border-radius:4px;background:#dfe3f5;margin-bottom:10px;text-decoration:none}
+.tile s{display:block;height:8px;border-radius:4px;background:var(--gold);width:40%;margin-top:16px;text-decoration:none}
+#swipe{position:absolute;top:-10%;bottom:-10%;width:2600px;background:linear-gradient(100deg,var(--gold) 0 3%,var(--blue2) 3% 100%);transform:skewX(-12deg);z-index:50}
+#cursor{position:absolute;width:46px;height:46px;z-index:5;filter:drop-shadow(0 6px 8px rgba(0,0,0,.4))}
+.ring{position:absolute;border-radius:50%;border:6px solid var(--green)}
+.badge{position:absolute;display:flex;align-items:center;gap:14px;background:var(--green);color:#fff;font-weight:900;border-radius:14px;box-shadow:0 10px 30px rgba(47,125,91,.5)}
+</style></head>
+<body><div id="stage">
+<div class="dots"></div>
+<div class="glow" style="width:900px;height:900px;left:-300px;bottom:-400px;background:rgba(44,54,180,.55)"></div>
+
+<!-- S1 hook -->
+<div class="scene" id="s1"><div id="tiles"></div>
+  <div class="abs" style="left:130px;top:250px">
+    <div class="h1" style="font-size:160px"><span class="mask"><span class="w1">Syllabi</span></span><span class="mask"><span class="w1">shouldn’t be</span></span><span class="mask"><span class="w1" style="color:var(--gold)">a scramble.</span></span></div>
+  </div>
+</div>
+
+<!-- S2 build / S3 review / S4 organize share a layout -->
+<div class="scene" id="s2"><div class="persp"><div class="card" id="c2a"><img src="shots/builder-1.png"></div><div class="card" id="c2b"><img src="shots/builder-3.png"></div></div>
+  <div class="abs lab" id="l2" style="left:110px;top:180px;width:700px"></div>
+  <div class="chip" id="chip2" style="left:130px;top:790px"><i></i>Auto-save on</div></div>
+<div class="scene" id="s3"><div class="persp"><div class="card" id="c3"><img src="shots/review-open.png">
+    <div style="position:absolute;left:562px;top:438px;width:52px;height:17px;background:#fff;font:12px/17px Arial,Helvetica,sans-serif;color:#111">IT 201</div>
+    <div class="badge" id="appr" style="left:1231px;top:442px;width:353px;height:52px;justify-content:center;font-size:22px;opacity:0">✓ Approved</div>
+    <div class="ring" id="ring3" style="left:1370px;top:455px;width:30px;height:30px;opacity:0"></div>
+    <svg id="cursor" viewBox="0 0 24 24"><path d="M3 2l7 19 3-8 8-3z" fill="#0d1240" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+  </div></div>
+  <div class="abs lab" id="l3" style="left:110px;top:180px;width:700px"></div>
+  <div class="chip" id="chip3" style="left:130px;top:790px"><i></i>Approve · Return · Reject</div></div>
+<div class="scene" id="s4"><div class="persp"><div class="card" id="c4a"><img src="shots/repository.png"><div id="rowhl"></div></div><div class="card" id="c4b"><img src="shots/dashboard.png"></div></div>
+  <div class="abs lab" id="l4" style="left:110px;top:180px;width:700px"></div>
+  <div class="chip" id="chip4" style="left:130px;top:790px"><i></i>4 approved · searchable</div></div>
+
+<!-- S5 end -->
+<div class="scene" id="s5">
+  <div class="abs" id="disc" style="left:730px;top:40px;width:460px;height:460px"><div style="position:absolute;left:70px;top:70px;width:320px;height:320px;border-radius:50%;background:#fff;box-shadow:0 30px 90px rgba(4,8,40,.5)"></div><img src="assets/cite-logo.png" style="position:absolute;inset:0;width:100%;height:100%"></div>
+  <div class="abs" id="disc-ring" style="left:800px;top:110px;width:320px;height:320px;border-radius:50%;border:5px solid var(--gold)"></div>
+  <div class="abs" style="left:0;width:1920px;top:520px;text-align:center">
+    <div class="h1" style="font-size:150px;display:flex;justify-content:center;gap:34px"><span class="mask"><span class="e1">Build.</span></span><span class="mask"><span class="e2">Review.</span></span></div>
+    <div class="h1" style="font-size:150px"><span class="mask"><span class="e3" style="color:var(--gold)">Stay organized.</span></span></div>
+    <div class="eyebrow" id="e4" style="margin-top:44px;color:#c9cffa;font-size:28px">Syllabus Management System</div>
+  </div>
+</div>
+<div id="swipe"></div>
+</div>
+<script src="timeline.cjs"></script>
+<script>
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const inOut=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+const outCubic=t=>1-Math.pow(1-t,3);
+const outExpo=t=>t>=1?1:1-Math.pow(2,-10*t);
+const outBack=t=>{const c=1.70158+1;return 1+c*Math.pow(t-1,3)+1.70158*Math.pow(t-1,2)};
+const seg=(t,a,b)=>clamp((t-a)/(b-a));
+const $=id=>document.getElementById(id);
+const C=TL.cuts;
+
+// ---- build static bits
+const rnd=(i)=>{const x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x)};
+const tiles=[];
+for(let i=0;i<15;i++){const d=document.createElement('div');d.className='tile';d.innerHTML='<b></b><u></u><u></u><u style="width:70%"></u><s></s>';$('tiles').appendChild(d);tiles.push(d)}
+function labelHTML(id,num,word,sub){ $(id).innerHTML=`<div class="eyebrow"><span class="mask"><span class="a">${num}</span></span></div><div class="h1" style="font-size:160px;margin-top:6px"><span class="mask"><span class="b">${word}</span></span></div><div class="sub" style="margin-top:20px;width:600px"><span class="mask"><span class="c">${sub}</span></span></div>`}
+labelHTML('l2','Step 01','Build.','Seven guided steps, one connected form.');
+labelHTML('l3','Step 02','Review.','Read, comment, then approve or send back.');
+labelHTML('l4','Step 03','Organize.','Every approved syllabus, one repository.');
+for(const id of['l2','l3','l4'])$(id).querySelector('.b').style.color=id==='l3'?'#fff':'#fff';
+for(let i=1;i<=4;i++)for(const el of document.querySelectorAll('#rowhl'))el.innerHTML+=`<div class="ring" style="left:${1408-26}px;top:${371+(i-1)*58.7-26}px;width:52px;height:52px;opacity:0"></div>`;
+
+// ---- camera: keyframes [t,S,cx,cy,Tx,Ty,rotY]; image point (cx,cy) lands at stage (Tx,Ty)
+function cam(el,kf,t,extra={}){
+  let a=kf[0],b=kf[kf.length-1];
+  if(t<=kf[0][0])b=a; else if(t>=kf[kf.length-1][0])a=b; else for(let i=0;i<kf.length-1;i++)if(t>=kf[i][0]&&t<=kf[i+1][0]){a=kf[i];b=kf[i+1];break}
+  const p=a===b?1:inOut(seg(t,a[0],b[0]));
+  const v=[1,2,3,4,5,6].map(k=>lerp(a[k],b[k],p));
+  const [S,cx,cy,Tx,Ty,ry]=v;
+  el.style.transform=`translate3d(${Tx-S*cx}px,${Ty-S*cy}px,0) scale(${S}) rotateY(${ry}deg)`;
+  el.style.transformOrigin=`${cx}px ${cy}px`; // rotate around the focus point
+  // translate then scale about origin: shift so origin maps correctly
+  el.style.transform=`translate3d(${Tx-cx}px,${Ty-cy}px,0) scale(${S}) rotateY(${ry}deg)`;
+}
+function maskIn(sel,t,t0,dur=.7,stag=.08){document.querySelectorAll(sel).forEach((e,i)=>{const p=outExpo(seg(t,t0+i*stag,t0+i*stag+dur));e.style.transform=`translateY(${(1-p)*115}%)`})}
+function maskOut(sel,t,t0,dur=.35){document.querySelectorAll(sel).forEach(e=>{const p=inOut(seg(t,t0,t0+dur));if(p>0)e.style.transform=`translateY(${-p*115}%)`})}
+const vis=(el,t,a,b,f=.25)=>{const o=Math.min(seg(t,a,a+f),1-seg(t,b-f,b));el.style.opacity=o;el.style.visibility=o>0?'visible':'hidden'};
+
+// ---- grid positions for the tiles
+const grid=tiles.map((_,i)=>({x:1180+(i%5)*135,y:300+Math.floor(i/5)*180}));
+
+function render(t){
+  // swipe at each cut (centre of the swipe is the cut time)
+  let sw=-9999; for(const k of[C.build,C.review,C.organize,C.end]){const p=seg(t,k-.32,k+.32);if(p>0&&p<1)sw=lerp(-2800,1920+400,inOut(p))}
+  $('swipe').style.left=sw+'px';
+
+  // ===== S1
+  vis($('s1'),t,0,C.build+.12,.05);
+  maskIn('.w1',t,.1,.8,.18); maskOut('.w1',t,3.0,.35);
+  tiles.forEach((d,i)=>{
+    const sx=(rnd(i)*2200-150), sy=(rnd(i+40)*1300-120), sr=(rnd(i+80)-.5)*140;
+    const drift=t*(14+rnd(i+9)*20); const snapP=outBack(seg(t,2.25,2.85));
+    const fall=outCubic(seg(t,0,1.0));
+    const px=lerp(sx-drift*(i%2?1:-1)+ (rnd(i+3)-.5)*300, grid[i].x, snapP);
+    const py=lerp(lerp(-260,sy,fall), grid[i].y, snapP);
+    const rot=lerp(sr+t*20*(i%2?1:-1),0,snapP);
+    const sc=lerp(.85+rnd(i+5)*.5,1,snapP)*(1+.06*Math.sin(clamp(seg(t,2.25,2.85)*Math.PI)));
+    d.style.transform=`translate(${px}px,${py}px) rotate(${rot}deg) scale(${sc})`;
+    d.style.opacity=clamp(t*3)*(1-seg(t,3.05,3.45));
+  });
+
+  // ===== S2 build
+  vis($('s2'),t,C.build-.1,C.review+.1,.05);
+  const t2=t-C.build;
+  maskIn('#l2 .a',t,C.build+.35,.6,0);maskIn('#l2 .b',t,C.build+.45,.9,0);maskIn('#l2 .c',t,C.build+.8,.8,0);
+    $('l2').style.opacity=1-seg(t,C.build+3.3,C.build+3.6)+seg(t,C.build+5.5,C.build+5.9);
+  const A=1500; // card A overview (builder-1)
+  cam($('c2a'),[[0,.5,960,540,1380,560,-9],[2.9,.56,960,540,1330,560,-5],[3.2,.56,960,540,1330,560,-5]].map(k=>[k[0]+C.build,...k.slice(1)]),t);
+  $('c2a').style.opacity=1-seg(t,C.build+2.9,C.build+3.3);
+  cam($('c2b'),[[2.9,.5,1200,470,1380,600,-10],[3.3,.56,1200,540,1330,560,-5],[4.3,2.05,880,480,960,470,0],[5.5,2.05,880,480,960,470,0],[6.0,.56,1200,540,1500,560,-6]].map(k=>[k[0]+C.build,...k.slice(1)]),t);
+  $('c2b').style.opacity=seg(t,C.build+2.9,C.build+3.3);
+  vis($('chip2'),t,C.build+1.0,C.build+2.6,.3);$('chip2').style.transform=`translateY(${(1-outBack(seg(t,C.build+1.0,C.build+1.5)))*50}px)`;
+
+  // ===== S3 review
+  vis($('s3'),t,C.review-.1,C.organize+.1,.05);
+  maskIn('#l3 .a',t,C.review+.35,.6,0);maskIn('#l3 .b',t,C.review+.45,.9,0);maskIn('#l3 .c',t,C.review+.8,.8,0);
+    const r=C.review; $('l3').style.opacity=clamp(1-seg(t,r+2.0,r+2.3)+seg(t,r+4.8,r+5.2));
+  cam($('c3'),[[0,.5,960,540,1380,560,-9],[1.3,.56,1000,540,1380,560,-6],[2.0,.56,1000,540,1380,560,-6],[2.9,1.7,1330,420,1250,520,0],[4.3,1.7,1330,470,1250,520,0],[5.2,.56,1000,540,1380,560,-5],[6.2,.56,1000,540,1380,560,-5]].map(k=>[k[0]+r,...k.slice(1)]),t);
+  // cursor path in image coordinates: from note box to the Approve button, click at r+3.4
+  const cp=inOut(seg(t,r+2.4,r+3.4)); $('cursor').style.left=lerp(1450,1370,cp)+'px'; $('cursor').style.top=lerp(340,462,cp)+'px';
+  $('cursor').style.opacity=seg(t,r+2.2,r+2.5)*(1-seg(t,r+4.3,r+4.6));
+  const click=seg(t,r+3.4,r+3.9); const ap=outBack(seg(t,r+3.5,r+3.9));
+  $('ring3').style.opacity=click>0&&click<1?1-click:0; const rs=lerp(30,200,outCubic(click)); $('ring3').style.width=$('ring3').style.height=rs+'px'; $('ring3').style.left=(1385-rs/2)+'px'; $('ring3').style.top=(468-rs/2)+'px';
+  $('appr').style.opacity=clamp(ap*3); $('appr').style.transform=`scale(${lerp(.9,1,clamp(ap))})`;
+  $('appr').style.fontSize='24px'; $('appr').style.boxShadow=`0 0 ${40*clamp(1-seg(t,r+3.6,r+4.6))}px rgba(47,125,91,.9)`;
+  vis($('chip3'),t,r+1.0,r+2.1,.3);$('chip3').style.transform=`translateY(${(1-outBack(seg(t,r+1.0,r+1.5)))*50}px)`;
+
+  // ===== S4 organize
+  vis($('s4'),t,C.organize-.1,C.end+.1,.05);
+  maskIn('#l4 .a',t,C.organize+.35,.6,0);maskIn('#l4 .b',t,C.organize+.45,.9,0);maskIn('#l4 .c',t,C.organize+.8,.8,0);
+    const o=C.organize; $('l4').style.opacity=clamp(1-seg(t,o+1.8,o+2.1)+seg(t,o+4.2,o+4.6));
+  cam($('c4a'),[[0,.5,960,540,1380,560,-9],[1.2,.56,1000,520,1380,560,-6],[1.8,.56,1000,520,1380,560,-6],[2.6,1.4,880,450,960,520,0],[4.0,1.4,880,450,960,520,0],[4.6,.56,1000,520,1380,560,-6]].map(k=>[k[0]+o,...k.slice(1)]),t);
+  $('c4a').style.opacity=1-seg(t,o+4.1,o+4.6);
+  cam($('c4b'),[[4.1,.5,960,540,1380,600,-10],[4.7,.56,1000,540,1380,560,-6],[5.9,.56,1000,540,1380,560,-6]].map(k=>[k[0]+o,...k.slice(1)]),t);
+  $('c4b').style.opacity=seg(t,o+4.1,o+4.6)*(1);
+  document.querySelectorAll('#rowhl .ring').forEach((e,i)=>{const p=seg(t,o+1.6+i*.35,o+2.3+i*.35);e.style.opacity=p>0?(1-p)*1:0;const s=lerp(.6,2.2,outCubic(p));e.style.transform=`scale(${s})`});
+  vis($('chip4'),t,o+1.0,o+2.0,.3);$('chip4').style.transform=`translateY(${(1-outBack(seg(t,o+1.0,o+1.5)))*50}px)`;
+
+  // ===== S5 end
+  const e=C.end; vis($('s5'),t,e-.1,99,.05);
+  const ls=outBack(seg(t,e+.15,e+.95)); $('disc').style.transform=`scale(${lerp(.2,1,clamp(ls,0,1.2))}) rotate(${(1-outCubic(seg(t,e+.15,e+1.1)))*-90}deg)`; $('disc').style.opacity=clamp(seg(t,e+.15,e+.4));
+  const rp=outCubic(seg(t,e+.3,e+1.4)); $('disc-ring').style.transform=`scale(${lerp(1,1.9,rp)})`; $('disc-ring').style.opacity=(1-rp)*clamp(seg(t,e+.3,e+.4));
+  maskIn('.e1',t,e+.9,.7,0);maskIn('.e2',t,e+1.4,.7,0);maskIn('.e3',t,e+1.9,.8,0);
+  $('e4').style.opacity=seg(t,e+2.4,e+3.0);
+  $('disc').style.transform+=` translateY(${Math.sin(t*1.6)*5}px)`;
+}
+window.render=render; render(0);
+</script></body></html>

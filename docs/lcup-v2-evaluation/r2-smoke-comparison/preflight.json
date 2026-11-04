@@ -1,0 +1,121 @@
+{
+ "at": "2026-10-29T09:02:36.364Z",
+ "allPass": true,
+ "checks": [
+  {
+   "name": "bundle preparedHash is the prepared one",
+   "ok": true,
+   "detail": "d6e2f2f551067433115a345edad3ccf114e4cd26ddf38b5cefc4354f8f1a09e2"
+  },
+  {
+   "name": "bundle content hashes to its preparedHash",
+   "ok": true
+  },
+  {
+   "name": "verifyBundle passes (sources, benchmark, contexts, references, plan pairs)",
+   "ok": true
+  },
+  {
+   "name": "bundle is the r2 smoke bundle: three cases, no pilot, nonofficial",
+   "ok": true
+  },
+  {
+   "name": "every prompt fingerprint matches the file on disk (8 files)",
+   "ok": true,
+   "detail": [
+    "gemini.js bff6ea1ef377",
+    "variants.js a9ba7eac42a3",
+    "stages.js 52dc77afc351",
+    "academicV2Plan.js 2800c782657d",
+    "anthropicClient.js 53917e36fa51",
+    "evidencePresence.js 3e7e50a2824c",
+    "contentPresence.cjs 105ddd2683d3",
+    "academicV2Recommendation.js de181846fac2"
+   ]
+  },
+  {
+   "name": "every source document hash matches the file on disk",
+   "ok": true,
+   "detail": [
+    "BM1-IT202-096 docs/lcup-approved-offline/it202.fixture.json p. ff1f9ed8aa24",
+    "BM1-IT202-096 reference-data/IT-202-Programming-1.pdf p.1,2,3,4 6376fe94981a",
+    "BM1-IE402-074 docs/lcup-approved-offline/ie402.fixture.json p. 8b8e701e15ec",
+    "BM1-IE402-074 reference-data/IE402-SYSTEM-ENGINEERINGS.pdf p.1,3,4 44ca6d48c77d",
+    "BM1-CPE304-051 docs/lcup-approved-offline/cpe304.fixture.json p. f22a01d95fba",
+    "BM1-CPE304-051 reference-data/CPE-304-Fundamentals-of-Mixed-Signals-and-Sensors.pdf p.1,2,4,5 f68eb5bedb77"
+   ]
+  },
+  {
+   "name": "benchmark file hash matches the bundle",
+   "ok": true,
+   "detail": "ebd12920a890971b8c7fb481cc6bc9b469ec7dd4c2001134f6833cc31009bbf7"
+  },
+  {
+   "name": "receipt authorizes exactly this run (bundle, scope, model, policy, contract, limits, unexpired)",
+   "ok": true
+  },
+  {
+   "name": "receipt names the r2 contract and the approved limits",
+   "ok": true,
+   "detail": {
+    "approvedAt": "2026-10-29T09:01:47Z",
+    "expiresAt": "2026-10-29T10:01:47Z",
+    "minutesLeft": 59
+   }
+  },
+  {
+   "name": "model is explicit and in the evaluation allowlist",
+   "ok": true
+  },
+  {
+   "name": "the plan is the prepared plan: same three request bodies",
+   "ok": true,
+   "detail": [
+    "5e79991b34dee693",
+    "80dbfd51ae91a2a1",
+    "8717312777551a6e"
+   ]
+  },
+  {
+   "name": "every request is to claude-sonnet-5-5, max_tokens 4096, adaptive thinking, no streaming",
+   "ok": true
+  },
+  {
+   "name": "the initial plan fits the limits",
+   "ok": true,
+   "detail": {
+    "worst": 0.6458622500000001,
+    "low": 0.07888609999999999,
+    "high": 0.25737415
+   }
+  },
+  {
+   "name": "no client retries (ANTHROPIC_MAX_RETRIES=0), 90 s timeout, prompt cache on",
+   "ok": true,
+   "detail": {
+    "ANTHROPIC_MAX_RETRIES": "0",
+    "ANTHROPIC_TIMEOUT_SEC": "90"
+   }
+  },
+  {
+   "name": "the guard stops at the first transient error, invalid answer or unproductive answer",
+   "ok": true
+  },
+  {
+   "name": "spend register: total cap 10 USD, room for the worst case",
+   "ok": true,
+   "detail": {
+    "total": 1.3525116,
+    "cap": 10
+   }
+  },
+  {
+   "name": "API key loads from server/.env in the expected format (value not printed)",
+   "ok": true
+  },
+  {
+   "name": "output directory is free",
+   "ok": true
+  }
+ ]
+}

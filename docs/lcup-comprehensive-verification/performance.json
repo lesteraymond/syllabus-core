@@ -1,0 +1,147 @@
+{
+  "scope": "Offline Node performance and mock provider; not live latency, throughput, accuracy or billing",
+  "node": "v26.12.1",
+  "rows": [
+    {
+      "name": "small partial syllabus",
+      "elapsedMs": 531.3607999999999,
+      "heapDeltaBytes": 13798816,
+      "rssBytes": 79609856,
+      "pairCount": 56,
+      "requiredWeeklyCells": 14,
+      "retainedRelationshipRecords": 58,
+      "adapterRequests": 15,
+      "disposition": "REQUIRES_REVISION",
+      "contextLimited": 0,
+      "liveCalls": 0
+    },
+    {
+      "name": "full 18-week syllabus",
+      "elapsedMs": 96.18889999999999,
+      "heapDeltaBytes": 4111840,
+      "rssBytes": 85430272,
+      "pairCount": 217,
+      "requiredWeeklyCells": 105,
+      "retainedRelationshipRecords": 232,
+      "adapterRequests": 59,
+      "disposition": "SUPPORTED_BY_SUPPLIED_EVIDENCE",
+      "contextLimited": 0,
+      "liveCalls": 0
+    },
+    {
+      "name": "six ILOs per instructional lesson",
+      "elapsedMs": 151.02089999999998,
+      "heapDeltaBytes": -1201320,
+      "rssBytes": 105127936,
+      "pairCount": 592,
+      "requiredWeeklyCells": 105,
+      "retainedRelationshipRecords": 607,
+      "adapterRequests": 152,
+      "disposition": "SUPPORTED_BY_SUPPLIED_EVIDENCE",
+      "contextLimited": 0,
+      "liveCalls": 0
+    },
+    {
+      "name": "grouped Week 1–2",
+      "elapsedMs": 56.75249999999994,
+      "heapDeltaBytes": 10762208,
+      "rssBytes": 108130304,
+      "pairCount": 205,
+      "requiredWeeklyCells": 98,
+      "retainedRelationshipRecords": 219,
+      "adapterRequests": 56,
+      "disposition": "FACULTY_REVIEW",
+      "contextLimited": 0,
+      "liveCalls": 0
+    },
+    {
+      "name": "long academic cell",
+      "elapsedMs": 52.69150000000002,
+      "heapDeltaBytes": 13029600,
+      "rssBytes": 108945408,
+      "pairCount": 217,
+      "requiredWeeklyCells": 105,
+      "retainedRelationshipRecords": 231,
+      "adapterRequests": 55,
+      "disposition": "PARTIALLY_EVALUATED",
+      "contextLimited": 13,
+      "liveCalls": 0
+    }
+  ],
+  "concurrent": {
+    "count": 4,
+    "wallMs": 236.88059999999996,
+    "requests": 236,
+    "rows": [
+      {
+        "name": "concurrent independent preview",
+        "elapsedMs": 232.46249999999986,
+        "heapDeltaBytes": 12366464,
+        "rssBytes": 133414912,
+        "pairCount": 217,
+        "requiredWeeklyCells": 105,
+        "retainedRelationshipRecords": 232,
+        "adapterRequests": 59,
+        "disposition": "SUPPORTED_BY_SUPPLIED_EVIDENCE",
+        "contextLimited": 0,
+        "liveCalls": 0
+      },
+      {
+        "name": "concurrent independent preview",
+        "elapsedMs": 226.11950000000002,
+        "heapDeltaBytes": 6433920,
+        "rssBytes": 133419008,
+        "pairCount": 217,
+        "requiredWeeklyCells": 105,
+        "retainedRelationshipRecords": 232,
+        "adapterRequests": 59,
+        "disposition": "SUPPORTED_BY_SUPPLIED_EVIDENCE",
+        "contextLimited": 0,
+        "liveCalls": 0
+      },
+      {
+        "name": "concurrent independent preview",
+        "elapsedMs": 219.5703000000001,
+        "heapDeltaBytes": 477712,
+        "rssBytes": 133419008,
+        "pairCount": 217,
+        "requiredWeeklyCells": 105,
+        "retainedRelationshipRecords": 232,
+        "adapterRequests": 59,
+        "disposition": "SUPPORTED_BY_SUPPLIED_EVIDENCE",
+        "contextLimited": 0,
+        "liveCalls": 0
+      },
+      {
+        "name": "concurrent independent preview",
+        "elapsedMs": 209.2414000000001,
+        "heapDeltaBytes": 9438792,
+        "rssBytes": 133419008,
+        "pairCount": 217,
+        "requiredWeeklyCells": 105,
+        "retainedRelationshipRecords": 232,
+        "adapterRequests": 59,
+        "disposition": "SUPPORTED_BY_SUPPLIED_EVIDENCE",
+        "contextLimited": 0,
+        "liveCalls": 0
+      }
+    ]
+  },
+  "promptPlan": {
+    "model": "claude-sonnet-4-6",
+    "priceBasisDate": "2026-10-27",
+    "bodyCount": 55,
+    "bodyBytes": 2656334,
+    "requests": 55,
+    "relationships": 217,
+    "worst": 26.43456337500001,
+    "largest": 0.49966950000000004,
+    "low": 1.40967435,
+    "high": 7.590299475000001,
+    "inputTokensPerRequest": 15421,
+    "note": "Existing repository-pinned prices and heuristic estimates, not a current quote or approved spend. Main-pass request bodies only; conditional C2/retries add calls. No price endpoint called."
+  },
+  "externalNetworkAttempts": 0,
+  "paidCalls": 0,
+  "peakProcessRssKilobytes": 146452
+}

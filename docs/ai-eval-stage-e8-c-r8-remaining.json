@@ -1,0 +1,609 @@
+{
+  "items": 16,
+  "runs": 1,
+  "answered": 4,
+  "invalid": 0,
+  "invalidRate": 0,
+  "notAttempted": 12,
+  "agreement": 1,
+  "falsePositiveRate": 0,
+  "falseNegativeRate": 0,
+  "counts": {
+    "clearAligned": 2,
+    "falsePositive": 0,
+    "clearNot": 2,
+    "falseNegative": 0
+  },
+  "confusion": {
+    "ALIGNED": {
+      "ALIGNED": 2,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "PARTIAL": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 1,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "FLAGGED": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 1,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    }
+  },
+  "partialAccuracy": 1,
+  "approvalAccuracy": 1,
+  "byDiscipline": {
+    "computing": {
+      "items": 12,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "engineering": {
+      "items": 4,
+      "answered": 0,
+      "agree": 0,
+      "invalid": 0,
+      "agreement": null
+    }
+  },
+  "byCategory": {
+    "wrong-method": {
+      "items": 1,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "limited-support": {
+      "items": 1,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "alternative-formats": {
+      "items": 1,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "week-one-orientation": {
+      "items": 2,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "clear-positive": {
+      "items": 2,
+      "answered": 0,
+      "agree": 0,
+      "invalid": 0,
+      "agreement": null
+    },
+    "off-subject": {
+      "items": 2,
+      "answered": 0,
+      "agree": 0,
+      "invalid": 0,
+      "agreement": null
+    },
+    "bare-name": {
+      "items": 1,
+      "answered": 0,
+      "agree": 0,
+      "invalid": 0,
+      "agreement": null
+    },
+    "wrong-cognitive-level": {
+      "items": 2,
+      "answered": 0,
+      "agree": 0,
+      "invalid": 0,
+      "agreement": null
+    },
+    "accessible-alternative": {
+      "items": 1,
+      "answered": 0,
+      "agree": 0,
+      "invalid": 0,
+      "agreement": null
+    },
+    "multiweek": {
+      "items": 2,
+      "answered": 0,
+      "agree": 0,
+      "invalid": 0,
+      "agreement": null
+    },
+    "vague-evidence": {
+      "items": 1,
+      "answered": 0,
+      "agree": 0,
+      "invalid": 0,
+      "agreement": null
+    }
+  },
+  "stability": null,
+  "byType": {
+    "Activity-fit": {
+      "items": 7,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "Assessment-fit": {
+      "items": 9,
+      "answered": 0,
+      "agree": 0,
+      "invalid": 0,
+      "agreement": null
+    }
+  },
+  "disagreements": [],
+  "structuredFields": {
+    "answers": 4,
+    "withFields": 4,
+    "missing": 0,
+    "malformed": 0,
+    "contradictory": 0,
+    "notAssessed": 0,
+    "perField": {
+      "teaching": {
+        "assessed": 4,
+        "not_assessed": 0,
+        "missing": 0,
+        "malformed": 0,
+        "contradicted": 0,
+        "compared": 4,
+        "agree": 3
+      },
+      "learnerSupport": {
+        "assessed": 4,
+        "not_assessed": 0,
+        "missing": 0,
+        "malformed": 0,
+        "contradicted": 0,
+        "compared": 3,
+        "agree": 3
+      }
+    },
+    "note": "Expectations are provisional. Only an assessed field is compared with them: a field that was not assessed, missing, malformed or in a self-contradictory answer is counted by its state, never as agreement. INSUFFICIENT_EVIDENCE answers are left out."
+  },
+  "model": "openrouter/minimax/minimax-m3.1-flash",
+  "promptVersion": "alignment-12c1c2-r8",
+  "dataset": {
+    "name": "stage-c",
+    "version": "stage-c-2",
+    "split": "all",
+    "reviewStatus": "unreviewed",
+    "selection": {
+      "parentItems": 28,
+      "selectedIds": [
+        "af-prog1-passive",
+        "af-prog1-single-format",
+        "af-prog1-alternatives",
+        "af-prog1-week1",
+        "af-syseng-good",
+        "af-syseng-irrelevant",
+        "as-prog1-essay",
+        "as-prog1-bare-name",
+        "as-prog1-keywords",
+        "as-prog1-accessible",
+        "as-prog1-week1",
+        "as-syseng-good",
+        "as-sensors-quiz",
+        "af-prog1-multiweek",
+        "as-prog1-vague-evidence",
+        "as-prog1-multiweek"
+      ]
+    }
+  },
+  "configuration": {
+    "stageFlags": {
+      "a": false,
+      "b": false,
+      "b3": false,
+      "b4": false,
+      "c1": true,
+      "c2": true,
+      "d1": false,
+      "d2": false
+    },
+    "promptVariant": "current",
+    "trim": false,
+    "minItems": false,
+    "timeoutMs": 90000
+  },
+  "batchReviews": [
+    {
+      "ids": [
+        "af-prog1-passive",
+        "af-prog1-single-format",
+        "af-prog1-alternatives",
+        "af-prog1-week1"
+      ],
+      "proceed": false,
+      "reason": "Unsupported resource bypass in af-prog1-single-format: draft assumes worked examples and syntax notes available, but own lesson provides no such evidence and no warning or withholding code was recorded."
+    }
+  ],
+  "retries": {
+    "batches": 1,
+    "requests": 1,
+    "invalidAnswers": 0,
+    "finalUnverified": 0,
+    "providerErrors": 0,
+    "notSent": 0,
+    "retryRate": 0,
+    "invalidAnswerRate": 0
+  },
+  "relationshipMetrics": {
+    "planned": 16,
+    "attempted": 4,
+    "neverAttempted": 12,
+    "verified": 4,
+    "recovered": 0,
+    "unresolved": 0,
+    "unresolvedRate": 0,
+    "coverage": 0.25,
+    "attemptedShare": 0.25,
+    "firstAttempt": {
+      "answered": 4,
+      "refused": 0,
+      "validationFailureRate": 0,
+      "noAnswerFirst": 0
+    },
+    "rawResponseErrors": {
+      "answers": 1,
+      "invalidAnswers": 0,
+      "refusedJudgements": 0,
+      "requestsWithoutAnswer": 0
+    },
+    "aspectCoverage": {
+      "byType": {
+        "Activity-fit": {
+          "relationships": 4,
+          "baseVerified": 4,
+          "baseAccepted": 4,
+          "notRecorded": 0,
+          "fields": {
+            "teaching": {
+              "assessed": 4,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "learnerSupport": {
+              "assessed": 4,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            }
+          }
+        }
+      },
+      "fieldsRequired": 8,
+      "fieldsAssessed": 8,
+      "rate": 1
+    }
+  },
+  "completion": {
+    "maxUnresolved": 0.2,
+    "unresolvedRate": 0,
+    "coverage": 0.25,
+    "stopped": "academic operator stop: Unsupported resource bypass in af-prog1-single-format: draft assumes worked examples and syntax notes available, but own lesson provides no such evidence and no warning or withholding code was recorded.",
+    "state": "incomplete",
+    "usableForAgreement": false,
+    "reason": "12 of 16 planned relationships were never attempted (stopped: academic operator stop: Unsupported resource bypass in af-prog1-single-format: draft assumes worked examples and syntax notes available, but own lesson provides no such evidence and no warning or withholding code was recorded.); they are not evaluated"
+  },
+  "schema": {
+    "minItems": false,
+    "emptyAnswers": 0,
+    "minItemsNotEnforced": false
+  },
+  "answerReview": {
+    "advisory": true,
+    "note": "Counts are heuristic review warnings, not verified academic errors. Labels, fields, validation and agreement are unchanged by these warnings.",
+    "counts": {
+      "explanationReview": {},
+      "draftReview": {
+        "assumes_resource": 1
+      },
+      "draftWarnings": {}
+    },
+    "flaggedAnswers": [
+      {
+        "run": 1,
+        "id": "af-prog1-passive",
+        "draftReview": [
+          "assumes_resource"
+        ],
+        "reviewEvidence": {
+          "explanation": [],
+          "draft": [
+            {
+              "code": "assumes_resource",
+              "evidence": "Laboratory"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "limits": {
+    "budget": 33,
+    "maxCost": 0.05583426,
+    "maxTransient": 3,
+    "maxUnproductive": 1,
+    "maxUnresolved": 0.2,
+    "minSample": 4,
+    "warnInvalid": 1,
+    "maxInvalid": 1,
+    "accounting": "reconcile",
+    "maxTokens": "production (8192)"
+  },
+  "failures": [],
+  "perItem": {
+    "af-prog1-passive": [
+      "NOT_ALIGNED"
+    ],
+    "af-prog1-single-format": [
+      "PARTIALLY_ALIGNED"
+    ],
+    "af-prog1-alternatives": [
+      "ALIGNED"
+    ],
+    "af-prog1-week1": [
+      "ALIGNED"
+    ],
+    "af-syseng-good": [
+      "not_attempted"
+    ],
+    "af-syseng-irrelevant": [
+      "not_attempted"
+    ],
+    "as-prog1-essay": [
+      "not_attempted"
+    ],
+    "as-prog1-bare-name": [
+      "not_attempted"
+    ],
+    "as-prog1-keywords": [
+      "not_attempted"
+    ],
+    "as-prog1-accessible": [
+      "not_attempted"
+    ],
+    "as-prog1-week1": [
+      "not_attempted"
+    ],
+    "as-syseng-good": [
+      "not_attempted"
+    ],
+    "as-sensors-quiz": [
+      "not_attempted"
+    ],
+    "af-prog1-multiweek": [
+      "not_attempted"
+    ],
+    "as-prog1-vague-evidence": [
+      "not_attempted"
+    ],
+    "as-prog1-multiweek": [
+      "not_attempted"
+    ]
+  },
+  "ranAt": "2026-10-26T08:44:06.461Z",
+  "answers": [
+    {
+      "af-prog1-passive": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Develop and test Java programs that use if-else and switch statements to make decisions",
+        "targetQuote": "students listen and copy the syntax",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The ILO requires learners to develop and test Java programs using if-else and switch, i.e. practical skill demonstration at Create level. The activity is a slide lecture in which students only listen and copy syntax, so no learner writes, runs or tests a conditional program; the competence is never practised. The lecture may support the syntax knowledge, but it does not develop the stated performance, so nothing in the activities develops the skill.",
+        "recommendation": null,
+        "draft": "- Lecture on Java conditional statements using slides, showing worked examples of if, if-else, nested if and switch.\n- Laboratory practice in which each student writes, runs and tests small Java programs that use if-else and switch to make decisions, with the instructor demonstrating one program first and providing annotated code samples for review.",
+        "draftReview": [
+          "assumes_resource"
+        ],
+        "reviewEvidence": {
+          "explanation": [],
+          "draft": [
+            {
+              "code": "assumes_resource",
+              "evidence": "Laboratory"
+            }
+          ]
+        },
+        "aspects": {
+          "values": {
+            "teaching": "weak",
+            "learnerSupport": "limited",
+            "measures": "not_assessed",
+            "evidence": "not_assessed",
+            "level": "not_assessed",
+            "responsible": "activity"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "af-prog1-single-format": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Develop and test Java programs that use if-else and switch statements to make decisions",
+        "targetQuote": "Individual timed coding test in which students write if-else programs from memory",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The activity does have students write if-else programs, so it practises the action verb and subject, but it stops at Apply: the ILO asks learners to develop AND test programs, and a timed test from memory gives no opportunity to run and test the program or to use switch. It also offers a single format with no alternative route for learners who cannot code under time pressure, and no reference material or worked examples to support recall of syntax. The gap is the missing testing step and the missing switch practice, plus the single-format support.",
+        "recommendation": null,
+        "draft": "- Individual coding exercise in which students write if-else and switch programs from worked examples and syntax notes, then run and test each program against several inputs and correct any faulty logic; students who prefer not to work under time pressure may complete the same exercise untimed with the notes available.",
+        "aspects": {
+          "values": {
+            "teaching": "weak",
+            "learnerSupport": "limited",
+            "measures": "not_assessed",
+            "evidence": "not_assessed",
+            "level": "not_assessed",
+            "responsible": "activity"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "af-prog1-alternatives": {
+        "label": "ALIGNED",
+        "sourceQuote": "Develop and test Java programs that use if-else and switch statements to make decisions",
+        "targetQuote": "pair programming in the laboratory",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The guided demonstration plus laboratory pair programming lets learners actually write, run and test if-else and switch programs, matching the Create-level practical competence, and the recorded demonstration, annotated samples and solo-or-pair option give adequate learner support.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": {
+          "values": {
+            "teaching": "sound",
+            "learnerSupport": "adequate",
+            "measures": "not_assessed",
+            "evidence": "not_assessed",
+            "level": "not_assessed",
+            "responsible": "none"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "af-prog1-week1": {
+        "label": "ALIGNED",
+        "sourceQuote": "Describe the course objectives, requirements and grading system",
+        "targetQuote": "presentation of the course objectives",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "This is a Week 1 orientation whose activities set expectations, present the objectives and review policies and grading, which is exactly what the descriptive ILO asks for.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": {
+          "values": {
+            "teaching": "sound",
+            "learnerSupport": "not_applicable",
+            "measures": "not_assessed",
+            "evidence": "not_assessed",
+            "level": "not_assessed",
+            "responsible": "none"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      }
+    }
+  ],
+  "usage": {
+    "requests": 16,
+    "thisRun": 3,
+    "model": 1,
+    "priceLookups": 1,
+    "keyChecks": 1,
+    "invalidAnswers": 0,
+    "unproductiveInARow": 0,
+    "transient": 1,
+    "promptTokens": 4367,
+    "completionTokens": 785,
+    "cachedTokens": 128,
+    "reportedCost": 0.00085693,
+    "charged": 0.00669119,
+    "accounting": {
+      "rule": "reconcile",
+      "requests": {
+        "reconciled": 1,
+        "conservative": 0,
+        "worst_case": 0,
+        "refused": 0
+      },
+      "chargedConservatively": 0.0161598
+    },
+    "warnings": [],
+    "limits": {
+      "maxRequests": 33,
+      "maxCost": 0.05583426,
+      "maxTransient": 3,
+      "maxInvalid": 1,
+      "warnInvalid": 1,
+      "maxUnproductive": 1,
+      "maxTokens": null
+    },
+    "stopped": "academic operator stop: Unsupported resource bypass in af-prog1-single-format: draft assumes worked examples and syntax notes available, but own lesson provides no such evidence and no warning or withholding code was recorded."
+  },
+  "keyCheck": {
+    "status": 200,
+    "ok": true,
+    "freeTier": true,
+    "limit": 250,
+    "limitRemaining": 249.98905439,
+    "usage": 0.01094561,
+    "expiresAt": "2026-11-25T04:44:27.996Z"
+  },
+  "requests": [
+    {
+      "n": 16,
+      "ids": [
+        "af-prog1-passive",
+        "af-prog1-single-format",
+        "af-prog1-alternatives",
+        "af-prog1-week1"
+      ],
+      "status": 200,
+      "ms": 5014,
+      "provider": "InferenceNet",
+      "finishReason": "stop",
+      "usage": {
+        "promptTokens": 4367,
+        "completionTokens": 785,
+        "reasoningTokens": 0,
+        "cachedTokens": 128,
+        "reportedCost": 0.00085693,
+        "costAtListPrices": 0.0022521
+      },
+      "accounting": "reconciled",
+      "charged": 0.00085693,
+      "conservativeCharge": 0.0022521,
+      "error": null,
+      "content": "{\"judgements\":[{\"teaching\":\"weak\",\"targetQuote\":\"students listen and copy the syntax\",\"targetBloom\":\"Remember\",\"sourceQuote\":\"Develop and test Java programs that use if-else and switch statements to make decisions\",\"sourceBloom\":\"Create\",\"responsible\":\"activity\",\"measures\":\"not_assessed\",\"level\":\"not_assessed\",\"learnerSupport\":\"limited\",\"label\":\"NOT_ALIGNED\",\"id\":\"af-prog1-passive\",\"explanation\":\"The ILO requires learners to develop and test Java programs using if-else and switch, i.e. practical skill demonstration at Create level. The activity is a slide lecture in which students only listen and copy syntax, so no learner writes, runs or tests a conditional program; the competence is never practised. The lecture may support the syntax knowledge, but it does not develop the stated performance, so nothing in the activities develops the skill.\",\"evidence\":\"not_assessed\",\"draft\":\"- Lecture on Java conditional statements using slides, showing worked examples of if, if-else, nested if and switch.\\n- Laboratory practice in which each student writes, runs and tests small Java programs that use if-else and switch to make decisions, with the instructor demonstrating one program first and providing annotated code samples for review.\"},{\"teaching\":\"weak\",\"targetQuote\":\"Individual timed coding test in which students write if-else programs from memory\",\"targetBloom\":\"Apply\",\"sourceQuote\":\"Develop and test Java programs that use if-else and switch statements to make decisions\",\"sourceBloom\":\"Create\",\"responsible\":\"activity\",\"measures\":\"not_assessed\",\"level\":\"not_assessed\",\"learnerSupport\":\"limited\",\"label\":\"PARTIALLY_ALIGNED\",\"id\":\"af-prog1-single-format\",\"explanation\":\"The activity does have students write if-else programs, so it practises the action verb and subject, but it stops at Apply: the ILO asks learners to develop AND test programs, and a timed test from memory gives no opportunity to run and test the program or to use switch. It also offers a single format with no alternative route for learners who cannot code under time pressure, and no reference material or worked examples to support recall of syntax. The gap is the missing testing step and the missing switch practice, plus the single-format support.\",\"evidence\":\"not_assessed\",\"draft\":\"- Individual coding exercise in which students write if-else and switch programs from worked examples and syntax notes, then run and test each program against several inputs and correct any faulty logic; students who prefer not to work under time pressure may complete the same exercise untimed with the notes available.\"},{\"teaching\":\"sound\",\"targetQuote\":\"pair programming in the laboratory\",\"targetBloom\":\"Create\",\"sourceQuote\":\"Develop and test Java programs that use if-else and switch statements to make decisions\",\"sourceBloom\":\"Create\",\"responsible\":\"none\",\"measures\":\"not_assessed\",\"level\":\"not_assessed\",\"learnerSupport\":\"adequate\",\"label\":\"ALIGNED\",\"id\":\"af-prog1-alternatives\",\"explanation\":\"The guided demonstration plus laboratory pair programming lets learners actually write, run and test if-else and switch programs, matching the Create-level practical competence, and the recorded demonstration, annotated samples and solo-or-pair option give adequate learner support.\",\"evidence\":\"not_assessed\",\"draft\":\"\"},{\"teaching\":\"sound\",\"targetQuote\":\"presentation of the course objectives\",\"targetBloom\":\"Understand\",\"sourceQuote\":\"Describe the course objectives, requirements and grading system\",\"sourceBloom\":\"Understand\",\"responsible\":\"none\",\"measures\":\"not_assessed\",\"level\":\"not_assessed\",\"learnerSupport\":\"not_applicable\",\"label\":\"ALIGNED\",\"id\":\"af-prog1-week1\",\"explanation\":\"This is a Week 1 orientation whose activities set expectations, present the objectives and review policies and grading, which is exactly what the descriptive ILO asks for.\",\"evidence\":\"not_assessed\",\"draft\":\"\"}]}"
+    }
+  ],
+  "stopped": "academic operator stop: Unsupported resource bypass in af-prog1-single-format: draft assumes worked examples and syntax notes available, but own lesson provides no such evidence and no warning or withholding code was recorded.",
+  "isolation": {
+    "dataModulesLoaded": [],
+    "processEnvStageFlags": [
+      "SYLLABUS_CHECK_STAGE_A",
+      "SYLLABUS_CHECK_STAGE_B",
+      "SYLLABUS_CHECK_STAGE_B3",
+      "SYLLABUS_CHECK_STAGE_B4",
+      "SYLLABUS_CHECK_STAGE_C1",
+      "SYLLABUS_CHECK_STAGE_C2",
+      "SYLLABUS_CHECK_STAGE_D1",
+      "SYLLABUS_CHECK_STAGE_D2"
+    ]
+  }
+}

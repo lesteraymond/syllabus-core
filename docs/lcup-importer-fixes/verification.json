@@ -1,0 +1,81 @@
+{
+  "head": "68926cb392756c07bb0b999538d098d1038be368",
+  "initialFiles": 966,
+  "changed": [
+    {
+      "path": "scripts/lcup-approved-offline/extract.mjs",
+      "before": "6b11faf4c79c094233d4f59f8ff74b6df0c3746b849a948d5d1098fa62427bba",
+      "after": "b71766c6ad87d4d5f2b7a25541504635afdfe45d46451985357a3ad22d914ea7"
+    },
+    {
+      "path": "scripts/lcup-approved-offline/fixture.test.mjs",
+      "before": "688bc3f77dcef321a65e1308d89a7b5961458658617fb792e3c4589bae8c3c4d",
+      "after": "353ecff04520e4eb08366af7c38f589865243e9b96ac4f16ffc569b380e9257f"
+    },
+    {
+      "path": "scripts/lcup-approved-offline/importer-regression.test.mjs",
+      "before": "4ec3d60a45ee52d32b220b3df0398d77452850c52e5e5d7325bce053b0c0299e",
+      "after": "e87011c347456027478999ba28a2e149fd8aafd0ce6a7c5bd2c5d480a6145e37"
+    },
+    {
+      "path": "server/lib/pdfImport.worker.js",
+      "before": "4a2b914bb79ee05a8542cfef13f3cf694f5c1c98ce17ef1c135180a34bc878e1",
+      "after": "c0c11afb684b9d8d658f3e78fc4fe7d675b2f728df6113107d585edbe2118ab6"
+    },
+    {
+      "path": "server/routes/pdfImport.js",
+      "before": "82053dd60ecd84c7fa1f8c2f4a82aa7b0275480b3db6b3a506a1e0e773e3b318",
+      "after": "3192a2753d36ee7eb006236e3d8d7dac4bfb263cc27d82f3b724e5c7dfb687bc"
+    },
+    {
+      "path": "server/routes/pdfImport.routes.test.js",
+      "before": "919c1ef29a5ec98b347d792ba194abe585d60de4488ae9b439824b14f1643cec",
+      "after": "94f38777196850e6f6c77e4129b26d215d1e6f52d3f4cb2c853680ecfbba11c5"
+    },
+    {
+      "path": "src/i18n/pdfImport.js",
+      "before": "4e0f9983c3dbdc5a255996c19aeda448bb4cdc05b229498fc712c5d866da416d",
+      "after": "858e25e79433fa9d65802bb3966d593725400bbcf605007fdaac89a68c56023d"
+    },
+    {
+      "path": "src/lib/pdfImport.js",
+      "before": "a37a971d6658cf590ca957811fec528a8b0e67b8c1b823a276465b0bd81d4a2e",
+      "after": "fdb660b9ff9e0e7a20e49aa33aef37b83e164cbeb1ca36578ea33e50e0914e51"
+    },
+    {
+      "path": "tests/pdf-import-ui.test.jsx",
+      "before": "554460a336d57eb5ea16d60dca8fef11dfa2b2c658c8db1d3769ddc2cf0e4b37",
+      "after": "cb3b5bfd5401ab3cc902730808bfda6639313e8dd34aa119f63e57df3eae6e93"
+    },
+    {
+      "path": "src/views/builder2/UploadPanel.jsx",
+      "before": "ec0ed5380859c5a1bd8509b01792f068691ff9cf3390e5c18bd143d1349bf164",
+      "after": "3765b307759c69b8211ab433945b58e74e3ed3a599d3b8d99801b7fbd7cd956c"
+    },
+    {
+      "path": "src/views/builder2/index.jsx",
+      "before": "12363645c3a0123fe4789a6958151f9971c8e7b4b580cd8b19c053cb3e1a61c5",
+      "after": "cdca49044d7eb0d77c2c283544b1c837a5be5b6d22a57cb306aa0191d6f5c9f0"
+    }
+  ],
+  "missing": [],
+  "added": [
+    "docs/lcup-importer-fixes/REPORT.md",
+    "docs/lcup-importer-fixes/before.json",
+    "docs/lcup-importer-fixes/verification.json",
+    "server/lib/pdfImportIdentity.js",
+    "server/lib/pdfImportIdentity.test.js",
+    "src/lib/pdfImport.fixes.test.js",
+    "src/lib/pdfImportReview.js"
+  ],
+  "verifiedOfflineArtifactsUnchanged": true,
+  "environmentUnchanged": true,
+  "safety": {
+    "liveDatabaseConnections": 0,
+    "databaseWrites": 0,
+    "paidAiCalls": 0,
+    "migrations": 0,
+    "commits": 0,
+    "deployments": 0
+  }
+}

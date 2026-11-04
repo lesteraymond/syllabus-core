@@ -1,0 +1,746 @@
+{
+  "items": 8,
+  "runs": 1,
+  "answered": 4,
+  "invalid": 4,
+  "invalidRate": 0.5,
+  "notAttempted": 0,
+  "agreement": 1,
+  "falsePositiveRate": 0,
+  "falseNegativeRate": 0,
+  "counts": {
+    "clearAligned": 1,
+    "falsePositive": 0,
+    "clearNot": 3,
+    "falseNegative": 0
+  },
+  "confusion": {
+    "ALIGNED": {
+      "ALIGNED": 1,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 1
+    },
+    "PARTIAL": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "FLAGGED": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 2,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 1,
+      "invalid": 3
+    }
+  },
+  "partialAccuracy": null,
+  "approvalAccuracy": 1,
+  "byDiscipline": {
+    "engineering": {
+      "items": 8,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 4,
+      "agreement": 1
+    }
+  },
+  "byCategory": {
+    "name-only": {
+      "items": 2,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 1,
+      "agreement": 1
+    },
+    "opportunity": {
+      "items": 2,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 1,
+      "agreement": 1
+    },
+    "demonstrated": {
+      "items": 2,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 1,
+      "agreement": 1
+    },
+    "insufficient-evidence": {
+      "items": 2,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 1,
+      "agreement": 1
+    }
+  },
+  "stability": null,
+  "byType": {
+    "Value-use": {
+      "items": 8,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 4,
+      "agreement": 1
+    }
+  },
+  "disagreements": [],
+  "structuredFields": {
+    "answers": 3,
+    "withFields": 3,
+    "missing": 0,
+    "malformed": 0,
+    "contradictory": 0,
+    "notAssessed": 0,
+    "perField": {
+      "valueUse": {
+        "assessed": 3,
+        "not_assessed": 0,
+        "missing": 0,
+        "malformed": 0,
+        "contradicted": 0,
+        "compared": 3,
+        "agree": 3
+      },
+      "carriedBy": {
+        "assessed": 3,
+        "not_assessed": 0,
+        "missing": 0,
+        "malformed": 0,
+        "contradicted": 0,
+        "compared": 3,
+        "agree": 3
+      },
+      "valueFit": {
+        "assessed": 3,
+        "not_assessed": 0,
+        "missing": 0,
+        "malformed": 0,
+        "contradicted": 0,
+        "compared": 1,
+        "agree": 1
+      }
+    },
+    "note": "Expectations are provisional. Only an assessed field is compared with them: a field that was not assessed, missing, malformed or in a self-contradictory answer is counted by its state, never as agreement. INSUFFICIENT_EVIDENCE answers are left out."
+  },
+  "model": "openrouter/minimax/minimax-m3.1-flash",
+  "promptVersion": "alignment-12d1-r7",
+  "dataset": {
+    "name": "stage-d1-followup",
+    "version": "stage-d1-2",
+    "split": "all",
+    "reviewStatus": "unreviewed",
+    "selection": {
+      "parentItems": 29,
+      "selectedIds": [
+        "vu-syseng-e7-name-only",
+        "vu-syseng-e7-opportunity",
+        "vu-syseng-e7-demonstrated",
+        "vu-syseng-e7-insufficient-evidence",
+        "vu-sensors-e7-name-only",
+        "vu-sensors-e7-opportunity",
+        "vu-sensors-e7-demonstrated",
+        "vu-sensors-e7-insufficient-evidence"
+      ]
+    }
+  },
+  "configuration": {
+    "stageFlags": {
+      "a": false,
+      "b": false,
+      "b3": false,
+      "b4": false,
+      "c1": false,
+      "c2": false,
+      "d1": true,
+      "d2": false
+    },
+    "promptVariant": "current",
+    "trim": false,
+    "minItems": false,
+    "timeoutMs": 90000
+  },
+  "retries": {
+    "batches": 2,
+    "requests": 2,
+    "invalidAnswers": 0,
+    "finalUnverified": 0,
+    "providerErrors": 1,
+    "notSent": 0,
+    "retryRate": 0,
+    "invalidAnswerRate": 0
+  },
+  "relationshipMetrics": {
+    "planned": 8,
+    "attempted": 8,
+    "neverAttempted": 0,
+    "verified": 4,
+    "recovered": 0,
+    "unresolved": 4,
+    "unresolvedRate": 0.5,
+    "coverage": 0.5,
+    "attemptedShare": 1,
+    "firstAttempt": {
+      "answered": 4,
+      "refused": 0,
+      "validationFailureRate": 0,
+      "noAnswerFirst": 4
+    },
+    "rawResponseErrors": {
+      "answers": 1,
+      "invalidAnswers": 0,
+      "refusedJudgements": 0,
+      "requestsWithoutAnswer": 1
+    },
+    "aspectCoverage": {
+      "byType": {
+        "Value-use": {
+          "relationships": 4,
+          "baseVerified": 3,
+          "baseAccepted": 3,
+          "notRecorded": 0,
+          "fields": {
+            "valueUse": {
+              "assessed": 3,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "carriedBy": {
+              "assessed": 3,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "valueFit": {
+              "assessed": 3,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            }
+          }
+        }
+      },
+      "fieldsRequired": 9,
+      "fieldsAssessed": 9,
+      "rate": 1
+    }
+  },
+  "completion": {
+    "maxUnresolved": 0.2,
+    "unresolvedRate": 0.5,
+    "coverage": 0.5,
+    "stopped": "academic stop: the final unresolved rate is 50% (4 of 8 distinct relationships attempted), above the 20% limit",
+    "state": "unresolved_above_limit",
+    "usableForAgreement": false,
+    "reason": "4 of 8 attempted relationships remain unresolved (50%), above the 20% limit"
+  },
+  "schema": {
+    "minItems": false,
+    "emptyAnswers": 0,
+    "minItemsNotEnforced": false
+  },
+  "answerReview": {
+    "advisory": true,
+    "note": "Counts are heuristic review warnings, not verified academic errors. Labels, fields, validation and agreement are unchanged by these warnings.",
+    "counts": {
+      "explanationReview": {},
+      "draftReview": {
+        "copies_other_relationship": 2,
+        "adds_activity": 1
+      },
+      "draftWarnings": {}
+    },
+    "flaggedAnswers": [
+      {
+        "run": 1,
+        "id": "vu-sensors-e7-opportunity",
+        "draftReview": [
+          "copies_other_relationship"
+        ],
+        "reviewEvidence": {
+          "explanation": [],
+          "draft": [
+            {
+              "code": "copies_other_relationship",
+              "evidence": "when a partner struggles to obtain a stable reading students ask which",
+              "from": "vu-sensors-e7-demonstrated"
+            }
+          ]
+        }
+      },
+      {
+        "run": 1,
+        "id": "vu-sensors-e7-insufficient-evidence",
+        "draftReview": [
+          "copies_other_relationship",
+          "adds_activity"
+        ],
+        "reviewEvidence": {
+          "explanation": [],
+          "draft": [
+            {
+              "code": "copies_other_relationship",
+              "evidence": "and assist that partner with the same procedure before",
+              "from": "vu-sensors-e7-demonstrated"
+            },
+            {
+              "code": "adds_activity",
+              "evidence": "pairs"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "limits": {
+    "budget": 10,
+    "maxCost": 0.04,
+    "maxTransient": 3,
+    "maxUnproductive": 4,
+    "maxUnresolved": 0.2,
+    "minSample": 8,
+    "warnInvalid": 2,
+    "maxInvalid": 3,
+    "accounting": "reconcile",
+    "maxTokens": "production (8192)"
+  },
+  "failures": [
+    {
+      "run": 1,
+      "course": "syseng",
+      "ids": [
+        "vu-syseng-e7-name-only",
+        "vu-syseng-e7-opportunity",
+        "vu-syseng-e7-demonstrated",
+        "vu-syseng-e7-insufficient-evidence"
+      ],
+      "error": "The operation was aborted due to timeout",
+      "rejected": []
+    }
+  ],
+  "perItem": {
+    "vu-syseng-e7-name-only": [
+      null
+    ],
+    "vu-syseng-e7-opportunity": [
+      null
+    ],
+    "vu-syseng-e7-demonstrated": [
+      null
+    ],
+    "vu-syseng-e7-insufficient-evidence": [
+      null
+    ],
+    "vu-sensors-e7-name-only": [
+      "PARTIALLY_ALIGNED"
+    ],
+    "vu-sensors-e7-opportunity": [
+      "PARTIALLY_ALIGNED"
+    ],
+    "vu-sensors-e7-demonstrated": [
+      "ALIGNED"
+    ],
+    "vu-sensors-e7-insufficient-evidence": [
+      "INSUFFICIENT_EVIDENCE"
+    ]
+  },
+  "ranAt": "2026-10-26T19:59:06.895Z",
+  "answers": [
+    {
+      "vu-sensors-e7-name-only": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Calibrate a thermistor and interpret its resistance-temperature record.",
+        "targetQuote": "Compassion",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The value statement is only the name of the value; the lesson text describes students calibrating a thermistor, comparing records and repeating unstable readings, but nothing that shows compassion being lived. The value is not unrelated to the lesson (partner work is present), so it is partly fitting, but the statement itself carries no integration.",
+        "recommendation": null,
+        "draft": "Compassion: while calibrating the thermistor in pairs, students notice which partner is having difficulty obtaining a stable reading and help that partner repeat the affected calibration step before recording their own final values.",
+        "aspects": {
+          "values": {
+            "responsible": "values",
+            "valueUse": "name_only",
+            "carriedBy": "none",
+            "valueFit": "partly",
+            "coreValue": "none",
+            "integration": "absent"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "vu-sensors-e7-opportunity": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Partners follow the supplied thermistor calibration procedure, compare their records and repeat unstable readings.",
+        "targetQuote": "Compassion during the thermistor calibration practical.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The statement ties Compassion to the lesson's calibration practical, but neither it nor the lesson text says what students do or decide that expresses the value; the activity only has partners compare records and repeat unstable readings. It is therefore an opportunity, not a demonstrated integration.",
+        "recommendation": null,
+        "draft": "Compassion during the thermistor calibration practical: when a partner struggles to obtain a stable reading, students ask which calibration step is difficult and assist that partner with the same procedure before resuming their own readings.",
+        "draftReview": [
+          "copies_other_relationship"
+        ],
+        "reviewEvidence": {
+          "explanation": [],
+          "draft": [
+            {
+              "code": "copies_other_relationship",
+              "evidence": "when a partner struggles to obtain a stable reading students ask which",
+              "from": "vu-sensors-e7-demonstrated"
+            }
+          ]
+        },
+        "aspects": {
+          "values": {
+            "responsible": "values",
+            "valueUse": "opportunity",
+            "carriedBy": "none",
+            "valueFit": "partly",
+            "coreValue": "none",
+            "integration": "absent"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "vu-sensors-e7-demonstrated": {
+        "label": "ALIGNED",
+        "sourceQuote": "Partners follow the supplied thermistor calibration procedure, compare their records and repeat unstable readings.",
+        "targetQuote": "when a partner struggles to obtain a stable reading, students ask which calibration step is difficult and assist that partner with the same procedure before resuming their own readings.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The statement describes students actually doing something in this lesson's partner calibration activity that expresses compassion (asking a struggling partner which step is difficult and assisting them), and the lesson's partner activity supports it.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": {
+          "values": {
+            "responsible": "none",
+            "valueUse": "integrated",
+            "carriedBy": "activity",
+            "valueFit": "fits",
+            "coreValue": "Compassion",
+            "integration": "demonstrated"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "vu-sensors-e7-insufficient-evidence": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "sourceQuote": "ILOs: (not provided)",
+        "targetQuote": "Compassion: students support a peer who finds the calibration difficult.",
+        "evidenceMatching": {
+          "source": "not_evaluated",
+          "target": "not_evaluated"
+        },
+        "explanation": "The lesson supplies no ILOs, activities or assessment tasks, so there is too little evidence to judge whether compassion is integrated, merely an opportunity, or only named.",
+        "recommendation": null,
+        "draft": "",
+        "draftReview": [
+          "copies_other_relationship",
+          "adds_activity"
+        ],
+        "reviewEvidence": {
+          "explanation": [],
+          "draft": [
+            {
+              "code": "copies_other_relationship",
+              "evidence": "and assist that partner with the same procedure before",
+              "from": "vu-sensors-e7-demonstrated"
+            },
+            {
+              "code": "adds_activity",
+              "evidence": "pairs"
+            }
+          ]
+        },
+        "aspects": {
+          "values": {
+            "responsible": "values",
+            "valueUse": "insufficient",
+            "carriedBy": "none",
+            "valueFit": "partly",
+            "coreValue": "none",
+            "integration": "absent"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      }
+    }
+  ],
+  "usage": {
+    "requests": 4,
+    "thisRun": 4,
+    "model": 2,
+    "priceLookups": 1,
+    "keyChecks": 1,
+    "invalidAnswers": 0,
+    "unproductiveInARow": 0,
+    "transient": 1,
+    "promptTokens": 3833,
+    "completionTokens": 720,
+    "cachedTokens": 128,
+    "reportedCost": 0.00076778,
+    "charged": 0.01642448,
+    "accounting": {
+      "rule": "reconcile",
+      "requests": {
+        "reconciled": 1,
+        "conservative": 0,
+        "worst_case": 1,
+        "refused": 0
+      },
+      "chargedConservatively": 0.0176706
+    },
+    "warnings": [],
+    "limits": {
+      "maxRequests": 10,
+      "maxCost": 0.04,
+      "maxTransient": 3,
+      "maxInvalid": 3,
+      "warnInvalid": 2,
+      "maxUnproductive": 4,
+      "maxTokens": null
+    },
+    "stopped": "academic stop: the final unresolved rate is 50% (4 of 8 distinct relationships attempted), above the 20% limit"
+  },
+  "keyCheck": {
+    "status": 200,
+    "ok": true,
+    "freeTier": true,
+    "limit": 250,
+    "limitRemaining": 249.98036197,
+    "usage": 0.01963803,
+    "expiresAt": "2026-11-25T04:44:27.996Z"
+  },
+  "prices": {
+    "prompt": 3e-7,
+    "completion": 0.0000012,
+    "reasoning": 0,
+    "request": 0,
+    "cacheWrite": 0,
+    "endpoints": [
+      {
+        "provider": "InferenceNet",
+        "tag": "inference-net/fp4",
+        "status": 0,
+        "uptime30m": 96.66666666666667,
+        "prompt": 1e-7,
+        "completion": 5.5e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "InferenceNet",
+        "tag": "inference-net/fp4/us",
+        "status": 0,
+        "uptime30m": 96.55172413793103,
+        "prompt": 1e-7,
+        "completion": 5.5e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "GMICloud",
+        "tag": "gmicloud/fp8",
+        "status": 0,
+        "uptime30m": 96.42857142857143,
+        "prompt": 1.425e-7,
+        "completion": 5.7e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.425e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "DigitalOcean",
+        "tag": "digitalocean",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Novita",
+        "tag": "novita/fp16",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "Nebius",
+        "tag": "nebius/fp4",
+        "status": -2,
+        "uptime30m": 90.9090909090909,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "ModelRun",
+        "tag": "modelrun/fp4",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Parasail",
+        "tag": "parasail/fp8",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Together",
+        "tag": "together",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Minimax",
+        "tag": "minimax",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "SambaNova",
+        "tag": "sambanova",
+        "status": 0,
+        "uptime30m": null,
+        "prompt": 3e-7,
+        "completion": 0.0000012,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 3e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      }
+    ],
+    "readAt": "2026-10-26T19:56:09.358Z"
+  },
+  "requests": [
+    {
+      "n": 3,
+      "ids": [
+        "vu-syseng-e7-name-only",
+        "vu-syseng-e7-opportunity",
+        "vu-syseng-e7-demonstrated",
+        "vu-syseng-e7-insufficient-evidence"
+      ],
+      "status": 200,
+      "ms": 13791,
+      "provider": null,
+      "finishReason": null,
+      "usage": null,
+      "accounting": "worst_case",
+      "charged": 0.0156567,
+      "conservativeCharge": 0.0156567,
+      "error": "timeout",
+      "content": null
+    },
+    {
+      "n": 4,
+      "ids": [
+        "vu-sensors-e7-name-only",
+        "vu-sensors-e7-opportunity",
+        "vu-sensors-e7-demonstrated",
+        "vu-sensors-e7-insufficient-evidence"
+      ],
+      "status": 200,
+      "ms": 2485,
+      "provider": "InferenceNet",
+      "finishReason": "stop",
+      "usage": {
+        "promptTokens": 3833,
+        "completionTokens": 720,
+        "reasoningTokens": 0,
+        "cachedTokens": 128,
+        "reportedCost": 0.00076778,
+        "costAtListPrices": 0.0020139
+      },
+      "accounting": "reconciled",
+      "charged": 0.00076778,
+      "conservativeCharge": 0.0020139,
+      "error": null,
+      "content": "{\"judgements\":[\n{\"valueUse\":\"name_only\",\"valueFit\":\"partly\",\"targetQuote\":\"Compassion\",\"targetBloom\":\"N/A\",\"sourceQuote\":\"Calibrate a thermistor and interpret its resistance-temperature record.\",\"sourceBloom\":\"Apply\",\"responsible\":\"values\",\"label\":\"PARTIALLY_ALIGNED\",\"integration\":\"absent\",\"id\":\"vu-sensors-e7-name-only\",\"explanation\":\"The value statement is only the name of the value; the lesson text describes students calibrating a thermistor, comparing records and repeating unstable readings, but nothing that shows compassion being lived. The value is not unrelated to the lesson (partner work is present), so it is partly fitting, but the statement itself carries no integration.\",\"draft\":\"Compassion: while calibrating the thermistor in pairs, students notice which partner is having difficulty obtaining a stable reading and help that partner repeat the affected calibration step before recording their own final values.\",\"coreValue\":\"none\",\"carriedBy\":\"none\"},\n{\"valueUse\":\"opportunity\",\"valueFit\":\"partly\",\"targetQuote\":\"Compassion during the thermistor calibration practical.\",\"targetBloom\":\"N/A\",\"sourceQuote\":\"Partners follow the supplied thermistor calibration procedure, compare their records and repeat unstable readings.\",\"sourceBloom\":\"Apply\",\"responsible\":\"values\",\"label\":\"PARTIALLY_ALIGNED\",\"integration\":\"absent\",\"id\":\"vu-sensors-e7-opportunity\",\"explanation\":\"The statement ties Compassion to the lesson's calibration practical, but neither it nor the lesson text says what students do or decide that expresses the value; the activity only has partners compare records and repeat unstable readings. It is therefore an opportunity, not a demonstrated integration.\",\"draft\":\"Compassion during the thermistor calibration practical: when a partner struggles to obtain a stable reading, students ask which calibration step is difficult and assist that partner with the same procedure before resuming their own readings.\",\"coreValue\":\"none\",\"carriedBy\":\"none\"},\n{\"valueUse\":\"integrated\",\"valueFit\":\"fits\",\"targetQuote\":\"when a partner struggles to obtain a stable reading, students ask which calibration step is difficult and assist that partner with the same procedure before resuming their own readings.\",\"targetBloom\":\"Apply\",\"sourceQuote\":\"Partners follow the supplied thermistor calibration procedure, compare their records and repeat unstable readings.\",\"sourceBloom\":\"Apply\",\"responsible\":\"none\",\"label\":\"ALIGNED\",\"integration\":\"demonstrated\",\"id\":\"vu-sensors-e7-demonstrated\",\"explanation\":\"The statement describes students actually doing something in this lesson's partner calibration activity that expresses compassion (asking a struggling partner which step is difficult and assisting them), and the lesson's partner activity supports it.\",\"draft\":\"\",\"coreValue\":\"Compassion\",\"carriedBy\":\"activity\"},\n{\"valueUse\":\"insufficient\",\"valueFit\":\"partly\",\"targetQuote\":\"Compassion: students support a peer who finds the calibration difficult.\",\"targetBloom\":\"N/A\",\"sourceQuote\":\"ILOs: (not provided)\",\"sourceBloom\":\"N/A\",\"responsible\":\"values\",\"label\":\"INSUFFICIENT_EVIDENCE\",\"integration\":\"absent\",\"id\":\"vu-sensors-e7-insufficient-evidence\",\"explanation\":\"The lesson supplies no ILOs, activities or assessment tasks, so there is too little evidence to judge whether compassion is integrated, merely an opportunity, or only named.\",\"draft\":\"Compassion: while calibrating the thermistor in pairs, students ask a partner who finds the calibration difficult which step is troublesome and assist that partner with the same procedure before recording their own final values.\",\"coreValue\":\"none\",\"carriedBy\":\"none\"}\n]}"
+    }
+  ],
+  "stopped": "academic stop: the final unresolved rate is 50% (4 of 8 distinct relationships attempted), above the 20% limit",
+  "isolation": {
+    "dataModulesLoaded": [],
+    "processEnvStageFlags": [
+      "SYLLABUS_CHECK_STAGE_A",
+      "SYLLABUS_CHECK_STAGE_B",
+      "SYLLABUS_CHECK_STAGE_B3",
+      "SYLLABUS_CHECK_STAGE_B4",
+      "SYLLABUS_CHECK_STAGE_C1",
+      "SYLLABUS_CHECK_STAGE_C2",
+      "SYLLABUS_CHECK_STAGE_D1",
+      "SYLLABUS_CHECK_STAGE_D2"
+    ]
+  }
+}

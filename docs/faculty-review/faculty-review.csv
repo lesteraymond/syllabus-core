@@ -1,0 +1,1417 @@
+﻿"Item","Kind","Stage / relationship","Course","Category","Original content (what the checker read)","Reference it was judged against","Provisional expected decision","AI decision (run 1 / run 2)","AI explanation","Why the provisional decision was proposed","Label status","Faculty: agree with the provisional decision? (Yes / No / Unsure)","Faculty: expected decision (ALIGNED / PARTIALLY_ALIGNED / NOT_ALIGNED)","Faculty notes","Reviewer / date"
+"real-prog1-ref-description","Reference","Course description (sample syllabus)","BSIT - IT 202 Computer Programming 1","reference","This course introduces students to the vital role of computers and computer programmers in shaping modern society. It
+aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the
+development of good coding practices. Students will be taught the fundamentals of Java programming and explore
+significant real-world applications.
+In line with La Consolacion University Philippines' commitment to forming Christo-centric Catholic professionals , the
+course integrates Marian Augustinian values in each lesson, ensuring that students not only achieve intellectual growth
+but also cultivate moral and ethical responsibility in the digital age. This holistic approach nurtures individuals who contribute
+positively to society, embodying community, humility, and love of service , as exemplified by the Blessed Virgin Mary
+and Saint Augustine. By the end of the course, students will have created their own Java applications, demonstrating both
+technical proficiency and a sense of purpose rooted in their Catholic faith.","","n/a","n/a","n/a","n/a","Reference text: description and CLOs from the sample syllabus; Program Outcomes transcribed from the registrar image (check the wording). Not official wording.","","","",""
+"real-prog1-ref-clos","Reference","Course learning outcomes (sample syllabus)","BSIT - IT 202 Computer Programming 1","reference","CLO1. Define and analyze the computing requirements needed for an effective solution that is essential for developing holistic and impactful solutions. [EGA 1,3,4] [PO 1,2,3,6,8]
+CLO2:  Incorporate ethical standards and social responsibility into technical designs, ensuring that solutions serve the common good, in line with Marian and Augustinian principles of truth and compassion.  [EGA 1,3,4] [PO 1,2,3,6,8]
+CLO3: Collaborate effectively within multi-disciplinary and culturally diverse teams to develop Java-
+based programming solutions that address social challenges, demonstrating social responsibility and cultural sensitivity. [EGA 1,2,3,4] [PO 1,2,3,4,6,8,9]
+CLO4. Demonstrate the Filipino- Catholic Augustinian Spirituality through value webbing. [EGA 2] [PO 4,5]","","n/a","n/a","n/a","n/a","Reference text: description and CLOs from the sample syllabus; Program Outcomes transcribed from the registrar image (check the wording). Not official wording.","","","",""
+"real-prog1-ref-pos","Reference","Program Outcomes of BSIT","BSIT - IT 202 Computer Programming 1","reference","PO 1: Articulate and discuss the latest developments in the specific field of practice;
+PO 2: Effectively communicate orally and in writing using both English and Filipino;
+PO 3: Work effectively and independently in multi-disciplinary and multi-cultural teams;
+PO 4: Act in recognition of professional, social ethical responsibility;
+PO 5: Preserve and promote “Filipino historical and cultural heritage;
+PO 6: Analyze complex problems, and identify and define the computing requirements needed to design and appropriate solution;
+PO 7: Apply computing and other knowledge domains to address real-world problems;
+PO 8: Design and develop computing solutions using a system-level perspective;
+PO 9: Utilize modern computing tools.","","n/a","n/a","n/a","n/a","Reference text: description and CLOs from the sample syllabus; Program Outcomes transcribed from the registrar image (check the wording). Not official wording.","","","",""
+"real-prog1-clo1","Real syllabus","CLO as written (with the syllabus's own EGA / PO tags)","BSIT - IT 202 Computer Programming 1","real","CLO1. Define and analyze the computing requirements needed for an effective solution that is essential for developing holistic and impactful solutions. [EGA 1,3,4] [PO 1,2,3,6,8]","See reference rows real-prog1-ref-description and real-prog1-ref-pos (description and Program Outcomes).","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-prog1-clo2","Real syllabus","CLO as written (with the syllabus's own EGA / PO tags)","BSIT - IT 202 Computer Programming 1","real","CLO2:  Incorporate ethical standards and social responsibility into technical designs, ensuring that solutions serve the common good, in line with Marian and Augustinian principles of truth and compassion.  [EGA 1,3,4] [PO 1,2,3,6,8]","See reference rows real-prog1-ref-description and real-prog1-ref-pos (description and Program Outcomes).","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-prog1-clo3","Real syllabus","CLO as written (with the syllabus's own EGA / PO tags)","BSIT - IT 202 Computer Programming 1","real","CLO3: Collaborate effectively within multi-disciplinary and culturally diverse teams to develop Java-
+based programming solutions that address social challenges, demonstrating social responsibility and cultural sensitivity. [EGA 1,2,3,4] [PO 1,2,3,4,6,8,9]","See reference rows real-prog1-ref-description and real-prog1-ref-pos (description and Program Outcomes).","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-prog1-clo4","Real syllabus","CLO as written (with the syllabus's own EGA / PO tags)","BSIT - IT 202 Computer Programming 1","real","CLO4. Demonstrate the Filipino- Catholic Augustinian Spirituality through value webbing. [EGA 2] [PO 4,5]","See reference rows real-prog1-ref-description and real-prog1-ref-pos (description and Program Outcomes).","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-prog1-week1-1","Real syllabus","Weekly plan row as written","BSIT - IT 202 Computer Programming 1","real","Week: 1
+ILO: ILO 1: Demonstrate a clear understanding of the course structure, expectations, and key programming concepts in Java, including how these skills align with real- world IT challenges and professional ethical standards. [CLO1]
+Course content:
+I. Orientation
+A. Introduction to the Course Contents
+B. Course Requirements and Activities
+C. Course Objectives Grading System and Policies on Absences, Tardiness and Examinations
+Learning activities:
+• Setting and sharing of Expectations from the Course
+• Discussion on the Vision, Mission and Goals of LCUP and of CITE
+• Presentation of Course Objectives and Contents, Course Requirements and Activities Review of Policies on Absences, Tardiness,
+Examinations, Grading System
+Assessment tasks:
+• Statement of Expectations
+• Review of Course Contents, Objectives, Activities and Assessment Tools
+• Review of Policies on Absences, Tardiness, Examinations, Grading System
+Values:
+• Compassion
+• Courage
+• Open mindedness
+• Respect
+• Obedience","The CLOs of the same syllabus: see reference row real-prog1-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-prog1-week2-2","Real syllabus","Weekly plan row as written","BSIT - IT 202 Computer Programming 1","real","Week: 2
+ILO: LO1. Explain the basic concepts and principles of Java programming, [CLO 1]
+Course content:
+II. Introduction to Java Programming
+• A Brief History of Java language
+• Characteristics of Java Language
+• Reasons why programmers use Java language Features of Java Programming
+Learning activities:
+• Lecture- Discussion/Recitat ion using Power Point Presentation
+• Video Presentation
+• Discovery Learning
+• Functioning Knowledge
+Assessment tasks:
+• Brain Storming
+• Quiz
+• Assignment
+Values:
+• Self Awareness
+• Active participation and involvement
+• Courage
+• Humility
+• Analytical Skills","The CLOs of the same syllabus: see reference row real-prog1-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-prog1-week3-4-3","Real syllabus","Weekly plan row as written","BSIT - IT 202 Computer Programming 1","real","Week: 3-4
+ILO: ILO1: Demonstrate the skills by knowing the syntax and semantics of Java. of Language. [CLO 1,2]
+ILO2: Ensures that students gain a foundational understanding of Java and are able to apply basic programming concepts through hands-on practice. (CLO 2] [CLO 3]
+Course content:
+III. The Basic Input/Output Statements of Java Console
+• The Basic Input/Output
+• Variable Declaration
+• Rules in declaring variables, ➢ Constants ➢ Operators
+• Java Installation Java Eclipse GUI
+Learning activities:
+• Discussion using PowerPoint Presentation
+• Discovery Learning
+• Functional Knowledge
+• Research Study
+• Demonstration
+Assessment tasks:
+• Recitation Group Participation •
+• Quiz
+• Machine Problem
+• Assignment
+Values:
+• Interiority
+• Work Ethics
+• Interpersonal Skills
+• Courage
+• Critical Thinking
+• Courage •","The CLOs of the same syllabus: see reference row real-prog1-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-prog1-week4-5-4","Real syllabus","Weekly plan row as written","BSIT - IT 202 Computer Programming 1","real","Week: 4-5
+ILO: ILO 1: Inference read and write data using Java streams [CLO 1] [CLO 2] ILO 2 Acquire the necessary skills and understanding of java methods.
+ILO4: Demonstrate the skills by knowing the syntax and semantics of Java. of Language. [CLO 3]
+Course content:
+IV. Java Libraries Program
+• Parts of a Java program
+• The print and println function Data type
+• Int (Integer)
+• Float
+• Double
+• Char
+• Reasons to declare variables
+Learning activities:
+• Lecture-Discussion using Power Point presentation
+• Seatwork
+• Laboratory
+• Machine Problem Video Presentation
+Assessment tasks:
+• Recitation
+• Quiz Simulation of the external and internal parts of the System Unit
+Values:
+• Understanding
+• Exactness
+• Patience
+• Critical Thinking
+• Active participation and involvement
+• Critical Thinking
+• Patience
+• Appreciation","The CLOs of the same syllabus: see reference row real-prog1-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-prog1-week6-5","Real syllabus","Examination row as written","BSIT - IT 202 Computer Programming 1","real","Week: 6
+ILO: Review topics covered by the examination
+Course content:
+PRELIM EXAMINATION
+Learning activities:
+Examination on the topics discussed during the Prelim Term
+Assessment tasks:
+Result of the Examination
+Values:
+• Skills and Competencies
+• Critical Thinking","The CLOs of the same syllabus: see reference row real-prog1-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-prog1-week7-8-6","Real syllabus","Weekly plan row as written","BSIT - IT 202 Computer Programming 1","real","Week: 7-8
+ILO: ILO3: Understand the fundamentals of structured logic using decisions, loops, and array manipulation. [CLO 1] [CLO3]
+ILO4: Be able to apply conditional statements in Java to control program flow based on specific conditions, and write programs
+that make decisions dynamically depending on user input or computed values. [CLO 2] [CLO3]
+Course content:
+V. . Conditional Statements
+• The Conditional Statements Syntax
+• If Statement
+• If Else Statement Switch/case Language
+Learning activities:
+• Discussion using PowerPoint Presentation
+• Video Presentation
+• Laboratory Exercises: Machine Language Group Dynamics
+Assessment tasks:
+• Recitation
+• Seatwork on the topics discussed
+• Laboratory Exercises
+Values:
+• Patience
+• Humility
+• Cooperation
+• Accuracy
+• Appreciation
+• Leadership Skills
+• Courage","The CLOs of the same syllabus: see reference row real-prog1-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-prog1-week9-11-7","Real syllabus","Weekly plan row as written","BSIT - IT 202 Computer Programming 1","real","Week: 9-11
+ILO: ILO1: Utilize various looping constructs (for, while, do-while) in Java to execute repeated tasks, and design programs that efficiently handle repetitive processes and iterations, incorporating loops to solve real-world problems. CLO1 CLO2, CLO3
+ILO2. Inference the structured programming concepts aCLOng with the Java syntax to implement them.
+Course content:
+XI. Looping Statements
+• Java Loops
+▪ For Loops
+▪ Do While Loop
+▪ Break/Continue
+Learning activities:
+• Discussion using PowerPoint Presentation
+• Functioning Knowledge
+• Laboratory Exercises.
+Assessment tasks:
+• Recitation
+• Group Participation
+• Quiz
+• Machine Problem
+Values:
+• Critical Thinking
+• Understanding
+• Precision
+• Accuracy
+• Appreciation
+• Humility","The CLOs of the same syllabus: see reference row real-prog1-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-prog1-week12-8","Real syllabus","Examination row as written","BSIT - IT 202 Computer Programming 1","real","Week: 12
+ILO: Review topics covered by the examination
+Course content:
+MIDTERM EXAMINATION
+Learning activities:
+Examination on the topics discussed during the Midterm Term
+Assessment tasks:
+Result of the Examination
+Values:
+• Skills and Competencies
+• Critical Thinking","The CLOs of the same syllabus: see reference row real-prog1-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-prog1-week13-9","Real syllabus","Weekly plan row as written","BSIT - IT 202 Computer Programming 1","real","Week: 13
+ILO: ILO4: declare, initialize, and manipulate arrays in Java, effectively using one-
+dimensional and multi-dimensional arrays to store, retrieve, and process data in various applications [CLO1] [CLO2]
+ILO6: Synthesize skills in De-bugging Java Language program.
+Course content:
+X. . Array
+• Array
+• Example of Array
+• Two-Dimensional Arrays syntax:
+Learning activities:
+• Discussion using Power Point Presentation
+• Functioning knowledge
+• Discovery Learning
+• Quiz on the discussed topic Laboratory Exercises
+Assessment tasks:
+• Recitation
+• Quiz
+• Machine problem: Hands-on exercises using Java Console programs
+Values:
+• Active participation and involvement
+• Understanding
+• Compassion Critical Thinking","The CLOs of the same syllabus: see reference row real-prog1-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-prog1-week14-10","Real syllabus","Weekly plan row as written","BSIT - IT 202 Computer Programming 1","real","Week: 14
+ILO: ILO1: Apply various string manipulation methods in Java. [CLO 1-2] . LO2: Synthesize skills in De-bugging Java Language program. [CLO2-3]
+Course content:
+XIII. Strings
+• String Manipulation ➢ Length() ➢ charAt() ➢ indexOf() ➢ concat() ➢ replace ➢ ignorecase() ➢ substring()
+Learning activities:
+Lecture:
+• Discussion using Powerpoint Presentation
+• Quiz
+• Laboratory: :Exercises: ➢ Machine Problem
+• Seatwork using trial and error discovery learning
+Assessment tasks:
+• Recitation
+• Quiz
+• Seatwork-Trial and Error for discovery learning
+• Accurate Program output
+Values:
+• Critical Thinking
+• Active participation and involvement
+• Open mindedness
+• Humility
+• Patience
+• Courage","The CLOs of the same syllabus: see reference row real-prog1-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-prog1-week15-11","Real syllabus","Weekly plan row as written","BSIT - IT 202 Computer Programming 1","real","Week: 15
+ILO: ILO4: Demonstrate the skills by knowing the syntax and semantics of Java. [CLO1-2]
+ILO5: Build robust applications using Java console code. [CLO 1-2]
+ILO6: Synthesize skills in De-bugging
+Java Language program. [CLO2-3]
+Course content:
+XII. JAVA METHOD
+• Java Parameters
+• Object Connection Java Recursion
+Learning activities:
+• Discussion using Power Point Presentation
+• Functioning knowledge
+• Blended Learning
+• Quiz on the discussed topic
+• Laboratory Exercises
+Assessment tasks:
+• Recitation
+• Quiz
+• Machine problem: Hands-on exercises using C programs
+Values:
+• Active participation and involvement
+• Understanding
+• Interiority
+• Courage
+• Critical Thinking","The CLOs of the same syllabus: see reference row real-prog1-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-prog1-week16-17-12","Real syllabus","Weekly plan row as written","BSIT - IT 202 Computer Programming 1","real","Week: 16-17
+ILO: ILO1 Retreve data from a relational database using java class. [CLO 2-3] Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing.
+Course content:
+X. JAVA DATABASE CONNECTION
+• Improvised Database UCanAccess Connection
+Learning activities:
+• Discussion using Power Point Presentation
+• Quiz on the discussed topic
+• Cooperative Learning
+• Group Dynamics Laboratory Exercises
+Assessment tasks:
+• Recitation
+• Quiz
+• Groupings
+• Machine problem: Hands-on exercises using Java programs
+Values:
+• Active participation and involvement
+• Understanding
+• Teamwork Skills
+• Courage Critical Thinking","The CLOs of the same syllabus: see reference row real-prog1-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-prog1-week18-13","Real syllabus","Examination row as written","BSIT - IT 202 Computer Programming 1","real","Week: 18
+ILO: Review topics covered by the examination
+Course content:
+FINALS EXAMINATION
+Learning activities:
+Examination on the topics discussed during the Final Term
+Assessment tasks:
+Result of the Examination
+Values:
+• Honesty
+• Integrity Critical Thinking","The CLOs of the same syllabus: see reference row real-prog1-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-syseng-ref-description","Reference","Course description (sample syllabus)","BSIE - IE 402 Systems Engineering","reference","This course introduces students to the principles and practices of systems engineering, focusing on the analysis,
+design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students
+learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and
+operational constraints. Key topics include requirements analysis, systems design, integration, project management, and
+performance evaluation.
+Students will develop skills in modeling and optimizing systems that integrate people, processes, and technology. They
+will explore methods for ensuring that systems are efficient, reliable, and adaptable across various industries, such as
+manufacturing, healthcare, and logistics. This course prepares BSIE students to play a vital role in creating systems that
+maximize performance, minimize waste, and support organizational goals.
+Beyond technical knowledge, the course integrates Marian Augustinian values into each lesson, fostering the
+development of students as Christo-centric Catholic professionals. The curriculum not only aims for intellectual growth but also
+instills a commitment to ethical decision-making, social responsibility, and compassionate service. Students will be equipped
+with the knowledge and values necessary to thrive as professionals in the field of Industrial Engineering.
+th","","n/a","n/a","n/a","n/a","Reference text: description and CLOs from the sample syllabus; Program Outcomes transcribed from the registrar image (check the wording). Not official wording.","","","",""
+"real-syseng-ref-clos","Reference","Course learning outcomes (sample syllabus)","BSIE - IE 402 Systems Engineering","reference","CLO 1: Demonstrate knowledge and understanding of engineering and management principles by effectively leading and collaborating within teams, managing projects, and engaging in multidisciplinary environments. [EGA 1] [PO 1,3]
+CLO 2: Apply critical and creative thinking skills to analyze, design, and optimize complex systems, integrating various components such as people, materials, technology, and information. [EGA 1] [PO 2,3, 4, 5]
+CLO 3: Develop the ability to identify and solve systems engineering challenges, making decisions that improve performance, enhance efficiency, and support sustainable practices across diverse industries. [EGA 1, 2] [PO 2, 3. 5, 6,7]
+CLO 4. Demonstrate the Filipino- Catholic Augustinian Spirituality through value webbing. [EGA 2] [PO 4,5]","","n/a","n/a","n/a","n/a","Reference text: description and CLOs from the sample syllabus; Program Outcomes transcribed from the registrar image (check the wording). Not official wording.","","","",""
+"real-syseng-ref-pos","Reference","Program Outcomes of BSIE","BSIE - IE 402 Systems Engineering","reference","PO 1: Ability to apply knowledge of mathematics and science to solve complex engineering problems;
+PO 2: Ability to design and conduct experiments, as well as to analyze and interpret data;
+PO 3: Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.
+PO 4: Ability to function on multidisciplinary teams
+PO 5: Ability to identify; formulate, and solve complex engineering problems;
+PO 6: Understanding of professional and ethical responsibility.
+PO 7: Ability to communicate effectively
+PO 8: Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.
+PO 9: Recognition of the need for, and an ability to engage in life-long learning;
+PO 10: Knowledge of contemporary issues;
+PO 11: Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and;
+PO 12: Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in
+PO 13: Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.","","n/a","n/a","n/a","n/a","Reference text: description and CLOs from the sample syllabus; Program Outcomes transcribed from the registrar image (check the wording). Not official wording.","","","",""
+"real-syseng-clo1","Real syllabus","CLO as written (with the syllabus's own EGA / PO tags)","BSIE - IE 402 Systems Engineering","real","CLO 1: Demonstrate knowledge and understanding of engineering and management principles by effectively leading and collaborating within teams, managing projects, and engaging in multidisciplinary environments. [EGA 1] [PO 1,3]","See reference rows real-syseng-ref-description and real-syseng-ref-pos (description and Program Outcomes).","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-syseng-clo2","Real syllabus","CLO as written (with the syllabus's own EGA / PO tags)","BSIE - IE 402 Systems Engineering","real","CLO 2: Apply critical and creative thinking skills to analyze, design, and optimize complex systems, integrating various components such as people, materials, technology, and information. [EGA 1] [PO 2,3, 4, 5]","See reference rows real-syseng-ref-description and real-syseng-ref-pos (description and Program Outcomes).","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-syseng-clo3","Real syllabus","CLO as written (with the syllabus's own EGA / PO tags)","BSIE - IE 402 Systems Engineering","real","CLO 3: Develop the ability to identify and solve systems engineering challenges, making decisions that improve performance, enhance efficiency, and support sustainable practices across diverse industries. [EGA 1, 2] [PO 2, 3. 5, 6,7]","See reference rows real-syseng-ref-description and real-syseng-ref-pos (description and Program Outcomes).","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-syseng-clo4","Real syllabus","CLO as written (with the syllabus's own EGA / PO tags)","BSIE - IE 402 Systems Engineering","real","CLO 4. Demonstrate the Filipino- Catholic Augustinian Spirituality through value webbing. [EGA 2] [PO 4,5]","See reference rows real-syseng-ref-description and real-syseng-ref-pos (description and Program Outcomes).","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-syseng-week1-1","Real syllabus","Weekly plan row as written","BSIE - IE 402 Systems Engineering","real","Week: 1
+ILO: ILO10: Demonstrate the Augustinian, Marian and missionary Christ- centered Spirituality through value webbing. [CLO 4]
+Course content:
+I. COURSE ORIENTATION
+A. Introduction to the Course Contents
+B. Course Requirements and Activities
+C. Course Objectives
+D. Grading System and Policies on Absences, Tardiness and Examinations
+Learning activities:
+• Setting and sharing of Expectations from the Course
+• Discussion on the Vision, Mission and Goals of LCUP and of CITE
+• Presentation of Course Objectives and Contents, Course Requirements and Activities
+• Review of Policies on Absences, Tardiness, Examinations, Grading System
+Assessment tasks:
+• Statement of Expectations
+• Review of Course Contents, Objectives, Activities and Assessment Tools
+• Review of Policies on Absences, Tardiness, Examinations, Grading System
+Values:
+• Interiority
+• Respect
+• Obedience","The CLOs of the same syllabus: see reference row real-syseng-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-syseng-week2-3-2","Real syllabus","Weekly plan row as written","BSIE - IE 402 Systems Engineering","real","Week: 2-3
+ILO: ILO1: Describe fundamental principles of systems engineering, including system life cycles, requirements
+analysis, and systems thinking. [CLO 1], [CLO 2]
+ILO2: Develop basic system designs that incorporate requirements from multiple disciplines, including human factors, technology, and organizational needs. [CLO 1], [CLO 2]
+Course content:
+Introduction to Systems Engineering
+• Introduction to Systems Engineering
+Management
+• Systems Engineering Management in DoD Acquisition
+Learning activities:
+Lecture and Case Study Analysis Activity: Present a lecture on the basics of systems engineering management, followed by
+an analysis of a real- world case study in systems engineering, such as a notable DoD acquisition project. Interactive Discussion and Q&A Activity: Facilitate an interactive class discussion on the key principles of systems engineering management and its importance in large-scale projects, especially in high-stakes environments like defense.
+Assessment tasks:
+Quiz on Fundamental Concepts Conduct a quiz covering key concepts and terminology in
+systems engineering management, including its principles, life cycle stages, and specific applications in DoD acquisition. Case Study Analysis Report Provide a case study on a DoD acquisition project or a similar large-scale systems engineering project. Students will analyze and write a report covering the systems engineering management challenges and solutions highlighted in the case.
+Values:
+• Understanding and patience in learning
+• Creative and critical thinking
+• Analytical thinking
+• Good active participation and involvement
+• Appreciation
+• Effective and efficient management of resources
+• Appreciation
+• Awareness
+• Courage and Humility","The CLOs of the same syllabus: see reference row real-syseng-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-syseng-week4-3","Real syllabus","Examination row as written","BSIE - IE 402 Systems Engineering","real","Week: 4
+ILO: [ILO 1], [ILO 2]
+Course content:
+PRELIMINARY EXAM
+Learning activities:
+Examination covering the topics discussed
+Assessment tasks:
+Examination results
+Values:
+Courage and Humility","The CLOs of the same syllabus: see reference row real-syseng-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-syseng-week5-8-4","Real syllabus","Weekly plan row as written","BSIE - IE 402 Systems Engineering","real","Week: 5-8
+ILO: ILO3: Summarize the overall systems engineering process, explaining each phase from requirements analysis to verification and process outputs. [CLO1][CLO2]
+ILO4: Analyze and define system requirements based on stakeholder needs, constraints, and project objectives. [CLO2][CLO3]
+ILO5: Recognize key outputs of the systems engineering process, such as documentation, specifications, and test reports, and evaluate their role in supporting successful project outcomes. [CLO2][CLO3]
+Course content:
+The Systems Engineering Process
+• Systems Engineering Process Overview
+• Requirements Analysis
+• Functional Analysis and Allocation
+• Design Synthesis
+• Verification
+• Systems Engineering Process Outputs
+Learning activities:
+Group Workshop on Functional Analysis and Allocation Activity: In small groups, students will break down system requirements into functional components and allocate these to hypothetical subsystems. Group Workshop on Functional Analysis
+and Allocation In small groups, students will break down system requirements into functional components and allocate these to hypothetical subsystems. Reflection Assignment on Process Outputs Have students reflect on the outputs generated at each stage of the systems engineering process and discuss how these support project success.
+Assessment tasks:
+Requirements Analysis Report Assign students a hypothetical project scenario where they must identify, analyze, and document key system requirements based on provided stakeholder needs.
+Functional Analysis and Allocation Diagram Description: Have students create a functional flow diagram for a system based on a given set of requirements, breaking down functions and allocating them to subsystems. Design Synthesis Project Description: Assign a design synthesis task where students create an initial design for a system, explaining how the design integrates functional requirements and meets project goals.
+Values:
+• Understandin g and patience in learning
+• Creative and critical thinking
+• Analytical thinking
+• Good and active
+participation and involvement
+• Appreciation
+• Effective and efficient management of resources
+• Problem solving skills •","The CLOs of the same syllabus: see reference row real-syseng-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-syseng-week9-5","Real syllabus","Examination row as written","BSIE - IE 402 Systems Engineering","real","Week: 9
+ILO: [ILO 3], [ILO 4] [ILO5]
+Course content:
+MIDTERM EXAM
+Learning activities:
+• Examination covering the topics discussed
+Assessment tasks:
+• Examination results
+Values:
+• Skills and Competencies
+• Critical Thinking
+• Honesty","The CLOs of the same syllabus: see reference row real-syseng-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-syseng-week10-11-6","Real syllabus","Weekly plan row as written","BSIE - IE 402 Systems Engineering","real","Week: 10-11
+ILO: ILO6: Create and interpret a WBS to organize and manage project components, identifying key deliverables and tasks for effective project planning and
+control. [CLO 3] [CLO4]
+ILO7: Apply modeling and simulation techniques to analyze system behavior, test potential solutions, and predict outcomes in a controlled virtual environment. [CLO 3] [CLO4]
+ILO8:Identify, assess, and manage risks within a systems project, developing risk mitigation strategies to minimize potential negative impacts on project outcomes. [CLO 3] [CLO4]
+Course content:
+Systems Analysis and Control
+• Work Breakdown Structure
+• Configuration Management
+• Technical Reviews and Audits
+• Trade Studies
+• Modeling and Simulation
+• Metrics
+• Risk Management
+Learning activities:
+Interactive Workshop on Work Breakdown Structure (WBS) Creation Activity: Conduct an interactive workshop where students create a WBS for a hypothetical
+project, breaking down tasks and identifying deliverables. Case Study on Configuration Management Activity: Present a case study demonstrating configuration management principles and practices in a real- world project. Have students discuss the role of configuration management in maintaining system consistency. Risk Management Analysis Activity Activity: Present a project scenario and ask students to identify potential risks, assess their impact and probability, and develop mitigation strategies.
+Assessment tasks:
+Peer Review of Experimental Design and Robustness Plan Ask students to peer review each other’s experimental design proposals and
+robustness plans, providing constructive feedback on methodology and approach. Risk Assessment and Mitigation in Robust Design Assign a task where students assess potential risks to robustness in a system design and develop mitigation strategies to address these risks.
+Values:
+• Understanding and patience in learning
+• Creative and critical thinking
+• Analytical thinking
+• Good and
+active participation and involvement
+• Appreciation
+• Effective and efficient management of resources
+• Problem solving skills","The CLOs of the same syllabus: see reference row real-syseng-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-syseng-week12-14-7","Real syllabus","Weekly plan row as written","BSIE - IE 402 Systems Engineering","real","Week: 12-14
+ILO: ILO9: Formulate a comprehensive systems engineering plan that outlines objectives, resources, timelines, and milestones to guide system development from inception
+through completion. [CLO 3] [CLO4]
+ILO10: Evaluate essential management considerations—such as resource allocation, risk assessment, and stakeholder engagement—and their impact on project success, applying these principles to real or simulated project scenarios. [CLO 3] [CLO4]
+Course content:
+Planning, Organizing and Managing
+• Systems Engineering Planning
+• Product Improvement Strategies
+• Organizing and Integrating System Development
+• Contractual Considerations
+• Management Considerations and Summary
+Learning activities:
+Workshop on Systems Engineering Planning Conduct a hands-on workshop where students outline a systems engineering plan for a hypothetical project. They should include project objectives, resource
+allocation, timeline planning, and key milestones. Product Improvement Strategy Brainstorming Session In groups, students brainstorm and propose strategies for iterative product improvement in a given scenario, focusing on design, functionality, and customer feedback loops.
+Assessment tasks:
+Systems Engineering Plan Development Task: Have students create a comprehensive systems engineering plan for a hypothetical project. This plan
+should include objectives, resource allocation, timeline, milestones, risk assessment, and project phases. Product Improvement Strategy Proposal Task: Ask students to develop a proposal for a product improvement strategy for an existing system, identifying areas for enhancement and proposing solutions to improve quality, efficiency, and user satisfaction.
+Values:
+• Active participation and involvement
+• Active participation and involvement
+• Critical
+Thinking
+• Patience
+• Understandin g
+• Critical Analysis
+• Logical Thinking","The CLOs of the same syllabus: see reference row real-syseng-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-syseng-week15-17-8","Real syllabus","Weekly plan row as written","BSIE - IE 402 Systems Engineering","real","Week: 15-17
+ILO: ILO11: Analyze and evaluate multiple design alternatives through trade space exploration, applying criteria to select the optimal concept based on performance, feasibility, and stakeholder needs. [CLO 3] [CLO4]
+ILO 12: Develop and execute experiments to validate design
+assumptions, analyze system behaviors, and refine solutions, demonstrating an understanding of experimental design and data collection principles. [CLO 3] [CLO4]
+ILO 13: Identify critical factors in system design that influence performance consistency, and apply robust design techniques to improve reliability under varying conditions (Robust Design I). [CLO 3] [CLO4]
+ILO14: Utilize advanced robust design methods to enhance system resilience, focusing on minimizing performance variability in complex, multi-variable systems (Robust Design II). [CLO 3] [CLO4]
+Course content:
+Application
+• Systems Engineering As Human Activity
+• Trade Space Exploration Concept Selection
+• Experiments
+• Robust Design I
+• Robust Design II
+Learning activities:
+Case Study Discussion: Systems Engineering as a Human Activity Provide a case study that highlights the role of human factors in systems engineering, including team dynamics, stakeholder involvement, and ethical considerations. Facilitate a class discussion on the human-centered aspects and their impact on project outcomes.
+Design and Conduct Experiments Activity Assign students a mini- project to design and conduct an experiment to validate a system component or process. They should identify the objective, develop a methodology, collect data, and analyze results to inform design improvements. Robust Design Brainstorming Session (Robust Design I) In small groups, students brainstorm how to apply basic robust design principles to make a system more stable under varying conditions. They discuss factors that influence system stability and propose design adjustments to minimize variability. Advanced Robust Design Project (Robust Design II) Activity: For a more complex project, students apply advanced robust design techniques to a hypothetical or real-world system. They identify and
+control multiple variables to minimize performance variation across diverse scenarios.
+Assessment tasks:
+Robust Design I – System Evaluation and Improvement Proposal Task: Have students apply basic robust design techniques to evaluate a system and propose design changes that would make it more stable under varying conditions. They should identify critical factors that affect performance and
+suggest improvements to minimize variability. Robust Design II – Advanced Design Analysis Task: For a more complex system, students should apply advanced robust design methods to assess and improve the system’s performance. They will use tools such as design of experiments (DOE) to explore multiple design variables and their interactions. Robust Design Report (I & II) Task: Students will submit a report for each part of the robust design application, detailing the steps taken to assess and improve system performance. For Robust Design I, they will focus on basic principles, and for Robust Design II, they will apply
+advanced techniques to optimize the system.
+Values:
+• Skills and Competencies
+• Critical Thinking
+• Honesty","The CLOs of the same syllabus: see reference row real-syseng-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-syseng-week18-9","Real syllabus","Examination row as written","BSIE - IE 402 Systems Engineering","real","Week: 18
+ILO: [CLO 3] [CLO 4]
+Course content:
+FINAL EXAMINATION
+Learning activities:
+• Examination on the topics discussed during the Final Term
+Assessment tasks:
+
+Values:
+• Skills and Competencies
+• Critical Thinking
+• Honesty","The CLOs of the same syllabus: see reference row real-syseng-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-sensors-ref-description","Reference","Course description (sample syllabus)","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","reference","This course covers operational amplifiers, signal converters, power switching devices and the construction and operation
+of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses
+on the application of these devices in developing signal conversion circuits that allows measurement, processing and control
+of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on
+actuators are also included.
+Anchored in the Marian and Augustinian values of truth (veritas), unity (unitas), and charity (caritas), the course encourages
+students to design technology that promotes social responsibility, collaboration, and compassion. Through hands-on
+projects, learners will not only develop technical proficiency but also embody ethical stewardship — using their knowledge to
+create solutions that serve the needs of others and contribute to the common good.","","n/a","n/a","n/a","n/a","Reference text: description and CLOs from the sample syllabus; Program Outcomes transcribed from the registrar image (check the wording). Not official wording.","","","",""
+"real-sensors-ref-clos","Reference","Course learning outcomes (sample syllabus)","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","reference","CLO1: Identify the design process of electronic circuits and systems and conduct experiments involving sensors and mixed-signal systems, analyze data, and interpret results to improve performance and reliability. [EGA1, PO1, PO2, PO3, PO5]
+CLO2: Develop analytical and design skills for both analog and digital electronic circuit and implement sensor-based systems that integrate hardware and software components while considering economic, environmental, and ethical constraints. [EGA2, PO6. PO7, PO12]
+CLO3: Analyze and apply the behavior of passive components in AC circuits and their instrumentation applications in multidisciplinary teams to design, test, and optimize mixed-signal and sensor applications for engineering solutions [EGA3, PO4, PO9]
+CLO4: Exhibit lifelong learning, precision, and ethical responsibility in performing
+measurements and calibration tasks. Engage in continuous learning by exploring emerging technologies and trends in sensors, instrumentation, and mixed-signal design for future innovation [EGA 4, PO11, PO13]","","n/a","n/a","n/a","n/a","Reference text: description and CLOs from the sample syllabus; Program Outcomes transcribed from the registrar image (check the wording). Not official wording.","","","",""
+"real-sensors-ref-pos","Reference","Program Outcomes of BSCPE","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","reference","PO 1: Ability to apply knowledge of mathematics and science to solve complex engineering problems;
+PO 2: Ability to design and conduct experiments, as well as to analyze and interpret data;
+PO 3: Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.
+PO 4: Ability to function on multidisciplinary teams
+PO 5: Ability to identify; formulate, and solve complex engineering problems;
+PO 6: Understanding of professional and ethical responsibility.
+PO 7: Ability to communicate effectively
+PO 8: Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.
+PO 9: Recognition of the need for, and an ability to engage in life-long learning;
+PO 10: Knowledge of contemporary issues;
+PO 11: Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and
+PO 12: Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in
+PO 13: Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.","","n/a","n/a","n/a","n/a","Reference text: description and CLOs from the sample syllabus; Program Outcomes transcribed from the registrar image (check the wording). Not official wording.","","","",""
+"real-sensors-clo1","Real syllabus","CLO as written (with the syllabus's own EGA / PO tags)","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","real","CLO1: Identify the design process of electronic circuits and systems and conduct experiments involving sensors and mixed-signal systems, analyze data, and interpret results to improve performance and reliability. [EGA1, PO1, PO2, PO3, PO5]","See reference rows real-sensors-ref-description and real-sensors-ref-pos (description and Program Outcomes).","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-sensors-clo2","Real syllabus","CLO as written (with the syllabus's own EGA / PO tags)","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","real","CLO2: Develop analytical and design skills for both analog and digital electronic circuit and implement sensor-based systems that integrate hardware and software components while considering economic, environmental, and ethical constraints. [EGA2, PO6. PO7, PO12]","See reference rows real-sensors-ref-description and real-sensors-ref-pos (description and Program Outcomes).","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-sensors-clo3","Real syllabus","CLO as written (with the syllabus's own EGA / PO tags)","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","real","CLO3: Analyze and apply the behavior of passive components in AC circuits and their instrumentation applications in multidisciplinary teams to design, test, and optimize mixed-signal and sensor applications for engineering solutions [EGA3, PO4, PO9]","See reference rows real-sensors-ref-description and real-sensors-ref-pos (description and Program Outcomes).","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-sensors-clo4","Real syllabus","CLO as written (with the syllabus's own EGA / PO tags)","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","real","CLO4: Exhibit lifelong learning, precision, and ethical responsibility in performing
+measurements and calibration tasks. Engage in continuous learning by exploring emerging technologies and trends in sensors, instrumentation, and mixed-signal design for future innovation [EGA 4, PO11, PO13]","See reference rows real-sensors-ref-description and real-sensors-ref-pos (description and Program Outcomes).","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-sensors-week1-1","Real syllabus","Weekly plan row as written","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","real","Week: 1
+ILO: (none written)
+Course content:
+I.ORIENTATION
+• Introduction to the Course Contents
+• Course Requirements and Activities
+• Course Objectives
+• Grading System and Policies on Absences,
+Tardiness and Examinations
+• Introduction to Gsuite, Google Classroom, Google Slides, Google Docs and Google Sheets
+Learning activities:
+• Setting and sharing of expectations from the course
+• Discussion of the Vision, Mission and Goals of LCUP and of CITE
+• Presentation of Course Objectives and Contents, Course Requirements and Activities
+• Review of Policies on Absences, Tardiness, Examinations and Grading System
+Assessment tasks:
+• Statement of expectations
+• Review of Course Contents, Objectives, Activities and Assessment Tools
+• Review of Policies on Absences, Tardiness, Examinations and Grading System
+Values:
+• Understanding
+• Open Mindedness
+• Respect
+• Obedience","The CLOs of the same syllabus: see reference row real-sensors-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-sensors-week2-3-2","Real syllabus","Weekly plan row as written","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","real","Week: 2-3
+ILO: ILO1: To develop skills in analysis and design of both analog and digital circuits [CLO1]
+ILO2: Understand the design process of electronic circuits and systems. [CLO1]
+Course content:
+II. Introduction to Electronic System
+• History of Electronics
+• Electronic Signals and Notation
+• Classifications of Electronic Systems
+• Specifications of Electronic Systems
+• Design of Electronic Systems
+• Design of Electronic Circuits
+• Electronic Devices
+• Emerging Electronics Differential Amplifiers
+• Introduction to Differential Amplifiers
+• Block Diagram
+• Differential Gain
+• Common Mode Gain
+• CMRR
+• Configuration of differential amplifiers
+Learning activities:
+• Lecture- Discussion using PowerPoint
+Assessment tasks:
+• Quiz on the topics discussed
+Values:
+• Cooperation
+• Understanding
+• Critical Thinking
+• Active participation and involvement","The CLOs of the same syllabus: see reference row real-sensors-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-sensors-week4-5-3","Real syllabus","Weekly plan row as written","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","real","Week: 4-5
+ILO: ILO1: Show one’s knowledge on the fundamental elements of amplifiers.[CLO1, CLO2]
+ILO2: Refresh and expand the understanding of basic electrical components and the basic terms used in electricity as required for instrumentation. .[CLO1, CLO2]
+Course content:
+III. INTRODUCTION TO OPERATIONAL AMPLIFIERS AND APPLICATIONS
+• Characteristics of Ideal Op- Amps
+• Noninverting Amplifiers
+• Inverting Amplifiers
+• Instrumentatio n Amplifiers
+• Integrators
+• Differentiators
+• Addition– Subtraction Amplifiers
+• Large-Signal Operations of Op-Amps
+• Input Offset Voltage
+• Input Offset Current
+• Op-Amp Circuit Design Linear and Non Linear Applications of Op-Amp
+• Linear Op-amp
+• Non-linear Op- amp
+Learning activities:
+• Lecture- Discussion using PowerPoint
+Assessment tasks:
+• Quiz on the topics discussed
+Values:
+• Cooperation
+• Understandi ng
+• Critical Thinking
+• Active participation and involvement","The CLOs of the same syllabus: see reference row real-sensors-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-sensors-week6-4","Real syllabus","Examination row as written","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","real","Week: 6
+ILO: (none written)
+Course content:
+Preliminary Examination
+Learning activities:
+• Examination on the topics discussed during the Mid Term
+Assessment tasks:
+• Examination
+Values:
+• Honesty in answering the test questionnaire
+• Diligence
+• Understanding","The CLOs of the same syllabus: see reference row real-sensors-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-sensors-week7-8-5","Real syllabus","Weekly plan row as written","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","real","Week: 7-8
+ILO: ILO1: To develop skills in analysis and design of both analog and digital circuits
+ILO6: Understand active devices, how they are used in instrument applications, and the difference between analog and digital circuits.
+ILO10: Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing.
+Course content:
+IV. Analog to Digital Conversion Digital to Analog Conversion
+• Sampling
+• Quantization
+• encoding
+Learning activities:
+• Lecture- Discussion using PowerPoint
+Assessment tasks:
+• Quiz on the topics discussed
+Values:
+• Cooperation
+• Understandi ng
+• Critical Thinking
+• Active participation and involvement","The CLOs of the same syllabus: see reference row real-sensors-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-sensors-week9-11-6","Real syllabus","Weekly plan row as written","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","real","Week: 9-11
+ILO: ILO4: Refresh and expand the understanding of basic electrical components and the basic terms used in electricity as required for instrumentation.
+ILO7: Understand the units used in measurements and familiarize with the most common
+methods of using the various measurement .
+ILO10: Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing.
+Course content:
+V. Mixed Signals Basic Measurement Theory
+• IC Test
+• Linearity
+Learning activities:
+• Lecture- Discussion using PowerPoint
+Assessment tasks:
+• Quiz on the topics discussed
+Values:
+• Cooperation
+• Understandi ng
+• Critical Thinking
+• Active participation and involvement","The CLOs of the same syllabus: see reference row real-sensors-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-sensors-week12-7","Real syllabus","Examination row as written","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","real","Week: 12
+ILO: (none written)
+Course content:
+Midterm Examination
+Learning activities:
+• Examination on the topics discussed during the Mid Term
+Assessment tasks:
+• Honesty in answering the test questionnaire
+• Diligence
+• Understanding
+Values:
+• Examination","The CLOs of the same syllabus: see reference row real-sensors-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-sensors-week13-14-8","Real syllabus","Weekly plan row as written","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","real","Week: 13-14
+ILO: ILO8: Understand the different Sensors and Transducers.
+ILO10: Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing
+Course content:
+VI. Sensors and Transducers
+● Sensitivity & Hysteresis
+● Offset Error & Non- linearity
+Learning activities:
+• Lecture- Discussion using PowerPoint
+Assessment tasks:
+• Quiz on the topics discussed
+Values:
+• Cooperation
+• Understanding
+• Critical Thinking
+• Active participation and involvement","The CLOs of the same syllabus: see reference row real-sensors-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-sensors-week15-16-9","Real syllabus","Weekly plan row as written","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","real","Week: 15-16
+ILO: ILO8: Understand the different Sensors and Transducers.
+Course content:
+VII. Other Types of Sensors and Transducers
+● active sensors
+● passive sensors
+Learning activities:
+• Lecture- Discussion using PowerPoint
+Assessment tasks:
+• Quiz on the topics discussed
+Values:
+• Cooperation
+• Understanding
+• Critical Thinking
+• Active participation and involvement","The CLOs of the same syllabus: see reference row real-sensors-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-sensors-week17-10","Real syllabus","Weekly plan row as written","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","real","Week: 17
+ILO: ILO9: Learn the basic components and control of devices and prototypes.
+ILO10: Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing
+Course content:
+VIII. Basic Control Devices
+● What are control devices
+● different types of control devices
+Learning activities:
+• Lecture- Discussion using PowerPoint
+Assessment tasks:
+• Quiz on the topics discussed
+Values:
+• Cooperation
+• Understandi ng
+• Critical Thinking
+• Active participation and involvement","The CLOs of the same syllabus: see reference row real-sensors-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"real-sensors-week18-11","Real syllabus","Examination row as written","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","real","Week: 18
+ILO: (none written)
+Course content:
+Final Examination
+Learning activities:
+• Examination on the topics discussed during the Final Term
+Assessment tasks:
+• Final Examination
+Values:
+• Honesty in answering the test questionnaire
+• Diligence","The CLOs of the same syllabus: see reference row real-sensors-ref-clos.","(none proposed: this is real faculty content; the faculty member sets the expected decision)","Not run on this text yet (provider credits unavailable)","n/a","n/a","Real syllabus text, extracted automatically from the PDF: check it against the original","","","",""
+"cc-prog1-aligned","Synthetic test item","Stage A (CLO relevance, PO mapping) / Course-CLO","BSIT - IT 202 Computer Programming 1","clear-positive","Develop and test Java programs that use variables, conditional statements and loops to solve simple problems.","Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)
+Program: BSIT
+Year level: 2
+Description: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Observable performance in the subject the description names (Java programming fundamentals).","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cc-prog1-keyword","Synthetic test item","Stage A (CLO relevance, PO mapping) / Course-CLO","BSIT - IT 202 Computer Programming 1","keyword-overlap","Appreciate the history of programming and understand the importance of programming in society.","Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)
+Program: BSIT
+Year level: 2
+Description: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.","PARTIALLY_ALIGNED or NOT_ALIGNED","PARTIALLY_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Repeats the subject word but states no assessable programming performance ('appreciate', 'understand').","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cc-prog1-offsubject","Synthetic test item","Stage A (CLO relevance, PO mapping) / Course-CLO","BSIT - IT 202 Computer Programming 1","off-subject","Design and analyze a relational database schema using normalization up to third normal form.","Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)
+Program: BSIT
+Year level: 2
+Description: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.","NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","A computing competence of a different course (databases); the description does not support it.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cc-prog1-generic","Synthetic test item","Stage A (CLO relevance, PO mapping) / Course-CLO","BSIT - IT 202 Computer Programming 1","generic","Demonstrate professionalism and teamwork in the workplace.","Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)
+Program: BSIT
+Year level: 2
+Description: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.","PARTIALLY_ALIGNED or NOT_ALIGNED","PARTIALLY_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Would fit any course; no link to programming.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cc-prog1-real1","Synthetic test item","Stage A (CLO relevance, PO mapping) / Course-CLO","BSIT - IT 202 Computer Programming 1","real-faculty-clo","Define and analyze the computing requirements needed for an effective solution that is essential for developing holistic and impactful solutions.","Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)
+Program: BSIT
+Year level: 2
+Description: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.","ALIGNED or PARTIALLY_ALIGNED (marked ambiguous)","PARTIALLY_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","CLO1 of the sample IT 202 syllabus (faculty-written). Related to the description's 'logical formulation techniques', but no programming performance is stated: contestable.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cc-syseng-aligned","Synthetic test item","Stage A (CLO relevance, PO mapping) / Course-CLO","BSIE - IE 402 Systems Engineering","clear-positive","Develop a system requirements specification and a functional decomposition for an engineered system.","Course: IE 402 - Systems Engineering
+Program: BSIE
+Year level: 4
+Description: This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Requirements analysis and system design are key topics of the description; the verbs are observable.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cc-syseng-keyword","Synthetic test item","Stage A (CLO relevance, PO mapping) / Course-CLO","BSIE - IE 402 Systems Engineering","keyword-overlap","Describe systems engineering.","Course: IE 402 - Systems Engineering
+Program: BSIE
+Year level: 4
+Description: This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation.","PARTIALLY_ALIGNED or NOT_ALIGNED","PARTIALLY_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Names the course but only asks for a description; no competence, below a fourth-year level.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cc-syseng-offsubject","Synthetic test item","Stage A (CLO relevance, PO mapping) / Course-CLO","BSIE - IE 402 Systems Engineering","off-subject","Write Java programs that use loops and conditional statements.","Course: IE 402 - Systems Engineering
+Program: BSIE
+Year level: 4
+Description: This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation.","NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","A programming-fundamentals outcome in a systems engineering course.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cc-syseng-real2","Synthetic test item","Stage A (CLO relevance, PO mapping) / Course-CLO","BSIE - IE 402 Systems Engineering","real-faculty-clo","Apply critical and creative thinking skills to analyze, design, and optimize complex systems, integrating various components such as people, materials, technology, and information.","Course: IE 402 - Systems Engineering
+Program: BSIE
+Year level: 4
+Description: This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation.","ALIGNED or PARTIALLY_ALIGNED (marked ambiguous)","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","CLO 2 of the sample IE 402 syllabus (faculty-written); close to the description, broad: contestable.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cc-sensors-aligned","Synthetic test item","Stage A (CLO relevance, PO mapping) / Course-CLO","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","clear-positive","Select and condition a sensor signal and interface it to a microcontroller through an analog-to-digital converter.","Course: CPE 304 - Fundamentals of Mixed Signals and Sensors
+Program: BSCPE
+Year level: 3
+Description: This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Sensors, signal conversion and digital interfacing are all in the description.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cc-sensors-keyword","Synthetic test item","Stage A (CLO relevance, PO mapping) / Course-CLO","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","keyword-overlap","Explain the importance of sensors in modern society.","Course: CPE 304 - Fundamentals of Mixed Signals and Sensors
+Program: BSCPE
+Year level: 3
+Description: This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included.","PARTIALLY_ALIGNED or NOT_ALIGNED","PARTIALLY_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Uses the word 'sensors' but develops no technical competence of the course.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cc-sensors-offsubject","Synthetic test item","Stage A (CLO relevance, PO mapping) / Course-CLO","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","off-subject","Apply queueing theory to model production lines.","Course: CPE 304 - Fundamentals of Mixed Signals and Sensors
+Program: BSCPE
+Year level: 3
+Description: This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included.","NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","An industrial engineering outcome in an electronics course.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cc-sensors-real3","Synthetic test item","Stage A (CLO relevance, PO mapping) / Course-CLO","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","real-faculty-clo","Analyze and apply the behavior of passive components in AC circuits and their instrumentation applications in multidisciplinary teams to design, test, and optimize mixed-signal and sensor applications for engineering solutions.","Course: CPE 304 - Fundamentals of Mixed Signals and Sensors
+Program: BSCPE
+Year level: 3
+Description: This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included.","ALIGNED or PARTIALLY_ALIGNED (marked ambiguous)","PARTIALLY_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","CLO3 of the sample CPE 304 syllabus (faculty-written): on subject, but several competences in one sentence.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cc-prog1-unreadable","Synthetic test item","Stage A (CLO relevance, PO mapping) / Course-CLO","BSIT - IT 202 Computer Programming 1","unreadable","Xq zv wl kjh pqrt mnb vcx.","Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)
+Program: BSIT
+Year level: 2
+Description: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.","INSUFFICIENT_EVIDENCE or NOT_ALIGNED","INSUFFICIENT_EVIDENCE / INSUFFICIENT_EVIDENCE","Not stored with the evaluation file (the model's wording was only inspected during development)","Text that cannot be read as an outcome: the model should say it cannot judge it (or reject it).","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cs-prog1-aligned","Synthetic test item","Stage A (CLO relevance, PO mapping) / CLO-set","BSIT - IT 202 Computer Programming 1","clear-positive","CLO 1: Write and test Java programs that use variables, conditional statements and loops.
+CLO 2: Decompose a problem into methods and implement them.
+CLO 3: Debug programs by tracing and testing their behaviour.
+CLO 4: Document and present a working program to peers.","Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)
+Program: BSIT
+Year level: 2
+Description: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Four distinct competences that together cover the description.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cs-prog1-redundant","Synthetic test item","Stage A (CLO relevance, PO mapping) / CLO-set","BSIT - IT 202 Computer Programming 1","redundant","CLO 1: Write Java programs using loops.
+CLO 2: Develop Java programs that use loop statements.
+CLO 3: Create programs in Java with repetition structures.
+CLO 4: Code Java loops to solve problems.","Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)
+Program: BSIT
+Year level: 2
+Description: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.","PARTIALLY_ALIGNED or NOT_ALIGNED","PARTIALLY_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Four wordings of one competence; nothing else in the description is covered.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cs-sensors-redundant","Synthetic test item","Stage A (CLO relevance, PO mapping) / CLO-set","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","redundant","CLO 1: Explain how sensors convert physical quantities into electrical signals.
+CLO 2: Describe how a sensor changes a physical parameter into an electrical signal.
+CLO 3: Discuss the conversion of physical parameters to electrical signals by transducers.
+CLO 4: Outline how transducers produce electrical signals from physical parameters.","Course: CPE 304 - Fundamentals of Mixed Signals and Sensors
+Program: BSCPE
+Year level: 3
+Description: This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included.","PARTIALLY_ALIGNED or NOT_ALIGNED","PARTIALLY_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Four paraphrases of one competence, all at recall level; converters, amplifiers and interfacing are never covered.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cs-syseng-narrow","Synthetic test item","Stage A (CLO relevance, PO mapping) / CLO-set","BSIE - IE 402 Systems Engineering","missing-coverage","CLO 1: Elicit and document stakeholder requirements for a system.
+CLO 2: Write verifiable system requirements.
+CLO 3: Trace requirements to functions.
+CLO 4: Maintain a requirements traceability matrix.","Course: IE 402 - Systems Engineering
+Program: BSIE
+Year level: 4
+Description: This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation.","PARTIALLY_ALIGNED or NOT_ALIGNED","PARTIALLY_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","All four concern requirements; integration, project management and performance evaluation, all in the description, are missing.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cs-sensors-generic","Synthetic test item","Stage A (CLO relevance, PO mapping) / CLO-set","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","generic","CLO 1: Demonstrate professionalism.
+CLO 2: Demonstrate teamwork.
+CLO 3: Demonstrate good communication.
+CLO 4: Demonstrate lifelong learning.","Course: CPE 304 - Fundamentals of Mixed Signals and Sensors
+Program: BSCPE
+Year level: 3
+Description: This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included.","PARTIALLY_ALIGNED or NOT_ALIGNED","PARTIALLY_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Generic outcomes that fit any course; none concerns sensors or signals.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cp-bscpe-aligned","Synthetic test item","Stage A (CLO relevance, PO mapping) / CLO-PO","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","clear-positive","Design and conduct experiments to characterize sensor accuracy and analyze and interpret the measurement data.","Ability to design and conduct experiments, as well as to analyze and interpret data;","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Same actions (design, conduct, analyze, interpret) on measurement data.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cp-bscpe-keyword","Synthetic test item","Stage A (CLO relevance, PO mapping) / CLO-PO","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","keyword-overlap","Discuss experiments in the history of sensor technology.","Ability to design and conduct experiments, as well as to analyze and interpret data;","PARTIALLY_ALIGNED or NOT_ALIGNED","PARTIALLY_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Shares the word 'experiments' but asks for discussion, not designing, conducting or analysing.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cp-bscpe-wrongpo","Synthetic test item","Stage A (CLO relevance, PO mapping) / CLO-PO","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","wrong-po-mapping","Calibrate a sensor and record its measurement tolerance.","Ability to communicate effectively","NOT_ALIGNED","NOT_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","A technical measurement outcome mapped to the communication PO: an incorrect mapping.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cp-bsit-aligned","Synthetic test item","Stage A (CLO relevance, PO mapping) / CLO-PO","BSIT - IT 202 Computer Programming 1","clear-positive","Write, compile and debug Java programs using an integrated development environment.","Utilize modern computing tools.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Using a modern computing tool (an IDE) to build programs.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cp-bsit-keyword","Synthetic test item","Stage A (CLO relevance, PO mapping) / CLO-PO","BSIT - IT 202 Computer Programming 1","keyword-overlap","Memorize the keywords and syntax of the Java language.","Analyze complex problems, and identify and define the computing requirements needed to design and appropriate solution;","PARTIALLY_ALIGNED or NOT_ALIGNED","PARTIALLY_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Names the discipline but only asks for recall: no analysis of problems or definition of requirements.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cp-bsit-wrongpo","Synthetic test item","Stage A (CLO relevance, PO mapping) / CLO-PO","BSIT - IT 202 Computer Programming 1","wrong-po-mapping","Develop and test Java programs that use loops and conditional statements.","Preserve and promote “Filipino historical and cultural heritage;","NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","A programming outcome mapped to the PO on Filipino historical and cultural heritage: an incorrect mapping.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cp-bsit-real3","Synthetic test item","Stage A (CLO relevance, PO mapping) / CLO-PO","BSIT - IT 202 Computer Programming 1","real-faculty-clo","Collaborate effectively within multi-disciplinary and culturally diverse teams to develop Java-based programming solutions that address social challenges, demonstrating social responsibility and cultural sensitivity.","Work effectively and independently in multi-disciplinary and multi-cultural teams;","ALIGNED or PARTIALLY_ALIGNED (marked ambiguous)","ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","CLO3 of the sample IT 202 syllabus, which the syllabus itself maps to PO 3 (teamwork): plausible, contestable.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cp-bsie-wrongpo","Synthetic test item","Stage A (CLO relevance, PO mapping) / CLO-PO","BSIE - IE 402 Systems Engineering","wrong-po-mapping","Develop a system requirements specification and a functional decomposition for an engineered system.","Ability to function on multidisciplinary teams","NOT_ALIGNED or PARTIALLY_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","A technical documentation outcome mapped to the multidisciplinary teams PO: an incorrect mapping.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"cp-bsie-real2","Synthetic test item","Stage A (CLO relevance, PO mapping) / CLO-PO","BSIE - IE 402 Systems Engineering","real-faculty-clo","Apply critical and creative thinking skills to analyze, design, and optimize complex systems, integrating various components such as people, materials, technology, and information.","Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.","ALIGNED or PARTIALLY_ALIGNED (marked ambiguous)","PARTIALLY_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","CLO 2 of the sample IE 402 syllabus, which maps it to POs 2-5 (here PO 3, system design): plausible, contestable.","PROVISIONAL - not reviewed by faculty. Written by the assistant; reference text taken from the repository records.","","","",""
+"wc-prog1-aligned","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-course","BSIT - IT 202 Computer Programming 1","clear-positive","Java conditional statements: if, if-else, nested if and switch","Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)
+Program: BSIT
+Year level: 2
+Week under review: 3 of 18
+Previous week - Week 2: Variables, data types and operators
+Next week - Week 4: Loops: for, while and do-while","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","A core topic of introductory Java programming even though it does not repeat the course title.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wc-prog1-week1","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-course","BSIT - IT 202 Computer Programming 1","week-one-orientation","Course orientation: objectives, requirements, grading system and class policies; introduction to computers and programmers","Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)
+Program: BSIT
+Year level: 2
+Week under review: 1 of 18
+Next week - Week 2: Variables, data types and operators","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Week 1 is the institutional course orientation.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wc-prog1-unrelated","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-course","BSIT - IT 202 Computer Programming 1","off-subject","Principles of supply chain management and inventory costing","Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)
+Program: BSIT
+Year level: 2
+Week under review: 5 of 18
+Previous week - Week 4: Loops: for, while and do-while
+Next week - Week 6: PRELIM EXAMINATION","NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","A topic of another discipline.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wc-prog1-keyword","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-course","BSIT - IT 202 Computer Programming 1","keyword-overlap","Programming career paths, salary trends and job-hunting tips","Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)
+Program: BSIT
+Year level: 2
+Week under review: 7 of 18
+Previous week - Week 6: PRELIM EXAMINATION
+Next week - Week 8: Arrays","PARTIALLY_ALIGNED or NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Contains the word 'programming' but teaches no programming competence of the course.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wc-prog1-level","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-course","BSIT - IT 202 Computer Programming 1","level-mismatch","Advanced software design patterns and microservice architecture","Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)
+Program: BSIT
+Year level: 2
+Week under review: 7 of 18
+Previous week - Week 6: PRELIM EXAMINATION
+Next week - Week 8: Arrays","PARTIALLY_ALIGNED or NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Far above a second-year introduction to programming fundamentals.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wc-prog1-repeat","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-course","BSIT - IT 202 Computer Programming 1","repetition","Java if-else conditional statements","Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)
+Program: BSIT
+Year level: 2
+Week under review: 4 of 18
+Previous week - Week 3: Java conditional statements: if, if-else, nested if and switch
+Next week - Week 5: Loops: for, while and do-while","PARTIALLY_ALIGNED or NOT_ALIGNED","PARTIALLY_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Repeats the previous week without a new aspect.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wc-prog1-unreadable","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-course","BSIT - IT 202 Computer Programming 1","unreadable","Qwv zzx plk mnb.","Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)
+Program: BSIT
+Year level: 2
+Week under review: 4 of 18
+Previous week - Week 3: Java conditional statements
+Next week - Week 5: Loops","INSUFFICIENT_EVIDENCE or NOT_ALIGNED","INSUFFICIENT_EVIDENCE / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Text that cannot be read as a topic.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wc-syseng-aligned","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-course","BSIE - IE 402 Systems Engineering","clear-positive","Requirements analysis: stakeholder needs, system requirements specification and traceability","Course: IE 402 - Systems Engineering
+Program: BSIE
+Year level: 4
+Week under review: 4 of 18
+Previous week - Week 3: Systems life-cycle models
+Next week - Week 5: Functional decomposition","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Requirements analysis is a named key topic of the description.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wc-syseng-aligned2","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-course","BSIE - IE 402 Systems Engineering","clear-positive","Verification and validation of engineered systems: test planning and acceptance criteria","Course: IE 402 - Systems Engineering
+Program: BSIE
+Year level: 4
+Week under review: 11 of 18
+Previous week - Week 10: Performance evaluation of systems
+Next week - Week 12: FINAL EXAMINATION","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Verification and validation is named in the description.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wc-syseng-week1","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-course","BSIE - IE 402 Systems Engineering","week-one-orientation","Orientation: course objectives, requirements, grading and policies","Course: IE 402 - Systems Engineering
+Program: BSIE
+Year level: 4
+Week under review: 1 of 18
+Next week - Week 2: Systems thinking","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Week 1 is the institutional course orientation.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wc-syseng-unrelated","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-course","BSIE - IE 402 Systems Engineering","off-subject","Java loops and arrays","Course: IE 402 - Systems Engineering
+Program: BSIE
+Year level: 4
+Week under review: 6 of 18
+Previous week - Week 5: Functional decomposition
+Next week - Week 7: Systems design","NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","A programming-fundamentals topic in a systems engineering course.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wc-syseng-keyword","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-course","BSIE - IE 402 Systems Engineering","keyword-overlap","Systems engineering in the movies: a review of films about space missions","Course: IE 402 - Systems Engineering
+Program: BSIE
+Year level: 4
+Week under review: 8 of 18
+Previous week - Week 7: Systems design
+Next week - Week 9: Project management","PARTIALLY_ALIGNED or NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Uses the words 'systems engineering' but is not a topic of the course.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wc-sensors-aligned","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-course","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","clear-positive","Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth","Course: CPE 304 - Fundamentals of Mixed Signals and Sensors
+Program: BSCPE
+Year level: 3
+Week under review: 3 of 18
+Previous week - Week 2: Operational amplifier basics
+Next week - Week 4: Signal conditioning for sensors","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Operational amplifiers are named in the description.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wc-sensors-aligned2","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-course","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","clear-positive","Analog-to-digital converters: sampling, resolution and quantization error","Course: CPE 304 - Fundamentals of Mixed Signals and Sensors
+Program: BSCPE
+Year level: 3
+Week under review: 7 of 18
+Previous week - Week 6: Signal conversion overview
+Next week - Week 8: Digital-to-analog converters","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Signal converters are named in the description.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wc-sensors-unrelated","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-course","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","off-subject","Corporate finance: capital budgeting and cost of capital","Course: CPE 304 - Fundamentals of Mixed Signals and Sensors
+Program: BSCPE
+Year level: 3
+Week under review: 5 of 18
+Previous week - Week 4: Signal conditioning for sensors
+Next week - Week 6: MIDTERM EXAMINATION","NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","A topic of another discipline.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wc-sensors-keyword","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-course","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","keyword-overlap","Sensors of public opinion: designing survey questionnaires","Course: CPE 304 - Fundamentals of Mixed Signals and Sensors
+Program: BSCPE
+Year level: 3
+Week under review: 9 of 18
+Previous week - Week 8: Digital-to-analog converters
+Next week - Week 10: Actuators","PARTIALLY_ALIGNED or NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Uses the word 'sensors' figuratively; no electronics content.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wi-prog1-aligned","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-ILO","BSIT - IT 202 Computer Programming 1","clear-positive","Develop and test Java programs that use if-else and switch statements to make decisions.","Week 3: Java conditional statements: if, if-else, nested if and switch","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Observable performance on exactly this week's content.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wi-prog1-aligned2","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-ILO","BSIT - IT 202 Computer Programming 1","clear-positive","Trace the execution of nested if statements to predict the output of a program.","Week 3: Java conditional statements: if, if-else, nested if and switch","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Observable (trace, predict) and on the week's topic.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wi-prog1-unrelated","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-ILO","BSIT - IT 202 Computer Programming 1","off-subject","Explain the history of operating systems.","Week 3: Java conditional statements: if, if-else, nested if and switch","NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Both are information technology, but the ILO is not about this week's content.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wi-prog1-vague","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-ILO","BSIT - IT 202 Computer Programming 1","vague-verb","Understand conditional statements.","Week 3: Java conditional statements: if, if-else, nested if and switch","PARTIALLY_ALIGNED","PARTIALLY_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","'Understand' is not an observable, assessable performance.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wi-prog1-keyword","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-ILO","BSIT - IT 202 Computer Programming 1","keyword-overlap","Describe the importance of decision-making in business organizations.","Week 3: Java conditional statements: if, if-else, nested if and switch","PARTIALLY_ALIGNED or NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Shares the word 'decision' but is about management, not conditional statements.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wi-prog1-toohigh","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-ILO","BSIT - IT 202 Computer Programming 1","level-mismatch","Design a distributed, fault-tolerant system with automatic failover logic.","Week 3: Java conditional statements: if, if-else, nested if and switch","PARTIALLY_ALIGNED or NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Far beyond what a week on conditional statements can teach.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wi-prog1-ambiguous","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-ILO","BSIT - IT 202 Computer Programming 1","ambiguous","Apply conditional logic in programs.","Week 3: Java conditional statements: if, if-else, nested if and switch","ALIGNED or PARTIALLY_ALIGNED (marked ambiguous)","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Observable but short and unspecific: contestable.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wi-syseng-aligned","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-ILO","BSIE - IE 402 Systems Engineering","clear-positive","Write a system requirements specification with traceable, verifiable requirements for a given scenario.","Week 4: Requirements analysis: stakeholder needs, system requirements specification and traceability","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Observable and on the week's content.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wi-syseng-unrelated","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-ILO","BSIE - IE 402 Systems Engineering","off-subject","Write Java methods that return values.","Week 4: Requirements analysis: stakeholder needs, system requirements specification and traceability","NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","A programming outcome for a requirements week.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wi-syseng-vague","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-ILO","BSIE - IE 402 Systems Engineering","vague-verb","Learn about requirements.","Week 4: Requirements analysis: stakeholder needs, system requirements specification and traceability","PARTIALLY_ALIGNED or NOT_ALIGNED","PARTIALLY_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","'Learn about' is not observable and names no performance.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wi-sensors-aligned","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-ILO","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","clear-positive","Design and test an inverting amplifier circuit with a specified gain.","Week 3: Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Observable and on the week's content.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wi-sensors-unrelated","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-ILO","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","off-subject","Prepare a cash-flow statement for a small business.","Week 3: Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth","NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","An accounting outcome for an electronics week.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"wi-sensors-keyword","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Content-ILO","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","keyword-overlap","Discuss the role of amplifiers in the history of the music industry.","Week 3: Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth","PARTIALLY_ALIGNED or NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Shares the word 'amplifiers' but is not about operational amplifier circuits.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ps-prog1-good","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Plan-sequence","BSIT - IT 202 Computer Programming 1","clear-positive","Week 1: Course orientation: objectives, requirements, grading and policies
+Week 2: Computers, programmers and the program development process
+Week 3: Java basics: variables, data types and operators
+Week 4: Conditional statements
+Week 5: Loops
+Week 6: EXAMINATION
+Week 7: Methods
+Week 8: Arrays
+Week 9: Debugging and testing
+Week 10: Putting it together: a small application","Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)
+Program: BSIT
+Year level: 2
+Description: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","A conventional order for an introduction to Java: foundations first, then control flow, then structure.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ps-prog1-order","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Plan-sequence","BSIT - IT 202 Computer Programming 1","wrong-sequence","Week 1: Course orientation: objectives, requirements, grading and policies
+Week 2: Nested loops and two-dimensional arrays
+Week 3: Variables and data types
+Week 4: Methods and recursion
+Week 5: Operators and expressions
+Week 6: EXAMINATION
+Week 7: Conditional statements
+Week 8: Debugging
+Week 9: Computers and programmers
+Week 10: A small application","Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)
+Program: BSIT
+Year level: 2
+Description: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.","PARTIALLY_ALIGNED or NOT_ALIGNED","PARTIALLY_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Nested loops, arrays and recursion are taught before variables, operators and conditionals.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ps-prog1-repeat","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Plan-sequence","BSIT - IT 202 Computer Programming 1","repetition","Week 1: Course orientation: objectives, requirements, grading and policies
+Week 2: Variables
+Week 3: Variables and data types
+Week 4: Data types
+Week 5: Variables again: declaring variables
+Week 6: EXAMINATION
+Week 7: Data types: int and double
+Week 8: Variables and constants
+Week 9: Review of variables
+Week 10: Variables","Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)
+Program: BSIT
+Year level: 2
+Description: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.","PARTIALLY_ALIGNED or NOT_ALIGNED","(not verified) / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","One topic is repeated in nearly every week; the description's Java fundamentals are never reached.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ps-prog1-offcourse","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Plan-sequence","BSIT - IT 202 Computer Programming 1","off-subject","Week 1: Course orientation: objectives, requirements, grading and policies
+Week 2: Principles of supply chain management
+Week 3: Inventory costing methods
+Week 4: Warehouse layout
+Week 5: EXAMINATION
+Week 6: Demand forecasting
+Week 7: Procurement strategy
+Week 8: Logistics and distribution","Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)
+Program: BSIT
+Year level: 2
+Description: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.","NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","The plan teaches another discipline.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ps-syseng-good","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Plan-sequence","BSIE - IE 402 Systems Engineering","clear-positive","Week 1: Orientation: course objectives, requirements, grading and policies
+Week 2: Systems thinking and the systems approach
+Week 3: Systems life-cycle models
+Week 4: Requirements analysis
+Week 5: Functional decomposition
+Week 6: EXAMINATION
+Week 7: Systems design and trade studies
+Week 8: Systems integration
+Week 9: Project management for systems
+Week 10: Performance evaluation of systems
+Week 11: Verification and validation
+Week 12: EXAMINATION","Course: IE 402 - Systems Engineering
+Program: BSIE
+Year level: 4
+Description: This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Follows the description: analysis, design, integration, project management, performance evaluation.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ps-sensors-good","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Plan-sequence","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","clear-positive","Week 1: Orientation: course objectives, requirements, grading and policies
+Week 2: Operational amplifier basics
+Week 3: Amplifier circuits
+Week 4: Signal conditioning for sensors
+Week 5: EXAMINATION
+Week 6: Analog-to-digital converters
+Week 7: Digital-to-analog converters
+Week 8: Sensors and transducers
+Week 9: Interfacing sensors with a microcontroller
+Week 10: Actuators
+Week 11: EXAMINATION","Course: CPE 304 - Fundamentals of Mixed Signals and Sensors
+Program: BSCPE
+Year level: 3
+Description: This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Follows the description: op-amps, converters, sensors, interfacing, actuators.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ps-sensors-repeat","Synthetic test item","Stage B1-B2 (weekly content, ILO) / Plan-sequence","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","repetition","Week 1: Orientation: course objectives, requirements, grading and policies
+Week 2: Sensors
+Week 3: Sensors
+Week 4: Types of sensors
+Week 5: Sensors again
+Week 6: EXAMINATION
+Week 7: Sensors and transducers
+Week 8: More about sensors
+Week 9: Sensor review","Course: CPE 304 - Fundamentals of Mixed Signals and Sensors
+Program: BSCPE
+Year level: 3
+Description: This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included.","PARTIALLY_ALIGNED or NOT_ALIGNED","PARTIALLY_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","One topic fills the plan; amplifiers, converters and interfacing are never taught.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ic-prog1-ok","Synthetic test item","Stage B3 (ILO to CLO) / ILO-CLO","BSIT - IT 202 Computer Programming 1","clear-positive","Develop and test Java programs that use if-else and switch statements to make decisions.","Write, test and debug Java programs that use variables, conditional statements, loops and methods.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","A smaller step toward CLO 1.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ic-prog1-wrongclo","Synthetic test item","Stage B3 (ILO to CLO) / ILO-CLO","BSIT - IT 202 Computer Programming 1","wrong-clo","Develop and test Java programs that use if-else and switch statements to make decisions.","Demonstrate honesty, compassion and responsibility in the use of computers and in team programming work, in line with Marian-Augustinian values.","PARTIALLY_ALIGNED or NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","A sound ILO, but it builds CLO 1, not the values CLO 4.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ic-prog1-flow","Synthetic test item","Stage B3 (ILO to CLO) / ILO-CLO","BSIT - IT 202 Computer Programming 1","clear-positive","Draw a flowchart for a program that finds the largest of three numbers.","Analyze a simple problem and express its logic as an algorithm or flowchart before coding.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Expresses logic as a flowchart: CLO 2.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ic-prog1-keyword","Synthetic test item","Stage B3 (ILO to CLO) / ILO-CLO","BSIT - IT 202 Computer Programming 1","keyword-overlap","Describe the history of programming languages.","Write, test and debug Java programs that use variables, conditional statements, loops and methods.","PARTIALLY_ALIGNED or NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Shares the word 'programs/programming' but asks for no Java programming performance.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ic-prog1-values","Synthetic test item","Stage B3 (ILO to CLO) / ILO-CLO","BSIT - IT 202 Computer Programming 1","ambiguous","Explain why honesty matters when submitting programming assignments.","Demonstrate honesty, compassion and responsibility in the use of computers and in team programming work, in line with Marian-Augustinian values.","ALIGNED or PARTIALLY_ALIGNED (marked ambiguous)","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","On the values CLO, but only an explanation: contestable.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ic-syseng-ok","Synthetic test item","Stage B3 (ILO to CLO) / ILO-CLO","BSIE - IE 402 Systems Engineering","clear-positive","Write verifiable system requirements for a given scenario.","Develop a system requirements specification and a functional decomposition for an engineered system.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","A step toward the requirements specification.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ic-syseng-wrongclo","Synthetic test item","Stage B3 (ILO to CLO) / ILO-CLO","BSIE - IE 402 Systems Engineering","wrong-clo","Write verifiable system requirements for a given scenario.","Plan and manage a systems engineering project, including integration, scheduling and risk.","PARTIALLY_ALIGNED or NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","A sound ILO, but it builds CLO 1, not the project-management CLO 3.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ic-syseng-pm","Synthetic test item","Stage B3 (ILO to CLO) / ILO-CLO","BSIE - IE 402 Systems Engineering","clear-positive","Prepare a project schedule and a risk register for a systems integration effort.","Plan and manage a systems engineering project, including integration, scheduling and risk.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Schedule and risk: CLO 3.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ic-syseng-keyword","Synthetic test item","Stage B3 (ILO to CLO) / ILO-CLO","BSIE - IE 402 Systems Engineering","keyword-overlap","Describe how systems engineers are portrayed in popular media.","Develop a system requirements specification and a functional decomposition for an engineered system.","PARTIALLY_ALIGNED or NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Shares 'systems engineers' but builds no requirements competence.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ic-sensors-ok","Synthetic test item","Stage B3 (ILO to CLO) / ILO-CLO","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","clear-positive","Design and test an inverting amplifier with a specified gain.","Analyze and design operational amplifier circuits for signal conditioning of sensor outputs.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","A step toward op-amp design for signal conditioning.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ic-sensors-wrongclo","Synthetic test item","Stage B3 (ILO to CLO) / ILO-CLO","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","wrong-clo","Design and test an inverting amplifier with a specified gain.","Interface sensors and actuators with a microcontroller using analog-to-digital and digital-to-analog converters.","PARTIALLY_ALIGNED or NOT_ALIGNED","PARTIALLY_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","A sound ILO, but it builds CLO 1, not the interfacing CLO 3.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ic-sensors-adc","Synthetic test item","Stage B3 (ILO to CLO) / ILO-CLO","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","clear-positive","Write a program that reads a temperature sensor through the analog-to-digital converter of a microcontroller.","Interface sensors and actuators with a microcontroller using analog-to-digital and digital-to-analog converters.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Interfacing through an ADC: CLO 3.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ic-sensors-keyword","Synthetic test item","Stage B3 (ILO to CLO) / ILO-CLO","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","keyword-overlap","Discuss famous inventors in the history of electronics.","Select sensors and transducers and relate their characteristics to the physical parameters they measure.","PARTIALLY_ALIGNED or NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Electronics words, but selects no sensor and relates no characteristics.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ic-sensors-calib","Synthetic test item","Stage B3 (ILO to CLO) / ILO-CLO","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","clear-positive","Record calibration results honestly and report the measurement tolerance.","Perform measurements and calibration with precision and honest reporting, showing stewardship and ethical responsibility.","ALIGNED","(not verified) / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Calibration, precision and honest reporting: CLO 4.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ia-prog1-fits","Synthetic test item","Stage B3 (ILO to CLO) / ILO-anyCLO","BSIT - IT 202 Computer Programming 1","clear-positive","Develop and test Java programs that use if-else and switch statements to make decisions.","CLO 1: Write, test and debug Java programs that use variables, conditional statements, loops and methods.
+CLO 2: Analyze a simple problem and express its logic as an algorithm or flowchart before coding.
+CLO 3: Apply good coding practices (naming, indentation, comments) and an integrated development environment to produce readable programs.
+CLO 4: Demonstrate honesty, compassion and responsibility in the use of computers and in team programming work, in line with Marian-Augustinian values.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Builds CLO 1.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ia-prog1-flow","Synthetic test item","Stage B3 (ILO to CLO) / ILO-anyCLO","BSIT - IT 202 Computer Programming 1","clear-positive","Draw a flowchart for a program that finds the largest of three numbers.","CLO 1: Write, test and debug Java programs that use variables, conditional statements, loops and methods.
+CLO 2: Analyze a simple problem and express its logic as an algorithm or flowchart before coding.
+CLO 3: Apply good coding practices (naming, indentation, comments) and an integrated development environment to produce readable programs.
+CLO 4: Demonstrate honesty, compassion and responsibility in the use of computers and in team programming work, in line with Marian-Augustinian values.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Builds CLO 2.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ia-prog1-none","Synthetic test item","Stage B3 (ILO to CLO) / ILO-anyCLO","BSIT - IT 202 Computer Programming 1","off-subject","Explain the history of operating systems.","CLO 1: Write, test and debug Java programs that use variables, conditional statements, loops and methods.
+CLO 2: Analyze a simple problem and express its logic as an algorithm or flowchart before coding.
+CLO 3: Apply good coding practices (naming, indentation, comments) and an integrated development environment to produce readable programs.
+CLO 4: Demonstrate honesty, compassion and responsibility in the use of computers and in team programming work, in line with Marian-Augustinian values.","NOT_ALIGNED or PARTIALLY_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Builds none of the four CLOs.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ia-prog1-ambiguous","Synthetic test item","Stage B3 (ILO to CLO) / ILO-anyCLO","BSIT - IT 202 Computer Programming 1","ambiguous","Apply conditional logic in programs.","CLO 1: Write, test and debug Java programs that use variables, conditional statements, loops and methods.
+CLO 2: Analyze a simple problem and express its logic as an algorithm or flowchart before coding.
+CLO 3: Apply good coding practices (naming, indentation, comments) and an integrated development environment to produce readable programs.
+CLO 4: Demonstrate honesty, compassion and responsibility in the use of computers and in team programming work, in line with Marian-Augustinian values.","ALIGNED or PARTIALLY_ALIGNED (marked ambiguous)","PARTIALLY_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Plausibly CLO 1 but unspecific.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ia-syseng-fits","Synthetic test item","Stage B3 (ILO to CLO) / ILO-anyCLO","BSIE - IE 402 Systems Engineering","clear-positive","Prepare a project schedule and a risk register for a systems integration effort.","CLO 1: Develop a system requirements specification and a functional decomposition for an engineered system.
+CLO 2: Apply modeling and trade-study methods to design and optimize a system that integrates people, processes and technology.
+CLO 3: Plan and manage a systems engineering project, including integration, scheduling and risk.
+CLO 4: Evaluate system performance, and verify and validate a system against its requirements, upholding professional and ethical responsibility.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Builds CLO 3.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ia-syseng-none","Synthetic test item","Stage B3 (ILO to CLO) / ILO-anyCLO","BSIE - IE 402 Systems Engineering","off-subject","Write Java methods that return values.","CLO 1: Develop a system requirements specification and a functional decomposition for an engineered system.
+CLO 2: Apply modeling and trade-study methods to design and optimize a system that integrates people, processes and technology.
+CLO 3: Plan and manage a systems engineering project, including integration, scheduling and risk.
+CLO 4: Evaluate system performance, and verify and validate a system against its requirements, upholding professional and ethical responsibility.","NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Builds none of the four CLOs.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ia-sensors-fits","Synthetic test item","Stage B3 (ILO to CLO) / ILO-anyCLO","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","clear-positive","Record calibration results honestly and report the measurement tolerance.","CLO 1: Analyze and design operational amplifier circuits for signal conditioning of sensor outputs.
+CLO 2: Select sensors and transducers and relate their characteristics to the physical parameters they measure.
+CLO 3: Interface sensors and actuators with a microcontroller using analog-to-digital and digital-to-analog converters.
+CLO 4: Perform measurements and calibration with precision and honest reporting, showing stewardship and ethical responsibility.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Builds CLO 4.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"ia-sensors-none","Synthetic test item","Stage B3 (ILO to CLO) / ILO-anyCLO","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","off-subject","Prepare a cash-flow statement for a small business.","CLO 1: Analyze and design operational amplifier circuits for signal conditioning of sensor outputs.
+CLO 2: Select sensors and transducers and relate their characteristics to the physical parameters they measure.
+CLO 3: Interface sensors and actuators with a microcontroller using analog-to-digital and digital-to-analog converters.
+CLO 4: Perform measurements and calibration with precision and honest reporting, showing stewardship and ethical responsibility.","NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Builds none of the four CLOs.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"cv-prog1-clo1","Synthetic test item","Stage B4 (CLO coverage) / CLO-coverage","BSIT - IT 202 Computer Programming 1","clear-positive","Weeks tagged to this CLO:
+- Week 2: ILO: Declare variables and evaluate arithmetic expressions in Java. | Content: Java basics: variables, data types and operators
+- Week 3: ILO: Develop and test Java programs that use if-else and switch statements. | Content: Java conditional statements: if, if-else, nested if and switch
+- Week 4: ILO: Write Java programs that use for and while loops to repeat tasks. | Content: Loops: for, while and do-while
+- Week 7: ILO: Define and call Java methods with parameters and return values. | Content: Methods: parameters and return values
+- Week 8: ILO: Use arrays to store and process lists of values. | Content: Arrays
+- Week 9-10: ILO: Trace a program and use test cases to locate and fix errors. | Content: Debugging and testing programs
+Other weeks (not tagged to this CLO):
+- Week 1: Course orientation: objectives, requirements, grading and policies
+- Week 5: Algorithms and flowcharts
+- Week 11: Coding standards and the IDE
+- Week 12: Ethics in computing and responsible programming
+Examination weeks: 6, 13","CLO 1 [course level tag: Demonstrating]: Write, test and debug Java programs that use variables, conditional statements, loops and methods.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Six tagged weeks teach and practise Java constructs and debugging.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"cv-prog1-clo2-oneweek","Synthetic test item","Stage B4 (CLO coverage) / CLO-coverage","BSIT - IT 202 Computer Programming 1","few-weeks","Weeks tagged to this CLO:
+- Week 5: ILO: Draw a flowchart and write pseudocode for a given problem. | Content: Algorithms and flowcharts
+Other weeks (not tagged to this CLO):
+- Week 1: Course orientation: objectives, requirements, grading and policies
+- Week 2: Java basics: variables, data types and operators
+- Week 3: Java conditional statements: if, if-else, nested if and switch
+- Week 4: Loops: for, while and do-while
+- Week 7: Methods: parameters and return values
+- Week 8: Arrays
+- Week 9-10: Debugging and testing programs
+- Week 11: Coding standards and the IDE
+- Week 12: Ethics in computing and responsible programming
+Examination weeks: 6, 13","CLO 2 [course level tag: Enabling]: Analyze a simple problem and express its logic as an algorithm or flowchart before coding.","ALIGNED or PARTIALLY_ALIGNED (marked ambiguous)","PARTIALLY_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","One tagged week (flowcharts and pseudocode) builds CLO 2; no equal share is required, but one week is thin.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"cv-prog1-clo3-multiweek","Synthetic test item","Stage B4 (CLO coverage) / CLO-coverage","BSIT - IT 202 Computer Programming 1","multiweek","Weeks tagged to this CLO:
+- Week 9-10: ILO: Trace a program and use test cases to locate and fix errors. | Content: Debugging and testing programs
+- Week 11: ILO: Apply naming, indentation and commenting conventions in an IDE. | Content: Coding standards and the IDE
+Other weeks (not tagged to this CLO):
+- Week 1: Course orientation: objectives, requirements, grading and policies
+- Week 2: Java basics: variables, data types and operators
+- Week 3: Java conditional statements: if, if-else, nested if and switch
+- Week 4: Loops: for, while and do-while
+- Week 5: Algorithms and flowcharts
+- Week 7: Methods: parameters and return values
+- Week 8: Arrays
+- Week 12: Ethics in computing and responsible programming
+Examination weeks: 6, 13","CLO 3 [course level tag: Enabling]: Apply good coding practices (naming, indentation, comments) and an integrated development environment to produce readable programs.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Weeks 9-10 (a two-week range) and week 11 build the coding-practices CLO.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"cv-prog1-clo4-values","Synthetic test item","Stage B4 (CLO coverage) / CLO-coverage","BSIT - IT 202 Computer Programming 1","values-clo","Weeks tagged to this CLO:
+- Week 12: ILO: Demonstrate honesty and responsibility in a team programming task. | Content: Ethics in computing and responsible programming | Values: Compassion and Humility: students review each other's code kindly and credit every source; a short reflection on honest authorship closes the session.
+Other weeks (not tagged to this CLO):
+- Week 1: Course orientation: objectives, requirements, grading and policies
+- Week 2: Java basics: variables, data types and operators
+- Week 3: Java conditional statements: if, if-else, nested if and switch
+- Week 4: Loops: for, while and do-while
+- Week 5: Algorithms and flowcharts
+- Week 7: Methods: parameters and return values
+- Week 8: Arrays
+- Week 9-10: Debugging and testing programs
+- Week 11: Coding standards and the IDE
+Examination weeks: 6, 13","CLO 4 [course level tag: Integration of Values]: Demonstrate honesty, compassion and responsibility in the use of computers and in team programming work, in line with Marian-Augustinian values.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Week 12 integrates the values in what students do (review each other's code, credit sources, reflect).","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"cv-prog1-clo4-namedonly","Synthetic test item","Stage B4 (CLO coverage) / CLO-coverage","BSIT - IT 202 Computer Programming 1","values-clo","Weeks tagged to this CLO:
+- Week 12: ILO: Demonstrate honesty and responsibility in a team programming task. | Content: Ethics in computing and responsible programming | Values: Compassion
+Other weeks (not tagged to this CLO):
+- Week 1: Course orientation: objectives, requirements, grading and policies
+- Week 2: Java basics: variables, data types and operators
+- Week 3: Java conditional statements: if, if-else, nested if and switch
+- Week 4: Loops: for, while and do-while
+- Week 5: Algorithms and flowcharts
+- Week 7: Methods: parameters and return values
+- Week 8: Arrays
+- Week 9-10: Debugging and testing programs
+- Week 11: Coding standards and the IDE
+Examination weeks: 6, 13","CLO 4 [course level tag: Integration of Values]: Demonstrate honesty, compassion and responsibility in the use of computers and in team programming work, in line with Marian-Augustinian values.","PARTIALLY_ALIGNED or NOT_ALIGNED","PARTIALLY_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","The only value text is a bare value name: no instructional integration.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"cv-prog1-clo2-misleadingtags","Synthetic test item","Stage B4 (CLO coverage) / CLO-coverage","BSIT - IT 202 Computer Programming 1","misleading-tags","Weeks tagged to this CLO:
+- Week 7: ILO: Define and call Java methods with parameters and return values. | Content: Methods: parameters and return values
+- Week 8: ILO: Use arrays to store and process lists of values. | Content: Arrays
+Other weeks (not tagged to this CLO):
+- Week 1: Course orientation: objectives, requirements, grading and policies
+- Week 2: Java basics: variables, data types and operators
+- Week 3: Java conditional statements: if, if-else, nested if and switch
+- Week 4: Loops: for, while and do-while
+- Week 5: Algorithms and flowcharts
+- Week 9-10: Debugging and testing programs
+- Week 11: Coding standards and the IDE
+- Week 12: Ethics in computing and responsible programming
+Examination weeks: 6, 13","CLO 2 [course level tag: Enabling]: Analyze a simple problem and express its logic as an algorithm or flowchart before coding.","PARTIALLY_ALIGNED or NOT_ALIGNED","NOT_ALIGNED / NOT_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","CLO 2 (analyze and express logic) is tagged to the weeks on methods and arrays; the week that really builds it (flowcharts, week 5) is not tagged.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"cv-prog1-clo3-gap","Synthetic test item","Stage B4 (CLO coverage) / CLO-coverage","BSIT - IT 202 Computer Programming 1","gap","Weeks tagged to this CLO:
+(none)
+Other weeks (not tagged to this CLO):
+- Week 1: Course orientation: objectives, requirements, grading and policies
+- Week 2: Java basics: variables, data types and operators
+- Week 3: Java conditional statements: if, if-else, nested if and switch
+- Week 4: Loops: for, while and do-while
+- Week 5: Algorithms and flowcharts
+- Week 7: Methods: parameters and return values
+- Week 8: Arrays
+- Week 9-10: Debugging and testing programs
+- Week 12: Ethics in computing and responsible programming
+Examination weeks: 6, 13","CLO 3 [course level tag: Enabling]: Apply good coding practices (naming, indentation, comments) and an integrated development environment to produce readable programs.","NOT_ALIGNED","PARTIALLY_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","No week teaches or practises coding standards or the IDE any more.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"cv-syseng-clo1","Synthetic test item","Stage B4 (CLO coverage) / CLO-coverage","BSIE - IE 402 Systems Engineering","clear-positive","Weeks tagged to this CLO:
+- Week 2: ILO: Identify the components, boundaries and stakeholders of a system. | Content: Systems thinking and the systems approach
+- Week 4: ILO: Write verifiable system requirements. | Content: Requirements analysis
+- Week 5: ILO: Decompose a system into functions and sub-functions. | Content: Functional decomposition
+Other weeks (not tagged to this CLO):
+- Week 1: Orientation: course objectives, requirements, grading and policies
+- Week 3: Systems life-cycle models
+- Week 7: Systems design and trade studies
+- Week 8: Systems integration
+- Week 9: Project management for systems
+- Week 10: Performance evaluation of systems
+- Week 11: Verification and validation
+Examination weeks: 6, 12","CLO 1 [course level tag: Enabling]: Develop a system requirements specification and a functional decomposition for an engineered system.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Weeks 2, 4 and 5 build the requirements specification and the decomposition.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"cv-syseng-clo3","Synthetic test item","Stage B4 (CLO coverage) / CLO-coverage","BSIE - IE 402 Systems Engineering","clear-positive","Weeks tagged to this CLO:
+- Week 8: ILO: Plan the integration of subsystems and their interfaces. | Content: Systems integration
+- Week 9: ILO: Prepare a schedule and a risk register. | Content: Project management for systems
+Other weeks (not tagged to this CLO):
+- Week 1: Orientation: course objectives, requirements, grading and policies
+- Week 2: Systems thinking and the systems approach
+- Week 3: Systems life-cycle models
+- Week 4: Requirements analysis
+- Week 5: Functional decomposition
+- Week 7: Systems design and trade studies
+- Week 10: Performance evaluation of systems
+- Week 11: Verification and validation
+Examination weeks: 6, 12","CLO 3 [course level tag: Demonstrating]: Plan and manage a systems engineering project, including integration, scheduling and risk.","ALIGNED","PARTIALLY_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Weeks 8 and 9 plan integration, schedule and risk.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"cv-syseng-clo4-novalues","Synthetic test item","Stage B4 (CLO coverage) / CLO-coverage","BSIE - IE 402 Systems Engineering","values-clo","Weeks tagged to this CLO:
+- Week 10: ILO: Compute performance measures of a system and compare them with its requirements. | Content: Performance evaluation of systems | Values: (none written)
+- Week 11: ILO: Prepare a verification and validation plan with acceptance criteria. | Content: Verification and validation | Values: (none written)
+Other weeks (not tagged to this CLO):
+- Week 1: Orientation: course objectives, requirements, grading and policies
+- Week 2: Systems thinking and the systems approach
+- Week 3: Systems life-cycle models
+- Week 4: Requirements analysis
+- Week 5: Functional decomposition
+- Week 7: Systems design and trade studies
+- Week 8: Systems integration
+- Week 9: Project management for systems
+Examination weeks: 6, 12","CLO 4 [course level tag: Integration of Values]: Evaluate system performance, and verify and validate a system against its requirements, upholding professional and ethical responsibility.","PARTIALLY_ALIGNED or NOT_ALIGNED","PARTIALLY_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","CLO 4 is an Integration of Values CLO, and the tagged weeks write no value or ethical integration.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"cv-syseng-clo4-values","Synthetic test item","Stage B4 (CLO coverage) / CLO-coverage","BSIE - IE 402 Systems Engineering","values-clo","Weeks tagged to this CLO:
+- Week 10: ILO: Compute performance measures of a system and compare them with its requirements. | Content: Performance evaluation of systems | Values: Integrity and Humility: students report a result that misses its requirement and discuss the professional duty to state it; peer review of the V&V plan is done with respect for the author.
+- Week 11: ILO: Prepare a verification and validation plan with acceptance criteria. | Content: Verification and validation | Values: Integrity and Humility: students report a result that misses its requirement and discuss the professional duty to state it; peer review of the V&V plan is done with respect for the author.
+Other weeks (not tagged to this CLO):
+- Week 1: Orientation: course objectives, requirements, grading and policies
+- Week 2: Systems thinking and the systems approach
+- Week 3: Systems life-cycle models
+- Week 4: Requirements analysis
+- Week 5: Functional decomposition
+- Week 7: Systems design and trade studies
+- Week 8: Systems integration
+- Week 9: Project management for systems
+Examination weeks: 6, 12","CLO 4 [course level tag: Integration of Values]: Evaluate system performance, and verify and validate a system against its requirements, upholding professional and ethical responsibility.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","The tagged weeks integrate integrity and humility in what students do.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"cv-sensors-clo1","Synthetic test item","Stage B4 (CLO coverage) / CLO-coverage","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","clear-positive","Weeks tagged to this CLO:
+- Week 2: ILO: Explain the ideal op-amp model and its golden rules. | Content: Operational amplifier basics
+- Week 3: ILO: Design and test an inverting amplifier with a specified gain. | Content: Amplifier circuits: inverting and non-inverting
+- Week 4: ILO: Design a signal-conditioning stage for a sensor output. | Content: Signal conditioning for sensors
+Other weeks (not tagged to this CLO):
+- Week 1: Orientation: course objectives, requirements, grading and policies
+- Week 6: Sensors and transducers
+- Week 7: Analog-to-digital converters
+- Week 8: Digital-to-analog converters
+- Week 9: Interfacing sensors with a microcontroller
+- Week 10: Measurement, calibration and reporting
+Examination weeks: 5, 11","CLO 1 [course level tag: Enabling]: Analyze and design operational amplifier circuits for signal conditioning of sensor outputs.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Weeks 2-4 build op-amp analysis and design.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"cv-sensors-clo2-oneweek","Synthetic test item","Stage B4 (CLO coverage) / CLO-coverage","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","few-weeks","Weeks tagged to this CLO:
+- Week 6: ILO: Select a sensor for a physical parameter from its characteristics. | Content: Sensors and transducers
+Other weeks (not tagged to this CLO):
+- Week 1: Orientation: course objectives, requirements, grading and policies
+- Week 2: Operational amplifier basics
+- Week 3: Amplifier circuits: inverting and non-inverting
+- Week 4: Signal conditioning for sensors
+- Week 7: Analog-to-digital converters
+- Week 8: Digital-to-analog converters
+- Week 9: Interfacing sensors with a microcontroller
+- Week 10: Measurement, calibration and reporting
+Examination weeks: 5, 11","CLO 2 [course level tag: Enabling]: Select sensors and transducers and relate their characteristics to the physical parameters they measure.","ALIGNED or PARTIALLY_ALIGNED (marked ambiguous)","PARTIALLY_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","One tagged week (sensors and transducers) selects sensors from characteristics.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"cv-sensors-clo3-untagged","Synthetic test item","Stage B4 (CLO coverage) / CLO-coverage","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","untagged-support","Weeks tagged to this CLO:
+(none)
+Other weeks (not tagged to this CLO):
+- Week 1: Orientation: course objectives, requirements, grading and policies
+- Week 2: Operational amplifier basics
+- Week 3: Amplifier circuits: inverting and non-inverting
+- Week 4: Signal conditioning for sensors
+- Week 6: Sensors and transducers
+- Week 7: Analog-to-digital converters
+- Week 8: Digital-to-analog converters
+- Week 9: Interfacing sensors with a microcontroller
+- Week 10: Measurement, calibration and reporting
+Examination weeks: 5, 11","CLO 3 [course level tag: Demonstrating]: Interface sensors and actuators with a microcontroller using analog-to-digital and digital-to-analog converters.","ALIGNED or PARTIALLY_ALIGNED (marked ambiguous)","PARTIALLY_ALIGNED / PARTIALLY_ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","No week is tagged to CLO 3, yet weeks 7-9 clearly build it: untagged support may count.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"cv-sensors-clo4-values","Synthetic test item","Stage B4 (CLO coverage) / CLO-coverage","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","values-clo","Weeks tagged to this CLO:
+- Week 10: ILO: Calibrate a sensor and report the measurement tolerance honestly. | Content: Measurement, calibration and reporting | Values: Integrity and Stewardship: students keep a calibration log, state the tolerance they actually measured and discuss what happens when a result is reported better than it is.
+Other weeks (not tagged to this CLO):
+- Week 1: Orientation: course objectives, requirements, grading and policies
+- Week 2: Operational amplifier basics
+- Week 3: Amplifier circuits: inverting and non-inverting
+- Week 4: Signal conditioning for sensors
+- Week 6: Sensors and transducers
+- Week 7: Analog-to-digital converters
+- Week 8: Digital-to-analog converters
+- Week 9: Interfacing sensors with a microcontroller
+Examination weeks: 5, 11","CLO 4 [course level tag: Integration of Values]: Perform measurements and calibration with precision and honest reporting, showing stewardship and ethical responsibility.","ALIGNED","ALIGNED / ALIGNED","Not stored with the evaluation file (the model's wording was only inspected during development)","Week 10 integrates integrity and stewardship in a calibration log and honest reporting.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"af-prog1-good","Synthetic test item","Stage C (learning activities, assessment tasks) / Activity-fit","BSIT - IT 202 Computer Programming 1","clear-positive","- Guided Java coding exercise in the laboratory: a worked demonstration first, then students write and run if-else and switch programs in pairs, with a starter file for students who want a scaffold.","Week 3 course content: Java conditional statements: if, if-else, nested if and switch
+ILOs:
+- Develop and test Java programs that use if-else and switch statements to make decisions.
+Contact units stated by the syllabus: lecture 2, laboratory 1","ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","Hands-on practice of the ILO verb, a demonstration and scaffolding.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"af-prog1-irrelevant","Synthetic test item","Stage C (learning activities, assessment tasks) / Activity-fit","BSIT - IT 202 Computer Programming 1","off-subject","- Group discussion on the history of computers and a video about early mainframes.","Week 3 course content: Java conditional statements: if, if-else, nested if and switch
+ILOs:
+- Develop and test Java programs that use if-else and switch statements to make decisions.
+Contact units stated by the syllabus: lecture 2, laboratory 1","NOT_ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","Unrelated to the content and the ILO.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"af-prog1-passive","Synthetic test item","Stage C (learning activities, assessment tasks) / Activity-fit","BSIT - IT 202 Computer Programming 1","wrong-method","- Lecture on Java conditional statements using slides; students listen and copy the syntax.","Week 3 course content: Java conditional statements: if, if-else, nested if and switch
+ILOs:
+- Develop and test Java programs that use if-else and switch statements to make decisions.
+Contact units stated by the syllabus: lecture 2, laboratory 1","PARTIALLY_ALIGNED or NOT_ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","Keywords match, but listening and copying does not develop ""develop and test"" and the laboratory unit is unused.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"af-prog1-single-format","Synthetic test item","Stage C (learning activities, assessment tasks) / Activity-fit","BSIT - IT 202 Computer Programming 1","limited-support","- Individual timed coding test in which students write if-else programs from memory.","Week 3 course content: Java conditional statements: if, if-else, nested if and switch
+ILOs:
+- Develop and test Java programs that use if-else and switch statements to make decisions.
+Contact units stated by the syllabus: lecture 2, laboratory 1","PARTIALLY_ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","It practises the skill, but the only format is one timed individual task: no demonstration, scaffolding or alternative.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"af-prog1-alternatives","Synthetic test item","Stage C (learning activities, assessment tasks) / Activity-fit","BSIT - IT 202 Computer Programming 1","alternative-formats","- Guided demonstration of if-else and switch in Java, then pair programming in the laboratory; a recorded demonstration and annotated code samples are available for review, and learners may work alone or in pairs.","Week 3 course content: Java conditional statements: if, if-else, nested if and switch
+ILOs:
+- Develop and test Java programs that use if-else and switch statements to make decisions.
+Contact units stated by the syllabus: lecture 2, laboratory 1","ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","Practice with demonstration, recorded and written material and a choice of working alone or in pairs.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"af-prog1-week1","Synthetic test item","Stage C (learning activities, assessment tasks) / Activity-fit","BSIT - IT 202 Computer Programming 1","week-one-orientation","- Setting and sharing of expectations; presentation of the course objectives; review of the policies and the grading system.","Week 1 course content: Course orientation: objectives, requirements, grading and policies
+ILOs:
+- Describe the course objectives, requirements and grading system.
+Contact units stated by the syllabus: lecture 2, laboratory 1","ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","A legitimate orientation activity needs no technical practice.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"af-syseng-good","Synthetic test item","Stage C (learning activities, assessment tasks) / Activity-fit","BSIE - IE 402 Systems Engineering","clear-positive","- Guided workshop: teams elicit stakeholder needs from a case and draft requirements; the teacher models one requirement first and gives a template.","Week 4 course content: Requirements analysis: stakeholder needs, system requirements specification and traceability
+ILOs:
+- Write verifiable system requirements for a given scenario.
+Contact units stated by the syllabus: lecture 3, laboratory 0","ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","Teams practise writing requirements with a model and a template.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"af-syseng-irrelevant","Synthetic test item","Stage C (learning activities, assessment tasks) / Activity-fit","BSIE - IE 402 Systems Engineering","off-subject","- Lecture and drill on Java loops.","Week 4 course content: Requirements analysis: stakeholder needs, system requirements specification and traceability
+ILOs:
+- Write verifiable system requirements for a given scenario.
+Contact units stated by the syllabus: lecture 3, laboratory 0","NOT_ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","A programming activity in a requirements lesson.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"af-sensors-good","Synthetic test item","Stage C (learning activities, assessment tasks) / Activity-fit","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","clear-positive","- Guided design example, then students design the circuit, simulate it in a circuit simulator and compare the simulated gain with the calculated one; a worked solution and a step-by-step handout are provided.","Week 3 course content: Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth
+ILOs:
+- Design and test an inverting amplifier with a specified gain.
+Contact units stated by the syllabus: lecture 3, laboratory 0","ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","Design, simulation and comparison, with worked material.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"af-sensors-passive","Synthetic test item","Stage C (learning activities, assessment tasks) / Activity-fit","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","wrong-method","- Lecture on operational amplifiers.","Week 3 course content: Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth
+ILOs:
+- Design and test an inverting amplifier with a specified gain.
+Contact units stated by the syllabus: lecture 3, laboratory 0","PARTIALLY_ALIGNED or NOT_ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","A design-and-test ILO with a lecture only.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"as-prog1-good","Synthetic test item","Stage C (learning activities, assessment tasks) / Assessment-fit","BSIT - IT 202 Computer Programming 1","clear-positive","- Programming task: write and test a Java program that uses if-else and switch to classify exam scores; submit the source code and the test cases with their results.","Week 3 course content: Java conditional statements: if, if-else, nested if and switch
+ILOs:
+- Develop and test Java programs that use if-else and switch statements to make decisions.
+Contact units stated by the syllabus: lecture 2, laboratory 1
+Learning activities: - Guided Java coding exercise in the laboratory: demonstration, then pair programming.","ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","Students perform the ILO and produce markable evidence.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"as-prog1-essay","Synthetic test item","Stage C (learning activities, assessment tasks) / Assessment-fit","BSIT - IT 202 Computer Programming 1","off-subject","- Write an essay about the history of computers.","Week 3 course content: Java conditional statements: if, if-else, nested if and switch
+ILOs:
+- Develop and test Java programs that use if-else and switch statements to make decisions.
+Contact units stated by the syllabus: lecture 2, laboratory 1
+Learning activities: - Guided Java coding exercise in the laboratory: demonstration, then pair programming.","NOT_ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","The example case: an essay on an unrelated topic cannot measure developing and testing a program.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"as-prog1-recall-quiz","Synthetic test item","Stage C (learning activities, assessment tasks) / Assessment-fit","BSIT - IT 202 Computer Programming 1","wrong-cognitive-level","- Ten-item multiple-choice quiz on Java conditional syntax.","Week 3 course content: Java conditional statements: if, if-else, nested if and switch
+ILOs:
+- Develop and test Java programs that use if-else and switch statements to make decisions.
+Contact units stated by the syllabus: lecture 2, laboratory 1
+Learning activities: - Guided Java coding exercise in the laboratory: demonstration, then pair programming.","PARTIALLY_ALIGNED or NOT_ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","A recall quiz does not show that students can develop and test a program.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"as-prog1-bare-name","Synthetic test item","Stage C (learning activities, assessment tasks) / Assessment-fit","BSIT - IT 202 Computer Programming 1","bare-name","- Quiz","Week 3 course content: Java conditional statements: if, if-else, nested if and switch
+ILOs:
+- Develop and test Java programs that use if-else and switch statements to make decisions.
+Contact units stated by the syllabus: lecture 2, laboratory 1
+Learning activities: - Guided Java coding exercise in the laboratory: demonstration, then pair programming.","PARTIALLY_ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","Names a format but not what is assessed or produced.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"as-prog1-keywords","Synthetic test item","Stage C (learning activities, assessment tasks) / Assessment-fit","BSIT - IT 202 Computer Programming 1","wrong-cognitive-level","- Name the keywords used in Java conditional statements.","Week 3 course content: Java conditional statements: if, if-else, nested if and switch
+ILOs:
+- Develop and test Java programs that use if-else and switch statements to make decisions.
+Contact units stated by the syllabus: lecture 2, laboratory 1
+Learning activities: - Guided Java coding exercise in the laboratory: demonstration, then pair programming.","PARTIALLY_ALIGNED or NOT_ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","Names the topic but only asks for recall of words.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"as-prog1-conceptual-ok","Synthetic test item","Stage C (learning activities, assessment tasks) / Assessment-fit","BSIT - IT 202 Computer Programming 1","legitimate-conceptual","- Short written answers comparing if-else and switch statements, with one example of each.","Week 3 course content: Java conditional statements: if, if-else, nested if and switch
+ILOs:
+- Explain the difference between if-else and switch statements.
+Contact units stated by the syllabus: lecture 2, laboratory 1
+Learning activities: - Lecture-discussion with worked examples.","ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","A conceptual ILO does not need a practical task.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"as-prog1-accessible","Synthetic test item","Stage C (learning activities, assessment tasks) / Assessment-fit","BSIT - IT 202 Computer Programming 1","accessible-alternative","- Practical coding task; students may submit a screen recording or a written walkthrough of their reasoning in addition to the code.","Week 3 course content: Java conditional statements: if, if-else, nested if and switch
+ILOs:
+- Develop and test Java programs that use if-else and switch statements to make decisions.
+Contact units stated by the syllabus: lecture 2, laboratory 1
+Learning activities: - Guided Java coding exercise in the laboratory: demonstration, then pair programming.","ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","An alternative way to show reasoning that does not change the competence measured.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"as-prog1-week1","Synthetic test item","Stage C (learning activities, assessment tasks) / Assessment-fit","BSIT - IT 202 Computer Programming 1","week-one-orientation","- Statement of expectations","Week 1 course content: Course orientation: objectives, requirements, grading and policies
+ILOs:
+- Describe the course objectives, requirements and grading system.
+Contact units stated by the syllabus: lecture 2, laboratory 1
+Learning activities: - Setting and sharing of expectations; review of policies.","ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","A simple expectations task suits an orientation.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"as-syseng-good","Synthetic test item","Stage C (learning activities, assessment tasks) / Assessment-fit","BSIE - IE 402 Systems Engineering","clear-positive","- Write a requirements specification (at least five verifiable requirements) for the case; each requirement is checked against a rubric for clarity and testability.","Week 4 course content: Requirements analysis: stakeholder needs, system requirements specification and traceability
+ILOs:
+- Write verifiable system requirements for a given scenario.
+Contact units stated by the syllabus: lecture 3, laboratory 0
+Learning activities: - Guided workshop: teams draft requirements from a case.","ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","Produces an artifact that is marked against the ILO.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"as-syseng-essay","Synthetic test item","Stage C (learning activities, assessment tasks) / Assessment-fit","BSIE - IE 402 Systems Engineering","off-subject","- Essay on the history of engineering.","Week 4 course content: Requirements analysis: stakeholder needs, system requirements specification and traceability
+ILOs:
+- Write verifiable system requirements for a given scenario.
+Contact units stated by the syllabus: lecture 3, laboratory 0
+Learning activities: - Guided workshop: teams draft requirements from a case.","NOT_ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","An unrelated essay.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"as-sensors-good","Synthetic test item","Stage C (learning activities, assessment tasks) / Assessment-fit","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","clear-positive","- Practical: build and measure the amplifier on a breadboard or in a simulator, record the measured gain and compare it with the design value.","Week 3 course content: Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth
+ILOs:
+- Design and test an inverting amplifier with a specified gain.
+Contact units stated by the syllabus: lecture 3, laboratory 0
+Learning activities: - Guided design example, then simulation.","ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","Students design and test; the evidence is a measured result.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"as-sensors-quiz","Synthetic test item","Stage C (learning activities, assessment tasks) / Assessment-fit","BSCpE - CPE 304 Fundamentals of Mixed Signals and Sensors","wrong-cognitive-level","- Multiple-choice quiz on the history of amplifiers.","Week 3 course content: Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth
+ILOs:
+- Design and test an inverting amplifier with a specified gain.
+Contact units stated by the syllabus: lecture 3, laboratory 0
+Learning activities: - Guided design example, then simulation.","NOT_ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","Unrelated to designing and testing, and recall only.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"af-prog1-multiweek","Synthetic test item","Stage C (learning activities, assessment tasks) / Activity-fit","BSIT - IT 202 Computer Programming 1","multiweek","- Guided laboratory sessions over two weeks: a demonstration of each loop, then pair programming exercises of increasing difficulty; a recorded demonstration is available for review.","Week 4-5 course content: Loops: for, while and do-while; nested loops
+ILOs:
+- Write and test Java programs that use for and while loops.
+Contact units stated by the syllabus: lecture 2, laboratory 1","ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","A two-week range with progressive hands-on practice.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"af-prog1-conceptual-lecture-ok","Synthetic test item","Stage C (learning activities, assessment tasks) / Activity-fit","BSIT - IT 202 Computer Programming 1","practical-vs-conceptual","- Lecture-discussion with worked examples, followed by a short class discussion of when each statement is used.","Week 3 course content: Java conditional statements: if, if-else, nested if and switch
+ILOs:
+- Explain the difference between if-else and switch statements.
+Contact units stated by the syllabus: lecture 2, laboratory 1","ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","A conceptual ILO is served by explanation and discussion; hands-on work is not required.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"af-prog1-lab-unused","Synthetic test item","Stage C (learning activities, assessment tasks) / Activity-fit","BSIT - IT 202 Computer Programming 1","wrong-method","- Slide presentation of loop syntax; no hands-on work in the laboratory period.","Week 4 course content: Loops: for, while and do-while
+ILOs:
+- Write and test Java programs that use for and while loops.
+Contact units stated by the syllabus: lecture 2, laboratory 1","PARTIALLY_ALIGNED or NOT_ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","A practical ILO in a course with a laboratory unit, taught only by slides.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"as-prog1-vague-evidence","Synthetic test item","Stage C (learning activities, assessment tasks) / Assessment-fit","BSIT - IT 202 Computer Programming 1","vague-evidence","- Submit your work.","Week 3 course content: Java conditional statements: if, if-else, nested if and switch
+ILOs:
+- Develop and test Java programs that use if-else and switch statements to make decisions.
+Contact units stated by the syllabus: lecture 2, laboratory 1
+Learning activities: - Guided Java coding exercise in the laboratory: demonstration, then pair programming.","PARTIALLY_ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","Says neither what is submitted nor how it is marked.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"as-prog1-too-high","Synthetic test item","Stage C (learning activities, assessment tasks) / Assessment-fit","BSIT - IT 202 Computer Programming 1","wrong-cognitive-level","- Design and implement a complete application with a database and a user interface.","Week 3 course content: Java conditional statements: if, if-else, nested if and switch
+ILOs:
+- Explain the difference between if-else and switch statements.
+Contact units stated by the syllabus: lecture 2, laboratory 1
+Learning activities: - Lecture-discussion with worked examples.","PARTIALLY_ALIGNED or NOT_ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","Far above a conceptual ILO and the lesson.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""
+"as-prog1-multiweek","Synthetic test item","Stage C (learning activities, assessment tasks) / Assessment-fit","BSIT - IT 202 Computer Programming 1","multiweek","- Laboratory exercise: write and test a Java program that uses a for loop and a while loop to process a list of values; submit the code and the test output.","Week 4-5 course content: Loops: for, while and do-while; nested loops
+ILOs:
+- Write and test Java programs that use for and while loops.
+Contact units stated by the syllabus: lecture 2, laboratory 1
+Learning activities: - Guided laboratory sessions over two weeks.","ALIGNED","not run","Not stored with the evaluation file (the model's wording was only inspected during development)","Practical task for a practical ILO across a two-week lesson.","PROVISIONAL - not reviewed by faculty. Written by the assistant; weekly topics, ILOs and plans are synthetic.","","","",""

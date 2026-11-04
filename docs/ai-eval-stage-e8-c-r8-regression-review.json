@@ -1,0 +1,326 @@
+{
+  "status": "stop_for_academic_review_no_full_evaluation",
+  "result": "docs/ai-eval-stage-e8-c-r8-regression.json",
+  "baseline": "docs/ai-eval-stage-e8-c-canary-resume.json",
+  "ledger": "docs/ai-eval-stage-e8-c-ledger.json",
+  "historicalLedgerSnapshot": "docs/ai-eval-stage-e8-c-ledger-before-r8.json",
+  "structural": {
+    "planned": 12,
+    "attempted": 12,
+    "neverAttempted": 0,
+    "verified": 12,
+    "recovered": 0,
+    "unresolved": 0,
+    "unresolvedRate": 0,
+    "coverage": 1,
+    "attemptedShare": 1,
+    "firstAttempt": {
+      "answered": 12,
+      "refused": 0,
+      "validationFailureRate": 0,
+      "noAnswerFirst": 0
+    },
+    "rawResponseErrors": {
+      "answers": 4,
+      "invalidAnswers": 0,
+      "refusedJudgements": 0,
+      "requestsWithoutAnswer": 0
+    },
+    "aspectCoverage": {
+      "byType": {
+        "Activity-fit": {
+          "relationships": 6,
+          "baseVerified": 6,
+          "baseAccepted": 6,
+          "notRecorded": 0,
+          "fields": {
+            "teaching": {
+              "assessed": 6,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "learnerSupport": {
+              "assessed": 6,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            }
+          }
+        },
+        "Assessment-fit": {
+          "relationships": 6,
+          "baseVerified": 6,
+          "baseAccepted": 6,
+          "notRecorded": 0,
+          "fields": {
+            "measures": {
+              "assessed": 6,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "evidence": {
+              "assessed": 6,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "level": {
+              "assessed": 6,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            }
+          }
+        }
+      },
+      "fieldsRequired": 30,
+      "fieldsAssessed": 30,
+      "rate": 1
+    }
+  },
+  "completion": {
+    "maxUnresolved": 0.2,
+    "unresolvedRate": 0,
+    "coverage": 1,
+    "stopped": "academic operator stop: The prior sensors resource-feasibility failure persists: the draft unconditionally assumes a circuit simulator and says a handout is provided; safeguards withheld the imported details.",
+    "state": "complete",
+    "usableForAgreement": true,
+    "reason": "every planned relationship was attempted; 0 of 12 remain unresolved (0%), within the 20% limit (the run stopped afterwards: academic operator stop: The prior sensors resource-feasibility failure persists: the draft unconditionally assumes a circuit simulator and says a handout is provided; safeguards withheld the imported details.)"
+  },
+  "quotationValidation": {
+    "exact": 24,
+    "total": 24
+  },
+  "rawJudgmentsPreserved": {
+    "compared": 12,
+    "changedLabels": 0,
+    "changedAspects": 0
+  },
+  "provisionalAgreement": {
+    "agree": 12,
+    "total": 12,
+    "falseApprovals": {
+      "count": 0,
+      "negativeCases": 6
+    },
+    "falseRejections": {
+      "count": 0,
+      "positiveCases": 6
+    },
+    "facultyVerified": false
+  },
+  "overlappingComparison": {
+    "cases": 8,
+    "r7Agreement": 7,
+    "r8Agreement": 8,
+    "items": [
+      {
+        "id": "af-prog1-good",
+        "r7Label": "ALIGNED",
+        "r8Label": "ALIGNED",
+        "r7Agrees": true,
+        "r8Agrees": true,
+        "r7DraftReview": [],
+        "r8DraftReview": [],
+        "r8DraftWarnings": []
+      },
+      {
+        "id": "af-prog1-irrelevant",
+        "r7Label": "NOT_ALIGNED",
+        "r8Label": "NOT_ALIGNED",
+        "r7Agrees": true,
+        "r8Agrees": true,
+        "r7DraftReview": [
+          "copies_other_relationship"
+        ],
+        "r8DraftReview": [
+          "assumes_resource",
+          "copies_other_relationship"
+        ],
+        "r8DraftWarnings": []
+      },
+      {
+        "id": "as-prog1-good",
+        "r7Label": "ALIGNED",
+        "r8Label": "ALIGNED",
+        "r7Agrees": true,
+        "r8Agrees": true,
+        "r7DraftReview": [],
+        "r8DraftReview": [],
+        "r8DraftWarnings": []
+      },
+      {
+        "id": "as-prog1-recall-quiz",
+        "r7Label": "NOT_ALIGNED",
+        "r8Label": "NOT_ALIGNED",
+        "r7Agrees": true,
+        "r8Agrees": true,
+        "r7DraftReview": [
+          "copies_other_relationship"
+        ],
+        "r8DraftReview": [],
+        "r8DraftWarnings": [
+          "borrowed_wording"
+        ]
+      },
+      {
+        "id": "af-prog1-conceptual-lecture-ok",
+        "r7Label": "PARTIALLY_ALIGNED",
+        "r8Label": "ALIGNED",
+        "r7Agrees": false,
+        "r8Agrees": true,
+        "r7DraftReview": [],
+        "r8DraftReview": [],
+        "r8DraftWarnings": []
+      },
+      {
+        "id": "as-prog1-too-high",
+        "r7Label": "NOT_ALIGNED",
+        "r8Label": "NOT_ALIGNED",
+        "r7Agrees": true,
+        "r8Agrees": true,
+        "r7DraftReview": [],
+        "r8DraftReview": [],
+        "r8DraftWarnings": [
+          "borrowed_wording"
+        ]
+      },
+      {
+        "id": "as-syseng-essay",
+        "r7Label": "NOT_ALIGNED",
+        "r8Label": "NOT_ALIGNED",
+        "r7Agrees": true,
+        "r8Agrees": true,
+        "r7DraftReview": [],
+        "r8DraftReview": [],
+        "r8DraftWarnings": []
+      },
+      {
+        "id": "af-sensors-passive",
+        "r7Label": "NOT_ALIGNED",
+        "r8Label": "NOT_ALIGNED",
+        "r7Agrees": true,
+        "r8Agrees": true,
+        "r7DraftReview": [],
+        "r8DraftReview": [
+          "assumes_resource",
+          "copies_other_relationship"
+        ],
+        "r8DraftWarnings": []
+      }
+    ]
+  },
+  "usage": {
+    "additionalRequests": 6,
+    "modelRequests": 4,
+    "keyChecks": 1,
+    "priceLookups": 1,
+    "modelRetries": 0,
+    "promptTokens": 17087,
+    "cachedPromptTokens": 4096,
+    "completionTokens": 1988,
+    "reasoningTokens": 0,
+    "providerReportedCost": 0.00289079,
+    "additionalCharged": 0.00289079,
+    "additionalConservativeComparison": 0.0075117,
+    "cumulativeRequests": 13,
+    "cumulativeCharged": 0.00583426,
+    "cumulativeConservativeComparison": 0.0139077,
+    "incrementalCap": {
+      "requests": 15,
+      "dollars": 0.03
+    },
+    "cumulativeCanaryCap": {
+      "requests": 22,
+      "dollars": 0.03294347
+    },
+    "authorizationEnded": true
+  },
+  "manualReview": {
+    "status": "stop_for_academic_review_no_full_evaluation",
+    "facultyVerified": false,
+    "conceptualFailure": {
+      "id": "af-prog1-conceptual-lecture-ok",
+      "outcome": "Not reproduced: ALIGNED, sound teaching, adequate support, no draft."
+    },
+    "resourceFailure": {
+      "id": "af-sensors-passive",
+      "outcome": "Persists in the model draft: unqualified circuit simulator use and a provided handout, imported from the positive sibling. The reviewer flags both resource assumptions and copying, so the draft is withheld by the existing application policy."
+    },
+    "explanations": {
+      "reviewed": 12,
+      "definiteInventedFactsFound": 0,
+      "inferenceCautions": [
+        {
+          "id": "as-prog1-recall-quiz",
+          "concern": "Only recall evidence is stronger than the unseen question contents establish; the mismatch with developing/testing programs remains provisionally supported."
+        }
+      ]
+    },
+    "recommendations": {
+      "reviewed": 6,
+      "unsupportedResourceDependent": [
+        "af-prog1-irrelevant",
+        "af-sensors-passive"
+      ],
+      "unnecessaryConceptualToPracticalExpansion": [],
+      "otherwisePlausible": [
+        "as-prog1-recall-quiz",
+        "as-prog1-too-high",
+        "as-syseng-essay",
+        "af-prog1-lab-unused"
+      ],
+      "conditionalRecommendationsReturned": 0,
+      "conditionalCoverage": "Conditional-resource handling passed offline preflight regressions, but no live conditional recommendation was returned, so model compliance is not demonstrated."
+    },
+    "withholding": {
+      "affectedAnswers": 2,
+      "codes": [
+        "assumes_resource",
+        "copies_other_relationship"
+      ],
+      "detail": {
+        "af-prog1-irrelevant": [
+          "laboratory",
+          "starter file"
+        ],
+        "af-sensors-passive": [
+          "circuit simulator",
+          "handout"
+        ]
+      },
+      "note": "These codes withhold drafts if otherwise eligible. The snippet evaluation does not apply suggestions, write a production report, or bypass upstream gating."
+    },
+    "warningReview": {
+      "hardWarningAffectedAnswers": 2,
+      "confirmedFalseTextualMatches": 0,
+      "unsupportedDetailsCorroborated": 2,
+      "benignAdvisorySimilarities": [
+        "as-prog1-recall-quiz",
+        "as-prog1-too-high"
+      ],
+      "unnecessarySimilarityOnlyWithholdingObserved": 0,
+      "note": "Advisory similarity is not presented as unsuitability. No heuristic precision or faculty accuracy estimate is established."
+    },
+    "limitations": [
+      "One run of unreviewed synthetic cases; no faculty accuracy or repeatability measurement.",
+      "The r8 cohort and batch composition differ from r7; provider routing/caching differ too. Observed differences cannot be attributed to the prompt alone.",
+      "Faculty text that states a resource is evidence within the snippet, not external verification of equipment availability.",
+      "Missing upstream evidence and broader Analysis/Evaluate cases remain offline-only coverage."
+    ]
+  },
+  "integrity": {
+    "protectedFilesUnchanged": 18,
+    "historicalLedgerEntriesUnchanged": 7,
+    "secretScanFiles": 4,
+    "credentialDisclosureDetected": false,
+    "dataModulesLoaded": []
+  }
+}

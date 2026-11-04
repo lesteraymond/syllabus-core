@@ -1,0 +1,29 @@
+{
+  "version": "lcup-v2-controlled-evaluation-1",
+  "approved": false,
+  "approvedBy": null,
+  "receiptId": null,
+  "approvedAt": null,
+  "expiresAt": null,
+  "preparedHash": "61ca84192d21e28126b14b3f2a2480d0e9c466c13dc90d36fe1ae4cfa14ec09d",
+  "policyVersion": "academic-evaluation-v2-preview-1",
+  "scope": "pilot",
+  "model": "claude-sonnet-5-5",
+  "limits": {
+    "maxRequests": 12,
+    "maxInputTokens": 1440000,
+    "maxInputTokensPerRequest": 120000,
+    "maxOutputTokens": 49152,
+    "maxOutputTokensPerRequest": 4096,
+    "maxCost": 2.5
+  },
+  "conditions": [
+    "21-case pilot only (7 Policy V2 weekly relationships x 3 synthetic cases), as frozen in prepared-final/bundle.json.",
+    "At most 12 API requests: the planned requests and nothing more.",
+    "No automatic retries: the run stops at the first invalid answer, error or timeout.",
+    "Spending cap 2.50 USD. This is a hard stop on the worst-case reservation of 2.233 USD. The expected spend is about 0.19 to 0.45 USD.",
+    "Current Policy V2 prompts unchanged (system prompt sha256 ce55c382..., the same one the smoke sent), so the pilot is a comparable baseline.",
+    "Policy V2 stays inactive and nonofficial; no production database access; no commit, push or deploy."
+  ],
+  "note": "UNAPPROVED TEMPLATE, prepared 2026-10-29. This file cannot authorize a request. After explicit user approval, a copy is written to docs/lcup-v2-evaluation/authorization.pilot.REVIEWED.json with approved:true, approvedBy, receiptId, approvedAt and a short expiresAt."
+}

@@ -1,0 +1,8 @@
+{
+  "httpStatus": 400,
+  "body": {
+    "error": "Invalid structured academic preview input.",
+    "code": "academic_v2_invalid_input",
+    "field": "content.plan"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "version": "lcup-v2-controlled-evaluation-1",
+  "approved": true,
+  "approvedBy": "JP Del Rosario",
+  "receiptId": "lcup-v2-smoke-r2-2026-10-29-01",
+  "approvedAt": "2026-10-29T09:01:47Z",
+  "expiresAt": "2026-10-29T10:01:47Z",
+  "preparedHash": "d6e2f2f551067433115a345edad3ccf114e4cd26ddf38b5cefc4354f8f1a09e2",
+  "policyVersion": "academic-evaluation-v2-preview-1",
+  "recommendation": "lcup-v2-recommendation-2",
+  "scope": "smoke",
+  "model": "claude-sonnet-5-5",
+  "limits": {
+    "maxRequests": 3,
+    "maxInputTokens": 360000,
+    "maxInputTokensPerRequest": 120000,
+    "maxOutputTokens": 12288,
+    "maxOutputTokensPerRequest": 4096,
+    "maxCost": 1
+  },
+  "conditions": [
+    "Three existing smoke cases only, under the evaluation-only recommendation contract lcup-v2-recommendation-2: BM1-IT202-096, BM1-IE402-074, BM1-CPE304-051.",
+    "At most 3 API requests and at most 1 USD.",
+    "No retries.",
+    "Run once. No additional paid evaluations; the 21-case pilot is not authorized.",
+    "No change to prompts or implementation during the evaluation.",
+    "Production configuration, faculty content, official scores and submission gates stay unchanged; Policy V2 and the recommendation contract stay inactive and nonofficial; no commit, push or deploy."
+  ],
+  "note": "Written by Claude Code from JP Del Rosario's explicit in-session approval (2026-10-29) of the controlled three-case real-Claude evaluation of lcup-v2-recommendation-2. The limits are tighter than the template's (3 requests instead of 6, 1 USD instead of 2); the token limits follow from 3 requests (3 x 120,000 input, 3 x 4,096 output). approvedAt is when this receipt was written."
+}

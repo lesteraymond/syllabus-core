@@ -1,0 +1,665 @@
+{
+ "version": "align-1-dev-adjudication-v2",
+ "builtAt": "2026-10-28",
+ "by": "scripts/export-align1-adjudication-v2.cjs (offline)",
+ "basedOn": {
+  "package": "docs/faculty-review/align-1-dev-adjudication",
+  "manifestSha256": "a753552b15357829c01ccd9420573da8e00a609786a48109d4ec6a4052a26b9a"
+ },
+ "sources": {
+  "a2": {
+   "file": "docs/ai-eval-anthropic/p2-a2-cases.json",
+   "sha256": "73c27948f75cb1b7f6395c8b2924ff0a802afa52d7bafef92124d131eb891e94"
+  },
+  "b2": {
+   "file": "docs/ai-eval-anthropic/p2-b2-cases.json",
+   "sha256": "ef984e44cd49667a8e41428e2b505fae6937238d1a5aaf9f9f4b1b0cebd870a6"
+  },
+  "a1": {
+   "file": "docs/ai-eval-anthropic/p2-a1-result.json",
+   "sha256": "ba3866e00e330cd7d077645283c0386943c36fbe55d7eab48dd8b177505778fb"
+  },
+  "dataset": {
+   "file": "server/lib/syllabuscheck/eval/alignment-dataset.json",
+   "sha256": "ab282a107df8c73b6e7e21e60fd990c86837055577bbb5a4cc7758bd62095801"
+  },
+  "prereg": {
+   "file": "docs/ai-eval-anthropic/p2b2-preregistered.json",
+   "sha256": "1415f75cfe12def391ac34056af23bbd99c8ab05260f0e21559534df759e1d60"
+  },
+  "seed": {
+   "file": "src/data/outcomesSeed.js",
+   "sha256": "a3b6314dbe45310b9a33c9995df73b86558178f72fb66455d7e7557d26029e50"
+  },
+  "outcomes": {
+   "file": "server/db/local-outcome-data.cjs",
+   "sha256": "d6730bbc7681b3a251da31d99679d39fc4cb8e4b64392397cace0a3da1d24ddb"
+  },
+  "curriculum": {
+   "file": "server/db/local-curriculum-data.cjs",
+   "sha256": "7b89f89db64b4f199c996702a63325e3a370b9db08889998926c4fd23bed6e53"
+  },
+  "values": {
+   "file": "server/config/marian-values.json",
+   "sha256": "f8c9ab3fc5e2f11e6b9c40b9bab2f7102f048701be2b3dff0f891f3ff9016cb9"
+  }
+ },
+ "bundles": {
+  "1-part-a-for-reviewers": "part-a-reviewers",
+  "2-part-b-for-reviewers": "part-b-reviewers",
+  "3-policy-panel": "policy-panel",
+  "coordinator-restricted": "coordinator (never sent)"
+ },
+ "files": [
+  {
+   "path": "1-part-a-for-reviewers/01-reviewer-guide-part-a.docx",
+   "sha256": "88f74afa74f81b7b42748f1992fb468b1ab05556c29c64478034df798535f47c",
+   "bytes": 26855,
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "1-part-a-for-reviewers/02-curriculum-and-institutional-references.docx",
+   "sha256": "e46998c05a06b3a0b2b2a9f5a723c1533d20b012361d5d3358837b645fc9269e",
+   "bytes": 215338,
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "1-part-a-for-reviewers/ACCTG201/ACCTG201-part-a-form.docx",
+   "sha256": "aacd40522ee6bd1f885be42b68e439b5a17a46712aa337b1964c35b991872014",
+   "bytes": 133391,
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "1-part-a-for-reviewers/ACCTG201/ACCTG201-part-a-responses.csv",
+   "sha256": "dc833f88ff507508689fbe504ea29d56f30ae2eb278303406e38edbd7eaa8629",
+   "bytes": 1325,
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "1-part-a-for-reviewers/EDUC105/EDUC105-part-a-form.docx",
+   "sha256": "6773562f3db6c2132dc5400f4580c86de3bf557ce5f49e2e4493ab24286ac66a",
+   "bytes": 193727,
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "1-part-a-for-reviewers/EDUC105/EDUC105-part-a-responses.csv",
+   "sha256": "e3d6bfbe3f3e260db121e71514423b87fdbb9bdfaf43f393d044091aad71ec62",
+   "bytes": 1667,
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "1-part-a-for-reviewers/HM210/HM210-part-a-form.docx",
+   "sha256": "bbe48ee08266d8430ed5644b64504fa5b09f9c458bab9fdcf7a9192cd15e6c46",
+   "bytes": 103222,
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "1-part-a-for-reviewers/HM210/HM210-part-a-responses.csv",
+   "sha256": "3e38c9a4a0c2e5e10f3d559f1ef1705654ac7cc843c0b002fddf60e9acd47014",
+   "bytes": 1163,
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "1-part-a-for-reviewers/IE310/IE310-part-a-form.docx",
+   "sha256": "fec3b69a5894a62d73f18006c90e64bacc1a2b06e17ba5ed08f1942bfb9d9c17",
+   "bytes": 43810,
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "1-part-a-for-reviewers/IE310/IE310-part-a-responses.csv",
+   "sha256": "706be6f9522b3b936785361209f860c0ea22b8aa2fe8dd91c35ff39fa7d34242",
+   "bytes": 865,
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "1-part-a-for-reviewers/IT204/IT204-part-a-form.docx",
+   "sha256": "352dda5375615fac6f32b6c4a52568ded40f1914f220b96971d596a023125f33",
+   "bytes": 400305,
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "1-part-a-for-reviewers/IT204/IT204-part-a-responses.csv",
+   "sha256": "3f0cf467e2dcefdfc900fa893acca8b5e7c43a75bec05bd4ea68e07ab8829c7d",
+   "bytes": 2604,
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "1-part-a-for-reviewers/MA7/MA7-part-a-form.docx",
+   "sha256": "acadc74ad80007c962f59b35cce3fba9ee369fe707b5948025c92baa6d49c03b",
+   "bytes": 603997,
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "1-part-a-for-reviewers/MA7/MA7-part-a-responses.csv",
+   "sha256": "14f13cef30d4d3981e6a44fc7db6910d805c1ed1cf92cefebb4aac2a8bb73472",
+   "bytes": 3546,
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "1-part-a-for-reviewers/NCM101/NCM101-part-a-form.docx",
+   "sha256": "6dfa128ed95984d14661eb0f5859371690164eecf07144197402a86dff92e6f5",
+   "bytes": 341672,
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "1-part-a-for-reviewers/NCM101/NCM101-part-a-responses.csv",
+   "sha256": "a3f821476196f2209e0f225521cc4c643e8b0c65c900f38296eb3d91705a6db3",
+   "bytes": 2419,
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "2-part-b-for-reviewers/01-reviewer-guide-part-b.docx",
+   "sha256": "be0b52f4c2544ed3285d07f474ddf119fb32d37bada2a80ee3e5d9594b593005",
+   "bytes": 16246,
+   "audience": "part-b-reviewers"
+  },
+  {
+   "path": "2-part-b-for-reviewers/ACCTG201/ACCTG201-part-b-form.docx",
+   "sha256": "be468ef6170f53d6d6d35c82ca47bd53dfb4f2182629d2d52402da594f86f7db",
+   "bytes": 219200,
+   "audience": "part-b-reviewers"
+  },
+  {
+   "path": "2-part-b-for-reviewers/ACCTG201/ACCTG201-part-b-responses.csv",
+   "sha256": "418bbe0ccdcee2318119468e747c1613a4648b867d92a33d15781da56cc0f9ea",
+   "bytes": 3519,
+   "audience": "part-b-reviewers"
+  },
+  {
+   "path": "2-part-b-for-reviewers/EDUC105/EDUC105-part-b-form.docx",
+   "sha256": "4b21b2ed9334576179767750525d6d323b578793760c98b7e7f1d3788ebacb7d",
+   "bytes": 265734,
+   "audience": "part-b-reviewers"
+  },
+  {
+   "path": "2-part-b-for-reviewers/EDUC105/EDUC105-part-b-responses.csv",
+   "sha256": "41491ab46f53e17a485b365855078b24655755162e6d1c829e2a82f2820287e7",
+   "bytes": 4728,
+   "audience": "part-b-reviewers"
+  },
+  {
+   "path": "2-part-b-for-reviewers/HM210/HM210-part-b-form.docx",
+   "sha256": "0a2d0d2e03fff312cab8326ed32d60a702be91a6b2ba16cbb194e84dc8c728d1",
+   "bytes": 98677,
+   "audience": "part-b-reviewers"
+  },
+  {
+   "path": "2-part-b-for-reviewers/HM210/HM210-part-b-responses.csv",
+   "sha256": "8945bdfb3e599b5955de5a07ef4be9238098a46b03d2f8db26f64f2cfc09892c",
+   "bytes": 1651,
+   "audience": "part-b-reviewers"
+  },
+  {
+   "path": "2-part-b-for-reviewers/IT204/IT204-part-b-form.docx",
+   "sha256": "0b00bcd77efddf374ed2eb576caf7506107a6b89794db39d805f48403509172b",
+   "bytes": 421279,
+   "audience": "part-b-reviewers"
+  },
+  {
+   "path": "2-part-b-for-reviewers/IT204/IT204-part-b-responses.csv",
+   "sha256": "02ba80ade2a91846614d6852b88eb7459cf4626fdb34b47ca4bf386f8c8d60c4",
+   "bytes": 6093,
+   "audience": "part-b-reviewers"
+  },
+  {
+   "path": "2-part-b-for-reviewers/MA7/MA7-part-b-form.docx",
+   "sha256": "dbd57e152e87329578777fba5ce32720eb0f54dd573190be35e660f0fe4ab743",
+   "bytes": 836330,
+   "audience": "part-b-reviewers"
+  },
+  {
+   "path": "2-part-b-for-reviewers/MA7/MA7-part-b-responses.csv",
+   "sha256": "0f8f977ba6355102968490d6e1bae9919c51e9a9df6195d6c6f090afe61a37a3",
+   "bytes": 11386,
+   "audience": "part-b-reviewers"
+  },
+  {
+   "path": "2-part-b-for-reviewers/NCM101/NCM101-part-b-form.docx",
+   "sha256": "30a3b86650d92d4dea672b349f4d17e94d624a53d10d0aee433b7dd288ac3834",
+   "bytes": 428126,
+   "audience": "part-b-reviewers"
+  },
+  {
+   "path": "2-part-b-for-reviewers/NCM101/NCM101-part-b-responses.csv",
+   "sha256": "eb72cba2fa7408d9c2278fa88bfdc78d7b24d4035aaf781a9fe5bf2f9b0e1b30",
+   "bytes": 6535,
+   "audience": "part-b-reviewers"
+  },
+  {
+   "path": "3-policy-panel/01-academic-policy-questions.docx",
+   "sha256": "18f1ab0f62fe5b66f0d7224c5e6233abdaaa2d7c2cfd0bfcebccbf4cd3080be6",
+   "bytes": 98770,
+   "audience": "policy-panel"
+  },
+  {
+   "path": "3-policy-panel/02-institutional-decisions-and-approvals.docx",
+   "sha256": "e82aec85d31eb57a1a56269d1ca8549c4518b559c2fd14bf6823776a578ba2eb",
+   "bytes": 39204,
+   "audience": "policy-panel"
+  },
+  {
+   "path": "3-policy-panel/03-adjudication-procedure.docx",
+   "sha256": "e88e95974f31dc53b0b461ff17b418b02a373b3a9bd2cfbbd266a421b3c852ad",
+   "bytes": 55378,
+   "audience": "policy-panel"
+  },
+  {
+   "path": "3-policy-panel/04-curriculum-and-institutional-references.docx",
+   "sha256": "e46998c05a06b3a0b2b2a9f5a723c1533d20b012361d5d3358837b645fc9269e",
+   "bytes": 215338,
+   "audience": "policy-panel"
+  },
+  {
+   "path": "3-policy-panel/decision-and-approval-record.csv",
+   "sha256": "77cef174040a388a80e98f5a07153ff801c6dfc77b7715e47a5e5d419abdf48b",
+   "bytes": 3966,
+   "audience": "policy-panel"
+  },
+  {
+   "path": "coordinator-restricted/00-coordinator-guide.md",
+   "sha256": "e9b74d5e3cb0c46864413e6b007010fc47ef06e391338771dc964b4c8090969a",
+   "bytes": 12289,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/01-case-inventory.md",
+   "sha256": "4a08422e136462e538450a1ac228c9d6e916db5a01ad9b15ca386d4b64c0f140",
+   "bytes": 225057,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/02-recommendation-quality-review.md",
+   "sha256": "b126dcbec3fe7995ac167f387c9278e86717ee37f071138baaf43fff5fe507be",
+   "bytes": 18097,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/03-comparison-and-blinding-key.md",
+   "sha256": "e38a77038b9f0c3f23c9319bd849db5a47bfb11b63f51223d20f3e51331cae04",
+   "bytes": 24011,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/04-post-validation-development-plan.md",
+   "sha256": "a0b20e0f1fcfc263b6ccf89c534143cd00111bf5fb3702e2ff2ebf21ca8f1e85",
+   "bytes": 6647,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/05-policy-question-case-map.md",
+   "sha256": "234ef737c64f46d0350f7311cec21e90922fb87b90efe4cab74c959979e96cd6",
+   "bytes": 1484,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/06-changes-from-v1.md",
+   "sha256": "99f3652defc90b00b98ef8c1bd9bdbaaf0e73804c3810ce0da7aa3f9cb1a14b1",
+   "bytes": 7972,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/cases.json",
+   "sha256": "7e7aae0e985dfc9f2d0f2bbcc9bbbd0d8f0a9dfcb9aad5edaa317c5200da540d",
+   "bytes": 357139,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/distributed-text/1-part-a-for-reviewers/01-reviewer-guide-part-a.md",
+   "sha256": "b715f85bd81f8dc33783034977be1134e3af5d38359b184b739958cc2c029b03",
+   "bytes": 6870,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/distributed-text/1-part-a-for-reviewers/02-curriculum-and-institutional-references.md",
+   "sha256": "c335a6d8ef4fd8d9a39cd6999ac30b26e232b1512dfb48ec5308a08fae40097d",
+   "bytes": 26070,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/distributed-text/1-part-a-for-reviewers/ACCTG201/ACCTG201-part-a-form.md",
+   "sha256": "6a8911314f32fb0f20edd2d188feea65bee7bb93115fee124f4aaff680c618e9",
+   "bytes": 10782,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/distributed-text/1-part-a-for-reviewers/EDUC105/EDUC105-part-a-form.md",
+   "sha256": "077f5581a494658ba912413fe4601ae3d7c70d4a3146b0ad3179fc35a0d11d6e",
+   "bytes": 15798,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/distributed-text/1-part-a-for-reviewers/HM210/HM210-part-a-form.md",
+   "sha256": "e9bcf335e060805382e48cf5ea2d395fef840d9d2960c6b2284504a341934316",
+   "bytes": 8374,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/distributed-text/1-part-a-for-reviewers/IE310/IE310-part-a-form.md",
+   "sha256": "47b9a7a9e2ab01f6519a46b6acdcb89a58b7c4616debdac3e1b1af43af697056",
+   "bytes": 3761,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/distributed-text/1-part-a-for-reviewers/IT204/IT204-part-a-form.md",
+   "sha256": "a9bf9e3acae9f674191702f3573e7a30fd772246f6b82e1618428ed269b8310e",
+   "bytes": 32615,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/distributed-text/1-part-a-for-reviewers/MA7/MA7-part-a-form.md",
+   "sha256": "362f087ff19509ad3f24dcdabc55bbd75a5354adb93957a0391770c5e84fc547",
+   "bytes": 48880,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/distributed-text/1-part-a-for-reviewers/NCM101/NCM101-part-a-form.md",
+   "sha256": "060e5e0f41b3d778065adb60fe27333e45edd9aedce8fc24b05c3a8dc4f310e1",
+   "bytes": 27684,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/distributed-text/2-part-b-for-reviewers/01-reviewer-guide-part-b.md",
+   "sha256": "87f449093ee26be4e2393d124f40a8f8571332ea5fa3ee000b4a85fb67bdfbd8",
+   "bytes": 2263,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/distributed-text/2-part-b-for-reviewers/ACCTG201/ACCTG201-part-b-form.md",
+   "sha256": "183294fd3677955484064a2cd5424651a93b5ebbb19258f0c61813140bc36c91",
+   "bytes": 17878,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/distributed-text/2-part-b-for-reviewers/EDUC105/EDUC105-part-b-form.md",
+   "sha256": "87c3c536541acc1d0d4f1f7868c434f5adfddb629818f7e7f2a79c926feb9f63",
+   "bytes": 22216,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/distributed-text/2-part-b-for-reviewers/HM210/HM210-part-b-form.md",
+   "sha256": "7034b86432881ff2865ab04228ce19492c69fe1bb1abe484634071de7172d66d",
+   "bytes": 8423,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/distributed-text/2-part-b-for-reviewers/IT204/IT204-part-b-form.md",
+   "sha256": "c6b803683f4bdfa8e7bbe563ca50ed6199141d12e8de87c63e46e225a316520a",
+   "bytes": 34912,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/distributed-text/2-part-b-for-reviewers/MA7/MA7-part-b-form.md",
+   "sha256": "fd2154723ef19ec74b7fdc2fde6c336eae83bc98ba06cc899be5b2239f008692",
+   "bytes": 67124,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/distributed-text/2-part-b-for-reviewers/NCM101/NCM101-part-b-form.md",
+   "sha256": "72389e15270c8a9dabeb2a3ec9c680631edc8508cdd39bf86d58ed08f4533e1d",
+   "bytes": 35187,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/distributed-text/3-policy-panel/01-academic-policy-questions.md",
+   "sha256": "06698ed4fea9b074ee60e965717122ea3ff6062ee5653cc69d4c38c7e0781ff6",
+   "bytes": 17088,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/distributed-text/3-policy-panel/02-institutional-decisions-and-approvals.md",
+   "sha256": "d96f181ae47bf3c944c5a69dcf9d152f0ddc42e62442e66fe94e6c825326c96a",
+   "bytes": 7313,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/distributed-text/3-policy-panel/03-adjudication-procedure.md",
+   "sha256": "44b88958b95dd19509e80efb7d21d7f6403e0ebab62164f63da620d4567b0e03",
+   "bytes": 12807,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/distributed-text/3-policy-panel/04-curriculum-and-institutional-references.md",
+   "sha256": "c335a6d8ef4fd8d9a39cd6999ac30b26e232b1512dfb48ec5308a08fae40097d",
+   "bytes": 26070,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/templates/adjudication-record.csv",
+   "sha256": "8ae8643fb8f47195c7fa3c7b6e93b9dd3b481923d2ce056f4ae55d8251f31b94",
+   "bytes": 390,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/templates/part-a-agreement-record.csv",
+   "sha256": "4216facfab2e58d4d659a1164ca35c957527c2595d3348e754d1683f57224066",
+   "bytes": 8147,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/templates/part-b-ratings-record.csv",
+   "sha256": "7e8df1f00b389606ff2d2e9f36153e1d9b3f4030a7d921278cdde59c269138af",
+   "bytes": 10805,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/templates/reassignment-log.csv",
+   "sha256": "d0860c75a1228f573242004c808c6b5236480654514c65962f8e5f877296e04a",
+   "bytes": 196,
+   "audience": "coordinator"
+  },
+  {
+   "path": "coordinator-restricted/templates/reviewer-tracking.csv",
+   "sha256": "e4f7591da9d72cfcba6099d85e4cdd7585b85586dcdbe1e624c9ff3a8ebccd22",
+   "bytes": 989,
+   "audience": "coordinator"
+  },
+  {
+   "path": "README.md",
+   "sha256": "51694447543d10293ada9f1cfc985693052efbba5475c9ef6e621ad3ccb11575",
+   "bytes": 1181,
+   "audience": "index"
+  }
+ ],
+ "pdf": [
+  {
+   "path": "1-part-a-for-reviewers/01-reviewer-guide-part-a.pdf",
+   "sha256": "9af89f539dcde0c737fea833c97033c6e3dec4ccd19d5d406c3b12a459b295fa",
+   "bytes": 255860,
+   "fromPath": "1-part-a-for-reviewers/01-reviewer-guide-part-a.docx",
+   "fromSha256": "88f74afa74f81b7b42748f1992fb468b1ab05556c29c64478034df798535f47c",
+   "pages": 2,
+   "renderer": "Microsoft Word 16.0 (build 16.0.20527), ExportAsFixedFormat: tagged, heading bookmarks, not PDF/A",
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "1-part-a-for-reviewers/02-curriculum-and-institutional-references.pdf",
+   "sha256": "fb15230a73c854e717eff21c3aadee6196c220ed51ea7fedf0398c2b28546b9d",
+   "bytes": 477449,
+   "fromPath": "1-part-a-for-reviewers/02-curriculum-and-institutional-references.docx",
+   "fromSha256": "e46998c05a06b3a0b2b2a9f5a723c1533d20b012361d5d3358837b645fc9269e",
+   "pages": 11,
+   "renderer": "Microsoft Word 16.0 (build 16.0.20527), ExportAsFixedFormat: tagged, heading bookmarks, not PDF/A",
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "1-part-a-for-reviewers/ACCTG201/ACCTG201-part-a-form.pdf",
+   "sha256": "ad5a617c9624dbc77c06aafef7374d02dd11f39268ac3a37a43d91242acfe23a",
+   "bytes": 329746,
+   "fromPath": "1-part-a-for-reviewers/ACCTG201/ACCTG201-part-a-form.docx",
+   "fromSha256": "aacd40522ee6bd1f885be42b68e439b5a17a46712aa337b1964c35b991872014",
+   "pages": 5,
+   "renderer": "Microsoft Word 16.0 (build 16.0.20527), ExportAsFixedFormat: tagged, heading bookmarks, not PDF/A",
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "1-part-a-for-reviewers/EDUC105/EDUC105-part-a-form.pdf",
+   "sha256": "a3809492dc1514513431af140d7a9ad1be14956760c59358c7f39261fa4a1d30",
+   "bytes": 359400,
+   "fromPath": "1-part-a-for-reviewers/EDUC105/EDUC105-part-a-form.docx",
+   "fromSha256": "6773562f3db6c2132dc5400f4580c86de3bf557ce5f49e2e4493ab24286ac66a",
+   "pages": 7,
+   "renderer": "Microsoft Word 16.0 (build 16.0.20527), ExportAsFixedFormat: tagged, heading bookmarks, not PDF/A",
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "1-part-a-for-reviewers/HM210/HM210-part-a-form.pdf",
+   "sha256": "3d174aa7c538e9e527d117395bfd07b45f566563864b25d61e13d5fb461a1f74",
+   "bytes": 319712,
+   "fromPath": "1-part-a-for-reviewers/HM210/HM210-part-a-form.docx",
+   "fromSha256": "bbe48ee08266d8430ed5644b64504fa5b09f9c458bab9fdcf7a9192cd15e6c46",
+   "pages": 4,
+   "renderer": "Microsoft Word 16.0 (build 16.0.20527), ExportAsFixedFormat: tagged, heading bookmarks, not PDF/A",
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "1-part-a-for-reviewers/IE310/IE310-part-a-form.pdf",
+   "sha256": "19d72d88fda7cab6a160c43a9789a8093eade21299dd9ea63c88381cd1961cf1",
+   "bytes": 304563,
+   "fromPath": "1-part-a-for-reviewers/IE310/IE310-part-a-form.docx",
+   "fromSha256": "fec3b69a5894a62d73f18006c90e64bacc1a2b06e17ba5ed08f1942bfb9d9c17",
+   "pages": 2,
+   "renderer": "Microsoft Word 16.0 (build 16.0.20527), ExportAsFixedFormat: tagged, heading bookmarks, not PDF/A",
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "1-part-a-for-reviewers/IT204/IT204-part-a-form.pdf",
+   "sha256": "9c4398648a78ce30cdd5c5d2ffafcabf110a6c4ad291f93e6ae868394da265fc",
+   "bytes": 419081,
+   "fromPath": "1-part-a-for-reviewers/IT204/IT204-part-a-form.docx",
+   "fromSha256": "352dda5375615fac6f32b6c4a52568ded40f1914f220b96971d596a023125f33",
+   "pages": 14,
+   "renderer": "Microsoft Word 16.0 (build 16.0.20527), ExportAsFixedFormat: tagged, heading bookmarks, not PDF/A",
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "1-part-a-for-reviewers/MA7/MA7-part-a-form.pdf",
+   "sha256": "972bc3f2bcc18ea467ebd52821c07fd44bdcf6b139fc0168445f8e6ede0fc1fd",
+   "bytes": 473303,
+   "fromPath": "1-part-a-for-reviewers/MA7/MA7-part-a-form.docx",
+   "fromSha256": "acadc74ad80007c962f59b35cce3fba9ee369fe707b5948025c92baa6d49c03b",
+   "pages": 21,
+   "renderer": "Microsoft Word 16.0 (build 16.0.20527), ExportAsFixedFormat: tagged, heading bookmarks, not PDF/A",
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "1-part-a-for-reviewers/NCM101/NCM101-part-a-form.pdf",
+   "sha256": "e405dbf05945120307426acd92d95e30da929fec9a2808ac2c0e7023ead865d8",
+   "bytes": 399910,
+   "fromPath": "1-part-a-for-reviewers/NCM101/NCM101-part-a-form.docx",
+   "fromSha256": "6dfa128ed95984d14661eb0f5859371690164eecf07144197402a86dff92e6f5",
+   "pages": 12,
+   "renderer": "Microsoft Word 16.0 (build 16.0.20527), ExportAsFixedFormat: tagged, heading bookmarks, not PDF/A",
+   "audience": "part-a-reviewers"
+  },
+  {
+   "path": "2-part-b-for-reviewers/01-reviewer-guide-part-b.pdf",
+   "sha256": "7b68fbe49f53917976b024464208c846a0faccee8342bbcc150f1d3d99a44b83",
+   "bytes": 204527,
+   "fromPath": "2-part-b-for-reviewers/01-reviewer-guide-part-b.docx",
+   "fromSha256": "be0b52f4c2544ed3285d07f474ddf119fb32d37bada2a80ee3e5d9594b593005",
+   "pages": 1,
+   "renderer": "Microsoft Word 16.0 (build 16.0.20527), ExportAsFixedFormat: tagged, heading bookmarks, not PDF/A",
+   "audience": "part-b-reviewers"
+  },
+  {
+   "path": "2-part-b-for-reviewers/ACCTG201/ACCTG201-part-b-form.pdf",
+   "sha256": "f49bbf5c7c1e3886bfa4db210029f42325b7b35239017b7e48becff43a85048f",
+   "bytes": 357511,
+   "fromPath": "2-part-b-for-reviewers/ACCTG201/ACCTG201-part-b-form.docx",
+   "fromSha256": "be468ef6170f53d6d6d35c82ca47bd53dfb4f2182629d2d52402da594f86f7db",
+   "pages": 9,
+   "renderer": "Microsoft Word 16.0 (build 16.0.20527), ExportAsFixedFormat: tagged, heading bookmarks, not PDF/A",
+   "audience": "part-b-reviewers"
+  },
+  {
+   "path": "2-part-b-for-reviewers/EDUC105/EDUC105-part-b-form.pdf",
+   "sha256": "bc0e7738832f993a3768f117df682080415e2ff0323bb8d18295d10dea0507cc",
+   "bytes": 371317,
+   "fromPath": "2-part-b-for-reviewers/EDUC105/EDUC105-part-b-form.docx",
+   "fromSha256": "4b21b2ed9334576179767750525d6d323b578793760c98b7e7f1d3788ebacb7d",
+   "pages": 10,
+   "renderer": "Microsoft Word 16.0 (build 16.0.20527), ExportAsFixedFormat: tagged, heading bookmarks, not PDF/A",
+   "audience": "part-b-reviewers"
+  },
+  {
+   "path": "2-part-b-for-reviewers/HM210/HM210-part-b-form.pdf",
+   "sha256": "0235ab0ec3cf9acd6d7219f607549e1bd6230509fa64064887b6bdc5a11d3314",
+   "bytes": 313334,
+   "fromPath": "2-part-b-for-reviewers/HM210/HM210-part-b-form.docx",
+   "fromSha256": "0a2d0d2e03fff312cab8326ed32d60a702be91a6b2ba16cbb194e84dc8c728d1",
+   "pages": 4,
+   "renderer": "Microsoft Word 16.0 (build 16.0.20527), ExportAsFixedFormat: tagged, heading bookmarks, not PDF/A",
+   "audience": "part-b-reviewers"
+  },
+  {
+   "path": "2-part-b-for-reviewers/IT204/IT204-part-b-form.pdf",
+   "sha256": "246a41c21afab1cf5e638dd3350f598a736636a65d31d3e50aefe71d265b113c",
+   "bytes": 425652,
+   "fromPath": "2-part-b-for-reviewers/IT204/IT204-part-b-form.docx",
+   "fromSha256": "0b00bcd77efddf374ed2eb576caf7506107a6b89794db39d805f48403509172b",
+   "pages": 20,
+   "renderer": "Microsoft Word 16.0 (build 16.0.20527), ExportAsFixedFormat: tagged, heading bookmarks, not PDF/A",
+   "audience": "part-b-reviewers"
+  },
+  {
+   "path": "2-part-b-for-reviewers/MA7/MA7-part-b-form.pdf",
+   "sha256": "80263a78e1439234bd16b9f3c4dea2b8e4d5ddc83e4b27c7d1783d20c8b27336",
+   "bytes": 531423,
+   "fromPath": "2-part-b-for-reviewers/MA7/MA7-part-b-form.docx",
+   "fromSha256": "dbd57e152e87329578777fba5ce32720eb0f54dd573190be35e660f0fe4ab743",
+   "pages": 34,
+   "renderer": "Microsoft Word 16.0 (build 16.0.20527), ExportAsFixedFormat: tagged, heading bookmarks, not PDF/A",
+   "audience": "part-b-reviewers"
+  },
+  {
+   "path": "2-part-b-for-reviewers/NCM101/NCM101-part-b-form.pdf",
+   "sha256": "26f54a06bb5ef35ab566f5d7194cdf00f487f40bb6876480cf059a7ba00e5c17",
+   "bytes": 423598,
+   "fromPath": "2-part-b-for-reviewers/NCM101/NCM101-part-b-form.docx",
+   "fromSha256": "30a3b86650d92d4dea672b349f4d17e94d624a53d10d0aee433b7dd288ac3834",
+   "pages": 19,
+   "renderer": "Microsoft Word 16.0 (build 16.0.20527), ExportAsFixedFormat: tagged, heading bookmarks, not PDF/A",
+   "audience": "part-b-reviewers"
+  },
+  {
+   "path": "3-policy-panel/01-academic-policy-questions.pdf",
+   "sha256": "472fde9e0e6754e4ad006ecab0ee8807df782865a8b7fdada1118bf127198ea6",
+   "bytes": 317218,
+   "fromPath": "3-policy-panel/01-academic-policy-questions.docx",
+   "fromSha256": "18f1ab0f62fe5b66f0d7224c5e6233abdaaa2d7c2cfd0bfcebccbf4cd3080be6",
+   "pages": 7,
+   "renderer": "Microsoft Word 16.0 (build 16.0.20527), ExportAsFixedFormat: tagged, heading bookmarks, not PDF/A",
+   "audience": "policy-panel"
+  },
+  {
+   "path": "3-policy-panel/02-institutional-decisions-and-approvals.pdf",
+   "sha256": "7cdc8f44806f59614cfe7688077b2b61d872ec50f5bebae8a97297bba2e60228",
+   "bytes": 271467,
+   "fromPath": "3-policy-panel/02-institutional-decisions-and-approvals.docx",
+   "fromSha256": "e82aec85d31eb57a1a56269d1ca8549c4518b559c2fd14bf6823776a578ba2eb",
+   "pages": 3,
+   "renderer": "Microsoft Word 16.0 (build 16.0.20527), ExportAsFixedFormat: tagged, heading bookmarks, not PDF/A",
+   "audience": "policy-panel"
+  },
+  {
+   "path": "3-policy-panel/03-adjudication-procedure.pdf",
+   "sha256": "3efe4dbba82fcf18ee9b25ab7657a469add4b81f6dcbe92de5e25b0a30ccedeb",
+   "bytes": 298934,
+   "fromPath": "3-policy-panel/03-adjudication-procedure.docx",
+   "fromSha256": "e88e95974f31dc53b0b461ff17b418b02a373b3a9bd2cfbbd266a421b3c852ad",
+   "pages": 5,
+   "renderer": "Microsoft Word 16.0 (build 16.0.20527), ExportAsFixedFormat: tagged, heading bookmarks, not PDF/A",
+   "audience": "policy-panel"
+  },
+  {
+   "path": "3-policy-panel/04-curriculum-and-institutional-references.pdf",
+   "sha256": "c3317a1a7365e3848895115ae3ab6ac9ccb7739839af8d395d507eef470404e1",
+   "bytes": 477449,
+   "fromPath": "3-policy-panel/04-curriculum-and-institutional-references.docx",
+   "fromSha256": "e46998c05a06b3a0b2b2a9f5a723c1533d20b012361d5d3358837b645fc9269e",
+   "pages": 11,
+   "renderer": "Microsoft Word 16.0 (build 16.0.20527), ExportAsFixedFormat: tagged, heading bookmarks, not PDF/A",
+   "audience": "policy-panel"
+  }
+ ]
+}

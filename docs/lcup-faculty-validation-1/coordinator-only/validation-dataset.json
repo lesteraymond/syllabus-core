@@ -1,0 +1,3152 @@
+{
+  "version": "lcup-faculty-validation-1",
+  "built": "2026-10-29",
+  "status": "Prepared offline. No faculty judgment, no adjudication and no model result is included.",
+  "purpose": "Faculty academic validation of the seven academic relationships: 21 genuine relationships from the three verified LCUP syllabi, three per relationship, for blind faculty judgment and a later, separately approved comparison with Claude.",
+  "benchmark": {
+    "version": "lcup-academic-benchmark-1",
+    "benchmarkHash": "ebd12920a890971b8c7fb481cc6bc9b469ec7dd4c2001134f6833cc31009bbf7",
+    "policyVersion": "academic-evaluation-v2-preview-1",
+    "file": "docs/lcup-academic-benchmark/package/cases.json",
+    "sha256": "6d2a6ab6dea98c46c2f83680a3633d69a7b9fa2a7c219fc414f09fbbf571b2f6"
+  },
+  "labels": [
+    "ALIGNED",
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED",
+    "INSUFFICIENT_EVIDENCE"
+  ],
+  "relationships": [
+    {
+      "key": "Content-course",
+      "name": "Course Title ↔ Course Content"
+    },
+    {
+      "key": "Content-ILO",
+      "name": "Course Content ↔ ILO"
+    },
+    {
+      "key": "ILO-CLO",
+      "name": "ILO ↔ CLO"
+    },
+    {
+      "key": "Content-activity",
+      "name": "Course Content ↔ Learning Activities"
+    },
+    {
+      "key": "ILO-activity",
+      "name": "ILO ↔ Learning Activities"
+    },
+    {
+      "key": "Content-assessment",
+      "name": "Course Content ↔ Assessment"
+    },
+    {
+      "key": "Activity-assessment",
+      "name": "Learning Activities ↔ Assessment"
+    }
+  ],
+  "cloClassification": {
+    "mapping": [
+      {
+        "clo": 1,
+        "classification": "Introductory"
+      },
+      {
+        "clo": 2,
+        "classification": "Enabling"
+      },
+      {
+        "clo": 3,
+        "classification": "Demonstrating"
+      },
+      {
+        "clo": 4,
+        "classification": "Integration of Values"
+      }
+    ],
+    "basis": "LCUP's fixed classification by CLO number, confirmed by the project owner on 2026-10-29.",
+    "officialDefinitions": null,
+    "note": "The official definitions of the four classifications are not in the repository, and none is supplied here."
+  },
+  "dataMinimisation": "Reproduced: course identity, units and prerequisite, the course description, the CLOs, a one-line lesson outline and the selected lesson rows (content, ILOs, activities, assessment). Not reproduced: names, signatures, contact details, the core-values column, requirements, references and the grading system.",
+  "courses": {
+    "IT 202": {
+      "program": "BSIT",
+      "code": "IT 202",
+      "title": "Computer Programming 1",
+      "units": {
+        "lecture": "2",
+        "laboratory": "1"
+      },
+      "prerequisite": "IT 101",
+      "description": "This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications. In line with La Consolacion University Philippines' commitment to forming Christo-centric Catholic professionals , the course integrates Marian Augustinian values in each lesson, ensuring that students not only achieve intellectual growth but also cultivate moral and ethical responsibility in the digital age. This holistic approach nurtures individuals who contribute positively to society, embodying community, humility, and love of service , as exemplified by the Blessed Virgin Mary and Saint Augustine. By the end of the course, students will have created their own Java applications, demonstrating both technical proficiency and a sense of purpose rooted in their Catholic faith.",
+      "clos": [
+        {
+          "clo": 1,
+          "statement": "Define and analyze the computing requirements needed for an effective solution that is essential for developing holistic and impactful solutions.",
+          "requiredClassification": "Introductory"
+        },
+        {
+          "clo": 2,
+          "statement": " Incorporate ethical standards and social responsibility into technical designs, ensuring that solutions serve the common good, in line with Marian and Augustinian principles of truth and compassion. ",
+          "requiredClassification": "Enabling"
+        },
+        {
+          "clo": 3,
+          "statement": "Collaborate effectively within multi-disciplinary and culturally diverse teams to develop Java- based programming solutions that address social challenges, demonstrating social responsibility and cultural sensitivity.",
+          "requiredClassification": "Demonstrating"
+        },
+        {
+          "clo": 4,
+          "statement": "Demonstrate the Filipino- Catholic Augustinian Spirituality through value webbing.",
+          "requiredClassification": "Integration of Values"
+        }
+      ],
+      "lessonOutline": [
+        {
+          "week": "Week 1",
+          "kind": "lesson",
+          "heading": "I. Orientation"
+        },
+        {
+          "week": "Week 2",
+          "kind": "lesson",
+          "heading": "II. Introduction to Java Programming"
+        },
+        {
+          "week": "Week 3-4",
+          "kind": "lesson",
+          "heading": "III. The Basic Input/Output Statements of Java Console"
+        },
+        {
+          "week": "Week 4-5",
+          "kind": "lesson",
+          "heading": "IV. Java Libraries Program"
+        },
+        {
+          "week": "Week 6",
+          "kind": "examination"
+        },
+        {
+          "week": "Week 7-8",
+          "kind": "lesson",
+          "heading": "V. . Conditional Statements"
+        },
+        {
+          "week": "Week 9-11",
+          "kind": "lesson",
+          "heading": "XI. Looping Statements"
+        },
+        {
+          "week": "Week 12",
+          "kind": "examination"
+        },
+        {
+          "week": "Week 13",
+          "kind": "lesson",
+          "heading": "X. . Array"
+        },
+        {
+          "week": "Week 14",
+          "kind": "lesson",
+          "heading": "XIII. Strings"
+        },
+        {
+          "week": "Week 15",
+          "kind": "lesson",
+          "heading": "XII. JAVA METHOD"
+        },
+        {
+          "week": "Week 16-17",
+          "kind": "lesson",
+          "heading": "X. JAVA DATABASE CONNECTION"
+        },
+        {
+          "week": "Week 18",
+          "kind": "examination"
+        }
+      ]
+    },
+    "IE-402": {
+      "program": "BSIE",
+      "code": "IE-402",
+      "title": "Systems Engineering",
+      "units": {
+        "lecture": "",
+        "laboratory": ""
+      },
+      "prerequisite": "4th Year Standing",
+      "description": "This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation. Students will develop skills in modeling and optimizing systems that integrate people, processes, and technology. They will explore methods for ensuring that systems are efficient, reliable, and adaptable across various industries, such as manufacturing, healthcare, and logistics. This course prepares BSIE students to play a vital role in creating systems that maximize performance, minimize waste, and support organizational goals. Beyond technical knowledge, the course integrates Marian Augustinian values into each lesson, fostering the development of students as Christo-centric Catholic professionals. The curriculum not only aims for intellectual growth but also instills a commitment to ethical decision-making, social responsibility, and compassionate service. Students will be equipped with the knowledge and values necessary to thrive as professionals in the field of Industrial Engineering.",
+      "clos": [
+        {
+          "clo": 1,
+          "statement": "Demonstrate knowledge and understanding of engineering and management principles by effectively leading and collaborating within teams, managing projects, and engaging in multidisciplinary environments.",
+          "requiredClassification": "Introductory"
+        },
+        {
+          "clo": 2,
+          "statement": "Apply critical and creative thinking skills to analyze, design, and optimize complex systems, integrating various components such as people, materials, technology, and information.",
+          "requiredClassification": "Enabling"
+        },
+        {
+          "clo": 3,
+          "statement": "Develop the ability to identify and solve systems engineering challenges, making decisions that improve performance, enhance efficiency, and support sustainable practices across diverse industries.",
+          "requiredClassification": "Demonstrating"
+        },
+        {
+          "clo": 4,
+          "statement": "Demonstrate the Filipino- Catholic Augustinian Spirituality through value webbing.",
+          "requiredClassification": "Integration of Values"
+        }
+      ],
+      "lessonOutline": [
+        {
+          "week": "Week 1",
+          "kind": "lesson",
+          "heading": "I. COURSE ORIENTATION"
+        },
+        {
+          "week": "Week 2-3",
+          "kind": "lesson",
+          "heading": "Introduction to Systems Engineering"
+        },
+        {
+          "week": "Week 4",
+          "kind": "examination"
+        },
+        {
+          "week": "Week 5-8",
+          "kind": "lesson",
+          "heading": "The Systems Engineering Process"
+        },
+        {
+          "week": "Week 9",
+          "kind": "examination"
+        },
+        {
+          "week": "Week 10-11",
+          "kind": "lesson",
+          "heading": "Systems Analysis and Control"
+        },
+        {
+          "week": "Week 12-14",
+          "kind": "lesson",
+          "heading": "Planning, Organizing and Managing"
+        },
+        {
+          "week": "Week 15-17",
+          "kind": "lesson",
+          "heading": "Application"
+        },
+        {
+          "week": "Week 18",
+          "kind": "examination"
+        }
+      ]
+    },
+    "CpE 304": {
+      "program": "BSCPE",
+      "code": "CpE 304",
+      "title": "Fundamentals of Mixed Signals and Sensors",
+      "units": {
+        "lecture": "3",
+        "laboratory": "0"
+      },
+      "prerequisite": "FUNEC, FUNELC",
+      "description": "This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included. Anchored in the Marian and Augustinian values of truth (veritas), unity (unitas), and charity (caritas), the course encourages students to design technology that promotes social responsibility, collaboration, and compassion. Through hands-on projects, learners will not only develop technical proficiency but also embody ethical stewardship — using their knowledge to create solutions that serve the needs of others and contribute to the common good.",
+      "clos": [
+        {
+          "clo": 1,
+          "statement": "Identify the design process of electronic circuits and systems and conduct experiments involving sensors and mixed-signal systems, analyze data, and interpret results to improve performance and reliability.",
+          "requiredClassification": "Introductory"
+        },
+        {
+          "clo": 2,
+          "statement": "Develop analytical and design skills for both analog and digital electronic circuit and implement sensor-based systems that integrate hardware and software components while considering economic, environmental, and ethical constraints.",
+          "requiredClassification": "Enabling"
+        },
+        {
+          "clo": 3,
+          "statement": "Analyze and apply the behavior of passive components in AC circuits and their instrumentation applications in multidisciplinary teams to design, test, and optimize mixed-signal and sensor applications for engineering solutions",
+          "requiredClassification": "Demonstrating"
+        },
+        {
+          "clo": 4,
+          "statement": "Exhibit lifelong learning, precision, and ethical responsibility in performing measurements and calibration tasks. Engage in continuous learning by exploring emerging technologies and trends in sensors, instrumentation, and mixed-signal design for future innovation",
+          "requiredClassification": "Integration of Values"
+        }
+      ],
+      "lessonOutline": [
+        {
+          "week": "Week 1",
+          "kind": "lesson",
+          "heading": "I.ORIENTATION"
+        },
+        {
+          "week": "Week 2-3",
+          "kind": "lesson",
+          "heading": "II. Introduction to Electronic System"
+        },
+        {
+          "week": "Week 4-5",
+          "kind": "lesson",
+          "heading": "III. INTRODUCTION TO OPERATIONAL AMPLIFIERS AND APPLICATIONS"
+        },
+        {
+          "week": "Week 6",
+          "kind": "examination"
+        },
+        {
+          "week": "Week 7-8",
+          "kind": "lesson",
+          "heading": "IV. Analog to Digital Conversion Digital to Analog Conversion"
+        },
+        {
+          "week": "Week 9-11",
+          "kind": "lesson",
+          "heading": "V. Mixed Signals Basic Measurement Theory"
+        },
+        {
+          "week": "Week 12",
+          "kind": "examination"
+        },
+        {
+          "week": "Week 13-14",
+          "kind": "lesson",
+          "heading": "VI. Sensors and Transducers"
+        },
+        {
+          "week": "Week 15-16",
+          "kind": "lesson",
+          "heading": "VII. Other Types of Sensors and Transducers"
+        },
+        {
+          "week": "Week 17",
+          "kind": "lesson",
+          "heading": "VIII. Basic Control Devices"
+        },
+        {
+          "week": "Week 18",
+          "kind": "examination"
+        }
+      ]
+    }
+  },
+  "cases": [
+    {
+      "caseId": "FV-01",
+      "relationship": {
+        "key": "Content-activity",
+        "name": "Course Content ↔ Learning Activities"
+      },
+      "program": "BSIT",
+      "course": {
+        "code": "IT 202",
+        "title": "Computer Programming 1"
+      },
+      "week": "Week 1",
+      "lesson": "I. Orientation",
+      "statements": [
+        {
+          "role": "Course content, Week 1",
+          "text": "I. Orientation A. Introduction to the Course Contents B. Course Requirements and Activities C. Course Objectives Grading System and Policies on Absences, Tardiness and Examinations",
+          "benchmarkSide": "source"
+        },
+        {
+          "role": "Learning activities, Week 1",
+          "text": "• Setting and sharing of Expectations from the Course • Discussion on the Vision, Mission and Goals of LCUP and of CITE • Presentation of Course Objectives and Contents, Course Requirements and Activities Review of Policies on Absences, Tardiness, Examinations, Grading System",
+          "benchmarkSide": "target"
+        }
+      ],
+      "iloCloMapping": null,
+      "weekRow": {
+        "week": "Week 1",
+        "content": "I. Orientation A. Introduction to the Course Contents B. Course Requirements and Activities C. Course Objectives Grading System and Policies on Absences, Tardiness and Examinations",
+        "ilos": [
+          {
+            "text": "ILO 1: Demonstrate a clear understanding of the course structure, expectations, and key programming concepts in Java, including how these skills align with real- world IT challenges and professional ethical standards. [CLO1]",
+            "facultyAssignedClos": [
+              1
+            ],
+            "inThisCase": false
+          }
+        ],
+        "activities": "• Setting and sharing of Expectations from the Course • Discussion on the Vision, Mission and Goals of LCUP and of CITE • Presentation of Course Objectives and Contents, Course Requirements and Activities Review of Policies on Absences, Tardiness, Examinations, Grading System",
+        "assessment": "• Statement of Expectations • Review of Course Contents, Objectives, Activities and Assessment Tools • Review of Policies on Absences, Tardiness, Examinations, Grading System"
+      },
+      "benchmark": {
+        "id": "BM1-IT202-130",
+        "caseHash": "997b6562dc0b7c7f83d1ecf116dde045982f97b55fe74fdc5c83d16ae673771a",
+        "relationshipType": "Content-activity",
+        "pairId": "row0-contentactivity",
+        "path": "plan[0].activities",
+        "sourceText": "Week 1 course content: I. Orientation\nA. Introduction to the\nCourse Contents\nB. Course\nRequirements and\nActivities\nC. Course Objectives\nGrading System and\nPolicies on Absences,\nTardiness and\nExaminations",
+        "targetText": "• Setting and\nsharing of\nExpectations from\nthe Course\n• Discussion on the\nVision, Mission\nand Goals of\nLCUP and of CITE\n• Presentation of\nCourse Objectives\nand Contents,\nCourse\nRequirements and\nActivities\nReview of Policies on\nAbsences, Tardiness,\nExaminations,\nGrading System"
+      },
+      "provenance": [
+        {
+          "file": "docs/lcup-approved-offline/it202.fixture.json",
+          "sha256": "ff1f9ed8aa24e88728c7364bb4e94717a8ab728a1da23e8bd0f59949e78cb642",
+          "path": "plan[0].activities"
+        },
+        {
+          "file": "reference-data/IT-202-Programming-1.pdf",
+          "sha256": "6376fe94981ae65f25054234e1ae63cd50be8f70f12b774ea72949e07d561845",
+          "pages": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "declaredFile": "docs/academic-references/IT-202-Programming-1.pdf",
+          "relocated": true
+        }
+      ]
+    },
+    {
+      "caseId": "FV-02",
+      "relationship": {
+        "key": "Content-ILO",
+        "name": "Course Content ↔ ILO"
+      },
+      "program": "BSIT",
+      "course": {
+        "code": "IT 202",
+        "title": "Computer Programming 1"
+      },
+      "week": "Week 4-5",
+      "lesson": "IV. Java Libraries Program",
+      "statements": [
+        {
+          "role": "Course content, Week 4-5",
+          "text": "IV. Java Libraries Program • Parts of a Java program • The print and println function Data type • Int (Integer) • Float • Double • Char • Reasons to declare variables",
+          "benchmarkSide": "source"
+        },
+        {
+          "role": "Intended learning outcome (ILO), Week 4-5",
+          "text": "ILO 2 Acquire the necessary skills and understanding of java methods.",
+          "benchmarkSide": "target"
+        }
+      ],
+      "iloCloMapping": null,
+      "weekRow": {
+        "week": "Week 4-5",
+        "content": "IV. Java Libraries Program • Parts of a Java program • The print and println function Data type • Int (Integer) • Float • Double • Char • Reasons to declare variables",
+        "ilos": [
+          {
+            "text": "ILO 1: Inference read and write data using Java streams [CLO 1] [CLO 2]",
+            "facultyAssignedClos": [
+              1,
+              2
+            ],
+            "inThisCase": false
+          },
+          {
+            "text": "ILO 2 Acquire the necessary skills and understanding of java methods.",
+            "facultyAssignedClos": [],
+            "inThisCase": true
+          },
+          {
+            "text": "ILO4: Demonstrate the skills by knowing the syntax and semantics of Java. of Language. [CLO 3]",
+            "facultyAssignedClos": [
+              3
+            ],
+            "inThisCase": false
+          }
+        ],
+        "activities": "• Lecture-Discussion using Power Point presentation • Seatwork • Laboratory • Machine Problem Video Presentation",
+        "assessment": "• Recitation • Quiz Simulation of the external and internal parts of the System Unit"
+      },
+      "benchmark": {
+        "id": "BM1-IT202-104",
+        "caseHash": "114b8d117c291cd0eda68cb207342e9c90e9c70297e3bf5224d6f6bc333153df",
+        "relationshipType": "Content-ILO",
+        "pairId": "row3-ilo1-contentilo",
+        "path": "plan[3].ilos[1].text",
+        "sourceText": "Week 4-5: IV. Java Libraries\nProgram\n• Parts of a Java\nprogram\n• The print and\nprintln function\nData type\n• Int (Integer)\n• Float\n• Double\n• Char\n• Reasons to\ndeclare variables",
+        "targetText": "ILO 2 Acquire the necessary skills and understanding of java methods."
+      },
+      "provenance": [
+        {
+          "file": "docs/lcup-approved-offline/it202.fixture.json",
+          "sha256": "ff1f9ed8aa24e88728c7364bb4e94717a8ab728a1da23e8bd0f59949e78cb642",
+          "path": "plan[3].ilos[1].text"
+        },
+        {
+          "file": "reference-data/IT-202-Programming-1.pdf",
+          "sha256": "6376fe94981ae65f25054234e1ae63cd50be8f70f12b774ea72949e07d561845",
+          "pages": [
+            1,
+            2,
+            3,
+            5
+          ],
+          "declaredFile": "docs/academic-references/IT-202-Programming-1.pdf",
+          "relocated": true
+        }
+      ]
+    },
+    {
+      "caseId": "FV-03",
+      "relationship": {
+        "key": "Activity-assessment",
+        "name": "Learning Activities ↔ Assessment"
+      },
+      "program": "BSIT",
+      "course": {
+        "code": "IT 202",
+        "title": "Computer Programming 1"
+      },
+      "week": "Week 4-5",
+      "lesson": "IV. Java Libraries Program",
+      "statements": [
+        {
+          "role": "Learning activities, Week 4-5",
+          "text": "• Lecture-Discussion using Power Point presentation • Seatwork • Laboratory • Machine Problem Video Presentation",
+          "benchmarkSide": "source"
+        },
+        {
+          "role": "Assessment, Week 4-5",
+          "text": "• Recitation • Quiz Simulation of the external and internal parts of the System Unit",
+          "benchmarkSide": "target"
+        }
+      ],
+      "iloCloMapping": null,
+      "weekRow": {
+        "week": "Week 4-5",
+        "content": "IV. Java Libraries Program • Parts of a Java program • The print and println function Data type • Int (Integer) • Float • Double • Char • Reasons to declare variables",
+        "ilos": [
+          {
+            "text": "ILO 1: Inference read and write data using Java streams [CLO 1] [CLO 2]",
+            "facultyAssignedClos": [
+              1,
+              2
+            ],
+            "inThisCase": false
+          },
+          {
+            "text": "ILO 2 Acquire the necessary skills and understanding of java methods.",
+            "facultyAssignedClos": [],
+            "inThisCase": false
+          },
+          {
+            "text": "ILO4: Demonstrate the skills by knowing the syntax and semantics of Java. of Language. [CLO 3]",
+            "facultyAssignedClos": [
+              3
+            ],
+            "inThisCase": false
+          }
+        ],
+        "activities": "• Lecture-Discussion using Power Point presentation • Seatwork • Laboratory • Machine Problem Video Presentation",
+        "assessment": "• Recitation • Quiz Simulation of the external and internal parts of the System Unit"
+      },
+      "benchmark": {
+        "id": "BM1-IT202-141",
+        "caseHash": "d0d864017dc14541b03b482dc0799c0a950b9496bc6c0a405887d0e0bc0c20ca",
+        "relationshipType": "Activity-assessment",
+        "pairId": "row3-activityassessment",
+        "path": "plan[3].tasks",
+        "sourceText": "Week 4-5 learning activities: • Lecture-Discussion\nusing Power Point\npresentation\n• Seatwork\n• Laboratory\n• Machine Problem\nVideo Presentation",
+        "targetText": "• Recitation\n• Quiz\nSimulation of the\nexternal and internal\nparts of the System\nUnit"
+      },
+      "provenance": [
+        {
+          "file": "docs/lcup-approved-offline/it202.fixture.json",
+          "sha256": "ff1f9ed8aa24e88728c7364bb4e94717a8ab728a1da23e8bd0f59949e78cb642",
+          "path": "plan[3].tasks"
+        },
+        {
+          "file": "reference-data/IT-202-Programming-1.pdf",
+          "sha256": "6376fe94981ae65f25054234e1ae63cd50be8f70f12b774ea72949e07d561845",
+          "pages": [
+            1,
+            2,
+            3,
+            5
+          ],
+          "declaredFile": "docs/academic-references/IT-202-Programming-1.pdf",
+          "relocated": true
+        }
+      ]
+    },
+    {
+      "caseId": "FV-04",
+      "relationship": {
+        "key": "ILO-CLO",
+        "name": "ILO ↔ CLO"
+      },
+      "program": "BSIT",
+      "course": {
+        "code": "IT 202",
+        "title": "Computer Programming 1"
+      },
+      "week": "Week 9-11",
+      "lesson": "XI. Looping Statements",
+      "statements": [
+        {
+          "role": "Intended learning outcome (ILO), Week 9-11",
+          "text": "ILO1: Utilize various looping constructs (for, while, do-while) in Java to execute repeated tasks, and design programs that efficiently handle repetitive processes and iterations, incorporating loops to solve real-world problems. CLO1 CLO2, CLO3",
+          "benchmarkSide": "target"
+        },
+        {
+          "role": "Course learning outcome, CLO 3 (Demonstrating)",
+          "text": "Collaborate effectively within multi-disciplinary and culturally diverse teams to develop Java- based programming solutions that address social challenges, demonstrating social responsibility and cultural sensitivity.",
+          "benchmarkSide": "source"
+        }
+      ],
+      "iloCloMapping": {
+        "ilo": "ILO1: Utilize various looping constructs (for, while, do-while) in Java to execute repeated tasks, and design programs that efficiently handle repetitive processes and iterations, incorporating loops to solve real-world problems. CLO1 CLO2, CLO3",
+        "mappingAsPrinted": "CLO1 CLO2, CLO3",
+        "facultyAssignedClos": [
+          1,
+          2,
+          3
+        ],
+        "cloInThisRelationship": 3,
+        "cloStatement": "Collaborate effectively within multi-disciplinary and culturally diverse teams to develop Java- based programming solutions that address social challenges, demonstrating social responsibility and cultural sensitivity.",
+        "requiredClassification": "Demonstrating",
+        "otherMappingsOfThisIlo": [
+          {
+            "clo": 1,
+            "requiredClassification": "Introductory",
+            "note": "A separate relationship; not part of this case."
+          },
+          {
+            "clo": 2,
+            "requiredClassification": "Enabling",
+            "note": "A separate relationship; not part of this case."
+          }
+        ],
+        "weeklyCourseContent": "XI. Looping Statements • Java Loops ▪ For Loops ▪ Do While Loop ▪ Break/Continue"
+      },
+      "weekRow": {
+        "week": "Week 9-11",
+        "content": "XI. Looping Statements • Java Loops ▪ For Loops ▪ Do While Loop ▪ Break/Continue",
+        "ilos": [
+          {
+            "text": "ILO1: Utilize various looping constructs (for, while, do-while) in Java to execute repeated tasks, and design programs that efficiently handle repetitive processes and iterations, incorporating loops to solve real-world problems. CLO1 CLO2, CLO3",
+            "facultyAssignedClos": [
+              1,
+              2,
+              3
+            ],
+            "inThisCase": true
+          },
+          {
+            "text": "ILO2. Inference the structured programming concepts aCLOng with the Java syntax to implement them.",
+            "facultyAssignedClos": [],
+            "inThisCase": false
+          }
+        ],
+        "activities": "• Discussion using PowerPoint Presentation • Functioning Knowledge • Laboratory Exercises.",
+        "assessment": "• Recitation • Group Participation • Quiz • Machine Problem"
+      },
+      "benchmark": {
+        "id": "BM1-IT202-064",
+        "caseHash": "427b645f2cfa3280c08f7f63eb80dbee5f4c6fd7a2484717fa2eeacf7f5c9319",
+        "relationshipType": "ILO-CLO",
+        "pairId": "row6-ilo0-clo:it202_clo3",
+        "path": "plan[6].ilos[0].text",
+        "sourceText": "Collaborate effectively within multi-disciplinary and culturally diverse teams to develop Java- based programming solutions that address social challenges, demonstrating social responsibility and cultural sensitivity.",
+        "targetText": "ILO1: Utilize various looping constructs (for, while, do-while) in Java to execute repeated tasks, and design programs that efficiently handle repetitive processes and iterations, incorporating loops to solve real-world problems. CLO1 CLO2, CLO3"
+      },
+      "provenance": [
+        {
+          "file": "docs/lcup-approved-offline/it202.fixture.json",
+          "sha256": "ff1f9ed8aa24e88728c7364bb4e94717a8ab728a1da23e8bd0f59949e78cb642",
+          "path": "plan[6].ilos[0].text"
+        },
+        {
+          "file": "reference-data/IT-202-Programming-1.pdf",
+          "sha256": "6376fe94981ae65f25054234e1ae63cd50be8f70f12b774ea72949e07d561845",
+          "pages": [
+            1,
+            2,
+            3,
+            6
+          ],
+          "declaredFile": "docs/academic-references/IT-202-Programming-1.pdf",
+          "relocated": true
+        }
+      ]
+    },
+    {
+      "caseId": "FV-05",
+      "relationship": {
+        "key": "Content-assessment",
+        "name": "Course Content ↔ Assessment"
+      },
+      "program": "BSIT",
+      "course": {
+        "code": "IT 202",
+        "title": "Computer Programming 1"
+      },
+      "week": "Week 15",
+      "lesson": "XII. JAVA METHOD",
+      "statements": [
+        {
+          "role": "Course content, Week 15",
+          "text": "XII. JAVA METHOD • Java Parameters • Object Connection Java Recursion",
+          "benchmarkSide": "source"
+        },
+        {
+          "role": "Assessment, Week 15",
+          "text": "• Recitation • Quiz • Machine problem: Hands-on exercises using C programs",
+          "benchmarkSide": "target"
+        }
+      ],
+      "iloCloMapping": null,
+      "weekRow": {
+        "week": "Week 15",
+        "content": "XII. JAVA METHOD • Java Parameters • Object Connection Java Recursion",
+        "ilos": [
+          {
+            "text": "ILO4: Demonstrate the skills by knowing the syntax and semantics of Java. [CLO1-2]",
+            "facultyAssignedClos": [
+              1,
+              2
+            ],
+            "inThisCase": false
+          },
+          {
+            "text": "ILO5: Build robust applications using Java console code. [CLO 1-2]",
+            "facultyAssignedClos": [
+              1,
+              2
+            ],
+            "inThisCase": false
+          },
+          {
+            "text": "ILO6: Synthesize skills in De-bugging Java Language program. [CLO2-3]",
+            "facultyAssignedClos": [
+              2,
+              3
+            ],
+            "inThisCase": false
+          }
+        ],
+        "activities": "• Discussion using Power Point Presentation • Functioning knowledge • Blended Learning • Quiz on the discussed topic • Laboratory Exercises",
+        "assessment": "• Recitation • Quiz • Machine problem: Hands-on exercises using C programs"
+      },
+      "benchmark": {
+        "id": "BM1-IT202-155",
+        "caseHash": "409759b3a4d76e47a4060bacec27eef72cae2ccffd2c7ad90e68afefca5e3148",
+        "relationshipType": "Content-assessment",
+        "pairId": "row10-contentassessment",
+        "path": "plan[10].tasks",
+        "sourceText": "Week 15 course content: XII. JAVA METHOD\n• Java\nParameters\n• Object\nConnection\nJava Recursion",
+        "targetText": "•\nRecitation\n• Quiz\n• Machine problem:\nHands-on exercises\nusing C programs"
+      },
+      "provenance": [
+        {
+          "file": "docs/lcup-approved-offline/it202.fixture.json",
+          "sha256": "ff1f9ed8aa24e88728c7364bb4e94717a8ab728a1da23e8bd0f59949e78cb642",
+          "path": "plan[10].tasks"
+        },
+        {
+          "file": "reference-data/IT-202-Programming-1.pdf",
+          "sha256": "6376fe94981ae65f25054234e1ae63cd50be8f70f12b774ea72949e07d561845",
+          "pages": [
+            1,
+            2,
+            3,
+            7,
+            8
+          ],
+          "declaredFile": "docs/academic-references/IT-202-Programming-1.pdf",
+          "relocated": true
+        }
+      ]
+    },
+    {
+      "caseId": "FV-06",
+      "relationship": {
+        "key": "Content-course",
+        "name": "Course Title ↔ Course Content"
+      },
+      "program": "BSIT",
+      "course": {
+        "code": "IT 202",
+        "title": "Computer Programming 1"
+      },
+      "week": "Week 16-17",
+      "lesson": "X. JAVA DATABASE CONNECTION",
+      "statements": [
+        {
+          "role": "Course title",
+          "text": "IT 202 - Computer Programming 1",
+          "benchmarkSide": "source"
+        },
+        {
+          "role": "Course content, Week 16-17",
+          "text": "X. JAVA DATABASE CONNECTION • Improvised Database UCanAccess Connection",
+          "benchmarkSide": "target"
+        }
+      ],
+      "iloCloMapping": null,
+      "weekRow": {
+        "week": "Week 16-17",
+        "content": "X. JAVA DATABASE CONNECTION • Improvised Database UCanAccess Connection",
+        "ilos": [
+          {
+            "text": "ILO1 Retreve data from a relational database using java class. [CLO 2-3]",
+            "facultyAssignedClos": [
+              2,
+              3
+            ],
+            "inThisCase": false
+          },
+          {
+            "text": "Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing.",
+            "facultyAssignedClos": [],
+            "inThisCase": false
+          }
+        ],
+        "activities": "• Discussion using Power Point Presentation • Quiz on the discussed topic • Cooperative Learning • Group Dynamics Laboratory Exercises",
+        "assessment": "• Recitation • Quiz • Groupings • Machine problem: Hands-on exercises using Java programs"
+      },
+      "benchmark": {
+        "id": "BM1-IT202-122",
+        "caseHash": "c845c25394297f46f201cbe83ed3000381b5e08258f4f5133baeeb405693a5ee",
+        "relationshipType": "Content-course",
+        "pairId": "row11-content",
+        "path": "plan[11].contents",
+        "sourceText": "Course: IT 202 - Computer Programming 1\nProgram: BSIT\nWeek under review: 16-17 of 18\nPrevious week - Week 15: XII. JAVA METHOD • Java Parameters • Object Connection Java Recursion\nNext week - Week 18: EXAMINATION",
+        "targetText": "X. JAVA DATABASE\nCONNECTION\n• Improvised\nDatabase\nUCanAccess\nConnection"
+      },
+      "provenance": [
+        {
+          "file": "docs/lcup-approved-offline/it202.fixture.json",
+          "sha256": "ff1f9ed8aa24e88728c7364bb4e94717a8ab728a1da23e8bd0f59949e78cb642",
+          "path": "plan[11].contents"
+        },
+        {
+          "file": "reference-data/IT-202-Programming-1.pdf",
+          "sha256": "6376fe94981ae65f25054234e1ae63cd50be8f70f12b774ea72949e07d561845",
+          "pages": [
+            1,
+            2,
+            3,
+            8
+          ],
+          "declaredFile": "docs/academic-references/IT-202-Programming-1.pdf",
+          "relocated": true
+        }
+      ]
+    },
+    {
+      "caseId": "FV-07",
+      "relationship": {
+        "key": "ILO-activity",
+        "name": "ILO ↔ Learning Activities"
+      },
+      "program": "BSIT",
+      "course": {
+        "code": "IT 202",
+        "title": "Computer Programming 1"
+      },
+      "week": "Week 16-17",
+      "lesson": "X. JAVA DATABASE CONNECTION",
+      "statements": [
+        {
+          "role": "Intended learning outcome (ILO), Week 16-17",
+          "text": "Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing.",
+          "benchmarkSide": "source"
+        },
+        {
+          "role": "Learning activities, Week 16-17",
+          "text": "• Discussion using Power Point Presentation • Quiz on the discussed topic • Cooperative Learning • Group Dynamics Laboratory Exercises",
+          "benchmarkSide": "target"
+        }
+      ],
+      "iloCloMapping": null,
+      "weekRow": {
+        "week": "Week 16-17",
+        "content": "X. JAVA DATABASE CONNECTION • Improvised Database UCanAccess Connection",
+        "ilos": [
+          {
+            "text": "ILO1 Retreve data from a relational database using java class. [CLO 2-3]",
+            "facultyAssignedClos": [
+              2,
+              3
+            ],
+            "inThisCase": false
+          },
+          {
+            "text": "Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing.",
+            "facultyAssignedClos": [],
+            "inThisCase": true
+          }
+        ],
+        "activities": "• Discussion using Power Point Presentation • Quiz on the discussed topic • Cooperative Learning • Group Dynamics Laboratory Exercises",
+        "assessment": "• Recitation • Quiz • Groupings • Machine problem: Hands-on exercises using Java programs"
+      },
+      "benchmark": {
+        "id": "BM1-IT202-093",
+        "caseHash": "d595785cdeca03f685144c15434e273fd3fec375bcd28b0744331167cea19733",
+        "relationshipType": "ILO-activity",
+        "pairId": "row11-ilo1-activity",
+        "path": "plan[11].ilos[1].text",
+        "sourceText": "Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing.",
+        "targetText": "• Discussion using\nPower Point\nPresentation\n• Quiz on the\ndiscussed topic\n• Cooperative\nLearning\n• Group Dynamics\nLaboratory\nExercises"
+      },
+      "provenance": [
+        {
+          "file": "docs/lcup-approved-offline/it202.fixture.json",
+          "sha256": "ff1f9ed8aa24e88728c7364bb4e94717a8ab728a1da23e8bd0f59949e78cb642",
+          "path": "plan[11].ilos[1].text"
+        },
+        {
+          "file": "reference-data/IT-202-Programming-1.pdf",
+          "sha256": "6376fe94981ae65f25054234e1ae63cd50be8f70f12b774ea72949e07d561845",
+          "pages": [
+            1,
+            2,
+            3,
+            8
+          ],
+          "declaredFile": "docs/academic-references/IT-202-Programming-1.pdf",
+          "relocated": true
+        }
+      ]
+    },
+    {
+      "caseId": "FV-08",
+      "relationship": {
+        "key": "Content-course",
+        "name": "Course Title ↔ Course Content"
+      },
+      "program": "BSIE",
+      "course": {
+        "code": "IE-402",
+        "title": "Systems Engineering"
+      },
+      "week": "Week 1",
+      "lesson": "I. COURSE ORIENTATION",
+      "statements": [
+        {
+          "role": "Course title",
+          "text": "IE-402 - Systems Engineering",
+          "benchmarkSide": "source"
+        },
+        {
+          "role": "Course content, Week 1",
+          "text": "I. COURSE ORIENTATION A. Introduction to the Course Contents B. Course Requirements and Activities C. Course Objectives D. Grading System and Policies on Absences, Tardiness and Examinations",
+          "benchmarkSide": "target"
+        }
+      ],
+      "iloCloMapping": null,
+      "weekRow": {
+        "week": "Week 1",
+        "content": "I. COURSE ORIENTATION A. Introduction to the Course Contents B. Course Requirements and Activities C. Course Objectives D. Grading System and Policies on Absences, Tardiness and Examinations",
+        "ilos": [
+          {
+            "text": "ILO10: Demonstrate the Augustinian, Marian and missionary Christ- centered Spirituality through value webbing. [CLO 4]",
+            "facultyAssignedClos": [
+              4
+            ],
+            "inThisCase": false
+          }
+        ],
+        "activities": "• Setting and sharing of Expectations from the Course • Discussion on the Vision, Mission and Goals of LCUP and of CITE • Presentation of Course Objectives and Contents, Course Requirements and Activities • Review of Policies on Absences, Tardiness, Examinations, Grading System",
+        "assessment": "• Statement of Expectations • Review of Course Contents, Objectives, Activities and Assessment Tools • Review of Policies on Absences, Tardiness, Examinations, Grading System"
+      },
+      "benchmark": {
+        "id": "BM1-IE402-073",
+        "caseHash": "37f41fe7fadcf04b1ca2c2c2bb3397174f92b09d9eb6e38394cf12c0b469f4a7",
+        "relationshipType": "Content-course",
+        "pairId": "row0-content",
+        "path": "plan[0].contents",
+        "sourceText": "Course: IE-402 - Systems Engineering\nProgram: BSIE\nWeek under review: 1 of 18\nNext week - Week 2-3: Introduction to Systems Engineering • Introduction to Systems Engineering Management • Systems Engineering Management in DoD Acquisition",
+        "targetText": "I. COURSE\nORIENTATION\nA. Introduction to the\nCourse Contents\nB. Course\nRequirements\nand Activities\nC. Course\nObjectives\nD. Grading System\nand Policies on\nAbsences,\nTardiness and\nExaminations"
+      },
+      "provenance": [
+        {
+          "file": "docs/lcup-approved-offline/ie402.fixture.json",
+          "sha256": "8b8e701e15ec4f18c9c6d60861e9c8de60415c475883a193730bfce222a7dd0f",
+          "path": "plan[0].contents"
+        },
+        {
+          "file": "reference-data/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "sha256": "44ca6d48c77d0b04055cf330717b9381b64d3b7fb8674be727aa2eb4a1807569",
+          "pages": [
+            1,
+            3,
+            4
+          ],
+          "declaredFile": "docs/academic-references/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "relocated": true
+        }
+      ]
+    },
+    {
+      "caseId": "FV-09",
+      "relationship": {
+        "key": "Content-assessment",
+        "name": "Course Content ↔ Assessment"
+      },
+      "program": "BSIE",
+      "course": {
+        "code": "IE-402",
+        "title": "Systems Engineering"
+      },
+      "week": "Week 2-3",
+      "lesson": "Introduction to Systems Engineering",
+      "statements": [
+        {
+          "role": "Course content, Week 2-3",
+          "text": "Introduction to Systems Engineering • Introduction to Systems Engineering Management • Systems Engineering Management in DoD Acquisition",
+          "benchmarkSide": "source"
+        },
+        {
+          "role": "Assessment, Week 2-3",
+          "text": "Quiz on Fundamental Concepts Conduct a quiz covering key concepts and terminology in systems engineering management, including its principles, life cycle stages, and specific applications in DoD acquisition. Case Study Analysis Report Provide a case study on a DoD acquisition project or a similar large-scale systems engineering project. Students will analyze and write a report covering the systems engineering management challenges and solutions highlighted in the case.",
+          "benchmarkSide": "target"
+        }
+      ],
+      "iloCloMapping": null,
+      "weekRow": {
+        "week": "Week 2-3",
+        "content": "Introduction to Systems Engineering • Introduction to Systems Engineering Management • Systems Engineering Management in DoD Acquisition",
+        "ilos": [
+          {
+            "text": "ILO1: Describe fundamental principles of systems engineering, including system life cycles, requirements analysis, and systems thinking. [CLO 1], [CLO 2]",
+            "facultyAssignedClos": [
+              1,
+              2
+            ],
+            "inThisCase": false
+          },
+          {
+            "text": "ILO2: Develop basic system designs that incorporate requirements from multiple disciplines, including human factors, technology, and organizational needs. [CLO 1], [CLO 2]",
+            "facultyAssignedClos": [
+              1,
+              2
+            ],
+            "inThisCase": false
+          }
+        ],
+        "activities": "Lecture and Case Study Analysis Activity: Present a lecture on the basics of systems engineering management, followed by an analysis of a real- world case study in systems engineering, such as a notable DoD acquisition project. Interactive Discussion and Q&A Activity: Facilitate an interactive class discussion on the key principles of systems engineering management and its importance in large-scale projects, especially in high-stakes environments like defense.",
+        "assessment": "Quiz on Fundamental Concepts Conduct a quiz covering key concepts and terminology in systems engineering management, including its principles, life cycle stages, and specific applications in DoD acquisition. Case Study Analysis Report Provide a case study on a DoD acquisition project or a similar large-scale systems engineering project. Students will analyze and write a report covering the systems engineering management challenges and solutions highlighted in the case."
+      },
+      "benchmark": {
+        "id": "BM1-IE402-103",
+        "caseHash": "906d87552b3fca548298dd21a811ef78ae6b22ee551f5898db742a94cf47ab3d",
+        "relationshipType": "Content-assessment",
+        "pairId": "row1-contentassessment",
+        "path": "plan[1].tasks",
+        "sourceText": "Week 2-3 course content: Introduction to\nSystems Engineering\n• Introduction to\nSystems\nEngineering\nManagement\n• Systems\nEngineering\nManagement in\nDoD Acquisition",
+        "targetText": "Quiz on\nFundamental\nConcepts\nConduct a quiz\ncovering key concepts\nand terminology in\nsystems engineering\nmanagement,\nincluding its\nprinciples, life cycle\nstages, and specific\napplications in DoD\nacquisition.\nCase Study Analysis\nReport\nProvide a case study\non a DoD acquisition\nproject or a similar\nlarge-scale systems\nengineering project.\nStudents will analyze\nand write a report\ncovering the systems\nengineering\nmanagement\nchallenges and\nsolutions highlighted\nin the case."
+      },
+      "provenance": [
+        {
+          "file": "docs/lcup-approved-offline/ie402.fixture.json",
+          "sha256": "8b8e701e15ec4f18c9c6d60861e9c8de60415c475883a193730bfce222a7dd0f",
+          "path": "plan[1].tasks"
+        },
+        {
+          "file": "reference-data/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "sha256": "44ca6d48c77d0b04055cf330717b9381b64d3b7fb8674be727aa2eb4a1807569",
+          "pages": [
+            1,
+            2,
+            4,
+            5
+          ],
+          "declaredFile": "docs/academic-references/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "relocated": true
+        }
+      ]
+    },
+    {
+      "caseId": "FV-10",
+      "relationship": {
+        "key": "Content-course",
+        "name": "Course Title ↔ Course Content"
+      },
+      "program": "BSIE",
+      "course": {
+        "code": "IE-402",
+        "title": "Systems Engineering"
+      },
+      "week": "Week 5-8",
+      "lesson": "The Systems Engineering Process",
+      "statements": [
+        {
+          "role": "Course title",
+          "text": "IE-402 - Systems Engineering",
+          "benchmarkSide": "source"
+        },
+        {
+          "role": "Course content, Week 5-8",
+          "text": "The Systems Engineering Process • Systems Engineering Process Overview • Requirements Analysis • Functional Analysis and Allocation • Design Synthesis • Verification • Systems Engineering Process Outputs",
+          "benchmarkSide": "target"
+        }
+      ],
+      "iloCloMapping": null,
+      "weekRow": {
+        "week": "Week 5-8",
+        "content": "The Systems Engineering Process • Systems Engineering Process Overview • Requirements Analysis • Functional Analysis and Allocation • Design Synthesis • Verification • Systems Engineering Process Outputs",
+        "ilos": [
+          {
+            "text": "ILO3: Summarize the overall systems engineering process, explaining each phase from requirements analysis to verification and process outputs. [CLO1][CLO2]",
+            "facultyAssignedClos": [
+              1,
+              2
+            ],
+            "inThisCase": false
+          },
+          {
+            "text": "ILO4: Analyze and define system requirements based on stakeholder needs, constraints, and project objectives. [CLO2][CLO3]",
+            "facultyAssignedClos": [
+              2,
+              3
+            ],
+            "inThisCase": false
+          },
+          {
+            "text": "ILO5: Recognize key outputs of the systems engineering process, such as documentation, specifications, and test reports, and evaluate their role in supporting successful project outcomes. [CLO2][CLO3]",
+            "facultyAssignedClos": [
+              2,
+              3
+            ],
+            "inThisCase": false
+          }
+        ],
+        "activities": "Group Workshop on Functional Analysis and Allocation Activity: In small groups, students will break down system requirements into functional components and allocate these to hypothetical subsystems. Group Workshop on Functional Analysis and Allocation In small groups, students will break down system requirements into functional components and allocate these to hypothetical subsystems. Reflection Assignment on Process Outputs Have students reflect on the outputs generated at each stage of the systems engineering process and discuss how these support project success.",
+        "assessment": "Requirements Analysis Report Assign students a hypothetical project scenario where they must identify, analyze, and document key system requirements based on provided stakeholder needs. Functional Analysis and Allocation Diagram Description: Have students create a functional flow diagram for a system based on a given set of requirements, breaking down functions and allocating them to subsystems. Design Synthesis Project Description: Assign a design synthesis task where students create an initial design for a system, explaining how the design integrates functional requirements and meets project goals."
+      },
+      "benchmark": {
+        "id": "BM1-IE402-078",
+        "caseHash": "9f0f508e1d8f402ddb03ea6dc8e89c8b1b3b9c5ee5497ca14af35134bcd50ce7",
+        "relationshipType": "Content-course",
+        "pairId": "row3-content",
+        "path": "plan[3].contents",
+        "sourceText": "Course: IE-402 - Systems Engineering\nProgram: BSIE\nWeek under review: 5-8 of 18\nPrevious week - Week 4: EXAMINATION\nNext week - Week 9: EXAMINATION",
+        "targetText": "The Systems\nEngineering Process\n• Systems\nEngineering\nProcess Overview\n• Requirements\nAnalysis\n• Functional\nAnalysis and\nAllocation\n• Design Synthesis\n• Verification\n• Systems\nEngineering\nProcess Outputs"
+      },
+      "provenance": [
+        {
+          "file": "docs/lcup-approved-offline/ie402.fixture.json",
+          "sha256": "8b8e701e15ec4f18c9c6d60861e9c8de60415c475883a193730bfce222a7dd0f",
+          "path": "plan[3].contents"
+        },
+        {
+          "file": "reference-data/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "sha256": "44ca6d48c77d0b04055cf330717b9381b64d3b7fb8674be727aa2eb4a1807569",
+          "pages": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "declaredFile": "docs/academic-references/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "relocated": true
+        }
+      ]
+    },
+    {
+      "caseId": "FV-11",
+      "relationship": {
+        "key": "Content-activity",
+        "name": "Course Content ↔ Learning Activities"
+      },
+      "program": "BSIE",
+      "course": {
+        "code": "IE-402",
+        "title": "Systems Engineering"
+      },
+      "week": "Week 5-8",
+      "lesson": "The Systems Engineering Process",
+      "statements": [
+        {
+          "role": "Course content, Week 5-8",
+          "text": "The Systems Engineering Process • Systems Engineering Process Overview • Requirements Analysis • Functional Analysis and Allocation • Design Synthesis • Verification • Systems Engineering Process Outputs",
+          "benchmarkSide": "source"
+        },
+        {
+          "role": "Learning activities, Week 5-8",
+          "text": "Group Workshop on Functional Analysis and Allocation Activity: In small groups, students will break down system requirements into functional components and allocate these to hypothetical subsystems. Group Workshop on Functional Analysis and Allocation In small groups, students will break down system requirements into functional components and allocate these to hypothetical subsystems. Reflection Assignment on Process Outputs Have students reflect on the outputs generated at each stage of the systems engineering process and discuss how these support project success.",
+          "benchmarkSide": "target"
+        }
+      ],
+      "iloCloMapping": null,
+      "weekRow": {
+        "week": "Week 5-8",
+        "content": "The Systems Engineering Process • Systems Engineering Process Overview • Requirements Analysis • Functional Analysis and Allocation • Design Synthesis • Verification • Systems Engineering Process Outputs",
+        "ilos": [
+          {
+            "text": "ILO3: Summarize the overall systems engineering process, explaining each phase from requirements analysis to verification and process outputs. [CLO1][CLO2]",
+            "facultyAssignedClos": [
+              1,
+              2
+            ],
+            "inThisCase": false
+          },
+          {
+            "text": "ILO4: Analyze and define system requirements based on stakeholder needs, constraints, and project objectives. [CLO2][CLO3]",
+            "facultyAssignedClos": [
+              2,
+              3
+            ],
+            "inThisCase": false
+          },
+          {
+            "text": "ILO5: Recognize key outputs of the systems engineering process, such as documentation, specifications, and test reports, and evaluate their role in supporting successful project outcomes. [CLO2][CLO3]",
+            "facultyAssignedClos": [
+              2,
+              3
+            ],
+            "inThisCase": false
+          }
+        ],
+        "activities": "Group Workshop on Functional Analysis and Allocation Activity: In small groups, students will break down system requirements into functional components and allocate these to hypothetical subsystems. Group Workshop on Functional Analysis and Allocation In small groups, students will break down system requirements into functional components and allocate these to hypothetical subsystems. Reflection Assignment on Process Outputs Have students reflect on the outputs generated at each stage of the systems engineering process and discuss how these support project success.",
+        "assessment": "Requirements Analysis Report Assign students a hypothetical project scenario where they must identify, analyze, and document key system requirements based on provided stakeholder needs. Functional Analysis and Allocation Diagram Description: Have students create a functional flow diagram for a system based on a given set of requirements, breaking down functions and allocating them to subsystems. Design Synthesis Project Description: Assign a design synthesis task where students create an initial design for a system, explaining how the design integrates functional requirements and meets project goals."
+      },
+      "benchmark": {
+        "id": "BM1-IE402-105",
+        "caseHash": "d9c048928ed77b2f6ac27ab0dded9c3ce813bc9656c85335b600adc8e550af9d",
+        "relationshipType": "Content-activity",
+        "pairId": "row3-contentactivity",
+        "path": "plan[3].activities",
+        "sourceText": "Week 5-8 course content: The Systems\nEngineering Process\n• Systems\nEngineering\nProcess Overview\n• Requirements\nAnalysis\n• Functional\nAnalysis and\nAllocation\n• Design Synthesis\n• Verification\n• Systems\nEngineering\nProcess Outputs",
+        "targetText": "Group Workshop on\nFunctional Analysis\nand Allocation\nActivity: In small groups,\nstudents will break down\nsystem requirements into\nfunctional components\nand allocate these to\nhypothetical subsystems.\nGroup Workshop on\nFunctional Analysis\nand Allocation\nIn small groups, students\nwill break down system\nrequirements into\nfunctional components\nand allocate these to\nhypothetical subsystems.\nReflection Assignment\non Process Outputs\nHave students reflect on\nthe outputs generated at\neach stage of the\nsystems engineering\nprocess and discuss how\nthese support project\nsuccess."
+      },
+      "provenance": [
+        {
+          "file": "docs/lcup-approved-offline/ie402.fixture.json",
+          "sha256": "8b8e701e15ec4f18c9c6d60861e9c8de60415c475883a193730bfce222a7dd0f",
+          "path": "plan[3].activities"
+        },
+        {
+          "file": "reference-data/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "sha256": "44ca6d48c77d0b04055cf330717b9381b64d3b7fb8674be727aa2eb4a1807569",
+          "pages": [
+            1,
+            2,
+            3,
+            5,
+            6
+          ],
+          "declaredFile": "docs/academic-references/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "relocated": true
+        }
+      ]
+    },
+    {
+      "caseId": "FV-12",
+      "relationship": {
+        "key": "ILO-CLO",
+        "name": "ILO ↔ CLO"
+      },
+      "program": "BSIE",
+      "course": {
+        "code": "IE-402",
+        "title": "Systems Engineering"
+      },
+      "week": "Week 10-11",
+      "lesson": "Systems Analysis and Control",
+      "statements": [
+        {
+          "role": "Intended learning outcome (ILO), Week 10-11",
+          "text": "ILO6: Create and interpret a WBS to organize and manage project components, identifying key deliverables and tasks for effective project planning and control. [CLO 3] [CLO4]",
+          "benchmarkSide": "target"
+        },
+        {
+          "role": "Course learning outcome, CLO 4 (Integration of Values)",
+          "text": "Demonstrate the Filipino- Catholic Augustinian Spirituality through value webbing.",
+          "benchmarkSide": "source"
+        }
+      ],
+      "iloCloMapping": {
+        "ilo": "ILO6: Create and interpret a WBS to organize and manage project components, identifying key deliverables and tasks for effective project planning and control. [CLO 3] [CLO4]",
+        "mappingAsPrinted": "[CLO 3] [CLO4]",
+        "facultyAssignedClos": [
+          3,
+          4
+        ],
+        "cloInThisRelationship": 4,
+        "cloStatement": "Demonstrate the Filipino- Catholic Augustinian Spirituality through value webbing.",
+        "requiredClassification": "Integration of Values",
+        "otherMappingsOfThisIlo": [
+          {
+            "clo": 3,
+            "requiredClassification": "Demonstrating",
+            "note": "A separate relationship; not part of this case."
+          }
+        ],
+        "weeklyCourseContent": "Systems Analysis and Control • Work Breakdown Structure • Configuration Management • Technical Reviews and Audits • Trade Studies • Modeling and Simulation • Metrics • Risk Management"
+      },
+      "weekRow": {
+        "week": "Week 10-11",
+        "content": "Systems Analysis and Control • Work Breakdown Structure • Configuration Management • Technical Reviews and Audits • Trade Studies • Modeling and Simulation • Metrics • Risk Management",
+        "ilos": [
+          {
+            "text": "ILO6: Create and interpret a WBS to organize and manage project components, identifying key deliverables and tasks for effective project planning and control. [CLO 3] [CLO4]",
+            "facultyAssignedClos": [
+              3,
+              4
+            ],
+            "inThisCase": true
+          },
+          {
+            "text": "ILO7: Apply modeling and simulation techniques to analyze system behavior, test potential solutions, and predict outcomes in a controlled virtual environment. [CLO 3] [CLO4]",
+            "facultyAssignedClos": [
+              3,
+              4
+            ],
+            "inThisCase": false
+          },
+          {
+            "text": "ILO8:Identify, assess, and manage risks within a systems project, developing risk mitigation strategies to minimize potential negative impacts on project outcomes. [CLO 3] [CLO4]",
+            "facultyAssignedClos": [
+              3,
+              4
+            ],
+            "inThisCase": false
+          }
+        ],
+        "activities": "Interactive Workshop on Work Breakdown Structure (WBS) Creation Activity: Conduct an interactive workshop where students create a WBS for a hypothetical project, breaking down tasks and identifying deliverables. Case Study on Configuration Management Activity: Present a case study demonstrating configuration management principles and practices in a real- world project. Have students discuss the role of configuration management in maintaining system consistency. Risk Management Analysis Activity Activity: Present a project scenario and ask students to identify potential risks, assess their impact and probability, and develop mitigation strategies.",
+        "assessment": "Peer Review of Experimental Design and Robustness Plan Ask students to peer review each other’s experimental design proposals and robustness plans, providing constructive feedback on methodology and approach. Risk Assessment and Mitigation in Robust Design Assign a task where students assess potential risks to robustness in a system design and develop mitigation strategies to address these risks."
+      },
+      "benchmark": {
+        "id": "BM1-IE402-044",
+        "caseHash": "01b35380991bdbf371c06268792fba36010e792e298752b32b13584f548d47cf",
+        "relationshipType": "ILO-CLO",
+        "pairId": "row5-ilo0-clo:ie402_clo4",
+        "path": "plan[5].ilos[0].text",
+        "sourceText": "Demonstrate the Filipino- Catholic Augustinian Spirituality through value webbing.",
+        "targetText": "ILO6: Create and interpret a WBS to organize and manage project components, identifying key deliverables and tasks for effective project planning and control. [CLO 3] [CLO4]"
+      },
+      "provenance": [
+        {
+          "file": "docs/lcup-approved-offline/ie402.fixture.json",
+          "sha256": "8b8e701e15ec4f18c9c6d60861e9c8de60415c475883a193730bfce222a7dd0f",
+          "path": "plan[5].ilos[0].text"
+        },
+        {
+          "file": "reference-data/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "sha256": "44ca6d48c77d0b04055cf330717b9381b64d3b7fb8674be727aa2eb4a1807569",
+          "pages": [
+            1,
+            3,
+            6,
+            7
+          ],
+          "declaredFile": "docs/academic-references/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "relocated": true
+        }
+      ]
+    },
+    {
+      "caseId": "FV-13",
+      "relationship": {
+        "key": "Activity-assessment",
+        "name": "Learning Activities ↔ Assessment"
+      },
+      "program": "BSIE",
+      "course": {
+        "code": "IE-402",
+        "title": "Systems Engineering"
+      },
+      "week": "Week 10-11",
+      "lesson": "Systems Analysis and Control",
+      "statements": [
+        {
+          "role": "Learning activities, Week 10-11",
+          "text": "Interactive Workshop on Work Breakdown Structure (WBS) Creation Activity: Conduct an interactive workshop where students create a WBS for a hypothetical project, breaking down tasks and identifying deliverables. Case Study on Configuration Management Activity: Present a case study demonstrating configuration management principles and practices in a real- world project. Have students discuss the role of configuration management in maintaining system consistency. Risk Management Analysis Activity Activity: Present a project scenario and ask students to identify potential risks, assess their impact and probability, and develop mitigation strategies.",
+          "benchmarkSide": "source"
+        },
+        {
+          "role": "Assessment, Week 10-11",
+          "text": "Peer Review of Experimental Design and Robustness Plan Ask students to peer review each other’s experimental design proposals and robustness plans, providing constructive feedback on methodology and approach. Risk Assessment and Mitigation in Robust Design Assign a task where students assess potential risks to robustness in a system design and develop mitigation strategies to address these risks.",
+          "benchmarkSide": "target"
+        }
+      ],
+      "iloCloMapping": null,
+      "weekRow": {
+        "week": "Week 10-11",
+        "content": "Systems Analysis and Control • Work Breakdown Structure • Configuration Management • Technical Reviews and Audits • Trade Studies • Modeling and Simulation • Metrics • Risk Management",
+        "ilos": [
+          {
+            "text": "ILO6: Create and interpret a WBS to organize and manage project components, identifying key deliverables and tasks for effective project planning and control. [CLO 3] [CLO4]",
+            "facultyAssignedClos": [
+              3,
+              4
+            ],
+            "inThisCase": false
+          },
+          {
+            "text": "ILO7: Apply modeling and simulation techniques to analyze system behavior, test potential solutions, and predict outcomes in a controlled virtual environment. [CLO 3] [CLO4]",
+            "facultyAssignedClos": [
+              3,
+              4
+            ],
+            "inThisCase": false
+          },
+          {
+            "text": "ILO8:Identify, assess, and manage risks within a systems project, developing risk mitigation strategies to minimize potential negative impacts on project outcomes. [CLO 3] [CLO4]",
+            "facultyAssignedClos": [
+              3,
+              4
+            ],
+            "inThisCase": false
+          }
+        ],
+        "activities": "Interactive Workshop on Work Breakdown Structure (WBS) Creation Activity: Conduct an interactive workshop where students create a WBS for a hypothetical project, breaking down tasks and identifying deliverables. Case Study on Configuration Management Activity: Present a case study demonstrating configuration management principles and practices in a real- world project. Have students discuss the role of configuration management in maintaining system consistency. Risk Management Analysis Activity Activity: Present a project scenario and ask students to identify potential risks, assess their impact and probability, and develop mitigation strategies.",
+        "assessment": "Peer Review of Experimental Design and Robustness Plan Ask students to peer review each other’s experimental design proposals and robustness plans, providing constructive feedback on methodology and approach. Risk Assessment and Mitigation in Robust Design Assign a task where students assess potential risks to robustness in a system design and develop mitigation strategies to address these risks."
+      },
+      "benchmark": {
+        "id": "BM1-IE402-110",
+        "caseHash": "df7f47e374df16f4bfff777bcc93aa391ffe587a31fd84d826715e3b7154ed64",
+        "relationshipType": "Activity-assessment",
+        "pairId": "row5-activityassessment",
+        "path": "plan[5].tasks",
+        "sourceText": "Week 10-11 learning activities: Interactive Workshop\non Work Breakdown\nStructure (WBS)\nCreation\nActivity: Conduct an\ninteractive workshop\nwhere students create a\nWBS for a hypothetical\nproject, breaking down\ntasks and identifying\ndeliverables.\nCase Study on\nConfiguration\nManagement\nActivity: Present a case\nstudy demonstrating\nconfiguration\nmanagement principles\nand practices in a real-\nworld project. Have\nstudents discuss the role\nof configuration\nmanagement in\nmaintaining system\nconsistency.\nRisk Management\nAnalysis Activity\nActivity: Present a\nproject scenario and ask\nstudents to identify\npotential risks, assess\ntheir impact and\nprobability, and develop\nmitigation strategies.",
+        "targetText": "Peer Review of\nExperimental Design\nand Robustness\nPlan\nAsk students to peer\nreview each other’s\nexperimental design\nproposals and\nrobustness plans,\nproviding constructive\nfeedback on\nmethodology and\napproach.\nRisk Assessment\nand Mitigation in\nRobust Design\nAssign a task where\nstudents assess\npotential risks to\nrobustness in a\nsystem design and\ndevelop mitigation\nstrategies to address\nthese risks."
+      },
+      "provenance": [
+        {
+          "file": "docs/lcup-approved-offline/ie402.fixture.json",
+          "sha256": "8b8e701e15ec4f18c9c6d60861e9c8de60415c475883a193730bfce222a7dd0f",
+          "path": "plan[5].tasks"
+        },
+        {
+          "file": "reference-data/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "sha256": "44ca6d48c77d0b04055cf330717b9381b64d3b7fb8674be727aa2eb4a1807569",
+          "pages": [
+            1,
+            3,
+            6,
+            7
+          ],
+          "declaredFile": "docs/academic-references/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "relocated": true
+        }
+      ]
+    },
+    {
+      "caseId": "FV-14",
+      "relationship": {
+        "key": "Content-ILO",
+        "name": "Course Content ↔ ILO"
+      },
+      "program": "BSIE",
+      "course": {
+        "code": "IE-402",
+        "title": "Systems Engineering"
+      },
+      "week": "Week 12-14",
+      "lesson": "Planning, Organizing and Managing",
+      "statements": [
+        {
+          "role": "Course content, Week 12-14",
+          "text": "Planning, Organizing and Managing • Systems Engineering Planning • Product Improvement Strategies • Organizing and Integrating System Development • Contractual Considerations • Management Considerations and Summary",
+          "benchmarkSide": "source"
+        },
+        {
+          "role": "Intended learning outcome (ILO), Week 12-14",
+          "text": "ILO10: Evaluate essential management considerations—such as resource allocation, risk assessment, and stakeholder engagement—and their impact on project success, applying these principles to real or simulated project scenarios. [CLO 3] [CLO4]",
+          "benchmarkSide": "target"
+        }
+      ],
+      "iloCloMapping": null,
+      "weekRow": {
+        "week": "Week 12-14",
+        "content": "Planning, Organizing and Managing • Systems Engineering Planning • Product Improvement Strategies • Organizing and Integrating System Development • Contractual Considerations • Management Considerations and Summary",
+        "ilos": [
+          {
+            "text": "ILO9: Formulate a comprehensive systems engineering plan that outlines objectives, resources, timelines, and milestones to guide system development from inception through completion. [CLO 3] [CLO4]",
+            "facultyAssignedClos": [
+              3,
+              4
+            ],
+            "inThisCase": false
+          },
+          {
+            "text": "ILO10: Evaluate essential management considerations—such as resource allocation, risk assessment, and stakeholder engagement—and their impact on project success, applying these principles to real or simulated project scenarios. [CLO 3] [CLO4]",
+            "facultyAssignedClos": [
+              3,
+              4
+            ],
+            "inThisCase": true
+          }
+        ],
+        "activities": "Workshop on Systems Engineering Planning Conduct a hands-on workshop where students outline a systems engineering plan for a hypothetical project. They should include project objectives, resource allocation, timeline planning, and key milestones. Product Improvement Strategy Brainstorming Session In groups, students brainstorm and propose strategies for iterative product improvement in a given scenario, focusing on design, functionality, and customer feedback loops.",
+        "assessment": "Systems Engineering Plan Development Task: Have students create a comprehensive systems engineering plan for a hypothetical project. This plan should include objectives, resource allocation, timeline, milestones, risk assessment, and project phases. Product Improvement Strategy Proposal Task: Ask students to develop a proposal for a product improvement strategy for an existing system, identifying areas for enhancement and proposing solutions to improve quality, efficiency, and user satisfaction."
+      },
+      "benchmark": {
+        "id": "BM1-IE402-088",
+        "caseHash": "22fc3fc16286e5c7263799443429290f5eb15559c90b2824b3ae8586aba67d27",
+        "relationshipType": "Content-ILO",
+        "pairId": "row6-ilo1-contentilo",
+        "path": "plan[6].ilos[1].text",
+        "sourceText": "Week 12-14: Planning, Organizing\nand Managing\n• Systems\nEngineering\nPlanning\n• Product\nImprovement\nStrategies\n• Organizing and\nIntegrating\nSystem\nDevelopment\n• Contractual\nConsiderations\n• Management\nConsiderations\nand Summary",
+        "targetText": "ILO10: Evaluate essential management considerations—such as resource allocation, risk assessment, and stakeholder engagement—and their impact on project success, applying these principles to real or simulated project scenarios. [CLO 3] [CLO4]"
+      },
+      "provenance": [
+        {
+          "file": "docs/lcup-approved-offline/ie402.fixture.json",
+          "sha256": "8b8e701e15ec4f18c9c6d60861e9c8de60415c475883a193730bfce222a7dd0f",
+          "path": "plan[6].ilos[1].text"
+        },
+        {
+          "file": "reference-data/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "sha256": "44ca6d48c77d0b04055cf330717b9381b64d3b7fb8674be727aa2eb4a1807569",
+          "pages": [
+            1,
+            3,
+            7,
+            8
+          ],
+          "declaredFile": "docs/academic-references/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "relocated": true
+        }
+      ]
+    },
+    {
+      "caseId": "FV-15",
+      "relationship": {
+        "key": "Activity-assessment",
+        "name": "Learning Activities ↔ Assessment"
+      },
+      "program": "BSIE",
+      "course": {
+        "code": "IE-402",
+        "title": "Systems Engineering"
+      },
+      "week": "Week 12-14",
+      "lesson": "Planning, Organizing and Managing",
+      "statements": [
+        {
+          "role": "Learning activities, Week 12-14",
+          "text": "Workshop on Systems Engineering Planning Conduct a hands-on workshop where students outline a systems engineering plan for a hypothetical project. They should include project objectives, resource allocation, timeline planning, and key milestones. Product Improvement Strategy Brainstorming Session In groups, students brainstorm and propose strategies for iterative product improvement in a given scenario, focusing on design, functionality, and customer feedback loops.",
+          "benchmarkSide": "source"
+        },
+        {
+          "role": "Assessment, Week 12-14",
+          "text": "Systems Engineering Plan Development Task: Have students create a comprehensive systems engineering plan for a hypothetical project. This plan should include objectives, resource allocation, timeline, milestones, risk assessment, and project phases. Product Improvement Strategy Proposal Task: Ask students to develop a proposal for a product improvement strategy for an existing system, identifying areas for enhancement and proposing solutions to improve quality, efficiency, and user satisfaction.",
+          "benchmarkSide": "target"
+        }
+      ],
+      "iloCloMapping": null,
+      "weekRow": {
+        "week": "Week 12-14",
+        "content": "Planning, Organizing and Managing • Systems Engineering Planning • Product Improvement Strategies • Organizing and Integrating System Development • Contractual Considerations • Management Considerations and Summary",
+        "ilos": [
+          {
+            "text": "ILO9: Formulate a comprehensive systems engineering plan that outlines objectives, resources, timelines, and milestones to guide system development from inception through completion. [CLO 3] [CLO4]",
+            "facultyAssignedClos": [
+              3,
+              4
+            ],
+            "inThisCase": false
+          },
+          {
+            "text": "ILO10: Evaluate essential management considerations—such as resource allocation, risk assessment, and stakeholder engagement—and their impact on project success, applying these principles to real or simulated project scenarios. [CLO 3] [CLO4]",
+            "facultyAssignedClos": [
+              3,
+              4
+            ],
+            "inThisCase": false
+          }
+        ],
+        "activities": "Workshop on Systems Engineering Planning Conduct a hands-on workshop where students outline a systems engineering plan for a hypothetical project. They should include project objectives, resource allocation, timeline planning, and key milestones. Product Improvement Strategy Brainstorming Session In groups, students brainstorm and propose strategies for iterative product improvement in a given scenario, focusing on design, functionality, and customer feedback loops.",
+        "assessment": "Systems Engineering Plan Development Task: Have students create a comprehensive systems engineering plan for a hypothetical project. This plan should include objectives, resource allocation, timeline, milestones, risk assessment, and project phases. Product Improvement Strategy Proposal Task: Ask students to develop a proposal for a product improvement strategy for an existing system, identifying areas for enhancement and proposing solutions to improve quality, efficiency, and user satisfaction."
+      },
+      "benchmark": {
+        "id": "BM1-IE402-113",
+        "caseHash": "a1b62bd3c97120bf38dcbe3a98013cd5eb6800a3fd542609d74fbb5ad16fdc98",
+        "relationshipType": "Activity-assessment",
+        "pairId": "row6-activityassessment",
+        "path": "plan[6].tasks",
+        "sourceText": "Week 12-14 learning activities: Workshop on Systems\nEngineering Planning\nConduct a hands-on\nworkshop where students\noutline a systems\nengineering plan for a\nhypothetical project. They\nshould include project\nobjectives, resource\nallocation, timeline\nplanning, and key\nmilestones.\nProduct Improvement\nStrategy Brainstorming\nSession\nIn groups, students\nbrainstorm and propose\nstrategies for iterative\nproduct improvement in a\ngiven scenario, focusing\non design, functionality,\nand customer feedback\nloops.",
+        "targetText": "Systems\nEngineering Plan\nDevelopment\nTask: Have students\ncreate a\ncomprehensive\nsystems engineering\nplan for a hypothetical\nproject. This plan\nshould include\nobjectives, resource\nallocation, timeline,\nmilestones, risk\nassessment, and\nproject phases.\nProduct\nImprovement\nStrategy Proposal\nTask: Ask students to\ndevelop a proposal for\na product\nimprovement strategy\nfor an existing system,\nidentifying areas for\nenhancement and\nproposing solutions to\nimprove quality,\nefficiency, and user\nsatisfaction."
+      },
+      "provenance": [
+        {
+          "file": "docs/lcup-approved-offline/ie402.fixture.json",
+          "sha256": "8b8e701e15ec4f18c9c6d60861e9c8de60415c475883a193730bfce222a7dd0f",
+          "path": "plan[6].tasks"
+        },
+        {
+          "file": "reference-data/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "sha256": "44ca6d48c77d0b04055cf330717b9381b64d3b7fb8674be727aa2eb4a1807569",
+          "pages": [
+            1,
+            3,
+            7,
+            8
+          ],
+          "declaredFile": "docs/academic-references/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "relocated": true
+        }
+      ]
+    },
+    {
+      "caseId": "FV-16",
+      "relationship": {
+        "key": "ILO-activity",
+        "name": "ILO ↔ Learning Activities"
+      },
+      "program": "BSIE",
+      "course": {
+        "code": "IE-402",
+        "title": "Systems Engineering"
+      },
+      "week": "Week 15-17",
+      "lesson": "Application",
+      "statements": [
+        {
+          "role": "Intended learning outcome (ILO), Week 15-17",
+          "text": "ILO 12: Develop and execute experiments to validate design assumptions, analyze system behaviors, and refine solutions, demonstrating an understanding of experimental design and data collection principles. [CLO 3] [CLO4]",
+          "benchmarkSide": "source"
+        },
+        {
+          "role": "Learning activities, Week 15-17",
+          "text": "Case Study Discussion: Systems Engineering as a Human Activity Provide a case study that highlights the role of human factors in systems engineering, including team dynamics, stakeholder involvement, and ethical considerations. Facilitate a class discussion on the human-centered aspects and their impact on project outcomes. Design and Conduct Experiments Activity Assign students a mini- project to design and conduct an experiment to validate a system component or process. They should identify the objective, develop a methodology, collect data, and analyze results to inform design improvements. Robust Design Brainstorming Session (Robust Design I) In small groups, students brainstorm how to apply basic robust design principles to make a system more stable under varying conditions. They discuss factors that influence system stability and propose design adjustments to minimize variability. Advanced Robust Design Project (Robust Design II) Activity: For a more complex project, students apply advanced robust design techniques to a hypothetical or real-world system. They identify and control multiple variables to minimize performance variation across diverse scenarios.",
+          "benchmarkSide": "target"
+        }
+      ],
+      "iloCloMapping": null,
+      "weekRow": {
+        "week": "Week 15-17",
+        "content": "Application • Systems Engineering As Human Activity • Trade Space Exploration Concept Selection • Experiments • Robust Design I • Robust Design II",
+        "ilos": [
+          {
+            "text": "ILO11: Analyze and evaluate multiple design alternatives through trade space exploration, applying criteria to select the optimal concept based on performance, feasibility, and stakeholder needs. [CLO 3] [CLO4]",
+            "facultyAssignedClos": [
+              3,
+              4
+            ],
+            "inThisCase": false
+          },
+          {
+            "text": "ILO 12: Develop and execute experiments to validate design assumptions, analyze system behaviors, and refine solutions, demonstrating an understanding of experimental design and data collection principles. [CLO 3] [CLO4]",
+            "facultyAssignedClos": [
+              3,
+              4
+            ],
+            "inThisCase": true
+          },
+          {
+            "text": "ILO 13: Identify critical factors in system design that influence performance consistency, and apply robust design techniques to improve reliability under varying conditions (Robust Design I). [CLO 3] [CLO4]",
+            "facultyAssignedClos": [
+              3,
+              4
+            ],
+            "inThisCase": false
+          },
+          {
+            "text": "ILO14: Utilize advanced robust design methods to enhance system resilience, focusing on minimizing performance variability in complex, multi-variable systems (Robust Design II). [CLO 3] [CLO4]",
+            "facultyAssignedClos": [
+              3,
+              4
+            ],
+            "inThisCase": false
+          }
+        ],
+        "activities": "Case Study Discussion: Systems Engineering as a Human Activity Provide a case study that highlights the role of human factors in systems engineering, including team dynamics, stakeholder involvement, and ethical considerations. Facilitate a class discussion on the human-centered aspects and their impact on project outcomes. Design and Conduct Experiments Activity Assign students a mini- project to design and conduct an experiment to validate a system component or process. They should identify the objective, develop a methodology, collect data, and analyze results to inform design improvements. Robust Design Brainstorming Session (Robust Design I) In small groups, students brainstorm how to apply basic robust design principles to make a system more stable under varying conditions. They discuss factors that influence system stability and propose design adjustments to minimize variability. Advanced Robust Design Project (Robust Design II) Activity: For a more complex project, students apply advanced robust design techniques to a hypothetical or real-world system. They identify and control multiple variables to minimize performance variation across diverse scenarios.",
+        "assessment": "Robust Design I – System Evaluation and Improvement Proposal Task: Have students apply basic robust design techniques to evaluate a system and propose design changes that would make it more stable under varying conditions. They should identify critical factors that affect performance and suggest improvements to minimize variability. Robust Design II – Advanced Design Analysis Task: For a more complex system, students should apply advanced robust design methods to assess and improve the system’s performance. They will use tools such as design of experiments (DOE) to explore multiple design variables and their interactions. Robust Design Report (I & II) Task: Students will submit a report for each part of the robust design application, detailing the steps taken to assess and improve system performance. For Robust Design I, they will focus on basic principles, and for Robust Design II, they will apply advanced techniques to optimize the system."
+      },
+      "benchmark": {
+        "id": "BM1-IE402-065",
+        "caseHash": "cab5257194b4bbc98f15d9aa23ef598e338f190d20f537ce6c5810cc3ba30d98",
+        "relationshipType": "ILO-activity",
+        "pairId": "row7-ilo1-activity",
+        "path": "plan[7].ilos[1].text",
+        "sourceText": "ILO 12: Develop and execute experiments to validate design assumptions, analyze system behaviors, and refine solutions, demonstrating an understanding of experimental design and data collection principles. [CLO 3] [CLO4]",
+        "targetText": "Case Study Discussion:\nSystems Engineering\nas a Human Activity\nProvide a case study that\nhighlights the role of\nhuman factors in systems\nengineering, including\nteam dynamics,\nstakeholder involvement,\nand ethical\nconsiderations. Facilitate\na class discussion on the\nhuman-centered aspects\nand their impact on\nproject outcomes.\nDesign and Conduct\nExperiments Activity\nAssign students a mini-\nproject to design and\nconduct an experiment to\nvalidate a system\ncomponent or process.\nThey should identify the\nobjective, develop a\nmethodology, collect\ndata, and analyze results\nto inform design\nimprovements.\nRobust Design\nBrainstorming Session\n(Robust Design I)\nIn small groups, students\nbrainstorm how to apply\nbasic robust design\nprinciples to make a\nsystem more stable\nunder varying conditions.\nThey discuss factors that\ninfluence system stability\nand propose design\nadjustments to minimize\nvariability.\nAdvanced Robust\nDesign Project (Robust\nDesign II)\nActivity: For a more\ncomplex project, students\napply advanced robust\ndesign techniques to a\nhypothetical or real-world\nsystem. They identify and\ncontrol multiple variables\nto minimize performance\nvariation across diverse\nscenarios."
+      },
+      "provenance": [
+        {
+          "file": "docs/lcup-approved-offline/ie402.fixture.json",
+          "sha256": "8b8e701e15ec4f18c9c6d60861e9c8de60415c475883a193730bfce222a7dd0f",
+          "path": "plan[7].ilos[1].text"
+        },
+        {
+          "file": "reference-data/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "sha256": "44ca6d48c77d0b04055cf330717b9381b64d3b7fb8674be727aa2eb4a1807569",
+          "pages": [
+            1,
+            3,
+            8,
+            9,
+            10
+          ],
+          "declaredFile": "docs/academic-references/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "relocated": true
+        }
+      ]
+    },
+    {
+      "caseId": "FV-17",
+      "relationship": {
+        "key": "ILO-CLO",
+        "name": "ILO ↔ CLO"
+      },
+      "program": "BSCPE",
+      "course": {
+        "code": "CpE 304",
+        "title": "Fundamentals of Mixed Signals and Sensors"
+      },
+      "week": "Week 2-3",
+      "lesson": "II. Introduction to Electronic System",
+      "statements": [
+        {
+          "role": "Intended learning outcome (ILO), Week 2-3",
+          "text": "ILO2: Understand the design process of electronic circuits and systems. [CLO1]",
+          "benchmarkSide": "target"
+        },
+        {
+          "role": "Course learning outcome, CLO 1 (Introductory)",
+          "text": "Identify the design process of electronic circuits and systems and conduct experiments involving sensors and mixed-signal systems, analyze data, and interpret results to improve performance and reliability.",
+          "benchmarkSide": "source"
+        }
+      ],
+      "iloCloMapping": {
+        "ilo": "ILO2: Understand the design process of electronic circuits and systems. [CLO1]",
+        "mappingAsPrinted": "[CLO1]",
+        "facultyAssignedClos": [
+          1
+        ],
+        "cloInThisRelationship": 1,
+        "cloStatement": "Identify the design process of electronic circuits and systems and conduct experiments involving sensors and mixed-signal systems, analyze data, and interpret results to improve performance and reliability.",
+        "requiredClassification": "Introductory",
+        "otherMappingsOfThisIlo": [],
+        "weeklyCourseContent": "II. Introduction to Electronic System • History of Electronics • Electronic Signals and Notation • Classifications of Electronic Systems • Specifications of Electronic Systems • Design of Electronic Systems • Design of Electronic Circuits • Electronic Devices • Emerging Electronics Differential Amplifiers • Introduction to Differential Amplifiers • Block Diagram • Differential Gain • Common Mode Gain • CMRR • Configuration of differential amplifiers"
+      },
+      "weekRow": {
+        "week": "Week 2-3",
+        "content": "II. Introduction to Electronic System • History of Electronics • Electronic Signals and Notation • Classifications of Electronic Systems • Specifications of Electronic Systems • Design of Electronic Systems • Design of Electronic Circuits • Electronic Devices • Emerging Electronics Differential Amplifiers • Introduction to Differential Amplifiers • Block Diagram • Differential Gain • Common Mode Gain • CMRR • Configuration of differential amplifiers",
+        "ilos": [
+          {
+            "text": "ILO1: To develop skills in analysis and design of both analog and digital circuits [CLO1]",
+            "facultyAssignedClos": [
+              1
+            ],
+            "inThisCase": false
+          },
+          {
+            "text": "ILO2: Understand the design process of electronic circuits and systems. [CLO1]",
+            "facultyAssignedClos": [
+              1
+            ],
+            "inThisCase": true
+          }
+        ],
+        "activities": "• Lecture- Discussion using PowerPoint",
+        "assessment": "• Quiz on the topics discussed"
+      },
+      "benchmark": {
+        "id": "BM1-CPE304-023",
+        "caseHash": "11d2b9676e2df6ac4986bcaff7d5f01c7aae36a8fe246da7acd76c099428e42a",
+        "relationshipType": "ILO-CLO",
+        "pairId": "row1-ilo1-clo:cpe304_clo1",
+        "path": "plan[1].ilos[1].text",
+        "sourceText": "Identify the design process of electronic circuits and systems and conduct experiments involving sensors and mixed-signal systems, analyze data, and interpret results to improve performance and reliability.",
+        "targetText": "ILO2: Understand the design process of electronic circuits and systems. [CLO1]"
+      },
+      "provenance": [
+        {
+          "file": "docs/lcup-approved-offline/cpe304.fixture.json",
+          "sha256": "f22a01d95fba2429b6349d414d3f012fb442fa47118f07d9612504e45a67b8f5",
+          "path": "plan[1].ilos[1].text"
+        },
+        {
+          "file": "reference-data/CPE-304-Fundamentals-of-Mixed-Signals-and-Sensors.pdf",
+          "sha256": "f68eb5bedb77d31b153b23dc354ef457c9a349b7fca64ba5a46578230982a4a2",
+          "pages": [
+            1,
+            2,
+            4,
+            5
+          ],
+          "declaredFile": "docs/academic-references/CPE-304-Fundamentals-of-Mixed-Signals-and-Sensors.pdf",
+          "relocated": true
+        }
+      ]
+    },
+    {
+      "caseId": "FV-18",
+      "relationship": {
+        "key": "ILO-activity",
+        "name": "ILO ↔ Learning Activities"
+      },
+      "program": "BSCPE",
+      "course": {
+        "code": "CpE 304",
+        "title": "Fundamentals of Mixed Signals and Sensors"
+      },
+      "week": "Week 2-3",
+      "lesson": "II. Introduction to Electronic System",
+      "statements": [
+        {
+          "role": "Intended learning outcome (ILO), Week 2-3",
+          "text": "ILO1: To develop skills in analysis and design of both analog and digital circuits [CLO1]",
+          "benchmarkSide": "source"
+        },
+        {
+          "role": "Learning activities, Week 2-3",
+          "text": "• Lecture- Discussion using PowerPoint",
+          "benchmarkSide": "target"
+        }
+      ],
+      "iloCloMapping": null,
+      "weekRow": {
+        "week": "Week 2-3",
+        "content": "II. Introduction to Electronic System • History of Electronics • Electronic Signals and Notation • Classifications of Electronic Systems • Specifications of Electronic Systems • Design of Electronic Systems • Design of Electronic Circuits • Electronic Devices • Emerging Electronics Differential Amplifiers • Introduction to Differential Amplifiers • Block Diagram • Differential Gain • Common Mode Gain • CMRR • Configuration of differential amplifiers",
+        "ilos": [
+          {
+            "text": "ILO1: To develop skills in analysis and design of both analog and digital circuits [CLO1]",
+            "facultyAssignedClos": [
+              1
+            ],
+            "inThisCase": true
+          },
+          {
+            "text": "ILO2: Understand the design process of electronic circuits and systems. [CLO1]",
+            "facultyAssignedClos": [
+              1
+            ],
+            "inThisCase": false
+          }
+        ],
+        "activities": "• Lecture- Discussion using PowerPoint",
+        "assessment": "• Quiz on the topics discussed"
+      },
+      "benchmark": {
+        "id": "BM1-CPE304-022",
+        "caseHash": "aa7a36a22a6ab393d11791e1b5575e9b3f1fd5265939e9c591a71de1f2f22f15",
+        "relationshipType": "ILO-activity",
+        "pairId": "row1-ilo0-activity",
+        "path": "plan[1].ilos[0].text",
+        "sourceText": "ILO1: To develop skills in analysis and design of both analog and digital circuits [CLO1]",
+        "targetText": "• Lecture-\nDiscussion\nusing\nPowerPoint"
+      },
+      "provenance": [
+        {
+          "file": "docs/lcup-approved-offline/cpe304.fixture.json",
+          "sha256": "f22a01d95fba2429b6349d414d3f012fb442fa47118f07d9612504e45a67b8f5",
+          "path": "plan[1].ilos[0].text"
+        },
+        {
+          "file": "reference-data/CPE-304-Fundamentals-of-Mixed-Signals-and-Sensors.pdf",
+          "sha256": "f68eb5bedb77d31b153b23dc354ef457c9a349b7fca64ba5a46578230982a4a2",
+          "pages": [
+            1,
+            2,
+            4,
+            5
+          ],
+          "declaredFile": "docs/academic-references/CPE-304-Fundamentals-of-Mixed-Signals-and-Sensors.pdf",
+          "relocated": true
+        }
+      ]
+    },
+    {
+      "caseId": "FV-19",
+      "relationship": {
+        "key": "Content-activity",
+        "name": "Course Content ↔ Learning Activities"
+      },
+      "program": "BSCPE",
+      "course": {
+        "code": "CpE 304",
+        "title": "Fundamentals of Mixed Signals and Sensors"
+      },
+      "week": "Week 4-5",
+      "lesson": "III. INTRODUCTION TO OPERATIONAL AMPLIFIERS AND APPLICATIONS",
+      "statements": [
+        {
+          "role": "Course content, Week 4-5",
+          "text": "III. INTRODUCTION TO OPERATIONAL AMPLIFIERS AND APPLICATIONS • Characteristics of Ideal Op- Amps • Noninverting Amplifiers • Inverting Amplifiers • Instrumentatio n Amplifiers • Integrators • Differentiators • Addition– Subtraction Amplifiers • Large-Signal Operations of Op-Amps • Input Offset Voltage • Input Offset Current • Op-Amp Circuit Design Linear and Non Linear Applications of Op-Amp • Linear Op-amp • Non-linear Op- amp",
+          "benchmarkSide": "source"
+        },
+        {
+          "role": "Learning activities, Week 4-5",
+          "text": "• Lecture- Discussion using PowerPoint",
+          "benchmarkSide": "target"
+        }
+      ],
+      "iloCloMapping": null,
+      "weekRow": {
+        "week": "Week 4-5",
+        "content": "III. INTRODUCTION TO OPERATIONAL AMPLIFIERS AND APPLICATIONS • Characteristics of Ideal Op- Amps • Noninverting Amplifiers • Inverting Amplifiers • Instrumentatio n Amplifiers • Integrators • Differentiators • Addition– Subtraction Amplifiers • Large-Signal Operations of Op-Amps • Input Offset Voltage • Input Offset Current • Op-Amp Circuit Design Linear and Non Linear Applications of Op-Amp • Linear Op-amp • Non-linear Op- amp",
+        "ilos": [
+          {
+            "text": "ILO1: Show one’s knowledge on the fundamental elements of amplifiers.[CLO1, CLO2]",
+            "facultyAssignedClos": [
+              1,
+              2
+            ],
+            "inThisCase": false
+          },
+          {
+            "text": "ILO2: Refresh and expand the understanding of basic electrical components and the basic terms used in electricity as required for instrumentation. .[CLO1, CLO2]",
+            "facultyAssignedClos": [
+              1,
+              2
+            ],
+            "inThisCase": false
+          }
+        ],
+        "activities": "• Lecture- Discussion using PowerPoint",
+        "assessment": "• Quiz on the topics discussed"
+      },
+      "benchmark": {
+        "id": "BM1-CPE304-083",
+        "caseHash": "cfd55eed3aef50637bf8b6824924387df7474fa16f858962d363836cae717071",
+        "relationshipType": "Content-activity",
+        "pairId": "row2-contentactivity",
+        "path": "plan[2].activities",
+        "sourceText": "Week 4-5 course content: III. INTRODUCTION\nTO OPERATIONAL\nAMPLIFIERS AND\nAPPLICATIONS\n• Characteristics\nof Ideal Op-\nAmps\n• Noninverting\nAmplifiers\n• Inverting\nAmplifiers\n• Instrumentatio\nn Amplifiers\n• Integrators\n• Differentiators\n• Addition–\nSubtraction\nAmplifiers\n• Large-Signal\nOperations of\nOp-Amps\n• Input Offset\nVoltage\n• Input Offset\nCurrent\n• Op-Amp\nCircuit Design\nLinear and Non\nLinear Applications\nof Op-Amp\n• Linear Op-amp\n• Non-linear Op-\namp",
+        "targetText": "• Lecture-\nDiscussion using\nPowerPoint"
+      },
+      "provenance": [
+        {
+          "file": "docs/lcup-approved-offline/cpe304.fixture.json",
+          "sha256": "f22a01d95fba2429b6349d414d3f012fb442fa47118f07d9612504e45a67b8f5",
+          "path": "plan[2].activities"
+        },
+        {
+          "file": "reference-data/CPE-304-Fundamentals-of-Mixed-Signals-and-Sensors.pdf",
+          "sha256": "f68eb5bedb77d31b153b23dc354ef457c9a349b7fca64ba5a46578230982a4a2",
+          "pages": [
+            1,
+            2,
+            5
+          ],
+          "declaredFile": "docs/academic-references/CPE-304-Fundamentals-of-Mixed-Signals-and-Sensors.pdf",
+          "relocated": true
+        }
+      ]
+    },
+    {
+      "caseId": "FV-20",
+      "relationship": {
+        "key": "Content-assessment",
+        "name": "Course Content ↔ Assessment"
+      },
+      "program": "BSCPE",
+      "course": {
+        "code": "CpE 304",
+        "title": "Fundamentals of Mixed Signals and Sensors"
+      },
+      "week": "Week 9-11",
+      "lesson": "V. Mixed Signals Basic Measurement Theory",
+      "statements": [
+        {
+          "role": "Course content, Week 9-11",
+          "text": "V. Mixed Signals Basic Measurement Theory • IC Test • Linearity",
+          "benchmarkSide": "source"
+        },
+        {
+          "role": "Assessment, Week 9-11",
+          "text": "• Quiz on the topics discussed",
+          "benchmarkSide": "target"
+        }
+      ],
+      "iloCloMapping": null,
+      "weekRow": {
+        "week": "Week 9-11",
+        "content": "V. Mixed Signals Basic Measurement Theory • IC Test • Linearity",
+        "ilos": [
+          {
+            "text": "ILO4: Refresh and expand the understanding of basic electrical components and the basic terms used in electricity as required for instrumentation.",
+            "facultyAssignedClos": [],
+            "inThisCase": false
+          },
+          {
+            "text": "ILO7: Understand the units used in measurements and familiarize with the most common methods of using the various measurement .",
+            "facultyAssignedClos": [],
+            "inThisCase": false
+          },
+          {
+            "text": "ILO10: Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing.",
+            "facultyAssignedClos": [],
+            "inThisCase": false
+          }
+        ],
+        "activities": "• Lecture- Discussion using PowerPoint",
+        "assessment": "• Quiz on the topics discussed"
+      },
+      "benchmark": {
+        "id": "BM1-CPE304-090",
+        "caseHash": "001c015ae7555c506b373ccae7da3f5d38ae682b1a30df5e163ed20af02157d3",
+        "relationshipType": "Content-assessment",
+        "pairId": "row5-contentassessment",
+        "path": "plan[5].tasks",
+        "sourceText": "Week 9-11 course content: V. Mixed Signals\nBasic Measurement\nTheory\n• IC Test\n• Linearity",
+        "targetText": "• Quiz on the\ntopics\ndiscussed"
+      },
+      "provenance": [
+        {
+          "file": "docs/lcup-approved-offline/cpe304.fixture.json",
+          "sha256": "f22a01d95fba2429b6349d414d3f012fb442fa47118f07d9612504e45a67b8f5",
+          "path": "plan[5].tasks"
+        },
+        {
+          "file": "reference-data/CPE-304-Fundamentals-of-Mixed-Signals-and-Sensors.pdf",
+          "sha256": "f68eb5bedb77d31b153b23dc354ef457c9a349b7fca64ba5a46578230982a4a2",
+          "pages": [
+            1,
+            6,
+            7
+          ],
+          "declaredFile": "docs/academic-references/CPE-304-Fundamentals-of-Mixed-Signals-and-Sensors.pdf",
+          "relocated": true
+        }
+      ]
+    },
+    {
+      "caseId": "FV-21",
+      "relationship": {
+        "key": "Content-ILO",
+        "name": "Course Content ↔ ILO"
+      },
+      "program": "BSCPE",
+      "course": {
+        "code": "CpE 304",
+        "title": "Fundamentals of Mixed Signals and Sensors"
+      },
+      "week": "Week 13-14",
+      "lesson": "VI. Sensors and Transducers",
+      "statements": [
+        {
+          "role": "Course content, Week 13-14",
+          "text": "VI. Sensors and Transducers ● Sensitivity & Hysteresis ● Offset Error & Non- linearity",
+          "benchmarkSide": "source"
+        },
+        {
+          "role": "Intended learning outcome (ILO), Week 13-14",
+          "text": "ILO8: Understand the different Sensors and Transducers.",
+          "benchmarkSide": "target"
+        }
+      ],
+      "iloCloMapping": null,
+      "weekRow": {
+        "week": "Week 13-14",
+        "content": "VI. Sensors and Transducers ● Sensitivity & Hysteresis ● Offset Error & Non- linearity",
+        "ilos": [
+          {
+            "text": "ILO8: Understand the different Sensors and Transducers.",
+            "facultyAssignedClos": [],
+            "inThisCase": true
+          },
+          {
+            "text": "ILO10: Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing",
+            "facultyAssignedClos": [],
+            "inThisCase": false
+          }
+        ],
+        "activities": "• Lecture- Discussion using PowerPoint",
+        "assessment": "• Quiz on the topics discussed"
+      },
+      "benchmark": {
+        "id": "BM1-CPE304-065",
+        "caseHash": "e0ad6ed10822787acc914f40d8496961a15b14b40af76ad1659e1f356b201062",
+        "relationshipType": "Content-ILO",
+        "pairId": "row7-ilo0-contentilo",
+        "path": "plan[7].ilos[0].text",
+        "sourceText": "Week 13-14: VI. Sensors and\nTransducers\n● Sensitivity &\nHysteresis\n● Offset Error & Non-\nlinearity",
+        "targetText": "ILO8: Understand the different Sensors and Transducers."
+      },
+      "provenance": [
+        {
+          "file": "docs/lcup-approved-offline/cpe304.fixture.json",
+          "sha256": "f22a01d95fba2429b6349d414d3f012fb442fa47118f07d9612504e45a67b8f5",
+          "path": "plan[7].ilos[0].text"
+        },
+        {
+          "file": "reference-data/CPE-304-Fundamentals-of-Mixed-Signals-and-Sensors.pdf",
+          "sha256": "f68eb5bedb77d31b153b23dc354ef457c9a349b7fca64ba5a46578230982a4a2",
+          "pages": [
+            1,
+            7
+          ],
+          "declaredFile": "docs/academic-references/CPE-304-Fundamentals-of-Mixed-Signals-and-Sensors.pdf",
+          "relocated": true
+        }
+      ]
+    }
+  ],
+  "notEvaluable": {
+    "note": "These relationships are not among the 21 cases and are not on the evaluation form. They cannot be judged as they stand: an ILO with no CLO mapping has no ILO-CLO relationship to judge, a lesson with no ILO has no ILO relationships, and a reference-held case waits for an institutional confirmation.",
+    "ilosWithoutClo": [
+      {
+        "course": "IT 202",
+        "week": "Week 4-5",
+        "ilo": "ILO 2 Acquire the necessary skills and understanding of java methods.",
+        "relationship": "ILO ↔ CLO",
+        "benchmarkId": "BM1-IT202-182"
+      },
+      {
+        "course": "IT 202",
+        "week": "Week 9-11",
+        "ilo": "ILO2. Inference the structured programming concepts aCLOng with the Java syntax to implement them.",
+        "relationship": "ILO ↔ CLO",
+        "benchmarkId": "BM1-IT202-183"
+      },
+      {
+        "course": "IT 202",
+        "week": "Week 13",
+        "ilo": "ILO6: Synthesize skills in De-bugging Java Language program.",
+        "relationship": "ILO ↔ CLO",
+        "benchmarkId": "BM1-IT202-184"
+      },
+      {
+        "course": "IT 202",
+        "week": "Week 16-17",
+        "ilo": "Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing.",
+        "relationship": "ILO ↔ CLO",
+        "benchmarkId": "BM1-IT202-185"
+      },
+      {
+        "course": "CpE 304",
+        "week": "Week 7-8",
+        "ilo": "ILO1: To develop skills in analysis and design of both analog and digital circuits",
+        "relationship": "ILO ↔ CLO",
+        "benchmarkId": "BM1-CPE304-122"
+      },
+      {
+        "course": "CpE 304",
+        "week": "Week 7-8",
+        "ilo": "ILO6: Understand active devices, how they are used in instrument applications, and the difference between analog and digital circuits.",
+        "relationship": "ILO ↔ CLO",
+        "benchmarkId": "BM1-CPE304-123"
+      },
+      {
+        "course": "CpE 304",
+        "week": "Week 7-8",
+        "ilo": "ILO10: Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing.",
+        "relationship": "ILO ↔ CLO",
+        "benchmarkId": "BM1-CPE304-124"
+      },
+      {
+        "course": "CpE 304",
+        "week": "Week 9-11",
+        "ilo": "ILO4: Refresh and expand the understanding of basic electrical components and the basic terms used in electricity as required for instrumentation.",
+        "relationship": "ILO ↔ CLO",
+        "benchmarkId": "BM1-CPE304-125"
+      },
+      {
+        "course": "CpE 304",
+        "week": "Week 9-11",
+        "ilo": "ILO7: Understand the units used in measurements and familiarize with the most common methods of using the various measurement .",
+        "relationship": "ILO ↔ CLO",
+        "benchmarkId": "BM1-CPE304-126"
+      },
+      {
+        "course": "CpE 304",
+        "week": "Week 9-11",
+        "ilo": "ILO10: Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing.",
+        "relationship": "ILO ↔ CLO",
+        "benchmarkId": "BM1-CPE304-127"
+      },
+      {
+        "course": "CpE 304",
+        "week": "Week 13-14",
+        "ilo": "ILO8: Understand the different Sensors and Transducers.",
+        "relationship": "ILO ↔ CLO",
+        "benchmarkId": "BM1-CPE304-128"
+      },
+      {
+        "course": "CpE 304",
+        "week": "Week 13-14",
+        "ilo": "ILO10: Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing",
+        "relationship": "ILO ↔ CLO",
+        "benchmarkId": "BM1-CPE304-129"
+      },
+      {
+        "course": "CpE 304",
+        "week": "Week 15-16",
+        "ilo": "ILO8: Understand the different Sensors and Transducers.",
+        "relationship": "ILO ↔ CLO",
+        "benchmarkId": "BM1-CPE304-130"
+      },
+      {
+        "course": "CpE 304",
+        "week": "Week 17",
+        "ilo": "ILO9: Learn the basic components and control of devices and prototypes.",
+        "relationship": "ILO ↔ CLO",
+        "benchmarkId": "BM1-CPE304-131"
+      },
+      {
+        "course": "CpE 304",
+        "week": "Week 17",
+        "ilo": "ILO10: Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing",
+        "relationship": "ILO ↔ CLO",
+        "benchmarkId": "BM1-CPE304-132"
+      }
+    ],
+    "lessonsWithoutIlo": [
+      {
+        "course": "CpE 304",
+        "week": "Week 1",
+        "lesson": "I.ORIENTATION",
+        "relationshipsNotEvaluable": [
+          {
+            "relationship": "Course Content ↔ ILO",
+            "benchmarkId": "BM1-CPE304-119"
+          },
+          {
+            "relationship": "ILO ↔ Learning Activities",
+            "benchmarkId": "BM1-CPE304-120"
+          },
+          {
+            "relationship": "ILO ↔ CLO",
+            "benchmarkId": "BM1-CPE304-121"
+          }
+        ]
+      }
+    ],
+    "closWithoutIlo": [
+      {
+        "course": "IT 202",
+        "clo": 4,
+        "requiredClassification": "Integration of Values",
+        "statement": "Demonstrate the Filipino- Catholic Augustinian Spirituality through value webbing."
+      },
+      {
+        "course": "CpE 304",
+        "clo": 3,
+        "requiredClassification": "Demonstrating",
+        "statement": "Analyze and apply the behavior of passive components in AC circuits and their instrumentation applications in multidisciplinary teams to design, test, and optimize mixed-signal and sensor applications for engineering solutions"
+      },
+      {
+        "course": "CpE 304",
+        "clo": 4,
+        "requiredClassification": "Integration of Values",
+        "statement": "Exhibit lifelong learning, precision, and ethical responsibility in performing measurements and calibration tasks. Engage in continuous learning by exploring emerging technologies and trends in sensors, instrumentation, and mixed-signal design for future innovation"
+      }
+    ],
+    "referenceHeld": [
+      {
+        "course": "CpE 304",
+        "week": "Week 1",
+        "lesson": "I.ORIENTATION",
+        "relationship": "Course Title ↔ Course Content",
+        "benchmarkId": "BM1-CPE304-049",
+        "holds": [
+          {
+            "code": "course_identity_code_not_found",
+            "owner": "institution"
+          }
+        ]
+      },
+      {
+        "course": "CpE 304",
+        "week": "Week 2-3",
+        "lesson": "II. Introduction to Electronic System",
+        "relationship": "Course Title ↔ Course Content",
+        "benchmarkId": "BM1-CPE304-050",
+        "holds": [
+          {
+            "code": "course_identity_code_not_found",
+            "owner": "institution"
+          }
+        ]
+      },
+      {
+        "course": "CpE 304",
+        "week": "Week 4-5",
+        "lesson": "III. INTRODUCTION TO OPERATIONAL AMPLIFIERS AND APPLICATIONS",
+        "relationship": "Course Title ↔ Course Content",
+        "benchmarkId": "BM1-CPE304-053",
+        "holds": [
+          {
+            "code": "course_identity_code_not_found",
+            "owner": "institution"
+          }
+        ]
+      },
+      {
+        "course": "CpE 304",
+        "week": "Week 7-8",
+        "lesson": "IV. Analog to Digital Conversion Digital to Analog Conversion",
+        "relationship": "Course Title ↔ Course Content",
+        "benchmarkId": "BM1-CPE304-056",
+        "holds": [
+          {
+            "code": "course_identity_code_not_found",
+            "owner": "institution"
+          }
+        ]
+      },
+      {
+        "course": "CpE 304",
+        "week": "Week 9-11",
+        "lesson": "V. Mixed Signals Basic Measurement Theory",
+        "relationship": "Course Title ↔ Course Content",
+        "benchmarkId": "BM1-CPE304-060",
+        "holds": [
+          {
+            "code": "course_identity_code_not_found",
+            "owner": "institution"
+          }
+        ]
+      },
+      {
+        "course": "CpE 304",
+        "week": "Week 13-14",
+        "lesson": "VI. Sensors and Transducers",
+        "relationship": "Course Title ↔ Course Content",
+        "benchmarkId": "BM1-CPE304-064",
+        "holds": [
+          {
+            "code": "course_identity_code_not_found",
+            "owner": "institution"
+          }
+        ]
+      },
+      {
+        "course": "CpE 304",
+        "week": "Week 15-16",
+        "lesson": "VII. Other Types of Sensors and Transducers",
+        "relationship": "Course Title ↔ Course Content",
+        "benchmarkId": "BM1-CPE304-067",
+        "holds": [
+          {
+            "code": "course_identity_code_not_found",
+            "owner": "institution"
+          }
+        ]
+      },
+      {
+        "course": "CpE 304",
+        "week": "Week 17",
+        "lesson": "VIII. Basic Control Devices",
+        "relationship": "Course Title ↔ Course Content",
+        "benchmarkId": "BM1-CPE304-069",
+        "holds": [
+          {
+            "code": "course_identity_code_not_found",
+            "owner": "institution"
+          }
+        ]
+      }
+    ],
+    "counts": {
+      "ilosWithoutClo": 15,
+      "relationshipsOfLessonsWithoutIlo": 3,
+      "referenceHeld": 8,
+      "total": 26,
+      "closWithoutIlo": 3
+    }
+  },
+  "iloCloRelationships": [
+    {
+      "course": "IT 202",
+      "week": "Week 1",
+      "ilo": "ILO 1: Demonstrate a clear understanding of the course structure, expectations, and key programming concepts in Java, including how these skills align with real- world IT challenges and professional ethical standards. [CLO1]",
+      "clo": 1,
+      "requiredClassification": "Introductory",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-035",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 2",
+      "ilo": "LO1. Explain the basic concepts and principles of Java programming, [CLO 1]",
+      "clo": 1,
+      "requiredClassification": "Introductory",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-038",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 3-4",
+      "ilo": "ILO1: Demonstrate the skills by knowing the syntax and semantics of Java. of Language. [CLO 1,2]",
+      "clo": 1,
+      "requiredClassification": "Introductory",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-041",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 3-4",
+      "ilo": "ILO1: Demonstrate the skills by knowing the syntax and semantics of Java. of Language. [CLO 1,2]",
+      "clo": 2,
+      "requiredClassification": "Enabling",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-042",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 3-4",
+      "ilo": "ILO2: Ensures that students gain a foundational understanding of Java and are able to apply basic programming concepts through hands-on practice. (CLO 2] [CLO 3]",
+      "clo": 2,
+      "requiredClassification": "Enabling",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-044",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 3-4",
+      "ilo": "ILO2: Ensures that students gain a foundational understanding of Java and are able to apply basic programming concepts through hands-on practice. (CLO 2] [CLO 3]",
+      "clo": 3,
+      "requiredClassification": "Demonstrating",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-045",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 4-5",
+      "ilo": "ILO 1: Inference read and write data using Java streams [CLO 1] [CLO 2]",
+      "clo": 1,
+      "requiredClassification": "Introductory",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-048",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 4-5",
+      "ilo": "ILO 1: Inference read and write data using Java streams [CLO 1] [CLO 2]",
+      "clo": 2,
+      "requiredClassification": "Enabling",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-049",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 4-5",
+      "ilo": "ILO 2 Acquire the necessary skills and understanding of java methods.",
+      "clo": null,
+      "requiredClassification": null,
+      "status": "not evaluable: the ILO is mapped to no CLO",
+      "benchmarkId": "BM1-IT202-182",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 4-5",
+      "ilo": "ILO4: Demonstrate the skills by knowing the syntax and semantics of Java. of Language. [CLO 3]",
+      "clo": 3,
+      "requiredClassification": "Demonstrating",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-052",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 7-8",
+      "ilo": "ILO3: Understand the fundamentals of structured logic using decisions, loops, and array manipulation. [CLO 1] [CLO3]",
+      "clo": 1,
+      "requiredClassification": "Introductory",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-055",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 7-8",
+      "ilo": "ILO3: Understand the fundamentals of structured logic using decisions, loops, and array manipulation. [CLO 1] [CLO3]",
+      "clo": 3,
+      "requiredClassification": "Demonstrating",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-056",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 7-8",
+      "ilo": "ILO4: Be able to apply conditional statements in Java to control program flow based on specific conditions, and write programs that make decisions dynamically depending on user input or computed values. [CLO 2] [CLO3]",
+      "clo": 2,
+      "requiredClassification": "Enabling",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-058",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 7-8",
+      "ilo": "ILO4: Be able to apply conditional statements in Java to control program flow based on specific conditions, and write programs that make decisions dynamically depending on user input or computed values. [CLO 2] [CLO3]",
+      "clo": 3,
+      "requiredClassification": "Demonstrating",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-059",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 9-11",
+      "ilo": "ILO1: Utilize various looping constructs (for, while, do-while) in Java to execute repeated tasks, and design programs that efficiently handle repetitive processes and iterations, incorporating loops to solve real-world problems. CLO1 CLO2, CLO3",
+      "clo": 1,
+      "requiredClassification": "Introductory",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-062",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 9-11",
+      "ilo": "ILO1: Utilize various looping constructs (for, while, do-while) in Java to execute repeated tasks, and design programs that efficiently handle repetitive processes and iterations, incorporating loops to solve real-world problems. CLO1 CLO2, CLO3",
+      "clo": 2,
+      "requiredClassification": "Enabling",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-063",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 9-11",
+      "ilo": "ILO1: Utilize various looping constructs (for, while, do-while) in Java to execute repeated tasks, and design programs that efficiently handle repetitive processes and iterations, incorporating loops to solve real-world problems. CLO1 CLO2, CLO3",
+      "clo": 3,
+      "requiredClassification": "Demonstrating",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-064",
+      "inSample": "FV-04"
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 9-11",
+      "ilo": "ILO2. Inference the structured programming concepts aCLOng with the Java syntax to implement them.",
+      "clo": null,
+      "requiredClassification": null,
+      "status": "not evaluable: the ILO is mapped to no CLO",
+      "benchmarkId": "BM1-IT202-183",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 13",
+      "ilo": "ILO4: declare, initialize, and manipulate arrays in Java, effectively using one- dimensional and multi-dimensional arrays to store, retrieve, and process data in various applications [CLO1] [CLO2]",
+      "clo": 1,
+      "requiredClassification": "Introductory",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-068",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 13",
+      "ilo": "ILO4: declare, initialize, and manipulate arrays in Java, effectively using one- dimensional and multi-dimensional arrays to store, retrieve, and process data in various applications [CLO1] [CLO2]",
+      "clo": 2,
+      "requiredClassification": "Enabling",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-069",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 13",
+      "ilo": "ILO6: Synthesize skills in De-bugging Java Language program.",
+      "clo": null,
+      "requiredClassification": null,
+      "status": "not evaluable: the ILO is mapped to no CLO",
+      "benchmarkId": "BM1-IT202-184",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 14",
+      "ilo": "ILO1: Apply various string manipulation methods in Java. [CLO 1-2] .",
+      "clo": 1,
+      "requiredClassification": "Introductory",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-073",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 14",
+      "ilo": "ILO1: Apply various string manipulation methods in Java. [CLO 1-2] .",
+      "clo": 2,
+      "requiredClassification": "Enabling",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-074",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 14",
+      "ilo": "LO2: Synthesize skills in De-bugging Java Language program. [CLO2-3]",
+      "clo": 2,
+      "requiredClassification": "Enabling",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-076",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 14",
+      "ilo": "LO2: Synthesize skills in De-bugging Java Language program. [CLO2-3]",
+      "clo": 3,
+      "requiredClassification": "Demonstrating",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-077",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 15",
+      "ilo": "ILO4: Demonstrate the skills by knowing the syntax and semantics of Java. [CLO1-2]",
+      "clo": 1,
+      "requiredClassification": "Introductory",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-080",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 15",
+      "ilo": "ILO4: Demonstrate the skills by knowing the syntax and semantics of Java. [CLO1-2]",
+      "clo": 2,
+      "requiredClassification": "Enabling",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-081",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 15",
+      "ilo": "ILO5: Build robust applications using Java console code. [CLO 1-2]",
+      "clo": 1,
+      "requiredClassification": "Introductory",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-083",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 15",
+      "ilo": "ILO5: Build robust applications using Java console code. [CLO 1-2]",
+      "clo": 2,
+      "requiredClassification": "Enabling",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-084",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 15",
+      "ilo": "ILO6: Synthesize skills in De-bugging Java Language program. [CLO2-3]",
+      "clo": 2,
+      "requiredClassification": "Enabling",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-086",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 15",
+      "ilo": "ILO6: Synthesize skills in De-bugging Java Language program. [CLO2-3]",
+      "clo": 3,
+      "requiredClassification": "Demonstrating",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-087",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 16-17",
+      "ilo": "ILO1 Retreve data from a relational database using java class. [CLO 2-3]",
+      "clo": 2,
+      "requiredClassification": "Enabling",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-090",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 16-17",
+      "ilo": "ILO1 Retreve data from a relational database using java class. [CLO 2-3]",
+      "clo": 3,
+      "requiredClassification": "Demonstrating",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IT202-091",
+      "inSample": null
+    },
+    {
+      "course": "IT 202",
+      "week": "Week 16-17",
+      "ilo": "Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing.",
+      "clo": null,
+      "requiredClassification": null,
+      "status": "not evaluable: the ILO is mapped to no CLO",
+      "benchmarkId": "BM1-IT202-185",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 1",
+      "ilo": "ILO10: Demonstrate the Augustinian, Marian and missionary Christ- centered Spirituality through value webbing. [CLO 4]",
+      "clo": 4,
+      "requiredClassification": "Integration of Values",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-023",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 2-3",
+      "ilo": "ILO1: Describe fundamental principles of systems engineering, including system life cycles, requirements analysis, and systems thinking. [CLO 1], [CLO 2]",
+      "clo": 1,
+      "requiredClassification": "Introductory",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-026",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 2-3",
+      "ilo": "ILO1: Describe fundamental principles of systems engineering, including system life cycles, requirements analysis, and systems thinking. [CLO 1], [CLO 2]",
+      "clo": 2,
+      "requiredClassification": "Enabling",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-027",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 2-3",
+      "ilo": "ILO2: Develop basic system designs that incorporate requirements from multiple disciplines, including human factors, technology, and organizational needs. [CLO 1], [CLO 2]",
+      "clo": 1,
+      "requiredClassification": "Introductory",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-029",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 2-3",
+      "ilo": "ILO2: Develop basic system designs that incorporate requirements from multiple disciplines, including human factors, technology, and organizational needs. [CLO 1], [CLO 2]",
+      "clo": 2,
+      "requiredClassification": "Enabling",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-030",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 5-8",
+      "ilo": "ILO3: Summarize the overall systems engineering process, explaining each phase from requirements analysis to verification and process outputs. [CLO1][CLO2]",
+      "clo": 1,
+      "requiredClassification": "Introductory",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-033",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 5-8",
+      "ilo": "ILO3: Summarize the overall systems engineering process, explaining each phase from requirements analysis to verification and process outputs. [CLO1][CLO2]",
+      "clo": 2,
+      "requiredClassification": "Enabling",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-034",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 5-8",
+      "ilo": "ILO4: Analyze and define system requirements based on stakeholder needs, constraints, and project objectives. [CLO2][CLO3]",
+      "clo": 2,
+      "requiredClassification": "Enabling",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-036",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 5-8",
+      "ilo": "ILO4: Analyze and define system requirements based on stakeholder needs, constraints, and project objectives. [CLO2][CLO3]",
+      "clo": 3,
+      "requiredClassification": "Demonstrating",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-037",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 5-8",
+      "ilo": "ILO5: Recognize key outputs of the systems engineering process, such as documentation, specifications, and test reports, and evaluate their role in supporting successful project outcomes. [CLO2][CLO3]",
+      "clo": 2,
+      "requiredClassification": "Enabling",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-039",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 5-8",
+      "ilo": "ILO5: Recognize key outputs of the systems engineering process, such as documentation, specifications, and test reports, and evaluate their role in supporting successful project outcomes. [CLO2][CLO3]",
+      "clo": 3,
+      "requiredClassification": "Demonstrating",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-040",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 10-11",
+      "ilo": "ILO6: Create and interpret a WBS to organize and manage project components, identifying key deliverables and tasks for effective project planning and control. [CLO 3] [CLO4]",
+      "clo": 3,
+      "requiredClassification": "Demonstrating",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-043",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 10-11",
+      "ilo": "ILO6: Create and interpret a WBS to organize and manage project components, identifying key deliverables and tasks for effective project planning and control. [CLO 3] [CLO4]",
+      "clo": 4,
+      "requiredClassification": "Integration of Values",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-044",
+      "inSample": "FV-12"
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 10-11",
+      "ilo": "ILO7: Apply modeling and simulation techniques to analyze system behavior, test potential solutions, and predict outcomes in a controlled virtual environment. [CLO 3] [CLO4]",
+      "clo": 3,
+      "requiredClassification": "Demonstrating",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-046",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 10-11",
+      "ilo": "ILO7: Apply modeling and simulation techniques to analyze system behavior, test potential solutions, and predict outcomes in a controlled virtual environment. [CLO 3] [CLO4]",
+      "clo": 4,
+      "requiredClassification": "Integration of Values",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-047",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 10-11",
+      "ilo": "ILO8:Identify, assess, and manage risks within a systems project, developing risk mitigation strategies to minimize potential negative impacts on project outcomes. [CLO 3] [CLO4]",
+      "clo": 3,
+      "requiredClassification": "Demonstrating",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-049",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 10-11",
+      "ilo": "ILO8:Identify, assess, and manage risks within a systems project, developing risk mitigation strategies to minimize potential negative impacts on project outcomes. [CLO 3] [CLO4]",
+      "clo": 4,
+      "requiredClassification": "Integration of Values",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-050",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 12-14",
+      "ilo": "ILO9: Formulate a comprehensive systems engineering plan that outlines objectives, resources, timelines, and milestones to guide system development from inception through completion. [CLO 3] [CLO4]",
+      "clo": 3,
+      "requiredClassification": "Demonstrating",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-053",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 12-14",
+      "ilo": "ILO9: Formulate a comprehensive systems engineering plan that outlines objectives, resources, timelines, and milestones to guide system development from inception through completion. [CLO 3] [CLO4]",
+      "clo": 4,
+      "requiredClassification": "Integration of Values",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-054",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 12-14",
+      "ilo": "ILO10: Evaluate essential management considerations—such as resource allocation, risk assessment, and stakeholder engagement—and their impact on project success, applying these principles to real or simulated project scenarios. [CLO 3] [CLO4]",
+      "clo": 3,
+      "requiredClassification": "Demonstrating",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-056",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 12-14",
+      "ilo": "ILO10: Evaluate essential management considerations—such as resource allocation, risk assessment, and stakeholder engagement—and their impact on project success, applying these principles to real or simulated project scenarios. [CLO 3] [CLO4]",
+      "clo": 4,
+      "requiredClassification": "Integration of Values",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-057",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 15-17",
+      "ilo": "ILO11: Analyze and evaluate multiple design alternatives through trade space exploration, applying criteria to select the optimal concept based on performance, feasibility, and stakeholder needs. [CLO 3] [CLO4]",
+      "clo": 3,
+      "requiredClassification": "Demonstrating",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-060",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 15-17",
+      "ilo": "ILO11: Analyze and evaluate multiple design alternatives through trade space exploration, applying criteria to select the optimal concept based on performance, feasibility, and stakeholder needs. [CLO 3] [CLO4]",
+      "clo": 4,
+      "requiredClassification": "Integration of Values",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-061",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 15-17",
+      "ilo": "ILO 12: Develop and execute experiments to validate design assumptions, analyze system behaviors, and refine solutions, demonstrating an understanding of experimental design and data collection principles. [CLO 3] [CLO4]",
+      "clo": 3,
+      "requiredClassification": "Demonstrating",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-063",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 15-17",
+      "ilo": "ILO 12: Develop and execute experiments to validate design assumptions, analyze system behaviors, and refine solutions, demonstrating an understanding of experimental design and data collection principles. [CLO 3] [CLO4]",
+      "clo": 4,
+      "requiredClassification": "Integration of Values",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-064",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 15-17",
+      "ilo": "ILO 13: Identify critical factors in system design that influence performance consistency, and apply robust design techniques to improve reliability under varying conditions (Robust Design I). [CLO 3] [CLO4]",
+      "clo": 3,
+      "requiredClassification": "Demonstrating",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-066",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 15-17",
+      "ilo": "ILO 13: Identify critical factors in system design that influence performance consistency, and apply robust design techniques to improve reliability under varying conditions (Robust Design I). [CLO 3] [CLO4]",
+      "clo": 4,
+      "requiredClassification": "Integration of Values",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-067",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 15-17",
+      "ilo": "ILO14: Utilize advanced robust design methods to enhance system resilience, focusing on minimizing performance variability in complex, multi-variable systems (Robust Design II). [CLO 3] [CLO4]",
+      "clo": 3,
+      "requiredClassification": "Demonstrating",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-069",
+      "inSample": null
+    },
+    {
+      "course": "IE-402",
+      "week": "Week 15-17",
+      "ilo": "ILO14: Utilize advanced robust design methods to enhance system resilience, focusing on minimizing performance variability in complex, multi-variable systems (Robust Design II). [CLO 3] [CLO4]",
+      "clo": 4,
+      "requiredClassification": "Integration of Values",
+      "status": "evaluable",
+      "benchmarkId": "BM1-IE402-070",
+      "inSample": null
+    },
+    {
+      "course": "CpE 304",
+      "week": "Week 1",
+      "ilo": null,
+      "clo": null,
+      "requiredClassification": null,
+      "status": "not evaluable: the lesson has no ILO",
+      "benchmarkId": "BM1-CPE304-121",
+      "inSample": null
+    },
+    {
+      "course": "CpE 304",
+      "week": "Week 2-3",
+      "ilo": "ILO1: To develop skills in analysis and design of both analog and digital circuits [CLO1]",
+      "clo": 1,
+      "requiredClassification": "Introductory",
+      "status": "evaluable",
+      "benchmarkId": "BM1-CPE304-021",
+      "inSample": null
+    },
+    {
+      "course": "CpE 304",
+      "week": "Week 2-3",
+      "ilo": "ILO2: Understand the design process of electronic circuits and systems. [CLO1]",
+      "clo": 1,
+      "requiredClassification": "Introductory",
+      "status": "evaluable",
+      "benchmarkId": "BM1-CPE304-023",
+      "inSample": "FV-17"
+    },
+    {
+      "course": "CpE 304",
+      "week": "Week 4-5",
+      "ilo": "ILO1: Show one’s knowledge on the fundamental elements of amplifiers.[CLO1, CLO2]",
+      "clo": 1,
+      "requiredClassification": "Introductory",
+      "status": "evaluable",
+      "benchmarkId": "BM1-CPE304-026",
+      "inSample": null
+    },
+    {
+      "course": "CpE 304",
+      "week": "Week 4-5",
+      "ilo": "ILO1: Show one’s knowledge on the fundamental elements of amplifiers.[CLO1, CLO2]",
+      "clo": 2,
+      "requiredClassification": "Enabling",
+      "status": "evaluable",
+      "benchmarkId": "BM1-CPE304-027",
+      "inSample": null
+    },
+    {
+      "course": "CpE 304",
+      "week": "Week 4-5",
+      "ilo": "ILO2: Refresh and expand the understanding of basic electrical components and the basic terms used in electricity as required for instrumentation. .[CLO1, CLO2]",
+      "clo": 1,
+      "requiredClassification": "Introductory",
+      "status": "evaluable",
+      "benchmarkId": "BM1-CPE304-029",
+      "inSample": null
+    },
+    {
+      "course": "CpE 304",
+      "week": "Week 4-5",
+      "ilo": "ILO2: Refresh and expand the understanding of basic electrical components and the basic terms used in electricity as required for instrumentation. .[CLO1, CLO2]",
+      "clo": 2,
+      "requiredClassification": "Enabling",
+      "status": "evaluable",
+      "benchmarkId": "BM1-CPE304-030",
+      "inSample": null
+    },
+    {
+      "course": "CpE 304",
+      "week": "Week 7-8",
+      "ilo": "ILO1: To develop skills in analysis and design of both analog and digital circuits",
+      "clo": null,
+      "requiredClassification": null,
+      "status": "not evaluable: the ILO is mapped to no CLO",
+      "benchmarkId": "BM1-CPE304-122",
+      "inSample": null
+    },
+    {
+      "course": "CpE 304",
+      "week": "Week 7-8",
+      "ilo": "ILO6: Understand active devices, how they are used in instrument applications, and the difference between analog and digital circuits.",
+      "clo": null,
+      "requiredClassification": null,
+      "status": "not evaluable: the ILO is mapped to no CLO",
+      "benchmarkId": "BM1-CPE304-123",
+      "inSample": null
+    },
+    {
+      "course": "CpE 304",
+      "week": "Week 7-8",
+      "ilo": "ILO10: Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing.",
+      "clo": null,
+      "requiredClassification": null,
+      "status": "not evaluable: the ILO is mapped to no CLO",
+      "benchmarkId": "BM1-CPE304-124",
+      "inSample": null
+    },
+    {
+      "course": "CpE 304",
+      "week": "Week 9-11",
+      "ilo": "ILO4: Refresh and expand the understanding of basic electrical components and the basic terms used in electricity as required for instrumentation.",
+      "clo": null,
+      "requiredClassification": null,
+      "status": "not evaluable: the ILO is mapped to no CLO",
+      "benchmarkId": "BM1-CPE304-125",
+      "inSample": null
+    },
+    {
+      "course": "CpE 304",
+      "week": "Week 9-11",
+      "ilo": "ILO7: Understand the units used in measurements and familiarize with the most common methods of using the various measurement .",
+      "clo": null,
+      "requiredClassification": null,
+      "status": "not evaluable: the ILO is mapped to no CLO",
+      "benchmarkId": "BM1-CPE304-126",
+      "inSample": null
+    },
+    {
+      "course": "CpE 304",
+      "week": "Week 9-11",
+      "ilo": "ILO10: Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing.",
+      "clo": null,
+      "requiredClassification": null,
+      "status": "not evaluable: the ILO is mapped to no CLO",
+      "benchmarkId": "BM1-CPE304-127",
+      "inSample": null
+    },
+    {
+      "course": "CpE 304",
+      "week": "Week 13-14",
+      "ilo": "ILO8: Understand the different Sensors and Transducers.",
+      "clo": null,
+      "requiredClassification": null,
+      "status": "not evaluable: the ILO is mapped to no CLO",
+      "benchmarkId": "BM1-CPE304-128",
+      "inSample": null
+    },
+    {
+      "course": "CpE 304",
+      "week": "Week 13-14",
+      "ilo": "ILO10: Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing",
+      "clo": null,
+      "requiredClassification": null,
+      "status": "not evaluable: the ILO is mapped to no CLO",
+      "benchmarkId": "BM1-CPE304-129",
+      "inSample": null
+    },
+    {
+      "course": "CpE 304",
+      "week": "Week 15-16",
+      "ilo": "ILO8: Understand the different Sensors and Transducers.",
+      "clo": null,
+      "requiredClassification": null,
+      "status": "not evaluable: the ILO is mapped to no CLO",
+      "benchmarkId": "BM1-CPE304-130",
+      "inSample": null
+    },
+    {
+      "course": "CpE 304",
+      "week": "Week 17",
+      "ilo": "ILO9: Learn the basic components and control of devices and prototypes.",
+      "clo": null,
+      "requiredClassification": null,
+      "status": "not evaluable: the ILO is mapped to no CLO",
+      "benchmarkId": "BM1-CPE304-131",
+      "inSample": null
+    },
+    {
+      "course": "CpE 304",
+      "week": "Week 17",
+      "ilo": "ILO10: Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing",
+      "clo": null,
+      "requiredClassification": null,
+      "status": "not evaluable: the ILO is mapped to no CLO",
+      "benchmarkId": "BM1-CPE304-132",
+      "inSample": null
+    }
+  ]
+}

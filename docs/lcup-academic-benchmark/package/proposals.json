@@ -1,0 +1,82 @@
+[
+  {
+    "id": "BM1-S01-005-P1",
+    "caseId": "BM1-S01-005",
+    "caseHash": "43a67421eb95ce679133f053818e8042a51031965430a630992ad23f8b85fa79",
+    "program": "BSIT",
+    "origin": "synthetic-proposal",
+    "isClaudeOutput": false,
+    "text": "Review the activity against the stated topic, retaining sound text and mappings.",
+    "proposalHash": "bad6dbcfb864a723f1ae3b40dc80f5654d3ff9af4c983a05f2e592d069d0c52a"
+  },
+  {
+    "id": "BM1-S01-005-P2",
+    "caseId": "BM1-S01-005",
+    "caseHash": "43a67421eb95ce679133f053818e8042a51031965430a630992ad23f8b85fa79",
+    "program": "BSIT",
+    "origin": "synthetic-proposal",
+    "isClaudeOutput": false,
+    "text": "Replace the engineering/computing topic and CLO tags with a human anatomy examination.",
+    "proposalHash": "24c913f04808503a07792d9d5aca1dcfdc448f68353e09886526afd7a733b653"
+  },
+  {
+    "id": "BM1-S07-005-P1",
+    "caseId": "BM1-S07-005",
+    "caseHash": "99753aabbd074d7aca8c9f01e07755cc505d5515997dbd55f52de5bb1dd33a94",
+    "program": "BSIT-CYBERSECURITY",
+    "origin": "synthetic-proposal",
+    "isClaudeOutput": false,
+    "text": "Review the activity against the stated topic, retaining sound text and mappings.",
+    "proposalHash": "3c06c0aa696623bd9e287b0bf6a62e057270916d77d48cd58d699b8e49bd93e8"
+  },
+  {
+    "id": "BM1-S07-005-P2",
+    "caseId": "BM1-S07-005",
+    "caseHash": "99753aabbd074d7aca8c9f01e07755cc505d5515997dbd55f52de5bb1dd33a94",
+    "program": "BSIT-CYBERSECURITY",
+    "origin": "synthetic-proposal",
+    "isClaudeOutput": false,
+    "text": "Replace the engineering/computing topic and CLO tags with a human anatomy examination.",
+    "proposalHash": "f0301fb4d082b8a471deec85a679696497a01d0b6fa63adf7f84e07250638b8d"
+  },
+  {
+    "id": "BM1-S13-005-P1",
+    "caseId": "BM1-S13-005",
+    "caseHash": "fefe1ea94c64cea76057ec571664d2491be698dc63004065576a2d92f08e27b4",
+    "program": "BSIE",
+    "origin": "synthetic-proposal",
+    "isClaudeOutput": false,
+    "text": "Review the activity against the stated topic, retaining sound text and mappings.",
+    "proposalHash": "f42f5c851aaa2b15885738c4281eddccd1dc51df7093d09133d5a7cad958eebf"
+  },
+  {
+    "id": "BM1-S13-005-P2",
+    "caseId": "BM1-S13-005",
+    "caseHash": "fefe1ea94c64cea76057ec571664d2491be698dc63004065576a2d92f08e27b4",
+    "program": "BSIE",
+    "origin": "synthetic-proposal",
+    "isClaudeOutput": false,
+    "text": "Replace the engineering/computing topic and CLO tags with a human anatomy examination.",
+    "proposalHash": "e3b9673c0d14fa9c75e66e2f08eb58de887c09b9868aa6e50aeb51e69b788b94"
+  },
+  {
+    "id": "BM1-S19-005-P1",
+    "caseId": "BM1-S19-005",
+    "caseHash": "884606c69f11fc651dde4e83a90d09dce775197c83f357a0bf5022a488464459",
+    "program": "BSCPE",
+    "origin": "synthetic-proposal",
+    "isClaudeOutput": false,
+    "text": "Review the activity against the stated topic, retaining sound text and mappings.",
+    "proposalHash": "22f6feea27c9cec396d7a970bd1a0f65ef16c5ef9e155d4059da985e4f55dfc9"
+  },
+  {
+    "id": "BM1-S19-005-P2",
+    "caseId": "BM1-S19-005",
+    "caseHash": "884606c69f11fc651dde4e83a90d09dce775197c83f357a0bf5022a488464459",
+    "program": "BSCPE",
+    "origin": "synthetic-proposal",
+    "isClaudeOutput": false,
+    "text": "Replace the engineering/computing topic and CLO tags with a human anatomy examination.",
+    "proposalHash": "8de32f6d54b9a2115b96fc8b98d412e1eaf8d020e3bf657fe0a3792c09cbfac2"
+  }
+]

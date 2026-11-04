@@ -1,0 +1,607 @@
+{
+  "content": {
+    "meta": {
+      "courseId": 25,
+      "code": "MA 7",
+      "title": "DIFFERENTIAL CALCULUS",
+      "program": "BSIE",
+      "lecture": "3",
+      "lab": "0",
+      "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+      "yearLevel": "1",
+      "curriculumYear": "2022-2023"
+    },
+    "outcomes": {
+      "vision": "Moved by the Spirit of the Risen Christ, La Consolacion University Philippines, rooted in Gospel values as a Catholic Augustinian-Marian institution, envisions to become a catalyst for the holistic transformation of all persons and communities.",
+      "mission": {
+        "lead": "LCUP commits to generate and make available to all persons and communities’ programs and services that will enable them to:",
+        "items": [
+          "exhibit academic and technical competence in their respective areas of discipline in the local and international environment;",
+          "demonstrate their knowledge, critical thinking and creativity by exploring the various avenues of learning and searching for truth;",
+          "manifest their willingness to serve specially the marginalized sector of our society;",
+          "demonstrate productivity in various areas of learning as responsible citizens of the society; and",
+          "live the Gospel values in the varied aspects of their personal and professional lives."
+        ]
+      },
+      "egas": [
+        {
+          "no": 1,
+          "name": "Critical and Creative thinker",
+          "short": "Critical and Creative Thinker"
+        },
+        {
+          "no": 2,
+          "name": "Competent Catholic Augustinian-Marian Professional",
+          "short": "Competent Professional"
+        },
+        {
+          "no": 3,
+          "name": "Socially Responsive Steward",
+          "short": "Socially Responsive Steward"
+        },
+        {
+          "no": 4,
+          "name": "Transformative Lifelong learner",
+          "short": "Transformative Lifelong Learner"
+        }
+      ],
+      "pos": [
+        {
+          "no": 1,
+          "short": "TEST ONLY: Mathematical analysis",
+          "text": "Test proposal, not an official BSIE Program Outcome: Apply mathematics and engineering reasoning to analyze industrial-system problems.",
+          "egas": [
+            1
+          ]
+        },
+        {
+          "no": 2,
+          "short": "TEST ONLY: Responsible practice",
+          "text": "Test proposal, not an official BSIE Program Outcome: Communicate engineering decisions ethically and consider their effects on communities.",
+          "egas": [
+            2,
+            3
+          ]
+        }
+      ]
+    },
+    "description": [
+      {
+        "id": "bsie_test_description",
+        "t": "DELIBERATELY MISALIGNED TEST VERSION: This teaching draft demonstrates constructive alignment for Differential Calculus. Students analyze engineering functions, limits and continuity; calculate and verify derivatives; and construct related-rates and optimization models. They explain their mathematical reasoning and communicate engineering recommendations with honest limitations and consideration for workers and communities. Weekly practice and assessment use the same mathematical objectives. Program Outcomes labeled TEST ONLY are provisional examples, not official institutional references. This draft must not be submitted as an officially verified syllabus. Intentional test errors: cosmetic-brand, costume, floral-decoration and cooking-vocabulary CLOs are assigned to calculus ILOs; dance activities and flower-name recall assessments do not measure the mathematical objectives."
+      }
+    ],
+    "clos": [
+      {
+        "id": "bsie_test_clo1",
+        "title": "Intentional mismatch 1",
+        "level": "Introductory",
+        "statement": "Memorize and recite cosmetic brand names from a product catalog.",
+        "pos": [
+          1
+        ],
+        "egas": [
+          1
+        ]
+      },
+      {
+        "id": "bsie_test_clo2",
+        "title": "Intentional mismatch 2",
+        "level": "Enabling",
+        "statement": "Identify costume colors in a ballroom-dance photograph.",
+        "pos": [
+          1
+        ],
+        "egas": [
+          1
+        ]
+      },
+      {
+        "id": "bsie_test_clo3",
+        "title": "Intentional mismatch 3",
+        "level": "Demonstrating",
+        "statement": "Reproduce a decorative flower bouquet by matching its colors and shapes.",
+        "pos": [
+          1,
+          2
+        ],
+        "egas": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "id": "bsie_test_clo4",
+        "title": "Intentional mismatch 4",
+        "level": "Integration of Values",
+        "statement": "Recall the names of kitchen utensils and cake decorations from a picture list.",
+        "pos": [
+          1,
+          2
+        ],
+        "egas": [
+          1,
+          2,
+          3
+        ]
+      }
+    ],
+    "plan": [
+      {
+        "id": "ma7_101_week1",
+        "week": "1",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "bsie_test_ilo1",
+            "text": "Represent an engineering quantity as a function and identify its domain and units.",
+            "tags": [
+              "clo:bsie_test_clo1"
+            ]
+          }
+        ],
+        "contents": "Functions and engineering quantities",
+        "activities": "Practice ballroom-dance steps and select costume colors. No calculus or engineering calculations are performed.",
+        "tasks": "Multiple-choice recall quiz naming flowers and costume colors. No mathematical reasoning, derivative calculation or engineering model is assessed.",
+        "values": "Community-orientedness: during the functions and engineering quantities activity, identify who could be affected by an incorrect engineering calculation, peer-check the assumptions and explain how accurate, honest results protect workers and communities."
+      },
+      {
+        "id": "ma7_101_week2",
+        "week": "2",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "bsie_test_ilo2",
+            "text": "Interpret graphs and transformations of functions used in engineering models.",
+            "tags": [
+              "clo:bsie_test_clo1"
+            ]
+          }
+        ],
+        "contents": "Graphs and transformations",
+        "activities": "Practice ballroom-dance steps and select costume colors. No calculus or engineering calculations are performed.",
+        "tasks": "Multiple-choice recall quiz naming flowers and costume colors. No mathematical reasoning, derivative calculation or engineering model is assessed.",
+        "values": "Community-orientedness: during the graphs and transformations activity, identify who could be affected by an incorrect engineering calculation, peer-check the assumptions and explain how accurate, honest results protect workers and communities."
+      },
+      {
+        "id": "ma7_101_week3",
+        "week": "3",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "bsie_test_ilo3",
+            "text": "Estimate limits from numerical tables and graphs and explain the result.",
+            "tags": [
+              "clo:bsie_test_clo1"
+            ]
+          }
+        ],
+        "contents": "Limits from tables and graphs",
+        "activities": "Practice ballroom-dance steps and select costume colors. No calculus or engineering calculations are performed.",
+        "tasks": "Multiple-choice recall quiz naming flowers and costume colors. No mathematical reasoning, derivative calculation or engineering model is assessed.",
+        "values": "Community-orientedness: during the limits from tables and graphs activity, identify who could be affected by an incorrect engineering calculation, peer-check the assumptions and explain how accurate, honest results protect workers and communities."
+      },
+      {
+        "id": "ma7_101_week4",
+        "week": "4",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "bsie_test_ilo4",
+            "text": "Evaluate limits using factorization, simplification and appropriate limit laws.",
+            "tags": [
+              "clo:bsie_test_clo1"
+            ]
+          }
+        ],
+        "contents": "Algebraic limit techniques",
+        "activities": "Practice ballroom-dance steps and select costume colors. No calculus or engineering calculations are performed.",
+        "tasks": "Multiple-choice recall quiz naming flowers and costume colors. No mathematical reasoning, derivative calculation or engineering model is assessed.",
+        "values": "Community-orientedness: during the algebraic limit techniques activity, identify who could be affected by an incorrect engineering calculation, peer-check the assumptions and explain how accurate, honest results protect workers and communities."
+      },
+      {
+        "id": "ma7_101_week5",
+        "week": "5",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "bsie_test_ilo5",
+            "text": "Analyze continuity at a point and identify the source of a discontinuity.",
+            "tags": [
+              "clo:bsie_test_clo1"
+            ]
+          }
+        ],
+        "contents": "Continuity",
+        "activities": "Practice ballroom-dance steps and select costume colors. No calculus or engineering calculations are performed.",
+        "tasks": "Multiple-choice recall quiz naming flowers and costume colors. No mathematical reasoning, derivative calculation or engineering model is assessed.",
+        "values": "Community-orientedness: during the continuity activity, identify who could be affected by an incorrect engineering calculation, peer-check the assumptions and explain how accurate, honest results protect workers and communities."
+      },
+      {
+        "id": "ma7_101_week6",
+        "week": "6",
+        "kind": "exam",
+        "ilos": [
+          {
+            "id": "ma7_101_ilo6",
+            "text": "",
+            "tags": []
+          }
+        ],
+        "contents": "PRELIM EXAMINATION",
+        "activities": "Individual written assessment.",
+        "tasks": "Solve calculus problems and explain mathematical reasoning.",
+        "values": "Interiority: reflect honestly on individual reasoning."
+      },
+      {
+        "id": "ma7_101_week7",
+        "week": "7",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "bsie_test_ilo7",
+            "text": "Compute a derivative using the limit definition and interpret the rate of change.",
+            "tags": [
+              "clo:bsie_test_clo2"
+            ]
+          }
+        ],
+        "contents": "Derivative from first principles",
+        "activities": "Practice ballroom-dance steps and select costume colors. No calculus or engineering calculations are performed.",
+        "tasks": "Multiple-choice recall quiz naming flowers and costume colors. No mathematical reasoning, derivative calculation or engineering model is assessed.",
+        "values": "Community-orientedness: during the derivative from first principles activity, identify who could be affected by an incorrect engineering calculation, peer-check the assumptions and explain how accurate, honest results protect workers and communities."
+      },
+      {
+        "id": "ma7_101_week8",
+        "week": "8",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "bsie_test_ilo8",
+            "text": "Apply differentiation rules to polynomial functions and verify the result.",
+            "tags": [
+              "clo:bsie_test_clo2"
+            ]
+          }
+        ],
+        "contents": "Power and sum rules",
+        "activities": "Practice ballroom-dance steps and select costume colors. No calculus or engineering calculations are performed.",
+        "tasks": "Multiple-choice recall quiz naming flowers and costume colors. No mathematical reasoning, derivative calculation or engineering model is assessed.",
+        "values": "Community-orientedness: during the power and sum rules activity, identify who could be affected by an incorrect engineering calculation, peer-check the assumptions and explain how accurate, honest results protect workers and communities."
+      },
+      {
+        "id": "ma7_101_week9",
+        "week": "9",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "bsie_test_ilo9",
+            "text": "Differentiate products and quotients and explain the solution steps.",
+            "tags": [
+              "clo:bsie_test_clo2"
+            ]
+          }
+        ],
+        "contents": "Product and quotient rules",
+        "activities": "Practice ballroom-dance steps and select costume colors. No calculus or engineering calculations are performed.",
+        "tasks": "Multiple-choice recall quiz naming flowers and costume colors. No mathematical reasoning, derivative calculation or engineering model is assessed.",
+        "values": "Community-orientedness: during the product and quotient rules activity, identify who could be affected by an incorrect engineering calculation, peer-check the assumptions and explain how accurate, honest results protect workers and communities."
+      },
+      {
+        "id": "ma7_101_week10",
+        "week": "10",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "bsie_test_ilo10",
+            "text": "Analyze a composite function and apply the chain rule correctly.",
+            "tags": [
+              "clo:bsie_test_clo2"
+            ]
+          }
+        ],
+        "contents": "Chain rule",
+        "activities": "Practice ballroom-dance steps and select costume colors. No calculus or engineering calculations are performed.",
+        "tasks": "Multiple-choice recall quiz naming flowers and costume colors. No mathematical reasoning, derivative calculation or engineering model is assessed.",
+        "values": "Community-orientedness: during the chain rule activity, identify who could be affected by an incorrect engineering calculation, peer-check the assumptions and explain how accurate, honest results protect workers and communities."
+      },
+      {
+        "id": "ma7_101_week11",
+        "week": "11",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "bsie_test_ilo11",
+            "text": "Apply implicit differentiation to determine a slope in a constrained relation.",
+            "tags": [
+              "clo:bsie_test_clo2"
+            ]
+          }
+        ],
+        "contents": "Implicit differentiation",
+        "activities": "Practice ballroom-dance steps and select costume colors. No calculus or engineering calculations are performed.",
+        "tasks": "Multiple-choice recall quiz naming flowers and costume colors. No mathematical reasoning, derivative calculation or engineering model is assessed.",
+        "values": "Community-orientedness: during the implicit differentiation activity, identify who could be affected by an incorrect engineering calculation, peer-check the assumptions and explain how accurate, honest results protect workers and communities."
+      },
+      {
+        "id": "ma7_101_week12",
+        "week": "12",
+        "kind": "exam",
+        "ilos": [
+          {
+            "id": "ma7_101_ilo12",
+            "text": "",
+            "tags": []
+          }
+        ],
+        "contents": "MIDTERM EXAMINATION",
+        "activities": "Individual written assessment.",
+        "tasks": "Solve calculus problems and explain mathematical reasoning.",
+        "values": "Interiority: reflect honestly on individual reasoning."
+      },
+      {
+        "id": "ma7_101_week13",
+        "week": "13",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "bsie_test_ilo13",
+            "text": "Compute and interpret derivatives of trigonometric functions.",
+            "tags": [
+              "clo:bsie_test_clo3"
+            ]
+          }
+        ],
+        "contents": "Trigonometric derivatives",
+        "activities": "Practice ballroom-dance steps and select costume colors. No calculus or engineering calculations are performed.",
+        "tasks": "Multiple-choice recall quiz naming flowers and costume colors. No mathematical reasoning, derivative calculation or engineering model is assessed.",
+        "values": "Community-orientedness: during the trigonometric derivatives activity, identify who could be affected by an incorrect engineering calculation, peer-check the assumptions and explain how accurate, honest results protect workers and communities."
+      },
+      {
+        "id": "ma7_101_week14",
+        "week": "14",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "bsie_test_ilo14",
+            "text": "Differentiate exponential and logarithmic engineering models.",
+            "tags": [
+              "clo:bsie_test_clo3"
+            ]
+          }
+        ],
+        "contents": "Exponential and logarithmic derivatives",
+        "activities": "Practice ballroom-dance steps and select costume colors. No calculus or engineering calculations are performed.",
+        "tasks": "Multiple-choice recall quiz naming flowers and costume colors. No mathematical reasoning, derivative calculation or engineering model is assessed.",
+        "values": "Community-orientedness: during the exponential and logarithmic derivatives activity, identify who could be affected by an incorrect engineering calculation, peer-check the assumptions and explain how accurate, honest results protect workers and communities."
+      },
+      {
+        "id": "ma7_101_week15",
+        "week": "15",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "bsie_test_ilo15",
+            "text": "Construct a related-rates model and solve for an unknown rate with consistent units.",
+            "tags": [
+              "clo:bsie_test_clo3"
+            ]
+          }
+        ],
+        "contents": "Related rates",
+        "activities": "Practice ballroom-dance steps and select costume colors. No calculus or engineering calculations are performed.",
+        "tasks": "Multiple-choice recall quiz naming flowers and costume colors. No mathematical reasoning, derivative calculation or engineering model is assessed.",
+        "values": "Community-orientedness: during the related rates activity, identify who could be affected by an incorrect engineering calculation, peer-check the assumptions and explain how accurate, honest results protect workers and communities."
+      },
+      {
+        "id": "ma7_101_week16",
+        "week": "16",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "bsie_test_ilo16",
+            "text": "Evaluate and communicate a calculus-based engineering recommendation using verified derivatives, explicit assumptions, honest limitations and an explanation of its impact on workers and communities.",
+            "tags": [
+              "clo:bsie_test_clo4"
+            ]
+          }
+        ],
+        "contents": "Curve analysis",
+        "activities": "Practice ballroom-dance steps and select costume colors. No calculus or engineering calculations are performed.",
+        "tasks": "Multiple-choice recall quiz naming flowers and costume colors. No mathematical reasoning, derivative calculation or engineering model is assessed.",
+        "values": "Community-orientedness: during the curve analysis activity, identify who could be affected by an incorrect engineering calculation, peer-check the assumptions and explain how accurate, honest results protect workers and communities."
+      },
+      {
+        "id": "ma7_101_week17",
+        "week": "17",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "bsie_test_ilo17",
+            "text": "Design an optimization model for a constrained engineering decision and justify the selected optimum.",
+            "tags": [
+              "clo:bsie_test_clo3"
+            ]
+          }
+        ],
+        "contents": "Optimization models",
+        "activities": "Practice ballroom-dance steps and select costume colors. No calculus or engineering calculations are performed.",
+        "tasks": "Multiple-choice recall quiz naming flowers and costume colors. No mathematical reasoning, derivative calculation or engineering model is assessed.",
+        "values": "Community-orientedness: during the optimization models activity, identify who could be affected by an incorrect engineering calculation, peer-check the assumptions and explain how accurate, honest results protect workers and communities."
+      },
+      {
+        "id": "ma7_101_week18",
+        "week": "18",
+        "kind": "exam",
+        "ilos": [
+          {
+            "id": "ma7_101_ilo18",
+            "text": "",
+            "tags": []
+          }
+        ],
+        "contents": "FINAL EXAMINATION",
+        "activities": "Individual written assessment.",
+        "tasks": "Solve calculus problems and explain mathematical reasoning.",
+        "values": "Interiority: reflect honestly on individual reasoning."
+      }
+    ],
+    "reqs": [
+      {
+        "id": "ma7_101_req1",
+        "t": "Complete weekly differential-calculus problem sets with solution steps."
+      },
+      {
+        "id": "ma7_101_req2",
+        "t": "Participate in mathematical modeling and peer explanation exercises."
+      },
+      {
+        "id": "ma7_101_req3",
+        "t": "Submit a related-rates and optimization portfolio with assumptions and interpretations."
+      },
+      {
+        "id": "ma7_101_req4",
+        "t": "Complete preliminary, midterm and final examinations."
+      }
+    ],
+    "refs": {
+      "books": {
+        "na": false,
+        "items": [
+          {
+            "id": "ma7_101_book",
+            "t": "Stewart, J. (2016). Calculus: Early transcendentals (8th ed.). Cengage Learning."
+          }
+        ]
+      },
+      "program": {
+        "na": true,
+        "items": []
+      },
+      "online": {
+        "na": true,
+        "items": []
+      },
+      "electronics": {
+        "na": true,
+        "items": []
+      }
+    },
+    "grading": {
+      "rows": [
+        {
+          "id": "ma7_101_grade1",
+          "label": "Problem sets and modeling portfolio",
+          "abbr": "PS",
+          "pct": 40
+        },
+        {
+          "id": "ma7_101_grade2",
+          "label": "Quizzes and participation",
+          "abbr": "QP",
+          "pct": 20
+        },
+        {
+          "id": "ma7_101_grade3",
+          "label": "Term examinations",
+          "abbr": "TE",
+          "pct": 40
+        }
+      ],
+      "override": {
+        "on": false,
+        "term": "",
+        "final": ""
+      }
+    },
+    "schemaVersion": 3,
+    "catalog": {
+      "institution": {
+        "vision": "Moved by the Spirit of the Risen Christ, La Consolacion University Philippines, rooted in Gospel values as a Catholic Augustinian-Marian institution, envisions to become a catalyst for the holistic transformation of all persons and communities.",
+        "mission": {
+          "lead": "LCUP commits to generate and make available to all persons and communities’ programs and services that will enable them to:",
+          "items": [
+            "exhibit academic and technical competence in their respective areas of discipline in the local and international environment;",
+            "demonstrate their knowledge, critical thinking and creativity by exploring the various avenues of learning and searching for truth;",
+            "manifest their willingness to serve specially the marginalized sector of our society;",
+            "demonstrate productivity in various areas of learning as responsible citizens of the society; and",
+            "live the Gospel values in the varied aspects of their personal and professional lives."
+          ]
+        },
+        "egas": [
+          {
+            "no": 1,
+            "name": "Critical and Creative thinker",
+            "short": "Critical and Creative Thinker"
+          },
+          {
+            "no": 2,
+            "name": "Competent Catholic Augustinian-Marian Professional",
+            "short": "Competent Professional"
+          },
+          {
+            "no": 3,
+            "name": "Socially Responsive Steward",
+            "short": "Socially Responsive Steward"
+          },
+          {
+            "no": 4,
+            "name": "Transformative Lifelong learner",
+            "short": "Transformative Lifelong Learner"
+          }
+        ]
+      },
+      "program": {
+        "code": "BSIE",
+        "name": "BS Industrial Engineering",
+        "egas": [
+          {
+            "no": 1,
+            "name": "Critical and Creative thinker",
+            "short": "Critical and Creative Thinker"
+          },
+          {
+            "no": 2,
+            "name": "Competent Catholic Augustinian-Marian Professional",
+            "short": "Competent Professional"
+          },
+          {
+            "no": 3,
+            "name": "Socially Responsive Steward",
+            "short": "Socially Responsive Steward"
+          },
+          {
+            "no": 4,
+            "name": "Transformative Lifelong learner",
+            "short": "Transformative Lifelong Learner"
+          }
+        ],
+        "pos": [
+          {
+            "no": 1,
+            "short": "TEST ONLY: Mathematical analysis",
+            "text": "Test proposal, not an official BSIE Program Outcome: Apply mathematics and engineering reasoning to analyze industrial-system problems.",
+            "egas": [
+              1
+            ]
+          },
+          {
+            "no": 2,
+            "short": "TEST ONLY: Responsible practice",
+            "text": "Test proposal, not an official BSIE Program Outcome: Communicate engineering decisions ethically and consider their effects on communities.",
+            "egas": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "subjectId": 25,
+      "savedAt": "2026-10-22T03:40:00.290Z"
+    }
+  },
+  "testOnly": true,
+  "variant": "misaligned",
+  "syllabusId": 101
+}

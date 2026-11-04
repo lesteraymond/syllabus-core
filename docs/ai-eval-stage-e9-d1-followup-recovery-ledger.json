@@ -1,0 +1,56 @@
+{
+  "requests": 4,
+  "charged": 0.01642448,
+  "conservative": 0.0176706,
+  "accounting": "reconcile",
+  "transient": 1,
+  "invalid": 0,
+  "unproductive": 0,
+  "entries": [
+    {
+      "n": 1,
+      "kind": "key-check",
+      "at": "2026-10-26T19:56:08.716Z",
+      "status": 200
+    },
+    {
+      "n": 2,
+      "kind": "price-lookup",
+      "at": "2026-10-26T19:56:09.276Z",
+      "status": 200
+    },
+    {
+      "n": 3,
+      "kind": "model",
+      "at": "2026-10-26T19:56:09.361Z",
+      "status": 200,
+      "error": "timeout",
+      "worst": 0.0156567,
+      "charged": 0.0156567,
+      "accounting": "worst_case",
+      "conservativeCharge": 0.0156567,
+      "ids": [
+        "vu-syseng-e7-name-only",
+        "vu-syseng-e7-opportunity",
+        "vu-syseng-e7-demonstrated",
+        "vu-syseng-e7-insufficient-evidence"
+      ]
+    },
+    {
+      "n": 4,
+      "kind": "model",
+      "at": "2026-10-26T19:57:39.392Z",
+      "status": 200,
+      "worst": 0.0156276,
+      "charged": 0.00076778,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.0020139,
+      "ids": [
+        "vu-sensors-e7-name-only",
+        "vu-sensors-e7-opportunity",
+        "vu-sensors-e7-demonstrated",
+        "vu-sensors-e7-insufficient-evidence"
+      ]
+    }
+  ]
+}

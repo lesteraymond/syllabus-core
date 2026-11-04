@@ -1,0 +1,74 @@
+{
+  "version": "lcup-academic-benchmark-1",
+  "benchmarkHash": "ebd12920a890971b8c7fb481cc6bc9b469ec7dd4c2001134f6833cc31009bbf7",
+  "files": [
+    {
+      "file": "cases.json",
+      "sha256": "6d2a6ab6dea98c46c2f83680a3633d69a7b9fa2a7c219fc414f09fbbf571b2f6"
+    },
+    {
+      "file": "faculty-part-a.responses.json",
+      "sha256": "e74cbf6084324ee825feb54dea1c5623ed5350e1d697b286cdf1dd6f58195512"
+    },
+    {
+      "file": "faculty-part-b.responses.json",
+      "sha256": "c5b0900efbfedaf243bb8574c2fa1bac525f17c611f6530561e2b58e862b5fa4"
+    },
+    {
+      "file": "adjudication-template.json",
+      "sha256": "d1038bfa25a212e18860eb258d51a8500072782ce412cb6fc011e2f2124616d9"
+    },
+    {
+      "file": "proposals.json",
+      "sha256": "fe0407db35d9368abecc7b5fa3550d0e38e1575542d3f176ac00c7d5cbaa2eea"
+    },
+    {
+      "file": "coordinator-only.json",
+      "sha256": "e40b9b0c6c5773bf8188820cf9004d3ea0620415ebf6d10799ca25d16e8c29e3"
+    },
+    {
+      "file": "reference-verification.json",
+      "sha256": "9ad411fd494659110d235d6290d71bddea24aa8963a742c23c992f4de0a56ae6"
+    },
+    {
+      "file": "faculty-part-a.responses.csv",
+      "sha256": "0136780e01ebb9f123139778273ac4d8924fbc35617f8f376e83fbe78b6edaad"
+    },
+    {
+      "file": "faculty-part-b.responses.csv",
+      "sha256": "cdb676d7edf3bc57e7e3c6628e4112df26401cbb96a2faeacd40cfedf8e59bcd"
+    },
+    {
+      "file": "faculty-part-b.html",
+      "sha256": "1f755006b6b0c887043d75c9d182762ee1be7fab0326f66c4f49559f8432e09f"
+    },
+    {
+      "file": "model-results.template.json",
+      "sha256": "165e9c5c1fd380f7114b822b3ca06bdbdbc080fe9d6ccac2aec660f9c7d45c20"
+    },
+    {
+      "file": "model-evidence-review.template.json",
+      "sha256": "1054ebb14a42c258ca79c83291b62250442d052de9e06a825be8832e150dbbbc"
+    },
+    {
+      "file": "pilot-selection.json",
+      "sha256": "8aa3909a676729f09622d6f61e59b485c868864ef8cbe7693cf2c4728872297c"
+    },
+    {
+      "file": "faculty-BSIT.html",
+      "sha256": "ae5ecda66c37ac7c36f4a05a1dac5b71b831399707abe13daf30e251be43f84e"
+    },
+    {
+      "file": "faculty-BSIT-CYBERSECURITY.html",
+      "sha256": "f65177ec0545e055428fa253ea5a7b94d697d2345c44e22595bebe980c6ca2f3"
+    },
+    {
+      "file": "faculty-BSIE.html",
+      "sha256": "c1a77147d16ff806074886ba3b65b62b102de0ee1296ac0d09d7fba92d6314a3"
+    },
+    {
+      "file": "faculty-BSCPE.html",
+      "sha256": "e3f01f5935dcfb1ca1f91ab60608a47b40be112c5abab63f0897de4736f7df6d"
+    }
+  ]
+}

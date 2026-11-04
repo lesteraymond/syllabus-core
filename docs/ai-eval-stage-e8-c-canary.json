@@ -1,0 +1,113 @@
+{
+  "stopped": "the key check failed (fetch failed)",
+  "usage": {
+    "requests": 1,
+    "thisRun": 1,
+    "model": 0,
+    "priceLookups": 0,
+    "keyChecks": 1,
+    "invalidAnswers": 0,
+    "unproductiveInARow": 0,
+    "transient": 1,
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "cachedTokens": 0,
+    "reportedCost": 0,
+    "charged": 0,
+    "accounting": {
+      "rule": "reconcile",
+      "requests": {
+        "reconciled": 0,
+        "conservative": 0,
+        "worst_case": 0,
+        "refused": 0
+      },
+      "chargedConservatively": 0
+    },
+    "warnings": [],
+    "limits": {
+      "maxRequests": 15,
+      "maxCost": 0.03,
+      "maxTransient": 3,
+      "maxInvalid": 3,
+      "warnInvalid": 2,
+      "maxUnproductive": 3,
+      "maxTokens": null
+    },
+    "stopped": "the key check failed (fetch failed)"
+  },
+  "relationshipMetrics": {
+    "planned": 8,
+    "attempted": 0,
+    "neverAttempted": 8,
+    "verified": 0,
+    "recovered": 0,
+    "unresolved": 0,
+    "unresolvedRate": null,
+    "coverage": 0,
+    "attemptedShare": 0,
+    "firstAttempt": {
+      "answered": 0,
+      "refused": 0,
+      "validationFailureRate": null,
+      "noAnswerFirst": 0
+    },
+    "rawResponseErrors": {
+      "answers": 0,
+      "invalidAnswers": 0,
+      "refusedJudgements": 0,
+      "requestsWithoutAnswer": 0
+    },
+    "aspectCoverage": null
+  },
+  "completion": {
+    "maxUnresolved": 0.2,
+    "unresolvedRate": null,
+    "coverage": 0,
+    "stopped": "the key check failed (fetch failed)",
+    "state": "incomplete",
+    "usableForAgreement": false,
+    "reason": "8 of 8 planned relationships were never attempted (stopped: the key check failed (fetch failed)); they are not evaluated"
+  },
+  "dataset": {
+    "name": "stage-c",
+    "version": "stage-c-2",
+    "split": "all",
+    "reviewStatus": "unreviewed",
+    "selection": {
+      "parentItems": 28,
+      "selectedIds": [
+        "af-prog1-good",
+        "af-prog1-irrelevant",
+        "af-sensors-passive",
+        "as-prog1-good",
+        "as-prog1-recall-quiz",
+        "as-syseng-essay",
+        "af-prog1-conceptual-lecture-ok",
+        "as-prog1-too-high"
+      ]
+    }
+  },
+  "configuration": {
+    "stageFlags": {
+      "a": false,
+      "b": false,
+      "b3": false,
+      "b4": false,
+      "c1": true,
+      "c2": true,
+      "d1": false,
+      "d2": false
+    },
+    "promptVariant": "current",
+    "trim": false,
+    "minItems": false,
+    "timeoutMs": 90000
+  },
+  "isolation": {
+    "dataModulesLoaded": []
+  },
+  "model": "openrouter/minimax/minimax-m3.1-flash",
+  "promptVersion": "alignment-12c1c2-r7",
+  "ranAt": "2026-10-26T07:22:49.895Z"
+}

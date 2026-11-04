@@ -1,0 +1,996 @@
+{
+  "stage": "E.3 smoke (Phase 1)",
+  "ranAt": "2026-10-25T07:42:14.603Z",
+  "mode": "live",
+  "model": "openrouter/minimax/minimax-m3.1-flash",
+  "promptVersion": "alignment-12ab34c1c2d1d2-r4",
+  "variant": "current",
+  "promptSha256": "cf78e71331c82b8f013f530d16ca0c438cc60d30d5531f90c1231cdd31cc0a95",
+  "promptTrimmed": false,
+  "stagesOnInThisProcessOnly": {
+    "a": true,
+    "b": true,
+    "b3": true,
+    "b4": true,
+    "c1": true,
+    "c2": true,
+    "d1": true,
+    "d2": true
+  },
+  "limits": {
+    "maxRequests": 10,
+    "maxCost": 0.05,
+    "maxTokens": "production (8192)",
+    "sequential": true
+  },
+  "stopped": "request cap reached (10 provider requests)",
+  "prices": {
+    "prompt": 3e-7,
+    "completion": 0.0000012,
+    "reasoning": 0,
+    "request": 0,
+    "cacheWrite": 0,
+    "endpoints": [
+      {
+        "provider": "Relace",
+        "status": 0,
+        "prompt": 9e-8,
+        "completion": 5e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "InferenceNet",
+        "status": 0,
+        "prompt": 1e-7,
+        "completion": 5.5e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "InferenceNet",
+        "status": -5,
+        "prompt": 1e-7,
+        "completion": 5.5e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "GMICloud",
+        "status": 0,
+        "prompt": 1.425e-7,
+        "completion": 5.7e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.425e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "DigitalOcean",
+        "status": 0,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Novita",
+        "status": 0,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "Nebius",
+        "status": 0,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Wafer",
+        "status": 0,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "ModelRun",
+        "status": 0,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Parasail",
+        "status": 0,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Together",
+        "status": 0,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Minimax",
+        "status": 0,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "SambaNova",
+        "status": 0,
+        "prompt": 3e-7,
+        "completion": 0.0000012,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 3e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      }
+    ],
+    "readAt": "2026-10-25T07:41:51.922Z"
+  },
+  "requests": {
+    "total": 10,
+    "model": 8,
+    "priceLookups": 1,
+    "attemptsSent": 8,
+    "retries": 7
+  },
+  "responses": {
+    "verified": 1,
+    "invalid": 7,
+    "errors": 0,
+    "schemaProblems": 0,
+    "truncated": 0
+  },
+  "usage": {
+    "promptTokens": 52253,
+    "completionTokens": 4581,
+    "reasoningTokens": 0,
+    "cachedTokens": 38528,
+    "reportedCost": 0.00538527,
+    "charged": 0.0211731
+  },
+  "items": [
+    {
+      "id": "cc-prog1-offsubject",
+      "course": "prog1",
+      "type": "Course-CLO",
+      "dataset": "stage-a@stage-a-2",
+      "category": "off-subject",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "NOT_ALIGNED"
+      ],
+      "why": "A computing competence of a different course (databases); the description does not support it.",
+      "verdict": "NOT_ALIGNED",
+      "matchesProvisional": true,
+      "schemaValid": true,
+      "evidence": {
+        "source": "exact",
+        "target": "exact",
+        "valid": true
+      },
+      "recommendation": {
+        "status": "proposed rewrite",
+        "draft": "Design and write Java programs that apply fundamental programming constructs to solve simple real-world problems.",
+        "safety": []
+      },
+      "aspects": {
+        "required": {},
+        "responsible": "none",
+        "invalid": [],
+        "missing": [],
+        "contradictions": [],
+        "offType": [
+          "evidence=vague",
+          "carriedBy=none",
+          "coreValue=none",
+          "integration=absent",
+          "basis=title_and_source"
+        ],
+        "expected": null
+      },
+      "bloom": {
+        "source": "N/A",
+        "target": "Analyze"
+      },
+      "explanation": "The CLO asks for relational database schema design and normalization, which belongs to database systems, not to the Java programming fundamentals this course (title, description and year level) teaches; it also introduces a performance (3NF normalization) well beyond an introductory programming course. The competency does not belong to this course's subject, so the CLO must be rewritten in this subject.",
+      "attempts": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "retries": 6,
+      "verifiedInRequest": 9
+    },
+    {
+      "id": "cp-bsit-wrongpo",
+      "course": "prog1",
+      "type": "CLO-PO",
+      "dataset": "stage-a@stage-a-2",
+      "category": "wrong-po-mapping",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "NOT_ALIGNED"
+      ],
+      "why": "A programming outcome mapped to the PO on Filipino historical and cultural heritage: an incorrect mapping.",
+      "verdict": "NOT VERIFIED",
+      "matchesProvisional": null,
+      "schemaValid": null,
+      "evidence": null,
+      "recommendation": {
+        "status": "not verified"
+      },
+      "aspects": null,
+      "bloom": null,
+      "explanation": null,
+      "attempts": [
+        1,
+        2,
+        3,
+        4,
+        8,
+        9
+      ],
+      "retries": 4,
+      "verifiedInRequest": null
+    },
+    {
+      "id": "wi-prog1-aligned",
+      "course": "prog1",
+      "type": "Content-ILO",
+      "dataset": "stage-b@stage-b-1",
+      "category": "clear-positive",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "ALIGNED"
+      ],
+      "why": "Observable performance on exactly this week's content.",
+      "verdict": "ALIGNED",
+      "matchesProvisional": true,
+      "schemaValid": true,
+      "evidence": {
+        "source": "exact",
+        "target": "exact",
+        "valid": true
+      },
+      "recommendation": {
+        "status": "none needed"
+      },
+      "aspects": {
+        "required": {},
+        "responsible": "none",
+        "invalid": [],
+        "missing": [],
+        "contradictions": [],
+        "offType": [
+          "evidence=vague",
+          "carriedBy=none",
+          "coreValue=none",
+          "integration=absent",
+          "basis=title_and_source"
+        ],
+        "expected": null
+      },
+      "bloom": {
+        "source": "N/A",
+        "target": "Apply"
+      },
+      "explanation": "The ILO is directly about this week's conditional statements, states an observable performance (\"Develop and test Java programs that use if-else and switch statements to make decisions\") at Apply level, and the week's content (if, if-else, nested if, switch) can teach it.",
+      "attempts": [
+        1,
+        2
+      ],
+      "retries": 1,
+      "verifiedInRequest": 4
+    },
+    {
+      "id": "ic-prog1-wrongclo",
+      "course": "prog1",
+      "type": "ILO-CLO",
+      "dataset": "stage-b3@stage-b3-1",
+      "category": "wrong-clo",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "PARTIALLY_ALIGNED",
+        "NOT_ALIGNED"
+      ],
+      "why": "A sound ILO, but it builds CLO 1, not the values CLO 4.",
+      "verdict": "NOT VERIFIED",
+      "matchesProvisional": null,
+      "schemaValid": null,
+      "evidence": null,
+      "recommendation": {
+        "status": "not verified"
+      },
+      "aspects": null,
+      "bloom": null,
+      "explanation": null,
+      "attempts": [
+        1,
+        2,
+        3
+      ],
+      "retries": 2,
+      "verifiedInRequest": null
+    },
+    {
+      "id": "af-prog1-good",
+      "course": "prog1",
+      "type": "Activity-fit",
+      "dataset": "stage-c@stage-c-2",
+      "category": "clear-positive",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "ALIGNED"
+      ],
+      "why": "Hands-on practice of the ILO verb, a demonstration and scaffolding.",
+      "verdict": "NOT VERIFIED",
+      "matchesProvisional": null,
+      "schemaValid": null,
+      "evidence": null,
+      "recommendation": {
+        "status": "not verified"
+      },
+      "aspects": null,
+      "bloom": null,
+      "explanation": null,
+      "attempts": [
+        1
+      ],
+      "retries": 0,
+      "verifiedInRequest": null
+    },
+    {
+      "id": "as-prog1-recall-quiz",
+      "course": "prog1",
+      "type": "Assessment-fit",
+      "dataset": "stage-c@stage-c-2",
+      "category": "wrong-cognitive-level",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "PARTIALLY_ALIGNED",
+        "NOT_ALIGNED"
+      ],
+      "why": "A recall quiz does not show that students can develop and test a program.",
+      "verdict": "NOT VERIFIED",
+      "matchesProvisional": null,
+      "schemaValid": null,
+      "evidence": null,
+      "recommendation": {
+        "status": "not verified"
+      },
+      "aspects": null,
+      "bloom": null,
+      "explanation": null,
+      "attempts": [
+        1
+      ],
+      "retries": 0,
+      "verifiedInRequest": null
+    },
+    {
+      "id": "vu-prog1-name-only",
+      "course": "prog1",
+      "type": "Value-use",
+      "dataset": "stage-d1@stage-d1-1",
+      "category": "name-only",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "PARTIALLY_ALIGNED",
+        "NOT_ALIGNED"
+      ],
+      "why": "A bare value name says nothing about what students do.",
+      "verdict": "NOT VERIFIED",
+      "matchesProvisional": null,
+      "schemaValid": null,
+      "evidence": null,
+      "recommendation": {
+        "status": "not verified"
+      },
+      "aspects": null,
+      "bloom": null,
+      "explanation": null,
+      "attempts": [
+        1
+      ],
+      "retries": 0,
+      "verifiedInRequest": null
+    },
+    {
+      "id": "rr-prog1-relevant",
+      "course": "prog1",
+      "type": "Ref-relevance",
+      "dataset": "stage-d2@stage-d2-1",
+      "category": "clear-positive",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "ALIGNED"
+      ],
+      "why": "The title concerns the course subject.",
+      "verdict": "NOT VERIFIED",
+      "matchesProvisional": null,
+      "schemaValid": null,
+      "evidence": null,
+      "recommendation": {
+        "status": "not verified"
+      },
+      "aspects": null,
+      "bloom": null,
+      "explanation": null,
+      "attempts": [
+        1
+      ],
+      "retries": 0,
+      "verifiedInRequest": null
+    }
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "course": "prog1",
+      "batch": "prog1#1",
+      "ids": [
+        "cc-prog1-offsubject",
+        "cp-bsit-wrongpo",
+        "wi-prog1-aligned",
+        "ic-prog1-wrongclo",
+        "af-prog1-good",
+        "as-prog1-recall-quiz",
+        "vu-prog1-name-only",
+        "rr-prog1-relevant"
+      ],
+      "outcome": "invalid",
+      "error": "Invalid or duplicate AI judgement",
+      "rejected": [
+        {
+          "id": "cc-prog1-offsubject",
+          "reason": "Invalid or duplicate AI judgement"
+        },
+        {
+          "id": "cp-bsit-wrongpo",
+          "reason": "Invalid or duplicate AI judgement"
+        },
+        {
+          "id": "wi-prog1-aligned",
+          "reason": "Invalid or duplicate AI judgement"
+        },
+        {
+          "id": "ic-prog1-wrongclo",
+          "reason": "Invalid or duplicate AI judgement"
+        },
+        {
+          "id": "af-prog1-good",
+          "reason": "Invalid or duplicate AI judgement"
+        },
+        {
+          "id": "as-prog1-recall-quiz",
+          "reason": "A misalignment must include a usable draft revision"
+        },
+        {
+          "id": "vu-prog1-name-only",
+          "reason": "Invalid or duplicate AI judgement"
+        },
+        {
+          "id": "rr-prog1-relevant",
+          "reason": "Invalid or duplicate AI judgement"
+        }
+      ],
+      "request": 3,
+      "truncated": false,
+      "schemaProblems": [],
+      "verifiedIds": []
+    },
+    {
+      "attempt": 2,
+      "course": "prog1",
+      "batch": "prog1#1",
+      "ids": [
+        "cc-prog1-offsubject",
+        "cp-bsit-wrongpo",
+        "wi-prog1-aligned",
+        "ic-prog1-wrongclo"
+      ],
+      "outcome": "invalid",
+      "error": "AI evidence is not present in the supplied text (source and target quotes)",
+      "rejected": [
+        {
+          "id": "cc-prog1-offsubject",
+          "reason": "AI evidence is not present in the supplied text (source and target quotes)"
+        },
+        {
+          "id": "cp-bsit-wrongpo",
+          "reason": "A misalignment must include a usable draft revision"
+        },
+        {
+          "id": "ic-prog1-wrongclo",
+          "reason": "A misalignment must include a usable draft revision"
+        }
+      ],
+      "request": 4,
+      "truncated": false,
+      "schemaProblems": [],
+      "verifiedIds": [
+        "wi-prog1-aligned"
+      ]
+    },
+    {
+      "attempt": 3,
+      "course": "prog1",
+      "batch": "prog1#1",
+      "ids": [
+        "cc-prog1-offsubject",
+        "cp-bsit-wrongpo",
+        "ic-prog1-wrongclo"
+      ],
+      "outcome": "invalid",
+      "error": "AI evidence is not present in the supplied text (source and target quotes)",
+      "rejected": [
+        {
+          "id": "cc-prog1-offsubject",
+          "reason": "AI evidence is not present in the supplied text (source and target quotes)"
+        },
+        {
+          "id": "cp-bsit-wrongpo",
+          "reason": "A misalignment must include a usable draft revision"
+        },
+        {
+          "id": "ic-prog1-wrongclo",
+          "reason": "AI evidence is not present in the supplied text (source and target quotes)"
+        }
+      ],
+      "request": 5,
+      "truncated": false,
+      "schemaProblems": [],
+      "verifiedIds": []
+    },
+    {
+      "attempt": 4,
+      "course": "prog1",
+      "batch": "prog1#1",
+      "ids": [
+        "cc-prog1-offsubject",
+        "cp-bsit-wrongpo"
+      ],
+      "outcome": "invalid",
+      "error": "A misalignment must include a usable draft revision",
+      "rejected": [
+        {
+          "id": "cc-prog1-offsubject",
+          "reason": "A misalignment must include a usable draft revision"
+        },
+        {
+          "id": "cp-bsit-wrongpo",
+          "reason": "A misalignment must include a usable draft revision"
+        }
+      ],
+      "request": 6,
+      "truncated": false,
+      "schemaProblems": [],
+      "verifiedIds": []
+    },
+    {
+      "attempt": 5,
+      "course": "prog1",
+      "batch": "prog1#1",
+      "ids": [
+        "cc-prog1-offsubject"
+      ],
+      "outcome": "invalid",
+      "error": "A misalignment must include a usable draft revision",
+      "rejected": [
+        {
+          "id": "cc-prog1-offsubject",
+          "reason": "A misalignment must include a usable draft revision"
+        }
+      ],
+      "request": 7,
+      "truncated": false,
+      "schemaProblems": [],
+      "verifiedIds": []
+    },
+    {
+      "attempt": 6,
+      "course": "prog1",
+      "batch": "prog1#1",
+      "ids": [
+        "cc-prog1-offsubject"
+      ],
+      "outcome": "invalid",
+      "error": "A misalignment must include a usable draft revision",
+      "rejected": [
+        {
+          "id": "cc-prog1-offsubject",
+          "reason": "A misalignment must include a usable draft revision"
+        }
+      ],
+      "request": 8,
+      "truncated": false,
+      "schemaProblems": [],
+      "verifiedIds": []
+    },
+    {
+      "attempt": 7,
+      "course": "prog1",
+      "batch": "prog1#1",
+      "ids": [
+        "cc-prog1-offsubject"
+      ],
+      "outcome": "verified",
+      "request": 9,
+      "truncated": false,
+      "schemaProblems": [],
+      "verifiedIds": [
+        "cc-prog1-offsubject"
+      ]
+    },
+    {
+      "attempt": 8,
+      "course": "prog1",
+      "batch": "prog1#1",
+      "ids": [
+        "cp-bsit-wrongpo"
+      ],
+      "outcome": "invalid",
+      "error": "A misalignment must include a usable draft revision",
+      "rejected": [
+        {
+          "id": "cp-bsit-wrongpo",
+          "reason": "A misalignment must include a usable draft revision"
+        }
+      ],
+      "request": 10,
+      "truncated": false,
+      "schemaProblems": [],
+      "verifiedIds": []
+    },
+    {
+      "attempt": 9,
+      "course": "prog1",
+      "batch": "prog1#1",
+      "ids": [
+        "cp-bsit-wrongpo"
+      ],
+      "outcome": "not sent",
+      "error": "not sent: request cap reached (10 provider requests)",
+      "request": null,
+      "verifiedIds": []
+    }
+  ],
+  "http": [
+    {
+      "n": 2,
+      "kind": "price-lookup",
+      "at": "2026-10-25T07:41:51.289Z",
+      "ms": 600,
+      "status": 200
+    },
+    {
+      "n": 3,
+      "kind": "model",
+      "at": "2026-10-25T07:41:51.923Z",
+      "worst": 0.0202902,
+      "inputBound": 34866,
+      "maxTokens": 8192,
+      "bodyBytes": 34610,
+      "ids": [
+        "cc-prog1-offsubject",
+        "cp-bsit-wrongpo",
+        "wi-prog1-aligned",
+        "ic-prog1-wrongclo",
+        "af-prog1-good",
+        "as-prog1-recall-quiz",
+        "vu-prog1-name-only",
+        "rr-prog1-relevant"
+      ],
+      "promptSha256": "cf78e71331c82b8f013f530d16ca0c438cc60d30d5531f90c1231cdd31cc0a95",
+      "fullPrompt": true,
+      "responseFormat": "json_schema",
+      "strict": true,
+      "ms": 2543,
+      "status": 200,
+      "usage": {
+        "promptTokens": 7154,
+        "completionTokens": 1197,
+        "reasoningTokens": 0,
+        "cachedTokens": 128,
+        "reportedCost": 0.00177402,
+        "costAtListPrices": 0.0035826
+      },
+      "charged": 0.0035826,
+      "provider": "DigitalOcean",
+      "modelReturned": "minimax/minimax-m3.1-flash",
+      "generationId": "gen-1792914110-6suPxGO7KLhjZFTOFbv5",
+      "finishReason": "stop",
+      "content": "{\"judgements\":[{\"basis\":\"title_and_source\",\"carriedBy\":\"none\",\"coreValue\":\"none\",\"draft\":\"\",\"evidence\":\"not_assessed\",\"explanation\":\"\",\"id\":\"af-prog1-good\",\"integration\":\"absent\",\"label\":\"ALIGNED\",\"learnerSupport\":\"adequate\",\"level\":\"not_assessed\",\"measures\":\"not_assessed\",\"relevance\":\"not_assessed\",\"responsible\":\"none\",\"sourceBloom\":\"Apply\",\"sourceQuote\":\"Develop and test Java programs that use if-else and switch statements to make decisions\",\"targetBloom\":\"Apply\",\"targetQuote\":\"students write and run if-else and switch programs in pairs\",\"teaching\":\"sound\",\"valueFit\":\"not_assessed\",\"valueUse\":\"not_assessed\"},{\"basis\":\"insufficient\",\"carriedBy\":\"none\",\"coreValue\":\"none\",\"draft\":\"\",\"evidence\":\"vague\",\"explanation\":\"The task collects evidence of recall of syntax, not of the ILO's performance: writing and testing Java programs that use if-else and switch to make decisions. It is also a bare task name with no hint of what is answered beyond 'syntax'.\",\"id\":\"as-prog1-recall-quiz\",\"integration\":\"absent\",\"label\":\"NOT_ALIGNED\",\"learnerSupport\":\"not_assessed\",\"level\":\"too_low\",\"measures\":\"no\",\"relevance\":\"not_assessed\",\"responsible\":\"assessment\",\"sourceBloom\":\"Apply\",\"sourceQuote\":\"Develop and test Java programs\",\"targetBloom\":\"Remember\",\"targetQuote\":\"Ten-item multiple-choice quiz on Java conditional syntax\",\"teaching\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"valueUse\":\"not_assessed\"},{\"basis\":\"insufficient\",\"carriedBy\":\"none\",\"coreValue\":\"none\",\"draft\":\"\",\"evidence\":\"not_assessed\",\"explanation\":\"\",\"id\":\"cc-prog1-offsubject\",\"integration\":\"absent\",\"label\":\"NOT_ALIGNED\",\"learnerSupport\":\"not_assessed\",\"level\":\"not_assessed\",\"measures\":\"not_assessed\",\"relevance\":\"not_assessed\",\"responsible\":\"none\",\"sourceBloom\":\"N/A\",\"sourceQuote\":\"fundamentals of Java programming\",\"targetBloom\":\"Create\",\"targetQuote\":\"Design and analyze a relational database schema using normalization up to third normal form\",\"teaching\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"valueUse\":\"not_assessed\"},{\"basis\":\"title_and_source\",\"carriedBy\":\"none\",\"coreValue\":\"none\",\"draft\":\"\",\"evidence\":\"not_assessed\",\"explanation\":\"\",\"id\":\"cp-bsit-wrongpo\",\"integration\":\"absent\",\"label\":\"NOT_ALIGNED\",\"learnerSupport\":\"not_assessed\",\"level\":\"not_assessed\",\"measures\":\"not_assessed\",\"relevance\":\"not_assessed\",\"responsible\":\"none\",\"sourceBloom\":\"N/A\",\"sourceQuote\":\"Preserve and promote “Filipino historical and cultural heritage;\",\"targetBloom\":\"Apply\",\"targetQuote\":\"Develop and test Java programs that use loops and conditional statements.\",\"teaching\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"valueUse\":\"not_assessed\"},{\"basis\":\"insufficient\",\"carriedBy\":\"none\",\"coreValue\":\"none\",\"draft\":\"\",\"evidence\":\"not_assessed\",\"explanation\":\"\",\"id\":\"ic-prog1-wrongclo\",\"integration\":\"absent\",\"label\":\"NOT_ALIGNED\",\"learnerSupport\":\"not_assessed\",\"level\":\"not_assessed\",\"measures\":\"not_assessed\",\"relevance\":\"not_assessed\",\"responsible\":\"none\",\"sourceBloom\":\"Understand\",\"sourceQuote\":\"Demonstrate honesty, compassion and responsibility in the use of computers\",\"targetBloom\":\"Apply\",\"targetQuote\":\"Develop and test Java programs that use if-else and switch statements to make decisions.\",\"teaching\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"valueUse\":\"not_assessed\"},{\"basis\":\"title_and_source\",\"carriedBy\":\"none\",\"coreValue\":\"none\",\"draft\":\"\",\"evidence\":\"not_assessed\",\"explanation\":\"\",\"id\":\"rr-prog1-relevant\",\"integration\":\"absent\",\"label\":\"ALIGNED\",\"learnerSupport\":\"not_assessed\",\"level\":\"not_assessed\",\"measures\":\"not_assessed\",\"relevance\":\"relevant\",\"responsible\":\"none\",\"sourceBloom\":\"N/A\",\"sourceQuote\":\"Fundamentals of Java programming\",\"targetBloom\":\"N/A\",\"targetQuote\":\"Fundamentals of Java programming\",\"teaching\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"valueUse\":\"not_assessed\"},{\"basis\":\"insufficient\",\"carriedBy\":\"none\",\"coreValue\":\"Humility\",\"draft\":\"\",\"evidence\":\"not_assessed\",\"explanation\":\"\",\"id\":\"vu-prog1-name-only\",\"integration\":\"absent\",\"label\":\"PARTIALLY_ALIGNED\",\"learnerSupport\":\"not_assessed\",\"level\":\"not_assessed\",\"measures\":\"not_assessed\",\"relevance\":\"not_assessed\",\"responsible\":\"values\",\"sourceBloom\":\"Apply\",\"sourceQuote\":\"review each other's code\",\"targetBloom\":\"N/A\",\"targetQuote\":\"Humility\",\"teaching\":\"not_assessed\",\"valueFit\":\"partly\",\"valueUse\":\"name_only\"},{\"basis\":\"insufficient\",\"carriedBy\":\"none\",\"coreValue\":\"none\",\"draft\":\"\",\"evidence\":\"not_assessed\",\"explanation\":\"\",\"id\":\"wi-prog1-aligned\",\"integration\":\"absent\",\"label\":\"ALIGNED\",\"learnerSupport\":\"not_assessed\",\"level\":\"not_assessed\",\"measures\":\"not_assessed\",\"relevance\":\"not_assessed\",\"responsible\":\"none\",\"sourceBloom\":\"Understand\",\"sourceQuote\":\"Java conditional statements: if, if-else, nested if and switch\",\"targetBloom\":\"Apply\",\"targetQuote\":\"Develop and test Java programs that use if-else and switch statements to make decisions\",\"teaching\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"valueUse\":\"not_assessed\"}]}"
+    },
+    {
+      "n": 4,
+      "kind": "model",
+      "at": "2026-10-25T07:41:56.263Z",
+      "worst": 0.019494,
+      "inputBound": 32212,
+      "maxTokens": 8192,
+      "bodyBytes": 31956,
+      "ids": [
+        "cc-prog1-offsubject",
+        "cp-bsit-wrongpo",
+        "wi-prog1-aligned",
+        "ic-prog1-wrongclo"
+      ],
+      "promptSha256": "cf78e71331c82b8f013f530d16ca0c438cc60d30d5531f90c1231cdd31cc0a95",
+      "fullPrompt": true,
+      "responseFormat": "json_schema",
+      "strict": true,
+      "ms": 2317,
+      "status": 200,
+      "usage": {
+        "promptTokens": 6590,
+        "completionTokens": 921,
+        "reasoningTokens": 0,
+        "cachedTokens": 6528,
+        "reportedCost": 0.00065982,
+        "costAtListPrices": 0.0030822
+      },
+      "charged": 0.0030822,
+      "provider": "DigitalOcean",
+      "modelReturned": "minimax/minimax-m3.1-flash",
+      "generationId": "gen-1792914114-k0u17ym4DpGtwMlIef8v",
+      "finishReason": "stop",
+      "content": "{\"judgements\":[{\"basis\":\"title_and_source\",\"carriedBy\":\"none\",\"coreValue\":\"none\",\"draft\":\"Design and analyze a relational database schema using normalization up to third normal form, by applying logical formulation techniques to structure data and testing the schema against real-world application requirements.\",\"evidence\":\"vague\",\"explanation\":\"The CLO concerns relational database design and normalisation, which this course (fundamentals of Java programming) does not teach; it belongs to a database course. It also has no connection to the year-level 2 programming competence described. Draft rewrites the CLO into this course's subject: designing and testing program logic, keeping the schema focus as logical formulation.\",\"id\":\"cc-prog1-offsubject\",\"integration\":\"absent\",\"label\":\"NOT_ALIGNED\",\"learnerSupport\":\"not_applicable\",\"level\":\"not_assessed\",\"measures\":\"not_assessed\",\"relevance\":\"unrelated\",\"responsible\":\"none\",\"sourceBloom\":\"N/A\",\"sourceQuote\":\"Design and analyze a relational database schema using normalization up to third normal form.\",\"targetBloom\":\"N/A\",\"targetQuote\":\"This course introduces students to the vital role of computers and computer programmers\",\"teaching\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"valueUse\":\"not_assessed\"},{\"basis\":\"title_and_source\",\"carriedBy\":\"none\",\"coreValue\":\"none\",\"draft\":\"\",\"evidence\":\"vague\",\"explanation\":\"The PO concerns preserving Filipino historical and cultural heritage, a competence unrelated to the programming competence this CLO builds; the CLO shares no action verb or subject matter with the PO. The CLO itself is sound for this course, so the PO tag is what does not fit; the draft keeps the CLO statement unchanged.\",\"id\":\"cp-bsit-wrongpo\",\"integration\":\"absent\",\"label\":\"NOT_ALIGNED\",\"learnerSupport\":\"not_assessed\",\"level\":\"not_assessed\",\"measures\":\"not_assessed\",\"relevance\":\"not_assessed\",\"responsible\":\"none\",\"sourceBloom\":\"N/A\",\"sourceQuote\":\"Preserve and promote “Filipino historical and cultural heritage;\",\"targetBloom\":\"Apply\",\"targetQuote\":\"Develop and test Java programs that use loops and conditional statements.\",\"teaching\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"valueUse\":\"not_assessed\"},{\"basis\":\"title_and_source\",\"carriedBy\":\"none\",\"coreValue\":\"none\",\"draft\":\"\",\"evidence\":\"vague\",\"explanation\":\"The ILO is directly about this week's conditional statements, states an observable performance (\\\"Develop and test Java programs that use if-else and switch statements to make decisions\\\") at Apply level, and the week's content (if, if-else, nested if, switch) can teach it.\",\"id\":\"wi-prog1-aligned\",\"integration\":\"absent\",\"label\":\"ALIGNED\",\"learnerSupport\":\"not_assessed\",\"level\":\"not_assessed\",\"measures\":\"not_assessed\",\"relevance\":\"not_assessed\",\"responsible\":\"none\",\"sourceBloom\":\"N/A\",\"sourceQuote\":\"Java conditional statements: if, if-else, nested if and switch\",\"targetBloom\":\"Apply\",\"targetQuote\":\"Develop and test Java programs that use if-else and switch statements to make decisions.\",\"teaching\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"valueUse\":\"not_assessed\"},{\"basis\":\"title_and_source\",\"carriedBy\":\"none\",\"coreValue\":\"none\",\"draft\":\"\",\"evidence\":\"vague\",\"explanation\":\"The ILO asks for programming competence in Java conditional statements, while the CLO asks for demonstrating honesty, compassion and responsibility in the use of computers and in team programming work; the ILO is not a step toward the CLO and does not claim any of its value-related content. The ILO is a sound outcome for this week, so the CLO tag is what does not fit; the draft keeps the ILO text unchanged.\",\"id\":\"ic-prog1-wrongclo\",\"integration\":\"absent\",\"label\":\"NOT_ALIGNED\",\"learnerSupport\":\"not_assessed\",\"level\":\"not_assessed\",\"measures\":\"not_assessed\",\"relevance\":\"not_assessed\",\"responsible\":\"none\",\"sourceBloom\":\"N/A\",\"sourceQuote\":\"Demonstrate honesty, compassion and responsibility in the use of computers\",\"targetBloom\":\"Apply\",\"targetQuote\":\"Develop and test Java programs that use if-else and switch statements to make decisions.\",\"teaching\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"valueUse\":\"not_assessed\"}]}"
+    },
+    {
+      "n": 5,
+      "kind": "model",
+      "at": "2026-10-25T07:42:00.310Z",
+      "worst": 0.0194079,
+      "inputBound": 31925,
+      "maxTokens": 8192,
+      "bodyBytes": 31669,
+      "ids": [
+        "cc-prog1-offsubject",
+        "cp-bsit-wrongpo",
+        "ic-prog1-wrongclo"
+      ],
+      "promptSha256": "cf78e71331c82b8f013f530d16ca0c438cc60d30d5531f90c1231cdd31cc0a95",
+      "fullPrompt": true,
+      "responseFormat": "json_schema",
+      "strict": true,
+      "ms": 1635,
+      "status": 200,
+      "usage": {
+        "promptTokens": 6527,
+        "completionTokens": 861,
+        "reasoningTokens": 0,
+        "cachedTokens": 6400,
+        "reportedCost": 0.00063165,
+        "costAtListPrices": 0.0029913
+      },
+      "charged": 0.0029913,
+      "provider": "DigitalOcean",
+      "modelReturned": "minimax/minimax-m3.1-flash",
+      "generationId": "gen-1792914118-toHn6qKikb7FJlmpg7xT",
+      "finishReason": "stop",
+      "content": "{\"judgements\": [{\"basis\": \"not_assessed\", \"carriedBy\": \"none\", \"coreValue\": \"none\", \"draft\": \"Design, implement and test Java programs that apply selection control structures (if-else and switch statements) to solve problems from the course's real-world application exercises.\", \"evidence\": \"vague\", \"explanation\": \"The CLO's competence is relational database design and normalization to 3NF, which belongs to database systems, not to the Java programming fundamentals this course teaches. The course description names logical formulation, good coding practices, Java programming and real-world applications, and does not cover relational modelling or normalization at all, so the CLO both names another subject and requires content the description does not cover.\", \"id\": \"cc-prog1-offsubject\", \"integration\": \"absent\", \"label\": \"NOT_ALIGNED\", \"learnerSupport\": \"not_applicable\", \"level\": \"too_high\", \"measures\": \"no\", \"relevance\": \"unrelated\", \"responsible\": \"ilo\", \"sourceBloom\": \"Create\", \"sourceQuote\": \"relational database schema using normalization up to third normal form\", \"targetBloom\": \"Apply\", \"targetQuote\": \"Develop and test Java programs that use loops and conditional statements.\", \"teaching\": \"weak\", \"valueFit\": \"clashes\", \"valueUse\": \"not_assessed\"}, {\"basis\": \"not_assessed\", \"carriedBy\": \"none\", \"coreValue\": \"none\", \"draft\": \"\", \"evidence\": \"vague\", \"explanation\": \"The PO asks for preserving and promoting Filipino historical and cultural heritage; the CLO asks for developing and testing Java programs with loops and conditionals. The CLO contains no verb, object or competence about heritage, culture or Filipino identity, so it only shares no substantive content with this PO at all — the tag simply does not fit this course outcome, and the PO named here is not the one the CLO develops. The CLO itself is a sound outcome for this course, so only the PO choice is wrong.\", \"id\": \"cp-bsit-wrongpo\", \"integration\": \"absent\", \"label\": \"NOT_ALIGNED\", \"learnerSupport\": \"not_applicable\", \"level\": \"too_low\", \"measures\": \"no\", \"relevance\": \"unrelated\", \"responsible\": \"none\", \"sourceBloom\": \"N/A\", \"sourceQuote\": \"Preserve and promote “Filipino historical and cultural heritage;\", \"targetBloom\": \"Apply\", \"targetQuote\": \"Develop and test Java programs that use loops and conditional statements.\", \"teaching\": \"weak\", \"valueFit\": \"clashes\", \"valueUse\": \"not_assessed\"}, {\"basis\": \"not_assessed\", \"carriedBy\": \"none\", \"coreValue\": \"none\", \"draft\": \"\", \"evidence\": \"vague\", \"explanation\": \"The ILO is about demonstrating honesty, compassion and responsibility in the use of computers and in team programming work in line of Marian-Augustinian values; the CLO is about developing and testing Java programs using if-else and switch statements. The ILO is a values/ethics competence and does not build the programming competence the CLO states, so the CLO tag does not fit this ILO; the ILO is a sound outcome for its week, so the tag choice is what is wrong.\", \"id\": \"ic-prog1-wrongclo\", \"integration\": \"absent\", \"label\": \"NOT_ALIGNED\", \"learnerSupport\": \"not_applicable\", \"level\": \"too_high\", \"measures\": \"no\", \"relevance\": \"tangential\", \"responsible\": \"none\", \"sourceBloom\": \"N/A\", \"sourceQuote\": \"Develop and test Java programs that use if-else and switch statements to make decisions.\", \"targetBloom\": \"Apply\", \"targetQuote\": \"Demonstrate honesty, compassion and responsibility in the use of computers and in team programming work\", \"teaching\": \"weak\", \"valueFit\": \"clashes\", \"valueUse\": \"not_assessed\"}]}"
+    },
+    {
+      "n": 6,
+      "kind": "model",
+      "at": "2026-10-25T07:42:03.556Z",
+      "worst": 0.0193005,
+      "inputBound": 31567,
+      "maxTokens": 8192,
+      "bodyBytes": 31311,
+      "ids": [
+        "cc-prog1-offsubject",
+        "cp-bsit-wrongpo"
+      ],
+      "promptSha256": "cf78e71331c82b8f013f530d16ca0c438cc60d30d5531f90c1231cdd31cc0a95",
+      "fullPrompt": true,
+      "responseFormat": "json_schema",
+      "strict": true,
+      "ms": 1691,
+      "status": 200,
+      "usage": {
+        "promptTokens": 6455,
+        "completionTokens": 369,
+        "reasoningTokens": 0,
+        "cachedTokens": 6400,
+        "reportedCost": 0.00032565,
+        "costAtListPrices": 0.0023793
+      },
+      "charged": 0.0023793,
+      "provider": "DigitalOcean",
+      "modelReturned": "minimax/minimax-m3.1-flash",
+      "generationId": "gen-1792914121-NZrfEIM6U1HmfZIZqWIc",
+      "finishReason": "stop",
+      "content": "{\"judgements\":[{\"basis\":\"title_and_source\",\"carriedBy\":\"none\",\"coreValue\":\"none\",\"draft\":\"\",\"evidence\":\"observable\",\"explanation\":\"The CLO concerns relational database design and normalization, which belongs to a database course, not to this Java programming course whose description covers logical formulation, Java fundamentals and coding practices.\",\"id\":\"cc-prog1-offsubject\",\"integration\":\"absent\",\"label\":\"NOT_ALIGNED\",\"learnerSupport\":\"not_assessed\",\"level\":\"not_assessed\",\"measures\":\"not_assessed\",\"relevance\":\"not_assessed\",\"responsible\":\"none\",\"sourceBloom\":\"N/A\",\"sourceQuote\":\"fundamentals of Java programming\",\"targetBloom\":\"Create\",\"targetQuote\":\"Design and analyze a relational database schema using normalization up to third normal form.\",\"teaching\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"valueUse\":\"not_assessed\"},{\"basis\":\"title_and_source\",\"carriedBy\":\"none\",\"coreValue\":\"none\",\"draft\":\"\",\"evidence\":\"observable\",\"explanation\":\"This PO asks for preserving and promoting Filipino historical and cultural heritage, a competence about national culture; the CLO asks for developing and testing Java programs with loops and conditionals, which does not develop that competence.\",\"id\":\"cp-bsit-wrongpo\",\"integration\":\"absent\",\"label\":\"NOT_ALIGNED\",\"learnerSupport\":\"not_assessed\",\"level\":\"not_assessed\",\"measures\":\"not_assessed\",\"relevance\":\"not_assessed\",\"responsible\":\"none\",\"sourceBloom\":\"N/A\",\"sourceQuote\":\"Preserve and promote “Filipino historical and cultural heritage;\",\"targetBloom\":\"Apply\",\"targetQuote\":\"Develop and test Java programs that use loops and conditional statements.\",\"teaching\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"valueUse\":\"not_assessed\"}]}"
+    },
+    {
+      "n": 7,
+      "kind": "model",
+      "at": "2026-10-25T07:42:06.250Z",
+      "worst": 0.0192219,
+      "inputBound": 31305,
+      "maxTokens": 8192,
+      "bodyBytes": 31049,
+      "ids": [
+        "cc-prog1-offsubject"
+      ],
+      "promptSha256": "cf78e71331c82b8f013f530d16ca0c438cc60d30d5531f90c1231cdd31cc0a95",
+      "fullPrompt": true,
+      "responseFormat": "json_schema",
+      "strict": true,
+      "ms": 1055,
+      "status": 200,
+      "usage": {
+        "promptTokens": 6401,
+        "completionTokens": 273,
+        "reasoningTokens": 0,
+        "cachedTokens": 6272,
+        "reportedCost": 0.00027723,
+        "costAtListPrices": 0.0022479
+      },
+      "charged": 0.0022479,
+      "provider": "DigitalOcean",
+      "modelReturned": "minimax/minimax-m3.1-flash",
+      "generationId": "gen-1792914124-KEZ1qKZrULOZWWgAhkJK",
+      "finishReason": "stop",
+      "content": "{\n  \"judgements\": [\n    {\n      \"basis\": \"not_assessed\",\n      \"carriedBy\": \"none\",\n      \"coreValue\": \"none\",\n      \"draft\": \"\",\n      \"evidence\": \"vague\",\n      \"explanation\": \"The CLO concerns relational database design and normalization, a subject outside this course's scope of Java programming fundamentals and logical formulation techniques; it therefore builds no competence of IT 202. The tag to this course does not fit.\",\n      \"id\": \"cc-prog1-offsubject\",\n      \"integration\": \"absent\",\n      \"label\": \"NOT_ALIGNED\",\n      \"learnerSupport\": \"not_assessed\",\n      \"level\": \"not_assessed\",\n      \"measures\": \"not_assessed\",\n      \"relevance\": \"not_assessed\",\n      \"responsible\": \"none\",\n      \"sourceBloom\": \"N/A\",\n      \"sourceQuote\": \"IT 202 - Computer Programming 1 (Fundamentals of Programming)\",\n      \"targetBloom\": \"Evaluate\",\n      \"targetQuote\": \"Design and analyze a relational database schema using normalization up to third normal form.\",\n      \"teaching\": \"not_assessed\",\n      \"valueFit\": \"not_assessed\",\n      \"valueUse\": \"not_assessed\"\n    }\n  ]\n}"
+    },
+    {
+      "n": 8,
+      "kind": "model",
+      "at": "2026-10-25T07:42:07.971Z",
+      "worst": 0.0192219,
+      "inputBound": 31305,
+      "maxTokens": 8192,
+      "bodyBytes": 31049,
+      "ids": [
+        "cc-prog1-offsubject"
+      ],
+      "promptSha256": "cf78e71331c82b8f013f530d16ca0c438cc60d30d5531f90c1231cdd31cc0a95",
+      "fullPrompt": true,
+      "responseFormat": "json_schema",
+      "strict": true,
+      "ms": 1832,
+      "status": 200,
+      "usage": {
+        "promptTokens": 6401,
+        "completionTokens": 291,
+        "reasoningTokens": 0,
+        "cachedTokens": 6400,
+        "reportedCost": 0.00027075,
+        "costAtListPrices": 0.0022695
+      },
+      "charged": 0.0022695,
+      "provider": "DigitalOcean",
+      "modelReturned": "minimax/minimax-m3.1-flash",
+      "generationId": "gen-1792914126-keIeHayjJB44Fafawu67",
+      "finishReason": "stop",
+      "content": "{\n  \"judgements\": [\n    {\n      \"basis\": \"title_and_source\",\n      \"carriedBy\": \"none\",\n      \"coreValue\": \"none\",\n      \"draft\": \"\",\n      \"evidence\": \"vague\",\n      \"explanation\": \"The CLO is about relational database schema design and normalization up to third normal form, a database subject the description does not cover: IT 202 promises the fundamentals of Java programming and logical formulation, so the competence belongs to a database course, and the target names none of the course's own subject matter. It also carries no course-relevant skill for a second-year programming course to build on.\",\n      \"id\": \"cc-prog1-offsubject\",\n      \"integration\": \"absent\",\n      \"label\": \"NOT_ALIGNED\",\n      \"learnerSupport\": \"not_assessed\",\n      \"level\": \"matches\",\n      \"measures\": \"no\",\n      \"relevance\": \"not_assessed\",\n      \"responsible\": \"none\",\n      \"sourceBloom\": \"N/A\",\n      \"sourceQuote\": \"fundamentals of Java programming\",\n      \"targetBloom\": \"Create\",\n      \"targetQuote\": \"Design and analyze a relational database schema using normalization up to third normal form\",\n      \"teaching\": \"not_assessed\",\n      \"valueFit\": \"partly\",\n      \"valueUse\": \"not_assessed\"\n    }\n  ]\n}"
+    },
+    {
+      "n": 9,
+      "kind": "model",
+      "at": "2026-10-25T07:42:10.606Z",
+      "worst": 0.0192219,
+      "inputBound": 31305,
+      "maxTokens": 8192,
+      "bodyBytes": 31049,
+      "ids": [
+        "cc-prog1-offsubject"
+      ],
+      "promptSha256": "cf78e71331c82b8f013f530d16ca0c438cc60d30d5531f90c1231cdd31cc0a95",
+      "fullPrompt": true,
+      "responseFormat": "json_schema",
+      "strict": true,
+      "ms": 1694,
+      "status": 200,
+      "usage": {
+        "promptTokens": 6401,
+        "completionTokens": 317,
+        "reasoningTokens": 0,
+        "cachedTokens": 6400,
+        "reportedCost": 0.00028635,
+        "costAtListPrices": 0.0023007
+      },
+      "charged": 0.0023007,
+      "provider": "DigitalOcean",
+      "modelReturned": "minimax/minimax-m3.1-flash",
+      "generationId": "gen-1792914128-4W4ZSygwVKZVKfzaqoJH",
+      "finishReason": "stop",
+      "content": "{\n  \"judgements\": [\n    {\n      \"basis\": \"title_and_source\",\n      \"carriedBy\": \"none\",\n      \"coreValue\": \"none\",\n      \"draft\": \"Design and write Java programs that apply fundamental programming constructs to solve simple real-world problems.\",\n      \"evidence\": \"vague\",\n      \"explanation\": \"The CLO asks for relational database schema design and normalization, which belongs to database systems, not to the Java programming fundamentals this course (title, description and year level) teaches; it also introduces a performance (3NF normalization) well beyond an introductory programming course. The competency does not belong to this course's subject, so the CLO must be rewritten in this subject.\",\n      \"id\": \"cc-prog1-offsubject\",\n      \"integration\": \"absent\",\n      \"label\": \"NOT_ALIGNED\",\n      \"learnerSupport\": \"not_assessed\",\n      \"level\": \"not_assessed\",\n      \"measures\": \"not_assessed\",\n      \"relevance\": \"not_assessed\",\n      \"responsible\": \"none\",\n      \"sourceBloom\": \"N/A\",\n      \"sourceQuote\": \"Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\",\n      \"targetBloom\": \"Analyze\",\n      \"targetQuote\": \"relational database schema using normalization up to third normal form\",\n      \"teaching\": \"not_assessed\",\n      \"valueFit\": \"not_assessed\",\n      \"valueUse\": \"not_assessed\"\n    }\n  ]\n}"
+    },
+    {
+      "n": 10,
+      "kind": "model",
+      "at": "2026-10-25T07:42:13.054Z",
+      "worst": 0.0190842,
+      "inputBound": 30846,
+      "maxTokens": 8192,
+      "bodyBytes": 30590,
+      "ids": [
+        "cp-bsit-wrongpo"
+      ],
+      "promptSha256": "cf78e71331c82b8f013f530d16ca0c438cc60d30d5531f90c1231cdd31cc0a95",
+      "fullPrompt": true,
+      "responseFormat": "json_schema",
+      "strict": true,
+      "ms": 826,
+      "status": 200,
+      "usage": {
+        "promptTokens": 6324,
+        "completionTokens": 352,
+        "reasoningTokens": 0,
+        "cachedTokens": 0,
+        "reportedCost": 0.0011598,
+        "costAtListPrices": 0.0023196
+      },
+      "charged": 0.0023196,
+      "provider": "Parasail",
+      "modelReturned": "minimax/minimax-m3.1-flash",
+      "generationId": "gen-1792914131-eEEKvrsulGmExuGEwO9I",
+      "finishReason": "stop",
+      "content": "{\n  \"judgements\": [\n    {\n      \"id\": \"cp-bsit-wrongpo\",\n      \"label\": \"NOT_ALIGNED\",\n      \"explanation\": \"The PO named here is about preserving and promoting Filipino historical and cultural heritage, a cultural-identity competence, while the CLO asks students to develop and test Java programs using loops and conditional statements, a programming competence. The CLO's subject matter (Java programming) is not the PO's (Filipino historical and cultural heritage), and the CLO contains no action verb or competency of the PO ('preserve', 'promote' heritage). The CLO itself is a sound outcome for IT 202, so the PO tag is what is wrong, not the CLO; the draft therefore leaves the CLO statement exactly as written.\",\n      \"sourceQuote\": \"Preserve and promote “Filipino historical and cultural heritage;\",\n      \"targetQuote\": \"Develop and test Java programs that use loops and conditional statements.\",\n      \"sourceBloom\": \"N/A\",\n      \"targetBloom\": \"Apply\",\n      \"draft\": \"\"\n    ,      \"teaching\": \"not_assessed\",\n      \"learnerSupport\": \"not_assessed\",\n      \"measures\": \"not_assessed\",\n      \"evidence\": \"not_assessed\",\n      \"level\": \"not_assessed\",\n      \"responsible\": \"none\",\n      \"valueUse\": \"not_assessed\",\n      \"carriedBy\": \"not_assessed\",\n      \"valueFit\": \"not_assessed\",\n      \"coreValue\": \"none\",\n      \"integration\": \"not_assessed\",\n      \"relevance\": \"not_assessed\",\n      \"basis\": \"not_assessed\"\n    }\n  ]\n}"
+    }
+  ],
+  "isolation": {
+    "forbiddenModulesLoaded": [],
+    "processEnvStageFlags": []
+  },
+  "note": "Expected verdicts are provisional (developer-written, unreviewed by faculty). A match is not faculty-verified accuracy, and an answer that was never verified is not a PASS."
+}

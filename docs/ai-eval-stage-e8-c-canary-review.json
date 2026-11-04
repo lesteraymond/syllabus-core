@@ -1,0 +1,230 @@
+{
+  "status": "canary_complete_stopped_for_academic_review",
+  "resultFile": "docs/ai-eval-stage-e8-c-canary-resume.json",
+  "ledgerFile": "docs/ai-eval-stage-e8-c-ledger.json",
+  "initialBlockedPreflightFile": "docs/ai-eval-stage-e8-c-canary.json",
+  "datasetVersion": "stage-c-2",
+  "selectedIds": [
+    "af-prog1-good",
+    "af-prog1-irrelevant",
+    "af-sensors-passive",
+    "as-prog1-good",
+    "as-prog1-recall-quiz",
+    "as-syseng-essay",
+    "af-prog1-conceptual-lecture-ok",
+    "as-prog1-too-high"
+  ],
+  "structural": {
+    "planned": 8,
+    "attempted": 8,
+    "neverAttempted": 0,
+    "verified": 8,
+    "recovered": 0,
+    "unresolved": 0,
+    "unresolvedRate": 0,
+    "coverage": 1,
+    "attemptedShare": 1,
+    "firstAttempt": {
+      "answered": 8,
+      "refused": 0,
+      "validationFailureRate": 0,
+      "noAnswerFirst": 0
+    },
+    "rawResponseErrors": {
+      "answers": 4,
+      "invalidAnswers": 0,
+      "refusedJudgements": 0,
+      "requestsWithoutAnswer": 0
+    },
+    "aspectCoverage": {
+      "byType": {
+        "Activity-fit": {
+          "relationships": 4,
+          "baseVerified": 4,
+          "baseAccepted": 4,
+          "notRecorded": 0,
+          "fields": {
+            "teaching": {
+              "assessed": 4,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "learnerSupport": {
+              "assessed": 4,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            }
+          }
+        },
+        "Assessment-fit": {
+          "relationships": 4,
+          "baseVerified": 4,
+          "baseAccepted": 4,
+          "notRecorded": 0,
+          "fields": {
+            "measures": {
+              "assessed": 4,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "evidence": {
+              "assessed": 4,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "level": {
+              "assessed": 4,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            }
+          }
+        }
+      },
+      "fieldsRequired": 20,
+      "fieldsAssessed": 20,
+      "rate": 1
+    }
+  },
+  "exactQuotes": {
+    "matched": 16,
+    "total": 16
+  },
+  "rawJudgmentsPreserved": {
+    "compared": 8,
+    "changed": 0,
+    "includes": [
+      "label",
+      "explanation",
+      "quotes",
+      "draft",
+      "every structured aspect"
+    ]
+  },
+  "provisionalAgreement": {
+    "agree": 7,
+    "answered": 8,
+    "fraction": 0.875,
+    "falseApprovals": {
+      "count": 0,
+      "negativeCases": 5
+    },
+    "falseRejections": {
+      "count": 1,
+      "positiveCases": 3
+    },
+    "facultyVerified": false
+  },
+  "academic": {
+    "status": "hold_for_review",
+    "facultyVerified": false,
+    "explanationReview": {
+      "answersRead": 8,
+      "definiteUnsupportedAnswers": 1,
+      "definiteIds": [
+        "af-prog1-conceptual-lecture-ok"
+      ],
+      "detail": "Course-wide laboratory credit was turned into a lesson-specific coding requirement for an Explain ILO; the answer also discounts the written worked examples as support.",
+      "inferentialCautions": [
+        {
+          "id": "af-prog1-irrelevant",
+          "claim": "History discussion is far below Apply: topic mismatch is established; the actual discussion cognitive level is unspecified."
+        },
+        {
+          "id": "as-prog1-recall-quiz",
+          "claim": "Syntax MCQ collects only Remember-level evidence: question contents are unseen, so the precise cognitive claim is stronger than the entry establishes."
+        },
+        {
+          "id": "as-prog1-too-high",
+          "claim": "A full application is not feasible within a single lesson: duration and learner capability are not supplied."
+        }
+      ]
+    },
+    "draftReview": {
+      "draftsRead": 6,
+      "definitelyInappropriate": [
+        "af-prog1-conceptual-lecture-ok"
+      ],
+      "resourceFeasibilityConcerns": [
+        "af-sensors-passive"
+      ],
+      "staticWithholdingCodes": {
+        "af-prog1-irrelevant": [
+          "copies_other_relationship"
+        ],
+        "as-prog1-recall-quiz": [
+          "copies_other_relationship"
+        ]
+      },
+      "staticWithholdingMeaning": "These two drafts meet the existing application withholding condition if a recommendation is otherwise eligible. This snippet evaluation does not apply drafts or exercise production upstream eligibility.",
+      "plausibleUnflaggedCorrections": [
+        "as-prog1-too-high",
+        "as-syseng-essay"
+      ],
+      "additionalCautions": [
+        "The copied starter-file scaffold in af-prog1-irrelevant needs faculty confirmation.",
+        "The optional five-minute oral check in as-prog1-too-high is a proposed format, not a verified lesson requirement."
+      ],
+      "safeApplicationClaim": false
+    },
+    "advisoryWarningAudit": {
+      "flaggedAnswers": 2,
+      "actualSiblingPhraseMatches": 2,
+      "confirmedFalseTextualMatches": 0,
+      "possibleOverWithholding": [
+        "af-prog1-irrelevant",
+        "as-prog1-recall-quiz"
+      ],
+      "note": "Both proposals may be pedagogically useful for the same ILO. Textual copying is verified; academic unsuitability is not proved by it. These are faculty-review concerns, not measured false-positive precision."
+    },
+    "missingUpstream": {
+      "liveEvaluated": false,
+      "reason": "No existing stage-c-2 model item covers missing upstream evidence.",
+      "offlineRegressionPassed": true,
+      "withholdingReason": "upstream_unverified"
+    },
+    "continuation": {
+      "automaticContinuation": false,
+      "reason": "Unnecessary lab rewrite for the conceptual ILO and unverified laboratory feasibility require review before any separately approved full run."
+    }
+  },
+  "usage": {
+    "countedAttempts": 7,
+    "completedHttpRequests": 6,
+    "blockedKeyCheckAttempts": 1,
+    "successfulKeyChecks": 1,
+    "priceLookups": 1,
+    "modelRequests": 4,
+    "modelRetries": 0,
+    "promptTokens": 14472,
+    "cachedPromptTokens": 384,
+    "completionTokens": 1712,
+    "reasoningTokens": 0,
+    "reportedCost": 0.00294347,
+    "charged": 0.00294347,
+    "conservativeCharge": 0.006396
+  },
+  "remainingOverallCeiling": {
+    "requests": 58,
+    "dollars": 0.08705653,
+    "requiresSeparateApproval": true,
+    "resumeSameLedger": true
+  },
+  "preservation": {
+    "protectedFilesUnchanged": 9,
+    "envFileUnchanged": true,
+    "keyAccepted": true,
+    "dataModulesLoaded": [],
+    "credentialsFoundInArtifacts": false,
+    "scannedFiles": 5
+  }
+}

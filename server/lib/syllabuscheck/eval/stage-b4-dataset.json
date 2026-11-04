@@ -1,0 +1,311 @@
+{
+ "version": "stage-b4-1",
+ "status": "DRAFT - synthetic examples with author-written labels, NOT faculty-reviewed",
+ "reviewStatus": "unreviewed",
+ "provenance": "Course identity and descriptions: the repository's records and the sample syllabi (as in stage-a-dataset.json). The CLO lists, weekly plans and ILOs are SYNTHETIC examples written by the assistant for IT 202, IE 402 and CPE 304; they are not the institution's. Expected verdicts are the assistant's, unreviewed by faculty; nothing here measures agreement with faculty.",
+ "splits": {
+  "dev": "All items. No held-out split."
+ },
+ "categories": [
+  "clear-positive",
+  "few-weeks",
+  "multiweek",
+  "values-clo",
+  "misleading-tags",
+  "gap",
+  "untagged-support"
+ ],
+ "courses": {
+  "prog1": {
+   "code": "IT 202",
+   "title": "Computer Programming 1 (Fundamentals of Programming)",
+   "program": "BSIT",
+   "yearLevel": "2",
+   "discipline": "computing",
+   "description": "This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications."
+  },
+  "syseng": {
+   "code": "IE 402",
+   "title": "Systems Engineering",
+   "program": "BSIE",
+   "yearLevel": "4",
+   "discipline": "engineering",
+   "description": "This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation."
+  },
+  "sensors": {
+   "code": "CPE 304",
+   "title": "Fundamentals of Mixed Signals and Sensors",
+   "program": "BSCPE",
+   "yearLevel": "3",
+   "discipline": "engineering",
+   "description": "This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included."
+  }
+ },
+ "note": "Sources and targets are built by the checker's own coverage.js, so they are exactly what is sent. A trap never accepts ALIGNED.",
+ "items": [
+  {
+   "id": "cv-prog1-clo1",
+   "origin": "stage-b4-1",
+   "type": "CLO-coverage",
+   "split": "dev",
+   "course": "prog1",
+   "category": "clear-positive",
+   "source": "CLO 1 [course level tag: Demonstrating]: Write, test and debug Java programs that use variables, conditional statements, loops and methods.",
+   "target": "Weeks tagged to this CLO:\n- Week 2: ILO: Declare variables and evaluate arithmetic expressions in Java. | Content: Java basics: variables, data types and operators\n- Week 3: ILO: Develop and test Java programs that use if-else and switch statements. | Content: Java conditional statements: if, if-else, nested if and switch\n- Week 4: ILO: Write Java programs that use for and while loops to repeat tasks. | Content: Loops: for, while and do-while\n- Week 7: ILO: Define and call Java methods with parameters and return values. | Content: Methods: parameters and return values\n- Week 8: ILO: Use arrays to store and process lists of values. | Content: Arrays\n- Week 9-10: ILO: Trace a program and use test cases to locate and fix errors. | Content: Debugging and testing programs\nOther weeks (not tagged to this CLO):\n- Week 1: Course orientation: objectives, requirements, grading and policies\n- Week 5: Algorithms and flowcharts\n- Week 11: Coding standards and the IDE\n- Week 12: Ethics in computing and responsible programming\nExamination weeks: 6, 13",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Six tagged weeks teach and practise Java constructs and debugging.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cv-prog1-clo2-oneweek",
+   "origin": "stage-b4-1",
+   "type": "CLO-coverage",
+   "split": "dev",
+   "course": "prog1",
+   "category": "few-weeks",
+   "source": "CLO 2 [course level tag: Enabling]: Analyze a simple problem and express its logic as an algorithm or flowchart before coding.",
+   "target": "Weeks tagged to this CLO:\n- Week 5: ILO: Draw a flowchart and write pseudocode for a given problem. | Content: Algorithms and flowcharts\nOther weeks (not tagged to this CLO):\n- Week 1: Course orientation: objectives, requirements, grading and policies\n- Week 2: Java basics: variables, data types and operators\n- Week 3: Java conditional statements: if, if-else, nested if and switch\n- Week 4: Loops: for, while and do-while\n- Week 7: Methods: parameters and return values\n- Week 8: Arrays\n- Week 9-10: Debugging and testing programs\n- Week 11: Coding standards and the IDE\n- Week 12: Ethics in computing and responsible programming\nExamination weeks: 6, 13",
+   "accept": [
+    "ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "One tagged week (flowcharts and pseudocode) builds CLO 2; no equal share is required, but one week is thin.",
+   "ambiguous": true,
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cv-prog1-clo3-multiweek",
+   "origin": "stage-b4-1",
+   "type": "CLO-coverage",
+   "split": "dev",
+   "course": "prog1",
+   "category": "multiweek",
+   "source": "CLO 3 [course level tag: Enabling]: Apply good coding practices (naming, indentation, comments) and an integrated development environment to produce readable programs.",
+   "target": "Weeks tagged to this CLO:\n- Week 9-10: ILO: Trace a program and use test cases to locate and fix errors. | Content: Debugging and testing programs\n- Week 11: ILO: Apply naming, indentation and commenting conventions in an IDE. | Content: Coding standards and the IDE\nOther weeks (not tagged to this CLO):\n- Week 1: Course orientation: objectives, requirements, grading and policies\n- Week 2: Java basics: variables, data types and operators\n- Week 3: Java conditional statements: if, if-else, nested if and switch\n- Week 4: Loops: for, while and do-while\n- Week 5: Algorithms and flowcharts\n- Week 7: Methods: parameters and return values\n- Week 8: Arrays\n- Week 12: Ethics in computing and responsible programming\nExamination weeks: 6, 13",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Weeks 9-10 (a two-week range) and week 11 build the coding-practices CLO.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cv-prog1-clo4-values",
+   "origin": "stage-b4-1",
+   "type": "CLO-coverage",
+   "split": "dev",
+   "course": "prog1",
+   "category": "values-clo",
+   "source": "CLO 4 [course level tag: Integration of Values]: Demonstrate honesty, compassion and responsibility in the use of computers and in team programming work, in line with Marian-Augustinian values.",
+   "target": "Weeks tagged to this CLO:\n- Week 12: ILO: Demonstrate honesty and responsibility in a team programming task. | Content: Ethics in computing and responsible programming | Values: Compassion and Humility: students review each other's code kindly and credit every source; a short reflection on honest authorship closes the session.\nOther weeks (not tagged to this CLO):\n- Week 1: Course orientation: objectives, requirements, grading and policies\n- Week 2: Java basics: variables, data types and operators\n- Week 3: Java conditional statements: if, if-else, nested if and switch\n- Week 4: Loops: for, while and do-while\n- Week 5: Algorithms and flowcharts\n- Week 7: Methods: parameters and return values\n- Week 8: Arrays\n- Week 9-10: Debugging and testing programs\n- Week 11: Coding standards and the IDE\nExamination weeks: 6, 13",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Week 12 integrates the values in what students do (review each other's code, credit sources, reflect).",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cv-prog1-clo4-namedonly",
+   "origin": "stage-b4-1",
+   "type": "CLO-coverage",
+   "split": "dev",
+   "course": "prog1",
+   "category": "values-clo",
+   "source": "CLO 4 [course level tag: Integration of Values]: Demonstrate honesty, compassion and responsibility in the use of computers and in team programming work, in line with Marian-Augustinian values.",
+   "target": "Weeks tagged to this CLO:\n- Week 12: ILO: Demonstrate honesty and responsibility in a team programming task. | Content: Ethics in computing and responsible programming | Values: Compassion\nOther weeks (not tagged to this CLO):\n- Week 1: Course orientation: objectives, requirements, grading and policies\n- Week 2: Java basics: variables, data types and operators\n- Week 3: Java conditional statements: if, if-else, nested if and switch\n- Week 4: Loops: for, while and do-while\n- Week 5: Algorithms and flowcharts\n- Week 7: Methods: parameters and return values\n- Week 8: Arrays\n- Week 9-10: Debugging and testing programs\n- Week 11: Coding standards and the IDE\nExamination weeks: 6, 13",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "The only value text is a bare value name: no instructional integration.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cv-prog1-clo2-misleadingtags",
+   "origin": "stage-b4-1",
+   "type": "CLO-coverage",
+   "split": "dev",
+   "course": "prog1",
+   "category": "misleading-tags",
+   "source": "CLO 2 [course level tag: Enabling]: Analyze a simple problem and express its logic as an algorithm or flowchart before coding.",
+   "target": "Weeks tagged to this CLO:\n- Week 7: ILO: Define and call Java methods with parameters and return values. | Content: Methods: parameters and return values\n- Week 8: ILO: Use arrays to store and process lists of values. | Content: Arrays\nOther weeks (not tagged to this CLO):\n- Week 1: Course orientation: objectives, requirements, grading and policies\n- Week 2: Java basics: variables, data types and operators\n- Week 3: Java conditional statements: if, if-else, nested if and switch\n- Week 4: Loops: for, while and do-while\n- Week 5: Algorithms and flowcharts\n- Week 9-10: Debugging and testing programs\n- Week 11: Coding standards and the IDE\n- Week 12: Ethics in computing and responsible programming\nExamination weeks: 6, 13",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "CLO 2 (analyze and express logic) is tagged to the weeks on methods and arrays; the week that really builds it (flowcharts, week 5) is not tagged.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cv-prog1-clo3-gap",
+   "origin": "stage-b4-1",
+   "type": "CLO-coverage",
+   "split": "dev",
+   "course": "prog1",
+   "category": "gap",
+   "source": "CLO 3 [course level tag: Enabling]: Apply good coding practices (naming, indentation, comments) and an integrated development environment to produce readable programs.",
+   "target": "Weeks tagged to this CLO:\n(none)\nOther weeks (not tagged to this CLO):\n- Week 1: Course orientation: objectives, requirements, grading and policies\n- Week 2: Java basics: variables, data types and operators\n- Week 3: Java conditional statements: if, if-else, nested if and switch\n- Week 4: Loops: for, while and do-while\n- Week 5: Algorithms and flowcharts\n- Week 7: Methods: parameters and return values\n- Week 8: Arrays\n- Week 9-10: Debugging and testing programs\n- Week 12: Ethics in computing and responsible programming\nExamination weeks: 6, 13",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "No week teaches or practises coding standards or the IDE any more.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cv-syseng-clo1",
+   "origin": "stage-b4-1",
+   "type": "CLO-coverage",
+   "split": "dev",
+   "course": "syseng",
+   "category": "clear-positive",
+   "source": "CLO 1 [course level tag: Enabling]: Develop a system requirements specification and a functional decomposition for an engineered system.",
+   "target": "Weeks tagged to this CLO:\n- Week 2: ILO: Identify the components, boundaries and stakeholders of a system. | Content: Systems thinking and the systems approach\n- Week 4: ILO: Write verifiable system requirements. | Content: Requirements analysis\n- Week 5: ILO: Decompose a system into functions and sub-functions. | Content: Functional decomposition\nOther weeks (not tagged to this CLO):\n- Week 1: Orientation: course objectives, requirements, grading and policies\n- Week 3: Systems life-cycle models\n- Week 7: Systems design and trade studies\n- Week 8: Systems integration\n- Week 9: Project management for systems\n- Week 10: Performance evaluation of systems\n- Week 11: Verification and validation\nExamination weeks: 6, 12",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Weeks 2, 4 and 5 build the requirements specification and the decomposition.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cv-syseng-clo3",
+   "origin": "stage-b4-1",
+   "type": "CLO-coverage",
+   "split": "dev",
+   "course": "syseng",
+   "category": "clear-positive",
+   "source": "CLO 3 [course level tag: Demonstrating]: Plan and manage a systems engineering project, including integration, scheduling and risk.",
+   "target": "Weeks tagged to this CLO:\n- Week 8: ILO: Plan the integration of subsystems and their interfaces. | Content: Systems integration\n- Week 9: ILO: Prepare a schedule and a risk register. | Content: Project management for systems\nOther weeks (not tagged to this CLO):\n- Week 1: Orientation: course objectives, requirements, grading and policies\n- Week 2: Systems thinking and the systems approach\n- Week 3: Systems life-cycle models\n- Week 4: Requirements analysis\n- Week 5: Functional decomposition\n- Week 7: Systems design and trade studies\n- Week 10: Performance evaluation of systems\n- Week 11: Verification and validation\nExamination weeks: 6, 12",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Weeks 8 and 9 plan integration, schedule and risk.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cv-syseng-clo4-novalues",
+   "origin": "stage-b4-1",
+   "type": "CLO-coverage",
+   "split": "dev",
+   "course": "syseng",
+   "category": "values-clo",
+   "source": "CLO 4 [course level tag: Integration of Values]: Evaluate system performance, and verify and validate a system against its requirements, upholding professional and ethical responsibility.",
+   "target": "Weeks tagged to this CLO:\n- Week 10: ILO: Compute performance measures of a system and compare them with its requirements. | Content: Performance evaluation of systems | Values: (none written)\n- Week 11: ILO: Prepare a verification and validation plan with acceptance criteria. | Content: Verification and validation | Values: (none written)\nOther weeks (not tagged to this CLO):\n- Week 1: Orientation: course objectives, requirements, grading and policies\n- Week 2: Systems thinking and the systems approach\n- Week 3: Systems life-cycle models\n- Week 4: Requirements analysis\n- Week 5: Functional decomposition\n- Week 7: Systems design and trade studies\n- Week 8: Systems integration\n- Week 9: Project management for systems\nExamination weeks: 6, 12",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "CLO 4 is an Integration of Values CLO, and the tagged weeks write no value or ethical integration.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cv-syseng-clo4-values",
+   "origin": "stage-b4-1",
+   "type": "CLO-coverage",
+   "split": "dev",
+   "course": "syseng",
+   "category": "values-clo",
+   "source": "CLO 4 [course level tag: Integration of Values]: Evaluate system performance, and verify and validate a system against its requirements, upholding professional and ethical responsibility.",
+   "target": "Weeks tagged to this CLO:\n- Week 10: ILO: Compute performance measures of a system and compare them with its requirements. | Content: Performance evaluation of systems | Values: Integrity and Humility: students report a result that misses its requirement and discuss the professional duty to state it; peer review of the V&V plan is done with respect for the author.\n- Week 11: ILO: Prepare a verification and validation plan with acceptance criteria. | Content: Verification and validation | Values: Integrity and Humility: students report a result that misses its requirement and discuss the professional duty to state it; peer review of the V&V plan is done with respect for the author.\nOther weeks (not tagged to this CLO):\n- Week 1: Orientation: course objectives, requirements, grading and policies\n- Week 2: Systems thinking and the systems approach\n- Week 3: Systems life-cycle models\n- Week 4: Requirements analysis\n- Week 5: Functional decomposition\n- Week 7: Systems design and trade studies\n- Week 8: Systems integration\n- Week 9: Project management for systems\nExamination weeks: 6, 12",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The tagged weeks integrate integrity and humility in what students do.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cv-sensors-clo1",
+   "origin": "stage-b4-1",
+   "type": "CLO-coverage",
+   "split": "dev",
+   "course": "sensors",
+   "category": "clear-positive",
+   "source": "CLO 1 [course level tag: Enabling]: Analyze and design operational amplifier circuits for signal conditioning of sensor outputs.",
+   "target": "Weeks tagged to this CLO:\n- Week 2: ILO: Explain the ideal op-amp model and its golden rules. | Content: Operational amplifier basics\n- Week 3: ILO: Design and test an inverting amplifier with a specified gain. | Content: Amplifier circuits: inverting and non-inverting\n- Week 4: ILO: Design a signal-conditioning stage for a sensor output. | Content: Signal conditioning for sensors\nOther weeks (not tagged to this CLO):\n- Week 1: Orientation: course objectives, requirements, grading and policies\n- Week 6: Sensors and transducers\n- Week 7: Analog-to-digital converters\n- Week 8: Digital-to-analog converters\n- Week 9: Interfacing sensors with a microcontroller\n- Week 10: Measurement, calibration and reporting\nExamination weeks: 5, 11",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Weeks 2-4 build op-amp analysis and design.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cv-sensors-clo2-oneweek",
+   "origin": "stage-b4-1",
+   "type": "CLO-coverage",
+   "split": "dev",
+   "course": "sensors",
+   "category": "few-weeks",
+   "source": "CLO 2 [course level tag: Enabling]: Select sensors and transducers and relate their characteristics to the physical parameters they measure.",
+   "target": "Weeks tagged to this CLO:\n- Week 6: ILO: Select a sensor for a physical parameter from its characteristics. | Content: Sensors and transducers\nOther weeks (not tagged to this CLO):\n- Week 1: Orientation: course objectives, requirements, grading and policies\n- Week 2: Operational amplifier basics\n- Week 3: Amplifier circuits: inverting and non-inverting\n- Week 4: Signal conditioning for sensors\n- Week 7: Analog-to-digital converters\n- Week 8: Digital-to-analog converters\n- Week 9: Interfacing sensors with a microcontroller\n- Week 10: Measurement, calibration and reporting\nExamination weeks: 5, 11",
+   "accept": [
+    "ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "One tagged week (sensors and transducers) selects sensors from characteristics.",
+   "ambiguous": true,
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cv-sensors-clo3-untagged",
+   "origin": "stage-b4-1",
+   "type": "CLO-coverage",
+   "split": "dev",
+   "course": "sensors",
+   "category": "untagged-support",
+   "source": "CLO 3 [course level tag: Demonstrating]: Interface sensors and actuators with a microcontroller using analog-to-digital and digital-to-analog converters.",
+   "target": "Weeks tagged to this CLO:\n(none)\nOther weeks (not tagged to this CLO):\n- Week 1: Orientation: course objectives, requirements, grading and policies\n- Week 2: Operational amplifier basics\n- Week 3: Amplifier circuits: inverting and non-inverting\n- Week 4: Signal conditioning for sensors\n- Week 6: Sensors and transducers\n- Week 7: Analog-to-digital converters\n- Week 8: Digital-to-analog converters\n- Week 9: Interfacing sensors with a microcontroller\n- Week 10: Measurement, calibration and reporting\nExamination weeks: 5, 11",
+   "accept": [
+    "ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "No week is tagged to CLO 3, yet weeks 7-9 clearly build it: untagged support may count.",
+   "ambiguous": true,
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cv-sensors-clo4-values",
+   "origin": "stage-b4-1",
+   "type": "CLO-coverage",
+   "split": "dev",
+   "course": "sensors",
+   "category": "values-clo",
+   "source": "CLO 4 [course level tag: Integration of Values]: Perform measurements and calibration with precision and honest reporting, showing stewardship and ethical responsibility.",
+   "target": "Weeks tagged to this CLO:\n- Week 10: ILO: Calibrate a sensor and report the measurement tolerance honestly. | Content: Measurement, calibration and reporting | Values: Integrity and Stewardship: students keep a calibration log, state the tolerance they actually measured and discuss what happens when a result is reported better than it is.\nOther weeks (not tagged to this CLO):\n- Week 1: Orientation: course objectives, requirements, grading and policies\n- Week 2: Operational amplifier basics\n- Week 3: Amplifier circuits: inverting and non-inverting\n- Week 4: Signal conditioning for sensors\n- Week 6: Sensors and transducers\n- Week 7: Analog-to-digital converters\n- Week 8: Digital-to-analog converters\n- Week 9: Interfacing sensors with a microcontroller\nExamination weeks: 5, 11",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Week 10 integrates integrity and stewardship in a calibration log and honest reporting.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  }
+ ]
+}

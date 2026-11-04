@@ -1,0 +1,166 @@
+{
+  "standard": "hybrid-1",
+  "status": "scored",
+  "filledSections": 5,
+  "overall": 99,
+  "band": "Excellent",
+  "passThreshold": 79,
+  "passed": false,
+  "areas": [
+    {
+      "key": "template",
+      "name": "Format Compliance",
+      "weight": 20,
+      "stage": 1,
+      "score": 100
+    },
+    {
+      "key": "completeness",
+      "name": "Content Completeness",
+      "weight": 20,
+      "stage": 2,
+      "score": 100
+    },
+    {
+      "key": "co_po",
+      "name": "CO–PO Alignment",
+      "weight": 20,
+      "stage": 2,
+      "score": 100
+    },
+    {
+      "key": "assessment",
+      "name": "Assessment Alignment",
+      "weight": 15,
+      "stage": 2,
+      "score": 100
+    },
+    {
+      "key": "contact_hours",
+      "name": "Contact Hours",
+      "weight": 10,
+      "stage": 2,
+      "score": 100
+    },
+    {
+      "key": "reference_currency",
+      "name": "Reference Currency",
+      "weight": 15,
+      "stage": 2,
+      "score": 100
+    }
+  ],
+  "conformance": {
+    "ok": false,
+    "failed": [
+      {
+        "id": "AI-REQUIRED:review",
+        "ruleId": "AI-REQUIRED",
+        "path": "review",
+        "step": "review",
+        "area": "assessment",
+        "severity": "blocking",
+        "source": "rule",
+        "message": "Gemini alignment must complete before submission. Gemini HTTP 429; alignment not evaluated"
+      }
+    ]
+  },
+  "contact": {
+    "lecture": 2,
+    "lab": 1,
+    "hoursPerWeek": 5,
+    "termHours": 90,
+    "weeksPlanned": 18,
+    "weeksExpected": 18
+  },
+  "findings": [
+    {
+      "id": "T-16:plan[0]",
+      "area": "template",
+      "source": "rule",
+      "ruleId": "T-16",
+      "severity": "major",
+      "step": "plan",
+      "path": "plan[0]",
+      "message": "Week 1 has nothing in: Expected Value/s to be Integrated.",
+      "evidence": {
+        "empty": [
+          "values"
+        ]
+      }
+    },
+    {
+      "id": "VALUE:plan[0].values",
+      "ruleId": "VALUE",
+      "path": "plan[0].values",
+      "message": "Week 1: integrate at least one Marian-Augustinian core value.",
+      "severity": "major",
+      "area": "assessment",
+      "step": "plan",
+      "source": "rule"
+    },
+    {
+      "id": "AI-REQUIRED:review",
+      "ruleId": "AI-REQUIRED",
+      "path": "review",
+      "step": "review",
+      "area": "assessment",
+      "severity": "blocking",
+      "source": "rule",
+      "message": "Gemini alignment must complete before submission. Gemini HTTP 429; alignment not evaluated"
+    }
+  ],
+  "score": 99,
+  "baseScore": 100,
+  "hybrid": {
+    "version": "hybrid-1",
+    "ready": false,
+    "critical": false,
+    "score": 99,
+    "baseScore": 100,
+    "deductions": [
+      {
+        "id": "VALUE:plan[0].values",
+        "points": 1,
+        "reason": "Missing core value"
+      }
+    ],
+    "links": [],
+    "alignment": {
+      "status": "not_evaluated",
+      "reason": "Gemini HTTP 429; alignment not evaluated",
+      "provider": "gemini",
+      "judgements": []
+    },
+    "suggestions": [
+      {
+        "id": "VALUE:plan[0].values",
+        "path": "plan[0].values",
+        "title": "Integrate Compassion",
+        "text": "Compassion: explain how the module's decisions affect other people and demonstrate this value in the activity.",
+        "replacement": "Compassion: explain how the module's decisions affect other people and demonstrate this value in the activity.",
+        "source": "rule",
+        "basedOn": [
+          "VALUE:plan[0].values"
+        ]
+      }
+    ],
+    "synthetic": true,
+    "checkedMeta": {
+      "courseId": 10,
+      "code": "IT 204",
+      "title": "Computer Programming 2",
+      "program": "BSIT",
+      "lecture": "2",
+      "lab": "1",
+      "prereq": "IT 202 - Programming 1",
+      "yearLevel": "2",
+      "curriculumYear": "test-2026"
+    },
+    "checkedAt": "2026-10-21T22:10:01.006Z",
+    "curriculum": {
+      "program": "BSIT",
+      "curriculumYear": "test-2026"
+    }
+  }
+}

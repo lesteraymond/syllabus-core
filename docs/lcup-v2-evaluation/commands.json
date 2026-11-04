@@ -1,0 +1,60 @@
+{
+  "selectedExisting": [
+    "node",
+    "--require",
+    "./scripts/lcup-v2-evaluation/isolate-evidence.cjs",
+    "--test",
+    "server/lib/compliance/rules.test.js",
+    "src/lib/complianceRules.parity.test.js",
+    "server/lib/syllabuscheck/validation.test.js",
+    "server/lib/syllabuscheck/scoring.test.js",
+    "server/lib/syllabuscheck/gates.test.js",
+    "server/lib/syllabuscheck/engine.test.js",
+    "server/lib/syllabuscheck/output-validation.test.js",
+    "server/routes/compliance.routes.test.js",
+    "server/routes/syllabusCheck.routes.test.js",
+    "scripts/lcup-policy-v2-implementation/policy.test.cjs",
+    "scripts/lcup-policy-v2-implementation/api.test.cjs",
+    "scripts/lcup-policy-v2-implementation/robustness.test.cjs",
+    "scripts/lcup-policy-v2/compatibility.test.mjs",
+    "server/lib/syllabuscheck/variants.test.js"
+  ],
+  "newCorrections": [
+    "node",
+    "--test",
+    "scripts/lcup-v2-evaluation/corrections.test.cjs"
+  ],
+  "newRunner": [
+    "node",
+    "--test",
+    "scripts/lcup-v2-evaluation/pipeline.test.cjs"
+  ],
+  "drySmoke": [
+    "node",
+    "scripts/lcup-v2-evaluation/run.cjs",
+    "--scope",
+    "smoke",
+    "--model",
+    "claude-sonnet-5-5",
+    "--out",
+    "docs/lcup-v2-evaluation/dry-smoke-NEW"
+  ],
+  "dryPilot": [
+    "node",
+    "scripts/lcup-v2-evaluation/run.cjs",
+    "--scope",
+    "pilot",
+    "--model",
+    "claude-sonnet-5-5",
+    "--out",
+    "docs/lcup-v2-evaluation/dry-pilot-NEW"
+  ],
+  "build": [
+    "npm.cmd",
+    "run",
+    "build",
+    "--",
+    "--outDir",
+    "tmp/lcup-v2-evaluation-build-NEW"
+  ]
+}

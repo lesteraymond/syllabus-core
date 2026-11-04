@@ -1,0 +1,362 @@
+{
+  "scope": "Final selected distinct assertions, not sum of diagnostic reruns",
+  "tests": 1188,
+  "passed": 1184,
+  "failed": 4,
+  "skipped": 0,
+  "cancelled": 0,
+  "blockedAutomated": 0,
+  "unexecutedAutomatedNotInventoriedAsTests": true,
+  "groups": [
+    {
+      "name": "New consolidated requirements",
+      "command": [
+        "node",
+        "--test",
+        "scripts/lcup-requirements/requirements.test.cjs"
+      ],
+      "log": "existing-regression-requirements-tests-final.log",
+      "exitCode": 0,
+      "tests": 21,
+      "passed": 21,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Bilingual lesson authoring",
+      "command": [
+        "node",
+        "scripts/lcup-requirements/test-ui.mjs"
+      ],
+      "log": "existing-regression-lesson-ui-final.log",
+      "exitCode": 0,
+      "tests": 6,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Existing C3, verdict and model",
+      "command": [
+        "node",
+        "--test",
+        "server/lib/syllabuscheck/stage-c3.test.js",
+        "server/lib/syllabuscheck/verdict.test.js",
+        "src/lib/syllabusModel.test.js"
+      ],
+      "log": "existing-regression-core-regressions.log",
+      "exitCode": 0,
+      "tests": 80,
+      "passed": 80,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Existing alignment, stages, scoring and provider",
+      "command": [
+        "node",
+        "--test",
+        "server/lib/syllabuscheck/clo-relevance.test.js",
+        "server/lib/syllabuscheck/stage-a-mapping.test.js",
+        "server/lib/syllabuscheck/stage-b.test.js",
+        "server/lib/syllabuscheck/stage-b34.test.js",
+        "server/lib/syllabuscheck/stage-c.test.js",
+        "server/lib/syllabuscheck/stage-c-response.test.js",
+        "server/lib/syllabuscheck/stage-d.test.js",
+        "server/lib/syllabuscheck/advisory.test.js",
+        "server/lib/syllabuscheck/institutional.test.js",
+        "server/lib/syllabuscheck/description-plan.test.js",
+        "server/lib/syllabuscheck/validation.test.js",
+        "server/lib/syllabuscheck/evidence.test.js",
+        "server/lib/syllabuscheck/alignment-safety.test.js",
+        "server/lib/syllabuscheck/failure-kinds.test.js",
+        "server/lib/syllabuscheck/quality.test.js",
+        "server/lib/syllabuscheck/scoring.test.js",
+        "server/lib/syllabuscheck/gates.test.js",
+        "server/lib/syllabuscheck/prompt-regression.test.js",
+        "server/lib/syllabuscheck/provider-guard.test.js",
+        "server/lib/syllabuscheck/anthropic.test.js"
+      ],
+      "log": "existing-regression-alignment-regressions.log",
+      "exitCode": 0,
+      "tests": 223,
+      "passed": 223,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Rules, route gates, findings and save workflow",
+      "command": [
+        "node",
+        "--test",
+        "src/lib/complianceRules.parity.test.js",
+        "server/lib/compliance/rules.test.js",
+        "src/lib/syllabusRules.test.js",
+        "server/routes/compliance.routes.test.js",
+        "server/routes/syllabusCheck.routes.test.js",
+        "server/routes/syllabusCheck.refine.routes.test.js",
+        "src/lib/hybridView.test.js",
+        "src/lib/hybridCheck.test.js",
+        "src/lib/complianceView.test.js",
+        "src/lib/draftSave.test.js",
+        "src/lib/planHeadings.test.js",
+        "src/i18n/i18n.test.js"
+      ],
+      "log": "existing-regression-workflow-regressions.log",
+      "exitCode": 0,
+      "tests": 161,
+      "passed": 161,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Existing importer UI",
+      "command": [
+        "node",
+        "scripts/test-pdf-import-ui.mjs"
+      ],
+      "log": "existing-regression-importer-ui-regressions.log",
+      "exitCode": 0,
+      "tests": 16,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Catalog and content HTTP persistence",
+      "command": [
+        "node",
+        "--test",
+        "server/routes/catalog.routes.test.js"
+      ],
+      "log": "existing-regression-catalog-regressions.log",
+      "exitCode": 0,
+      "tests": 22,
+      "passed": 22,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Compatibility fixes and existing prompt variants",
+      "command": [
+        "node",
+        "--test",
+        "scripts/lcup-policy-v2/compatibility.test.mjs",
+        "server/lib/syllabuscheck/variants.test.js"
+      ],
+      "log": "existing-compatibility-final.log",
+      "exitCode": 0,
+      "tests": 9,
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Existing C3 addendum contracts",
+      "command": [
+        "node",
+        "--test",
+        "server/lib/syllabuscheck/stage-c3-addendum.test.js"
+      ],
+      "log": "existing-c3-addendum-tests.log",
+      "exitCode": 0,
+      "tests": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "V2 replacement policy",
+      "command": [
+        "node",
+        "--test",
+        "scripts/lcup-policy-v2-implementation/policy.test.cjs"
+      ],
+      "log": "policy-tests-final.log",
+      "exitCode": 0,
+      "tests": 36,
+      "passed": 36,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "V2 HTTP and persistence safety",
+      "command": [
+        "node",
+        "--test",
+        "scripts/lcup-policy-v2-implementation/api.test.cjs"
+      ],
+      "log": "api-tests-final.log",
+      "exitCode": 0,
+      "tests": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "V2 bilingual UI",
+      "command": [
+        "node",
+        "scripts/lcup-policy-v2-implementation/test-ui.mjs"
+      ],
+      "log": "ui-tests-final.log",
+      "exitCode": 0,
+      "tests": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "V2 context, references, CLI and comparison",
+      "command": [
+        "node",
+        "--test",
+        "scripts/lcup-policy-v2-implementation/robustness.test.cjs"
+      ],
+      "log": "robustness-tests-final.log",
+      "exitCode": 0,
+      "tests": 10,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Additional safe provider/reference contracts",
+      "command": [
+        "node",
+        "--test",
+        "server/lib/syllabuscheck/anthropic-schema.test.js"
+      ],
+      "log": "existing-additional.log",
+      "exitCode": 0,
+      "tests": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Additional safe reliability, recommendation, mapping, cache and provider tests",
+      "command": [
+        "node",
+        "--test",
+        "server/lib/syllabuscheck/anthropic-errors.test.js",
+        "server/lib/syllabuscheck/anthropic-guard.test.js",
+        "server/lib/syllabuscheck/anthropic-lock.test.js",
+        "server/lib/syllabuscheck/anthropic-replay.test.js",
+        "server/lib/syllabuscheck/cache-keys.test.js",
+        "server/lib/syllabuscheck/clo-any.test.js",
+        "server/lib/syllabuscheck/engine.test.js",
+        "server/lib/syllabuscheck/links.test.js",
+        "server/lib/syllabuscheck/openrouter.test.js",
+        "server/lib/syllabuscheck/outcome-sharing.test.js",
+        "server/lib/syllabuscheck/outcome-source.test.js",
+        "server/lib/syllabuscheck/output-validation.test.js",
+        "server/lib/syllabuscheck/partial-check.test.js",
+        "server/lib/syllabuscheck/refine.test.js",
+        "server/lib/syllabuscheck/reliability.test.js",
+        "server/lib/syllabuscheck/reuse.test.js",
+        "server/lib/syllabuscheck/revision-cycles.test.js",
+        "server/lib/syllabuscheck/stage-c3-independence.test.js",
+        "server/lib/syllabuscheck/stage-c3-safety.test.js",
+        "server/lib/syllabuscheck/stewardship.test.js",
+        "server/lib/syllabuscheck/suggestions.test.js",
+        "server/lib/syllabuscheck/eval-quality-metrics.test.js"
+      ],
+      "log": "additional-regressions.log",
+      "exitCode": 0,
+      "tests": 200,
+      "passed": 200,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Independent seven-link evidence contracts",
+      "command": [
+        "node",
+        "--test",
+        "scripts/lcup-comprehensive-verification/relationships.test.cjs"
+      ],
+      "log": "relationships-initial.log",
+      "tests": 98,
+      "passed": 98,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Deterministic, course, metrics and three original safety tests",
+      "command": [
+        "node",
+        "--test",
+        "scripts/lcup-comprehensive-verification/deterministic.test.cjs",
+        "scripts/lcup-comprehensive-verification/course.test.cjs",
+        "scripts/lcup-comprehensive-verification/metrics.test.cjs",
+        "scripts/lcup-comprehensive-verification/safety.test.cjs"
+      ],
+      "log": "new-targeted-final.log",
+      "tests": 211,
+      "passed": 208,
+      "failed": 3,
+      "skipped": 0
+    },
+    {
+      "name": "Additional below-79 gate observation",
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern",
+        "passing mark 79",
+        "scripts/lcup-comprehensive-verification/safety.test.cjs"
+      ],
+      "log": "gate-threshold-verified.log",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Fresh SQL / real HTTP / bilingual DOM integration",
+      "command": [
+        "node",
+        "scripts/lcup-comprehensive-verification/run-integration.mjs"
+      ],
+      "log": "integration-final.log",
+      "tests": 9,
+      "passed": 8,
+      "failed": 1,
+      "skipped": 0
+    },
+    {
+      "name": "Existing faculty benchmark source and preservation contracts",
+      "command": [
+        "node",
+        "--test",
+        "scripts/lcup-academic-benchmark/benchmark.test.cjs"
+      ],
+      "log": "benchmark-preservation.log",
+      "tests": 36,
+      "passed": 36,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Fresh legacy versus V2 scenario execution",
+      "command": [
+        "node",
+        "--test",
+        "scripts/lcup-comprehensive-verification/comparison.test.cjs"
+      ],
+      "log": "comparison-tests.log",
+      "tests": 22,
+      "passed": 22,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "notes": [
+    "new-targeted-final.log contains the original three safety tests; the later gate-pattern log adds the fourth once.",
+    "An unfiltered repeat of the targeted command now executes 212 assertions instead of 211; omit the separate gate-pattern command when recomputing totals.",
+    "Diagnostic initial failures are retained separately; they are not additional distinct final test cases.",
+    "Performance/probe/inventory commands succeeded but are not counted as Node tests.",
+    "Blocked academic/production objectives are listed in requirements-matrix.json, not counted as executed tests."
+  ]
+}

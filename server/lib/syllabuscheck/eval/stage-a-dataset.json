@@ -1,0 +1,547 @@
+{
+ "version": "stage-a-2",
+ "status": "DRAFT - author-written labels, NOT faculty-reviewed",
+ "reviewStatus": "unreviewed",
+ "provenance": "Reference text is taken from the repository's records: PO wording from server/db/local-outcome-data.cjs (imported from the registrar images), course identity from server/db/local-curriculum-data.cjs, descriptions and the 'real-faculty-clo' CLOs from the sample syllabi in docs/academic-references (technical paragraph(s) only, copied verbatim). The EXPECTED VERDICTS were written by the assistant and have not been reviewed by faculty. The PO transcriptions came from images and have not been proof-read word by word.",
+ "splits": {
+  "dev": "All items. There is no held-out split; do not treat the numbers as agreement with faculty."
+ },
+ "categories": [
+  "clear-positive",
+  "keyword-overlap",
+  "off-subject",
+  "generic",
+  "redundant",
+  "missing-coverage",
+  "wrong-po-mapping",
+  "real-faculty-clo",
+  "unreadable"
+ ],
+ "courses": {
+  "prog1": {
+   "code": "IT 202",
+   "title": "Computer Programming 1 (Fundamentals of Programming)",
+   "program": "BSIT",
+   "yearLevel": "2",
+   "discipline": "computing",
+   "description": "This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications."
+  },
+  "syseng": {
+   "code": "IE 402",
+   "title": "Systems Engineering",
+   "program": "BSIE",
+   "yearLevel": "4",
+   "discipline": "engineering",
+   "description": "This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation."
+  },
+  "sensors": {
+   "code": "CPE 304",
+   "title": "Fundamentals of Mixed Signals and Sensors",
+   "program": "BSCPE",
+   "yearLevel": "3",
+   "discipline": "engineering",
+   "description": "This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included."
+  }
+ },
+ "items": [
+  {
+   "id": "cc-prog1-aligned",
+   "origin": "stage-a-2",
+   "type": "Course-CLO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "clear-positive",
+   "source": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nProgram: BSIT\nYear level: 2\nDescription: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.",
+   "target": "Develop and test Java programs that use variables, conditional statements and loops to solve simple problems.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Observable performance in the subject the description names (Java programming fundamentals).",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cc-prog1-keyword",
+   "origin": "stage-a-2",
+   "type": "Course-CLO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "keyword-overlap",
+   "source": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nProgram: BSIT\nYear level: 2\nDescription: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.",
+   "target": "Appreciate the history of programming and understand the importance of programming in society.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Repeats the subject word but states no assessable programming performance ('appreciate', 'understand').",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cc-prog1-offsubject",
+   "origin": "stage-a-2",
+   "type": "Course-CLO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "off-subject",
+   "source": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nProgram: BSIT\nYear level: 2\nDescription: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.",
+   "target": "Design and analyze a relational database schema using normalization up to third normal form.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "A computing competence of a different course (databases); the description does not support it.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cc-prog1-generic",
+   "origin": "stage-a-2",
+   "type": "Course-CLO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "generic",
+   "source": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nProgram: BSIT\nYear level: 2\nDescription: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.",
+   "target": "Demonstrate professionalism and teamwork in the workplace.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Would fit any course; no link to programming.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cc-prog1-real1",
+   "origin": "stage-a-2",
+   "type": "Course-CLO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "real-faculty-clo",
+   "source": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nProgram: BSIT\nYear level: 2\nDescription: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.",
+   "target": "Define and analyze the computing requirements needed for an effective solution that is essential for developing holistic and impactful solutions.",
+   "accept": [
+    "ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "CLO1 of the sample IT 202 syllabus (faculty-written). Related to the description's 'logical formulation techniques', but no programming performance is stated: contestable.",
+   "ambiguous": true,
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cc-syseng-aligned",
+   "origin": "stage-a-2",
+   "type": "Course-CLO",
+   "split": "dev",
+   "course": "syseng",
+   "category": "clear-positive",
+   "source": "Course: IE 402 - Systems Engineering\nProgram: BSIE\nYear level: 4\nDescription: This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation.",
+   "target": "Develop a system requirements specification and a functional decomposition for an engineered system.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Requirements analysis and system design are key topics of the description; the verbs are observable.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cc-syseng-keyword",
+   "origin": "stage-a-2",
+   "type": "Course-CLO",
+   "split": "dev",
+   "course": "syseng",
+   "category": "keyword-overlap",
+   "source": "Course: IE 402 - Systems Engineering\nProgram: BSIE\nYear level: 4\nDescription: This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation.",
+   "target": "Describe systems engineering.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Names the course but only asks for a description; no competence, below a fourth-year level.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cc-syseng-offsubject",
+   "origin": "stage-a-2",
+   "type": "Course-CLO",
+   "split": "dev",
+   "course": "syseng",
+   "category": "off-subject",
+   "source": "Course: IE 402 - Systems Engineering\nProgram: BSIE\nYear level: 4\nDescription: This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation.",
+   "target": "Write Java programs that use loops and conditional statements.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "A programming-fundamentals outcome in a systems engineering course.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cc-syseng-real2",
+   "origin": "stage-a-2",
+   "type": "Course-CLO",
+   "split": "dev",
+   "course": "syseng",
+   "category": "real-faculty-clo",
+   "source": "Course: IE 402 - Systems Engineering\nProgram: BSIE\nYear level: 4\nDescription: This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation.",
+   "target": "Apply critical and creative thinking skills to analyze, design, and optimize complex systems, integrating various components such as people, materials, technology, and information.",
+   "accept": [
+    "ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "CLO 2 of the sample IE 402 syllabus (faculty-written); close to the description, broad: contestable.",
+   "ambiguous": true,
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cc-sensors-aligned",
+   "origin": "stage-a-2",
+   "type": "Course-CLO",
+   "split": "dev",
+   "course": "sensors",
+   "category": "clear-positive",
+   "source": "Course: CPE 304 - Fundamentals of Mixed Signals and Sensors\nProgram: BSCPE\nYear level: 3\nDescription: This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included.",
+   "target": "Select and condition a sensor signal and interface it to a microcontroller through an analog-to-digital converter.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Sensors, signal conversion and digital interfacing are all in the description.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cc-sensors-keyword",
+   "origin": "stage-a-2",
+   "type": "Course-CLO",
+   "split": "dev",
+   "course": "sensors",
+   "category": "keyword-overlap",
+   "source": "Course: CPE 304 - Fundamentals of Mixed Signals and Sensors\nProgram: BSCPE\nYear level: 3\nDescription: This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included.",
+   "target": "Explain the importance of sensors in modern society.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Uses the word 'sensors' but develops no technical competence of the course.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cc-sensors-offsubject",
+   "origin": "stage-a-2",
+   "type": "Course-CLO",
+   "split": "dev",
+   "course": "sensors",
+   "category": "off-subject",
+   "source": "Course: CPE 304 - Fundamentals of Mixed Signals and Sensors\nProgram: BSCPE\nYear level: 3\nDescription: This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included.",
+   "target": "Apply queueing theory to model production lines.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "An industrial engineering outcome in an electronics course.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cc-sensors-real3",
+   "origin": "stage-a-2",
+   "type": "Course-CLO",
+   "split": "dev",
+   "course": "sensors",
+   "category": "real-faculty-clo",
+   "source": "Course: CPE 304 - Fundamentals of Mixed Signals and Sensors\nProgram: BSCPE\nYear level: 3\nDescription: This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included.",
+   "target": "Analyze and apply the behavior of passive components in AC circuits and their instrumentation applications in multidisciplinary teams to design, test, and optimize mixed-signal and sensor applications for engineering solutions.",
+   "accept": [
+    "ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "CLO3 of the sample CPE 304 syllabus (faculty-written): on subject, but several competences in one sentence.",
+   "ambiguous": true,
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cc-prog1-unreadable",
+   "origin": "stage-a-2",
+   "type": "Course-CLO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "unreadable",
+   "source": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nProgram: BSIT\nYear level: 2\nDescription: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.",
+   "target": "Xq zv wl kjh pqrt mnb vcx.",
+   "accept": [
+    "INSUFFICIENT_EVIDENCE",
+    "NOT_ALIGNED"
+   ],
+   "why": "Text that cannot be read as an outcome: the model should say it cannot judge it (or reject it).",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cs-prog1-aligned",
+   "origin": "stage-a-2",
+   "type": "CLO-set",
+   "split": "dev",
+   "course": "prog1",
+   "category": "clear-positive",
+   "source": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nProgram: BSIT\nYear level: 2\nDescription: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.",
+   "target": "CLO 1: Write and test Java programs that use variables, conditional statements and loops.\nCLO 2: Decompose a problem into methods and implement them.\nCLO 3: Debug programs by tracing and testing their behaviour.\nCLO 4: Document and present a working program to peers.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Four distinct competences that together cover the description.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cs-prog1-redundant",
+   "origin": "stage-a-2",
+   "type": "CLO-set",
+   "split": "dev",
+   "course": "prog1",
+   "category": "redundant",
+   "source": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nProgram: BSIT\nYear level: 2\nDescription: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.",
+   "target": "CLO 1: Write Java programs using loops.\nCLO 2: Develop Java programs that use loop statements.\nCLO 3: Create programs in Java with repetition structures.\nCLO 4: Code Java loops to solve problems.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Four wordings of one competence; nothing else in the description is covered.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cs-sensors-redundant",
+   "origin": "stage-a-2",
+   "type": "CLO-set",
+   "split": "dev",
+   "course": "sensors",
+   "category": "redundant",
+   "source": "Course: CPE 304 - Fundamentals of Mixed Signals and Sensors\nProgram: BSCPE\nYear level: 3\nDescription: This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included.",
+   "target": "CLO 1: Explain how sensors convert physical quantities into electrical signals.\nCLO 2: Describe how a sensor changes a physical parameter into an electrical signal.\nCLO 3: Discuss the conversion of physical parameters to electrical signals by transducers.\nCLO 4: Outline how transducers produce electrical signals from physical parameters.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Four paraphrases of one competence, all at recall level; converters, amplifiers and interfacing are never covered.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cs-syseng-narrow",
+   "origin": "stage-a-2",
+   "type": "CLO-set",
+   "split": "dev",
+   "course": "syseng",
+   "category": "missing-coverage",
+   "source": "Course: IE 402 - Systems Engineering\nProgram: BSIE\nYear level: 4\nDescription: This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation.",
+   "target": "CLO 1: Elicit and document stakeholder requirements for a system.\nCLO 2: Write verifiable system requirements.\nCLO 3: Trace requirements to functions.\nCLO 4: Maintain a requirements traceability matrix.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "All four concern requirements; integration, project management and performance evaluation, all in the description, are missing.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cs-sensors-generic",
+   "origin": "stage-a-2",
+   "type": "CLO-set",
+   "split": "dev",
+   "course": "sensors",
+   "category": "generic",
+   "source": "Course: CPE 304 - Fundamentals of Mixed Signals and Sensors\nProgram: BSCPE\nYear level: 3\nDescription: This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included.",
+   "target": "CLO 1: Demonstrate professionalism.\nCLO 2: Demonstrate teamwork.\nCLO 3: Demonstrate good communication.\nCLO 4: Demonstrate lifelong learning.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Generic outcomes that fit any course; none concerns sensors or signals.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cp-bscpe-aligned",
+   "origin": "stage-a-2",
+   "type": "CLO-PO",
+   "split": "dev",
+   "course": "sensors",
+   "category": "clear-positive",
+   "source": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+   "target": "Design and conduct experiments to characterize sensor accuracy and analyze and interpret the measurement data.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Same actions (design, conduct, analyze, interpret) on measurement data.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cp-bscpe-keyword",
+   "origin": "stage-a-2",
+   "type": "CLO-PO",
+   "split": "dev",
+   "course": "sensors",
+   "category": "keyword-overlap",
+   "source": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+   "target": "Discuss experiments in the history of sensor technology.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Shares the word 'experiments' but asks for discussion, not designing, conducting or analysing.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cp-bscpe-wrongpo",
+   "origin": "stage-a-2",
+   "type": "CLO-PO",
+   "split": "dev",
+   "course": "sensors",
+   "category": "wrong-po-mapping",
+   "source": "Ability to communicate effectively",
+   "target": "Calibrate a sensor and record its measurement tolerance.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "A technical measurement outcome mapped to the communication PO: an incorrect mapping.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cp-bsit-aligned",
+   "origin": "stage-a-2",
+   "type": "CLO-PO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "clear-positive",
+   "source": "Utilize modern computing tools.",
+   "target": "Write, compile and debug Java programs using an integrated development environment.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Using a modern computing tool (an IDE) to build programs.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cp-bsit-keyword",
+   "origin": "stage-a-2",
+   "type": "CLO-PO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "keyword-overlap",
+   "source": "Analyze complex problems, and identify and define the computing requirements needed to design and appropriate solution;",
+   "target": "Memorize the keywords and syntax of the Java language.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Names the discipline but only asks for recall: no analysis of problems or definition of requirements.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cp-bsit-wrongpo",
+   "origin": "stage-a-2",
+   "type": "CLO-PO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "wrong-po-mapping",
+   "source": "Preserve and promote “Filipino historical and cultural heritage;",
+   "target": "Develop and test Java programs that use loops and conditional statements.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "A programming outcome mapped to the PO on Filipino historical and cultural heritage: an incorrect mapping.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cp-bsit-real3",
+   "origin": "stage-a-2",
+   "type": "CLO-PO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "real-faculty-clo",
+   "source": "Work effectively and independently in multi-disciplinary and multi-cultural teams;",
+   "target": "Collaborate effectively within multi-disciplinary and culturally diverse teams to develop Java-based programming solutions that address social challenges, demonstrating social responsibility and cultural sensitivity.",
+   "accept": [
+    "ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "CLO3 of the sample IT 202 syllabus, which the syllabus itself maps to PO 3 (teamwork): plausible, contestable.",
+   "ambiguous": true,
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cp-bsie-wrongpo",
+   "origin": "stage-a-2",
+   "type": "CLO-PO",
+   "split": "dev",
+   "course": "syseng",
+   "category": "wrong-po-mapping",
+   "source": "Ability to function on multidisciplinary teams",
+   "target": "Develop a system requirements specification and a functional decomposition for an engineered system.",
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "A technical documentation outcome mapped to the multidisciplinary teams PO: an incorrect mapping.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "cp-bsie-real2",
+   "origin": "stage-a-2",
+   "type": "CLO-PO",
+   "split": "dev",
+   "course": "syseng",
+   "category": "real-faculty-clo",
+   "source": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+   "target": "Apply critical and creative thinking skills to analyze, design, and optimize complex systems, integrating various components such as people, materials, technology, and information.",
+   "accept": [
+    "ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "CLO 2 of the sample IE 402 syllabus, which maps it to POs 2-5 (here PO 3, system design): plausible, contestable.",
+   "ambiguous": true,
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  }
+ ],
+ "note": "Where the strength of a flag is contestable the item accepts PARTIALLY_ALIGNED and NOT_ALIGNED; ALIGNED is never accepted for a trap, so judging it ALIGNED counts as a false approval. 'real-faculty-clo' items are genuine faculty-written outcomes and are marked ambiguous (ALIGNED or PARTIALLY_ALIGNED accepted): they are excluded from the false-approval and false-rejection rates."
+}

@@ -1,0 +1,45 @@
+{
+  "provider": "anthropic",
+  "model": "claude-sonnet-5-5",
+  "pricesAsOf": "2026-10-27",
+  "outputTokens": 914,
+  "requests": 1,
+  "charged": 0.019372,
+  "conservative": 0.02156,
+  "accounting": "reconcile",
+  "transient": 0,
+  "invalid": 0,
+  "unproductive": 0,
+  "entries": [
+    {
+      "n": 1,
+      "kind": "model",
+      "at": "2026-10-27T14:27:26.827Z",
+      "status": 200,
+      "worst": 0.21425525,
+      "charged": 0.019372,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.02156,
+      "ids": [
+        "clo-po-calc-aligned",
+        "clo-po-calc-lower-level",
+        "clo-po-calc-unrelated",
+        "clo-po-calc-vague"
+      ],
+      "maxTokens": 16000,
+      "requestId": "req_011CgSu4MvRDJVib8L6MpTYF",
+      "ms": 10171,
+      "stopReason": "end_turn",
+      "tokens": {
+        "input": 456,
+        "cacheWrite": 3728,
+        "cacheWrite1h": 0,
+        "cacheRead": 0,
+        "output": 914,
+        "thinking": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      }
+    }
+  ]
+}

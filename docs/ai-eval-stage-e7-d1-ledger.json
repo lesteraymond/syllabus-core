@@ -1,0 +1,116 @@
+{
+  "requests": 8,
+  "charged": 0.00328903,
+  "conservative": 0.0102966,
+  "accounting": "reconcile",
+  "transient": 0,
+  "invalid": 1,
+  "unproductive": 0,
+  "entries": [
+    {
+      "n": 1,
+      "kind": "key-check",
+      "at": "2026-10-26T05:21:56.467Z",
+      "status": 200
+    },
+    {
+      "n": 2,
+      "kind": "price-lookup",
+      "at": "2026-10-26T05:21:56.948Z",
+      "status": 200
+    },
+    {
+      "n": 3,
+      "kind": "model",
+      "at": "2026-10-26T05:21:57.057Z",
+      "status": 200,
+      "worst": 0.0156063,
+      "charged": 0.00077043,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.0020241,
+      "ids": [
+        "vu-prog1-humility-review",
+        "vu-prog1-name-only",
+        "vu-prog1-generic",
+        "vu-prog1-unrelated"
+      ]
+    },
+    {
+      "n": 4,
+      "kind": "model",
+      "at": "2026-10-26T05:22:10.295Z",
+      "status": 200,
+      "worst": 0.0155418,
+      "charged": 0.0000992,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.0011589,
+      "ids": [
+        "vu-prog1-clashes",
+        "vu-prog1-no-activity",
+        "vu-prog1-week1",
+        "vu-prog1-multiweek"
+      ]
+    },
+    {
+      "n": 5,
+      "kind": "model",
+      "at": "2026-10-26T05:22:12.775Z",
+      "status": 200,
+      "worst": 0.0157956,
+      "charged": 0.00044337,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.002025,
+      "ids": [
+        "vu-prog1-clashes",
+        "vu-prog1-no-activity",
+        "vu-prog1-week1",
+        "vu-prog1-multiweek"
+      ]
+    },
+    {
+      "n": 6,
+      "kind": "model",
+      "at": "2026-10-26T05:22:27.068Z",
+      "status": 200,
+      "worst": 0.015558,
+      "charged": 0.00079986,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.0017034,
+      "ids": [
+        "vm-prog1-respect-supported",
+        "vm-prog1-respect-no-evidence",
+        "vm-prog1-honesty-supported"
+      ]
+    },
+    {
+      "n": 7,
+      "kind": "model",
+      "at": "2026-10-26T05:22:29.853Z",
+      "status": 200,
+      "worst": 0.0154395,
+      "charged": 0.00081957,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.0016737,
+      "ids": [
+        "vu-syseng-community",
+        "vu-syseng-interiority-generic",
+        "vm-syseng-cooperation-supported"
+      ]
+    },
+    {
+      "n": 8,
+      "kind": "model",
+      "at": "2026-10-26T05:22:31.934Z",
+      "status": 200,
+      "worst": 0.0154173,
+      "charged": 0.0003566,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.0017115,
+      "ids": [
+        "vu-sensors-courage",
+        "vu-sensors-silly",
+        "vm-sensors-patience-weak"
+      ]
+    }
+  ]
+}

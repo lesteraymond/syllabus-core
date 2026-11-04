@@ -1,0 +1,252 @@
+{
+  "status": "paused_for_academic_batch_review",
+  "dataset": {
+    "name": "stage-c",
+    "version": "stage-c-2",
+    "split": "all",
+    "reviewStatus": "unreviewed",
+    "selection": {
+      "parentItems": 28,
+      "selectedIds": [
+        "af-prog1-passive",
+        "af-prog1-single-format",
+        "af-prog1-alternatives",
+        "af-prog1-week1",
+        "af-syseng-good",
+        "af-syseng-irrelevant",
+        "as-prog1-essay",
+        "as-prog1-bare-name",
+        "as-prog1-keywords",
+        "as-prog1-accessible",
+        "as-prog1-week1",
+        "as-syseng-good",
+        "as-sensors-quiz",
+        "af-prog1-multiweek",
+        "as-prog1-vague-evidence",
+        "as-prog1-multiweek"
+      ]
+    }
+  },
+  "configuration": {
+    "stageFlags": {
+      "a": false,
+      "b": false,
+      "b3": false,
+      "b4": false,
+      "c1": true,
+      "c2": true,
+      "d1": false,
+      "d2": false
+    },
+    "promptVariant": "current",
+    "trim": false,
+    "minItems": false,
+    "timeoutMs": 90000
+  },
+  "promptVersion": "alignment-12c1c2-r8",
+  "ids": [
+    "af-prog1-passive",
+    "af-prog1-single-format",
+    "af-prog1-alternatives",
+    "af-prog1-week1"
+  ],
+  "answers": {
+    "af-prog1-passive": {
+      "label": "NOT_ALIGNED",
+      "sourceQuote": "Develop and test Java programs that use if-else and switch statements to make decisions",
+      "targetQuote": "students listen and copy the syntax",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "The ILO requires learners to develop and test Java programs using if-else and switch, i.e. practical skill demonstration at Create level. The activity is a slide lecture in which students only listen and copy syntax, so no learner writes, runs or tests a conditional program; the competence is never practised. The lecture may support the syntax knowledge, but it does not develop the stated performance, so nothing in the activities develops the skill.",
+      "recommendation": null,
+      "draft": "- Lecture on Java conditional statements using slides, showing worked examples of if, if-else, nested if and switch.\n- Laboratory practice in which each student writes, runs and tests small Java programs that use if-else and switch to make decisions, with the instructor demonstrating one program first and providing annotated code samples for review.",
+      "draftReview": [
+        "assumes_resource"
+      ],
+      "reviewEvidence": {
+        "explanation": [],
+        "draft": [
+          {
+            "code": "assumes_resource",
+            "evidence": "Laboratory"
+          }
+        ]
+      },
+      "aspects": {
+        "values": {
+          "teaching": "weak",
+          "learnerSupport": "limited",
+          "measures": "not_assessed",
+          "evidence": "not_assessed",
+          "level": "not_assessed",
+          "responsible": "activity"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "af-prog1-single-format": {
+      "label": "PARTIALLY_ALIGNED",
+      "sourceQuote": "Develop and test Java programs that use if-else and switch statements to make decisions",
+      "targetQuote": "Individual timed coding test in which students write if-else programs from memory",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "The activity does have students write if-else programs, so it practises the action verb and subject, but it stops at Apply: the ILO asks learners to develop AND test programs, and a timed test from memory gives no opportunity to run and test the program or to use switch. It also offers a single format with no alternative route for learners who cannot code under time pressure, and no reference material or worked examples to support recall of syntax. The gap is the missing testing step and the missing switch practice, plus the single-format support.",
+      "recommendation": null,
+      "draft": "- Individual coding exercise in which students write if-else and switch programs from worked examples and syntax notes, then run and test each program against several inputs and correct any faulty logic; students who prefer not to work under time pressure may complete the same exercise untimed with the notes available.",
+      "aspects": {
+        "values": {
+          "teaching": "weak",
+          "learnerSupport": "limited",
+          "measures": "not_assessed",
+          "evidence": "not_assessed",
+          "level": "not_assessed",
+          "responsible": "activity"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "af-prog1-alternatives": {
+      "label": "ALIGNED",
+      "sourceQuote": "Develop and test Java programs that use if-else and switch statements to make decisions",
+      "targetQuote": "pair programming in the laboratory",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "The guided demonstration plus laboratory pair programming lets learners actually write, run and test if-else and switch programs, matching the Create-level practical competence, and the recorded demonstration, annotated samples and solo-or-pair option give adequate learner support.",
+      "recommendation": null,
+      "draft": "",
+      "aspects": {
+        "values": {
+          "teaching": "sound",
+          "learnerSupport": "adequate",
+          "measures": "not_assessed",
+          "evidence": "not_assessed",
+          "level": "not_assessed",
+          "responsible": "none"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "af-prog1-week1": {
+      "label": "ALIGNED",
+      "sourceQuote": "Describe the course objectives, requirements and grading system",
+      "targetQuote": "presentation of the course objectives",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "This is a Week 1 orientation whose activities set expectations, present the objectives and review policies and grading, which is exactly what the descriptive ILO asks for.",
+      "recommendation": null,
+      "draft": "",
+      "aspects": {
+        "values": {
+          "teaching": "sound",
+          "learnerSupport": "not_applicable",
+          "measures": "not_assessed",
+          "evidence": "not_assessed",
+          "level": "not_assessed",
+          "responsible": "none"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    }
+  },
+  "relationshipMetrics": {
+    "planned": 16,
+    "attempted": 4,
+    "neverAttempted": 12,
+    "verified": 4,
+    "recovered": 0,
+    "unresolved": 0,
+    "unresolvedRate": 0,
+    "coverage": 0.25,
+    "attemptedShare": 0.25,
+    "firstAttempt": {
+      "answered": 4,
+      "refused": 0,
+      "validationFailureRate": 0,
+      "noAnswerFirst": 0
+    },
+    "rawResponseErrors": {
+      "answers": 1,
+      "invalidAnswers": 0,
+      "refusedJudgements": 0,
+      "requestsWithoutAnswer": 0
+    },
+    "aspectCoverage": {
+      "byType": {
+        "Activity-fit": {
+          "relationships": 4,
+          "baseVerified": 4,
+          "baseAccepted": 4,
+          "notRecorded": 0,
+          "fields": {
+            "teaching": {
+              "assessed": 4,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "learnerSupport": {
+              "assessed": 4,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            }
+          }
+        }
+      },
+      "fieldsRequired": 8,
+      "fieldsAssessed": 8,
+      "rate": 1
+    }
+  },
+  "usage": {
+    "requests": 16,
+    "thisRun": 3,
+    "model": 1,
+    "priceLookups": 1,
+    "keyChecks": 1,
+    "invalidAnswers": 0,
+    "unproductiveInARow": 0,
+    "transient": 1,
+    "promptTokens": 4367,
+    "completionTokens": 785,
+    "cachedTokens": 128,
+    "reportedCost": 0.00085693,
+    "charged": 0.00669119,
+    "accounting": {
+      "rule": "reconcile",
+      "requests": {
+        "reconciled": 1,
+        "conservative": 0,
+        "worst_case": 0,
+        "refused": 0
+      },
+      "chargedConservatively": 0.0161598
+    },
+    "warnings": [],
+    "limits": {
+      "maxRequests": 33,
+      "maxCost": 0.05583426,
+      "maxTransient": 3,
+      "maxInvalid": 1,
+      "warnInvalid": 1,
+      "maxUnproductive": 1,
+      "maxTokens": null
+    },
+    "stopped": null
+  },
+  "batchReviews": []
+}

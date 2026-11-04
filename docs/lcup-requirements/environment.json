@@ -1,0 +1,50 @@
+{
+  "source": "server/.env (read only; allowlisted non-secret configuration)",
+  "runningProcessObserved": false,
+  "configured": {
+    "SYLLABUS_CHECK_AI_PROVIDER": "anthropic",
+    "COMPLIANCE_AI_PROVIDER": "(unset)",
+    "ANTHROPIC_MODEL": "claude-sonnet-5-5",
+    "SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL": "(unset)",
+    "SYLLABUS_CHECK_AI_GATE": "(unset)",
+    "SYLLABUS_CHECK_TITLE_POLICY": "(unset)",
+    "SYLLABUS_CHECK_STAGE_A": "(unset)",
+    "SYLLABUS_CHECK_STAGE_B": "(unset)",
+    "SYLLABUS_CHECK_STAGE_B3": "(unset)",
+    "SYLLABUS_CHECK_STAGE_B4": "(unset)",
+    "SYLLABUS_CHECK_STAGE_C1": "(unset)",
+    "SYLLABUS_CHECK_STAGE_C2": "(unset)",
+    "SYLLABUS_CHECK_STAGE_C3": "(unset)",
+    "SYLLABUS_CHECK_STAGE_D1": "(unset)",
+    "SYLLABUS_CHECK_STAGE_D2": "(unset)",
+    "SYLLABUS_CHECK_REF_VERIFY": "(unset)",
+    "SYLLABUS_CHECK_REQUIREMENTS_ADVICE": "(unset)"
+  },
+  "effectiveFlags": {
+    "a": false,
+    "b": false,
+    "b3": false,
+    "b4": false,
+    "c1": false,
+    "c2": false,
+    "d1": false,
+    "d2": false
+  },
+  "provider": {
+    "provider": "anthropic",
+    "model": "claude-sonnet-5-5",
+    "configured": false,
+    "approved": false
+  },
+  "aiGate": "advisory",
+  "ruleCount": 47,
+  "valuesDefinitions": {
+    "status": "pending_approval",
+    "version": "lcup-core-values-2026-10-25",
+    "source": "https://lcup.edu.ph/mission-vision.php (section CORE VALUES)"
+  },
+  "supportingValuesLexicon": {
+    "status": "proposed",
+    "version": "values-lexicon-1"
+  }
+}
