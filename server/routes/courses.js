@@ -68,9 +68,12 @@ router.get('/', requireAuth, async (req, res) => {
 
 router.get('/:id', requireAuth, async (req, res) => {
   try {
-    const course = await loadCourse(req.app.locals.db, parseId(req.params.id));
+    const db = req.app.locals.db;
+    const course = await loadCourse(db, parseId(req.params.id));
     if (!course) throw httpError(404, 'Subject not found');
-    res.json(course);
+    // The other subjects of the same program (code and title only): the syllabus form offers them as pre-requisites.
+    const [others] = await db.query('SELECT course_id, code, title FROM courses WHERE program_id = ? AND course_id <> ? ORDER BY code', [course.program.id, course.id]);
+    res.json({ ...course, programSubjects: others.map((r) => ({ id: r.course_id, code: r.code, title: r.title })) });
   } catch (err) { sendError(res, err); }
 });
 
@@ -99,7 +102,7 @@ router.post('/', requireAuth, requireAdmin, async (req, res) => {
         programCreated = true;
       }
       const [dup] = await conn.query('SELECT 1 FROM courses WHERE code = ? AND program_id = ?', [c, programId]);
-      if (dup.length) throw httpError(409, `${c} already exists`);
+      if (dup.length) throw httpError(409, `${c} already exists in ${progCode}`);
       const [r] = await conn.query('INSERT INTO courses (code, title, program_id, standards_json) VALUES (?, ?, ?, ?)', [c, t, programId, JSON.stringify(blankStandards())]);
       return { id: r.insertId, programCreated };
     });

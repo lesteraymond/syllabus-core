@@ -1,16 +1,18 @@
-// Institution/EGA prototype text is retained. POs use the user-designated official
-// PDF version. Existing databases are corrected only by the explicit versioned migration.
+// Institution/EGA prototype text is retained. The vision and mission are the LCUP's current wording and are the same text the
+// AI Checker's standard (server/lib/compliance/standard-v4.json, rules T-28 and T-29) compares a syllabus with. POs use the
+// user-designated official PDF version. Existing databases are corrected only by the explicit versioned migration.
 import officialPoReferences from './officialProgramOutcomes.json' with { type: 'json' };
 export const INSTITUTION = {
-  vision: 'Moved by the Spirit of the Risen Christ, La Consolacion University Philippines, rooted in Gospel values as a Catholic Augustinian-Marian institution, envisions to become a catalyst for the holistic transformation of all persons and communities.',
+  vision: 'Moved by the Spirit of the Risen Christ, La Consolacion University Philippines, envisions itself to become a catalyst for the wholistic transformational development of Catholic Augustinian Marian graduates rooted in Gospel values.',
   mission: {
-    lead: 'LCUP commits to generate and make available to all persons and communities’ programs and services that will enable them to:',
+    lead: 'LCUP commits to generate and make available to all persons and communities programs and services that will enable them to:',
     items: [
       'exhibit academic and technical competence in their respective areas of discipline in the local and international environment;',
       'demonstrate their knowledge, critical thinking and creativity by exploring the various avenues of learning and searching for truth;',
+      'live Gospel values in the varied aspects of their personal and professional lives;',
       'manifest their willingness to serve specially the marginalized sector of our society;',
-      'demonstrate productivity in various areas of learning as responsible citizens of the society; and',
-      'live the Gospel values in the varied aspects of their personal and professional lives.',
+      'demonstrate productivity in various areas of learning as responsible stewards of our common home and society; and',
+      'develop individuals who are resilient, inclusive, and responsive to the socio-economic realities of the Philippines and the complexities of the global environment.',
     ],
   },
   egas: [
