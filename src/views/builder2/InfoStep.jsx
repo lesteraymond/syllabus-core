@@ -2,7 +2,6 @@ import { t as translateUI } from "../../i18n/index.js";
 import { tr } from "../../i18n/index.js";
 import { STATUS_LABELS } from '../../lib/syllabusRules';
 import { Field } from '../../components/ui';
-import PrereqPicker from './PrereqPicker';
 import { Auto, Ic } from './parts';
 import { newId } from './useDraft';
 import Select from '../../components/Select';
@@ -41,7 +40,7 @@ export default function InfoStep({ d, apply, model, programList, courseList, onC
       </Field>
       <Field label={translateUI('hybrid.curriculumYear')}><input value={m.curriculumYear || ''} onChange={e => setM('curriculumYear', e.target.value)} aria-label={translateUI('hybrid.curriculumYear')} placeholder={translateUI('hybrid.yearExample')} maxLength={40} /></Field>
       <Field label={translateUI('hybrid.yearLevel')}><input type="number" min="1" max="8" value={m.yearLevel || ''} onChange={e => setM('yearLevel', e.target.value)} aria-label={translateUI('hybrid.yearLevel')} /></Field>
-      <Field label={translateUI("ui.pre_requisite_iv_1c46d5")} full><PrereqPicker value={m.prereq} courseId={m.courseId} onChange={(v) => setM('prereq', v)} /></Field>
+      <Field label={translateUI("ui.pre_requisite_iv_1c46d5")} full><input value={m.prereq} onChange={(e) => setM('prereq', e.target.value)} aria-label={translateUI("ui.pre_requisite_d4ec8c")} maxLength={255} /></Field>
       <div className="field full">
         <span>{translateUI("ui.course_description_iii_db7708")}</span>
         {d.description.map((x, i) => (

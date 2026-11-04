@@ -39,7 +39,7 @@ function makeDb(installed = true) {
     if (sql.startsWith('SELECT s.syllabus_id, s.version_id, s.stage')) return [s.stages.filter((r) => p[0].includes(r.syllabus_id)).map((r) => ({ reviewer_id: 1, note: '', cleared_at: null, first_name: 'Rev', last_name: 'Iewer', ...r }))];
     if (sql.startsWith('SELECT version_id, version_label, content FROM syllabus_versions')) return [[...s.versions.filter(v => v.syllabus_id === p[0]).slice(-1)]];
     if (sql.startsWith('SELECT s.*, u.first_name')) {
-      return [Object.values(s.syllabi).filter((x) => x.status !== 'draft').map((x) => ({ ...x, first_name: 'Fay', last_name: 'F', avatar_path: null, program_name: null, course_title: x.live_title || x.title, course_code_live: x.live_code || null, program_code: 'BSFM', program_full_name: 'BS Financial Management' }))];
+      return [Object.values(s.syllabi).filter((x) => x.status !== 'draft').map((x) => ({ ...x, first_name: 'Fay', last_name: 'F', avatar_path: null, program_name: null, course_title: x.title, program_code: 'BSFM' }))];
     }
     // svc.adminCheckStates: the newest version of each syllabus, and the administrator's runs
     if (sql.startsWith('SELECT v.syllabus_id, v.version_id, (v.content IS NOT NULL')) {
@@ -58,7 +58,6 @@ function makeDb(installed = true) {
     if (/^(INSERT|UPDATE|DELETE)/.test(sql)) { s.logged.push(sql.slice(0, 40)); return [{}]; }
     if (sql.startsWith("SELECT user_id FROM users WHERE role = 'admin'")) return [[]];
     if (/program_outcome_sources/.test(sql)) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' }); // not migrated yet
-    if (/FROM course_prerequisites/.test(sql)) return [[]]; // a subject's prerequisites: none set
     throw new Error('unexpected query: ' + sql);
   };
   const conn = { query: async (q, p) => handle(q, p), beginTransaction: async () => {}, commit: async () => {}, rollback: async () => {}, release: () => {} };
@@ -213,17 +212,4 @@ test('the version history says what changed between versions and what the admini
     assert.strictEqual(v11.note, 'Added to the description.'); // what the faculty member said they changed
   }
   assert.strictEqual((await call({ id: 6, role: 'faculty', firstName: 'Gus', lastName: 'G' }, 'GET', '/syllabi/1/versions')).status, 404);
-}));
-
-test('a student\'s list and the repository show the subject as the catalog has it now; the working lists keep the syllabus\'s own text', () => withServer(async ({ call, db }) => {
-  Object.assign(db.s.syllabi[1], { live_code: 'FM 202-A', live_title: 'Fundamentals of Mathematics (Revised)' });
-  const student = { id: 9, role: 'student' };
-  const forStudent = (await call(student, 'GET', '/syllabi')).body.find((x) => x.id === 1);
-  assert.deepStrictEqual([forStudent.courseCode, forStudent.title, forStudent.programCode, forStudent.programName], ['FM 202-A', 'Fundamentals of Mathematics (Revised)', 'BSFM', 'BS Financial Management']);
-  const repo = (await call(admin, 'GET', '/syllabi?scope=repository')).body.find((x) => x.id === 1);
-  assert.deepStrictEqual([repo.courseCode, repo.title], ['FM 202-A', 'Fundamentals of Mathematics (Revised)']);
-  const working = (await call(admin, 'GET', '/syllabi')).body.find((x) => x.id === 1);
-  assert.deepStrictEqual([working.courseCode, working.title], ['FM 202', 'Fundamentals of Mathematics']); // the syllabus's own copy
-  const unlinked = (await call(student, 'GET', '/syllabi')).body.find((x) => x.id === 2);
-  assert.deepStrictEqual([unlinked.courseCode, unlinked.title], ['OLD 1', 'Legacy']); // no catalog subject: its own text
 }));

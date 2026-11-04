@@ -63,7 +63,6 @@ function makeDb() {
     if (sql.startsWith('INSERT INTO faculty_courses')) { params[0].forEach(([u, c]) => store.courses.set(u, (store.courses.get(u) || new Set()).add(c))); return [{}]; }
     if (sql.startsWith('INSERT INTO notifications')) { store.notes.push({ userId: params[0], type: params[1], title: params[3] }); return [{}]; }
     if (/program_outcome_sources/.test(sql)) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' }); // not migrated yet
-    if (/FROM course_prerequisites/.test(sql)) return [[]]; // a subject's prerequisites: none set
     throw new Error('unexpected query: ' + sql);
   };
   const conn = { query: async (s, p) => handle(s, p), beginTransaction: async () => {}, commit: async () => {}, rollback: async () => {}, release: () => {} };

@@ -186,16 +186,13 @@ router.get('/:id/review', requireAuth, async (req, res) => {
     const me = req.session.user;
     const id = parseId(req.params.id);
     const [rows] = await db.query(
-      'SELECT s.syllabus_id, s.user_id, s.status, s.version, s.title, s.course_code, s.file_path, s.content, s.course_id, ' + LABEL_SQL + ' WHERE s.syllabus_id = ?', [id]);
+      'SELECT s.syllabus_id, s.user_id, s.status, s.version, s.title, s.course_code, s.file_path, s.content, ' + LABEL_SQL + ' WHERE s.syllabus_id = ?', [id]);
     const syl = rows[0];
-    // A student reads any approved syllabus.
-    const studentReads = me.role === 'student' && !!syl && syl.status === 'approved';
-    if (!syl || !(rules.canView(me, syl) || studentReads)) throw httpError(404, 'Syllabus not found');
+    if (!syl || !rules.canView(me, syl)) throw httpError(404, 'Syllabus not found');
 
     const [vrows] = await db.query(
       'SELECT version_id, version_label, status_at_save, note, created_at, file_path, (content IS NOT NULL) AS has_form FROM syllabus_versions WHERE syllabus_id = ? ORDER BY version_id DESC', [id]);
-    let versions = vrows.map((v) => ({ id: v.version_id, label: v.version_label, statusAtSave: v.status_at_save, note: v.note || '', createdAt: v.created_at, filePath: v.file_path || null, hasForm: !!v.has_form }));
-    if (studentReads) versions = versions.slice(0, 1).map((v) => ({ ...v, note: '' })); // only the current version, without the review notes
+    const versions = vrows.map((v) => ({ id: v.version_id, label: v.version_label, statusAtSave: v.status_at_save, note: v.note || '', createdAt: v.created_at, filePath: v.file_path || null, hasForm: !!v.has_form }));
 
     let chosen = versions[0] || null;
     if (req.query.version !== undefined) {
@@ -218,7 +215,7 @@ router.get('/:id/review', requireAuth, async (req, res) => {
       const [before] = await db.query('SELECT version_label, content FROM syllabus_versions WHERE syllabus_id = ? AND version_id < ? AND content IS NOT NULL ORDER BY version_id DESC LIMIT 1', [id, chosen.id]);
       if (before[0]) {
         const list = changedSections(parseJson(before[0].content), content);
-        if (!studentReads) changes = { from: before[0].version_label, sections: list, text: describeChanges(list) };
+        changes = { from: before[0].version_label, sections: list, text: describeChanges(list) };
       }
     }
     res.json({

@@ -7,14 +7,11 @@ Syllabus management system for undergraduate programs. React + Vite, Node.js + E
 - **Roles** — Faculty, Admin (dean), Asst. VPAA, LIC Director, VPAA and Student. The dean, the Asst. VPAA and the LIC Director check and review; only the VPAA approves (`docs/review-chain.md`)
 - **Sign-in** — Email and password, Google (allowlist), Remember me
 - **Syllabus Builder** — 7-step form, or upload a PDF instead (with preview)
-- **Student registration** — Upload a COR; an AI vision model reads it and the server checks the student is BSIT
+- **Student registration** — Upload a COR; OCR checks the student is BSIT
 - **My Syllabi** — Edit, delete, version history, messaging
 - **Review & Approval** — Approve, reject or return for revision, with comments
-- **Compliance check** — Rule-based scoring on the v9 standard, with AI-written recommendations; admins can read the standard (Settings, View standard); after a check, faculty get automatic suggested fixes (some written by the AI) to accept or reject
-- **Programs and subjects** — loaded from the curricula (BSIT, BSIT Cyber Security, BSCPE, BSIE); a subject's prerequisites are linked and fill the syllabus form
-- **Repository**, **Analytics** (from the stored checks), **Reports** (PDF: analytics, faculty compliance, past terms)
-- **Search** — top bar search across syllabi, faculty and subjects
-- **Developer rule editor** — `/dev/rules`, behind a developer password (see HOW-TO-RUN.md)
+- **Compliance check** — Rule-based scoring with recommendations
+- **Repository**, **Analytics**, **Reports**
 - **Messaging**, **Notifications**, **Activity log**
 
 ## How to Run

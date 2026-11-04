@@ -8,12 +8,10 @@ import { useGooglePhotoSync } from '../lib/useGooglePhotoSync';
 import { users as usersApi, adminSettings } from '../lib/api';
 import { AVATAR_ACCEPT, prepareAvatar } from '../lib/avatar';
 import Select from '../components/Select';
-import StandardDialog from '../components/StandardDialog';
 
 export default function Settings({ user, notify, onAvatarChange, onProfileChange, language, languageBusy, onLanguageChange }) {
   const isAdmin = user.role === 'admin';
   const [administration, setAdministration] = useState(null);
-  const [standardOpen, setStandardOpen] = useState(false);
   const [adminBusy, setAdminBusy] = useState(false);
   const [adminError, setAdminError] = useState('');
   const [languageError, setLanguageError] = useState('');
@@ -28,8 +26,6 @@ export default function Settings({ user, notify, onAvatarChange, onProfileChange
   const saveAdmin = async event => {
     event.preventDefault();
     if (adminBusy || !administration) return;
-    const year = String(administration.academicYear || '').match(/^(\d{4})–(\d{4})$/);
-    if (!year || Number(year[2]) !== Number(year[1]) + 1) { setAdminError(translateUI("settings.year_invalid")); return; }
     setAdminBusy(true); setAdminError('');
     try { const result = await adminSettings.save(administration); setAdministration(result.settings); notify(translateUI("ui.settings_saved_f133b2")); }
     catch (error) { setAdminError(error.message); }
@@ -151,11 +147,10 @@ export default function Settings({ user, notify, onAvatarChange, onProfileChange
         {adminError && <div className="form-error" role="alert">{tr(adminError)}</div>}
         {!administration && !adminError && <p role="status">{translateUI("ui.loading_administrator_settings_ce3873")}</p>}
         {administration && <>
-          <AdministrativeSettings administration={administration} adminBusy={adminBusy} updateAdmin={updateAdmin} onViewStandard={() => setStandardOpen(true)} />
+          <AdministrativeSettings administration={administration} adminBusy={adminBusy} updateAdmin={updateAdmin} />
           <StableButton className="btn primary" type="submit" disabled={adminBusy}>{adminBusy ? translateUI("ui.saving_settings_984f7f") : translateUI("ui.save_settings_0022a3")}</StableButton>
         </>}
       </form>}
-      {standardOpen && <StandardDialog onClose={() => setStandardOpen(false)} />}
     </>
   );
 }
