@@ -185,7 +185,10 @@ export const syllabusCheck = {
   status: () => request('/syllabus-check/status'),
   decisions: (runId) => request(`/syllabus-check/runs/${runId}/decisions`),
   // Check one AI recommendation against every relationship its text touches, and get the text to use (nothing is saved or applied).
-  refine: (runId, suggestionId) => request(`/syllabus-check/runs/${runId}/suggestions/${encodeURIComponent(suggestionId)}/refine`, { method: 'POST' }),
+  refine: (runId, suggestionId, editedText) => request(`/syllabus-check/runs/${runId}/suggestions/${encodeURIComponent(suggestionId)}/refine`, {
+    method: 'POST',
+    ...(typeof editedText === 'string' && editedText.trim() ? { body: JSON.stringify({ editedText }) } : {}),
+  }),
   decide: (runId, body) => request(`/syllabus-check/runs/${runId}/decisions`, { method: 'POST', body: JSON.stringify(body) }),
 };
 

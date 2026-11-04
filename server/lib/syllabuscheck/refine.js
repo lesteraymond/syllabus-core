@@ -133,7 +133,7 @@ async function refineSuggestion({ content, masters, report, suggestion, options 
   const requirements = requirementsFor({ content, masters, path, baseline });
   let text = null;
   try {
-    text = await rewrite({ path, current, requirements, course: courseOf(content), options });
+    text = await rewrite({ path, current: suggestion.userEdited ? suggestion.replacement : current, requirements, course: courseOf(content), options });
   } catch (error) {
     text = null;
   }
