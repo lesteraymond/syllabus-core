@@ -1439,3 +1439,46 @@ Each program has its own expected graduate attributes (EGAs) and program outcome
 **Date:** October 22, 2026
 
 - The score ring in the AI Checker and Review & Check is now red when the score is below the pass line (it stayed blue for every score). At or above the line it is still blue. The Analytics band donut already showed Low in red.
+
+---
+
+### v1.61.0 — Quick Actions Customization and Dashboard Viewport Stability
+**Date:** October 31, 2026
+
+**Dashboard Quick Actions:**
+- Added `CustomizeQuickActionsModal.jsx` allowing users (Faculty and Admin) to customize which navigation action shortcuts appear on their Dashboard Quick Actions card.
+- Synchronized shortcuts with sidebar navigation items, honoring user roles and permissions, and persisted selections in `localStorage` under a user-scoped key (`quick_actions_{userId}`).
+- Updated Quick Action shortcut buttons: icon container background changed to soft white-gray (`bg-slate-100`), icon foreground changed to black (`text-slate-900` / `#0f172a`), providing high contrast and visual hierarchy.
+- Removed the numeric syllabus count badge from the "My Syllabi" shortcut button while preserving the descriptive subtitle ("Syllabi in your account" in English, "Silabus sa iyong account" in Tagalog).
+- Resolved text overlapping and layout breakage when switching to Tagalog by enforcing 2-line text clamping (`-webkit-line-clamp: 2`), flexible container heights (`min-height: 52px; max-height: 72px`), and text truncation without spilling into adjacent buttons.
+
+**Dashboard Viewport & Scroll Stability:**
+- Refined desktop single-viewport layout in `src/responsive.css` so the dashboard remains static, clean, and unfragmented without unwanted card-level scrollbars, while maintaining responsive fluid scaling across device breakpoints.
+- Eliminated vertical overflow scrolling inside the Quick Actions card and the Time Usage stat card across both English and Tagalog by constraining `.card:has(.usage-host) > .card-body` with `overflow-y: hidden` and tightening `<dt>` typography line heights.
+
+**Validation and deployment:**
+- Automated test suite passed with 100% success rate (`npm test`).
+- Localization audit passed with 0 missing translations and 0 hardcoded strings (`npm run test:localization`).
+- Production Vite build compiled cleanly into `dist/` with 0 errors (`npm run build`).
+
+---
+
+### v1.62.0 — Review Chain: VPAA, Asst. VPAA and LIC Director
+**Date:** November 4, 2026
+
+**New roles:**
+- `vpaa` (Vice President for Academic Affairs), `asst_vpaa` (Asst. Vice President for Academic Affairs) and `lic_director` (LIC Director). The dean creates them in Users & Roles.
+
+**The flow:**
+- Faculty submit → the dean (admin), the Asst. VPAA and the LIC Director each check and review (any order) → the VPAA reviews and approves → the Repository.
+- **Only the VPAA approves or rejects.** The dean, the Asst. VPAA and the LIC Director clear their own check, or return the syllabus for revision with a reason. The VPAA can approve only after all three have cleared the newest version and the AI check has been made. A new version starts the three checks again.
+- A dean who writes a syllabus now **sends it for review** instead of approving it; their stage is cleared by authoring and the others follow.
+- The printed form's "Checked and Reviewed by" and "Approved by" show the names and dates.
+- Review & Approval shows each role what needs them (a reviewer's open checks, the VPAA's approvals); the panel shows the three stages and only the buttons that role has. Faculty see a small review-progress line on a submitted syllabus. Notifications reach all three reviewers on a submission, and the VPAA when the third check clears.
+
+**Server:**
+- New `syllabus_review_stages` table and the three roles in `users.role` (`npm run migrate-review-stages`, with `--dry-run`). `syllabi.status` is unchanged.
+- New `POST /api/syllabi/:id/stage-clear` and `GET /api/syllabi/:id/stages`; the status `PUT` enforces who may set which status and the chain before `approved` (`403` for anyone but the VPAA, `409 STAGES_PENDING` before all three have cleared, `503` before the migration). The admin-only checks that meant "may look at and check a syllabus" (comments, AI check, check history, program and subject lists, avatars) now accept every reviewer; user, catalog, deadline and settings management stay with the dean.
+- Upgrade notes: syllabi already approved stay approved; syllabi still submitted or under review need the three checks again. See `docs/review-chain.md`.
+
+**Tests:** new `server/lib/roles.test.js`, `server/lib/reviewStages.test.js`, `server/routes/reviewChain.routes.test.js`, `src/lib/roles.test.js`; the stage, enforcement, comments, compliance and password route tests, the review, notification and navigation tests were updated for "only the VPAA approves".

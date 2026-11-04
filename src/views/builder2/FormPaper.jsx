@@ -1,12 +1,16 @@
 import { GROUPS, PLAN_HEADINGS, renderMarkup } from '../../lib/syllabusModel';
 import { CURRENT_SCHOOL_YEAR, COLLEGE_NAME, INSTITUTION_NAME, INSTITUTION_ADDRESS } from '../../lib/schoolYear';
+import { STAGES, STAGE_LABELS } from '../../lib/roles';
+import { phDate } from '../../lib/phTime';
 
 const html = (t) => ({ __html: renderMarkup(t) });
 
 // The finished form, read-only, laid out like the institutional form. All free text is escaped before the
 // light markup (bullets, bold) is applied. There is no revision date and no modifications checklist:
 // the system adds the revision date when the syllabus is approved. Reusable by the admin review.
-export default function FormPaper({ d, model, preparedBy }) {
+// `signoffs` ({ stages, approved }, from GET /api/syllabi/:id/stages) fills the sign-off block with the names and dates of the dean, the
+// Asst. VPAA and the LIC Director who checked it and of the VPAA who approved it; without it the block says the system adds them.
+export default function FormPaper({ d, model, preparedBy, signoffs = null }) {
   const selected = model.outcomesReady(d);
   const I = selected ? model.institutionFor(d) : { vision: '', mission: { lead: '', items: [] } };
   const egas = selected ? model.egaList(d) : []; // this program's own EGAs
@@ -78,8 +82,12 @@ export default function FormPaper({ d, model, preparedBy }) {
       </div>
       <table style={{ marginTop: 14 }}><tbody><tr>
         <td>Prepared by:<br /><br /><b>{preparedBy}</b></td>
-        <td>Checked and Reviewed by:<br /><br /><b className="m">Added by the system on review</b></td>
-        <td>Approved by:<br /><br /><b className="m">Added by the system on approval</b></td>
+        <td>Checked and Reviewed by:<br /><br />{signoffs && signoffs.stages && signoffs.stages.cleared > 0
+          ? STAGES.map((stage) => { const st = signoffs.stages[stage]; return <div key={stage}>{st.cleared ? <><b>{st.by}</b><br />{(stage === 'dean' ? 'Dean' : STAGE_LABELS[stage]) + ' - ' + (st.at ? phDate(st.at) : 'Date')}</> : <span className="m">{STAGE_LABELS[stage] + ' - pending'}</span>}</div>; })
+          : <b className="m">Added by the system on review</b>}</td>
+        <td>Approved by:<br /><br />{signoffs && signoffs.approved
+          ? <><b>{signoffs.approved.by}</b><br />{'Vice President for Academic Affairs - ' + (signoffs.approved.at ? phDate(signoffs.approved.at) : 'Date')}</>
+          : <b className="m">Added by the system on approval</b>}</td>
       </tr></tbody></table>
     </div>
   );

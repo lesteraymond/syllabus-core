@@ -33,7 +33,7 @@ test('tags resolve to a code and a name', () => {
   assert.deepEqual([M.tagInfo(d, 'clo:' + c1).label, M.tagInfo(d, 'clo:' + c1).name], ['CLO 1', 'One']);
   assert.deepEqual([M.tagInfo(d, 'ega:2').label, M.tagInfo(d, 'ega:2').name], ['EGA 2', 'Competent Professional']);
   assert.equal(M.tagInfo(d, 'ega:2').text, 'Competent Catholic Augustinian-Marian Professional');
-  assert.deepEqual([M.tagInfo(d, 'po:3').label, M.tagInfo(d, 'po:3').name], ['PO 3', 'Design computing solutions']);
+  assert.deepEqual([M.tagInfo(d, 'po:3').label, M.tagInfo(d, 'po:3').name], ['PO 3', 'PO 3']);
   assert.ok(M.tagInfo(d, 'po:3').ok);
 });
 
@@ -92,8 +92,11 @@ test('week parsing', () => {
 test('implied EGAs and the one-click suggestion', () => {
   const { d } = fixture();
   const clo = { egas: [1], pos: [4, 8] };
-  assert.deepEqual(M.impliedEgas(d, clo), [1, 2, 4]);
-  assert.deepEqual(M.missingEgas(d, clo), [2, 4]);
+  assert.deepEqual(M.impliedEgas(d, clo), [], 'Official PDF states no independent PO–EGA crosswalk');
+  assert.deepEqual(M.missingEgas(d, clo), []);
+  const synthetic=createModel({institution:INSTITUTION,programs:{BSIT:{...PROGRAMS.BSIT,pos:PROGRAMS.BSIT.pos.map(p=>({...p,egas:p.no===4?[2]:p.no===8?[1,4]:[]}))}}});
+  assert.deepEqual(synthetic.impliedEgas(d,clo),[1,2,4],'The inference still works when a synthetic crosswalk is explicitly supplied');
+  assert.deepEqual(synthetic.missingEgas(d,clo),[2,4]);
   assert.deepEqual(M.impliedEgas(d, { egas: [], pos: [99] }), []);
 });
 
@@ -222,7 +225,8 @@ test('a new syllabus starts empty with one blank plan row', () => {
   const e = emptyDraft(newId);
   assert.equal(e.schemaVersion, SCHEMA_VERSION);
   assert.equal(e.plan.length, 1);
-  assert.equal(e.plan[0].ilos.length, 1);
+  assert.equal(e.plan[0].ilos.length, 0, 'new lessons need Course Content before an ILO is created');
+  assert.equal(e.plan[0].authoringOrder, 1);
   assert.equal(e.meta.code, '');
   assert.equal(e.clos.length, 0);
   assert.ok(!JSON.stringify(e).includes('IT 204'));
@@ -242,11 +246,11 @@ test('migrating old ILOs from clos:[ids] to tags', () => {
   assert.equal(migrateContent(null).schemaVersion, SCHEMA_VERSION);
 });
 
-test('seed data matches the form: 4 EGAs, 10 BSIT outcomes, every PO maps to a real EGA', () => {
+test('official seed: 4 EGAs, 9 BSIT outcomes, no invented PO–EGA crosswalk', () => {
   assert.equal(INSTITUTION.egas.length, 4);
-  assert.equal(PROGRAMS.BSIT.pos.length, 10);
+  assert.equal(PROGRAMS.BSIT.pos.length, 9);
   assert.equal(INSTITUTION.mission.items.length, 6);
-  assert.ok(PROGRAMS.BSIT.pos.every((p) => p.egas.length && p.egas.every((e) => INSTITUTION.egas.some((x) => x.no === e))));
+  assert.ok(PROGRAMS.BSIT.pos.every((p) => p.egas.length === 0));
   assert.deepEqual(M.poList({ meta: { program: 'BSCS' } }), []);
 });
 
@@ -280,6 +284,8 @@ test('choosing a course copies its starting values without sharing mutable data'
 
 test('changing the course drops all old outcome tags; selecting the same course preserves edits', () => {
   let d = applyCourse(emptyDraft(newId), catalogCourse(1, 'IT 204', [{ id: 'c1', title: 'A', level: 'Enabling', statement: 's', egas: [], pos: [] }]));
+  d.plan[0].contents = 'Previously authored topic';
+  d.plan[0].ilos.push(ilo('Previously authored ILO'));
   d.plan[0].ilos[0].tags = ['clo:c1', 'ega:2', 'po:4'];
   const d2 = applyCourse(d, catalogCourse(2, 'IT 205', [{ id: 'c9', title: 'Z', level: 'Enabling', statement: 's', egas: [], pos: [] }]));
   assert.deepEqual(d2.plan[0].ilos[0].tags, []);

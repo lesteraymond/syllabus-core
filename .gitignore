@@ -41,6 +41,8 @@ desktop.ini
 *.swp
 
 # Temp files
+tmp/reference-tools/
+tmp/reference-extract/
 *.tmp
 *.temp
 *.bak

@@ -24,6 +24,7 @@ function makeDb() {
       return [rows.filter((r) => r.user_id === p[0]).sort((a, b) => b.log_id - a.log_id).slice(0, limit)
         .map((r) => ({ ...r, first_name: NAMES[r.user_id][0], last_name: NAMES[r.user_id][1], title: 'Fundamentals of Mathematics', course_code: 'FM 202' }))];
     }
+    if (/program_outcome_sources/.test(sql)) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' }); // not migrated yet
     throw new Error('unexpected query: ' + sql);
   };
   return { rows, query: async (q, p) => handle(q, p) };

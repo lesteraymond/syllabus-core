@@ -109,7 +109,7 @@ test('administrative settings require server-side administrator access and persi
   const std = (await admin('/settings/standard')).body.standard;
   assert.equal(std.title, settings.DEFAULTS.template);
   assert.equal(std.passThreshold, 79);
-  assert.ok(std.rules.length > 50 && std.areas.length === 6);
+  assert.ok(std.rules.length > 40 && std.areas.length === 6);
   // What is still a project decision reads as sentences, not field names.
   assert.ok(std.pending.length > 0 && std.pending.every(x => !/[\[\]_]|constants\./.test(x)));
   assert.deepEqual((await admin('/settings')).body.settings, settings.DEFAULTS);

@@ -10,6 +10,8 @@ const STATUS_LABELS = { draft: 'Draft', submitted: 'Submitted', under_review: 'U
 
 export function DeletionImpact({ preview }) {
   return <div className="program-delete-impact">
+    {preview.blocked && <p className="info-banner warning" role="alert">{t('programs.blockedBySpecializations', { code: preview.program.code, list: preview.specializations.map(row => row.code).join(', ') })}</p>}
+    {preview.inheritsFrom && <p className="info-banner" role="status">{t('programs.inheritsNote', { code: preview.program.code, source: preview.inheritsFrom })}</p>}
     <dl>{['subjects', 'syllabi', 'versions', 'assignments', 'files'].map(key => <div key={key}><dt>{t('programs.count.' + key)}</dt><dd>{preview.counts[key]}</dd></div>)}</dl>
     <p className="info-banner warning">{t('programs.cascadeWarning')}</p>
     {preview.subjects.length > 0 && <details><summary>{t('programs.affectedSubjects')}</summary><ul>{preview.subjects.map(subject => <li key={subject.id}>{subject.code}{' · '}{subject.title}</li>)}</ul></details>}
@@ -88,7 +90,7 @@ export function ProgramDialog({ program, mode, onClose, onComplete, onReload }) 
           <StableButton type="button" className="btn outline" disabled={busy || motion.closing} onClick={close}>{t('ui.cancel_77dfd2')}</StableButton>
           {mode === 'rename' ? <StableButton type="submit" className="btn primary" disabled={busy || motion.closing || name.trim().length < 2 || !/^[A-Z][A-Z0-9-]{1,19}$/.test(programCode.trim())}>{busy ? t('ui.saving_56a228') : t('programs.saveName')}</StableButton>
             : !preview && !loading ? <StableButton type="button" className="btn outline" onClick={reload}>{t('programs.reloadImpact')}</StableButton>
-            : stage === 1 ? <StableButton type="button" className="btn danger" disabled={loading || !preview || !acknowledged || busy || motion.closing} onClick={() => { if (preview && acknowledged && !busy && !motion.isClosing()) setStage(2); }}>{t('programs.deleteAction')}</StableButton>
+            : stage === 1 ? <StableButton type="button" className="btn danger" disabled={loading || !preview || preview.blocked || !acknowledged || busy || motion.closing} onClick={() => { if (preview && acknowledged && !busy && !motion.isClosing()) setStage(2); }}>{t('programs.deleteAction')}</StableButton>
             : <StableButton type="submit" className="btn danger" disabled={busy || motion.closing || code !== target.code || !acknowledged}>{busy ? t('programs.deleting') : t('programs.deleteAction')}</StableButton>}
         </div>
       </form>

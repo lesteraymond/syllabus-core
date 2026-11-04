@@ -7,6 +7,7 @@ import Topbar from '../src/components/Topbar';
 import Dashboard from '../src/views/DashboardView';
 import { adminSettings } from '../src/lib/api';
 import { navItems } from '../src/data/initialData';
+import { roleAllows } from '../src/lib/roles';
 import { createLanguagePreference } from '../src/i18n/preference';
 import { getLanguage, subscribeLanguage, setLanguage } from '../src/i18n';
 import '../src/tailwind.css'; // styles.css uses @apply, so it is loaded through the entry that defines the utilities
@@ -38,7 +39,7 @@ function Preview() {
     </div>
     <div style={{ width: width === 'narrow' ? 390 : '100%', maxWidth: '100%', margin: '0 auto' }}>
       <div className="app-shell" data-sidebar-collapsed="false" style={width === 'narrow' ? { display: 'block' } : undefined}>
-        {width === 'wide' && <Sidebar page={page} setPage={setPage} nav={navItems.filter(([, , , r]) => !r || r === role)} collapsed={false} onToggle={() => {}} />}
+        {width === 'wide' && <Sidebar page={page} setPage={setPage} nav={navItems.filter(([, , , r]) => roleAllows(r, role))} collapsed={false} onToggle={() => {}} />}
         <main className="workspace" style={width === 'narrow' ? { marginLeft: 0, width: '100%' } : undefined}>
           {width === 'wide' && <Topbar page={page} user={user} onLogout={() => {}} unread={0} threads={[]} msgDrop={false} setMsgDrop={() => {}} setChatCode={() => {}} markRead={() => {}} notify={setToast} onAvatarChange={() => {}} notifications={{ items: [], unreadCount: 0 }} />}
           <div className="page-wrap" style={width === 'narrow' ? { padding: 16 } : undefined}>

@@ -1,8 +1,14 @@
 import { getLanguage, getLocale } from './store.js';
 import { en as baseEn, tl as baseTl } from './messages.js';
 import { extraEn, extraTl } from './extra.js';
-const en = { ...baseEn, ...extraEn };
-const tl = { ...baseTl, ...extraTl };
+import { hybridEn, hybridTl } from './hybrid.js';
+import { pdfImportEn, pdfImportTl } from './pdfImport.js';
+import { dashboardStatsEn, dashboardStatsTl } from './dashboardStats.js';
+import { lessonAuthoringEn, lessonAuthoringTl } from './lessonAuthoring.js';
+import {academicV2En,academicV2Tl} from './academicV2.js';
+import { reviewChainEn, reviewChainTl } from './reviewChain.js';
+const en = { ...baseEn, ...extraEn, ...hybridEn, ...pdfImportEn, ...dashboardStatsEn, ...lessonAuthoringEn, ...academicV2En, ...reviewChainEn };
+const tl = { ...baseTl, ...extraTl, ...hybridTl, ...pdfImportTl, ...dashboardStatsTl, ...lessonAuthoringTl, ...academicV2Tl, ...reviewChainTl };
 export { getLanguage, getLocale, setLanguage, subscribeLanguage, normalizeLanguage } from './store.js';
 export const dictionaries = { en, tl };
 export function translate(key, values = {}, language = getLanguage()) {
@@ -42,7 +48,7 @@ export function tr(message) {
   if (grouped) return tr(grouped[1]) + ' ' + tr(grouped[2] + ' more like this.');
   for (const { key, names, regex } of patterns) {
     const match = regex.exec(message);
-    if (match) return translate(key, Object.fromEntries(names.map((name, i) => [name, name === 'gaps' ? match[i + 1].split(', ').map(tr).join(', ') : ['where', 'which', 'missing', 'term', 'problem', 'hours', 'message', 'title', 'status'].includes(name) ? tr(match[i + 1]) : match[i + 1]])));
+    if (match) return translate(key, Object.fromEntries(names.map((name, i) => [name, name === 'gaps' || name === 'fields' ? match[i + 1].split(', ').map(tr).join(', ') : ['where', 'which', 'missing', 'term', 'problem', 'hours', 'message', 'title', 'status'].includes(name) ? tr(match[i + 1]) : match[i + 1]])));
   }
   return message;
 }

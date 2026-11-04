@@ -288,6 +288,165 @@
 	.mnav-chevron { transition: none; }
 }
 
+/* Fixed, static single-viewport desktop dashboard: eliminates whole-page scrolling while keeping cards responsive */
+@media (min-width: 1024px) and (min-height: 700px) {
+	.app-shell[data-page="dashboard"],
+	.workspace[data-page="dashboard"],
+	.app-shell:has(.dashboard-view),
+	.workspace:has(.dashboard-view) {
+		height: 100vh;
+		height: 100dvh;
+		overflow: hidden;
+	}
+
+	.page-wrap-dashboard,
+	.page-wrap:has(.dashboard-view) {
+		height: calc(100vh - var(--topbar-h, 64px));
+		height: calc(100dvh - var(--topbar-h, 64px));
+		padding: 14px 24px 14px;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		box-sizing: border-box;
+	}
+
+	.dashboard-view {
+		display: flex;
+		flex-direction: column;
+		flex: 1 1 0%;
+		min-height: 0;
+		overflow: hidden;
+	}
+
+	.dashboard-view .page-head {
+		margin-bottom: 10px;
+		flex: none;
+	}
+
+	.dashboard-view .stat-grid {
+		margin-bottom: 10px;
+		flex: none;
+		gap: 8px;
+	}
+
+	.dashboard-view .stat-grid .stat-card {
+		min-height: 76px;
+		padding: 10px 12px;
+	}
+
+	.dashboard-grids-wrap {
+		display: flex;
+		flex-direction: column;
+		flex: 1 1 0%;
+		min-height: 0;
+		gap: 10px;
+	}
+
+	.dashboard-grids-wrap .dashboard-grid {
+		flex: 1.25 1 0%;
+		min-height: 0;
+		margin-bottom: 0;
+		grid-auto-rows: unset;
+		grid-template-rows: minmax(0, 1fr);
+		gap: 10px;
+	}
+
+	.dashboard-grids-wrap .dashboard-grid.lower {
+		flex: 1 1 0%;
+		min-height: 0;
+		margin-bottom: 0;
+		grid-auto-rows: unset;
+		grid-template-rows: minmax(0, 1fr);
+		gap: 10px;
+	}
+
+	.dashboard-grids-wrap .dashboard-grid > .card {
+		height: 100%;
+		min-height: 0;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+	}
+
+	.dashboard-grids-wrap .dashboard-grid > .card > .card-body {
+		flex: 1 1 0%;
+		min-height: 0;
+		overflow-y: auto;
+	}
+
+	.dashboard-grids-wrap .dashboard-grid > .card:has(.quick-actions) > .card-body,
+	.dashboard-grid > .card:has(.quick-actions) > .card-body,
+	.dashboard-grids-wrap .dashboard-grid > .card:has(.usage-host) > .card-body,
+	.dashboard-grid > .card:has(.usage-host) > .card-body {
+		overflow: hidden;
+		overflow-y: hidden;
+	}
+
+	.dashboard-grids-wrap .usage {
+		gap: 4px;
+	}
+
+	.dashboard-grids-wrap .usage-stats {
+		gap: 6px;
+		padding-top: 4px;
+	}
+
+	.dashboard-grids-wrap .usage-stats dt {
+		font-size: 11px;
+		line-height: 1.2;
+	}
+
+	.dashboard-grids-wrap .quick-actions {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		gap: 6px;
+	}
+
+	.dashboard-grids-wrap .quick-actions button {
+		flex: 1 1 auto;
+		min-height: 52px;
+		max-height: 72px;
+		padding: 6px 10px;
+		align-items: center;
+		overflow: hidden;
+	}
+
+	.dashboard-grids-wrap .quick-actions button b {
+		align-self: center;
+		flex-shrink: 0;
+	}
+
+	.dashboard-grids-wrap .quick-actions button > span {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-self: center;
+		min-width: 0;
+		overflow: hidden;
+		gap: 1px;
+		line-height: 1.25;
+	}
+
+	.dashboard-grids-wrap .quick-actions button > span .stable-label {
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		line-height: 1.25;
+	}
+
+	.dashboard-grids-wrap .quick-actions small {
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		line-height: 1.2;
+		margin-top: 1px;
+	}
+}
+
 /* Dialogs that are a fixed-height window (the syllabus preview, the compliance check) keep that height on a phone instead of shrinking to their content. */
 @media (max-width: 767.98px) {
 	.overlay:not(.overlay-confirm) .modal.svm-modal,

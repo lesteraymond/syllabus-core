@@ -151,3 +151,54 @@ test('a submission is on the review board only after the administrator checked i
   assert.strictEqual(readyForReview({ status: 'for_revision' }), false); // with the faculty member
   assert.strictEqual(waitsForCheck(null), false);
 });
+
+// ---- the review chain
+import { reviewQueue, decisionKeysFor, canClearStage, canApprove, openStages, CLEAR } from './reviewView.js';
+
+const stagesOf = (dean, asst, lic) => ({ dean: { cleared: dean, by: dean ? 'D' : '' }, asst_vpaa: { cleared: asst, by: asst ? 'A' : '' }, lic_director: { cleared: lic, by: lic ? 'L' : '' }, allCleared: dean && asst && lic });
+const item = (id, extra = {}) => ({ id, userId: 5, status: 'submitted', awaitingAiCheck: false, stages: stagesOf(false, false, false), myStageCleared: false, readyForApproval: false, ...extra });
+
+test('a stage reviewer\'s queue is the checks they have not cleared; what they cleared waits with the others', () => {
+  const list = [item(1), item(2, { myStageCleared: true }), item(3, { awaitingAiCheck: true }), item(4, { status: 'approved' }), item(5, { userId: 1 })];
+  for (const role of ['admin', 'asst_vpaa', 'lic_director']) {
+    const q = reviewQueue(list, role, 1);
+    assert.deepStrictEqual(q.queue.map((s) => s.id), [1], role);
+    assert.deepStrictEqual(q.rest.map((s) => s.id), [2], role);
+  }
+});
+
+test('the VPAA\'s queue is what all three have cleared; the others are still with the reviewers', () => {
+  const list = [item(1, { readyForApproval: true, stages: stagesOf(true, true, true) }), item(2, { stages: stagesOf(true, false, true) }), item(3, { awaitingAiCheck: true })];
+  const q = reviewQueue(list, 'vpaa', 4);
+  assert.deepStrictEqual(q.queue.map((s) => s.id), [1]);
+  assert.deepStrictEqual(q.rest.map((s) => s.id), [2]);
+  assert.deepStrictEqual(reviewQueue(list, 'faculty', 5), { queue: [], rest: [] });
+  assert.deepStrictEqual(reviewQueue(null, 'vpaa', 4), { queue: [], rest: [] });
+});
+
+test('only the VPAA sees approve and reject; the others see "return for revision" and "clear my check"', () => {
+  assert.deepStrictEqual(decisionKeysFor('vpaa'), ['approve', 'revise', 'reject']);
+  for (const role of ['admin', 'asst_vpaa', 'lic_director', 'faculty']) assert.deepStrictEqual(decisionKeysFor(role), ['revise'], role);
+  assert.ok(CLEAR.label && CLEAR.confirm && CLEAR.icon);
+});
+
+test('clearing a stage: your own stage, once, on a checked submission that is not yours', () => {
+  const open = item(1);
+  assert.ok(canClearStage('asst_vpaa', open, 2));
+  assert.ok(!canClearStage('vpaa', open, 4), 'the VPAA has no stage');
+  assert.ok(!canClearStage('faculty', open, 5));
+  assert.ok(!canClearStage('admin', item(1, { myStageCleared: true }), 1), 'already cleared');
+  assert.ok(!canClearStage('admin', item(1, { awaitingAiCheck: true }), 1), 'not checked yet');
+  assert.ok(!canClearStage('admin', item(1, { userId: 1 }), 1), 'your own syllabus');
+  assert.ok(!canClearStage('admin', item(1, { status: 'approved' }), 1));
+});
+
+test('approving needs the VPAA, a checked submission and all three stages cleared', () => {
+  assert.ok(canApprove('vpaa', item(1, { stages: stagesOf(true, true, true) })));
+  assert.ok(!canApprove('vpaa', item(1, { stages: stagesOf(true, true, false) })));
+  assert.ok(!canApprove('vpaa', item(1)));
+  assert.ok(!canApprove('vpaa', item(1, { stages: stagesOf(true, true, true), awaitingAiCheck: true })));
+  assert.ok(!canApprove('admin', item(1, { stages: stagesOf(true, true, true) })), 'the dean never approves');
+  assert.deepStrictEqual(openStages(item(1, { stages: stagesOf(true, false, false) })), ['asst_vpaa', 'lic_director']);
+  assert.deepStrictEqual(openStages({}), []);
+});

@@ -61,9 +61,9 @@ test('nothing is blocked while the assignments load, and admins are never blocke
 test('admin approval requires their draft and the current completed check without automatically approving a score',()=>{
   const user={id:1,role:'admin'};
   const syllabus={syllabusId:10,userId:1,status:'under_review'};
-  const run={id:5,syllabusId:10,createdBy:1,status:'scored',conformant:true,stale:false,aiStatus:'ok',passed:false};
+  const run={id:5,syllabusId:10,createdBy:1,status:'scored',conformant:true,stale:false,aiStatus:'ok',passed:false,hybrid:{ready:true,alignment:{status:'completed'}}};
   assert.strictEqual(canApproveAdminDraft(user,syllabus,run),true); // warnings remain an administrator decision
-  assert.strictEqual(canApproveAdminDraft(user,syllabus,{...run,aiStatus:'none'}),true);
+  assert.strictEqual(canApproveAdminDraft(user,syllabus,{...run,aiStatus:'none'}),false);
   for (const change of [{aiStatus:'pending'},{aiStatus:'failed'},{aiStatus:undefined},{stale:true},{conformant:false},{status:'insufficient'},{createdBy:2},{syllabusId:11}]) assert.strictEqual(canApproveAdminDraft(user,syllabus,{...run,...change}),false);
   assert.strictEqual(canApproveAdminDraft(user,syllabus,run,false),false);
   assert.strictEqual(canApproveAdminDraft({id:1,role:'faculty'},syllabus,run),false);
@@ -91,4 +91,20 @@ test('an archived syllabus (its subject went to another faculty member) is read-
   for (const status of ['draft', 'for_revision', 'rejected']) assert.equal(canEditSyllabus(owner, { userId: 7, status, archived: true }), false, status);
   assert.match(editBlockedReason({ status: 'draft', archived: true }), /archived because its subject was assigned to another faculty member/);
   assert.equal(canEditSyllabus(owner, { userId: 7, status: 'draft', archived: false }), true);
+});
+
+test('advisory policy: the administrator can approve their own draft after reading a current check, even if the AI check is incomplete, but not past a coded hard gate', () => {
+  const user = { id: 1, role: 'admin' };
+  const syllabus = { syllabusId: 10, userId: 1, status: 'under_review' };
+  const incomplete = { id: 5, syllabusId: 10, createdBy: 1, status: 'incomplete', conformant: false, stale: false, aiStatus: 'failed', hybrid: { ready: false, alignment: { status: 'not_evaluated' } },
+    findings: [{ id: 'AI-REQUIRED:review', ruleId: 'AI-REQUIRED', severity: 'blocking' }, { id: 'SEM:x', ruleId: 'SEM', severity: 'blocking' }, { id: 'LINK:y', ruleId: 'LINK', severity: 'blocking' }] };
+  assert.strictEqual(canApproveAdminDraft(user, syllabus, incomplete), false, 'the strict rule is the default until the policy is known');
+  assert.strictEqual(canApproveAdminDraft(user, syllabus, incomplete, true, 'required'), false);
+  assert.strictEqual(canApproveAdminDraft(user, syllabus, incomplete, true, 'advisory'), true);
+  const hard = { ...incomplete, findings: [...incomplete.findings, { id: 'GRADE-100:grading.rows', ruleId: 'GRADE-100', severity: 'blocking' }] };
+  assert.strictEqual(canApproveAdminDraft(user, syllabus, hard, true, 'advisory'), false);
+  for (const change of [{ stale: true }, { createdBy: 2 }, { syllabusId: 11 }, { id: undefined }]) assert.strictEqual(canApproveAdminDraft(user, syllabus, { ...incomplete, ...change }, true, 'advisory'), false);
+  assert.strictEqual(canApproveAdminDraft(user, syllabus, incomplete, false, 'advisory'), false);
+  assert.strictEqual(canApproveAdminDraft({ id: 1, role: 'faculty' }, syllabus, incomplete, true, 'advisory'), false);
+  assert.strictEqual(canApproveAdminDraft(user, syllabus, null, true, 'advisory'), false);
 });

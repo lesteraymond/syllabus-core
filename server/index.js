@@ -38,8 +38,6 @@ const pool = mysql.createPool({
 });
 
 app.locals.db = pool;
-// Developer edits of the compliance standard (kept in the database) are laid over the file before the first request is served.
-require('./lib/compliance/overridesStore').load(pool).catch((err) => console.warn('Standard edits could not be loaded; using the standard file as it is.', err.message));
 require('./lib/catalogFileCleanup').startCleanup(pool);
 // Time usage: counted in memory, written in one batch about once a minute, and written out when the server stops.
 const usage = require('./lib/usage').createUsageService({ db: pool });
@@ -67,12 +65,13 @@ app.use("/api/auth", authRoutes);
 app.use("/api/students", require("./routes/students"));
 app.use("/api/users", require("./routes/users"));
 app.use("/api/settings", require("./routes/settings"));
-// The developer rule editor: a page of its own at /dev/rules, behind DEV_EDITOR_PASSWORD (off when that is not set).
-app.use("/dev/rules", require("./routes/devRules"));
 app.use("/api/syllabi", require("./routes/syllabi"));
 app.use("/api/syllabi", require("./routes/syllabusContent"));
+app.use("/api/syllabi", require("./routes/pdfImport"));
 app.use("/api/syllabi", require("./routes/comments"));
+app.use("/api/syllabi", require("./routes/reviewChain"));
 app.use("/api", require("./routes/compliance"));
+app.use("/api/syllabus-check", require("./routes/syllabusCheck"));
 app.use("/api/institution", require("./routes/institution"));
 app.use("/api/programs", require("./routes/programs"));
 app.use("/api/courses", require("./routes/courses"));

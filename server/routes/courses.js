@@ -3,11 +3,12 @@ const { blankStandards, readStandards, updateStandards } = require('../lib/subje
 // Everyone signed in reads; only admins write. Faculty cannot change a course's CLOs: syllabus content
 // always takes them from here (see routes/syllabusContent.js).
 const express = require('express');
+const { isReviewer } = require('../lib/roles');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { inTransaction, httpError, sendError } = require('../lib/http');
 const { LEVELS, cloKey, parseCloKey, loadCourse, loadClos } = require('../lib/courses');
 const { isStale, STALE_MESSAGE } = require('../lib/programEgas');
-const { createProgram, PROGRAM_CODE } = require('../lib/programs');
+const { createProgram, PROGRAM_CODE, requireOwnOutcomes, inheritStandards, findProgram } = require('../lib/programs');
 const { catalogGaps } = require('../lib/catalogReady');
 const { takenBySubject } = require('../lib/subjectLock');
 const router = express.Router();
@@ -31,7 +32,7 @@ router.get('/', requireAuth, async (req, res) => {
     const conds = [];
     if (req.query.program) { conds.push('p.code = ?'); params.push(String(req.query.program).toUpperCase()); }
     // Faculty see only the courses an admin assigned to them; admins see every course.
-    if (req.session.user.role !== 'admin') { conds.push('c.course_id IN (SELECT course_id FROM faculty_courses WHERE user_id = ?)'); params.push(req.session.user.id); }
+    if (!isReviewer(req.session.user)) { conds.push('c.course_id IN (SELECT course_id FROM faculty_courses WHERE user_id = ?)'); params.push(req.session.user.id); }
     const where = conds.length ? 'WHERE ' + conds.join(' AND ') : '';
     const [rows] = await req.app.locals.db.query(
       `SELECT c.course_id, c.code, c.title, c.program_id, p.code AS program_code, COUNT(k.clo_id) AS clo_count, c.standards_json
@@ -117,8 +118,9 @@ router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
     const { code, title } = req.body || {};
     const c = text(code, 50, 'Subject code');
     const t = text(title, 255, 'Subject title');
-    if (!(await loadCourse(db, id))) throw httpError(404, 'Subject not found');
-    const [dup] = await db.query('SELECT 1 FROM courses WHERE code = ? AND course_id <> ? AND program_id = (SELECT program_id FROM (SELECT program_id FROM courses WHERE course_id = ?) x)', [c, id, id]);
+    const course = await loadCourse(db, id);
+    if (!course) throw httpError(404, 'Subject not found');
+    const [dup] = await db.query('SELECT 1 FROM courses WHERE code = ? AND course_id <> ? AND program_id = ?', [c, id, course.program.id]);
     if (dup.length) throw httpError(409, `${c} already exists`);
     await db.query('UPDATE courses SET code = ?, title = ? WHERE course_id = ?', [c, t, id]);
     res.json(await loadCourse(db, id));
@@ -167,8 +169,8 @@ router.put('/:id/clos', requireAuth, requireAdmin, async (req, res) => {
 
     await inTransaction(db, async (conn) => {
       // Lock the subject and refuse a save from an out-of-date screen, so two admins never overwrite each other.
-      const [[locked]] = await conn.query('SELECT clos_version AS v, standards_json FROM courses WHERE course_id = ? FOR UPDATE', [id]);
-      const current = readStandards(locked.standards_json);
+      const [[locked]] = await conn.query('SELECT clos_version AS v, standards_json, program_id FROM courses WHERE course_id = ? FOR UPDATE', [id]);
+      const current = await inheritStandards(conn, locked.program_id, readStandards(locked.standards_json));
       if (items.some(item => item.egas.some(n => !current.egas.some(e => e.no === n)) || item.pos.some(n => !current.pos.some(p => p.no === n)))) throw httpError(409, 'The subject setup changed. Reload before saving its CLOs.');
       if (isStale(version, locked.v)) throw httpError(409, STALE_MESSAGE);
       await conn.query('UPDATE courses SET clos_version = clos_version + 1 WHERE course_id = ?', [id]);
@@ -193,8 +195,11 @@ router.put('/:id/standards', requireAuth, requireAdmin, async (req,res) => {
     const id=parseId(req.params.id); const db=req.app.locals.db;
     const { section, value, version }=req.body||{};
     await inTransaction(db,async conn=>{
-      const [[row]]=await conn.query('SELECT standards_json FROM courses WHERE course_id = ? FOR UPDATE',[id]);
+      const [[row]]=await conn.query('SELECT standards_json, program_id FROM courses WHERE course_id = ? FOR UPDATE',[id]);
       if (!row) throw httpError(404,'Subject not found');
+      // A specialization's EGAs and POs come from the program it inherits from; only vision and mission are subject-level.
+      if (section === 'egas' || section === 'pos') { await requireOwnOutcomes(conn, await findProgram(conn, row.program_id)); }
+      if (section === 'pos') await require('../lib/programPoReferences').requireMutable(conn,row.program_id);
       const clos=await loadClos(conn,id);
       const next=updateStandards(readStandards(row.standards_json),section,value,version,clos);
       await conn.query('UPDATE courses SET standards_json = ? WHERE course_id = ?',[JSON.stringify(next),id]);

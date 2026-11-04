@@ -1,3 +1,4 @@
+import { hardGatesOf } from './hybridCheck.js';
 // Keep EDITABLE_STATUSES in sync with server/lib/syllabusRules.js: the Edit button and the server must agree.
 // A draft, or a syllabus the administrator sent back (for revision, or rejected: a subject has one syllabus for each person, so it is edited and sent
 // again, not replaced by a new draft). Once submitted it is locked until the administrator sends it back.
@@ -67,8 +68,12 @@ export function toBuilderShape(s) {
 }
 
 // Approval is a separate administrator decision after reading a completed check of their own draft.
-export function canApproveAdminDraft(user, syllabus, run, isLatest = true) {
-  return !!(user?.role === 'admin' && syllabus?.userId === user.id && syllabus.status === 'under_review'
-    && isLatest && run?.id && run.syllabusId === syllabus.syllabusId && run.createdBy === user.id
-    && run.status === 'scored' && run.conformant && !run.stale && ['ok','none'].includes(run.aiStatus));
+// `gate` is the server's AI policy. 'required' (the default until it is known) needs a completed AI check; 'advisory' lets the
+// administrator decide after reading a current check of this draft, as long as no coded hard gate fails.
+export function canApproveAdminDraft(user, syllabus, run, isLatest = true, gate = 'required') {
+  const mine = !!(user?.role === 'admin' && syllabus?.userId === user.id && syllabus.status === 'under_review'
+    && isLatest && run?.id && run.syllabusId === syllabus.syllabusId && run.createdBy === user.id);
+  if (gate === 'advisory') return mine && !run.stale && hardGatesOf(run).length === 0;
+  return !!(mine && run.status === 'scored' && run.conformant && !run.stale && run.aiStatus === 'ok'
+    && run.hybrid?.ready && run.hybrid.alignment?.status === 'completed');
 }

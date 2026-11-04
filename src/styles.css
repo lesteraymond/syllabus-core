@@ -3115,7 +3115,7 @@ table,
 }
 
 .bld2 .rv {
-	@apply tw:grid tw:[grid-template-columns:260px_minmax(0,_1fr)] tw:[gap:20px] tw:[align-items:start];
+	@apply tw:grid tw:[grid-template-columns:minmax(0,_1fr)] tw:[gap:20px] tw:[align-items:start];
 }
 .bld2 .chk {
 	@apply tw:grid tw:[gap:4px];
@@ -3208,12 +3208,6 @@ table,
 	grid-template-columns: 34px 150px 12px 1fr;
 	margin-block: 3px;
 }
-@media (max-width: 900px) {
-	.bld2 .rv {
-		@apply tw:[grid-template-columns:minmax(0,_1fr)];
-	}
-}
-
 /* ---- Courses & CLOs (admin) ---- */
 .ac-layout {
 	@apply tw:grid tw:[grid-template-columns:minmax(280px,_380px)_minmax(0,_1fr)] tw:[gap:14px] tw:[align-items:start];
@@ -3859,6 +3853,14 @@ table,
 .rp-tabs button.active { @apply tw:[background:var(--card)] tw:[color:var(--text)] tw:[box-shadow:0_1px_3px_rgba(15,_35,_85,_0.16)]; }
 .rp-tabs button:focus-visible { @apply tw:[outline:2px_solid_var(--blue2)]; @apply tw:outline-offset-1; }
 .rp-count { @apply tw:[min-width:20px] tw:[padding:0_6px] tw:[border-radius:99px] tw:[background:var(--rv-reject)] tw:[color:#fff] tw:[font-size:11px]; @apply tw:[font-weight:var(--fw-bold)]; @apply tw:[line-height:20px] tw:text-center; }
+/* The review chain in the reviewer's panel: the three stages (dean, Asst. VPAA, LIC Director) and who cleared each. */
+.syl-progress { margin: 0; font-size: var(--text-xs); color: var(--muted); }
+.rp-stages { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.rp-stages li { display: flex; align-items: flex-start; gap: 8px; min-width: 0; padding: 9px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--muted); font-size: var(--text-xs); }
+.rp-stages li.cleared { color: var(--green-ink, #176b3a); border-color: color-mix(in srgb, var(--green-ink, #176b3a) 40%, var(--line)); background: color-mix(in srgb, var(--green-ink, #176b3a) 8%, var(--card)); }
+.rp-stages li > span { display: flex; flex-direction: column; min-width: 0; }
+.rp-stages strong { font-weight: var(--fw-semibold); overflow-wrap: anywhere; }
+.rp-stages small { font-size: var(--text-xs); overflow-wrap: anywhere; }
 .rp-status { @apply tw:flex tw:items-center tw:[gap:10px] tw:[margin:0] tw:[padding:12px_14px] tw:[border-radius:12px] tw:[font-size:var(--text-sm)]; @apply tw:[font-weight:var(--fw-semibold)]; @apply tw:[line-height:1.4]; }
 .rp-status.waiting { @apply tw:[background:var(--rv-revise-bg)] tw:[color:var(--rv-revise)]; }
 .rp-status.done { background: color-mix(in srgb, var(--muted) 12%, var(--card)); color: var(--muted); }

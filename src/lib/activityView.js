@@ -12,17 +12,20 @@ export const KINDS = {
   upload: { icon: 'uploadSimple', tone: 'info', verb: 'uploaded' },
   update: { icon: 'notePencil', tone: 'quiet', verb: 'updated' },
   delete: { icon: 'bin', tone: 'quiet', verb: 'deleted' },
-  aiCheck: { icon: 'sparkle', tone: 'info', verb: 'ran an AI check on' },
+  check: { icon: 'sparkle', tone: 'info', verb: 'ran an AI check on' },
+  recommend: { icon: 'checkCircle', tone: 'quiet', verb: 'answered a recommendation on' },
 };
+// What a person did with a recommendation, from the first word of the note the server wrote ("Accepted recommendation: plan[3].tasks").
+const RECOMMEND_VERBS = { Accepted: 'accepted a recommendation on', Edited: 'edited and applied a recommendation on', Rejected: 'rejected a recommendation on', Undid: 'undid a recommendation on' };
 const FALLBACK = { icon: 'notePencil', tone: 'quiet', verb: 'made a change to' };
 
 // -> { key, icon, tone, who, verb, subject, detail, time, iso, when }. `viewerId` is the signed-in user: their own actions read "You".
 export function describeActivity(log, index = 0, viewerId = null) {
   // Older rows logged the first submission from the builder as an "upload"; its note says what it really was.
   const submittedFromBuilder = log && log.action === 'upload' && /^Syllabus submitted from the builder/.test(String(log.notes || ''));
-  // An AI check is stored as an 'update' whose note starts with "AI check:" (so the log table's action list stays as it is).
-  const aiCheck = log && log.action === 'update' && /^AI check:/.test(String(log.notes || ''));
-  const kind = KINDS[aiCheck ? 'aiCheck' : submittedFromBuilder ? 'submit' : log && log.action] || FALLBACK;
+  // An AI check is a 'check' row; older rows stored it as an 'update' whose note starts with "AI check:". Both read the same way.
+  const aiCheck = log && (log.action === 'check' || (log.action === 'update' && /^AI check:/.test(String(log.notes || ''))));
+  const kind = KINDS[aiCheck ? 'check' : submittedFromBuilder ? 'submit' : log && log.action] || FALLBACK;
   const score = aiCheck ? (String(log.notes).match(/(\d{1,3})%/) || [])[1] : null;
   const code = String((log && log.courseCode) || '').trim();
   const title = String((log && log.title) || '').trim();
@@ -32,7 +35,7 @@ export function describeActivity(log, index = 0, viewerId = null) {
     icon: kind.icon,
     tone: kind.tone,
     who: viewerId !== null && log && log.userId === viewerId ? 'You' : String((log && log.user) || '').trim() || 'Someone',
-    verb: kind.verb,
+    verb: (log && log.action === 'recommend' && RECOMMEND_VERBS[String(log.notes || '').split(' ')[0]]) || kind.verb,
     subject: code || title || 'a syllabus',
     detail: (code && title ? title : '') + (score ? (code && title ? ' · ' : '') + 'AI check score ' + score + '%' : ''), // the course title under the code, when there is both; an AI check adds its score
     time: phTime(d),

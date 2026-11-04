@@ -1,7 +1,7 @@
 // Run: npm test
 import test from 'node:test';
 import assert from 'node:assert';
-import { runState, tone, ringAngle, basis, blockersOf, warningsOf, warningCount, headline, areaNames, groupFindings, scoreText, when, stepLabel, listBasis, STEP_INFO, rowState, actionLabel, timeOf, stamp, isLocked, needsCheck, canCheckNow, rangeToInstants, rangeLabel, bulkTargets, filterRows, groupByFacultyProgram } from './complianceView.js';
+import { PROVISIONAL_MIN_COVERAGE, provisionalOf, runState, tone, ringAngle, basis, blockersOf, warningsOf, warningCount, headline, areaNames, groupFindings, scoreText, when, stepLabel, listBasis, STEP_INFO, rowState, actionLabel, timeOf, stamp, isLocked, needsCheck, canCheckNow, rangeToInstants, rangeLabel, bulkTargets, filterRows, groupByFacultyProgram, verdictOf, verdictIssues } from './complianceView.js';
 import { STEPS } from './syllabusModel.js';
 
 const area = (key, score) => ({ key, name: key.toUpperCase(), weight: 10, score });
@@ -15,6 +15,13 @@ test('a run is none, insufficient or scored', () => {
   assert.strictEqual(runState(scored({ status: 'insufficient', overall: null })), 'insufficient');
   assert.strictEqual(runState(scored({ overall: null })), 'insufficient'); // never shows a null as a 0%
   assert.strictEqual(runState(scored({ overall: 0 })), 'scored'); // a real zero is still a score
+});
+test('an incomplete hybrid report never presents its historical baseline as a final AI score', () => {
+  const run = scored({ overall: 97, hybrid: { ready: false, critical: false, baseScore: 97 } });
+  assert.strictEqual(runState(run), 'incomplete');
+  assert.strictEqual(scoreText(run), '—');
+  assert.match(headline(run), /No final AI score/);
+  assert.strictEqual(runState(scored({ overall: 0, hybrid: { ready: false, critical: true } })), 'scored');
 });
 
 test('tone follows the pass line, and no score has no tone', () => {
@@ -39,6 +46,9 @@ test('the basis of a check is "Rule-based check" until a model has run', () => {
   const bad = basis(scored({ aiStatus: 'failed' }));
   assert.deepStrictEqual([bad.kind, bad.label], ['unavailable', 'AI unavailable']);
   assert.match(bad.note, /come from the rules/);
+  const part = basis(scored({ aiStatus: 'failed', hybrid: { alignment: { judgements: [{ id: 'a', label: 'ALIGNED' }, { id: 'b', label: 'ALIGNED' }, { id: 'c', label: 'INSUFFICIENT_EVIDENCE', unverified: true }] } } }));
+  assert.deepStrictEqual([part.kind, part.label], ['stale', 'AI check incomplete']);
+  assert.match(part.note, /2 of 3 relationships/);
   assert.deepStrictEqual([basis(scored({ aiStatus: 'ok' })).kind, basis(scored({ aiStatus: 'ok' })).label], ['ai', 'AI-assisted check']);
   assert.strictEqual(basis(null).kind, 'none');
   assert.strictEqual(listBasis([scored(), null, scored()]), 'Rule-based check');
@@ -209,4 +219,57 @@ test('the range is named for the admin: a span, one day, or one open side', () =
   assert.strictEqual(rangeLabel('2026-10-01', ''), 'Since Oct 1, 2026');
   assert.strictEqual(rangeLabel('', '2026-10-14'), 'Until Oct 14, 2026');
   assert.strictEqual(rangeLabel('', ''), '');
+});
+
+test('an unfinished check shows a provisional score with how much was checked, but only when a meaningful share was; a finished, never-checked or out-of-curriculum one does not', () => {
+  const hybrid = (extra = {}) => ({ ready: false, critical: false, provisionalScore: 86, alignment: { status: 'not_evaluated', coverage: { verified: 117, total: 118 }, judgements: [] }, summary: { status: 'incomplete' }, ...extra });
+  const run = (over = {}) => ({ status: 'incomplete', overall: null, hybrid: hybrid(), ...over });
+  assert.deepStrictEqual(provisionalOf(run()), { score: 86, verified: 117, total: 118, rule: false });
+  assert.strictEqual(provisionalOf(run({ hybrid: hybrid({ summary: { status: 'mandatory_open' } }) })).rule, true, 'a failing required rule is said to be the reason');
+  const checked = (verified, total) => run({ hybrid: hybrid({ alignment: { status: 'not_evaluated', coverage: { verified, total }, judgements: [] } }) });
+  assert.strictEqual(provisionalOf(checked(0, 118)), null, 'nothing checked: the figure would be the fixed-rules score dressed up as an AI result');
+  assert.strictEqual(provisionalOf(checked(8, 147)), null, 'a tiny share checked is not enough to show a score');
+  assert.strictEqual(provisionalOf(checked(PROVISIONAL_MIN_COVERAGE * 100, 100)).verified, 50, 'half checked is enough');
+  assert.strictEqual(provisionalOf(checked(49, 100)), null);
+  const older = run({ hybrid: hybrid({ alignment: { status: 'not_evaluated', judgements: [{ id: 'a', label: 'ALIGNED' }, { id: 'b', label: 'PARTIALLY_ALIGNED' }] } }) });
+  assert.strictEqual(provisionalOf(older), null, 'a report from before coverage was recorded cannot say how much was checked, so it shows no figure');
+  assert.strictEqual(provisionalOf(null), null, 'never checked');
+  assert.strictEqual(provisionalOf(run({ hybrid: hybrid({ critical: true }) })), null, 'a course outside the curriculum has no honest figure');
+  assert.strictEqual(provisionalOf(run({ hybrid: hybrid({ provisionalScore: null }) })), null);
+  assert.strictEqual(provisionalOf(run({ hybrid: undefined })), null, 'a rule-only report has no AI figure');
+  assert.strictEqual(provisionalOf({ status: 'scored', overall: 91, hybrid: hybrid({ ready: true }) }), null, 'a finished check shows its official score instead');
+  assert.strictEqual(runState(run()), 'incomplete');
+});
+
+test('verdictOf ignores a report saved before the verdict existed or one whose builder failed', () => {
+  assert.strictEqual(verdictOf(null), null);
+  assert.strictEqual(verdictOf({ hybrid: {} }), null);
+  assert.strictEqual(verdictOf({ hybrid: { verdict: { unavailable: true } } }), null);
+  assert.ok(verdictOf({ hybrid: { verdict: { overall: 'PARTIAL_VALIDATION', findings: [] } } }));
+});
+test('verdictIssues lists failures first, by severity, and leaves out passes and informational notes', () => {
+  const v = { findings: [
+    { ruleId: 'A', status: 'NOT_CHECKED', severity: 'INFO' }, { ruleId: 'B', status: 'NEEDS_REVIEW', severity: 'INFO' },
+    { ruleId: 'C', status: 'FAIL', severity: 'MINOR' }, { ruleId: 'D', status: 'FAIL', severity: 'CRITICAL' }, { ruleId: 'E', status: 'NEEDS_REVIEW', severity: 'MINOR' },
+  ] };
+  assert.deepStrictEqual(verdictIssues(v).map((f) => f.ruleId), ['D', 'C', 'E']);
+});
+
+test('verdictIssues includes an answer warning once even for a passed or informational finding', () => {
+  const v = { findings: [
+    { ruleId: 'REF-05', status: 'PASS', severity: 'INFO', explanationReview: ['venue_claim'] },
+    { ruleId: 'VAL-03', status: 'NEEDS_REVIEW', severity: 'MINOR', draftReview: ['adds_activity'] },
+    { ruleId: 'VAL-05', status: 'NEEDS_REVIEW', severity: 'INFO', explanationReview: ['explanation_from_other_pair'] },
+    { ruleId: 'ALN-01', status: 'PASS', severity: 'INFO' },
+  ] };
+  const before = structuredClone(v);
+  assert.deepEqual(verdictIssues(v).map(f => f.ruleId), ['VAL-03', 'VAL-05', 'REF-05']);
+  assert.deepEqual(v, before);
+});
+
+test('verdictIssues includes advisory draft cautions without inventing duplicate failures', () => {
+  const caution = { ruleId: 'ALN-05', status: 'PASS', severity: 'INFO', draftWarnings: ['borrowed_wording', 'conditional_resource'] };
+  const ordinaryPass = { ruleId: 'ALN-07', status: 'PASS', severity: 'INFO' };
+  assert.deepEqual(verdictIssues({ findings: [caution, ordinaryPass] }), [caution]);
+  assert.equal(caution.status, 'PASS');
 });

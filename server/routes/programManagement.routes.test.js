@@ -10,11 +10,14 @@ function makeDb() {
     syllabi:[{id:100,course_id:10,code:'IT101',title:'Syllabus',status:'approved',version:'v1.0',updated_at:'2026-01-01',file_path:'/uploads/123-test.pdf'},{id:200,course_id:20,code:'CS101',title:'Other syllabus',status:'draft',version:'v1.0',updated_at:'2026-01-01',file_path:null}],
     versions:[{id:1,syllabus_id:100,file_path:'/uploads/123-test.pdf'}],
     programAssignments:[{user_id:2,program_id:1}],subjectAssignments:[{user_id:2,course_id:10}],
-    curricula:[],aliases:[],codeAliases:[],events:[],jobs:[],failDelete:false,transaction:false,
+    links:[],curricula:[],aliases:[],codeAliases:[],events:[],jobs:[],failDelete:false,transaction:false,
   };
   let backup;
   const query = async (sql,p=[]) => {
     // Route tests never expose cleanup jobs to the real filesystem worker.
+    // program_outcome_sources: s.links is [{program, source}] (a specialization and the program it inherits its outcomes from).
+    if(sql.startsWith('SELECT p.program_id AS id, p.code, p.name FROM program_outcome_sources'))return [s.links.filter(l=>l.source===p[0]).map(l=>{const {id,code,name}=s.programs.find(r=>r.id===l.program);return {id,code,name};})];
+    if(sql.startsWith('SELECT p.program_id, p.code, p.name, p.egas_version, p.pos_version FROM program_outcome_sources'))return [s.links.filter(l=>l.program===p[0]).map(l=>{const r=s.programs.find(x=>x.id===l.source);return {program_id:r.id,code:r.code,name:r.name,egas_version:1,pos_version:1};})];
     if(sql.startsWith('SELECT file_path FROM catalog_file_cleanup'))return [[]];
     if(sql.startsWith('SELECT COUNT(*) AS pending FROM catalog_file_cleanup'))return [[{pending:s.jobs.length}]];
     if(sql.startsWith('SELECT user_id FROM users WHERE user_id'))return [[{user_id:p[0]}]];
@@ -154,4 +157,23 @@ test('a code change invalidates pending deletion previews and keeps historical c
   assert.equal((await call('PATCH','/1',{name:'Information Technology',expectedName:'Information Technology',code:'NEW-IT',expectedCode:'BSIT'})).status,200);
   const r=await call('DELETE','/1',confirmation(old));assert.equal(r.status,409);assert.equal(r.body.code,'preview_required');
   const fresh=(await call('GET','/1/deletion-preview')).body;assert.equal(fresh.program.code,'NEW-IT');assert.equal(fresh.counts.syllabi,2);
+}));
+
+test('a program that others inherit outcomes from cannot be deleted: the preview explains it and deletion is refused plainly',()=>withServer(async({db,call})=>{
+  db.s.programs.push({id:3,code:'BSIT-CYBER',name:'IT Cyber Security',egas_version:1,pos_version:1});db.s.links.push({program:3,source:1});
+  const preview=await call('GET','/1/deletion-preview');
+  assert.equal(preview.status,200);assert.equal(preview.body.blocked,true);assert.deepEqual(preview.body.specializations.map(r=>r.code),['BSIT-CYBER']);assert.equal(preview.body.previewToken,undefined);
+  const refused=await call('DELETE','/1',{confirmCode:'BSIT',acknowledgeCascade:true});
+  assert.equal(refused.status,409);assert.equal(refused.body.code,'has_specializations');assert.deepEqual(refused.body.specializations,['BSIT-CYBER']);
+  assert.match(refused.body.error,/BSIT cannot be deleted while BSIT-CYBER inherits its Program Outcomes/);assert.doesNotMatch(refused.body.error,/foreign key|constraint/i);
+  assert.equal(db.s.programs.length,3);assert.equal(db.s.syllabi.length,2);assert.equal(db.s.events.length,0);
+}));
+test('the specialization itself can be deleted, its preview names the program it inherits from, and the parent is untouched',()=>withServer(async({db,call})=>{
+  db.s.programs.push({id:3,code:'BSIT-CYBER',name:'IT Cyber Security',egas_version:1,pos_version:1});db.s.links.push({program:3,source:1});
+  const p=(await call('GET','/3/deletion-preview')).body;assert.equal(p.blocked,false);assert.equal(p.inheritsFrom,'BSIT');
+  const done=await call('DELETE','/3',{previewToken:p.previewToken,confirmCode:'BSIT-CYBER',acknowledgeCascade:true});
+  assert.equal(done.status,200);assert.deepEqual(db.s.programs.map(r=>r.code),['BSIT','BSCS']);
+}));
+test('programs without specializations keep the old preview and deletion behaviour (no new blocking)',()=>withServer(async({call})=>{
+  const p=(await call('GET','/2/deletion-preview')).body;assert.equal(p.blocked,false);assert.deepEqual(p.specializations,[]);assert.equal(p.inheritsFrom,null);assert.ok(p.previewToken);
 }));

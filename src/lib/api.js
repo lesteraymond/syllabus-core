@@ -75,6 +75,22 @@ export const auth = {
 };
 
 export const syllabi = {
+  pdfImportConfig: ({ signal } = {}) => request('/syllabi/pdf-import/config', { signal }),
+  importPdf: async (id, file) => {
+    const body = new FormData(); body.append('file', file);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 150000);
+    try {
+      const res = await fetch(`${API}/syllabi/${id}/import-pdf`, { method: 'POST', credentials: 'include', headers: authHeaders(), body, signal: controller.signal });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw Object.assign(new Error(data.error || 'pdfImport.failed'), { status: res.status, data });
+      if (!data.fields || !Array.isArray(data.pages)) throw new Error('pdfImport.failed');
+      return data;
+    } catch (error) {
+      if (error.name === 'AbortError') throw new Error('pdfImport.timeout');
+      throw error;
+    } finally { clearTimeout(timeout); }
+  },
   list: () => request('/syllabi'),
   repository: () => request('/syllabi?scope=repository'),
   // Syllabi archived when their subject went to another faculty member: read-only records, left out of every other list.
@@ -82,6 +98,9 @@ export const syllabi = {
   create: (formData) => fetch(`${API}/syllabi`, { method: 'POST', credentials: 'include', headers: authHeaders(), body: formData }).then(r => r.json()),
   update: (id, data) => fetch(`${API}/syllabi/${id}`, { method: 'PUT', credentials: 'include', headers: authHeaders({ 'Content-Type': 'application/json' }), body: JSON.stringify(data) }).then(r => r.json()),
   remove: (id) => request(`/syllabi/${id}`, { method: 'DELETE' }),
+  // The review chain: a reviewer (dean, Asst. VPAA, LIC Director) clears their own stage on the newest version; `stages` says who cleared which.
+  clearStage: (id, note) => request(`/syllabi/${id}/stage-clear`, { method: 'POST', body: JSON.stringify(note ? { note } : {}) }),
+  stages: (id) => request(`/syllabi/${id}/stages`),
   // Owner edit: multipart (optional file + note). Errors throw, unlike create/update above.
   edit: async (id, formData) => {
     let res;
@@ -121,7 +140,6 @@ export const compliance = {
   get: (id) => request(`/syllabi/${id}/compliance`),
   recheck: (id, force = false) => request(`/syllabi/${id}/compliance/recheck`, { method: 'POST', body: JSON.stringify(force ? { force: true } : {}) }),
   list: (syllabus = 'all', term = null) => request(`/compliance?syllabus=${encodeURIComponent(syllabus)}${term ? `&schoolYear=${encodeURIComponent(term.schoolYear)}&semester=${encodeURIComponent(term.semester)}` : ''}`),
-  suggest: (id) => request(`/syllabi/${id}/suggestions`, { method: 'POST', body: '{}' }), // AI rewordings of what the latest check found weak: { suggestions: [{ id, path, label, before, after, why }] }
   terms: () => request('/compliance/terms'), // the school terms that have checks: [{ schoolYear, semester, checks, syllabi }]
   // admin: the latest check of each submitted syllabus, newest first. { limit, from, to }: from/to are ISO instants (from inclusive, to exclusive).
   history: ({ limit, from, to } = {}) => {
@@ -162,6 +180,14 @@ export const courses = {
 
 export const curriculum = {
   list: () => request('/curriculum'),
+};
+
+export const syllabusCheck = {
+  status: () => request('/syllabus-check/status'),
+  decisions: (runId) => request(`/syllabus-check/runs/${runId}/decisions`),
+  // Check one AI recommendation against every relationship its text touches, and get the text to use (nothing is saved or applied).
+  refine: (runId, suggestionId) => request(`/syllabus-check/runs/${runId}/suggestions/${encodeURIComponent(suggestionId)}/refine`, { method: 'POST' }),
+  decide: (runId, body) => request(`/syllabus-check/runs/${runId}/decisions`, { method: 'POST', body: JSON.stringify(body) }),
 };
 
 export const logs = {

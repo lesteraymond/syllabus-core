@@ -1603,8 +1603,8 @@ extraTl["programs.error.ambiguousName"] = "Ginagamit din ng ibang programa ang d
 Object.assign(extraEn, {"programs.renameNote":"Program codes and names can change. Assignments keep the same program ID, and submitted syllabus versions retain their original content.","programs.saveName":"Save program","programs.renamed":"Program code and name saved.","programs.error.fields":"Only the program code and name can be changed.","programs.error.codeFormat":"Use a program code of 2 to 20 letters, digits or hyphens, starting with a letter.","programs.error.codeDuplicate":"Another program already uses that code.","programs.error.codeReserved":"That program code is reserved by existing records. Choose another code."});
 Object.assign(extraTl, {"programs.renameNote":"Maaaring baguhin ang kodigo at pangalan ng programa. Mananatili ang ID ng programa sa mga pagtatalaga, at mapapanatili ang orihinal na nilalaman ng mga naipasang bersiyon ng silabus.","programs.saveName":"I-save ang programa","programs.renamed":"Na-save ang kodigo at pangalan ng programa.","programs.error.fields":"Kodigo at pangalan lamang ng programa ang maaaring baguhin.","programs.error.codeFormat":"Gumamit ng kodigong may 2 hanggang 20 letra, numero o gitling, na nagsisimula sa letra.","programs.error.codeDuplicate":"Ginagamit na ng ibang programa ang kodigong iyon.","programs.error.codeReserved":"Nakalaan ang kodigong iyon para sa mga umiiral na rekord. Pumili ng ibang kodigo."});
 
-extraEn["repository.approvedSubtitle"] = "Search and access syllabi approved by an administrator.";
-extraTl["repository.approvedSubtitle"] = "Maghanap at tingnan ang mga silabus na inaprubahan ng administrador.";
+extraEn["repository.approvedSubtitle"] = "Search and access syllabi approved by the VPAA.";
+extraTl["repository.approvedSubtitle"] = "Maghanap at tingnan ang mga silabus na inaprubahan ng VPAA.";
 extraEn["student.view"] = "View";
 extraTl["student.view"] = "Tingnan";
 extraEn["student.subtitle"] = "Search and read all approved syllabi.";
@@ -1687,20 +1687,20 @@ extraTl["publication.checkedDrafts"] = "Aking mga nasuring burador";
 extraEn["publication.continueToCheck"] = "Save and continue to AI Checker";
 extraTl["publication.continueToCheck"] = "I-save at magpatuloy sa AI Checker";
 
-extraEn["publication.approve"] = "Approve & Add to Repository";
-extraTl["publication.approve"] = "Aprubahan at idagdag sa Repositoryo";
+extraEn["publication.approve"] = "Send for review";
+extraTl["publication.approve"] = "Ipadala para sa pagsusuri";
 
-extraEn["publication.approving"] = "Approving…";
-extraTl["publication.approving"] = "Inaaprubahan…";
+extraEn["publication.approving"] = "Sending…";
+extraTl["publication.approving"] = "Ipinapadala…";
 
 extraEn["publication.editDraft"] = "Edit Syllabus";
 extraTl["publication.editDraft"] = "Baguhin ang Silabus";
 
-extraEn["publication.approvedRepository"] = "Syllabus approved and added to Repository.";
-extraTl["publication.approvedRepository"] = "Naaprubahan ang silabus at naidagdag sa Repositoryo.";
+extraEn["publication.approvedRepository"] = "Syllabus sent for review. The Asst. VPAA and the LIC Director check it, then the VPAA approves it.";
+extraTl["publication.approvedRepository"] = "Naipadala ang silabus para sa pagsusuri. Susuriin ito ng Asst. VPAA at ng LIC Director, pagkatapos ay aaprubahan ito ng VPAA.";
 
-extraEn["publication.reviewResult"] = "Review the AI result, then approve the syllabus or edit your draft.";
-extraTl["publication.reviewResult"] = "Suriin ang resulta ng AI, pagkatapos ay aprubahan ang silabus o baguhin ang iyong burador.";
+extraEn["publication.reviewResult"] = "Review the AI result, then send the syllabus for review or edit your draft.";
+extraTl["publication.reviewResult"] = "Suriin ang resulta ng AI, pagkatapos ay ipadala ang silabus para sa pagsusuri o baguhin ang iyong burador.";
 
 extraEn["publication.error.checkReference"] = "Invalid AI check reference.";
 extraTl["publication.error.checkReference"] = "Hindi wastong sanggunian ng pagsusuri sa AI.";

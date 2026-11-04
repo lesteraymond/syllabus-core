@@ -5,7 +5,23 @@
 const test = require('node:test');
 const assert = require('node:assert');
 const express = require('express');
+require('../lib/syllabuscheck/legacy-storage-test-helper')();
 const F = require('../lib/compliance/fixtures');
+
+test('new lesson authoring metadata survives content save/reopen without changing legacy rows or other syllabi', () => withServer(async ({call,db}) => {
+  const current=JSON.parse(db.s.syllabi[1].content),priorPlan=structuredClone(current.plan);
+  const other=JSON.stringify({...current,meta:{...current.meta,title:'Other faculty draft'}});
+  db.s.syllabi[2]={...db.s.syllabi[1],syllabus_id:2,user_id:55,content:other};
+  const row={id:'new_ordered_lesson',kind:'lesson',week:'',authoringOrder:1,contents:'',ilos:[],activities:'',tasks:'',values:''};
+  const response=await call(fay,'PUT','/syllabi/1/content',{sections:{plan:[...priorPlan,row]},schemaVersion:3});
+  assert.strictEqual(response.status,200,JSON.stringify(response.body));
+  const saved=db.s.saved.at(-1);assert.deepStrictEqual(saved.plan.slice(0,-1),priorPlan);assert.deepStrictEqual(saved.plan.at(-1),row);
+  // This test database captures UPDATE payloads; provide that captured payload
+  // to the existing GET adapter, as the database would on the next request.
+  db.s.syllabi[1].content=JSON.stringify(saved);
+  const reopened=await call(fay,'GET','/syllabi/1/content');assert.strictEqual(reopened.status,200,JSON.stringify(reopened.body));
+  assert.deepStrictEqual(reopened.body.content.plan.at(-1),row);assert.strictEqual(db.s.syllabi[2].content,other);
+}));
 
 // A form that follows the standard, built on the compliance fixture. A draft carries no catalog copy (the server adds it at submit),
 // and the fake catalog below has one CLO (id c1) for IT 204, so every ILO is tagged with that one.
@@ -44,7 +60,7 @@ function makeDb() {
   for (const course of s.courses) course.standards_json = JSON.stringify({ vision:s.settings.vision, mission:{lead:s.settings.mission_lead,items:JSON.parse(s.settings.mission_items)}, egas:s.egas.filter(e=>e.program_id===course.program_id).map(e=>({no:e.ega_no,name:e.name,short:e.short_name})), pos:s.pos.filter(p=>p.program_id===course.program_id).map(p=>({no:p.po_no,short:p.short_name,text:p.outcome_text,egas:p.ega_nos.split(',').map(Number)})), versions:{vision:1,egas:1,pos:1} });
   const prog = (where) => s.programs.find(where);
   const handle = (sql, p = []) => {
-    if (sql.startsWith('SELECT standards_json FROM courses')) return [s.courses.filter(c=>c.course_id===p[0]).map(c=>({standards_json:c.standards_json}))];
+    if (sql.startsWith('SELECT standards_json')) return [s.courses.filter(c=>c.course_id===p[0]).map(c=>({standards_json:c.standards_json,program_id:c.program_id}))];
     if (sql.startsWith('UPDATE courses SET standards_json')) {s.courses.find(c=>c.course_id===p[1]).standards_json=p[0];return [{}];}
     if (sql.startsWith('SELECT user_id FROM users WHERE user_id')) return [[{ user_id: p[0] }]];
     if (sql.startsWith('SELECT vision')) return [[s.settings]];
@@ -81,6 +97,7 @@ function makeDb() {
     if (sql.startsWith("SELECT user_id FROM users WHERE role = 'admin'")) return [[]];
     if (sql.startsWith('UPDATE syllabi SET content')) { s.saved.push(JSON.parse(p[0])); return [{}]; }
     if (/^(INSERT|UPDATE|DELETE)/.test(sql)) return [{}];
+    if (/program_outcome_sources|program_po_reference_(active|versions|remediation)/.test(sql)) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' }); // isolated unmigrated database
     if (/FROM course_prerequisites/.test(sql)) return [[]]; // a subject's prerequisites: none set
     throw new Error('unexpected query: ' + sql);
   };

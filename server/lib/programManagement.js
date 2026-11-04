@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const { inTransaction, httpError } = require('./http');
-const { normalizeName } = require('./programs');
+const { normalizeName, specializationsOf, inheritedFrom, findProgram } = require('./programs');
 const secret = process.env.SESSION_SECRET ? crypto.createHash('sha256').update('program-deletion:' + process.env.SESSION_SECRET).digest() : crypto.randomBytes(32);
 const sign = value => crypto.createHmac('sha256', secret).update(value).digest('base64url');
 const jsonProgram = alias => "LOWER(COALESCE(JSON_UNQUOTE(JSON_EXTRACT(IF(JSON_VALID(" + alias + ".content), " + alias + ".content, NULL), '$.meta.program')), JSON_UNQUOTE(JSON_EXTRACT(IF(JSON_VALID(" + alias + ".content), " + alias + ".content, NULL), '$.catalog.program.code'))))";
@@ -8,6 +8,7 @@ const ids = rows => rows.map(row => row.id);
 const nonempty = list => list.length ? list : [null];
 const digest = impact => crypto.createHash('sha256').update(JSON.stringify(impact)).digest('hex');
 const missing = () => httpError(404, 'Program not found');
+const dependentError = impact => httpError(409, `${impact.program.code} cannot be deleted while ${impact.specializations.map(row => row.code).join(', ')} inherit${impact.specializations.length === 1 ? 's' : ''} its Program Outcomes. Delete or relink ${impact.specializations.length === 1 ? 'that specialization' : 'those specializations'} first.`, { code: 'has_specializations', specializations: impact.specializations.map(row => row.code) });
 
 async function impactOf(conn, id) {
   const [[program]] = await conn.query('SELECT program_id AS id, code, name, egas_version, pos_version FROM programs WHERE program_id = ? FOR UPDATE', [id]);
@@ -27,13 +28,18 @@ async function impactOf(conn, id) {
   const [programAssignments] = await conn.query('SELECT user_id FROM faculty_programs WHERE program_id = ? ORDER BY user_id FOR UPDATE', [id]);
   const [subjectAssignments] = courses.length ? await conn.query('SELECT user_id, course_id FROM faculty_courses WHERE course_id IN (?) ORDER BY user_id, course_id FOR UPDATE', [ids(courses)]) : [[]];
   const files = [...new Set([...syllabi, ...versions].map(row => row.file_path).filter(Boolean))].sort();
-  return { program, courses, curricula, syllabi, versions, programAssignments, subjectAssignments, files };
+  // Specializations that inherit this program's outcomes depend on it; this program may itself inherit from another (that link is simply removed with it).
+  const specializations = (await specializationsOf(conn, id)).map(({ id: sid, code, name }) => ({ id: sid, code, name }));
+  const parent = await inheritedFrom(conn, { program_id: id });
+  return { program, courses, curricula, syllabi, versions, programAssignments, subjectAssignments, files, specializations, inheritsFrom: parent ? parent.code : null };
 }
 function summary(impact) {
-  return { program: { id: impact.program.id, code: impact.program.code, name: impact.program.name }, subjects: impact.courses.map(({ id, code, title }) => ({ id, code, title })), syllabi: impact.syllabi.slice(0, 100).map(({ id, code, title, status }) => ({ id, code, title, status })), counts: { subjects: impact.courses.length, syllabi: impact.syllabi.length, versions: impact.versions.length, assignments: impact.programAssignments.length + impact.subjectAssignments.length, files: impact.files.length } };
+  return { program: { id: impact.program.id, code: impact.program.code, name: impact.program.name }, subjects: impact.courses.map(({ id, code, title }) => ({ id, code, title })), syllabi: impact.syllabi.slice(0, 100).map(({ id, code, title, status }) => ({ id, code, title, status })), counts: { subjects: impact.courses.length, syllabi: impact.syllabi.length, versions: impact.versions.length, assignments: impact.programAssignments.length + impact.subjectAssignments.length, files: impact.files.length }, specializations: impact.specializations, inheritsFrom: impact.inheritsFrom, blocked: impact.specializations.length > 0 };
 }
 async function preview(db, id, actor) {
   const impact = await inTransaction(db, conn => impactOf(conn, id));
+  // A blocked program still gets a preview so the dialog can explain why; only the token that allows deletion is withheld.
+  if (impact.specializations.length) return summary(impact);
   const payload = Buffer.from(JSON.stringify({ id, actor, hash: digest(impact), expires: Date.now() + 10 * 60 * 1000 })).toString('base64url');
   return { ...summary(impact), previewToken: payload + '.' + sign(payload) };
 }
@@ -49,9 +55,13 @@ function verify(token, id, actor) {
   } catch { throw httpError(409, 'The deletion preview expired or is invalid. Review the program again.', { code: 'preview_required' }); }
 }
 async function remove(db, id, actor, body) {
+  // A program that others inherit from is refused with a plain explanation before anything else (a blocked preview carries no token).
+  const blockers = await specializationsOf(db, id);
+  if (blockers.length) throw dependentError({ program: await findProgram(db, id), specializations: blockers });
   const intent = verify(body.previewToken, id, actor);
   return inTransaction(db, async conn => {
     const impact = await impactOf(conn, id);
+    if (impact.specializations.length) throw dependentError(impact);
     if (digest(impact) !== intent.hash) throw httpError(409, 'The program changed after the preview. Review the affected records again.', { code: 'preview_required' });
     if (body.confirmCode !== impact.program.code || body.acknowledgeCascade !== true) throw httpError(400, 'Type the program code and acknowledge permanent deletion.', { code: 'confirmation_required' });
     // Record the event and file outbox in the same transaction as the cascade.
