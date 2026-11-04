@@ -35,6 +35,7 @@ function makeDb({ linked = false, tableExists = true, cyberPos } = {}) {
     if (/FROM program_egas/.test(sql)) return [s.egas[p[0]].map(x => (/AS no/.test(sql) ? x : { ega_no: x.no, name: x.name, short_name: x.short_name }))];
     if (/FROM courses c JOIN programs p/.test(sql)) return [[s.courses[p[0]]].filter(Boolean)];
     if (/FROM course_clos/.test(sql)) return [[]];
+    if (/FROM course_prerequisites/.test(sql)) return [[]]; // a subject's prerequisites: none set
     throw new Error('unexpected query: ' + sql);
   };
   return { s, query };
