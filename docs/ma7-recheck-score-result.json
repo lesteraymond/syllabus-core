@@ -1,0 +1,21 @@
+{
+  "syllabusId": 101,
+  "runId": 248,
+  "status": "incomplete",
+  "finalScore": null,
+  "overall": null,
+  "codedBaseline": 97,
+  "alignment": {
+    "status": "not_evaluated",
+    "reason": "Resolve the hard gates before Gemini alignment can run.",
+    "judgements": []
+  },
+  "blocked": true,
+  "draftUnchanged": true,
+  "blockers": [
+    "Official approved curriculum unavailable for BSIE. Submission is blocked until it is supplied.",
+    "Official program outcomes are unavailable; program alignment cannot be verified.",
+    "Gemini alignment must complete before submission. Resolve the hard gates before Gemini alignment can run."
+  ],
+  "verifiedAt": "2026-10-22T03:15:14.462Z"
+}

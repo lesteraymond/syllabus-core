@@ -1,0 +1,113 @@
+{
+  "provider": "anthropic",
+  "model": "claude-sonnet-5-5",
+  "modelsReturned": {
+    "claude-sonnet-5-5": 3
+  },
+  "pricesAsOf": "2026-10-27",
+  "outputTokens": 1807,
+  "requests": 3,
+  "charged": 0.0684257,
+  "conservative": 0.15541075,
+  "accounting": "reconcile",
+  "transient": 0,
+  "invalid": 0,
+  "unproductive": 0,
+  "closed": {
+    "at": "2026-10-29T00:13:57.790Z",
+    "reason": "scope_complete",
+    "supersededBy": null
+  },
+  "entries": [
+    {
+      "n": 1,
+      "kind": "model",
+      "at": "2026-10-29T00:13:37.655Z",
+      "status": 200,
+      "worst": 0.189321,
+      "charged": 0.0459545,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.05098775,
+      "ids": [
+        "row0-ilo0-contentilo"
+      ],
+      "maxTokens": 4096,
+      "requestId": "req_011CgVZZzHvkxbXAQTXiXGt4",
+      "modelReturned": "claude-sonnet-5-5",
+      "ms": 8102,
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "estimatedCost": 0.0459545,
+      "tokens": {
+        "input": 796,
+        "cacheWrite": 15553,
+        "cacheWrite1h": 0,
+        "cacheRead": 0,
+        "output": 548,
+        "thinking": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      }
+    },
+    {
+      "n": 2,
+      "kind": "model",
+      "at": "2026-10-29T00:13:45.771Z",
+      "status": 200,
+      "worst": 0.1899975,
+      "charged": 0.0115346,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.05251675,
+      "ids": [
+        "row0-ilo0-contentilo"
+      ],
+      "maxTokens": 4096,
+      "requestId": "req_011CgVZaZyiyDQryHUHHk7g5",
+      "modelReturned": "claude-sonnet-5-5",
+      "ms": 6717,
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "estimatedCost": 0.0099793,
+      "tokens": {
+        "input": 872,
+        "cacheWrite": 0,
+        "cacheWrite1h": 0,
+        "cacheRead": 15553,
+        "output": 668,
+        "thinking": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      }
+    },
+    {
+      "n": 3,
+      "kind": "model",
+      "at": "2026-10-29T00:13:52.498Z",
+      "status": 200,
+      "worst": 0.19045675,
+      "charged": 0.0109366,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.05190625,
+      "ids": [
+        "row1-ilo0-contentilo"
+      ],
+      "maxTokens": 4096,
+      "requestId": "req_011CgVZb4f9NLkpQhyeDYigh",
+      "modelReturned": "claude-sonnet-5-5",
+      "ms": 5285,
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "estimatedCost": 0.0093813,
+      "tokens": {
+        "input": 958,
+        "cacheWrite": 0,
+        "cacheWrite1h": 0,
+        "cacheRead": 15553,
+        "output": 591,
+        "thinking": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      }
+    }
+  ]
+}

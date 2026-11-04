@@ -1,0 +1,771 @@
+{
+  "items": 12,
+  "runs": 1,
+  "answered": 4,
+  "invalid": 4,
+  "invalidRate": 0.5,
+  "notAttempted": 4,
+  "agreement": 1,
+  "falsePositiveRate": 0,
+  "falseNegativeRate": 0,
+  "counts": {
+    "clearAligned": 1,
+    "falsePositive": 0,
+    "clearNot": 3,
+    "falseNegative": 0
+  },
+  "confusion": {
+    "ALIGNED": {
+      "ALIGNED": 1,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 1
+    },
+    "PARTIAL": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "FLAGGED": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 2,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 1,
+      "invalid": 3
+    }
+  },
+  "partialAccuracy": null,
+  "approvalAccuracy": 1,
+  "byDiscipline": {
+    "computing": {
+      "items": 4,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "engineering": {
+      "items": 8,
+      "answered": 0,
+      "agree": 0,
+      "invalid": 4,
+      "agreement": null
+    }
+  },
+  "byCategory": {
+    "name-only": {
+      "items": 3,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 1,
+      "agreement": 1
+    },
+    "opportunity": {
+      "items": 3,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 1,
+      "agreement": 1
+    },
+    "demonstrated": {
+      "items": 3,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 1,
+      "agreement": 1
+    },
+    "insufficient-evidence": {
+      "items": 3,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 1,
+      "agreement": 1
+    }
+  },
+  "stability": null,
+  "byType": {
+    "Value-use": {
+      "items": 12,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 4,
+      "agreement": 1
+    }
+  },
+  "disagreements": [],
+  "structuredFields": {
+    "answers": 3,
+    "withFields": 3,
+    "missing": 0,
+    "malformed": 0,
+    "contradictory": 0,
+    "notAssessed": 0,
+    "perField": {
+      "valueUse": {
+        "assessed": 3,
+        "not_assessed": 0,
+        "missing": 0,
+        "malformed": 0,
+        "contradicted": 0,
+        "compared": 3,
+        "agree": 3
+      },
+      "carriedBy": {
+        "assessed": 3,
+        "not_assessed": 0,
+        "missing": 0,
+        "malformed": 0,
+        "contradicted": 0,
+        "compared": 3,
+        "agree": 3
+      },
+      "valueFit": {
+        "assessed": 3,
+        "not_assessed": 0,
+        "missing": 0,
+        "malformed": 0,
+        "contradicted": 0,
+        "compared": 1,
+        "agree": 1
+      }
+    },
+    "note": "Expectations are provisional. Only an assessed field is compared with them: a field that was not assessed, missing, malformed or in a self-contradictory answer is counted by its state, never as agreement. INSUFFICIENT_EVIDENCE answers are left out."
+  },
+  "model": "openrouter/minimax/minimax-m3.1-flash",
+  "promptVersion": "alignment-12d1-r7",
+  "dataset": {
+    "name": "stage-d1-followup",
+    "version": "stage-d1-2",
+    "split": "all",
+    "reviewStatus": "unreviewed",
+    "selection": {
+      "parentItems": 29,
+      "selectedIds": [
+        "vu-prog1-e7-name-only",
+        "vu-prog1-e7-opportunity",
+        "vu-prog1-e7-demonstrated",
+        "vu-prog1-e7-insufficient-evidence",
+        "vu-syseng-e7-name-only",
+        "vu-syseng-e7-opportunity",
+        "vu-syseng-e7-demonstrated",
+        "vu-syseng-e7-insufficient-evidence",
+        "vu-sensors-e7-name-only",
+        "vu-sensors-e7-opportunity",
+        "vu-sensors-e7-demonstrated",
+        "vu-sensors-e7-insufficient-evidence"
+      ]
+    }
+  },
+  "configuration": {
+    "stageFlags": {
+      "a": false,
+      "b": false,
+      "b3": false,
+      "b4": false,
+      "c1": false,
+      "c2": false,
+      "d1": true,
+      "d2": false
+    },
+    "promptVariant": "current",
+    "trim": false,
+    "minItems": false,
+    "timeoutMs": 90000
+  },
+  "retries": {
+    "batches": 2,
+    "requests": 2,
+    "invalidAnswers": 0,
+    "finalUnverified": 0,
+    "providerErrors": 1,
+    "notSent": 0,
+    "retryRate": 0,
+    "invalidAnswerRate": 0
+  },
+  "relationshipMetrics": {
+    "planned": 12,
+    "attempted": 8,
+    "neverAttempted": 4,
+    "verified": 4,
+    "recovered": 0,
+    "unresolved": 4,
+    "unresolvedRate": 0.5,
+    "coverage": 0.3333,
+    "attemptedShare": 0.6667,
+    "firstAttempt": {
+      "answered": 4,
+      "refused": 0,
+      "validationFailureRate": 0,
+      "noAnswerFirst": 4
+    },
+    "rawResponseErrors": {
+      "answers": 1,
+      "invalidAnswers": 0,
+      "refusedJudgements": 0,
+      "requestsWithoutAnswer": 1
+    },
+    "aspectCoverage": {
+      "byType": {
+        "Value-use": {
+          "relationships": 4,
+          "baseVerified": 3,
+          "baseAccepted": 3,
+          "notRecorded": 0,
+          "fields": {
+            "valueUse": {
+              "assessed": 3,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "carriedBy": {
+              "assessed": 3,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "valueFit": {
+              "assessed": 3,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            }
+          }
+        }
+      },
+      "fieldsRequired": 9,
+      "fieldsAssessed": 9,
+      "rate": 1
+    }
+  },
+  "completion": {
+    "maxUnresolved": 0.2,
+    "unresolvedRate": 0.5,
+    "coverage": 0.3333,
+    "stopped": "academic stop: the final unresolved rate is 50% (4 of 8 distinct relationships attempted), above the 20% limit",
+    "state": "incomplete",
+    "usableForAgreement": false,
+    "reason": "4 of 12 planned relationships were never attempted (stopped: academic stop: the final unresolved rate is 50% (4 of 8 distinct relationships attempted), above the 20% limit); they are not evaluated"
+  },
+  "schema": {
+    "minItems": false,
+    "emptyAnswers": 0,
+    "minItemsNotEnforced": false
+  },
+  "answerReview": {
+    "advisory": true,
+    "note": "Counts are heuristic review warnings, not verified academic errors. Labels, fields, validation and agreement are unchanged by these warnings.",
+    "counts": {
+      "explanationReview": {},
+      "draftReview": {
+        "copies_other_relationship": 2
+      },
+      "draftWarnings": {}
+    },
+    "flaggedAnswers": [
+      {
+        "run": 1,
+        "id": "vu-prog1-e7-name-only",
+        "draftReview": [
+          "copies_other_relationship"
+        ],
+        "reviewEvidence": {
+          "explanation": [],
+          "draft": [
+            {
+              "code": "copies_other_relationship",
+              "evidence": "humility during the trace table comparison each student identifies an assumption in",
+              "from": "vu-prog1-e7-demonstrated"
+            }
+          ]
+        }
+      },
+      {
+        "run": 1,
+        "id": "vu-prog1-e7-opportunity",
+        "draftReview": [
+          "copies_other_relationship"
+        ],
+        "reviewEvidence": {
+          "explanation": [],
+          "draft": [
+            {
+              "code": "copies_other_relationship",
+              "evidence": "humility during the trace table comparison each student identifies an assumption in",
+              "from": "vu-prog1-e7-demonstrated"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "limits": {
+    "budget": 15,
+    "maxCost": 0.04,
+    "maxTransient": 3,
+    "maxUnproductive": 4,
+    "maxUnresolved": 0.2,
+    "minSample": 8,
+    "warnInvalid": 2,
+    "maxInvalid": 3,
+    "accounting": "reconcile",
+    "maxTokens": "production (8192)"
+  },
+  "failures": [
+    {
+      "run": 1,
+      "course": "syseng",
+      "ids": [
+        "vu-syseng-e7-name-only",
+        "vu-syseng-e7-opportunity",
+        "vu-syseng-e7-demonstrated",
+        "vu-syseng-e7-insufficient-evidence"
+      ],
+      "error": "The operation was aborted due to timeout",
+      "rejected": []
+    }
+  ],
+  "perItem": {
+    "vu-prog1-e7-name-only": [
+      "PARTIALLY_ALIGNED"
+    ],
+    "vu-prog1-e7-opportunity": [
+      "PARTIALLY_ALIGNED"
+    ],
+    "vu-prog1-e7-demonstrated": [
+      "ALIGNED"
+    ],
+    "vu-prog1-e7-insufficient-evidence": [
+      "INSUFFICIENT_EVIDENCE"
+    ],
+    "vu-syseng-e7-name-only": [
+      null
+    ],
+    "vu-syseng-e7-opportunity": [
+      null
+    ],
+    "vu-syseng-e7-demonstrated": [
+      null
+    ],
+    "vu-syseng-e7-insufficient-evidence": [
+      null
+    ],
+    "vu-sensors-e7-name-only": [
+      "not_attempted"
+    ],
+    "vu-sensors-e7-opportunity": [
+      "not_attempted"
+    ],
+    "vu-sensors-e7-demonstrated": [
+      "not_attempted"
+    ],
+    "vu-sensors-e7-insufficient-evidence": [
+      "not_attempted"
+    ]
+  },
+  "ranAt": "2026-10-26T19:44:06.069Z",
+  "answers": [
+    {
+      "vu-prog1-e7-name-only": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Trace the contents of an integer array after a sequence of assignments.",
+        "targetQuote": "Humility",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The target names only the value (\"Humility\") with no statement of what students do or decide in this lesson, so the value is merely named; the lesson's own text (trace tables, partner comparison, corrected table) is not referenced at all.",
+        "recommendation": null,
+        "draft": "Humility: during the trace-table comparison, each student identifies an assumption in their own index calculation that was mistaken, listens to the partner's explanation, and corrects the table.",
+        "draftReview": [
+          "copies_other_relationship"
+        ],
+        "reviewEvidence": {
+          "explanation": [],
+          "draft": [
+            {
+              "code": "copies_other_relationship",
+              "evidence": "humility during the trace table comparison each student identifies an assumption in",
+              "from": "vu-prog1-e7-demonstrated"
+            }
+          ]
+        },
+        "aspects": {
+          "values": {
+            "responsible": "values",
+            "valueUse": "name_only",
+            "carriedBy": "none",
+            "valueFit": "partly",
+            "coreValue": "none",
+            "integration": "absent"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "vu-prog1-e7-opportunity": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Students complete array trace tables individually, then compare their calculations with a partner.",
+        "targetQuote": "Humility during the array trace-table comparison.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The statement ties Humility to the lesson's partner comparison activity, but it does not say what students do or decide that expresses the value (no acknowledgement of error, no correction of the table), so it is only a potential opportunity; the lesson text itself describes no such behaviour.",
+        "recommendation": null,
+        "draft": "Humility: during the trace-table comparison, each student identifies an assumption in their own index calculation that was mistaken, listens to the partner's explanation, and corrects the table.",
+        "draftReview": [
+          "copies_other_relationship"
+        ],
+        "reviewEvidence": {
+          "explanation": [],
+          "draft": [
+            {
+              "code": "copies_other_relationship",
+              "evidence": "humility during the trace table comparison each student identifies an assumption in",
+              "from": "vu-prog1-e7-demonstrated"
+            }
+          ]
+        },
+        "aspects": {
+          "values": {
+            "responsible": "values",
+            "valueUse": "opportunity",
+            "carriedBy": "none",
+            "valueFit": "partly",
+            "coreValue": "none",
+            "integration": "absent"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "vu-prog1-e7-demonstrated": {
+        "label": "ALIGNED",
+        "sourceQuote": "compare their calculations with a partner",
+        "targetQuote": "each student identifies an assumption in their own index calculation that was mistaken, listens to the partner's explanation, and corrects the table",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The statement describes students doing something in this lesson that expresses Humility: identifying their own mistaken assumption, listening to the partner's explanation and correcting the table, which matches the lesson's partner comparison and corrected trace-table submission.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": {
+          "values": {
+            "responsible": "none",
+            "valueUse": "integrated",
+            "carriedBy": "activity",
+            "valueFit": "fits",
+            "coreValue": "Humility",
+            "integration": "demonstrated"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "vu-prog1-e7-insufficient-evidence": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "sourceQuote": "ILOs: (not provided)",
+        "targetQuote": "Humility: students acknowledge mistaken assumptions when comparing their work.",
+        "evidenceMatching": {
+          "source": "not_evaluated",
+          "target": "not_evaluated"
+        },
+        "explanation": "The source supplies no ILOs, learning activities or assessment tasks, so there is too little lesson evidence to judge whether Humility is integrated, merely named or unrelated.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": {
+          "values": {
+            "responsible": "none",
+            "valueUse": "insufficient",
+            "carriedBy": "none",
+            "valueFit": "partly",
+            "coreValue": "insufficient",
+            "integration": "absent"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      }
+    }
+  ],
+  "usage": {
+    "requests": 4,
+    "thisRun": 4,
+    "model": 2,
+    "priceLookups": 1,
+    "keyChecks": 1,
+    "invalidAnswers": 0,
+    "unproductiveInARow": 0,
+    "transient": 1,
+    "promptTokens": 3825,
+    "completionTokens": 656,
+    "cachedTokens": 128,
+    "reportedCost": 0.00095007,
+    "charged": 0.01660677,
+    "accounting": {
+      "rule": "reconcile",
+      "requests": {
+        "reconciled": 1,
+        "conservative": 0,
+        "worst_case": 1,
+        "refused": 0
+      },
+      "chargedConservatively": 0.0175914
+    },
+    "warnings": [],
+    "limits": {
+      "maxRequests": 15,
+      "maxCost": 0.04,
+      "maxTransient": 3,
+      "maxInvalid": 3,
+      "warnInvalid": 2,
+      "maxUnproductive": 4,
+      "maxTokens": null
+    },
+    "stopped": "academic stop: the final unresolved rate is 50% (4 of 8 distinct relationships attempted), above the 20% limit"
+  },
+  "keyCheck": {
+    "status": 200,
+    "ok": true,
+    "freeTier": true,
+    "limit": 250,
+    "limitRemaining": 249.98206427,
+    "usage": 0.01793573,
+    "expiresAt": "2026-11-25T04:44:27.996Z"
+  },
+  "prices": {
+    "prompt": 3e-7,
+    "completion": 0.0000012,
+    "reasoning": 0,
+    "request": 0,
+    "cacheWrite": 0,
+    "endpoints": [
+      {
+        "provider": "InferenceNet",
+        "tag": "inference-net/fp4",
+        "status": -2,
+        "uptime30m": 96.66666666666667,
+        "prompt": 1e-7,
+        "completion": 5.5e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "InferenceNet",
+        "tag": "inference-net/fp4/us",
+        "status": -2,
+        "uptime30m": 80,
+        "prompt": 1e-7,
+        "completion": 5.5e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "GMICloud",
+        "tag": "gmicloud/fp8",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.425e-7,
+        "completion": 5.7e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.425e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "DigitalOcean",
+        "tag": "digitalocean",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Novita",
+        "tag": "novita/fp16",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "Nebius",
+        "tag": "nebius/fp4",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Wafer",
+        "tag": "wafer/nvfp4",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "ModelRun",
+        "tag": "modelrun/fp4",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Parasail",
+        "tag": "parasail/fp8",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Together",
+        "tag": "together",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Minimax",
+        "tag": "minimax",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "SambaNova",
+        "tag": "sambanova",
+        "status": 0,
+        "uptime30m": null,
+        "prompt": 3e-7,
+        "completion": 0.0000012,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 3e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      }
+    ],
+    "readAt": "2026-10-26T19:42:33.326Z"
+  },
+  "requests": [
+    {
+      "n": 3,
+      "ids": [
+        "vu-prog1-e7-name-only",
+        "vu-prog1-e7-opportunity",
+        "vu-prog1-e7-demonstrated",
+        "vu-prog1-e7-insufficient-evidence"
+      ],
+      "status": 200,
+      "ms": 928,
+      "provider": "ModelRun",
+      "finishReason": "stop",
+      "usage": {
+        "promptTokens": 3825,
+        "completionTokens": 656,
+        "reasoningTokens": 0,
+        "cachedTokens": 128,
+        "reportedCost": 0.00095007,
+        "costAtListPrices": 0.0019347
+      },
+      "accounting": "reconciled",
+      "charged": 0.00095007,
+      "conservativeCharge": 0.0019347,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"vu-prog1-e7-name-only\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The target names only the value (\\\"Humility\\\") with no statement of what students do or decide in this lesson, so the value is merely named; the lesson's own text (trace tables, partner comparison, corrected table) is not referenced at all.\",\"sourceQuote\":\"Trace the contents of an integer array after a sequence of assignments.\",\"targetQuote\":\"Humility\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"N/A\",\"draft\":\"Humility: during the trace-table comparison, each student identifies an assumption in their own index calculation that was mistaken, listens to the partner's explanation, and corrects the table.\",\"responsible\":\"values\",\"valueUse\":\"name_only\",\"carriedBy\":\"none\",\"valueFit\":\"partly\",\"coreValue\":\"none\",\"integration\":\"absent\"},{\"id\":\"vu-prog1-e7-opportunity\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The statement ties Humility to the lesson's partner comparison activity, but it does not say what students do or decide that expresses the value (no acknowledgement of error, no correction of the table), so it is only a potential opportunity; the lesson text itself describes no such behaviour.\",\"sourceQuote\":\"Students complete array trace tables individually, then compare their calculations with a partner.\",\"targetQuote\":\"Humility during the array trace-table comparison.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"N/A\",\"draft\":\"Humility: during the trace-table comparison, each student identifies an assumption in their own index calculation that was mistaken, listens to the partner's explanation, and corrects the table.\",\"responsible\":\"values\",\"valueUse\":\"opportunity\",\"carriedBy\":\"none\",\"valueFit\":\"partly\",\"coreValue\":\"none\",\"integration\":\"absent\"},{\"id\":\"vu-prog1-e7-demonstrated\",\"label\":\"ALIGNED\",\"explanation\":\"The statement describes students doing something in this lesson that expresses Humility: identifying their own mistaken assumption, listening to the partner's explanation and correcting the table, which matches the lesson's partner comparison and corrected trace-table submission.\",\"sourceQuote\":\"compare their calculations with a partner\",\"targetQuote\":\"each student identifies an assumption in their own index calculation that was mistaken, listens to the partner's explanation, and corrects the table\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\",\"responsible\":\"none\",\"valueUse\":\"integrated\",\"carriedBy\":\"activity\",\"valueFit\":\"fits\",\"coreValue\":\"Humility\",\"integration\":\"demonstrated\"},{\"id\":\"vu-prog1-e7-insufficient-evidence\",\"label\":\"INSUFFICIENT_EVIDENCE\",\"explanation\":\"The source supplies no ILOs, learning activities or assessment tasks, so there is too little lesson evidence to judge whether Humility is integrated, merely named or unrelated.\",\"sourceQuote\":\"ILOs: (not provided)\",\"targetQuote\":\"Humility: students acknowledge mistaken assumptions when comparing their work.\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"N/A\",\"draft\":\"\",\"responsible\":\"none\",\"valueUse\":\"insufficient\",\"carriedBy\":\"none\",\"valueFit\":\"partly\",\"coreValue\":\"insufficient\",\"integration\":\"absent\"}]}"
+    },
+    {
+      "n": 4,
+      "ids": [
+        "vu-syseng-e7-name-only",
+        "vu-syseng-e7-opportunity",
+        "vu-syseng-e7-demonstrated",
+        "vu-syseng-e7-insufficient-evidence"
+      ],
+      "status": 200,
+      "ms": 5813,
+      "provider": null,
+      "finishReason": null,
+      "usage": null,
+      "accounting": "worst_case",
+      "charged": 0.0156567,
+      "conservativeCharge": 0.0156567,
+      "error": "timeout",
+      "content": null
+    }
+  ],
+  "stopped": "academic stop: the final unresolved rate is 50% (4 of 8 distinct relationships attempted), above the 20% limit",
+  "isolation": {
+    "dataModulesLoaded": [],
+    "processEnvStageFlags": [
+      "SYLLABUS_CHECK_STAGE_A",
+      "SYLLABUS_CHECK_STAGE_B",
+      "SYLLABUS_CHECK_STAGE_B3",
+      "SYLLABUS_CHECK_STAGE_B4",
+      "SYLLABUS_CHECK_STAGE_C1",
+      "SYLLABUS_CHECK_STAGE_C2",
+      "SYLLABUS_CHECK_STAGE_D1",
+      "SYLLABUS_CHECK_STAGE_D2"
+    ]
+  }
+}

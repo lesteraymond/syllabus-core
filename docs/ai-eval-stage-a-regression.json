@@ -1,0 +1,505 @@
+{
+  "items": 28,
+  "runs": 2,
+  "answered": 56,
+  "invalid": 0,
+  "invalidRate": 0,
+  "agreement": 0.982,
+  "falsePositiveRate": 0,
+  "falseNegativeRate": 0,
+  "counts": {
+    "clearAligned": 12,
+    "falsePositive": 0,
+    "clearNot": 34,
+    "falseNegative": 0
+  },
+  "confusion": {
+    "ALIGNED": {
+      "ALIGNED": 12,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "PARTIAL": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "FLAGGED": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 19,
+      "NOT_ALIGNED": 13,
+      "INSUFFICIENT_EVIDENCE": 2,
+      "invalid": 0
+    }
+  },
+  "partialAccuracy": null,
+  "approvalAccuracy": 1,
+  "byDiscipline": {
+    "computing": {
+      "items": 12,
+      "answered": 24,
+      "agree": 24,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "engineering": {
+      "items": 16,
+      "answered": 32,
+      "agree": 31,
+      "invalid": 0,
+      "agreement": 0.969
+    }
+  },
+  "byCategory": {
+    "clear-positive": {
+      "items": 6,
+      "answered": 12,
+      "agree": 12,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "keyword-overlap": {
+      "items": 5,
+      "answered": 10,
+      "agree": 10,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "off-subject": {
+      "items": 3,
+      "answered": 6,
+      "agree": 6,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "generic": {
+      "items": 2,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "real-faculty-clo": {
+      "items": 5,
+      "answered": 10,
+      "agree": 10,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "unreadable": {
+      "items": 1,
+      "answered": 2,
+      "agree": 2,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "redundant": {
+      "items": 2,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "missing-coverage": {
+      "items": 1,
+      "answered": 2,
+      "agree": 2,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "wrong-po-mapping": {
+      "items": 3,
+      "answered": 6,
+      "agree": 5,
+      "invalid": 0,
+      "agreement": 0.833
+    }
+  },
+  "stability": 0.857,
+  "byType": {
+    "Course-CLO": {
+      "items": 14,
+      "answered": 28,
+      "agree": 28,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "CLO-set": {
+      "items": 5,
+      "answered": 10,
+      "agree": 10,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "CLO-PO": {
+      "items": 9,
+      "answered": 18,
+      "agree": 17,
+      "invalid": 0,
+      "agreement": 0.944
+    }
+  },
+  "disagreements": [
+    {
+      "id": "cp-bscpe-wrongpo",
+      "type": "CLO-PO",
+      "accept": [
+        "NOT_ALIGNED"
+      ],
+      "got": [
+        "NOT_ALIGNED",
+        "PARTIALLY_ALIGNED"
+      ]
+    }
+  ],
+  "model": "openrouter/minimax/minimax-m3.1-flash",
+  "promptVersion": "alignment-12a",
+  "dataset": {
+    "name": "stage-a",
+    "version": "stage-a-2",
+    "split": "all",
+    "reviewStatus": "unreviewed"
+  },
+  "retries": {
+    "batches": 6,
+    "requests": 24,
+    "firstAttemptInvalid": 7,
+    "finalUnverified": 0,
+    "providerErrors": 0,
+    "retryRate": 3,
+    "firstAttemptInvalidRate": 0.292
+  },
+  "failures": [
+    {
+      "run": 1,
+      "course": "prog1",
+      "ids": [
+        "cc-prog1-aligned",
+        "cc-prog1-keyword",
+        "cc-prog1-offsubject",
+        "cc-prog1-generic",
+        "cc-prog1-real1",
+        "cc-prog1-unreadable",
+        "cs-prog1-aligned",
+        "cs-prog1-redundant",
+        "cp-bsit-aligned",
+        "cp-bsit-keyword",
+        "cp-bsit-wrongpo",
+        "cp-bsit-real3"
+      ],
+      "error": "A misalignment must include a usable draft revision",
+      "rejected": [
+        {
+          "id": "cp-bsit-wrongpo",
+          "reason": "A misalignment must include a usable draft revision"
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "course": "sensors",
+      "ids": [
+        "cc-sensors-aligned",
+        "cc-sensors-keyword",
+        "cc-sensors-offsubject",
+        "cc-sensors-real3",
+        "cs-sensors-redundant",
+        "cs-sensors-generic",
+        "cp-bscpe-aligned",
+        "cp-bscpe-keyword",
+        "cp-bscpe-wrongpo"
+      ],
+      "error": "AI omitted alignment judgements",
+      "rejected": [
+        {
+          "id": "cc-sensors-offsubject",
+          "reason": "A misalignment must include a usable draft revision"
+        },
+        {
+          "id": "cp-bscpe-aligned-dup",
+          "reason": "not a requested id"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "course": "prog1",
+      "ids": [
+        "cc-prog1-aligned",
+        "cc-prog1-keyword",
+        "cc-prog1-offsubject",
+        "cc-prog1-generic",
+        "cc-prog1-real1",
+        "cc-prog1-unreadable",
+        "cs-prog1-aligned",
+        "cs-prog1-redundant",
+        "cp-bsit-aligned",
+        "cp-bsit-keyword",
+        "cp-bsit-wrongpo",
+        "cp-bsit-real3"
+      ],
+      "error": "AI omitted alignment judgements",
+      "rejected": [
+        {
+          "id": "cc-prog1-aligned",
+          "reason": "not answered"
+        },
+        {
+          "id": "cc-prog1-keyword",
+          "reason": "not answered"
+        },
+        {
+          "id": "cc-prog1-offsubject",
+          "reason": "not answered"
+        },
+        {
+          "id": "cc-prog1-generic",
+          "reason": "not answered"
+        },
+        {
+          "id": "cc-prog1-real1",
+          "reason": "not answered"
+        },
+        {
+          "id": "cc-prog1-unreadable",
+          "reason": "not answered"
+        },
+        {
+          "id": "cs-prog1-aligned",
+          "reason": "not answered"
+        },
+        {
+          "id": "cs-prog1-redundant",
+          "reason": "not answered"
+        },
+        {
+          "id": "cp-bsit-aligned",
+          "reason": "not answered"
+        },
+        {
+          "id": "cp-bsit-keyword",
+          "reason": "not answered"
+        },
+        {
+          "id": "cp-bsit-wrongpo",
+          "reason": "not answered"
+        },
+        {
+          "id": "cp-bsit-real3",
+          "reason": "not answered"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "course": "prog1",
+      "ids": [
+        "cc-prog1-generic"
+      ],
+      "error": "A misalignment must include a usable draft revision",
+      "rejected": [
+        {
+          "id": "cc-prog1-generic",
+          "reason": "A misalignment must include a usable draft revision"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "course": "prog1",
+      "ids": [
+        "cp-bsit-wrongpo"
+      ],
+      "error": "A misalignment must include a usable draft revision",
+      "rejected": [
+        {
+          "id": "cp-bsit-wrongpo",
+          "reason": "A misalignment must include a usable draft revision"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "course": "sensors",
+      "ids": [
+        "cc-sensors-aligned",
+        "cc-sensors-keyword",
+        "cc-sensors-offsubject",
+        "cc-sensors-real3",
+        "cs-sensors-redundant",
+        "cs-sensors-generic",
+        "cp-bscpe-aligned",
+        "cp-bscpe-keyword",
+        "cp-bscpe-wrongpo"
+      ],
+      "error": "AI evidence is not present in the supplied text (source and target quotes)",
+      "rejected": [
+        {
+          "id": "cc-sensors-aligned",
+          "reason": "AI evidence is not present in the supplied text (source and target quotes)"
+        },
+        {
+          "id": "cc-sensors-keyword",
+          "reason": "AI evidence is not present in the supplied text (target quote)"
+        },
+        {
+          "id": "cc-sensors-offsubject",
+          "reason": "A misalignment must include a usable draft revision"
+        },
+        {
+          "id": "cp-bscpe-keyword",
+          "reason": "A misalignment must include a usable draft revision"
+        },
+        {
+          "id": "cp-bscpe-wrongpo",
+          "reason": "A misalignment must include a usable draft revision"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "course": "sensors",
+      "ids": [
+        "cc-sensors-aligned",
+        "cc-sensors-keyword",
+        "cc-sensors-offsubject",
+        "cp-bscpe-keyword",
+        "cp-bscpe-wrongpo"
+      ],
+      "error": "A misalignment must include a usable draft revision",
+      "rejected": [
+        {
+          "id": "cc-sensors-offsubject",
+          "reason": "A misalignment must include a usable draft revision"
+        }
+      ]
+    }
+  ],
+  "perItem": {
+    "cc-prog1-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "cc-prog1-keyword": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cc-prog1-offsubject": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "cc-prog1-generic": [
+      "PARTIALLY_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "cc-prog1-real1": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cc-syseng-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "cc-syseng-keyword": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cc-syseng-offsubject": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "cc-syseng-real2": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "cc-sensors-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "cc-sensors-keyword": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cc-sensors-offsubject": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "cc-sensors-real3": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cc-prog1-unreadable": [
+      "INSUFFICIENT_EVIDENCE",
+      "INSUFFICIENT_EVIDENCE"
+    ],
+    "cs-prog1-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "cs-prog1-redundant": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cs-sensors-redundant": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cs-syseng-narrow": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cs-sensors-generic": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cp-bscpe-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "cp-bscpe-keyword": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cp-bscpe-wrongpo": [
+      "NOT_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cp-bsit-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "cp-bsit-keyword": [
+      "PARTIALLY_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "cp-bsit-wrongpo": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "cp-bsit-real3": [
+      "ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cp-bsie-wrongpo": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "cp-bsie-real2": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ]
+  },
+  "ranAt": "2026-10-24T17:41:15.497Z",
+  "usage": {
+    "requests": 24,
+    "promptTokens": 79200,
+    "completionTokens": 11058,
+    "cost": 0.009785,
+    "unreported": 0,
+    "budget": 40
+  }
+}

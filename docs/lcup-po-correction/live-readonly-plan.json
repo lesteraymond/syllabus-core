@@ -1,0 +1,1540 @@
+{
+  "migrationId": "lcup-po-2026-10-29",
+  "officialSha256": "59605b4cd2cadf9c93bf1f939ca7463a19103b4879550e88fa61f565cbe917c7",
+  "before": {
+    "programs": [
+      {
+        "program_id": 1,
+        "code": "BSIT",
+        "name": "BS Information Technology",
+        "egas_version": 1,
+        "pos_version": 1
+      },
+      {
+        "program_id": 15,
+        "code": "BSIE",
+        "name": "BS Industrial Engineering",
+        "egas_version": 2,
+        "pos_version": 2
+      },
+      {
+        "program_id": 16,
+        "code": "BSCPE",
+        "name": "BS Computer Engineering",
+        "egas_version": 2,
+        "pos_version": 2
+      },
+      {
+        "program_id": 17,
+        "code": "BSIT-CYBERSECURITY",
+        "name": "BS Information Technology with Specialization in Cyber Security",
+        "egas_version": 2,
+        "pos_version": 2
+      }
+    ],
+    "pos": [
+      {
+        "program_id": 1,
+        "po_no": 1,
+        "short_name": "Apply computing knowledge",
+        "outcome_text": "Apply computing and other knowledge domains to address realworld problems.",
+        "ega_nos": "1"
+      },
+      {
+        "program_id": 1,
+        "po_no": 2,
+        "short_name": "Analyze and define requirements",
+        "outcome_text": "Analyze complex problems and identify and define the computing requirements needed to design an appropriate solution.",
+        "ega_nos": "1"
+      },
+      {
+        "program_id": 1,
+        "po_no": 3,
+        "short_name": "Design computing solutions",
+        "outcome_text": "Design and develop computing solutions using a system-level perspective.",
+        "ega_nos": "1"
+      },
+      {
+        "program_id": 1,
+        "po_no": 4,
+        "short_name": "Ethical IT professional",
+        "outcome_text": "Demonstrate ethical behavior as an IT Professional and sensitivity to the impact of technology in the society.",
+        "ega_nos": "2"
+      },
+      {
+        "program_id": 1,
+        "po_no": 5,
+        "short_name": "Augustinian virtues and CSR",
+        "outcome_text": "Show Augustinian virtues/ethical values and the understanding and appreciation of corporate social responsibility.",
+        "ega_nos": "2"
+      },
+      {
+        "program_id": 1,
+        "po_no": 6,
+        "short_name": "Multi-disciplinary teamwork",
+        "outcome_text": "Work effectively and independently in multi-disciplinary and multi-cultural teams.",
+        "ega_nos": "4"
+      },
+      {
+        "program_id": 1,
+        "po_no": 7,
+        "short_name": "Impact on society",
+        "outcome_text": "Understand the impact of their work on society and strive to ensure that their actions contribute positively on the community.",
+        "ega_nos": "3"
+      },
+      {
+        "program_id": 1,
+        "po_no": 8,
+        "short_name": "Latest developments in the field",
+        "outcome_text": "Articulate and discuss the latest developments in the specific field of practice.",
+        "ega_nos": "1,4"
+      },
+      {
+        "program_id": 1,
+        "po_no": 9,
+        "short_name": "Professional and social ethics",
+        "outcome_text": "Act in recognition of professional, social and ethical.",
+        "ega_nos": "2"
+      },
+      {
+        "program_id": 1,
+        "po_no": 10,
+        "short_name": "Ethical leadership",
+        "outcome_text": "Demonstrate ethical leadership and social responsibility by integrating sustainability, inclusivity, mental well-being and peace-building principles into academic, professional and community engagements, ensuring holistic development and societal transformation.",
+        "ega_nos": "3"
+      },
+      {
+        "program_id": 15,
+        "po_no": 1,
+        "short_name": "PO 1",
+        "outcome_text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 15,
+        "po_no": 2,
+        "short_name": "PO 2",
+        "outcome_text": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 15,
+        "po_no": 3,
+        "short_name": "PO 3",
+        "outcome_text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 15,
+        "po_no": 4,
+        "short_name": "PO 4",
+        "outcome_text": "Ability to function on multidisciplinary teams",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 15,
+        "po_no": 5,
+        "short_name": "PO 5",
+        "outcome_text": "Ability to identify; formulate, and solve complex engineering problems;",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 15,
+        "po_no": 6,
+        "short_name": "PO 6",
+        "outcome_text": "Understanding of professional and ethical responsibility.",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 15,
+        "po_no": 7,
+        "short_name": "PO 7",
+        "outcome_text": "Ability to communicate effectively",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 15,
+        "po_no": 8,
+        "short_name": "PO 8",
+        "outcome_text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 15,
+        "po_no": 9,
+        "short_name": "PO 9",
+        "outcome_text": "Recognition of the need for, and an ability to engage in life-long learning;",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 15,
+        "po_no": 10,
+        "short_name": "PO 10",
+        "outcome_text": "Knowledge of contemporary issues;",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 15,
+        "po_no": 11,
+        "short_name": "PO 11",
+        "outcome_text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and;",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 15,
+        "po_no": 12,
+        "short_name": "PO 12",
+        "outcome_text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 15,
+        "po_no": 13,
+        "short_name": "PO 13",
+        "outcome_text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 16,
+        "po_no": 1,
+        "short_name": "PO 1",
+        "outcome_text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 16,
+        "po_no": 2,
+        "short_name": "PO 2",
+        "outcome_text": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 16,
+        "po_no": 3,
+        "short_name": "PO 3",
+        "outcome_text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 16,
+        "po_no": 4,
+        "short_name": "PO 4",
+        "outcome_text": "Ability to function on multidisciplinary teams",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 16,
+        "po_no": 5,
+        "short_name": "PO 5",
+        "outcome_text": "Ability to identify; formulate, and solve complex engineering problems;",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 16,
+        "po_no": 6,
+        "short_name": "PO 6",
+        "outcome_text": "Understanding of professional and ethical responsibility.",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 16,
+        "po_no": 7,
+        "short_name": "PO 7",
+        "outcome_text": "Ability to communicate effectively",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 16,
+        "po_no": 8,
+        "short_name": "PO 8",
+        "outcome_text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 16,
+        "po_no": 9,
+        "short_name": "PO 9",
+        "outcome_text": "Recognition of the need for, and an ability to engage in life-long learning;",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 16,
+        "po_no": 10,
+        "short_name": "PO 10",
+        "outcome_text": "Knowledge of contemporary issues;",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 16,
+        "po_no": 11,
+        "short_name": "PO 11",
+        "outcome_text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 16,
+        "po_no": 12,
+        "short_name": "PO 12",
+        "outcome_text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 16,
+        "po_no": 13,
+        "short_name": "PO 13",
+        "outcome_text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 17,
+        "po_no": 1,
+        "short_name": "Apply computing knowledge",
+        "outcome_text": "Apply computing and other knowledge domains to address realworld problems.",
+        "ega_nos": "1"
+      },
+      {
+        "program_id": 17,
+        "po_no": 2,
+        "short_name": "Analyze and define requirements",
+        "outcome_text": "Analyze complex problems and identify and define the computing requirements needed to design an appropriate solution.",
+        "ega_nos": "1"
+      },
+      {
+        "program_id": 17,
+        "po_no": 3,
+        "short_name": "Design computing solutions",
+        "outcome_text": "Design and develop computing solutions using a system-level perspective.",
+        "ega_nos": "1"
+      },
+      {
+        "program_id": 17,
+        "po_no": 4,
+        "short_name": "Ethical IT professional",
+        "outcome_text": "Demonstrate ethical behavior as an IT Professional and sensitivity to the impact of technology in the society.",
+        "ega_nos": "2"
+      },
+      {
+        "program_id": 17,
+        "po_no": 5,
+        "short_name": "Augustinian virtues and CSR",
+        "outcome_text": "Show Augustinian virtues/ethical values and the understanding and appreciation of corporate social responsibility.",
+        "ega_nos": "2"
+      },
+      {
+        "program_id": 17,
+        "po_no": 6,
+        "short_name": "Multi-disciplinary teamwork",
+        "outcome_text": "Work effectively and independently in multi-disciplinary and multi-cultural teams.",
+        "ega_nos": "4"
+      },
+      {
+        "program_id": 17,
+        "po_no": 7,
+        "short_name": "Impact on society",
+        "outcome_text": "Understand the impact of their work on society and strive to ensure that their actions contribute positively on the community.",
+        "ega_nos": "3"
+      },
+      {
+        "program_id": 17,
+        "po_no": 8,
+        "short_name": "Latest developments in the field",
+        "outcome_text": "Articulate and discuss the latest developments in the specific field of practice.",
+        "ega_nos": "1,4"
+      },
+      {
+        "program_id": 17,
+        "po_no": 9,
+        "short_name": "Professional and social ethics",
+        "outcome_text": "Act in recognition of professional, social and ethical.",
+        "ega_nos": "2"
+      },
+      {
+        "program_id": 17,
+        "po_no": 10,
+        "short_name": "Ethical leadership",
+        "outcome_text": "Demonstrate ethical leadership and social responsibility by integrating sustainability, inclusivity, mental well-being and peace-building principles into academic, professional and community engagements, ensuring holistic development and societal transformation.",
+        "ega_nos": "3"
+      }
+    ],
+    "links": [],
+    "active": [],
+    "protectedHashes": {
+      "syllabi": {
+        "rows": 15,
+        "sha256": "223b8d7f04dfb1a6c784fb8b5d0d2072f78de93dacbcde20c3310b2a346b97e4"
+      },
+      "syllabus_versions": {
+        "rows": 18,
+        "sha256": "3aba02528acb53ca0f37e86250b999750cab96d6a2d1a0897ca4c9e581898d3b"
+      },
+      "syllabus_check_reports": {
+        "rows": 197,
+        "sha256": "e317eee6436acd2aae40fad9d54d4fb89dc541efdd6583ff3f1c33d77e18bdcd"
+      },
+      "ai_check_runs": {
+        "rows": 288,
+        "sha256": "9ad3c84819de58295eb84b4f7490e2dc8c238567c3fd3f8b5c31473547e1ffd6"
+      },
+      "syllabus_check_decisions": {
+        "rows": 780,
+        "sha256": "b2a6393a91e9d0c19d1a883661ec5f838a4aea0f41d7f09bddd3312494bc14c7"
+      },
+      "syllabus_check_curricula": {
+        "rows": 4,
+        "sha256": "d14af13102de4fb50258ab0d439a7a380cff9eea600e777bbcc183ae8fc88731"
+      },
+      "curriculum": {
+        "rows": 39,
+        "sha256": "2213f1bbaf9f6a79637805b80f32bbab0a19461b314facc1123d981cf349a4b8"
+      },
+      "courses": {
+        "rows": 243,
+        "sha256": "133c0fd22603b0a0a28f88e59aeb6cac7afbea8a5ee2920adb3e83d8d6306ced"
+      },
+      "course_clos": {
+        "rows": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "program_egas": {
+        "rows": 20,
+        "sha256": "0b77ce0eaa6e244fc326c1cdca9d37b4570c230c05a2a8b5a2e107c4d4b10e7d"
+      },
+      "institution_egas": {
+        "rows": 4,
+        "sha256": "cc4a8a7770198c1e74625c2874cda24663dbc6b425278d60e418d8b11c925907"
+      },
+      "institution_settings": {
+        "rows": 1,
+        "sha256": "746a26e2a8981ac9446740a2be060113550902f85e32089ab145774029f6e7a6"
+      }
+    }
+  },
+  "beforeSha256": "a829b6299d4c60213a0d33c1ce69ab8f896cf3bd42587aae89826aa5b03913bc",
+  "impacts": [
+    {
+      "type": "syllabus",
+      "id": 43,
+      "program": "BSIT",
+      "status": "draft",
+      "contentSha256": "26c980f6c0072fd814eeecf269ab084755c07f8c986e10b76b6ba3d8f2093323",
+      "oldBasis": null,
+      "cloMappings": [
+        {
+          "id": "c1",
+          "pos": [
+            1,
+            5
+          ]
+        },
+        {
+          "id": "c2",
+          "pos": [
+            6
+          ]
+        },
+        {
+          "id": "c3",
+          "pos": [
+            3,
+            7
+          ]
+        },
+        {
+          "id": "c4",
+          "pos": [
+            6,
+            8
+          ]
+        }
+      ],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "syllabus",
+      "id": 93,
+      "program": "BSIT",
+      "status": "for_revision",
+      "contentSha256": "4e2e80a4de1e3650b0fefa747eaeea4a99d9bf6ec87ec92c4d398ce1ede19f54",
+      "oldBasis": [
+        {
+          "no": 1,
+          "short": "Apply computing knowledge",
+          "text": "Apply computing and other knowledge domains to address realworld problems.",
+          "egas": [
+            1
+          ]
+        },
+        {
+          "no": 2,
+          "short": "Analyze and define requirements",
+          "text": "Analyze complex problems and identify and define the computing requirements needed to design an appropriate solution.",
+          "egas": [
+            1
+          ]
+        },
+        {
+          "no": 3,
+          "short": "Design computing solutions",
+          "text": "Design and develop computing solutions using a system-level perspective.",
+          "egas": [
+            1
+          ]
+        },
+        {
+          "no": 4,
+          "short": "Ethical IT professional",
+          "text": "Demonstrate ethical behavior as an IT Professional and sensitivity to the impact of technology in the society.",
+          "egas": [
+            2
+          ]
+        },
+        {
+          "no": 5,
+          "short": "Augustinian virtues and CSR",
+          "text": "Show Augustinian virtues/ethical values and the understanding and appreciation of corporate social responsibility.",
+          "egas": [
+            2
+          ]
+        },
+        {
+          "no": 6,
+          "short": "Multi-disciplinary teamwork",
+          "text": "Work effectively and independently in multi-disciplinary and multi-cultural teams.",
+          "egas": [
+            4
+          ]
+        },
+        {
+          "no": 7,
+          "short": "Impact on society",
+          "text": "Understand the impact of their work on society and strive to ensure that their actions contribute positively on the community.",
+          "egas": [
+            3
+          ]
+        },
+        {
+          "no": 8,
+          "short": "Latest developments in the field",
+          "text": "Articulate and discuss the latest developments in the specific field of practice.",
+          "egas": [
+            1,
+            4
+          ]
+        },
+        {
+          "no": 9,
+          "short": "Professional and social ethics",
+          "text": "Act in recognition of professional, social and ethical.",
+          "egas": [
+            2
+          ]
+        },
+        {
+          "no": 10,
+          "short": "Ethical leadership",
+          "text": "Demonstrate ethical leadership and social responsibility by integrating sustainability, inclusivity, mental well-being and peace-building principles into academic, professional and community engagements, ensuring holistic development and societal transformation.",
+          "egas": [
+            3
+          ]
+        }
+      ],
+      "cloMappings": [
+        {
+          "id": "c9",
+          "pos": [
+            1
+          ]
+        },
+        {
+          "id": "api93_clo2",
+          "pos": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "api93_clo3",
+          "pos": [
+            3
+          ]
+        },
+        {
+          "id": "api93_clo4",
+          "pos": [
+            4,
+            7
+          ]
+        }
+      ],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "syllabus",
+      "id": 97,
+      "program": "BSIE",
+      "status": "draft",
+      "contentSha256": "169a538d6d0c931ff258791f7a3ec04aa37a5cadd132f8c99238b2d4342b1ffd",
+      "oldBasis": [
+        {
+          "no": 1,
+          "short": "Draft: Engineering problem solving",
+          "text": "Proposed BSIE outcome for this draft: Apply mathematics, engineering reasoning and computing tools to analyze industrial systems and develop evidence-based solutions.",
+          "egas": [
+            1,
+            4
+          ]
+        },
+        {
+          "no": 2,
+          "short": "Draft: Responsible practice",
+          "text": "Proposed BSIE outcome for this draft: Communicate technical results, collaborate effectively and evaluate operational decisions with attention to professional ethics, sustainability and community needs.",
+          "egas": [
+            2,
+            3
+          ]
+        }
+      ],
+      "cloMappings": [
+        {
+          "id": "kmvax3geut0vgvl",
+          "pos": [
+            1
+          ]
+        },
+        {
+          "id": "kmvax3hk1otdyd1",
+          "pos": [
+            1
+          ]
+        },
+        {
+          "id": "kmvax3imhluz216",
+          "pos": [
+            1
+          ]
+        },
+        {
+          "id": "kmvax3kanekeayr",
+          "pos": [
+            2
+          ]
+        }
+      ],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "syllabus",
+      "id": 99,
+      "program": "BSIT",
+      "status": "draft",
+      "contentSha256": "66844be3c088256fdb3fc04f60f8a8c8cf8b1c75a9617f7367a250e74f14cf8e",
+      "oldBasis": [
+        {
+          "no": 1,
+          "short": "Apply computing knowledge",
+          "text": "Apply computing and other knowledge domains to address realworld problems.",
+          "egas": [
+            1
+          ]
+        },
+        {
+          "no": 2,
+          "short": "Analyze and define requirements",
+          "text": "Analyze complex problems and identify and define the computing requirements needed to design an appropriate solution.",
+          "egas": [
+            1
+          ]
+        },
+        {
+          "no": 3,
+          "short": "Design computing solutions",
+          "text": "Design and develop computing solutions using a system-level perspective.",
+          "egas": [
+            1
+          ]
+        },
+        {
+          "no": 4,
+          "short": "Ethical IT professional",
+          "text": "Demonstrate ethical behavior as an IT Professional and sensitivity to the impact of technology in the society.",
+          "egas": [
+            2
+          ]
+        },
+        {
+          "no": 5,
+          "short": "Augustinian virtues and CSR",
+          "text": "Show Augustinian virtues/ethical values and the understanding and appreciation of corporate social responsibility.",
+          "egas": [
+            2
+          ]
+        },
+        {
+          "no": 6,
+          "short": "Multi-disciplinary teamwork",
+          "text": "Work effectively and independently in multi-disciplinary and multi-cultural teams.",
+          "egas": [
+            4
+          ]
+        },
+        {
+          "no": 7,
+          "short": "Impact on society",
+          "text": "Understand the impact of their work on society and strive to ensure that their actions contribute positively on the community.",
+          "egas": [
+            3
+          ]
+        },
+        {
+          "no": 8,
+          "short": "Latest developments in the field",
+          "text": "Articulate and discuss the latest developments in the specific field of practice.",
+          "egas": [
+            1,
+            4
+          ]
+        },
+        {
+          "no": 9,
+          "short": "Professional and social ethics",
+          "text": "Act in recognition of professional, social and ethical.",
+          "egas": [
+            2
+          ]
+        },
+        {
+          "no": 10,
+          "short": "Ethical leadership",
+          "text": "Demonstrate ethical leadership and social responsibility by integrating sustainability, inclusivity, mental well-being and peace-building principles into academic, professional and community engagements, ensuring holistic development and societal transformation.",
+          "egas": [
+            3
+          ]
+        }
+      ],
+      "cloMappings": [
+        {
+          "id": "c9",
+          "pos": [
+            1
+          ]
+        },
+        {
+          "id": "api99_clo2",
+          "pos": [
+            1,
+            2
+          ]
+        },
+        {
+          "id": "api99_clo3",
+          "pos": [
+            3
+          ]
+        },
+        {
+          "id": "api99_clo4",
+          "pos": [
+            4,
+            7
+          ]
+        },
+        {
+          "id": "bss99_team",
+          "pos": [
+            5,
+            6,
+            8,
+            9,
+            10
+          ]
+        }
+      ],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "syllabus",
+      "id": 100,
+      "program": "BSIE",
+      "status": "draft",
+      "contentSha256": "dbe786f6273c032f5dfcbb06a6923edd83725d53c309f4b9003562f6e3b27725",
+      "oldBasis": [
+        {
+          "no": 1,
+          "short": "Draft: Engineering problem solving",
+          "text": "Proposed BSIE outcome for this draft: Apply mathematics, engineering reasoning and computing tools to analyze industrial systems and develop evidence-based solutions.",
+          "egas": [
+            1,
+            4
+          ]
+        },
+        {
+          "no": 2,
+          "short": "Draft: Responsible practice",
+          "text": "Proposed BSIE outcome for this draft: Communicate technical results, collaborate effectively and evaluate operational decisions with attention to professional ethics, sustainability and community needs.",
+          "egas": [
+            2,
+            3
+          ]
+        }
+      ],
+      "cloMappings": [
+        {
+          "id": "bsie100_clo1",
+          "pos": [
+            2
+          ]
+        },
+        {
+          "id": "bsie100_clo2",
+          "pos": [
+            1
+          ]
+        },
+        {
+          "id": "bsie100_clo3",
+          "pos": [
+            1
+          ]
+        },
+        {
+          "id": "bsie100_clo4",
+          "pos": [
+            2
+          ]
+        }
+      ],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "syllabus",
+      "id": 101,
+      "program": "BSIE",
+      "status": "for_revision",
+      "contentSha256": "448a33ea66c9fb197bd2afd87a924aa610c88bf91d78badcd60407bf4810bdd8",
+      "oldBasis": [
+        {
+          "no": 1,
+          "short": "PO 1",
+          "text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+          "egas": []
+        },
+        {
+          "no": 2,
+          "short": "PO 2",
+          "text": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+          "egas": []
+        },
+        {
+          "no": 3,
+          "short": "PO 3",
+          "text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+          "egas": []
+        },
+        {
+          "no": 4,
+          "short": "PO 4",
+          "text": "Ability to function on multidisciplinary teams",
+          "egas": []
+        },
+        {
+          "no": 5,
+          "short": "PO 5",
+          "text": "Ability to identify; formulate, and solve complex engineering problems;",
+          "egas": []
+        },
+        {
+          "no": 6,
+          "short": "PO 6",
+          "text": "Understanding of professional and ethical responsibility.",
+          "egas": []
+        },
+        {
+          "no": 7,
+          "short": "PO 7",
+          "text": "Ability to communicate effectively",
+          "egas": []
+        },
+        {
+          "no": 8,
+          "short": "PO 8",
+          "text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+          "egas": []
+        },
+        {
+          "no": 9,
+          "short": "PO 9",
+          "text": "Recognition of the need for, and an ability to engage in life-long learning;",
+          "egas": []
+        },
+        {
+          "no": 10,
+          "short": "PO 10",
+          "text": "Knowledge of contemporary issues;",
+          "egas": []
+        },
+        {
+          "no": 11,
+          "short": "PO 11",
+          "text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and;",
+          "egas": []
+        },
+        {
+          "no": 12,
+          "short": "PO 12",
+          "text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in",
+          "egas": []
+        },
+        {
+          "no": 13,
+          "short": "PO 13",
+          "text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+          "egas": []
+        }
+      ],
+      "cloMappings": [
+        {
+          "id": "ma7_aligned_clo1",
+          "pos": [
+            1
+          ]
+        },
+        {
+          "id": "ma7_aligned_clo2",
+          "pos": [
+            1
+          ]
+        },
+        {
+          "id": "ma7_aligned_clo3",
+          "pos": [
+            1,
+            5
+          ]
+        },
+        {
+          "id": "ma7_aligned_clo4",
+          "pos": [
+            6,
+            7,
+            8,
+            9
+          ]
+        }
+      ],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "syllabus",
+      "id": 102,
+      "program": "BSIT",
+      "status": "draft",
+      "contentSha256": "cb076bcd9750abe0b27b6f3e8c7e8ad6a34f971c42d668cb4e13be8077c7ba95",
+      "oldBasis": [
+        {
+          "no": 1,
+          "short": "Apply computing knowledge",
+          "text": "Apply computing and other knowledge domains to address realworld problems.",
+          "egas": [
+            1
+          ]
+        },
+        {
+          "no": 2,
+          "short": "Analyze and define requirements",
+          "text": "Analyze complex problems and identify and define the computing requirements needed to design an appropriate solution.",
+          "egas": [
+            1
+          ]
+        },
+        {
+          "no": 3,
+          "short": "Design computing solutions",
+          "text": "Design and develop computing solutions using a system-level perspective.",
+          "egas": [
+            1
+          ]
+        },
+        {
+          "no": 4,
+          "short": "Ethical IT professional",
+          "text": "Demonstrate ethical behavior as an IT Professional and sensitivity to the impact of technology in the society.",
+          "egas": [
+            2
+          ]
+        },
+        {
+          "no": 5,
+          "short": "Augustinian virtues and CSR",
+          "text": "Show Augustinian virtues/ethical values and the understanding and appreciation of corporate social responsibility.",
+          "egas": [
+            2
+          ]
+        },
+        {
+          "no": 6,
+          "short": "Multi-disciplinary teamwork",
+          "text": "Work effectively and independently in multi-disciplinary and multi-cultural teams.",
+          "egas": [
+            4
+          ]
+        },
+        {
+          "no": 7,
+          "short": "Impact on society",
+          "text": "Understand the impact of their work on society and strive to ensure that their actions contribute positively on the community.",
+          "egas": [
+            3
+          ]
+        },
+        {
+          "no": 8,
+          "short": "Latest developments in the field",
+          "text": "Articulate and discuss the latest developments in the specific field of practice.",
+          "egas": [
+            1,
+            4
+          ]
+        },
+        {
+          "no": 9,
+          "short": "Professional and social ethics",
+          "text": "Act in recognition of professional, social and ethical.",
+          "egas": [
+            2
+          ]
+        },
+        {
+          "no": 10,
+          "short": "Ethical leadership",
+          "text": "Demonstrate ethical leadership and social responsibility by integrating sustainability, inclusivity, mental well-being and peace-building principles into academic, professional and community engagements, ensuring holistic development and societal transformation.",
+          "egas": [
+            3
+          ]
+        }
+      ],
+      "cloMappings": [
+        {
+          "id": "imp2",
+          "pos": [
+            2,
+            3,
+            6,
+            8
+          ]
+        },
+        {
+          "id": "imp3",
+          "pos": [
+            2,
+            3,
+            6,
+            8
+          ]
+        },
+        {
+          "id": "imp4",
+          "pos": [
+            2,
+            3,
+            6,
+            8,
+            9
+          ]
+        },
+        {
+          "id": "imp5",
+          "pos": [
+            9
+          ]
+        }
+      ],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    }
+  ],
+  "session": {
+    "read_only": 1,
+    "version": "10.4.32-MariaDB"
+  },
+  "foreignKeys": [
+    {
+      "table_name": "ai_check_area_scores",
+      "column_name": "run_id",
+      "referenced_table_name": "ai_check_runs",
+      "referenced_column_name": "run_id",
+      "constraint_name": "ai_check_area_scores_ibfk_1"
+    },
+    {
+      "table_name": "ai_check_runs",
+      "column_name": "created_by",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "ai_check_runs_ibfk_3"
+    },
+    {
+      "table_name": "ai_check_runs",
+      "column_name": "syllabus_id",
+      "referenced_table_name": "syllabi",
+      "referenced_column_name": "syllabus_id",
+      "constraint_name": "ai_check_runs_ibfk_1"
+    },
+    {
+      "table_name": "ai_check_runs",
+      "column_name": "version_id",
+      "referenced_table_name": "syllabus_versions",
+      "referenced_column_name": "version_id",
+      "constraint_name": "ai_check_runs_ibfk_2"
+    },
+    {
+      "table_name": "ai_findings",
+      "column_name": "run_id",
+      "referenced_table_name": "ai_check_runs",
+      "referenced_column_name": "run_id",
+      "constraint_name": "ai_findings_ibfk_1"
+    },
+    {
+      "table_name": "catalog_events",
+      "column_name": "actor_id",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "catalog_events_ibfk_1"
+    },
+    {
+      "table_name": "chk_decisions",
+      "column_name": "run_id",
+      "referenced_table_name": "chk_runs",
+      "referenced_column_name": "run_id",
+      "constraint_name": "chk_decisions_ibfk_1"
+    },
+    {
+      "table_name": "chk_decisions",
+      "column_name": "user_id",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "chk_decisions_ibfk_2"
+    },
+    {
+      "table_name": "chk_documents",
+      "column_name": "owner_id",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "chk_documents_ibfk_1"
+    },
+    {
+      "table_name": "chk_documents",
+      "column_name": "syllabus_id",
+      "referenced_table_name": "syllabi",
+      "referenced_column_name": "syllabus_id",
+      "constraint_name": "chk_documents_ibfk_2"
+    },
+    {
+      "table_name": "chk_examples",
+      "column_name": "reviewer_id",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "chk_examples_ibfk_1"
+    },
+    {
+      "table_name": "chk_reference_events",
+      "column_name": "set_id",
+      "referenced_table_name": "chk_reference_sets",
+      "referenced_column_name": "set_id",
+      "constraint_name": "chk_reference_events_ibfk_1"
+    },
+    {
+      "table_name": "chk_reference_events",
+      "column_name": "user_id",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "chk_reference_events_ibfk_2"
+    },
+    {
+      "table_name": "chk_reference_sets",
+      "column_name": "approved_by",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "chk_reference_sets_ibfk_2"
+    },
+    {
+      "table_name": "chk_reference_sets",
+      "column_name": "created_by",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "chk_reference_sets_ibfk_1"
+    },
+    {
+      "table_name": "chk_runs",
+      "column_name": "created_by",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "chk_runs_ibfk_2"
+    },
+    {
+      "table_name": "chk_runs",
+      "column_name": "document_id",
+      "referenced_table_name": "chk_documents",
+      "referenced_column_name": "document_id",
+      "constraint_name": "chk_runs_ibfk_1"
+    },
+    {
+      "table_name": "comments",
+      "column_name": "syllabus_id",
+      "referenced_table_name": "syllabi",
+      "referenced_column_name": "syllabus_id",
+      "constraint_name": "comments_ibfk_1"
+    },
+    {
+      "table_name": "comments",
+      "column_name": "user_id",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "comments_ibfk_2"
+    },
+    {
+      "table_name": "comment_reads",
+      "column_name": "syllabus_id",
+      "referenced_table_name": "syllabi",
+      "referenced_column_name": "syllabus_id",
+      "constraint_name": "comment_reads_ibfk_2"
+    },
+    {
+      "table_name": "comment_reads",
+      "column_name": "user_id",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "comment_reads_ibfk_1"
+    },
+    {
+      "table_name": "courses",
+      "column_name": "program_id",
+      "referenced_table_name": "programs",
+      "referenced_column_name": "program_id",
+      "constraint_name": "courses_ibfk_1"
+    },
+    {
+      "table_name": "course_assignments",
+      "column_name": "syllabus_id",
+      "referenced_table_name": "syllabi",
+      "referenced_column_name": "syllabus_id",
+      "constraint_name": "course_assignments_ibfk_2"
+    },
+    {
+      "table_name": "course_assignments",
+      "column_name": "teacher_id",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "course_assignments_ibfk_1"
+    },
+    {
+      "table_name": "course_clos",
+      "column_name": "course_id",
+      "referenced_table_name": "courses",
+      "referenced_column_name": "course_id",
+      "constraint_name": "course_clos_ibfk_1"
+    },
+    {
+      "table_name": "course_prerequisites",
+      "column_name": "course_id",
+      "referenced_table_name": "courses",
+      "referenced_column_name": "course_id",
+      "constraint_name": "course_prerequisites_ibfk_1"
+    },
+    {
+      "table_name": "course_prerequisites",
+      "column_name": "prereq_course_id",
+      "referenced_table_name": "courses",
+      "referenced_column_name": "course_id",
+      "constraint_name": "course_prerequisites_ibfk_2"
+    },
+    {
+      "table_name": "co_po_mapping",
+      "column_name": "curriculum_id",
+      "referenced_table_name": "curriculum",
+      "referenced_column_name": "curriculum_id",
+      "constraint_name": "co_po_mapping_ibfk_1"
+    },
+    {
+      "table_name": "deadline_notices",
+      "column_name": "deadline_id",
+      "referenced_table_name": "subject_deadlines",
+      "referenced_column_name": "deadline_id",
+      "constraint_name": "deadline_notices_ibfk_1"
+    },
+    {
+      "table_name": "deadline_notices",
+      "column_name": "user_id",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "deadline_notices_ibfk_2"
+    },
+    {
+      "table_name": "faculty_courses",
+      "column_name": "course_id",
+      "referenced_table_name": "courses",
+      "referenced_column_name": "course_id",
+      "constraint_name": "faculty_courses_ibfk_2"
+    },
+    {
+      "table_name": "faculty_courses",
+      "column_name": "user_id",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "faculty_courses_ibfk_1"
+    },
+    {
+      "table_name": "faculty_programs",
+      "column_name": "program_id",
+      "referenced_table_name": "programs",
+      "referenced_column_name": "program_id",
+      "constraint_name": "faculty_programs_ibfk_2"
+    },
+    {
+      "table_name": "faculty_programs",
+      "column_name": "user_id",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "faculty_programs_ibfk_1"
+    },
+    {
+      "table_name": "messages",
+      "column_name": "receiver_id",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "messages_ibfk_3"
+    },
+    {
+      "table_name": "messages",
+      "column_name": "sender_id",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "messages_ibfk_2"
+    },
+    {
+      "table_name": "messages",
+      "column_name": "syllabus_id",
+      "referenced_table_name": "syllabi",
+      "referenced_column_name": "syllabus_id",
+      "constraint_name": "messages_ibfk_1"
+    },
+    {
+      "table_name": "notifications",
+      "column_name": "syllabus_id",
+      "referenced_table_name": "syllabi",
+      "referenced_column_name": "syllabus_id",
+      "constraint_name": "notifications_ibfk_2"
+    },
+    {
+      "table_name": "notifications",
+      "column_name": "user_id",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "notifications_ibfk_1"
+    },
+    {
+      "table_name": "password_temp",
+      "column_name": "user_id",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "password_temp_ibfk_1"
+    },
+    {
+      "table_name": "program_code_aliases",
+      "column_name": "program_id",
+      "referenced_table_name": "programs",
+      "referenced_column_name": "program_id",
+      "constraint_name": "program_code_aliases_ibfk_1"
+    },
+    {
+      "table_name": "program_egas",
+      "column_name": "program_id",
+      "referenced_table_name": "programs",
+      "referenced_column_name": "program_id",
+      "constraint_name": "program_egas_ibfk_1"
+    },
+    {
+      "table_name": "program_name_aliases",
+      "column_name": "program_id",
+      "referenced_table_name": "programs",
+      "referenced_column_name": "program_id",
+      "constraint_name": "program_name_aliases_ibfk_1"
+    },
+    {
+      "table_name": "program_outcomes",
+      "column_name": "program_id",
+      "referenced_table_name": "programs",
+      "referenced_column_name": "program_id",
+      "constraint_name": "program_outcomes_ibfk_1"
+    },
+    {
+      "table_name": "remember_tokens",
+      "column_name": "user_id",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "remember_tokens_ibfk_1"
+    },
+    {
+      "table_name": "student_enrollments",
+      "column_name": "course_id",
+      "referenced_table_name": "courses",
+      "referenced_column_name": "course_id",
+      "constraint_name": "student_enrollments_ibfk_2"
+    },
+    {
+      "table_name": "student_enrollments",
+      "column_name": "user_id",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "student_enrollments_ibfk_1"
+    },
+    {
+      "table_name": "student_profiles",
+      "column_name": "user_id",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "student_profiles_ibfk_1"
+    },
+    {
+      "table_name": "student_profiles",
+      "column_name": "verified_by",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "student_profiles_ibfk_2"
+    },
+    {
+      "table_name": "subject_deadlines",
+      "column_name": "course_id",
+      "referenced_table_name": "courses",
+      "referenced_column_name": "course_id",
+      "constraint_name": "subject_deadlines_ibfk_1"
+    },
+    {
+      "table_name": "subject_deadlines",
+      "column_name": "created_by",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "subject_deadlines_ibfk_2"
+    },
+    {
+      "table_name": "submission_logs",
+      "column_name": "syllabus_id",
+      "referenced_table_name": "syllabi",
+      "referenced_column_name": "syllabus_id",
+      "constraint_name": "submission_logs_ibfk_1"
+    },
+    {
+      "table_name": "submission_logs",
+      "column_name": "user_id",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "submission_logs_ibfk_2"
+    },
+    {
+      "table_name": "syllabi",
+      "column_name": "course_id",
+      "referenced_table_name": "courses",
+      "referenced_column_name": "course_id",
+      "constraint_name": "fk_syllabi_course"
+    },
+    {
+      "table_name": "syllabi",
+      "column_name": "curriculum_id",
+      "referenced_table_name": "curriculum",
+      "referenced_column_name": "curriculum_id",
+      "constraint_name": "syllabi_ibfk_2"
+    },
+    {
+      "table_name": "syllabi",
+      "column_name": "user_id",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "syllabi_ibfk_1"
+    },
+    {
+      "table_name": "syllabus_check_decisions",
+      "column_name": "run_id",
+      "referenced_table_name": "ai_check_runs",
+      "referenced_column_name": "run_id",
+      "constraint_name": "syllabus_check_decisions_ibfk_1"
+    },
+    {
+      "table_name": "syllabus_check_decisions",
+      "column_name": "user_id",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "syllabus_check_decisions_ibfk_2"
+    },
+    {
+      "table_name": "syllabus_check_reports",
+      "column_name": "run_id",
+      "referenced_table_name": "ai_check_runs",
+      "referenced_column_name": "run_id",
+      "constraint_name": "syllabus_check_reports_ibfk_1"
+    },
+    {
+      "table_name": "syllabus_versions",
+      "column_name": "created_by",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "syllabus_versions_ibfk_2"
+    },
+    {
+      "table_name": "syllabus_versions",
+      "column_name": "syllabus_id",
+      "referenced_table_name": "syllabi",
+      "referenced_column_name": "syllabus_id",
+      "constraint_name": "syllabus_versions_ibfk_1"
+    },
+    {
+      "table_name": "usage_daily",
+      "column_name": "user_id",
+      "referenced_table_name": "users",
+      "referenced_column_name": "user_id",
+      "constraint_name": "usage_daily_ibfk_1"
+    }
+  ],
+  "queries": [
+    "SELECT @@tx_read_only AS read_only, VERSION() AS version",
+    "SELECT * FROM programs WHERE code IN (?,?,?,?) ORDER BY program_id",
+    "SELECT * FROM program_outcomes WHERE program_id IN (?,?,?,?) ORDER BY program_id,po_no",
+    "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name=?",
+    "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name=?",
+    "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name=?",
+    "SELECT * FROM syllabi",
+    "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name=?",
+    "SELECT * FROM syllabus_versions",
+    "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name=?",
+    "SELECT * FROM syllabus_check_reports",
+    "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name=?",
+    "SELECT * FROM ai_check_runs",
+    "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name=?",
+    "SELECT * FROM syllabus_check_decisions",
+    "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name=?",
+    "SELECT * FROM syllabus_check_curricula",
+    "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name=?",
+    "SELECT * FROM curriculum",
+    "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name=?",
+    "SELECT * FROM courses",
+    "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name=?",
+    "SELECT * FROM course_clos",
+    "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name=?",
+    "SELECT * FROM program_egas",
+    "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name=?",
+    "SELECT * FROM institution_egas",
+    "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name=?",
+    "SELECT * FROM institution_settings",
+    "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name=?",
+    "SELECT * FROM courses",
+    "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name=?",
+    "SELECT * FROM syllabi",
+    "SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name=?",
+    "SELECT * FROM course_clos",
+    "SELECT table_name,column_name,referenced_table_name,referenced_column_name,constraint_name FROM information_schema.key_column_usage WHERE table_schema=DATABASE() AND referenced_table_name IS NOT NULL ORDER BY table_name,column_name"
+  ],
+  "productionWrites": 0
+}

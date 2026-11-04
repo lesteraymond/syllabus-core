@@ -1,0 +1,1303 @@
+{
+  "stage": "E.4 smoke (Phase 1 re-run)",
+  "ranAt": "2026-10-25T15:07:07.392Z",
+  "mode": "live",
+  "resumedFrom": {
+    "requests": 2,
+    "charged": 0.0197841,
+    "transient": 1,
+    "invalid": 0,
+    "attempts": {
+      "cc-prog1-offsubject": 1,
+      "cp-bsit-wrongpo": 1,
+      "wi-prog1-aligned": 1,
+      "ic-prog1-wrongclo": 1
+    }
+  },
+  "model": "openrouter/minimax/minimax-m3.1-flash",
+  "promptVersion": "alignment-12ab34c1c2d1d2-r5",
+  "variant": "current",
+  "promptSha256": "c8757b22b9b79d9d69d591ae41baccd4e7cd10280f584b00258f338b8b66f8e2",
+  "promptTrimmed": false,
+  "stagesOnInThisProcessOnly": {
+    "a": true,
+    "b": true,
+    "b3": true,
+    "b4": true,
+    "c1": true,
+    "c2": true,
+    "d1": true,
+    "d2": true
+  },
+  "limits": {
+    "maxRequests": 10,
+    "maxCost": 0.07,
+    "maxTokens": "production (8192)",
+    "maxInvalid": 4,
+    "maxTransient": 3,
+    "sequential": true
+  },
+  "stopped": "4 answer(s) failed validation (the last: not_answered: AI omitted alignment judgements)",
+  "prices": {
+    "prompt": 3e-7,
+    "completion": 0.0000012,
+    "reasoning": 0,
+    "request": 0,
+    "cacheWrite": 0,
+    "endpoints": [
+      {
+        "provider": "Relace",
+        "tag": "relace/fp4",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 9e-8,
+        "completion": 5e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "InferenceNet",
+        "tag": "inference-net/fp4",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1e-7,
+        "completion": 5.5e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "InferenceNet",
+        "tag": "inference-net/fp4/us",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1e-7,
+        "completion": 5.5e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "GMICloud",
+        "tag": "gmicloud/fp8",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.425e-7,
+        "completion": 5.7e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.425e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "DigitalOcean",
+        "tag": "digitalocean",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Novita",
+        "tag": "novita/fp16",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "Nebius",
+        "tag": "nebius/fp4",
+        "status": 0,
+        "uptime30m": null,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Wafer",
+        "tag": "wafer/nvfp4",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "ModelRun",
+        "tag": "modelrun/fp4",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Parasail",
+        "tag": "parasail/fp8",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Together",
+        "tag": "together",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Minimax",
+        "tag": "minimax",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "SambaNova",
+        "tag": "sambanova",
+        "status": 0,
+        "uptime30m": null,
+        "prompt": 3e-7,
+        "completion": 0.0000012,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 3e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      }
+    ],
+    "readAt": "2026-10-25T15:06:50.388Z"
+  },
+  "requests": {
+    "total": 8,
+    "model": 5,
+    "priceLookups": 1,
+    "attemptsSent": 5,
+    "retries": 2
+  },
+  "responses": {
+    "verified": 1,
+    "invalid": 4,
+    "errors": 0,
+    "timeouts": 0,
+    "schemaProblems": 0,
+    "truncated": 0
+  },
+  "usage": {
+    "promptTokens": 33876,
+    "completionTokens": 2296,
+    "reasoningTokens": 0,
+    "cachedTokens": 13056,
+    "reportedCost": 0.00425934,
+    "charged": 0.0327021
+  },
+  "items": [
+    {
+      "id": "cc-prog1-offsubject",
+      "course": "prog1",
+      "type": "Course-CLO",
+      "dataset": "stage-a@stage-a-2",
+      "category": "off-subject",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "NOT_ALIGNED"
+      ],
+      "why": "A computing competence of a different course (databases); the description does not support it.",
+      "verdict": "NOT_ALIGNED",
+      "matchesProvisional": true,
+      "schemaValid": true,
+      "evidence": {
+        "source": "exact",
+        "target": "exact",
+        "valid": true
+      },
+      "recommendation": {
+        "type": "REWRITE_TEXT",
+        "expected": "REWRITE_TEXT",
+        "matchesExpected": true,
+        "status": "proposed rewrite",
+        "draft": "Apply fundamental programming constructs such as selection and repetition to solve simple problems, writing and testing Java programs that follow good coding practices.",
+        "safety": [],
+        "draftReview": []
+      },
+      "aspects": {
+        "required": {},
+        "responsible": "none",
+        "invalid": [],
+        "missing": [],
+        "contradictions": [],
+        "offType": [
+          "carriedBy=none",
+          "coreValue=none"
+        ],
+        "expected": null
+      },
+      "bloom": {
+        "source": "N/A",
+        "target": "Analyze"
+      },
+      "explanation": "The CLO's competence belongs to database design, not to this course's subject as its title and description define it (fundamentals of Java programming, logical formulation, coding practices). The description never covers relational schemas or normalization, so the CLO needs content the course does not teach. The draft rewrites the CLO in this course's subject.",
+      "attempts": [
+        1
+      ],
+      "retries": 0,
+      "verifiedInRequest": 4
+    },
+    {
+      "id": "cp-bsit-wrongpo",
+      "course": "prog1",
+      "type": "CLO-PO",
+      "dataset": "stage-a@stage-a-2",
+      "category": "wrong-po-mapping",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "NOT_ALIGNED"
+      ],
+      "why": "A programming outcome mapped to the PO on Filipino historical and cultural heritage: an incorrect mapping.",
+      "verdict": "NOT_ALIGNED",
+      "matchesProvisional": true,
+      "schemaValid": true,
+      "evidence": {
+        "source": "exact",
+        "target": "exact",
+        "valid": true
+      },
+      "recommendation": {
+        "type": "RETAG_OUTCOME",
+        "expected": "RETAG_OUTCOME",
+        "matchesExpected": true,
+        "status": "valid re-tag: the faculty text is kept, no rewrite",
+        "draftInAnswer": "empty"
+      },
+      "aspects": {
+        "required": {},
+        "responsible": "none",
+        "invalid": [],
+        "missing": [],
+        "contradictions": [],
+        "offType": [
+          "carriedBy=none",
+          "coreValue=none"
+        ],
+        "expected": null
+      },
+      "bloom": {
+        "source": "N/A",
+        "target": "Apply"
+      },
+      "explanation": "The PO asks to preserve and promote Filipino historical and cultural heritage; the CLO develops Java programming competence with loops and conditionals, which contributes nothing to that outcome. The CLO is a sound outcome for this course, so the PO tag is what is wrong: the CLO statement stays exactly as written.",
+      "attempts": [
+        1
+      ],
+      "retries": 0,
+      "verifiedInRequest": 4
+    },
+    {
+      "id": "wi-prog1-aligned",
+      "course": "prog1",
+      "type": "Content-ILO",
+      "dataset": "stage-b@stage-b-1",
+      "category": "clear-positive",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "ALIGNED"
+      ],
+      "why": "Observable performance on exactly this week's content.",
+      "verdict": "ALIGNED",
+      "matchesProvisional": true,
+      "schemaValid": true,
+      "evidence": {
+        "source": "exact",
+        "target": "exact",
+        "valid": true
+      },
+      "recommendation": {
+        "type": "NO_CHANGE",
+        "expected": "NO_CHANGE",
+        "matchesExpected": true,
+        "status": "none needed"
+      },
+      "aspects": {
+        "required": {},
+        "responsible": "none",
+        "invalid": [],
+        "missing": [],
+        "contradictions": [],
+        "offType": [
+          "carriedBy=none",
+          "coreValue=none"
+        ],
+        "expected": null
+      },
+      "bloom": {
+        "source": "N/A",
+        "target": "Apply"
+      },
+      "explanation": "The ILO is directly about this week's conditional statements, states an observable performance (develop and test programs) at Apply level, and is specific enough to guide teaching and assessment.",
+      "attempts": [
+        1
+      ],
+      "retries": 0,
+      "verifiedInRequest": 4
+    },
+    {
+      "id": "ic-prog1-wrongclo",
+      "course": "prog1",
+      "type": "ILO-CLO",
+      "dataset": "stage-b3@stage-b3-1",
+      "category": "wrong-clo",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "PARTIALLY_ALIGNED",
+        "NOT_ALIGNED"
+      ],
+      "why": "A sound ILO, but it builds CLO 1, not the values CLO 4.",
+      "verdict": "NOT_ALIGNED",
+      "matchesProvisional": true,
+      "schemaValid": true,
+      "evidence": {
+        "source": "exact",
+        "target": "exact",
+        "valid": true
+      },
+      "recommendation": {
+        "type": "RETAG_OUTCOME",
+        "expected": "RETAG_OUTCOME",
+        "matchesExpected": true,
+        "status": "valid re-tag: the faculty text is kept, no rewrite",
+        "draftInAnswer": "empty"
+      },
+      "aspects": {
+        "required": {},
+        "responsible": "none",
+        "invalid": [],
+        "missing": [],
+        "contradictions": [],
+        "offType": [
+          "carriedBy=none",
+          "coreValue=none"
+        ],
+        "expected": null
+      },
+      "bloom": {
+        "source": "N/A",
+        "target": "Apply"
+      },
+      "explanation": "The CLO asks for demonstrating honesty, compassion and responsibility in the use of computers and in team programming work; the ILO asks for developing and testing Java programs with if-else and switch, which builds no part of that competence. The ILO is a sound outcome for its week, so the CLO tag is what is wrong: the ILO text stays exactly as written.",
+      "attempts": [
+        1
+      ],
+      "retries": 0,
+      "verifiedInRequest": 4
+    },
+    {
+      "id": "af-prog1-good",
+      "course": "prog1",
+      "type": "Activity-fit",
+      "dataset": "stage-c@stage-c-2",
+      "category": "clear-positive",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "ALIGNED"
+      ],
+      "why": "Hands-on practice of the ILO verb, a demonstration and scaffolding.",
+      "verdict": "ALIGNED",
+      "matchesProvisional": true,
+      "schemaValid": true,
+      "evidence": {
+        "source": "exact",
+        "target": "exact",
+        "valid": true
+      },
+      "recommendation": {
+        "type": "NO_CHANGE",
+        "expected": "NO_CHANGE",
+        "matchesExpected": true,
+        "status": "none needed"
+      },
+      "aspects": {
+        "required": {
+          "teaching": "sound",
+          "learnerSupport": "adequate"
+        },
+        "responsible": "none",
+        "invalid": [],
+        "missing": [],
+        "contradictions": [],
+        "offType": [],
+        "expected": {
+          "teaching": {
+            "provisional": "sound",
+            "got": "sound",
+            "matches": true
+          },
+          "learnerSupport": {
+            "provisional": "adequate",
+            "got": "adequate",
+            "matches": true
+          }
+        }
+      },
+      "bloom": {
+        "source": "Apply",
+        "target": "Apply"
+      },
+      "explanation": "The laboratory exercise has students write and run if-else and switch programs, directly practising the ILO's development and testing performance, with demonstration, scaffolding and pair work supporting varied learners.",
+      "attempts": [
+        2
+      ],
+      "retries": 0,
+      "verifiedInRequest": 5
+    },
+    {
+      "id": "as-prog1-recall-quiz",
+      "course": "prog1",
+      "type": "Assessment-fit",
+      "dataset": "stage-c@stage-c-2",
+      "category": "wrong-cognitive-level",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "PARTIALLY_ALIGNED",
+        "NOT_ALIGNED"
+      ],
+      "why": "A recall quiz does not show that students can develop and test a program.",
+      "verdict": "NOT_ALIGNED",
+      "matchesProvisional": true,
+      "schemaValid": true,
+      "evidence": {
+        "source": "exact",
+        "target": "exact",
+        "valid": true
+      },
+      "recommendation": {
+        "type": "REWRITE_TEXT",
+        "expected": "REWRITE_TEXT",
+        "matchesExpected": true,
+        "status": "proposed rewrite",
+        "draft": "- Practical programming task: write, run and test a Java program that uses if-else and switch statements to make decisions, and submit the source code with the test results.",
+        "safety": [],
+        "draftReview": []
+      },
+      "aspects": {
+        "required": {
+          "measures": "no",
+          "evidence": "observable",
+          "level": "too_low"
+        },
+        "responsible": "assessment",
+        "invalid": [],
+        "missing": [],
+        "contradictions": [],
+        "offType": [],
+        "expected": {
+          "measures": {
+            "provisional": [
+              "no",
+              "partly"
+            ],
+            "got": "no",
+            "matches": true
+          },
+          "level": {
+            "provisional": "too_low",
+            "got": "too_low",
+            "matches": true
+          }
+        }
+      },
+      "bloom": {
+        "source": "Apply",
+        "target": "Remember"
+      },
+      "explanation": "The assessment task measures only recall of Java conditional syntax, not the ILO's performance of developing and testing programs that make decisions. It produces no program, test result or demonstration through which the practical competence can be judged.",
+      "attempts": [
+        2
+      ],
+      "retries": 0,
+      "verifiedInRequest": 5
+    },
+    {
+      "id": "vu-prog1-name-only",
+      "course": "prog1",
+      "type": "Value-use",
+      "dataset": "stage-d1@stage-d1-1",
+      "category": "name-only",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "PARTIALLY_ALIGNED",
+        "NOT_ALIGNED"
+      ],
+      "why": "A bare value name says nothing about what students do.",
+      "verdict": "ALIGNED",
+      "matchesProvisional": false,
+      "schemaValid": true,
+      "evidence": {
+        "source": "exact",
+        "target": "exact",
+        "valid": true
+      },
+      "recommendation": {
+        "type": "NO_CHANGE",
+        "expected": "REWRITE_TEXT",
+        "matchesExpected": false,
+        "status": "none needed"
+      },
+      "aspects": {
+        "required": {
+          "valueUse": "integrated",
+          "carriedBy": "activity",
+          "valueFit": "fits"
+        },
+        "responsible": "none",
+        "invalid": [],
+        "missing": [],
+        "contradictions": [],
+        "offType": [],
+        "expected": {
+          "valueUse": {
+            "provisional": "name_only",
+            "got": "integrated",
+            "matches": false
+          }
+        }
+      },
+      "bloom": {
+        "source": "Apply",
+        "target": "N/A"
+      },
+      "explanation": "Students review each other's code during pair programming, which can express Humility through acknowledging mistakes and accepting constructive feedback.",
+      "attempts": [
+        2
+      ],
+      "retries": 0,
+      "verifiedInRequest": 5
+    },
+    {
+      "id": "rr-prog1-relevant",
+      "course": "prog1",
+      "type": "Ref-relevance",
+      "dataset": "stage-d2@stage-d2-1",
+      "category": "clear-positive",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "ALIGNED"
+      ],
+      "why": "The title concerns the course subject.",
+      "verdict": "NOT VERIFIED",
+      "matchesProvisional": null,
+      "schemaValid": null,
+      "evidence": null,
+      "recommendation": {
+        "status": "not verified"
+      },
+      "aspects": null,
+      "bloom": null,
+      "explanation": null,
+      "attempts": [
+        2,
+        3,
+        4
+      ],
+      "retries": 2,
+      "verifiedInRequest": null
+    },
+    {
+      "id": "cc-syseng-aligned",
+      "course": "syseng",
+      "type": "Course-CLO",
+      "dataset": "stage-a@stage-a-2",
+      "category": "clear-positive",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "ALIGNED"
+      ],
+      "why": "Requirements analysis and system design are key topics of the description; the verbs are observable.",
+      "verdict": "NOT VERIFIED",
+      "matchesProvisional": null,
+      "schemaValid": null,
+      "evidence": null,
+      "recommendation": {
+        "status": "not verified"
+      },
+      "aspects": null,
+      "bloom": null,
+      "explanation": null,
+      "attempts": [
+        5,
+        6
+      ],
+      "retries": 0,
+      "verifiedInRequest": null
+    },
+    {
+      "id": "cp-bsie-real2",
+      "course": "syseng",
+      "type": "CLO-PO",
+      "dataset": "stage-a@stage-a-2",
+      "category": "real-faculty-clo",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "ALIGNED",
+        "PARTIALLY_ALIGNED"
+      ],
+      "why": "CLO 2 of the sample IE 402 syllabus, which maps it to POs 2-5 (here PO 3, system design): plausible, contestable.",
+      "verdict": "NOT VERIFIED",
+      "matchesProvisional": null,
+      "schemaValid": null,
+      "evidence": null,
+      "recommendation": {
+        "status": "not verified"
+      },
+      "aspects": null,
+      "bloom": null,
+      "explanation": null,
+      "attempts": [
+        5,
+        6
+      ],
+      "retries": 0,
+      "verifiedInRequest": null
+    },
+    {
+      "id": "wi-syseng-unrelated",
+      "course": "syseng",
+      "type": "Content-ILO",
+      "dataset": "stage-b@stage-b-1",
+      "category": "off-subject",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "NOT_ALIGNED"
+      ],
+      "why": "A programming outcome for a requirements week.",
+      "verdict": "NOT VERIFIED",
+      "matchesProvisional": null,
+      "schemaValid": null,
+      "evidence": null,
+      "recommendation": {
+        "status": "not verified"
+      },
+      "aspects": null,
+      "bloom": null,
+      "explanation": null,
+      "attempts": [
+        5,
+        6
+      ],
+      "retries": 0,
+      "verifiedInRequest": null
+    },
+    {
+      "id": "ic-syseng-ok",
+      "course": "syseng",
+      "type": "ILO-CLO",
+      "dataset": "stage-b3@stage-b3-1",
+      "category": "clear-positive",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "ALIGNED"
+      ],
+      "why": "A step toward the requirements specification.",
+      "verdict": "NOT VERIFIED",
+      "matchesProvisional": null,
+      "schemaValid": null,
+      "evidence": null,
+      "recommendation": {
+        "status": "not verified"
+      },
+      "aspects": null,
+      "bloom": null,
+      "explanation": null,
+      "attempts": [
+        5,
+        6
+      ],
+      "retries": 0,
+      "verifiedInRequest": null
+    }
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "course": "prog1",
+      "batch": "prog1#1",
+      "ids": [
+        "cc-prog1-offsubject",
+        "cp-bsit-wrongpo",
+        "wi-prog1-aligned",
+        "ic-prog1-wrongclo"
+      ],
+      "outcome": "verified",
+      "request": 4,
+      "truncated": false,
+      "schemaProblems": [],
+      "verifiedIds": [
+        "cc-prog1-offsubject",
+        "cp-bsit-wrongpo",
+        "wi-prog1-aligned",
+        "ic-prog1-wrongclo"
+      ]
+    },
+    {
+      "attempt": 2,
+      "course": "prog1",
+      "batch": "prog1#2",
+      "ids": [
+        "af-prog1-good",
+        "as-prog1-recall-quiz",
+        "vu-prog1-name-only",
+        "rr-prog1-relevant"
+      ],
+      "outcome": "invalid",
+      "error": "AI quotes are swapped: the source quote is copied from the target text and the target quote from the source text",
+      "code": "quotes_swapped",
+      "rejected": [
+        {
+          "id": "rr-prog1-relevant",
+          "reason": "AI quotes are swapped: the source quote is copied from the target text and the target quote from the source text",
+          "code": "quotes_swapped"
+        }
+      ],
+      "request": 5,
+      "truncated": false,
+      "schemaProblems": [],
+      "verifiedIds": [
+        "af-prog1-good",
+        "as-prog1-recall-quiz",
+        "vu-prog1-name-only"
+      ]
+    },
+    {
+      "attempt": 3,
+      "course": "prog1",
+      "batch": "prog1#2",
+      "ids": [
+        "rr-prog1-relevant"
+      ],
+      "outcome": "invalid",
+      "error": "AI quotes are swapped: the source quote is copied from the target text and the target quote from the source text",
+      "code": "quotes_swapped",
+      "rejected": [
+        {
+          "id": "rr-prog1-relevant",
+          "reason": "AI quotes are swapped: the source quote is copied from the target text and the target quote from the source text",
+          "code": "quotes_swapped"
+        }
+      ],
+      "request": 6,
+      "truncated": false,
+      "schemaProblems": [],
+      "verifiedIds": []
+    },
+    {
+      "attempt": 4,
+      "course": "prog1",
+      "batch": "prog1#2",
+      "ids": [
+        "rr-prog1-relevant"
+      ],
+      "outcome": "invalid",
+      "error": "AI quotes are swapped: the source quote is copied from the target text and the target quote from the source text",
+      "code": "quotes_swapped",
+      "rejected": [
+        {
+          "id": "rr-prog1-relevant",
+          "reason": "AI quotes are swapped: the source quote is copied from the target text and the target quote from the source text",
+          "code": "quotes_swapped"
+        }
+      ],
+      "request": 7,
+      "truncated": false,
+      "schemaProblems": [],
+      "verifiedIds": []
+    },
+    {
+      "attempt": 5,
+      "course": "syseng",
+      "batch": "syseng#1",
+      "ids": [
+        "cc-syseng-aligned",
+        "cp-bsie-real2",
+        "wi-syseng-unrelated",
+        "ic-syseng-ok"
+      ],
+      "outcome": "invalid",
+      "error": "AI omitted alignment judgements",
+      "code": "not_answered",
+      "rejected": [
+        {
+          "id": "cc-syseng-aligned",
+          "reason": "not answered",
+          "code": "not_answered"
+        },
+        {
+          "id": "cp-bsie-real2",
+          "reason": "not answered",
+          "code": "not_answered"
+        },
+        {
+          "id": "wi-syseng-unrelated",
+          "reason": "not answered",
+          "code": "not_answered"
+        },
+        {
+          "id": "ic-syseng-ok",
+          "reason": "not answered",
+          "code": "not_answered"
+        }
+      ],
+      "request": 8,
+      "truncated": false,
+      "schemaProblems": [],
+      "verifiedIds": []
+    },
+    {
+      "attempt": 6,
+      "course": "syseng",
+      "batch": "syseng#1",
+      "ids": [
+        "cc-syseng-aligned",
+        "cp-bsie-real2",
+        "wi-syseng-unrelated",
+        "ic-syseng-ok"
+      ],
+      "outcome": "not sent",
+      "error": "not sent: 4 answer(s) failed validation (the last: not_answered: AI omitted alignment judgements)",
+      "request": null,
+      "verifiedIds": []
+    }
+  ],
+  "http": [
+    {
+      "n": 3,
+      "kind": "price-lookup",
+      "at": "2026-10-25T15:06:49.885Z",
+      "ms": 493,
+      "status": 200
+    },
+    {
+      "n": 4,
+      "kind": "model",
+      "at": "2026-10-25T15:06:50.390Z",
+      "worst": 0.0197841,
+      "inputBound": 33179,
+      "maxTokens": 8192,
+      "bodyBytes": 32923,
+      "ids": [
+        "cc-prog1-offsubject",
+        "cp-bsit-wrongpo",
+        "wi-prog1-aligned",
+        "ic-prog1-wrongclo"
+      ],
+      "promptSha256": "c8757b22b9b79d9d69d591ae41baccd4e7cd10280f584b00258f338b8b66f8e2",
+      "fullPrompt": true,
+      "responseFormat": "json_schema",
+      "strict": true,
+      "ms": 1611,
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "X-Generation-Id,X-Provider-Name,request-id,cf-ray",
+        "cache-control": "private",
+        "cf-cache-status": "DYNAMIC",
+        "cf-ray": "a50220911981e2dd-HKG",
+        "content-encoding": "gzip",
+        "content-type": "application/json",
+        "date": "Sun, 25 Oct 2026 15:06:49 GMT",
+        "expires": "Sun, 25 Oct 2026 15:06:49 GMT",
+        "permissions-policy": "payment=(self \"https://checkout.stripe.com\" \"https://connect-js.stripe.com\" \"https://js.stripe.com\" \"https://*.js.stripe.com\" \"https://hooks.stripe.com\"), payment=(self \"https://checkout.stripe.com\" \"",
+        "referrer-policy": "no-referrer, strict-origin-when-cross-origin, no-referrer, strict-origin-when-cross-origin",
+        "server": "cloudflare",
+        "vary": "Accept-Encoding",
+        "x-content-type-options": "nosniff",
+        "x-generation-id": "gen-1792940808-rNoD9UVYmSMf4dx4g1TA"
+      },
+      "usage": {
+        "promptTokens": 6775,
+        "completionTokens": 916,
+        "reasoningTokens": 0,
+        "cachedTokens": 128,
+        "reportedCost": 0.00116978,
+        "costAtListPrices": 0.0031317
+      },
+      "charged": 0.0031317,
+      "provider": "InferenceNet",
+      "modelReturned": "minimax/minimax-m3.1-flash",
+      "generationId": "gen-1792940808-rNoD9UVYmSMf4dx4g1TA",
+      "finishReason": "stop",
+      "content": "{\"judgements\":[{\"valueUse\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"teaching\":\"not_assessed\",\"targetQuote\":\"Design and analyze a relational database schema using normalization up to third normal form.\",\"targetBloom\":\"Analyze\",\"sourceQuote\":\"This course introduces students to the vital role of computers and computer programmers in shaping modern society.\",\"sourceBloom\":\"N/A\",\"responsible\":\"none\",\"relevance\":\"not_assessed\",\"recommendation\":\"REWRITE_TEXT\",\"measures\":\"not_assessed\",\"level\":\"not_assessed\",\"learnerSupport\":\"not_assessed\",\"label\":\"NOT_ALIGNED\",\"integration\":\"not_assessed\",\"id\":\"cc-prog1-offsubject\",\"explanation\":\"The CLO's competence belongs to database design, not to this course's subject as its title and description define it (fundamentals of Java programming, logical formulation, coding practices). The description never covers relational schemas or normalization, so the CLO needs content the course does not teach. The draft rewrites the CLO in this course's subject.\",\"evidence\":\"not_assessed\",\"draft\":\"Apply fundamental programming constructs such as selection and repetition to solve simple problems, writing and testing Java programs that follow good coding practices.\",\"coreValue\":\"none\",\"carriedBy\":\"none\",\"basis\":\"not_assessed\"},{\"valueUse\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"teaching\":\"not_assessed\",\"targetQuote\":\"Develop and test Java programs that use loops and conditional statements.\",\"targetBloom\":\"Apply\",\"sourceQuote\":\"Preserve and promote “Filipino historical and cultural heritage;\",\"sourceBloom\":\"N/A\",\"responsible\":\"none\",\"relevance\":\"not_assessed\",\"recommendation\":\"RETAG_OUTCOME\",\"measures\":\"not_assessed\",\"level\":\"not_assessed\",\"learnerSupport\":\"not_assessed\",\"label\":\"NOT_ALIGNED\",\"integration\":\"not_assessed\",\"id\":\"cp-bsit-wrongpo\",\"explanation\":\"The PO asks to preserve and promote Filipino historical and cultural heritage; the CLO develops Java programming competence with loops and conditionals, which contributes nothing to that outcome. The CLO is a sound outcome for this course, so the PO tag is what is wrong: the CLO statement stays exactly as written.\",\"evidence\":\"not_assessed\",\"draft\":\"\",\"coreValue\":\"none\",\"carriedBy\":\"none\",\"basis\":\"not_assessed\"},{\"valueUse\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"teaching\":\"not_assessed\",\"targetQuote\":\"Develop and test Java programs that use if-else and switch statements to make decisions.\",\"targetBloom\":\"Apply\",\"sourceQuote\":\"Week 3: Java conditional statements: if, if-else, nested if and switch\",\"sourceBloom\":\"N/A\",\"responsible\":\"none\",\"relevance\":\"not_assessed\",\"recommendation\":\"NO_CHANGE\",\"measures\":\"not_assessed\",\"level\":\"not_assessed\",\"learnerSupport\":\"not_assessed\",\"label\":\"ALIGNED\",\"integration\":\"not_assessed\",\"id\":\"wi-prog1-aligned\",\"explanation\":\"The ILO is directly about this week's conditional statements, states an observable performance (develop and test programs) at Apply level, and is specific enough to guide teaching and assessment.\",\"evidence\":\"not_assessed\",\"draft\":\"\",\"coreValue\":\"none\",\"carriedBy\":\"none\",\"basis\":\"not_assessed\"},{\"valueUse\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"teaching\":\"not_assessed\",\"targetQuote\":\"Develop and test Java programs that use if-else and switch statements to make decisions.\",\"targetBloom\":\"Apply\",\"sourceQuote\":\"Demonstrate honesty, compassion and responsibility in the use of computers and in team programming work, in line with Marian-Augustinian values.\",\"sourceBloom\":\"N/A\",\"responsible\":\"none\",\"relevance\":\"not_assessed\",\"recommendation\":\"RETAG_OUTCOME\",\"measures\":\"not_assessed\",\"level\":\"not_assessed\",\"learnerSupport\":\"not_assessed\",\"label\":\"NOT_ALIGNED\",\"integration\":\"not_assessed\",\"id\":\"ic-prog1-wrongclo\",\"explanation\":\"The CLO asks for demonstrating honesty, compassion and responsibility in the use of computers and in team programming work; the ILO asks for developing and testing Java programs with if-else and switch, which builds no part of that competence. The ILO is a sound outcome for its week, so the CLO tag is what is wrong: the ILO text stays exactly as written.\",\"evidence\":\"not_assessed\",\"draft\":\"\",\"coreValue\":\"none\",\"carriedBy\":\"none\",\"basis\":\"not_assessed\"}]}"
+    },
+    {
+      "n": 5,
+      "kind": "model",
+      "at": "2026-10-25T15:06:58.896Z",
+      "worst": 0.0200919,
+      "inputBound": 34205,
+      "maxTokens": 8192,
+      "bodyBytes": 33949,
+      "ids": [
+        "af-prog1-good",
+        "as-prog1-recall-quiz",
+        "vu-prog1-name-only",
+        "rr-prog1-relevant"
+      ],
+      "promptSha256": "c8757b22b9b79d9d69d591ae41baccd4e7cd10280f584b00258f338b8b66f8e2",
+      "fullPrompt": true,
+      "responseFormat": "json_schema",
+      "strict": true,
+      "ms": 672,
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "X-Generation-Id,X-Provider-Name,request-id,cf-ray",
+        "cache-control": "private",
+        "cf-cache-status": "DYNAMIC",
+        "cf-ray": "a50220c60cc2e2dd-HKG",
+        "content-encoding": "gzip",
+        "content-type": "application/json",
+        "date": "Sun, 25 Oct 2026 15:06:56 GMT",
+        "expires": "Sun, 25 Oct 2026 15:06:56 GMT",
+        "permissions-policy": "payment=(self \"https://checkout.stripe.com\" \"https://connect-js.stripe.com\" \"https://js.stripe.com\" \"https://*.js.stripe.com\" \"https://hooks.stripe.com\"), payment=(self \"https://checkout.stripe.com\" \"",
+        "referrer-policy": "no-referrer, strict-origin-when-cross-origin, no-referrer, strict-origin-when-cross-origin",
+        "server": "cloudflare",
+        "vary": "Accept-Encoding",
+        "x-content-type-options": "nosniff",
+        "x-generation-id": "gen-1792940816-nGqGE4759r9wPOf22pK1"
+      },
+      "usage": {
+        "promptTokens": 7006,
+        "completionTokens": 1034,
+        "reasoningTokens": 0,
+        "cachedTokens": 0,
+        "reportedCost": 0.0016713,
+        "costAtListPrices": 0.0033426
+      },
+      "charged": 0.0033426,
+      "provider": "Together",
+      "modelReturned": "minimax/minimax-m3.1-flash",
+      "generationId": "gen-1792940816-nGqGE4759r9wPOf22pK1",
+      "finishReason": "stop",
+      "content": "{\n  \"judgements\": [\n    {\n      \"id\": \"af-prog1-good\",\n      \"label\": \"ALIGNED\",\n      \"explanation\": \"The laboratory exercise has students write and run if-else and switch programs, directly practising the ILO's development and testing performance, with demonstration, scaffolding and pair work supporting varied learners.\",\n      \"sourceQuote\": \"Develop and test Java programs that use if-else and switch statements\",\n      \"targetQuote\": \"students write and run if-else and switch programs in pairs\",\n      \"sourceBloom\": \"Apply\",\n      \"targetBloom\": \"Apply\",\n      \"recommendation\": \"NO_CHANGE\",\n      \"draft\": \"\",\n      \"teaching\": \"sound\",\n      \"learnerSupport\": \"adequate\",\n      \"measures\": \"not_assessed\",\n      \"evidence\": \"not_assessed\",\n      \"level\": \"not_assessed\",\n      \"responsible\": \"none\",\n      \"valueUse\": \"not_assessed\",\n      \"carriedBy\": \"not_assessed\",\n      \"valueFit\": \"not_assessed\",\n      \"coreValue\": \"not_assessed\",\n      \"integration\": \"not_assessed\",\n      \"relevance\": \"not_assessed\",\n      \"basis\": \"not_assessed\"\n    },\n    {\n      \"id\": \"as-prog1-recall-quiz\",\n      \"label\": \"NOT_ALIGNED\",\n      \"explanation\": \"The assessment task measures only recall of Java conditional syntax, not the ILO's performance of developing and testing programs that make decisions. It produces no program, test result or demonstration through which the practical competence can be judged.\",\n      \"sourceQuote\": \"Develop and test Java programs that use if-else and switch statements\",\n      \"targetQuote\": \"Ten-item multiple-choice quiz on Java conditional syntax.\",\n      \"sourceBloom\": \"Apply\",\n      \"targetBloom\": \"Remember\",\n      \"recommendation\": \"REWRITE_TEXT\",\n      \"draft\": \"- Practical programming task: write, run and test a Java program that uses if-else and switch statements to make decisions, and submit the source code with the test results.\",\n      \"teaching\": \"not_assessed\",\n      \"learnerSupport\": \"not_assessed\",\n      \"measures\": \"no\",\n      \"evidence\": \"observable\",\n      \"level\": \"too_low\",\n      \"responsible\": \"assessment\",\n      \"valueUse\": \"not_assessed\",\n      \"carriedBy\": \"not_assessed\",\n      \"valueFit\": \"not_assessed\",\n      \"coreValue\": \"not_assessed\",\n      \"integration\": \"not_assessed\",\n      \"relevance\": \"not_assessed\",\n      \"basis\": \"not_assessed\"\n    },\n    {\n      \"id\": \"vu-prog1-name-only\",\n      \"label\": \"ALIGNED\",\n      \"explanation\": \"Students review each other's code during pair programming, which can express Humility through acknowledging mistakes and accepting constructive feedback.\",\n      \"sourceQuote\": \"students write if-else programs and review each other's code\",\n      \"targetQuote\": \"Humility\",\n      \"sourceBloom\": \"Apply\",\n      \"targetBloom\": \"N/A\",\n      \"recommendation\": \"NO_CHANGE\",\n      \"draft\": \"\",\n      \"teaching\": \"not_assessed\",\n      \"learnerSupport\": \"not_assessed\",\n      \"measures\": \"not_assessed\",\n      \"evidence\": \"not_assessed\",\n      \"level\": \"not_assessed\",\n      \"responsible\": \"none\",\n      \"valueUse\": \"integrated\",\n      \"carriedBy\": \"activity\",\n      \"valueFit\": \"fits\",\n      \"coreValue\": \"not_assessed\",\n      \"integration\": \"not_assessed\",\n      \"relevance\": \"not_assessed\",\n      \"basis\": \"not_assessed\"\n    },\n    {\n      \"id\": \"rr-prog1-relevant\",\n      \"label\": \"ALIGNED\",\n      \"explanation\": \"The title and publisher identify a Java programming textbook that directly concerns the course's Java fundamentals and weekly programming topics.\",\n      \"sourceQuote\": \"Fundamentals of Java programming\",\n      \"targetQuote\": \"IT 202 - Computer Programming 1 (Fundamentals of Programming)\",\n      \"sourceBloom\": \"N/A\",\n      \"targetBloom\": \"N/A\",\n      \"recommendation\": \"NO_CHANGE\",\n      \"draft\": \"\",\n      \"teaching\": \"not_assessed\",\n      \"learnerSupport\": \"not_assessed\",\n      \"measures\": \"not_assessed\",\n      \"evidence\": \"not_assessed\",\n      \"level\": \"not_assessed\",\n      \"responsible\": \"none\",\n      \"valueUse\": \"not_assessed\",\n      \"carriedBy\": \"not_assessed\",\n      \"valueFit\": \"not_assessed\",\n      \"coreValue\": \"not_assessed\",\n      \"integration\": \"not_assessed\",\n      \"relevance\": \"relevant\",\n      \"basis\": \"title_and_source\"\n    }\n  ]\n}"
+    },
+    {
+      "n": 6,
+      "kind": "model",
+      "at": "2026-10-25T15:07:01.348Z",
+      "worst": 0.0195639,
+      "inputBound": 32445,
+      "maxTokens": 8192,
+      "bodyBytes": 32189,
+      "ids": [
+        "rr-prog1-relevant"
+      ],
+      "promptSha256": "c8757b22b9b79d9d69d591ae41baccd4e7cd10280f584b00258f338b8b66f8e2",
+      "fullPrompt": true,
+      "responseFormat": "json_schema",
+      "strict": true,
+      "ms": 1030,
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "X-Generation-Id,X-Provider-Name,request-id,cf-ray",
+        "cache-control": "private",
+        "cf-cache-status": "DYNAMIC",
+        "cf-ray": "a50220d54b91e2dd-HKG",
+        "content-encoding": "gzip",
+        "content-type": "application/json",
+        "date": "Sun, 25 Oct 2026 15:06:59 GMT",
+        "expires": "Sun, 25 Oct 2026 15:06:59 GMT",
+        "permissions-policy": "payment=(self \"https://checkout.stripe.com\" \"https://connect-js.stripe.com\" \"https://js.stripe.com\" \"https://*.js.stripe.com\" \"https://hooks.stripe.com\"), payment=(self \"https://checkout.stripe.com\" \"",
+        "referrer-policy": "no-referrer, strict-origin-when-cross-origin, no-referrer, strict-origin-when-cross-origin",
+        "server": "cloudflare",
+        "vary": "Accept-Encoding",
+        "x-content-type-options": "nosniff",
+        "x-generation-id": "gen-1792940818-jD9qOD0ZF4O7wl2JNyOi"
+      },
+      "usage": {
+        "promptTokens": 6645,
+        "completionTokens": 170,
+        "reasoningTokens": 0,
+        "cachedTokens": 128,
+        "reportedCost": 0.00108147,
+        "costAtListPrices": 0.0021975
+      },
+      "charged": 0.0021975,
+      "provider": "ModelRun",
+      "modelReturned": "minimax/minimax-m3.1-flash",
+      "generationId": "gen-1792940818-jD9qOD0ZF4O7wl2JNyOi",
+      "finishReason": "stop",
+      "content": "{\"judgements\":[{\"id\":\"rr-prog1-relevant\",\"label\":\"ALIGNED\",\"explanation\":\"The cited title and source concern Java programming fundamentals, the subject and weekly topics of IT 202.\",\"sourceQuote\":\"Fundamentals of Java programming\",\"targetQuote\":\"Week 1: Java basics: variables, data types and operators\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"N/A\",\"recommendation\":\"NO_CHANGE\",\"draft\":\"\",\"teaching\":\"not_assessed\",\"learnerSupport\":\"not_assessed\",\"measures\":\"not_assessed\",\"evidence\":\"not_assessed\",\"level\":\"not_assessed\",\"responsible\":\"none\",\"valueUse\":\"not_assessed\",\"carriedBy\":\"none\",\"valueFit\":\"not_assessed\",\"coreValue\":\"none\",\"integration\":\"absent\",\"relevance\":\"relevant\",\"basis\":\"title_and_source\"}]}"
+    },
+    {
+      "n": 7,
+      "kind": "model",
+      "at": "2026-10-25T15:07:02.892Z",
+      "worst": 0.0195639,
+      "inputBound": 32445,
+      "maxTokens": 8192,
+      "bodyBytes": 32189,
+      "ids": [
+        "rr-prog1-relevant"
+      ],
+      "promptSha256": "c8757b22b9b79d9d69d591ae41baccd4e7cd10280f584b00258f338b8b66f8e2",
+      "fullPrompt": true,
+      "responseFormat": "json_schema",
+      "strict": true,
+      "ms": 1577,
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "X-Generation-Id,X-Provider-Name,request-id,cf-ray",
+        "cache-control": "private",
+        "cf-cache-status": "DYNAMIC",
+        "cf-ray": "a50220df2eb3e2dd-HKG",
+        "content-encoding": "gzip",
+        "content-type": "application/json",
+        "date": "Sun, 25 Oct 2026 15:07:01 GMT",
+        "expires": "Sun, 25 Oct 2026 15:07:01 GMT",
+        "permissions-policy": "payment=(self \"https://checkout.stripe.com\" \"https://connect-js.stripe.com\" \"https://js.stripe.com\" \"https://*.js.stripe.com\" \"https://hooks.stripe.com\"), payment=(self \"https://checkout.stripe.com\" \"",
+        "referrer-policy": "no-referrer, strict-origin-when-cross-origin, no-referrer, strict-origin-when-cross-origin",
+        "server": "cloudflare",
+        "vary": "Accept-Encoding",
+        "x-content-type-options": "nosniff",
+        "x-generation-id": "gen-1792940820-9J9xMO16hSJJIXPaX2O1"
+      },
+      "usage": {
+        "promptTokens": 6645,
+        "completionTokens": 170,
+        "reasoningTokens": 0,
+        "cachedTokens": 6528,
+        "reportedCost": 0.00021747,
+        "costAtListPrices": 0.0021975
+      },
+      "charged": 0.0021975,
+      "provider": "ModelRun",
+      "modelReturned": "minimax/minimax-m3.1-flash",
+      "generationId": "gen-1792940820-9J9xMO16hSJJIXPaX2O1",
+      "finishReason": "stop",
+      "content": "{\"judgements\":[{\"id\":\"rr-prog1-relevant\",\"label\":\"ALIGNED\",\"explanation\":\"The cited title and source concern Java programming fundamentals, the subject and weekly topics of IT 202.\",\"sourceQuote\":\"Fundamentals of Java programming\",\"targetQuote\":\"Week 1: Java basics: variables, data types and operators\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"N/A\",\"recommendation\":\"NO_CHANGE\",\"draft\":\"\",\"teaching\":\"not_assessed\",\"learnerSupport\":\"not_assessed\",\"measures\":\"not_assessed\",\"evidence\":\"not_assessed\",\"level\":\"not_assessed\",\"responsible\":\"none\",\"valueUse\":\"not_assessed\",\"carriedBy\":\"none\",\"valueFit\":\"not_assessed\",\"coreValue\":\"none\",\"integration\":\"absent\",\"relevance\":\"relevant\",\"basis\":\"title_and_source\"}]}"
+    },
+    {
+      "n": 8,
+      "kind": "model",
+      "at": "2026-10-25T15:07:05.023Z",
+      "worst": 0.0198894,
+      "inputBound": 33530,
+      "maxTokens": 8192,
+      "bodyBytes": 33274,
+      "ids": [
+        "cc-syseng-aligned",
+        "cp-bsie-real2",
+        "wi-syseng-unrelated",
+        "ic-syseng-ok"
+      ],
+      "promptSha256": "c8757b22b9b79d9d69d591ae41baccd4e7cd10280f584b00258f338b8b66f8e2",
+      "fullPrompt": true,
+      "responseFormat": "json_schema",
+      "strict": true,
+      "ms": 2354,
+      "status": 200,
+      "headers": {
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "X-Generation-Id,X-Provider-Name,request-id,cf-ray",
+        "cache-control": "private",
+        "cf-cache-status": "DYNAMIC",
+        "cf-ray": "a50220ec6f95e2dd-HKG",
+        "content-encoding": "gzip",
+        "content-type": "application/json",
+        "date": "Sun, 25 Oct 2026 15:07:04 GMT",
+        "expires": "Sun, 25 Oct 2026 15:07:04 GMT",
+        "permissions-policy": "payment=(self \"https://checkout.stripe.com\" \"https://connect-js.stripe.com\" \"https://js.stripe.com\" \"https://*.js.stripe.com\" \"https://hooks.stripe.com\"), payment=(self \"https://checkout.stripe.com\" \"",
+        "referrer-policy": "no-referrer, strict-origin-when-cross-origin, no-referrer, strict-origin-when-cross-origin",
+        "server": "cloudflare",
+        "vary": "Accept-Encoding",
+        "x-content-type-options": "nosniff",
+        "x-generation-id": "gen-1792940822-FgYo4Sz3KM0MJvS85hlI"
+      },
+      "usage": {
+        "promptTokens": 6805,
+        "completionTokens": 6,
+        "reasoningTokens": 0,
+        "cachedTokens": 6272,
+        "reportedCost": 0.00011932,
+        "costAtListPrices": 0.0020487
+      },
+      "charged": 0.0020487,
+      "provider": "InferenceNet",
+      "modelReturned": "minimax/minimax-m3.1-flash",
+      "generationId": "gen-1792940822-FgYo4Sz3KM0MJvS85hlI",
+      "finishReason": "stop",
+      "content": "{\"judgements\":[]}"
+    }
+  ],
+  "isolation": {
+    "forbiddenModulesLoaded": [],
+    "processEnvStageFlags": []
+  },
+  "note": "Expected verdicts and recommendations are provisional (developer-written, unreviewed by faculty). A match is not faculty-verified accuracy, and an answer that was never verified is not a PASS.",
+  "summary": {
+    "answers": {
+      "sent": 5,
+      "verified": 1,
+      "invalid": 4,
+      "errors": 0
+    },
+    "judgements": {
+      "asked": 14,
+      "valid": 7,
+      "refused": 7
+    },
+    "refusalReasons": {
+      "quotes_swapped": 3,
+      "not_answered": 4
+    },
+    "relationships": {
+      "asked": 12,
+      "verified": 7,
+      "neverVerified": [
+        "rr-prog1-relevant",
+        "cc-syseng-aligned",
+        "cp-bsie-real2",
+        "wi-syseng-unrelated",
+        "ic-syseng-ok"
+      ]
+    },
+    "sends": {
+      "retries": 2,
+      "mostForOneRelationship": 3,
+      "relationshipsSentAgain": 1
+    },
+    "recommendations": {
+      "verified": {
+        "REWRITE_TEXT": 2,
+        "RETAG_OUTCOME": 2,
+        "NO_CHANGE": 3
+      },
+      "asProvisionallyExpected": 6,
+      "withAnExpectation": 7,
+      "retags": [
+        {
+          "id": "cp-bsit-wrongpo",
+          "expected": "RETAG_OUTCOME",
+          "draftInAnswer": "empty"
+        },
+        {
+          "id": "ic-prog1-wrongclo",
+          "expected": "RETAG_OUTCOME",
+          "draftInAnswer": "empty"
+        }
+      ],
+      "rewrites": [
+        {
+          "id": "cc-prog1-offsubject",
+          "expected": "REWRITE_TEXT",
+          "status": "proposed rewrite"
+        },
+        {
+          "id": "as-prog1-recall-quiz",
+          "expected": "REWRITE_TEXT",
+          "status": "proposed rewrite"
+        }
+      ]
+    },
+    "budget": {
+      "requests": {
+        "cap": 10,
+        "used": 8,
+        "remaining": 2
+      },
+      "dollars": {
+        "cap": 0.07,
+        "chargedAgainstCap": 0.0327021,
+        "remainingUnderCap": 0.0372979,
+        "providerReported": 0.00425934
+      }
+    }
+  },
+  "comparison": {
+    "baseline": "docs/ai-eval-stage-e3-smoke-run2.json (Stage E.3 run 2: prompt -r4, one batch of 8, the earlier retry cascade)",
+    "e3Run2": {
+      "answers": {
+        "sent": 8,
+        "verified": 1,
+        "invalid": 7,
+        "errors": 0
+      },
+      "judgements": {
+        "asked": 21,
+        "valid": 2,
+        "refused": 19
+      },
+      "refusalReasons": {
+        "Invalid or duplicate AI judgement": 7,
+        "A misalignment must include a usable draft revision": 9,
+        "AI evidence is not present in the supplied text (source and target quotes)": 3
+      },
+      "relationships": {
+        "asked": 8,
+        "verified": 2,
+        "neverVerified": [
+          "cp-bsit-wrongpo",
+          "ic-prog1-wrongclo",
+          "af-prog1-good",
+          "as-prog1-recall-quiz",
+          "vu-prog1-name-only",
+          "rr-prog1-relevant"
+        ]
+      },
+      "sends": {
+        "retries": 7,
+        "mostForOneRelationship": 7,
+        "relationshipsSentAgain": 4
+      }
+    }
+  }
+}

@@ -1,0 +1,750 @@
+{
+  "syllabusId": 101,
+  "account": "jprizal.delrosario@email.lcup.edu.ph",
+  "subject": "BSIE MA 7 — Differential Calculus",
+  "status": "for_revision",
+  "variant": "deliberately misaligned learning plan",
+  "calculusCLOs": 4,
+  "misalignedLessons": 15,
+  "totalWeeks": 18,
+  "aiCheckTriggered": false,
+  "submitted": false,
+  "backup": ".api-test-backups\\ma7-before-misaligned-101-1792654182375.json",
+  "savedAt": "2026-10-22T07:29:42.428Z",
+  "content": {
+    "meta": {
+      "courseId": 25,
+      "code": "MA 7",
+      "title": "DIFFERENTIAL CALCULUS",
+      "program": "BSIE",
+      "lecture": "3",
+      "lab": "0",
+      "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+      "yearLevel": "1",
+      "curriculumYear": "2022-2023"
+    },
+    "outcomes": {
+      "vision": "Moved by the Spirit of the Risen Christ, La Consolacion University Philippines, rooted in Gospel values as a Catholic Augustinian-Marian institution, envisions to become a catalyst for the holistic transformation of all persons and communities.",
+      "mission": {
+        "lead": "LCUP commits to generate and make available to all persons and communities’ programs and services that will enable them to:",
+        "items": [
+          "exhibit academic and technical competence in their respective areas of discipline in the local and international environment;",
+          "demonstrate their knowledge, critical thinking and creativity by exploring the various avenues of learning and searching for truth;",
+          "manifest their willingness to serve specially the marginalized sector of our society;",
+          "demonstrate productivity in various areas of learning as responsible citizens of the society; and",
+          "live the Gospel values in the varied aspects of their personal and professional lives."
+        ]
+      },
+      "egas": [
+        {
+          "no": 1,
+          "name": "Critical and Creative thinker",
+          "short": "Critical and Creative Thinker"
+        },
+        {
+          "no": 2,
+          "name": "Competent Catholic Augustinian-Marian Professional",
+          "short": "Competent Professional"
+        },
+        {
+          "no": 3,
+          "name": "Socially Responsive Steward",
+          "short": "Socially Responsive Steward"
+        },
+        {
+          "no": 4,
+          "name": "Transformative Lifelong learner",
+          "short": "Transformative Lifelong Learner"
+        }
+      ],
+      "pos": [
+        {
+          "no": 1,
+          "short": "PO 1",
+          "text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+          "egas": []
+        },
+        {
+          "no": 2,
+          "short": "PO 2",
+          "text": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+          "egas": []
+        },
+        {
+          "no": 3,
+          "short": "PO 3",
+          "text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+          "egas": []
+        },
+        {
+          "no": 4,
+          "short": "PO 4",
+          "text": "Ability to function on multidisciplinary teams",
+          "egas": []
+        },
+        {
+          "no": 5,
+          "short": "PO 5",
+          "text": "Ability to identify; formulate, and solve complex engineering problems;",
+          "egas": []
+        },
+        {
+          "no": 6,
+          "short": "PO 6",
+          "text": "Understanding of professional and ethical responsibility.",
+          "egas": []
+        },
+        {
+          "no": 7,
+          "short": "PO 7",
+          "text": "Ability to communicate effectively",
+          "egas": []
+        },
+        {
+          "no": 8,
+          "short": "PO 8",
+          "text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+          "egas": []
+        },
+        {
+          "no": 9,
+          "short": "PO 9",
+          "text": "Recognition of the need for, and an ability to engage in life-long learning;",
+          "egas": []
+        },
+        {
+          "no": 10,
+          "short": "PO 10",
+          "text": "Knowledge of contemporary issues;",
+          "egas": []
+        },
+        {
+          "no": 11,
+          "short": "PO 11",
+          "text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and;",
+          "egas": []
+        },
+        {
+          "no": 12,
+          "short": "PO 12",
+          "text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in",
+          "egas": []
+        },
+        {
+          "no": 13,
+          "short": "PO 13",
+          "text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+          "egas": []
+        }
+      ]
+    },
+    "description": [
+      {
+        "id": "ma7_aligned_description",
+        "t": "Differential Calculus develops the mathematical reasoning used to analyze changing quantities in industrial engineering. Students represent engineering functions, evaluate limits and continuity, calculate and verify derivatives, and formulate related-rates and optimization models. Worked examples, graph interpretation, peer review and individual problem solving connect symbolic methods with physical units, assumptions and realistic constraints. Students communicate justified recommendations, examine consequences for workers and communities, and practice Marian-Augustinian honesty, humility and compassionate service. A modeling project and reflective revision develop independent learning and responsible mathematical practice."
+      }
+    ],
+    "clos": [
+      {
+        "id": "ma7_aligned_clo1",
+        "title": "Functions, limits and continuity",
+        "level": "Introductory",
+        "statement": "Represent and analyze engineering functions, evaluate limits and continuity, and justify domains, units and assumptions using mathematical and scientific knowledge.",
+        "pos": [
+          1
+        ],
+        "egas": [
+          1
+        ]
+      },
+      {
+        "id": "ma7_aligned_clo2",
+        "title": "Differentiation and verification",
+        "level": "Enabling",
+        "statement": "Apply differentiation rules to algebraic, trigonometric, exponential, logarithmic and implicit functions; verify solution steps and interpret derivatives as engineering rates of change.",
+        "pos": [
+          1
+        ],
+        "egas": [
+          1
+        ]
+      },
+      {
+        "id": "ma7_aligned_clo3",
+        "title": "Engineering problem formulation and modeling",
+        "level": "Demonstrating",
+        "statement": "Identify and formulate related-rates and optimization problems in industrial engineering, construct and solve calculus models within stated constraints, and justify the resulting engineering recommendation.",
+        "pos": [
+          1,
+          5
+        ],
+        "egas": [
+          1
+        ]
+      },
+      {
+        "id": "ma7_aligned_clo4",
+        "title": "Responsible communication and reflective learning",
+        "level": "Integration of Values",
+        "statement": "Evaluate and communicate calculus-based engineering recommendations with honest evidence and attention to workers and communities; practice Catholic Augustinian-Marian professional values of truth, humility and compassionate service, revise work using feedback, and identify an independent learning goal.",
+        "pos": [
+          6,
+          7,
+          8,
+          9
+        ],
+        "egas": [
+          2,
+          3,
+          4
+        ]
+      }
+    ],
+    "plan": [
+      {
+        "id": "ma7_aligned_week1",
+        "week": "1",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo1",
+            "text": "Design a museum exhibition floor plan and justify the arrangement of paintings by artistic period.",
+            "tags": [
+              "clo:ma7_aligned_clo1"
+            ]
+          }
+        ],
+        "contents": "Museum exhibition design",
+        "activities": "Memorize a list of painters and copy their birth dates from a handout.",
+        "tasks": "Ten-item multiple-choice quiz recalling painters and their birth dates.",
+        "values": "Compassion: provide patient and respectful peer feedback while discussing museum exhibition design."
+      },
+      {
+        "id": "ma7_aligned_week2",
+        "week": "2",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo2",
+            "text": "Construct a three-course restaurant menu and evaluate its visual presentation for a seasonal festival.",
+            "tags": [
+              "clo:ma7_aligned_clo1"
+            ]
+          }
+        ],
+        "contents": "Restaurant menu development",
+        "activities": "Watch a restaurant advertisement and repeat the names of kitchen utensils.",
+        "tasks": "True-or-false recall quiz identifying the names of kitchen utensils.",
+        "values": "Compassion: provide patient and respectful peer feedback while discussing restaurant menu development."
+      },
+      {
+        "id": "ma7_aligned_week3",
+        "week": "3",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo3",
+            "text": "Create a theatrical costume collection and defend the selection of fabrics for contrasting stage characters.",
+            "tags": [
+              "clo:ma7_aligned_clo1"
+            ]
+          }
+        ],
+        "contents": "Theatrical costume design",
+        "activities": "Read a costume-color glossary aloud and copy its definitions.",
+        "tasks": "Match color names to swatches in a five-item worksheet.",
+        "values": "Compassion: provide patient and respectful peer feedback while discussing theatrical costume design."
+      },
+      {
+        "id": "ma7_aligned_week4",
+        "week": "4",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo4",
+            "text": "Evaluate competing travel brochure layouts and develop an illustrated destination campaign for visitors.",
+            "tags": [
+              "clo:ma7_aligned_clo1"
+            ]
+          }
+        ],
+        "contents": "Travel brochure production",
+        "activities": "Listen to a list of capital cities and memorize their spelling.",
+        "tasks": "Fill-in-the-blank quiz recalling capital-city names.",
+        "values": "Compassion: provide patient and respectful peer feedback while discussing travel brochure production."
+      },
+      {
+        "id": "ma7_aligned_week5",
+        "week": "5",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo5",
+            "text": "Design and critique a floral centerpiece for a wedding reception using contrasting visual compositions.",
+            "tags": [
+              "clo:ma7_aligned_clo1"
+            ]
+          }
+        ],
+        "contents": "Floral arrangement planning",
+        "activities": "Recite the common names of flowers shown on flashcards.",
+        "tasks": "Multiple-choice recall quiz identifying flower names from photographs.",
+        "values": "Compassion: provide patient and respectful peer feedback while discussing floral arrangement planning."
+      },
+      {
+        "id": "ma7_aligned_week6",
+        "week": "6",
+        "kind": "exam",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo6",
+            "text": "",
+            "tags": []
+          }
+        ],
+        "contents": "PRELIM EXAMINATION",
+        "activities": "Individual written assessment of functions, limits and continuity.",
+        "tasks": "Solve engineering calculus problems, show and justify solution steps, verify results and interpret units and assumptions.",
+        "values": "Honesty in independent work and responsible reporting of results."
+      },
+      {
+        "id": "ma7_aligned_week7",
+        "week": "7",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo7",
+            "text": "Design a museum exhibition floor plan and justify the arrangement of paintings by artistic period.",
+            "tags": [
+              "clo:ma7_aligned_clo2"
+            ]
+          }
+        ],
+        "contents": "Museum exhibition design",
+        "activities": "Memorize a list of painters and copy their birth dates from a handout.",
+        "tasks": "Ten-item multiple-choice quiz recalling painters and their birth dates.",
+        "values": "Compassion: provide patient and respectful peer feedback while discussing museum exhibition design."
+      },
+      {
+        "id": "ma7_aligned_week8",
+        "week": "8",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo8",
+            "text": "Construct a three-course restaurant menu and evaluate its visual presentation for a seasonal festival.",
+            "tags": [
+              "clo:ma7_aligned_clo2"
+            ]
+          }
+        ],
+        "contents": "Restaurant menu development",
+        "activities": "Watch a restaurant advertisement and repeat the names of kitchen utensils.",
+        "tasks": "True-or-false recall quiz identifying the names of kitchen utensils.",
+        "values": "Compassion: provide patient and respectful peer feedback while discussing restaurant menu development."
+      },
+      {
+        "id": "ma7_aligned_week9",
+        "week": "9",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo9",
+            "text": "Create a theatrical costume collection and defend the selection of fabrics for contrasting stage characters.",
+            "tags": [
+              "clo:ma7_aligned_clo2"
+            ]
+          }
+        ],
+        "contents": "Theatrical costume design",
+        "activities": "Read a costume-color glossary aloud and copy its definitions.",
+        "tasks": "Match color names to swatches in a five-item worksheet.",
+        "values": "Compassion: provide patient and respectful peer feedback while discussing theatrical costume design."
+      },
+      {
+        "id": "ma7_aligned_week10",
+        "week": "10",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo10",
+            "text": "Evaluate competing travel brochure layouts and develop an illustrated destination campaign for visitors.",
+            "tags": [
+              "clo:ma7_aligned_clo2"
+            ]
+          }
+        ],
+        "contents": "Travel brochure production",
+        "activities": "Listen to a list of capital cities and memorize their spelling.",
+        "tasks": "Fill-in-the-blank quiz recalling capital-city names.",
+        "values": "Compassion: provide patient and respectful peer feedback while discussing travel brochure production."
+      },
+      {
+        "id": "ma7_aligned_week11",
+        "week": "11",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo11",
+            "text": "Design and critique a floral centerpiece for a wedding reception using contrasting visual compositions.",
+            "tags": [
+              "clo:ma7_aligned_clo2"
+            ]
+          }
+        ],
+        "contents": "Floral arrangement planning",
+        "activities": "Recite the common names of flowers shown on flashcards.",
+        "tasks": "Multiple-choice recall quiz identifying flower names from photographs.",
+        "values": "Compassion: provide patient and respectful peer feedback while discussing floral arrangement planning."
+      },
+      {
+        "id": "ma7_aligned_week12",
+        "week": "12",
+        "kind": "exam",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo12",
+            "text": "",
+            "tags": []
+          }
+        ],
+        "contents": "MIDTERM EXAMINATION",
+        "activities": "Individual written assessment of derivatives, verification and engineering rates.",
+        "tasks": "Solve engineering calculus problems, show and justify solution steps, verify results and interpret units and assumptions.",
+        "values": "Honesty in independent work and responsible reporting of results."
+      },
+      {
+        "id": "ma7_aligned_week13",
+        "week": "13",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo13",
+            "text": "Design a museum exhibition floor plan and justify the arrangement of paintings by artistic period.",
+            "tags": [
+              "clo:ma7_aligned_clo3"
+            ]
+          }
+        ],
+        "contents": "Museum exhibition design",
+        "activities": "Memorize a list of painters and copy their birth dates from a handout.",
+        "tasks": "Ten-item multiple-choice quiz recalling painters and their birth dates.",
+        "values": "Compassion: provide patient and respectful peer feedback while discussing museum exhibition design."
+      },
+      {
+        "id": "ma7_aligned_week14",
+        "week": "14",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo14",
+            "text": "Construct a three-course restaurant menu and evaluate its visual presentation for a seasonal festival.",
+            "tags": [
+              "clo:ma7_aligned_clo3"
+            ]
+          }
+        ],
+        "contents": "Restaurant menu development",
+        "activities": "Watch a restaurant advertisement and repeat the names of kitchen utensils.",
+        "tasks": "True-or-false recall quiz identifying the names of kitchen utensils.",
+        "values": "Compassion: provide patient and respectful peer feedback while discussing restaurant menu development."
+      },
+      {
+        "id": "ma7_aligned_week15",
+        "week": "15",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo15",
+            "text": "Create a theatrical costume collection and defend the selection of fabrics for contrasting stage characters.",
+            "tags": [
+              "clo:ma7_aligned_clo3"
+            ]
+          }
+        ],
+        "contents": "Theatrical costume design",
+        "activities": "Read a costume-color glossary aloud and copy its definitions.",
+        "tasks": "Match color names to swatches in a five-item worksheet.",
+        "values": "Compassion: provide patient and respectful peer feedback while discussing theatrical costume design."
+      },
+      {
+        "id": "ma7_aligned_week16",
+        "week": "16",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo16",
+            "text": "Evaluate competing travel brochure layouts and develop an illustrated destination campaign for visitors.",
+            "tags": [
+              "clo:ma7_aligned_clo3"
+            ]
+          }
+        ],
+        "contents": "Travel brochure production",
+        "activities": "Listen to a list of capital cities and memorize their spelling.",
+        "tasks": "Fill-in-the-blank quiz recalling capital-city names.",
+        "values": "Compassion: provide patient and respectful peer feedback while discussing travel brochure production."
+      },
+      {
+        "id": "ma7_aligned_week17",
+        "week": "17",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo17",
+            "text": "Design and critique a floral centerpiece for a wedding reception using contrasting visual compositions.",
+            "tags": [
+              "clo:ma7_aligned_clo4"
+            ]
+          }
+        ],
+        "contents": "Floral arrangement planning",
+        "activities": "Recite the common names of flowers shown on flashcards.",
+        "tasks": "Multiple-choice recall quiz identifying flower names from photographs.",
+        "values": "Compassion: provide patient and respectful peer feedback while discussing floral arrangement planning."
+      },
+      {
+        "id": "ma7_aligned_week18",
+        "week": "18",
+        "kind": "exam",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo18",
+            "text": "",
+            "tags": []
+          }
+        ],
+        "contents": "FINAL EXAMINATION",
+        "activities": "Individual written assessment of related rates, curve analysis and optimization.",
+        "tasks": "Solve engineering calculus problems, show and justify solution steps, verify results and interpret units and assumptions.",
+        "values": "Honesty in independent work and responsible reporting of results."
+      }
+    ],
+    "reqs": [
+      {
+        "id": "ma7_misaligned_requirement1",
+        "t": "Complete weekly recall quizzes on painters, kitchen utensils, costume colors, capital cities and flower names."
+      },
+      {
+        "id": "ma7_misaligned_requirement2",
+        "t": "Submit an exhibition floor plan, restaurant menu, costume collection, travel brochure and floral centerpiece proposal."
+      },
+      {
+        "id": "ma7_misaligned_requirement3",
+        "t": "Participate respectfully in peer feedback and submit an individual reflection."
+      },
+      {
+        "id": "ma7_misaligned_requirement4",
+        "t": "Complete the scheduled preliminary, midterm and final examinations."
+      }
+    ],
+    "refs": {
+      "books": {
+        "na": false,
+        "items": [
+          {
+            "id": "ma7_101_book",
+            "t": "Stewart, J. (2016). Calculus: Early transcendentals (8th ed.). Cengage Learning."
+          }
+        ]
+      },
+      "program": {
+        "na": true,
+        "items": []
+      },
+      "online": {
+        "na": true,
+        "items": []
+      },
+      "electronics": {
+        "na": true,
+        "items": []
+      }
+    },
+    "grading": {
+      "rows": [
+        {
+          "id": "ma7_aligned_grade1",
+          "label": "Worked problem sets",
+          "abbr": "PS",
+          "pct": 25
+        },
+        {
+          "id": "ma7_aligned_grade2",
+          "label": "Quizzes with solution explanations",
+          "abbr": "QZ",
+          "pct": 10
+        },
+        {
+          "id": "ma7_aligned_grade3",
+          "label": "Engineering modeling project and oral defense",
+          "abbr": "MP",
+          "pct": 20
+        },
+        {
+          "id": "ma7_aligned_grade4",
+          "label": "Reflective revision and learning journal",
+          "abbr": "RJ",
+          "pct": 5
+        },
+        {
+          "id": "ma7_aligned_grade5",
+          "label": "Term examinations",
+          "abbr": "TE",
+          "pct": 40
+        }
+      ],
+      "override": {
+        "on": false,
+        "term": "",
+        "final": ""
+      }
+    },
+    "schemaVersion": 3,
+    "catalog": {
+      "institution": {
+        "vision": "Moved by the Spirit of the Risen Christ, La Consolacion University Philippines, rooted in Gospel values as a Catholic Augustinian-Marian institution, envisions to become a catalyst for the holistic transformation of all persons and communities.",
+        "mission": {
+          "lead": "LCUP commits to generate and make available to all persons and communities’ programs and services that will enable them to:",
+          "items": [
+            "exhibit academic and technical competence in their respective areas of discipline in the local and international environment;",
+            "demonstrate their knowledge, critical thinking and creativity by exploring the various avenues of learning and searching for truth;",
+            "manifest their willingness to serve specially the marginalized sector of our society;",
+            "demonstrate productivity in various areas of learning as responsible citizens of the society; and",
+            "live the Gospel values in the varied aspects of their personal and professional lives."
+          ]
+        },
+        "egas": [
+          {
+            "no": 1,
+            "name": "Critical and Creative thinker",
+            "short": "Critical and Creative Thinker"
+          },
+          {
+            "no": 2,
+            "name": "Competent Catholic Augustinian-Marian Professional",
+            "short": "Competent Professional"
+          },
+          {
+            "no": 3,
+            "name": "Socially Responsive Steward",
+            "short": "Socially Responsive Steward"
+          },
+          {
+            "no": 4,
+            "name": "Transformative Lifelong learner",
+            "short": "Transformative Lifelong Learner"
+          }
+        ]
+      },
+      "program": {
+        "code": "BSIE",
+        "name": "BS Industrial Engineering",
+        "egas": [
+          {
+            "no": 1,
+            "name": "Critical and Creative thinker",
+            "short": "Critical and Creative Thinker"
+          },
+          {
+            "no": 2,
+            "name": "Competent Catholic Augustinian-Marian Professional",
+            "short": "Competent Professional"
+          },
+          {
+            "no": 3,
+            "name": "Socially Responsive Steward",
+            "short": "Socially Responsive Steward"
+          },
+          {
+            "no": 4,
+            "name": "Transformative Lifelong learner",
+            "short": "Transformative Lifelong Learner"
+          }
+        ],
+        "pos": [
+          {
+            "no": 1,
+            "short": "PO 1",
+            "text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+            "egas": []
+          },
+          {
+            "no": 2,
+            "short": "PO 2",
+            "text": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+            "egas": []
+          },
+          {
+            "no": 3,
+            "short": "PO 3",
+            "text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+            "egas": []
+          },
+          {
+            "no": 4,
+            "short": "PO 4",
+            "text": "Ability to function on multidisciplinary teams",
+            "egas": []
+          },
+          {
+            "no": 5,
+            "short": "PO 5",
+            "text": "Ability to identify; formulate, and solve complex engineering problems;",
+            "egas": []
+          },
+          {
+            "no": 6,
+            "short": "PO 6",
+            "text": "Understanding of professional and ethical responsibility.",
+            "egas": []
+          },
+          {
+            "no": 7,
+            "short": "PO 7",
+            "text": "Ability to communicate effectively",
+            "egas": []
+          },
+          {
+            "no": 8,
+            "short": "PO 8",
+            "text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+            "egas": []
+          },
+          {
+            "no": 9,
+            "short": "PO 9",
+            "text": "Recognition of the need for, and an ability to engage in life-long learning;",
+            "egas": []
+          },
+          {
+            "no": 10,
+            "short": "PO 10",
+            "text": "Knowledge of contemporary issues;",
+            "egas": []
+          },
+          {
+            "no": 11,
+            "short": "PO 11",
+            "text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and;",
+            "egas": []
+          },
+          {
+            "no": 12,
+            "short": "PO 12",
+            "text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in",
+            "egas": []
+          },
+          {
+            "no": 13,
+            "short": "PO 13",
+            "text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+            "egas": []
+          }
+        ]
+      },
+      "subjectId": 25,
+      "savedAt": "2026-10-22T07:29:42.401Z"
+    }
+  }
+}

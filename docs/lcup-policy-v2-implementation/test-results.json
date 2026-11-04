@@ -1,0 +1,214 @@
+[
+  {
+    "name": "New consolidated requirements",
+    "command": [
+      "node",
+      "--test",
+      "scripts/lcup-requirements/requirements.test.cjs"
+    ],
+    "log": "regression-requirements-tests-final.log",
+    "exitCode": 0,
+    "tests": 21,
+    "pass": 21,
+    "fail": 0,
+    "skipped": 0
+  },
+  {
+    "name": "Bilingual lesson authoring",
+    "command": [
+      "node",
+      "scripts/lcup-requirements/test-ui.mjs"
+    ],
+    "log": "regression-lesson-ui-final.log",
+    "exitCode": 0,
+    "tests": 6,
+    "pass": 6,
+    "fail": 0,
+    "skipped": 0
+  },
+  {
+    "name": "Existing C3, verdict and model",
+    "command": [
+      "node",
+      "--test",
+      "server/lib/syllabuscheck/stage-c3.test.js",
+      "server/lib/syllabuscheck/verdict.test.js",
+      "src/lib/syllabusModel.test.js"
+    ],
+    "log": "regression-core-regressions.log",
+    "exitCode": 0,
+    "tests": 80,
+    "pass": 80,
+    "fail": 0,
+    "skipped": 0
+  },
+  {
+    "name": "Existing alignment, stages, scoring and provider",
+    "command": [
+      "node",
+      "--test",
+      "server/lib/syllabuscheck/clo-relevance.test.js",
+      "server/lib/syllabuscheck/stage-a-mapping.test.js",
+      "server/lib/syllabuscheck/stage-b.test.js",
+      "server/lib/syllabuscheck/stage-b34.test.js",
+      "server/lib/syllabuscheck/stage-c.test.js",
+      "server/lib/syllabuscheck/stage-c-response.test.js",
+      "server/lib/syllabuscheck/stage-d.test.js",
+      "server/lib/syllabuscheck/advisory.test.js",
+      "server/lib/syllabuscheck/institutional.test.js",
+      "server/lib/syllabuscheck/description-plan.test.js",
+      "server/lib/syllabuscheck/validation.test.js",
+      "server/lib/syllabuscheck/evidence.test.js",
+      "server/lib/syllabuscheck/alignment-safety.test.js",
+      "server/lib/syllabuscheck/failure-kinds.test.js",
+      "server/lib/syllabuscheck/quality.test.js",
+      "server/lib/syllabuscheck/scoring.test.js",
+      "server/lib/syllabuscheck/gates.test.js",
+      "server/lib/syllabuscheck/prompt-regression.test.js",
+      "server/lib/syllabuscheck/provider-guard.test.js",
+      "server/lib/syllabuscheck/anthropic.test.js"
+    ],
+    "log": "regression-alignment-regressions.log",
+    "exitCode": 0,
+    "tests": 223,
+    "pass": 223,
+    "fail": 0,
+    "skipped": 0
+  },
+  {
+    "name": "Rules, route gates, findings and save workflow",
+    "command": [
+      "node",
+      "--test",
+      "src/lib/complianceRules.parity.test.js",
+      "server/lib/compliance/rules.test.js",
+      "src/lib/syllabusRules.test.js",
+      "server/routes/compliance.routes.test.js",
+      "server/routes/syllabusCheck.routes.test.js",
+      "server/routes/syllabusCheck.refine.routes.test.js",
+      "src/lib/hybridView.test.js",
+      "src/lib/hybridCheck.test.js",
+      "src/lib/complianceView.test.js",
+      "src/lib/draftSave.test.js",
+      "src/lib/planHeadings.test.js",
+      "src/i18n/i18n.test.js"
+    ],
+    "log": "regression-workflow-regressions.log",
+    "exitCode": 0,
+    "tests": 161,
+    "pass": 161,
+    "fail": 0,
+    "skipped": 0
+  },
+  {
+    "name": "Existing importer UI",
+    "command": [
+      "node",
+      "scripts/test-pdf-import-ui.mjs"
+    ],
+    "log": "regression-importer-ui-regressions.log",
+    "exitCode": 0,
+    "tests": 16,
+    "pass": 16,
+    "fail": 0,
+    "skipped": 0
+  },
+  {
+    "name": "Catalog and content HTTP persistence",
+    "command": [
+      "node",
+      "--test",
+      "server/routes/catalog.routes.test.js"
+    ],
+    "log": "regression-catalog-regressions.log",
+    "exitCode": 0,
+    "tests": 22,
+    "pass": 22,
+    "fail": 0,
+    "skipped": 0
+  },
+  {
+    "name": "Compatibility fixes and existing prompt variants",
+    "command": [
+      "node",
+      "--test",
+      "scripts/lcup-policy-v2/compatibility.test.mjs",
+      "server/lib/syllabuscheck/variants.test.js"
+    ],
+    "log": "compatibility-final.log",
+    "exitCode": 0,
+    "tests": 9,
+    "pass": 9,
+    "fail": 0,
+    "skipped": 0
+  },
+  {
+    "name": "Existing C3 addendum contracts",
+    "command": [
+      "node",
+      "--test",
+      "server/lib/syllabuscheck/stage-c3-addendum.test.js"
+    ],
+    "log": "c3-addendum-tests.log",
+    "exitCode": 0,
+    "tests": 8,
+    "pass": 8,
+    "fail": 0,
+    "skipped": 0
+  },
+  {
+    "name": "V2 replacement policy",
+    "command": [
+      "node",
+      "--test",
+      "scripts/lcup-policy-v2-implementation/policy.test.cjs"
+    ],
+    "log": "policy-tests-final.log",
+    "exitCode": 0,
+    "tests": 36,
+    "pass": 36,
+    "fail": 0,
+    "skipped": 0
+  },
+  {
+    "name": "V2 HTTP and persistence safety",
+    "command": [
+      "node",
+      "--test",
+      "scripts/lcup-policy-v2-implementation/api.test.cjs"
+    ],
+    "log": "api-tests-final.log",
+    "exitCode": 0,
+    "tests": 5,
+    "pass": 5,
+    "fail": 0,
+    "skipped": 0
+  },
+  {
+    "name": "V2 bilingual UI",
+    "command": [
+      "node",
+      "scripts/lcup-policy-v2-implementation/test-ui.mjs"
+    ],
+    "log": "ui-tests-final.log",
+    "exitCode": 0,
+    "tests": 7,
+    "pass": 7,
+    "fail": 0,
+    "skipped": 0
+  },
+  {
+    "name": "V2 context, references, CLI and comparison",
+    "command": [
+      "node",
+      "--test",
+      "scripts/lcup-policy-v2-implementation/robustness.test.cjs"
+    ],
+    "log": "robustness-tests-final.log",
+    "exitCode": 0,
+    "tests": 10,
+    "pass": 10,
+    "fail": 0,
+    "skipped": 0
+  }
+]

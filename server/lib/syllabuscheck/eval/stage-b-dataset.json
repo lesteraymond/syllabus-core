@@ -1,0 +1,677 @@
+{
+ "version": "stage-b-1",
+ "status": "DRAFT - synthetic examples with author-written labels, NOT faculty-reviewed",
+ "reviewStatus": "unreviewed",
+ "provenance": "Course identity and descriptions: the repository's records and the sample syllabi (same as stage-a-dataset.json). The weekly topics, ILOs and plans are SYNTHETIC examples written by the assistant for IT 202, IE 402 and CPE 304 - they are not the institution's learning plans. Expected verdicts are the assistant's and have not been reviewed by faculty; nothing here measures agreement with faculty.",
+ "splits": {
+  "dev": "All items. No held-out split."
+ },
+ "categories": [
+  "clear-positive",
+  "week-one-orientation",
+  "off-subject",
+  "keyword-overlap",
+  "level-mismatch",
+  "repetition",
+  "unreadable",
+  "vague-verb",
+  "ambiguous",
+  "wrong-sequence"
+ ],
+ "courses": {
+  "prog1": {
+   "code": "IT 202",
+   "title": "Computer Programming 1 (Fundamentals of Programming)",
+   "program": "BSIT",
+   "yearLevel": "2",
+   "discipline": "computing",
+   "description": "This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications."
+  },
+  "syseng": {
+   "code": "IE 402",
+   "title": "Systems Engineering",
+   "program": "BSIE",
+   "yearLevel": "4",
+   "discipline": "engineering",
+   "description": "This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation."
+  },
+  "sensors": {
+   "code": "CPE 304",
+   "title": "Fundamentals of Mixed Signals and Sensors",
+   "program": "BSCPE",
+   "yearLevel": "3",
+   "discipline": "engineering",
+   "description": "This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included."
+  }
+ },
+ "note": "A trap never accepts ALIGNED, so judging it ALIGNED counts as a false approval. Not covered here: ILO-to-CLO mapping (Stage B3), CLO coverage across the plan (B4), examination rows (deterministic, tested offline).",
+ "items": [
+  {
+   "id": "wc-prog1-aligned",
+   "origin": "stage-b-1",
+   "type": "Content-course",
+   "split": "dev",
+   "course": "prog1",
+   "category": "clear-positive",
+   "source": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nProgram: BSIT\nYear level: 2\nWeek under review: 3 of 18\nPrevious week - Week 2: Variables, data types and operators\nNext week - Week 4: Loops: for, while and do-while",
+   "target": "Java conditional statements: if, if-else, nested if and switch",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "A core topic of introductory Java programming even though it does not repeat the course title.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wc-prog1-week1",
+   "origin": "stage-b-1",
+   "type": "Content-course",
+   "split": "dev",
+   "course": "prog1",
+   "category": "week-one-orientation",
+   "source": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nProgram: BSIT\nYear level: 2\nWeek under review: 1 of 18\nNext week - Week 2: Variables, data types and operators",
+   "target": "Course orientation: objectives, requirements, grading system and class policies; introduction to computers and programmers",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Week 1 is the institutional course orientation.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wc-prog1-unrelated",
+   "origin": "stage-b-1",
+   "type": "Content-course",
+   "split": "dev",
+   "course": "prog1",
+   "category": "off-subject",
+   "source": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nProgram: BSIT\nYear level: 2\nWeek under review: 5 of 18\nPrevious week - Week 4: Loops: for, while and do-while\nNext week - Week 6: PRELIM EXAMINATION",
+   "target": "Principles of supply chain management and inventory costing",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "A topic of another discipline.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wc-prog1-keyword",
+   "origin": "stage-b-1",
+   "type": "Content-course",
+   "split": "dev",
+   "course": "prog1",
+   "category": "keyword-overlap",
+   "source": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nProgram: BSIT\nYear level: 2\nWeek under review: 7 of 18\nPrevious week - Week 6: PRELIM EXAMINATION\nNext week - Week 8: Arrays",
+   "target": "Programming career paths, salary trends and job-hunting tips",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Contains the word 'programming' but teaches no programming competence of the course.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wc-prog1-level",
+   "origin": "stage-b-1",
+   "type": "Content-course",
+   "split": "dev",
+   "course": "prog1",
+   "category": "level-mismatch",
+   "source": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nProgram: BSIT\nYear level: 2\nWeek under review: 7 of 18\nPrevious week - Week 6: PRELIM EXAMINATION\nNext week - Week 8: Arrays",
+   "target": "Advanced software design patterns and microservice architecture",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Far above a second-year introduction to programming fundamentals.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wc-prog1-repeat",
+   "origin": "stage-b-1",
+   "type": "Content-course",
+   "split": "dev",
+   "course": "prog1",
+   "category": "repetition",
+   "source": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nProgram: BSIT\nYear level: 2\nWeek under review: 4 of 18\nPrevious week - Week 3: Java conditional statements: if, if-else, nested if and switch\nNext week - Week 5: Loops: for, while and do-while",
+   "target": "Java if-else conditional statements",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Repeats the previous week without a new aspect.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wc-prog1-unreadable",
+   "origin": "stage-b-1",
+   "type": "Content-course",
+   "split": "dev",
+   "course": "prog1",
+   "category": "unreadable",
+   "source": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nProgram: BSIT\nYear level: 2\nWeek under review: 4 of 18\nPrevious week - Week 3: Java conditional statements\nNext week - Week 5: Loops",
+   "target": "Qwv zzx plk mnb.",
+   "accept": [
+    "INSUFFICIENT_EVIDENCE",
+    "NOT_ALIGNED"
+   ],
+   "why": "Text that cannot be read as a topic.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wc-syseng-aligned",
+   "origin": "stage-b-1",
+   "type": "Content-course",
+   "split": "dev",
+   "course": "syseng",
+   "category": "clear-positive",
+   "source": "Course: IE 402 - Systems Engineering\nProgram: BSIE\nYear level: 4\nWeek under review: 4 of 18\nPrevious week - Week 3: Systems life-cycle models\nNext week - Week 5: Functional decomposition",
+   "target": "Requirements analysis: stakeholder needs, system requirements specification and traceability",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Requirements analysis is a named key topic of the description.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wc-syseng-aligned2",
+   "origin": "stage-b-1",
+   "type": "Content-course",
+   "split": "dev",
+   "course": "syseng",
+   "category": "clear-positive",
+   "source": "Course: IE 402 - Systems Engineering\nProgram: BSIE\nYear level: 4\nWeek under review: 11 of 18\nPrevious week - Week 10: Performance evaluation of systems\nNext week - Week 12: FINAL EXAMINATION",
+   "target": "Verification and validation of engineered systems: test planning and acceptance criteria",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Verification and validation is named in the description.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wc-syseng-week1",
+   "origin": "stage-b-1",
+   "type": "Content-course",
+   "split": "dev",
+   "course": "syseng",
+   "category": "week-one-orientation",
+   "source": "Course: IE 402 - Systems Engineering\nProgram: BSIE\nYear level: 4\nWeek under review: 1 of 18\nNext week - Week 2: Systems thinking",
+   "target": "Orientation: course objectives, requirements, grading and policies",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Week 1 is the institutional course orientation.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wc-syseng-unrelated",
+   "origin": "stage-b-1",
+   "type": "Content-course",
+   "split": "dev",
+   "course": "syseng",
+   "category": "off-subject",
+   "source": "Course: IE 402 - Systems Engineering\nProgram: BSIE\nYear level: 4\nWeek under review: 6 of 18\nPrevious week - Week 5: Functional decomposition\nNext week - Week 7: Systems design",
+   "target": "Java loops and arrays",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "A programming-fundamentals topic in a systems engineering course.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wc-syseng-keyword",
+   "origin": "stage-b-1",
+   "type": "Content-course",
+   "split": "dev",
+   "course": "syseng",
+   "category": "keyword-overlap",
+   "source": "Course: IE 402 - Systems Engineering\nProgram: BSIE\nYear level: 4\nWeek under review: 8 of 18\nPrevious week - Week 7: Systems design\nNext week - Week 9: Project management",
+   "target": "Systems engineering in the movies: a review of films about space missions",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Uses the words 'systems engineering' but is not a topic of the course.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wc-sensors-aligned",
+   "origin": "stage-b-1",
+   "type": "Content-course",
+   "split": "dev",
+   "course": "sensors",
+   "category": "clear-positive",
+   "source": "Course: CPE 304 - Fundamentals of Mixed Signals and Sensors\nProgram: BSCPE\nYear level: 3\nWeek under review: 3 of 18\nPrevious week - Week 2: Operational amplifier basics\nNext week - Week 4: Signal conditioning for sensors",
+   "target": "Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Operational amplifiers are named in the description.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wc-sensors-aligned2",
+   "origin": "stage-b-1",
+   "type": "Content-course",
+   "split": "dev",
+   "course": "sensors",
+   "category": "clear-positive",
+   "source": "Course: CPE 304 - Fundamentals of Mixed Signals and Sensors\nProgram: BSCPE\nYear level: 3\nWeek under review: 7 of 18\nPrevious week - Week 6: Signal conversion overview\nNext week - Week 8: Digital-to-analog converters",
+   "target": "Analog-to-digital converters: sampling, resolution and quantization error",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Signal converters are named in the description.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wc-sensors-unrelated",
+   "origin": "stage-b-1",
+   "type": "Content-course",
+   "split": "dev",
+   "course": "sensors",
+   "category": "off-subject",
+   "source": "Course: CPE 304 - Fundamentals of Mixed Signals and Sensors\nProgram: BSCPE\nYear level: 3\nWeek under review: 5 of 18\nPrevious week - Week 4: Signal conditioning for sensors\nNext week - Week 6: MIDTERM EXAMINATION",
+   "target": "Corporate finance: capital budgeting and cost of capital",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "A topic of another discipline.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wc-sensors-keyword",
+   "origin": "stage-b-1",
+   "type": "Content-course",
+   "split": "dev",
+   "course": "sensors",
+   "category": "keyword-overlap",
+   "source": "Course: CPE 304 - Fundamentals of Mixed Signals and Sensors\nProgram: BSCPE\nYear level: 3\nWeek under review: 9 of 18\nPrevious week - Week 8: Digital-to-analog converters\nNext week - Week 10: Actuators",
+   "target": "Sensors of public opinion: designing survey questionnaires",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Uses the word 'sensors' figuratively; no electronics content.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wi-prog1-aligned",
+   "origin": "stage-b-1",
+   "type": "Content-ILO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "clear-positive",
+   "source": "Week 3: Java conditional statements: if, if-else, nested if and switch",
+   "target": "Develop and test Java programs that use if-else and switch statements to make decisions.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Observable performance on exactly this week's content.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wi-prog1-aligned2",
+   "origin": "stage-b-1",
+   "type": "Content-ILO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "clear-positive",
+   "source": "Week 3: Java conditional statements: if, if-else, nested if and switch",
+   "target": "Trace the execution of nested if statements to predict the output of a program.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Observable (trace, predict) and on the week's topic.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wi-prog1-unrelated",
+   "origin": "stage-b-1",
+   "type": "Content-ILO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "off-subject",
+   "source": "Week 3: Java conditional statements: if, if-else, nested if and switch",
+   "target": "Explain the history of operating systems.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "Both are information technology, but the ILO is not about this week's content.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wi-prog1-vague",
+   "origin": "stage-b-1",
+   "type": "Content-ILO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "vague-verb",
+   "source": "Week 3: Java conditional statements: if, if-else, nested if and switch",
+   "target": "Understand conditional statements.",
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "'Understand' is not an observable, assessable performance.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wi-prog1-keyword",
+   "origin": "stage-b-1",
+   "type": "Content-ILO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "keyword-overlap",
+   "source": "Week 3: Java conditional statements: if, if-else, nested if and switch",
+   "target": "Describe the importance of decision-making in business organizations.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Shares the word 'decision' but is about management, not conditional statements.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wi-prog1-toohigh",
+   "origin": "stage-b-1",
+   "type": "Content-ILO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "level-mismatch",
+   "source": "Week 3: Java conditional statements: if, if-else, nested if and switch",
+   "target": "Design a distributed, fault-tolerant system with automatic failover logic.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Far beyond what a week on conditional statements can teach.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wi-prog1-ambiguous",
+   "origin": "stage-b-1",
+   "type": "Content-ILO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "ambiguous",
+   "source": "Week 3: Java conditional statements: if, if-else, nested if and switch",
+   "target": "Apply conditional logic in programs.",
+   "accept": [
+    "ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Observable but short and unspecific: contestable.",
+   "ambiguous": true,
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wi-syseng-aligned",
+   "origin": "stage-b-1",
+   "type": "Content-ILO",
+   "split": "dev",
+   "course": "syseng",
+   "category": "clear-positive",
+   "source": "Week 4: Requirements analysis: stakeholder needs, system requirements specification and traceability",
+   "target": "Write a system requirements specification with traceable, verifiable requirements for a given scenario.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Observable and on the week's content.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wi-syseng-unrelated",
+   "origin": "stage-b-1",
+   "type": "Content-ILO",
+   "split": "dev",
+   "course": "syseng",
+   "category": "off-subject",
+   "source": "Week 4: Requirements analysis: stakeholder needs, system requirements specification and traceability",
+   "target": "Write Java methods that return values.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "A programming outcome for a requirements week.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wi-syseng-vague",
+   "origin": "stage-b-1",
+   "type": "Content-ILO",
+   "split": "dev",
+   "course": "syseng",
+   "category": "vague-verb",
+   "source": "Week 4: Requirements analysis: stakeholder needs, system requirements specification and traceability",
+   "target": "Learn about requirements.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "'Learn about' is not observable and names no performance.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wi-sensors-aligned",
+   "origin": "stage-b-1",
+   "type": "Content-ILO",
+   "split": "dev",
+   "course": "sensors",
+   "category": "clear-positive",
+   "source": "Week 3: Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth",
+   "target": "Design and test an inverting amplifier circuit with a specified gain.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Observable and on the week's content.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wi-sensors-unrelated",
+   "origin": "stage-b-1",
+   "type": "Content-ILO",
+   "split": "dev",
+   "course": "sensors",
+   "category": "off-subject",
+   "source": "Week 3: Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth",
+   "target": "Prepare a cash-flow statement for a small business.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "An accounting outcome for an electronics week.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "wi-sensors-keyword",
+   "origin": "stage-b-1",
+   "type": "Content-ILO",
+   "split": "dev",
+   "course": "sensors",
+   "category": "keyword-overlap",
+   "source": "Week 3: Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth",
+   "target": "Discuss the role of amplifiers in the history of the music industry.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Shares the word 'amplifiers' but is not about operational amplifier circuits.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ps-prog1-good",
+   "origin": "stage-b-1",
+   "type": "Plan-sequence",
+   "split": "dev",
+   "course": "prog1",
+   "category": "clear-positive",
+   "source": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nProgram: BSIT\nYear level: 2\nDescription: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.",
+   "target": "Week 1: Course orientation: objectives, requirements, grading and policies\nWeek 2: Computers, programmers and the program development process\nWeek 3: Java basics: variables, data types and operators\nWeek 4: Conditional statements\nWeek 5: Loops\nWeek 6: EXAMINATION\nWeek 7: Methods\nWeek 8: Arrays\nWeek 9: Debugging and testing\nWeek 10: Putting it together: a small application",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "A conventional order for an introduction to Java: foundations first, then control flow, then structure.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ps-prog1-order",
+   "origin": "stage-b-1",
+   "type": "Plan-sequence",
+   "split": "dev",
+   "course": "prog1",
+   "category": "wrong-sequence",
+   "source": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nProgram: BSIT\nYear level: 2\nDescription: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.",
+   "target": "Week 1: Course orientation: objectives, requirements, grading and policies\nWeek 2: Nested loops and two-dimensional arrays\nWeek 3: Variables and data types\nWeek 4: Methods and recursion\nWeek 5: Operators and expressions\nWeek 6: EXAMINATION\nWeek 7: Conditional statements\nWeek 8: Debugging\nWeek 9: Computers and programmers\nWeek 10: A small application",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Nested loops, arrays and recursion are taught before variables, operators and conditionals.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ps-prog1-repeat",
+   "origin": "stage-b-1",
+   "type": "Plan-sequence",
+   "split": "dev",
+   "course": "prog1",
+   "category": "repetition",
+   "source": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nProgram: BSIT\nYear level: 2\nDescription: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.",
+   "target": "Week 1: Course orientation: objectives, requirements, grading and policies\nWeek 2: Variables\nWeek 3: Variables and data types\nWeek 4: Data types\nWeek 5: Variables again: declaring variables\nWeek 6: EXAMINATION\nWeek 7: Data types: int and double\nWeek 8: Variables and constants\nWeek 9: Review of variables\nWeek 10: Variables",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "One topic is repeated in nearly every week; the description's Java fundamentals are never reached.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ps-prog1-offcourse",
+   "origin": "stage-b-1",
+   "type": "Plan-sequence",
+   "split": "dev",
+   "course": "prog1",
+   "category": "off-subject",
+   "source": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nProgram: BSIT\nYear level: 2\nDescription: This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications.",
+   "target": "Week 1: Course orientation: objectives, requirements, grading and policies\nWeek 2: Principles of supply chain management\nWeek 3: Inventory costing methods\nWeek 4: Warehouse layout\nWeek 5: EXAMINATION\nWeek 6: Demand forecasting\nWeek 7: Procurement strategy\nWeek 8: Logistics and distribution",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "The plan teaches another discipline.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ps-syseng-good",
+   "origin": "stage-b-1",
+   "type": "Plan-sequence",
+   "split": "dev",
+   "course": "syseng",
+   "category": "clear-positive",
+   "source": "Course: IE 402 - Systems Engineering\nProgram: BSIE\nYear level: 4\nDescription: This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation.",
+   "target": "Week 1: Orientation: course objectives, requirements, grading and policies\nWeek 2: Systems thinking and the systems approach\nWeek 3: Systems life-cycle models\nWeek 4: Requirements analysis\nWeek 5: Functional decomposition\nWeek 6: EXAMINATION\nWeek 7: Systems design and trade studies\nWeek 8: Systems integration\nWeek 9: Project management for systems\nWeek 10: Performance evaluation of systems\nWeek 11: Verification and validation\nWeek 12: EXAMINATION",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Follows the description: analysis, design, integration, project management, performance evaluation.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ps-sensors-good",
+   "origin": "stage-b-1",
+   "type": "Plan-sequence",
+   "split": "dev",
+   "course": "sensors",
+   "category": "clear-positive",
+   "source": "Course: CPE 304 - Fundamentals of Mixed Signals and Sensors\nProgram: BSCPE\nYear level: 3\nDescription: This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included.",
+   "target": "Week 1: Orientation: course objectives, requirements, grading and policies\nWeek 2: Operational amplifier basics\nWeek 3: Amplifier circuits\nWeek 4: Signal conditioning for sensors\nWeek 5: EXAMINATION\nWeek 6: Analog-to-digital converters\nWeek 7: Digital-to-analog converters\nWeek 8: Sensors and transducers\nWeek 9: Interfacing sensors with a microcontroller\nWeek 10: Actuators\nWeek 11: EXAMINATION",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Follows the description: op-amps, converters, sensors, interfacing, actuators.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ps-sensors-repeat",
+   "origin": "stage-b-1",
+   "type": "Plan-sequence",
+   "split": "dev",
+   "course": "sensors",
+   "category": "repetition",
+   "source": "Course: CPE 304 - Fundamentals of Mixed Signals and Sensors\nProgram: BSCPE\nYear level: 3\nDescription: This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included.",
+   "target": "Week 1: Orientation: course objectives, requirements, grading and policies\nWeek 2: Sensors\nWeek 3: Sensors\nWeek 4: Types of sensors\nWeek 5: Sensors again\nWeek 6: EXAMINATION\nWeek 7: Sensors and transducers\nWeek 8: More about sensors\nWeek 9: Sensor review",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "One topic fills the plan; amplifiers, converters and interfacing are never taught.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  }
+ ]
+}

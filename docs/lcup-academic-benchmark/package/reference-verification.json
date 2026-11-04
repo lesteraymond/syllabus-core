@@ -1,0 +1,804 @@
+{
+  "version": "lcup-academic-benchmark-1",
+  "officialPOReference": "lcup-po-2026-10-29",
+  "poSources": [
+    {
+      "program": "BSIT",
+      "file": "docs/academic-references/IT-101-Introduction-to-Computing-.pdf",
+      "sha256": "0375ce27ff4b1059c569a73cf8c77211de016aaeedbebe13de2efc6fe330fa14",
+      "count": 9,
+      "numbering": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "po12": null
+    },
+    {
+      "program": "BSIE",
+      "file": "docs/academic-references/IE-403-Operation-Management.pdf",
+      "sha256": "bdb90b9b09eaf505e13bc82cfc1fdc51e283901455064617997d0426592c57a4",
+      "count": 13,
+      "numbering": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "po12": {
+        "no": 12,
+        "short": "PO 12",
+        "text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in multidisciplinary environments.",
+        "egas": [],
+        "sourcePages": [
+          3
+        ],
+        "raw": "PO12. Knowledge and understanding of\nengineering and management principles\nas a member and leader in a team, to\nmanage projects and in multidisciplinary\nenvironments."
+      }
+    },
+    {
+      "program": "BSCPE",
+      "file": "docs/academic-references/CPE-404-Digital-Signal-Processing.pdf",
+      "sha256": "9e16f9d0524b5a328ce992306a7897b4a5d6cd70933a388fa01412e427ab754a",
+      "count": 13,
+      "numbering": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "po12": {
+        "no": 12,
+        "short": "PO 12",
+        "text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in multidisciplinary environments.",
+        "egas": [],
+        "sourcePages": [
+          3
+        ],
+        "raw": "PO12. Knowledge and understanding of\nengineering and management principles\nas a member and leader in a team, to\nmanage projects and in\nmultidisciplinary environments."
+      }
+    }
+  ],
+  "sourceAmbiguities": {},
+  "programs": [
+    {
+      "program": "BSIT",
+      "curriculumYear": "2022-2023",
+      "expectedPOs": 9,
+      "poSource": "BSIT",
+      "curriculumSources": [
+        {
+          "file": "docs/academic-references/BSIT-1.jpeg",
+          "sha256": "a71664c8ad1a47d1d97b1d75d2b199edacb9762362b2067f1fb0f60d205a6877"
+        },
+        {
+          "file": "docs/academic-references/BSIT-2.jpeg",
+          "sha256": "0d7812a46615671e6b7a47c093cb14cb516ecbe2cefab5c85fbe2c68e6b8360f"
+        }
+      ],
+      "realSyllabusAvailable": true,
+      "evidence": {
+        "program": "BSIT",
+        "fixture": "docs/lcup-approved-offline/it202.fixture.json",
+        "source": {
+          "file": "reference-data/IT-202-Programming-1.pdf",
+          "sha256": "6376fe94981ae65f25054234e1ae63cd50be8f70f12b774ea72949e07d561845",
+          "pages": 11,
+          "declaredFile": "docs/academic-references/IT-202-Programming-1.pdf",
+          "relocated": true
+        },
+        "expectedPOs": 9,
+        "frozenMasterPOs": 10,
+        "authoredPOs": 9,
+        "authoredBasisMatchesOfficial": true,
+        "frozenMasterMatchesOfficial": false,
+        "poComparison": [
+          {
+            "no": 1,
+            "authoredText": "Articulate and discuss the latest developments in the specific field of practice;",
+            "officialText": "Articulate and discuss the latest developments in the specific field of practice;",
+            "equalText": true
+          },
+          {
+            "no": 2,
+            "authoredText": "Effectively communicate orally and in writing using both English and Filipino;",
+            "officialText": "Effectively communicate orally and in writing using both English and Filipino;",
+            "equalText": true
+          },
+          {
+            "no": 3,
+            "authoredText": "Work effectively and independently in multi-disciplinary and multi-cultural teams;",
+            "officialText": "Work effectively and independently in multi-disciplinary and multi-cultural teams;",
+            "equalText": true
+          },
+          {
+            "no": 4,
+            "authoredText": "Act in recognition of professional, social ethical responsibility;",
+            "officialText": "Act in recognition of professional, social ethical responsibility;",
+            "equalText": true
+          },
+          {
+            "no": 5,
+            "authoredText": "Preserve and promote “Filipino historical and cultural heritage;",
+            "officialText": "Preserve and promote “Filipino historical and cultural heritage;",
+            "equalText": true
+          },
+          {
+            "no": 6,
+            "authoredText": "Analyze complex problems, and identify and define the computing requirements needed to design and appropriate solution;",
+            "officialText": "Analyze complex problems, and identify and define the computing requirements needed to design and appropriate solution;",
+            "equalText": true
+          },
+          {
+            "no": 7,
+            "authoredText": "Apply computing and other knowledge domains to address real-world problems;",
+            "officialText": "Apply computing and other knowledge domains to address real-world problems;",
+            "equalText": true
+          },
+          {
+            "no": 8,
+            "authoredText": "Design and develop computing solutions using a system-level perspective;",
+            "officialText": "Design and develop computing solutions using a system-level perspective;",
+            "equalText": true
+          },
+          {
+            "no": 9,
+            "authoredText": "Utilize modern computing tools.",
+            "officialText": "Utilize modern computing tools.",
+            "equalText": true
+          }
+        ],
+        "curriculumYearStated": null,
+        "availableCurriculumYear": "2022-2023",
+        "courseAsAuthored": {
+          "code": "IT 202",
+          "title": "Computer Programming 1"
+        },
+        "curriculumCourse": {
+          "code": "IT 202",
+          "title": "COMPUTER PROGRAMMING 1 (FUNDAMENTALS OF PROGRAMMING)",
+          "lecture": 2,
+          "lab": 1,
+          "prereq": "IT 101",
+          "rawPrerequisite": "IT 101",
+          "corequisite": "",
+          "yearLevel": 2,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 2,
+          "labHours": 3,
+          "sourceFile": "BSIT-1.jpeg"
+        },
+        "productionIdentity": {
+          "code": "IT 202",
+          "program": "BSIT",
+          "curriculumYear": "",
+          "status": "verified",
+          "elsewhere": []
+        },
+        "codedCurriculumFindings": [
+          {
+            "id": "CUR-REF:meta.program",
+            "ruleId": "CUR-REF",
+            "path": "meta.program",
+            "status": "PASS",
+            "evidence": {
+              "actual": [
+                {
+                  "id": 1,
+                  "curriculumYear": "2022-2023"
+                }
+              ],
+              "expected": "One selected approved curriculum"
+            },
+            "source": "rule",
+            "ruleVersion": "hybrid-2"
+          },
+          {
+            "id": "CUR-CODE:meta.code",
+            "ruleId": "CUR-CODE",
+            "path": "meta.code",
+            "status": "PASS",
+            "evidence": {
+              "actual": "IT 202",
+              "expected": "IT 202"
+            },
+            "source": "rule",
+            "ruleVersion": "hybrid-2"
+          },
+          {
+            "id": "CUR-FIELD:meta.title",
+            "ruleId": "CUR-FIELD",
+            "path": "meta.title",
+            "status": "FAIL",
+            "evidence": {
+              "actual": "Computer Programming 1",
+              "expected": "COMPUTER PROGRAMMING 1 (FUNDAMENTALS OF PROGRAMMING)"
+            },
+            "source": "rule",
+            "ruleVersion": "hybrid-2"
+          },
+          {
+            "id": "CUR-FIELD:meta.prereq",
+            "ruleId": "CUR-FIELD",
+            "path": "meta.prereq",
+            "status": "PASS",
+            "evidence": {
+              "actual": "IT 101",
+              "expected": "IT 101"
+            },
+            "source": "rule",
+            "ruleVersion": "hybrid-2"
+          },
+          {
+            "id": "CUR-FIELD:meta.lecture",
+            "ruleId": "CUR-FIELD",
+            "path": "meta.lecture",
+            "status": "PASS",
+            "evidence": {
+              "actual": "2",
+              "expected": 2
+            },
+            "source": "rule",
+            "ruleVersion": "hybrid-2"
+          },
+          {
+            "id": "CUR-FIELD:meta.lab",
+            "ruleId": "CUR-FIELD",
+            "path": "meta.lab",
+            "status": "PASS",
+            "evidence": {
+              "actual": "1",
+              "expected": 1
+            },
+            "source": "rule",
+            "ruleVersion": "hybrid-2"
+          },
+          {
+            "id": "CUR-FIELD:meta.yearLevel",
+            "ruleId": "CUR-FIELD",
+            "path": "meta.yearLevel",
+            "status": "FAIL",
+            "evidence": {
+              "actual": "",
+              "expected": 2
+            },
+            "source": "rule",
+            "ruleVersion": "hybrid-2"
+          }
+        ],
+        "reviewNotes": [
+          "No PO-EGA crosswalk supplied; all PO.egas remain empty.",
+          "CLO level is an unsourced builder enum default (Introductory); no academic level judgment.",
+          "Whitespace and soft line wraps normalized in checker text. Original tokens, exact cell lines and page references retained in source/evidence.",
+          "No curriculum year or year level is printed; blank in source content.",
+          "EGA short labels are display metadata; exact master comparison can detect display differences.",
+          "p8 unlabelled value-webbing sentence split after ILO1, without copying its CLO tags; needs faculty confirmation.",
+          "Source Journals retained as a source category in evidence; projected to builder online because schema has no Journals group. No absent group is silently marked N/A."
+        ]
+      }
+    },
+    {
+      "program": "BSIE",
+      "curriculumYear": "2022-2023",
+      "expectedPOs": 13,
+      "poSource": "BSIE",
+      "curriculumSources": [
+        {
+          "file": "docs/academic-references/BSIE-1.jpeg",
+          "sha256": "cd5bd50fd4dfb1daead0e78fe670aaac5824247690b4bfb610a1365d05f05133"
+        },
+        {
+          "file": "docs/academic-references/BSIE-2 (1).jpeg",
+          "sha256": "92cabc29bc21d1fcc029a0eb583c3a8a06eac3b41fb8e4401697f66ff5ff9a17"
+        }
+      ],
+      "realSyllabusAvailable": true,
+      "evidence": {
+        "program": "BSIE",
+        "fixture": "docs/lcup-approved-offline/ie402.fixture.json",
+        "source": {
+          "file": "reference-data/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "sha256": "44ca6d48c77d0b04055cf330717b9381b64d3b7fb8674be727aa2eb4a1807569",
+          "pages": 12,
+          "declaredFile": "docs/academic-references/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "relocated": true
+        },
+        "expectedPOs": 13,
+        "frozenMasterPOs": 13,
+        "authoredPOs": 13,
+        "authoredBasisMatchesOfficial": false,
+        "frozenMasterMatchesOfficial": false,
+        "poComparison": [
+          {
+            "no": 1,
+            "authoredText": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+            "officialText": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+            "equalText": true
+          },
+          {
+            "no": 2,
+            "authoredText": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+            "officialText": "Ability to design and conduct experiments, as well as to analyze and interpret data.",
+            "equalText": false
+          },
+          {
+            "no": 3,
+            "authoredText": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+            "officialText": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+            "equalText": true
+          },
+          {
+            "no": 4,
+            "authoredText": "Ability to function on multidisciplinary teams",
+            "officialText": "Ability to function on multidisciplinary teams;",
+            "equalText": false
+          },
+          {
+            "no": 5,
+            "authoredText": "Ability to identify; formulate, and solve complex engineering problems;",
+            "officialText": "Ability to identify; formulate, and solve complex engineering problems.",
+            "equalText": false
+          },
+          {
+            "no": 6,
+            "authoredText": "Understanding of professional and ethical responsibility.",
+            "officialText": "Understanding of professional and ethical responsibility.",
+            "equalText": true
+          },
+          {
+            "no": 7,
+            "authoredText": "Ability to communicate effectively",
+            "officialText": "Ability to communicate effectively.",
+            "equalText": false
+          },
+          {
+            "no": 8,
+            "authoredText": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+            "officialText": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+            "equalText": true
+          },
+          {
+            "no": 9,
+            "authoredText": "Recognition of the need for, and an ability to engage in life-long learning;",
+            "officialText": "Recognition of the need for, and an ability to engage in life-long learning;",
+            "equalText": true
+          },
+          {
+            "no": 10,
+            "authoredText": "Knowledge of contemporary issues;",
+            "officialText": "Knowledge of contemporary issues.",
+            "equalText": false
+          },
+          {
+            "no": 11,
+            "authoredText": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and;",
+            "officialText": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and",
+            "equalText": false
+          },
+          {
+            "no": 12,
+            "authoredText": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in",
+            "officialText": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in multidisciplinary environments.",
+            "equalText": false
+          },
+          {
+            "no": 13,
+            "authoredText": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+            "officialText": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+            "equalText": true
+          }
+        ],
+        "curriculumYearStated": null,
+        "availableCurriculumYear": "2022-2023",
+        "courseAsAuthored": {
+          "code": "IE-402",
+          "title": "Systems Engineering"
+        },
+        "curriculumCourse": {
+          "code": "IE-402",
+          "title": "SYSTEMS ENGINEERING",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "4th Yr",
+          "rawPrerequisite": "4th Yr",
+          "corequisite": "",
+          "yearLevel": 4,
+          "semester": "1st Semester",
+          "page": 2,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSIE-2 (1).jpeg"
+        },
+        "productionIdentity": {
+          "code": "IE-402",
+          "program": "BSIE",
+          "curriculumYear": "",
+          "status": "verified",
+          "elsewhere": []
+        },
+        "codedCurriculumFindings": [
+          {
+            "id": "CUR-REF:meta.program",
+            "ruleId": "CUR-REF",
+            "path": "meta.program",
+            "status": "PASS",
+            "evidence": {
+              "actual": [
+                {
+                  "id": 2,
+                  "curriculumYear": "2022-2023"
+                }
+              ],
+              "expected": "One selected approved curriculum"
+            },
+            "source": "rule",
+            "ruleVersion": "hybrid-2"
+          },
+          {
+            "id": "CUR-CODE:meta.code",
+            "ruleId": "CUR-CODE",
+            "path": "meta.code",
+            "status": "PASS",
+            "evidence": {
+              "actual": "IE-402",
+              "expected": "IE-402"
+            },
+            "source": "rule",
+            "ruleVersion": "hybrid-2"
+          },
+          {
+            "id": "CUR-FIELD:meta.title",
+            "ruleId": "CUR-FIELD",
+            "path": "meta.title",
+            "status": "FAIL",
+            "evidence": {
+              "actual": "Systems Engineering",
+              "expected": "SYSTEMS ENGINEERING"
+            },
+            "source": "rule",
+            "ruleVersion": "hybrid-2"
+          },
+          {
+            "id": "CUR-FIELD:meta.prereq",
+            "ruleId": "CUR-FIELD",
+            "path": "meta.prereq",
+            "status": "FAIL",
+            "evidence": {
+              "actual": "4th Year Standing",
+              "expected": "4th Yr"
+            },
+            "source": "rule",
+            "ruleVersion": "hybrid-2"
+          },
+          {
+            "id": "CUR-FIELD:meta.lecture",
+            "ruleId": "CUR-FIELD",
+            "path": "meta.lecture",
+            "status": "FAIL",
+            "evidence": {
+              "actual": "",
+              "expected": 3
+            },
+            "source": "rule",
+            "ruleVersion": "hybrid-2"
+          },
+          {
+            "id": "CUR-FIELD:meta.lab",
+            "ruleId": "CUR-FIELD",
+            "path": "meta.lab",
+            "status": "FAIL",
+            "evidence": {
+              "actual": "",
+              "expected": 0
+            },
+            "source": "rule",
+            "ruleVersion": "hybrid-2"
+          },
+          {
+            "id": "CUR-FIELD:meta.yearLevel",
+            "ruleId": "CUR-FIELD",
+            "path": "meta.yearLevel",
+            "status": "FAIL",
+            "evidence": {
+              "actual": "",
+              "expected": 4
+            },
+            "source": "rule",
+            "ruleVersion": "hybrid-2"
+          }
+        ],
+        "reviewNotes": [
+          "No PO-EGA crosswalk supplied; all PO.egas remain empty.",
+          "CLO level is an unsourced builder enum default (Introductory); no academic level judgment.",
+          "Whitespace and soft line wraps normalized in checker text. Original tokens, exact cell lines and page references retained in source/evidence.",
+          "No curriculum year or year level is printed; blank in source content.",
+          "EGA short labels are display metadata; exact master comparison can detect display differences.",
+          "PO12 ends mid-sentence in baseline; supporting PDF completion is NOT inserted.",
+          "3 units states only total units; source lecture/lab split is unresolved. Builder-context scenario uses the catalog split explicitly.",
+          "Production page y-sorting appends prerequisite superscript th to description and leaves 4 Year Standing. Offline adapter reads source stream and rejoins the superscript; production remains unchanged.",
+          "Source Journals retained as a source category in evidence; projected to builder online because schema has no Journals group. No absent group is silently marked N/A."
+        ]
+      }
+    },
+    {
+      "program": "BSCPE",
+      "curriculumYear": "2022-2023",
+      "expectedPOs": 13,
+      "poSource": "BSCPE",
+      "curriculumSources": [
+        {
+          "file": "docs/academic-references/BSCPE-1.jpeg",
+          "sha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "file": "docs/academic-references/BSCPE-2.jpeg",
+          "sha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        }
+      ],
+      "realSyllabusAvailable": true,
+      "evidence": {
+        "program": "BSCPE",
+        "fixture": "docs/lcup-approved-offline/cpe304.fixture.json",
+        "source": {
+          "file": "reference-data/CPE-304-Fundamentals-of-Mixed-Signals-and-Sensors.pdf",
+          "sha256": "f68eb5bedb77d31b153b23dc354ef457c9a349b7fca64ba5a46578230982a4a2",
+          "pages": 9,
+          "declaredFile": "docs/academic-references/CPE-304-Fundamentals-of-Mixed-Signals-and-Sensors.pdf",
+          "relocated": true
+        },
+        "expectedPOs": 13,
+        "frozenMasterPOs": 13,
+        "authoredPOs": 13,
+        "authoredBasisMatchesOfficial": false,
+        "frozenMasterMatchesOfficial": false,
+        "poComparison": [
+          {
+            "no": 1,
+            "authoredText": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+            "officialText": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+            "equalText": true
+          },
+          {
+            "no": 2,
+            "authoredText": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+            "officialText": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+            "equalText": true
+          },
+          {
+            "no": 3,
+            "authoredText": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+            "officialText": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+            "equalText": true
+          },
+          {
+            "no": 4,
+            "authoredText": "Ability to function on multidisciplinary teams",
+            "officialText": "Ability to function on multidisciplinary teams;",
+            "equalText": false
+          },
+          {
+            "no": 5,
+            "authoredText": "Ability to identify; formulate, and solve complex engineering problems;",
+            "officialText": "Ability to identify; formulate, and solve complex engineering problems;",
+            "equalText": true
+          },
+          {
+            "no": 6,
+            "authoredText": "Understanding of professional and ethical responsibility.",
+            "officialText": "Understanding of professional and ethical responsibility.",
+            "equalText": true
+          },
+          {
+            "no": 7,
+            "authoredText": "Ability to communicate effectively",
+            "officialText": "Ability to communicate effectively;",
+            "equalText": false
+          },
+          {
+            "no": 8,
+            "authoredText": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+            "officialText": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+            "equalText": true
+          },
+          {
+            "no": 9,
+            "authoredText": "Recognition of the need for, and an ability to engage in life-long learning;",
+            "officialText": "Recognition of the need for, and an ability to engage in life-long learning;",
+            "equalText": true
+          },
+          {
+            "no": 10,
+            "authoredText": "Knowledge of contemporary issues;",
+            "officialText": "Knowledge of contemporary issues;",
+            "equalText": true
+          },
+          {
+            "no": 11,
+            "authoredText": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and",
+            "officialText": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and",
+            "equalText": true
+          },
+          {
+            "no": 12,
+            "authoredText": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in",
+            "officialText": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in multidisciplinary environments.",
+            "equalText": false
+          },
+          {
+            "no": 13,
+            "authoredText": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+            "officialText": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+            "equalText": true
+          }
+        ],
+        "curriculumYearStated": null,
+        "availableCurriculumYear": "2022-2023",
+        "courseAsAuthored": {
+          "code": "CpE 304",
+          "title": "Fundamentals of Mixed Signals and Sensors"
+        },
+        "curriculumCourse": null,
+        "productionIdentity": {
+          "code": "CpE 304",
+          "program": "BSCPE",
+          "curriculumYear": "",
+          "status": "code_not_found",
+          "elsewhere": []
+        },
+        "codedCurriculumFindings": [
+          {
+            "id": "CUR-REF:meta.program",
+            "ruleId": "CUR-REF",
+            "path": "meta.program",
+            "status": "PASS",
+            "evidence": {
+              "actual": [
+                {
+                  "id": 3,
+                  "curriculumYear": "2022-2023"
+                }
+              ],
+              "expected": "One selected approved curriculum"
+            },
+            "source": "rule",
+            "ruleVersion": "hybrid-2"
+          },
+          {
+            "id": "CUR-CODE:meta.code",
+            "ruleId": "CUR-CODE",
+            "path": "meta.code",
+            "status": "FAIL",
+            "evidence": {
+              "actual": "CpE 304",
+              "expected": [
+                "MA 7",
+                "CHEMENG",
+                "CENGDIS",
+                "GE - PC",
+                "GE - US",
+                "GE - RPH",
+                "PATHFit 1",
+                "NSTP 1",
+                "TH 1",
+                "MA 8",
+                "PHYENG",
+                "CPE 101",
+                "GE - RC",
+                "GE - ET",
+                "GE - CW",
+                "PATHFit 2",
+                "NSTP 2",
+                "TH 2",
+                "MA 9DE",
+                "ENGDA",
+                "PROLOG",
+                "FUNELC",
+                "GE - STS",
+                "GE - MMW",
+                "GE - ELECT KOMFIL",
+                "PATHFit 3",
+                "TH 3",
+                "OOPENG",
+                "ENGEC",
+                "NUMET",
+                "FUNEC",
+                "CAD",
+                "GE - ELECT DL",
+                "GE - ART",
+                "GE - ELECT SOSLIT",
+                "PATHFit 4",
+                "TH 4",
+                "CpE-300",
+                "CpE 301",
+                "CpE 302",
+                "CpE-303",
+                "CpE-304",
+                "CpE-305",
+                "CpE-306",
+                "COE 7",
+                "CpE-ELEC1",
+                "TH 5",
+                "SOFTDES",
+                "ENGBOHS",
+                "CpE 307",
+                "CpE 308",
+                "CpE 309",
+                "CpE-310",
+                "TECHPREN-CITE",
+                "CpE-ELEC2",
+                "TH 6",
+                "CpE 401",
+                "CpE 402",
+                "CpE-403",
+                "CpE-404",
+                "DesPro-1",
+                "CpE-ELEC3",
+                "CpE-405",
+                "DesPro-2",
+                "CpE-PRAC",
+                "IS-CITE"
+              ]
+            },
+            "source": "rule",
+            "ruleVersion": "hybrid-2"
+          }
+        ],
+        "reviewNotes": [
+          "No PO-EGA crosswalk supplied; all PO.egas remain empty.",
+          "CLO level is an unsourced builder enum default (Introductory); no academic level judgment.",
+          "Whitespace and soft line wraps normalized in checker text. Original tokens, exact cell lines and page references retained in source/evidence.",
+          "No curriculum year or year level is printed; blank in source content.",
+          "EGA short labels are display metadata; exact master comparison can detect display differences.",
+          "PO12 ends mid-sentence in baseline; supporting PDF completion is NOT inserted.",
+          "p7 week12 assessment/value cells appear swapped; preserved as printed. Preliminary exam activities say Mid Term; preserved.",
+          "Source Journals retained as a source category in evidence; projected to builder online because schema has no Journals group. No absent group is silently marked N/A."
+        ]
+      }
+    },
+    {
+      "program": "BSIT-CYBERSECURITY",
+      "curriculumYear": "2025-2026",
+      "expectedPOs": 9,
+      "poSource": "BSIT",
+      "curriculumSources": [
+        {
+          "file": "docs/academic-references/BSIT-Cybersecurity-1.jpeg",
+          "sha256": "afa2f17df048e96585686cac8f415fb7cf172af138d955ee5eaabbc99d5cb09f"
+        },
+        {
+          "file": "docs/academic-references/BSIT-Cybersecurity-2.jpeg",
+          "sha256": "bbccdfc55aa2a712c7ce7ed386e22528e7ad56020b3c0f05c27244f3924a748a"
+        }
+      ],
+      "realSyllabusAvailable": false,
+      "evidence": null
+    }
+  ],
+  "databaseVerification": "Not performed in this task; prior SELECT-only snapshot and disposable migration reports are historical evidence, not a fresh current-database assertion.",
+  "migrationDependency": "The last verified existing-database snapshot was not migrated. Existing faculty PO meanings require explicit remediation. No migration or reference record change is performed here."
+}

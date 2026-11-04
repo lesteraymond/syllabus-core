@@ -1,0 +1,12 @@
+{
+  "version": "lcup-academic-benchmark-1",
+  "benchmarkHash": "ebd12920a890971b8c7fb481cc6bc9b469ec7dd4c2001134f6833cc31009bbf7",
+  "policyVersion": "academic-evaluation-v2-preview-1",
+  "provenance": "not-run",
+  "runId": null,
+  "model": null,
+  "promptVersion": null,
+  "transcriptSha256": null,
+  "plannedCaseIds": [],
+  "observations": []
+}

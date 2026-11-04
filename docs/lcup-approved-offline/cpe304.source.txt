@@ -1,0 +1,560 @@
+PAGE 1
+La Consolacion University Philippines 
+Valenzuela St., Capitol View Park Subdivision, Bulihan, City of Malolos, Bulacan 
+COLLEGE OF INFORMATION TECHNOLOGY AND ENGINEERING 
+School Year 2025-2026 
+I.   COURSE CODE   :   CpE 304 
+II.   COURSE TITLE   :   Fundamentals of Mixed Signals and Sensors 
+III.   COURSE DESCRIPTION   : 
+This course covers operational amplifiers, signal converters, power switching devices and the construction and operation
+of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses
+on the application of these devices in developing signal conversion circuits that allows measurement, processing and control
+of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on
+actuators are also included. 
+Anchored in the Marian and Augustinian values of truth (veritas), unity (unitas), and charity (caritas), the course encourages
+students to design technology that promotes social responsibility, collaboration, and compassion. Through hands-on
+projects, learners will not only develop technical proficiency but also embody ethical stewardship — using their knowledge to
+create solutions that serve the needs of others and contribute to the common good. 
+IV.   PRE-REQUISITE   :   FUNEC, FUNELC 
+V.   CREDIT UNITS   :   3 units lecture 
+VI.   COURSE LEARNING OUTCOMES: 
+Vision   Mission 
+Moved by the Spirit of the Risen Christ, La Consolacion 
+University   Philippines,   envisions   itself   to   become   a
+catalyst for the wholistic transformational development
+of   Catholic   Augustinian   Marian   graduates   rooted   in
+Gospel values. 
+To achieve the above vision, LCUP commits itself to
+generate and make available to its Augustinian Marian
+students, programs and services that will make them: 
+●   exhibit academic and technical competence in their
+respective   areas   of   discipline   in   the   local   and
+international environment; 
+●   demonstrate   their   knowledge,   critical   thinking   and
+creativity by exploring the various avenues of learning
+and searching for truth; 
+PAGE 2
+●   live the Gospel values in the varied aspects of their
+personal and professional lives; 
+●   manifest   their   willingness   to   serve   specially   the
+marginalized sector of our society; 
+●   demonstrate productivity in various areas of learning as
+responsible citizens of the society; and 
+●   develop individuals who are resilient,   inclusive and
+responsive   to   be   socio-economic   realities   of   the
+Philippines   and   the   complexities   of   the   global
+environment. 
+EXPECTED GRADUATE ATTRIBUTES   PROGRAM OUTCOMES   COURSE LEARNING OUTCOMES 
+EGA 1: Critical and Creative thinker 
+EGA 2: Competent   Catholic Augustinian-
+Marian Professional 
+EGA 3: Socially Responsive Steward 
+EGA 4: Transformative Lifelong learner 
+PO1.   Ability to apply knowledge of
+mathematics and science to solve
+complex engineering problems; 
+PO2.   Ability to design and conduct
+experiments, as well as to analyze and
+interpret data; 
+PO3.   Ability to design a system,
+component, or process to meet desired
+needs within realistic constraints such as
+economic, environmental,   social,
+political, ethical, health and safety,
+manufacturability and sustainability, in
+accordance with standards. 
+PO4.   Ability to function on
+multidisciplinary teams 
+PO5.   Ability to identify; formulate, and
+solve complex engineering problems; 
+PO6.   Understanding of professional and
+ethical responsibility. 
+PO7.   Ability to communicate effectively 
+CLO1: Identify the design process of
+electronic circuits and systems and 
+conduct experiments involving sensors
+and mixed-signal systems, analyze data,
+and interpret results to improve
+performance and reliability. 
+[EGA1, PO1, PO2, PO3, PO5] 
+CLO2: Develop analytical and design
+skills for both analog and digital electronic
+circuit and   implement sensor-based
+systems that integrate hardware and
+software components while considering
+economic, environmental, and ethical
+constraints.   [EGA2, PO6. PO7, PO12] 
+CLO3: Analyze and apply the behavior of
+passive components in AC circuits and
+their instrumentation applications   in
+multidisciplinary teams to design, test,
+and optimize mixed-signal and sensor
+applications for engineering solutions 
+[EGA3, PO4, PO9] 
+CLO4: Exhibit lifelong learning, precision,
+and ethical responsibility in performing 
+PAGE 3
+PO8.   Broad education necessary to
+understand the impact of engineering
+solutions in a global, economic,
+environmental, and societal context.
+PO9.   Recognition of the need for, and an
+ability to engage in life-long learning; 
+PO10. Knowledge of contemporary
+issues; 
+PO11. Ability to use techniques, skills and
+modern engineering tools necessary for
+engineering practice; and 
+PO12. Knowledge and understanding of
+engineering and management principles
+as a member and leader in a team, to
+manage projects and in 
+PO13: Ability to design, develop,
+implement and improve integrated system
+that include people materials,
+implementation, equipment and energy. 
+measurements and calibration tasks. 
+Engage in continuous learning by
+exploring emerging technologies and
+trends in sensors, instrumentation, and
+mixed-signal design for future innovation 
+[EGA 4, PO11, PO13] 
+VII.   LEARNING PLAN: 
+SCHEDULE   INTENDED LEARNING
+OUTCOMES   LEARNING CONTENTS   SUGGESTED LEARNING
+ACTIVITIES 
+SUGGESTED
+ASSESSMENT TASKS 
+EXPECTED VALUE
+TO BE INTEGRATED 
+Week 1   I.ORIENTATION 
+•   Introduction to
+the Course
+Contents 
+•   Course
+Requirements
+and Activities 
+•   Course
+Objectives 
+•   Grading
+System and
+Policies on
+Absences, 
+•   Setting and sharing
+of expectations from
+the course 
+•   Discussion of the
+Vision, Mission and
+Goals of LCUP and
+of CITE 
+•   Presentation of
+Course Objectives
+and Contents,
+Course
+Requirements and
+Activities 
+•   Statement of
+expectations 
+•   Review of Course
+Contents,
+Objectives,
+Activities and
+Assessment Tools 
+•   Review of Policies
+on Absences,
+Tardiness,
+Examinations and
+Grading System 
+•   Understanding 
+•   Open
+Mindedness 
+•   Respect 
+•   Obedience 
+PAGE 4
+Tardiness and
+Examinations 
+•   Introduction to
+Gsuite, Google
+Classroom,
+Google Slides,
+Google Docs
+and Google
+Sheets 
+•   Review of Policies
+on Absences,
+Tardiness,
+Examinations and
+Grading System 
+Week 2-3   ILO1: To develop
+skills in analysis and
+design of both analog
+and digital circuits 
+[CLO1] 
+ILO2: Understand the
+design process of
+electronic circuits and
+systems. 
+[CLO1 ] 
+II. Introduction to
+Electronic System 
+•   History of
+Electronics 
+•   Electronic Signals
+and Notation 
+•   Classifications of
+Electronic
+Systems 
+•   Specifications of
+Electronic
+Systems 
+•   Design of
+Electronic
+Systems 
+•   Design of
+Electronic Circuits 
+•   Electronic
+Devices 
+•   Emerging
+Electronics 
+Differential
+Amplifiers 
+•   Introduction to
+Differential
+Amplifiers 
+•   Block Diagram 
+•   Differential Gain 
+•   Common Mode
+Gain 
+•   Lecture-
+Discussion
+using
+PowerPoint 
+•   Quiz on the
+topics
+discussed 
+•   Cooperation 
+•   Understanding 
+•   Critical Thinking 
+•   Active
+participation and
+involvement 
+PAGE 5
+•   CMRR 
+•   Configuration of
+differential
+amplifiers 
+Week 4-5   ILO1 : Show one’s 
+knowledge on the
+fundamental elements
+of amplifiers. [CLO1,
+CLO2] 
+ILO2: Refresh and
+expand the
+understanding of
+basic electrical
+components and the
+basic terms used in
+electricity as required
+for instrumentation. 
+. [CLO1, CLO2] 
+III. INTRODUCTION
+TO OPERATIONAL
+AMPLIFIERS AND
+APPLICATIONS 
+•   Characteristics
+of Ideal Op-
+Amps 
+•   Noninverting
+Amplifiers 
+•   Inverting
+Amplifiers 
+•   Instrumentatio
+n Amplifiers 
+•   Integrators 
+•   Differentiators 
+•   Addition – 
+Subtraction
+Amplifiers 
+•   Large-Signal
+Operations of
+Op-Amps 
+•   Input Offset
+Voltage 
+•   Input Offset
+Current 
+•   Op-Amp
+Circuit Design 
+Linear and Non
+Linear Applications
+of Op-Amp 
+•   Linear Op-amp 
+•   Non-linear Op-
+amp 
+•   Lecture-
+Discussion using
+PowerPoint 
+•   Quiz on the
+topics
+discussed 
+•   Cooperation 
+•   Understandi
+ng 
+•   Critical
+Thinking 
+•   Active
+participation
+and
+involvement 
+PAGE 6
+Week 6   Preliminary
+Examination 
+•   Examination on
+the topics
+discussed during
+the Mid Term 
+•   Examination   •   Honesty in
+answering the test
+questionnaire 
+•   Diligence 
+•   Understanding 
+Week 7-8   ILO1: To develop
+skills in analysis and
+design of both analog
+and digital circuits 
+ILO6: Understand
+active devices, how
+they are used in
+instrument
+applications, and the
+difference between
+analog and digital
+circuits. 
+ILO10: Demonstrate
+the Filipino-Catholic
+Augustinian
+Spirituality through
+value webbing. 
+IV. Analog to Digital
+Conversion 
+Digital to Analog
+Conversion 
+•   Sampling 
+•   Quantization 
+•   encoding 
+•   Lecture-
+Discussion using
+PowerPoint 
+•   Quiz on the
+topics
+discussed 
+•   Cooperation 
+•   Understandi
+ng 
+•   Critical
+Thinking 
+•   Active
+participation
+and
+involvement 
+Week 9-11   ILO4: Refresh and
+expand the
+understanding of
+basic electrical
+components and the
+basic terms used in
+electricity as required
+for instrumentation. 
+ILO7: Understand the
+units used in
+measurements and
+familiarize with the
+most common 
+V. Mixed Signals 
+Basic Measurement
+Theory 
+•   IC Test 
+•   Linearity 
+•   Lecture-
+Discussion
+using
+PowerPoint 
+•   Quiz on the
+topics
+discussed 
+•   Cooperation 
+•   Understandi
+ng 
+•   Critical
+Thinking 
+•   Active
+participation
+and
+involvement 
+PAGE 7
+methods of using the
+various measurement 
+. 
+ILO10: Demonstrate
+the Filipino-Catholic
+Augustinian
+Spirituality through
+value webbing. 
+Week 12 
+Midterm
+Examination 
+•   Examination on
+the topics
+discussed
+during the Mid
+Term 
+•   Honesty in
+answering the test
+questionnaire 
+•   Diligence 
+•   Understanding 
+•   Examination 
+Week 
+13-14 
+ILO8: Understand the
+different Sensors and
+Transducers. 
+ILO10: Demonstrate
+the Filipino-Catholic
+Augustinian
+Spirituality through
+value webbing 
+VI. Sensors and
+Transducers 
+●   Sensitivity &
+Hysteresis 
+●   Offset Error & Non-
+linearity 
+•   Lecture-
+Discussion
+using
+PowerPoint 
+•   Quiz on the
+topics
+discussed 
+•   Cooperation 
+•   Understanding 
+•   Critical Thinking 
+•   Active
+participation and
+involvement 
+Week 
+15-16 
+ILO8: Understand the
+different Sensors and
+Transducers. 
+VII. Other Types of
+Sensors and
+Transducers 
+●   active sensors 
+●   passive sensors 
+•   Lecture-
+Discussion
+using
+PowerPoint 
+•   Quiz on the
+topics
+discussed 
+•   Cooperation 
+•   Understanding 
+•   Critical Thinking 
+•   Active
+participation and
+involvement 
+Week 17 
+ILO9: Learn the basic
+components and
+control of devices and
+prototypes. 
+ILO10: Demonstrate
+the Filipino-Catholic
+Augustinian
+Spirituality through
+value webbing 
+VIII. Basic Control
+Devices 
+●   What are control 
+devices 
+●   different types of
+control devices 
+•   Lecture-
+Discussion
+using
+PowerPoint 
+•   Quiz on the
+topics
+discussed 
+•   Cooperation 
+•   Understandi
+ng 
+•   Critical
+Thinking 
+•   Active
+participation
+and
+involvement 
+PAGE 8
+Week 18 
+Final Examination   •   Examination on the
+topics discussed
+during the Final Term 
+•   Final
+Examination 
+•   Honesty in
+answering the test
+questionnaire 
+•   Diligence 
+VIII.   COURSE REQUIREMENTS   : 
+1.   Class Attendance 
+2.   Recitations 
+3.   Quizzes 
+4.   Examinations 
+5.   Compilation of Laboratory Activity Reports 
+6.   Project 
+IX.   REFERENCES   : 
+A.   INTERNET REFERENCES: 
+Erhan, L., Ndubuaku, M., Di Mauro, M., Song, W., Chen, M., Fortino, G., Bagdasar, O., & Liotta, A. (2020).   Smart
+Anomaly Detection in Sensor Systems: A Multi-Perspective Review . arXiv.   https://arxiv.org/abs/2010.14946   arXiv 
+Wei, Z., Qu, H., Wang, Y., Yuan, X., Wu, H., Du, Y., Han, K., & Zhang, N. (2023).   Integrated Sensing and Communication
+Signals Toward 5G-A and 6G: A Survey . arXiv.   https://arxiv.org/abs/2301.03857   arXiv 
+Cherubini, A., & Navarro-Alarcon, D. (2020).   Sensor-Based Control for Collaborative Robots: Fundamentals, Challenges
+and Opportunities . arXiv.   https://arxiv.org/abs/2007.02067   arXiv 
+Perera, C., Zaslavsky, A., Christen, P., & Georgakopoulos, D. (2013).   Context Aware Computing for the Internet of
+Things: A Survey . arXiv.   https://arxiv.org/abs/1305.0982   arXiv 
+X.   GRADING SYSTEM   : 
+1.   Class Standing   60% 
+2.   Term Examination   40% 
+3.   Term Grade   =   Class Standing (60%) + Term Examination (40%) 
+4. 
+5.   Final Rating   =   Preliminary Term Grade + Mid Term Grade + Final Term Grade 
+PAGE 9
+3 
+Prepared by: 
+ENGR. GLAZEN CAREY PEREZ 
+Faculty/Date 
+Checked and Reviewed by: 
+EDNA F. DAYAO, DIT 
+Dean/Date 
+ROSALYN S. GALVEZ, PhD., LPT 
+Asst. Vice President for Academic Affairs-Date 
+References Certified by: 
+MARIA MERCEDEZ M. HAZ, PhD., RL 
+LIC Director/Date 
+Approved by: 
+JAY MARK B. SANTOS, PhD, LPT, CSSWB 
+Vice President for Academic Affairs-Date 
+Revision Date: 
+Modifications: 
+__Learning Outcomes 
+__Course Contents 
+__Suggested Learning Activities 
+__Suggested Assessment 
+__Expected Values to be Integrated 
+__Course Requirements 
+__References 
+__Grading System 
+PRE-VPAA-FO-001(011) 

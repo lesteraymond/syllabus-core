@@ -1,0 +1,122 @@
+{
+  "testedAt": "2026-10-22T04:07:01.444Z",
+  "syllabusId": 101,
+  "status": "not_evaluated",
+  "reason": "Gemini evidence is not present in the supplied text",
+  "batches": [
+    {
+      "pairIds": [
+        "clo0-po1",
+        "clo0-ega1",
+        "clo1-po1",
+        "clo1-ega1",
+        "clo2-po1",
+        "clo2-po2",
+        "clo2-ega1",
+        "clo2-ega2",
+        "clo2-ega3",
+        "clo3-po1",
+        "clo3-po2",
+        "clo3-ega1"
+      ],
+      "mismatches": []
+    },
+    {
+      "pairIds": [
+        "clo3-ega2",
+        "clo3-ega3",
+        "row0-ilo0-clo:bsie_test_clo1",
+        "row0-ilo0-activity",
+        "row0-ilo0-assessment",
+        "row0-value",
+        "row1-ilo0-clo:bsie_test_clo1",
+        "row1-ilo0-activity",
+        "row1-ilo0-assessment",
+        "row1-value",
+        "row2-ilo0-clo:bsie_test_clo1",
+        "row2-ilo0-activity"
+      ],
+      "mismatches": []
+    },
+    {
+      "pairIds": [
+        "row2-ilo0-assessment",
+        "row2-value",
+        "row3-ilo0-clo:bsie_test_clo1",
+        "row3-ilo0-activity",
+        "row3-ilo0-assessment",
+        "row3-value",
+        "row4-ilo0-clo:bsie_test_clo1",
+        "row4-ilo0-activity",
+        "row4-ilo0-assessment",
+        "row4-value",
+        "row6-ilo0-clo:bsie_test_clo2",
+        "row6-ilo0-activity"
+      ],
+      "mismatches": []
+    },
+    {
+      "pairIds": [
+        "row6-ilo0-assessment",
+        "row6-value",
+        "row7-ilo0-clo:bsie_test_clo2",
+        "row7-ilo0-activity",
+        "row7-ilo0-assessment",
+        "row7-value",
+        "row8-ilo0-clo:bsie_test_clo2",
+        "row8-ilo0-activity",
+        "row8-ilo0-assessment",
+        "row8-value",
+        "row9-ilo0-clo:bsie_test_clo2",
+        "row9-ilo0-activity"
+      ],
+      "mismatches": []
+    },
+    {
+      "pairIds": [
+        "row9-ilo0-assessment",
+        "row9-value",
+        "row10-ilo0-clo:bsie_test_clo2",
+        "row10-ilo0-activity",
+        "row10-ilo0-assessment",
+        "row10-value",
+        "row12-ilo0-clo:bsie_test_clo3",
+        "row12-ilo0-activity",
+        "row12-ilo0-assessment",
+        "row12-value",
+        "row13-ilo0-clo:bsie_test_clo3",
+        "row13-ilo0-activity"
+      ],
+      "mismatches": [
+        {
+          "pairId": "row9-value",
+          "type": "Module-value",
+          "side": "source",
+          "suppliedText": "Chain rule\nWork through chain rule using an engineering example. Analyze a composite function and apply the chain rule correctly. Compare mathematical reasoning in pairs, check units and assumptions, and explain any disagreement.\nIndividual worked engineering problem and short oral explanation: Analyze a composite function and apply the chain rule correctly. Submit calculations or graphs, justify each step and verify the result against an independent calculation or graphical check.",
+          "returnedQuote": "Chain rule Work through chain rule using an engineering example. Analyze a composite function and apply the chain rule correctly. Compare mathematical reasoning in pairs, check units and assumptions, and explain any disagreement. Individual worked engineering problem and short oral explanation: Analyze a composite function and apply the chain rule correctly. Submit calculations or graphs, justify each step and verify the result against an independent calculation or graphical check.",
+          "quoteBelongsToOtherSide": false,
+          "label": "ALIGNED"
+        },
+        {
+          "pairId": "row10-value",
+          "type": "Module-value",
+          "side": "source",
+          "suppliedText": "Implicit differentiation\nWork through implicit differentiation using an engineering example. Apply implicit differentiation to determine a slope in a constrained relation. Compare mathematical reasoning in pairs, check units and assumptions, and explain any disagreement.\nIndividual worked engineering problem and short oral explanation: Apply implicit differentiation to determine a slope in a constrained relation. Submit calculations or graphs, justify each step and verify the result against an independent calculation or graphical check.",
+          "returnedQuote": "Implicit differentiation Work through implicit differentiation using an engineering example. Apply implicit differentiation to determine a slope in a constrained relation. Compare mathematical reasoning in pairs, check units and assumptions, and explain any disagreement. Individual worked engineering problem and short oral explanation: Apply implicit differentiation to determine a slope in a constrained relation. Submit calculations or graphs, justify each step and verify the result against an independent calculation or graphical check.",
+          "quoteBelongsToOtherSide": false,
+          "label": "ALIGNED"
+        },
+        {
+          "pairId": "row12-value",
+          "type": "Module-value",
+          "side": "source",
+          "suppliedText": "Trigonometric derivatives\nWork through trigonometric derivatives using an engineering example. Compute and interpret derivatives of trigonometric functions. Compare mathematical reasoning in pairs, check units and assumptions, and explain any disagreement.\nIndividual worked engineering problem and short oral explanation: Compute and interpret derivatives of trigonometric functions. Submit calculations or graphs, justify each step and verify the result against an independent calculation or graphical check.",
+          "returnedQuote": "Trigonometric derivatives Work through trigonometric derivatives using an engineering example. Compute and interpret derivatives of trigonometric functions. Compare mathematical reasoning in pairs, check units and assumptions, and explain any disagreement. Individual worked engineering problem and short oral explanation: Compute and interpret derivatives of trigonometric functions. Submit calculations or graphs, justify each step and verify the result against an independent calculation or graphical check.",
+          "quoteBelongsToOtherSide": false,
+          "label": "ALIGNED"
+        }
+      ]
+    }
+  ],
+  "syllabusModified": false
+}

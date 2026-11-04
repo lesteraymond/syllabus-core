@@ -1,0 +1,8 @@
+{
+  "identity": {
+    "datadir": "C:\\Users\\JP Del Rosario\\Syllabus-Repository\\tmp\\lcup-po-correction-db\\data\\",
+    "port": 43308
+  },
+  "database": "lcupo_test_23588",
+  "productionConfigurationUsed": false
+}

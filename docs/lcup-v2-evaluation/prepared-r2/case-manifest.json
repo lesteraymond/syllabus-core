@@ -1,0 +1,838 @@
+{
+  "preparedHash": "d6e2f2f551067433115a345edad3ccf114e4cd26ddf38b5cefc4354f8f1a09e2",
+  "cases": [
+    {
+      "caseId": "BM1-IT202-096",
+      "caseHash": "b19c488bc5e293818c1bc4c1e70ebefb435a98c20fd12457bf6903fe556dfeb7",
+      "program": "BSIT",
+      "course": {
+        "program": "BSIT",
+        "code": "IT 202",
+        "title": "Computer Programming 1",
+        "schoolYear": "2025-2026",
+        "curriculumYear": "",
+        "yearLevel": "",
+        "prereq": "IT 101",
+        "lecture": "2",
+        "lab": "1"
+      },
+      "sourceKind": "verified-syllabus",
+      "sourceDocuments": [
+        {
+          "file": "docs/lcup-approved-offline/it202.fixture.json",
+          "sha256": "ff1f9ed8aa24e88728c7364bb4e94717a8ab728a1da23e8bd0f59949e78cb642",
+          "path": "plan[0].ilos[0].text"
+        },
+        {
+          "file": "reference-data/IT-202-Programming-1.pdf",
+          "sha256": "6376fe94981ae65f25054234e1ae63cd50be8f70f12b774ea72949e07d561845",
+          "pages": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "declaredFile": "docs/academic-references/IT-202-Programming-1.pdf",
+          "relocated": true
+        }
+      ],
+      "relationshipType": "Content-ILO",
+      "sourceText": "Week 1: I. Orientation\nA. Introduction to the\nCourse Contents\nB. Course\nRequirements and\nActivities\nC. Course Objectives\nGrading System and\nPolicies on Absences,\nTardiness and\nExaminations",
+      "targetText": "ILO 1: Demonstrate a clear understanding of the course structure, expectations, and key programming concepts in Java, including how these skills align with real- world IT challenges and professional ethical standards. [CLO1]",
+      "inputHash": "a5d7b2a2728405a5f94eadeae7187540963a004ce253908ad06d06b260ab90b4",
+      "referenceHash": "bb7fc0d88ad211af3395183046661cc3bc1cc0a1e05131fbc2ea58f9df5f5e7c",
+      "referenceSnapshotVersion": "lcup-v2-controlled-evaluation-1-frozen-benchmark-contexts",
+      "policyVersion": "academic-evaluation-v2-preview-1",
+      "promptVersion": "alignment-12ab34c1c2c3d1d2req1-r8-rubric-academic-evaluation-v2-preview-1-lcup-v2-recommendation-2",
+      "modelRequested": "claude-sonnet-5-5",
+      "modelReturned": null,
+      "judgment": null,
+      "facultyJudgment": null,
+      "expectedResponseSchema": {
+        "type": "object",
+        "properties": {
+          "judgements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string",
+                  "enum": [
+                    "ALIGNED",
+                    "PARTIALLY_ALIGNED",
+                    "NOT_ALIGNED",
+                    "INSUFFICIENT_EVIDENCE"
+                  ]
+                },
+                "explanation": {
+                  "type": "string"
+                },
+                "sourceQuote": {
+                  "type": "string"
+                },
+                "targetQuote": {
+                  "type": "string"
+                },
+                "sourceBloom": {
+                  "type": "string"
+                },
+                "targetBloom": {
+                  "type": "string"
+                },
+                "correctionField": {
+                  "type": "string",
+                  "enum": [
+                    "none",
+                    "course_content",
+                    "ilo",
+                    "learning_activity",
+                    "assessment_task",
+                    "clo_mapping",
+                    "ilo_week",
+                    "undetermined"
+                  ]
+                },
+                "correctionReason": {
+                  "type": "string"
+                },
+                "recommendation": {
+                  "type": "string",
+                  "enum": [
+                    "NO_CHANGE",
+                    "REWRITE_TEXT",
+                    "RETAG_OUTCOME",
+                    "REVIEW_REQUIRED"
+                  ]
+                },
+                "draft": {
+                  "type": "string"
+                },
+                "teaching": {
+                  "type": "string",
+                  "enum": [
+                    "sound",
+                    "weak",
+                    "not_assessed"
+                  ]
+                },
+                "learnerSupport": {
+                  "type": "string",
+                  "enum": [
+                    "adequate",
+                    "limited",
+                    "not_applicable",
+                    "not_assessed"
+                  ]
+                },
+                "measures": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "partly",
+                    "no",
+                    "not_assessed"
+                  ]
+                },
+                "evidence": {
+                  "type": "string",
+                  "enum": [
+                    "observable",
+                    "vague",
+                    "not_assessed"
+                  ]
+                },
+                "level": {
+                  "type": "string",
+                  "enum": [
+                    "matches",
+                    "too_low",
+                    "too_high",
+                    "not_assessed"
+                  ]
+                },
+                "responsible": {
+                  "type": "string",
+                  "enum": [
+                    "activity",
+                    "assessment",
+                    "ilo",
+                    "course_content",
+                    "values",
+                    "none",
+                    "not_assessed"
+                  ]
+                },
+                "valueUse": {
+                  "type": "string",
+                  "enum": [
+                    "integrated",
+                    "opportunity",
+                    "name_only",
+                    "generic",
+                    "unrelated",
+                    "insufficient",
+                    "not_assessed"
+                  ]
+                },
+                "carriedBy": {
+                  "type": "string",
+                  "enum": [
+                    "activity",
+                    "assessment",
+                    "content",
+                    "ilo",
+                    "several",
+                    "none",
+                    "not_assessed"
+                  ]
+                },
+                "valueFit": {
+                  "type": "string",
+                  "enum": [
+                    "fits",
+                    "partly",
+                    "clashes",
+                    "not_assessed"
+                  ]
+                },
+                "coreValue": {
+                  "type": "string",
+                  "enum": [
+                    "Compassion",
+                    "Courage",
+                    "Community-orientedness",
+                    "Humility",
+                    "Interiority",
+                    "Missionary Spirit",
+                    "none",
+                    "insufficient",
+                    "not_assessed"
+                  ]
+                },
+                "integration": {
+                  "type": "string",
+                  "enum": [
+                    "demonstrated",
+                    "stated_only",
+                    "absent",
+                    "not_assessed"
+                  ]
+                },
+                "relevance": {
+                  "type": "string",
+                  "enum": [
+                    "relevant",
+                    "tangential",
+                    "unrelated",
+                    "cannot_tell",
+                    "not_assessed"
+                  ]
+                },
+                "basis": {
+                  "type": "string",
+                  "enum": [
+                    "title_and_venue",
+                    "title_only",
+                    "insufficient",
+                    "not_assessed"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "label",
+                "explanation",
+                "sourceQuote",
+                "targetQuote",
+                "sourceBloom",
+                "targetBloom",
+                "correctionField",
+                "correctionReason",
+                "recommendation",
+                "draft",
+                "teaching",
+                "learnerSupport",
+                "measures",
+                "evidence",
+                "level",
+                "responsible",
+                "valueUse",
+                "carriedBy",
+                "valueFit",
+                "coreValue",
+                "integration",
+                "relevance",
+                "basis"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "judgements"
+        ],
+        "additionalProperties": false
+      },
+      "holds": []
+    },
+    {
+      "caseId": "BM1-IE402-074",
+      "caseHash": "689fab10de2d8021aac753f37da8f33ed231049c1972fc6b28c74dec88b5ae78",
+      "program": "BSIE",
+      "course": {
+        "program": "BSIE",
+        "code": "IE-402",
+        "title": "Systems Engineering",
+        "schoolYear": "2025-2026",
+        "curriculumYear": "",
+        "yearLevel": "",
+        "prereq": "4th Year Standing",
+        "lecture": "",
+        "lab": ""
+      },
+      "sourceKind": "verified-syllabus",
+      "sourceDocuments": [
+        {
+          "file": "docs/lcup-approved-offline/ie402.fixture.json",
+          "sha256": "8b8e701e15ec4f18c9c6d60861e9c8de60415c475883a193730bfce222a7dd0f",
+          "path": "plan[0].ilos[0].text"
+        },
+        {
+          "file": "reference-data/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "sha256": "44ca6d48c77d0b04055cf330717b9381b64d3b7fb8674be727aa2eb4a1807569",
+          "pages": [
+            1,
+            3,
+            4
+          ],
+          "declaredFile": "docs/academic-references/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "relocated": true
+        }
+      ],
+      "relationshipType": "Content-ILO",
+      "sourceText": "Week 1: I. COURSE\nORIENTATION\nA. Introduction to the\nCourse Contents\nB. Course\nRequirements\nand Activities\nC. Course\nObjectives\nD. Grading System\nand Policies on\nAbsences,\nTardiness and\nExaminations",
+      "targetText": "ILO10: Demonstrate the Augustinian, Marian and missionary Christ- centered Spirituality through value webbing. [CLO 4]",
+      "inputHash": "7005c0cfdd0d0e1df9ceef1e7d573be37e622fc36bd549f6130a1be9737868f1",
+      "referenceHash": "a193874b7ce2c2448de4e9c482f240edaed6088b5031ca30fbed70e598fed1e0",
+      "referenceSnapshotVersion": "lcup-v2-controlled-evaluation-1-frozen-benchmark-contexts",
+      "policyVersion": "academic-evaluation-v2-preview-1",
+      "promptVersion": "alignment-12ab34c1c2c3d1d2req1-r8-rubric-academic-evaluation-v2-preview-1-lcup-v2-recommendation-2",
+      "modelRequested": "claude-sonnet-5-5",
+      "modelReturned": null,
+      "judgment": null,
+      "facultyJudgment": null,
+      "expectedResponseSchema": {
+        "type": "object",
+        "properties": {
+          "judgements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string",
+                  "enum": [
+                    "ALIGNED",
+                    "PARTIALLY_ALIGNED",
+                    "NOT_ALIGNED",
+                    "INSUFFICIENT_EVIDENCE"
+                  ]
+                },
+                "explanation": {
+                  "type": "string"
+                },
+                "sourceQuote": {
+                  "type": "string"
+                },
+                "targetQuote": {
+                  "type": "string"
+                },
+                "sourceBloom": {
+                  "type": "string"
+                },
+                "targetBloom": {
+                  "type": "string"
+                },
+                "correctionField": {
+                  "type": "string",
+                  "enum": [
+                    "none",
+                    "course_content",
+                    "ilo",
+                    "learning_activity",
+                    "assessment_task",
+                    "clo_mapping",
+                    "ilo_week",
+                    "undetermined"
+                  ]
+                },
+                "correctionReason": {
+                  "type": "string"
+                },
+                "recommendation": {
+                  "type": "string",
+                  "enum": [
+                    "NO_CHANGE",
+                    "REWRITE_TEXT",
+                    "RETAG_OUTCOME",
+                    "REVIEW_REQUIRED"
+                  ]
+                },
+                "draft": {
+                  "type": "string"
+                },
+                "teaching": {
+                  "type": "string",
+                  "enum": [
+                    "sound",
+                    "weak",
+                    "not_assessed"
+                  ]
+                },
+                "learnerSupport": {
+                  "type": "string",
+                  "enum": [
+                    "adequate",
+                    "limited",
+                    "not_applicable",
+                    "not_assessed"
+                  ]
+                },
+                "measures": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "partly",
+                    "no",
+                    "not_assessed"
+                  ]
+                },
+                "evidence": {
+                  "type": "string",
+                  "enum": [
+                    "observable",
+                    "vague",
+                    "not_assessed"
+                  ]
+                },
+                "level": {
+                  "type": "string",
+                  "enum": [
+                    "matches",
+                    "too_low",
+                    "too_high",
+                    "not_assessed"
+                  ]
+                },
+                "responsible": {
+                  "type": "string",
+                  "enum": [
+                    "activity",
+                    "assessment",
+                    "ilo",
+                    "course_content",
+                    "values",
+                    "none",
+                    "not_assessed"
+                  ]
+                },
+                "valueUse": {
+                  "type": "string",
+                  "enum": [
+                    "integrated",
+                    "opportunity",
+                    "name_only",
+                    "generic",
+                    "unrelated",
+                    "insufficient",
+                    "not_assessed"
+                  ]
+                },
+                "carriedBy": {
+                  "type": "string",
+                  "enum": [
+                    "activity",
+                    "assessment",
+                    "content",
+                    "ilo",
+                    "several",
+                    "none",
+                    "not_assessed"
+                  ]
+                },
+                "valueFit": {
+                  "type": "string",
+                  "enum": [
+                    "fits",
+                    "partly",
+                    "clashes",
+                    "not_assessed"
+                  ]
+                },
+                "coreValue": {
+                  "type": "string",
+                  "enum": [
+                    "Compassion",
+                    "Courage",
+                    "Community-orientedness",
+                    "Humility",
+                    "Interiority",
+                    "Missionary Spirit",
+                    "none",
+                    "insufficient",
+                    "not_assessed"
+                  ]
+                },
+                "integration": {
+                  "type": "string",
+                  "enum": [
+                    "demonstrated",
+                    "stated_only",
+                    "absent",
+                    "not_assessed"
+                  ]
+                },
+                "relevance": {
+                  "type": "string",
+                  "enum": [
+                    "relevant",
+                    "tangential",
+                    "unrelated",
+                    "cannot_tell",
+                    "not_assessed"
+                  ]
+                },
+                "basis": {
+                  "type": "string",
+                  "enum": [
+                    "title_and_venue",
+                    "title_only",
+                    "insufficient",
+                    "not_assessed"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "label",
+                "explanation",
+                "sourceQuote",
+                "targetQuote",
+                "sourceBloom",
+                "targetBloom",
+                "correctionField",
+                "correctionReason",
+                "recommendation",
+                "draft",
+                "teaching",
+                "learnerSupport",
+                "measures",
+                "evidence",
+                "level",
+                "responsible",
+                "valueUse",
+                "carriedBy",
+                "valueFit",
+                "coreValue",
+                "integration",
+                "relevance",
+                "basis"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "judgements"
+        ],
+        "additionalProperties": false
+      },
+      "holds": []
+    },
+    {
+      "caseId": "BM1-CPE304-051",
+      "caseHash": "6657df760ffbe04859740ab0039bbb1e5bd0d8f29e0382d66498d769eed928e6",
+      "program": "BSCPE",
+      "course": {
+        "program": "BSCPE",
+        "code": "CpE 304",
+        "title": "Fundamentals of Mixed Signals and Sensors",
+        "schoolYear": "2025-2026",
+        "curriculumYear": "",
+        "yearLevel": "",
+        "prereq": "FUNEC, FUNELC",
+        "lecture": "3",
+        "lab": "0"
+      },
+      "sourceKind": "verified-syllabus",
+      "sourceDocuments": [
+        {
+          "file": "docs/lcup-approved-offline/cpe304.fixture.json",
+          "sha256": "f22a01d95fba2429b6349d414d3f012fb442fa47118f07d9612504e45a67b8f5",
+          "path": "plan[1].ilos[0].text"
+        },
+        {
+          "file": "reference-data/CPE-304-Fundamentals-of-Mixed-Signals-and-Sensors.pdf",
+          "sha256": "f68eb5bedb77d31b153b23dc354ef457c9a349b7fca64ba5a46578230982a4a2",
+          "pages": [
+            1,
+            2,
+            4,
+            5
+          ],
+          "declaredFile": "docs/academic-references/CPE-304-Fundamentals-of-Mixed-Signals-and-Sensors.pdf",
+          "relocated": true
+        }
+      ],
+      "relationshipType": "Content-ILO",
+      "sourceText": "Week 2-3: II. Introduction to\nElectronic System\n• History of\nElectronics\n• Electronic Signals\nand Notation\n• Classifications of\nElectronic\nSystems\n• Specifications of\nElectronic\nSystems\n• Design of\nElectronic\nSystems\n• Design of\nElectronic Circuits\n• Electronic\nDevices\n• Emerging\nElectronics\nDifferential\nAmplifiers\n• Introduction to\nDifferential\nAmplifiers\n• Block Diagram\n• Differential Gain\n• Common Mode\nGain\n• CMRR\n• Configuration of\ndifferential\namplifiers",
+      "targetText": "ILO1: To develop skills in analysis and design of both analog and digital circuits [CLO1]",
+      "inputHash": "55ec2bcca08c00c9cbc207a7e95358c5ab481d0ef36fcd05cd24ea9f8e4ea6ba",
+      "referenceHash": "361a85773bbcbcd81a427e855c3aeaa9afcd24bdc408c6de71a31c8c7e86fd6e",
+      "referenceSnapshotVersion": "lcup-v2-controlled-evaluation-1-frozen-benchmark-contexts",
+      "policyVersion": "academic-evaluation-v2-preview-1",
+      "promptVersion": "alignment-12ab34c1c2c3d1d2req1-r8-rubric-academic-evaluation-v2-preview-1-lcup-v2-recommendation-2",
+      "modelRequested": "claude-sonnet-5-5",
+      "modelReturned": null,
+      "judgment": null,
+      "facultyJudgment": null,
+      "expectedResponseSchema": {
+        "type": "object",
+        "properties": {
+          "judgements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string",
+                  "enum": [
+                    "ALIGNED",
+                    "PARTIALLY_ALIGNED",
+                    "NOT_ALIGNED",
+                    "INSUFFICIENT_EVIDENCE"
+                  ]
+                },
+                "explanation": {
+                  "type": "string"
+                },
+                "sourceQuote": {
+                  "type": "string"
+                },
+                "targetQuote": {
+                  "type": "string"
+                },
+                "sourceBloom": {
+                  "type": "string"
+                },
+                "targetBloom": {
+                  "type": "string"
+                },
+                "correctionField": {
+                  "type": "string",
+                  "enum": [
+                    "none",
+                    "course_content",
+                    "ilo",
+                    "learning_activity",
+                    "assessment_task",
+                    "clo_mapping",
+                    "ilo_week",
+                    "undetermined"
+                  ]
+                },
+                "correctionReason": {
+                  "type": "string"
+                },
+                "recommendation": {
+                  "type": "string",
+                  "enum": [
+                    "NO_CHANGE",
+                    "REWRITE_TEXT",
+                    "RETAG_OUTCOME",
+                    "REVIEW_REQUIRED"
+                  ]
+                },
+                "draft": {
+                  "type": "string"
+                },
+                "teaching": {
+                  "type": "string",
+                  "enum": [
+                    "sound",
+                    "weak",
+                    "not_assessed"
+                  ]
+                },
+                "learnerSupport": {
+                  "type": "string",
+                  "enum": [
+                    "adequate",
+                    "limited",
+                    "not_applicable",
+                    "not_assessed"
+                  ]
+                },
+                "measures": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "partly",
+                    "no",
+                    "not_assessed"
+                  ]
+                },
+                "evidence": {
+                  "type": "string",
+                  "enum": [
+                    "observable",
+                    "vague",
+                    "not_assessed"
+                  ]
+                },
+                "level": {
+                  "type": "string",
+                  "enum": [
+                    "matches",
+                    "too_low",
+                    "too_high",
+                    "not_assessed"
+                  ]
+                },
+                "responsible": {
+                  "type": "string",
+                  "enum": [
+                    "activity",
+                    "assessment",
+                    "ilo",
+                    "course_content",
+                    "values",
+                    "none",
+                    "not_assessed"
+                  ]
+                },
+                "valueUse": {
+                  "type": "string",
+                  "enum": [
+                    "integrated",
+                    "opportunity",
+                    "name_only",
+                    "generic",
+                    "unrelated",
+                    "insufficient",
+                    "not_assessed"
+                  ]
+                },
+                "carriedBy": {
+                  "type": "string",
+                  "enum": [
+                    "activity",
+                    "assessment",
+                    "content",
+                    "ilo",
+                    "several",
+                    "none",
+                    "not_assessed"
+                  ]
+                },
+                "valueFit": {
+                  "type": "string",
+                  "enum": [
+                    "fits",
+                    "partly",
+                    "clashes",
+                    "not_assessed"
+                  ]
+                },
+                "coreValue": {
+                  "type": "string",
+                  "enum": [
+                    "Compassion",
+                    "Courage",
+                    "Community-orientedness",
+                    "Humility",
+                    "Interiority",
+                    "Missionary Spirit",
+                    "none",
+                    "insufficient",
+                    "not_assessed"
+                  ]
+                },
+                "integration": {
+                  "type": "string",
+                  "enum": [
+                    "demonstrated",
+                    "stated_only",
+                    "absent",
+                    "not_assessed"
+                  ]
+                },
+                "relevance": {
+                  "type": "string",
+                  "enum": [
+                    "relevant",
+                    "tangential",
+                    "unrelated",
+                    "cannot_tell",
+                    "not_assessed"
+                  ]
+                },
+                "basis": {
+                  "type": "string",
+                  "enum": [
+                    "title_and_venue",
+                    "title_only",
+                    "insufficient",
+                    "not_assessed"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "label",
+                "explanation",
+                "sourceQuote",
+                "targetQuote",
+                "sourceBloom",
+                "targetBloom",
+                "correctionField",
+                "correctionReason",
+                "recommendation",
+                "draft",
+                "teaching",
+                "learnerSupport",
+                "measures",
+                "evidence",
+                "level",
+                "responsible",
+                "valueUse",
+                "carriedBy",
+                "valueFit",
+                "coreValue",
+                "integration",
+                "relevance",
+                "basis"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "judgements"
+        ],
+        "additionalProperties": false
+      },
+      "holds": []
+    }
+  ]
+}

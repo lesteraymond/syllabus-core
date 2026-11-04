@@ -1,0 +1,153 @@
+{
+ "builtAt": "2026-10-28",
+ "by": "scratch build-adjudication.cjs (offline)",
+ "salt": "align-1-dev-adjudication/2026-10-28",
+ "sources": {
+  "a2": "73c27948f75cb1b7f6395c8b2924ff0a802afa52d7bafef92124d131eb891e94",
+  "b2": "ef984e44cd49667a8e41428e2b505fae6937238d1a5aaf9f9f4b1b0cebd870a6",
+  "a1": "ba3866e00e330cd7d077645283c0386943c36fbe55d7eab48dd8b177505778fb",
+  "dataset": "ab282a107df8c73b6e7e21e60fd990c86837055577bbb5a4cc7758bd62095801",
+  "prereg": "1415f75cfe12def391ac34056af23bbd99c8ab05260f0e21559534df759e1d60",
+  "seed": "a3b6314dbe45310b9a33c9995df73b86558178f72fb66455d7e7557d26029e50",
+  "outcomes": "d6730bbc7681b3a251da31d99679d39fc4cb8e4b64392397cace0a3da1d24ddb",
+  "curriculum": "7b89f89db64b4f199c996702a63325e3a370b9db08889998926c4fd23bed6e53",
+  "values": "f8c9ab3fc5e2f11e6b9c40b9bab2f7102f048701be2b3dff0f891f3ff9016cb9"
+ },
+ "files": [
+  {
+   "path": "README.md",
+   "sha256": "952146977335ea8b10a48f12b7a13ce58fcee55931b394364bb7e32bf3f7bf7d",
+   "bytes": 7855
+  },
+  {
+   "path": "coordinator/01-case-inventory.md",
+   "sha256": "e57d0e017b727cc97b1f6d9c30fcdfbee03d82fc1c736c102cd4a4ad4993fc06",
+   "bytes": 223003
+  },
+  {
+   "path": "coordinator/02-recommendation-quality-review.md",
+   "sha256": "67bcf03e6e35d554c74808bd7f2cb2bd6086bed499e114af6e9f2ddc4c8a6cad",
+   "bytes": 17703
+  },
+  {
+   "path": "coordinator/03-comparison-and-blinding-key.md",
+   "sha256": "de536d1885a2a56d102c818e201aebd379ead3729324b81262415b8a4ab42b49",
+   "bytes": 23619
+  },
+  {
+   "path": "coordinator/04-post-validation-development-plan.md",
+   "sha256": "652c0b82301983927aed8138019116ad649eed7cec8bc302ad93f04b9baf98db",
+   "bytes": 6250
+  },
+  {
+   "path": "coordinator/cases.json",
+   "sha256": "1ffc2b8cc0b0c75d90be9f88e3fa9d0ab5d6d7a754faf9c7b30a66cb78b67313",
+   "bytes": 347949
+  },
+  {
+   "path": "faculty/01-reviewer-guide.md",
+   "sha256": "9c155e008a61145cbdf6c521e16cf2f0ed150748ac81d72e2b4f82a36a78c366",
+   "bytes": 4980
+  },
+  {
+   "path": "faculty/02-curriculum-references.md",
+   "sha256": "c9b4bc08bc34bd87866e7ba0877335305a531b3e15cab75e5b8dfbda07cd8998",
+   "bytes": 21633
+  },
+  {
+   "path": "faculty/part-a/ACCTG201.md",
+   "sha256": "3349b3900708730fa393a11f4b912f98e574d7d44fc9b86c7955922778371719",
+   "bytes": 6517
+  },
+  {
+   "path": "faculty/part-a/EDUC105.md",
+   "sha256": "f0597f9beba30a79f5310ae46e03c297b62d253716cc85b724fb9c2c1b4ae194",
+   "bytes": 9699
+  },
+  {
+   "path": "faculty/part-a/HM210.md",
+   "sha256": "46c3e3a3165309fc9096bb9c5e099623f510f9f5cc43c75e85ff10da8be3106c",
+   "bytes": 5040
+  },
+  {
+   "path": "faculty/part-a/IE310.md",
+   "sha256": "4cbf7df088ad9a2f22cf465c5b4101155a99c3e55015984b9195b4e90d9f5ac8",
+   "bytes": 2379
+  },
+  {
+   "path": "faculty/part-a/IT204.md",
+   "sha256": "895992949238edf6b726d2317d48662f8b749f7f76b6d6b996fef79202d43f2a",
+   "bytes": 20380
+  },
+  {
+   "path": "faculty/part-a/MA7.md",
+   "sha256": "99b98aab701be76862fbc59cd76e4b19c0f0dc6aa9378bddeaa794fd804e271f",
+   "bytes": 30899
+  },
+  {
+   "path": "faculty/part-a/NCM101.md",
+   "sha256": "dc98c5a2556fcd67f78bfab12167a17f89b0dd5831a53f486e227a2eb699bd9e",
+   "bytes": 17051
+  },
+  {
+   "path": "faculty/part-a/part-a-responses.csv",
+   "sha256": "49024c6ceabc43bb1d79ec0db0dcea863ea488793ea1759e0a1cfdd7d549446b",
+   "bytes": 8330
+  },
+  {
+   "path": "faculty/part-b/ACCTG201.md",
+   "sha256": "f5bed8717ef60a7c7f801317e5fb62778912249fc70199f46daaaa84efca9300",
+   "bytes": 14436
+  },
+  {
+   "path": "faculty/part-b/EDUC105.md",
+   "sha256": "06042d3d5ce54c9cfef4e47679e2ddc799b559858c061cbedb4f7f75d2c4fbed",
+   "bytes": 18277
+  },
+  {
+   "path": "faculty/part-b/HM210.md",
+   "sha256": "f0f578e0cb495c97ea3d9d6aff4cf5bcbb87b0115a5dba41a1d25995ae91dfbc",
+   "bytes": 6684
+  },
+  {
+   "path": "faculty/part-b/IT204.md",
+   "sha256": "728d67f708396f4d9095912c15c613b482df2c6eed48052d986ec0bbd5e8e2e8",
+   "bytes": 28556
+  },
+  {
+   "path": "faculty/part-b/MA7.md",
+   "sha256": "c38315c2b67393a74f8316397847636c2ebca77bbf4fd47ed029d659dff139c9",
+   "bytes": 54962
+  },
+  {
+   "path": "faculty/part-b/NCM101.md",
+   "sha256": "6c4ce06d6ee1306970ce1e2adbb43e903d7af0f332a330961f937ec952cd8e64",
+   "bytes": 28944
+  },
+  {
+   "path": "faculty/part-b/part-b-responses.csv",
+   "sha256": "10e62aed1237439c5f67ee32da5a671e82363a4d4ac7d04f6820f0f459e66de4",
+   "bytes": 31051
+  },
+  {
+   "path": "institution/01-policy-questions.md",
+   "sha256": "940511626ac304b6fb097b3723b6472bc55445d467cf757578b512500ff30d56",
+   "bytes": 14550
+  },
+  {
+   "path": "institution/02-institutional-decisions.md",
+   "sha256": "e92d343210f4403755e6b4065bbce8a55fed6f67b5ff50a3dbcfe394534444ca",
+   "bytes": 4409
+  },
+  {
+   "path": "institution/03-adjudication-procedure.md",
+   "sha256": "53f94325a760452cd10408de858305c39bd4fa98f1f20aa821a9244dc0027177",
+   "bytes": 9181
+  },
+  {
+   "path": "institution/policy-responses.csv",
+   "sha256": "f7b608342e8f2d4f3adf7f63b81c5be4492e1dc1f98b87f797605893f0eab825",
+   "bytes": 1875
+  }
+ ]
+}

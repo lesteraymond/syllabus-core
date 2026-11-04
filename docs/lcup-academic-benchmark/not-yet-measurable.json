@@ -1,0 +1,573 @@
+{
+  "version": "lcup-academic-benchmark-1",
+  "policyVersion": "academic-evaluation-v2-preview-1",
+  "benchmarkHash": "ebd12920a890971b8c7fb481cc6bc9b469ec7dd4c2001134f6833cc31009bbf7",
+  "scope": "faculty-adjudicated-relationship-accuracy",
+  "status": "awaiting_faculty_adjudication",
+  "official": false,
+  "institutionalAcceptanceThreshold": null,
+  "modelRequestsMade": 0,
+  "academic": {
+    "facultyLabelled": 0,
+    "inScopeFacultyLabelled": 0,
+    "unlabelledOrExcluded": 751,
+    "agreement": null,
+    "agreementCounts": {
+      "strict": {
+        "answers": 0,
+        "agree": 0,
+        "rate": null
+      },
+      "permissive": {
+        "answers": 0,
+        "agree": 0,
+        "rate": null
+      }
+    },
+    "falseApprovals": {
+      "clearNotAligned": 0,
+      "judgedAligned": 0,
+      "rate": null,
+      "ids": []
+    },
+    "falseRejections": {
+      "clearAligned": 0,
+      "judgedOtherwise": 0,
+      "rate": null,
+      "byLabel": {},
+      "ids": []
+    },
+    "partialAccuracy": null,
+    "byRelationship": {
+      "Content-course": {
+        "facultyLabelled": 0,
+        "attempted": 0,
+        "agreement": null,
+        "agreementCounts": {
+          "strict": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          },
+          "permissive": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          }
+        },
+        "answered": 0,
+        "falseApprovals": {
+          "clearNotAligned": 0,
+          "judgedAligned": 0,
+          "rate": null,
+          "ids": []
+        },
+        "falseRejections": {
+          "clearAligned": 0,
+          "judgedOtherwise": 0,
+          "rate": null,
+          "byLabel": {},
+          "ids": []
+        },
+        "notAttempted": 0,
+        "invalid": 0
+      },
+      "Content-ILO": {
+        "facultyLabelled": 0,
+        "attempted": 0,
+        "agreement": null,
+        "agreementCounts": {
+          "strict": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          },
+          "permissive": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          }
+        },
+        "answered": 0,
+        "falseApprovals": {
+          "clearNotAligned": 0,
+          "judgedAligned": 0,
+          "rate": null,
+          "ids": []
+        },
+        "falseRejections": {
+          "clearAligned": 0,
+          "judgedOtherwise": 0,
+          "rate": null,
+          "byLabel": {},
+          "ids": []
+        },
+        "notAttempted": 0,
+        "invalid": 0
+      },
+      "ILO-CLO": {
+        "facultyLabelled": 0,
+        "attempted": 0,
+        "agreement": null,
+        "agreementCounts": {
+          "strict": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          },
+          "permissive": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          }
+        },
+        "answered": 0,
+        "falseApprovals": {
+          "clearNotAligned": 0,
+          "judgedAligned": 0,
+          "rate": null,
+          "ids": []
+        },
+        "falseRejections": {
+          "clearAligned": 0,
+          "judgedOtherwise": 0,
+          "rate": null,
+          "byLabel": {},
+          "ids": []
+        },
+        "notAttempted": 0,
+        "invalid": 0
+      },
+      "Content-activity": {
+        "facultyLabelled": 0,
+        "attempted": 0,
+        "agreement": null,
+        "agreementCounts": {
+          "strict": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          },
+          "permissive": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          }
+        },
+        "answered": 0,
+        "falseApprovals": {
+          "clearNotAligned": 0,
+          "judgedAligned": 0,
+          "rate": null,
+          "ids": []
+        },
+        "falseRejections": {
+          "clearAligned": 0,
+          "judgedOtherwise": 0,
+          "rate": null,
+          "byLabel": {},
+          "ids": []
+        },
+        "notAttempted": 0,
+        "invalid": 0
+      },
+      "ILO-activity": {
+        "facultyLabelled": 0,
+        "attempted": 0,
+        "agreement": null,
+        "agreementCounts": {
+          "strict": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          },
+          "permissive": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          }
+        },
+        "answered": 0,
+        "falseApprovals": {
+          "clearNotAligned": 0,
+          "judgedAligned": 0,
+          "rate": null,
+          "ids": []
+        },
+        "falseRejections": {
+          "clearAligned": 0,
+          "judgedOtherwise": 0,
+          "rate": null,
+          "byLabel": {},
+          "ids": []
+        },
+        "notAttempted": 0,
+        "invalid": 0
+      },
+      "Content-assessment": {
+        "facultyLabelled": 0,
+        "attempted": 0,
+        "agreement": null,
+        "agreementCounts": {
+          "strict": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          },
+          "permissive": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          }
+        },
+        "answered": 0,
+        "falseApprovals": {
+          "clearNotAligned": 0,
+          "judgedAligned": 0,
+          "rate": null,
+          "ids": []
+        },
+        "falseRejections": {
+          "clearAligned": 0,
+          "judgedOtherwise": 0,
+          "rate": null,
+          "byLabel": {},
+          "ids": []
+        },
+        "notAttempted": 0,
+        "invalid": 0
+      },
+      "Activity-assessment": {
+        "facultyLabelled": 0,
+        "attempted": 0,
+        "agreement": null,
+        "agreementCounts": {
+          "strict": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          },
+          "permissive": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          }
+        },
+        "answered": 0,
+        "falseApprovals": {
+          "clearNotAligned": 0,
+          "judgedAligned": 0,
+          "rate": null,
+          "ids": []
+        },
+        "falseRejections": {
+          "clearAligned": 0,
+          "judgedOtherwise": 0,
+          "rate": null,
+          "byLabel": {},
+          "ids": []
+        },
+        "notAttempted": 0,
+        "invalid": 0
+      }
+    },
+    "byProgram": {
+      "BSIT": {
+        "facultyLabelled": 0,
+        "attempted": 0,
+        "agreement": null,
+        "agreementCounts": {
+          "strict": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          },
+          "permissive": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          }
+        },
+        "answered": 0,
+        "falseApprovals": {
+          "clearNotAligned": 0,
+          "judgedAligned": 0,
+          "rate": null,
+          "ids": []
+        },
+        "falseRejections": {
+          "clearAligned": 0,
+          "judgedOtherwise": 0,
+          "rate": null,
+          "byLabel": {},
+          "ids": []
+        },
+        "notAttempted": 0,
+        "invalid": 0
+      },
+      "BSIT-CYBERSECURITY": {
+        "facultyLabelled": 0,
+        "attempted": 0,
+        "agreement": null,
+        "agreementCounts": {
+          "strict": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          },
+          "permissive": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          }
+        },
+        "answered": 0,
+        "falseApprovals": {
+          "clearNotAligned": 0,
+          "judgedAligned": 0,
+          "rate": null,
+          "ids": []
+        },
+        "falseRejections": {
+          "clearAligned": 0,
+          "judgedOtherwise": 0,
+          "rate": null,
+          "byLabel": {},
+          "ids": []
+        },
+        "notAttempted": 0,
+        "invalid": 0
+      },
+      "BSIE": {
+        "facultyLabelled": 0,
+        "attempted": 0,
+        "agreement": null,
+        "agreementCounts": {
+          "strict": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          },
+          "permissive": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          }
+        },
+        "answered": 0,
+        "falseApprovals": {
+          "clearNotAligned": 0,
+          "judgedAligned": 0,
+          "rate": null,
+          "ids": []
+        },
+        "falseRejections": {
+          "clearAligned": 0,
+          "judgedOtherwise": 0,
+          "rate": null,
+          "byLabel": {},
+          "ids": []
+        },
+        "notAttempted": 0,
+        "invalid": 0
+      },
+      "BSCPE": {
+        "facultyLabelled": 0,
+        "attempted": 0,
+        "agreement": null,
+        "agreementCounts": {
+          "strict": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          },
+          "permissive": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          }
+        },
+        "answered": 0,
+        "falseApprovals": {
+          "clearNotAligned": 0,
+          "judgedAligned": 0,
+          "rate": null,
+          "ids": []
+        },
+        "falseRejections": {
+          "clearAligned": 0,
+          "judgedOtherwise": 0,
+          "rate": null,
+          "byLabel": {},
+          "ids": []
+        },
+        "notAttempted": 0,
+        "invalid": 0
+      }
+    },
+    "bySourceKind": {
+      "verified-syllabus": {
+        "facultyLabelled": 0,
+        "attempted": 0,
+        "agreement": null,
+        "agreementCounts": {
+          "strict": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          },
+          "permissive": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          }
+        },
+        "answered": 0,
+        "falseApprovals": {
+          "clearNotAligned": 0,
+          "judgedAligned": 0,
+          "rate": null,
+          "ids": []
+        },
+        "falseRejections": {
+          "clearAligned": 0,
+          "judgedOtherwise": 0,
+          "rate": null,
+          "byLabel": {},
+          "ids": []
+        },
+        "notAttempted": 0,
+        "invalid": 0
+      },
+      "synthetic": {
+        "facultyLabelled": 0,
+        "attempted": 0,
+        "agreement": null,
+        "agreementCounts": {
+          "strict": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          },
+          "permissive": {
+            "answers": 0,
+            "agree": 0,
+            "rate": null
+          }
+        },
+        "answered": 0,
+        "falseApprovals": {
+          "clearNotAligned": 0,
+          "judgedAligned": 0,
+          "rate": null,
+          "ids": []
+        },
+        "falseRejections": {
+          "clearAligned": 0,
+          "judgedOtherwise": 0,
+          "rate": null,
+          "byLabel": {},
+          "ids": []
+        },
+        "notAttempted": 0,
+        "invalid": 0
+      }
+    },
+    "profileFalseApprovals": null,
+    "profileMeasurementLimitation": "No complete-scope faculty syllabus disposition or genuine V2 model report is supplied."
+  },
+  "operations": {
+    "planned": 0,
+    "attempted": 0,
+    "neverAttempted": 0,
+    "verified": 0,
+    "recovered": 0,
+    "unresolved": 0,
+    "unresolvedRate": null,
+    "coverage": null,
+    "attemptedShare": null,
+    "firstAttempt": {
+      "answered": 0,
+      "refused": 0,
+      "validationFailureRate": null,
+      "noAnswerFirst": 0
+    },
+    "rawResponseErrors": {
+      "answers": 0,
+      "invalidAnswers": 0,
+      "refusedJudgements": 0,
+      "requestsWithoutAnswer": 0
+    },
+    "aspectCoverage": null,
+    "reviewPoolSemantic": 751,
+    "notSelected": 751,
+    "referenceHeld": 126
+  },
+  "evidence": {
+    "mechanical": {
+      "sides": {},
+      "exactRate": null,
+      "judgementsReturned": 0,
+      "refusedForQuotes": 0,
+      "refusedRate": null,
+      "byCode": {}
+    },
+    "facultyRatings": {
+      "quoteAccuracy": {
+        "ratings": 0,
+        "yes": 0,
+        "partly": 0,
+        "no": 0,
+        "cannotJudge": 0,
+        "yesShare": null
+      },
+      "relevanceOfEvidence": {
+        "ratings": 0,
+        "yes": 0,
+        "partly": 0,
+        "no": 0,
+        "cannotJudge": 0,
+        "yesShare": null
+      },
+      "explanationSupported": {
+        "ratings": 0,
+        "yes": 0,
+        "partly": 0,
+        "no": 0,
+        "cannotJudge": 0,
+        "yesShare": null
+      },
+      "referenceHoldHonesty": {
+        "ratings": 0,
+        "yes": 0,
+        "partly": 0,
+        "no": 0,
+        "cannotJudge": 0,
+        "yesShare": null
+      }
+    },
+    "semanticEvidenceLimitation": "Quote containment is mechanical; independent faculty review must establish whether the quotations support the explanation."
+  },
+  "recommendations": {
+    "synthetic-proposal": {
+      "proposals": 8,
+      "reviewerRatings": 0,
+      "appropriate": 0,
+      "inappropriate": 0,
+      "partly": 0,
+      "cannotJudge": 0,
+      "appropriateShare": null
+    },
+    "Claude": {
+      "proposals": 0,
+      "reviewerRatings": 0,
+      "appropriate": 0,
+      "inappropriate": 0,
+      "partly": 0,
+      "cannotJudge": 0,
+      "appropriateShare": null
+    }
+  },
+  "exclusions": [],
+  "refused": []
+}

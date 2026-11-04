@@ -1,0 +1,105 @@
+{
+  "baselineHead": "68926cb392756c07bb0b999538d098d1038be368",
+  "finalHead": "68926cb392756c07bb0b999538d098d1038be368",
+  "existingFilesChecked": 1102,
+  "unchanged": 1100,
+  "changed": [
+    {
+      "path": "server/lib/syllabuscheck/variants.js",
+      "before": "9e2123a1ae3e80497bbbdd4f8d9e19d91c72f5b839213380e34e00f8f5f5fb94",
+      "after": "a9ba7eac42a34c1b44fa96ac6b9c79208d0706ad1562434365bb6312874a3825",
+      "expected": true
+    },
+    {
+      "path": "src/i18n/lessonAuthoring.js",
+      "before": "9c637311e8c5abd9d483c8e15f0724ff386792914a047e23a47c557836241416",
+      "after": "d695c5f4231cb4a951a1087524c16ab08d081cfe23012f722d4de61b9a109367",
+      "expected": true
+    }
+  ],
+  "missing": [],
+  "unexpectedChanges": [],
+  "testGroups": [
+    {
+      "name": "New consolidated requirements",
+      "log": "regression-requirements-tests-final.log",
+      "tests": 21,
+      "passed": 21,
+      "failed": 0
+    },
+    {
+      "name": "Bilingual lesson authoring",
+      "log": "regression-lesson-ui-final.log",
+      "tests": 6,
+      "passed": 6,
+      "failed": 0
+    },
+    {
+      "name": "Existing C3, verdict and model",
+      "log": "regression-core-regressions.log",
+      "tests": 80,
+      "passed": 80,
+      "failed": 0
+    },
+    {
+      "name": "Existing alignment, stages, scoring and provider",
+      "log": "regression-alignment-regressions.log",
+      "tests": 223,
+      "passed": 223,
+      "failed": 0
+    },
+    {
+      "name": "Rules, route gates, findings and save workflow",
+      "log": "regression-workflow-regressions.log",
+      "tests": 161,
+      "passed": 161,
+      "failed": 0
+    },
+    {
+      "name": "Existing importer UI",
+      "log": "regression-importer-ui-regressions.log",
+      "tests": 16,
+      "passed": 16,
+      "failed": 0
+    },
+    {
+      "name": "Catalog and content HTTP persistence",
+      "log": "regression-catalog-regressions.log",
+      "tests": 22,
+      "passed": 22,
+      "failed": 0
+    },
+    {
+      "name": "Compatibility fixes and existing prompt variants",
+      "log": "compatibility-final.log",
+      "tests": 9,
+      "passed": 9,
+      "failed": 0
+    },
+    {
+      "name": "Policy V2 isolated projection",
+      "log": "projection-tests.log",
+      "tests": 22,
+      "passed": 22,
+      "failed": 0
+    },
+    {
+      "name": "Existing C3 addendum contracts",
+      "log": "c3-addendum-tests.log",
+      "tests": 8,
+      "passed": 8,
+      "failed": 0
+    }
+  ],
+  "totalPassed": 568,
+  "sampledTranslationAudit": {
+    "missing": 0,
+    "sentences": 57
+  },
+  "comparisonCases": 22,
+  "networkAttempts": 0,
+  "productionDatabaseWrites": 0,
+  "migrationsRun": 0,
+  "paidAiCalls": 0,
+  "officialPolicyActivated": false
+}

@@ -1,0 +1,782 @@
+{
+ "version": "stage-d1-2",
+ "status": "DRAFT - synthetic examples with author-written labels, NOT faculty-reviewed",
+ "reviewStatus": "unreviewed",
+ "provenance": "Course identity and descriptions: the repository's records and the sample syllabi (as in stage-a-dataset.json). The lessons, value statements and references are SYNTHETIC examples written by the assistant; every reference uses an invented author and an 'Example' publisher and is NOT a real work. The institution's definitions of the six core values are not available to the checker, so the Value-use items assume none is supplied. Expected verdicts are the assistant's, unreviewed by faculty; nothing here measures agreement with faculty.",
+ "splits": {
+  "dev": "All items. No held-out split."
+ },
+ "categories": [
+  "clear-positive",
+  "name-only",
+  "generic",
+  "unrelated",
+  "clash",
+  "no-activity",
+  "week-one-orientation",
+  "multiweek",
+  "ambiguous",
+  "supporting-with-evidence",
+  "supporting-without-evidence",
+  "supporting-weak",
+  "opportunity",
+  "demonstrated",
+  "insufficient-evidence"
+ ],
+ "courses": {
+  "prog1": {
+   "code": "IT 202",
+   "title": "Computer Programming 1 (Fundamentals of Programming)",
+   "program": "BSIT",
+   "yearLevel": "2",
+   "discipline": "computing",
+   "description": "This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications."
+  },
+  "syseng": {
+   "code": "IE 402",
+   "title": "Systems Engineering",
+   "program": "BSIE",
+   "yearLevel": "4",
+   "discipline": "engineering",
+   "description": "This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation."
+  },
+  "sensors": {
+   "code": "CPE 304",
+   "title": "Fundamentals of Mixed Signals and Sensors",
+   "program": "BSCPE",
+   "yearLevel": "3",
+   "discipline": "engineering",
+   "description": "This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included."
+  }
+ },
+ "note": "A trap never accepts ALIGNED. Sources are built by values.js, assuming NO institutional definitions are supplied. Where an item has `expectedAspects` (valueUse, carriedBy, valueFit) the structured fields are compared too; a list means several values are acceptable. Not covered by model items: examination weeks (never asked), lessons whose earlier fields are off (held back), the whole-course VAL-04 (deterministic). Offline E.7 follow-up: the original 17 examples and expectations are unchanged. Twelve new examples distinguish a bare name, an activity-linked opportunity, described integration, and thin evidence across three courses. All labels and structured-field expectations remain provisional; none has a model answer or faculty review.",
+ "items": [
+  {
+   "id": "vu-prog1-humility-review",
+   "origin": "stage-d1-1",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "prog1",
+   "category": "clear-positive",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Develop and test Java programs that use if-else and switch statements to make decisions.\nLearning activities: - Pair programming in the laboratory: students write if-else programs and review each other's code.\nAssessment tasks: - Programming task: write and test an if-else program.\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Humility: in the peer code review each student names one thing they could have done better in their own program and accepts the reviewer's comments before revising.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The value is lived in a concrete step of the activity: acknowledging a mistake and accepting feedback.",
+   "expectedAspects": {
+    "valueUse": "integrated",
+    "carriedBy": [
+     "activity",
+     "several"
+    ],
+    "valueFit": "fits"
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vu-prog1-name-only",
+   "origin": "stage-d1-1",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "prog1",
+   "category": "name-only",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Develop and test Java programs that use if-else and switch statements to make decisions.\nLearning activities: - Pair programming in the laboratory: students write if-else programs and review each other's code.\nAssessment tasks: - Programming task: write and test an if-else program.\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Humility",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "A bare value name says nothing about what students do.",
+   "expectedAspects": {
+    "valueUse": "name_only"
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vu-prog1-generic",
+   "origin": "stage-d1-1",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "prog1",
+   "category": "generic",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Develop and test Java programs that use if-else and switch statements to make decisions.\nLearning activities: - Pair programming in the laboratory: students write if-else programs and review each other's code.\nAssessment tasks: - Programming task: write and test an if-else program.\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Courage: students will show courage in their studies.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "A sentence that would fit any lesson.",
+   "expectedAspects": {
+    "valueUse": "generic"
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vu-prog1-unrelated",
+   "origin": "stage-d1-1",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "prog1",
+   "category": "unrelated",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Develop and test Java programs that use if-else and switch statements to make decisions.\nLearning activities: - Pair programming in the laboratory: students write if-else programs and review each other's code.\nAssessment tasks: - Programming task: write and test an if-else program.\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Missionary Spirit: students will join mission trips to far-away communities.",
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Unrelated to anything the students do in this lesson.",
+   "expectedAspects": {
+    "valueUse": [
+     "unrelated",
+     "generic"
+    ],
+    "valueFit": [
+     "clashes",
+     "partly"
+    ]
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vu-prog1-clashes",
+   "origin": "stage-d1-1",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "prog1",
+   "category": "clash",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Develop and test Java programs that use if-else and switch statements to make decisions.\nLearning activities: - Pair programming in the laboratory: students write if-else programs and review each other's code.\nAssessment tasks: - Programming task: write and test an if-else program.\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Humility: students compete to have the best program and the winner is announced to the class.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "The named value is contradicted by the competition the sentence describes.",
+   "expectedAspects": {
+    "valueFit": "clashes"
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vu-prog1-no-activity",
+   "origin": "stage-d1-1",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "prog1",
+   "category": "no-activity",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Develop and test Java programs that use if-else and switch statements to make decisions.\nLearning activities: (none written)\nAssessment tasks: (none written)\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Compassion: students help each other.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "The lesson has no activity or task that students carry out, so nothing can carry the value.",
+   "expectedAspects": {
+    "carriedBy": [
+     "none",
+     "content",
+     "ilo"
+    ]
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vu-prog1-week1",
+   "origin": "stage-d1-1",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "prog1",
+   "category": "week-one-orientation",
+   "source": "Week 1 course content: Course orientation: objectives, requirements, grading and policies\nILOs:\n- Describe the course objectives, requirements and grading system.\nLearning activities: - Setting and sharing of expectations; review of policies.\nAssessment tasks: - Statement of expectations\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Community-orientedness: in the first class students agree on shared class expectations and take turns presenting them to the group.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "A legitimate orientation lesson: the value is lived in a shared task.",
+   "expectedAspects": {
+    "valueUse": "integrated",
+    "valueFit": "fits"
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vu-prog1-multiweek",
+   "origin": "stage-d1-1",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "prog1",
+   "category": "multiweek",
+   "source": "Week 4-5 course content: Loops: for, while and do-while; nested loops\nILOs:\n- Write and test Java programs that use for and while loops.\nLearning activities: - Guided laboratory sessions over two weeks with pair programming.\nAssessment tasks: - Laboratory exercise: write and test a loop program.\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Courage: in the second week a pair presents a program that does not yet work and asks the class for help in finding the error.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Presenting an unfinished program and asking for help is a concrete act of courage in a programming lesson.",
+   "expectedAspects": {
+    "valueUse": "integrated",
+    "valueFit": [
+     "fits",
+     "partly"
+    ]
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vu-syseng-community",
+   "origin": "stage-d1-1",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "syseng",
+   "category": "clear-positive",
+   "source": "Week 4 course content: Requirements analysis: stakeholder needs, system requirements specification and traceability\nILOs:\n- Write verifiable system requirements for a given scenario.\nLearning activities: - Guided workshop: teams interview a stakeholder from a community case and draft requirements.\nAssessment tasks: - Requirements document\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Community-orientedness: teams write requirements that reflect the stakeholder's needs from the interview, not the team's own preferences.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The value is lived in how the requirements are produced.",
+   "expectedAspects": {
+    "valueUse": "integrated",
+    "valueFit": "fits"
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vu-syseng-interiority-generic",
+   "origin": "stage-d1-1",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "syseng",
+   "category": "generic",
+   "source": "Week 4 course content: Requirements analysis: stakeholder needs, system requirements specification and traceability\nILOs:\n- Write verifiable system requirements for a given scenario.\nLearning activities: - Guided workshop: teams draft requirements.\nAssessment tasks: - Requirements document\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Interiority: students reflect.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Names a value and the word \"reflect\" but not on what, or how.",
+   "expectedAspects": {
+    "valueUse": [
+     "generic",
+     "name_only"
+    ]
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vu-sensors-courage",
+   "origin": "stage-d1-1",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "sensors",
+   "category": "ambiguous",
+   "source": "Week 3 course content: Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth\nILOs:\n- Design and test an inverting amplifier with a specified gain.\nLearning activities: - Guided design example, then simulation.\nAssessment tasks: - Practical: build and measure the amplifier, record the measured gain.\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Courage: students report a measured gain that misses the design value instead of adjusting the numbers.",
+   "accept": [
+    "ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Honest reporting could be read as courage; contestable.",
+   "expectedAspects": {
+    "valueUse": [
+     "integrated",
+     "generic"
+    ]
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "ambiguous": true
+  },
+  {
+   "id": "vu-sensors-silly",
+   "origin": "stage-d1-1",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "sensors",
+   "category": "unrelated",
+   "source": "Week 3 course content: Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth\nILOs:\n- Design and test an inverting amplifier with a specified gain.\nLearning activities: - Guided design example, then simulation.\nAssessment tasks: - Practical: build and measure the amplifier.\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Compassion: students are kind to the circuits.",
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "The value statement has nothing to do with what students do or decide.",
+   "expectedAspects": {
+    "valueUse": [
+     "unrelated",
+     "generic"
+    ]
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vm-prog1-respect-supported",
+   "origin": "stage-d1-2",
+   "type": "Value-map",
+   "split": "dev",
+   "course": "prog1",
+   "category": "supporting-with-evidence",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Develop and test Java programs that use if-else and switch statements to make decisions.\nLearning activities: - Pair programming in the laboratory: after each exercise the pair swaps seats, listens to the reading of the code by the partner before commenting, and records one thing learned from the partner.\nAssessment tasks: - Programming task: write and test an if-else program.\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.\nThe six official core values: Compassion, Courage, Community-orientedness, Humility, Interiority, Missionary Spirit.\nExpressions the faculty wrote (not official core values): Respect",
+   "target": "Respect",
+   "accept": [
+    "ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Respect is shown in how partners listen and credit each other: it can support Community-orientedness, but only because the activity shows it.",
+   "expectedAspects": {
+    "coreValue": [
+     "Community-orientedness",
+     "Humility"
+    ],
+    "integration": "demonstrated"
+   },
+   "ambiguous": true,
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vm-prog1-respect-no-evidence",
+   "origin": "stage-d1-2",
+   "type": "Value-map",
+   "split": "dev",
+   "course": "prog1",
+   "category": "supporting-without-evidence",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Develop and test Java programs that use if-else and switch statements to make decisions.\nLearning activities: - Lecture and demonstration of if-else statements.\nAssessment tasks: - Programming task: write and test an if-else program.\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.\nThe six official core values: Compassion, Courage, Community-orientedness, Humility, Interiority, Missionary Spirit.\nExpressions the faculty wrote (not official core values): Respect",
+   "target": "Respect",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Nothing students do in this lesson shows respect, so no core value can be supported.",
+   "expectedAspects": {
+    "coreValue": [
+     "none",
+     "insufficient"
+    ],
+    "integration": [
+     "stated_only",
+     "absent"
+    ]
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vm-prog1-honesty-supported",
+   "origin": "stage-d1-2",
+   "type": "Value-map",
+   "split": "dev",
+   "course": "prog1",
+   "category": "supporting-with-evidence",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Develop and test Java programs that use if-else and switch statements to make decisions.\nLearning activities: - Laboratory: students run their program against the provided test cases and report every failing case truthfully in their test log, including cases they cannot yet fix.\nAssessment tasks: - Programming task: write and test an if-else program.\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.\nThe six official core values: Compassion, Courage, Community-orientedness, Humility, Interiority, Missionary Spirit.\nExpressions the faculty wrote (not official core values): Honesty in reporting test results",
+   "target": "Honesty in reporting test results",
+   "accept": [
+    "ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Truthful reporting of failures is the observable behaviour; it can support Courage.",
+   "expectedAspects": {
+    "coreValue": [
+     "Courage",
+     "Humility"
+    ],
+    "integration": "demonstrated"
+   },
+   "ambiguous": true,
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vm-syseng-cooperation-supported",
+   "origin": "stage-d1-2",
+   "type": "Value-map",
+   "split": "dev",
+   "course": "syseng",
+   "category": "supporting-with-evidence",
+   "source": "Week 4 course content: Requirements analysis: stakeholder needs, system requirements specification and traceability\nILOs:\n- Write verifiable system requirements for a given scenario.\nLearning activities: - Team workshop: each member interviews a different stakeholder and the team merges the findings into one requirements list, resolving conflicts together.\nAssessment tasks: - Requirements document\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.\nThe six official core values: Compassion, Courage, Community-orientedness, Humility, Interiority, Missionary Spirit.\nExpressions the faculty wrote (not official core values): Cooperation",
+   "target": "Cooperation",
+   "accept": [
+    "ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Cooperation is shown by merging the interviews and resolving conflicts together; it can support Community-orientedness.",
+   "expectedAspects": {
+    "coreValue": "Community-orientedness",
+    "integration": "demonstrated"
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vm-sensors-patience-weak",
+   "origin": "stage-d1-2",
+   "type": "Value-map",
+   "split": "dev",
+   "course": "sensors",
+   "category": "supporting-weak",
+   "source": "Week 3 course content: Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth\nILOs:\n- Design and test an inverting amplifier with a specified gain.\nLearning activities: - Guided design example, then simulation.\nAssessment tasks: - Practical: build and measure the amplifier.\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.\nThe six official core values: Compassion, Courage, Community-orientedness, Humility, Interiority, Missionary Spirit.\nExpressions the faculty wrote (not official core values): Patience",
+   "target": "Patience",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "The word is written; nothing in the lesson shows how patience is lived.",
+   "expectedAspects": {
+    "coreValue": [
+     "none",
+     "insufficient"
+    ],
+    "integration": [
+     "stated_only",
+     "absent"
+    ]
+   },
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vu-prog1-e7-name-only",
+   "origin": "stage-d1-2",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "prog1",
+   "category": "name-only",
+   "evidenceDistinction": "name-only",
+   "source": "Week 6 course content: Java arrays: array indices, bounds and trace tables\nILOs:\n- Trace the contents of an integer array after a sequence of assignments.\nLearning activities: - Students complete array trace tables individually, then compare their calculations with a partner.\nAssessment tasks: - Submit a corrected trace table with the array index for each assignment.\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Humility",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Only a value name is written. The activity may allow it, but the name describes no integration.",
+   "expectedAspects": {
+    "valueUse": "name_only",
+    "carriedBy": "none"
+   },
+   "reviewStatus": "unreviewed",
+   "expectationStatus": "provisional",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vu-prog1-e7-opportunity",
+   "origin": "stage-d1-2",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "prog1",
+   "category": "opportunity",
+   "evidenceDistinction": "opportunity",
+   "source": "Week 6 course content: Java arrays: array indices, bounds and trace tables\nILOs:\n- Trace the contents of an integer array after a sequence of assignments.\nLearning activities: - Students complete array trace tables individually, then compare their calculations with a partner.\nAssessment tasks: - Submit a corrected trace table with the array index for each assignment.\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Humility during the array trace-table comparison.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "The statement names the lesson activity as a place for the value, without saying what anyone does or decides to express it.",
+   "expectedAspects": {
+    "valueUse": "opportunity",
+    "carriedBy": "none"
+   },
+   "reviewStatus": "unreviewed",
+   "expectationStatus": "provisional",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vu-prog1-e7-demonstrated",
+   "origin": "stage-d1-2",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "prog1",
+   "category": "demonstrated",
+   "evidenceDistinction": "demonstrated",
+   "source": "Week 6 course content: Java arrays: array indices, bounds and trace tables\nILOs:\n- Trace the contents of an integer array after a sequence of assignments.\nLearning activities: - Students complete array trace tables individually, then compare their calculations with a partner.\nAssessment tasks: - Submit a corrected trace table with the array index for each assignment.\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Humility: during the trace-table comparison, each student identifies an assumption in their own index calculation that was mistaken, listens to the partner's explanation, and corrects the table.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The value statement explicitly describes a student decision or interpersonal behaviour within this lesson; faculty must judge whether it expresses the named value.",
+   "expectedAspects": {
+    "valueUse": "integrated",
+    "carriedBy": [
+     "activity",
+     "several"
+    ],
+    "valueFit": [
+     "fits",
+     "partly"
+    ]
+   },
+   "reviewStatus": "unreviewed",
+   "expectationStatus": "provisional",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vu-prog1-e7-insufficient-evidence",
+   "origin": "stage-d1-2",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "prog1",
+   "category": "insufficient-evidence",
+   "evidenceDistinction": "insufficient-evidence",
+   "source": "Week 6 course content: Java arrays: array indices, bounds and trace tables\nILOs: (not provided)\nLearning activities: (not provided)\nAssessment tasks: (not provided)\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Humility: students acknowledge mistaken assumptions when comparing their work.",
+   "accept": [
+    "INSUFFICIENT_EVIDENCE",
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Only a topic is supplied. The statement cannot establish an instructional integration without a described activity or assessment; the precise label remains a faculty decision.",
+   "expectedAspects": {
+    "valueUse": "insufficient",
+    "carriedBy": "none"
+   },
+   "reviewStatus": "unreviewed",
+   "expectationStatus": "provisional",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vu-syseng-e7-name-only",
+   "origin": "stage-d1-2",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "syseng",
+   "category": "name-only",
+   "evidenceDistinction": "name-only",
+   "source": "Week 8 course content: Engineering trade studies: service access and maintenance alternatives\nILOs:\n- Compare maintenance alternatives using a decision matrix for a simulated hospital.\nLearning activities: - Teams discuss a simulated hospital case, compare how maintenance closures affect ward staff and patients, and rank two maintenance schedules.\nAssessment tasks: - Submit a decision matrix and a justified maintenance schedule.\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Community-orientedness",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Only a value name is written. The activity may allow it, but the name describes no integration.",
+   "expectedAspects": {
+    "valueUse": "name_only",
+    "carriedBy": "none"
+   },
+   "reviewStatus": "unreviewed",
+   "expectationStatus": "provisional",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vu-syseng-e7-opportunity",
+   "origin": "stage-d1-2",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "syseng",
+   "category": "opportunity",
+   "evidenceDistinction": "opportunity",
+   "source": "Week 8 course content: Engineering trade studies: service access and maintenance alternatives\nILOs:\n- Compare maintenance alternatives using a decision matrix for a simulated hospital.\nLearning activities: - Teams discuss a simulated hospital case, compare how maintenance closures affect ward staff and patients, and rank two maintenance schedules.\nAssessment tasks: - Submit a decision matrix and a justified maintenance schedule.\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Community-orientedness in the maintenance-schedule discussion.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "The statement names the lesson activity as a place for the value, without saying what anyone does or decides to express it.",
+   "expectedAspects": {
+    "valueUse": "opportunity",
+    "carriedBy": "none"
+   },
+   "reviewStatus": "unreviewed",
+   "expectationStatus": "provisional",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vu-syseng-e7-demonstrated",
+   "origin": "stage-d1-2",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "syseng",
+   "category": "demonstrated",
+   "evidenceDistinction": "demonstrated",
+   "source": "Week 8 course content: Engineering trade studies: service access and maintenance alternatives\nILOs:\n- Compare maintenance alternatives using a decision matrix for a simulated hospital.\nLearning activities: - Teams discuss a simulated hospital case, compare how maintenance closures affect ward staff and patients, and rank two maintenance schedules.\nAssessment tasks: - Submit a decision matrix and a justified maintenance schedule.\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Community-orientedness: before agreeing on a maintenance schedule, team members explain how each option affects access for ward staff and patients, and use those shared service needs to justify the selected schedule.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The value statement explicitly describes a student decision or interpersonal behaviour within this lesson; faculty must judge whether it expresses the named value.",
+   "expectedAspects": {
+    "valueUse": "integrated",
+    "carriedBy": [
+     "activity",
+     "several"
+    ],
+    "valueFit": [
+     "fits",
+     "partly"
+    ]
+   },
+   "reviewStatus": "unreviewed",
+   "expectationStatus": "provisional",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vu-syseng-e7-insufficient-evidence",
+   "origin": "stage-d1-2",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "syseng",
+   "category": "insufficient-evidence",
+   "evidenceDistinction": "insufficient-evidence",
+   "source": "Week 8 course content: Engineering trade studies: service access and maintenance alternatives\nILOs: (not provided)\nLearning activities: (not provided)\nAssessment tasks: (not provided)\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Community-orientedness: teams consider shared service needs before selecting a schedule.",
+   "accept": [
+    "INSUFFICIENT_EVIDENCE",
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Only a topic is supplied. The statement cannot establish an instructional integration without a described activity or assessment; the precise label remains a faculty decision.",
+   "expectedAspects": {
+    "valueUse": "insufficient",
+    "carriedBy": "none"
+   },
+   "reviewStatus": "unreviewed",
+   "expectationStatus": "provisional",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vu-sensors-e7-name-only",
+   "origin": "stage-d1-2",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "sensors",
+   "category": "name-only",
+   "evidenceDistinction": "name-only",
+   "source": "Week 7 course content: Thermistor calibration: resistance, temperature and calibration records\nILOs:\n- Calibrate a thermistor and interpret its resistance-temperature record.\nLearning activities: - Partners follow the supplied thermistor calibration procedure, compare their records and repeat unstable readings.\nAssessment tasks: - Submit the calibration record and explain one source of uncertainty.\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Compassion",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Only a value name is written. The activity may allow it, but the name describes no integration.",
+   "expectedAspects": {
+    "valueUse": "name_only",
+    "carriedBy": "none"
+   },
+   "reviewStatus": "unreviewed",
+   "expectationStatus": "provisional",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vu-sensors-e7-opportunity",
+   "origin": "stage-d1-2",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "sensors",
+   "category": "opportunity",
+   "evidenceDistinction": "opportunity",
+   "source": "Week 7 course content: Thermistor calibration: resistance, temperature and calibration records\nILOs:\n- Calibrate a thermistor and interpret its resistance-temperature record.\nLearning activities: - Partners follow the supplied thermistor calibration procedure, compare their records and repeat unstable readings.\nAssessment tasks: - Submit the calibration record and explain one source of uncertainty.\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Compassion during the thermistor calibration practical.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "The statement names the lesson activity as a place for the value, without saying what anyone does or decides to express it.",
+   "expectedAspects": {
+    "valueUse": "opportunity",
+    "carriedBy": "none"
+   },
+   "reviewStatus": "unreviewed",
+   "expectationStatus": "provisional",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vu-sensors-e7-demonstrated",
+   "origin": "stage-d1-2",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "sensors",
+   "category": "demonstrated",
+   "evidenceDistinction": "demonstrated",
+   "source": "Week 7 course content: Thermistor calibration: resistance, temperature and calibration records\nILOs:\n- Calibrate a thermistor and interpret its resistance-temperature record.\nLearning activities: - Partners follow the supplied thermistor calibration procedure, compare their records and repeat unstable readings.\nAssessment tasks: - Submit the calibration record and explain one source of uncertainty.\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Compassion: when a partner struggles to obtain a stable reading, students ask which calibration step is difficult and assist that partner with the same procedure before resuming their own readings.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The value statement explicitly describes a student decision or interpersonal behaviour within this lesson; faculty must judge whether it expresses the named value.",
+   "expectedAspects": {
+    "valueUse": "integrated",
+    "carriedBy": [
+     "activity",
+     "several"
+    ],
+    "valueFit": [
+     "fits",
+     "partly"
+    ]
+   },
+   "reviewStatus": "unreviewed",
+   "expectationStatus": "provisional",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "vu-sensors-e7-insufficient-evidence",
+   "origin": "stage-d1-2",
+   "type": "Value-use",
+   "split": "dev",
+   "course": "sensors",
+   "category": "insufficient-evidence",
+   "evidenceDistinction": "insufficient-evidence",
+   "source": "Week 7 course content: Thermistor calibration: resistance, temperature and calibration records\nILOs: (not provided)\nLearning activities: (not provided)\nAssessment tasks: (not provided)\nNo institutional definition of the values named is supplied: judge only what the lesson text itself shows.",
+   "target": "Compassion: students support a peer who finds the calibration difficult.",
+   "accept": [
+    "INSUFFICIENT_EVIDENCE",
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Only a topic is supplied. The statement cannot establish an instructional integration without a described activity or assessment; the precise label remains a faculty decision.",
+   "expectedAspects": {
+    "valueUse": "insufficient",
+    "carriedBy": "none"
+   },
+   "reviewStatus": "unreviewed",
+   "expectationStatus": "provisional",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  }
+ ],
+ "baselineVersion": "stage-d1-1",
+ "changeLog": [
+  {
+   "stage": "E.7 offline follow-up",
+   "reviewedBy": null,
+   "change": "Preserve all stage-d1-1 items; add twelve synthetic evidence-distinction cases. Missing lesson evidence provisionally accepts INSUFFICIENT_EVIDENCE as well as flagged labels; the two existing disputed labels are unchanged."
+  }
+ ]
+}

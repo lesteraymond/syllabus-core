@@ -1,0 +1,292 @@
+{
+  "items": 9,
+  "runs": 1,
+  "answered": 0,
+  "invalid": 4,
+  "invalidRate": 1,
+  "notAttempted": 5,
+  "agreement": null,
+  "falsePositiveRate": null,
+  "falseNegativeRate": null,
+  "counts": {
+    "clearAligned": 0,
+    "falsePositive": 0,
+    "clearNot": 0,
+    "falseNegative": 0
+  },
+  "confusion": {
+    "ALIGNED": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 1
+    },
+    "PARTIAL": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 2
+    },
+    "FLAGGED": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 1
+    }
+  },
+  "partialAccuracy": null,
+  "approvalAccuracy": null,
+  "byDiscipline": {
+    "computing": {
+      "items": 4,
+      "answered": 0,
+      "agree": 0,
+      "invalid": 4,
+      "agreement": null
+    },
+    "engineering": {
+      "items": 5,
+      "answered": 0,
+      "agree": 0,
+      "invalid": 0,
+      "agreement": null
+    }
+  },
+  "byCategory": {
+    "clear-positive": {
+      "items": 3,
+      "answered": 0,
+      "agree": 0,
+      "invalid": 1,
+      "agreement": null
+    },
+    "tangential": {
+      "items": 2,
+      "answered": 0,
+      "agree": 0,
+      "invalid": 1,
+      "agreement": null
+    },
+    "unrelated": {
+      "items": 2,
+      "answered": 0,
+      "agree": 0,
+      "invalid": 1,
+      "agreement": null
+    },
+    "cannot-tell": {
+      "items": 1,
+      "answered": 0,
+      "agree": 0,
+      "invalid": 1,
+      "agreement": null
+    },
+    "ambiguous": {
+      "items": 1,
+      "answered": 0,
+      "agree": 0,
+      "invalid": 0,
+      "agreement": null
+    }
+  },
+  "stability": null,
+  "byType": {
+    "Ref-relevance": {
+      "items": 9,
+      "answered": 0,
+      "agree": 0,
+      "invalid": 4,
+      "agreement": null
+    }
+  },
+  "disagreements": [],
+  "structuredFields": {
+    "answers": 0,
+    "withFields": 0,
+    "missing": 0,
+    "malformed": 0,
+    "contradictory": 0,
+    "notAssessed": 0,
+    "perField": {},
+    "note": "Expectations are provisional. Only an assessed field is compared with them: a field that was not assessed, missing, malformed or in a self-contradictory answer is counted by its state, never as agreement. INSUFFICIENT_EVIDENCE answers are left out."
+  },
+  "model": "openrouter/minimax/minimax-m3.1-flash",
+  "promptVersion": "alignment-12d2-r7",
+  "dataset": {
+    "name": "stage-d2",
+    "version": "stage-d2-1",
+    "split": "all",
+    "reviewStatus": "unreviewed"
+  },
+  "retries": {
+    "batches": 1,
+    "requests": 1,
+    "invalidAnswers": 0,
+    "finalUnverified": 0,
+    "providerErrors": 1,
+    "notSent": 0,
+    "retryRate": 0,
+    "invalidAnswerRate": 0
+  },
+  "relationshipMetrics": {
+    "planned": 9,
+    "attempted": 4,
+    "neverAttempted": 5,
+    "verified": 0,
+    "recovered": 0,
+    "unresolved": 4,
+    "unresolvedRate": 1,
+    "coverage": 0,
+    "attemptedShare": 0.4444,
+    "firstAttempt": {
+      "answered": 0,
+      "refused": 0,
+      "validationFailureRate": null,
+      "noAnswerFirst": 4
+    },
+    "rawResponseErrors": {
+      "answers": 0,
+      "invalidAnswers": 0,
+      "refusedJudgements": 0,
+      "requestsWithoutAnswer": 1
+    },
+    "aspectCoverage": null
+  },
+  "completion": {
+    "maxUnresolved": 0.2,
+    "unresolvedRate": 1,
+    "coverage": 0,
+    "stopped": "HTTP 401 (credits, key or access)",
+    "state": "incomplete",
+    "usableForAgreement": false,
+    "reason": "5 of 9 planned relationships were never attempted (stopped: HTTP 401 (credits, key or access)); they are not evaluated"
+  },
+  "schema": {
+    "minItems": false,
+    "emptyAnswers": 0,
+    "minItemsNotEnforced": false
+  },
+  "limits": {
+    "budget": 21,
+    "maxCost": 0.05,
+    "maxTransient": 3,
+    "maxUnproductive": 9,
+    "maxUnresolved": 0.2,
+    "minSample": 8,
+    "warnInvalid": 9,
+    "maxInvalid": null,
+    "accounting": "reconcile",
+    "maxTokens": "production (8192)"
+  },
+  "failures": [
+    {
+      "run": 1,
+      "course": "prog1",
+      "ids": [
+        "rr-prog1-relevant",
+        "rr-prog1-tangential",
+        "rr-prog1-unrelated",
+        "rr-prog1-cannot-tell"
+      ],
+      "error": "OpenRouter HTTP 401: API key expired.; alignment not evaluated",
+      "rejected": []
+    }
+  ],
+  "perItem": {
+    "rr-prog1-relevant": [
+      null
+    ],
+    "rr-prog1-tangential": [
+      null
+    ],
+    "rr-prog1-unrelated": [
+      null
+    ],
+    "rr-prog1-cannot-tell": [
+      null
+    ],
+    "rr-syseng-relevant": [
+      "not_attempted"
+    ],
+    "rr-syseng-unrelated": [
+      "not_attempted"
+    ],
+    "rr-sensors-relevant": [
+      "not_attempted"
+    ],
+    "rr-sensors-tangential": [
+      "not_attempted"
+    ],
+    "rr-sensors-web": [
+      "not_attempted"
+    ]
+  },
+  "ranAt": "2026-10-26T04:39:18.440Z",
+  "answers": [
+    {}
+  ],
+  "usage": {
+    "requests": 2,
+    "thisRun": 2,
+    "model": 1,
+    "priceLookups": 1,
+    "invalidAnswers": 0,
+    "unproductiveInARow": 0,
+    "transient": 0,
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "cachedTokens": 0,
+    "reportedCost": 0,
+    "charged": 0,
+    "accounting": {
+      "rule": "reconcile",
+      "requests": {
+        "reconciled": 0,
+        "conservative": 0,
+        "worst_case": 0,
+        "refused": 1
+      },
+      "chargedConservatively": 0
+    },
+    "warnings": [],
+    "limits": {
+      "maxRequests": 21,
+      "maxCost": 0.05,
+      "maxTransient": 3,
+      "maxInvalid": null,
+      "warnInvalid": 9,
+      "maxUnproductive": 9,
+      "maxTokens": null
+    },
+    "stopped": "HTTP 401 (credits, key or access)"
+  },
+  "requests": [
+    {
+      "n": 2,
+      "ids": [
+        "rr-prog1-relevant",
+        "rr-prog1-tangential",
+        "rr-prog1-unrelated",
+        "rr-prog1-cannot-tell"
+      ],
+      "status": 401,
+      "ms": 90,
+      "provider": null,
+      "finishReason": null,
+      "usage": null,
+      "accounting": "refused",
+      "charged": 0,
+      "conservativeCharge": 0,
+      "error": null,
+      "content": null
+    }
+  ],
+  "stopped": "HTTP 401 (credits, key or access)",
+  "isolation": {
+    "dataModulesLoaded": [],
+    "processEnvStageFlags": []
+  }
+}

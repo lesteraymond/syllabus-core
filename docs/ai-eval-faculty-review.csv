@@ -1,0 +1,88 @@
+﻿"# DRAFT - author-written, NOT faculty-reviewed"
+"# Dataset eval-1.1. Expected verdicts are the dataset author's judgement, not a faculty consensus. Where reasonable reviewers could differ, `accept` lists every verdict that is defensible and `ambiguous` is true; those items are left out of the false-positive and false-negative rates. A faculty panel should review, correct and extend this file before any threshold is set from it."
+"# Faculty: for each item read source, target and the expected verdict(s); enter your own verdict in facultyVerdict (ALIGNED, PARTIALLY_ALIGNED or NOT_ALIGNED) and a note. Where reasonable reviewers disagree, record that in facultyNotes rather than forcing one answer. Set reviewStatus to ""faculty-reviewed"" per item only after review; set the dataset reviewStatus to ""faculty-reviewed"" only when every item has been."
+"ID","Relationship type","Discipline","Course","Course title","Program / year","Set","Scenario","Source text","Target text","Author expects","Clear or ambiguous","Author rationale","Diagnosis (awaiting faculty)","Where it came from","Model answered","FACULTY VERDICT (Aligned / Partially aligned / Not aligned)","FACULTY NOTES","Review status"
+"clo-po-calc-aligned","CLO-PO","","MA 7","Differential Calculus","BSIE, year 1","","","Apply knowledge of mathematics and science to solve complex engineering problems.","Apply differentiation rules to solve optimization problems in engineering.","Aligned","Clear","Same action, same discipline, same level.","","Written for eval-1.1","","","","unreviewed"
+"clo-po-calc-lower-level","CLO-PO","","MA 7","Differential Calculus","BSIE, year 1","","","Design solutions for complex engineering problems that meet specified needs.","Define the derivative of a function.","Partially aligned or Not aligned","Clear","Recall-level outcome against a design-level outcome.","","Written for eval-1.1","","","","unreviewed"
+"clo-po-calc-unrelated","CLO-PO","","MA 7","Differential Calculus","BSIE, year 1","","","Communicate effectively with a range of audiences.","Evaluate limits of rational functions.","Not aligned or Partially aligned","Clear","Nothing about communication.","","Written for eval-1.1","","","","unreviewed"
+"clo-po-calc-vague","CLO-PO","","MA 7","Differential Calculus","BSIE, year 1","","","Apply knowledge of mathematics and science to solve complex engineering problems.","Understand calculus.","Partially aligned or Not aligned","Clear","No action or object that can be compared.","","Written for eval-1.1","","","","unreviewed"
+"clo-po-prog-aligned","CLO-PO","","IT 204","Computer Programming 2","BSIT, year 2","","","Design and implement computing-based solutions to meet desired needs.","Design, implement and test object-oriented programs that solve given problems.","Aligned","Clear","Design and implement are both present, same discipline.","","Written for eval-1.1","","","","unreviewed"
+"clo-po-prog-lower-level","CLO-PO","","IT 204","Computer Programming 2","BSIT, year 2","","","Design and evaluate computing solutions for real problems.","List the keywords of the programming language.","Partially aligned or Not aligned","Clear","Remember-level against design and evaluate.","","Written for eval-1.1","","","","unreviewed"
+"clo-po-prog-two-skills","CLO-PO","","IT 204","Computer Programming 2","BSIT, year 2","","","Design solutions and communicate them effectively to technical and non-technical audiences.","Design a program solution for a given problem.","Partially aligned or Not aligned","Clear","Only one of the two required skills is shown.","","Written for eval-1.1","","","","unreviewed"
+"clo-po-prog-interdisciplinary","CLO-PO","","IT 204","Computer Programming 2","BSIT, year 2","","","Analyze the impact of computing on individuals, organizations and society.","Evaluate the ethical and social implications of a software system on its users.","Aligned","Clear","Valid interdisciplinary outcome that matches the PO.","The model judged PARTIALLY_ALIGNED in every run (3 of 3) and its explanation is defensible: the PO asks to analyze the impact of computing on individuals, organizations AND society, while the CLO evaluates the ethical and social implications of ONE software system on its users, narrowing the object and dropping organizations and society. Proposal: Aligned or Partially aligned (not applied).","Written for eval-1.1","","","","unreviewed"
+"clo-po-nurs-aligned","CLO-PO","","NCM 101","Fundamentals of Nursing Practice","BSN, year 1","","","Provide safe, quality nursing care to individuals using the nursing process.","Perform basic nursing procedures safely using the nursing process on a simulated patient.","Aligned","Clear","Same practice, same process.","","Written for eval-1.1","","","","unreviewed"
+"clo-po-nurs-unrelated","CLO-PO","","NCM 101","Fundamentals of Nursing Practice","BSN, year 1","","","Provide safe, quality nursing care to individuals using the nursing process.","Compute the derivative of polynomial functions.","Not aligned","Clear","Different discipline entirely.","","Written for eval-1.1","","","","unreviewed"
+"clo-ega-aligned","CLO-EGA","","IT 204","Computer Programming 2","BSIT, year 2","","","Critical and Creative thinker","Analyze alternative designs and justify the selection of one for a given problem.","Aligned or Partially aligned","AMBIGUOUS (reasonable reviewers may differ)","Analysis and justification support critical thinking; creativity is arguable.","","Written for eval-1.1","","","","unreviewed"
+"clo-ega-unrelated","CLO-EGA","","IT 204","Computer Programming 2","BSIT, year 2","","","Competent Professional","Recite the history of the institution.","Not aligned or Partially aligned","Clear","No professional competence is shown.","","Written for eval-1.1","","","","unreviewed"
+"clo-anypo-fits","CLO-anyPO","","MA 7","Differential Calculus","BSIE, year 1","","","1. Apply knowledge of mathematics and science to solve complex engineering problems.
+2. Communicate effectively with a range of audiences.
+3. Recognize the need for lifelong learning.","Apply differentiation rules to solve optimization problems in engineering.","Aligned","Clear","Fits PO 1; it need not fit the others.","","Written for eval-1.1","","","","unreviewed"
+"clo-anypo-none","CLO-anyPO","","MA 7","Differential Calculus","BSIE, year 1","","","1. Apply knowledge of mathematics and science to solve complex engineering problems.
+2. Communicate effectively with a range of audiences.
+3. Recognize the need for lifelong learning.","Appreciate the history of ancient Rome and its art.","Not aligned or Partially aligned","Clear","Fits none of the listed outcomes.","","Written for eval-1.1","","","","unreviewed"
+"ilo-clo-calc-aligned","ILO-CLO","","MA 7","Differential Calculus","BSIE, year 1","","","Apply differentiation rules to solve optimization problems in engineering.","Apply the chain rule to differentiate composite functions.","Aligned","Clear","A smaller step of the CLO.","","Written for eval-1.1","","","","unreviewed"
+"ilo-clo-claims-more","ILO-CLO","","MA 7","Differential Calculus","BSIE, year 1","","","Define limits of functions.","Design and implement a numerical solver for limits.","Partially aligned or Not aligned","Clear","The ILO asks for much more than the CLO.","","Written for eval-1.1","","","","unreviewed"
+"ilo-clo-unrelated","ILO-CLO","","MA 7","Differential Calculus","BSIE, year 1","","","Apply differentiation rules to solve optimization problems in engineering.","Describe the history of ancient Rome.","Not aligned","Clear","Unrelated subject.","","Written for eval-1.1","","","","unreviewed"
+"ilo-clo-prog-aligned","ILO-CLO","","IT 204","Computer Programming 2","BSIT, year 2","","","Design, implement and test object-oriented programs that solve given problems.","Implement a class hierarchy using inheritance in the chosen language.","Aligned","Clear","A concrete step of the CLO.","","Written for eval-1.1","","","","unreviewed"
+"ilo-activity-prog-practises","ILO-activity","","IT 204","Computer Programming 2","BSIT, year 2","","","Implement a class hierarchy using inheritance in the chosen language.","Students code a class hierarchy in the laboratory with instructor feedback.","Aligned","Clear","The activity is the skill itself.","","Written for eval-1.1","","","","unreviewed"
+"ilo-activity-calc-passive","ILO-activity","","MA 7","Differential Calculus","BSIE, year 1","","","Design a cost-minimizing container using derivatives.","Listen to a lecture on derivative rules.","Partially aligned or Not aligned","Clear","Listening does not practise designing.","","Written for eval-1.1","","","","unreviewed"
+"ilo-activity-calc-unrelated","ILO-activity","","MA 7","Differential Calculus","BSIE, year 1","","","Design a cost-minimizing container using derivatives.","Group discussion on the history of Rome.","Not aligned","Clear","Unrelated activity.","","Written for eval-1.1","","","","unreviewed"
+"ilo-activity-nurs-practises","ILO-activity","","NCM 101","Fundamentals of Nursing Practice","BSN, year 1","","","Demonstrate the correct procedure for taking blood pressure.","Return demonstration of blood pressure measurement on a partner in the skills laboratory.","Aligned","Clear","Practice of the exact procedure.","","Written for eval-1.1","","","","unreviewed"
+"ilo-assess-prog-aligned","ILO-assessment","","IT 204","Computer Programming 2","BSIT, year 2","","","Design a normalized database schema for a given scenario.","Project: students submit an entity-relationship diagram and a normalized schema for an assigned scenario, scored with a rubric.","Aligned","Clear","The output is the skill, with scoring criteria.","","Written for eval-1.1","","","","unreviewed"
+"ilo-assess-prog-mcq-for-design","ILO-assessment","","IT 204","Computer Programming 2","BSIT, year 2","","","Design a normalized database schema for a given scenario.","Multiple-choice quiz on database terms.","Partially aligned or Not aligned","Clear","Recall cannot show a design.","","Written for eval-1.1","","","","unreviewed"
+"ilo-assess-named-only","ILO-assessment","","IT 204","Computer Programming 2","BSIT, year 2","","","Explain the concept of recursion.","Quiz","Partially aligned or Not aligned","Clear","The task says nothing about what is assessed.","","Written for eval-1.1","","","","unreviewed"
+"ilo-assess-mcq-for-understand","ILO-assessment","","IT 204","Computer Programming 2","BSIT, year 2","","","Describe the difference between a stack and a queue.","Multiple-choice quiz on data structure concepts.","Aligned or Partially aligned","AMBIGUOUS (reasonable reviewers may differ)","Multiple choice can support Understand; reviewers may want a short explanation too.","","Written for eval-1.1","","","","unreviewed"
+"ilo-assess-nurs-knowledge-for-skill","ILO-assessment","","NCM 101","Fundamentals of Nursing Practice","BSN, year 1","","","Perform hand hygiene using the correct technique.","Written exam on the steps of hand hygiene.","Partially aligned or Not aligned","Clear","A written exam shows knowing the steps, not performing them.","","Written for eval-1.1","","","","unreviewed"
+"ilo-content-calc-aligned","ILO-content","","MA 7","Differential Calculus","BSIE, year 1","","","Apply the chain rule to differentiate composite functions.","Chain rule; derivatives of composite functions; worked examples from physics, economics and engineering.","Aligned","Clear","Covers the topic with applications from several fields.","","Written for eval-1.1","","","","unreviewed"
+"ilo-content-calc-bare","ILO-content","","MA 7","Differential Calculus","BSIE, year 1","","","Apply the chain rule to differentiate composite functions.","Chain rule.","Partially aligned or Aligned","AMBIGUOUS (reasonable reviewers may differ)","A topic name alone; reviewers differ on whether it is enough for a contents column.","","Written for eval-1.1","","","","unreviewed"
+"ilo-content-calc-narrow-audience","ILO-content","","MA 7","Differential Calculus","BSIE, year 1","","","Apply the chain rule to differentiate composite functions.","Chain rule examples that use only Formula 1 racing telemetry and assume prior racing experience.","Partially aligned or Aligned","AMBIGUOUS (reasonable reviewers may differ)","Covers the topic but assumes a narrow background.","","Written for eval-1.1","","","","unreviewed"
+"ilo-content-calc-unrelated","ILO-content","","MA 7","Differential Calculus","BSIE, year 1","","","Apply the chain rule to differentiate composite functions.","History of the Roman Empire.","Not aligned","Clear","Unrelated contents.","","Written for eval-1.1","","","","unreviewed"
+"value-calc-integrated","Module-value","","MA 7","Differential Calculus","BSIE, year 1","","","Apply the chain rule to differentiate composite functions.
+Chain rule; worked examples
+Pair problem solving
+Quiz","Compassion: students coach a classmate through the chain-rule problem set so everyone can apply it.","Aligned","Clear","The value is tied to what students do for this ILO.","","Written for eval-1.1","","","","unreviewed"
+"value-calc-bare","Module-value","","MA 7","Differential Calculus","BSIE, year 1","","","Apply the chain rule to differentiate composite functions.
+Chain rule; worked examples
+Pair problem solving
+Quiz","Compassion","Partially aligned","Clear","A bare value name.","","Written for eval-1.1","","","","unreviewed"
+"value-calc-unconnected","Module-value","","MA 7","Differential Calculus","BSIE, year 1","","","Apply the chain rule to differentiate composite functions.
+Chain rule; worked examples
+Pair problem solving
+Quiz","Missionary Spirit","Partially aligned or Not aligned","Clear","A bare value name that is not tied to the lesson.","","Written for eval-1.1","","","","unreviewed"
+"desc-calc-aligned","Description-plan","","MA 7","Differential Calculus","BSIE, year 1","","","Week 1: Functions and graphs; limits of a function
+Week 2: Limit laws; continuity
+Week 3: The derivative; differentiation rules
+Week 4: Chain rule; implicit differentiation
+Week 5: Higher-order derivatives; related rates
+Week 6: Optimization problems in engineering
+Week 7: Curve sketching; mean value theorem","This course covers functions, limits and continuity, the derivative and its rules, higher-order and implicit differentiation, related rates, optimization and curve sketching, with applications to engineering problems.","Aligned","Clear","Names the plan's topics.","","Written for eval-1.1","","","","unreviewed"
+"desc-calc-generic","Description-plan","","MA 7","Differential Calculus","BSIE, year 1","","","Week 1: Functions and graphs; limits of a function
+Week 2: Limit laws; continuity
+Week 3: The derivative; differentiation rules
+Week 4: Chain rule; implicit differentiation
+Week 5: Higher-order derivatives; related rates
+Week 6: Optimization problems in engineering
+Week 7: Curve sketching; mean value theorem","This course introduces students to important concepts and prepares them for further study through lectures and activities.","Partially aligned or Not aligned","Clear","Would fit any course.","","Written for eval-1.1","","","","unreviewed"
+"desc-calc-other-subject","Description-plan","","MA 7","Differential Calculus","BSIE, year 1","","","Week 1: Functions and graphs; limits of a function
+Week 2: Limit laws; continuity
+Week 3: The derivative; differentiation rules","This course studies the history, culture and art of ancient Rome.","Not aligned","Clear","A different subject.","","Written for eval-1.1","","","","unreviewed"
+"desc-calc-too-narrow","Description-plan","","MA 7","Differential Calculus","BSIE, year 1","","","Week 1: Functions and graphs; limits of a function
+Week 2: Limit laws; continuity
+Week 3: The derivative; differentiation rules
+Week 4: Chain rule; implicit differentiation
+Week 5: Higher-order derivatives; related rates
+Week 6: Optimization problems in engineering","This course covers limits and continuity.","Partially aligned","Clear","Omits most of the plan.","","Written for eval-1.1","","","","unreviewed"
+"ref-calc-relevant","REF-plan","","MA 7","Differential Calculus","BSIE, year 1","","","Calculus: Early Transcendentals
+Chapters on limits, derivatives and their applications.","Differential Calculus
+Week 1: Limits of a function
+Week 3: The derivative; differentiation rules
+Week 6: Optimization problems","Aligned","Clear","Directly covers the topics.","","Written for eval-1.1","","","","unreviewed"
+"ref-calc-older-foundational","REF-plan","","MA 7","Differential Calculus","BSIE, year 1","","","Principles of Mathematical Analysis (1976)
+A classic text on limits, continuity and differentiation.","Differential Calculus
+Week 1: Limits of a function
+Week 2: Continuity
+Week 3: The derivative; differentiation rules","Aligned or Partially aligned","AMBIGUOUS (reasonable reviewers may differ)","Old but foundational; age alone is not a defect.","","Written for eval-1.1","","","","unreviewed"
+"ref-calc-unrelated","REF-plan","","MA 7","Differential Calculus","BSIE, year 1","","","Cooking with herbs
+A collection of recipes using garden herbs.","Differential Calculus
+Week 1: Limits of a function
+Week 3: The derivative; differentiation rules","Not aligned","Clear","Unrelated subject.","","Written for eval-1.1","","","","unreviewed"

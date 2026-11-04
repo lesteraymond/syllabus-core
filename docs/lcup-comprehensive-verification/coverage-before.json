@@ -1,0 +1,837 @@
+{
+  "reviewed": [
+    {
+      "file": "docs/lcup-requirements/requirements-matrix.md",
+      "sha256": "12a51df2ca7e845d1dde7e0021c71f3ff057ecbd47d7576fd9693dea4230ab37",
+      "headings": [
+        "# Consolidated requirements matrix"
+      ]
+    },
+    {
+      "file": "docs/lcup-requirements/REPORT.md",
+      "sha256": "cf6e2c64e6c4a37b48524509b3affa18711e2b1398a22966df51e9b5c81ac253",
+      "headings": [
+        "# Consolidated original-requirements verification",
+        "## One requirements matrix and execution evidence",
+        "## Confirmed gaps implemented",
+        "## Seven relationships and separate ILO–Assessment impact",
+        "## Verification results",
+        "## Exact implementation changes and preservation",
+        "## Remaining limitations and final assessment"
+      ]
+    },
+    {
+      "file": "docs/lcup-policy-v2/REPORT.md",
+      "sha256": "1f95e1be54cefc00fd426b4567c910e73a4b49c1f913a7be237b6b6524bae146",
+      "headings": [
+        "# Academic Evaluation Policy V2: design and isolated verification",
+        "## Deliverables",
+        "## Compatibility stabilization",
+        "## Current scoring-policy assessment",
+        "## Proposed policy and legacy checks",
+        "## Isolated comparison and limitations",
+        "## Regression verification",
+        "## Exact files changed",
+        "## Decision and next work"
+      ]
+    },
+    {
+      "file": "docs/lcup-policy-v2/PROPOSAL.md",
+      "sha256": "54d13c1345b4cc60d4a781b89955f16da3053d8631396eb9c4a6fe6b21f77096",
+      "headings": [
+        "# Academic Evaluation Policy V2 — draft for institutional review",
+        "## Recommended policy: separate compliance from academic evidence",
+        "## Seven required weekly relationships",
+        "## Preserve every other original requirement",
+        "## Avoid duplicate penalties without hiding independent findings",
+        "## Missing evidence, unavailable AI and reference conflicts",
+        "## Scoring alternatives for review",
+        "## Legacy direct ILO–Assessment check",
+        "## Evidence and validation required before implementation",
+        "## Recommended implementation sequence, after explicit authorization"
+      ]
+    },
+    {
+      "file": "docs/lcup-policy-v2/shadow-comparison.md",
+      "sha256": "faca5bb003e9152435653ce8a3c829d3a2df21e89efe15e0f6772248412cf8c9",
+      "headings": [
+        "# Isolated Policy V2 comparison",
+        "## Legacy ILO–Assessment options",
+        "## Root handling and evidence limits"
+      ]
+    },
+    {
+      "file": "docs/lcup-policy-v2-implementation/REPORT.md",
+      "sha256": "525f55268e72a7851bd722310e41a6b4e3d6010dc042470323457bb91c05c634",
+      "headings": [
+        "# Academic Evaluation Policy V2 — implementation for review",
+        "## Completed work and evidence",
+        "## What replaces the old academic policy in V2",
+        "## Dual-axis report and disposition",
+        "## Safe preview and compatibility",
+        "## Legacy-versus-V2 execution",
+        "## Executed regression results",
+        "## Exact source changes and repository integrity",
+        "## Limits, faculty decisions and readiness"
+      ]
+    },
+    {
+      "file": "docs/lcup-policy-v2-implementation/requirements-matrix.md",
+      "sha256": "e737c501d5e1bcb8ea32f03c03cb7f4497a8da943741c0fd0c63d21a203d1b0e",
+      "headings": [
+        "# Original requirements → executable Policy V2"
+      ]
+    },
+    {
+      "file": "docs/lcup-policy-v2-implementation/comparison.md",
+      "sha256": "330cf26b99e34032e1ccd65680d71d252773960d5b7373fb370e541f9d89bdcc",
+      "headings": [
+        "# Actual legacy/V2 policy comparison"
+      ]
+    },
+    {
+      "file": "docs/ai-checker-rules-addendum-c3.md",
+      "sha256": "8e33b4dbdee40fd1f21a1915ff20f3ea8b3bb24a7d7335e35d3b70e70618f66e",
+      "headings": [
+        "# AI Checker rules: Stage C3 addendum",
+        "## 1. Switch (the row §9a lacks)",
+        "## 2. The three relationships",
+        "## 3. Advice only: what C3 can and cannot change",
+        "## 4. When a link is not checked",
+        "## 5. Nothing invented",
+        "### Review notes (offline English word patterns)",
+        "## 6. Engine change (2026-10-29)",
+        "## 7. Evaluation",
+        "## 8. Tests behind these statements",
+        "## 9. Known limits"
+      ]
+    },
+    {
+      "file": "docs/ilo-assessment-scoring-review.md",
+      "sha256": "2077c6ab151c923ae4b6fd4f58b93a8f1b6f2b2536d9e0c88919ebf4fb5f2edd",
+      "headings": [
+        "# ILO–Assessment scoring: impact assessment and migration proposal",
+        "## Summary",
+        "## 1. What the check does today",
+        "## 2. Measured impact (offline)",
+        "## 3. Evidence from real models",
+        "## 4. The academic question",
+        "## 5. Options compared",
+        "## 6. Proposed migration (each step needs your approval)",
+        "## 7. What each option would need to change (not changed)",
+        "## 8. Decisions needed"
+      ]
+    }
+  ],
+  "existingGroups": [
+    {
+      "name": "New consolidated requirements",
+      "command": [
+        "node",
+        "--test",
+        "scripts/lcup-requirements/requirements.test.cjs"
+      ],
+      "log": "regression-requirements-tests-final.log",
+      "exitCode": 0,
+      "tests": 21,
+      "pass": 21,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Bilingual lesson authoring",
+      "command": [
+        "node",
+        "scripts/lcup-requirements/test-ui.mjs"
+      ],
+      "log": "regression-lesson-ui-final.log",
+      "exitCode": 0,
+      "tests": 6,
+      "pass": 6,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Existing C3, verdict and model",
+      "command": [
+        "node",
+        "--test",
+        "server/lib/syllabuscheck/stage-c3.test.js",
+        "server/lib/syllabuscheck/verdict.test.js",
+        "src/lib/syllabusModel.test.js"
+      ],
+      "log": "regression-core-regressions.log",
+      "exitCode": 0,
+      "tests": 80,
+      "pass": 80,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Existing alignment, stages, scoring and provider",
+      "command": [
+        "node",
+        "--test",
+        "server/lib/syllabuscheck/clo-relevance.test.js",
+        "server/lib/syllabuscheck/stage-a-mapping.test.js",
+        "server/lib/syllabuscheck/stage-b.test.js",
+        "server/lib/syllabuscheck/stage-b34.test.js",
+        "server/lib/syllabuscheck/stage-c.test.js",
+        "server/lib/syllabuscheck/stage-c-response.test.js",
+        "server/lib/syllabuscheck/stage-d.test.js",
+        "server/lib/syllabuscheck/advisory.test.js",
+        "server/lib/syllabuscheck/institutional.test.js",
+        "server/lib/syllabuscheck/description-plan.test.js",
+        "server/lib/syllabuscheck/validation.test.js",
+        "server/lib/syllabuscheck/evidence.test.js",
+        "server/lib/syllabuscheck/alignment-safety.test.js",
+        "server/lib/syllabuscheck/failure-kinds.test.js",
+        "server/lib/syllabuscheck/quality.test.js",
+        "server/lib/syllabuscheck/scoring.test.js",
+        "server/lib/syllabuscheck/gates.test.js",
+        "server/lib/syllabuscheck/prompt-regression.test.js",
+        "server/lib/syllabuscheck/provider-guard.test.js",
+        "server/lib/syllabuscheck/anthropic.test.js"
+      ],
+      "log": "regression-alignment-regressions.log",
+      "exitCode": 0,
+      "tests": 223,
+      "pass": 223,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Rules, route gates, findings and save workflow",
+      "command": [
+        "node",
+        "--test",
+        "src/lib/complianceRules.parity.test.js",
+        "server/lib/compliance/rules.test.js",
+        "src/lib/syllabusRules.test.js",
+        "server/routes/compliance.routes.test.js",
+        "server/routes/syllabusCheck.routes.test.js",
+        "server/routes/syllabusCheck.refine.routes.test.js",
+        "src/lib/hybridView.test.js",
+        "src/lib/hybridCheck.test.js",
+        "src/lib/complianceView.test.js",
+        "src/lib/draftSave.test.js",
+        "src/lib/planHeadings.test.js",
+        "src/i18n/i18n.test.js"
+      ],
+      "log": "regression-workflow-regressions.log",
+      "exitCode": 0,
+      "tests": 161,
+      "pass": 161,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Existing importer UI",
+      "command": [
+        "node",
+        "scripts/test-pdf-import-ui.mjs"
+      ],
+      "log": "regression-importer-ui-regressions.log",
+      "exitCode": 0,
+      "tests": 16,
+      "pass": 16,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Catalog and content HTTP persistence",
+      "command": [
+        "node",
+        "--test",
+        "server/routes/catalog.routes.test.js"
+      ],
+      "log": "regression-catalog-regressions.log",
+      "exitCode": 0,
+      "tests": 22,
+      "pass": 22,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Compatibility fixes and existing prompt variants",
+      "command": [
+        "node",
+        "--test",
+        "scripts/lcup-policy-v2/compatibility.test.mjs",
+        "server/lib/syllabuscheck/variants.test.js"
+      ],
+      "log": "compatibility-final.log",
+      "exitCode": 0,
+      "tests": 9,
+      "pass": 9,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Existing C3 addendum contracts",
+      "command": [
+        "node",
+        "--test",
+        "server/lib/syllabuscheck/stage-c3-addendum.test.js"
+      ],
+      "log": "c3-addendum-tests.log",
+      "exitCode": 0,
+      "tests": 8,
+      "pass": 8,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "V2 replacement policy",
+      "command": [
+        "node",
+        "--test",
+        "scripts/lcup-policy-v2-implementation/policy.test.cjs"
+      ],
+      "log": "policy-tests-final.log",
+      "exitCode": 0,
+      "tests": 36,
+      "pass": 36,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "V2 HTTP and persistence safety",
+      "command": [
+        "node",
+        "--test",
+        "scripts/lcup-policy-v2-implementation/api.test.cjs"
+      ],
+      "log": "api-tests-final.log",
+      "exitCode": 0,
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "V2 bilingual UI",
+      "command": [
+        "node",
+        "scripts/lcup-policy-v2-implementation/test-ui.mjs"
+      ],
+      "log": "ui-tests-final.log",
+      "exitCode": 0,
+      "tests": 7,
+      "pass": 7,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "V2 context, references, CLI and comparison",
+      "command": [
+        "node",
+        "--test",
+        "scripts/lcup-policy-v2-implementation/robustness.test.cjs"
+      ],
+      "log": "robustness-tests-final.log",
+      "exitCode": 0,
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "skipped": 0
+    }
+  ],
+  "rules": [
+    {
+      "id": "T-01",
+      "check": "nonEmpty",
+      "severity": "blocking",
+      "params": {
+        "path": "meta.code"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-02",
+      "check": "nonEmpty",
+      "severity": "blocking",
+      "params": {
+        "path": "meta.title"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-03",
+      "check": "nonEmpty",
+      "severity": "blocking",
+      "params": {
+        "path": "meta.program"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-04",
+      "check": "nonEmpty",
+      "severity": "blocking",
+      "params": {
+        "path": "description",
+        "items": "t"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-05",
+      "check": "nonEmpty",
+      "severity": "blocking",
+      "params": {
+        "path": "meta.prereq"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-06",
+      "check": "nonEmpty",
+      "severity": "blocking",
+      "params": {
+        "paths": [
+          "meta.lecture",
+          "meta.lab"
+        ],
+        "numeric": true
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-07",
+      "check": "nonEmpty",
+      "severity": "blocking",
+      "params": {
+        "path": "clos",
+        "minItems": 1
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-08",
+      "check": "nonEmpty",
+      "severity": "blocking",
+      "params": {
+        "path": "plan",
+        "minItems": 1,
+        "where": "lessonWithIlo"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-09",
+      "check": "equalsCatalog",
+      "severity": "blocking",
+      "params": {
+        "field": "vision"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-10",
+      "check": "equalsCatalog",
+      "severity": "blocking",
+      "params": {
+        "field": "mission"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-11",
+      "check": "equalsCatalog",
+      "severity": "blocking",
+      "params": {
+        "field": "egas"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-12",
+      "check": "equalsCatalog",
+      "severity": "blocking",
+      "params": {
+        "field": "pos"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-13",
+      "check": "tagsResolve",
+      "severity": "blocking",
+      "params": {
+        "mode": "cloTagPresent"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-14",
+      "check": "tagsResolve",
+      "severity": "blocking",
+      "params": {
+        "mode": "resolve"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-15",
+      "check": "columnsFilled",
+      "severity": "blocking",
+      "params": {
+        "mode": "present",
+        "columns": [
+          "week",
+          "ilos",
+          "contents",
+          "activities",
+          "tasks",
+          "values"
+        ]
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-16",
+      "check": "columnsFilled",
+      "severity": "major",
+      "params": {
+        "mode": "filled",
+        "rows": "lesson",
+        "columns": [
+          "contents",
+          "activities",
+          "tasks",
+          "values"
+        ]
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-17",
+      "check": "iloNumbering",
+      "severity": "minor",
+      "params": {},
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-18",
+      "check": "weeksOrder",
+      "severity": "minor",
+      "params": {},
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-19",
+      "check": "numberedRequirements",
+      "severity": "blocking",
+      "params": {
+        "mode": "count",
+        "min": 3
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-20",
+      "check": "numberedRequirements",
+      "severity": "minor",
+      "params": {
+        "mode": "noManualNumber"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-21",
+      "check": "referenceGroups",
+      "severity": "blocking",
+      "params": {
+        "mode": "filledOrNa"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-22",
+      "check": "referenceGroups",
+      "severity": "minor",
+      "params": {
+        "mode": "naConsistent"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-23",
+      "check": "nonEmpty",
+      "severity": "blocking",
+      "params": {
+        "path": "grading.rows",
+        "minItems": 1
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-24",
+      "check": "gradingTotal",
+      "severity": "blocking",
+      "params": {
+        "total": 100
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-25",
+      "check": "gradingFormula",
+      "severity": "blocking",
+      "params": {
+        "mode": "overrideFilled"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-26",
+      "check": "gradingFormula",
+      "severity": "major",
+      "params": {
+        "mode": "wording"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "T-27",
+      "check": "signoffRoles",
+      "severity": "minor",
+      "params": {},
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "C-01",
+      "check": "textLength",
+      "severity": "major",
+      "params": {
+        "target": "description",
+        "minWords": 30
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "C-02",
+      "check": "textLength",
+      "severity": "minor",
+      "params": {
+        "target": "ilo",
+        "minWords": 4
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "C-03",
+      "check": "textLength",
+      "severity": "minor",
+      "params": {
+        "target": "clo",
+        "minWords": 1
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "C-04",
+      "check": "referenceAge",
+      "severity": "minor",
+      "params": {
+        "mode": "count",
+        "min": 3
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "P-01",
+      "check": "cloConventions",
+      "severity": "blocking",
+      "params": {
+        "mode": "egaTagged"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "P-02",
+      "check": "cloConventions",
+      "severity": "blocking",
+      "params": {
+        "mode": "poTagged"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "P-03",
+      "check": "cloConventions",
+      "severity": "major",
+      "params": {
+        "mode": "poImpliesEga"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "P-04",
+      "check": "cloConventions",
+      "severity": "minor",
+      "params": {
+        "mode": "format"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "P-05",
+      "check": "cloCoverage",
+      "severity": "major",
+      "params": {
+        "requireColumn": null
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "A-01",
+      "check": "columnsFilled",
+      "severity": "major",
+      "params": {
+        "mode": "filled",
+        "rows": "lesson",
+        "columns": [
+          "tasks"
+        ]
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "A-02",
+      "check": "cloCoverage",
+      "severity": "major",
+      "params": {
+        "requireColumn": "tasks"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "A-03",
+      "check": "examRowsPerTerm",
+      "severity": "major",
+      "params": {},
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "A-04",
+      "check": "gradingHasExam",
+      "severity": "major",
+      "params": {},
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "H-01",
+      "check": "contactUnits",
+      "severity": "major",
+      "params": {},
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "H-02",
+      "check": "weeksCover",
+      "severity": "major",
+      "params": {
+        "mode": "cover",
+        "from": 1,
+        "to": 18
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "H-03",
+      "check": "weeksCover",
+      "severity": "major",
+      "params": {
+        "mode": "range",
+        "from": 1,
+        "to": 18
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "H-04",
+      "check": "weeksCover",
+      "severity": "minor",
+      "params": {
+        "mode": "overlap"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "R-01",
+      "check": "referenceAge",
+      "severity": "major",
+      "params": {
+        "mode": "any"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "R-02",
+      "check": "referenceAge",
+      "severity": "minor",
+      "params": {
+        "mode": "dated"
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    },
+    {
+      "id": "R-03",
+      "check": "referenceAge",
+      "severity": "major",
+      "params": {
+        "mode": "current",
+        "maxAgeYears": 10
+      },
+      "expectedBoundaryCoverage": "Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules."
+    }
+  ],
+  "unsafeForUnchangedExecution": [
+    {
+      "file": "server/lib/syllabuscheck/anthropic-guard.test.js",
+      "reason": "Inspect before reuse; possible artifact-writing test path. No glob/full npm execution."
+    },
+    {
+      "file": "server/lib/syllabuscheck/anthropic-harness.test.js",
+      "reason": "Inspect before reuse; possible artifact-writing test path. No glob/full npm execution."
+    },
+    {
+      "file": "server/lib/syllabuscheck/provider-guard.test.js",
+      "reason": "Inspect before reuse; possible artifact-writing test path. No glob/full npm execution."
+    },
+    {
+      "file": "server/lib/syllabuscheck/stage-c3-addendum.test.js",
+      "reason": "Inspect before reuse; possible artifact-writing test path. No glob/full npm execution."
+    },
+    {
+      "file": "server/lib/syllabuscheck/stage-c3-eval.test.js",
+      "reason": "Inspect before reuse; possible artifact-writing test path. No glob/full npm execution."
+    },
+    {
+      "file": "server/lib/syllabuscheck/stage-d.test.js",
+      "reason": "Inspect before reuse; possible artifact-writing test path. No glob/full npm execution."
+    },
+    {
+      "file": "server/lib/syllabuscheck/stage-e6.test.js",
+      "reason": "Inspect before reuse; possible artifact-writing test path. No glob/full npm execution."
+    },
+    {
+      "file": "server/lib/syllabuscheck/stage-e8-retry-budget.test.js",
+      "reason": "Inspect before reuse; possible artifact-writing test path. No glob/full npm execution."
+    },
+    {
+      "file": "server/lib/syllabuscheck/stage-e9-phase3.test.js",
+      "reason": "Inspect before reuse; possible artifact-writing test path. No glob/full npm execution."
+    }
+  ],
+  "missingVerification": [
+    "Seven relationships × fourteen requested evidence/label conditions",
+    "All 47 rules individually with boundary/malformed evidence",
+    "Precision/recall/F1 with explicit label polarity and missing-coverage exclusions",
+    "Current isolated legacy Re-Check/SQL/report/UI workflow",
+    "Simulated load, request-count and prompt-cost measurements"
+  ],
+  "actualAcademicAccuracy": "NOT_YET_MEASURED"
+}

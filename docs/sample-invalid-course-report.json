@@ -1,0 +1,142 @@
+{
+  "standard": "hybrid-1",
+  "status": "scored",
+  "filledSections": 5,
+  "overall": 0,
+  "band": "Needs work",
+  "passThreshold": 79,
+  "passed": false,
+  "areas": [
+    {
+      "key": "template",
+      "name": "Format Compliance",
+      "weight": 20,
+      "stage": 1,
+      "score": 100
+    },
+    {
+      "key": "completeness",
+      "name": "Content Completeness",
+      "weight": 20,
+      "stage": 2,
+      "score": 100
+    },
+    {
+      "key": "co_po",
+      "name": "CO–PO Alignment",
+      "weight": 20,
+      "stage": 2,
+      "score": 100
+    },
+    {
+      "key": "assessment",
+      "name": "Assessment Alignment",
+      "weight": 15,
+      "stage": 2,
+      "score": 100
+    },
+    {
+      "key": "contact_hours",
+      "name": "Contact Hours",
+      "weight": 10,
+      "stage": 2,
+      "score": 100
+    },
+    {
+      "key": "reference_currency",
+      "name": "Reference Currency",
+      "weight": 15,
+      "stage": 2,
+      "score": 100
+    }
+  ],
+  "conformance": {
+    "ok": false,
+    "failed": [
+      {
+        "id": "CUR-CODE:meta.code",
+        "ruleId": "CUR-CODE",
+        "path": "meta.code",
+        "message": "CRITICAL MISMATCH: Course Code IE 204 does not exist in the official BSIE curriculum.",
+        "severity": "blocking",
+        "area": "template",
+        "step": "info",
+        "source": "rule"
+      },
+      {
+        "id": "AI-REQUIRED:review",
+        "ruleId": "AI-REQUIRED",
+        "path": "review",
+        "step": "review",
+        "area": "assessment",
+        "severity": "blocking",
+        "source": "rule",
+        "message": "Gemini alignment must complete before submission. Resolve the hard gates before Gemini alignment can run."
+      }
+    ]
+  },
+  "contact": {
+    "lecture": 2,
+    "lab": 1,
+    "hoursPerWeek": 5,
+    "termHours": 90,
+    "weeksPlanned": 18,
+    "weeksExpected": 18
+  },
+  "findings": [
+    {
+      "id": "CUR-CODE:meta.code",
+      "ruleId": "CUR-CODE",
+      "path": "meta.code",
+      "message": "CRITICAL MISMATCH: Course Code IE 204 does not exist in the official BSIE curriculum.",
+      "severity": "blocking",
+      "area": "template",
+      "step": "info",
+      "source": "rule"
+    },
+    {
+      "id": "AI-REQUIRED:review",
+      "ruleId": "AI-REQUIRED",
+      "path": "review",
+      "step": "review",
+      "area": "assessment",
+      "severity": "blocking",
+      "source": "rule",
+      "message": "Gemini alignment must complete before submission. Resolve the hard gates before Gemini alignment can run."
+    }
+  ],
+  "score": 0,
+  "baseScore": 100,
+  "hybrid": {
+    "version": "hybrid-1",
+    "ready": false,
+    "critical": true,
+    "score": 0,
+    "baseScore": 100,
+    "deductions": [],
+    "links": [],
+    "alignment": {
+      "status": "not_evaluated",
+      "reason": "Resolve the hard gates before Gemini alignment can run.",
+      "judgements": []
+    },
+    "suggestions": [],
+    "synthetic": true,
+    "checkedMeta": {
+      "courseId": 10,
+      "code": "IE 204",
+      "title": "Computer Programming 2",
+      "program": "BSIE",
+      "lecture": "2",
+      "lab": "1",
+      "prereq": "IT 202 - Programming 1",
+      "yearLevel": "2",
+      "curriculumYear": "test-2026"
+    },
+    "checkedAt": "2026-10-21T22:20:42.177Z",
+    "curriculum": {
+      "program": "BSIE",
+      "curriculumYear": "test-2026"
+    }
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "items": 41,
+  "runs": 3,
+  "answered": 119,
+  "invalid": 4,
+  "invalidRate": 0.033,
+  "agreement": 0.975,
+  "falsePositiveRate": 0.075,
+  "falseNegativeRate": 0,
+  "counts": {
+    "clearAligned": 40,
+    "falsePositive": 3,
+    "clearNot": 66,
+    "falseNegative": 0
+  },
+  "stability": 0.949,
+  "byType": {
+    "CLO-PO": {
+      "items": 10,
+      "answered": 30,
+      "agree": 27,
+      "invalid": 0,
+      "agreement": 0.9
+    },
+    "CLO-EGA": {
+      "items": 2,
+      "answered": 6,
+      "agree": 6,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "CLO-anyPO": {
+      "items": 2,
+      "answered": 6,
+      "agree": 6,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "ILO-CLO": {
+      "items": 4,
+      "answered": 12,
+      "agree": 12,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "ILO-activity": {
+      "items": 4,
+      "answered": 12,
+      "agree": 12,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "ILO-assessment": {
+      "items": 5,
+      "answered": 15,
+      "agree": 15,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "ILO-content": {
+      "items": 4,
+      "answered": 12,
+      "agree": 12,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "Module-value": {
+      "items": 3,
+      "answered": 9,
+      "agree": 9,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "Description-plan": {
+      "items": 4,
+      "answered": 12,
+      "agree": 12,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "REF-plan": {
+      "items": 3,
+      "answered": 5,
+      "agree": 5,
+      "invalid": 4,
+      "agreement": 1
+    }
+  },
+  "disagreements": [
+    {
+      "id": "clo-po-prog-interdisciplinary",
+      "type": "CLO-PO",
+      "accept": [
+        "ALIGNED"
+      ],
+      "got": [
+        "PARTIALLY_ALIGNED",
+        "PARTIALLY_ALIGNED",
+        "PARTIALLY_ALIGNED"
+      ]
+    }
+  ],
+  "providerErrors": 0,
+  "model": "openrouter/minimax/minimax-m3.1-flash",
+  "promptVersion": "alignment-10",
+  "dataset": {
+    "version": "eval-1",
+    "status": "DRAFT - author-written, NOT faculty-reviewed"
+  },
+  "ranAt": "2026-10-23T05:54:36.134Z"
+}

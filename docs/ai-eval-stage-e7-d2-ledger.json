@@ -1,0 +1,90 @@
+{
+  "requests": 7,
+  "charged": 0.00182232,
+  "conservative": 0.0043704,
+  "accounting": "reconcile",
+  "transient": 0,
+  "invalid": 0,
+  "unproductive": 0,
+  "entries": [
+    {
+      "n": 1,
+      "kind": "price-lookup",
+      "at": "2026-10-26T04:39:17.828Z",
+      "status": 200
+    },
+    {
+      "n": 2,
+      "kind": "model",
+      "at": "2026-10-26T04:39:18.347Z",
+      "status": 401,
+      "worst": 0.014988,
+      "charged": 0,
+      "accounting": "refused",
+      "conservativeCharge": 0,
+      "ids": [
+        "rr-prog1-relevant",
+        "rr-prog1-tangential",
+        "rr-prog1-unrelated",
+        "rr-prog1-cannot-tell"
+      ]
+    },
+    {
+      "n": 3,
+      "kind": "key-check",
+      "at": "2026-10-26T05:01:41.554Z",
+      "status": 200
+    },
+    {
+      "n": 4,
+      "kind": "price-lookup",
+      "at": "2026-10-26T05:01:42.060Z",
+      "status": 200
+    },
+    {
+      "n": 5,
+      "kind": "model",
+      "at": "2026-10-26T05:01:42.183Z",
+      "status": 200,
+      "worst": 0.014988,
+      "charged": 0.0008415,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.001683,
+      "ids": [
+        "rr-prog1-relevant",
+        "rr-prog1-tangential",
+        "rr-prog1-unrelated",
+        "rr-prog1-cannot-tell"
+      ]
+    },
+    {
+      "n": 6,
+      "kind": "model",
+      "at": "2026-10-26T05:01:44.634Z",
+      "status": 200,
+      "worst": 0.0145623,
+      "charged": 0.0002985,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.0012882,
+      "ids": [
+        "rr-syseng-relevant",
+        "rr-syseng-unrelated"
+      ]
+    },
+    {
+      "n": 7,
+      "kind": "model",
+      "at": "2026-10-26T05:01:45.594Z",
+      "status": 200,
+      "worst": 0.0149331,
+      "charged": 0.00068232,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.0013992,
+      "ids": [
+        "rr-sensors-relevant",
+        "rr-sensors-tangential",
+        "rr-sensors-web"
+      ]
+    }
+  ]
+}

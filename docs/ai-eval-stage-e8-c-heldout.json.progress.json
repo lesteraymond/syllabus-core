@@ -1,0 +1,681 @@
+{
+  "status": "paused_for_academic_batch_review",
+  "dataset": {
+    "name": "stage-c",
+    "version": "stage-c-2",
+    "split": "all",
+    "reviewStatus": "unreviewed",
+    "selection": {
+      "parentItems": 28,
+      "selectedIds": [
+        "af-syseng-good",
+        "af-syseng-irrelevant",
+        "as-prog1-essay",
+        "as-prog1-bare-name",
+        "as-prog1-keywords",
+        "as-prog1-accessible",
+        "as-prog1-week1",
+        "as-syseng-good",
+        "as-sensors-quiz",
+        "af-prog1-multiweek",
+        "as-prog1-vague-evidence",
+        "as-prog1-multiweek"
+      ]
+    }
+  },
+  "configuration": {
+    "stageFlags": {
+      "a": false,
+      "b": false,
+      "b3": false,
+      "b4": false,
+      "c1": true,
+      "c2": true,
+      "d1": false,
+      "d2": false
+    },
+    "promptVariant": "current",
+    "trim": false,
+    "minItems": false,
+    "timeoutMs": 90000
+  },
+  "promptVersion": "alignment-12c1c2-r8",
+  "ids": [
+    "as-sensors-quiz"
+  ],
+  "answers": {
+    "as-prog1-essay": {
+      "label": "NOT_ALIGNED",
+      "sourceQuote": "Develop and test Java programs that use if-else and switch statements to make decisions.",
+      "targetQuote": "Write an essay about the history of computers.",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "The task asks for an essay on the history of computers, which is unrelated to the Week 3 content (Java conditional statements) and to the ILO's competence of developing and testing Java programs that use if-else and switch. It measures neither the practical skill of writing conditional code nor the testing of it, and the subject matter is outside the lesson.",
+      "recommendation": null,
+      "draft": "- Practical task: write a Java program that uses if-else, nested if and switch statements to make decisions for a small set of given inputs, then test it with sample data and submit the source code together with the test cases and their outputs.",
+      "draftWarnings": [
+        "proposed_resource"
+      ],
+      "reviewEvidence": {
+        "explanation": [],
+        "draft": [],
+        "draftWarnings": [
+          {
+            "code": "proposed_resource",
+            "evidence": "sample data",
+            "advisory": true
+          }
+        ]
+      },
+      "aspects": {
+        "values": {
+          "teaching": "not_assessed",
+          "learnerSupport": "not_assessed",
+          "measures": "no",
+          "evidence": "vague",
+          "level": "too_low",
+          "responsible": "assessment"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "as-prog1-bare-name": {
+      "label": "PARTIALLY_ALIGNED",
+      "sourceQuote": "Develop and test Java programs that use if-else and switch statements to make decisions.",
+      "targetQuote": "Quiz",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "The task is only named (\"Quiz\") with no hint of what is assessed, so it gives no observable evidence of the ILO's competence of developing and testing Java programs with if-else and switch. It also does not state that the quiz covers the Week 3 conditional-statement content, and it does not indicate whether students must write and test code or only recall syntax.",
+      "recommendation": null,
+      "draft": "- Quiz on Java conditional statements: for each given problem, students write the if-else, nested if or switch code that makes the required decision and state the output it produces for the given test inputs.",
+      "aspects": {
+        "values": {
+          "teaching": "not_assessed",
+          "learnerSupport": "not_assessed",
+          "measures": "partly",
+          "evidence": "vague",
+          "level": "too_low",
+          "responsible": "assessment"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "as-prog1-keywords": {
+      "label": "NOT_ALIGNED",
+      "sourceQuote": "Develop and test Java programs that use if-else and switch statements to make decisions.",
+      "targetQuote": "Name the keywords used in Java conditional statements.",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "The task only asks students to name keywords, which is a Remember-level recall of syntax. The ILO requires developing and testing Java programs that use if-else and switch to make decisions, so the task measures a lower demand and does not produce any program or test result. The subject is the same lesson topic, but the competence and level are not measured.",
+      "recommendation": null,
+      "draft": "- Write a short Java program that uses if-else, nested if and switch statements to make decisions for given inputs, run it on the provided test cases, and submit the code with the outputs it produces.",
+      "aspects": {
+        "values": {
+          "teaching": "not_assessed",
+          "learnerSupport": "not_assessed",
+          "measures": "no",
+          "evidence": "vague",
+          "level": "too_low",
+          "responsible": "assessment"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "as-prog1-accessible": {
+      "label": "ALIGNED",
+      "sourceQuote": "Develop and test Java programs that use if-else and switch statements to make decisions.",
+      "targetQuote": "Practical coding task; students may submit a screen recording or a written walkthrough of their reasoning in addition to the code.",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "The task requires students to produce and test Java code using conditional statements, matching the ILO's practical competence, and the alternative submission format (screen recording or written walkthrough of reasoning) changes only the response format, not the competence measured.",
+      "recommendation": null,
+      "draft": "",
+      "aspects": {
+        "values": {
+          "teaching": "not_assessed",
+          "learnerSupport": "not_assessed",
+          "measures": "yes",
+          "evidence": "observable",
+          "level": "matches",
+          "responsible": "none"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "as-prog1-week1": {
+      "label": "ALIGNED",
+      "sourceQuote": "Describe the course objectives, requirements and grading system.",
+      "targetQuote": "Statement of expectations",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "A Week 1 orientation with a simple expectations statement is an acceptable evidence task for the orientation ILO.",
+      "recommendation": null,
+      "draft": "",
+      "aspects": {
+        "values": {
+          "teaching": "sound",
+          "learnerSupport": "not_applicable",
+          "measures": "yes",
+          "evidence": "observable",
+          "level": "matches",
+          "responsible": "none"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "af-prog1-multiweek": {
+      "label": "ALIGNED",
+      "sourceQuote": "Write and test Java programs that use for and while loops.",
+      "targetQuote": "Guided laboratory sessions over two weeks: a demonstration of each loop, then pair programming exercises of increasing difficulty",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "Guided laboratory practice with demonstration and pair programming lets learners actually write and test loop programs, matching the Apply-level ILO.",
+      "recommendation": null,
+      "draft": "",
+      "aspects": {
+        "values": {
+          "teaching": "sound",
+          "learnerSupport": "adequate",
+          "measures": "yes",
+          "evidence": "observable",
+          "level": "matches",
+          "responsible": "none"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "as-prog1-vague-evidence": {
+      "label": "NOT_ALIGNED",
+      "sourceQuote": "Develop and test Java programs that use if-else and switch statements to make decisions.",
+      "targetQuote": "Submit your work.",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "The task names no evidence: it does not say what is submitted or answered, so it collects no observable evidence of developing and testing if-else and switch programs.",
+      "recommendation": null,
+      "draft": "- Submit the Java program you developed in the laboratory exercise, together with its test output showing the results of the if-else and switch decisions.",
+      "aspects": {
+        "values": {
+          "teaching": "not_assessed",
+          "learnerSupport": "not_assessed",
+          "measures": "no",
+          "evidence": "vague",
+          "level": "too_low",
+          "responsible": "assessment"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "as-prog1-multiweek": {
+      "label": "ALIGNED",
+      "sourceQuote": "Write and test Java programs that use for and while loops.",
+      "targetQuote": "write and test a Java program that uses a for loop and a while loop to process a list of values; submit the code and the test output",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "The task requires writing and testing a Java program with both for and while loops and submitting the code and test output, matching the Apply-level ILO.",
+      "recommendation": null,
+      "draft": "",
+      "aspects": {
+        "values": {
+          "teaching": "not_assessed",
+          "learnerSupport": "not_assessed",
+          "measures": "yes",
+          "evidence": "observable",
+          "level": "matches",
+          "responsible": "none"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "af-syseng-good": {
+      "label": "ALIGNED",
+      "sourceQuote": "Write verifiable system requirements for a given scenario.",
+      "targetQuote": "teams elicit stakeholder needs from a case and draft requirements",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "The guided workshop has students elicit stakeholder needs and draft verifiable requirements for a case, with teacher modelling and a template, which practises writing requirements at the Apply/Create level the ILO requires.",
+      "recommendation": null,
+      "draft": "",
+      "aspects": {
+        "values": {
+          "teaching": "sound",
+          "learnerSupport": "adequate",
+          "measures": "yes",
+          "evidence": "observable",
+          "level": "matches",
+          "responsible": "none"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "af-syseng-irrelevant": {
+      "label": "NOT_ALIGNED",
+      "sourceQuote": "Requirements analysis: stakeholder needs, system requirements specification and traceability",
+      "targetQuote": "Lecture and drill on Java loops.",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "The activity is about Java loops, a programming topic unrelated to the lesson subject of requirements analysis and traceability, so the stated competence 'Write verifiable system requirements for a given scenario' is not developed at all.",
+      "recommendation": null,
+      "draft": "- Guided workshop: teams elicit stakeholder needs from a case and draft verifiable system requirements, with the teacher modelling one requirement first and providing a requirements template.",
+      "draftWarnings": [
+        "borrowed_wording"
+      ],
+      "reviewEvidence": {
+        "explanation": [],
+        "draft": [],
+        "draftWarnings": [
+          {
+            "code": "borrowed_wording",
+            "evidence": "guided workshop teams elicit stakeholder needs from a case and draft",
+            "from": "af-syseng-good",
+            "advisory": true
+          }
+        ]
+      },
+      "aspects": {
+        "values": {
+          "teaching": "weak",
+          "learnerSupport": "not_applicable",
+          "measures": "no",
+          "evidence": "vague",
+          "level": "too_low",
+          "responsible": "activity"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "as-syseng-good": {
+      "label": "ALIGNED",
+      "sourceQuote": "Write verifiable system requirements for a given scenario.",
+      "targetQuote": "Write a requirements specification (at least five verifiable requirements) for the case; each requirement is checked against a rubric for clarity and testability.",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "The task requires students to produce at least five verifiable requirements for the case and each is checked against a rubric for clarity and testability, which is direct observable evidence of writing verifiable requirements at the ILO's level.",
+      "recommendation": null,
+      "draft": "",
+      "aspects": {
+        "values": {
+          "teaching": "not_assessed",
+          "learnerSupport": "not_assessed",
+          "measures": "yes",
+          "evidence": "observable",
+          "level": "matches",
+          "responsible": "none"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "as-sensors-quiz": {
+      "label": "NOT_ALIGNED",
+      "sourceQuote": "Design and test an inverting amplifier with a specified gain.",
+      "targetQuote": "Multiple-choice quiz on the history of amplifiers.",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "The ILO requires designing and testing an inverting amplifier with a specified gain (Create/practical demonstration), but the only assessment task is a multiple-choice quiz on the history of amplifiers, which is a recall task (Remember) about amplifier history rather than amplifier design. Two gaps: (1) the task does not measure the ILO's action verb 'design' or 'test' at all; (2) the subject is amplifier history, not the inverting amplifier circuit with specified gain from the lesson content. The quiz also gives no observable artifact of a designed and tested circuit.",
+      "recommendation": null,
+      "draft": "- Design task: design an inverting amplifier with a specified gain, then verify the gain and bandwidth by simulating the circuit and reporting the measured gain against the specified value.",
+      "aspects": {
+        "values": {
+          "teaching": "not_assessed",
+          "learnerSupport": "not_assessed",
+          "measures": "no",
+          "evidence": "vague",
+          "level": "too_low",
+          "responsible": "assessment"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    }
+  },
+  "relationshipMetrics": {
+    "planned": 12,
+    "attempted": 12,
+    "neverAttempted": 0,
+    "verified": 12,
+    "recovered": 4,
+    "unresolved": 0,
+    "unresolvedRate": 0,
+    "coverage": 1,
+    "attemptedShare": 1,
+    "firstAttempt": {
+      "answered": 12,
+      "refused": 4,
+      "validationFailureRate": 0.3333,
+      "noAnswerFirst": 0
+    },
+    "rawResponseErrors": {
+      "answers": 5,
+      "invalidAnswers": 1,
+      "refusedJudgements": 4,
+      "requestsWithoutAnswer": 0
+    },
+    "aspectCoverage": {
+      "byType": {
+        "Activity-fit": {
+          "relationships": 3,
+          "baseVerified": 3,
+          "baseAccepted": 3,
+          "notRecorded": 0,
+          "fields": {
+            "teaching": {
+              "assessed": 3,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "learnerSupport": {
+              "assessed": 3,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            }
+          }
+        },
+        "Assessment-fit": {
+          "relationships": 9,
+          "baseVerified": 9,
+          "baseAccepted": 9,
+          "notRecorded": 0,
+          "fields": {
+            "measures": {
+              "assessed": 9,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "evidence": {
+              "assessed": 9,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "level": {
+              "assessed": 9,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            }
+          }
+        }
+      },
+      "fieldsRequired": 33,
+      "fieldsAssessed": 33,
+      "rate": 1
+    }
+  },
+  "usage": {
+    "requests": 32,
+    "thisRun": 7,
+    "model": 5,
+    "priceLookups": 1,
+    "keyChecks": 1,
+    "invalidAnswers": 3,
+    "unproductiveInARow": 0,
+    "transient": 1,
+    "promptTokens": 21658,
+    "completionTokens": 2204,
+    "cachedTokens": 12032,
+    "reportedCost": 0.00262342,
+    "charged": 0.01214202,
+    "accounting": {
+      "rule": "reconcile",
+      "requests": {
+        "reconciled": 5,
+        "conservative": 0,
+        "worst_case": 0,
+        "refused": 0
+      },
+      "chargedConservatively": 0.0334797
+    },
+    "warnings": [
+      "3 answer(s) have failed validation in whole or in part (the last: empty_answer: AI omitted alignment judgements); this is not a stop: the evaluation stops on the final unresolved rate of distinct relationships"
+    ],
+    "limits": {
+      "maxRequests": 33,
+      "maxCost": 0.0395186,
+      "maxTransient": 3,
+      "maxInvalid": 4,
+      "warnInvalid": 3,
+      "maxUnproductive": 2,
+      "maxTokens": null
+    },
+    "stopped": null
+  },
+  "prices": {
+    "prompt": 3e-7,
+    "completion": 0.0000012,
+    "reasoning": 0,
+    "request": 0,
+    "cacheWrite": 0,
+    "endpoints": [
+      {
+        "provider": "InferenceNet",
+        "tag": "inference-net/fp4",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1e-7,
+        "completion": 5.5e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "InferenceNet",
+        "tag": "inference-net/fp4/us",
+        "status": -2,
+        "uptime30m": 86.66666666666667,
+        "prompt": 1e-7,
+        "completion": 5.5e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "GMICloud",
+        "tag": "gmicloud/fp8",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.425e-7,
+        "completion": 5.7e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.425e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "DigitalOcean",
+        "tag": "digitalocean",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Novita",
+        "tag": "novita/fp16",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "Nebius",
+        "tag": "nebius/fp4",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Wafer",
+        "tag": "wafer/nvfp4",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "ModelRun",
+        "tag": "modelrun/fp4",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Parasail",
+        "tag": "parasail/fp8",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Together",
+        "tag": "together",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Minimax",
+        "tag": "minimax",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "SambaNova",
+        "tag": "sambanova",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 3e-7,
+        "completion": 0.0000012,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 3e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      }
+    ],
+    "readAt": "2026-10-26T14:29:35.928Z"
+  },
+  "batchReviews": [
+    {
+      "ids": [
+        "as-prog1-essay",
+        "as-prog1-bare-name",
+        "as-prog1-keywords",
+        "as-prog1-accessible"
+      ],
+      "proceed": true,
+      "reason": null
+    },
+    {
+      "ids": [
+        "as-prog1-week1",
+        "af-prog1-multiweek",
+        "as-prog1-vague-evidence",
+        "as-prog1-multiweek"
+      ],
+      "proceed": true,
+      "reason": null
+    },
+    {
+      "ids": [
+        "af-syseng-good",
+        "af-syseng-irrelevant",
+        "as-syseng-good"
+      ],
+      "proceed": true,
+      "reason": null
+    }
+  ]
+}

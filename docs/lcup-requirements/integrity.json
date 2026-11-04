@@ -1,0 +1,158 @@
+{
+  "baselineHead": "68926cb392756c07bb0b999538d098d1038be368",
+  "finalHead": "68926cb392756c07bb0b999538d098d1038be368",
+  "existingFilesChecked": 1067,
+  "unchanged": 1055,
+  "changed": [
+    {
+      "path": "server/lib/syllabuscheck/acceptance.js",
+      "before": "826f7a2f67dd674197971c75170e2cf541de8b81f28747ee884568791de0a637",
+      "after": "f54cfd2ca4f06095acbf7e80d6c106546ff8f3bcb6dd1a80487937623720ac16",
+      "expected": true
+    },
+    {
+      "path": "server/lib/syllabuscheck/engine.js",
+      "before": "9fd9553e876f336bef01e37c329844d9f33983844bed8cbbbbe422349a979c64",
+      "after": "3c044923c36ff29639b24f0a9d433ffb9746f34faef809e7aecbb0fbd01a2e8d",
+      "expected": true
+    },
+    {
+      "path": "server/lib/syllabuscheck/gemini.js",
+      "before": "95649515c87bd42e540144b81eee6bd511692d0a6dbc7f8020e83685e0b7c4a3",
+      "after": "51f053f62dd22986c2d844ffa9379404945fe4f67d684becb83d77fd1e5c83b0",
+      "expected": true
+    },
+    {
+      "path": "server/lib/syllabuscheck/identity.js",
+      "before": "ebdd1e51598c1d83b22d6df96bd0e6ecf84ce223c989e2e136b01c4258d4e4ac",
+      "after": "acb4b5c3025b7403bee2d15a35f96c1dc2bdd739e00a536906292d091776c46a",
+      "expected": true
+    },
+    {
+      "path": "server/lib/syllabuscheck/stages.js",
+      "before": "977ea8b5fa5b26b757b1990ff1ddcb85a91a71e8ff5d934c525bb2683d1fa365",
+      "after": "52dc77afc351d4c8add28e5030b29c464644c61631515caf54352e7c8ebdfd37",
+      "expected": true
+    },
+    {
+      "path": "server/lib/syllabuscheck/verdict.js",
+      "before": "5f609d50019d7043642abd20d1b2195b0df769e5721f05f794712d8cad45b1ca",
+      "after": "b6862316e02a03900755572af9baae0e37b0f4e1c7b204a76a4b7d836f164b76",
+      "expected": true
+    },
+    {
+      "path": "server/routes/catalog.routes.test.js",
+      "before": "a357b66d91b9c067b656d23bdb15f4b1a2a79a8ec8ee45ad267cd3497824d0ef",
+      "after": "8cef4ed3379a9d3759565709a305ddc4efe2d8201e50c37cf4cd64fc6e6751c2",
+      "expected": true
+    },
+    {
+      "path": "src/i18n/index.js",
+      "before": "39f5c6d7e373be21bc8941fde2de91a9d9e3c7cc22db02ffa82acbd5e8349e15",
+      "after": "0303c9ec1e9c0b33c8167070dcaf5680fb76aedc8221a0983e7da092afe971b6",
+      "expected": true
+    },
+    {
+      "path": "src/lib/syllabusModel.js",
+      "before": "99ecae17ef5dd3e7f0c5eef7fe3b984345b7991e83cb699a9040a3d3359b376a",
+      "after": "6f917d5ee59517bc0b334f98d2580ef08c7722a3745ddafae1bb6d7fdbec0afa",
+      "expected": true
+    },
+    {
+      "path": "src/lib/syllabusModel.test.js",
+      "before": "ad35f69a0fe4541d9774803cfe4a4a86f01e7ef05ab7d16fec4660e97612f2b5",
+      "after": "bbb4db9dcd43c002216412c12e12cee8b5d3fbf9d9d84f8e4a52542237724c52",
+      "expected": true
+    },
+    {
+      "path": "src/views/builder2/parts.jsx",
+      "before": "8f8d6a298d75961a7a37afe9280bf0b5ab3187dcbce3acaf764f7437c4a5d542",
+      "after": "4726da7dcc4d9f0570bbdb3930d050f58d1eac37c176bbd3c9a5aa0bde833b40",
+      "expected": true
+    },
+    {
+      "path": "src/views/builder2/PlanStep.jsx",
+      "before": "1cc33433156660ddceeeeb1f5529947fa4152f90fc126e668c34feb124e0dc6d",
+      "after": "523ce942eb506aa8c696f3d1851273288fc9809e5c06804d4d2a13f608b8500e",
+      "expected": true
+    }
+  ],
+  "missing": [],
+  "unexpectedChanges": [],
+  "tests": [
+    {
+      "log": "requirements-tests-final.log",
+      "tests": 21,
+      "passed": 21,
+      "failed": 0
+    },
+    {
+      "log": "lesson-ui-final.log",
+      "tests": 6,
+      "passed": 6,
+      "failed": 0
+    },
+    {
+      "log": "core-regressions.log",
+      "tests": 80,
+      "passed": 80,
+      "failed": 0
+    },
+    {
+      "log": "alignment-regressions.log",
+      "tests": 223,
+      "passed": 223,
+      "failed": 0
+    },
+    {
+      "log": "workflow-regressions.log",
+      "tests": 161,
+      "passed": 161,
+      "failed": 0
+    },
+    {
+      "log": "importer-ui-regressions.log",
+      "tests": 16,
+      "passed": 16,
+      "failed": 0
+    },
+    {
+      "log": "catalog-regressions.log",
+      "tests": 22,
+      "passed": 22,
+      "failed": 0
+    }
+  ],
+  "totalPassed": 529,
+  "productionDatabaseWrites": 0,
+  "migrationsRun": 0,
+  "paidAiCalls": 0,
+  "configuredExecution": {
+    "scope": "Synthetic fixture through real local configuration; no server process or database exercised",
+    "provider": {
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "configured": false,
+      "approved": false
+    },
+    "stages": {
+      "a": false,
+      "b": false,
+      "b3": false,
+      "b4": false,
+      "c1": false,
+      "c2": false,
+      "d1": false,
+      "d2": false
+    },
+    "alignmentStatus": "not_evaluated",
+    "failure": {
+      "kind": "not_configured",
+      "retryable": false
+    },
+    "reason": "Claude (the direct Anthropic API) is experimental and not approved for official checking on this server (SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL), so no AI request was sent; the coded rules ran.",
+    "codedChecks": 153,
+    "academicJudgements": 0,
+    "providerRequestAttempts": 0
+  }
+}

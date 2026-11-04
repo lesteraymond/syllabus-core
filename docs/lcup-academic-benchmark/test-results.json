@@ -1,0 +1,81 @@
+[
+  {
+    "name": "Repeatable package verification",
+    "command": [
+      "node",
+      "scripts/lcup-academic-benchmark/build.cjs",
+      "--check"
+    ],
+    "log": "package-check.log",
+    "exitCode": 0,
+    "tests": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "commandOnly": true
+  },
+  {
+    "name": "Benchmark provenance, blank faculty forms, citations, metrics and preservation",
+    "command": [
+      "node",
+      "--test",
+      "scripts/lcup-academic-benchmark/benchmark.test.cjs"
+    ],
+    "log": "benchmark-tests.log",
+    "exitCode": 0,
+    "tests": 36,
+    "passed": 36,
+    "failed": 0,
+    "skipped": 0,
+    "commandOnly": false
+  },
+  {
+    "name": "Unchanged Policy V2 replacement, API, reference safety and comparison regressions",
+    "command": [
+      "node",
+      "--test",
+      "scripts/lcup-policy-v2-implementation/policy.test.cjs",
+      "scripts/lcup-policy-v2-implementation/api.test.cjs",
+      "scripts/lcup-policy-v2-implementation/robustness.test.cjs"
+    ],
+    "log": "policy-v2-regressions.log",
+    "exitCode": 0,
+    "tests": 51,
+    "passed": 51,
+    "failed": 0,
+    "skipped": 0,
+    "commandOnly": false
+  },
+  {
+    "name": "Reused evaluation metrics",
+    "command": [
+      "node",
+      "--test",
+      "server/lib/syllabuscheck/eval-quality-metrics.test.js",
+      "server/lib/syllabuscheck/eval/eval.test.js"
+    ],
+    "log": "existing-metrics-tests.log",
+    "exitCode": 0,
+    "tests": 18,
+    "passed": 18,
+    "failed": 0,
+    "skipped": 0,
+    "commandOnly": false
+  },
+  {
+    "name": "Existing seven-relationship and C3 requirements",
+    "command": [
+      "node",
+      "--test",
+      "scripts/lcup-requirements/requirements.test.cjs",
+      "server/lib/syllabuscheck/stage-c3.test.js"
+    ],
+    "log": "existing-chain-tests.log",
+    "exitCode": 0,
+    "tests": 44,
+    "passed": 44,
+    "failed": 0,
+    "skipped": 0,
+    "commandOnly": false
+  }
+]

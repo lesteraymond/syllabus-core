@@ -1,0 +1,708 @@
+PAGE 1
+La Consolacion University Philippines 
+Valenzuela St., Capitol View Park Subdivision, Bulihan, City of Malolos, Bulacan 
+SCHOOL YEAR 2025-2026 
+COLLEGE OF INFORMATION TECHNOLOGY AND ENGINEERING 
+I.   COURSE CODE   :   IT 202 
+II.   COURSE TITLE   :   Computer Programming 1 
+III.   COURSE DESCRIPTION   : 
+This course introduces students to the vital role of computers and computer programmers in shaping modern society. It
+aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the
+development of good coding practices. Students will be taught the fundamentals of Java programming and explore
+significant real-world applications. 
+In line with La Consolacion University Philippines' commitment to forming   Christo-centric Catholic professionals , the
+course integrates   Marian Augustinian values   in each lesson, ensuring that students not only achieve intellectual growth
+but also cultivate moral and ethical responsibility in the digital age. This holistic approach nurtures individuals who contribute
+positively to society, embodying   community, humility, and love of service , as exemplified by the Blessed Virgin Mary
+and Saint Augustine. By the end of the course, students will have created their own Java applications, demonstrating both
+technical proficiency and a sense of purpose rooted in their Catholic faith. 
+IV.   PRE-REQUISITE   :   IT 101 
+V.   CREDIT UNITS   :   2 units lecture / 1 unit laboratory 
+VI.   COURSE LEARNING OUTCOMES: 
+Vision   Mission 
+PAGE 2
+Moved by the Spirit of the Risen Christ, La Consolacion 
+University   Philippines,   envisions   itself   to   become   a
+catalyst for the wholistic transformational development
+of   Catholic   Augustinian   Marian   graduates   rooted   in
+Gospel values. 
+To achieve the above vision, LCUP commits itself to
+generate and make available to its Augustinian Marian
+students, programs and services that will make them: 
+●   exhibit academic and technical competence in their
+respective   areas   of   discipline   in   the   local   and
+international environment; 
+●   demonstrate   their   knowledge,   critical   thinking   and
+creativity by exploring the various avenues of learning
+and searching for truth; 
+●   manifest   their   willingness   to   serve   specially   the
+marginalized sector of our society; 
+●   demonstrate productivity in various areas of learning as
+responsible citizens of the society; and 
+●   live the Gospel values in the varied aspects of their
+personal and professional lives 
+EXPECTED GRADUATE
+ATTRIBUTES 
+PROGRAM OUTCOMES   COURSE LEARNING OUTCOMES 
+EGA 1: Critical and Creative thinker 
+EGA 2: Competent   Catholic Augustinian-
+Marian Professional 
+EGA 3: Socially Responsive Steward 
+EGA 4: Transformative Lifelong learner 
+PO1. Articulate and discuss the
+latest developments in the specific
+field of practice;
+PO2. Effectively communicate
+orally and in writing using both
+English and Filipino;
+PO3. Work effectively and
+independently in multi-disciplinary
+and multi-cultural teams;
+PO4. Act in recognition of
+professional, social ethical
+responsibility;
+PO5. Preserve and promote 
+“Filipino historical and cultural 
+heritage;
+PO6. Analyze complex problems,
+and identify and define the
+computing requirements needed to
+design and appropriate solution; 
+CLO1.   Define and a nalyze the
+computing requirements needed for
+an effective solution that is essential
+for developing holistic and impactful
+solutions. 
+[ EGA 1,3,4 ]   [ PO 1,2,3,6,8 ] 
+CLO2 :      Incorporate   ethical
+standards   and   social   responsibility
+into technical designs, ensuring that
+solutions serve the common good, in
+line   with   Marian   and   Augustinian
+principles of truth and compassion. 
+ 
+[ EGA 1,3,4 ]   [ PO 1,2,3,6,8 ] 
+C LO 3 :   Collaborate effectively within
+multi-disciplinary and culturally
+diverse teams to develop Java- 
+PAGE 3
+PO7. Apply computing and other
+knowledge domains to address
+real-world problems;
+PO8. Design and develop
+computing solutions using a
+system-level perspective;
+PO9. Utilize modern computing
+tools. 
+based programming solutions that
+address social challenges,
+demonstrating social responsibility
+and cultural sensitivity. 
+[ EGA 1,2,3,4 ]   [ PO 1,2,3,4,6,8,9 ] 
+C LO 4 . Demonstrate the Filipino - 
+Catholic Augustinian Spirituality 
+through value webbing. 
+[ EGA 2 ]   [ PO 4,5 ] 
+VII.   LEARNING PLAN: 
+SCHEDULE   INTENDED LEARNING
+OUTCOMES   COURSE CONTENTS   SUGGESTED LEARNING
+ACTIVITIES 
+SUGGESTED
+ASSESSMENT TASKS 
+EXPECTED
+VALUE/S TO BE
+INTEGRATED 
+Week1 
+ILO 1: 
+Demonstrate a clear
+understanding of the
+course structure,
+expectations, and
+key programming
+concepts in Java,
+including how these
+skills align with real-
+world IT challenges
+and professional
+ethical standards. 
+[CLO1] 
+I.   Orientation 
+A.   Introduction to the
+Course Contents 
+B.   Course
+Requirements and
+Activities 
+C.   Course Objectives 
+Grading System and
+Policies on Absences,
+Tardiness and
+Examinations 
+•   Setting and
+sharing of
+Expectations from
+the Course 
+•   Discussion on the
+Vision, Mission
+and Goals of
+LCUP and of CITE 
+•   Presentation of
+Course Objectives
+and Contents,
+Course
+Requirements and
+Activities 
+Review of Policies on
+Absences, Tardiness, 
+•   Statement of
+Expectations 
+•   Review of Course
+Contents,
+Objectives,
+Activities and
+Assessment Tools 
+•   Review of Policies
+on Absences,
+Tardiness,
+Examinations,
+Grading System 
+•   Compassion 
+•   Courage 
+•   Open
+mindedness 
+•   Respect 
+•   Obedience 
+PAGE 4
+Examinations,
+Grading System 
+Week 2   LO1. Explain the
+basic concepts and
+principles of Java
+programming, 
+[CLO 1] 
+II. Introduction to 
+Java P rogramming 
+•   A Brief History of 
+Java   language 
+•   Characteristics of 
+Java   Language 
+•   Reasons why 
+programmers use 
+Java   language 
+Features of Java 
+Programming 
+•   Lecture-
+Discussion/Recitat
+ion using Power
+Point Presentation 
+•   Video
+Presentation 
+•   Discovery
+Learning 
+•   Functioning
+Knowledge 
+•   Brain Storming 
+•   Quiz 
+•   Assignment 
+•   Self
+Awareness 
+•   Active
+participation
+and
+involvement 
+•   Courage 
+•   Humility 
+•   Analytical
+Skills 
+Week 3-4 
+ILO1 :   Demonstrate 
+the skills by knowing 
+the syntax and 
+semantics of   Java. 
+of Language. 
+[CLO   1,2] 
+ILO2:   Ensures   that
+students   gain   a
+foundational
+understanding   of
+Java and are able to
+apply   basic
+programming
+concepts   through
+hands-on practice. 
+(CLO 2] [CLO 3] 
+III . The Basic 
+Input/Output 
+Statements of   Java 
+Console 
+•   The Basic 
+Input/Output 
+•   Variable 
+Declaration 
+•   Rules in declaring 
+variables, 
+➢   Constants 
+➢   Operators 
+•   Java Installation 
+Java Eclipse GUI 
+•   Discussion using
+PowerPoint
+Presentation 
+•   Discovery
+Learning 
+•   Functional
+Knowledge 
+•   Research Study 
+•   Demonstration 
+•   Recitation 
+•   Group   Participation 
+•   Quiz 
+•   Machine Problem 
+•   Assignment 
+•   Interiority 
+•   Work Ethics 
+•   Interpersonal
+Skills 
+•   Courage 
+•   Critical 
+Thinking 
+•   Courage 
+• 
+PAGE 5
+Week 4-5 
+ILO 1:   Inference 
+read and write data 
+using Java streams 
+[CLO 1] [CLO 2] 
+ILO 2 Acquire the
+necessary skills and
+understanding of java
+methods. 
+I LO4:   Demonstrate 
+the skills by knowing 
+the syntax and 
+semantics of   Java. 
+of Language. 
+[CLO 3] 
+IV .   Java Libraries 
+Program 
+•   Parts of a Java 
+program 
+•   The print and 
+println   function 
+Data type 
+•   Int (Integer) 
+•   Float 
+•   Double 
+•   Char 
+•   Reasons to 
+declare variables 
+•   Lecture-Discussion
+using Power Point
+presentation 
+•   Seatwork 
+•   Laboratory 
+•   Machine Problem 
+Video Presentation 
+•   Recitation 
+•   Quiz 
+Simulation of the
+external and internal
+parts of the System
+Unit 
+•   Understanding 
+•   Exactness 
+•   Patience 
+•   Critical
+Thinking 
+•   Active
+participation
+and
+involvement 
+•   Critical
+Thinking 
+•   Patience 
+•   Appreciation 
+Week 6   Review   topics
+covered   by   the
+examination 
+PRELIM 
+EXAMINATION 
+Examination on
+the topics
+discussed during
+the Prelim Term 
+Result of the
+Examination 
+•   Skills and
+Competencies 
+•   Critical
+Thinking 
+Week 7-8   I LO 3 : Understand   the
+fundamentals   of
+structured logic using
+decisions, loops, and
+array manipulation. 
+[CLO 1] [CLO3] 
+I LO4:   B e able to
+apply conditional
+statements in Java
+to control program
+flow based on
+specific conditions,
+and write programs 
+V.   . Conditional
+Statements 
+•   The Conditional
+Statements Syntax 
+•   If Statement 
+•   If Else Statement 
+Switch/case 
+Language 
+•   Discussion using
+PowerPoint
+Presentation 
+•   Video Presentation 
+•   Laboratory
+Exercises:
+Machine Language 
+Group Dynamics 
+•   Recitation 
+•   Seatwork on the
+topics discussed 
+•   Laboratory Exercises 
+•   Patience 
+•   Humility 
+•   Cooperation 
+•   Accuracy 
+•   Appreciation 
+•   Leadership
+Skills 
+•   Courage 
+PAGE 6
+that make decisions
+dynamically
+depending on user
+input or computed
+values. 
+[CLO 2] [CLO3] 
+Week 9-11   ILO1: Utilize various
+looping constructs
+(for, while, do-while)
+in Java to execute
+repeated tasks, and
+design programs that
+efficiently handle
+repetitive processes
+and iterations,
+incorporating loops to
+solve real-world
+problems. 
+CLO1 CLO2, CLO3 
+ILO2 . Inference the 
+structured 
+programming 
+concepts a CLO ng 
+with the Java syntax 
+to implement them. 
+XI. Looping
+Statements 
+•   Java Loops 
+▪   For Loops 
+▪   Do While Loop 
+▪   Break/Continue 
+•   Discussion using
+PowerPoint
+Presentation 
+•   Functioning
+Knowledge 
+•   Laboratory
+Exercises. 
+•   Recitation 
+•   Group Participation 
+•   Quiz 
+•   Machine Problem 
+•   Critical
+Thinking 
+•   Understanding 
+•   Precision 
+•   Accuracy 
+•   Appreciation 
+•   Humility 
+Week 12   Review   topics
+covered   by   the
+examination 
+MIDTERM 
+EXAMINATION 
+Examination on
+the topics
+discussed during
+the Midterm Term 
+Result of the
+Examination 
+•   Skills and
+Competencies 
+•   Critical
+Thinking 
+Week 13   I LO 4:   declare,
+initialize, and
+manipulate arrays in
+Java, effectively
+using one- 
+X. .   Array 
+•   Array 
+•   Example of Array 
+•   Two-Dimensional
+Arrays syntax: 
+•   Discussion using
+Power Point
+Presentation 
+•   Recitation 
+•   Quiz 
+•   Active
+participation
+and
+involvement 
+PAGE 7
+dimensional and
+multi-dimensional
+arrays to store,
+retrieve, and process
+data in various 
+applications 
+[CLO1] [CLO2] 
+I LO 6:   Synthesize 
+skills   in   De - bugging 
+Java   Language 
+program. 
+•   Functioning
+knowledge 
+•   Discovery
+Learning 
+•   Quiz on the
+discussed topic 
+Laboratory
+Exercises 
+•   Machine problem:
+Hands-on exercises 
+using Java Console
+programs 
+•   Understanding 
+•   Compassion 
+Critical Thinking 
+Week 14   I LO 1 :   Apply various
+string manipulation
+methods in Java. 
+[CLO 1-2] 
+. 
+LO2 :   Synthesize 
+skills   in   De - bugging 
+Java   Language 
+program. 
+[CLO2 - 3] 
+XIII. Strings 
+•   String Manipulation 
+➢   Length() 
+➢   charAt() 
+➢   indexOf() 
+➢   concat() 
+➢   replace 
+➢   ignorecase() 
+➢   substring() 
+Lecture: 
+•   Discussion using
+Powerpoint
+Presentation 
+•   Quiz 
+•   Laboratory: 
+:Exercises: 
+➢   Machine
+Problem 
+•   Seatwork using
+trial and error
+discovery learning 
+•   Recitation 
+•   Quiz 
+•   Seatwork-Trial and
+Error for discovery
+learning 
+•   Accurate Program
+output 
+•   Critical 
+Thinking 
+•   Active
+participation
+and
+involvement 
+•   Open
+mindedness 
+•   Humility 
+•   Patience 
+•   Courage 
+Week 15   I LO4:   Demonstrate 
+the skills by knowing 
+the syntax and 
+semantics of   Java. 
+[CLO1 - 2] 
+I LO5 :   Build robust 
+applications using 
+Java console code. 
+[CLO 1 - 2] 
+I LO 6: Synthesize 
+skills in De - bugging 
+XII. JAVA METHOD 
+•   Java
+Parameters 
+•   Object
+Connection 
+Java Recursion 
+•   Discussion using
+Power Point
+Presentation 
+•   Functioning
+knowledge 
+•   Blended Learning 
+•   Quiz on the
+discussed topic 
+•   Laboratory
+Exercises 
+•   Recitation 
+•   Quiz 
+•   Machine problem:
+Hands-on exercises 
+using C programs 
+•   Active
+participation
+and
+involvement 
+•   Understanding 
+•   Interiority 
+•   Courage 
+•   Critical
+Thinking 
+PAGE 8
+Java   Language 
+program. 
+[CLO2-3] 
+Week 16-
+17   ILO1   Retreve data 
+from a relational 
+database using java 
+class. 
+[CLO 2 - 3] 
+Demonstrate the 
+Filipino - Catholic 
+Augustinian 
+Spirituality through 
+value webbing. 
+X.   JAVA DATABASE
+CONNECTION 
+•   Improvised
+Database 
+UCanAccess
+Connection 
+•   Discussion using
+Power Point
+Presentation 
+•   Quiz on the
+discussed topic 
+•   Cooperative
+Learning 
+•   Group Dynamics 
+Laboratory
+Exercises 
+•   Recitation 
+•   Quiz 
+•   Groupings 
+•   Machine problem:
+Hands-on exercises 
+using Java
+programs 
+•   Active
+participation
+and
+involvement 
+•   Understanding 
+•   Teamwork Skills 
+•   Courage 
+Critical Thinking 
+Week 18   Review   topics
+covered   by   the
+examination 
+FINALS 
+EXAMINATION 
+Examination on
+the topics
+discussed during
+the Final Term 
+Result of the
+Examination 
+•   Honesty 
+•   Integrity 
+Critical Thinking 
+VIII.   COURSE REQUIREMENTS   : 
+1.   Class attendance 
+2.   Recitations 
+3.   Quizzes 
+4.   Examinations 
+5.   Machine Problem : Laboratory Exercises 
+PAGE 9
+IX.   REFERENCES   : 
+A. BOOKS 
+Burd, B. (2022).   Java for dummies (Eighth edition).   John Wiley & Sons, Inc. QA 76.73 J83 B87 2022 
+Bernard, M. (2022).   Future skills: the 20 skills and competencies everyone needs to succeed in a digital world.   John Wiley 
+& Sons, Inc. T 65.3 M37 2022 
+Farrell, J. (2019).   Java programming.   Cengage. QA 76.73 F37 2019 
+B. INTERNET REFERENCES 
+Java Tutorial - W3Schools. https://www.w3schools.com/java/default.asp. Accessed 2 Aug. 2024. 
+Learn Java | Codecademy. https://www.codecademy.com/learn/learn-java. Accessed 19 June. 2024. 
+Learn Java Programming.   https://www.programiz.com/java-programming . Accessed 16 February 2023 
+Java Tutorial - Tutorialspoint. https://www.tutorialspoint.com/java/index.htm. Accessed 29 December. 2023 
+Java tutorial: Learn Java Programming with examples.   https://beginnersbook.com/java-tutorial-for-beginners-with- 
+example. Accessed 15, March, 2023. 
+C. JOURNALS 
+Kok, A. J. et. Al., (2024). “ Analysis and Evaluation of a Searchable Exercise Repository for Training Java   Programming”, 
+Informatics in Education, 2024.   DOI: 10.15388/infedu.2024.17 
+Park J. et. Al., (2023). “ Static Analysis of JNI Programs via Binary Decompilation ” : IEEE Transactions on Software
+Engineering. https://doi.org/10.1109/tse.2023.3241639 
+Syaifudin, Y.W. ,   Funabiki, N. ,   Kuribayashi, M.   and   Kao, W.-C.   (2019), "A proposal of Android Programming Learning 
+Assistant System with implementation of basic application learning",   International Journal of Web Information Systems , 
+Vol. 16 No. 1, pp. 115-135.   https://doi.org/10.1108/IJWIS-08-2019-0038 
+D. ELECTRONICS 
+Java Eclipse IDE   –   Console/NetBeans 
+Quizizz 
+PAGE 10
+X.   GRADING SYSTEM   : 
+1.   Class Standing   60% 
+Quiz/Recitation 
+Machine Problem 
+Assignment 
+2.   Examination   40 % 
+3.   Term Grade   CS (60%) + TE (40%) 
+4.   Final Rating   Prelim Grade + Midterm Grade + Final Grade 
+3 
+Prepared by: 
+DR. JAYSON BATOON 
+Faculty/Date 
+Checked and Reviewed by: 
+EDNA F. DAYAO, DIT 
+Dean/Date 
+ROSALYN S. GALVEZ, PhD., LPT 
+Asst. Vice President for Academic Affairs-Date 
+References Certified by: 
+DR. MARIA MERCEDEZ M. HAZ 
+LIC Director/Date 
+Approved by: 
+JAY MARK B. SANTOS, PhD, LPT, CSSWB 
+Vice President for Academic Affairs-Date 
+PAGE 11
+Revision Date: 
+Modifications: 
+__Learning Outcomes 
+__Course Contents 
+__Suggested Learning Activities 
+__Suggested Assessment 
+__Expected Values to be Integrated 
+__Course Requirements 
+__References 
+__Grading System 
+PRE-VPAA-FO-001 (011) 

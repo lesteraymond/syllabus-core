@@ -1,0 +1,353 @@
+{
+  "items": 22,
+  "runs": 2,
+  "answered": 43,
+  "invalid": 1,
+  "invalidRate": 0.023,
+  "agreement": 0.953,
+  "falsePositiveRate": 0,
+  "falseNegativeRate": 0,
+  "counts": {
+    "clearAligned": 21,
+    "falsePositive": 0,
+    "clearNot": 18,
+    "falseNegative": 0
+  },
+  "confusion": {
+    "ALIGNED": {
+      "ALIGNED": 21,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 1
+    },
+    "PARTIAL": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "FLAGGED": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 1,
+      "NOT_ALIGNED": 17,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    }
+  },
+  "partialAccuracy": null,
+  "approvalAccuracy": 1,
+  "byDiscipline": {
+    "computing": {
+      "items": 9,
+      "answered": 18,
+      "agree": 16,
+      "invalid": 0,
+      "agreement": 0.889
+    },
+    "engineering": {
+      "items": 13,
+      "answered": 25,
+      "agree": 25,
+      "invalid": 1,
+      "agreement": 1
+    }
+  },
+  "byCategory": {
+    "clear-positive": {
+      "items": 11,
+      "answered": 21,
+      "agree": 21,
+      "invalid": 1,
+      "agreement": 1
+    },
+    "wrong-clo": {
+      "items": 3,
+      "answered": 6,
+      "agree": 6,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "keyword-overlap": {
+      "items": 3,
+      "answered": 6,
+      "agree": 6,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "ambiguous": {
+      "items": 2,
+      "answered": 4,
+      "agree": 2,
+      "invalid": 0,
+      "agreement": 0.5
+    },
+    "off-subject": {
+      "items": 3,
+      "answered": 6,
+      "agree": 6,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "stability": 0.952,
+  "byType": {
+    "ILO-CLO": {
+      "items": 14,
+      "answered": 27,
+      "agree": 25,
+      "invalid": 1,
+      "agreement": 0.926
+    },
+    "ILO-anyCLO": {
+      "items": 8,
+      "answered": 16,
+      "agree": 16,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "disagreements": [
+    {
+      "id": "ic-prog1-values",
+      "type": "ILO-CLO",
+      "accept": [
+        "ALIGNED",
+        "PARTIALLY_ALIGNED"
+      ],
+      "got": [
+        "NOT_ALIGNED",
+        "NOT_ALIGNED"
+      ]
+    }
+  ],
+  "model": "openrouter/minimax/minimax-m3.1-flash",
+  "promptVersion": "alignment-123",
+  "dataset": {
+    "name": "stage-b3",
+    "version": "stage-b3-1",
+    "split": "all",
+    "reviewStatus": "unreviewed"
+  },
+  "retries": {
+    "batches": 6,
+    "requests": 16,
+    "firstAttemptInvalid": 5,
+    "finalUnverified": 1,
+    "providerErrors": 0,
+    "retryRate": 1.667,
+    "firstAttemptInvalidRate": 0.313
+  },
+  "failures": [
+    {
+      "run": 1,
+      "course": "sensors",
+      "ids": [
+        "ic-sensors-ok",
+        "ic-sensors-wrongclo",
+        "ic-sensors-adc",
+        "ic-sensors-keyword",
+        "ic-sensors-calib",
+        "ia-sensors-fits",
+        "ia-sensors-none"
+      ],
+      "error": "AI omitted alignment judgements",
+      "rejected": [
+        {
+          "id": "ic-sensors-ok",
+          "reason": "not answered"
+        },
+        {
+          "id": "ic-sensors-wrongclo",
+          "reason": "not answered"
+        },
+        {
+          "id": "ic-sensors-adc",
+          "reason": "not answered"
+        },
+        {
+          "id": "ic-sensors-keyword",
+          "reason": "not answered"
+        },
+        {
+          "id": "ic-sensors-calib",
+          "reason": "not answered"
+        },
+        {
+          "id": "ia-sensors-fits",
+          "reason": "not answered"
+        },
+        {
+          "id": "ia-sensors-none",
+          "reason": "not answered"
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "course": "sensors",
+      "ids": [
+        "ic-sensors-calib"
+      ],
+      "error": "AI evidence is not present in the supplied text (source and target quotes)",
+      "rejected": [
+        {
+          "id": "ic-sensors-calib",
+          "reason": "AI evidence is not present in the supplied text (source and target quotes)"
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "course": "sensors",
+      "ids": [
+        "ic-sensors-calib"
+      ],
+      "error": "AI evidence is not present in the supplied text (source and target quotes)",
+      "rejected": [
+        {
+          "id": "ic-sensors-calib",
+          "reason": "AI evidence is not present in the supplied text (source and target quotes)"
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "course": "sensors",
+      "ids": [
+        "ic-sensors-calib"
+      ],
+      "error": "AI evidence is not present in the supplied text (source and target quotes)",
+      "rejected": [
+        {
+          "id": "ic-sensors-calib",
+          "reason": "AI evidence is not present in the supplied text (source and target quotes)"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "course": "sensors",
+      "ids": [
+        "ic-sensors-ok",
+        "ic-sensors-wrongclo",
+        "ic-sensors-adc",
+        "ic-sensors-keyword",
+        "ic-sensors-calib",
+        "ia-sensors-fits",
+        "ia-sensors-none"
+      ],
+      "error": "A misalignment must include a usable draft revision",
+      "rejected": [
+        {
+          "id": "ic-sensors-wrongclo",
+          "reason": "A misalignment must include a usable draft revision"
+        },
+        {
+          "id": "ic-sensors-keyword",
+          "reason": "A misalignment must include a usable draft revision"
+        }
+      ]
+    }
+  ],
+  "perItem": {
+    "ic-prog1-ok": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ic-prog1-wrongclo": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "ic-prog1-flow": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ic-prog1-keyword": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "ic-prog1-values": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "ic-syseng-ok": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ic-syseng-wrongclo": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "ic-syseng-pm": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ic-syseng-keyword": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "ic-sensors-ok": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ic-sensors-wrongclo": [
+      "PARTIALLY_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "ic-sensors-adc": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ic-sensors-keyword": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "ic-sensors-calib": [
+      null,
+      "ALIGNED"
+    ],
+    "ia-prog1-fits": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ia-prog1-flow": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ia-prog1-none": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "ia-prog1-ambiguous": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "ia-syseng-fits": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ia-syseng-none": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "ia-sensors-fits": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ia-sensors-none": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ]
+  },
+  "ranAt": "2026-10-24T18:08:51.220Z",
+  "usage": {
+    "requests": 16,
+    "promptTokens": 47275,
+    "completionTokens": 6188,
+    "cost": 0.006952,
+    "unreported": 0,
+    "budget": 40
+  }
+}

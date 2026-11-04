@@ -1,0 +1,2284 @@
+{
+  "version": "lcup-v2-improvement-measurements-1",
+  "generatedAt": "2026-10-29T02:03:49.941Z",
+  "official": false,
+  "networkRequests": 0,
+  "paidRequests": 0,
+  "note": "Offline measurements for PROPOSAL.md. Sizes and gate checks are computed from the frozen benchmark; costs are estimates from the smoke run usage, not quotes.",
+  "stage2Draft": {
+    "file": "docs/lcup-v2-evaluation/improvement-proposal/stage2-recommendation-review.DRAFT.md",
+    "systemPromptChars": 5034,
+    "systemPromptSha256": "aa9b59d88acb034d5ac3d8c6b20a0c60cddc9435dcae5982d119044a7747c6da",
+    "estimatedSystemTokens": 1811,
+    "schemaChars": 1408,
+    "estimatedSchemaTokens": 506,
+    "casesWhoseTextAppearsInPrompt": []
+  },
+  "stage2InputSizes": {
+    "development/verified-syllabus": {
+      "n": 24,
+      "stage2UserChars": {
+        "n": 24,
+        "min": 4547,
+        "median": 4967,
+        "p90": 6594,
+        "max": 10950,
+        "mean": 5630
+      },
+      "dependencyChars": {
+        "n": 24,
+        "min": 323,
+        "median": 871,
+        "p90": 2750,
+        "max": 6651,
+        "mean": 1558
+      },
+      "rewritable": 15,
+      "g1Applicable": 10,
+      "g2Applicable": 3,
+      "worstCaseDollarsPerRequest": {
+        "n": 24,
+        "min": 0.086174,
+        "median": 0.087376,
+        "p90": 0.092216,
+        "max": 0.104607,
+        "mean": 0.089367
+      }
+    },
+    "development/synthetic": {
+      "n": 16,
+      "stage2UserChars": {
+        "n": 16,
+        "min": 2698,
+        "median": 3013,
+        "p90": 5268,
+        "max": 5501,
+        "mean": 3565
+      },
+      "dependencyChars": {
+        "n": 16,
+        "min": 284,
+        "median": 396,
+        "p90": 2769,
+        "max": 2987,
+        "mean": 1082
+      },
+      "rewritable": 9,
+      "g1Applicable": 0,
+      "g2Applicable": 3,
+      "worstCaseDollarsPerRequest": {
+        "n": 16,
+        "min": 0.080952,
+        "median": 0.081848,
+        "p90": 0.088668,
+        "max": 0.089309,
+        "mean": 0.083528
+      }
+    },
+    "protected/P-core": {
+      "n": 16,
+      "stage2UserChars": {
+        "n": 16,
+        "min": 2916,
+        "median": 3219,
+        "p90": 5350,
+        "max": 5442,
+        "mean": 3701
+      },
+      "dependencyChars": {
+        "n": 16,
+        "min": 362,
+        "median": 521,
+        "p90": 2808,
+        "max": 2900,
+        "mean": 1112
+      },
+      "rewritable": 10,
+      "g1Applicable": 0,
+      "g2Applicable": 5,
+      "worstCaseDollarsPerRequest": {
+        "n": 16,
+        "min": 0.081551,
+        "median": 0.082437,
+        "p90": 0.088894,
+        "max": 0.089147,
+        "mean": 0.083913
+      }
+    },
+    "protected/P-shared": {
+      "n": 20,
+      "stage2UserChars": {
+        "n": 20,
+        "min": 2703,
+        "median": 3014,
+        "p90": 4893,
+        "max": 4986,
+        "mean": 3447
+      },
+      "dependencyChars": {
+        "n": 20,
+        "min": 264,
+        "median": 367,
+        "p90": 2442,
+        "max": 2494,
+        "mean": 946
+      },
+      "rewritable": 11,
+      "g1Applicable": 0,
+      "g2Applicable": 1,
+      "worstCaseDollarsPerRequest": {
+        "n": 20,
+        "min": 0.080971,
+        "median": 0.081857,
+        "p90": 0.087538,
+        "max": 0.087805,
+        "mean": 0.08318
+      }
+    }
+  },
+  "stage1MeanCharsAssumedForUnrunCases": 1269,
+  "smokeArmB": [
+    {
+      "caseId": "BM1-IT202-096",
+      "label": "PARTIALLY_ALIGNED",
+      "stage1Recommendation": "REWRITE_TEXT",
+      "stage1Draft": "ILO 1: Describe the course structure, objectives, requirements, grading system and policies on absences, tardiness and examinations, and state what is expected of students in learning Java programming.",
+      "gatesFired": [
+        {
+          "gate": "G1",
+          "reason": "would_change_mapping_or_label",
+          "lostLabels": [
+            "[CLO1]"
+          ],
+          "prefixLost": false
+        }
+      ],
+      "armB": "REVIEW_REQUIRED (draft withheld)",
+      "note": "G3 needs Stage 2 root cause; not available without a paid Stage 2 request."
+    },
+    {
+      "caseId": "BM1-IE402-074",
+      "label": "NOT_ALIGNED",
+      "stage1Recommendation": "REWRITE_TEXT",
+      "stage1Draft": "ILO10: Explain the course objectives, requirements, grading system and policies on absences, tardiness and examinations of Systems Engineering, including how Marian Augustinian values are integrated into the course. [CLO 4]",
+      "gatesFired": [],
+      "armB": "REWRITE_TEXT",
+      "note": "G3 needs Stage 2 root cause; not available without a paid Stage 2 request."
+    },
+    {
+      "caseId": "BM1-CPE304-051",
+      "label": "PARTIALLY_ALIGNED",
+      "stage1Recommendation": "REWRITE_TEXT",
+      "stage1Draft": "ILO1: Analyze the differential gain, common mode gain and CMRR of a differential amplifier configuration, and apply the electronic system design process to specify a simple analog circuit. [CLO1]",
+      "gatesFired": [
+        {
+          "gate": "G2",
+          "reason": "target_shared_across_weeks",
+          "weeks": [
+            "7-8"
+          ]
+        }
+      ],
+      "armB": "REVIEW_REQUIRED (draft withheld)",
+      "note": "G3 needs Stage 2 root cause; not available without a paid Stage 2 request."
+    }
+  ],
+  "stage1Plans": {
+    "devBaselinePilot": {
+      "requests": 9,
+      "relationships": 16,
+      "perRequest": [
+        {
+          "caseIds": [
+            "BM1-S01-003",
+            "BM1-S01-002"
+          ],
+          "userChars": 1420,
+          "worstCaseDollars": 0.186585
+        },
+        {
+          "caseIds": [
+            "BM1-S15-003",
+            "BM1-S15-002"
+          ],
+          "userChars": 1385,
+          "worstCaseDollars": 0.186489
+        },
+        {
+          "caseIds": [
+            "BM1-S14-004",
+            "BM1-S14-006"
+          ],
+          "userChars": 1355,
+          "worstCaseDollars": 0.186387
+        },
+        {
+          "caseIds": [
+            "BM1-S21-004",
+            "BM1-S21-006"
+          ],
+          "userChars": 1175,
+          "worstCaseDollars": 0.185892
+        },
+        {
+          "caseIds": [
+            "BM1-S13-001",
+            "BM1-S13-007"
+          ],
+          "userChars": 1387,
+          "worstCaseDollars": 0.186475
+        },
+        {
+          "caseIds": [
+            "BM1-S20-001",
+            "BM1-S20-007"
+          ],
+          "userChars": 1241,
+          "worstCaseDollars": 0.186073
+        },
+        {
+          "caseIds": [
+            "BM1-S03-001",
+            "BM1-S03-007"
+          ],
+          "userChars": 1168,
+          "worstCaseDollars": 0.185873
+        },
+        {
+          "caseIds": [
+            "BM1-S19-005"
+          ],
+          "userChars": 1003,
+          "worstCaseDollars": 0.185353
+        },
+        {
+          "caseIds": [
+            "BM1-S02-005"
+          ],
+          "userChars": 941,
+          "worstCaseDollars": 0.185182
+        }
+      ]
+    },
+    "devReal": {
+      "requests": 6,
+      "relationships": 21,
+      "perRequest": [
+        {
+          "caseIds": [
+            "BM1-IT202-095",
+            "BM1-IT202-035",
+            "BM1-IT202-130",
+            "BM1-IT202-036"
+          ],
+          "userChars": 4246,
+          "worstCaseDollars": 0.194686
+        },
+        {
+          "caseIds": [
+            "BM1-IT202-131",
+            "BM1-IT202-132",
+            "BM1-IT202-098"
+          ],
+          "userChars": 3436,
+          "worstCaseDollars": 0.192409
+        },
+        {
+          "caseIds": [
+            "BM1-IE402-073",
+            "BM1-IE402-023",
+            "BM1-IE402-099",
+            "BM1-IE402-024"
+          ],
+          "userChars": 4312,
+          "worstCaseDollars": 0.194868
+        },
+        {
+          "caseIds": [
+            "BM1-IE402-100",
+            "BM1-IE402-101",
+            "BM1-IE402-088"
+          ],
+          "userChars": 4001,
+          "worstCaseDollars": 0.193999
+        },
+        {
+          "caseIds": [
+            "BM1-CPE304-021",
+            "BM1-CPE304-077",
+            "BM1-CPE304-022",
+            "BM1-CPE304-078"
+          ],
+          "userChars": 4132,
+          "worstCaseDollars": 0.194455
+        },
+        {
+          "caseIds": [
+            "BM1-CPE304-079",
+            "BM1-CPE304-057",
+            "BM1-CPE304-054"
+          ],
+          "userChars": 3741,
+          "worstCaseDollars": 0.193339
+        }
+      ]
+    },
+    "devBaseline": {
+      "requests": 15,
+      "relationships": 37,
+      "perRequest": [
+        {
+          "caseIds": [
+            "BM1-S01-003",
+            "BM1-S01-002"
+          ],
+          "userChars": 1420,
+          "worstCaseDollars": 0.186585
+        },
+        {
+          "caseIds": [
+            "BM1-S15-003",
+            "BM1-S15-002"
+          ],
+          "userChars": 1385,
+          "worstCaseDollars": 0.186489
+        },
+        {
+          "caseIds": [
+            "BM1-S14-004",
+            "BM1-S14-006"
+          ],
+          "userChars": 1355,
+          "worstCaseDollars": 0.186387
+        },
+        {
+          "caseIds": [
+            "BM1-S21-004",
+            "BM1-S21-006"
+          ],
+          "userChars": 1175,
+          "worstCaseDollars": 0.185892
+        },
+        {
+          "caseIds": [
+            "BM1-S13-001",
+            "BM1-S13-007"
+          ],
+          "userChars": 1387,
+          "worstCaseDollars": 0.186475
+        },
+        {
+          "caseIds": [
+            "BM1-S20-001",
+            "BM1-S20-007"
+          ],
+          "userChars": 1241,
+          "worstCaseDollars": 0.186073
+        },
+        {
+          "caseIds": [
+            "BM1-S03-001",
+            "BM1-S03-007"
+          ],
+          "userChars": 1168,
+          "worstCaseDollars": 0.185873
+        },
+        {
+          "caseIds": [
+            "BM1-S19-005"
+          ],
+          "userChars": 1003,
+          "worstCaseDollars": 0.185353
+        },
+        {
+          "caseIds": [
+            "BM1-S02-005"
+          ],
+          "userChars": 941,
+          "worstCaseDollars": 0.185182
+        },
+        {
+          "caseIds": [
+            "BM1-IT202-095",
+            "BM1-IT202-035",
+            "BM1-IT202-130",
+            "BM1-IT202-036"
+          ],
+          "userChars": 4246,
+          "worstCaseDollars": 0.194686
+        },
+        {
+          "caseIds": [
+            "BM1-IT202-131",
+            "BM1-IT202-132",
+            "BM1-IT202-098"
+          ],
+          "userChars": 3436,
+          "worstCaseDollars": 0.192409
+        },
+        {
+          "caseIds": [
+            "BM1-IE402-073",
+            "BM1-IE402-023",
+            "BM1-IE402-099",
+            "BM1-IE402-024"
+          ],
+          "userChars": 4312,
+          "worstCaseDollars": 0.194868
+        },
+        {
+          "caseIds": [
+            "BM1-IE402-100",
+            "BM1-IE402-101",
+            "BM1-IE402-088"
+          ],
+          "userChars": 4001,
+          "worstCaseDollars": 0.193999
+        },
+        {
+          "caseIds": [
+            "BM1-CPE304-021",
+            "BM1-CPE304-077",
+            "BM1-CPE304-022",
+            "BM1-CPE304-078"
+          ],
+          "userChars": 4132,
+          "worstCaseDollars": 0.194455
+        },
+        {
+          "caseIds": [
+            "BM1-CPE304-079",
+            "BM1-CPE304-057",
+            "BM1-CPE304-054"
+          ],
+          "userChars": 3741,
+          "worstCaseDollars": 0.193339
+        }
+      ]
+    },
+    "protected": {
+      "requests": 10,
+      "relationships": 36,
+      "perRequest": [
+        {
+          "caseIds": [
+            "BM1-S07-001",
+            "BM1-S07-002",
+            "BM1-S07-003",
+            "BM1-S07-004"
+          ],
+          "userChars": 2227,
+          "worstCaseDollars": 0.188936
+        },
+        {
+          "caseIds": [
+            "BM1-S07-005",
+            "BM1-S07-006",
+            "BM1-S07-007"
+          ],
+          "userChars": 1766,
+          "worstCaseDollars": 0.187572
+        },
+        {
+          "caseIds": [
+            "BM1-S08-001",
+            "BM1-S08-002",
+            "BM1-S08-003",
+            "BM1-S08-004"
+          ],
+          "userChars": 2244,
+          "worstCaseDollars": 0.188983
+        },
+        {
+          "caseIds": [
+            "BM1-S08-005",
+            "BM1-S08-006",
+            "BM1-S08-007"
+          ],
+          "userChars": 1582,
+          "worstCaseDollars": 0.187066
+        },
+        {
+          "caseIds": [
+            "BM1-S09-001",
+            "BM1-S09-002",
+            "BM1-S09-003",
+            "BM1-S09-004"
+          ],
+          "userChars": 1949,
+          "worstCaseDollars": 0.188172
+        },
+        {
+          "caseIds": [
+            "BM1-S09-005",
+            "BM1-S09-006",
+            "BM1-S09-007"
+          ],
+          "userChars": 1514,
+          "worstCaseDollars": 0.186879
+        },
+        {
+          "caseIds": [
+            "BM1-S10-001",
+            "BM1-S10-002",
+            "BM1-S10-003",
+            "BM1-S10-004"
+          ],
+          "userChars": 2151,
+          "worstCaseDollars": 0.188727
+        },
+        {
+          "caseIds": [
+            "BM1-S10-005",
+            "BM1-S10-006",
+            "BM1-S10-007"
+          ],
+          "userChars": 1725,
+          "worstCaseDollars": 0.187459
+        },
+        {
+          "caseIds": [
+            "BM1-S11-001",
+            "BM1-S11-002",
+            "BM1-S11-003",
+            "BM1-S11-004"
+          ],
+          "userChars": 1928,
+          "worstCaseDollars": 0.188114
+        },
+        {
+          "caseIds": [
+            "BM1-S11-005",
+            "BM1-S11-006",
+            "BM1-S11-007",
+            "BM1-S11-008"
+          ],
+          "userChars": 1566,
+          "worstCaseDollars": 0.187088
+        }
+      ]
+    }
+  },
+  "costModel": {
+    "prices": {
+      "input": 2,
+      "output": 10,
+      "cacheWrite5m": 2.5,
+      "cacheReadAsCharged": 0.2,
+      "geoFactorInWorstCase": 1.1,
+      "asOf": "2026-10-27",
+      "unit": "USD per million tokens"
+    },
+    "calibration": {
+      "userCharsPerToken": 3.01,
+      "systemCharsPerToken": 2.78,
+      "stage1OutputTokensPerRelationship": 602,
+      "stage1SystemTokens": 15553,
+      "stage2OutputTokens": {
+        "expected": 450,
+        "high": 2900
+      },
+      "stage2ExpectedShareOfRelationships": 0.65,
+      "assumptions": [
+        "Stage 1 expected: smoke output per relationship, no thinking; high: +30% output and 2,000 thinking tokens per request.",
+        "Stage 2 system prompt and schema are priced as uncached input (conservative).",
+        "Stage 2 runs only for non-aligned Stage 1 results; expected share 65% (coherent synthetic cases are expected to pass); high and capNeeded assume every relationship is sent.",
+        "capNeeded = the sum of the guard reservations of every request (whole body at the cache-write rate + 2,048-token allowance + max_tokens 4,096, x1.1 data-residency factor). The existing runner refuses a cap below it. It is a ceiling, not a forecast."
+      ]
+    },
+    "runs": [
+      {
+        "run": "R1",
+        "phase": 1,
+        "required": true,
+        "tool": "existing runner (run.cjs --bundle), frozen Stage 1",
+        "name": "Baseline: the 37 development cases without outputs: the frozen pilot minus the protected cluster (16 synthetic; 9 requests byte-identical to the frozen plan) plus 21 real-syllabus cases (6 requests)",
+        "stage": 1,
+        "requestsMax": 15,
+        "requestsExpected": 15,
+        "relationships": 37,
+        "expected": 0.3285,
+        "high": 0.6954,
+        "capNeeded": 2.8381,
+        "maxWorstCasePerRequest": 0.194868
+      },
+      {
+        "run": "R2",
+        "phase": 3,
+        "required": true,
+        "tool": "new Stage 2 runner",
+        "name": "Stage 2 on the development set, iteration 1 (non-aligned relationships only, the 3 smoke cases included)",
+        "stage": 2,
+        "requestsMax": 40,
+        "requestsExpected": 26,
+        "relationships": 40,
+        "expected": 0.3205,
+        "high": 1.473,
+        "capNeeded": 3.4812,
+        "maxWorstCasePerRequest": 0.104607
+      },
+      {
+        "run": "R3",
+        "phase": 3,
+        "required": false,
+        "tool": "new Stage 2 runner",
+        "name": "Stage 2 iteration 2, only if your review asks for a prompt revision",
+        "stage": 2,
+        "requestsMax": 40,
+        "requestsExpected": 26,
+        "relationships": 40,
+        "expected": 0.3205,
+        "high": 1.473,
+        "capNeeded": 3.4812,
+        "maxWorstCasePerRequest": 0.104607
+      },
+      {
+        "run": "R4",
+        "phase": 4,
+        "required": false,
+        "tool": "existing runner, frozen Stage 1",
+        "name": "Noise floor: repeat Stage 1 once on all 40 development cases",
+        "stage": 1,
+        "requestsMax": 18,
+        "requestsExpected": 18,
+        "relationships": 40,
+        "expected": 0.3612,
+        "high": 0.7934,
+        "capNeeded": 3.4078,
+        "maxWorstCasePerRequest": 0.194868
+      },
+      {
+        "run": "R5",
+        "phase": 4,
+        "required": false,
+        "tool": "new Stage 2 runner",
+        "name": "Noise floor: repeat Stage 2 once on the development set",
+        "stage": 2,
+        "requestsMax": 40,
+        "requestsExpected": 26,
+        "relationships": 40,
+        "expected": 0.3205,
+        "high": 1.473,
+        "capNeeded": 3.4812,
+        "maxWorstCasePerRequest": 0.104607
+      },
+      {
+        "run": "R6",
+        "phase": 5,
+        "required": true,
+        "tool": "existing runner (run.cjs --bundle), frozen Stage 1",
+        "name": "Protected: Stage 1 once on P-core and P-shared (36 cases)",
+        "stage": 1,
+        "requestsMax": 10,
+        "requestsExpected": 10,
+        "relationships": 36,
+        "expected": 0.2961,
+        "high": 0.5612,
+        "capNeeded": 1.879,
+        "maxWorstCasePerRequest": 0.188983
+      },
+      {
+        "run": "R7",
+        "phase": 5,
+        "required": true,
+        "tool": "new Stage 2 runner",
+        "name": "Protected: Stage 2 once with the frozen candidate, non-aligned only",
+        "stage": 2,
+        "requestsMax": 36,
+        "requestsExpected": 23,
+        "relationships": 36,
+        "expected": 0.2691,
+        "high": 1.296,
+        "capNeeded": 3.0062,
+        "maxWorstCasePerRequest": 0.089147
+      }
+    ],
+    "totals": {
+      "required": {
+        "runs": [
+          "R1",
+          "R2",
+          "R6",
+          "R7"
+        ],
+        "expected": 1.2142,
+        "high": 4.0256,
+        "capsNeededSum": 11.2045
+      },
+      "all": {
+        "runs": [
+          "R1",
+          "R2",
+          "R3",
+          "R4",
+          "R5",
+          "R6",
+          "R7"
+        ],
+        "expected": 2.2164,
+        "high": 7.765,
+        "capsNeededSum": 21.5747
+      }
+    },
+    "registerProjection": {
+      "now": 1.3525116,
+      "cap": 10,
+      "required": {
+        "expected": {
+          "scenario": "expected",
+          "registerAtEnd": 2.5667,
+          "allRunsFitWithFullCap": true,
+          "steps": [
+            {
+              "run": "R1",
+              "registerBefore": 1.3525,
+              "capNeeded": 2.8381,
+              "fitsWithFullCap": true
+            },
+            {
+              "run": "R2",
+              "registerBefore": 1.681,
+              "capNeeded": 3.4812,
+              "fitsWithFullCap": true
+            },
+            {
+              "run": "R6",
+              "registerBefore": 2.0015,
+              "capNeeded": 1.879,
+              "fitsWithFullCap": true
+            },
+            {
+              "run": "R7",
+              "registerBefore": 2.2976,
+              "capNeeded": 3.0062,
+              "fitsWithFullCap": true
+            }
+          ]
+        },
+        "high": {
+          "scenario": "high",
+          "registerAtEnd": 5.3781,
+          "allRunsFitWithFullCap": true,
+          "steps": [
+            {
+              "run": "R1",
+              "registerBefore": 1.3525,
+              "capNeeded": 2.8381,
+              "fitsWithFullCap": true
+            },
+            {
+              "run": "R2",
+              "registerBefore": 2.0479,
+              "capNeeded": 3.4812,
+              "fitsWithFullCap": true
+            },
+            {
+              "run": "R6",
+              "registerBefore": 3.5209,
+              "capNeeded": 1.879,
+              "fitsWithFullCap": true
+            },
+            {
+              "run": "R7",
+              "registerBefore": 4.0821,
+              "capNeeded": 3.0062,
+              "fitsWithFullCap": true
+            }
+          ]
+        }
+      },
+      "all": {
+        "expected": {
+          "scenario": "expected",
+          "registerAtEnd": 3.5689,
+          "allRunsFitWithFullCap": true,
+          "steps": [
+            {
+              "run": "R1",
+              "registerBefore": 1.3525,
+              "capNeeded": 2.8381,
+              "fitsWithFullCap": true
+            },
+            {
+              "run": "R2",
+              "registerBefore": 1.681,
+              "capNeeded": 3.4812,
+              "fitsWithFullCap": true
+            },
+            {
+              "run": "R3",
+              "registerBefore": 2.0015,
+              "capNeeded": 3.4812,
+              "fitsWithFullCap": true
+            },
+            {
+              "run": "R4",
+              "registerBefore": 2.322,
+              "capNeeded": 3.4078,
+              "fitsWithFullCap": true
+            },
+            {
+              "run": "R5",
+              "registerBefore": 2.6832,
+              "capNeeded": 3.4812,
+              "fitsWithFullCap": true
+            },
+            {
+              "run": "R6",
+              "registerBefore": 3.0037,
+              "capNeeded": 1.879,
+              "fitsWithFullCap": true
+            },
+            {
+              "run": "R7",
+              "registerBefore": 3.2998,
+              "capNeeded": 3.0062,
+              "fitsWithFullCap": true
+            }
+          ]
+        },
+        "high": {
+          "scenario": "high",
+          "registerAtEnd": 9.1175,
+          "allRunsFitWithFullCap": false,
+          "steps": [
+            {
+              "run": "R1",
+              "registerBefore": 1.3525,
+              "capNeeded": 2.8381,
+              "fitsWithFullCap": true
+            },
+            {
+              "run": "R2",
+              "registerBefore": 2.0479,
+              "capNeeded": 3.4812,
+              "fitsWithFullCap": true
+            },
+            {
+              "run": "R3",
+              "registerBefore": 3.5209,
+              "capNeeded": 3.4812,
+              "fitsWithFullCap": true
+            },
+            {
+              "run": "R4",
+              "registerBefore": 4.9939,
+              "capNeeded": 3.4078,
+              "fitsWithFullCap": true
+            },
+            {
+              "run": "R5",
+              "registerBefore": 5.7873,
+              "capNeeded": 3.4812,
+              "fitsWithFullCap": true
+            },
+            {
+              "run": "R6",
+              "registerBefore": 7.2603,
+              "capNeeded": 1.879,
+              "fitsWithFullCap": true
+            },
+            {
+              "run": "R7",
+              "registerBefore": 7.8215,
+              "capNeeded": 3.0062,
+              "fitsWithFullCap": false
+            }
+          ]
+        }
+      }
+    }
+  },
+  "perCase": [
+    {
+      "id": "BM1-IT202-096",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "Content-ILO",
+      "rewritableField": "plan[0].ilos[0].text",
+      "dependencyKinds": [
+        "printed_labels",
+        "same_number_other_statement",
+        "week_row",
+        "mapped_clos",
+        "clo_coverage"
+      ],
+      "userChars": 6277,
+      "dependencyChars": 2556,
+      "g1Applicable": true,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 16880,
+      "worstCaseDollars": 0.091476
+    },
+    {
+      "id": "BM1-IE402-074",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "Content-ILO",
+      "rewritableField": "plan[0].ilos[0].text",
+      "dependencyKinds": [
+        "printed_labels",
+        "same_number_other_statement",
+        "week_row",
+        "mapped_clos",
+        "clo_coverage"
+      ],
+      "userChars": 7560,
+      "dependencyChars": 3233,
+      "g1Applicable": true,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 18145,
+      "worstCaseDollars": 0.094955
+    },
+    {
+      "id": "BM1-CPE304-051",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "Content-ILO",
+      "rewritableField": "plan[1].ilos[0].text",
+      "dependencyKinds": [
+        "printed_labels",
+        "same_text_other_weeks",
+        "same_number_other_statement",
+        "week_row",
+        "mapped_clos",
+        "clo_coverage"
+      ],
+      "userChars": 5921,
+      "dependencyChars": 1666,
+      "g1Applicable": true,
+      "g2Applicable": true,
+      "sharedWeeks": 1,
+      "worstCaseInputTokens": 16542,
+      "worstCaseDollars": 0.090547
+    },
+    {
+      "id": "BM1-S01-003",
+      "set": "development",
+      "sourceKind": "synthetic",
+      "type": "Content-course",
+      "rewritableField": "plan[2].contents",
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 3088,
+      "dependencyChars": 500,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13454,
+      "worstCaseDollars": 0.082055
+    },
+    {
+      "id": "BM1-S15-003",
+      "set": "development",
+      "sourceKind": "synthetic",
+      "type": "Content-course",
+      "rewritableField": "plan[2].contents",
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 3013,
+      "dependencyChars": 367,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13379,
+      "worstCaseDollars": 0.081848
+    },
+    {
+      "id": "BM1-S14-004",
+      "set": "development",
+      "sourceKind": "synthetic",
+      "type": "Content-ILO",
+      "rewritableField": "plan[2].ilos[0].text",
+      "dependencyKinds": [
+        "same_text_other_weeks",
+        "week_row",
+        "mapped_clos",
+        "clo_coverage"
+      ],
+      "userChars": 5324,
+      "dependencyChars": 2773,
+      "g1Applicable": false,
+      "g2Applicable": true,
+      "sharedWeeks": 13,
+      "worstCaseInputTokens": 15911,
+      "worstCaseDollars": 0.088811
+    },
+    {
+      "id": "BM1-S21-004",
+      "set": "development",
+      "sourceKind": "synthetic",
+      "type": "Content-ILO",
+      "rewritableField": "plan[2].ilos[0].text",
+      "dependencyKinds": [
+        "week_row",
+        "mapped_clos",
+        "clo_coverage"
+      ],
+      "userChars": 4541,
+      "dependencyChars": 2127,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 15048,
+      "worstCaseDollars": 0.086438
+    },
+    {
+      "id": "BM1-S13-001",
+      "set": "development",
+      "sourceKind": "synthetic",
+      "type": "ILO-CLO",
+      "rewritableField": "plan[2].ilos[0].text",
+      "dependencyKinds": [
+        "same_text_other_weeks",
+        "week_row",
+        "mapped_clos",
+        "clo_coverage"
+      ],
+      "userChars": 5501,
+      "dependencyChars": 2987,
+      "g1Applicable": false,
+      "g2Applicable": true,
+      "sharedWeeks": 13,
+      "worstCaseInputTokens": 16092,
+      "worstCaseDollars": 0.089309
+    },
+    {
+      "id": "BM1-S20-001",
+      "set": "development",
+      "sourceKind": "synthetic",
+      "type": "ILO-CLO",
+      "rewritableField": "plan[2].ilos[0].text",
+      "dependencyKinds": [
+        "same_text_other_weeks",
+        "week_row",
+        "mapped_clos",
+        "clo_coverage"
+      ],
+      "userChars": 5268,
+      "dependencyChars": 2769,
+      "g1Applicable": false,
+      "g2Applicable": true,
+      "sharedWeeks": 13,
+      "worstCaseInputTokens": 15859,
+      "worstCaseDollars": 0.088668
+    },
+    {
+      "id": "BM1-S03-001",
+      "set": "development",
+      "sourceKind": "synthetic",
+      "type": "ILO-CLO",
+      "rewritableField": "plan[2].ilos[0].text",
+      "dependencyKinds": [
+        "week_row",
+        "mapped_clos",
+        "clo_coverage"
+      ],
+      "userChars": 4436,
+      "dependencyChars": 2049,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 14947,
+      "worstCaseDollars": 0.08616
+    },
+    {
+      "id": "BM1-S19-005",
+      "set": "development",
+      "sourceKind": "synthetic",
+      "type": "Content-activity",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 2874,
+      "dependencyChars": 380,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13229,
+      "worstCaseDollars": 0.081436
+    },
+    {
+      "id": "BM1-S02-005",
+      "set": "development",
+      "sourceKind": "synthetic",
+      "type": "Content-activity",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 2741,
+      "dependencyChars": 309,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13096,
+      "worstCaseDollars": 0.08107
+    },
+    {
+      "id": "BM1-S01-002",
+      "set": "development",
+      "sourceKind": "synthetic",
+      "type": "ILO-activity",
+      "rewritableField": "plan[2].activities",
+      "dependencyKinds": [
+        "week_row",
+        "mapped_clos"
+      ],
+      "userChars": 3146,
+      "dependencyChars": 684,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13539,
+      "worstCaseDollars": 0.082288
+    },
+    {
+      "id": "BM1-S15-002",
+      "set": "development",
+      "sourceKind": "synthetic",
+      "type": "ILO-activity",
+      "rewritableField": "plan[2].activities",
+      "dependencyKinds": [
+        "week_row",
+        "mapped_clos"
+      ],
+      "userChars": 3094,
+      "dependencyChars": 673,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13487,
+      "worstCaseDollars": 0.082145
+    },
+    {
+      "id": "BM1-S14-006",
+      "set": "development",
+      "sourceKind": "synthetic",
+      "type": "Content-assessment",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 2838,
+      "dependencyChars": 349,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13193,
+      "worstCaseDollars": 0.081337
+    },
+    {
+      "id": "BM1-S21-006",
+      "set": "development",
+      "sourceKind": "synthetic",
+      "type": "Content-assessment",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 2740,
+      "dependencyChars": 299,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13095,
+      "worstCaseDollars": 0.081067
+    },
+    {
+      "id": "BM1-S13-007",
+      "set": "development",
+      "sourceKind": "synthetic",
+      "type": "Activity-assessment",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 2926,
+      "dependencyChars": 368,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13281,
+      "worstCaseDollars": 0.081579
+    },
+    {
+      "id": "BM1-S20-007",
+      "set": "development",
+      "sourceKind": "synthetic",
+      "type": "Activity-assessment",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 2818,
+      "dependencyChars": 396,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13173,
+      "worstCaseDollars": 0.081282
+    },
+    {
+      "id": "BM1-S03-007",
+      "set": "development",
+      "sourceKind": "synthetic",
+      "type": "Activity-assessment",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 2698,
+      "dependencyChars": 284,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13053,
+      "worstCaseDollars": 0.080952
+    },
+    {
+      "id": "BM1-IT202-095",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "Content-course",
+      "rewritableField": "plan[0].contents",
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 4791,
+      "dependencyChars": 871,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 15197,
+      "worstCaseDollars": 0.086848
+    },
+    {
+      "id": "BM1-IT202-035",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "ILO-CLO",
+      "rewritableField": "plan[0].ilos[0].text",
+      "dependencyKinds": [
+        "printed_labels",
+        "same_number_other_statement",
+        "week_row",
+        "mapped_clos",
+        "clo_coverage"
+      ],
+      "userChars": 6594,
+      "dependencyChars": 2750,
+      "g1Applicable": true,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 17149,
+      "worstCaseDollars": 0.092216
+    },
+    {
+      "id": "BM1-IT202-130",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "Content-activity",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 4547,
+      "dependencyChars": 579,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 14955,
+      "worstCaseDollars": 0.086182
+    },
+    {
+      "id": "BM1-IT202-036",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "ILO-activity",
+      "rewritableField": "plan[0].activities",
+      "dependencyKinds": [
+        "week_row",
+        "mapped_clos"
+      ],
+      "userChars": 4895,
+      "dependencyChars": 906,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 15327,
+      "worstCaseDollars": 0.087205
+    },
+    {
+      "id": "BM1-IT202-131",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "Content-assessment",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 4550,
+      "dependencyChars": 686,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 14952,
+      "worstCaseDollars": 0.086174
+    },
+    {
+      "id": "BM1-IT202-132",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "Activity-assessment",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 4562,
+      "dependencyChars": 588,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 14971,
+      "worstCaseDollars": 0.086226
+    },
+    {
+      "id": "BM1-IE402-073",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "Content-course",
+      "rewritableField": "plan[0].contents",
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 4988,
+      "dependencyChars": 740,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 15389,
+      "worstCaseDollars": 0.087376
+    },
+    {
+      "id": "BM1-IE402-023",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "ILO-CLO",
+      "rewritableField": "plan[0].ilos[0].text",
+      "dependencyKinds": [
+        "printed_labels",
+        "same_number_other_statement",
+        "week_row",
+        "mapped_clos",
+        "clo_coverage"
+      ],
+      "userChars": 7452,
+      "dependencyChars": 3437,
+      "g1Applicable": true,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 17999,
+      "worstCaseDollars": 0.094553
+    },
+    {
+      "id": "BM1-IE402-099",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "Content-activity",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 4767,
+      "dependencyChars": 446,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 15170,
+      "worstCaseDollars": 0.086774
+    },
+    {
+      "id": "BM1-IE402-024",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "ILO-activity",
+      "rewritableField": "plan[0].activities",
+      "dependencyKinds": [
+        "week_row",
+        "mapped_clos"
+      ],
+      "userChars": 5000,
+      "dependencyChars": 777,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 15420,
+      "worstCaseDollars": 0.087461
+    },
+    {
+      "id": "BM1-IE402-100",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "Content-assessment",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 4772,
+      "dependencyChars": 555,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 15171,
+      "worstCaseDollars": 0.086776
+    },
+    {
+      "id": "BM1-IE402-101",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "Activity-assessment",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 4779,
+      "dependencyChars": 465,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 15180,
+      "worstCaseDollars": 0.086801
+    },
+    {
+      "id": "BM1-CPE304-021",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "ILO-CLO",
+      "rewritableField": "plan[1].ilos[0].text",
+      "dependencyKinds": [
+        "printed_labels",
+        "same_text_other_weeks",
+        "same_number_other_statement",
+        "week_row",
+        "mapped_clos",
+        "clo_coverage"
+      ],
+      "userChars": 6105,
+      "dependencyChars": 2133,
+      "g1Applicable": true,
+      "g2Applicable": true,
+      "sharedWeeks": 1,
+      "worstCaseInputTokens": 16656,
+      "worstCaseDollars": 0.09086
+    },
+    {
+      "id": "BM1-CPE304-077",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "Content-activity",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 4595,
+      "dependencyChars": 323,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 15014,
+      "worstCaseDollars": 0.086345
+    },
+    {
+      "id": "BM1-CPE304-022",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "ILO-activity",
+      "rewritableField": "plan[1].activities",
+      "dependencyKinds": [
+        "week_row",
+        "mapped_clos"
+      ],
+      "userChars": 4967,
+      "dependencyChars": 1164,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 15405,
+      "worstCaseDollars": 0.08742
+    },
+    {
+      "id": "BM1-CPE304-078",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "Content-assessment",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 4598,
+      "dependencyChars": 432,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 15011,
+      "worstCaseDollars": 0.086336
+    },
+    {
+      "id": "BM1-CPE304-079",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "Activity-assessment",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 4599,
+      "dependencyChars": 416,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 15008,
+      "worstCaseDollars": 0.086328
+    },
+    {
+      "id": "BM1-CPE304-057",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "Content-ILO",
+      "rewritableField": "plan[4].ilos[0].text",
+      "dependencyKinds": [
+        "printed_labels",
+        "same_text_other_weeks",
+        "same_number_other_statement",
+        "week_row",
+        "mapped_clos"
+      ],
+      "userChars": 5217,
+      "dependencyChars": 1345,
+      "g1Applicable": true,
+      "g2Applicable": true,
+      "sharedWeeks": 1,
+      "worstCaseInputTokens": 15708,
+      "worstCaseDollars": 0.088253
+    },
+    {
+      "id": "BM1-CPE304-054",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "Content-ILO",
+      "rewritableField": "plan[2].ilos[0].text",
+      "dependencyKinds": [
+        "printed_labels",
+        "same_number_other_statement",
+        "week_row",
+        "mapped_clos",
+        "clo_coverage",
+        "clo_coverage"
+      ],
+      "userChars": 6438,
+      "dependencyChars": 2208,
+      "g1Applicable": true,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 17037,
+      "worstCaseDollars": 0.091908
+    },
+    {
+      "id": "BM1-IE402-088",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "Content-ILO",
+      "rewritableField": "plan[6].ilos[1].text",
+      "dependencyKinds": [
+        "printed_labels",
+        "same_number_other_statement",
+        "week_row",
+        "mapped_clos",
+        "clo_coverage",
+        "clo_coverage"
+      ],
+      "userChars": 10950,
+      "dependencyChars": 6651,
+      "g1Applicable": true,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 21655,
+      "worstCaseDollars": 0.104607
+    },
+    {
+      "id": "BM1-IT202-098",
+      "set": "development",
+      "sourceKind": "verified-syllabus",
+      "type": "Content-ILO",
+      "rewritableField": "plan[1].ilos[0].text",
+      "dependencyKinds": [
+        "printed_labels",
+        "same_number_other_statement",
+        "week_row",
+        "mapped_clos",
+        "clo_coverage"
+      ],
+      "userChars": 6201,
+      "dependencyChars": 2454,
+      "g1Applicable": true,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 16770,
+      "worstCaseDollars": 0.091174
+    },
+    {
+      "id": "BM1-S07-001",
+      "set": "protected/P-core",
+      "sourceKind": "synthetic",
+      "type": "ILO-CLO",
+      "rewritableField": "plan[2].ilos[0].text",
+      "dependencyKinds": [
+        "same_text_other_weeks",
+        "week_row",
+        "mapped_clos",
+        "clo_coverage"
+      ],
+      "userChars": 5442,
+      "dependencyChars": 2900,
+      "g1Applicable": false,
+      "g2Applicable": true,
+      "sharedWeeks": 13,
+      "worstCaseInputTokens": 16033,
+      "worstCaseDollars": 0.089147
+    },
+    {
+      "id": "BM1-S07-002",
+      "set": "protected/P-core",
+      "sourceKind": "synthetic",
+      "type": "ILO-activity",
+      "rewritableField": "plan[2].activities",
+      "dependencyKinds": [
+        "week_row",
+        "mapped_clos"
+      ],
+      "userChars": 3291,
+      "dependencyChars": 706,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13684,
+      "worstCaseDollars": 0.082687
+    },
+    {
+      "id": "BM1-S07-003",
+      "set": "protected/P-core",
+      "sourceKind": "synthetic",
+      "type": "Content-course",
+      "rewritableField": "plan[2].contents",
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 3268,
+      "dependencyChars": 521,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13634,
+      "worstCaseDollars": 0.08255
+    },
+    {
+      "id": "BM1-S07-004",
+      "set": "protected/P-core",
+      "sourceKind": "synthetic",
+      "type": "Content-ILO",
+      "rewritableField": "plan[2].ilos[0].text",
+      "dependencyKinds": [
+        "same_text_other_weeks",
+        "week_row",
+        "mapped_clos",
+        "clo_coverage"
+      ],
+      "userChars": 5355,
+      "dependencyChars": 2816,
+      "g1Applicable": false,
+      "g2Applicable": true,
+      "sharedWeeks": 13,
+      "worstCaseInputTokens": 15942,
+      "worstCaseDollars": 0.088897
+    },
+    {
+      "id": "BM1-S07-005",
+      "set": "protected/P-core",
+      "sourceKind": "synthetic",
+      "type": "Content-activity",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 2957,
+      "dependencyChars": 378,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13312,
+      "worstCaseDollars": 0.081664
+    },
+    {
+      "id": "BM1-S07-006",
+      "set": "protected/P-core",
+      "sourceKind": "synthetic",
+      "type": "Content-assessment",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 2966,
+      "dependencyChars": 421,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13321,
+      "worstCaseDollars": 0.081689
+    },
+    {
+      "id": "BM1-S07-007",
+      "set": "protected/P-core",
+      "sourceKind": "synthetic",
+      "type": "Activity-assessment",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 2971,
+      "dependencyChars": 362,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13326,
+      "worstCaseDollars": 0.081703
+    },
+    {
+      "id": "BM1-S08-001",
+      "set": "protected/P-core",
+      "sourceKind": "synthetic",
+      "type": "ILO-CLO",
+      "rewritableField": "plan[2].ilos[0].text",
+      "dependencyKinds": [
+        "same_text_other_weeks",
+        "week_row",
+        "mapped_clos",
+        "clo_coverage"
+      ],
+      "userChars": 5350,
+      "dependencyChars": 2808,
+      "g1Applicable": false,
+      "g2Applicable": true,
+      "sharedWeeks": 13,
+      "worstCaseInputTokens": 15941,
+      "worstCaseDollars": 0.088894
+    },
+    {
+      "id": "BM1-S08-002",
+      "set": "protected/P-shared",
+      "sourceKind": "synthetic",
+      "type": "ILO-activity",
+      "rewritableField": "plan[2].activities",
+      "dependencyKinds": [
+        "week_row",
+        "mapped_clos"
+      ],
+      "userChars": 3199,
+      "dependencyChars": 693,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13592,
+      "worstCaseDollars": 0.082434
+    },
+    {
+      "id": "BM1-S08-003",
+      "set": "protected/P-core",
+      "sourceKind": "synthetic",
+      "type": "Content-course",
+      "rewritableField": "plan[2].contents",
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 3176,
+      "dependencyChars": 381,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13542,
+      "worstCaseDollars": 0.082297
+    },
+    {
+      "id": "BM1-S08-004",
+      "set": "protected/P-core",
+      "sourceKind": "synthetic",
+      "type": "Content-ILO",
+      "rewritableField": "plan[2].ilos[0].text",
+      "dependencyKinds": [
+        "same_text_other_weeks",
+        "week_row",
+        "mapped_clos",
+        "clo_coverage"
+      ],
+      "userChars": 5263,
+      "dependencyChars": 2676,
+      "g1Applicable": false,
+      "g2Applicable": true,
+      "sharedWeeks": 13,
+      "worstCaseInputTokens": 15850,
+      "worstCaseDollars": 0.088644
+    },
+    {
+      "id": "BM1-S08-005",
+      "set": "protected/P-shared",
+      "sourceKind": "synthetic",
+      "type": "Content-activity",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 2865,
+      "dependencyChars": 317,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13220,
+      "worstCaseDollars": 0.081411
+    },
+    {
+      "id": "BM1-S08-006",
+      "set": "protected/P-shared",
+      "sourceKind": "synthetic",
+      "type": "Content-assessment",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 2874,
+      "dependencyChars": 342,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13229,
+      "worstCaseDollars": 0.081436
+    },
+    {
+      "id": "BM1-S08-007",
+      "set": "protected/P-shared",
+      "sourceKind": "synthetic",
+      "type": "Activity-assessment",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 2879,
+      "dependencyChars": 410,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13234,
+      "worstCaseDollars": 0.08145
+    },
+    {
+      "id": "BM1-S09-001",
+      "set": "protected/P-shared",
+      "sourceKind": "synthetic",
+      "type": "ILO-CLO",
+      "rewritableField": "plan[2].ilos[0].text",
+      "dependencyKinds": [
+        "week_row",
+        "mapped_clos",
+        "clo_coverage"
+      ],
+      "userChars": 4634,
+      "dependencyChars": 2145,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 15145,
+      "worstCaseDollars": 0.086705
+    },
+    {
+      "id": "BM1-S09-002",
+      "set": "protected/P-shared",
+      "sourceKind": "synthetic",
+      "type": "ILO-activity",
+      "rewritableField": "plan[2].activities",
+      "dependencyKinds": [
+        "week_row",
+        "mapped_clos"
+      ],
+      "userChars": 3112,
+      "dependencyChars": 649,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13505,
+      "worstCaseDollars": 0.082195
+    },
+    {
+      "id": "BM1-S09-003",
+      "set": "protected/P-shared",
+      "sourceKind": "synthetic",
+      "type": "Content-course",
+      "rewritableField": "plan[2].contents",
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 3089,
+      "dependencyChars": 367,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13455,
+      "worstCaseDollars": 0.082057
+    },
+    {
+      "id": "BM1-S09-004",
+      "set": "protected/P-shared",
+      "sourceKind": "synthetic",
+      "type": "Content-ILO",
+      "rewritableField": "plan[2].ilos[0].text",
+      "dependencyKinds": [
+        "week_row",
+        "mapped_clos",
+        "clo_coverage"
+      ],
+      "userChars": 4547,
+      "dependencyChars": 2086,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 15054,
+      "worstCaseDollars": 0.086455
+    },
+    {
+      "id": "BM1-S09-005",
+      "set": "protected/P-shared",
+      "sourceKind": "synthetic",
+      "type": "Content-activity",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 2778,
+      "dependencyChars": 293,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13133,
+      "worstCaseDollars": 0.081172
+    },
+    {
+      "id": "BM1-S09-006",
+      "set": "protected/P-shared",
+      "sourceKind": "synthetic",
+      "type": "Content-assessment",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 2787,
+      "dependencyChars": 299,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13142,
+      "worstCaseDollars": 0.081197
+    },
+    {
+      "id": "BM1-S09-007",
+      "set": "protected/P-shared",
+      "sourceKind": "synthetic",
+      "type": "Activity-assessment",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 2792,
+      "dependencyChars": 284,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13147,
+      "worstCaseDollars": 0.08121
+    },
+    {
+      "id": "BM1-S10-001",
+      "set": "protected/P-shared",
+      "sourceKind": "synthetic",
+      "type": "ILO-CLO",
+      "rewritableField": "plan[2].ilos[0].text",
+      "dependencyKinds": [
+        "same_text_other_weeks",
+        "week_row",
+        "mapped_clos",
+        "clo_coverage"
+      ],
+      "userChars": 4013,
+      "dependencyChars": 1547,
+      "g1Applicable": false,
+      "g2Applicable": true,
+      "sharedWeeks": 13,
+      "worstCaseInputTokens": 14508,
+      "worstCaseDollars": 0.084953
+    },
+    {
+      "id": "BM1-S10-002",
+      "set": "protected/P-core",
+      "sourceKind": "synthetic",
+      "type": "ILO-activity",
+      "rewritableField": "plan[2].activities",
+      "dependencyKinds": [
+        "week_row",
+        "mapped_clos"
+      ],
+      "userChars": 3219,
+      "dependencyChars": 675,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13612,
+      "worstCaseDollars": 0.082489
+    },
+    {
+      "id": "BM1-S10-003",
+      "set": "protected/P-core",
+      "sourceKind": "synthetic",
+      "type": "Content-course",
+      "rewritableField": "plan[2].contents",
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 3227,
+      "dependencyChars": 521,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13593,
+      "worstCaseDollars": 0.082437
+    },
+    {
+      "id": "BM1-S10-004",
+      "set": "protected/P-core",
+      "sourceKind": "synthetic",
+      "type": "Content-ILO",
+      "rewritableField": "plan[2].ilos[0].text",
+      "dependencyKinds": [
+        "same_text_other_weeks",
+        "week_row",
+        "mapped_clos",
+        "clo_coverage"
+      ],
+      "userChars": 3961,
+      "dependencyChars": 1463,
+      "g1Applicable": false,
+      "g2Applicable": true,
+      "sharedWeeks": 13,
+      "worstCaseInputTokens": 14452,
+      "worstCaseDollars": 0.084799
+    },
+    {
+      "id": "BM1-S10-005",
+      "set": "protected/P-core",
+      "sourceKind": "synthetic",
+      "type": "Content-activity",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 2916,
+      "dependencyChars": 378,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13271,
+      "worstCaseDollars": 0.081551
+    },
+    {
+      "id": "BM1-S10-006",
+      "set": "protected/P-core",
+      "sourceKind": "synthetic",
+      "type": "Content-assessment",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 2925,
+      "dependencyChars": 421,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13280,
+      "worstCaseDollars": 0.081576
+    },
+    {
+      "id": "BM1-S10-007",
+      "set": "protected/P-core",
+      "sourceKind": "synthetic",
+      "type": "Activity-assessment",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 2930,
+      "dependencyChars": 362,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13285,
+      "worstCaseDollars": 0.08159
+    },
+    {
+      "id": "BM1-S11-001",
+      "set": "protected/P-shared",
+      "sourceKind": "synthetic",
+      "type": "ILO-CLO",
+      "rewritableField": "plan[2].ilos[0].text",
+      "dependencyKinds": [
+        "week_row",
+        "mapped_clos",
+        "clo_coverage",
+        "clo_coverage"
+      ],
+      "userChars": 4986,
+      "dependencyChars": 2494,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 15545,
+      "worstCaseDollars": 0.087805
+    },
+    {
+      "id": "BM1-S11-002",
+      "set": "protected/P-shared",
+      "sourceKind": "synthetic",
+      "type": "ILO-CLO",
+      "rewritableField": "plan[2].ilos[0].text",
+      "dependencyKinds": [
+        "week_row",
+        "mapped_clos",
+        "clo_coverage",
+        "clo_coverage"
+      ],
+      "userChars": 4980,
+      "dependencyChars": 2494,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 15539,
+      "worstCaseDollars": 0.087788
+    },
+    {
+      "id": "BM1-S11-003",
+      "set": "protected/P-shared",
+      "sourceKind": "synthetic",
+      "type": "ILO-activity",
+      "rewritableField": "plan[2].activities",
+      "dependencyKinds": [
+        "week_row",
+        "mapped_clos"
+      ],
+      "userChars": 3358,
+      "dependencyChars": 937,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13781,
+      "worstCaseDollars": 0.082954
+    },
+    {
+      "id": "BM1-S11-004",
+      "set": "protected/P-shared",
+      "sourceKind": "synthetic",
+      "type": "Content-course",
+      "rewritableField": "plan[2].contents",
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 3014,
+      "dependencyChars": 299,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13382,
+      "worstCaseDollars": 0.081857
+    },
+    {
+      "id": "BM1-S11-005",
+      "set": "protected/P-shared",
+      "sourceKind": "synthetic",
+      "type": "Content-ILO",
+      "rewritableField": "plan[2].ilos[0].text",
+      "dependencyKinds": [
+        "week_row",
+        "mapped_clos",
+        "clo_coverage",
+        "clo_coverage"
+      ],
+      "userChars": 4893,
+      "dependencyChars": 2442,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 15448,
+      "worstCaseDollars": 0.087538
+    },
+    {
+      "id": "BM1-S11-006",
+      "set": "protected/P-shared",
+      "sourceKind": "synthetic",
+      "type": "Content-activity",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 2703,
+      "dependencyChars": 264,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13060,
+      "worstCaseDollars": 0.080971
+    },
+    {
+      "id": "BM1-S11-007",
+      "set": "protected/P-shared",
+      "sourceKind": "synthetic",
+      "type": "Content-assessment",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 2712,
+      "dependencyChars": 269,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13069,
+      "worstCaseDollars": 0.080996
+    },
+    {
+      "id": "BM1-S11-008",
+      "set": "protected/P-shared",
+      "sourceKind": "synthetic",
+      "type": "Activity-assessment",
+      "rewritableField": null,
+      "dependencyKinds": [
+        "week_row"
+      ],
+      "userChars": 2717,
+      "dependencyChars": 286,
+      "g1Applicable": false,
+      "g2Applicable": false,
+      "sharedWeeks": 0,
+      "worstCaseInputTokens": 13074,
+      "worstCaseDollars": 0.08101
+    }
+  ]
+}

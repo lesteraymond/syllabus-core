@@ -1,0 +1,4414 @@
+{
+  "head": "68926cb392756c07bb0b999538d098d1038be368",
+  "status": " M .gitignore\n M HOW-TO-RUN.md\n M package-lock.json\n M package.json\n M server/.env.example\n M server/db/schema.sql\n M server/db/seed-outcomes.js\n M server/index.js\n M server/lib/compliance/service.js\n M server/lib/courses.js\n M server/lib/programManagement.js\n M server/lib/programs.js\n M server/lib/syllabusOutcomes.js\n M server/package-lock.json\n M server/package.json\n M server/routes/assignments.routes.test.js\n M server/routes/avatar.routes.test.js\n M server/routes/catalog.routes.test.js\n M server/routes/comments.routes.test.js\n M server/routes/compliance.js\n M server/routes/compliance.routes.test.js\n M server/routes/courses.js\n M server/routes/enforcement.routes.test.js\n M server/routes/logs.routes.test.js\n M server/routes/messages.routes.test.js\n M server/routes/passwords.routes.test.js\n M server/routes/programManagement.routes.test.js\n M server/routes/programs.js\n M server/routes/review.routes.test.js\n M server/routes/stages.routes.test.js\n M server/routes/syllabi.js\n M server/routes/syllabusContent.js\n M server/routes/usage.routes.test.js\n M src/components/ComplianceModal.jsx\n M src/components/ProgramManagement.jsx\n M src/components/ui.jsx\n M src/data/outcomesSeed.js\n M src/i18n/index.js\n M src/lib/activityView.js\n M src/lib/activityView.test.js\n M src/lib/api.js\n M src/lib/complianceView.js\n M src/lib/complianceView.test.js\n M src/lib/syllabusModel.js\n M src/lib/syllabusModel.test.js\n M src/lib/syllabusRules.js\n M src/lib/syllabusRules.test.js\n M src/styles.css\n M src/views/AIChecker.jsx\n M src/views/Analytics.jsx\n M src/views/ComplianceCard.jsx\n M src/views/DashboardView.jsx\n M src/views/builder2/ComplianceSection.jsx\n M src/views/builder2/InfoStep.jsx\n M src/views/builder2/PlanStep.jsx\n M src/views/builder2/ReviewStep.jsx\n M src/views/builder2/UploadPanel.jsx\n M src/views/builder2/index.jsx\n M src/views/builder2/parts.jsx\n M src/views/builder2/useCompliance.js\n M src/views/builder2/useDraft.js\n M tests/i18n-ui.test.jsx\n?? docs/CAPSTONE-DOCUMENTATION.docx\n?? docs/CAPSTONE-DOCUMENTATION.md\n?? docs/academic-references/\n?? docs/academic-validation-package/\n?? docs/ai-alignment-accuracy.md\n?? docs/ai-alignment-pipeline.md\n?? docs/ai-check-request-audit.json\n?? docs/ai-checker-revision-cycles.md\n?? docs/ai-checker-rules-addendum-c3.md\n?? docs/ai-checker-rules.md\n?? docs/ai-eval-anthropic/\n?? docs/ai-eval-baseline-prompt10.json\n?? docs/ai-eval-baseline-prompt9.json\n?? docs/ai-eval-diagnosis.md\n?? docs/ai-eval-faculty-review-alignment.csv\n?? docs/ai-eval-faculty-review.csv\n?? docs/ai-eval-stage-a-baseline.json\n?? docs/ai-eval-stage-a-regression.json\n?? docs/ai-eval-stage-b-baseline.json\n?? docs/ai-eval-stage-b-regression.json\n?? docs/ai-eval-stage-b3-baseline.json\n?? docs/ai-eval-stage-b4-baseline.json\n?? docs/ai-eval-stage-e3-smoke-run2.json\n?? docs/ai-eval-stage-e3-smoke.json\n?? docs/ai-eval-stage-e4-ledger.json\n?? docs/ai-eval-stage-e4-smoke-resume.json\n?? docs/ai-eval-stage-e4-smoke.json\n?? docs/ai-eval-stage-e5-bsie-ledger.json\n?? docs/ai-eval-stage-e5-bsie.json\n?? docs/ai-eval-stage-e7-d1-ledger.json\n?? docs/ai-eval-stage-e7-d1.json\n?? docs/ai-eval-stage-e7-d2-ledger.json\n?? docs/ai-eval-stage-e7-d2-resume.json\n?? docs/ai-eval-stage-e7-d2.json\n?? docs/ai-eval-stage-e8-c-canary-resume.json\n?? docs/ai-eval-stage-e8-c-canary-review.json\n?? docs/ai-eval-stage-e8-c-canary.json\n?? docs/ai-eval-stage-e8-c-corrections-replay.json\n?? docs/ai-eval-stage-e8-c-heldout.json\n?? docs/ai-eval-stage-e8-c-heldout.json.progress.json\n?? docs/ai-eval-stage-e8-c-ledger-before-heldout.json\n?? docs/ai-eval-stage-e8-c-ledger-before-r8.json\n?? docs/ai-eval-stage-e8-c-ledger-before-remaining.json\n?? docs/ai-eval-stage-e8-c-ledger-before-resource-recovery.json\n?? docs/ai-eval-stage-e8-c-ledger-before-resource-regression.json\n?? docs/ai-eval-stage-e8-c-ledger.json\n?? docs/ai-eval-stage-e8-c-r8-exploratory-summary.json\n?? docs/ai-eval-stage-e8-c-r8-regression-review.json\n?? docs/ai-eval-stage-e8-c-r8-regression.json\n?? docs/ai-eval-stage-e8-c-r8-regression.json.progress.json\n?? docs/ai-eval-stage-e8-c-r8-remaining-review.json\n?? docs/ai-eval-stage-e8-c-r8-remaining.json\n?? docs/ai-eval-stage-e8-c-r8-remaining.json.progress.json\n?? docs/ai-eval-stage-e8-c-resource-recovery.json\n?? docs/ai-eval-stage-e8-c-resource-recovery.json.progress.json\n?? docs/ai-eval-stage-e8-c-resource-regression.json\n?? docs/ai-eval-stage-e8-c-resource-replay.json\n?? docs/ai-eval-stage-e9-d1-billing-check-ledger.json\n?? docs/ai-eval-stage-e9-d1-billing-check.json\n?? docs/ai-eval-stage-e9-d1-followup-final-recovery-ledger.json\n?? docs/ai-eval-stage-e9-d1-followup-final-recovery.json\n?? docs/ai-eval-stage-e9-d1-followup-ledger.json\n?? docs/ai-eval-stage-e9-d1-followup-recovery-ledger.json\n?? docs/ai-eval-stage-e9-d1-followup-recovery.json\n?? docs/ai-eval-stage-e9-d1-followup.json\n?? docs/ai-eval-stage-e9-d2-followup-ledger.json\n?? docs/ai-eval-stage-e9-d2-followup.json\n?? docs/ai-prompt-trim.md\n?? docs/anthropic-direct-api-plan.md\n?? docs/anthropic-p2-a1-report.md\n?? docs/anthropic-p2-a2-report.md\n?? docs/anthropic-p2-b2-report.md\n?? docs/anthropic-p2-pilot-report.md\n?? docs/anthropic-p2-preparation.md\n?? docs/bsie-hybrid-api-result.json\n?? docs/bsie-ma7-tests/\n?? docs/bsie-misalignment-test.json\n?? docs/faculty-review/\n?? docs/ilo-assessment-scoring-review.md\n?? docs/institutional-reference-inventory.md\n?? docs/lcup-academic-decisions-for-vpaa.md\n?? docs/lcup-approved-offline/\n?? docs/lcup-curriculum-audit-followup.md\n?? docs/lcup-curriculum-reference-audit.md\n?? docs/lcup-evaluation-readiness/\n?? docs/lcup-importer-fixes/\n?? docs/lcup-po-correction/\n?? docs/lcup-requirements/\n?? docs/live-evaluation-plan.md\n?? docs/local-reference-import.json\n?? docs/local-reference-import.md\n?? docs/ma7-aligned-draft.json\n?? docs/ma7-coded-rules-v2-result.json\n?? docs/ma7-evidence-diagnostic.json\n?? docs/ma7-misaligned-draft.json\n?? docs/ma7-misalignment-test-result.json\n?? docs/ma7-official-pos-check.json\n?? docs/ma7-recheck-score-result.json\n?? docs/openrouter-ma7-live-result.json\n?? docs/pdf-import-api-audit.json\n?? docs/pdf-layout-extraction-audit.json\n?? docs/pdf-syllabus-import.md\n?? docs/sample-invalid-course-report.json\n?? docs/sample-misaligned-report.json\n?? docs/stage-c-evaluation-plan.md\n?? docs/stage-e-audit.md\n?? docs/stage-e-provider-efficiency.md\n?? docs/stage-e-readiness.md\n?? docs/stage-e1-design.md\n?? docs/stage-e2-readiness.md\n?? docs/stage-e4-request-volume.json\n?? docs/stage-e4-response-contract.md\n?? docs/stage-e5-reference-evidence.md\n?? docs/stage-e6-evaluation-reliability.md\n?? docs/stage-e7-academic-reliability-follow-up.md\n?? docs/stage-e7-d2-validation-proposal.md\n?? docs/stage-e7-phase2-evaluation.md\n?? docs/stage-e8-post-recovery-review.md\n?? docs/stage-e8-resource-grounding-fix.md\n?? docs/stage-e8-resource-recovery.md\n?? docs/stage-e8-resource-regression.md\n?? docs/stage-e8-stage-c-canary.md\n?? docs/stage-e8-stage-c-corrections.md\n?? docs/stage-e8-stage-c-r8-coverage.md\n?? docs/stage-e8-stage-c-r8-regression.md\n?? docs/stage-e9-phase2-closeout.md\n?? docs/stage-e9-phase3-evaluation-plan.md\n?? docs/syllabus-checker.md\n?? docs/title-normalization-impact.md\n?? docs/title-policy-activation.md\n?? docs/verdict-layer.md\n?? docs/verdict-translation-inventory.md\n?? docs/~$thropic-p2-a2-report.md\n?? promo-video/\n?? reference-data/\n?? scripts/analyze-provider-cost.cjs\n?? scripts/audit-ai-check-requests.cjs\n?? scripts/audit-pdf-layout.cjs\n?? scripts/audit-verdict-i18n.mjs\n?? scripts/compare-prompts.cjs\n?? scripts/compare-title-policy.cjs\n?? scripts/create-bsie-test-versions.cjs\n?? scripts/diagnose-ma7-evidence.cjs\n?? scripts/eval-alignment.cjs\n?? scripts/eval-compare.cjs\n?? scripts/export-align1-adjudication-v2.cjs\n?? scripts/export-align1-adjudication.cjs\n?? scripts/export-checker-rules.cjs\n?? scripts/export-eval-review.cjs\n?? scripts/export-faculty-review.cjs\n?? scripts/export-phase3-faculty-review.cjs\n?? scripts/export-validation-package.cjs\n?? scripts/extract-reference-pdfs.mjs\n?? scripts/fill-bsie-api.cjs\n?? scripts/fill-ma7-aligned-draft.cjs\n?? scripts/fill-ma7-misaligned-draft.cjs\n?? scripts/import-align1-faculty-responses.cjs\n?? scripts/import-align1-faculty-responses.test.cjs\n?? scripts/inspect-bsie-testing.cjs\n?? scripts/lcup-approved-offline/\n?? scripts/lcup-evaluation-readiness/\n?? scripts/lcup-po-correction/\n?? scripts/lcup-requirements/\n?? scripts/live-pipeline-eval.cjs\n?? scripts/live-smoke-eval.cjs\n?? scripts/measure-request-volume.cjs\n?? scripts/misalign-bsie-api.cjs\n?? scripts/replay-stage-e8-resources.cjs\n?? scripts/report-phase3-scoring-drift.cjs\n?? scripts/report-provider-drift.cjs\n?? scripts/test-checker-provider.cjs\n?? scripts/test-ma7-api.cjs\n?? scripts/test-openrouter-ma7.cjs\n?? scripts/test-pdf-import-ui.mjs\n?? scripts/update-ma7-official-pos.cjs\n?? scripts/verify-align1-adjudication-v2.cjs\n?? scripts/verify-hybrid-api.cjs\n?? scripts/whatif-ilo-assessment.cjs\n?? server/config/\n?? server/db/local-curriculum-data.cjs\n?? server/db/local-outcome-data.cjs\n?? server/db/migrate-activity-log.js\n?? server/db/migrate-course-program-codes.js\n?? server/db/migrate-program-outcome-sources.js\n?? server/db/migrate-syllabuscheck.js\n?? server/db/official-po-migration.cjs\n?? server/db/seed-local-references.js\n?? server/db/syllabuscheck-ddl.js\n?? server/lib/activity.js\n?? server/lib/activity.test.js\n?? server/lib/pdfGeometry.js\n?? server/lib/pdfImport.js\n?? server/lib/pdfImport.test.js\n?? server/lib/pdfImport.worker.js\n?? server/lib/pdfImportIdentity.js\n?? server/lib/pdfImportIdentity.test.js\n?? server/lib/pdfLayout.js\n?? server/lib/pdfLayout.test.js\n?? server/lib/programPoReferences.js\n?? server/lib/syllabuscheck/\n?? server/routes/pdfImport.js\n?? server/routes/pdfImport.routes.test.js\n?? server/routes/syllabusCheck.js\n?? server/routes/syllabusCheck.refine.routes.test.js\n?? server/routes/syllabusCheck.routes.test.js\n?? server/scripts/syllabus-check.cjs\n?? src/components/HybridCheckPanel.jsx\n?? src/components/HybridProblem.jsx\n?? src/components/HybridProblemsModal.jsx\n?? src/components/VerdictPanel.jsx\n?? src/data/officialProgramOutcomes.json\n?? src/i18n/dashboardStats.js\n?? src/i18n/hybrid.js\n?? src/i18n/lessonAuthoring.js\n?? src/i18n/pdfImport.js\n?? src/lib/checkPolicy.js\n?? src/lib/complianceStats.js\n?? src/lib/complianceStats.test.js\n?? src/lib/hybridCheck.js\n?? src/lib/hybridCheck.test.js\n?? src/lib/hybridView.js\n?? src/lib/hybridView.test.js\n?? src/lib/lessonAuthoring.js\n?? src/lib/panelMemory.js\n?? src/lib/pdfImport.fixes.test.js\n?? src/lib/pdfImport.js\n?? src/lib/pdfImport.test.js\n?? src/lib/pdfImportReview.js\n?? tests/lesson-authoring.test.jsx\n?? tests/pdf-import-ui.test.jsx\n?? tmp/\n",
+  "files": [
+    {
+      "path": ".ai-check-button-localization.log",
+      "sha256": "3da5e7ca6c5b24dfef30e7394b1b770a0d1efcf211799dfb52c0be271e46405e"
+    },
+    {
+      "path": ".ai-check-duplicate-tests.log",
+      "sha256": "47b487db6c40ff5009a33b36816239527a3c8ede8859d08b575ade66c63d0a02"
+    },
+    {
+      "path": ".coded-rules-build.log",
+      "sha256": "9a683573c621bc5ffdcbf1b0a329bc6b1ae707f81a890283884510e3b2f52dc3"
+    },
+    {
+      "path": ".coded-rules-test.log",
+      "sha256": "02845100fffb1284cd1d4667f825c2e6b4065215cad5480c7295f92653f9cd02"
+    },
+    {
+      "path": ".env",
+      "sha256": "64499c591c8a7cc8342c4d826b69192f6ab81bea82a4f94a04e08d2824657513"
+    },
+    {
+      "path": ".gemini-evidence-tests.log",
+      "sha256": "c0a1c16a2104bca9ca45c59fc266408d4d32f0a5227d5926545becc34ccf1e27"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "087fb55bf0c054c2534ced26fef35f4505bc2b28927d1370b534c47b7a190f11"
+    },
+    {
+      "path": ".hybrid-routes.log",
+      "sha256": "b92fadd69d724714c8f3c6bdfccd336c843a371b6733c83b1904cf8ce7d9e56e"
+    },
+    {
+      "path": ".hybrid-test.log",
+      "sha256": "e54ea87d3f3a53c7bd06ec122ae8b2f81ebd7a83b305662697dfb1200d4ce827"
+    },
+    {
+      "path": ".minimax-ma7-small-batch.log",
+      "sha256": "ae4ca8cbe7c3cfb09a3e12e5733d7209a03f56dffac51a181ffd7edeb8980ce8"
+    },
+    {
+      "path": ".minimax-ma7-test.log",
+      "sha256": "da167aaa44f2a07d41887e895203596af6bc4f2a56516b234f0284affa01263a"
+    },
+    {
+      "path": ".minimax-regression-tests.log",
+      "sha256": "2f5c052cb79356f20c7a100bfb1519d19fa04ff0768b8efb403ab91438337ea4"
+    },
+    {
+      "path": ".openrouter-test.log",
+      "sha256": "eb8ee17e166a271fbf5f57e2ad490dc5083892d01cb32c67ac8987ab2a56c703"
+    },
+    {
+      "path": ".outcomes-full.log",
+      "sha256": "da79611f4b48a8af7182680abd07c6a4b23812e87cdbb35769c7d2d0e2e2eca3"
+    },
+    {
+      "path": ".outcomes-tests.log",
+      "sha256": "69532ae87187282f6e45781fb476fb48a42f66916b43fab86bb2f8b21adcb0e9"
+    },
+    {
+      "path": ".outcomes-ui.log",
+      "sha256": "3aca2f17bb72069b6bad4b518f943e9a178c1e5cc991c3f5d1a1b487a595a877"
+    },
+    {
+      "path": ".recommendation-accept-tests.log",
+      "sha256": "fe04d8810a3075f01239ec591110106c760494eaf567f29eb0af87773d2b26ed"
+    },
+    {
+      "path": ".reference-import-tests.log",
+      "sha256": "2dc044619254a76b8646d07587950ab540b2f46b0ee891d730cc42ca45c91cdd"
+    },
+    {
+      "path": ".reference-seed-rerun.log",
+      "sha256": "0e5c858842172639a46e2dbfea28bb046ac2cf6b7352762012336a3c129f8363"
+    },
+    {
+      "path": ".reference-verification.log",
+      "sha256": "6cdf3119d4cd0262e8012f9af6fa6d0b9cf41d07584102c865eee65ff781fc2f"
+    },
+    {
+      "path": ".score-state-test.log",
+      "sha256": "484b3d296c79d1211fae9ed715702c2c92ec2f1cf6c2957d7dd5e67b0031abb6"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "ec3cd98a5138da502acb3ca14441f67f5731842ca09283ab88ed85dafa7df968"
+    },
+    {
+      "path": "dist/assets/index-CxiECfSd.js",
+      "sha256": "f65718464816e88572ec31407a7fedfd7f4f3954baee57fa2fae200570fdb906"
+    },
+    {
+      "path": "dist/assets/index-Oht4n0tu.css",
+      "sha256": "8c2c8c5cd5c37055cc4f716fbeb584003857186a7177387a8634935d87778bb6"
+    },
+    {
+      "path": "dist/cite-logo.png",
+      "sha256": "fdc8115ea0dc8cadc4daad002dd66d5d4cdd90484d8d37d90e6c223de96fb5f1"
+    },
+    {
+      "path": "dist/fonts/nunito-latin.woff2",
+      "sha256": "ba344451eab25b217a165363b1982048a5e5830a0daf36577973955a04cac793"
+    },
+    {
+      "path": "dist/fonts/Nunito-OFL.txt",
+      "sha256": "40991bfa02ac620aae16dc527f3c47765a25e43f270d4c301ee6ab663a8d9015"
+    },
+    {
+      "path": "dist/index.html",
+      "sha256": "5ea3faa5ea74ff6d700a0d98c6115d05fd406474b2561e159bdbae179b0bbd12"
+    },
+    {
+      "path": "dist/lcup-logo.png",
+      "sha256": "6842d30a02dcf2d6e5e9578dc69acfb641d18fd3d9c4bf9a301e2102afab4d04"
+    },
+    {
+      "path": "dist/testmark-logo.png",
+      "sha256": "4f1febe16674fdd919a2a7bc760d1276755a3924274d864941e29f53b944726b"
+    },
+    {
+      "path": "docs/academic-references/BSCPE-1.jpeg",
+      "sha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+    },
+    {
+      "path": "docs/academic-references/BSCPE-2.jpeg",
+      "sha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+    },
+    {
+      "path": "docs/academic-references/BSIE-1.jpeg",
+      "sha256": "cd5bd50fd4dfb1daead0e78fe670aaac5824247690b4bfb610a1365d05f05133"
+    },
+    {
+      "path": "docs/academic-references/BSIE-2 (1).jpeg",
+      "sha256": "92cabc29bc21d1fcc029a0eb583c3a8a06eac3b41fb8e4401697f66ff5ff9a17"
+    },
+    {
+      "path": "docs/academic-references/BSIT-1.jpeg",
+      "sha256": "a71664c8ad1a47d1d97b1d75d2b199edacb9762362b2067f1fb0f60d205a6877"
+    },
+    {
+      "path": "docs/academic-references/BSIT-2.jpeg",
+      "sha256": "0d7812a46615671e6b7a47c093cb14cb516ecbe2cefab5c85fbe2c68e6b8360f"
+    },
+    {
+      "path": "docs/academic-references/BSIT-Cybersecurity-1.jpeg",
+      "sha256": "afa2f17df048e96585686cac8f415fb7cf172af138d955ee5eaabbc99d5cb09f"
+    },
+    {
+      "path": "docs/academic-references/BSIT-Cybersecurity-2.jpeg",
+      "sha256": "bbccdfc55aa2a712c7ce7ed386e22528e7ad56020b3c0f05c27244f3924a748a"
+    },
+    {
+      "path": "docs/academic-references/CPE-404-Digital-Signal-Processing.pdf",
+      "sha256": "9e16f9d0524b5a328ce992306a7897b4a5d6cd70933a388fa01412e427ab754a"
+    },
+    {
+      "path": "docs/academic-references/IE-403-Operation-Management.pdf",
+      "sha256": "bdb90b9b09eaf505e13bc82cfc1fdc51e283901455064617997d0426592c57a4"
+    },
+    {
+      "path": "docs/academic-references/IT-101-Introduction-to-Computing-.pdf",
+      "sha256": "0375ce27ff4b1059c569a73cf8c77211de016aaeedbebe13de2efc6fe330fa14"
+    },
+    {
+      "path": "docs/academic-validation-package/README.md",
+      "sha256": "1629c7cfa188fc3c4b45b44af93836a8bba7066c0afaed501093acda5990fe7e"
+    },
+    {
+      "path": "docs/academic-validation-package/validation-package.csv",
+      "sha256": "47744493b9b9f72cb453ef5401a4a99e86437d7a7a4aa997ddb4508d97b4064e"
+    },
+    {
+      "path": "docs/academic-validation-package/validation-package.html",
+      "sha256": "2222760a234e41e41ebbd022ea7f6ee6aff223ca95e74fbefaeb3eec3a6b0dce"
+    },
+    {
+      "path": "docs/academic-validation-package/validation-package.json",
+      "sha256": "f4415bbda4cb0f0a4d4b33172d01b12df4a94342af9dc32f73dca719f1831ce0"
+    },
+    {
+      "path": "docs/admin-authoring-and-subject-standards.md",
+      "sha256": "575c4ffc4276dea6fd9a00ba89889ed76564981631cf531520c7c544fb2aeffb"
+    },
+    {
+      "path": "docs/ai-alignment-accuracy.md",
+      "sha256": "1ecdc9d05070b392f62d850d50d7ce9c9c9237946a22b1c04b892b262c74b74a"
+    },
+    {
+      "path": "docs/ai-alignment-pipeline.md",
+      "sha256": "72fa3d834b618c3a99b3029d5b50905bf57e2a2347c98e6869612f553b8a6f5f"
+    },
+    {
+      "path": "docs/ai-check-request-audit.json",
+      "sha256": "8903a6eb3423476b162a6f6a072bb02b3dc50e86900211847d7151ac77f6623b"
+    },
+    {
+      "path": "docs/ai-checker-revision-cycles.md",
+      "sha256": "7013ab46298c48cf2530dee556c3b6e87e6a4d552d734ef30c230b20d06871b5"
+    },
+    {
+      "path": "docs/ai-checker-rules-addendum-c3.md",
+      "sha256": "8e33b4dbdee40fd1f21a1915ff20f3ea8b3bb24a7d7335e35d3b70e70618f66e"
+    },
+    {
+      "path": "docs/ai-checker-rules.md",
+      "sha256": "e378baecca3c7655e8fa8d210ea9e3ff550f94dccc9872e39d66b4c12db9a00e"
+    },
+    {
+      "path": "docs/ai-eval-anthropic/p1-smoke-ledger.json",
+      "sha256": "7d92e0d9cdc3e5efd89ecd29950eab20d043e550affc53d11c82754739064f98"
+    },
+    {
+      "path": "docs/ai-eval-anthropic/p1-smoke-result.json",
+      "sha256": "e7ee8e5a10cb6250585b10995441d9a170f69ad17101f192ca4193bc306e2bf3"
+    },
+    {
+      "path": "docs/ai-eval-anthropic/p2-a1-ledger.json",
+      "sha256": "8e9184fbc76b855b3c950c9e881999a115f956ff66b44c25a0a38c38a1dd9df4"
+    },
+    {
+      "path": "docs/ai-eval-anthropic/p2-a1-result.json",
+      "sha256": "ba3866e00e330cd7d077645283c0386943c36fbe55d7eab48dd8b177505778fb"
+    },
+    {
+      "path": "docs/ai-eval-anthropic/p2-a2-cases.json",
+      "sha256": "73c27948f75cb1b7f6395c8b2924ff0a802afa52d7bafef92124d131eb891e94"
+    },
+    {
+      "path": "docs/ai-eval-anthropic/p2-a2-ledger.json",
+      "sha256": "23709c09c1ef83b9535db1e48b04c36ed1c4d6d631b34b0e9538f36d59caec58"
+    },
+    {
+      "path": "docs/ai-eval-anthropic/p2-a2-result.json",
+      "sha256": "082284ac04284ac15cdfa5d80bad1f159e4b62bcf109a2e0179f7dc4ee0dd12e"
+    },
+    {
+      "path": "docs/ai-eval-anthropic/p2-a3-ledger.json",
+      "sha256": "602c7a1d02ed38b0025c3c13bb862824801140f4f24d0271a4d22a8adec58a20"
+    },
+    {
+      "path": "docs/ai-eval-anthropic/p2-a3-result.json",
+      "sha256": "81ac643fb0e6b040a8900bd8d247277daddb43420813f167d50ee034fe16731c"
+    },
+    {
+      "path": "docs/ai-eval-anthropic/p2-b1-ledger.json",
+      "sha256": "d53c5f5f6134756cda9509ab86ccee7e5ca6b26cfb2fc503535d2a612f4beb4c"
+    },
+    {
+      "path": "docs/ai-eval-anthropic/p2-b1-result.json",
+      "sha256": "8388e8a68c9f04ad28a99015723dacc4a735438d1a3f27d0cf5e3e3d81089b7b"
+    },
+    {
+      "path": "docs/ai-eval-anthropic/p2-b2-cases.json",
+      "sha256": "ef984e44cd49667a8e41428e2b505fae6937238d1a5aaf9f9f4b1b0cebd870a6"
+    },
+    {
+      "path": "docs/ai-eval-anthropic/p2-b2-ledger.json",
+      "sha256": "368d186f18d236ae7cc849afe34d16c49568088f5d9d925f9ba5914d95d586b1"
+    },
+    {
+      "path": "docs/ai-eval-anthropic/p2-b2-result.json",
+      "sha256": "4980e7eec5ce6a8a132782e24f7b11bdf5d30e3630b246e7e3831d9dbeead323"
+    },
+    {
+      "path": "docs/ai-eval-anthropic/p2b2-preregistered.json",
+      "sha256": "1415f75cfe12def391ac34056af23bbd99c8ab05260f0e21559534df759e1d60"
+    },
+    {
+      "path": "docs/ai-eval-anthropic/spend-register.json",
+      "sha256": "6223494d2ec26a046ca79173b6f449aff608c4e0487b027ff87ba7427a88ab11"
+    },
+    {
+      "path": "docs/ai-eval-baseline-prompt10.json",
+      "sha256": "bd95004966d0b3938a06d3cb17b1e78605886be021338398510700e821b81be4"
+    },
+    {
+      "path": "docs/ai-eval-baseline-prompt9.json",
+      "sha256": "97998417eea56b6e3b16922e0a375f46d283b85a79ffb8f2828200bd11253b7a"
+    },
+    {
+      "path": "docs/ai-eval-diagnosis.md",
+      "sha256": "c6aca359e13fa8ce560cf8e564d1fe58d891b5334abdd2e1e9764a16e1180a73"
+    },
+    {
+      "path": "docs/ai-eval-faculty-review-alignment.csv",
+      "sha256": "e9c385ee69d195c8cac5913fa9ee0b9d792378ac37ab2b1675b3d9eae8583edb"
+    },
+    {
+      "path": "docs/ai-eval-faculty-review.csv",
+      "sha256": "291ed18b5b9d421423db5bae553cb184563115f501029561e8d6c675e70cc345"
+    },
+    {
+      "path": "docs/ai-eval-stage-a-baseline.json",
+      "sha256": "f06a03d31b4e8ddbe2596a5d2f3773a14c38d5d20a8a9edc2dba6bbdaf47eebe"
+    },
+    {
+      "path": "docs/ai-eval-stage-a-regression.json",
+      "sha256": "577f18eb975579be7f2311dfb2904fc74de666a5db4a1182880a3766a1ee134c"
+    },
+    {
+      "path": "docs/ai-eval-stage-b-baseline.json",
+      "sha256": "1c2cbd95370edc633af93a31b6f54d446971098476eafed1c2e3e0b1fe48f3e4"
+    },
+    {
+      "path": "docs/ai-eval-stage-b-regression.json",
+      "sha256": "de8dbb37575c4d0ab06f937cf2fb125e5ebe76cea3e32bec10ea9547112d2fad"
+    },
+    {
+      "path": "docs/ai-eval-stage-b3-baseline.json",
+      "sha256": "5dfc915a63f0b76a51a831cb2f110b6da9e08ba22cd3557f085175382c4fef70"
+    },
+    {
+      "path": "docs/ai-eval-stage-b4-baseline.json",
+      "sha256": "716de3ac27faaa66b52ae149593d529391f2e3104d7c46f275f70f8ca18b7819"
+    },
+    {
+      "path": "docs/ai-eval-stage-e3-smoke-run2.json",
+      "sha256": "ea8aed7e52ff5d192ddb280843ebf5a6c7711e7710d733c4c2ab2052b4fd5b7e"
+    },
+    {
+      "path": "docs/ai-eval-stage-e3-smoke.json",
+      "sha256": "50cd8b1cb9ab04d1c8598fcff5d6a1b6104f106127259e6d29163657428a9830"
+    },
+    {
+      "path": "docs/ai-eval-stage-e4-ledger.json",
+      "sha256": "499fae2067f1dfe599cc9bfdb787142ad190500aa69af0be0329ea1af66fb8ba"
+    },
+    {
+      "path": "docs/ai-eval-stage-e4-smoke-resume.json",
+      "sha256": "58f880ecb66231e637572cb72aeaa98f799348694e92baaa7805bb4115a32f24"
+    },
+    {
+      "path": "docs/ai-eval-stage-e4-smoke.json",
+      "sha256": "b5bf1d3845f50f5e7e36909c8e41c03d933c59736fc178b5ba75fba6bd106b7d"
+    },
+    {
+      "path": "docs/ai-eval-stage-e5-bsie-ledger.json",
+      "sha256": "8d7a355c84bd4ba8b074af5d68e99cbf00d7cbe90e05b6888efc2c88304b8eb3"
+    },
+    {
+      "path": "docs/ai-eval-stage-e5-bsie.json",
+      "sha256": "3b9c3b29b3d20af613eb5db2795e7ae9f41938ab920a3d882f469eaf5adb41c7"
+    },
+    {
+      "path": "docs/ai-eval-stage-e7-d1-ledger.json",
+      "sha256": "b25590b72fd1fd13710d02e4b1ff5141e8286563a6c872bcf04a9ccf9a204b9d"
+    },
+    {
+      "path": "docs/ai-eval-stage-e7-d1.json",
+      "sha256": "c4289d97078960cd441cccba8e4c846ed518ad32fe8286c9ec48279db684901f"
+    },
+    {
+      "path": "docs/ai-eval-stage-e7-d2-ledger.json",
+      "sha256": "e18210efb32ceb722b56a1be3c4d70288c72f786e0f994dca6b31219edc80361"
+    },
+    {
+      "path": "docs/ai-eval-stage-e7-d2-resume.json",
+      "sha256": "c8865eb3a3a935c6aa488d22ec3f76c7599290f43f4acab4b0e80fa3cea9d4b3"
+    },
+    {
+      "path": "docs/ai-eval-stage-e7-d2.json",
+      "sha256": "348cbe072bc750cde00d3016bb69299eda7e838e35394b24bcb315764053540c"
+    },
+    {
+      "path": "docs/ai-eval-stage-e8-c-canary-resume.json",
+      "sha256": "7d43263aa8365b493d38ac91daf83f9dbaff8d48f82886b694b9e0ea3981329e"
+    },
+    {
+      "path": "docs/ai-eval-stage-e8-c-canary-review.json",
+      "sha256": "56e27d30b66e06a791604f6d7d5dafa451e4be0b056a8e6d76d989e03307a0c2"
+    },
+    {
+      "path": "docs/ai-eval-stage-e8-c-canary.json",
+      "sha256": "7d398720b049801a1dd79d7c153263aeb93209e691ff6c97d544883c00dfc1ec"
+    },
+    {
+      "path": "docs/ai-eval-stage-e8-c-corrections-replay.json",
+      "sha256": "79201c9ec8305fbb982eba3fea118279dd567126033664da053763fccc079a76"
+    },
+    {
+      "path": "docs/ai-eval-stage-e8-c-heldout.json",
+      "sha256": "4154c84cbc0f6fa087ed30318fca44d83bc581b963d2a3a13e882b6a57615823"
+    },
+    {
+      "path": "docs/ai-eval-stage-e8-c-heldout.json.progress.json",
+      "sha256": "e343e532e42c87eb97360a0bf45588e57d7ae03ebbeabccfcd67dee2fd339fdd"
+    },
+    {
+      "path": "docs/ai-eval-stage-e8-c-ledger-before-heldout.json",
+      "sha256": "fe656c729a14e76b38a7e54c5ed1c0fcac8026c1fe045d817cbd19c2b2eaf6ba"
+    },
+    {
+      "path": "docs/ai-eval-stage-e8-c-ledger-before-r8.json",
+      "sha256": "275bf07a71dc75d130dcbfe6469d2bcce92b8120dddced59a835aee238fd6fcd"
+    },
+    {
+      "path": "docs/ai-eval-stage-e8-c-ledger-before-remaining.json",
+      "sha256": "dce1a47a31d4756660810914aaaf2d667acfac5d6bec20c200fcdfb19b2fc1ee"
+    },
+    {
+      "path": "docs/ai-eval-stage-e8-c-ledger-before-resource-recovery.json",
+      "sha256": "0d7891e5ba92535c5a25b8f309484e1d9bbb71ca6981be7cc8b31866fd2a7ff8"
+    },
+    {
+      "path": "docs/ai-eval-stage-e8-c-ledger-before-resource-regression.json",
+      "sha256": "45b1c69f1748d7993ed3649ff13a5902c14a9e3d196e8381a323a03abd79c41f"
+    },
+    {
+      "path": "docs/ai-eval-stage-e8-c-ledger.json",
+      "sha256": "97aafc76f22d592408308c6e2a9f203fac5ea952cb231ded4fad2e533b4aa34e"
+    },
+    {
+      "path": "docs/ai-eval-stage-e8-c-r8-exploratory-summary.json",
+      "sha256": "6cdad5ba1f48e4402ee7fd6478ce42ddbaf4fdcfb1a0e374b647e6b52045b3ec"
+    },
+    {
+      "path": "docs/ai-eval-stage-e8-c-r8-regression-review.json",
+      "sha256": "1429bf493d443af7c56d396370b07ada29ddc91ac6fc3bdc0f37ed807013422b"
+    },
+    {
+      "path": "docs/ai-eval-stage-e8-c-r8-regression.json",
+      "sha256": "b5b90d447fc7b77cf5d43193e3e6a5c89978631451789c8d0a656511a4854dfb"
+    },
+    {
+      "path": "docs/ai-eval-stage-e8-c-r8-regression.json.progress.json",
+      "sha256": "bdb917e7fac0e3c6762f932ea129f54128e3213c1ad82ee0ad35d6fe484e32f5"
+    },
+    {
+      "path": "docs/ai-eval-stage-e8-c-r8-remaining-review.json",
+      "sha256": "0fffb25b62553a96d0bdb3adc3e33b73e7a7edf3400b7fc3019f185202195819"
+    },
+    {
+      "path": "docs/ai-eval-stage-e8-c-r8-remaining.json",
+      "sha256": "5fc27100259689cdfd60c933264ad0e7bd1eae6a35ae80d0ad9b77d9abdd6cd6"
+    },
+    {
+      "path": "docs/ai-eval-stage-e8-c-r8-remaining.json.progress.json",
+      "sha256": "6cb29665e606996980c8751cfb2d8def5ba2eb8708282031b665e9c46c387577"
+    },
+    {
+      "path": "docs/ai-eval-stage-e8-c-resource-recovery.json",
+      "sha256": "d47d229f5c4fcb4f4efaa2a2ee1cfabcf542e6dc7c825172a8528672327373cc"
+    },
+    {
+      "path": "docs/ai-eval-stage-e8-c-resource-recovery.json.progress.json",
+      "sha256": "463602666e4f09fc3b43677a526343c55e3d4ca616b931419b699ea51fe4fb00"
+    },
+    {
+      "path": "docs/ai-eval-stage-e8-c-resource-regression.json",
+      "sha256": "84ed76abae4634590279ea6d2015dcc9539b3149c980b28e1881b73125019191"
+    },
+    {
+      "path": "docs/ai-eval-stage-e8-c-resource-replay.json",
+      "sha256": "73c55419ddfa35342f14992728d3923164db30d7ddf80e9f2bbdbd46f474997d"
+    },
+    {
+      "path": "docs/ai-eval-stage-e9-d1-billing-check-ledger.json",
+      "sha256": "1326812715ff1cd9d5d3d4945a3bde07b0a994655c7da340b0a6b1d4eabf95f9"
+    },
+    {
+      "path": "docs/ai-eval-stage-e9-d1-billing-check.json",
+      "sha256": "11d8f139f28cdc8d3c4fdc7b6e93b3f1a526f1c0f89fc4b7496faf0f9f9fe745"
+    },
+    {
+      "path": "docs/ai-eval-stage-e9-d1-followup-final-recovery-ledger.json",
+      "sha256": "390d210bf880fd8cda4227af229541eb9ea72007706d2c819d3be4615f1e47f2"
+    },
+    {
+      "path": "docs/ai-eval-stage-e9-d1-followup-final-recovery.json",
+      "sha256": "65e0c89d708a6b6b506dd4247005e0669c5cee2848bfa3a9107e7d25f6922696"
+    },
+    {
+      "path": "docs/ai-eval-stage-e9-d1-followup-ledger.json",
+      "sha256": "42c1bf06641affe50945cd953e3a683362018a2306f084a3ccb49119cb4bd184"
+    },
+    {
+      "path": "docs/ai-eval-stage-e9-d1-followup-recovery-ledger.json",
+      "sha256": "149264a2da69369bff7338832167b00fe270e61368afb1d39298e25d2dd57b4e"
+    },
+    {
+      "path": "docs/ai-eval-stage-e9-d1-followup-recovery.json",
+      "sha256": "79ac1f821a77df72db07cb1d613bc52027c683f7193fecaa79a091d6dc4e7b6f"
+    },
+    {
+      "path": "docs/ai-eval-stage-e9-d1-followup.json",
+      "sha256": "6f487cb0ee03acfe2ec95598c4245f665916faa002feff6c8bf450279333dbfa"
+    },
+    {
+      "path": "docs/ai-eval-stage-e9-d2-followup-ledger.json",
+      "sha256": "2056edbcfa41994764e6909622c188353989731e5fe34ba9a6b23f8640e79d92"
+    },
+    {
+      "path": "docs/ai-eval-stage-e9-d2-followup.json",
+      "sha256": "30f3540aef553db1f42107028e1899f031d1594085d3052e1e0509b0cdbb809a"
+    },
+    {
+      "path": "docs/ai-prompt-trim.md",
+      "sha256": "7b4cd1ce96b17b0200d5651c289016c8dfbb5e161c63c253a8dd7b71dd1f4d1f"
+    },
+    {
+      "path": "docs/anthropic-direct-api-plan.md",
+      "sha256": "b87744132c529c0a3c8b5a6b6be3040bf70dd138a957f5a36d5d93e20a41c600"
+    },
+    {
+      "path": "docs/anthropic-p2-a1-report.md",
+      "sha256": "d561dad6d575b6731c333d3d1a6dcb2d1c2636602e9b172b6bf391dba7a1136d"
+    },
+    {
+      "path": "docs/anthropic-p2-a2-report.md",
+      "sha256": "a51b04f0c5cc5d33e925ff26aaac128fb711a292c9a527cebca12726bf6f6e95"
+    },
+    {
+      "path": "docs/anthropic-p2-b2-report.md",
+      "sha256": "4023df6038d3d26d3ea60a1242cb20d2a054e40ee6173d6d7fc7abcb547936cc"
+    },
+    {
+      "path": "docs/anthropic-p2-pilot-report.md",
+      "sha256": "3e5eca258605d05a0b91cc64d36ca0a56550a8a2b99deac7c9908a1b0797fd60"
+    },
+    {
+      "path": "docs/anthropic-p2-preparation.md",
+      "sha256": "4c8306a0f956ccf14140fdfa99b8b0f871c26ab4992150ff689008da5b3abd90"
+    },
+    {
+      "path": "docs/bsfm-admin-workflow-result.json",
+      "sha256": "6b4eb3931fc6fa75e7ca1608525849cda5387a9aa488073f1d6cf85fc019009e"
+    },
+    {
+      "path": "docs/bsie-hybrid-api-result.json",
+      "sha256": "3f96d92165cf8883be9a05cac139a045320ef59cfb80c2225ec573e53c0c6a77"
+    },
+    {
+      "path": "docs/bsie-ma7-tests/after-reference-import.json",
+      "sha256": "e9a050512c1ac2662d5b93ac18a34e9ca9e3702cdee33eff14bc8eaaa4164336"
+    },
+    {
+      "path": "docs/bsie-ma7-tests/aligned.builder.json",
+      "sha256": "cb09ca46ff838de9eaf5ffd72367642bd9d30ac304b414d8427e420307fe3e66"
+    },
+    {
+      "path": "docs/bsie-ma7-tests/aligned.diagnostic.json",
+      "sha256": "f6fce8765a9df90726acac3146770ac972abe5e9d008c492f66521a3f1d7ef19"
+    },
+    {
+      "path": "docs/bsie-ma7-tests/builder-check-results.json",
+      "sha256": "400c74e96895875d9f6dc43139ce459ae209a5b54836c3fd2f290cb45eab9d90"
+    },
+    {
+      "path": "docs/bsie-ma7-tests/diagnostic-comparison.json",
+      "sha256": "ac73f04332f16ae2f3f921c786287fbd9575f106e4e3d8f58be100b43cb2e68f"
+    },
+    {
+      "path": "docs/bsie-ma7-tests/misaligned.builder.json",
+      "sha256": "11cb503e1321e7405b3febb678794bf8255a8fd4fae7191a0a1a2ffff41d92b0"
+    },
+    {
+      "path": "docs/bsie-ma7-tests/misaligned.diagnostic.json",
+      "sha256": "551a44058b8958c6906b1475dede1261d51f6fa970b67d0c0c0affba76c37846"
+    },
+    {
+      "path": "docs/bsie-ma7-tests/README.md",
+      "sha256": "86754546864b30068f188304ab962d094ef9166d8be3221a3798f30474b7b4ff"
+    },
+    {
+      "path": "docs/bsie-misalignment-test.json",
+      "sha256": "7aa03f5c18ec5ff3d53f7e819a1786c1c15e1de88554a963ba8191d3f4ae4c81"
+    },
+    {
+      "path": "docs/CAPSTONE-DOCUMENTATION.docx",
+      "sha256": "2f9cff194d2ecacba9032547d5f997b84d3f40a06a4c7cf5d983015602d45340"
+    },
+    {
+      "path": "docs/CAPSTONE-DOCUMENTATION.md",
+      "sha256": "016b3e1cefe2aae8f1031c2007e869f70526fe738fa26663e2820238cfe08135"
+    },
+    {
+      "path": "docs/claude-program-deadlines-ui.md",
+      "sha256": "2d27a315a5e34b04b584c926dee02ae7261d2c2f31ff8e2e849f11c6424e2817"
+    },
+    {
+      "path": "docs/css-conventions.md",
+      "sha256": "49510286634ff006509a5a23f548822f027f015705d9afd67c8713fb56b98c24"
+    },
+    {
+      "path": "docs/deadlines.md",
+      "sha256": "3f17c0c471394c867073e0567525e9bca321188e58b7683fe06443e659f02b39"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/coordinator/01-case-inventory.md",
+      "sha256": "e57d0e017b727cc97b1f6d9c30fcdfbee03d82fc1c736c102cd4a4ad4993fc06"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/coordinator/02-recommendation-quality-review.md",
+      "sha256": "67bcf03e6e35d554c74808bd7f2cb2bd6086bed499e114af6e9f2ddc4c8a6cad"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/coordinator/03-comparison-and-blinding-key.md",
+      "sha256": "de536d1885a2a56d102c818e201aebd379ead3729324b81262415b8a4ab42b49"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/coordinator/04-post-validation-development-plan.md",
+      "sha256": "652c0b82301983927aed8138019116ad649eed7cec8bc302ad93f04b9baf98db"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/coordinator/cases.json",
+      "sha256": "1ffc2b8cc0b0c75d90be9f88e3fa9d0ab5d6d7a754faf9c7b30a66cb78b67313"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/faculty/01-reviewer-guide.md",
+      "sha256": "9c155e008a61145cbdf6c521e16cf2f0ed150748ac81d72e2b4f82a36a78c366"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/faculty/02-curriculum-references.md",
+      "sha256": "c9b4bc08bc34bd87866e7ba0877335305a531b3e15cab75e5b8dfbda07cd8998"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/faculty/part-a/ACCTG201.md",
+      "sha256": "3349b3900708730fa393a11f4b912f98e574d7d44fc9b86c7955922778371719"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/faculty/part-a/EDUC105.md",
+      "sha256": "f0597f9beba30a79f5310ae46e03c297b62d253716cc85b724fb9c2c1b4ae194"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/faculty/part-a/HM210.md",
+      "sha256": "46c3e3a3165309fc9096bb9c5e099623f510f9f5cc43c75e85ff10da8be3106c"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/faculty/part-a/IE310.md",
+      "sha256": "4cbf7df088ad9a2f22cf465c5b4101155a99c3e55015984b9195b4e90d9f5ac8"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/faculty/part-a/IT204.md",
+      "sha256": "895992949238edf6b726d2317d48662f8b749f7f76b6d6b996fef79202d43f2a"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/faculty/part-a/MA7.md",
+      "sha256": "99b98aab701be76862fbc59cd76e4b19c0f0dc6aa9378bddeaa794fd804e271f"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/faculty/part-a/NCM101.md",
+      "sha256": "dc98c5a2556fcd67f78bfab12167a17f89b0dd5831a53f486e227a2eb699bd9e"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/faculty/part-a/part-a-responses.csv",
+      "sha256": "49024c6ceabc43bb1d79ec0db0dcea863ea488793ea1759e0a1cfdd7d549446b"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/faculty/part-b/ACCTG201.md",
+      "sha256": "f5bed8717ef60a7c7f801317e5fb62778912249fc70199f46daaaa84efca9300"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/faculty/part-b/EDUC105.md",
+      "sha256": "06042d3d5ce54c9cfef4e47679e2ddc799b559858c061cbedb4f7f75d2c4fbed"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/faculty/part-b/HM210.md",
+      "sha256": "f0f578e0cb495c97ea3d9d6aff4cf5bcbb87b0115a5dba41a1d25995ae91dfbc"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/faculty/part-b/IT204.md",
+      "sha256": "728d67f708396f4d9095912c15c613b482df2c6eed48052d986ec0bbd5e8e2e8"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/faculty/part-b/MA7.md",
+      "sha256": "c38315c2b67393a74f8316397847636c2ebca77bbf4fd47ed029d659dff139c9"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/faculty/part-b/NCM101.md",
+      "sha256": "6c4ce06d6ee1306970ce1e2adbb43e903d7af0f332a330961f937ec952cd8e64"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/faculty/part-b/part-b-responses.csv",
+      "sha256": "10e62aed1237439c5f67ee32da5a671e82363a4d4ac7d04f6820f0f459e66de4"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/institution/01-policy-questions.md",
+      "sha256": "940511626ac304b6fb097b3723b6472bc55445d467cf757578b512500ff30d56"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/institution/02-institutional-decisions.md",
+      "sha256": "e92d343210f4403755e6b4065bbce8a55fed6f67b5ff50a3dbcfe394534444ca"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/institution/03-adjudication-procedure.md",
+      "sha256": "53f94325a760452cd10408de858305c39bd4fa98f1f20aa821a9244dc0027177"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/institution/policy-responses.csv",
+      "sha256": "f7b608342e8f2d4f3adf7f63b81c5be4492e1dc1f98b87f797605893f0eab825"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/package-manifest.json",
+      "sha256": "a753552b15357829c01ccd9420573da8e00a609786a48109d4ec6a4052a26b9a"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication/README.md",
+      "sha256": "952146977335ea8b10a48f12b7a13ce58fcee55931b394364bb7e32bf3f7bf7d"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/01-reviewer-guide-part-a.docx",
+      "sha256": "88f74afa74f81b7b42748f1992fb468b1ab05556c29c64478034df798535f47c"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/01-reviewer-guide-part-a.pdf",
+      "sha256": "9af89f539dcde0c737fea833c97033c6e3dec4ccd19d5d406c3b12a459b295fa"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/02-curriculum-and-institutional-references.docx",
+      "sha256": "e46998c05a06b3a0b2b2a9f5a723c1533d20b012361d5d3358837b645fc9269e"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/02-curriculum-and-institutional-references.pdf",
+      "sha256": "fb15230a73c854e717eff21c3aadee6196c220ed51ea7fedf0398c2b28546b9d"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/ACCTG201/ACCTG201-part-a-form.docx",
+      "sha256": "aacd40522ee6bd1f885be42b68e439b5a17a46712aa337b1964c35b991872014"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/ACCTG201/ACCTG201-part-a-form.pdf",
+      "sha256": "ad5a617c9624dbc77c06aafef7374d02dd11f39268ac3a37a43d91242acfe23a"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/ACCTG201/ACCTG201-part-a-responses.csv",
+      "sha256": "dc833f88ff507508689fbe504ea29d56f30ae2eb278303406e38edbd7eaa8629"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/EDUC105/EDUC105-part-a-form.docx",
+      "sha256": "6773562f3db6c2132dc5400f4580c86de3bf557ce5f49e2e4493ab24286ac66a"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/EDUC105/EDUC105-part-a-form.pdf",
+      "sha256": "a3809492dc1514513431af140d7a9ad1be14956760c59358c7f39261fa4a1d30"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/EDUC105/EDUC105-part-a-responses.csv",
+      "sha256": "e3d6bfbe3f3e260db121e71514423b87fdbb9bdfaf43f393d044091aad71ec62"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/HM210/HM210-part-a-form.docx",
+      "sha256": "bbe48ee08266d8430ed5644b64504fa5b09f9c458bab9fdcf7a9192cd15e6c46"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/HM210/HM210-part-a-form.pdf",
+      "sha256": "3d174aa7c538e9e527d117395bfd07b45f566563864b25d61e13d5fb461a1f74"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/HM210/HM210-part-a-responses.csv",
+      "sha256": "3e38c9a4a0c2e5e10f3d559f1ef1705654ac7cc843c0b002fddf60e9acd47014"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/IE310/IE310-part-a-form.docx",
+      "sha256": "fec3b69a5894a62d73f18006c90e64bacc1a2b06e17ba5ed08f1942bfb9d9c17"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/IE310/IE310-part-a-form.pdf",
+      "sha256": "19d72d88fda7cab6a160c43a9789a8093eade21299dd9ea63c88381cd1961cf1"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/IE310/IE310-part-a-responses.csv",
+      "sha256": "706be6f9522b3b936785361209f860c0ea22b8aa2fe8dd91c35ff39fa7d34242"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/IT204/IT204-part-a-form.docx",
+      "sha256": "352dda5375615fac6f32b6c4a52568ded40f1914f220b96971d596a023125f33"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/IT204/IT204-part-a-form.pdf",
+      "sha256": "9c4398648a78ce30cdd5c5d2ffafcabf110a6c4ad291f93e6ae868394da265fc"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/IT204/IT204-part-a-responses.csv",
+      "sha256": "3f0cf467e2dcefdfc900fa893acca8b5e7c43a75bec05bd4ea68e07ab8829c7d"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/MA7/MA7-part-a-form.docx",
+      "sha256": "acadc74ad80007c962f59b35cce3fba9ee369fe707b5948025c92baa6d49c03b"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/MA7/MA7-part-a-form.pdf",
+      "sha256": "972bc3f2bcc18ea467ebd52821c07fd44bdcf6b139fc0168445f8e6ede0fc1fd"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/MA7/MA7-part-a-responses.csv",
+      "sha256": "14f13cef30d4d3981e6a44fc7db6910d805c1ed1cf92cefebb4aac2a8bb73472"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/NCM101/NCM101-part-a-form.docx",
+      "sha256": "6dfa128ed95984d14661eb0f5859371690164eecf07144197402a86dff92e6f5"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/NCM101/NCM101-part-a-form.pdf",
+      "sha256": "e405dbf05945120307426acd92d95e30da929fec9a2808ac2c0e7023ead865d8"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/1-part-a-for-reviewers/NCM101/NCM101-part-a-responses.csv",
+      "sha256": "a3f821476196f2209e0f225521cc4c643e8b0c65c900f38296eb3d91705a6db3"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/2-part-b-for-reviewers/01-reviewer-guide-part-b.docx",
+      "sha256": "be0b52f4c2544ed3285d07f474ddf119fb32d37bada2a80ee3e5d9594b593005"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/2-part-b-for-reviewers/01-reviewer-guide-part-b.pdf",
+      "sha256": "7b68fbe49f53917976b024464208c846a0faccee8342bbcc150f1d3d99a44b83"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/2-part-b-for-reviewers/ACCTG201/ACCTG201-part-b-form.docx",
+      "sha256": "be468ef6170f53d6d6d35c82ca47bd53dfb4f2182629d2d52402da594f86f7db"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/2-part-b-for-reviewers/ACCTG201/ACCTG201-part-b-form.pdf",
+      "sha256": "f49bbf5c7c1e3886bfa4db210029f42325b7b35239017b7e48becff43a85048f"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/2-part-b-for-reviewers/ACCTG201/ACCTG201-part-b-responses.csv",
+      "sha256": "418bbe0ccdcee2318119468e747c1613a4648b867d92a33d15781da56cc0f9ea"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/2-part-b-for-reviewers/EDUC105/EDUC105-part-b-form.docx",
+      "sha256": "4b21b2ed9334576179767750525d6d323b578793760c98b7e7f1d3788ebacb7d"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/2-part-b-for-reviewers/EDUC105/EDUC105-part-b-form.pdf",
+      "sha256": "bc0e7738832f993a3768f117df682080415e2ff0323bb8d18295d10dea0507cc"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/2-part-b-for-reviewers/EDUC105/EDUC105-part-b-responses.csv",
+      "sha256": "41491ab46f53e17a485b365855078b24655755162e6d1c829e2a82f2820287e7"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/2-part-b-for-reviewers/HM210/HM210-part-b-form.docx",
+      "sha256": "0a2d0d2e03fff312cab8326ed32d60a702be91a6b2ba16cbb194e84dc8c728d1"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/2-part-b-for-reviewers/HM210/HM210-part-b-form.pdf",
+      "sha256": "0235ab0ec3cf9acd6d7219f607549e1bd6230509fa64064887b6bdc5a11d3314"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/2-part-b-for-reviewers/HM210/HM210-part-b-responses.csv",
+      "sha256": "8945bdfb3e599b5955de5a07ef4be9238098a46b03d2f8db26f64f2cfc09892c"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/2-part-b-for-reviewers/IT204/IT204-part-b-form.docx",
+      "sha256": "0b00bcd77efddf374ed2eb576caf7506107a6b89794db39d805f48403509172b"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/2-part-b-for-reviewers/IT204/IT204-part-b-form.pdf",
+      "sha256": "246a41c21afab1cf5e638dd3350f598a736636a65d31d3e50aefe71d265b113c"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/2-part-b-for-reviewers/IT204/IT204-part-b-responses.csv",
+      "sha256": "02ba80ade2a91846614d6852b88eb7459cf4626fdb34b47ca4bf386f8c8d60c4"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/2-part-b-for-reviewers/MA7/MA7-part-b-form.docx",
+      "sha256": "dbd57e152e87329578777fba5ce32720eb0f54dd573190be35e660f0fe4ab743"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/2-part-b-for-reviewers/MA7/MA7-part-b-form.pdf",
+      "sha256": "80263a78e1439234bd16b9f3c4dea2b8e4d5ddc83e4b27c7d1783d20c8b27336"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/2-part-b-for-reviewers/MA7/MA7-part-b-responses.csv",
+      "sha256": "0f8f977ba6355102968490d6e1bae9919c51e9a9df6195d6c6f090afe61a37a3"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/2-part-b-for-reviewers/NCM101/NCM101-part-b-form.docx",
+      "sha256": "30a3b86650d92d4dea672b349f4d17e94d624a53d10d0aee433b7dd288ac3834"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/2-part-b-for-reviewers/NCM101/NCM101-part-b-form.pdf",
+      "sha256": "26f54a06bb5ef35ab566f5d7194cdf00f487f40bb6876480cf059a7ba00e5c17"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/2-part-b-for-reviewers/NCM101/NCM101-part-b-responses.csv",
+      "sha256": "eb72cba2fa7408d9c2278fa88bfdc78d7b24d4035aaf781a9fe5bf2f9b0e1b30"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/3-policy-panel/01-academic-policy-questions.docx",
+      "sha256": "18f1ab0f62fe5b66f0d7224c5e6233abdaaa2d7c2cfd0bfcebccbf4cd3080be6"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/3-policy-panel/01-academic-policy-questions.pdf",
+      "sha256": "472fde9e0e6754e4ad006ecab0ee8807df782865a8b7fdada1118bf127198ea6"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/3-policy-panel/02-institutional-decisions-and-approvals.docx",
+      "sha256": "e82aec85d31eb57a1a56269d1ca8549c4518b559c2fd14bf6823776a578ba2eb"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/3-policy-panel/02-institutional-decisions-and-approvals.pdf",
+      "sha256": "7cdc8f44806f59614cfe7688077b2b61d872ec50f5bebae8a97297bba2e60228"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/3-policy-panel/03-adjudication-procedure.docx",
+      "sha256": "e88e95974f31dc53b0b461ff17b418b02a373b3a9bd2cfbbd266a421b3c852ad"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/3-policy-panel/03-adjudication-procedure.pdf",
+      "sha256": "3efe4dbba82fcf18ee9b25ab7657a469add4b81f6dcbe92de5e25b0a30ccedeb"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/3-policy-panel/04-curriculum-and-institutional-references.docx",
+      "sha256": "e46998c05a06b3a0b2b2a9f5a723c1533d20b012361d5d3358837b645fc9269e"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/3-policy-panel/04-curriculum-and-institutional-references.pdf",
+      "sha256": "c3317a1a7365e3848895115ae3ab6ac9ccb7739839af8d395d507eef470404e1"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/3-policy-panel/decision-and-approval-record.csv",
+      "sha256": "77cef174040a388a80e98f5a07153ff801c6dfc77b7715e47a5e5d419abdf48b"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/00-coordinator-guide.md",
+      "sha256": "e9b74d5e3cb0c46864413e6b007010fc47ef06e391338771dc964b4c8090969a"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/01-case-inventory.md",
+      "sha256": "4a08422e136462e538450a1ac228c9d6e916db5a01ad9b15ca386d4b64c0f140"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/02-recommendation-quality-review.md",
+      "sha256": "b126dcbec3fe7995ac167f387c9278e86717ee37f071138baaf43fff5fe507be"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/03-comparison-and-blinding-key.md",
+      "sha256": "e38a77038b9f0c3f23c9319bd849db5a47bfb11b63f51223d20f3e51331cae04"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/04-post-validation-development-plan.md",
+      "sha256": "a0b20e0f1fcfc263b6ccf89c534143cd00111bf5fb3702e2ff2ebf21ca8f1e85"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/05-policy-question-case-map.md",
+      "sha256": "234ef737c64f46d0350f7311cec21e90922fb87b90efe4cab74c959979e96cd6"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/06-changes-from-v1.md",
+      "sha256": "99f3652defc90b00b98ef8c1bd9bdbaaf0e73804c3810ce0da7aa3f9cb1a14b1"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/cases.json",
+      "sha256": "7e7aae0e985dfc9f2d0f2bbcc9bbbd0d8f0a9dfcb9aad5edaa317c5200da540d"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/distributed-text/1-part-a-for-reviewers/01-reviewer-guide-part-a.md",
+      "sha256": "b715f85bd81f8dc33783034977be1134e3af5d38359b184b739958cc2c029b03"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/distributed-text/1-part-a-for-reviewers/02-curriculum-and-institutional-references.md",
+      "sha256": "c335a6d8ef4fd8d9a39cd6999ac30b26e232b1512dfb48ec5308a08fae40097d"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/distributed-text/1-part-a-for-reviewers/ACCTG201/ACCTG201-part-a-form.md",
+      "sha256": "6a8911314f32fb0f20edd2d188feea65bee7bb93115fee124f4aaff680c618e9"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/distributed-text/1-part-a-for-reviewers/EDUC105/EDUC105-part-a-form.md",
+      "sha256": "077f5581a494658ba912413fe4601ae3d7c70d4a3146b0ad3179fc35a0d11d6e"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/distributed-text/1-part-a-for-reviewers/HM210/HM210-part-a-form.md",
+      "sha256": "e9bcf335e060805382e48cf5ea2d395fef840d9d2960c6b2284504a341934316"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/distributed-text/1-part-a-for-reviewers/IE310/IE310-part-a-form.md",
+      "sha256": "47b9a7a9e2ab01f6519a46b6acdcb89a58b7c4616debdac3e1b1af43af697056"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/distributed-text/1-part-a-for-reviewers/IT204/IT204-part-a-form.md",
+      "sha256": "a9bf9e3acae9f674191702f3573e7a30fd772246f6b82e1618428ed269b8310e"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/distributed-text/1-part-a-for-reviewers/MA7/MA7-part-a-form.md",
+      "sha256": "362f087ff19509ad3f24dcdabc55bbd75a5354adb93957a0391770c5e84fc547"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/distributed-text/1-part-a-for-reviewers/NCM101/NCM101-part-a-form.md",
+      "sha256": "060e5e0f41b3d778065adb60fe27333e45edd9aedce8fc24b05c3a8dc4f310e1"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/distributed-text/2-part-b-for-reviewers/01-reviewer-guide-part-b.md",
+      "sha256": "87f449093ee26be4e2393d124f40a8f8571332ea5fa3ee000b4a85fb67bdfbd8"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/distributed-text/2-part-b-for-reviewers/ACCTG201/ACCTG201-part-b-form.md",
+      "sha256": "183294fd3677955484064a2cd5424651a93b5ebbb19258f0c61813140bc36c91"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/distributed-text/2-part-b-for-reviewers/EDUC105/EDUC105-part-b-form.md",
+      "sha256": "87c3c536541acc1d0d4f1f7868c434f5adfddb629818f7e7f2a79c926feb9f63"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/distributed-text/2-part-b-for-reviewers/HM210/HM210-part-b-form.md",
+      "sha256": "7034b86432881ff2865ab04228ce19492c69fe1bb1abe484634071de7172d66d"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/distributed-text/2-part-b-for-reviewers/IT204/IT204-part-b-form.md",
+      "sha256": "c6b803683f4bdfa8e7bbe563ca50ed6199141d12e8de87c63e46e225a316520a"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/distributed-text/2-part-b-for-reviewers/MA7/MA7-part-b-form.md",
+      "sha256": "fd2154723ef19ec74b7fdc2fde6c336eae83bc98ba06cc899be5b2239f008692"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/distributed-text/2-part-b-for-reviewers/NCM101/NCM101-part-b-form.md",
+      "sha256": "72389e15270c8a9dabeb2a3ec9c680631edc8508cdd39bf86d58ed08f4533e1d"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/distributed-text/3-policy-panel/01-academic-policy-questions.md",
+      "sha256": "06698ed4fea9b074ee60e965717122ea3ff6062ee5653cc69d4c38c7e0781ff6"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/distributed-text/3-policy-panel/02-institutional-decisions-and-approvals.md",
+      "sha256": "d96f181ae47bf3c944c5a69dcf9d152f0ddc42e62442e66fe94e6c825326c96a"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/distributed-text/3-policy-panel/03-adjudication-procedure.md",
+      "sha256": "44b88958b95dd19509e80efb7d21d7f6403e0ebab62164f63da620d4567b0e03"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/distributed-text/3-policy-panel/04-curriculum-and-institutional-references.md",
+      "sha256": "c335a6d8ef4fd8d9a39cd6999ac30b26e232b1512dfb48ec5308a08fae40097d"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/templates/adjudication-record.csv",
+      "sha256": "8ae8643fb8f47195c7fa3c7b6e93b9dd3b481923d2ce056f4ae55d8251f31b94"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/templates/part-a-agreement-record.csv",
+      "sha256": "4216facfab2e58d4d659a1164ca35c957527c2595d3348e754d1683f57224066"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/templates/part-b-ratings-record.csv",
+      "sha256": "7e8df1f00b389606ff2d2e9f36153e1d9b3f4030a7d921278cdde59c269138af"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/templates/reassignment-log.csv",
+      "sha256": "d0860c75a1228f573242004c808c6b5236480654514c65962f8e5f877296e04a"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/coordinator-restricted/templates/reviewer-tracking.csv",
+      "sha256": "e4f7591da9d72cfcba6099d85e4cdd7585b85586dcdbe1e624c9ff3a8ebccd22"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/package-manifest.json",
+      "sha256": "285f656d07355e178e3daba0b9ec87ed2fd71618e5c54d6fc2cbada4cab9435c"
+    },
+    {
+      "path": "docs/faculty-review/align-1-dev-adjudication-v2/README.md",
+      "sha256": "51694447543d10293ada9f1cfc985693052efbba5475c9ef6e621ad3ccb11575"
+    },
+    {
+      "path": "docs/faculty-review/align-1-response-import-guide.md",
+      "sha256": "1fa7c51cd58aad6380b39f19eccabd3e40bc99cb3b07b63c59c8555606b6ca20"
+    },
+    {
+      "path": "docs/faculty-review/faculty-review.csv",
+      "sha256": "c24c4ca8284a3d2581c5494af68c90a5e425616b3f7539dee34a173bdda728ae"
+    },
+    {
+      "path": "docs/faculty-review/faculty-review.html",
+      "sha256": "7977735805f64f45e7b3478013c6e079c48f285ec67b31da2ce26931f1926708"
+    },
+    {
+      "path": "docs/faculty-review/phase3/phase3-faculty-review.csv",
+      "sha256": "0e2815a20f3f72b356a021ed2b15ba9a8eb4d8431326bbff59bcf310ee2efe0e"
+    },
+    {
+      "path": "docs/faculty-review/phase3/phase3-faculty-review.html",
+      "sha256": "fc9ab3c36f54134f8c33935e28d0af3114e9edd202f27706d141665784315c8c"
+    },
+    {
+      "path": "docs/faculty-review/phase3/phase3-faculty-review.json",
+      "sha256": "d3eaa5cbad252c9546fe734780e4d1d6255e6931dc142ee7a5ed495efc916634"
+    },
+    {
+      "path": "docs/faculty-review/phase3/README.md",
+      "sha256": "f33222cda72976329ab1f7c92f30448fe492b586eeefbee22406686ac0f4a33f"
+    },
+    {
+      "path": "docs/faculty-review/README.md",
+      "sha256": "cd550db82617bbed02c0ff5c96c7b9415f9d1889e0e9065637119eabbc951acb"
+    },
+    {
+      "path": "docs/icons/Approved.svg",
+      "sha256": "42aed98da4fd10ef38a4f1e40a1790f7ccb81e6ecad1a590cc11dacb8a6882a5"
+    },
+    {
+      "path": "docs/icons/bin-svgrepo-com.svg",
+      "sha256": "b405ab2f3ccc0a267c13ba5c0b15a746fa74b411b81c14494ac3aaa1e0d8f5af"
+    },
+    {
+      "path": "docs/icons/denied-svgrepo-com.svg",
+      "sha256": "806fd96e3fc255aad09dd2c5da62284a53a4292a5e0a8103733e42a3e1283b64"
+    },
+    {
+      "path": "docs/icons/pencil-square-svgrepo-com.svg",
+      "sha256": "7cc61335f0e2b0ee74c2a974a8237d98db031f3f1c63f70b9e9808a6455d13f9"
+    },
+    {
+      "path": "docs/icons/Program.svg",
+      "sha256": "fa21c3d04f97c9e0edcb30ce7c1d675816302bcecceebc89de059abdad3eb178"
+    },
+    {
+      "path": "docs/icons/README.md",
+      "sha256": "b9392dd124b04600fbfecb5534673b2972b13f074e4cf2cf7ee2bbfb2b23deb4"
+    },
+    {
+      "path": "docs/icons/Revise.svg",
+      "sha256": "3096bd56fc82b729d0ff721548a7e9d7aa9dc71aa5811a49ee6fd785f1094c4d"
+    },
+    {
+      "path": "docs/icons/Subject.svg",
+      "sha256": "34032148a3e7b38db1bfd9707a6b483b55fe1f837b1372971494f6808cc3f828"
+    },
+    {
+      "path": "docs/icons/UnderReview.svg",
+      "sha256": "2dee845878913727e178f23f3f290c061e6175b0edca56b891076aea8a15ec7f"
+    },
+    {
+      "path": "docs/ilo-assessment-scoring-review.md",
+      "sha256": "2077c6ab151c923ae4b6fd4f58b93a8f1b6f2b2536d9e0c88919ebf4fb5f2edd"
+    },
+    {
+      "path": "docs/institutional-reference-inventory.md",
+      "sha256": "f1709a9ad52e370f969dd0dfcd224694a42e512fac3a61ce947161a41cf099fe"
+    },
+    {
+      "path": "docs/lcup-academic-decisions-for-vpaa.md",
+      "sha256": "e8f4c48aff77b124f400db3d97fa248e99bcbb5b3a1e7352c87114ac9bc94a79"
+    },
+    {
+      "path": "docs/lcup-approved-offline/baseline.log",
+      "sha256": "3872d8df1a13d3b9b2ef58e8ff4fe63ca418e94d9cc147927c8c9289b00dc605"
+    },
+    {
+      "path": "docs/lcup-approved-offline/cpe304.fixture.json",
+      "sha256": "f22a01d95fba2429b6349d414d3f012fb442fa47118f07d9612504e45a67b8f5"
+    },
+    {
+      "path": "docs/lcup-approved-offline/cpe304.source.json",
+      "sha256": "b4fb14b7c118967c62f56210b9b0ae681e6a574244de0c8026dbd6d808ce8745"
+    },
+    {
+      "path": "docs/lcup-approved-offline/cpe304.source.txt",
+      "sha256": "9db49f5def5ba8383075f5bc949ecd398cbd13bbb9350f473dddf67aa6ba5255"
+    },
+    {
+      "path": "docs/lcup-approved-offline/cpe404.source.json",
+      "sha256": "d265f8914ce8abf2568a863415fc9b6cd6ff9b2dd2e9d4f91808baee9d8a4035"
+    },
+    {
+      "path": "docs/lcup-approved-offline/cpe404.source.txt",
+      "sha256": "811e310a8642f2595c0a6eb9c57750ea5a0c8035c9f91224e56ae152d7bdd2e0"
+    },
+    {
+      "path": "docs/lcup-approved-offline/deterministic-baseline.json",
+      "sha256": "4c8c1c8cee4ae94cbc5f5195779165f0ba62e9e203132f7cb4895bdd80aa65b4"
+    },
+    {
+      "path": "docs/lcup-approved-offline/deterministic-findings.md",
+      "sha256": "fed940966ab6e8e395de3688eb2b4f2484b51590261ce192f6924656eb918ba1"
+    },
+    {
+      "path": "docs/lcup-approved-offline/engineering-po-comparison.md",
+      "sha256": "60867b22ff77843b6d6bb16c319a3fe22d02493dfb6eb85464bbb5c06ebd1f11"
+    },
+    {
+      "path": "docs/lcup-approved-offline/engineering-pos.json",
+      "sha256": "43c6fb001439535ffdddffe7f94f4c7676cec17f45cbef2f6279e0916704f299"
+    },
+    {
+      "path": "docs/lcup-approved-offline/existing-importer-tests.log",
+      "sha256": "79a1bc3c291189922bf69b4e6e565687960ff12b4b71e1a1532761f843a4279e"
+    },
+    {
+      "path": "docs/lcup-approved-offline/extraction.log",
+      "sha256": "15aa90fa01fa6ee6a390e82d0e863eb050d366987d02b681013e2d2092e0106e"
+    },
+    {
+      "path": "docs/lcup-approved-offline/ie402.fixture.json",
+      "sha256": "8b8e701e15ec4f18c9c6d60861e9c8de60415c475883a193730bfce222a7dd0f"
+    },
+    {
+      "path": "docs/lcup-approved-offline/ie402.source.json",
+      "sha256": "ec7e1a2b375881ba3d801d2352b57547801720861fd908314244a4073a3e2df9"
+    },
+    {
+      "path": "docs/lcup-approved-offline/ie402.source.txt",
+      "sha256": "99c5d2a0d8a1acf3e37ea8ac2e9db7d5397491bfba3b086a2a446df08a421143"
+    },
+    {
+      "path": "docs/lcup-approved-offline/ie403.source.json",
+      "sha256": "bf2242cbb642f66a6fe0c0d7c72dbc1260d24e167be417b668fd79468f96aa16"
+    },
+    {
+      "path": "docs/lcup-approved-offline/ie403.source.txt",
+      "sha256": "c0e90f247bd02a0803d5a40cdf5a31033c680e5ba076353190ba91294296f741"
+    },
+    {
+      "path": "docs/lcup-approved-offline/it202.fixture.json",
+      "sha256": "ff1f9ed8aa24e88728c7364bb4e94717a8ab728a1da23e8bd0f59949e78cb642"
+    },
+    {
+      "path": "docs/lcup-approved-offline/it202.source.json",
+      "sha256": "6b2603e37f8a1de4f4cf18bbaf71dfa65a223ace3692c0b6cb4aa947ab15f67c"
+    },
+    {
+      "path": "docs/lcup-approved-offline/it202.source.txt",
+      "sha256": "3e1451ad0c789ae35598ac84ed4ca14dfd6aa24341515c9a164b1fbe49389896"
+    },
+    {
+      "path": "docs/lcup-approved-offline/masters.json",
+      "sha256": "ac5fa60cc739f3cd49769edd6e0dde0df9d96320ec12d504126e364dd8da345f"
+    },
+    {
+      "path": "docs/lcup-approved-offline/REPORT.md",
+      "sha256": "e03c6f21a86c4606ae9df43e76c57e248d57a0640c6c6aa19eed6621a17023e2"
+    },
+    {
+      "path": "docs/lcup-approved-offline/repository-after.json",
+      "sha256": "2bb579e1287dd62b9900e0a3dd2781d1f772d33c208b2a7f6047127e36800a65"
+    },
+    {
+      "path": "docs/lcup-approved-offline/repository-before.json",
+      "sha256": "38818936a9220af695022077bf98a1529bc88f5da00ab5123551520c66aa4cd6"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/cpe304-p1.png",
+      "sha256": "f9f108bb4fbdeff75d75287accbd4ca7ce608914e7c0e8b5c649e076a82b953c"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/cpe304-p2.png",
+      "sha256": "f49a9519d2e5329eeea9c80fda037f9ea03772bed23a4091afa128c678ba6712"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/cpe304-p3.png",
+      "sha256": "c267dc7e11e3e28c25776f6a789bdbf43da4dab608547b2c8311d1f4b12f525b"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/cpe304-p4.png",
+      "sha256": "288efe94167d7d18f4d3eeeadb314313b26f122eaa3dc21629cccd4988cc5ded"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/cpe304-p5.png",
+      "sha256": "59dde03dcb7b7fac04b6d56bce1b45ce35d8dcde7780dba5f230ca04e1de467b"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/cpe304-p6.png",
+      "sha256": "06a5eaaa7bc7a01203dc6289fceeac3a1690bd1ffca722188f9da415d1313b93"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/cpe304-p7.png",
+      "sha256": "dd05b90c4dc43bfca5761151ad67b6aca587ac22a7201725925f08db9119f598"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/cpe304-p8.png",
+      "sha256": "cab65419a2bffc9e7401cf2fce6380c8c32ea99dc2cf453607279b84e69764d3"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/cpe304-p9.png",
+      "sha256": "1fe97c2899cced3011d346676b8b4d583ed6b9d719ff53fc8d786ed7232c06dc"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/cpe404-p1.png",
+      "sha256": "4b96690a77f1de3dcd9734ea5ee5f4f23470cbf9026b55bf53abd468cd283481"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/cpe404-p2.png",
+      "sha256": "ac06352f4eaf5dc19a1135a0fbbc52129bef38c46e93d2d005ead480affc1a27"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/cpe404-p3.png",
+      "sha256": "8fe0e6d9ccf9df944ae359e81c85ccaab524b4688945a03b09a98de460d01dfd"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/cpe404-p4.png",
+      "sha256": "e19b6bfef4327fbb60bdad5ccab58f381ed0d84361f00eaf7c019fd8c3135070"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/ie402-p1.png",
+      "sha256": "cdc74ae908491b55e057b914d222233f41fd45bbcfd12f1ac2e6915af31a8319"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/ie402-p10.png",
+      "sha256": "995ab072e057577592b1e0c61c8e8faadbd0268a899e192149bf9b0bddcb77aa"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/ie402-p11.png",
+      "sha256": "f760338aef62a69b0c12609c4eb883897e0b10af91544452ad13f459bd01bc77"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/ie402-p12.png",
+      "sha256": "353f6a1f720a15c3d5c78fe9dbc8009c9a1268b6d882565135934102e8ccfebe"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/ie402-p2.png",
+      "sha256": "0726916ce33651101fb77833b218d2d817e7e9adaa123f6598df19909cbf232b"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/ie402-p3.png",
+      "sha256": "40be8b20e6ded83783a22fcaa4e4513a75d91b467952e2fd0e55372569514bed"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/ie402-p4.png",
+      "sha256": "f8e05add4bf9a5d006cccb8f790ddc3d034a9f45fe0b24b2b5866a242627e886"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/ie402-p5.png",
+      "sha256": "e9ba7068d16e9d5712e79ba344bb504d2de8196cf9fb14b139e87d78afa6823a"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/ie402-p6.png",
+      "sha256": "8788cd85bb78db1e621c25ec4bcfc817bcc497101494adb90a09bd942176c77a"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/ie402-p7.png",
+      "sha256": "a2654fac02b04608f6c192f58d546b66c4c929b7273adf21d746f0c5f08a63ea"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/ie402-p8.png",
+      "sha256": "b3ec861d770077950aa5389f9313aaa2c13730c1235569e67c263b70cee84b84"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/ie402-p9.png",
+      "sha256": "73c1f9558ceae16683649495e8a877aac31d5d81cd21da539d21de45ed07a016"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/ie403-p1.png",
+      "sha256": "b290458e177309d173d4dbc9d5893ff1d728bc93ea6d476012b2867b8bb7629e"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/ie403-p2.png",
+      "sha256": "bb4afd9c3955d10f2dab9589c1c0fc4d87469875aaef230aa92f3ef251411de7"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/ie403-p3.png",
+      "sha256": "990dccc64dc3614a60b6322cb25e01bfa68576d1dd116d1ef038850350a5f869"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/ie403-p4.png",
+      "sha256": "195e3882c3faabb34033d2dcb80b2a9b6fe81a61373582d6f8598dbddf07a840"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/it202-p1.png",
+      "sha256": "aeeb16eb8d7d8e7fce26c59de0436e35e0e81d857927f71efe1793ad65823975"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/it202-p10.png",
+      "sha256": "f883f08cb1326bfbccd95408e48e94db046d11c17f68c84fd1c2b3a22cb0f1c7"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/it202-p11.png",
+      "sha256": "1d56674ee186d795836110edb05e408d9dc8320b15fbca6c6830d0667b5e36fe"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/it202-p2.png",
+      "sha256": "8a5de48bb9de13c0114a9e4ef366d5c690749f9b916147e99833578351f326c4"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/it202-p3.png",
+      "sha256": "97fd186aa7e0bc720dcb7631f4fbc97d081d7669f3cb3696a2dddafc6b28850b"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/it202-p4.png",
+      "sha256": "9efc7a2665814957a27ab6acbdbc87d271ee2ce76a2d72da7045ae10154e8d43"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/it202-p5.png",
+      "sha256": "c87a90e52e70a843eee6e85d4b4ee92871b1eb91b9aa74b959655ba42451e46b"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/it202-p6.png",
+      "sha256": "621cb443cc233c07041a0d46aea3efc3a4df2dba04b9b02d812d31d2f5cff26a"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/it202-p7.png",
+      "sha256": "e0b11531a9ada2acf12c4e1714de07891fe5f300f795babdab5f841bec001966"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/it202-p8.png",
+      "sha256": "3fbfd4a7b13359406450366484c8f66f7a7b08d12bd4ebef0daa2a90f25b7e23"
+    },
+    {
+      "path": "docs/lcup-approved-offline/review/it202-p9.png",
+      "sha256": "c94cd0b16dae3c5981a11bd77c07962452a6866300520447fd4892a65cc7f82f"
+    },
+    {
+      "path": "docs/lcup-approved-offline/targeted-tests.log",
+      "sha256": "298cb57267a9469d882a7e0594b21831a1a28431eb6dbec03db83e1e2885bcb1"
+    },
+    {
+      "path": "docs/lcup-curriculum-audit-followup.md",
+      "sha256": "8578d221c473f25b855a29da35b49ca6135a870871ce400665f3609c6104db5d"
+    },
+    {
+      "path": "docs/lcup-curriculum-reference-audit.md",
+      "sha256": "21a9fb2c45b3fd342f45e7cce59d7aab4da49e8fbfa37273ab3ec51039649d9f"
+    },
+    {
+      "path": "docs/lcup-evaluation-readiness/academic-readiness.json",
+      "sha256": "17a2597020269a13227bcf04d2347daffffa30354684bb75c60763ea9c680a50"
+    },
+    {
+      "path": "docs/lcup-evaluation-readiness/academic-readiness.md",
+      "sha256": "21a447e6aec2c58decd8ff8c5a0a3d14bf64dfb3e24c86b953f81e0f8b898daa"
+    },
+    {
+      "path": "docs/lcup-evaluation-readiness/before.json",
+      "sha256": "a28313cf73cb8f6869161ab9f1ff4d39a6e7c880c40c082183ddc1a6bce41ddc"
+    },
+    {
+      "path": "docs/lcup-evaluation-readiness/current-pos.json",
+      "sha256": "3cf7083a2ccf929d6153d500417967175f1c53965265fc8858cc26e601dde941"
+    },
+    {
+      "path": "docs/lcup-evaluation-readiness/disposable-database.json",
+      "sha256": "2579055cbcce3334fcffc36a275aba1b0d080f121fa04959871d08f285cda9ca"
+    },
+    {
+      "path": "docs/lcup-evaluation-readiness/disposable-server.pid",
+      "sha256": "67cfada8afbc97d718a01541090015ec887a8c98bdb98477a6b9918301c1d76f"
+    },
+    {
+      "path": "docs/lcup-evaluation-readiness/disposable-shutdown.json",
+      "sha256": "609827f4ee0e954a02040a9c74c0f6c09a0290f203b20a11722b05899bbaefc1"
+    },
+    {
+      "path": "docs/lcup-evaluation-readiness/importer-ui16.log",
+      "sha256": "ee67fc4207cdc6571adba90231b65350978e54fcffcb7604df220712e14ac02a"
+    },
+    {
+      "path": "docs/lcup-evaluation-readiness/integrity.json",
+      "sha256": "45814d18809acb1bf40af72bcd6b2d24f0f8ee7a9a0ca21a0d48dd6a3f02afe8"
+    },
+    {
+      "path": "docs/lcup-evaluation-readiness/program-outcomes.md",
+      "sha256": "9423114595516b9693722cb5f1b7c644d45195aab7675e98ef33d851d59cbd76"
+    },
+    {
+      "path": "docs/lcup-evaluation-readiness/readiness.log",
+      "sha256": "252e4922a68059e2e7be5784babb89663856ca94093a09dd7131ea61028244a8"
+    },
+    {
+      "path": "docs/lcup-evaluation-readiness/regression74.log",
+      "sha256": "707124b91345e130e15bb907ef47c0844e65c6385ccd1097ab397614bece2726"
+    },
+    {
+      "path": "docs/lcup-evaluation-readiness/REPORT.md",
+      "sha256": "a6816dda00569ad90924628b82fc08490fc056b41265e9fa4d8d380fb32a266f"
+    },
+    {
+      "path": "docs/lcup-evaluation-readiness/verification-tests.log",
+      "sha256": "2f1502ca8c2c5c4421810ebe3d269b9dd5753827da9539dd510646022601677b"
+    },
+    {
+      "path": "docs/lcup-evaluation-readiness/workflow-initial-assertion.log",
+      "sha256": "9a1e4d4f2ea42e4e0e0a736cfea93e28b9cf7a22c0cf000a1f5bae24e02fb275"
+    },
+    {
+      "path": "docs/lcup-evaluation-readiness/workflow-results.json",
+      "sha256": "7b94be0c2e1fdac9b946a36e8cc2851c735229c1ca496232975e09342f95a92f"
+    },
+    {
+      "path": "docs/lcup-evaluation-readiness/workflow.log",
+      "sha256": "3dc53f657db2555c535a97c16ddceb5525802aba71988367146104d36eec179c"
+    },
+    {
+      "path": "docs/lcup-importer-fixes/before.json",
+      "sha256": "7aea1aa696eb3698b1e4e392d32fc8c43783de2dc3bf75f258bec1d778cdd8af"
+    },
+    {
+      "path": "docs/lcup-importer-fixes/existing19.log",
+      "sha256": "179a5fcb34c4e60c8da2cf0cbf9fb3df6afcfb0060c1eabfc088c882abd431fc"
+    },
+    {
+      "path": "docs/lcup-importer-fixes/i18n.log",
+      "sha256": "2480b97151b91b8273207f28e49c83d54ba61bff765a90521b77e6eb05bd8316"
+    },
+    {
+      "path": "docs/lcup-importer-fixes/offline29.log",
+      "sha256": "0feade5f5953df8e873d6b011672dbbcb9010c08ecc86c6c2e05d1249df2c8cc"
+    },
+    {
+      "path": "docs/lcup-importer-fixes/old-expectations.log",
+      "sha256": "65a1fb8e948c0bd40efb35b88b7fd55fece0eeebf406a3ccb84ffc451b448bbb"
+    },
+    {
+      "path": "docs/lcup-importer-fixes/real-pdf-verification.log",
+      "sha256": "1362bb05337b281369aca2529c560eaab63bed648e7c9a552c9020124dd02222"
+    },
+    {
+      "path": "docs/lcup-importer-fixes/REPORT.md",
+      "sha256": "28d0d5981ec220c5bcae43cfa820489d5475cf01071e6b0beff6368ef9e0456f"
+    },
+    {
+      "path": "docs/lcup-importer-fixes/targeted.log",
+      "sha256": "436946f174fcf871df905e2f15296140cb151aec0f784ad4f27a5e407b3723d4"
+    },
+    {
+      "path": "docs/lcup-importer-fixes/ui.log",
+      "sha256": "9e216afccd7aa265e8a2fb08d2a5501fddf498338d4c338a8d3e33041e7c4c73"
+    },
+    {
+      "path": "docs/lcup-importer-fixes/verification.json",
+      "sha256": "2738ccc0533acc1c4a1abeb188ca2aab92f87e11976790496ee329abc50d404b"
+    },
+    {
+      "path": "docs/lcup-po-correction/before.json",
+      "sha256": "16fb765106213b0b09c7a182bfea6fae1848342c8ff3543ece1d3f42c04e4d55"
+    },
+    {
+      "path": "docs/lcup-po-correction/BSCPE-p2.png",
+      "sha256": "487b1cc388e7b5c310d2baf992b2ad12d6ac55dbd9696c332b2a187e75afb5d2"
+    },
+    {
+      "path": "docs/lcup-po-correction/BSCPE-p3.png",
+      "sha256": "d102c12fe576aeef22cafdf36fa1fd28f8983f2271fafbeb147787e31102088d"
+    },
+    {
+      "path": "docs/lcup-po-correction/BSIE-p2.png",
+      "sha256": "f2a6cf8bac7c2c1be69ca7aef8e39359d73b43f1d1b73a02182c88717d11fba2"
+    },
+    {
+      "path": "docs/lcup-po-correction/BSIE-p3.png",
+      "sha256": "99023523ed186d15e0d8dd75f35c381bda281bd4f402c48da27edca9aa586d34"
+    },
+    {
+      "path": "docs/lcup-po-correction/BSIT-p2.png",
+      "sha256": "c6b9c0c2b80fb74f1fa95edb27bda1334cab0b3295f627559b6801d938ad4b84"
+    },
+    {
+      "path": "docs/lcup-po-correction/BSIT-p3.png",
+      "sha256": "0446ff28e704dca6deaeaf82df3df884ee2f2708d3d9c6bed68524b3440d2aba"
+    },
+    {
+      "path": "docs/lcup-po-correction/database-impact.md",
+      "sha256": "40bbd815387fc1e1c7d3cc8500ddaa9db9d4634b42492ad8da88255c76aa4ac4"
+    },
+    {
+      "path": "docs/lcup-po-correction/disposable-config.json",
+      "sha256": "7b0f6190290a5502a7bea4ba71fca3ec96a553b8ed7ea904ca89b2e496a036d6"
+    },
+    {
+      "path": "docs/lcup-po-correction/disposable-identity.json",
+      "sha256": "2d6daeeb87a470e11921fc50400634bc3736f0faa9f45b86aba1781fc28f8533"
+    },
+    {
+      "path": "docs/lcup-po-correction/disposable-shutdown.json",
+      "sha256": "b5c359e700864e1f09632bbbfaea3336e970b224e4a14349e7716eae1c84937e"
+    },
+    {
+      "path": "docs/lcup-po-correction/disposable.pid",
+      "sha256": "4c3e8f76b3b8d9cc9f0b9eeebd7318fc033005a34b0cbdf0272e915e6d54db2e"
+    },
+    {
+      "path": "docs/lcup-po-correction/exact-program-outcomes.md",
+      "sha256": "7976ac2be837ba680913cf5e29a7453c11452ab08c7fd0234960135dd6c6a08f"
+    },
+    {
+      "path": "docs/lcup-po-correction/extraction.log",
+      "sha256": "23c39adc893f66d98d82e7ffa2a1cd46a1d5e4dc0cce2e6d8ad4e3c970a1769d"
+    },
+    {
+      "path": "docs/lcup-po-correction/gates-regression.log",
+      "sha256": "c25e98b95b233ab3c38838ef15614cb7c528699f05d68ca300c0f47a49591510"
+    },
+    {
+      "path": "docs/lcup-po-correction/importer74-verified-copies.log",
+      "sha256": "3f8bcf883dae1869122fa71cb1df46e40491a31ba0e0209bb81380892f06095b"
+    },
+    {
+      "path": "docs/lcup-po-correction/importer74.log",
+      "sha256": "6517da795f3806a1c03da54f423e32c353db0d40c53f7341d8090d44964308da"
+    },
+    {
+      "path": "docs/lcup-po-correction/integrity.json",
+      "sha256": "9f80b71525e10e53629e79236a7dd71bf13707acef8621bbae73db78314e4e50"
+    },
+    {
+      "path": "docs/lcup-po-correction/integrity.log",
+      "sha256": "cba9e599c29b9274e8cecdc4e8ed06c4318c46be34a4aaa3a1b6b471651a53b0"
+    },
+    {
+      "path": "docs/lcup-po-correction/live-readonly-final-plan.json",
+      "sha256": "94a1ac2d5db1ffbcc34e1be20d7d53bb3ca354e41a0a4996619a5900549d6a87"
+    },
+    {
+      "path": "docs/lcup-po-correction/live-readonly-plan.json",
+      "sha256": "7ad7583d384312f733a28f735eaff38facec5b753b8e381da516acc2eac36778"
+    },
+    {
+      "path": "docs/lcup-po-correction/live-verification.log",
+      "sha256": "3721e98db3d84811a40a3488e1641c274cda93659d573c8b3e647f6b9a8297bb"
+    },
+    {
+      "path": "docs/lcup-po-correction/migration-results.json",
+      "sha256": "c0dd32aa6815e55adf87ad0e68723384906d0e9f820ca698291dd2e0ca1fb321"
+    },
+    {
+      "path": "docs/lcup-po-correction/migration-tests.log",
+      "sha256": "22d44cef32ef94a182c59121a210c4e40ab4186aa6c5058feb31315f7d44642a"
+    },
+    {
+      "path": "docs/lcup-po-correction/official-data.json",
+      "sha256": "c270ee18c1d37bfb47eb5080a4b45bc2c1e03f4ef9d5968a2dcbc485d573fd05"
+    },
+    {
+      "path": "docs/lcup-po-correction/preflight.log",
+      "sha256": "5cf2e350bdaf4b09400461d6cec0e54222d1fd526e5da13e0ec84dcdc1b5505e"
+    },
+    {
+      "path": "docs/lcup-po-correction/reference-regression.log",
+      "sha256": "0b6d3e50223a91178834176c94ca96b6b46d7371026444275bbf2ae10ae653d0"
+    },
+    {
+      "path": "docs/lcup-po-correction/remediation-worksheets.json",
+      "sha256": "7be0459f219b6d17dfce0cbff11fbfac4cfd57efdd2e4570064aff41b588276c"
+    },
+    {
+      "path": "docs/lcup-po-correction/REPORT.md",
+      "sha256": "9da37bacbee38115f67b7c6acc2057203076b647f343d9913dc34d0279d58cf7"
+    },
+    {
+      "path": "docs/lcup-po-correction/test-backup-14920.json",
+      "sha256": "1aab062361c122c066b0b213f35e6ce2afea9e988cd0efa3f8b322482165c93d"
+    },
+    {
+      "path": "docs/lcup-po-correction/test-backup-17128.json",
+      "sha256": "ae2b564dd86f46eb06f10410ad8fa456bbb5c008a2d3f50338a5e78dcc394417"
+    },
+    {
+      "path": "docs/lcup-po-correction/test-backup-18404.json",
+      "sha256": "714d7fab09263c65172354d1f761dfc82b317bfce33ea7b9727c7df4a69be804"
+    },
+    {
+      "path": "docs/lcup-po-correction/test-backup-18472.json",
+      "sha256": "b23a9a48cad11d5ca6f114e47083fb2cc6b91e50ef6a2a1424cea28d25814874"
+    },
+    {
+      "path": "docs/lcup-po-correction/test-backup-23588.json",
+      "sha256": "c7498a927e360b8e2ce41bae9dee614f83e6dcd3257c437a7190e7525af89cf4"
+    },
+    {
+      "path": "docs/lcup-po-correction/test-backup-29588.json",
+      "sha256": "3227ddcd4b9430bf6acba659ac644a4bd5fc0a37d07e05c1aa08b70b9012557d"
+    },
+    {
+      "path": "docs/lcup-po-correction/test-backup-30608.json",
+      "sha256": "78c95200850f384222197fafa968bf86dec3cc47f371e1eebefe2fb3c03a7c5a"
+    },
+    {
+      "path": "docs/lcup-po-correction/test-backup-31832.json",
+      "sha256": "4c341805e52448bc24d24d4badfc727dc07672b2bc5dc4bd9c06827a984300a3"
+    },
+    {
+      "path": "docs/lcup-po-correction/test-backup-35312.json",
+      "sha256": "7f587303a3e5bf5b7de6abe81efeee3f9abc4d8c3f3872c425039354817a258c"
+    },
+    {
+      "path": "docs/lcup-po-correction/test-backup-7368.json",
+      "sha256": "dc57bc3d82f79a031cce4b94a92f16ce25605b18d25ffd72d1cc2b4e0d48903a"
+    },
+    {
+      "path": "docs/lcup-po-correction/ui-regression.log",
+      "sha256": "005b80e99fcedc406c0df4709fcd4f1f1f802050bcbb068179d11df8c09f2a47"
+    },
+    {
+      "path": "docs/lcup-requirements/after-status.txt",
+      "sha256": "90bb2260c68f5c0f63aeb833436fcf002031de2a38e6da36b6b3511812cd8d64"
+    },
+    {
+      "path": "docs/lcup-requirements/alignment-regressions.log",
+      "sha256": "c5c30d4b86dc0967a1f43ff7afe4fffb087930b258053b850ad7a60844d3c565"
+    },
+    {
+      "path": "docs/lcup-requirements/before.json",
+      "sha256": "99f3b18349ea692ab376c053cb9209b92c7add8bc13b2eb10e87875d0020296e"
+    },
+    {
+      "path": "docs/lcup-requirements/catalog-regressions.log",
+      "sha256": "5797ed9b539bc23bf41af4ef5a533aa41470623215d85486e2a2aae200736003"
+    },
+    {
+      "path": "docs/lcup-requirements/configured-execution.json",
+      "sha256": "bf3d699c0ba16acb02b156b7bd2f8dc893bdc51cb3c20a35a5ac0457b1d8ea5c"
+    },
+    {
+      "path": "docs/lcup-requirements/core-regressions.log",
+      "sha256": "fff9d18aa526e3e8c79e15423a07e2d67354290399068104d1cd7a12d67c2023"
+    },
+    {
+      "path": "docs/lcup-requirements/environment.json",
+      "sha256": "e31a06fa62395987bd37d037694f8ba7fff07a700717574d075dcc99ef6e4d9d"
+    },
+    {
+      "path": "docs/lcup-requirements/importer-ui-regressions.log",
+      "sha256": "4e408e9986429d173a7c7504fab3db1c4694172af5ed95a64bbc8f9037fe9d0c"
+    },
+    {
+      "path": "docs/lcup-requirements/initial-regressions.log",
+      "sha256": "3c6d3c7dfacfb1b7a4c542bb525aa4c5136b3c8ba60184ec8df91d81f8052d1c"
+    },
+    {
+      "path": "docs/lcup-requirements/integrity.json",
+      "sha256": "8bb9ab47c4aee5bcc1aa75628f2c01a6e76033292ae397150882c213b7c9d3ac"
+    },
+    {
+      "path": "docs/lcup-requirements/lesson-ui-final.log",
+      "sha256": "c3978f289ce6c585d4af9a7d24b3c225d615bcdcbf0b520c7edf312d2851b382"
+    },
+    {
+      "path": "docs/lcup-requirements/lesson-ui.log",
+      "sha256": "b35b5876db9fc82d4531f19e4f936b9b00f46b7e7703dd3f5e83deaf2b44902e"
+    },
+    {
+      "path": "docs/lcup-requirements/REPORT.md",
+      "sha256": "cf6e2c64e6c4a37b48524509b3affa18711e2b1398a22966df51e9b5c81ac253"
+    },
+    {
+      "path": "docs/lcup-requirements/requirements-matrix.md",
+      "sha256": "12a51df2ca7e845d1dde7e0021c71f3ff057ecbd47d7576fd9693dea4230ab37"
+    },
+    {
+      "path": "docs/lcup-requirements/requirements-tests-final.log",
+      "sha256": "99fa9bd8f50f06b32334498e624026160f738b3309eed05fd1a0ead8fdf05936"
+    },
+    {
+      "path": "docs/lcup-requirements/requirements-tests.log",
+      "sha256": "5e4f96c2fe21dbc63f28b099a4cbfd84f32315f6d6cd2302d5a33b81cfab01c7"
+    },
+    {
+      "path": "docs/lcup-requirements/test-commands.json",
+      "sha256": "c8176c117b6be7189266ca3856306fd016e323e88e5d4471b4d04412745826e7"
+    },
+    {
+      "path": "docs/lcup-requirements/workflow-regressions.log",
+      "sha256": "29feaf618f33d71dbe9e1eadd2e3f467bdc73772d44be3a20328b24d9dc7d121"
+    },
+    {
+      "path": "docs/live-evaluation-plan.md",
+      "sha256": "1afc63220c8f2f052f04c7bdcb4ab1c665db668679270b0b90ef09f77089241b"
+    },
+    {
+      "path": "docs/local-reference-import.json",
+      "sha256": "46c2abde02a178fd6433025d1fe760fba49e8ade097abde4495bfa7ab616f87f"
+    },
+    {
+      "path": "docs/local-reference-import.md",
+      "sha256": "0e57e1e4845e7e4b93278d2eab7b0d09aafcc21f5f223006069b53ec5a1c25be"
+    },
+    {
+      "path": "docs/localization.md",
+      "sha256": "b3b7201e59f180305384e46c908d0cc28c70a3769f2ff5413f8044314e731176"
+    },
+    {
+      "path": "docs/ma7-aligned-draft.json",
+      "sha256": "ecc37ca25a03010eff00f3a6b3107a5f145427bd85e2aa7165ae5734fae46b57"
+    },
+    {
+      "path": "docs/ma7-coded-rules-v2-result.json",
+      "sha256": "20d552d8a5d0d9f34ca4a13aebde7d4b771d4050c443d6ce8696eab2513f82b3"
+    },
+    {
+      "path": "docs/ma7-evidence-diagnostic.json",
+      "sha256": "2a6f5aaf62ac0f50903cb5939ace3dc0915c336831e77e0c5faaf2c6da656820"
+    },
+    {
+      "path": "docs/ma7-misaligned-draft.json",
+      "sha256": "6ba05568613be9f2c15a9ae440bbaa18fe7e85264a7059dd5f59f98fe79b2827"
+    },
+    {
+      "path": "docs/ma7-misalignment-test-result.json",
+      "sha256": "d8b6f6e14dbd627ae0cfcb921dfd29e8510196ef6c40c656fab58ad53cd8dc33"
+    },
+    {
+      "path": "docs/ma7-official-pos-check.json",
+      "sha256": "12174d411e075d78b19bdc7b44a79c129f1e6ef8e94ac8e6efd639bdb489a480"
+    },
+    {
+      "path": "docs/ma7-recheck-score-result.json",
+      "sha256": "fbd59059c77cfcbe1c611c88e85a7f53065a0ce9b6cd4044e7812ba1a9507a5f"
+    },
+    {
+      "path": "docs/openrouter-ma7-live-result.json",
+      "sha256": "0564e0ca5be7fc4cf69b804ce2a6536376517632547c2c8b73721d84afc7455d"
+    },
+    {
+      "path": "docs/pdf-import-api-audit.json",
+      "sha256": "ccf8eddfc042f68aaaccc1a83530bf030d541b79259cc11db9591f6b86b6ae65"
+    },
+    {
+      "path": "docs/pdf-layout-extraction-audit.json",
+      "sha256": "004e40dae67c8cd49866013d33ae17d37659b213d71fef6c4a5b76c28aa90eb9"
+    },
+    {
+      "path": "docs/pdf-syllabus-import.md",
+      "sha256": "e410737930813d6db1a908acda2c42674dbfc28bc98ef8fd5433665ade7e4eb8"
+    },
+    {
+      "path": "docs/program-management.md",
+      "sha256": "99e9c43a0308e588fef1e946c2045c75cceb588ae5989256fc49ee1e521d147e"
+    },
+    {
+      "path": "docs/sample-invalid-course-report.json",
+      "sha256": "6cbdf897dc1e8eee618efe0bd2521da580fb104aa24139908fd09c83ca28a3b3"
+    },
+    {
+      "path": "docs/sample-misaligned-report.json",
+      "sha256": "6c714024e02ae752ecd78a1c1bf9bfed5ae593a297d8a810d9e18a94bab25739"
+    },
+    {
+      "path": "docs/stage-c-evaluation-plan.md",
+      "sha256": "e85d506a951d45139c9a0000959d354b87c7c78b8997c4e0dfbb0ddbcc7a8dd1"
+    },
+    {
+      "path": "docs/stage-e-audit.md",
+      "sha256": "4fff363099ac6a421f3b41f45907590ef846373862e53d9d9b45b6704e3262e0"
+    },
+    {
+      "path": "docs/stage-e-provider-efficiency.md",
+      "sha256": "411bb789827a310884ff893bcaf8968a939ecded73bc5ef8e3e3ea553b795c7f"
+    },
+    {
+      "path": "docs/stage-e-readiness.md",
+      "sha256": "8ccbef4fcdafe7690e28f820107b2c0f1a4495593e57c63ae89d2156a281685c"
+    },
+    {
+      "path": "docs/stage-e1-design.md",
+      "sha256": "05137ffa87bedb3e8d8a08fc64abfe7b940c92f002bf7de659cfcfb04e4cb221"
+    },
+    {
+      "path": "docs/stage-e2-readiness.md",
+      "sha256": "85cb2af365ea5b8c4c87960288e4ddc8ff99df2d68cdf28225f3bdac1943a57a"
+    },
+    {
+      "path": "docs/stage-e4-request-volume.json",
+      "sha256": "3d20166b1c66cc20c2b42afb633c1403e7d8d907bc6a8bc4af15a79880548ff6"
+    },
+    {
+      "path": "docs/stage-e4-response-contract.md",
+      "sha256": "d1b409359609b5dae2dd5aa5d9262eec99479e0bfc7e9c0bf01f875ba481d08c"
+    },
+    {
+      "path": "docs/stage-e5-reference-evidence.md",
+      "sha256": "83bb5d1a44ef542ad8193ed57ba066223a52c461962512dd074354f38a217b95"
+    },
+    {
+      "path": "docs/stage-e6-evaluation-reliability.md",
+      "sha256": "bff00b8acd44f59479a80fd6363439b2071f19288e7bb33458f1b17a6a5dbd09"
+    },
+    {
+      "path": "docs/stage-e7-academic-reliability-follow-up.md",
+      "sha256": "fa0dc00c1ca87780cb242beb2a0b01a97cbc5fed60afe3db574317b391398950"
+    },
+    {
+      "path": "docs/stage-e7-d2-validation-proposal.md",
+      "sha256": "266e950082215277c4a23d48f85dd133e722aa948e68c0bdc2acc7ed235e986c"
+    },
+    {
+      "path": "docs/stage-e7-phase2-evaluation.md",
+      "sha256": "7373cc465a6f4dd83f6329f02d32ec30c9b6a7fdcc1f7e9d12ce2aebdd093bfb"
+    },
+    {
+      "path": "docs/stage-e8-post-recovery-review.md",
+      "sha256": "0f4a03160c84bdec87bf92c8863ff685187d8815ee654eed5cdc6308ba03e128"
+    },
+    {
+      "path": "docs/stage-e8-resource-grounding-fix.md",
+      "sha256": "95cb27ca92ca03a964c38c2a494c959340bda0f694d8b1c187f0bae6f0ea643e"
+    },
+    {
+      "path": "docs/stage-e8-resource-recovery.md",
+      "sha256": "9c82134885e1179817b8fb8666933f7af6b72da8abd269bef7284da390c80743"
+    },
+    {
+      "path": "docs/stage-e8-resource-regression.md",
+      "sha256": "97d82fe29a54ff82c591e28623100dff6439a68209c8b3630fe15e8339df7190"
+    },
+    {
+      "path": "docs/stage-e8-stage-c-canary.md",
+      "sha256": "8cd074aaa487376ce006f9cb90aeb12d100b30efbf5ce58e6645c3cd57fb3c6f"
+    },
+    {
+      "path": "docs/stage-e8-stage-c-corrections.md",
+      "sha256": "c7dad5780c72125d43a8a3cf1904410e0f2d678dd3e04233b1c882e21c01086b"
+    },
+    {
+      "path": "docs/stage-e8-stage-c-r8-coverage.md",
+      "sha256": "7c4f26020b453d58d32fdfce7c0c14a319960944dcba14dad995ea8c30f33ca8"
+    },
+    {
+      "path": "docs/stage-e8-stage-c-r8-regression.md",
+      "sha256": "aa22d6eb0271b4e8b214724faef7a28fbc7fabc24188cd3fb6fd4556f219ea1e"
+    },
+    {
+      "path": "docs/stage-e9-phase2-closeout.md",
+      "sha256": "4e694b62c6772a3eda283ec0f6a7c776ec0142286e77fd4432f8d55fe87f2214"
+    },
+    {
+      "path": "docs/stage-e9-phase3-evaluation-plan.md",
+      "sha256": "f7fecdcdd9351905ff93d310f4b98d64858ef574850d944b9a264805e4c7ac24"
+    },
+    {
+      "path": "docs/syllabus-checker.md",
+      "sha256": "bc258f4ea2a6658aa94197007ac20962734b3d74d393a1fcd396740cd92e2499"
+    },
+    {
+      "path": "docs/time-usage.md",
+      "sha256": "a06af7a6a1ace2912cadacb91e730d91cb21cae0933a7132c6d393af8a994c35"
+    },
+    {
+      "path": "docs/title-normalization-impact.md",
+      "sha256": "e6b72e467f30fe90536767c13b66e4b3ea441aec8bfc2e2156f6c0eb3f67ff8b"
+    },
+    {
+      "path": "docs/title-policy-activation.md",
+      "sha256": "373dfb54e783ab65c6cac980b9c74645bc2c527062a7b920fb9b5f14d680be7e"
+    },
+    {
+      "path": "docs/verdict-layer.md",
+      "sha256": "25aef2b8ffc0b24b45971d116394ca27003bc8f2e8fe80dbb0634bf9af566957"
+    },
+    {
+      "path": "docs/verdict-translation-inventory.md",
+      "sha256": "4e1ebcf503580d76f4ac268dd532cfc738f7653466c4c4d4da0fcaf5544efe8a"
+    },
+    {
+      "path": "docs/~$thropic-p2-a2-report.md",
+      "sha256": "418fc82ddb909a7ec64502dd6b61325534ed47ad92df783f7eb27f0871c70b1a"
+    },
+    {
+      "path": "HOW-TO-RUN.md",
+      "sha256": "50544121af61e3a5062f992255a90ffb3a0c736c0b4a2726541e92527a97b1bf"
+    },
+    {
+      "path": "index.html",
+      "sha256": "c22b26a33d8ae6b2b1b0c281d4b6103bd671f924d40310cc49af25432ea2d633"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "a2b0a5f3196c8842c6a841473d3bae67367691ed96257b0bef442715043ebf0a"
+    },
+    {
+      "path": "package.json",
+      "sha256": "18164990ad9df354951075f43c2729673f57a675e105bc62117b5440c988d05d"
+    },
+    {
+      "path": "promo-video/assets/cite-logo.png",
+      "sha256": "fdc8115ea0dc8cadc4daad002dd66d5d4cdd90484d8d37d90e6c223de96fb5f1"
+    },
+    {
+      "path": "promo-video/assets/nunito-latin.woff2",
+      "sha256": "ba344451eab25b217a165363b1982048a5e5830a0daf36577973955a04cac793"
+    },
+    {
+      "path": "promo-video/audio/music.wav",
+      "sha256": "3ffd9875bc8053fd5c222c18c6e017f915fc9486bbf04b32a3392c45a37bdaa6"
+    },
+    {
+      "path": "promo-video/audio/sfx.wav",
+      "sha256": "8fe5bf61a00274fd29bd9ec03851e40c1bd2c40f92507ba9b92bc1f32c5ea3a2"
+    },
+    {
+      "path": "promo-video/audio.mjs",
+      "sha256": "bff3e7804710fcde360143482342f523234974fc77728ec1a72123994ff0fc4b"
+    },
+    {
+      "path": "promo-video/capture.mjs",
+      "sha256": "ffb7aaef3f154be186ebb7bdc24ca5472559e6761b37678d00f87835776e8eb6"
+    },
+    {
+      "path": "promo-video/mix.mjs",
+      "sha256": "0d5d85fb02cf511c4ca7201d8a920964e9ba6d37d470d041989df53b06250f9e"
+    },
+    {
+      "path": "promo-video/out/render.log",
+      "sha256": "425b9730df84cafda933d0104b8596bd40610d54ec739325d0f1a87f9f75619b"
+    },
+    {
+      "path": "promo-video/out/silent.mp4",
+      "sha256": "7dda716688396ce1e09d5bad9e4d1ca86fb72032e43fae411ee76f2027f490e5"
+    },
+    {
+      "path": "promo-video/out/syllabus-showcase-novo.mp4",
+      "sha256": "1ad1112c589f8fe23903fc2fe464753f9edca58e48f1ea5be8fcc2a5553f5912"
+    },
+    {
+      "path": "promo-video/promo.html",
+      "sha256": "f4af8bd871caf8389848f7225d40adaffba4c6522267f4eec562835a4ddda16f"
+    },
+    {
+      "path": "promo-video/render.mjs",
+      "sha256": "51654739685129c60d2585a3df3c7062c04350b8933ca98d06bc9e9c4f3354da"
+    },
+    {
+      "path": "promo-video/shots/builder-1.png",
+      "sha256": "401d76b53f775e7badc26a95e79eb20ea36e91e56b64bf069abc8a958d4d60e3"
+    },
+    {
+      "path": "promo-video/shots/builder-2.png",
+      "sha256": "4199a07da61fdca18e36b8a2b990fcacb4ecbb73421991dc574258c7175817da"
+    },
+    {
+      "path": "promo-video/shots/builder-3.png",
+      "sha256": "52058220cdc281caff9c61cfc91fc4844f5c39f5223adf0e17b844ebb41c2d5a"
+    },
+    {
+      "path": "promo-video/shots/builder-4.png",
+      "sha256": "fafd1009b67b5fa1c8e2b687b16f02a806cd5451945ed1d30a77d9cb2e9b39cb"
+    },
+    {
+      "path": "promo-video/shots/builder.png",
+      "sha256": "e9701de72f1ba87fcb479d92ce759b912fbba67b6411d748391763116a0eb437"
+    },
+    {
+      "path": "promo-video/shots/dashboard.png",
+      "sha256": "53752a75c610c86f7b2b277ae9a1266e153720395d72703c19ffdaf609852cd1"
+    },
+    {
+      "path": "promo-video/shots/mysyllabi.png",
+      "sha256": "66b18ba5284dce9e0b63c7239392e5320b142eb431725be405269bc5e5b1f007"
+    },
+    {
+      "path": "promo-video/shots/repository.png",
+      "sha256": "abfa4efd9b63df2a8d0164e6d01e968a48856ab242046f83ac6188d146eae4f3"
+    },
+    {
+      "path": "promo-video/shots/review-open.png",
+      "sha256": "0fcc545059766b39912d986302ae20569143472f8d86e39160248b405379e726"
+    },
+    {
+      "path": "promo-video/shots/review.png",
+      "sha256": "e94e33fe766f55566c5c802ea3e30a762ed921086062db02cf21f2447c68ac16"
+    },
+    {
+      "path": "promo-video/shots/_login.png",
+      "sha256": "7bee041cdbd1b7cb3edcab5e4ed1924ffb4e0e932453488743c6a331db888629"
+    },
+    {
+      "path": "promo-video/stills/sheet.jpg",
+      "sha256": "bc862fcb4fa796820c01b093396d365e2ade6d861675397a32ff25ed2a07e096"
+    },
+    {
+      "path": "promo-video/stills/t1.jpg",
+      "sha256": "7d0b28ef6cb6837de56008361fdade2a7b0f5c3d66700027ec21dde99352a9b1"
+    },
+    {
+      "path": "promo-video/stills/t10.9.jpg",
+      "sha256": "4967cc82c6b0939215c7a5c248501f90e318a7fea077a6600f8fc2824bec1f29"
+    },
+    {
+      "path": "promo-video/stills/t11.jpg",
+      "sha256": "339eeb43e9ae41625b27cf2aea9fe9c81652789ccea48778810bafb5926f2e67"
+    },
+    {
+      "path": "promo-video/stills/t12.jpg",
+      "sha256": "fac0c83196395805cda0f1682b123f1b36f194a0ea62c5ab09c278e654175fed"
+    },
+    {
+      "path": "promo-video/stills/t13.4.jpg",
+      "sha256": "4630e728f486bb244958e3caa4b782682281c14463a2c44385f0da648f6211ea"
+    },
+    {
+      "path": "promo-video/stills/t16.5.jpg",
+      "sha256": "d145ea61a113ccbc3b539ba58db2b01768e635edceef4d38cd9cd91f77ae2191"
+    },
+    {
+      "path": "promo-video/stills/t16.8.jpg",
+      "sha256": "6adf6ff314bd0239fecb17beb5a12ed17c757c00d1a2553927a2d532dcfd93c0"
+    },
+    {
+      "path": "promo-video/stills/t16.jpg",
+      "sha256": "db8ca21cfe6a9d697f47ec46a569e893c5d4edabadce01cd6789920302e8342d"
+    },
+    {
+      "path": "promo-video/stills/t17.5.jpg",
+      "sha256": "ca89834a4bcf529f3c069302ac178472f2ba4bba7fd0aa497c3d716fd681db1e"
+    },
+    {
+      "path": "promo-video/stills/t19.4.jpg",
+      "sha256": "88f425b9848a235c71f85eed287eda1e327c61bcb0d89fed953f2a47c98478c3"
+    },
+    {
+      "path": "promo-video/stills/t19.5.jpg",
+      "sha256": "88f425b9848a235c71f85eed287eda1e327c61bcb0d89fed953f2a47c98478c3"
+    },
+    {
+      "path": "promo-video/stills/t2.6.jpg",
+      "sha256": "6520c2eb36484683ef23c4a41b973814eef1974af9763120f8f910efb87104ac"
+    },
+    {
+      "path": "promo-video/stills/t23.5.jpg",
+      "sha256": "6d1246d90110b09d7cb959a0da7638318affa39134a47965993f8a30cc14b19e"
+    },
+    {
+      "path": "promo-video/stills/t24.5.jpg",
+      "sha256": "b8efe8d7e8666dd393783224bd7f13afdaf9c1fefb928070943c314afb568644"
+    },
+    {
+      "path": "promo-video/stills/t5.jpg",
+      "sha256": "300ae45be62f25cd3b56d9caaed66589aef03e6c46f19082e02819b463b90d5c"
+    },
+    {
+      "path": "promo-video/stills/t7.8.jpg",
+      "sha256": "6416184460e98cc0ce4c3e267af43947c0289c824e27654da7da349dde8b4398"
+    },
+    {
+      "path": "promo-video/timeline.cjs",
+      "sha256": "2dec5dcde56ee49aa155a89458f1a3bf4c4ea24e50a7bfca2b38b37ad8288609"
+    },
+    {
+      "path": "public/cite-logo.png",
+      "sha256": "fdc8115ea0dc8cadc4daad002dd66d5d4cdd90484d8d37d90e6c223de96fb5f1"
+    },
+    {
+      "path": "public/fonts/nunito-latin.woff2",
+      "sha256": "ba344451eab25b217a165363b1982048a5e5830a0daf36577973955a04cac793"
+    },
+    {
+      "path": "public/fonts/Nunito-OFL.txt",
+      "sha256": "40991bfa02ac620aae16dc527f3c47765a25e43f270d4c301ee6ab663a8d9015"
+    },
+    {
+      "path": "public/lcup-logo.png",
+      "sha256": "6842d30a02dcf2d6e5e9578dc69acfb641d18fd3d9c4bf9a301e2102afab4d04"
+    },
+    {
+      "path": "public/testmark-logo.png",
+      "sha256": "4f1febe16674fdd919a2a7bc760d1276755a3924274d864941e29f53b944726b"
+    },
+    {
+      "path": "README.md",
+      "sha256": "a2ceb51ad3ce67731112e2467b517653a7ba65e1ecb44c1dda7e1b3c431056c7"
+    },
+    {
+      "path": "Recommended Enhancements and Revisions for the System.txt",
+      "sha256": "8f3592f0f11a747b14d9bc8b53e47b8a42e475e938d19cdd9344293a8c3ee305"
+    },
+    {
+      "path": "reference-data/BSCPE-1.jpeg",
+      "sha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+    },
+    {
+      "path": "reference-data/BSCPE-2.jpeg",
+      "sha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+    },
+    {
+      "path": "reference-data/BSIE-1.jpeg",
+      "sha256": "cd5bd50fd4dfb1daead0e78fe670aaac5824247690b4bfb610a1365d05f05133"
+    },
+    {
+      "path": "reference-data/BSIE-2 (1).jpeg",
+      "sha256": "92cabc29bc21d1fcc029a0eb583c3a8a06eac3b41fb8e4401697f66ff5ff9a17"
+    },
+    {
+      "path": "reference-data/BSIT-1.jpeg",
+      "sha256": "a71664c8ad1a47d1d97b1d75d2b199edacb9762362b2067f1fb0f60d205a6877"
+    },
+    {
+      "path": "reference-data/BSIT-2.jpeg",
+      "sha256": "0d7812a46615671e6b7a47c093cb14cb516ecbe2cefab5c85fbe2c68e6b8360f"
+    },
+    {
+      "path": "reference-data/BSIT-Cybersecurity-1.jpeg",
+      "sha256": "afa2f17df048e96585686cac8f415fb7cf172af138d955ee5eaabbc99d5cb09f"
+    },
+    {
+      "path": "reference-data/BSIT-Cybersecurity-2.jpeg",
+      "sha256": "bbccdfc55aa2a712c7ce7ed386e22528e7ad56020b3c0f05c27244f3924a748a"
+    },
+    {
+      "path": "reference-data/CPE-304-Fundamentals-of-Mixed-Signals-and-Sensors.pdf",
+      "sha256": "f68eb5bedb77d31b153b23dc354ef457c9a349b7fca64ba5a46578230982a4a2"
+    },
+    {
+      "path": "reference-data/IE402-SYSTEM-ENGINEERINGS.pdf",
+      "sha256": "44ca6d48c77d0b04055cf330717b9381b64d3b7fb8674be727aa2eb4a1807569"
+    },
+    {
+      "path": "reference-data/IT-202-Programming-1.pdf",
+      "sha256": "6376fe94981ae65f25054234e1ae63cd50be8f70f12b774ea72949e07d561845"
+    },
+    {
+      "path": "sample_syllabus/img/lcup_logo_.png",
+      "sha256": "d2395676ab32fcce48de7d067cf1c17083d82e318b6ef5c5400be20bc388c23f"
+    },
+    {
+      "path": "sample_syllabus/img/TR-Testmark_0091004089_DE_CMYK_.png",
+      "sha256": "b2ec7b35c774344fa200aecd9a3ee6e7731c66492700b67e8409e567b92869fc"
+    },
+    {
+      "path": "sample_syllabus/index.html",
+      "sha256": "2cbddef193863d18872342d3f0170640188a6101695d14714cfd42e668d2cf21"
+    },
+    {
+      "path": "scripts/analyze-provider-cost.cjs",
+      "sha256": "efc60775958fb1d44a805766457d67f407b9c4b2dad1fe822affd45b6b530151"
+    },
+    {
+      "path": "scripts/audit-ai-check-requests.cjs",
+      "sha256": "bb27fff13d8a3b379e178f454dad2ac6961a71c14846fa36cb1be4dd1f98601f"
+    },
+    {
+      "path": "scripts/audit-i18n.mjs",
+      "sha256": "b71a78abd9e555e8bd2b5059c1b042978aa8b104682c5da861f5e48061efb0da"
+    },
+    {
+      "path": "scripts/audit-pdf-layout.cjs",
+      "sha256": "bc53296267d9d8d28d7c1ae43f96c352423d797297278a78c0a497be61dc9f03"
+    },
+    {
+      "path": "scripts/audit-verdict-i18n.mjs",
+      "sha256": "21f9df2290375bdb86add7ddb2981e1e20c96519e87b7718eaa4d6b9c74cc36e"
+    },
+    {
+      "path": "scripts/compare-prompts.cjs",
+      "sha256": "cbe04772231d96a8cfef02b3302eb3a068d9814ac6d70c9583735fedde515788"
+    },
+    {
+      "path": "scripts/compare-title-policy.cjs",
+      "sha256": "21d68b376c3d3fb79ec60d74f0caf8b38fb5f84d27d7018833c30e526bb3f556"
+    },
+    {
+      "path": "scripts/create-bsie-test-versions.cjs",
+      "sha256": "63e38e68a7a6f29bca4b21e69c2ad0f963864752ab72b3d8979005e1cbd1ded0"
+    },
+    {
+      "path": "scripts/css-browser-compare.mjs",
+      "sha256": "2ccdd1a9adb04457fbe5e7bd6684e019cfb96bbff5bf29e9f35632c69e774b15"
+    },
+    {
+      "path": "scripts/css-equivalence.mjs",
+      "sha256": "97a5fe1d833863e19ecc457e864e4da0e6d138e2663681ce97c362cae3dabcd5"
+    },
+    {
+      "path": "scripts/css-to-apply.mjs",
+      "sha256": "76e71e926d2352761a65c7358bf4734db28c992de001b28a0eba5c2de2d3d155"
+    },
+    {
+      "path": "scripts/diagnose-ma7-evidence.cjs",
+      "sha256": "e3bde0b3b7ae4ebd2b10eea6c67fc5c46768b6112f2af2ad525ee6063958ea24"
+    },
+    {
+      "path": "scripts/eval-alignment.cjs",
+      "sha256": "a9760f287246fac94d046dc9ad6df3666ad43ec67efa2d9ed7b20fdb4d0ac7a7"
+    },
+    {
+      "path": "scripts/eval-compare.cjs",
+      "sha256": "cf130da3ffd03c8d22217c3c2125d6e50c59e00672534b321a76b2bdd24b6240"
+    },
+    {
+      "path": "scripts/export-align1-adjudication-v2.cjs",
+      "sha256": "6663c7de18f926500b5b616250add46a3080cc0bedf983e1662ded00a74237ce"
+    },
+    {
+      "path": "scripts/export-align1-adjudication.cjs",
+      "sha256": "01e5a5532f8e73b2d06da23139fe776c7d74b6ffce4848472bc76eb27c5ce53b"
+    },
+    {
+      "path": "scripts/export-checker-rules.cjs",
+      "sha256": "0e3022cd567eb153e662252dc1b795fd1f7ca669b7408783f89f79bdb0e905df"
+    },
+    {
+      "path": "scripts/export-eval-review.cjs",
+      "sha256": "1381dc9bdfbd75a4c6958d325883563897b524541b08e3db0226fdb3fc0a766a"
+    },
+    {
+      "path": "scripts/export-faculty-review.cjs",
+      "sha256": "70dd408e4b304d1bf5516d6be5c5fe8f0be7e0203affadb9cffb215ef992496a"
+    },
+    {
+      "path": "scripts/export-phase3-faculty-review.cjs",
+      "sha256": "1b6d1c931175a5b07e81f69efdc88210ecfa257f5948b880bb9c8e70d7fe652b"
+    },
+    {
+      "path": "scripts/export-validation-package.cjs",
+      "sha256": "badcd14b80a694facff0c617442430ad545afcfa19c1e25facf9f1c10c34623c"
+    },
+    {
+      "path": "scripts/extract-reference-pdfs.mjs",
+      "sha256": "7347aa32fb10ca2176070fb15109b5a619e4bee2acde2018dbe9f33e1aa77b58"
+    },
+    {
+      "path": "scripts/fill-bsie-api.cjs",
+      "sha256": "6627bed4bad778cbf2ed04dc82a5c7d7348319587ebcd94601b8fa752a95d2bf"
+    },
+    {
+      "path": "scripts/fill-it301-api.cjs",
+      "sha256": "fb245182bd96a69f3cd0a63e3f47a8ef373f88792ad2184ef155c338b1f9b5c2"
+    },
+    {
+      "path": "scripts/fill-ma7-aligned-draft.cjs",
+      "sha256": "b3107621e919c6d3ad4792baf8ba77592e95275aebe652a9f7fa8a99079728a8"
+    },
+    {
+      "path": "scripts/fill-ma7-misaligned-draft.cjs",
+      "sha256": "f373ac1d3a496259e7f236bed867b29a04e87701b4603a75cdc631fab879079e"
+    },
+    {
+      "path": "scripts/import-align1-faculty-responses.cjs",
+      "sha256": "19f710aaad218e659690e0ca0c438aadf914ddb7401a9d5b84ebe52137e2cd4a"
+    },
+    {
+      "path": "scripts/import-align1-faculty-responses.test.cjs",
+      "sha256": "e2389c8dd3cdf302ed79e957e5f0df0008729f0029947e11f8625378c467fe90"
+    },
+    {
+      "path": "scripts/inspect-bsie-testing.cjs",
+      "sha256": "64094c53f62cb279caf20814b05d5c4f27230e38e18262331c71a2af8ff42bed"
+    },
+    {
+      "path": "scripts/lcup-approved-offline/baseline.mjs",
+      "sha256": "1ba5cc808be56d578e8d6d7b0f8d79a12c6c2c60fedb674b500fc10ce2efac0d"
+    },
+    {
+      "path": "scripts/lcup-approved-offline/baseline.test.mjs",
+      "sha256": "3cceba6b279eb9d8f96655b296dec3553a0646761ab5b9287675383a2cde873f"
+    },
+    {
+      "path": "scripts/lcup-approved-offline/export-masters.cjs",
+      "sha256": "122e062d4afff9b0305fbf60b11f6fad1d2845a239df72d9b8510785c215ac3a"
+    },
+    {
+      "path": "scripts/lcup-approved-offline/extract.mjs",
+      "sha256": "b71766c6ad87d4d5f2b7a25541504635afdfe45d46451985357a3ad22d914ea7"
+    },
+    {
+      "path": "scripts/lcup-approved-offline/fixture.test.mjs",
+      "sha256": "353ecff04520e4eb08366af7c38f589865243e9b96ac4f16ffc569b380e9257f"
+    },
+    {
+      "path": "scripts/lcup-approved-offline/generate.mjs",
+      "sha256": "f11bcc9852c2f00665df3ad6fdd24b91e79722c61940d08ec1b84af845bc36ef"
+    },
+    {
+      "path": "scripts/lcup-approved-offline/importer-regression.test.mjs",
+      "sha256": "e87011c347456027478999ba28a2e149fd8aafd0ce6a7c5bd2c5d480a6145e37"
+    },
+    {
+      "path": "scripts/lcup-approved-offline/integrity.cjs",
+      "sha256": "51cbf4ca9047e55d420e8a1f99b4ba7527c0189a828bcb7e0f364d58bf0016ac"
+    },
+    {
+      "path": "scripts/lcup-approved-offline/report.mjs",
+      "sha256": "82d777d0f0eef680d645a7697a5e85c478d7268b23250d5f3463e0b7cc1a7586"
+    },
+    {
+      "path": "scripts/lcup-evaluation-readiness/readiness.mjs",
+      "sha256": "1fb6c1be34e983d22e5487104187389156726ffee6deb7cffc25e0b1df0e4135"
+    },
+    {
+      "path": "scripts/lcup-evaluation-readiness/report.mjs",
+      "sha256": "f7defdf7f20f277d0c29b38527b43c1c9d5b937e5314b4b75a91ffb7d75fddec"
+    },
+    {
+      "path": "scripts/lcup-evaluation-readiness/run-workflow.mjs",
+      "sha256": "2e564906d28399ed0d774502b7b349d6aa1bb22b49fae0899f438d08c79f3c86"
+    },
+    {
+      "path": "scripts/lcup-evaluation-readiness/stop-disposable.cjs",
+      "sha256": "1473bc2fff04b486743979e4f2d99cd9d675a7b32538d1d26c966c8484768b03"
+    },
+    {
+      "path": "scripts/lcup-evaluation-readiness/verification.test.mjs",
+      "sha256": "dab5f7fae17e2fef8746459453820babd34c064c676342cd12e9be20594ef528"
+    },
+    {
+      "path": "scripts/lcup-evaluation-readiness/verify-pos.cjs",
+      "sha256": "648d4c8c89002c3ac494364bc9e31051a35cc8ad2b722367c1eed85b1ba9c9b0"
+    },
+    {
+      "path": "scripts/lcup-evaluation-readiness/workflow.bundle.mjs",
+      "sha256": "698318c7cba5cbaebfc0e55c8540cf97a57792672f127be1edcd382d4c2819ca"
+    },
+    {
+      "path": "scripts/lcup-evaluation-readiness/workflow.test.jsx",
+      "sha256": "bb8cb4a19369956fc3f3403175483701248b49cb52c8ca35f78bba525c965e3e"
+    },
+    {
+      "path": "scripts/lcup-po-correction/baseline-source-copies.mjs",
+      "sha256": "69bfd016a5942e7e6ef2fbc10bb766de5f4fb79c924a4338b09fcd67041e67a6"
+    },
+    {
+      "path": "scripts/lcup-po-correction/extract.mjs",
+      "sha256": "48bd8c53b5908887941bf974a6c023650f406c4e86126550628e64dc74b779b6"
+    },
+    {
+      "path": "scripts/lcup-po-correction/integrity.mjs",
+      "sha256": "96f5d0538f2e06d16a707679b5b55e5f759acfc18eafbd2208fe57f5c97f08b4"
+    },
+    {
+      "path": "scripts/lcup-po-correction/migrate.cjs",
+      "sha256": "79ad41e1be2cb2e1a5e8e6dce9e88b0482ef92af15ccc8e62fb653a4db79061d"
+    },
+    {
+      "path": "scripts/lcup-po-correction/migration.test.cjs",
+      "sha256": "5b9a3ed42f5f6ef30d600f6f8ba57f96f62b942de9c30ab200d5fe16a8c16e8e"
+    },
+    {
+      "path": "scripts/lcup-po-correction/preflight.cjs",
+      "sha256": "573d4b0906b65845b4085066b25a90344ba4759da0c40b58696f37136ec9b181"
+    },
+    {
+      "path": "scripts/lcup-po-correction/report.mjs",
+      "sha256": "80337a5daa13b494aec69dd8dc72f77ab0bddeec4c4f445c65dd9bb9ec2a5065"
+    },
+    {
+      "path": "scripts/lcup-po-correction/source.test.mjs",
+      "sha256": "f52db2710a97567bdd3c6acfae2522a9d9362b40eb81be5f8b8a5e80543da4fe"
+    },
+    {
+      "path": "scripts/lcup-po-correction/start-disposable.ps1",
+      "sha256": "0c30efcd17972ee2bc5faaa990e1589f1234859b4562440418f76772bb1cdb17"
+    },
+    {
+      "path": "scripts/lcup-po-correction/stop-disposable.cjs",
+      "sha256": "2b054e78463f7e706ce8fc0a985f5328cadc12b4e0a3bc19c113e6d4cd279350"
+    },
+    {
+      "path": "scripts/lcup-po-correction/verify-live.cjs",
+      "sha256": "ebb82bde04d8c242eb2abca17a5947db81101128ad3029e1d16b28e6f78786bb"
+    },
+    {
+      "path": "scripts/lcup-requirements/requirements.test.cjs",
+      "sha256": "c68ec7ad514f948e92a481939cc8c4dace3236582ac1c8f90e755ffb6735d58b"
+    },
+    {
+      "path": "scripts/lcup-requirements/run-tests.mjs",
+      "sha256": "c68f57c8711279f56a29e6b0e03938bbf8b9e2ab64ad50346aad1a636b226780"
+    },
+    {
+      "path": "scripts/lcup-requirements/test-ui.mjs",
+      "sha256": "0a9cf48d9e484300a35b5407d2c0a29d19c748a67a99dd319c3341fb84658cb0"
+    },
+    {
+      "path": "scripts/lcup-requirements/verify.mjs",
+      "sha256": "66b7a49fca54bd118b22c2d55532edcb28a27abce0bab697166f04f6d35b6583"
+    },
+    {
+      "path": "scripts/live-pipeline-eval.cjs",
+      "sha256": "40d725ef0c7e66ec73fc63900bbbeb03940a83671f821c983aa88ffbc24bcec8"
+    },
+    {
+      "path": "scripts/live-smoke-eval.cjs",
+      "sha256": "59f671fe6edcbd1ab22371845b67e7955c5adda6c15d84e8d139b4d41c42ca04"
+    },
+    {
+      "path": "scripts/measure-request-volume.cjs",
+      "sha256": "b4a5a567f9631b612e80d8c0d773109b47283e5709f51db47c7f31bbaf9551de"
+    },
+    {
+      "path": "scripts/misalign-bsie-api.cjs",
+      "sha256": "70a5457eae3055eed31b72bdae46b50b59de0144a5ce1babf9bfd8286f03a140"
+    },
+    {
+      "path": "scripts/replay-stage-e8-resources.cjs",
+      "sha256": "8a13069965c8e1caa69b74563960f5317d8b25fbdf40d1fe0596af87470cdcfa"
+    },
+    {
+      "path": "scripts/report-phase3-scoring-drift.cjs",
+      "sha256": "33d0a9cddf8295628224970785808726d93d1e84fe3f2b18d7c97c6d332c3955"
+    },
+    {
+      "path": "scripts/report-provider-drift.cjs",
+      "sha256": "4acf85e998b53eeae76ff79499906951a48481cb6c2f2d184c0575cae18fcd00"
+    },
+    {
+      "path": "scripts/test-checker-provider.cjs",
+      "sha256": "2a74a4eb5cc6c7d07b805ff52a035d81f8543b90e05627ec3da9ac48274b1a6d"
+    },
+    {
+      "path": "scripts/test-i18n-ui.mjs",
+      "sha256": "3f24034e67552fdf328c4c753b0eec1345d13b3ac9d824a36473c47c08be872b"
+    },
+    {
+      "path": "scripts/test-localization.mjs",
+      "sha256": "1be6753a2d7b5c65e5a4a00154f36e5c9514e58ce1fface243dc1959732d910e"
+    },
+    {
+      "path": "scripts/test-ma7-api.cjs",
+      "sha256": "fd338da2c027c639b1bc90028c8f29c46014218a374d2eb1a2ea5ea9ce609a6f"
+    },
+    {
+      "path": "scripts/test-openrouter-ma7.cjs",
+      "sha256": "14b78533ff88b82e30096ebc34954e9765469cfc9e10d7881295ede4636148c7"
+    },
+    {
+      "path": "scripts/test-pdf-import-ui.mjs",
+      "sha256": "2e94ca02341316eb73233a6f8e6259f1481ab1728596c2b15fbd1e21a7faf930"
+    },
+    {
+      "path": "scripts/update-ma7-official-pos.cjs",
+      "sha256": "13b9f243b2e500e9843cb99545bf84197c5435b11ad70fdead4a963de415db6d"
+    },
+    {
+      "path": "scripts/verify-align1-adjudication-v2.cjs",
+      "sha256": "443fe86589f9bb599884663608062b3536b795a0e5f296a3d29ec4ba08083e35"
+    },
+    {
+      "path": "scripts/verify-hybrid-api.cjs",
+      "sha256": "389315609fe19bc3477f3184226141d96f4f8b166c98b6f72242dc934cf08ce6"
+    },
+    {
+      "path": "scripts/whatif-ilo-assessment.cjs",
+      "sha256": "5684788ce5a83597e22aaa8315f2d0a3024edd197578c2f3919ce3e1507374cc"
+    },
+    {
+      "path": "server/.env",
+      "sha256": "9e8eb0103c0aae563a8f1787f958df3cf818f0885154abbcdeabbfff6429c274"
+    },
+    {
+      "path": "server/.env.example",
+      "sha256": "e435e810830ce6465098fa04091cc3700f7578b8fbdf2d04a8354482d2a087ce"
+    },
+    {
+      "path": "server/config/marian-values.json",
+      "sha256": "f8c9ab3fc5e2f11e6b9c40b9bab2f7102f048701be2b3dff0f891f3ff9016cb9"
+    },
+    {
+      "path": "server/config/values-lexicon.json",
+      "sha256": "3271d81bab90fcf532209c4c4731bee032b7a32d76bc8e34a380736b5746012f"
+    },
+    {
+      "path": "server/db/comment-reads-ddl.js",
+      "sha256": "cf970532c3e2b19f85c0dd616c55aa1c1214fea90e8be36991664dbd33efd24b"
+    },
+    {
+      "path": "server/db/compliance-ddl.js",
+      "sha256": "bb056fed809c25f2b0634700570b6f2d044e38a1c9e1c0a216d761f0d5b60221"
+    },
+    {
+      "path": "server/db/deadlines-ddl.js",
+      "sha256": "6a97eb7e81cadddf4a7ae4f3d5b71326a0c39a21491d1fc8b729bd6c239c09a7"
+    },
+    {
+      "path": "server/db/init.js",
+      "sha256": "d893fe843d09cbd9d4bff7d033328d742a98faea51f576794feda2a33a01edf7"
+    },
+    {
+      "path": "server/db/local-curriculum-data.cjs",
+      "sha256": "7b89f89db64b4f199c996702a63325e3a370b9db08889998926c4fd23bed6e53"
+    },
+    {
+      "path": "server/db/local-outcome-data.cjs",
+      "sha256": "d6730bbc7681b3a251da31d99679d39fc4cb8e4b64392397cace0a3da1d24ddb"
+    },
+    {
+      "path": "server/db/migrate-activity-log.js",
+      "sha256": "ff6b0313aed29faea785a67b496eb640dc065e50d7340a7fa8f2af33bc60f74c"
+    },
+    {
+      "path": "server/db/migrate-archive.js",
+      "sha256": "09cacdd248ff2df87a1a5f13e7c78dd4f981e851efee44c62dd637a541f5a5c6"
+    },
+    {
+      "path": "server/db/migrate-assignments.js",
+      "sha256": "b45ac17ee377103b7e0344314ee5733e077e116a78c85c60b6bae6c3e679e07c"
+    },
+    {
+      "path": "server/db/migrate-avatar.js",
+      "sha256": "b4209571d6ce189cf58245c8786387f272dd8c782667090b663f1f80f6f48336"
+    },
+    {
+      "path": "server/db/migrate-avatars-private.js",
+      "sha256": "83133d007d61bbdc91fdc2507fe6115a73ae9c697bdc54f97c1b0f3192c5667f"
+    },
+    {
+      "path": "server/db/migrate-builder.js",
+      "sha256": "c01007f6d88d884a2a02c2814ea5d61dfe00c337a3cfd2a92add303330900db6"
+    },
+    {
+      "path": "server/db/migrate-comment-reads.js",
+      "sha256": "b3d551da1fedff4de18b3b06f4a0026fce9e4c27891436e32fb64ff8350d7162"
+    },
+    {
+      "path": "server/db/migrate-compliance.js",
+      "sha256": "8ed7b9e89a34a4084db64a5262c3d55850215f4182b867129aad579182b2dcce"
+    },
+    {
+      "path": "server/db/migrate-course-program-codes.js",
+      "sha256": "e0465cb6e129c7f19e30bdc4b00912a3fe4a2b0afc49c78f3615b86eeb93d028"
+    },
+    {
+      "path": "server/db/migrate-deadlines.js",
+      "sha256": "2750ad0d93d796a87d6a46a9a1fc8bf02ea0f31414a7314e73cef8a41d9acc8b"
+    },
+    {
+      "path": "server/db/migrate-google-auth.js",
+      "sha256": "af6af5b3340434e91bc755ddd7d813b2f0bc449eee020bbeea65fd1f92e485fa"
+    },
+    {
+      "path": "server/db/migrate-notifications.js",
+      "sha256": "c014df11f57823d67fc8c7312c3b93877a26189ac9579103181a8638ef83dc75"
+    },
+    {
+      "path": "server/db/migrate-passwords.js",
+      "sha256": "14d3cf5ab5f4c5dbd0b29b984892c96c6e74df53c6e4e01f8368ffbaee6ff428"
+    },
+    {
+      "path": "server/db/migrate-preferences.js",
+      "sha256": "7ff9c3a49ac8941db9c7f354c7a893d7671091ae385f822cae7ace38c33cc3f3"
+    },
+    {
+      "path": "server/db/migrate-program-egas.js",
+      "sha256": "f98349e365e213263c1998d3a74c175eb65c431b7e0612df3e496b2d7a0136e8"
+    },
+    {
+      "path": "server/db/migrate-program-management.js",
+      "sha256": "188bb8d52b6ee81554a484089ec485f10bcd44d517cf9cacf2d4f9f00b852ab4"
+    },
+    {
+      "path": "server/db/migrate-program-outcome-sources.js",
+      "sha256": "cd3b1d8ef68a173fa5d6309133f084e040d216a8fe58ffadbe24f13ec3b97f18"
+    },
+    {
+      "path": "server/db/migrate-students.js",
+      "sha256": "f94965a8bdacc516c834a0be4fdfad8c571bd8345eb5a181a6010ae35850a974"
+    },
+    {
+      "path": "server/db/migrate-subject-owner.js",
+      "sha256": "71baccf2f04033ef14448ebdfbf743d067c5b1835878f08fea1e323236925211"
+    },
+    {
+      "path": "server/db/migrate-subject-standards.js",
+      "sha256": "c66146c850b7c813b2329e8697934e341d466771760b6ad4e68f24e0ef59982d"
+    },
+    {
+      "path": "server/db/migrate-syllabus-versions.js",
+      "sha256": "1ae2ee29d0fe6e855354eb101beb52e25bbdfa8acb1e4456ccd6822215bbbd59"
+    },
+    {
+      "path": "server/db/migrate-syllabuscheck.js",
+      "sha256": "829b1dfbfa507a5dca7482de56f807792f5dd9ba70cf2bc35673763bf9053263"
+    },
+    {
+      "path": "server/db/migrate-usage.js",
+      "sha256": "706a9a92e44756029387c86e7902087869f7d01896499f485550f5082816f508"
+    },
+    {
+      "path": "server/db/official-po-migration.cjs",
+      "sha256": "d0a43f4c12da26637a13b449eae7334cae36880e2e40e2a9398471cebb68a746"
+    },
+    {
+      "path": "server/db/passwords-ddl.js",
+      "sha256": "aefc6052c9dedfebfe489f5b777603c5ad01cb10a2419c07919274f17edca265"
+    },
+    {
+      "path": "server/db/preferences-ddl.js",
+      "sha256": "c007bc1728ab87a21c1d16df39dbf4bedaae354689206952036e6fdc0515f93b"
+    },
+    {
+      "path": "server/db/program-management-ddl.js",
+      "sha256": "95ecefabfc078c17319fa94996ab786eff759eb9790100594d078b5d59948eaa"
+    },
+    {
+      "path": "server/db/schema.sql",
+      "sha256": "737ab00b0b0e6c2159c1ddd69a323896fd168f90eda6f5829c361932008cd5f5"
+    },
+    {
+      "path": "server/db/seed-local-references.js",
+      "sha256": "c100f660109b27fc6969ce1c406ba6cd2311e79bb959d4fc8becb105f79dc8ba"
+    },
+    {
+      "path": "server/db/seed-outcomes.js",
+      "sha256": "8fae32629588a996a176a6af8b8d7da815458112ab7baabe7a2aa7e92d17542c"
+    },
+    {
+      "path": "server/db/seed.sql",
+      "sha256": "c9afafd0169a00743a3eaf411a3b53f3aa30c21c268763ef24c978cf2f4dd430"
+    },
+    {
+      "path": "server/db/syllabuscheck-ddl.js",
+      "sha256": "4f3700e780c5a457511fd481d8000428b06797145e73d4f21544e06110290d4c"
+    },
+    {
+      "path": "server/db/test-bsfm-admin-workflow.cjs",
+      "sha256": "60b352200c187e89376fa46727896d3dfd7ffad5014c4aca7d8fa11bcbc39d53"
+    },
+    {
+      "path": "server/db/usage-ddl.js",
+      "sha256": "eb8c6c2fa4d4ec9d6ca42b9baecbad916261c8cb0226a6498bf83e917db007da"
+    },
+    {
+      "path": "server/db/verify-subject-standards.js",
+      "sha256": "4b3b8b3a0040925dcdc4958f820b40731de5dc3e8ac029b5d6e904a13bd9c4b9"
+    },
+    {
+      "path": "server/dev-api-error.log",
+      "sha256": "13143cd71b30f8051c1e89161f0b6b05c8bfdd4b27511b4f8041a29f58c8993d"
+    },
+    {
+      "path": "server/dev-api.log",
+      "sha256": "479519919af206b50d879ca8ed91a8e8506f1b0f6fd6b06ced806a01f21d2a70"
+    },
+    {
+      "path": "server/eng.traineddata",
+      "sha256": "5dc5d8d640a212c9d6184921ba103b186f50e0fed9ee716c53e6b312b400d747"
+    },
+    {
+      "path": "server/index.js",
+      "sha256": "b0455d60b9fa402b7016bca6d1e201b54d87da1905be8b8d622b8ddbf6341d14"
+    },
+    {
+      "path": "server/lib/activity.js",
+      "sha256": "f38f2fd8eae6991c60c5b5bea8151102a1e5470e55836c31d9d043c392043cdf"
+    },
+    {
+      "path": "server/lib/activity.test.js",
+      "sha256": "cbc974810c8d304e803e353c7000394176331f8fcf55d1f48761b0b2c0ad8b84"
+    },
+    {
+      "path": "server/lib/assignments.js",
+      "sha256": "6701b1f5849850e97a573cbb4e58ffc2a73d07450706b34ca6ea81c319852e5b"
+    },
+    {
+      "path": "server/lib/assignments.test.js",
+      "sha256": "e8545ad059918c6449540bd206dfa8d428f87015e7e02de9d8a8d1e1de634581"
+    },
+    {
+      "path": "server/lib/avatar.js",
+      "sha256": "8f58014ab21c61cd72f82bbc15a17e197abca1aff1f5568d8343ba1c5cf4281c"
+    },
+    {
+      "path": "server/lib/catalogFileCleanup.js",
+      "sha256": "6aab1a7499eac897c718b9ae65df7260e94c02172394452ee750369f3cdce3b5"
+    },
+    {
+      "path": "server/lib/catalogFileCleanup.test.js",
+      "sha256": "ac090123e22504a28ddfa4bc780b20f7925899e4bd800b880c3caccba084d147"
+    },
+    {
+      "path": "server/lib/catalogReady.js",
+      "sha256": "34dedd52b6da963f2b23e3735aa5bf1d7d7be40193fa4bffac7f52c569e4d53d"
+    },
+    {
+      "path": "server/lib/catalogUse.js",
+      "sha256": "d2f44d8091d1157aece24b3f5f352ad230265265cbcaa372eaf6ddefa26eaa9d"
+    },
+    {
+      "path": "server/lib/commentReads.js",
+      "sha256": "e1e2b0bf680d3eb2715a08cf3441759fd4dc689b116fcd5922b54e186b851bd1"
+    },
+    {
+      "path": "server/lib/compliance/fixtures.js",
+      "sha256": "128520213b26c1888ef623bb2c2c4beaad600ff110f8aa4d78855b36955a18b2"
+    },
+    {
+      "path": "server/lib/compliance/hash.js",
+      "sha256": "e41cc9eefa018a0eb2b1ba58e26ea0a50678fba1a3812091bc2ea910306db182"
+    },
+    {
+      "path": "server/lib/compliance/misc.test.js",
+      "sha256": "b89e5c23437fcc21bb29d1d72f671919983ae65194bb2f39b669a08af8ebf62f"
+    },
+    {
+      "path": "server/lib/compliance/providers.js",
+      "sha256": "5c527268619ae644336a4526b7926efd8a8d506b3f398f0ffd5bf15a0ef94d44"
+    },
+    {
+      "path": "server/lib/compliance/recommend.js",
+      "sha256": "26cab696dc53455dbb84bd0b3b5ddbc7bc58aa15f4cef26463f0776c6caeaa4c"
+    },
+    {
+      "path": "server/lib/compliance/recommend.test.js",
+      "sha256": "0d7574dee2a30d7db0974a3bd8796f9b2ee77e1123ba7fd86c1c8e0038124076"
+    },
+    {
+      "path": "server/lib/compliance/rules.js",
+      "sha256": "afbdf316e2974ab8784ea8e57b772f67e62080dd73fe6840905832d6bb33c4b4"
+    },
+    {
+      "path": "server/lib/compliance/rules.test.js",
+      "sha256": "939fce161ef853fee64b567fd17f329deb07137ad23681e64a5414ebe6858132"
+    },
+    {
+      "path": "server/lib/compliance/service.js",
+      "sha256": "f6b8835b130618dbc35e00a67d44ad34a6e0d2d540fede93759ca79c2691aa77"
+    },
+    {
+      "path": "server/lib/compliance/standard-v4.json",
+      "sha256": "1be5c5ba969b6c7464601aac34c72b7c71949b59d76ed746412937a8c6907612"
+    },
+    {
+      "path": "server/lib/compliance/upload.js",
+      "sha256": "b4bde84878f7caddf52d0aed369b8bb63f6219fb0d780eeba0b888054530213f"
+    },
+    {
+      "path": "server/lib/compliance/upload.test.js",
+      "sha256": "3cb73c9a838232dfcacb7d7e06152e45c0a1ebbb8e33011ee99a5b8cf31946c6"
+    },
+    {
+      "path": "server/lib/corOcr.js",
+      "sha256": "f07c5b7ba90fe191feaa62ea02fb1c39dcd5937fa3bf90c1d53be38f3878baa6"
+    },
+    {
+      "path": "server/lib/corParser.js",
+      "sha256": "0172563e70c5d5b84d2227b3e18a65220afad6167e0f621e4f3d184e372367bb"
+    },
+    {
+      "path": "server/lib/courses.js",
+      "sha256": "5e4066a3f264c4038bf29915f8de9e8b4bd7708fb1867aa70fb70baa0ce8f938"
+    },
+    {
+      "path": "server/lib/deadlineNotices.js",
+      "sha256": "62e32738109cdec1fb93c84cd7ad912d9c49352917a11c09f4db0ff014e4cdf5"
+    },
+    {
+      "path": "server/lib/deadlineNotices.test.js",
+      "sha256": "ee1c4f4a59601edef2d9d2c333026861a02c316c7b790c5a796035fb98d82890"
+    },
+    {
+      "path": "server/lib/deadlines.fakedb.js",
+      "sha256": "0e8bcbe33fd53ba08b4bf36a3b54a9bb03689274839117345dcc86b174f8b467"
+    },
+    {
+      "path": "server/lib/deadlines.js",
+      "sha256": "1c05d917a111b834498f6a70430d377d28f763d00ed81ab6273e39434b0f918d"
+    },
+    {
+      "path": "server/lib/deadlines.test.js",
+      "sha256": "adcaa802b4a1231fb6d38792862524463fac2a9ab199503c8890c6523f355cd5"
+    },
+    {
+      "path": "server/lib/emailDomain.js",
+      "sha256": "17f6a135a3d43f9ad03f050351c2840ffa27456e26c4c3eb0b9b60e9a789419b"
+    },
+    {
+      "path": "server/lib/googleProfile.js",
+      "sha256": "7d3a4c75223a538e4f2c4b03853b881d79a243ab1443f33f2da87cd1cdad938a"
+    },
+    {
+      "path": "server/lib/http.js",
+      "sha256": "e4d599c3fa1e7baa614a8ed6ef23eab36a9c6fc92434f3d2f2472e604622feea"
+    },
+    {
+      "path": "server/lib/institution.js",
+      "sha256": "9b5670bd9b8561b98201179092daea618c9dae10e0f2f9872b88e6bd444293d1"
+    },
+    {
+      "path": "server/lib/mailer.js",
+      "sha256": "9c189492d00f091c5d7b098f6e84c448f4976e05720b6fa679df070883bf088f"
+    },
+    {
+      "path": "server/lib/mailer.test.js",
+      "sha256": "c48b201c69f24f64161e3c99be027a7c27890c4e18057a97bf0f6dfb53847648"
+    },
+    {
+      "path": "server/lib/notify.js",
+      "sha256": "ddf0ab16725f62ec564381618634d9a157bede01ac0f3dd44da125ac6d302dc2"
+    },
+    {
+      "path": "server/lib/passwords.js",
+      "sha256": "eacfe8c2ca175cb5bd71932f90745f8b5c56d16588737a5d787213945d89e82d"
+    },
+    {
+      "path": "server/lib/passwords.test.js",
+      "sha256": "9b118349a68e9509efb6d524ce32d4a368fc110bd85db3227a8fd6f2173b6d86"
+    },
+    {
+      "path": "server/lib/pdfGeometry.js",
+      "sha256": "e83da388167eb2e1bf7864ecb3f48d98a316564bab647bcdf72f25e13ce798e3"
+    },
+    {
+      "path": "server/lib/pdfImport.js",
+      "sha256": "b5b25f52120559900584a0b21ae73a49b7d76c4d38f4f343d7061eebc1957211"
+    },
+    {
+      "path": "server/lib/pdfImport.test.js",
+      "sha256": "cdfad6c63fff659f203ca9243d7d23c3eab4324d3fd7331f19261d9b1899bb49"
+    },
+    {
+      "path": "server/lib/pdfImport.worker.js",
+      "sha256": "c0c11afb684b9d8d658f3e78fc4fe7d675b2f728df6113107d585edbe2118ab6"
+    },
+    {
+      "path": "server/lib/pdfImportIdentity.js",
+      "sha256": "24bffaf5fb6116fc5b2d4070504424e1f91e369cb12f88dbe2be661489239a7d"
+    },
+    {
+      "path": "server/lib/pdfImportIdentity.test.js",
+      "sha256": "8da8625bad1bdb2fbae73fca0116435308d5269d7499872d340a0e43c3d7a6f5"
+    },
+    {
+      "path": "server/lib/pdfLayout.js",
+      "sha256": "09be33d271ccaac6fea765b8e7ce7bf8ce493d258e0f9fd4f36212477e02e52a"
+    },
+    {
+      "path": "server/lib/pdfLayout.test.js",
+      "sha256": "3cf799c473b2d970d382ad079f1d9f9e0bf338d20f528a230ac4bc956e8b54da"
+    },
+    {
+      "path": "server/lib/programEgas.js",
+      "sha256": "3ee4ebd1078746cd35c26e21d9ae059c366a4fe41649022fcacaddfad7e9b687"
+    },
+    {
+      "path": "server/lib/programManagement.js",
+      "sha256": "9a4b5b02396d9f532e1be7fd04278ac85ea756a3234a4e3b7a85d865736fc7ec"
+    },
+    {
+      "path": "server/lib/programPoReferences.js",
+      "sha256": "3e1936d19a6812629e7a4a2017cd0d2dbd1a5d6dc28358ef084e26dea5d99b2f"
+    },
+    {
+      "path": "server/lib/programs.js",
+      "sha256": "4bc92a2995e0e633b3ba6c00632308c7a9b3c4f5dd89b48c5a347a09aa84b95a"
+    },
+    {
+      "path": "server/lib/rateLimit.js",
+      "sha256": "2d4b3b315074e87e712380282aa6141fe4dc088fe804c90ea5c4b5bbf05c7f4d"
+    },
+    {
+      "path": "server/lib/reviewComments.js",
+      "sha256": "0a7e95ed525769c1e89ead9fdaa450fda3ad95e4fdcbcd41e4ced1bfb5969315"
+    },
+    {
+      "path": "server/lib/schoolYear.js",
+      "sha256": "a6a42e3481af02c89ee89da136a7e61c985e4737b8d9e383a2c89352be0a3895"
+    },
+    {
+      "path": "server/lib/subjectLock.js",
+      "sha256": "26fc52577619803e528535bbcb461d943da4806f3d41b66f176feea221a5a3d2"
+    },
+    {
+      "path": "server/lib/subjectLock.test.js",
+      "sha256": "6472bd3eda1fac54ba2f6849505673e1ad9b0dd18f7dfdde705789ca19b205c5"
+    },
+    {
+      "path": "server/lib/subjectStandards.js",
+      "sha256": "bffa9d4d53f95bd16a9745bfd7e428837af325e0c31b410a79b8e3b328481554"
+    },
+    {
+      "path": "server/lib/syllabuscheck/acceptance.js",
+      "sha256": "f54cfd2ca4f06095acbf7e80d6c106546ff8f3bcb6dd1a80487937623720ac16"
+    },
+    {
+      "path": "server/lib/syllabuscheck/advisory.test.js",
+      "sha256": "ed95dac39faa8f8d6375fd87468a8e8ed6efc8497eee5fc6c1246ae19d5d0a8d"
+    },
+    {
+      "path": "server/lib/syllabuscheck/alignment-safety.test.js",
+      "sha256": "aae0e21bf617ce396f59b86282913cf82920b6f2486db0983b8f9fc0512ae510"
+    },
+    {
+      "path": "server/lib/syllabuscheck/answerReview.js",
+      "sha256": "4037ad0c1e8149a50aabfd2d7cadf09d5cd7210aacc37cc2fa8dd029d5da50f5"
+    },
+    {
+      "path": "server/lib/syllabuscheck/anthropic-errors.test.js",
+      "sha256": "67a4672d17a17069def256b4c4c753bd3669e0c27ab757dc836265dd1d19c32f"
+    },
+    {
+      "path": "server/lib/syllabuscheck/anthropic-guard.test.js",
+      "sha256": "ac092b978abb59574ca1355612865ab6b58c9450f5d5080308cafef4cab5ff35"
+    },
+    {
+      "path": "server/lib/syllabuscheck/anthropic-harness.test.js",
+      "sha256": "6c44a9b9d9d951c8e5f3a969dde8dbcbf9d5b7aa0422913e309d0875f31351db"
+    },
+    {
+      "path": "server/lib/syllabuscheck/anthropic-lock.test.js",
+      "sha256": "5218bab8b772ee3ac4232e4f9f023f97504752b5533b0c93e9c67036f5e65ce6"
+    },
+    {
+      "path": "server/lib/syllabuscheck/anthropic-replay.test.js",
+      "sha256": "f9a2cb9461dca6f238989dc3d701e5e1ef08a391dff297ad62629132190440bb"
+    },
+    {
+      "path": "server/lib/syllabuscheck/anthropic-schema.test.js",
+      "sha256": "9b25bf121cd03431c2b67989024c75654f39df0d246791ff12cf972edde8d828"
+    },
+    {
+      "path": "server/lib/syllabuscheck/anthropic.test.js",
+      "sha256": "93f3ed21794da715d2434101591afa53a96ff3c20cf546e735db859baf4ffe38"
+    },
+    {
+      "path": "server/lib/syllabuscheck/anthropicClient.js",
+      "sha256": "53917e36fa51a4676ea8df056f2056bba67b809db489d04ced1ce8050a0b02c7"
+    },
+    {
+      "path": "server/lib/syllabuscheck/anthropicSchema.js",
+      "sha256": "436c2f10075b16ae1cedfbaf16b964ca86cab1f3d197be5f90d9235b5388dc78"
+    },
+    {
+      "path": "server/lib/syllabuscheck/aspects.js",
+      "sha256": "4f4ce8784dc58f47cc2497b12a26fc2ada753de562df5f735ed74814ba0acd45"
+    },
+    {
+      "path": "server/lib/syllabuscheck/cache-keys.test.js",
+      "sha256": "5feed4b0cfdb568fde303d24951fc9f547cabc3c4b171b9057e85bb3f618ce61"
+    },
+    {
+      "path": "server/lib/syllabuscheck/clo-any.test.js",
+      "sha256": "d965ca3e790960b53d4fe9fe9d66793d6d17be7532f9091d2c44504907e28987"
+    },
+    {
+      "path": "server/lib/syllabuscheck/clo-relevance.test.js",
+      "sha256": "cddc3d6d325210b64088133ea5e37439677ea959c4d78cb20c28ac96ffd6eb23"
+    },
+    {
+      "path": "server/lib/syllabuscheck/coverage.js",
+      "sha256": "8d02b339c1ba1c2dfff567e93e7c71c6bda7083c31373d2064656e9e9932eb21"
+    },
+    {
+      "path": "server/lib/syllabuscheck/description-plan.test.js",
+      "sha256": "9b644a57c5d8205a5b5def4e2df2d5c8b7b715e06797a9e99d1927fbef529f3d"
+    },
+    {
+      "path": "server/lib/syllabuscheck/engine.js",
+      "sha256": "c3472fad4a53f1b74b5ddc423a646eac4b0124e10995e54f44d0a2a964b0bfd6"
+    },
+    {
+      "path": "server/lib/syllabuscheck/engine.test.js",
+      "sha256": "e061d2710e74a1ca4917b8bb994f8099e179431ad887d510a744eb5cbbe1d064"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/alignment-dataset.json",
+      "sha256": "ab282a107df8c73b6e7e21e60fd990c86837055577bbb5a4cc7758bd62095801"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/answerReviews.js",
+      "sha256": "7a569ccd93d85a20e3b8f24c5c3420aa81cd914be521b177f5be73d7ebc78955"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/anthropicReplay.js",
+      "sha256": "9064ba01218c653a2aeed809b07905dcd2b680c130a0257bc50abff83671bf06"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/anthropicReplayPreload.js",
+      "sha256": "8112212f50791d744caebf423b0b97e979d51f2e31556b9d0390e6b13ba3b219"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/batchReview.js",
+      "sha256": "2b78579caa7283a4aacd45cf62f3024280d9eab7059058245d7b903a82bcf0c2"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/claudeEvaluation.js",
+      "sha256": "a336f3cac65ec81a35512af47438613dbe2407594779f7cb5da51dba913984f8"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/contradictions.js",
+      "sha256": "e9f00cfe6928793c1ac15a0af6ba3915ef70c3605966a88c6593f732017ecdb2"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/dataset.json",
+      "sha256": "08423949b5b0ff92401be1a62328e549968233feb91761f87342cf03dbbfacb6"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/eval.test.js",
+      "sha256": "7822e66a2a372bbcc0c60bfd01ecbbfbe12751a5d29d1b388214922d2a335eab"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/evalMetrics.js",
+      "sha256": "b9050321dfdfeff0e74df96f8fcd5225c364f156d35f59e3e397af0c65a374b9"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/metrics.js",
+      "sha256": "3fea8106d0f22bd8104fd0aaed6806384792cba8b49d172df702fbaac6e00bf9"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/phase3/facultyExport.js",
+      "sha256": "79d42ffbb049ba2a95a3f32326e7bc692225f16b6d5a072006eb070838f5a25e"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/phase3/fixtures.js",
+      "sha256": "6158c9f55c33118075cc87ac2ad6095ad5f0a01edc4831efaeaa41b6f528aad4"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/phase3/manifest-phase3-1.json",
+      "sha256": "2da030d93433c36511cce9a2196096511f17568053d611e22521d267fad0ae36"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/phase3/oracle.js",
+      "sha256": "43d813ffc549b1bd0edb5adcf83550f311940f30c53f15161398f08de1b31d12"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/phase3/score.js",
+      "sha256": "a55349d549550d42009274f18947a04d54de9183c0a1a0066caae01a36722dbd"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/programSyllabi.js",
+      "sha256": "95d64809c425f3861145a44c75ea03338711ea2e10766f72705bef931166799d"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/providerDrift.js",
+      "sha256": "28714732c392e5f9189c515937f0833801a46f8ce5e2e47072dd9bd11564fa3c"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/providerGuard.js",
+      "sha256": "98d91169d84404a199cbd9c17066907b5396f902dcc4ab3d7b9e44af7e2ef15f"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/qualityMetrics.js",
+      "sha256": "ba67ea83b1966c3f4e5bf89c17d6c3acf570aa740ae0063c0d7fcd624f56ec3f"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/realSyllabi.js",
+      "sha256": "2bd340319b8f9c4ddab04d9d7a68abcc5a2b375395e9cfb5a7b897b898db796d"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/reference-format-fixtures.json",
+      "sha256": "a1d41d0152011a0678c6fcbc5050cf42e5b5697cfdf5bc1580a2ce7372bf19fd"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/stage-a-dataset.json",
+      "sha256": "e2d3a372c0b6b6c75f3aa0a28bc59ec3c83e24a27e548cbf81aad131aa4c7bad"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/stage-b-dataset.json",
+      "sha256": "ee51171e9a6bfabccb2969419c77ad752707fba89ee93207a51b6e43daab6945"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/stage-b3-dataset.json",
+      "sha256": "c7e2ad276368facd4217e3cc95f23af3a51a986b91de594abac77004a9972b80"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/stage-b4-dataset.json",
+      "sha256": "10d1413a56ed053a2bfb2520f9f5d63ec315ce682f8cb9381cf1a7c76dca42fa"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/stage-c-dataset.json",
+      "sha256": "f1211d4fd6097412146930f3cdae43c20a6c1f28c1e2d76b74cbdc501926dbac"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/stage-c3-dataset.json",
+      "sha256": "0c7fb8b0254c3e9904f9e80650352265907dbbb38bbc753b8fbf9593675ec5fb"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/stage-d1-dataset.json",
+      "sha256": "596bd425f7971e7f930c2c1aeb3d03b8957f7a6db788938325152f6454cef057"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/stage-d1-followup-dataset.json",
+      "sha256": "6d2eb3017d3303cbfe209626dd7fbf03e021fb4a72f885c6920dbe7c6c13eaf8"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/stage-d2-dataset.json",
+      "sha256": "bec7e41a93179994235763603459303d736fbb35207ef92493ddf68cafbbc90f"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval/stage-d2-followup-dataset.json",
+      "sha256": "73bdc96cc11b8f01b52c92c36d77e79e6b986671c2a134d2e0ee1fee5d287df8"
+    },
+    {
+      "path": "server/lib/syllabuscheck/eval-quality-metrics.test.js",
+      "sha256": "7c10434c475f6c3bae684c932d61bed3b6e6613952d5181058102d30d57b37d1"
+    },
+    {
+      "path": "server/lib/syllabuscheck/evidence.test.js",
+      "sha256": "a8ecadf2465ec1974e2dfaf5c121520f2caa2e16be99521d185edd35ac4f8cf0"
+    },
+    {
+      "path": "server/lib/syllabuscheck/failure-kinds.test.js",
+      "sha256": "c052a5f428c5ce11f6ba80f985a170dff1f2571300f716c13f81a696941d0dda"
+    },
+    {
+      "path": "server/lib/syllabuscheck/fixtures.js",
+      "sha256": "22e3966d9430debe8446ba68bf6a82217fa671e978e0f0ec3d668778889c4428"
+    },
+    {
+      "path": "server/lib/syllabuscheck/gates.test.js",
+      "sha256": "5ba8a36ea8514663209f91ee19801f7a70dcecb23b427b42655610e4b75de962"
+    },
+    {
+      "path": "server/lib/syllabuscheck/gemini.js",
+      "sha256": "51f053f62dd22986c2d844ffa9379404945fe4f67d684becb83d77fd1e5c83b0"
+    },
+    {
+      "path": "server/lib/syllabuscheck/identity.js",
+      "sha256": "acb4b5c3025b7403bee2d15a35f96c1dc2bdd739e00a536906292d091776c46a"
+    },
+    {
+      "path": "server/lib/syllabuscheck/ilo-assessment-whatif.test.js",
+      "sha256": "ae3e1bd5c3556ffba3b0707313659a102715c3d4eca989ebfdeef2af750f7977"
+    },
+    {
+      "path": "server/lib/syllabuscheck/institutional.test.js",
+      "sha256": "9878300fdeb66f4cabfed4c02bfc1ece3e5df54bc9f467ab0dcec261095e3000"
+    },
+    {
+      "path": "server/lib/syllabuscheck/legacy-storage-test-helper.js",
+      "sha256": "f243b94fc8255f2655ecd2419986ea2629e3303b73b9a8cdb523a9472202bf00"
+    },
+    {
+      "path": "server/lib/syllabuscheck/lessonfit.js",
+      "sha256": "a6a8548bb05398353e5f007205404a6fb32ccbfd355231a3616e3739e1c3b90b"
+    },
+    {
+      "path": "server/lib/syllabuscheck/links.js",
+      "sha256": "70813834fa55644c2df6d93f267b10bd3e0a80ef3b56c420f01e2e2d41b81dc7"
+    },
+    {
+      "path": "server/lib/syllabuscheck/links.test.js",
+      "sha256": "071832ad0ab45c5bb18ec4bde68d196df506d7c896ab39aa76bb078b064a0dd2"
+    },
+    {
+      "path": "server/lib/syllabuscheck/mapping.js",
+      "sha256": "22b1a9a6665d5dda85073a6806563435525a231d79bc43c3b7e1371beacbdeb3"
+    },
+    {
+      "path": "server/lib/syllabuscheck/modelClient.js",
+      "sha256": "4f227b1b98cceb7f4e459a1fcde88842a9a15babffa3e91ad0bf5e8491a9785f"
+    },
+    {
+      "path": "server/lib/syllabuscheck/openrouter.test.js",
+      "sha256": "b29e480692d095c68faf1b16d40378532825d7d69146482590cdf58bc8d5b756"
+    },
+    {
+      "path": "server/lib/syllabuscheck/outcome-sharing.test.js",
+      "sha256": "c4fe43e2e308c6e3ffc15629fc04c84cfa9d4d8633e81b473d2e6402b571849d"
+    },
+    {
+      "path": "server/lib/syllabuscheck/outcome-source.test.js",
+      "sha256": "cd37c58aa277c6d8b92af7e685df28e1b0f4907f0aee44bc6cf5874e1bd31686"
+    },
+    {
+      "path": "server/lib/syllabuscheck/output-validation.test.js",
+      "sha256": "6344f54be880585ea75aaa25570bd813bcacdc35826b22782f883d0ce6358a1f"
+    },
+    {
+      "path": "server/lib/syllabuscheck/partial-check.test.js",
+      "sha256": "280d0e4534e405dc4c385966d06528d82002c4a7a81740d4400a253c2f447620"
+    },
+    {
+      "path": "server/lib/syllabuscheck/planrows.js",
+      "sha256": "5a895032a1ade763b6601e5fd5e3b2a276637e7efb66038a39edd00a1774ae35"
+    },
+    {
+      "path": "server/lib/syllabuscheck/policy.js",
+      "sha256": "fbdf25a42e35dcdadc7a95f8756c8add807d2c5c5a2d5ba9020954d2f656e383"
+    },
+    {
+      "path": "server/lib/syllabuscheck/prompt-regression.test.js",
+      "sha256": "3578aaeda33131cb00cd731a57d4592ce29a1ba9bedf52fb5ea3006a3a4f16f9"
+    },
+    {
+      "path": "server/lib/syllabuscheck/provider-guard.test.js",
+      "sha256": "ffd8ada65aae2eef5b957fd999ab4e4a494c926786d0a47c12e2e027cced81f5"
+    },
+    {
+      "path": "server/lib/syllabuscheck/quality.js",
+      "sha256": "363507e3c229ee7c809afd9c58176880522b7b0f7e7d1b4e8659056b75234a91"
+    },
+    {
+      "path": "server/lib/syllabuscheck/quality.test.js",
+      "sha256": "204e4662d61b66a5ca6e053c828240b5458d30dd5f0da655c624cddca0b285e1"
+    },
+    {
+      "path": "server/lib/syllabuscheck/recommendationReview.js",
+      "sha256": "138dbcf6235c55146577460f88c568db23f2f305d90a875606c6e498e6638e72"
+    },
+    {
+      "path": "server/lib/syllabuscheck/reference-import.test.js",
+      "sha256": "4fed598fda55572db10b5b3e51745506cb31639635f89e078fa0c9997658efc6"
+    },
+    {
+      "path": "server/lib/syllabuscheck/references.js",
+      "sha256": "71fbeb500fc175fb5fe11b43ff7194428c3ea8d832b54c8f0bb1f997541c6c5f"
+    },
+    {
+      "path": "server/lib/syllabuscheck/refine.js",
+      "sha256": "f3ee3aa89b3e932cf1b1485f50548d387ae81557f12305f1f8d217a6db8f35e5"
+    },
+    {
+      "path": "server/lib/syllabuscheck/refine.test.js",
+      "sha256": "c6fdff95bdc3bf128e12e50775bf63ee3da88e2cfd4fb4e9ee667cf2dd82b623"
+    },
+    {
+      "path": "server/lib/syllabuscheck/reliability.test.js",
+      "sha256": "3677437792bb70c799a74f51a2cf2f522f4cbe6ae961ec932a7f0fe3212b20ad"
+    },
+    {
+      "path": "server/lib/syllabuscheck/reportSafety.js",
+      "sha256": "c9f305569eed552a7adcbd6a82fa1d8602ad6cb5a5c4615de937b3978df86805"
+    },
+    {
+      "path": "server/lib/syllabuscheck/repository.js",
+      "sha256": "eae48c6ae8e7bef0362a973ad408052522b522d42bb07961f61e0d76cab3fc16"
+    },
+    {
+      "path": "server/lib/syllabuscheck/requirementsAdvice.js",
+      "sha256": "226ef727997e0a1ba9ee5262f519458f9c1cd18e83b3f5451362517019a97243"
+    },
+    {
+      "path": "server/lib/syllabuscheck/reuse.test.js",
+      "sha256": "60f5864c558fec39e40f998cc3d5bcfaffae224882723e65990bc39ef0ba932d"
+    },
+    {
+      "path": "server/lib/syllabuscheck/revision-cycles.test.js",
+      "sha256": "fbc6f3b4fd35c8922e14bd28a75b5df442c14ff090a22be3a7804443318b606d"
+    },
+    {
+      "path": "server/lib/syllabuscheck/scoring.js",
+      "sha256": "26d5ba060f5910ed8ffc87685b08f847e6075709b4e42c858b1793244b14e55e"
+    },
+    {
+      "path": "server/lib/syllabuscheck/scoring.test.js",
+      "sha256": "3ae25b035c3bf5992a66a210995c68ef83b1290d3623a84ac42446e52aa7ab34"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-a-mapping.test.js",
+      "sha256": "4db2293cbcfddad98ecd8fd83751afe1b86bd85a9bbb30e3e7347b68d3416600"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-b.test.js",
+      "sha256": "2eb3f99307ea74786b4247db048ba575d288b887f5cad343e80d7bae88bad6e4"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-b34.test.js",
+      "sha256": "af6ce17c6c7e9ed1c06f3be957d99eb94869bd8e1dc0262f66a33a947490cbec"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-c-response.test.js",
+      "sha256": "d4967934a403ade3d91c6dad554291a69598917e3ecab106e75d2d5bbad389d2"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-c.test.js",
+      "sha256": "aca5584c64c11f6b4b6d0de8dca276ba88be6ad4e17c26211649077455133a1b"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-c3-addendum.test.js",
+      "sha256": "25dd24d5d8c0571d657a35d78efd9892eb422abe8f7162e3f5ec205c881ca0cb"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-c3-eval.test.js",
+      "sha256": "f9e83b1cc24dc54bc767fc67db01ef8957833fd611b1d75a0086005f3a8d01b1"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-c3-independence.test.js",
+      "sha256": "41a0c6e791ea7433d5ec9e23f8fd771621c039d57ccc6d8c0f177b91f0ab7e6b"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-c3-safety.test.js",
+      "sha256": "528f47da057ab73ee025fa609f79a5ff49ac230ac3aef7a828c3e85aba56dd43"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-c3.test.js",
+      "sha256": "689d4758a7abc1cff8e26eb0011efbd8fbf49cc4e19e88819d2b2c46e9109279"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-d.test.js",
+      "sha256": "490a1bbe014dbe2de1d0ed55995194408ef2991d22519384d41e38a0c5b167ff"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-e.test.js",
+      "sha256": "112d41c7b4502b97a145f64058dcae601e402940b9b5fe2078f3bea985fdedaf"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-e1.test.js",
+      "sha256": "7dc97e5309acbd1fe0d195e97e519c50319ae7734da1da7652c3a4aed75c97c3"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-e2.test.js",
+      "sha256": "13aa33fa2f132291b5586cf96cdea71b9812fc7f1eb3d506b8a12dfce5864f75"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-e4.test.js",
+      "sha256": "2c7c9545a7ec22253265463e37354fc9aa528c3907e186e6acc87af2fe2c0328"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-e5.test.js",
+      "sha256": "4cf6233e0e2cfb8ae6ce2143e44ecc05c9f783d99bee511ebaf2a4520ff04b63"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-e6.test.js",
+      "sha256": "09524bc719817d81966e99bdb3f80680411d94e121d7ccb9c1a41540c1ac48e6"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-e7-datasets.test.js",
+      "sha256": "294f9ce59d80040e872759021180254129bde2c87c4f8937925f1d1c1591ca23"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-e7-verdict.test.js",
+      "sha256": "a7e04bac537a69ab6d449a53439640eee6bf3c0369bebc1aaab6b15a4df2d4da"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-e7.test.js",
+      "sha256": "64d58fb86ea2a10dae96199dc8b8d7aac957786a348256493c24e95af9bca9ae"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-e8-batch-review.test.js",
+      "sha256": "7cd303795ecc04bfce8b7e63fe8b2a59c4f5f7917d1106c970efe2d1d18b1c96"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-e8-canary.test.js",
+      "sha256": "7d10894e7774713e37e6544bae3453b2a9fc7fbe1bd72c3163e20a4241b6201a"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-e8-corrections.test.js",
+      "sha256": "5f3340ed212d197759b8fdcb3fe697e556ede59412d22501d8f6f5b9512c2238"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-e8-ledger-accounting.test.js",
+      "sha256": "0a8c9d14fd2764bb9d8773ea109254b0ebea1d07844ab561cba8a342fed83e23"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-e8-prompt.test.js",
+      "sha256": "04f5db0f8b14712f8462bd3bb69b9ce9e58f32592bc8fb8933594a29beddb1ab"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-e8-recovery-quotations.test.js",
+      "sha256": "71a2539d28999bb0c2ddfb00c842029baa429a7d7ddd81f2420a0ea6264f8cb7"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-e8-resource-grounding.test.js",
+      "sha256": "24a8a7ff482ae2845006a16c2246415bc8ddcd17a03624fbdc03002d95a4867f"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-e8-resource-recognition.test.js",
+      "sha256": "6b88711d1a23ca67c5c4b49c43ab9e860a9a74ce69640b8108d87da945e6160c"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-e8-retry-budget.test.js",
+      "sha256": "1e05b0ae0262f86e9fe234da28fa7b17d8ca1f73d6cab19f8e23b1ebf9881900"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-e8-verdict.test.js",
+      "sha256": "bae476e6c8b7fbf1e512661df960892403c3c876fee4d84c146e88c083f12bee"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stage-e9-phase3.test.js",
+      "sha256": "d15e2fd4f190df0c0c24b84a8b58994443b7733751f47ad40f4428dbc7918218"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stages.js",
+      "sha256": "52dc77afc351d4c8add28e5030b29c464644c61631515caf54352e7c8ebdfd37"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stewardship.js",
+      "sha256": "a6493554f38b61bc123251a6af8722539a6cbc58e0f4064d9a3d334414074127"
+    },
+    {
+      "path": "server/lib/syllabuscheck/stewardship.test.js",
+      "sha256": "6866e9e0e67211e9c0075e53e5a5ecd0c2e275cd69f6cafe4285ca81a6431077"
+    },
+    {
+      "path": "server/lib/syllabuscheck/suggestions.js",
+      "sha256": "02e40e8b25e10f25e2318cc26f8330d84d319c68b779bae3f8b019b19164af36"
+    },
+    {
+      "path": "server/lib/syllabuscheck/suggestions.test.js",
+      "sha256": "95ba680e4ccf96adcc872431c131d4dffa80fca6c17d30d7411f991f6f8fc3d5"
+    },
+    {
+      "path": "server/lib/syllabuscheck/titles.js",
+      "sha256": "eb360212a42144dcbee6c7a71d0b02f94c11389a1fc7c406a753dcce7f1e6591"
+    },
+    {
+      "path": "server/lib/syllabuscheck/validation.js",
+      "sha256": "6ffd230dd3e71614a2aaf93444641f2799dbec3359f0df90fc12fc0b7b1dbbc9"
+    },
+    {
+      "path": "server/lib/syllabuscheck/validation.test.js",
+      "sha256": "ef1d1bbd99352bb8baa79c858312dae06b91cb573e574eb42ca84b4365d2b008"
+    },
+    {
+      "path": "server/lib/syllabuscheck/valueClassification.js",
+      "sha256": "4aa84767cdffaea2e68cd48f74ee1b237839945b1e20e0d81ef8b896e6317628"
+    },
+    {
+      "path": "server/lib/syllabuscheck/values.js",
+      "sha256": "f46aa605b2098d0769170875d83275e2b189029646b7b65dd9489ea67650b254"
+    },
+    {
+      "path": "server/lib/syllabuscheck/variants.js",
+      "sha256": "9e2123a1ae3e80497bbbdd4f8d9e19d91c72f5b839213380e34e00f8f5f5fb94"
+    },
+    {
+      "path": "server/lib/syllabuscheck/variants.test.js",
+      "sha256": "d5fce0131f3363ad9d61e8305d64153ee3903acdf8d4ace5b2339f255911f8af"
+    },
+    {
+      "path": "server/lib/syllabuscheck/verdict.js",
+      "sha256": "b6862316e02a03900755572af9baae0e37b0f4e1c7b204a76a4b7d836f164b76"
+    },
+    {
+      "path": "server/lib/syllabuscheck/verdict.test.js",
+      "sha256": "4b0be97fe5abc79bc7fedeaae93428d14648e097d2a20db1f90e69aa4f79ea54"
+    },
+    {
+      "path": "server/lib/syllabusLabels.js",
+      "sha256": "aa5808e28dfbe7fe94df10252d5e38b8eb89f8e826fb777cb74f0a5421bbc759"
+    },
+    {
+      "path": "server/lib/syllabusOutcomes.js",
+      "sha256": "9c089266ffccd54e01695abfc7783daaf5d1e2eccc682f14638ff5bd6e6d582a"
+    },
+    {
+      "path": "server/lib/syllabusRules.js",
+      "sha256": "ed6b3df9827df27cdcd4eb032917dc3950378faf49029c368258218c0a4cfd66"
+    },
+    {
+      "path": "server/lib/usage.js",
+      "sha256": "a47ca0ef230f84664dcb69670107fcda481354386f69759f63e84d0a28b0d68a"
+    },
+    {
+      "path": "server/lib/usage.test.js",
+      "sha256": "681aa1c30eef3facd6e16bef0c3b01cbf475abc47995f84f70a1eb7499cf8548"
+    },
+    {
+      "path": "server/lib/versionChange.js",
+      "sha256": "c09e4f15dc6ece9dfef62cde4eb83ae61f99501ae284b224316f59a054a0efc9"
+    },
+    {
+      "path": "server/lib/versionChange.test.js",
+      "sha256": "3dd5e17b861adb75d460cb35ee8034b0627647e4eaa1db7fe547b8913d698f02"
+    },
+    {
+      "path": "server/middleware/auth.js",
+      "sha256": "dfe92045e3c7cbdea18c94b94a372f07f3b5eea87db7f13b82a12144ee1805a5"
+    },
+    {
+      "path": "server/middleware/canEditSyllabus.js",
+      "sha256": "2890cb43bcb7bb95b56a676b009448542efe98634dbda1fd959e52c523984f28"
+    },
+    {
+      "path": "server/middleware/jwt.js",
+      "sha256": "7e0397451721e103aae23e355fd958c2cd893b4f2ef14ebc098a4101f37920c2"
+    },
+    {
+      "path": "server/package-lock.json",
+      "sha256": "e998562503c8dc64fffa78b3b9038ab87df6e9f8067198347e57f3ead33611ab"
+    },
+    {
+      "path": "server/package.json",
+      "sha256": "1e7722a30fa28752f01d292eba1332d85dd7f1559f5d681aa80b468a21239439"
+    },
+    {
+      "path": "server/private/avatars/u1-2813144b-4287-42a7-9a78-6de8dbe6235d-1792133048068.webp",
+      "sha256": "2a5f7424f4357ee1ed327d696a0bca39fccdc44c5589bd5fe3ebd6b22590d372"
+    },
+    {
+      "path": "server/private/avatars/u26-96e0554b-e2dc-4270-81c0-d35e2819c46d-1792041788857.webp",
+      "sha256": "7cbf65dbfe47df9ea963926553a1502056367788fdb6d5bd52734917c0cb9ac5"
+    },
+    {
+      "path": "server/private/avatars/u9-1791826898187.webp",
+      "sha256": "2a5f7424f4357ee1ed327d696a0bca39fccdc44c5589bd5fe3ebd6b22590d372"
+    },
+    {
+      "path": "server/routes/assignments.routes.test.js",
+      "sha256": "4bfc399e4d2cd32cb7c8b72040568067ef3edb6eaae4a62c8097c8e1f1f1149c"
+    },
+    {
+      "path": "server/routes/auth.js",
+      "sha256": "540766182b29a6e9b3a767d9c37b506ff17afb637fab5bea5ce9e2430bbfb977"
+    },
+    {
+      "path": "server/routes/avatar.routes.test.js",
+      "sha256": "b22ae0acc419e64a84ba9b2cfd6efaba1cec7e6d07d5bd8e5bcc0cb5d4894a43"
+    },
+    {
+      "path": "server/routes/catalog.routes.test.js",
+      "sha256": "8cef4ed3379a9d3759565709a305ddc4efe2d8201e50c37cf4cd64fc6e6751c2"
+    },
+    {
+      "path": "server/routes/comments.js",
+      "sha256": "712c48c1a500f9465625fdccfa29e7e9367ba448fa288b2b0d7aaeb80afc79d0"
+    },
+    {
+      "path": "server/routes/comments.routes.test.js",
+      "sha256": "6b300e3e95963fff1d08184b0a17f3beb9b77388b14d067fe848e3041d10a475"
+    },
+    {
+      "path": "server/routes/compliance.js",
+      "sha256": "204e31e98977b33ad3cce35206d9687f8b250de92f6f73358e814c12923d48b7"
+    },
+    {
+      "path": "server/routes/compliance.routes.test.js",
+      "sha256": "59b68efbe69cb8e1b109043141cad8dd6c77a6eaab6b6d561d495557fdd44291"
+    },
+    {
+      "path": "server/routes/courses.js",
+      "sha256": "c9f83e209cbcd6eb79b9f2e7a11e671b30da36fafaa437e54d0b679c812f65b4"
+    },
+    {
+      "path": "server/routes/curriculum.js",
+      "sha256": "03b8ba75046f5045b1b29fa2869d87f8e5699b1208ae1d9cb045753be0080f18"
+    },
+    {
+      "path": "server/routes/deadlines.js",
+      "sha256": "3d05526d9cfdb293eaf490428042e77007d8cec8b8b6352086c6128abedbbe8a"
+    },
+    {
+      "path": "server/routes/deadlines.routes.test.js",
+      "sha256": "683ddab4d00c01795b799fa8e7960e1480ae5ba4335879246af17378161b1862"
+    },
+    {
+      "path": "server/routes/enforcement.routes.test.js",
+      "sha256": "fd43e028ddfc19656d81513fc83639ef67052ff0a56008ca82e7de6f8b03c747"
+    },
+    {
+      "path": "server/routes/institution.js",
+      "sha256": "ae9d5b779657c17c81ae33d00a682e94ae22d86bc2628ec70500e3c67db82ddf"
+    },
+    {
+      "path": "server/routes/logs.js",
+      "sha256": "1d9ec6bd36a58c8b74dc0f00c9c9c39bcfdbd7c14e72f0eb370e2c21cf2dde31"
+    },
+    {
+      "path": "server/routes/logs.routes.test.js",
+      "sha256": "df41d8000149d92ea0d150f2d647ec1bdb3b72dc6345c28db2e11b4e9adae450"
+    },
+    {
+      "path": "server/routes/messages.js",
+      "sha256": "b7c7bad5514926924b636659694c68757ecc7e6fd53ef0d6029c9d1e9ef3f238"
+    },
+    {
+      "path": "server/routes/messages.routes.test.js",
+      "sha256": "b58fbe85cf0799c1d0ec833256d760c56775081ac04c35be40848b309e0bbfae"
+    },
+    {
+      "path": "server/routes/notifications.js",
+      "sha256": "5c72c83e23b306f49431a158697ff2075dde69f8a2cf2874b168f403237947fb"
+    },
+    {
+      "path": "server/routes/passwords.routes.test.js",
+      "sha256": "58bb155b204f77e95790e6889453e75e021dc54d3ffbe0aae5c2d250aa98ee75"
+    },
+    {
+      "path": "server/routes/pdfImport.js",
+      "sha256": "3192a2753d36ee7eb006236e3d8d7dac4bfb263cc27d82f3b724e5c7dfb687bc"
+    },
+    {
+      "path": "server/routes/pdfImport.routes.test.js",
+      "sha256": "94f38777196850e6f6c77e4129b26d215d1e6f52d3f4cb2c853680ecfbba11c5"
+    },
+    {
+      "path": "server/routes/preferences.routes.test.js",
+      "sha256": "edfe182a26960c70138aae3cbe1a99151df4fccb05affccb41cf285762b80d8a"
+    },
+    {
+      "path": "server/routes/programManagement.routes.test.js",
+      "sha256": "1aa46d660910f49d0cd32570891382306bfac9cbf127b3f2f2234e7615fc9783"
+    },
+    {
+      "path": "server/routes/programs.js",
+      "sha256": "6290db727e59ba8bb8605e273b76a5928bf91aa4f0110d0de79c279c959b83a8"
+    },
+    {
+      "path": "server/routes/review.routes.test.js",
+      "sha256": "648e7064375939309c3817874117dc93c4bbc8ffef751e430adb5a082a8ef39e"
+    },
+    {
+      "path": "server/routes/settings.js",
+      "sha256": "0d16523fea83bb512d5fbccd9f0110b810ff1deae50b253ec30f372c61d21ad6"
+    },
+    {
+      "path": "server/routes/stages.routes.test.js",
+      "sha256": "5b21ccc4500925a72b5fa3fd12cd85cc508eff5b6a0440d9cae3bd7782c6b634"
+    },
+    {
+      "path": "server/routes/students.js",
+      "sha256": "99f2b84f824169b7b6ef66cc2140daf092eebaa4f039e582e4e9fe3bdb95d429"
+    },
+    {
+      "path": "server/routes/syllabi.js",
+      "sha256": "6ab448529fd2f5d26a4ab9d787cc66fc7ab50e34125b8d4a76ae53b456ca6da2"
+    },
+    {
+      "path": "server/routes/syllabusCheck.js",
+      "sha256": "0f69fec0858670b1cc321f5a1b2fa637e06b2faacb2bf77fe79771c7b6522627"
+    },
+    {
+      "path": "server/routes/syllabusCheck.refine.routes.test.js",
+      "sha256": "1869ba627aaac34f97d01765e1cff70f251ace263bf3781b1b4fd90c12f2a060"
+    },
+    {
+      "path": "server/routes/syllabusCheck.routes.test.js",
+      "sha256": "388e1125636490466bedf93cfa6560c85c1cdbcdadaa0003994f2607f4babcd1"
+    },
+    {
+      "path": "server/routes/syllabusContent.js",
+      "sha256": "9fa14e7b6fab010292c3473e6ccc07286fae6188686035dea993c0269f1645ab"
+    },
+    {
+      "path": "server/routes/usage.js",
+      "sha256": "26dd9e3863c26805c9c9d5e4c980acb58bd72611354d02feb7887ec05b0e1964"
+    },
+    {
+      "path": "server/routes/usage.routes.test.js",
+      "sha256": "a2405fc446969d96f150f3b7ee2af5cac4f157dde74a2da2815b6d6df6a07774"
+    },
+    {
+      "path": "server/routes/users.js",
+      "sha256": "4772145007d8a70ff8281d6ffd8e990cbbf84259043f0d5e76eb8425e7334794"
+    },
+    {
+      "path": "server/scripts/ocr-cor-test.js",
+      "sha256": "887fdf5bf328fae062982bb0ea270387233fd0b26c7dea9d302e5f061d00cbdb"
+    },
+    {
+      "path": "server/scripts/syllabus-check.cjs",
+      "sha256": "3233ab59a78d73d23253e952624067da6532ef8fc80c57f16b49c6517283b55d"
+    },
+    {
+      "path": "src/App.jsx",
+      "sha256": "c4c711e7b430d3b5507e6311ffe86348655c86f496e2c953fbbd534f165bbea6"
+    },
+    {
+      "path": "src/components/AdministrativeSettings.jsx",
+      "sha256": "45fabee9ad41ded3bc072a172102285fc6b92e7a6e927f0176929b6dea5fc667"
+    },
+    {
+      "path": "src/components/CatalogModalPortal.jsx",
+      "sha256": "fda795484408f91a3b3b2fdb9fdd7a932818374ebe15a9ead72ada8a750b2a01"
+    },
+    {
+      "path": "src/components/ChangePassword.jsx",
+      "sha256": "0bbe52a7950cad6a957a41d37e86bab6cbfc5f00160c0d26d083f628acbc3e92"
+    },
+    {
+      "path": "src/components/ChatModal.jsx",
+      "sha256": "e6ba7e5c39b7da530672a37a022e4cbb66356b54e524a90114e51fb0db66440a"
+    },
+    {
+      "path": "src/components/ChatThread.jsx",
+      "sha256": "bc85b8192c73cb0102eb74b5d7a6d0437392aff50156af083797e624760fdac9"
+    },
+    {
+      "path": "src/components/CheckHistory.jsx",
+      "sha256": "8b92426e46aa398daa25e40d725eddd4121c20f4fce04333407c9b1daa9266f0"
+    },
+    {
+      "path": "src/components/ComplianceModal.jsx",
+      "sha256": "17976a7a3a2badb45391bae66c7c50acc5b9d2faccd10fe4e53f5cb8609cb294"
+    },
+    {
+      "path": "src/components/ConfirmModal.jsx",
+      "sha256": "cf519856b884c6ec2c4a593c66575204851756b3b24aa01247b48c5a6a0e1fe4"
+    },
+    {
+      "path": "src/components/customIcons.jsx",
+      "sha256": "82815c19f3e247612d41fd2802105515a4bdf8178b81736279defcb78cf9c77d"
+    },
+    {
+      "path": "src/components/DatePicker.jsx",
+      "sha256": "e807d2a9f0e3b4941f8303c0fa2cbdb3ea96c5828f62ef712687c16accbce8e2"
+    },
+    {
+      "path": "src/components/DeadlineDialog.jsx",
+      "sha256": "82f42dd1b7e53d5e73d3a4a378f9701ca1adb0faf13dc92b684f2418bd14d31e"
+    },
+    {
+      "path": "src/components/ForgotPassword.jsx",
+      "sha256": "0313d41456ea4d61026405019aad96143c9a90761e1a94a1de2346ad59024b5a"
+    },
+    {
+      "path": "src/components/GoogleSignInButton.jsx",
+      "sha256": "a945d86891344c6721513567ad5c0567f973cc7094b75a882d5f044ffc11383c"
+    },
+    {
+      "path": "src/components/HybridCheckPanel.jsx",
+      "sha256": "7598a6222711c65ee359060c75904d59351ed1bdbcb54a4e3667835216f8569b"
+    },
+    {
+      "path": "src/components/HybridProblem.jsx",
+      "sha256": "02c7e6c6e56731c8afaca9be3fc178016c278c4923db2a508f60b1d133f36b6c"
+    },
+    {
+      "path": "src/components/HybridProblemsModal.jsx",
+      "sha256": "76b3cd62536705e9f03e04f872b86fff0fcde3418b7ba588841f4f5c7f69cfbc"
+    },
+    {
+      "path": "src/components/Login.jsx",
+      "sha256": "a04e4a1dba6e81af9e7813c41a2a19fcddffe6e2db5cbd2555f3c2c71c1f59e3"
+    },
+    {
+      "path": "src/components/MobileNav.jsx",
+      "sha256": "265901d27cfd7f4fbf58615ec2cf29ecded8f725db4b1f7dc18d583c35bd6318"
+    },
+    {
+      "path": "src/components/ProgramManagement.jsx",
+      "sha256": "5844f761a83c141fc8d68d7643d134a57fb496ea806336519059997a13cd6bfc"
+    },
+    {
+      "path": "src/components/Select.jsx",
+      "sha256": "c7a9bc21704010ec5b5906406104374d1ec913f01f4609b377a3aa6e7a03a063"
+    },
+    {
+      "path": "src/components/Sidebar.jsx",
+      "sha256": "75fa6b3a77f3c7a8c4e54ee2f0dea978b4fb01e9efa6955756d2b16fba31b807"
+    },
+    {
+      "path": "src/components/StableButton.jsx",
+      "sha256": "811284a0b37173acf45a81ccb2d068c1d71b7fd6f04bb4905178cdeaca6ffad7"
+    },
+    {
+      "path": "src/components/StudentRegister.jsx",
+      "sha256": "4f61a136b44f4e221204ea9443e72ff2af68fc418eaa1281810f3d901453304b"
+    },
+    {
+      "path": "src/components/SubjectActions.jsx",
+      "sha256": "545217d209abd05d264e0510a67c1af1586e7e778dfa5644630252880e17267c"
+    },
+    {
+      "path": "src/components/SyllabusCommentsModal.jsx",
+      "sha256": "c4f63798aed3928864616f2fa026fad410d316d65e919f5a723cd6a8a334cbc2"
+    },
+    {
+      "path": "src/components/SyllabusPicker.jsx",
+      "sha256": "aaaaf4f2ee33a31816a5c801267e1d2e434bf294e5fe9d0d8caf3f8d453587b8"
+    },
+    {
+      "path": "src/components/SyllabusViewModal.jsx",
+      "sha256": "c41d879d94173272a7bcedb4b03b41739959a04eca801f1397230a5fa47f5ba1"
+    },
+    {
+      "path": "src/components/TimeUsageCard.jsx",
+      "sha256": "c67a5228b8c02b0de947c2de1f20f3f3c481ef4be67a8c671d10bd1f5a6bd0ec"
+    },
+    {
+      "path": "src/components/Topbar.jsx",
+      "sha256": "d2e32da3c5bc5a107f467dbf8c9a0c68282a40b7d01f621b10aeda89367259aa"
+    },
+    {
+      "path": "src/components/TypewriterText.jsx",
+      "sha256": "101a9cf135d919ce85bce13ee263e3f6ca15d6be5579d856371495a6ef67b938"
+    },
+    {
+      "path": "src/components/ui.jsx",
+      "sha256": "f59cacc6f8874b5be1edceb44e16ce03f4a352113f9e2d1337f030d7e9164ba3"
+    },
+    {
+      "path": "src/components/UpcomingDeadlines.jsx",
+      "sha256": "ae5fb8c99107a475150a90dee57e6d73c8f71e78de7483f21c8943a430428dfa"
+    },
+    {
+      "path": "src/components/useModalLayer.js",
+      "sha256": "444777d86488e17c63b47389a33cb87a310f07af4df297287a86e5dafb8bae74"
+    },
+    {
+      "path": "src/components/VerdictPanel.jsx",
+      "sha256": "dd7514b71f96d52d11114bff16064dc5a6b72b52f01469a5883d93cb3b183834"
+    },
+    {
+      "path": "src/components/VersionHistoryModal.jsx",
+      "sha256": "10bd22034bc69ad5f154f56030bbb802992f9044d5ffaca9d76da3a259117189"
+    },
+    {
+      "path": "src/data/initialData.js",
+      "sha256": "3a8e9c12785276f0879f59e05c6b342f6827acd18f58397ea69a627e75c0499a"
+    },
+    {
+      "path": "src/data/officialProgramOutcomes.json",
+      "sha256": "c270ee18c1d37bfb47eb5080a4b45bc2c1e03f4ef9d5968a2dcbc485d573fd05"
+    },
+    {
+      "path": "src/data/outcomesSeed.js",
+      "sha256": "6c78fe557265b57cfba5cc8624fac1a89c0f910b63b16a3ed21e903b18c4219a"
+    },
+    {
+      "path": "src/i18n/changes.js",
+      "sha256": "223f01757f1aa0dfcf29da5999749ab0aee1216f45386a7e2bb068bb08a3f1d3"
+    },
+    {
+      "path": "src/i18n/dashboardStats.js",
+      "sha256": "1c639e5cd43cb5012f48f02e03e79ae18e5bd4d3301c4067c6c112f79f83d409"
+    },
+    {
+      "path": "src/i18n/extra.js",
+      "sha256": "734fc0b49556b5cb225609b78495f9ba097765dd552368c80012b4f1cd6c2e7f"
+    },
+    {
+      "path": "src/i18n/hybrid.js",
+      "sha256": "dfee8ff525bc15e415376d98ef8fe74a03285ce400d0d33be6cfc73fd3da388e"
+    },
+    {
+      "path": "src/i18n/i18n.test.js",
+      "sha256": "4e45ee167785b0c18f288c239f735f8dc43c90cb237aab55f2e073ebec42b9eb"
+    },
+    {
+      "path": "src/i18n/index.js",
+      "sha256": "0303c9ec1e9c0b33c8167070dcaf5680fb76aedc8221a0983e7da092afe971b6"
+    },
+    {
+      "path": "src/i18n/lessonAuthoring.js",
+      "sha256": "9c637311e8c5abd9d483c8e15f0724ff386792914a047e23a47c557836241416"
+    },
+    {
+      "path": "src/i18n/messages.js",
+      "sha256": "ca35f4d6cd1960adb63c29515ad34bab9108331bbc56a567a4c41b6561ff7a8f"
+    },
+    {
+      "path": "src/i18n/pdfImport.js",
+      "sha256": "858e25e79433fa9d65802bb3966d593725400bbcf605007fdaac89a68c56023d"
+    },
+    {
+      "path": "src/i18n/preference.js",
+      "sha256": "2d7265bf314c72a8f0904dc298bb482d606a5f1e7a427f59095cc2dcf1fd5272"
+    },
+    {
+      "path": "src/i18n/store.js",
+      "sha256": "d5e700e424de9865601ee823a998e34f54badc6eef3f3ef82f387c469a050a66"
+    },
+    {
+      "path": "src/i18n/transition.js",
+      "sha256": "5724c583212fb267143b61f664086ee52d7ae59dd57a33e88f03c7186ab22af0"
+    },
+    {
+      "path": "src/i18n/transition.test.js",
+      "sha256": "30edd422b0e88522145efb992dac92110670abbaa7c1950111dc9b344a0443af"
+    },
+    {
+      "path": "src/i18n/useLanguageTransition.js",
+      "sha256": "be209c4b60102c0b977070033c57c6a30837db3419cca60c3ce47c26516fb623"
+    },
+    {
+      "path": "src/i18n/validation.js",
+      "sha256": "71dc5755bb6bcec11ca1691d7439fc6cc086cfea2d3c25f6ab69c6f862326010"
+    },
+    {
+      "path": "src/lib/activity.js",
+      "sha256": "5881fd6fac0e3cfe2805c9e572b77720ad2a25302cfb790df962b1f95ca80320"
+    },
+    {
+      "path": "src/lib/activity.test.js",
+      "sha256": "b05a22875b3b49ff2ed54f8a0e141e9b58c00f868c5384f6887bef297b7d3024"
+    },
+    {
+      "path": "src/lib/activityView.js",
+      "sha256": "eea4555494978bed33dd5fbbbf11842095ceee2686e2c575dc8fdcd5db2ecbf9"
+    },
+    {
+      "path": "src/lib/activityView.test.js",
+      "sha256": "4cfad00a1de2f0257627a5e3d98632dc35a5986d1597ac3e049c572414ff0c14"
+    },
+    {
+      "path": "src/lib/adminDashboardStats.js",
+      "sha256": "fe5df60720b315ec8cc5d743559a1075987ee8bb14a70e8fff31ab5902f8160f"
+    },
+    {
+      "path": "src/lib/adminDashboardStats.test.js",
+      "sha256": "46250ae76ac75662a26da35a70498d93984c3471d400e89b5541d20ca59a8eff"
+    },
+    {
+      "path": "src/lib/api.js",
+      "sha256": "4e51d0321a9edc600e1b60b7a40d37b06e33224c6cffba384e2c40d3d4f50bfa"
+    },
+    {
+      "path": "src/lib/assignmentSync.js",
+      "sha256": "f8cf550c2b1548f98c927ef722e7eaed50d3848c979f64e6a34bb362f0bfe2ea"
+    },
+    {
+      "path": "src/lib/assignmentSync.test.js",
+      "sha256": "32c2daa5df075a03073ac51d0ff056fc6770e32fc65b113035f808af89630083"
+    },
+    {
+      "path": "src/lib/avatar.js",
+      "sha256": "8954a897db1fb69d722dff2fea45c85ee3a820c1edc3506898ed1c490a10a9d0"
+    },
+    {
+      "path": "src/lib/avatarStore.js",
+      "sha256": "a60586dc2b7974bec1a2c16252a349dae600bcb2621df6547db1dfa45c5ef9b1"
+    },
+    {
+      "path": "src/lib/avatarStore.test.js",
+      "sha256": "229a7c217daa6731187a1ca3dfac7fed0501270d4a69d538f9de6a3bc0220846"
+    },
+    {
+      "path": "src/lib/brandTheme.test.js",
+      "sha256": "0d2fe67f0a51edd14ef690db8e0d3854853ee4bc528f50265073068f1a6e04d5"
+    },
+    {
+      "path": "src/lib/catalogMotion.js",
+      "sha256": "a33230aec7a9c02c137a3587b7ba08ce9a87f0636109bab7600e1a29c51b379f"
+    },
+    {
+      "path": "src/lib/catalogMotion.test.js",
+      "sha256": "a286702e1a94613ff68426f238285cfc8e2f962ce5b3683bca638d0718e8171a"
+    },
+    {
+      "path": "src/lib/chatPartner.js",
+      "sha256": "e242e76edb6b00753357526fa775b0560d144294b2ba15f2b416f5f4371c21bb"
+    },
+    {
+      "path": "src/lib/chatPartner.test.js",
+      "sha256": "fe424e5e0a30d223eb53438afc276297af53fd7cca79ae093c2854108469cb4a"
+    },
+    {
+      "path": "src/lib/checkPolicy.js",
+      "sha256": "25097db532b66f1745689fdb877f77f1ca4cd81af508f749369f0fb40b861d4b"
+    },
+    {
+      "path": "src/lib/compiledCss.js",
+      "sha256": "b2181ee0be797bb375e0b03ca49e5bf98c10a326a8bef5b6f8085843a57f4019"
+    },
+    {
+      "path": "src/lib/complianceRules.js",
+      "sha256": "6fc84e715d025438c66bea966b7bbf7b807d0c458df3eb1ad67dd6459e422cf8"
+    },
+    {
+      "path": "src/lib/complianceRules.parity.test.js",
+      "sha256": "610338cc6b9b5d9763cf961e348b65b4a5d6bbd012ab518a7c6a4d22f1c8f8a4"
+    },
+    {
+      "path": "src/lib/complianceStats.js",
+      "sha256": "b3ea1a0f5602c2b3fe0bab9ae14a7732a65cefa4acfbd4eca27055c2aa829b1b"
+    },
+    {
+      "path": "src/lib/complianceStats.test.js",
+      "sha256": "869ddd455031525c9a45627c360b68ab7a6ba53123ed27ce1b32df5284949955"
+    },
+    {
+      "path": "src/lib/complianceView.js",
+      "sha256": "bf6abaaf0f5316922eb38e4812b73445702a0a6a7a4e0f509fd42d6d82a65085"
+    },
+    {
+      "path": "src/lib/complianceView.test.js",
+      "sha256": "31c563591c5c378982c621d628aec0c22ac077723c3274fb6bc9e0e55b67c656"
+    },
+    {
+      "path": "src/lib/dashboardIcons.test.js",
+      "sha256": "4e4929003012ffd21733e0ed34dc817428281071962b844a233d48833b7d9fef"
+    },
+    {
+      "path": "src/lib/datePickerModel.js",
+      "sha256": "231d090b2383d226c1beabe938b3e3f6bab7b52d07fda0b991edaf0803813b59"
+    },
+    {
+      "path": "src/lib/datePickerModel.test.js",
+      "sha256": "d347d516996f929ba10f5bde00594682aeffeebe450661c75e8eaafc0441406c"
+    },
+    {
+      "path": "src/lib/deadlineView.js",
+      "sha256": "2a12e9220b2f42b39600f8875efec81b2e72c29604383768efd69d6608e4a3e4"
+    },
+    {
+      "path": "src/lib/deadlineView.test.js",
+      "sha256": "b7491ffbec3ab211fb81e937b6f859a2549fbc096735c3f5342b566f73d0df27"
+    },
+    {
+      "path": "src/lib/draftSave.js",
+      "sha256": "e773ec5908484adf9f8bda81a3e93365020cb353909a69ad9bf1084f75593890"
+    },
+    {
+      "path": "src/lib/draftSave.test.js",
+      "sha256": "6ecc9ffa7eb888b7b033a805e24332282065cbb227ad178910940181531218e6"
+    },
+    {
+      "path": "src/lib/googleIdentity.js",
+      "sha256": "f7c4d5251c79e91810be80aa7d0a1b97790c237ea7b4ba2766d8892912c3ad5c"
+    },
+    {
+      "path": "src/lib/googlePhotoSync.js",
+      "sha256": "e8e105cd3e249b3b853a76023603c4095bb6bc255065b78a50713bcc74e48790"
+    },
+    {
+      "path": "src/lib/googlePhotoSync.test.js",
+      "sha256": "d02d613ac945e19c7637af86c3e1a56fddfb4356e045de2085d45120c6fc4729"
+    },
+    {
+      "path": "src/lib/hybridCheck.js",
+      "sha256": "645241eb3e14764382e6ccfa0b5540c3b15d83a77f9f901a65095098ca5c4397"
+    },
+    {
+      "path": "src/lib/hybridCheck.test.js",
+      "sha256": "0c06e083cc325524d1c950def1e8a7b7a4478b1f80feb7692eb580bab37c0794"
+    },
+    {
+      "path": "src/lib/hybridView.js",
+      "sha256": "19b3f3253c51036de46246695a764e9325e282adedc2a07b5197203b74a213b0"
+    },
+    {
+      "path": "src/lib/hybridView.test.js",
+      "sha256": "4200cdaed0fb16c7cd943260bc1eee413c1859c9f56dc56a99598cbab9e5cee2"
+    },
+    {
+      "path": "src/lib/lessonAuthoring.js",
+      "sha256": "79030ebbc14a759c53c0a508ce59d1d3c9ea4470d0912813318dff2e8dfb988e"
+    },
+    {
+      "path": "src/lib/modalStack.js",
+      "sha256": "bcc134f92591e758ebb4729357ff84ff3de10ff45f196a764fb3ec1aa871ba28"
+    },
+    {
+      "path": "src/lib/modalStack.test.js",
+      "sha256": "08df05e19d92fd23583611a9f7b56f3146acf4570bd2dfa568c07eeb3b61f36c"
+    },
+    {
+      "path": "src/lib/notificationRoute.js",
+      "sha256": "aa5bcd0ef6ec3550aafdaab9ca5ffeba2269bc7273a37b31287b51850454add5"
+    },
+    {
+      "path": "src/lib/notificationRoute.test.js",
+      "sha256": "3c3cf6a2374301d08365d52ca633a62a0d18dd5394e1ed257f4b5d01d6fbc209"
+    },
+    {
+      "path": "src/lib/panelMemory.js",
+      "sha256": "d809b57a4b533378ca4b2e78e14b8c35a75fee2999dd5653387d78f0e3d8e280"
+    },
+    {
+      "path": "src/lib/pdfImport.fixes.test.js",
+      "sha256": "92cd61a9fcfde8578a8d6222bfa8c2f1f0a88196ca8b066af17d6426530042f6"
+    },
+    {
+      "path": "src/lib/pdfImport.js",
+      "sha256": "fdb660b9ff9e0e7a20e49aa33aef37b83e164cbeb1ca36578ea33e50e0914e51"
+    },
+    {
+      "path": "src/lib/pdfImport.test.js",
+      "sha256": "2e01a05c9a376953fd9ba3f6985d1b791d97e03f7951eaa6e91ecc8f2ec536e7"
+    },
+    {
+      "path": "src/lib/pdfImportReview.js",
+      "sha256": "121b3f028e9bff305ccffb36c3551532cd69b907d6cab40edee892e3cb98cfc0"
+    },
+    {
+      "path": "src/lib/phTime.js",
+      "sha256": "a3589d425d7d468dc360b6d2244b6c3454ccbb97b1eb0d127ca9d7a4da164764"
+    },
+    {
+      "path": "src/lib/phTime.test.js",
+      "sha256": "93871e60fbc3721f8c3d07c56857e7c494e7a01976af1971fa2e53a8111aa2a8"
+    },
+    {
+      "path": "src/lib/planHeadings.test.js",
+      "sha256": "499653c73c36787ea785da8e9cff845d7b0953b2c8803ce0c6ac918664cf6318"
+    },
+    {
+      "path": "src/lib/reviewView.js",
+      "sha256": "03e6959757f6f274823558caa01e8073b549ef512e39e2abdedf471297977d2d"
+    },
+    {
+      "path": "src/lib/reviewView.test.js",
+      "sha256": "f3fe4efe4260b075b9ce7b52b65f6efd041651d9c1b3c7879ea1ece9b76856c1"
+    },
+    {
+      "path": "src/lib/roles.js",
+      "sha256": "002cce8b4247678128641b39e3f339e5414297a6d7b467e0c983a7abe609c0e8"
+    },
+    {
+      "path": "src/lib/schoolYear.js",
+      "sha256": "c78a1e273375ef86a227fe9425403a1813ef3bc7857bb783f5239d52efff9bbc"
+    },
+    {
+      "path": "src/lib/selectModel.js",
+      "sha256": "bd76af517680efab839cfb91bf6c4e21f3bf0ac86f3465cd0ae165b9ca2edc4a"
+    },
+    {
+      "path": "src/lib/selectModel.test.js",
+      "sha256": "d3b717bd2a42266f7606d4b3ddb3470fcb9338308215f92c5e293ff3dfdce419"
+    },
+    {
+      "path": "src/lib/sentenceCase.js",
+      "sha256": "31ffd9ec685ebc06542a56ff5114b6eb927548c7f5df94fbf36577025099b10c"
+    },
+    {
+      "path": "src/lib/sentenceCase.test.js",
+      "sha256": "97dc8b5ec2b5a8fb0f224bb3e9bc46d56bbd4f667653c6e4a395acfe324aa7cf"
+    },
+    {
+      "path": "src/lib/syllabusModel.js",
+      "sha256": "6f917d5ee59517bc0b334f98d2580ef08c7722a3745ddafae1bb6d7fdbec0afa"
+    },
+    {
+      "path": "src/lib/syllabusModel.test.js",
+      "sha256": "bbb4db9dcd43c002216412c12e12cee8b5d3fbf9d9d84f8e4a52542237724c52"
+    },
+    {
+      "path": "src/lib/syllabusRules.js",
+      "sha256": "4974b4fae6f65e7f28861ab46e6dd11e52063d3c11a00ff642dcf78b865290b8"
+    },
+    {
+      "path": "src/lib/syllabusRules.test.js",
+      "sha256": "bfb2acbbb77e0178c849d6b347b1bbd2d7b935daa12c3141099b5b50d8ecdc66"
+    },
+    {
+      "path": "src/lib/timeUsage.js",
+      "sha256": "945b758475a2881b26a3de5d0576cfadb2b1043b6a404f7109327165553e1110"
+    },
+    {
+      "path": "src/lib/timeUsage.test.js",
+      "sha256": "f92b05ad43f62b6a19ac9d8a5ca50ec41d20fcb6e838c98f440307231f2db4eb"
+    },
+    {
+      "path": "src/lib/typedText.test.js",
+      "sha256": "a0f4474857fa9f7323cfaa9028858473e19443b8c343e0419ac1485394627ebc"
+    },
+    {
+      "path": "src/lib/typography.test.js",
+      "sha256": "d27b8c63380f614150b3a9af7862578310c6456f68775e96120e842bf80fd30c"
+    },
+    {
+      "path": "src/lib/useActiveTime.js",
+      "sha256": "5477538b972f50b5e2b0c0b17eab60aea763c24f1e68d4393c32ded8a4abf500"
+    },
+    {
+      "path": "src/lib/useGooglePhotoSync.js",
+      "sha256": "62d0cab687a4625efd7091169be01e05685ce6bfe3f498242289b79f122220d8"
+    },
+    {
+      "path": "src/lib/useMediaQuery.js",
+      "sha256": "6cf78bc6b58f747f4c0c43059e70ebe56ebf3c9a91f4cd3d7717dd1780ca73a8"
+    },
+    {
+      "path": "src/lib/usePolling.js",
+      "sha256": "4b511a8a94430ab92353a9c3175492dc49b766c4a53846577a91c826bc79cc40"
+    },
+    {
+      "path": "src/lib/utils.js",
+      "sha256": "704e0c8c285b0269a4deae1b00e0d6a7ab7072a2b1b12a06e993ee0178015006"
+    },
+    {
+      "path": "src/main.jsx",
+      "sha256": "7bb101e934adc04aa7fc1364545fdf641797347f9d699d929d56e41f84f3e710"
+    },
+    {
+      "path": "src/responsive.css",
+      "sha256": "e267e0e470b7f152125b2d88c0a1035d795383a0b8965355e3d64796c8794ef0"
+    },
+    {
+      "path": "src/styles.css",
+      "sha256": "62889b6f2588ad8bcabf7e5415692f5f48fda8091d71127d838c710298e48631"
+    },
+    {
+      "path": "src/tailwind.css",
+      "sha256": "055a5e2274f5d534736dccecbdc2f9967dfdbc71b3c65252595c4bd4aa1478c9"
+    },
+    {
+      "path": "src/theme.css",
+      "sha256": "108ad0ffba7557150df75046bc0966990d994d225d27922a0ba897a20ec03ee5"
+    },
+    {
+      "path": "src/tw-theme.css",
+      "sha256": "cb4f4fc5a0278b987ba5074b7dad1e4004dde8a7b7fd0e7029bbd85610c55609"
+    },
+    {
+      "path": "src/views/AIChecker.jsx",
+      "sha256": "b4fa9ef2ba7290c2b13f4f9a27c76a9f44528493dbbab7b8edb9f5835b29637e"
+    },
+    {
+      "path": "src/views/Analytics.jsx",
+      "sha256": "9a7b9e5f1b5bb70bd32d02578af22abecd80a72bc8c5b6cfa64e14aca7ca77ce"
+    },
+    {
+      "path": "src/views/AssignmentsPanel.jsx",
+      "sha256": "0ec82655a41dd8e5c54f87d2ffee333a9fc30242b3efa73c3ba9e5ba4b309941"
+    },
+    {
+      "path": "src/views/builder2/ClosStep.jsx",
+      "sha256": "5ccda0f2d74a4ac389315829956d3d814098bdb9855247cf3d265a25bf63f433"
+    },
+    {
+      "path": "src/views/builder2/ComplianceSection.jsx",
+      "sha256": "dad4eb428b12e6d7dfe624de8efda8ed3aca64cb3261d4524660db01b8d4d1a0"
+    },
+    {
+      "path": "src/views/builder2/FormPaper.jsx",
+      "sha256": "d80e5464c89f51903be66050fd38fc3a608fabb9603ced6030cd277c64313dc2"
+    },
+    {
+      "path": "src/views/builder2/GradeStep.jsx",
+      "sha256": "c91230cb5be62fea959b5d54627ca3275b44fae52a6d5024cfe75c162f122c9a"
+    },
+    {
+      "path": "src/views/builder2/index.jsx",
+      "sha256": "cdca49044d7eb0d77c2c283544b1c837a5be5b6d22a57cb306aa0191d6f5c9f0"
+    },
+    {
+      "path": "src/views/builder2/InfoStep.jsx",
+      "sha256": "819d0c94542d41917d58424f6a2518aca9087519da321ab838b2813b5c73239f"
+    },
+    {
+      "path": "src/views/builder2/parts.jsx",
+      "sha256": "4726da7dcc4d9f0570bbdb3930d050f58d1eac37c176bbd3c9a5aa0bde833b40"
+    },
+    {
+      "path": "src/views/builder2/PlanStep.jsx",
+      "sha256": "523ce942eb506aa8c696f3d1851273288fc9809e5c06804d4d2a13f608b8500e"
+    },
+    {
+      "path": "src/views/builder2/ReadOnlyOutcomes.jsx",
+      "sha256": "ae384f551ff721ef86149aeb2a08d8f8879ea8a7397189a8f7ca2efc820321e9"
+    },
+    {
+      "path": "src/views/builder2/RefsStep.jsx",
+      "sha256": "63d9e2b16905426e13d0aa020d276c53f9532030e990e7e2da4e9396537ed64e"
+    },
+    {
+      "path": "src/views/builder2/ReqStep.jsx",
+      "sha256": "f1036c931e2359a5df14ef8d0551f9e9d1d41a936fdd3db765ce041c7ee2d1a8"
+    },
+    {
+      "path": "src/views/builder2/ReviewStep.jsx",
+      "sha256": "c45b4fe98dc9e7d8f4dc92506d5ebed7ec02a30e4711ab10dba7ea91453b75a8"
+    },
+    {
+      "path": "src/views/builder2/UploadPanel.jsx",
+      "sha256": "3765b307759c69b8211ab433945b58e74e3ed3a599d3b8d99801b7fbd7cd956c"
+    },
+    {
+      "path": "src/views/builder2/useCatalog.js",
+      "sha256": "c71ae57dc3239a28f4a2139aa48b77ab83ff97e7631a14f9353ebdb9b359a14a"
+    },
+    {
+      "path": "src/views/builder2/useCompliance.js",
+      "sha256": "fdfd4bacc7b0bba8416f9ae309a0c5a80cd44057aa4b4570282f6333ba2d1eb2"
+    },
+    {
+      "path": "src/views/builder2/useDraft.js",
+      "sha256": "cbc1867eaa006dc57923c82a36ca8892dc0cdd055333e8ea6496d8bc3bd8aaaf"
+    },
+    {
+      "path": "src/views/CommentsThread.jsx",
+      "sha256": "c034a2061458dfd49d6fe61a07cd20849a40f6d886e460936ee9790224026250"
+    },
+    {
+      "path": "src/views/Compliance.jsx",
+      "sha256": "eb9ed1baa71fa449f768fa41357478914704b1e42c3ef89e71d67976804b5960"
+    },
+    {
+      "path": "src/views/ComplianceCard.jsx",
+      "sha256": "32160f8448642107bcbd3255be68b4aa07fb924b0744c36d53042417b8fb94d9"
+    },
+    {
+      "path": "src/views/CourseOutcomes.jsx",
+      "sha256": "c394e17ad261f71f89e3c2d8733980d6b896961ccee47a423909f131a798602f"
+    },
+    {
+      "path": "src/views/DashboardView.jsx",
+      "sha256": "70c6cd624f537be5720b1489517547fede148b9e0ce21a842e312312055da5dc"
+    },
+    {
+      "path": "src/views/MySyllabi.jsx",
+      "sha256": "c2436c65733d8fd258e3a01af9bc206b5b61f2599c1061570405cb4a2a883a8b"
+    },
+    {
+      "path": "src/views/Reports.jsx",
+      "sha256": "e565a3d860e9feb3d767970cb9589795eb94daccf25c36e690020a6fc1327ef6"
+    },
+    {
+      "path": "src/views/Repository.jsx",
+      "sha256": "2fff10fa386d0bddc9a86f34373e4edfd69e482100853c3836106d7e66386a36"
+    },
+    {
+      "path": "src/views/ReviewApproval.jsx",
+      "sha256": "e304ad28f04c48d44aa663f626dfcef2185fe653455f92397a69d1dbbd0ec801"
+    },
+    {
+      "path": "src/views/ReviewBoard.jsx",
+      "sha256": "22e82cea728cd7b89ebe93064d555f3e8045ec1beacf54ab3c36408d56c94dcf"
+    },
+    {
+      "path": "src/views/ReviewDocument.jsx",
+      "sha256": "4943d188d0e06932a42128d16d0a9910ba24bba56c7b8188c458447dd41ebdf6"
+    },
+    {
+      "path": "src/views/ReviewPanel.jsx",
+      "sha256": "a60b1c30eae81705292074c94e022f620b024e153a8d0d62e150ce5147eb19ce"
+    },
+    {
+      "path": "src/views/Settings.jsx",
+      "sha256": "bedf955ff29b7cce77635c77dd6b166f2bbc9c5fc8dd07907e0dd46d5136914f"
+    },
+    {
+      "path": "src/views/StudentHome.jsx",
+      "sha256": "9dc86c040b73b6c96be3e5e7c10a75d70b676395bbf3eaeb9c283282041e2c42"
+    },
+    {
+      "path": "src/views/SyllabusBuilder.jsx",
+      "sha256": "6c5ec1b63befab7ec1c1ff3358a436a2fda1fdb37ba9882b42e35a67ba3d7c3f"
+    },
+    {
+      "path": "src/views/UsersRoles.jsx",
+      "sha256": "f95353b507222c2bf48b072c10954406d1a46f1c0fe40901f239324e70350616"
+    },
+    {
+      "path": "test-localization.log",
+      "sha256": "2a56c1cdef988a55144fb99da40aea5bbc62c260a3d9ec0323f31d1804849cd3"
+    },
+    {
+      "path": "tests/i18n-preview-error.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/i18n-preview.html",
+      "sha256": "c4547b2fc3e15ad0aec1bc179af57a7ac19e6b1b1a6b760f92a0a4414f251770"
+    },
+    {
+      "path": "tests/i18n-preview.jsx",
+      "sha256": "efba20170507acf27c99c313641b4f526b79520693200510bce61126cd13332a"
+    },
+    {
+      "path": "tests/i18n-preview.log",
+      "sha256": "509a50da4f86eb0627e0e1e7e5ae15fb15192236008bb53c0fbd5507f4b462de"
+    },
+    {
+      "path": "tests/i18n-ui.test.jsx",
+      "sha256": "7dc1f0a0ecce76fffdacf398fd1dc0ef17efc827bbced1096d4c6f100863af17"
+    },
+    {
+      "path": "tests/lesson-authoring.test.jsx",
+      "sha256": "fa93d8d11870a8bd8eb3f7b4cd8b807f3789241adc5ed5a7e22adcca040ebf67"
+    },
+    {
+      "path": "tests/pdf-import-ui.test.jsx",
+      "sha256": "cb3b5bfd5401ab3cc902730808bfda6639313e8dd34aa119f63e57df3eae6e93"
+    },
+    {
+      "path": "vite.config.js",
+      "sha256": "d9b98d7664e4205ab8d304e8388573bde6e4e49bc6a0f562a37afcbf8febd4c2"
+    }
+  ]
+}

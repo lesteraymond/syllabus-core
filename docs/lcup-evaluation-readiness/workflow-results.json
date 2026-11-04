@@ -1,0 +1,1083 @@
+{
+  "results": [
+    {
+      "language": "en",
+      "key": "it202",
+      "action": "keep",
+      "roundTrip": true,
+      "cloPo": 19,
+      "cloEga": 11,
+      "iloClo": 30,
+      "prereq": "ISOLATED EXISTING PREREQUISITE"
+    },
+    {
+      "language": "en",
+      "key": "ie402",
+      "action": "keep",
+      "roundTrip": true,
+      "cloPo": 13,
+      "cloEga": 5,
+      "iloClo": 29,
+      "prereq": "ISOLATED EXISTING PREREQUISITE"
+    },
+    {
+      "language": "en",
+      "key": "cpe304",
+      "action": "keep",
+      "roundTrip": true,
+      "cloPo": 11,
+      "cloEga": 4,
+      "iloClo": 6,
+      "prereq": "ISOLATED EXISTING PREREQUISITE"
+    },
+    {
+      "language": "en",
+      "key": "it202",
+      "action": "replace",
+      "roundTrip": true,
+      "cloPo": 19,
+      "cloEga": 11,
+      "iloClo": 30,
+      "prereq": "IT 101"
+    },
+    {
+      "language": "en",
+      "key": "ie402",
+      "action": "replace",
+      "roundTrip": true,
+      "cloPo": 13,
+      "cloEga": 5,
+      "iloClo": 29,
+      "prereq": "4th Year Standing"
+    },
+    {
+      "language": "en",
+      "key": "cpe304",
+      "action": "replace",
+      "roundTrip": true,
+      "cloPo": 11,
+      "cloEga": 4,
+      "iloClo": 6,
+      "prereq": "FUNEC, FUNELC"
+    },
+    {
+      "language": "tl",
+      "key": "it202",
+      "action": "keep",
+      "roundTrip": true,
+      "cloPo": 19,
+      "cloEga": 11,
+      "iloClo": 30,
+      "prereq": "ISOLATED EXISTING PREREQUISITE"
+    },
+    {
+      "language": "tl",
+      "key": "ie402",
+      "action": "keep",
+      "roundTrip": true,
+      "cloPo": 13,
+      "cloEga": 5,
+      "iloClo": 29,
+      "prereq": "ISOLATED EXISTING PREREQUISITE"
+    },
+    {
+      "language": "tl",
+      "key": "cpe304",
+      "action": "keep",
+      "roundTrip": true,
+      "cloPo": 11,
+      "cloEga": 4,
+      "iloClo": 6,
+      "prereq": "ISOLATED EXISTING PREREQUISITE"
+    },
+    {
+      "language": "tl",
+      "key": "it202",
+      "action": "replace",
+      "roundTrip": true,
+      "cloPo": 19,
+      "cloEga": 11,
+      "iloClo": 30,
+      "prereq": "IT 101"
+    },
+    {
+      "language": "tl",
+      "key": "ie402",
+      "action": "replace",
+      "roundTrip": true,
+      "cloPo": 13,
+      "cloEga": 5,
+      "iloClo": 29,
+      "prereq": "4th Year Standing"
+    },
+    {
+      "language": "tl",
+      "key": "cpe304",
+      "action": "replace",
+      "roundTrip": true,
+      "cloPo": 11,
+      "cloEga": 4,
+      "iloClo": 6,
+      "prereq": "FUNEC, FUNELC"
+    },
+    {
+      "language": "en",
+      "key": "cyber-collision",
+      "blockedBeforeSave": true
+    },
+    {
+      "language": "tl",
+      "key": "cyber-collision",
+      "blockedBeforeSave": true
+    },
+    {
+      "language": "en",
+      "key": "prerequisite-decision",
+      "blockedBeforeSave": true
+    },
+    {
+      "language": "tl",
+      "key": "prerequisite-decision",
+      "blockedBeforeSave": true
+    }
+  ],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/syllabi/1/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabus-check/status"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/25"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/pdf-import/config"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/1/import-pdf"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/syllabi/1/content"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/1/compliance/recheck"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/1/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/1/compliance"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/1/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/25"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/1/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/2/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/26"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/pdf-import/config"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/2/import-pdf"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/syllabi/2/content"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/2/compliance/recheck"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/2/compliance"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/2/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/2/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/26"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/2/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/3/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/27"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/pdf-import/config"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/3/import-pdf"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/syllabi/3/content"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/3/compliance/recheck"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/3/compliance"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/3/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/3/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/27"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/3/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/1/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/25"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/pdf-import/config"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/1/import-pdf"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/syllabi/1/content"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/1/compliance/recheck"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/1/compliance"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/1/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/1/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/25"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/1/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/2/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/26"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/pdf-import/config"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/2/import-pdf"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/syllabi/2/content"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/2/compliance/recheck"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/2/compliance"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/2/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/2/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/26"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/2/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/3/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/27"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/pdf-import/config"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/3/import-pdf"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/syllabi/3/content"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/3/compliance/recheck"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/3/compliance"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/3/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/3/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/27"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/3/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/1/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/25"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/pdf-import/config"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/1/import-pdf"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/syllabi/1/content"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/1/compliance/recheck"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/1/compliance"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/1/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/1/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/25"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/1/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/2/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/26"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/pdf-import/config"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/2/import-pdf"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/syllabi/2/content"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/2/compliance/recheck"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/2/compliance"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/2/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/2/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/26"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/2/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/3/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/27"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/pdf-import/config"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/3/import-pdf"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/syllabi/3/content"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/3/compliance/recheck"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/3/compliance"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/3/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/3/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/27"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/3/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/1/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/25"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/pdf-import/config"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/1/import-pdf"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/syllabi/1/content"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/1/compliance/recheck"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/1/compliance"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/1/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/1/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/25"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/1/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/2/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/26"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/pdf-import/config"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/2/import-pdf"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/syllabi/2/content"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/2/compliance/recheck"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/2/compliance"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/2/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/2/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/26"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/2/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/3/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/27"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/pdf-import/config"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/3/import-pdf"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/syllabi/3/content"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/3/compliance/recheck"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/3/compliance"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/3/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/3/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/27"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/3/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/4/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/28"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/pdf-import/config"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/4/import-pdf"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/4/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/28"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/pdf-import/config"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/4/import-pdf"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/1/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/25"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/pdf-import/config"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/1/import-pdf"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/1/content"
+    },
+    {
+      "method": "GET",
+      "path": "/api/programs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me/assignments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses/25"
+    },
+    {
+      "method": "GET",
+      "path": "/api/courses"
+    },
+    {
+      "method": "GET",
+      "path": "/api/syllabi/pdf-import/config"
+    },
+    {
+      "method": "POST",
+      "path": "/api/syllabi/1/import-pdf"
+    }
+  ],
+  "mockedAiCalls": 12,
+  "paidAiCalls": 0,
+  "syntheticSentinelUnchanged": true,
+  "productionDatabaseWrites": 0,
+  "scope": "Actual React builder in simulated DOM; real HTTP upload/content routes and isolated MariaDB; AI/ancillary endpoints mocked"
+}

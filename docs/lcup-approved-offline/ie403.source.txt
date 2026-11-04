@@ -1,0 +1,897 @@
+PAGE 1
+La Consolacion University Philippines 
+Valenzuela St., Capitol View Park Subdivision, Bulihan, City of Malolos, Bulacan 
+SCHOOL YEAR 2025-2026 
+COLLEGE OF INFORMATION TECHNOLOGY AND ENGINEERING 
+I.   COURSE CODE   :   IE-403 
+II.   COURSE TITLE   :   Operation Management 
+III.   COURSE DESCRIPTION   : 
+This course provides students with a comprehensive understanding of the principles, strategies, and tools used in
+managing operations within manufacturing and service organizations. It explores key topics such as operations strategy,
+process design, capacity planning, supply chain management, inventory control, quality assurance, and project scheduling.
+Emphasis is placed on applying quantitative and qualitative methods to solve real-world operational challenges, improve
+productivity, and enhance organizational competitiveness. Through case studies, simulations, and team projects, students
+will develop critical thinking and decision-making skills essential for effective operations leadership in dynamic business
+environments. 
+Anchored in Marian and Augustinian values, this course introduces students to the principles and tools of managing
+operations in manufacturing and service organizations. It emphasizes strategic thinking, process design, and data-driven
+decision-making to solve real-world challenges and improve productivity in ethical and socially responsive ways. 
+IV.   PRE-REQUISITE   : 
+V.   CREDIT UNITS   :   3 units lecture 
+VI.   COURSE LEARNING OUTCOMES: 
+Vision   Mission 
+Moved by the Spirit of the Risen Christ, La Consolacion 
+University   Philippines,   envisions   itself   to   become   a
+catalyst for the wholistic transformational development
+of   Catholic   Augustinian   Marian   graduates   rooted   in
+Gospel values. 
+To achieve the above vision, LCUP commits itself to
+generate and make available to its Augustinian Marian
+students, programs and services that will make them: 
+●   exhibit academic and technical competence in their
+respective   areas   of   discipline   in   the   local   and
+international environment; 
+PAGE 2
+●   demonstrate   their   knowledge,   critical   thinking   and
+creativity by exploring the various avenues of learning
+and searching for truth; 
+●   live the Gospel values in the varied aspects of their
+personal and professional lives; 
+●   manifest   their   willingness   to   serve   specially   the
+marginalized sector of our society; 
+●   demonstrate productivity in various areas of learning as
+responsible citizens of the society; and 
+●   develop individuals who are resilient,   inclusive and
+responsive   to   be   socio-economic   realities   of   the
+Philippines   and   the   complexities   of   the   global
+environment. 
+EXPECTED GRADUATE
+ATTRIBUTES 
+PROGRAM OUTCOMES   COURSE LEARNING
+OUTCOMES 
+EGA 1:   Critical and Creative thinker 
+EGA 2:   Competent   Catholic Augustinian-
+Marian Professional 
+EGA 3:   Socially Responsive Steward 
+EGA 4:   Transformative Lifelong learner 
+PO1.   Ability to apply knowledge of
+mathematics and science to solve
+complex engineering problems; 
+PO2.   Ability to design and conduct
+experiments, as well as to analyze and
+interpret data. 
+PO3.   Ability to design a system,
+component, or process to meet desired
+needs within realistic constraints such as
+economic, environmental, social, political,
+ethical, health and safety,
+manufacturability and sustainability, in
+accordance with standards. 
+PO4.   Ability to function on
+multidisciplinary teams; 
+PO5.   Ability to identify; formulate, and
+solve complex engineering problems. 
+PO6.   Understanding of professional and
+ethical responsibility. 
+PO7.   Ability to communicate effectively. 
+PO8.   Broad education necessary to
+understand the impact of engineering 
+CLO1:   Apply   interdisciplinary
+knowledge   from   computing,
+mathematics, physical and social
+sciences   to   identify,   formulate,
+and   solve   complex   engineering
+problems through the design and
+execution of experiments, and the
+development   of   systems   or
+processes   that   meet   real-world
+needs   within   economic,
+environmental,   social,   political,
+ethical,   health   and   safety,
+manufacturability,   and
+sustainability   constraints,   in
+accordance   with   professional
+standards. 
+(EGA 1) (PO 1, 2, 3, 5) 
+CLO2:   Exhibit   professional   and
+ethical   responsibility   while
+communicating   effectively   and
+applying   engineering   and
+management   principles   to   lead 
+PAGE 3
+solutions in a global, economic,
+environmental, and societal context. 
+PO9.   Recognition of the need for, and
+an ability to engage in life-long learning; 
+PO10.   Knowledge of contemporary
+issues. 
+PO11.   Ability to use techniques, skills
+and modern engineering tools necessary
+for engineering practice; and 
+PO12.   Knowledge and understanding of
+engineering and management principles
+as a member and leader in a team, to
+manage projects and in multidisciplinary
+environments. 
+PO13:   Ability   to   design,   develop,
+implement and improve integrated system
+that   include   people   materials,
+implementation, equipment and energy. 
+and   collaborate   within
+multidisciplinary teams, guided by
+Catholic   Augustinian-Marian
+values. 
+(EGA2) (PO 6, 7, 12) 
+CLO3:   Collaborate effectively in
+multidisciplinary teams to develop
+engineering   solutions   that
+address   global,   economic,
+environmental,   and   societal
+challenges, while demonstrating a
+commitment   to   lifelong   learning
+and   socially   responsible
+stewardship. 
+(EGA 3) (PO 4, 8, 9) 
+CLO4:   Apply modern engineering
+tools   and   techniques   to   design
+and improve integrated systems
+involving   people,   materials,
+equipment,   and   energy,   while
+demonstrating   awareness   of
+contemporary   issues   and   a
+commitment to lifelong learning in
+pursuit   of   transformative
+professional growth. 
+(EGA 4 ) (PO 10, 11, 13) 
+PAGE 4
+VII.   LEARNING PLAN: 
+SCHEDULE   INTENDED LEARNING
+OUTCOMES   COURSE CONTENTS   SUGGESTED
+LEARNING ACTIVITIES 
+SUGGESTED
+ASSESSMENT
+TASKS 
+EXPECTED VALUE/S TO
+BE INTEGRATED 
+Week1 
+ILO 1. Identify real- 
+world operational 
+problems and explain 
+how mathematics and 
+science can be 
+applied to address 
+them. (CLO 1) 
+ILO 2. Describe the 
+role of ethics and 
+professionalism in 
+operations decision- 
+making. (CLO 2) 
+ILO 3. Explain the 
+societal and 
+environmental impact 
+of operations 
+decisions. (CLO 3) 
+ILO 4. Identify 
+contemporary tools 
+and technologies used 
+in operations 
+management. (CLO 4) 
+I. Introduction to 
+Operations 
+Management 
+A.   Definition, 
+scope, and 
+importance of 
+OM 
+B.   Historical 
+development 
+C.   Role of 
+operations in 
+the organization 
+• Lecture -discussion
+on OM concepts 
+• Class icebreaker:
+“How Operations
+Affect You” 
+• Short video: “What 
+is Operations 
+Management?” 
+• Reflection paper 
+•   Diagnostic quiz;
+reflection paper on 
+“How Operations
+Affect Daily Life” 
+•   Discipline: Encourages
+students to value order
+and systematic processes
+as a foundation of
+effective operations. 
+•   Integrity: Builds
+awareness of honesty
+and ethical behavior as
+essential in managing
+operational activities and
+decision-making. 
+•   Responsibility: Instills
+accountability for roles
+and decisions within an 
+organization’s operational 
+system. 
+PAGE 5
+Week 
+2-3 
+ILO1. Formulate
+problem statements
+and propose analytical
+models using
+engineering principles. 
+Design experiments or
+simulations to test
+operational
+hypotheses. (CLO 1) 
+ILO 2. Communicate
+operational goals and
+constraints clearly in
+written and oral
+formats. 
+Participate in team-
+based discussions
+and contribute
+constructively to group
+tasks. (CLO 2) 
+ILO 3. Identify roles
+and responsibilities in
+a multidisciplinary
+team setting. 
+Engage in
+collaborative problem-
+solving with peers
+from diverse
+backgrounds. (CLO 3) 
+ILO 4. Use basic
+engineering software
+to model operational
+processes. 
+II. Operations Strategy
+and Competitiveness 
+•   Relationship
+between operations
+and corporate
+strategy 
+•   Productivity and
+performance
+measures 
+III. Product and
+Service Design 
+•   Product life
+cycle 
+•   Design for
+manufacturabilit
+y and
+serviceability 
+•   Value
+engineering 
+• Group discussion 
+on business
+competitiveness 
+• Case analysis:
+“Operations Strategy
+of Toyota” 
+• Productivity 
+computation
+exercise 
+• Lecture and 
+examples of design
+innovation 
+• Service 
+blueprinting activity
+(group) 
+• Mini -presentation
+of redesigned
+products 
+•   Short quiz;
+group analysis
+report on
+business
+competitiveness 
+•   Group
+output:
+product
+redesign
+proposal
+with brief
+rationale 
+•   Excellence,
+Accountability,
+Creativity,
+Innovation,
+Customer
+Orientation: 
+Encourages students
+to pursue excellence
+and accountability in
+developing effective
+operations strategies
+while fostering
+creativity and
+innovation in
+designing customer-
+centered products
+and services. 
+PAGE 6
+Apply digital tools to
+visualize system
+layouts and workflows. 
+(CLO 4) 
+Week 
+4-5 
+ILO 1. Analyze and
+interpret data from
+operations scenarios
+to draw evidence-
+based conclusions. 
+Apply optimization
+techniques to improve
+system performance
+under realistic
+constraints. (CLO1) 
+ILO 2. Apply
+leadership principles
+to guide team
+decision-making in
+project settings. 
+Resolve conflicts and
+negotiate solutions
+within multidisciplinary
+teams. (CLO 2) 
+ILO 3. Apply global
+and local perspectives
+to operational
+challenges. 
+Reflect on the
+importance of lifelong
+learning in
+engineering practice.
+(CLO 3) 
+IV. Process and
+Capacity Planning 
+• Types of processes 
+(job, batch, mass,
+continuous) 
+• Process selection 
+and analysis 
+• Capacity planning 
+concepts 
+V. Facility Layout and
+Location Planning 
+• Factors affecting 
+location 
+• Types of layout 
+(process, product,
+cellular, fixed position) 
+• Relationship between 
+layout and productivity 
+• Lecture with 
+process flow
+diagrams 
+• Problem -solving:
+capacity planning
+scenarios 
+• Simulation:
+“Bottleneck
+Identification” 
+• Classroom layout 
+design exercise 
+• Site location case 
+analysis 
+• Quiz #1 
+•   Problem set on
+capacity
+planning; short
+reflection on
+process design 
+•   Layout design
+sketch
+submission; quiz
+on location
+factors 
+•   Discipline,
+Responsibility,
+Efficiency: 
+Encourages
+systematic
+planning,
+accountability,
+and effective
+resource
+utilization in
+process and
+facility design. 
+PAGE 7
+ILO 4. Analyze system
+performance using
+simulation software. 
+Design integrated
+systems that include
+people, materials, and
+equipment. (CLO 4) 
+Week 
+6 
+Preliminary
+Examination 
+Exam 
+Week 
+7-9 
+ILO 1. Evaluate
+alternative solutions
+using trade-off
+analysis and decision
+matrices. 
+Use mathematical
+tools to model process
+flows and resource
+allocation. 
+Solve complex
+scheduling or
+inventory problems
+using quantitative
+methods. (CLO 1) 
+ILO 2. Demonstrate
+ethical reasoning in
+evaluating operational
+trade-offs. 
+Prepare and deliver a
+presentation on an
+operations case study. 
+Collaborate with peers
+to develop a shared
+project plan. (CLO 2) 
+VI. Forecasting in
+Operations 
+• Qualitative and 
+quantitative
+forecasting methods 
+• Time series models 
+• Forecast accuracy 
+and error measures 
+VII. Work Design and
+Measurement 
+• Job design principles 
+• Methods analysis 
+• Time and motion 
+studies 
+VIII. Inventory
+Management 
+• Types and functions 
+of inventory 
+• EOQ model 
+• Lecture -demo on
+forecasting methods 
+• Spreadsheet 
+exercise: moving
+average &
+exponential
+smoothing 
+• Short quiz 
+• Motion study video 
+analysis 
+• Group activity: 
+Work simplification
+project 
+• Reflection:
+“Ergonomics in
+Workplaces” 
+• Lecture -demo:
+EOQ computation 
+• Case: “Balancing
+Inventory Costs” 
+• Worksheet activity 
+using sample data 
+•   Computed
+worksheet; short
+quiz on
+forecasting
+accuracy 
+•   Group output:
+work
+simplification
+report; oral
+presentation 
+•   Problem-solving
+worksheet; quiz
+on EOQ 
+•   Accuracy, Integrity,
+Accountability,
+Professionalism: 
+Reinforces ethical
+and precise decision-
+making,
+responsibility, and
+professionalism in
+forecasting, work
+systems, and
+inventory control. 
+PAGE 8
+ILO 3. Analyze
+operations scenarios
+with consideration for
+social and
+environmental
+outcomes. 
+Participate in team-
+based sustainability
+assessments. 
+Integrate feedback
+from multiple
+disciplines into project
+development. (CLO 3) 
+ILO 4. Implement
+productivity tools to
+streamline operations
+tasks. 
+Evaluate the
+effectiveness of
+modern tools in
+solving operational
+problems. 
+Use data analytics
+platforms to interpret
+operational metrics.
+(CLO 4) 
+• Inventory control 
+systems (ABC, JIT) 
+Week 
+10-11 
+ILO 1. Interpret system
+behavior   through
+simulation   and   data
+visualization. 
+Apply   scientific
+reasoning   to   assess
+reliability   and   risk   in
+operations. (CLO 1) 
+IX. Supply Chain 
+Management 
+• Components and flow 
+of supply chain 
+• Supplier 
+management and 
+logistics 
+• Supply chain 
+coordination 
+• Role -playing:
+Supply chain
+coordination game 
+• Guest speaker (if 
+available) from
+logistics industry 
+• Reflection journal 
+•   Written reflection;
+group case study
+presentation 
+•   Quality
+improvement
+plan; group
+output and short
+quiz 
+•   Collaboration,
+Integrity,
+Excellence,
+Commitment: 
+Promotes teamwork,
+ethical practices,
+and dedication to
+achieving high-
+quality standards 
+PAGE 9
+ILO 2. Document team
+processes   and
+decisions   using
+professional
+standards. 
+Reflect   on   personal
+leadership   style   and
+team   contributions.
+(CLO 2) 
+ILO   3.   Explore
+contemporary   issues
+affecting   operations
+and supply chains. 
+Demonstrate
+adaptability   and
+openness to new ideas
+in team settings. 
+(CLO 3) 
+ILO   4.   Apply
+engineering   tools   to
+optimize   resource
+utilization. 
+Integrate   automation
+and   digital   solutions
+into   system   design.
+(CLO 4) 
+X.   Quality 
+Management 
+• Total Quality 
+Management (TQM) 
+• Six Sigma and 
+continuous 
+improvement 
+• Statistical Process 
+Control (SPC) 
+• Lecture: Quality 
+frameworks 
+• Group workshop: 
+Fishbone and
+Pareto analysis 
+• Quality 
+improvement mini-
+project 
+across supply chain
+operations. 
+Week 
+12 
+Midterm Examination   Exam 
+Week 
+13-14 
+ILO   1.   Design
+integrated   systems
+that   meet   operational
+goals within economic
+and   environmental
+constraints. 
+XI. Scheduling and 
+Project Management 
+• Scheduling methods 
+and sequencing 
+• Gantt Charts, CPM, 
+and PERT 
+• Lecture -demo:
+Gantt chart,
+CPM/PERT
+computation 
+• Group project 
+scheduling
+simulation 
+•   CPM/PERT
+problem set;
+short quiz 
+•   Group reflection
+report; photo
+documentation of
+5S activity 
+•   Punctuality,
+Teamwork,
+Efficiency,
+Continuous
+Improvement: 
+Emphasizes time
+management, 
+PAGE 10
+Improve   existing
+processes   using
+engineering tools and
+sustainability
+principles. (CLO 1) 
+ILO 2. Lead a team in
+developing   a
+sustainable operations
+proposal. 
+Communicate
+technical   findings   to
+diverse   audiences.
+(CLO 2) 
+ILO 3. Propose socially
+responsive solutions to
+operational problems. 
+Collaborate   on   a
+community-based
+operations
+improvement   project.
+(CLO 3) 
+ILO 4. Develop a tool-
+supported   plan   for
+improving   an
+integrated system. 
+Test and refine system
+components   using
+engineering   software.
+(CLO 4) 
+• Time - cost trade - offs 
+XII.   Lean Systems and 
+Just - in - Time (JIT) 
+• Principles of lean 
+operations 
+• Waste elimination 
+• 5S and Kaizen 
+• Quiz #2 
+• 5S classroom 
+audit 
+• Lean simulation
+exercise (“Paper
+Airplane Factory”) 
+• Group reflection 
+on continuous
+improvement 
+collaboration, and a
+commitment to
+improving processes
+and eliminating
+waste. 
+Week 
+15-17 
+ILO   1.   Justify   design
+decisions   using   data
+analysis   and
+performance metrics. 
+XIII.   Maintenance and 
+Reliability 
+• Case study: 
+Equipment
+downtime problem 
+•   Case analysis
+paper; short quiz 
+•   Group
+presentation: 
+•   Dependability,
+Adaptability,
+Innovation,
+Environmental
+Stewardship: 
+PAGE 11
+Synthesize knowledge
+from multiple domains
+to propose innovative
+operational solutions. 
+Present   a
+comprehensive
+system   design   that
+solves   a   complex
+operational   challenge.
+(CLO 1) 
+ILO 2. Evaluate team
+performance   and
+suggest
+improvements. 
+Apply   project
+management   tools   to
+coordinate team tasks. 
+Defend   team-based
+project outcomes in a
+formal   presentation.
+(CLO 2) 
+ILO   3.   Evaluate   the
+long-term   societal
+impact   of   proposed
+systems. 
+Reflect   on   personal
+growth   and   learning
+throughout the course. 
+Present   a   socially
+responsible operations
+plan   developed   by   a
+multidisciplinary team.
+(CLO 3) 
+• Preventive and 
+predictive 
+maintenance 
+• Reliability analysis 
+• Equipment 
+effectiveness 
+XIV.   Operations 
+Technology and 
+Innovation 
+• Automation and 
+Industry 4.0 
+• ERP systems 
+• Data - driven 
+operations 
+XV.   Sustainability and 
+Green Operations 
+• Environmental 
+management 
+• Sustainable supply 
+chains 
+• Circular economy 
+principles 
+• Group presentation 
+on reliability
+strategies 
+• Lecture and video
+clips: “Industry 4.0 in
+Action” 
+• Mini research on 
+local firms using
+ERP 
+• Group sharing 
+• Case analysis:
+“Green 
+Manufacturing 
+Practices” 
+• Group project: 
+Sustainable
+Operations Plan
+presentation 
+“Technology in
+Operations” 
+•   Final project
+submission:
+Sustainable
+Operations Plan 
+Encourages
+reliability, openness
+to technological
+change, creative
+problem-solving, and
+responsibility toward
+sustainable
+operations. 
+PAGE 12
+ILO   4.   Assess   the
+sustainability   of   tool-
+based   system
+improvements. 
+Explore   emerging
+technologies and their
+applications   in
+operations. 
+Demonstrate
+proficiency   in   using
+modern   tools   during
+final   project
+presentation. (CLO 4) 
+Week 18 
+FINAL
+EXAMINATION 
+Exam week 
+VIII.   COURSE REQUIREMENTS   : 
+1.   Term examinations 
+2.   Quizzes 
+3.   Seatwork, assignment and/or project 
+4.   Class attendance 
+5.   Class participation 
+IX. REFERENCES: 
+A.   BOOKS 
+Heizer, J., Render, B., & Munson, C. (2023). Operations management (14th ed.). Pearson Education. 
+Stevenson, W. J. (2021). Operations management (14th ed.). McGraw-Hill Education. 
+Krajewski, L. J., Malhotra, M. K., & Ritzman, L. P. (2019). Operations management: Processes and supply chains (12th
+ed.). Pearson Education. 
+Russell, R. S., & Taylor, B. W. (2019). Operations and supply chain management (10th ed.). John Wiley & Sons. 
+Slack, N., Brandon-Jones, A., & Burgess, N. (2022). Operations management (10th ed.). Pearson Education. 
+PAGE 13
+X.   GRADING SYSTEM   : 
+1.   Class Standing   60% 
+Quiz 
+Recitation 
+Attendance 
+2.   Examination   40 % 
+3.   Term Grade   CS (60%) + TE (40%) 
+4.   Final Rating   Prelim Grade + Midterm Grade + Final Grade 
+3 
+5.   Passing Grade:   50% 
+Prepared by: 
+ENGR. DAVID ALDOUS
+VICTOR T. ANSELMO 
+Dean/Date 
+Checked and Reviewed by: 
+EDNA F. DAYAO, DIT 
+Dean/Date 
+ROSALYN S. GALVEZ, PhD., LPT 
+Asst. Vice President for Academic Affairs/Date 
+References Certified by: 
+DR. MARIA MERCEDEZ M. HAZ 
+LIC Director/Date 
+Approved by: 
+JAY MARK B. SANTOS, PhD, LPT, CSSWB 
+Vice President for Academic Affairs/Date 
+PAGE 14
+Modifications: 
+__Learning Outcomes 
+__Course Contents 
+__Suggested Learning Activities 
+__Suggested Assessment 
+__Expected Values to be Integrated 
+__Course Requirements 
+__References 
+__Grading System 
+PRE - VPAA   – FO – 001 (011) 

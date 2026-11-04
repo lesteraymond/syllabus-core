@@ -1,0 +1,6 @@
+'use strict';
+// Node backend process is separate from the simulated browser, as in production.
+require('./sql-harness.cjs').start().then(state=>{
+ process.send({ready:true,origin:state.origin,courses:state.courses,contents:state.contents,identity:state.identity});
+ process.on('message',async m=>{try{let value;if(m.action==='query')value=await state.pool.query(m.sql,m.params);else if(m.action==='masters')value=await state.repo.mastersFor(state.db,m.content,{syllabusId:m.syllabusId});else if(m.action==='replay'){state.app.locals.academicV2OfflinePreviews=new Map([[m.syllabusId,m.data]]);value=true;}else if(m.action==='sql')value=state.sql;else if(m.action==='storeAdminFixture'){const [[row]]=await state.pool.query('SELECT run_id FROM ai_check_runs WHERE syllabus_id=1 ORDER BY run_id DESC LIMIT 1');const report=await state.repo.readReport(state.db,row.run_id);report.referenceHash=report.fingerprint;value=await require('../../server/lib/compliance/service').storeRun(state.db,{syllabusId:1,content:state.contents[0],result:report,createdBy:9});}else if(m.action==='close'){await state.close();process.send({id:m.id,value:true});process.disconnect();return;}else throw Error('Unknown isolated test action');process.send({id:m.id,value});}catch(e){process.send({id:m.id,error:e.stack||e.message});}});
+}).catch(e=>{console.error(e);process.exitCode=1;});

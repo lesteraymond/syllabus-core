@@ -1,0 +1,14 @@
+# Institutional and external reference inventory (Stage E)
+
+Status words: **Verified** = compared against the source in this session. **Pending approval** = copied from a public source but not confirmed by the institution. **Not verified** = could not be checked.
+
+| Reference | Where it lives | Source | Retrieved | Status |
+|---|---|---|---|---|
+| Six Marian-Augustinian core values: names | `server/lib/syllabuscheck/values.js`, `server/config/marian-values.json` | https://lcup.edu.ph/mission-vision.php (CORE VALUES) | 2026-10-25 | **Verified**: the six names and their order match what the checker already used |
+| Core value definitions | `server/config/marian-values.json` (`approval: pending_approval`) | same page, full paragraph under each heading, St. Augustine epigraphs left out | 2026-10-25 | **Pending approval**. The page had an encoding fault where an apostrophe belongs; it was read as a typographic apostrophe. No definition existed before, so nothing was replaced. The file records the SHA-256 of the page text. |
+| BSIT, BSIE, BSCpE Program Outcomes and EGAs | `server/db/local-outcome-data.cjs` (transcribed from the images in `reference-data/`) | repository records | n/a | Not re-verified; transcription of images |
+| BSIT, BSIE, BSCpE curricula (2022-2023) and BSIT-CYBERSECURITY (2025-2026) | `server/db/local-curriculum-data.cjs` | repository records (curriculum images) | n/a | Not re-verified; the three sample courses are present (IT 202, IE-402, CpE-304). Some codes are spelled with a hyphen, some with a space. |
+| BSIT-Cyber Security shares BSIT Program Outcomes and EGAs; own curriculum kept | `program_outcome_sources` link, `outcome-sharing.test.js` | your earlier instruction | n/a | Software done; migration **not run**; institutional policy confirmation still pending |
+| APA 7 reference examples | rules in `references.js` | https://apastyle.apa.org/style-grammar-guidelines/references/examples | - | **Not verified**: the page returned no readable content to the fetch tool or to a plain HTTP request from this environment. The rules follow the assistant's knowledge of APA 7 (author "Surname, A. B.", "(Year).", sentence-case title, no place of publication, DOI as https://doi.org/ link, no quotation marks around titles). Italics cannot be checked in plain text. Needs a librarian's confirmation. |
+| Crossref (optional authenticity lookup) | `references.js verifyDois` | https://api.crossref.org/works/{doi} | not called | Optional (`SYLLABUS_CHECK_REF_VERIFY=crossref`), off by default. A DOI missing from Crossref is reported NEEDS_REVIEW, never rejected, and a well-formed DOI is never taken as proof the work exists. |
+| Thresholds (50% integrated values, 60% copied over 4 lessons, expected 4 CLOs) | `values.js POLICY`, `verdict.js CONFIG` | none | n/a | **Proposals, not university requirements**; every finding that uses them says so |

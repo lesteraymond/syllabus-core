@@ -1,0 +1,76 @@
+{
+  "requests": 5,
+  "charged": 0.0112413,
+  "transient": 0,
+  "invalid": 3,
+  "previous": {
+    "ledger": "docs/ai-eval-stage-e4-ledger.json",
+    "requests": 8,
+    "charged": 0.0327021,
+    "transient": 1,
+    "invalid": 4,
+    "closedAt": "2026-10-25T17:01:29.196Z",
+    "closedBecause": "Stage E.4 Phase 1 (re-run) reached its invalid-answer stop condition: 4 answers failed validation (the limit for 10 requests; the last: not_answered, AI omitted alignment judgements). Root causes addressed in Stage E.5 (docs/stage-e5-reference-evidence.md)."
+  },
+  "entries": [
+    {
+      "n": 1,
+      "kind": "price-lookup",
+      "at": "2026-10-25T17:02:39.788Z",
+      "status": 200
+    },
+    {
+      "n": 2,
+      "kind": "model",
+      "at": "2026-10-25T17:02:40.407Z",
+      "status": 200,
+      "worst": 0.020289,
+      "charged": 0.0032073,
+      "ids": [
+        "cc-syseng-aligned",
+        "cp-bsie-real2",
+        "wi-syseng-unrelated",
+        "ic-syseng-ok"
+      ]
+    },
+    {
+      "n": 3,
+      "kind": "model",
+      "at": "2026-10-25T17:02:57.776Z",
+      "status": 200,
+      "worst": 0.0199701,
+      "charged": 0.0026325,
+      "ids": [
+        "cp-bsie-real2"
+      ]
+    },
+    {
+      "n": 4,
+      "kind": "model",
+      "at": "2026-10-25T17:03:05.383Z",
+      "status": 200,
+      "worst": 0.0205359,
+      "charged": 0.0021798,
+      "ids": [
+        "af-syseng-irrelevant",
+        "as-syseng-good",
+        "vu-syseng-community",
+        "rr-syseng-unrelated"
+      ]
+    },
+    {
+      "n": 5,
+      "kind": "model",
+      "at": "2026-10-25T17:03:06.583Z",
+      "status": 200,
+      "worst": 0.0207909,
+      "charged": 0.0032217,
+      "ids": [
+        "af-syseng-irrelevant",
+        "as-syseng-good",
+        "vu-syseng-community",
+        "rr-syseng-unrelated"
+      ]
+    }
+  ]
+}

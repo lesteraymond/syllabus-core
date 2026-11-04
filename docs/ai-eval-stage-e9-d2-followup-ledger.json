@@ -1,0 +1,51 @@
+{
+  "requests": 4,
+  "charged": 0.00068236,
+  "conservative": 0.0025842,
+  "accounting": "reconcile",
+  "transient": 0,
+  "invalid": 0,
+  "unproductive": 0,
+  "entries": [
+    {
+      "n": 1,
+      "kind": "key-check",
+      "at": "2026-10-26T19:28:36.625Z",
+      "status": 200
+    },
+    {
+      "n": 2,
+      "kind": "price-lookup",
+      "at": "2026-10-26T19:28:37.171Z",
+      "status": 200
+    },
+    {
+      "n": 3,
+      "kind": "model",
+      "at": "2026-10-26T19:28:37.355Z",
+      "status": 200,
+      "worst": 0.0142722,
+      "charged": 0.00039248,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.0011346,
+      "ids": [
+        "rr-syseng-venue-only"
+      ]
+    },
+    {
+      "n": 4,
+      "kind": "model",
+      "at": "2026-10-26T19:28:44.260Z",
+      "status": 200,
+      "worst": 0.0149571,
+      "charged": 0.00028988,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.0014496,
+      "ids": [
+        "rr-sensors-venue-journal",
+        "rr-sensors-venue-other-field",
+        "rr-sensors-venue-web"
+      ]
+    }
+  ]
+}

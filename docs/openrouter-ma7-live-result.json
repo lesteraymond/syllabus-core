@@ -1,0 +1,52 @@
+{
+  "testedAt": "2026-10-22T03:09:58.735Z",
+  "provider": "openrouter",
+  "model": "google/gemini-2.5-flash",
+  "syllabusId": 101,
+  "scope": "Three deliberately misaligned MA 7 relationships. Real semantic diagnostic only; not a complete syllabus verification.",
+  "liveProviderResponded": true,
+  "evidenceValidated": true,
+  "canAuthorizeSubmission": false,
+  "judgements": [
+    {
+      "id": "clo0-ega3",
+      "type": "CLO-EGA",
+      "path": "clos[0].statement",
+      "targetPath": "clos[0].statement",
+      "label": "NOT_ALIGNED",
+      "explanation": "The CLO describes a socially responsive steward, which implies ethical and societal considerations in engineering. The EGA, however, focuses on memorization of cosmetic brand names, which does not align with the broader concept of social responsiveness or stewardship in an engineering context.",
+      "sourceQuote": "Socially Responsive Steward",
+      "targetQuote": "Memorize and recite cosmetic brand names from a product catalog.",
+      "sourceBloom": "N/A",
+      "targetBloom": "Remember",
+      "draft": "Apply ethical considerations and societal impact in engineering decision-making."
+    },
+    {
+      "id": "row0-ilo0-clo:ma7_101_clo1",
+      "type": "ILO-CLO",
+      "path": "plan[0].ilos[0].text",
+      "targetPath": "plan[0].ilos[0].text",
+      "label": "NOT_ALIGNED",
+      "explanation": "The ILO focuses on memorizing and reciting cosmetic brand names, which is a low-level cognitive skill unrelated to engineering. The CLO requires representing engineering quantities as functions and identifying their domain and units, which is an application-level skill in an engineering context. There is no support or alignment between these two statements.",
+      "sourceQuote": "Memorize and recite cosmetic brand names from a product catalog.",
+      "targetQuote": "Represent an engineering quantity as a function and identify its domain and units.",
+      "sourceBloom": "Remember",
+      "targetBloom": "Apply",
+      "draft": "Memorize and recall fundamental engineering quantities and their standard units."
+    },
+    {
+      "id": "row16-ilo0-assessment",
+      "type": "ILO-assessment",
+      "path": "plan[16].ilos[0].text",
+      "targetPath": "plan[16].tasks",
+      "label": "NOT_ALIGNED",
+      "explanation": "The ILO requires designing an optimization model and justifying the optimum, which are high-level cognitive skills (Create, Evaluate). The assessment is a multiple-choice recall quiz on unrelated topics (flower names, costume colors), which only tests remembering and does not provide any evidence of the student's ability to design or justify an optimization model.",
+      "sourceQuote": "Design an optimization model for a constrained engineering decision and justify the selected optimum.",
+      "targetQuote": "Multiple-choice recall quiz on flower names and costume colors only.",
+      "sourceBloom": "Create",
+      "targetBloom": "Remember",
+      "draft": "Design and present an optimization model for a given engineering problem, including a justification of the chosen optimum solution."
+    }
+  ],
+  "detectedMisalignments": 3
+}

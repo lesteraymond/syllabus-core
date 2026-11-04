@@ -1,0 +1,629 @@
+{
+  "version": "lcup-v2-controlled-evaluation-1",
+  "policyVersion": "academic-evaluation-v2-preview-1",
+  "preparedHash": "61ca84192d21e28126b14b3f2a2480d0e9c466c13dc90d36fe1ae4cfa14ec09d",
+  "benchmarkHash": "ebd12920a890971b8c7fb481cc6bc9b469ec7dd4c2001134f6833cc31009bbf7",
+  "scope": "smoke",
+  "runId": "live-smoke-REVIEWED",
+  "official": false,
+  "productionActive": false,
+  "provenance": "controlled-Claude-evaluation",
+  "modelRequested": "claude-sonnet-5-5",
+  "promptVersion": "alignment-12ab34c1c2c3d1d2req1-r8-rubric-academic-evaluation-v2-preview-1",
+  "rawTranscriptHash": "64ae4723ebd76c19a00d37c9a3849a318e16cc8965f64d17db2ca91ba2b1491b",
+  "priceAsOf": "2026-10-27",
+  "pricesVerifiedCurrent": false,
+  "limits": {
+    "maxRequests": 3,
+    "maxInputTokens": 360000,
+    "maxInputTokensPerRequest": 120000,
+    "maxOutputTokens": 12288,
+    "maxOutputTokensPerRequest": 4096,
+    "maxCost": 1
+  },
+  "inputReserved": 158039,
+  "stopReason": null,
+  "summary": {
+    "requests": 3,
+    "thisRun": 3,
+    "model": 3,
+    "priceLookups": 0,
+    "keyChecks": 0,
+    "invalidAnswers": 0,
+    "unproductiveInARow": 0,
+    "transient": 0,
+    "promptTokens": 49285,
+    "completionTokens": 1807,
+    "cachedTokens": 31106,
+    "reportedCost": 0,
+    "charged": 0.0684257,
+    "accounting": {
+      "rule": "reconcile",
+      "requests": {
+        "reconciled": 3,
+        "conservative": 0,
+        "worst_case": 0,
+        "refused": 0
+      },
+      "chargedConservatively": 0.15541075
+    },
+    "warnings": [],
+    "limits": {
+      "maxRequests": 3,
+      "maxCost": 1,
+      "maxTransient": 1,
+      "maxInvalid": 1,
+      "warnInvalid": null,
+      "maxUnproductive": 1,
+      "maxTokens": 4096
+    },
+    "stopped": null,
+    "anthropic": {
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "prices": {
+        "model": "claude-sonnet-5-5",
+        "asOf": "2026-10-27",
+        "geoFactor": 1.1,
+        "perMillionTokens": {
+          "input": 2,
+          "output": 10,
+          "cacheRead": 0.2,
+          "listedCacheRead": 0.1,
+          "cacheWrite5m": 2.5,
+          "cacheWrite1h": 4
+        }
+      },
+      "modelsReturned": {
+        "claude-sonnet-5-5": 3
+      },
+      "inputTokens": 2626,
+      "cacheCreationInputTokens": 15553,
+      "cacheReadInputTokens": 31106,
+      "outputTokens": 1807,
+      "thinkingTokens": 0,
+      "thinkingReports": {
+        "nonzero": 0,
+        "zero": 3,
+        "unavailable": 0
+      },
+      "thinkingBlocks": 0,
+      "atListPrices": 0.0653151,
+      "estimatedCost": 0.0653151,
+      "notEstimated": 0,
+      "chargedThisRun": 0.0684257,
+      "outputTokensCharged": 1807,
+      "stopReasons": {
+        "end_turn": 3
+      },
+      "refusalCategories": {},
+      "inferenceGeo": {
+        "global": 3
+      },
+      "serviceTier": {
+        "standard": 3
+      },
+      "errors": {},
+      "latencyMs": {
+        "answers": 3,
+        "median": 6717,
+        "p90": 8102,
+        "max": 8102
+      },
+      "limits": {
+        "maxOutputTokens": 12288,
+        "register": {
+          "cap": 10,
+          "chargedByEveryLedger": 1.3525116
+        }
+      }
+    }
+  },
+  "raw": [
+    {
+      "request": 1,
+      "caseIds": [
+        "BM1-IT202-096"
+      ],
+      "requestedModel": "claude-sonnet-5-5",
+      "promptVersion": "alignment-12ab34c1c2c3d1d2req1-r8-rubric-academic-evaluation-v2-preview-1",
+      "requestBodyHash": "cd66ec69a7ae0bfdd1f82ab76c60114a1e045e9f1b9b5260b2759099903f21a0",
+      "inputReferenceBindings": [
+        {
+          "id": "BM1-IT202-096",
+          "inputHash": "a5d7b2a2728405a5f94eadeae7187540963a004ce253908ad06d06b260ab90b4",
+          "referenceHash": "bb7fc0d88ad211af3395183046661cc3bc1cc0a1e05131fbc2ea58f9df5f5e7c"
+        }
+      ],
+      "requestFile": "raw/001.request.json",
+      "latencyMs": 8100,
+      "status": 200,
+      "file": "raw/001.json",
+      "responseHash": "0ed8896d1459d200735eb97f26cbaecca23d2423912dbe0249db07bbf3741128",
+      "modelReturned": "claude-sonnet-5-5",
+      "tokenUsage": {
+        "input_tokens": 796,
+        "cache_creation_input_tokens": 15553,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 15553,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 548,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "service_tier": "standard",
+        "inference_geo": "global",
+        "speed": "standard"
+      },
+      "estimatedCost": 0.0459545,
+      "guardCharge": 0.0459545,
+      "accounting": "reconciled"
+    },
+    {
+      "request": 2,
+      "caseIds": [
+        "BM1-IE402-074"
+      ],
+      "requestedModel": "claude-sonnet-5-5",
+      "promptVersion": "alignment-12ab34c1c2c3d1d2req1-r8-rubric-academic-evaluation-v2-preview-1",
+      "requestBodyHash": "92c969e0a897be233ff2fd33c012167c40cd129b89e8d10d440d0212a465a644",
+      "inputReferenceBindings": [
+        {
+          "id": "BM1-IE402-074",
+          "inputHash": "7005c0cfdd0d0e1df9ceef1e7d573be37e622fc36bd549f6130a1be9737868f1",
+          "referenceHash": "a193874b7ce2c2448de4e9c482f240edaed6088b5031ca30fbed70e598fed1e0"
+        }
+      ],
+      "requestFile": "raw/002.request.json",
+      "latencyMs": 6716,
+      "status": 200,
+      "file": "raw/002.json",
+      "responseHash": "2f08bd42eeeea9089a870c4e2aaf7fe5c265ffbd7f52a911cc523f78d2fd376d",
+      "modelReturned": "claude-sonnet-5-5",
+      "tokenUsage": {
+        "input_tokens": 872,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 15553,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 668,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "service_tier": "standard",
+        "inference_geo": "global",
+        "speed": "standard"
+      },
+      "estimatedCost": 0.0099793,
+      "guardCharge": 0.0115346,
+      "accounting": "reconciled"
+    },
+    {
+      "request": 3,
+      "caseIds": [
+        "BM1-CPE304-051"
+      ],
+      "requestedModel": "claude-sonnet-5-5",
+      "promptVersion": "alignment-12ab34c1c2c3d1d2req1-r8-rubric-academic-evaluation-v2-preview-1",
+      "requestBodyHash": "a73903c690ad63f478bbd927b132f86f4316ddd3169780aa5fa01bb9388dadb1",
+      "inputReferenceBindings": [
+        {
+          "id": "BM1-CPE304-051",
+          "inputHash": "55ec2bcca08c00c9cbc207a7e95358c5ab481d0ef36fcd05cd24ea9f8e4ea6ba",
+          "referenceHash": "361a85773bbcbcd81a427e855c3aeaa9afcd24bdc408c6de71a31c8c7e86fd6e"
+        }
+      ],
+      "requestFile": "raw/003.request.json",
+      "latencyMs": 5284,
+      "status": 200,
+      "file": "raw/003.json",
+      "responseHash": "2e5ea27bb2de31bd71b7737cc8b0587b6c3b52908534cf978ef73bedfd8380bb",
+      "modelReturned": "claude-sonnet-5-5",
+      "tokenUsage": {
+        "input_tokens": 958,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 15553,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 591,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "service_tier": "standard",
+        "inference_geo": "global",
+        "speed": "standard"
+      },
+      "estimatedCost": 0.0093813,
+      "guardCharge": 0.0109366,
+      "accounting": "reconciled"
+    }
+  ],
+  "observations": [
+    {
+      "id": "BM1-IT202-096",
+      "caseHash": "b19c488bc5e293818c1bc4c1e70ebefb435a98c20fd12457bf6903fe556dfeb7",
+      "attempted": true,
+      "judgment": {
+        "aspects": {
+          "values": {
+            "teaching": "not_assessed",
+            "learnerSupport": "not_assessed",
+            "measures": "not_assessed",
+            "evidence": "not_assessed",
+            "level": "not_assessed",
+            "responsible": "not_assessed",
+            "valueUse": "not_assessed",
+            "carriedBy": "not_assessed",
+            "valueFit": "not_assessed",
+            "coreValue": "not_assessed",
+            "integration": "not_assessed",
+            "relevance": "not_assessed",
+            "basis": "not_assessed"
+          },
+          "invalid": [],
+          "missing": []
+        },
+        "id": "row0-ilo0-contentilo",
+        "type": "Content-ILO",
+        "path": "plan[0].ilos[0].text",
+        "targetPath": "plan[0].ilos[0].text",
+        "label": "PARTIALLY_ALIGNED",
+        "explanation": "The ILO is about this week's orientation (course structure, expectations), so it is on topic. But it has four gaps. First, \"Demonstrate a clear understanding\" is vague and gives no observable performance. Second, it asks for \"key programming concepts in Java\" and for alignment with \"real- world IT challenges and professional ethical standards\", and the Week 1 content (orientation, requirements, objectives, grading and policies) teaches none of these. Third, the Bloom level is too high for an orientation. Fourth, it is too broad to guide teaching or assessment.",
+        "sourceQuote": "Course\nRequirements and\nActivities",
+        "targetQuote": "Demonstrate a clear understanding of the course structure, expectations, and key programming concepts in Java",
+        "evidenceMatching": {
+          "source": "whitespace",
+          "target": "exact"
+        },
+        "sourceBloom": "Remember",
+        "targetBloom": "Understand",
+        "draft": "ILO 1: Describe the course structure, objectives, requirements, grading system and policies on absences, tardiness and examinations, and state what is expected of students in learning Java programming.",
+        "recommendation": "REWRITE_TEXT",
+        "key": "8a73d35a0915f1f7ecf3117297f6b05dfdf15141ed8d19bad0c849835ee145f9"
+      },
+      "unverified": false,
+      "failure": null,
+      "inputHash": "a5d7b2a2728405a5f94eadeae7187540963a004ce253908ad06d06b260ab90b4",
+      "referenceHash": "bb7fc0d88ad211af3395183046661cc3bc1cc0a1e05131fbc2ea58f9df5f5e7c"
+    },
+    {
+      "id": "BM1-IE402-074",
+      "caseHash": "689fab10de2d8021aac753f37da8f33ed231049c1972fc6b28c74dec88b5ae78",
+      "attempted": true,
+      "judgment": {
+        "aspects": {
+          "values": {
+            "teaching": "not_assessed",
+            "learnerSupport": "not_assessed",
+            "measures": "not_assessed",
+            "evidence": "not_assessed",
+            "level": "not_assessed",
+            "responsible": "not_assessed",
+            "valueUse": "not_assessed",
+            "carriedBy": "not_assessed",
+            "valueFit": "not_assessed",
+            "coreValue": "not_assessed",
+            "integration": "not_assessed",
+            "relevance": "not_assessed",
+            "basis": "not_assessed"
+          },
+          "invalid": [],
+          "missing": []
+        },
+        "id": "row0-ilo0-contentilo",
+        "type": "Content-ILO",
+        "path": "plan[0].ilos[0].text",
+        "targetPath": "plan[0].ilos[0].text",
+        "label": "NOT_ALIGNED",
+        "explanation": "The source (Week 1 content) is a course orientation: course contents, requirements and activities, objectives, grading system and policies on absences, tardiness and examinations. The target ILO asks students to demonstrate Augustinian, Marian and missionary Christ-centered Spirituality through value webbing. (1) The ILO is not about this week's content: nothing in the orientation teaches or introduces spirituality or value webbing. (2) The verb 'Demonstrate' is observable, but the performance (value webbing) is not specified and nothing in the content prepares it. (3) A Demonstrating-level performance on spirituality is far above what an orientation week can teach. (4) The ILO brings in a skill, value webbing, that the content never teaches. It belongs to a later value-integration lesson or to the course CLO, not to the orientation. The ILO should be about the orientation content, such as the course objectives and requirements.",
+        "sourceQuote": "C. Course\nObjectives",
+        "targetQuote": "Demonstrate the Augustinian, Marian and missionary Christ- centered Spirituality through value webbing",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Remember",
+        "targetBloom": "Apply",
+        "draft": "ILO10: Explain the course objectives, requirements, grading system and policies on absences, tardiness and examinations of Systems Engineering, including how Marian Augustinian values are integrated into the course. [CLO 4]",
+        "recommendation": "REWRITE_TEXT",
+        "key": "a4361ba977bd77bb761460837f1b18e58d77039a08196d19a25e852a79440084"
+      },
+      "unverified": false,
+      "failure": null,
+      "inputHash": "7005c0cfdd0d0e1df9ceef1e7d573be37e622fc36bd549f6130a1be9737868f1",
+      "referenceHash": "a193874b7ce2c2448de4e9c482f240edaed6088b5031ca30fbed70e598fed1e0"
+    },
+    {
+      "id": "BM1-CPE304-051",
+      "caseHash": "6657df760ffbe04859740ab0039bbb1e5bd0d8f29e0382d66498d769eed928e6",
+      "attempted": true,
+      "judgment": {
+        "aspects": {
+          "values": {
+            "teaching": "not_assessed",
+            "learnerSupport": "not_assessed",
+            "measures": "not_assessed",
+            "evidence": "not_assessed",
+            "level": "not_assessed",
+            "responsible": "not_assessed",
+            "valueUse": "not_assessed",
+            "carriedBy": "not_assessed",
+            "valueFit": "not_assessed",
+            "coreValue": "not_assessed",
+            "integration": "not_assessed",
+            "relevance": "not_assessed",
+            "basis": "not_assessed"
+          },
+          "invalid": [],
+          "missing": []
+        },
+        "id": "row1-ilo0-contentilo",
+        "type": "Content-ILO",
+        "path": "plan[1].ilos[0].text",
+        "targetPath": "plan[1].ilos[0].text",
+        "label": "PARTIALLY_ALIGNED",
+        "explanation": "The target ILO is related to the source content, but it has several gaps. (1) \"To develop skills\" is not an observable, assessable student performance; it names no action the student can show. (2) \"both analog and digital circuits\" is broader than the source content, which covers electronic systems, design of circuits and differential amplifiers (differential gain, common mode gain, CMRR, configurations) and teaches no digital circuit content. (3) The ILO names neither the differential amplifier topics nor the electronic system design topics the week actually teaches, so it is too vague to guide teaching and assessment. (4) \"analysis and design\" needs a stated object and expected evidence, and the history, notation and classification topics only support this at a lower level.",
+        "sourceQuote": "Design of\nElectronic Circuits",
+        "targetQuote": "develop skills in analysis and design of both analog and digital circuits",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Understand",
+        "targetBloom": "Create",
+        "draft": "ILO1: Analyze the differential gain, common mode gain and CMRR of a differential amplifier configuration, and apply the electronic system design process to specify a simple analog circuit. [CLO1]",
+        "recommendation": "REWRITE_TEXT",
+        "key": "ce579e5be5fa05b98acd61897474b74bc15b634a40ffedc1579b55b7ce5def6c"
+      },
+      "unverified": false,
+      "failure": null,
+      "inputHash": "55ec2bcca08c00c9cbc207a7e95358c5ab481d0ef36fcd05cd24ea9f8e4ea6ba",
+      "referenceHash": "361a85773bbcbcd81a427e855c3aeaa9afcd24bdc408c6de71a31c8c7e86fd6e"
+    }
+  ],
+  "responses": [
+    {
+      "contextId": "ctx-it202",
+      "status": "completed",
+      "reason": "",
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "promptVersion": "alignment-12ab34c1c2c3d1d2req1-r8-rubric-academic-evaluation-v2-preview-1",
+      "reuse": {
+        "reused": 0,
+        "asked": 1,
+        "requests": 1
+      },
+      "judgements": [
+        {
+          "aspects": {
+            "values": {
+              "teaching": "not_assessed",
+              "learnerSupport": "not_assessed",
+              "measures": "not_assessed",
+              "evidence": "not_assessed",
+              "level": "not_assessed",
+              "responsible": "not_assessed",
+              "valueUse": "not_assessed",
+              "carriedBy": "not_assessed",
+              "valueFit": "not_assessed",
+              "coreValue": "not_assessed",
+              "integration": "not_assessed",
+              "relevance": "not_assessed",
+              "basis": "not_assessed"
+            },
+            "invalid": [],
+            "missing": []
+          },
+          "id": "row0-ilo0-contentilo",
+          "type": "Content-ILO",
+          "path": "plan[0].ilos[0].text",
+          "targetPath": "plan[0].ilos[0].text",
+          "label": "PARTIALLY_ALIGNED",
+          "explanation": "The ILO is about this week's orientation (course structure, expectations), so it is on topic. But it has four gaps. First, \"Demonstrate a clear understanding\" is vague and gives no observable performance. Second, it asks for \"key programming concepts in Java\" and for alignment with \"real- world IT challenges and professional ethical standards\", and the Week 1 content (orientation, requirements, objectives, grading and policies) teaches none of these. Third, the Bloom level is too high for an orientation. Fourth, it is too broad to guide teaching or assessment.",
+          "sourceQuote": "Course\nRequirements and\nActivities",
+          "targetQuote": "Demonstrate a clear understanding of the course structure, expectations, and key programming concepts in Java",
+          "evidenceMatching": {
+            "source": "whitespace",
+            "target": "exact"
+          },
+          "sourceBloom": "Remember",
+          "targetBloom": "Understand",
+          "draft": "ILO 1: Describe the course structure, objectives, requirements, grading system and policies on absences, tardiness and examinations, and state what is expected of students in learning Java programming.",
+          "recommendation": "REWRITE_TEXT",
+          "key": "8a73d35a0915f1f7ecf3117297f6b05dfdf15141ed8d19bad0c849835ee145f9"
+        }
+      ],
+      "coverage": {
+        "total": 1,
+        "verified": 1
+      },
+      "usage": {
+        "requests": 1,
+        "attempts": 1,
+        "timedOut": 0,
+        "inputTokens": 796,
+        "outputTokens": 548,
+        "thinkingTokens": 0,
+        "cacheCreationInputTokens": 15553,
+        "cacheReadInputTokens": 0,
+        "thinkingReports": {
+          "nonzero": 0,
+          "zero": 1,
+          "unavailable": 0
+        },
+        "stopReasons": {
+          "end_turn": 1
+        },
+        "enumCaseOnly": 0,
+        "estimatedUsd": 0.0459545,
+        "priceAsOf": "2026-10-27"
+      },
+      "evaluationOnly": true
+    },
+    {
+      "contextId": "ctx-ie402",
+      "status": "completed",
+      "reason": "",
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "promptVersion": "alignment-12ab34c1c2c3d1d2req1-r8-rubric-academic-evaluation-v2-preview-1",
+      "reuse": {
+        "reused": 0,
+        "asked": 1,
+        "requests": 1
+      },
+      "judgements": [
+        {
+          "aspects": {
+            "values": {
+              "teaching": "not_assessed",
+              "learnerSupport": "not_assessed",
+              "measures": "not_assessed",
+              "evidence": "not_assessed",
+              "level": "not_assessed",
+              "responsible": "not_assessed",
+              "valueUse": "not_assessed",
+              "carriedBy": "not_assessed",
+              "valueFit": "not_assessed",
+              "coreValue": "not_assessed",
+              "integration": "not_assessed",
+              "relevance": "not_assessed",
+              "basis": "not_assessed"
+            },
+            "invalid": [],
+            "missing": []
+          },
+          "id": "row0-ilo0-contentilo",
+          "type": "Content-ILO",
+          "path": "plan[0].ilos[0].text",
+          "targetPath": "plan[0].ilos[0].text",
+          "label": "NOT_ALIGNED",
+          "explanation": "The source (Week 1 content) is a course orientation: course contents, requirements and activities, objectives, grading system and policies on absences, tardiness and examinations. The target ILO asks students to demonstrate Augustinian, Marian and missionary Christ-centered Spirituality through value webbing. (1) The ILO is not about this week's content: nothing in the orientation teaches or introduces spirituality or value webbing. (2) The verb 'Demonstrate' is observable, but the performance (value webbing) is not specified and nothing in the content prepares it. (3) A Demonstrating-level performance on spirituality is far above what an orientation week can teach. (4) The ILO brings in a skill, value webbing, that the content never teaches. It belongs to a later value-integration lesson or to the course CLO, not to the orientation. The ILO should be about the orientation content, such as the course objectives and requirements.",
+          "sourceQuote": "C. Course\nObjectives",
+          "targetQuote": "Demonstrate the Augustinian, Marian and missionary Christ- centered Spirituality through value webbing",
+          "evidenceMatching": {
+            "source": "exact",
+            "target": "exact"
+          },
+          "sourceBloom": "Remember",
+          "targetBloom": "Apply",
+          "draft": "ILO10: Explain the course objectives, requirements, grading system and policies on absences, tardiness and examinations of Systems Engineering, including how Marian Augustinian values are integrated into the course. [CLO 4]",
+          "recommendation": "REWRITE_TEXT",
+          "key": "a4361ba977bd77bb761460837f1b18e58d77039a08196d19a25e852a79440084"
+        }
+      ],
+      "coverage": {
+        "total": 1,
+        "verified": 1
+      },
+      "usage": {
+        "requests": 1,
+        "attempts": 1,
+        "timedOut": 0,
+        "inputTokens": 872,
+        "outputTokens": 668,
+        "thinkingTokens": 0,
+        "cacheCreationInputTokens": 0,
+        "cacheReadInputTokens": 15553,
+        "thinkingReports": {
+          "nonzero": 0,
+          "zero": 1,
+          "unavailable": 0
+        },
+        "stopReasons": {
+          "end_turn": 1
+        },
+        "enumCaseOnly": 0,
+        "estimatedUsd": 0.0099793,
+        "priceAsOf": "2026-10-27"
+      },
+      "evaluationOnly": true
+    },
+    {
+      "contextId": "ctx-cpe304",
+      "status": "completed",
+      "reason": "",
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "promptVersion": "alignment-12ab34c1c2c3d1d2req1-r8-rubric-academic-evaluation-v2-preview-1",
+      "reuse": {
+        "reused": 0,
+        "asked": 1,
+        "requests": 1
+      },
+      "judgements": [
+        {
+          "aspects": {
+            "values": {
+              "teaching": "not_assessed",
+              "learnerSupport": "not_assessed",
+              "measures": "not_assessed",
+              "evidence": "not_assessed",
+              "level": "not_assessed",
+              "responsible": "not_assessed",
+              "valueUse": "not_assessed",
+              "carriedBy": "not_assessed",
+              "valueFit": "not_assessed",
+              "coreValue": "not_assessed",
+              "integration": "not_assessed",
+              "relevance": "not_assessed",
+              "basis": "not_assessed"
+            },
+            "invalid": [],
+            "missing": []
+          },
+          "id": "row1-ilo0-contentilo",
+          "type": "Content-ILO",
+          "path": "plan[1].ilos[0].text",
+          "targetPath": "plan[1].ilos[0].text",
+          "label": "PARTIALLY_ALIGNED",
+          "explanation": "The target ILO is related to the source content, but it has several gaps. (1) \"To develop skills\" is not an observable, assessable student performance; it names no action the student can show. (2) \"both analog and digital circuits\" is broader than the source content, which covers electronic systems, design of circuits and differential amplifiers (differential gain, common mode gain, CMRR, configurations) and teaches no digital circuit content. (3) The ILO names neither the differential amplifier topics nor the electronic system design topics the week actually teaches, so it is too vague to guide teaching and assessment. (4) \"analysis and design\" needs a stated object and expected evidence, and the history, notation and classification topics only support this at a lower level.",
+          "sourceQuote": "Design of\nElectronic Circuits",
+          "targetQuote": "develop skills in analysis and design of both analog and digital circuits",
+          "evidenceMatching": {
+            "source": "exact",
+            "target": "exact"
+          },
+          "sourceBloom": "Understand",
+          "targetBloom": "Create",
+          "draft": "ILO1: Analyze the differential gain, common mode gain and CMRR of a differential amplifier configuration, and apply the electronic system design process to specify a simple analog circuit. [CLO1]",
+          "recommendation": "REWRITE_TEXT",
+          "key": "ce579e5be5fa05b98acd61897474b74bc15b634a40ffedc1579b55b7ce5def6c"
+        }
+      ],
+      "coverage": {
+        "total": 1,
+        "verified": 1
+      },
+      "usage": {
+        "requests": 1,
+        "attempts": 1,
+        "timedOut": 0,
+        "inputTokens": 958,
+        "outputTokens": 591,
+        "thinkingTokens": 0,
+        "cacheCreationInputTokens": 0,
+        "cacheReadInputTokens": 15553,
+        "thinkingReports": {
+          "nonzero": 0,
+          "zero": 1,
+          "unavailable": 0
+        },
+        "stopReasons": {
+          "end_turn": 1
+        },
+        "enumCaseOnly": 0,
+        "estimatedUsd": 0.0093813,
+        "priceAsOf": "2026-10-27"
+      },
+      "evaluationOnly": true
+    }
+  ]
+}

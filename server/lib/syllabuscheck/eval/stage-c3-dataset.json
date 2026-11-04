@@ -1,0 +1,1626 @@
+{
+ "version": "stage-c3-1",
+ "status": "DRAFT - synthetic examples with author-written labels, NOT faculty-reviewed",
+ "reviewStatus": "unreviewed",
+ "provenance": "Course identity and descriptions: copied unchanged from stage-c-dataset.json (IT 202, IE 402 and CPE 304). The lessons, learning activities and assessment tasks are SYNTHETIC examples written by the assistant for those three courses; they are not the institution's and were not taken from any syllabus. Expected verdicts are the assistant's reading of the Stage C3 rules (server/lib/syllabuscheck/stages.js, C3.tests) and of ordinary constructive-alignment practice; no faculty member has reviewed them and nothing here measures agreement with faculty.",
+ "splits": {
+  "dev": "Lessons used while the C3 wording is developed and compared.",
+  "heldout": "Lessons kept apart to measure a final wording: never used to tune a prompt. A run that includes them needs --confirm-heldout (Claude) or is logged as a held-out look (OpenRouter)."
+ },
+ "categories": [
+  "aligned",
+  "paraphrase-aligned",
+  "week-one-orientation",
+  "grouped-weeks",
+  "partial-coverage",
+  "shallow-depth",
+  "bare-name",
+  "beyond-practice",
+  "off-topic",
+  "keyword-trap"
+ ],
+ "note": "Each item is ONE relationship of one lesson, judged on its own: Content-activity (course content -> learning activities), Content-assessment (course content -> assessment tasks) or Activity-assessment (learning activities -> assessment tasks). `lessons` holds the three texts of every lesson and each item names its lesson; sources and targets are exactly what lessonfit.chainPairs builds from them (stage-c3-eval.test.js rebuilds them). A keyword-trap never accepts ALIGNED: its texts share technical words whose academic meaning differs. A paraphrase-aligned item is aligned with little shared wording. A lesson with a `purpose` of masking has an aligned Activity-assessment link next to failing content links, so one link passing must not hide another failing. The ILO is deliberately absent: these links never involve it. Not covered by model items: a missing course content, activities or tasks (the engine answers INSUFFICIENT_EVIDENCE without asking), examination weeks (never asked), provider failures and unverified answers (NOT_CHECKED) - engine behaviours covered by offline tests.",
+ "labelBasis": "Author-written provisional expectations. `accept` lists every label the author considers defensible; two labels mean either flags the problem. `reviewStatus`, `facultyVerdict` and `facultyNotes` are for the faculty review and are empty until a named reviewer fills them.",
+ "changeLog": [],
+ "courses": {
+  "prog1": {
+   "code": "IT 202",
+   "title": "Computer Programming 1 (Fundamentals of Programming)",
+   "program": "BSIT",
+   "yearLevel": "2",
+   "discipline": "computing",
+   "description": "This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications."
+  },
+  "syseng": {
+   "code": "IE 402",
+   "title": "Systems Engineering",
+   "program": "BSIE",
+   "yearLevel": "4",
+   "discipline": "engineering",
+   "description": "This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation."
+  },
+  "sensors": {
+   "code": "CPE 304",
+   "title": "Fundamentals of Mixed Signals and Sensors",
+   "program": "BSCPE",
+   "yearLevel": "3",
+   "discipline": "engineering",
+   "description": "This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included."
+  }
+ },
+ "lessons": {
+  "prog1-orientation": {
+   "course": "prog1",
+   "week": "1",
+   "split": "dev",
+   "contents": "Course orientation: the syllabus, grading system and class policies; the role of computers and programmers in society",
+   "activities": "- Walk-through of the syllabus and class policies, then small-group sharing on how computer programs shape daily life in the community.",
+   "tasks": "- Expectations sheet: each student writes what they hope to learn in the course and one example of a computer program that affects their community."
+  },
+  "prog1-conditionals": {
+   "course": "prog1",
+   "week": "3",
+   "split": "heldout",
+   "contents": "Conditional statements in Java: if, if-else, nested if and switch",
+   "activities": "- Worked demonstration of if, if-else, nested if and switch, then pair programming: students write and run programs that compute a shipping fee by weight and print the name of the day for a day number.",
+   "tasks": "- Laboratory exercise: write and test a program that assigns a letter grade from a numeric score with nested if-else, and a menu program that uses switch."
+  },
+  "prog1-loops-paraphrase": {
+   "course": "prog1",
+   "week": "4",
+   "split": "dev",
+   "contents": "Repetition structures in Java: for, while and do-while loops",
+   "activities": "- Students write programs that repeat steps a fixed number of times or until a stop value is entered: a times-table printer, a running total that ends when 0 is typed, and a menu that is shown at least once and repeats until Exit is chosen.",
+   "tasks": "- Hands-on test: (a) print the first n odd numbers with a counter; (b) read scores until -1 is typed and print their average; (c) show a menu at least once and repeat it until the user picks Exit."
+  },
+  "prog1-methods": {
+   "course": "prog1",
+   "week": "5",
+   "split": "dev",
+   "contents": "Methods in Java: defining and calling methods, parameters, return values and method overloading",
+   "activities": "- Students write and call methods without parameters that print a banner and a greeting.",
+   "tasks": "- Programming exercise: write a method that takes the length and width of a rectangle and returns its area, then overload it to compute the area of a square from one side."
+  },
+  "prog1-arrays-masked": {
+   "course": "prog1",
+   "week": "6",
+   "split": "dev",
+   "purpose": "masking: the activities and the tasks agree with each other, but neither works on the week's course content",
+   "contents": "One-dimensional arrays in Java: declaring, initializing and traversing arrays; the sum, average and largest element of an array",
+   "activities": "- Guided practice on if-else statements: students write programs that classify a number as positive, negative or zero.",
+   "tasks": "- Laboratory exercise: write a program that uses if-else to classify a triangle as equilateral, isosceles or scalene from its three sides."
+  },
+  "prog1-variables-trap": {
+   "course": "prog1",
+   "week": "2",
+   "split": "dev",
+   "contents": "Variables, data types and operators in Java: int, double, char, boolean and String; arithmetic and relational operators",
+   "activities": "- Students declare variables of each data type in the IDE and evaluate expressions that use arithmetic and relational operators.",
+   "tasks": "- Statistics worksheet: classify the variables of a survey data set by type (nominal, ordinal, interval, ratio) and compute the mean and mode of each numeric variable."
+  },
+  "prog1-classes-trap": {
+   "course": "prog1",
+   "week": "15",
+   "split": "dev",
+   "contents": "Introduction to classes and objects in Java: defining a class with fields and a constructor, and creating objects",
+   "activities": "- Group sorting game: students sort pictures of computer hardware objects (keyboard, monitor, hard disk, printer) into classes of input, output and storage devices.",
+   "tasks": "- Programming exercise: define a Book class with fields and a constructor, create three Book objects and print their details."
+  },
+  "prog1-strings-bare": {
+   "course": "prog1",
+   "week": "10",
+   "split": "dev",
+   "contents": "Strings in Java: the String methods length, charAt, substring, indexOf and equals, and comparing strings",
+   "activities": "- Guided exercise: students use String methods to count the vowels in a word and to check whether a word reads the same backwards.",
+   "tasks": "- Quiz"
+  },
+  "prog1-debugging-shallow": {
+   "course": "prog1",
+   "week": "11",
+   "split": "dev",
+   "contents": "Debugging and testing Java programs: finding and fixing syntax, runtime and logic errors, and writing test cases",
+   "activities": "- Lecture with slides on the kinds of programming errors; students take down notes.",
+   "tasks": "- Debugging exercise: find and fix the syntax, runtime and logic errors in three given programs, and write test cases that show each fix works."
+  },
+  "prog1-methods-trap": {
+   "course": "prog1",
+   "week": "5",
+   "split": "heldout",
+   "contents": "Methods in Java: defining and calling methods, parameters and return values",
+   "activities": "- Students define and call methods with parameters and return values in the IDE, then trace a call step by step with a partner.",
+   "tasks": "- Short report: define three research methods used in software engineering (surveys, interviews and experiments) and give one example of each."
+  },
+  "syseng-requirements": {
+   "course": "syseng",
+   "week": "4",
+   "split": "dev",
+   "contents": "Requirements analysis: stakeholder needs, system requirements specification and traceability",
+   "activities": "- Case workshop: teams interview a mock client about a campus shuttle system, write the system requirements as \"shall\" statements and build a traceability matrix from each stakeholder need to its requirements.",
+   "tasks": "- Team output: a system requirements specification for the campus shuttle system with its traceability matrix, checked with a rubric for completeness and verifiability."
+  },
+  "syseng-functional-paraphrase": {
+   "course": "syseng",
+   "week": "5",
+   "split": "dev",
+   "contents": "Functional analysis and allocation: functional flow block diagrams and the allocation of functions to system elements",
+   "activities": "- Teams break down what a vending machine must do, from accepting payment to releasing the item, draw these steps in order as connected boxes, and decide which component (coin unit, controller or motor) carries out each step.",
+   "tasks": "- Individual problem: for an automatic car wash, sketch the ordered steps the machine performs as linked boxes and assign each step to the equipment that will carry it out."
+  },
+  "syseng-reliability-masked": {
+   "course": "syseng",
+   "week": "8",
+   "split": "heldout",
+   "purpose": "masking: the activities and the tasks agree with each other, but neither works on the week's course content",
+   "contents": "Reliability and maintainability: failure rate, mean time between failures and the reliability of series and parallel systems",
+   "activities": "- Teams compute the net present worth of two equipment alternatives from given cash flows and an interest rate.",
+   "tasks": "- Problem set: compare three equipment alternatives by net present worth and payback period."
+  },
+  "syseng-integration-trap": {
+   "course": "syseng",
+   "week": "11",
+   "split": "dev",
+   "contents": "System integration: interface definition, integration strategies (top-down, bottom-up and big-bang) and integration testing",
+   "activities": "- Teams draw an interface diagram for a conveyor-and-robot cell and choose an integration strategy: the order in which its subsystems are joined and tested.",
+   "tasks": "- Problem set: evaluate ten integrals, choosing the integration strategy for each: substitution, integration by parts or partial fractions."
+  },
+  "syseng-requirements-trap": {
+   "course": "syseng",
+   "week": "4",
+   "split": "dev",
+   "contents": "Requirements analysis: stakeholder needs, system requirements specification and traceability",
+   "activities": "- Students read the course requirements in the syllabus (attendance, projects and examinations) and discuss the grading system with the instructor.",
+   "tasks": "- Team output: a system requirements specification for a library book-return kiosk with a traceability matrix."
+  },
+  "syseng-performance-trap": {
+   "course": "syseng",
+   "week": "14",
+   "split": "dev",
+   "contents": "System performance evaluation: technical performance measures, measures of effectiveness, and system test and evaluation",
+   "activities": "- Peer performance evaluation: each student rates every team member's contribution to the term project on an evaluation form.",
+   "tasks": "- Case analysis: define three technical performance measures for a hospital queueing system, state how each will be measured in the system test, and evaluate the current design against them."
+  },
+  "syseng-lifecycle-trap": {
+   "course": "syseng",
+   "week": "12",
+   "split": "heldout",
+   "contents": "Life-cycle cost analysis: cost breakdown structure, and acquisition, operation and support costs over the system life cycle",
+   "activities": "- Teams build a cost breakdown structure for a municipal water pumping station and estimate its acquisition, operation and support costs over its 20-year life cycle.",
+   "tasks": "- Essay: explain the four stages of the product life cycle in marketing (introduction, growth, maturity and decline) using a smartphone brand as the example."
+  },
+  "syseng-management-bare": {
+   "course": "syseng",
+   "week": "15",
+   "split": "heldout",
+   "contents": "Systems engineering management: the systems engineering management plan, work breakdown structure and technical reviews",
+   "activities": "- Teams draft a work breakdown structure for their term project.",
+   "tasks": "- Seatwork"
+  },
+  "syseng-tradeoff-recall": {
+   "course": "syseng",
+   "week": "6",
+   "split": "dev",
+   "contents": "Trade-off studies and decision analysis: evaluation criteria, weighting, decision matrices and sensitivity analysis",
+   "activities": "- Teams build a weighted decision matrix to choose among three conveyor designs and test how the choice changes when the weights change.",
+   "tasks": "- Short quiz: define \"trade-off study\" and \"decision matrix\"."
+  },
+  "syseng-requirements-grouped": {
+   "course": "syseng",
+   "week": "4-5",
+   "split": "dev",
+   "contents": "Requirements analysis and validation: eliciting stakeholder needs, writing system requirements, and validating them through reviews and prototypes",
+   "activities": "- Week 4: teams interview a mock client and write the system requirements. Week 5: teams review another team's requirements and check them against a paper prototype.",
+   "tasks": "- Team output: a validated requirements document with the peer-review comments and the prototype findings that changed it."
+  },
+  "syseng-queueing-shallow": {
+   "course": "syseng",
+   "week": "13",
+   "split": "heldout",
+   "contents": "Queueing models for system analysis: arrival and service rates, utilization and waiting time in a single-server queue",
+   "activities": "- Video showing on long lines at a theme park; students write a one-page reaction paper.",
+   "tasks": "- Problem set: compute the utilization, the average number waiting and the average waiting time of single-server queues from given arrival and service rates."
+  },
+  "sensors-opamp": {
+   "course": "sensors",
+   "week": "3",
+   "split": "dev",
+   "contents": "Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth",
+   "activities": "- Laboratory: students build inverting and non-inverting amplifiers on a breadboard, measure their gain with an oscilloscope and observe how the gain falls at higher frequencies.",
+   "tasks": "- Laboratory report: measured and calculated gain of both amplifiers, the frequency at which the gain drops by 3 dB, and an explanation of the differences."
+  },
+  "sensors-hysteresis-paraphrase": {
+   "course": "sensors",
+   "week": "4",
+   "split": "heldout",
+   "contents": "Comparators and Schmitt triggers: threshold voltages and hysteresis",
+   "activities": "- Students build an op-amp circuit whose output snaps fully high or low when a slowly changing input crosses a set level, add positive feedback so that a noisy input no longer makes the output chatter, compute the resistor values that set the two switching levels, and measure them.",
+   "tasks": "- Practical test: build a circuit whose output goes high at the sensor voltage for 30 °C and goes low again only at the voltage for 28 °C, and measure its two switching voltages."
+  },
+  "sensors-adc-masked": {
+   "course": "sensors",
+   "week": "6",
+   "split": "dev",
+   "purpose": "masking: the activities and the tasks agree with each other, but neither works on the week's course content",
+   "contents": "Analog-to-digital converters: sampling, quantization, resolution and the successive-approximation converter",
+   "activities": "- Laboratory: students build a 555 timer astable circuit and measure its output frequency and duty cycle.",
+   "tasks": "- Laboratory report: the 555 astable circuit with its measured frequency and duty cycle compared with the calculated values."
+  },
+  "sensors-amplifier-trap": {
+   "course": "sensors",
+   "week": "3",
+   "split": "dev",
+   "contents": "Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth",
+   "activities": "- Students set up the classroom audio amplifier and adjust its gain and volume for the class presentation.",
+   "tasks": "- Laboratory report: the measured gain of an inverting amplifier compared with the gain calculated from its resistors."
+  },
+  "sensors-switching-trap": {
+   "course": "sensors",
+   "week": "8",
+   "split": "dev",
+   "contents": "Power switching devices: SCR, TRIAC and power MOSFET switching circuits",
+   "activities": "- Laboratory: students wire SCR and TRIAC switching devices that turn a lamp on and off, and a MOSFET that switches a DC motor.",
+   "tasks": "- Quiz on network switching devices: how switches forward frames at OSI layer 2 and routers forward packets at layer 3."
+  },
+  "sensors-conversion-trap": {
+   "course": "sensors",
+   "week": "6",
+   "split": "heldout",
+   "contents": "Analog-to-digital converters: sampling, quantization, resolution and the successive-approximation converter",
+   "activities": "- Students sample a slowly varying voltage with a microcontroller's converter at several sampling rates, compute the resolution in volts per step, and work through one successive-approximation conversion by hand.",
+   "tasks": "- Seatwork: convert the given decimal numbers to binary and hexadecimal digits."
+  },
+  "sensors-temperature-trap": {
+   "course": "sensors",
+   "week": "10",
+   "split": "dev",
+   "contents": "Temperature sensors: thermistors, RTDs and thermocouples, their characteristics and linearization",
+   "activities": "- Students read the classroom wall thermometer every hour and record the temperatures for a weather log.",
+   "tasks": "- Laboratory report: the resistance-temperature curves of a thermistor and an RTD measured in a water bath, and the thermocouple voltage at three temperatures, with a linear fit for each."
+  },
+  "sensors-actuators-bare": {
+   "course": "sensors",
+   "week": "14",
+   "split": "dev",
+   "contents": "Actuators: DC, stepper and servo motors and their driver circuits",
+   "activities": "- Laboratory: students drive a DC motor with an H-bridge, a stepper motor with a driver IC and a servo motor with PWM from a microcontroller.",
+   "tasks": "- Laboratory exercise"
+  },
+  "sensors-dac-partial": {
+   "course": "sensors",
+   "week": "7",
+   "split": "heldout",
+   "contents": "Digital-to-analog converters: binary-weighted and R-2R ladder converters, resolution and settling time",
+   "activities": "- Students build a 4-bit R-2R ladder converter on a breadboard.",
+   "tasks": "- Problem set: compute the output voltage, resolution and settling time of binary-weighted and R-2R ladder converters for given input codes."
+  }
+ },
+ "items": [
+  {
+   "id": "c3-prog1-orientation-ca",
+   "origin": "stage-c3-1",
+   "type": "Content-activity",
+   "split": "dev",
+   "course": "prog1",
+   "lesson": "prog1-orientation",
+   "category": "week-one-orientation",
+   "source": "Week 1 course content: Course orientation: the syllabus, grading system and class policies; the role of computers and programmers in society",
+   "target": "- Walk-through of the syllabus and class policies, then small-group sharing on how computer programs shape daily life in the community.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The walk-through covers the syllabus and policies, and the sharing covers the role of programs in society: both parts of the orientation content.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-orientation-ct",
+   "origin": "stage-c3-1",
+   "type": "Content-assessment",
+   "split": "dev",
+   "course": "prog1",
+   "lesson": "prog1-orientation",
+   "category": "week-one-orientation",
+   "source": "Week 1 course content: Course orientation: the syllabus, grading system and class policies; the role of computers and programmers in society",
+   "target": "- Expectations sheet: each student writes what they hope to learn in the course and one example of a computer program that affects their community.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "A simple expectations task suits an orientation week, and its second part asks about the role of programs named in the content.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-orientation-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "dev",
+   "course": "prog1",
+   "lesson": "prog1-orientation",
+   "category": "week-one-orientation",
+   "source": "Week 1 learning activities: - Walk-through of the syllabus and class policies, then small-group sharing on how computer programs shape daily life in the community.",
+   "target": "- Expectations sheet: each student writes what they hope to learn in the course and one example of a computer program that affects their community.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The expectations sheet follows the sharing activity: the same theme and the same kind of reflection.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-conditionals-ca",
+   "origin": "stage-c3-1",
+   "type": "Content-activity",
+   "split": "heldout",
+   "course": "prog1",
+   "lesson": "prog1-conditionals",
+   "category": "aligned",
+   "source": "Week 3 course content: Conditional statements in Java: if, if-else, nested if and switch",
+   "target": "- Worked demonstration of if, if-else, nested if and switch, then pair programming: students write and run programs that compute a shipping fee by weight and print the name of the day for a day number.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Every statement the content names is demonstrated and then written and run by the students.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-conditionals-ct",
+   "origin": "stage-c3-1",
+   "type": "Content-assessment",
+   "split": "heldout",
+   "course": "prog1",
+   "lesson": "prog1-conditionals",
+   "category": "aligned",
+   "source": "Week 3 course content: Conditional statements in Java: if, if-else, nested if and switch",
+   "target": "- Laboratory exercise: write and test a program that assigns a letter grade from a numeric score with nested if-else, and a menu program that uses switch.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The exercise asks for working programs with nested if-else and switch, so it assesses the content's main topics and says what is produced.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-conditionals-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "heldout",
+   "course": "prog1",
+   "lesson": "prog1-conditionals",
+   "category": "aligned",
+   "source": "Week 3 learning activities: - Worked demonstration of if, if-else, nested if and switch, then pair programming: students write and run programs that compute a shipping fee by weight and print the name of the day for a day number.",
+   "target": "- Laboratory exercise: write and test a program that assigns a letter grade from a numeric score with nested if-else, and a menu program that uses switch.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The tasks ask for the same kind of program the students wrote in pairs, at the same level.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-loops-paraphrase-ca",
+   "origin": "stage-c3-1",
+   "type": "Content-activity",
+   "split": "dev",
+   "course": "prog1",
+   "lesson": "prog1-loops-paraphrase",
+   "category": "paraphrase-aligned",
+   "source": "Week 4 course content: Repetition structures in Java: for, while and do-while loops",
+   "target": "- Students write programs that repeat steps a fixed number of times or until a stop value is entered: a times-table printer, a running total that ends when 0 is typed, and a menu that is shown at least once and repeats until Exit is chosen.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Counted repetition, repetition until a stop value and a menu shown at least once are the for, while and do-while loops, described without their names.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-loops-paraphrase-ct",
+   "origin": "stage-c3-1",
+   "type": "Content-assessment",
+   "split": "dev",
+   "course": "prog1",
+   "lesson": "prog1-loops-paraphrase",
+   "category": "paraphrase-aligned",
+   "source": "Week 4 course content: Repetition structures in Java: for, while and do-while loops",
+   "target": "- Hands-on test: (a) print the first n odd numbers with a counter; (b) read scores until -1 is typed and print their average; (c) show a menu at least once and repeat it until the user picks Exit.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Parts (a), (b) and (c) assess counted, sentinel-controlled and run-at-least-once repetition: the three loops, in other words.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-loops-paraphrase-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "dev",
+   "course": "prog1",
+   "lesson": "prog1-loops-paraphrase",
+   "category": "aligned",
+   "source": "Week 4 learning activities: - Students write programs that repeat steps a fixed number of times or until a stop value is entered: a times-table printer, a running total that ends when 0 is typed, and a menu that is shown at least once and repeats until Exit is chosen.",
+   "target": "- Hands-on test: (a) print the first n odd numbers with a counter; (b) read scores until -1 is typed and print their average; (c) show a menu at least once and repeat it until the user picks Exit.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The test asks for the same three kinds of program the students practised.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-methods-ca",
+   "origin": "stage-c3-1",
+   "type": "Content-activity",
+   "split": "dev",
+   "course": "prog1",
+   "lesson": "prog1-methods",
+   "category": "partial-coverage",
+   "source": "Week 5 course content: Methods in Java: defining and calling methods, parameters, return values and method overloading",
+   "target": "- Students write and call methods without parameters that print a banner and a greeting.",
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Only defining and calling methods is practised; parameters, return values and overloading, three of the main topics, are not.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-methods-ct",
+   "origin": "stage-c3-1",
+   "type": "Content-assessment",
+   "split": "dev",
+   "course": "prog1",
+   "lesson": "prog1-methods",
+   "category": "aligned",
+   "source": "Week 5 course content: Methods in Java: defining and calling methods, parameters, return values and method overloading",
+   "target": "- Programming exercise: write a method that takes the length and width of a rectangle and returns its area, then overload it to compute the area of a square from one side.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The exercise needs parameters, a return value and an overloaded method: it assesses the main topics of the content.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-methods-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "dev",
+   "course": "prog1",
+   "lesson": "prog1-methods",
+   "category": "beyond-practice",
+   "source": "Week 5 learning activities: - Students write and call methods without parameters that print a banner and a greeting.",
+   "target": "- Programming exercise: write a method that takes the length and width of a rectangle and returns its area, then overload it to compute the area of a square from one side.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "The task asks for parameters, return values and overloading, which the activities never practised (they wrote methods without parameters).",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-arrays-masked-ca",
+   "origin": "stage-c3-1",
+   "type": "Content-activity",
+   "split": "dev",
+   "course": "prog1",
+   "lesson": "prog1-arrays-masked",
+   "category": "off-topic",
+   "source": "Week 6 course content: One-dimensional arrays in Java: declaring, initializing and traversing arrays; the sum, average and largest element of an array",
+   "target": "- Guided practice on if-else statements: students write programs that classify a number as positive, negative or zero.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "The activities practise if-else, another week's topic; nothing about arrays is done.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-arrays-masked-ct",
+   "origin": "stage-c3-1",
+   "type": "Content-assessment",
+   "split": "dev",
+   "course": "prog1",
+   "lesson": "prog1-arrays-masked",
+   "category": "off-topic",
+   "source": "Week 6 course content: One-dimensional arrays in Java: declaring, initializing and traversing arrays; the sum, average and largest element of an array",
+   "target": "- Laboratory exercise: write a program that uses if-else to classify a triangle as equilateral, isosceles or scalene from its three sides.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "The task assesses if-else, not arrays.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-arrays-masked-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "dev",
+   "course": "prog1",
+   "lesson": "prog1-arrays-masked",
+   "category": "aligned",
+   "source": "Week 6 learning activities: - Guided practice on if-else statements: students write programs that classify a number as positive, negative or zero.",
+   "target": "- Laboratory exercise: write a program that uses if-else to classify a triangle as equilateral, isosceles or scalene from its three sides.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The task assesses exactly the if-else classification work that was practised; this link is aligned even though both texts miss the content.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-variables-trap-ct",
+   "origin": "stage-c3-1",
+   "type": "Content-assessment",
+   "split": "dev",
+   "course": "prog1",
+   "lesson": "prog1-variables-trap",
+   "category": "keyword-trap",
+   "source": "Week 2 course content: Variables, data types and operators in Java: int, double, char, boolean and String; arithmetic and relational operators",
+   "target": "- Statistics worksheet: classify the variables of a survey data set by type (nominal, ordinal, interval, ratio) and compute the mean and mode of each numeric variable.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "\"Variables\", \"data\" and \"type\" match, but the worksheet is about statistical variables and levels of measurement, not Java variables, data types or operators.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-variables-trap-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "dev",
+   "course": "prog1",
+   "lesson": "prog1-variables-trap",
+   "category": "keyword-trap",
+   "source": "Week 2 learning activities: - Students declare variables of each data type in the IDE and evaluate expressions that use arithmetic and relational operators.",
+   "target": "- Statistics worksheet: classify the variables of a survey data set by type (nominal, ordinal, interval, ratio) and compute the mean and mode of each numeric variable.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "Both texts speak of variables and data types, but the task is statistics work that the Java activities never practised.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-classes-trap-ca",
+   "origin": "stage-c3-1",
+   "type": "Content-activity",
+   "split": "dev",
+   "course": "prog1",
+   "lesson": "prog1-classes-trap",
+   "category": "keyword-trap",
+   "source": "Week 15 course content: Introduction to classes and objects in Java: defining a class with fields and a constructor, and creating objects",
+   "target": "- Group sorting game: students sort pictures of computer hardware objects (keyboard, monitor, hard disk, printer) into classes of input, output and storage devices.",
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "\"Classes\" and \"objects\" here mean groups of hardware, not Java classes and objects; no class, field or constructor is written. At most a loose analogy.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-classes-trap-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "dev",
+   "course": "prog1",
+   "lesson": "prog1-classes-trap",
+   "category": "keyword-trap",
+   "source": "Week 15 learning activities: - Group sorting game: students sort pictures of computer hardware objects (keyboard, monitor, hard disk, printer) into classes of input, output and storage devices.",
+   "target": "- Programming exercise: define a Book class with fields and a constructor, create three Book objects and print their details.",
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "The task asks for a Java class with fields and a constructor, which the sorting game never practised; the shared words have another meaning.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-strings-bare-ct",
+   "origin": "stage-c3-1",
+   "type": "Content-assessment",
+   "split": "dev",
+   "course": "prog1",
+   "lesson": "prog1-strings-bare",
+   "category": "bare-name",
+   "source": "Week 10 course content: Strings in Java: the String methods length, charAt, substring, indexOf and equals, and comparing strings",
+   "target": "- Quiz",
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "A bare task name: it does not say what is assessed about strings.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-strings-bare-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "dev",
+   "course": "prog1",
+   "lesson": "prog1-strings-bare",
+   "category": "bare-name",
+   "source": "Week 10 learning activities: - Guided exercise: students use String methods to count the vowels in a word and to check whether a word reads the same backwards.",
+   "target": "- Quiz",
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "A bare task name: it does not say whether the quiz assesses the String methods the students practised.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-debugging-shallow-ca",
+   "origin": "stage-c3-1",
+   "type": "Content-activity",
+   "split": "dev",
+   "course": "prog1",
+   "lesson": "prog1-debugging-shallow",
+   "category": "shallow-depth",
+   "source": "Week 11 course content: Debugging and testing Java programs: finding and fixing syntax, runtime and logic errors, and writing test cases",
+   "target": "- Lecture with slides on the kinds of programming errors; students take down notes.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "The content is about finding, fixing and testing; the students only listen and take notes, so nothing is debugged or tested.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-debugging-shallow-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "dev",
+   "course": "prog1",
+   "lesson": "prog1-debugging-shallow",
+   "category": "beyond-practice",
+   "source": "Week 11 learning activities: - Lecture with slides on the kinds of programming errors; students take down notes.",
+   "target": "- Debugging exercise: find and fix the syntax, runtime and logic errors in three given programs, and write test cases that show each fix works.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "The task asks for debugging and test cases, which a lecture with note-taking never practised.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-methods-trap-ct",
+   "origin": "stage-c3-1",
+   "type": "Content-assessment",
+   "split": "heldout",
+   "course": "prog1",
+   "lesson": "prog1-methods-trap",
+   "category": "keyword-trap",
+   "source": "Week 5 course content: Methods in Java: defining and calling methods, parameters and return values",
+   "target": "- Short report: define three research methods used in software engineering (surveys, interviews and experiments) and give one example of each.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "\"Methods\" here means research methods; the report assesses nothing about Java methods, parameters or return values.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-prog1-methods-trap-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "heldout",
+   "course": "prog1",
+   "lesson": "prog1-methods-trap",
+   "category": "keyword-trap",
+   "source": "Week 5 learning activities: - Students define and call methods with parameters and return values in the IDE, then trace a call step by step with a partner.",
+   "target": "- Short report: define three research methods used in software engineering (surveys, interviews and experiments) and give one example of each.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "The report is about research methods, work the programming activities never practised; only the word \"methods\" is shared.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-requirements-ca",
+   "origin": "stage-c3-1",
+   "type": "Content-activity",
+   "split": "dev",
+   "course": "syseng",
+   "lesson": "syseng-requirements",
+   "category": "aligned",
+   "source": "Week 4 course content: Requirements analysis: stakeholder needs, system requirements specification and traceability",
+   "target": "- Case workshop: teams interview a mock client about a campus shuttle system, write the system requirements as \"shall\" statements and build a traceability matrix from each stakeholder need to its requirements.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Eliciting needs, writing requirements and tracing them are all practised on a case.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-requirements-ct",
+   "origin": "stage-c3-1",
+   "type": "Content-assessment",
+   "split": "dev",
+   "course": "syseng",
+   "lesson": "syseng-requirements",
+   "category": "aligned",
+   "source": "Week 4 course content: Requirements analysis: stakeholder needs, system requirements specification and traceability",
+   "target": "- Team output: a system requirements specification for the campus shuttle system with its traceability matrix, checked with a rubric for completeness and verifiability.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The specification and the traceability matrix assess every main topic of the content and say what is produced.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-requirements-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "dev",
+   "course": "syseng",
+   "lesson": "syseng-requirements",
+   "category": "aligned",
+   "source": "Week 4 learning activities: - Case workshop: teams interview a mock client about a campus shuttle system, write the system requirements as \"shall\" statements and build a traceability matrix from each stakeholder need to its requirements.",
+   "target": "- Team output: a system requirements specification for the campus shuttle system with its traceability matrix, checked with a rubric for completeness and verifiability.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The output is the product the workshop practised, on the same case.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-functional-paraphrase-ca",
+   "origin": "stage-c3-1",
+   "type": "Content-activity",
+   "split": "dev",
+   "course": "syseng",
+   "lesson": "syseng-functional-paraphrase",
+   "category": "paraphrase-aligned",
+   "source": "Week 5 course content: Functional analysis and allocation: functional flow block diagrams and the allocation of functions to system elements",
+   "target": "- Teams break down what a vending machine must do, from accepting payment to releasing the item, draw these steps in order as connected boxes, and decide which component (coin unit, controller or motor) carries out each step.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Breaking down what the system must do, drawing the ordered steps as connected boxes and assigning each step to a component are functional analysis, a functional flow block diagram and allocation, without the terms.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-functional-paraphrase-ct",
+   "origin": "stage-c3-1",
+   "type": "Content-assessment",
+   "split": "dev",
+   "course": "syseng",
+   "lesson": "syseng-functional-paraphrase",
+   "category": "paraphrase-aligned",
+   "source": "Week 5 course content: Functional analysis and allocation: functional flow block diagrams and the allocation of functions to system elements",
+   "target": "- Individual problem: for an automatic car wash, sketch the ordered steps the machine performs as linked boxes and assign each step to the equipment that will carry it out.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Sketching the ordered steps as linked boxes and assigning each to equipment assesses the diagram and the allocation, in other words.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-functional-paraphrase-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "dev",
+   "course": "syseng",
+   "lesson": "syseng-functional-paraphrase",
+   "category": "aligned",
+   "source": "Week 5 learning activities: - Teams break down what a vending machine must do, from accepting payment to releasing the item, draw these steps in order as connected boxes, and decide which component (coin unit, controller or motor) carries out each step.",
+   "target": "- Individual problem: for an automatic car wash, sketch the ordered steps the machine performs as linked boxes and assign each step to the equipment that will carry it out.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The individual problem repeats the practised work on a new system.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-reliability-masked-ca",
+   "origin": "stage-c3-1",
+   "type": "Content-activity",
+   "split": "heldout",
+   "course": "syseng",
+   "lesson": "syseng-reliability-masked",
+   "category": "off-topic",
+   "source": "Week 8 course content: Reliability and maintainability: failure rate, mean time between failures and the reliability of series and parallel systems",
+   "target": "- Teams compute the net present worth of two equipment alternatives from given cash flows and an interest rate.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "Net present worth is engineering economy, not reliability or maintainability.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-reliability-masked-ct",
+   "origin": "stage-c3-1",
+   "type": "Content-assessment",
+   "split": "heldout",
+   "course": "syseng",
+   "lesson": "syseng-reliability-masked",
+   "category": "off-topic",
+   "source": "Week 8 course content: Reliability and maintainability: failure rate, mean time between failures and the reliability of series and parallel systems",
+   "target": "- Problem set: compare three equipment alternatives by net present worth and payback period.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "The problem set assesses engineering economy, not failure rates or system reliability.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-reliability-masked-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "heldout",
+   "course": "syseng",
+   "lesson": "syseng-reliability-masked",
+   "category": "aligned",
+   "source": "Week 8 learning activities: - Teams compute the net present worth of two equipment alternatives from given cash flows and an interest rate.",
+   "target": "- Problem set: compare three equipment alternatives by net present worth and payback period.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The problem set assesses the net-present-worth work that was practised; this link is aligned although both texts miss the content.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-integration-trap-ct",
+   "origin": "stage-c3-1",
+   "type": "Content-assessment",
+   "split": "dev",
+   "course": "syseng",
+   "lesson": "syseng-integration-trap",
+   "category": "keyword-trap",
+   "source": "Week 11 course content: System integration: interface definition, integration strategies (top-down, bottom-up and big-bang) and integration testing",
+   "target": "- Problem set: evaluate ten integrals, choosing the integration strategy for each: substitution, integration by parts or partial fractions.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "\"Integration\" here is calculus; the problem set assesses nothing about system interfaces, integration strategies or integration testing.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-integration-trap-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "dev",
+   "course": "syseng",
+   "lesson": "syseng-integration-trap",
+   "category": "keyword-trap",
+   "source": "Week 11 learning activities: - Teams draw an interface diagram for a conveyor-and-robot cell and choose an integration strategy: the order in which its subsystems are joined and tested.",
+   "target": "- Problem set: evaluate ten integrals, choosing the integration strategy for each: substitution, integration by parts or partial fractions.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "Calculus integrals were never practised in the interface and integration-planning activities; \"integration strategy\" means something else in each text.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-requirements-trap-ca",
+   "origin": "stage-c3-1",
+   "type": "Content-activity",
+   "split": "dev",
+   "course": "syseng",
+   "lesson": "syseng-requirements-trap",
+   "category": "keyword-trap",
+   "source": "Week 4 course content: Requirements analysis: stakeholder needs, system requirements specification and traceability",
+   "target": "- Students read the course requirements in the syllabus (attendance, projects and examinations) and discuss the grading system with the instructor.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "The activity is about the course's own requirements and grading, not about analysing the requirements of a system.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-requirements-trap-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "dev",
+   "course": "syseng",
+   "lesson": "syseng-requirements-trap",
+   "category": "keyword-trap",
+   "source": "Week 4 learning activities: - Students read the course requirements in the syllabus (attendance, projects and examinations) and discuss the grading system with the instructor.",
+   "target": "- Team output: a system requirements specification for a library book-return kiosk with a traceability matrix.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "The task asks for a system requirements specification and a traceability matrix, which reading the course requirements never practised.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-performance-trap-ca",
+   "origin": "stage-c3-1",
+   "type": "Content-activity",
+   "split": "dev",
+   "course": "syseng",
+   "lesson": "syseng-performance-trap",
+   "category": "keyword-trap",
+   "source": "Week 14 course content: System performance evaluation: technical performance measures, measures of effectiveness, and system test and evaluation",
+   "target": "- Peer performance evaluation: each student rates every team member's contribution to the term project on an evaluation form.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "Rating team members is a peer evaluation of students, not an evaluation of a system's performance.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-performance-trap-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "dev",
+   "course": "syseng",
+   "lesson": "syseng-performance-trap",
+   "category": "keyword-trap",
+   "source": "Week 14 learning activities: - Peer performance evaluation: each student rates every team member's contribution to the term project on an evaluation form.",
+   "target": "- Case analysis: define three technical performance measures for a hospital queueing system, state how each will be measured in the system test, and evaluate the current design against them.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "The task asks for technical performance measures and a system test, which the peer rating never practised; \"performance\" and \"evaluation\" mean something else in each text.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-lifecycle-trap-ct",
+   "origin": "stage-c3-1",
+   "type": "Content-assessment",
+   "split": "heldout",
+   "course": "syseng",
+   "lesson": "syseng-lifecycle-trap",
+   "category": "keyword-trap",
+   "source": "Week 12 course content: Life-cycle cost analysis: cost breakdown structure, and acquisition, operation and support costs over the system life cycle",
+   "target": "- Essay: explain the four stages of the product life cycle in marketing (introduction, growth, maturity and decline) using a smartphone brand as the example.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "The product life cycle of marketing is not the system life cycle of a cost analysis; no cost is broken down or estimated.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-lifecycle-trap-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "heldout",
+   "course": "syseng",
+   "lesson": "syseng-lifecycle-trap",
+   "category": "keyword-trap",
+   "source": "Week 12 learning activities: - Teams build a cost breakdown structure for a municipal water pumping station and estimate its acquisition, operation and support costs over its 20-year life cycle.",
+   "target": "- Essay: explain the four stages of the product life cycle in marketing (introduction, growth, maturity and decline) using a smartphone brand as the example.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "A marketing essay was never practised in the cost-estimation activities; \"life cycle\" means something else in each text.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-management-bare-ca",
+   "origin": "stage-c3-1",
+   "type": "Content-activity",
+   "split": "heldout",
+   "course": "syseng",
+   "lesson": "syseng-management-bare",
+   "category": "partial-coverage",
+   "source": "Week 15 course content: Systems engineering management: the systems engineering management plan, work breakdown structure and technical reviews",
+   "target": "- Teams draft a work breakdown structure for their term project.",
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Only the work breakdown structure is practised; the management plan and the technical reviews are not.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-management-bare-ct",
+   "origin": "stage-c3-1",
+   "type": "Content-assessment",
+   "split": "heldout",
+   "course": "syseng",
+   "lesson": "syseng-management-bare",
+   "category": "bare-name",
+   "source": "Week 15 course content: Systems engineering management: the systems engineering management plan, work breakdown structure and technical reviews",
+   "target": "- Seatwork",
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "A bare task name: it does not say what is assessed about systems engineering management.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-management-bare-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "heldout",
+   "course": "syseng",
+   "lesson": "syseng-management-bare",
+   "category": "bare-name",
+   "source": "Week 15 learning activities: - Teams draft a work breakdown structure for their term project.",
+   "target": "- Seatwork",
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "A bare task name: it does not say whether the seatwork assesses the work breakdown structure the teams drafted.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-tradeoff-recall-ct",
+   "origin": "stage-c3-1",
+   "type": "Content-assessment",
+   "split": "dev",
+   "course": "syseng",
+   "lesson": "syseng-tradeoff-recall",
+   "category": "partial-coverage",
+   "source": "Week 6 course content: Trade-off studies and decision analysis: evaluation criteria, weighting, decision matrices and sensitivity analysis",
+   "target": "- Short quiz: define \"trade-off study\" and \"decision matrix\".",
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Two definitions touch the topic but leave out weighting, criteria and sensitivity analysis, and no decision is analysed.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-tradeoff-recall-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "dev",
+   "course": "syseng",
+   "lesson": "syseng-tradeoff-recall",
+   "category": "partial-coverage",
+   "source": "Week 6 learning activities: - Teams build a weighted decision matrix to choose among three conveyor designs and test how the choice changes when the weights change.",
+   "target": "- Short quiz: define \"trade-off study\" and \"decision matrix\".",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "The quiz checks the recall of two terms; it does not assess building and testing a weighted decision matrix, the work the teams practised.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-requirements-grouped-ca",
+   "origin": "stage-c3-1",
+   "type": "Content-activity",
+   "split": "dev",
+   "course": "syseng",
+   "lesson": "syseng-requirements-grouped",
+   "category": "grouped-weeks",
+   "source": "Week 4-5 course content: Requirements analysis and validation: eliciting stakeholder needs, writing system requirements, and validating them through reviews and prototypes",
+   "target": "- Week 4: teams interview a mock client and write the system requirements. Week 5: teams review another team's requirements and check them against a paper prototype.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Across the two weeks of the lesson the activities cover eliciting, writing and validating requirements.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-requirements-grouped-ct",
+   "origin": "stage-c3-1",
+   "type": "Content-assessment",
+   "split": "dev",
+   "course": "syseng",
+   "lesson": "syseng-requirements-grouped",
+   "category": "grouped-weeks",
+   "source": "Week 4-5 course content: Requirements analysis and validation: eliciting stakeholder needs, writing system requirements, and validating them through reviews and prototypes",
+   "target": "- Team output: a validated requirements document with the peer-review comments and the prototype findings that changed it.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The validated document with the review and prototype evidence assesses the whole two-week content.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-requirements-grouped-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "dev",
+   "course": "syseng",
+   "lesson": "syseng-requirements-grouped",
+   "category": "grouped-weeks",
+   "source": "Week 4-5 learning activities: - Week 4: teams interview a mock client and write the system requirements. Week 5: teams review another team's requirements and check them against a paper prototype.",
+   "target": "- Team output: a validated requirements document with the peer-review comments and the prototype findings that changed it.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The output collects what both weeks of activities produced.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-queueing-shallow-ca",
+   "origin": "stage-c3-1",
+   "type": "Content-activity",
+   "split": "heldout",
+   "course": "syseng",
+   "lesson": "syseng-queueing-shallow",
+   "category": "shallow-depth",
+   "source": "Week 13 course content: Queueing models for system analysis: arrival and service rates, utilization and waiting time in a single-server queue",
+   "target": "- Video showing on long lines at a theme park; students write a one-page reaction paper.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "The video shows waiting lines, but nothing is modelled or computed: arrival and service rates, utilization and waiting time are not worked on.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-syseng-queueing-shallow-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "heldout",
+   "course": "syseng",
+   "lesson": "syseng-queueing-shallow",
+   "category": "beyond-practice",
+   "source": "Week 13 learning activities: - Video showing on long lines at a theme park; students write a one-page reaction paper.",
+   "target": "- Problem set: compute the utilization, the average number waiting and the average waiting time of single-server queues from given arrival and service rates.",
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "The problem set asks for queueing computations that a video and a reaction paper never practised.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-sensors-opamp-ca",
+   "origin": "stage-c3-1",
+   "type": "Content-activity",
+   "split": "dev",
+   "course": "sensors",
+   "lesson": "sensors-opamp",
+   "category": "aligned",
+   "source": "Week 3 course content: Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth",
+   "target": "- Laboratory: students build inverting and non-inverting amplifiers on a breadboard, measure their gain with an oscilloscope and observe how the gain falls at higher frequencies.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Both amplifier types are built and their gain and bandwidth are measured.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-sensors-opamp-ct",
+   "origin": "stage-c3-1",
+   "type": "Content-assessment",
+   "split": "dev",
+   "course": "sensors",
+   "lesson": "sensors-opamp",
+   "category": "aligned",
+   "source": "Week 3 course content: Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth",
+   "target": "- Laboratory report: measured and calculated gain of both amplifiers, the frequency at which the gain drops by 3 dB, and an explanation of the differences.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The report assesses gain and bandwidth of both amplifiers and says what is shown.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-sensors-opamp-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "dev",
+   "course": "sensors",
+   "lesson": "sensors-opamp",
+   "category": "aligned",
+   "source": "Week 3 learning activities: - Laboratory: students build inverting and non-inverting amplifiers on a breadboard, measure their gain with an oscilloscope and observe how the gain falls at higher frequencies.",
+   "target": "- Laboratory report: measured and calculated gain of both amplifiers, the frequency at which the gain drops by 3 dB, and an explanation of the differences.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The report is on the measurements the laboratory practised.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-sensors-hysteresis-paraphrase-ca",
+   "origin": "stage-c3-1",
+   "type": "Content-activity",
+   "split": "heldout",
+   "course": "sensors",
+   "lesson": "sensors-hysteresis-paraphrase",
+   "category": "paraphrase-aligned",
+   "source": "Week 4 course content: Comparators and Schmitt triggers: threshold voltages and hysteresis",
+   "target": "- Students build an op-amp circuit whose output snaps fully high or low when a slowly changing input crosses a set level, add positive feedback so that a noisy input no longer makes the output chatter, compute the resistor values that set the two switching levels, and measure them.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "An output that snaps when the input crosses a set level is a comparator; positive feedback with two switching levels is a Schmitt trigger with hysteresis.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-sensors-hysteresis-paraphrase-ct",
+   "origin": "stage-c3-1",
+   "type": "Content-assessment",
+   "split": "heldout",
+   "course": "sensors",
+   "lesson": "sensors-hysteresis-paraphrase",
+   "category": "paraphrase-aligned",
+   "source": "Week 4 course content: Comparators and Schmitt triggers: threshold voltages and hysteresis",
+   "target": "- Practical test: build a circuit whose output goes high at the sensor voltage for 30 °C and goes low again only at the voltage for 28 °C, and measure its two switching voltages.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Different switching voltages for rising and falling inputs are threshold voltages with hysteresis, assessed by building and measuring.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-sensors-hysteresis-paraphrase-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "heldout",
+   "course": "sensors",
+   "lesson": "sensors-hysteresis-paraphrase",
+   "category": "aligned",
+   "source": "Week 4 learning activities: - Students build an op-amp circuit whose output snaps fully high or low when a slowly changing input crosses a set level, add positive feedback so that a noisy input no longer makes the output chatter, compute the resistor values that set the two switching levels, and measure them.",
+   "target": "- Practical test: build a circuit whose output goes high at the sensor voltage for 30 °C and goes low again only at the voltage for 28 °C, and measure its two switching voltages.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The test asks for the circuit and the measurements the students practised, with given switching levels.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-sensors-adc-masked-ca",
+   "origin": "stage-c3-1",
+   "type": "Content-activity",
+   "split": "dev",
+   "course": "sensors",
+   "lesson": "sensors-adc-masked",
+   "category": "off-topic",
+   "source": "Week 6 course content: Analog-to-digital converters: sampling, quantization, resolution and the successive-approximation converter",
+   "target": "- Laboratory: students build a 555 timer astable circuit and measure its output frequency and duty cycle.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "A 555 timer is not an analog-to-digital converter; sampling, quantization and resolution are not worked on.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-sensors-adc-masked-ct",
+   "origin": "stage-c3-1",
+   "type": "Content-assessment",
+   "split": "dev",
+   "course": "sensors",
+   "lesson": "sensors-adc-masked",
+   "category": "off-topic",
+   "source": "Week 6 course content: Analog-to-digital converters: sampling, quantization, resolution and the successive-approximation converter",
+   "target": "- Laboratory report: the 555 astable circuit with its measured frequency and duty cycle compared with the calculated values.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "The report assesses the timer circuit, not analog-to-digital conversion.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-sensors-adc-masked-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "dev",
+   "course": "sensors",
+   "lesson": "sensors-adc-masked",
+   "category": "aligned",
+   "source": "Week 6 learning activities: - Laboratory: students build a 555 timer astable circuit and measure its output frequency and duty cycle.",
+   "target": "- Laboratory report: the 555 astable circuit with its measured frequency and duty cycle compared with the calculated values.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The report is on the timer the students built and measured; this link is aligned although both texts miss the content.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-sensors-amplifier-trap-ca",
+   "origin": "stage-c3-1",
+   "type": "Content-activity",
+   "split": "dev",
+   "course": "sensors",
+   "lesson": "sensors-amplifier-trap",
+   "category": "keyword-trap",
+   "source": "Week 3 course content: Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth",
+   "target": "- Students set up the classroom audio amplifier and adjust its gain and volume for the class presentation.",
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Adjusting the room's audio amplifier is operating equipment, not building or analysing op-amp circuits; \"amplifier\" and \"gain\" are shared only as words.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-sensors-amplifier-trap-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "dev",
+   "course": "sensors",
+   "lesson": "sensors-amplifier-trap",
+   "category": "keyword-trap",
+   "source": "Week 3 learning activities: - Students set up the classroom audio amplifier and adjust its gain and volume for the class presentation.",
+   "target": "- Laboratory report: the measured gain of an inverting amplifier compared with the gain calculated from its resistors.",
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "The report asks for an op-amp circuit measured and calculated, which setting up the audio amplifier never practised.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-sensors-switching-trap-ct",
+   "origin": "stage-c3-1",
+   "type": "Content-assessment",
+   "split": "dev",
+   "course": "sensors",
+   "lesson": "sensors-switching-trap",
+   "category": "keyword-trap",
+   "source": "Week 8 course content: Power switching devices: SCR, TRIAC and power MOSFET switching circuits",
+   "target": "- Quiz on network switching devices: how switches forward frames at OSI layer 2 and routers forward packets at layer 3.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "Network switching devices belong to data communications, not to power electronics; \"switching devices\" means something else in each text.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-sensors-switching-trap-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "dev",
+   "course": "sensors",
+   "lesson": "sensors-switching-trap",
+   "category": "keyword-trap",
+   "source": "Week 8 learning activities: - Laboratory: students wire SCR and TRIAC switching devices that turn a lamp on and off, and a MOSFET that switches a DC motor.",
+   "target": "- Quiz on network switching devices: how switches forward frames at OSI layer 2 and routers forward packets at layer 3.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "Network switches and routers were never practised in the power-switching laboratory.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-sensors-conversion-trap-ct",
+   "origin": "stage-c3-1",
+   "type": "Content-assessment",
+   "split": "heldout",
+   "course": "sensors",
+   "lesson": "sensors-conversion-trap",
+   "category": "keyword-trap",
+   "source": "Week 6 course content: Analog-to-digital converters: sampling, quantization, resolution and the successive-approximation converter",
+   "target": "- Seatwork: convert the given decimal numbers to binary and hexadecimal digits.",
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Number-system conversion is not analog-to-digital conversion: sampling, quantization, resolution and the converter are not assessed. At most it touches the binary codes a converter outputs.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-sensors-temperature-trap-ca",
+   "origin": "stage-c3-1",
+   "type": "Content-activity",
+   "split": "dev",
+   "course": "sensors",
+   "lesson": "sensors-temperature-trap",
+   "category": "keyword-trap",
+   "source": "Week 10 course content: Temperature sensors: thermistors, RTDs and thermocouples, their characteristics and linearization",
+   "target": "- Students read the classroom wall thermometer every hour and record the temperatures for a weather log.",
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Reading a wall thermometer records the weather; the sensors named in the content, their characteristics and linearization are not worked on.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-sensors-temperature-trap-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "dev",
+   "course": "sensors",
+   "lesson": "sensors-temperature-trap",
+   "category": "keyword-trap",
+   "source": "Week 10 learning activities: - Students read the classroom wall thermometer every hour and record the temperatures for a weather log.",
+   "target": "- Laboratory report: the resistance-temperature curves of a thermistor and an RTD measured in a water bath, and the thermocouple voltage at three temperatures, with a linear fit for each.",
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "The report asks for sensor characteristics measured in a laboratory, which reading a thermometer for a weather log never practised.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-sensors-actuators-bare-ct",
+   "origin": "stage-c3-1",
+   "type": "Content-assessment",
+   "split": "dev",
+   "course": "sensors",
+   "lesson": "sensors-actuators-bare",
+   "category": "bare-name",
+   "source": "Week 14 course content: Actuators: DC, stepper and servo motors and their driver circuits",
+   "target": "- Laboratory exercise",
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "A bare task name: it does not say what is assessed about the actuators or their drivers.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-sensors-actuators-bare-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "dev",
+   "course": "sensors",
+   "lesson": "sensors-actuators-bare",
+   "category": "bare-name",
+   "source": "Week 14 learning activities: - Laboratory: students drive a DC motor with an H-bridge, a stepper motor with a driver IC and a servo motor with PWM from a microcontroller.",
+   "target": "- Laboratory exercise",
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "A bare task name: it does not say which of the practised motor-driving work is assessed.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-sensors-dac-partial-ca",
+   "origin": "stage-c3-1",
+   "type": "Content-activity",
+   "split": "heldout",
+   "course": "sensors",
+   "lesson": "sensors-dac-partial",
+   "category": "partial-coverage",
+   "source": "Week 7 course content: Digital-to-analog converters: binary-weighted and R-2R ladder converters, resolution and settling time",
+   "target": "- Students build a 4-bit R-2R ladder converter on a breadboard.",
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Only the R-2R ladder is built; the binary-weighted converter, resolution and settling time are not worked on.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-sensors-dac-partial-ct",
+   "origin": "stage-c3-1",
+   "type": "Content-assessment",
+   "split": "heldout",
+   "course": "sensors",
+   "lesson": "sensors-dac-partial",
+   "category": "aligned",
+   "source": "Week 7 course content: Digital-to-analog converters: binary-weighted and R-2R ladder converters, resolution and settling time",
+   "target": "- Problem set: compute the output voltage, resolution and settling time of binary-weighted and R-2R ladder converters for given input codes.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "The problem set assesses both converter types, their resolution and settling time.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "c3-sensors-dac-partial-at",
+   "origin": "stage-c3-1",
+   "type": "Activity-assessment",
+   "split": "heldout",
+   "course": "sensors",
+   "lesson": "sensors-dac-partial",
+   "category": "beyond-practice",
+   "source": "Week 7 learning activities: - Students build a 4-bit R-2R ladder converter on a breadboard.",
+   "target": "- Problem set: compute the output voltage, resolution and settling time of binary-weighted and R-2R ladder converters for given input codes.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "The problem set asks for computations and a converter type the students never practised; they only built an R-2R ladder.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  }
+ ]
+}

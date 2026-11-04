@@ -1,0 +1,640 @@
+{
+ "version": "stage-c-2",
+ "status": "DRAFT - synthetic examples with author-written labels, NOT faculty-reviewed",
+ "reviewStatus": "unreviewed",
+ "provenance": "Course identity and descriptions: the repository's records and the sample syllabi (as in stage-a-dataset.json). The lessons, activities and assessment tasks are SYNTHETIC examples written by the assistant for IT 202, IE 402 and CPE 304; they are not the institution's. Expected verdicts are the assistant's, unreviewed by faculty; nothing here measures agreement with faculty. The contact units are the curriculum's (IT 202 lecture 2 / laboratory 1; the others lecture 3).",
+ "splits": {
+  "dev": "All items. No held-out split."
+ },
+ "categories": [
+  "clear-positive",
+  "off-subject",
+  "wrong-method",
+  "limited-support",
+  "alternative-formats",
+  "week-one-orientation",
+  "wrong-cognitive-level",
+  "bare-name",
+  "legitimate-conceptual",
+  "accessible-alternative",
+  "multiweek",
+  "practical-vs-conceptual",
+  "vague-evidence"
+ ],
+ "courses": {
+  "prog1": {
+   "code": "IT 202",
+   "title": "Computer Programming 1 (Fundamentals of Programming)",
+   "program": "BSIT",
+   "yearLevel": "2",
+   "discipline": "computing",
+   "description": "This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications."
+  },
+  "syseng": {
+   "code": "IE 402",
+   "title": "Systems Engineering",
+   "program": "BSIE",
+   "yearLevel": "4",
+   "discipline": "engineering",
+   "description": "This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation."
+  },
+  "sensors": {
+   "code": "CPE 304",
+   "title": "Fundamentals of Mixed Signals and Sensors",
+   "program": "BSCPE",
+   "yearLevel": "3",
+   "discipline": "engineering",
+   "description": "This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included."
+  }
+ },
+ "note": "A trap never accepts ALIGNED. Sources are built by lessonfit.js. The label is scored as in the other datasets. Where an item has `expectedAspects`, the structured fields of the answer (teaching, learnerSupport, measures, evidence, level) are compared too; a value may be a list of acceptable values. Those expectations are as provisional as the labels. Not covered by model items: upstream-invalid lessons, missing upstream evidence, examination weeks (never asked), conflicting or malformed model fields and provider failures - those are engine behaviours, covered by offline tests.",
+ "items": [
+  {
+   "id": "af-prog1-good",
+   "origin": "stage-c-1",
+   "type": "Activity-fit",
+   "split": "dev",
+   "course": "prog1",
+   "category": "clear-positive",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Develop and test Java programs that use if-else and switch statements to make decisions.\nContact units stated by the syllabus: lecture 2, laboratory 1",
+   "target": "- Guided Java coding exercise in the laboratory: a worked demonstration first, then students write and run if-else and switch programs in pairs, with a starter file for students who want a scaffold.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Hands-on practice of the ILO verb, a demonstration and scaffolding.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "teaching": "sound",
+    "learnerSupport": "adequate"
+   }
+  },
+  {
+   "id": "af-prog1-irrelevant",
+   "origin": "stage-c-1",
+   "type": "Activity-fit",
+   "split": "dev",
+   "course": "prog1",
+   "category": "off-subject",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Develop and test Java programs that use if-else and switch statements to make decisions.\nContact units stated by the syllabus: lecture 2, laboratory 1",
+   "target": "- Group discussion on the history of computers and a video about early mainframes.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "Unrelated to the content and the ILO.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "teaching": "weak"
+   }
+  },
+  {
+   "id": "af-prog1-passive",
+   "origin": "stage-c-1",
+   "type": "Activity-fit",
+   "split": "dev",
+   "course": "prog1",
+   "category": "wrong-method",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Develop and test Java programs that use if-else and switch statements to make decisions.\nContact units stated by the syllabus: lecture 2, laboratory 1",
+   "target": "- Lecture on Java conditional statements using slides; students listen and copy the syntax.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Keywords match, but listening and copying does not develop \"develop and test\" and the laboratory unit is unused.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "teaching": "weak"
+   }
+  },
+  {
+   "id": "af-prog1-single-format",
+   "origin": "stage-c-1",
+   "type": "Activity-fit",
+   "split": "dev",
+   "course": "prog1",
+   "category": "limited-support",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Develop and test Java programs that use if-else and switch statements to make decisions.\nContact units stated by the syllabus: lecture 2, laboratory 1",
+   "target": "- Individual timed coding test in which students write if-else programs from memory.",
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "It practises the skill, but the only format is one timed individual task: no demonstration, scaffolding or alternative.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "teaching": "sound",
+    "learnerSupport": "limited"
+   }
+  },
+  {
+   "id": "af-prog1-alternatives",
+   "origin": "stage-c-1",
+   "type": "Activity-fit",
+   "split": "dev",
+   "course": "prog1",
+   "category": "alternative-formats",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Develop and test Java programs that use if-else and switch statements to make decisions.\nContact units stated by the syllabus: lecture 2, laboratory 1",
+   "target": "- Guided demonstration of if-else and switch in Java, then pair programming in the laboratory; a recorded demonstration and annotated code samples are available for review, and learners may work alone or in pairs.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Practice with demonstration, recorded and written material and a choice of working alone or in pairs.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "teaching": "sound",
+    "learnerSupport": "adequate"
+   }
+  },
+  {
+   "id": "af-prog1-week1",
+   "origin": "stage-c-1",
+   "type": "Activity-fit",
+   "split": "dev",
+   "course": "prog1",
+   "category": "week-one-orientation",
+   "source": "Week 1 course content: Course orientation: objectives, requirements, grading and policies\nILOs:\n- Describe the course objectives, requirements and grading system.\nContact units stated by the syllabus: lecture 2, laboratory 1",
+   "target": "- Setting and sharing of expectations; presentation of the course objectives; review of the policies and the grading system.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "A legitimate orientation activity needs no technical practice.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "teaching": "sound",
+    "learnerSupport": [
+     "adequate",
+     "not_applicable"
+    ]
+   }
+  },
+  {
+   "id": "af-syseng-good",
+   "origin": "stage-c-1",
+   "type": "Activity-fit",
+   "split": "dev",
+   "course": "syseng",
+   "category": "clear-positive",
+   "source": "Week 4 course content: Requirements analysis: stakeholder needs, system requirements specification and traceability\nILOs:\n- Write verifiable system requirements for a given scenario.\nContact units stated by the syllabus: lecture 3, laboratory 0",
+   "target": "- Guided workshop: teams elicit stakeholder needs from a case and draft requirements; the teacher models one requirement first and gives a template.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Teams practise writing requirements with a model and a template.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "teaching": "sound"
+   }
+  },
+  {
+   "id": "af-syseng-irrelevant",
+   "origin": "stage-c-1",
+   "type": "Activity-fit",
+   "split": "dev",
+   "course": "syseng",
+   "category": "off-subject",
+   "source": "Week 4 course content: Requirements analysis: stakeholder needs, system requirements specification and traceability\nILOs:\n- Write verifiable system requirements for a given scenario.\nContact units stated by the syllabus: lecture 3, laboratory 0",
+   "target": "- Lecture and drill on Java loops.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "A programming activity in a requirements lesson.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "teaching": "weak"
+   }
+  },
+  {
+   "id": "af-sensors-good",
+   "origin": "stage-c-1",
+   "type": "Activity-fit",
+   "split": "dev",
+   "course": "sensors",
+   "category": "clear-positive",
+   "source": "Week 3 course content: Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth\nILOs:\n- Design and test an inverting amplifier with a specified gain.\nContact units stated by the syllabus: lecture 3, laboratory 0",
+   "target": "- Guided design example, then students design the circuit, simulate it in a circuit simulator and compare the simulated gain with the calculated one; a worked solution and a step-by-step handout are provided.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Design, simulation and comparison, with worked material.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "teaching": "sound"
+   }
+  },
+  {
+   "id": "af-sensors-passive",
+   "origin": "stage-c-1",
+   "type": "Activity-fit",
+   "split": "dev",
+   "course": "sensors",
+   "category": "wrong-method",
+   "source": "Week 3 course content: Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth\nILOs:\n- Design and test an inverting amplifier with a specified gain.\nContact units stated by the syllabus: lecture 3, laboratory 0",
+   "target": "- Lecture on operational amplifiers.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "A design-and-test ILO with a lecture only.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "teaching": "weak"
+   }
+  },
+  {
+   "id": "as-prog1-good",
+   "origin": "stage-c-1",
+   "type": "Assessment-fit",
+   "split": "dev",
+   "course": "prog1",
+   "category": "clear-positive",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Develop and test Java programs that use if-else and switch statements to make decisions.\nContact units stated by the syllabus: lecture 2, laboratory 1\nLearning activities: - Guided Java coding exercise in the laboratory: demonstration, then pair programming.",
+   "target": "- Programming task: write and test a Java program that uses if-else and switch to classify exam scores; submit the source code and the test cases with their results.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Students perform the ILO and produce markable evidence.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "measures": "yes",
+    "evidence": "observable",
+    "level": "matches"
+   }
+  },
+  {
+   "id": "as-prog1-essay",
+   "origin": "stage-c-1",
+   "type": "Assessment-fit",
+   "split": "dev",
+   "course": "prog1",
+   "category": "off-subject",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Develop and test Java programs that use if-else and switch statements to make decisions.\nContact units stated by the syllabus: lecture 2, laboratory 1\nLearning activities: - Guided Java coding exercise in the laboratory: demonstration, then pair programming.",
+   "target": "- Write an essay about the history of computers.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "The example case: an essay on an unrelated topic cannot measure developing and testing a program.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "measures": "no"
+   }
+  },
+  {
+   "id": "as-prog1-recall-quiz",
+   "origin": "stage-c-1",
+   "type": "Assessment-fit",
+   "split": "dev",
+   "course": "prog1",
+   "category": "wrong-cognitive-level",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Develop and test Java programs that use if-else and switch statements to make decisions.\nContact units stated by the syllabus: lecture 2, laboratory 1\nLearning activities: - Guided Java coding exercise in the laboratory: demonstration, then pair programming.",
+   "target": "- Ten-item multiple-choice quiz on Java conditional syntax.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "A recall quiz does not show that students can develop and test a program.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "measures": [
+     "no",
+     "partly"
+    ],
+    "level": "too_low"
+   }
+  },
+  {
+   "id": "as-prog1-bare-name",
+   "origin": "stage-c-1",
+   "type": "Assessment-fit",
+   "split": "dev",
+   "course": "prog1",
+   "category": "bare-name",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Develop and test Java programs that use if-else and switch statements to make decisions.\nContact units stated by the syllabus: lecture 2, laboratory 1\nLearning activities: - Guided Java coding exercise in the laboratory: demonstration, then pair programming.",
+   "target": "- Quiz",
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Names a format but not what is assessed or produced.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "evidence": "vague"
+   }
+  },
+  {
+   "id": "as-prog1-keywords",
+   "origin": "stage-c-1",
+   "type": "Assessment-fit",
+   "split": "dev",
+   "course": "prog1",
+   "category": "wrong-cognitive-level",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Develop and test Java programs that use if-else and switch statements to make decisions.\nContact units stated by the syllabus: lecture 2, laboratory 1\nLearning activities: - Guided Java coding exercise in the laboratory: demonstration, then pair programming.",
+   "target": "- Name the keywords used in Java conditional statements.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Names the topic but only asks for recall of words.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "measures": [
+     "no",
+     "partly"
+    ],
+    "level": "too_low"
+   }
+  },
+  {
+   "id": "as-prog1-conceptual-ok",
+   "origin": "stage-c-1",
+   "type": "Assessment-fit",
+   "split": "dev",
+   "course": "prog1",
+   "category": "legitimate-conceptual",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Explain the difference between if-else and switch statements.\nContact units stated by the syllabus: lecture 2, laboratory 1\nLearning activities: - Lecture-discussion with worked examples.",
+   "target": "- Short written answers comparing if-else and switch statements, with one example of each.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "A conceptual ILO does not need a practical task.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "measures": "yes"
+   }
+  },
+  {
+   "id": "as-prog1-accessible",
+   "origin": "stage-c-1",
+   "type": "Assessment-fit",
+   "split": "dev",
+   "course": "prog1",
+   "category": "accessible-alternative",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Develop and test Java programs that use if-else and switch statements to make decisions.\nContact units stated by the syllabus: lecture 2, laboratory 1\nLearning activities: - Guided Java coding exercise in the laboratory: demonstration, then pair programming.",
+   "target": "- Practical coding task; students may submit a screen recording or a written walkthrough of their reasoning in addition to the code.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "An alternative way to show reasoning that does not change the competence measured.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "measures": "yes",
+    "evidence": "observable"
+   }
+  },
+  {
+   "id": "as-prog1-week1",
+   "origin": "stage-c-1",
+   "type": "Assessment-fit",
+   "split": "dev",
+   "course": "prog1",
+   "category": "week-one-orientation",
+   "source": "Week 1 course content: Course orientation: objectives, requirements, grading and policies\nILOs:\n- Describe the course objectives, requirements and grading system.\nContact units stated by the syllabus: lecture 2, laboratory 1\nLearning activities: - Setting and sharing of expectations; review of policies.",
+   "target": "- Statement of expectations",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "A simple expectations task suits an orientation.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "measures": "yes"
+   }
+  },
+  {
+   "id": "as-syseng-good",
+   "origin": "stage-c-1",
+   "type": "Assessment-fit",
+   "split": "dev",
+   "course": "syseng",
+   "category": "clear-positive",
+   "source": "Week 4 course content: Requirements analysis: stakeholder needs, system requirements specification and traceability\nILOs:\n- Write verifiable system requirements for a given scenario.\nContact units stated by the syllabus: lecture 3, laboratory 0\nLearning activities: - Guided workshop: teams draft requirements from a case.",
+   "target": "- Write a requirements specification (at least five verifiable requirements) for the case; each requirement is checked against a rubric for clarity and testability.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Produces an artifact that is marked against the ILO.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "measures": "yes",
+    "evidence": "observable"
+   }
+  },
+  {
+   "id": "as-syseng-essay",
+   "origin": "stage-c-1",
+   "type": "Assessment-fit",
+   "split": "dev",
+   "course": "syseng",
+   "category": "off-subject",
+   "source": "Week 4 course content: Requirements analysis: stakeholder needs, system requirements specification and traceability\nILOs:\n- Write verifiable system requirements for a given scenario.\nContact units stated by the syllabus: lecture 3, laboratory 0\nLearning activities: - Guided workshop: teams draft requirements from a case.",
+   "target": "- Essay on the history of engineering.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "An unrelated essay.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "measures": "no"
+   }
+  },
+  {
+   "id": "as-sensors-good",
+   "origin": "stage-c-1",
+   "type": "Assessment-fit",
+   "split": "dev",
+   "course": "sensors",
+   "category": "clear-positive",
+   "source": "Week 3 course content: Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth\nILOs:\n- Design and test an inverting amplifier with a specified gain.\nContact units stated by the syllabus: lecture 3, laboratory 0\nLearning activities: - Guided design example, then simulation.",
+   "target": "- Practical: build and measure the amplifier on a breadboard or in a simulator, record the measured gain and compare it with the design value.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Students design and test; the evidence is a measured result.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "measures": "yes",
+    "evidence": "observable"
+   }
+  },
+  {
+   "id": "as-sensors-quiz",
+   "origin": "stage-c-1",
+   "type": "Assessment-fit",
+   "split": "dev",
+   "course": "sensors",
+   "category": "wrong-cognitive-level",
+   "source": "Week 3 course content: Operational amplifier circuits: inverting and non-inverting amplifiers, gain and bandwidth\nILOs:\n- Design and test an inverting amplifier with a specified gain.\nContact units stated by the syllabus: lecture 3, laboratory 0\nLearning activities: - Guided design example, then simulation.",
+   "target": "- Multiple-choice quiz on the history of amplifiers.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "Unrelated to designing and testing, and recall only.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "measures": "no"
+   }
+  },
+  {
+   "id": "af-prog1-multiweek",
+   "origin": "stage-c-1",
+   "type": "Activity-fit",
+   "split": "dev",
+   "course": "prog1",
+   "category": "multiweek",
+   "source": "Week 4-5 course content: Loops: for, while and do-while; nested loops\nILOs:\n- Write and test Java programs that use for and while loops.\nContact units stated by the syllabus: lecture 2, laboratory 1",
+   "target": "- Guided laboratory sessions over two weeks: a demonstration of each loop, then pair programming exercises of increasing difficulty; a recorded demonstration is available for review.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "A two-week range with progressive hands-on practice.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "teaching": "sound"
+   }
+  },
+  {
+   "id": "af-prog1-conceptual-lecture-ok",
+   "origin": "stage-c-1",
+   "type": "Activity-fit",
+   "split": "dev",
+   "course": "prog1",
+   "category": "practical-vs-conceptual",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Explain the difference between if-else and switch statements.\nContact units stated by the syllabus: lecture 2, laboratory 1",
+   "target": "- Lecture-discussion with worked examples, followed by a short class discussion of when each statement is used.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "A conceptual ILO is served by explanation and discussion; hands-on work is not required.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "teaching": "sound"
+   }
+  },
+  {
+   "id": "af-prog1-lab-unused",
+   "origin": "stage-c-1",
+   "type": "Activity-fit",
+   "split": "dev",
+   "course": "prog1",
+   "category": "wrong-method",
+   "source": "Week 4 course content: Loops: for, while and do-while\nILOs:\n- Write and test Java programs that use for and while loops.\nContact units stated by the syllabus: lecture 2, laboratory 1",
+   "target": "- Slide presentation of loop syntax; no hands-on work in the laboratory period.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "A practical ILO in a course with a laboratory unit, taught only by slides.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "teaching": "weak"
+   }
+  },
+  {
+   "id": "as-prog1-vague-evidence",
+   "origin": "stage-c-1",
+   "type": "Assessment-fit",
+   "split": "dev",
+   "course": "prog1",
+   "category": "vague-evidence",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Develop and test Java programs that use if-else and switch statements to make decisions.\nContact units stated by the syllabus: lecture 2, laboratory 1\nLearning activities: - Guided Java coding exercise in the laboratory: demonstration, then pair programming.",
+   "target": "- Submit your work.",
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Says neither what is submitted nor how it is marked.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "evidence": "vague"
+   }
+  },
+  {
+   "id": "as-prog1-too-high",
+   "origin": "stage-c-1",
+   "type": "Assessment-fit",
+   "split": "dev",
+   "course": "prog1",
+   "category": "wrong-cognitive-level",
+   "source": "Week 3 course content: Java conditional statements: if, if-else, nested if and switch\nILOs:\n- Explain the difference between if-else and switch statements.\nContact units stated by the syllabus: lecture 2, laboratory 1\nLearning activities: - Lecture-discussion with worked examples.",
+   "target": "- Design and implement a complete application with a database and a user interface.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Far above a conceptual ILO and the lesson.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "level": "too_high"
+   }
+  },
+  {
+   "id": "as-prog1-multiweek",
+   "origin": "stage-c-1",
+   "type": "Assessment-fit",
+   "split": "dev",
+   "course": "prog1",
+   "category": "multiweek",
+   "source": "Week 4-5 course content: Loops: for, while and do-while; nested loops\nILOs:\n- Write and test Java programs that use for and while loops.\nContact units stated by the syllabus: lecture 2, laboratory 1\nLearning activities: - Guided laboratory sessions over two weeks.",
+   "target": "- Laboratory exercise: write and test a Java program that uses a for loop and a while loop to process a list of values; submit the code and the test output.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Practical task for a practical ILO across a two-week lesson.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": "",
+   "expectedAspects": {
+    "measures": "yes",
+    "evidence": "observable"
+   }
+  }
+ ]
+}

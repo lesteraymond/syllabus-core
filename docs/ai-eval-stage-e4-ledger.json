@@ -1,0 +1,107 @@
+{
+  "requests": 8,
+  "charged": 0.0327021,
+  "transient": 1,
+  "invalid": 4,
+  "notes": [
+    "2026-10-25: request 2 marked as a timeout, with the relationships it carried, from docs/ai-eval-stage-e4-smoke.json (attempt 1: \"The operation was aborted due to timeout\"; HTTP 200 headers, no answer). The guard of that run did not yet record an answer cut off while it was read as a timeout. Requests and charges are unchanged."
+  ],
+  "closed": {
+    "at": "2026-10-25T17:01:29.196Z",
+    "reason": "Stage E.4 Phase 1 (re-run) reached its invalid-answer stop condition: 4 answers failed validation (the limit for 10 requests; the last: not_answered, AI omitted alignment judgements). Root causes addressed in Stage E.5 (docs/stage-e5-reference-evidence.md).",
+    "supersededBy": "docs/ai-eval-stage-e5-bsie-ledger.json"
+  },
+  "entries": [
+    {
+      "n": 1,
+      "kind": "price-lookup",
+      "at": "2026-10-25T14:23:58.959Z",
+      "status": 200
+    },
+    {
+      "n": 2,
+      "kind": "model",
+      "at": "2026-10-25T14:23:59.528Z",
+      "status": 200,
+      "error": "timeout",
+      "worst": 0.0197841,
+      "charged": 0.0197841,
+      "ids": [
+        "cc-prog1-offsubject",
+        "cp-bsit-wrongpo",
+        "wi-prog1-aligned",
+        "ic-prog1-wrongclo"
+      ]
+    },
+    {
+      "n": 3,
+      "kind": "price-lookup",
+      "at": "2026-10-25T15:06:49.885Z",
+      "status": 200
+    },
+    {
+      "n": 4,
+      "kind": "model",
+      "at": "2026-10-25T15:06:50.390Z",
+      "status": 200,
+      "worst": 0.0197841,
+      "charged": 0.0031317,
+      "ids": [
+        "cc-prog1-offsubject",
+        "cp-bsit-wrongpo",
+        "wi-prog1-aligned",
+        "ic-prog1-wrongclo"
+      ]
+    },
+    {
+      "n": 5,
+      "kind": "model",
+      "at": "2026-10-25T15:06:58.896Z",
+      "status": 200,
+      "worst": 0.0200919,
+      "charged": 0.0033426,
+      "ids": [
+        "af-prog1-good",
+        "as-prog1-recall-quiz",
+        "vu-prog1-name-only",
+        "rr-prog1-relevant"
+      ]
+    },
+    {
+      "n": 6,
+      "kind": "model",
+      "at": "2026-10-25T15:07:01.348Z",
+      "status": 200,
+      "worst": 0.0195639,
+      "charged": 0.0021975,
+      "ids": [
+        "rr-prog1-relevant"
+      ]
+    },
+    {
+      "n": 7,
+      "kind": "model",
+      "at": "2026-10-25T15:07:02.892Z",
+      "status": 200,
+      "worst": 0.0195639,
+      "charged": 0.0021975,
+      "ids": [
+        "rr-prog1-relevant"
+      ]
+    },
+    {
+      "n": 8,
+      "kind": "model",
+      "at": "2026-10-25T15:07:05.023Z",
+      "status": 200,
+      "worst": 0.0198894,
+      "charged": 0.0020487,
+      "ids": [
+        "cc-syseng-aligned",
+        "cp-bsie-real2",
+        "wi-syseng-unrelated",
+        "ic-syseng-ok"
+      ]
+    }
+  ]
+}

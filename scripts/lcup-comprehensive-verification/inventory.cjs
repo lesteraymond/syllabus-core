@@ -1,0 +1,15 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path');
+const {sha}=require('../lcup-academic-benchmark/references.cjs');
+const root=path.resolve(__dirname,'../..'),out=path.join(root,'docs/lcup-comprehensive-verification');
+const docs=['docs/lcup-requirements/requirements-matrix.md','docs/lcup-requirements/REPORT.md','docs/lcup-policy-v2/REPORT.md','docs/lcup-policy-v2/PROPOSAL.md','docs/lcup-policy-v2/shadow-comparison.md','docs/lcup-policy-v2-implementation/REPORT.md','docs/lcup-policy-v2-implementation/requirements-matrix.md','docs/lcup-policy-v2-implementation/comparison.md','docs/ai-checker-rules-addendum-c3.md','docs/ilo-assessment-scoring-review.md'];
+const read=f=>fs.readFileSync(path.join(root,f),'utf8');
+const old=JSON.parse(read('docs/lcup-policy-v2-implementation/test-results.json'));
+const rules=require('../../server/lib/compliance/standard-v4.json');
+const files=fs.readdirSync(path.join(root,'server/lib/syllabuscheck')).filter(f=>f.endsWith('.test.js')).map(f=>'server/lib/syllabuscheck/'+f);
+const dangerous=files.filter(f=>/writeFile|writePhase3|export-checker-rules|export-phase3|buildPhase3FacultyReviewPackage/.test(read(f)));
+const coverage={reviewed:docs.map(file=>({file,sha256:sha(fs.readFileSync(path.join(root,file))),headings:read(file).split(/\r?\n/).filter(l=>/^#{1,3} /.test(l))})),existingGroups:old,rules:rules.rules.map(r=>({id:r.id,check:r.check,severity:r.severity,params:r.params,expectedBoundaryCoverage:'Pending new explicit positive/negative/boundary/malformed probes; existing general fixtures cover many but not independently all rules.'})),unsafeForUnchangedExecution:dangerous.map(file=>({file,reason:'Inspect before reuse; possible artifact-writing test path. No glob/full npm execution.'})),missingVerification:['Seven relationships × fourteen requested evidence/label conditions','All 47 rules individually with boundary/malformed evidence','Precision/recall/F1 with explicit label polarity and missing-coverage exclusions','Current isolated legacy Re-Check/SQL/report/UI workflow','Simulated load, request-count and prompt-cost measurements'],actualAcademicAccuracy:'NOT_YET_MEASURED'};
+fs.writeFileSync(path.join(out,'coverage-before.json'),JSON.stringify(coverage,null,2)+'\n');
+const refs=require('../lcup-academic-benchmark/references.cjs').references();
+fs.writeFileSync(path.join(out,'reference-readiness.json'),JSON.stringify({officialVersion:refs.official.version,officialSources:refs.poSources,curricula:refs.curricula.map(c=>({program:c.program,year:c.curriculumYear,files:c.files})),fixtures:refs.real.map(r=>r.readiness),valueDefinitions:refs.valueDefinitions.approval,liveDatabaseRead:false,rollout:'Not authorized; no assumption that the prior disposable migration was applied.'},null,2)+'\n');
+console.log(JSON.stringify({reviewed:docs.length,rules:rules.rules.length,testFiles:files.length,artifactWritingCandidates:dangerous}));

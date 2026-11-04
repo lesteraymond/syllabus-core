@@ -1,0 +1,1170 @@
+{
+ "at": "2026-10-27T19:52:38.432Z",
+ "note": "Fixed before B2 was run. Reviewer assessments are provisional, for faculty; not dataset expectations and never scored.",
+ "dataset": {
+  "version": "align-1",
+  "sha256": "ab282a107df8c73b6e7e21e60fd990c86837055577bbb5a4cc7758bd62095801",
+  "development": 58,
+  "heldoutExcluded": 42
+ },
+ "a2": {
+  "casesFile": "docs/ai-eval-anthropic/p2-a2-cases.json",
+  "casesSha256": "73c27948f75cb1b7f6395c8b2924ff0a802afa52d7bafef92124d131eb891e94",
+  "preregistrationSha256": "2a98d82028ecf89eb63aa958bccecc2eeb5b24297824230b07a09db32f18af84",
+  "integrity": {
+   "a2Result": true,
+   "a2Ledger": true,
+   "dataset": true,
+   "a2PreregistrationDataset": true
+  }
+ },
+ "promptFacts": {
+  "A2": {
+   "version": "alignment-10",
+   "chars": 9049,
+   "sha256": "81d11a069d91ee47c7171bd941f05867d73e6423eebf1ea9d8fa6c06f49d7262",
+   "contains": {
+    "multiPart": true,
+    "courseSubject": true,
+    "offCourseNotAligned": true,
+    "draftFixesEveryGap": true,
+    "iloSmallerStep": true,
+    "stageACloPoTail": false,
+    "stageAAddNothing": false,
+    "stageARetag": false,
+    "stageAImaginedLink": false,
+    "b3IloTail": false,
+    "recommendationContract": false
+   }
+  },
+  "B2": {
+   "version": "alignment-12a3-r7",
+   "chars": 14448,
+   "sha256": "373bd09b17e29775bf4dfe78796f9d3833fd5b3b8fdfc235b9bd1912568303ac",
+   "contains": {
+    "multiPart": true,
+    "courseSubject": true,
+    "offCourseNotAligned": true,
+    "draftFixesEveryGap": true,
+    "iloSmallerStep": true,
+    "stageACloPoTail": true,
+    "stageAAddNothing": true,
+    "stageARetag": true,
+    "stageAImaginedLink": true,
+    "b3IloTail": true,
+    "recommendationContract": true
+   }
+  }
+ },
+ "prediction": "From the prompt text alone (section 2): B2 keeps the multi-part rule and the course-subject rule that A2's report traced 13 of the 18 false rejections to, and Stage A adds a stricter CLO-PO tail (an imagined link is not evidence). The wording therefore gives no reason to expect fewer false rejections on the 11 items; Stage A and B3 change the recommendation contract (RETAG_OUTCOME, \"add nothing from the PO\"), which is where a difference is expected. This is written before the run so the result can be read against it; it is not a hypothesis test.",
+ "disputed": [
+  {
+   "id": "clo-po-prog-interdisciplinary",
+   "type": "CLO-PO",
+   "course": "prog",
+   "category": "interdisciplinary",
+   "accept": [
+    "ALIGNED"
+   ],
+   "a2Labels": [
+    "PARTIALLY_ALIGNED",
+    "ALIGNED"
+   ],
+   "a2FalseRejectionRuns": [
+    1
+   ],
+   "a2Consistent": false,
+   "cause": "broad PO, part of its scope covered",
+   "promptRule": "multiPart"
+  },
+  {
+   "id": "d-po-01",
+   "type": "CLO-PO",
+   "course": "calc",
+   "category": "different-wording",
+   "accept": [
+    "ALIGNED"
+   ],
+   "a2Labels": [
+    "PARTIALLY_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "a2FalseRejectionRuns": [
+    1,
+    2
+   ],
+   "a2Consistent": true,
+   "cause": "CLO outside the course's stated subject",
+   "promptRule": "courseSubject"
+  },
+  {
+   "id": "d-po-03",
+   "type": "CLO-PO",
+   "course": "prog",
+   "category": "different-wording",
+   "accept": [
+    "ALIGNED"
+   ],
+   "a2Labels": [
+    "PARTIALLY_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "a2FalseRejectionRuns": [
+    1,
+    2
+   ],
+   "a2Consistent": true,
+   "cause": "multi-part PO, one part not shown",
+   "promptRule": "multiPart"
+  },
+  {
+   "id": "d-po-05",
+   "type": "CLO-PO",
+   "course": "nurs",
+   "category": "specific-clo-broad-po",
+   "accept": [
+    "ALIGNED"
+   ],
+   "a2Labels": [
+    "PARTIALLY_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "a2FalseRejectionRuns": [
+    1,
+    2
+   ],
+   "a2Consistent": true,
+   "cause": "broad PO, part of its scope covered",
+   "promptRule": "multiPart"
+  },
+  {
+   "id": "d-po-07",
+   "type": "CLO-PO",
+   "course": "edu",
+   "category": "different-wording",
+   "accept": [
+    "ALIGNED"
+   ],
+   "a2Labels": [
+    "PARTIALLY_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "a2FalseRejectionRuns": [
+    1,
+    2
+   ],
+   "a2Consistent": true,
+   "cause": "multi-part PO, one part not shown",
+   "promptRule": "multiPart"
+  },
+  {
+   "id": "d-po-09",
+   "type": "CLO-PO",
+   "course": "acct",
+   "category": "clear-positive",
+   "accept": [
+    "ALIGNED"
+   ],
+   "a2Labels": [
+    "PARTIALLY_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "a2FalseRejectionRuns": [
+    1,
+    2
+   ],
+   "a2Consistent": true,
+   "cause": "multi-part PO, one part not shown",
+   "promptRule": "multiPart"
+  },
+  {
+   "id": "d-ega-03",
+   "type": "CLO-EGA",
+   "course": "nurs",
+   "category": "name-only-ega",
+   "accept": [
+    "ALIGNED"
+   ],
+   "a2Labels": [
+    "PARTIALLY_ALIGNED",
+    "ALIGNED"
+   ],
+   "a2FalseRejectionRuns": [
+    1
+   ],
+   "a2Consistent": false,
+   "cause": "EGA name read literally",
+   "promptRule": "other"
+  },
+  {
+   "id": "d-ilo-01",
+   "type": "ILO-CLO",
+   "course": "calc",
+   "category": "different-wording",
+   "accept": [
+    "ALIGNED"
+   ],
+   "a2Labels": [
+    "NOT_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "a2FalseRejectionRuns": [
+    1,
+    2
+   ],
+   "a2Consistent": true,
+   "cause": "ILO step judged against the whole CLO",
+   "promptRule": "iloStepVersusMultiPart"
+  },
+  {
+   "id": "d-ilo-10",
+   "type": "ILO-CLO",
+   "course": "hm",
+   "category": "clear-positive",
+   "accept": [
+    "ALIGNED"
+   ],
+   "a2Labels": [
+    "PARTIALLY_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "a2FalseRejectionRuns": [
+    1,
+    2
+   ],
+   "a2Consistent": true,
+   "cause": "ILO step judged against the whole CLO",
+   "promptRule": "iloStepVersusMultiPart"
+  },
+  {
+   "id": "d-any-po-01",
+   "type": "CLO-anyPO",
+   "course": "calc",
+   "category": "whole-list",
+   "accept": [
+    "ALIGNED"
+   ],
+   "a2Labels": [
+    "ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "a2FalseRejectionRuns": [
+    2
+   ],
+   "a2Consistent": false,
+   "cause": "CLO outside the course's stated subject",
+   "promptRule": "courseSubject"
+  },
+  {
+   "id": "d-any-po-03",
+   "type": "CLO-anyPO",
+   "course": "calc",
+   "category": "whole-list",
+   "accept": [
+    "ALIGNED"
+   ],
+   "a2Labels": [
+    "ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "a2FalseRejectionRuns": [
+    2
+   ],
+   "a2Consistent": false,
+   "cause": "CLO outside the course's stated subject",
+   "promptRule": "courseSubject"
+  }
+ ],
+ "groups": {
+  "clearAligned": [
+   "clo-po-calc-aligned",
+   "clo-po-prog-aligned",
+   "clo-po-prog-interdisciplinary",
+   "clo-po-nurs-aligned",
+   "ilo-clo-calc-aligned",
+   "ilo-clo-prog-aligned",
+   "d-po-01",
+   "d-po-03",
+   "d-po-05",
+   "d-po-07",
+   "d-po-09",
+   "d-po-11",
+   "d-ega-01",
+   "d-ega-03",
+   "d-ega-05",
+   "d-ega-07",
+   "d-ilo-01",
+   "d-ilo-02",
+   "d-ilo-04",
+   "d-ilo-06",
+   "d-ilo-10",
+   "d-ilo-13",
+   "d-any-po-01",
+   "d-any-po-03",
+   "d-any-ega-01"
+  ],
+  "clearNotAligned": [
+   "clo-po-calc-lower-level",
+   "clo-po-calc-unrelated",
+   "clo-po-calc-vague",
+   "clo-po-prog-lower-level",
+   "clo-po-nurs-unrelated",
+   "clo-ega-unrelated",
+   "ilo-clo-claims-more",
+   "ilo-clo-unrelated",
+   "d-po-02",
+   "d-po-04",
+   "d-po-06",
+   "d-po-10",
+   "d-po-12",
+   "d-ega-02",
+   "d-ega-04",
+   "d-ega-06",
+   "d-ilo-05",
+   "d-ilo-09",
+   "d-ilo-11",
+   "d-ilo-12",
+   "d-any-po-02",
+   "d-any-ega-02",
+   "d-po-13",
+   "d-po-14",
+   "d-ilo-14",
+   "d-ilo-15"
+  ],
+  "singleVerdict": [
+   "clo-po-calc-aligned",
+   "clo-po-prog-aligned",
+   "clo-po-prog-interdisciplinary",
+   "clo-po-nurs-aligned",
+   "clo-po-nurs-unrelated",
+   "ilo-clo-calc-aligned",
+   "ilo-clo-unrelated",
+   "ilo-clo-prog-aligned",
+   "d-po-01",
+   "d-po-03",
+   "d-po-05",
+   "d-po-06",
+   "d-po-07",
+   "d-po-09",
+   "d-po-11",
+   "d-ega-01",
+   "d-ega-03",
+   "d-ega-05",
+   "d-ega-07",
+   "d-ilo-01",
+   "d-ilo-02",
+   "d-ilo-04",
+   "d-ilo-06",
+   "d-ilo-10",
+   "d-ilo-11",
+   "d-ilo-13",
+   "d-any-po-01",
+   "d-any-po-03",
+   "d-any-ega-01",
+   "d-po-13",
+   "d-po-14",
+   "d-ilo-14",
+   "d-ilo-15"
+  ],
+  "ambiguous": [
+   "clo-po-prog-two-skills",
+   "clo-ega-aligned",
+   "d-po-08",
+   "d-ega-08",
+   "d-ilo-03",
+   "d-ilo-07",
+   "d-ilo-08"
+  ],
+  "multiAccept": [
+   "clo-po-calc-lower-level",
+   "clo-po-calc-unrelated",
+   "clo-po-calc-vague",
+   "clo-po-prog-lower-level",
+   "clo-po-prog-two-skills",
+   "clo-ega-aligned",
+   "clo-ega-unrelated",
+   "ilo-clo-claims-more",
+   "d-po-02",
+   "d-po-04",
+   "d-po-08",
+   "d-po-10",
+   "d-po-12",
+   "d-ega-02",
+   "d-ega-04",
+   "d-ega-06",
+   "d-ega-08",
+   "d-ilo-03",
+   "d-ilo-05",
+   "d-ilo-07",
+   "d-ilo-08",
+   "d-ilo-09",
+   "d-ilo-12",
+   "d-any-po-02",
+   "d-any-ega-02"
+  ],
+  "byCategory": {
+   "clear-positive": [
+    "clo-po-calc-aligned",
+    "clo-po-prog-aligned",
+    "clo-po-nurs-aligned",
+    "ilo-clo-prog-aligned",
+    "d-po-09",
+    "d-po-11",
+    "d-ilo-04",
+    "d-ilo-10"
+   ],
+   "level-gap": [
+    "clo-po-calc-lower-level",
+    "clo-po-calc-vague",
+    "clo-po-prog-lower-level",
+    "ilo-clo-claims-more",
+    "d-po-02",
+    "d-po-08",
+    "d-po-10",
+    "d-ilo-12"
+   ],
+   "clear-negative": [
+    "clo-po-calc-unrelated",
+    "clo-ega-unrelated",
+    "ilo-clo-unrelated",
+    "d-po-06",
+    "d-ega-02",
+    "d-ega-04",
+    "d-ega-06",
+    "d-ilo-05",
+    "d-ilo-09"
+   ],
+   "specific-clo-broad-po": [
+    "clo-po-prog-two-skills",
+    "d-po-05"
+   ],
+   "interdisciplinary": [
+    "clo-po-prog-interdisciplinary",
+    "d-ilo-13"
+   ],
+   "wrong-program": [
+    "clo-po-nurs-unrelated",
+    "d-po-12"
+   ],
+   "name-only-ega": [
+    "clo-ega-aligned",
+    "d-ega-01",
+    "d-ega-03",
+    "d-ega-05",
+    "d-ega-07",
+    "d-ega-08"
+   ],
+   "different-wording": [
+    "ilo-clo-calc-aligned",
+    "d-po-01",
+    "d-po-03",
+    "d-po-07",
+    "d-ilo-01",
+    "d-ilo-02",
+    "d-ilo-06"
+   ],
+   "keyword-overlap": [
+    "d-po-04",
+    "d-ilo-03"
+   ],
+   "broad-clo-narrow-ilo": [
+    "d-ilo-07",
+    "d-ilo-08"
+   ],
+   "contradictory": [
+    "d-ilo-11"
+   ],
+   "whole-list": [
+    "d-any-po-01",
+    "d-any-po-02",
+    "d-any-po-03",
+    "d-any-ega-01",
+    "d-any-ega-02"
+   ],
+   "partial": [
+    "d-po-13",
+    "d-po-14",
+    "d-ilo-14",
+    "d-ilo-15"
+   ]
+  },
+  "byType": {
+   "CLO-PO": [
+    "clo-po-calc-aligned",
+    "clo-po-calc-lower-level",
+    "clo-po-calc-unrelated",
+    "clo-po-calc-vague",
+    "clo-po-prog-aligned",
+    "clo-po-prog-lower-level",
+    "clo-po-prog-two-skills",
+    "clo-po-prog-interdisciplinary",
+    "clo-po-nurs-aligned",
+    "clo-po-nurs-unrelated",
+    "d-po-01",
+    "d-po-02",
+    "d-po-03",
+    "d-po-04",
+    "d-po-05",
+    "d-po-06",
+    "d-po-07",
+    "d-po-08",
+    "d-po-09",
+    "d-po-10",
+    "d-po-11",
+    "d-po-12",
+    "d-po-13",
+    "d-po-14"
+   ],
+   "CLO-EGA": [
+    "clo-ega-aligned",
+    "clo-ega-unrelated",
+    "d-ega-01",
+    "d-ega-02",
+    "d-ega-03",
+    "d-ega-04",
+    "d-ega-05",
+    "d-ega-06",
+    "d-ega-07",
+    "d-ega-08"
+   ],
+   "ILO-CLO": [
+    "ilo-clo-calc-aligned",
+    "ilo-clo-claims-more",
+    "ilo-clo-unrelated",
+    "ilo-clo-prog-aligned",
+    "d-ilo-01",
+    "d-ilo-02",
+    "d-ilo-03",
+    "d-ilo-04",
+    "d-ilo-05",
+    "d-ilo-06",
+    "d-ilo-07",
+    "d-ilo-08",
+    "d-ilo-09",
+    "d-ilo-10",
+    "d-ilo-11",
+    "d-ilo-12",
+    "d-ilo-13",
+    "d-ilo-14",
+    "d-ilo-15"
+   ],
+   "CLO-anyPO": [
+    "d-any-po-01",
+    "d-any-po-02",
+    "d-any-po-03"
+   ],
+   "CLO-anyEGA": [
+    "d-any-ega-01",
+    "d-any-ega-02"
+   ]
+  },
+  "a2Unstable": [
+   "clo-po-prog-interdisciplinary",
+   "d-ega-03",
+   "d-any-po-01",
+   "d-any-po-03"
+  ]
+ },
+ "remapCandidates": [
+  {
+   "id": "clo-po-calc-unrelated",
+   "type": "CLO-PO",
+   "course": "calc",
+   "category": "clear-negative",
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "provisionalRemedy": "RETAG",
+   "reason": "A sound Differential Calculus CLO; the communication PO is the wrong mapping. A rewrite would turn mathematics into communication."
+  },
+  {
+   "id": "clo-po-nurs-unrelated",
+   "type": "CLO-PO",
+   "course": "nurs",
+   "category": "wrong-program",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "provisionalRemedy": "REWRITE OR REMOVE",
+   "reason": "A calculus CLO does not belong in NCM 101; no nursing PO fits it, so a re-tag cannot help."
+  },
+  {
+   "id": "clo-ega-unrelated",
+   "type": "CLO-EGA",
+   "course": "prog",
+   "category": "clear-negative",
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "provisionalRemedy": "REWRITE",
+   "reason": "Remember-level and off-subject for a programming course: weak in itself."
+  },
+  {
+   "id": "d-po-06",
+   "type": "CLO-PO",
+   "course": "nurs",
+   "category": "clear-negative",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "provisionalRemedy": "EITHER (faculty)",
+   "reason": "Heart anatomy recall is a plausible but low-level knowledge CLO for nursing fundamentals; the communication PO is the wrong mapping. Re-tag or raise it."
+  },
+  {
+   "id": "d-po-12",
+   "type": "CLO-PO",
+   "course": "nurs",
+   "category": "wrong-program",
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "provisionalRemedy": "RETAG",
+   "reason": "A sound nursing CLO in a nursing course, mapped to a computing program's PO. A rewrite toward computing would change the course's subject."
+  },
+  {
+   "id": "d-ega-02",
+   "type": "CLO-EGA",
+   "course": "calc",
+   "category": "clear-negative",
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "provisionalRemedy": "REWRITE",
+   "reason": "Reciting the multiplication table is not a college calculus outcome: weak in itself."
+  },
+  {
+   "id": "d-ega-04",
+   "type": "CLO-EGA",
+   "course": "calc",
+   "category": "clear-negative",
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "provisionalRemedy": "RETAG",
+   "reason": "A sound calculus CLO; Socially Responsive Steward is the wrong attribute. Adding social service to it would force the fit."
+  },
+  {
+   "id": "d-ega-06",
+   "type": "CLO-EGA",
+   "course": "calc",
+   "category": "clear-negative",
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "provisionalRemedy": "EITHER (faculty)",
+   "reason": "Solving quadratic equations is below Differential Calculus and develops no lifelong learning: rewrite it for the course or re-tag it."
+  }
+ ],
+ "levelGap": [
+  {
+   "id": "clo-po-calc-lower-level",
+   "type": "CLO-PO",
+   "course": "calc",
+   "note": "Year 1: raising \"Define the derivative\" to design is a faculty decision; re-tagging to the apply-mathematics PO keeps it."
+  },
+  {
+   "id": "clo-po-calc-vague",
+   "type": "CLO-PO",
+   "course": "calc",
+   "note": "A vague CLO: raising it to Apply is appropriate."
+  },
+  {
+   "id": "clo-po-prog-lower-level",
+   "type": "CLO-PO",
+   "course": "prog",
+   "note": "Year 2: raising \"List the keywords\" to design and evaluate changes its content; faculty to decide."
+  },
+  {
+   "id": "ilo-clo-claims-more",
+   "type": "ILO-CLO",
+   "course": "calc",
+   "note": "ILO above its CLO: a draft should lower the ILO; raising it further would be wrong."
+  },
+  {
+   "id": "d-po-02",
+   "type": "CLO-PO",
+   "course": "calc",
+   "note": "Year 1: a sound Apply-level calculus CLO; raising it to design to fit a design PO is escalation; a re-tag keeps it."
+  },
+  {
+   "id": "d-po-08",
+   "type": "CLO-PO",
+   "course": "edu",
+   "note": "Year 3, assessment course: a rewrite into assessment design stays in scope but drops the history topic; either."
+  },
+  {
+   "id": "d-po-10",
+   "type": "CLO-PO",
+   "course": "acct",
+   "note": "Year 2, intermediate accounting: \"Define accounting.\" is too basic; raising it to applying standards is appropriate."
+  },
+  {
+   "id": "d-ilo-12",
+   "type": "ILO-CLO",
+   "course": "calc",
+   "note": "ILO above its CLO: a draft should lower the ILO; raising it further would be wrong."
+  }
+ ],
+ "keywordTraps": [
+  {
+   "id": "clo-po-prog-two-skills",
+   "type": "CLO-PO",
+   "category": "specific-clo-broad-po",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "shared": [
+    "design",
+    "soluti"
+   ]
+  },
+  {
+   "id": "ilo-clo-claims-more",
+   "type": "ILO-CLO",
+   "category": "level-gap",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "shared": [
+    "limit"
+   ]
+  },
+  {
+   "id": "d-po-04",
+   "type": "CLO-PO",
+   "category": "keyword-overlap",
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "shared": []
+  },
+  {
+   "id": "d-po-10",
+   "type": "CLO-PO",
+   "category": "level-gap",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "shared": [
+    "accoun"
+   ]
+  },
+  {
+   "id": "d-po-12",
+   "type": "CLO-PO",
+   "category": "wrong-program",
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "shared": [
+    "apply"
+   ]
+  },
+  {
+   "id": "d-ilo-03",
+   "type": "ILO-CLO",
+   "category": "keyword-overlap",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "shared": []
+  },
+  {
+   "id": "d-ilo-05",
+   "type": "ILO-CLO",
+   "category": "clear-negative",
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "shared": [
+    "nursin"
+   ]
+  },
+  {
+   "id": "d-ilo-11",
+   "type": "ILO-CLO",
+   "category": "contradictory",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "shared": [
+    "food"
+   ]
+  },
+  {
+   "id": "d-ilo-12",
+   "type": "ILO-CLO",
+   "category": "level-gap",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "shared": [
+    "functi",
+    "limit"
+   ]
+  },
+  {
+   "id": "d-po-13",
+   "type": "CLO-PO",
+   "category": "partial",
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "shared": [
+    "nursin",
+    "proces"
+   ]
+  },
+  {
+   "id": "d-po-14",
+   "type": "CLO-PO",
+   "category": "partial",
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "shared": [
+    "profes"
+   ]
+  },
+  {
+   "id": "d-ilo-15",
+   "type": "ILO-CLO",
+   "category": "partial",
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "shared": [
+    "sign",
+    "vital"
+   ]
+  }
+ ],
+ "a1Overlap": [
+  "clo-po-calc-aligned",
+  "clo-po-calc-lower-level",
+  "clo-po-calc-unrelated",
+  "clo-po-calc-vague",
+  "clo-po-prog-aligned",
+  "clo-po-prog-lower-level",
+  "clo-po-prog-two-skills",
+  "clo-po-prog-interdisciplinary",
+  "clo-po-nurs-aligned",
+  "clo-po-nurs-unrelated",
+  "clo-ega-aligned",
+  "clo-ega-unrelated",
+  "ilo-clo-calc-aligned",
+  "ilo-clo-claims-more",
+  "ilo-clo-unrelated",
+  "ilo-clo-prog-aligned"
+ ],
+ "cloPool": {
+  "calc": {
+   "Apply differentiation rules to solve optimization problems in engineering.": [
+    "clo-po-calc-aligned:target",
+    "ilo-clo-calc-aligned:source",
+    "ilo-clo-unrelated:source",
+    "d-ilo-01:source",
+    "d-ilo-14:source"
+   ],
+   "Define the derivative of a function.": [
+    "clo-po-calc-lower-level:target"
+   ],
+   "Evaluate limits of rational functions.": [
+    "clo-po-calc-unrelated:target"
+   ],
+   "Understand calculus.": [
+    "clo-po-calc-vague:target"
+   ],
+   "Define limits of functions.": [
+    "ilo-clo-claims-more:source"
+   ],
+   "Use integration techniques to compute areas and volumes that arise in engineering problems.": [
+    "d-po-01:target"
+   ],
+   "Compute the derivative of a polynomial using the power rule.": [
+    "d-po-02:target"
+   ],
+   "Formulate and compare alternative mathematical models of an engineering situation and justify the choice.": [
+    "d-ega-01:target"
+   ],
+   "Recite the multiplication table.": [
+    "d-ega-02:target",
+    "d-any-ega-02:target"
+   ],
+   "Compute the derivative of trigonometric functions.": [
+    "d-ega-04:target"
+   ],
+   "Solve quadratic equations.": [
+    "d-ega-06:target"
+   ],
+   "Define the limit of a function.": [
+    "d-ilo-12:source"
+   ],
+   "Solve systems of linear equations using matrix methods.": [
+    "d-any-po-01:target"
+   ],
+   "Appreciate the history of ancient Rome and its art.": [
+    "d-any-po-02:target"
+   ],
+   "Collaborate with a team to design a prototype that meets stated requirements.": [
+    "d-any-po-03:target"
+   ]
+  },
+  "prog": {
+   "Design, implement and test object-oriented programs that solve given problems.": [
+    "clo-po-prog-aligned:target",
+    "ilo-clo-prog-aligned:source",
+    "d-ilo-02:source",
+    "d-ilo-03:source"
+   ],
+   "List the keywords of the programming language.": [
+    "clo-po-prog-lower-level:target"
+   ],
+   "Design a program solution for a given problem.": [
+    "clo-po-prog-two-skills:target"
+   ],
+   "Evaluate the ethical and social implications of a software system on its users.": [
+    "clo-po-prog-interdisciplinary:target"
+   ],
+   "Analyze alternative designs and justify the selection of one for a given problem.": [
+    "clo-ega-aligned:target",
+    "d-any-ega-01:target"
+   ],
+   "Recite the history of the institution.": [
+    "clo-ega-unrelated:target"
+   ],
+   "Develop and test a web application that meets the requirements of a client.": [
+    "d-po-03:target"
+   ],
+   "Write programs in Python that process text files.": [
+    "d-po-04:target"
+   ],
+   "Write a Python function that sorts a list.": [
+    "d-ega-08:target"
+   ]
+  },
+  "nurs": {
+   "Perform basic nursing procedures safely using the nursing process on a simulated patient.": [
+    "clo-po-nurs-aligned:target",
+    "d-ilo-04:source",
+    "d-ilo-05:source"
+   ],
+   "Compute the derivative of polynomial functions.": [
+    "clo-po-nurs-unrelated:target"
+   ],
+   "Prepare and administer oral medications safely following the five rights of medication administration.": [
+    "d-po-05:target"
+   ],
+   "Identify the anatomical structures of the heart.": [
+    "d-po-06:target"
+   ],
+   "Apply the nursing process to assess a patient's vital signs.": [
+    "d-po-12:target"
+   ],
+   "Design a community outreach activity that addresses a local health need and evaluate its results.": [
+    "d-ega-03:target"
+   ],
+   "Perform nursing procedures to professional standards and show the Augustinian values of community and truth in patient care.": [
+    "d-ega-07:target"
+   ],
+   "Describe the steps of the nursing process.": [
+    "d-po-13:target"
+   ],
+   "Assess vital signs accurately.": [
+    "d-ilo-15:source"
+   ]
+  },
+  "edu": {
+   "Construct a table of specifications and write test items that match the stated learning objectives.": [
+    "d-po-07:target"
+   ],
+   "Discuss the history of educational testing.": [
+    "d-po-08:target"
+   ],
+   "Reflect on one's own learning and set goals for continued professional development.": [
+    "d-ega-05:target"
+   ],
+   "Construct valid and reliable classroom tests.": [
+    "d-ilo-06:source",
+    "d-ilo-07:source"
+   ],
+   "Name the provisions of the code of ethics for professional teachers.": [
+    "d-po-14:target"
+   ]
+  },
+  "acct": {
+   "Record and report receivables and inventories in accordance with the applicable financial reporting standards.": [
+    "d-po-09:target"
+   ],
+   "Define accounting.": [
+    "d-po-10:target"
+   ],
+   "Prepare the financial statements of a business entity.": [
+    "d-ilo-08:source"
+   ],
+   "Record and report receivables in accordance with the applicable financial reporting standards.": [
+    "d-ilo-09:source"
+   ]
+  },
+  "hm": {
+   "Apply proper food handling and sanitation procedures when serving guests.": [
+    "d-po-11:target"
+   ],
+   "Deliver table service to industry standards.": [
+    "d-ilo-10:source"
+   ],
+   "Apply safety and sanitation standards when serving food and beverages.": [
+    "d-ilo-11:source"
+   ]
+  },
+  "ie": {
+   "Formulate linear programming models of production problems.": [
+    "d-ilo-13:source"
+   ]
+  }
+ },
+ "bloom": {
+  "Remember": [
+   "define",
+   "list",
+   "recall",
+   "recite",
+   "state",
+   "name",
+   "identify",
+   "recognize",
+   "label",
+   "memorize"
+  ],
+  "Understand": [
+   "describe",
+   "explain",
+   "summarize",
+   "discuss",
+   "interpret",
+   "classify",
+   "illustrate",
+   "paraphrase",
+   "understand",
+   "reflect"
+  ],
+  "Apply": [
+   "apply",
+   "use",
+   "compute",
+   "calculate",
+   "solve",
+   "demonstrate",
+   "perform",
+   "implement",
+   "execute",
+   "prepare",
+   "practice",
+   "practise",
+   "measure",
+   "record",
+   "report",
+   "administer",
+   "communicate",
+   "deliver",
+   "follow",
+   "write",
+   "set",
+   "handle",
+   "journalize",
+   "differentiate",
+   "sketch",
+   "translate",
+   "assess",
+   "provide",
+   "conduct",
+   "present",
+   "operate"
+  ],
+  "Analyze": [
+   "analyze",
+   "analyse",
+   "compare",
+   "contrast",
+   "distinguish",
+   "examine",
+   "investigate",
+   "organize",
+   "interpret",
+   "model"
+  ],
+  "Evaluate": [
+   "evaluate",
+   "justify",
+   "critique",
+   "judge",
+   "appraise",
+   "defend",
+   "recommend",
+   "validate",
+   "verify",
+   "prove"
+  ],
+  "Create": [
+   "design",
+   "create",
+   "develop",
+   "construct",
+   "formulate",
+   "produce",
+   "plan",
+   "compose",
+   "generate",
+   "build",
+   "propose",
+   "devise",
+   "collaborate"
+  ]
+ },
+ "egaNames": [
+  "Critical and Creative thinker",
+  "Competent Catholic Augustinian-Marian Professional",
+  "Socially Responsive Steward",
+  "Transformative Lifelong learner",
+  "Competent Professional"
+ ],
+ "rules": {
+  "a2Rules": {
+   "duplicate": "a draft equal (lower case, letters and spaces only) to another CLO of the same course in the development split, or sharing at least 80% of its content stems both ways (Jaccard >= 0.8); its own original statement excluded",
+   "escalation": "a CLO-side draft whose leading verb level (BLOOM table, first six words, highest wins) is above the CLO's level as the model gave it (targetBloom) and at or above the PO/EGA level it gave (sourceBloom); ILO-CLO drafts are checked the other way: an ILO draft above its CLO's level",
+   "replacement": "a draft keeping under a third of the original statement's content stems is a replacement, not a revision; whether that is right depends on whether the original was off-subject or weak (remedy assessments above)",
+   "values": "any draft or explanation that names an EGA or value other than the one mapped, removes a value reference the original had, or proposes changing the EGA, PO or value itself; EGA names: the four official names and the eval-1.1 short form \"Competent Professional\"",
+   "scope": "a draft bringing in a competency the course does not teach (by its description) or turning the statement into another discipline's outcome"
+  },
+  "scoring": "Agreement, false approvals and false rejections exactly as eval/qualityMetrics.js computes them for each arm (strict: single-verdict, not ambiguous; permissive: any accepted verdict; false approval: clear not-aligned judged ALIGNED; false rejection: clear-ALIGNED judged otherwise). An answer a run never verified is reported apart and never counted as agreement or disagreement.",
+  "pairingByItem": "For each item, the number of agreeing answers in each arm (0, 1 or 2 of 2): both right (2/2 and 2/2), only A2 right (2/2 and 0/2), only B2 right (0/2 and 2/2), both wrong (0/2 and 0/2), A2 better or B2 better (unequal counts otherwise), equal and partial (1/2 and 1/2). An item with an unverified answer is listed apart.",
+  "pairingByAnswer": "Answer level, run r of A2 against run r of B2 (both agree, only A2, only B2, neither). The two arms are independent samples, so pairing run 1 with run 1 is by index only; the item-level table is the primary one.",
+  "disputedOutcome": "For each of the 11 items: corrected in both runs (B2 ALIGNED twice), corrected in one run (once), repeated (B2 not ALIGNED in both runs); with B2's label kind (PARTIALLY_ALIGNED or NOT_ALIGNED), its Bloom levels against A2's, its explanation's reason against the A2 cause above, and its recommendation. A B2 ALIGNED is a correction against the PROVISIONAL label only: whether the item is aligned is the faculty policy question A2 raised (multi-part and broad POs, the course-subject rule), never settled by either arm.",
+  "newFalseRejection": "A B2 answer on a clear-ALIGNED item outside the 11 that is not ALIGNED (A2 was ALIGNED in both runs on it).",
+  "newFalseApproval": "A B2 ALIGNED answer on a clear not-aligned item (A2 had none: 0 of 52).",
+  "bothDisagree": "An item where at least one answer of each arm disagrees with the provisional label.",
+  "noiseFloor": "A2's own run-to-run label changes (a2Unstable above) are the reference for how much a difference of one answer can come from re-asking alone; a B2 difference confined to one run on such an item is not read as an effect of the wording.",
+  "remedyMatch": "Remap candidates (never scored): provisional RETAG is matched by RETAG_OUTCOME; REWRITE and REWRITE OR REMOVE by REWRITE_TEXT; EITHER (faculty) by both. A non-matching remedy, and every RETAG_OUTCOME outside these candidates, is listed for faculty with its explanation; a re-tag is never assumed right because it is a re-tag.",
+  "retagChecks": "A RETAG_OUTCOME answer: the validator requires an empty draft; the explanation should say the tag does not fit (regex /\\b(tag|tagged|mapped|mapping|re-?tag|another PO|different PO|another (EGA|attribute)|does not fit|wrong (PO|EGA|outcome))\\b/i), and whether it names a better outcome is recorded. A RETAG on a clear-ALIGNED item is unsupported against the label; on a level-gap item it is compared with the A2 notes (a re-tag keeps the outcome for clo-po-calc-lower-level, d-po-02, clo-po-prog-lower-level, d-po-08).",
+  "unsupportedRecommendations": "The harness count (quality.recommendations.unsupported: a rewrite for a clear-ALIGNED item, a rewrite where a re-tag is expected, a draft held back by the static review, contract refusals), plus every RETAG_OUTCOME for a clear-ALIGNED item and every RETAG_OUTCOME where the provisional remedy is REWRITE.",
+  "draftRules": "Duplicate, escalation, replacement, values and scope exactly as A2 (a2Rules), with the same BLOOM table and CLO pool, applied to every B2 draft; then the developer reads every B2 draft as in A2 section 6. The same rules are re-applied to A2's drafts from p2-a2-cases.json so the two arms are counted the same way.",
+  "labelExplanation": "Post hoc in A2, pre-registered here for both arms: NOT_ALIGNED on an ILO-CLO pair whose explanation says /smaller (prerequisite )?step|builds toward|does not claim more|same subject/i, and ALIGNED with /\\b(missing|lacks?|no |not |omits|gap)/i; each hit is read by hand before it is reported.",
+  "iloDirection": "ILO-CLO: an ALIGNED answer whose ILO level is above its CLO's breaks the level rule (quality.bloom); an ILO draft above its CLO's level, or a draft sharing at least half its words with its own CLO (Jaccard >= 0.5, A2 extra section 3), no longer reads as a smaller step; role_confusion refusals are reported.",
+  "facultyReview": "An item needs faculty review when (F1) it is one of the 11; (F2) A2 and B2 labels differ on it in any run, or either arm changed its label between runs; (F3) a B2 answer disagrees with the provisional label; (F4) it is a remap candidate, or B2 re-tags it; (F5) a B2 explanation contradicts its label (read by hand); (F6) a B2 draft is flagged by a draft rule. F1-F3 are academic-relationship disputes; F4 and F6 are recommendation concerns; F5 is a consistency concern.",
+  "provisional": "Every expected verdict is developer-written and unreviewed (reviewStatus unreviewed): agreement is with provisional labels, never faculty-validated accuracy, and no difference between the arms is called a model improvement (both arms are the same model)."
+ }
+}

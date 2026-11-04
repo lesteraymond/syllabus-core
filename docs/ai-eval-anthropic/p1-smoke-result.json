@@ -1,0 +1,428 @@
+{
+  "items": 4,
+  "runs": 1,
+  "answered": 4,
+  "invalid": 0,
+  "invalidRate": 0,
+  "notAttempted": 0,
+  "agreement": 1,
+  "falsePositiveRate": 0,
+  "falseNegativeRate": 0,
+  "counts": {
+    "clearAligned": 1,
+    "falsePositive": 0,
+    "clearNot": 3,
+    "falseNegative": 0
+  },
+  "confusion": {
+    "ALIGNED": {
+      "ALIGNED": 1,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "PARTIAL": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "FLAGGED": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 1,
+      "NOT_ALIGNED": 2,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    }
+  },
+  "partialAccuracy": null,
+  "approvalAccuracy": 1,
+  "byDiscipline": {
+    "unknown": {
+      "items": 4,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "byCategory": {
+    "uncategorised": {
+      "items": 4,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "stability": null,
+  "byType": {
+    "CLO-PO": {
+      "items": 4,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "disagreements": [],
+  "structuredFields": {
+    "answers": 0,
+    "withFields": 0,
+    "missing": 0,
+    "malformed": 0,
+    "contradictory": 0,
+    "notAssessed": 0,
+    "perField": {},
+    "note": "Expectations are provisional. Only an assessed field is compared with them: a field that was not assessed, missing, malformed or in a self-contradictory answer is counted by its state, never as agreement. INSUFFICIENT_EVIDENCE answers are left out."
+  },
+  "model": "anthropic/claude-sonnet-5-5",
+  "promptVersion": "alignment-10",
+  "provider": "anthropic",
+  "evaluationOnly": true,
+  "adapterUsage": {
+    "requests": 1,
+    "attempts": 1,
+    "timedOut": 0,
+    "inputTokens": 456,
+    "outputTokens": 914,
+    "thinkingTokens": 0,
+    "cacheCreationInputTokens": 3728,
+    "cacheReadInputTokens": 0,
+    "stopReasons": {
+      "end_turn": 1
+    },
+    "enumCaseOnly": 0,
+    "estimatedUsd": 0.019372,
+    "priceAsOf": "2026-10-27"
+  },
+  "dataset": {
+    "name": "general",
+    "version": "eval-1.1",
+    "split": "all",
+    "reviewStatus": "unreviewed",
+    "selection": {
+      "parentItems": 41,
+      "selectedIds": [
+        "clo-po-calc-aligned",
+        "clo-po-calc-lower-level",
+        "clo-po-calc-unrelated",
+        "clo-po-calc-vague"
+      ]
+    }
+  },
+  "configuration": {
+    "stageFlags": {
+      "a": false,
+      "b": false,
+      "b3": false,
+      "b4": false,
+      "c1": false,
+      "c2": false,
+      "d1": false,
+      "d2": false
+    },
+    "promptVariant": "current",
+    "trim": false,
+    "minItems": false,
+    "timeoutMs": 180000,
+    "anthropic": {
+      "model": "claude-sonnet-5-5",
+      "thinking": "adaptive",
+      "thinkingParameter": {
+        "type": "adaptive"
+      },
+      "effort": "high",
+      "maxTokens": 16000,
+      "maxRetries": 2,
+      "promptCache": true,
+      "evaluationOnly": true
+    }
+  },
+  "retries": {
+    "batches": 1,
+    "requests": 1,
+    "invalidAnswers": 0,
+    "finalUnverified": 0,
+    "providerErrors": 0,
+    "notSent": 0,
+    "retryRate": 0,
+    "invalidAnswerRate": 0
+  },
+  "relationshipMetrics": {
+    "planned": 4,
+    "attempted": 4,
+    "neverAttempted": 0,
+    "verified": 4,
+    "recovered": 0,
+    "unresolved": 0,
+    "unresolvedRate": 0,
+    "coverage": 1,
+    "attemptedShare": 1,
+    "firstAttempt": {
+      "answered": 4,
+      "refused": 0,
+      "validationFailureRate": 0,
+      "noAnswerFirst": 0
+    },
+    "rawResponseErrors": {
+      "answers": 1,
+      "invalidAnswers": 0,
+      "refusedJudgements": 0,
+      "requestsWithoutAnswer": 0
+    },
+    "aspectCoverage": null
+  },
+  "completion": {
+    "maxUnresolved": 0.2,
+    "unresolvedRate": 0,
+    "coverage": 1,
+    "stopped": null,
+    "state": "complete",
+    "usableForAgreement": true,
+    "reason": "every planned relationship was attempted; 0 of 4 remain unresolved (0%), within the 20% limit"
+  },
+  "schema": {
+    "minItems": false,
+    "emptyAnswers": 0,
+    "minItemsNotEnforced": false
+  },
+  "answerReview": {
+    "advisory": true,
+    "note": "Counts are heuristic review warnings, not verified academic errors. Labels, fields, validation and agreement are unchanged by these warnings.",
+    "counts": {
+      "explanationReview": {},
+      "draftReview": {},
+      "draftWarnings": {}
+    },
+    "flaggedAnswers": []
+  },
+  "limits": {
+    "budget": 3,
+    "maxCost": 0.5,
+    "maxTransient": 3,
+    "maxUnproductive": 37,
+    "maxUnresolved": 0.2,
+    "minSample": 8,
+    "warnInvalid": 3,
+    "maxInvalid": null,
+    "accounting": "reconcile",
+    "maxTokens": 16000,
+    "totalCap": 10,
+    "spendRegister": "docs\\ai-eval-anthropic\\spend-register.json",
+    "maxOutputTokens": null
+  },
+  "failures": [],
+  "perItem": {
+    "clo-po-calc-aligned": [
+      "ALIGNED"
+    ],
+    "clo-po-calc-lower-level": [
+      "NOT_ALIGNED"
+    ],
+    "clo-po-calc-unrelated": [
+      "NOT_ALIGNED"
+    ],
+    "clo-po-calc-vague": [
+      "PARTIALLY_ALIGNED"
+    ]
+  },
+  "ranAt": "2026-10-27T14:27:37.019Z",
+  "answers": [
+    {
+      "clo-po-calc-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "Apply knowledge of mathematics and science to solve complex engineering problems",
+        "targetQuote": "Apply differentiation rules to solve optimization problems in engineering",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The CLO applies differentiation (mathematics) to solve engineering optimization problems, matching the PO's verb, level and subject.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "clo-po-calc-lower-level": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Design solutions for complex engineering problems that meet specified needs",
+        "targetQuote": "Define the derivative of a function",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The PO asks for Create-level design of solutions to complex engineering problems meeting specified needs. The CLO only says 'Define' (Remember level), so the verb and level are far below the PO. It has no engineering problem, no solution and no specified needs, so the subject is also missing. It is only a calculus topic word (derivative).",
+        "recommendation": null,
+        "draft": "Design solutions to engineering problems that meet specified needs by modeling them as functions and applying derivatives to optimize the result.",
+        "aspects": null
+      },
+      "clo-po-calc-unrelated": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Communicate effectively with a range of audiences",
+        "targetQuote": "Evaluate limits of rational functions",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The PO is about communicating effectively with a range of audiences. The CLO is about evaluating limits of rational functions, a purely mathematical computation. It has no communication verb, no audience and no communication subject. Its level (Evaluate/Apply) is not the issue; the competency is unrelated.",
+        "recommendation": null,
+        "draft": "Communicate the results of limit and derivative analyses of engineering problems clearly to technical and non-technical audiences through written reports and oral explanations.",
+        "aspects": null
+      },
+      "clo-po-calc-vague": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Apply knowledge of mathematics and science to solve complex engineering problems",
+        "targetQuote": "Understand calculus",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The CLO 'Understand calculus' is Understand level, lower than the PO's Apply. It has no action verb to apply or solve anything. It has no engineering problems as its object, and 'calculus' is only a topic word that is too vague to show mathematics applied to engineering.",
+        "recommendation": null,
+        "draft": "Apply differentiation rules and limit concepts of calculus to solve engineering problems.",
+        "aspects": null
+      }
+    }
+  ],
+  "usage": {
+    "requests": 1,
+    "thisRun": 1,
+    "model": 1,
+    "priceLookups": 0,
+    "keyChecks": 0,
+    "invalidAnswers": 0,
+    "unproductiveInARow": 0,
+    "transient": 0,
+    "promptTokens": 4184,
+    "completionTokens": 914,
+    "cachedTokens": 0,
+    "reportedCost": 0,
+    "charged": 0.019372,
+    "accounting": {
+      "rule": "reconcile",
+      "requests": {
+        "reconciled": 1,
+        "conservative": 0,
+        "worst_case": 0,
+        "refused": 0
+      },
+      "chargedConservatively": 0.02156
+    },
+    "warnings": [],
+    "limits": {
+      "maxRequests": 3,
+      "maxCost": 0.5,
+      "maxTransient": 3,
+      "maxInvalid": null,
+      "warnInvalid": 3,
+      "maxUnproductive": 37,
+      "maxTokens": null
+    },
+    "stopped": null,
+    "anthropic": {
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "prices": {
+        "model": "claude-sonnet-5-5",
+        "asOf": "2026-10-27",
+        "geoFactor": 1.1,
+        "perMillionTokens": {
+          "input": 2,
+          "output": 10,
+          "cacheRead": 0.2,
+          "listedCacheRead": 0.1,
+          "cacheWrite5m": 2.5,
+          "cacheWrite1h": 4
+        }
+      },
+      "inputTokens": 456,
+      "cacheCreationInputTokens": 3728,
+      "cacheReadInputTokens": 0,
+      "outputTokens": 914,
+      "thinkingTokens": 0,
+      "atListPrices": 0.019372,
+      "outputTokensCharged": 914,
+      "stopReasons": {
+        "end_turn": 1
+      },
+      "refusalCategories": {},
+      "inferenceGeo": {
+        "global": 1
+      },
+      "serviceTier": {
+        "standard": 1
+      },
+      "errors": {},
+      "latencyMs": {
+        "answers": 1,
+        "median": 10171,
+        "max": 10171
+      },
+      "limits": {
+        "maxOutputTokens": null,
+        "register": {
+          "cap": 10,
+          "chargedByEveryLedger": 0.019372
+        }
+      }
+    }
+  },
+  "prices": {
+    "provider": "anthropic",
+    "model": "claude-sonnet-5-5",
+    "asOf": "2026-10-27",
+    "geoFactor": 1.1,
+    "input": 0.000002,
+    "output": 0.00001,
+    "cacheRead": 2.0000000000000002e-7,
+    "listedCacheRead": 1.0000000000000001e-7,
+    "cacheWrite5m": 0.0000025,
+    "cacheWrite1h": 0.000004
+  },
+  "requests": [
+    {
+      "n": 1,
+      "ids": [
+        "clo-po-calc-aligned",
+        "clo-po-calc-lower-level",
+        "clo-po-calc-unrelated",
+        "clo-po-calc-vague"
+      ],
+      "status": 200,
+      "ms": 10171,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgSu4MvRDJVib8L6MpTYF",
+      "stopReason": "end_turn",
+      "errorType": null,
+      "worst": 0.21425525,
+      "usage": {
+        "promptTokens": 4184,
+        "completionTokens": 914,
+        "reasoningTokens": 0,
+        "cachedTokens": 0,
+        "reportedCost": null,
+        "costAtListPrices": 0.019372,
+        "inputTokens": 456,
+        "cacheCreationInputTokens": 3728,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 0,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.019372,
+      "conservativeCharge": 0.02156,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"clo-po-calc-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"The CLO applies differentiation (mathematics) to solve engineering optimization problems, matching the PO's verb, level and subject.\",\"sourceQuote\":\"Apply knowledge of mathematics and science to solve complex engineering problems\",\"targetQuote\":\"Apply differentiation rules to solve optimization problems in engineering\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\"},{\"id\":\"clo-po-calc-lower-level\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The PO asks for Create-level design of solutions to complex engineering problems meeting specified needs. The CLO only says 'Define' (Remember level), so the verb and level are far below the PO. It has no engineering problem, no solution and no specified needs, so the subject is also missing. It is only a calculus topic word (derivative).\",\"sourceQuote\":\"Design solutions for complex engineering problems that meet specified needs\",\"targetQuote\":\"Define the derivative of a function\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Remember\",\"draft\":\"Design solutions to engineering problems that meet specified needs by modeling them as functions and applying derivatives to optimize the result.\"},{\"id\":\"clo-po-calc-unrelated\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The PO is about communicating effectively with a range of audiences. The CLO is about evaluating limits of rational functions, a purely mathematical computation. It has no communication verb, no audience and no communication subject. Its level (Evaluate/Apply) is not the issue; the competency is unrelated.\",\"sourceQuote\":\"Communicate effectively with a range of audiences\",\"targetQuote\":\"Evaluate limits of rational functions\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Evaluate\",\"draft\":\"Communicate the results of limit and derivative analyses of engineering problems clearly to technical and non-technical audiences through written reports and oral explanations.\"},{\"id\":\"clo-po-calc-vague\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The CLO 'Understand calculus' is Understand level, lower than the PO's Apply. It has no action verb to apply or solve anything. It has no engineering problems as its object, and 'calculus' is only a topic word that is too vague to show mathematics applied to engineering.\",\"sourceQuote\":\"Apply knowledge of mathematics and science to solve complex engineering problems\",\"targetQuote\":\"Understand calculus\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Understand\",\"draft\":\"Apply differentiation rules and limit concepts of calculus to solve engineering problems.\"}]}"
+    }
+  ],
+  "stopped": null,
+  "isolation": {
+    "dataModulesLoaded": [],
+    "processEnvStageFlags": []
+  }
+}

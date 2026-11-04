@@ -1,0 +1,314 @@
+ M .gitignore
+ M HOW-TO-RUN.md
+ M docs/bsfm-admin-workflow-result.json
+ M package-lock.json
+ M package.json
+ M server/.env.example
+ M server/db/schema.sql
+ M server/db/seed-outcomes.js
+ M server/index.js
+ M server/lib/compliance/rules.js
+ M server/lib/compliance/service.js
+ M server/lib/courses.js
+ M server/lib/programManagement.js
+ M server/lib/programs.js
+ M server/lib/syllabusOutcomes.js
+ M server/package-lock.json
+ M server/package.json
+ M server/routes/assignments.routes.test.js
+ M server/routes/avatar.routes.test.js
+ M server/routes/catalog.routes.test.js
+ M server/routes/comments.routes.test.js
+ M server/routes/compliance.js
+ M server/routes/compliance.routes.test.js
+ M server/routes/courses.js
+ M server/routes/enforcement.routes.test.js
+ M server/routes/logs.routes.test.js
+ M server/routes/messages.routes.test.js
+ M server/routes/passwords.routes.test.js
+ M server/routes/programManagement.routes.test.js
+ M server/routes/programs.js
+ M server/routes/review.routes.test.js
+ M server/routes/stages.routes.test.js
+ M server/routes/syllabi.js
+ M server/routes/syllabusContent.js
+ M server/routes/usage.routes.test.js
+ M src/components/ComplianceModal.jsx
+ M src/components/ProgramManagement.jsx
+ M src/components/ui.jsx
+ M src/data/outcomesSeed.js
+ M src/i18n/index.js
+ M src/lib/activityView.js
+ M src/lib/activityView.test.js
+ M src/lib/api.js
+ M src/lib/complianceRules.js
+ M src/lib/complianceView.js
+ M src/lib/complianceView.test.js
+ M src/lib/syllabusModel.js
+ M src/lib/syllabusModel.test.js
+ M src/lib/syllabusRules.js
+ M src/lib/syllabusRules.test.js
+ M src/styles.css
+ M src/views/AIChecker.jsx
+ M src/views/Analytics.jsx
+ M src/views/ComplianceCard.jsx
+ M src/views/DashboardView.jsx
+ M src/views/builder2/ComplianceSection.jsx
+ M src/views/builder2/InfoStep.jsx
+ M src/views/builder2/PlanStep.jsx
+ M src/views/builder2/ReviewStep.jsx
+ M src/views/builder2/UploadPanel.jsx
+ M src/views/builder2/index.jsx
+ M src/views/builder2/parts.jsx
+ M src/views/builder2/useCompliance.js
+ M src/views/builder2/useDraft.js
+ M tests/i18n-ui.test.jsx
+ M vite.config.js
+?? docs/CAPSTONE-DOCUMENTATION.docx
+?? docs/CAPSTONE-DOCUMENTATION.md
+?? docs/academic-references/
+?? docs/academic-validation-package/
+?? docs/ai-alignment-accuracy.md
+?? docs/ai-alignment-pipeline.md
+?? docs/ai-check-request-audit.json
+?? docs/ai-checker-revision-cycles.md
+?? docs/ai-checker-rules-addendum-c3.md
+?? docs/ai-checker-rules.md
+?? docs/ai-eval-anthropic/
+?? docs/ai-eval-baseline-prompt10.json
+?? docs/ai-eval-baseline-prompt9.json
+?? docs/ai-eval-diagnosis.md
+?? docs/ai-eval-faculty-review-alignment.csv
+?? docs/ai-eval-faculty-review.csv
+?? docs/ai-eval-stage-a-baseline.json
+?? docs/ai-eval-stage-a-regression.json
+?? docs/ai-eval-stage-b-baseline.json
+?? docs/ai-eval-stage-b-regression.json
+?? docs/ai-eval-stage-b3-baseline.json
+?? docs/ai-eval-stage-b4-baseline.json
+?? docs/ai-eval-stage-e3-smoke-run2.json
+?? docs/ai-eval-stage-e3-smoke.json
+?? docs/ai-eval-stage-e4-ledger.json
+?? docs/ai-eval-stage-e4-smoke-resume.json
+?? docs/ai-eval-stage-e4-smoke.json
+?? docs/ai-eval-stage-e5-bsie-ledger.json
+?? docs/ai-eval-stage-e5-bsie.json
+?? docs/ai-eval-stage-e7-d1-ledger.json
+?? docs/ai-eval-stage-e7-d1.json
+?? docs/ai-eval-stage-e7-d2-ledger.json
+?? docs/ai-eval-stage-e7-d2-resume.json
+?? docs/ai-eval-stage-e7-d2.json
+?? docs/ai-eval-stage-e8-c-canary-resume.json
+?? docs/ai-eval-stage-e8-c-canary-review.json
+?? docs/ai-eval-stage-e8-c-canary.json
+?? docs/ai-eval-stage-e8-c-corrections-replay.json
+?? docs/ai-eval-stage-e8-c-heldout.json
+?? docs/ai-eval-stage-e8-c-heldout.json.progress.json
+?? docs/ai-eval-stage-e8-c-ledger-before-heldout.json
+?? docs/ai-eval-stage-e8-c-ledger-before-r8.json
+?? docs/ai-eval-stage-e8-c-ledger-before-remaining.json
+?? docs/ai-eval-stage-e8-c-ledger-before-resource-recovery.json
+?? docs/ai-eval-stage-e8-c-ledger-before-resource-regression.json
+?? docs/ai-eval-stage-e8-c-ledger.json
+?? docs/ai-eval-stage-e8-c-r8-exploratory-summary.json
+?? docs/ai-eval-stage-e8-c-r8-regression-review.json
+?? docs/ai-eval-stage-e8-c-r8-regression.json
+?? docs/ai-eval-stage-e8-c-r8-regression.json.progress.json
+?? docs/ai-eval-stage-e8-c-r8-remaining-review.json
+?? docs/ai-eval-stage-e8-c-r8-remaining.json
+?? docs/ai-eval-stage-e8-c-r8-remaining.json.progress.json
+?? docs/ai-eval-stage-e8-c-resource-recovery.json
+?? docs/ai-eval-stage-e8-c-resource-recovery.json.progress.json
+?? docs/ai-eval-stage-e8-c-resource-regression.json
+?? docs/ai-eval-stage-e8-c-resource-replay.json
+?? docs/ai-eval-stage-e9-d1-billing-check-ledger.json
+?? docs/ai-eval-stage-e9-d1-billing-check.json
+?? docs/ai-eval-stage-e9-d1-followup-final-recovery-ledger.json
+?? docs/ai-eval-stage-e9-d1-followup-final-recovery.json
+?? docs/ai-eval-stage-e9-d1-followup-ledger.json
+?? docs/ai-eval-stage-e9-d1-followup-recovery-ledger.json
+?? docs/ai-eval-stage-e9-d1-followup-recovery.json
+?? docs/ai-eval-stage-e9-d1-followup.json
+?? docs/ai-eval-stage-e9-d2-followup-ledger.json
+?? docs/ai-eval-stage-e9-d2-followup.json
+?? docs/ai-prompt-trim.md
+?? docs/anthropic-direct-api-plan.md
+?? docs/anthropic-p2-a1-report.md
+?? docs/anthropic-p2-a2-report.md
+?? docs/anthropic-p2-b2-report.md
+?? docs/anthropic-p2-pilot-report.md
+?? docs/anthropic-p2-preparation.md
+?? docs/bsie-hybrid-api-result.json
+?? docs/bsie-ma7-tests/
+?? docs/bsie-misalignment-test.json
+?? docs/faculty-review/
+?? docs/ilo-assessment-scoring-review.md
+?? docs/institutional-reference-inventory.md
+?? docs/lcup-academic-benchmark/
+?? docs/lcup-academic-decisions-for-vpaa.md
+?? docs/lcup-approved-offline/
+?? docs/lcup-comprehensive-verification/
+?? docs/lcup-curriculum-audit-followup.md
+?? docs/lcup-curriculum-reference-audit.md
+?? docs/lcup-evaluation-readiness/
+?? docs/lcup-faculty-validation-1/
+?? docs/lcup-importer-fixes/
+?? docs/lcup-po-correction/
+?? docs/lcup-policy-v2-implementation/
+?? docs/lcup-policy-v2/
+?? docs/lcup-requirements/
+?? docs/lcup-v2-evaluation/
+?? docs/live-evaluation-plan.md
+?? docs/local-reference-import.json
+?? docs/local-reference-import.md
+?? docs/ma7-aligned-draft.json
+?? docs/ma7-coded-rules-v2-result.json
+?? docs/ma7-evidence-diagnostic.json
+?? docs/ma7-misaligned-draft.json
+?? docs/ma7-misalignment-test-result.json
+?? docs/ma7-official-pos-check.json
+?? docs/ma7-recheck-score-result.json
+?? docs/openrouter-ma7-live-result.json
+?? docs/pdf-import-api-audit.json
+?? docs/pdf-layout-extraction-audit.json
+?? docs/pdf-syllabus-import.md
+?? docs/sample-invalid-course-report.json
+?? docs/sample-misaligned-report.json
+?? docs/stage-c-evaluation-plan.md
+?? docs/stage-e-audit.md
+?? docs/stage-e-provider-efficiency.md
+?? docs/stage-e-readiness.md
+?? docs/stage-e1-design.md
+?? docs/stage-e2-readiness.md
+?? docs/stage-e4-request-volume.json
+?? docs/stage-e4-response-contract.md
+?? docs/stage-e5-reference-evidence.md
+?? docs/stage-e6-evaluation-reliability.md
+?? docs/stage-e7-academic-reliability-follow-up.md
+?? docs/stage-e7-d2-validation-proposal.md
+?? docs/stage-e7-phase2-evaluation.md
+?? docs/stage-e8-post-recovery-review.md
+?? docs/stage-e8-resource-grounding-fix.md
+?? docs/stage-e8-resource-recovery.md
+?? docs/stage-e8-resource-regression.md
+?? docs/stage-e8-stage-c-canary.md
+?? docs/stage-e8-stage-c-corrections.md
+?? docs/stage-e8-stage-c-r8-coverage.md
+?? docs/stage-e8-stage-c-r8-regression.md
+?? docs/stage-e9-phase2-closeout.md
+?? docs/stage-e9-phase3-evaluation-plan.md
+?? docs/syllabus-checker.md
+?? docs/title-normalization-impact.md
+?? docs/title-policy-activation.md
+?? docs/verdict-layer.md
+?? docs/verdict-translation-inventory.md
+?? docs/verification/
+?? promo-video/
+?? reference-data/
+?? scripts/analyze-provider-cost.cjs
+?? scripts/audit-ai-check-requests.cjs
+?? scripts/audit-pdf-layout.cjs
+?? scripts/audit-verdict-i18n.mjs
+?? scripts/compare-prompts.cjs
+?? scripts/compare-title-policy.cjs
+?? scripts/create-bsie-test-versions.cjs
+?? scripts/diagnose-ma7-evidence.cjs
+?? scripts/eval-alignment.cjs
+?? scripts/eval-compare.cjs
+?? scripts/export-align1-adjudication-v2.cjs
+?? scripts/export-align1-adjudication.cjs
+?? scripts/export-checker-rules.cjs
+?? scripts/export-eval-review.cjs
+?? scripts/export-faculty-review.cjs
+?? scripts/export-phase3-faculty-review.cjs
+?? scripts/export-validation-package.cjs
+?? scripts/extract-reference-pdfs.mjs
+?? scripts/fill-bsie-api.cjs
+?? scripts/fill-ma7-aligned-draft.cjs
+?? scripts/fill-ma7-misaligned-draft.cjs
+?? scripts/import-align1-faculty-responses.cjs
+?? scripts/import-align1-faculty-responses.test.cjs
+?? scripts/inspect-bsie-testing.cjs
+?? scripts/lcup-academic-benchmark/
+?? scripts/lcup-approved-offline/
+?? scripts/lcup-comprehensive-verification/
+?? scripts/lcup-evaluation-readiness/
+?? scripts/lcup-faculty-validation/
+?? scripts/lcup-po-correction/
+?? scripts/lcup-policy-v2-implementation/
+?? scripts/lcup-policy-v2/
+?? scripts/lcup-requirements/
+?? scripts/lcup-v2-evaluation/
+?? scripts/live-pipeline-eval.cjs
+?? scripts/live-smoke-eval.cjs
+?? scripts/measure-request-volume.cjs
+?? scripts/misalign-bsie-api.cjs
+?? scripts/replay-stage-e8-resources.cjs
+?? scripts/report-phase3-scoring-drift.cjs
+?? scripts/report-provider-drift.cjs
+?? scripts/test-checker-provider.cjs
+?? scripts/test-ma7-api.cjs
+?? scripts/test-openrouter-ma7.cjs
+?? scripts/test-pdf-import-ui.mjs
+?? scripts/update-ma7-official-pos.cjs
+?? scripts/verify-align1-adjudication-v2.cjs
+?? scripts/verify-hybrid-api.cjs
+?? scripts/whatif-ilo-assessment.cjs
+?? server/config/
+?? server/db/local-curriculum-data.cjs
+?? server/db/local-outcome-data.cjs
+?? server/db/migrate-activity-log.js
+?? server/db/migrate-course-program-codes.js
+?? server/db/migrate-program-outcome-sources.js
+?? server/db/migrate-syllabuscheck.js
+?? server/db/official-po-migration.cjs
+?? server/db/seed-local-references.js
+?? server/db/syllabuscheck-ddl.js
+?? server/lib/activity.js
+?? server/lib/activity.test.js
+?? server/lib/pdfGeometry.js
+?? server/lib/pdfImport.js
+?? server/lib/pdfImport.test.js
+?? server/lib/pdfImport.worker.js
+?? server/lib/pdfImportIdentity.js
+?? server/lib/pdfImportIdentity.test.js
+?? server/lib/pdfLayout.js
+?? server/lib/pdfLayout.test.js
+?? server/lib/programPoReferences.js
+?? server/lib/syllabuscheck/
+?? server/routes/pdfImport.js
+?? server/routes/pdfImport.routes.test.js
+?? server/routes/syllabusCheck.js
+?? server/routes/syllabusCheck.refine.routes.test.js
+?? server/routes/syllabusCheck.routes.test.js
+?? server/scripts/syllabus-check.cjs
+?? shared/
+?? src/components/AcademicEvaluationPanel.jsx
+?? src/components/HybridCheckPanel.jsx
+?? src/components/HybridProblem.jsx
+?? src/components/HybridProblemsModal.jsx
+?? src/components/VerdictPanel.jsx
+?? src/data/academicPolicyV2.json
+?? src/data/officialProgramOutcomes.json
+?? src/i18n/academicV2.js
+?? src/i18n/dashboardStats.js
+?? src/i18n/hybrid.js
+?? src/i18n/lessonAuthoring.js
+?? src/i18n/pdfImport.js
+?? src/lib/academicEvaluation.js
+?? src/lib/checkPolicy.js
+?? src/lib/complianceStats.js
+?? src/lib/complianceStats.test.js
+?? src/lib/hybridCheck.js
+?? src/lib/hybridCheck.test.js
+?? src/lib/hybridView.js
+?? src/lib/hybridView.test.js
+?? src/lib/lessonAuthoring.js
+?? src/lib/panelMemory.js
+?? src/lib/pdfImport.fixes.test.js
+?? src/lib/pdfImport.js
+?? src/lib/pdfImport.test.js
+?? src/lib/pdfImportReview.js
+?? tests/lesson-authoring.test.jsx
+?? tests/pdf-import-ui.test.jsx
+?? tmp/

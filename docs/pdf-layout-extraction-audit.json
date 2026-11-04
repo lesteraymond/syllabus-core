@@ -1,0 +1,174 @@
+{
+  "testedAt": "2026-10-22T09:05:31.054Z",
+  "layoutVersion": 2,
+  "aiRequests": 0,
+  "databaseWrites": 0,
+  "results": [
+    {
+      "file": "IE402-SYSTEM-ENGINEERINGS.pdf",
+      "sha256": "44ca6d48c77d0b04055cf330717b9381b64d3b7fb8674be727aa2eb4a1807569",
+      "pages": 12,
+      "sections": 10,
+      "clos": 4,
+      "egas": 4,
+      "pos": 13,
+      "planRows": 9,
+      "exams": 3,
+      "weeks": [
+        "1",
+        "2-3",
+        "4",
+        "5-8",
+        "9",
+        "10-11",
+        "12-14",
+        "15-17",
+        "18"
+      ],
+      "continuedRows": [
+        {
+          "week": "2-3",
+          "sourcePages": [
+            4,
+            5
+          ]
+        },
+        {
+          "week": "5-8",
+          "sourcePages": [
+            5,
+            6
+          ]
+        },
+        {
+          "week": "10-11",
+          "sourcePages": [
+            6,
+            7
+          ]
+        },
+        {
+          "week": "12-14",
+          "sourcePages": [
+            7,
+            8
+          ]
+        },
+        {
+          "week": "15-17",
+          "sourcePages": [
+            8,
+            9,
+            10
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "file": "CPE-304-Fundamentals-of-Mixed-Signals-and-Sensors.pdf",
+      "sha256": "f68eb5bedb77d31b153b23dc354ef457c9a349b7fca64ba5a46578230982a4a2",
+      "pages": 9,
+      "sections": 10,
+      "clos": 4,
+      "egas": 4,
+      "pos": 13,
+      "planRows": 11,
+      "exams": 3,
+      "weeks": [
+        "1",
+        "2-3",
+        "4-5",
+        "6",
+        "7-8",
+        "9-11",
+        "12",
+        "13-14",
+        "15-16",
+        "17",
+        "18"
+      ],
+      "continuedRows": [
+        {
+          "week": "1",
+          "sourcePages": [
+            3,
+            4
+          ]
+        },
+        {
+          "week": "2-3",
+          "sourcePages": [
+            4,
+            5
+          ]
+        },
+        {
+          "week": "9-11",
+          "sourcePages": [
+            6,
+            7
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "file": "IT-202-Programming-1.pdf",
+      "sha256": "6376fe94981ae65f25054234e1ae63cd50be8f70f12b774ea72949e07d561845",
+      "pages": 11,
+      "sections": 10,
+      "clos": 4,
+      "egas": 4,
+      "pos": 9,
+      "planRows": 13,
+      "exams": 3,
+      "weeks": [
+        "1",
+        "2",
+        "3-4",
+        "4-5",
+        "6",
+        "7-8",
+        "9-11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16-17",
+        "18"
+      ],
+      "continuedRows": [
+        {
+          "week": "1",
+          "sourcePages": [
+            3,
+            4
+          ]
+        },
+        {
+          "week": "7-8",
+          "sourcePages": [
+            5,
+            6
+          ]
+        },
+        {
+          "week": "13",
+          "sourcePages": [
+            6,
+            7
+          ]
+        },
+        {
+          "week": "15",
+          "sourcePages": [
+            7,
+            8
+          ]
+        }
+      ],
+      "warnings": []
+    }
+  ]
+}

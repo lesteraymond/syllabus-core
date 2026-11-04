@@ -1,0 +1,1530 @@
+[
+  {
+    "type": "syllabus",
+    "id": 43,
+    "program": "BSIT",
+    "status": "draft",
+    "contentSha256": "26c980f6c0072fd814eeecf269ab084755c07f8c986e10b76b6ba3d8f2093323",
+    "oldBasis": null,
+    "cloMappings": [
+      {
+        "id": "c1",
+        "pos": [
+          1,
+          5
+        ]
+      },
+      {
+        "id": "c2",
+        "pos": [
+          6
+        ]
+      },
+      {
+        "id": "c3",
+        "pos": [
+          3,
+          7
+        ]
+      },
+      {
+        "id": "c4",
+        "pos": [
+          6,
+          8
+        ]
+      }
+    ],
+    "directIloPoMappings": [],
+    "proposedMappings": null,
+    "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk.",
+    "targetReference": "lcup-po-2026-10-29",
+    "targetProgram": "BSIT",
+    "facultyReview": {
+      "reviewer": null,
+      "reviewDate": null,
+      "decisions": [
+        {
+          "cloId": "c1",
+          "oldPoNumbers": [
+            1,
+            5
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "cloId": "c2",
+          "oldPoNumbers": [
+            6
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "cloId": "c3",
+          "oldPoNumbers": [
+            3,
+            7
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "cloId": "c4",
+          "oldPoNumbers": [
+            6,
+            8
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        }
+      ],
+      "directIloDecisions": [],
+      "referenceAdoptionConfirmed": false
+    },
+    "action": "Do not apply this worksheet automatically. Faculty must explicitly confirm meanings. Preserve approved/historical versions and saved reports."
+  },
+  {
+    "type": "syllabus",
+    "id": 93,
+    "program": "BSIT",
+    "status": "for_revision",
+    "contentSha256": "4e2e80a4de1e3650b0fefa747eaeea4a99d9bf6ec87ec92c4d398ce1ede19f54",
+    "oldBasis": [
+      {
+        "no": 1,
+        "short": "Apply computing knowledge",
+        "text": "Apply computing and other knowledge domains to address realworld problems.",
+        "egas": [
+          1
+        ]
+      },
+      {
+        "no": 2,
+        "short": "Analyze and define requirements",
+        "text": "Analyze complex problems and identify and define the computing requirements needed to design an appropriate solution.",
+        "egas": [
+          1
+        ]
+      },
+      {
+        "no": 3,
+        "short": "Design computing solutions",
+        "text": "Design and develop computing solutions using a system-level perspective.",
+        "egas": [
+          1
+        ]
+      },
+      {
+        "no": 4,
+        "short": "Ethical IT professional",
+        "text": "Demonstrate ethical behavior as an IT Professional and sensitivity to the impact of technology in the society.",
+        "egas": [
+          2
+        ]
+      },
+      {
+        "no": 5,
+        "short": "Augustinian virtues and CSR",
+        "text": "Show Augustinian virtues/ethical values and the understanding and appreciation of corporate social responsibility.",
+        "egas": [
+          2
+        ]
+      },
+      {
+        "no": 6,
+        "short": "Multi-disciplinary teamwork",
+        "text": "Work effectively and independently in multi-disciplinary and multi-cultural teams.",
+        "egas": [
+          4
+        ]
+      },
+      {
+        "no": 7,
+        "short": "Impact on society",
+        "text": "Understand the impact of their work on society and strive to ensure that their actions contribute positively on the community.",
+        "egas": [
+          3
+        ]
+      },
+      {
+        "no": 8,
+        "short": "Latest developments in the field",
+        "text": "Articulate and discuss the latest developments in the specific field of practice.",
+        "egas": [
+          1,
+          4
+        ]
+      },
+      {
+        "no": 9,
+        "short": "Professional and social ethics",
+        "text": "Act in recognition of professional, social and ethical.",
+        "egas": [
+          2
+        ]
+      },
+      {
+        "no": 10,
+        "short": "Ethical leadership",
+        "text": "Demonstrate ethical leadership and social responsibility by integrating sustainability, inclusivity, mental well-being and peace-building principles into academic, professional and community engagements, ensuring holistic development and societal transformation.",
+        "egas": [
+          3
+        ]
+      }
+    ],
+    "cloMappings": [
+      {
+        "id": "c9",
+        "pos": [
+          1
+        ]
+      },
+      {
+        "id": "api93_clo2",
+        "pos": [
+          1,
+          2
+        ]
+      },
+      {
+        "id": "api93_clo3",
+        "pos": [
+          3
+        ]
+      },
+      {
+        "id": "api93_clo4",
+        "pos": [
+          4,
+          7
+        ]
+      }
+    ],
+    "directIloPoMappings": [],
+    "proposedMappings": null,
+    "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk.",
+    "targetReference": "lcup-po-2026-10-29",
+    "targetProgram": "BSIT",
+    "facultyReview": {
+      "reviewer": null,
+      "reviewDate": null,
+      "decisions": [
+        {
+          "cloId": "c9",
+          "oldPoNumbers": [
+            1
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "cloId": "api93_clo2",
+          "oldPoNumbers": [
+            1,
+            2
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "cloId": "api93_clo3",
+          "oldPoNumbers": [
+            3
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "cloId": "api93_clo4",
+          "oldPoNumbers": [
+            4,
+            7
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        }
+      ],
+      "directIloDecisions": [],
+      "referenceAdoptionConfirmed": false
+    },
+    "action": "Do not apply this worksheet automatically. Faculty must explicitly confirm meanings. Preserve approved/historical versions and saved reports."
+  },
+  {
+    "type": "syllabus",
+    "id": 97,
+    "program": "BSIE",
+    "status": "draft",
+    "contentSha256": "169a538d6d0c931ff258791f7a3ec04aa37a5cadd132f8c99238b2d4342b1ffd",
+    "oldBasis": [
+      {
+        "no": 1,
+        "short": "Draft: Engineering problem solving",
+        "text": "Proposed BSIE outcome for this draft: Apply mathematics, engineering reasoning and computing tools to analyze industrial systems and develop evidence-based solutions.",
+        "egas": [
+          1,
+          4
+        ]
+      },
+      {
+        "no": 2,
+        "short": "Draft: Responsible practice",
+        "text": "Proposed BSIE outcome for this draft: Communicate technical results, collaborate effectively and evaluate operational decisions with attention to professional ethics, sustainability and community needs.",
+        "egas": [
+          2,
+          3
+        ]
+      }
+    ],
+    "cloMappings": [
+      {
+        "id": "kmvax3geut0vgvl",
+        "pos": [
+          1
+        ]
+      },
+      {
+        "id": "kmvax3hk1otdyd1",
+        "pos": [
+          1
+        ]
+      },
+      {
+        "id": "kmvax3imhluz216",
+        "pos": [
+          1
+        ]
+      },
+      {
+        "id": "kmvax3kanekeayr",
+        "pos": [
+          2
+        ]
+      }
+    ],
+    "directIloPoMappings": [],
+    "proposedMappings": null,
+    "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk.",
+    "targetReference": "lcup-po-2026-10-29",
+    "targetProgram": "BSIE",
+    "facultyReview": {
+      "reviewer": null,
+      "reviewDate": null,
+      "decisions": [
+        {
+          "cloId": "kmvax3geut0vgvl",
+          "oldPoNumbers": [
+            1
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "cloId": "kmvax3hk1otdyd1",
+          "oldPoNumbers": [
+            1
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "cloId": "kmvax3imhluz216",
+          "oldPoNumbers": [
+            1
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "cloId": "kmvax3kanekeayr",
+          "oldPoNumbers": [
+            2
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        }
+      ],
+      "directIloDecisions": [],
+      "referenceAdoptionConfirmed": false
+    },
+    "action": "Do not apply this worksheet automatically. Faculty must explicitly confirm meanings. Preserve approved/historical versions and saved reports."
+  },
+  {
+    "type": "syllabus",
+    "id": 99,
+    "program": "BSIT",
+    "status": "draft",
+    "contentSha256": "66844be3c088256fdb3fc04f60f8a8c8cf8b1c75a9617f7367a250e74f14cf8e",
+    "oldBasis": [
+      {
+        "no": 1,
+        "short": "Apply computing knowledge",
+        "text": "Apply computing and other knowledge domains to address realworld problems.",
+        "egas": [
+          1
+        ]
+      },
+      {
+        "no": 2,
+        "short": "Analyze and define requirements",
+        "text": "Analyze complex problems and identify and define the computing requirements needed to design an appropriate solution.",
+        "egas": [
+          1
+        ]
+      },
+      {
+        "no": 3,
+        "short": "Design computing solutions",
+        "text": "Design and develop computing solutions using a system-level perspective.",
+        "egas": [
+          1
+        ]
+      },
+      {
+        "no": 4,
+        "short": "Ethical IT professional",
+        "text": "Demonstrate ethical behavior as an IT Professional and sensitivity to the impact of technology in the society.",
+        "egas": [
+          2
+        ]
+      },
+      {
+        "no": 5,
+        "short": "Augustinian virtues and CSR",
+        "text": "Show Augustinian virtues/ethical values and the understanding and appreciation of corporate social responsibility.",
+        "egas": [
+          2
+        ]
+      },
+      {
+        "no": 6,
+        "short": "Multi-disciplinary teamwork",
+        "text": "Work effectively and independently in multi-disciplinary and multi-cultural teams.",
+        "egas": [
+          4
+        ]
+      },
+      {
+        "no": 7,
+        "short": "Impact on society",
+        "text": "Understand the impact of their work on society and strive to ensure that their actions contribute positively on the community.",
+        "egas": [
+          3
+        ]
+      },
+      {
+        "no": 8,
+        "short": "Latest developments in the field",
+        "text": "Articulate and discuss the latest developments in the specific field of practice.",
+        "egas": [
+          1,
+          4
+        ]
+      },
+      {
+        "no": 9,
+        "short": "Professional and social ethics",
+        "text": "Act in recognition of professional, social and ethical.",
+        "egas": [
+          2
+        ]
+      },
+      {
+        "no": 10,
+        "short": "Ethical leadership",
+        "text": "Demonstrate ethical leadership and social responsibility by integrating sustainability, inclusivity, mental well-being and peace-building principles into academic, professional and community engagements, ensuring holistic development and societal transformation.",
+        "egas": [
+          3
+        ]
+      }
+    ],
+    "cloMappings": [
+      {
+        "id": "c9",
+        "pos": [
+          1
+        ]
+      },
+      {
+        "id": "api99_clo2",
+        "pos": [
+          1,
+          2
+        ]
+      },
+      {
+        "id": "api99_clo3",
+        "pos": [
+          3
+        ]
+      },
+      {
+        "id": "api99_clo4",
+        "pos": [
+          4,
+          7
+        ]
+      },
+      {
+        "id": "bss99_team",
+        "pos": [
+          5,
+          6,
+          8,
+          9,
+          10
+        ]
+      }
+    ],
+    "directIloPoMappings": [
+      {
+        "rowIndex": 0,
+        "iloIndex": 0,
+        "tags": [
+          "po:1"
+        ]
+      },
+      {
+        "rowIndex": 0,
+        "iloIndex": 1,
+        "tags": [
+          "po:1"
+        ]
+      },
+      {
+        "rowIndex": 1,
+        "iloIndex": 0,
+        "tags": [
+          "po:1"
+        ]
+      },
+      {
+        "rowIndex": 1,
+        "iloIndex": 1,
+        "tags": [
+          "po:3"
+        ]
+      },
+      {
+        "rowIndex": 2,
+        "iloIndex": 0,
+        "tags": [
+          "po:3"
+        ]
+      },
+      {
+        "rowIndex": 2,
+        "iloIndex": 1,
+        "tags": [
+          "po:4"
+        ]
+      },
+      {
+        "rowIndex": 3,
+        "iloIndex": 0,
+        "tags": [
+          "po:4"
+        ]
+      },
+      {
+        "rowIndex": 3,
+        "iloIndex": 1,
+        "tags": [
+          "po:5"
+        ]
+      },
+      {
+        "rowIndex": 4,
+        "iloIndex": 0,
+        "tags": [
+          "po:5"
+        ]
+      },
+      {
+        "rowIndex": 4,
+        "iloIndex": 1,
+        "tags": [
+          "po:1"
+        ]
+      },
+      {
+        "rowIndex": 6,
+        "iloIndex": 0,
+        "tags": [
+          "po:1"
+        ]
+      },
+      {
+        "rowIndex": 6,
+        "iloIndex": 1,
+        "tags": [
+          "po:1"
+        ]
+      },
+      {
+        "rowIndex": 7,
+        "iloIndex": 0,
+        "tags": [
+          "po:1"
+        ]
+      },
+      {
+        "rowIndex": 7,
+        "iloIndex": 1,
+        "tags": [
+          "po:3"
+        ]
+      },
+      {
+        "rowIndex": 8,
+        "iloIndex": 0,
+        "tags": [
+          "po:3"
+        ]
+      },
+      {
+        "rowIndex": 8,
+        "iloIndex": 1,
+        "tags": [
+          "po:4"
+        ]
+      },
+      {
+        "rowIndex": 9,
+        "iloIndex": 0,
+        "tags": [
+          "po:4"
+        ]
+      },
+      {
+        "rowIndex": 9,
+        "iloIndex": 1,
+        "tags": [
+          "po:5"
+        ]
+      },
+      {
+        "rowIndex": 10,
+        "iloIndex": 0,
+        "tags": [
+          "po:5"
+        ]
+      },
+      {
+        "rowIndex": 10,
+        "iloIndex": 1,
+        "tags": [
+          "po:1"
+        ]
+      },
+      {
+        "rowIndex": 12,
+        "iloIndex": 0,
+        "tags": [
+          "po:1"
+        ]
+      },
+      {
+        "rowIndex": 12,
+        "iloIndex": 1,
+        "tags": [
+          "po:1"
+        ]
+      },
+      {
+        "rowIndex": 13,
+        "iloIndex": 0,
+        "tags": [
+          "po:1"
+        ]
+      },
+      {
+        "rowIndex": 13,
+        "iloIndex": 1,
+        "tags": [
+          "po:3"
+        ]
+      },
+      {
+        "rowIndex": 14,
+        "iloIndex": 0,
+        "tags": [
+          "po:3"
+        ]
+      },
+      {
+        "rowIndex": 14,
+        "iloIndex": 1,
+        "tags": [
+          "po:4"
+        ]
+      },
+      {
+        "rowIndex": 15,
+        "iloIndex": 0,
+        "tags": [
+          "po:4"
+        ]
+      },
+      {
+        "rowIndex": 15,
+        "iloIndex": 1,
+        "tags": [
+          "po:5"
+        ]
+      },
+      {
+        "rowIndex": 16,
+        "iloIndex": 0,
+        "tags": [
+          "po:5"
+        ]
+      },
+      {
+        "rowIndex": 16,
+        "iloIndex": 1,
+        "tags": [
+          "po:1"
+        ]
+      }
+    ],
+    "proposedMappings": null,
+    "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk.",
+    "targetReference": "lcup-po-2026-10-29",
+    "targetProgram": "BSIT",
+    "facultyReview": {
+      "reviewer": null,
+      "reviewDate": null,
+      "decisions": [
+        {
+          "cloId": "c9",
+          "oldPoNumbers": [
+            1
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "cloId": "api99_clo2",
+          "oldPoNumbers": [
+            1,
+            2
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "cloId": "api99_clo3",
+          "oldPoNumbers": [
+            3
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "cloId": "api99_clo4",
+          "oldPoNumbers": [
+            4,
+            7
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "cloId": "bss99_team",
+          "oldPoNumbers": [
+            5,
+            6,
+            8,
+            9,
+            10
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        }
+      ],
+      "directIloDecisions": [
+        {
+          "rowIndex": 0,
+          "iloIndex": 0,
+          "tags": [
+            "po:1"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 0,
+          "iloIndex": 1,
+          "tags": [
+            "po:1"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 1,
+          "iloIndex": 0,
+          "tags": [
+            "po:1"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 1,
+          "iloIndex": 1,
+          "tags": [
+            "po:3"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 2,
+          "iloIndex": 0,
+          "tags": [
+            "po:3"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 2,
+          "iloIndex": 1,
+          "tags": [
+            "po:4"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 3,
+          "iloIndex": 0,
+          "tags": [
+            "po:4"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 3,
+          "iloIndex": 1,
+          "tags": [
+            "po:5"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 4,
+          "iloIndex": 0,
+          "tags": [
+            "po:5"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 4,
+          "iloIndex": 1,
+          "tags": [
+            "po:1"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 6,
+          "iloIndex": 0,
+          "tags": [
+            "po:1"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 6,
+          "iloIndex": 1,
+          "tags": [
+            "po:1"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 7,
+          "iloIndex": 0,
+          "tags": [
+            "po:1"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 7,
+          "iloIndex": 1,
+          "tags": [
+            "po:3"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 8,
+          "iloIndex": 0,
+          "tags": [
+            "po:3"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 8,
+          "iloIndex": 1,
+          "tags": [
+            "po:4"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 9,
+          "iloIndex": 0,
+          "tags": [
+            "po:4"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 9,
+          "iloIndex": 1,
+          "tags": [
+            "po:5"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 10,
+          "iloIndex": 0,
+          "tags": [
+            "po:5"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 10,
+          "iloIndex": 1,
+          "tags": [
+            "po:1"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 12,
+          "iloIndex": 0,
+          "tags": [
+            "po:1"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 12,
+          "iloIndex": 1,
+          "tags": [
+            "po:1"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 13,
+          "iloIndex": 0,
+          "tags": [
+            "po:1"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 13,
+          "iloIndex": 1,
+          "tags": [
+            "po:3"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 14,
+          "iloIndex": 0,
+          "tags": [
+            "po:3"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 14,
+          "iloIndex": 1,
+          "tags": [
+            "po:4"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 15,
+          "iloIndex": 0,
+          "tags": [
+            "po:4"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 15,
+          "iloIndex": 1,
+          "tags": [
+            "po:5"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 16,
+          "iloIndex": 0,
+          "tags": [
+            "po:5"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "rowIndex": 16,
+          "iloIndex": 1,
+          "tags": [
+            "po:1"
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        }
+      ],
+      "referenceAdoptionConfirmed": false
+    },
+    "action": "Do not apply this worksheet automatically. Faculty must explicitly confirm meanings. Preserve approved/historical versions and saved reports."
+  },
+  {
+    "type": "syllabus",
+    "id": 100,
+    "program": "BSIE",
+    "status": "draft",
+    "contentSha256": "dbe786f6273c032f5dfcbb06a6923edd83725d53c309f4b9003562f6e3b27725",
+    "oldBasis": [
+      {
+        "no": 1,
+        "short": "Draft: Engineering problem solving",
+        "text": "Proposed BSIE outcome for this draft: Apply mathematics, engineering reasoning and computing tools to analyze industrial systems and develop evidence-based solutions.",
+        "egas": [
+          1,
+          4
+        ]
+      },
+      {
+        "no": 2,
+        "short": "Draft: Responsible practice",
+        "text": "Proposed BSIE outcome for this draft: Communicate technical results, collaborate effectively and evaluate operational decisions with attention to professional ethics, sustainability and community needs.",
+        "egas": [
+          2,
+          3
+        ]
+      }
+    ],
+    "cloMappings": [
+      {
+        "id": "bsie100_clo1",
+        "pos": [
+          2
+        ]
+      },
+      {
+        "id": "bsie100_clo2",
+        "pos": [
+          1
+        ]
+      },
+      {
+        "id": "bsie100_clo3",
+        "pos": [
+          1
+        ]
+      },
+      {
+        "id": "bsie100_clo4",
+        "pos": [
+          2
+        ]
+      }
+    ],
+    "directIloPoMappings": [],
+    "proposedMappings": null,
+    "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk.",
+    "targetReference": "lcup-po-2026-10-29",
+    "targetProgram": "BSIE",
+    "facultyReview": {
+      "reviewer": null,
+      "reviewDate": null,
+      "decisions": [
+        {
+          "cloId": "bsie100_clo1",
+          "oldPoNumbers": [
+            2
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "cloId": "bsie100_clo2",
+          "oldPoNumbers": [
+            1
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "cloId": "bsie100_clo3",
+          "oldPoNumbers": [
+            1
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "cloId": "bsie100_clo4",
+          "oldPoNumbers": [
+            2
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        }
+      ],
+      "directIloDecisions": [],
+      "referenceAdoptionConfirmed": false
+    },
+    "action": "Do not apply this worksheet automatically. Faculty must explicitly confirm meanings. Preserve approved/historical versions and saved reports."
+  },
+  {
+    "type": "syllabus",
+    "id": 101,
+    "program": "BSIE",
+    "status": "for_revision",
+    "contentSha256": "448a33ea66c9fb197bd2afd87a924aa610c88bf91d78badcd60407bf4810bdd8",
+    "oldBasis": [
+      {
+        "no": 1,
+        "short": "PO 1",
+        "text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+        "egas": []
+      },
+      {
+        "no": 2,
+        "short": "PO 2",
+        "text": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+        "egas": []
+      },
+      {
+        "no": 3,
+        "short": "PO 3",
+        "text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+        "egas": []
+      },
+      {
+        "no": 4,
+        "short": "PO 4",
+        "text": "Ability to function on multidisciplinary teams",
+        "egas": []
+      },
+      {
+        "no": 5,
+        "short": "PO 5",
+        "text": "Ability to identify; formulate, and solve complex engineering problems;",
+        "egas": []
+      },
+      {
+        "no": 6,
+        "short": "PO 6",
+        "text": "Understanding of professional and ethical responsibility.",
+        "egas": []
+      },
+      {
+        "no": 7,
+        "short": "PO 7",
+        "text": "Ability to communicate effectively",
+        "egas": []
+      },
+      {
+        "no": 8,
+        "short": "PO 8",
+        "text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+        "egas": []
+      },
+      {
+        "no": 9,
+        "short": "PO 9",
+        "text": "Recognition of the need for, and an ability to engage in life-long learning;",
+        "egas": []
+      },
+      {
+        "no": 10,
+        "short": "PO 10",
+        "text": "Knowledge of contemporary issues;",
+        "egas": []
+      },
+      {
+        "no": 11,
+        "short": "PO 11",
+        "text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and;",
+        "egas": []
+      },
+      {
+        "no": 12,
+        "short": "PO 12",
+        "text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in",
+        "egas": []
+      },
+      {
+        "no": 13,
+        "short": "PO 13",
+        "text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+        "egas": []
+      }
+    ],
+    "cloMappings": [
+      {
+        "id": "ma7_aligned_clo1",
+        "pos": [
+          1
+        ]
+      },
+      {
+        "id": "ma7_aligned_clo2",
+        "pos": [
+          1
+        ]
+      },
+      {
+        "id": "ma7_aligned_clo3",
+        "pos": [
+          1,
+          5
+        ]
+      },
+      {
+        "id": "ma7_aligned_clo4",
+        "pos": [
+          6,
+          7,
+          8,
+          9
+        ]
+      }
+    ],
+    "directIloPoMappings": [],
+    "proposedMappings": null,
+    "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk.",
+    "targetReference": "lcup-po-2026-10-29",
+    "targetProgram": "BSIE",
+    "facultyReview": {
+      "reviewer": null,
+      "reviewDate": null,
+      "decisions": [
+        {
+          "cloId": "ma7_aligned_clo1",
+          "oldPoNumbers": [
+            1
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "cloId": "ma7_aligned_clo2",
+          "oldPoNumbers": [
+            1
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "cloId": "ma7_aligned_clo3",
+          "oldPoNumbers": [
+            1,
+            5
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "cloId": "ma7_aligned_clo4",
+          "oldPoNumbers": [
+            6,
+            7,
+            8,
+            9
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        }
+      ],
+      "directIloDecisions": [],
+      "referenceAdoptionConfirmed": false
+    },
+    "action": "Do not apply this worksheet automatically. Faculty must explicitly confirm meanings. Preserve approved/historical versions and saved reports."
+  },
+  {
+    "type": "syllabus",
+    "id": 102,
+    "program": "BSIT",
+    "status": "draft",
+    "contentSha256": "cb076bcd9750abe0b27b6f3e8c7e8ad6a34f971c42d668cb4e13be8077c7ba95",
+    "oldBasis": [
+      {
+        "no": 1,
+        "short": "Apply computing knowledge",
+        "text": "Apply computing and other knowledge domains to address realworld problems.",
+        "egas": [
+          1
+        ]
+      },
+      {
+        "no": 2,
+        "short": "Analyze and define requirements",
+        "text": "Analyze complex problems and identify and define the computing requirements needed to design an appropriate solution.",
+        "egas": [
+          1
+        ]
+      },
+      {
+        "no": 3,
+        "short": "Design computing solutions",
+        "text": "Design and develop computing solutions using a system-level perspective.",
+        "egas": [
+          1
+        ]
+      },
+      {
+        "no": 4,
+        "short": "Ethical IT professional",
+        "text": "Demonstrate ethical behavior as an IT Professional and sensitivity to the impact of technology in the society.",
+        "egas": [
+          2
+        ]
+      },
+      {
+        "no": 5,
+        "short": "Augustinian virtues and CSR",
+        "text": "Show Augustinian virtues/ethical values and the understanding and appreciation of corporate social responsibility.",
+        "egas": [
+          2
+        ]
+      },
+      {
+        "no": 6,
+        "short": "Multi-disciplinary teamwork",
+        "text": "Work effectively and independently in multi-disciplinary and multi-cultural teams.",
+        "egas": [
+          4
+        ]
+      },
+      {
+        "no": 7,
+        "short": "Impact on society",
+        "text": "Understand the impact of their work on society and strive to ensure that their actions contribute positively on the community.",
+        "egas": [
+          3
+        ]
+      },
+      {
+        "no": 8,
+        "short": "Latest developments in the field",
+        "text": "Articulate and discuss the latest developments in the specific field of practice.",
+        "egas": [
+          1,
+          4
+        ]
+      },
+      {
+        "no": 9,
+        "short": "Professional and social ethics",
+        "text": "Act in recognition of professional, social and ethical.",
+        "egas": [
+          2
+        ]
+      },
+      {
+        "no": 10,
+        "short": "Ethical leadership",
+        "text": "Demonstrate ethical leadership and social responsibility by integrating sustainability, inclusivity, mental well-being and peace-building principles into academic, professional and community engagements, ensuring holistic development and societal transformation.",
+        "egas": [
+          3
+        ]
+      }
+    ],
+    "cloMappings": [
+      {
+        "id": "imp2",
+        "pos": [
+          2,
+          3,
+          6,
+          8
+        ]
+      },
+      {
+        "id": "imp3",
+        "pos": [
+          2,
+          3,
+          6,
+          8
+        ]
+      },
+      {
+        "id": "imp4",
+        "pos": [
+          2,
+          3,
+          6,
+          8,
+          9
+        ]
+      },
+      {
+        "id": "imp5",
+        "pos": [
+          9
+        ]
+      }
+    ],
+    "directIloPoMappings": [],
+    "proposedMappings": null,
+    "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk.",
+    "targetReference": "lcup-po-2026-10-29",
+    "targetProgram": "BSIT",
+    "facultyReview": {
+      "reviewer": null,
+      "reviewDate": null,
+      "decisions": [
+        {
+          "cloId": "imp2",
+          "oldPoNumbers": [
+            2,
+            3,
+            6,
+            8
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "cloId": "imp3",
+          "oldPoNumbers": [
+            2,
+            3,
+            6,
+            8
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "cloId": "imp4",
+          "oldPoNumbers": [
+            2,
+            3,
+            6,
+            8,
+            9
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        },
+        {
+          "cloId": "imp5",
+          "oldPoNumbers": [
+            9
+          ],
+          "newPoNumbers": null,
+          "decision": null,
+          "rationale": null
+        }
+      ],
+      "directIloDecisions": [],
+      "referenceAdoptionConfirmed": false
+    },
+    "action": "Do not apply this worksheet automatically. Faculty must explicitly confirm meanings. Preserve approved/historical versions and saved reports."
+  }
+]

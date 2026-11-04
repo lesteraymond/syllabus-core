@@ -1,0 +1,65 @@
+{
+ "note": "Snapshots hash every file under the repository except node_modules, .git and tmp. liveRun spans writing the receipt, the preflight and the run; afterRun spans report.cjs and this comparison. This file was written after the final snapshot, so it is not listed.",
+ "liveRun": {
+  "from": {
+   "snapshot": "before-r2-live",
+   "takenAt": "2026-10-29T08:57:16.819Z"
+  },
+  "to": {
+   "snapshot": "after-r2-live",
+   "takenAt": "2026-10-29T09:03:47.639Z"
+  },
+  "files": {
+   "before": 1458,
+   "after": 1469
+  },
+  "added": [
+   "docs/lcup-v2-evaluation/authorization.smoke-r2.REVIEWED.json",
+   "docs/lcup-v2-evaluation/live-smoke-r2-REVIEWED/authorization.json",
+   "docs/lcup-v2-evaluation/live-smoke-r2-REVIEWED/ledger.json",
+   "docs/lcup-v2-evaluation/live-smoke-r2-REVIEWED/plan.json",
+   "docs/lcup-v2-evaluation/live-smoke-r2-REVIEWED/raw/001.json",
+   "docs/lcup-v2-evaluation/live-smoke-r2-REVIEWED/raw/001.request.json",
+   "docs/lcup-v2-evaluation/live-smoke-r2-REVIEWED/raw/002.json",
+   "docs/lcup-v2-evaluation/live-smoke-r2-REVIEWED/raw/002.request.json",
+   "docs/lcup-v2-evaluation/live-smoke-r2-REVIEWED/raw/003.json",
+   "docs/lcup-v2-evaluation/live-smoke-r2-REVIEWED/raw/003.request.json",
+   "docs/lcup-v2-evaluation/live-smoke-r2-REVIEWED/results.json"
+  ],
+  "removed": [],
+  "changed": [
+   "docs/ai-eval-anthropic/spend-register.json"
+  ]
+ },
+ "afterRun": {
+  "from": {
+   "snapshot": "after-r2-live",
+   "takenAt": "2026-10-29T09:03:47.639Z"
+  },
+  "to": {
+   "snapshot": "final",
+   "takenAt": "2026-10-29T09:26:36.670Z"
+  },
+  "files": {
+   "before": 1469,
+   "after": 1476
+  },
+  "added": [
+   "docs/lcup-v2-evaluation/live-smoke-r2-REVIEWED/benchmark-model-input.json",
+   "docs/lcup-v2-evaluation/live-smoke-r2-REVIEWED/review-report.json",
+   "docs/lcup-v2-evaluation/live-smoke-r2-REVIEWED/review-report.md",
+   "docs/lcup-v2-evaluation/r2-smoke-comparison/REPORT.md",
+   "docs/lcup-v2-evaluation/r2-smoke-comparison/comparison.json",
+   "docs/lcup-v2-evaluation/r2-smoke-comparison/postcheck.json",
+   "docs/lcup-v2-evaluation/r2-smoke-comparison/preflight.json"
+  ],
+  "removed": [],
+  "changed": []
+ },
+ "keyScanAfterRun": {
+  "method": "the full key, its first 24 and its last 24 characters, searched in each file written after postcheck.json",
+  "filesScanned": 7,
+  "filesContainingKeyOrFragment": 0,
+  "hits": []
+ }
+}

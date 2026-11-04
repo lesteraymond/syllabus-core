@@ -1,0 +1,158 @@
+{
+  "version": "lcup-academic-benchmark-1",
+  "policyVersion": "academic-evaluation-v2-preview-1",
+  "benchmarkHash": "ebd12920a890971b8c7fb481cc6bc9b469ec7dd4c2001134f6833cc31009bbf7",
+  "cases": 812,
+  "programs": {
+    "BSIT": {
+      "total": 288,
+      "real": 211,
+      "synthetic": 77,
+      "referenceOrContextHolds": 43,
+      "missingEvidence": 11
+    },
+    "BSIT-CYBERSECURITY": {
+      "total": 77,
+      "real": 0,
+      "synthetic": 77,
+      "referenceOrContextHolds": 4,
+      "missingEvidence": 7
+    },
+    "BSIE": {
+      "total": 223,
+      "real": 146,
+      "synthetic": 77,
+      "referenceOrContextHolds": 29,
+      "missingEvidence": 7
+    },
+    "BSCPE": {
+      "total": 224,
+      "real": 147,
+      "synthetic": 77,
+      "referenceOrContextHolds": 50,
+      "missingEvidence": 21
+    }
+  },
+  "byRelationship": {
+    "Course-CLO": {
+      "total": 28,
+      "real": 12,
+      "held": 4
+    },
+    "CLO-PO": {
+      "total": 59,
+      "real": 43,
+      "held": 43
+    },
+    "CLO-EGA": {
+      "total": 36,
+      "real": 20,
+      "held": 0
+    },
+    "ILO-CLO": {
+      "total": 109,
+      "real": 81,
+      "held": 0
+    },
+    "ILO-activity": {
+      "total": 75,
+      "real": 51,
+      "held": 0
+    },
+    "Module-value": {
+      "total": 32,
+      "real": 24,
+      "held": 32
+    },
+    "Content-course": {
+      "total": 48,
+      "real": 24,
+      "held": 8
+    },
+    "Content-ILO": {
+      "total": 75,
+      "real": 51,
+      "held": 0
+    },
+    "Description-plan": {
+      "total": 7,
+      "real": 3,
+      "held": 1
+    },
+    "CLO-classification": {
+      "total": 32,
+      "real": 12,
+      "held": 4
+    },
+    "Content-activity": {
+      "total": 48,
+      "real": 24,
+      "held": 0
+    },
+    "Content-assessment": {
+      "total": 48,
+      "real": 24,
+      "held": 0
+    },
+    "Activity-assessment": {
+      "total": 48,
+      "real": 24,
+      "held": 0
+    },
+    "Activity-fit": {
+      "total": 32,
+      "real": 24,
+      "held": 0
+    },
+    "Value-use": {
+      "total": 32,
+      "real": 24,
+      "held": 32
+    },
+    "Title-description": {
+      "total": 7,
+      "real": 3,
+      "held": 1
+    },
+    "Week1-introduction": {
+      "total": 7,
+      "real": 3,
+      "held": 1
+    },
+    "Assessment-fit": {
+      "total": 28,
+      "real": 24,
+      "held": 0
+    },
+    "Four-CLOs": {
+      "total": 7,
+      "real": 3,
+      "held": 0
+    },
+    "Schedule": {
+      "total": 7,
+      "real": 3,
+      "held": 0
+    },
+    "Required-fields": {
+      "total": 7,
+      "real": 3,
+      "held": 0
+    },
+    "APA7-text": {
+      "total": 40,
+      "real": 24,
+      "held": 0
+    }
+  },
+  "contexts": 27,
+  "assignedFacultyLabels": 0,
+  "actualClaudeResponses": 0,
+  "syntheticProposals": 8,
+  "pilot": {
+    "cases": 76,
+    "held": 17,
+    "weekly": 28
+  },
+  "liveRequests": 0
+}

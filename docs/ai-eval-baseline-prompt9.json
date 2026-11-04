@@ -1,0 +1,132 @@
+{
+  "items": 41,
+  "runs": 2,
+  "answered": 77,
+  "invalid": 5,
+  "invalidRate": 0.061,
+  "agreement": 0.935,
+  "falsePositiveRate": 0.148,
+  "falseNegativeRate": 0.024,
+  "counts": {
+    "clearAligned": 27,
+    "falsePositive": 4,
+    "clearNot": 41,
+    "falseNegative": 1
+  },
+  "stability": 1,
+  "byType": {
+    "CLO-PO": {
+      "items": 10,
+      "answered": 20,
+      "agree": 18,
+      "invalid": 0,
+      "agreement": 0.9
+    },
+    "CLO-EGA": {
+      "items": 2,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "CLO-anyPO": {
+      "items": 2,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "ILO-CLO": {
+      "items": 4,
+      "answered": 8,
+      "agree": 6,
+      "invalid": 0,
+      "agreement": 0.75
+    },
+    "ILO-activity": {
+      "items": 4,
+      "answered": 8,
+      "agree": 8,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "ILO-assessment": {
+      "items": 5,
+      "answered": 8,
+      "agree": 8,
+      "invalid": 2,
+      "agreement": 1
+    },
+    "ILO-content": {
+      "items": 4,
+      "answered": 8,
+      "agree": 8,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "Module-value": {
+      "items": 3,
+      "answered": 6,
+      "agree": 6,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "Description-plan": {
+      "items": 4,
+      "answered": 8,
+      "agree": 8,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "REF-plan": {
+      "items": 3,
+      "answered": 3,
+      "agree": 2,
+      "invalid": 3,
+      "agreement": 0.667
+    }
+  },
+  "disagreements": [
+    {
+      "id": "clo-po-prog-interdisciplinary",
+      "type": "CLO-PO",
+      "accept": [
+        "ALIGNED"
+      ],
+      "got": [
+        "PARTIALLY_ALIGNED",
+        "PARTIALLY_ALIGNED"
+      ]
+    },
+    {
+      "id": "ilo-clo-prog-aligned",
+      "type": "ILO-CLO",
+      "accept": [
+        "ALIGNED"
+      ],
+      "got": [
+        "PARTIALLY_ALIGNED",
+        "PARTIALLY_ALIGNED"
+      ]
+    },
+    {
+      "id": "ref-calc-unrelated",
+      "type": "REF-plan",
+      "accept": [
+        "NOT_ALIGNED"
+      ],
+      "got": [
+        "ALIGNED",
+        null
+      ]
+    }
+  ],
+  "providerErrors": 0,
+  "model": "openrouter/minimax/minimax-m3.1-flash",
+  "promptVersion": "alignment-9",
+  "dataset": {
+    "version": "eval-1",
+    "status": "DRAFT - author-written, NOT faculty-reviewed"
+  },
+  "ranAt": "2026-10-23T05:36:13.086Z"
+}

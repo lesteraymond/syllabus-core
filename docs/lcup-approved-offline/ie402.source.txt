@@ -1,0 +1,931 @@
+PAGE 1
+SCHOOL YEAR 2025-2026 
+COLLEGE OF INFORMATION TECHNOLOGY AND ENGINEERING 
+I.   COURSE CODE   :   IE-402 
+II.   COURSE TITLE   :   Systems Engineering 
+III.   COURSE DESCRIPTION   : 
+This course introduces students to the principles and practices of systems engineering, focusing on the analysis,
+design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students
+learn   how   to   approach   and   solve   large-scale   engineering   problems   involving   multiple   components,   stakeholders,   and
+operational constraints. Key topics include requirements analysis, systems design, integration, project management, and
+performance evaluation. 
+Students will develop skills in modeling and optimizing systems that integrate people, processes, and technology. They
+will explore methods for ensuring that systems are efficient, reliable, and adaptable across various industries, such as
+manufacturing, healthcare, and logistics. This course prepares BSIE students to play a vital role in creating systems that
+maximize performance, minimize waste, and support organizational goals. 
+Beyond   technical   knowledge,   the   course   integrates   Marian   Augustinian   values   into   each   lesson,   fostering   the
+development of students as Christo-centric Catholic professionals. The curriculum not only aims for intellectual growth but also
+instills a commitment to ethical decision-making, social responsibility, and compassionate service. Students will be equipped
+with the knowledge and values necessary to thrive as professionals in the field of Industrial Engineering. 
+IV.   PRE   –   REQUISITE   :   4 th   Year Standing 
+V.   CREDIT UNITS   :   3 units 
+La Consolacion University Philippines 
+(formerly University of Regina Carmeli) 
+Catmon, City of Malolos 
+PAGE 2
+VI.   COURSE LEARNING OUTCOMES : 
+Vision   Mission 
+Moved by the Spirit of the Risen Christ, La Consolacion 
+University   Philippines,   envisions   itself   to   become   a
+catalyst for the wholistic transformational development
+of   Catholic   Augustinian   Marian   graduates   rooted   in
+Gospel values. 
+To achieve the above vision, LCUP commits itself to
+generate and make available to its Augustinian Marian
+students, programs and services that will make them: 
+●   exhibit academic and technical competence in their
+respective   areas   of   discipline   in   the   local   and
+international environment; 
+●   demonstrate   their   knowledge,   critical   thinking   and
+creativity by exploring the various avenues of learning
+and searching for truth; 
+●   manifest   their   willingness   to   serve   specially   the
+marginalized sector of our society; 
+●   demonstrate productivity in various areas of learning
+as responsible citizens of the society; and 
+●   live the Gospel values in the varied aspects of their
+personal and professional lives 
+EXPECTED GRADUATE
+ATTRIBUTES 
+PROGRAM OUTCOMES   COURSE LEARNING OUTCOMES 
+EGA 1: Critical and Creative thinker 
+EGA 2: Competent   Catholic
+Augustinian-Marian Professional 
+EGA 3: Socially Responsive Steward 
+EGA 4: Transformative Lifelong learner 
+PO1.   Ability to apply knowledge of
+mathematics and science to solve
+complex engineering problems; 
+PO2.   Ability to design and
+conduct experiments, as well as to
+analyze and interpret data; 
+PO3.   Ability to design a system,
+component, or process to meet
+desired needs within realistic
+constraints such as economic,
+environmental,   social,
+political, ethical, health and safety,
+manufacturability and
+sustainability, in accordance with
+standards. 
+CLO 1: Demonstrate knowledge and
+understanding   of   engineering   and
+management principles by effectively
+leading   and   collaborating   within
+teams,   managing   projects,   and
+engaging   in   multidisciplinary
+environments. [EGA 1] [PO 1,3] 
+CLO   2:   Apply   critical   and   creative
+thinking skills to analyze, design, and
+optimize   complex   systems,
+integrating various components such
+as   people,   materials,   technology,
+and information. [EGA 1] [PO 2,3, 4,
+5] 
+PAGE 3
+PO4.   Ability to function on
+multidisciplinary teams 
+PO5.   Ability to identify; formulate,
+and solve complex engineering
+problems; 
+PO6.   Understanding of
+professional and ethical
+responsibility. 
+PO7.   Ability to communicate
+effectively 
+PO8.   Broad education necessary
+to understand the impact of
+engineering solutions in a global,
+economic, environmental, and
+societal context.
+PO9.   Recognition of the need for,
+and an ability to engage in life-long
+learning; 
+PO10. Knowledge of
+contemporary issues; 
+PO11. Ability to use techniques,
+skills and modern engineering tools
+necessary for engineering practice;
+and; 
+PO12. Knowledge and
+understanding of engineering and
+management principles as a
+member and leader in a team, to
+manage projects and in 
+PO13: Ability to design, develop,
+implement and improve integrated
+system that include people 
+CLO 3: Develop the ability to identify
+and   solve   systems   engineering
+challenges,   making   decisions   that
+improve   performance,   enhance
+efficiency,   and   support   sustainable
+practices across diverse   industries.
+[EGA 1, 2] [PO 2, 3. 5, 6,7] 
+CLO 4. Demonstrate the Filipino - 
+Catholic Augustinian Spirituality 
+through value webbing. 
+[EGA 2] [PO 4,5] 
+PAGE 4
+materials, implementation,
+equipment and energy. 
+VII. LEARNING PLAN: 
+SCHEDULE 
+INTENDED
+LEARNING
+OUTCOMES 
+COURSE CONTENTS   SUGGESTED
+LEARNING ACTIVITIES 
+SUGGESTED
+ASSESSMENT
+TASKS 
+EXPECTED
+VALUE/S TO BE
+INTEGRATED 
+Week 1 
+I LO10:   Demonstrate
+the Augustinian,
+Marian and
+missionary Christ-
+centered Spirituality
+through value
+webbing. 
+[CLO 4] 
+I.   COURSE
+ORIENTATION 
+A.   Introduction to the
+Course Contents 
+B.   Course
+Requirements
+and Activities 
+C.   Course
+Objectives 
+D.   Grading System
+and Policies on
+Absences,
+Tardiness and
+Examinations 
+•   Setting and sharing of
+Expectations from the
+Course 
+•   Discussion on the
+Vision, Mission and
+Goals of LCUP and of
+CITE 
+•   Presentation of
+Course Objectives
+and Contents, Course
+Requirements and
+Activities 
+•   Review of Policies on
+Absences, Tardiness,
+Examinations,
+Grading System 
+•   Statement of
+Expectations 
+•   Review of Course
+Contents,
+Objectives, Activities
+and Assessment
+Tools 
+•   Review of Policies
+on Absences,
+Tardiness,
+Examinations,
+Grading System 
+•   Interiority 
+•   Respect 
+•   Obedience 
+Week 2 - 3 
+ILO1: Describe
+fundamental
+principles of systems
+engineering,
+including system life
+cycles, requirements 
+Introduction to 
+Systems Engineering 
+•   Introduction to 
+Systems 
+Engineering 
+Lecture and Case Study
+Analysis 
+Activity :   Present   a
+lecture on the basics of
+systems   engineering
+management, followed by 
+Quiz on
+Fundamental
+Concepts 
+Conduct   a   quiz
+covering key concepts
+and   terminology   in 
+•   Understanding
+and   patience
+in 
+learning 
+•   Creative   and
+critical thinking 
+PAGE 5
+analysis, and
+systems thinking. 
+[CLO 1], [CLO 2] 
+ILO2: Develop basic
+system designs that
+incorporate
+requirements from
+multiple disciplines,
+including human
+factors, technology,
+and organizational
+needs. 
+[CLO 1], [CLO 2] 
+Management 
+•   Systems 
+Engineering 
+Management in 
+DoD Acquisition 
+an   analysis   of   a   real-
+world   case   study   in
+systems   engineering,
+such as a   notable DoD
+acquisition project. 
+Interactive Discussion
+and Q&A 
+Activity :   Facilitate   an
+interactive   class
+discussion   on   the   key
+principles   of   systems
+engineering management
+and   its   importance   in
+large-scale   projects,
+especially in high-stakes
+environments   like
+defense. 
+systems   engineering
+management,
+including   its
+principles,   life   cycle
+stages,   and   specific
+applications   in   DoD
+acquisition. 
+Case Study Analysis
+Report 
+Provide a case study
+on a DoD acquisition
+project   or   a   similar
+large-scale   systems
+engineering   project.
+Students will analyze
+and   write   a   report
+covering the systems
+engineering
+management
+challenges   and
+solutions   highlighted
+in the case. 
+•   Analytical
+thinking 
+•   Good   active
+participation 
+and
+involvement 
+•   Appreciation 
+•   Effective   and
+efficient
+management
+of resources 
+•   Appreciation 
+•   Awareness 
+•   Courage   and
+Humility 
+WEEK 4   [ILO 1], [ILO 2]   PRELIMINARY EXAM   Examination   covering
+the topics discussed 
+Examination
+results 
+Courage   and
+Humility 
+WEEK 5 - 8 
+ILO3: Summarize the
+overall systems
+engineering process,
+explaining each
+phase from
+requirements
+analysis to
+verification and
+process outputs. 
+[CLO1][CLO2] 
+The Systems
+Engineering Process 
+•   Systems 
+Engineering 
+Process Overview 
+•   Requirements 
+Analysis 
+•   Functional 
+Analysis   and 
+Allocation 
+•   Design Synthesis 
+Group   Workshop   on
+Functional   Analysis
+and Allocation 
+Activity : In small groups,
+students will break down
+system requirements into
+functional   components
+and   allocate   these   to
+hypothetical subsystems. 
+Group   Workshop   on
+Functional   Analysis 
+Requirements
+Analysis Report 
+Assign students a
+hypothetical project
+scenario where they
+must identify, analyze,
+and document key
+system requirements
+based on provided
+stakeholder needs. 
+•   Understandin
+g   and
+patience   in
+learning 
+•   Creative   and
+critical
+thinking 
+•   Analytical
+thinking 
+•   Good   and
+active 
+PAGE 6
+ILO4: Analyze and
+define system
+requirements based
+on stakeholder
+needs, constraints,
+and project
+objectives. 
+[CLO2][CLO3] 
+ILO5: Recognize key
+outputs of the
+systems engineering
+process, such as
+documentation,
+specifications, and
+test reports, and
+evaluate their role in
+supporting
+successful project
+outcomes. 
+[CLO2][CLO3] 
+•   Verification 
+•   Systems 
+Engineering 
+Process Outputs 
+and Allocation 
+In small groups, students
+will   break   down   system
+requirements   into
+functional   components
+and   allocate   these   to
+hypothetical subsystems. 
+Reflection   Assignment
+on Process Outputs 
+Have students reflect on
+the outputs generated at
+each   stage   of   the
+systems   engineering
+process and discuss how
+these   support   project
+success. 
+Functional Analysis
+and Allocation
+Diagram 
+Description : Have
+students create a
+functional flow
+diagram for a system
+based on a given set
+of requirements,
+breaking down
+functions and
+allocating them to
+subsystems. 
+Design Synthesis
+Project 
+Description : Assign a
+design synthesis task
+where students create
+an initial design for a
+system, explaining
+how the design
+integrates functional
+requirements and
+meets project goals. 
+participation
+and
+involvement 
+•   Appreciation 
+•   Effective   and
+efficient
+management
+of resources 
+•   Problem
+solving skills 
+• 
+WEEK 9 
+[ILO 3], [ILO 4] [ILO5]   MIDTERM EXAM   •   Examination covering
+the topics discussed 
+•   Examination
+results 
+•   Skills and
+Competencies 
+•   Critical
+Thinking 
+•   Honesty 
+Week   10 - 11 
+ILO6:   Create   and
+interpret   a   WBS   to
+organize and manage
+project   components,
+identifying   key
+deliverables   and
+tasks   for   effective
+project   planning   and 
+Systems   Analysis 
+and Control 
+•   Work 
+Breakdown 
+Structure 
+•   Configuration 
+Management 
+Interactive Workshop
+on Work Breakdown
+Structure (WBS)
+Creation 
+Activity :   Conduct   an
+interactive   workshop
+where students create a
+WBS   for   a   hypothetical 
+Peer Review of
+Experimental Design
+and Robustness
+Plan 
+Ask students to peer 
+review each other’s 
+experimental design
+proposals and 
+•   Understanding
+and   patience
+in learning 
+•   Creative   and
+critical thinking 
+•   Analytical
+thinking 
+•   Good   and 
+PAGE 7
+control. 
+[CLO 3] [CLO4] 
+ILO7: Apply modeling
+and   simulation
+techniques to analyze
+system behavior, test
+potential   solutions,
+and predict outcomes
+in a controlled virtual
+environment. 
+[CLO 3] [CLO4] 
+ILO8:Identify, assess,
+and   manage   risks
+within   a   systems
+project,   developing
+risk   mitigation
+strategies to minimize
+potential   negative
+impacts   on   project
+outcomes. 
+[CLO 3] [CLO4] 
+•   Technical 
+Reviews   and 
+Audits 
+•   Trade Studies 
+•   Modeling   and 
+Simulation 
+•   Metrics 
+•   Risk 
+Management 
+project,   breaking   down
+tasks   and   identifying
+deliverables. 
+Case   Study   on
+Configuration
+Management 
+Activity : Present a case
+study   demonstrating
+configuration
+management   principles
+and practices in a real-
+world   project.   Have
+students discuss the role
+of   configuration
+management   in
+maintaining   system
+consistency. 
+Risk   Management
+Analysis Activity 
+Activity :   Present   a
+project scenario and ask
+students   to   identify
+potential   risks,   assess
+their   impact   and
+probability,   and   develop
+mitigation strategies. 
+robustness plans,
+providing constructive
+feedback on
+methodology and
+approach. 
+Risk Assessment
+and Mitigation in
+Robust Design 
+Assign   a   task   where
+students   assess
+potential   risks   to
+robustness   in   a
+system   design   and
+develop   mitigation
+strategies   to   address
+these risks. 
+active
+participation
+and
+involvement 
+•   Appreciation 
+•   Effective   and
+efficient
+management
+of resources 
+•   Problem
+solving skills 
+Week 1 2 - 1 4 
+ILO9:   Formulate   a
+comprehensive
+systems   engineering
+plan   that   outlines
+objectives, resources,
+timelines,   and
+milestones   to   guide
+system   development
+from   inception 
+Planning, Organizing 
+and Managing 
+•   Systems 
+Engineering 
+Planning 
+•   Product 
+Improvement 
+Strategies 
+Workshop on Systems
+Engineering Planning 
+Conduct   a   hands-on
+workshop where students
+outline   a   systems
+engineering   plan   for   a
+hypothetical project. They
+should   include   project
+objectives,   resource 
+Systems
+Engineering   Plan
+Development 
+Task :   Have   students
+create   a
+comprehensive
+systems   engineering
+plan for a hypothetical
+project.   This   plan 
+•   Active
+participation
+and
+involvement 
+•   Active
+participation
+and
+involvement 
+•   Critical 
+PAGE 8
+through completion. 
+[CLO 3] [CLO4] 
+ILO10:   Evaluate
+essential
+management
+considerations — such
+as   resource
+allocation,   risk
+assessment,   and
+stakeholder
+engagement — and
+their   impact   on
+project   success,
+applying   these
+principles   to   real   or
+simulated   project
+scenarios. 
+[CLO 3] [CLO4] 
+•   Organizing   and 
+Integrating 
+System 
+Development 
+•   Contractual 
+Considerations 
+•   Management 
+Considerations 
+and Summary 
+allocation,   timeline
+planning,   and   key
+milestones. 
+Product   Improvement
+Strategy Brainstorming
+Session 
+In   groups,   students
+brainstorm   and   propose
+strategies   for   iterative
+product improvement in a
+given   scenario,   focusing
+on   design,   functionality,
+and   customer   feedback
+loops. 
+should   include
+objectives,   resource
+allocation,   timeline,
+milestones,   risk
+assessment,   and
+project phases. 
+Product
+Improvement
+Strategy Proposal 
+Task : Ask students to
+develop a proposal for
+a   product
+improvement   strategy
+for an existing system,
+identifying   areas   for
+enhancement   and
+proposing solutions to
+improve   quality,
+efficiency,   and   user
+satisfaction. 
+Thinking 
+•   Patience 
+•   Understandin
+g 
+•   Critical
+Analysis 
+•   Logical
+Thinking 
+Week 1 5 - 17 
+ILO11: Analyze and
+evaluate multiple
+design alternatives
+through trade space
+exploration, applying
+criteria to select the
+optimal concept
+based on
+performance,
+feasibility, and
+stakeholder needs. 
+[CLO 3] [CLO4] 
+ILO 12: Develop and
+execute   experiments
+to   validate   design 
+Application 
+•   Systems 
+Engineering   As 
+Human Activity 
+•   Trade   Space 
+Exploration 
+Concept 
+Selection 
+•   Experiments 
+•   Robust Design I 
+•   Robust   Design 
+II 
+Case Study Discussion:
+Systems Engineering
+as a Human Activity 
+Provide a case study that
+highlights   the   role   of
+human factors in systems
+engineering,   including
+team   dynamics,
+stakeholder   involvement,
+and   ethical
+considerations.   Facilitate
+a class discussion on the
+human-centered   aspects
+and   their   impact   on
+project outcomes. 
+Robust   Design   I   – 
+System   Evaluation
+and   Improvement
+Proposal 
+Task :   Have   students
+apply   basic   robust
+design   techniques   to
+evaluate   a   system
+and   propose   design
+changes   that   would
+make   it   more   stable
+under   varying
+conditions.   They
+should identify critical
+factors   that   affect
+performance   and 
+•   Skills and
+Competencies 
+•   Critical
+Thinking 
+•   Honesty 
+PAGE 9
+assumptions, analyze
+system   behaviors,
+and   refine   solutions,
+demonstrating   an
+understanding   of
+experimental   design
+and   data   collection
+principles. 
+[CLO 3] [CLO4] 
+ILO   13:   Identify
+critical   factors   in
+system   design   that
+influence
+performance
+consistency,   and
+apply   robust   design
+techniques   to
+improve   reliability
+under   varying
+conditions   (Robust
+Design I). 
+[CLO 3] [CLO4] 
+ILO14:   Utilize
+advanced   robust
+design   methods   to
+enhance   system
+resilience,   focusing
+on   minimizing
+performance
+variability in complex,
+multi-variable
+systems   (Robust
+Design II). 
+[CLO 3] [CLO4] 
+Design and Conduct
+Experiments Activity 
+Assign   students   a   mini-
+project   to   design   and
+conduct an experiment to
+validate   a   system
+component   or   process.
+They should identify the
+objective,   develop   a
+methodology,   collect
+data, and analyze results
+to   inform   design
+improvements. 
+Robust   Design
+Brainstorming   Session
+(Robust Design I) 
+In small groups, students
+brainstorm how to apply
+basic   robust   design
+principles   to   make   a
+system   more   stable
+under varying conditions.
+They discuss factors that
+influence system stability
+and   propose   design
+adjustments   to   minimize
+variability. 
+Advanced   Robust
+Design Project (Robust
+Design II) 
+Activity :   For   a   more
+complex project, students
+apply   advanced   robust
+design   techniques   to   a
+hypothetical or real-world
+system. They identify and 
+suggest
+improvements   to
+minimize variability. 
+Robust   Design   II   – 
+Advanced   Design
+Analysis 
+Task :   For   a   more
+complex   system,
+students should apply
+advanced   robust
+design   methods   to
+assess   and   improve 
+the   system’s 
+performance.   They
+will use tools such as
+design of experiments
+(DOE)   to   explore
+multiple   design
+variables   and   their
+interactions. 
+Robust   Design
+Report (I & II) 
+Task :   Students   will
+submit   a   report   for
+each   part   of   the
+robust   design
+application,   detailing
+the   steps   taken   to
+assess   and   improve
+system   performance.
+For Robust Design I,
+they   will   focus   on
+basic   principles,   and
+for Robust Design II,
+they   will   apply 
+PAGE 10
+control multiple variables
+to minimize performance
+variation   across   diverse
+scenarios. 
+advanced   techniques
+to   optimize   the
+system. 
+Week 18   [CLO 3] [CLO 4]   FINAL EXAMINATION 
+•   Examination on
+the topics discussed
+during the Final Term 
+•   Skills and
+Competencies 
+•   Critical
+Thinking 
+•   Honesty 
+VIII. COURSE REQUIREMENTS : 
+1.   Class attendance 
+2.   Recitations 
+3.   Quizzes 
+4.   Examinations 
+5.   Compilation of activity reports 
+IX. REFERENCES 
+A. BOOKS 
+Awari, G. K., and Warjurkar, S. V. (2022).   Ethics in information technology: a practical guide.   CRC Press. 
+TK 5105.878 A93 2022 
+Bernard, M. (2022).   Future skills: the 20 skills and competencies everyone needs to succeed in a digital world.   John Wiley 
+& Sons, Inc. T 65.3 M37 2022 
+Delfanti, A. (2019).   Introduction to digital media.   Wiley. QA 76.575 D48 2019 
+B. INTERNET REFERENCES 
+MIT Open Courseware (2024). “Introduction to Design Computing” 
+https://ocw.mit.edu/courses/4-500-introduction-to-design-computing-fall-2008/download/   Massachusetts Institute of
+Technology 
+PAGE 11
+C. JOURNALS 
+Primiero, G. (2019). Introduction.”   On the Foundations of Computing , pp. 1 – 4., doi:10.1093/oso/9780198835646.003.0001. 
+Jianwen, C.   and   Wakil, K.   (2019), "A model for evaluating the vital factors affecting cloud computing adoption: Analysis of the
+services sector",   Kybernetes ,   doi:10.1108/K-06-2019-0434 
+Yang, F., Akanbi, T., Chong, O. W., Zhang, J., Debs, L., Chen, Y., & Hubbard, B. J. (2024). Project-Based Introduction to
+Computing in Construction Management Curriculum: A Case Study.   Journal of Civil Engineering Education ,   150 (1). 
+https://doi.org/10.1061/JCEECD.EIENG-1905 
+X. GRADING SYSTEM 
+1.   Class Standing   60% 
+2.   Examination   40 % 
+3.   Term Grade   CS (60%) + TE (40%) 
+4.   Final Rating   Prelim Grade + Midterm Grade + Final Grade 
+3 
+Prepared by: 
+ENGR. GLAZEN CAREY PEREZ 
+Faculty/Date 
+Checked and Reviewed by: 
+EDNA F. DAYAO, DIT 
+Dean/Date 
+ROSALYN S. GALVEZ, PhD., LPT 
+Asst. Vice President for Academic Affairs-Date 
+References Certified by: 
+DR. MARIA MERCEDEZ M. HAZ 
+LIC Director/Date 
+Approved by: 
+JAY MARK B. SANTOS, PhD, LPT, 
+CSSWB 
+Vice President for Academic Affairs-Date 
+PAGE 12
+Revision Date: 
+Modifications: 
+__Learning Outcomes 
+__Course Contents 
+__Suggested Learning Activities 
+__Suggested Assessment 
+__Expected Values to be Integrated 
+__Course Requirements 
+__References 
+__Grading System 
+PRE-VPAA-FO-001 (011) 

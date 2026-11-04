@@ -1,0 +1,2494 @@
+{
+  "items": 41,
+  "runs": 2,
+  "answered": 82,
+  "invalid": 0,
+  "invalidRate": 0,
+  "notAttempted": 0,
+  "agreement": 0.988,
+  "falsePositiveRate": 0.036,
+  "falseNegativeRate": 0,
+  "counts": {
+    "clearAligned": 28,
+    "falsePositive": 1,
+    "clearNot": 44,
+    "falseNegative": 0
+  },
+  "confusion": {
+    "ALIGNED": {
+      "ALIGNED": 27,
+      "PARTIALLY_ALIGNED": 1,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "PARTIAL": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 4,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "FLAGGED": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 17,
+      "NOT_ALIGNED": 23,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    }
+  },
+  "partialAccuracy": 1,
+  "approvalAccuracy": 0.964,
+  "byDiscipline": {
+    "unknown": {
+      "items": 41,
+      "answered": 82,
+      "agree": 81,
+      "invalid": 0,
+      "agreement": 0.988
+    }
+  },
+  "byCategory": {
+    "uncategorised": {
+      "items": 41,
+      "answered": 82,
+      "agree": 81,
+      "invalid": 0,
+      "agreement": 0.988
+    }
+  },
+  "stability": 0.951,
+  "byType": {
+    "CLO-PO": {
+      "items": 10,
+      "answered": 20,
+      "agree": 19,
+      "invalid": 0,
+      "agreement": 0.95
+    },
+    "CLO-EGA": {
+      "items": 2,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "CLO-anyPO": {
+      "items": 2,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "ILO-CLO": {
+      "items": 4,
+      "answered": 8,
+      "agree": 8,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "ILO-activity": {
+      "items": 4,
+      "answered": 8,
+      "agree": 8,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "ILO-assessment": {
+      "items": 5,
+      "answered": 10,
+      "agree": 10,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "ILO-content": {
+      "items": 4,
+      "answered": 8,
+      "agree": 8,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "Module-value": {
+      "items": 3,
+      "answered": 6,
+      "agree": 6,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "Description-plan": {
+      "items": 4,
+      "answered": 8,
+      "agree": 8,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "REF-plan": {
+      "items": 3,
+      "answered": 6,
+      "agree": 6,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "disagreements": [
+    {
+      "id": "clo-po-prog-interdisciplinary",
+      "type": "CLO-PO",
+      "accept": [
+        "ALIGNED"
+      ],
+      "got": [
+        "PARTIALLY_ALIGNED",
+        "ALIGNED"
+      ]
+    }
+  ],
+  "structuredFields": {
+    "answers": 0,
+    "withFields": 0,
+    "missing": 0,
+    "malformed": 0,
+    "contradictory": 0,
+    "notAssessed": 0,
+    "perField": {},
+    "note": "Expectations are provisional. Only an assessed field is compared with them: a field that was not assessed, missing, malformed or in a self-contradictory answer is counted by its state, never as agreement. INSUFFICIENT_EVIDENCE answers are left out."
+  },
+  "model": "anthropic/claude-sonnet-5-5",
+  "promptVersion": "alignment-10",
+  "provider": "anthropic",
+  "evaluationOnly": true,
+  "modelsReturned": {
+    "claude-sonnet-5-5": 11
+  },
+  "adapterUsage": {
+    "requests": 11,
+    "attempts": 11,
+    "timedOut": 0,
+    "inputTokens": 10019,
+    "outputTokens": 16349,
+    "thinkingTokens": 0,
+    "cacheCreationInputTokens": 3728,
+    "cacheReadInputTokens": 37280,
+    "thinkingReports": {
+      "nonzero": 0,
+      "zero": 11,
+      "unavailable": 0
+    },
+    "stopReasons": {
+      "end_turn": 11
+    },
+    "enumCaseOnly": 0,
+    "estimatedUsd": 0.196576,
+    "priceAsOf": "2026-10-27"
+  },
+  "dataset": {
+    "name": "general",
+    "version": "eval-1.1",
+    "split": "all",
+    "reviewStatus": "unreviewed"
+  },
+  "configuration": {
+    "stageFlags": {
+      "a": false,
+      "b": false,
+      "b3": false,
+      "b4": false,
+      "c1": false,
+      "c2": false,
+      "d1": false,
+      "d2": false
+    },
+    "promptVariant": "current",
+    "trim": false,
+    "minItems": false,
+    "timeoutMs": 180000,
+    "anthropic": {
+      "model": "claude-sonnet-5-5",
+      "thinking": "adaptive",
+      "thinkingParameter": {
+        "type": "adaptive"
+      },
+      "effort": "high",
+      "maxTokens": 16000,
+      "maxRetries": 2,
+      "promptCache": true,
+      "evaluationOnly": true
+    }
+  },
+  "retries": {
+    "batches": 10,
+    "requests": 11,
+    "invalidAnswers": 1,
+    "finalUnverified": 0,
+    "providerErrors": 0,
+    "notSent": 0,
+    "retryRate": 0.1,
+    "invalidAnswerRate": 0.091
+  },
+  "relationshipMetrics": {
+    "planned": 82,
+    "attempted": 82,
+    "neverAttempted": 0,
+    "verified": 82,
+    "recovered": 1,
+    "unresolved": 0,
+    "unresolvedRate": 0,
+    "coverage": 1,
+    "attemptedShare": 1,
+    "firstAttempt": {
+      "answered": 82,
+      "refused": 1,
+      "validationFailureRate": 0.0122,
+      "noAnswerFirst": 0
+    },
+    "rawResponseErrors": {
+      "answers": 11,
+      "invalidAnswers": 1,
+      "refusedJudgements": 1,
+      "requestsWithoutAnswer": 0
+    },
+    "aspectCoverage": null
+  },
+  "completion": {
+    "maxUnresolved": 0.2,
+    "unresolvedRate": 0,
+    "coverage": 1,
+    "stopped": null,
+    "state": "complete",
+    "usableForAgreement": true,
+    "reason": "every planned relationship was attempted; 0 of 82 remain unresolved (0%), within the 20% limit"
+  },
+  "schema": {
+    "minItems": false,
+    "emptyAnswers": 0,
+    "minItemsNotEnforced": false
+  },
+  "answerReview": {
+    "advisory": true,
+    "note": "Counts are heuristic review warnings, not verified academic errors. Labels, fields, validation and agreement are unchanged by these warnings.",
+    "counts": {
+      "explanationReview": {},
+      "draftReview": {},
+      "draftWarnings": {}
+    },
+    "flaggedAnswers": []
+  },
+  "quality": {
+    "mode": {
+      "id": "A",
+      "name": "legacy academic alignment benchmark",
+      "stagesOn": [],
+      "recommendationField": false
+    },
+    "note": "Expectations are provisional (developer-written, not reviewed by faculty). These measures compare the answers with those expectations and with the prompt's own rules; they are not faculty accuracy, and the Bloom and mapping measures are heuristics for review.",
+    "answers": {
+      "attempted": 82,
+      "verified": 82,
+      "unverified": 0,
+      "scored": 82
+    },
+    "agreement": {
+      "strict": {
+        "answers": 44,
+        "agree": 43,
+        "rate": 0.977
+      },
+      "permissive": {
+        "answers": 82,
+        "agree": 81,
+        "rate": 0.988
+      }
+    },
+    "falseApprovals": {
+      "clearNotAligned": 44,
+      "judgedAligned": 0,
+      "rate": 0,
+      "ids": []
+    },
+    "falseRejections": {
+      "clearAligned": 28,
+      "judgedOtherwise": 1,
+      "rate": 0.036,
+      "byLabel": {
+        "PARTIALLY_ALIGNED": 1
+      },
+      "ids": [
+        "clo-po-prog-interdisciplinary#1"
+      ]
+    },
+    "insufficientEvidence": {
+      "answers": 0,
+      "accepted": 0,
+      "notAccepted": 0,
+      "rate": 0,
+      "ids": []
+    },
+    "bloom": {
+      "answers": 32,
+      "notApplicable": 0,
+      "levelRuleConflicts": {
+        "aligned": 13,
+        "breakingTheRule": 0,
+        "ids": []
+      },
+      "levelGapItems": {
+        "answers": 0,
+        "gapShown": 0,
+        "gapNotShown": 0,
+        "notApplicable": 0
+      },
+      "sameStatement": {
+        "repeated": 22,
+        "differentLevels": 0,
+        "examples": []
+      },
+      "acrossRuns": {
+        "compared": 41,
+        "changed": 0
+      },
+      "refusedInvalidLevel": 0
+    },
+    "recommendations": {
+      "proposals": {
+        "NO_CHANGE": 31,
+        "REWRITE_TEXT": 49,
+        "REVIEW_REQUIRED": 2
+      },
+      "asExpected": {
+        "withAnExpectation": 72,
+        "matches": 71,
+        "byExpected": {
+          "NO_CHANGE": {
+            "NO_CHANGE": 27,
+            "REWRITE_TEXT": 1
+          },
+          "REWRITE_TEXT": {
+            "REWRITE_TEXT": 42
+          },
+          "REVIEW_REQUIRED": {
+            "REVIEW_REQUIRED": 2
+          }
+        }
+      },
+      "unsupported": {
+        "rewriteForClearAligned": 1,
+        "rewriteWhereRetagExpected": 0,
+        "draftHeldBackByReview": 0,
+        "refusals": {},
+        "total": 1,
+        "ids": {
+          "rewriteForClearAligned": [
+            "clo-po-prog-interdisciplinary#1"
+          ],
+          "rewriteWhereRetagExpected": [],
+          "draftHeldBackByReview": []
+        }
+      }
+    },
+    "mappingRemedy": {
+      "retagExpected": {
+        "answers": 0,
+        "failing": 0,
+        "proposals": {},
+        "rewritesTowardSource": 0,
+        "answersById": []
+      },
+      "remapCandidates": {
+        "rule": "CLO-PO or CLO-EGA, not ambiguous, ALIGNED not accepted, category clear-negative or wrong-program: faculty to confirm whether a re-tag or a rewrite is right; never scored",
+        "answers": 0,
+        "failing": 0,
+        "proposals": {},
+        "rewritesTowardSource": 0,
+        "answersById": []
+      },
+      "rewrites": {
+        "drafts": 19,
+        "towardSource": 15,
+        "threshold": 2
+      }
+    },
+    "evidence": {
+      "sides": {
+        "exact": 164
+      },
+      "exactRate": 1,
+      "judgementsReturned": 83,
+      "refusedForQuotes": 1,
+      "refusedRate": 0.012,
+      "byCode": {
+        "quote_not_found": 1
+      }
+    },
+    "refusalCodes": {
+      "quote_not_found": 1
+    },
+    "operations": {
+      "requests": 11,
+      "latencyMs": {
+        "answers": 11,
+        "median": 12921,
+        "p90": 14583,
+        "max": 15230
+      },
+      "tokens": {
+        "input": 10019,
+        "cacheWrite": 3728,
+        "cacheRead": 37280,
+        "output": 16349,
+        "thinking": 0,
+        "thinkingReports": {
+          "nonzero": 0,
+          "zero": 11,
+          "unavailable": 0
+        }
+      },
+      "estimatedCost": 0.196576,
+      "notEstimated": 0,
+      "chargedByGuard": 0.200304,
+      "estimatedPerVerifiedRelationship": 0.00239727
+    }
+  },
+  "limits": {
+    "budget": 25,
+    "maxCost": 1,
+    "maxTransient": 3,
+    "maxUnproductive": 37,
+    "maxUnresolved": 0.2,
+    "minSample": 8,
+    "warnInvalid": 10,
+    "maxInvalid": 3,
+    "accounting": "reconcile",
+    "maxTokens": 16000,
+    "totalCap": 1.302853,
+    "spendRegister": "docs\\ai-eval-anthropic\\spend-register.json",
+    "maxOutputTokens": null
+  },
+  "failures": [
+    {
+      "run": 1,
+      "course": "nurs",
+      "ids": [
+        "clo-po-nurs-aligned",
+        "clo-po-nurs-unrelated",
+        "ilo-activity-nurs-practises",
+        "ilo-assess-nurs-knowledge-for-skill"
+      ],
+      "error": "AI evidence is not present in the supplied text (target quote)",
+      "code": "quote_not_found",
+      "rejected": [
+        {
+          "id": "clo-po-nurs-unrelated",
+          "reason": "AI evidence is not present in the supplied text (target quote)",
+          "code": "quote_not_found",
+          "problems": [
+            {
+              "code": "quote_not_found",
+              "side": "target"
+            }
+          ],
+          "given": {
+            "sourceQuote": "Provide safe, quality nursing care to individuals using the nursing process.",
+            "targetQuote": "Compute the derivative of polynomials functions."
+          }
+        }
+      ]
+    }
+  ],
+  "perItem": {
+    "clo-po-calc-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "clo-po-calc-lower-level": [
+      "PARTIALLY_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "clo-po-calc-unrelated": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "clo-po-calc-vague": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "clo-po-prog-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "clo-po-prog-lower-level": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "clo-po-prog-two-skills": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "clo-po-prog-interdisciplinary": [
+      "PARTIALLY_ALIGNED",
+      "ALIGNED"
+    ],
+    "clo-po-nurs-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "clo-po-nurs-unrelated": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "clo-ega-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "clo-ega-unrelated": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "clo-anypo-fits": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "clo-anypo-none": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "ilo-clo-calc-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ilo-clo-claims-more": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "ilo-clo-unrelated": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "ilo-clo-prog-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ilo-activity-prog-practises": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ilo-activity-calc-passive": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "ilo-activity-calc-unrelated": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "ilo-activity-nurs-practises": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ilo-assess-prog-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ilo-assess-prog-mcq-for-design": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "ilo-assess-named-only": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "ilo-assess-mcq-for-understand": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "ilo-assess-nurs-knowledge-for-skill": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "ilo-content-calc-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ilo-content-calc-bare": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "ilo-content-calc-narrow-audience": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "ilo-content-calc-unrelated": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "value-calc-integrated": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "value-calc-bare": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "value-calc-unconnected": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "desc-calc-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "desc-calc-generic": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "desc-calc-other-subject": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "desc-calc-too-narrow": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "ref-calc-relevant": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ref-calc-older-foundational": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ref-calc-unrelated": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ]
+  },
+  "ranAt": "2026-10-27T18:50:34.142Z",
+  "answers": [
+    {
+      "clo-po-calc-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "Apply knowledge of mathematics and science to solve complex engineering problems",
+        "targetQuote": "Apply differentiation rules to solve optimization problems in engineering",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The CLO applies mathematics (differentiation) to solve engineering problems, matching the PO.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "clo-po-calc-lower-level": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Design solutions for complex engineering problems that meet specified needs.",
+        "targetQuote": "Define the derivative of a function.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Remember",
+        "explanation": "Gaps: the CLO verb 'Define' is Remember level, below the Create level of 'Design'; it names no engineering problem or specified needs; it only shares the mathematical topic loosely. The draft states a design-oriented calculus outcome.",
+        "recommendation": null,
+        "draft": "Design solutions to engineering problems, such as minimum-cost or maximum-efficiency designs, that meet specified needs by applying derivatives of functions.",
+        "aspects": null
+      },
+      "clo-po-calc-unrelated": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Communicate effectively with a range of audiences.",
+        "targetQuote": "Evaluate limits of rational functions.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Evaluate",
+        "explanation": "Gaps: the PO asks for effective communication to varied audiences, but the CLO only asks for evaluating limits of rational functions (computation). There is no communicating verb, no audience, and the subject matter differs. The draft turns the CLO into communication of limit results.",
+        "recommendation": null,
+        "draft": "Communicate the evaluation of limits of rational functions effectively to a range of audiences, using correct mathematical notation, clear written explanations and graphs.",
+        "aspects": null
+      },
+      "clo-po-calc-vague": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Apply knowledge of mathematics and science to solve complex engineering problems.",
+        "targetQuote": "Understand calculus.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Understand",
+        "explanation": "Gaps: 'Understand' is Understand level, below the PO's Apply level; the CLO does not apply knowledge or solve anything; it names no engineering problems and is vague about what in calculus.",
+        "recommendation": null,
+        "draft": "Apply the concepts of limits and derivatives to solve engineering problems.",
+        "aspects": null
+      },
+      "clo-anypo-fits": {
+        "label": "ALIGNED",
+        "sourceQuote": "1. Apply knowledge of mathematics and science to solve complex engineering problems.",
+        "targetQuote": "Apply differentiation rules to solve optimization problems",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "Item 1: the CLO applies mathematics (differentiation) to solve engineering problems.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "clo-anypo-none": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "1. Apply knowledge of mathematics and science to solve complex engineering problems.",
+        "targetQuote": "Appreciate the history of ancient Rome and its art.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Understand",
+        "explanation": "Best fit is item 1, but the CLO is about Roman history and art: it has no mathematics or science, no engineering problem, and its Bloom level is Understand/appreciate (not Apply). It is also outside this Differential Calculus course. The draft rewrites it to fit item 1.",
+        "recommendation": null,
+        "draft": "Apply differentiation rules to solve optimization problems in engineering.",
+        "aspects": null
+      },
+      "ilo-clo-calc-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "Apply differentiation rules",
+        "targetQuote": "Apply the chain rule to differentiate composite functions",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "Applying the chain rule is a smaller Apply step toward applying differentiation rules.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "ilo-clo-claims-more": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Define limits of functions.",
+        "targetQuote": "Design and implement a numerical solver for limits.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Remember",
+        "targetBloom": "Create",
+        "explanation": "Gaps: the ILO verbs 'Design and implement' are Create level, above the CLO's Remember-level 'Define'; a numerical solver claims more than defining limits; it is not a smaller step. The subject (limits) is shared. The draft lowers the ILO to the CLO's level.",
+        "recommendation": null,
+        "draft": "State the definition of the limit of a function and identify it from a table of values or a graph.",
+        "aspects": null
+      },
+      "ilo-clo-unrelated": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Apply differentiation rules to solve optimization problems in engineering.",
+        "targetQuote": "Describe the history of ancient Rome.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Understand",
+        "explanation": "Gaps: the ILO is about the history of ancient Rome, unrelated to differentiation, optimization or engineering; its verb 'Describe' (Understand) does not build toward Apply. The draft returns the ILO to the CLO's subject.",
+        "recommendation": null,
+        "draft": "Apply the power, product and quotient rules to differentiate functions that model engineering quantities.",
+        "aspects": null
+      },
+      "ilo-activity-calc-passive": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Design a cost-minimizing container using derivatives.",
+        "targetQuote": "Listen to a lecture on derivative rules.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Remember",
+        "explanation": "Gaps: listening to a lecture is passive, so students do not practise 'design'; it does not reach Create level; there is no container, cost model or optimization with derivatives. The subject (derivative rules) is related only in part. The draft adds hands-on design work.",
+        "recommendation": null,
+        "draft": "Listen to a short lecture on derivative rules, then work in groups to design a cost-minimizing container: write the cost function, use derivatives to find the minimum, and present the chosen dimensions.",
+        "aspects": null
+      },
+      "ilo-activity-calc-unrelated": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Design a cost-minimizing container using derivatives.",
+        "targetQuote": "Group discussion on the history of Rome.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Understand",
+        "explanation": "Gaps: a discussion on Roman history does not practise designing; it is not about derivatives, containers or cost minimization; no Create-level work is done. The draft replaces it with a calculus design activity.",
+        "recommendation": null,
+        "draft": "Group activity: design a cost-minimizing container by writing the cost function, using derivatives to find the optimal dimensions, and presenting and justifying the design.",
+        "aspects": null
+      },
+      "ilo-content-calc-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "Apply the chain rule",
+        "targetQuote": "Chain rule; derivatives of composite functions; worked examples",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "Contents cover the chain rule with worked examples from varied fields.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "ilo-content-calc-bare": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Apply the chain rule to differentiate composite functions.",
+        "targetQuote": "Chain rule.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Remember",
+        "explanation": "The contents name only 'Chain rule' as a topic. They do not show composite functions being differentiated, so they do not reach the Apply level the ILO needs. No worked examples or application of the rule to composite functions is listed.",
+        "recommendation": null,
+        "draft": "Chain rule for composite functions; identifying the outer and inner functions; worked examples differentiating polynomial, trigonometric, exponential and radical composites; applying the chain rule in engineering rate problems.",
+        "aspects": null
+      },
+      "ilo-content-calc-narrow-audience": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Apply the chain rule to differentiate composite functions.",
+        "targetQuote": "use only Formula 1 racing telemetry and assume prior racing experience",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The content is on the chain rule, but it uses only Formula 1 racing telemetry and assumes prior racing experience. That clearly excludes learners without this background. It also lists no examples of differentiating composite functions in general.",
+        "recommendation": null,
+        "draft": "Chain rule examples that differentiate composite functions drawn from varied contexts (polynomial, trigonometric and exponential composites, plus engineering rates such as temperature, motion and cost), with no prior specialised experience assumed.",
+        "aspects": null
+      },
+      "ilo-content-calc-unrelated": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Apply the chain rule to differentiate composite functions.",
+        "targetQuote": "History of the Roman Empire.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "N/A",
+        "explanation": "The Roman Empire history has nothing to do with the chain rule or differentiating composite functions, and it is not in the subject of Differential Calculus.",
+        "recommendation": null,
+        "draft": "Chain rule for composite functions; identifying inner and outer functions; worked examples differentiating polynomial, trigonometric and exponential composites; practice problems applying the rule.",
+        "aspects": null
+      },
+      "value-calc-integrated": {
+        "label": "ALIGNED",
+        "sourceQuote": "Pair problem solving",
+        "targetQuote": "students coach a classmate through the chain-rule problem set",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "Compassion is tied to students coaching classmates through the chain-rule problem set, which matches the ILO and activity.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "value-calc-bare": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Pair problem solving",
+        "targetQuote": "Compassion",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "N/A",
+        "explanation": "A value is named (Compassion), but it is only a bare name. It does not say what students do or decide in this lesson to reach the ILO of applying the chain rule.",
+        "recommendation": null,
+        "draft": "Compassion: during pair problem solving, students patiently explain each chain-rule step to a struggling partner so both can differentiate composite functions.",
+        "aspects": null
+      },
+      "value-calc-unconnected": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Pair problem solving",
+        "targetQuote": "Missionary Spirit",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "N/A",
+        "explanation": "Missionary Spirit is named but is a bare value name with no link to the chain-rule ILO, content, pair problem solving or quiz. It does not say what students do in this lesson. It does not clash with the lesson, but it is not integrated.",
+        "recommendation": null,
+        "draft": "Missionary Spirit: students share their chain-rule solutions by tutoring peers outside the class pair, using what they have mastered to serve others who struggle with differentiating composite functions.",
+        "aspects": null
+      },
+      "desc-calc-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "Optimization problems in engineering",
+        "targetQuote": "functions, limits and continuity, the derivative and its rules",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "N/A",
+        "explanation": "The description names the plan's main topics and promises nothing extra.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "desc-calc-generic": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Week 3: The derivative; differentiation rules",
+        "targetQuote": "This course introduces students to important concepts and prepares them for further study",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "N/A",
+        "explanation": "The description is generic and would fit any course. It names none of the plan's topics: limits, continuity, derivatives, differentiation rules, related rates, optimization or curve sketching. It does not mention engineering applications.",
+        "recommendation": null,
+        "draft": "This course covers functions, limits and continuity, the derivative and its rules, implicit and higher-order differentiation, related rates, optimization and curve sketching, with applications to engineering problems.",
+        "aspects": null
+      },
+      "desc-calc-other-subject": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Week 3: The derivative; differentiation rules",
+        "targetQuote": "history, culture and art of ancient Rome",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "N/A",
+        "explanation": "The description is about the history, culture and art of ancient Rome. The plan teaches functions, limits, continuity and derivatives.",
+        "recommendation": null,
+        "draft": "This course covers functions and graphs, limits and continuity, and the derivative with its differentiation rules.",
+        "aspects": null
+      },
+      "desc-calc-too-narrow": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Week 6: Optimization problems in engineering",
+        "targetQuote": "This course covers limits and continuity.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "N/A",
+        "explanation": "The description mentions only limits and continuity. It leaves out major blocks of the plan: the derivative, differentiation rules, chain rule, implicit differentiation, higher-order derivatives, related rates and engineering optimization.",
+        "recommendation": null,
+        "draft": "This course covers functions, limits and continuity, the derivative and its rules, the chain rule and implicit differentiation, higher-order derivatives, related rates, and optimization problems in engineering.",
+        "aspects": null
+      },
+      "ref-calc-relevant": {
+        "label": "ALIGNED",
+        "sourceQuote": "Chapters on limits, derivatives and their applications.",
+        "targetQuote": "Week 3: The derivative; differentiation rules",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "N/A",
+        "explanation": "The calculus text covers limits, derivatives and applications, matching the course topics.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "ref-calc-older-foundational": {
+        "label": "ALIGNED",
+        "sourceQuote": "A classic text on limits, continuity and differentiation.",
+        "targetQuote": "Week 2: Continuity",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "N/A",
+        "explanation": "The analysis text covers limits, continuity and differentiation, which match the weekly topics. It is an older and more advanced reference but still supports them.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "ref-calc-unrelated": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Cooking with herbs",
+        "targetQuote": "Week 3: The derivative; differentiation rules",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "N/A",
+        "explanation": "The page is about cooking with garden herbs, which has nothing to do with differential calculus. It cannot support teaching limits, the derivative or differentiation rules, so it fails both tests: its subject is not the course's subject and it covers none of the weekly topics.",
+        "recommendation": null,
+        "draft": "Replace this with a calculus reference, such as a university-level differential calculus textbook or an open course page covering limits, continuity, derivatives, differentiation rules and optimization.",
+        "aspects": null
+      },
+      "clo-po-prog-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "Design and implement computing-based solutions",
+        "targetQuote": "Design, implement and test object-oriented programs",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Create",
+        "explanation": "CLO has design and implement, Create level, and concerns computing solutions.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "clo-po-prog-lower-level": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Design and evaluate computing solutions for real problems.",
+        "targetQuote": "List the keywords of the programming language.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Remember",
+        "explanation": "The CLO uses 'List' (Remember), while the PO asks for design and evaluation (Create/Evaluate). It lacks both key verbs 'design' and 'evaluate'. Its subject (language keywords) is only a minor part of designing computing solutions to real problems.",
+        "recommendation": null,
+        "draft": "Design and evaluate object-oriented program solutions for real problems, using the constructs of the programming language.",
+        "aspects": null
+      },
+      "clo-po-prog-two-skills": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "communicate them effectively to technical and non-technical audiences",
+        "targetQuote": "Design a program solution for a given problem.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Create",
+        "explanation": "The CLO shows 'design' (Create) for a program solution, but the PO's second skill, communicating solutions effectively to technical and non-technical audiences, is missing entirely.",
+        "recommendation": null,
+        "draft": "Design a program solution for a given problem and communicate it effectively to technical and non-technical audiences through documentation and presentations.",
+        "aspects": null
+      },
+      "clo-po-prog-interdisciplinary": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Analyze the impact of computing on individuals, organizations and society.",
+        "targetQuote": "Evaluate the ethical and social implications of a software system on its users.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Analyze",
+        "targetBloom": "Evaluate",
+        "explanation": "The CLO evaluates ethical and social implications for users, which is close to analyzing impact on society, at an equal or higher Bloom level. However, it covers only users of a single software system, not the impact of computing on individuals, organizations and society more broadly. 'Analyze' is not stated, and organizations are not mentioned.",
+        "recommendation": null,
+        "draft": "Analyze and evaluate the ethical and social impact of a software system on individuals, organizations and society.",
+        "aspects": null
+      },
+      "clo-ega-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "Critical and Creative thinker",
+        "targetQuote": "Analyze alternative designs and justify the selection",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Analyze",
+        "targetBloom": "Evaluate",
+        "explanation": "Analyzing alternatives and justifying a choice shows critical and creative thinking.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "clo-ega-unrelated": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Competent Professional",
+        "targetQuote": "Recite the history of the institution.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Remember",
+        "explanation": "Reciting institutional history is Remember level, unrelated to programming, and shows no professional competence.",
+        "recommendation": null,
+        "draft": "Develop and test object-oriented programs that meet professional standards of correctness, documentation and code quality.",
+        "aspects": null
+      },
+      "ilo-clo-prog-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "implement and test object-oriented programs",
+        "targetQuote": "Implement a class hierarchy using inheritance",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Apply",
+        "explanation": "Implementing a class hierarchy is a smaller step of implementing OO programs, in the same subject.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "ilo-activity-prog-practises": {
+        "label": "ALIGNED",
+        "sourceQuote": "Implement a class hierarchy using inheritance",
+        "targetQuote": "Students code a class hierarchy in the laboratory",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "Students code a class hierarchy themselves, practising the implement verb on the same subject.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "ilo-assess-prog-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "Design a normalized database schema",
+        "targetQuote": "submit an entity-relationship diagram and a normalized schema",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Create",
+        "explanation": "Students produce an ER diagram and normalized schema, scored by rubric, which is evidence of design.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "ilo-assess-prog-mcq-for-design": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Design a normalized database schema for a given scenario.",
+        "targetQuote": "Multiple-choice quiz on database terms.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Remember",
+        "explanation": "A multiple-choice quiz on terms is recall evidence (Remember) and cannot show designing a schema (Create). It also produces no schema and does not cover normalization or a given scenario.",
+        "recommendation": null,
+        "draft": "Project: students design and submit an entity-relationship diagram and a normalized schema for an assigned scenario, scored with a rubric.",
+        "aspects": null
+      },
+      "ilo-assess-named-only": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Explain the concept of recursion.",
+        "targetQuote": "Quiz",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Understand",
+        "targetBloom": "N/A",
+        "explanation": "The task is only named 'Quiz'. It does not say what is asked or produced, nor that students explain recursion (Understand), so the evidence is unclear.",
+        "recommendation": null,
+        "draft": "Short-answer quiz: students explain in their own words how recursion works, including the base case and recursive case, and trace a simple recursive function.",
+        "aspects": null
+      },
+      "ilo-assess-mcq-for-understand": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Describe the difference between a stack and a queue.",
+        "targetQuote": "Multiple-choice quiz on data structure concepts.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Understand",
+        "targetBloom": "Understand",
+        "explanation": "Multiple choice can support Understand, but this one is only named by topic. It does not show that students describe the stack-queue difference (LIFO vs FIFO), and says nothing about what items test it.",
+        "recommendation": null,
+        "draft": "Multiple-choice quiz whose items ask students to identify the difference between a stack (LIFO) and a queue (FIFO) in given scenarios, with a short written justification for each answer.",
+        "aspects": null
+      },
+      "clo-po-nurs-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "Provide safe, quality nursing care",
+        "targetQuote": "Perform basic nursing procedures safely using the nursing process",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The CLO performs nursing procedures safely using the nursing process, which matches the PO's safe care using the nursing process at an equal Apply level.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "ilo-activity-nurs-practises": {
+        "label": "ALIGNED",
+        "sourceQuote": "Demonstrate the correct procedure for taking blood pressure.",
+        "targetQuote": "Return demonstration of blood pressure measurement",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "Students do a return demonstration of blood pressure measurement, which practises the verb 'demonstrate' on the same subject at the Apply level.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "ilo-assess-nurs-knowledge-for-skill": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Perform hand hygiene using the correct technique.",
+        "targetQuote": "Written exam on the steps of hand hygiene.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Remember",
+        "explanation": "The ILO asks students to perform hand hygiene with correct technique (Apply), but a written exam on the steps only collects recall or understanding evidence (Remember/Understand). It does not show observed performance of the technique, and there is no criteria or checklist for correct technique. The subject (hand hygiene) does match.",
+        "recommendation": null,
+        "draft": "Skills laboratory return demonstration of hand hygiene, observed and scored with a checklist of the correct technique (steps, timing, coverage of all hand surfaces), with a short written exam on the steps as supporting evidence.",
+        "aspects": null
+      },
+      "clo-po-nurs-unrelated": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Provide safe, quality nursing care to individuals using the nursing process.",
+        "targetQuote": "Compute the derivative of polynomial functions.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The CLO is about computing derivatives of polynomial functions (calculus). It has no nursing action verb or competency (providing safe, quality nursing care), no use of the nursing process, and its subject is mathematics, not nursing care of individuals. Its Bloom level (Apply) matches the PO's Apply level, but the subject is wrong, and it also does not belong in this course (NCM 101, Fundamentals of Nursing Practice).",
+        "recommendation": null,
+        "draft": "Perform basic nursing procedures safely on a simulated patient, using the nursing process to provide quality nursing care.",
+        "aspects": null
+      }
+    },
+    {
+      "clo-po-calc-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "Apply knowledge of mathematics and science",
+        "targetQuote": "Apply differentiation rules to solve optimization problems",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The CLO applies mathematics to engineering problems, matching the PO's verb, level and subject.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "clo-po-calc-lower-level": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Design solutions for complex engineering problems that meet specified needs.",
+        "targetQuote": "Define the derivative of a function.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Remember",
+        "explanation": "The PO asks for Create-level design of solutions to engineering problems. The CLO only defines a derivative (Remember), which is a much lower level. It has no design verb and does not mention engineering problems or specified needs.",
+        "recommendation": null,
+        "draft": "Design solutions to engineering problems, such as minimum-cost or maximum-efficiency designs, by applying derivatives and optimization techniques to meet specified needs.",
+        "aspects": null
+      },
+      "clo-po-calc-unrelated": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Communicate effectively with a range of audiences.",
+        "targetQuote": "Evaluate limits of rational functions.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Evaluate",
+        "explanation": "The PO is about communicating effectively with varied audiences. The CLO is a calculus computation (evaluating limits) with no communication verb, no audience and no communication product.",
+        "recommendation": null,
+        "draft": "Communicate the evaluation of limits of rational functions clearly, in written and oral form, to audiences of varied mathematical backgrounds, explaining each step and justifying the result.",
+        "aspects": null
+      },
+      "clo-po-calc-vague": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Apply knowledge of mathematics and science to solve complex engineering problems.",
+        "targetQuote": "Understand calculus.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Understand",
+        "explanation": "The CLO shares only the topic word calculus. 'Understand' is Understand level, lower than the PO's Apply. It has no action of applying or solving and does not mention engineering problems. It is also too vague to assess.",
+        "recommendation": null,
+        "draft": "Apply the concepts of limits and derivatives to solve engineering problems involving rates of change and optimization.",
+        "aspects": null
+      },
+      "clo-anypo-fits": {
+        "label": "ALIGNED",
+        "sourceQuote": "1. Apply knowledge of mathematics and science to solve complex engineering problems.",
+        "targetQuote": "Apply differentiation rules to solve optimization problems",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "Item 1 fits: the CLO applies mathematics (differentiation) to solve engineering problems.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "clo-anypo-none": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "1. Apply knowledge of mathematics and science to solve complex engineering problems.",
+        "targetQuote": "Appreciate the history of ancient Rome and its art.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Understand",
+        "explanation": "Best-fitting item is 1. The CLO is about Roman history and art. It has no mathematics or science, no engineering problem and no application verb. It is unrelated to Differential Calculus and to every listed PO.",
+        "recommendation": null,
+        "draft": "Apply differentiation rules to solve optimization problems in engineering.",
+        "aspects": null
+      },
+      "ilo-clo-calc-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "Apply differentiation rules",
+        "targetQuote": "Apply the chain rule to differentiate composite functions",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "Applying the chain rule is a smaller Apply-level step toward applying differentiation rules.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "ilo-clo-claims-more": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Define limits of functions.",
+        "targetQuote": "Design and implement a numerical solver for limits.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Remember",
+        "targetBloom": "Create",
+        "explanation": "The subject (limits) is the same, but the ILO claims more than the CLO. The CLO asks only to define limits (Remember), while the ILO asks to design and implement a numerical solver (Create). This level is far above the CLO and builds on nothing it states.",
+        "recommendation": null,
+        "draft": "State the definition of the limit of a function and identify it from a graph or table of values.",
+        "aspects": null
+      },
+      "ilo-clo-unrelated": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Apply differentiation rules to solve optimization problems in engineering.",
+        "targetQuote": "Describe the history of ancient Rome.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Understand",
+        "explanation": "The ILO is about the history of ancient Rome. It is unrelated to differentiation rules and engineering optimization, so it is not a smaller step of the CLO. It is also only Understand level and in a different subject.",
+        "recommendation": null,
+        "draft": "Apply the power, product and quotient rules to differentiate functions that model engineering quantities.",
+        "aspects": null
+      },
+      "ilo-activity-calc-passive": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Design a cost-minimizing container using derivatives.",
+        "targetQuote": "Listen to a lecture on derivative rules.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Remember",
+        "explanation": "Listening to a lecture is passive and does not practise 'design' (Create). Students do not design a container or minimize cost themselves. The subject is related (derivative rules), but the activity lacks the optimization context.",
+        "recommendation": null,
+        "draft": "Listen to a short lecture on derivative rules, then work in pairs to design a cost-minimizing container: write the cost function, differentiate it, find the critical point and present the dimensions chosen.",
+        "aspects": null
+      },
+      "ilo-activity-calc-unrelated": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Design a cost-minimizing container using derivatives.",
+        "targetQuote": "Group discussion on the history of Rome.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Understand",
+        "explanation": "A discussion on Roman history is unrelated to designing a cost-minimizing container with derivatives. It does not practise design or the use of derivatives, and it is not at Create level.",
+        "recommendation": null,
+        "draft": "In groups, design a cost-minimizing container: model material cost as a function of its dimensions, use derivatives to find the minimum and justify the design to the class.",
+        "aspects": null
+      },
+      "ilo-content-calc-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "Apply the chain rule",
+        "targetQuote": "Chain rule; derivatives of composite functions; worked examples",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "Contents cover the chain rule and composite functions with worked examples from varied fields.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "ilo-content-calc-bare": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Apply the chain rule to differentiate composite functions.",
+        "targetQuote": "Chain rule.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Remember",
+        "explanation": "The content only names the topic \"Chain rule.\" It does not show what is applied (no worked composite functions or differentiation steps), so it does not reach the Apply level the ILO needs.",
+        "recommendation": null,
+        "draft": "Chain rule: statement and notation; identifying outer and inner functions; worked examples differentiating composite functions (polynomial, trigonometric, exponential and radical) step by step; common errors.",
+        "aspects": null
+      },
+      "ilo-content-calc-narrow-audience": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Apply the chain rule to differentiate composite functions.",
+        "targetQuote": "use only Formula 1 racing telemetry and assume prior racing experience",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The content is on the chain rule, but it uses only Formula 1 racing telemetry and assumes prior racing experience. That is a narrow background and excludes diverse learners. It also does not show differentiating general composite functions.",
+        "recommendation": null,
+        "draft": "Chain rule examples differentiating composite functions drawn from varied contexts (for example motion, cost, heat transfer, and pure algebraic functions), with no prior specialized experience assumed.",
+        "aspects": null
+      },
+      "ilo-content-calc-unrelated": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Apply the chain rule to differentiate composite functions.",
+        "targetQuote": "History of the Roman Empire.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "N/A",
+        "explanation": "The content, the history of the Roman Empire, has nothing to do with the chain rule or differentiating composite functions. It is in the wrong subject for this course.",
+        "recommendation": null,
+        "draft": "Chain rule: statement and notation; identifying outer and inner functions; worked examples differentiating composite functions step by step; common errors.",
+        "aspects": null
+      },
+      "value-calc-integrated": {
+        "label": "ALIGNED",
+        "sourceQuote": "Pair problem solving",
+        "targetQuote": "students coach a classmate through the chain-rule problem set",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "Compassion is named and tied to coaching classmates through the chain-rule problem set so all can apply it.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "value-calc-bare": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Pair problem solving",
+        "targetQuote": "Compassion",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "N/A",
+        "explanation": "The value is named but is a bare label. It does not say what students do or decide in this lesson (chain-rule worked examples, pair problem solving, quiz) to reach the ILO.",
+        "recommendation": null,
+        "draft": "Compassion: during pair problem solving, students patiently coach a partner through chain-rule problems so both can apply the rule to composite functions before the quiz.",
+        "aspects": null
+      },
+      "value-calc-unconnected": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Pair problem solving",
+        "targetQuote": "Missionary Spirit",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "N/A",
+        "explanation": "Missionary Spirit is named, but it is a bare label with no link to the lesson. It does not say what students do in the chain-rule examples, pair work or quiz, so it does not show how the value helps reach the ILO.",
+        "recommendation": null,
+        "draft": "Compassion: during pair problem solving, students coach a partner through chain-rule problems so both can apply the rule to composite functions, and share their solutions with the class to help others learn.",
+        "aspects": null
+      },
+      "desc-calc-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "Optimization problems in engineering",
+        "targetQuote": "functions, limits and continuity, the derivative and its rules",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "N/A",
+        "explanation": "The description names the main plan topics and engineering applications without adding anything the plan lacks.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "desc-calc-generic": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Week 3: The derivative; differentiation rules",
+        "targetQuote": "introduces students to important concepts and prepares them for further study",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "N/A",
+        "explanation": "The description is generic and would fit any course. It names none of the plan's topics: limits, continuity, derivatives, rules, related rates, optimization, curve sketching.",
+        "recommendation": null,
+        "draft": "This course covers functions, limits and continuity, the derivative and its rules (including the chain rule and implicit differentiation), higher-order derivatives, related rates, optimization problems and curve sketching, with applications to engineering problems.",
+        "aspects": null
+      },
+      "desc-calc-other-subject": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Week 1: Functions and graphs; limits of a function",
+        "targetQuote": "history, culture and art of ancient Rome",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "N/A",
+        "explanation": "The description is about ancient Rome, while the plan teaches functions, limits, continuity and derivatives. It is the wrong subject.",
+        "recommendation": null,
+        "draft": "This course covers functions and graphs, limits and limit laws, continuity, and the derivative with its differentiation rules.",
+        "aspects": null
+      },
+      "desc-calc-too-narrow": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Week 6: Optimization problems in engineering",
+        "targetQuote": "This course covers limits and continuity.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "N/A",
+        "explanation": "The description covers only limits and continuity. It omits major blocks of the plan: the derivative and differentiation rules, chain rule and implicit differentiation, higher-order derivatives, related rates, and optimization in engineering.",
+        "recommendation": null,
+        "draft": "This course covers functions, limits and continuity, the derivative and its differentiation rules, the chain rule and implicit differentiation, higher-order derivatives, related rates and optimization problems in engineering.",
+        "aspects": null
+      },
+      "ref-calc-relevant": {
+        "label": "ALIGNED",
+        "sourceQuote": "Chapters on limits, derivatives and their applications.",
+        "targetQuote": "Week 3: The derivative; differentiation rules",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "N/A",
+        "explanation": "A calculus text on limits, derivatives and applications supports the weekly topics.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "ref-calc-older-foundational": {
+        "label": "ALIGNED",
+        "sourceQuote": "A classic text on limits, continuity and differentiation.",
+        "targetQuote": "Week 2: Continuity",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "N/A",
+        "explanation": "The analysis text covers limits, continuity and differentiation, matching the listed weeks. It is older and more advanced, but it is still relevant.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "ref-calc-unrelated": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Cooking with herbs",
+        "targetQuote": "Limits of a function",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "N/A",
+        "explanation": "The page is about cooking with garden herbs, which has nothing to do with differential calculus. It cannot support the weekly topics on limits of a function, the derivative or differentiation rules, so it cannot support the course.",
+        "recommendation": null,
+        "draft": "Replace this reference with a calculus text or page covering limits, derivatives and differentiation rules, for example a university-level differential calculus textbook chapter.",
+        "aspects": null
+      },
+      "clo-po-prog-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "Design and implement computing-based solutions",
+        "targetQuote": "Design, implement and test object-oriented programs",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Create",
+        "explanation": "CLO has design and implement of programs, at Create level, matching the PO.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "clo-po-prog-lower-level": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Design and evaluate computing solutions for real problems.",
+        "targetQuote": "List the keywords of the programming language.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Remember",
+        "explanation": "The CLO only asks to list keywords (Remember), while the PO asks for design and evaluate (Create/Evaluate). Neither verb appears, and the object (keywords of a language) is not computing solutions for real problems.",
+        "recommendation": null,
+        "draft": "Design and evaluate object-oriented program solutions for real problems, using the constructs of the programming language.",
+        "aspects": null
+      },
+      "clo-po-prog-two-skills": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "communicate them effectively to technical and non-technical audiences",
+        "targetQuote": "Design a program solution for a given problem.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Create",
+        "explanation": "The CLO shows design of a program solution, but the PO's second skill, communicating solutions effectively to technical and non-technical audiences, is missing.",
+        "recommendation": null,
+        "draft": "Design a program solution for a given problem and communicate it effectively to technical and non-technical audiences through documentation and a demonstration.",
+        "aspects": null
+      },
+      "clo-po-prog-interdisciplinary": {
+        "label": "ALIGNED",
+        "sourceQuote": "Analyze the impact of computing on individuals",
+        "targetQuote": "Evaluate the ethical and social implications of a software system",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Analyze",
+        "targetBloom": "Evaluate",
+        "explanation": "CLO evaluates ethical and social implications of software on users, which matches analyzing computing's impact on individuals and society at an equal or higher level.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "clo-ega-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "Critical and Creative thinker",
+        "targetQuote": "Analyze alternative designs and justify the selection",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Analyze",
+        "targetBloom": "Evaluate",
+        "explanation": "Analyzing alternatives and justifying a choice shows critical and creative thinking.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "clo-ega-unrelated": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Competent Professional",
+        "targetQuote": "Recite the history of the institution.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Remember",
+        "explanation": "Reciting institutional history is Remember level, has no professional competence in programming, and its subject is unrelated to the course.",
+        "recommendation": null,
+        "draft": "Develop and test object-oriented programs that meet professional standards of correctness and code quality for given problems.",
+        "aspects": null
+      },
+      "ilo-clo-prog-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "implement and test object-oriented programs",
+        "targetQuote": "Implement a class hierarchy using inheritance",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Apply",
+        "explanation": "Implementing an inheritance hierarchy is a smaller step of the CLO's implement component, in the same subject.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "ilo-activity-prog-practises": {
+        "label": "ALIGNED",
+        "sourceQuote": "Implement a class hierarchy using inheritance",
+        "targetQuote": "Students code a class hierarchy in the laboratory",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "Students code a class hierarchy in lab, practising implementation with feedback.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "ilo-assess-prog-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "Design a normalized database schema",
+        "targetQuote": "submit an entity-relationship diagram and a normalized schema",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Create",
+        "explanation": "The project requires an ER diagram and normalized schema, scored by rubric, which is evidence of design.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "ilo-assess-prog-mcq-for-design": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Design a normalized database schema for a given scenario.",
+        "targetQuote": "Multiple-choice quiz on database terms.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Remember",
+        "explanation": "A multiple-choice quiz on terms collects recall (Remember) evidence only. It does not show design, the schema being produced, or normalization applied to a scenario.",
+        "recommendation": null,
+        "draft": "Project: students design and submit an entity-relationship diagram and a normalized schema for an assigned scenario, scored with a rubric.",
+        "aspects": null
+      },
+      "ilo-assess-named-only": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Explain the concept of recursion.",
+        "targetQuote": "Quiz",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Understand",
+        "targetBloom": "N/A",
+        "explanation": "The task is only named 'Quiz'. It does not say what is asked or produced, nor that students explain recursion, such as how a base case and recursive case work.",
+        "recommendation": null,
+        "draft": "Quiz: students answer short-answer questions explaining recursion, including the base case and recursive case, and trace a simple recursive method.",
+        "aspects": null
+      },
+      "ilo-assess-mcq-for-understand": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Describe the difference between a stack and a queue.",
+        "targetQuote": "Multiple-choice quiz on data structure concepts.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Understand",
+        "targetBloom": "Understand",
+        "explanation": "Multiple choice can support Understand, but the task names only 'concepts' and does not state that stacks and queues are compared. The describe-the-difference evidence is not clear.",
+        "recommendation": null,
+        "draft": "Multiple-choice quiz on stacks and queues, with items asking students to identify the difference in ordering (LIFO vs FIFO) and the operations of each, plus a short written item describing the difference.",
+        "aspects": null
+      },
+      "clo-po-nurs-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "Provide safe, quality nursing care to individuals using the nursing process",
+        "targetQuote": "Perform basic nursing procedures safely using the nursing process",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The CLO performs nursing procedures safely using the nursing process, matching the PO's safe care with the nursing process at an Apply level.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "clo-po-nurs-unrelated": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Provide safe, quality nursing care to individuals using the nursing process.",
+        "targetQuote": "Compute the derivative of polynomial functions.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The CLO is about calculus. It has no nursing care verb, no safety or nursing process, and the wrong subject, so it fails tests 1 and 3. It also does not belong to this nursing course. The draft restores the course's own CLO.",
+        "recommendation": null,
+        "draft": "Perform basic nursing procedures safely using the nursing process on a simulated patient.",
+        "aspects": null
+      },
+      "ilo-activity-nurs-practises": {
+        "label": "ALIGNED",
+        "sourceQuote": "Demonstrate the correct procedure for taking blood pressure",
+        "targetQuote": "Return demonstration of blood pressure measurement on a partner",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "Students do a return demonstration of blood pressure measurement, practising the verb 'demonstrate' on the same subject.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": null
+      },
+      "ilo-assess-nurs-knowledge-for-skill": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Perform hand hygiene using the correct technique.",
+        "targetQuote": "Written exam on the steps of hand hygiene.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Remember",
+        "explanation": "The ILO asks students to perform hand hygiene with correct technique (Apply). A written exam on the steps only collects recall or understanding evidence. It does not show that students can perform the technique, so it fails tests 1 and 2. The subject is right, but the product is a written answer, not an observed performance.",
+        "recommendation": null,
+        "draft": "Return demonstration of hand hygiene in the skills laboratory, scored by the instructor with a checklist of the correct technique (palm-to-palm, between fingers, thumbs, fingertips, 20 seconds, drying). A short written quiz on the steps supports it.",
+        "aspects": null
+      }
+    }
+  ],
+  "usage": {
+    "requests": 11,
+    "thisRun": 11,
+    "model": 11,
+    "priceLookups": 0,
+    "keyChecks": 0,
+    "invalidAnswers": 1,
+    "unproductiveInARow": 0,
+    "transient": 0,
+    "promptTokens": 51027,
+    "completionTokens": 16349,
+    "cachedTokens": 37280,
+    "reportedCost": 0,
+    "charged": 0.200304,
+    "accounting": {
+      "rule": "reconcile",
+      "requests": {
+        "reconciled": 11,
+        "conservative": 0,
+        "worst_case": 0,
+        "refused": 0
+      },
+      "chargedConservatively": 0.32016325
+    },
+    "warnings": [],
+    "limits": {
+      "maxRequests": 25,
+      "maxCost": 1,
+      "maxTransient": 3,
+      "maxInvalid": 3,
+      "warnInvalid": 10,
+      "maxUnproductive": 37,
+      "maxTokens": null
+    },
+    "stopped": null,
+    "anthropic": {
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "prices": {
+        "model": "claude-sonnet-5-5",
+        "asOf": "2026-10-27",
+        "geoFactor": 1.1,
+        "perMillionTokens": {
+          "input": 2,
+          "output": 10,
+          "cacheRead": 0.2,
+          "listedCacheRead": 0.1,
+          "cacheWrite5m": 2.5,
+          "cacheWrite1h": 4
+        }
+      },
+      "modelsReturned": {
+        "claude-sonnet-5-5": 11
+      },
+      "inputTokens": 10019,
+      "cacheCreationInputTokens": 3728,
+      "cacheReadInputTokens": 37280,
+      "outputTokens": 16349,
+      "thinkingTokens": 0,
+      "thinkingReports": {
+        "nonzero": 0,
+        "zero": 11,
+        "unavailable": 0
+      },
+      "thinkingBlocks": 0,
+      "atListPrices": 0.196576,
+      "estimatedCost": 0.196576,
+      "notEstimated": 0,
+      "chargedThisRun": 0.200304,
+      "outputTokensCharged": 16349,
+      "stopReasons": {
+        "end_turn": 11
+      },
+      "refusalCategories": {},
+      "inferenceGeo": {
+        "global": 11
+      },
+      "serviceTier": {
+        "standard": 11
+      },
+      "errors": {},
+      "latencyMs": {
+        "answers": 11,
+        "median": 12921,
+        "p90": 14583,
+        "max": 15230
+      },
+      "limits": {
+        "maxOutputTokens": null,
+        "register": {
+          "cap": 1.302853,
+          "chargedByEveryLedger": 0.5031572
+        }
+      }
+    }
+  },
+  "prices": {
+    "provider": "anthropic",
+    "model": "claude-sonnet-5-5",
+    "asOf": "2026-10-27",
+    "geoFactor": 1.1,
+    "input": 0.000002,
+    "output": 0.00001,
+    "cacheRead": 2.0000000000000002e-7,
+    "listedCacheRead": 1.0000000000000001e-7,
+    "cacheWrite5m": 0.0000025,
+    "cacheWrite1h": 0.000004
+  },
+  "requests": [
+    {
+      "n": 1,
+      "ids": [
+        "clo-po-calc-aligned",
+        "clo-po-calc-lower-level",
+        "clo-po-calc-unrelated",
+        "clo-po-calc-vague",
+        "clo-anypo-fits",
+        "clo-anypo-none",
+        "ilo-clo-calc-aligned",
+        "ilo-clo-claims-more",
+        "ilo-clo-unrelated",
+        "ilo-activity-calc-passive",
+        "ilo-activity-calc-unrelated",
+        "ilo-content-calc-aligned"
+      ],
+      "status": 200,
+      "ms": 15230,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTEzigoRzNukhSZJZZpu",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.22035475,
+      "usage": {
+        "promptTokens": 4977,
+        "completionTokens": 2458,
+        "reasoningTokens": 0,
+        "cachedTokens": 0,
+        "reportedCost": null,
+        "costAtListPrices": 0.036398,
+        "estimatedCost": 0.036398,
+        "inputTokens": 1249,
+        "cacheCreationInputTokens": 3728,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 0,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.036398,
+      "conservativeCharge": 0.04072475,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"clo-po-calc-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"The CLO applies mathematics (differentiation) to solve engineering problems, matching the PO.\",\"sourceQuote\":\"Apply knowledge of mathematics and science to solve complex engineering problems\",\"targetQuote\":\"Apply differentiation rules to solve optimization problems in engineering\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\"},{\"id\":\"clo-po-calc-lower-level\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"Gaps: the CLO verb 'Define' is Remember level, below the Create level of 'Design'; it names no engineering problem or specified needs; it only shares the mathematical topic loosely. The draft states a design-oriented calculus outcome.\",\"sourceQuote\":\"Design solutions for complex engineering problems that meet specified needs.\",\"targetQuote\":\"Define the derivative of a function.\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Remember\",\"draft\":\"Design solutions to engineering problems, such as minimum-cost or maximum-efficiency designs, that meet specified needs by applying derivatives of functions.\"},{\"id\":\"clo-po-calc-unrelated\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"Gaps: the PO asks for effective communication to varied audiences, but the CLO only asks for evaluating limits of rational functions (computation). There is no communicating verb, no audience, and the subject matter differs. The draft turns the CLO into communication of limit results.\",\"sourceQuote\":\"Communicate effectively with a range of audiences.\",\"targetQuote\":\"Evaluate limits of rational functions.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Evaluate\",\"draft\":\"Communicate the evaluation of limits of rational functions effectively to a range of audiences, using correct mathematical notation, clear written explanations and graphs.\"},{\"id\":\"clo-po-calc-vague\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"Gaps: 'Understand' is Understand level, below the PO's Apply level; the CLO does not apply knowledge or solve anything; it names no engineering problems and is vague about what in calculus.\",\"sourceQuote\":\"Apply knowledge of mathematics and science to solve complex engineering problems.\",\"targetQuote\":\"Understand calculus.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Understand\",\"draft\":\"Apply the concepts of limits and derivatives to solve engineering problems.\"},{\"id\":\"clo-anypo-fits\",\"label\":\"ALIGNED\",\"explanation\":\"Item 1: the CLO applies mathematics (differentiation) to solve engineering problems.\",\"sourceQuote\":\"1. Apply knowledge of mathematics and science to solve complex engineering problems.\",\"targetQuote\":\"Apply differentiation rules to solve optimization problems\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\"},{\"id\":\"clo-anypo-none\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"Best fit is item 1, but the CLO is about Roman history and art: it has no mathematics or science, no engineering problem, and its Bloom level is Understand/appreciate (not Apply). It is also outside this Differential Calculus course. The draft rewrites it to fit item 1.\",\"sourceQuote\":\"1. Apply knowledge of mathematics and science to solve complex engineering problems.\",\"targetQuote\":\"Appreciate the history of ancient Rome and its art.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Understand\",\"draft\":\"Apply differentiation rules to solve optimization problems in engineering.\"},{\"id\":\"ilo-clo-calc-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"Applying the chain rule is a smaller Apply step toward applying differentiation rules.\",\"sourceQuote\":\"Apply differentiation rules\",\"targetQuote\":\"Apply the chain rule to differentiate composite functions\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\"},{\"id\":\"ilo-clo-claims-more\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"Gaps: the ILO verbs 'Design and implement' are Create level, above the CLO's Remember-level 'Define'; a numerical solver claims more than defining limits; it is not a smaller step. The subject (limits) is shared. The draft lowers the ILO to the CLO's level.\",\"sourceQuote\":\"Define limits of functions.\",\"targetQuote\":\"Design and implement a numerical solver for limits.\",\"sourceBloom\":\"Remember\",\"targetBloom\":\"Create\",\"draft\":\"State the definition of the limit of a function and identify it from a table of values or a graph.\"},{\"id\":\"ilo-clo-unrelated\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"Gaps: the ILO is about the history of ancient Rome, unrelated to differentiation, optimization or engineering; its verb 'Describe' (Understand) does not build toward Apply. The draft returns the ILO to the CLO's subject.\",\"sourceQuote\":\"Apply differentiation rules to solve optimization problems in engineering.\",\"targetQuote\":\"Describe the history of ancient Rome.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Understand\",\"draft\":\"Apply the power, product and quotient rules to differentiate functions that model engineering quantities.\"},{\"id\":\"ilo-activity-calc-passive\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"Gaps: listening to a lecture is passive, so students do not practise 'design'; it does not reach Create level; there is no container, cost model or optimization with derivatives. The subject (derivative rules) is related only in part. The draft adds hands-on design work.\",\"sourceQuote\":\"Design a cost-minimizing container using derivatives.\",\"targetQuote\":\"Listen to a lecture on derivative rules.\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Remember\",\"draft\":\"Listen to a short lecture on derivative rules, then work in groups to design a cost-minimizing container: write the cost function, use derivatives to find the minimum, and present the chosen dimensions.\"},{\"id\":\"ilo-activity-calc-unrelated\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"Gaps: a discussion on Roman history does not practise designing; it is not about derivatives, containers or cost minimization; no Create-level work is done. The draft replaces it with a calculus design activity.\",\"sourceQuote\":\"Design a cost-minimizing container using derivatives.\",\"targetQuote\":\"Group discussion on the history of Rome.\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Understand\",\"draft\":\"Group activity: design a cost-minimizing container by writing the cost function, using derivatives to find the optimal dimensions, and presenting and justifying the design.\"},{\"id\":\"ilo-content-calc-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"Contents cover the chain rule with worked examples from varied fields.\",\"sourceQuote\":\"Apply the chain rule\",\"targetQuote\":\"Chain rule; derivatives of composite functions; worked examples\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\"}]}"
+    },
+    {
+      "n": 2,
+      "ids": [
+        "ilo-content-calc-bare",
+        "ilo-content-calc-narrow-audience",
+        "ilo-content-calc-unrelated",
+        "value-calc-integrated",
+        "value-calc-bare",
+        "value-calc-unconnected",
+        "desc-calc-aligned",
+        "desc-calc-generic",
+        "desc-calc-other-subject",
+        "desc-calc-too-narrow",
+        "ref-calc-relevant",
+        "ref-calc-older-foundational"
+      ],
+      "status": 200,
+      "ms": 13476,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTF1qHwnjweQf4fkheqz",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.223553,
+      "usage": {
+        "promptTokens": 5423,
+        "completionTokens": 2386,
+        "reasoningTokens": 0,
+        "cachedTokens": 3728,
+        "reportedCost": null,
+        "costAtListPrices": 0.0276228,
+        "estimatedCost": 0.0276228,
+        "inputTokens": 1695,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 3728,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0279956,
+      "conservativeCharge": 0.04115925,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"ilo-content-calc-bare\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The contents name only 'Chain rule' as a topic. They do not show composite functions being differentiated, so they do not reach the Apply level the ILO needs. No worked examples or application of the rule to composite functions is listed.\",\"sourceQuote\":\"Apply the chain rule to differentiate composite functions.\",\"targetQuote\":\"Chain rule.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Remember\",\"draft\":\"Chain rule for composite functions; identifying the outer and inner functions; worked examples differentiating polynomial, trigonometric, exponential and radical composites; applying the chain rule in engineering rate problems.\"},{\"id\":\"ilo-content-calc-narrow-audience\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The content is on the chain rule, but it uses only Formula 1 racing telemetry and assumes prior racing experience. That clearly excludes learners without this background. It also lists no examples of differentiating composite functions in general.\",\"sourceQuote\":\"Apply the chain rule to differentiate composite functions.\",\"targetQuote\":\"use only Formula 1 racing telemetry and assume prior racing experience\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"Chain rule examples that differentiate composite functions drawn from varied contexts (polynomial, trigonometric and exponential composites, plus engineering rates such as temperature, motion and cost), with no prior specialised experience assumed.\"},{\"id\":\"ilo-content-calc-unrelated\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The Roman Empire history has nothing to do with the chain rule or differentiating composite functions, and it is not in the subject of Differential Calculus.\",\"sourceQuote\":\"Apply the chain rule to differentiate composite functions.\",\"targetQuote\":\"History of the Roman Empire.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"N/A\",\"draft\":\"Chain rule for composite functions; identifying inner and outer functions; worked examples differentiating polynomial, trigonometric and exponential composites; practice problems applying the rule.\"},{\"id\":\"value-calc-integrated\",\"label\":\"ALIGNED\",\"explanation\":\"Compassion is tied to students coaching classmates through the chain-rule problem set, which matches the ILO and activity.\",\"sourceQuote\":\"Pair problem solving\",\"targetQuote\":\"students coach a classmate through the chain-rule problem set\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\"},{\"id\":\"value-calc-bare\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"A value is named (Compassion), but it is only a bare name. It does not say what students do or decide in this lesson to reach the ILO of applying the chain rule.\",\"sourceQuote\":\"Pair problem solving\",\"targetQuote\":\"Compassion\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"N/A\",\"draft\":\"Compassion: during pair problem solving, students patiently explain each chain-rule step to a struggling partner so both can differentiate composite functions.\"},{\"id\":\"value-calc-unconnected\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"Missionary Spirit is named but is a bare value name with no link to the chain-rule ILO, content, pair problem solving or quiz. It does not say what students do in this lesson. It does not clash with the lesson, but it is not integrated.\",\"sourceQuote\":\"Pair problem solving\",\"targetQuote\":\"Missionary Spirit\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"N/A\",\"draft\":\"Missionary Spirit: students share their chain-rule solutions by tutoring peers outside the class pair, using what they have mastered to serve others who struggle with differentiating composite functions.\"},{\"id\":\"desc-calc-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"The description names the plan's main topics and promises nothing extra.\",\"sourceQuote\":\"Optimization problems in engineering\",\"targetQuote\":\"functions, limits and continuity, the derivative and its rules\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"N/A\",\"draft\":\"\"},{\"id\":\"desc-calc-generic\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The description is generic and would fit any course. It names none of the plan's topics: limits, continuity, derivatives, differentiation rules, related rates, optimization or curve sketching. It does not mention engineering applications.\",\"sourceQuote\":\"Week 3: The derivative; differentiation rules\",\"targetQuote\":\"This course introduces students to important concepts and prepares them for further study\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"N/A\",\"draft\":\"This course covers functions, limits and continuity, the derivative and its rules, implicit and higher-order differentiation, related rates, optimization and curve sketching, with applications to engineering problems.\"},{\"id\":\"desc-calc-other-subject\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The description is about the history, culture and art of ancient Rome. The plan teaches functions, limits, continuity and derivatives.\",\"sourceQuote\":\"Week 3: The derivative; differentiation rules\",\"targetQuote\":\"history, culture and art of ancient Rome\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"N/A\",\"draft\":\"This course covers functions and graphs, limits and continuity, and the derivative with its differentiation rules.\"},{\"id\":\"desc-calc-too-narrow\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The description mentions only limits and continuity. It leaves out major blocks of the plan: the derivative, differentiation rules, chain rule, implicit differentiation, higher-order derivatives, related rates and engineering optimization.\",\"sourceQuote\":\"Week 6: Optimization problems in engineering\",\"targetQuote\":\"This course covers limits and continuity.\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"N/A\",\"draft\":\"This course covers functions, limits and continuity, the derivative and its rules, the chain rule and implicit differentiation, higher-order derivatives, related rates, and optimization problems in engineering.\"},{\"id\":\"ref-calc-relevant\",\"label\":\"ALIGNED\",\"explanation\":\"The calculus text covers limits, derivatives and applications, matching the course topics.\",\"sourceQuote\":\"Chapters on limits, derivatives and their applications.\",\"targetQuote\":\"Week 3: The derivative; differentiation rules\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"N/A\",\"draft\":\"\"},{\"id\":\"ref-calc-older-foundational\",\"label\":\"ALIGNED\",\"explanation\":\"The analysis text covers limits, continuity and differentiation, which match the weekly topics. It is an older and more advanced reference but still supports them.\",\"sourceQuote\":\"A classic text on limits, continuity and differentiation.\",\"targetQuote\":\"Week 2: Continuity\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"N/A\",\"draft\":\"\"}]}"
+    },
+    {
+      "n": 3,
+      "ids": [
+        "ref-calc-unrelated"
+      ],
+      "status": 200,
+      "ms": 2643,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTF2px8h4a7g3RTf3AkV",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.21238525,
+      "usage": {
+        "promptTokens": 3951,
+        "completionTokens": 254,
+        "reasoningTokens": 0,
+        "cachedTokens": 3728,
+        "reportedCost": null,
+        "costAtListPrices": 0.0033588,
+        "estimatedCost": 0.0033588,
+        "inputTokens": 223,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 3728,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0037316,
+      "conservativeCharge": 0.01365925,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"ref-calc-unrelated\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The page is about cooking with garden herbs, which has nothing to do with differential calculus. It cannot support teaching limits, the derivative or differentiation rules, so it fails both tests: its subject is not the course's subject and it covers none of the weekly topics.\",\"sourceQuote\":\"Cooking with herbs\",\"targetQuote\":\"Week 3: The derivative; differentiation rules\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"N/A\",\"draft\":\"Replace this with a calculus reference, such as a university-level differential calculus textbook or an open course page covering limits, continuity, derivatives, differentiation rules and optimization.\"}]}"
+    },
+    {
+      "n": 4,
+      "ids": [
+        "clo-po-prog-aligned",
+        "clo-po-prog-lower-level",
+        "clo-po-prog-two-skills",
+        "clo-po-prog-interdisciplinary",
+        "clo-ega-aligned",
+        "clo-ega-unrelated",
+        "ilo-clo-prog-aligned",
+        "ilo-activity-prog-practises",
+        "ilo-assess-prog-aligned",
+        "ilo-assess-prog-mcq-for-design",
+        "ilo-assess-named-only",
+        "ilo-assess-mcq-for-understand"
+      ],
+      "status": 200,
+      "ms": 13351,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTF32H2AVmkChFhHNDjX",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.22006325,
+      "usage": {
+        "promptTokens": 4906,
+        "completionTokens": 2206,
+        "reasoningTokens": 0,
+        "cachedTokens": 3728,
+        "reportedCost": null,
+        "costAtListPrices": 0.0247888,
+        "estimatedCost": 0.0247888,
+        "inputTokens": 1178,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 3728,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0251616,
+      "conservativeCharge": 0.0377575,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"clo-po-prog-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"CLO has design and implement, Create level, and concerns computing solutions.\",\"sourceQuote\":\"Design and implement computing-based solutions\",\"targetQuote\":\"Design, implement and test object-oriented programs\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Create\",\"draft\":\"\"},{\"id\":\"clo-po-prog-lower-level\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The CLO uses 'List' (Remember), while the PO asks for design and evaluation (Create/Evaluate). It lacks both key verbs 'design' and 'evaluate'. Its subject (language keywords) is only a minor part of designing computing solutions to real problems.\",\"sourceQuote\":\"Design and evaluate computing solutions for real problems.\",\"targetQuote\":\"List the keywords of the programming language.\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Remember\",\"draft\":\"Design and evaluate object-oriented program solutions for real problems, using the constructs of the programming language.\"},{\"id\":\"clo-po-prog-two-skills\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The CLO shows 'design' (Create) for a program solution, but the PO's second skill, communicating solutions effectively to technical and non-technical audiences, is missing entirely.\",\"sourceQuote\":\"communicate them effectively to technical and non-technical audiences\",\"targetQuote\":\"Design a program solution for a given problem.\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Create\",\"draft\":\"Design a program solution for a given problem and communicate it effectively to technical and non-technical audiences through documentation and presentations.\"},{\"id\":\"clo-po-prog-interdisciplinary\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The CLO evaluates ethical and social implications for users, which is close to analyzing impact on society, at an equal or higher Bloom level. However, it covers only users of a single software system, not the impact of computing on individuals, organizations and society more broadly. 'Analyze' is not stated, and organizations are not mentioned.\",\"sourceQuote\":\"Analyze the impact of computing on individuals, organizations and society.\",\"targetQuote\":\"Evaluate the ethical and social implications of a software system on its users.\",\"sourceBloom\":\"Analyze\",\"targetBloom\":\"Evaluate\",\"draft\":\"Analyze and evaluate the ethical and social impact of a software system on individuals, organizations and society.\"},{\"id\":\"clo-ega-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"Analyzing alternatives and justifying a choice shows critical and creative thinking.\",\"sourceQuote\":\"Critical and Creative thinker\",\"targetQuote\":\"Analyze alternative designs and justify the selection\",\"sourceBloom\":\"Analyze\",\"targetBloom\":\"Evaluate\",\"draft\":\"\"},{\"id\":\"clo-ega-unrelated\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"Reciting institutional history is Remember level, unrelated to programming, and shows no professional competence.\",\"sourceQuote\":\"Competent Professional\",\"targetQuote\":\"Recite the history of the institution.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Remember\",\"draft\":\"Develop and test object-oriented programs that meet professional standards of correctness, documentation and code quality.\"},{\"id\":\"ilo-clo-prog-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"Implementing a class hierarchy is a smaller step of implementing OO programs, in the same subject.\",\"sourceQuote\":\"implement and test object-oriented programs\",\"targetQuote\":\"Implement a class hierarchy using inheritance\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Apply\",\"draft\":\"\"},{\"id\":\"ilo-activity-prog-practises\",\"label\":\"ALIGNED\",\"explanation\":\"Students code a class hierarchy themselves, practising the implement verb on the same subject.\",\"sourceQuote\":\"Implement a class hierarchy using inheritance\",\"targetQuote\":\"Students code a class hierarchy in the laboratory\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\"},{\"id\":\"ilo-assess-prog-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"Students produce an ER diagram and normalized schema, scored by rubric, which is evidence of design.\",\"sourceQuote\":\"Design a normalized database schema\",\"targetQuote\":\"submit an entity-relationship diagram and a normalized schema\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Create\",\"draft\":\"\"},{\"id\":\"ilo-assess-prog-mcq-for-design\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"A multiple-choice quiz on terms is recall evidence (Remember) and cannot show designing a schema (Create). It also produces no schema and does not cover normalization or a given scenario.\",\"sourceQuote\":\"Design a normalized database schema for a given scenario.\",\"targetQuote\":\"Multiple-choice quiz on database terms.\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Remember\",\"draft\":\"Project: students design and submit an entity-relationship diagram and a normalized schema for an assigned scenario, scored with a rubric.\"},{\"id\":\"ilo-assess-named-only\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The task is only named 'Quiz'. It does not say what is asked or produced, nor that students explain recursion (Understand), so the evidence is unclear.\",\"sourceQuote\":\"Explain the concept of recursion.\",\"targetQuote\":\"Quiz\",\"sourceBloom\":\"Understand\",\"targetBloom\":\"N/A\",\"draft\":\"Short-answer quiz: students explain in their own words how recursion works, including the base case and recursive case, and trace a simple recursive function.\"},{\"id\":\"ilo-assess-mcq-for-understand\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"Multiple choice can support Understand, but this one is only named by topic. It does not show that students describe the stack-queue difference (LIFO vs FIFO), and says nothing about what items test it.\",\"sourceQuote\":\"Describe the difference between a stack and a queue.\",\"targetQuote\":\"Multiple-choice quiz on data structure concepts.\",\"sourceBloom\":\"Understand\",\"targetBloom\":\"Understand\",\"draft\":\"Multiple-choice quiz whose items ask students to identify the difference between a stack (LIFO) and a queue (FIFO) in given scenarios, with a short written justification for each answer.\"}]}"
+    },
+    {
+      "n": 5,
+      "ids": [
+        "clo-po-nurs-aligned",
+        "clo-po-nurs-unrelated",
+        "ilo-activity-nurs-practises",
+        "ilo-assess-nurs-knowledge-for-skill"
+      ],
+      "status": 200,
+      "ms": 5792,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTF41UvoPWnC49zdx1jU",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.21484925,
+      "usage": {
+        "promptTokens": 4270,
+        "completionTokens": 865,
+        "reasoningTokens": 0,
+        "cachedTokens": 3728,
+        "reportedCost": null,
+        "costAtListPrices": 0.0101068,
+        "estimatedCost": 0.0101068,
+        "inputTokens": 542,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 3728,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0104796,
+      "conservativeCharge": 0.0212575,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"clo-po-nurs-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"The CLO performs nursing procedures safely using the nursing process, which matches the PO's safe care using the nursing process at an equal Apply level.\",\"sourceQuote\":\"Provide safe, quality nursing care\",\"targetQuote\":\"Perform basic nursing procedures safely using the nursing process\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\"},{\"id\":\"clo-po-nurs-unrelated\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The CLO is about calculus (derivatives of polynomials), not nursing. It has no nursing care verb, no safety or nursing process, and the wrong subject for the PO and for NCM 101. Its Bloom level (Apply) does match the PO, but the subject does not.\",\"sourceQuote\":\"Provide safe, quality nursing care to individuals using the nursing process.\",\"targetQuote\":\"Compute the derivative of polynomials functions.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"Perform basic nursing procedures safely using the nursing process on a simulated patient.\"},{\"id\":\"ilo-activity-nurs-practises\",\"label\":\"ALIGNED\",\"explanation\":\"Students do a return demonstration of blood pressure measurement, which practises the verb 'demonstrate' on the same subject at the Apply level.\",\"sourceQuote\":\"Demonstrate the correct procedure for taking blood pressure.\",\"targetQuote\":\"Return demonstration of blood pressure measurement\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\"},{\"id\":\"ilo-assess-nurs-knowledge-for-skill\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The ILO asks students to perform hand hygiene with correct technique (Apply), but a written exam on the steps only collects recall or understanding evidence (Remember/Understand). It does not show observed performance of the technique, and there is no criteria or checklist for correct technique. The subject (hand hygiene) does match.\",\"sourceQuote\":\"Perform hand hygiene using the correct technique.\",\"targetQuote\":\"Written exam on the steps of hand hygiene.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Remember\",\"draft\":\"Skills laboratory return demonstration of hand hygiene, observed and scored with a checklist of the correct technique (steps, timing, coverage of all hand surfaces), with a short written exam on the steps as supporting evidence.\"}]}"
+    },
+    {
+      "n": 6,
+      "ids": [
+        "clo-po-nurs-unrelated"
+      ],
+      "status": 200,
+      "ms": 3059,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTF4SBEf5KGMZgyN71cQ",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.21258325,
+      "usage": {
+        "promptTokens": 3973,
+        "completionTokens": 312,
+        "reasoningTokens": 0,
+        "cachedTokens": 3728,
+        "reportedCost": null,
+        "costAtListPrices": 0.0039828,
+        "estimatedCost": 0.0039828,
+        "inputTokens": 245,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 3728,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0043556,
+      "conservativeCharge": 0.01435775,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"clo-po-nurs-unrelated\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The CLO is about computing derivatives of polynomial functions (calculus). It has no nursing action verb or competency (providing safe, quality nursing care), no use of the nursing process, and its subject is mathematics, not nursing care of individuals. Its Bloom level (Apply) matches the PO's Apply level, but the subject is wrong, and it also does not belong in this course (NCM 101, Fundamentals of Nursing Practice).\",\"sourceQuote\":\"Provide safe, quality nursing care to individuals using the nursing process.\",\"targetQuote\":\"Compute the derivative of polynomial functions.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"Perform basic nursing procedures safely on a simulated patient, using the nursing process to provide quality nursing care.\"}]}"
+    },
+    {
+      "n": 7,
+      "ids": [
+        "clo-po-calc-aligned",
+        "clo-po-calc-lower-level",
+        "clo-po-calc-unrelated",
+        "clo-po-calc-vague",
+        "clo-anypo-fits",
+        "clo-anypo-none",
+        "ilo-clo-calc-aligned",
+        "ilo-clo-claims-more",
+        "ilo-clo-unrelated",
+        "ilo-activity-calc-passive",
+        "ilo-activity-calc-unrelated",
+        "ilo-content-calc-aligned"
+      ],
+      "status": 200,
+      "ms": 14583,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTF4fMk5V3bCM5P3Hphg",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.22035475,
+      "usage": {
+        "promptTokens": 4977,
+        "completionTokens": 2357,
+        "reasoningTokens": 0,
+        "cachedTokens": 3728,
+        "reportedCost": null,
+        "costAtListPrices": 0.0264408,
+        "estimatedCost": 0.0264408,
+        "inputTokens": 1249,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 3728,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0268136,
+      "conservativeCharge": 0.03961375,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"clo-po-calc-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"The CLO applies mathematics to engineering problems, matching the PO's verb, level and subject.\",\"sourceQuote\":\"Apply knowledge of mathematics and science\",\"targetQuote\":\"Apply differentiation rules to solve optimization problems\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\"},{\"id\":\"clo-po-calc-lower-level\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The PO asks for Create-level design of solutions to engineering problems. The CLO only defines a derivative (Remember), which is a much lower level. It has no design verb and does not mention engineering problems or specified needs.\",\"sourceQuote\":\"Design solutions for complex engineering problems that meet specified needs.\",\"targetQuote\":\"Define the derivative of a function.\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Remember\",\"draft\":\"Design solutions to engineering problems, such as minimum-cost or maximum-efficiency designs, by applying derivatives and optimization techniques to meet specified needs.\"},{\"id\":\"clo-po-calc-unrelated\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The PO is about communicating effectively with varied audiences. The CLO is a calculus computation (evaluating limits) with no communication verb, no audience and no communication product.\",\"sourceQuote\":\"Communicate effectively with a range of audiences.\",\"targetQuote\":\"Evaluate limits of rational functions.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Evaluate\",\"draft\":\"Communicate the evaluation of limits of rational functions clearly, in written and oral form, to audiences of varied mathematical backgrounds, explaining each step and justifying the result.\"},{\"id\":\"clo-po-calc-vague\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The CLO shares only the topic word calculus. 'Understand' is Understand level, lower than the PO's Apply. It has no action of applying or solving and does not mention engineering problems. It is also too vague to assess.\",\"sourceQuote\":\"Apply knowledge of mathematics and science to solve complex engineering problems.\",\"targetQuote\":\"Understand calculus.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Understand\",\"draft\":\"Apply the concepts of limits and derivatives to solve engineering problems involving rates of change and optimization.\"},{\"id\":\"clo-anypo-fits\",\"label\":\"ALIGNED\",\"explanation\":\"Item 1 fits: the CLO applies mathematics (differentiation) to solve engineering problems.\",\"sourceQuote\":\"1. Apply knowledge of mathematics and science to solve complex engineering problems.\",\"targetQuote\":\"Apply differentiation rules to solve optimization problems\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\"},{\"id\":\"clo-anypo-none\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"Best-fitting item is 1. The CLO is about Roman history and art. It has no mathematics or science, no engineering problem and no application verb. It is unrelated to Differential Calculus and to every listed PO.\",\"sourceQuote\":\"1. Apply knowledge of mathematics and science to solve complex engineering problems.\",\"targetQuote\":\"Appreciate the history of ancient Rome and its art.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Understand\",\"draft\":\"Apply differentiation rules to solve optimization problems in engineering.\"},{\"id\":\"ilo-clo-calc-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"Applying the chain rule is a smaller Apply-level step toward applying differentiation rules.\",\"sourceQuote\":\"Apply differentiation rules\",\"targetQuote\":\"Apply the chain rule to differentiate composite functions\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\"},{\"id\":\"ilo-clo-claims-more\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The subject (limits) is the same, but the ILO claims more than the CLO. The CLO asks only to define limits (Remember), while the ILO asks to design and implement a numerical solver (Create). This level is far above the CLO and builds on nothing it states.\",\"sourceQuote\":\"Define limits of functions.\",\"targetQuote\":\"Design and implement a numerical solver for limits.\",\"sourceBloom\":\"Remember\",\"targetBloom\":\"Create\",\"draft\":\"State the definition of the limit of a function and identify it from a graph or table of values.\"},{\"id\":\"ilo-clo-unrelated\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The ILO is about the history of ancient Rome. It is unrelated to differentiation rules and engineering optimization, so it is not a smaller step of the CLO. It is also only Understand level and in a different subject.\",\"sourceQuote\":\"Apply differentiation rules to solve optimization problems in engineering.\",\"targetQuote\":\"Describe the history of ancient Rome.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Understand\",\"draft\":\"Apply the power, product and quotient rules to differentiate functions that model engineering quantities.\"},{\"id\":\"ilo-activity-calc-passive\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"Listening to a lecture is passive and does not practise 'design' (Create). Students do not design a container or minimize cost themselves. The subject is related (derivative rules), but the activity lacks the optimization context.\",\"sourceQuote\":\"Design a cost-minimizing container using derivatives.\",\"targetQuote\":\"Listen to a lecture on derivative rules.\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Remember\",\"draft\":\"Listen to a short lecture on derivative rules, then work in pairs to design a cost-minimizing container: write the cost function, differentiate it, find the critical point and present the dimensions chosen.\"},{\"id\":\"ilo-activity-calc-unrelated\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"A discussion on Roman history is unrelated to designing a cost-minimizing container with derivatives. It does not practise design or the use of derivatives, and it is not at Create level.\",\"sourceQuote\":\"Design a cost-minimizing container using derivatives.\",\"targetQuote\":\"Group discussion on the history of Rome.\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Understand\",\"draft\":\"In groups, design a cost-minimizing container: model material cost as a function of its dimensions, use derivatives to find the minimum and justify the design to the class.\"},{\"id\":\"ilo-content-calc-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"Contents cover the chain rule and composite functions with worked examples from varied fields.\",\"sourceQuote\":\"Apply the chain rule\",\"targetQuote\":\"Chain rule; derivatives of composite functions; worked examples\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\"}]}"
+    },
+    {
+      "n": 8,
+      "ids": [
+        "ilo-content-calc-bare",
+        "ilo-content-calc-narrow-audience",
+        "ilo-content-calc-unrelated",
+        "value-calc-integrated",
+        "value-calc-bare",
+        "value-calc-unconnected",
+        "desc-calc-aligned",
+        "desc-calc-generic",
+        "desc-calc-other-subject",
+        "desc-calc-too-narrow",
+        "ref-calc-relevant",
+        "ref-calc-older-foundational"
+      ],
+      "status": 200,
+      "ms": 13377,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTF5jiD3aJCA88QAhTRX",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.223553,
+      "usage": {
+        "promptTokens": 5423,
+        "completionTokens": 2356,
+        "reasoningTokens": 0,
+        "cachedTokens": 3728,
+        "reportedCost": null,
+        "costAtListPrices": 0.0273228,
+        "estimatedCost": 0.0273228,
+        "inputTokens": 1695,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 3728,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0276956,
+      "conservativeCharge": 0.04082925,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"ilo-content-calc-bare\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The content only names the topic \\\"Chain rule.\\\" It does not show what is applied (no worked composite functions or differentiation steps), so it does not reach the Apply level the ILO needs.\",\"sourceQuote\":\"Apply the chain rule to differentiate composite functions.\",\"targetQuote\":\"Chain rule.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Remember\",\"draft\":\"Chain rule: statement and notation; identifying outer and inner functions; worked examples differentiating composite functions (polynomial, trigonometric, exponential and radical) step by step; common errors.\"},{\"id\":\"ilo-content-calc-narrow-audience\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The content is on the chain rule, but it uses only Formula 1 racing telemetry and assumes prior racing experience. That is a narrow background and excludes diverse learners. It also does not show differentiating general composite functions.\",\"sourceQuote\":\"Apply the chain rule to differentiate composite functions.\",\"targetQuote\":\"use only Formula 1 racing telemetry and assume prior racing experience\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"Chain rule examples differentiating composite functions drawn from varied contexts (for example motion, cost, heat transfer, and pure algebraic functions), with no prior specialized experience assumed.\"},{\"id\":\"ilo-content-calc-unrelated\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The content, the history of the Roman Empire, has nothing to do with the chain rule or differentiating composite functions. It is in the wrong subject for this course.\",\"sourceQuote\":\"Apply the chain rule to differentiate composite functions.\",\"targetQuote\":\"History of the Roman Empire.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"N/A\",\"draft\":\"Chain rule: statement and notation; identifying outer and inner functions; worked examples differentiating composite functions step by step; common errors.\"},{\"id\":\"value-calc-integrated\",\"label\":\"ALIGNED\",\"explanation\":\"Compassion is named and tied to coaching classmates through the chain-rule problem set so all can apply it.\",\"sourceQuote\":\"Pair problem solving\",\"targetQuote\":\"students coach a classmate through the chain-rule problem set\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\"},{\"id\":\"value-calc-bare\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The value is named but is a bare label. It does not say what students do or decide in this lesson (chain-rule worked examples, pair problem solving, quiz) to reach the ILO.\",\"sourceQuote\":\"Pair problem solving\",\"targetQuote\":\"Compassion\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"N/A\",\"draft\":\"Compassion: during pair problem solving, students patiently coach a partner through chain-rule problems so both can apply the rule to composite functions before the quiz.\"},{\"id\":\"value-calc-unconnected\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"Missionary Spirit is named, but it is a bare label with no link to the lesson. It does not say what students do in the chain-rule examples, pair work or quiz, so it does not show how the value helps reach the ILO.\",\"sourceQuote\":\"Pair problem solving\",\"targetQuote\":\"Missionary Spirit\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"N/A\",\"draft\":\"Compassion: during pair problem solving, students coach a partner through chain-rule problems so both can apply the rule to composite functions, and share their solutions with the class to help others learn.\"},{\"id\":\"desc-calc-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"The description names the main plan topics and engineering applications without adding anything the plan lacks.\",\"sourceQuote\":\"Optimization problems in engineering\",\"targetQuote\":\"functions, limits and continuity, the derivative and its rules\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"N/A\",\"draft\":\"\"},{\"id\":\"desc-calc-generic\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The description is generic and would fit any course. It names none of the plan's topics: limits, continuity, derivatives, rules, related rates, optimization, curve sketching.\",\"sourceQuote\":\"Week 3: The derivative; differentiation rules\",\"targetQuote\":\"introduces students to important concepts and prepares them for further study\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"N/A\",\"draft\":\"This course covers functions, limits and continuity, the derivative and its rules (including the chain rule and implicit differentiation), higher-order derivatives, related rates, optimization problems and curve sketching, with applications to engineering problems.\"},{\"id\":\"desc-calc-other-subject\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The description is about ancient Rome, while the plan teaches functions, limits, continuity and derivatives. It is the wrong subject.\",\"sourceQuote\":\"Week 1: Functions and graphs; limits of a function\",\"targetQuote\":\"history, culture and art of ancient Rome\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"N/A\",\"draft\":\"This course covers functions and graphs, limits and limit laws, continuity, and the derivative with its differentiation rules.\"},{\"id\":\"desc-calc-too-narrow\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The description covers only limits and continuity. It omits major blocks of the plan: the derivative and differentiation rules, chain rule and implicit differentiation, higher-order derivatives, related rates, and optimization in engineering.\",\"sourceQuote\":\"Week 6: Optimization problems in engineering\",\"targetQuote\":\"This course covers limits and continuity.\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"N/A\",\"draft\":\"This course covers functions, limits and continuity, the derivative and its differentiation rules, the chain rule and implicit differentiation, higher-order derivatives, related rates and optimization problems in engineering.\"},{\"id\":\"ref-calc-relevant\",\"label\":\"ALIGNED\",\"explanation\":\"A calculus text on limits, derivatives and applications supports the weekly topics.\",\"sourceQuote\":\"Chapters on limits, derivatives and their applications.\",\"targetQuote\":\"Week 3: The derivative; differentiation rules\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"N/A\",\"draft\":\"\"},{\"id\":\"ref-calc-older-foundational\",\"label\":\"ALIGNED\",\"explanation\":\"The analysis text covers limits, continuity and differentiation, matching the listed weeks. It is older and more advanced, but it is still relevant.\",\"sourceQuote\":\"A classic text on limits, continuity and differentiation.\",\"targetQuote\":\"Week 2: Continuity\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"N/A\",\"draft\":\"\"}]}"
+    },
+    {
+      "n": 9,
+      "ids": [
+        "ref-calc-unrelated"
+      ],
+      "status": 200,
+      "ms": 2235,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTF6iwME35BnEFvBGsa9",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.21238525,
+      "usage": {
+        "promptTokens": 3951,
+        "completionTokens": 222,
+        "reasoningTokens": 0,
+        "cachedTokens": 3728,
+        "reportedCost": null,
+        "costAtListPrices": 0.0030388,
+        "estimatedCost": 0.0030388,
+        "inputTokens": 223,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 3728,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0034116,
+      "conservativeCharge": 0.01330725,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"ref-calc-unrelated\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The page is about cooking with garden herbs, which has nothing to do with differential calculus. It cannot support the weekly topics on limits of a function, the derivative or differentiation rules, so it cannot support the course.\",\"sourceQuote\":\"Cooking with herbs\",\"targetQuote\":\"Limits of a function\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"N/A\",\"draft\":\"Replace this reference with a calculus text or page covering limits, derivatives and differentiation rules, for example a university-level differential calculus textbook chapter.\"}]}"
+    },
+    {
+      "n": 10,
+      "ids": [
+        "clo-po-prog-aligned",
+        "clo-po-prog-lower-level",
+        "clo-po-prog-two-skills",
+        "clo-po-prog-interdisciplinary",
+        "clo-ega-aligned",
+        "clo-ega-unrelated",
+        "ilo-clo-prog-aligned",
+        "ilo-activity-prog-practises",
+        "ilo-assess-prog-aligned",
+        "ilo-assess-prog-mcq-for-design",
+        "ilo-assess-named-only",
+        "ilo-assess-mcq-for-understand"
+      ],
+      "status": 200,
+      "ms": 12921,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTF6tU5xfnEbKKWMJF3k",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.22006325,
+      "usage": {
+        "promptTokens": 4906,
+        "completionTokens": 2067,
+        "reasoningTokens": 0,
+        "cachedTokens": 3728,
+        "reportedCost": null,
+        "costAtListPrices": 0.0233988,
+        "estimatedCost": 0.0233988,
+        "inputTokens": 1178,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 3728,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0237716,
+      "conservativeCharge": 0.0362285,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"clo-po-prog-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"CLO has design and implement of programs, at Create level, matching the PO.\",\"sourceQuote\":\"Design and implement computing-based solutions\",\"targetQuote\":\"Design, implement and test object-oriented programs\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Create\",\"draft\":\"\"},{\"id\":\"clo-po-prog-lower-level\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The CLO only asks to list keywords (Remember), while the PO asks for design and evaluate (Create/Evaluate). Neither verb appears, and the object (keywords of a language) is not computing solutions for real problems.\",\"sourceQuote\":\"Design and evaluate computing solutions for real problems.\",\"targetQuote\":\"List the keywords of the programming language.\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Remember\",\"draft\":\"Design and evaluate object-oriented program solutions for real problems, using the constructs of the programming language.\"},{\"id\":\"clo-po-prog-two-skills\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The CLO shows design of a program solution, but the PO's second skill, communicating solutions effectively to technical and non-technical audiences, is missing.\",\"sourceQuote\":\"communicate them effectively to technical and non-technical audiences\",\"targetQuote\":\"Design a program solution for a given problem.\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Create\",\"draft\":\"Design a program solution for a given problem and communicate it effectively to technical and non-technical audiences through documentation and a demonstration.\"},{\"id\":\"clo-po-prog-interdisciplinary\",\"label\":\"ALIGNED\",\"explanation\":\"CLO evaluates ethical and social implications of software on users, which matches analyzing computing's impact on individuals and society at an equal or higher level.\",\"sourceQuote\":\"Analyze the impact of computing on individuals\",\"targetQuote\":\"Evaluate the ethical and social implications of a software system\",\"sourceBloom\":\"Analyze\",\"targetBloom\":\"Evaluate\",\"draft\":\"\"},{\"id\":\"clo-ega-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"Analyzing alternatives and justifying a choice shows critical and creative thinking.\",\"sourceQuote\":\"Critical and Creative thinker\",\"targetQuote\":\"Analyze alternative designs and justify the selection\",\"sourceBloom\":\"Analyze\",\"targetBloom\":\"Evaluate\",\"draft\":\"\"},{\"id\":\"clo-ega-unrelated\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"Reciting institutional history is Remember level, has no professional competence in programming, and its subject is unrelated to the course.\",\"sourceQuote\":\"Competent Professional\",\"targetQuote\":\"Recite the history of the institution.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Remember\",\"draft\":\"Develop and test object-oriented programs that meet professional standards of correctness and code quality for given problems.\"},{\"id\":\"ilo-clo-prog-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"Implementing an inheritance hierarchy is a smaller step of the CLO's implement component, in the same subject.\",\"sourceQuote\":\"implement and test object-oriented programs\",\"targetQuote\":\"Implement a class hierarchy using inheritance\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Apply\",\"draft\":\"\"},{\"id\":\"ilo-activity-prog-practises\",\"label\":\"ALIGNED\",\"explanation\":\"Students code a class hierarchy in lab, practising implementation with feedback.\",\"sourceQuote\":\"Implement a class hierarchy using inheritance\",\"targetQuote\":\"Students code a class hierarchy in the laboratory\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\"},{\"id\":\"ilo-assess-prog-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"The project requires an ER diagram and normalized schema, scored by rubric, which is evidence of design.\",\"sourceQuote\":\"Design a normalized database schema\",\"targetQuote\":\"submit an entity-relationship diagram and a normalized schema\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Create\",\"draft\":\"\"},{\"id\":\"ilo-assess-prog-mcq-for-design\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"A multiple-choice quiz on terms collects recall (Remember) evidence only. It does not show design, the schema being produced, or normalization applied to a scenario.\",\"sourceQuote\":\"Design a normalized database schema for a given scenario.\",\"targetQuote\":\"Multiple-choice quiz on database terms.\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Remember\",\"draft\":\"Project: students design and submit an entity-relationship diagram and a normalized schema for an assigned scenario, scored with a rubric.\"},{\"id\":\"ilo-assess-named-only\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The task is only named 'Quiz'. It does not say what is asked or produced, nor that students explain recursion, such as how a base case and recursive case work.\",\"sourceQuote\":\"Explain the concept of recursion.\",\"targetQuote\":\"Quiz\",\"sourceBloom\":\"Understand\",\"targetBloom\":\"N/A\",\"draft\":\"Quiz: students answer short-answer questions explaining recursion, including the base case and recursive case, and trace a simple recursive method.\"},{\"id\":\"ilo-assess-mcq-for-understand\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"Multiple choice can support Understand, but the task names only 'concepts' and does not state that stacks and queues are compared. The describe-the-difference evidence is not clear.\",\"sourceQuote\":\"Describe the difference between a stack and a queue.\",\"targetQuote\":\"Multiple-choice quiz on data structure concepts.\",\"sourceBloom\":\"Understand\",\"targetBloom\":\"Understand\",\"draft\":\"Multiple-choice quiz on stacks and queues, with items asking students to identify the difference in ordering (LIFO vs FIFO) and the operations of each, plus a short written item describing the difference.\"}]}"
+    },
+    {
+      "n": 11,
+      "ids": [
+        "clo-po-nurs-aligned",
+        "clo-po-nurs-unrelated",
+        "ilo-activity-nurs-practises",
+        "ilo-assess-nurs-knowledge-for-skill"
+      ],
+      "status": 200,
+      "ms": 5597,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTF7qrLyiyo5k3q4M7yq",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.21484925,
+      "usage": {
+        "promptTokens": 4270,
+        "completionTokens": 866,
+        "reasoningTokens": 0,
+        "cachedTokens": 3728,
+        "reportedCost": null,
+        "costAtListPrices": 0.0101168,
+        "estimatedCost": 0.0101168,
+        "inputTokens": 542,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 3728,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0104896,
+      "conservativeCharge": 0.0212685,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"clo-po-nurs-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"The CLO performs nursing procedures safely using the nursing process, matching the PO's safe care with the nursing process at an Apply level.\",\"sourceQuote\":\"Provide safe, quality nursing care to individuals using the nursing process\",\"targetQuote\":\"Perform basic nursing procedures safely using the nursing process\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\"},{\"id\":\"clo-po-nurs-unrelated\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The CLO is about calculus. It has no nursing care verb, no safety or nursing process, and the wrong subject, so it fails tests 1 and 3. It also does not belong to this nursing course. The draft restores the course's own CLO.\",\"sourceQuote\":\"Provide safe, quality nursing care to individuals using the nursing process.\",\"targetQuote\":\"Compute the derivative of polynomial functions.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"Perform basic nursing procedures safely using the nursing process on a simulated patient.\"},{\"id\":\"ilo-activity-nurs-practises\",\"label\":\"ALIGNED\",\"explanation\":\"Students do a return demonstration of blood pressure measurement, practising the verb 'demonstrate' on the same subject.\",\"sourceQuote\":\"Demonstrate the correct procedure for taking blood pressure\",\"targetQuote\":\"Return demonstration of blood pressure measurement on a partner\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\"},{\"id\":\"ilo-assess-nurs-knowledge-for-skill\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The ILO asks students to perform hand hygiene with correct technique (Apply). A written exam on the steps only collects recall or understanding evidence. It does not show that students can perform the technique, so it fails tests 1 and 2. The subject is right, but the product is a written answer, not an observed performance.\",\"sourceQuote\":\"Perform hand hygiene using the correct technique.\",\"targetQuote\":\"Written exam on the steps of hand hygiene.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Remember\",\"draft\":\"Return demonstration of hand hygiene in the skills laboratory, scored by the instructor with a checklist of the correct technique (palm-to-palm, between fingers, thumbs, fingertips, 20 seconds, drying). A short written quiz on the steps supports it.\"}]}"
+    }
+  ],
+  "stopped": null,
+  "isolation": {
+    "dataModulesLoaded": [],
+    "processEnvStageFlags": []
+  }
+}

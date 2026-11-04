@@ -1,0 +1,1792 @@
+[
+  {
+    "rule": "T-01",
+    "mode": "positive",
+    "check": "nonEmpty",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-01",
+    "mode": "negative",
+    "check": "nonEmpty",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-01:meta.code",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-01",
+        "severity": "blocking",
+        "step": "info",
+        "path": "meta.code",
+        "message": "Course code (I) is empty.",
+        "evidence": {}
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-01",
+    "mode": "boundary",
+    "check": "nonEmpty",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-02",
+    "mode": "positive",
+    "check": "nonEmpty",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-02",
+    "mode": "negative",
+    "check": "nonEmpty",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-02:meta.title",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-02",
+        "severity": "blocking",
+        "step": "info",
+        "path": "meta.title",
+        "message": "Course title (II) is empty.",
+        "evidence": {}
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-02",
+    "mode": "boundary",
+    "check": "nonEmpty",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-03",
+    "mode": "positive",
+    "check": "nonEmpty",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-03",
+    "mode": "negative",
+    "check": "nonEmpty",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-03:meta.program",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-03",
+        "severity": "blocking",
+        "step": "info",
+        "path": "meta.program",
+        "message": "Program is empty.",
+        "evidence": {}
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-03",
+    "mode": "boundary",
+    "check": "nonEmpty",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-04",
+    "mode": "positive",
+    "check": "nonEmpty",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-04",
+    "mode": "negative",
+    "check": "nonEmpty",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-04:description",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-04",
+        "severity": "blocking",
+        "step": "info",
+        "path": "description",
+        "message": "Course description (III) is empty.",
+        "evidence": {}
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-04",
+    "mode": "boundary",
+    "check": "nonEmpty",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-05",
+    "mode": "positive",
+    "check": "nonEmpty",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-05",
+    "mode": "negative",
+    "check": "nonEmpty",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-05:meta.prereq",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-05",
+        "severity": "blocking",
+        "step": "info",
+        "path": "meta.prereq",
+        "message": "Pre-requisite (IV) is empty.",
+        "evidence": {}
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-05",
+    "mode": "boundary",
+    "check": "nonEmpty",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-06",
+    "mode": "positive",
+    "check": "nonEmpty",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-06",
+    "mode": "negative",
+    "check": "nonEmpty",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-06:meta.lecture",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-06",
+        "severity": "blocking",
+        "step": "info",
+        "path": "meta.lecture",
+        "message": "Lecture and laboratory units (V) are not both entered.",
+        "evidence": {
+          "paths": [
+            "meta.lecture",
+            "meta.lab"
+          ]
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-06",
+    "mode": "boundary",
+    "check": "nonEmpty",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-07",
+    "mode": "positive",
+    "check": "nonEmpty",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-07",
+    "mode": "negative",
+    "check": "nonEmpty",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-07:clos",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-07",
+        "severity": "blocking",
+        "step": "clos",
+        "path": "clos",
+        "message": "There are no course learning outcomes (VI).",
+        "evidence": {
+          "have": 0,
+          "need": 1
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-07",
+    "mode": "boundary",
+    "check": "nonEmpty",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-08",
+    "mode": "positive",
+    "check": "nonEmpty",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-08",
+    "mode": "negative",
+    "check": "nonEmpty",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-08:plan",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-08",
+        "severity": "blocking",
+        "step": "plan",
+        "path": "plan",
+        "message": "The Learning Plan (VII) has no lesson with a learning outcome (ILO).",
+        "evidence": {
+          "have": 0
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-08",
+    "mode": "boundary",
+    "check": "nonEmpty",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-09",
+    "mode": "positive",
+    "check": "equalsCatalog",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-09",
+    "mode": "negative",
+    "check": "equalsCatalog",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-09:catalog.vision",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-09",
+        "severity": "blocking",
+        "step": "clos",
+        "path": "catalog.vision",
+        "message": "The vision in this syllabus is not the school's current vision.",
+        "evidence": {
+          "field": "vision",
+          "stored": "\"A leading university of Gospel values.\"",
+          "current": "\"Different reference\""
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-09",
+    "mode": "boundary",
+    "check": "equalsCatalog",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-10",
+    "mode": "positive",
+    "check": "equalsCatalog",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-10",
+    "mode": "negative",
+    "check": "equalsCatalog",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-10:catalog.mission",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-10",
+        "severity": "blocking",
+        "step": "clos",
+        "path": "catalog.mission",
+        "message": "The mission in this syllabus is not the school's current mission.",
+        "evidence": {
+          "field": "mission",
+          "stored": "{\"lead\":\"Moved by the Spirit, we form learners to:\",\"items\":[\"exhibit academic competence\",\"serve the marginalized\"]}",
+          "current": "{\"lead\":\"Different reference\",\"items\":[\"exhibit academic competence\",\"serve the marginalized\"]}"
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-10",
+    "mode": "boundary",
+    "check": "equalsCatalog",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-11",
+    "mode": "positive",
+    "check": "equalsCatalog",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-11",
+    "mode": "negative",
+    "check": "equalsCatalog",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-11:catalog.egas",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-11",
+        "severity": "blocking",
+        "step": "clos",
+        "path": "catalog.egas",
+        "message": "The graduate attributes (EGAs) in this syllabus are not the program's current ones.",
+        "evidence": {
+          "field": "egas",
+          "stored": "[{\"no\":1,\"name\":\"Attribute 1\",\"short\":\"A1\"},{\"no\":2,\"name\":\"Attribute 2\",\"short\":\"A2\"},{\"no\":3,\"name\":\"Attribute 3\",\"short\":\"A3\"},{\"no\":4,\"name\":\"Attribute 4\",\"",
+          "current": "[{\"no\":1,\"name\":\"Different reference\",\"short\":\"A1\"},{\"no\":2,\"name\":\"Attribute 2\",\"short\":\"A2\"},{\"no\":3,\"name\":\"Attribute 3\",\"short\":\"A3\"},{\"no\":4,\"name\":\"Attrib"
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-11",
+    "mode": "boundary",
+    "check": "equalsCatalog",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-12",
+    "mode": "positive",
+    "check": "equalsCatalog",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-12",
+    "mode": "negative",
+    "check": "equalsCatalog",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-12:catalog.pos",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-12",
+        "severity": "blocking",
+        "step": "clos",
+        "path": "catalog.pos",
+        "message": "The program outcomes (POs) in this syllabus are not the program's current ones.",
+        "evidence": {
+          "field": "pos",
+          "stored": "[{\"no\":1,\"short\":\"PO 1\",\"text\":\"Program outcome 1\",\"egas\":[1]},{\"no\":2,\"short\":\"PO 2\",\"text\":\"Program outcome 2\",\"egas\":[2]},{\"no\":3,\"short\":\"PO 3\",\"text\":\"Prog",
+          "current": "[{\"no\":1,\"short\":\"PO 1\",\"text\":\"Different reference\",\"egas\":[1]},{\"no\":2,\"short\":\"PO 2\",\"text\":\"Program outcome 2\",\"egas\":[2]},{\"no\":3,\"short\":\"PO 3\",\"text\":\"Pr"
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-12",
+    "mode": "boundary",
+    "check": "equalsCatalog",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-13",
+    "mode": "positive",
+    "check": "tagsResolve",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-13",
+    "mode": "negative",
+    "check": "tagsResolve",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-13:plan[0].ilos[0]",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-13",
+        "severity": "blocking",
+        "step": "plan",
+        "path": "plan[0].ilos[0]",
+        "message": "Week 1, ILO1 has no CLO tag.",
+        "evidence": {}
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-13",
+    "mode": "boundary",
+    "check": "tagsResolve",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-14",
+    "mode": "positive",
+    "check": "tagsResolve",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-14",
+    "mode": "negative",
+    "check": "tagsResolve",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-14:plan[0].ilos[0].tags[0]",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-14",
+        "severity": "blocking",
+        "step": "plan",
+        "path": "plan[0].ilos[0].tags[0]",
+        "message": "Week 1, ILO1 has a tag that no longer resolves: clo:missing.",
+        "evidence": {
+          "tag": "clo:missing"
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-14",
+    "mode": "boundary",
+    "check": "tagsResolve",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-15",
+    "mode": "positive",
+    "check": "columnsFilled",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-15",
+    "mode": "negative",
+    "check": "columnsFilled",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-15:plan[0]",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-15",
+        "severity": "blocking",
+        "step": "plan",
+        "path": "plan[0]",
+        "message": "Learning Plan row 1 is missing the column: Suggested Learning Activities.",
+        "evidence": {
+          "missing": [
+            "Suggested Learning Activities"
+          ]
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-15",
+    "mode": "boundary",
+    "check": "columnsFilled",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-16",
+    "mode": "positive",
+    "check": "columnsFilled",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-16",
+    "mode": "negative",
+    "check": "columnsFilled",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-16:plan[0]",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-16",
+        "severity": "major",
+        "step": "plan",
+        "path": "plan[0]",
+        "message": "Week 1 has nothing in: Course Contents.",
+        "evidence": {
+          "empty": [
+            "contents"
+          ]
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-16",
+    "mode": "boundary",
+    "check": "columnsFilled",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-17",
+    "mode": "positive",
+    "check": "iloNumbering",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-17",
+    "mode": "negative",
+    "check": "iloNumbering",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-17:plan[0].ilos",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-17",
+        "severity": "minor",
+        "step": "plan",
+        "path": "plan[0].ilos",
+        "message": "Week 1 has an empty ILO before a filled one, so the printed numbering has a gap.",
+        "evidence": {}
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-17",
+    "mode": "boundary",
+    "check": "iloNumbering",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-18",
+    "mode": "positive",
+    "check": "weeksOrder",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-18",
+    "mode": "negative",
+    "check": "weeksOrder",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-18:plan[1]",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-18",
+        "severity": "minor",
+        "step": "plan",
+        "path": "plan[1]",
+        "message": "Learning Plan row 2 comes before an earlier week.",
+        "evidence": {
+          "row": 2
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-18",
+    "mode": "boundary",
+    "check": "weeksOrder",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-19",
+    "mode": "positive",
+    "check": "numberedRequirements",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-19",
+    "mode": "negative",
+    "check": "numberedRequirements",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-19:reqs",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-19",
+        "severity": "blocking",
+        "step": "reqs",
+        "path": "reqs",
+        "message": "Course requirements (VIII): 2 listed, at least 3 needed.",
+        "evidence": {
+          "have": 2,
+          "need": 3
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-19",
+    "mode": "boundary",
+    "check": "numberedRequirements",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-20",
+    "mode": "positive",
+    "check": "numberedRequirements",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-20",
+    "mode": "negative",
+    "check": "numberedRequirements",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-20:reqs[0]",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-20",
+        "severity": "minor",
+        "step": "reqs",
+        "path": "reqs[0]",
+        "message": "Requirement \"1. Manually numbered\" starts with its own number; the form numbers the list for you.",
+        "evidence": {}
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-20",
+    "mode": "boundary",
+    "check": "numberedRequirements",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-21",
+    "mode": "positive",
+    "check": "referenceGroups",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-21",
+    "mode": "negative",
+    "check": "referenceGroups",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-21:refs.books",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-21",
+        "severity": "blocking",
+        "step": "refs",
+        "path": "refs.books",
+        "message": "References (A. Books) has no entries and is not marked not applicable.",
+        "evidence": {}
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-21",
+    "mode": "boundary",
+    "check": "referenceGroups",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-22",
+    "mode": "positive",
+    "check": "referenceGroups",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-22",
+    "mode": "negative",
+    "check": "referenceGroups",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-22:refs.books",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-22",
+        "severity": "minor",
+        "step": "refs",
+        "path": "refs.books",
+        "message": "References (A. Books) is marked not applicable but has entries.",
+        "evidence": {}
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-22",
+    "mode": "boundary",
+    "check": "referenceGroups",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-23",
+    "mode": "positive",
+    "check": "nonEmpty",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-23",
+    "mode": "negative",
+    "check": "nonEmpty",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-23:grading.rows",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-23",
+        "severity": "blocking",
+        "step": "grade",
+        "path": "grading.rows",
+        "message": "The Grading System (X) has no components.",
+        "evidence": {
+          "have": 0,
+          "need": 1
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-23",
+    "mode": "boundary",
+    "check": "nonEmpty",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-24",
+    "mode": "positive",
+    "check": "gradingTotal",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-24",
+    "mode": "negative",
+    "check": "gradingTotal",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-24:grading.rows",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-24",
+        "severity": "blocking",
+        "step": "grade",
+        "path": "grading.rows",
+        "message": "The grading components total 99%, not 100%.",
+        "evidence": {
+          "total": 99,
+          "need": 100
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-24",
+    "mode": "boundary",
+    "check": "gradingTotal",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-25",
+    "mode": "positive",
+    "check": "gradingFormula",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-25",
+    "mode": "negative",
+    "check": "gradingFormula",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-25:grading.override",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-25",
+        "severity": "blocking",
+        "step": "grade",
+        "path": "grading.override",
+        "message": "The override formulas cannot be empty.",
+        "evidence": {}
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-25",
+    "mode": "boundary",
+    "check": "gradingFormula",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-26",
+    "mode": "positive",
+    "check": "gradingFormula",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-26",
+    "mode": "negative",
+    "check": "gradingFormula",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-26:grading.override.final",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-26",
+        "severity": "major",
+        "step": "grade",
+        "path": "grading.override.final",
+        "message": "The Final Rating formula does not mention Prelim Grade, Midterm Grade.",
+        "evidence": {
+          "missing": [
+            "Prelim Grade",
+            "Midterm Grade"
+          ]
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-26",
+    "mode": "boundary",
+    "check": "gradingFormula",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-27",
+    "mode": "positive",
+    "check": "signoffRoles",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-27",
+    "mode": "negative",
+    "check": "signoffRoles",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "T-27:signoff",
+        "area": "template",
+        "source": "rule",
+        "ruleId": "T-27",
+        "severity": "minor",
+        "step": "review",
+        "path": "signoff",
+        "message": "The sign-off block is not as the form requires: the preparer's name is missing.",
+        "evidence": {}
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "T-27",
+    "mode": "boundary",
+    "check": "signoffRoles",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "C-01",
+    "mode": "positive",
+    "check": "textLength",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "C-01",
+    "mode": "negative",
+    "check": "textLength",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "C-01:description",
+        "area": "completeness",
+        "source": "rule",
+        "ruleId": "C-01",
+        "severity": "major",
+        "step": "info",
+        "path": "description",
+        "message": "The course description is 4 words; about 30 are expected.",
+        "evidence": {
+          "words": 4,
+          "need": 30
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "C-01",
+    "mode": "boundary",
+    "check": "textLength",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "C-02",
+    "mode": "positive",
+    "check": "textLength",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "C-02",
+    "mode": "negative",
+    "check": "textLength",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "C-02:plan[0].ilos[0]",
+        "area": "completeness",
+        "source": "rule",
+        "ruleId": "C-02",
+        "severity": "minor",
+        "step": "plan",
+        "path": "plan[0].ilos[0]",
+        "message": "Week 1, ILO1 is only 1 word; an ILO states what the student will do.",
+        "evidence": {
+          "words": 1,
+          "need": 4
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "C-02",
+    "mode": "boundary",
+    "check": "textLength",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "C-03",
+    "mode": "positive",
+    "check": "textLength",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "C-03",
+    "mode": "negative",
+    "check": "textLength",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "C-03:clos[0]",
+        "area": "completeness",
+        "source": "rule",
+        "ruleId": "C-03",
+        "severity": "minor",
+        "step": "clos",
+        "path": "clos[0]",
+        "message": "CLO 1 has no statement.",
+        "evidence": {}
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "C-03",
+    "mode": "boundary",
+    "check": "textLength",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "C-04",
+    "mode": "positive",
+    "check": "referenceAge",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "C-04",
+    "mode": "negative",
+    "check": "referenceAge",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "C-04:refs",
+        "area": "completeness",
+        "source": "rule",
+        "ruleId": "C-04",
+        "severity": "minor",
+        "step": "refs",
+        "path": "refs",
+        "message": "There are 1 references; at least 3 are expected.",
+        "evidence": {
+          "have": 1,
+          "need": 3
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "C-04",
+    "mode": "boundary",
+    "check": "referenceAge",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "P-01",
+    "mode": "positive",
+    "check": "cloConventions",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "P-01",
+    "mode": "negative",
+    "check": "cloConventions",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "P-01:clos[0].egas",
+        "area": "co_po",
+        "source": "rule",
+        "ruleId": "P-01",
+        "severity": "blocking",
+        "step": "clos",
+        "path": "clos[0].egas",
+        "message": "CLO 1 is not tagged with a valid graduate attribute (EGA).",
+        "evidence": {
+          "egas": []
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "P-01",
+    "mode": "boundary",
+    "check": "cloConventions",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "P-02",
+    "mode": "positive",
+    "check": "cloConventions",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "P-02",
+    "mode": "negative",
+    "check": "cloConventions",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "P-02:clos[0].pos",
+        "area": "co_po",
+        "source": "rule",
+        "ruleId": "P-02",
+        "severity": "blocking",
+        "step": "clos",
+        "path": "clos[0].pos",
+        "message": "CLO 1 is not tagged with a valid program outcome (PO).",
+        "evidence": {
+          "pos": []
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "P-02",
+    "mode": "boundary",
+    "check": "cloConventions",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "P-03",
+    "mode": "positive",
+    "check": "cloConventions",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "P-03",
+    "mode": "negative",
+    "check": "cloConventions",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "P-03:clos[0].egas",
+        "area": "co_po",
+        "source": "rule",
+        "ruleId": "P-03",
+        "severity": "major",
+        "step": "clos",
+        "path": "clos[0].egas",
+        "message": "CLO 1 is tagged PO 2, which maps to EGA 2, but EGA 2 is not tagged.",
+        "evidence": {
+          "missing": [
+            {
+              "po": "2",
+              "ega": 2
+            }
+          ]
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "P-03",
+    "mode": "boundary",
+    "check": "cloConventions",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "P-04",
+    "mode": "positive",
+    "check": "cloConventions",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "P-04",
+    "mode": "negative",
+    "check": "cloConventions",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "P-04:clos[0]",
+        "area": "co_po",
+        "source": "rule",
+        "ruleId": "P-04",
+        "severity": "minor",
+        "step": "clos",
+        "path": "clos[0]",
+        "message": "CLO 1's tags would not print as [EGA 1&4] [PO 1, 5]: numbers must be unique and in order.",
+        "evidence": {}
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "P-04",
+    "mode": "boundary",
+    "check": "cloConventions",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "P-05",
+    "mode": "positive",
+    "check": "cloCoverage",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "P-05",
+    "mode": "negative",
+    "check": "cloCoverage",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "P-05:clos[3]",
+        "area": "co_po",
+        "source": "rule",
+        "ruleId": "P-05",
+        "severity": "major",
+        "step": "plan",
+        "path": "clos[3]",
+        "message": "CLO 4 is not built by any ILO in the Learning Plan.",
+        "evidence": {}
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "P-05",
+    "mode": "boundary",
+    "check": "cloCoverage",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "A-01",
+    "mode": "positive",
+    "check": "columnsFilled",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "A-01",
+    "mode": "negative",
+    "check": "columnsFilled",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "A-01:plan[0].tasks",
+        "area": "assessment",
+        "source": "rule",
+        "ruleId": "A-01",
+        "severity": "major",
+        "step": "plan",
+        "path": "plan[0].tasks",
+        "message": "Week 1 has no assessment task.",
+        "evidence": {
+          "empty": [
+            "tasks"
+          ]
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "A-01",
+    "mode": "boundary",
+    "check": "columnsFilled",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "A-02",
+    "mode": "positive",
+    "check": "cloCoverage",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "A-02",
+    "mode": "negative",
+    "check": "cloCoverage",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "A-02:clos[0]",
+        "area": "assessment",
+        "source": "rule",
+        "ruleId": "A-02",
+        "severity": "major",
+        "step": "plan",
+        "path": "clos[0]",
+        "message": "CLO 1 is not assessed: no week that builds it has an assessment task.",
+        "evidence": {}
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "A-02",
+    "mode": "boundary",
+    "check": "cloCoverage",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "A-03",
+    "mode": "positive",
+    "check": "examRowsPerTerm",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "A-03",
+    "mode": "negative",
+    "check": "examRowsPerTerm",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "A-03:plan.exams.midterm",
+        "area": "assessment",
+        "source": "rule",
+        "ruleId": "A-03",
+        "severity": "major",
+        "step": "plan",
+        "path": "plan.exams.midterm",
+        "message": "There is no Midterm examination row in the Learning Plan.",
+        "evidence": {
+          "term": "midterm"
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "A-03",
+    "mode": "boundary",
+    "check": "examRowsPerTerm",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "A-04",
+    "mode": "positive",
+    "check": "gradingHasExam",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "A-04",
+    "mode": "negative",
+    "check": "gradingHasExam",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "A-04:grading.rows",
+        "area": "assessment",
+        "source": "rule",
+        "ruleId": "A-04",
+        "severity": "major",
+        "step": "grade",
+        "path": "grading.rows",
+        "message": "The grading system has no examination component.",
+        "evidence": {}
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "A-04",
+    "mode": "boundary",
+    "check": "gradingHasExam",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "H-01",
+    "mode": "positive",
+    "check": "contactUnits",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "H-01",
+    "mode": "negative",
+    "check": "contactUnits",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "H-01:meta.lecture",
+        "area": "contact_hours",
+        "source": "rule",
+        "ruleId": "H-01",
+        "severity": "major",
+        "step": "info",
+        "path": "meta.lecture",
+        "message": "The credit units are not usable: lecture 0, laboratory 0.",
+        "evidence": {
+          "hoursPerWeek": null,
+          "termHours": null
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "H-01",
+    "mode": "boundary",
+    "check": "contactUnits",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "H-02",
+    "mode": "positive",
+    "check": "weeksCover",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "H-02",
+    "mode": "negative",
+    "check": "weeksCover",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "H-02:plan",
+        "area": "contact_hours",
+        "source": "rule",
+        "ruleId": "H-02",
+        "severity": "major",
+        "step": "plan",
+        "path": "plan",
+        "message": "The plan covers 17 of 18 weeks, so the 90 contact hours (5 a week) are not all planned.",
+        "evidence": {
+          "planned": 17,
+          "expected": 18,
+          "hoursPerWeek": 5,
+          "termHours": 90
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "H-02",
+    "mode": "boundary",
+    "check": "weeksCover",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "H-03",
+    "mode": "positive",
+    "check": "weeksCover",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "H-03",
+    "mode": "negative",
+    "check": "weeksCover",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "H-03:plan[0].week",
+        "area": "contact_hours",
+        "source": "rule",
+        "ruleId": "H-03",
+        "severity": "major",
+        "step": "plan",
+        "path": "plan[0].week",
+        "message": "Row 1 has a week that is not within 1 to 18: \"19\".",
+        "evidence": {
+          "week": "19"
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "H-03",
+    "mode": "boundary",
+    "check": "weeksCover",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "H-04",
+    "mode": "positive",
+    "check": "weeksCover",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "H-04",
+    "mode": "negative",
+    "check": "weeksCover",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "H-04:plan",
+        "area": "contact_hours",
+        "source": "rule",
+        "ruleId": "H-04",
+        "severity": "minor",
+        "step": "plan",
+        "path": "plan",
+        "message": "Week 1 appears in more than one row.",
+        "evidence": {
+          "weeks": [
+            1
+          ]
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "H-04",
+    "mode": "boundary",
+    "check": "weeksCover",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "R-01",
+    "mode": "positive",
+    "check": "referenceAge",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "R-01",
+    "mode": "negative",
+    "check": "referenceAge",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "R-01:refs",
+        "area": "reference_currency",
+        "source": "rule",
+        "ruleId": "R-01",
+        "severity": "major",
+        "step": "refs",
+        "path": "refs",
+        "message": "There are no references.",
+        "evidence": {}
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "R-01",
+    "mode": "boundary",
+    "check": "referenceAge",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "R-02",
+    "mode": "positive",
+    "check": "referenceAge",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "R-02",
+    "mode": "negative",
+    "check": "referenceAge",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "R-02:refs.books.items[0]",
+        "area": "reference_currency",
+        "source": "rule",
+        "ruleId": "R-02",
+        "severity": "minor",
+        "step": "refs",
+        "path": "refs.books.items[0]",
+        "message": "A reference has no year: \"A reference without publication date.\".",
+        "evidence": {
+          "reference": "A reference without publication date."
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "R-02",
+    "mode": "boundary",
+    "check": "referenceAge",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "R-03",
+    "mode": "positive",
+    "check": "referenceAge",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  },
+  {
+    "rule": "R-03",
+    "mode": "negative",
+    "check": "referenceAge",
+    "expected": "Rule finding",
+    "actual": [
+      {
+        "id": "R-03:refs.books.items[0]",
+        "area": "reference_currency",
+        "source": "rule",
+        "ruleId": "R-03",
+        "severity": "major",
+        "step": "refs",
+        "path": "refs.books.items[0]",
+        "message": "A reference is 11 years old (2015); the limit is 10: \"Old, A. (2015). A reference. Publisher.\".",
+        "evidence": {
+          "year": 2015,
+          "age": 11,
+          "limit": 10
+        }
+      }
+    ],
+    "status": "PASS"
+  },
+  {
+    "rule": "R-03",
+    "mode": "boundary",
+    "check": "referenceAge",
+    "expected": "No finding for this rule",
+    "actual": [],
+    "status": "PASS"
+  }
+]

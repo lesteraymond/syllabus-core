@@ -1,0 +1,28 @@
+{
+  "scope": "Synthetic fixture through real local configuration; no server process or database exercised",
+  "provider": {
+    "provider": "anthropic",
+    "model": "claude-sonnet-5-5",
+    "configured": false,
+    "approved": false
+  },
+  "stages": {
+    "a": false,
+    "b": false,
+    "b3": false,
+    "b4": false,
+    "c1": false,
+    "c2": false,
+    "d1": false,
+    "d2": false
+  },
+  "alignmentStatus": "not_evaluated",
+  "failure": {
+    "kind": "not_configured",
+    "retryable": false
+  },
+  "reason": "Claude (the direct Anthropic API) is experimental and not approved for official checking on this server (SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL), so no AI request was sent; the coded rules ran.",
+  "codedChecks": 153,
+  "academicJudgements": 0,
+  "providerRequestAttempts": 0
+}

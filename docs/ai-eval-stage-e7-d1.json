@@ -1,0 +1,1073 @@
+{
+  "items": 17,
+  "runs": 1,
+  "answered": 17,
+  "invalid": 0,
+  "invalidRate": 0,
+  "notAttempted": 0,
+  "agreement": 0.882,
+  "falsePositiveRate": 0,
+  "falseNegativeRate": 0,
+  "counts": {
+    "clearAligned": 4,
+    "falsePositive": 0,
+    "clearNot": 9,
+    "falseNegative": 0
+  },
+  "confusion": {
+    "ALIGNED": {
+      "ALIGNED": 4,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "PARTIAL": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "FLAGGED": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 4,
+      "NOT_ALIGNED": 3,
+      "INSUFFICIENT_EVIDENCE": 2,
+      "invalid": 0
+    }
+  },
+  "partialAccuracy": null,
+  "approvalAccuracy": 1,
+  "byDiscipline": {
+    "computing": {
+      "items": 11,
+      "answered": 11,
+      "agree": 9,
+      "invalid": 0,
+      "agreement": 0.818
+    },
+    "engineering": {
+      "items": 6,
+      "answered": 6,
+      "agree": 6,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "byCategory": {
+    "clear-positive": {
+      "items": 2,
+      "answered": 2,
+      "agree": 2,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "name-only": {
+      "items": 1,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "generic": {
+      "items": 2,
+      "answered": 2,
+      "agree": 2,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "unrelated": {
+      "items": 2,
+      "answered": 2,
+      "agree": 2,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "clash": {
+      "items": 1,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "no-activity": {
+      "items": 1,
+      "answered": 1,
+      "agree": 0,
+      "invalid": 0,
+      "agreement": 0
+    },
+    "week-one-orientation": {
+      "items": 1,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "multiweek": {
+      "items": 1,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "ambiguous": {
+      "items": 1,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "supporting-with-evidence": {
+      "items": 3,
+      "answered": 3,
+      "agree": 3,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "supporting-without-evidence": {
+      "items": 1,
+      "answered": 1,
+      "agree": 0,
+      "invalid": 0,
+      "agreement": 0
+    },
+    "supporting-weak": {
+      "items": 1,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "stability": null,
+  "byType": {
+    "Value-use": {
+      "items": 12,
+      "answered": 12,
+      "agree": 11,
+      "invalid": 0,
+      "agreement": 0.917
+    },
+    "Value-map": {
+      "items": 5,
+      "answered": 5,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 0.8
+    }
+  },
+  "disagreements": [
+    {
+      "id": "vu-prog1-no-activity",
+      "type": "Value-use",
+      "accept": [
+        "PARTIALLY_ALIGNED",
+        "NOT_ALIGNED"
+      ],
+      "got": [
+        "INSUFFICIENT_EVIDENCE"
+      ]
+    },
+    {
+      "id": "vm-prog1-respect-no-evidence",
+      "type": "Value-map",
+      "accept": [
+        "PARTIALLY_ALIGNED",
+        "NOT_ALIGNED"
+      ],
+      "got": [
+        "INSUFFICIENT_EVIDENCE"
+      ]
+    }
+  ],
+  "structuredFields": {
+    "answers": 15,
+    "withFields": 15,
+    "missing": 0,
+    "malformed": 0,
+    "contradictory": 0,
+    "notAssessed": 0,
+    "perField": {
+      "valueUse": {
+        "assessed": 11,
+        "not_assessed": 0,
+        "missing": 0,
+        "malformed": 0,
+        "contradicted": 0,
+        "compared": 10,
+        "agree": 10
+      },
+      "carriedBy": {
+        "assessed": 11,
+        "not_assessed": 0,
+        "missing": 0,
+        "malformed": 0,
+        "contradicted": 0,
+        "compared": 1,
+        "agree": 1
+      },
+      "valueFit": {
+        "assessed": 11,
+        "not_assessed": 0,
+        "missing": 0,
+        "malformed": 0,
+        "contradicted": 0,
+        "compared": 6,
+        "agree": 6
+      },
+      "coreValue": {
+        "assessed": 4,
+        "not_assessed": 0,
+        "missing": 0,
+        "malformed": 0,
+        "contradicted": 0,
+        "compared": 4,
+        "agree": 4
+      },
+      "integration": {
+        "assessed": 4,
+        "not_assessed": 0,
+        "missing": 0,
+        "malformed": 0,
+        "contradicted": 0,
+        "compared": 4,
+        "agree": 4
+      }
+    },
+    "note": "Expectations are provisional. Only an assessed field is compared with them: a field that was not assessed, missing, malformed or in a self-contradictory answer is counted by its state, never as agreement. INSUFFICIENT_EVIDENCE answers are left out."
+  },
+  "model": "openrouter/minimax/minimax-m3.1-flash",
+  "promptVersion": "alignment-12d1-r7",
+  "dataset": {
+    "name": "stage-d1",
+    "version": "stage-d1-1",
+    "split": "all",
+    "reviewStatus": "unreviewed"
+  },
+  "retries": {
+    "batches": 5,
+    "requests": 6,
+    "invalidAnswers": 1,
+    "finalUnverified": 0,
+    "providerErrors": 0,
+    "notSent": 0,
+    "retryRate": 0.2,
+    "invalidAnswerRate": 0.167
+  },
+  "relationshipMetrics": {
+    "planned": 17,
+    "attempted": 17,
+    "neverAttempted": 0,
+    "verified": 17,
+    "recovered": 4,
+    "unresolved": 0,
+    "unresolvedRate": 0,
+    "coverage": 1,
+    "attemptedShare": 1,
+    "firstAttempt": {
+      "answered": 17,
+      "refused": 4,
+      "validationFailureRate": 0.2353,
+      "noAnswerFirst": 0
+    },
+    "rawResponseErrors": {
+      "answers": 6,
+      "invalidAnswers": 1,
+      "refusedJudgements": 4,
+      "requestsWithoutAnswer": 0
+    },
+    "aspectCoverage": {
+      "byType": {
+        "Value-use": {
+          "relationships": 12,
+          "baseVerified": 11,
+          "baseAccepted": 11,
+          "notRecorded": 0,
+          "fields": {
+            "valueUse": {
+              "assessed": 11,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "carriedBy": {
+              "assessed": 11,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "valueFit": {
+              "assessed": 11,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            }
+          }
+        },
+        "Value-map": {
+          "relationships": 5,
+          "baseVerified": 4,
+          "baseAccepted": 4,
+          "notRecorded": 0,
+          "fields": {
+            "coreValue": {
+              "assessed": 4,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "integration": {
+              "assessed": 4,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            }
+          }
+        }
+      },
+      "fieldsRequired": 41,
+      "fieldsAssessed": 41,
+      "rate": 1
+    }
+  },
+  "completion": {
+    "maxUnresolved": 0.2,
+    "unresolvedRate": 0,
+    "coverage": 1,
+    "stopped": null,
+    "state": "complete",
+    "usableForAgreement": true,
+    "reason": "every planned relationship was attempted; 0 of 17 remain unresolved (0%), within the 20% limit"
+  },
+  "schema": {
+    "minItems": false,
+    "emptyAnswers": 1,
+    "minItemsNotEnforced": false
+  },
+  "limits": {
+    "budget": 41,
+    "maxCost": 0.07,
+    "maxTransient": 3,
+    "maxUnproductive": 9,
+    "maxUnresolved": 0.2,
+    "minSample": 8,
+    "warnInvalid": 17,
+    "maxInvalid": null,
+    "accounting": "reconcile",
+    "maxTokens": "production (8192)"
+  },
+  "failures": [
+    {
+      "run": 1,
+      "course": "prog1",
+      "ids": [
+        "vu-prog1-clashes",
+        "vu-prog1-no-activity",
+        "vu-prog1-week1",
+        "vu-prog1-multiweek"
+      ],
+      "error": "AI omitted alignment judgements",
+      "code": "empty_answer",
+      "rejected": [
+        {
+          "id": "vu-prog1-clashes",
+          "reason": "not answered: the judgements list is empty",
+          "code": "empty_answer"
+        },
+        {
+          "id": "vu-prog1-no-activity",
+          "reason": "not answered: the judgements list is empty",
+          "code": "empty_answer"
+        },
+        {
+          "id": "vu-prog1-week1",
+          "reason": "not answered: the judgements list is empty",
+          "code": "empty_answer"
+        },
+        {
+          "id": "vu-prog1-multiweek",
+          "reason": "not answered: the judgements list is empty",
+          "code": "empty_answer"
+        }
+      ]
+    }
+  ],
+  "perItem": {
+    "vu-prog1-humility-review": [
+      "ALIGNED"
+    ],
+    "vu-prog1-name-only": [
+      "PARTIALLY_ALIGNED"
+    ],
+    "vu-prog1-generic": [
+      "PARTIALLY_ALIGNED"
+    ],
+    "vu-prog1-unrelated": [
+      "NOT_ALIGNED"
+    ],
+    "vu-prog1-clashes": [
+      "NOT_ALIGNED"
+    ],
+    "vu-prog1-no-activity": [
+      "INSUFFICIENT_EVIDENCE"
+    ],
+    "vu-prog1-week1": [
+      "ALIGNED"
+    ],
+    "vu-prog1-multiweek": [
+      "ALIGNED"
+    ],
+    "vu-syseng-community": [
+      "ALIGNED"
+    ],
+    "vu-syseng-interiority-generic": [
+      "PARTIALLY_ALIGNED"
+    ],
+    "vu-sensors-courage": [
+      "ALIGNED"
+    ],
+    "vu-sensors-silly": [
+      "NOT_ALIGNED"
+    ],
+    "vm-prog1-respect-supported": [
+      "ALIGNED"
+    ],
+    "vm-prog1-respect-no-evidence": [
+      "INSUFFICIENT_EVIDENCE"
+    ],
+    "vm-prog1-honesty-supported": [
+      "ALIGNED"
+    ],
+    "vm-syseng-cooperation-supported": [
+      "ALIGNED"
+    ],
+    "vm-sensors-patience-weak": [
+      "PARTIALLY_ALIGNED"
+    ]
+  },
+  "ranAt": "2026-10-26T05:22:39.732Z",
+  "answers": [
+    {
+      "vu-prog1-humility-review": {
+        "label": "ALIGNED",
+        "sourceQuote": "Pair programming in the laboratory: students write if-else programs and review each other's code",
+        "targetQuote": "in the peer code review each student names one thing they could have done better in their own program and accepts the reviewer's comments before revising",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The value statement names what each student does in this lesson's own peer code review activity (naming an own weakness and accepting review comments before revising), which the lesson text describes, so Humility is lived through the pair-programming review.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": {
+          "values": {
+            "responsible": "none",
+            "valueUse": "integrated",
+            "carriedBy": "activity",
+            "valueFit": "fits",
+            "coreValue": "Humility",
+            "integration": "demonstrated"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "vu-prog1-name-only": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Pair programming in the laboratory: students write if-else programs and review each other's code",
+        "targetQuote": "Humility",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The statement is only the value's name; it says nothing about what students do or decide in this lesson, so the lesson's peer code review activity is not tied to Humility in the text.",
+        "recommendation": null,
+        "draft": "Humility: in the peer code review each student names one thing they could have done better in their own program and accepts the reviewer's comments before revising.",
+        "aspects": {
+          "values": {
+            "responsible": "values",
+            "valueUse": "name_only",
+            "carriedBy": "none",
+            "valueFit": "fits",
+            "coreValue": "Humility",
+            "integration": "absent"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "vu-prog1-generic": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Pair programming in the laboratory: students write if-else programs and review each other's code",
+        "targetQuote": "students will show courage in their studies",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The sentence would fit any lesson: it names no action in this lesson's if-else programming, peer review or programming task, so nothing in the text shows Courage being lived; the lesson's own activity is only an opportunity.",
+        "recommendation": null,
+        "draft": "Courage: in the laboratory, students who find a bug in their partner's if-else program point it out respectfully and revise their own program to handle the failing case, so that they speak up about a difficulty instead of hiding it.",
+        "aspects": {
+          "values": {
+            "responsible": "values",
+            "valueUse": "generic",
+            "carriedBy": "none",
+            "valueFit": "partly",
+            "coreValue": "Courage",
+            "integration": "absent"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "vu-prog1-unrelated": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Java conditional statements: if, if-else, nested if and switch",
+        "targetQuote": "students will join mission trips to far-away communities",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "Mission trips to far-away communities have nothing to do with what students do in this lesson (writing, reviewing and testing if-else programs), and the lesson offers no activity or task in which such a value could be expressed.",
+        "recommendation": null,
+        "draft": "Missionary Spirit: in the laboratory, students share their if-else program and the decision rules it encodes with a classmate from another section, so that the program they write serves a reader outside their own pair.",
+        "aspects": {
+          "values": {
+            "responsible": "values",
+            "valueUse": "unrelated",
+            "carriedBy": "none",
+            "valueFit": "clashes",
+            "coreValue": "Missionary Spirit",
+            "integration": "absent"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "vu-prog1-clashes": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Pair programming in the laboratory: students write if-else programs and review each other's code.",
+        "targetQuote": "students compete to have the best program and the winner is announced to the class.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The lesson's own activity is pair programming with code review, but the value statement describes competition and a public winner, which contradicts Humility and is not what the lesson describes; no student behaviour in the lesson text expresses Humility.",
+        "recommendation": null,
+        "draft": "Humility: in the laboratory pair programming, students share their if-else code with their partner and give constructive feedback on each other's program before writing and testing their own, treating every mistake as a shared learning point rather than a contest.",
+        "aspects": {
+          "values": {
+            "responsible": "values",
+            "valueUse": "unrelated",
+            "carriedBy": "none",
+            "valueFit": "clashes",
+            "coreValue": "none",
+            "integration": "absent"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "vu-prog1-no-activity": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "sourceQuote": "Learning activities: (none written)",
+        "targetQuote": "students help each other.",
+        "evidenceMatching": {
+          "source": "not_evaluated",
+          "target": "not_evaluated"
+        },
+        "explanation": "The lesson text supplies no learning activities and no assessment tasks, so there is nothing students are described as doing that could carry Compassion; the statement 'students help each other' is also generic and names no concrete behaviour in this lesson.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": {
+          "values": {
+            "responsible": "activity",
+            "valueUse": "insufficient",
+            "carriedBy": "none",
+            "valueFit": "partly",
+            "coreValue": "Compassion",
+            "integration": "absent"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "vu-prog1-week1": {
+        "label": "ALIGNED",
+        "sourceQuote": "Setting and sharing of expectations; review of policies.",
+        "targetQuote": "students agree on shared class expectations and take turns presenting them to the group.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The lesson's activity of setting and sharing expectations, with the assessment task of a statement of expectations, is exactly what the value statement describes: students agree shared class expectations and present them to the group.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": {
+          "values": {
+            "responsible": "none",
+            "valueUse": "integrated",
+            "carriedBy": "activity",
+            "valueFit": "fits",
+            "coreValue": "Community-orientedness",
+            "integration": "demonstrated"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "vu-prog1-multiweek": {
+        "label": "ALIGNED",
+        "sourceQuote": "Guided laboratory sessions over two weeks with pair programming.",
+        "targetQuote": "in the second week a pair presents a program that does not yet work and asks the class for help in finding the error.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The lesson runs guided laboratory sessions over two weeks with pair programming, so a pair presenting a not-yet-working program and asking the class for help in the second week is a concrete act of Courage within the lesson's own activity.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": {
+          "values": {
+            "responsible": "none",
+            "valueUse": "integrated",
+            "carriedBy": "activity",
+            "valueFit": "fits",
+            "coreValue": "Courage",
+            "integration": "demonstrated"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "vm-prog1-respect-supported": {
+        "label": "ALIGNED",
+        "sourceQuote": "listens to the reading of the code by the partner before commenting, and records one thing learned from the partner",
+        "targetQuote": "Respect",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The lesson's own pair programming activity has students listen to their partner's code, comment on it and record one thing learned from the partner, and the laboratory task has them report every failing test case truthfully including cases they cannot fix. Listening to and learning from a partner's code shows Humility lived through the faculty's supporting expression \"Respect\".",
+        "recommendation": null,
+        "draft": "",
+        "aspects": {
+          "values": {
+            "responsible": "none",
+            "valueUse": "integrated",
+            "carriedBy": "activity",
+            "valueFit": "fits",
+            "coreValue": "Humility",
+            "integration": "demonstrated"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "vm-prog1-respect-no-evidence": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "sourceQuote": "Lecture and demonstration of if-else statements.",
+        "targetQuote": "Respect",
+        "evidenceMatching": {
+          "source": "not_evaluated",
+          "target": "not_evaluated"
+        },
+        "explanation": "The lesson text only has a lecture and demonstration of if-else statements and a programming task; nothing in it shows students doing anything that would express a core value through \"Respect\".",
+        "recommendation": null,
+        "draft": "",
+        "aspects": {
+          "values": {
+            "responsible": "none",
+            "valueUse": "insufficient",
+            "carriedBy": "none",
+            "valueFit": "partly",
+            "coreValue": "none",
+            "integration": "absent"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "vm-prog1-honesty-supported": {
+        "label": "ALIGNED",
+        "sourceQuote": "report every failing case truthfully in their test log, including cases they cannot yet fix",
+        "targetQuote": "Honesty in reporting test results",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The laboratory activity has students run their program against the provided test cases and report every failing case truthfully in their test log, including cases they cannot yet fix. Admitting unresolved failures in one's own test log shows the faculty's expression \"Honesty in reporting test results\" lived as Courage.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": {
+          "values": {
+            "responsible": "none",
+            "valueUse": "integrated",
+            "carriedBy": "activity",
+            "valueFit": "fits",
+            "coreValue": "Courage",
+            "integration": "demonstrated"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "vu-syseng-community": {
+        "label": "ALIGNED",
+        "sourceQuote": "teams interview a stakeholder from a community case and draft requirements",
+        "targetQuote": "teams write requirements that reflect the stakeholder's needs from the interview, not the team's own preferences",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The value statement names Community-orientedness and ties it to what students actually do in this lesson: teams write requirements reflecting the interviewed stakeholder's needs rather than their own preferences, which the guided workshop and requirements document task describe.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": {
+          "values": {
+            "responsible": "none",
+            "valueUse": "integrated",
+            "carriedBy": "activity",
+            "valueFit": "fits",
+            "coreValue": "Community-orientedness",
+            "integration": "demonstrated"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "vu-syseng-interiority-generic": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Learning activities: - Guided workshop: teams draft requirements.",
+        "targetQuote": "Interiority: students reflect.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The value statement names Interiority but says only that \"students reflect\", with no indication of what they reflect on or decide, and the lesson text (workshop drafting requirements, requirements document) describes no reflection activity or task; the statement would fit any lesson.",
+        "recommendation": null,
+        "draft": "Interiority: students reflect on how their own assumptions and preferences shape the requirements they draft, and record in the requirements document which requirements were revised to better match the stakeholder's stated needs.",
+        "aspects": {
+          "values": {
+            "responsible": "values",
+            "valueUse": "generic",
+            "carriedBy": "none",
+            "valueFit": "partly",
+            "coreValue": "Interiority",
+            "integration": "absent"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "vm-syseng-cooperation-supported": {
+        "label": "ALIGNED",
+        "sourceQuote": "each member interviews a different stakeholder and the team merges the findings into one requirements list, resolving conflicts together",
+        "targetQuote": "Cooperation",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The lesson text shows students living Community-orientedness through the faculty's \"Cooperation\" expression: each member interviews a different stakeholder and the team merges the findings into one requirements list, resolving conflicts together.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": {
+          "values": {
+            "responsible": "none",
+            "valueUse": "integrated",
+            "carriedBy": "activity",
+            "valueFit": "fits",
+            "coreValue": "Community-orientedness",
+            "integration": "demonstrated"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "vu-sensors-courage": {
+        "label": "ALIGNED",
+        "sourceQuote": "Practical: build and measure the amplifier, record the measured gain.",
+        "targetQuote": "students report a measured gain that misses the design value instead of adjusting the numbers.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The value statement names Courage and ties it to what students actually do in this lesson's practical task: report a measured gain that misses the design value instead of adjusting the numbers, which is honest reporting of results rather than fudging data.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": {
+          "values": {
+            "responsible": "none",
+            "valueUse": "integrated",
+            "carriedBy": "assessment",
+            "valueFit": "fits",
+            "coreValue": "Courage",
+            "integration": "demonstrated"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "vu-sensors-silly": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Design and test an inverting amplifier with a specified gain.",
+        "targetQuote": "students are kind to the circuits.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The value statement names Compassion but says nothing students do or decide in this lesson: 'students are kind to the circuits' is not an action any student performs in designing, simulating, building and measuring an inverting amplifier, and the lesson text contains no activity or task about care, kindness or regard for others. The value is also unrelated to the lesson's subject matter, so the statement cannot be integrated as written.",
+        "recommendation": null,
+        "draft": "Compassion: students check their measured gain against the specified design value and, when it misses, revise the circuit and re-measure rather than accepting a result that does not meet the specification.",
+        "aspects": {
+          "values": {
+            "responsible": "values",
+            "valueUse": "unrelated",
+            "carriedBy": "none",
+            "valueFit": "clashes",
+            "coreValue": "none",
+            "integration": "absent"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "vm-sensors-patience-weak": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Practical: build and measure the amplifier.",
+        "targetQuote": "Patience",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The faculty expression 'Patience' is not one of the six official core values, and the lesson text shows only building and measuring an amplifier, with no evidence of a core value being lived through that expression; the link is plausible but weak.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": {
+          "values": {
+            "responsible": "none",
+            "valueUse": "not_assessed",
+            "carriedBy": "none",
+            "valueFit": "not_assessed",
+            "coreValue": "none",
+            "integration": "stated_only"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      }
+    }
+  ],
+  "usage": {
+    "requests": 8,
+    "thisRun": 8,
+    "model": 6,
+    "priceLookups": 1,
+    "keyChecks": 1,
+    "invalidAnswers": 1,
+    "unproductiveInARow": 0,
+    "transient": 0,
+    "promptTokens": 23030,
+    "completionTokens": 2823,
+    "cachedTokens": 10752,
+    "reportedCost": 0.00328903,
+    "charged": 0.00328903,
+    "accounting": {
+      "rule": "reconcile",
+      "requests": {
+        "reconciled": 6,
+        "conservative": 0,
+        "worst_case": 0,
+        "refused": 0
+      },
+      "chargedConservatively": 0.0102966
+    },
+    "warnings": [],
+    "limits": {
+      "maxRequests": 41,
+      "maxCost": 0.07,
+      "maxTransient": 3,
+      "maxInvalid": null,
+      "warnInvalid": 17,
+      "maxUnproductive": 9,
+      "maxTokens": null
+    },
+    "stopped": null
+  },
+  "keyCheck": {
+    "status": 200,
+    "ok": true,
+    "freeTier": true,
+    "limit": 250,
+    "limitRemaining": 249.99817768,
+    "usage": 0.00182232,
+    "expiresAt": "2026-11-25T04:44:27.996Z"
+  },
+  "requests": [
+    {
+      "n": 3,
+      "ids": [
+        "vu-prog1-humility-review",
+        "vu-prog1-name-only",
+        "vu-prog1-generic",
+        "vu-prog1-unrelated"
+      ],
+      "status": 200,
+      "ms": 1678,
+      "provider": "InferenceNet",
+      "finishReason": "stop",
+      "usage": {
+        "promptTokens": 3887,
+        "completionTokens": 715,
+        "reasoningTokens": 0,
+        "cachedTokens": 128,
+        "reportedCost": 0.00077043,
+        "costAtListPrices": 0.0020241
+      },
+      "accounting": "reconciled",
+      "charged": 0.00077043,
+      "conservativeCharge": 0.0020241,
+      "error": null,
+      "content": "{\"judgements\":[{\"valueUse\":\"integrated\",\"valueFit\":\"fits\",\"targetQuote\":\"in the peer code review each student names one thing they could have done better in their own program and accepts the reviewer's comments before revising\",\"targetBloom\":\"N/A\",\"sourceQuote\":\"Pair programming in the laboratory: students write if-else programs and review each other's code\",\"sourceBloom\":\"N/A\",\"responsible\":\"none\",\"label\":\"ALIGNED\",\"integration\":\"demonstrated\",\"id\":\"vu-prog1-humility-review\",\"explanation\":\"The value statement names what each student does in this lesson's own peer code review activity (naming an own weakness and accepting review comments before revising), which the lesson text describes, so Humility is lived through the pair-programming review.\",\"draft\":\"\" , \"coreValue\":\"Humility\",\"carriedBy\":\"activity\"},{\"valueUse\":\"name_only\",\"valueFit\":\"fits\",\"targetQuote\":\"Humility\",\"targetBloom\":\"N/A\",\"sourceQuote\":\"Pair programming in the laboratory: students write if-else programs and review each other's code\",\"sourceBloom\":\"N/A\",\"responsible\":\"values\",\"label\":\"PARTIALLY_ALIGNED\",\"integration\":\"absent\",\"id\":\"vu-prog1-name-only\",\"explanation\":\"The statement is only the value's name; it says nothing about what students do or decide in this lesson, so the lesson's peer code review activity is not tied to Humility in the text.\",\"draft\":\"Humility: in the peer code review each student names one thing they could have done better in their own program and accepts the reviewer's comments before revising.\",\"coreValue\":\"Humility\",\"carriedBy\":\"none\"},{\"valueUse\":\"generic\",\"valueFit\":\"partly\",\"targetQuote\":\"students will show courage in their studies\",\"targetBloom\":\"N/A\",\"sourceQuote\":\"Pair programming in the laboratory: students write if-else programs and review each other's code\",\"sourceBloom\":\"N/A\",\"responsible\":\"values\",\"label\":\"PARTIALLY_ALIGNED\",\"integration\":\"absent\",\"id\":\"vu-prog1-generic\",\"explanation\":\"The sentence would fit any lesson: it names no action in this lesson's if-else programming, peer review or programming task, so nothing in the text shows Courage being lived; the lesson's own activity is only an opportunity.\",\"draft\":\"Courage: in the laboratory, students who find a bug in their partner's if-else program point it out respectfully and revise their own program to handle the failing case, so that they speak up about a difficulty instead of hiding it.\",\"coreValue\":\"Courage\",\"carriedBy\":\"none\"},{\"valueUse\":\"unrelated\",\"valueFit\":\"clashes\",\"targetQuote\":\"students will join mission trips to far-away communities\",\"targetBloom\":\"N/A\",\"sourceQuote\":\"Java conditional statements: if, if-else, nested if and switch\",\"sourceBloom\":\"N/A\",\"responsible\":\"values\",\"label\":\"NOT_ALIGNED\",\"integration\":\"absent\",\"id\":\"vu-prog1-unrelated\",\"explanation\":\"Mission trips to far-away communities have nothing to do with what students do in this lesson (writing, reviewing and testing if-else programs), and the lesson offers no activity or task in which such a value could be expressed.\",\"draft\":\"Missionary Spirit: in the laboratory, students share their if-else program and the decision rules it encodes with a classmate from another section, so that the program they write serves a reader outside their own pair.\",\"coreValue\":\"Missionary Spirit\",\"carriedBy\":\"none\"}]}"
+    },
+    {
+      "n": 4,
+      "ids": [
+        "vu-prog1-clashes",
+        "vu-prog1-no-activity",
+        "vu-prog1-week1",
+        "vu-prog1-multiweek"
+      ],
+      "status": 200,
+      "ms": 2207,
+      "provider": "InferenceNet",
+      "finishReason": "stop",
+      "usage": {
+        "promptTokens": 3839,
+        "completionTokens": 6,
+        "reasoningTokens": 0,
+        "cachedTokens": 3200,
+        "reportedCost": 0.0000992,
+        "costAtListPrices": 0.0011589
+      },
+      "accounting": "reconciled",
+      "charged": 0.0000992,
+      "conservativeCharge": 0.0011589,
+      "error": null,
+      "content": "{\"judgements\":[]}"
+    },
+    {
+      "n": 5,
+      "ids": [
+        "vu-prog1-clashes",
+        "vu-prog1-no-activity",
+        "vu-prog1-week1",
+        "vu-prog1-multiweek"
+      ],
+      "status": 200,
+      "ms": 1384,
+      "provider": "InferenceNet",
+      "finishReason": "stop",
+      "usage": {
+        "promptTokens": 4018,
+        "completionTokens": 683,
+        "reasoningTokens": 0,
+        "cachedTokens": 3712,
+        "reportedCost": 0.00044337,
+        "costAtListPrices": 0.002025
+      },
+      "accounting": "reconciled",
+      "charged": 0.00044337,
+      "conservativeCharge": 0.002025,
+      "error": null,
+      "content": "{\"judgements\":[{\"valueUse\":\"unrelated\",\"valueFit\":\"clashes\",\"targetQuote\":\"students compete to have the best program and the winner is announced to the class.\",\"targetBloom\":\"N/A\",\"sourceQuote\":\"Pair programming in the laboratory: students write if-else programs and review each other's code.\",\"sourceBloom\":\"Apply\",\"responsible\":\"values\",\"label\":\"NOT_ALIGNED\",\"integration\":\"absent\",\"id\":\"vu-prog1-clashes\",\"explanation\":\"The lesson's own activity is pair programming with code review, but the value statement describes competition and a public winner, which contradicts Humility and is not what the lesson describes; no student behaviour in the lesson text expresses Humility.\",\"draft\":\"Humility: in the laboratory pair programming, students share their if-else code with their partner and give constructive feedback on each other's program before writing and testing their own, treating every mistake as a shared learning point rather than a contest.\" ,\"coreValue\":\"none\",\"carriedBy\":\"none\"},{\"valueUse\":\"insufficient\",\"valueFit\":\"partly\",\"targetQuote\":\"students help each other.\",\"targetBloom\":\"N/A\",\"sourceQuote\":\"Learning activities: (none written)\",\"sourceBloom\":\"N/A\",\"responsible\":\"activity\",\"label\":\"INSUFFICIENT_EVIDENCE\",\"integration\":\"absent\",\"id\":\"vu-prog1-no-activity\",\"explanation\":\"The lesson text supplies no learning activities and no assessment tasks, so there is nothing students are described as doing that could carry Compassion; the statement 'students help each other' is also generic and names no concrete behaviour in this lesson.\",\"draft\":\"Compassion: in the Week 3 laboratory on if-else and switch statements, students work in pairs and, when a partner's program does not run as expected, they help each other diagnose the condition and correct it, so that both partners finish with a working program.\",\"coreValue\":\"Compassion\",\"carriedBy\":\"none\"},{\"valueUse\":\"integrated\",\"valueFit\":\"fits\",\"targetQuote\":\"students agree on shared class expectations and take turns presenting them to the group.\",\"targetBloom\":\"N/A\",\"sourceQuote\":\"Setting and sharing of expectations; review of policies.\",\"sourceBloom\":\"Apply\",\"responsible\":\"none\",\"label\":\"ALIGNED\",\"integration\":\"demonstrated\",\"id\":\"vu-prog1-week1\",\"explanation\":\"The lesson's activity of setting and sharing expectations, with the assessment task of a statement of expectations, is exactly what the value statement describes: students agree shared class expectations and present them to the group.\",\"draft\":\"\",\"coreValue\":\"Community-orientedness\",\"carriedBy\":\"activity\"},{\"valueUse\":\"integrated\",\"valueFit\":\"fits\",\"targetQuote\":\"in the second week a pair presents a program that does not yet work and asks the class for help in finding the error.\",\"targetBloom\":\"N/A\",\"sourceQuote\":\"Guided laboratory sessions over two weeks with pair programming.\",\"sourceBloom\":\"Apply\",\"responsible\":\"none\",\"label\":\"ALIGNED\",\"integration\":\"demonstrated\",\"id\":\"vu-prog1-multiweek\",\"explanation\":\"The lesson runs guided laboratory sessions over two weeks with pair programming, so a pair presenting a not-yet-working program and asking the class for help in the second week is a concrete act of Courage within the lesson's own activity.\",\"draft\":\"\",\"coreValue\":\"Courage\",\"carriedBy\":\"activity\"}]}"
+    },
+    {
+      "n": 6,
+      "ids": [
+        "vm-prog1-respect-supported",
+        "vm-prog1-respect-no-evidence",
+        "vm-prog1-honesty-supported"
+      ],
+      "status": 200,
+      "ms": 1541,
+      "provider": "DigitalOcean",
+      "finishReason": "stop",
+      "usage": {
+        "promptTokens": 3850,
+        "completionTokens": 457,
+        "reasoningTokens": 0,
+        "cachedTokens": 384,
+        "reportedCost": 0.00079986,
+        "costAtListPrices": 0.0017034
+      },
+      "accounting": "reconciled",
+      "charged": 0.00079986,
+      "conservativeCharge": 0.0017034,
+      "error": null,
+      "content": "{\"judgements\":[{\"carriedBy\":\"activity\",\"coreValue\":\"Humility\",\"draft\":\"\",\"explanation\":\"The lesson's own pair programming activity has students listen to their partner's code, comment on it and record one thing learned from the partner, and the laboratory task has them report every failing test case truthfully including cases they cannot fix. Listening to and learning from a partner's code shows Humility lived through the faculty's supporting expression \\\"Respect\\\".\",\"id\":\"vm-prog1-respect-supported\",\"integration\":\"demonstrated\",\"label\":\"ALIGNED\",\"responsible\":\"none\",\"sourceBloom\":\"N/A\",\"sourceQuote\":\"listens to the reading of the code by the partner before commenting, and records one thing learned from the partner\",\"targetBloom\":\"N/A\",\"targetQuote\":\"Respect\",\"valueFit\":\"fits\",\"valueUse\":\"integrated\"},{\"carriedBy\":\"none\",\"coreValue\":\"none\",\"draft\":\"\",\"explanation\":\"The lesson text only has a lecture and demonstration of if-else statements and a programming task; nothing in it shows students doing anything that would express a core value through \\\"Respect\\\".\",\"id\":\"vm-prog1-respect-no-evidence\",\"integration\":\"absent\",\"label\":\"INSUFFICIENT_EVIDENCE\",\"responsible\":\"none\",\"sourceBloom\":\"N/A\",\"sourceQuote\":\"Lecture and demonstration of if-else statements.\",\"targetBloom\":\"N/A\",\"targetQuote\":\"Respect\",\"valueFit\":\"partly\",\"valueUse\":\"insufficient\"},{\"carriedBy\":\"activity\",\"coreValue\":\"Courage\",\"draft\":\"\",\"explanation\":\"The laboratory activity has students run their program against the provided test cases and report every failing case truthfully in their test log, including cases they cannot yet fix. Admitting unresolved failures in one's own test log shows the faculty's expression \\\"Honesty in reporting test results\\\" lived as Courage.\",\"id\":\"vm-prog1-honesty-supported\",\"integration\":\"demonstrated\",\"label\":\"ALIGNED\",\"responsible\":\"none\",\"sourceBloom\":\"N/A\",\"sourceQuote\":\"report every failing case truthfully in their test log, including cases they cannot yet fix\",\"targetBloom\":\"N/A\",\"targetQuote\":\"Honesty in reporting test results\",\"valueFit\":\"fits\",\"valueUse\":\"integrated\"}]}"
+    },
+    {
+      "n": 7,
+      "ids": [
+        "vu-syseng-community",
+        "vu-syseng-interiority-generic",
+        "vm-syseng-cooperation-supported"
+      ],
+      "status": 200,
+      "ms": 890,
+      "provider": "Parasail",
+      "finishReason": "stop",
+      "usage": {
+        "promptTokens": 3707,
+        "completionTokens": 468,
+        "reasoningTokens": 0,
+        "cachedTokens": 128,
+        "reportedCost": 0.00081957,
+        "costAtListPrices": 0.0016737
+      },
+      "accounting": "reconciled",
+      "charged": 0.00081957,
+      "conservativeCharge": 0.0016737,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"vu-syseng-community\",\"label\":\"ALIGNED\",\"explanation\":\"The value statement names Community-orientedness and ties it to what students actually do in this lesson: teams write requirements reflecting the interviewed stakeholder's needs rather than their own preferences, which the guided workshop and requirements document task describe.\",\"sourceQuote\":\"teams interview a stakeholder from a community case and draft requirements\",\"targetQuote\":\"teams write requirements that reflect the stakeholder's needs from the interview, not the team's own preferences\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\" ,\"responsible\":\"none\",\"valueUse\":\"integrated\",\"carriedBy\":\"activity\",\"valueFit\":\"fits\",\"coreValue\":\"Community-orientedness\",\"integration\":\"demonstrated\"},{\"id\":\"vu-syseng-interiority-generic\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The value statement names Interiority but says only that \\\"students reflect\\\", with no indication of what they reflect on or decide, and the lesson text (workshop drafting requirements, requirements document) describes no reflection activity or task; the statement would fit any lesson.\",\"sourceQuote\":\"Learning activities: - Guided workshop: teams draft requirements.\",\"targetQuote\":\"Interiority: students reflect.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"N/A\",\"draft\":\"Interiority: students reflect on how their own assumptions and preferences shape the requirements they draft, and record in the requirements document which requirements were revised to better match the stakeholder's stated needs.\",\"responsible\":\"values\",\"valueUse\":\"generic\",\"carriedBy\":\"none\",\"valueFit\":\"partly\",\"coreValue\":\"Interiority\",\"integration\":\"absent\"},{\"id\":\"vm-syseng-cooperation-supported\",\"label\":\"ALIGNED\",\"explanation\":\"The lesson text shows students living Community-orientedness through the faculty's \\\"Cooperation\\\" expression: each member interviews a different stakeholder and the team merges the findings into one requirements list, resolving conflicts together.\",\"sourceQuote\":\"each member interviews a different stakeholder and the team merges the findings into one requirements list, resolving conflicts together\",\"targetQuote\":\"Cooperation\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\",\"responsible\":\"none\",\"valueUse\":\"integrated\",\"carriedBy\":\"activity\",\"valueFit\":\"fits\",\"coreValue\":\"Community-orientedness\",\"integration\":\"demonstrated\"}]}"
+    },
+    {
+      "n": 8,
+      "ids": [
+        "vu-sensors-courage",
+        "vu-sensors-silly",
+        "vm-sensors-patience-weak"
+      ],
+      "status": 200,
+      "ms": 851,
+      "provider": "InferenceNet",
+      "finishReason": "stop",
+      "usage": {
+        "promptTokens": 3729,
+        "completionTokens": 494,
+        "reasoningTokens": 0,
+        "cachedTokens": 3200,
+        "reportedCost": 0.0003566,
+        "costAtListPrices": 0.0017115
+      },
+      "accounting": "reconciled",
+      "charged": 0.0003566,
+      "conservativeCharge": 0.0017115,
+      "error": null,
+      "content": "{\"judgements\":[{\"valueUse\":\"integrated\",\"valueFit\":\"fits\",\"targetQuote\":\"students report a measured gain that misses the design value instead of adjusting the numbers.\",\"targetBloom\":\"Evaluate\",\"sourceQuote\":\"Practical: build and measure the amplifier, record the measured gain.\",\"sourceBloom\":\"Apply\",\"responsible\":\"none\",\"label\":\"ALIGNED\",\"integration\":\"demonstrated\",\"id\":\"vu-sensors-courage\",\"explanation\":\"The value statement names Courage and ties it to what students actually do in this lesson's practical task: report a measured gain that misses the design value instead of adjusting the numbers, which is honest reporting of results rather than fudging data.\",\"draft\":\"\" , \"coreValue\":\"Courage\",\"carriedBy\":\"assessment\"},{\"valueUse\":\"unrelated\",\"valueFit\":\"clashes\",\"targetQuote\":\"students are kind to the circuits.\",\"targetBloom\":\"N/A\",\"sourceQuote\":\"Design and test an inverting amplifier with a specified gain.\",\"sourceBloom\":\"Apply\",\"responsible\":\"values\",\"label\":\"NOT_ALIGNED\",\"integration\":\"absent\",\"id\":\"vu-sensors-silly\",\"explanation\":\"The value statement names Compassion but says nothing students do or decide in this lesson: 'students are kind to the circuits' is not an action any student performs in designing, simulating, building and measuring an inverting amplifier, and the lesson text contains no activity or task about care, kindness or regard for others. The value is also unrelated to the lesson's subject matter, so the statement cannot be integrated as written.\",\"draft\":\"Compassion: students check their measured gain against the specified design value and, when it misses, revise the circuit and re-measure rather than accepting a result that does not meet the specification.\" ,\"coreValue\":\"none\",\"carriedBy\":\"none\"},{\"valueUse\":\"not_assessed\",\"valueFit\":\"not_assessed\",\"targetQuote\":\"Patience\",\"targetBloom\":\"N/A\",\"sourceQuote\":\"Practical: build and measure the amplifier.\",\"sourceBloom\":\"Apply\",\"responsible\":\"none\",\"label\":\"PARTIALLY_ALIGNED\",\"integration\":\"stated_only\",\"id\":\"vm-sensors-patience-weak\",\"explanation\":\"The faculty expression 'Patience' is not one of the six official core values, and the lesson text shows only building and measuring an amplifier, with no evidence of a core value being lived through that expression; the link is plausible but weak.\",\"draft\":\"\",\"coreValue\":\"none\",\"carriedBy\":\"none\"}]}"
+    }
+  ],
+  "stopped": null,
+  "isolation": {
+    "dataModulesLoaded": [],
+    "processEnvStageFlags": []
+  }
+}

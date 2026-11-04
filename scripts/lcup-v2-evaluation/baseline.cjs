@@ -1,0 +1,11 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),{execFileSync}=require('node:child_process');
+const root=path.resolve(__dirname,'../..'),out=path.join(root,'docs/lcup-v2-evaluation');fs.mkdirSync(out,{recursive:true});
+const target=path.join(out,'before.json');if(fs.existsSync(target))throw Error('Refusing to replace baseline');
+const files=execFileSync('git',['ls-files','--cached','--others','--exclude-standard','-z'],{cwd:root,encoding:'utf8'}).split('\0').filter(Boolean).filter(f=>!f.startsWith('docs/lcup-v2-evaluation/')&&!f.startsWith('scripts/lcup-v2-evaluation/')&&!f.startsWith('tmp/')&&!f.includes('node_modules/')&&!f.startsWith('dist/'));
+if(fs.existsSync(path.join(root,'server/.env')))files.push('server/.env');
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+fs.writeFileSync(target,JSON.stringify({head:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),status:execFileSync('git',['status','--short'],{cwd:root,encoding:'utf8'}),files:[...new Set(files)].filter(f=>fs.existsSync(path.join(root,f))&&fs.statSync(path.join(root,f)).isFile()).map(file=>({file,sha256:sha(fs.readFileSync(path.join(root,file)))}))},null,2)+'\n');
+const sources=['server/lib/compliance/rules.js','src/lib/complianceRules.js','src/lib/lessonAuthoring.js','server/lib/syllabuscheck/academicV2Plan.js','server/lib/syllabuscheck/academicPolicyV2.js'];
+fs.writeFileSync(path.join(out,'before-sources.json'),JSON.stringify(Object.fromEntries(sources.map(f=>[f,fs.readFileSync(path.join(root,f),'utf8')])),null,2)+'\n');
+console.log('Captured baseline; no production state changed.');

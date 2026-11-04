@@ -1,0 +1,43 @@
+{
+  "identity": {
+    "datadir": "C:\\Users\\JP Del Rosario\\Syllabus-Repository\\tmp\\lcup-comprehensive-verification-db-639288254491205333\\data\\",
+    "port": 43309,
+    "version": "10.4.32-MariaDB"
+  },
+  "database": "lcup_verify_19916_1793228665927",
+  "tables": 36,
+  "productionDatabaseUsed": false,
+  "migrationsRun": 0,
+  "syntheticSentinelUnchanged": true,
+  "mockedProviderRequests": 0,
+  "sqlStatements": [
+    "SELECT migration_id, details_json FROM program_po_reference_remediation",
+    "SELECT vision, mission_lead, mission_items, version",
+    "SELECT ega_no, name, short_name FROM",
+    "SELECT program_id, code, name, egas_version,",
+    "SELECT po_no, short_name, outcome_text, ega_nos",
+    "SELECT r.reference_id, r.version_label, r.source_file, r.source_sha256,",
+    "SELECT ega_no, name, short_name FROM",
+    "SELECT p.program_id, p.code, p.name, p.egas_version,",
+    "SELECT po_no, short_name, outcome_text, ega_nos",
+    "SELECT r.reference_id, r.version_label, r.source_file, r.source_sha256,",
+    "SELECT ega_no, name, short_name FROM",
+    "SELECT reference_id, program_code, curriculum_year, source,",
+    "SELECT user_id FROM users WHERE",
+    "SELECT * FROM syllabi WHERE",
+    "SELECT migration_id, details_json FROM program_po_reference_remediation",
+    "SELECT vision, mission_lead, mission_items, version",
+    "SELECT ega_no, name, short_name FROM",
+    "SELECT program_id, code, name, egas_version,",
+    "SELECT po_no, short_name, outcome_text, ega_nos",
+    "SELECT r.reference_id, r.version_label, r.source_file, r.source_sha256,",
+    "SELECT ega_no, name, short_name FROM",
+    "SELECT p.program_id, p.code, p.name, p.egas_version,",
+    "SELECT po_no, short_name, outcome_text, ega_nos",
+    "SELECT r.reference_id, r.version_label, r.source_file, r.source_sha256,",
+    "SELECT ega_no, name, short_name FROM",
+    "SELECT reference_id, program_code, curriculum_year, source,"
+  ],
+  "paidRequests": 0,
+  "scope": "Real local HTTP/routes/shared service/SQL persistence; simulated DOM and provider only"
+}

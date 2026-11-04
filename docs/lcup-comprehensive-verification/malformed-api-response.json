@@ -1,0 +1,6 @@
+{
+  "httpStatus": 500,
+  "body": {
+    "error": "(content.plan || []).map is not a function"
+  }
+}

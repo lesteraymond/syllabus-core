@@ -1,0 +1,17 @@
+{
+  "requests": 1,
+  "charged": 0,
+  "conservative": 0,
+  "accounting": "reconcile",
+  "transient": 0,
+  "invalid": 0,
+  "unproductive": 0,
+  "entries": [
+    {
+      "n": 1,
+      "kind": "key-check",
+      "at": "2026-10-27T03:54:19.285Z",
+      "status": 200
+    }
+  ]
+}

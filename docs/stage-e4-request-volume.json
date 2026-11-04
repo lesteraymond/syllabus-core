@@ -1,0 +1,1224 @@
+{
+  "stage": "E.4",
+  "generatedBy": "node scripts/measure-request-volume.cjs",
+  "offline": true,
+  "assumptions": {
+    "bytesPerToken": 4.85,
+    "outputTokensPerAnswer": 218,
+    "beforeBatch": 12,
+    "afterBatch": 4,
+    "seeds": 10,
+    "prices": {
+      "source": "run 2 price lookup (structured-output endpoints)",
+      "typical": {
+        "in": 1.5e-7,
+        "out": 6e-7
+      },
+      "worst": {
+        "in": 3e-7,
+        "out": 0.0000012
+      }
+    }
+  },
+  "wholeCheck": [
+    {
+      "syllabus": "Test fixture (sample)",
+      "legacy": {
+        "requests": 9,
+        "requestBytes": 116781,
+        "inputTokens": 24079,
+        "outputTokens": 21800,
+        "costTypical": 0.0167,
+        "costWorst": 0.0334,
+        "relationships": 100,
+        "verified": 100,
+        "status": "completed"
+      },
+      "before": {
+        "requests": 19,
+        "requestBytes": 657716,
+        "inputTokens": 135612,
+        "outputTokens": 41202,
+        "costTypical": 0.0451,
+        "costWorst": 0.0901,
+        "relationships": 189,
+        "verified": 189,
+        "status": "completed"
+      },
+      "after": {
+        "requests": 48,
+        "requestBytes": 1567504,
+        "inputTokens": 323197,
+        "outputTokens": 41202,
+        "costTypical": 0.0732,
+        "costWorst": 0.1464,
+        "relationships": 189,
+        "verified": 189,
+        "status": "completed"
+      }
+    },
+    {
+      "syllabus": "BSIT - IT 202 Computer Programming 1 (18-week representative)",
+      "legacy": {
+        "requests": 9,
+        "requestBytes": 143802,
+        "inputTokens": 29650,
+        "outputTokens": 21800,
+        "costTypical": 0.0175,
+        "costWorst": 0.0351,
+        "relationships": 100,
+        "verified": 100,
+        "status": "completed"
+      },
+      "before": {
+        "requests": 19,
+        "requestBytes": 722223,
+        "inputTokens": 148912,
+        "outputTokens": 41202,
+        "costTypical": 0.0471,
+        "costWorst": 0.0941,
+        "relationships": 189,
+        "verified": 189,
+        "status": "completed"
+      },
+      "after": {
+        "requests": 48,
+        "requestBytes": 1650426,
+        "inputTokens": 340294,
+        "outputTokens": 41202,
+        "costTypical": 0.0758,
+        "costWorst": 0.1515,
+        "relationships": 189,
+        "verified": 189,
+        "status": "completed"
+      }
+    },
+    {
+      "syllabus": "BSIE - IE-402 Systems Engineering (18-week representative)",
+      "legacy": {
+        "requests": 9,
+        "requestBytes": 145190,
+        "inputTokens": 29936,
+        "outputTokens": 21800,
+        "costTypical": 0.0176,
+        "costWorst": 0.0351,
+        "relationships": 100,
+        "verified": 100,
+        "status": "completed"
+      },
+      "before": {
+        "requests": 19,
+        "requestBytes": 720279,
+        "inputTokens": 148511,
+        "outputTokens": 41202,
+        "costTypical": 0.047,
+        "costWorst": 0.094,
+        "relationships": 189,
+        "verified": 189,
+        "status": "completed"
+      },
+      "after": {
+        "requests": 48,
+        "requestBytes": 1649816,
+        "inputTokens": 340168,
+        "outputTokens": 41202,
+        "costTypical": 0.0757,
+        "costWorst": 0.1515,
+        "relationships": 189,
+        "verified": 189,
+        "status": "completed"
+      }
+    },
+    {
+      "syllabus": "BSCpE - CpE-304 Fundamentals of Mixed Signals and Sensors (18-week representative)",
+      "legacy": {
+        "requests": 9,
+        "requestBytes": 143683,
+        "inputTokens": 29625,
+        "outputTokens": 21800,
+        "costTypical": 0.0175,
+        "costWorst": 0.035,
+        "relationships": 100,
+        "verified": 100,
+        "status": "completed"
+      },
+      "before": {
+        "requests": 19,
+        "requestBytes": 716948,
+        "inputTokens": 147824,
+        "outputTokens": 41202,
+        "costTypical": 0.0469,
+        "costWorst": 0.0938,
+        "relationships": 189,
+        "verified": 189,
+        "status": "completed"
+      },
+      "after": {
+        "requests": 48,
+        "requestBytes": 1644194,
+        "inputTokens": 339009,
+        "outputTokens": 41202,
+        "costTypical": 0.0756,
+        "costWorst": 0.1511,
+        "relationships": 189,
+        "verified": 189,
+        "status": "completed"
+      }
+    },
+    {
+      "syllabus": "BSIT - IT 202 Computer Programming 1 (real faculty PDF)",
+      "legacy": {
+        "requests": 11,
+        "requestBytes": 192550,
+        "inputTokens": 39701,
+        "outputTokens": 27032,
+        "costTypical": 0.0222,
+        "costWorst": 0.0443,
+        "relationships": 124,
+        "verified": 124,
+        "status": "completed"
+      },
+      "before": {
+        "requests": 19,
+        "requestBytes": 771827,
+        "inputTokens": 159140,
+        "outputTokens": 44254,
+        "costTypical": 0.0504,
+        "costWorst": 0.1008,
+        "relationships": 203,
+        "verified": 203,
+        "status": "completed"
+      },
+      "after": {
+        "requests": 54,
+        "requestBytes": 1914122,
+        "inputTokens": 394664,
+        "outputTokens": 44254,
+        "costTypical": 0.0858,
+        "costWorst": 0.1715,
+        "relationships": 203,
+        "verified": 203,
+        "status": "completed"
+      }
+    },
+    {
+      "syllabus": "BSIE - IE 402 Systems Engineering (real faculty PDF)",
+      "legacy": {
+        "requests": 9,
+        "requestBytes": 192892,
+        "inputTokens": 39772,
+        "outputTokens": 23326,
+        "costTypical": 0.02,
+        "costWorst": 0.0399,
+        "relationships": 107,
+        "verified": 107,
+        "status": "completed"
+      },
+      "before": {
+        "requests": 17,
+        "requestBytes": 722766,
+        "inputTokens": 149024,
+        "outputTokens": 35534,
+        "costTypical": 0.0437,
+        "costWorst": 0.0873,
+        "relationships": 163,
+        "verified": 163,
+        "status": "completed"
+      },
+      "after": {
+        "requests": 43,
+        "requestBytes": 1580142,
+        "inputTokens": 325802,
+        "outputTokens": 35534,
+        "costTypical": 0.0702,
+        "costWorst": 0.1404,
+        "relationships": 163,
+        "verified": 163,
+        "status": "completed"
+      }
+    },
+    {
+      "syllabus": "BSCpE - CpE 304 Fundamentals of Mixed Signals and Sensors (real faculty PDF)",
+      "legacy": {
+        "requests": 7,
+        "requestBytes": 124683,
+        "inputTokens": 25708,
+        "outputTokens": 16568,
+        "costTypical": 0.0138,
+        "costWorst": 0.0276,
+        "relationships": 76,
+        "verified": 76,
+        "status": "completed"
+      },
+      "before": {
+        "requests": 14,
+        "requestBytes": 554366,
+        "inputTokens": 114302,
+        "outputTokens": 29212,
+        "costTypical": 0.0347,
+        "costWorst": 0.0693,
+        "relationships": 134,
+        "verified": 134,
+        "status": "completed"
+      },
+      "after": {
+        "requests": 35,
+        "requestBytes": 1243922,
+        "inputTokens": 256479,
+        "outputTokens": 29212,
+        "costTypical": 0.056,
+        "costWorst": 0.112,
+        "relationships": 134,
+        "verified": 134,
+        "status": "completed"
+      }
+    }
+  ],
+  "retryPolicy": [
+    {
+      "syllabus": "Test fixture (sample)",
+      "scenario": "clean",
+      "assumption": "every answer valid",
+      "before": {
+        "requests": 12,
+        "requestBytes": 412830,
+        "inputTokens": 85120,
+        "outputTokens": 30520,
+        "costTypical": 0.0311,
+        "costWorst": 0.0622,
+        "relationships": 140,
+        "verified": 140,
+        "notVerified": 0
+      },
+      "after": {
+        "requests": 35,
+        "requestBytes": 1134386,
+        "inputTokens": 233894,
+        "outputTokens": 30520,
+        "costTypical": 0.0534,
+        "costWorst": 0.1068,
+        "relationships": 140,
+        "verified": 140,
+        "notVerified": 0
+      }
+    },
+    {
+      "syllabus": "Test fixture (sample)",
+      "scenario": "run-2 like",
+      "assumption": "empty explanations in 85% of answers in batches of 8 or more (run 2: 7 of 8), none below 8; 5% swapped quotes; 4 tag-only errors answered as re-tags",
+      "before": {
+        "requests": 65.3,
+        "requestBytes": 2151813.4,
+        "inputTokens": 443673,
+        "outputTokens": 90470,
+        "costTypical": 0.1208,
+        "costWorst": 0.2417,
+        "relationships": 140,
+        "verified": 136,
+        "notVerified": 4
+      },
+      "after": {
+        "requests": 41.7,
+        "requestBytes": 1346483.2,
+        "inputTokens": 277625.5,
+        "outputTokens": 32089.6,
+        "costTypical": 0.0609,
+        "costWorst": 0.1218,
+        "relationships": 140,
+        "verified": 140,
+        "notVerified": 0
+      }
+    },
+    {
+      "syllabus": "Test fixture (sample)",
+      "scenario": "pessimistic small batches",
+      "assumption": "as run-2 like, plus 25% empty explanations in batches of 4-7 and 15% swapped quotes",
+      "before": {
+        "requests": 84.8,
+        "requestBytes": 2774670.8,
+        "inputTokens": 572097.1,
+        "outputTokens": 98884.8,
+        "costTypical": 0.1451,
+        "costWorst": 0.2903,
+        "relationships": 140,
+        "verified": 135.9,
+        "notVerified": 4.1
+      },
+      "after": {
+        "requests": 71.2,
+        "requestBytes": 2285579.4,
+        "inputTokens": 471253.4,
+        "outputTokens": 43294.8,
+        "costTypical": 0.0967,
+        "costWorst": 0.1933,
+        "relationships": 140,
+        "verified": 139.2,
+        "notVerified": 0.8
+      }
+    },
+    {
+      "syllabus": "Test fixture (sample)",
+      "scenario": "model ignores the re-tag contract",
+      "assumption": "as run-2 like, but the 4 tag-only errors come back as REWRITE_TEXT with no draft, a contract error every time",
+      "before": {
+        "requests": 65.3,
+        "requestBytes": 2151813.4,
+        "inputTokens": 443673,
+        "outputTokens": 90470,
+        "costTypical": 0.1208,
+        "costWorst": 0.2417,
+        "relationships": 140,
+        "verified": 136,
+        "notVerified": 4
+      },
+      "after": {
+        "requests": 44.4,
+        "requestBytes": 1432029.2,
+        "inputTokens": 295263.7,
+        "outputTokens": 33005.2,
+        "costTypical": 0.0641,
+        "costWorst": 0.1282,
+        "relationships": 140,
+        "verified": 136,
+        "notVerified": 4
+      }
+    },
+    {
+      "syllabus": "Test fixture (sample)",
+      "scenario": "unreadable replies",
+      "assumption": "as run-2 like, plus 10% of replies (any batch size) that are not valid JSON, so the reply names no relationship (not observed in run 2)",
+      "before": {
+        "requests": 66.7,
+        "requestBytes": 2194334.5,
+        "inputTokens": 452440.3,
+        "outputTokens": 88987.6,
+        "costTypical": 0.1213,
+        "costWorst": 0.2425,
+        "relationships": 140,
+        "verified": 136,
+        "notVerified": 4
+      },
+      "after": {
+        "requests": 50.6,
+        "requestBytes": 1629699.4,
+        "inputTokens": 336020.4,
+        "outputTokens": 35359.6,
+        "costTypical": 0.0716,
+        "costWorst": 0.1432,
+        "relationships": 140,
+        "verified": 139.6,
+        "notVerified": 0.4
+      }
+    },
+    {
+      "syllabus": "BSIT - IT 202 Computer Programming 1 (18-week representative)",
+      "scenario": "clean",
+      "assumption": "every answer valid",
+      "before": {
+        "requests": 12,
+        "requestBytes": 455220,
+        "inputTokens": 93860,
+        "outputTokens": 30520,
+        "costTypical": 0.0324,
+        "costWorst": 0.0648,
+        "relationships": 140,
+        "verified": 140,
+        "notVerified": 0
+      },
+      "after": {
+        "requests": 35,
+        "requestBytes": 1191381,
+        "inputTokens": 245646,
+        "outputTokens": 30520,
+        "costTypical": 0.0552,
+        "costWorst": 0.1103,
+        "relationships": 140,
+        "verified": 140,
+        "notVerified": 0
+      }
+    },
+    {
+      "syllabus": "BSIT - IT 202 Computer Programming 1 (18-week representative)",
+      "scenario": "run-2 like",
+      "assumption": "empty explanations in 85% of answers in batches of 8 or more (run 2: 7 of 8), none below 8; 5% swapped quotes; 4 tag-only errors answered as re-tags",
+      "before": {
+        "requests": 65.3,
+        "requestBytes": 2289595,
+        "inputTokens": 472081.3,
+        "outputTokens": 90470,
+        "costTypical": 0.1251,
+        "costWorst": 0.2502,
+        "relationships": 140,
+        "verified": 136,
+        "notVerified": 4
+      },
+      "after": {
+        "requests": 41.7,
+        "requestBytes": 1409324.7,
+        "inputTokens": 290582.5,
+        "outputTokens": 32089.6,
+        "costTypical": 0.0628,
+        "costWorst": 0.1257,
+        "relationships": 140,
+        "verified": 140,
+        "notVerified": 0
+      }
+    },
+    {
+      "syllabus": "BSIT - IT 202 Computer Programming 1 (18-week representative)",
+      "scenario": "pessimistic small batches",
+      "assumption": "as run-2 like, plus 25% empty explanations in batches of 4-7 and 15% swapped quotes",
+      "before": {
+        "requests": 84.8,
+        "requestBytes": 2935131.1,
+        "inputTokens": 605181.7,
+        "outputTokens": 98884.8,
+        "costTypical": 0.1501,
+        "costWorst": 0.3002,
+        "relationships": 140,
+        "verified": 135.9,
+        "notVerified": 4.1
+      },
+      "after": {
+        "requests": 71.3,
+        "requestBytes": 2383709.7,
+        "inputTokens": 491486.5,
+        "outputTokens": 43294.8,
+        "costTypical": 0.0997,
+        "costWorst": 0.1994,
+        "relationships": 140,
+        "verified": 139.2,
+        "notVerified": 0.8
+      }
+    },
+    {
+      "syllabus": "BSIT - IT 202 Computer Programming 1 (18-week representative)",
+      "scenario": "model ignores the re-tag contract",
+      "assumption": "as run-2 like, but the 4 tag-only errors come back as REWRITE_TEXT with no draft, a contract error every time",
+      "before": {
+        "requests": 65.3,
+        "requestBytes": 2289595,
+        "inputTokens": 472081.3,
+        "outputTokens": 90470,
+        "costTypical": 0.1251,
+        "costWorst": 0.2502,
+        "relationships": 140,
+        "verified": 136,
+        "notVerified": 4
+      },
+      "after": {
+        "requests": 44.4,
+        "requestBytes": 1497590.6,
+        "inputTokens": 308781.6,
+        "outputTokens": 32983.4,
+        "costTypical": 0.0661,
+        "costWorst": 0.1322,
+        "relationships": 140,
+        "verified": 136,
+        "notVerified": 4
+      }
+    },
+    {
+      "syllabus": "BSIT - IT 202 Computer Programming 1 (18-week representative)",
+      "scenario": "unreadable replies",
+      "assumption": "as run-2 like, plus 10% of replies (any batch size) that are not valid JSON, so the reply names no relationship (not observed in run 2)",
+      "before": {
+        "requests": 66.7,
+        "requestBytes": 2330900.4,
+        "inputTokens": 480598,
+        "outputTokens": 88987.6,
+        "costTypical": 0.1255,
+        "costWorst": 0.251,
+        "relationships": 140,
+        "verified": 136,
+        "notVerified": 4
+      },
+      "after": {
+        "requests": 50.6,
+        "requestBytes": 1702268.7,
+        "inputTokens": 350983.2,
+        "outputTokens": 35359.6,
+        "costTypical": 0.0739,
+        "costWorst": 0.1477,
+        "relationships": 140,
+        "verified": 139.6,
+        "notVerified": 0.4
+      }
+    },
+    {
+      "syllabus": "BSIE - IE-402 Systems Engineering (18-week representative)",
+      "scenario": "clean",
+      "assumption": "every answer valid",
+      "before": {
+        "requests": 12,
+        "requestBytes": 455722,
+        "inputTokens": 93963,
+        "outputTokens": 30520,
+        "costTypical": 0.0324,
+        "costWorst": 0.0648,
+        "relationships": 140,
+        "verified": 140,
+        "notVerified": 0
+      },
+      "after": {
+        "requests": 35,
+        "requestBytes": 1192941,
+        "inputTokens": 245967,
+        "outputTokens": 30520,
+        "costTypical": 0.0552,
+        "costWorst": 0.1104,
+        "relationships": 140,
+        "verified": 140,
+        "notVerified": 0
+      }
+    },
+    {
+      "syllabus": "BSIE - IE-402 Systems Engineering (18-week representative)",
+      "scenario": "run-2 like",
+      "assumption": "empty explanations in 85% of answers in batches of 8 or more (run 2: 7 of 8), none below 8; 5% swapped quotes; 4 tag-only errors answered as re-tags",
+      "before": {
+        "requests": 65.3,
+        "requestBytes": 2292307.9,
+        "inputTokens": 472640.8,
+        "outputTokens": 90470,
+        "costTypical": 0.1252,
+        "costWorst": 0.2504,
+        "relationships": 140,
+        "verified": 136,
+        "notVerified": 4
+      },
+      "after": {
+        "requests": 41.7,
+        "requestBytes": 1411186.1,
+        "inputTokens": 290966.2,
+        "outputTokens": 32089.6,
+        "costTypical": 0.0629,
+        "costWorst": 0.1258,
+        "relationships": 140,
+        "verified": 140,
+        "notVerified": 0
+      }
+    },
+    {
+      "syllabus": "BSIE - IE-402 Systems Engineering (18-week representative)",
+      "scenario": "pessimistic small batches",
+      "assumption": "as run-2 like, plus 25% empty explanations in batches of 4-7 and 15% swapped quotes",
+      "before": {
+        "requests": 84.8,
+        "requestBytes": 2938280.7,
+        "inputTokens": 605831,
+        "outputTokens": 98884.8,
+        "costTypical": 0.1502,
+        "costWorst": 0.3004,
+        "relationships": 140,
+        "verified": 135.9,
+        "notVerified": 4.1
+      },
+      "after": {
+        "requests": 71.3,
+        "requestBytes": 2387497.8,
+        "inputTokens": 492267.6,
+        "outputTokens": 43294.8,
+        "costTypical": 0.0998,
+        "costWorst": 0.1996,
+        "relationships": 140,
+        "verified": 139.2,
+        "notVerified": 0.8
+      }
+    },
+    {
+      "syllabus": "BSIE - IE-402 Systems Engineering (18-week representative)",
+      "scenario": "model ignores the re-tag contract",
+      "assumption": "as run-2 like, but the 4 tag-only errors come back as REWRITE_TEXT with no draft, a contract error every time",
+      "before": {
+        "requests": 65.3,
+        "requestBytes": 2292307.9,
+        "inputTokens": 472640.8,
+        "outputTokens": 90470,
+        "costTypical": 0.1252,
+        "costWorst": 0.2504,
+        "relationships": 140,
+        "verified": 136,
+        "notVerified": 4
+      },
+      "after": {
+        "requests": 44.4,
+        "requestBytes": 1499643.8,
+        "inputTokens": 309204.8,
+        "outputTokens": 33005.2,
+        "costTypical": 0.0662,
+        "costWorst": 0.1324,
+        "relationships": 140,
+        "verified": 136,
+        "notVerified": 4
+      }
+    },
+    {
+      "syllabus": "BSIE - IE-402 Systems Engineering (18-week representative)",
+      "scenario": "unreadable replies",
+      "assumption": "as run-2 like, plus 10% of replies (any batch size) that are not valid JSON, so the reply names no relationship (not observed in run 2)",
+      "before": {
+        "requests": 66.7,
+        "requestBytes": 2333939.8,
+        "inputTokens": 481224.8,
+        "outputTokens": 88987.6,
+        "costTypical": 0.1256,
+        "costWorst": 0.2511,
+        "relationships": 140,
+        "verified": 136,
+        "notVerified": 4
+      },
+      "after": {
+        "requests": 50.7,
+        "requestBytes": 1707648.8,
+        "inputTokens": 352092.7,
+        "outputTokens": 35446.8,
+        "costTypical": 0.0741,
+        "costWorst": 0.1482,
+        "relationships": 140,
+        "verified": 139.6,
+        "notVerified": 0.4
+      }
+    },
+    {
+      "syllabus": "BSCpE - CpE-304 Fundamentals of Mixed Signals and Sensors (18-week representative)",
+      "scenario": "clean",
+      "assumption": "every answer valid",
+      "before": {
+        "requests": 12,
+        "requestBytes": 453601,
+        "inputTokens": 93526,
+        "outputTokens": 30520,
+        "costTypical": 0.0323,
+        "costWorst": 0.0647,
+        "relationships": 140,
+        "verified": 140,
+        "notVerified": 0
+      },
+      "after": {
+        "requests": 35,
+        "requestBytes": 1189003,
+        "inputTokens": 245155,
+        "outputTokens": 30520,
+        "costTypical": 0.0551,
+        "costWorst": 0.1102,
+        "relationships": 140,
+        "verified": 140,
+        "notVerified": 0
+      }
+    },
+    {
+      "syllabus": "BSCpE - CpE-304 Fundamentals of Mixed Signals and Sensors (18-week representative)",
+      "scenario": "run-2 like",
+      "assumption": "empty explanations in 85% of answers in batches of 8 or more (run 2: 7 of 8), none below 8; 5% swapped quotes; 4 tag-only errors answered as re-tags",
+      "before": {
+        "requests": 65.3,
+        "requestBytes": 2284174.2,
+        "inputTokens": 470963.7,
+        "outputTokens": 90470,
+        "costTypical": 0.1249,
+        "costWorst": 0.2499,
+        "relationships": 140,
+        "verified": 136,
+        "notVerified": 4
+      },
+      "after": {
+        "requests": 41.7,
+        "requestBytes": 1406747.5,
+        "inputTokens": 290051.1,
+        "outputTokens": 32089.6,
+        "costTypical": 0.0628,
+        "costWorst": 0.1255,
+        "relationships": 140,
+        "verified": 140,
+        "notVerified": 0
+      }
+    },
+    {
+      "syllabus": "BSCpE - CpE-304 Fundamentals of Mixed Signals and Sensors (18-week representative)",
+      "scenario": "pessimistic small batches",
+      "assumption": "as run-2 like, plus 25% empty explanations in batches of 4-7 and 15% swapped quotes",
+      "before": {
+        "requests": 84.8,
+        "requestBytes": 2928152.4,
+        "inputTokens": 603742.7,
+        "outputTokens": 98884.8,
+        "costTypical": 0.1499,
+        "costWorst": 0.2998,
+        "relationships": 140,
+        "verified": 135.9,
+        "notVerified": 4.1
+      },
+      "after": {
+        "requests": 71.2,
+        "requestBytes": 2376878.4,
+        "inputTokens": 490078.2,
+        "outputTokens": 43294.8,
+        "costTypical": 0.0995,
+        "costWorst": 0.199,
+        "relationships": 140,
+        "verified": 139.2,
+        "notVerified": 0.8
+      }
+    },
+    {
+      "syllabus": "BSCpE - CpE-304 Fundamentals of Mixed Signals and Sensors (18-week representative)",
+      "scenario": "model ignores the re-tag contract",
+      "assumption": "as run-2 like, but the 4 tag-only errors come back as REWRITE_TEXT with no draft, a contract error every time",
+      "before": {
+        "requests": 65.3,
+        "requestBytes": 2284174.2,
+        "inputTokens": 470963.7,
+        "outputTokens": 90470,
+        "costTypical": 0.1249,
+        "costWorst": 0.2499,
+        "relationships": 140,
+        "verified": 136,
+        "notVerified": 4
+      },
+      "after": {
+        "requests": 44.4,
+        "requestBytes": 1494872.2,
+        "inputTokens": 308220.9,
+        "outputTokens": 33005.2,
+        "costTypical": 0.066,
+        "costWorst": 0.1321,
+        "relationships": 140,
+        "verified": 136,
+        "notVerified": 4
+      }
+    },
+    {
+      "syllabus": "BSCpE - CpE-304 Fundamentals of Mixed Signals and Sensors (18-week representative)",
+      "scenario": "unreadable replies",
+      "assumption": "as run-2 like, plus 10% of replies (any batch size) that are not valid JSON, so the reply names no relationship (not observed in run 2)",
+      "before": {
+        "requests": 66.7,
+        "requestBytes": 2325511.2,
+        "inputTokens": 479486.7,
+        "outputTokens": 88987.6,
+        "costTypical": 0.1253,
+        "costWorst": 0.2506,
+        "relationships": 140,
+        "verified": 136,
+        "notVerified": 4
+      },
+      "after": {
+        "requests": 50.6,
+        "requestBytes": 1699596.3,
+        "inputTokens": 350432.4,
+        "outputTokens": 35359.6,
+        "costTypical": 0.0738,
+        "costWorst": 0.1476,
+        "relationships": 140,
+        "verified": 139.6,
+        "notVerified": 0.4
+      }
+    },
+    {
+      "syllabus": "BSIT - IT 202 Computer Programming 1 (real faculty PDF)",
+      "scenario": "clean",
+      "assumption": "every answer valid",
+      "before": {
+        "requests": 14,
+        "requestBytes": 552587,
+        "inputTokens": 113935,
+        "outputTokens": 35098,
+        "costTypical": 0.0381,
+        "costWorst": 0.0763,
+        "relationships": 161,
+        "verified": 161,
+        "notVerified": 0
+      },
+      "after": {
+        "requests": 41,
+        "requestBytes": 1433786,
+        "inputTokens": 295626,
+        "outputTokens": 35098,
+        "costTypical": 0.0654,
+        "costWorst": 0.1308,
+        "relationships": 161,
+        "verified": 161,
+        "notVerified": 0
+      }
+    },
+    {
+      "syllabus": "BSIT - IT 202 Computer Programming 1 (real faculty PDF)",
+      "scenario": "run-2 like",
+      "assumption": "empty explanations in 85% of answers in batches of 8 or more (run 2: 7 of 8), none below 8; 5% swapped quotes; 4 tag-only errors answered as re-tags",
+      "before": {
+        "requests": 72.2,
+        "requestBytes": 2616869.6,
+        "inputTokens": 539560.8,
+        "outputTokens": 103898.8,
+        "costTypical": 0.1433,
+        "costWorst": 0.2865,
+        "relationships": 161,
+        "verified": 157,
+        "notVerified": 4
+      },
+      "after": {
+        "requests": 48.8,
+        "requestBytes": 1693972.3,
+        "inputTokens": 349272.7,
+        "outputTokens": 36972.8,
+        "costTypical": 0.0746,
+        "costWorst": 0.1492,
+        "relationships": 161,
+        "verified": 161,
+        "notVerified": 0
+      }
+    },
+    {
+      "syllabus": "BSIT - IT 202 Computer Programming 1 (real faculty PDF)",
+      "scenario": "pessimistic small batches",
+      "assumption": "as run-2 like, plus 25% empty explanations in batches of 4-7 and 15% swapped quotes",
+      "before": {
+        "requests": 94.3,
+        "requestBytes": 3362088.2,
+        "inputTokens": 693214.1,
+        "outputTokens": 113011.2,
+        "costTypical": 0.1718,
+        "costWorst": 0.3436,
+        "relationships": 161,
+        "verified": 156.8,
+        "notVerified": 4.2
+      },
+      "after": {
+        "requests": 82.8,
+        "requestBytes": 2837585.2,
+        "inputTokens": 585069.1,
+        "outputTokens": 49551.4,
+        "costTypical": 0.1175,
+        "costWorst": 0.235,
+        "relationships": 161,
+        "verified": 160,
+        "notVerified": 1
+      }
+    },
+    {
+      "syllabus": "BSIT - IT 202 Computer Programming 1 (real faculty PDF)",
+      "scenario": "model ignores the re-tag contract",
+      "assumption": "as run-2 like, but the 4 tag-only errors come back as REWRITE_TEXT with no draft, a contract error every time",
+      "before": {
+        "requests": 72.2,
+        "requestBytes": 2616869.6,
+        "inputTokens": 539560.8,
+        "outputTokens": 103898.8,
+        "costTypical": 0.1433,
+        "costWorst": 0.2865,
+        "relationships": 161,
+        "verified": 157,
+        "notVerified": 4
+      },
+      "after": {
+        "requests": 51.2,
+        "requestBytes": 1773678.3,
+        "inputTokens": 365706.9,
+        "outputTokens": 37910.2,
+        "costTypical": 0.0776,
+        "costWorst": 0.1552,
+        "relationships": 161,
+        "verified": 157,
+        "notVerified": 4
+      }
+    },
+    {
+      "syllabus": "BSIT - IT 202 Computer Programming 1 (real faculty PDF)",
+      "scenario": "unreadable replies",
+      "assumption": "as run-2 like, plus 10% of replies (any batch size) that are not valid JSON, so the reply names no relationship (not observed in run 2)",
+      "before": {
+        "requests": 77.5,
+        "requestBytes": 2789997.5,
+        "inputTokens": 575257.2,
+        "outputTokens": 103157.6,
+        "costTypical": 0.1482,
+        "costWorst": 0.2964,
+        "relationships": 161,
+        "verified": 157,
+        "notVerified": 4
+      },
+      "after": {
+        "requests": 59.5,
+        "requestBytes": 2056583.2,
+        "inputTokens": 424037.8,
+        "outputTokens": 40809.6,
+        "costTypical": 0.0881,
+        "costWorst": 0.1762,
+        "relationships": 161,
+        "verified": 160.6,
+        "notVerified": 0.4
+      }
+    },
+    {
+      "syllabus": "BSIE - IE 402 Systems Engineering (real faculty PDF)",
+      "scenario": "clean",
+      "assumption": "every answer valid",
+      "before": {
+        "requests": 12,
+        "requestBytes": 512722,
+        "inputTokens": 105716,
+        "outputTokens": 30084,
+        "costTypical": 0.0339,
+        "costWorst": 0.0678,
+        "relationships": 138,
+        "verified": 138,
+        "notVerified": 0
+      },
+      "after": {
+        "requests": 35,
+        "requestBytes": 1271170,
+        "inputTokens": 262097,
+        "outputTokens": 30084,
+        "costTypical": 0.0574,
+        "costWorst": 0.1147,
+        "relationships": 138,
+        "verified": 138,
+        "notVerified": 0
+      }
+    },
+    {
+      "syllabus": "BSIE - IE 402 Systems Engineering (real faculty PDF)",
+      "scenario": "run-2 like",
+      "assumption": "empty explanations in 85% of answers in batches of 8 or more (run 2: 7 of 8), none below 8; 5% swapped quotes; 4 tag-only errors answered as re-tags",
+      "before": {
+        "requests": 63.4,
+        "requestBytes": 2407680,
+        "inputTokens": 496428.8,
+        "outputTokens": 89053,
+        "costTypical": 0.1279,
+        "costWorst": 0.2558,
+        "relationships": 138,
+        "verified": 134,
+        "notVerified": 4
+      },
+      "after": {
+        "requests": 41.6,
+        "requestBytes": 1494619.5,
+        "inputTokens": 308168.9,
+        "outputTokens": 31631.8,
+        "costTypical": 0.0652,
+        "costWorst": 0.1304,
+        "relationships": 138,
+        "verified": 138,
+        "notVerified": 0
+      }
+    },
+    {
+      "syllabus": "BSIE - IE 402 Systems Engineering (real faculty PDF)",
+      "scenario": "pessimistic small batches",
+      "assumption": "as run-2 like, plus 25% empty explanations in batches of 4-7 and 15% swapped quotes",
+      "before": {
+        "requests": 85,
+        "requestBytes": 3157987.7,
+        "inputTokens": 651131.4,
+        "outputTokens": 98252.6,
+        "costTypical": 0.1566,
+        "costWorst": 0.3132,
+        "relationships": 138,
+        "verified": 133.9,
+        "notVerified": 4.1
+      },
+      "after": {
+        "requests": 70.5,
+        "requestBytes": 2489944.6,
+        "inputTokens": 513390.6,
+        "outputTokens": 42575.4,
+        "costTypical": 0.1026,
+        "costWorst": 0.2051,
+        "relationships": 138,
+        "verified": 137.2,
+        "notVerified": 0.8
+      }
+    },
+    {
+      "syllabus": "BSIE - IE 402 Systems Engineering (real faculty PDF)",
+      "scenario": "model ignores the re-tag contract",
+      "assumption": "as run-2 like, but the 4 tag-only errors come back as REWRITE_TEXT with no draft, a contract error every time",
+      "before": {
+        "requests": 63.4,
+        "requestBytes": 2407680,
+        "inputTokens": 496428.8,
+        "outputTokens": 89053,
+        "costTypical": 0.1279,
+        "costWorst": 0.2558,
+        "relationships": 138,
+        "verified": 134,
+        "notVerified": 4
+      },
+      "after": {
+        "requests": 44.2,
+        "requestBytes": 1583708.7,
+        "inputTokens": 326537.8,
+        "outputTokens": 32547.4,
+        "costTypical": 0.0685,
+        "costWorst": 0.137,
+        "relationships": 138,
+        "verified": 134,
+        "notVerified": 4
+      }
+    },
+    {
+      "syllabus": "BSIE - IE 402 Systems Engineering (real faculty PDF)",
+      "scenario": "unreadable replies",
+      "assumption": "as run-2 like, plus 10% of replies (any batch size) that are not valid JSON, so the reply names no relationship (not observed in run 2)",
+      "before": {
+        "requests": 67.5,
+        "requestBytes": 2540167.3,
+        "inputTokens": 523745.8,
+        "outputTokens": 86742.2,
+        "costTypical": 0.1306,
+        "costWorst": 0.2612,
+        "relationships": 138,
+        "verified": 134,
+        "notVerified": 4
+      },
+      "after": {
+        "requests": 50.5,
+        "requestBytes": 1802484.9,
+        "inputTokens": 371646.3,
+        "outputTokens": 34901.8,
+        "costTypical": 0.0767,
+        "costWorst": 0.1534,
+        "relationships": 138,
+        "verified": 137.6,
+        "notVerified": 0.4
+      }
+    },
+    {
+      "syllabus": "BSCpE - CpE 304 Fundamentals of Mixed Signals and Sensors (real faculty PDF)",
+      "scenario": "clean",
+      "assumption": "every answer valid",
+      "before": {
+        "requests": 10,
+        "requestBytes": 398412,
+        "inputTokens": 82147,
+        "outputTokens": 24416,
+        "costTypical": 0.027,
+        "costWorst": 0.0539,
+        "relationships": 112,
+        "verified": 112,
+        "notVerified": 0
+      },
+      "after": {
+        "requests": 28,
+        "requestBytes": 989460,
+        "inputTokens": 204012,
+        "outputTokens": 24416,
+        "costTypical": 0.0453,
+        "costWorst": 0.0905,
+        "relationships": 112,
+        "verified": 112,
+        "notVerified": 0
+      }
+    },
+    {
+      "syllabus": "BSCpE - CpE 304 Fundamentals of Mixed Signals and Sensors (real faculty PDF)",
+      "scenario": "run-2 like",
+      "assumption": "empty explanations in 85% of answers in batches of 8 or more (run 2: 7 of 8), none below 8; 5% swapped quotes; 4 tag-only errors answered as re-tags",
+      "before": {
+        "requests": 53.4,
+        "requestBytes": 1943804.5,
+        "inputTokens": 400784.4,
+        "outputTokens": 71700.2,
+        "costTypical": 0.1031,
+        "costWorst": 0.2063,
+        "relationships": 112,
+        "verified": 108,
+        "notVerified": 4
+      },
+      "after": {
+        "requests": 33.5,
+        "requestBytes": 1174334.9,
+        "inputTokens": 242130.9,
+        "outputTokens": 25702.2,
+        "costTypical": 0.0517,
+        "costWorst": 0.1035,
+        "relationships": 112,
+        "verified": 112,
+        "notVerified": 0
+      }
+    },
+    {
+      "syllabus": "BSCpE - CpE 304 Fundamentals of Mixed Signals and Sensors (real faculty PDF)",
+      "scenario": "pessimistic small batches",
+      "assumption": "as run-2 like, plus 25% empty explanations in batches of 4-7 and 15% swapped quotes",
+      "before": {
+        "requests": 71.7,
+        "requestBytes": 2576643.4,
+        "inputTokens": 531266.8,
+        "outputTokens": 82513,
+        "costTypical": 0.1292,
+        "costWorst": 0.2584,
+        "relationships": 112,
+        "verified": 108,
+        "notVerified": 4
+      },
+      "after": {
+        "requests": 56.1,
+        "requestBytes": 1940120.6,
+        "inputTokens": 400025.1,
+        "outputTokens": 34182.4,
+        "costTypical": 0.0805,
+        "costWorst": 0.161,
+        "relationships": 112,
+        "verified": 111.3,
+        "notVerified": 0.7
+      }
+    },
+    {
+      "syllabus": "BSCpE - CpE 304 Fundamentals of Mixed Signals and Sensors (real faculty PDF)",
+      "scenario": "model ignores the re-tag contract",
+      "assumption": "as run-2 like, but the 4 tag-only errors come back as REWRITE_TEXT with no draft, a contract error every time",
+      "before": {
+        "requests": 53.4,
+        "requestBytes": 1943804.5,
+        "inputTokens": 400784.4,
+        "outputTokens": 71700.2,
+        "costTypical": 0.1031,
+        "costWorst": 0.2063,
+        "relationships": 112,
+        "verified": 108,
+        "notVerified": 4
+      },
+      "after": {
+        "requests": 36.9,
+        "requestBytes": 1287310.8,
+        "inputTokens": 265424.9,
+        "outputTokens": 26596,
+        "costTypical": 0.0558,
+        "costWorst": 0.1115,
+        "relationships": 112,
+        "verified": 108,
+        "notVerified": 4
+      }
+    },
+    {
+      "syllabus": "BSCpE - CpE 304 Fundamentals of Mixed Signals and Sensors (real faculty PDF)",
+      "scenario": "unreadable replies",
+      "assumption": "as run-2 like, plus 10% of replies (any batch size) that are not valid JSON, so the reply names no relationship (not observed in run 2)",
+      "before": {
+        "requests": 57.8,
+        "requestBytes": 2090442.7,
+        "inputTokens": 431019,
+        "outputTokens": 71852.8,
+        "costTypical": 0.1078,
+        "costWorst": 0.2155,
+        "relationships": 112,
+        "verified": 108,
+        "notVerified": 4
+      },
+      "after": {
+        "requests": 41.4,
+        "requestBytes": 1442547.3,
+        "inputTokens": 297432.4,
+        "outputTokens": 28579.8,
+        "costTypical": 0.0618,
+        "costWorst": 0.1235,
+        "relationships": 112,
+        "verified": 111.8,
+        "notVerified": 0.2
+      }
+    }
+  ]
+}

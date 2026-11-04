@@ -1,0 +1,691 @@
+{
+  "version": "lcup-academic-benchmark-1",
+  "benchmarkHash": "ebd12920a890971b8c7fb481cc6bc9b469ec7dd4c2001134f6833cc31009bbf7",
+  "basis": "Deterministic coverage selection only; no correctness labels, random-sampling claim or reviewer assignment. A reference-held selection is for reference/faculty review, not a Claude-ready case.",
+  "cases": [
+    {
+      "id": "BM1-IT202-095",
+      "program": "BSIT",
+      "type": "Content-course",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IT202-096",
+      "program": "BSIT",
+      "type": "Content-ILO",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IT202-035",
+      "program": "BSIT",
+      "type": "ILO-CLO",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IT202-130",
+      "program": "BSIT",
+      "type": "Content-activity",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IT202-036",
+      "program": "BSIT",
+      "type": "ILO-activity",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IT202-131",
+      "program": "BSIT",
+      "type": "Content-assessment",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IT202-132",
+      "program": "BSIT",
+      "type": "Activity-assessment",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IT202-001",
+      "program": "BSIT",
+      "type": "Course-CLO",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IT202-002",
+      "program": "BSIT",
+      "type": "CLO-PO",
+      "sourceKind": "verified-syllabus",
+      "held": true,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IT202-007",
+      "program": "BSIT",
+      "type": "CLO-EGA",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IT202-126",
+      "program": "BSIT",
+      "type": "CLO-classification",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IT202-180",
+      "program": "BSIT",
+      "type": "Title-description",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IT202-125",
+      "program": "BSIT",
+      "type": "Description-plan",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IT202-181",
+      "program": "BSIT",
+      "type": "Week1-introduction",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IT202-160",
+      "program": "BSIT",
+      "type": "Activity-fit",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IT202-037",
+      "program": "BSIT",
+      "type": "Module-value",
+      "sourceKind": "verified-syllabus",
+      "held": true,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IT202-170",
+      "program": "BSIT",
+      "type": "Value-use",
+      "sourceKind": "verified-syllabus",
+      "held": true,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IT202-186",
+      "program": "BSIT",
+      "type": "Assessment-fit",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IT202-199",
+      "program": "BSIT",
+      "type": "APA7-text",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-S07-003",
+      "program": "BSIT-CYBERSECURITY",
+      "type": "Content-course",
+      "sourceKind": "synthetic",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-S07-004",
+      "program": "BSIT-CYBERSECURITY",
+      "type": "Content-ILO",
+      "sourceKind": "synthetic",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-S07-001",
+      "program": "BSIT-CYBERSECURITY",
+      "type": "ILO-CLO",
+      "sourceKind": "synthetic",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-S07-005",
+      "program": "BSIT-CYBERSECURITY",
+      "type": "Content-activity",
+      "sourceKind": "synthetic",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-S07-002",
+      "program": "BSIT-CYBERSECURITY",
+      "type": "ILO-activity",
+      "sourceKind": "synthetic",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-S07-006",
+      "program": "BSIT-CYBERSECURITY",
+      "type": "Content-assessment",
+      "sourceKind": "synthetic",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-S07-007",
+      "program": "BSIT-CYBERSECURITY",
+      "type": "Activity-assessment",
+      "sourceKind": "synthetic",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-S07-008",
+      "program": "BSIT-CYBERSECURITY",
+      "type": "Course-CLO",
+      "sourceKind": "synthetic",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-S07-009",
+      "program": "BSIT-CYBERSECURITY",
+      "type": "CLO-PO",
+      "sourceKind": "synthetic",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-S07-010",
+      "program": "BSIT-CYBERSECURITY",
+      "type": "CLO-EGA",
+      "sourceKind": "synthetic",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-S07-023",
+      "program": "BSIT-CYBERSECURITY",
+      "type": "CLO-classification",
+      "sourceKind": "synthetic",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-S07-031",
+      "program": "BSIT-CYBERSECURITY",
+      "type": "Title-description",
+      "sourceKind": "synthetic",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-S07-022",
+      "program": "BSIT-CYBERSECURITY",
+      "type": "Description-plan",
+      "sourceKind": "synthetic",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-S07-032",
+      "program": "BSIT-CYBERSECURITY",
+      "type": "Week1-introduction",
+      "sourceKind": "synthetic",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-S07-027",
+      "program": "BSIT-CYBERSECURITY",
+      "type": "Activity-fit",
+      "sourceKind": "synthetic",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-S07-020",
+      "program": "BSIT-CYBERSECURITY",
+      "type": "Module-value",
+      "sourceKind": "synthetic",
+      "held": true,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-S07-029",
+      "program": "BSIT-CYBERSECURITY",
+      "type": "Value-use",
+      "sourceKind": "synthetic",
+      "held": true,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-S07-033",
+      "program": "BSIT-CYBERSECURITY",
+      "type": "Assessment-fit",
+      "sourceKind": "synthetic",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-S07-037",
+      "program": "BSIT-CYBERSECURITY",
+      "type": "APA7-text",
+      "sourceKind": "synthetic",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IE402-073",
+      "program": "BSIE",
+      "type": "Content-course",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IE402-074",
+      "program": "BSIE",
+      "type": "Content-ILO",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IE402-023",
+      "program": "BSIE",
+      "type": "ILO-CLO",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IE402-099",
+      "program": "BSIE",
+      "type": "Content-activity",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IE402-024",
+      "program": "BSIE",
+      "type": "ILO-activity",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IE402-100",
+      "program": "BSIE",
+      "type": "Content-assessment",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IE402-101",
+      "program": "BSIE",
+      "type": "Activity-assessment",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IE402-001",
+      "program": "BSIE",
+      "type": "Course-CLO",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IE402-002",
+      "program": "BSIE",
+      "type": "CLO-PO",
+      "sourceKind": "verified-syllabus",
+      "held": true,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IE402-004",
+      "program": "BSIE",
+      "type": "CLO-EGA",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IE402-095",
+      "program": "BSIE",
+      "type": "CLO-classification",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IE402-129",
+      "program": "BSIE",
+      "type": "Title-description",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IE402-094",
+      "program": "BSIE",
+      "type": "Description-plan",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IE402-130",
+      "program": "BSIE",
+      "type": "Week1-introduction",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IE402-117",
+      "program": "BSIE",
+      "type": "Activity-fit",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IE402-025",
+      "program": "BSIE",
+      "type": "Module-value",
+      "sourceKind": "verified-syllabus",
+      "held": true,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IE402-123",
+      "program": "BSIE",
+      "type": "Value-use",
+      "sourceKind": "verified-syllabus",
+      "held": true,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IE402-131",
+      "program": "BSIE",
+      "type": "Assessment-fit",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-IE402-140",
+      "program": "BSIE",
+      "type": "APA7-text",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-CPE304-049",
+      "program": "BSCPE",
+      "type": "Content-course",
+      "sourceKind": "verified-syllabus",
+      "held": true,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-CPE304-051",
+      "program": "BSCPE",
+      "type": "Content-ILO",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-CPE304-021",
+      "program": "BSCPE",
+      "type": "ILO-CLO",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-CPE304-077",
+      "program": "BSCPE",
+      "type": "Content-activity",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-CPE304-022",
+      "program": "BSCPE",
+      "type": "ILO-activity",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-CPE304-078",
+      "program": "BSCPE",
+      "type": "Content-assessment",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-CPE304-079",
+      "program": "BSCPE",
+      "type": "Activity-assessment",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-CPE304-001",
+      "program": "BSCPE",
+      "type": "Course-CLO",
+      "sourceKind": "verified-syllabus",
+      "held": true,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-CPE304-002",
+      "program": "BSCPE",
+      "type": "CLO-PO",
+      "sourceKind": "verified-syllabus",
+      "held": true,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-CPE304-006",
+      "program": "BSCPE",
+      "type": "CLO-EGA",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-CPE304-073",
+      "program": "BSCPE",
+      "type": "CLO-classification",
+      "sourceKind": "verified-syllabus",
+      "held": true,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-CPE304-117",
+      "program": "BSCPE",
+      "type": "Title-description",
+      "sourceKind": "verified-syllabus",
+      "held": true,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-CPE304-072",
+      "program": "BSCPE",
+      "type": "Description-plan",
+      "sourceKind": "verified-syllabus",
+      "held": true,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-CPE304-118",
+      "program": "BSCPE",
+      "type": "Week1-introduction",
+      "sourceKind": "verified-syllabus",
+      "held": true,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-CPE304-101",
+      "program": "BSCPE",
+      "type": "Activity-fit",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-CPE304-020",
+      "program": "BSCPE",
+      "type": "Module-value",
+      "sourceKind": "verified-syllabus",
+      "held": true,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-CPE304-109",
+      "program": "BSCPE",
+      "type": "Value-use",
+      "sourceKind": "verified-syllabus",
+      "held": true,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-CPE304-133",
+      "program": "BSCPE",
+      "type": "Assessment-fit",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    },
+    {
+      "id": "BM1-CPE304-144",
+      "program": "BSCPE",
+      "type": "APA7-text",
+      "sourceKind": "verified-syllabus",
+      "held": false,
+      "expectedJudgment": null,
+      "reviewerIds": []
+    }
+  ]
+}

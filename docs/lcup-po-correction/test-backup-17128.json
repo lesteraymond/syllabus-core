@@ -1,0 +1,906 @@
+{
+  "migrationId": "lcup-po-2026-10-29",
+  "officialSha256": "59605b4cd2cadf9c93bf1f939ca7463a19103b4879550e88fa61f565cbe917c7",
+  "before": {
+    "programs": [
+      {
+        "program_id": 1,
+        "code": "BSIT",
+        "name": "BSIT",
+        "egas_version": 1,
+        "pos_version": 1
+      },
+      {
+        "program_id": 2,
+        "code": "BSIT-CYBERSECURITY",
+        "name": "BSIT-CYBERSECURITY",
+        "egas_version": 1,
+        "pos_version": 2
+      },
+      {
+        "program_id": 3,
+        "code": "BSIE",
+        "name": "BSIE",
+        "egas_version": 1,
+        "pos_version": 2
+      },
+      {
+        "program_id": 4,
+        "code": "BSCPE",
+        "name": "BSCPE",
+        "egas_version": 1,
+        "pos_version": 2
+      }
+    ],
+    "pos": [
+      {
+        "program_id": 1,
+        "po_no": 1,
+        "short_name": "Apply computing knowledge",
+        "outcome_text": "Apply computing and other knowledge domains to address realworld problems.",
+        "ega_nos": "1"
+      },
+      {
+        "program_id": 1,
+        "po_no": 2,
+        "short_name": "Analyze and define requirements",
+        "outcome_text": "Analyze complex problems and identify and define the computing requirements needed to design an appropriate solution.",
+        "ega_nos": "1"
+      },
+      {
+        "program_id": 1,
+        "po_no": 3,
+        "short_name": "Design computing solutions",
+        "outcome_text": "Design and develop computing solutions using a system-level perspective.",
+        "ega_nos": "1"
+      },
+      {
+        "program_id": 1,
+        "po_no": 4,
+        "short_name": "Ethical IT professional",
+        "outcome_text": "Demonstrate ethical behavior as an IT Professional and sensitivity to the impact of technology in the society.",
+        "ega_nos": "2"
+      },
+      {
+        "program_id": 1,
+        "po_no": 5,
+        "short_name": "Augustinian virtues and CSR",
+        "outcome_text": "Show Augustinian virtues/ethical values and the understanding and appreciation of corporate social responsibility.",
+        "ega_nos": "2"
+      },
+      {
+        "program_id": 1,
+        "po_no": 6,
+        "short_name": "Multi-disciplinary teamwork",
+        "outcome_text": "Work effectively and independently in multi-disciplinary and multi-cultural teams.",
+        "ega_nos": "4"
+      },
+      {
+        "program_id": 1,
+        "po_no": 7,
+        "short_name": "Impact on society",
+        "outcome_text": "Understand the impact of their work on society and strive to ensure that their actions contribute positively on the community.",
+        "ega_nos": "3"
+      },
+      {
+        "program_id": 1,
+        "po_no": 8,
+        "short_name": "Latest developments in the field",
+        "outcome_text": "Articulate and discuss the latest developments in the specific field of practice.",
+        "ega_nos": "1,4"
+      },
+      {
+        "program_id": 1,
+        "po_no": 9,
+        "short_name": "Professional and social ethics",
+        "outcome_text": "Act in recognition of professional, social and ethical.",
+        "ega_nos": "2"
+      },
+      {
+        "program_id": 1,
+        "po_no": 10,
+        "short_name": "Ethical leadership",
+        "outcome_text": "Demonstrate ethical leadership and social responsibility by integrating sustainability, inclusivity, mental well-being and peace-building principles into academic, professional and community engagements, ensuring holistic development and societal transformation.",
+        "ega_nos": "3"
+      },
+      {
+        "program_id": 2,
+        "po_no": 1,
+        "short_name": "Apply computing knowledge",
+        "outcome_text": "Apply computing and other knowledge domains to address realworld problems.",
+        "ega_nos": "1"
+      },
+      {
+        "program_id": 2,
+        "po_no": 2,
+        "short_name": "Analyze and define requirements",
+        "outcome_text": "Analyze complex problems and identify and define the computing requirements needed to design an appropriate solution.",
+        "ega_nos": "1"
+      },
+      {
+        "program_id": 2,
+        "po_no": 3,
+        "short_name": "Design computing solutions",
+        "outcome_text": "Design and develop computing solutions using a system-level perspective.",
+        "ega_nos": "1"
+      },
+      {
+        "program_id": 2,
+        "po_no": 4,
+        "short_name": "Ethical IT professional",
+        "outcome_text": "Demonstrate ethical behavior as an IT Professional and sensitivity to the impact of technology in the society.",
+        "ega_nos": "2"
+      },
+      {
+        "program_id": 2,
+        "po_no": 5,
+        "short_name": "Augustinian virtues and CSR",
+        "outcome_text": "Show Augustinian virtues/ethical values and the understanding and appreciation of corporate social responsibility.",
+        "ega_nos": "2"
+      },
+      {
+        "program_id": 2,
+        "po_no": 6,
+        "short_name": "Multi-disciplinary teamwork",
+        "outcome_text": "Work effectively and independently in multi-disciplinary and multi-cultural teams.",
+        "ega_nos": "4"
+      },
+      {
+        "program_id": 2,
+        "po_no": 7,
+        "short_name": "Impact on society",
+        "outcome_text": "Understand the impact of their work on society and strive to ensure that their actions contribute positively on the community.",
+        "ega_nos": "3"
+      },
+      {
+        "program_id": 2,
+        "po_no": 8,
+        "short_name": "Latest developments in the field",
+        "outcome_text": "Articulate and discuss the latest developments in the specific field of practice.",
+        "ega_nos": "1,4"
+      },
+      {
+        "program_id": 2,
+        "po_no": 9,
+        "short_name": "Professional and social ethics",
+        "outcome_text": "Act in recognition of professional, social and ethical.",
+        "ega_nos": "2"
+      },
+      {
+        "program_id": 2,
+        "po_no": 10,
+        "short_name": "Ethical leadership",
+        "outcome_text": "Demonstrate ethical leadership and social responsibility by integrating sustainability, inclusivity, mental well-being and peace-building principles into academic, professional and community engagements, ensuring holistic development and societal transformation.",
+        "ega_nos": "3"
+      },
+      {
+        "program_id": 3,
+        "po_no": 1,
+        "short_name": "PO 1",
+        "outcome_text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 3,
+        "po_no": 2,
+        "short_name": "PO 2",
+        "outcome_text": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 3,
+        "po_no": 3,
+        "short_name": "PO 3",
+        "outcome_text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 3,
+        "po_no": 4,
+        "short_name": "PO 4",
+        "outcome_text": "Ability to function on multidisciplinary teams",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 3,
+        "po_no": 5,
+        "short_name": "PO 5",
+        "outcome_text": "Ability to identify; formulate, and solve complex engineering problems;",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 3,
+        "po_no": 6,
+        "short_name": "PO 6",
+        "outcome_text": "Understanding of professional and ethical responsibility.",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 3,
+        "po_no": 7,
+        "short_name": "PO 7",
+        "outcome_text": "Ability to communicate effectively",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 3,
+        "po_no": 8,
+        "short_name": "PO 8",
+        "outcome_text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 3,
+        "po_no": 9,
+        "short_name": "PO 9",
+        "outcome_text": "Recognition of the need for, and an ability to engage in life-long learning;",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 3,
+        "po_no": 10,
+        "short_name": "PO 10",
+        "outcome_text": "Knowledge of contemporary issues;",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 3,
+        "po_no": 11,
+        "short_name": "PO 11",
+        "outcome_text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and;",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 3,
+        "po_no": 12,
+        "short_name": "PO 12",
+        "outcome_text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 3,
+        "po_no": 13,
+        "short_name": "PO 13",
+        "outcome_text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 4,
+        "po_no": 1,
+        "short_name": "PO 1",
+        "outcome_text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 4,
+        "po_no": 2,
+        "short_name": "PO 2",
+        "outcome_text": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 4,
+        "po_no": 3,
+        "short_name": "PO 3",
+        "outcome_text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 4,
+        "po_no": 4,
+        "short_name": "PO 4",
+        "outcome_text": "Ability to function on multidisciplinary teams",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 4,
+        "po_no": 5,
+        "short_name": "PO 5",
+        "outcome_text": "Ability to identify; formulate, and solve complex engineering problems;",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 4,
+        "po_no": 6,
+        "short_name": "PO 6",
+        "outcome_text": "Understanding of professional and ethical responsibility.",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 4,
+        "po_no": 7,
+        "short_name": "PO 7",
+        "outcome_text": "Ability to communicate effectively",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 4,
+        "po_no": 8,
+        "short_name": "PO 8",
+        "outcome_text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 4,
+        "po_no": 9,
+        "short_name": "PO 9",
+        "outcome_text": "Recognition of the need for, and an ability to engage in life-long learning;",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 4,
+        "po_no": 10,
+        "short_name": "PO 10",
+        "outcome_text": "Knowledge of contemporary issues;",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 4,
+        "po_no": 11,
+        "short_name": "PO 11",
+        "outcome_text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 4,
+        "po_no": 12,
+        "short_name": "PO 12",
+        "outcome_text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in",
+        "ega_nos": ""
+      },
+      {
+        "program_id": 4,
+        "po_no": 13,
+        "short_name": "PO 13",
+        "outcome_text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+        "ega_nos": ""
+      }
+    ],
+    "links": [],
+    "active": [],
+    "activeVersions": [],
+    "protectedHashes": {
+      "syllabi": {
+        "rows": 4,
+        "sha256": "b716b574d93bb5216f701c94eeacf3f95d9d1984842d9d3d793f6a3049190ccf"
+      },
+      "syllabus_versions": {
+        "rows": 4,
+        "sha256": "c8b227f964148ca5a4d8fb334919fa68cb947b6dd556d14ca3e6dcc26849f3fb"
+      },
+      "syllabus_check_reports": {
+        "rows": 4,
+        "sha256": "8621b90d9776d7a910b8ad0ce520d8bde8d4c4c3e98cba393c9bb5e98434165d"
+      },
+      "ai_check_runs": {
+        "rows": 4,
+        "sha256": "39eaa950addfdde1c0fe63f4aaa3b82f34659eb4d984f33ae883259a341906cc"
+      },
+      "syllabus_check_decisions": {
+        "rows": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "syllabus_check_curricula": {
+        "rows": 1,
+        "sha256": "88e18ba05fd19e94dd2322f1597dfdae73731e60e4be586e1104ee566f848e13"
+      },
+      "curriculum": {
+        "rows": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "courses": {
+        "rows": 4,
+        "sha256": "e96c93aa1545d4848c113f07c8c1cc12c2a34a1cd8e4d43745212012c0ac0b3d"
+      },
+      "course_clos": {
+        "rows": 1,
+        "sha256": "b27093a7f74f9b6a89457d51ff02677fc7b0f23a9d674728f520614e94fb95c4"
+      },
+      "program_egas": {
+        "rows": 16,
+        "sha256": "94b3024f575dfde4a3ca0f8f64d9e65be798e1a1b9202f5de5ae37befdeb39de"
+      },
+      "institution_egas": {
+        "rows": 4,
+        "sha256": "cc4a8a7770198c1e74625c2874cda24663dbc6b425278d60e418d8b11c925907"
+      },
+      "institution_settings": {
+        "rows": 1,
+        "sha256": "420eee235eb23d624508b6186fc2e198f2238b839d17e1a8a50b39f65ff208a2"
+      }
+    }
+  },
+  "beforeSha256": "83a1efc36213050ea50fcc4b37ef8409cad5c52184305e6b95592ab8c6d336d2",
+  "impacts": [
+    {
+      "type": "syllabus",
+      "id": 1,
+      "program": "BSIT",
+      "status": "draft",
+      "contentSha256": "71f4572203fa5f184640312b3765a7c4915c182718082fa8e4c8b76916b90ecd",
+      "oldBasis": [
+        {
+          "no": 1,
+          "short": "Apply computing knowledge",
+          "text": "Apply computing and other knowledge domains to address realworld problems.",
+          "egas": [
+            1
+          ]
+        },
+        {
+          "no": 2,
+          "short": "Analyze and define requirements",
+          "text": "Analyze complex problems and identify and define the computing requirements needed to design an appropriate solution.",
+          "egas": [
+            1
+          ]
+        },
+        {
+          "no": 3,
+          "short": "Design computing solutions",
+          "text": "Design and develop computing solutions using a system-level perspective.",
+          "egas": [
+            1
+          ]
+        },
+        {
+          "no": 4,
+          "short": "Ethical IT professional",
+          "text": "Demonstrate ethical behavior as an IT Professional and sensitivity to the impact of technology in the society.",
+          "egas": [
+            2
+          ]
+        },
+        {
+          "no": 5,
+          "short": "Augustinian virtues and CSR",
+          "text": "Show Augustinian virtues/ethical values and the understanding and appreciation of corporate social responsibility.",
+          "egas": [
+            2
+          ]
+        },
+        {
+          "no": 6,
+          "short": "Multi-disciplinary teamwork",
+          "text": "Work effectively and independently in multi-disciplinary and multi-cultural teams.",
+          "egas": [
+            4
+          ]
+        },
+        {
+          "no": 7,
+          "short": "Impact on society",
+          "text": "Understand the impact of their work on society and strive to ensure that their actions contribute positively on the community.",
+          "egas": [
+            3
+          ]
+        },
+        {
+          "no": 8,
+          "short": "Latest developments in the field",
+          "text": "Articulate and discuss the latest developments in the specific field of practice.",
+          "egas": [
+            1,
+            4
+          ]
+        },
+        {
+          "no": 9,
+          "short": "Professional and social ethics",
+          "text": "Act in recognition of professional, social and ethical.",
+          "egas": [
+            2
+          ]
+        },
+        {
+          "no": 10,
+          "short": "Ethical leadership",
+          "text": "Demonstrate ethical leadership and social responsibility by integrating sustainability, inclusivity, mental well-being and peace-building principles into academic, professional and community engagements, ensuring holistic development and societal transformation.",
+          "egas": [
+            3
+          ]
+        }
+      ],
+      "cloMappings": [
+        {
+          "id": "legacy_0",
+          "pos": [
+            1
+          ]
+        }
+      ],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "syllabus",
+      "id": 2,
+      "program": "BSIT-CYBERSECURITY",
+      "status": "draft",
+      "contentSha256": "3ce37798b24a5a0c89d223fa92ba54cdb00f1400b4cddc4fe5def39b124ed68e",
+      "oldBasis": [
+        {
+          "no": 1,
+          "short": "Apply computing knowledge",
+          "text": "Apply computing and other knowledge domains to address realworld problems.",
+          "egas": [
+            1
+          ]
+        },
+        {
+          "no": 2,
+          "short": "Analyze and define requirements",
+          "text": "Analyze complex problems and identify and define the computing requirements needed to design an appropriate solution.",
+          "egas": [
+            1
+          ]
+        },
+        {
+          "no": 3,
+          "short": "Design computing solutions",
+          "text": "Design and develop computing solutions using a system-level perspective.",
+          "egas": [
+            1
+          ]
+        },
+        {
+          "no": 4,
+          "short": "Ethical IT professional",
+          "text": "Demonstrate ethical behavior as an IT Professional and sensitivity to the impact of technology in the society.",
+          "egas": [
+            2
+          ]
+        },
+        {
+          "no": 5,
+          "short": "Augustinian virtues and CSR",
+          "text": "Show Augustinian virtues/ethical values and the understanding and appreciation of corporate social responsibility.",
+          "egas": [
+            2
+          ]
+        },
+        {
+          "no": 6,
+          "short": "Multi-disciplinary teamwork",
+          "text": "Work effectively and independently in multi-disciplinary and multi-cultural teams.",
+          "egas": [
+            4
+          ]
+        },
+        {
+          "no": 7,
+          "short": "Impact on society",
+          "text": "Understand the impact of their work on society and strive to ensure that their actions contribute positively on the community.",
+          "egas": [
+            3
+          ]
+        },
+        {
+          "no": 8,
+          "short": "Latest developments in the field",
+          "text": "Articulate and discuss the latest developments in the specific field of practice.",
+          "egas": [
+            1,
+            4
+          ]
+        },
+        {
+          "no": 9,
+          "short": "Professional and social ethics",
+          "text": "Act in recognition of professional, social and ethical.",
+          "egas": [
+            2
+          ]
+        },
+        {
+          "no": 10,
+          "short": "Ethical leadership",
+          "text": "Demonstrate ethical leadership and social responsibility by integrating sustainability, inclusivity, mental well-being and peace-building principles into academic, professional and community engagements, ensuring holistic development and societal transformation.",
+          "egas": [
+            3
+          ]
+        }
+      ],
+      "cloMappings": [
+        {
+          "id": "legacy_1",
+          "pos": [
+            1
+          ]
+        }
+      ],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "syllabus",
+      "id": 3,
+      "program": "BSIE",
+      "status": "draft",
+      "contentSha256": "4cd2884b1f8d0cebeb6efb3adb7bf826d8d9f79b743446c90fa50f7d675e424f",
+      "oldBasis": [
+        {
+          "no": 1,
+          "short": "PO 1",
+          "text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+          "egas": []
+        },
+        {
+          "no": 2,
+          "short": "PO 2",
+          "text": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+          "egas": []
+        },
+        {
+          "no": 3,
+          "short": "PO 3",
+          "text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+          "egas": []
+        },
+        {
+          "no": 4,
+          "short": "PO 4",
+          "text": "Ability to function on multidisciplinary teams",
+          "egas": []
+        },
+        {
+          "no": 5,
+          "short": "PO 5",
+          "text": "Ability to identify; formulate, and solve complex engineering problems;",
+          "egas": []
+        },
+        {
+          "no": 6,
+          "short": "PO 6",
+          "text": "Understanding of professional and ethical responsibility.",
+          "egas": []
+        },
+        {
+          "no": 7,
+          "short": "PO 7",
+          "text": "Ability to communicate effectively",
+          "egas": []
+        },
+        {
+          "no": 8,
+          "short": "PO 8",
+          "text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+          "egas": []
+        },
+        {
+          "no": 9,
+          "short": "PO 9",
+          "text": "Recognition of the need for, and an ability to engage in life-long learning;",
+          "egas": []
+        },
+        {
+          "no": 10,
+          "short": "PO 10",
+          "text": "Knowledge of contemporary issues;",
+          "egas": []
+        },
+        {
+          "no": 11,
+          "short": "PO 11",
+          "text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and;",
+          "egas": []
+        },
+        {
+          "no": 12,
+          "short": "PO 12",
+          "text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in",
+          "egas": []
+        },
+        {
+          "no": 13,
+          "short": "PO 13",
+          "text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+          "egas": []
+        }
+      ],
+      "cloMappings": [
+        {
+          "id": "legacy_2",
+          "pos": [
+            1
+          ]
+        }
+      ],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "syllabus",
+      "id": 4,
+      "program": "BSCPE",
+      "status": "draft",
+      "contentSha256": "689de4655dbbf613145361481478f1f3925689ff2fd458c9db12230260b9d7f0",
+      "oldBasis": [
+        {
+          "no": 1,
+          "short": "PO 1",
+          "text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+          "egas": []
+        },
+        {
+          "no": 2,
+          "short": "PO 2",
+          "text": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+          "egas": []
+        },
+        {
+          "no": 3,
+          "short": "PO 3",
+          "text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+          "egas": []
+        },
+        {
+          "no": 4,
+          "short": "PO 4",
+          "text": "Ability to function on multidisciplinary teams",
+          "egas": []
+        },
+        {
+          "no": 5,
+          "short": "PO 5",
+          "text": "Ability to identify; formulate, and solve complex engineering problems;",
+          "egas": []
+        },
+        {
+          "no": 6,
+          "short": "PO 6",
+          "text": "Understanding of professional and ethical responsibility.",
+          "egas": []
+        },
+        {
+          "no": 7,
+          "short": "PO 7",
+          "text": "Ability to communicate effectively",
+          "egas": []
+        },
+        {
+          "no": 8,
+          "short": "PO 8",
+          "text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+          "egas": []
+        },
+        {
+          "no": 9,
+          "short": "PO 9",
+          "text": "Recognition of the need for, and an ability to engage in life-long learning;",
+          "egas": []
+        },
+        {
+          "no": 10,
+          "short": "PO 10",
+          "text": "Knowledge of contemporary issues;",
+          "egas": []
+        },
+        {
+          "no": 11,
+          "short": "PO 11",
+          "text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and",
+          "egas": []
+        },
+        {
+          "no": 12,
+          "short": "PO 12",
+          "text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in",
+          "egas": []
+        },
+        {
+          "no": 13,
+          "short": "PO 13",
+          "text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+          "egas": []
+        }
+      ],
+      "cloMappings": [
+        {
+          "id": "legacy_3",
+          "pos": [
+            1
+          ]
+        }
+      ],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "catalog_course",
+      "id": 10,
+      "program": "BSIT",
+      "oldBasis": [
+        {
+          "no": 1,
+          "short": "Apply computing knowledge",
+          "text": "Apply computing and other knowledge domains to address realworld problems.",
+          "egas": [
+            1
+          ]
+        },
+        {
+          "no": 2,
+          "short": "Analyze and define requirements",
+          "text": "Analyze complex problems and identify and define the computing requirements needed to design an appropriate solution.",
+          "egas": [
+            1
+          ]
+        },
+        {
+          "no": 3,
+          "short": "Design computing solutions",
+          "text": "Design and develop computing solutions using a system-level perspective.",
+          "egas": [
+            1
+          ]
+        },
+        {
+          "no": 4,
+          "short": "Ethical IT professional",
+          "text": "Demonstrate ethical behavior as an IT Professional and sensitivity to the impact of technology in the society.",
+          "egas": [
+            2
+          ]
+        },
+        {
+          "no": 5,
+          "short": "Augustinian virtues and CSR",
+          "text": "Show Augustinian virtues/ethical values and the understanding and appreciation of corporate social responsibility.",
+          "egas": [
+            2
+          ]
+        },
+        {
+          "no": 6,
+          "short": "Multi-disciplinary teamwork",
+          "text": "Work effectively and independently in multi-disciplinary and multi-cultural teams.",
+          "egas": [
+            4
+          ]
+        },
+        {
+          "no": 7,
+          "short": "Impact on society",
+          "text": "Understand the impact of their work on society and strive to ensure that their actions contribute positively on the community.",
+          "egas": [
+            3
+          ]
+        },
+        {
+          "no": 8,
+          "short": "Latest developments in the field",
+          "text": "Articulate and discuss the latest developments in the specific field of practice.",
+          "egas": [
+            1,
+            4
+          ]
+        },
+        {
+          "no": 9,
+          "short": "Professional and social ethics",
+          "text": "Act in recognition of professional, social and ethical.",
+          "egas": [
+            2
+          ]
+        },
+        {
+          "no": 10,
+          "short": "Ethical leadership",
+          "text": "Demonstrate ethical leadership and social responsibility by integrating sustainability, inclusivity, mental well-being and peace-building principles into academic, professional and community engagements, ensuring holistic development and societal transformation.",
+          "egas": [
+            3
+          ]
+        }
+      ],
+      "cloMappings": [
+        {
+          "id": 1,
+          "pos": "1"
+        }
+      ],
+      "proposedMappings": null,
+      "reason": "Catalog CLO mappings must be reviewed before new course adoption."
+    }
+  ]
+}
