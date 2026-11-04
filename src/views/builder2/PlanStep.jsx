@@ -3,6 +3,7 @@ import { t as translateUI } from "../../i18n/index.js";
 import { useState } from 'react';
 import { blankRow, clone, renderMarkup, weekSet } from '../../lib/syllabusModel';
 import { orderedLesson, canCreateIlo, canEditLessonField } from '../../lib/lessonAuthoring';
+import { CORE_VALUES, hasCoreValue, toggleCoreValue } from '../../lib/coreValues';
 import { Auto, CoverageStrip, Ic, OutcomePicker, Tag } from './parts';
 import { newId } from './useDraft';
 import Select from '../../components/Select';
@@ -62,7 +63,7 @@ export default function PlanStep({ d, apply, model, filter, setFilter, onDeleteR
               const exam = r.kind === 'exam';
               const orderHint = orderedLesson(r) ? `lesson-order-${r.id}` : undefined;
               return (
-                <tr key={r.id} className={exam ? 'exam' : ''}>
+                <tr key={r.id} className={exam ? 'exam' : ''} data-plan-row={full}>
                   <td>
                     <div className="wkc">
                       {edit
@@ -106,7 +107,12 @@ export default function PlanStep({ d, apply, model, filter, setFilter, onDeleteR
                   {CELLS.map(([f, ph]) => (
                     <td key={f}>{edit
                       ? <><Auto value={r[f]} disabled={!canEditLessonField(r,f)} describedBy={orderHint} placeholder={ph} label={translateUI('plan.heading.'+f) + translateUI("ui.of_week_60075b") + r.week} onChange={(v) => updRow(r.id, (x) => { if(canEditLessonField(x,f))x[f] = v; })} />{!canEditLessonField(r,f) && <p className="hint">{translateUI(f==='activities'?'plan.iloFirst':'plan.activityFirst')}</p>}</>
-                      : <Formatted text={r[f]} />}</td>
+                      : <Formatted text={r[f]} />}
+                      {edit && f === 'values' && !exam && (
+                        <div className="valchips">
+                          {CORE_VALUES.map((v) => <button type="button" key={v.key} className="valchip" aria-pressed={hasCoreValue(r.values, v)} onClick={() => updRow(r.id, (x) => { x.values = toggleCoreValue(x.values, v); })}>{v.name}</button>)}
+                        </div>
+                      )}</td>
                   ))}
                 </tr>
               );
