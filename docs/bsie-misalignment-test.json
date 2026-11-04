@@ -1,0 +1,19 @@
+{
+  "syllabusId": 100,
+  "course": "BSIE / IE 204 Computing",
+  "status": "draft",
+  "savedAt": "2026-10-21T21:04:57.099Z",
+  "backup": ".api-test-backups\\bsie-before-misalignment-100-1792616697065.json",
+  "aiCheckRun": false,
+  "deliberateMismatches": [
+    "CLO 1 computational problem analysis maps only to PO 2 responsible communication instead of engineering problem solving.",
+    "CLO 4 concerns floral arrangement rather than computing and does not support its professional-practice PO.",
+    "Weeks 2, 3, 4, 5, 7 retain computing ILOs but tag the floral-arrangement CLO.",
+    "Weeks 8, 9, 10, 11, 13 teach and assess dance while retaining computing ILOs and content.",
+    "Week 14 teaches floral design while retaining the debugging/testing ILO and computing assessment.",
+    "All three examinations assess flowers and costume colors rather than computing.",
+    "Requirements and grading assess floral design and dance instead of the stated computing course outcomes."
+  ],
+  "planRows": 18,
+  "gradingTotal": 100
+}

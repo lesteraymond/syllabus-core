@@ -1,0 +1,558 @@
+{
+  "status": "paused_for_academic_batch_review",
+  "dataset": {
+    "name": "stage-c",
+    "version": "stage-c-2",
+    "split": "all",
+    "reviewStatus": "unreviewed",
+    "selection": {
+      "parentItems": 28,
+      "selectedIds": [
+        "af-prog1-good",
+        "af-prog1-irrelevant",
+        "af-sensors-good",
+        "af-sensors-passive",
+        "as-prog1-good",
+        "as-prog1-recall-quiz",
+        "as-prog1-conceptual-ok",
+        "as-syseng-essay",
+        "as-sensors-good",
+        "af-prog1-conceptual-lecture-ok",
+        "af-prog1-lab-unused",
+        "as-prog1-too-high"
+      ]
+    }
+  },
+  "configuration": {
+    "stageFlags": {
+      "a": false,
+      "b": false,
+      "b3": false,
+      "b4": false,
+      "c1": true,
+      "c2": true,
+      "d1": false,
+      "d2": false
+    },
+    "promptVariant": "current",
+    "trim": false,
+    "minItems": false,
+    "timeoutMs": 90000
+  },
+  "promptVersion": "alignment-12c1c2-r8",
+  "ids": [
+    "af-sensors-good",
+    "af-sensors-passive",
+    "as-sensors-good"
+  ],
+  "answers": {
+    "af-prog1-good": {
+      "label": "ALIGNED",
+      "sourceQuote": "Develop and test Java programs that use if-else and switch statements to make decisions.",
+      "targetQuote": "students write and run if-else and switch programs in pairs",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "The guided coding exercise has students actually write and run if-else and switch programs after a worked demonstration, which practises the develop-and-test competence at the required level.",
+      "recommendation": null,
+      "draft": "",
+      "aspects": {
+        "values": {
+          "teaching": "sound",
+          "learnerSupport": "adequate",
+          "measures": "not_assessed",
+          "evidence": "not_assessed",
+          "level": "not_assessed",
+          "responsible": "none"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "af-prog1-irrelevant": {
+      "label": "NOT_ALIGNED",
+      "sourceQuote": "Develop and test Java programs that use if-else and switch statements to make decisions.",
+      "targetQuote": "Group discussion on the history of computers and a video about early mainframes.",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "The discussion and video concern the history of computers and mainframes, so nothing in the activities practises developing or testing Java programs with if-else and switch; the subject matter and the action verb of the ILO are both absent.",
+      "recommendation": null,
+      "draft": "- Guided Java coding exercise in the laboratory: a worked demonstration of if-else and switch decisions first, then students write and run if-else and switch programs in pairs, with a starter file for students who want a scaffold.",
+      "draftReview": [
+        "assumes_resource",
+        "copies_other_relationship"
+      ],
+      "reviewEvidence": {
+        "explanation": [],
+        "draft": [
+          {
+            "code": "assumes_resource",
+            "evidence": "laboratory"
+          },
+          {
+            "code": "assumes_resource",
+            "evidence": "starter file"
+          },
+          {
+            "code": "copies_other_relationship",
+            "evidence": "first then students write and run if else and switch programs in",
+            "from": "af-prog1-good"
+          }
+        ]
+      },
+      "aspects": {
+        "values": {
+          "teaching": "weak",
+          "learnerSupport": "not_applicable",
+          "measures": "not_assessed",
+          "evidence": "not_assessed",
+          "level": "not_assessed",
+          "responsible": "activity"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "as-prog1-good": {
+      "label": "ALIGNED",
+      "sourceQuote": "Develop and test Java programs that use if-else and switch statements to make decisions.",
+      "targetQuote": "write and test a Java program that uses if-else and switch to classify exam scores; submit the source code and the test cases with their results.",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "The programming task requires students to write and test a Java program using if-else and switch and to submit source code plus test cases with results, giving observable evidence of the develop-and-test competence.",
+      "recommendation": null,
+      "draft": "",
+      "aspects": {
+        "values": {
+          "teaching": "not_assessed",
+          "learnerSupport": "not_assessed",
+          "measures": "yes",
+          "evidence": "observable",
+          "level": "matches",
+          "responsible": "none"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "as-prog1-recall-quiz": {
+      "label": "NOT_ALIGNED",
+      "sourceQuote": "Develop and test Java programs that use if-else and switch statements to make decisions.",
+      "targetQuote": "Ten-item multiple-choice quiz on Java conditional syntax.",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "A ten-item multiple-choice quiz on syntax only collects recall evidence of conditional syntax; it does not collect evidence of developing and testing programs that use if-else and switch, so the action verb and the level of the ILO are both missing.",
+      "recommendation": null,
+      "draft": "- Programming task: write and test a Java program that uses if-else and switch to classify exam scores; submit the source code and the test cases with their results.",
+      "draftWarnings": [
+        "borrowed_wording"
+      ],
+      "reviewEvidence": {
+        "explanation": [],
+        "draft": [],
+        "draftWarnings": [
+          {
+            "code": "borrowed_wording",
+            "evidence": "programming task write and test a java program that uses if else",
+            "from": "as-prog1-good",
+            "advisory": true
+          }
+        ]
+      },
+      "aspects": {
+        "values": {
+          "teaching": "not_assessed",
+          "learnerSupport": "not_assessed",
+          "measures": "no",
+          "evidence": "observable",
+          "level": "too_low",
+          "responsible": "assessment"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "as-prog1-conceptual-ok": {
+      "label": "ALIGNED",
+      "sourceQuote": "Explain the difference between if-else and switch statements.",
+      "targetQuote": "Short written answers comparing if-else and switch statements, with one example of each.",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "The written answers directly elicit the explanation of the difference between if-else and switch, with concrete examples, matching the Understand-level ILO.",
+      "recommendation": null,
+      "draft": "",
+      "aspects": {
+        "values": {
+          "teaching": "not_assessed",
+          "learnerSupport": "not_assessed",
+          "measures": "yes",
+          "evidence": "observable",
+          "level": "matches",
+          "responsible": "none"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "af-prog1-conceptual-lecture-ok": {
+      "label": "ALIGNED",
+      "sourceQuote": "Explain the difference between if-else and switch statements.",
+      "targetQuote": "Lecture-discussion with worked examples, followed by a short class discussion of when each statement is used.",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "A lecture-discussion with worked examples plus a guided class discussion is adequate instructional support for an Understand-level explanation ILO.",
+      "recommendation": null,
+      "draft": "",
+      "aspects": {
+        "values": {
+          "teaching": "sound",
+          "learnerSupport": "adequate",
+          "measures": "not_assessed",
+          "evidence": "not_assessed",
+          "level": "not_assessed",
+          "responsible": "none"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "af-prog1-lab-unused": {
+      "label": "PARTIALLY_ALIGNED",
+      "sourceQuote": "Write and test Java programs that use for and while loops.",
+      "targetQuote": "Slide presentation of loop syntax; no hands-on work in the laboratory period.",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "The ILO requires learners to write and test Java programs using for and while loops, a practical performance at Apply level, but the only activity is a slide presentation of syntax, so learners never practise writing or testing loop programs; the laboratory period is left unused.",
+      "recommendation": null,
+      "draft": "- Slide presentation of loop syntax, followed by a guided laboratory exercise in which students write short Java programs using for and while loops and test them with sample inputs, comparing the output with the expected result.",
+      "aspects": {
+        "values": {
+          "teaching": "weak",
+          "learnerSupport": "limited",
+          "measures": "not_assessed",
+          "evidence": "not_assessed",
+          "level": "not_assessed",
+          "responsible": "activity"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "as-prog1-too-high": {
+      "label": "NOT_ALIGNED",
+      "sourceQuote": "Explain the difference between if-else and switch statements.",
+      "targetQuote": "Design and implement a complete application with a database and a user interface.",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "The task asks learners to design and implement a complete application with a database and user interface, a Create-level performance far above the Understand-level ILO of explaining the difference between if-else and switch; it also assesses a subject (database and UI application development) that the Week 3 conditional-statement content does not cover.",
+      "recommendation": null,
+      "draft": "- Short written answers comparing if-else and switch statements, with one example of each.",
+      "draftWarnings": [
+        "borrowed_wording"
+      ],
+      "reviewEvidence": {
+        "explanation": [],
+        "draft": [],
+        "draftWarnings": [
+          {
+            "code": "borrowed_wording",
+            "evidence": "short written answers comparing if else and switch statements with one example",
+            "from": "as-prog1-conceptual-ok",
+            "advisory": true
+          }
+        ]
+      },
+      "aspects": {
+        "values": {
+          "teaching": "not_assessed",
+          "learnerSupport": "not_assessed",
+          "measures": "no",
+          "evidence": "observable",
+          "level": "too_high",
+          "responsible": "assessment"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "as-syseng-essay": {
+      "label": "NOT_ALIGNED",
+      "sourceQuote": "Write verifiable system requirements for a given scenario.",
+      "targetQuote": "Essay on the history of engineering.",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "The assessment does not measure the required performance. The ILO requires learners to \"Write verifiable system requirements for a given scenario,\" which is an Apply-level performance in requirements analysis. The task, \"Essay on the history of engineering,\" neither elicits system requirements nor covers the lesson's subject of stakeholder needs, system requirements specification, and traceability. It therefore provides no evidence of the stated competence.",
+      "recommendation": null,
+      "draft": "- Requirements analysis task: individually write a set of verifiable system requirements for the workshop case, stating the stakeholder need, requirement statement, measurable acceptance criterion, and traceability to the corresponding stakeholder need.",
+      "aspects": {
+        "values": {
+          "teaching": "not_assessed",
+          "learnerSupport": "not_assessed",
+          "measures": "no",
+          "evidence": "vague",
+          "level": "too_low",
+          "responsible": "assessment"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "af-sensors-good": {
+      "label": "ALIGNED",
+      "sourceQuote": "Design and test an inverting amplifier with a specified gain.",
+      "targetQuote": "students design the circuit, simulate it in a circuit simulator and compare the simulated gain with the calculated one",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "The activity has students design the amplifier and verify the gain against the calculated value, matching the design-and-test ILO.",
+      "recommendation": null,
+      "draft": "",
+      "aspects": {
+        "values": {
+          "teaching": "sound",
+          "learnerSupport": "adequate",
+          "measures": "not_assessed",
+          "evidence": "not_assessed",
+          "level": "not_assessed",
+          "responsible": "none"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "af-sensors-passive": {
+      "label": "NOT_ALIGNED",
+      "sourceQuote": "Design and test an inverting amplifier with a specified gain.",
+      "targetQuote": "Lecture on operational amplifiers.",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "A lecture on operational amplifiers is passive instruction: it neither has students design an inverting amplifier nor lets them test its gain, so the design-and-test competence is never practised.",
+      "recommendation": null,
+      "draft": "- Guided design example, then students design an inverting amplifier with a specified gain, simulate it in a circuit simulator and compare the simulated gain with the calculated one; a worked solution and a step-by-step handout are provided.",
+      "draftReview": [
+        "assumes_resource",
+        "copies_other_relationship"
+      ],
+      "reviewEvidence": {
+        "explanation": [],
+        "draft": [
+          {
+            "code": "assumes_resource",
+            "evidence": "circuit simulator"
+          },
+          {
+            "code": "assumes_resource",
+            "evidence": "handout"
+          },
+          {
+            "code": "copies_other_relationship",
+            "evidence": "simulate it in a circuit simulator and compare the simulated gain with",
+            "from": "af-sensors-good"
+          }
+        ]
+      },
+      "aspects": {
+        "values": {
+          "teaching": "weak",
+          "learnerSupport": "not_applicable",
+          "measures": "not_assessed",
+          "evidence": "not_assessed",
+          "level": "not_assessed",
+          "responsible": "activity"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    },
+    "as-sensors-good": {
+      "label": "ALIGNED",
+      "sourceQuote": "Design and test an inverting amplifier with a specified gain.",
+      "targetQuote": "build and measure the amplifier on a breadboard or in a simulator, record the measured gain and compare it with the design value",
+      "evidenceMatching": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanation": "The task produces an observable artifact (recorded gain) and compares it with the design value, evidencing both design and test of the amplifier.",
+      "recommendation": null,
+      "draft": "",
+      "aspects": {
+        "values": {
+          "teaching": "not_assessed",
+          "learnerSupport": "not_assessed",
+          "measures": "yes",
+          "evidence": "observable",
+          "level": "matches",
+          "responsible": "none"
+        },
+        "invalid": [],
+        "missing": []
+      }
+    }
+  },
+  "relationshipMetrics": {
+    "planned": 12,
+    "attempted": 12,
+    "neverAttempted": 0,
+    "verified": 12,
+    "recovered": 0,
+    "unresolved": 0,
+    "unresolvedRate": 0,
+    "coverage": 1,
+    "attemptedShare": 1,
+    "firstAttempt": {
+      "answered": 12,
+      "refused": 0,
+      "validationFailureRate": 0,
+      "noAnswerFirst": 0
+    },
+    "rawResponseErrors": {
+      "answers": 4,
+      "invalidAnswers": 0,
+      "refusedJudgements": 0,
+      "requestsWithoutAnswer": 0
+    },
+    "aspectCoverage": {
+      "byType": {
+        "Activity-fit": {
+          "relationships": 6,
+          "baseVerified": 6,
+          "baseAccepted": 6,
+          "notRecorded": 0,
+          "fields": {
+            "teaching": {
+              "assessed": 6,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "learnerSupport": {
+              "assessed": 6,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            }
+          }
+        },
+        "Assessment-fit": {
+          "relationships": 6,
+          "baseVerified": 6,
+          "baseAccepted": 6,
+          "notRecorded": 0,
+          "fields": {
+            "measures": {
+              "assessed": 6,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "evidence": {
+              "assessed": 6,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "level": {
+              "assessed": 6,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            }
+          }
+        }
+      },
+      "fieldsRequired": 30,
+      "fieldsAssessed": 30,
+      "rate": 1
+    }
+  },
+  "usage": {
+    "requests": 13,
+    "thisRun": 6,
+    "model": 4,
+    "priceLookups": 1,
+    "keyChecks": 1,
+    "invalidAnswers": 0,
+    "unproductiveInARow": 0,
+    "transient": 1,
+    "promptTokens": 17087,
+    "completionTokens": 1988,
+    "cachedTokens": 4096,
+    "reportedCost": 0.00289079,
+    "charged": 0.00583426,
+    "accounting": {
+      "rule": "reconcile",
+      "requests": {
+        "reconciled": 4,
+        "conservative": 0,
+        "worst_case": 0,
+        "refused": 0
+      },
+      "chargedConservatively": 0.0139077
+    },
+    "warnings": [],
+    "limits": {
+      "maxRequests": 22,
+      "maxCost": 0.03294347,
+      "maxTransient": 3,
+      "maxInvalid": 1,
+      "warnInvalid": 1,
+      "maxUnproductive": 1,
+      "maxTokens": null
+    },
+    "stopped": null
+  },
+  "batchReviews": [
+    {
+      "ids": [
+        "af-prog1-good",
+        "af-prog1-irrelevant",
+        "as-prog1-good",
+        "as-prog1-recall-quiz"
+      ],
+      "proceed": true,
+      "reason": null
+    },
+    {
+      "ids": [
+        "as-prog1-conceptual-ok",
+        "af-prog1-conceptual-lecture-ok",
+        "af-prog1-lab-unused",
+        "as-prog1-too-high"
+      ],
+      "proceed": true,
+      "reason": null
+    },
+    {
+      "ids": [
+        "as-syseng-essay"
+      ],
+      "proceed": true,
+      "reason": null
+    }
+  ]
+}

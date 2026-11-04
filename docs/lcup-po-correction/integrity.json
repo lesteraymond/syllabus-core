@@ -1,0 +1,137 @@
+{
+  "baselineHead": "68926cb392756c07bb0b999538d098d1038be368",
+  "existingFilesChecked": 1133,
+  "changed": [
+    {
+      "path": "server/db/seed-local-references.js",
+      "before": "221f121913464678528eeef69b3a13e6cc448bd8a83073098b264ecf0b9483d1",
+      "after": "c100f660109b27fc6969ce1c406ba6cd2311e79bb959d4fc8becb105f79dc8ba",
+      "expected": true
+    },
+    {
+      "path": "server/lib/syllabuscheck/outcome-sharing.test.js",
+      "before": "46ce3f6be42f1f4bdc988ec5771efed265c003c570dc6a489cd443a5bee37162",
+      "after": "c4fe43e2e308c6e3ffc15629fc04c84cfa9d4d8633e81b473d2e6402b571849d",
+      "expected": true
+    },
+    {
+      "path": "server/lib/syllabuscheck/repository.js",
+      "before": "f4c4099bec1a54650b359810895be6743466c42ba2509517b261012002a4c80b",
+      "after": "eae48c6ae8e7bef0362a973ad408052522b522d42bb07961f61e0d76cab3fc16",
+      "expected": true
+    },
+    {
+      "path": "server/routes/syllabusCheck.js",
+      "before": "7e019b6f75b2f8405900077c0f8b75222890118b57de666bf8ad5d91d2edb912",
+      "after": "0f69fec0858670b1cc321f5a1b2fa637e06b2faacb2bf77fe79771c7b6522627",
+      "expected": true
+    },
+    {
+      "path": "server/db/seed-outcomes.js",
+      "before": "bb75f5d86d8b9484d32543ece7a027d0cf88c5039d348ff880b003cde4cd836d",
+      "after": "8fae32629588a996a176a6af8b8d7da815458112ab7baabe7a2aa7e92d17542c",
+      "expected": true
+    },
+    {
+      "path": "server/lib/compliance/service.js",
+      "before": "8a6033d5929104cc400efde7fc31a781ff92ee8f4e593f5a45679f8286d4915d",
+      "after": "f6b8835b130618dbc35e00a67d44ad34a6e0d2d540fede93759ca79c2691aa77",
+      "expected": true
+    },
+    {
+      "path": "server/lib/courses.js",
+      "before": "9a726702267cb534915176c31da765eb1508dbc11d13f99322f8668f2e08ed69",
+      "after": "5e4066a3f264c4038bf29915f8de9e8b4bd7708fb1867aa70fb70baa0ce8f938",
+      "expected": true
+    },
+    {
+      "path": "server/lib/programs.js",
+      "before": "4845784dd7d1d823d312469e883f53bbccad06c072da5b14b80474200a62e950",
+      "after": "4bc92a2995e0e633b3ba6c00632308c7a9b3c4f5dd89b48c5a347a09aa84b95a",
+      "expected": true
+    },
+    {
+      "path": "server/lib/syllabusOutcomes.js",
+      "before": "dfd1e325218851ee2a2b38c95d879b7e20640dee4a4a9b279dad2bbf71b8016f",
+      "after": "9c089266ffccd54e01695abfc7783daaf5d1e2eccc682f14638ff5bd6e6d582a",
+      "expected": true
+    },
+    {
+      "path": "server/routes/compliance.routes.test.js",
+      "before": "84a3a46da03c414d046cb1ab4e97f5c4e90c024af6195bc1988fd75fa21beafc",
+      "after": "59b68efbe69cb8e1b109043141cad8dd6c77a6eaab6b6d561d495557fdd44291",
+      "expected": true
+    },
+    {
+      "path": "server/routes/courses.js",
+      "before": "9481abb3866b1916856a7d915ce19fee6b5a014d67a964c84b5159d2b4d5a0e0",
+      "after": "c9f83e209cbcd6eb79b9f2e7a11e671b30da36fafaa437e54d0b679c812f65b4",
+      "expected": true
+    },
+    {
+      "path": "server/routes/programs.js",
+      "before": "41acba6bfe4656616d77dd6fed7779ec80639ee7989d23a2345191c6851aa228",
+      "after": "6290db727e59ba8bb8605e273b76a5928bf91aa4f0110d0de79c279c959b83a8",
+      "expected": true
+    },
+    {
+      "path": "server/routes/syllabusContent.js",
+      "before": "674764823d0be4da9058f2d57abeba2f21f62729b7762b99a2eddec84840b8e1",
+      "after": "9fa14e7b6fab010292c3473e6ccc07286fae6188686035dea993c0269f1645ab",
+      "expected": true
+    },
+    {
+      "path": "src/data/outcomesSeed.js",
+      "before": "a3b6314dbe45310b9a33c9995df73b86558178f72fb66455d7e7557d26029e50",
+      "after": "6c78fe557265b57cfba5cc8624fac1a89c0f910b63b16a3ed21e903b18c4219a",
+      "expected": true
+    },
+    {
+      "path": "src/lib/syllabusModel.test.js",
+      "before": "ae75d11ae52420d700b0c34acbe35c23dcf816d018e23b19d0b762bab57cb068",
+      "after": "ad35f69a0fe4541d9774803cfe4a4a86f01e7ef05ab7d16fec4660e97612f2b5",
+      "expected": true
+    }
+  ],
+  "missing": [],
+  "unexpectedChanges": [],
+  "unchanged": 1118,
+  "existingDatabaseUnchanged": true,
+  "disposablePortClosed": true,
+  "testGroups": [
+    {
+      "log": "migration-tests.log",
+      "tests": 8,
+      "passed": 8,
+      "failed": 0
+    },
+    {
+      "log": "reference-regression.log",
+      "tests": 59,
+      "passed": 59,
+      "failed": 0
+    },
+    {
+      "log": "gates-regression.log",
+      "tests": 68,
+      "passed": 68,
+      "failed": 0
+    },
+    {
+      "log": "importer74-verified-copies.log",
+      "tests": 74,
+      "passed": 74,
+      "failed": 0
+    },
+    {
+      "log": "ui-regression.log",
+      "tests": 16,
+      "passed": 16,
+      "failed": 0
+    }
+  ],
+  "totalPassed": 225,
+  "productionDatabaseWrites": 0,
+  "paidAiCalls": 0,
+  "protectedStatement": "All existing source PDFs, approved offline fixtures, academic references, evaluation datasets/reports, rule/scoring implementations, submission gate implementations and server/.env have their original hashes. Compliance service changes only carry the syllabus ID to the PO-reference guard."
+}

@@ -1,0 +1,158 @@
+{
+  "scope": "Same original controlled markup probe; supplied mock judgments are not accuracy evidence",
+  "source": "** **",
+  "complianceScore": 100,
+  "academicDisposition": "FACULTY_REVIEW",
+  "requiredWeeklyCells": [
+    {
+      "id": "weekly:2:Content-course",
+      "relationshipType": "Content-course",
+      "path": "plan[2]",
+      "week": "3",
+      "status": "NOT_EVALUATED",
+      "evidenceIds": [
+        "row2-content"
+      ],
+      "required": true
+    },
+    {
+      "id": "weekly:2:Content-ILO",
+      "relationshipType": "Content-ILO",
+      "path": "plan[2]",
+      "week": "3",
+      "status": "NOT_EVALUATED",
+      "evidenceIds": [
+        "row2-ilo0-contentilo"
+      ],
+      "required": true
+    },
+    {
+      "id": "weekly:2:ILO-CLO",
+      "relationshipType": "ILO-CLO",
+      "path": "plan[2]",
+      "week": "3",
+      "status": "SUPPORTED_BY_SUPPLIED_EVIDENCE",
+      "evidenceIds": [
+        "row2-ilo0-clo:c3"
+      ],
+      "required": true
+    },
+    {
+      "id": "weekly:2:Content-activity",
+      "relationshipType": "Content-activity",
+      "path": "plan[2]",
+      "week": "3",
+      "status": "NOT_EVALUATED",
+      "evidenceIds": [
+        "row2-contentactivity"
+      ],
+      "required": true
+    },
+    {
+      "id": "weekly:2:ILO-activity",
+      "relationshipType": "ILO-activity",
+      "path": "plan[2]",
+      "week": "3",
+      "status": "SUPPORTED_BY_SUPPLIED_EVIDENCE",
+      "evidenceIds": [
+        "row2-ilo0-activity"
+      ],
+      "required": true
+    },
+    {
+      "id": "weekly:2:Content-assessment",
+      "relationshipType": "Content-assessment",
+      "path": "plan[2]",
+      "week": "3",
+      "status": "NOT_EVALUATED",
+      "evidenceIds": [
+        "row2-contentassessment"
+      ],
+      "required": true
+    },
+    {
+      "id": "weekly:2:Activity-assessment",
+      "relationshipType": "Activity-assessment",
+      "path": "plan[2]",
+      "week": "3",
+      "status": "SUPPORTED_BY_SUPPLIED_EVIDENCE",
+      "evidenceIds": [
+        "row2-activityassessment"
+      ],
+      "required": true
+    },
+    {
+      "id": "weekly:2:diverseLearners",
+      "status": "NOT_EVALUATED",
+      "evidenceIds": [
+        "row2-activityfit"
+      ],
+      "required": true,
+      "week": "3"
+    },
+    {
+      "id": "weekly:2:values",
+      "status": "NOT_EVALUATED",
+      "evidenceIds": [
+        "row2-value",
+        "row2-valueuse"
+      ],
+      "required": true,
+      "week": "3"
+    }
+  ],
+  "contentDependentRelationships": [
+    {
+      "id": "row2-content",
+      "type": "Content-course",
+      "status": "NOT_EVALUATED",
+      "review": [
+        "missing_evidence"
+      ]
+    },
+    {
+      "id": "row2-ilo0-contentilo",
+      "type": "Content-ILO",
+      "status": "NOT_EVALUATED",
+      "review": [
+        "missing_evidence"
+      ]
+    },
+    {
+      "id": "row2-contentactivity",
+      "type": "Content-activity",
+      "status": "NOT_EVALUATED",
+      "review": [
+        "missing_evidence"
+      ]
+    },
+    {
+      "id": "row2-contentassessment",
+      "type": "Content-assessment",
+      "status": "NOT_EVALUATED",
+      "review": [
+        "missing_evidence"
+      ]
+    }
+  ],
+  "T16Findings": [
+    {
+      "id": "T-16:plan[2]",
+      "area": "template",
+      "source": "rule",
+      "ruleId": "T-16",
+      "severity": "major",
+      "step": "plan",
+      "path": "plan[2]",
+      "message": "Week 3 has nothing in: Course Contents.",
+      "evidence": {
+        "empty": [
+          "contents"
+        ]
+      }
+    }
+  ],
+  "contentUnchanged": true,
+  "officialScore": null,
+  "paidCalls": 0
+}

@@ -1,0 +1,430 @@
+{
+ "version": "stage-b3-1",
+ "status": "DRAFT - synthetic examples with author-written labels, NOT faculty-reviewed",
+ "reviewStatus": "unreviewed",
+ "provenance": "Course identity and descriptions: the repository's records and the sample syllabi (as in stage-a-dataset.json). The CLO lists, weekly plans and ILOs are SYNTHETIC examples written by the assistant for IT 202, IE 402 and CPE 304; they are not the institution's. Expected verdicts are the assistant's, unreviewed by faculty; nothing here measures agreement with faculty.",
+ "splits": {
+  "dev": "All items. No held-out split."
+ },
+ "categories": [
+  "clear-positive",
+  "wrong-clo",
+  "keyword-overlap",
+  "off-subject",
+  "ambiguous"
+ ],
+ "courses": {
+  "prog1": {
+   "code": "IT 202",
+   "title": "Computer Programming 1 (Fundamentals of Programming)",
+   "program": "BSIT",
+   "yearLevel": "2",
+   "discipline": "computing",
+   "description": "This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications."
+  },
+  "syseng": {
+   "code": "IE 402",
+   "title": "Systems Engineering",
+   "program": "BSIE",
+   "yearLevel": "4",
+   "discipline": "engineering",
+   "description": "This course introduces students to the principles and practices of systems engineering, focusing on the analysis, design, and management of complex systems. Through a blend of theoretical concepts and practical applications, students learn how to approach and solve large-scale engineering problems involving multiple components, stakeholders, and operational constraints. Key topics include requirements analysis, systems design, integration, project management, and performance evaluation."
+  },
+  "sensors": {
+   "code": "CPE 304",
+   "title": "Fundamentals of Mixed Signals and Sensors",
+   "program": "BSCPE",
+   "yearLevel": "3",
+   "discipline": "engineering",
+   "description": "This course covers operational amplifiers, signal converters, power switching devices and the construction and operation of sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses on the application of these devices in developing signal conversion circuits that allows measurement, processing and control of physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on actuators are also included."
+  }
+ },
+ "note": "A trap never accepts ALIGNED. ILO-CLO items are asked with the Stage B3 wording; ILO-anyCLO asks whether the ILO builds any CLO of the list. Not covered: whether the model names the RIGHT CLO number (checked by hand in the report).",
+ "items": [
+  {
+   "id": "ic-prog1-ok",
+   "origin": "stage-b3-1",
+   "type": "ILO-CLO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "clear-positive",
+   "source": "Write, test and debug Java programs that use variables, conditional statements, loops and methods.",
+   "target": "Develop and test Java programs that use if-else and switch statements to make decisions.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "A smaller step toward CLO 1.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ic-prog1-wrongclo",
+   "origin": "stage-b3-1",
+   "type": "ILO-CLO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "wrong-clo",
+   "source": "Demonstrate honesty, compassion and responsibility in the use of computers and in team programming work, in line with Marian-Augustinian values.",
+   "target": "Develop and test Java programs that use if-else and switch statements to make decisions.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "A sound ILO, but it builds CLO 1, not the values CLO 4.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ic-prog1-flow",
+   "origin": "stage-b3-1",
+   "type": "ILO-CLO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "clear-positive",
+   "source": "Analyze a simple problem and express its logic as an algorithm or flowchart before coding.",
+   "target": "Draw a flowchart for a program that finds the largest of three numbers.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Expresses logic as a flowchart: CLO 2.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ic-prog1-keyword",
+   "origin": "stage-b3-1",
+   "type": "ILO-CLO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "keyword-overlap",
+   "source": "Write, test and debug Java programs that use variables, conditional statements, loops and methods.",
+   "target": "Describe the history of programming languages.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Shares the word 'programs/programming' but asks for no Java programming performance.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ic-prog1-values",
+   "origin": "stage-b3-1",
+   "type": "ILO-CLO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "ambiguous",
+   "source": "Demonstrate honesty, compassion and responsibility in the use of computers and in team programming work, in line with Marian-Augustinian values.",
+   "target": "Explain why honesty matters when submitting programming assignments.",
+   "accept": [
+    "ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "On the values CLO, but only an explanation: contestable.",
+   "ambiguous": true,
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ic-syseng-ok",
+   "origin": "stage-b3-1",
+   "type": "ILO-CLO",
+   "split": "dev",
+   "course": "syseng",
+   "category": "clear-positive",
+   "source": "Develop a system requirements specification and a functional decomposition for an engineered system.",
+   "target": "Write verifiable system requirements for a given scenario.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "A step toward the requirements specification.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ic-syseng-wrongclo",
+   "origin": "stage-b3-1",
+   "type": "ILO-CLO",
+   "split": "dev",
+   "course": "syseng",
+   "category": "wrong-clo",
+   "source": "Plan and manage a systems engineering project, including integration, scheduling and risk.",
+   "target": "Write verifiable system requirements for a given scenario.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "A sound ILO, but it builds CLO 1, not the project-management CLO 3.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ic-syseng-pm",
+   "origin": "stage-b3-1",
+   "type": "ILO-CLO",
+   "split": "dev",
+   "course": "syseng",
+   "category": "clear-positive",
+   "source": "Plan and manage a systems engineering project, including integration, scheduling and risk.",
+   "target": "Prepare a project schedule and a risk register for a systems integration effort.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Schedule and risk: CLO 3.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ic-syseng-keyword",
+   "origin": "stage-b3-1",
+   "type": "ILO-CLO",
+   "split": "dev",
+   "course": "syseng",
+   "category": "keyword-overlap",
+   "source": "Develop a system requirements specification and a functional decomposition for an engineered system.",
+   "target": "Describe how systems engineers are portrayed in popular media.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Shares 'systems engineers' but builds no requirements competence.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ic-sensors-ok",
+   "origin": "stage-b3-1",
+   "type": "ILO-CLO",
+   "split": "dev",
+   "course": "sensors",
+   "category": "clear-positive",
+   "source": "Analyze and design operational amplifier circuits for signal conditioning of sensor outputs.",
+   "target": "Design and test an inverting amplifier with a specified gain.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "A step toward op-amp design for signal conditioning.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ic-sensors-wrongclo",
+   "origin": "stage-b3-1",
+   "type": "ILO-CLO",
+   "split": "dev",
+   "course": "sensors",
+   "category": "wrong-clo",
+   "source": "Interface sensors and actuators with a microcontroller using analog-to-digital and digital-to-analog converters.",
+   "target": "Design and test an inverting amplifier with a specified gain.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "A sound ILO, but it builds CLO 1, not the interfacing CLO 3.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ic-sensors-adc",
+   "origin": "stage-b3-1",
+   "type": "ILO-CLO",
+   "split": "dev",
+   "course": "sensors",
+   "category": "clear-positive",
+   "source": "Interface sensors and actuators with a microcontroller using analog-to-digital and digital-to-analog converters.",
+   "target": "Write a program that reads a temperature sensor through the analog-to-digital converter of a microcontroller.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Interfacing through an ADC: CLO 3.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ic-sensors-keyword",
+   "origin": "stage-b3-1",
+   "type": "ILO-CLO",
+   "split": "dev",
+   "course": "sensors",
+   "category": "keyword-overlap",
+   "source": "Select sensors and transducers and relate their characteristics to the physical parameters they measure.",
+   "target": "Discuss famous inventors in the history of electronics.",
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Electronics words, but selects no sensor and relates no characteristics.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ic-sensors-calib",
+   "origin": "stage-b3-1",
+   "type": "ILO-CLO",
+   "split": "dev",
+   "course": "sensors",
+   "category": "clear-positive",
+   "source": "Perform measurements and calibration with precision and honest reporting, showing stewardship and ethical responsibility.",
+   "target": "Record calibration results honestly and report the measurement tolerance.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Calibration, precision and honest reporting: CLO 4.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ia-prog1-fits",
+   "origin": "stage-b3-1",
+   "type": "ILO-anyCLO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "clear-positive",
+   "source": "CLO 1: Write, test and debug Java programs that use variables, conditional statements, loops and methods.\nCLO 2: Analyze a simple problem and express its logic as an algorithm or flowchart before coding.\nCLO 3: Apply good coding practices (naming, indentation, comments) and an integrated development environment to produce readable programs.\nCLO 4: Demonstrate honesty, compassion and responsibility in the use of computers and in team programming work, in line with Marian-Augustinian values.",
+   "target": "Develop and test Java programs that use if-else and switch statements to make decisions.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Builds CLO 1.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ia-prog1-flow",
+   "origin": "stage-b3-1",
+   "type": "ILO-anyCLO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "clear-positive",
+   "source": "CLO 1: Write, test and debug Java programs that use variables, conditional statements, loops and methods.\nCLO 2: Analyze a simple problem and express its logic as an algorithm or flowchart before coding.\nCLO 3: Apply good coding practices (naming, indentation, comments) and an integrated development environment to produce readable programs.\nCLO 4: Demonstrate honesty, compassion and responsibility in the use of computers and in team programming work, in line with Marian-Augustinian values.",
+   "target": "Draw a flowchart for a program that finds the largest of three numbers.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Builds CLO 2.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ia-prog1-none",
+   "origin": "stage-b3-1",
+   "type": "ILO-anyCLO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "off-subject",
+   "source": "CLO 1: Write, test and debug Java programs that use variables, conditional statements, loops and methods.\nCLO 2: Analyze a simple problem and express its logic as an algorithm or flowchart before coding.\nCLO 3: Apply good coding practices (naming, indentation, comments) and an integrated development environment to produce readable programs.\nCLO 4: Demonstrate honesty, compassion and responsibility in the use of computers and in team programming work, in line with Marian-Augustinian values.",
+   "target": "Explain the history of operating systems.",
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Builds none of the four CLOs.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ia-prog1-ambiguous",
+   "origin": "stage-b3-1",
+   "type": "ILO-anyCLO",
+   "split": "dev",
+   "course": "prog1",
+   "category": "ambiguous",
+   "source": "CLO 1: Write, test and debug Java programs that use variables, conditional statements, loops and methods.\nCLO 2: Analyze a simple problem and express its logic as an algorithm or flowchart before coding.\nCLO 3: Apply good coding practices (naming, indentation, comments) and an integrated development environment to produce readable programs.\nCLO 4: Demonstrate honesty, compassion and responsibility in the use of computers and in team programming work, in line with Marian-Augustinian values.",
+   "target": "Apply conditional logic in programs.",
+   "accept": [
+    "ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Plausibly CLO 1 but unspecific.",
+   "ambiguous": true,
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ia-syseng-fits",
+   "origin": "stage-b3-1",
+   "type": "ILO-anyCLO",
+   "split": "dev",
+   "course": "syseng",
+   "category": "clear-positive",
+   "source": "CLO 1: Develop a system requirements specification and a functional decomposition for an engineered system.\nCLO 2: Apply modeling and trade-study methods to design and optimize a system that integrates people, processes and technology.\nCLO 3: Plan and manage a systems engineering project, including integration, scheduling and risk.\nCLO 4: Evaluate system performance, and verify and validate a system against its requirements, upholding professional and ethical responsibility.",
+   "target": "Prepare a project schedule and a risk register for a systems integration effort.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Builds CLO 3.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ia-syseng-none",
+   "origin": "stage-b3-1",
+   "type": "ILO-anyCLO",
+   "split": "dev",
+   "course": "syseng",
+   "category": "off-subject",
+   "source": "CLO 1: Develop a system requirements specification and a functional decomposition for an engineered system.\nCLO 2: Apply modeling and trade-study methods to design and optimize a system that integrates people, processes and technology.\nCLO 3: Plan and manage a systems engineering project, including integration, scheduling and risk.\nCLO 4: Evaluate system performance, and verify and validate a system against its requirements, upholding professional and ethical responsibility.",
+   "target": "Write Java methods that return values.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "Builds none of the four CLOs.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ia-sensors-fits",
+   "origin": "stage-b3-1",
+   "type": "ILO-anyCLO",
+   "split": "dev",
+   "course": "sensors",
+   "category": "clear-positive",
+   "source": "CLO 1: Analyze and design operational amplifier circuits for signal conditioning of sensor outputs.\nCLO 2: Select sensors and transducers and relate their characteristics to the physical parameters they measure.\nCLO 3: Interface sensors and actuators with a microcontroller using analog-to-digital and digital-to-analog converters.\nCLO 4: Perform measurements and calibration with precision and honest reporting, showing stewardship and ethical responsibility.",
+   "target": "Record calibration results honestly and report the measurement tolerance.",
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Builds CLO 4.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  },
+  {
+   "id": "ia-sensors-none",
+   "origin": "stage-b3-1",
+   "type": "ILO-anyCLO",
+   "split": "dev",
+   "course": "sensors",
+   "category": "off-subject",
+   "source": "CLO 1: Analyze and design operational amplifier circuits for signal conditioning of sensor outputs.\nCLO 2: Select sensors and transducers and relate their characteristics to the physical parameters they measure.\nCLO 3: Interface sensors and actuators with a microcontroller using analog-to-digital and digital-to-analog converters.\nCLO 4: Perform measurements and calibration with precision and honest reporting, showing stewardship and ethical responsibility.",
+   "target": "Prepare a cash-flow statement for a small business.",
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "Builds none of the four CLOs.",
+   "reviewStatus": "unreviewed",
+   "facultyVerdict": null,
+   "facultyNotes": ""
+  }
+ ]
+}

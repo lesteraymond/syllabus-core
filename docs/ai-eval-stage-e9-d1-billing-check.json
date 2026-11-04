@@ -1,0 +1,116 @@
+{
+  "stopped": "request cap reached (1 provider requests)",
+  "usage": {
+    "requests": 1,
+    "thisRun": 1,
+    "model": 0,
+    "priceLookups": 0,
+    "keyChecks": 1,
+    "invalidAnswers": 0,
+    "unproductiveInARow": 0,
+    "transient": 0,
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "cachedTokens": 0,
+    "reportedCost": 0,
+    "charged": 0,
+    "accounting": {
+      "rule": "reconcile",
+      "requests": {
+        "reconciled": 0,
+        "conservative": 0,
+        "worst_case": 0,
+        "refused": 0
+      },
+      "chargedConservatively": 0
+    },
+    "warnings": [],
+    "limits": {
+      "maxRequests": 1,
+      "maxCost": 0.01,
+      "maxTransient": 1,
+      "maxInvalid": null,
+      "warnInvalid": 3,
+      "maxUnproductive": 9,
+      "maxTokens": null
+    },
+    "stopped": "request cap reached (1 provider requests)"
+  },
+  "keyCheck": {
+    "status": 200,
+    "ok": true,
+    "freeTier": true,
+    "limit": 250,
+    "limitRemaining": 249.97295089,
+    "usage": 0.02704911,
+    "expiresAt": "2026-11-25T04:44:27.996Z"
+  },
+  "relationshipMetrics": {
+    "planned": 2,
+    "attempted": 0,
+    "neverAttempted": 2,
+    "verified": 0,
+    "recovered": 0,
+    "unresolved": 0,
+    "unresolvedRate": null,
+    "coverage": 0,
+    "attemptedShare": 0,
+    "firstAttempt": {
+      "answered": 0,
+      "refused": 0,
+      "validationFailureRate": null,
+      "noAnswerFirst": 0
+    },
+    "rawResponseErrors": {
+      "answers": 0,
+      "invalidAnswers": 0,
+      "refusedJudgements": 0,
+      "requestsWithoutAnswer": 0
+    },
+    "aspectCoverage": null
+  },
+  "completion": {
+    "maxUnresolved": 0.2,
+    "unresolvedRate": null,
+    "coverage": 0,
+    "stopped": "request cap reached (1 provider requests)",
+    "state": "incomplete",
+    "usableForAgreement": false,
+    "reason": "2 of 2 planned relationships were never attempted (stopped: request cap reached (1 provider requests)); they are not evaluated"
+  },
+  "dataset": {
+    "name": "stage-d1-followup",
+    "version": "stage-d1-2",
+    "split": "all",
+    "reviewStatus": "unreviewed",
+    "selection": {
+      "parentItems": 29,
+      "selectedIds": [
+        "vu-syseng-e7-demonstrated",
+        "vu-syseng-e7-insufficient-evidence"
+      ]
+    }
+  },
+  "configuration": {
+    "stageFlags": {
+      "a": false,
+      "b": false,
+      "b3": false,
+      "b4": false,
+      "c1": false,
+      "c2": false,
+      "d1": true,
+      "d2": false
+    },
+    "promptVariant": "current",
+    "trim": false,
+    "minItems": false,
+    "timeoutMs": 90000
+  },
+  "isolation": {
+    "dataModulesLoaded": []
+  },
+  "model": "openrouter/minimax/minimax-m3.1-flash",
+  "promptVersion": "alignment-12d1-r7",
+  "ranAt": "2026-10-27T03:54:19.911Z"
+}

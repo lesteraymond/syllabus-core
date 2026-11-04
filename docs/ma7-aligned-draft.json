@@ -1,0 +1,806 @@
+{
+  "syllabusId": 101,
+  "subject": "BSIE MA 7 DIFFERENTIAL CALCULUS",
+  "status": "draft",
+  "officialPOs": 13,
+  "clos": [
+    {
+      "title": "Functions, limits and continuity",
+      "pos": [
+        1
+      ],
+      "egas": [
+        1
+      ]
+    },
+    {
+      "title": "Differentiation and verification",
+      "pos": [
+        1
+      ],
+      "egas": [
+        1
+      ]
+    },
+    {
+      "title": "Engineering problem formulation and modeling",
+      "pos": [
+        1,
+        5
+      ],
+      "egas": [
+        1
+      ]
+    },
+    {
+      "title": "Responsible communication and reflective learning",
+      "pos": [
+        6,
+        7,
+        8,
+        9
+      ],
+      "egas": [
+        2,
+        3,
+        4
+      ]
+    }
+  ],
+  "planRows": 18,
+  "gradingTotal": 100,
+  "codedBaseline": 100,
+  "hardBlockers": [],
+  "codedFindings": [],
+  "aiCheckTriggered": false,
+  "finalAiScore": null,
+  "submitted": false,
+  "previousRunId": 303,
+  "previousRunStale": true,
+  "backup": ".api-test-backups\\ma7-before-aligned-draft-101-1792642962903.json",
+  "savedAt": "2026-10-22T04:22:42.946Z",
+  "content": {
+    "meta": {
+      "courseId": 25,
+      "code": "MA 7",
+      "title": "DIFFERENTIAL CALCULUS",
+      "program": "BSIE",
+      "lecture": "3",
+      "lab": "0",
+      "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+      "yearLevel": "1",
+      "curriculumYear": "2022-2023"
+    },
+    "outcomes": {
+      "vision": "Moved by the Spirit of the Risen Christ, La Consolacion University Philippines, rooted in Gospel values as a Catholic Augustinian-Marian institution, envisions to become a catalyst for the holistic transformation of all persons and communities.",
+      "mission": {
+        "lead": "LCUP commits to generate and make available to all persons and communities’ programs and services that will enable them to:",
+        "items": [
+          "exhibit academic and technical competence in their respective areas of discipline in the local and international environment;",
+          "demonstrate their knowledge, critical thinking and creativity by exploring the various avenues of learning and searching for truth;",
+          "manifest their willingness to serve specially the marginalized sector of our society;",
+          "demonstrate productivity in various areas of learning as responsible citizens of the society; and",
+          "live the Gospel values in the varied aspects of their personal and professional lives."
+        ]
+      },
+      "egas": [
+        {
+          "no": 1,
+          "name": "Critical and Creative thinker",
+          "short": "Critical and Creative Thinker"
+        },
+        {
+          "no": 2,
+          "name": "Competent Catholic Augustinian-Marian Professional",
+          "short": "Competent Professional"
+        },
+        {
+          "no": 3,
+          "name": "Socially Responsive Steward",
+          "short": "Socially Responsive Steward"
+        },
+        {
+          "no": 4,
+          "name": "Transformative Lifelong learner",
+          "short": "Transformative Lifelong Learner"
+        }
+      ],
+      "pos": [
+        {
+          "no": 1,
+          "short": "PO 1",
+          "text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+          "egas": []
+        },
+        {
+          "no": 2,
+          "short": "PO 2",
+          "text": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+          "egas": []
+        },
+        {
+          "no": 3,
+          "short": "PO 3",
+          "text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+          "egas": []
+        },
+        {
+          "no": 4,
+          "short": "PO 4",
+          "text": "Ability to function on multidisciplinary teams",
+          "egas": []
+        },
+        {
+          "no": 5,
+          "short": "PO 5",
+          "text": "Ability to identify; formulate, and solve complex engineering problems;",
+          "egas": []
+        },
+        {
+          "no": 6,
+          "short": "PO 6",
+          "text": "Understanding of professional and ethical responsibility.",
+          "egas": []
+        },
+        {
+          "no": 7,
+          "short": "PO 7",
+          "text": "Ability to communicate effectively",
+          "egas": []
+        },
+        {
+          "no": 8,
+          "short": "PO 8",
+          "text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+          "egas": []
+        },
+        {
+          "no": 9,
+          "short": "PO 9",
+          "text": "Recognition of the need for, and an ability to engage in life-long learning;",
+          "egas": []
+        },
+        {
+          "no": 10,
+          "short": "PO 10",
+          "text": "Knowledge of contemporary issues;",
+          "egas": []
+        },
+        {
+          "no": 11,
+          "short": "PO 11",
+          "text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and;",
+          "egas": []
+        },
+        {
+          "no": 12,
+          "short": "PO 12",
+          "text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in",
+          "egas": []
+        },
+        {
+          "no": 13,
+          "short": "PO 13",
+          "text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+          "egas": []
+        }
+      ]
+    },
+    "description": [
+      {
+        "id": "ma7_aligned_description",
+        "t": "Differential Calculus develops the mathematical reasoning used to analyze changing quantities in industrial engineering. Students represent engineering functions, evaluate limits and continuity, calculate and verify derivatives, and formulate related-rates and optimization models. Worked examples, graph interpretation, peer review and individual problem solving connect symbolic methods with physical units, assumptions and realistic constraints. Students communicate justified recommendations, examine consequences for workers and communities, and practice Marian-Augustinian honesty, humility and compassionate service. A modeling project and reflective revision develop independent learning and responsible mathematical practice."
+      }
+    ],
+    "clos": [
+      {
+        "id": "ma7_aligned_clo1",
+        "title": "Functions, limits and continuity",
+        "level": "Introductory",
+        "statement": "Represent and analyze engineering functions, evaluate limits and continuity, and justify domains, units and assumptions using mathematical and scientific knowledge.",
+        "pos": [
+          1
+        ],
+        "egas": [
+          1
+        ]
+      },
+      {
+        "id": "ma7_aligned_clo2",
+        "title": "Differentiation and verification",
+        "level": "Enabling",
+        "statement": "Apply differentiation rules to algebraic, trigonometric, exponential, logarithmic and implicit functions; verify solution steps and interpret derivatives as engineering rates of change.",
+        "pos": [
+          1
+        ],
+        "egas": [
+          1
+        ]
+      },
+      {
+        "id": "ma7_aligned_clo3",
+        "title": "Engineering problem formulation and modeling",
+        "level": "Demonstrating",
+        "statement": "Identify and formulate related-rates and optimization problems in industrial engineering, construct and solve calculus models within stated constraints, and justify the resulting engineering recommendation.",
+        "pos": [
+          1,
+          5
+        ],
+        "egas": [
+          1
+        ]
+      },
+      {
+        "id": "ma7_aligned_clo4",
+        "title": "Responsible communication and reflective learning",
+        "level": "Integration of Values",
+        "statement": "Evaluate and communicate calculus-based engineering recommendations with honest evidence and attention to workers and communities; practice Catholic Augustinian-Marian professional values of truth, humility and compassionate service, revise work using feedback, and identify an independent learning goal.",
+        "pos": [
+          6,
+          7,
+          8,
+          9
+        ],
+        "egas": [
+          2,
+          3,
+          4
+        ]
+      }
+    ],
+    "plan": [
+      {
+        "id": "ma7_aligned_week1",
+        "week": "1",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo1",
+            "text": "Represent a production-cost relationship as a function, identify its domain and units, and justify the chosen assumptions.",
+            "tags": [
+              "clo:ma7_aligned_clo1"
+            ]
+          }
+        ],
+        "contents": "Functions, domains and engineering units",
+        "activities": "Build a cost function from a production case; compare domains and dimensional consistency in pairs. Value integration: invite a peer to challenge the domain assumptions and record a correction without hiding the original error.",
+        "tasks": "Submit the function, a labeled graph, a domain justification and a dimensional check; explain each assumption. Include a brief account of how you invite a peer to challenge the domain assumptions and record a correction without hiding the original error.",
+        "values": "Humility: invite a peer to challenge the domain assumptions and record a correction without hiding the original error."
+      },
+      {
+        "id": "ma7_aligned_week2",
+        "week": "2",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo2",
+            "text": "Analyze transformations and piecewise graphs of an engineering function and explain their effect on the modeled quantity.",
+            "tags": [
+              "clo:ma7_aligned_clo1"
+            ]
+          }
+        ],
+        "contents": "Graphs and transformations of engineering functions",
+        "activities": "Sketch and compare transformed throughput graphs, then explain the meaning of each change in a peer walkthrough. Value integration: explain how misleading throughput graphs could affect the workers who rely on production targets.",
+        "tasks": "Produce and interpret labeled graphs, identify relevant intervals, and explain how the transformations change throughput. Include a brief account of how you explain how misleading throughput graphs could affect the workers who rely on production targets.",
+        "values": "Community-orientedness: explain how misleading throughput graphs could affect the workers who rely on production targets."
+      },
+      {
+        "id": "ma7_aligned_week3",
+        "week": "3",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo3",
+            "text": "Estimate one-sided and two-sided limits of an engineering function from tables and graphs and justify whether a limit exists.",
+            "tags": [
+              "clo:ma7_aligned_clo1"
+            ]
+          }
+        ],
+        "contents": "Limits from numerical tables and graphs",
+        "activities": "Generate tables approaching a production threshold from both sides and compare the graphical and numerical evidence. Value integration: state honestly when the evidence does not support a two-sided limit and defend the conclusion respectfully.",
+        "tasks": "Submit tables, graphs, one-sided limits and a written explanation supported by the observed values. Include a brief account of how you state honestly when the evidence does not support a two-sided limit and defend the conclusion respectfully.",
+        "values": "Courage: state honestly when the evidence does not support a two-sided limit and defend the conclusion respectfully."
+      },
+      {
+        "id": "ma7_aligned_week4",
+        "week": "4",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo4",
+            "text": "Evaluate limits using factorization, simplification and limit laws, and verify the result using a numerical check.",
+            "tags": [
+              "clo:ma7_aligned_clo1"
+            ]
+          }
+        ],
+        "contents": "Algebraic evaluation of limits",
+        "activities": "Solve production-cost limit examples with annotated algebra; exchange solutions and independently check the result. Value integration: give a struggling peer a patient explanation of one algebraic step while preserving their responsibility to solve the problem.",
+        "tasks": "Provide a worked limit solution, justification of each algebraic step and an independent numerical verification. Include a brief account of how you give a struggling peer a patient explanation of one algebraic step while preserving their responsibility to solve the problem.",
+        "values": "Compassion: give a struggling peer a patient explanation of one algebraic step while preserving their responsibility to solve the problem."
+      },
+      {
+        "id": "ma7_aligned_week5",
+        "week": "5",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo5",
+            "text": "Analyze continuity at a production transition and identify the assumptions needed for the engineering model to remain valid.",
+            "tags": [
+              "clo:ma7_aligned_clo1"
+            ]
+          }
+        ],
+        "contents": "Continuity and model assumptions",
+        "activities": "Inspect piecewise production models, diagnose discontinuities and revise unjustified assumptions in a reflective peer review. Value integration: reflect on a mistaken assumption, explain its consequence and document a specific improvement in reasoning.",
+        "tasks": "Submit a continuity analysis with a graph, the relevant limits and a justified revision to the assumptions. Include a brief account of how you reflect on a mistaken assumption, explain its consequence and document a specific improvement in reasoning.",
+        "values": "Interiority: reflect on a mistaken assumption, explain its consequence and document a specific improvement in reasoning."
+      },
+      {
+        "id": "ma7_aligned_week6",
+        "week": "6",
+        "kind": "exam",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo6",
+            "text": "",
+            "tags": []
+          }
+        ],
+        "contents": "PRELIM EXAMINATION",
+        "activities": "Individual written assessment of functions, limits and continuity.",
+        "tasks": "Solve engineering calculus problems, show and justify solution steps, verify results and interpret units and assumptions.",
+        "values": "Honesty in independent work and responsible reporting of results."
+      },
+      {
+        "id": "ma7_aligned_week7",
+        "week": "7",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo7",
+            "text": "Compute a derivative from the limit definition, verify it using basic differentiation rules, and interpret its engineering units.",
+            "tags": [
+              "clo:ma7_aligned_clo2"
+            ]
+          }
+        ],
+        "contents": "Derivative from first principles and basic differentiation",
+        "activities": "Derive a rate-of-change function from a machine-position example; compare the limit derivation with power-rule results. Value integration: accept and document peer corrections to the derivation rather than presenting an unchecked calculation as certain.",
+        "tasks": "Submit the limit derivation, rule-based verification and an interpretation of the derivative with correct units. Include a brief account of how you accept and document peer corrections to the derivation rather than presenting an unchecked calculation as certain.",
+        "values": "Humility: accept and document peer corrections to the derivation rather than presenting an unchecked calculation as certain."
+      },
+      {
+        "id": "ma7_aligned_week8",
+        "week": "8",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo8",
+            "text": "Differentiate product and quotient functions in engineering examples, justify the selected rule and verify the result.",
+            "tags": [
+              "clo:ma7_aligned_clo2"
+            ]
+          }
+        ],
+        "contents": "Product and quotient differentiation rules",
+        "activities": "Compare product and quotient solutions in a guided workshop; diagnose a deliberately incorrect derivative. Value integration: identify and explain the incorrect result openly, including how the correction improves the engineering conclusion.",
+        "tasks": "Submit two worked derivatives, explain rule selection, correct the supplied error and verify using numerical slopes. Include a brief account of how you identify and explain the incorrect result openly, including how the correction improves the engineering conclusion.",
+        "values": "Courage: identify and explain the incorrect result openly, including how the correction improves the engineering conclusion."
+      },
+      {
+        "id": "ma7_aligned_week9",
+        "week": "9",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo9",
+            "text": "Analyze a composite engineering function, apply the chain rule correctly and interpret how the component rates combine.",
+            "tags": [
+              "clo:ma7_aligned_clo2"
+            ]
+          }
+        ],
+        "contents": "Chain rule and composite engineering functions",
+        "activities": "Decompose a nested machine-response function into inner and outer functions and trace the derivative in pairs. Value integration: peer-check the combined rate and discuss how an incorrect rate could mislead a machine operator.",
+        "tasks": "Submit a composition diagram, an annotated chain-rule solution and an explanation of the combined rate and its units. Include a brief account of how you peer-check the combined rate and discuss how an incorrect rate could mislead a machine operator.",
+        "values": "Community-orientedness: peer-check the combined rate and discuss how an incorrect rate could mislead a machine operator."
+      },
+      {
+        "id": "ma7_aligned_week10",
+        "week": "10",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo10",
+            "text": "Apply implicit differentiation to determine a slope in a constrained engineering relationship and verify the result at a valid point.",
+            "tags": [
+              "clo:ma7_aligned_clo2"
+            ]
+          }
+        ],
+        "contents": "Implicit differentiation and constrained relationships",
+        "activities": "Differentiate a geometric constraint, discuss dependent variables and cross-check the slope at a feasible operating point. Value integration: identify an initially overlooked constraint and explain how checking assumptions changed the solution.",
+        "tasks": "Submit the differentiated equation, the slope at a feasible point, a verification and a statement of the constraint. Include a brief account of how you identify an initially overlooked constraint and explain how checking assumptions changed the solution.",
+        "values": "Interiority: identify an initially overlooked constraint and explain how checking assumptions changed the solution."
+      },
+      {
+        "id": "ma7_aligned_week11",
+        "week": "11",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo11",
+            "text": "Compute and verify derivatives of trigonometric, exponential and logarithmic engineering functions and explain their rates of change.",
+            "tags": [
+              "clo:ma7_aligned_clo2"
+            ]
+          }
+        ],
+        "contents": "Trigonometric, exponential and logarithmic derivatives",
+        "activities": "Compare vibration, growth and logarithmic-response models; practice rule selection and numerical verification. Value integration: share an accessible worked explanation with a classmate who needs support, as a concrete act of learning through service.",
+        "tasks": "Complete one worked derivative for each function family and explain the result in context with a numerical check. Include a brief account of how you share an accessible worked explanation with a classmate who needs support, as a concrete act of learning through service.",
+        "values": "Missionary Spirit: share an accessible worked explanation with a classmate who needs support, as a concrete act of learning through service."
+      },
+      {
+        "id": "ma7_aligned_week12",
+        "week": "12",
+        "kind": "exam",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo12",
+            "text": "",
+            "tags": []
+          }
+        ],
+        "contents": "MIDTERM EXAMINATION",
+        "activities": "Individual written assessment of derivatives, verification and engineering rates.",
+        "tasks": "Solve engineering calculus problems, show and justify solution steps, verify results and interpret units and assumptions.",
+        "values": "Honesty in independent work and responsible reporting of results."
+      },
+      {
+        "id": "ma7_aligned_week13",
+        "week": "13",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo13",
+            "text": "Formulate and solve a related-rates engineering problem, defining variables, differentiating the constraint and interpreting the answer with consistent units.",
+            "tags": [
+              "clo:ma7_aligned_clo3"
+            ]
+          }
+        ],
+        "contents": "Related-rates models",
+        "activities": "Build a related-rates model for a changing container or conveyor geometry; review variable definitions and constraints in groups. Value integration: consider the people affected by an incorrect rate estimate and explain the need for a careful verification.",
+        "tasks": "Submit a diagram, variable definitions, the constraint, the differentiated model, the calculated rate and a reasonableness check. Include a brief account of how you consider the people affected by an incorrect rate estimate and explain the need for a careful verification.",
+        "values": "Compassion: consider the people affected by an incorrect rate estimate and explain the need for a careful verification."
+      },
+      {
+        "id": "ma7_aligned_week14",
+        "week": "14",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo14",
+            "text": "Analyze critical points, monotonicity and concavity of an engineering function and justify the resulting interpretation of its behavior.",
+            "tags": [
+              "clo:ma7_aligned_clo3"
+            ]
+          }
+        ],
+        "contents": "Curve analysis and engineering interpretation",
+        "activities": "Construct derivative sign charts and compare the predicted behavior with a graph of the engineering function. Value integration: defend the interpretation using mathematical evidence while remaining open to a peer counterexample.",
+        "tasks": "Submit first- and second-derivative calculations, sign charts, a labeled graph and a justified interpretation. Include a brief account of how you defend the interpretation using mathematical evidence while remaining open to a peer counterexample.",
+        "values": "Courage: defend the interpretation using mathematical evidence while remaining open to a peer counterexample."
+      },
+      {
+        "id": "ma7_aligned_week15",
+        "week": "15",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo15",
+            "text": "Formulate and solve a constrained production or material-use optimization problem and justify the optimum using calculus and feasible endpoints.",
+            "tags": [
+              "clo:ma7_aligned_clo3"
+            ]
+          }
+        ],
+        "contents": "Constrained optimization",
+        "activities": "Translate a case into an objective and constraint, eliminate variables, identify feasible candidates and compare alternatives. Value integration: explain how the selected optimum affects workers and resource use rather than reporting a numerical optimum without context.",
+        "tasks": "Submit the objective, constraint, feasible domain, derivative analysis, endpoint comparison and a justified engineering recommendation. Include a brief account of how you explain how the selected optimum affects workers and resource use rather than reporting a numerical optimum without context.",
+        "values": "Community-orientedness: explain how the selected optimum affects workers and resource use rather than reporting a numerical optimum without context."
+      },
+      {
+        "id": "ma7_aligned_week16",
+        "week": "16",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo16",
+            "text": "Construct and validate a calculus-based model for an industrial engineering decision, test assumptions and revise the model using documented feedback.",
+            "tags": [
+              "clo:ma7_aligned_clo3"
+            ]
+          }
+        ],
+        "contents": "Model construction, validation and revision",
+        "activities": "Develop a production or material-use model in a workshop; exchange verification notes and revise assumptions using the received feedback. Value integration: acknowledge model limitations, credit the reviewer and make a documented correction to improve the work.",
+        "tasks": "Submit the model, worked solution, independent verification, assumptions log and a before-and-after revision record. Include a brief account of how you acknowledge model limitations, credit the reviewer and make a documented correction to improve the work.",
+        "values": "Humility: acknowledge model limitations, credit the reviewer and make a documented correction to improve the work."
+      },
+      {
+        "id": "ma7_aligned_week17",
+        "week": "17",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo17",
+            "text": "Evaluate and communicate a verified calculus-based recommendation, explain its effects on workers and communities, and propose an independent learning goal based on feedback.",
+            "tags": [
+              "clo:ma7_aligned_clo4"
+            ]
+          }
+        ],
+        "contents": "Engineering recommendation, ethical reporting and independent learning",
+        "activities": "Present the project and conduct an individual oral defense; discuss truthful reporting, compassionate service, feedback and the next learning goal. Value integration: communicate the recommendation in accessible language for the people it serves, linking professional honesty and care for others with Catholic Augustinian-Marian service.",
+        "tasks": "Submit the final recommendation with calculations and limitations, deliver an individual oral explanation, and provide a reflective revision and independent learning plan. Include a brief account of how you communicate the recommendation in accessible language for the people it serves, linking professional honesty and care for others with Catholic Augustinian-Marian service.",
+        "values": "Missionary Spirit: communicate the recommendation in accessible language for the people it serves, linking professional honesty and care for others with Catholic Augustinian-Marian service."
+      },
+      {
+        "id": "ma7_aligned_week18",
+        "week": "18",
+        "kind": "exam",
+        "ilos": [
+          {
+            "id": "ma7_aligned_ilo18",
+            "text": "",
+            "tags": []
+          }
+        ],
+        "contents": "FINAL EXAMINATION",
+        "activities": "Individual written assessment of related rates, curve analysis and optimization.",
+        "tasks": "Solve engineering calculus problems, show and justify solution steps, verify results and interpret units and assumptions.",
+        "values": "Honesty in independent work and responsible reporting of results."
+      }
+    ],
+    "reqs": [
+      {
+        "id": "ma7_aligned_requirement1",
+        "t": "Complete individual weekly problem sets with annotated mathematical reasoning, labeled graphs where appropriate, correct units and independent verification."
+      },
+      {
+        "id": "ma7_aligned_requirement2",
+        "t": "Complete short quizzes that require worked calculus solutions and interpretation of results rather than recall of unrelated facts."
+      },
+      {
+        "id": "ma7_aligned_requirement3",
+        "t": "Complete preliminary, midterm and final written examinations covering the scheduled mathematical outcomes and engineering applications."
+      },
+      {
+        "id": "ma7_aligned_requirement4",
+        "t": "Develop a calculus-based engineering modeling project with an objective, constraints, assumptions, derivations, verified results, limitations and a justified recommendation."
+      },
+      {
+        "id": "ma7_aligned_requirement5",
+        "t": "Present the modeling recommendation and complete an individual oral defense, addressing professional honesty and the consequences for workers and communities."
+      },
+      {
+        "id": "ma7_aligned_requirement6",
+        "t": "Maintain a short reflective learning journal documenting peer feedback, revisions, Marian-Augustinian value applications and one independent learning goal."
+      }
+    ],
+    "refs": {
+      "books": {
+        "na": false,
+        "items": [
+          {
+            "id": "ma7_101_book",
+            "t": "Stewart, J. (2016). Calculus: Early transcendentals (8th ed.). Cengage Learning."
+          }
+        ]
+      },
+      "program": {
+        "na": true,
+        "items": []
+      },
+      "online": {
+        "na": true,
+        "items": []
+      },
+      "electronics": {
+        "na": true,
+        "items": []
+      }
+    },
+    "grading": {
+      "rows": [
+        {
+          "id": "ma7_aligned_grade1",
+          "label": "Worked problem sets",
+          "abbr": "PS",
+          "pct": 25
+        },
+        {
+          "id": "ma7_aligned_grade2",
+          "label": "Quizzes with solution explanations",
+          "abbr": "QZ",
+          "pct": 10
+        },
+        {
+          "id": "ma7_aligned_grade3",
+          "label": "Engineering modeling project and oral defense",
+          "abbr": "MP",
+          "pct": 20
+        },
+        {
+          "id": "ma7_aligned_grade4",
+          "label": "Reflective revision and learning journal",
+          "abbr": "RJ",
+          "pct": 5
+        },
+        {
+          "id": "ma7_aligned_grade5",
+          "label": "Term examinations",
+          "abbr": "TE",
+          "pct": 40
+        }
+      ],
+      "override": {
+        "on": false,
+        "term": "",
+        "final": ""
+      }
+    },
+    "schemaVersion": 3,
+    "catalog": {
+      "institution": {
+        "vision": "Moved by the Spirit of the Risen Christ, La Consolacion University Philippines, rooted in Gospel values as a Catholic Augustinian-Marian institution, envisions to become a catalyst for the holistic transformation of all persons and communities.",
+        "mission": {
+          "lead": "LCUP commits to generate and make available to all persons and communities’ programs and services that will enable them to:",
+          "items": [
+            "exhibit academic and technical competence in their respective areas of discipline in the local and international environment;",
+            "demonstrate their knowledge, critical thinking and creativity by exploring the various avenues of learning and searching for truth;",
+            "manifest their willingness to serve specially the marginalized sector of our society;",
+            "demonstrate productivity in various areas of learning as responsible citizens of the society; and",
+            "live the Gospel values in the varied aspects of their personal and professional lives."
+          ]
+        },
+        "egas": [
+          {
+            "no": 1,
+            "name": "Critical and Creative thinker",
+            "short": "Critical and Creative Thinker"
+          },
+          {
+            "no": 2,
+            "name": "Competent Catholic Augustinian-Marian Professional",
+            "short": "Competent Professional"
+          },
+          {
+            "no": 3,
+            "name": "Socially Responsive Steward",
+            "short": "Socially Responsive Steward"
+          },
+          {
+            "no": 4,
+            "name": "Transformative Lifelong learner",
+            "short": "Transformative Lifelong Learner"
+          }
+        ]
+      },
+      "program": {
+        "code": "BSIE",
+        "name": "BS Industrial Engineering",
+        "egas": [
+          {
+            "no": 1,
+            "name": "Critical and Creative thinker",
+            "short": "Critical and Creative Thinker"
+          },
+          {
+            "no": 2,
+            "name": "Competent Catholic Augustinian-Marian Professional",
+            "short": "Competent Professional"
+          },
+          {
+            "no": 3,
+            "name": "Socially Responsive Steward",
+            "short": "Socially Responsive Steward"
+          },
+          {
+            "no": 4,
+            "name": "Transformative Lifelong learner",
+            "short": "Transformative Lifelong Learner"
+          }
+        ],
+        "pos": [
+          {
+            "no": 1,
+            "short": "PO 1",
+            "text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+            "egas": []
+          },
+          {
+            "no": 2,
+            "short": "PO 2",
+            "text": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+            "egas": []
+          },
+          {
+            "no": 3,
+            "short": "PO 3",
+            "text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+            "egas": []
+          },
+          {
+            "no": 4,
+            "short": "PO 4",
+            "text": "Ability to function on multidisciplinary teams",
+            "egas": []
+          },
+          {
+            "no": 5,
+            "short": "PO 5",
+            "text": "Ability to identify; formulate, and solve complex engineering problems;",
+            "egas": []
+          },
+          {
+            "no": 6,
+            "short": "PO 6",
+            "text": "Understanding of professional and ethical responsibility.",
+            "egas": []
+          },
+          {
+            "no": 7,
+            "short": "PO 7",
+            "text": "Ability to communicate effectively",
+            "egas": []
+          },
+          {
+            "no": 8,
+            "short": "PO 8",
+            "text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+            "egas": []
+          },
+          {
+            "no": 9,
+            "short": "PO 9",
+            "text": "Recognition of the need for, and an ability to engage in life-long learning;",
+            "egas": []
+          },
+          {
+            "no": 10,
+            "short": "PO 10",
+            "text": "Knowledge of contemporary issues;",
+            "egas": []
+          },
+          {
+            "no": 11,
+            "short": "PO 11",
+            "text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and;",
+            "egas": []
+          },
+          {
+            "no": 12,
+            "short": "PO 12",
+            "text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in",
+            "egas": []
+          },
+          {
+            "no": 13,
+            "short": "PO 13",
+            "text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+            "egas": []
+          }
+        ]
+      },
+      "subjectId": 25,
+      "savedAt": "2026-10-22T04:22:42.917Z"
+    }
+  }
+}

@@ -1,0 +1,564 @@
+{
+  "items": 9,
+  "runs": 1,
+  "answered": 9,
+  "invalid": 0,
+  "invalidRate": 0,
+  "notAttempted": 0,
+  "agreement": 1,
+  "falsePositiveRate": 0,
+  "falseNegativeRate": 0,
+  "counts": {
+    "clearAligned": 3,
+    "falsePositive": 0,
+    "clearNot": 5,
+    "falseNegative": 0
+  },
+  "confusion": {
+    "ALIGNED": {
+      "ALIGNED": 3,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "PARTIAL": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 3,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "FLAGGED": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 2,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    }
+  },
+  "partialAccuracy": 1,
+  "approvalAccuracy": 1,
+  "byDiscipline": {
+    "computing": {
+      "items": 4,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "engineering": {
+      "items": 5,
+      "answered": 5,
+      "agree": 5,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "byCategory": {
+    "clear-positive": {
+      "items": 3,
+      "answered": 3,
+      "agree": 3,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "tangential": {
+      "items": 2,
+      "answered": 2,
+      "agree": 2,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "unrelated": {
+      "items": 2,
+      "answered": 2,
+      "agree": 2,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "cannot-tell": {
+      "items": 1,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "ambiguous": {
+      "items": 1,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "stability": null,
+  "byType": {
+    "Ref-relevance": {
+      "items": 9,
+      "answered": 9,
+      "agree": 9,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "disagreements": [],
+  "structuredFields": {
+    "answers": 9,
+    "withFields": 9,
+    "missing": 0,
+    "malformed": 0,
+    "contradictory": 0,
+    "notAssessed": 0,
+    "perField": {
+      "relevance": {
+        "assessed": 9,
+        "not_assessed": 0,
+        "missing": 0,
+        "malformed": 0,
+        "contradicted": 0,
+        "compared": 9,
+        "agree": 9
+      },
+      "basis": {
+        "assessed": 9,
+        "not_assessed": 0,
+        "missing": 0,
+        "malformed": 0,
+        "contradicted": 0,
+        "compared": 0,
+        "agree": 0
+      }
+    },
+    "note": "Expectations are provisional. Only an assessed field is compared with them: a field that was not assessed, missing, malformed or in a self-contradictory answer is counted by its state, never as agreement. INSUFFICIENT_EVIDENCE answers are left out."
+  },
+  "model": "openrouter/minimax/minimax-m3.1-flash",
+  "promptVersion": "alignment-12d2-r7",
+  "dataset": {
+    "name": "stage-d2",
+    "version": "stage-d2-1",
+    "split": "all",
+    "reviewStatus": "unreviewed"
+  },
+  "retries": {
+    "batches": 3,
+    "requests": 3,
+    "invalidAnswers": 0,
+    "finalUnverified": 0,
+    "providerErrors": 0,
+    "notSent": 0,
+    "retryRate": 0,
+    "invalidAnswerRate": 0
+  },
+  "relationshipMetrics": {
+    "planned": 9,
+    "attempted": 9,
+    "neverAttempted": 0,
+    "verified": 9,
+    "recovered": 0,
+    "unresolved": 0,
+    "unresolvedRate": 0,
+    "coverage": 1,
+    "attemptedShare": 1,
+    "firstAttempt": {
+      "answered": 9,
+      "refused": 0,
+      "validationFailureRate": 0,
+      "noAnswerFirst": 0
+    },
+    "rawResponseErrors": {
+      "answers": 3,
+      "invalidAnswers": 0,
+      "refusedJudgements": 0,
+      "requestsWithoutAnswer": 0
+    },
+    "aspectCoverage": {
+      "byType": {
+        "Ref-relevance": {
+          "relationships": 9,
+          "baseVerified": 9,
+          "baseAccepted": 9,
+          "notRecorded": 0,
+          "fields": {
+            "relevance": {
+              "assessed": 9,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "basis": {
+              "assessed": 9,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            }
+          }
+        }
+      },
+      "fieldsRequired": 18,
+      "fieldsAssessed": 18,
+      "rate": 1
+    }
+  },
+  "completion": {
+    "maxUnresolved": 0.2,
+    "unresolvedRate": 0,
+    "coverage": 1,
+    "stopped": null,
+    "state": "complete",
+    "usableForAgreement": true,
+    "reason": "every planned relationship was attempted; 0 of 9 remain unresolved (0%), within the 20% limit"
+  },
+  "schema": {
+    "minItems": false,
+    "emptyAnswers": 0,
+    "minItemsNotEnforced": false
+  },
+  "limits": {
+    "budget": 21,
+    "maxCost": 0.05,
+    "maxTransient": 3,
+    "maxUnproductive": 9,
+    "maxUnresolved": 0.2,
+    "minSample": 8,
+    "warnInvalid": 9,
+    "maxInvalid": null,
+    "accounting": "reconcile",
+    "maxTokens": "production (8192)"
+  },
+  "failures": [],
+  "perItem": {
+    "rr-prog1-relevant": [
+      "ALIGNED"
+    ],
+    "rr-prog1-tangential": [
+      "PARTIALLY_ALIGNED"
+    ],
+    "rr-prog1-unrelated": [
+      "NOT_ALIGNED"
+    ],
+    "rr-prog1-cannot-tell": [
+      "PARTIALLY_ALIGNED"
+    ],
+    "rr-syseng-relevant": [
+      "ALIGNED"
+    ],
+    "rr-syseng-unrelated": [
+      "NOT_ALIGNED"
+    ],
+    "rr-sensors-relevant": [
+      "ALIGNED"
+    ],
+    "rr-sensors-tangential": [
+      "PARTIALLY_ALIGNED"
+    ],
+    "rr-sensors-web": [
+      "ALIGNED"
+    ]
+  },
+  "ranAt": "2026-10-26T05:01:47.145Z",
+  "answers": [
+    {
+      "rr-prog1-relevant": {
+        "label": "ALIGNED",
+        "sourceQuote": "fundamentals of Java programming",
+        "targetQuote": "Fundamentals of Java programming",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The title explicitly concerns the fundamentals of Java programming, which is the central subject of this course.",
+        "recommendation": null,
+        "aspects": {
+          "values": {
+            "relevance": "relevant",
+            "basis": "title_only"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "rr-prog1-tangential": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "fundamentals of Java programming",
+        "targetQuote": "Database design and normalization",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The entry concerns database design and normalization, a related computing discipline, but it does not evidently cover the Java programming topics taught in this course.",
+        "recommendation": null,
+        "aspects": {
+          "values": {
+            "relevance": "tangential",
+            "basis": "title_only"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "rr-prog1-unrelated": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Computer Programming 1 (Fundamentals of Programming)",
+        "targetQuote": "Principles of marketing management",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The entry concerns marketing management, which is unrelated to the subject of this programming course.",
+        "recommendation": null,
+        "aspects": {
+          "values": {
+            "relevance": "unrelated",
+            "basis": "title_only"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "rr-prog1-cannot-tell": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Computer Programming 1 (Fundamentals of Programming)",
+        "targetQuote": "Essentials",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The title \"Essentials\" does not identify the subject of the entry, so its relevance to this programming course cannot be established from the bibliographic entry alone.",
+        "recommendation": null,
+        "aspects": {
+          "values": {
+            "relevance": "cannot_tell",
+            "basis": "insufficient"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "rr-syseng-relevant": {
+        "label": "ALIGNED",
+        "sourceQuote": "requirements analysis, systems design, integration, project management, and performance evaluation",
+        "targetQuote": "Systems engineering: Requirements, design and verification",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The title directly concerns systems engineering requirements, design and verification, matching the course's requirements analysis, systems design and verification and validation topics.",
+        "recommendation": null,
+        "aspects": {
+          "values": {
+            "relevance": "relevant",
+            "basis": "title_only"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "rr-syseng-unrelated": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Systems Engineering",
+        "targetQuote": "A history of medieval architecture",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The entry concerns medieval architecture, which is unrelated to the course's systems engineering subject and weekly topics.",
+        "recommendation": null,
+        "aspects": {
+          "values": {
+            "relevance": "unrelated",
+            "basis": "title_only"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "rr-sensors-relevant": {
+        "label": "ALIGNED",
+        "sourceQuote": "Week 1: Operational amplifier basics",
+        "targetQuote": "Operational amplifiers and sensor signal conditioning",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The entry's title names operational amplifiers and sensor signal conditioning, which are the course's Week 1 and Week 3 topics, and the publisher named is a technical press.",
+        "recommendation": null,
+        "aspects": {
+          "values": {
+            "relevance": "relevant",
+            "basis": "title_and_venue"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "rr-sensors-tangential": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Week 3: Signal conditioning",
+        "targetQuote": "Digital logic fundamentals",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The title names digital logic fundamentals, a related discipline, but not the amplifier, signal conditioning, converter or sensor topics this course teaches.",
+        "recommendation": null,
+        "aspects": {
+          "values": {
+            "relevance": "tangential",
+            "basis": "title_only"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "rr-sensors-web": {
+        "label": "ALIGNED",
+        "sourceQuote": "Week 6: Interfacing sensors with a microcontroller",
+        "targetQuote": "Sensor interfacing application note",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The title names a sensor interfacing application note, matching the course's sensor interfacing topic, and the entry names a website hosting it.",
+        "recommendation": null,
+        "aspects": {
+          "values": {
+            "relevance": "relevant",
+            "basis": "title_and_venue"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      }
+    }
+  ],
+  "usage": {
+    "requests": 7,
+    "thisRun": 5,
+    "model": 3,
+    "priceLookups": 1,
+    "keyChecks": 1,
+    "invalidAnswers": 0,
+    "unproductiveInARow": 0,
+    "transient": 0,
+    "promptTokens": 10364,
+    "completionTokens": 1051,
+    "cachedTokens": 2688,
+    "reportedCost": 0.00182232,
+    "charged": 0.00182232,
+    "accounting": {
+      "rule": "reconcile",
+      "requests": {
+        "reconciled": 3,
+        "conservative": 0,
+        "worst_case": 0,
+        "refused": 0
+      },
+      "chargedConservatively": 0.0043704
+    },
+    "warnings": [],
+    "limits": {
+      "maxRequests": 21,
+      "maxCost": 0.05,
+      "maxTransient": 3,
+      "maxInvalid": null,
+      "warnInvalid": 9,
+      "maxUnproductive": 9,
+      "maxTokens": null
+    },
+    "stopped": null
+  },
+  "keyCheck": {
+    "status": 200,
+    "ok": true,
+    "freeTier": true,
+    "limit": 250,
+    "limitRemaining": 250,
+    "usage": 0,
+    "expiresAt": "2026-11-25T04:44:27.996Z"
+  },
+  "requests": [
+    {
+      "n": 5,
+      "ids": [
+        "rr-prog1-relevant",
+        "rr-prog1-tangential",
+        "rr-prog1-unrelated",
+        "rr-prog1-cannot-tell"
+      ],
+      "status": 200,
+      "ms": 1643,
+      "provider": "Together",
+      "finishReason": "stop",
+      "usage": {
+        "promptTokens": 3602,
+        "completionTokens": 502,
+        "reasoningTokens": 0,
+        "cachedTokens": 0,
+        "reportedCost": 0.0008415,
+        "costAtListPrices": 0.001683
+      },
+      "accounting": "reconciled",
+      "charged": 0.0008415,
+      "conservativeCharge": 0.001683,
+      "error": null,
+      "content": "{\n  \"judgements\": [\n    {\n      \"id\": \"rr-prog1-relevant\",\n      \"label\": \"ALIGNED\",\n      \"explanation\": \"The title explicitly concerns the fundamentals of Java programming, which is the central subject of this course.\",\n      \"sourceQuote\": \"fundamentals of Java programming\",\n      \"targetQuote\": \"Fundamentals of Java programming\",\n      \"sourceBloom\": \"N/A\",\n      \"targetBloom\": \"N/A\",\n      \"draft\": \"\"\n    ,\n      \"relevance\": \"relevant\",\n      \"basis\": \"title_only\"\n    },\n    {\n      \"id\": \"rr-prog1-tangential\",\n      \"label\": \"PARTIALLY_ALIGNED\",\n      \"explanation\": \"The entry concerns database design and normalization, a related computing discipline, but it does not evidently cover the Java programming topics taught in this course.\",\n      \"sourceQuote\": \"fundamentals of Java programming\",\n      \"targetQuote\": \"Database design and normalization\",\n      \"sourceBloom\": \"N/A\",\n      \"targetBloom\": \"N/A\",\n      \"draft\": \"\",\n      \"relevance\": \"tangential\",\n      \"basis\": \"title_only\"\n    },\n    {\n      \"id\": \"rr-prog1-unrelated\",\n      \"label\": \"NOT_ALIGNED\",\n      \"explanation\": \"The entry concerns marketing management, which is unrelated to the subject of this programming course.\",\n      \"sourceQuote\": \"Computer Programming 1 (Fundamentals of Programming)\",\n      \"targetQuote\": \"Principles of marketing management\",\n      \"sourceBloom\": \"N/A\",\n      \"targetBloom\": \"N/A\",\n      \"draft\": \"\",\n      \"relevance\": \"unrelated\",\n      \"basis\": \"title_only\"\n    },\n    {\n      \"id\": \"rr-prog1-cannot-tell\",\n      \"label\": \"PARTIALLY_ALIGNED\",\n      \"explanation\": \"The title \\\"Essentials\\\" does not identify the subject of the entry, so its relevance to this programming course cannot be established from the bibliographic entry alone.\",\n      \"sourceQuote\": \"Computer Programming 1 (Fundamentals of Programming)\",\n      \"targetQuote\": \"Essentials\",\n      \"sourceBloom\": \"N/A\",\n      \"targetBloom\": \"N/A\",\n      \"draft\": \"\",\n      \"relevance\": \"cannot_tell\",\n      \"basis\": \"insufficient\"\n    }\n  ]\n}"
+    },
+    {
+      "n": 6,
+      "ids": [
+        "rr-syseng-relevant",
+        "rr-syseng-unrelated"
+      ],
+      "status": 200,
+      "ms": 613,
+      "provider": "Together",
+      "finishReason": "stop",
+      "usage": {
+        "promptTokens": 3258,
+        "completionTokens": 259,
+        "reasoningTokens": 0,
+        "cachedTokens": 2560,
+        "reportedCost": 0.0002985,
+        "costAtListPrices": 0.0012882
+      },
+      "accounting": "reconciled",
+      "charged": 0.0002985,
+      "conservativeCharge": 0.0012882,
+      "error": null,
+      "content": "{\n  \"judgements\": [\n    {\n      \"id\": \"rr-syseng-relevant\",\n      \"label\": \"ALIGNED\",\n      \"explanation\": \"The title directly concerns systems engineering requirements, design and verification, matching the course's requirements analysis, systems design and verification and validation topics.\",\n      \"sourceQuote\": \"requirements analysis, systems design, integration, project management, and performance evaluation\",\n      \"targetQuote\": \"Systems engineering: Requirements, design and verification\",\n      \"sourceBloom\": \"N/A\",\n      \"targetBloom\": \"N/A\",\n      \"draft\": \"\"\n    ,\n      \"relevance\": \"relevant\",\n      \"basis\": \"title_only\"\n    },\n    {\n      \"id\": \"rr-syseng-unrelated\",\n      \"label\": \"NOT_ALIGNED\",\n      \"explanation\": \"The entry concerns medieval architecture, which is unrelated to the course's systems engineering subject and weekly topics.\",\n      \"sourceQuote\": \"Systems Engineering\",\n      \"targetQuote\": \"A history of medieval architecture\",\n      \"sourceBloom\": \"N/A\",\n      \"targetBloom\": \"N/A\",\n      \"draft\": \"\",\n      \"relevance\": \"unrelated\",\n      \"basis\": \"title_only\"\n    }\n  ]\n}"
+    },
+    {
+      "n": 7,
+      "ids": [
+        "rr-sensors-relevant",
+        "rr-sensors-tangential",
+        "rr-sensors-web"
+      ],
+      "status": 200,
+      "ms": 701,
+      "provider": "Wafer",
+      "finishReason": "stop",
+      "usage": {
+        "promptTokens": 3504,
+        "completionTokens": 290,
+        "reasoningTokens": 0,
+        "cachedTokens": 128,
+        "reportedCost": 0.00068232,
+        "costAtListPrices": 0.0013992
+      },
+      "accounting": "reconciled",
+      "charged": 0.00068232,
+      "conservativeCharge": 0.0013992,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"rr-sensors-relevant\",\"label\":\"ALIGNED\",\"explanation\":\"The entry's title names operational amplifiers and sensor signal conditioning, which are the course's Week 1 and Week 3 topics, and the publisher named is a technical press.\",\"sourceQuote\":\"Week 1: Operational amplifier basics\",\"targetQuote\":\"Operational amplifiers and sensor signal conditioning\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"N/A\",\"draft\":\"\" , \"relevance\":\"relevant\",\"basis\":\"title_and_venue\"},{\"id\":\"rr-sensors-tangential\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The title names digital logic fundamentals, a related discipline, but not the amplifier, signal conditioning, converter or sensor topics this course teaches.\",\"sourceQuote\":\"Week 3: Signal conditioning\",\"targetQuote\":\"Digital logic fundamentals\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"N/A\",\"draft\":\"\",\"relevance\":\"tangential\",\"basis\":\"title_only\"},{\"id\":\"rr-sensors-web\",\"label\":\"ALIGNED\",\"explanation\":\"The title names a sensor interfacing application note, matching the course's sensor interfacing topic, and the entry names a website hosting it.\",\"sourceQuote\":\"Week 6: Interfacing sensors with a microcontroller\",\"targetQuote\":\"Sensor interfacing application note\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"N/A\",\"draft\":\"\",\"relevance\":\"relevant\",\"basis\":\"title_and_venue\"}]}"
+    }
+  ],
+  "stopped": null,
+  "isolation": {
+    "dataModulesLoaded": [],
+    "processEnvStageFlags": []
+  }
+}

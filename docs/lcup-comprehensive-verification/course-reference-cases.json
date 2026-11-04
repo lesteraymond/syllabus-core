@@ -1,0 +1,164 @@
+[
+  {
+    "id": "book",
+    "text": "Doe, J. (2025). Java programming. Academic Press.",
+    "expected": "PASS",
+    "actual": "PASS",
+    "issues": [],
+    "type": {
+      "kind": "book",
+      "confidence": "medium",
+      "signals": [
+        "publisher name"
+      ]
+    },
+    "authenticity": {
+      "status": "not_verified"
+    }
+  },
+  {
+    "id": "missing-date",
+    "text": "Doe, J. Java programming. Academic Press.",
+    "expected": "FAIL",
+    "actual": "FAIL",
+    "issues": [
+      {
+        "code": "DATE_MISSING",
+        "severity": "definite",
+        "message": "No publication date in the form (2020). was found after the authors.",
+        "component": "date",
+        "fix": null
+      }
+    ],
+    "type": {
+      "kind": "book",
+      "confidence": "medium",
+      "signals": [
+        "publisher name"
+      ]
+    },
+    "authenticity": {
+      "status": "not_verified"
+    }
+  },
+  {
+    "id": "missing-title",
+    "text": "Doe, J. (2025).",
+    "expected": "FAIL",
+    "actual": "FAIL",
+    "issues": [
+      {
+        "code": "TITLE_MISSING",
+        "severity": "definite",
+        "message": "No title was found after the date.",
+        "component": "title",
+        "fix": null
+      }
+    ],
+    "type": {
+      "kind": "unknown",
+      "confidence": "none",
+      "signals": []
+    },
+    "authenticity": {
+      "status": "not_verified"
+    }
+  },
+  {
+    "id": "unknown-type",
+    "text": "Doe, J. (2025). A work with unclassified source.",
+    "expected": "NEEDS_REVIEW",
+    "actual": "NEEDS_REVIEW",
+    "issues": [],
+    "type": {
+      "kind": "unknown",
+      "confidence": "none",
+      "signals": []
+    },
+    "authenticity": {
+      "status": "not_verified"
+    }
+  },
+  {
+    "id": "malformed-doi",
+    "text": "Doe, J. (2025). A study. Journal of Examples, 2(1), 1–8. https://doi.org/not-a-doi",
+    "expected": "FAIL",
+    "actual": "FAIL",
+    "issues": [
+      {
+        "code": "DOI_MALFORMED",
+        "severity": "definite",
+        "message": "The DOI link does not contain a DOI of the form 10.xxxx/yyyy.",
+        "component": "doi",
+        "fix": null
+      }
+    ],
+    "type": {
+      "kind": "journal",
+      "confidence": "medium",
+      "signals": [
+        "volume (issue) and pages"
+      ]
+    },
+    "authenticity": {
+      "status": "not_verified"
+    }
+  },
+  {
+    "id": "doi-format",
+    "text": "Doe, J. (2025). A study. Journal of Examples, 2(1), 1–8. doi:10.1234/example",
+    "expected": "FAIL",
+    "actual": "FAIL",
+    "issues": [
+      {
+        "code": "DOI_FORM",
+        "severity": "definite",
+        "message": "A DOI is written as a link: https://doi.org/10.1234/example",
+        "component": "doi",
+        "fix": "doi-to-https"
+      }
+    ],
+    "type": {
+      "kind": "journal",
+      "confidence": "medium",
+      "signals": [
+        "volume (issue) and pages"
+      ]
+    },
+    "authenticity": {
+      "status": "not_verified"
+    }
+  },
+  {
+    "id": "article",
+    "text": "Doe, J. (2025). A study. Journal of Examples, 2(1), 1–8. https://doi.org/10.1234/example",
+    "expected": "PASS",
+    "actual": "PASS",
+    "issues": [],
+    "type": {
+      "kind": "journal",
+      "confidence": "medium",
+      "signals": [
+        "volume (issue) and pages"
+      ]
+    },
+    "authenticity": {
+      "status": "not_verified"
+    }
+  },
+  {
+    "id": "blank",
+    "text": "",
+    "expected": "NOT_CHECKED",
+    "actual": "NOT_CHECKED",
+    "issues": [],
+    "type": {
+      "kind": "unknown",
+      "confidence": "none",
+      "signals": []
+    },
+    "authenticity": {
+      "status": "not_verified"
+    }
+  }
+]

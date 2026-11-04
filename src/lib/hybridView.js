@@ -1,3 +1,5 @@
+import { stepLabel } from './complianceView.js';
+
 // Presentation-only shaping of run.hybrid for the checker panel. The server stays authoritative: nothing here
 // changes a score, a gate or a decision, it only groups what the server already sent into "what is wrong".
 // INSUFFICIENT_EVIDENCE is a relationship the AI answered but the server could not verify: it blocks the submit, so it is a problem too.
@@ -74,6 +76,38 @@ export function suggestionKind(path) {
   if (/^outcomes\./.test(p)) return 'outcomes';
   if (/^meta\./.test(p)) return 'meta';
   return 'other';
+}
+
+export function suggestionStepKey(path) {
+  const p = String(path || '');
+  if (/^(meta\.|description\b)/.test(p)) return 'info';
+  if (/^(outcomes\.|clos\[)/.test(p)) return 'clos';
+  if (/^plan\[/.test(p)) return 'plan';
+  if (/^reqs\b/.test(p)) return 'reqs';
+  if (/^refs\b/.test(p)) return 'refs';
+  if (/^grading\b/.test(p)) return 'grade';
+  return '';
+}
+
+export function suggestionSection(path, { tr = (x) => x, t = (x) => x } = {}) {
+  const p = String(path || '');
+  const stepKey = suggestionStepKey(p);
+  const stepText = stepKey ? tr(stepLabel(stepKey)) : '';
+  const cloMatch = p.match(/^clos\[(\d+)\]/);
+  if (cloMatch) {
+    return `${stepText} · CLO ${Number(cloMatch[1]) + 1}`;
+  }
+  const iloMatch = p.match(/^plan\[(\d+)\]\.ilos\[(\d+)\]/);
+  if (iloMatch) {
+    return `${stepText} · ${t('hybrid.kind.ilo')} (${tr('Row')} ${Number(iloMatch[1]) + 1}, ILO ${Number(iloMatch[2]) + 1})`;
+  }
+  const planMatch = p.match(/^plan\[(\d+)\]/);
+  if (planMatch) {
+    return `${stepText} · ${t('hybrid.kind.plan')} (${tr('Row')} ${Number(planMatch[1]) + 1})`;
+  }
+  const kind = suggestionKind(p);
+  const kindText = t(`hybrid.kind.${kind}`);
+  return stepText ? `${stepText} · ${kindText}` : kindText;
 }
 
 // Which recommendations can be checked and improved: an AI rewrite of a text field (the same fields the server accepts).

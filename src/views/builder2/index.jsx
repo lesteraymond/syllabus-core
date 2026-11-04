@@ -47,11 +47,6 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
     }
   }, [resolvedProgramCode, draft?.meta.program, load.editable, frozen]);
   const [step, setStep] = useState(0);
-  // On a phone the steps are one swipeable row: keep the open step in view (sideways only, the page does not jump).
-  useEffect(() => {
-    const open = document.querySelector('.stepper button.active');
-    if (open && open.scrollIntoView) open.scrollIntoView({ inline: 'center', block: 'nearest', behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
-  }, [step]);
   const [visited, setVisited] = useState({ 0: 1 });
   const [filter, setFilter] = useState(null);
   const [toast, setToast] = useState(null);
@@ -170,7 +165,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
     notify(translateUI("builder.draftSaved"));
     setPage('my-syllabi');
   };
-  const submit = async () => {
+  const openChecker = async () => {
     setBusy(true);
     setSubmitFailed([]);
     try {
@@ -180,6 +175,23 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
       if (isAdmin) { await syllabiApi.prepareCheck(id); setPage('ai'); return; }
       if (onOpenChecker) await onOpenChecker({ syllabusId: id, status: load.status });
       setPage('ai');
+    } catch (e) {
+      if (e.data && Array.isArray(e.data.failed)) setSubmitFailed(e.data.failed);
+      notify(translateUI("ui.submit_failed_adb15a") + e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+  const submit = async () => {
+    setBusy(true);
+    setSubmitFailed([]);
+    try {
+      if (!(await saveFirst())) return;
+      const id = syllabusId();
+      if (!id) { notify(translateUI("ui.choose_a_subject_first_24357e")); return; }
+      if (isAdmin) { await syllabiApi.prepareCheck(id); setPage('ai'); return; }
+      const res = await syllabiApi.submitContent(id, note.trim());
+      if (onSubmitted) await onSubmitted(res, existing);
     } catch (e) {
       if (e.data && Array.isArray(e.data.failed)) setSubmitFailed(e.data.failed);
       notify(translateUI("ui.submit_failed_adb15a") + e.message);
@@ -249,14 +261,6 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
   const existing = load.status !== 'draft';
   const revising = isReturned(load.status); // back from the reviewer: the next submission is a new version, with a note about the change
   const needNote = noteMissing(load.status, note);
-  // Why the main button cannot go yet. The button stays clickable so a click always answers with this reason, instead of doing nothing.
-  const whyNot = !draft.meta.courseId ? translateUI("ui.choose_a_subject_first_24357e")
-    : !complete ? translateUI("ui.complete_steps_1_to_6_to_unlock_b21a68") : ''; // the change note is written on the AI Checker page, not here
-  const onPrimary = () => {
-    if (!whyNot) return submit();
-    notify(whyNot);
-    return undefined;
-  };
   const preparedBy = user ? user.name || (user.firstName + ' ' + user.lastName) : '';
   const doneCount = statuses.filter((x) => x === 'done').length;
   const cfg = STEP_CONFIG[step];
@@ -341,13 +345,16 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
           )}
           {!isAdmin && step === 6 && warnings > 0 && editable && <div className="step-hint advice" role="note">{tr(warnings + (warnings === 1 ? ' warning remains' : ' warnings remain')) + translateUI("ui.in_the_compliance_check_they_do_not_block_you_the_reviewer_will_s_d35203")}</div>}
           {step < 6 && advice.length > 0 && editable && <div className="step-hint advice" role="note">{translateUI("ui.suggestions_73fedd") + advice.map((x) => tr(x.text)).join(' ')}</div>}
-          {!nxt && editable && whyNot && <div className="step-hint advice" role="status">{whyNot}</div>}
           <div className="editor-footer">
             {prv && <StableButton type="button" className="btn outline" onClick={() => go(step - 1)}>{'← ' + titleOf(prv)}</StableButton>}
             <div>
               {nxt && <StableButton type="button" className="btn primary" disabled={blocking.length > 0} title={blocking.length ? translateUI("ui.complete_this_step_to_continue_71b565") : undefined} onClick={() => go(step + 1)}>{translateUI("ui.next_94377f") + titleOf(nxt) + ' →'}</StableButton>}
-              {!nxt && <>
-                <StableButton type="button" className="btn primary" disabled={busy || !editable} aria-disabled={!!whyNot || undefined} title={whyNot || undefined} onClick={onPrimary}>{translateUI('publication.continueToCheck')}</StableButton>
+              {!nxt && isAdmin && (
+                <StableButton type="button" className="btn primary" disabled={busy || !editable || !draft.meta.courseId || !complete} onClick={openChecker}>{translateUI('publication.continueToCheck')}</StableButton>
+              )}
+              {!nxt && !isAdmin && <>
+                <StableButton type="button" className="btn outline" disabled={busy || !editable || !draft.meta.courseId || !complete} onClick={openChecker}>{translateUI('publication.continueToCheck')}</StableButton>
+                <StableButton type="button" className="btn primary" disabled={busy || !editable || !draft.meta.courseId || !complete || needNote || !canSubmitHybrid(lastRun, JSON.stringify(draft), 'advisory')} title={!canSubmitHybrid(lastRun, JSON.stringify(draft), 'advisory') ? translateUI('hybrid.hardGateRequired') : undefined} onClick={submit}>{existing ? translateUI('hybrid.submitVersion') : translateUI('hybrid.submit')}</StableButton>
               </>}
             </div>
           </div>

@@ -1,0 +1,2375 @@
+{
+  "items": 28,
+  "runs": 2,
+  "answered": 56,
+  "invalid": 0,
+  "invalidRate": 0,
+  "notAttempted": 0,
+  "agreement": 1,
+  "falsePositiveRate": 0,
+  "falseNegativeRate": 0,
+  "counts": {
+    "clearAligned": 12,
+    "falsePositive": 0,
+    "clearNot": 34,
+    "falseNegative": 0
+  },
+  "confusion": {
+    "ALIGNED": {
+      "ALIGNED": 12,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "PARTIAL": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "FLAGGED": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 11,
+      "NOT_ALIGNED": 21,
+      "INSUFFICIENT_EVIDENCE": 2,
+      "invalid": 0
+    }
+  },
+  "partialAccuracy": null,
+  "approvalAccuracy": 1,
+  "byDiscipline": {
+    "computing": {
+      "items": 12,
+      "answered": 24,
+      "agree": 24,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "engineering": {
+      "items": 16,
+      "answered": 32,
+      "agree": 32,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "byCategory": {
+    "clear-positive": {
+      "items": 6,
+      "answered": 12,
+      "agree": 12,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "keyword-overlap": {
+      "items": 5,
+      "answered": 10,
+      "agree": 10,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "off-subject": {
+      "items": 3,
+      "answered": 6,
+      "agree": 6,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "generic": {
+      "items": 2,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "real-faculty-clo": {
+      "items": 5,
+      "answered": 10,
+      "agree": 10,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "unreadable": {
+      "items": 1,
+      "answered": 2,
+      "agree": 2,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "redundant": {
+      "items": 2,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "missing-coverage": {
+      "items": 1,
+      "answered": 2,
+      "agree": 2,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "wrong-po-mapping": {
+      "items": 3,
+      "answered": 6,
+      "agree": 6,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "stability": 0.929,
+  "byType": {
+    "Course-CLO": {
+      "items": 14,
+      "answered": 28,
+      "agree": 28,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "CLO-set": {
+      "items": 5,
+      "answered": 10,
+      "agree": 10,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "CLO-PO": {
+      "items": 9,
+      "answered": 18,
+      "agree": 18,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "disagreements": [],
+  "structuredFields": {
+    "answers": 0,
+    "withFields": 0,
+    "missing": 0,
+    "malformed": 0,
+    "contradictory": 0,
+    "notAssessed": 0,
+    "perField": {},
+    "note": "Expectations are provisional. Only an assessed field is compared with them: a field that was not assessed, missing, malformed or in a self-contradictory answer is counted by its state, never as agreement. INSUFFICIENT_EVIDENCE answers are left out."
+  },
+  "model": "anthropic/claude-sonnet-5-5",
+  "promptVersion": "alignment-12a-r7",
+  "provider": "anthropic",
+  "evaluationOnly": true,
+  "modelsReturned": {
+    "claude-sonnet-5-5": 18
+  },
+  "adapterUsage": {
+    "requests": 18,
+    "attempts": 18,
+    "timedOut": 0,
+    "inputTokens": 16228,
+    "outputTokens": 15542,
+    "thinkingTokens": 0,
+    "cacheCreationInputTokens": 5128,
+    "cacheReadInputTokens": 87176,
+    "thinkingReports": {
+      "nonzero": 0,
+      "zero": 18,
+      "unavailable": 0
+    },
+    "stopReasons": {
+      "end_turn": 18
+    },
+    "enumCaseOnly": 0,
+    "estimatedUsd": 0.2094136,
+    "priceAsOf": "2026-10-27"
+  },
+  "dataset": {
+    "name": "stage-a",
+    "version": "stage-a-2",
+    "split": "all",
+    "reviewStatus": "unreviewed"
+  },
+  "configuration": {
+    "stageFlags": {
+      "a": true,
+      "b": false,
+      "b3": false,
+      "b4": false,
+      "c1": false,
+      "c2": false,
+      "d1": false,
+      "d2": false
+    },
+    "promptVariant": "current",
+    "trim": false,
+    "minItems": false,
+    "timeoutMs": 180000,
+    "anthropic": {
+      "model": "claude-sonnet-5-5",
+      "thinking": "adaptive",
+      "thinkingParameter": {
+        "type": "adaptive"
+      },
+      "effort": "high",
+      "maxTokens": 16000,
+      "maxRetries": 2,
+      "promptCache": true,
+      "evaluationOnly": true
+    }
+  },
+  "retries": {
+    "batches": 16,
+    "requests": 18,
+    "invalidAnswers": 2,
+    "finalUnverified": 0,
+    "providerErrors": 0,
+    "notSent": 0,
+    "retryRate": 0.125,
+    "invalidAnswerRate": 0.111
+  },
+  "relationshipMetrics": {
+    "planned": 56,
+    "attempted": 56,
+    "neverAttempted": 0,
+    "verified": 56,
+    "recovered": 2,
+    "unresolved": 0,
+    "unresolvedRate": 0,
+    "coverage": 1,
+    "attemptedShare": 1,
+    "firstAttempt": {
+      "answered": 56,
+      "refused": 2,
+      "validationFailureRate": 0.0357,
+      "noAnswerFirst": 0
+    },
+    "rawResponseErrors": {
+      "answers": 18,
+      "invalidAnswers": 2,
+      "refusedJudgements": 2,
+      "requestsWithoutAnswer": 0
+    },
+    "aspectCoverage": null
+  },
+  "completion": {
+    "maxUnresolved": 0.2,
+    "unresolvedRate": 0,
+    "coverage": 1,
+    "stopped": null,
+    "state": "complete",
+    "usableForAgreement": true,
+    "reason": "every planned relationship was attempted; 0 of 56 remain unresolved (0%), within the 20% limit"
+  },
+  "schema": {
+    "minItems": false,
+    "emptyAnswers": 0,
+    "minItemsNotEnforced": false
+  },
+  "answerReview": {
+    "advisory": true,
+    "note": "Counts are heuristic review warnings, not verified academic errors. Labels, fields, validation and agreement are unchanged by these warnings.",
+    "counts": {
+      "explanationReview": {},
+      "draftReview": {},
+      "draftWarnings": {}
+    },
+    "flaggedAnswers": []
+  },
+  "quality": {
+    "mode": {
+      "id": "B",
+      "name": "enhanced staged semantic evaluation",
+      "stagesOn": [
+        "a"
+      ],
+      "recommendationField": true
+    },
+    "note": "Expectations are provisional (developer-written, not reviewed by faculty). These measures compare the answers with those expectations and with the prompt's own rules; they are not faculty accuracy, and the Bloom and mapping measures are heuristics for review.",
+    "answers": {
+      "attempted": 56,
+      "verified": 56,
+      "unverified": 0,
+      "scored": 56
+    },
+    "agreement": {
+      "strict": {
+        "answers": 22,
+        "agree": 22,
+        "rate": 1
+      },
+      "permissive": {
+        "answers": 56,
+        "agree": 56,
+        "rate": 1
+      }
+    },
+    "falseApprovals": {
+      "clearNotAligned": 34,
+      "judgedAligned": 0,
+      "rate": 0,
+      "ids": []
+    },
+    "falseRejections": {
+      "clearAligned": 12,
+      "judgedOtherwise": 0,
+      "rate": 0,
+      "byLabel": {},
+      "ids": []
+    },
+    "insufficientEvidence": {
+      "answers": 2,
+      "accepted": 2,
+      "notAccepted": 0,
+      "rate": 0.036,
+      "ids": [
+        "cc-prog1-unreadable#1",
+        "cc-prog1-unreadable#2"
+      ]
+    },
+    "bloom": {
+      "answers": 18,
+      "notApplicable": 0,
+      "levelRuleConflicts": {
+        "aligned": 6,
+        "breakingTheRule": 0,
+        "ids": []
+      },
+      "levelGapItems": {
+        "answers": 0,
+        "gapShown": 0,
+        "gapNotShown": 0,
+        "notApplicable": 0
+      },
+      "sameStatement": {
+        "repeated": 12,
+        "differentLevels": 3,
+        "examples": [
+          {
+            "statement": "Course: IT 202 - Computer Programming 1 (Fundamentals of Programming)\nProgram: BSIT\nYear level: 2\nDescription: This course introduces students to the vital role",
+            "levels": {
+              "N/A": 4,
+              "Apply": 3
+            }
+          },
+          {
+            "statement": "Course: CPE 304 - Fundamentals of Mixed Signals and Sensors\nProgram: BSCPE\nYear level: 3\nDescription: This course covers operational amplifiers, signal converte",
+            "levels": {
+              "N/A": 5,
+              "Apply": 1
+            }
+          },
+          {
+            "statement": "Course: CPE 304 - Fundamentals of Mixed Signals and Sensors\nProgram: BSCPE\nYear level: 3\nDescription: This course covers operational amplifiers, signal converte",
+            "levels": {
+              "Apply": 3,
+              "N/A": 3
+            }
+          }
+        ]
+      },
+      "acrossRuns": {
+        "compared": 27,
+        "changed": 8
+      },
+      "refusedInvalidLevel": 0
+    },
+    "recommendations": {
+      "proposals": {
+        "NO_CHANGE": 15,
+        "REWRITE_TEXT": 25,
+        "REVIEW_REQUIRED": 10,
+        "RETAG_OUTCOME": 6
+      },
+      "asExpected": {
+        "withAnExpectation": 46,
+        "matches": 44,
+        "byExpected": {
+          "NO_CHANGE": {
+            "NO_CHANGE": 12
+          },
+          "REWRITE_TEXT": {
+            "REWRITE_TEXT": 18,
+            "REVIEW_REQUIRED": 2
+          },
+          "REVIEW_REQUIRED": {
+            "REVIEW_REQUIRED": 8
+          },
+          "RETAG_OUTCOME": {
+            "RETAG_OUTCOME": 6
+          }
+        }
+      },
+      "unsupported": {
+        "rewriteForClearAligned": 0,
+        "rewriteWhereRetagExpected": 0,
+        "draftHeldBackByReview": 0,
+        "refusals": {},
+        "total": 0,
+        "ids": {
+          "rewriteForClearAligned": [],
+          "rewriteWhereRetagExpected": [],
+          "draftHeldBackByReview": []
+        }
+      }
+    },
+    "mappingRemedy": {
+      "retagExpected": {
+        "answers": 6,
+        "failing": 6,
+        "proposals": {
+          "RETAG_OUTCOME": 6
+        },
+        "rewritesTowardSource": 0,
+        "answersById": [
+          {
+            "id": "cp-bscpe-wrongpo",
+            "run": 1,
+            "label": "NOT_ALIGNED",
+            "proposal": "RETAG_OUTCOME"
+          },
+          {
+            "id": "cp-bscpe-wrongpo",
+            "run": 2,
+            "label": "NOT_ALIGNED",
+            "proposal": "RETAG_OUTCOME"
+          },
+          {
+            "id": "cp-bsit-wrongpo",
+            "run": 1,
+            "label": "NOT_ALIGNED",
+            "proposal": "RETAG_OUTCOME"
+          },
+          {
+            "id": "cp-bsit-wrongpo",
+            "run": 2,
+            "label": "NOT_ALIGNED",
+            "proposal": "RETAG_OUTCOME"
+          },
+          {
+            "id": "cp-bsie-wrongpo",
+            "run": 1,
+            "label": "NOT_ALIGNED",
+            "proposal": "RETAG_OUTCOME"
+          },
+          {
+            "id": "cp-bsie-wrongpo",
+            "run": 2,
+            "label": "NOT_ALIGNED",
+            "proposal": "RETAG_OUTCOME"
+          }
+        ]
+      },
+      "remapCandidates": {
+        "rule": "CLO-PO or CLO-EGA, not ambiguous, ALIGNED not accepted, category clear-negative or wrong-program: faculty to confirm whether a re-tag or a rewrite is right; never scored",
+        "answers": 0,
+        "failing": 0,
+        "proposals": {},
+        "rewritesTowardSource": 0,
+        "answersById": []
+      },
+      "rewrites": {
+        "drafts": 6,
+        "towardSource": 6,
+        "threshold": 2
+      }
+    },
+    "evidence": {
+      "sides": {
+        "exact": 108,
+        "not_evaluated": 4
+      },
+      "exactRate": 1,
+      "judgementsReturned": 58,
+      "refusedForQuotes": 2,
+      "refusedRate": 0.034,
+      "byCode": {
+        "quote_not_found": 2
+      }
+    },
+    "refusalCodes": {
+      "quote_not_found": 2
+    },
+    "operations": {
+      "requests": 18,
+      "latencyMs": {
+        "answers": 18,
+        "median": 6941,
+        "p90": 8672,
+        "max": 9089
+      },
+      "tokens": {
+        "input": 16228,
+        "cacheWrite": 5128,
+        "cacheRead": 87176,
+        "output": 15542,
+        "thinking": 0,
+        "thinkingReports": {
+          "nonzero": 0,
+          "zero": 18,
+          "unavailable": 0
+        }
+      },
+      "estimatedCost": 0.2094136,
+      "notEstimated": 0,
+      "chargedByGuard": 0.2181312,
+      "estimatedPerVerifiedRelationship": 0.00373953
+    }
+  },
+  "limits": {
+    "budget": 40,
+    "maxCost": 1.1,
+    "maxTransient": 3,
+    "maxUnproductive": 9,
+    "maxUnresolved": 0.2,
+    "minSample": 8,
+    "warnInvalid": 16,
+    "maxInvalid": 3,
+    "accounting": "reconcile",
+    "maxTokens": 16000,
+    "totalCap": 1.669372,
+    "spendRegister": "docs\\ai-eval-anthropic\\spend-register.json",
+    "maxOutputTokens": null
+  },
+  "failures": [
+    {
+      "run": 1,
+      "course": "sensors",
+      "ids": [
+        "cc-sensors-aligned",
+        "cc-sensors-keyword",
+        "cc-sensors-offsubject",
+        "cc-sensors-real3"
+      ],
+      "error": "AI evidence is not present in the supplied text (source quote)",
+      "code": "quote_not_found",
+      "rejected": [
+        {
+          "id": "cc-sensors-real3",
+          "reason": "AI evidence is not present in the supplied text (source quote)",
+          "code": "quote_not_found",
+          "problems": [
+            {
+              "code": "quote_not_found",
+              "side": "source"
+            }
+          ],
+          "given": {
+            "sourceQuote": "development of signal conversion circuits",
+            "targetQuote": "Analyze and apply the behavior of passive components in AC circuits"
+          }
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "course": "sensors",
+      "ids": [
+        "cc-sensors-aligned",
+        "cc-sensors-keyword",
+        "cc-sensors-offsubject",
+        "cc-sensors-real3"
+      ],
+      "error": "AI evidence is not present in the supplied text (source quote)",
+      "code": "quote_not_found",
+      "rejected": [
+        {
+          "id": "cc-sensors-real3",
+          "reason": "AI evidence is not present in the supplied text (source quote)",
+          "code": "quote_not_found",
+          "problems": [
+            {
+              "code": "quote_not_found",
+              "side": "source"
+            }
+          ],
+          "given": {
+            "sourceQuote": "development of signal conversion circuits",
+            "targetQuote": "Analyze and apply the behavior of passive components in AC circuits"
+          }
+        }
+      ]
+    }
+  ],
+  "perItem": {
+    "cc-prog1-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "cc-prog1-keyword": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cc-prog1-offsubject": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "cc-prog1-generic": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "cc-prog1-real1": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cc-syseng-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "cc-syseng-keyword": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cc-syseng-offsubject": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "cc-syseng-real2": [
+      "PARTIALLY_ALIGNED",
+      "ALIGNED"
+    ],
+    "cc-sensors-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "cc-sensors-keyword": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cc-sensors-offsubject": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "cc-sensors-real3": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cc-prog1-unreadable": [
+      "INSUFFICIENT_EVIDENCE",
+      "INSUFFICIENT_EVIDENCE"
+    ],
+    "cs-prog1-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "cs-prog1-redundant": [
+      "PARTIALLY_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "cs-sensors-redundant": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cs-syseng-narrow": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "cs-sensors-generic": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "cp-bscpe-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "cp-bscpe-keyword": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "cp-bscpe-wrongpo": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "cp-bsit-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "cp-bsit-keyword": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "cp-bsit-wrongpo": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "cp-bsit-real3": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "cp-bsie-wrongpo": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "cp-bsie-real2": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ]
+  },
+  "ranAt": "2026-10-27T18:31:42.348Z",
+  "answers": [
+    {
+      "cc-prog1-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "fundamentals of Java programming",
+        "targetQuote": "Develop and test Java programs",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "Apply",
+        "explanation": "The CLO states observable Java programming performance (develop and test) suited to a Year 2 fundamentals course.",
+        "recommendation": "NO_CHANGE",
+        "draft": "",
+        "aspects": null
+      },
+      "cc-prog1-keyword": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "vital role of computers and computer programmers in shaping modern society",
+        "targetQuote": "Appreciate the history of programming and understand the importance of programming in society.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "Understand",
+        "explanation": "The CLO uses non-observable verbs (\"Appreciate\", \"understand\") that cannot be assessed directly. It stays at Remember/Understand level, below what a Year 2 programming course needs. It names programming and society but states no performance of programming or logical formulation. It covers only the description's societal-role aspect and leaves out Java fundamentals, logic and coding practices.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Explain the role of computers and programmers in society by describing real-world applications of Java programs, and apply good coding practices when writing them.",
+        "aspects": null
+      },
+      "cc-prog1-offsubject": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Students will be taught the fundamentals of Java programming",
+        "targetQuote": "Design and analyze a relational database schema using normalization up to third normal form.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "Create",
+        "explanation": "The CLO is about relational database design and normalization, which is a database subject. The course description covers Java programming fundamentals, logical formulation and coding practices, and does not mention databases or schema design. Its Analyze/Create level also exceeds a fundamentals course. The CLO needs content the description does not cover.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Design algorithms using flowcharts or pseudocode and implement them as Java programs that use methods and arrays to solve simple problems.",
+        "aspects": null
+      },
+      "cc-prog1-generic": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "foster a strong foundation in logical formulation techniques essential for programming",
+        "targetQuote": "Demonstrate professionalism and teamwork in the workplace.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "Apply",
+        "explanation": "The CLO is a generic workplace outcome that would fit any course. It names no programming, Java or logical formulation competence from the description. \"Demonstrate professionalism\" is not tied to any observable programming task, and teamwork is not part of the description.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Apply logical formulation techniques and good coding practices, such as meaningful naming and documentation, when writing Java programs.",
+        "aspects": null
+      },
+      "cc-prog1-real1": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "fundamentals of Java programming",
+        "targetQuote": "Define and analyze the computing requirements needed for an effective solution",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Analyze",
+        "explanation": "The target CLO is generic and would fit any computing course: it names no programming, Java or coding competence, so the course subject is missing (test 1). \"Define and analyze\" is observable, but it asks for requirements analysis, which the source description does not cover; the description stresses logical formulation, Java fundamentals and good coding practices (test 3). It also never states a performance such as writing or testing code. \"Holistic and impactful solutions\" is vague and not assessable.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Analyze a problem and design a logical solution, then implement it as a Java program that applies good coding practices.",
+        "aspects": null
+      },
+      "cc-prog1-unreadable": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "sourceQuote": "fundamentals of Java programming",
+        "targetQuote": "Xq zv wl kjh pqrt mnb vcx.",
+        "evidenceMatching": {
+          "source": "not_evaluated",
+          "target": "not_evaluated"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "N/A",
+        "explanation": "The target CLO text is unreadable: it is a string of meaningless characters and states no competence, so it cannot be judged against the course.",
+        "recommendation": "REVIEW_REQUIRED",
+        "draft": "",
+        "aspects": null
+      },
+      "cs-prog1-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "fundamentals of Java programming",
+        "targetQuote": "Decompose a problem into methods",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The CLOs cover Java fundamentals, problem decomposition, debugging and good practice without overlap, and none is too broad.",
+        "recommendation": "NO_CHANGE",
+        "draft": "",
+        "aspects": null
+      },
+      "cs-prog1-redundant": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "logical formulation techniques essential for programming",
+        "targetQuote": "CLO 2: Develop Java programs that use loop statements.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "CLOs 1, 2, 3 and 4 all ask for the same competence, writing Java programs with loops, in different words. The set also leaves out the rest of the Java fundamentals the description promises (variables, conditionals, methods), logical formulation techniques, good coding practices and real-world applications.",
+        "recommendation": "REVIEW_REQUIRED",
+        "draft": "Merge CLOs 1-4 into one loop CLO and add CLOs on logical problem formulation, other Java fundamentals, and good coding practices.",
+        "aspects": null
+      },
+      "cp-bsit-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "Utilize modern computing tools",
+        "targetQuote": "using an integrated development environment",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The CLO has the student write, compile and debug Java programs in an IDE, which is using a modern computing tool at Apply level.",
+        "recommendation": "NO_CHANGE",
+        "draft": "",
+        "aspects": null
+      },
+      "cp-bsit-keyword": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Analyze complex problems, and identify and define the computing requirements",
+        "targetQuote": "Memorize the keywords and syntax of the Java language.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Analyze",
+        "targetBloom": "Remember",
+        "explanation": "The PO asks the student to analyze problems and define computing requirements for a solution (Analyze). The CLO only asks to memorize Java keywords and syntax (Remember). Its action verb and Bloom level are lower than the PO's. It shows no problem analysis or requirements definition. It shares only the computing topic. The CLO text must change.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Analyze a programming problem and define its requirements, then apply Java keywords and syntax to design a program that solves it.",
+        "aspects": null
+      },
+      "cp-bsit-wrongpo": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Preserve and promote",
+        "targetQuote": "Develop and test Java programs that use loops and conditional statements.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The PO is about preserving and promoting Filipino historical and cultural heritage. The CLO develops and tests Java programs with loops and conditionals, which is a sound programming outcome with a different subject. The tag does not fit, so the PO choice is wrong, not the CLO.",
+        "recommendation": "RETAG_OUTCOME",
+        "draft": "",
+        "aspects": null
+      },
+      "cp-bsit-real3": {
+        "label": "ALIGNED",
+        "sourceQuote": "multi-disciplinary and multi-cultural teams",
+        "targetQuote": "Collaborate effectively within multi-disciplinary and culturally diverse teams",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The CLO states that students collaborate effectively in multi-disciplinary, culturally diverse teams, which matches the PO's teamwork competence.",
+        "recommendation": "NO_CHANGE",
+        "draft": "",
+        "aspects": null
+      },
+      "cc-syseng-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "requirements analysis, systems design",
+        "targetQuote": "Develop a system requirements specification and a functional decomposition",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "Create",
+        "explanation": "The target CLO states an observable Create-level performance (develop a requirements specification and functional decomposition) that matches the source's requirements analysis and systems design topics at year 4.",
+        "recommendation": "NO_CHANGE",
+        "draft": "",
+        "aspects": null
+      },
+      "cc-syseng-keyword": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "focusing on the analysis, design, and management of complex systems",
+        "targetQuote": "Describe systems engineering.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "Understand",
+        "explanation": "The target CLO only repeats the course title. 'Describe' is a Remember/Understand verb too low for a year 4 course that focuses on analysis, design and management of complex systems. It names no object (concepts, process, system type) and gives no performance that can be assessed against the source's topics such as requirements, integration or performance evaluation.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Apply systems engineering principles to analyze requirements, design and integrate the components of a complex system, and evaluate its performance against stakeholder needs and operational constraints.",
+        "aspects": null
+      },
+      "cc-syseng-offsubject": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "principles and practices of systems engineering",
+        "targetQuote": "Write Java programs that use loops and conditional statements.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "Apply",
+        "explanation": "The target CLO is about computer programming in Java (loops and conditionals), a different subject from the source's systems engineering. It matches none of the source's topics (requirements analysis, systems design, integration, project management, performance evaluation). Its Apply verb fits, but the subject does not belong to this course.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Design an integrated system architecture for a complex engineering problem that satisfies stakeholder requirements and operational constraints.",
+        "aspects": null
+      },
+      "cc-syseng-real2": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "large-scale engineering problems involving multiple components, stakeholders, and operational constraints",
+        "targetQuote": "Apply critical and creative thinking skills to analyze, design, and optimize complex systems",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "Create",
+        "explanation": "The target CLO is in the right subject, with Analyze/Create-level verbs and a system with components, but it is generic: 'critical and creative thinking skills' would fit any course. It names no systems engineering content from the source (requirements, stakeholders, integration, project management, performance evaluation). It bundles three verbs (analyze, design, optimize) in one outcome, which makes it hard to assess as a single performance.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Analyze stakeholder requirements and design and integrate the people, materials, technology and information components of a complex system, and optimize its performance within operational constraints.",
+        "aspects": null
+      },
+      "cs-syseng-narrow": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Key topics include requirements analysis, systems design, integration, project management, and performance evaluation.",
+        "targetQuote": "CLO 4: Maintain a requirements traceability matrix.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "Apply",
+        "explanation": "The CLOs cover only requirements work. CLO 1-4 all sit in requirements analysis (eliciting, writing, tracing, and maintaining requirements), so CLO 3 and CLO 4 largely repeat the same traceability competence. The description also promises systems design, integration, project management and performance evaluation, and no CLO covers any of these. The set does not cover the essential learning the title and description promise.",
+        "recommendation": "REVIEW_REQUIRED",
+        "draft": "Merge CLO 3 and CLO 4 into one traceability CLO, and add CLOs for systems design and integration, project management, and performance evaluation of complex systems.",
+        "aspects": null
+      },
+      "cp-bsie-wrongpo": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "function on multidisciplinary teams",
+        "targetQuote": "Develop a system requirements specification and a functional decomposition",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Create",
+        "explanation": "The PO asks for the ability to function on multidisciplinary teams. The CLO is a sound outcome about producing a requirements specification and a functional decomposition, but it states no teamwork, collaboration or multidisciplinary activity. The PO named here is not the one this CLO develops, so the tag does not fit and should be changed.",
+        "recommendation": "RETAG_OUTCOME",
+        "draft": "",
+        "aspects": null
+      },
+      "cp-bsie-real2": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Ability to design a system, component, or process to meet desired needs within realistic constraints",
+        "targetQuote": "analyze, design, and optimize complex systems",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Create",
+        "explanation": "The CLO shares the design verb and the subject of complex systems. It is missing the design-to-meet-needs element and any realistic constraints (economic, environmental, social, ethical, health and safety, sustainability), and it does not mention standards. Its Bloom level, with optimize and design, is adequate, but the PO's constraints and standards are not shown.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Apply critical and creative thinking skills to analyze, design, and optimize complex systems that meet stakeholder needs within realistic constraints and applicable standards, integrating various components such as people, materials, technology, and information.",
+        "aspects": null
+      },
+      "cc-sensors-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "signal conversion circuits",
+        "targetQuote": "Select and condition a sensor signal",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "Apply",
+        "explanation": "The CLO states an observable, Apply-level performance on sensor conditioning and ADC interfacing, which matches the course description and a year 3 level.",
+        "recommendation": "NO_CHANGE",
+        "draft": "",
+        "aspects": null
+      },
+      "cc-sensors-keyword": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "construction and operation of sensors and transducers",
+        "targetQuote": "Explain the importance of sensors in modern society.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "Understand",
+        "explanation": "The CLO is about the course subject (sensors), but \"Explain the importance of sensors in modern society\" is a generic Understand-level statement. It describes no technical performance with sensors, transducers, signal conversion or the other devices in the description. It is below the Apply focus of the description for a year 3 course, and it is weakly assessable because it needs no engineering competence.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Explain the construction and operation of sensors and transducers and select suitable sensors for converting physical parameters into electrical signals in measurement and control applications.",
+        "aspects": null
+      },
+      "cc-sensors-offsubject": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "application of these devices in developing signal conversion circuits",
+        "targetQuote": "Apply queueing theory to model production lines.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "Apply",
+        "explanation": "Queueing theory for production line modeling belongs to operations research or industrial engineering. The course description covers operational amplifiers, signal converters, power switching devices, sensors, transducers and actuators, none of which relates to queueing models.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Apply operational amplifiers and signal converters to develop signal conversion circuits that allow measurement and control of physical parameters by a digital processing system.",
+        "aspects": null
+      },
+      "cc-sensors-real3": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "application of these devices in developing signal conversion circuits",
+        "targetQuote": "design, test, and optimize mixed-signal and sensor applications",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Create",
+        "explanation": "The CLO is in the right area (mixed-signal and sensor applications), but it has gaps against the course description. (1) Its first half, 'behavior of passive components in AC circuits', is circuit-analysis content that the description does not cover. The description names op-amps, signal converters, power switching devices, sensors, transducers and actuators. (2) It names no course devices such as op-amps, ADC/DAC converters, sensors or transducers, nor the measurement, processing and control of physical parameters by digital systems. (3) It packs several verbs (analyze, apply, design, test, optimize) and a teamwork condition into one outcome, so it is hard to assess. 'Optimize' goes beyond what the description promises at year 3. (4) 'engineering solutions' is generic and would fit any engineering course.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Design and test signal conversion circuits using operational amplifiers, signal converters and sensors or transducers in multidisciplinary teams, to measure, process and control physical parameters with digital processing systems.",
+        "aspects": null
+      },
+      "cs-sensors-redundant": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "construction and operation of sensors and transducers",
+        "targetQuote": "CLO 2: Describe how a sensor changes a physical parameter into an electrical signal.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "Understand",
+        "explanation": "CLO 1, CLO 2, CLO 3 and CLO 4 all ask for the same competence (explaining how sensors or transducers convert physical parameters into electrical signals) in different words, which breaks the no-repetition test. The set also leaves out major blocks the description promises: operational amplifiers, signal converters (ADC/DAC), power switching devices, designing signal conversion circuits for digital processing systems, and actuators. The conversion from electrical signal back to a physical parameter (vice-versa) is not covered either. All the verbs are low level (Explain, Describe, Discuss, Outline), though the description stresses application for a year 3 course.",
+        "recommendation": "REVIEW_REQUIRED",
+        "draft": "Merge CLO 1-4 into one outcome on sensor and transducer operation, and add CLOs on operational amplifier circuits, signal converters, power switching devices, signal conversion circuit design for digital systems, and actuators.",
+        "aspects": null
+      },
+      "cs-sensors-generic": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "construction and operation of sensors and transducers for converting physical parameters into electrical signals",
+        "targetQuote": "CLO 1: Demonstrate professionalism.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "Apply",
+        "explanation": "CLO 1 (professionalism), CLO 2 (teamwork), CLO 3 (communication) and CLO 4 (lifelong learning) are generic outcomes that would fit any course. None mentions operational amplifiers, signal converters, power switching devices, sensors, transducers, actuators or signal conversion circuits, so the essential learning in the title and description is not covered. The CLOs also share the same verb 'Demonstrate' with no technical object, so they are vague and not assessable.",
+        "recommendation": "REVIEW_REQUIRED",
+        "draft": "Replace these with subject-specific CLOs on operational amplifier circuits, signal converters, power switching devices, sensors and transducers, signal conversion circuits for digital systems, and actuators.",
+        "aspects": null
+      },
+      "cp-bscpe-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "design and conduct experiments",
+        "targetQuote": "Design and conduct experiments to characterize sensor accuracy and analyze and interpret the measurement data",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Create",
+        "explanation": "The CLO states designing and conducting experiments and analyzing and interpreting data, on sensor accuracy, matching the PO.",
+        "recommendation": "NO_CHANGE",
+        "draft": "",
+        "aspects": null
+      },
+      "cp-bscpe-keyword": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Ability to design and conduct experiments, as well as to analyze and interpret data",
+        "targetQuote": "Discuss experiments in the history of sensor technology.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Understand",
+        "explanation": "The CLO only shares the word 'experiments' with the PO. Its verb 'Discuss' is Understand level, below the PO's design, conduct, analyze and interpret. It asks for no design or conduct of experiments and no data analysis or interpretation. Its subject, the history of sensor technology, is not performing experiments or handling data.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Design and conduct experiments on sensor performance, and analyze and interpret the resulting measurement data.",
+        "aspects": null
+      },
+      "cp-bscpe-wrongpo": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Ability to communicate effectively",
+        "targetQuote": "Calibrate a sensor and record its measurement tolerance.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The source PO asks for effective communication. The target CLO develops a technical measurement competence (calibrating a sensor, recording tolerance). It does not state any communicating, such as reporting to an audience, writing or presenting. Recording a tolerance is data logging, not communication, so the link would rest on an activity the CLO does not mention. The CLO is a sound outcome for this sensors course, so the PO tag does not fit and should be changed.",
+        "recommendation": "RETAG_OUTCOME",
+        "draft": "",
+        "aspects": null
+      }
+    },
+    {
+      "cc-prog1-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "fundamentals of Java programming",
+        "targetQuote": "Develop and test Java programs",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The CLO states an observable Apply-level performance in Java fundamentals, which fits the course description and a year 2 introductory course.",
+        "recommendation": "NO_CHANGE",
+        "draft": "",
+        "aspects": null
+      },
+      "cc-prog1-keyword": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "vital role of computers and computer programmers in shaping modern society",
+        "targetQuote": "Appreciate the history of programming and understand the importance of programming in society.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Understand",
+        "explanation": "The CLO uses \"Appreciate\" and \"understand\", which are not observable, assessable verbs and sit at Remember/Understand level. It does not state a performance in programming. It touches only the description's role of computers in society and leaves out the core of the course: Java fundamentals, logical formulation and good coding practices. History of programming is not covered by the description.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Explain the role of computers and programmers in society by describing real-world applications of Java programs and the good coding practices used to build them.",
+        "aspects": null
+      },
+      "cc-prog1-offsubject": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Students will be taught the fundamentals of Java programming",
+        "targetQuote": "Design and analyze a relational database schema using normalization up to third normal form.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Create",
+        "explanation": "The CLO is about relational database design and normalization, which is a different subject from Java programming fundamentals. The course description does not cover database content. The Analyze/Create level also exceeds what an introductory programming course asks for. The draft moves the CLO toward the course's own subject.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Design and implement Java programs that apply logical formulation techniques, such as algorithms and flowcharts, to solve simple real-world problems.",
+        "aspects": null
+      },
+      "cc-prog1-generic": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "foster a strong foundation in logical formulation techniques essential for programming",
+        "targetQuote": "Demonstrate professionalism and teamwork in the workplace.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The CLO is a generic workplace outcome that would fit any course. It names no programming competence, no Java and no logical formulation. The description does not cover workplace professionalism or teamwork. The verb \"Demonstrate\" has no stated object that can be assessed in this subject.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Apply good coding practices, such as meaningful naming, comments and consistent structure, when writing Java programs that solve simple problems.",
+        "aspects": null
+      },
+      "cc-prog1-real1": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "foster a strong foundation in logical formulation techniques essential for programming",
+        "targetQuote": "Define and analyze the computing requirements needed for an effective solution",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Analyze",
+        "explanation": "The target CLO is generic: it names no programming, Java or coding performance, so it would fit any computing course. 'Define and analyze the computing requirements' is a requirements-engineering/systems-analysis competence, not the programming fundamentals and logical formulation that the source description promises. The phrase 'holistic and impactful solutions' is vague and not assessable. Analysis of requirements for a solution is beyond what a Year 2 introductory Java course teaches, and the description does not cover it. The draft keeps the author's idea of analyzing requirements but ties it to a Java program.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Analyze a simple problem to identify its inputs, processes and outputs, and design and implement a Java program that solves it effectively.",
+        "aspects": null
+      },
+      "cc-prog1-unreadable": {
+        "label": "INSUFFICIENT_EVIDENCE",
+        "sourceQuote": "Students will be taught the fundamentals of Java programming",
+        "targetQuote": "Xq zv wl kjh pqrt mnb vcx.",
+        "evidenceMatching": {
+          "source": "not_evaluated",
+          "target": "not_evaluated"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "N/A",
+        "explanation": "The target CLO text is unreadable gibberish and states no outcome, so it cannot be judged against the course.",
+        "recommendation": "REVIEW_REQUIRED",
+        "draft": "",
+        "aspects": null
+      },
+      "cs-prog1-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "fundamentals of Java programming",
+        "targetQuote": "Decompose a problem into methods and implement them.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The CLOs cover Java basics, decomposition, debugging and documentation without repeating each other.",
+        "recommendation": "NO_CHANGE",
+        "draft": "",
+        "aspects": null
+      },
+      "cs-prog1-redundant": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "fundamentals of Java programming",
+        "targetQuote": "CLO 1: Write Java programs using loops.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "CLOs 1, 2, 3 and 4 all ask for the same competence, writing Java programs with loops, in different words. The set omits the rest of the essential learning in the description: variables, data types, conditionals, methods, logical formulation, good coding practices and real-world applications. The CLOs are also all at a similar Apply level, with no debugging, documentation or problem-solving outcome.",
+        "recommendation": "REVIEW_REQUIRED",
+        "draft": "Merge CLOs 1-4 into one loop CLO and add distinct CLOs for logical problem formulation, conditionals and methods, good coding practices and debugging, and real-world applications.",
+        "aspects": null
+      },
+      "cp-bsit-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "Utilize modern computing tools",
+        "targetQuote": "using an integrated development environment",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The CLO has students write, compile and debug Java programs in an IDE, which is using a modern computing tool, at Apply level.",
+        "recommendation": "NO_CHANGE",
+        "draft": "",
+        "aspects": null
+      },
+      "cp-bsit-keyword": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Analyze complex problems, and identify and define the computing requirements",
+        "targetQuote": "Memorize the keywords and syntax of the Java language.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Analyze",
+        "targetBloom": "Remember",
+        "explanation": "The PO asks students to analyze complex problems and identify and define computing requirements for a solution (Analyze). The CLO only asks them to memorize Java keywords and syntax (Remember). So: (1) it has no analyze, identify or define action; (2) its Bloom level is far below the PO's; (3) its object is language syntax, not problems or requirements. It shares only a topic area with the PO.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Analyze a given problem, identify and define its computing requirements, and apply Java syntax and keywords to design a program that solves it.",
+        "aspects": null
+      },
+      "cp-bsit-wrongpo": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Preserve and promote “Filipino historical and cultural heritage",
+        "targetQuote": "Develop and test Java programs that use loops and conditional statements.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The PO is about preserving and promoting Filipino historical and cultural heritage. The CLO is a sound programming outcome: developing and testing Java programs with loops and conditionals. It develops no heritage or cultural competence, so the PO named here is not the one it develops and the tag does not fit.",
+        "recommendation": "RETAG_OUTCOME",
+        "draft": "",
+        "aspects": null
+      },
+      "cp-bsit-real3": {
+        "label": "ALIGNED",
+        "sourceQuote": "multi-disciplinary and multi-cultural teams",
+        "targetQuote": "multi-disciplinary and culturally diverse teams",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The CLO has students collaborate in multi-disciplinary, culturally diverse teams, matching the PO's teamwork and multi-cultural focus.",
+        "recommendation": "NO_CHANGE",
+        "draft": "",
+        "aspects": null
+      },
+      "cc-syseng-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "requirements analysis, systems design",
+        "targetQuote": "Develop a system requirements specification",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "Create",
+        "explanation": "The CLO develops a requirements specification and functional decomposition, which are core systems engineering competences named in the course description (requirements analysis, systems design), at a suitable Create level for year 4.",
+        "recommendation": "NO_CHANGE",
+        "draft": "",
+        "aspects": null
+      },
+      "cc-syseng-keyword": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "analysis, design, and management of complex systems",
+        "targetQuote": "Describe systems engineering.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "Understand",
+        "explanation": "The CLO repeats the course title without stating a performance. \"Describe\" is a Remember/Understand level, too low for a year 4 course focused on analysis, design and management of complex systems. It names no object (requirements, design, integration, evaluation) and no assessable product, and it is so generic it would fit any introduction to the subject.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Analyze a complex engineered system by identifying its components, stakeholders and operational constraints, and evaluate its performance against defined requirements.",
+        "aspects": null
+      },
+      "cc-syseng-offsubject": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "principles and practices of systems engineering",
+        "targetQuote": "Write Java programs that use loops and conditional statements.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "Apply",
+        "explanation": "The CLO is about computer programming in Java (loops and conditionals), which is a different subject. The description covers requirements analysis, systems design, integration, project management and performance evaluation, and none of these involve Java programming. The course description does not cover this content.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Design the integration of the components of a complex engineered system by applying systems engineering methods to meet stakeholder requirements and operational constraints.",
+        "aspects": null
+      },
+      "cc-syseng-real2": {
+        "label": "ALIGNED",
+        "sourceQuote": "analysis, design, and management of complex systems",
+        "targetQuote": "analyze, design, and optimize complex systems",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "Create",
+        "explanation": "The CLO applies analysis, design and optimization to complex systems and integrates their components, matching the course focus at a suitable Apply/Create level for year 4.",
+        "recommendation": "NO_CHANGE",
+        "draft": "",
+        "aspects": null
+      },
+      "cs-syseng-narrow": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Key topics include requirements analysis, systems design, integration, project management, and performance evaluation.",
+        "targetQuote": "CLO 4: Maintain a requirements traceability matrix.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "Apply",
+        "explanation": "The CLOs together cover only requirements work (CLO 1-4). The description also promises systems design, integration, project management and performance evaluation, and none of these has a CLO. CLO 2, CLO 3 and CLO 4 are narrow, overlapping requirements-management steps (writing, tracing and maintaining a traceability matrix). CLO 3 and CLO 4 both ask for traceability. CLO 2 to CLO 4 are very low-level and sit below the analysis, design and management level expected in year 4.",
+        "recommendation": "REVIEW_REQUIRED",
+        "draft": "Merge CLO 3 and CLO 4 into one traceability CLO, and add CLOs for designing and integrating a system architecture, managing a systems project, and evaluating system performance.",
+        "aspects": null
+      },
+      "cp-bsie-wrongpo": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Ability to function on multidisciplinary teams",
+        "targetQuote": "Develop a system requirements specification and a functional decomposition",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Create",
+        "explanation": "The PO asks for functioning on multidisciplinary teams, which is a teamwork competence. The CLO develops a technical competence: writing a system requirements specification and a functional decomposition. It mentions no teamwork, collaboration or multidisciplinary roles. The CLO is a sound outcome for the course, but this PO is not the one it develops (a design PO would fit better). The tag does not fit, so retag the outcome and leave the CLO text unchanged.",
+        "recommendation": "RETAG_OUTCOME",
+        "draft": "",
+        "aspects": null
+      },
+      "cp-bsie-real2": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Ability to design a system, component, or process to meet desired needs within realistic constraints",
+        "targetQuote": "analyze, design, and optimize complex systems",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Create",
+        "explanation": "The CLO has the design verb and reaches Bloom Create, so it meets the PO's level, and the subject (complex systems) fits. Gaps: the CLO names no realistic constraints (economic, ethical, health and safety, sustainability) and no standards, so it does not show designing to meet desired needs within constraints. It also says nothing about meeting needs, which is the PO's purpose.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Apply critical and creative thinking skills to analyze, design, and optimize complex systems that meet stakeholder needs within realistic constraints and applicable standards, integrating various components such as people, materials, technology, and information.",
+        "aspects": null
+      },
+      "cc-sensors-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "signal conversion circuits",
+        "targetQuote": "Select and condition a sensor signal",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The CLO states an observable performance (select, condition, interface via ADC) that belongs to this course's sensor and signal conversion subject at a suitable year-3 Apply level.",
+        "recommendation": "NO_CHANGE",
+        "draft": "",
+        "aspects": null
+      },
+      "cc-sensors-keyword": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "The course focuses on the application of these devices in developing signal conversion circuits",
+        "targetQuote": "Explain the importance of sensors in modern society.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Understand",
+        "explanation": "The CLO names sensors, which is the course subject, but it asks only to explain their importance in society, a general Understand-level statement. It does not state what the student does with sensors, transducers or signal conversion circuits. It is too low for year 3 and the description's application focus, and it would fit any course that mentions sensors.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Explain the operation of sensors and transducers and apply them in signal conversion circuits that convert physical parameters into electrical signals for measurement by a digital system.",
+        "aspects": null
+      },
+      "cc-sensors-offsubject": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "operational amplifiers, signal converters, power switching devices",
+        "targetQuote": "Apply queueing theory to model production lines.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The CLO is about queueing theory and production line modelling, which is operations research or industrial engineering. The description covers operational amplifiers, signal converters, power switching devices, sensors and actuators. No topic in the description needs queueing theory.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Apply operational amplifiers and signal converters to build circuits that condition sensor signals for measurement and control by a digital system.",
+        "aspects": null
+      },
+      "cc-sensors-real3": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "signal conversion circuits",
+        "targetQuote": "design, test, and optimize mixed-signal and sensor applications",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "Create",
+        "explanation": "The target CLO is partly in the course's subject: it names mixed-signal and sensor applications and uses observable verbs (design, test, optimize). However, (1) its first half, analyzing and applying passive components in AC circuits, is a circuit-theory topic that the source description does not list; the description covers operational amplifiers, signal converters, power switching devices, sensors/transducers and actuators. (2) It never names the course's core devices (op-amps, converters, sensors, transducers) or the measurement, processing and control of physical parameters by digital systems. (3) 'In multidisciplinary teams' and 'for engineering solutions' are generic, add no assessable competence and would fit any course. (4) 'Analyze and apply' plus 'design, test, and optimize' bundle too many verbs, and 'optimize' is not clearly supported by the description.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Design and test signal conversion circuits using operational amplifiers, signal converters and sensors or transducers to measure, process and control physical parameters through a digital processing system.",
+        "aspects": null
+      },
+      "cs-sensors-redundant": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "operational amplifiers, signal converters, power switching devices",
+        "targetQuote": "CLO 2: Describe how a sensor changes a physical parameter into an electrical signal.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "Understand",
+        "explanation": "CLO 1, CLO 2, CLO 3 and CLO 4 all ask for the same competence (explaining how sensors or transducers convert physical parameters into electrical signals) in different words. The set also leaves out operational amplifiers, signal converters (ADC/DAC), power switching devices, signal conversion circuits for digital processing, and actuators. All four CLOs sit at Understand level, with no Apply or higher CLO for building or using circuits, which is weak for year 3.",
+        "recommendation": "REVIEW_REQUIRED",
+        "draft": "Merge CLOs 1-4 into one CLO on sensor and transducer operation, and add CLOs on applying op-amps and signal converters, designing signal conversion circuits for digital systems, and actuators and power switching.",
+        "aspects": null
+      },
+      "cs-sensors-generic": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "construction and operation of sensors and transducers",
+        "targetQuote": "CLO 1: Demonstrate professionalism.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "N/A",
+        "targetBloom": "Apply",
+        "explanation": "CLO 1, CLO 2, CLO 3 and CLO 4 (professionalism, teamwork, communication, lifelong learning) are generic outcomes that would fit any course. None addresses operational amplifiers, signal converters, power switching devices, sensors and transducers, signal conversion circuits or actuators. The essential learning the title and description promise is not covered.",
+        "recommendation": "REVIEW_REQUIRED",
+        "draft": "Add subject-specific CLOs, for example on applying op-amps and signal converters, building sensor signal conditioning circuits, and interfacing sensors and actuators with digital systems.",
+        "aspects": null
+      },
+      "cp-bscpe-aligned": {
+        "label": "ALIGNED",
+        "sourceQuote": "design and conduct experiments",
+        "targetQuote": "Design and conduct experiments to characterize sensor accuracy",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Create",
+        "explanation": "The CLO statement has the PO's design, conduct, analyze and interpret verbs, applied to sensor measurement data.",
+        "recommendation": "NO_CHANGE",
+        "draft": "",
+        "aspects": null
+      },
+      "cp-bscpe-keyword": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "design and conduct experiments, as well as to analyze and interpret data",
+        "targetQuote": "Discuss experiments in the history of sensor technology.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Create",
+        "targetBloom": "Understand",
+        "explanation": "The CLO statement only shares the word \"experiments\" with the PO. \"Discuss\" is Understand level, below the PO's design and conduct (Create) and analyze and interpret (Analyze). The CLO does not state designing, conducting, analyzing or interpreting, and its subject is the history of sensor technology rather than performing experiments and handling data.",
+        "recommendation": "REWRITE_TEXT",
+        "draft": "Design and conduct experiments on sensors and analyze and interpret the resulting measurement data.",
+        "aspects": null
+      },
+      "cp-bscpe-wrongpo": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Ability to communicate effectively",
+        "targetQuote": "Calibrate a sensor and record its measurement tolerance.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "sourceBloom": "Apply",
+        "targetBloom": "Apply",
+        "explanation": "The source PO asks for effective communication. The target CLO is about calibrating a sensor and recording its tolerance, which is a technical measurement competence in this course. Test 1 fails: the CLO has no communicating verb such as presenting, explaining or documenting for an audience. Test 3 fails: its subject is sensor calibration, not communication. 'Record' only means noting values, not communicating them. The CLO is sound for this course, so the PO tag does not fit and should be changed rather than the CLO text.",
+        "recommendation": "RETAG_OUTCOME",
+        "draft": "",
+        "aspects": null
+      }
+    }
+  ],
+  "usage": {
+    "requests": 18,
+    "thisRun": 18,
+    "model": 18,
+    "priceLookups": 0,
+    "keyChecks": 0,
+    "invalidAnswers": 2,
+    "unproductiveInARow": 0,
+    "transient": 0,
+    "promptTokens": 108532,
+    "completionTokens": 15542,
+    "cachedTokens": 87176,
+    "reportedCost": 0,
+    "charged": 0.2181312,
+    "accounting": {
+      "rule": "reconcile",
+      "requests": {
+        "reconciled": 18,
+        "conservative": 0,
+        "worst_case": 0,
+        "refused": 0
+      },
+      "chargedConservatively": 0.469425
+    },
+    "warnings": [],
+    "limits": {
+      "maxRequests": 40,
+      "maxCost": 1.1,
+      "maxTransient": 3,
+      "maxInvalid": 3,
+      "warnInvalid": 16,
+      "maxUnproductive": 9,
+      "maxTokens": null
+    },
+    "stopped": null,
+    "anthropic": {
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "prices": {
+        "model": "claude-sonnet-5-5",
+        "asOf": "2026-10-27",
+        "geoFactor": 1.1,
+        "perMillionTokens": {
+          "input": 2,
+          "output": 10,
+          "cacheRead": 0.2,
+          "listedCacheRead": 0.1,
+          "cacheWrite5m": 2.5,
+          "cacheWrite1h": 4
+        }
+      },
+      "modelsReturned": {
+        "claude-sonnet-5-5": 18
+      },
+      "inputTokens": 16228,
+      "cacheCreationInputTokens": 5128,
+      "cacheReadInputTokens": 87176,
+      "outputTokens": 15542,
+      "thinkingTokens": 0,
+      "thinkingReports": {
+        "nonzero": 0,
+        "zero": 18,
+        "unavailable": 0
+      },
+      "thinkingBlocks": 0,
+      "atListPrices": 0.2094136,
+      "estimatedCost": 0.2094136,
+      "notEstimated": 0,
+      "chargedThisRun": 0.2181312,
+      "outputTokensCharged": 15542,
+      "stopReasons": {
+        "end_turn": 18
+      },
+      "refusalCategories": {},
+      "inferenceGeo": {
+        "global": 18
+      },
+      "serviceTier": {
+        "standard": 18
+      },
+      "errors": {},
+      "latencyMs": {
+        "answers": 18,
+        "median": 6941,
+        "p90": 8672,
+        "max": 9089
+      },
+      "limits": {
+        "maxOutputTokens": null,
+        "register": {
+          "cap": 1.669372,
+          "chargedByEveryLedger": 0.3028532
+        }
+      }
+    }
+  },
+  "prices": {
+    "provider": "anthropic",
+    "model": "claude-sonnet-5-5",
+    "asOf": "2026-10-27",
+    "geoFactor": 1.1,
+    "input": 0.000002,
+    "output": 0.00001,
+    "cacheRead": 2.0000000000000002e-7,
+    "listedCacheRead": 1.0000000000000001e-7,
+    "cacheWrite5m": 0.0000025,
+    "cacheWrite1h": 0.000004
+  },
+  "requests": [
+    {
+      "n": 1,
+      "ids": [
+        "cc-prog1-aligned",
+        "cc-prog1-keyword",
+        "cc-prog1-offsubject",
+        "cc-prog1-generic"
+      ],
+      "status": 200,
+      "ms": 8672,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDYKpYSmemzK2whJK9i",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.23199825,
+      "usage": {
+        "promptTokens": 6202,
+        "completionTokens": 1000,
+        "reasoningTokens": 0,
+        "cachedTokens": 0,
+        "reportedCost": null,
+        "costAtListPrices": 0.024968,
+        "estimatedCost": 0.024968,
+        "inputTokens": 1074,
+        "cacheCreationInputTokens": 5128,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 0,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.024968,
+      "conservativeCharge": 0.0280555,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cc-prog1-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"The CLO states observable Java programming performance (develop and test) suited to a Year 2 fundamentals course.\",\"sourceQuote\":\"fundamentals of Java programming\",\"targetQuote\":\"Develop and test Java programs\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"Apply\",\"recommendation\":\"NO_CHANGE\",\"draft\":\"\"},{\"id\":\"cc-prog1-keyword\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The CLO uses non-observable verbs (\\\"Appreciate\\\", \\\"understand\\\") that cannot be assessed directly. It stays at Remember/Understand level, below what a Year 2 programming course needs. It names programming and society but states no performance of programming or logical formulation. It covers only the description's societal-role aspect and leaves out Java fundamentals, logic and coding practices.\",\"sourceQuote\":\"vital role of computers and computer programmers in shaping modern society\",\"targetQuote\":\"Appreciate the history of programming and understand the importance of programming in society.\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"Understand\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Explain the role of computers and programmers in society by describing real-world applications of Java programs, and apply good coding practices when writing them.\"},{\"id\":\"cc-prog1-offsubject\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The CLO is about relational database design and normalization, which is a database subject. The course description covers Java programming fundamentals, logical formulation and coding practices, and does not mention databases or schema design. Its Analyze/Create level also exceeds a fundamentals course. The CLO needs content the description does not cover.\",\"sourceQuote\":\"Students will be taught the fundamentals of Java programming\",\"targetQuote\":\"Design and analyze a relational database schema using normalization up to third normal form.\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"Create\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Design algorithms using flowcharts or pseudocode and implement them as Java programs that use methods and arrays to solve simple problems.\"},{\"id\":\"cc-prog1-generic\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The CLO is a generic workplace outcome that would fit any course. It names no programming, Java or logical formulation competence from the description. \\\"Demonstrate professionalism\\\" is not tied to any observable programming task, and teamwork is not part of the description.\",\"sourceQuote\":\"foster a strong foundation in logical formulation techniques essential for programming\",\"targetQuote\":\"Demonstrate professionalism and teamwork in the workplace.\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"Apply\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Apply logical formulation techniques and good coding practices, such as meaningful naming and documentation, when writing Java programs.\"}]}"
+    },
+    {
+      "n": 2,
+      "ids": [
+        "cc-prog1-real1",
+        "cc-prog1-unreadable",
+        "cs-prog1-aligned",
+        "cs-prog1-redundant"
+      ],
+      "status": 200,
+      "ms": 6904,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDYx6cAzXY7KbTAgcTd",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.23276275,
+      "usage": {
+        "promptTokens": 6333,
+        "completionTokens": 940,
+        "reasoningTokens": 0,
+        "cachedTokens": 5128,
+        "reportedCost": null,
+        "costAtListPrices": 0.0123228,
+        "estimatedCost": 0.0123228,
+        "inputTokens": 1205,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 5128,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0128356,
+      "conservativeCharge": 0.02775575,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cc-prog1-real1\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The target CLO is generic and would fit any computing course: it names no programming, Java or coding competence, so the course subject is missing (test 1). \\\"Define and analyze\\\" is observable, but it asks for requirements analysis, which the source description does not cover; the description stresses logical formulation, Java fundamentals and good coding practices (test 3). It also never states a performance such as writing or testing code. \\\"Holistic and impactful solutions\\\" is vague and not assessable.\",\"sourceQuote\":\"fundamentals of Java programming\",\"targetQuote\":\"Define and analyze the computing requirements needed for an effective solution\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Analyze\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Analyze a problem and design a logical solution, then implement it as a Java program that applies good coding practices.\"},{\"id\":\"cc-prog1-unreadable\",\"label\":\"INSUFFICIENT_EVIDENCE\",\"explanation\":\"The target CLO text is unreadable: it is a string of meaningless characters and states no competence, so it cannot be judged against the course.\",\"sourceQuote\":\"fundamentals of Java programming\",\"targetQuote\":\"Xq zv wl kjh pqrt mnb vcx.\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"N/A\",\"recommendation\":\"REVIEW_REQUIRED\",\"draft\":\"\"},{\"id\":\"cs-prog1-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"The CLOs cover Java fundamentals, problem decomposition, debugging and good practice without overlap, and none is too broad.\",\"sourceQuote\":\"fundamentals of Java programming\",\"targetQuote\":\"Decompose a problem into methods\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"recommendation\":\"NO_CHANGE\",\"draft\":\"\"},{\"id\":\"cs-prog1-redundant\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"CLOs 1, 2, 3 and 4 all ask for the same competence, writing Java programs with loops, in different words. The set also leaves out the rest of the Java fundamentals the description promises (variables, conditionals, methods), logical formulation techniques, good coding practices and real-world applications.\",\"sourceQuote\":\"logical formulation techniques essential for programming\",\"targetQuote\":\"CLO 2: Develop Java programs that use loop statements.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"recommendation\":\"REVIEW_REQUIRED\",\"draft\":\"Merge CLOs 1-4 into one loop CLO and add CLOs on logical problem formulation, other Java fundamentals, and good coding practices.\"}]}"
+    },
+    {
+      "n": 3,
+      "ids": [
+        "cp-bsit-aligned",
+        "cp-bsit-keyword",
+        "cp-bsit-wrongpo",
+        "cp-bsit-real3"
+      ],
+      "status": 200,
+      "ms": 6015,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDZTdsPBUdQCN68u14N",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.22747175,
+      "usage": {
+        "promptTokens": 5723,
+        "completionTokens": 842,
+        "reasoningTokens": 0,
+        "cachedTokens": 5128,
+        "reportedCost": null,
+        "costAtListPrices": 0.0101228,
+        "estimatedCost": 0.0101228,
+        "inputTokens": 595,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 5128,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0106356,
+      "conservativeCharge": 0.02500025,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cp-bsit-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"The CLO has the student write, compile and debug Java programs in an IDE, which is using a modern computing tool at Apply level.\",\"sourceQuote\":\"Utilize modern computing tools\",\"targetQuote\":\"using an integrated development environment\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"recommendation\":\"NO_CHANGE\",\"draft\":\"\"},{\"id\":\"cp-bsit-keyword\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The PO asks the student to analyze problems and define computing requirements for a solution (Analyze). The CLO only asks to memorize Java keywords and syntax (Remember). Its action verb and Bloom level are lower than the PO's. It shows no problem analysis or requirements definition. It shares only the computing topic. The CLO text must change.\",\"sourceQuote\":\"Analyze complex problems, and identify and define the computing requirements\",\"targetQuote\":\"Memorize the keywords and syntax of the Java language.\",\"sourceBloom\":\"Analyze\",\"targetBloom\":\"Remember\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Analyze a programming problem and define its requirements, then apply Java keywords and syntax to design a program that solves it.\"},{\"id\":\"cp-bsit-wrongpo\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The PO is about preserving and promoting Filipino historical and cultural heritage. The CLO develops and tests Java programs with loops and conditionals, which is a sound programming outcome with a different subject. The tag does not fit, so the PO choice is wrong, not the CLO.\",\"sourceQuote\":\"Preserve and promote\",\"targetQuote\":\"Develop and test Java programs that use loops and conditional statements.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"recommendation\":\"RETAG_OUTCOME\",\"draft\":\"\"},{\"id\":\"cp-bsit-real3\",\"label\":\"ALIGNED\",\"explanation\":\"The CLO states that students collaborate effectively in multi-disciplinary, culturally diverse teams, which matches the PO's teamwork competence.\",\"sourceQuote\":\"multi-disciplinary and multi-cultural teams\",\"targetQuote\":\"Collaborate effectively within multi-disciplinary and culturally diverse teams\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"recommendation\":\"NO_CHANGE\",\"draft\":\"\"}]}"
+    },
+    {
+      "n": 4,
+      "ids": [
+        "cc-syseng-aligned",
+        "cc-syseng-keyword",
+        "cc-syseng-offsubject",
+        "cc-syseng-real2"
+      ],
+      "status": 200,
+      "ms": 7333,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDZuKxAXEPnnAJM5Scf",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.2331175,
+      "usage": {
+        "promptTokens": 6290,
+        "completionTokens": 1070,
+        "reasoningTokens": 0,
+        "cachedTokens": 5128,
+        "reportedCost": null,
+        "costAtListPrices": 0.0135368,
+        "estimatedCost": 0.0135368,
+        "inputTokens": 1162,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 5128,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0140496,
+      "conservativeCharge": 0.0290675,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cc-syseng-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"The target CLO states an observable Create-level performance (develop a requirements specification and functional decomposition) that matches the source's requirements analysis and systems design topics at year 4.\",\"sourceQuote\":\"requirements analysis, systems design\",\"targetQuote\":\"Develop a system requirements specification and a functional decomposition\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"Create\",\"recommendation\":\"NO_CHANGE\",\"draft\":\"\"},{\"id\":\"cc-syseng-keyword\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The target CLO only repeats the course title. 'Describe' is a Remember/Understand verb too low for a year 4 course that focuses on analysis, design and management of complex systems. It names no object (concepts, process, system type) and gives no performance that can be assessed against the source's topics such as requirements, integration or performance evaluation.\",\"sourceQuote\":\"focusing on the analysis, design, and management of complex systems\",\"targetQuote\":\"Describe systems engineering.\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"Understand\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Apply systems engineering principles to analyze requirements, design and integrate the components of a complex system, and evaluate its performance against stakeholder needs and operational constraints.\"},{\"id\":\"cc-syseng-offsubject\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The target CLO is about computer programming in Java (loops and conditionals), a different subject from the source's systems engineering. It matches none of the source's topics (requirements analysis, systems design, integration, project management, performance evaluation). Its Apply verb fits, but the subject does not belong to this course.\",\"sourceQuote\":\"principles and practices of systems engineering\",\"targetQuote\":\"Write Java programs that use loops and conditional statements.\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"Apply\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Design an integrated system architecture for a complex engineering problem that satisfies stakeholder requirements and operational constraints.\"},{\"id\":\"cc-syseng-real2\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The target CLO is in the right subject, with Analyze/Create-level verbs and a system with components, but it is generic: 'critical and creative thinking skills' would fit any course. It names no systems engineering content from the source (requirements, stakeholders, integration, project management, performance evaluation). It bundles three verbs (analyze, design, optimize) in one outcome, which makes it hard to assess as a single performance.\",\"sourceQuote\":\"large-scale engineering problems involving multiple components, stakeholders, and operational constraints\",\"targetQuote\":\"Apply critical and creative thinking skills to analyze, design, and optimize complex systems\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"Create\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Analyze stakeholder requirements and design and integrate the people, materials, technology and information components of a complex system, and optimize its performance within operational constraints.\"}]}"
+    },
+    {
+      "n": 5,
+      "ids": [
+        "cs-syseng-narrow",
+        "cp-bsie-wrongpo",
+        "cp-bsie-real2"
+      ],
+      "status": 200,
+      "ms": 9089,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDaSn3h2FBXGvf8wv53",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.229086,
+      "usage": {
+        "promptTokens": 5876,
+        "completionTokens": 907,
+        "reasoningTokens": 0,
+        "cachedTokens": 5128,
+        "reportedCost": null,
+        "costAtListPrices": 0.0110788,
+        "estimatedCost": 0.0110788,
+        "inputTokens": 748,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 5128,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0115916,
+      "conservativeCharge": 0.026136,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cs-syseng-narrow\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The CLOs cover only requirements work. CLO 1-4 all sit in requirements analysis (eliciting, writing, tracing, and maintaining requirements), so CLO 3 and CLO 4 largely repeat the same traceability competence. The description also promises systems design, integration, project management and performance evaluation, and no CLO covers any of these. The set does not cover the essential learning the title and description promise.\",\"sourceQuote\":\"Key topics include requirements analysis, systems design, integration, project management, and performance evaluation.\",\"targetQuote\":\"CLO 4: Maintain a requirements traceability matrix.\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"Apply\",\"recommendation\":\"REVIEW_REQUIRED\",\"draft\":\"Merge CLO 3 and CLO 4 into one traceability CLO, and add CLOs for systems design and integration, project management, and performance evaluation of complex systems.\"},{\"id\":\"cp-bsie-wrongpo\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The PO asks for the ability to function on multidisciplinary teams. The CLO is a sound outcome about producing a requirements specification and a functional decomposition, but it states no teamwork, collaboration or multidisciplinary activity. The PO named here is not the one this CLO develops, so the tag does not fit and should be changed.\",\"sourceQuote\":\"function on multidisciplinary teams\",\"targetQuote\":\"Develop a system requirements specification and a functional decomposition\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Create\",\"recommendation\":\"RETAG_OUTCOME\",\"draft\":\"\"},{\"id\":\"cp-bsie-real2\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The CLO shares the design verb and the subject of complex systems. It is missing the design-to-meet-needs element and any realistic constraints (economic, environmental, social, ethical, health and safety, sustainability), and it does not mention standards. Its Bloom level, with optimize and design, is adequate, but the PO's constraints and standards are not shown.\",\"sourceQuote\":\"Ability to design a system, component, or process to meet desired needs within realistic constraints\",\"targetQuote\":\"analyze, design, and optimize complex systems\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Create\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Apply critical and creative thinking skills to analyze, design, and optimize complex systems that meet stakeholder needs within realistic constraints and applicable standards, integrating various components such as people, materials, technology, and information.\"}]}"
+    },
+    {
+      "n": 6,
+      "ids": [
+        "cc-sensors-aligned",
+        "cc-sensors-keyword",
+        "cc-sensors-offsubject",
+        "cc-sensors-real3"
+      ],
+      "status": 200,
+      "ms": 7132,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDb7deo8BkK3CQvcixn",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.23393975,
+      "usage": {
+        "promptTokens": 6414,
+        "completionTokens": 1047,
+        "reasoningTokens": 0,
+        "cachedTokens": 5128,
+        "reportedCost": null,
+        "costAtListPrices": 0.0135548,
+        "estimatedCost": 0.0135548,
+        "inputTokens": 1286,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 5128,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0140676,
+      "conservativeCharge": 0.0291555,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cc-sensors-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"The CLO states an observable, Apply-level performance on sensor conditioning and ADC interfacing, which matches the course description and a year 3 level.\",\"sourceQuote\":\"signal conversion circuits\",\"targetQuote\":\"Select and condition a sensor signal\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"Apply\",\"recommendation\":\"NO_CHANGE\",\"draft\":\"\"},{\"id\":\"cc-sensors-keyword\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The CLO is about the course subject (sensors), but \\\"Explain the importance of sensors in modern society\\\" is a generic Understand-level statement. It describes no technical performance with sensors, transducers, signal conversion or the other devices in the description. It is below the Apply focus of the description for a year 3 course, and it is weakly assessable because it needs no engineering competence.\",\"sourceQuote\":\"construction and operation of sensors and transducers\",\"targetQuote\":\"Explain the importance of sensors in modern society.\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"Understand\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Explain the construction and operation of sensors and transducers and select suitable sensors for converting physical parameters into electrical signals in measurement and control applications.\"},{\"id\":\"cc-sensors-offsubject\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"Queueing theory for production line modeling belongs to operations research or industrial engineering. The course description covers operational amplifiers, signal converters, power switching devices, sensors, transducers and actuators, none of which relates to queueing models.\",\"sourceQuote\":\"application of these devices in developing signal conversion circuits\",\"targetQuote\":\"Apply queueing theory to model production lines.\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"Apply\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Apply operational amplifiers and signal converters to develop signal conversion circuits that allow measurement and control of physical parameters by a digital processing system.\"},{\"id\":\"cc-sensors-real3\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The CLO is about mixed-signal and sensor applications, but it bundles several competencies (analyze, apply, design, test, optimize) in one statement, which makes it too broad to assess. Its first part, passive components in AC circuits, is not covered by the description. The description's core content, operational amplifiers, signal converters, power switching devices, actuators and digital interfacing, is not named. Teamwork is not part of the description and \\\"for engineering solutions\\\" is generic.\",\"sourceQuote\":\"development of signal conversion circuits\",\"targetQuote\":\"Analyze and apply the behavior of passive components in AC circuits\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"Analyze\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Design and test signal conversion circuits using operational amplifiers, sensors and converters that allow measurement and control of physical parameters by a digital processing system.\"}]}"
+    },
+    {
+      "n": 7,
+      "ids": [
+        "cc-sensors-real3"
+      ],
+      "status": 200,
+      "ms": 4078,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDbeBvZQ9VkyeUGQXNh",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.22838475,
+      "usage": {
+        "promptTokens": 5799,
+        "completionTokens": 470,
+        "reasoningTokens": 0,
+        "cachedTokens": 5128,
+        "reportedCost": null,
+        "costAtListPrices": 0.0065548,
+        "estimatedCost": 0.0065548,
+        "inputTokens": 671,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 5128,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0070676,
+      "conservativeCharge": 0.02111725,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cc-sensors-real3\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The CLO is in the right area (mixed-signal and sensor applications), but it has gaps against the course description. (1) Its first half, 'behavior of passive components in AC circuits', is circuit-analysis content that the description does not cover. The description names op-amps, signal converters, power switching devices, sensors, transducers and actuators. (2) It names no course devices such as op-amps, ADC/DAC converters, sensors or transducers, nor the measurement, processing and control of physical parameters by digital systems. (3) It packs several verbs (analyze, apply, design, test, optimize) and a teamwork condition into one outcome, so it is hard to assess. 'Optimize' goes beyond what the description promises at year 3. (4) 'engineering solutions' is generic and would fit any engineering course.\",\"sourceQuote\":\"application of these devices in developing signal conversion circuits\",\"targetQuote\":\"design, test, and optimize mixed-signal and sensor applications\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Create\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Design and test signal conversion circuits using operational amplifiers, signal converters and sensors or transducers in multidisciplinary teams, to measure, process and control physical parameters with digital processing systems.\"}]}"
+    },
+    {
+      "n": 8,
+      "ids": [
+        "cs-sensors-redundant",
+        "cs-sensors-generic",
+        "cp-bscpe-aligned",
+        "cp-bscpe-keyword"
+      ],
+      "status": 200,
+      "ms": 8556,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDbwcBFWaP1c9Cp6BJZ",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.23151975,
+      "usage": {
+        "promptTokens": 6204,
+        "completionTokens": 1266,
+        "reasoningTokens": 0,
+        "cachedTokens": 5128,
+        "reportedCost": null,
+        "costAtListPrices": 0.0153248,
+        "estimatedCost": 0.0153248,
+        "inputTokens": 1076,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 5128,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0158376,
+      "conservativeCharge": 0.030987,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cs-sensors-redundant\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"CLO 1, CLO 2, CLO 3 and CLO 4 all ask for the same competence (explaining how sensors or transducers convert physical parameters into electrical signals) in different words, which breaks the no-repetition test. The set also leaves out major blocks the description promises: operational amplifiers, signal converters (ADC/DAC), power switching devices, designing signal conversion circuits for digital processing systems, and actuators. The conversion from electrical signal back to a physical parameter (vice-versa) is not covered either. All the verbs are low level (Explain, Describe, Discuss, Outline), though the description stresses application for a year 3 course.\",\"sourceQuote\":\"construction and operation of sensors and transducers\",\"targetQuote\":\"CLO 2: Describe how a sensor changes a physical parameter into an electrical signal.\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"Understand\",\"recommendation\":\"REVIEW_REQUIRED\",\"draft\":\"Merge CLO 1-4 into one outcome on sensor and transducer operation, and add CLOs on operational amplifier circuits, signal converters, power switching devices, signal conversion circuit design for digital systems, and actuators.\"},{\"id\":\"cs-sensors-generic\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"CLO 1 (professionalism), CLO 2 (teamwork), CLO 3 (communication) and CLO 4 (lifelong learning) are generic outcomes that would fit any course. None mentions operational amplifiers, signal converters, power switching devices, sensors, transducers, actuators or signal conversion circuits, so the essential learning in the title and description is not covered. The CLOs also share the same verb 'Demonstrate' with no technical object, so they are vague and not assessable.\",\"sourceQuote\":\"construction and operation of sensors and transducers for converting physical parameters into electrical signals\",\"targetQuote\":\"CLO 1: Demonstrate professionalism.\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"Apply\",\"recommendation\":\"REVIEW_REQUIRED\",\"draft\":\"Replace these with subject-specific CLOs on operational amplifier circuits, signal converters, power switching devices, sensors and transducers, signal conversion circuits for digital systems, and actuators.\"},{\"id\":\"cp-bscpe-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"The CLO states designing and conducting experiments and analyzing and interpreting data, on sensor accuracy, matching the PO.\",\"sourceQuote\":\"design and conduct experiments\",\"targetQuote\":\"Design and conduct experiments to characterize sensor accuracy and analyze and interpret the measurement data\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Create\",\"recommendation\":\"NO_CHANGE\",\"draft\":\"\"},{\"id\":\"cp-bscpe-keyword\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The CLO only shares the word 'experiments' with the PO. Its verb 'Discuss' is Understand level, below the PO's design, conduct, analyze and interpret. It asks for no design or conduct of experiments and no data analysis or interpretation. Its subject, the history of sensor technology, is not performing experiments or handling data.\",\"sourceQuote\":\"Ability to design and conduct experiments, as well as to analyze and interpret data\",\"targetQuote\":\"Discuss experiments in the history of sensor technology.\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Understand\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Design and conduct experiments on sensor performance, and analyze and interpret the resulting measurement data.\"}]}"
+    },
+    {
+      "n": 9,
+      "ids": [
+        "cp-bscpe-wrongpo"
+      ],
+      "status": 200,
+      "ms": 2983,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDcaK3DGabB5o8XMMUW",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.22506275,
+      "usage": {
+        "promptTokens": 5425,
+        "completionTokens": 283,
+        "reasoningTokens": 0,
+        "cachedTokens": 5128,
+        "reportedCost": null,
+        "costAtListPrices": 0.0039368,
+        "estimatedCost": 0.0039368,
+        "inputTokens": 297,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 5128,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0044496,
+      "conservativeCharge": 0.01803175,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cp-bscpe-wrongpo\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The source PO asks for effective communication. The target CLO develops a technical measurement competence (calibrating a sensor, recording tolerance). It does not state any communicating, such as reporting to an audience, writing or presenting. Recording a tolerance is data logging, not communication, so the link would rest on an activity the CLO does not mention. The CLO is a sound outcome for this sensors course, so the PO tag does not fit and should be changed.\",\"sourceQuote\":\"Ability to communicate effectively\",\"targetQuote\":\"Calibrate a sensor and record its measurement tolerance.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"recommendation\":\"RETAG_OUTCOME\",\"draft\":\"\"}]}"
+    },
+    {
+      "n": 10,
+      "ids": [
+        "cc-prog1-aligned",
+        "cc-prog1-keyword",
+        "cc-prog1-offsubject",
+        "cc-prog1-generic"
+      ],
+      "status": 200,
+      "ms": 7057,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDco1XNqjESfZH7JGM9",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.23199825,
+      "usage": {
+        "promptTokens": 6202,
+        "completionTokens": 998,
+        "reasoningTokens": 0,
+        "cachedTokens": 5128,
+        "reportedCost": null,
+        "costAtListPrices": 0.0126408,
+        "estimatedCost": 0.0126408,
+        "inputTokens": 1074,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 5128,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0131536,
+      "conservativeCharge": 0.0280335,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cc-prog1-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"The CLO states an observable Apply-level performance in Java fundamentals, which fits the course description and a year 2 introductory course.\",\"sourceQuote\":\"fundamentals of Java programming\",\"targetQuote\":\"Develop and test Java programs\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"recommendation\":\"NO_CHANGE\",\"draft\":\"\"},{\"id\":\"cc-prog1-keyword\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The CLO uses \\\"Appreciate\\\" and \\\"understand\\\", which are not observable, assessable verbs and sit at Remember/Understand level. It does not state a performance in programming. It touches only the description's role of computers in society and leaves out the core of the course: Java fundamentals, logical formulation and good coding practices. History of programming is not covered by the description.\",\"sourceQuote\":\"vital role of computers and computer programmers in shaping modern society\",\"targetQuote\":\"Appreciate the history of programming and understand the importance of programming in society.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Understand\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Explain the role of computers and programmers in society by describing real-world applications of Java programs and the good coding practices used to build them.\"},{\"id\":\"cc-prog1-offsubject\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The CLO is about relational database design and normalization, which is a different subject from Java programming fundamentals. The course description does not cover database content. The Analyze/Create level also exceeds what an introductory programming course asks for. The draft moves the CLO toward the course's own subject.\",\"sourceQuote\":\"Students will be taught the fundamentals of Java programming\",\"targetQuote\":\"Design and analyze a relational database schema using normalization up to third normal form.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Create\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Design and implement Java programs that apply logical formulation techniques, such as algorithms and flowcharts, to solve simple real-world problems.\"},{\"id\":\"cc-prog1-generic\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The CLO is a generic workplace outcome that would fit any course. It names no programming competence, no Java and no logical formulation. The description does not cover workplace professionalism or teamwork. The verb \\\"Demonstrate\\\" has no stated object that can be assessed in this subject.\",\"sourceQuote\":\"foster a strong foundation in logical formulation techniques essential for programming\",\"targetQuote\":\"Demonstrate professionalism and teamwork in the workplace.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Apply good coding practices, such as meaningful naming, comments and consistent structure, when writing Java programs that solve simple problems.\"}]}"
+    },
+    {
+      "n": 11,
+      "ids": [
+        "cc-prog1-real1",
+        "cc-prog1-unreadable",
+        "cs-prog1-aligned",
+        "cs-prog1-redundant"
+      ],
+      "status": 200,
+      "ms": 7378,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDdKDTda8BK3GsuUR3s",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.23276275,
+      "usage": {
+        "promptTokens": 6333,
+        "completionTokens": 1023,
+        "reasoningTokens": 0,
+        "cachedTokens": 5128,
+        "reportedCost": null,
+        "costAtListPrices": 0.0131528,
+        "estimatedCost": 0.0131528,
+        "inputTokens": 1205,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 5128,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0136656,
+      "conservativeCharge": 0.02866875,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cc-prog1-real1\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The target CLO is generic: it names no programming, Java or coding performance, so it would fit any computing course. 'Define and analyze the computing requirements' is a requirements-engineering/systems-analysis competence, not the programming fundamentals and logical formulation that the source description promises. The phrase 'holistic and impactful solutions' is vague and not assessable. Analysis of requirements for a solution is beyond what a Year 2 introductory Java course teaches, and the description does not cover it. The draft keeps the author's idea of analyzing requirements but ties it to a Java program.\",\"sourceQuote\":\"foster a strong foundation in logical formulation techniques essential for programming\",\"targetQuote\":\"Define and analyze the computing requirements needed for an effective solution\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Analyze\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Analyze a simple problem to identify its inputs, processes and outputs, and design and implement a Java program that solves it effectively.\"},{\"id\":\"cc-prog1-unreadable\",\"label\":\"INSUFFICIENT_EVIDENCE\",\"explanation\":\"The target CLO text is unreadable gibberish and states no outcome, so it cannot be judged against the course.\",\"sourceQuote\":\"Students will be taught the fundamentals of Java programming\",\"targetQuote\":\"Xq zv wl kjh pqrt mnb vcx.\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"N/A\",\"recommendation\":\"REVIEW_REQUIRED\",\"draft\":\"\"},{\"id\":\"cs-prog1-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"The CLOs cover Java basics, decomposition, debugging and documentation without repeating each other.\",\"sourceQuote\":\"fundamentals of Java programming\",\"targetQuote\":\"Decompose a problem into methods and implement them.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"recommendation\":\"NO_CHANGE\",\"draft\":\"\"},{\"id\":\"cs-prog1-redundant\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"CLOs 1, 2, 3 and 4 all ask for the same competence, writing Java programs with loops, in different words. The set omits the rest of the essential learning in the description: variables, data types, conditionals, methods, logical formulation, good coding practices and real-world applications. The CLOs are also all at a similar Apply level, with no debugging, documentation or problem-solving outcome.\",\"sourceQuote\":\"fundamentals of Java programming\",\"targetQuote\":\"CLO 1: Write Java programs using loops.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"recommendation\":\"REVIEW_REQUIRED\",\"draft\":\"Merge CLOs 1-4 into one loop CLO and add distinct CLOs for logical problem formulation, conditionals and methods, good coding practices and debugging, and real-world applications.\"}]}"
+    },
+    {
+      "n": 12,
+      "ids": [
+        "cp-bsit-aligned",
+        "cp-bsit-keyword",
+        "cp-bsit-wrongpo",
+        "cp-bsit-real3"
+      ],
+      "status": 200,
+      "ms": 5820,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDdroFfNZ4U9cS8WodD",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.22747175,
+      "usage": {
+        "promptTokens": 5723,
+        "completionTokens": 876,
+        "reasoningTokens": 0,
+        "cachedTokens": 5128,
+        "reportedCost": null,
+        "costAtListPrices": 0.0104628,
+        "estimatedCost": 0.0104628,
+        "inputTokens": 595,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 5128,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0109756,
+      "conservativeCharge": 0.02537425,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cp-bsit-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"The CLO has students write, compile and debug Java programs in an IDE, which is using a modern computing tool, at Apply level.\",\"sourceQuote\":\"Utilize modern computing tools\",\"targetQuote\":\"using an integrated development environment\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"recommendation\":\"NO_CHANGE\",\"draft\":\"\"},{\"id\":\"cp-bsit-keyword\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The PO asks students to analyze complex problems and identify and define computing requirements for a solution (Analyze). The CLO only asks them to memorize Java keywords and syntax (Remember). So: (1) it has no analyze, identify or define action; (2) its Bloom level is far below the PO's; (3) its object is language syntax, not problems or requirements. It shares only a topic area with the PO.\",\"sourceQuote\":\"Analyze complex problems, and identify and define the computing requirements\",\"targetQuote\":\"Memorize the keywords and syntax of the Java language.\",\"sourceBloom\":\"Analyze\",\"targetBloom\":\"Remember\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Analyze a given problem, identify and define its computing requirements, and apply Java syntax and keywords to design a program that solves it.\"},{\"id\":\"cp-bsit-wrongpo\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The PO is about preserving and promoting Filipino historical and cultural heritage. The CLO is a sound programming outcome: developing and testing Java programs with loops and conditionals. It develops no heritage or cultural competence, so the PO named here is not the one it develops and the tag does not fit.\",\"sourceQuote\":\"Preserve and promote “Filipino historical and cultural heritage\",\"targetQuote\":\"Develop and test Java programs that use loops and conditional statements.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"recommendation\":\"RETAG_OUTCOME\",\"draft\":\"\"},{\"id\":\"cp-bsit-real3\",\"label\":\"ALIGNED\",\"explanation\":\"The CLO has students collaborate in multi-disciplinary, culturally diverse teams, matching the PO's teamwork and multi-cultural focus.\",\"sourceQuote\":\"multi-disciplinary and multi-cultural teams\",\"targetQuote\":\"multi-disciplinary and culturally diverse teams\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"recommendation\":\"NO_CHANGE\",\"draft\":\"\"}]}"
+    },
+    {
+      "n": 13,
+      "ids": [
+        "cc-syseng-aligned",
+        "cc-syseng-keyword",
+        "cc-syseng-offsubject",
+        "cc-syseng-real2"
+      ],
+      "status": 200,
+      "ms": 5901,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDeHiTUUi2iV9aQoE7h",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.2331175,
+      "usage": {
+        "promptTokens": 6290,
+        "completionTokens": 872,
+        "reasoningTokens": 0,
+        "cachedTokens": 5128,
+        "reportedCost": null,
+        "costAtListPrices": 0.0115568,
+        "estimatedCost": 0.0115568,
+        "inputTokens": 1162,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 5128,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0120696,
+      "conservativeCharge": 0.0268895,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cc-syseng-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"The CLO develops a requirements specification and functional decomposition, which are core systems engineering competences named in the course description (requirements analysis, systems design), at a suitable Create level for year 4.\",\"sourceQuote\":\"requirements analysis, systems design\",\"targetQuote\":\"Develop a system requirements specification\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"Create\",\"recommendation\":\"NO_CHANGE\",\"draft\":\"\"},{\"id\":\"cc-syseng-keyword\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The CLO repeats the course title without stating a performance. \\\"Describe\\\" is a Remember/Understand level, too low for a year 4 course focused on analysis, design and management of complex systems. It names no object (requirements, design, integration, evaluation) and no assessable product, and it is so generic it would fit any introduction to the subject.\",\"sourceQuote\":\"analysis, design, and management of complex systems\",\"targetQuote\":\"Describe systems engineering.\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"Understand\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Analyze a complex engineered system by identifying its components, stakeholders and operational constraints, and evaluate its performance against defined requirements.\"},{\"id\":\"cc-syseng-offsubject\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The CLO is about computer programming in Java (loops and conditionals), which is a different subject. The description covers requirements analysis, systems design, integration, project management and performance evaluation, and none of these involve Java programming. The course description does not cover this content.\",\"sourceQuote\":\"principles and practices of systems engineering\",\"targetQuote\":\"Write Java programs that use loops and conditional statements.\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"Apply\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Design the integration of the components of a complex engineered system by applying systems engineering methods to meet stakeholder requirements and operational constraints.\"},{\"id\":\"cc-syseng-real2\",\"label\":\"ALIGNED\",\"explanation\":\"The CLO applies analysis, design and optimization to complex systems and integrates their components, matching the course focus at a suitable Apply/Create level for year 4.\",\"sourceQuote\":\"analysis, design, and management of complex systems\",\"targetQuote\":\"analyze, design, and optimize complex systems\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"Create\",\"recommendation\":\"NO_CHANGE\",\"draft\":\"\"}]}"
+    },
+    {
+      "n": 14,
+      "ids": [
+        "cs-syseng-narrow",
+        "cp-bsie-wrongpo",
+        "cp-bsie-real2"
+      ],
+      "status": 200,
+      "ms": 7141,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDej2iXGBLmgUpivq76",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.229086,
+      "usage": {
+        "promptTokens": 5876,
+        "completionTokens": 1010,
+        "reasoningTokens": 0,
+        "cachedTokens": 5128,
+        "reportedCost": null,
+        "costAtListPrices": 0.0121088,
+        "estimatedCost": 0.0121088,
+        "inputTokens": 748,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 5128,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0126216,
+      "conservativeCharge": 0.027269,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cs-syseng-narrow\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The CLOs together cover only requirements work (CLO 1-4). The description also promises systems design, integration, project management and performance evaluation, and none of these has a CLO. CLO 2, CLO 3 and CLO 4 are narrow, overlapping requirements-management steps (writing, tracing and maintaining a traceability matrix). CLO 3 and CLO 4 both ask for traceability. CLO 2 to CLO 4 are very low-level and sit below the analysis, design and management level expected in year 4.\",\"sourceQuote\":\"Key topics include requirements analysis, systems design, integration, project management, and performance evaluation.\",\"targetQuote\":\"CLO 4: Maintain a requirements traceability matrix.\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"Apply\",\"recommendation\":\"REVIEW_REQUIRED\",\"draft\":\"Merge CLO 3 and CLO 4 into one traceability CLO, and add CLOs for designing and integrating a system architecture, managing a systems project, and evaluating system performance.\"},{\"id\":\"cp-bsie-wrongpo\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The PO asks for functioning on multidisciplinary teams, which is a teamwork competence. The CLO develops a technical competence: writing a system requirements specification and a functional decomposition. It mentions no teamwork, collaboration or multidisciplinary roles. The CLO is a sound outcome for the course, but this PO is not the one it develops (a design PO would fit better). The tag does not fit, so retag the outcome and leave the CLO text unchanged.\",\"sourceQuote\":\"Ability to function on multidisciplinary teams\",\"targetQuote\":\"Develop a system requirements specification and a functional decomposition\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Create\",\"recommendation\":\"RETAG_OUTCOME\",\"draft\":\"\"},{\"id\":\"cp-bsie-real2\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The CLO has the design verb and reaches Bloom Create, so it meets the PO's level, and the subject (complex systems) fits. Gaps: the CLO names no realistic constraints (economic, ethical, health and safety, sustainability) and no standards, so it does not show designing to meet desired needs within constraints. It also says nothing about meeting needs, which is the PO's purpose.\",\"sourceQuote\":\"Ability to design a system, component, or process to meet desired needs within realistic constraints\",\"targetQuote\":\"analyze, design, and optimize complex systems\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Create\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Apply critical and creative thinking skills to analyze, design, and optimize complex systems that meet stakeholder needs within realistic constraints and applicable standards, integrating various components such as people, materials, technology, and information.\"}]}"
+    },
+    {
+      "n": 15,
+      "ids": [
+        "cc-sensors-aligned",
+        "cc-sensors-keyword",
+        "cc-sensors-offsubject",
+        "cc-sensors-real3"
+      ],
+      "status": 200,
+      "ms": 6941,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDfFbyd61QPiej2pwS7",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.23393975,
+      "usage": {
+        "promptTokens": 6414,
+        "completionTokens": 1027,
+        "reasoningTokens": 0,
+        "cachedTokens": 5128,
+        "reportedCost": null,
+        "costAtListPrices": 0.0133548,
+        "estimatedCost": 0.0133548,
+        "inputTokens": 1286,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 5128,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0138676,
+      "conservativeCharge": 0.0289355,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cc-sensors-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"The CLO states an observable performance (select, condition, interface via ADC) that belongs to this course's sensor and signal conversion subject at a suitable year-3 Apply level.\",\"sourceQuote\":\"signal conversion circuits\",\"targetQuote\":\"Select and condition a sensor signal\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"recommendation\":\"NO_CHANGE\",\"draft\":\"\"},{\"id\":\"cc-sensors-keyword\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The CLO names sensors, which is the course subject, but it asks only to explain their importance in society, a general Understand-level statement. It does not state what the student does with sensors, transducers or signal conversion circuits. It is too low for year 3 and the description's application focus, and it would fit any course that mentions sensors.\",\"sourceQuote\":\"The course focuses on the application of these devices in developing signal conversion circuits\",\"targetQuote\":\"Explain the importance of sensors in modern society.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Understand\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Explain the operation of sensors and transducers and apply them in signal conversion circuits that convert physical parameters into electrical signals for measurement by a digital system.\"},{\"id\":\"cc-sensors-offsubject\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The CLO is about queueing theory and production line modelling, which is operations research or industrial engineering. The description covers operational amplifiers, signal converters, power switching devices, sensors and actuators. No topic in the description needs queueing theory.\",\"sourceQuote\":\"operational amplifiers, signal converters, power switching devices\",\"targetQuote\":\"Apply queueing theory to model production lines.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Apply operational amplifiers and signal converters to build circuits that condition sensor signals for measurement and control by a digital system.\"},{\"id\":\"cc-sensors-real3\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The CLO combines several outcomes: AC passive component analysis, teamwork, and design, test and optimize. Passive components in AC circuits are not in the description, so the CLO needs content it does not cover. It is broad and generic (multidisciplinary teams, engineering solutions) and names no op-amps, converters, sensors or actuators. Optimize is likely above what the description supports.\",\"sourceQuote\":\"development of signal conversion circuits\",\"targetQuote\":\"Analyze and apply the behavior of passive components in AC circuits\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Analyze\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Design and test mixed-signal circuits that use operational amplifiers, signal converters and sensors to convert physical parameters into electrical signals for measurement and control by a digital system.\"}]}"
+    },
+    {
+      "n": 16,
+      "ids": [
+        "cc-sensors-real3"
+      ],
+      "status": 200,
+      "ms": 4051,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDfmHRzCDPhECZWFkWb",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.22838475,
+      "usage": {
+        "promptTokens": 5799,
+        "completionTokens": 466,
+        "reasoningTokens": 0,
+        "cachedTokens": 5128,
+        "reportedCost": null,
+        "costAtListPrices": 0.0065148,
+        "estimatedCost": 0.0065148,
+        "inputTokens": 671,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 5128,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0070276,
+      "conservativeCharge": 0.02107325,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cc-sensors-real3\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The target CLO is partly in the course's subject: it names mixed-signal and sensor applications and uses observable verbs (design, test, optimize). However, (1) its first half, analyzing and applying passive components in AC circuits, is a circuit-theory topic that the source description does not list; the description covers operational amplifiers, signal converters, power switching devices, sensors/transducers and actuators. (2) It never names the course's core devices (op-amps, converters, sensors, transducers) or the measurement, processing and control of physical parameters by digital systems. (3) 'In multidisciplinary teams' and 'for engineering solutions' are generic, add no assessable competence and would fit any course. (4) 'Analyze and apply' plus 'design, test, and optimize' bundle too many verbs, and 'optimize' is not clearly supported by the description.\",\"sourceQuote\":\"signal conversion circuits\",\"targetQuote\":\"design, test, and optimize mixed-signal and sensor applications\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"Create\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Design and test signal conversion circuits using operational amplifiers, signal converters and sensors or transducers to measure, process and control physical parameters through a digital processing system.\"}]}"
+    },
+    {
+      "n": 17,
+      "ids": [
+        "cs-sensors-redundant",
+        "cs-sensors-generic",
+        "cp-bscpe-aligned",
+        "cp-bscpe-keyword"
+      ],
+      "status": 200,
+      "ms": 7536,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDg4diATL6GVw3Nn3QR",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.23151975,
+      "usage": {
+        "promptTokens": 6204,
+        "completionTokens": 1140,
+        "reasoningTokens": 0,
+        "cachedTokens": 5128,
+        "reportedCost": null,
+        "costAtListPrices": 0.0140648,
+        "estimatedCost": 0.0140648,
+        "inputTokens": 1076,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 5128,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0145776,
+      "conservativeCharge": 0.029601,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cs-sensors-redundant\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"CLO 1, CLO 2, CLO 3 and CLO 4 all ask for the same competence (explaining how sensors or transducers convert physical parameters into electrical signals) in different words. The set also leaves out operational amplifiers, signal converters (ADC/DAC), power switching devices, signal conversion circuits for digital processing, and actuators. All four CLOs sit at Understand level, with no Apply or higher CLO for building or using circuits, which is weak for year 3.\",\"sourceQuote\":\"operational amplifiers, signal converters, power switching devices\",\"targetQuote\":\"CLO 2: Describe how a sensor changes a physical parameter into an electrical signal.\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"Understand\",\"recommendation\":\"REVIEW_REQUIRED\",\"draft\":\"Merge CLOs 1-4 into one CLO on sensor and transducer operation, and add CLOs on applying op-amps and signal converters, designing signal conversion circuits for digital systems, and actuators and power switching.\"},{\"id\":\"cs-sensors-generic\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"CLO 1, CLO 2, CLO 3 and CLO 4 (professionalism, teamwork, communication, lifelong learning) are generic outcomes that would fit any course. None addresses operational amplifiers, signal converters, power switching devices, sensors and transducers, signal conversion circuits or actuators. The essential learning the title and description promise is not covered.\",\"sourceQuote\":\"construction and operation of sensors and transducers\",\"targetQuote\":\"CLO 1: Demonstrate professionalism.\",\"sourceBloom\":\"N/A\",\"targetBloom\":\"Apply\",\"recommendation\":\"REVIEW_REQUIRED\",\"draft\":\"Add subject-specific CLOs, for example on applying op-amps and signal converters, building sensor signal conditioning circuits, and interfacing sensors and actuators with digital systems.\"},{\"id\":\"cp-bscpe-aligned\",\"label\":\"ALIGNED\",\"explanation\":\"The CLO statement has the PO's design, conduct, analyze and interpret verbs, applied to sensor measurement data.\",\"sourceQuote\":\"design and conduct experiments\",\"targetQuote\":\"Design and conduct experiments to characterize sensor accuracy\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Create\",\"recommendation\":\"NO_CHANGE\",\"draft\":\"\"},{\"id\":\"cp-bscpe-keyword\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The CLO statement only shares the word \\\"experiments\\\" with the PO. \\\"Discuss\\\" is Understand level, below the PO's design and conduct (Create) and analyze and interpret (Analyze). The CLO does not state designing, conducting, analyzing or interpreting, and its subject is the history of sensor technology rather than performing experiments and handling data.\",\"sourceQuote\":\"design and conduct experiments, as well as to analyze and interpret data\",\"targetQuote\":\"Discuss experiments in the history of sensor technology.\",\"sourceBloom\":\"Create\",\"targetBloom\":\"Understand\",\"recommendation\":\"REWRITE_TEXT\",\"draft\":\"Design and conduct experiments on sensors and analyze and interpret the resulting measurement data.\"}]}"
+    },
+    {
+      "n": 18,
+      "ids": [
+        "cp-bscpe-wrongpo"
+      ],
+      "status": 200,
+      "ms": 2825,
+      "provider": "anthropic",
+      "finishReason": null,
+      "requestId": "req_011CgTDgctgHXfJWvJEdbcEF",
+      "modelReturned": "claude-sonnet-5-5",
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "errorType": null,
+      "worst": 0.22506275,
+      "usage": {
+        "promptTokens": 5425,
+        "completionTokens": 305,
+        "reasoningTokens": 0,
+        "cachedTokens": 5128,
+        "reportedCost": null,
+        "costAtListPrices": 0.0041568,
+        "estimatedCost": 0.0041568,
+        "inputTokens": 297,
+        "cacheCreationInputTokens": 0,
+        "cacheCreation1hTokens": 0,
+        "cacheReadInputTokens": 5128,
+        "thinkingTokens": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      },
+      "accounting": "reconciled",
+      "charged": 0.0046696,
+      "conservativeCharge": 0.01827375,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"cp-bscpe-wrongpo\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The source PO asks for effective communication. The target CLO is about calibrating a sensor and recording its tolerance, which is a technical measurement competence in this course. Test 1 fails: the CLO has no communicating verb such as presenting, explaining or documenting for an audience. Test 3 fails: its subject is sensor calibration, not communication. 'Record' only means noting values, not communicating them. The CLO is sound for this course, so the PO tag does not fit and should be changed rather than the CLO text.\",\"sourceQuote\":\"Ability to communicate effectively\",\"targetQuote\":\"Calibrate a sensor and record its measurement tolerance.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"recommendation\":\"RETAG_OUTCOME\",\"draft\":\"\"}]}"
+    }
+  ],
+  "stopped": null,
+  "isolation": {
+    "dataModulesLoaded": [],
+    "processEnvStageFlags": []
+  }
+}

@@ -1,0 +1,480 @@
+{
+  "items": 36,
+  "runs": 2,
+  "answered": 72,
+  "invalid": 0,
+  "invalidRate": 0,
+  "agreement": 1,
+  "falsePositiveRate": 0,
+  "falseNegativeRate": 0,
+  "counts": {
+    "clearAligned": 28,
+    "falsePositive": 0,
+    "clearNot": 42,
+    "falseNegative": 0
+  },
+  "confusion": {
+    "ALIGNED": {
+      "ALIGNED": 28,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "PARTIAL": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 2,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "FLAGGED": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 4,
+      "NOT_ALIGNED": 35,
+      "INSUFFICIENT_EVIDENCE": 1,
+      "invalid": 0
+    }
+  },
+  "partialAccuracy": 1,
+  "approvalAccuracy": 1,
+  "byDiscipline": {
+    "computing": {
+      "items": 18,
+      "answered": 36,
+      "agree": 36,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "engineering": {
+      "items": 18,
+      "answered": 36,
+      "agree": 36,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "byCategory": {
+    "clear-positive": {
+      "items": 12,
+      "answered": 24,
+      "agree": 24,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "week-one-orientation": {
+      "items": 2,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "off-subject": {
+      "items": 7,
+      "answered": 14,
+      "agree": 14,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "keyword-overlap": {
+      "items": 5,
+      "answered": 10,
+      "agree": 10,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "level-mismatch": {
+      "items": 2,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "repetition": {
+      "items": 3,
+      "answered": 6,
+      "agree": 6,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "unreadable": {
+      "items": 1,
+      "answered": 2,
+      "agree": 2,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "vague-verb": {
+      "items": 2,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "ambiguous": {
+      "items": 1,
+      "answered": 2,
+      "agree": 2,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "wrong-sequence": {
+      "items": 1,
+      "answered": 2,
+      "agree": 2,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "stability": 0.944,
+  "byType": {
+    "Content-course": {
+      "items": 16,
+      "answered": 32,
+      "agree": 32,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "Content-ILO": {
+      "items": 13,
+      "answered": 26,
+      "agree": 26,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "Plan-sequence": {
+      "items": 7,
+      "answered": 14,
+      "agree": 14,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "disagreements": [],
+  "model": "openrouter/minimax/minimax-m3.1-flash",
+  "promptVersion": "alignment-12ab",
+  "dataset": {
+    "name": "stage-b",
+    "version": "stage-b-1",
+    "split": "all",
+    "reviewStatus": "unreviewed"
+  },
+  "retries": {
+    "batches": 8,
+    "requests": 33,
+    "firstAttemptInvalid": 3,
+    "finalUnverified": 0,
+    "providerErrors": 0,
+    "retryRate": 3.125,
+    "firstAttemptInvalidRate": 0.091
+  },
+  "failures": [
+    {
+      "run": 1,
+      "course": "prog1",
+      "ids": [
+        "wc-prog1-aligned",
+        "wc-prog1-week1",
+        "wc-prog1-unrelated",
+        "wc-prog1-keyword",
+        "wc-prog1-level",
+        "wc-prog1-repeat",
+        "wc-prog1-unreadable",
+        "wi-prog1-aligned",
+        "wi-prog1-aligned2",
+        "wi-prog1-unrelated",
+        "wi-prog1-vague",
+        "wi-prog1-keyword"
+      ],
+      "error": "AI omitted alignment judgements",
+      "rejected": [
+        {
+          "id": "wc-prog1-aligned",
+          "reason": "not answered"
+        },
+        {
+          "id": "wc-prog1-week1",
+          "reason": "not answered"
+        },
+        {
+          "id": "wc-prog1-unrelated",
+          "reason": "not answered"
+        },
+        {
+          "id": "wc-prog1-keyword",
+          "reason": "not answered"
+        },
+        {
+          "id": "wc-prog1-level",
+          "reason": "not answered"
+        },
+        {
+          "id": "wc-prog1-repeat",
+          "reason": "not answered"
+        },
+        {
+          "id": "wc-prog1-unreadable",
+          "reason": "not answered"
+        },
+        {
+          "id": "wi-prog1-aligned",
+          "reason": "not answered"
+        },
+        {
+          "id": "wi-prog1-aligned2",
+          "reason": "not answered"
+        },
+        {
+          "id": "wi-prog1-unrelated",
+          "reason": "not answered"
+        },
+        {
+          "id": "wi-prog1-vague",
+          "reason": "not answered"
+        },
+        {
+          "id": "wi-prog1-keyword",
+          "reason": "not answered"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "course": "prog1",
+      "ids": [
+        "wc-prog1-aligned",
+        "wc-prog1-week1",
+        "wc-prog1-unrelated",
+        "wc-prog1-keyword",
+        "wc-prog1-level",
+        "wc-prog1-repeat",
+        "wc-prog1-unreadable",
+        "wi-prog1-aligned",
+        "wi-prog1-aligned2",
+        "wi-prog1-unrelated",
+        "wi-prog1-vague",
+        "wi-prog1-keyword"
+      ],
+      "error": "AI omitted alignment judgements",
+      "rejected": [
+        {
+          "id": "wc-prog1-aligned",
+          "reason": "not answered"
+        },
+        {
+          "id": "wc-prog1-week1",
+          "reason": "not answered"
+        },
+        {
+          "id": "wc-prog1-unrelated",
+          "reason": "not answered"
+        },
+        {
+          "id": "wc-prog1-keyword",
+          "reason": "not answered"
+        },
+        {
+          "id": "wc-prog1-level",
+          "reason": "not answered"
+        },
+        {
+          "id": "wc-prog1-repeat",
+          "reason": "not answered"
+        },
+        {
+          "id": "wc-prog1-unreadable",
+          "reason": "not answered"
+        },
+        {
+          "id": "wi-prog1-aligned",
+          "reason": "not answered"
+        },
+        {
+          "id": "wi-prog1-aligned2",
+          "reason": "not answered"
+        },
+        {
+          "id": "wi-prog1-unrelated",
+          "reason": "not answered"
+        },
+        {
+          "id": "wi-prog1-vague",
+          "reason": "not answered"
+        },
+        {
+          "id": "wi-prog1-keyword",
+          "reason": "not answered"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "course": "prog1",
+      "ids": [
+        "wc-prog1-unrelated"
+      ],
+      "error": "A misalignment must include a usable draft revision",
+      "rejected": [
+        {
+          "id": "wc-prog1-unrelated",
+          "reason": "A misalignment must include a usable draft revision"
+        }
+      ]
+    }
+  ],
+  "perItem": {
+    "wc-prog1-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "wc-prog1-week1": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "wc-prog1-unrelated": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wc-prog1-keyword": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wc-prog1-level": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wc-prog1-repeat": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wc-prog1-unreadable": [
+      "NOT_ALIGNED",
+      "INSUFFICIENT_EVIDENCE"
+    ],
+    "wc-syseng-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "wc-syseng-aligned2": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "wc-syseng-week1": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "wc-syseng-unrelated": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wc-syseng-keyword": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wc-sensors-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "wc-sensors-aligned2": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "wc-sensors-unrelated": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wc-sensors-keyword": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wi-prog1-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "wi-prog1-aligned2": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "wi-prog1-unrelated": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wi-prog1-vague": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "wi-prog1-keyword": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wi-prog1-toohigh": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wi-prog1-ambiguous": [
+      "PARTIALLY_ALIGNED",
+      "ALIGNED"
+    ],
+    "wi-syseng-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "wi-syseng-unrelated": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wi-syseng-vague": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "wi-sensors-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "wi-sensors-unrelated": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wi-sensors-keyword": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "ps-prog1-good": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ps-prog1-order": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "ps-prog1-repeat": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "ps-prog1-offcourse": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "ps-syseng-good": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ps-sensors-good": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ps-sensors-repeat": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ]
+  },
+  "ranAt": "2026-10-24T17:49:37.420Z",
+  "usage": {
+    "requests": 33,
+    "promptTokens": 130700,
+    "completionTokens": 12345,
+    "cost": 0.012715,
+    "unreported": 0,
+    "budget": 40
+  }
+}

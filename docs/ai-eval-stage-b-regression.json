@@ -1,0 +1,635 @@
+{
+  "items": 36,
+  "runs": 2,
+  "answered": 71,
+  "invalid": 1,
+  "invalidRate": 0.014,
+  "agreement": 1,
+  "falsePositiveRate": 0,
+  "falseNegativeRate": 0,
+  "counts": {
+    "clearAligned": 28,
+    "falsePositive": 0,
+    "clearNot": 41,
+    "falseNegative": 0
+  },
+  "confusion": {
+    "ALIGNED": {
+      "ALIGNED": 28,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "PARTIAL": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 2,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "FLAGGED": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 8,
+      "NOT_ALIGNED": 30,
+      "INSUFFICIENT_EVIDENCE": 1,
+      "invalid": 1
+    }
+  },
+  "partialAccuracy": 1,
+  "approvalAccuracy": 1,
+  "byDiscipline": {
+    "computing": {
+      "items": 18,
+      "answered": 35,
+      "agree": 35,
+      "invalid": 1,
+      "agreement": 1
+    },
+    "engineering": {
+      "items": 18,
+      "answered": 36,
+      "agree": 36,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "byCategory": {
+    "clear-positive": {
+      "items": 12,
+      "answered": 24,
+      "agree": 24,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "week-one-orientation": {
+      "items": 2,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "off-subject": {
+      "items": 7,
+      "answered": 14,
+      "agree": 14,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "keyword-overlap": {
+      "items": 5,
+      "answered": 10,
+      "agree": 10,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "level-mismatch": {
+      "items": 2,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "repetition": {
+      "items": 3,
+      "answered": 5,
+      "agree": 5,
+      "invalid": 1,
+      "agreement": 1
+    },
+    "unreadable": {
+      "items": 1,
+      "answered": 2,
+      "agree": 2,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "vague-verb": {
+      "items": 2,
+      "answered": 4,
+      "agree": 4,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "ambiguous": {
+      "items": 1,
+      "answered": 2,
+      "agree": 2,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "wrong-sequence": {
+      "items": 1,
+      "answered": 2,
+      "agree": 2,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "stability": 0.943,
+  "byType": {
+    "Content-course": {
+      "items": 16,
+      "answered": 32,
+      "agree": 32,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "Content-ILO": {
+      "items": 13,
+      "answered": 26,
+      "agree": 26,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "Plan-sequence": {
+      "items": 7,
+      "answered": 13,
+      "agree": 13,
+      "invalid": 1,
+      "agreement": 1
+    }
+  },
+  "disagreements": [],
+  "model": "openrouter/minimax/minimax-m3.1-flash",
+  "promptVersion": "alignment-12ab",
+  "dataset": {
+    "name": "stage-b",
+    "version": "stage-b-1",
+    "split": "all",
+    "reviewStatus": "unreviewed"
+  },
+  "retries": {
+    "batches": 8,
+    "requests": 35,
+    "firstAttemptInvalid": 13,
+    "finalUnverified": 1,
+    "providerErrors": 0,
+    "retryRate": 3.375,
+    "firstAttemptInvalidRate": 0.371
+  },
+  "failures": [
+    {
+      "run": 1,
+      "course": "prog1",
+      "ids": [
+        "wi-prog1-toohigh",
+        "wi-prog1-ambiguous",
+        "ps-prog1-good",
+        "ps-prog1-order",
+        "ps-prog1-repeat",
+        "ps-prog1-offcourse"
+      ],
+      "error": "AI evidence is not present in the supplied text (target quote)",
+      "rejected": [
+        {
+          "id": "ps-prog1-repeat",
+          "reason": "AI evidence is not present in the supplied text (target quote)"
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "course": "prog1",
+      "ids": [
+        "ps-prog1-repeat"
+      ],
+      "error": "AI evidence is not present in the supplied text (source quote)",
+      "rejected": [
+        {
+          "id": "ps-prog1-repeat",
+          "reason": "AI evidence is not present in the supplied text (source quote)"
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "course": "prog1",
+      "ids": [
+        "ps-prog1-repeat"
+      ],
+      "error": "AI omitted alignment judgements",
+      "rejected": [
+        {
+          "id": "unlisted-1",
+          "reason": "not a requested id"
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "course": "prog1",
+      "ids": [
+        "ps-prog1-repeat"
+      ],
+      "error": "AI evidence is not present in the supplied text (target quote)",
+      "rejected": [
+        {
+          "id": "ps-prog1-repeat",
+          "reason": "AI evidence is not present in the supplied text (target quote)"
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "course": "syseng",
+      "ids": [
+        "wc-syseng-aligned",
+        "wc-syseng-aligned2",
+        "wc-syseng-week1",
+        "wc-syseng-unrelated",
+        "wc-syseng-keyword",
+        "wi-syseng-aligned",
+        "wi-syseng-unrelated",
+        "wi-syseng-vague",
+        "ps-syseng-good"
+      ],
+      "error": "AI evidence is not present in the supplied text (source quote)",
+      "rejected": [
+        {
+          "id": "wc-syseng-aligned",
+          "reason": "AI evidence is not present in the supplied text (source quote)"
+        },
+        {
+          "id": "wc-syseng-aligned2",
+          "reason": "AI evidence is not present in the supplied text (source quote)"
+        },
+        {
+          "id": "wc-syseng-unrelated",
+          "reason": "AI evidence is not present in the supplied text (source quote)"
+        },
+        {
+          "id": "wc-syseng-keyword",
+          "reason": "AI evidence is not present in the supplied text (source quote)"
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "course": "syseng",
+      "ids": [
+        "wc-syseng-aligned",
+        "wc-syseng-aligned2",
+        "wc-syseng-unrelated",
+        "wc-syseng-keyword"
+      ],
+      "error": "AI evidence is not present in the supplied text (source quote)",
+      "rejected": [
+        {
+          "id": "wc-syseng-aligned",
+          "reason": "AI evidence is not present in the supplied text (source quote)"
+        },
+        {
+          "id": "wc-syseng-aligned2",
+          "reason": "AI evidence is not present in the supplied text (source quote)"
+        },
+        {
+          "id": "wc-syseng-unrelated",
+          "reason": "AI evidence is not present in the supplied text (source quote)"
+        },
+        {
+          "id": "wc-syseng-keyword",
+          "reason": "AI evidence is not present in the supplied text (source quote)"
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "course": "sensors",
+      "ids": [
+        "wc-sensors-aligned",
+        "wc-sensors-aligned2",
+        "wc-sensors-unrelated",
+        "wc-sensors-keyword",
+        "wi-sensors-aligned",
+        "wi-sensors-unrelated",
+        "wi-sensors-keyword",
+        "ps-sensors-good",
+        "ps-sensors-repeat"
+      ],
+      "error": "AI evidence is not present in the supplied text (target quote)",
+      "rejected": [
+        {
+          "id": "ps-sensors-repeat",
+          "reason": "AI evidence is not present in the supplied text (target quote)"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "course": "prog1",
+      "ids": [
+        "wc-prog1-aligned",
+        "wc-prog1-week1",
+        "wc-prog1-unrelated",
+        "wc-prog1-keyword",
+        "wc-prog1-level",
+        "wc-prog1-repeat",
+        "wc-prog1-unreadable",
+        "wi-prog1-aligned",
+        "wi-prog1-aligned2",
+        "wi-prog1-unrelated",
+        "wi-prog1-vague",
+        "wi-prog1-keyword"
+      ],
+      "error": "AI omitted alignment judgements",
+      "rejected": [
+        {
+          "id": "wc-prog1-aligned",
+          "reason": "not answered"
+        },
+        {
+          "id": "wc-prog1-week1",
+          "reason": "not answered"
+        },
+        {
+          "id": "wc-prog1-unrelated",
+          "reason": "not answered"
+        },
+        {
+          "id": "wc-prog1-keyword",
+          "reason": "not answered"
+        },
+        {
+          "id": "wc-prog1-level",
+          "reason": "not answered"
+        },
+        {
+          "id": "wc-prog1-repeat",
+          "reason": "not answered"
+        },
+        {
+          "id": "wc-prog1-unreadable",
+          "reason": "not answered"
+        },
+        {
+          "id": "wi-prog1-aligned",
+          "reason": "not answered"
+        },
+        {
+          "id": "wi-prog1-aligned2",
+          "reason": "not answered"
+        },
+        {
+          "id": "wi-prog1-unrelated",
+          "reason": "not answered"
+        },
+        {
+          "id": "wi-prog1-vague",
+          "reason": "not answered"
+        },
+        {
+          "id": "wi-prog1-keyword",
+          "reason": "not answered"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "course": "prog1",
+      "ids": [
+        "wi-prog1-toohigh",
+        "wi-prog1-ambiguous",
+        "ps-prog1-good",
+        "ps-prog1-order",
+        "ps-prog1-repeat",
+        "ps-prog1-offcourse"
+      ],
+      "error": "AI evidence is not present in the supplied text (target quote)",
+      "rejected": [
+        {
+          "id": "ps-prog1-repeat",
+          "reason": "AI evidence is not present in the supplied text (target quote)"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "course": "prog1",
+      "ids": [
+        "ps-prog1-repeat"
+      ],
+      "error": "AI omitted alignment judgements",
+      "rejected": [
+        {
+          "id": "ilo-week10-loop",
+          "reason": "not a requested id"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "course": "prog1",
+      "ids": [
+        "ps-prog1-repeat"
+      ],
+      "error": "AI evidence is not present in the supplied text (target quote)",
+      "rejected": [
+        {
+          "id": "ps-prog1-repeat",
+          "reason": "AI evidence is not present in the supplied text (target quote)"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "course": "syseng",
+      "ids": [
+        "wc-syseng-aligned",
+        "wc-syseng-aligned2",
+        "wc-syseng-week1",
+        "wc-syseng-unrelated",
+        "wc-syseng-keyword",
+        "wi-syseng-aligned",
+        "wi-syseng-unrelated",
+        "wi-syseng-vague",
+        "ps-syseng-good"
+      ],
+      "error": "AI evidence is not present in the supplied text (source quote)",
+      "rejected": [
+        {
+          "id": "wc-syseng-aligned",
+          "reason": "AI evidence is not present in the supplied text (source quote)"
+        },
+        {
+          "id": "wc-syseng-unrelated",
+          "reason": "AI evidence is not present in the supplied text (source quote)"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "course": "syseng",
+      "ids": [
+        "wc-syseng-aligned",
+        "wc-syseng-unrelated"
+      ],
+      "error": "AI evidence is not present in the supplied text (source quote)",
+      "rejected": [
+        {
+          "id": "wc-syseng-aligned",
+          "reason": "AI evidence is not present in the supplied text (source quote)"
+        },
+        {
+          "id": "wc-syseng-unrelated",
+          "reason": "AI evidence is not present in the supplied text (source quote)"
+        }
+      ]
+    }
+  ],
+  "perItem": {
+    "wc-prog1-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "wc-prog1-week1": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "wc-prog1-unrelated": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wc-prog1-keyword": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wc-prog1-level": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wc-prog1-repeat": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "wc-prog1-unreadable": [
+      "INSUFFICIENT_EVIDENCE",
+      "NOT_ALIGNED"
+    ],
+    "wc-syseng-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "wc-syseng-aligned2": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "wc-syseng-week1": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "wc-syseng-unrelated": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wc-syseng-keyword": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wc-sensors-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "wc-sensors-aligned2": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "wc-sensors-unrelated": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wc-sensors-keyword": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wi-prog1-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "wi-prog1-aligned2": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "wi-prog1-unrelated": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wi-prog1-vague": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "wi-prog1-keyword": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wi-prog1-toohigh": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wi-prog1-ambiguous": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "wi-syseng-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "wi-syseng-unrelated": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wi-syseng-vague": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "wi-sensors-aligned": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "wi-sensors-unrelated": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "wi-sensors-keyword": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "ps-prog1-good": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ps-prog1-order": [
+      "PARTIALLY_ALIGNED",
+      "PARTIALLY_ALIGNED"
+    ],
+    "ps-prog1-repeat": [
+      null,
+      "PARTIALLY_ALIGNED"
+    ],
+    "ps-prog1-offcourse": [
+      "NOT_ALIGNED",
+      "NOT_ALIGNED"
+    ],
+    "ps-syseng-good": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ps-sensors-good": [
+      "ALIGNED",
+      "ALIGNED"
+    ],
+    "ps-sensors-repeat": [
+      "PARTIALLY_ALIGNED",
+      "NOT_ALIGNED"
+    ]
+  },
+  "ranAt": "2026-10-24T18:35:08.814Z",
+  "usage": {
+    "requests": 35,
+    "promptTokens": 136536,
+    "completionTokens": 14363,
+    "cost": 0.010812,
+    "unreported": 0,
+    "budget": 60
+  }
+}

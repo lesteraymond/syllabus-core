@@ -45,7 +45,6 @@ function makeDb() {
         .map((x) => ({ ...x, ...NAMES[x.user_id], avatar_path: null, program_name: x.curriculum_program, course_id: null, curriculum_id: null, admin_comment: null, uploaded_at: '2026-01-01', updated_at: '2026-01-02' }))];
     }
     if (/program_outcome_sources/.test(sql)) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' }); // not migrated yet
-    if (/FROM course_prerequisites/.test(sql)) return [[]]; // a subject's prerequisites: none set
     throw new Error('unexpected query: ' + sql);
   };
   return { s, query: async (q, p) => handle(q, p) };

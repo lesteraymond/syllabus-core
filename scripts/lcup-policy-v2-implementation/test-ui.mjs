@@ -1,0 +1,17 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {createRequire} from 'node:module';
+import {spawnSync} from 'node:child_process';
+import {build} from 'rolldown';
+const require=createRequire(import.meta.url),root=path.resolve(import.meta.dirname,'../..');
+const dir=path.join(root,'tmp/lcup-policy-v2-implementation');
+await fs.mkdir(dir,{recursive:true});
+const {fixture,replay,POLICY}=require('./fixtures.cjs');
+const {run}=require('../../server/lib/syllabuscheck/engine');
+const f=fixture();
+f.content.plan[2].contents='Human Anatomy: the digestive system';
+const report=await run(f.content,f.masters,{academicPolicy:POLICY.id,offlineReplay:replay(f.content,f.masters,p=>p.id==='row2-content'?{label:'NOT_ALIGNED'}:{})});
+await fs.writeFile(path.join(dir,'report.json'),JSON.stringify(report));
+const file=path.join(dir,'academic-ui.test.mjs');
+await build({input:path.join(root,'scripts/lcup-policy-v2-implementation/ui.test.jsx'),platform:'node',external:['react','react-dom/client','react/jsx-runtime','happy-dom','node:test','node:assert/strict','node:fs'],transform:{define:{'import.meta.env':'{}'},jsx:{runtime:'automatic'}},output:{file},logLevel:'silent'});
+const result=spawnSync(process.execPath,['--test',file],{cwd:root,stdio:'inherit'});process.exitCode=result.status??1;

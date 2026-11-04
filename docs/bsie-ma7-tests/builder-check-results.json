@@ -1,0 +1,86 @@
+{
+  "syllabusId": 101,
+  "subject": "BSIE MA 7",
+  "finalBuilderVersion": "aligned",
+  "draftStatus": "draft",
+  "submitted": false,
+  "officialReferencesModified": false,
+  "backup": ".api-test-backups\\ma7-before-two-version-test-101-1792640400262.json",
+  "testedAt": "2026-10-22T03:40:00.466Z",
+  "reports": {
+    "misaligned": {
+      "runId": 270,
+      "score": null,
+      "baseScore": 100,
+      "ready": false,
+      "alignment": "not_evaluated",
+      "blockers": [
+        {
+          "ruleId": "CUR-REF",
+          "message": "Official approved curriculum unavailable for BSIE. Submission is blocked until it is supplied."
+        },
+        {
+          "ruleId": "PO-MASTER",
+          "message": "Official program outcomes are unavailable; program alignment cannot be verified."
+        },
+        {
+          "ruleId": "CLO-MAP",
+          "message": "Official POS references are unavailable."
+        },
+        {
+          "ruleId": "CLO-MAP",
+          "message": "Official POS references are unavailable."
+        },
+        {
+          "ruleId": "CLO-MAP",
+          "message": "Official POS references are unavailable."
+        },
+        {
+          "ruleId": "CLO-MAP",
+          "message": "Official POS references are unavailable."
+        },
+        {
+          "ruleId": "AI-REQUIRED",
+          "message": "Gemini alignment must complete before submission. Resolve the hard gates before Gemini alignment can run."
+        }
+      ]
+    },
+    "aligned": {
+      "runId": 271,
+      "score": null,
+      "baseScore": 100,
+      "ready": false,
+      "alignment": "not_evaluated",
+      "blockers": [
+        {
+          "ruleId": "CUR-REF",
+          "message": "Official approved curriculum unavailable for BSIE. Submission is blocked until it is supplied."
+        },
+        {
+          "ruleId": "PO-MASTER",
+          "message": "Official program outcomes are unavailable; program alignment cannot be verified."
+        },
+        {
+          "ruleId": "CLO-MAP",
+          "message": "Official POS references are unavailable."
+        },
+        {
+          "ruleId": "CLO-MAP",
+          "message": "Official POS references are unavailable."
+        },
+        {
+          "ruleId": "CLO-MAP",
+          "message": "Official POS references are unavailable."
+        },
+        {
+          "ruleId": "CLO-MAP",
+          "message": "Official POS references are unavailable."
+        },
+        {
+          "ruleId": "AI-REQUIRED",
+          "message": "Gemini alignment must complete before submission. Resolve the hard gates before Gemini alignment can run."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "cap": 10,
+  "total": 1.4421591,
+  "ledgers": {
+    "p1-smoke-ledger.json": {
+      "model": "claude-sonnet-5-5",
+      "requests": 1,
+      "charged": 0.019372,
+      "outputTokens": 914,
+      "updatedAt": "2026-10-27T14:27:37.017Z"
+    },
+    "p2-a3-ledger.json": {
+      "model": "claude-sonnet-5-5",
+      "requests": 6,
+      "charged": 0.06535,
+      "outputTokens": 4611,
+      "updatedAt": "2026-10-27T18:25:49.799Z"
+    },
+    "p2-b1-ledger.json": {
+      "model": "claude-sonnet-5-5",
+      "requests": 18,
+      "charged": 0.2181312,
+      "outputTokens": 15542,
+      "updatedAt": "2026-10-27T18:31:42.340Z"
+    },
+    "p2-a1-ledger.json": {
+      "model": "claude-sonnet-5-5",
+      "requests": 11,
+      "charged": 0.200304,
+      "outputTokens": 16349,
+      "updatedAt": "2026-10-27T18:50:34.133Z"
+    },
+    "p2-a2-ledger.json": {
+      "model": "claude-sonnet-5-5",
+      "requests": 18,
+      "charged": 0.3255532,
+      "outputTokens": 27811,
+      "updatedAt": "2026-10-27T19:11:27.910Z"
+    },
+    "p2-b2-ledger.json": {
+      "model": "claude-sonnet-5-5",
+      "requests": 36,
+      "charged": 0.4553755,
+      "outputTokens": 37047,
+      "updatedAt": "2026-10-27T19:58:25.369Z"
+    },
+    "../lcup-v2-evaluation/live-smoke-REVIEWED/ledger.json": {
+      "model": "claude-sonnet-5-5",
+      "requests": 3,
+      "charged": 0.0684257,
+      "outputTokens": 1807,
+      "updatedAt": "2026-10-29T00:13:57.790Z"
+    },
+    "../lcup-v2-evaluation/live-smoke-r2-REVIEWED/ledger.json": {
+      "model": "claude-sonnet-5-5",
+      "requests": 3,
+      "charged": 0.0896475,
+      "outputTokens": 2275,
+      "updatedAt": "2026-10-29T09:03:21.139Z"
+    }
+  }
+}

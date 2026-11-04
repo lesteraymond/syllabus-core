@@ -1,0 +1,1367 @@
+{
+  "version": "lcup-approved-offline-1",
+  "source": {
+    "file": "docs/academic-references/IT-202-Programming-1.pdf",
+    "sha256": "6376fe94981ae65f25054234e1ae63cd50be8f70f12b774ea72949e07d561845",
+    "pages": 11
+  },
+  "key": "it202",
+  "content": {
+    "schemaVersion": 3,
+    "meta": {
+      "program": "BSIT",
+      "code": "IT 202",
+      "title": "Computer Programming 1",
+      "schoolYear": "2025-2026",
+      "curriculumYear": "",
+      "yearLevel": "",
+      "prereq": "IT 101",
+      "lecture": "2",
+      "lab": "1"
+    },
+    "outcomes": {
+      "vision": "Moved by the Spirit of the Risen Christ, La Consolacion University Philippines, envisions itself to become a catalyst for the wholistic transformational development of Catholic Augustinian Marian graduates rooted in Gospel values.",
+      "mission": {
+        "lead": "To achieve the above vision, LCUP commits itself to generate and make available to its Augustinian Marian students, programs and services that will make them:",
+        "items": [
+          "exhibit academic and technical competence in their respective areas of discipline in the local and international environment;",
+          "demonstrate their knowledge, critical thinking and creativity by exploring the various avenues of learning and searching for truth;",
+          "manifest their willingness to serve specially the marginalized sector of our society;",
+          "demonstrate productivity in various areas of learning as responsible citizens of the society; and",
+          "live the Gospel values in the varied aspects of their personal and professional lives"
+        ]
+      },
+      "egas": [
+        {
+          "no": 1,
+          "name": "Critical and Creative thinker",
+          "short": "Critical and Creative thinker"
+        },
+        {
+          "no": 2,
+          "name": "Competent Catholic Augustinian- Marian Professional",
+          "short": "Competent Catholic Augustinian- Marian Professional"
+        },
+        {
+          "no": 3,
+          "name": "Socially Responsive Steward",
+          "short": "Socially Responsive Steward"
+        },
+        {
+          "no": 4,
+          "name": "Transformative Lifelong learner",
+          "short": "Transformative Lifelong learner"
+        }
+      ],
+      "pos": [
+        {
+          "no": 1,
+          "text": "Articulate and discuss the latest developments in the specific field of practice;",
+          "short": "PO 1",
+          "egas": []
+        },
+        {
+          "no": 2,
+          "text": "Effectively communicate orally and in writing using both English and Filipino;",
+          "short": "PO 2",
+          "egas": []
+        },
+        {
+          "no": 3,
+          "text": "Work effectively and independently in multi-disciplinary and multi-cultural teams;",
+          "short": "PO 3",
+          "egas": []
+        },
+        {
+          "no": 4,
+          "text": "Act in recognition of professional, social ethical responsibility;",
+          "short": "PO 4",
+          "egas": []
+        },
+        {
+          "no": 5,
+          "text": "Preserve and promote “Filipino historical and cultural heritage;",
+          "short": "PO 5",
+          "egas": []
+        },
+        {
+          "no": 6,
+          "text": "Analyze complex problems, and identify and define the computing requirements needed to design and appropriate solution;",
+          "short": "PO 6",
+          "egas": []
+        },
+        {
+          "no": 7,
+          "text": "Apply computing and other knowledge domains to address real-world problems;",
+          "short": "PO 7",
+          "egas": []
+        },
+        {
+          "no": 8,
+          "text": "Design and develop computing solutions using a system-level perspective;",
+          "short": "PO 8",
+          "egas": []
+        },
+        {
+          "no": 9,
+          "text": "Utilize modern computing tools.",
+          "short": "PO 9",
+          "egas": []
+        }
+      ]
+    },
+    "description": [
+      {
+        "id": "it202_desc",
+        "t": "This course introduces students to the vital role of computers and computer programmers in shaping modern society. It\naims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the\ndevelopment of good coding practices. Students will be taught the fundamentals of Java programming and explore\nsignificant real-world applications. \nIn line with La Consolacion University Philippines' commitment to forming   Christo-centric Catholic professionals , the\ncourse integrates   Marian Augustinian values   in each lesson, ensuring that students not only achieve intellectual growth\nbut also cultivate moral and ethical responsibility in the digital age. This holistic approach nurtures individuals who contribute\npositively to society, embodying   community, humility, and love of service , as exemplified by the Blessed Virgin Mary\nand Saint Augustine. By the end of the course, students will have created their own Java applications, demonstrating both\ntechnical proficiency and a sense of purpose rooted in their Catholic faith."
+      }
+    ],
+    "clos": [
+      {
+        "id": "it202_clo1",
+        "title": "CLO 1",
+        "level": "Introductory",
+        "statement": "Define and analyze the computing requirements needed for an effective solution that is essential for developing holistic and impactful solutions.",
+        "pos": [
+          1,
+          2,
+          3,
+          6,
+          8
+        ],
+        "egas": [
+          1,
+          3,
+          4
+        ]
+      },
+      {
+        "id": "it202_clo2",
+        "title": "CLO 2",
+        "level": "Introductory",
+        "statement": " Incorporate ethical standards and social responsibility into technical designs, ensuring that solutions serve the common good, in line with Marian and Augustinian principles of truth and compassion. ",
+        "pos": [
+          1,
+          2,
+          3,
+          6,
+          8
+        ],
+        "egas": [
+          1,
+          3,
+          4
+        ]
+      },
+      {
+        "id": "it202_clo3",
+        "title": "CLO 3",
+        "level": "Introductory",
+        "statement": "Collaborate effectively within multi-disciplinary and culturally diverse teams to develop Java- based programming solutions that address social challenges, demonstrating social responsibility and cultural sensitivity.",
+        "pos": [
+          1,
+          2,
+          3,
+          4,
+          6,
+          8,
+          9
+        ],
+        "egas": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "id": "it202_clo4",
+        "title": "CLO 4",
+        "level": "Introductory",
+        "statement": "Demonstrate the Filipino- Catholic Augustinian Spirituality through value webbing.",
+        "pos": [
+          4,
+          5
+        ],
+        "egas": [
+          2
+        ]
+      }
+    ],
+    "plan": [
+      {
+        "id": "it202_r1",
+        "week": "1",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "it202_r1_i1",
+            "text": "ILO 1: Demonstrate a clear understanding of the course structure, expectations, and key programming concepts in Java, including how these skills align with real- world IT challenges and professional ethical standards. [CLO1]",
+            "tags": [
+              "clo:it202_clo1"
+            ]
+          }
+        ],
+        "contents": "I. Orientation\nA. Introduction to the\nCourse Contents\nB. Course\nRequirements and\nActivities\nC. Course Objectives\nGrading System and\nPolicies on Absences,\nTardiness and\nExaminations",
+        "activities": "• Setting and\nsharing of\nExpectations from\nthe Course\n• Discussion on the\nVision, Mission\nand Goals of\nLCUP and of CITE\n• Presentation of\nCourse Objectives\nand Contents,\nCourse\nRequirements and\nActivities\nReview of Policies on\nAbsences, Tardiness,\nExaminations,\nGrading System",
+        "tasks": "• Statement of\nExpectations\n• Review of Course\nContents,\nObjectives,\nActivities and\nAssessment Tools\n• Review of Policies\non Absences,\nTardiness,\nExaminations,\nGrading System",
+        "values": "• Compassion\n• Courage\n• Open\nmindedness\n• Respect\n• Obedience"
+      },
+      {
+        "id": "it202_r2",
+        "week": "2",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "it202_r2_i1",
+            "text": "LO1. Explain the basic concepts and principles of Java programming, [CLO 1]",
+            "tags": [
+              "clo:it202_clo1"
+            ]
+          }
+        ],
+        "contents": "II. Introduction to\nJava Programming\n• A Brief History of\nJava language\n• Characteristics of\nJava Language\n• Reasons why\nprogrammers use\nJava language\nFeatures of Java\nProgramming",
+        "activities": "• Lecture-\nDiscussion/Recitat\nion using Power\nPoint Presentation\n• Video\nPresentation\n• Discovery\nLearning\n• Functioning\nKnowledge",
+        "tasks": "• Brain Storming\n• Quiz\n• Assignment",
+        "values": "• Self\nAwareness\n• Active\nparticipation\nand\ninvolvement\n• Courage\n• Humility\n• Analytical\nSkills"
+      },
+      {
+        "id": "it202_r3",
+        "week": "3-4",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "it202_r3_i1",
+            "text": "ILO1: Demonstrate the skills by knowing the syntax and semantics of Java. of Language. [CLO 1,2]",
+            "tags": [
+              "clo:it202_clo1",
+              "clo:it202_clo2"
+            ]
+          },
+          {
+            "id": "it202_r3_i2",
+            "text": "ILO2: Ensures that students gain a foundational understanding of Java and are able to apply basic programming concepts through hands-on practice. (CLO 2] [CLO 3]",
+            "tags": [
+              "clo:it202_clo2",
+              "clo:it202_clo3"
+            ]
+          }
+        ],
+        "contents": "III. The Basic\nInput/Output\nStatements of Java\nConsole\n• The Basic\nInput/Output\n• Variable\nDeclaration\n• Rules in declaring\nvariables,\n➢ Constants\n➢ Operators\n• Java Installation\nJava Eclipse GUI",
+        "activities": "• Discussion using\nPowerPoint\nPresentation\n• Discovery\nLearning\n• Functional\nKnowledge\n• Research Study\n• Demonstration",
+        "tasks": "• Recitation\nGroup Participation\n•\n• Quiz\n• Machine Problem\n• Assignment",
+        "values": "• Interiority\n• Work Ethics\n• Interpersonal\nSkills\n• Courage\n• Critical\nThinking\n• Courage\n•"
+      },
+      {
+        "id": "it202_r4",
+        "week": "4-5",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "it202_r4_i1",
+            "text": "ILO 1: Inference read and write data using Java streams [CLO 1] [CLO 2]",
+            "tags": [
+              "clo:it202_clo1",
+              "clo:it202_clo2"
+            ]
+          },
+          {
+            "id": "it202_r4_i2",
+            "text": "ILO 2 Acquire the necessary skills and understanding of java methods.",
+            "tags": []
+          },
+          {
+            "id": "it202_r4_i3",
+            "text": "ILO4: Demonstrate the skills by knowing the syntax and semantics of Java. of Language. [CLO 3]",
+            "tags": [
+              "clo:it202_clo3"
+            ]
+          }
+        ],
+        "contents": "IV. Java Libraries\nProgram\n• Parts of a Java\nprogram\n• The print and\nprintln function\nData type\n• Int (Integer)\n• Float\n• Double\n• Char\n• Reasons to\ndeclare variables",
+        "activities": "• Lecture-Discussion\nusing Power Point\npresentation\n• Seatwork\n• Laboratory\n• Machine Problem\nVideo Presentation",
+        "tasks": "• Recitation\n• Quiz\nSimulation of the\nexternal and internal\nparts of the System\nUnit",
+        "values": "• Understanding\n• Exactness\n• Patience\n• Critical\nThinking\n• Active\nparticipation\nand\ninvolvement\n• Critical\nThinking\n• Patience\n• Appreciation"
+      },
+      {
+        "id": "it202_r5",
+        "week": "6",
+        "kind": "exam",
+        "ilos": [
+          {
+            "id": "it202_r5_i1",
+            "text": "Review topics covered by the examination",
+            "tags": []
+          }
+        ],
+        "contents": "PRELIM\nEXAMINATION",
+        "activities": "Examination on\nthe topics\ndiscussed during\nthe Prelim Term",
+        "tasks": "Result of the\nExamination",
+        "values": "• Skills and\nCompetencies\n• Critical\nThinking"
+      },
+      {
+        "id": "it202_r6",
+        "week": "7-8",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "it202_r6_i1",
+            "text": "ILO3: Understand the fundamentals of structured logic using decisions, loops, and array manipulation. [CLO 1] [CLO3]",
+            "tags": [
+              "clo:it202_clo1",
+              "clo:it202_clo3"
+            ]
+          },
+          {
+            "id": "it202_r6_i2",
+            "text": "ILO4: Be able to apply conditional statements in Java to control program flow based on specific conditions, and write programs that make decisions dynamically depending on user input or computed values. [CLO 2] [CLO3]",
+            "tags": [
+              "clo:it202_clo2",
+              "clo:it202_clo3"
+            ]
+          }
+        ],
+        "contents": "V. . Conditional\nStatements\n• The Conditional\nStatements Syntax\n• If Statement\n• If Else Statement\nSwitch/case\nLanguage",
+        "activities": "• Discussion using\nPowerPoint\nPresentation\n• Video Presentation\n• Laboratory\nExercises:\nMachine Language\nGroup Dynamics",
+        "tasks": "• Recitation\n• Seatwork on the\ntopics discussed\n• Laboratory Exercises",
+        "values": "• Patience\n• Humility\n• Cooperation\n• Accuracy\n• Appreciation\n• Leadership\nSkills\n• Courage"
+      },
+      {
+        "id": "it202_r7",
+        "week": "9-11",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "it202_r7_i1",
+            "text": "ILO1: Utilize various looping constructs (for, while, do-while) in Java to execute repeated tasks, and design programs that efficiently handle repetitive processes and iterations, incorporating loops to solve real-world problems. CLO1 CLO2, CLO3",
+            "tags": [
+              "clo:it202_clo1",
+              "clo:it202_clo2",
+              "clo:it202_clo3"
+            ]
+          },
+          {
+            "id": "it202_r7_i2",
+            "text": "ILO2. Inference the structured programming concepts aCLOng with the Java syntax to implement them.",
+            "tags": []
+          }
+        ],
+        "contents": "XI. Looping\nStatements\n• Java Loops\n▪ For Loops\n▪ Do While Loop\n▪ Break/Continue",
+        "activities": "• Discussion using\nPowerPoint\nPresentation\n• Functioning\nKnowledge\n• Laboratory\nExercises.",
+        "tasks": "•\nRecitation\n• Group Participation\n• Quiz\n• Machine Problem",
+        "values": "• Critical\nThinking\n• Understanding\n• Precision\n• Accuracy\n• Appreciation\n• Humility"
+      },
+      {
+        "id": "it202_r8",
+        "week": "12",
+        "kind": "exam",
+        "ilos": [
+          {
+            "id": "it202_r8_i1",
+            "text": "Review topics covered by the examination",
+            "tags": []
+          }
+        ],
+        "contents": "MIDTERM\nEXAMINATION",
+        "activities": "Examination on\nthe topics\ndiscussed during\nthe Midterm Term",
+        "tasks": "Result of the\nExamination",
+        "values": "• Skills and\nCompetencies\n• Critical\nThinking"
+      },
+      {
+        "id": "it202_r9",
+        "week": "13",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "it202_r9_i1",
+            "text": "ILO4: declare, initialize, and manipulate arrays in Java, effectively using one- dimensional and multi-dimensional arrays to store, retrieve, and process data in various applications [CLO1] [CLO2]",
+            "tags": [
+              "clo:it202_clo1",
+              "clo:it202_clo2"
+            ]
+          },
+          {
+            "id": "it202_r9_i2",
+            "text": "ILO6: Synthesize skills in De-bugging Java Language program.",
+            "tags": []
+          }
+        ],
+        "contents": "X. . Array\n• Array\n• Example of Array\n• Two-Dimensional\nArrays syntax:",
+        "activities": "• Discussion using\nPower Point\nPresentation\n• Functioning\nknowledge\n• Discovery\nLearning\n• Quiz on the\ndiscussed topic\nLaboratory\nExercises",
+        "tasks": "•\nRecitation\n• Quiz\n• Machine problem:\nHands-on exercises\nusing Java Console\nprograms",
+        "values": "• Active\nparticipation\nand\ninvolvement\n• Understanding\n• Compassion\nCritical Thinking"
+      },
+      {
+        "id": "it202_r10",
+        "week": "14",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "it202_r10_i1",
+            "text": "ILO1: Apply various string manipulation methods in Java. [CLO 1-2] .",
+            "tags": [
+              "clo:it202_clo1",
+              "clo:it202_clo2"
+            ]
+          },
+          {
+            "id": "it202_r10_i2",
+            "text": "LO2: Synthesize skills in De-bugging Java Language program. [CLO2-3]",
+            "tags": [
+              "clo:it202_clo2",
+              "clo:it202_clo3"
+            ]
+          }
+        ],
+        "contents": "XIII. Strings\n• String Manipulation\n➢ Length()\n➢ charAt()\n➢ indexOf()\n➢ concat()\n➢ replace\n➢ ignorecase()\n➢ substring()",
+        "activities": "Lecture:\n• Discussion using\nPowerpoint\nPresentation\n• Quiz\n• Laboratory:\n:Exercises:\n➢ Machine\nProblem\n• Seatwork using\ntrial and error\ndiscovery learning",
+        "tasks": "• Recitation\n• Quiz\n• Seatwork-Trial and\nError for discovery\nlearning\n• Accurate Program\noutput",
+        "values": "• Critical\nThinking\n• Active\nparticipation\nand\ninvolvement\n• Open\nmindedness\n• Humility\n• Patience\n• Courage"
+      },
+      {
+        "id": "it202_r11",
+        "week": "15",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "it202_r11_i1",
+            "text": "ILO4: Demonstrate the skills by knowing the syntax and semantics of Java. [CLO1-2]",
+            "tags": [
+              "clo:it202_clo1",
+              "clo:it202_clo2"
+            ]
+          },
+          {
+            "id": "it202_r11_i2",
+            "text": "ILO5: Build robust applications using Java console code. [CLO 1-2]",
+            "tags": [
+              "clo:it202_clo1",
+              "clo:it202_clo2"
+            ]
+          },
+          {
+            "id": "it202_r11_i3",
+            "text": "ILO6: Synthesize skills in De-bugging Java Language program. [CLO2-3]",
+            "tags": [
+              "clo:it202_clo2",
+              "clo:it202_clo3"
+            ]
+          }
+        ],
+        "contents": "XII. JAVA METHOD\n• Java\nParameters\n• Object\nConnection\nJava Recursion",
+        "activities": "• Discussion using\nPower Point\nPresentation\n• Functioning\nknowledge\n• Blended Learning\n• Quiz on the\ndiscussed topic\n• Laboratory\nExercises",
+        "tasks": "•\nRecitation\n• Quiz\n• Machine problem:\nHands-on exercises\nusing C programs",
+        "values": "• Active\nparticipation\nand\ninvolvement\n• Understanding\n• Interiority\n• Courage\n• Critical\nThinking"
+      },
+      {
+        "id": "it202_r12",
+        "week": "16-17",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "it202_r12_i1",
+            "text": "ILO1 Retreve data from a relational database using java class. [CLO 2-3]",
+            "tags": [
+              "clo:it202_clo2",
+              "clo:it202_clo3"
+            ]
+          },
+          {
+            "id": "it202_r12_i2",
+            "text": "Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing.",
+            "tags": []
+          }
+        ],
+        "contents": "X. JAVA DATABASE\nCONNECTION\n• Improvised\nDatabase\nUCanAccess\nConnection",
+        "activities": "• Discussion using\nPower Point\nPresentation\n• Quiz on the\ndiscussed topic\n• Cooperative\nLearning\n• Group Dynamics\nLaboratory\nExercises",
+        "tasks": "•\nRecitation\n• Quiz\n• Groupings\n• Machine problem:\nHands-on exercises\nusing Java\nprograms",
+        "values": "• Active\nparticipation\nand\ninvolvement\n• Understanding\n• Teamwork Skills\n• Courage\nCritical Thinking"
+      },
+      {
+        "id": "it202_r13",
+        "week": "18",
+        "kind": "exam",
+        "ilos": [
+          {
+            "id": "it202_r13_i1",
+            "text": "Review topics covered by the examination",
+            "tags": []
+          }
+        ],
+        "contents": "FINALS\nEXAMINATION",
+        "activities": "Examination on\nthe topics\ndiscussed during\nthe Final Term",
+        "tasks": "Result of the\nExamination",
+        "values": "• Honesty\n• Integrity\nCritical Thinking"
+      }
+    ],
+    "reqs": [
+      {
+        "id": "it202_q1",
+        "t": "1. Class attendance"
+      },
+      {
+        "id": "it202_q2",
+        "t": "2. Recitations"
+      },
+      {
+        "id": "it202_q3",
+        "t": "3. Quizzes"
+      },
+      {
+        "id": "it202_q4",
+        "t": "4. Examinations"
+      },
+      {
+        "id": "it202_q5",
+        "t": "5. Machine Problem : Laboratory Exercises"
+      }
+    ],
+    "refs": {
+      "books": {
+        "na": false,
+        "items": [
+          {
+            "id": "it202_ref1",
+            "t": "Burd, B. (2022). Java for dummies (Eighth edition). John Wiley & Sons, Inc. QA 76.73 J83 B87 2022"
+          },
+          {
+            "id": "it202_ref2",
+            "t": "Bernard, M. (2022). Future skills: the 20 skills and competencies everyone needs to succeed in a digital world. John Wiley\n& Sons, Inc. T 65.3 M37 2022"
+          },
+          {
+            "id": "it202_ref3",
+            "t": "Farrell, J. (2019). Java programming. Cengage. QA 76.73 F37 2019"
+          }
+        ]
+      },
+      "program": {
+        "na": false,
+        "items": []
+      },
+      "online": {
+        "na": false,
+        "items": [
+          {
+            "id": "it202_ref4",
+            "t": "Java Tutorial - W3Schools. https://www.w3schools.com/java/default.asp. Accessed 2 Aug. 2024."
+          },
+          {
+            "id": "it202_ref5",
+            "t": "Learn Java | Codecademy. https://www.codecademy.com/learn/learn-java. Accessed 19 June. 2024."
+          },
+          {
+            "id": "it202_ref6",
+            "t": "Learn Java Programming. https://www.programiz.com/java-programming . Accessed 16 February 2023"
+          },
+          {
+            "id": "it202_ref7",
+            "t": "Java Tutorial - Tutorialspoint. https://www.tutorialspoint.com/java/index.htm. Accessed 29 December. 2023"
+          },
+          {
+            "id": "it202_ref8",
+            "t": "Java tutorial: Learn Java Programming with examples. https://beginnersbook.com/java-tutorial-for-beginners-with-\nexample. Accessed 15, March, 2023."
+          },
+          {
+            "id": "it202_ref9",
+            "t": "Kok, A. J. et. Al., (2024). “ Analysis and Evaluation of a Searchable Exercise Repository for Training Java Programming”,\nInformatics in Education, 2024. DOI: 10.15388/infedu.2024.17"
+          },
+          {
+            "id": "it202_ref10",
+            "t": "Park J. et. Al., (2023). “ Static Analysis of JNI Programs via Binary Decompilation ” : IEEE Transactions on Software\nEngineering. https://doi.org/10.1109/tse.2023.3241639"
+          },
+          {
+            "id": "it202_ref11",
+            "t": "Syaifudin, Y.W. , Funabiki, N. , Kuribayashi, M. and Kao, W.-C. (2019), \"A proposal of Android Programming Learning\nAssistant System with implementation of basic application learning\", International Journal of Web Information Systems ,\nVol. 16 No. 1, pp. 115-135. https://doi.org/10.1108/IJWIS-08-2019-0038"
+          }
+        ]
+      },
+      "electronics": {
+        "na": false,
+        "items": [
+          {
+            "id": "it202_ref12",
+            "t": "Java Eclipse IDE – Console/NetBeans"
+          },
+          {
+            "id": "it202_ref13",
+            "t": "Quizizz"
+          }
+        ]
+      }
+    },
+    "grading": {
+      "rows": [
+        {
+          "id": "it202_g0",
+          "label": "Class Standing",
+          "abbr": "",
+          "pct": "60"
+        },
+        {
+          "id": "it202_g4",
+          "label": "Examination",
+          "abbr": "",
+          "pct": "40"
+        }
+      ],
+      "override": {
+        "on": false,
+        "term": "",
+        "final": ""
+      }
+    }
+  },
+  "evidence": {
+    "identity": {
+      "program": "BSIT",
+      "basis": "User-specified degree; matched within that program in frozen database export. Degree code is not printed in the college header.",
+      "schoolYear": "2025-2026",
+      "schoolYearPages": [
+        1
+      ],
+      "curriculumYear": null,
+      "curriculumYearReason": "Not stated in PDF; school year is not curriculum year."
+    },
+    "fields": {
+      "code": {
+        "raw": "IT 202",
+        "pages": [
+          1
+        ]
+      },
+      "title": {
+        "raw": "Computer Programming 1",
+        "pages": [
+          1
+        ]
+      },
+      "description": {
+        "raw": "This course introduces students to the vital role of computers and computer programmers in shaping modern society. It\naims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the\ndevelopment of good coding practices. Students will be taught the fundamentals of Java programming and explore\nsignificant real-world applications. \nIn line with La Consolacion University Philippines' commitment to forming   Christo-centric Catholic professionals , the\ncourse integrates   Marian Augustinian values   in each lesson, ensuring that students not only achieve intellectual growth\nbut also cultivate moral and ethical responsibility in the digital age. This holistic approach nurtures individuals who contribute\npositively to society, embodying   community, humility, and love of service , as exemplified by the Blessed Virgin Mary\nand Saint Augustine. By the end of the course, students will have created their own Java applications, demonstrating both\ntechnical proficiency and a sense of purpose rooted in their Catholic faith.",
+        "pages": [
+          1
+        ],
+        "adaptation": "Read between source-stream section headings, not y-sorted importer text."
+      },
+      "credits": {
+        "raw": "2 units lecture / 1 unit laboratory",
+        "pages": [
+          1
+        ]
+      },
+      "reqs": {
+        "raw": "1. Class attendance\n2. Recitations\n3. Quizzes\n4. Examinations\n5. Machine Problem : Laboratory Exercises",
+        "pages": [
+          8
+        ]
+      },
+      "refs": {
+        "raw": "A. BOOKS\nBurd, B. (2022). Java for dummies (Eighth edition). John Wiley & Sons, Inc. QA 76.73 J83 B87 2022\nBernard, M. (2022). Future skills: the 20 skills and competencies everyone needs to succeed in a digital world. John Wiley\n& Sons, Inc. T 65.3 M37 2022\nFarrell, J. (2019). Java programming. Cengage. QA 76.73 F37 2019\nB. INTERNET REFERENCES\nJava Tutorial - W3Schools. https://www.w3schools.com/java/default.asp. Accessed 2 Aug. 2024.\nLearn Java | Codecademy. https://www.codecademy.com/learn/learn-java. Accessed 19 June. 2024.\nLearn Java Programming. https://www.programiz.com/java-programming . Accessed 16 February 2023\nJava Tutorial - Tutorialspoint. https://www.tutorialspoint.com/java/index.htm. Accessed 29 December. 2023\nJava tutorial: Learn Java Programming with examples. https://beginnersbook.com/java-tutorial-for-beginners-with-\nexample. Accessed 15, March, 2023.\nC. JOURNALS\nKok, A. J. et. Al., (2024). “ Analysis and Evaluation of a Searchable Exercise Repository for Training Java Programming”,\nInformatics in Education, 2024. DOI: 10.15388/infedu.2024.17\nPark J. et. Al., (2023). “ Static Analysis of JNI Programs via Binary Decompilation ” : IEEE Transactions on Software\nEngineering. https://doi.org/10.1109/tse.2023.3241639\nSyaifudin, Y.W. , Funabiki, N. , Kuribayashi, M. and Kao, W.-C. (2019), \"A proposal of Android Programming Learning\nAssistant System with implementation of basic application learning\", International Journal of Web Information Systems ,\nVol. 16 No. 1, pp. 115-135. https://doi.org/10.1108/IJWIS-08-2019-0038\nD. ELECTRONICS\nJava Eclipse IDE – Console/NetBeans\nQuizizz",
+        "pages": [
+          9
+        ]
+      },
+      "prereq": {
+        "raw": "IT 101",
+        "pages": [
+          1
+        ],
+        "adaptation": "Whitespace only"
+      },
+      "grading": {
+        "raw": "1.\tClass Standing\t60%\nQuiz/Recitation\nMachine Problem\nAssignment\n2.\tExamination\t40 %\n3.\tTerm Grade\tCS (60%) + TE (40%)\n4.\tFinal Rating\tPrelim Grade + Midterm Grade + Final Grade\n3",
+        "pages": [
+          10
+        ]
+      },
+      "vision": {
+        "raw": "Moved by the Spirit of the Risen Christ, La Consolacion University Philippines, envisions itself to become a catalyst for the wholistic transformational development of Catholic Augustinian Marian graduates rooted in Gospel values.",
+        "pages": [
+          2
+        ]
+      },
+      "mission": {
+        "raw": "To achieve the above vision, LCUP commits itself to generate and make available to its Augustinian Marian students, programs and services that will make them:\n● exhibit academic and technical competence in their respective areas of discipline in the local and international environment;\n● demonstrate their knowledge, critical thinking and creativity by exploring the various avenues of learning and searching for truth;\n● manifest their willingness to serve specially the marginalized sector of our society;\n● demonstrate productivity in various areas of learning as responsible citizens of the society; and\n● live the Gospel values in the varied aspects of their personal and professional lives",
+        "pages": [
+          2
+        ]
+      }
+    },
+    "outcomes": {
+      "PO1": {
+        "raw": "PO1. Articulate and discuss the\nlatest developments in the specific\nfield of practice;",
+        "pages": [
+          2
+        ]
+      },
+      "PO2": {
+        "raw": "PO2. Effectively communicate\norally and in writing using both\nEnglish and Filipino;",
+        "pages": [
+          2
+        ]
+      },
+      "PO3": {
+        "raw": "PO3. Work effectively and\nindependently in multi-disciplinary\nand multi-cultural teams;",
+        "pages": [
+          2
+        ]
+      },
+      "PO4": {
+        "raw": "PO4. Act in recognition of\nprofessional, social ethical\nresponsibility;",
+        "pages": [
+          2
+        ]
+      },
+      "PO5": {
+        "raw": "PO5. Preserve and promote\n“Filipino historical and cultural\nheritage;",
+        "pages": [
+          2
+        ]
+      },
+      "PO6": {
+        "raw": "PO6. Analyze complex problems,\nand identify and define the\ncomputing requirements needed to\ndesign and appropriate solution;",
+        "pages": [
+          2
+        ]
+      },
+      "PO7": {
+        "raw": "PO7. Apply computing and other\nknowledge domains to address\nreal-world problems;",
+        "pages": [
+          3
+        ]
+      },
+      "PO8": {
+        "raw": "PO8. Design and develop\ncomputing solutions using a\nsystem-level perspective;",
+        "pages": [
+          3
+        ]
+      },
+      "PO9": {
+        "raw": "PO9. Utilize modern computing\ntools.",
+        "pages": [
+          3
+        ]
+      },
+      "EGA1": {
+        "raw": "EGA 1: Critical and Creative thinker",
+        "pages": [
+          2
+        ]
+      },
+      "EGA2": {
+        "raw": "EGA 2: Competent Catholic Augustinian-\nMarian Professional",
+        "pages": [
+          2
+        ]
+      },
+      "EGA3": {
+        "raw": "EGA 3: Socially Responsive Steward",
+        "pages": [
+          2
+        ]
+      },
+      "EGA4": {
+        "raw": "EGA 4: Transformative Lifelong learner",
+        "pages": [
+          2
+        ]
+      },
+      "CLO1": {
+        "raw": "CLO1. Define and analyze the\ncomputing requirements needed for\nan effective solution that is essential\nfor developing holistic and impactful\nsolutions.\n[EGA 1,3,4] [PO 1,2,3,6,8]",
+        "pages": [
+          2
+        ]
+      },
+      "CLO2": {
+        "raw": "CLO2:  Incorporate ethical\nstandards and social responsibility\ninto technical designs, ensuring that\nsolutions serve the common good, in\nline with Marian and Augustinian\nprinciples of truth and compassion.\n\n[EGA 1,3,4] [PO 1,2,3,6,8]",
+        "pages": [
+          2
+        ]
+      },
+      "CLO3": {
+        "raw": "CLO3: Collaborate effectively within\nmulti-disciplinary and culturally\ndiverse teams to develop Java-\nbased programming solutions that\naddress social challenges,\ndemonstrating social responsibility\nand cultural sensitivity.\n[EGA 1,2,3,4] [PO 1,2,3,4,6,8,9]",
+        "pages": [
+          2,
+          3
+        ]
+      },
+      "CLO4": {
+        "raw": "CLO4. Demonstrate the Filipino-\nCatholic Augustinian Spirituality\nthrough value webbing.\n[EGA 2] [PO 4,5]",
+        "pages": [
+          3
+        ]
+      }
+    },
+    "plan": [
+      {
+        "week": "1",
+        "chunks": [
+          {
+            "page": 3,
+            "cells": [
+              "Week1",
+              "ILO 1:\nDemonstrate a clear\nunderstanding of the\ncourse structure,\nexpectations, and\nkey programming\nconcepts in Java,\nincluding how these\nskills align with real-\nworld IT challenges\nand professional\nethical standards.\n[CLO1]",
+              "I. Orientation\nA. Introduction to the\nCourse Contents\nB. Course\nRequirements and\nActivities\nC. Course Objectives\nGrading System and\nPolicies on Absences,\nTardiness and\nExaminations",
+              "• Setting and\nsharing of\nExpectations from\nthe Course\n• Discussion on the\nVision, Mission\nand Goals of\nLCUP and of CITE\n• Presentation of\nCourse Objectives\nand Contents,\nCourse\nRequirements and\nActivities\nReview of Policies on\nAbsences, Tardiness,",
+              "• Statement of\nExpectations\n• Review of Course\nContents,\nObjectives,\nActivities and\nAssessment Tools\n• Review of Policies\non Absences,\nTardiness,\nExaminations,\nGrading System",
+              "• Compassion\n• Courage\n• Open\nmindedness\n• Respect\n• Obedience"
+            ],
+            "box": [
+              45.142857687813894,
+              344.2950134277344,
+              755.9959790039062,
+              577.7750015258789
+            ]
+          },
+          {
+            "page": 4,
+            "cells": [
+              "",
+              "",
+              "",
+              "Examinations,\nGrading System",
+              "",
+              ""
+            ],
+            "box": [
+              45,
+              72.6300048828125,
+              756.1799621582031,
+              100.82998657226562
+            ]
+          }
+        ],
+        "pages": [
+          3,
+          4
+        ],
+        "cells": [
+          "Week1",
+          "ILO 1:\nDemonstrate a clear\nunderstanding of the\ncourse structure,\nexpectations, and\nkey programming\nconcepts in Java,\nincluding how these\nskills align with real-\nworld IT challenges\nand professional\nethical standards.\n[CLO1]",
+          "I. Orientation\nA. Introduction to the\nCourse Contents\nB. Course\nRequirements and\nActivities\nC. Course Objectives\nGrading System and\nPolicies on Absences,\nTardiness and\nExaminations",
+          "• Setting and\nsharing of\nExpectations from\nthe Course\n• Discussion on the\nVision, Mission\nand Goals of\nLCUP and of CITE\n• Presentation of\nCourse Objectives\nand Contents,\nCourse\nRequirements and\nActivities\nReview of Policies on\nAbsences, Tardiness,\nExaminations,\nGrading System",
+          "• Statement of\nExpectations\n• Review of Course\nContents,\nObjectives,\nActivities and\nAssessment Tools\n• Review of Policies\non Absences,\nTardiness,\nExaminations,\nGrading System",
+          "• Compassion\n• Courage\n• Open\nmindedness\n• Respect\n• Obedience"
+        ]
+      },
+      {
+        "week": "2",
+        "chunks": [
+          {
+            "page": 4,
+            "cells": [
+              "Week 2",
+              "LO1. Explain the\nbasic concepts and\nprinciples of Java\nprogramming,\n[CLO 1]",
+              "II. Introduction to\nJava Programming\n• A Brief History of\nJava language\n• Characteristics of\nJava Language\n• Reasons why\nprogrammers use\nJava language\nFeatures of Java\nProgramming",
+              "• Lecture-\nDiscussion/Recitat\nion using Power\nPoint Presentation\n• Video\nPresentation\n• Discovery\nLearning\n• Functioning\nKnowledge",
+              "• Brain Storming\n• Quiz\n• Assignment",
+              "• Self\nAwareness\n• Active\nparticipation\nand\ninvolvement\n• Courage\n• Humility\n• Analytical\nSkills"
+            ],
+            "box": [
+              45.12000045776367,
+              101.42999267578125,
+              755.993772309402,
+              343.8999938964844
+            ]
+          }
+        ],
+        "pages": [
+          4
+        ],
+        "cells": [
+          "Week 2",
+          "LO1. Explain the\nbasic concepts and\nprinciples of Java\nprogramming,\n[CLO 1]",
+          "II. Introduction to\nJava Programming\n• A Brief History of\nJava language\n• Characteristics of\nJava Language\n• Reasons why\nprogrammers use\nJava language\nFeatures of Java\nProgramming",
+          "• Lecture-\nDiscussion/Recitat\nion using Power\nPoint Presentation\n• Video\nPresentation\n• Discovery\nLearning\n• Functioning\nKnowledge",
+          "• Brain Storming\n• Quiz\n• Assignment",
+          "• Self\nAwareness\n• Active\nparticipation\nand\ninvolvement\n• Courage\n• Humility\n• Analytical\nSkills"
+        ]
+      },
+      {
+        "week": "3-4",
+        "chunks": [
+          {
+            "page": 4,
+            "cells": [
+              "Week 3-4",
+              "ILO1: Demonstrate\nthe skills by knowing\nthe syntax and\nsemantics of Java.\nof Language.\n[CLO 1,2]\nILO2: Ensures that\nstudents gain a\nfoundational\nunderstanding of\nJava and are able to\napply basic\nprogramming\nconcepts through\nhands-on practice.\n(CLO 2] [CLO 3]",
+              "III. The Basic\nInput/Output\nStatements of Java\nConsole\n• The Basic\nInput/Output\n• Variable\nDeclaration\n• Rules in declaring\nvariables,\n➢ Constants\n➢ Operators\n• Java Installation\nJava Eclipse GUI",
+              "• Discussion using\nPowerPoint\nPresentation\n• Discovery\nLearning\n• Functional\nKnowledge\n• Research Study\n• Demonstration",
+              "• Recitation\nGroup Participation\n•\n• Quiz\n• Machine Problem\n• Assignment",
+              "• Interiority\n• Work Ethics\n• Interpersonal\nSkills\n• Courage\n• Critical\nThinking\n• Courage\n•"
+            ],
+            "box": [
+              45.15000057220459,
+              344.2950134277344,
+              755.9917440975414,
+              580.7749996185303
+            ]
+          }
+        ],
+        "pages": [
+          4
+        ],
+        "cells": [
+          "Week 3-4",
+          "ILO1: Demonstrate\nthe skills by knowing\nthe syntax and\nsemantics of Java.\nof Language.\n[CLO 1,2]\nILO2: Ensures that\nstudents gain a\nfoundational\nunderstanding of\nJava and are able to\napply basic\nprogramming\nconcepts through\nhands-on practice.\n(CLO 2] [CLO 3]",
+          "III. The Basic\nInput/Output\nStatements of Java\nConsole\n• The Basic\nInput/Output\n• Variable\nDeclaration\n• Rules in declaring\nvariables,\n➢ Constants\n➢ Operators\n• Java Installation\nJava Eclipse GUI",
+          "• Discussion using\nPowerPoint\nPresentation\n• Discovery\nLearning\n• Functional\nKnowledge\n• Research Study\n• Demonstration",
+          "• Recitation\nGroup Participation\n•\n• Quiz\n• Machine Problem\n• Assignment",
+          "• Interiority\n• Work Ethics\n• Interpersonal\nSkills\n• Courage\n• Critical\nThinking\n• Courage\n•"
+        ]
+      },
+      {
+        "week": "4-5",
+        "chunks": [
+          {
+            "page": 5,
+            "cells": [
+              "Week 4-5",
+              "ILO 1: Inference\nread and write data\nusing Java streams\n[CLO 1] [CLO 2]\nILO 2 Acquire the\nnecessary skills and\nunderstanding of java\nmethods.\nILO4: Demonstrate\nthe skills by knowing\nthe syntax and\nsemantics of Java.\nof Language.\n[CLO 3]",
+              "IV. Java Libraries\nProgram\n• Parts of a Java\nprogram\n• The print and\nprintln function\nData type\n• Int (Integer)\n• Float\n• Double\n• Char\n• Reasons to\ndeclare variables",
+              "• Lecture-Discussion\nusing Power Point\npresentation\n• Seatwork\n• Laboratory\n• Machine Problem\nVideo Presentation",
+              "• Recitation\n• Quiz\nSimulation of the\nexternal and internal\nparts of the System\nUnit",
+              "• Understanding\n• Exactness\n• Patience\n• Critical\nThinking\n• Active\nparticipation\nand\ninvolvement\n• Critical\nThinking\n• Patience\n• Appreciation"
+            ],
+            "box": [
+              45.15000057220459,
+              72.6300048828125,
+              755.9899795532226,
+              322.8999938964844
+            ]
+          }
+        ],
+        "pages": [
+          5
+        ],
+        "cells": [
+          "Week 4-5",
+          "ILO 1: Inference\nread and write data\nusing Java streams\n[CLO 1] [CLO 2]\nILO 2 Acquire the\nnecessary skills and\nunderstanding of java\nmethods.\nILO4: Demonstrate\nthe skills by knowing\nthe syntax and\nsemantics of Java.\nof Language.\n[CLO 3]",
+          "IV. Java Libraries\nProgram\n• Parts of a Java\nprogram\n• The print and\nprintln function\nData type\n• Int (Integer)\n• Float\n• Double\n• Char\n• Reasons to\ndeclare variables",
+          "• Lecture-Discussion\nusing Power Point\npresentation\n• Seatwork\n• Laboratory\n• Machine Problem\nVideo Presentation",
+          "• Recitation\n• Quiz\nSimulation of the\nexternal and internal\nparts of the System\nUnit",
+          "• Understanding\n• Exactness\n• Patience\n• Critical\nThinking\n• Active\nparticipation\nand\ninvolvement\n• Critical\nThinking\n• Patience\n• Appreciation"
+        ]
+      },
+      {
+        "week": "6",
+        "chunks": [
+          {
+            "page": 5,
+            "cells": [
+              "Week 6",
+              "Review topics\ncovered by the\nexamination",
+              "PRELIM\nEXAMINATION",
+              "Examination on\nthe topics\ndiscussed during\nthe Prelim Term",
+              "Result of the\nExamination",
+              "• Skills and\nCompetencies\n• Critical\nThinking"
+            ],
+            "box": [
+              45.12000045776367,
+              323.30499267578125,
+              756.008549281529,
+              393.92999267578125
+            ]
+          }
+        ],
+        "pages": [
+          5
+        ],
+        "cells": [
+          "Week 6",
+          "Review topics\ncovered by the\nexamination",
+          "PRELIM\nEXAMINATION",
+          "Examination on\nthe topics\ndiscussed during\nthe Prelim Term",
+          "Result of the\nExamination",
+          "• Skills and\nCompetencies\n• Critical\nThinking"
+        ]
+      },
+      {
+        "week": "7-8",
+        "chunks": [
+          {
+            "page": 5,
+            "cells": [
+              "Week 7-8",
+              "ILO3: Understand the\nfundamentals of\nstructured logic using\ndecisions, loops, and\narray manipulation.\n[CLO 1] [CLO3]\nILO4: Be able to\napply conditional\nstatements in Java\nto control program\nflow based on\nspecific conditions,\nand write programs",
+              "V. . Conditional\nStatements\n• The Conditional\nStatements Syntax\n• If Statement\n• If Else Statement\nSwitch/case\nLanguage",
+              "• Discussion using\nPowerPoint\nPresentation\n• Video Presentation\n• Laboratory\nExercises:\nMachine Language\nGroup Dynamics",
+              "• Recitation\n• Seatwork on the\ntopics discussed\n• Laboratory Exercises",
+              "• Patience\n• Humility\n• Cooperation\n• Accuracy\n• Appreciation\n• Leadership\nSkills\n• Courage"
+            ],
+            "box": [
+              45.142857687813894,
+              394.5249938964844,
+              755.990235940004,
+              589.1749992370605
+            ]
+          },
+          {
+            "page": 6,
+            "cells": [
+              "",
+              "that make decisions\ndynamically\ndepending on user\ninput or computed\nvalues.\n[CLO 2] [CLO3]",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "box": [
+              45,
+              72.625,
+              756.1799621582031,
+              169.85000610351562
+            ]
+          }
+        ],
+        "pages": [
+          5,
+          6
+        ],
+        "cells": [
+          "Week 7-8",
+          "ILO3: Understand the\nfundamentals of\nstructured logic using\ndecisions, loops, and\narray manipulation.\n[CLO 1] [CLO3]\nILO4: Be able to\napply conditional\nstatements in Java\nto control program\nflow based on\nspecific conditions,\nand write programs\nthat make decisions\ndynamically\ndepending on user\ninput or computed\nvalues.\n[CLO 2] [CLO3]",
+          "V. . Conditional\nStatements\n• The Conditional\nStatements Syntax\n• If Statement\n• If Else Statement\nSwitch/case\nLanguage",
+          "• Discussion using\nPowerPoint\nPresentation\n• Video Presentation\n• Laboratory\nExercises:\nMachine Language\nGroup Dynamics",
+          "• Recitation\n• Seatwork on the\ntopics discussed\n• Laboratory Exercises",
+          "• Patience\n• Humility\n• Cooperation\n• Accuracy\n• Appreciation\n• Leadership\nSkills\n• Courage"
+        ]
+      },
+      {
+        "week": "9-11",
+        "chunks": [
+          {
+            "page": 6,
+            "cells": [
+              "Week 9-11",
+              "ILO1: Utilize various\nlooping constructs\n(for, while, do-while)\nin Java to execute\nrepeated tasks, and\ndesign programs that\nefficiently handle\nrepetitive processes\nand iterations,\nincorporating loops to\nsolve real-world\nproblems.\nCLO1 CLO2, CLO3\nILO2. Inference the\nstructured\nprogramming\nconcepts aCLOng\nwith the Java syntax\nto implement them.",
+              "XI. Looping\nStatements\n• Java Loops\n▪ For Loops\n▪ Do While Loop\n▪ Break/Continue",
+              "• Discussion using\nPowerPoint\nPresentation\n• Functioning\nKnowledge\n• Laboratory\nExercises.",
+              "•\nRecitation\n• Group Participation\n• Quiz\n• Machine Problem",
+              "• Critical\nThinking\n• Understanding\n• Precision\n• Accuracy\n• Appreciation\n• Humility"
+            ],
+            "box": [
+              45.142857687813894,
+              170.45001220703125,
+              755.9914079938616,
+              448.5500030517578
+            ]
+          }
+        ],
+        "pages": [
+          6
+        ],
+        "cells": [
+          "Week 9-11",
+          "ILO1: Utilize various\nlooping constructs\n(for, while, do-while)\nin Java to execute\nrepeated tasks, and\ndesign programs that\nefficiently handle\nrepetitive processes\nand iterations,\nincorporating loops to\nsolve real-world\nproblems.\nCLO1 CLO2, CLO3\nILO2. Inference the\nstructured\nprogramming\nconcepts aCLOng\nwith the Java syntax\nto implement them.",
+          "XI. Looping\nStatements\n• Java Loops\n▪ For Loops\n▪ Do While Loop\n▪ Break/Continue",
+          "• Discussion using\nPowerPoint\nPresentation\n• Functioning\nKnowledge\n• Laboratory\nExercises.",
+          "•\nRecitation\n• Group Participation\n• Quiz\n• Machine Problem",
+          "• Critical\nThinking\n• Understanding\n• Precision\n• Accuracy\n• Appreciation\n• Humility"
+        ]
+      },
+      {
+        "week": "12",
+        "chunks": [
+          {
+            "page": 6,
+            "cells": [
+              "Week 12",
+              "Review topics\ncovered by the\nexamination",
+              "MIDTERM\nEXAMINATION",
+              "Examination on\nthe topics\ndiscussed during\nthe Midterm Term",
+              "Result of the\nExamination",
+              "• Skills and\nCompetencies\n• Critical\nThinking"
+            ],
+            "box": [
+              45.12000045776367,
+              448.9499969482422,
+              756.008549281529,
+              514.75
+            ]
+          }
+        ],
+        "pages": [
+          6
+        ],
+        "cells": [
+          "Week 12",
+          "Review topics\ncovered by the\nexamination",
+          "MIDTERM\nEXAMINATION",
+          "Examination on\nthe topics\ndiscussed during\nthe Midterm Term",
+          "Result of the\nExamination",
+          "• Skills and\nCompetencies\n• Critical\nThinking"
+        ]
+      },
+      {
+        "week": "13",
+        "chunks": [
+          {
+            "page": 6,
+            "cells": [
+              "Week 13",
+              "ILO4: declare,\ninitialize, and\nmanipulate arrays in\nJava, effectively\nusing one-",
+              "X. . Array\n• Array\n• Example of Array\n• Two-Dimensional\nArrays syntax:",
+              "• Discussion using\nPower Point\nPresentation",
+              "•\nRecitation\n• Quiz",
+              "• Active\nparticipation\nand\ninvolvement"
+            ],
+            "box": [
+              45.12000045776367,
+              515.3499984741211,
+              756.0163407759233,
+              586.9750003814697
+            ]
+          },
+          {
+            "page": 7,
+            "cells": [
+              "",
+              "dimensional and\nmulti-dimensional\narrays to store,\nretrieve, and process\ndata in various\napplications\n[CLO1] [CLO2]\nILO6: Synthesize\nskills in De-bugging\nJava Language\nprogram.",
+              "",
+              "• Functioning\nknowledge\n• Discovery\nLearning\n• Quiz on the\ndiscussed topic\nLaboratory\nExercises",
+              "• Machine problem:\nHands-on exercises\nusing Java Console\nprograms",
+              "• Understanding\n• Compassion\nCritical Thinking"
+            ],
+            "box": [
+              45,
+              72.6300048828125,
+              756.010746882512,
+              225.48001098632812
+            ]
+          }
+        ],
+        "pages": [
+          6,
+          7
+        ],
+        "cells": [
+          "Week 13",
+          "ILO4: declare,\ninitialize, and\nmanipulate arrays in\nJava, effectively\nusing one-\ndimensional and\nmulti-dimensional\narrays to store,\nretrieve, and process\ndata in various\napplications\n[CLO1] [CLO2]\nILO6: Synthesize\nskills in De-bugging\nJava Language\nprogram.",
+          "X. . Array\n• Array\n• Example of Array\n• Two-Dimensional\nArrays syntax:",
+          "• Discussion using\nPower Point\nPresentation\n• Functioning\nknowledge\n• Discovery\nLearning\n• Quiz on the\ndiscussed topic\nLaboratory\nExercises",
+          "•\nRecitation\n• Quiz\n• Machine problem:\nHands-on exercises\nusing Java Console\nprograms",
+          "• Active\nparticipation\nand\ninvolvement\n• Understanding\n• Compassion\nCritical Thinking"
+        ]
+      },
+      {
+        "week": "14",
+        "chunks": [
+          {
+            "page": 7,
+            "cells": [
+              "Week 14",
+              "ILO1: Apply various\nstring manipulation\nmethods in Java.\n[CLO 1-2]\n.\nLO2: Synthesize\nskills in De-bugging\nJava Language\nprogram.\n[CLO2-3]",
+              "XIII. Strings\n• String Manipulation\n➢ Length()\n➢ charAt()\n➢ indexOf()\n➢ concat()\n➢ replace\n➢ ignorecase()\n➢ substring()",
+              "Lecture:\n• Discussion using\nPowerpoint\nPresentation\n• Quiz\n• Laboratory:\n:Exercises:\n➢ Machine\nProblem\n• Seatwork using\ntrial and error\ndiscovery learning",
+              "• Recitation\n• Quiz\n• Seatwork-Trial and\nError for discovery\nlearning\n• Accurate Program\noutput",
+              "• Critical\nThinking\n• Active\nparticipation\nand\ninvolvement\n• Open\nmindedness\n• Humility\n• Patience\n• Courage"
+            ],
+            "box": [
+              45.12000045776367,
+              226.07998657226562,
+              755.9910905626085,
+              424.3300018310547
+            ]
+          }
+        ],
+        "pages": [
+          7
+        ],
+        "cells": [
+          "Week 14",
+          "ILO1: Apply various\nstring manipulation\nmethods in Java.\n[CLO 1-2]\n.\nLO2: Synthesize\nskills in De-bugging\nJava Language\nprogram.\n[CLO2-3]",
+          "XIII. Strings\n• String Manipulation\n➢ Length()\n➢ charAt()\n➢ indexOf()\n➢ concat()\n➢ replace\n➢ ignorecase()\n➢ substring()",
+          "Lecture:\n• Discussion using\nPowerpoint\nPresentation\n• Quiz\n• Laboratory:\n:Exercises:\n➢ Machine\nProblem\n• Seatwork using\ntrial and error\ndiscovery learning",
+          "• Recitation\n• Quiz\n• Seatwork-Trial and\nError for discovery\nlearning\n• Accurate Program\noutput",
+          "• Critical\nThinking\n• Active\nparticipation\nand\ninvolvement\n• Open\nmindedness\n• Humility\n• Patience\n• Courage"
+        ]
+      },
+      {
+        "week": "15",
+        "chunks": [
+          {
+            "page": 7,
+            "cells": [
+              "Week 15",
+              "ILO4: Demonstrate\nthe skills by knowing\nthe syntax and\nsemantics of Java.\n[CLO1-2]\nILO5: Build robust\napplications using\nJava console code.\n[CLO 1-2]\nILO6: Synthesize\nskills in De-bugging",
+              "XII. JAVA METHOD\n• Java\nParameters\n• Object\nConnection\nJava Recursion",
+              "• Discussion using\nPower Point\nPresentation\n• Functioning\nknowledge\n• Blended Learning\n• Quiz on the\ndiscussed topic\n• Laboratory\nExercises",
+              "•\nRecitation\n• Quiz\n• Machine problem:\nHands-on exercises\nusing C programs",
+              "• Active\nparticipation\nand\ninvolvement\n• Understanding\n• Interiority\n• Courage\n• Critical\nThinking"
+            ],
+            "box": [
+              45.12000045776367,
+              424.9250030517578,
+              755.993772309402,
+              580.7749996185303
+            ]
+          },
+          {
+            "page": 8,
+            "cells": [
+              "",
+              "Java Language\nprogram.\n[CLO2-3]",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "box": [
+              45,
+              72.625,
+              756.0799713134766,
+              146.64999389648438
+            ]
+          }
+        ],
+        "pages": [
+          7,
+          8
+        ],
+        "cells": [
+          "Week 15",
+          "ILO4: Demonstrate\nthe skills by knowing\nthe syntax and\nsemantics of Java.\n[CLO1-2]\nILO5: Build robust\napplications using\nJava console code.\n[CLO 1-2]\nILO6: Synthesize\nskills in De-bugging\nJava Language\nprogram.\n[CLO2-3]",
+          "XII. JAVA METHOD\n• Java\nParameters\n• Object\nConnection\nJava Recursion",
+          "• Discussion using\nPower Point\nPresentation\n• Functioning\nknowledge\n• Blended Learning\n• Quiz on the\ndiscussed topic\n• Laboratory\nExercises",
+          "•\nRecitation\n• Quiz\n• Machine problem:\nHands-on exercises\nusing C programs",
+          "• Active\nparticipation\nand\ninvolvement\n• Understanding\n• Interiority\n• Courage\n• Critical\nThinking"
+        ]
+      },
+      {
+        "week": "16-17",
+        "chunks": [
+          {
+            "page": 8,
+            "cells": [
+              "Week 16-\n17",
+              "ILO1 Retreve data\nfrom a relational\ndatabase using java\nclass.\n[CLO 2-3]\nDemonstrate the\nFilipino-Catholic\nAugustinian\nSpirituality through\nvalue webbing.",
+              "X. JAVA DATABASE\nCONNECTION\n• Improvised\nDatabase\nUCanAccess\nConnection",
+              "• Discussion using\nPower Point\nPresentation\n• Quiz on the\ndiscussed topic\n• Cooperative\nLearning\n• Group Dynamics\nLaboratory\nExercises",
+              "•\nRecitation\n• Quiz\n• Groupings\n• Machine problem:\nHands-on exercises\nusing Java\nprograms",
+              "• Active\nparticipation\nand\ninvolvement\n• Understanding\n• Teamwork Skills\n• Courage\nCritical Thinking"
+            ],
+            "box": [
+              45.142857687813894,
+              147.04998779296875,
+              755.9959790039062,
+              300.1000061035156
+            ]
+          }
+        ],
+        "pages": [
+          8
+        ],
+        "cells": [
+          "Week 16-\n17",
+          "ILO1 Retreve data\nfrom a relational\ndatabase using java\nclass.\n[CLO 2-3]\nDemonstrate the\nFilipino-Catholic\nAugustinian\nSpirituality through\nvalue webbing.",
+          "X. JAVA DATABASE\nCONNECTION\n• Improvised\nDatabase\nUCanAccess\nConnection",
+          "• Discussion using\nPower Point\nPresentation\n• Quiz on the\ndiscussed topic\n• Cooperative\nLearning\n• Group Dynamics\nLaboratory\nExercises",
+          "•\nRecitation\n• Quiz\n• Groupings\n• Machine problem:\nHands-on exercises\nusing Java\nprograms",
+          "• Active\nparticipation\nand\ninvolvement\n• Understanding\n• Teamwork Skills\n• Courage\nCritical Thinking"
+        ]
+      },
+      {
+        "week": "18",
+        "chunks": [
+          {
+            "page": 8,
+            "cells": [
+              "Week 18",
+              "Review topics\ncovered by the\nexamination",
+              "FINALS\nEXAMINATION",
+              "Examination on\nthe topics\ndiscussed during\nthe Final Term",
+              "Result of the\nExamination",
+              "• Honesty\n• Integrity\nCritical Thinking"
+            ],
+            "box": [
+              45.12000045776367,
+              300.5050048828125,
+              756.010746882512,
+              374.72999572753906
+            ]
+          }
+        ],
+        "pages": [
+          8
+        ],
+        "cells": [
+          "Week 18",
+          "Review topics\ncovered by the\nexamination",
+          "FINALS\nEXAMINATION",
+          "Examination on\nthe topics\ndiscussed during\nthe Final Term",
+          "Result of the\nExamination",
+          "• Honesty\n• Integrity\nCritical Thinking"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "heading": "A. BOOKS",
+        "raw": "Burd, B. (2022). Java for dummies (Eighth edition). John Wiley & Sons, Inc. QA 76.73 J83 B87 2022\nBernard, M. (2022). Future skills: the 20 skills and competencies everyone needs to succeed in a digital world. John Wiley\n& Sons, Inc. T 65.3 M37 2022\nFarrell, J. (2019). Java programming. Cengage. QA 76.73 F37 2019",
+        "items": [
+          "Burd, B. (2022). Java for dummies (Eighth edition). John Wiley & Sons, Inc. QA 76.73 J83 B87 2022",
+          "Bernard, M. (2022). Future skills: the 20 skills and competencies everyone needs to succeed in a digital world. John Wiley\n& Sons, Inc. T 65.3 M37 2022",
+          "Farrell, J. (2019). Java programming. Cengage. QA 76.73 F37 2019"
+        ],
+        "builderGroup": "books",
+        "pages": [
+          9
+        ]
+      },
+      {
+        "heading": "B. INTERNET REFERENCES",
+        "raw": "Java Tutorial - W3Schools. https://www.w3schools.com/java/default.asp. Accessed 2 Aug. 2024.\nLearn Java | Codecademy. https://www.codecademy.com/learn/learn-java. Accessed 19 June. 2024.\nLearn Java Programming. https://www.programiz.com/java-programming . Accessed 16 February 2023\nJava Tutorial - Tutorialspoint. https://www.tutorialspoint.com/java/index.htm. Accessed 29 December. 2023\nJava tutorial: Learn Java Programming with examples. https://beginnersbook.com/java-tutorial-for-beginners-with-\nexample. Accessed 15, March, 2023.",
+        "items": [
+          "Java Tutorial - W3Schools. https://www.w3schools.com/java/default.asp. Accessed 2 Aug. 2024.",
+          "Learn Java | Codecademy. https://www.codecademy.com/learn/learn-java. Accessed 19 June. 2024.",
+          "Learn Java Programming. https://www.programiz.com/java-programming . Accessed 16 February 2023",
+          "Java Tutorial - Tutorialspoint. https://www.tutorialspoint.com/java/index.htm. Accessed 29 December. 2023",
+          "Java tutorial: Learn Java Programming with examples. https://beginnersbook.com/java-tutorial-for-beginners-with-\nexample. Accessed 15, March, 2023."
+        ],
+        "builderGroup": "online",
+        "pages": [
+          9
+        ]
+      },
+      {
+        "heading": "C. JOURNALS",
+        "raw": "Kok, A. J. et. Al., (2024). “ Analysis and Evaluation of a Searchable Exercise Repository for Training Java Programming”,\nInformatics in Education, 2024. DOI: 10.15388/infedu.2024.17\nPark J. et. Al., (2023). “ Static Analysis of JNI Programs via Binary Decompilation ” : IEEE Transactions on Software\nEngineering. https://doi.org/10.1109/tse.2023.3241639\nSyaifudin, Y.W. , Funabiki, N. , Kuribayashi, M. and Kao, W.-C. (2019), \"A proposal of Android Programming Learning\nAssistant System with implementation of basic application learning\", International Journal of Web Information Systems ,\nVol. 16 No. 1, pp. 115-135. https://doi.org/10.1108/IJWIS-08-2019-0038",
+        "items": [
+          "Kok, A. J. et. Al., (2024). “ Analysis and Evaluation of a Searchable Exercise Repository for Training Java Programming”,\nInformatics in Education, 2024. DOI: 10.15388/infedu.2024.17",
+          "Park J. et. Al., (2023). “ Static Analysis of JNI Programs via Binary Decompilation ” : IEEE Transactions on Software\nEngineering. https://doi.org/10.1109/tse.2023.3241639",
+          "Syaifudin, Y.W. , Funabiki, N. , Kuribayashi, M. and Kao, W.-C. (2019), \"A proposal of Android Programming Learning\nAssistant System with implementation of basic application learning\", International Journal of Web Information Systems ,\nVol. 16 No. 1, pp. 115-135. https://doi.org/10.1108/IJWIS-08-2019-0038"
+        ],
+        "builderGroup": "online",
+        "pages": [
+          9
+        ]
+      },
+      {
+        "heading": "D. ELECTRONICS",
+        "raw": "Java Eclipse IDE – Console/NetBeans\nQuizizz",
+        "items": [
+          "Java Eclipse IDE – Console/NetBeans",
+          "Quizizz"
+        ],
+        "builderGroup": "electronics",
+        "pages": [
+          9
+        ]
+      }
+    ]
+  },
+  "reviewNotes": [
+    "No PO-EGA crosswalk supplied; all PO.egas remain empty.",
+    "CLO level is an unsourced builder enum default (Introductory); no academic level judgment.",
+    "Whitespace and soft line wraps normalized in checker text. Original tokens, exact cell lines and page references retained in source/evidence.",
+    "No curriculum year or year level is printed; blank in source content.",
+    "EGA short labels are display metadata; exact master comparison can detect display differences.",
+    "p8 unlabelled value-webbing sentence split after ILO1, without copying its CLO tags; needs faculty confirmation.",
+    "Source Journals retained as a source category in evidence; projected to builder online because schema has no Journals group. No absent group is silently marked N/A."
+  ],
+  "readiness": {
+    "deterministic": true,
+    "aiEvaluation": false,
+    "reason": "Faculty semantics and institutional references unresolved; external transmission not authorized."
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "version": "lcup-v2-controlled-evaluation-1",
+  "approved": true,
+  "approvedBy": "JP Del Rosario",
+  "receiptId": "lcup-v2-smoke-2026-10-29-01",
+  "approvedAt": "2026-10-29T00:12:30Z",
+  "expiresAt": "2026-10-29T01:12:30Z",
+  "preparedHash": "61ca84192d21e28126b14b3f2a2480d0e9c466c13dc90d36fe1ae4cfa14ec09d",
+  "policyVersion": "academic-evaluation-v2-preview-1",
+  "scope": "smoke",
+  "model": "claude-sonnet-5-5",
+  "limits": {
+    "maxRequests": 3,
+    "maxInputTokens": 360000,
+    "maxInputTokensPerRequest": 120000,
+    "maxOutputTokens": 12288,
+    "maxOutputTokensPerRequest": 4096,
+    "maxCost": 1
+  },
+  "conditions": [
+    "Three-case smoke test only: BM1-IT202-096, BM1-IE402-074, BM1-CPE304-051.",
+    "At most 3 API requests and an estimated run cost of at most 1 USD.",
+    "No automatic retries.",
+    "No automatic execution of the 21-case pilot; the pilot needs its own approval and receipt.",
+    "No additional paid requests beyond this authorization.",
+    "Policy V2 stays inactive and nonofficial; no production database access; no commit, push or deploy."
+  ],
+  "note": "Written by Claude Code from JP Del Rosario's explicit in-session approval (2026-10-29) of the controlled three-case smoke test. The limits are tighter than the template's (3 requests instead of 6, 1 USD instead of 2); the token limits follow from 3 requests (3 x 120,000 input, 3 x 4,096 output). approvedAt is when this receipt was written."
+}

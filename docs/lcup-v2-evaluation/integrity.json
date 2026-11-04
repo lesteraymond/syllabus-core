@@ -1,0 +1,70 @@
+{
+  "headBefore": "68926cb392756c07bb0b999538d098d1038be368",
+  "headAfter": "68926cb392756c07bb0b999538d098d1038be368",
+  "filesCaptured": 1162,
+  "unchanged": 1154,
+  "changes": [
+    {
+      "file": "server/lib/syllabuscheck/academicPolicyV2.js",
+      "before": "0d9e57f40065f7c29743e7048fdf291dae3dd990c618837128f943ee6b8b5255",
+      "after": "015f668343274fb48fe64b883b98d09194233a5d1d9601a25990bc9404a36215"
+    },
+    {
+      "file": "server/lib/syllabuscheck/academicV2Plan.js",
+      "before": "2db9d5b57d678981b754b32bdfa41e772cd50600c064f56cad362745ea2be1c7",
+      "after": "2800c782657dcc5855de981dda41be0e11b32a61056a3995d6a35b45d86fc6f1"
+    },
+    {
+      "file": "server/lib/syllabuscheck/gemini.js",
+      "before": "32cb48a1b4753b4c19387beb44a745f3373d5abf1b2ba72f2b6e5765b7ce4fe8",
+      "after": "b747e32a9b8ea79227c44b048793b35e639619d8a2788286952efddbebec91ea"
+    },
+    {
+      "file": "src/lib/lessonAuthoring.js",
+      "before": "79030ebbc14a759c53c0a508ce59d1d3c9ea4470d0912813318dff2e8dfb988e",
+      "after": "ca0815e92274a7bbae206703af6f77e3f13c2a0321ef37ec8285101c0dd783a8"
+    },
+    {
+      "file": "server/lib/compliance/rules.js",
+      "before": "afbdf316e2974ab8784ea8e57b772f67e62080dd73fe6840905832d6bb33c4b4",
+      "after": "cf8177ca89f2b24b58dc3fd5325ded19384535e9a065b3221e2edfdd53ea9f40"
+    },
+    {
+      "file": "server/lib/compliance/service.js",
+      "before": "7062822402abe33b556cab321c8de8f7a0a843e3d7a65cda0b0b1fdb1553f3a4",
+      "after": "a467c51edf122cba468cfa39328f6f9d172f842a760105f46bcec7a39d375136"
+    },
+    {
+      "file": "server/lib/syllabusOutcomes.js",
+      "before": "9c089266ffccd54e01695abfc7783daaf5d1e2eccc682f14638ff5bd6e6d582a",
+      "after": "d2d8c9b4e966a91bf3365dc4f3ce76321b5a712e6716b57396df1915beb9858c"
+    },
+    {
+      "file": "src/lib/complianceRules.js",
+      "before": "6fc84e715d025438c66bea966b7bbf7b807d0c458df3eb1ad67dd6459e422cf8",
+      "after": "535ba95fa4122e6d280261dc7288091b681dab94dd51744c2e51c5135ec2d6cf"
+    }
+  ],
+  "protectedFilesChecked": 292,
+  "protectedFilesUnchanged": true,
+  "previousComprehensiveBaseline": {
+    "files": 1205,
+    "unchanged": 1197,
+    "changes": [
+      "server/lib/compliance/rules.js",
+      "server/lib/compliance/service.js",
+      "server/lib/syllabusOutcomes.js",
+      "server/lib/syllabuscheck/academicPolicyV2.js",
+      "server/lib/syllabuscheck/academicV2Plan.js",
+      "server/lib/syllabuscheck/gemini.js",
+      "src/lib/complianceRules.js",
+      "src/lib/lessonAuthoring.js"
+    ]
+  },
+  "originalComprehensiveEvidenceUnchanged": true,
+  "ruleCount": 47,
+  "passingMark": 79,
+  "productionDatabaseConnected": false,
+  "paidCalls": 0,
+  "disposableShutdown": true
+}

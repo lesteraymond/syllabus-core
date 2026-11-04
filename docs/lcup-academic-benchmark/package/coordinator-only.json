@@ -1,0 +1,256 @@
+{
+  "version": "lcup-academic-benchmark-1",
+  "benchmarkHash": "ebd12920a890971b8c7fb481cc6bc9b469ec7dd4c2001134f6833cc31009bbf7",
+  "notAnAnswerKey": true,
+  "constructionIntents": [
+    {
+      "contextId": "ctx-it202",
+      "sourceKind": "verified-syllabus",
+      "constructionIntent": "Unchanged source evidence; no presumed alignment",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "syllabus-it202"
+    },
+    {
+      "contextId": "ctx-ie402",
+      "sourceKind": "verified-syllabus",
+      "constructionIntent": "Unchanged source evidence; no presumed alignment",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "syllabus-ie402"
+    },
+    {
+      "contextId": "ctx-cpe304",
+      "sourceKind": "verified-syllabus",
+      "constructionIntent": "Unchanged source evidence; no presumed alignment",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "syllabus-cpe304"
+    },
+    {
+      "contextId": "ctx-S01",
+      "sourceKind": "synthetic",
+      "constructionIntent": "coherent-candidate",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSIT"
+    },
+    {
+      "caseId": "BM1-S01-025-C",
+      "constructionIntent": "Classification-meaning contrast; unchanged label set is not semantic proof.",
+      "facultyJudgment": null
+    },
+    {
+      "proposalId": "BM1-S01-005-P1",
+      "constructionIntent": "Grounded review candidate",
+      "facultyJudgment": null
+    },
+    {
+      "proposalId": "BM1-S01-005-P2",
+      "constructionIntent": "Unrelated correction candidate",
+      "facultyJudgment": null
+    },
+    {
+      "contextId": "ctx-S02",
+      "sourceKind": "synthetic",
+      "constructionIntent": "partial-scope-candidate",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSIT"
+    },
+    {
+      "contextId": "ctx-S03",
+      "sourceKind": "synthetic",
+      "constructionIntent": "unrelated-content-candidate",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSIT"
+    },
+    {
+      "contextId": "ctx-S04",
+      "sourceKind": "synthetic",
+      "constructionIntent": "incorrect-mapping-candidate",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSIT"
+    },
+    {
+      "contextId": "ctx-S05",
+      "sourceKind": "synthetic",
+      "constructionIntent": "ambiguous-candidate",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSIT"
+    },
+    {
+      "contextId": "ctx-S06",
+      "sourceKind": "synthetic",
+      "constructionIntent": "missing-evidence",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSIT"
+    },
+    {
+      "contextId": "ctx-S07",
+      "sourceKind": "synthetic",
+      "constructionIntent": "coherent-candidate",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSIT-CYBERSECURITY"
+    },
+    {
+      "caseId": "BM1-S07-025-C",
+      "constructionIntent": "Classification-meaning contrast; unchanged label set is not semantic proof.",
+      "facultyJudgment": null
+    },
+    {
+      "proposalId": "BM1-S07-005-P1",
+      "constructionIntent": "Grounded review candidate",
+      "facultyJudgment": null
+    },
+    {
+      "proposalId": "BM1-S07-005-P2",
+      "constructionIntent": "Unrelated correction candidate",
+      "facultyJudgment": null
+    },
+    {
+      "contextId": "ctx-S08",
+      "sourceKind": "synthetic",
+      "constructionIntent": "partial-scope-candidate",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSIT-CYBERSECURITY"
+    },
+    {
+      "contextId": "ctx-S09",
+      "sourceKind": "synthetic",
+      "constructionIntent": "unrelated-content-candidate",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSIT-CYBERSECURITY"
+    },
+    {
+      "contextId": "ctx-S10",
+      "sourceKind": "synthetic",
+      "constructionIntent": "incorrect-mapping-candidate",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSIT-CYBERSECURITY"
+    },
+    {
+      "contextId": "ctx-S11",
+      "sourceKind": "synthetic",
+      "constructionIntent": "ambiguous-candidate",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSIT-CYBERSECURITY"
+    },
+    {
+      "contextId": "ctx-S12",
+      "sourceKind": "synthetic",
+      "constructionIntent": "missing-evidence",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSIT-CYBERSECURITY"
+    },
+    {
+      "contextId": "ctx-S13",
+      "sourceKind": "synthetic",
+      "constructionIntent": "coherent-candidate",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSIE"
+    },
+    {
+      "caseId": "BM1-S13-025-C",
+      "constructionIntent": "Classification-meaning contrast; unchanged label set is not semantic proof.",
+      "facultyJudgment": null
+    },
+    {
+      "proposalId": "BM1-S13-005-P1",
+      "constructionIntent": "Grounded review candidate",
+      "facultyJudgment": null
+    },
+    {
+      "proposalId": "BM1-S13-005-P2",
+      "constructionIntent": "Unrelated correction candidate",
+      "facultyJudgment": null
+    },
+    {
+      "contextId": "ctx-S14",
+      "sourceKind": "synthetic",
+      "constructionIntent": "partial-scope-candidate",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSIE"
+    },
+    {
+      "contextId": "ctx-S15",
+      "sourceKind": "synthetic",
+      "constructionIntent": "unrelated-content-candidate",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSIE"
+    },
+    {
+      "contextId": "ctx-S16",
+      "sourceKind": "synthetic",
+      "constructionIntent": "incorrect-mapping-candidate",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSIE"
+    },
+    {
+      "contextId": "ctx-S17",
+      "sourceKind": "synthetic",
+      "constructionIntent": "ambiguous-candidate",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSIE"
+    },
+    {
+      "contextId": "ctx-S18",
+      "sourceKind": "synthetic",
+      "constructionIntent": "missing-evidence",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSIE"
+    },
+    {
+      "contextId": "ctx-S19",
+      "sourceKind": "synthetic",
+      "constructionIntent": "coherent-candidate",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSCPE"
+    },
+    {
+      "caseId": "BM1-S19-025-C",
+      "constructionIntent": "Classification-meaning contrast; unchanged label set is not semantic proof.",
+      "facultyJudgment": null
+    },
+    {
+      "proposalId": "BM1-S19-005-P1",
+      "constructionIntent": "Grounded review candidate",
+      "facultyJudgment": null
+    },
+    {
+      "proposalId": "BM1-S19-005-P2",
+      "constructionIntent": "Unrelated correction candidate",
+      "facultyJudgment": null
+    },
+    {
+      "contextId": "ctx-S20",
+      "sourceKind": "synthetic",
+      "constructionIntent": "partial-scope-candidate",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSCPE"
+    },
+    {
+      "contextId": "ctx-S21",
+      "sourceKind": "synthetic",
+      "constructionIntent": "unrelated-content-candidate",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSCPE"
+    },
+    {
+      "contextId": "ctx-S22",
+      "sourceKind": "synthetic",
+      "constructionIntent": "incorrect-mapping-candidate",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSCPE"
+    },
+    {
+      "contextId": "ctx-S23",
+      "sourceKind": "synthetic",
+      "constructionIntent": "ambiguous-candidate",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSCPE"
+    },
+    {
+      "contextId": "ctx-S24",
+      "sourceKind": "synthetic",
+      "constructionIntent": "missing-evidence",
+      "facultyJudgment": null,
+      "sourceSiblingGroup": "synthetic-domain-BSCPE"
+    }
+  ]
+}

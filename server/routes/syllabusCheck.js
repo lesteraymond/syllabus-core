@@ -185,7 +185,13 @@ router.post('/runs/:id/suggestions/:suggestionId/refine', wrap(async (req, res) 
   refining.add(req.app);
   try {
     const masters = await repo.mastersFor(req.app.locals.db, content, {syllabusId:syllabus.syllabus_id});
-    const out = await refine.refineSuggestion({ content, masters, report, suggestion });
+    const editedText = typeof req.body?.editedText === 'string' && req.body.editedText.trim() && req.body.editedText.length <= 10000
+      ? req.body.editedText.trim()
+      : null;
+    const effectiveSuggestion = editedText && typeof suggestion.replacement === 'string'
+      ? { ...suggestion, replacement: editedText, userEdited: editedText !== suggestion.replacement }
+      : suggestion;
+    const out = await refine.refineSuggestion({ content, masters, report, suggestion: effectiveSuggestion });
     if (out && out.status === 'verified') {
       const contextHash = relatedContextHash(content, masters, suggestion.path);
       out.verificationToken = createVerificationToken({

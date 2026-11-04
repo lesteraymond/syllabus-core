@@ -1,0 +1,767 @@
+{
+  "items": 6,
+  "runs": 1,
+  "answered": 6,
+  "invalid": 0,
+  "invalidRate": 0,
+  "notAttempted": 0,
+  "agreement": 1,
+  "falsePositiveRate": 0,
+  "falseNegativeRate": 0,
+  "counts": {
+    "clearAligned": 2,
+    "falsePositive": 0,
+    "clearNot": 4,
+    "falseNegative": 0
+  },
+  "confusion": {
+    "ALIGNED": {
+      "ALIGNED": 2,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "PARTIAL": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 1,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "FLAGGED": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 1,
+      "NOT_ALIGNED": 2,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    }
+  },
+  "partialAccuracy": 1,
+  "approvalAccuracy": 1,
+  "byDiscipline": {
+    "computing": {
+      "items": 5,
+      "answered": 5,
+      "agree": 5,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "engineering": {
+      "items": 1,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "byCategory": {
+    "wrong-method": {
+      "items": 2,
+      "answered": 2,
+      "agree": 2,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "limited-support": {
+      "items": 1,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "alternative-formats": {
+      "items": 1,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "wrong-cognitive-level": {
+      "items": 1,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "practical-vs-conceptual": {
+      "items": 1,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "stability": null,
+  "byType": {
+    "Activity-fit": {
+      "items": 5,
+      "answered": 5,
+      "agree": 5,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "Assessment-fit": {
+      "items": 1,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 0,
+      "agreement": 1
+    }
+  },
+  "disagreements": [],
+  "structuredFields": {
+    "answers": 6,
+    "withFields": 6,
+    "missing": 0,
+    "malformed": 0,
+    "contradictory": 0,
+    "notAssessed": 0,
+    "perField": {
+      "teaching": {
+        "assessed": 5,
+        "not_assessed": 0,
+        "missing": 0,
+        "malformed": 0,
+        "contradicted": 0,
+        "compared": 5,
+        "agree": 5
+      },
+      "learnerSupport": {
+        "assessed": 5,
+        "not_assessed": 0,
+        "missing": 0,
+        "malformed": 0,
+        "contradicted": 0,
+        "compared": 2,
+        "agree": 2
+      },
+      "measures": {
+        "assessed": 1,
+        "not_assessed": 0,
+        "missing": 0,
+        "malformed": 0,
+        "contradicted": 0,
+        "compared": 1,
+        "agree": 1
+      },
+      "evidence": {
+        "assessed": 1,
+        "not_assessed": 0,
+        "missing": 0,
+        "malformed": 0,
+        "contradicted": 0,
+        "compared": 0,
+        "agree": 0
+      },
+      "level": {
+        "assessed": 1,
+        "not_assessed": 0,
+        "missing": 0,
+        "malformed": 0,
+        "contradicted": 0,
+        "compared": 1,
+        "agree": 1
+      }
+    },
+    "note": "Expectations are provisional. Only an assessed field is compared with them: a field that was not assessed, missing, malformed or in a self-contradictory answer is counted by its state, never as agreement. INSUFFICIENT_EVIDENCE answers are left out."
+  },
+  "model": "openrouter/minimax/minimax-m3.1-flash",
+  "promptVersion": "alignment-12c1c2-r8",
+  "dataset": {
+    "name": "stage-c",
+    "version": "stage-c-2",
+    "split": "all",
+    "reviewStatus": "unreviewed",
+    "selection": {
+      "parentItems": 28,
+      "selectedIds": [
+        "af-prog1-passive",
+        "af-prog1-single-format",
+        "af-prog1-alternatives",
+        "af-sensors-passive",
+        "as-prog1-recall-quiz",
+        "af-prog1-conceptual-lecture-ok"
+      ]
+    }
+  },
+  "configuration": {
+    "stageFlags": {
+      "a": false,
+      "b": false,
+      "b3": false,
+      "b4": false,
+      "c1": true,
+      "c2": true,
+      "d1": false,
+      "d2": false
+    },
+    "promptVariant": "current",
+    "trim": false,
+    "minItems": false,
+    "timeoutMs": 90000
+  },
+  "batchReviews": [
+    {
+      "ids": [
+        "af-prog1-passive",
+        "af-prog1-single-format",
+        "af-prog1-alternatives",
+        "as-prog1-recall-quiz"
+      ],
+      "proceed": true,
+      "reason": null
+    },
+    {
+      "ids": [
+        "af-prog1-conceptual-lecture-ok"
+      ],
+      "proceed": true,
+      "reason": null
+    },
+    {
+      "ids": [
+        "af-sensors-passive"
+      ],
+      "proceed": true,
+      "reason": null
+    }
+  ],
+  "retries": {
+    "batches": 3,
+    "requests": 4,
+    "invalidAnswers": 1,
+    "finalUnverified": 0,
+    "providerErrors": 0,
+    "notSent": 0,
+    "retryRate": 0.333,
+    "invalidAnswerRate": 0.25
+  },
+  "relationshipMetrics": {
+    "planned": 6,
+    "attempted": 6,
+    "neverAttempted": 0,
+    "verified": 6,
+    "recovered": 4,
+    "unresolved": 0,
+    "unresolvedRate": 0,
+    "coverage": 1,
+    "attemptedShare": 1,
+    "firstAttempt": {
+      "answered": 6,
+      "refused": 4,
+      "validationFailureRate": 0.6667,
+      "noAnswerFirst": 0
+    },
+    "rawResponseErrors": {
+      "answers": 4,
+      "invalidAnswers": 1,
+      "refusedJudgements": 4,
+      "requestsWithoutAnswer": 0
+    },
+    "aspectCoverage": {
+      "byType": {
+        "Activity-fit": {
+          "relationships": 5,
+          "baseVerified": 5,
+          "baseAccepted": 5,
+          "notRecorded": 0,
+          "fields": {
+            "teaching": {
+              "assessed": 5,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "learnerSupport": {
+              "assessed": 5,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            }
+          }
+        },
+        "Assessment-fit": {
+          "relationships": 1,
+          "baseVerified": 1,
+          "baseAccepted": 1,
+          "notRecorded": 0,
+          "fields": {
+            "measures": {
+              "assessed": 1,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "evidence": {
+              "assessed": 1,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "level": {
+              "assessed": 1,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            }
+          }
+        }
+      },
+      "fieldsRequired": 13,
+      "fieldsAssessed": 13,
+      "rate": 1
+    }
+  },
+  "completion": {
+    "maxUnresolved": 0.2,
+    "unresolvedRate": 0,
+    "coverage": 1,
+    "stopped": null,
+    "state": "complete",
+    "usableForAgreement": true,
+    "reason": "every planned relationship was attempted; 0 of 6 remain unresolved (0%), within the 20% limit"
+  },
+  "schema": {
+    "minItems": false,
+    "emptyAnswers": 1,
+    "minItemsNotEnforced": false
+  },
+  "answerReview": {
+    "advisory": true,
+    "note": "Counts are heuristic review warnings, not verified academic errors. Labels, fields, validation and agreement are unchanged by these warnings.",
+    "counts": {
+      "explanationReview": {},
+      "draftReview": {
+        "assumes_resource": 1,
+        "copies_other_relationship": 1
+      },
+      "draftWarnings": {}
+    },
+    "flaggedAnswers": [
+      {
+        "run": 1,
+        "id": "af-prog1-single-format",
+        "draftReview": [
+          "assumes_resource",
+          "copies_other_relationship"
+        ],
+        "reviewEvidence": {
+          "explanation": [],
+          "draft": [
+            {
+              "code": "assumes_resource",
+              "evidence": "annotated code samples"
+            },
+            {
+              "code": "copies_other_relationship",
+              "evidence": "recorded demonstration and annotated code samples",
+              "from": "af-prog1-alternatives"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "limits": {
+    "budget": 27,
+    "maxCost": 0.03733556,
+    "maxTransient": 3,
+    "maxUnproductive": 3,
+    "maxUnresolved": 0.2,
+    "minSample": 4,
+    "warnInvalid": 2,
+    "maxInvalid": 3,
+    "accounting": "reconcile",
+    "maxTokens": "production (8192)"
+  },
+  "failures": [
+    {
+      "run": 1,
+      "course": "prog1",
+      "ids": [
+        "af-prog1-passive",
+        "af-prog1-single-format",
+        "af-prog1-alternatives",
+        "as-prog1-recall-quiz"
+      ],
+      "error": "AI omitted alignment judgements",
+      "code": "empty_answer",
+      "rejected": [
+        {
+          "id": "af-prog1-passive",
+          "reason": "not answered: the judgements list is empty",
+          "code": "empty_answer"
+        },
+        {
+          "id": "af-prog1-single-format",
+          "reason": "not answered: the judgements list is empty",
+          "code": "empty_answer"
+        },
+        {
+          "id": "af-prog1-alternatives",
+          "reason": "not answered: the judgements list is empty",
+          "code": "empty_answer"
+        },
+        {
+          "id": "as-prog1-recall-quiz",
+          "reason": "not answered: the judgements list is empty",
+          "code": "empty_answer"
+        }
+      ]
+    }
+  ],
+  "perItem": {
+    "af-prog1-passive": [
+      "NOT_ALIGNED"
+    ],
+    "af-prog1-single-format": [
+      "PARTIALLY_ALIGNED"
+    ],
+    "af-prog1-alternatives": [
+      "ALIGNED"
+    ],
+    "af-sensors-passive": [
+      "PARTIALLY_ALIGNED"
+    ],
+    "as-prog1-recall-quiz": [
+      "NOT_ALIGNED"
+    ],
+    "af-prog1-conceptual-lecture-ok": [
+      "ALIGNED"
+    ]
+  },
+  "ranAt": "2026-10-26T10:37:09.279Z",
+  "answers": [
+    {
+      "af-prog1-passive": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Develop and test Java programs that use if-else and switch statements to make decisions.",
+        "targetQuote": "Lecture on Java conditional statements using slides; students listen and copy the syntax.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The ILO requires learners to develop and test Java programs using if-else and switch, i.e. practical skill demonstration at Apply level. The only activity is a slide lecture in which students listen and copy syntax, which is passive and never practises writing or testing a program. Nothing in the activities develops the skill.",
+        "recommendation": null,
+        "draft": "- Lecture on Java conditional statements using slides, explaining the syntax of if, if-else, nested if and switch and the decision each expresses.\n- Guided coding exercise in which each student writes a short Java program that uses if-else and switch to make a decision, runs it, tests it with different inputs, and revises it after checking the output.",
+        "aspects": {
+          "values": {
+            "teaching": "weak",
+            "learnerSupport": "not_applicable",
+            "measures": "not_assessed",
+            "evidence": "not_assessed",
+            "level": "not_assessed",
+            "responsible": "activity"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "af-prog1-single-format": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Develop and test Java programs that use if-else and switch statements to make decisions.",
+        "targetQuote": "Individual timed coding test in which students write if-else programs from memory.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The activity does let students write if-else programs, so it practises the Apply-level action, but it is a single timed test from memory with no guidance, no opportunity to test or debug programs, and no alternative format for learners who cannot code under time pressure. The 'test' half of the ILO (develop and test) is not practised, and learner support is limited.",
+        "recommendation": null,
+        "draft": "- Individual coding exercise in which students write if-else and switch programs that make decisions, then run and test them with sample inputs and correct any errors; the exercise is untimed, and students may use the recorded demonstration and annotated code samples for review.",
+        "draftReview": [
+          "assumes_resource",
+          "copies_other_relationship"
+        ],
+        "reviewEvidence": {
+          "explanation": [],
+          "draft": [
+            {
+              "code": "assumes_resource",
+              "evidence": "annotated code samples"
+            },
+            {
+              "code": "copies_other_relationship",
+              "evidence": "recorded demonstration and annotated code samples",
+              "from": "af-prog1-alternatives"
+            }
+          ]
+        },
+        "aspects": {
+          "values": {
+            "teaching": "sound",
+            "learnerSupport": "limited",
+            "measures": "not_assessed",
+            "evidence": "not_assessed",
+            "level": "not_assessed",
+            "responsible": "activity"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "af-prog1-alternatives": {
+        "label": "ALIGNED",
+        "sourceQuote": "Develop and test Java programs that use if-else and switch statements to make decisions.",
+        "targetQuote": "Guided demonstration of if-else and switch in Java, then pair programming in the laboratory",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The demonstration plus pair programming in the laboratory lets learners actually write, run and test if-else and switch programs, matching the Apply-level practical ILO, and the recorded demonstration, annotated samples and solo-or-pair option provide adequate support.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": {
+          "values": {
+            "teaching": "sound",
+            "learnerSupport": "adequate",
+            "measures": "not_assessed",
+            "evidence": "not_assessed",
+            "level": "not_assessed",
+            "responsible": "none"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "as-prog1-recall-quiz": {
+        "label": "NOT_ALIGNED",
+        "sourceQuote": "Develop and test Java programs that use if-else and switch statements to make decisions.",
+        "targetQuote": "Ten-item multiple-choice quiz on Java conditional syntax.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The ILO requires evidence of developing and testing Java programs that use if-else and switch, an Apply-level practical performance. A ten-item multiple-choice quiz on syntax collects only recall evidence and cannot show that a learner wrote, ran or tested a decision program, so it measures a lower demand than the ILO states.",
+        "recommendation": null,
+        "draft": "- Practical programming task: each student writes a short Java program that uses if-else and switch to make decisions, runs it with several test inputs, and submits the source code together with the recorded outputs showing the decisions taken.",
+        "aspects": {
+          "values": {
+            "teaching": "not_assessed",
+            "learnerSupport": "not_assessed",
+            "measures": "no",
+            "evidence": "observable",
+            "level": "too_low",
+            "responsible": "assessment"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "af-prog1-conceptual-lecture-ok": {
+        "label": "ALIGNED",
+        "sourceQuote": "Explain the difference between if-else and switch statements.",
+        "targetQuote": "Lecture-discussion with worked examples, followed by a short class discussion of when each statement is used.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The lecture-discussion with worked examples and class discussion gives learners the explanations and guided reasoning needed to state the difference between if-else and switch statements.",
+        "recommendation": null,
+        "draft": "",
+        "aspects": {
+          "values": {
+            "teaching": "sound",
+            "learnerSupport": "adequate",
+            "measures": "not_assessed",
+            "evidence": "observable",
+            "level": "matches",
+            "responsible": "none"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "af-sensors-passive": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "Design and test an inverting amplifier with a specified gain.",
+        "targetQuote": "- Lecture on operational amplifiers.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The ILO requires a practical performance: 'Design and test an inverting amplifier with a specified gain' — the student must construct the circuit and test it, not merely hear about it. The only activity offered is '- Lecture on operational amplifiers.', which is passive listening and does not include any design or test practice, so the practical-competency demand is not developed. The lecture is a suitable conceptual support for the amplifier theory, so the gap is the missing guided design-and-test practice, not the lecture itself. The syllabus states 'lecture 3, laboratory 0', so no laboratory session is available for this lesson; the correction must therefore be conditional on faculty-confirmed availability of bench components and instrumentation, with a feasible alternative that still lets the student design and test the amplifier (for example a paper-based design and calculation of the inverting amplifier with specified gain, plus analysis of measured or simulated results) if bench access is not confirmed.",
+        "recommendation": null,
+        "draft": "- Lecture on operational amplifiers.\n- Guided design exercise: students design an inverting amplifier for a specified gain, calculate the required resistor values, and justify the choice of feedback and input resistors.\n- Guided test exercise: students test the designed amplifier and record and interpret the measured gain and bandwidth, comparing results with the design values (using bench components and instrumentation if faculty-confirmed available; otherwise a paper-based design with analysis of given or simulated measured values).",
+        "aspects": {
+          "values": {
+            "teaching": "weak",
+            "learnerSupport": "limited",
+            "measures": "not_assessed",
+            "evidence": "not_assessed",
+            "level": "not_assessed",
+            "responsible": "activity"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      }
+    }
+  ],
+  "usage": {
+    "requests": 25,
+    "thisRun": 6,
+    "model": 4,
+    "priceLookups": 1,
+    "keyChecks": 1,
+    "invalidAnswers": 2,
+    "unproductiveInARow": 0,
+    "transient": 1,
+    "promptTokens": 17044,
+    "completionTokens": 1451,
+    "cachedTokens": 9216,
+    "reportedCost": 0.00218304,
+    "charged": 0.0095186,
+    "accounting": {
+      "rule": "reconcile",
+      "requests": {
+        "reconciled": 4,
+        "conservative": 0,
+        "worst_case": 0,
+        "refused": 0
+      },
+      "chargedConservatively": 0.0243375
+    },
+    "warnings": [
+      "2 answer(s) have failed validation in whole or in part (the last: empty_answer: AI omitted alignment judgements); this is not a stop: the evaluation stops on the final unresolved rate of distinct relationships"
+    ],
+    "limits": {
+      "maxRequests": 27,
+      "maxCost": 0.03733556,
+      "maxTransient": 3,
+      "maxInvalid": 3,
+      "warnInvalid": 2,
+      "maxUnproductive": 3,
+      "maxTokens": null
+    },
+    "stopped": null
+  },
+  "keyCheck": {
+    "status": 200,
+    "ok": true,
+    "freeTier": true,
+    "limit": 250,
+    "limitRemaining": 249.98755309,
+    "usage": 0.01244691,
+    "expiresAt": "2026-11-25T04:44:27.996Z"
+  },
+  "requests": [
+    {
+      "n": 22,
+      "ids": [
+        "af-prog1-passive",
+        "af-prog1-single-format",
+        "af-prog1-alternatives",
+        "as-prog1-recall-quiz"
+      ],
+      "status": 200,
+      "ms": 1785,
+      "provider": "ModelRun",
+      "finishReason": "stop",
+      "usage": {
+        "promptTokens": 4387,
+        "completionTokens": 6,
+        "reasoningTokens": 0,
+        "cachedTokens": 4352,
+        "reportedCost": 0.00007413,
+        "costAtListPrices": 0.0013233
+      },
+      "accounting": "reconciled",
+      "charged": 0.00007413,
+      "conservativeCharge": 0.0013233,
+      "error": null,
+      "content": "{\"judgements\":[]}"
+    },
+    {
+      "n": 23,
+      "ids": [
+        "af-prog1-passive",
+        "af-prog1-single-format",
+        "af-prog1-alternatives",
+        "as-prog1-recall-quiz"
+      ],
+      "status": 200,
+      "ms": 1095,
+      "provider": "ModelRun",
+      "finishReason": "stop",
+      "usage": {
+        "promptTokens": 4569,
+        "completionTokens": 834,
+        "reasoningTokens": 0,
+        "cachedTokens": 4352,
+        "reportedCost": 0.00059823,
+        "costAtListPrices": 0.0023715
+      },
+      "accounting": "reconciled",
+      "charged": 0.00059823,
+      "conservativeCharge": 0.0023715,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"af-prog1-passive\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The ILO requires learners to develop and test Java programs using if-else and switch, i.e. practical skill demonstration at Apply level. The only activity is a slide lecture in which students listen and copy syntax, which is passive and never practises writing or testing a program. Nothing in the activities develops the skill.\",\"sourceQuote\":\"Develop and test Java programs that use if-else and switch statements to make decisions.\",\"targetQuote\":\"Lecture on Java conditional statements using slides; students listen and copy the syntax.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Remember\",\"draft\":\"- Lecture on Java conditional statements using slides, explaining the syntax of if, if-else, nested if and switch and the decision each expresses.\\n- Guided coding exercise in which each student writes a short Java program that uses if-else and switch to make a decision, runs it, tests it with different inputs, and revises it after checking the output.\",\"teaching\":\"weak\",\"learnerSupport\":\"not_applicable\",\"measures\":\"not_assessed\",\"evidence\":\"not_assessed\",\"level\":\"not_assessed\",\"responsible\":\"activity\"},{\"id\":\"af-prog1-single-format\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The activity does let students write if-else programs, so it practises the Apply-level action, but it is a single timed test from memory with no guidance, no opportunity to test or debug programs, and no alternative format for learners who cannot code under time pressure. The 'test' half of the ILO (develop and test) is not practised, and learner support is limited.\",\"sourceQuote\":\"Develop and test Java programs that use if-else and switch statements to make decisions.\",\"targetQuote\":\"Individual timed coding test in which students write if-else programs from memory.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"- Individual coding exercise in which students write if-else and switch programs that make decisions, then run and test them with sample inputs and correct any errors; the exercise is untimed, and students may use the recorded demonstration and annotated code samples for review.\",\"teaching\":\"sound\",\"learnerSupport\":\"limited\",\"measures\":\"not_assessed\",\"evidence\":\"not_assessed\",\"level\":\"not_assessed\",\"responsible\":\"activity\"},{\"id\":\"af-prog1-alternatives\",\"label\":\"ALIGNED\",\"explanation\":\"The demonstration plus pair programming in the laboratory lets learners actually write, run and test if-else and switch programs, matching the Apply-level practical ILO, and the recorded demonstration, annotated samples and solo-or-pair option provide adequate support.\",\"sourceQuote\":\"Develop and test Java programs that use if-else and switch statements to make decisions.\",\"targetQuote\":\"Guided demonstration of if-else and switch in Java, then pair programming in the laboratory\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Apply\",\"draft\":\"\",\"teaching\":\"sound\",\"learnerSupport\":\"adequate\",\"measures\":\"not_assessed\",\"evidence\":\"not_assessed\",\"level\":\"not_assessed\",\"responsible\":\"none\"},{\"id\":\"as-prog1-recall-quiz\",\"label\":\"NOT_ALIGNED\",\"explanation\":\"The ILO requires evidence of developing and testing Java programs that use if-else and switch, an Apply-level practical performance. A ten-item multiple-choice quiz on syntax collects only recall evidence and cannot show that a learner wrote, ran or tested a decision program, so it measures a lower demand than the ILO states.\",\"sourceQuote\":\"Develop and test Java programs that use if-else and switch statements to make decisions.\",\"targetQuote\":\"Ten-item multiple-choice quiz on Java conditional syntax.\",\"sourceBloom\":\"Apply\",\"targetBloom\":\"Remember\",\"draft\":\"- Practical programming task: each student writes a short Java program that uses if-else and switch to make decisions, runs it with several test inputs, and submits the source code together with the recorded outputs showing the decisions taken.\",\"teaching\":\"not_assessed\",\"learnerSupport\":\"not_assessed\",\"measures\":\"no\",\"evidence\":\"observable\",\"level\":\"too_low\",\"responsible\":\"assessment\"}]}"
+    },
+    {
+      "n": 24,
+      "ids": [
+        "af-prog1-conceptual-lecture-ok"
+      ],
+      "status": 200,
+      "ms": 2248,
+      "provider": "DigitalOcean",
+      "finishReason": "stop",
+      "usage": {
+        "promptTokens": 4044,
+        "completionTokens": 188,
+        "reasoningTokens": 0,
+        "cachedTokens": 384,
+        "reportedCost": 0.00066756,
+        "costAtListPrices": 0.0014388
+      },
+      "accounting": "reconciled",
+      "charged": 0.00066756,
+      "conservativeCharge": 0.0014388,
+      "error": null,
+      "content": "{\n  \"judgements\": [\n    {\n      \"draft\": \"\",\n      \"evidence\": \"observable\",\n      \"explanation\": \"The lecture-discussion with worked examples and class discussion gives learners the explanations and guided reasoning needed to state the difference between if-else and switch statements.\",\n      \"id\": \"af-prog1-conceptual-lecture-ok\",\n      \"label\": \"ALIGNED\",\n      \"learnerSupport\": \"adequate\",\n      \"level\": \"matches\",\n      \"measures\": \"not_assessed\",\n      \"responsible\": \"none\",\n      \"sourceBloom\": \"Understand\",\n      \"sourceQuote\": \"Explain the difference between if-else and switch statements.\",\n      \"targetBloom\": \"Understand\",\n      \"targetQuote\": \"Lecture-discussion with worked examples, followed by a short class discussion of when each statement is used.\",\n      \"teaching\": \"sound\"\n    }\n  ]\n}"
+    },
+    {
+      "n": 25,
+      "ids": [
+        "af-sensors-passive"
+      ],
+      "status": 200,
+      "ms": 943,
+      "provider": "Wafer",
+      "finishReason": "stop",
+      "usage": {
+        "promptTokens": 4044,
+        "completionTokens": 423,
+        "reasoningTokens": 0,
+        "cachedTokens": 128,
+        "reportedCost": 0.00084312,
+        "costAtListPrices": 0.0017208
+      },
+      "accounting": "reconciled",
+      "charged": 0.00084312,
+      "conservativeCharge": 0.0017208,
+      "error": null,
+      "content": "{\n  \"judgements\": [\n    {\n      \"id\": \"af-sensors-passive\",\n      \"label\": \"PARTIALLY_ALIGNED\",\n      \"explanation\": \"The ILO requires a practical performance: 'Design and test an inverting amplifier with a specified gain' — the student must construct the circuit and test it, not merely hear about it. The only activity offered is '- Lecture on operational amplifiers.', which is passive listening and does not include any design or test practice, so the practical-competency demand is not developed. The lecture is a suitable conceptual support for the amplifier theory, so the gap is the missing guided design-and-test practice, not the lecture itself. The syllabus states 'lecture 3, laboratory 0', so no laboratory session is available for this lesson; the correction must therefore be conditional on faculty-confirmed availability of bench components and instrumentation, with a feasible alternative that still lets the student design and test the amplifier (for example a paper-based design and calculation of the inverting amplifier with specified gain, plus analysis of measured or simulated results) if bench access is not confirmed.\",\n      \"sourceQuote\": \"Design and test an inverting amplifier with a specified gain.\",\n      \"targetQuote\": \"- Lecture on operational amplifiers.\",\n      \"sourceBloom\": \"Create\",\n      \"targetBloom\": \"Understand\",\n      \"draft\": \"- Lecture on operational amplifiers.\\n- Guided design exercise: students design an inverting amplifier for a specified gain, calculate the required resistor values, and justify the choice of feedback and input resistors.\\n- Guided test exercise: students test the designed amplifier and record and interpret the measured gain and bandwidth, comparing results with the design values (using bench components and instrumentation if faculty-confirmed available; otherwise a paper-based design with analysis of given or simulated measured values).\",\n      \"teaching\": \"weak\",\n      \"learnerSupport\": \"limited\",\n      \"measures\": \"not_assessed\",\n      \"evidence\": \"not_assessed\",\n      \"level\": \"not_assessed\",\n      \"responsible\": \"activity\"\n    }\n  ]\n}"
+    }
+  ],
+  "stopped": null,
+  "isolation": {
+    "dataModulesLoaded": [],
+    "processEnvStageFlags": [
+      "SYLLABUS_CHECK_STAGE_A",
+      "SYLLABUS_CHECK_STAGE_B",
+      "SYLLABUS_CHECK_STAGE_B3",
+      "SYLLABUS_CHECK_STAGE_B4",
+      "SYLLABUS_CHECK_STAGE_C1",
+      "SYLLABUS_CHECK_STAGE_C2",
+      "SYLLABUS_CHECK_STAGE_D1",
+      "SYLLABUS_CHECK_STAGE_D2"
+    ]
+  }
+}

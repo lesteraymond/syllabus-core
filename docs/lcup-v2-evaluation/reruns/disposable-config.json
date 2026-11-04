@@ -1,0 +1,9 @@
+{
+    "port":  43309,
+    "host":  "127.0.0.1",
+    "pid":  17144,
+    "taskRoot":  "C:\\Users\\JP Del Rosario\\Syllabus-Repository\\tmp\\lcup-comprehensive-verification-db-639288254491205333",
+    "password":  "lcup-comprehensive-test-only",
+    "user":  "root",
+    "datadir":  "C:\\Users\\JP Del Rosario\\Syllabus-Repository\\tmp\\lcup-comprehensive-verification-db-639288254491205333\\data"
+}

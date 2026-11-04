@@ -1,0 +1,458 @@
+{
+  "stage": "E.3 smoke (Phase 1)",
+  "ranAt": "2026-10-25T07:32:22.860Z",
+  "mode": "live",
+  "model": "openrouter/minimax/minimax-m3.1-flash",
+  "promptVersion": "alignment-12ab34c1c2d1d2-r4",
+  "variant": "current",
+  "promptSha256": "cf78e71331c82b8f013f530d16ca0c438cc60d30d5531f90c1231cdd31cc0a95",
+  "promptTrimmed": false,
+  "stagesOnInThisProcessOnly": {
+    "a": true,
+    "b": true,
+    "b3": true,
+    "b4": true,
+    "c1": true,
+    "c2": true,
+    "d1": true,
+    "d2": true
+  },
+  "limits": {
+    "maxRequests": 10,
+    "maxCost": 0.01,
+    "maxTokens": "production (8192)",
+    "sequential": true
+  },
+  "stopped": "cost cap: $0 already charged + $0.0202902 worst case of the next request > $0.01",
+  "prices": {
+    "prompt": 3e-7,
+    "completion": 0.0000012,
+    "reasoning": 0,
+    "request": 0,
+    "cacheWrite": 0,
+    "endpoints": [
+      {
+        "provider": "Relace",
+        "status": 0,
+        "prompt": 9e-8,
+        "completion": 5e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "InferenceNet",
+        "status": 0,
+        "prompt": 1e-7,
+        "completion": 5.5e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "InferenceNet",
+        "status": -2,
+        "prompt": 1e-7,
+        "completion": 5.5e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "GMICloud",
+        "status": 0,
+        "prompt": 1.425e-7,
+        "completion": 5.7e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.425e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "DigitalOcean",
+        "status": 0,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Novita",
+        "status": 0,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "Nebius",
+        "status": 0,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Wafer",
+        "status": 0,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "ModelRun",
+        "status": 0,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Parasail",
+        "status": 0,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Together",
+        "status": 0,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Minimax",
+        "status": 0,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "SambaNova",
+        "status": 0,
+        "prompt": 3e-7,
+        "completion": 0.0000012,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 3e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      }
+    ],
+    "readAt": "2026-10-25T07:32:22.857Z"
+  },
+  "requests": {
+    "total": 1,
+    "model": 0,
+    "priceLookups": 1,
+    "attemptsSent": 0,
+    "retries": 0
+  },
+  "responses": {
+    "verified": 0,
+    "invalid": 0,
+    "errors": 0,
+    "schemaProblems": 0,
+    "truncated": 0
+  },
+  "usage": {
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "reasoningTokens": 0,
+    "cachedTokens": 0,
+    "reportedCost": 0,
+    "charged": 0
+  },
+  "items": [
+    {
+      "id": "cc-prog1-offsubject",
+      "course": "prog1",
+      "type": "Course-CLO",
+      "dataset": "stage-a@stage-a-2",
+      "category": "off-subject",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "NOT_ALIGNED"
+      ],
+      "why": "A computing competence of a different course (databases); the description does not support it.",
+      "verdict": "NOT VERIFIED",
+      "matchesProvisional": null,
+      "schemaValid": null,
+      "evidence": null,
+      "recommendation": {
+        "status": "not verified"
+      },
+      "aspects": null,
+      "bloom": null,
+      "explanation": null,
+      "attempts": [
+        1
+      ],
+      "retries": 0,
+      "verifiedInRequest": null
+    },
+    {
+      "id": "cp-bsit-wrongpo",
+      "course": "prog1",
+      "type": "CLO-PO",
+      "dataset": "stage-a@stage-a-2",
+      "category": "wrong-po-mapping",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "NOT_ALIGNED"
+      ],
+      "why": "A programming outcome mapped to the PO on Filipino historical and cultural heritage: an incorrect mapping.",
+      "verdict": "NOT VERIFIED",
+      "matchesProvisional": null,
+      "schemaValid": null,
+      "evidence": null,
+      "recommendation": {
+        "status": "not verified"
+      },
+      "aspects": null,
+      "bloom": null,
+      "explanation": null,
+      "attempts": [
+        1
+      ],
+      "retries": 0,
+      "verifiedInRequest": null
+    },
+    {
+      "id": "wi-prog1-aligned",
+      "course": "prog1",
+      "type": "Content-ILO",
+      "dataset": "stage-b@stage-b-1",
+      "category": "clear-positive",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "ALIGNED"
+      ],
+      "why": "Observable performance on exactly this week's content.",
+      "verdict": "NOT VERIFIED",
+      "matchesProvisional": null,
+      "schemaValid": null,
+      "evidence": null,
+      "recommendation": {
+        "status": "not verified"
+      },
+      "aspects": null,
+      "bloom": null,
+      "explanation": null,
+      "attempts": [
+        1
+      ],
+      "retries": 0,
+      "verifiedInRequest": null
+    },
+    {
+      "id": "ic-prog1-wrongclo",
+      "course": "prog1",
+      "type": "ILO-CLO",
+      "dataset": "stage-b3@stage-b3-1",
+      "category": "wrong-clo",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "PARTIALLY_ALIGNED",
+        "NOT_ALIGNED"
+      ],
+      "why": "A sound ILO, but it builds CLO 1, not the values CLO 4.",
+      "verdict": "NOT VERIFIED",
+      "matchesProvisional": null,
+      "schemaValid": null,
+      "evidence": null,
+      "recommendation": {
+        "status": "not verified"
+      },
+      "aspects": null,
+      "bloom": null,
+      "explanation": null,
+      "attempts": [
+        1
+      ],
+      "retries": 0,
+      "verifiedInRequest": null
+    },
+    {
+      "id": "af-prog1-good",
+      "course": "prog1",
+      "type": "Activity-fit",
+      "dataset": "stage-c@stage-c-2",
+      "category": "clear-positive",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "ALIGNED"
+      ],
+      "why": "Hands-on practice of the ILO verb, a demonstration and scaffolding.",
+      "verdict": "NOT VERIFIED",
+      "matchesProvisional": null,
+      "schemaValid": null,
+      "evidence": null,
+      "recommendation": {
+        "status": "not verified"
+      },
+      "aspects": null,
+      "bloom": null,
+      "explanation": null,
+      "attempts": [
+        1
+      ],
+      "retries": 0,
+      "verifiedInRequest": null
+    },
+    {
+      "id": "as-prog1-recall-quiz",
+      "course": "prog1",
+      "type": "Assessment-fit",
+      "dataset": "stage-c@stage-c-2",
+      "category": "wrong-cognitive-level",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "PARTIALLY_ALIGNED",
+        "NOT_ALIGNED"
+      ],
+      "why": "A recall quiz does not show that students can develop and test a program.",
+      "verdict": "NOT VERIFIED",
+      "matchesProvisional": null,
+      "schemaValid": null,
+      "evidence": null,
+      "recommendation": {
+        "status": "not verified"
+      },
+      "aspects": null,
+      "bloom": null,
+      "explanation": null,
+      "attempts": [
+        1
+      ],
+      "retries": 0,
+      "verifiedInRequest": null
+    },
+    {
+      "id": "vu-prog1-name-only",
+      "course": "prog1",
+      "type": "Value-use",
+      "dataset": "stage-d1@stage-d1-1",
+      "category": "name-only",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "PARTIALLY_ALIGNED",
+        "NOT_ALIGNED"
+      ],
+      "why": "A bare value name says nothing about what students do.",
+      "verdict": "NOT VERIFIED",
+      "matchesProvisional": null,
+      "schemaValid": null,
+      "evidence": null,
+      "recommendation": {
+        "status": "not verified"
+      },
+      "aspects": null,
+      "bloom": null,
+      "explanation": null,
+      "attempts": [
+        1
+      ],
+      "retries": 0,
+      "verifiedInRequest": null
+    },
+    {
+      "id": "rr-prog1-relevant",
+      "course": "prog1",
+      "type": "Ref-relevance",
+      "dataset": "stage-d2@stage-d2-1",
+      "category": "clear-positive",
+      "reviewStatus": "unreviewed",
+      "provisional": [
+        "ALIGNED"
+      ],
+      "why": "The title concerns the course subject.",
+      "verdict": "NOT VERIFIED",
+      "matchesProvisional": null,
+      "schemaValid": null,
+      "evidence": null,
+      "recommendation": {
+        "status": "not verified"
+      },
+      "aspects": null,
+      "bloom": null,
+      "explanation": null,
+      "attempts": [
+        1
+      ],
+      "retries": 0,
+      "verifiedInRequest": null
+    }
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "course": "prog1",
+      "batch": "prog1#1",
+      "ids": [
+        "cc-prog1-offsubject",
+        "cp-bsit-wrongpo",
+        "wi-prog1-aligned",
+        "ic-prog1-wrongclo",
+        "af-prog1-good",
+        "as-prog1-recall-quiz",
+        "vu-prog1-name-only",
+        "rr-prog1-relevant"
+      ],
+      "outcome": "not sent",
+      "error": "not sent: cost cap: $0 already charged + $0.0202902 worst case of the next request > $0.01",
+      "request": null,
+      "verifiedIds": []
+    }
+  ],
+  "http": [
+    {
+      "n": 1,
+      "kind": "price-lookup",
+      "at": "2026-10-25T07:32:22.285Z",
+      "ms": 552,
+      "status": 200
+    }
+  ],
+  "isolation": {
+    "forbiddenModulesLoaded": [],
+    "processEnvStageFlags": []
+  },
+  "note": "Expected verdicts are provisional (developer-written, unreviewed by faculty). A match is not faculty-verified accuracy, and an answer that was never verified is not a PASS."
+}

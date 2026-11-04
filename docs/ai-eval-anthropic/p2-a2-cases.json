@@ -1,0 +1,4237 @@
+{
+ "about": "Derived, read-only record of the P2 A2 evaluation (Claude Sonnet 5.5, mode A legacy) for comparison with B2 on the same academic cases. Agreement is with provisional, developer-written verdicts (unreviewed), not faculty-validated accuracy. Built offline from the files below; the result and ledger themselves are unchanged.",
+ "builtAt": "2026-10-27T19:12:46.174Z",
+ "sources": {
+  "result": {
+   "file": "docs/ai-eval-anthropic/p2-a2-result.json",
+   "sha256": "082284ac04284ac15cdfa5d80bad1f159e4b62bcf109a2e0179f7dc4ee0dd12e"
+  },
+  "ledger": {
+   "file": "docs/ai-eval-anthropic/p2-a2-ledger.json",
+   "sha256": "23709c09c1ef83b9535db1e48b04c36ed1c4d6d631b34b0e9538f36d59caec58"
+  },
+  "dataset": {
+   "file": "server/lib/syllabuscheck/eval/alignment-dataset.json",
+   "version": "align-1",
+   "sha256": "ab282a107df8c73b6e7e21e60fd990c86837055577bbb5a4cc7758bd62095801",
+   "split": "dev",
+   "items": 58,
+   "heldoutExcluded": 42
+  }
+ },
+ "evaluation": {
+  "provider": "anthropic",
+  "model": "anthropic/claude-sonnet-5-5",
+  "modelsReturned": {
+   "claude-sonnet-5-5": 18
+  },
+  "promptVersion": "alignment-10",
+  "mode": {
+   "id": "A",
+   "name": "legacy academic alignment benchmark",
+   "stagesOn": [],
+   "recommendationField": false
+  },
+  "configuration": {
+   "stageFlags": {
+    "a": false,
+    "b": false,
+    "b3": false,
+    "b4": false,
+    "c1": false,
+    "c2": false,
+    "d1": false,
+    "d2": false
+   },
+   "promptVariant": "current",
+   "trim": false,
+   "minItems": false,
+   "timeoutMs": 180000,
+   "anthropic": {
+    "model": "claude-sonnet-5-5",
+    "thinking": "adaptive",
+    "thinkingParameter": {
+     "type": "adaptive"
+    },
+    "effort": "high",
+    "maxTokens": 16000,
+    "maxRetries": 2,
+    "promptCache": true,
+    "evaluationOnly": true
+   }
+  },
+  "runs": 2,
+  "ranAt": "2026-10-27T19:11:27.945Z",
+  "evaluationOnly": true,
+  "limits": {
+   "budget": 40,
+   "maxCost": 1.4,
+   "maxTransient": 3,
+   "maxUnproductive": 37,
+   "maxUnresolved": 0.2,
+   "minSample": 8,
+   "warnInvalid": 16,
+   "maxInvalid": 3,
+   "accounting": "reconcile",
+   "maxTokens": 16000,
+   "totalCap": 1.903157,
+   "spendRegister": "docs\\ai-eval-anthropic\\spend-register.json",
+   "maxOutputTokens": null
+  },
+  "completion": {
+   "maxUnresolved": 0.2,
+   "unresolvedRate": 0,
+   "coverage": 1,
+   "stopped": null,
+   "state": "complete",
+   "usableForAgreement": true,
+   "reason": "every planned relationship was attempted; 0 of 116 remain unresolved (0%), within the 20% limit"
+  },
+  "stopped": null,
+  "retries": {
+   "batches": 18,
+   "requests": 18,
+   "invalidAnswers": 0,
+   "finalUnverified": 0,
+   "providerErrors": 0,
+   "notSent": 0,
+   "retryRate": 0,
+   "invalidAnswerRate": 0
+  },
+  "relationshipMetrics": {
+   "planned": 116,
+   "attempted": 116,
+   "neverAttempted": 0,
+   "verified": 116,
+   "recovered": 0,
+   "unresolved": 0,
+   "unresolvedRate": 0,
+   "coverage": 1,
+   "attemptedShare": 1,
+   "firstAttempt": {
+    "answered": 116,
+    "refused": 0,
+    "validationFailureRate": 0,
+    "noAnswerFirst": 0
+   },
+   "rawResponseErrors": {
+    "answers": 18,
+    "invalidAnswers": 0,
+    "refusedJudgements": 0,
+    "requestsWithoutAnswer": 0
+   },
+   "aspectCoverage": null
+  }
+ },
+ "agreement": {
+  "strict": {
+   "answers": 66,
+   "agree": 48,
+   "rate": 0.727
+  },
+  "permissive": {
+   "answers": 116,
+   "agree": 96,
+   "rate": 0.828
+  },
+  "falseApprovals": {
+   "clearNotAligned": 52,
+   "judgedAligned": 0,
+   "rate": 0,
+   "ids": []
+  },
+  "falseRejections": {
+   "clearAligned": 50,
+   "judgedOtherwise": 18,
+   "rate": 0.36,
+   "byLabel": {
+    "PARTIALLY_ALIGNED": 16,
+    "NOT_ALIGNED": 2
+   },
+   "ids": [
+    "clo-po-prog-interdisciplinary#1",
+    "d-po-01#1",
+    "d-po-01#2",
+    "d-po-03#1",
+    "d-po-03#2",
+    "d-po-05#1",
+    "d-po-05#2",
+    "d-po-07#1",
+    "d-po-07#2",
+    "d-po-09#1",
+    "d-po-09#2",
+    "d-ega-03#1",
+    "d-ilo-01#1",
+    "d-ilo-01#2",
+    "d-ilo-10#1",
+    "d-ilo-10#2",
+    "d-any-po-01#2",
+    "d-any-po-03#2"
+   ]
+  },
+  "stability": 0.931
+ },
+ "usage": {
+  "operations": {
+   "requests": 18,
+   "latencyMs": {
+    "answers": 18,
+    "median": 9192,
+    "p90": 25381,
+    "max": 28425
+   },
+   "tokens": {
+    "input": 12724,
+    "cacheWrite": 3728,
+    "cacheRead": 63376,
+    "output": 27811,
+    "thinking": 3477,
+    "thinkingReports": {
+     "nonzero": 2,
+     "zero": 16,
+     "unavailable": 0
+    }
+   },
+   "estimatedCost": 0.3192156,
+   "notEstimated": 0,
+   "chargedByGuard": 0.3255532,
+   "estimatedPerVerifiedRelationship": 0.00275186
+  },
+  "adapter": {
+   "requests": 18,
+   "attempts": 18,
+   "timedOut": 0,
+   "inputTokens": 12724,
+   "outputTokens": 27811,
+   "thinkingTokens": 3477,
+   "cacheCreationInputTokens": 3728,
+   "cacheReadInputTokens": 63376,
+   "thinkingReports": {
+    "nonzero": 2,
+    "zero": 16,
+    "unavailable": 0
+   },
+   "stopReasons": {
+    "end_turn": 18
+   },
+   "enumCaseOnly": 0,
+   "estimatedUsd": 0.3192156,
+   "priceAsOf": "2026-10-27"
+  },
+  "guard": {
+   "charged": 0.3255532,
+   "conservative": 0.525448,
+   "requests": 18,
+   "invalid": 0,
+   "transient": 0,
+   "outputTokens": 27811
+  },
+  "prices": {
+   "provider": "anthropic",
+   "model": "claude-sonnet-5-5",
+   "asOf": "2026-10-27",
+   "geoFactor": 1.1,
+   "input": 0.000002,
+   "output": 0.00001,
+   "cacheRead": 2.0000000000000002e-7,
+   "listedCacheRead": 1.0000000000000001e-7,
+   "cacheWrite5m": 0.0000025,
+   "cacheWrite1h": 0.000004
+  }
+ },
+ "requests": [
+  {
+   "n": 1,
+   "run": 1,
+   "retry": false,
+   "ids": [
+    "clo-po-calc-aligned",
+    "clo-po-calc-lower-level",
+    "clo-po-calc-unrelated",
+    "clo-po-calc-vague",
+    "ilo-clo-calc-aligned",
+    "ilo-clo-claims-more",
+    "ilo-clo-unrelated",
+    "d-po-01",
+    "d-po-02",
+    "d-ega-01",
+    "d-ega-02",
+    "d-ega-04"
+   ],
+   "status": 200,
+   "ms": 28425,
+   "requestId": "req_011CgTGUjtdSCZA28mWDBgrF",
+   "modelReturned": "claude-sonnet-5-5",
+   "stopReason": "end_turn",
+   "thinkingBlocks": 1,
+   "errorType": null,
+   "tokens": {
+    "input": 1106,
+    "cacheWrite": 3728,
+    "cacheRead": 0,
+    "output": 4030,
+    "thinking": 1742
+   },
+   "inferenceGeo": "global",
+   "estimatedCost": 0.051832,
+   "worstReserved": 0.21925475,
+   "charged": 0.051832,
+   "conservativeCharge": 0.0576235,
+   "accounting": "reconciled"
+  },
+  {
+   "n": 2,
+   "run": 1,
+   "retry": false,
+   "ids": [
+    "d-ega-06",
+    "d-ilo-01",
+    "d-ilo-12",
+    "d-any-po-01",
+    "d-any-po-02",
+    "d-any-po-03",
+    "d-any-ega-02",
+    "d-ilo-14"
+   ],
+   "status": 200,
+   "ms": 12171,
+   "requestId": "req_011CgTGWpz29vzpRHT789X6L",
+   "modelReturned": "claude-sonnet-5-5",
+   "stopReason": "end_turn",
+   "thinkingBlocks": 0,
+   "errorType": null,
+   "tokens": {
+    "input": 1129,
+    "cacheWrite": 0,
+    "cacheRead": 3728,
+    "output": 1843,
+    "thinking": 0
+   },
+   "inferenceGeo": "global",
+   "estimatedCost": 0.0210608,
+   "worstReserved": 0.219604,
+   "charged": 0.0214336,
+   "conservativeCharge": 0.03362975,
+   "accounting": "reconciled"
+  },
+  {
+   "n": 3,
+   "run": 1,
+   "retry": false,
+   "ids": [
+    "d-ilo-13"
+   ],
+   "status": 200,
+   "ms": 1639,
+   "requestId": "req_011CgTGXj4rDp77LXYwujCwQ",
+   "modelReturned": "claude-sonnet-5-5",
+   "stopReason": "end_turn",
+   "thinkingBlocks": 0,
+   "errorType": null,
+   "tokens": {
+    "input": 188,
+    "cacheWrite": 0,
+    "cacheRead": 3728,
+    "output": 142,
+    "thinking": 0
+   },
+   "inferenceGeo": "global",
+   "estimatedCost": 0.0021688,
+   "worstReserved": 0.21230825,
+   "charged": 0.0025416,
+   "conservativeCharge": 0.012331,
+   "accounting": "reconciled"
+  },
+  {
+   "n": 4,
+   "run": 1,
+   "retry": false,
+   "ids": [
+    "clo-po-prog-aligned",
+    "clo-po-prog-lower-level",
+    "clo-po-prog-two-skills",
+    "clo-po-prog-interdisciplinary",
+    "clo-ega-aligned",
+    "clo-ega-unrelated",
+    "ilo-clo-prog-aligned",
+    "d-po-03",
+    "d-po-04",
+    "d-ega-08",
+    "d-ilo-02",
+    "d-ilo-03"
+   ],
+   "status": 200,
+   "ms": 13531,
+   "requestId": "req_011CgTGXrEDPdRZsTTXkwJ5X",
+   "modelReturned": "claude-sonnet-5-5",
+   "stopReason": "end_turn",
+   "thinkingBlocks": 0,
+   "errorType": null,
+   "tokens": {
+    "input": 1123,
+    "cacheWrite": 0,
+    "cacheRead": 3728,
+    "output": 2232,
+    "thinking": 0
+   },
+   "inferenceGeo": "global",
+   "estimatedCost": 0.0249388,
+   "worstReserved": 0.21976075,
+   "charged": 0.0253116,
+   "conservativeCharge": 0.03789225,
+   "accounting": "reconciled"
+  },
+  {
+   "n": 5,
+   "run": 1,
+   "retry": false,
+   "ids": [
+    "d-any-ega-01"
+   ],
+   "status": 200,
+   "ms": 2000,
+   "requestId": "req_011CgTGYqv9B3vfcZvemBhL7",
+   "modelReturned": "claude-sonnet-5-5",
+   "stopReason": "end_turn",
+   "thinkingBlocks": 0,
+   "errorType": null,
+   "tokens": {
+    "input": 246,
+    "cacheWrite": 0,
+    "cacheRead": 3728,
+    "output": 175,
+    "thinking": 0
+   },
+   "inferenceGeo": "global",
+   "estimatedCost": 0.0026148,
+   "worstReserved": 0.2125805,
+   "charged": 0.0029876,
+   "conservativeCharge": 0.0128535,
+   "accounting": "reconciled"
+  },
+  {
+   "n": 6,
+   "run": 1,
+   "retry": false,
+   "ids": [
+    "clo-po-nurs-aligned",
+    "clo-po-nurs-unrelated",
+    "d-po-05",
+    "d-po-06",
+    "d-po-12",
+    "d-ega-03",
+    "d-ega-07",
+    "d-ilo-04",
+    "d-ilo-05",
+    "d-po-13",
+    "d-ilo-15"
+   ],
+   "status": 200,
+   "ms": 14635,
+   "requestId": "req_011CgTGYzXoB1GSL3p2MRoQF",
+   "modelReturned": "claude-sonnet-5-5",
+   "stopReason": "end_turn",
+   "thinkingBlocks": 0,
+   "errorType": null,
+   "tokens": {
+    "input": 1120,
+    "cacheWrite": 0,
+    "cacheRead": 3728,
+    "output": 2293,
+    "thinking": 0
+   },
+   "inferenceGeo": "global",
+   "estimatedCost": 0.0255428,
+   "worstReserved": 0.2195325,
+   "charged": 0.0259156,
+   "conservativeCharge": 0.038555,
+   "accounting": "reconciled"
+  },
+  {
+   "n": 7,
+   "run": 1,
+   "retry": false,
+   "ids": [
+    "d-po-07",
+    "d-po-08",
+    "d-ega-05",
+    "d-ilo-06",
+    "d-ilo-07",
+    "d-po-14"
+   ],
+   "status": 200,
+   "ms": 9459,
+   "requestId": "req_011CgTGa59Pxr8mbhWVat1Lm",
+   "modelReturned": "claude-sonnet-5-5",
+   "stopReason": "end_turn",
+   "thinkingBlocks": 0,
+   "errorType": null,
+   "tokens": {
+    "input": 619,
+    "cacheWrite": 0,
+    "cacheRead": 3728,
+    "output": 1363,
+    "thinking": 0
+   },
+   "inferenceGeo": "global",
+   "estimatedCost": 0.0152408,
+   "worstReserved": 0.21566875,
+   "charged": 0.0156136,
+   "conservativeCharge": 0.02694725,
+   "accounting": "reconciled"
+  },
+  {
+   "n": 8,
+   "run": 1,
+   "retry": false,
+   "ids": [
+    "d-po-09",
+    "d-po-10",
+    "d-ilo-08",
+    "d-ilo-09"
+   ],
+   "status": 200,
+   "ms": 7082,
+   "requestId": "req_011CgTGamaVxhHHduvQC2nd7",
+   "modelReturned": "claude-sonnet-5-5",
+   "stopReason": "end_turn",
+   "thinkingBlocks": 0,
+   "errorType": null,
+   "tokens": {
+    "input": 460,
+    "cacheWrite": 0,
+    "cacheRead": 3728,
+    "output": 961,
+    "thinking": 0
+   },
+   "inferenceGeo": "global",
+   "estimatedCost": 0.0109028,
+   "worstReserved": 0.21446425,
+   "charged": 0.0112756,
+   "conservativeCharge": 0.022088,
+   "accounting": "reconciled"
+  },
+  {
+   "n": 9,
+   "run": 1,
+   "retry": false,
+   "ids": [
+    "d-po-11",
+    "d-ilo-10",
+    "d-ilo-11"
+   ],
+   "status": 200,
+   "ms": 5611,
+   "requestId": "req_011CgTGbHvNdSKMKDj8gRXLv",
+   "modelReturned": "claude-sonnet-5-5",
+   "stopReason": "end_turn",
+   "thinkingBlocks": 0,
+   "errorType": null,
+   "tokens": {
+    "input": 371,
+    "cacheWrite": 0,
+    "cacheRead": 3728,
+    "output": 731,
+    "thinking": 0
+   },
+   "inferenceGeo": "global",
+   "estimatedCost": 0.0084248,
+   "worstReserved": 0.2136145,
+   "charged": 0.0087976,
+   "conservativeCharge": 0.01931325,
+   "accounting": "reconciled"
+  },
+  {
+   "n": 10,
+   "run": 2,
+   "retry": false,
+   "ids": [
+    "clo-po-calc-aligned",
+    "clo-po-calc-lower-level",
+    "clo-po-calc-unrelated",
+    "clo-po-calc-vague",
+    "ilo-clo-calc-aligned",
+    "ilo-clo-claims-more",
+    "ilo-clo-unrelated",
+    "d-po-01",
+    "d-po-02",
+    "d-ega-01",
+    "d-ega-02",
+    "d-ega-04"
+   ],
+   "status": 200,
+   "ms": 25381,
+   "requestId": "req_011CgTGbhwFLxn1caCMjfKtR",
+   "modelReturned": "claude-sonnet-5-5",
+   "stopReason": "end_turn",
+   "thinkingBlocks": 1,
+   "errorType": null,
+   "tokens": {
+    "input": 1106,
+    "cacheWrite": 0,
+    "cacheRead": 3728,
+    "output": 4091,
+    "thinking": 1735
+   },
+   "inferenceGeo": "global",
+   "estimatedCost": 0.0434948,
+   "worstReserved": 0.21925475,
+   "charged": 0.0438676,
+   "conservativeCharge": 0.0582945,
+   "accounting": "reconciled"
+  },
+  {
+   "n": 11,
+   "run": 2,
+   "retry": false,
+   "ids": [
+    "d-ega-06",
+    "d-ilo-01",
+    "d-ilo-12",
+    "d-any-po-01",
+    "d-any-po-02",
+    "d-any-po-03",
+    "d-any-ega-02",
+    "d-ilo-14"
+   ],
+   "status": 200,
+   "ms": 15281,
+   "requestId": "req_011CgTGdbPQR2dMBi3x2C5Pk",
+   "modelReturned": "claude-sonnet-5-5",
+   "stopReason": "end_turn",
+   "thinkingBlocks": 0,
+   "errorType": null,
+   "tokens": {
+    "input": 1129,
+    "cacheWrite": 0,
+    "cacheRead": 3728,
+    "output": 2365,
+    "thinking": 0
+   },
+   "inferenceGeo": "global",
+   "estimatedCost": 0.0262808,
+   "worstReserved": 0.219604,
+   "charged": 0.0266536,
+   "conservativeCharge": 0.03937175,
+   "accounting": "reconciled"
+  },
+  {
+   "n": 12,
+   "run": 2,
+   "retry": false,
+   "ids": [
+    "d-ilo-13"
+   ],
+   "status": 200,
+   "ms": 1607,
+   "requestId": "req_011CgTGeiQrDw9HFjg1mQkgV",
+   "modelReturned": "claude-sonnet-5-5",
+   "stopReason": "end_turn",
+   "thinkingBlocks": 0,
+   "errorType": null,
+   "tokens": {
+    "input": 188,
+    "cacheWrite": 0,
+    "cacheRead": 3728,
+    "output": 152,
+    "thinking": 0
+   },
+   "inferenceGeo": "global",
+   "estimatedCost": 0.0022688,
+   "worstReserved": 0.21230825,
+   "charged": 0.0026416,
+   "conservativeCharge": 0.012441,
+   "accounting": "reconciled"
+  },
+  {
+   "n": 13,
+   "run": 2,
+   "retry": false,
+   "ids": [
+    "clo-po-prog-aligned",
+    "clo-po-prog-lower-level",
+    "clo-po-prog-two-skills",
+    "clo-po-prog-interdisciplinary",
+    "clo-ega-aligned",
+    "clo-ega-unrelated",
+    "ilo-clo-prog-aligned",
+    "d-po-03",
+    "d-po-04",
+    "d-ega-08",
+    "d-ilo-02",
+    "d-ilo-03"
+   ],
+   "status": 200,
+   "ms": 12652,
+   "requestId": "req_011CgTGerm9rgGuc3RUC5KUK",
+   "modelReturned": "claude-sonnet-5-5",
+   "stopReason": "end_turn",
+   "thinkingBlocks": 0,
+   "errorType": null,
+   "tokens": {
+    "input": 1123,
+    "cacheWrite": 0,
+    "cacheRead": 3728,
+    "output": 2104,
+    "thinking": 0
+   },
+   "inferenceGeo": "global",
+   "estimatedCost": 0.0236588,
+   "worstReserved": 0.21976075,
+   "charged": 0.0240316,
+   "conservativeCharge": 0.03648425,
+   "accounting": "reconciled"
+  },
+  {
+   "n": 14,
+   "run": 2,
+   "retry": false,
+   "ids": [
+    "d-any-ega-01"
+   ],
+   "status": 200,
+   "ms": 2044,
+   "requestId": "req_011CgTGfmYQDEEKX2JupdAUa",
+   "modelReturned": "claude-sonnet-5-5",
+   "stopReason": "end_turn",
+   "thinkingBlocks": 0,
+   "errorType": null,
+   "tokens": {
+    "input": 246,
+    "cacheWrite": 0,
+    "cacheRead": 3728,
+    "output": 177,
+    "thinking": 0
+   },
+   "inferenceGeo": "global",
+   "estimatedCost": 0.0026348,
+   "worstReserved": 0.2125805,
+   "charged": 0.0030076,
+   "conservativeCharge": 0.0128755,
+   "accounting": "reconciled"
+  },
+  {
+   "n": 15,
+   "run": 2,
+   "retry": false,
+   "ids": [
+    "clo-po-nurs-aligned",
+    "clo-po-nurs-unrelated",
+    "d-po-05",
+    "d-po-06",
+    "d-po-12",
+    "d-ega-03",
+    "d-ega-07",
+    "d-ilo-04",
+    "d-ilo-05",
+    "d-po-13",
+    "d-ilo-15"
+   ],
+   "status": 200,
+   "ms": 14450,
+   "requestId": "req_011CgTGfvHGKU4csN9rcgjaL",
+   "modelReturned": "claude-sonnet-5-5",
+   "stopReason": "end_turn",
+   "thinkingBlocks": 0,
+   "errorType": null,
+   "tokens": {
+    "input": 1120,
+    "cacheWrite": 0,
+    "cacheRead": 3728,
+    "output": 2147,
+    "thinking": 0
+   },
+   "inferenceGeo": "global",
+   "estimatedCost": 0.0240828,
+   "worstReserved": 0.2195325,
+   "charged": 0.0244556,
+   "conservativeCharge": 0.036949,
+   "accounting": "reconciled"
+  },
+  {
+   "n": 16,
+   "run": 2,
+   "retry": false,
+   "ids": [
+    "d-po-07",
+    "d-po-08",
+    "d-ega-05",
+    "d-ilo-06",
+    "d-ilo-07",
+    "d-po-14"
+   ],
+   "status": 200,
+   "ms": 9192,
+   "requestId": "req_011CgTGgz9hmHjQe9HVkX6sF",
+   "modelReturned": "claude-sonnet-5-5",
+   "stopReason": "end_turn",
+   "thinkingBlocks": 0,
+   "errorType": null,
+   "tokens": {
+    "input": 619,
+    "cacheWrite": 0,
+    "cacheRead": 3728,
+    "output": 1317,
+    "thinking": 0
+   },
+   "inferenceGeo": "global",
+   "estimatedCost": 0.0147808,
+   "worstReserved": 0.21566875,
+   "charged": 0.0151536,
+   "conservativeCharge": 0.02644125,
+   "accounting": "reconciled"
+  },
+  {
+   "n": 17,
+   "run": 2,
+   "retry": false,
+   "ids": [
+    "d-po-09",
+    "d-po-10",
+    "d-ilo-08",
+    "d-ilo-09"
+   ],
+   "status": 200,
+   "ms": 7434,
+   "requestId": "req_011CgTGhfTbJ8xBcHKVnvV9p",
+   "modelReturned": "claude-sonnet-5-5",
+   "stopReason": "end_turn",
+   "thinkingBlocks": 0,
+   "errorType": null,
+   "tokens": {
+    "input": 460,
+    "cacheWrite": 0,
+    "cacheRead": 3728,
+    "output": 1017,
+    "thinking": 0
+   },
+   "inferenceGeo": "global",
+   "estimatedCost": 0.0114628,
+   "worstReserved": 0.21446425,
+   "charged": 0.0118356,
+   "conservativeCharge": 0.022704,
+   "accounting": "reconciled"
+  },
+  {
+   "n": 18,
+   "run": 2,
+   "retry": false,
+   "ids": [
+    "d-po-11",
+    "d-ilo-10",
+    "d-ilo-11"
+   ],
+   "status": 200,
+   "ms": 6240,
+   "requestId": "req_011CgTGiDMyjTeC8qk98bVdt",
+   "modelReturned": "claude-sonnet-5-5",
+   "stopReason": "end_turn",
+   "thinkingBlocks": 0,
+   "errorType": null,
+   "tokens": {
+    "input": 371,
+    "cacheWrite": 0,
+    "cacheRead": 3728,
+    "output": 671,
+    "thinking": 0
+   },
+   "inferenceGeo": "global",
+   "estimatedCost": 0.0078248,
+   "worstReserved": 0.2136145,
+   "charged": 0.0081976,
+   "conservativeCharge": 0.01865325,
+   "accounting": "reconciled"
+  }
+ ],
+ "cases": [
+  {
+   "id": "clo-po-calc-aligned",
+   "type": "CLO-PO",
+   "course": "calc",
+   "category": "clear-positive",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Same action, same discipline, same level.",
+   "origin": "eval-1.1",
+   "source": "Apply knowledge of mathematics and science to solve complex engineering problems.",
+   "target": "Apply differentiation rules to solve optimization problems in engineering.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Apply knowledge of mathematics",
+     "targetQuote": "solve optimization problems in engineering",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "The CLO applies differentiation to engineering optimization problems, matching the PO's apply and solve verbs and its engineering subject.",
+     "validationFailures": [],
+     "requests": [
+      1
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Apply knowledge of mathematics and science",
+     "targetQuote": "Apply differentiation rules to solve optimization problems in engineering",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "The CLO applies differentiation to engineering optimization, which matches the PO's apply-mathematics-to-engineering-problems.",
+     "validationFailures": [],
+     "requests": [
+      10
+     ]
+    }
+   ]
+  },
+  {
+   "id": "clo-po-calc-lower-level",
+   "type": "CLO-PO",
+   "course": "calc",
+   "category": "level-gap",
+   "ambiguous": false,
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Recall-level outcome against a design-level outcome.",
+   "origin": "eval-1.1",
+   "source": "Design solutions for complex engineering problems that meet specified needs.",
+   "target": "Define the derivative of a function.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Design solutions for complex engineering problems",
+     "targetQuote": "Define the derivative of a function.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Remember",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Design a solution to an engineering problem that meets specified needs by applying derivatives, such as dimensioning a container of minimum material cost.",
+     "explanation": "The PO asks to design solutions that meet specified needs (Create). The CLO only defines a derivative (Remember), so it has no design verb, sits far below the required level, and contains no engineering problem or specified needs.",
+     "validationFailures": [],
+     "requests": [
+      1
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Design solutions for complex engineering problems that meet specified needs",
+     "targetQuote": "Define the derivative of a function",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Remember",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Design solutions to engineering problems that meet specified needs by applying derivatives, such as determining the dimensions of a container that minimize material cost within given constraints.",
+     "explanation": "The PO asks for designing solutions to meet specified needs (Create), but the CLO only defines a term (Remember). It has no design verb, is far below the PO's Bloom level, and has no engineering problem or specified needs.",
+     "validationFailures": [],
+     "requests": [
+      10
+     ]
+    }
+   ]
+  },
+  {
+   "id": "clo-po-calc-unrelated",
+   "type": "CLO-PO",
+   "course": "calc",
+   "category": "clear-negative",
+   "ambiguous": false,
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Nothing about communication.",
+   "origin": "eval-1.1",
+   "source": "Communicate effectively with a range of audiences.",
+   "target": "Evaluate limits of rational functions.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Communicate effectively with a range of audiences.",
+     "targetQuote": "Evaluate limits of rational functions.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Evaluate",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Evaluate limits of rational functions and communicate the steps and results effectively in written and oral form to peers and non-specialist audiences.",
+     "explanation": "The PO is about communicating with different audiences. The CLO is about computing limits of rational functions. It has no communication verb, no audience, and a different subject.",
+     "validationFailures": [],
+     "requests": [
+      1
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Communicate effectively with a range of audiences",
+     "targetQuote": "Evaluate limits of rational functions",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Evaluate",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Communicate the evaluation of limits of rational functions clearly to technical and non-technical audiences using correct notation, graphs and written explanations.",
+     "explanation": "The PO is about communicating effectively with different audiences. The CLO is about evaluating limits of rational functions, so it has no communication verb, no audience and a different subject.",
+     "validationFailures": [],
+     "requests": [
+      10
+     ]
+    }
+   ]
+  },
+  {
+   "id": "clo-po-calc-vague",
+   "type": "CLO-PO",
+   "course": "calc",
+   "category": "level-gap",
+   "ambiguous": false,
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "No action or object that can be compared.",
+   "origin": "eval-1.1",
+   "source": "Apply knowledge of mathematics and science to solve complex engineering problems.",
+   "target": "Understand calculus.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "solve complex engineering problems",
+     "targetQuote": "Understand calculus.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Understand",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply limits and derivatives to solve engineering problems.",
+     "explanation": "\"Understand calculus\" is vague. It lacks the PO's verbs apply and solve. Its Bloom level (Understand) is below Apply. It names no engineering problems and no specific calculus content such as limits or derivatives.",
+     "validationFailures": [],
+     "requests": [
+      1
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Apply knowledge of mathematics and science to solve complex engineering problems",
+     "targetQuote": "Understand calculus",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Understand",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply the concepts of limits, continuity and derivatives to solve engineering problems.",
+     "explanation": "The CLO only shares the topic of mathematics with the PO. 'Understand' is below the PO's Apply level. It does not say what is understood, and it has no engineering problems or solving.",
+     "validationFailures": [],
+     "requests": [
+      10
+     ]
+    }
+   ]
+  },
+  {
+   "id": "clo-po-prog-aligned",
+   "type": "CLO-PO",
+   "course": "prog",
+   "category": "clear-positive",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Design and implement are both present, same discipline.",
+   "origin": "eval-1.1",
+   "source": "Design and implement computing-based solutions to meet desired needs.",
+   "target": "Design, implement and test object-oriented programs that solve given problems.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Design and implement computing-based solutions",
+     "targetQuote": "Design, implement and test object-oriented programs",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Create",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "The CLO has design and implement, adds test, and addresses the same subject of solving problems with programs.",
+     "validationFailures": [],
+     "requests": [
+      4
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Design and implement computing-based solutions",
+     "targetQuote": "Design, implement and test object-oriented programs",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Create",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "The CLO has design and implement, and adds test, in the same computing-solutions subject.",
+     "validationFailures": [],
+     "requests": [
+      13
+     ]
+    }
+   ]
+  },
+  {
+   "id": "clo-po-prog-lower-level",
+   "type": "CLO-PO",
+   "course": "prog",
+   "category": "level-gap",
+   "ambiguous": false,
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Remember-level against design and evaluate.",
+   "origin": "eval-1.1",
+   "source": "Design and evaluate computing solutions for real problems.",
+   "target": "List the keywords of the programming language.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Design and evaluate computing solutions for real problems.",
+     "targetQuote": "List the keywords of the programming language.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Evaluate",
+     "targetBloom": "Remember",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Design and evaluate object-oriented program solutions for real problems, justifying the choice of language constructs used.",
+     "explanation": "The CLO only asks to list keywords (Remember), while the PO asks to design (Create) and evaluate (Evaluate). Neither key verb appears. The CLO's subject (language keywords) is not the PO's object (computing solutions to real problems).",
+     "validationFailures": [],
+     "requests": [
+      4
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Design and evaluate computing solutions for real problems.",
+     "targetQuote": "List the keywords of the programming language.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Remember",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Design and evaluate object-oriented program solutions for real problems, using the constructs of the programming language.",
+     "explanation": "Gaps: 'List' is Remember, below the PO's Create/Evaluate level; the CLO has neither 'design' nor 'evaluate'; its object (language keywords) is not computing solutions for real problems.",
+     "validationFailures": [],
+     "requests": [
+      13
+     ]
+    }
+   ]
+  },
+  {
+   "id": "clo-po-prog-two-skills",
+   "type": "CLO-PO",
+   "course": "prog",
+   "category": "specific-clo-broad-po",
+   "ambiguous": true,
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Only one of the two required skills is shown. NOTE: under the 'contribution' reading used by the rubric variants this could reasonably be ALIGNED; faculty should decide.",
+   "origin": "eval-1.1",
+   "source": "Design solutions and communicate them effectively to technical and non-technical audiences.",
+   "target": "Design a program solution for a given problem.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "communicate them effectively to technical and non-technical audiences",
+     "targetQuote": "Design a program solution for a given problem.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Create",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Design a program solution for a given problem and communicate it effectively to technical and non-technical audiences through documentation and a short presentation.",
+     "explanation": "The CLO shows design of a program solution but not the PO's second skill, communicating solutions effectively to technical and non-technical audiences. No audience or communication is mentioned.",
+     "validationFailures": [],
+     "requests": [
+      4
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "communicate them effectively to technical and non-technical audiences",
+     "targetQuote": "Design a program solution for a given problem.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Create",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Design a program solution for a given problem and communicate it effectively to technical and non-technical audiences through documentation and presentation.",
+     "explanation": "The CLO shows 'design' but not the second skill: communicating solutions effectively to technical and non-technical audiences is missing.",
+     "validationFailures": [],
+     "requests": [
+      13
+     ]
+    }
+   ]
+  },
+  {
+   "id": "clo-po-prog-interdisciplinary",
+   "type": "CLO-PO",
+   "course": "prog",
+   "category": "interdisciplinary",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Valid interdisciplinary outcome that matches the PO. DISPUTED: the model judged PARTIAL in every run because the CLO narrows the PO's object to one system and its users; faculty to decide.",
+   "origin": "eval-1.1",
+   "source": "Analyze the impact of computing on individuals, organizations and society.",
+   "target": "Evaluate the ethical and social implications of a software system on its users.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Analyze the impact of computing on individuals, organizations and society.",
+     "targetQuote": "Evaluate the ethical and social implications of a software system on its users.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Analyze",
+     "targetBloom": "Evaluate",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Analyze and evaluate the ethical and social impact of a software system on individuals, organizations and society.",
+     "explanation": "The CLO evaluates ethical and social implications for users, which is related to the PO's impact on society and is at Evaluate level (above Analyze). However, it covers only users of one software system, not the impact on individuals, organizations and society, and it uses neither the verb analyze nor a broader scope.",
+     "validationFailures": [],
+     "requests": [
+      4
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "impact of computing on individuals, organizations and society",
+     "targetQuote": "ethical and social implications of a software system on its users",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Analyze",
+     "targetBloom": "Evaluate",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "The CLO evaluates the social and ethical implications of software on its users, which matches analyzing computing's impact on individuals and society, at an equal or higher Bloom level.",
+     "validationFailures": [],
+     "requests": [
+      13
+     ]
+    }
+   ]
+  },
+  {
+   "id": "clo-po-nurs-aligned",
+   "type": "CLO-PO",
+   "course": "nurs",
+   "category": "clear-positive",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Same practice, same process.",
+   "origin": "eval-1.1",
+   "source": "Provide safe, quality nursing care to individuals using the nursing process.",
+   "target": "Perform basic nursing procedures safely using the nursing process on a simulated patient.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "safe, quality nursing care",
+     "targetQuote": "Perform basic nursing procedures safely using the nursing process",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "The CLO performs nursing procedures safely using the nursing process, matching the PO's verb, level and subject.",
+     "validationFailures": [],
+     "requests": [
+      6
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "safe, quality nursing care",
+     "targetQuote": "Perform basic nursing procedures safely using the nursing process",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "The CLO performs nursing procedures safely using the nursing process, matching the PO's verb, level and subject.",
+     "validationFailures": [],
+     "requests": [
+      15
+     ]
+    }
+   ]
+  },
+  {
+   "id": "clo-po-nurs-unrelated",
+   "type": "CLO-PO",
+   "course": "nurs",
+   "category": "wrong-program",
+   "ambiguous": false,
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "Different discipline entirely.",
+   "origin": "eval-1.1",
+   "source": "Provide safe, quality nursing care to individuals using the nursing process.",
+   "target": "Compute the derivative of polynomial functions.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Provide safe, quality nursing care to individuals using the nursing process.",
+     "targetQuote": "Compute the derivative of polynomial functions.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Perform basic nursing procedures safely on a simulated patient using the steps of the nursing process.",
+     "explanation": "The CLO is about calculus, not nursing. It has no nursing action, no safe-care competency and no nursing process, so it fails the subject test and shows no equivalent of the PO's verb.",
+     "validationFailures": [],
+     "requests": [
+      6
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Provide safe, quality nursing care to individuals using the nursing process.",
+     "targetQuote": "Compute the derivative of polynomial functions.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Perform basic nursing procedures safely on individuals using the nursing process on a simulated patient.",
+     "explanation": "The CLO is about calculus, not nursing. It has no nursing action, no nursing process and no patient care, so it fails the verb and subject tests. Its Bloom level (Apply) is acceptable but irrelevant to the subject.",
+     "validationFailures": [],
+     "requests": [
+      15
+     ]
+    }
+   ]
+  },
+  {
+   "id": "clo-ega-aligned",
+   "type": "CLO-EGA",
+   "course": "prog",
+   "category": "name-only-ega",
+   "ambiguous": true,
+   "accept": [
+    "ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Analysis and justification support critical thinking; creativity is arguable.",
+   "origin": "eval-1.1",
+   "source": "Critical and Creative thinker",
+   "target": "Analyze alternative designs and justify the selection of one for a given problem.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Critical and Creative thinker",
+     "targetQuote": "Analyze alternative designs and justify the selection",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Analyze",
+     "targetBloom": "Evaluate",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "Analyzing alternative designs and justifying a choice shows critical and creative thinking.",
+     "validationFailures": [],
+     "requests": [
+      4
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Critical and Creative thinker",
+     "targetQuote": "Analyze alternative designs and justify the selection",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Analyze",
+     "targetBloom": "Evaluate",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "Analyzing alternatives and justifying a choice shows critical and creative thinking.",
+     "validationFailures": [],
+     "requests": [
+      13
+     ]
+    }
+   ]
+  },
+  {
+   "id": "clo-ega-unrelated",
+   "type": "CLO-EGA",
+   "course": "prog",
+   "category": "clear-negative",
+   "ambiguous": false,
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "No professional competence is shown.",
+   "origin": "eval-1.1",
+   "source": "Competent Professional",
+   "target": "Recite the history of the institution.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Competent Professional",
+     "targetQuote": "Recite the history of the institution.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Remember",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Develop and test object-oriented programs to professional standards, applying good coding practice and documentation.",
+     "explanation": "Reciting institutional history is Remember level and has nothing to do with professional competence in programming. The subject is not the course's subject.",
+     "validationFailures": [],
+     "requests": [
+      4
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Competent Professional",
+     "targetQuote": "Recite the history of the institution.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Remember",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply professional programming practices to design, implement and test object-oriented programs that meet given requirements.",
+     "explanation": "Reciting institutional history is Remember-level and has nothing to do with professional competence in programming; no competency action or computing subject is present.",
+     "validationFailures": [],
+     "requests": [
+      13
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ilo-clo-calc-aligned",
+   "type": "ILO-CLO",
+   "course": "calc",
+   "category": "different-wording",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "A smaller step of the CLO.",
+   "origin": "eval-1.1",
+   "source": "Apply differentiation rules to solve optimization problems in engineering.",
+   "target": "Apply the chain rule to differentiate composite functions.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Apply differentiation rules",
+     "targetQuote": "Apply the chain rule",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "Applying the chain rule is a smaller Apply-level step toward applying differentiation rules in the CLO.",
+     "validationFailures": [],
+     "requests": [
+      1
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Apply differentiation rules",
+     "targetQuote": "Apply the chain rule to differentiate composite functions",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "Applying the chain rule is a smaller Apply-level step toward applying differentiation rules to optimization.",
+     "validationFailures": [],
+     "requests": [
+      10
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ilo-clo-claims-more",
+   "type": "ILO-CLO",
+   "course": "calc",
+   "category": "level-gap",
+   "ambiguous": false,
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "The ILO asks for much more than the CLO.",
+   "origin": "eval-1.1",
+   "source": "Define limits of functions.",
+   "target": "Design and implement a numerical solver for limits.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Define limits of functions.",
+     "targetQuote": "Design and implement a numerical solver for limits.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Remember",
+     "targetBloom": "Create",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Define the limit of a function using proper notation and describe it from a graph.",
+     "explanation": "Both texts are about limits. However, the ILO asks to design and implement a numerical solver (Create), while the CLO only asks to define limits (Remember). The ILO therefore claims much more than the CLO. Implementing a solver is also programming work, not part of this CLO.",
+     "validationFailures": [],
+     "requests": [
+      1
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Define limits of functions",
+     "targetQuote": "Design and implement a numerical solver for limits",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Remember",
+     "targetBloom": "Create",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "State the definition of the limit of a function using correct notation.",
+     "explanation": "The subject (limits) is the same, but the ILO asks to design and implement a numerical solver (Create). The CLO only asks to define limits (Remember), so the ILO claims far more than the CLO and does not build toward it as a smaller step.",
+     "validationFailures": [],
+     "requests": [
+      10
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ilo-clo-unrelated",
+   "type": "ILO-CLO",
+   "course": "calc",
+   "category": "clear-negative",
+   "ambiguous": false,
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "Unrelated subject.",
+   "origin": "eval-1.1",
+   "source": "Apply differentiation rules to solve optimization problems in engineering.",
+   "target": "Describe the history of ancient Rome.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Apply differentiation rules to solve optimization problems",
+     "targetQuote": "Describe the history of ancient Rome.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Understand",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply differentiation rules to find the maximum or minimum of a function that models an engineering quantity.",
+     "explanation": "The ILO is about the history of ancient Rome. The CLO is about differentiation for engineering optimization. The ILO is therefore in a different subject and does not build toward the CLO.",
+     "validationFailures": [],
+     "requests": [
+      1
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Apply differentiation rules to solve optimization problems in engineering",
+     "targetQuote": "Describe the history of ancient Rome",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Understand",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply derivatives to find the maximum or minimum value of a quantity in a simple engineering situation.",
+     "explanation": "The ILO is about the history of ancient Rome, which has no connection to differentiation or engineering optimization. It also has the wrong subject and does not build toward the CLO's Apply level.",
+     "validationFailures": [],
+     "requests": [
+      10
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ilo-clo-prog-aligned",
+   "type": "ILO-CLO",
+   "course": "prog",
+   "category": "clear-positive",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "A concrete step of the CLO.",
+   "origin": "eval-1.1",
+   "source": "Design, implement and test object-oriented programs that solve given problems.",
+   "target": "Implement a class hierarchy using inheritance in the chosen language.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "implement and test object-oriented programs",
+     "targetQuote": "Implement a class hierarchy using inheritance",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Apply",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "Implementing a class hierarchy is a smaller step of implementing OO programs, at a matching level.",
+     "validationFailures": [],
+     "requests": [
+      4
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "implement and test object-oriented programs",
+     "targetQuote": "Implement a class hierarchy using inheritance",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Apply",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "Implementing a class hierarchy is a smaller implement step of the CLO in the same subject.",
+     "validationFailures": [],
+     "requests": [
+      13
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-po-01",
+   "type": "CLO-PO",
+   "course": "calc",
+   "category": "different-wording",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Different words ('use integration to compute' vs 'apply knowledge to solve') for the same competency.",
+   "origin": null,
+   "source": "Apply knowledge of mathematics and science to solve complex engineering problems.",
+   "target": "Use integration techniques to compute areas and volumes that arise in engineering problems.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Apply knowledge of mathematics and science",
+     "targetQuote": "Use integration techniques to compute areas and volumes",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Use derivatives to compute rates of change and optimal values that arise in engineering problems.",
+     "explanation": "The CLO applies mathematics (Apply) to engineering problems, so it matches the PO's verb, level and subject. However, integration for areas and volumes is integral calculus. It is not a topic of Differential Calculus (limits, continuity, derivatives), so the CLO does not fit this course.",
+     "validationFailures": [],
+     "requests": [
+      1
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Apply knowledge of mathematics and science to solve complex engineering problems",
+     "targetQuote": "Use integration techniques to compute areas and volumes",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Use differentiation techniques to compute rates of change and optimal values that arise in engineering problems.",
+     "explanation": "The verb and engineering context match the PO's apply-mathematics-to-engineering-problems. But the CLO's subject is integration (areas and volumes), which falls outside this Differential Calculus course (limits, continuity, derivatives), so it does not fit the course's own subject.",
+     "validationFailures": [],
+     "requests": [
+      10
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-po-02",
+   "type": "CLO-PO",
+   "course": "calc",
+   "category": "level-gap",
+   "ambiguous": false,
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "A routine calculation does not develop design.",
+   "origin": null,
+   "source": "Design solutions for complex engineering problems that meet specified needs.",
+   "target": "Compute the derivative of a polynomial using the power rule.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Design solutions for complex engineering problems",
+     "targetQuote": "Compute the derivative of a polynomial using the power rule.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Design a solution to an engineering problem that meets specified needs by using derivatives, including the power rule, to model and optimize it.",
+     "explanation": "The PO asks to design solutions that meet needs (Create). The CLO only computes a polynomial derivative with the power rule (Apply). It has no design verb, a lower Bloom level, and no engineering problem or specified needs.",
+     "validationFailures": [],
+     "requests": [
+      1
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Design solutions for complex engineering problems that meet specified needs",
+     "targetQuote": "Compute the derivative of a polynomial using the power rule",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Design solutions to engineering problems that meet specified needs by applying derivatives, such as determining dimensions that minimize cost under given constraints.",
+     "explanation": "The PO asks to design solutions that meet specified needs (Create). The CLO only computes a derivative by a rule (Apply), so it has no design verb, is below the PO's Bloom level, and has no engineering problem or specified needs.",
+     "validationFailures": [],
+     "requests": [
+      10
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-po-03",
+   "type": "CLO-PO",
+   "course": "prog",
+   "category": "different-wording",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Develop and test a solution for a client's requirements is the PO's competency in other words.",
+   "origin": null,
+   "source": "Design, implement and evaluate computing-based solutions to meet desired needs.",
+   "target": "Develop and test a web application that meets the requirements of a client.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Design, implement and evaluate computing-based solutions",
+     "targetQuote": "Develop and test a web application that meets the requirements of a client.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Design, develop and evaluate a web application that meets the requirements of a client, testing it against those requirements.",
+     "explanation": "The CLO has develop (implement) and test, which fits the PO's subject. However, the PO's design verb is not shown, and evaluate is only partly covered, since testing is not evaluating the solution against needs. The CLO is also narrowed to a web application and client requirements.",
+     "validationFailures": [],
+     "requests": [
+      4
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Design, implement and evaluate computing-based solutions",
+     "targetQuote": "Develop and test a web application that meets the requirements of a client.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Create",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Design, develop and evaluate a web application that meets the requirements of a client, testing it against those requirements.",
+     "explanation": "The CLO has develop (implement) and test, which is partly evaluating, in the right subject. Missing: design is not stated, and evaluating the solution against needs is not shown beyond testing.",
+     "validationFailures": [],
+     "requests": [
+      13
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-po-04",
+   "type": "CLO-PO",
+   "course": "prog",
+   "category": "keyword-overlap",
+   "ambiguous": false,
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Shares the word 'computing' context only; no impact analysis.",
+   "origin": null,
+   "source": "Analyze the local and global impact of computing on individuals, organizations and society.",
+   "target": "Write programs in Python that process text files.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Analyze the local and global impact of computing on individuals, organizations and society.",
+     "targetQuote": "Write programs in Python that process text files.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Analyze",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Analyze the local and global impact of programs that process personal text data on individuals, organizations and society.",
+     "explanation": "The CLO is only about writing Python programs for text files (Apply). The PO asks to analyze local and global impact on individuals, organizations and society. The verb, level and subject are all missing.",
+     "validationFailures": [],
+     "requests": [
+      4
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Analyze the local and global impact of computing",
+     "targetQuote": "Write programs in Python that process text files.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Analyze",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Analyze the local and global impact on individuals, organizations and society of programs that process text files, such as their effects on data privacy.",
+     "explanation": "The CLO is only about writing Python programs for text files. It has no analysis, Bloom level is Apply rather than Analyze, and it says nothing of the local and global impact of computing on individuals, organizations or society.",
+     "validationFailures": [],
+     "requests": [
+      13
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-po-05",
+   "type": "CLO-PO",
+   "course": "nurs",
+   "category": "specific-clo-broad-po",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "A specific skill that clearly develops one real part of broad safe-care practice.",
+   "origin": null,
+   "source": "Apply the nursing process in providing safe, quality care to individuals, families and communities.",
+   "target": "Prepare and administer oral medications safely following the five rights of medication administration.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Apply the nursing process in providing safe, quality care to individuals, families and communities.",
+     "targetQuote": "Prepare and administer oral medications safely following the five rights of medication administration.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply the nursing process to prepare and administer oral medications safely following the five rights, and teach the patient and family about the medication.",
+     "explanation": "Safe oral medication administration is nursing care at Apply level, but the CLO never mentions the nursing process (assess, diagnose, plan, implement, evaluate). It also covers only individual patients, not the families and communities the PO names.",
+     "validationFailures": [],
+     "requests": [
+      6
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Apply the nursing process in providing safe, quality care to individuals, families and communities.",
+     "targetQuote": "Prepare and administer oral medications safely following the five rights of medication administration.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply the nursing process to prepare and administer oral medications safely, following the five rights, to individual patients and their families in a simulated setting.",
+     "explanation": "The CLO applies safe practice to oral medication administration, which is nursing, but it does not mention the nursing process (assess, diagnose, plan, implement, evaluate). It is limited to one procedure and does not cover individuals, families or communities. The Bloom level (Apply) is adequate.",
+     "validationFailures": [],
+     "requests": [
+      15
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-po-06",
+   "type": "CLO-PO",
+   "course": "nurs",
+   "category": "clear-negative",
+   "ambiguous": false,
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "Anatomy recall, not communication.",
+   "origin": null,
+   "source": "Communicate therapeutically with clients and collaboratively with the health team.",
+   "target": "Identify the anatomical structures of the heart.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Communicate therapeutically with clients and collaboratively with the health team.",
+     "targetQuote": "Identify the anatomical structures of the heart.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Remember",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Communicate therapeutically with a simulated client about a cardiac condition and report findings collaboratively to the health team.",
+     "explanation": "The CLO only identifies heart anatomy (Remember). It has no therapeutic communication, no collaboration with the health team, and a lower Bloom level than the PO's Apply-level communication.",
+     "validationFailures": [],
+     "requests": [
+      6
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Communicate therapeutically with clients and collaboratively with the health team.",
+     "targetQuote": "Identify the anatomical structures of the heart.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Remember",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Communicate therapeutically with simulated patients and collaboratively with the health team when explaining basic care procedures in the skills laboratory.",
+     "explanation": "The CLO only identifies heart structures (Remember). It has no therapeutic communication or collaboration with the health team, so the verb is missing, the Bloom level is lower than Apply, and the subject differs.",
+     "validationFailures": [],
+     "requests": [
+      15
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-po-07",
+   "type": "CLO-PO",
+   "course": "edu",
+   "category": "different-wording",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Constructing a test blueprint and items is designing an assessment.",
+   "origin": null,
+   "source": "Design, implement and evaluate assessments that measure student learning.",
+   "target": "Construct a table of specifications and write test items that match the stated learning objectives.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Design, implement and evaluate assessments that measure student learning.",
+     "targetQuote": "Construct a table of specifications and write test items that match the stated learning objectives.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Evaluate",
+     "targetBloom": "Create",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Construct a table of specifications and write test items that match the stated learning objectives, administer the test to a class, and evaluate its quality and the learning it measures through item analysis and validity and reliability checks.",
+     "explanation": "The CLO covers constructing (Create) a table of specifications and writing test items, which fits 'design' of assessments in the right subject. But the PO also asks for 'implement' and 'evaluate'; the CLO has no administering of the assessment and no evaluation of its quality or of the learning it measures (e.g. item analysis, validity or reliability review). Evaluate level is not reached.",
+     "validationFailures": [],
+     "requests": [
+      7
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Design, implement and evaluate assessments that measure student learning.",
+     "targetQuote": "Construct a table of specifications and write test items",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Create",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Construct a table of specifications, write test items that match the stated learning objectives, administer the test to a class, and evaluate its quality through item analysis and the results.",
+     "explanation": "The CLO covers the 'design' part (Create-level table of specifications and item writing) and matches the subject. It does not show 'implement' (administering the assessment) or 'evaluate' (judging or analysing the quality of the test or of results), so two of the three actions in the PO are missing.",
+     "validationFailures": [],
+     "requests": [
+      16
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-po-08",
+   "type": "CLO-PO",
+   "course": "edu",
+   "category": "level-gap",
+   "ambiguous": true,
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Related topic, but it does not design, implement or evaluate an assessment.",
+   "origin": null,
+   "source": "Design, implement and evaluate assessments that measure student learning.",
+   "target": "Discuss the history of educational testing.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Design, implement and evaluate assessments that measure student learning.",
+     "targetQuote": "Discuss the history of educational testing.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Evaluate",
+     "targetBloom": "Understand",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Design, administer and evaluate classroom tests and performance tasks that measure student learning, using evidence from the results to judge their validity and to improve teaching.",
+     "explanation": "Discussing the history of educational testing is Understand level, below the Create/Evaluate level of the PO. It has no designing, implementing or evaluating of assessments, and the subject (history of testing) is not the PO's object of action, assessments that measure student learning.",
+     "validationFailures": [],
+     "requests": [
+      7
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Design, implement and evaluate assessments that measure student learning.",
+     "targetQuote": "Discuss the history of educational testing.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Understand",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Design and administer a classroom assessment aligned with learning objectives, and evaluate how well it measures student learning using item analysis and score interpretation.",
+     "explanation": "The CLO 'Discuss' is an Understand-level verb about the history of testing. The PO asks for design, implementation and evaluation (Create/Evaluate) of assessments that measure student learning. The CLO has no design, implement or evaluate action, and its subject (history) is not the PO's subject of assessments that measure learning.",
+     "validationFailures": [],
+     "requests": [
+      16
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-po-09",
+   "type": "CLO-PO",
+   "course": "acct",
+   "category": "clear-positive",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Records and reports under the standards.",
+   "origin": null,
+   "source": "Apply accounting principles and standards to record, measure and report financial transactions.",
+   "target": "Record and report receivables and inventories in accordance with the applicable financial reporting standards.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "record, measure and report financial transactions",
+     "targetQuote": "Record and report receivables and inventories",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply the applicable Philippine Financial Reporting Standards to record, measure and report receivables and inventories.",
+     "explanation": "The CLO has 'record' and 'report' and covers the right subject (receivables and inventories under reporting standards). It omits 'measure', which the PO requires. Its verbs also do not clearly reach Apply, since it never says the standards are applied to transactions.",
+     "validationFailures": [],
+     "requests": [
+      8
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "record, measure and report financial transactions",
+     "targetQuote": "Record and report receivables and inventories",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Record, measure and report receivables and inventories in accordance with the applicable Philippine Financial Reporting Standards.",
+     "explanation": "The CLO covers 'record' and 'report' (the PO's verbs) for receivables and inventories under the standards, so subject and standards match. Gap: the PO asks for 'measure' as well, and the CLO never states measurement (e.g., valuation, impairment, lower of cost and NRV). Bloom is Apply in both, which is fine.",
+     "validationFailures": [],
+     "requests": [
+      17
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-po-10",
+   "type": "CLO-PO",
+   "course": "acct",
+   "category": "level-gap",
+   "ambiguous": false,
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "Recall of a definition, far below applying standards.",
+   "origin": null,
+   "source": "Apply accounting principles and standards to record, measure and report financial transactions.",
+   "target": "Define accounting.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Apply accounting principles and standards",
+     "targetQuote": "Define accounting.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Remember",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply accounting principles and standards to record, measure and report cash, receivables, inventories and property, plant and equipment transactions.",
+     "explanation": "'Define accounting' is Remember level, below the PO's Apply level. It has no recording, measuring or reporting action. It names no transactions, standards, receivables or inventories, so the subject is only the general topic word 'accounting'.",
+     "validationFailures": [],
+     "requests": [
+      8
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Apply accounting principles and standards to record, measure and report financial transactions",
+     "targetQuote": "Define accounting.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Remember",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply Philippine Financial Reporting Standards to record, measure and report cash, receivables, inventories and property, plant and equipment transactions.",
+     "explanation": "'Define accounting' is Remember level, while the PO asks for Apply. It has no record, measure or report action, and its subject is the general concept of accounting rather than applying standards to financial transactions. It is also not tied to the course content (cash, receivables, inventories, PPE).",
+     "validationFailures": [],
+     "requests": [
+      17
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-po-11",
+   "type": "CLO-PO",
+   "course": "hm",
+   "category": "clear-positive",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Same standards in the same setting.",
+   "origin": null,
+   "source": "Apply safety, sanitation and hygiene standards in hospitality operations.",
+   "target": "Apply proper food handling and sanitation procedures when serving guests.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Apply safety, sanitation and hygiene standards",
+     "targetQuote": "Apply proper food handling and sanitation procedures",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "The CLO applies food handling and sanitation procedures in guest service, matching the PO's verb, level and subject.",
+     "validationFailures": [],
+     "requests": [
+      9
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Apply safety, sanitation and hygiene standards",
+     "targetQuote": "Apply proper food handling and sanitation procedures",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "CLO applies food handling and sanitation procedures in serving guests, matching the PO's verb, level and subject.",
+     "validationFailures": [],
+     "requests": [
+      18
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-po-12",
+   "type": "CLO-PO",
+   "course": "nurs",
+   "category": "wrong-program",
+   "ambiguous": false,
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "A nursing CLO against a computing program's PO: the wrong program's outcome.",
+   "origin": null,
+   "source": "Apply knowledge of computing and mathematics appropriate to the discipline.",
+   "target": "Apply the nursing process to assess a patient's vital signs.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Apply knowledge of computing and mathematics appropriate to the discipline.",
+     "targetQuote": "Apply the nursing process to assess a patient's vital signs.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply basic mathematics and computing skills to calculate, record and interpret a patient's vital signs, such as pulse rate and respiratory rate, using the nursing process.",
+     "explanation": "The CLO applies the nursing process to vital signs and is at Apply level. However, the PO asks for computing and mathematics knowledge, and the CLO shows no computation, calculation or use of computing tools. It shares only the Apply verb and the nursing context.",
+     "validationFailures": [],
+     "requests": [
+      6
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Apply knowledge of computing and mathematics appropriate to the discipline.",
+     "targetQuote": "Apply the nursing process to assess a patient's vital signs.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply basic mathematics and computing skills to measure, calculate, record and interpret a patient's vital signs using the nursing process.",
+     "explanation": "The CLO applies the nursing process to vital signs, which is nursing, but it shows no use of computing or mathematics (e.g., calculating, computing or recording values). It shares only the verb Apply and the assessment topic, so the PO's subject matter is not met.",
+     "validationFailures": [],
+     "requests": [
+      15
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-ega-01",
+   "type": "CLO-EGA",
+   "course": "calc",
+   "category": "name-only-ega",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Comparing alternatives and justifying is critical and creative thinking.",
+   "origin": null,
+   "source": "Critical and Creative thinker",
+   "target": "Formulate and compare alternative mathematical models of an engineering situation and justify the choice.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Critical and Creative thinker",
+     "targetQuote": "Formulate and compare alternative mathematical models",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Evaluate",
+     "targetBloom": "Evaluate",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "Formulating and comparing alternative models and justifying the choice shows critical and creative thinking.",
+     "validationFailures": [],
+     "requests": [
+      1
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Critical and Creative thinker",
+     "targetQuote": "Formulate and compare alternative mathematical models",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Evaluate",
+     "targetBloom": "Evaluate",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "Formulating and comparing models and justifying the choice shows critical and creative thinking at a high level.",
+     "validationFailures": [],
+     "requests": [
+      10
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-ega-02",
+   "type": "CLO-EGA",
+   "course": "calc",
+   "category": "clear-negative",
+   "ambiguous": false,
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Pure recall.",
+   "origin": null,
+   "source": "Critical and Creative thinker",
+   "target": "Recite the multiplication table.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Critical and Creative thinker",
+     "targetQuote": "Recite the multiplication table.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Evaluate",
+     "targetBloom": "Remember",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Analyze an engineering situation and justify the choice of differentiation technique used to solve it.",
+     "explanation": "Reciting the multiplication table is a Remember-level task. It involves no critical or creative thinking and is not calculus content.",
+     "validationFailures": [],
+     "requests": [
+      1
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Critical and Creative thinker",
+     "targetQuote": "Recite the multiplication table",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Analyze",
+     "targetBloom": "Remember",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Analyze calculus problems critically and propose creative solution strategies, justifying the choice of method for finding derivatives.",
+     "explanation": "Reciting the multiplication table is Remember-level rote recall. It involves no critical or creative thinking and has no connection to calculus.",
+     "validationFailures": [],
+     "requests": [
+      10
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-ega-03",
+   "type": "CLO-EGA",
+   "course": "nurs",
+   "category": "name-only-ega",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Serves a community need and reflects on the result.",
+   "origin": null,
+   "source": "Socially Responsive Steward",
+   "target": "Design a community outreach activity that addresses a local health need and evaluate its results.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Socially Responsive Steward",
+     "targetQuote": "Design a community outreach activity that addresses a local health need and evaluate its results.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Create",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Design a community health outreach activity on basic nursing care, such as hygiene or safety, that responsibly addresses a local health need, and evaluate its results and use of resources.",
+     "explanation": "The CLO designs and evaluates a community outreach activity for a local health need, which fits social responsiveness and is at Create/Evaluate level. However, it does not mention stewardship, meaning responsible and sustainable care for people and resources. It also does not say who is served or how the activity responds to that community's needs. The subject is also not tied to fundamentals of nursing practice.",
+     "validationFailures": [],
+     "requests": [
+      6
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Socially Responsive Steward",
+     "targetQuote": "community outreach activity that addresses a local health need",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Create",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "Designing and evaluating a community outreach addressing a local health need shows socially responsive stewardship.",
+     "validationFailures": [],
+     "requests": [
+      15
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-ega-04",
+   "type": "CLO-EGA",
+   "course": "calc",
+   "category": "clear-negative",
+   "ambiguous": false,
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Nothing about responsibility toward society.",
+   "origin": null,
+   "source": "Socially Responsive Steward",
+   "target": "Compute the derivative of trigonometric functions.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Socially Responsive Steward",
+     "targetQuote": "Compute the derivative of trigonometric functions.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Evaluate",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply derivatives of trigonometric functions to model and solve engineering problems of community concern, such as vibration in structures, and explain the benefit of the solution to society.",
+     "explanation": "The EGA is about responsible, socially minded stewardship. The CLO is a purely technical computation (Apply) with no social or community context, no responsibility and no stewardship competency.",
+     "validationFailures": [],
+     "requests": [
+      1
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Socially Responsive Steward",
+     "targetQuote": "Compute the derivative of trigonometric functions",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply derivatives of trigonometric functions to model and analyze periodic engineering phenomena, such as vibration or electrical signals, and explain how the results serve community needs responsibly.",
+     "explanation": "The CLO only computes derivatives of trigonometric functions. It has no social responsiveness or stewardship, no community or societal context, and no responsible use of results.",
+     "validationFailures": [],
+     "requests": [
+      10
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-ega-05",
+   "type": "CLO-EGA",
+   "course": "edu",
+   "category": "name-only-ega",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Reflection and goal setting for continued learning.",
+   "origin": null,
+   "source": "Transformative Lifelong learner",
+   "target": "Reflect on one's own learning and set goals for continued professional development.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Transformative Lifelong learner",
+     "targetQuote": "Reflect on one's own learning and set goals",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Evaluate",
+     "targetBloom": "Evaluate",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "Reflecting and setting goals for professional development expresses transformative lifelong learning.",
+     "validationFailures": [],
+     "requests": [
+      7
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Transformative Lifelong learner",
+     "targetQuote": "Reflect on one's own learning and set goals for continued professional development",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Evaluate",
+     "targetBloom": "Evaluate",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "The CLO reflects on one's learning and sets goals for development, matching a lifelong learner.",
+     "validationFailures": [],
+     "requests": [
+      16
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-ega-06",
+   "type": "CLO-EGA",
+   "course": "calc",
+   "category": "clear-negative",
+   "ambiguous": false,
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "A skill, with no learning-to-learn element.",
+   "origin": null,
+   "source": "Transformative Lifelong learner",
+   "target": "Solve quadratic equations.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Transformative Lifelong learner",
+     "targetQuote": "Solve quadratic equations.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Evaluate",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply derivatives to analyze engineering problems and reflect on gaps in one's own understanding to plan further independent study of calculus.",
+     "explanation": "The EGA asks for lifelong learning and transformation (self-directed, continuing learning). The CLO 'Solve quadratic equations' is a narrow Apply-level algebra skill. It has no verb or competency of learning independently, no reflection or growth, and it is also not a Differential Calculus topic (limits, derivatives, applications). Only the subject is mathematics, with no link to the attribute.",
+     "validationFailures": [],
+     "requests": [
+      2
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Transformative Lifelong learner",
+     "targetQuote": "Solve quadratic equations.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Evaluate",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Evaluate one's own understanding of limits and derivatives and independently choose study strategies and resources to solve differential calculus problems.",
+     "explanation": "The EGA asks for lifelong learning and transformation (reflecting on, seeking and sustaining one's own learning), but the CLO is only a procedural algebra skill. (1) It has no verb or competency of lifelong learning. (2) Its Bloom level (Apply) is not the level of self-directed learning. (3) Its subject, quadratic equations, is unrelated to the attribute and is not part of Differential Calculus. The draft ties the CLO to calculus and to independent learning.",
+     "validationFailures": [],
+     "requests": [
+      11
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-ega-07",
+   "type": "CLO-EGA",
+   "course": "nurs",
+   "category": "name-only-ega",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Professional competence together with named Augustinian values.",
+   "origin": null,
+   "source": "Competent Catholic Augustinian-Marian Professional",
+   "target": "Perform nursing procedures to professional standards and show the Augustinian values of community and truth in patient care.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Competent Catholic Augustinian-Marian Professional",
+     "targetQuote": "Augustinian values of community and truth in patient care",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "The CLO has professional-standard nursing performance and names the Augustinian values of community and truth.",
+     "validationFailures": [],
+     "requests": [
+      6
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Competent Catholic Augustinian-Marian Professional",
+     "targetQuote": "Augustinian values of community and truth in patient care",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "The CLO combines professional nursing performance with Augustinian values of community and truth.",
+     "validationFailures": [],
+     "requests": [
+      15
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-ega-08",
+   "type": "CLO-EGA",
+   "course": "prog",
+   "category": "name-only-ega",
+   "ambiguous": true,
+   "accept": [
+    "ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Technical competence only; whether that is enough for this EGA depends on a definition the system does not hold (the EGA is a name only).",
+   "origin": null,
+   "source": "Competent Catholic Augustinian-Marian Professional",
+   "target": "Write a Python function that sorts a list.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Competent Catholic Augustinian-Marian Professional",
+     "targetQuote": "Write a Python function that sorts a list.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Write and test Python functions, such as a list-sorting function, with professional competence and with integrity and humility, documenting code for the benefit of others.",
+     "explanation": "Writing a sorting function is a technical Apply task. It shows no Catholic Augustinian-Marian professional attributes such as values, faith or service, and no professional conduct.",
+     "validationFailures": [],
+     "requests": [
+      4
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Competent Catholic Augustinian-Marian Professional",
+     "targetQuote": "Write a Python function that sorts a list.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Write and test a Python function that sorts a list, and justify, using Augustinian-Marian values such as integrity and service to others, how it was built to be correct and reliable for its users.",
+     "explanation": "The CLO is a technical coding task. It has no Catholic Augustinian-Marian values or professional dimension, and the Bloom level is Apply with no ethical or value-based competence shown.",
+     "validationFailures": [],
+     "requests": [
+      13
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-ilo-01",
+   "type": "ILO-CLO",
+   "course": "calc",
+   "category": "different-wording",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "A needed step toward applying the rules; different wording.",
+   "origin": null,
+   "source": "Apply differentiation rules to solve optimization problems in engineering.",
+   "target": "Differentiate polynomial and trigonometric functions.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Apply differentiation rules to solve optimization problems in engineering.",
+     "targetQuote": "Differentiate polynomial and trigonometric functions.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply differentiation rules to polynomial and trigonometric functions as a step toward setting up and solving simple engineering optimization problems.",
+     "explanation": "The source CLO asks to apply differentiation rules to solve engineering optimization problems (Apply, optimization). The ILO only says to differentiate polynomial and trig functions. This is a lower step (Apply of routine differentiation) in the same subject. It builds toward the CLO but is not stated as optimization, and the ILO contains no engineering context. The ILO does not claim more than the CLO, but it should be a smaller step of the CLO. The gap is that it names only the differentiation skill and omits the optimization and engineering application.",
+     "validationFailures": [],
+     "requests": [
+      2
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Apply differentiation rules to solve optimization problems in engineering.",
+     "targetQuote": "Differentiate polynomial and trigonometric functions.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply differentiation rules to polynomial and trigonometric functions as a step toward setting up and solving simple optimization problems in engineering.",
+     "explanation": "Here the source is the CLO and the target the ILO. The ILO (differentiate polynomial and trigonometric functions) is a smaller prerequisite step in the same subject, so it builds toward the CLO. However, the CLO is about solving engineering optimization problems, and the ILO only differentiates functions, so the match is incomplete: it does not name differentiation rules, optimization or engineering context. As a step it reaches Apply, the CLO's own level, but it does not show the optimization or engineering application, so it claims less than needed and is only a partial step.",
+     "validationFailures": [],
+     "requests": [
+      11
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-ilo-02",
+   "type": "ILO-CLO",
+   "course": "prog",
+   "category": "different-wording",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Testing is one of the three things the CLO asks for.",
+   "origin": null,
+   "source": "Design, implement and test object-oriented programs that solve given problems.",
+   "target": "Write unit tests for a class and run them.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "implement and test object-oriented programs",
+     "targetQuote": "Write unit tests for a class and run them.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Apply",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "Writing and running unit tests for a class is a smaller step of the test part of the CLO.",
+     "validationFailures": [],
+     "requests": [
+      4
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "implement and test object-oriented programs",
+     "targetQuote": "Write unit tests for a class and run them.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Apply",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "Writing and running unit tests for a class is a smaller step of the test part of the CLO, in the same subject.",
+     "validationFailures": [],
+     "requests": [
+      13
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-ilo-03",
+   "type": "ILO-CLO",
+   "course": "prog",
+   "category": "keyword-overlap",
+   "ambiguous": true,
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "A setup task that enables the work but develops none of the CLO's competencies.",
+   "origin": null,
+   "source": "Design, implement and test object-oriented programs that solve given problems.",
+   "target": "Install the integrated development environment.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Design, implement and test object-oriented programs that solve given problems.",
+     "targetQuote": "Install the integrated development environment.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Implement and run a simple object-oriented program in the integrated development environment.",
+     "explanation": "Installing the IDE is setup. It is not a step toward designing, implementing or testing OO programs. It is Apply or below and is not about the CLO's subject.",
+     "validationFailures": [],
+     "requests": [
+      4
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Design, implement and test object-oriented programs",
+     "targetQuote": "Install the integrated development environment.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Create and run a simple object-oriented program in the integrated development environment, and test its classes.",
+     "explanation": "Installing the IDE is a setup task, Remember/Apply level at best. It is not a smaller step toward designing, implementing or testing object-oriented programs.",
+     "validationFailures": [],
+     "requests": [
+      13
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-ilo-04",
+   "type": "ILO-CLO",
+   "course": "nurs",
+   "category": "clear-positive",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "A basic procedure performed safely.",
+   "origin": null,
+   "source": "Perform basic nursing procedures safely using the nursing process on a simulated patient.",
+   "target": "Demonstrate correct hand hygiene before and after patient contact.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Perform basic nursing procedures safely",
+     "targetQuote": "Demonstrate correct hand hygiene",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "Hand hygiene is a basic nursing procedure and a smaller step toward the CLO, at Apply level.",
+     "validationFailures": [],
+     "requests": [
+      6
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Perform basic nursing procedures safely",
+     "targetQuote": "Demonstrate correct hand hygiene",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "Demonstrating hand hygiene is a smaller, applied step of performing basic nursing procedures safely.",
+     "validationFailures": [],
+     "requests": [
+      15
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-ilo-05",
+   "type": "ILO-CLO",
+   "course": "nurs",
+   "category": "clear-negative",
+   "ambiguous": false,
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "History recall, not a procedure.",
+   "origin": null,
+   "source": "Perform basic nursing procedures safely using the nursing process on a simulated patient.",
+   "target": "Recite the history of nursing in the Philippines.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Perform basic nursing procedures safely using the nursing process on a simulated patient.",
+     "targetQuote": "Recite the history of nursing in the Philippines.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Remember",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Demonstrate correct hand hygiene before and after contact with a simulated patient as part of a basic nursing procedure.",
+     "explanation": "Reciting nursing history is a Remember task. It is not a step toward performing procedures safely and does not build toward Apply. It is about history, not the CLO's procedural subject.",
+     "validationFailures": [],
+     "requests": [
+      6
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Perform basic nursing procedures safely using the nursing process on a simulated patient.",
+     "targetQuote": "Recite the history of nursing in the Philippines.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Remember",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Demonstrate correct hand hygiene and safe positioning of a simulated patient using the steps of the nursing process.",
+     "explanation": "Reciting nursing history is Remember-level recall and is not a step toward performing procedures safely on a simulated patient. The subject also differs (history vs. skills).",
+     "validationFailures": [],
+     "requests": [
+      15
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-ilo-06",
+   "type": "ILO-CLO",
+   "course": "edu",
+   "category": "different-wording",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Item writing is a core step of constructing a test.",
+   "origin": null,
+   "source": "Construct valid and reliable classroom tests.",
+   "target": "Write multiple-choice items with plausible distractors.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Construct valid and reliable classroom tests.",
+     "targetQuote": "Write multiple-choice items with plausible distractors.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Create",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "Writing multiple-choice items with plausible distractors is a smaller step toward constructing valid classroom tests.",
+     "validationFailures": [],
+     "requests": [
+      7
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Construct valid and reliable classroom tests.",
+     "targetQuote": "Write multiple-choice items with plausible distractors",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Create",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "Writing multiple-choice items is a smaller step toward constructing valid classroom tests.",
+     "validationFailures": [],
+     "requests": [
+      16
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-ilo-07",
+   "type": "ILO-CLO",
+   "course": "edu",
+   "category": "broad-clo-narrow-ilo",
+   "ambiguous": true,
+   "accept": [
+    "ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Score statistics support judging reliability but are not construction itself.",
+   "origin": null,
+   "source": "Construct valid and reliable classroom tests.",
+   "target": "Compute the mean and standard deviation of a set of test scores.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Construct valid and reliable classroom tests.",
+     "targetQuote": "Compute the mean and standard deviation of a set of test scores.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Compute the mean and standard deviation of a set of test scores and use them to judge the reliability of a classroom test and decide how to revise its items.",
+     "explanation": "Computing the mean and standard deviation is related, as test statistics are used to check reliability and interpret scores. But it is an Apply-level calculation that does not build toward constructing tests, and it is not linked to validity or reliability. It does not say how the statistics are used to judge or improve a test.",
+     "validationFailures": [],
+     "requests": [
+      7
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Construct valid and reliable classroom tests.",
+     "targetQuote": "Compute the mean and standard deviation of a set of test scores.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Compute the mean and standard deviation of a set of test scores and use them to judge the reliability of a classroom test and to revise its items.",
+     "explanation": "Computing the mean and standard deviation is related to the validity and reliability of tests, as the same subject area. However, it is an Apply-level computation of descriptive statistics, not a step toward constructing tests. It does not link the statistics to the test's validity or reliability, and it contains no construction of a test.",
+     "validationFailures": [],
+     "requests": [
+      16
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-ilo-08",
+   "type": "ILO-CLO",
+   "course": "acct",
+   "category": "broad-clo-narrow-ilo",
+   "ambiguous": true,
+   "accept": [
+    "ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "A real but minor step toward the statements.",
+   "origin": null,
+   "source": "Prepare the financial statements of a business entity.",
+   "target": "Journalize cash receipts.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Prepare the financial statements of a business entity.",
+     "targetQuote": "Journalize cash receipts.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Journalize cash receipts and post them to the ledger as a step toward preparing the financial statements of a business entity.",
+     "explanation": "The pair is read as source = CLO, target = ILO. 'Journalize cash receipts' is a smaller step in accounting, so it is related. But it is only a first step toward the CLO's 'Prepare the financial statements of a business entity'. It covers only cash receipts, not the other transactions, the adjusting, closing or statement-preparation steps, or the statements themselves. Its Apply level is below the CLO's Create/Apply level for preparing whole statements.",
+     "validationFailures": [],
+     "requests": [
+      8
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Prepare the financial statements of a business entity.",
+     "targetQuote": "Journalize cash receipts.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Journalize cash receipts and present cash in the statement of financial position as a step toward preparing the financial statements of a business entity.",
+     "explanation": "Journalizing cash receipts is a smaller step in the same discipline and is Apply level, which builds toward the CLO. Gaps: the CLO is about preparing the financial statements of a business entity, and the ILO does not show how journal entries lead to statements (posting, trial balance, presentation). It is also not tied to the course's standards-based cash topic. The ILO does not overclaim.",
+     "validationFailures": [],
+     "requests": [
+      17
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-ilo-09",
+   "type": "ILO-CLO",
+   "course": "acct",
+   "category": "clear-negative",
+   "ambiguous": false,
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "History does not contribute to recording receivables.",
+   "origin": null,
+   "source": "Record and report receivables in accordance with the applicable financial reporting standards.",
+   "target": "Explain the history of the accounting profession.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Record and report receivables in accordance with the applicable financial reporting standards.",
+     "targetQuote": "Explain the history of the accounting profession.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Understand",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Record receivables, including uncollectible accounts, in accordance with the applicable Philippine Financial Reporting Standards.",
+     "explanation": "The ILO asks for the history of the accounting profession, which is different subject matter from recording and reporting receivables under reporting standards. Its level is Understand, below the CLO's Apply level. It builds toward no part of the CLO.",
+     "validationFailures": [],
+     "requests": [
+      8
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Record and report receivables in accordance with the applicable financial reporting standards.",
+     "targetQuote": "Explain the history of the accounting profession.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Understand",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Record trade receivables and the allowance for expected credit losses, and report them in the statement of financial position in accordance with the applicable financial reporting standards.",
+     "explanation": "The history of the accounting profession is a different subject from recording and reporting receivables under the standards. It is Understand level (explain), below the CLO's Apply level, so it does not build toward the CLO, and it is not a step of receivables recording or reporting.",
+     "validationFailures": [],
+     "requests": [
+      17
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-ilo-10",
+   "type": "ILO-CLO",
+   "course": "hm",
+   "category": "clear-positive",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "A standard step of table service.",
+   "origin": null,
+   "source": "Deliver table service to industry standards.",
+   "target": "Set a cover for a three-course meal following the standard layout.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Deliver table service to industry standards.",
+     "targetQuote": "Set a cover for a three-course meal following the standard layout.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Set a cover for a three-course meal and serve it to guests following industry-standard table service procedures.",
+     "explanation": "The ILO is a smaller step of table service in the same subject. But it only covers setting a cover (a single task), not the delivery of service. The ILO verb 'Set' is Apply, which builds toward 'Deliver'. As a CLO-level statement, it claims less than the CLO: it omits serving guests and the industry standards. The ILO text is also missing the standard being met beyond 'standard layout'. Since the source is the CLO and the target is the ILO, the ILO is a valid smaller step but does not state the industry standard or service delivery.",
+     "validationFailures": [],
+     "requests": [
+      9
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Deliver table service to industry standards.",
+     "targetQuote": "Set a cover for a three-course meal following the standard layout.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Set a cover for a three-course meal following the standard layout and serve the courses to guests following industry service standards.",
+     "explanation": "The ILO is the same subject (table service) and practises a smaller step (setting a cover), but the source CLO asks to deliver service to industry standards, which includes more than the cover layout: the ILO covers only a table setup, not serving or delivering to guests. Its Bloom level (Apply) matches, but it does not show the delivery of service itself, so it is only a partial step of the CLO.",
+     "validationFailures": [],
+     "requests": [
+      18
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-ilo-11",
+   "type": "ILO-CLO",
+   "course": "hm",
+   "category": "contradictory",
+   "ambiguous": false,
+   "accept": [
+    "NOT_ALIGNED"
+   ],
+   "why": "The ILO contradicts the CLO.",
+   "origin": null,
+   "source": "Apply safety and sanitation standards when serving food and beverages.",
+   "target": "Handle food with bare hands to save time during rush hours.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Apply safety and sanitation standards when serving food and beverages.",
+     "targetQuote": "Handle food with bare hands to save time during rush hours.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply safe food-handling and sanitation standards, such as handwashing and using gloves or tongs, when serving food and beverages, including during rush hours.",
+     "explanation": "The ILO contradicts the CLO: handling food with bare hands violates sanitation standards. It does not apply safety or sanitation standards, and it prioritises speed over hygiene. It is not a step toward the CLO's verb 'Apply' with respect to standards, and does not address beverages.",
+     "validationFailures": [],
+     "requests": [
+      9
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Apply safety and sanitation standards when serving food and beverages.",
+     "targetQuote": "Handle food with bare hands to save time during rush hours.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply hygienic food handling, such as handwashing and using gloves or tongs, when serving food and beverages, including during rush hours.",
+     "explanation": "The ILO tells students to handle food with bare hands to save time, which contradicts the CLO's requirement to apply safety and sanitation standards when serving. It is a poor practice, not a step toward the CLO, and it names no sanitation standard, so it cannot build toward it.",
+     "validationFailures": [],
+     "requests": [
+      18
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-ilo-12",
+   "type": "ILO-CLO",
+   "course": "calc",
+   "category": "level-gap",
+   "ambiguous": false,
+   "accept": [
+    "PARTIALLY_ALIGNED",
+    "NOT_ALIGNED"
+   ],
+   "why": "The ILO goes far beyond the CLO's level.",
+   "origin": null,
+   "source": "Define the limit of a function.",
+   "target": "Prove the epsilon-delta definition of a limit for arbitrary functions.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Define the limit of a function.",
+     "targetQuote": "Prove the epsilon-delta definition of a limit for arbitrary functions.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Remember",
+     "targetBloom": "Create",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "State the definition of the limit of a function and explain it in terms of values approaching a number.",
+     "explanation": "The ILO claims more than the CLO. The CLO asks only to define the limit (Remember), but the ILO asks to prove the epsilon-delta definition for arbitrary functions (Evaluate/Create level). That is far above the CLO's level and scope, so it is not a smaller step.",
+     "validationFailures": [],
+     "requests": [
+      2
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "Define the limit of a function.",
+     "targetQuote": "Prove the epsilon-delta definition of a limit for arbitrary functions.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Remember",
+     "targetBloom": "Evaluate",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "State the definition of the limit of a function and explain it in words and with the epsilon-delta idea for simple functions.",
+     "explanation": "The ILO is at Remember level (define) and the target text is a stronger Create/Evaluate-level proof claim. The pair is checked with the CLO as source: the CLO asks to define the limit of a function, while the ILO text (target) claims to prove the epsilon-delta definition for arbitrary functions. This claims far more than the CLO (it goes from Remember to Evaluate/Create), which fails the test that it does not claim more than the CLO. It is the same subject, limits, but the Bloom level is too high.",
+     "validationFailures": [],
+     "requests": [
+      11
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-ilo-13",
+   "type": "ILO-CLO",
+   "course": "ie",
+   "category": "interdisciplinary",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Modelling a scheduling problem is formulating a linear programme.",
+   "origin": null,
+   "source": "Formulate linear programming models of production problems.",
+   "target": "Translate a word problem about workforce scheduling into decision variables and constraints.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Formulate linear programming models",
+     "targetQuote": "decision variables and constraints",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "The ILO is a smaller step toward formulating LP models: translating a workforce scheduling word problem into variables and constraints.",
+     "validationFailures": [],
+     "requests": [
+      3
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Formulate linear programming models",
+     "targetQuote": "decision variables and constraints",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "The ILO is a smaller formulation step (decision variables and constraints) toward the CLO's LP formulation, in the same subject and at the same Apply level.",
+     "validationFailures": [],
+     "requests": [
+      12
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-any-po-01",
+   "type": "CLO-anyPO",
+   "course": "calc",
+   "category": "whole-list",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Fits PO 1; it need not fit the others.",
+   "origin": null,
+   "source": "1. Apply knowledge of mathematics and science to solve complex engineering problems.\n2. Design solutions for complex engineering problems that meet specified needs.\n3. Function effectively as a member or leader of a team.\n4. Communicate effectively on complex engineering activities with the engineering community and society.\n5. Recognize the need for, and engage in, independent and lifelong learning.",
+   "target": "Solve systems of linear equations using matrix methods.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Apply knowledge of mathematics and science to solve complex engineering problems.",
+     "targetQuote": "Solve systems of linear equations using matrix methods.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "PO 1: solving linear systems with matrix methods applies mathematics to solve problems.",
+     "validationFailures": [],
+     "requests": [
+      2
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "1. Apply knowledge of mathematics and science to solve complex engineering problems.",
+     "targetQuote": "Solve systems of linear equations using matrix methods.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply knowledge of mathematics, including limits and derivatives, to solve complex engineering problems such as rates of change and optimization.",
+     "explanation": "PO 1 fits best: the CLO applies mathematics (matrix methods) to solve problems, so it shares the verb 'solve' and the mathematics subject. But it lacks the engineering context ('complex engineering problems') and, being a linear algebra topic, it is not part of Differential Calculus. The draft adds the engineering problems and the calculus subject.",
+     "validationFailures": [],
+     "requests": [
+      11
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-any-po-02",
+   "type": "CLO-anyPO",
+   "course": "calc",
+   "category": "whole-list",
+   "ambiguous": false,
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Fits none of the five.",
+   "origin": null,
+   "source": "1. Apply knowledge of mathematics and science to solve complex engineering problems.\n2. Design solutions for complex engineering problems that meet specified needs.\n3. Function effectively as a member or leader of a team.\n4. Communicate effectively on complex engineering activities with the engineering community and society.\n5. Recognize the need for, and engage in, independent and lifelong learning.",
+   "target": "Appreciate the history of ancient Rome and its art.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "5. Recognize the need for, and engage in, independent and lifelong learning.",
+     "targetQuote": "Appreciate the history of ancient Rome and its art.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Understand",
+     "targetBloom": "Understand",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply derivatives to solve engineering problems involving rates of change and optimization.",
+     "explanation": "Best-fitting item is PO 5 (learning), but the CLO is about appreciating Roman history and art, which is unrelated to engineering or mathematics. It has no engineering subject, and 'Appreciate' (Understand) does not match any PO verb; it also has nothing to do with Differential Calculus.",
+     "validationFailures": [],
+     "requests": [
+      2
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "1. Apply knowledge of mathematics and science to solve complex engineering problems.",
+     "targetQuote": "Appreciate the history of ancient Rome and its art.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Understand",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply knowledge of limits, continuity and derivatives to solve complex engineering problems.",
+     "explanation": "No PO fits. The CLO is about appreciating the history and art of ancient Rome: it is an Understand/affective outcome in a humanities subject, with no engineering or mathematics subject. It has none of the verbs of POs 1 to 5. The best-fitting item is PO 1, so the draft rewrites it toward Differential Calculus and begins with its verb.",
+     "validationFailures": [],
+     "requests": [
+      11
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-any-po-03",
+   "type": "CLO-anyPO",
+   "course": "calc",
+   "category": "whole-list",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Fits PO 2 and PO 3.",
+   "origin": null,
+   "source": "1. Apply knowledge of mathematics and science to solve complex engineering problems.\n2. Design solutions for complex engineering problems that meet specified needs.\n3. Function effectively as a member or leader of a team.\n4. Communicate effectively on complex engineering activities with the engineering community and society.\n5. Recognize the need for, and engage in, independent and lifelong learning.",
+   "target": "Collaborate with a team to design a prototype that meets stated requirements.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Function effectively as a member or leader of a team.",
+     "targetQuote": "Collaborate with a team to design a prototype",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Create",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "PO 3 and PO 2: the CLO has team collaboration and design to requirements.",
+     "validationFailures": [],
+     "requests": [
+      2
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "2. Design solutions for complex engineering problems that meet specified needs.",
+     "targetQuote": "Collaborate with a team to design a prototype that meets stated requirements.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Create",
+     "targetBloom": "Create",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Design, with a team, solutions to complex engineering problems that meet specified needs, using derivatives to model and optimize the design.",
+     "explanation": "PO 2 fits best: the CLO designs a prototype to meet requirements, so it shares the verb 'design' and the 'meets stated requirements' idea. It is not tied to complex engineering problems, and it has no calculus subject matter (Differential Calculus), which is not covered. PO 3 (teamwork) is also matched by 'collaborate', but the CLO is about a prototype design and not about leading or functioning in a team. The draft adds the engineering problem and calculus.",
+     "validationFailures": [],
+     "requests": [
+      11
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-any-ega-01",
+   "type": "CLO-anyEGA",
+   "course": "prog",
+   "category": "whole-list",
+   "ambiguous": false,
+   "accept": [
+    "ALIGNED"
+   ],
+   "why": "Fits EGA 1.",
+   "origin": null,
+   "source": "1. Critical and Creative thinker\n2. Competent Catholic Augustinian-Marian Professional\n3. Socially Responsive Steward\n4. Transformative Lifelong learner",
+   "target": "Analyze alternative designs and justify the selection of one for a given problem.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Critical and Creative thinker",
+     "targetQuote": "Analyze alternative designs and justify the selection",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Analyze",
+     "targetBloom": "Evaluate",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "1. Critical and Creative thinker: the CLO asks students to analyze alternative designs and justify a selection, which is critical thinking at Analyze/Evaluate level, in computing design.",
+     "validationFailures": [],
+     "requests": [
+      5
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "ALIGNED",
+     "sourceQuote": "Critical and Creative thinker",
+     "targetQuote": "Analyze alternative designs and justify the selection of one",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Analyze",
+     "targetBloom": "Evaluate",
+     "remedy": "NO_CHANGE",
+     "recommendationField": null,
+     "draft": "",
+     "explanation": "1. Critical and Creative thinker: the CLO analyzes alternative designs and justifies a choice, which is critical thinking at Analyze/Evaluate level on a programming design problem.",
+     "validationFailures": [],
+     "requests": [
+      14
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-any-ega-02",
+   "type": "CLO-anyEGA",
+   "course": "calc",
+   "category": "whole-list",
+   "ambiguous": false,
+   "accept": [
+    "NOT_ALIGNED",
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Fits none.",
+   "origin": null,
+   "source": "1. Critical and Creative thinker\n2. Competent Catholic Augustinian-Marian Professional\n3. Socially Responsive Steward\n4. Transformative Lifelong learner",
+   "target": "Recite the multiplication table.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "1. Critical and Creative thinker",
+     "targetQuote": "Recite the multiplication table.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Analyze",
+     "targetBloom": "Remember",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Analyze engineering problems and devise creative solutions using limits and derivatives.",
+     "explanation": "Closest is EGA 1 (Critical and Creative thinker), but reciting a multiplication table is Remember-level rote recall. It has no critical or creative thinking, and no link to any other attribute; it is also not a Differential Calculus skill.",
+     "validationFailures": [],
+     "requests": [
+      2
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "NOT_ALIGNED",
+     "sourceQuote": "1. Critical and Creative thinker",
+     "targetQuote": "Recite the multiplication table.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Analyze",
+     "targetBloom": "Remember",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Analyze engineering problems critically and creatively, using limits and derivatives to build and justify solutions.",
+     "explanation": "No EGA fits. Reciting the multiplication table is a Remember-level rote task, below every attribute, which asks for thinking, professionalism, stewardship or lifelong learning. The subject is also elementary arithmetic and not Differential Calculus. The best-fitting item is 1 (Critical and Creative thinker), so the draft begins with its verb.",
+     "validationFailures": [],
+     "requests": [
+      11
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-po-13",
+   "type": "CLO-PO",
+   "course": "nurs",
+   "category": "partial",
+   "ambiguous": false,
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Knowing the steps of the PO's own process is related and necessary, but it does not apply the process in care. The best answer here is PARTIAL; reviewers could argue for a different level.",
+   "origin": null,
+   "source": "Apply the nursing process in providing safe, quality care to individuals, families and communities.",
+   "target": "Describe the steps of the nursing process.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Apply the nursing process in providing safe, quality care to individuals, families and communities.",
+     "targetQuote": "Describe the steps of the nursing process.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Understand",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply the steps of the nursing process to provide safe, quality care to an individual and his or her family in a simulated case.",
+     "explanation": "The CLO is about the nursing process, which is the PO's subject, but it only describes the steps (Understand), which is below the PO's Apply level. It does not show safe, quality care delivery or care for individuals, families or communities.",
+     "validationFailures": [],
+     "requests": [
+      6
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Apply the nursing process in providing safe, quality care to individuals, families and communities.",
+     "targetQuote": "Describe the steps of the nursing process.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Understand",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply the steps of the nursing process in providing safe, quality care to an individual patient and family in a simulated case.",
+     "explanation": "The CLO is on the right subject (nursing process) but only describes its steps (Understand), which is lower than the PO's Apply. It also gives no care of individuals, families or communities and no safe, quality care.",
+     "validationFailures": [],
+     "requests": [
+      15
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-po-14",
+   "type": "CLO-PO",
+   "course": "edu",
+   "category": "partial",
+   "ambiguous": false,
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Knowledge of the code supports ethical practice but is not the practice itself.",
+   "origin": null,
+   "source": "Demonstrate professional and ethical teaching practice.",
+   "target": "Name the provisions of the code of ethics for professional teachers.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Demonstrate professional and ethical teaching practice.",
+     "targetQuote": "Name the provisions of the code of ethics for professional teachers.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Remember",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply the provisions of the code of ethics for professional teachers to demonstrate ethical practice in classroom assessment, such as fair grading and confidentiality of student results.",
+     "explanation": "The CLO is on the right subject (the code of ethics for teachers) but only asks to 'name' provisions, which is Remember level. The PO asks to demonstrate professional and ethical teaching practice, which is Apply level or higher. No demonstrating, and no application of the provisions to teaching or assessment situations, is shown.",
+     "validationFailures": [],
+     "requests": [
+      7
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Demonstrate professional and ethical teaching practice.",
+     "targetQuote": "Name the provisions of the code of ethics for professional teachers.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Remember",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply the provisions of the code of ethics for professional teachers to assessment situations, such as grading fairly and keeping student results confidential, and justify decisions as ethical teaching practice.",
+     "explanation": "The CLO shares the subject of the professional code of ethics for teachers. But 'Name' is a Remember-level verb, below the PO's 'Demonstrate' (Apply). It does not show professional and ethical teaching practice in action, such as applying the provisions to classroom assessment situations.",
+     "validationFailures": [],
+     "requests": [
+      16
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-ilo-14",
+   "type": "ILO-CLO",
+   "course": "calc",
+   "category": "partial",
+   "ambiguous": false,
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Graphs relate to optimization but sketching one uses none of the differentiation the CLO asks for: a peripheral contribution.",
+   "origin": null,
+   "source": "Apply differentiation rules to solve optimization problems in engineering.",
+   "target": "Sketch the graph of a given function.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Apply differentiation rules to solve optimization problems in engineering.",
+     "targetQuote": "Sketch the graph of a given function.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Sketch the graph of a given function using its first derivative to locate maxima and minima, as a step toward solving engineering optimization problems.",
+     "explanation": "Sketching a graph is related to calculus and could build toward optimization, as in the same subject. But the ILO does not state use of derivatives (differentiation rules), nor optimization, nor any engineering problem. Its Bloom level is Apply/Understand, a smaller step, but the link to the CLO's verb and subject is missing.",
+     "validationFailures": [],
+     "requests": [
+      2
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Apply differentiation rules to solve optimization problems in engineering.",
+     "targetQuote": "Sketch the graph of a given function.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Apply",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Apply the first derivative to sketch the graph of a given function and locate its maximum and minimum points for an engineering optimization problem.",
+     "explanation": "The ILO (sketch the graph of a function) is in the same subject, calculus, and builds toward optimization, since graphs show maxima and minima. But its level is lower than the CLO's Apply: it does not use differentiation rules, and it does not mention optimization or an engineering context. The draft links the sketch to derivatives and optimization.",
+     "validationFailures": [],
+     "requests": [
+      11
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d-ilo-15",
+   "type": "ILO-CLO",
+   "course": "nurs",
+   "category": "partial",
+   "ambiguous": false,
+   "accept": [
+    "PARTIALLY_ALIGNED"
+   ],
+   "why": "Defining the term is a low-level, peripheral step toward assessing them accurately.",
+   "origin": null,
+   "source": "Assess vital signs accurately.",
+   "target": "Define the term vital signs.",
+   "runs": [
+    {
+     "run": 1,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Assess vital signs accurately.",
+     "targetQuote": "Define the term vital signs.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Remember",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Measure and record temperature, pulse, respiration and blood pressure accurately on a simulated patient.",
+     "explanation": "The ILO is on the same subject (vital signs) but only defines the term (Remember). The CLO requires accurate assessment at Apply level, so the ILO does not build toward the CLO's skill.",
+     "validationFailures": [],
+     "requests": [
+      6
+     ]
+    },
+    {
+     "run": 2,
+     "verified": true,
+     "label": "PARTIALLY_ALIGNED",
+     "sourceQuote": "Assess vital signs accurately.",
+     "targetQuote": "Define the term vital signs.",
+     "evidenceMatching": {
+      "source": "exact",
+      "target": "exact"
+     },
+     "sourceBloom": "Apply",
+     "targetBloom": "Remember",
+     "remedy": "REWRITE_TEXT",
+     "recommendationField": null,
+     "draft": "Measure temperature, pulse, respiration and blood pressure correctly on a simulated patient and record the results.",
+     "explanation": "Defining vital signs is the same subject and a prerequisite, but it is Remember-level, below the CLO's Assess (Apply). It does not build toward accurate measurement.",
+     "validationFailures": [],
+     "requests": [
+      15
+     ]
+    }
+   ]
+  }
+ ]
+}

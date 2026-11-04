@@ -1,0 +1,210 @@
+{
+  "provider": "anthropic",
+  "model": "claude-sonnet-5-5",
+  "modelsReturned": {
+    "claude-sonnet-5-5": 6
+  },
+  "pricesAsOf": "2026-10-27",
+  "outputTokens": 4611,
+  "requests": 6,
+  "charged": 0.06535,
+  "conservative": 0.120747,
+  "accounting": "reconcile",
+  "transient": 0,
+  "invalid": 0,
+  "unproductive": 0,
+  "entries": [
+    {
+      "n": 1,
+      "kind": "model",
+      "at": "2026-10-27T18:25:15.126Z",
+      "status": 200,
+      "worst": 0.21567425,
+      "charged": 0.01904,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.02127125,
+      "ids": [
+        "cp-bsit-aligned",
+        "cp-bsit-keyword",
+        "cp-bsit-wrongpo",
+        "cp-bsit-real3"
+      ],
+      "maxTokens": 16000,
+      "requestId": "req_011CgTDCJPf5XoFHhesHdYXb",
+      "modelReturned": "claude-sonnet-5-5",
+      "ms": 6941,
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "estimatedCost": 0.01904,
+      "tokens": {
+        "input": 595,
+        "cacheWrite": 3728,
+        "cacheWrite1h": 0,
+        "cacheRead": 0,
+        "output": 853,
+        "thinking": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      }
+    },
+    {
+      "n": 2,
+      "kind": "model",
+      "at": "2026-10-27T18:25:22.141Z",
+      "status": 200,
+      "worst": 0.2148025,
+      "charged": 0.0096676,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.02031425,
+      "ids": [
+        "cp-bsie-wrongpo",
+        "cp-bsie-real2"
+      ],
+      "maxTokens": 16000,
+      "requestId": "req_011CgTDCob5NYhhmh3rf6ie5",
+      "modelReturned": "claude-sonnet-5-5",
+      "ms": 6527,
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "estimatedCost": 0.0092948,
+      "tokens": {
+        "input": 451,
+        "cacheWrite": 0,
+        "cacheWrite1h": 0,
+        "cacheRead": 3728,
+        "output": 802,
+        "thinking": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      }
+    },
+    {
+      "n": 3,
+      "kind": "model",
+      "at": "2026-10-27T18:25:28.677Z",
+      "status": 200,
+      "worst": 0.21486575,
+      "charged": 0.0084796,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.0190355,
+      "ids": [
+        "cp-bscpe-aligned",
+        "cp-bscpe-keyword",
+        "cp-bscpe-wrongpo"
+      ],
+      "maxTokens": 16000,
+      "requestId": "req_011CgTDDHUd5QrHbPtrTXwPd",
+      "modelReturned": "claude-sonnet-5-5",
+      "ms": 5070,
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "estimatedCost": 0.0081068,
+      "tokens": {
+        "input": 502,
+        "cacheWrite": 0,
+        "cacheWrite1h": 0,
+        "cacheRead": 3728,
+        "output": 673,
+        "thinking": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      }
+    },
+    {
+      "n": 4,
+      "kind": "model",
+      "at": "2026-10-27T18:25:33.755Z",
+      "status": 200,
+      "worst": 0.21567425,
+      "charged": 0.0104556,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.02126025,
+      "ids": [
+        "cp-bsit-aligned",
+        "cp-bsit-keyword",
+        "cp-bsit-wrongpo",
+        "cp-bsit-real3"
+      ],
+      "maxTokens": 16000,
+      "requestId": "req_011CgTDDg5QgiydXPv6cWCUB",
+      "modelReturned": "claude-sonnet-5-5",
+      "ms": 5840,
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "estimatedCost": 0.0100828,
+      "tokens": {
+        "input": 595,
+        "cacheWrite": 0,
+        "cacheWrite1h": 0,
+        "cacheRead": 3728,
+        "output": 852,
+        "thinking": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      }
+    },
+    {
+      "n": 5,
+      "kind": "model",
+      "at": "2026-10-27T18:25:39.604Z",
+      "status": 200,
+      "worst": 0.2148025,
+      "charged": 0.0089076,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.01947825,
+      "ids": [
+        "cp-bsie-wrongpo",
+        "cp-bsie-real2"
+      ],
+      "maxTokens": 16000,
+      "requestId": "req_011CgTDE6AkoPRhH3bcAh1xw",
+      "modelReturned": "claude-sonnet-5-5",
+      "ms": 5198,
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "estimatedCost": 0.0085348,
+      "tokens": {
+        "input": 451,
+        "cacheWrite": 0,
+        "cacheWrite1h": 0,
+        "cacheRead": 3728,
+        "output": 726,
+        "thinking": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      }
+    },
+    {
+      "n": 6,
+      "kind": "model",
+      "at": "2026-10-27T18:25:44.810Z",
+      "status": 200,
+      "worst": 0.21486575,
+      "charged": 0.0087996,
+      "accounting": "reconciled",
+      "conservativeCharge": 0.0193875,
+      "ids": [
+        "cp-bscpe-aligned",
+        "cp-bscpe-keyword",
+        "cp-bscpe-wrongpo"
+      ],
+      "maxTokens": 16000,
+      "requestId": "req_011CgTDEURi4Y3Y5s7uCSBCB",
+      "modelReturned": "claude-sonnet-5-5",
+      "ms": 4983,
+      "stopReason": "end_turn",
+      "thinkingBlocks": 0,
+      "estimatedCost": 0.0084268,
+      "tokens": {
+        "input": 502,
+        "cacheWrite": 0,
+        "cacheWrite1h": 0,
+        "cacheRead": 3728,
+        "output": 705,
+        "thinking": 0,
+        "inferenceGeo": "global",
+        "serviceTier": "standard"
+      }
+    }
+  ]
+}

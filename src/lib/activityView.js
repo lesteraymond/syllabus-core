@@ -23,10 +23,7 @@ const FALLBACK = { icon: 'notePencil', tone: 'quiet', verb: 'made a change to' }
 export function describeActivity(log, index = 0, viewerId = null) {
   // Older rows logged the first submission from the builder as an "upload"; its note says what it really was.
   const submittedFromBuilder = log && log.action === 'upload' && /^Syllabus submitted from the builder/.test(String(log.notes || ''));
-  // An AI check is a 'check' row; older rows stored it as an 'update' whose note starts with "AI check:". Both read the same way.
-  const aiCheck = log && (log.action === 'check' || (log.action === 'update' && /^AI check:/.test(String(log.notes || ''))));
-  const kind = KINDS[aiCheck ? 'check' : submittedFromBuilder ? 'submit' : log && log.action] || FALLBACK;
-  const score = aiCheck ? (String(log.notes).match(/(\d{1,3})%/) || [])[1] : null;
+  const kind = KINDS[submittedFromBuilder ? 'submit' : log && log.action] || FALLBACK;
   const code = String((log && log.courseCode) || '').trim();
   const title = String((log && log.title) || '').trim();
   const d = toDate(log && log.actionDate);
@@ -37,7 +34,7 @@ export function describeActivity(log, index = 0, viewerId = null) {
     who: viewerId !== null && log && log.userId === viewerId ? 'You' : String((log && log.user) || '').trim() || 'Someone',
     verb: (log && log.action === 'recommend' && RECOMMEND_VERBS[String(log.notes || '').split(' ')[0]]) || kind.verb,
     subject: code || title || 'a syllabus',
-    detail: (code && title ? title : '') + (score ? (code && title ? ' · ' : '') + 'AI check score ' + score + '%' : ''), // the course title under the code, when there is both; an AI check adds its score
+    detail: code && title ? title : '', // the course title under the code, when there is both
     time: phTime(d),
     iso: d ? d.toISOString() : '',
     when: d,

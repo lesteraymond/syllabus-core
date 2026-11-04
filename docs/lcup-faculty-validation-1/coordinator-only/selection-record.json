@@ -1,0 +1,323 @@
+{
+  "version": "lcup-faculty-validation-1",
+  "built": "2026-10-29",
+  "coordinatorOnly": true,
+  "warning": "Never give this record to reviewers, and never include it in any prompt or model input. The signals are not judgments, not expected answers and not ground truth; do not score faculty or Claude against them.",
+  "author": "The selection signals and observations were written by Claude Code (an AI assistant) on 2026-10-29 from the wording of the cases alone, when the sample was drawn. No faculty member has reviewed them.",
+  "rule": [
+    "Pool: the relationships of the three verified syllabi (IT 202, IE-402, CpE 304) in lcup-academic-benchmark-1, for the seven weekly relationship types of academic-evaluation-v2-preview-1.",
+    "Eligible: academic-semantic, required weekly, not optional, no reference hold, no missing evidence, Claude eligibility \"candidate_pending_authorization\".",
+    "Left out: the 3 cases with an earlier Claude output (BM1-IT202-096, BM1-IE402-074, BM1-CPE304-051), so that no earlier output can reach the blind materials or shape the sample.",
+    "Three cases per relationship, one from each syllabus where it offers a suitable case.",
+    "Within each relationship, cases chosen from their wording to include an apparent alignment, an apparent partial alignment and an apparent misalignment; where no authentic apparent misalignment exists, a case whose evidence is general or administrative instead, and the gap is reported. No academic content was written or changed.",
+    "Weeks spread over the term; one week may serve two relationships. Case IDs follow course, week and relationship order, so they reveal no signal."
+  ],
+  "signals": [
+    {
+      "caseId": "FV-01",
+      "benchmarkId": "BM1-IT202-130",
+      "course": "IT 202",
+      "week": "Week 1",
+      "relationship": "Course Content ↔ Learning Activities",
+      "signal": "apparent alignment",
+      "observation": "Every item of the orientation content (course contents, requirements and activities, objectives, grading system and policies) is named in an activity."
+    },
+    {
+      "caseId": "FV-02",
+      "benchmarkId": "BM1-IT202-104",
+      "course": "IT 202",
+      "week": "Week 4-5",
+      "relationship": "Course Content ↔ ILO",
+      "signal": "apparent misalignment",
+      "observation": "The ILO names Java methods. The week's content lists the parts of a Java program, print and println, and data types; \"XII. JAVA METHOD\" is the Week 15 content."
+    },
+    {
+      "caseId": "FV-03",
+      "benchmarkId": "BM1-IT202-141",
+      "course": "IT 202",
+      "week": "Week 4-5",
+      "relationship": "Learning Activities ↔ Assessment",
+      "signal": "apparent misalignment",
+      "observation": "The assessment names a simulation of the external and internal parts of the System Unit, which no activity names; the seatwork, laboratory and machine problem of the activities are not named in the assessment."
+    },
+    {
+      "caseId": "FV-04",
+      "benchmarkId": "BM1-IT202-064",
+      "course": "IT 202",
+      "week": "Week 9-11",
+      "relationship": "ILO ↔ CLO",
+      "signal": "apparent partial alignment",
+      "observation": "Both name Java programs, and the ILO's \"real-world problems\" is close to the CLO's \"social challenges\"; the CLO's collaboration in multi-disciplinary, culturally diverse teams is not in the ILO."
+    },
+    {
+      "caseId": "FV-05",
+      "benchmarkId": "BM1-IT202-155",
+      "course": "IT 202",
+      "week": "Week 15",
+      "relationship": "Course Content ↔ Assessment",
+      "signal": "apparent misalignment",
+      "observation": "The machine problem names \"C programs\" while the week's content and the course are Java; the recitation and quiz name no topic."
+    },
+    {
+      "caseId": "FV-06",
+      "benchmarkId": "BM1-IT202-122",
+      "course": "IT 202",
+      "week": "Week 16-17",
+      "relationship": "Course Title ↔ Course Content",
+      "signal": "apparent partial alignment",
+      "observation": "The content names Java, the course language; its topic, a database connection through UCanAccess, is not among the topics the course description names."
+    },
+    {
+      "caseId": "FV-07",
+      "benchmarkId": "BM1-IT202-093",
+      "course": "IT 202",
+      "week": "Week 16-17",
+      "relationship": "ILO ↔ Learning Activities",
+      "signal": "apparent misalignment",
+      "observation": "The ILO names Augustinian spirituality through value webbing; no activity names either."
+    },
+    {
+      "caseId": "FV-08",
+      "benchmarkId": "BM1-IE402-073",
+      "course": "IE-402",
+      "week": "Week 1",
+      "relationship": "Course Title ↔ Course Content",
+      "signal": "limited evidence",
+      "observation": "The orientation content (course contents, requirements, objectives, grading and policies) names no systems engineering topic."
+    },
+    {
+      "caseId": "FV-09",
+      "benchmarkId": "BM1-IE402-103",
+      "course": "IE-402",
+      "week": "Week 2-3",
+      "relationship": "Course Content ↔ Assessment",
+      "signal": "apparent alignment",
+      "observation": "The quiz and the case study report name the content's topics: systems engineering management and DoD acquisition."
+    },
+    {
+      "caseId": "FV-10",
+      "benchmarkId": "BM1-IE402-078",
+      "course": "IE-402",
+      "week": "Week 5-8",
+      "relationship": "Course Title ↔ Course Content",
+      "signal": "apparent alignment",
+      "observation": "The content names \"The Systems Engineering Process\" and steps that the course description lists, such as requirements analysis."
+    },
+    {
+      "caseId": "FV-11",
+      "benchmarkId": "BM1-IE402-105",
+      "course": "IE-402",
+      "week": "Week 5-8",
+      "relationship": "Course Content ↔ Learning Activities",
+      "signal": "apparent partial alignment",
+      "observation": "Two of the six listed topics (functional analysis and allocation; process outputs) are named in the activities; the overview, requirements analysis, design synthesis and verification are not. The workshop description is printed twice."
+    },
+    {
+      "caseId": "FV-12",
+      "benchmarkId": "BM1-IE402-044",
+      "course": "IE-402",
+      "week": "Week 10-11",
+      "relationship": "ILO ↔ CLO",
+      "signal": "apparent misalignment",
+      "observation": "The ILO names creating and interpreting a WBS; the CLO names Augustinian spirituality through value webbing; no element is shared. The same ILO is also mapped to CLO 3."
+    },
+    {
+      "caseId": "FV-13",
+      "benchmarkId": "BM1-IE402-110",
+      "course": "IE-402",
+      "week": "Week 10-11",
+      "relationship": "Learning Activities ↔ Assessment",
+      "signal": "apparent partial alignment",
+      "observation": "Both name risk assessment and mitigation. The WBS and configuration management activities are not assessed, and the experimental design and robust design of the tasks are not among this week's activities (they are Week 15-17 topics)."
+    },
+    {
+      "caseId": "FV-14",
+      "benchmarkId": "BM1-IE402-088",
+      "course": "IE-402",
+      "week": "Week 12-14",
+      "relationship": "Course Content ↔ ILO",
+      "signal": "apparent partial alignment",
+      "observation": "Both name management considerations; the ILO's resource allocation, risk assessment and stakeholder engagement are not named in the content."
+    },
+    {
+      "caseId": "FV-15",
+      "benchmarkId": "BM1-IE402-113",
+      "course": "IE-402",
+      "week": "Week 12-14",
+      "relationship": "Learning Activities ↔ Assessment",
+      "signal": "apparent alignment",
+      "observation": "The planning workshop and the plan development task name the same plan elements (objectives, resource allocation, timeline, milestones); the brainstorming session and the proposal task both name a product improvement strategy."
+    },
+    {
+      "caseId": "FV-16",
+      "benchmarkId": "BM1-IE402-065",
+      "course": "IE-402",
+      "week": "Week 15-17",
+      "relationship": "ILO ↔ Learning Activities",
+      "signal": "apparent alignment",
+      "observation": "The \"Design and Conduct Experiments\" activity names designing and conducting an experiment, collecting data and analysing results, as the ILO does."
+    },
+    {
+      "caseId": "FV-17",
+      "benchmarkId": "BM1-CPE304-023",
+      "course": "CpE 304",
+      "week": "Week 2-3",
+      "relationship": "ILO ↔ CLO",
+      "signal": "apparent alignment",
+      "observation": "The ILO repeats the CLO's phrase \"design process of electronic circuits and systems\"; the CLO's experiments and data analysis are not in the ILO."
+    },
+    {
+      "caseId": "FV-18",
+      "benchmarkId": "BM1-CPE304-022",
+      "course": "CpE 304",
+      "week": "Week 2-3",
+      "relationship": "ILO ↔ Learning Activities",
+      "signal": "apparent partial alignment",
+      "observation": "The ILO names developing analysis and design skills; the only activity is a lecture-discussion, and no practice activity is named."
+    },
+    {
+      "caseId": "FV-19",
+      "benchmarkId": "BM1-CPE304-083",
+      "course": "CpE 304",
+      "week": "Week 4-5",
+      "relationship": "Course Content ↔ Learning Activities",
+      "signal": "limited evidence",
+      "observation": "The only activity, \"Lecture- Discussion using PowerPoint\", names a teaching method and no topic, against the operational-amplifier topics the content lists."
+    },
+    {
+      "caseId": "FV-20",
+      "benchmarkId": "BM1-CPE304-090",
+      "course": "CpE 304",
+      "week": "Week 9-11",
+      "relationship": "Course Content ↔ Assessment",
+      "signal": "limited evidence",
+      "observation": "The only assessment, \"Quiz on the topics discussed\", names no topic."
+    },
+    {
+      "caseId": "FV-21",
+      "benchmarkId": "BM1-CPE304-065",
+      "course": "CpE 304",
+      "week": "Week 13-14",
+      "relationship": "Course Content ↔ ILO",
+      "signal": "apparent alignment",
+      "observation": "Both name sensors and transducers."
+    }
+  ],
+  "coverage": {
+    "byRelationship": {
+      "Course Title ↔ Course Content": [
+        "FV-06 IT 202: apparent partial alignment",
+        "FV-08 IE-402: limited evidence",
+        "FV-10 IE-402: apparent alignment"
+      ],
+      "Course Content ↔ ILO": [
+        "FV-02 IT 202: apparent misalignment",
+        "FV-14 IE-402: apparent partial alignment",
+        "FV-21 CpE 304: apparent alignment"
+      ],
+      "ILO ↔ CLO": [
+        "FV-04 IT 202: apparent partial alignment",
+        "FV-12 IE-402: apparent misalignment",
+        "FV-17 CpE 304: apparent alignment"
+      ],
+      "Course Content ↔ Learning Activities": [
+        "FV-01 IT 202: apparent alignment",
+        "FV-11 IE-402: apparent partial alignment",
+        "FV-19 CpE 304: limited evidence"
+      ],
+      "ILO ↔ Learning Activities": [
+        "FV-07 IT 202: apparent misalignment",
+        "FV-16 IE-402: apparent alignment",
+        "FV-18 CpE 304: apparent partial alignment"
+      ],
+      "Course Content ↔ Assessment": [
+        "FV-05 IT 202: apparent misalignment",
+        "FV-09 IE-402: apparent alignment",
+        "FV-20 CpE 304: limited evidence"
+      ],
+      "Learning Activities ↔ Assessment": [
+        "FV-03 IT 202: apparent misalignment",
+        "FV-13 IE-402: apparent partial alignment",
+        "FV-15 IE-402: apparent alignment"
+      ]
+    },
+    "byCourse": {
+      "IT 202": 7,
+      "IE-402": 9,
+      "CpE 304": 5
+    },
+    "bySignal": {
+      "apparent alignment": 7,
+      "apparent partial alignment": 6,
+      "apparent misalignment": 5,
+      "limited evidence": 3
+    },
+    "cloClassificationsInSample": [
+      "FV-04: CLO 3 Demonstrating",
+      "FV-12: CLO 4 Integration of Values",
+      "FV-17: CLO 1 Introductory"
+    ]
+  },
+  "gaps": [
+    "Course Title ↔ Course Content: none of the eight CpE 304 cases can be used, because all are reference-held (the course code is written \"CpE 304\" in the syllabus and \"CpE-304\" in the curriculum transcription). No authentic apparent misalignment was found in the three syllabi; the third case is the IE-402 orientation week, whose content names no subject-matter topic.",
+    "Course Content ↔ Learning Activities: no authentic apparent misalignment was found; the third case is CpE 304, whose activities name a teaching method only.",
+    "Course Content ↔ Assessment: the sample has no apparent partial alignment for this relationship. An authentic candidate exists (reserve 1), but it would add a tenth IE-402 case; the CpE 304 case was kept so that the syllabus stays represented.",
+    "CpE 304 uses the same general wording for the activities and the assessment of every lesson, so its cases for those relationships can only show how faculty treat general wording.",
+    "ILO ↔ CLO: three cases cover CLO 1 (Introductory), CLO 3 (Demonstrating) and CLO 4 (Integration of Values); CLO 2 (Enabling) is not covered (reserve 2). IT 202 has no ILO mapped to CLO 4, and CpE 304 none mapped to CLO 3 or CLO 4."
+  ],
+  "reserves": [
+    {
+      "benchmarkId": "BM1-IE402-109",
+      "course": "IE-402",
+      "week": "Week 10-11",
+      "relationship": "Course Content ↔ Assessment",
+      "signal": "apparent partial alignment",
+      "observation": "Both name risk; the tasks name experimental design and robust design, which the Weeks 10-11 content does not list. It would add an apparent partial alignment to Course Content ↔ Assessment."
+    },
+    {
+      "benchmarkId": "BM1-IE402-036",
+      "course": "IE-402",
+      "week": "Week 5-8",
+      "relationship": "ILO ↔ CLO",
+      "signal": "apparent alignment",
+      "observation": "Both name analysing systems, and the ILO's stakeholder needs are close to the CLO's \"people\". It would add CLO 2 (Enabling), which the sample does not cover."
+    }
+  ],
+  "excluded": {
+    "earlierModelOutput": [
+      "BM1-IT202-096",
+      "BM1-IE402-074",
+      "BM1-CPE304-051"
+    ],
+    "referenceHeld": [
+      "BM1-CPE304-049",
+      "BM1-CPE304-050",
+      "BM1-CPE304-053",
+      "BM1-CPE304-056",
+      "BM1-CPE304-060",
+      "BM1-CPE304-064",
+      "BM1-CPE304-067",
+      "BM1-CPE304-069"
+    ],
+    "missingEvidence": [
+      "BM1-IT202-182",
+      "BM1-IT202-183",
+      "BM1-IT202-184",
+      "BM1-IT202-185",
+      "BM1-CPE304-119",
+      "BM1-CPE304-120",
+      "BM1-CPE304-121",
+      "BM1-CPE304-122",
+      "BM1-CPE304-123",
+      "BM1-CPE304-124",
+      "BM1-CPE304-125",
+      "BM1-CPE304-126",
+      "BM1-CPE304-127",
+      "BM1-CPE304-128",
+      "BM1-CPE304-129",
+      "BM1-CPE304-130",
+      "BM1-CPE304-131",
+      "BM1-CPE304-132"
+    ]
+  }
+}

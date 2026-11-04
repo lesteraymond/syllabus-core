@@ -166,16 +166,17 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
 
           {selectedId && doc.editable && (
             <div className="editor-footer">
-              <StableButton type="button" className="btn outline" onClick={openBuilder}>{translateUI('publication.editDraft')}</StableButton>
-              <StableButton
-                type="button"
-                className="btn primary"
-                disabled={submitting || !doc.content || needNote || !canSubmitHybrid(lastRun, JSON.stringify(doc.content), aiGate)}
-                title={!doc.content || !canSubmitHybrid(lastRun, JSON.stringify(doc.content), aiGate) ? translateUI(aiGate === 'advisory' ? 'hybrid.hardGateRequired' : 'hybrid.required') : undefined}
-                onClick={submitChecked}
-              >
-                {existing ? translateUI('hybrid.submitVersion') : translateUI('hybrid.submit')}
-              </StableButton>
+              <div>
+                <StableButton
+                  type="button"
+                  className="btn primary"
+                  disabled={submitting || !doc.content || needNote || !canSubmitHybrid(lastRun, JSON.stringify(doc.content), 'advisory')}
+                  title={!doc.content || !canSubmitHybrid(lastRun, JSON.stringify(doc.content), 'advisory') ? translateUI('hybrid.hardGateRequired') : undefined}
+                  onClick={submitChecked}
+                >
+                  {existing ? translateUI('hybrid.submitVersion') : translateUI('hybrid.submit')}
+                </StableButton>
+              </div>
             </div>
           )}
         </>
@@ -234,7 +235,7 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
   useEffect(() => {
     if (!pending) return undefined;
     let tries = 0;
-    const t = setInterval(() => { tries += 1; loadDetail(openId); if (tries >= 24) clearInterval(t); }, 2500);
+    const t = setInterval(() => { tries += 1; loadDetail(openId); if (tries >= 15) clearInterval(t); }, 2500);
     return () => clearInterval(t);
   }, [pending, openId, loadDetail]);
 

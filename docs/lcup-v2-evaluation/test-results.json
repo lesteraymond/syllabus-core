@@ -1,0 +1,228 @@
+{
+  "scope": "Final distinct targeted assertions; comprehensive1188 not repeated",
+  "tests": 473,
+  "pass": 473,
+  "fail": 0,
+  "skipped": 0,
+  "assertionExecutionsIncludingStrengthenedReruns": 776,
+  "groups": [
+    {
+      "name": "Previously failing unit cases plus two whitespace controls",
+      "command": "node --require ./scripts/lcup-v2-evaluation/isolate-evidence.cjs --test --test-name-pattern \"markup/whitespace-only|malformed V2 top-level\" scripts/lcup-comprehensive-verification/deterministic.test.cjs scripts/lcup-comprehensive-verification/course.test.cjs",
+      "log": "original-failures-unit.log",
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Previously failing actual disposable SQL preview",
+      "command": "node scripts/lcup-v2-evaluation/rerun-sql.cjs",
+      "log": "original-failure-sql.log",
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "New presence, syntax, parity, immutability and malformed shapes",
+      "command": "node --test scripts/lcup-v2-evaluation/corrections.test.cjs",
+      "log": "corrections-tests.log",
+      "tests": 51,
+      "pass": 51,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Additional existing complete-outcomes boundary cases",
+      "command": "node --test --test-name-pattern \"existing complete-outcomes boundary\" scripts/lcup-v2-evaluation/corrections.test.cjs",
+      "log": "outcome-boundary-tests.log",
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Additional optional-structure engine case",
+      "command": "node --test --test-name-pattern \"missing optional sections run\" scripts/lcup-v2-evaluation/corrections.test.cjs",
+      "log": "optional-structure-test.log",
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Selected rule/parity/planning/legacy/API compatibility",
+      "command": "See commands.json selectedExisting",
+      "log": "compatibility-final.log",
+      "tests": 187,
+      "pass": 187,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Outcome save-boundary/model compatibility",
+      "command": "node --test server/routes/catalog.routes.test.js src/lib/syllabusModel.test.js",
+      "log": "outcome-compatibility-tests.log",
+      "tests": 61,
+      "pass": 61,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Existing bilingual Builder dependencies",
+      "command": "node scripts/lcup-requirements/test-ui.mjs",
+      "log": "builder-tests.log",
+      "tests": 6,
+      "pass": 6,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Independent seven-relationship contracts",
+      "command": "node --require ./scripts/lcup-v2-evaluation/isolate-evidence.cjs --test scripts/lcup-comprehensive-verification/relationships.test.cjs",
+      "log": "seven-relationships-final.log",
+      "tests": 98,
+      "pass": 98,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "New malformed HTTP/authentication/no-write contracts",
+      "command": "node --test scripts/lcup-v2-evaluation/api.test.cjs",
+      "log": "malformed-api-tests.log",
+      "tests": 9,
+      "pass": 9,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Evaluation selection/prompts/guards/results/CLI",
+      "command": "node --test scripts/lcup-v2-evaluation/pipeline.test.cjs",
+      "log": "pipeline-tests.log",
+      "tests": 33,
+      "pass": 33,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Additional restrictive review/cost preservation",
+      "command": "node --test --test-name-pattern \"report preserves restrictive\" scripts/lcup-v2-evaluation/pipeline.test.cjs",
+      "log": "review-safeguards-test.log",
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "All seven underlying evidence sides, independent of generated labels",
+      "command": "node --test scripts/lcup-v2-evaluation/evidence-presence.test.cjs",
+      "log": "scaffolding-final.log",
+      "tests": 14,
+      "pass": 14,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Returned model provenance cannot be absent",
+      "command": "node --test --test-name-pattern \"missing returned model identity\" scripts/lcup-v2-evaluation/pipeline.test.cjs",
+      "log": "model-provenance-test.log",
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Reuse existing measurement with raw, provenance-bound judgments",
+      "command": "node --test --test-name-pattern \"future response export\" scripts/lcup-v2-evaluation/pipeline.test.cjs",
+      "log": "measurement-export-final.log",
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Frozen contexts and unique IDs",
+      "command": "node --test --test-name-pattern \"coherently rehashed\" scripts/lcup-v2-evaluation/pipeline.test.cjs",
+      "log": "context-binding-test.log",
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0
+    }
+  ],
+  "reruns": [
+    {
+      "name": "Strengthened report-cost/provider assertion rerun",
+      "command": "node --test --test-name-pattern \"valid mocked execution\" scripts/lcup-v2-evaluation/pipeline.test.cjs",
+      "log": "report-cost-test.log",
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Strengthened report-cost/provider assertion rerun",
+      "command": "node --test --test-name-pattern \"valid mocked execution\" scripts/lcup-v2-evaluation/pipeline.test.cjs",
+      "log": "final-report-contract-test.log",
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Strengthened report-cost/provider assertion rerun",
+      "command": "node --test --test-name-pattern \"valid mocked execution\" scripts/lcup-v2-evaluation/pipeline.test.cjs",
+      "log": "final-provider-replay-test.log",
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Before authored-cell scaffolding correction",
+      "command": "node --test scripts/lcup-v2-evaluation/evidence-presence.test.cjs",
+      "log": "scaffolding-initial.log",
+      "tests": 14,
+      "pass": 9,
+      "fail": 5,
+      "skipped": 0
+    },
+    {
+      "name": "Compatibility before scaffolding correction",
+      "command": "See commands.json",
+      "log": "compatibility-tests.log",
+      "tests": 187,
+      "pass": 187,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Seven-link contracts before scaffolding correction",
+      "command": "See commands.json",
+      "log": "seven-relationships-tests.log",
+      "tests": 98,
+      "pass": 98,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "name": "Initial measurement test used a nonexistent template filename",
+      "command": "node --test --test-name-pattern \"future response export\" scripts/lcup-v2-evaluation/pipeline.test.cjs",
+      "log": "measurement-export-test.log",
+      "tests": 1,
+      "pass": 0,
+      "fail": 1,
+      "skipped": 0
+    }
+  ],
+  "notes": [
+    "corrections.test gained4 tests after its51-test run; the3+1 selected logs execute those new cases once. A full repeat now runs55 tests.",
+    "pipeline.test gained4 tests after its33-test run; four selected supplement logs execute those new cases. A full repeat now runs37 tests.",
+    "The valid mocked report case was rerun three times after strengthening cost/review and provider reporting; counted once in distinct totals.",
+    "The scaffold probe initially had5 failures out of14. It exposed D1 in generated contextual labels. After correcting raw-field presence, all14 pass;187 compatibility and98 relationship assertions were rerun because shared evidence behavior changed.",
+    "The initial measurement-export test used a nonexistent template filename. Only the test path was corrected to the existing adjudication-template.json; assertions stayed intact.",
+    "Two PowerShell launch attempts were blocked by local script execution policy; process-scoped PowerShell invocation and npm.cmd succeeded.",
+    "Initial preparation default-argument issue and initial request target-path planning were corrected in new harness code. prepared-final is the final manifest; earlier new preparation directories are diagnostic snapshots. No original comprehensive evidence was rewritten."
+  ]
+}

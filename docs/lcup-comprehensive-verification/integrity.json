@@ -1,0 +1,25 @@
+{
+  "headBefore": "68926cb392756c07bb0b999538d098d1038be368",
+  "headAfter": "68926cb392756c07bb0b999538d098d1038be368",
+  "headUnchanged": true,
+  "preExistingFilesChecked": 1205,
+  "preExistingFilesUnchanged": 1205,
+  "changes": [],
+  "statusChanges": {
+    "beforeEntries": 303,
+    "afterEntries": 305,
+    "added": [
+      "?? docs/lcup-comprehensive-verification/",
+      "?? scripts/lcup-comprehensive-verification/"
+    ],
+    "removed": []
+  },
+  "protectedAndReferenceFilesChecked": 388,
+  "baseline": "before.json",
+  "productionSourceModified": false,
+  "productionEnvModified": false,
+  "policyOrGatesModified": false,
+  "productionDatabaseConnected": false,
+  "disposableServerShutdown": true,
+  "scope": "SHA256 for every file captured before work, including dirty tracked and untracked work; node_modules/.git/tmp/build output excluded. This is filesystem preservation evidence, not a current production DB audit."
+}

@@ -1,0 +1,689 @@
+{
+  "version": "lcup-v2-controlled-evaluation-1",
+  "policyVersion": "academic-evaluation-v2-preview-1",
+  "recommendation": "lcup-v2-recommendation-2",
+  "runId": "live-smoke-r2-REVIEWED",
+  "provenance": "controlled-Claude-evaluation",
+  "official": false,
+  "academicAccuracy": "NOT YET MEASURED",
+  "accuracy": null,
+  "acceptanceThreshold": null,
+  "rawTranscriptHash": "fb2d5b469ee3af4fabb59fb17c383c1555da6d15fdd0f384d9aaccbfec849d59",
+  "stopReason": null,
+  "priceAsOf": "2026-10-27",
+  "pricesVerifiedCurrent": false,
+  "summary": {
+    "requests": 3,
+    "thisRun": 3,
+    "model": 3,
+    "priceLookups": 0,
+    "keyChecks": 0,
+    "invalidAnswers": 0,
+    "unproductiveInARow": 0,
+    "transient": 0,
+    "promptTokens": 59512,
+    "completionTokens": 2275,
+    "cachedTokens": 33630,
+    "reportedCost": 0,
+    "charged": 0.0896475,
+    "accounting": {
+      "rule": "reconcile",
+      "requests": {
+        "reconciled": 3,
+        "conservative": 0,
+        "worst_case": 0,
+        "refused": 0
+      },
+      "chargedConservatively": 0.188683
+    },
+    "warnings": [],
+    "limits": {
+      "maxRequests": 3,
+      "maxCost": 1,
+      "maxTransient": 1,
+      "maxInvalid": 1,
+      "warnInvalid": null,
+      "maxUnproductive": 1,
+      "maxTokens": 4096
+    },
+    "stopped": null,
+    "anthropic": {
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "prices": {
+        "model": "claude-sonnet-5-5",
+        "asOf": "2026-10-27",
+        "geoFactor": 1.1,
+        "perMillionTokens": {
+          "input": 2,
+          "output": 10,
+          "cacheRead": 0.2,
+          "listedCacheRead": 0.1,
+          "cacheWrite5m": 2.5,
+          "cacheWrite1h": 4
+        }
+      },
+      "modelsReturned": {
+        "claude-sonnet-5-5": 3
+      },
+      "inputTokens": 9067,
+      "cacheCreationInputTokens": 16815,
+      "cacheReadInputTokens": 33630,
+      "outputTokens": 2275,
+      "thinkingTokens": 0,
+      "thinkingReports": {
+        "nonzero": 0,
+        "zero": 3,
+        "unavailable": 0
+      },
+      "thinkingBlocks": 0,
+      "atListPrices": 0.0862845,
+      "estimatedCost": 0.0862845,
+      "notEstimated": 0,
+      "chargedThisRun": 0.0896475,
+      "outputTokensCharged": 2275,
+      "stopReasons": {
+        "end_turn": 3
+      },
+      "refusalCategories": {},
+      "inferenceGeo": {
+        "global": 3
+      },
+      "serviceTier": {
+        "standard": 3
+      },
+      "errors": {},
+      "latencyMs": {
+        "answers": 3,
+        "median": 7498,
+        "p90": 7958,
+        "max": 7958
+      },
+      "limits": {
+        "maxOutputTokens": 12288,
+        "register": {
+          "cap": 10,
+          "chargedByEveryLedger": 1.4421591
+        }
+      }
+    }
+  },
+  "requestAccounting": [
+    {
+      "request": 1,
+      "caseIds": [
+        "BM1-IT202-096"
+      ],
+      "requestedModel": "claude-sonnet-5-5",
+      "promptVersion": "alignment-12ab34c1c2c3d1d2req1-r8-rubric-academic-evaluation-v2-preview-1-lcup-v2-recommendation-2",
+      "requestBodyHash": "5e79991b34dee693fcb293f7638b8b88101a4e347f8e153243d93f4970b0fbb9",
+      "inputReferenceBindings": [
+        {
+          "id": "BM1-IT202-096",
+          "inputHash": "a5d7b2a2728405a5f94eadeae7187540963a004ce253908ad06d06b260ab90b4",
+          "referenceHash": "bb7fc0d88ad211af3395183046661cc3bc1cc0a1e05131fbc2ea58f9df5f5e7c"
+        }
+      ],
+      "requestFile": "raw/001.request.json",
+      "latencyMs": 7956,
+      "status": 200,
+      "file": "raw/001.json",
+      "responseHash": "5ab558cefa1b737e32d558a0030ce144671a606a8f75027455a795a6102858ea",
+      "modelReturned": "claude-sonnet-5-5",
+      "tokenUsage": {
+        "input_tokens": 3120,
+        "cache_creation_input_tokens": 16815,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 16815,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 594,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "service_tier": "standard",
+        "inference_geo": "global",
+        "speed": "standard"
+      },
+      "estimatedCost": 0.0542175,
+      "guardCharge": 0.0542175,
+      "accounting": "reconciled"
+    },
+    {
+      "request": 2,
+      "caseIds": [
+        "BM1-IE402-074"
+      ],
+      "requestedModel": "claude-sonnet-5-5",
+      "promptVersion": "alignment-12ab34c1c2c3d1d2req1-r8-rubric-academic-evaluation-v2-preview-1-lcup-v2-recommendation-2",
+      "requestBodyHash": "80dbfd51ae91a2a10776d4b9757682d7b47f1249fadcdcb1fd7fee713d4165f9",
+      "inputReferenceBindings": [
+        {
+          "id": "BM1-IE402-074",
+          "inputHash": "7005c0cfdd0d0e1df9ceef1e7d573be37e622fc36bd549f6130a1be9737868f1",
+          "referenceHash": "a193874b7ce2c2448de4e9c482f240edaed6088b5031ca30fbed70e598fed1e0"
+        }
+      ],
+      "requestFile": "raw/002.request.json",
+      "latencyMs": 7497,
+      "status": 200,
+      "file": "raw/002.json",
+      "responseHash": "65c5e979082677fe03ebf428d9bd09f5c75e403fc8db214f0abeb0e9acf67810",
+      "modelReturned": "claude-sonnet-5-5",
+      "tokenUsage": {
+        "input_tokens": 3191,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 16815,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 768,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "service_tier": "standard",
+        "inference_geo": "global",
+        "speed": "standard"
+      },
+      "estimatedCost": 0.0157435,
+      "guardCharge": 0.017425,
+      "accounting": "reconciled"
+    },
+    {
+      "request": 3,
+      "caseIds": [
+        "BM1-CPE304-051"
+      ],
+      "requestedModel": "claude-sonnet-5-5",
+      "promptVersion": "alignment-12ab34c1c2c3d1d2req1-r8-rubric-academic-evaluation-v2-preview-1-lcup-v2-recommendation-2",
+      "requestBodyHash": "8717312777551a6ed3df103e63d331a520173f6ccb0c3ea53acae5a43feb9f87",
+      "inputReferenceBindings": [
+        {
+          "id": "BM1-CPE304-051",
+          "inputHash": "55ec2bcca08c00c9cbc207a7e95358c5ab481d0ef36fcd05cd24ea9f8e4ea6ba",
+          "referenceHash": "361a85773bbcbcd81a427e855c3aeaa9afcd24bdc408c6de71a31c8c7e86fd6e"
+        }
+      ],
+      "requestFile": "raw/003.request.json",
+      "latencyMs": 6646,
+      "status": 200,
+      "file": "raw/003.json",
+      "responseHash": "49e1182c151a321219b18074f84ffbb84142a929e5496ed468ca4f2845852dd4",
+      "modelReturned": "claude-sonnet-5-5",
+      "tokenUsage": {
+        "input_tokens": 2756,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 16815,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 913,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "service_tier": "standard",
+        "inference_geo": "global",
+        "speed": "standard"
+      },
+      "estimatedCost": 0.0163235,
+      "guardCharge": 0.018005,
+      "accounting": "reconciled"
+    }
+  ],
+  "rows": [
+    {
+      "caseId": "BM1-IT202-096",
+      "program": "BSIT",
+      "course": {
+        "program": "BSIT",
+        "code": "IT 202",
+        "title": "Computer Programming 1",
+        "schoolYear": "2025-2026",
+        "curriculumYear": "",
+        "yearLevel": "",
+        "prereq": "IT 101",
+        "lecture": "2",
+        "lab": "1"
+      },
+      "relationshipType": "Content-ILO",
+      "sourceKind": "verified-syllabus",
+      "sourceText": "Week 1: I. Orientation\nA. Introduction to the\nCourse Contents\nB. Course\nRequirements and\nActivities\nC. Course Objectives\nGrading System and\nPolicies on Absences,\nTardiness and\nExaminations",
+      "targetText": "ILO 1: Demonstrate a clear understanding of the course structure, expectations, and key programming concepts in Java, including how these skills align with real- world IT challenges and professional ethical standards. [CLO1]",
+      "actualJudgment": "PARTIALLY_ALIGNED",
+      "explanation": "The ILO is partly about the orientation content (course structure, expectations), but it also asks for 'key programming concepts in Java' and how they 'align with real- world IT challenges and professional ethical standards'. The Week 1 content (course contents, requirements, objectives, grading, policies) teaches no Java concepts, no real-world IT challenges and no professional ethics. 'Demonstrate a clear understanding' is also a vague verb, not an observable performance.",
+      "sourceQuote": "Course\nRequirements and",
+      "targetQuote": "key programming concepts in Java",
+      "evidenceVerification": {
+        "source": "whitespace",
+        "target": "exact"
+      },
+      "explanationReview": [],
+      "recommendedCorrection": "ILO 1: Explain the course structure, objectives, requirements, grading system and policies, and state their own expectations of the course. [CLO1]",
+      "recommendationReview": [],
+      "incorrectFieldIdentified": null,
+      "relationshipPath": "plan[0].ilos[0].text",
+      "modelRequested": "claude-sonnet-5-5",
+      "modelsReturned": [
+        "claude-sonnet-5-5"
+      ],
+      "promptVersion": "alignment-12ab34c1c2c3d1d2req1-r8-rubric-academic-evaluation-v2-preview-1-lcup-v2-recommendation-2",
+      "inputHash": "a5d7b2a2728405a5f94eadeae7187540963a004ce253908ad06d06b260ab90b4",
+      "referenceHash": "bb7fc0d88ad211af3395183046661cc3bc1cc0a1e05131fbc2ea58f9df5f5e7c",
+      "providerRequests": [
+        {
+          "request": 1,
+          "tokenUsage": {
+            "input_tokens": 3120,
+            "cache_creation_input_tokens": 16815,
+            "cache_read_input_tokens": 0,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 16815,
+              "ephemeral_1h_input_tokens": 0
+            },
+            "output_tokens": 594,
+            "output_tokens_details": {
+              "thinking_tokens": 0
+            },
+            "service_tier": "standard",
+            "inference_geo": "global",
+            "speed": "standard"
+          },
+          "latencyMs": 7956,
+          "status": 200,
+          "estimatedCost": 0.0542175,
+          "guardCharge": 0.0542175,
+          "accounting": "reconciled",
+          "sharedBatchCost": true
+        }
+      ],
+      "costAttribution": "Request-level usage/cost only; shared batch cost is not invented per relationship.",
+      "attempted": true,
+      "status": "REVIEWABLE_MODEL_JUDGMENT",
+      "invalid": null,
+      "failure": null,
+      "potentialFalseApproval": "UNDETERMINED_WITHOUT_INDEPENDENT_FACULTY_JUDGMENT",
+      "potentialFalseRejection": "UNDETERMINED_WITHOUT_INDEPENDENT_FACULTY_JUDGMENT",
+      "academicRecommendationAppropriate": null,
+      "facultyReviewRequired": true,
+      "sourceDocuments": [
+        {
+          "file": "docs/lcup-approved-offline/it202.fixture.json",
+          "sha256": "ff1f9ed8aa24e88728c7364bb4e94717a8ab728a1da23e8bd0f59949e78cb642",
+          "path": "plan[0].ilos[0].text"
+        },
+        {
+          "file": "reference-data/IT-202-Programming-1.pdf",
+          "sha256": "6376fe94981ae65f25054234e1ae63cd50be8f70f12b774ea72949e07d561845",
+          "pages": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "declaredFile": "docs/academic-references/IT-202-Programming-1.pdf",
+          "relocated": true
+        }
+      ],
+      "correction": {
+        "contract": "lcup-v2-recommendation-2",
+        "stated": "REWRITE_TEXT",
+        "decision": "REWRITE_TEXT",
+        "field": "ilo",
+        "path": "plan[0].ilos[0].text",
+        "target": true,
+        "reason": "The content is a legitimate orientation, and the mismatch comes from the ILO adding Java concepts, real-world challenges and ethics that Week 1 does not teach. Revising the ILO to fit the orientation fixes this without touching the content or the week's activities and tasks. The ILO keeps its [CLO1] label.",
+        "draftOffered": true,
+        "canAutoApply": false,
+        "withheld": [],
+        "checks": [],
+        "notes": []
+      }
+    },
+    {
+      "caseId": "BM1-IE402-074",
+      "program": "BSIE",
+      "course": {
+        "program": "BSIE",
+        "code": "IE-402",
+        "title": "Systems Engineering",
+        "schoolYear": "2025-2026",
+        "curriculumYear": "",
+        "yearLevel": "",
+        "prereq": "4th Year Standing",
+        "lecture": "",
+        "lab": ""
+      },
+      "relationshipType": "Content-ILO",
+      "sourceKind": "verified-syllabus",
+      "sourceText": "Week 1: I. COURSE\nORIENTATION\nA. Introduction to the\nCourse Contents\nB. Course\nRequirements\nand Activities\nC. Course\nObjectives\nD. Grading System\nand Policies on\nAbsences,\nTardiness and\nExaminations",
+      "targetText": "ILO10: Demonstrate the Augustinian, Marian and missionary Christ- centered Spirituality through value webbing. [CLO 4]",
+      "actualJudgment": "NOT_ALIGNED",
+      "explanation": "The target ILO asks students to demonstrate Augustinian, Marian and missionary Christ-centered Spirituality through value webbing. The source Week 1 content is only a course orientation (introduction to contents, requirements, objectives, grading and policies). It teaches nothing about Augustinian-Marian spirituality or value webbing, so students cannot reach the ILO from this content. Demonstrating a spirituality is also a higher-level performance than orientation content can teach. The ILO is not drawn from this week's content; and its wording is also not observable as written, because 'demonstrate spirituality' gives no concrete performance. The same ILO10 number also appears in weeks 12-14 for a different outcome, which adds to the confusion.",
+      "sourceQuote": "Introduction to the\nCourse Contents",
+      "targetQuote": "Demonstrate the Augustinian, Marian and missionary Christ- centered Spirituality through value webbing.",
+      "evidenceVerification": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanationReview": [],
+      "recommendedCorrection": null,
+      "recommendationReview": [
+        "keeps_off_subject",
+        "weakens_mapped_clo"
+      ],
+      "incorrectFieldIdentified": null,
+      "relationshipPath": "plan[0].ilos[0].text",
+      "modelRequested": "claude-sonnet-5-5",
+      "modelsReturned": [
+        "claude-sonnet-5-5"
+      ],
+      "promptVersion": "alignment-12ab34c1c2c3d1d2req1-r8-rubric-academic-evaluation-v2-preview-1-lcup-v2-recommendation-2",
+      "inputHash": "7005c0cfdd0d0e1df9ceef1e7d573be37e622fc36bd549f6130a1be9737868f1",
+      "referenceHash": "a193874b7ce2c2448de4e9c482f240edaed6088b5031ca30fbed70e598fed1e0",
+      "providerRequests": [
+        {
+          "request": 2,
+          "tokenUsage": {
+            "input_tokens": 3191,
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 16815,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 0
+            },
+            "output_tokens": 768,
+            "output_tokens_details": {
+              "thinking_tokens": 0
+            },
+            "service_tier": "standard",
+            "inference_geo": "global",
+            "speed": "standard"
+          },
+          "latencyMs": 7497,
+          "status": 200,
+          "estimatedCost": 0.0157435,
+          "guardCharge": 0.017425,
+          "accounting": "reconciled",
+          "sharedBatchCost": true
+        }
+      ],
+      "costAttribution": "Request-level usage/cost only; shared batch cost is not invented per relationship.",
+      "attempted": true,
+      "status": "REVIEWABLE_MODEL_JUDGMENT",
+      "invalid": null,
+      "failure": null,
+      "potentialFalseApproval": "UNDETERMINED_WITHOUT_INDEPENDENT_FACULTY_JUDGMENT",
+      "potentialFalseRejection": "UNDETERMINED_WITHOUT_INDEPENDENT_FACULTY_JUDGMENT",
+      "academicRecommendationAppropriate": null,
+      "facultyReviewRequired": true,
+      "sourceDocuments": [
+        {
+          "file": "docs/lcup-approved-offline/ie402.fixture.json",
+          "sha256": "8b8e701e15ec4f18c9c6d60861e9c8de60415c475883a193730bfce222a7dd0f",
+          "path": "plan[0].ilos[0].text"
+        },
+        {
+          "file": "reference-data/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "sha256": "44ca6d48c77d0b04055cf330717b9381b64d3b7fb8674be727aa2eb4a1807569",
+          "pages": [
+            1,
+            3,
+            4
+          ],
+          "declaredFile": "docs/academic-references/IE402-SYSTEM-ENGINEERINGS.pdf",
+          "relocated": true
+        }
+      ],
+      "correction": {
+        "contract": "lcup-v2-recommendation-2",
+        "stated": "REWRITE_TEXT",
+        "decision": "REVIEW_REQUIRED",
+        "field": "ilo",
+        "path": "plan[0].ilos[0].text",
+        "target": true,
+        "reason": "The Week 1 content is a legitimate orientation and other relationships (activities, tasks) rely on it, while the ILO is the text that does not fit the week; the ILO is the target and a full draft is allowed. The CLO 4 tag stays, since the revised ILO still builds the introductory CLO 4 competence. Relocating the ILO to another week would need a faculty decision.",
+        "draftOffered": false,
+        "canAutoApply": false,
+        "withheld": [
+          "keeps_off_subject",
+          "weakens_mapped_clo"
+        ],
+        "checks": [
+          {
+            "code": "weakens_mapped_clo",
+            "evidence": "CLO 4: web"
+          }
+        ],
+        "notes": []
+      }
+    },
+    {
+      "caseId": "BM1-CPE304-051",
+      "program": "BSCPE",
+      "course": {
+        "program": "BSCPE",
+        "code": "CpE 304",
+        "title": "Fundamentals of Mixed Signals and Sensors",
+        "schoolYear": "2025-2026",
+        "curriculumYear": "",
+        "yearLevel": "",
+        "prereq": "FUNEC, FUNELC",
+        "lecture": "3",
+        "lab": "0"
+      },
+      "relationshipType": "Content-ILO",
+      "sourceKind": "verified-syllabus",
+      "sourceText": "Week 2-3: II. Introduction to\nElectronic System\n• History of\nElectronics\n• Electronic Signals\nand Notation\n• Classifications of\nElectronic\nSystems\n• Specifications of\nElectronic\nSystems\n• Design of\nElectronic\nSystems\n• Design of\nElectronic Circuits\n• Electronic\nDevices\n• Emerging\nElectronics\nDifferential\nAmplifiers\n• Introduction to\nDifferential\nAmplifiers\n• Block Diagram\n• Differential Gain\n• Common Mode\nGain\n• CMRR\n• Configuration of\ndifferential\namplifiers",
+      "targetText": "ILO1: To develop skills in analysis and design of both analog and digital circuits [CLO1]",
+      "actualJudgment": "PARTIALLY_ALIGNED",
+      "explanation": "The ILO (target) is about analysis and design of analog and digital circuits, and the week's content (source) covers design of electronic systems and circuits and differential amplifiers, so it is partly on topic. Gaps: (1) the ILO says \"both analog and digital circuits\", but the content covers only analog differential amplifiers and general system design, with no digital circuit topic; (2) \"develop skills in analysis and design\" is vague and gives no observable performance; (3) the content only lists topic names (Design of Electronic Circuits, Differential Gain, CMRR) and does not show circuits being analysed or designed, so the Analyze/Create level is not supported. The ILO text is also shared with Week 7-8, so changing it could affect that week; the content can be extended instead.",
+      "sourceQuote": "Design of\nElectronic Circuits",
+      "targetQuote": "To develop skills in analysis and design of both analog and digital circuits",
+      "evidenceVerification": {
+        "source": "exact",
+        "target": "exact"
+      },
+      "explanationReview": [],
+      "recommendedCorrection": "II. Introduction to Electronic System\n• History of Electronics\n• Electronic Signals and Notation\n• Classifications of Electronic Systems\n• Specifications of Electronic Systems\n• Design of Electronic Systems\n• Design of Electronic Circuits (analog and digital)\n• Analysis and design of basic analog and digital circuits: worked examples\n• Electronic Devices\n• Emerging Electronics\nDifferential Amplifiers\n• Introduction to Differential Amplifiers\n• Block Diagram\n• Differential Gain\n• Common Mode Gain\n• CMRR\n• Configuration of differential amplifiers\n• Analysis of differential amplifier circuits: computing differential gain, common mode gain and CMRR",
+      "recommendationReview": [],
+      "incorrectFieldIdentified": null,
+      "relationshipPath": "plan[1].ilos[0].text",
+      "modelRequested": "claude-sonnet-5-5",
+      "modelsReturned": [
+        "claude-sonnet-5-5"
+      ],
+      "promptVersion": "alignment-12ab34c1c2c3d1d2req1-r8-rubric-academic-evaluation-v2-preview-1-lcup-v2-recommendation-2",
+      "inputHash": "55ec2bcca08c00c9cbc207a7e95358c5ab481d0ef36fcd05cd24ea9f8e4ea6ba",
+      "referenceHash": "361a85773bbcbcd81a427e855c3aeaa9afcd24bdc408c6de71a31c8c7e86fd6e",
+      "providerRequests": [
+        {
+          "request": 3,
+          "tokenUsage": {
+            "input_tokens": 2756,
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 16815,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 0
+            },
+            "output_tokens": 913,
+            "output_tokens_details": {
+              "thinking_tokens": 0
+            },
+            "service_tier": "standard",
+            "inference_geo": "global",
+            "speed": "standard"
+          },
+          "latencyMs": 6646,
+          "status": 200,
+          "estimatedCost": 0.0163235,
+          "guardCharge": 0.018005,
+          "accounting": "reconciled",
+          "sharedBatchCost": true
+        }
+      ],
+      "costAttribution": "Request-level usage/cost only; shared batch cost is not invented per relationship.",
+      "attempted": true,
+      "status": "REVIEWABLE_MODEL_JUDGMENT",
+      "invalid": null,
+      "failure": null,
+      "potentialFalseApproval": "UNDETERMINED_WITHOUT_INDEPENDENT_FACULTY_JUDGMENT",
+      "potentialFalseRejection": "UNDETERMINED_WITHOUT_INDEPENDENT_FACULTY_JUDGMENT",
+      "academicRecommendationAppropriate": null,
+      "facultyReviewRequired": true,
+      "sourceDocuments": [
+        {
+          "file": "docs/lcup-approved-offline/cpe304.fixture.json",
+          "sha256": "f22a01d95fba2429b6349d414d3f012fb442fa47118f07d9612504e45a67b8f5",
+          "path": "plan[1].ilos[0].text"
+        },
+        {
+          "file": "reference-data/CPE-304-Fundamentals-of-Mixed-Signals-and-Sensors.pdf",
+          "sha256": "f68eb5bedb77d31b153b23dc354ef457c9a349b7fca64ba5a46578230982a4a2",
+          "pages": [
+            1,
+            2,
+            4,
+            5
+          ],
+          "declaredFile": "docs/academic-references/CPE-304-Fundamentals-of-Mixed-Signals-and-Sensors.pdf",
+          "relocated": true
+        }
+      ],
+      "correction": {
+        "contract": "lcup-v2-recommendation-2",
+        "stated": "REWRITE_TEXT",
+        "decision": "REWRITE_TEXT",
+        "field": "course_content",
+        "path": "plan[1].contents",
+        "target": false,
+        "reason": "The same ILO1 text is stated in Week 7-8, so the ilo field has no draft and rewriting it would affect that week. Adding to the week's content (analysis of differential amplifier circuits, digital circuit design) supports the ILO without removing anything other relationships rely on.",
+        "draftOffered": true,
+        "canAutoApply": false,
+        "withheld": [],
+        "checks": [],
+        "notes": []
+      }
+    }
+  ],
+  "measurementInput": {
+    "version": "lcup-academic-benchmark-1",
+    "benchmarkHash": "ebd12920a890971b8c7fb481cc6bc9b469ec7dd4c2001134f6833cc31009bbf7",
+    "policyVersion": "academic-evaluation-v2-preview-1",
+    "provenance": "controlled-Claude-evaluation",
+    "runId": "live-smoke-r2-REVIEWED",
+    "model": "claude-sonnet-5-5",
+    "promptVersion": "alignment-12ab34c1c2c3d1d2req1-r8-rubric-academic-evaluation-v2-preview-1-lcup-v2-recommendation-2",
+    "recommendation": "lcup-v2-recommendation-2",
+    "transcriptSha256": "fb2d5b469ee3af4fabb59fb17c383c1555da6d15fdd0f384d9aaccbfec849d59",
+    "plannedCaseIds": [
+      "BM1-IT202-096",
+      "BM1-IE402-074",
+      "BM1-CPE304-051"
+    ],
+    "observations": [
+      {
+        "id": "BM1-IT202-096",
+        "caseHash": "b19c488bc5e293818c1bc4c1e70ebefb435a98c20fd12457bf6903fe556dfeb7",
+        "attempted": true,
+        "judgment": {
+          "id": "row0-ilo0-contentilo",
+          "label": "PARTIALLY_ALIGNED",
+          "explanation": "The ILO is partly about the orientation content (course structure, expectations), but it also asks for 'key programming concepts in Java' and how they 'align with real- world IT challenges and professional ethical standards'. The Week 1 content (course contents, requirements, objectives, grading, policies) teaches no Java concepts, no real-world IT challenges and no professional ethics. 'Demonstrate a clear understanding' is also a vague verb, not an observable performance.",
+          "sourceQuote": "Course Requirements and",
+          "targetQuote": "key programming concepts in Java",
+          "sourceBloom": "Understand",
+          "targetBloom": "Understand",
+          "correctionField": "ilo",
+          "correctionReason": "The content is a legitimate orientation, and the mismatch comes from the ILO adding Java concepts, real-world challenges and ethics that Week 1 does not teach. Revising the ILO to fit the orientation fixes this without touching the content or the week's activities and tasks. The ILO keeps its [CLO1] label.",
+          "recommendation": "REWRITE_TEXT",
+          "draft": "ILO 1: Explain the course structure, objectives, requirements, grading system and policies, and state their own expectations of the course. [CLO1]",
+          "teaching": "not_assessed",
+          "learnerSupport": "not_assessed",
+          "measures": "not_assessed",
+          "evidence": "not_assessed",
+          "level": "not_assessed",
+          "responsible": "not_assessed",
+          "valueUse": "not_assessed",
+          "carriedBy": "not_assessed",
+          "valueFit": "not_assessed",
+          "coreValue": "not_assessed",
+          "integration": "not_assessed",
+          "relevance": "not_assessed",
+          "basis": "not_assessed"
+        }
+      },
+      {
+        "id": "BM1-IE402-074",
+        "caseHash": "689fab10de2d8021aac753f37da8f33ed231049c1972fc6b28c74dec88b5ae78",
+        "attempted": true,
+        "judgment": {
+          "id": "row0-ilo0-contentilo",
+          "label": "NOT_ALIGNED",
+          "explanation": "The target ILO asks students to demonstrate Augustinian, Marian and missionary Christ-centered Spirituality through value webbing. The source Week 1 content is only a course orientation (introduction to contents, requirements, objectives, grading and policies). It teaches nothing about Augustinian-Marian spirituality or value webbing, so students cannot reach the ILO from this content. Demonstrating a spirituality is also a higher-level performance than orientation content can teach. The ILO is not drawn from this week's content; and its wording is also not observable as written, because 'demonstrate spirituality' gives no concrete performance. The same ILO10 number also appears in weeks 12-14 for a different outcome, which adds to the confusion.",
+          "sourceQuote": "Introduction to the\nCourse Contents",
+          "targetQuote": "Demonstrate the Augustinian, Marian and missionary Christ- centered Spirituality through value webbing.",
+          "sourceBloom": "Remember",
+          "targetBloom": "Apply",
+          "correctionField": "ilo",
+          "correctionReason": "The Week 1 content is a legitimate orientation and other relationships (activities, tasks) rely on it, while the ILO is the text that does not fit the week; the ILO is the target and a full draft is allowed. The CLO 4 tag stays, since the revised ILO still builds the introductory CLO 4 competence. Relocating the ILO to another week would need a faculty decision.",
+          "recommendation": "REWRITE_TEXT",
+          "draft": "ILO10: Describe the Augustinian, Marian and missionary Christ-centered Spirituality and the course's Marian Augustinian values as presented in the course orientation, and state how these values will guide your work in Systems Engineering. [CLO 4]",
+          "teaching": "not_assessed",
+          "learnerSupport": "not_assessed",
+          "measures": "not_assessed",
+          "evidence": "not_assessed",
+          "level": "not_assessed",
+          "responsible": "not_assessed",
+          "valueUse": "not_assessed",
+          "carriedBy": "not_assessed",
+          "valueFit": "not_assessed",
+          "coreValue": "not_assessed",
+          "integration": "not_assessed",
+          "relevance": "not_assessed",
+          "basis": "not_assessed"
+        }
+      },
+      {
+        "id": "BM1-CPE304-051",
+        "caseHash": "6657df760ffbe04859740ab0039bbb1e5bd0d8f29e0382d66498d769eed928e6",
+        "attempted": true,
+        "judgment": {
+          "id": "row1-ilo0-contentilo",
+          "label": "PARTIALLY_ALIGNED",
+          "explanation": "The ILO (target) is about analysis and design of analog and digital circuits, and the week's content (source) covers design of electronic systems and circuits and differential amplifiers, so it is partly on topic. Gaps: (1) the ILO says \"both analog and digital circuits\", but the content covers only analog differential amplifiers and general system design, with no digital circuit topic; (2) \"develop skills in analysis and design\" is vague and gives no observable performance; (3) the content only lists topic names (Design of Electronic Circuits, Differential Gain, CMRR) and does not show circuits being analysed or designed, so the Analyze/Create level is not supported. The ILO text is also shared with Week 7-8, so changing it could affect that week; the content can be extended instead.",
+          "sourceQuote": "Design of\nElectronic Circuits",
+          "targetQuote": "To develop skills in analysis and design of both analog and digital circuits",
+          "sourceBloom": "Understand",
+          "targetBloom": "Create",
+          "correctionField": "course_content",
+          "correctionReason": "The same ILO1 text is stated in Week 7-8, so the ilo field has no draft and rewriting it would affect that week. Adding to the week's content (analysis of differential amplifier circuits, digital circuit design) supports the ILO without removing anything other relationships rely on.",
+          "recommendation": "REWRITE_TEXT",
+          "draft": "II. Introduction to Electronic System\n• History of Electronics\n• Electronic Signals and Notation\n• Classifications of Electronic Systems\n• Specifications of Electronic Systems\n• Design of Electronic Systems\n• Design of Electronic Circuits (analog and digital)\n• Analysis and design of basic analog and digital circuits: worked examples\n• Electronic Devices\n• Emerging Electronics\nDifferential Amplifiers\n• Introduction to Differential Amplifiers\n• Block Diagram\n• Differential Gain\n• Common Mode Gain\n• CMRR\n• Configuration of differential amplifiers\n• Analysis of differential amplifier circuits: computing differential gain, common mode gain and CMRR",
+          "teaching": "not_assessed",
+          "learnerSupport": "not_assessed",
+          "measures": "not_assessed",
+          "evidence": "not_assessed",
+          "level": "not_assessed",
+          "responsible": "not_assessed",
+          "valueUse": "not_assessed",
+          "carriedBy": "not_assessed",
+          "valueFit": "not_assessed",
+          "coreValue": "not_assessed",
+          "integration": "not_assessed",
+          "relevance": "not_assessed",
+          "basis": "not_assessed"
+        }
+      }
+    ]
+  },
+  "limitations": [
+    "Quote containment is not evidence relevance.",
+    "Academic correctness, false approvals/rejections and recommendation quality need independent faculty review.",
+    "Synthetic/mock runs cannot be presented as genuine Claude judgments.",
+    "This selected relationship scope is not a whole-syllabus disposition or official grade."
+  ]
+}

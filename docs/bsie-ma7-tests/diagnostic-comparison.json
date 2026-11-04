@@ -1,0 +1,41 @@
+{
+  "testedAt": "2026-10-22T03:41:30.385Z",
+  "syntheticReferences": true,
+  "canAuthorizeSubmission": false,
+  "results": {
+    "aligned": {
+      "provider": "openrouter",
+      "model": "google/gemini-2.5-flash",
+      "status": "not_evaluated",
+      "reason": "Gemini evidence is not present in the supplied text",
+      "baseScore": 100,
+      "diagnosticScore": null,
+      "finalOfficialScore": null,
+      "deductions": 0,
+      "relationships": 0,
+      "labels": {
+        "ALIGNED": 0,
+        "PARTIALLY_ALIGNED": 0,
+        "NOT_ALIGNED": 0,
+        "INSUFFICIENT_EVIDENCE": 0
+      }
+    },
+    "misaligned": {
+      "provider": "openrouter",
+      "model": "google/gemini-2.5-flash",
+      "status": "not_evaluated",
+      "reason": "Gemini evidence is not present in the supplied text",
+      "baseScore": 100,
+      "diagnosticScore": null,
+      "finalOfficialScore": null,
+      "deductions": 0,
+      "relationships": 0,
+      "labels": {
+        "ALIGNED": 0,
+        "PARTIALLY_ALIGNED": 0,
+        "NOT_ALIGNED": 0,
+        "INSUFFICIENT_EVIDENCE": 0
+      }
+    }
+  }
+}

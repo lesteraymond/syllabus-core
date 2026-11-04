@@ -1,0 +1,1899 @@
+{
+  "version": "lcup-v2-eval-split-1",
+  "status": "PROPOSED - NOT FROZEN",
+  "generatedAt": "2026-10-29T02:03:49.941Z",
+  "benchmarkHash": "ebd12920a890971b8c7fb481cc6bc9b469ec7dd4c2001134f6833cc31009bbf7",
+  "rule": "Leakage unit = course identity: a real syllabus together with every synthetic sibling written for the same course. The three real syllabi (IT 202, IE 402, CpE 304) and their synthetic families informed the improvement design, so they are development only. Cyber Security IT-202 System Integration and Architecture 1 (synthetic S07-S12) is the only course with no design exposure, so it is the protected set.",
+  "labels": {
+    "facultyConfirmed": 0,
+    "developerProposed": 0,
+    "note": "No case has a reference answer yet (expectedJudgment is null for all 83). Claude output is never a label. Construction intent is generator design, never a reference answer."
+  },
+  "development": {
+    "n": 40,
+    "bySourceKind": {
+      "verified-syllabus": 24,
+      "synthetic": 16
+    },
+    "byType": {
+      "Content-ILO": 9,
+      "Content-course": 4,
+      "ILO-CLO": 6,
+      "Content-activity": 5,
+      "ILO-activity": 5,
+      "Content-assessment": 5,
+      "Activity-assessment": 6
+    },
+    "byProgram": {
+      "BSIT": 13,
+      "BSIE": 14,
+      "BSCPE": 13
+    },
+    "stage1OutputsExist": 3,
+    "duplicatePairs": [],
+    "excludedAsHeldOrIneligible": [
+      "BM1-CPE304-049"
+    ],
+    "partners": [
+      {
+        "id": "BM1-CPE304-057",
+        "why": "same ILO1 statement as the CpE 304 smoke target (Weeks 7-8)",
+        "eligible": true
+      },
+      {
+        "id": "BM1-CPE304-054",
+        "why": "a different ILO1 statement in Weeks 4-5",
+        "eligible": true
+      },
+      {
+        "id": "BM1-IE402-088",
+        "why": "a different ILO10 statement in Weeks 12-14",
+        "eligible": true
+      },
+      {
+        "id": "BM1-IT202-098",
+        "why": "a different statement numbered 1 (LO1) in Week 2",
+        "eligible": true
+      }
+    ],
+    "cases": [
+      {
+        "id": "BM1-IT202-096",
+        "caseHash": "b19c488bc5e293818c1bc4c1e70ebefb435a98c20fd12457bf6903fe556dfeb7",
+        "contextId": "ctx-it202",
+        "cluster": "course-IT202",
+        "program": "BSIT",
+        "sourceKind": "verified-syllabus",
+        "type": "Content-ILO",
+        "path": "plan[0].ilos[0].text",
+        "role": "smoke",
+        "in76Selection": true
+      },
+      {
+        "id": "BM1-IE402-074",
+        "caseHash": "689fab10de2d8021aac753f37da8f33ed231049c1972fc6b28c74dec88b5ae78",
+        "contextId": "ctx-ie402",
+        "cluster": "course-IE402",
+        "program": "BSIE",
+        "sourceKind": "verified-syllabus",
+        "type": "Content-ILO",
+        "path": "plan[0].ilos[0].text",
+        "role": "smoke",
+        "in76Selection": true
+      },
+      {
+        "id": "BM1-CPE304-051",
+        "caseHash": "6657df760ffbe04859740ab0039bbb1e5bd0d8f29e0382d66498d769eed928e6",
+        "contextId": "ctx-cpe304",
+        "cluster": "course-CPE304",
+        "program": "BSCPE",
+        "sourceKind": "verified-syllabus",
+        "type": "Content-ILO",
+        "path": "plan[1].ilos[0].text",
+        "role": "smoke",
+        "in76Selection": true
+      },
+      {
+        "id": "BM1-S01-003",
+        "caseHash": "55670cf6339ba4a0a2dec9ae49f607ede84ef2e1c1903cbea2a3b415d02ed04b",
+        "contextId": "ctx-S01",
+        "cluster": "course-IT202",
+        "program": "BSIT",
+        "sourceKind": "synthetic",
+        "type": "Content-course",
+        "path": "plan[2].contents",
+        "role": "pilot",
+        "in76Selection": false
+      },
+      {
+        "id": "BM1-S15-003",
+        "caseHash": "0f1729384c74ce956a555583e86a270ca4c40d5223eda37838c3babdaebd1f68",
+        "contextId": "ctx-S15",
+        "cluster": "course-IE402",
+        "program": "BSIE",
+        "sourceKind": "synthetic",
+        "type": "Content-course",
+        "path": "plan[2].contents",
+        "role": "pilot",
+        "in76Selection": false
+      },
+      {
+        "id": "BM1-S14-004",
+        "caseHash": "f14a39b9aaddecd608f34206fee09b460b7f4fb995b482eefc1ddb87c5f732a6",
+        "contextId": "ctx-S14",
+        "cluster": "course-IE402",
+        "program": "BSIE",
+        "sourceKind": "synthetic",
+        "type": "Content-ILO",
+        "path": "plan[2].ilos[0].text",
+        "role": "pilot",
+        "in76Selection": false
+      },
+      {
+        "id": "BM1-S21-004",
+        "caseHash": "21ed65933348559608ae741e22750266c43062cc93d56bd92f124b950f280a55",
+        "contextId": "ctx-S21",
+        "cluster": "course-CPE304",
+        "program": "BSCPE",
+        "sourceKind": "synthetic",
+        "type": "Content-ILO",
+        "path": "plan[2].ilos[0].text",
+        "role": "pilot",
+        "in76Selection": false
+      },
+      {
+        "id": "BM1-S13-001",
+        "caseHash": "8fd02b2d1abd6263f0a6199d74f0417f43224bc192ce89ce453e03f887b6d738",
+        "contextId": "ctx-S13",
+        "cluster": "course-IE402",
+        "program": "BSIE",
+        "sourceKind": "synthetic",
+        "type": "ILO-CLO",
+        "path": "plan[2].ilos[0].text",
+        "role": "pilot",
+        "in76Selection": false
+      },
+      {
+        "id": "BM1-S20-001",
+        "caseHash": "469db89383547cd3f594b6419d84e40e57150df464b96f614edb78d426125619",
+        "contextId": "ctx-S20",
+        "cluster": "course-CPE304",
+        "program": "BSCPE",
+        "sourceKind": "synthetic",
+        "type": "ILO-CLO",
+        "path": "plan[2].ilos[0].text",
+        "role": "pilot",
+        "in76Selection": false
+      },
+      {
+        "id": "BM1-S03-001",
+        "caseHash": "fcaf964b0aaf67864270df4e8db658cba77f6abef52a4c58e86511788582dfda",
+        "contextId": "ctx-S03",
+        "cluster": "course-IT202",
+        "program": "BSIT",
+        "sourceKind": "synthetic",
+        "type": "ILO-CLO",
+        "path": "plan[2].ilos[0].text",
+        "role": "pilot",
+        "in76Selection": false
+      },
+      {
+        "id": "BM1-S19-005",
+        "caseHash": "884606c69f11fc651dde4e83a90d09dce775197c83f357a0bf5022a488464459",
+        "contextId": "ctx-S19",
+        "cluster": "course-CPE304",
+        "program": "BSCPE",
+        "sourceKind": "synthetic",
+        "type": "Content-activity",
+        "path": "plan[2].activities",
+        "role": "pilot",
+        "in76Selection": false
+      },
+      {
+        "id": "BM1-S02-005",
+        "caseHash": "5e02fe5e85f35aebb5168ab4f444d91dc7decdd1eb2e8aed5c1b3fd2b338e4aa",
+        "contextId": "ctx-S02",
+        "cluster": "course-IT202",
+        "program": "BSIT",
+        "sourceKind": "synthetic",
+        "type": "Content-activity",
+        "path": "plan[2].activities",
+        "role": "pilot",
+        "in76Selection": false
+      },
+      {
+        "id": "BM1-S01-002",
+        "caseHash": "b992cf3a3cc7a7c00955f8b125b81a75fa0eac2311db4f86268fc9dd18ff991f",
+        "contextId": "ctx-S01",
+        "cluster": "course-IT202",
+        "program": "BSIT",
+        "sourceKind": "synthetic",
+        "type": "ILO-activity",
+        "path": "plan[2].ilos[0].text",
+        "role": "pilot",
+        "in76Selection": false
+      },
+      {
+        "id": "BM1-S15-002",
+        "caseHash": "b0a8cddf317f1c4cf212cc90226aa1408484a259d6dd296eab9eb7f1788e490c",
+        "contextId": "ctx-S15",
+        "cluster": "course-IE402",
+        "program": "BSIE",
+        "sourceKind": "synthetic",
+        "type": "ILO-activity",
+        "path": "plan[2].ilos[0].text",
+        "role": "pilot",
+        "in76Selection": false
+      },
+      {
+        "id": "BM1-S14-006",
+        "caseHash": "1274d6d5e3f6c3394928b8622bd44088e4d7fe925d3035485d8c03a0a340f1f4",
+        "contextId": "ctx-S14",
+        "cluster": "course-IE402",
+        "program": "BSIE",
+        "sourceKind": "synthetic",
+        "type": "Content-assessment",
+        "path": "plan[2].tasks",
+        "role": "pilot",
+        "in76Selection": false
+      },
+      {
+        "id": "BM1-S21-006",
+        "caseHash": "828a67cb953640668dd92303068aab60eb7189f362a204d4b189a7c13e49600f",
+        "contextId": "ctx-S21",
+        "cluster": "course-CPE304",
+        "program": "BSCPE",
+        "sourceKind": "synthetic",
+        "type": "Content-assessment",
+        "path": "plan[2].tasks",
+        "role": "pilot",
+        "in76Selection": false
+      },
+      {
+        "id": "BM1-S13-007",
+        "caseHash": "c655f54a63d4ba98a04e3f0c8165876abcdfdca034e74e1f7149bb6ad67335e7",
+        "contextId": "ctx-S13",
+        "cluster": "course-IE402",
+        "program": "BSIE",
+        "sourceKind": "synthetic",
+        "type": "Activity-assessment",
+        "path": "plan[2].tasks",
+        "role": "pilot",
+        "in76Selection": false
+      },
+      {
+        "id": "BM1-S20-007",
+        "caseHash": "5972d509f8981490213e05e5bd6b5c8d9d545ce1f420096e96610f3df76e8079",
+        "contextId": "ctx-S20",
+        "cluster": "course-CPE304",
+        "program": "BSCPE",
+        "sourceKind": "synthetic",
+        "type": "Activity-assessment",
+        "path": "plan[2].tasks",
+        "role": "pilot",
+        "in76Selection": false
+      },
+      {
+        "id": "BM1-S03-007",
+        "caseHash": "63b8861ce920cadbe8059549286935d8baac848802d12af6526e283386dbe40a",
+        "contextId": "ctx-S03",
+        "cluster": "course-IT202",
+        "program": "BSIT",
+        "sourceKind": "synthetic",
+        "type": "Activity-assessment",
+        "path": "plan[2].tasks",
+        "role": "pilot",
+        "in76Selection": false
+      },
+      {
+        "id": "BM1-IT202-095",
+        "caseHash": "d6cdd283efa7a8e42068fa813f86edb2c3f5b6552e2f7820debdc1766630a3f8",
+        "contextId": "ctx-it202",
+        "cluster": "course-IT202",
+        "program": "BSIT",
+        "sourceKind": "verified-syllabus",
+        "type": "Content-course",
+        "path": "plan[0].contents",
+        "role": "benchmark-76-selection",
+        "in76Selection": true
+      },
+      {
+        "id": "BM1-IT202-035",
+        "caseHash": "c57a9728443b187c495e23f5cf7b888d608b0c077c0e2d2059d63b2ccf2d5893",
+        "contextId": "ctx-it202",
+        "cluster": "course-IT202",
+        "program": "BSIT",
+        "sourceKind": "verified-syllabus",
+        "type": "ILO-CLO",
+        "path": "plan[0].ilos[0].text",
+        "role": "benchmark-76-selection",
+        "in76Selection": true
+      },
+      {
+        "id": "BM1-IT202-130",
+        "caseHash": "997b6562dc0b7c7f83d1ecf116dde045982f97b55fe74fdc5c83d16ae673771a",
+        "contextId": "ctx-it202",
+        "cluster": "course-IT202",
+        "program": "BSIT",
+        "sourceKind": "verified-syllabus",
+        "type": "Content-activity",
+        "path": "plan[0].activities",
+        "role": "benchmark-76-selection",
+        "in76Selection": true
+      },
+      {
+        "id": "BM1-IT202-036",
+        "caseHash": "02c8f04d9a4adc80c03a1d2e47deaaf404b77f383a0dfa13af73132489ff8ab4",
+        "contextId": "ctx-it202",
+        "cluster": "course-IT202",
+        "program": "BSIT",
+        "sourceKind": "verified-syllabus",
+        "type": "ILO-activity",
+        "path": "plan[0].ilos[0].text",
+        "role": "benchmark-76-selection",
+        "in76Selection": true
+      },
+      {
+        "id": "BM1-IT202-131",
+        "caseHash": "fd5f08ae734c2db90f012baba190ad664bca7e4cdc4516051cae976484a69dbd",
+        "contextId": "ctx-it202",
+        "cluster": "course-IT202",
+        "program": "BSIT",
+        "sourceKind": "verified-syllabus",
+        "type": "Content-assessment",
+        "path": "plan[0].tasks",
+        "role": "benchmark-76-selection",
+        "in76Selection": true
+      },
+      {
+        "id": "BM1-IT202-132",
+        "caseHash": "264d638749d57c675b81fce4fc19c5c935395f9faa8a53a405f3606b0c421388",
+        "contextId": "ctx-it202",
+        "cluster": "course-IT202",
+        "program": "BSIT",
+        "sourceKind": "verified-syllabus",
+        "type": "Activity-assessment",
+        "path": "plan[0].tasks",
+        "role": "benchmark-76-selection",
+        "in76Selection": true
+      },
+      {
+        "id": "BM1-IE402-073",
+        "caseHash": "37f41fe7fadcf04b1ca2c2c2bb3397174f92b09d9eb6e38394cf12c0b469f4a7",
+        "contextId": "ctx-ie402",
+        "cluster": "course-IE402",
+        "program": "BSIE",
+        "sourceKind": "verified-syllabus",
+        "type": "Content-course",
+        "path": "plan[0].contents",
+        "role": "benchmark-76-selection",
+        "in76Selection": true
+      },
+      {
+        "id": "BM1-IE402-023",
+        "caseHash": "b43903da04a3767dcb9f7dc7602f3b17d25e2730724cf907885bae952d041c7f",
+        "contextId": "ctx-ie402",
+        "cluster": "course-IE402",
+        "program": "BSIE",
+        "sourceKind": "verified-syllabus",
+        "type": "ILO-CLO",
+        "path": "plan[0].ilos[0].text",
+        "role": "benchmark-76-selection",
+        "in76Selection": true
+      },
+      {
+        "id": "BM1-IE402-099",
+        "caseHash": "cb2edb70988c42f7535164aac1d4ea7f403376daeed2b5c0a6d55cace3a16bcf",
+        "contextId": "ctx-ie402",
+        "cluster": "course-IE402",
+        "program": "BSIE",
+        "sourceKind": "verified-syllabus",
+        "type": "Content-activity",
+        "path": "plan[0].activities",
+        "role": "benchmark-76-selection",
+        "in76Selection": true
+      },
+      {
+        "id": "BM1-IE402-024",
+        "caseHash": "b2cb4c266300abc51bee2c410c68bc0346825231c2c4104f7a6ac5eb290bb932",
+        "contextId": "ctx-ie402",
+        "cluster": "course-IE402",
+        "program": "BSIE",
+        "sourceKind": "verified-syllabus",
+        "type": "ILO-activity",
+        "path": "plan[0].ilos[0].text",
+        "role": "benchmark-76-selection",
+        "in76Selection": true
+      },
+      {
+        "id": "BM1-IE402-100",
+        "caseHash": "85f08e8bdf1dec10bd4dd85099d23646de5efe882ef278850e3436e55d5f8a6d",
+        "contextId": "ctx-ie402",
+        "cluster": "course-IE402",
+        "program": "BSIE",
+        "sourceKind": "verified-syllabus",
+        "type": "Content-assessment",
+        "path": "plan[0].tasks",
+        "role": "benchmark-76-selection",
+        "in76Selection": true
+      },
+      {
+        "id": "BM1-IE402-101",
+        "caseHash": "653ec2155f729f2f0042fbfb51b07d87c6d2183469a32827ac74844ddd0458f8",
+        "contextId": "ctx-ie402",
+        "cluster": "course-IE402",
+        "program": "BSIE",
+        "sourceKind": "verified-syllabus",
+        "type": "Activity-assessment",
+        "path": "plan[0].tasks",
+        "role": "benchmark-76-selection",
+        "in76Selection": true
+      },
+      {
+        "id": "BM1-CPE304-021",
+        "caseHash": "e7571c728c34c929bb3f2aa4f231ff36cf5ddb770cf70019b7e91541fc43a70a",
+        "contextId": "ctx-cpe304",
+        "cluster": "course-CPE304",
+        "program": "BSCPE",
+        "sourceKind": "verified-syllabus",
+        "type": "ILO-CLO",
+        "path": "plan[1].ilos[0].text",
+        "role": "benchmark-76-selection",
+        "in76Selection": true
+      },
+      {
+        "id": "BM1-CPE304-077",
+        "caseHash": "a8bc701fb19ae0e0d6a6e7166c5bc9d9990a8031b75fdcc760774434f99e2dc9",
+        "contextId": "ctx-cpe304",
+        "cluster": "course-CPE304",
+        "program": "BSCPE",
+        "sourceKind": "verified-syllabus",
+        "type": "Content-activity",
+        "path": "plan[0].activities",
+        "role": "benchmark-76-selection",
+        "in76Selection": true
+      },
+      {
+        "id": "BM1-CPE304-022",
+        "caseHash": "aa7a36a22a6ab393d11791e1b5575e9b3f1fd5265939e9c591a71de1f2f22f15",
+        "contextId": "ctx-cpe304",
+        "cluster": "course-CPE304",
+        "program": "BSCPE",
+        "sourceKind": "verified-syllabus",
+        "type": "ILO-activity",
+        "path": "plan[1].ilos[0].text",
+        "role": "benchmark-76-selection",
+        "in76Selection": true
+      },
+      {
+        "id": "BM1-CPE304-078",
+        "caseHash": "47c89cffa56c09f02e110b6d4d47f8c4d82d3da40be4c98df9c0a224f4b74836",
+        "contextId": "ctx-cpe304",
+        "cluster": "course-CPE304",
+        "program": "BSCPE",
+        "sourceKind": "verified-syllabus",
+        "type": "Content-assessment",
+        "path": "plan[0].tasks",
+        "role": "benchmark-76-selection",
+        "in76Selection": true
+      },
+      {
+        "id": "BM1-CPE304-079",
+        "caseHash": "76e69befbcdce04301ad0949c30974f0f81643c6c2fc43df0bcccd285cd26f02",
+        "contextId": "ctx-cpe304",
+        "cluster": "course-CPE304",
+        "program": "BSCPE",
+        "sourceKind": "verified-syllabus",
+        "type": "Activity-assessment",
+        "path": "plan[0].tasks",
+        "role": "benchmark-76-selection",
+        "in76Selection": true
+      },
+      {
+        "id": "BM1-CPE304-057",
+        "caseHash": "c01a9585d13ceca564cf3a212e689a815ffb3759a5166c3b9b930b4b745ac6db",
+        "contextId": "ctx-cpe304",
+        "cluster": "course-CPE304",
+        "program": "BSCPE",
+        "sourceKind": "verified-syllabus",
+        "type": "Content-ILO",
+        "path": "plan[4].ilos[0].text",
+        "role": "partner",
+        "in76Selection": false
+      },
+      {
+        "id": "BM1-CPE304-054",
+        "caseHash": "dd68d77137b3bc1fa8e3c709c0a83f2067f1afd9e3b0b39e04a1e1497751842e",
+        "contextId": "ctx-cpe304",
+        "cluster": "course-CPE304",
+        "program": "BSCPE",
+        "sourceKind": "verified-syllabus",
+        "type": "Content-ILO",
+        "path": "plan[2].ilos[0].text",
+        "role": "partner",
+        "in76Selection": false
+      },
+      {
+        "id": "BM1-IE402-088",
+        "caseHash": "22fc3fc16286e5c7263799443429290f5eb15559c90b2824b3ae8586aba67d27",
+        "contextId": "ctx-ie402",
+        "cluster": "course-IE402",
+        "program": "BSIE",
+        "sourceKind": "verified-syllabus",
+        "type": "Content-ILO",
+        "path": "plan[6].ilos[1].text",
+        "role": "partner",
+        "in76Selection": false
+      },
+      {
+        "id": "BM1-IT202-098",
+        "caseHash": "85a1feb8892381888d66d1211677c5118c3166181df60796cfca5cdffcd11a9a",
+        "contextId": "ctx-it202",
+        "cluster": "course-IT202",
+        "program": "BSIT",
+        "sourceKind": "verified-syllabus",
+        "type": "Content-ILO",
+        "path": "plan[1].ilos[0].text",
+        "role": "partner",
+        "in76Selection": false
+      }
+    ],
+    "manifestSha256": "a6f65478c5909cd3d75e6ab076352f0362242b7306bdecd2182769b326f7654b"
+  },
+  "protected": {
+    "n": 43,
+    "eligible": 36,
+    "pCore": 16,
+    "pShared": 20,
+    "ineligible": [
+      "BM1-S12-001",
+      "BM1-S12-002",
+      "BM1-S12-003",
+      "BM1-S12-004",
+      "BM1-S12-005",
+      "BM1-S12-006",
+      "BM1-S12-007"
+    ],
+    "byTypeEligible": {
+      "ILO-CLO": 6,
+      "ILO-activity": 5,
+      "Content-course": 5,
+      "Content-ILO": 5,
+      "Content-activity": 5,
+      "Content-assessment": 5,
+      "Activity-assessment": 5
+    },
+    "pCoreByType": {
+      "ILO-CLO": 2,
+      "ILO-activity": 2,
+      "Content-course": 3,
+      "Content-ILO": 3,
+      "Content-activity": 2,
+      "Content-assessment": 2,
+      "Activity-assessment": 2
+    },
+    "pSharedByType": {
+      "ILO-activity": 3,
+      "Content-activity": 3,
+      "Content-assessment": 3,
+      "Activity-assessment": 3,
+      "ILO-CLO": 4,
+      "Content-course": 2,
+      "Content-ILO": 2
+    },
+    "distinctStimuli": {
+      "pCore": 9,
+      "pShared": 20,
+      "pCoreByType": {
+        "ILO-CLO": 1,
+        "ILO-activity": 1,
+        "Content-course": 2,
+        "Content-ILO": 2,
+        "Content-activity": 1,
+        "Content-assessment": 1,
+        "Activity-assessment": 1
+      },
+      "pCoreByConstructionFamily": {
+        "coherent-candidate": 7,
+        "partial-scope-candidate": 2
+      },
+      "note": "A duplicate has the same relationship type, source and target as an earlier protected case (the incorrect-mapping family S10 repeats the coherent family S07 except for its ILO-CLO pair). Duplicates stay in the set as a built-in repeat check but count once in statistics."
+    },
+    "stimulusRule": "A protected side text (source or target) is shared when, after whitespace/case normalisation, it equals a side text of any non-protected benchmark case, or when it has at least 3 word trigrams (words longer than 3 letters) and at least 60% of them occur in one such side text. P-core = eligible cases with both sides novel; P-shared = eligible cases with at least one shared side. Every non-protected case counts, not only the development set, because any of them may be read during development.",
+    "inFrozenPilot": [
+      "BM1-S08-003",
+      "BM1-S07-004",
+      "BM1-S09-005",
+      "BM1-S08-002",
+      "BM1-S07-006"
+    ],
+    "cases": [
+      {
+        "id": "BM1-S07-001",
+        "caseHash": "a44616486f00fcaa63b948bbe39c89ffd21af18b893884981fbf459be6f4aec1",
+        "contextId": "ctx-S07",
+        "constructionIntentFamily": "coherent-candidate",
+        "type": "ILO-CLO",
+        "eligible": true,
+        "subset": "P-core",
+        "stimulus": "novel",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 8,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 8,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": true,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S07-002",
+        "caseHash": "c722f5c198c671ce9930a2ba5edbfd3a29147fbfea7cb58da129a7c284a58eb5",
+        "contextId": "ctx-S07",
+        "constructionIntentFamily": "coherent-candidate",
+        "type": "ILO-activity",
+        "eligible": true,
+        "subset": "P-core",
+        "stimulus": "novel",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 8,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 10,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": true,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S07-003",
+        "caseHash": "ad14799b568e6b81c9562ccc9aed0049f875a04e59526516bab04da1186b780a",
+        "contextId": "ctx-S07",
+        "constructionIntentFamily": "coherent-candidate",
+        "type": "Content-course",
+        "eligible": true,
+        "subset": "P-core",
+        "stimulus": "novel",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 24,
+            "maxContainment": 0.2917,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 6,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": true,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S07-004",
+        "caseHash": "38c08bdb0a9155af40295cf79e71646888a1ae7c3f92b51bc1e2824d70631c8e",
+        "contextId": "ctx-S07",
+        "constructionIntentFamily": "coherent-candidate",
+        "type": "Content-ILO",
+        "eligible": true,
+        "subset": "P-core",
+        "stimulus": "novel",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 7,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 8,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          }
+        ],
+        "inFrozenPilot": true,
+        "in76Selection": true,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S07-005",
+        "caseHash": "99753aabbd074d7aca8c9f01e07755cc505d5515997dbd55f52de5bb1dd33a94",
+        "contextId": "ctx-S07",
+        "constructionIntentFamily": "coherent-candidate",
+        "type": "Content-activity",
+        "eligible": true,
+        "subset": "P-core",
+        "stimulus": "novel",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 9,
+            "maxContainment": 0.1111,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 10,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": true,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S07-006",
+        "caseHash": "a3deafaca36b1ab5196fe65e438db8b7b584502d663ab15b5a25e564a155a02f",
+        "contextId": "ctx-S07",
+        "constructionIntentFamily": "coherent-candidate",
+        "type": "Content-assessment",
+        "eligible": true,
+        "subset": "P-core",
+        "stimulus": "novel",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 9,
+            "maxContainment": 0.1111,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 7,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          }
+        ],
+        "inFrozenPilot": true,
+        "in76Selection": true,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S07-007",
+        "caseHash": "74aa69700c14524814cd61e9c2da4486e0302225174b282d305d8d8199afc742",
+        "contextId": "ctx-S07",
+        "constructionIntentFamily": "coherent-candidate",
+        "type": "Activity-assessment",
+        "eligible": true,
+        "subset": "P-core",
+        "stimulus": "novel",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 13,
+            "maxContainment": 0.0769,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 7,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": true,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S08-001",
+        "caseHash": "03515b2346b5908f289de94b8f3efa260d2ed64a0474761eda1b6c307ce4d75c",
+        "contextId": "ctx-S08",
+        "constructionIntentFamily": "partial-scope-candidate",
+        "type": "ILO-CLO",
+        "eligible": true,
+        "subset": "P-core",
+        "stimulus": "novel",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 8,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 8,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": "BM1-S07-001"
+      },
+      {
+        "id": "BM1-S08-002",
+        "caseHash": "e044519c74764da55f9ff0cb1c5c3cdd53e693d3397082dcd42b413438c06a5f",
+        "contextId": "ctx-S08",
+        "constructionIntentFamily": "partial-scope-candidate",
+        "type": "ILO-activity",
+        "eligible": true,
+        "subset": "P-shared",
+        "stimulus": "shared",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 8,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 3,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S02-002",
+              "BM1-S02-005",
+              "BM1-S02-007"
+            ]
+          }
+        ],
+        "inFrozenPilot": true,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S08-003",
+        "caseHash": "9840ab2898b59d1cf07b35255db66c672ad545986a7722d9f2fda22ab0915f7b",
+        "contextId": "ctx-S08",
+        "constructionIntentFamily": "partial-scope-candidate",
+        "type": "Content-course",
+        "eligible": true,
+        "subset": "P-core",
+        "stimulus": "novel",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 24,
+            "maxContainment": 0.2917,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 11,
+            "maxContainment": 0.2727,
+            "shared": false,
+            "alsoIn": []
+          }
+        ],
+        "inFrozenPilot": true,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S08-004",
+        "caseHash": "b92a89f02b852ccc280f967edf039813f0744e9512e1e534ba47dcc7049d0295",
+        "contextId": "ctx-S08",
+        "constructionIntentFamily": "partial-scope-candidate",
+        "type": "Content-ILO",
+        "eligible": true,
+        "subset": "P-core",
+        "stimulus": "novel",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 12,
+            "maxContainment": 0.25,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 8,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S08-005",
+        "caseHash": "ab36b9a6ac4826cbb457b0dcfd09fd0c8f9638bfdcbcfe30bbb97e93b6b0b746",
+        "contextId": "ctx-S08",
+        "constructionIntentFamily": "partial-scope-candidate",
+        "type": "Content-activity",
+        "eligible": true,
+        "subset": "P-shared",
+        "stimulus": "shared",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 14,
+            "maxContainment": 0.2857,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 3,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S02-002",
+              "BM1-S02-005",
+              "BM1-S02-007"
+            ]
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S08-006",
+        "caseHash": "0f1d3ef715422236658395634ab89b0c381ba9fba5b8fe81c771108373531823",
+        "contextId": "ctx-S08",
+        "constructionIntentFamily": "partial-scope-candidate",
+        "type": "Content-assessment",
+        "eligible": true,
+        "subset": "P-shared",
+        "stimulus": "shared",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 14,
+            "maxContainment": 0.2857,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 1,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S02-006",
+              "BM1-S02-007",
+              "BM1-S14-006"
+            ]
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S08-007",
+        "caseHash": "6e00b6940180007b166068b46acda898b997eaee659e3ea2401370fe8644af33",
+        "contextId": "ctx-S08",
+        "constructionIntentFamily": "partial-scope-candidate",
+        "type": "Activity-assessment",
+        "eligible": true,
+        "subset": "P-shared",
+        "stimulus": "shared",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 6,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S02-007",
+              "BM1-S14-007",
+              "BM1-S20-007"
+            ]
+          },
+          {
+            "side": "target",
+            "trigrams": 1,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S02-006",
+              "BM1-S02-007",
+              "BM1-S14-006"
+            ]
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S09-001",
+        "caseHash": "25948974ffe918787664191e74f6cc65d466c859017473cfb36343dfd3ee2131",
+        "contextId": "ctx-S09",
+        "constructionIntentFamily": "unrelated-content-candidate",
+        "type": "ILO-CLO",
+        "eligible": true,
+        "subset": "P-shared",
+        "stimulus": "shared",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 8,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 2,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S03-001",
+              "BM1-S03-002",
+              "BM1-S03-004"
+            ]
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S09-002",
+        "caseHash": "2934b559f0cd38931bc6db88cec66d80c5eec7139b85919cc7e8ab2b415952dc",
+        "contextId": "ctx-S09",
+        "constructionIntentFamily": "unrelated-content-candidate",
+        "type": "ILO-activity",
+        "eligible": true,
+        "subset": "P-shared",
+        "stimulus": "shared",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 2,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S03-001",
+              "BM1-S03-002",
+              "BM1-S03-004"
+            ]
+          },
+          {
+            "side": "target",
+            "trigrams": 3,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S03-002",
+              "BM1-S03-005",
+              "BM1-S03-007"
+            ]
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S09-003",
+        "caseHash": "3ef3698d3f16d7757faf5ac43291533de52f3cc558b7e15542417507c297be3c",
+        "contextId": "ctx-S09",
+        "constructionIntentFamily": "unrelated-content-candidate",
+        "type": "Content-course",
+        "eligible": true,
+        "subset": "P-shared",
+        "stimulus": "shared",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 24,
+            "maxContainment": 0.2917,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 3,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S03-003",
+              "BM1-S03-004",
+              "BM1-S03-005"
+            ]
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S09-004",
+        "caseHash": "15ec5cb7c9fc3f3f731eb46a30d829d16c997e8e4b5eb9ad0c0e9fbc51d19d39",
+        "contextId": "ctx-S09",
+        "constructionIntentFamily": "unrelated-content-candidate",
+        "type": "Content-ILO",
+        "eligible": true,
+        "subset": "P-shared",
+        "stimulus": "shared",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 4,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S03-004",
+              "BM1-S15-004",
+              "BM1-S21-004"
+            ]
+          },
+          {
+            "side": "target",
+            "trigrams": 2,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S03-001",
+              "BM1-S03-002",
+              "BM1-S03-004"
+            ]
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S09-005",
+        "caseHash": "720c0d3e43d3bef7e116785abb0f1bed2b4e6f1fdde9e73dc703beff213e14ca",
+        "contextId": "ctx-S09",
+        "constructionIntentFamily": "unrelated-content-candidate",
+        "type": "Content-activity",
+        "eligible": true,
+        "subset": "P-shared",
+        "stimulus": "shared",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 6,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S03-005",
+              "BM1-S03-006",
+              "BM1-S15-005"
+            ]
+          },
+          {
+            "side": "target",
+            "trigrams": 3,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S03-002",
+              "BM1-S03-005",
+              "BM1-S03-007"
+            ]
+          }
+        ],
+        "inFrozenPilot": true,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S09-006",
+        "caseHash": "b5d91ebfc56a55c7db6f22696fd188df4a08f8861aa0c85e005aa79deec9a963",
+        "contextId": "ctx-S09",
+        "constructionIntentFamily": "unrelated-content-candidate",
+        "type": "Content-assessment",
+        "eligible": true,
+        "subset": "P-shared",
+        "stimulus": "shared",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 6,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S03-005",
+              "BM1-S03-006",
+              "BM1-S15-005"
+            ]
+          },
+          {
+            "side": "target",
+            "trigrams": 4,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S03-006",
+              "BM1-S03-007",
+              "BM1-S15-006"
+            ]
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S09-007",
+        "caseHash": "85e20b301a016c3cc4ed7d5303979e563cbc71b66e496e4a46c788c39a403805",
+        "contextId": "ctx-S09",
+        "constructionIntentFamily": "unrelated-content-candidate",
+        "type": "Activity-assessment",
+        "eligible": true,
+        "subset": "P-shared",
+        "stimulus": "shared",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 6,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S03-007",
+              "BM1-S15-007",
+              "BM1-S21-007"
+            ]
+          },
+          {
+            "side": "target",
+            "trigrams": 4,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S03-006",
+              "BM1-S03-007",
+              "BM1-S15-006"
+            ]
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S10-001",
+        "caseHash": "e807d670cb8815c6652f716b03e35b7ce20b832a0bdcb42b24b56b12329508c9",
+        "contextId": "ctx-S10",
+        "constructionIntentFamily": "incorrect-mapping-candidate",
+        "type": "ILO-CLO",
+        "eligible": true,
+        "subset": "P-shared",
+        "stimulus": "shared",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 3,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S04-001",
+              "BM1-S16-001",
+              "BM1-S22-001"
+            ]
+          },
+          {
+            "side": "target",
+            "trigrams": 8,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S10-002",
+        "caseHash": "074dacefecbbbb892fbdb7345075ea7b8b6785876b9f5c5954c19d59ec85c9cf",
+        "contextId": "ctx-S10",
+        "constructionIntentFamily": "incorrect-mapping-candidate",
+        "type": "ILO-activity",
+        "eligible": true,
+        "subset": "P-core",
+        "stimulus": "novel",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 8,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 10,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": "BM1-S07-002"
+      },
+      {
+        "id": "BM1-S10-003",
+        "caseHash": "a131175d7d08276912ff87c956ef52a373ee23cc8ae2186786e0cacd6001e139",
+        "contextId": "ctx-S10",
+        "constructionIntentFamily": "incorrect-mapping-candidate",
+        "type": "Content-course",
+        "eligible": true,
+        "subset": "P-core",
+        "stimulus": "novel",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 24,
+            "maxContainment": 0.2917,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 6,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": "BM1-S07-003"
+      },
+      {
+        "id": "BM1-S10-004",
+        "caseHash": "c163923f9ccf3a0293ff65d035167a116cb6b4266fae14127859a5051b80d2b8",
+        "contextId": "ctx-S10",
+        "constructionIntentFamily": "incorrect-mapping-candidate",
+        "type": "Content-ILO",
+        "eligible": true,
+        "subset": "P-core",
+        "stimulus": "novel",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 7,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 8,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": "BM1-S07-004"
+      },
+      {
+        "id": "BM1-S10-005",
+        "caseHash": "912c1bd00cb92641ff4bab1902b42f108271a62a8bb030b3f405270bccffa800",
+        "contextId": "ctx-S10",
+        "constructionIntentFamily": "incorrect-mapping-candidate",
+        "type": "Content-activity",
+        "eligible": true,
+        "subset": "P-core",
+        "stimulus": "novel",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 9,
+            "maxContainment": 0.1111,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 10,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": "BM1-S07-005"
+      },
+      {
+        "id": "BM1-S10-006",
+        "caseHash": "761fba1db90bce86f23902b6582aa6c5a09df3a0b128ab8216cc87e5870dcb59",
+        "contextId": "ctx-S10",
+        "constructionIntentFamily": "incorrect-mapping-candidate",
+        "type": "Content-assessment",
+        "eligible": true,
+        "subset": "P-core",
+        "stimulus": "novel",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 9,
+            "maxContainment": 0.1111,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 7,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": "BM1-S07-006"
+      },
+      {
+        "id": "BM1-S10-007",
+        "caseHash": "c2d49d59bd7b3a8a44375205920974b29c8dcf0371c688ee0092e7125922420c",
+        "contextId": "ctx-S10",
+        "constructionIntentFamily": "incorrect-mapping-candidate",
+        "type": "Activity-assessment",
+        "eligible": true,
+        "subset": "P-core",
+        "stimulus": "novel",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 13,
+            "maxContainment": 0.0769,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 7,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": "BM1-S07-007"
+      },
+      {
+        "id": "BM1-S11-001",
+        "caseHash": "26815a67bb76bbdbbca6639508de7d0316095bbfc515a12dafe0fddb934f5671",
+        "contextId": "ctx-S11",
+        "constructionIntentFamily": "ambiguous-candidate",
+        "type": "ILO-CLO",
+        "eligible": true,
+        "subset": "P-shared",
+        "stimulus": "shared",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 8,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 1,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S05-001",
+              "BM1-S05-002",
+              "BM1-S05-003"
+            ]
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S11-002",
+        "caseHash": "a2e439ff2ebc804c214bfe902fe947377490391eb6a55959fedf788014f3396c",
+        "contextId": "ctx-S11",
+        "constructionIntentFamily": "ambiguous-candidate",
+        "type": "ILO-CLO",
+        "eligible": true,
+        "subset": "P-shared",
+        "stimulus": "shared",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 8,
+            "maxContainment": 0,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 1,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S05-001",
+              "BM1-S05-002",
+              "BM1-S05-003"
+            ]
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S11-003",
+        "caseHash": "ab62ac09a40d19136df5824752b0d20f7b3afb41ec1eda407c24db314be65e02",
+        "contextId": "ctx-S11",
+        "constructionIntentFamily": "ambiguous-candidate",
+        "type": "ILO-activity",
+        "eligible": true,
+        "subset": "P-shared",
+        "stimulus": "shared",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 1,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S05-001",
+              "BM1-S05-002",
+              "BM1-S05-003"
+            ]
+          },
+          {
+            "side": "target",
+            "trigrams": 0,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S05-003",
+              "BM1-S05-006",
+              "BM1-S17-003"
+            ]
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S11-004",
+        "caseHash": "0c97494908415e147c7b22ed870e508a93448959bd2b57e4c46625d8cd4976c5",
+        "contextId": "ctx-S11",
+        "constructionIntentFamily": "ambiguous-candidate",
+        "type": "Content-course",
+        "eligible": true,
+        "subset": "P-shared",
+        "stimulus": "shared",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 24,
+            "maxContainment": 0.2917,
+            "shared": false,
+            "alsoIn": []
+          },
+          {
+            "side": "target",
+            "trigrams": 1,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S05-004",
+              "BM1-S17-004",
+              "BM1-S23-004"
+            ]
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S11-005",
+        "caseHash": "4aede60d7fe63d402e25c55d624cd6556e0b6955551766ff7862225dcdde6208",
+        "contextId": "ctx-S11",
+        "constructionIntentFamily": "ambiguous-candidate",
+        "type": "Content-ILO",
+        "eligible": true,
+        "subset": "P-shared",
+        "stimulus": "shared",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 2,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S05-005",
+              "BM1-S17-005",
+              "BM1-S23-005"
+            ]
+          },
+          {
+            "side": "target",
+            "trigrams": 1,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S05-001",
+              "BM1-S05-002",
+              "BM1-S05-003"
+            ]
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S11-006",
+        "caseHash": "d99c57953d2d9ce5e93a9747b6fea3df7a49a7fdf99b925640e0b1dedfa79273",
+        "contextId": "ctx-S11",
+        "constructionIntentFamily": "ambiguous-candidate",
+        "type": "Content-activity",
+        "eligible": true,
+        "subset": "P-shared",
+        "stimulus": "shared",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 4,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S05-006",
+              "BM1-S05-007",
+              "BM1-S17-006"
+            ]
+          },
+          {
+            "side": "target",
+            "trigrams": 0,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S05-003",
+              "BM1-S05-006",
+              "BM1-S17-003"
+            ]
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S11-007",
+        "caseHash": "69f7be2e9518cc751de3d705c8b105dd3880fb57a7dd80174d826ad34d4cc020",
+        "contextId": "ctx-S11",
+        "constructionIntentFamily": "ambiguous-candidate",
+        "type": "Content-assessment",
+        "eligible": true,
+        "subset": "P-shared",
+        "stimulus": "shared",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 4,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S05-006",
+              "BM1-S05-007",
+              "BM1-S17-006"
+            ]
+          },
+          {
+            "side": "target",
+            "trigrams": 0,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S05-007",
+              "BM1-S05-008",
+              "BM1-S17-007"
+            ]
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S11-008",
+        "caseHash": "644633976e37e18fa83beff0aaca566b92cf9df24b7fdd4e053b57788a97cf98",
+        "contextId": "ctx-S11",
+        "constructionIntentFamily": "ambiguous-candidate",
+        "type": "Activity-assessment",
+        "eligible": true,
+        "subset": "P-shared",
+        "stimulus": "shared",
+        "sides": [
+          {
+            "side": "source",
+            "trigrams": 3,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S05-008",
+              "BM1-S17-008",
+              "BM1-S23-008"
+            ]
+          },
+          {
+            "side": "target",
+            "trigrams": 0,
+            "maxContainment": 1,
+            "shared": true,
+            "alsoIn": [
+              "BM1-S05-007",
+              "BM1-S05-008",
+              "BM1-S17-007"
+            ]
+          }
+        ],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S12-001",
+        "caseHash": "726d6a1e78cfa5408467809077241322f69ba8bf1902be77334a3c2c2bda0ef7",
+        "contextId": "ctx-S12",
+        "constructionIntentFamily": "missing-evidence",
+        "type": "ILO-activity",
+        "eligible": false,
+        "subset": "ineligible (missingEvidence or held)",
+        "stimulus": null,
+        "sides": [],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S12-002",
+        "caseHash": "418c32c92f1df1b7f38e3a4ca4fdb8cc37797e9a825b27ed9378ef350c56bfa0",
+        "contextId": "ctx-S12",
+        "constructionIntentFamily": "missing-evidence",
+        "type": "Content-activity",
+        "eligible": false,
+        "subset": "ineligible (missingEvidence or held)",
+        "stimulus": null,
+        "sides": [],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S12-003",
+        "caseHash": "973d6af7e8620d80914681877f2bc41a4f4a98175d9722edeae47df3773edc81",
+        "contextId": "ctx-S12",
+        "constructionIntentFamily": "missing-evidence",
+        "type": "Content-assessment",
+        "eligible": false,
+        "subset": "ineligible (missingEvidence or held)",
+        "stimulus": null,
+        "sides": [],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S12-004",
+        "caseHash": "23682cef2876ed3dad7af344f851fb2de17b36d99f094b6ae506b18aab88a6ec",
+        "contextId": "ctx-S12",
+        "constructionIntentFamily": "missing-evidence",
+        "type": "Activity-assessment",
+        "eligible": false,
+        "subset": "ineligible (missingEvidence or held)",
+        "stimulus": null,
+        "sides": [],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S12-005",
+        "caseHash": "2e84bccd023ba049bca2efc5ccf7e05773141b25188096d7df3e79d421763097",
+        "contextId": "ctx-S12",
+        "constructionIntentFamily": "missing-evidence",
+        "type": "Content-course",
+        "eligible": false,
+        "subset": "ineligible (missingEvidence or held)",
+        "stimulus": null,
+        "sides": [],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S12-006",
+        "caseHash": "afaa90e7b8b5d4ad37fecb13728cf691e9113f600ae44382c51d21d2bdab4c84",
+        "contextId": "ctx-S12",
+        "constructionIntentFamily": "missing-evidence",
+        "type": "Content-ILO",
+        "eligible": false,
+        "subset": "ineligible (missingEvidence or held)",
+        "stimulus": null,
+        "sides": [],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      },
+      {
+        "id": "BM1-S12-007",
+        "caseHash": "04f8f91701e5d83b583fb7b6fd20e33ae01e1e762cf76b4769f691fd3e0644f3",
+        "contextId": "ctx-S12",
+        "constructionIntentFamily": "missing-evidence",
+        "type": "ILO-CLO",
+        "eligible": false,
+        "subset": "ineligible (missingEvidence or held)",
+        "stimulus": null,
+        "sides": [],
+        "inFrozenPilot": false,
+        "in76Selection": false,
+        "duplicateOf": null
+      }
+    ],
+    "manifestSha256": "c1a0f84f3330827474dac734be354baed34efd89b84895361bcc440528786925"
+  },
+  "leakageChecks": {
+    "courseClustersShared": 0,
+    "contextsShared": 0,
+    "maxContextTrigramJaccardDevVsProtected": {
+      "value": 0.1848,
+      "dev": "ctx-S15",
+      "protected": "ctx-S09"
+    },
+    "minContextTrigramJaccardWithinProtected": {
+      "value": 0.7333,
+      "a": "ctx-S09",
+      "b": "ctx-S10"
+    },
+    "protectedCasesWithASideTextIdenticalToADevSideText": {
+      "all": 11,
+      "pCore": 0,
+      "pShared": 11
+    }
+  }
+}

@@ -1,0 +1,633 @@
+{
+  "items": 4,
+  "runs": 1,
+  "answered": 2,
+  "invalid": 2,
+  "invalidRate": 0.5,
+  "notAttempted": 0,
+  "agreement": 1,
+  "falsePositiveRate": null,
+  "falseNegativeRate": 0,
+  "counts": {
+    "clearAligned": 0,
+    "falsePositive": 0,
+    "clearNot": 2,
+    "falseNegative": 0
+  },
+  "confusion": {
+    "ALIGNED": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 1
+    },
+    "PARTIAL": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 0,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 0
+    },
+    "FLAGGED": {
+      "ALIGNED": 0,
+      "PARTIALLY_ALIGNED": 2,
+      "NOT_ALIGNED": 0,
+      "INSUFFICIENT_EVIDENCE": 0,
+      "invalid": 1
+    }
+  },
+  "partialAccuracy": null,
+  "approvalAccuracy": null,
+  "byDiscipline": {
+    "engineering": {
+      "items": 4,
+      "answered": 2,
+      "agree": 2,
+      "invalid": 2,
+      "agreement": 1
+    }
+  },
+  "byCategory": {
+    "name-only": {
+      "items": 1,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "opportunity": {
+      "items": 1,
+      "answered": 1,
+      "agree": 1,
+      "invalid": 0,
+      "agreement": 1
+    },
+    "demonstrated": {
+      "items": 1,
+      "answered": 0,
+      "agree": 0,
+      "invalid": 1,
+      "agreement": null
+    },
+    "insufficient-evidence": {
+      "items": 1,
+      "answered": 0,
+      "agree": 0,
+      "invalid": 1,
+      "agreement": null
+    }
+  },
+  "stability": null,
+  "byType": {
+    "Value-use": {
+      "items": 4,
+      "answered": 2,
+      "agree": 2,
+      "invalid": 2,
+      "agreement": 1
+    }
+  },
+  "disagreements": [],
+  "structuredFields": {
+    "answers": 2,
+    "withFields": 2,
+    "missing": 0,
+    "malformed": 0,
+    "contradictory": 0,
+    "notAssessed": 0,
+    "perField": {
+      "valueUse": {
+        "assessed": 2,
+        "not_assessed": 0,
+        "missing": 0,
+        "malformed": 0,
+        "contradicted": 0,
+        "compared": 2,
+        "agree": 2
+      },
+      "carriedBy": {
+        "assessed": 2,
+        "not_assessed": 0,
+        "missing": 0,
+        "malformed": 0,
+        "contradicted": 0,
+        "compared": 2,
+        "agree": 2
+      },
+      "valueFit": {
+        "assessed": 2,
+        "not_assessed": 0,
+        "missing": 0,
+        "malformed": 0,
+        "contradicted": 0,
+        "compared": 0,
+        "agree": 0
+      }
+    },
+    "note": "Expectations are provisional. Only an assessed field is compared with them: a field that was not assessed, missing, malformed or in a self-contradictory answer is counted by its state, never as agreement. INSUFFICIENT_EVIDENCE answers are left out."
+  },
+  "model": "openrouter/minimax/minimax-m3.1-flash",
+  "promptVersion": "alignment-12d1-r7",
+  "dataset": {
+    "name": "stage-d1-followup",
+    "version": "stage-d1-2",
+    "split": "all",
+    "reviewStatus": "unreviewed",
+    "selection": {
+      "parentItems": 29,
+      "selectedIds": [
+        "vu-syseng-e7-name-only",
+        "vu-syseng-e7-opportunity",
+        "vu-syseng-e7-demonstrated",
+        "vu-syseng-e7-insufficient-evidence"
+      ]
+    }
+  },
+  "configuration": {
+    "stageFlags": {
+      "a": false,
+      "b": false,
+      "b3": false,
+      "b4": false,
+      "c1": false,
+      "c2": false,
+      "d1": true,
+      "d2": false
+    },
+    "promptVariant": "current",
+    "trim": false,
+    "minItems": false,
+    "timeoutMs": 90000
+  },
+  "retries": {
+    "batches": 2,
+    "requests": 2,
+    "invalidAnswers": 0,
+    "finalUnverified": 0,
+    "providerErrors": 1,
+    "notSent": 0,
+    "retryRate": 0,
+    "invalidAnswerRate": 0
+  },
+  "relationshipMetrics": {
+    "planned": 4,
+    "attempted": 4,
+    "neverAttempted": 0,
+    "verified": 2,
+    "recovered": 0,
+    "unresolved": 2,
+    "unresolvedRate": 0.5,
+    "coverage": 0.5,
+    "attemptedShare": 1,
+    "firstAttempt": {
+      "answered": 2,
+      "refused": 0,
+      "validationFailureRate": 0,
+      "noAnswerFirst": 2
+    },
+    "rawResponseErrors": {
+      "answers": 1,
+      "invalidAnswers": 0,
+      "refusedJudgements": 0,
+      "requestsWithoutAnswer": 1
+    },
+    "aspectCoverage": {
+      "byType": {
+        "Value-use": {
+          "relationships": 2,
+          "baseVerified": 2,
+          "baseAccepted": 2,
+          "notRecorded": 0,
+          "fields": {
+            "valueUse": {
+              "assessed": 2,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "carriedBy": {
+              "assessed": 2,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            },
+            "valueFit": {
+              "assessed": 2,
+              "not_assessed": 0,
+              "missing": 0,
+              "malformed": 0,
+              "contradicted": 0
+            }
+          }
+        }
+      },
+      "fieldsRequired": 6,
+      "fieldsAssessed": 6,
+      "rate": 1
+    }
+  },
+  "completion": {
+    "maxUnresolved": 0.2,
+    "unresolvedRate": 0.5,
+    "coverage": 0.5,
+    "stopped": "academic stop: the final unresolved rate is 50% (2 of 4 distinct relationships attempted), above the 20% limit",
+    "state": "unresolved_above_limit",
+    "usableForAgreement": false,
+    "reason": "2 of 4 attempted relationships remain unresolved (50%), above the 20% limit"
+  },
+  "schema": {
+    "minItems": false,
+    "emptyAnswers": 0,
+    "minItemsNotEnforced": false
+  },
+  "answerReview": {
+    "advisory": true,
+    "note": "Counts are heuristic review warnings, not verified academic errors. Labels, fields, validation and agreement are unchanged by these warnings.",
+    "counts": {
+      "explanationReview": {},
+      "draftReview": {
+        "adds_participant": 1
+      },
+      "draftWarnings": {}
+    },
+    "flaggedAnswers": [
+      {
+        "run": 1,
+        "id": "vu-syseng-e7-opportunity",
+        "draftReview": [
+          "adds_participant"
+        ],
+        "reviewEvidence": {
+          "explanation": [],
+          "draft": [
+            {
+              "code": "adds_participant",
+              "evidence": "community"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "limits": {
+    "budget": 10,
+    "maxCost": 0.04,
+    "maxTransient": 3,
+    "maxUnproductive": 4,
+    "maxUnresolved": 0.2,
+    "minSample": 2,
+    "warnInvalid": 2,
+    "maxInvalid": 3,
+    "accounting": "reconcile",
+    "maxTokens": "production (8192)"
+  },
+  "failures": [
+    {
+      "run": 1,
+      "course": "syseng",
+      "ids": [
+        "vu-syseng-e7-demonstrated",
+        "vu-syseng-e7-insufficient-evidence"
+      ],
+      "error": "The operation was aborted due to timeout",
+      "rejected": []
+    }
+  ],
+  "perItem": {
+    "vu-syseng-e7-name-only": [
+      "PARTIALLY_ALIGNED"
+    ],
+    "vu-syseng-e7-opportunity": [
+      "PARTIALLY_ALIGNED"
+    ],
+    "vu-syseng-e7-demonstrated": [
+      null
+    ],
+    "vu-syseng-e7-insufficient-evidence": [
+      null
+    ]
+  },
+  "ranAt": "2026-10-27T03:09:15.975Z",
+  "answers": [
+    {
+      "vu-syseng-e7-name-only": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "compare how maintenance closures affect ward staff and patients",
+        "targetQuote": "Community-orientedness",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The value statement names only the value (\"Community-orientedness\") with no link to what students do in this lesson, so it is name_only. The lesson does contain material that could carry the value (teams \"compare how maintenance closures affect ward staff and patients\"), but the statement itself does not say so.",
+        "recommendation": null,
+        "draft": "Community-orientedness: teams weigh how each maintenance closure affects ward staff and patients before ranking the two schedules, and justify the chosen schedule in terms of those effects.",
+        "aspects": {
+          "values": {
+            "responsible": "values",
+            "valueUse": "name_only",
+            "carriedBy": "none",
+            "valueFit": "fits",
+            "coreValue": "none",
+            "integration": "absent"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      },
+      "vu-syseng-e7-opportunity": {
+        "label": "PARTIALLY_ALIGNED",
+        "sourceQuote": "compare how maintenance closures affect ward staff and patients",
+        "targetQuote": "Community-orientedness in the maintenance-schedule discussion.",
+        "evidenceMatching": {
+          "source": "exact",
+          "target": "exact"
+        },
+        "explanation": "The statement ties the value to the lesson's discussion but never says what students do or decide that expresses it, so it is an opportunity rather than a demonstrated integration. The lesson text shows students comparing effects on ward staff and patients and ranking schedules, but the statement does not name that as the place where the value is lived.",
+        "recommendation": null,
+        "draft": "Community-orientedness: in the maintenance-schedule discussion, teams compare how each closure affects ward staff and patients and rank the two schedules by those effects, then justify the chosen schedule in terms of the impact on the hospital community.",
+        "draftReview": [
+          "adds_participant"
+        ],
+        "reviewEvidence": {
+          "explanation": [],
+          "draft": [
+            {
+              "code": "adds_participant",
+              "evidence": "community"
+            }
+          ]
+        },
+        "aspects": {
+          "values": {
+            "responsible": "values",
+            "valueUse": "opportunity",
+            "carriedBy": "none",
+            "valueFit": "fits",
+            "coreValue": "none",
+            "integration": "absent"
+          },
+          "invalid": [],
+          "missing": []
+        }
+      }
+    }
+  ],
+  "usage": {
+    "requests": 4,
+    "thisRun": 4,
+    "model": 2,
+    "priceLookups": 1,
+    "keyChecks": 1,
+    "invalidAnswers": 0,
+    "unproductiveInARow": 0,
+    "transient": 1,
+    "promptTokens": 3580,
+    "completionTokens": 391,
+    "cachedTokens": 128,
+    "reportedCost": 0.00075432,
+    "charged": 0.00836517,
+    "accounting": {
+      "rule": "reconcile",
+      "requests": {
+        "reconciled": 1,
+        "conservative": 0,
+        "worst_case": 1,
+        "refused": 0
+      },
+      "chargedConservatively": 0.00838245
+    },
+    "warnings": [],
+    "limits": {
+      "maxRequests": 10,
+      "maxCost": 0.04,
+      "maxTransient": 3,
+      "maxInvalid": 3,
+      "warnInvalid": 2,
+      "maxUnproductive": 4,
+      "maxTokens": null
+    },
+    "stopped": "academic stop: the final unresolved rate is 50% (2 of 4 distinct relationships attempted), above the 20% limit"
+  },
+  "keyCheck": {
+    "status": 200,
+    "ok": true,
+    "freeTier": true,
+    "limit": 250,
+    "limitRemaining": 249.97884196,
+    "usage": 0.02115804,
+    "expiresAt": "2026-11-25T04:44:27.996Z"
+  },
+  "prices": {
+    "prompt": 1.5e-7,
+    "completion": 6e-7,
+    "reasoning": 0,
+    "request": 0,
+    "cacheWrite": 0,
+    "endpoints": [
+      {
+        "provider": "GMICloud",
+        "tag": "gmicloud/fp8",
+        "status": 0,
+        "uptime30m": 0,
+        "prompt": 1.425e-7,
+        "completion": 5.7e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.425e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "InferenceNet",
+        "tag": "inference-net/fp4",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "DigitalOcean",
+        "tag": "digitalocean",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Novita",
+        "tag": "novita/fp16",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      },
+      {
+        "provider": "Nebius",
+        "tag": "nebius/fp4",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "SambaNova",
+        "tag": "sambanova",
+        "status": 0,
+        "uptime30m": null,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "ModelRun",
+        "tag": "modelrun/fp4",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Parasail",
+        "tag": "parasail/fp8",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "InferenceNet",
+        "tag": "inference-net/fp4/us",
+        "status": 0,
+        "uptime30m": null,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Together",
+        "tag": "together",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": true
+      },
+      {
+        "provider": "Minimax",
+        "tag": "minimax",
+        "status": 0,
+        "uptime30m": 100,
+        "prompt": 1.5e-7,
+        "completion": 6e-7,
+        "reasoning": 0,
+        "request": 0,
+        "cacheRead": 1.5e-8,
+        "cacheWrite": 0,
+        "structuredOutputs": false
+      }
+    ],
+    "readAt": "2026-10-27T03:07:43.636Z"
+  },
+  "requests": [
+    {
+      "n": 3,
+      "ids": [
+        "vu-syseng-e7-name-only",
+        "vu-syseng-e7-opportunity"
+      ],
+      "status": 200,
+      "ms": 1375,
+      "provider": "Parasail",
+      "finishReason": "stop",
+      "usage": {
+        "promptTokens": 3580,
+        "completionTokens": 391,
+        "reasoningTokens": 0,
+        "cachedTokens": 128,
+        "reportedCost": 0.00075432,
+        "costAtListPrices": 0.0007716
+      },
+      "accounting": "reconciled",
+      "charged": 0.00075432,
+      "conservativeCharge": 0.0007716,
+      "error": null,
+      "content": "{\"judgements\":[{\"id\":\"vu-syseng-e7-name-only\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The value statement names only the value (\\\"Community-orientedness\\\") with no link to what students do in this lesson, so it is name_only. The lesson does contain material that could carry the value (teams \\\"compare how maintenance closures affect ward staff and patients\\\"), but the statement itself does not say so.\",\"sourceQuote\":\"compare how maintenance closures affect ward staff and patients\",\"targetQuote\":\"Community-orientedness\",\"sourceBloom\":\"Analyze\",\"targetBloom\":\"N/A\",\"draft\":\"Community-orientedness: teams weigh how each maintenance closure affects ward staff and patients before ranking the two schedules, and justify the chosen schedule in terms of those effects.\" ,\"responsible\":\"values\",\"valueUse\":\"name_only\",\"carriedBy\":\"none\",\"valueFit\":\"fits\",\"coreValue\":\"none\",\"integration\":\"absent\"},{\"id\":\"vu-syseng-e7-opportunity\",\"label\":\"PARTIALLY_ALIGNED\",\"explanation\":\"The statement ties the value to the lesson's discussion but never says what students do or decide that expresses it, so it is an opportunity rather than a demonstrated integration. The lesson text shows students comparing effects on ward staff and patients and ranking schedules, but the statement does not name that as the place where the value is lived.\",\"sourceQuote\":\"compare how maintenance closures affect ward staff and patients\",\"targetQuote\":\"Community-orientedness in the maintenance-schedule discussion.\",\"sourceBloom\":\"Analyze\",\"targetBloom\":\"N/A\",\"draft\":\"Community-orientedness: in the maintenance-schedule discussion, teams compare how each closure affects ward staff and patients and rank the two schedules by those effects, then justify the chosen schedule in terms of the impact on the hospital community.\",\"responsible\":\"values\",\"valueUse\":\"opportunity\",\"carriedBy\":\"none\",\"valueFit\":\"fits\",\"coreValue\":\"none\",\"integration\":\"absent\"}]}"
+    },
+    {
+      "n": 4,
+      "ids": [
+        "vu-syseng-e7-demonstrated",
+        "vu-syseng-e7-insufficient-evidence"
+      ],
+      "status": 200,
+      "ms": 1669,
+      "provider": null,
+      "finishReason": null,
+      "usage": null,
+      "accounting": "worst_case",
+      "charged": 0.00761085,
+      "conservativeCharge": 0.00761085,
+      "error": "timeout",
+      "content": null
+    }
+  ],
+  "stopped": "academic stop: the final unresolved rate is 50% (2 of 4 distinct relationships attempted), above the 20% limit",
+  "isolation": {
+    "dataModulesLoaded": [],
+    "processEnvStageFlags": [
+      "SYLLABUS_CHECK_STAGE_A",
+      "SYLLABUS_CHECK_STAGE_B",
+      "SYLLABUS_CHECK_STAGE_B3",
+      "SYLLABUS_CHECK_STAGE_B4",
+      "SYLLABUS_CHECK_STAGE_C1",
+      "SYLLABUS_CHECK_STAGE_C2",
+      "SYLLABUS_CHECK_STAGE_D1",
+      "SYLLABUS_CHECK_STAGE_D2"
+    ]
+  }
+}

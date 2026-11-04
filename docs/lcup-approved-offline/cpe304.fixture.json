@@ -1,0 +1,1144 @@
+{
+  "version": "lcup-approved-offline-1",
+  "source": {
+    "file": "docs/academic-references/CPE-304-Fundamentals-of-Mixed-Signals-and-Sensors.pdf",
+    "sha256": "f68eb5bedb77d31b153b23dc354ef457c9a349b7fca64ba5a46578230982a4a2",
+    "pages": 9
+  },
+  "key": "cpe304",
+  "content": {
+    "schemaVersion": 3,
+    "meta": {
+      "program": "BSCPE",
+      "code": "CpE 304",
+      "title": "Fundamentals of Mixed Signals and Sensors",
+      "schoolYear": "2025-2026",
+      "curriculumYear": "",
+      "yearLevel": "",
+      "prereq": "FUNEC, FUNELC",
+      "lecture": "3",
+      "lab": "0"
+    },
+    "outcomes": {
+      "vision": "Moved by the Spirit of the Risen Christ, La Consolacion University Philippines, envisions itself to become a catalyst for the wholistic transformational development of Catholic Augustinian Marian graduates rooted in Gospel values.",
+      "mission": {
+        "lead": "To achieve the above vision, LCUP commits itself to generate and make available to its Augustinian Marian students, programs and services that will make them:",
+        "items": [
+          "exhibit academic and technical competence in their respective areas of discipline in the local and international environment;",
+          "demonstrate their knowledge, critical thinking and creativity by exploring the various avenues of learning and searching for truth;",
+          "live the Gospel values in the varied aspects of their personal and professional lives;",
+          "manifest their willingness to serve specially the marginalized sector of our society;",
+          "demonstrate productivity in various areas of learning as responsible citizens of the society; and",
+          "develop individuals who are resilient, inclusive and responsive to be socio-economic realities of the Philippines and the complexities of the global environment."
+        ]
+      },
+      "egas": [
+        {
+          "no": 1,
+          "name": "Critical and Creative thinker",
+          "short": "Critical and Creative thinker"
+        },
+        {
+          "no": 2,
+          "name": "Competent Catholic Augustinian- Marian Professional",
+          "short": "Competent Catholic Augustinian- Marian Professional"
+        },
+        {
+          "no": 3,
+          "name": "Socially Responsive Steward",
+          "short": "Socially Responsive Steward"
+        },
+        {
+          "no": 4,
+          "name": "Transformative Lifelong learner",
+          "short": "Transformative Lifelong learner"
+        }
+      ],
+      "pos": [
+        {
+          "no": 1,
+          "text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+          "short": "PO 1",
+          "egas": []
+        },
+        {
+          "no": 2,
+          "text": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+          "short": "PO 2",
+          "egas": []
+        },
+        {
+          "no": 3,
+          "text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+          "short": "PO 3",
+          "egas": []
+        },
+        {
+          "no": 4,
+          "text": "Ability to function on multidisciplinary teams",
+          "short": "PO 4",
+          "egas": []
+        },
+        {
+          "no": 5,
+          "text": "Ability to identify; formulate, and solve complex engineering problems;",
+          "short": "PO 5",
+          "egas": []
+        },
+        {
+          "no": 6,
+          "text": "Understanding of professional and ethical responsibility.",
+          "short": "PO 6",
+          "egas": []
+        },
+        {
+          "no": 7,
+          "text": "Ability to communicate effectively",
+          "short": "PO 7",
+          "egas": []
+        },
+        {
+          "no": 8,
+          "text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+          "short": "PO 8",
+          "egas": []
+        },
+        {
+          "no": 9,
+          "text": "Recognition of the need for, and an ability to engage in life-long learning;",
+          "short": "PO 9",
+          "egas": []
+        },
+        {
+          "no": 10,
+          "text": "Knowledge of contemporary issues;",
+          "short": "PO 10",
+          "egas": []
+        },
+        {
+          "no": 11,
+          "text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and",
+          "short": "PO 11",
+          "egas": []
+        },
+        {
+          "no": 12,
+          "text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in",
+          "short": "PO 12",
+          "egas": []
+        },
+        {
+          "no": 13,
+          "text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy.",
+          "short": "PO 13",
+          "egas": []
+        }
+      ]
+    },
+    "description": [
+      {
+        "id": "cpe304_desc",
+        "t": "This course covers operational amplifiers, signal converters, power switching devices and the construction and operation\nof sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses\non the application of these devices in developing signal conversion circuits that allows measurement, processing and control\nof physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on\nactuators are also included. \nAnchored in the Marian and Augustinian values of truth (veritas), unity (unitas), and charity (caritas), the course encourages\nstudents to design technology that promotes social responsibility, collaboration, and compassion. Through hands-on\nprojects, learners will not only develop technical proficiency but also embody ethical stewardship — using their knowledge to\ncreate solutions that serve the needs of others and contribute to the common good."
+      }
+    ],
+    "clos": [
+      {
+        "id": "cpe304_clo1",
+        "title": "CLO 1",
+        "level": "Introductory",
+        "statement": "Identify the design process of electronic circuits and systems and conduct experiments involving sensors and mixed-signal systems, analyze data, and interpret results to improve performance and reliability.",
+        "pos": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "egas": [
+          1
+        ]
+      },
+      {
+        "id": "cpe304_clo2",
+        "title": "CLO 2",
+        "level": "Introductory",
+        "statement": "Develop analytical and design skills for both analog and digital electronic circuit and implement sensor-based systems that integrate hardware and software components while considering economic, environmental, and ethical constraints.",
+        "pos": [
+          6,
+          7,
+          12
+        ],
+        "egas": [
+          2
+        ]
+      },
+      {
+        "id": "cpe304_clo3",
+        "title": "CLO 3",
+        "level": "Introductory",
+        "statement": "Analyze and apply the behavior of passive components in AC circuits and their instrumentation applications in multidisciplinary teams to design, test, and optimize mixed-signal and sensor applications for engineering solutions",
+        "pos": [
+          4,
+          9
+        ],
+        "egas": [
+          3
+        ]
+      },
+      {
+        "id": "cpe304_clo4",
+        "title": "CLO 4",
+        "level": "Introductory",
+        "statement": "Exhibit lifelong learning, precision, and ethical responsibility in performing measurements and calibration tasks. Engage in continuous learning by exploring emerging technologies and trends in sensors, instrumentation, and mixed-signal design for future innovation",
+        "pos": [
+          11,
+          13
+        ],
+        "egas": [
+          4
+        ]
+      }
+    ],
+    "plan": [
+      {
+        "id": "cpe304_r1",
+        "week": "1",
+        "kind": "lesson",
+        "ilos": [],
+        "contents": "I.ORIENTATION\n• Introduction to\nthe Course\nContents\n• Course\nRequirements\nand Activities\n• Course\nObjectives\n• Grading\nSystem and\nPolicies on\nAbsences,\nTardiness and\nExaminations\n• Introduction to\nGsuite, Google\nClassroom,\nGoogle Slides,\nGoogle Docs\nand Google\nSheets",
+        "activities": "• Setting and sharing\nof expectations from\nthe course\n• Discussion of the\nVision, Mission and\nGoals of LCUP and\nof CITE\n• Presentation of\nCourse Objectives\nand Contents,\nCourse\nRequirements and\nActivities\n• Review of Policies\non Absences,\nTardiness,\nExaminations and\nGrading System",
+        "tasks": "• Statement of\nexpectations\n• Review of Course\nContents,\nObjectives,\nActivities and\nAssessment Tools\n• Review of Policies\non Absences,\nTardiness,\nExaminations and\nGrading System",
+        "values": "• Understanding\n• Open\nMindedness\n• Respect\n• Obedience"
+      },
+      {
+        "id": "cpe304_r2",
+        "week": "2-3",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "cpe304_r2_i1",
+            "text": "ILO1: To develop skills in analysis and design of both analog and digital circuits [CLO1]",
+            "tags": [
+              "clo:cpe304_clo1"
+            ]
+          },
+          {
+            "id": "cpe304_r2_i2",
+            "text": "ILO2: Understand the design process of electronic circuits and systems. [CLO1]",
+            "tags": [
+              "clo:cpe304_clo1"
+            ]
+          }
+        ],
+        "contents": "II. Introduction to\nElectronic System\n• History of\nElectronics\n• Electronic Signals\nand Notation\n• Classifications of\nElectronic\nSystems\n• Specifications of\nElectronic\nSystems\n• Design of\nElectronic\nSystems\n• Design of\nElectronic Circuits\n• Electronic\nDevices\n• Emerging\nElectronics\nDifferential\nAmplifiers\n• Introduction to\nDifferential\nAmplifiers\n• Block Diagram\n• Differential Gain\n• Common Mode\nGain\n• CMRR\n• Configuration of\ndifferential\namplifiers",
+        "activities": "• Lecture-\nDiscussion\nusing\nPowerPoint",
+        "tasks": "• Quiz on the\ntopics\ndiscussed",
+        "values": "• Cooperation\n• Understanding\n• Critical Thinking\n• Active\nparticipation and\ninvolvement"
+      },
+      {
+        "id": "cpe304_r3",
+        "week": "4-5",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "cpe304_r3_i1",
+            "text": "ILO1: Show one’s knowledge on the fundamental elements of amplifiers.[CLO1, CLO2]",
+            "tags": [
+              "clo:cpe304_clo1",
+              "clo:cpe304_clo2"
+            ]
+          },
+          {
+            "id": "cpe304_r3_i2",
+            "text": "ILO2: Refresh and expand the understanding of basic electrical components and the basic terms used in electricity as required for instrumentation. .[CLO1, CLO2]",
+            "tags": [
+              "clo:cpe304_clo1",
+              "clo:cpe304_clo2"
+            ]
+          }
+        ],
+        "contents": "III. INTRODUCTION\nTO OPERATIONAL\nAMPLIFIERS AND\nAPPLICATIONS\n• Characteristics\nof Ideal Op-\nAmps\n• Noninverting\nAmplifiers\n• Inverting\nAmplifiers\n• Instrumentatio\nn Amplifiers\n• Integrators\n• Differentiators\n• Addition–\nSubtraction\nAmplifiers\n• Large-Signal\nOperations of\nOp-Amps\n• Input Offset\nVoltage\n• Input Offset\nCurrent\n• Op-Amp\nCircuit Design\nLinear and Non\nLinear Applications\nof Op-Amp\n• Linear Op-amp\n• Non-linear Op-\namp",
+        "activities": "• Lecture-\nDiscussion using\nPowerPoint",
+        "tasks": "• Quiz on the\ntopics\ndiscussed",
+        "values": "• Cooperation\n• Understandi\nng\n• Critical\nThinking\n• Active\nparticipation\nand\ninvolvement"
+      },
+      {
+        "id": "cpe304_r4",
+        "week": "6",
+        "kind": "exam",
+        "ilos": [],
+        "contents": "Preliminary\nExamination",
+        "activities": "• Examination on\nthe topics\ndiscussed during\nthe Mid Term",
+        "tasks": "• Examination",
+        "values": "• Honesty in\nanswering the test\nquestionnaire\n• Diligence\n• Understanding"
+      },
+      {
+        "id": "cpe304_r5",
+        "week": "7-8",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "cpe304_r5_i1",
+            "text": "ILO1: To develop skills in analysis and design of both analog and digital circuits",
+            "tags": []
+          },
+          {
+            "id": "cpe304_r5_i2",
+            "text": "ILO6: Understand active devices, how they are used in instrument applications, and the difference between analog and digital circuits.",
+            "tags": []
+          },
+          {
+            "id": "cpe304_r5_i3",
+            "text": "ILO10: Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing.",
+            "tags": []
+          }
+        ],
+        "contents": "IV. Analog to Digital\nConversion\nDigital to Analog\nConversion\n• Sampling\n• Quantization\n• encoding",
+        "activities": "• Lecture-\nDiscussion using\nPowerPoint",
+        "tasks": "• Quiz on the\ntopics\ndiscussed",
+        "values": "• Cooperation\n• Understandi\nng\n• Critical\nThinking\n• Active\nparticipation\nand\ninvolvement"
+      },
+      {
+        "id": "cpe304_r6",
+        "week": "9-11",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "cpe304_r6_i1",
+            "text": "ILO4: Refresh and expand the understanding of basic electrical components and the basic terms used in electricity as required for instrumentation.",
+            "tags": []
+          },
+          {
+            "id": "cpe304_r6_i2",
+            "text": "ILO7: Understand the units used in measurements and familiarize with the most common methods of using the various measurement .",
+            "tags": []
+          },
+          {
+            "id": "cpe304_r6_i3",
+            "text": "ILO10: Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing.",
+            "tags": []
+          }
+        ],
+        "contents": "V. Mixed Signals\nBasic Measurement\nTheory\n• IC Test\n• Linearity",
+        "activities": "• Lecture-\nDiscussion\nusing\nPowerPoint",
+        "tasks": "• Quiz on the\ntopics\ndiscussed",
+        "values": "• Cooperation\n• Understandi\nng\n• Critical\nThinking\n• Active\nparticipation\nand\ninvolvement"
+      },
+      {
+        "id": "cpe304_r7",
+        "week": "12",
+        "kind": "exam",
+        "ilos": [],
+        "contents": "Midterm\nExamination",
+        "activities": "• Examination on\nthe topics\ndiscussed\nduring the Mid\nTerm",
+        "tasks": "• Honesty in\nanswering the test\nquestionnaire\n• Diligence\n• Understanding",
+        "values": "• Examination"
+      },
+      {
+        "id": "cpe304_r8",
+        "week": "13-14",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "cpe304_r8_i1",
+            "text": "ILO8: Understand the different Sensors and Transducers.",
+            "tags": []
+          },
+          {
+            "id": "cpe304_r8_i2",
+            "text": "ILO10: Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing",
+            "tags": []
+          }
+        ],
+        "contents": "VI. Sensors and\nTransducers\n● Sensitivity &\nHysteresis\n● Offset Error & Non-\nlinearity",
+        "activities": "• Lecture-\nDiscussion\nusing\nPowerPoint",
+        "tasks": "• Quiz on the\ntopics\ndiscussed",
+        "values": "• Cooperation\n• Understanding\n• Critical Thinking\n• Active\nparticipation and\ninvolvement"
+      },
+      {
+        "id": "cpe304_r9",
+        "week": "15-16",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "cpe304_r9_i1",
+            "text": "ILO8: Understand the different Sensors and Transducers.",
+            "tags": []
+          }
+        ],
+        "contents": "VII. Other Types of\nSensors and\nTransducers\n● active sensors\n● passive sensors",
+        "activities": "• Lecture-\nDiscussion\nusing\nPowerPoint",
+        "tasks": "• Quiz on the\ntopics\ndiscussed",
+        "values": "• Cooperation\n• Understanding\n• Critical Thinking\n• Active\nparticipation and\ninvolvement"
+      },
+      {
+        "id": "cpe304_r10",
+        "week": "17",
+        "kind": "lesson",
+        "ilos": [
+          {
+            "id": "cpe304_r10_i1",
+            "text": "ILO9: Learn the basic components and control of devices and prototypes.",
+            "tags": []
+          },
+          {
+            "id": "cpe304_r10_i2",
+            "text": "ILO10: Demonstrate the Filipino-Catholic Augustinian Spirituality through value webbing",
+            "tags": []
+          }
+        ],
+        "contents": "VIII. Basic Control\nDevices\n● What are control\ndevices\n● different types of\ncontrol devices",
+        "activities": "• Lecture-\nDiscussion\nusing\nPowerPoint",
+        "tasks": "• Quiz on the\ntopics\ndiscussed",
+        "values": "• Cooperation\n• Understandi\nng\n• Critical\nThinking\n• Active\nparticipation\nand\ninvolvement"
+      },
+      {
+        "id": "cpe304_r11",
+        "week": "18",
+        "kind": "exam",
+        "ilos": [],
+        "contents": "Final Examination",
+        "activities": "• Examination on the\ntopics discussed\nduring the Final Term",
+        "tasks": "• Final\nExamination",
+        "values": "• Honesty in\nanswering the test\nquestionnaire\n• Diligence"
+      }
+    ],
+    "reqs": [
+      {
+        "id": "cpe304_q1",
+        "t": "1. Class Attendance"
+      },
+      {
+        "id": "cpe304_q2",
+        "t": "2. Recitations"
+      },
+      {
+        "id": "cpe304_q3",
+        "t": "3. Quizzes"
+      },
+      {
+        "id": "cpe304_q4",
+        "t": "4. Examinations"
+      },
+      {
+        "id": "cpe304_q5",
+        "t": "5. Compilation of Laboratory Activity Reports"
+      },
+      {
+        "id": "cpe304_q6",
+        "t": "6. Project"
+      }
+    ],
+    "refs": {
+      "books": {
+        "na": false,
+        "items": []
+      },
+      "program": {
+        "na": false,
+        "items": []
+      },
+      "online": {
+        "na": false,
+        "items": [
+          {
+            "id": "cpe304_ref1",
+            "t": "Erhan, L., Ndubuaku, M., Di Mauro, M., Song, W., Chen, M., Fortino, G., Bagdasar, O., & Liotta, A. (2020). Smart\nAnomaly Detection in Sensor Systems: A Multi-Perspective Review . arXiv. https://arxiv.org/abs/2010.14946 arXiv"
+          },
+          {
+            "id": "cpe304_ref2",
+            "t": "Wei, Z., Qu, H., Wang, Y., Yuan, X., Wu, H., Du, Y., Han, K., & Zhang, N. (2023). Integrated Sensing and Communication\nSignals Toward 5G-A and 6G: A Survey . arXiv. https://arxiv.org/abs/2301.03857 arXiv"
+          },
+          {
+            "id": "cpe304_ref3",
+            "t": "Cherubini, A., & Navarro-Alarcon, D. (2020). Sensor-Based Control for Collaborative Robots: Fundamentals, Challenges\nand Opportunities . arXiv. https://arxiv.org/abs/2007.02067 arXiv"
+          },
+          {
+            "id": "cpe304_ref4",
+            "t": "Perera, C., Zaslavsky, A., Christen, P., & Georgakopoulos, D. (2013). Context Aware Computing for the Internet of\nThings: A Survey . arXiv. https://arxiv.org/abs/1305.0982 arXiv"
+          }
+        ]
+      },
+      "electronics": {
+        "na": false,
+        "items": []
+      }
+    },
+    "grading": {
+      "rows": [
+        {
+          "id": "cpe304_g0",
+          "label": "Class Standing",
+          "abbr": "",
+          "pct": "60"
+        },
+        {
+          "id": "cpe304_g1",
+          "label": "Term Examination",
+          "abbr": "",
+          "pct": "40"
+        }
+      ],
+      "override": {
+        "on": false,
+        "term": "",
+        "final": ""
+      }
+    }
+  },
+  "evidence": {
+    "identity": {
+      "program": "BSCPE",
+      "basis": "User-specified degree; matched within that program in frozen database export. Degree code is not printed in the college header.",
+      "schoolYear": "2025-2026",
+      "schoolYearPages": [
+        1
+      ],
+      "curriculumYear": null,
+      "curriculumYearReason": "Not stated in PDF; school year is not curriculum year."
+    },
+    "fields": {
+      "code": {
+        "raw": "CpE 304",
+        "pages": [
+          1
+        ]
+      },
+      "title": {
+        "raw": "Fundamentals of Mixed Signals and Sensors",
+        "pages": [
+          1
+        ]
+      },
+      "description": {
+        "raw": "This course covers operational amplifiers, signal converters, power switching devices and the construction and operation\nof sensors and transducers for converting physical parameters into electrical signals and vice-versa. The course focuses\non the application of these devices in developing signal conversion circuits that allows measurement, processing and control\nof physical parameters by digital processing systems such as a finite state machine or a digital computer. Topics on\nactuators are also included. \nAnchored in the Marian and Augustinian values of truth (veritas), unity (unitas), and charity (caritas), the course encourages\nstudents to design technology that promotes social responsibility, collaboration, and compassion. Through hands-on\nprojects, learners will not only develop technical proficiency but also embody ethical stewardship — using their knowledge to\ncreate solutions that serve the needs of others and contribute to the common good.",
+        "pages": [
+          1
+        ],
+        "adaptation": "Read between source-stream section headings, not y-sorted importer text."
+      },
+      "credits": {
+        "raw": "3 units lecture",
+        "pages": [
+          1
+        ]
+      },
+      "reqs": {
+        "raw": "1. Class Attendance\n2. Recitations\n3. Quizzes\n4. Examinations\n5. Compilation of Laboratory Activity Reports\n6. Project",
+        "pages": [
+          8
+        ]
+      },
+      "refs": {
+        "raw": "A. INTERNET REFERENCES:\nErhan, L., Ndubuaku, M., Di Mauro, M., Song, W., Chen, M., Fortino, G., Bagdasar, O., & Liotta, A. (2020). Smart\nAnomaly Detection in Sensor Systems: A Multi-Perspective Review . arXiv. https://arxiv.org/abs/2010.14946 arXiv\nWei, Z., Qu, H., Wang, Y., Yuan, X., Wu, H., Du, Y., Han, K., & Zhang, N. (2023). Integrated Sensing and Communication\nSignals Toward 5G-A and 6G: A Survey . arXiv. https://arxiv.org/abs/2301.03857 arXiv\nCherubini, A., & Navarro-Alarcon, D. (2020). Sensor-Based Control for Collaborative Robots: Fundamentals, Challenges\nand Opportunities . arXiv. https://arxiv.org/abs/2007.02067 arXiv\nPerera, C., Zaslavsky, A., Christen, P., & Georgakopoulos, D. (2013). Context Aware Computing for the Internet of\nThings: A Survey . arXiv. https://arxiv.org/abs/1305.0982 arXiv",
+        "pages": [
+          8
+        ]
+      },
+      "prereq": {
+        "raw": "FUNEC, FUNELC",
+        "pages": [
+          1
+        ],
+        "adaptation": "Whitespace only"
+      },
+      "grading": {
+        "raw": "1. Class Standing\t60%\n2. Term Examination\t40%\n3. Term Grade =\tClass Standing (60%) + Term Examination (40%)\n4.\n5. Final Rating =\tPreliminary Term Grade + Mid Term Grade + Final Term Grade\n\n3",
+        "pages": [
+          8
+        ]
+      },
+      "vision": {
+        "raw": "Moved by the Spirit of the Risen Christ, La Consolacion University Philippines, envisions itself to become a catalyst for the wholistic transformational development of Catholic Augustinian Marian graduates rooted in Gospel values.",
+        "pages": [
+          1
+        ]
+      },
+      "mission": {
+        "raw": "To achieve the above vision, LCUP commits itself to generate and make available to its Augustinian Marian students, programs and services that will make them:\n● exhibit academic and technical competence in their respective areas of discipline in the local and international environment;\n● demonstrate their knowledge, critical thinking and creativity by exploring the various avenues of learning and searching for truth;\n● live the Gospel values in the varied aspects of their personal and professional lives;\n● manifest their willingness to serve specially the marginalized sector of our society;\n● demonstrate productivity in various areas of learning as responsible citizens of the society; and\n● develop individuals who are resilient, inclusive and responsive to be socio-economic realities of the Philippines and the complexities of the global environment.",
+        "pages": [
+          1,
+          2
+        ]
+      }
+    },
+    "outcomes": {
+      "PO1": {
+        "raw": "PO1. Ability to apply knowledge of\nmathematics and science to solve\ncomplex engineering problems;",
+        "pages": [
+          2
+        ]
+      },
+      "PO2": {
+        "raw": "PO2. Ability to design and conduct\nexperiments, as well as to analyze and\ninterpret data;",
+        "pages": [
+          2
+        ]
+      },
+      "PO3": {
+        "raw": "PO3. Ability to design a system,\ncomponent, or process to meet desired\nneeds within realistic constraints such as\neconomic, environmental, social,\npolitical, ethical, health and safety,\nmanufacturability and sustainability, in\naccordance with standards.",
+        "pages": [
+          2
+        ]
+      },
+      "PO4": {
+        "raw": "PO4. Ability to function on\nmultidisciplinary teams",
+        "pages": [
+          2
+        ]
+      },
+      "PO5": {
+        "raw": "PO5. Ability to identify; formulate, and\nsolve complex engineering problems;",
+        "pages": [
+          2
+        ]
+      },
+      "PO6": {
+        "raw": "PO6. Understanding of professional and\nethical responsibility.",
+        "pages": [
+          2
+        ]
+      },
+      "PO7": {
+        "raw": "PO7. Ability to communicate effectively",
+        "pages": [
+          2
+        ]
+      },
+      "PO8": {
+        "raw": "PO8. Broad education necessary to\nunderstand the impact of engineering\nsolutions in a global, economic,\nenvironmental, and societal context.",
+        "pages": [
+          3
+        ]
+      },
+      "PO9": {
+        "raw": "PO9. Recognition of the need for, and an\nability to engage in life-long learning;",
+        "pages": [
+          3
+        ]
+      },
+      "PO10": {
+        "raw": "PO10. Knowledge of contemporary\nissues;",
+        "pages": [
+          3
+        ]
+      },
+      "PO11": {
+        "raw": "PO11. Ability to use techniques, skills and\nmodern engineering tools necessary for\nengineering practice; and",
+        "pages": [
+          3
+        ]
+      },
+      "PO12": {
+        "raw": "PO12. Knowledge and understanding of\nengineering and management principles\nas a member and leader in a team, to\nmanage projects and in",
+        "pages": [
+          3
+        ]
+      },
+      "PO13": {
+        "raw": "PO13: Ability to design, develop,\nimplement and improve integrated system\nthat include people materials,\nimplementation, equipment and energy.",
+        "pages": [
+          3
+        ]
+      },
+      "EGA1": {
+        "raw": "EGA 1: Critical and Creative thinker",
+        "pages": [
+          2
+        ]
+      },
+      "EGA2": {
+        "raw": "EGA 2: Competent Catholic Augustinian-\nMarian Professional",
+        "pages": [
+          2
+        ]
+      },
+      "EGA3": {
+        "raw": "EGA 3: Socially Responsive Steward",
+        "pages": [
+          2
+        ]
+      },
+      "EGA4": {
+        "raw": "EGA 4: Transformative Lifelong learner",
+        "pages": [
+          2
+        ]
+      },
+      "CLO1": {
+        "raw": "CLO1: Identify the design process of\nelectronic circuits and systems and\nconduct experiments involving sensors\nand mixed-signal systems, analyze data,\nand interpret results to improve\nperformance and reliability.\n[EGA1, PO1, PO2, PO3, PO5]",
+        "pages": [
+          2
+        ]
+      },
+      "CLO2": {
+        "raw": "CLO2: Develop analytical and design\nskills for both analog and digital electronic\ncircuit and implement sensor-based\nsystems that integrate hardware and\nsoftware components while considering\neconomic, environmental, and ethical\nconstraints. [EGA2, PO6. PO7, PO12]",
+        "pages": [
+          2
+        ]
+      },
+      "CLO3": {
+        "raw": "CLO3: Analyze and apply the behavior of\npassive components in AC circuits and\ntheir instrumentation applications in\nmultidisciplinary teams to design, test,\nand optimize mixed-signal and sensor\napplications for engineering solutions\n[EGA3, PO4, PO9]",
+        "pages": [
+          2
+        ]
+      },
+      "CLO4": {
+        "raw": "CLO4: Exhibit lifelong learning, precision,\nand ethical responsibility in performing\nmeasurements and calibration tasks.\nEngage in continuous learning by\nexploring emerging technologies and\ntrends in sensors, instrumentation, and\nmixed-signal design for future innovation\n[EGA 4, PO11, PO13]",
+        "pages": [
+          2,
+          3
+        ]
+      }
+    },
+    "plan": [
+      {
+        "week": "1",
+        "chunks": [
+          {
+            "page": 3,
+            "cells": [
+              "Week 1",
+              "",
+              "I.ORIENTATION\n• Introduction to\nthe Course\nContents\n• Course\nRequirements\nand Activities\n• Course\nObjectives\n• Grading\nSystem and\nPolicies on\nAbsences,",
+              "• Setting and sharing\nof expectations from\nthe course\n• Discussion of the\nVision, Mission and\nGoals of LCUP and\nof CITE\n• Presentation of\nCourse Objectives\nand Contents,\nCourse\nRequirements and\nActivities",
+              "• Statement of\nexpectations\n• Review of Course\nContents,\nObjectives,\nActivities and\nAssessment Tools\n• Review of Policies\non Absences,\nTardiness,\nExaminations and\nGrading System",
+              "• Understanding\n• Open\nMindedness\n• Respect\n• Obedience"
+            ],
+            "box": [
+              45.12000045776367,
+              399.7250061035156,
+              751.4090459914435,
+              582.375
+            ]
+          },
+          {
+            "page": 4,
+            "cells": [
+              "",
+              "",
+              "Tardiness and\nExaminations\n• Introduction to\nGsuite, Google\nClassroom,\nGoogle Slides,\nGoogle Docs\nand Google\nSheets",
+              "• Review of Policies\non Absences,\nTardiness,\nExaminations and\nGrading System",
+              "",
+              ""
+            ],
+            "box": [
+              45,
+              27.5999755859375,
+              751.780029296875,
+              166.45001220703125
+            ]
+          }
+        ],
+        "pages": [
+          3,
+          4
+        ],
+        "cells": [
+          "Week 1",
+          "",
+          "I.ORIENTATION\n• Introduction to\nthe Course\nContents\n• Course\nRequirements\nand Activities\n• Course\nObjectives\n• Grading\nSystem and\nPolicies on\nAbsences,\nTardiness and\nExaminations\n• Introduction to\nGsuite, Google\nClassroom,\nGoogle Slides,\nGoogle Docs\nand Google\nSheets",
+          "• Setting and sharing\nof expectations from\nthe course\n• Discussion of the\nVision, Mission and\nGoals of LCUP and\nof CITE\n• Presentation of\nCourse Objectives\nand Contents,\nCourse\nRequirements and\nActivities\n• Review of Policies\non Absences,\nTardiness,\nExaminations and\nGrading System",
+          "• Statement of\nexpectations\n• Review of Course\nContents,\nObjectives,\nActivities and\nAssessment Tools\n• Review of Policies\non Absences,\nTardiness,\nExaminations and\nGrading System",
+          "• Understanding\n• Open\nMindedness\n• Respect\n• Obedience"
+        ]
+      },
+      {
+        "week": "2-3",
+        "chunks": [
+          {
+            "page": 4,
+            "cells": [
+              "Week 2-3",
+              "ILO1: To develop\nskills in analysis and\ndesign of both analog\nand digital circuits\n[CLO1]\nILO2: Understand the\ndesign process of\nelectronic circuits and\nsystems.\n[CLO1]",
+              "II. Introduction to\nElectronic System\n• History of\nElectronics\n• Electronic Signals\nand Notation\n• Classifications of\nElectronic\nSystems\n• Specifications of\nElectronic\nSystems\n• Design of\nElectronic\nSystems\n• Design of\nElectronic Circuits\n• Electronic\nDevices\n• Emerging\nElectronics\nDifferential\nAmplifiers\n• Introduction to\nDifferential\nAmplifiers\n• Block Diagram\n• Differential Gain\n• Common Mode\nGain",
+              "• Lecture-\nDiscussion\nusing\nPowerPoint",
+              "• Quiz on the\ntopics\ndiscussed",
+              "• Cooperation\n• Understanding\n• Critical Thinking\n• Active\nparticipation and\ninvolvement"
+            ],
+            "box": [
+              45.142857687813894,
+              167.04501342773438,
+              751.4090459914435,
+              594.9750003814697
+            ]
+          },
+          {
+            "page": 5,
+            "cells": [
+              "",
+              "",
+              "• CMRR\n• Configuration of\ndifferential\namplifiers",
+              "",
+              "",
+              ""
+            ],
+            "box": [
+              45,
+              27.60498046875,
+              751.780029296875,
+              103.6300048828125
+            ]
+          }
+        ],
+        "pages": [
+          4,
+          5
+        ],
+        "cells": [
+          "Week 2-3",
+          "ILO1: To develop\nskills in analysis and\ndesign of both analog\nand digital circuits\n[CLO1]\nILO2: Understand the\ndesign process of\nelectronic circuits and\nsystems.\n[CLO1]",
+          "II. Introduction to\nElectronic System\n• History of\nElectronics\n• Electronic Signals\nand Notation\n• Classifications of\nElectronic\nSystems\n• Specifications of\nElectronic\nSystems\n• Design of\nElectronic\nSystems\n• Design of\nElectronic Circuits\n• Electronic\nDevices\n• Emerging\nElectronics\nDifferential\nAmplifiers\n• Introduction to\nDifferential\nAmplifiers\n• Block Diagram\n• Differential Gain\n• Common Mode\nGain\n• CMRR\n• Configuration of\ndifferential\namplifiers",
+          "• Lecture-\nDiscussion\nusing\nPowerPoint",
+          "• Quiz on the\ntopics\ndiscussed",
+          "• Cooperation\n• Understanding\n• Critical Thinking\n• Active\nparticipation and\ninvolvement"
+        ]
+      },
+      {
+        "week": "4-5",
+        "chunks": [
+          {
+            "page": 5,
+            "cells": [
+              "Week 4-5",
+              "ILO1: Show one’s\nknowledge on the\nfundamental elements\nof amplifiers.[CLO1,\nCLO2]\nILO2: Refresh and\nexpand the\nunderstanding of\nbasic electrical\ncomponents and the\nbasic terms used in\nelectricity as required\nfor instrumentation.\n.[CLO1, CLO2]",
+              "III. INTRODUCTION\nTO OPERATIONAL\nAMPLIFIERS AND\nAPPLICATIONS\n• Characteristics\nof Ideal Op-\nAmps\n• Noninverting\nAmplifiers\n• Inverting\nAmplifiers\n• Instrumentatio\nn Amplifiers\n• Integrators\n• Differentiators\n• Addition–\nSubtraction\nAmplifiers\n• Large-Signal\nOperations of\nOp-Amps\n• Input Offset\nVoltage\n• Input Offset\nCurrent\n• Op-Amp\nCircuit Design\nLinear and Non\nLinear Applications\nof Op-Amp\n• Linear Op-amp\n• Non-linear Op-\namp",
+              "• Lecture-\nDiscussion using\nPowerPoint",
+              "• Quiz on the\ntopics\ndiscussed",
+              "• Cooperation\n• Understandi\nng\n• Critical\nThinking\n• Active\nparticipation\nand\ninvolvement"
+            ],
+            "box": [
+              45.142857687813894,
+              104.02499389648438,
+              751.4041646321615,
+              573.5750007629395
+            ]
+          }
+        ],
+        "pages": [
+          5
+        ],
+        "cells": [
+          "Week 4-5",
+          "ILO1: Show one’s\nknowledge on the\nfundamental elements\nof amplifiers.[CLO1,\nCLO2]\nILO2: Refresh and\nexpand the\nunderstanding of\nbasic electrical\ncomponents and the\nbasic terms used in\nelectricity as required\nfor instrumentation.\n.[CLO1, CLO2]",
+          "III. INTRODUCTION\nTO OPERATIONAL\nAMPLIFIERS AND\nAPPLICATIONS\n• Characteristics\nof Ideal Op-\nAmps\n• Noninverting\nAmplifiers\n• Inverting\nAmplifiers\n• Instrumentatio\nn Amplifiers\n• Integrators\n• Differentiators\n• Addition–\nSubtraction\nAmplifiers\n• Large-Signal\nOperations of\nOp-Amps\n• Input Offset\nVoltage\n• Input Offset\nCurrent\n• Op-Amp\nCircuit Design\nLinear and Non\nLinear Applications\nof Op-Amp\n• Linear Op-amp\n• Non-linear Op-\namp",
+          "• Lecture-\nDiscussion using\nPowerPoint",
+          "• Quiz on the\ntopics\ndiscussed",
+          "• Cooperation\n• Understandi\nng\n• Critical\nThinking\n• Active\nparticipation\nand\ninvolvement"
+        ]
+      },
+      {
+        "week": "6",
+        "chunks": [
+          {
+            "page": 6,
+            "cells": [
+              "Week 6",
+              "",
+              "Preliminary\nExamination",
+              "• Examination on\nthe topics\ndiscussed during\nthe Mid Term",
+              "• Examination",
+              "• Honesty in\nanswering the test\nquestionnaire\n• Diligence\n• Understanding"
+            ],
+            "box": [
+              45.12000045776367,
+              27.60498046875,
+              751.4182344324448,
+              103.6300048828125
+            ]
+          }
+        ],
+        "pages": [
+          6
+        ],
+        "cells": [
+          "Week 6",
+          "",
+          "Preliminary\nExamination",
+          "• Examination on\nthe topics\ndiscussed during\nthe Mid Term",
+          "• Examination",
+          "• Honesty in\nanswering the test\nquestionnaire\n• Diligence\n• Understanding"
+        ]
+      },
+      {
+        "week": "7-8",
+        "chunks": [
+          {
+            "page": 6,
+            "cells": [
+              "Week 7-8",
+              "ILO1: To develop\nskills in analysis and\ndesign of both analog\nand digital circuits\nILO6: Understand\nactive devices, how\nthey are used in\ninstrument\napplications, and the\ndifference between\nanalog and digital\ncircuits.\nILO10: Demonstrate\nthe Filipino-Catholic\nAugustinian\nSpirituality through\nvalue webbing.",
+              "IV. Analog to Digital\nConversion\nDigital to Analog\nConversion\n• Sampling\n• Quantization\n• encoding",
+              "• Lecture-\nDiscussion using\nPowerPoint",
+              "• Quiz on the\ntopics\ndiscussed",
+              "• Cooperation\n• Understandi\nng\n• Critical\nThinking\n• Active\nparticipation\nand\ninvolvement"
+            ],
+            "box": [
+              45.142857687813894,
+              104.01998901367188,
+              751.4041646321615,
+              380.1199951171875
+            ]
+          }
+        ],
+        "pages": [
+          6
+        ],
+        "cells": [
+          "Week 7-8",
+          "ILO1: To develop\nskills in analysis and\ndesign of both analog\nand digital circuits\nILO6: Understand\nactive devices, how\nthey are used in\ninstrument\napplications, and the\ndifference between\nanalog and digital\ncircuits.\nILO10: Demonstrate\nthe Filipino-Catholic\nAugustinian\nSpirituality through\nvalue webbing.",
+          "IV. Analog to Digital\nConversion\nDigital to Analog\nConversion\n• Sampling\n• Quantization\n• encoding",
+          "• Lecture-\nDiscussion using\nPowerPoint",
+          "• Quiz on the\ntopics\ndiscussed",
+          "• Cooperation\n• Understandi\nng\n• Critical\nThinking\n• Active\nparticipation\nand\ninvolvement"
+        ]
+      },
+      {
+        "week": "9-11",
+        "chunks": [
+          {
+            "page": 6,
+            "cells": [
+              "Week 9-11",
+              "ILO4: Refresh and\nexpand the\nunderstanding of\nbasic electrical\ncomponents and the\nbasic terms used in\nelectricity as required\nfor instrumentation.\nILO7: Understand the\nunits used in\nmeasurements and\nfamiliarize with the\nmost common",
+              "V. Mixed Signals\nBasic Measurement\nTheory\n• IC Test\n• Linearity",
+              "• Lecture-\nDiscussion\nusing\nPowerPoint",
+              "• Quiz on the\ntopics\ndiscussed",
+              "• Cooperation\n• Understandi\nng\n• Critical\nThinking\n• Active\nparticipation\nand\ninvolvement"
+            ],
+            "box": [
+              45.142857687813894,
+              380.5249938964844,
+              751.4041646321615,
+              573.7750015258789
+            ]
+          },
+          {
+            "page": 7,
+            "cells": [
+              "",
+              "methods of using the\nvarious measurement\n.\nILO10: Demonstrate\nthe Filipino-Catholic\nAugustinian\nSpirituality through\nvalue webbing.",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "box": [
+              45,
+              27.5999755859375,
+              751.780029296875,
+              137.85000610351562
+            ]
+          }
+        ],
+        "pages": [
+          6,
+          7
+        ],
+        "cells": [
+          "Week 9-11",
+          "ILO4: Refresh and\nexpand the\nunderstanding of\nbasic electrical\ncomponents and the\nbasic terms used in\nelectricity as required\nfor instrumentation.\nILO7: Understand the\nunits used in\nmeasurements and\nfamiliarize with the\nmost common\nmethods of using the\nvarious measurement\n.\nILO10: Demonstrate\nthe Filipino-Catholic\nAugustinian\nSpirituality through\nvalue webbing.",
+          "V. Mixed Signals\nBasic Measurement\nTheory\n• IC Test\n• Linearity",
+          "• Lecture-\nDiscussion\nusing\nPowerPoint",
+          "• Quiz on the\ntopics\ndiscussed",
+          "• Cooperation\n• Understandi\nng\n• Critical\nThinking\n• Active\nparticipation\nand\ninvolvement"
+        ]
+      },
+      {
+        "week": "12",
+        "chunks": [
+          {
+            "page": 7,
+            "cells": [
+              "Week 12",
+              "",
+              "Midterm\nExamination",
+              "• Examination on\nthe topics\ndiscussed\nduring the Mid\nTerm",
+              "• Honesty in\nanswering the test\nquestionnaire\n• Diligence\n• Understanding",
+              "• Examination"
+            ],
+            "box": [
+              45.15555614895291,
+              138.45498657226562,
+              751.4871477399554,
+              214.48001098632812
+            ]
+          }
+        ],
+        "pages": [
+          7
+        ],
+        "cells": [
+          "Week 12",
+          "",
+          "Midterm\nExamination",
+          "• Examination on\nthe topics\ndiscussed\nduring the Mid\nTerm",
+          "• Honesty in\nanswering the test\nquestionnaire\n• Diligence\n• Understanding",
+          "• Examination"
+        ]
+      },
+      {
+        "week": "13-14",
+        "chunks": [
+          {
+            "page": 7,
+            "cells": [
+              "Week\n13-14",
+              "ILO8: Understand the\ndifferent Sensors and\nTransducers.\nILO10: Demonstrate\nthe Filipino-Catholic\nAugustinian\nSpirituality through\nvalue webbing",
+              "VI. Sensors and\nTransducers\n● Sensitivity &\nHysteresis\n● Offset Error & Non-\nlinearity",
+              "• Lecture-\nDiscussion\nusing\nPowerPoint",
+              "• Quiz on the\ntopics\ndiscussed",
+              "• Cooperation\n• Understanding\n• Critical Thinking\n• Active\nparticipation and\ninvolvement"
+            ],
+            "box": [
+              45.163636987859554,
+              214.8800048828125,
+              751.4090459914435,
+              331.5
+            ]
+          }
+        ],
+        "pages": [
+          7
+        ],
+        "cells": [
+          "Week\n13-14",
+          "ILO8: Understand the\ndifferent Sensors and\nTransducers.\nILO10: Demonstrate\nthe Filipino-Catholic\nAugustinian\nSpirituality through\nvalue webbing",
+          "VI. Sensors and\nTransducers\n● Sensitivity &\nHysteresis\n● Offset Error & Non-\nlinearity",
+          "• Lecture-\nDiscussion\nusing\nPowerPoint",
+          "• Quiz on the\ntopics\ndiscussed",
+          "• Cooperation\n• Understanding\n• Critical Thinking\n• Active\nparticipation and\ninvolvement"
+        ]
+      },
+      {
+        "week": "15-16",
+        "chunks": [
+          {
+            "page": 7,
+            "cells": [
+              "Week\n15-16",
+              "ILO8: Understand the\ndifferent Sensors and\nTransducers.",
+              "VII. Other Types of\nSensors and\nTransducers\n● active sensors\n● passive sensors",
+              "• Lecture-\nDiscussion\nusing\nPowerPoint",
+              "• Quiz on the\ntopics\ndiscussed",
+              "• Cooperation\n• Understanding\n• Critical Thinking\n• Active\nparticipation and\ninvolvement"
+            ],
+            "box": [
+              45.163636987859554,
+              331.8949890136719,
+              751.4090459914435,
+              418.1199951171875
+            ]
+          }
+        ],
+        "pages": [
+          7
+        ],
+        "cells": [
+          "Week\n15-16",
+          "ILO8: Understand the\ndifferent Sensors and\nTransducers.",
+          "VII. Other Types of\nSensors and\nTransducers\n● active sensors\n● passive sensors",
+          "• Lecture-\nDiscussion\nusing\nPowerPoint",
+          "• Quiz on the\ntopics\ndiscussed",
+          "• Cooperation\n• Understanding\n• Critical Thinking\n• Active\nparticipation and\ninvolvement"
+        ]
+      },
+      {
+        "week": "17",
+        "chunks": [
+          {
+            "page": 7,
+            "cells": [
+              "Week 17",
+              "ILO9: Learn the basic\ncomponents and\ncontrol of devices and\nprototypes.\nILO10: Demonstrate\nthe Filipino-Catholic\nAugustinian\nSpirituality through\nvalue webbing",
+              "VIII. Basic Control\nDevices\n● What are control\ndevices\n● different types of\ncontrol devices",
+              "• Lecture-\nDiscussion\nusing\nPowerPoint",
+              "• Quiz on the\ntopics\ndiscussed",
+              "• Cooperation\n• Understandi\nng\n• Critical\nThinking\n• Active\nparticipation\nand\ninvolvement"
+            ],
+            "box": [
+              45.15000057220459,
+              418.5249938964844,
+              751.4041646321615,
+              556.5750007629395
+            ]
+          }
+        ],
+        "pages": [
+          7
+        ],
+        "cells": [
+          "Week 17",
+          "ILO9: Learn the basic\ncomponents and\ncontrol of devices and\nprototypes.\nILO10: Demonstrate\nthe Filipino-Catholic\nAugustinian\nSpirituality through\nvalue webbing",
+          "VIII. Basic Control\nDevices\n● What are control\ndevices\n● different types of\ncontrol devices",
+          "• Lecture-\nDiscussion\nusing\nPowerPoint",
+          "• Quiz on the\ntopics\ndiscussed",
+          "• Cooperation\n• Understandi\nng\n• Critical\nThinking\n• Active\nparticipation\nand\ninvolvement"
+        ]
+      },
+      {
+        "week": "18",
+        "chunks": [
+          {
+            "page": 8,
+            "cells": [
+              "Week 18",
+              "",
+              "Final Examination",
+              "• Examination on the\ntopics discussed\nduring the Final Term",
+              "• Final\nExamination",
+              "• Honesty in\nanswering the test\nquestionnaire\n• Diligence"
+            ],
+            "box": [
+              45.142857687813894,
+              27.60498046875,
+              751.4330772986779,
+              92.22998046875
+            ]
+          }
+        ],
+        "pages": [
+          8
+        ],
+        "cells": [
+          "Week 18",
+          "",
+          "Final Examination",
+          "• Examination on the\ntopics discussed\nduring the Final Term",
+          "• Final\nExamination",
+          "• Honesty in\nanswering the test\nquestionnaire\n• Diligence"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "heading": "A. INTERNET REFERENCES:",
+        "raw": "Erhan, L., Ndubuaku, M., Di Mauro, M., Song, W., Chen, M., Fortino, G., Bagdasar, O., & Liotta, A. (2020). Smart\nAnomaly Detection in Sensor Systems: A Multi-Perspective Review . arXiv. https://arxiv.org/abs/2010.14946 arXiv\nWei, Z., Qu, H., Wang, Y., Yuan, X., Wu, H., Du, Y., Han, K., & Zhang, N. (2023). Integrated Sensing and Communication\nSignals Toward 5G-A and 6G: A Survey . arXiv. https://arxiv.org/abs/2301.03857 arXiv\nCherubini, A., & Navarro-Alarcon, D. (2020). Sensor-Based Control for Collaborative Robots: Fundamentals, Challenges\nand Opportunities . arXiv. https://arxiv.org/abs/2007.02067 arXiv\nPerera, C., Zaslavsky, A., Christen, P., & Georgakopoulos, D. (2013). Context Aware Computing for the Internet of\nThings: A Survey . arXiv. https://arxiv.org/abs/1305.0982 arXiv",
+        "items": [
+          "Erhan, L., Ndubuaku, M., Di Mauro, M., Song, W., Chen, M., Fortino, G., Bagdasar, O., & Liotta, A. (2020). Smart\nAnomaly Detection in Sensor Systems: A Multi-Perspective Review . arXiv. https://arxiv.org/abs/2010.14946 arXiv",
+          "Wei, Z., Qu, H., Wang, Y., Yuan, X., Wu, H., Du, Y., Han, K., & Zhang, N. (2023). Integrated Sensing and Communication\nSignals Toward 5G-A and 6G: A Survey . arXiv. https://arxiv.org/abs/2301.03857 arXiv",
+          "Cherubini, A., & Navarro-Alarcon, D. (2020). Sensor-Based Control for Collaborative Robots: Fundamentals, Challenges\nand Opportunities . arXiv. https://arxiv.org/abs/2007.02067 arXiv",
+          "Perera, C., Zaslavsky, A., Christen, P., & Georgakopoulos, D. (2013). Context Aware Computing for the Internet of\nThings: A Survey . arXiv. https://arxiv.org/abs/1305.0982 arXiv"
+        ],
+        "builderGroup": "online",
+        "pages": [
+          8
+        ]
+      }
+    ]
+  },
+  "reviewNotes": [
+    "No PO-EGA crosswalk supplied; all PO.egas remain empty.",
+    "CLO level is an unsourced builder enum default (Introductory); no academic level judgment.",
+    "Whitespace and soft line wraps normalized in checker text. Original tokens, exact cell lines and page references retained in source/evidence.",
+    "No curriculum year or year level is printed; blank in source content.",
+    "EGA short labels are display metadata; exact master comparison can detect display differences.",
+    "PO12 ends mid-sentence in baseline; supporting PDF completion is NOT inserted.",
+    "p7 week12 assessment/value cells appear swapped; preserved as printed. Preliminary exam activities say Mid Term; preserved.",
+    "Source Journals retained as a source category in evidence; projected to builder online because schema has no Journals group. No absent group is silently marked N/A."
+  ],
+  "readiness": {
+    "deterministic": true,
+    "aiEvaluation": false,
+    "reason": "Faculty semantics and institutional references unresolved; external transmission not authorized."
+  }
+}
