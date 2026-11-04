@@ -235,7 +235,7 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
   useEffect(() => {
     if (!pending) return undefined;
     let tries = 0;
-    const t = setInterval(() => { tries += 1; loadDetail(openId); if (tries >= 15) clearInterval(t); }, 2500);
+    const t = setInterval(() => { tries += 1; loadDetail(openId); if (tries >= 24) clearInterval(t); }, 2500);
     return () => clearInterval(t);
   }, [pending, openId, loadDetail]);
 

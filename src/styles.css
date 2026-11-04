@@ -973,7 +973,7 @@ a:focus-visible {
 }
 .recommend .priority {
 	@apply tw:[width:56px];
-	@apply tw:[height:56px] tw:[border-radius:50%] tw:[font-size:var(--text-xs)];
+	@apply tw:[height:56px] tw:[border-radius:50%] tw:[font-size:10px];
 	@apply tw:[font-weight:var(--fw-semibold)] tw:[padding:0] tw:flex tw:items-center tw:justify-center tw:uppercase tw:[letter-spacing:0.2px];
 	@apply tw:[line-height:1.1] tw:text-center;
 }
@@ -3969,9 +3969,9 @@ table,
 .cm-head > div { @apply tw:[min-width:0]; }
 .cm-head h3 { @apply tw:wrap-anywhere; }
 .cm-score { @apply tw:flex tw:items-center tw:[gap:28px] tw:[padding-bottom:18px] tw:[margin-bottom:14px] tw:[border-bottom:1px_solid_var(--line)]; }
-.cm-score .big-ring.cm-ring { @apply tw:[width:176px]; @apply tw:[height:176px] tw:[margin:0] tw:flex-none; }
-.cm-score .big-ring.cm-ring > div { @apply tw:[width:132px]; @apply tw:[height:132px]; }
-.cm-score .big-ring.cm-ring strong { @apply tw:[font-weight:var(--fw-heavy)]; @apply tw:[font-size:32px]; }
+.cm-score .big-ring.cm-ring { @apply tw:[width:128px]; @apply tw:[height:128px] tw:[margin:0] tw:flex-none; }
+.cm-score .big-ring.cm-ring > div { @apply tw:[width:96px]; @apply tw:[height:96px]; }
+.cm-score .big-ring.cm-ring strong { @apply tw:[font-weight:var(--fw-heavy)]; @apply tw:[font-size:24px]; }
 .cm-score .big-ring.cm-ring.warn { @apply tw:[background:conic-gradient(var(--gold)_0_var(--p),_#e3e7ea_var(--p))]; }
 .cm-score .big-ring.cm-ring.warn small { @apply tw:[color:var(--warn,_#8f6310)]; }
 .cm-score .big-ring.cm-ring.none { @apply tw:[background:transparent] tw:[border:2px_dashed_var(--line)]; }
@@ -4229,4 +4229,15 @@ html { scrollbar-gutter: stable; }
 	.catalog-page .modal.catalog-surface, .program-delete-impact, .program-final-confirm, .catalog-overlay { @apply tw:animate-none; }
 	.catalog-page .btn, .catalog-page .ac-row { @apply tw:[transition:none]; }
 	.catalog-page .btn:hover, .catalog-page .btn:active:not(:disabled) { @apply tw:transform-none; }
+}
+
+.login-card-signin h2,
+.login-card-signin > p.muted {
+	text-align: center;
+}
+
+/* Student dashboard: the values are words and IDs, so they are set smaller than the numbers on the other dashboards. */
+.stat-grid.student-stats .stat-card strong {
+	font-size: var(--text-md, 16px);
+	overflow-wrap: anywhere;
 }

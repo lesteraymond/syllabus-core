@@ -202,7 +202,7 @@ export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, set
                 subtitle = translateUI("ui.read_the_stored_check_of_each_submitted_syllabus_921a70");
               } else if (k === 'review') {
                 title = translateUI("ui.review_pending_syllabi_bf50c2");
-                subtitle = <>{submitted + underReview}<StableLabel>{translateUI("ui.submissions_awaiting_review_31080a")}</StableLabel></>;
+                subtitle = <>{submitted + underReview}{' '}<StableLabel>{translateUI("ui.submissions_awaiting_review_31080a")}</StableLabel></>;
               }
 
               return (
@@ -220,7 +220,7 @@ export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, set
         </Card>
       </section>
       <section className="dashboard-grid lower">
-        <Card title={translateUI("ui.program_compliance_943fac")} action={tr("View analytics")}>
+        <Card title={translateUI("ui.program_compliance_943fac")} action={tr("View analytics")} onAction={() => setPage('analytics')}>
           {programs.length > 0
             ? programs.map(p => <Progress key={p.program} label={p.program} value={p.average} note={translateUI(p.checked ? 'dashboard.stats.programChecked' : 'dashboard.stats.programNone', { checked: p.checked, total: p.total, approved: p.approved, pct: p.approvedPercent })} />)
             : <div className="empty">{translateUI("ui.no_program_data_yet_c5b890")}</div>
