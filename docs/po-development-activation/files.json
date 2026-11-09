@@ -1,0 +1,45 @@
+{
+  "sourceAdded": [
+    "scripts/po-controlled-activation/development-safety.cjs",
+    "scripts/po-controlled-activation/development-backup.cjs",
+    "scripts/po-controlled-activation/development-restore.cjs",
+    "scripts/po-controlled-activation/development-activate.cjs",
+    "scripts/po-controlled-activation/development-integration.test.cjs",
+    "scripts/po-controlled-activation/development-report.cjs"
+  ],
+  "sourceModified": [
+    "scripts/po-controlled-activation/browser.test.mjs"
+  ],
+  "newEvidence": [
+    "docs/po-development-activation/activation-receipt.json",
+    "docs/po-development-activation/activation-status.json",
+    "docs/po-development-activation/backup-created.json",
+    "docs/po-development-activation/backup-restored.json",
+    "docs/po-development-activation/browser-fixtures.json",
+    "docs/po-development-activation/browser-reference-review.png",
+    "docs/po-development-activation/browser-results.json",
+    "docs/po-development-activation/dry-run.json",
+    "docs/po-development-activation/files.json",
+    "docs/po-development-activation/integration-results.json",
+    "docs/po-development-activation/isolated-shutdown.json",
+    "docs/po-development-activation/post-migration.json",
+    "docs/po-development-activation/recovery-locations.json",
+    "docs/po-development-activation/rehearsal.json",
+    "docs/po-development-activation/REPORT.md",
+    "docs/po-development-activation/scoring-parity.json",
+    "docs/po-development-activation/target-identity.json",
+    "docs/po-development-activation/test-results.json"
+  ],
+  "priorSyntheticEvidenceRegenerated": [
+    "docs/po-controlled-activation/disposable-config.json",
+    "docs/po-controlled-activation/disposable-identity.json",
+    "docs/po-controlled-activation/migration-results.json",
+    "docs/po-controlled-activation/browser-fixtures.json"
+  ],
+  "newSyntheticBackups": [
+    "docs\\po-controlled-activation\\test-backup-29188.json"
+  ],
+  "privateRecoveryFiles": "See recovery-locations.json. No credentials or full SQL backup added to repo.",
+  "testLogs": "tmp/po-development-activation/",
+  "unrelatedWork": "Preserved; no reset, commit, push or deployment."
+}

@@ -38,10 +38,27 @@ test('saving refuses with 409 and a code the builder reads, and skips the query 
   const calls = [];
   const conn = { query: async (sql, params) => { calls.push([sql, params]); return [[row(58, 'submitted')]]; } };
   await assert.rejects(() => assertSubjectFree(conn, me, 9, 93), (e) => e.status === 409 && e.body.code === 'syllabus_exists' && e.body.existingId === 58 && e.body.existingStatus === 'submitted');
-  assert.deepStrictEqual(calls[0][1], [9, 93, 26], "the syllabus being saved is not counted against itself, and only the person's own are read");
+  const lock = calls.find((c) => /FROM syllabi/.test(c[0]));
+  assert.deepStrictEqual(lock[1], [9, 93, 26], "the syllabus being saved is not counted against itself, and only the person's own are read");
   calls.length = 0;
   await assertSubjectFree(conn, me, null, 93);
   assert.strictEqual(calls.length, 0);
+});
+
+test('the rule is per academic year: the query counts only syllabi of the same year as the one being saved (the current year when it has none)', async () => {
+  const calls = [];
+  const conn = { query: async (sql, params) => {
+    calls.push([sql, params]);
+    if (/FROM academic_years/.test(sql)) return [[{ label: '2026–2027', start_year: 2026, is_current: 0 }, { label: '2027–2028', start_year: 2027, is_current: 1 }]];
+    return [[]];
+  } };
+  await assertSubjectFree(conn, me, 9, 93);
+  const lock = calls.find((c) => /FROM syllabi WHERE course_id/.test(c[0]));
+  assert.ok(lock[0].includes('AND COALESCE(academic_year, ?) = COALESCE((SELECT y.academic_year FROM syllabi y WHERE y.syllabus_id = ?), ?)'));
+  assert.deepStrictEqual(lock[1], [9, 93, 26, '2027–2028', 93, '2027–2028'], "same year as syllabus 93, with the current year standing in for a syllabus that has no year");
+  // before the column exists the old query runs and the app keeps working
+  const old = { query: async (sql, params) => { if (/FROM academic_years/.test(sql)) return [[{ label: '2027–2028', start_year: 2027, is_current: 1 }]]; if (sql.includes('COALESCE(academic_year')) throw Object.assign(new Error('Unknown column'), { code: 'ER_BAD_FIELD_ERROR' }); return [[row(58, 'draft')]]; } };
+  await assert.rejects(() => assertSubjectFree(old, me, 9, 93), (e) => e.status === 409);
 });
 
 test('the subject list marks what the person already has a syllabus on, and leaves free subjects out', () => {

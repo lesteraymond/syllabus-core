@@ -7,30 +7,40 @@ import { chipTone, dueParts, sortForAdmin, sortForFaculty, submittedCount } from
 
 // The body of the dashboard's "Upcoming Deadlines" card, with the real deadlines (they used to be fixed sample entries).
 //   faculty        their own subjects: the due date, and their status for each (upcoming, due today, failed to submit, submitted, submitted late)
-//   administrator  every active deadline: how many assigned faculty have submitted, and how many failed
-// The most urgent come first. It asks for nothing from the dashboard; clicking a row goes to the page where the deadline is handled.
+//   administrator  every active deadline: how many assigned faculty have submitted, and how many failed; and above it, when they have any, their OWN
+//                  deadlines (subjects assigned to them or that they are writing a syllabus for: lib/deadlines.js mine), with their own status
+// The most urgent come first. It asks for nothing from the dashboard; clicking a row goes to the page where the deadline is handled
+// (onOpenOwn for the administrator's own rows: My Syllabi).
 const MAX_ROWS = 12;
 
-export default function UpcomingDeadlines({ role, onOpen }) {
+export default function UpcomingDeadlines({ role, onOpen, onOpenOwn }) {
   const faculty = role === 'faculty';
+  const admin = role === 'admin';
   const [state, setState] = useState({ status: 'loading' });
   const load = useCallback(async () => {
     try {
-      const answer = await (faculty ? deadlinesApi.mine() : deadlinesApi.list());
-      setState(answer.enabled === false ? { status: 'off' } : { status: 'ready', list: answer.deadlines || [] });
+      const [answer, own] = await Promise.all([faculty ? deadlinesApi.mine() : deadlinesApi.list(), admin ? deadlinesApi.mine().catch(() => null) : null]);
+      setState(answer.enabled === false ? { status: 'off' } : { status: 'ready', list: answer.deadlines || [], own: own && own.enabled !== false ? own.deadlines || [] : [] });
     } catch {
       setState((previous) => (previous.status === 'ready' ? previous : { status: 'error' }));
     }
-  }, [faculty]);
+  }, [faculty, admin]);
   useEffect(() => { load(); }, [load]);
   usePeriodicRefresh(true, load, 60000);
 
   if (state.status === 'loading') return <p className="usage-note" role="status">{t('deadline.loading')}</p>;
   if (state.status === 'off') return <p className="usage-note">{t('deadline.cardOff')}</p>;
   if (state.status === 'error') return <p className="usage-note" role="alert">{t('deadline.loadError')}</p>;
-  if (!state.list.length) return <p className="usage-note">{t(faculty ? 'deadline.cardEmptyFaculty' : 'deadline.cardEmptyAdmin')}</p>;
-
-  return <DeadlineRows list={state.list} faculty={faculty} onOpen={onOpen} />;
+  const own = admin ? state.own || [] : [];
+  if (!state.list.length && !own.length) return <p className="usage-note">{t(faculty ? 'deadline.cardEmptyFaculty' : 'deadline.cardEmptyAdmin')}</p>;
+  if (!own.length) return <DeadlineRows list={state.list} faculty={faculty} onOpen={onOpen} />;
+  // the administrator's own deadlines first, shown like a faculty member's (their own status), then everyone's
+  return <>
+    <p className="dl-section" data-testid="dl-mine">{t('deadline.mineTitle')}</p>
+    <DeadlineRows list={own} faculty onOpen={onOpenOwn || onOpen} />
+    <p className="dl-section">{t('deadline.allTitle')}</p>
+    {state.list.length ? <DeadlineRows list={state.list} faculty={false} onOpen={onOpen} /> : <p className="usage-note">{t('deadline.cardEmptyAdmin')}</p>}
+  </>;
 }
 
 // The rows themselves, most urgent first. Separate from the loading so it can be shown, and tested, with a list in hand.

@@ -1,7 +1,7 @@
 // Run: npm test
 import test from 'node:test';
 import assert from 'node:assert';
-import { PROVISIONAL_MIN_COVERAGE, provisionalOf, runState, tone, ringAngle, basis, blockersOf, warningsOf, warningCount, headline, areaNames, groupFindings, scoreText, when, stepLabel, listBasis, STEP_INFO, rowState, actionLabel, timeOf, stamp, isLocked, needsCheck, canCheckNow, rangeToInstants, rangeLabel, bulkTargets, filterRows, groupByFacultyProgram, verdictOf, verdictIssues } from './complianceView.js';
+import { PROVISIONAL_MIN_COVERAGE, provisionalOf, runState, tone, ringAngle, basis, blockersOf, warningsOf, warningCount, headline, areaNames, groupFindings, scoreText, when, stepLabel, listBasis, STEP_INFO, rowState, actionLabel, timeOf, stamp, isLocked, needsCheck, canCheckNow, rangeToInstants, rangeLabel, bulkTargets, filterRows, groupByFacultyProgram } from './complianceView.js';
 import { STEPS } from './syllabusModel.js';
 
 const area = (key, score) => ({ key, name: key.toUpperCase(), weight: 10, score });
@@ -241,35 +241,17 @@ test('an unfinished check shows a provisional score with how much was checked, b
   assert.strictEqual(runState(run()), 'incomplete');
 });
 
-test('verdictOf ignores a report saved before the verdict existed or one whose builder failed', () => {
-  assert.strictEqual(verdictOf(null), null);
-  assert.strictEqual(verdictOf({ hybrid: {} }), null);
-  assert.strictEqual(verdictOf({ hybrid: { verdict: { unavailable: true } } }), null);
-  assert.ok(verdictOf({ hybrid: { verdict: { overall: 'PARTIAL_VALIDATION', findings: [] } } }));
+test('a saved report under record review keeps the score it was saved with', () => {
+  const run = scored({ overall: 84, stale: true, hybrid: { ready: false, critical: false, alignment: { status: 'completed' } }, recordReview: { code: 'po_mapping_remediation_required', savedReady: true } });
+  assert.strictEqual(runState(run), 'scored');
+  assert.strictEqual(scoreText(run), '84%');
 });
-test('verdictIssues lists failures first, by severity, and leaves out passes and informational notes', () => {
-  const v = { findings: [
-    { ruleId: 'A', status: 'NOT_CHECKED', severity: 'INFO' }, { ruleId: 'B', status: 'NEEDS_REVIEW', severity: 'INFO' },
-    { ruleId: 'C', status: 'FAIL', severity: 'MINOR' }, { ruleId: 'D', status: 'FAIL', severity: 'CRITICAL' }, { ruleId: 'E', status: 'NEEDS_REVIEW', severity: 'MINOR' },
-  ] };
-  assert.deepStrictEqual(verdictIssues(v).map((f) => f.ruleId), ['D', 'C', 'E']);
+test('a report that was incomplete when saved stays incomplete, under review or not', () => {
+  const held = { ready: false, critical: false, alignment: { status: 'failed' } };
+  assert.strictEqual(runState(scored({ hybrid: held, recordReview: { code: 'po_mapping_remediation_required', savedReady: false } })), 'incomplete');
+  assert.strictEqual(runState(scored({ status: 'incomplete', overall: null, hybrid: held, recordReview: { code: 'x', savedReady: false } })), 'incomplete');
+  assert.strictEqual(scoreText(scored({ hybrid: held, recordReview: { code: 'x', savedReady: false } })), '—');
 });
-
-test('verdictIssues includes an answer warning once even for a passed or informational finding', () => {
-  const v = { findings: [
-    { ruleId: 'REF-05', status: 'PASS', severity: 'INFO', explanationReview: ['venue_claim'] },
-    { ruleId: 'VAL-03', status: 'NEEDS_REVIEW', severity: 'MINOR', draftReview: ['adds_activity'] },
-    { ruleId: 'VAL-05', status: 'NEEDS_REVIEW', severity: 'INFO', explanationReview: ['explanation_from_other_pair'] },
-    { ruleId: 'ALN-01', status: 'PASS', severity: 'INFO' },
-  ] };
-  const before = structuredClone(v);
-  assert.deepEqual(verdictIssues(v).map(f => f.ruleId), ['VAL-03', 'VAL-05', 'REF-05']);
-  assert.deepEqual(v, before);
-});
-
-test('verdictIssues includes advisory draft cautions without inventing duplicate failures', () => {
-  const caution = { ruleId: 'ALN-05', status: 'PASS', severity: 'INFO', draftWarnings: ['borrowed_wording', 'conditional_resource'] };
-  const ordinaryPass = { ruleId: 'ALN-07', status: 'PASS', severity: 'INFO' };
-  assert.deepEqual(verdictIssues({ findings: [caution, ordinaryPass] }), [caution]);
-  assert.equal(caution.status, 'PASS');
+test('a normal report that is out of date is treated as before', () => {
+  assert.strictEqual(runState(scored({ stale: true, hybrid: { ready: false, critical: false, alignment: { status: 'completed' } } })), 'incomplete');
 });

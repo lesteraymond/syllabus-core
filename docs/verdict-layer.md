@@ -1,5 +1,7 @@
 # Advisory verdict layer (`verdict-1`)
 
+> **2026-11-04: the "Academic verdict (advisory)" panel was removed from the UI** (`VerdictPanel.jsx`, `verdictOf` and `verdictIssues` in `complianceView.js`, and their tests). The AI Checker now shows the score, the findings behind the score and the recommendations. The server side below is unchanged and still stored as `report_json.hybrid.verdict`, because the Policy V2 code (`academicPolicyV2.js`), `reportSafety.js`, the evaluation pipeline and several scripts read it. The rollback line at the end of this file no longer applies: restore `src/components/VerdictPanel.jsx` from git and re-add it to `ComplianceCard.jsx`.
+
 `server/lib/syllabuscheck/verdict.js` re-expresses a finished hybrid report as typed findings. It is **shadow/advisory**: the official score, pass mark, deductions and submit gates are unchanged. The result is stored as `report_json.hybrid.verdict`; reports saved earlier simply lack it and the UI hides the panel.
 
 - Findings: `ruleId` (proposed catalog), `legacyRuleId`, `category`, `path`, `week`, `status` (PASS / FAIL / NEEDS_REVIEW / NOT_CHECKED / NOT_APPLICABLE), `severity` (CRITICAL / MAJOR / MINOR / INFO), `method` (deterministic / course_profile / ai_semantic), `actual`, `evidence`, `explanation`, `recommendation`, `requiresFacultyApproval`.

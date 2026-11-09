@@ -14,6 +14,9 @@ function makeDb() {
     settings: null,                                            // the administration settings row, as JSON text
     clock: NOW,                                                // when a new notice is written
     assigned: [[5, 10], [6, 10], [7, 10], [8, 20]],            // [user, course]
+    roles: {},                                                 // user -> role; anyone not named is faculty
+    adminSyllabi: [],                                          // [user, course]: an administrator writing a syllabus for a subject not assigned to them
+    adminSubmits: [],                                          // { user, course, at (ms) }: an administrator's syllabus sent for review (its 'submit' log)
     versions: [],                                              // { user, course, status, at (ms) }
     deadlines: [],
     notices: [],
@@ -33,6 +36,7 @@ function makeDb() {
   const db = {
     state,
     async query(text, p = []) {
+      if (/FROM academic_years/.test(text)) throw Object.assign(new Error("Table 'academic_years' doesn't exist"), { code: 'ER_NO_SUCH_TABLE' }); // a database before the academic year scope
       const q = sql1(text);
       state.queries.push(q);
       if (q.startsWith('SELECT course_id FROM courses WHERE')) return [state.courses.filter((c) => c.id === p[0]).map((c) => ({ course_id: c.id }))];
@@ -62,8 +66,23 @@ function makeDb() {
         let rows = state.deadlines;
         if (q.includes('WHERE d.deadline_id = ?')) rows = rows.filter((r) => r.deadline_id === p[0]);
         else if (q.includes('JOIN faculty_courses fc')) rows = rows.filter((r) => r.cancelled === null && state.assigned.some(([u, c]) => u === p[0] && c === r.course_id));
+        else if (q.includes('IN (SELECT course_id FROM faculty_courses WHERE user_id = ?)')) rows = rows.filter((r) => r.cancelled === null && ([...state.assigned, ...state.adminSyllabi].some(([u, c]) => u === p[0] && c === r.course_id)));
         else if (q.includes('d.cancelled_at IS NULL')) rows = rows.filter((r) => r.cancelled === null);
         return [[...rows].sort((a, b) => a.due - b.due || a.deadline_id - b.deadline_id).map(joined)];
+      }
+      const roleOf = (u) => state.roles[u] || 'faculty';
+      if (q.startsWith('SELECT DISTINCT s.user_id, u.first_name, u.last_name, u.role FROM syllabi s')) {
+        assert.ok(q.includes("u.role = 'admin'") && q.includes('s.archived_at IS NULL'), 'an administrator writing the subject, not archived');
+        return [state.adminSyllabi.filter(([u, c]) => c === p[0] && roleOf(u) === 'admin').map(([u]) => ({ user_id: u, first_name: state.users[u][0], last_name: state.users[u][1], role: 'admin' }))];
+      }
+      if (q.startsWith('SELECT s.user_id, MIN(UNIX_TIMESTAMP(l.action_date)) AS at FROM submission_logs')) {
+        assert.ok(q.includes("l.action = 'submit'") && q.includes('l.user_id = s.user_id'), 'an administrator counts from sending for review');
+        return [p[2].map((u) => { const at = state.adminSubmits.filter((x) => x.user === u && x.course === p[0] && x.at >= p[1] * 1000).map((x) => x.at); return { user_id: u, at: at.length ? s(Math.min(...at)) : null }; }).filter((r) => r.at !== null)];
+      }
+      if (q.startsWith('SELECT fc.user_id, u.first_name, u.last_name, u.role FROM faculty_courses')) {
+        assert.ok(q.includes("u.role IN ('faculty', 'admin')"), 'faculty and administrators can be assigned');
+        return [state.assigned.filter(([u, c]) => c === p[0] && ['faculty', 'admin'].includes(roleOf(u))).map(([u]) => ({ user_id: u, first_name: state.users[u][0], last_name: state.users[u][1], role: roleOf(u) }))
+          .sort((a, b) => (a.last_name + a.first_name).localeCompare(b.last_name + b.first_name))];
       }
       if (q.startsWith('SELECT fc.user_id, u.first_name, u.last_name FROM faculty_courses')) {
         return [state.assigned.filter(([, c]) => c === p[0]).map(([u]) => ({ user_id: u, first_name: state.users[u][0], last_name: state.users[u][1] }))

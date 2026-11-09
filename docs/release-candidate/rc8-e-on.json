@@ -1,0 +1,123 @@
+{
+  "run": "regression-on",
+  "suite": "regression",
+  "mode": "on",
+  "label": "rc8",
+  "database": "syllabus_e2e_dyn_regression",
+  "port": "43310",
+  "schema": "fresh bootstrap (init.js + every migrate-* script)",
+  "start": "2026-11-06T00:24:04.098Z",
+  "finished": "2026-11-06T00:30:13.313Z",
+  "exit": 0,
+  "scenarios": [
+    {
+      "result": "PASS",
+      "id": "E01"
+    },
+    {
+      "result": "PASS",
+      "id": "E02"
+    },
+    {
+      "result": "PASS",
+      "id": "E03"
+    },
+    {
+      "result": "PASS",
+      "id": "E04"
+    },
+    {
+      "result": "PASS",
+      "id": "E05"
+    },
+    {
+      "result": "PASS",
+      "id": "E06"
+    },
+    {
+      "result": "PASS",
+      "id": "E07"
+    },
+    {
+      "result": "PASS",
+      "id": "E08"
+    },
+    {
+      "result": "PASS",
+      "id": "E09"
+    },
+    {
+      "result": "PASS",
+      "id": "E10"
+    },
+    {
+      "result": "PASS",
+      "id": "E11"
+    },
+    {
+      "result": "PASS",
+      "id": "E12"
+    },
+    {
+      "result": "PASS",
+      "id": "E13"
+    },
+    {
+      "result": "PASS",
+      "id": "E14"
+    },
+    {
+      "result": "PASS",
+      "id": "E15"
+    },
+    {
+      "result": "PASS",
+      "id": "E16"
+    },
+    {
+      "result": "PASS",
+      "id": "E17"
+    },
+    {
+      "result": "PASS",
+      "id": "E18"
+    },
+    {
+      "result": "PASS",
+      "id": "E19"
+    },
+    {
+      "result": "PASS",
+      "id": "E20"
+    },
+    {
+      "result": "PASS",
+      "id": "E21"
+    },
+    {
+      "result": "PASS",
+      "id": "E22"
+    },
+    {
+      "result": "PASS",
+      "id": "E23"
+    },
+    {
+      "result": "PASS",
+      "id": "E24"
+    }
+  ],
+  "failedChecks": [],
+  "flags": {
+    "SYLLABUS_CHECK_CACHE_WARMUP": "on",
+    "SYLLABUS_CHECK_OUTPUT_PLAN": "on",
+    "SYLLABUS_CHECK_OUTPUT_FIELDS": "scoped",
+    "SYLLABUS_CHECK_COURSE_CONTEXT": "off",
+    "SYLLABUS_CHECK_V2_GROUPING": "off",
+    "SYLLABUS_CHECK_PROMPT_TRIM": "off"
+  },
+  "snapshotSourceHash": "5edd97a3468a64642ad322830a9bf3925cfc5de39c82e96b9a9379013e1859b2",
+  "workingTreeSourceHashBefore": "5edd97a3468a64642ad322830a9bf3925cfc5de39c82e96b9a9379013e1859b2",
+  "workingTreeSourceHashAfter": "5edd97a3468a64642ad322830a9bf3925cfc5de39c82e96b9a9379013e1859b2",
+  "log": "docs\\release-candidate\\dyn-regression-on.log"
+}

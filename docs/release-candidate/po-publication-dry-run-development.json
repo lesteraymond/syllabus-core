@@ -1,0 +1,123 @@
+{
+  "mode": "dry-run",
+  "at": "2026-11-06T07:39:55.672Z",
+  "target": {
+    "database": "syllabus_cms_plus",
+    "host": "JpDelRosario",
+    "port": 3306,
+    "datadir": "C:\\xampp\\mysql\\data\\",
+    "version": "10.4.32-MariaDB",
+    "maxAllowedPacketBytes": 1048576,
+    "readOnlyServer": false
+  },
+  "writesPerformed": 0,
+  "plan": {
+    "tables": [
+      {
+        "table": "program_po_reference_versions",
+        "action": "exists: untouched",
+        "ddl": "CREATE TABLE IF NOT EXISTS program_po_reference_versions ( reference_id VARCHAR(100) PRIMARY KEY, program_id I…"
+      },
+      {
+        "table": "program_po_reference_active",
+        "action": "exists: untouched",
+        "ddl": "CREATE TABLE IF NOT EXISTS program_po_reference_active ( program_id INT PRIMARY KEY, reference_id VARCHAR(100)…"
+      },
+      {
+        "table": "program_po_reference_audit",
+        "action": "would be created",
+        "ddl": "CREATE TABLE IF NOT EXISTS program_po_reference_audit ( audit_id BIGINT AUTO_INCREMENT PRIMARY KEY, reference_…"
+      }
+    ],
+    "versionsColumns": [
+      {
+        "column": "status",
+        "type": "VARCHAR(20) NOT NULL DEFAULT 'published'",
+        "action": "would be added"
+      },
+      {
+        "column": "academic_year",
+        "type": "VARCHAR(9) NULL",
+        "action": "would be added"
+      },
+      {
+        "column": "published_by",
+        "type": "INT NULL",
+        "action": "would be added"
+      },
+      {
+        "column": "published_at",
+        "type": "TIMESTAMP NULL DEFAULT NULL",
+        "action": "would be added"
+      },
+      {
+        "column": "supersedes_reference_id",
+        "type": "VARCHAR(100) NULL",
+        "action": "would be added"
+      },
+      {
+        "column": "created_by",
+        "type": "INT NULL",
+        "action": "would be added"
+      }
+    ],
+    "activeColumns": [
+      {
+        "column": "association",
+        "type": "VARCHAR(10) NOT NULL DEFAULT 'owner'",
+        "action": "would be added"
+      },
+      {
+        "column": "associated_by",
+        "type": "INT NULL",
+        "action": "would be added"
+      },
+      {
+        "column": "associated_at",
+        "type": "TIMESTAMP NULL DEFAULT NULL",
+        "action": "would be added"
+      },
+      {
+        "column": "association_note",
+        "type": "VARCHAR(500) NULL",
+        "action": "would be added"
+      }
+    ],
+    "notes": [],
+    "wouldChange": true
+  },
+  "compatibility": [
+    {
+      "name": "programs table is InnoDB (the new tables reference it with foreign keys)",
+      "ok": true,
+      "detail": "InnoDB"
+    },
+    {
+      "name": "programs.program_id is an INT, matching the new program_id columns",
+      "ok": true,
+      "detail": "int(11)"
+    },
+    {
+      "name": "programs has the academic_year column (migrate-catalog-year applied), which publication labels use",
+      "ok": true,
+      "detail": "present"
+    },
+    {
+      "name": "users table exists (published_by / associated_by hold user ids)",
+      "ok": true
+    },
+    {
+      "name": "the connecting user can CREATE and ALTER (needed only for the migration window; not required for this dry run)",
+      "ok": true,
+      "detail": "ALL PRIVILEGES"
+    },
+    {
+      "name": "existing reference versions will keep working: every new column is nullable or has a default",
+      "ok": true,
+      "detail": "3 existing version rows get status 'published'"
+    }
+  ],
+  "verdict": "COMPATIBLE",
+  "wouldChange": true,
+  "note": "Nothing was changed. Applying the migration needs a verified backup, a restore rehearsal and separate written authorization."
+}

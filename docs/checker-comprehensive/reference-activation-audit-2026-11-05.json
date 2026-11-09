@@ -1,0 +1,344 @@
+{
+  "capturedAt": "2026-11-05T09:38:47.823Z",
+  "scope": "Read-only current configured database; institutional/program reference tables only; synthetic inputs for coded/pair planning; zero AI calls",
+  "officialPoVersion": "lcup-po-2026-10-29",
+  "institution": {
+    "vision": "Moved by the Spirit of the Risen Christ, La Consolacion University Philippines, rooted in Gospel values as a Catholic Augustinian-Marian institution, envisions to become a catalyst for the holistic transformation of all persons and communities.",
+    "mission": {
+      "lead": "LCUP commits to generate and make available to all persons and communities’ programs and services that will enable them to:",
+      "items": [
+        "exhibit academic and technical competence in their respective areas of discipline in the local and international environment;",
+        "demonstrate their knowledge, critical thinking and creativity by exploring the various avenues of learning and searching for truth;",
+        "manifest their willingness to serve specially the marginalized sector of our society;",
+        "demonstrate productivity in various areas of learning as responsible citizens of the society; and",
+        "live the Gospel values in the varied aspects of their personal and professional lives."
+      ]
+    },
+    "version": 1,
+    "egas": [
+      {
+        "no": 1,
+        "name": "Critical and Creative thinker",
+        "short": "Critical and Creative Thinker"
+      },
+      {
+        "no": 2,
+        "name": "Competent Catholic Augustinian-Marian Professional",
+        "short": "Competent Professional"
+      },
+      {
+        "no": 3,
+        "name": "Socially Responsive Steward",
+        "short": "Socially Responsive Steward"
+      },
+      {
+        "no": 4,
+        "name": "Transformative Lifelong learner",
+        "short": "Transformative Lifelong Learner"
+      }
+    ],
+    "matchesPrototypeVision": true,
+    "matchesPrototypeMission": true,
+    "matchesPrototypeEgas": true
+  },
+  "programs": [
+    {
+      "program": "BSCPE",
+      "name": "BS Computer Engineering",
+      "poSource": "BSCPE",
+      "inheritedFrom": null,
+      "resolvedPoCount": 13,
+      "expectedCorrectedPoCount": 13,
+      "matchesCorrectedPos": false,
+      "activeReference": null,
+      "egaCount": 4,
+      "egasMatchCheckerMaster": true,
+      "visionShared": true,
+      "missionShared": true,
+      "referenceChecks": [
+        {
+          "ruleId": "INST-EXACT",
+          "path": "outcomes.vision",
+          "status": "PASS"
+        },
+        {
+          "ruleId": "INST-EXACT",
+          "path": "outcomes.mission",
+          "status": "PASS"
+        },
+        {
+          "ruleId": "INST-EXACT",
+          "path": "outcomes.egas",
+          "status": "PASS"
+        },
+        {
+          "ruleId": "PO-EXACT",
+          "path": "outcomes.pos",
+          "status": "PASS"
+        }
+      ],
+      "semanticPoSourceMatchesResolved": true,
+      "semanticEgaSourceMatchesResolved": true,
+      "policyV2PoUsable": false,
+      "policyV2ReferenceIssues": [
+        {
+          "code": "po_reference_unavailable",
+          "message": "The supplied PO reference does not match the designated official program wording/numbering; faculty text was not judged against it."
+        },
+        {
+          "code": "authored_po_basis_review",
+          "message": "Historical CLO–PO numbers have a previous or unknown authored basis. No number was remapped."
+        }
+      ],
+      "poEgaMappings": 0,
+      "changedPoNumbers": [
+        4,
+        7,
+        12
+      ],
+      "extraPoNumbers": []
+    },
+    {
+      "program": "BSFM",
+      "name": "Bachelor of Science in Financial Management",
+      "poSource": "BSFM",
+      "inheritedFrom": null,
+      "resolvedPoCount": 1,
+      "expectedCorrectedPoCount": null,
+      "matchesCorrectedPos": null,
+      "activeReference": null,
+      "egaCount": 4,
+      "egasMatchCheckerMaster": true,
+      "visionShared": true,
+      "missionShared": true,
+      "referenceChecks": [
+        {
+          "ruleId": "INST-EXACT",
+          "path": "outcomes.vision",
+          "status": "PASS"
+        },
+        {
+          "ruleId": "INST-EXACT",
+          "path": "outcomes.mission",
+          "status": "PASS"
+        },
+        {
+          "ruleId": "INST-EXACT",
+          "path": "outcomes.egas",
+          "status": "PASS"
+        },
+        {
+          "ruleId": "PO-EXACT",
+          "path": "outcomes.pos",
+          "status": "PASS"
+        }
+      ],
+      "semanticPoSourceMatchesResolved": true,
+      "semanticEgaSourceMatchesResolved": true,
+      "policyV2PoUsable": false,
+      "policyV2ReferenceIssues": [
+        {
+          "code": "po_reference_unavailable",
+          "message": "The supplied PO reference does not match the designated official program wording/numbering; faculty text was not judged against it."
+        },
+        {
+          "code": "authored_po_basis_review",
+          "message": "Historical CLO–PO numbers have a previous or unknown authored basis. No number was remapped."
+        }
+      ],
+      "poEgaMappings": 1
+    },
+    {
+      "program": "BSIE",
+      "name": "BS Industrial Engineering",
+      "poSource": "BSIE",
+      "inheritedFrom": null,
+      "resolvedPoCount": 13,
+      "expectedCorrectedPoCount": 13,
+      "matchesCorrectedPos": false,
+      "activeReference": null,
+      "egaCount": 4,
+      "egasMatchCheckerMaster": true,
+      "visionShared": true,
+      "missionShared": true,
+      "referenceChecks": [
+        {
+          "ruleId": "INST-EXACT",
+          "path": "outcomes.vision",
+          "status": "PASS"
+        },
+        {
+          "ruleId": "INST-EXACT",
+          "path": "outcomes.mission",
+          "status": "PASS"
+        },
+        {
+          "ruleId": "INST-EXACT",
+          "path": "outcomes.egas",
+          "status": "PASS"
+        },
+        {
+          "ruleId": "PO-EXACT",
+          "path": "outcomes.pos",
+          "status": "PASS"
+        }
+      ],
+      "semanticPoSourceMatchesResolved": true,
+      "semanticEgaSourceMatchesResolved": true,
+      "policyV2PoUsable": false,
+      "policyV2ReferenceIssues": [
+        {
+          "code": "po_reference_unavailable",
+          "message": "The supplied PO reference does not match the designated official program wording/numbering; faculty text was not judged against it."
+        },
+        {
+          "code": "authored_po_basis_review",
+          "message": "Historical CLO–PO numbers have a previous or unknown authored basis. No number was remapped."
+        }
+      ],
+      "poEgaMappings": 0,
+      "changedPoNumbers": [
+        2,
+        4,
+        5,
+        7,
+        10,
+        11,
+        12
+      ],
+      "extraPoNumbers": []
+    },
+    {
+      "program": "BSIT",
+      "name": "BS Information Technology",
+      "poSource": "BSIT",
+      "inheritedFrom": null,
+      "resolvedPoCount": 10,
+      "expectedCorrectedPoCount": 9,
+      "matchesCorrectedPos": false,
+      "activeReference": null,
+      "egaCount": 4,
+      "egasMatchCheckerMaster": true,
+      "visionShared": true,
+      "missionShared": true,
+      "referenceChecks": [
+        {
+          "ruleId": "INST-EXACT",
+          "path": "outcomes.vision",
+          "status": "PASS"
+        },
+        {
+          "ruleId": "INST-EXACT",
+          "path": "outcomes.mission",
+          "status": "PASS"
+        },
+        {
+          "ruleId": "INST-EXACT",
+          "path": "outcomes.egas",
+          "status": "PASS"
+        },
+        {
+          "ruleId": "PO-EXACT",
+          "path": "outcomes.pos",
+          "status": "PASS"
+        }
+      ],
+      "semanticPoSourceMatchesResolved": true,
+      "semanticEgaSourceMatchesResolved": true,
+      "policyV2PoUsable": false,
+      "policyV2ReferenceIssues": [
+        {
+          "code": "po_reference_unavailable",
+          "message": "The supplied PO reference does not match the designated official program wording/numbering; faculty text was not judged against it."
+        },
+        {
+          "code": "authored_po_basis_review",
+          "message": "Historical CLO–PO numbers have a previous or unknown authored basis. No number was remapped."
+        }
+      ],
+      "poEgaMappings": 10,
+      "changedPoNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "extraPoNumbers": [
+        10
+      ]
+    },
+    {
+      "program": "BSIT-CYBERSECURITY",
+      "name": "BS Information Technology with Specialization in Cyber Security",
+      "poSource": "BSIT-CYBERSECURITY",
+      "inheritedFrom": null,
+      "resolvedPoCount": 10,
+      "expectedCorrectedPoCount": 9,
+      "matchesCorrectedPos": false,
+      "activeReference": null,
+      "egaCount": 4,
+      "egasMatchCheckerMaster": true,
+      "visionShared": true,
+      "missionShared": true,
+      "referenceChecks": [
+        {
+          "ruleId": "INST-EXACT",
+          "path": "outcomes.vision",
+          "status": "PASS"
+        },
+        {
+          "ruleId": "INST-EXACT",
+          "path": "outcomes.mission",
+          "status": "PASS"
+        },
+        {
+          "ruleId": "INST-EXACT",
+          "path": "outcomes.egas",
+          "status": "PASS"
+        },
+        {
+          "ruleId": "PO-EXACT",
+          "path": "outcomes.pos",
+          "status": "PASS"
+        }
+      ],
+      "semanticPoSourceMatchesResolved": true,
+      "semanticEgaSourceMatchesResolved": true,
+      "policyV2PoUsable": false,
+      "policyV2ReferenceIssues": [
+        {
+          "code": "po_reference_unavailable",
+          "message": "The supplied PO reference does not match the designated official program wording/numbering; faculty text was not judged against it."
+        },
+        {
+          "code": "inheritance_unverified",
+          "message": "Cyber Security PO inheritance from BSIT is not established in this reference context; its separate curriculum is retained."
+        },
+        {
+          "code": "authored_po_basis_review",
+          "message": "Historical CLO–PO numbers have a previous or unknown authored basis. No number was remapped."
+        }
+      ],
+      "poEgaMappings": 10,
+      "changedPoNumbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "extraPoNumbers": [
+        10
+      ]
+    }
+  ]
+}

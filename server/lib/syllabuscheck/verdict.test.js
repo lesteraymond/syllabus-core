@@ -216,7 +216,8 @@ test('a failing verdict builder is logged and changes nothing in the official re
   try { broken = await run(structuredClone(content), masters, offline); } finally { verdictModule.buildVerdict = original; console.error = log; }
   assert.ok(logged.some(l => /VERDICT ERROR/.test(l) && /boom/.test(l)));
   assert.equal(broken.hybrid.verdict.unavailable, true);
-  const strip = r => { const c = JSON.parse(JSON.stringify(r)); delete c.hybrid.verdict; delete c.hybrid.checkedAt; return c; };
+  assert.ok(broken.hybrid.ruleCoverage.counts.notChecked >= normal.hybrid.ruleCoverage.counts.notChecked, 'unavailable advisory verdict coverage is disclosed');
+  const strip = r => { const c = JSON.parse(JSON.stringify(r)); delete c.hybrid.verdict; delete c.hybrid.ruleCoverage; delete c.hybrid.checkedAt; return c; };
   assert.deepEqual(strip(broken), strip(normal));
 });
 

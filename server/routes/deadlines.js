@@ -27,7 +27,9 @@ const answer = (res, work) => work().then((body) => res.json({ enabled: true, ..
 router.get('/', requireAdmin, (req, res) => answer(res, async () => ({ deadlines: await deadlines.listForAdmin(req.app.locals.db) })));
 
 router.get('/mine', requireAuth, (req, res) => answer(res, async () => ({
-  deadlines: req.session.user.role === 'faculty' ? await deadlines.mine(req.app.locals.db, req.session.user.id) : [],
+  // faculty: their assigned subjects; an administrator: the subjects assigned to them and those they are writing a syllabus for (lib/deadlines.js mine)
+  deadlines: req.session.user.role === 'faculty' ? await deadlines.mine(req.app.locals.db, req.session.user.id)
+    : req.session.user.role === 'admin' ? await deadlines.mine(req.app.locals.db, req.session.user.id, Date.now(), { admin: true }) : [],
 })));
 
 router.post('/course/:courseId', requireAdmin, (req, res) => answer(res, async () => {

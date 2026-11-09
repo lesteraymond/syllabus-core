@@ -10,6 +10,11 @@
 // request throws.
 export const hasSubject = (d) => !!(d && d.meta && d.meta.courseId);
 
+// The saved content also carries bookkeeping the server owns (schemaVersion, catalog, ...). PUT /syllabi/:id/content accepts only these editable sections and
+// answers 400 "Unknown section" for anything else, so whoever saves a whole content object must send just these (server/routes/syllabusContent.js SECTIONS).
+export const SECTION_KEYS = ['meta', 'outcomes', 'description', 'clos', 'plan', 'reqs', 'refs', 'grading'];
+export const sectionsOf = (content) => Object.fromEntries(SECTION_KEYS.filter((k) => content && content[k] !== undefined).map((k) => [k, content[k]]));
+
 export async function saveOnce({ api, d, idRef, saved, sections, schemaVersion }) {
   const changed = sections.filter((k) => d[k] !== undefined && JSON.stringify(d[k]) !== saved.current[k]);
   if (!changed.length) return 'unchanged';

@@ -1,0 +1,68 @@
+{
+  "programs": [
+    {
+      "program": "BSIT",
+      "baseline": 99,
+      "optimized": 99,
+      "adminBaseline": 99,
+      "adminOptimized": 99,
+      "scoreParity": true,
+      "passThreshold": 79,
+      "baselinePassed": true,
+      "optimizedPassed": true
+    },
+    {
+      "program": "BSIE",
+      "baseline": 99,
+      "optimized": 99,
+      "adminBaseline": 99,
+      "adminOptimized": 99,
+      "scoreParity": true,
+      "passThreshold": 79,
+      "baselinePassed": true,
+      "optimizedPassed": true
+    },
+    {
+      "program": "BSCPE",
+      "baseline": 99,
+      "optimized": 99,
+      "adminBaseline": 99,
+      "adminOptimized": 99,
+      "scoreParity": true,
+      "passThreshold": 79,
+      "baselinePassed": true,
+      "optimizedPassed": true
+    },
+    {
+      "program": "BSIT-CYBERSECURITY",
+      "baseline": 99,
+      "optimized": 99,
+      "adminBaseline": 99,
+      "adminOptimized": 99,
+      "scoreParity": true,
+      "passThreshold": 79,
+      "baselinePassed": true,
+      "optimizedPassed": true
+    }
+  ],
+  "flags": {
+    "SYLLABUS_CHECK_CACHE_WARMUP": "on",
+    "SYLLABUS_CHECK_OUTPUT_PLAN": "on",
+    "SYLLABUS_CHECK_OUTPUT_FIELDS": "scoped"
+  },
+  "optionalCourseContextAlsoTested": true,
+  "registeredRules": 47,
+  "directHybrid2Rules": 44,
+  "weights": [
+    20,
+    20,
+    20,
+    15,
+    10,
+    15
+  ],
+  "threshold": 79,
+  "officialPoliciesModified": false,
+  "scoredNegativePoJudgmentsCompared": true,
+  "liveModelCalls": 0
+}

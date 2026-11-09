@@ -47,10 +47,13 @@ test('the administrator lists deadlines, and the answer says tracking is enabled
   assert.deepStrictEqual(r.body, { enabled: true, deadlines: [{ id: 3 }] });
 }, { listForAdmin: async () => [{ id: 3 }] }));
 
-test('a faculty member reads only their own deadlines, and an administrator gets an empty list there', () => withServer(async ({ call, calls }) => {
+// An administrator writes syllabi and can be assigned subjects, so they have deadlines of their own too (lib/deadlines.js mine, { admin: true }).
+test('a faculty member reads only their own deadlines, and so does an administrator: never another person\'s', () => withServer(async ({ call, calls }) => {
   assert.deepStrictEqual((await call('GET', '/mine', fay)).body, { enabled: true, deadlines: [{ id: 3, status: 'upcoming' }] });
   assert.deepStrictEqual(calls, [['mine', 5]], 'the signed-in user decides whose; there is no way to ask for another');
-  assert.deepStrictEqual((await call('GET', '/mine?userId=6', admin)).body, { enabled: true, deadlines: [] });
+  assert.deepStrictEqual((await call('GET', '/mine?userId=6', admin)).body, { enabled: true, deadlines: [{ id: 3, status: 'upcoming' }] });
+  assert.strictEqual(calls[1][1], 1, 'the administrator\'s own, not user 6');
+  assert.deepStrictEqual(calls[1][3], { admin: true }, 'read as an administrator: assigned subjects and the ones they are writing');
 }, { mine: async () => [{ id: 3, status: 'upcoming' }] }));
 
 test('setting, changing and cancelling a deadline pass the right ids and the form to the library', () => withServer(async ({ call, calls }) => {

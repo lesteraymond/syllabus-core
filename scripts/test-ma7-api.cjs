@@ -78,13 +78,14 @@ async function main() {
   d.reqs = ['Complete weekly differential-calculus problem sets with solution steps.', 'Participate in mathematical modeling and peer explanation exercises.', 'Submit a related-rates and optimization portfolio with assumptions and interpretations.', 'Complete preliminary, midterm and final examinations.'].map((t, i) => ({ id: key(`req${i + 1}`), t }));
   d.refs = { books: { na: false, items: [{ id: key('book'), t: 'Stewart, J. (2016). Calculus: Early transcendentals (8th ed.). Cengage Learning.' }] }, program: { na: true, items: [] }, online: { na: true, items: [] }, electronics: { na: true, items: [] } };
   d.grading = { rows: [{ id: key('grade1'), label: 'Problem sets and modeling portfolio', abbr: 'PS', pct: 40 }, { id: key('grade2'), label: 'Quizzes and participation', abbr: 'QP', pct: 20 }, { id: key('grade3'), label: 'Term examinations', abbr: 'TE', pct: 40 }], override: { on: false, term: '', final: '' } };
-  assert.deepEqual((await request(`/syllabi/${id}/content`)).content, before.content, 'Draft changed during preparation');
+  const latestForSave = await request(`/syllabi/${id}/content`);
+  assert.deepEqual(latestForSave.content, before.content, 'Draft changed during preparation');
   const backupDir = path.join(root, '.api-test-backups');
   await fs.mkdir(backupDir, { recursive: true });
   const backup = path.join(backupDir, `ma7-before-test-${id}-${Date.now()}.json`);
   await fs.writeFile(backup, JSON.stringify(before, null, 2), { flag: 'wx' });
   const sections = Object.fromEntries(['meta', 'outcomes', 'description', 'clos', 'plan', 'reqs', 'refs', 'grading'].map(k => [k, d[k]]));
-  await request(`/syllabi/${id}/content`, 'PUT', { sections, schemaVersion: 3 });
+  await request(`/syllabi/${id}/content`, 'PUT', { sections, schemaVersion: 3, baseRevisions: latestForSave.revisions });
   const saved = await request(`/syllabi/${id}/content`);
   for (const field of Object.keys(sections)) assert.deepEqual(saved.content[field], d[field]);
   await fs.writeFile(path.join(backupDir, 'ma7-semantic-diagnostic-input.json'), JSON.stringify({ content: saved.content, masters: { institution, pos: program.pos }, synthetic: true }, null, 2));

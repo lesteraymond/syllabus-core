@@ -1,0 +1,2610 @@
+{
+  "meta": {
+    "generatedAt": "2026-11-04T21:33:57.138Z",
+    "node": "v26.12.1",
+    "platform": "win32",
+    "counts": {
+      "total": 288,
+      "pass": 288,
+      "fail": 0,
+      "known": 0,
+      "fixed": 0
+    },
+    "regression": null,
+    "uiExit": 0
+  },
+  "tests": [
+    {
+      "id": "VPAA-R12-V2-unavailable",
+      "name": "[VPAA-R12-V2-unavailable] Policy V2 under failure: Claude API unavailable (connection fails)",
+      "file": "ai-failure.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 760,
+      "error": null
+    },
+    {
+      "id": "VPAA-R12-HYBRID-unavailable",
+      "name": "[VPAA-R12-HYBRID-unavailable] Hybrid-2 production path under failure: Claude API unavailable (connection fails)",
+      "file": "ai-failure.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 198,
+      "error": null
+    },
+    {
+      "id": "VPAA-R12-V2-auth",
+      "name": "[VPAA-R12-V2-auth] Policy V2 under failure: provider authentication fails (HTTP 401)",
+      "file": "ai-failure.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 44,
+      "error": null
+    },
+    {
+      "id": "VPAA-R12-HYBRID-auth",
+      "name": "[VPAA-R12-HYBRID-auth] Hybrid-2 production path under failure: provider authentication fails (HTTP 401)",
+      "file": "ai-failure.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 86,
+      "error": null
+    },
+    {
+      "id": "VPAA-R12-V2-budget",
+      "name": "[VPAA-R12-V2-budget] Policy V2 under failure: request budget exhausted",
+      "file": "ai-failure.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 33,
+      "error": null
+    },
+    {
+      "id": "VPAA-R12-HYBRID-budget",
+      "name": "[VPAA-R12-HYBRID-budget] Hybrid-2 production path under failure: request budget exhausted",
+      "file": "ai-failure.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 67,
+      "error": null
+    },
+    {
+      "id": "VPAA-R12-V2-incomplete",
+      "name": "[VPAA-R12-V2-incomplete] Policy V2 under failure: model response incomplete (stop_reason max_tokens)",
+      "file": "ai-failure.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 618,
+      "error": null
+    },
+    {
+      "id": "VPAA-R12-HYBRID-incomplete",
+      "name": "[VPAA-R12-HYBRID-incomplete] Hybrid-2 production path under failure: model response incomplete (stop_reason max_tokens)",
+      "file": "ai-failure.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 389,
+      "error": null
+    },
+    {
+      "id": "VPAA-R12-V2-invalidJson",
+      "name": "[VPAA-R12-V2-invalidJson] Policy V2 under failure: response is not valid JSON",
+      "file": "ai-failure.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 372,
+      "error": null
+    },
+    {
+      "id": "VPAA-R12-HYBRID-invalidJson",
+      "name": "[VPAA-R12-HYBRID-invalidJson] Hybrid-2 production path under failure: response is not valid JSON",
+      "file": "ai-failure.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 423,
+      "error": null
+    },
+    {
+      "id": "VPAA-R12-V2-emptyAnswer",
+      "name": "[VPAA-R12-V2-emptyAnswer] Policy V2 under failure: response is valid JSON but contains no judgements",
+      "file": "ai-failure.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 353,
+      "error": null
+    },
+    {
+      "id": "VPAA-R12-HYBRID-emptyAnswer",
+      "name": "[VPAA-R12-HYBRID-emptyAnswer] Hybrid-2 production path under failure: response is valid JSON but contains no judgements",
+      "file": "ai-failure.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 468,
+      "error": null
+    },
+    {
+      "id": "VPAA-R12-V2-noEvidence",
+      "name": "[VPAA-R12-V2-noEvidence] Policy V2 under failure: judgments lack supporting evidence (no quotations, no explanation)",
+      "file": "ai-failure.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 504,
+      "error": null
+    },
+    {
+      "id": "VPAA-R12-HYBRID-noEvidence",
+      "name": "[VPAA-R12-HYBRID-noEvidence] Hybrid-2 production path under failure: judgments lack supporting evidence (no quotations, no explanation)",
+      "file": "ai-failure.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 571,
+      "error": null
+    },
+    {
+      "id": "VPAA-R12-V2-fabricatedEvidence",
+      "name": "[VPAA-R12-V2-fabricatedEvidence] Policy V2 under failure: judgments quote text that is not in the syllabus",
+      "file": "ai-failure.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 440,
+      "error": null
+    },
+    {
+      "id": "VPAA-R12-HYBRID-fabricatedEvidence",
+      "name": "[VPAA-R12-HYBRID-fabricatedEvidence] Hybrid-2 production path under failure: judgments quote text that is not in the syllabus",
+      "file": "ai-failure.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 431,
+      "error": null
+    },
+    {
+      "id": "VPAA-R12-V2-timeout",
+      "name": "[VPAA-R12-V2-timeout] Policy V2 under failure: request times out (HTTP 504, the API's own timeout)",
+      "file": "ai-failure.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 19,
+      "error": null
+    },
+    {
+      "id": "VPAA-R12-HYBRID-timeout",
+      "name": "[VPAA-R12-HYBRID-timeout] Hybrid-2 production path under failure: request times out (HTTP 504, the API's own timeout)",
+      "file": "ai-failure.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 53,
+      "error": null
+    },
+    {
+      "id": "VPAA-R12-BREAKER",
+      "name": "[VPAA-R12-BREAKER] after the provider refuses for access or credits, no further request is sent until the cooldown ends",
+      "file": "ai-failure.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 35,
+      "error": null
+    },
+    {
+      "id": "VPAA-R12-PARTIAL",
+      "name": "[VPAA-R12-PARTIAL] when the model answers only some relationships, the rest stay \"not checked\" and the check is reported as partial",
+      "file": "ai-failure.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 111,
+      "error": null
+    },
+    {
+      "id": "VPAA-R12-NOT-CONFIGURED",
+      "name": "[VPAA-R12-NOT-CONFIGURED] with no approved provider, no AI request is made and the coded checks still run",
+      "file": "ai-failure.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 33,
+      "error": null
+    },
+    {
+      "id": "VPAA-R12-LIVECALLS",
+      "name": "[VPAA-R12-LIVECALLS] DEF-03 regression: the reported number of live model calls equals the requests actually sent",
+      "file": "ai-failure.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 111,
+      "error": null
+    },
+    {
+      "id": "VPAA-R12-LIVECALLS-SHARED",
+      "name": "[VPAA-R12-LIVECALLS-SHARED] DEF-03: through the shared service, the legacy run and Policy V2 share ONE budget and V2 reports only its own requests",
+      "file": "ai-failure.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 127,
+      "error": null
+    },
+    {
+      "id": "VPAA-R8-LEVELS",
+      "name": "[VPAA-R8-LEVELS] the four institutional classifications and their definitions are exactly as approved",
+      "file": "clo-classification.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 2,
+      "error": null
+    },
+    {
+      "id": "VPAA-R8-FIXED-BY-NUMBER",
+      "name": "[VPAA-R8-FIXED-BY-NUMBER] the classification comes from the CLO number, never from the saved label; a conflict is reported, not trusted or changed",
+      "file": "clo-classification.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 654,
+      "error": null
+    },
+    {
+      "id": "VPAA-R8-STATEMENTS-PRESERVED",
+      "name": "[VPAA-R8-STATEMENTS-PRESERVED] faculty-authored CLO statements are sent verbatim as the target and never rewritten",
+      "file": "clo-classification.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 79,
+      "error": null
+    },
+    {
+      "id": "VPAA-R8-CONTEXT",
+      "name": "[VPAA-R8-CONTEXT] the judgment is not left to a Bloom verb: each ILO↔CLO request carries the classification, the lesson, the CLO's other lessons and the course CLOs",
+      "file": "clo-classification.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 66,
+      "error": null
+    },
+    {
+      "id": "VPAA-R8-MULTI-MAPPING",
+      "name": "[VPAA-R8-MULTI-MAPPING] an ILO assigned to several CLOs gets one relationship per CLO, each with its own classification",
+      "file": "clo-classification.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 54,
+      "error": null
+    },
+    {
+      "id": "VPAA-R8-SECONDARY-NOT-IGNORED",
+      "name": "[VPAA-R8-SECONDARY-NOT-IGNORED] one wrong mapping among several is never silently ignored, in either position",
+      "file": "clo-classification.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 261,
+      "error": null
+    },
+    {
+      "id": "VPAA-R8-LABEL-COMPLETENESS",
+      "name": "[VPAA-R8-LABEL-COMPLETENESS] label completeness (CLO-08) is a separate criterion from classification meaning",
+      "file": "clo-classification.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 45,
+      "error": null
+    },
+    {
+      "id": "VPAA-R8-BLANK-LABEL",
+      "name": "[VPAA-R8-BLANK-LABEL] DEF-02 regression: a CLO with no saved classification is not judged and not guessed, and the report says exactly what to do",
+      "file": "clo-classification.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 60,
+      "error": null
+    },
+    {
+      "id": "VPAA-R8-BLANK-LABEL-LOCALIZED",
+      "name": "[VPAA-R8-BLANK-LABEL-LOCALIZED] the missing-classification message is shown in English and Filipino and names the CLO",
+      "file": "clo-classification.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 6,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-COUNT",
+      "name": "[VPAA-R11-COUNT] the standard has exactly 47 rules with unique ids, and every rule has a conformance case",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 5,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-BASELINE",
+      "name": "[VPAA-R11-BASELINE] the conforming synthetic syllabus passes all 47 rules with no finding and full credit",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 14,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-01",
+      "name": "[VPAA-R11-T-01] nonEmpty (blocking, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 3,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-02",
+      "name": "[VPAA-R11-T-02] nonEmpty (blocking, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 2,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-03",
+      "name": "[VPAA-R11-T-03] nonEmpty (blocking, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-04",
+      "name": "[VPAA-R11-T-04] nonEmpty (blocking, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-05",
+      "name": "[VPAA-R11-T-05] nonEmpty (blocking, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-06",
+      "name": "[VPAA-R11-T-06] nonEmpty (blocking, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 2,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-07",
+      "name": "[VPAA-R11-T-07] nonEmpty (blocking, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 4,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-08",
+      "name": "[VPAA-R11-T-08] nonEmpty (blocking, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 2,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-09",
+      "name": "[VPAA-R11-T-09] equalsCatalog (blocking, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-10",
+      "name": "[VPAA-R11-T-10] equalsCatalog (blocking, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-11",
+      "name": "[VPAA-R11-T-11] equalsCatalog (blocking, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-12",
+      "name": "[VPAA-R11-T-12] equalsCatalog (blocking, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-13",
+      "name": "[VPAA-R11-T-13] tagsResolve (blocking, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-14",
+      "name": "[VPAA-R11-T-14] tagsResolve (blocking, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 2,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-15",
+      "name": "[VPAA-R11-T-15] columnsFilled (blocking, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 2,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-16",
+      "name": "[VPAA-R11-T-16] columnsFilled (major, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 2,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-17",
+      "name": "[VPAA-R11-T-17] iloNumbering (minor, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 2,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-18",
+      "name": "[VPAA-R11-T-18] weeksOrder (minor, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 2,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-19",
+      "name": "[VPAA-R11-T-19] numberedRequirements (blocking, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-20",
+      "name": "[VPAA-R11-T-20] numberedRequirements (minor, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 2,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-21",
+      "name": "[VPAA-R11-T-21] referenceGroups (blocking, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-22",
+      "name": "[VPAA-R11-T-22] referenceGroups (minor, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-23",
+      "name": "[VPAA-R11-T-23] nonEmpty (blocking, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-24",
+      "name": "[VPAA-R11-T-24] gradingTotal (blocking, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-25",
+      "name": "[VPAA-R11-T-25] gradingFormula (blocking, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-26",
+      "name": "[VPAA-R11-T-26] gradingFormula (major, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 2,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-T-27",
+      "name": "[VPAA-R11-T-27] signoffRoles (minor, template): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-C-01",
+      "name": "[VPAA-R11-C-01] textLength (major, completeness): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-C-02",
+      "name": "[VPAA-R11-C-02] textLength (minor, completeness): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-C-03",
+      "name": "[VPAA-R11-C-03] textLength (minor, completeness): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 2,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-C-04",
+      "name": "[VPAA-R11-C-04] referenceAge (minor, completeness): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-P-01",
+      "name": "[VPAA-R11-P-01] cloConventions (blocking, co_po): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 2,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-P-02",
+      "name": "[VPAA-R11-P-02] cloConventions (blocking, co_po): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-P-03",
+      "name": "[VPAA-R11-P-03] cloConventions (major, co_po): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-P-04",
+      "name": "[VPAA-R11-P-04] cloConventions (minor, co_po): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-P-05",
+      "name": "[VPAA-R11-P-05] cloCoverage (major, co_po): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-A-01",
+      "name": "[VPAA-R11-A-01] columnsFilled (major, assessment): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-A-02",
+      "name": "[VPAA-R11-A-02] cloCoverage (major, assessment): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-A-03",
+      "name": "[VPAA-R11-A-03] examRowsPerTerm (major, assessment): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-A-04",
+      "name": "[VPAA-R11-A-04] gradingHasExam (major, assessment): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-H-01",
+      "name": "[VPAA-R11-H-01] contactUnits (major, contact_hours): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-H-02",
+      "name": "[VPAA-R11-H-02] weeksCover (major, contact_hours): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-H-03",
+      "name": "[VPAA-R11-H-03] weeksCover (major, contact_hours): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 2,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-H-04",
+      "name": "[VPAA-R11-H-04] weeksCover (minor, contact_hours): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-R-01",
+      "name": "[VPAA-R11-R-01] referenceAge (major, reference_currency): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-R-02",
+      "name": "[VPAA-R11-R-02] referenceAge (minor, reference_currency): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-R-03",
+      "name": "[VPAA-R11-R-03] referenceAge (major, reference_currency): valid, invalid and missing-field behaviour",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R10-THRESHOLD",
+      "name": "[VPAA-R10-THRESHOLD] the official pass mark is 79, the bands and the six weighted areas are unchanged",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 0,
+      "error": null
+    },
+    {
+      "id": "VPAA-R10-PASS-LOGIC",
+      "name": "[VPAA-R10-PASS-LOGIC] passed is exactly (overall ≥ 79 and no blocking finding), for every single-rule failure",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 22,
+      "error": null
+    },
+    {
+      "id": "VPAA-R10-BLOCKING-OVERRIDES-SCORE",
+      "name": "[VPAA-R10-BLOCKING-OVERRIDES-SCORE] a blocking failure stops the pass even when the score is above 79; a non-blocking failure alone does not",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R10-SCORE-CAP",
+      "name": "[VPAA-R10-SCORE-CAP] the score reflects weights: a failed high-weight rule costs more than a failed low-weight one in the same area",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R10-INSUFFICIENT",
+      "name": "[VPAA-R10-INSUFFICIENT] an almost-empty draft is \"not enough content\", never a low score or a pass",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 0,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-HYBRID-44",
+      "name": "[VPAA-R11-HYBRID-44] Hybrid-2 applies 44 of the 47 rules: C-04, R-02 and R-03 are replaced by link checks",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 6,
+      "error": null
+    },
+    {
+      "id": "VPAA-R10-DEDUCTIONS",
+      "name": "[VPAA-R10-DEDUCTIONS] the authorized hybrid deductions are unchanged: alignment 3, partial 1, link 2, value 1; advisory relationships cost nothing",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 837,
+      "error": null
+    },
+    {
+      "id": "VPAA-R11-PLACEHOLDER",
+      "name": "[VPAA-R11-PLACEHOLDER] LIM-01: placeholder text satisfies the presence rules; only the advisory STR-05 flags it, and the score is unchanged",
+      "file": "coded-rules.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 17,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-CONFIG",
+      "name": "[VPAA-COMP-CONFIG] comprehensive scope cannot authorize a provider, external lookup, budget increase, or gate change",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 5,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-SCOPE",
+      "name": "[VPAA-COMP-SCOPE] comprehensive service retains Plan-sequence, every distinct stage, seven VPAA links, and four classifications",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 876,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-OFF",
+      "name": "[VPAA-COMP-OFF] useAi false suppresses both legacy and Policy V2 provider requests",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 56,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-UNAVAILABLE",
+      "name": "[VPAA-COMP-UNAVAILABLE] unavailable provider leaves academic checks not verified, while deterministic/APA checks execute",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 37,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RESERVED",
+      "name": "[VPAA-COMP-RESERVED] every reserved ID stays NOT_CHECKED with its exact missing decision",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 38,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-CROSSWALK",
+      "name": "[VPAA-COMP-CROSSWALK] absent PO-EGA data cannot be reported as verified P-03; legacy scoring is preserved",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 13,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-QUALITY",
+      "name": "[VPAA-COMP-QUALITY] all twelve quality predicates have explicit execution and applicability receipts",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 2,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-APA",
+      "name": "[VPAA-COMP-APA] APA receipts distinguish unrun type-specific predicates from a successful format predicate",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 0,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-STRUCTURE",
+      "name": "[VPAA-COMP-STRUCTURE] swapped but valid CLO labels fail the required per-CLO structure without changing faculty data",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-PERSISTENCE",
+      "name": "[VPAA-COMP-PERSISTENCE] complete manifest and V2 reuse receipts survive saved report storage",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 265,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-PARITY-ALIGNED",
+      "name": "[VPAA-COMP-PARITY-ALIGNED] comprehensive advice preserves official score, deductions and gate policy",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 254,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-PARITY-PARTIALLY_ALIGNED",
+      "name": "[VPAA-COMP-PARITY-PARTIALLY_ALIGNED] comprehensive advice preserves official score, deductions and gate policy",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 268,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-PARITY-NOT_ALIGNED",
+      "name": "[VPAA-COMP-PARITY-NOT_ALIGNED] comprehensive advice preserves official score, deductions and gate policy",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 249,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-PARITY-INSUFFICIENT_EVIDENCE",
+      "name": "[VPAA-COMP-PARITY-INSUFFICIENT_EVIDENCE] comprehensive advice preserves official score, deductions and gate policy",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 165,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-PARTIAL",
+      "name": "[VPAA-COMP-PARTIAL] one unverified weekly instance prevents full verification of its relationship type",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 179,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-BUDGET",
+      "name": "[VPAA-COMP-BUDGET] a one-request shared budget bounds legacy plus V2 and leaves unasked instances not attempted",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 50,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-B3",
+      "name": "[VPAA-COMP-B3] incorrect existing mappings invoke the conditional any-CLO fallback through the existing stage",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 175,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-01",
+      "name": "[VPAA-COMP-RECEIPT-T-01] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 2,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-02",
+      "name": "[VPAA-COMP-RECEIPT-T-02] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-03",
+      "name": "[VPAA-COMP-RECEIPT-T-03] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-04",
+      "name": "[VPAA-COMP-RECEIPT-T-04] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-05",
+      "name": "[VPAA-COMP-RECEIPT-T-05] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 0,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-06",
+      "name": "[VPAA-COMP-RECEIPT-T-06] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-07",
+      "name": "[VPAA-COMP-RECEIPT-T-07] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-08",
+      "name": "[VPAA-COMP-RECEIPT-T-08] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-09",
+      "name": "[VPAA-COMP-RECEIPT-T-09] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-10",
+      "name": "[VPAA-COMP-RECEIPT-T-10] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-11",
+      "name": "[VPAA-COMP-RECEIPT-T-11] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-12",
+      "name": "[VPAA-COMP-RECEIPT-T-12] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-13",
+      "name": "[VPAA-COMP-RECEIPT-T-13] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-14",
+      "name": "[VPAA-COMP-RECEIPT-T-14] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-15",
+      "name": "[VPAA-COMP-RECEIPT-T-15] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-16",
+      "name": "[VPAA-COMP-RECEIPT-T-16] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-17",
+      "name": "[VPAA-COMP-RECEIPT-T-17] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-18",
+      "name": "[VPAA-COMP-RECEIPT-T-18] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-19",
+      "name": "[VPAA-COMP-RECEIPT-T-19] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-20",
+      "name": "[VPAA-COMP-RECEIPT-T-20] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-21",
+      "name": "[VPAA-COMP-RECEIPT-T-21] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-22",
+      "name": "[VPAA-COMP-RECEIPT-T-22] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-23",
+      "name": "[VPAA-COMP-RECEIPT-T-23] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-24",
+      "name": "[VPAA-COMP-RECEIPT-T-24] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-25",
+      "name": "[VPAA-COMP-RECEIPT-T-25] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-26",
+      "name": "[VPAA-COMP-RECEIPT-T-26] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-T-27",
+      "name": "[VPAA-COMP-RECEIPT-T-27] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-C-01",
+      "name": "[VPAA-COMP-RECEIPT-C-01] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-C-02",
+      "name": "[VPAA-COMP-RECEIPT-C-02] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 2,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-C-03",
+      "name": "[VPAA-COMP-RECEIPT-C-03] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-C-04",
+      "name": "[VPAA-COMP-RECEIPT-C-04] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-P-01",
+      "name": "[VPAA-COMP-RECEIPT-P-01] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-P-02",
+      "name": "[VPAA-COMP-RECEIPT-P-02] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-P-03",
+      "name": "[VPAA-COMP-RECEIPT-P-03] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-P-04",
+      "name": "[VPAA-COMP-RECEIPT-P-04] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-P-05",
+      "name": "[VPAA-COMP-RECEIPT-P-05] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-A-01",
+      "name": "[VPAA-COMP-RECEIPT-A-01] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-A-02",
+      "name": "[VPAA-COMP-RECEIPT-A-02] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-A-03",
+      "name": "[VPAA-COMP-RECEIPT-A-03] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-A-04",
+      "name": "[VPAA-COMP-RECEIPT-A-04] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-H-01",
+      "name": "[VPAA-COMP-RECEIPT-H-01] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-H-02",
+      "name": "[VPAA-COMP-RECEIPT-H-02] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-H-03",
+      "name": "[VPAA-COMP-RECEIPT-H-03] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-H-04",
+      "name": "[VPAA-COMP-RECEIPT-H-04] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-R-01",
+      "name": "[VPAA-COMP-RECEIPT-R-01] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-R-02",
+      "name": "[VPAA-COMP-RECEIPT-R-02] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-RECEIPT-R-03",
+      "name": "[VPAA-COMP-RECEIPT-R-03] execution receipts match valid, invalid, missing and declared boundary scopes",
+      "file": "comprehensive.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-HOST-DEV",
+      "name": "[VPAA-HOST-DEV] local development behaves as before: one localhost origin, HttpOnly Lax cookies that are not Secure, cookie-authenticated API",
+      "file": "host.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 111,
+      "error": null
+    },
+    {
+      "id": "VPAA-HOST-STAGING-COOKIES",
+      "name": "[VPAA-HOST-STAGING-COOKIES] in staging both cookies are HttpOnly, Secure and SameSite, the remember-me cookie included (it used to be Secure only in production), and nothing falls back to insecure",
+      "file": "host.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 26,
+      "error": null
+    },
+    {
+      "id": "VPAA-HOST-STAGING-CORS",
+      "name": "[VPAA-HOST-STAGING-CORS] staging allows only the configured frontend origin, never a wildcard, and does not inherit the localhost development default",
+      "file": "host.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 19,
+      "error": null
+    },
+    {
+      "id": "VPAA-HOST-CSRF",
+      "name": "[VPAA-HOST-CSRF] with cookie authentication, a state-changing request from a foreign site is refused before it reaches any route, including the classic form-post vector",
+      "file": "host.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 25,
+      "error": null
+    },
+    {
+      "id": "VPAA-HOST-AUTHZ",
+      "name": "[VPAA-HOST-AUTHZ] authentication and authorization still work through the real cookie session: anonymous, another faculty member, the administrator and the author",
+      "file": "host.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 31,
+      "error": null
+    },
+    {
+      "id": "VPAA-HOST-ROUTING",
+      "name": "[VPAA-HOST-ROUTING] every checker and compliance call the browser client makes exists on the server, under the prefixes index.js mounts",
+      "file": "host.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 28,
+      "error": null
+    },
+    {
+      "id": "VPAA-HOST-INDEX",
+      "name": "[VPAA-HOST-INDEX] server/index.js has no hardcoded origin and applies the host security before the session",
+      "file": "host.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-HOST-NO-NETWORK",
+      "name": "[VPAA-HOST-NO-NETWORK] nothing in this suite can reach beyond loopback",
+      "file": "host.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 3,
+      "error": null
+    },
+    {
+      "id": "VPAA-R15-PARSE",
+      "name": "[VPAA-R15-PARSE] a field the schema does not allow is refused and never verified",
+      "file": "hybrid-pipeline.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 656,
+      "error": null
+    },
+    {
+      "id": "VPAA-R15-PARSE",
+      "name": "[VPAA-R15-PARSE] a required field is missing is refused and never verified",
+      "file": "hybrid-pipeline.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 72,
+      "error": null
+    },
+    {
+      "id": "VPAA-R15-PARSE",
+      "name": "[VPAA-R15-PARSE] a label outside the four allowed values is refused and never verified",
+      "file": "hybrid-pipeline.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 72,
+      "error": null
+    },
+    {
+      "id": "VPAA-R15-PARSE",
+      "name": "[VPAA-R15-PARSE] a lower-case label is refused and never verified",
+      "file": "hybrid-pipeline.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 70,
+      "error": null
+    },
+    {
+      "id": "VPAA-R15-PARSE",
+      "name": "[VPAA-R15-PARSE] the same id answered twice is refused and never verified",
+      "file": "hybrid-pipeline.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 82,
+      "error": null
+    },
+    {
+      "id": "VPAA-R15-PARSE",
+      "name": "[VPAA-R15-PARSE] an id that was never asked is refused and never verified",
+      "file": "hybrid-pipeline.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 65,
+      "error": null
+    },
+    {
+      "id": "VPAA-R15-PARSE",
+      "name": "[VPAA-R15-PARSE] an empty explanation is refused and never verified",
+      "file": "hybrid-pipeline.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 59,
+      "error": null
+    },
+    {
+      "id": "VPAA-R15-PARSE",
+      "name": "[VPAA-R15-PARSE] an empty source quotation is refused and never verified",
+      "file": "hybrid-pipeline.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 59,
+      "error": null
+    },
+    {
+      "id": "VPAA-R15-PARSE",
+      "name": "[VPAA-R15-PARSE] an invented source quotation is refused and never verified",
+      "file": "hybrid-pipeline.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 64,
+      "error": null
+    },
+    {
+      "id": "VPAA-R15-PARSE",
+      "name": "[VPAA-R15-PARSE] a quotation with changed capitalisation is refused and never verified",
+      "file": "hybrid-pipeline.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 58,
+      "error": null
+    },
+    {
+      "id": "VPAA-R15-PARSE",
+      "name": "[VPAA-R15-PARSE] the two quotations swapped is refused and never verified",
+      "file": "hybrid-pipeline.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 70,
+      "error": null
+    },
+    {
+      "id": "VPAA-R15-PARSE",
+      "name": "[VPAA-R15-PARSE] a source quotation taken from the target side is refused and never verified",
+      "file": "hybrid-pipeline.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 61,
+      "error": null
+    },
+    {
+      "id": "VPAA-R15-PARSE",
+      "name": "[VPAA-R15-PARSE] a quotation borrowed from a different relationship is refused and never verified",
+      "file": "hybrid-pipeline.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 81,
+      "error": null
+    },
+    {
+      "id": "VPAA-R15-OMITTED",
+      "name": "[VPAA-R15-OMITTED] a relationship the model leaves out is \"not checked\", not assumed aligned",
+      "file": "hybrid-pipeline.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 107,
+      "error": null
+    },
+    {
+      "id": "VPAA-R15-INSUFFICIENT-ANSWER",
+      "name": "[VPAA-R15-INSUFFICIENT-ANSWER] when the text is present, INSUFFICIENT_EVIDENCE from the model is \"not evaluated\", never a pass",
+      "file": "hybrid-pipeline.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 67,
+      "error": null
+    },
+    {
+      "id": "VPAA-R15-NO-DUPLICATES",
+      "name": "[VPAA-R15-NO-DUPLICATES] one record per asked relationship, no duplicates and none missing, in Policy V2 and in Hybrid-2",
+      "file": "hybrid-pipeline.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 200,
+      "error": null
+    },
+    {
+      "id": "VPAA-R15-CONTEXT",
+      "name": "[VPAA-R15-CONTEXT] Title ↔ Content carries the adjacent weeks (and only those) and the course identity, never the description",
+      "file": "hybrid-pipeline.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 74,
+      "error": null
+    },
+    {
+      "id": "VPAA-R15-REFERENCE-CONTEXT",
+      "name": "[VPAA-R15-REFERENCE-CONTEXT] a CLO ↔ PO relationship is not judged when the supplied PO reference does not match the official wording",
+      "file": "hybrid-pipeline.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 67,
+      "error": null
+    },
+    {
+      "id": "VPAA-R15-DRAFT-GUARD",
+      "name": "[VPAA-R15-DRAFT-GUARD] a rewrite that merely copies the text it was meant to revise is withheld, not offered as a recommendation",
+      "file": "hybrid-pipeline.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 83,
+      "error": null
+    },
+    {
+      "id": "VPAA-R13-AUTHORIZATION",
+      "name": "[VPAA-R13-AUTHORIZATION] only the author can accept, edit, reject or undo; the administrator, another faculty member and an anonymous caller cannot",
+      "file": "recommendation-actions.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 165,
+      "error": null
+    },
+    {
+      "id": "VPAA-R13-VALIDATION",
+      "name": "[VPAA-R13-VALIDATION] unknown suggestions, unknown actions and bad edits are refused and nothing is recorded",
+      "file": "recommendation-actions.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 26,
+      "error": null
+    },
+    {
+      "id": "VPAA-R13-V2-TOKEN",
+      "name": "[VPAA-R13-V2-TOKEN] a Policy V2 recommendation can be accepted or edited only with a valid Check & Improve token; reject and undo need none",
+      "file": "recommendation-actions.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 41,
+      "error": null
+    },
+    {
+      "id": "VPAA-R13-V2-STALE",
+      "name": "[VPAA-R13-V2-STALE] a token is refused when the text, the related context, the run, the suggestion or the signature does not match",
+      "file": "recommendation-actions.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 45,
+      "error": null
+    },
+    {
+      "id": "VPAA-R13-V2-REPLAY",
+      "name": "[VPAA-R13-V2-REPLAY] a verification token can be used once",
+      "file": "recommendation-actions.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 14,
+      "error": null
+    },
+    {
+      "id": "VPAA-R13-AUDIT",
+      "name": "[VPAA-R13-AUDIT] every decision leaves an audit row and an activity note, stores edited text only for an edit, and never writes faculty content",
+      "file": "recommendation-actions.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 21,
+      "error": null
+    },
+    {
+      "id": "VPAA-R13-CHECK-IMPROVE",
+      "name": "[VPAA-R13-CHECK-IMPROVE] Check & Improve returns a token only for a verified refinement; an unverified refinement cannot then be accepted",
+      "file": "recommendation-actions.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 23,
+      "error": null
+    },
+    {
+      "id": "VPAA-R13-LEGACY-ACCEPT",
+      "name": "[VPAA-R13-LEGACY-ACCEPT] CLARIFICATION: outside Policy V2 an Accept is recorded without a verification token",
+      "file": "recommendation-actions.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 7,
+      "error": null
+    },
+    {
+      "id": "VPAA-R13-NO-UNVERIFIED-SUGGESTION",
+      "name": "[VPAA-R13-NO-UNVERIFIED-SUGGESTION] a suggestion is only ever created from a verified judgment (Policy V2 and Hybrid-2), so none can be accepted from an unverified one",
+      "file": "recommendation-actions.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1713,
+      "error": null
+    },
+    {
+      "id": "VPAA-R13-SECRET",
+      "name": "[VPAA-R13-SECRET] DEF-04 regression: with no configured secret nothing is signed or accepted, and the old public constant is refused even when supplied",
+      "file": "recommendation-actions.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-R13-SECRET-ROUTES",
+      "name": "[VPAA-R13-SECRET-ROUTES] DEF-04 regression: with no secret configured, Check & Improve and a Policy V2 acceptance fail closed (503) and spend nothing; reject and undo still work",
+      "file": "recommendation-actions.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 45,
+      "error": null
+    },
+    {
+      "id": "VPAA-R1-ALIGNED",
+      "name": "[VPAA-R1-ALIGNED] Course Title ↔ Course Content - aligned: Week content that teaches the course subject",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 588,
+      "error": null
+    },
+    {
+      "id": "VPAA-R1-MISALIGNED",
+      "name": "[VPAA-R1-MISALIGNED] Course Title ↔ Course Content - misaligned: Week content from an unrelated discipline",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 70,
+      "error": null
+    },
+    {
+      "id": "VPAA-R1-PARTIAL",
+      "name": "[VPAA-R1-PARTIAL] Course Title ↔ Course Content - partial: Week content only loosely connected to the subject",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 58,
+      "error": null
+    },
+    {
+      "id": "VPAA-R1-INSUFFICIENT",
+      "name": "[VPAA-R1-INSUFFICIENT] Course Title ↔ Course Content - insufficient: Course Content is empty",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 51,
+      "error": null
+    },
+    {
+      "id": "VPAA-R1-ADVERSARIAL",
+      "name": "[VPAA-R1-ADVERSARIAL] Course Title ↔ Course Content - adversarial: Course-title keywords stuffed around off-subject content",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 115,
+      "error": null
+    },
+    {
+      "id": "VPAA-R2-ALIGNED",
+      "name": "[VPAA-R2-ALIGNED] Course Content ↔ ILO - aligned: ILO is an observable performance on the week content",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 62,
+      "error": null
+    },
+    {
+      "id": "VPAA-R2-MISALIGNED",
+      "name": "[VPAA-R2-MISALIGNED] Course Content ↔ ILO - misaligned: ILO about an unrelated subject",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 71,
+      "error": null
+    },
+    {
+      "id": "VPAA-R2-PARTIAL",
+      "name": "[VPAA-R2-PARTIAL] Course Content ↔ ILO - partial: ILO uses a non-observable verb",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 70,
+      "error": null
+    },
+    {
+      "id": "VPAA-R2-INSUFFICIENT",
+      "name": "[VPAA-R2-INSUFFICIENT] Course Content ↔ ILO - insufficient: The ILO is empty",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 63,
+      "error": null
+    },
+    {
+      "id": "VPAA-R2-ADVERSARIAL",
+      "name": "[VPAA-R2-ADVERSARIAL] Course Content ↔ ILO - adversarial: ILO names the topic but demands an unrelated skill",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 147,
+      "error": null
+    },
+    {
+      "id": "VPAA-R3-ALIGNED",
+      "name": "[VPAA-R3-ALIGNED] ILO ↔ CLO - aligned: ILO is a smaller step toward its assigned CLO",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 58,
+      "error": null
+    },
+    {
+      "id": "VPAA-R3-MISALIGNED",
+      "name": "[VPAA-R3-MISALIGNED] ILO ↔ CLO - misaligned: ILO unrelated to its assigned CLO",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 53,
+      "error": null
+    },
+    {
+      "id": "VPAA-R3-PARTIAL",
+      "name": "[VPAA-R3-PARTIAL] ILO ↔ CLO - partial: ILO loosely related to its CLO",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 64,
+      "error": null
+    },
+    {
+      "id": "VPAA-R3-INSUFFICIENT",
+      "name": "[VPAA-R3-INSUFFICIENT] ILO ↔ CLO - insufficient: ILO has no assigned CLO",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 54,
+      "error": null
+    },
+    {
+      "id": "VPAA-R3-ADVERSARIAL",
+      "name": "[VPAA-R3-ADVERSARIAL] ILO ↔ CLO - adversarial: One correct and one incorrect assigned CLO on the same ILO",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 66,
+      "error": null
+    },
+    {
+      "id": "VPAA-R4-ALIGNED",
+      "name": "[VPAA-R4-ALIGNED] Course Content ↔ Learning Activities - aligned: Activities practise the week content",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 72,
+      "error": null
+    },
+    {
+      "id": "VPAA-R4-MISALIGNED",
+      "name": "[VPAA-R4-MISALIGNED] Course Content ↔ Learning Activities - misaligned: Activities unrelated to the week content",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 60,
+      "error": null
+    },
+    {
+      "id": "VPAA-R4-PARTIAL",
+      "name": "[VPAA-R4-PARTIAL] Course Content ↔ Learning Activities - partial: Passive activity for applied content",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 56,
+      "error": null
+    },
+    {
+      "id": "VPAA-R4-INSUFFICIENT",
+      "name": "[VPAA-R4-INSUFFICIENT] Course Content ↔ Learning Activities - insufficient: Learning Activities are empty",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 53,
+      "error": null
+    },
+    {
+      "id": "VPAA-R4-ADVERSARIAL",
+      "name": "[VPAA-R4-ADVERSARIAL] Course Content ↔ Learning Activities - adversarial: Prompt-injection text inside the activities",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 117,
+      "error": null
+    },
+    {
+      "id": "VPAA-R5-ALIGNED",
+      "name": "[VPAA-R5-ALIGNED] ILO ↔ Learning Activities - aligned: Activities practise the ILO action",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 58,
+      "error": null
+    },
+    {
+      "id": "VPAA-R5-MISALIGNED",
+      "name": "[VPAA-R5-MISALIGNED] ILO ↔ Learning Activities - misaligned: Activities unrelated to the ILO",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 53,
+      "error": null
+    },
+    {
+      "id": "VPAA-R5-PARTIAL",
+      "name": "[VPAA-R5-PARTIAL] ILO ↔ Learning Activities - partial: Passive-only activity for an Apply-level ILO",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 56,
+      "error": null
+    },
+    {
+      "id": "VPAA-R5-INSUFFICIENT",
+      "name": "[VPAA-R5-INSUFFICIENT] ILO ↔ Learning Activities - insufficient: Learning Activities are empty",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 66,
+      "error": null
+    },
+    {
+      "id": "VPAA-R5-ADVERSARIAL",
+      "name": "[VPAA-R5-ADVERSARIAL] ILO ↔ Learning Activities - adversarial: ILO verb repeated inside unrelated activities",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 148,
+      "error": null
+    },
+    {
+      "id": "VPAA-R6-ALIGNED",
+      "name": "[VPAA-R6-ALIGNED] Course Content ↔ Assessment - aligned: Assessment collects evidence of the week content",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 60,
+      "error": null
+    },
+    {
+      "id": "VPAA-R6-MISALIGNED",
+      "name": "[VPAA-R6-MISALIGNED] Course Content ↔ Assessment - misaligned: Assessment on an unrelated subject",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 88,
+      "error": null
+    },
+    {
+      "id": "VPAA-R6-PARTIAL",
+      "name": "[VPAA-R6-PARTIAL] Course Content ↔ Assessment - partial: Assessment only samples part of the content",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 100,
+      "error": null
+    },
+    {
+      "id": "VPAA-R6-INSUFFICIENT",
+      "name": "[VPAA-R6-INSUFFICIENT] Course Content ↔ Assessment - insufficient: Assessment Tasks are empty",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 70,
+      "error": null
+    },
+    {
+      "id": "VPAA-R6-ADVERSARIAL",
+      "name": "[VPAA-R6-ADVERSARIAL] Course Content ↔ Assessment - adversarial: Prompt-injection text inside the assessment task",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 107,
+      "error": null
+    },
+    {
+      "id": "VPAA-R7-ALIGNED",
+      "name": "[VPAA-R7-ALIGNED] Learning Activities ↔ Assessment - aligned: Assessment measures what the activities practise",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 42,
+      "error": null
+    },
+    {
+      "id": "VPAA-R7-MISALIGNED",
+      "name": "[VPAA-R7-MISALIGNED] Learning Activities ↔ Assessment - misaligned: Assessment unrelated to the activities",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 49,
+      "error": null
+    },
+    {
+      "id": "VPAA-R7-PARTIAL",
+      "name": "[VPAA-R7-PARTIAL] Learning Activities ↔ Assessment - partial: Assessment tests vocabulary, not the practised skill",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 49,
+      "error": null
+    },
+    {
+      "id": "VPAA-R7-INSUFFICIENT",
+      "name": "[VPAA-R7-INSUFFICIENT] Learning Activities ↔ Assessment - insufficient: Learning Activities are empty",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 41,
+      "error": null
+    },
+    {
+      "id": "VPAA-R7-ADVERSARIAL",
+      "name": "[VPAA-R7-ADVERSARIAL] Learning Activities ↔ Assessment - adversarial: Assessment repeats the activity keywords around an unrelated task",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 95,
+      "error": null
+    },
+    {
+      "id": "VPAA-ACTIVATION",
+      "name": "[VPAA-ACTIVATION] which of the seven relationships run in the application under each configuration (measured, not assumed)",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 286,
+      "error": null
+    },
+    {
+      "id": "VPAA-MAPPING",
+      "name": "[VPAA-MAPPING] every instructional week builds exactly one of each relationship per ILO/CLO, with unique ids and no exam obligations",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 54,
+      "error": null
+    },
+    {
+      "id": "VPAA-DESCRIPTION-EXCLUSION",
+      "name": "[VPAA-DESCRIPTION-EXCLUSION] Policy V2: the course description is never evidence for a CLO judgment, and CLO-Description is not a relationship",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 67,
+      "error": null
+    },
+    {
+      "id": "VPAA-DESCRIPTION-EXCLUSION-LEGACY",
+      "name": "[VPAA-DESCRIPTION-EXCLUSION-LEGACY] GAP-01 regression: with SYLLABUS_CHECK_CLO_DESCRIPTION=off no request with a CLO relationship carries the course description",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 60,
+      "error": null
+    },
+    {
+      "id": "VPAA-DESCRIPTION-EXCLUSION-DEFAULT",
+      "name": "[VPAA-DESCRIPTION-EXCLUSION-DEFAULT] GAP-01: with the switch unset (the default) the legacy requests are unchanged: the description is still in the shared context",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 216,
+      "error": null
+    },
+    {
+      "id": "VPAA-DESCRIPTION-EXCLUSION-V2",
+      "name": "[VPAA-DESCRIPTION-EXCLUSION-V2] GAP-01: through the shared service with Policy V2 on, NO request of the check (legacy or V2) carries the description with a CLO relationship",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 119,
+      "error": null
+    },
+    {
+      "id": "VPAA-DESCRIPTION-EXCLUSION-REUSE",
+      "name": "[VPAA-DESCRIPTION-EXCLUSION-REUSE] GAP-01: with the switch on, editing only the description does not re-ask a CLO relationship, but does re-ask what the description is evidence for",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 90,
+      "error": null
+    },
+    {
+      "id": "VPAA-INSUFFICIENT-JUNK",
+      "name": "[VPAA-INSUFFICIENT-JUNK] whitespace-only and empty-markup text (empty bullet, empty bold) counts as missing evidence in every lesson field",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 868,
+      "error": null
+    },
+    {
+      "id": "VPAA-LEGACY-PARITY",
+      "name": "[VPAA-LEGACY-PARITY] with Stage B and C3 on, the production hybrid path judges each relationship the same way as Policy V2 for the same scripted answer",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 614,
+      "error": null
+    },
+    {
+      "id": "VPAA-CONTENT-FIRST",
+      "name": "[VPAA-CONTENT-FIRST] authoring order Course Content → ILO → Activities → Assessment is enforced for new lesson rows only",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 4,
+      "error": null
+    },
+    {
+      "id": "VPAA-PRESENCE-CONTRACT",
+      "name": "[VPAA-PRESENCE-CONTRACT] the documented presence rule: unmatched markers are literal content; an empty bullet or empty bold is not",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 0,
+      "error": null
+    },
+    {
+      "id": "VPAA-PRESENCE-INVISIBLE",
+      "name": "[VPAA-PRESENCE-INVISIBLE] DEF-01 regression: text made only of zero-width or other invisible characters counts as missing",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 0,
+      "error": null
+    },
+    {
+      "id": "VPAA-PRESENCE-INVISIBLE-RULES",
+      "name": "[VPAA-PRESENCE-INVISIBLE-RULES] DEF-01 regression: an invisible-only field is flagged by the scored presence rules and never reaches the model",
+      "file": "relationships.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 69,
+      "error": null
+    },
+    {
+      "id": "VPAA-SEC-INDEX",
+      "name": "[VPAA-SEC-INDEX] server/index.js has no secret literal: the session secret comes only from the shared resolver, which runs before the database pool exists",
+      "file": "security.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 2,
+      "error": null
+    },
+    {
+      "id": "VPAA-SEC-NO-FALLBACKS",
+      "name": "[VPAA-SEC-NO-FALLBACKS] no server source falls back to a public constant for a secret, and the former constants appear only in the refusal list",
+      "file": "security.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 81,
+      "error": null
+    },
+    {
+      "id": "VPAA-SEC-FAIL-CLOSED",
+      "name": "[VPAA-SEC-FAIL-CLOSED] the real server REFUSES to start in staging and production without acceptable secrets, before touching a database, and never prints what was configured",
+      "file": "security.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 11575,
+      "error": null
+    },
+    {
+      "id": "VPAA-SEC-READINESS-NO-LEAK",
+      "name": "[VPAA-SEC-READINESS-NO-LEAK] the credential report and the Policy V2 preflight never print a value, a prefix or a fragment of any secret",
+      "file": "security.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1773,
+      "error": null
+    },
+    {
+      "id": "VPAA-SEC-CREDENTIAL-REPORT",
+      "name": "[VPAA-SEC-CREDENTIAL-REPORT] the credential report flags reuse, weak and missing secrets and exits non-zero until they are fixed",
+      "file": "security.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 2359,
+      "error": null
+    },
+    {
+      "id": "VPAA-SEC-HYGIENE",
+      "name": "[VPAA-SEC-HYGIENE] the environment files are git-ignored and untracked, and no real-looking provider key is committed",
+      "file": "security.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 780,
+      "error": null
+    },
+    {
+      "id": "VPAA-SEC-TOKEN-RULE",
+      "name": "[VPAA-SEC-TOKEN-RULE] the verification-token secret follows the same rule as the session secret",
+      "file": "security.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 42,
+      "error": null
+    },
+    {
+      "id": "VPAA-STG-DOC-CONFIG",
+      "name": "[VPAA-STG-DOC-CONFIG] the documented staging configuration is complete, uses no real secret, and the read-only preflight accepts it",
+      "file": "staging-config.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 121,
+      "error": null
+    },
+    {
+      "id": "VPAA-STG-MODEL",
+      "name": "[VPAA-STG-MODEL] Claude Sonnet 5.5: verified model, adaptive thinking at high effort, documented defaults, and the approved-model gate",
+      "file": "staging-config.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-STG-LIMITS",
+      "name": "[VPAA-STG-LIMITS] request, token and cost limits: the defaults, the documented values, and what each does when it is reached",
+      "file": "staging-config.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1004,
+      "error": null
+    },
+    {
+      "id": "VPAA-STG-RETRY",
+      "name": "[VPAA-STG-RETRY] retry behavior, measured: which failures are retried, how many requests a failing provider costs, and that every attempt counts against the request cap",
+      "file": "staging-config.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1056,
+      "error": null
+    },
+    {
+      "id": "VPAA-STG-PROVIDER-FAILURE",
+      "name": "[VPAA-STG-PROVIDER-FAILURE] a provider refusal reports an incomplete check, starts a cooldown, and the next check sends nothing",
+      "file": "staging-config.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 73,
+      "error": null
+    },
+    {
+      "id": "VPAA-STG-ROLLBACK",
+      "name": "[VPAA-STG-ROLLBACK] switching Policy V2 off (and restarting) restores the legacy behavior, and reports saved while it was on stay readable",
+      "file": "staging-config.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 131,
+      "error": null
+    },
+    {
+      "id": "VPAA-STG-DOC-NUMBERS",
+      "name": "[VPAA-STG-DOC-NUMBERS] the request counts the document states for the synthetic sample are the measured ones",
+      "file": "staging-config.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 67,
+      "error": null
+    },
+    {
+      "id": "VPAA-STG-REHEARSAL-SEVEN",
+      "name": "[VPAA-STG-REHEARSAL-SEVEN] under the staging configuration all seven relationships are evaluated, with correct identifiers, context and recommendations, inside the limits",
+      "file": "staging-rehearsal.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 631,
+      "error": null
+    },
+    {
+      "id": "VPAA-STG-REHEARSAL-PARITY",
+      "name": "[VPAA-STG-REHEARSAL-PARITY] the official result under the staging configuration is identical with Policy V2 on and off",
+      "file": "staging-rehearsal.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 138,
+      "error": null
+    },
+    {
+      "id": "VPAA-STG-REHEARSAL-PERSISTENCE",
+      "name": "[VPAA-STG-REHEARSAL-PERSISTENCE] the report is saved, read back whole, goes stale when the syllabus changes, and survives a rollback",
+      "file": "staging-rehearsal.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 93,
+      "error": null
+    },
+    {
+      "id": "VPAA-STG-REHEARSAL-OFFLINE",
+      "name": "[VPAA-STG-REHEARSAL-OFFLINE] with the AI unavailable the staging configuration reports an incomplete check, keeps the coded checks, and issues no official score",
+      "file": "staging-rehearsal.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 252,
+      "error": null
+    },
+    {
+      "id": "VPAA-STG-REHEARSAL-AUTHORIZATION",
+      "name": "[VPAA-STG-REHEARSAL-AUTHORIZATION] Check & Improve and recommendation actions: only the author acts, an unverified or forged recommendation is never recorded, the administrator reads",
+      "file": "staging-rehearsal.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 244,
+      "error": null
+    },
+    {
+      "id": "VPAA-STG-REHEARSAL-NO-LIVE-CALL",
+      "name": "[VPAA-STG-REHEARSAL-NO-LIVE-CALL] the rehearsal cannot reach the network: any real call is blocked and the staging environment carries only stand-in credentials",
+      "file": "staging-rehearsal.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-V2-SEVEN",
+      "name": "[VPAA-V2-SEVEN] Policy V2 evaluates exactly the seven VPAA relationships, with the right fields and identifiers, and no CLO ↔ Course Description",
+      "file": "v2-primary.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 572,
+      "error": null
+    },
+    {
+      "id": "VPAA-V2-PERSISTENCE",
+      "name": "[VPAA-V2-PERSISTENCE] a Policy V2 report is saved with the check and read back whole, with its relationships, suggestions and coverage",
+      "file": "v2-primary.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 150,
+      "error": null
+    },
+    {
+      "id": "VPAA-V2-NO-DUPLICATES",
+      "name": "[VPAA-V2-NO-DUPLICATES] with several checking stages available, no relationship is evaluated or reported twice (the two scored ones are the one documented exception)",
+      "file": "v2-primary.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 366,
+      "error": null
+    },
+    {
+      "id": "VPAA-V2-SCORE-PARITY",
+      "name": "[VPAA-V2-SCORE-PARITY] official scoring is identical with Policy V2 on and off: score, status, pass, deductions, findings, gates",
+      "file": "v2-primary.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 650,
+      "error": null
+    },
+    {
+      "id": "VPAA-V2-OFFLINE",
+      "name": "[VPAA-V2-OFFLINE] when V2 is off, or the AI is unavailable, the report says the seven-relationship check is incomplete and invents nothing",
+      "file": "v2-primary.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 182,
+      "error": null
+    },
+    {
+      "id": "VPAA-V2-COVERAGE-REPORT",
+      "name": "[VPAA-V2-COVERAGE-REPORT] the coverage the report states matches what was really evaluated, in every configuration",
+      "file": "v2-primary.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 263,
+      "error": null
+    },
+    {
+      "id": "VPAA-V2-BUDGET",
+      "name": "[VPAA-V2-BUDGET] the per-check budget bounds the legacy path and Policy V2 TOGETHER, and exhausting it is reported, not hidden",
+      "file": "v2-primary.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 135,
+      "error": null
+    },
+    {
+      "id": "VPAA-V2-GATES",
+      "name": "[VPAA-V2-GATES] the official submission gates are the same with Policy V2 on and off",
+      "file": "v2-primary.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 9,
+      "error": null
+    },
+    {
+      "id": "VPAA-V2-STAGING-CONFIG",
+      "name": "[VPAA-V2-STAGING-CONFIG] the documented staging configuration is complete, and each missing piece makes V2 report itself unavailable instead of guessing",
+      "file": "v2-primary.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 1,
+      "error": null
+    },
+    {
+      "id": "VPAA-V2-BASELINE-PARITY",
+      "name": "[VPAA-V2-BASELINE-PARITY] the official deterministic result of the six recorded real-syllabus baselines is identical to what was recorded before these changes",
+      "file": "v2-primary.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 884,
+      "error": null
+    },
+    {
+      "id": "VPAA-T5-SUBMIT-GATE",
+      "name": "[VPAA-T5-SUBMIT-GATE] the coded hard gates always stop a submit; with them clear, the gate is advisory unless AI is made mandatory",
+      "file": "workflow.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 20,
+      "error": null
+    },
+    {
+      "id": "VPAA-T5-WORKFLOW",
+      "name": "[VPAA-T5-WORKFLOW] Re-Check → saved report → what the UI reads: data, relationships, findings, score and recommendations agree",
+      "file": "workflow.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 658,
+      "error": null
+    },
+    {
+      "id": "VPAA-T5-RECOMMEND-FLOW",
+      "name": "[VPAA-T5-RECOMMEND-FLOW] Accept / Edit / Reject / Undo are recorded over HTTP, then a corrective re-check improves the score and re-asks only what changed",
+      "file": "workflow.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 291,
+      "error": null
+    },
+    {
+      "id": "VPAA-T5-STALE",
+      "name": "[VPAA-T5-STALE] a saved check goes stale when the syllabus changes afterwards, and a stale check can neither be approved nor satisfy a mandatory gate",
+      "file": "workflow.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 92,
+      "error": null
+    },
+    {
+      "id": "VPAA-T5-APPROVAL-GATES",
+      "name": "[VPAA-T5-APPROVAL-GATES] administrator approval: advisory gate needs a current check and clear hard gates; the mandatory gate also needs a completed verified AI check",
+      "file": "workflow.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 201,
+      "error": null
+    },
+    {
+      "id": "VPAA-T5-SYNTHETIC-GUARD",
+      "name": "[VPAA-T5-SYNTHETIC-GUARD] a check made against synthetic reference data never yields an official score or satisfies a mandatory gate",
+      "file": "workflow.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 75,
+      "error": null
+    },
+    {
+      "id": "VPAA-T5-STAGES-VIA-SERVICE",
+      "name": "[VPAA-T5-STAGES-VIA-SERVICE] regression for DEF-05: every Stage flag still lets the shared service complete the AI evaluation",
+      "file": "workflow.conformance.test.js",
+      "status": "PASS",
+      "todo": null,
+      "ms": 450,
+      "error": null
+    },
+    {
+      "id": "VPAA-T5-UI-SCORED",
+      "name": "[VPAA-T5-UI-SCORED] a scored run shows its score, its findings and its recommendations, and the score equals base minus the listed deductions",
+      "file": "vpaa-conformance-ui.test.jsx",
+      "status": "PASS",
+      "todo": null,
+      "ms": 91,
+      "error": null
+    },
+    {
+      "id": "VPAA-T5-UI-CLEAN",
+      "name": "[VPAA-T5-UI-CLEAN] a run with nothing to improve says so and shows no recommendations",
+      "file": "vpaa-conformance-ui.test.jsx",
+      "status": "PASS",
+      "todo": null,
+      "ms": 25,
+      "error": null
+    },
+    {
+      "id": "VPAA-T5-UI-FAILED",
+      "name": "[VPAA-T5-UI-FAILED] a run whose AI step failed shows no final score and says the AI check is incomplete, never a verified result",
+      "file": "vpaa-conformance-ui.test.jsx",
+      "status": "PASS",
+      "todo": null,
+      "ms": 25,
+      "error": null
+    },
+    {
+      "id": "VPAA-T5-UI-STALE",
+      "name": "[VPAA-T5-UI-STALE] a run whose syllabus changed afterwards is flagged out of date",
+      "file": "vpaa-conformance-ui.test.jsx",
+      "status": "PASS",
+      "todo": null,
+      "ms": 44,
+      "error": null
+    },
+    {
+      "id": "VPAA-T5-UI-V2",
+      "name": "[VPAA-T5-UI-V2] a Policy V2 report renders its academic evaluation panel without error",
+      "file": "vpaa-conformance-ui.test.jsx",
+      "status": "PASS",
+      "todo": null,
+      "ms": 54,
+      "error": null
+    },
+    {
+      "id": "VPAA-T5-UI-LANGUAGE",
+      "name": "[VPAA-T5-UI-LANGUAGE] the same stored run renders in Filipino with the same score, without leaving English chrome behind",
+      "file": "vpaa-conformance-ui.test.jsx",
+      "status": "PASS",
+      "todo": null,
+      "ms": 52,
+      "error": null
+    },
+    {
+      "id": "VPAA-V2-UI-COVERAGE",
+      "name": "[VPAA-V2-UI-COVERAGE] an incomplete seven-relationship check says so (with the reason), a complete one does not, in English and Filipino",
+      "file": "vpaa-conformance-ui.test.jsx",
+      "status": "PASS",
+      "todo": null,
+      "ms": 168,
+      "error": null
+    },
+    {
+      "id": "VPAA-V2-UI-BLANK-CLO",
+      "name": "[VPAA-V2-UI-BLANK-CLO] a CLO with no saved classification is explained, naming the CLO, in English and Filipino",
+      "file": "vpaa-conformance-ui.test.jsx",
+      "status": "PASS",
+      "todo": null,
+      "ms": 105,
+      "error": null
+    },
+    {
+      "id": "VPAA-STG-UI-FACULTY-ADMIN",
+      "name": "[VPAA-STG-UI-FACULTY-ADMIN] the staging report renders for the Faculty author (with Apply controls) and for the Administrator (read only), the same score and the same seven relationships",
+      "file": "vpaa-conformance-ui.test.jsx",
+      "status": "PASS",
+      "todo": null,
+      "ms": 96,
+      "error": null
+    },
+    {
+      "id": "VPAA-T5-UI-ROBUST",
+      "name": "[VPAA-T5-UI-ROBUST] a missing run, an empty run and a run with no AI part render without throwing",
+      "file": "vpaa-conformance-ui.test.jsx",
+      "status": "PASS",
+      "todo": null,
+      "ms": 18,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-UI-en",
+      "name": "[VPAA-COMP-UI-en] existing report shows coverage and incomplete states in the selected language",
+      "file": "vpaa-conformance-ui.test.jsx",
+      "status": "PASS",
+      "todo": null,
+      "ms": 20,
+      "error": null
+    },
+    {
+      "id": "VPAA-COMP-UI-tl",
+      "name": "[VPAA-COMP-UI-tl] existing report shows coverage and incomplete states in the selected language",
+      "file": "vpaa-conformance-ui.test.jsx",
+      "status": "PASS",
+      "todo": null,
+      "ms": 18,
+      "error": null
+    }
+  ]
+}

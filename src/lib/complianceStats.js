@@ -58,3 +58,42 @@ export function scoreBands(rows) {
   const medium = percent(scores.filter((v) => v >= 50 && v < 80).length, count);
   return { count, high, medium, low: 100 - high - medium };
 }
+
+// The administrator's Program Compliance (the dashboard): for each program, how many of its SUBJECTS have an approved syllabus, out of all the subjects
+// the program has in the catalog. An approved syllabus counts whether or not it was checked by AI. 100% means every subject of the program has one.
+//   programs  the catalog's programs ({ code, name }) — so a program with no approved syllabus, or no subject yet, still shows
+//   subjects  the catalog's subjects ({ id, program }) of the same academic year
+//   syllabi   the syllabus list ({ courseId, status, archived }); a subject counts once however many approved syllabi it has
+//   statuses  which syllabus statuses count (default: approved). A faculty member's own view counts what they have submitted:
+//             FACULTY_SUBMITTED (Submitted, Under Review, Approved; not a draft, nor one returned for revision or rejected, which must be submitted again).
+// -> [{ program, name, total, approved, percent }] (approved: the subjects that count), in the programs' own order (by code).
+export const FACULTY_SUBMITTED = Object.freeze(['submitted', 'under_review', 'approved']);
+export function programCoverage(programs, subjects, syllabi, { statuses = ['approved'] } = {}) {
+  const approvedSubjects = new Set((syllabi || []).filter((s) => s && statuses.includes(s.status) && !s.archived && s.courseId != null).map((s) => Number(s.courseId)));
+  const byProgram = new Map();
+  for (const p of programs || []) if (p && p.code) byProgram.set(p.code, { program: p.code, name: p.name || '', total: 0, approved: 0 });
+  for (const s of subjects || []) {
+    if (!s || !s.program) continue;
+    if (!byProgram.has(s.program)) byProgram.set(s.program, { program: s.program, name: '', total: 0, approved: 0 });
+    const entry = byProgram.get(s.program);
+    entry.total += 1;
+    if (approvedSubjects.has(Number(s.id))) entry.approved += 1;
+  }
+  return [...byProgram.values()].map((e) => ({ ...e, percent: percent(e.approved, e.total) })).sort((a, b) => a.program.localeCompare(b.program));
+}
+
+// The dashboard's AI Quality Snapshot: the FINAL AI check score (the coded rules' score minus the AI check's deductions, averaged over the latest check of
+// each syllabus), and the four areas after those deductions (server/lib/compliance/finalAreas.js), with the lowest one named: where the score was lost.
+//   summary  what GET /api/compliance?syllabus=all returns: { average, areas: [{ key, average (rules), final (after AI) }] }
+// -> { final, areas: [{ key, rules, score }], lowest: { key, score } | null } (lowest: only an area below 100)
+export function snapshotOf(summary) {
+  const areas = (summary && Array.isArray(summary.areas)) ? summary.areas : [];
+  const list = SNAPSHOT_AREAS.map((key) => {
+    const found = areas.find((a) => a && a.key === key) || {};
+    const rules = Number.isFinite(found.average) ? found.average : null;
+    return { key, rules, score: Number.isFinite(found.final) ? found.final : rules };
+  });
+  const scored = list.filter((a) => a.score !== null);
+  const low = scored.length ? scored.reduce((min, a) => (a.score < min.score ? a : min)) : null;
+  return { final: summary && Number.isFinite(summary.average) ? summary.average : null, areas: list, lowest: low && low.score < 100 ? { key: low.key, score: low.score } : null };
+}

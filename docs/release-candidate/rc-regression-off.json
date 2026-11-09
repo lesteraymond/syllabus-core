@@ -1,0 +1,119 @@
+{
+  "run": "regression-off",
+  "suite": "regression",
+  "mode": "off",
+  "label": "rc3h",
+  "database": "syllabus_e2e_po_1105_regression",
+  "start": "2026-11-05T18:22:23.351Z",
+  "finished": "2026-11-05T18:28:42.925Z",
+  "exit": 0,
+  "scenarios": [
+    {
+      "result": "PASS",
+      "id": "E01"
+    },
+    {
+      "result": "PASS",
+      "id": "E02"
+    },
+    {
+      "result": "PASS",
+      "id": "E03"
+    },
+    {
+      "result": "PASS",
+      "id": "E04"
+    },
+    {
+      "result": "PASS",
+      "id": "E05"
+    },
+    {
+      "result": "PASS",
+      "id": "E06"
+    },
+    {
+      "result": "PASS",
+      "id": "E07"
+    },
+    {
+      "result": "PASS",
+      "id": "E08"
+    },
+    {
+      "result": "PASS",
+      "id": "E09"
+    },
+    {
+      "result": "PASS",
+      "id": "E10"
+    },
+    {
+      "result": "PASS",
+      "id": "E11"
+    },
+    {
+      "result": "PASS",
+      "id": "E12"
+    },
+    {
+      "result": "PASS",
+      "id": "E13"
+    },
+    {
+      "result": "PASS",
+      "id": "E14"
+    },
+    {
+      "result": "PASS",
+      "id": "E15"
+    },
+    {
+      "result": "PASS",
+      "id": "E16"
+    },
+    {
+      "result": "PASS",
+      "id": "E17"
+    },
+    {
+      "result": "PASS",
+      "id": "E18"
+    },
+    {
+      "result": "PASS",
+      "id": "E19"
+    },
+    {
+      "result": "PASS",
+      "id": "E20"
+    },
+    {
+      "result": "PASS",
+      "id": "E21"
+    },
+    {
+      "result": "PASS",
+      "id": "E22"
+    },
+    {
+      "result": "PASS",
+      "id": "E23"
+    },
+    {
+      "result": "PASS",
+      "id": "E24"
+    }
+  ],
+  "failedChecks": [],
+  "migrationsExecuted": 0,
+  "flags": {
+    "SYLLABUS_CHECK_CACHE_WARMUP": "off",
+    "SYLLABUS_CHECK_OUTPUT_PLAN": "off",
+    "SYLLABUS_CHECK_OUTPUT_FIELDS": "off",
+    "SYLLABUS_CHECK_COURSE_CONTEXT": "off",
+    "SYLLABUS_CHECK_V2_GROUPING": "off",
+    "SYLLABUS_CHECK_PROMPT_TRIM": "off"
+  },
+  "log": "docs\\release-candidate\\rc-regression-off.log"
+}

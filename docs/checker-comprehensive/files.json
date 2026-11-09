@@ -1,0 +1,50 @@
+{
+  "modified": [
+    "server/lib/compliance/rules.js",
+    "server/lib/compliance/service.js",
+    "server/lib/syllabuscheck/engine.js",
+    "server/lib/syllabuscheck/gemini.js",
+    "server/lib/syllabuscheck/academicPolicyV2.js",
+    "server/lib/syllabuscheck/repository.js",
+    "server/lib/syllabuscheck/semanticCoverage.js",
+    "server/lib/syllabuscheck/verdict.js",
+    "server/lib/syllabuscheck/verdict.test.js",
+    "server/lib/syllabuscheck/quality.js",
+    "server/lib/syllabuscheck/references.js",
+    "src/views/ComplianceCard.jsx",
+    "src/i18n/hybrid.js",
+    "tests/vpaa-conformance-ui.test.jsx",
+    "scripts/vpaa-conformance-report.template.md"
+  ],
+  "added": [
+    "server/lib/syllabuscheck/checkingProfile.js",
+    "server/lib/syllabuscheck/pendingRules.js",
+    "server/lib/syllabuscheck/ruleCatalog.js",
+    "server/lib/syllabuscheck/ruleCoverage.js",
+    "server/lib/syllabuscheck/vpaa-conformance/comprehensive.conformance.test.js",
+    "src/components/RuleCoveragePanel.jsx",
+    "scripts/checker-comprehensive-audit.cjs",
+    "scripts/checker-comprehensive-report.cjs"
+  ],
+  "generated": [
+    "docs/checker-comprehensive/audit-before.json",
+    "docs/checker-comprehensive/runs.json",
+    "docs/checker-comprehensive/inventory.json",
+    "docs/checker-comprehensive/inventory.md",
+    "docs/checker-comprehensive/activation-matrix.md",
+    "docs/checker-comprehensive/test-results.json",
+    "docs/checker-comprehensive/scoring-parity.json",
+    "docs/checker-comprehensive/REPORT.md",
+    "docs/checker-comprehensive/STAGING.md",
+    "docs/checker-comprehensive/files.json"
+  ],
+  "regenerated": [
+    "docs/vpaa-conformance/coded-rules-coverage.md",
+    "docs/vpaa-conformance/REPORT.md",
+    "docs/vpaa-conformance/results.json",
+    "docs/vpaa-conformance/test-matrix.md",
+    "docs/vpaa-conformance/traceability-matrix.md"
+  ],
+  "existingUserChanges": "Preserved in place. Previous VPAA report artifacts were copied to tmp/checker-comprehensive/vpaa-before before authorized regeneration. These lists identify this task’s intentional edits, not all git status changes.",
+  "verificationLogs": "tmp/checker-comprehensive/ (baseline and current exact command logs)"
+}

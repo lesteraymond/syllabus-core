@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { hasSubject, saveOnce } from './draftSave.js';
+import { readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { hasSubject, saveOnce, sectionsOf, SECTION_KEYS } from './draftSave.js';
 
 const SECTIONS = ['meta', 'description', 'plan'];
 const refusal = () => Object.assign(new Error('You already have a syllabus for this subject (Approved).'), { status: 409, data: { code: 'syllabus_exists' } });
@@ -92,4 +95,19 @@ test('the original refusal reaches the screen even when deleting the row fails',
   const s = setup({ saveError: refusal(), removeError: new Error('offline') });
   await assert.rejects(() => run(s, { meta: { courseId: 9 }, description: [], plan: [] }), (e) => e.data && e.data.code === 'syllabus_exists');
   assert.equal(s.idRef.current, null);
+});
+
+test('sectionsOf sends only the editable sections of a stored content object (the AI Checker Accept saved the whole object and was refused with HTTP 400)', () => {
+  const stored = { schemaVersion: 3, catalog: { savedAt: 'x' }, signoff: {}, meta: { courseId: 9 }, outcomes: {}, description: [], clos: [], plan: [], reqs: [], refs: {}, grading: {} };
+  const sent = sectionsOf(stored);
+  assert.deepEqual(Object.keys(sent).sort(), [...SECTION_KEYS].sort());
+  assert.ok(!('schemaVersion' in sent) && !('catalog' in sent) && !('signoff' in sent));
+  assert.deepEqual(sectionsOf({ meta: {}, plan: [] }), { meta: {}, plan: [] }, 'sections a legacy content object lacks are not invented');
+  assert.deepEqual(sectionsOf(null), {});
+});
+
+test('the sections sectionsOf may send are exactly the ones the server accepts', () => {
+  const server = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), '../../server/routes/syllabusContent.js'), 'utf8');
+  const declared = server.split('const SECTIONS = {')[1].split('}')[0].split(',').map((x) => x.split(':')[0].trim()).filter(Boolean).sort();
+  assert.deepEqual([...SECTION_KEYS].sort(), declared);
 });

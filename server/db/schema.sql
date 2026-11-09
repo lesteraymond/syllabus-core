@@ -8,6 +8,8 @@ CREATE TABLE IF NOT EXISTS users (
   last_name VARCHAR(100) NOT NULL,
   avatar_path VARCHAR(255) NULL,
   preferred_language VARCHAR(2) NOT NULL DEFAULT 'en',
+  disabled_at DATETIME NULL DEFAULT NULL, -- set while the account is disabled (db/migrate-account-status.js)
+  disabled_by INT NULL DEFAULT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -55,6 +57,7 @@ CREATE TABLE IF NOT EXISTS courses (
   program_id INT NOT NULL,
   clos_version INT NOT NULL DEFAULT 1,
   standards_json LONGTEXT NULL,
+  curriculum_year VARCHAR(9) NULL DEFAULT NULL, -- the curriculum the subject belongs to, e.g. 2022-2023 (db/migrate-curriculum-year.js), not its academic year
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY courses_program_code (program_id, code),
   FOREIGN KEY (program_id) REFERENCES programs(program_id) ON DELETE RESTRICT
@@ -316,7 +319,7 @@ CREATE TABLE IF NOT EXISTS catalog_file_cleanup (file_path VARCHAR(500) PRIMARY 
 CREATE TABLE IF NOT EXISTS program_code_aliases (code VARCHAR(20) PRIMARY KEY, program_id INT NOT NULL, FOREIGN KEY (program_id) REFERENCES programs(program_id) ON DELETE CASCADE);
 
 -- A specialization that shares another program's authoritative Program Outcomes (e.g. BSIT-CYBERSECURITY -> BSIT). The checker reads the source
--- program's POs; the specialization keeps its own program id, code, name and curriculum. Additive: no row here means the program uses its own POs.
+-- program's POs, and the specialization keeps its own program id, code, name and curriculum. This is additive: no row here means the program uses its own POs.
 CREATE TABLE IF NOT EXISTS program_outcome_sources (program_id INT PRIMARY KEY, source_program_id INT NOT NULL, specialization VARCHAR(120) NULL, FOREIGN KEY (program_id) REFERENCES programs(program_id) ON DELETE CASCADE, FOREIGN KEY (source_program_id) REFERENCES programs(program_id) ON DELETE RESTRICT);
 
 -- Time usage: active seconds per user per day (see lib/usage.js). Written in one batch about once a minute.
@@ -407,4 +410,34 @@ CREATE TABLE IF NOT EXISTS syllabus_review_stages (
     INDEX idx_stage_syllabus (syllabus_id),
     FOREIGN KEY (syllabus_id) REFERENCES syllabi(syllabus_id) ON DELETE CASCADE,
     FOREIGN KEY (reviewer_id) REFERENCES users(user_id) ON DELETE CASCADE
+  );
+
+-- A reviewer's choice to review a submitted syllabus without an AI check, per version (lib/reviewAiChoice.js, db/review-ai-choice-ddl.js)
+CREATE TABLE IF NOT EXISTS syllabus_review_ai_choices (
+    choice_id INT AUTO_INCREMENT PRIMARY KEY,
+    syllabus_id INT NOT NULL,
+    version_id INT NOT NULL,
+    reviewer_id INT NOT NULL,
+    choice ENUM('without_ai') NOT NULL DEFAULT 'without_ai',
+    note VARCHAR(500) NULL,
+    chosen_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uniq_ai_choice_per_version (syllabus_id, version_id, reviewer_id),
+    INDEX idx_ai_choice_syllabus (syllabus_id),
+    FOREIGN KEY (syllabus_id) REFERENCES syllabi(syllabus_id) ON DELETE CASCADE,
+    FOREIGN KEY (reviewer_id) REFERENCES users(user_id) ON DELETE CASCADE
+  );
+
+-- The account's own activity for Recent Activity: sign-in/out, password, name, photo, language, drafts, edits, deletions (lib/accountActivity.js, db/account-activity-ddl.js)
+CREATE TABLE IF NOT EXISTS account_activity (
+    activity_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    action VARCHAR(30) NOT NULL,
+    syllabus_id INT NULL,
+    subject VARCHAR(300) NULL,
+    notes VARCHAR(500) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_account_activity_user (user_id, created_at),
+    INDEX idx_account_activity_edit (user_id, syllabus_id, action, created_at),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (syllabus_id) REFERENCES syllabi(syllabus_id) ON DELETE SET NULL
   );

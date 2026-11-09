@@ -8,7 +8,7 @@ import ComplianceSection from './ComplianceSection';
 
 // Step 7: Review & Check. The compliance controls and a read-only rendering of the finished form.
 // `submitFailed` are the rules the server named when it refused a submit.
-export default function ReviewStep({ d, model, go, preparedBy, editable, noteRequired, note = '', setNote, syllabusId, saveFirst, canCheck, submitFailed, onRun, onApplyDraft, showCompliance = false }) {
+export default function ReviewStep({ d, model, go, preparedBy, editable, noteRequired, note = '', setNote, syllabusId, saveFirst, canCheck, submitFailed, onRun, onApplyDraft, showCompliance = false, syllabusYear }) {
   const openStep = (key) => go(STEPS.findIndex((s) => s.key === key));
   const needNote = noteRequired && note.trim().length < MIN_NOTE;
   return (
@@ -19,7 +19,7 @@ export default function ReviewStep({ d, model, go, preparedBy, editable, noteReq
         <ul>{submitFailed.map((c) => <li key={c.id}>{tr(c.message)}</li>)}</ul>
       </div>
     )}
-    {showCompliance ? <ComplianceSection syllabusId={syllabusId} saveFirst={saveFirst} canCheck={canCheck} onOpenStep={openStep} onRun={onRun} onApplyDraft={onApplyDraft} /> : <div className="info-banner" role="note">{translateUI('publication.checkInTab')}</div>}
+    {showCompliance ? <ComplianceSection syllabusId={syllabusId} saveFirst={saveFirst} canCheck={canCheck} onOpenStep={openStep} onRun={onRun} onApplyDraft={onApplyDraft} syllabusYear={syllabusYear} /> : <div className="info-banner" role="note">{translateUI('publication.checkInTab')}</div>}
     {noteRequired && editable && (
       <label className="field" style={{ marginBottom: 14 }}>
         <span>{translateUI("ui.what_did_you_change_required_c57040")}</span>

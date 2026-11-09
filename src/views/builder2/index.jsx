@@ -1,11 +1,12 @@
 import StableButton from '../../components/StableButton';
+import { useInactiveYear } from '../../components/InactiveYearNotice';
 import { tr } from "../../i18n/index.js";
 import { t as translateUI } from "../../i18n/index.js";
 import { useEffect, useRef, useState } from 'react';
 import { LockSimple } from '@phosphor-icons/react/dist/csr/LockSimple';
 import { PageHead } from '../../components/ui';
 import { compliance as complianceApi, courses as coursesApi, syllabi as syllabiApi, users as usersApi } from '../../lib/api';
-import { STEPS, applyCourse, clearCourse } from '../../lib/syllabusModel';
+import { STEPS, applyCourse, clearCourse, poReviewPending, withStandards } from '../../lib/syllabusModel';
 import { CURRENT_SCHOOL_YEAR } from '../../lib/schoolYear';
 import { ASSIGNMENT_MESSAGES, STATUS_LABELS, assignmentState, editBlockedReason, isReturned, noteMissing } from '../../lib/syllabusRules';
 import InfoStep from './InfoStep';
@@ -23,6 +24,7 @@ import { prefersReducedMotion } from './parts';
 import { warningCount } from '../../lib/complianceView';
 import { canSubmitHybrid, applySuggestion } from '../../lib/hybridCheck';
 import { useAiGate } from '../../lib/checkPolicy';
+import { useAdminPolicy, stepsGated } from '../../lib/adminPolicy';
 
 // The step list: key, title, component, validate. The shell below only iterates this.
 const BODIES = { info: InfoStep, clos: ClosStep, plan: PlanStep, reqs: ReqStep, refs: RefsStep, grade: GradeStep, review: ReviewStep };
@@ -35,12 +37,13 @@ const STEP_CONFIG = STEPS.map((s) => ({
 // The new syllabus builder: same shell as the current one (course strip, stepper, "Step N of 7" card, auto-save status),
 // driven by the rules in src/lib/syllabusModel.js. It is used when VITE_NEW_BUILDER=true; until then the previous builder is the default.
 export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSubmitted, onOpenChecker }) {
-  const { draft, apply, set, setAndSave, save, saveNow, load, syllabusId } = useDraft(editing);
+  const { draft, apply, set, setAndSave, save, saveNow, reload, load, syllabusId } = useDraft(editing);
   const importBase = useRef(null);
   const importIdentity = useRef(null);
+  const inactiveYear = useInactiveYear(load.academicYear); // another academic year: no new AI check (lib/activeYearGate.js)
   // Locked syllabi retain their submitted catalog. Step 2's syllabus-owned values always take precedence in the model.
   const frozen = !!draft && !load.loading && !load.editable && !!draft.catalog;
-  const { model, programList, loading: catalogLoading, error: catalogError, refresh: refreshCatalog, resolvedProgramCode } = useCatalog(draft ? draft.meta.program : '', { snapshot: frozen ? draft.catalog : null, live: !frozen, courseId: draft?.meta.courseId });
+  const { model, programList, loading: catalogLoading, error: catalogError, refresh: refreshCatalog, resolvedProgramCode } = useCatalog(draft ? draft.meta.program : '', { snapshot: frozen ? draft.catalog : null, live: !frozen, courseId: draft?.meta.courseId, year: load.academicYear || undefined });
   useEffect(() => {
     if (load.editable && !frozen && resolvedProgramCode && draft?.meta.program !== resolvedProgramCode) {
       apply(current => ({ ...current, meta: { ...current.meta, program: resolvedProgramCode } }));
@@ -58,6 +61,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
   // 'form' (the seven steps) or 'upload' (review a PDF import). Switching modes
   // preserves the draft; only explicit import confirmation replaces sections.
   const aiGate = useAiGate(); // who has the final say: 'advisory' (the person decides) or 'required' (a completed AI check too)
+  const policy = useAdminPolicy(); // the administrator's "Strict format validation" switch decides whether faculty complete the steps in order
   const [mode, setMode] = useState('form');
   // The rules the server named when it refused a submit (the form does not follow the template).
   const [submitFailed, setSubmitFailed] = useState([]);
@@ -88,9 +92,28 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
   useEffect(() => {
     if (!program) { setCourseList([]); return undefined; }
     let live = true;
-    coursesApi.list(program, { except: syllabusId() }).then((l) => { if (live) setCourseList(l); }).catch(() => { if (live) setCourseList([]); });
+    coursesApi.list(program, { except: syllabusId() }, load.academicYear || undefined).then((l) => { if (live) setCourseList(l); }).catch(() => { if (live) setCourseList([]); });
     return () => { live = false; };
-  }, [program, courseTick]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [program, courseTick, load.academicYear]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // The vision, mission, EGAs and POs the administrator set on the subject are locked for everyone but an administrator: read from the catalog, shown filled in Step 2,
+  // and kept equal to the catalog in a draft that was started before (the server forces them on every save as well).
+  const subjectId = draft ? draft.meta.courseId : null;
+  const [subjectStandards, setSubjectStandards] = useState(null);
+  const termLocked = !!user && user.role !== 'admin' && load.editable; // faculty never type the subject's term or standards: the administrator owns them
+  const standardsLocked = termLocked;
+  useEffect(() => {
+    if (!subjectId || !user || user.role === 'admin' || !load.editable) { setSubjectStandards(null); return undefined; }
+    let live = true;
+    coursesApi.get(subjectId).then((c) => { if (live) setSubjectStandards(c.standards || null); }).catch(() => { if (live) setSubjectStandards(null); });
+    return () => { live = false; };
+  }, [subjectId, load.editable, courseTick]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (!standardsLocked || !draft || !draft.outcomes) return;
+    if (withStandards(draft, subjectStandards) !== draft) apply((x) => withStandards(x, subjectStandards));
+  }, [standardsLocked, subjectStandards, draft]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const poReview = standardsLocked && !!draft && poReviewPending(draft, subjectStandards) ? { syllabusId: syllabusId(), flush: saveNow, onAdopted: () => { notify(translateUI('poReview.adopted')); reload(); } } : null;
 
   // Step 2 belongs to this draft. Catalog refreshes must never replace the author's edits.
 
@@ -108,9 +131,12 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
   if (load.loading || catalogLoading) return <div className="empty">{translateUI("ui.loading_the_syllabus_builder_e89b32")}</div>;
   if (load.error || catalogError) return <div className="info-banner warning">{translateUI("ui.could_not_open_the_builder_7169ab")}{tr(load.error || catalogError)}</div>;
 
-  // Gating: faculty and administrators cannot move forward while a step has a BLOCKING problem (an empty required field, or data an
-  // administrator has not added). Going back is always allowed, and a read-only syllabus is never gated.
-  const gated = load.editable && !!user && user.role === 'faculty';
+  // Gating: while "Strict format validation" is on (Settings > AI & Notifications), faculty cannot move forward while a step has a BLOCKING problem
+  // (an empty required field, or data an administrator has not added). While it is off they open any step, and what is missing is still listed.
+  // Submitting needs every step complete either way (the Submit button below, and the server). Going back is always allowed, the administrator
+  // is never gated, and neither is a read-only syllabus.
+  const faculty = load.editable && !!user && user.role === 'faculty';
+  const gated = stepsGated({ editable: load.editable, role: user?.role, strict: policy.strictValidation });
   const isAdmin = user?.role === 'admin';
   const titleOf = item => item.key === 'review' ? translateUI('publication.reviewSyllabus') : tr(item.title);
   const { statuses, complete, firstBlocked: blockedStep } = model.stepStatuses(draft, visited, { sequential: gated });
@@ -236,6 +262,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
       importBase.current = null;
       try {
         // Explicit Apply and AI CHECK action: use the existing endpoint and lock.
+        if (inactiveYear) throw new Error(translateUI('hybrid.inactiveYearTitle')); // the import is saved; the check is not available for this academic year
         const result = await complianceApi.recheck(syllabusId(), true);
         if (!result.run) throw new Error(translateUI('pdfImport.failed'));
         setLastRun({ ...result.run, draftSignature: JSON.stringify(mapped.content) });
@@ -267,7 +294,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
   const warnings = warningCount(lastRun); // warnings the author would be submitting with: they never block, so this offers "Submit anyway"
   const Body = cfg.component;
   const issues = cfg.validate(draft, model);
-  const blocking = gated ? issues.filter((i) => i.blocking) : [];
+  const blocking = faculty ? issues.filter((i) => i.blocking) : []; // listed for faculty either way; they hold the Next button only while gated
   const advice = issues.filter((i) => !i.blocking);
   const mine_ = blocking.filter((i) => i.source === 'form');
   const theirs = blocking.filter((i) => i.source === 'admin'); // set up by an administrator: faculty can only wait for it
@@ -326,13 +353,22 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
             </div>
             <span className={'autosave' + (save.state === 'error' ? ' error' : save.state === 'saved' ? '' : ' saving')} role="status">{tr(saveText)}{save.state === 'error' && <button type="button" className="link" onClick={saveNow}>{translateUI("ui.retry_9f5cd8")}</button>}</span>
           </div>
+          {save.state === 'error' && (save.code === 'revision_conflict' || save.code === 'revision_required') && <div className="info-banner warning" role="alert" data-testid="revision-conflict">
+            <strong>{translateUI(save.code === 'revision_required' ? 'conflict.requiredTitle' : 'conflict.title')}</strong>
+            <p>{translateUI(save.code === 'revision_required' ? 'conflict.requiredBody' : 'conflict.body')}{Array.isArray(save.sections) && save.sections.length > 0 && ' ' + translateUI('conflict.sections', { sections: save.sections.join(', ') })}</p>
+            <p>{translateUI('conflict.loadNote')}</p>
+            <button type="button" className="btn outline" onClick={reload}>{translateUI('conflict.load')}</button>
+          </div>}
+          {poReview && cfg.key !== 'clos' && <div className="info-banner warning" role="status">{translateUI('poReview.status')}</div>}
+          {faculty && policy.loaded && !gated && <div className="step-hint advice" role="note" data-testid="free-steps-note">{translateUI('policy.freeSteps')}</div>}
+          {cfg.key === 'review' && policy.loaded && !policy.aiChecking && <div className="ai-note" role="note" data-testid="ai-off-note">{translateUI('policy.aiOff')}</div>}
           <fieldset disabled={!editable || busy}>
-            <Body d={draft} apply={apply} editable={editable} model={model} programList={programList} courseList={courseList} onChooseCourse={onChooseCourse} onChooseProgram={onChooseProgram} filter={filter} setFilter={setFilter} onDeleteRow={onDeleteRow} go={go} preparedBy={preparedBy} existing={existing} noteRequired={revising} note={note} setNote={setNote} syllabusId={syllabusId} saveFirst={saveFirst} showCompliance={false} canCheck={!!user && user.role === 'faculty' && !noAccess} submitFailed={submitFailed} onRun={receiveRun} onApplyDraft={editable ? applyDraftRecommendation : undefined} />
+            <Body d={draft} apply={apply} editable={editable} poReview={poReview} syllabusYear={load.academicYear} model={model} programList={programList} courseList={courseList} onChooseCourse={onChooseCourse} onChooseProgram={onChooseProgram} filter={filter} setFilter={setFilter} onDeleteRow={onDeleteRow} lockStandards={standardsLocked} lockTerm={termLocked} go={go} preparedBy={preparedBy} existing={existing} noteRequired={revising} note={note} setNote={setNote} syllabusId={syllabusId} saveFirst={saveFirst} showCompliance={false} canCheck={!!user && user.role === 'faculty' && !noAccess} submitFailed={submitFailed} onRun={receiveRun} onApplyDraft={editable ? applyDraftRecommendation : undefined} />
           </fieldset>
           {!nxt && !complete && <div className="step-hint" role="status">{translateUI("ui.finish_the_steps_marked_in_the_list_review_check_the_compliance_c_31bb82")}{existing ? translateUI("ui.saving_a_new_version_a8d794") : translateUI("ui.submitting_8ee0db")}{translateUI("ui.unlock_once_steps_1_to_6_are_complete_f983eb")}</div>}
           {step < 6 && mine_.length > 0 && (
             <div className="blockers" role="status">
-              <b>{translateUI("ui.to_continue_3819bf")}</b>
+              <b>{gated ? translateUI("ui.to_continue_3819bf") : translateUI('policy.completeBeforeSubmit')}</b>
               <ul>{mine_.map((x, k) => <li key={k}>{tr(x.text)}</li>)}</ul>
             </div>
           )}
@@ -348,7 +384,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
           <div className="editor-footer">
             {prv && <StableButton type="button" className="btn outline" onClick={() => go(step - 1)}>{'← ' + titleOf(prv)}</StableButton>}
             <div>
-              {nxt && <StableButton type="button" className="btn primary" disabled={blocking.length > 0} title={blocking.length ? translateUI("ui.complete_this_step_to_continue_71b565") : undefined} onClick={() => go(step + 1)}>{translateUI("ui.next_94377f") + titleOf(nxt) + ' →'}</StableButton>}
+              {nxt && <StableButton type="button" className="btn primary" disabled={gated && blocking.length > 0} title={gated && blocking.length ? translateUI("ui.complete_this_step_to_continue_71b565") : undefined} onClick={() => go(step + 1)}>{translateUI("ui.next_94377f") + titleOf(nxt) + ' →'}</StableButton>}
               {!nxt && isAdmin && (
                 <StableButton type="button" className="btn primary" disabled={busy || !editable || !draft.meta.courseId || !complete} onClick={openChecker}>{translateUI('publication.continueToCheck')}</StableButton>
               )}

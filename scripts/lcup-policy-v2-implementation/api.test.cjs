@@ -8,7 +8,7 @@ const {fixture,replay,POLICY}=require('./fixtures.cjs');
 const priorFetch=globalThis.fetch;
 async function withServer(t,{enabled=false,user=5}={},fn){
  const f=fixture();f.masters.fingerprint='synthetic-master-context';const data=replay(f.content,f.masters);const queries=[];
- const app=express();app.use(express.json());app.locals.db={query:async(sql,args)=>{queries.push(sql);if(sql==='SELECT user_id FROM users WHERE user_id = ?')return [[{user_id:user}]];if(sql==='SELECT * FROM syllabi WHERE syllabus_id = ?')return [[{syllabus_id:1,user_id:5,status:'draft',content:JSON.stringify(f.content)}]];throw Error('Unexpected SQL in readonly preview: '+sql);}};
+ const app=express();app.use(express.json());app.locals.db={query:async(sql,args)=>{queries.push(sql);if(sql.startsWith('SELECT user_id FROM users WHERE user_id = ?'))return [[{user_id:user}]];if(sql==='SELECT * FROM syllabi WHERE syllabus_id = ?')return [[{syllabus_id:1,user_id:5,status:'draft',content:JSON.stringify(f.content)}]];throw Error('Unexpected SQL in readonly preview: '+sql);}};
  t.mock.method(repo,'mastersFor',async()=>f.masters);
  t.mock.method(repo,'reusableJudgements',async()=>{throw Error('V2 must not reuse legacy academic judgments');});
  t.mock.method(repo,'correctionHistory',async()=>{throw Error('V2 must not reinterpret legacy correction history');});
@@ -18,7 +18,7 @@ async function withServer(t,{enabled=false,user=5}={},fn){
  try{await fn({app,base:`http://127.0.0.1:${server.address().port}`,f,queries});}finally{await new Promise(resolve=>server.close(resolve));}
 }
 test('production preview route is inactive and cannot be enabled by request fields or stage names',t=>withServer(t,{},async({base,queries})=>{
- const response=await priorFetch(base+'/syllabus-check/syllabi/1/academic-v2-preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({academicPolicy:POLICY.id,SYLLABUS_CHECK_STAGE_C3:'on',activate:true})});assert.equal(response.status,404);assert.deepEqual(queries,['SELECT user_id FROM users WHERE user_id = ?']);
+ const response=await priorFetch(base+'/syllabus-check/syllabi/1/academic-v2-preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({academicPolicy:POLICY.id,SYLLABUS_CHECK_STAGE_C3:'on',activate:true})});assert.equal(response.status,404);assert.deepEqual(queries,['SELECT user_id FROM users WHERE user_id = ? AND disabled_at IS NULL']);
 }));
 test('isolated Re-Check API → shared service → versioned JSON is readonly and preserves dual axes',t=>withServer(t,{enabled:true},async({base,queries})=>{
  const response=await priorFetch(base+'/syllabus-check/syllabi/1/academic-v2-preview',{method:'POST'});assert.equal(response.status,200);const report=await response.json();assert.equal(report.evaluationPolicy.id,POLICY.id);assert.equal(report.compliance.score,100);assert.equal(report.academic.disposition,'SUPPORTED_BY_SUPPLIED_EVIDENCE');assert.equal(report.score,null);assert.ok(queries.every(q=>q.startsWith('SELECT')));

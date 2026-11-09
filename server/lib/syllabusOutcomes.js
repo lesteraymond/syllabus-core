@@ -1,7 +1,7 @@
 // Syllabus-owned learning outcomes. Legacy catalog data is copied only on first edit.
 const { httpError } = require('./http');
 const { LEVELS } = require('./courses');
-const { assertContentBasis } = require('./programPoReferences');
+const { assertContentBasis, hasPoMappings, sameBasis } = require('./programPoReferences');
 const { hasContent } = require('../../shared/contentPresence.cjs');
 const blankOutcomes = () => ({ vision: '', mission: { lead: '', items: [] }, egas: [], pos: [] });
 function outcomesFrom(content, course) {
@@ -49,4 +49,26 @@ function validateOutcomes(outcomes, clos, plan = [], { complete = false } = {}) 
     throw httpError(409, 'Complete Vision, Mission, EGA, PO and CLO in step 2 before submitting.');
   }
 }
-module.exports = { blankOutcomes, outcomesFrom, validateOutcomes };
+// The vision, mission, EGAs and program outcomes an administrator set on a subject are the subject's own constants: a faculty member's syllabus takes them as they are and
+// cannot change them (the CLOs and their mapping to the EGAs and POs stay the author's). True once the administrator has set anything.
+const standardsAreSet = (standards) => !!standards && (hasContent(standards.vision) || hasContent(standards.mission?.lead) || (standards.mission?.items || []).some(hasContent) || (standards.egas || []).length > 0 || (standards.pos || []).length > 0);
+// A syllabus with CLO-PO mappings keeps the PO statements it was mapped against until its author reviews and adopts the changed ones (POST /syllabi/:id/po-review/adopt). `stored` is the content read
+// from the database under the save's row lock, never the request. A draft with no mappings has nothing to review, and takes the subject's POs as it always has.
+function poReviewPending(stored, standards) {
+  const pos = stored?.outcomes?.pos, next = standards?.pos;
+  return Array.isArray(pos) && pos.length > 0 && Array.isArray(next) && next.length > 0 && hasPoMappings(stored) && !sameBasis(pos, next);
+}
+function forceStandards(outcomes, standards, stored = null) {
+  // decided and copied first: on a partial save `outcomes` IS the stored object
+  const kept = poReviewPending(stored, standards) ? JSON.parse(JSON.stringify(stored.outcomes)) : null;
+  const own = JSON.parse(JSON.stringify({ vision: standards.vision || '', mission: { lead: standards.mission?.lead || '', items: standards.mission?.items || [] }, egas: standards.egas || [], pos: standards.pos || [] }));
+  outcomes.vision = own.vision; outcomes.mission = own.mission; outcomes.egas = own.egas; outcomes.pos = own.pos;
+  if (standards.poReference) outcomes.poReference = JSON.parse(JSON.stringify(standards.poReference));
+  if (kept) { // the stored statements stay; so does the EGA list if they still point at an EGA the subject no longer has
+    outcomes.pos = kept.pos;
+    if (kept.pos.some((p) => (p.egas || []).some((n) => !outcomes.egas.some((e) => e.no === n)))) outcomes.egas = kept.egas;
+    if (kept.poReference) outcomes.poReference = kept.poReference; else delete outcomes.poReference;
+  }
+  return outcomes;
+}
+module.exports = { blankOutcomes, outcomesFrom, validateOutcomes, standardsAreSet, forceStandards, poReviewPending };

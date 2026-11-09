@@ -4,12 +4,17 @@ const path = require('path');
 const fs = require('fs');
 const { requireAuth } = require('../middleware/auth');
 const { avatarUrlFor } = require('../lib/avatar');
-const { createNotification } = require('../lib/notify');
+const { createNotification, notifyRoles } = require('../lib/notify');
+const accountActivity = require('../lib/accountActivity'); // a deleted syllabus stays in its deleter's Recent Activity (best effort)
+const decisionEmail = require('../lib/decisionEmail'); // the faculty member's email about a decision on their syllabus
 const rules = require('../lib/syllabusRules');
 const assignments = require('../lib/assignments');
 const { validateReason, typeForStatus, MAX_LENGTH } = require('../lib/reviewComments');
+const { syllabusRefused } = require('../lib/approvedRecords');
+const { assertValidSubject } = require('../lib/subjectValidation');
 const compliance = require('../lib/compliance/service');
 const reviewStages = require('../lib/reviewStages');
+const { resolveYear, yearClause } = require('../lib/academicYear');
 const { changedSections, describeChanges } = require('../lib/versionChange');
 const router = express.Router();
 
@@ -46,7 +51,9 @@ const onePdf = (req, res, next) => upload.single('file')(req, res, (err) => {
 // A submission goes to the AI Checker first and is decided in Review & Approval only after the administrator has checked it there. These
 // are the decisions that wait for that check (submitting, and moving to "under review", do not).
 const DECISIONS = ['approved', 'for_revision', 'rejected'];
-const CHECK_FIRST = 'Check this syllabus in the AI Checker before you decide on it.';
+const FINAL_DECISIONS = ['approved', 'rejected']; // the VPAA's alone (lib/syllabusRules.js canSetStatus)
+const CHECK_FIRST = 'Check this syllabus in the AI Checker before you decide on it, or choose to review it without an AI check.';
+const reviewAiChoice = require('../lib/reviewAiChoice');
 
 router.get('/', requireAuth, async (req, res) => {
   try {
@@ -68,6 +75,12 @@ router.get('/', requireAuth, async (req, res) => {
     // Repository reads are approved-only; the default list still powers the workflow tabs.
     if (req.query.scope === 'repository') query += " AND s.status = 'approved'";
 
+    // The academic year the screen asks for (?year=2026–2027, or all). With no year it is the current one, so a new academic year starts empty; a person who is not an
+    // administrator may ask only for the current and the previous year (403 otherwise). Syllabi of an older year stay stored.
+    const scope = await resolveYear(db, req.session.user, req.query.year);
+    const inYear = yearClause(scope);
+    query += inYear.sql; params.push(...inYear.params);
+
     query += ' ORDER BY s.uploaded_at DESC';
     const [rows] = await db.query(query, params);
 
@@ -78,19 +91,26 @@ router.get('/', requireAuth, async (req, res) => {
     const myStage = require('../lib/roles').stageOf(me);
     let states = new Map();
     let stages = new Map();
+    let withoutAi = new Set(); // this reviewer's own choices to review without an AI check ('syllabusId:versionId', lib/reviewAiChoice.js)
     if (rows.length) {
       const ids = rows.map((r) => r.syllabus_id);
       if (reviewer) try { if (await compliance.isInstalled(db)) states = await compliance.adminCheckStates(db, ids); } catch { states = new Map(); }
+      if (reviewer && reviewAiChoice.allowed()) try { withoutAi = await reviewAiChoice.choicesOf(db, ids, me.id); } catch { withoutAi = new Set(); }
       try { stages = await reviewStages.stagesOf(db, ids); } catch { stages = new Map(); }
     }
     const stageFlags = (st) => ({ dean: st.dean.cleared, asst_vpaa: st.asst_vpaa.cleared, lic_director: st.lic_director.cleared });
 
-    res.json(rows.map(r => ({
+    // The VPAA sees a syllabus once the dean, the Asst. VPAA and the LIC Director have cleared its newest version, or once it is approved (lib/reviewStages.js)
+    // and a syllabus the dean wrote reaches the other reviewers only once the dean sends it for review (lib/reviewStages.js hiddenFromReviewers)
+    const notSent = reviewer ? await reviewStages.hiddenFromReviewers(db, rows, me.id, stages) : new Set();
+    const visible = (require('../lib/roles').isApprover(me) ? rows.filter((r) => reviewStages.readyForApprover(r.status, stages.get(r.syllabus_id))) : rows).filter((r) => !notSent.has(r.syllabus_id));
+    res.json(visible.map(r => ({
       id: r.syllabus_id,
       userId: r.user_id,
       curriculumId: r.curriculum_id,
       courseId: r.course_id,
       archived: !!r.archived_at,
+      academicYear: r.academic_year || null,
       filePath: r.file_path,
       title: r.title,
       courseCode: r.course_code,
@@ -104,14 +124,15 @@ router.get('/', requireAuth, async (req, res) => {
       program: r.program_name || '',
       programCode: r.program_code || '', // the catalog program of the subject (the field above comes from the old curriculum)
       courseTitle: r.course_title || '',
-      ...(reviewer ? { awaitingAiCheck: !!(states.get(r.syllabus_id) && states.get(r.syllabus_id).checkable && !states.get(r.syllabus_id).checked) } : {}),
+      // awaitingAiCheck is this reviewer's own answer: not checked with AI on the newest version, and they did not choose to review it without an AI check
+      ...(reviewer ? (() => { const st = states.get(r.syllabus_id); const chose = !!(st && withoutAi.has(r.syllabus_id + ':' + st.versionId)); return { awaitingAiCheck: !!(st && st.checkable && !st.checked && !chose), ...(chose && !st.checked ? { reviewedWithoutAi: true } : {}) }; })() : {}),
       // The review chain: a reviewer sees every stage with who cleared it; the owner sees only which stages are cleared.
       ...(stages.get(r.syllabus_id) && r.status !== 'draft' ? (reviewer
         ? { stages: stages.get(r.syllabus_id), myStageCleared: myStage ? stages.get(r.syllabus_id)[myStage].cleared : null, readyForApproval: stages.get(r.syllabus_id).allCleared && ['submitted', 'under_review'].includes(r.status) }
         : r.user_id === me.id ? { reviewProgress: stageFlags(stages.get(r.syllabus_id)) } : {}) : {}),
     })));
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    sendError(res, err);
   }
 });
 
@@ -195,21 +216,32 @@ router.put('/:id', requireAuth, onePdf, async (req, res) => {
         if (!rules.canSetStatus(me, status)) throw httpError(403, 'Only the VPAA can approve or reject a syllabus. The dean, the Asst. VPAA and the LIC Director clear their check, or return the syllabus for revision.');
         if (!rules.STATUSES.includes(status)) throw httpError(400, 'Invalid status');
         if (hasContent) throw httpError(403, 'Administrators cannot edit syllabus content');
+        // The row is locked above, so the status decided on here is the one the update below replaces. A submitted syllabus asked to be approved goes on to the checks below,
+        // which say what is still missing; it cannot pass them without becoming under_review, and that is required again once the chain is known.
+        const refuseTransition = () => { const refusal = rules.transitionRefusal(syl.status, status); throw httpError(409, refusal.message, { code: refusal.code }); };
+        if (!rules.canTransition(syl.status, status) && !(status === 'approved' && syl.status === 'submitted')) refuseTransition();
+        // Nobody decides on the dean's own syllabus before the dean has sent it for review
+        if (DECISIONS.includes(status)) await reviewStages.assertSentForReview(conn, syl, me);
         if (DECISIONS.includes(status) && await compliance.isInstalled(db)) { // the AI check comes first, then the administrator decides
           const state = (await compliance.adminCheckStates(conn, [id])).get(id);
-          if (state && state.checkable && !state.checked) throw httpError(409, CHECK_FIRST);
+          if (!(await reviewAiChoice.mayReview(conn, id, state, me.id))) throw httpError(409, CHECK_FIRST, { code: 'ai_check_or_choice_required' });
         }
+        // The VPAA decides only what has reached them: the three stages cleared on the newest version (approving checks it again below, with its own message).
+        if (DECISIONS.includes(status) && status !== 'approved' && require('../lib/roles').isApprover(me)) await reviewStages.assertReadyForApprover(conn, syl);
         if (status === 'approved') {
           // The chain comes first: the dean, the Asst. VPAA and the LIC Director must each have cleared the newest version.
           if (!(await reviewStages.isInstalled(db))) throw httpError(503, 'The review chain is not set up on this server yet. Ask an administrator to run the database update.');
           const chain = (await reviewStages.stagesOf(conn, [id])).get(id);
           if (!chain || !chain.allCleared) throw httpError(409, 'The dean, the Asst. VPAA and the LIC Director must each clear this syllabus before it can be approved.', { code: 'STAGES_PENDING' });
+          if (!rules.canTransition(syl.status, status)) refuseTransition();
           // Mandatory verification also covers legacy approval endpoints.
           const version = await compliance.latestVersion(conn, id);
           let form;
           try { form = JSON.parse(version?.content || syl.content || 'null'); } catch { form = null; }
           if (!form) throw httpError(409, 'A verified structured syllabus is required before approval.', { code: 'alignment_required' });
-          await compliance.requireHybrid(conn, id, form);
+          // The subject again, on the locked row: it may have been deleted or changed since the syllabus was submitted (lib/subjectValidation.js).
+          await assertValidSubject(conn, syl, form, 'approve');
+          await compliance.requireHybrid(conn, id, form, { aiOff: !(await require('../lib/adminSettings').policy(conn)).aiChecking }); // AI checking off in Settings: no AI check can be required
         }
         // Returning a syllabus for revision or rejecting it needs a reason; approving does not.
         const reason = validateReason(status, adminComment);
@@ -264,6 +296,20 @@ router.put('/:id', requireAuth, onePdf, async (req, res) => {
           title: `${decision}: ${outcome.syl.course_code || outcome.syl.title}`,
           body: outcome.comment ? `Reviewer comment: ${outcome.comment}` : '',
         });
+        // And an email, while "Email notifications" is on in Settings (lib/decisionEmail.js, in the background: this answer does not wait for it)
+        decisionEmail.send(db, { ownerId: outcome.syl.user_id, status: outcome.status, code: outcome.syl.course_code, title: outcome.syl.title, comment: outcome.comment, decidedBy: { role: me.role, name: `${me.firstName} ${me.lastName}` } });
+      }
+      // The VPAA's final decision (approved or rejected) reaches the whole review chain too: the dean (every administrator), the Asst. VPAA and the
+      // LIC Director, who each cleared it, and any other VPAA account. Not the VPAA who decided, and not the owner, who was told above.
+      if (FINAL_DECISIONS.includes(outcome.status)) {
+        const subject = outcome.syl.course_code || outcome.syl.title || 'a syllabus';
+        await notifyRoles(db, ['admin', 'asst_vpaa', 'lic_director', 'vpaa'], {
+          exceptUserId: [me.id, outcome.syl.user_id],
+          type: outcome.status === 'approved' ? 'approval' : 'status',
+          syllabusId: id,
+          title: `${decision}: ${subject}`,
+          body: outcome.status === 'approved' ? `Approved by the VPAA (${me.firstName} ${me.lastName}). It is now in the Repository.` : `Rejected by the VPAA (${me.firstName} ${me.lastName}).` + (outcome.comment ? ` Reason: ${outcome.comment}` : ''),
+        });
       }
       return res.json({ message: 'Syllabus updated' });
     }
@@ -282,13 +328,21 @@ router.delete('/:id', requireAuth, async (req, res) => {
     const [rows] = await db.query('SELECT syllabus_id, user_id, status FROM syllabi WHERE syllabus_id = ?', [id]);
     const me = req.session.user;
     if (!rows[0] || !rules.canView(me, rows[0])) throw httpError(404, 'Syllabus not found');
+    if (rows[0].status === 'approved') throw syllabusRefused();
     if (!rules.canDelete(me, rows[0])) throw httpError(409, 'Only draft syllabi can be deleted by faculty.');
-    // Enforce the draft restriction in the mutation too: a concurrent submission must never be deleted.
+    const subject = await accountActivity.subjectOf(db, id); // read before it is gone, so the record still names it
+    // Enforce both restrictions in the mutation too: a concurrent submission or approval must never be deleted. The read above can already be out of date; this statement cannot.
     const [result] = await db.query(
-      rules.isAdmin(me) ? 'DELETE FROM syllabi WHERE syllabus_id = ?' : "DELETE FROM syllabi WHERE syllabus_id = ? AND user_id = ? AND status = 'draft'",
+      rules.isAdmin(me) ? "DELETE FROM syllabi WHERE syllabus_id = ? AND status <> 'approved'" : "DELETE FROM syllabi WHERE syllabus_id = ? AND user_id = ? AND status = 'draft'",
       rules.isAdmin(me) ? [id] : [id, me.id]
     );
-    if (!result.affectedRows) throw httpError(409, 'This syllabus changed or was removed. Refresh your list before deleting.');
+    if (!result.affectedRows) {
+      const [now] = await db.query('SELECT syllabus_id, user_id, status FROM syllabi WHERE syllabus_id = ?', [id]);
+      if (now[0]?.status === 'approved') throw syllabusRefused();
+      throw httpError(409, 'This syllabus changed or was removed. Refresh your list before deleting.');
+    }
+    // No syllabus id: the row is gone (and its own log with it). The subject and the status it had keep the record readable.
+    await accountActivity.record(db, { userId: me.id, action: 'syllabus_delete', subject, notes: rows[0].status });
     res.json({ message: 'Syllabus deleted' });
   } catch (err) {
     sendError(res, err);

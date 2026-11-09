@@ -8,6 +8,7 @@ const USERS = {
   1: { user_id: 1, role: 'admin', first_name: 'Ada', last_name: 'Admin' },
   5: { user_id: 5, role: 'faculty', first_name: 'Fay', last_name: 'Faculty' },
   6: { user_id: 6, role: 'faculty', first_name: 'Gus', last_name: 'Faculty' },
+  3: { user_id: 3, role: 'asst_vpaa', first_name: 'Ash', last_name: 'Vee' },
 };
 const PROGRAMS = [{ program_id: 1, code: 'BSIT', name: 'BS Information Technology' }, { program_id: 2, code: 'BSIE', name: 'BS Industrial Engineering' }, { program_id: 3, code: 'BSEMC', name: 'BS Entertainment and Multimedia Computing' }];
 const COURSES = [
@@ -19,9 +20,10 @@ const COURSES = [
 function makeDb() {
   // syllabi: { id, userId, courseId, status, updatedAt, archived } so a subject changing hands can be followed end to end;
   // archivals: each time a subject given to someone archives what others wrote
-  const store = { programs: new Map(), courses: new Map(), notes: [], archivals: [], syllabi: [] };
+  const store = { programs: new Map(), courses: new Map(), notes: [], archivals: [], syllabi: [], activity: [] }; // activity: account_activity rows (lib/accountActivity.js)
   const rowsOf = (m, id) => [...(m.get(id) || [])].sort((a, b) => a - b);
   const handle = (sql, params = []) => {
+    if (/FROM academic_years/.test(sql)) throw Object.assign(new Error("Table 'academic_years' doesn't exist"), { code: 'ER_NO_SUCH_TABLE' }); // a database before the academic year scope
     if (sql.startsWith('SELECT user_id FROM users WHERE user_id')) return [USERS[params[0]] ? [{ user_id: params[0] }] : []];
     if (sql.startsWith('SELECT user_id, role, first_name')) return [USERS[params[0]] ? [USERS[params[0]]] : []];
     if (sql.startsWith('SELECT program_id FROM programs')) return [PROGRAMS.map((p) => ({ program_id: p.program_id }))];
@@ -61,6 +63,7 @@ function makeDb() {
     if (sql.startsWith('DELETE FROM faculty_programs')) { store.programs.delete(params[0]); return [{}]; }
     if (sql.startsWith('INSERT INTO faculty_programs')) { params[0].forEach(([u, p]) => store.programs.set(u, (store.programs.get(u) || new Set()).add(p))); return [{}]; }
     if (sql.startsWith('INSERT INTO faculty_courses')) { params[0].forEach(([u, c]) => store.courses.set(u, (store.courses.get(u) || new Set()).add(c))); return [{}]; }
+    if (sql.startsWith('INSERT INTO account_activity')) { const [user_id, action, , subject, notes] = params; store.activity.push({ user_id, action, subject, notes }); return [{}]; }
     if (sql.startsWith('INSERT INTO notifications')) { store.notes.push({ userId: params[0], type: params[1], title: params[3] }); return [{}]; }
     if (/program_outcome_sources/.test(sql)) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' }); // not migrated yet
     throw new Error('unexpected query: ' + sql);
@@ -153,8 +156,10 @@ test('a program with no subjects in the catalog saves fine and is reported as em
   assert.deepStrictEqual(back.body.programIds, [1, 3]);
 }));
 
-test('only faculty can be assigned: an admin target is 400, an unknown user 404', () => withServer(async ({ call }) => {
-  assert.strictEqual((await call(admin, 'PUT', '/1/assignments', { programs: [1] })).status, 400);
+// Faculty and administrators can be assigned (the administrator writes syllabi too); the other reviewers cannot.
+test('faculty and administrators can be assigned: a reviewer target is 400, an unknown user 404', () => withServer(async ({ call }) => {
+  assert.strictEqual((await call(admin, 'PUT', '/1/assignments', { programs: [1], courses: [10] })).status, 200, 'an administrator');
+  assert.strictEqual((await call(admin, 'PUT', '/3/assignments', { programs: [1] })).status, 400, 'the Asst. VPAA');
   assert.strictEqual((await call(admin, 'PUT', '/999/assignments', { programs: [1] })).status, 404);
   assert.strictEqual((await call(admin, 'GET', '/abc/assignments')).status, 404);
 }));
@@ -256,4 +261,15 @@ test('two admins saving the same subject at the same moment: the database refuse
   const r = await call(admin, 'PUT', '/6/assignments', { programs: [1], courses: [11] });
   assert.strictEqual(r.status, 409);
   assert.match(r.body.error, /just assigned to someone else/);
+}));
+
+// Recent Activity for transparency (lib/accountActivity.js): an assignment change is recorded on the administrator, naming the faculty member, with the
+// number of subjects now assigned. Saving the same assignments again records nothing.
+test('an assignment change is recorded on the administrator, naming the faculty member; saving the same again is not', () => withServer(async ({ call, db }) => {
+  await call(admin, 'PUT', '/5/assignments', { programs: [1], courses: [10, 11] });
+  await call(admin, 'PUT', '/5/assignments', { programs: [1], courses: [10, 11] });
+  await call(admin, 'PUT', '/5/assignments', { programs: [1], courses: [10] });
+  assert.strictEqual((await call(fay, 'PUT', '/5/assignments', { programs: [1], courses: [] })).status, 403);
+  assert.deepStrictEqual(db.store.activity, [
+    { user_id: 1, action: 'user_assignments', subject: 'Fay Faculty', notes: '2' }, { user_id: 1, action: 'user_assignments', subject: 'Fay Faculty', notes: '1' }]);
 }));

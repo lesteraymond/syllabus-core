@@ -1,0 +1,69 @@
+{
+  "regression": {
+    "tests": 2144,
+    "pass": 2144,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "exit": 0,
+    "log": "tmp/po-development-activation/test.log"
+  },
+  "vpaa": {
+    "tests": 294,
+    "pass": 294,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "exit": 0,
+    "log": "tmp/po-development-activation/vpaa.log"
+  },
+  "isolatedMigration": {
+    "tests": 10,
+    "pass": 10,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "exit": 0,
+    "log": "tmp/po-development-activation/isolated.log"
+  },
+  "developmentIntegration": {
+    "tests": 6,
+    "pass": 6,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "exit": 0,
+    "log": "tmp/po-development-activation/integration.log"
+  },
+  "sourceReferences": {
+    "tests": 4,
+    "pass": 4,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "exit": 0,
+    "log": "tmp/po-development-activation/source.log"
+  },
+  "browser": {
+    "pass": 4,
+    "fail": 0,
+    "skipped": 0,
+    "todo": 0,
+    "cancelled": 0,
+    "exit": 0,
+    "scope": "LOCAL COMPONENT BROWSER E2E with read-only development reference fixtures, synthetic content and scripted model; no faculty content saved"
+  },
+  "build": {
+    "exit": 0,
+    "log": "tmp/po-development-activation/build.log",
+    "warnings": [
+      "Existing bundle size warning; build succeeds."
+    ]
+  },
+  "note": "Counts overlap; do not add suites as unique coverage. Initial HTTP harness run had 5 passed/1 failed because the synthetic account fixture was missing. Fixture corrected; final run 6 passed/0 failed. No product data recovery was needed."
+}

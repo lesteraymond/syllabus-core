@@ -14,6 +14,8 @@ const MISSING_PO_REFERENCE_SQL = new Set([
   'SELECT p.program_id, p.code, p.name, p.egas_version, p.pos_version FROM program_outcome_sources s JOIN programs p ON p.program_id = s.source_program_id WHERE s.program_id = ?',
   'SELECT p.program_id AS id, p.code, p.name FROM program_outcome_sources s JOIN programs p ON p.program_id = s.program_id WHERE s.source_program_id = ? ORDER BY p.code',
   'SELECT r.reference_id, r.version_label, r.source_file, r.source_sha256, r.outcomes_json FROM program_po_reference_active a JOIN program_po_reference_versions r ON r.reference_id = a.reference_id WHERE a.program_id = ?',
+  'SELECT r.reference_id, r.program_id AS source_program_id, r.version_label, r.source_file, r.source_sha256, r.outcomes_json FROM program_po_reference_active a JOIN program_po_reference_versions r ON r.reference_id = a.reference_id WHERE a.program_id = ?',
+  'SELECT r.*, r.program_id AS source_program_id FROM program_po_reference_active a JOIN program_po_reference_versions r ON r.reference_id = a.reference_id WHERE a.program_id = ?', // activeFor reads the publication columns too
   "SELECT migration_id, details_json FROM program_po_reference_remediation WHERE entity_type='syllabus' AND entity_id=? AND status='needs_review'",
 ].map(normalizeSql));
 const PO_REFERENCE_TABLE = /\b(?:program_outcome_sources|program_po_reference_(?:active|versions|remediation))\b/i;
@@ -71,15 +73,18 @@ function makeDb({ assigned = {}, syllabi = {}, beforeDelete, complianceInstalled
       return [masterData.curricula];
     }
     if (sql.startsWith('SELECT syllabus_id, user_id, status FROM syllabi WHERE') && !sql.includes('WHERE course_id')) return [syllabi[params[0]] ? [{ ...syllabi[params[0]] }] : []];
+    if (sql.startsWith('SELECT course_code, title FROM syllabi WHERE syllabus_id')) return [syllabi[params[0]] ? [{ course_code: syllabi[params[0]].course_code || '', title: syllabi[params[0]].title || '' }] : []]; // lib/accountActivity.js subjectOf
     if (sql.startsWith('DELETE FROM syllabi WHERE syllabus_id')) {
       beforeDelete?.(syllabi);
       const target = syllabi[params[0]];
-      const allowed = target && (!sql.includes('AND status') || (target.user_id === params[1] && target.status === 'draft'));
+      const allowed = target && (sql.includes("status <> 'approved'") ? target.status !== 'approved' : target.user_id === params[1] && target.status === 'draft');
       if (allowed) delete syllabi[params[0]];
       return [{ affectedRows: allowed ? 1 : 0 }];
     }
     if (sql.startsWith('SELECT user_id FROM users WHERE user_id')) return [USERS.has(params[0]) ? [{ user_id: params[0] }] : []];
     if (sql.startsWith('SELECT program_id FROM faculty_programs')) return [mine(params[0]).programs.map((program_id) => ({ program_id }))];
+    if (sql.startsWith('SELECT c.course_id AS subject_id')) return [COURSES.filter((c) => c.course_id === params[0]).map((c) => ({ subject_id: c.course_id, subject_code: c.code, program_id: c.program_id, code: c.program_code }))]; // lib/subjectValidation.js
+    if (sql.startsWith('SELECT academic_year FROM syllabi WHERE syllabus_id')) return [syllabi[params[0]] ? [{ academic_year: syllabi[params[0]].academic_year ?? null }] : []]; // lib/syllabuscheck/repository.js
     if (sql.startsWith('SELECT course_id FROM faculty_courses')) return [mine(params[0]).courses.map((course_id) => ({ course_id }))];
     if (sql.startsWith('SELECT 1 FROM faculty_courses fc JOIN courses c')) {
       const [uid, code] = params;
@@ -105,6 +110,9 @@ function makeDb({ assigned = {}, syllabi = {}, beforeDelete, complianceInstalled
     // one syllabus for each subject (lib/subjectLock.js): the subject a code names, and the syllabi already on a subject
     if (sql.startsWith('SELECT course_id FROM courses WHERE code')) return [COURSES.filter((c) => c.code.toLowerCase() === String(params[0]).toLowerCase()).map((c) => ({ course_id: c.course_id }))];
     if (sql.startsWith('SELECT syllabus_id, user_id, status FROM syllabi WHERE course_id')) return [Object.values(syllabi).filter((r) => r.course_id === params[0] && r.syllabus_id !== params[1] && r.user_id === params[2]).map((r) => ({ syllabus_id: r.syllabus_id, user_id: r.user_id, status: r.status }))];
+    if (sql.startsWith('SELECT label, start_year, is_current FROM academic_years')) throw Object.assign(new Error("Table 'academic_years' doesn't exist"), { code: 'ER_NO_SUCH_TABLE' }); // these fixtures are a database before the academic year scope
+    if (sql.startsWith('SELECT 1 FROM academic_years')) return [['2026–2027', '2027–2028'].includes(params[0]) ? [{ 1: 1 }] : []];
+    if (sql.startsWith("SELECT program_code, curriculum_year, courses_json FROM syllabus_check_curricula WHERE status = 'approved'")) return [[{ program_code: 'BSIT', curriculum_year: '2022-2023', courses_json: JSON.stringify([{ code: 'IT 351', title: 'Networks', prereq: 'IT 204 - Programming 2', yearLevel: 3 }]) }]];
     if (sql.startsWith('SELECT code, name FROM programs')) return [PROGRAMS.map((p) => ({ code: p.code, name: p.name }))];
     if (sql.startsWith('INSERT INTO programs')) {
       const [code, name] = params;
@@ -127,6 +135,7 @@ function makeDb({ assigned = {}, syllabi = {}, beforeDelete, complianceInstalled
     if (sql.startsWith('SELECT syllabus_id, user_id, status, version, content')) return [syllabi[params[0]] ? [syllabi[params[0]]] : []];
     if (sql.startsWith('SELECT syllabus_id, user_id, status, title, course_code, content, course_id') || sql.startsWith('SELECT * FROM syllabi WHERE syllabus_id')) return [syllabi[params[0]] ? [syllabi[params[0]]] : []];
     // the review chain (lib/reviewStages.js): the stage table, the newest version of each syllabus, and the stages cleared
+    if (sql.startsWith('SELECT ega_no, name, short_name FROM program_egas WHERE program_id')) return [[]]; // a program with no EGAs of its own yet: a new subject starts with the blank copy
     if (sql.startsWith('SELECT 1 FROM syllabus_review_stages')) { if (!chainInstalled) throw Object.assign(new Error("Table 'syllabus_review_stages' doesn't exist"), { code: 'ER_NO_SUCH_TABLE' }); return [[]]; }
     if (sql.startsWith('SELECT syllabus_id, MAX(version_id) AS version_id FROM syllabus_versions')) return [(params[0] || []).map(id => syllabusVersions.filter(v => v.syllabus_id === id).slice(-1)[0]).filter(Boolean).map(v => ({ syllabus_id: v.syllabus_id, version_id: v.version_id }))];
     if (sql.startsWith('SELECT s.syllabus_id, s.version_id, s.stage')) return [stages.filter(r => (params[0] || []).includes(r.syllabus_id)).map(r => ({ reviewer_id: 1, note: '', cleared_at: null, first_name: 'Rev', last_name: 'Iewer', ...r }))];
@@ -141,6 +150,7 @@ function makeDb({ assigned = {}, syllabi = {}, beforeDelete, complianceInstalled
       if (record) record.status = params[0];
       return [{ affectedRows: record ? 1 : 0 }];
     }
+    if (sql.startsWith('UPDATE courses SET academic_year')) { const c = COURSES.find((x) => x.course_id === params[4]); if (c) Object.assign(c, { academic_year: params[0], semester: params[1], year_level: params[2], prerequisite: params[3] }); return [{}]; }
     if (sql.startsWith('UPDATE')) return [{}];
     throw new Error('unexpected query: ' + sql);
   };
@@ -193,7 +203,7 @@ function validApprovalFixture() {
   const catalog = F.catalog();
   const syllabusId = 44, versionId = 144, savedContent = JSON.stringify(content);
   return {
-    syllabus: row({ syllabus_id: syllabusId, user_id: 5, status: 'submitted', version: 'v1.0', title: content.meta.title, course_code: content.meta.code, course_id: 11, content: savedContent }),
+    syllabus: row({ syllabus_id: syllabusId, user_id: 5, status: 'under_review', version: 'v1.0', title: content.meta.title, course_code: content.meta.code, course_id: 11, content: savedContent }),
     syllabusVersions: [{ syllabus_id: syllabusId, version_id: versionId, version_label: 'v1.0', content: savedContent, file_path: null }],
     adminRuns: [{ syllabus_id: syllabusId, version_id: versionId, created_by: 1 }],
     masterData: {
@@ -234,7 +244,8 @@ test('faculty can delete their own draft, but no submitted or decided syllabus',
     for (let id = 2; id <= statuses.length; id++) {
       const result = await call(fay, 'DELETE', '/syllabi/' + id);
       assert.strictEqual(result.status, 409, statuses[id - 1]);
-      assert.match(result.body.error, /Only draft syllabi/);
+      if (statuses[id - 1] === 'approved') assert.strictEqual(result.body.code, 'approved_records_protected');
+      else assert.match(result.body.error, /Only draft syllabi/);
       assert.ok(syllabi[id]);
     }
     assert.ok(!db.queries.some(sql => sql.startsWith('DELETE FROM syllabi')));
@@ -261,9 +272,25 @@ test('administrators retain deletion access to submitted records and their own d
   syllabi[11] = { syllabus_id: 11, user_id: 1, status: 'draft' };
   await withServer({ syllabi }, async ({ call }) => {
     assert.strictEqual((await call(admin, 'DELETE', '/syllabi/10')).status, 404);
-    for (let id = 1; id <= statuses.length; id++) assert.strictEqual((await call(admin, 'DELETE', '/syllabi/' + id)).status, 200);
+    for (let id = 1; id <= statuses.length; id++) {
+      const result = await call(admin, 'DELETE', '/syllabi/' + id);
+      if (statuses[id - 1] !== 'approved') { assert.strictEqual(result.status, 200, statuses[id - 1]); continue; }
+      assert.strictEqual(result.status, 409);
+      assert.strictEqual(result.body.code, 'approved_records_protected');
+      assert.ok(syllabi[id], 'the approved syllabus is still there');
+    }
     assert.strictEqual((await call(admin, 'DELETE', '/syllabi/11')).status, 200);
     assert.ok(syllabi[10]);
+  });
+});
+
+test('a syllabus approved while an administrator deletes it is kept, and the refusal says why', async () => {
+  const syllabi = { 1: { syllabus_id: 1, user_id: 5, status: 'under_review' } };
+  await withServer({ syllabi, beforeDelete: records => { records[1].status = 'approved'; } }, async ({ call }) => {
+    const result = await call(admin, 'DELETE', '/syllabi/1');
+    assert.strictEqual(result.status, 409);
+    assert.strictEqual(result.body.code, 'approved_records_protected');
+    assert.ok(syllabi[1]);
   });
 });
 
@@ -376,7 +403,7 @@ test('the structured builder rejects assigning a subject that already has this f
     'the failed assignment was not saved');
 }));
 
-test('legacy edits enforce course assignment and the structured alignment gate; faculty cannot approve', () => withServer({ assigned: ASSIGNED, syllabusVersions: [{ syllabus_id: 4, version_id: 40, content: null, file_path: null }], stages: allStages(4, 40), syllabi: { 4: row({ syllabus_id: 4, status: 'for_revision', course_code: 'IT 204' }), 5: row({ syllabus_id: 5, status: 'for_revision', course_code: 'IT 101' }) } }, async ({ call }) => {
+test('legacy edits enforce course assignment and the structured alignment gate; faculty cannot approve', () => withServer({ assigned: ASSIGNED, syllabusVersions: [{ syllabus_id: 4, version_id: 40, content: null, file_path: null }, { syllabus_id: 6, version_id: 60, content: null, file_path: null }], stages: [...allStages(4, 40), ...allStages(6, 60)], syllabi: { 4: row({ syllabus_id: 4, status: 'for_revision', course_code: 'IT 204' }), 5: row({ syllabus_id: 5, status: 'for_revision', course_code: 'IT 101' }), 6: row({ syllabus_id: 6, status: 'under_review', course_code: 'IT 204' }) } }, async ({ call }) => {
   assert.strictEqual((await call(fay, 'PUT', '/syllabi/4', { title: 'New title', note: 'Changed the title.' })).status, 403);
   const assigned = await call(fay, 'PUT', '/syllabi/5', { title: 'New title', note: 'Changed the title.' });
   assert.strictEqual(assigned.status, 409);
@@ -384,8 +411,8 @@ test('legacy edits enforce course assignment and the structured alignment gate; 
   const unauthorized = await call(fay, 'PUT', '/syllabi/5', { status: 'approved' });
   assert.strictEqual(unauthorized.status, 403);
   assert.match(unauthorized.body.error, /Only reviewers can change a syllabus status/);
-  assert.strictEqual((await call(admin, 'PUT', '/syllabi/4', { status: 'approved' })).status, 403); // the dean never approves
-  const missingForm = await call(vpaa, 'PUT', '/syllabi/4', { status: 'approved' });
+  assert.strictEqual((await call(admin, 'PUT', '/syllabi/6', { status: 'approved' })).status, 403); // the dean never approves
+  const missingForm = await call(vpaa, 'PUT', '/syllabi/6', { status: 'approved' });
   assert.strictEqual(missingForm.status, 409);
   assert.strictEqual(missingForm.body.code, 'alignment_required');
 }));
@@ -427,7 +454,7 @@ test('a VPAA approval is still rejected when the actual curriculum hard gate fai
       const refused = await call(vpaa, 'PUT', '/syllabi/44', { status: 'approved' });
       assert.strictEqual(refused.status, 409);
       assert.strictEqual(refused.body.code, 'syllabus_hard_gate');
-      assert.strictEqual(syllabi[44].status, 'submitted');
+      assert.strictEqual(syllabi[44].status, 'under_review');
       assert.ok(!db.writes.some(write => write.sql.startsWith('UPDATE syllabi SET status = ?')));
     });
   } finally {
@@ -451,6 +478,36 @@ test('an admin can add a subject to a program; faculty cannot; duplicates and un
   const empty = await call(admin, 'POST', '/courses', { code: '', title: 'X', program: 'BSIT' });
   assert.strictEqual(empty.status, 400);
   assert.match(empty.body.error, /Subject code is required/);
+}));
+
+const TERM = { academicYear: '2026–2027', semester: '1st Semester', yearLevel: 3, prerequisite: 'IT 204 - Programming 2' };
+test("a subject's academic year, semester, year level and pre-requisite are validated, saved, and checked against the approved curriculum with a warning only", () => withServer({ assigned: ASSIGNED }, async ({ call, db }) => {
+  const bad = async (patch, pattern) => { const r = await call(admin, 'POST', '/courses', { code: 'IT 3' + Math.floor(Math.random() * 1e6), title: 'T', program: 'BSIT', ...TERM, ...patch }); assert.strictEqual(r.status, 400, JSON.stringify(patch)); assert.match(r.body.error, pattern); };
+  await bad({ academicYear: '2031–2032' }, /has not been added/);
+  await bad({ academicYear: 'next year' }, /Choose the academic year/);
+  await bad({ semester: '3rd Semester' }, /Choose the semester/); // the official curricula have 1st, 2nd and Summer terms only
+  await bad({ semester: 'summer' }, /Choose the semester/);
+  await bad({ yearLevel: 0 }, /year level/);
+  await bad({ yearLevel: 5 }, /year level/);
+  // the pre-requisite is optional (many subjects have none): a blank one is accepted and stored as nothing; the syllabus then shows "None"
+  const none = await call(admin, 'POST', '/courses', { code: 'IT 398', title: 'No prereq', program: 'BSIT', ...TERM, prerequisite: '   ' });
+  assert.strictEqual(none.status, 200, JSON.stringify(none.body));
+  assert.strictEqual(db.writes.filter((w) => /^UPDATE courses SET academic_year/.test(w.sql)).pop().params[3], null, 'no pre-requisite stored');
+  await bad({ prerequisite: 'x'.repeat(256) }, /too long/);
+  assert.strictEqual((await call(fay, 'POST', '/courses', { code: 'IT 399', title: 'X', program: 'BSIT', ...TERM })).status, 403);
+  // valid: the term is written, and a difference from the approved curriculum is reported but never refuses the save
+  const made = await call(admin, 'POST', '/courses', { code: 'IT 351', title: 'Networks', program: 'BSIT', ...TERM, prerequisite: 'None', yearLevel: 2 });
+  assert.strictEqual(made.status, 200, JSON.stringify(made.body));
+  const write = db.writes.filter((w) => /^UPDATE courses SET academic_year/.test(w.sql)).pop(); // the subject just added (IT 351)
+  assert.deepStrictEqual(write.params.slice(0, 4), ['2026–2027', '1st Semester', 2, 'None']);
+  assert.deepStrictEqual(made.body.curriculumNote.differences.map((d) => d.field).sort(), ['prerequisite', 'yearLevel']);
+  // editing an existing subject can set the term too; sending none leaves it alone
+  const put = await call(admin, 'PUT', '/courses/10', { code: 'IT 101', title: 'Intro', ...TERM });
+  assert.strictEqual(put.status, 200, JSON.stringify(put.body));
+  const before = db.writes.filter((w) => /^UPDATE courses SET academic_year/.test(w.sql)).length;
+  assert.strictEqual((await call(admin, 'PUT', '/courses/10', { code: 'IT 101', title: 'Intro 2' })).status, 200);
+  assert.strictEqual(db.writes.filter((w) => /^UPDATE courses SET academic_year/.test(w.sql)).length, before, 'no term sent: no term write');
+  for (const c of COURSES) for (const k of ['academic_year', 'semester', 'year_level', 'prerequisite']) delete c[k]; // the fixture list is shared with the other tests
 }));
 
 const addSubject = (call, body) => call(admin, 'POST', '/courses', body);
@@ -548,3 +605,19 @@ test('an admin\'s subject list says what is still missing for each subject; the 
   assert.ok(ie.gaps.some((g) => /BSIE program outcomes/.test(g)));
   assert.ok((await call(fay, 'GET', '/courses')).body.every((c) => c.gaps === undefined));
 }));
+
+// Recent Activity for transparency (lib/accountActivity.js): a deleted syllabus stays in its deleter's activity, named by the subject it had and the status
+// it was in (its own log rows go with it). A refused deletion records nothing.
+test('a deleted syllabus is recorded in the account activity of whoever deleted it, by name and status; a refused deletion records nothing', async () => {
+  const syllabi = { 1: { syllabus_id: 1, user_id: 5, status: 'draft', course_code: 'FM 202', title: 'Fundamentals of Mathematics' }, 2: { syllabus_id: 2, user_id: 5, status: 'submitted', course_code: 'IT 351', title: 'Networks' }, 3: { syllabus_id: 3, user_id: 5, status: 'approved', course_code: 'IT 352', title: 'Security' } };
+  await withServer({ syllabi }, async ({ call, db }) => {
+    const recorded = () => db.writes.filter((w) => w.sql.startsWith('INSERT INTO account_activity')).map((w) => w.params);
+    assert.strictEqual((await call(fay, 'DELETE', '/syllabi/2')).status, 409);
+    assert.strictEqual((await call(admin, 'DELETE', '/syllabi/3')).status, 409);
+    assert.deepStrictEqual(recorded(), [], 'refused: nothing recorded');
+    assert.strictEqual((await call(fay, 'DELETE', '/syllabi/1')).status, 200);
+    assert.strictEqual((await call(admin, 'DELETE', '/syllabi/2')).status, 200);
+    // user, action, syllabus id (none: the row is gone), subject, status
+    assert.deepStrictEqual(recorded(), [[5, 'syllabus_delete', null, 'FM 202 — Fundamentals of Mathematics', 'draft'], [1, 'syllabus_delete', null, 'IT 351 — Networks', 'submitted']]);
+  });
+});

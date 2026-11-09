@@ -1,0 +1,1171 @@
+{
+  "shared": 143,
+  "comparable": 143,
+  "improved": 52,
+  "worsened": 7,
+  "same": 84,
+  "added": [],
+  "removed": [],
+  "beforeLabels": {
+    "PARTIALLY_ALIGNED": 107,
+    "NOT_ALIGNED": 25,
+    "ALIGNED": 11
+  },
+  "afterLabels": {
+    "NOT_ALIGNED": 18,
+    "ALIGNED": 52,
+    "PARTIALLY_ALIGNED": 73
+  },
+  "sourcePdfUnchanged": true,
+  "successfulModelRequests": {
+    "claude-sonnet-5-5": 22
+  },
+  "estimatedSuccessfulCostUsd": 1.2415228,
+  "conservativeGuardTotalUsd": 1.47943585,
+  "changes": [
+    {
+      "id": "clo0-po1",
+      "type": "CLO-PO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "NOT_ALIGNED",
+      "explanation": "The PO asks to articulate and discuss (Understand/Analyze) the latest developments in the field. The CLO is about analyzing requirements and designing Java solutions. It has no verb of articulating or discussing, and nothing about current developments or trends in computing. It only shares the general computing field.",
+      "direction": "worsened"
+    },
+    {
+      "id": "clo0-po2",
+      "type": "CLO-PO",
+      "from": "NOT_ALIGNED",
+      "to": "NOT_ALIGNED",
+      "explanation": "The PO asks for oral and written communication in English and Filipino. The CLO has no communication verb, no oral or written product, and no mention of English or Filipino.",
+      "direction": "same"
+    },
+    {
+      "id": "clo0-po3",
+      "type": "CLO-PO",
+      "from": "NOT_ALIGNED",
+      "to": "NOT_ALIGNED",
+      "explanation": "The PO is about working effectively and independently in multi-disciplinary, multi-cultural teams. The CLO describes individual analysis and design with no teamwork, independence, or multi-disciplinary or cultural context. That competency is in CLO 3, not here.",
+      "direction": "same"
+    },
+    {
+      "id": "clo0-po6",
+      "type": "CLO-PO",
+      "from": "ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "The CLO analyzes and defines computing requirements for a solution, matching the PO's verbs, level and subject.",
+      "direction": "same"
+    },
+    {
+      "id": "clo0-po8",
+      "type": "CLO-PO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The CLO designs Java solutions (Create), which matches the PO's design verb. It does not show develop or implement, and nothing signals a system-level perspective. The word 'holistic' is vague and does not state system-level thinking.",
+      "direction": "same"
+    },
+    {
+      "id": "clo0-ega1",
+      "type": "CLO-EGA",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Analyzing requirements and creatively designing original solutions shows critical and creative thinking.",
+      "direction": "improved"
+    },
+    {
+      "id": "clo0-ega3",
+      "type": "CLO-EGA",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The CLO only says solutions are 'holistic and impactful'. It names no social responsibility, stewardship, community need or common good, so it does not show a socially responsive steward. It also lacks any verb of acting responsibly toward society.",
+      "direction": "same"
+    },
+    {
+      "id": "clo0-ega4",
+      "type": "CLO-EGA",
+      "from": "NOT_ALIGNED",
+      "to": "NOT_ALIGNED",
+      "explanation": "The EGA is about lifelong learning and transformation. The CLO has no learning-to-learn, reflection, self-directed growth or continuous improvement element, and only concerns a single design task.",
+      "direction": "same"
+    },
+    {
+      "id": "clo0-anypo",
+      "type": "CLO-anyPO",
+      "from": "ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Item 6: the CLO analyzes and defines computing requirements, matching the PO's verbs and subject.",
+      "direction": "same"
+    },
+    {
+      "id": "clo0-anyega",
+      "type": "CLO-anyEGA",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Item 1: Critical and Creative thinker is shown by analyzing requirements and creatively designing original solutions.",
+      "direction": "improved"
+    },
+    {
+      "id": "clo1-po1",
+      "type": "CLO-PO",
+      "from": "NOT_ALIGNED",
+      "to": "NOT_ALIGNED",
+      "explanation": "The CLO is about incorporating ethics and social responsibility into designs. It has no action to articulate or discuss, and no mention of the latest developments in the field. Only the technical-design area is loosely related.",
+      "direction": "same"
+    },
+    {
+      "id": "clo1-po2",
+      "type": "CLO-PO",
+      "from": "NOT_ALIGNED",
+      "to": "NOT_ALIGNED",
+      "explanation": "The CLO has no oral or written communication and no mention of English or Filipino. Its focus on ethics in technical designs is a different competency.",
+      "direction": "same"
+    },
+    {
+      "id": "clo1-po3",
+      "type": "CLO-PO",
+      "from": "NOT_ALIGNED",
+      "to": "NOT_ALIGNED",
+      "explanation": "The PO asks for working effectively and independently in multi-disciplinary, multi-cultural teams. The CLO is about ethics and social responsibility in technical designs. It has no teamwork or collaboration verb, no independent work, and no multi-disciplinary or multicultural team context.",
+      "direction": "same"
+    },
+    {
+      "id": "clo1-po6",
+      "type": "CLO-PO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The CLO only shares the topic of technical design with the PO. It has no analyze verb, no complex problem to analyze, and no identifying or defining of computing requirements. Its Bloom level (Apply) is lower than the PO's Analyze.",
+      "direction": "same"
+    },
+    {
+      "id": "clo1-po8",
+      "type": "CLO-PO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The CLO mentions technical designs, but the PO asks to design and develop computing solutions. The CLO has no develop or build action, no computing solution as the object, and no system-level perspective.",
+      "direction": "same"
+    },
+    {
+      "id": "clo1-ega1",
+      "type": "CLO-EGA",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "Technical design implies some creative work. However, the CLO does not ask students to think critically, evaluate or analyze, and it does not ask for original or creative solutions. Its Bloom level (Apply) is below the critical-thinking level of the EGA.",
+      "direction": "same"
+    },
+    {
+      "id": "clo1-ega3",
+      "type": "CLO-EGA",
+      "from": "ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "The CLO's social responsibility and common good match a Socially Responsive Steward.",
+      "direction": "same"
+    },
+    {
+      "id": "clo1-ega4",
+      "type": "CLO-EGA",
+      "from": "NOT_ALIGNED",
+      "to": "NOT_ALIGNED",
+      "explanation": "The EGA is about lifelong, transformative learning. The CLO has no learning, reflection, growth or continuing-development competency. It is about embedding ethics in designs.",
+      "direction": "same"
+    },
+    {
+      "id": "clo1-anypo",
+      "type": "CLO-anyPO",
+      "from": "ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "PO 4 matches: incorporating ethical standards and social responsibility is acting on professional, social ethical responsibility.",
+      "direction": "same"
+    },
+    {
+      "id": "clo1-anyega",
+      "type": "CLO-anyEGA",
+      "from": "ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "EGA 3 matches: the CLO's social responsibility and common good fit a Socially Responsive Steward.",
+      "direction": "same"
+    },
+    {
+      "id": "clo2-po1",
+      "type": "CLO-PO",
+      "from": "NOT_ALIGNED",
+      "to": "NOT_ALIGNED",
+      "explanation": "The PO asks students to articulate and discuss the latest developments in the field. The CLO is about collaboration to build Java solutions. It has no articulate or discuss verb and no current developments in computing as subject matter.",
+      "direction": "same"
+    },
+    {
+      "id": "clo2-po2",
+      "type": "CLO-PO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "Collaboration implies some communication, but the CLO does not state communicating orally and in writing. It also does not mention English and Filipino.",
+      "direction": "same"
+    },
+    {
+      "id": "clo2-po3",
+      "type": "CLO-PO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The CLO covers effective collaboration in multi-disciplinary and culturally diverse teams. It does not show the PO's second skill, working independently.",
+      "direction": "same"
+    },
+    {
+      "id": "clo2-po4",
+      "type": "CLO-PO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The CLO names social responsibility. It does not name professional or ethical responsibility, and it does not say students act on it in their professional practice as programmers.",
+      "direction": "same"
+    },
+    {
+      "id": "clo2-po6",
+      "type": "CLO-PO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The CLO has no analyze verb. It never analyzes complex problems and never identifies or defines computing requirements. It only says 'develop ... solutions', which is a Create/Apply step. It shares only the topic of solutions with the PO.",
+      "direction": "same"
+    },
+    {
+      "id": "clo2-po8",
+      "type": "CLO-PO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The CLO says 'develop' but not 'design'. It has no system-level perspective, because the solutions are not described as whole systems with interacting parts. Its Bloom level is Apply, below the Create the PO asks for.",
+      "direction": "same"
+    },
+    {
+      "id": "clo2-po9",
+      "type": "CLO-PO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The CLO names Java, which is a language, but never says students use modern computing tools such as an IDE, version control or collaboration platforms. The verb 'utilize' and the tools as its object are missing.",
+      "direction": "same"
+    },
+    {
+      "id": "clo2-ega1",
+      "type": "CLO-EGA",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The CLO shows teamwork and solution development but no critical or creative thinking. It has no analyzing, evaluating or original problem-solving, and its Bloom level (Apply) is below that of a critical and creative thinker.",
+      "direction": "same"
+    },
+    {
+      "id": "clo2-ega2",
+      "type": "CLO-EGA",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The CLO mentions social responsibility but nothing Catholic, Augustinian or Marian. It states no professional competence or professional conduct, though Java development hints at competence.",
+      "direction": "same"
+    },
+    {
+      "id": "clo2-ega3",
+      "type": "CLO-EGA",
+      "from": "ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "The CLO has students address social challenges with social responsibility and cultural sensitivity, which is the stewardship the EGA asks for.",
+      "direction": "same"
+    },
+    {
+      "id": "clo2-ega4",
+      "type": "CLO-EGA",
+      "from": "NOT_ALIGNED",
+      "to": "NOT_ALIGNED",
+      "explanation": "The CLO says nothing about learning, reflecting, adapting or growing. Nothing in it is transformative or lifelong. The EGA's verb and subject are both absent.",
+      "direction": "same"
+    },
+    {
+      "id": "clo2-anypo",
+      "type": "CLO-anyPO",
+      "from": "ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "PO 3 fits: the CLO has students collaborate effectively in multi-disciplinary, culturally diverse teams at the Apply level.",
+      "direction": "same"
+    },
+    {
+      "id": "clo2-anyega",
+      "type": "CLO-anyEGA",
+      "from": "ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "EGA 3 fits: the CLO addresses social challenges with social responsibility and cultural sensitivity.",
+      "direction": "same"
+    },
+    {
+      "id": "clo3-po4",
+      "type": "CLO-PO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "The CLO uses the PO's verb and subject: acting in recognition of professional, social and ethical responsibility.",
+      "direction": "improved"
+    },
+    {
+      "id": "clo3-po5",
+      "type": "CLO-PO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The CLO mentions Filipino-Catholic Augustinian Spirituality, which touches on culture. It has no verb of preserving or promoting, and it does not address Filipino historical or cultural heritage. It is about ethical responsibility in Java decisions, so it shares only a cultural topic word.",
+      "direction": "same"
+    },
+    {
+      "id": "clo3-ega2",
+      "type": "CLO-EGA",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "The CLO has students act on professional and ethical responsibility through Filipino-Catholic Augustinian spirituality, which matches the Catholic Augustinian-Marian Professional attribute.",
+      "direction": "improved"
+    },
+    {
+      "id": "clo3-anypo",
+      "type": "CLO-anyPO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Item 4 matches the CLO's key verb and subject, professional, social and ethical responsibility.",
+      "direction": "improved"
+    },
+    {
+      "id": "clo3-anyega",
+      "type": "CLO-anyEGA",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Item 2 fits: the CLO is about Augustinian spirituality and professional responsibility.",
+      "direction": "improved"
+    },
+    {
+      "id": "row0-ilo0-clo:real-prog1-2",
+      "type": "ILO-CLO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "Only 'identify the computing requirements' is a smaller step of CLO 1, and it builds toward 'analyze and define'. 'Explain the course structure and expectations' is not part of CLO 1's subject, which is analyzing requirements and designing Java solutions. 'Citing professional ethical standards' belongs to the ethics CLOs, not CLO 1. The ILO therefore mixes in content CLO 1 does not claim.",
+      "direction": "same"
+    },
+    {
+      "id": "row0-ilo0-content",
+      "type": "ILO-content",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The contents only list topic names for 'identify the computing requirements of a simple real-world IT problem'. They never show what computing requirements are (inputs, processing, outputs, constraints) or work through an example problem. 'How programming skills address real-world IT challenges' does not teach how to identify requirements. Ethical standards are listed but not tied to a problem.",
+      "direction": "same"
+    },
+    {
+      "id": "row0-ilo0-activity",
+      "type": "ILO-activity",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "Students explain what Java is used for and discuss an ethics case, but no activity has them identify the computing requirements of a real-world IT problem. The course-structure items are only presentations to listen to. Citing ethical standards is only discussed in general, not tied to a problem.",
+      "direction": "same"
+    },
+    {
+      "id": "row0-ilo0-assessment",
+      "type": "ILO-assessment",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The reflection covers Java concepts, one IT challenge and one ethical standard, but it does not ask students to identify the computing requirements of a problem, which is the ILO's main action. The 'explain the course structure and expectations' part is only 'review' and 'statement' items, with no product showing the student can explain them. The ethical standard is not tied to a problem.",
+      "direction": "same"
+    },
+    {
+      "id": "row0-value",
+      "type": "Module-value",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Courage, Humility and Community-orientedness are each tied to what students do in the orientation: sharing expectations, listening, and committing to class norms and the LCUP/CITE mission.",
+      "direction": "improved"
+    },
+    {
+      "id": "row1-ilo0-clo:real-prog1-2",
+      "type": "ILO-CLO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Explaining Java concepts needed to define requirements is an Understand-level step toward CLO 1's Analyze/define/design, in the same subject.",
+      "direction": "improved"
+    },
+    {
+      "id": "row1-ilo0-content",
+      "type": "ILO-content",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "The contents cover the basic Java concepts and principles and include worked examples explained line by line, which suits an Explain ILO.",
+      "direction": "improved"
+    },
+    {
+      "id": "row1-ilo0-activity",
+      "type": "ILO-activity",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Students explain Java concepts themselves, to the class and to a partner, and run programs to describe how the concepts work, which practises the Explain verb.",
+      "direction": "improved"
+    },
+    {
+      "id": "row1-ilo0-assessment",
+      "type": "ILO-assessment",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "The quiz and the assignment both require students to explain Java concepts and how a program works, which is evidence of the Explain verb.",
+      "direction": "improved"
+    },
+    {
+      "id": "row1-value",
+      "type": "Module-value",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Each value is tied to what students do in this lesson (explaining Java concepts aloud, accepting correction, partner explanations).",
+      "direction": "improved"
+    },
+    {
+      "id": "row2-ilo0-clo:real-prog1-2",
+      "type": "ILO-CLO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "ILO1 analyzes requirements and identifies Java constructs, a smaller step toward the CLO's analyze and define requirements.",
+      "direction": "improved"
+    },
+    {
+      "id": "row2-ilo0-clo:real-prog1-3",
+      "type": "ILO-CLO",
+      "from": "NOT_ALIGNED",
+      "to": "NOT_ALIGNED",
+      "explanation": "The CLO is about incorporating ethical standards and social responsibility into designs for the common good (Marian/Augustinian truth and compassion). ILO1 is purely technical: analyzing requirements and identifying syntax. It has no ethics, social responsibility or common-good element, and it is Analyze while the CLO is Create/Evaluate level (incorporate into design). It is not a step toward this CLO.",
+      "direction": "same"
+    },
+    {
+      "id": "row2-ilo0-content",
+      "type": "ILO-content",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Contents cover variables, constants, operators and console I/O with traced and worked examples, enough for analyzing and identifying them.",
+      "direction": "improved"
+    },
+    {
+      "id": "row2-ilo0-activity",
+      "type": "ILO-activity",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Students trace, predict and debug code on the ILO's constructs, practising analysis.",
+      "direction": "improved"
+    },
+    {
+      "id": "row2-ilo0-assessment",
+      "type": "ILO-assessment",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "Tasks assess syntax, output and tracing, but none asks students to analyze a problem's computing requirements (inputs, outputs, processing) and justify which Java constructs are needed, which is the ILO's main verb and first object. The Machine Problem is graded only on correct syntax and output.",
+      "direction": "same"
+    },
+    {
+      "id": "row2-ilo1-clo:real-prog1-3",
+      "type": "ILO-CLO",
+      "from": "NOT_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "ILO2 builds a program addressing a community need, which touches social responsibility and the common good. But it has no ethical standards, truth or compassion element, and it does not incorporate ethics into design decisions.",
+      "direction": "improved"
+    },
+    {
+      "id": "row2-ilo1-clo:real-prog1-4",
+      "type": "ILO-CLO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "ILO2 has collaboration with diverse classmates to build a Java program for a community need, a step toward the CLO.",
+      "direction": "improved"
+    },
+    {
+      "id": "row2-ilo1-content",
+      "type": "ILO-content",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "Contents teach basic Java concepts but nothing on building a program for a community need or on working in diverse teams. No example or case shows applying them to a community problem, and no collaboration content is present.",
+      "direction": "same"
+    },
+    {
+      "id": "row2-ilo1-activity",
+      "type": "ILO-activity",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "Hands-on coding and pair debugging practise applying concepts, but no activity has students collaborate with classmates of different backgrounds to build a program addressing a community need.",
+      "direction": "same"
+    },
+    {
+      "id": "row2-ilo1-assessment",
+      "type": "ILO-assessment",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The Machine Problem assesses applying Java concepts, but no task collects evidence of the community-need program or of teamwork with diverse classmates. The other tasks are tracing and error correction.",
+      "direction": "same"
+    },
+    {
+      "id": "row2-value",
+      "type": "Module-value",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "Interiority and Courage are named and tied to coding habits, honesty and running programs that fail. However, they are not linked to ILO2's collaboration with diverse classmates and the community-need program, so Community-orientedness is missing.",
+      "direction": "same"
+    },
+    {
+      "id": "row3-ilo0-clo:real-prog1-2",
+      "type": "ILO-CLO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Analyzing I/O requirements and applying Java streams is a smaller step toward analyzing requirements and designing Java solutions.",
+      "direction": "improved"
+    },
+    {
+      "id": "row3-ilo0-clo:real-prog1-3",
+      "type": "ILO-CLO",
+      "from": "NOT_ALIGNED",
+      "to": "NOT_ALIGNED",
+      "explanation": "The CLO is about incorporating ethical standards and social responsibility into designs (common good, truth, compassion). The ILO is purely technical (I/O requirements and Java streams). It has no ethical or social element, so it is not a step toward this CLO.",
+      "direction": "same"
+    },
+    {
+      "id": "row3-ilo0-content",
+      "type": "ILO-content",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "The contents cover Java streams, Scanner and file I/O, with a worked example tracing data through read, process and write.",
+      "direction": "improved"
+    },
+    {
+      "id": "row3-ilo0-activity",
+      "type": "ILO-activity",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Students trace stream code and write a program that reads and writes data using streams.",
+      "direction": "improved"
+    },
+    {
+      "id": "row3-ilo0-assessment",
+      "type": "ILO-assessment",
+      "from": "NOT_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The laboratory exercise and rubric assess correct stream use and output (apply). Nothing collects evidence of the ILO's other verb, analyzing the problem's input and output requirements: the rubric has no criterion for it, and the recitation covers only how streams work.",
+      "direction": "improved"
+    },
+    {
+      "id": "row3-ilo1-content",
+      "type": "ILO-content",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The ILO is about Java methods. The contents cover streams, variables and data types, and only mention the print/println functions. They do not teach defining or calling methods, parameters, return values or overloading. They show no methods applied in a worked example.",
+      "direction": "same"
+    },
+    {
+      "id": "row3-ilo1-activity",
+      "type": "ILO-activity",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "NOT_ALIGNED",
+      "explanation": "Every activity is about Java streams. None has students define, call or explain Java methods, so the ILO's subject is not practised.",
+      "direction": "worsened"
+    },
+    {
+      "id": "row3-ilo1-assessment",
+      "type": "ILO-assessment",
+      "from": "NOT_ALIGNED",
+      "to": "NOT_ALIGNED",
+      "explanation": "The recitation and the laboratory rubric assess stream use and output only. No task asks students to show skill or understanding of Java methods.",
+      "direction": "same"
+    },
+    {
+      "id": "row3-ilo2-clo:real-prog1-4",
+      "type": "ILO-CLO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Writing Java programs with a classmate for a community-related problem is a smaller step toward team-based solutions to social challenges.",
+      "direction": "improved"
+    },
+    {
+      "id": "row3-ilo2-content",
+      "type": "ILO-content",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The contents give only part of Java syntax and semantics (program parts, data types, variables, streams). They lack operators, control structures and methods. They include no community-related problem and nothing on working with a partner, so the application and collaboration parts of the ILO are not shown.",
+      "direction": "same"
+    },
+    {
+      "id": "row3-ilo2-activity",
+      "type": "ILO-activity",
+      "from": "ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The laboratory has students write Java programs, which practises applying Java. No activity has students work with a classmate, and none uses a community-related problem. The activities are also framed around streams rather than the wider syntax and semantics.",
+      "direction": "worsened"
+    },
+    {
+      "id": "row3-ilo2-assessment",
+      "type": "ILO-assessment",
+      "from": "NOT_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The laboratory program with a rubric gives evidence of working Java code. The task is not set as pair work and is not about a community-related problem. The rubric covers only stream use and output, not correct syntax and semantics or collaboration.",
+      "direction": "improved"
+    },
+    {
+      "id": "row3-value",
+      "type": "Module-value",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Humility, Community-orientedness and Interiority are each tied to specific student actions in the stream-programming lab and the video presentation.",
+      "direction": "improved"
+    },
+    {
+      "id": "row5-ilo0-clo:real-prog1-2",
+      "type": "ILO-CLO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "ILO3 analyzes problem requirements and applies Java structured logic, a smaller step toward the CLO's analyze-and-design outcome.",
+      "direction": "improved"
+    },
+    {
+      "id": "row5-ilo0-clo:real-prog1-4",
+      "type": "ILO-CLO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The ILO shares the Java topic but has no collaboration with multi-disciplinary or diverse teams. It does not address social challenges, social responsibility or cultural sensitivity. It is an individual analysis task, so it does not build toward the CLO's collaborate-and-develop verbs.",
+      "direction": "same"
+    },
+    {
+      "id": "row5-ilo0-content",
+      "type": "ILO-content",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The contents cover decisions, loops and arrays with traced examples. They do not show how to analyze a problem's requirements (identify inputs, conditions, repetitions, data to store) or how to choose and justify a structure. That is the Analyze level the ILO needs, and tracing alone only reaches Understand.",
+      "direction": "same"
+    },
+    {
+      "id": "row5-ilo0-activity",
+      "type": "ILO-activity",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "Students trace and explain short programs, which practises explaining. No activity has them analyze the requirements of a given problem, and the lecture and video are passive. The Analyze-level action on problem requirements is missing.",
+      "direction": "same"
+    },
+    {
+      "id": "row5-ilo0-assessment",
+      "type": "ILO-assessment",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "Recitation, seatwork and the lab explanation collect evidence of explaining and tracing. No task has students analyze the requirements of a given problem, so the evidence stops below the ILO's Analyze level.",
+      "direction": "same"
+    },
+    {
+      "id": "row5-ilo1-clo:real-prog1-3",
+      "type": "ILO-CLO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "The ILO applies conditionals with honest, fair and safe input handling that serves the common good, matching the CLO's ethical-incorporation focus.",
+      "direction": "improved"
+    },
+    {
+      "id": "row5-ilo1-clo:real-prog1-4",
+      "type": "ILO-CLO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The ILO is about writing conditional programs and ethical input handling. It has no teamwork, no multi-disciplinary or culturally diverse collaboration, and no social challenge or cultural sensitivity. The CLO's collaborate verb is not built toward.",
+      "direction": "same"
+    },
+    {
+      "id": "row5-ilo1-content",
+      "type": "ILO-content",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The contents cover conditional syntax with traced examples. They do not show writing programs that decide on user input or computed values, which is the Apply level. They also omit honest, fair and safe handling of input.",
+      "direction": "same"
+    },
+    {
+      "id": "row5-ilo1-activity",
+      "type": "ILO-activity",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "Students only trace and explain existing programs, and the lecture and video are passive. They do not write conditional programs driven by user input or computed values, which is the Apply action. Nothing practises ethical handling of input.",
+      "direction": "same"
+    },
+    {
+      "id": "row5-ilo1-assessment",
+      "type": "ILO-assessment",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The lab programs use decisions, but the task does not say they decide on user input or computed values. Nothing assesses ethical, honest, fair and safe input handling. Recitation and tracing seatwork only reach Understand.",
+      "direction": "same"
+    },
+    {
+      "id": "row5-value",
+      "type": "Module-value",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Humility, Courage and Community-orientedness are each tied to concrete student actions in the recitation and the paired laboratory exercises.",
+      "direction": "improved"
+    },
+    {
+      "id": "row6-ilo0-clo:real-prog1-2",
+      "type": "ILO-CLO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "The ILO analyzes requirements and designs Java programs with loops, a smaller step toward CLO1.",
+      "direction": "improved"
+    },
+    {
+      "id": "row6-ilo0-clo:real-prog1-3",
+      "type": "ILO-CLO",
+      "from": "NOT_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The ILO is Java design, but it has no ethical standard, social responsibility or common-good element, which is the action CLO2 requires. It also has no link to the Marian/Augustinian principles of truth and compassion. It would not build toward CLO2 as written.",
+      "direction": "improved"
+    },
+    {
+      "id": "row6-ilo0-clo:real-prog1-4",
+      "type": "ILO-CLO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The ILO is Java program design, but it has no collaboration in diverse teams. It does not address social challenges or show social responsibility and cultural sensitivity. It would not build toward CLO3 as written.",
+      "direction": "same"
+    },
+    {
+      "id": "row6-ilo0-content",
+      "type": "ILO-content",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The contents cover the three loops and real-world worked examples, but they do not show how to analyze the requirements of a repetitive task (identifying the repeated steps, the loop condition and the stopping point). They also do not teach what makes a loop design efficient, as the ILO asks.",
+      "direction": "same"
+    },
+    {
+      "id": "row6-ilo0-activity",
+      "type": "ILO-activity",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "Students write, run, design and code loop programs, which practises the design and utilize verbs at the right level. No activity has students analyze the requirements of a repetitive task before coding, so the Analyze verb is not practised.",
+      "direction": "same"
+    },
+    {
+      "id": "row6-ilo0-assessment",
+      "type": "ILO-assessment",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The Machine Problem produces a Java program with all three loops, graded on correctness and efficiency, which covers the utilize and design verbs. No task collects evidence that students analyzed the requirements of the repetitive task. The quiz and recitation only check syntax, tracing and concepts.",
+      "direction": "same"
+    },
+    {
+      "id": "row6-ilo1-content",
+      "type": "ILO-content",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The contents cover only loops, which is one part of structured programming. They do not present the structured programming concepts themselves (sequence, selection, repetition) or show how the Java syntax implements them. The ILO wording ('Inference ... aCLOng') is also garbled.",
+      "direction": "same"
+    },
+    {
+      "id": "row6-ilo1-activity",
+      "type": "ILO-activity",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "Laboratory exercises have students implement loops in Java, which practises the implement part. No activity has students infer or explain the structured programming concepts, such as identifying sequence, selection and repetition in code. The PowerPoint discussion is passive.",
+      "direction": "same"
+    },
+    {
+      "id": "row6-ilo1-assessment",
+      "type": "ILO-assessment",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The Machine Problem shows implementation in Java. Nothing assesses understanding of the structured programming concepts, because the quiz and recitation cover only loop syntax, tracing and loop concepts. The inference verb is not evidenced.",
+      "direction": "same"
+    },
+    {
+      "id": "row6-value",
+      "type": "Module-value",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Humility, Community-orientedness and Interiority are named and tied to debugging loops, group lab work and code precision in this lesson.",
+      "direction": "improved"
+    },
+    {
+      "id": "row8-ilo0-clo:real-prog1-2",
+      "type": "ILO-CLO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "The ILO analyzes data storage requirements and builds Java array solutions, a smaller step toward CLO1.",
+      "direction": "improved"
+    },
+    {
+      "id": "row8-ilo0-clo:real-prog1-3",
+      "type": "ILO-CLO",
+      "from": "NOT_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The ILO is about arrays in Java, but it has no ethical standards, social responsibility or common-good element, which CLO2 requires. It has no link to truth and compassion in how data is stored and processed.",
+      "direction": "improved"
+    },
+    {
+      "id": "row8-ilo0-content",
+      "type": "ILO-content",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The contents cover declaring, initializing, accessing and processing 1D and 2D arrays with worked examples. Nothing teaches how to analyze a problem's data storage requirements (what data, how many values, which dimensions), so the ILO's Analyze verb is not covered.",
+      "direction": "same"
+    },
+    {
+      "id": "row8-ilo0-activity",
+      "type": "ILO-activity",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The laboratory exercises have students write array programs that store, retrieve and process data, which practises declare, initialize and manipulate. No activity has students analyze a problem's data storage requirements, so the Analyze verb is not practised.",
+      "direction": "same"
+    },
+    {
+      "id": "row8-ilo0-assessment",
+      "type": "ILO-assessment",
+      "from": "ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The tasks are about error types and debugging. Array programs appear only as programs to debug, so no task has students declare, initialize or process arrays themselves. No task asks students to analyze data storage requirements. The recitation has no stated focus.",
+      "direction": "worsened"
+    },
+    {
+      "id": "row8-ilo1-content",
+      "type": "ILO-content",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "NOT_ALIGNED",
+      "explanation": "The ILO is about synthesizing debugging skills. The contents are only array syntax and processing. They teach no error types, debugging techniques or worked debugging examples, and they do not reach a Create-level synthesis.",
+      "direction": "worsened"
+    },
+    {
+      "id": "row8-ilo1-activity",
+      "type": "ILO-activity",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "Tracing array contents is a small step toward debugging. No activity has students locate and fix errors in Java programs. Nothing reaches the Synthesize level of combining debugging skills. The quiz covers only array syntax.",
+      "direction": "same"
+    },
+    {
+      "id": "row8-ilo1-assessment",
+      "type": "ILO-assessment",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The machine problem with a debugging log is relevant evidence of debugging. It only has students fix programs supplied to them, which is Analyze/Apply and not Synthesize, because students do not combine their skills on their own work. The quiz is recall of error types. The recitation has no stated focus.",
+      "direction": "same"
+    },
+    {
+      "id": "row8-value",
+      "type": "Module-value",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Compassion and Humility are tied to what students do while debugging array programs in the lab.",
+      "direction": "improved"
+    },
+    {
+      "id": "row9-ilo0-clo:real-prog1-2",
+      "type": "ILO-CLO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Analyzing requirements and applying Java methods is a smaller step toward the CLO's analyze-define-design outcome in the same Java subject.",
+      "direction": "improved"
+    },
+    {
+      "id": "row9-ilo0-clo:real-prog1-3",
+      "type": "ILO-CLO",
+      "from": "NOT_ALIGNED",
+      "to": "NOT_ALIGNED",
+      "explanation": "The CLO is about incorporating ethical standards and social responsibility into designs for the common good. The ILO is purely technical string handling, with no ethical, social or Marian-Augustinian element. It is not a smaller step of this CLO.",
+      "direction": "same"
+    },
+    {
+      "id": "row9-ilo0-content",
+      "type": "ILO-content",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The contents cover the string methods with worked examples and everyday applications. Nothing shows how to analyze a text-processing requirement (identify inputs, outputs and which method fits), so the Analyze part of the ILO is not covered.",
+      "direction": "same"
+    },
+    {
+      "id": "row9-ilo0-activity",
+      "type": "ILO-activity",
+      "from": "ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The activities are mostly about debugging faulty String programs, which touches string methods. No activity has students analyze a text-processing requirement. No activity has students write programs that choose and apply string methods to meet a requirement. The quiz is unspecified.",
+      "direction": "worsened"
+    },
+    {
+      "id": "row9-ilo0-assessment",
+      "type": "ILO-assessment",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "Seatwork and program output show students applying string methods in working programs. No task collects evidence of analyzing the text-processing requirements, such as a written breakdown of input, output and chosen methods. The quiz covers recall of method behaviour only.",
+      "direction": "same"
+    },
+    {
+      "id": "row9-ilo1-clo:real-prog1-3",
+      "type": "ILO-CLO",
+      "from": "NOT_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The ILO is about Java and a social challenge, but it never asks students to incorporate ethical standards or social responsibility into technical designs. It also never mentions the common good or truth and compassion. Its verb is about debugging and collaborating, not incorporating ethics into design. It shares only the 'social challenge' topic with the CLO.",
+      "direction": "improved"
+    },
+    {
+      "id": "row9-ilo1-clo:real-prog1-4",
+      "type": "ILO-CLO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "The ILO is a smaller step of the CLO: it covers collaboration in diverse teams and Java programs that address a social challenge.",
+      "direction": "improved"
+    },
+    {
+      "id": "row9-ilo1-content",
+      "type": "ILO-content",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The contents teach String methods but contain nothing on debugging: no common errors, no tracing or testing techniques, no finding and fixing of faulty code. The Create-level 'synthesize' is not reached, because the examples only show applying methods. There is nothing on collaboration or peer feedback with diverse classmates. The programs are everyday tasks, not a social challenge.",
+      "direction": "same"
+    },
+    {
+      "id": "row9-ilo1-activity",
+      "type": "ILO-activity",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "Students do practise finding and fixing errors in the lab exercises and seatwork. However, the activities do not have them collaborate with classmates from diverse backgrounds; the seatwork is on 'their own' programs. The faulty programs are generic String programs and are not tied to any social challenge. The 'synthesize' level is only partly reached.",
+      "direction": "same"
+    },
+    {
+      "id": "row9-ilo1-assessment",
+      "type": "ILO-assessment",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The tasks check recall of String methods and writing String programs, not finding and fixing errors. The 'synthesize debugging skills' verb is not assessed. Nothing shows collaboration with diverse classmates. No task involves a social-challenge program. The output criterion has no debugging evidence.",
+      "direction": "same"
+    },
+    {
+      "id": "row9-value",
+      "type": "Module-value",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Humility and Courage are named and tied to debugging, accepting classmates' feedback and presenting solutions in recitation.",
+      "direction": "improved"
+    },
+    {
+      "id": "row10-ilo0-clo:real-prog1-2",
+      "type": "ILO-CLO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "The ILO takes the CLO's 'analyze requirements' step and builds toward design with the Java syntax and semantics needed, without claiming more.",
+      "direction": "improved"
+    },
+    {
+      "id": "row10-ilo0-clo:real-prog1-3",
+      "type": "ILO-CLO",
+      "from": "NOT_ALIGNED",
+      "to": "NOT_ALIGNED",
+      "explanation": "The ILO is about analyzing problem requirements and demonstrating Java syntax and semantics. It says nothing about ethical standards, social responsibility, the common good, or truth and compassion. It does not serve this CLO.",
+      "direction": "same"
+    },
+    {
+      "id": "row10-ilo0-content",
+      "type": "ILO-content",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The contents cover method syntax and semantics (parameters, return values, recursion, tracing). They do not show how to analyze a problem's requirements, for example identifying inputs, outputs and which methods are needed. The Analyze level is therefore not reached; the contents are only about writing and tracing methods.",
+      "direction": "same"
+    },
+    {
+      "id": "row10-ilo0-activity",
+      "type": "ILO-activity",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "Students write, run and trace methods, which practises demonstrating syntax and semantics. No activity has them analyze a given problem's requirements; the lecture and online practice are about syntax. The Analyze level is not practised.",
+      "direction": "same"
+    },
+    {
+      "id": "row10-ilo0-assessment",
+      "type": "ILO-assessment",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The recitation, quiz and machine problem assess Java method syntax and output. The task grading does not collect evidence of analyzing a problem's requirements, since no requirements analysis is produced or graded. The Analyze verb is missing.",
+      "direction": "same"
+    },
+    {
+      "id": "row10-ilo1-clo:real-prog1-2",
+      "type": "ILO-CLO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Building Java console applications for requirements the student has defined and analyzed is a smaller step toward the CLO's design of Java solutions.",
+      "direction": "improved"
+    },
+    {
+      "id": "row10-ilo1-clo:real-prog1-3",
+      "type": "ILO-CLO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "NOT_ALIGNED",
+      "explanation": "The CLO asks for ethical standards and social responsibility in technical designs. ILO5 only asks for robust console applications that meet requirements. Ethics, social responsibility, the common good and Marian/Augustinian principles are all missing, so the ILO is not a smaller step of this CLO.",
+      "direction": "worsened"
+    },
+    {
+      "id": "row10-ilo1-content",
+      "type": "ILO-content",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The contents are only method syntax, parameters and recursion. They do not show how to build a complete console application: no console input/output, no turning requirements into a program design, and nothing on robustness such as input validation or error handling. This is a topic list for a Create-level ILO.",
+      "direction": "same"
+    },
+    {
+      "id": "row10-ilo1-activity",
+      "type": "ILO-activity",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "Students write and trace individual methods, but they do not build a whole console application. They do not define or analyze requirements first, and nothing practises making a program robust (input validation, error handling). The lecture, quiz and online practice are passive or low-level.",
+      "direction": "same"
+    },
+    {
+      "id": "row10-ilo1-assessment",
+      "type": "ILO-assessment",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The machine problem is graded on correct syntax and accurate output of method exercises. It does not collect evidence of building a complete console application from requirements the student defined. Robustness (invalid input, errors) is not assessed. The recitation and quiz only test Remember/Understand.",
+      "direction": "same"
+    },
+    {
+      "id": "row10-ilo2-clo:real-prog1-3",
+      "type": "ILO-CLO",
+      "from": "NOT_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "ILO6 shares the Java and social-challenge context. It asks for debugging and teamwork, but says nothing about ethical standards, honesty/truth or the common good, which are what the CLO asks for. The wording \"Synthesize debugging skills\" also does not say what is produced.",
+      "direction": "improved"
+    },
+    {
+      "id": "row10-ilo2-clo:real-prog1-4",
+      "type": "ILO-CLO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "ILO6 is a smaller step of the CLO: collaborating with diverse teammates on a Java solution to a social challenge.",
+      "direction": "improved"
+    },
+    {
+      "id": "row10-ilo2-content",
+      "type": "ILO-content",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The contents cover tracing method output, but they do not teach debugging: no kinds of errors (syntax, runtime, logic), no debugging techniques or tools. They do not show collaborative work with diverse teammates (such as pair debugging or code review). The social-challenge Java solution is not in the contents.",
+      "direction": "same"
+    },
+    {
+      "id": "row10-ilo2-activity",
+      "type": "ILO-activity",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "Students write, run and trace methods, but they are not asked to find and fix errors in a program. There is no teamwork with diverse teammates and no social-challenge solution. The other activities are passive or low-level.",
+      "direction": "same"
+    },
+    {
+      "id": "row10-ilo2-assessment",
+      "type": "ILO-assessment",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The tasks check syntax, output and method writing. None collects evidence of finding and fixing errors, of collaborating with teammates, or of a Java solution to a social challenge. Grading on correct syntax and output does not show debugging.",
+      "direction": "same"
+    },
+    {
+      "id": "row10-value",
+      "type": "Module-value",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Interiority and Courage are tied to debugging in the lab and to defending and fixing errors in recitation.",
+      "direction": "improved"
+    },
+    {
+      "id": "row11-ilo0-clo:real-prog1-3",
+      "type": "ILO-CLO",
+      "from": "NOT_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "ILO1 is in the Java subject and mentions a social challenge, which loosely touches the common good. It does not mention ethical standards or social responsibility in the design (such as data privacy, responsible use of retrieved data, honesty). It also does not mention Marian/Augustinian principles of truth and compassion.",
+      "direction": "improved"
+    },
+    {
+      "id": "row11-ilo0-clo:real-prog1-4",
+      "type": "ILO-CLO",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "ILO1 is a smaller step of the CLO: working with teammates to build a Java solution to a social challenge.",
+      "direction": "improved"
+    },
+    {
+      "id": "row11-ilo0-content",
+      "type": "ILO-content",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The ILO is an Apply-level outcome: retrieve data from a relational database with a Java class, and build a team solution to a social challenge. (1) The contents only name 'Improvised Database UCanAccess Connection'. They do not cover opening a connection, querying, or reading rows with a Java class. (2) A bare topic name does not show retrieval being applied. (3) Nothing in the contents covers building a teamwork solution to a social challenge. The value webbing line links to the common good but does not show the build.",
+      "direction": "same"
+    },
+    {
+      "id": "row11-ilo0-activity",
+      "type": "ILO-activity",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "Hands-on practice exists ('Group Dynamics Laboratory Exercises on Java database connection') and it is in groups. Gaps: (1) the exercises are about a 'connection' and do not say students retrieve data with a Java class (query or read rows). (2) No activity has students build a Java solution for a social challenge. The value web only reflects on their database program.",
+      "direction": "same"
+    },
+    {
+      "id": "row11-ilo0-assessment",
+      "type": "ILO-assessment",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "Gaps: (1) 'Quiz' and 'Recitation' are named only, with no hint of what is assessed. (2) The 'Machine problem: hands-on exercises using Java programs' does not say that data is retrieved from a relational database with a Java class, so the ILO's subject is not evidenced. (3) No task collects evidence of the team-built solution for a social challenge. The value web output covers only the values reflection.",
+      "direction": "same"
+    },
+    {
+      "id": "row11-ilo1-content",
+      "type": "ILO-content",
+      "from": "NOT_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "The contents include value webbing with a sample value web tied to database use.",
+      "direction": "improved"
+    },
+    {
+      "id": "row11-ilo1-activity",
+      "type": "ILO-activity",
+      "from": "NOT_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Groups create and present a value web, which practises demonstrating the spirituality.",
+      "direction": "improved"
+    },
+    {
+      "id": "row11-ilo1-assessment",
+      "type": "ILO-assessment",
+      "from": "NOT_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "A rubric-graded group value web output is direct evidence of the ILO.",
+      "direction": "improved"
+    },
+    {
+      "id": "row11-value",
+      "type": "Module-value",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "Three values are named and each is tied to what students do in the lab and value web.",
+      "direction": "improved"
+    },
+    {
+      "id": "description-plan",
+      "type": "Description-plan",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "PARTIALLY_ALIGNED",
+      "explanation": "The description says only 'fundamentals of Java programming' and 'logical formulation techniques', which would fit any introductory Java course. It does not name the plan's main blocks: console input/output, file streams, conditionals and loops, arrays, strings, methods and recursion, and Java database connection. Its closing claim of 'created their own Java applications' is not tied to any plan content, such as the database-connected solution.",
+      "direction": "same"
+    },
+    {
+      "id": "ref0",
+      "type": "REF-plan",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "The W3Schools Java Tutorial matches the course subject and covers many of its weekly topics.",
+      "direction": "improved"
+    },
+    {
+      "id": "ref1",
+      "type": "REF-plan",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "The Codecademy Learn Java course matches the course subject and supports the introductory Java topics.",
+      "direction": "improved"
+    },
+    {
+      "id": "ref2",
+      "type": "REF-plan",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "The Programiz Java tutorials match the subject and cover loops, arrays and strings.",
+      "direction": "improved"
+    },
+    {
+      "id": "ref3",
+      "type": "REF-plan",
+      "from": "PARTIALLY_ALIGNED",
+      "to": "ALIGNED",
+      "explanation": "The Tutorialspoint Java index lists the course's topics: syntax, variables, operators, control statements and methods.",
+      "direction": "improved"
+    }
+  ]
+}

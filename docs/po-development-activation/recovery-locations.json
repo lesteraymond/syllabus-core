@@ -1,0 +1,10 @@
+{
+  "fullBackup": "C:\\Users\\JPDELR~1\\AppData\\Local\\Temp\\lcup-dev-po-activation-x7VyTW\\development-full-before.sql",
+  "fullBackupSha256": "9809ce02a8b1076d8e087d03bb59fb0b7b563a3059ecc748109cce4ff69bb46d",
+  "referenceBackup": "C:\\Users\\JPDELR~1\\AppData\\Local\\Temp\\lcup-dev-po-activation-x7VyTW\\reference-before.json",
+  "referenceBackupSha256": "f8ea7ed17659d76e59dc97a8a42c5a6bdc40401ccb5caf7e67ff2e6566af8465",
+  "privateConnectionFile": "C:\\Users\\JPDELR~1\\AppData\\Local\\Temp\\lcup-dev-po-activation-x7VyTW\\development-connection.json",
+  "privateAuthorizationReceipt": "C:\\Users\\JPDELR~1\\AppData\\Local\\Temp\\lcup-dev-po-activation-x7VyTW\\development-authorization.json",
+  "privateContext": "C:\\Users\\JPDELR~1\\AppData\\Local\\Temp\\lcup-dev-po-activation-x7VyTW\\private-context.json",
+  "containsNoCredentials": true
+}

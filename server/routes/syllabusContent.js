@@ -2,7 +2,7 @@
 // per syllabus, written section by section so autosave sends only what changed.
 // Mounted on /api/syllabi after routes/syllabi.js (different paths, so the two never overlap).
 const express = require('express');
-const { requireAuth, requireAdmin } = require('../middleware/auth');
+const { requireAuth, requireAdmin, requireAuthor } = require('../middleware/auth'); // requireAuthor: faculty and the administrator write syllabi (lib/roles.js)
 const { inTransaction, httpError, sendError } = require('../lib/http');
 const { notifyAdmins, notifyRoles } = require('../lib/notify');
 const reviewStages = require('../lib/reviewStages');
@@ -10,11 +10,15 @@ const rules = require('../lib/syllabusRules');
 const { loadCourse } = require('../lib/courses');
 const assignments = require('../lib/assignments');
 const subjectLock = require('../lib/subjectLock');
-const { outcomesFrom, validateOutcomes } = require('../lib/syllabusOutcomes');
+const { outcomesFrom, validateOutcomes, standardsAreSet, forceStandards, poReviewPending } = require('../lib/syllabusOutcomes');
+const { hashOutcomes, auditIfReady } = require('../lib/programPoReferences');
 const { catalogGaps, gapsMessage } = require('../lib/catalogReady');
 const compliance = require('../lib/compliance/service');
 const { changedSections, describeChanges, normalize } = require('../lib/versionChange');
+const contentRevision = require('../lib/contentRevision');
 const { LABEL_SQL, labelsOf } = require('../lib/syllabusLabels');
+const { currentLabel } = require('../lib/academicYear');
+const accountActivity = require('../lib/accountActivity'); // a new draft and each editing session in the author's Recent Activity (best effort)
 const router = express.Router();
 
 const MAX_CONTENT_BYTES = 512 * 1024;
@@ -22,6 +26,8 @@ const MAX_CONTENT_BYTES = 512 * 1024;
 const SECTIONS = { meta: 'object', outcomes: 'object', description: 'array', clos: 'array', plan: 'array', reqs: 'array', refs: 'object', grading: 'object' };
 const TAG = /^(clo|ega|po):[A-Za-z0-9_-]{1,40}$/;
 
+const { assertValidSubject } = require('../lib/subjectValidation');
+const { assertActiveYear } = require('../lib/activeYearGate');
 const parseJson = (text) => { try { return text ? JSON.parse(text) : null; } catch { return null; } };
 const isObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 
@@ -59,14 +65,18 @@ const parseId = (raw) => {
 
 // Only course identity is catalog-managed. Updated clients save their own Step 2 content.
 // Preserve the legacy contract for clients/drafts that have not adopted syllabus-owned outcomes yet.
-async function applyCatalog(db, content) {
+// `user` is who is saving: everyone but an administrator gets the subject's vision, mission, EGAs and POs exactly as the administrator set them (forceStandards).
+// `stored` is the content already in the database: while its PO review is pending, its PO statements stay as they are (poReviewPending). Choosing a different subject starts from that subject's
+// outcomes, so another subject's stored statements are never kept.
+async function applyCatalog(db, content, user = null, stored = null) {
   const courseId = content.meta && Number.isInteger(content.meta.courseId) ? content.meta.courseId : null;
   const course = courseId ? await loadCourse(db, courseId, { lock: true }) : null;
   if (courseId && !course) throw httpError(400, 'That course does not exist');
   if(course?.standards?.poReference && !content.outcomes && require('../lib/programPoReferences').hasPoMappings(content)) throw httpError(409,'This legacy draft must explicitly adopt its authored PO context before saving. Existing mappings were not replaced.',{code:'legacy_po_adoption_required'});
-  if (course) { content.meta.code = course.code; content.meta.title = course.title; content.meta.program = course.program.code; }
+  if (course) { content.meta.code = course.code; content.meta.title = course.title; content.meta.program = course.program.code; require('../lib/subjectTerm').applyTerm(content.meta, course.term); } // the administrator's year level, pre-requisite, academic year and semester: faculty cannot change them
   if (!content.outcomes) content.clos = course ? course.clos : [];
   else {
+    if (course && user && user.role !== 'admin' && standardsAreSet(course.standards)) forceStandards(content.outcomes, course.standards, stored?.meta?.courseId === course.id ? stored : null);
     validateOutcomes(content.outcomes, content.clos || [], content.plan || []);
     const o = content.outcomes;
     if (!course && (content.clos?.length || o.egas.length || o.pos.length || o.vision.trim() || o.mission.lead.trim() || o.mission.items.length)) throw httpError(400, 'Choose a subject before editing learning outcomes.');
@@ -91,14 +101,22 @@ function snapshotFrom(content, course) {
 }
 
 // A new, empty draft. It is the owner's alone: admins never see drafts and no one is notified.
-router.post('/drafts', requireAuth, async (req, res) => {
+router.post('/drafts', requireAuthor, async (req, res) => {
   try {
     const db = req.app.locals.db;
     await assignments.requireCourseAccess(db, req.session.user, null); // faculty need at least one assigned course
-    const [result] = await db.query(
-      "INSERT INTO syllabi (user_id, title, course_code, status, version) VALUES (?, '', '', 'draft', 'v1.0')",
-      [req.session.user.id]
-    );
+    // the draft belongs to the academic year that is current now (lib/academicYear.js); before the migration there is none and the old insert runs
+    const year = await currentLabel(db);
+    let result;
+    try {
+      [result] = year
+        ? await db.query("INSERT INTO syllabi (user_id, title, course_code, status, version, academic_year) VALUES (?, '', '', 'draft', 'v1.0', ?)", [req.session.user.id, year])
+        : await db.query("INSERT INTO syllabi (user_id, title, course_code, status, version) VALUES (?, '', '', 'draft', 'v1.0')", [req.session.user.id]);
+    } catch (error) {
+      if (!(year && error && error.code === 'ER_BAD_FIELD_ERROR')) throw error;
+      [result] = await db.query("INSERT INTO syllabi (user_id, title, course_code, status, version) VALUES (?, '', '', 'draft', 'v1.0')", [req.session.user.id]);
+    }
+    await accountActivity.record(db, { userId: req.session.user.id, action: 'draft_create', syllabusId: result.insertId });
     res.json({ id: result.insertId });
   } catch (err) { sendError(res, err); }
 });
@@ -106,12 +124,15 @@ router.post('/drafts', requireAuth, async (req, res) => {
 router.get('/:id/content', requireAuth, async (req, res) => {
   try {
     const id = parseId(req.params.id);
-    const [rows] = await req.app.locals.db.query(
-      'SELECT syllabus_id, user_id, status, version, content, content_schema_version, content_updated_at, course_id, archived_at, admin_comment FROM syllabi WHERE syllabus_id = ?', [id]);
+    // academic_year is the syllabus's own year (lib/academicYear.js); a database before the migration has no such column
+    const read = (year) => req.app.locals.db.query('SELECT syllabus_id, user_id, status, version, content, content_schema_version, content_updated_at, course_id, archived_at, admin_comment' + (year ? ', academic_year' : '') + ' FROM syllabi WHERE syllabus_id = ?', [id]);
+    let rows;
+    try { [rows] = await read(true); } catch (error) { if (!(error && error.code === 'ER_BAD_FIELD_ERROR')) throw error; [rows] = await read(false); }
     const syl = rows[0];
     if (!syl || !rules.canView(req.session.user, syl)) throw httpError(404, 'Syllabus not found');
     let content = null;
     if (syl.content) { try { content = JSON.parse(syl.content); } catch { content = null; } }
+    const revisions = contentRevision.revisionsOf(content); // of the STORED sections, before any in-memory adoption below
     // The owner may edit only while the course is assigned to them (an admin can assign it again).
     let editable = rules.canEdit(req.session.user, syl);
     let lockedReason = null;
@@ -129,20 +150,21 @@ router.get('/:id/content', requireAuth, async (req, res) => {
     }
     // Back from "For revision": the next submission becomes the next version, and the reviewer's note says what to change.
     const revising = rules.isReturned(syl.status);
-    res.json({ id, status: syl.status, version: syl.version, content, adoptedOutcomes, schemaVersion: syl.content_schema_version, updatedAt: syl.content_updated_at, editable, lockedReason,
+    res.json({ id, status: syl.status, version: syl.version, academicYear: syl.academic_year || null, content, revisions, adoptedOutcomes, schemaVersion: syl.content_schema_version, updatedAt: syl.content_updated_at, editable, lockedReason,
       ...(revising ? { nextVersion: rules.nextVersionLabel(syl.version), reviewerNote: syl.admin_comment || '' } : {}) });
   } catch (err) { sendError(res, err); }
 });
 
 // Body: { sections: { plan: [...], meta: {...} }, schemaVersion }. The given sections replace the stored ones;
 // the others are untouched, so two tabs editing different sections never overwrite each other.
-router.put('/:id/content', requireAuth, async (req, res) => {
+router.put('/:id/content', requireAuthor, async (req, res) => {
   try {
     const db = req.app.locals.db;
     const me = req.session.user;
     const id = parseId(req.params.id);
-    const { sections, schemaVersion } = req.body || {};
+    const { sections, schemaVersion, baseRevisions } = req.body || {};
     validateSections(sections);
+    if (!contentRevision.validBase(baseRevisions)) throw httpError(400, 'baseRevisions must map section names to revision strings');
     const version = Number.isInteger(schemaVersion) && schemaVersion > 0 && schemaVersion < 1000 ? schemaVersion : 2;
 
     const saved = await inTransaction(db, async (conn) => {
@@ -156,10 +178,18 @@ router.put('/:id/content', requireAuth, async (req, res) => {
 
       let current = {};
       if (syl.content) { try { current = JSON.parse(syl.content); } catch { current = {}; } }
+      // Mandatory optimistic concurrency, decided under the row lock above. Every section being saved that ALREADY holds content must come with the revision the
+      // client based its edit on: without one the server cannot know the client has seen what it is about to replace (428), and with an outdated one it is refused (409).
+      // A section with nothing stored yet (a brand-new draft) has nothing to overwrite, so its first save needs no base. Nothing is ever merged or replaced silently.
+      const sentKeys = Object.keys(sections);
+      const missing = contentRevision.missingBases(current, baseRevisions, sentKeys);
+      if (missing.length) throw httpError(428, 'This save does not say which version of the syllabus it was based on (' + missing.join(', ') + '), so it was refused rather than risk replacing newer content. Load the syllabus, then save again with the revisions you loaded.', { code: 'revision_required', sections: missing, revisions: contentRevision.revisionsOf(current) });
+      const stale = contentRevision.staleSections(current, baseRevisions, sentKeys);
+      if (stale.length) throw httpError(409, 'Newer changes to this syllabus were saved after you opened it (' + stale.join(', ') + '). Your save was not applied, so nothing newer was overwritten. Load the latest version, review it, then make your change again.', { code: 'revision_conflict', sections: stale, revisions: contentRevision.revisionsOf(current) });
       const merged = { ...current, ...sections, schemaVersion: version };
       // and so must the course being chosen
       if (merged.meta && Number.isInteger(merged.meta.courseId)) await assignments.requireCourseAccess(conn, me, merged.meta.courseId);
-      const course = await applyCatalog(conn, merged);
+      const course = await applyCatalog(conn, merged, me, current);
       if (course && course.id !== syl.course_id) await subjectLock.assertSubjectFree(conn, me, course.id, id); // one syllabus for each subject
       const json = JSON.stringify(merged);
       if (Buffer.byteLength(json, 'utf8') > MAX_CONTENT_BYTES) throw httpError(413, `This syllabus is too large to save (limit ${MAX_CONTENT_BYTES / 1024} KB)`);
@@ -171,9 +201,71 @@ router.put('/:id/content', requireAuth, async (req, res) => {
         'UPDATE syllabi SET content = ?, content_schema_version = ?, content_updated_at = NOW(), title = ?, course_code = ?, course_id = ? WHERE syllabus_id = ?',
         [json, version, title, code, course ? course.id : null, id]
       );
-      return { bytes: Buffer.byteLength(json, 'utf8'), clos: merged.clos };
+      // Sections this save did not send but the server itself changed (the catalog supplies the CLOs of a draft that has no authored outcomes yet): the saving client
+      // may adopt their new revisions, because they are the server's doing and not another author's.
+      const derivedSections = contentRevision.SECTION_KEYS.filter((k) => !sentKeys.includes(k) && contentRevision.revisionOf(merged[k]) !== contentRevision.revisionOf(current[k]));
+      return { bytes: Buffer.byteLength(json, 'utf8'), clos: merged.clos, revisions: contentRevision.revisionsOf(merged), derivedSections, status: syl.status, subject: accountActivity.subjectLine(code, title) };
     });
-    res.json({ savedAt: new Date().toISOString(), bytes: saved.bytes, clos: saved.clos });
+    // After the commit: one "edited" line per editing session (autosave saves every few seconds), with the status it was edited in (draft, for revision, ...).
+    await accountActivity.recordEdit(db, { userId: me.id, syllabusId: id, subject: saved.subject, notes: saved.status });
+    res.json({ savedAt: new Date().toISOString(), bytes: saved.bytes, clos: saved.clos, revisions: saved.revisions, derivedSections: saved.derivedSections });
+  } catch (err) { sendError(res, err); }
+});
+
+// What changed for a syllabus waiting for its author's PO review: the stored statements, the subject's statements, and the hash the author's confirmation must send back.
+function poReviewOf(content, course) {
+  if (!course || !poReviewPending(content, course.standards)) return { pending: false };
+  const current = content.outcomes.pos, updated = course.standards.pos, nos = [...new Set([...current, ...updated].map((p) => p.no))].sort((a, b) => a - b);
+  const text = (rows, no) => { const row = rows.find((p) => p.no === no); return row ? row.text : null; };
+  const mapped = new Set([...(content.clos || []).flatMap((c) => c.pos || []), ...(content.plan || []).flatMap((row) => (row.ilos || []).flatMap((il) => (il.tags || []).filter((tag) => /^po:\d+$/.test(tag)).map((tag) => Number(tag.slice(3)))))]);
+  const closOf = (no) => (content.clos || []).map((c, i) => ({ c, label: 'CLO ' + (i + 1) })).filter(({ c }) => (c.pos || []).includes(no)).map(({ label }) => label);
+  const side = (r) => (r ? { id: r.id, version: r.version } : null);
+  return { pending: true, reviewedSha256: hashOutcomes(updated), references: { current: side(content.outcomes.poReference), updated: side(course.standards.poReference) }, changes: nos.map((no) => ({ no, before: text(current, no), after: text(updated, no), clos: closOf(no) })).filter((c) => String(c.before ?? '').replace(/\s+/g, ' ').trim() !== String(c.after ?? '').replace(/\s+/g, ' ').trim()), missingMappings: [...mapped].filter((no) => !updated.some((p) => p.no === no)).sort((a, b) => a - b) };
+}
+const contentOf = (syl) => { try { return syl.content ? JSON.parse(syl.content) : null; } catch { return null; } };
+
+router.get('/:id/po-review', requireAuth, async (req, res) => {
+  try {
+    const db = req.app.locals.db, id = parseId(req.params.id);
+    const [rows] = await db.query('SELECT syllabus_id, user_id, status, content, course_id, archived_at FROM syllabi WHERE syllabus_id = ?', [id]);
+    const syl = rows[0];
+    if (!syl || !rules.canView(req.session.user, syl)) throw httpError(404, 'Syllabus not found');
+    const content = contentOf(syl);
+    res.json(poReviewOf(content, content?.meta?.courseId ? await loadCourse(db, content.meta.courseId) : null));
+  } catch (err) { sendError(res, err); }
+});
+
+// The author's explicit adoption of the changed PO statements. They come from the server, and must still be the ones the author reviewed (reviewedSha256); the CLO mappings, the plan and every saved
+// report are left exactly as they are. The next check judges each CLO-PO relationship again, because the reference is part of what a judgment is cached under.
+router.post('/:id/po-review/adopt', requireAuthor, async (req, res) => {
+  try {
+    const db = req.app.locals.db, me = req.session.user, id = parseId(req.params.id);
+    const { reviewedSha256, confirm } = req.body || {};
+    if (confirm !== true) throw httpError(400, 'Confirm that you reviewed the updated Program Outcomes.', { code: 'po_review_confirmation_required' });
+    if (typeof reviewedSha256 !== 'string' || !/^[a-f0-9]{64}$/.test(reviewedSha256)) throw httpError(400, 'This review is not valid. Open it again.', { code: 'po_review_invalid' });
+    const done = await inTransaction(db, async (conn) => {
+      const [rows] = await conn.query('SELECT syllabus_id, user_id, status, content, course_id, archived_at FROM syllabi WHERE syllabus_id = ? FOR UPDATE', [id]);
+      const syl = rows[0];
+      if (!syl || !rules.canView(me, syl)) throw httpError(404, 'Syllabus not found');
+      if (!rules.isOwner(me, syl)) throw httpError(403, 'Only the owner can edit syllabus content');
+      if (!rules.canEdit(me, syl)) throw httpError(409, rules.lockedMessage(syl));
+      await assignments.requireCourseAccess(conn, me, syl.course_id);
+      const content = contentOf(syl);
+      const course = content?.meta?.courseId ? await loadCourse(conn, content.meta.courseId, { lock: true }) : null;
+      const review = poReviewOf(content, course);
+      if (!review.pending) throw httpError(409, 'There is no Program Outcome update waiting for review on this syllabus.', { code: 'po_review_not_pending' });
+      if (reviewedSha256 !== review.reviewedSha256) throw httpError(409, 'The Program Outcomes changed after you opened this review. Review them again.', { code: 'po_review_changed' });
+      if (review.missingMappings.length) throw httpError(409, 'A CLO or a learning plan row still uses a Program Outcome that the update removes. Change that mapping first.', { code: 'po_review_mapping_missing', pos: review.missingMappings });
+      const previous = content.outcomes.poReference;
+      forceStandards(content.outcomes, course.standards);
+      validateOutcomes(content.outcomes, content.clos || [], content.plan || []);
+      content.catalog = snapshotFrom(content, course);
+      await conn.query('UPDATE syllabi SET content = ?, content_updated_at = NOW() WHERE syllabus_id = ?', [JSON.stringify(content), id]);
+      const side = (r) => (r ? { id: r.id, version: r.version } : null);
+      await auditIfReady(conn, { referenceId: course.standards.poReference?.id ?? null, programId: course.program.id, action: 'faculty_adopted', actorId: me.id, details: { syllabusId: id, previous: side(previous), next: side(course.standards.poReference) } });
+      return { revisions: contentRevision.revisionsOf(content) };
+    });
+    res.json({ adopted: true, revisions: done.revisions });
   } catch (err) { sendError(res, err); }
 });
 
@@ -275,6 +367,10 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
       if (!rules.isOwner(me, syl)) throw httpError(403, 'Only the owner can submit a syllabus');
       if (publishing && syl.status !== 'under_review') throw httpError(409, 'Complete the form and send it to AI Checker before sending it for review.');
       if (!rules.canEdit(me, syl) && !(publishing && rules.isAdmin(me) && syl.status === 'under_review')) throw httpError(409, rules.lockedMessage(syl));
+      // Submitting stores a new check run: only for a syllabus of the active academic year, read locked in this transaction (lib/activeYearGate.js).
+      await assertActiveYear(conn, syl, { lock: true });
+      // A valid subject, checked against the database on the locked row, before anything else about the subject (lib/subjectValidation.js).
+      await assertValidSubject(conn, syl, parseJson(syl.content), 'submit');
       await assignments.requireCourseAccess(conn, me, syl.course_id);
 
       let content = null;
@@ -286,9 +382,9 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
       // Validate raw saved identity before applyCatalog can overwrite it.
       const verifiedResult = await compliance.requireHybrid(conn, id,
         publishing ? compliance.publicationContent(content, await catalogSnapshot(conn, content)) : content,
-        { hardOnly: preparing });
+        { hardOnly: preparing, aiOff: !(await require('../lib/adminSettings').policy(conn)).aiChecking }); // AI checking off in Settings: no AI check can be required
       // Validate authored outcomes and snapshot the exact values being submitted.
-      await applyCatalog(conn, content);
+      await applyCatalog(conn, content, me, JSON.parse(JSON.stringify(content)));
       if (content.outcomes) validateOutcomes(content.outcomes, content.clos || [], content.plan || [], { complete: true });
       content.catalog = await catalogSnapshot(conn, content);
       // Legacy clients still receive their catalog setup checks; new clients complete these fields in Step 2.
@@ -370,7 +466,8 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
 
     if (outcome.preparing) return res.json({version:outcome.label,status:outcome.status});
     if (outcome.sentForReview) {
-      // After the commit: the other two reviewers hear about it; the VPAA when all three have cleared it.
+      // After the commit: the other two reviewers hear about it; the VPAA when all three have cleared it. Until now it was hidden from them
+      // (lib/reviewStages.js hiddenFromReviewers): this is when it reaches them.
       await notifyRoles(db, ['asst_vpaa', 'lic_director'], { exceptUserId: me.id, type: 'submission', syllabusId: id, title: `Syllabus sent for review: ${outcome.courseCode || outcome.title}`, body: `${me.firstName} ${me.lastName} sent ${outcome.title || outcome.courseCode} for review.` });
       return res.json({ version: outcome.label, status: outcome.status });
     }
@@ -398,7 +495,7 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
     res.json({ version: outcome.label, status: outcome.status, score: outcome.result?.score, deductions: outcome.result?.hybrid?.deductions });
   } catch (err) { sendError(res, err); }
 }
-router.post('/:id/submit', requireAuth, (req,res) => finalizeSyllabus(req,res));
+router.post('/:id/submit', requireAuthor, (req,res) => finalizeSyllabus(req,res));
 router.post('/:id/prepare-check', requireAuth, requireAdmin, (req,res) => finalizeSyllabus(req,res,false,true));
 router.post('/:id/publish', requireAuth, requireAdmin, (req,res) => finalizeSyllabus(req,res,true));
 
@@ -422,3 +519,4 @@ router.post('/:id/resume-draft', requireAuth, requireAdmin, async (req,res)=>{
 module.exports = router;
 module.exports.MAX_CONTENT_BYTES = MAX_CONTENT_BYTES;
 module.exports.catalogSnapshot = catalogSnapshot;
+module.exports.applyCatalog = applyCatalog;

@@ -28,4 +28,38 @@ function updateStandards(current, section, value, version, clos) {
   next.versions[section]++;
   return next;
 }
-module.exports = { blankStandards, readStandards, updateStandards };
+// The standards a NEW subject starts with: a snapshot of its program's masters (EGAs and POs) and the school's vision and mission, so what an administrator set up for the
+// program is what faculty see when they pick the program and subject. It is the subject's own copy from then on (later edits of the masters do not change it; see
+// applyMasters). The argument is { institution: { vision, mission }, egas: [{ no, name, short }], pos: [{ no, short, text, egas }] }. A program without EGAs yet gives the blank copy.
+function standardsFromMasters(masters) {
+  if (!masters || !Array.isArray(masters.egas) || !masters.egas.length) return blankStandards();
+  const inst = masters.institution || {};
+  return {
+    ...blankStandards(),
+    vision: String(inst.vision || ''),
+    mission: { lead: String((inst.mission && inst.mission.lead) || ''), items: ((inst.mission && inst.mission.items) || []).map(String) },
+    egas: masters.egas.map((e) => ({ no: e.no, name: e.name, short: e.short })),
+    pos: (masters.pos || []).map((p) => ({ no: p.no, short: p.short, text: p.text, egas: [...p.egas] })),
+  };
+}
+
+// Explicit sync of an existing subject with the masters (an administrator's action, never automatic). Returns { next, changed: [sections], conflict: string|null }. Nothing is
+// forced: when a CLO of the subject still points at an EGA or PO the masters no longer have, the subject is left as it is and the reason is given.
+function applyMasters(current, masters, clos) {
+  const incoming = standardsFromMasters(masters);
+  const keepEgas = new Set(incoming.egas.map((e) => e.no)), keepPos = new Set(incoming.pos.map((p) => p.no));
+  for (const clo of clos || []) {
+    const lostEga = (clo.egas || []).find((n) => !keepEgas.has(n));
+    if (lostEga !== undefined) return { next: current, changed: [], conflict: 'EGA ' + lostEga + ' is still used by a CLO of this subject' };
+    const lostPo = (clo.pos || []).find((n) => !keepPos.has(n));
+    if (lostPo !== undefined) return { next: current, changed: [], conflict: 'PO ' + lostPo + ' is still used by a CLO of this subject' };
+  }
+  const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  const next = JSON.parse(JSON.stringify(current)), changed = [];
+  if (!same({ v: current.vision, m: current.mission }, { v: incoming.vision, m: incoming.mission })) { next.vision = incoming.vision; next.mission = incoming.mission; next.versions.vision = (current.versions.vision || 1) + 1; changed.push('vision'); }
+  if (!same(current.egas, incoming.egas)) { next.egas = incoming.egas; next.versions.egas = (current.versions.egas || 1) + 1; changed.push('egas'); }
+  if (!same(current.pos, incoming.pos)) { next.pos = incoming.pos; next.versions.pos = (current.versions.pos || 1) + 1; changed.push('pos'); }
+  return { next, changed, conflict: null };
+}
+
+module.exports = { blankStandards, readStandards, updateStandards, standardsFromMasters, applyMasters };

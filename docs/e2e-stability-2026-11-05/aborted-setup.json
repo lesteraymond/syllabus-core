@@ -1,0 +1,7 @@
+{
+  "status": "ABORTED before E19/E23",
+  "cause": "Snapshot excluded .env; VITE_NEW_BUILDER was unset, so the legacy Builder was built. Existing checked configuration requires true.",
+  "applicationRegression": false,
+  "migrationsExecuted": 0,
+  "correction": "Explicit VITE_NEW_BUILDER=true in isolated build process; no environment file copied or changed."
+}

@@ -11,6 +11,9 @@ const STAGES = ['dean', 'asst_vpaa', 'lic_director'];
 const STAGE_OF = { admin: 'dean', asst_vpaa: 'asst_vpaa', lic_director: 'lic_director' };
 const REVIEW_ROLES = ['admin', 'asst_vpaa', 'lic_director', 'vpaa'];
 const STAFF_ROLES = ['faculty', ...REVIEW_ROLES];
+// Who writes syllabi (the Syllabus Builder, My Syllabi, drafts, saving and submitting): faculty and the administrator. The Asst. VPAA, the LIC Director and
+// the VPAA only review what others wrote.
+const AUTHOR_ROLES = ['faculty', 'admin'];
 
 const roleOf = (user) => (user && user.role) || '';
 // May look at submitted syllabi, comment on them and run the AI check (never at a draft: that is the author's).
@@ -19,5 +22,7 @@ const isReviewer = (user) => REVIEW_ROLES.includes(roleOf(user));
 const stageOf = (user) => STAGE_OF[roleOf(user)] || null;
 // The only role that approves or rejects.
 const isApprover = (user) => roleOf(user) === 'vpaa';
+// May write a syllabus of their own.
+const canAuthor = (user) => AUTHOR_ROLES.includes(roleOf(user));
 
-module.exports = { STAGES, STAGE_OF, REVIEW_ROLES, STAFF_ROLES, isReviewer, stageOf, isApprover };
+module.exports = { STAGES, STAGE_OF, REVIEW_ROLES, STAFF_ROLES, AUTHOR_ROLES, isReviewer, stageOf, isApprover, canAuthor };

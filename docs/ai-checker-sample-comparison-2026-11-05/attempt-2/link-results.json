@@ -1,0 +1,60 @@
+[
+  {
+    "url": "https://www.w3schools.com/java/default.asp",
+    "httpStatus": 200,
+    "status": "ok",
+    "reason": "HTTP 200",
+    "page": {
+      "title": "Java Tutorial",
+      "text": "Tutorials References Exercises Certificates Menu Search field &times; See More NEW W3Schools app iOS & Android Start the adventure Sign In Sign Up --> user-anonymous --> --> &#x2605; +1 --> My W3Schools --> user-authenticated --> Spaces Upgrade Paid Courses Campus (previously Academy) Practice --> user-anonymous - action-btn --> Spaces Upgrade Paid Courses Campus (previously Academy) Practice --> user-authenticated - action-btn --> &#xe80b; My W3Schools Tutorials References Exercises Certificates W3Schools app iOS & Android NEW Spaces Get Certified Plus Practice Campus (previously Academy) All our Services Logout &#62220; &#59399; &#59398; &#61805; &times; &times; Tutorials Tutorials Learn web development, programming, data science, and more. W3SCHOOLS TUTORIALS: &times; &times; References W3SCHOOLS REFERENCES: &times; HTML Tag reference CSS Reference JavaScript Reference SQL Keyword reference Python Reference Java Reference C Reference C++ Reference Colors Color names PHP Reference HTML DOM Reference MySQL Reference W3.CSS Reference Bootstrap 3 Reference Bootstrap 4 Reference Node.js Reference Django Reference jQuery Reference Vue Attributes Angular Reference Sass Reference XML Reference JSON Reference ASP Reference Icons Reference SVG Reference Canvas Reference Charsets Reference Emojis Reference AppML Reference W3.JS Reference &times; Exercises Practice and test your skills with different exercises. Tip: Sign in to track your progress. Select another topic: &times; HTML Ex"
+    }
+  },
+  {
+    "url": "https://www.codecademy.com/learn/learn-java",
+    "httpStatus": 200,
+    "status": "ok",
+    "reason": "HTTP 200",
+    "page": {
+      "title": "Java Tutorial: Learn Java Programming | Codecademy",
+      "text": "Skip to Content Loading menu bar Loading menu bar Search Search Free Course Learn Java Learn to code in Java — a robust programming language used to create software, web and mobile apps, and more. 4.4 10,905 ratings This course includes AI assistance for guided coding help Projects to apply new skills Quizzes to test your knowledge A certificate of completion Start 1,449,637 learners enrolled This course includes AI assistance for guided coding help Projects to apply new skills Quizzes to test your knowledge A certificate of completion"
+    }
+  },
+  {
+    "url": "https://www.programiz.com/java-programming",
+    "httpStatus": 200,
+    "status": "ok",
+    "reason": "HTTP 200",
+    "page": {
+      "title": "Learn Java Programming",
+      "text": "Skip to main content Online Compilers Tutorials Search Try Programiz PRO Compilers Tutorials Python JavaScript TypeScript SQL HTML CSS C C++ Java R Ruby RUST Golang Kotlin Swift C# DSA Online Python Online JavaScript Online SQL Online Java Online HTML Online C Online C++ Online C# Online PHP Online Swift Online Kotlin Online TypeScript Online Go Online Rust Online Scala Online Dart Online R Online Ruby Popular Tutorials Java \"Hello World\" Program Java for Loop Arrays in Java Interfaces in Java Java ArrayList Start Learning Java Reference Materials String ArrayList HashMap Math View all Learn Practice Compete Certification Courses Created with over a decade of experience and thousands of feedback. Learn Python Learn HTML Learn JavaScript Learn SQL Learn DSA Learn C Learn C++ Learn Java View all Courses on Python JavaScript TypeScript SQL HTML CSS C C++ Java More languages Popular Tutorials Java \"Hello World\" Program Java for Loop Arrays in Java Interfaces in Java Java ArrayList Start Learning Java All Java Tutorials Reference Materials String ArrayList HashMap Math View all Python online compiler JavaScript online compiler SQL online compiler Java online compiler HTML online compiler C online compiler C++ online compiler C# online compiler PHP online compiler Swift online compiler Kotlin online compiler TypeScript online compiler Go online compiler Rust online compiler Scala online compiler Dart online compiler R online compiler Ruby online compiler Learn Java Programming Tuto"
+    }
+  },
+  {
+    "url": "https://www.tutorialspoint.com/java/index.htm",
+    "httpStatus": 200,
+    "status": "ok",
+    "reason": "HTTP 200",
+    "page": {
+      "title": "Java Tutorial",
+      "text": "Home Whiteboard Practice Code Graphing Calculator Online Compilers Articles Tools Categories Explore Categories Find the perfect tutorial for your learning journey Python Technologies Databases Computer Programming Web Development Java Technologies Computer Science Mobile Development Big Data & Analytics Microsoft Technologies DevOps Latest Technologies Machine Learning Digital Marketing Software Quality Management Tutorials View All Categories Tutorials Courses Jobs Login Java - Home Java - Overview Java - History Java - Features Java Vs. C++ JVM - Java Virtual Machine Java - JDK vs JRE vs JVM Java - Environment Setup Java - Hello World Program Java - Comments Java - Basic Syntax Java - Variables Java - Data Types Java - Type Casting Java - Unicode System Java - User Input Java - Date & Time Java Operators Java - Operators Java - Arithmetic Operators Java - Assignment Operators Java - Relational Operators Java - Logical Operators Java - Bitwise Operators Java Operator Precedence & Associativity Java - Unary Operators Java Control Statements Java - Decision Making Java - If Else Statement Java - Switch Statement Java - Loop Control Java - For Loop Java - For-Each Loop Java - While Loop Java - Do While Loop Java - Break Statement Java - Continue Statement Object Oriented Programming Java - OOPs Concepts Java - Object & Classes Java - Class Attributes Java - Class Methods Java - Methods Java - Variables Scope Java - Constructors Java - Access Modifiers Java - Inheritance Java -"
+    }
+  },
+  {
+    "url": "https://beginnersbook.com/java-tutorial-for-beginners-with-",
+    "httpStatus": 301,
+    "status": "redirected",
+    "reason": "HTTP 301"
+  },
+  {
+    "url": "https://doi.org/10.1109/tse.2023.3241639",
+    "httpStatus": 302,
+    "status": "ok",
+    "reason": "HTTP 302"
+  },
+  {
+    "url": "https://doi.org/10.1108/IJWIS-08-2019-0038",
+    "httpStatus": 302,
+    "status": "ok",
+    "reason": "HTTP 302"
+  }
+]

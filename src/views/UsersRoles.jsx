@@ -1,11 +1,11 @@
 import StableButton from '../components/StableButton';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Avatar, PageHead } from '../components/ui';
 import { users as usersApi } from '../lib/api';
 import AssignmentsPanel from './AssignmentsPanel';
-import { ROLE_LABELS, STAFF_ROLES } from '../lib/roles';
+import { ROLE_LABELS, ROLE_ORDER, STAFF_ROLES, byRoleOrder } from '../lib/roles';
 import Select from '../components/Select';
 
 const ROLE_PERMISSIONS = {
@@ -27,9 +27,10 @@ const EMPTY_FORM = { email: '', firstName: '', lastName: '', role: 'faculty' };
 
 export default function UsersRoles({ notify, onManageSubjects }) {
   const [people, setPeople] = useState([]);
+  const ordered = useMemo(() => [...people].sort(byRoleOrder), [people]); // VPAA, Asst. VPAA, LIC Director, administrator, faculty; then by name
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
-  const [assigning, setAssigning] = useState(null); // the faculty member whose assignments are open
+  const [assigning, setAssigning] = useState(null); // the faculty member (or administrator: they write syllabi too) whose assignments are open
 
   const fetchUsers = () => usersApi.list().then(setPeople).catch(() => {});
 
@@ -56,6 +57,14 @@ export default function UsersRoles({ notify, onManageSubjects }) {
     } catch (err) { notify(translateUI("ui.failed_9500be") + err.message); }
   };
 
+  const toggleDisabled = async (p) => {
+    if (!p.disabled && !window.confirm(translateUI('users.confirmDisable', { name: p.firstName + ' ' + p.lastName }))) return;
+    try {
+      await (p.disabled ? usersApi.enable(p.id) : usersApi.disable(p.id));
+      fetchUsers();
+      notify(translateUI(p.disabled ? 'users.enabledDone' : 'users.disabledDone'));
+    } catch (err) { notify(translateUI("ui.failed_9500be") + err.message); }
+  };
   const removeUser = async (p) => {
     if (!window.confirm(tr('Remove ' + p.firstName + ' ' + p.lastName + '? They will no longer be able to sign in, and their syllabi will be deleted.'))) return;
     try {
@@ -84,7 +93,7 @@ export default function UsersRoles({ notify, onManageSubjects }) {
             </div>
             <div className="user-field">
               <label htmlFor="user-role" className="user-label">{translateUI("ui.role_c3f104")}</label>
-              <Select id="user-role" className="user-input" value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}>{STAFF_ROLES.map(r => <option key={r} value={r}>{tr(ROLE_LABELS[r])}</option>)}</Select>
+              <Select id="user-role" className="user-input" value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}>{ROLE_ORDER.filter(r => STAFF_ROLES.includes(r)).map(r => <option key={r} value={r}>{tr(ROLE_LABELS[r])}</option>)}</Select>
             </div>
           <div className="user-field user-field-action">
             <button className="user-save-btn" type="submit">{translateUI("ui.save_efc007")}</button>
@@ -94,7 +103,7 @@ export default function UsersRoles({ notify, onManageSubjects }) {
       )}
       <div className="table-card">
         <div className="overflow-x-auto w-full">
-          <table><thead><tr><th>{translateUI("ui.user_9f8a23")}</th><th>{translateUI("ui.email_84add5")}</th><th>{translateUI("ui.role_c3f104")}</th><th>{translateUI("ui.permissions_d06d55")}</th><th></th></tr></thead><tbody>{people.map(p => <tr key={p.id}><td><span className="user-cell"><Avatar src={p.avatarUrl} name={`${p.firstName} ${p.lastName}`} /><strong>{p.firstName} {p.lastName}</strong></span></td><td><small>{p.email}</small></td><td>{tr(ROLE_LABELS[p.role] || p.role)}</td><td>{tr(ROLE_PERMISSIONS[p.role] || translateUI("ui.unknown_bc7819"))}</td><td><span className="user-actions">{p.role === 'faculty' && <StableButton className="btn outline" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => setAssigning(p)}>{translateUI("ui.assignments_057d58")}</StableButton>}{ROLE_LABELS[p.role] && <StableButton className="btn outline" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => resend(p)}>{translateUI("ui.resend_credentials_1ba6fd")}</StableButton>}<StableButton className="btn danger" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => removeUser(p)}>{translateUI("ui.remove_e96390")}</StableButton></span></td></tr>)}</tbody></table>
+          <table><thead><tr><th>{translateUI("ui.user_9f8a23")}</th><th>{translateUI("ui.email_84add5")}</th><th>{translateUI("ui.role_c3f104")}</th><th>{translateUI("ui.permissions_d06d55")}</th><th></th></tr></thead><tbody>{ordered.map(p => <tr key={p.id}><td><span className="user-cell"><Avatar src={p.avatarUrl} name={`${p.firstName} ${p.lastName}`} /><strong>{p.firstName} {p.lastName}</strong>{p.disabled && <span className="badge" data-testid="account-disabled">{translateUI('users.disabledChip')}</span>}</span></td><td><small>{p.email}</small></td><td>{tr(ROLE_LABELS[p.role] || p.role)}</td><td>{tr(ROLE_PERMISSIONS[p.role] || translateUI("ui.unknown_bc7819"))}</td><td><span className="user-actions">{(p.role === 'faculty' || p.role === 'admin') && <StableButton className="btn outline" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => setAssigning(p)}>{translateUI("ui.assignments_057d58")}</StableButton>}{ROLE_LABELS[p.role] && <StableButton className="btn outline" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => resend(p)}>{translateUI("ui.resend_credentials_1ba6fd")}</StableButton>}<StableButton className="btn danger" style={{ padding: '4px 10px', fontSize: '12px' }} onClick={() => removeUser(p)}>{translateUI("ui.remove_e96390")}</StableButton><StableButton className="btn outline" style={{ padding: '4px 10px', fontSize: '12px' }} data-testid="account-toggle" onClick={() => toggleDisabled(p)}>{translateUI(p.disabled ? 'users.enable' : 'users.disable')}</StableButton></span></td></tr>)}</tbody></table>
         </div>
         {people.length === 0 && <div className="empty">{translateUI("ui.no_users_found_e611ef")}</div>}
       </div>

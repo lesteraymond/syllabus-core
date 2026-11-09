@@ -1,0 +1,162 @@
+{
+  "units": [
+    {
+      "name": "repository",
+      "exit": 0,
+      "start": "2026-11-05T13:14:52.520Z",
+      "finished": "2026-11-05T13:16:56.369Z",
+      "log": "tmp\\e2e-stability-2026-11-05\\repository.log",
+      "tests": 2152,
+      "pass": 2152,
+      "fail": 0,
+      "skipped": 0,
+      "todo": 0,
+      "cancelled": 0
+    },
+    {
+      "name": "vpaa",
+      "exit": 0,
+      "start": "2026-11-05T13:16:56.383Z",
+      "finished": "2026-11-05T13:17:25.656Z",
+      "log": "tmp\\e2e-stability-2026-11-05\\vpaa.log",
+      "tests": 294,
+      "pass": 294,
+      "fail": 0,
+      "skipped": 0,
+      "todo": 0,
+      "cancelled": 0
+    },
+    {
+      "name": "build",
+      "exit": 0,
+      "start": "2026-11-05T13:17:25.659Z",
+      "finished": "2026-11-05T13:17:34.395Z",
+      "log": "tmp\\e2e-stability-2026-11-05\\build.log"
+    },
+    {
+      "name": "focused",
+      "exit": 0,
+      "start": "2026-11-05T13:17:34.398Z",
+      "finished": "2026-11-05T13:17:47.145Z",
+      "log": "tmp\\e2e-stability-2026-11-05\\focused.log",
+      "tests": 15,
+      "pass": 15,
+      "fail": 0,
+      "skipped": 0,
+      "todo": 0,
+      "cancelled": 0
+    },
+    {
+      "name": "optimization",
+      "exit": 0,
+      "start": "2026-11-05T13:17:47.384Z",
+      "finished": "2026-11-05T13:18:01.081Z",
+      "log": "tmp\\e2e-stability-2026-11-05\\optimization.log",
+      "tests": 21,
+      "pass": 21,
+      "fail": 0,
+      "skipped": 0,
+      "todo": 0,
+      "cancelled": 0
+    }
+  ],
+  "browser": [
+    {
+      "run": "final-off",
+      "exit": 0,
+      "scenarios": {
+        "total": 23,
+        "passed": 23,
+        "failed": 0
+      },
+      "assertions": {
+        "total": 377,
+        "passed": 377,
+        "knownDefects": 0
+      },
+      "providerRequests": 101,
+      "externalNetwork": 0,
+      "sourceHash": "6a55a8c755b72a8de7c16e629b3afc98978103cd6f31891f7317a7f90b19380a"
+    },
+    {
+      "run": "final-on",
+      "exit": 0,
+      "scenarios": {
+        "total": 23,
+        "passed": 23,
+        "failed": 0
+      },
+      "assertions": {
+        "total": 377,
+        "passed": 377,
+        "knownDefects": 0
+      },
+      "providerRequests": 101,
+      "externalNetwork": 0,
+      "sourceHash": "6a55a8c755b72a8de7c16e629b3afc98978103cd6f31891f7317a7f90b19380a"
+    },
+    {
+      "run": "comprehensive-on",
+      "exit": 0,
+      "scenarios": {
+        "total": 10,
+        "passed": 10,
+        "failed": 0
+      },
+      "assertions": {
+        "total": 287,
+        "passed": 287,
+        "knownDefects": 0
+      },
+      "providerRequests": 186,
+      "externalNetwork": 0,
+      "sourceHash": "6a55a8c755b72a8de7c16e629b3afc98978103cd6f31891f7317a7f90b19380a"
+    },
+    {
+      "run": "budget-on",
+      "exit": 0,
+      "scenarios": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0
+      },
+      "assertions": {
+        "total": 37,
+        "passed": 37,
+        "knownDefects": 0
+      },
+      "providerRequests": 26,
+      "externalNetwork": 0,
+      "sourceHash": "6a55a8c755b72a8de7c16e629b3afc98978103cd6f31891f7317a7f90b19380a"
+    },
+    {
+      "run": "po-off",
+      "exit": 0,
+      "scenarios": {
+        "total": 4,
+        "passed": 4,
+        "failed": 0
+      },
+      "assertions": null,
+      "providerRequests": 400,
+      "externalNetwork": [],
+      "sourceHash": "6a55a8c755b72a8de7c16e629b3afc98978103cd6f31891f7317a7f90b19380a"
+    },
+    {
+      "run": "po-on",
+      "exit": 0,
+      "scenarios": {
+        "total": 4,
+        "passed": 4,
+        "failed": 0
+      },
+      "assertions": null,
+      "providerRequests": 400,
+      "externalNetwork": [],
+      "sourceHash": "6a55a8c755b72a8de7c16e629b3afc98978103cd6f31891f7317a7f90b19380a"
+    }
+  ],
+  "liveClaudeCalls": 0,
+  "migrationsExecuted": 0,
+  "countsOverlap": true
+}

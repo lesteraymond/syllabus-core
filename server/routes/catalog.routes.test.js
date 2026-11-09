@@ -60,6 +60,7 @@ function makeDb() {
   for (const course of s.courses) course.standards_json = JSON.stringify({ vision:s.settings.vision, mission:{lead:s.settings.mission_lead,items:JSON.parse(s.settings.mission_items)}, egas:s.egas.filter(e=>e.program_id===course.program_id).map(e=>({no:e.ega_no,name:e.name,short:e.short_name})), pos:s.pos.filter(p=>p.program_id===course.program_id).map(p=>({no:p.po_no,short:p.short_name,text:p.outcome_text,egas:p.ega_nos.split(',').map(Number)})), versions:{vision:1,egas:1,pos:1} });
   const prog = (where) => s.programs.find(where);
   const handle = (sql, p = []) => {
+    if (sql.startsWith('SELECT label, start_year, is_current FROM academic_years')) throw Object.assign(new Error("Table 'academic_years' doesn't exist"), { code: 'ER_NO_SUCH_TABLE' }); // these fixtures are a database before the academic year scope
     if (sql.startsWith('SELECT standards_json')) return [s.courses.filter(c=>c.course_id===p[0]).map(c=>({standards_json:c.standards_json,program_id:c.program_id}))];
     if (sql.startsWith('UPDATE courses SET standards_json')) {s.courses.find(c=>c.course_id===p[1]).standards_json=p[0];return [{}];}
     if (sql.startsWith('SELECT user_id FROM users WHERE user_id')) return [[{ user_id: p[0] }]];
@@ -87,6 +88,7 @@ function makeDb() {
     if (sql.startsWith('INSERT INTO program_egas')) { p[0].forEach(([program_id, ega_no, name, short_name]) => s.egas.push({ program_id, ega_no, name, short_name })); return [{}]; }
     if (sql.startsWith('DELETE FROM program_outcomes')) { s.pos = s.pos.filter((x) => x.program_id !== p[0]); return [{}]; }
     if (sql.startsWith('INSERT INTO program_outcomes')) { p[0].forEach(([program_id, po_no, short_name, outcome_text, ega_nos]) => s.pos.push({ program_id, po_no, short_name, outcome_text, ega_nos })); return [{}]; }
+    if (sql.startsWith('SELECT c.course_id AS subject_id')) return [s.courses.filter((c) => c.course_id === p[0]).map((c) => ({ ...prog((x) => x.program_id === c.program_id), subject_id: c.course_id, subject_code: c.code }))]; // lib/subjectValidation.js
     if (sql.startsWith('SELECT c.course_id, c.code, c.title, c.clos_version, p.program_id')) return [s.courses.filter((c) => c.course_id === p[0]).map((c) => ({ ...c, program_code: prog((x) => x.program_id === c.program_id).code, program_name: 'x' }))];
     if (sql.startsWith('SELECT clo_id')) return [s.clos.filter((k) => k.course_id === p[0]).map((k, i) => ({ clo_id: i + 1, title: '', clo_level: 'Enabling', statement: 's', ega_nos: k.ega_nos, po_nos: k.po_nos }))];
     if (sql.startsWith('SELECT course_id FROM faculty_courses')) return [[{ course_id: 10 }]];
@@ -96,7 +98,9 @@ function makeDb() {
     if (sql.startsWith("SELECT user_id FROM users WHERE role = 'admin'")) return [[]];
     if (sql.startsWith('UPDATE syllabi SET content')) { s.saved.push(JSON.parse(p[0])); return [{}]; }
     if (/^(INSERT|UPDATE|DELETE)/.test(sql)) return [{}];
-    if (/program_outcome_sources|program_po_reference_(active|versions|remediation)/.test(sql)) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' }); // isolated unmigrated database
+    if (sql.startsWith('SELECT academic_year FROM programs WHERE program_id')) return [[{ academic_year: null }]];
+    if (/information_schema/.test(sql)) return [sql.includes('COUNT(*)') ? [{ n: 0 }] : []]; // the version tables are not migrated here
+    if (/program_outcome_sources|program_po_reference_(active|versions|remediation|audit)/.test(sql)) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' }); // isolated unmigrated database
     throw new Error('unexpected query: ' + sql);
   };
   const conn = { query: async (q, p) => handle(q, p), beginTransaction: async () => {}, commit: async () => {}, rollback: async () => {}, release: () => {} };
@@ -116,6 +120,13 @@ async function withServer(fn) {
   const server = await new Promise((resolve) => { const sv = app.listen(0, () => resolve(sv)); });
   const base = `http://127.0.0.1:${server.address().port}/api`;
   const call = async (as, method, path, body) => {
+    // A real client saves content with the revisions it last read (PUT /syllabi/:id/content requires them, see lib/contentRevision.js), so these tests read them first,
+    // exactly as the builder does when it opens a syllabus. Tests of the refusals themselves are in contentRevision.routes.test.js.
+    if (method === 'PUT' && /^\/syllabi\/\d+\/content$/.test(path) && body && body.sections && !body.baseRevisions) {
+      const got = await fetch(base + path, { headers: { ...(as ? { 'x-test-user': JSON.stringify(as) } : {}) } });
+      const read = await got.json().catch(() => ({}));
+      if (got.status === 200 && read.revisions) body = { ...body, baseRevisions: read.revisions };
+    }
     const res = await fetch(base + path, { method, headers: { 'Content-Type': 'application/json', ...(as ? { 'x-test-user': JSON.stringify(as) } : {}) }, body: body ? JSON.stringify(body) : undefined });
     return { status: res.status, body: await res.json().catch(() => ({})) };
   };
@@ -135,25 +146,27 @@ const ownSections = content => ({
   plan: content.plan.map(row => ({ ...row, ilos: row.ilos.map(il => ({ ...il, tags: il.tags.length ? ['clo:facultyClo'] : [] })) })),
 });
 
-test('faculty Step 2 edits survive saves and submission without changing the subject catalog', () => withServer(async ({ call, db }) => {
+test('faculty cannot change the Vision, Mission, EGA and PO an administrator set on the subject; their CLOs survive saves and submission', () => withServer(async ({ call, db }) => {
   const original = db.s.courses[0].standards_json;
+  const set = JSON.parse(original);
   const sections = ownSections(JSON.parse(db.s.syllabi[1].content));
   const save = await call(fay, 'PUT', '/syllabi/1/content', { sections, schemaVersion: 3 });
   assert.strictEqual(save.status, 200, JSON.stringify(save.body));
   const saved = db.s.saved.at(-1);
-  assert.deepStrictEqual(saved.outcomes, sections.outcomes);
+  assert.deepStrictEqual({ vision: saved.outcomes.vision, mission: saved.outcomes.mission, egas: saved.outcomes.egas, pos: saved.outcomes.pos }, { vision: set.vision, mission: set.mission, egas: set.egas, pos: set.pos }, "the administrator's values replace what the client sent");
+  assert.notStrictEqual(saved.outcomes.vision, 'Faculty vision');
   assert.deepStrictEqual(saved.clos, sections.clos);
-  assert.strictEqual(saved.catalog.institution.vision, 'Faculty vision');
+  assert.strictEqual(saved.catalog.institution.vision, set.vision);
   assert.strictEqual(db.s.courses[0].standards_json, original);
   db.s.syllabi[1].content = JSON.stringify(saved);
-  // Empty catalog setup cannot overwrite or block a syllabus with its own complete Step 2.
+  // Empty catalog setup cannot overwrite or block a syllabus that already holds a complete Step 2.
   db.s.courses[0].standards_json = null;
   const again = await call(fay, 'PUT', '/syllabi/1/content', { sections: { description: saved.description }, schemaVersion: 3 });
   assert.strictEqual(again.status, 200);
   assert.deepStrictEqual(db.s.saved.at(-1).clos, sections.clos);
   const submit = await call(fay, 'POST', '/syllabi/1/submit', {});
   assert.strictEqual(submit.status, 200, JSON.stringify(submit.body));
-  assert.strictEqual(db.s.saved.at(-1).catalog.institution.vision, 'Faculty vision');
+  assert.strictEqual(db.s.saved.at(-1).catalog.institution.vision, set.vision);
 }));
 
 test('Step 2 edits remain owner-only and decided records are immutable', () => withServer(async ({ call, db }) => {
@@ -170,11 +183,13 @@ test('Step 2 edits remain owner-only and decided records are immutable', () => w
 test('Step 2 rejects malformed and dangling mappings while allowing incomplete autosaves', () => withServer(async ({ call, db }) => {
   const sections = ownSections(JSON.parse(db.s.syllabi[1].content));
   const invalid = JSON.parse(JSON.stringify(sections));
-  invalid.outcomes.egas = [];
-  assert.strictEqual((await call(fay, 'PUT', '/syllabi/1/content', { sections: invalid })).status, 400);
-  invalid.outcomes = sections.outcomes;
   invalid.clos[0].id = null;
   assert.strictEqual((await call(fay, 'PUT', '/syllabi/1/content', { sections: invalid })).status, 400);
+  invalid.clos[0].id = sections.clos[0].id;
+  invalid.clos[0].egas = [99]; // an EGA the program does not have
+  assert.strictEqual((await call(fay, 'PUT', '/syllabi/1/content', { sections: invalid })).status, 400);
+  // a subject the administrator has not set up yet: the author's own Step 2 is kept, and an incomplete one autosaves but cannot be submitted
+  db.s.courses[0].standards_json = null;
   sections.outcomes.vision = '';
   const save = await call(fay, 'PUT', '/syllabi/1/content', { sections, schemaVersion: 3 });
   assert.strictEqual(save.status, 200);
@@ -358,6 +373,25 @@ test('saving an editable draft canonicalizes the program code from its assigned 
   assert.strictEqual(db.s.saved[0].meta.program, 'NEW-IT');
   assert.deepStrictEqual(db.s.saved[0].description, old.description);
   assert.deepStrictEqual(db.s.saved[0].plan, old.plan);
+}));
+
+test("the administrator's year level, pre-requisite and semester are forced into Step 1 on every save; a subject without them leaves Step 1 editable", () => withServer(async ({ call, db }) => {
+  const old = JSON.parse(db.s.syllabi[1].content);
+  // no term on the subject: the faculty member's own values are kept
+  let r = await call(fay, 'PUT', '/syllabi/1/content', { sections: { meta: { ...old.meta, courseId: 10, prereq: 'Typed by faculty', yearLevel: '3' } } });
+  assert.strictEqual(r.status, 200);
+  assert.strictEqual(db.s.saved.at(-1).meta.prereq, 'Typed by faculty');
+  assert.strictEqual(db.s.saved.at(-1).meta.yearLevel, '3');
+  // the administrator sets the term: a forged request cannot change it
+  Object.assign(db.s.courses[0], { academic_year: '2026–2027', semester: '2nd Semester', year_level: 2, prerequisite: 'IT 202 - Programming 1' });
+  r = await call(fay, 'PUT', '/syllabi/1/content', { sections: { meta: { ...old.meta, courseId: 10, prereq: 'Nothing', yearLevel: '4', academicYear: '1999–2000', semester: '1st Semester' } } });
+  assert.strictEqual(r.status, 200);
+  const meta = db.s.saved.at(-1).meta;
+  assert.deepStrictEqual([meta.prereq, meta.yearLevel, meta.semester], ['IT 202 - Programming 1', '2', '2nd Semester']);
+  assert.strictEqual(meta.academicYear, '1999–2000', "the syllabus's academic year is not the subject's: it is stamped on the syllabus itself, so the server leaves it alone here");
+  // the picker reads it from the course
+  const course = await call(fay, 'GET', '/courses/10');
+  assert.deepStrictEqual(course.body.term, { academicYear: '2026–2027', semester: '2nd Semester', yearLevel: 2, prerequisite: 'IT 202 - Programming 1' });
 }));
 
 test('an unconfigured subject cannot submit despite configured program and institution values', () => withServer(async ({call,db}) => {

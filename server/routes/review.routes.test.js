@@ -24,6 +24,7 @@ function makeDb() {
     ],
   };
   const handle = (sql, p = []) => {
+    if (sql.startsWith('SELECT label, start_year, is_current FROM academic_years')) throw Object.assign(new Error("Table 'academic_years' doesn't exist"), { code: 'ER_NO_SUCH_TABLE' }); // these fixtures are a database before the academic year scope
     if (sql.startsWith('SELECT user_id FROM users WHERE user_id')) return [[{ user_id: p[0] }]]; // the auth middleware checks the user still exists
     if (sql.startsWith('SELECT s.syllabus_id, s.user_id, s.status')) {
       const x = s.syllabi[p[0]];

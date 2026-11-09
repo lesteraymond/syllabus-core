@@ -19,6 +19,7 @@ test('only the author records a decision, and only while the syllabus is editabl
     if (sql.startsWith('SELECT decision_id')) return [[]];
     if (sql.startsWith('INSERT INTO submission_logs')) { activity.push({ syllabusId: params[0], userId: params[1], action: params[2], notes: params[3] }); return [{ insertId: activity.length }]; }
     if (sql.startsWith('INSERT INTO syllabus_check_decisions')) { writes.push(params); return [{ insertId: writes.length }]; }
+    if (/program_po_reference_remediation/.test(sql)) return [[]];
     throw Error('Unexpected mutation/query: ' + sql);
   } };
   app.use((req, res, next) => { const who = req.headers['x-test-role']; req.session = who ? { user: { id: who === 'admin' ? 1 : who === 'other' ? 27 : 26, role: who === 'admin' ? 'admin' : 'faculty' } } : {}; next(); });

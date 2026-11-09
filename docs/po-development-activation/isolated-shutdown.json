@@ -1,0 +1,15 @@
+{
+  "results": [
+    {
+      "port": 43308,
+      "identityVerified": true,
+      "shutdownRequested": true
+    },
+    {
+      "port": 43309,
+      "identityVerified": true,
+      "shutdownRequested": true
+    }
+  ],
+  "developmentPort3306Untouched": true
+}

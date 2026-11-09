@@ -1,0 +1,37 @@
+{
+  "kind": "LOCAL COMPONENT BROWSER E2E with read-only development reference fixtures, synthetic content and scripted model; no faculty content saved",
+  "results": [
+    {
+      "program": "BSIT",
+      "status": "PASS",
+      "poCount": 9,
+      "poSource": "BSIT",
+      "curriculumSource": "BSIT"
+    },
+    {
+      "program": "BSIT-CYBERSECURITY",
+      "status": "PASS",
+      "poCount": 9,
+      "poSource": "BSIT",
+      "curriculumSource": "BSIT"
+    },
+    {
+      "program": "BSIE",
+      "status": "PASS",
+      "poCount": 13,
+      "poSource": "BSIE",
+      "curriculumSource": "BSIE"
+    },
+    {
+      "program": "BSCPE",
+      "status": "PASS",
+      "poCount": 13,
+      "poSource": "BSCPE",
+      "curriculumSource": "BSCPE"
+    }
+  ],
+  "failed": 0,
+  "englishAndFilipino": true,
+  "pageErrors": [],
+  "paidAiCalls": 0
+}

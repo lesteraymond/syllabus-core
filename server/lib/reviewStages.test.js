@@ -58,3 +58,51 @@ test('schema.sql carries the same stage table as the migration, and the role lis
   assert.ok(sql.includes(ddl[0].replace(/\s+/g, ' ').trim()));
   assert.ok(sql.includes("role ENUM('faculty', 'admin', 'student', 'asst_vpaa', 'lic_director', 'vpaa')"));
 });
+
+// When a syllabus reaches the VPAA (routes/syllabi.js, routes/compliance.js, routes/reviewChain.js all use these).
+test('a syllabus reaches the VPAA once all three stages are cleared on its newest version, or once it is approved', async () => {
+  const { readyForApprover, approverVisible, assertReadyForApprover } = require('./reviewStages');
+  assert.strictEqual(readyForApprover('submitted', { allCleared: false }), false);
+  assert.strictEqual(readyForApprover('under_review', { allCleared: true }), true);
+  assert.strictEqual(readyForApprover('for_revision', { allCleared: true }), true, 'returned by the VPAA after the chain: still the VPAA\'s');
+  assert.strictEqual(readyForApprover('approved', undefined), true);
+  assert.strictEqual(readyForApprover('submitted', undefined), false, 'no chain known: not the VPAA\'s');
+  const db = { async query(sql, p) {
+    if (sql.startsWith('SELECT 1 FROM syllabus_review_stages')) return [[]];
+    if (sql.startsWith('SELECT syllabus_id, MAX(version_id)')) return [p[0].map((id) => ({ syllabus_id: id, version_id: id * 10 }))];
+    if (sql.startsWith('SELECT s.syllabus_id, s.version_id, s.stage')) return [['dean', 'asst_vpaa', 'lic_director'].map((stage) => ({ syllabus_id: 1, version_id: 10, stage, reviewer_id: 1, first_name: 'R', last_name: 'R' }))];
+    throw new Error('unexpected ' + sql);
+  } };
+  const seen = await approverVisible(db, [{ syllabus_id: 1, status: 'under_review' }, { syllabus_id: 2, status: 'submitted' }, { syllabus_id: 3, status: 'approved' }]);
+  assert.deepStrictEqual([...seen].sort(), [1, 3]);
+  await assert.rejects(assertReadyForApprover(db, { syllabus_id: 2, status: 'submitted' }), (e) => e.status === 409 && e.body.code === 'STAGES_PENDING');
+  await assertReadyForApprover(db, { syllabus_id: 1, status: 'under_review' });
+  const broken = { async query() { throw new Error('connection lost'); } };
+  assert.deepStrictEqual([...(await approverVisible(broken, [{ syllabus_id: 2, status: 'submitted' }]))], [], 'when the chain cannot be read, nothing unfinished reaches the VPAA');
+});
+
+// The dean's own syllabus before it is sent for review (hiddenFromReviewers): hidden from everyone but its author while it is Under Review and the dean
+// stage is not cleared on its newest version; a faculty member's syllabus is never hidden this way.
+test('an administrator\'s Under Review syllabus is hidden from other reviewers until the dean stage is cleared on its newest version', async () => {
+  const rs = require('./reviewStages');
+  const dean = rs.summarize([row('dean', 7)], 7), none = rs.summarize([], 7), oldVersion = rs.summarize([row('dean', 6)], 7);
+  assert.strictEqual(rs.awaitingAuthor('admin', 'under_review', none), true);
+  assert.strictEqual(rs.awaitingAuthor('admin', 'under_review', oldVersion), true, 'a dean stage on an older version does not count');
+  assert.strictEqual(rs.awaitingAuthor('admin', 'under_review', dean), false, 'sent for review');
+  assert.strictEqual(rs.awaitingAuthor('faculty', 'under_review', none), false, 'a faculty member\'s syllabus is never held back');
+  for (const status of ['draft', 'for_revision', 'rejected', 'approved']) assert.strictEqual(rs.awaitingAuthor('admin', status, none), false, status);
+
+  const roles = { 1: 'admin', 5: 'faculty' };
+  const db = { query: async (sql, p) => {
+    if (sql.startsWith('SELECT user_id, role FROM users WHERE user_id IN (?)')) return [p[0].map((id) => ({ user_id: id, role: roles[id] }))];
+    throw new Error('unexpected query: ' + sql);
+  } };
+  const rows = [{ syllabus_id: 10, user_id: 1, status: 'under_review' }, { syllabus_id: 11, user_id: 1, status: 'under_review' }, { syllabus_id: 12, user_id: 5, status: 'under_review' }, { syllabus_id: 13, user_id: 1, status: 'approved' }];
+  const stages = new Map([[10, none], [11, dean]]);
+  assert.deepStrictEqual([...(await rs.hiddenFromReviewers(db, rows, 3, stages))], [10], 'another reviewer: only the dean\'s unsent one');
+  assert.deepStrictEqual([...(await rs.hiddenFromReviewers(db, rows, 1, stages))], [], 'the dean sees their own');
+  await assert.rejects(rs.assertSentForReview(db, rows[0], { id: 3 }), (e) => e.status === 409 && e.body.code === 'not_sent_for_review' && e.message === rs.NOT_SENT);
+  await rs.assertSentForReview(db, rows[0], { id: 1 }); // the author
+  const unreadable = { query: async () => { throw new Error('db down'); } };
+  assert.deepStrictEqual([...(await rs.hiddenFromReviewers(unreadable, rows, 3, stages))], [], 'roles unreadable: nothing hidden');
+});

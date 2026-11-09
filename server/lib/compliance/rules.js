@@ -344,10 +344,12 @@ function evaluate(content, standard, ctx = {}) {
   const areas = standard.areas.map((a) => ({ key: a.key, name: a.name, weight: a.weight, stage: a.stage, wsum: 0, wscore: 0 }));
   const area = Object.fromEntries(areas.map((a) => [a.key, a]));
   const findings = [];
+  const ruleChecks = [];
   standard.rules.forEach((rule) => {
     const fn = CHECKS[rule.check];
     if (!fn) throw new Error('Unknown compliance check "' + rule.check + '" in rule ' + rule.id);
     const items = fn(X, rule.params || {});
+    if (ctx.coverage) ruleChecks.push({ ruleId: rule.id, status: !items.length ? 'NOT_APPLICABLE' : items.some(i => i.f < 1) ? 'FAIL' : 'PASS', items: items.length, failed: items.filter(i => i.f < 1).length });
     if (!items.length) return; // not applicable
     area[rule.area].wsum += rule.weight;
     area[rule.area].wscore += rule.weight * (items.reduce((s, i) => s + i.f, 0) / items.length);
@@ -392,6 +394,7 @@ function evaluate(content, standard, ctx = {}) {
     conformance: { ok: failed.length === 0, failed },
     contact: { lecture: isNaN(lecture) ? null : lecture, lab: isNaN(lab) ? null : lab, hoursPerWeek, termHours, weeksPlanned: Object.keys(weekHits).map(Number).filter((w) => w >= 1 && w <= K.weeksPerTerm).length, weeksExpected: K.weeksPerTerm },
     findings,
+    ...(ctx.coverage ? { ruleChecks } : {}),
   };
 }
 

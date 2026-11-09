@@ -28,7 +28,8 @@ export default function CheckHistory({ runs, loading = false, error = '', openin
   const apply = (e) => { e.preventDefault(); if (valid && changed) onApply(draft); };
 
   // The score's tone in words as well as colour: "Meets the standard" / "Below the pass line" / "Not scored".
-  const toneOf = (r) => (!r.scored || r.overall === null ? 'none' : r.passed ? 'good' : 'warn');
+  // A card keeps its stored score. Under an open record review it is not shown as meeting the standard: that score is history, not the syllabus's current standing.
+  const toneOf = (r) => (!r.scored || r.overall === null ? 'none' : r.passed && !r.recordReview ? 'good' : 'warn');
   const toneText = { good: 'Meets the standard', warn: 'Below the pass line', none: 'Not scored' };
 
   return (
@@ -73,7 +74,7 @@ export default function CheckHistory({ runs, loading = false, error = '', openin
                   aria-label={r.courseCode + ', ' + (r.facultyName || tr('unknown faculty')) + ', ' + (r.overall === null ? tr('not scored') : r.overall + ' ' + tr('percent') + ', ' + tr(toneText[t])) + translateUI("ui.checked_d42130") + day + ' ' + time}>
                   <span className="hist-score">
                     <b>{r.overall === null ? '—' : r.overall + '%'}</b>
-                    <small>{tr(toneText[t])}</small>
+                    <small>{r.recordReview ? translateUI('hybrid.reviewRequiredChip') : tr(toneText[t])}</small>
                   </span>
                   <span className="hist-main">
                     <strong>{r.courseCode}{r.versionLabel && <span className="hist-ver">{r.versionLabel}</span>}</strong>

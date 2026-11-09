@@ -3,11 +3,13 @@
 //
 // The rules are pure functions over a plain `assignments` object ({ programIds: [], courseIds: [] }), so they are
 // unit-tested without a database. Only loadAssignments / saveAssignments touch MySQL.
+const { pastCourseIds, pastProgramIds } = require('./academicYear');
 //
 // Invariants (kept by normalizeAssignments and saveAssignments):
 //   - a course is assigned only if its program is assigned to the same user;
 //   - removing a program removes that program's courses for that user, in the same transaction;
-//   - only users with role 'faculty' are assignable.
+//   - users with role 'faculty' or 'admin' are assignable (an administrator writes syllabi too, and is held to the subject's deadlines); an
+//     administrator is never RESTRICTED by assignments (mayWriteSyllabus), the assignment only says the subject is theirs.
 
 const MAX_PROGRAMS = 20;
 const MAX_COURSES = 200;
@@ -129,8 +131,10 @@ async function requireCourseCodeAccess(db, user, code) {
 // Names for the ids, for the admin screen and the faculty member's own view:
 // { programIds, courseIds, programs: [{ id, code, name }], courses: [{ id, code, title, program, programId }] }
 async function describeAssignments(db, a) {
-  const programIds = assignedProgramIds(a);
-  const courseIds = assignedCourseIds(a);
+  // the catalog is per academic year: what a person is assigned in a past year stays recorded (for the syllabi of that year) but is not shown as current
+  const past = await pastCourseIds(db), pastPrograms = await pastProgramIds(db);
+  const programIds = assignedProgramIds(a).filter((id) => !pastPrograms.has(id));
+  const courseIds = assignedCourseIds(a).filter((id) => !past.has(id));
   const [programs] = programIds.length ? await db.query('SELECT program_id, code, name FROM programs WHERE program_id IN (?) ORDER BY code', [programIds]) : [[]];
   const [courses] = courseIds.length
     ? await db.query('SELECT c.course_id, c.code, c.title, c.program_id, p.code AS program_code FROM courses c JOIN programs p ON p.program_id = c.program_id WHERE c.course_id IN (?) ORDER BY c.code', [courseIds])

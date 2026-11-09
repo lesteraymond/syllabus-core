@@ -1,0 +1,8 @@
+{
+  "checkedAt": "2026-11-05T13:20:48.341Z",
+  "VITE_NEW_BUILDER": "true",
+  "privateClientEnvSha256": "f7cea18c410a429adb104732d6780d25d14b7c503d35bb08640bf4e8b4bfe96d",
+  "privateConfigCopiedToSnapshot": false,
+  "explicitIsolatedBuildFlag": "true",
+  "VITE_GOOGLE_CLIENT_ID": "blank in isolated builds"
+}

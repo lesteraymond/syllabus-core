@@ -1,0 +1,125 @@
+{
+  "programs": [
+    {
+      "code": "BSIT",
+      "count": 9,
+      "referenceId": "lcup-po-2026-10-29-BSIT",
+      "inheritedFrom": null
+    },
+    {
+      "code": "BSIT-CYBERSECURITY",
+      "count": 9,
+      "referenceId": "lcup-po-2026-10-29-BSIT",
+      "inheritedFrom": {
+        "id": 1,
+        "code": "BSIT",
+        "name": "BSIT"
+      }
+    },
+    {
+      "code": "BSIE",
+      "count": 13,
+      "referenceId": "lcup-po-2026-10-29-BSIE",
+      "inheritedFrom": null
+    },
+    {
+      "code": "BSCPE",
+      "count": 13,
+      "referenceId": "lcup-po-2026-10-29-BSCPE",
+      "inheritedFrom": null
+    },
+    {
+      "code": "BSIT",
+      "legacyScore": 100,
+      "comprehensiveScore": 100,
+      "sevenVPAA": 7,
+      "poSource": "BSIT",
+      "curriculumSource": "BSIT",
+      "scriptedRequests": 39,
+      "liveModelCalls": 0
+    },
+    {
+      "code": "BSIT-CYBERSECURITY",
+      "legacyScore": 100,
+      "comprehensiveScore": 100,
+      "sevenVPAA": 7,
+      "poSource": "BSIT",
+      "curriculumSource": "BSIT",
+      "scriptedRequests": 39,
+      "liveModelCalls": 0
+    },
+    {
+      "code": "BSIE",
+      "legacyScore": 100,
+      "comprehensiveScore": 100,
+      "sevenVPAA": 7,
+      "poSource": "BSIE",
+      "curriculumSource": "BSIE",
+      "scriptedRequests": 39,
+      "liveModelCalls": 0
+    },
+    {
+      "code": "BSCPE",
+      "legacyScore": 100,
+      "comprehensiveScore": 100,
+      "sevenVPAA": 7,
+      "poSource": "BSCPE",
+      "curriculumSource": "BSCPE",
+      "scriptedRequests": 39,
+      "liveModelCalls": 0
+    }
+  ],
+  "protectedHashes": {
+    "syllabi": {
+      "rows": 4,
+      "sha256": "dc0f4ce01b08d22fa611e720d51f742401abc746c37f204163086a3ae46153bd"
+    },
+    "syllabus_versions": {
+      "rows": 4,
+      "sha256": "d939ff501e453fd86f95f1e5b3bc21d7949f286a46e270cbecbf7a4c6d2ed997"
+    },
+    "syllabus_check_reports": {
+      "rows": 4,
+      "sha256": "8621b90d9776d7a910b8ad0ce520d8bde8d4c4c3e98cba393c9bb5e98434165d"
+    },
+    "ai_check_runs": {
+      "rows": 4,
+      "sha256": "0f74aaa9bad3d9cdb3dcc3da5655bc4e129000e8903e48bd36ccb2e059b7aee3"
+    },
+    "syllabus_check_decisions": {
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "syllabus_check_curricula": {
+      "rows": 4,
+      "sha256": "1de3595d566e6b8c8fbd02295c496c3a98659a37c330aea35a335b60ab336ad3"
+    },
+    "curriculum": {
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "courses": {
+      "rows": 4,
+      "sha256": "fa1a2278c849de7c368421ee41833c7eb5a187bcec2f31ff7f10dddce8bc92d1"
+    },
+    "course_clos": {
+      "rows": 1,
+      "sha256": "b27093a7f74f9b6a89457d51ff02677fc7b0f23a9d674728f520614e94fb95c4"
+    },
+    "program_egas": {
+      "rows": 16,
+      "sha256": "94b3024f575dfde4a3ca0f8f64d9e65be798e1a1b9202f5de5ae37befdeb39de"
+    },
+    "institution_egas": {
+      "rows": 4,
+      "sha256": "cc4a8a7770198c1e74625c2874cda24663dbc6b425278d60e418d8b11c925907"
+    },
+    "institution_settings": {
+      "rows": 1,
+      "sha256": "6292b03250d916cc9dd759d982876f2efd56ac10d6855ed4b0f27d97e6cd7b19"
+    }
+  },
+  "backupFile": "docs\\po-controlled-activation\\test-backup-29188.json",
+  "productionWrites": 0,
+  "paidAiCalls": 0
+}

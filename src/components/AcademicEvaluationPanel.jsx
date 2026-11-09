@@ -22,7 +22,7 @@ function RelationshipEvidence({ relationship: r }) {
     <summary><code>{r.id}</code> · {status(r.status)}</summary>
     <dl><dt>{t('academicV2.source')}</dt><dd className="typed-text">{r.sourceText || '—'}</dd>
       <dt>{t('academicV2.target')}</dt><dd className="typed-text">{r.targetText || '—'}</dd>
-      <dt>{t('academicV2.explanation')}</dt><dd>{r.explanation}</dd>
+      <dt>{t('academicV2.explanation')}</dt><dd>{r.reviewRequirements?.includes('clo_classification_missing') ? t('academicV2.cloClassificationMissing', { clo: String(/^clo(\d+)-/.exec(r.id || '')?.[1] ? 'CLO ' + (Number(/^clo(\d+)-/.exec(r.id)[1]) + 1) : '') }) : r.explanation}</dd>
       {(evidence.sourceQuote || evidence.targetQuote) && <><dt>{t('academicV2.quotes')}</dt><dd>{evidence.sourceQuote} / {evidence.targetQuote}</dd></>}
       {classification && <><dt>{t('academicV2.classificationContext')}</dt><dd>
         <p>{classification.clo}: {classification.classification}{marked?.stored ? ` · ${t('academicV2.savedClassification')}: ${marked.stored.level || t('academicV2.missing')} (${marked.stored.status})` : ''}</p>
@@ -142,7 +142,7 @@ export default function AcademicEvaluationPanel({ run, onApplyDraft }) {
   const suggestionMap = new Map(suggestions.map(s => [s.id, s]));
 
   return <section className="vd" aria-label={t('academicV2.title')} data-policy={profile.evaluationPolicy?.id || profile.version}>
-    <h3>{t('academicV2.title')}</h3>
+    <h3>{t('academicV2.title')}{run?.stale && <span className="hy-pill warn" role="status" data-testid="stale-chip"> {t('hybrid.staleChip')}</span>}</h3>
     <p className="vd-note">{preview ? t('academicV2.preview') : t('academicV2.integrated')}</p>
     <code>{profile.evaluationPolicy?.id || profile.version}</code>
     {preview ? <dl className="vd-grid">

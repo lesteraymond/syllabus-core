@@ -1,3 +1,5 @@
+import { YearFilter, useYearScope } from '../components/AcademicYearScope';
+import { selectionLabel } from '../lib/academicYearScope';
 import StableButton from '../components/StableButton';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
@@ -6,6 +8,9 @@ import { PageHead, Card } from '../components/ui';
 import { fmt } from '../lib/utils';
 
 export default function Reports({ syllabi, user, notify }) {
+  const yearScope = useYearScope();
+  // the report says which academic year it covers (the one selected on this screen), not a fixed year
+  const yearName = yearScope ? selectionLabel(yearScope.selection('data'), yearScope.years, (key) => translateUI(key)) : '';
   const mySyllabi = useMemo(() => user.role === 'faculty' ? syllabi.filter(s => s.userId === user.id) : syllabi, [syllabi, user]);
   const facultyData = useMemo(() => {
     const map = {}; const req = 2;
@@ -15,7 +20,7 @@ export default function Reports({ syllabi, user, notify }) {
   const totalApproved = mySyllabi.filter(s => s.status === 'approved').length;
   const complianceRate = mySyllabi.length ? Math.round((totalApproved / mySyllabi.length) * 100) : 0;
   const genReport = () => {
-    let txt = `${tr('FACULTY COMPLIANCE REPORT')}\nAY 2026–2027\n${tr('Generated')}: ${fmt(new Date())}\n\n`;
+    let txt = `${tr('FACULTY COMPLIANCE REPORT')}\n${yearName ? 'AY ' + yearName : ''}\n${tr('Generated')}: ${fmt(new Date())}\n\n`;
     txt += `${tr('Total Syllabi')}: ${syllabi.length}\n${tr('Approved')}: ${totalApproved}\n${tr('Compliance Rate')}: ${complianceRate}%\n\n`;
     txt += `${tr('FACULTY BREAKDOWN')}\n`;
     facultyData.forEach(f => { txt += `${f.name}: ${tr(`${f.total} total, ${f.approved} approved, ${f.rate}% compliance`)}\n`; });
@@ -25,7 +30,7 @@ export default function Reports({ syllabi, user, notify }) {
   };
   return (
     <>
-      <PageHead title={translateUI("ui.reports_88bc3f")} subtitle={translateUI("ui.generate_compliance_accreditation_and_historical_reports_for_inst_673ed4")} />
+      <PageHead title={translateUI("ui.reports_88bc3f")} subtitle={translateUI("ui.generate_compliance_accreditation_and_historical_reports_for_inst_673ed4")} actions={<YearFilter group="data" />} />
       <div className="reports-grid">
         <Card title={translateUI("ui.faculty_compliance_report_91eba7")} action={<StableButton className="btn outline" style={{ padding: '4px 8px', fontSize: '12px' }} onClick={genReport}>{translateUI("ui.download_e4d296")}</StableButton>}>
           <p className="muted" style={{ marginBottom: 12 }}>{translateUI("ui.computed_from_live_syllabus_data_5e6cfe")}</p>

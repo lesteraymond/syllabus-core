@@ -1,4 +1,5 @@
 'use strict';
+process.env.SESSION_SECRET = process.env.SESSION_SECRET || 'existing-suite-test-secret-0123456789'; // verification tokens are signed only with a configured secret
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('node:path');

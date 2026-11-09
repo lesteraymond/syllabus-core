@@ -1,4 +1,5 @@
 const express = require('express');
+const { activeOnly, isDisabled, disabledBody } = require('../lib/accountStatus');
 const bcrypt = require('bcryptjs');
 const { issueRememberToken, revokeRememberToken, toSessionUser, requireSignedIn, REMEMBER_MS } = require('../middleware/auth');
 const { createLimiter } = require('../lib/rateLimit');
@@ -7,6 +8,7 @@ const mailer = require('../lib/mailer');
 const { domain, isSchoolEmail } = require('../lib/emailDomain');
 const { OAuth2Client } = require('google-auth-library');
 const { signAccessToken, JWT_TTL } = require('../middleware/jwt');
+const accountActivity = require('../lib/accountActivity'); // sign-in, sign-out and password changes in the account's Recent Activity
 const router = express.Router();
 
 const googleClient = new OAuth2Client();
@@ -69,10 +71,12 @@ router.post('/google', async (req, res) => {
     const user = rows[0];
     // Allowlist: only users an admin has added to `users` may sign in. Offboarding = the row is deleted.
     if (!user) return fail(res, 403, 'Access Denied. Your account is not registered in the system.');
+    if (await isDisabled(db, user.user_id)) { await accountActivity.record(db, { userId: user.user_id, action: 'login_failed', notes: 'disabled' }); return res.status(403).json(disabledBody()); }
 
     // Also start the cookie session so the existing session-based routes keep working.
     const sessionUser = toSessionUser(user);
     req.session.user = sessionUser;
+    await accountActivity.record(db, { userId: user.user_id, action: 'login', notes: 'google' }); // the account's Recent Activity (best effort)
     res.json({ token: signAccessToken(user), tokenType: 'Bearer', expiresIn: JWT_TTL, user: sessionUser });
   } catch (error) {
     console.error('GOOGLE AUTH ERROR:', error);
@@ -99,7 +103,10 @@ router.post('/login', async (req, res) => {
       const temp = await findTemp(db, user.user_id);
       if (temp && await bcrypt.compare(String(password || ''), temp.temp_hash)) { valid = true; viaTemp = true; }
     }
-    if (!valid) return fail(res, 401, 'Invalid email or password');
+    // A failed sign-in is recorded on the account it was for, so its owner (and the administrator) can see attempts they did not make. An unknown
+    // email has no account to record it on. The answer to the person signing in is unchanged.
+    if (!valid) { await accountActivity.record(db, { userId: user.user_id, action: 'login_failed', notes: 'password' }); return fail(res, 401, 'Invalid email or password'); }
+    if (user.disabled_at) { await accountActivity.record(db, { userId: user.user_id, action: 'login_failed', notes: 'disabled' }); return res.status(403).json(disabledBody()); } // only after the password is proven, so the answer reveals nothing to a guesser
     if (viaTemp) { // the current password stays valid until the new one is chosen
       await db.query('UPDATE users SET must_change_password = 1 WHERE user_id = ?', [user.user_id]);
       user.must_change_password = 1;
@@ -120,6 +127,7 @@ router.post('/login', async (req, res) => {
       req.session.cookie.expires = false; // browser-session cookie
       await revokeRememberToken(db, req, res);
     }
+    await accountActivity.record(db, { userId: user.user_id, action: 'login', notes: viaTemp ? 'temporary' : 'password' }); // the account's Recent Activity (best effort)
     res.json({ token: signAccessToken(user), tokenType: 'Bearer', expiresIn: JWT_TTL, user: sessionUser });
   } catch (err) {
     console.error('LOGIN ERROR:', err);
@@ -128,6 +136,8 @@ router.post('/login', async (req, res) => {
 });
 
 router.post('/logout', async (req, res) => {
+  const who = req.session && req.session.user ? req.session.user.id : null; // signing out of a session that already ended records nothing
+  if (Number.isInteger(who)) await accountActivity.record(req.app.locals.db, { userId: who, action: 'logout' });
   try { await revokeRememberToken(req.app.locals.db, req, res); } catch {}
   req.session.destroy(() => res.json({ message: 'Logged out' }));
 });
@@ -145,7 +155,7 @@ router.post('/forgot-password', async (req, res) => {
 
   const db = req.app.locals.db;
   const job = (async () => {
-    const [rows] = await db.query('SELECT user_id, email, first_name FROM users WHERE LOWER(email) = ?', [email]);
+    const [rows] = await activeOnly(db, 'SELECT user_id, email, first_name FROM users WHERE LOWER(email) = ?', [email]); // a disabled account gets no temporary password
     const user = rows[0];
     if (!user) return;
     const password = generatePassword();
@@ -180,6 +190,7 @@ router.post('/change-password', requireSignedIn, async (req, res) => {
     await db.query('DELETE FROM password_temp WHERE user_id = ?', [me.id]).catch(() => {}); // a database without the table has nothing to clear
     await db.query('DELETE FROM remember_tokens WHERE user_id = ?', [me.id]); // devices that stayed signed in must sign in again
     req.session.user = { ...me, mustChangePassword: false };
+    await accountActivity.record(db, { userId: me.id, action: 'password_change', notes: me.mustChangePassword ? 'required' : 'self' }); // never the password itself
     res.json({ message: 'Your password was changed.', user: req.session.user });
   } catch (err) {
     console.error('CHANGE PASSWORD ERROR:', err);
@@ -191,7 +202,7 @@ router.get('/me', async (req, res) => {
   if (!req.session.user) return res.status(401).json({ error: 'Not authenticated' });
   try {
     // The account is authoritative, including preferences saved from another tab or device.
-    const [rows] = await req.app.locals.db.query('SELECT user_id, email, role, first_name, last_name, avatar_path, must_change_password, preferred_language FROM users WHERE user_id = ?', [req.session.user.id]);
+    const [rows] = await activeOnly(req.app.locals.db, 'SELECT user_id, email, role, first_name, last_name, avatar_path, must_change_password, preferred_language FROM users WHERE user_id = ?', [req.session.user.id]);
     if (!rows[0]) return res.status(401).json({ error: 'Not authenticated' });
     req.session.user = toSessionUser(rows[0]);
     res.json({ user: req.session.user });

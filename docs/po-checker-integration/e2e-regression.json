@@ -1,0 +1,43 @@
+{
+  "label": "LOCAL browser verification, comprehensive-testing profile (staging-like topology, isolated scratch database, SYNTHETIC data, SCRIPTED provider). Not a staging test and not a Claude test: no live model request was made.",
+  "suite": "regression",
+  "profile": "none (baseline control: Policy V2 on, no profile)",
+  "configuration": {},
+  "browser": "Microsoft Edge (Chromium) via playwright-core",
+  "node": "v26.12.1",
+  "finishedAt": "2026-11-05T11:43:08.091Z",
+  "scenarios": {
+    "total": 23,
+    "passed": 21,
+    "failed": 2
+  },
+  "checks": {
+    "total": 353,
+    "passed": 351,
+    "knownDefects": 0
+  },
+  "providerRequests": 101,
+  "blockedNetwork": 0,
+  "failed": [
+    {
+      "id": "E19",
+      "title": "Subjects table filters: program, semester and year level combine, hide subjects without a term, and clear",
+      "checks": [
+        {
+          "ok": false,
+          "message": "scenario aborted: locator.click: Timeout 12000ms exceeded. Call log: \u001b[2m  - waiting for getByRole('option', { name: /2nd Semester/ }).first()\u001b[22m "
+        }
+      ]
+    },
+    {
+      "id": "E23",
+      "title": "Add subject with a new program: the administrator types its EGAs, Program Outcomes and the school vision; faculty get them for that program and subject; a later change reaches existing subjects only through Apply to subjects",
+      "checks": [
+        {
+          "ok": false,
+          "message": "scenario aborted: locator.click: Timeout 12000ms exceeded. Call log: \u001b[2m  - waiting for getByRole('button', { name: /2 learning outcomes/i })\u001b[22m \u001b[2m    - locator resolved to <button type=\"button\" class=\"locked\" aria-disabled=\"true\" title=\"Finish step 1 first\">…</button>\u001b[22m"
+        }
+      ]
+    }
+  ]
+}

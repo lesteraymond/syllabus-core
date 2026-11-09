@@ -1,0 +1,17 @@
+{
+  "checkedAt": "2026-11-05T11:40:51.325Z",
+  "flags": {
+    "SYLLABUS_CHECK_ACADEMIC_V2": "unset/default",
+    "SYLLABUS_CHECK_PROFILE": "unset/default",
+    "SYLLABUS_CHECK_CACHE_WARMUP": "unset/default",
+    "SYLLABUS_CHECK_OUTPUT_PLAN": "unset/default",
+    "SYLLABUS_CHECK_OUTPUT_FIELDS": "unset/default",
+    "SYLLABUS_CHECK_COURSE_CONTEXT": "unset/default",
+    "SYLLABUS_CHECK_V2_GROUPING": "unset/default",
+    "SYLLABUS_CHECK_PROMPT_TRIM": "unset/default"
+  },
+  "environmentSha256": "a370b8f3960600c4043eda0e5c98518e2d8c44e4d2d16476ff57366b471c4d12",
+  "formalInstitutionalApproval": "not_recorded",
+  "realClaudeCallsAuthorized": false,
+  "paidCallsMade": 0
+}

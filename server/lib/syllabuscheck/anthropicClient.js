@@ -144,7 +144,7 @@ function failureOf(error, status, key, tail, usage) {
 // what is not evaluated when it fails ('alignment' for gemini.js). options.transport replaces fetch (tests); options.sleep and options.timeoutMs are for
 // tests too. Returns { text, stopReason, stopCategory, model, requestId, latencyMs, usage }. Every error it throws after a request was sent carries
 // `usage`: a refused or cut-off answer was billed all the same.
-async function anthropicMessage({ model, system, user, schema, subject = '' }, { env = process.env, transport, sleep = pause, timeoutMs, signal, onRequest } = {}) {
+async function anthropicMessage({ model, system, user, schema, subject = '' }, { env = process.env, transport, sleep = pause, timeoutMs, signal, onRequest, maxTokens } = {}) {
   const key = env.ANTHROPIC_API_KEY;
   if (!KEY_FORMAT.test(key || '') || !MODEL_ID.test(model || '')) throw Error('Anthropic requires ANTHROPIC_API_KEY and a claude-* ANTHROPIC_MODEL');
   if (signal?.aborted) throw Object.assign(Error('AI checking was cancelled before all relationships were evaluated.'), { kind: 'request_cancelled', retryable: false, cause: signal.reason });
@@ -160,7 +160,9 @@ async function anthropicMessage({ model, system, user, schema, subject = '' }, {
   let refused = null;
   const send = transport ? async (url, init) => { try { return await transport(url, init); } catch (error) { if (error?.refused) refused = error; throw error; } } : null;
   const client = new sdk.Anthropic({ apiKey: key, baseURL: API, maxRetries: 0, logLevel: 'off', openTelemetry: { traces: false, propagation: false }, defaultHeaders: customHeadersOff(), ...(send ? { fetch: send } : {}) });
-  const body = { model, max_tokens: settings.maxTokens, thinking: config.thinking,
+  // options.maxTokens (a planned output ceiling, costPlan.js) can only lower the configured ANTHROPIC_MAX_TOKENS, never raise it, and never below 1024.
+  const outputLimit = Number.isInteger(maxTokens) && maxTokens > 0 ? Math.max(1024, Math.min(settings.maxTokens, maxTokens)) : settings.maxTokens;
+  const body = { model, max_tokens: outputLimit, thinking: config.thinking,
     system: [{ type: 'text', text: system, ...(settings.cache ? { cache_control: { type: 'ephemeral' } } : {}) }],
     messages: [{ role: 'user', content: user }],
     output_config: { effort: config.effort, format: { type: 'json_schema', schema } } };

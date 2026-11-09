@@ -1,0 +1,73 @@
+{
+  "kind": "REHEARSAL on a synthetic old-schema database (isolated port 43310); no existing database was touched",
+  "database": "syllabus_e2e_rehearsal",
+  "at": "2026-11-06T07:35:38.085Z",
+  "allPassed": true,
+  "steps": [
+    {
+      "step": "a scratch database was bootstrapped from the repository",
+      "ok": true,
+      "detail": "{\"scratchDatabase\":\"syllabus_e2e_rehearsal\",\"migrationsRun\":28,\"tables\":43,\"missing\":[],\"problems\":[]}"
+    },
+    {
+      "step": "the rehearsal database has the OLD schema and the old data",
+      "ok": true,
+      "detail": "reference_id,program_id,version_label,source_file,source_sha256,outcomes_json,created_at"
+    },
+    {
+      "step": "snapshot: the four programs resolve 9 / 13 / 13 / 9 from the old schema",
+      "ok": true,
+      "detail": "{\"BSIT\":{\"pos\":9,\"source\":null,\"reference\":\"lcup-po-2026-10-29\",\"curricula\":1},\"BSIE\":{\"pos\":13,\"source\":null,\"reference\":\"lcup-po-2026-10-29\",\"curricula\":1},\"BSCPE\":{\"pos\":13,\"source\":null,\"reference\":\"lcup-po-2026-10-29\",\"curricula\":1},\"BSIT-CYBERSECURITY\":{\"pos\":9,\"source\":\"BSIT\",\"reference\":\"lcup-po-2026-10-29\",\"curricula\":1}}"
+    },
+    {
+      "step": "snapshot: the eight reviews are present",
+      "ok": true,
+      "detail": "syllabus:43:needs_review syllabus:93:needs_review syllabus:97:needs_review syllabus:99:needs_review syllabus:100:needs_review syllabus:101:needs_review syllabus:102:needs_review syllabus:110:needs_review"
+    },
+    {
+      "step": "dry run: COMPATIBLE and says exactly what it would add, with zero writes",
+      "ok": true,
+      "detail": "COMPATIBLE"
+    },
+    {
+      "step": "the dry run changed nothing (a verification against the snapshot finds the old structure and no preservation problem; only the new structure is reported missing)",
+      "ok": true
+    },
+    {
+      "step": "the migration ran",
+      "ok": true,
+      "detail": "Reference versions are ready. No version was created and no existing row was changed."
+    },
+    {
+      "step": "verification: VERIFIED (old rows and columns unchanged, defaults in place, nothing published, the four programs still resolve, the eight reviews intact)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "step": "the existing official versions are still read as official sources (not as administrator publications)",
+      "ok": true,
+      "detail": "{\"BSIT\":{\"pos\":9,\"source\":null,\"reference\":\"lcup-po-2026-10-29\",\"curricula\":1},\"BSIE\":{\"pos\":13,\"source\":null,\"reference\":\"lcup-po-2026-10-29\",\"curricula\":1},\"BSCPE\":{\"pos\":13,\"source\":null,\"reference\":\"lcup-po-2026-10-29\",\"curricula\":1},\"BSIT-CYBERSECURITY\":{\"pos\":9,\"source\":\"BSIT\",\"reference\":\"lcup-po-2026-10-29\",\"curricula\":1}}"
+    },
+    {
+      "step": "applying it again is harmless (idempotent)",
+      "ok": true
+    },
+    {
+      "step": "rollback refuses without the confirmation and expectation flags",
+      "ok": true
+    },
+    {
+      "step": "rollback removed only the added structure",
+      "ok": true,
+      "detail": "{ \"rolledBack\": true, \"removed\": [ \"active.association\", \"active.associated_by\", \"active.associated_at\", \"active.association_note\", \"versions.status\", \"versions"
+    },
+    {
+      "step": "after the rollback the database equals the snapshot again (no preservation problem; the new structure is gone)",
+      "ok": true
+    },
+    {
+      "step": "once a publication is recorded the rollback refuses (it would lose data); recovery is the backup",
+      "ok": true
+    }
+  ]
+}

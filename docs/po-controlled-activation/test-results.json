@@ -1,0 +1,94 @@
+{
+  "regression": {
+    "log": "tmp/po-controlled-activation/test.log",
+    "exit": 0,
+    "tests": 2139,
+    "pass": 2139,
+    "fail": 0,
+    "skipped": 0,
+    "todo": 0,
+    "cancelled": 0
+  },
+  "vpaa": {
+    "log": "tmp/po-controlled-activation/vpaa.log",
+    "exit": 0,
+    "tests": 294,
+    "pass": 294,
+    "fail": 0,
+    "skipped": 0,
+    "todo": 0,
+    "cancelled": 0
+  },
+  "isolatedMySQL": {
+    "log": "tmp/po-controlled-activation/isolated.log",
+    "exit": 0,
+    "tests": 10,
+    "pass": 10,
+    "fail": 0,
+    "skipped": 0,
+    "todo": 0,
+    "cancelled": 0
+  },
+  "focused": {
+    "log": "tmp/po-controlled-activation/focused.log",
+    "exit": 0,
+    "tests": 25,
+    "pass": 25,
+    "fail": 0,
+    "skipped": 0,
+    "todo": 0,
+    "cancelled": 0
+  },
+  "sourceAndGuards": {
+    "log": "tmp/po-controlled-activation/source-and-guards.log",
+    "exit": 0,
+    "tests": 10,
+    "pass": 10,
+    "fail": 0,
+    "skipped": 0,
+    "todo": 0,
+    "cancelled": 0
+  },
+  "browser": {
+    "kind": "LOCAL COMPONENT BROWSER E2E with real existing components and isolated-database service fixtures; no existing environment accessed",
+    "results": [
+      {
+        "program": "BSIT",
+        "status": "PASS",
+        "poCount": 9,
+        "poSource": "BSIT",
+        "curriculumSource": "BSIT"
+      },
+      {
+        "program": "BSIT-CYBERSECURITY",
+        "status": "PASS",
+        "poCount": 9,
+        "poSource": "BSIT",
+        "curriculumSource": "BSIT"
+      },
+      {
+        "program": "BSIE",
+        "status": "PASS",
+        "poCount": 13,
+        "poSource": "BSIE",
+        "curriculumSource": "BSIE"
+      },
+      {
+        "program": "BSCPE",
+        "status": "PASS",
+        "poCount": 13,
+        "poSource": "BSCPE",
+        "curriculumSource": "BSCPE"
+      }
+    ],
+    "failed": 0,
+    "englishAndFilipino": true,
+    "pageErrors": [],
+    "paidAiCalls": 0,
+    "exit": 0
+  },
+  "build": {
+    "exit": 0,
+    "log": "tmp/po-controlled-activation/build.log"
+  }
+}

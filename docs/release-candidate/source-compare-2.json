@@ -1,0 +1,91 @@
+{
+  "comparedAt": "2026-11-05T14:14:32.857Z",
+  "head": "4d30dcb74ff5794ab51cdc503a2e27fae1aa27d1",
+  "testedSourceHash": "6a55a8c755b72a8de7c16e629b3afc98978103cd6f31891f7317a7f90b19380a",
+  "testedFiles": 783,
+  "currentFiles": 789,
+  "unchanged": 771,
+  "added": [
+    "scripts/e2e/stability-audit.cjs",
+    "scripts/e2e/stability-report.cjs",
+    "scripts/e2e/stability-run.cjs",
+    "scripts/e2e/stability-seal.cjs",
+    "scripts/e2e/stability-units.cjs",
+    "scripts/release/source-compare.cjs",
+    "src/components/AcademicYearControl.jsx"
+  ],
+  "removed": [
+    "src/components/CurrentAcademicYear.jsx"
+  ],
+  "changed": [
+    "scripts/e2e/scenarios.cjs",
+    "scripts/live-claude/fixtures.cjs",
+    "scripts/live-claude/live.cjs",
+    "scripts/live-claude/readiness.cjs",
+    "server/lib/syllabuscheck/live-claude.test.js",
+    "src/components/AcademicYearScope.jsx",
+    "src/components/Topbar.jsx",
+    "src/i18n/extra.js",
+    "src/styles.css",
+    "src/views/CourseOutcomes.jsx",
+    "tests/i18n-ui.test.jsx"
+  ],
+  "byArea": {
+    "added": {
+      "E2E / test infrastructure": [
+        "scripts/e2e/stability-audit.cjs",
+        "scripts/e2e/stability-report.cjs",
+        "scripts/e2e/stability-run.cjs",
+        "scripts/e2e/stability-seal.cjs",
+        "scripts/e2e/stability-units.cjs"
+      ],
+      "Saved reports": [
+        "scripts/e2e/stability-report.cjs"
+      ],
+      "other": [
+        "scripts/release/source-compare.cjs"
+      ],
+      "Subject management / academic year": [
+        "src/components/AcademicYearControl.jsx"
+      ],
+      "Faculty/Admin workflows (UI, routes)": [
+        "src/components/AcademicYearControl.jsx"
+      ]
+    },
+    "changed": {
+      "E2E / test infrastructure": [
+        "scripts/e2e/scenarios.cjs",
+        "server/lib/syllabuscheck/live-claude.test.js",
+        "tests/i18n-ui.test.jsx"
+      ],
+      "other": [
+        "scripts/live-claude/fixtures.cjs",
+        "scripts/live-claude/live.cjs",
+        "scripts/live-claude/readiness.cjs",
+        "src/styles.css"
+      ],
+      "Subject management / academic year": [
+        "src/components/AcademicYearScope.jsx",
+        "src/views/CourseOutcomes.jsx"
+      ],
+      "Faculty/Admin workflows (UI, routes)": [
+        "src/components/AcademicYearScope.jsx",
+        "src/components/Topbar.jsx",
+        "src/views/CourseOutcomes.jsx"
+      ],
+      "Localization": [
+        "src/i18n/extra.js"
+      ]
+    },
+    "removed": {
+      "Subject management / academic year": [
+        "src/components/CurrentAcademicYear.jsx"
+      ],
+      "Faculty/Admin workflows (UI, routes)": [
+        "src/components/CurrentAcademicYear.jsx"
+      ]
+    }
+  },
+  "releaseCandidateHash": "d4e1689a7166a709fc9435b26b6acf1793cd1f22441aad25a7866cc8751e4334",
+  "matchesSnapshot": false
+}

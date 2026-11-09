@@ -8,7 +8,8 @@ const official=JSON.parse(await fs.readFile(new URL('../../src/data/officialProg
 const require=createRequire(import.meta.url);
 test('official source hashes, numbering, complete PO12 and all four frontend seed sets agree',async()=>{
  const evidence=JSON.parse(await fs.readFile(new URL('../../docs/lcup-po-correction/official-data.json',import.meta.url),'utf8'));
- assert.deepEqual(official,evidence,'Canonical seed data matches independently extracted source evidence');
+ for(const code of ['BSIT','BSIE','BSCPE'])assert.deepEqual(official.programs[code],evidence.programs[code],'Canonical PO statements match independently extracted source evidence; curriculum inheritance follows the later explicit instruction');
+ assert.equal(official.programs['BSIT-CYBERSECURITY'].curriculumSource,'BSIT');
  for(const [code,count] of [['BSIT',9],['BSIT-CYBERSECURITY',9],['BSIE',13],['BSCPE',13]]){
   const ref=official.programs[code==='BSIT-CYBERSECURITY'?'BSIT':code];
   assert.equal(PROGRAMS[code].pos.length,count);assert.deepEqual(PROGRAMS[code].pos.map(p=>p.text),ref.outcomes.map(p=>p.text));

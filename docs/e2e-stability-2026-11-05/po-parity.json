@@ -1,0 +1,50 @@
+[
+  {
+    "program": "BSIT",
+    "poCount": 9,
+    "source": "BSIT",
+    "referenceId": "lcup-po-2026-10-29-BSIT",
+    "facultyOff": 99,
+    "facultyOn": 99,
+    "adminOff": 99,
+    "adminOn": 99,
+    "threshold": 79,
+    "scoreParity": true
+  },
+  {
+    "program": "BSIE",
+    "poCount": 13,
+    "source": "BSIE",
+    "referenceId": "lcup-po-2026-10-29-BSIE",
+    "facultyOff": 99,
+    "facultyOn": 99,
+    "adminOff": 99,
+    "adminOn": 99,
+    "threshold": 79,
+    "scoreParity": true
+  },
+  {
+    "program": "BSCPE",
+    "poCount": 13,
+    "source": "BSCPE",
+    "referenceId": "lcup-po-2026-10-29-BSCPE",
+    "facultyOff": 99,
+    "facultyOn": 99,
+    "adminOff": 99,
+    "adminOn": 99,
+    "threshold": 79,
+    "scoreParity": true
+  },
+  {
+    "program": "BSIT-CYBERSECURITY",
+    "poCount": 9,
+    "source": "BSIT",
+    "referenceId": "lcup-po-2026-10-29-BSIT",
+    "facultyOff": 99,
+    "facultyOn": 99,
+    "adminOff": 99,
+    "adminOn": 99,
+    "threshold": 79,
+    "scoreParity": true
+  }
+]

@@ -1,0 +1,1170 @@
+[
+  {
+    "id": "T-01",
+    "area": "template",
+    "severity": "blocking",
+    "weight": 3,
+    "check": "nonEmpty",
+    "requirement": "Course code (I) is empty.",
+    "fix": "Enter the course code",
+    "inputs": "meta.code",
+    "valid": [
+      "the conforming syllabus",
+      "whitespace-padded code with text"
+    ],
+    "invalid": "meta.code is empty",
+    "missing": "meta.code is absent",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "no pre-existing automated test names this rule (it may be exercised indirectly); now covered here",
+      "presence/form only: placeholder text (TBD, n/a) and invisible-only text satisfy it (LIM-01, DEF-01)"
+    ],
+    "note": ""
+  },
+  {
+    "id": "T-02",
+    "area": "template",
+    "severity": "blocking",
+    "weight": 3,
+    "check": "nonEmpty",
+    "requirement": "Course title (II) is empty.",
+    "fix": "Enter the course title",
+    "inputs": "meta.title",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "meta.title is empty",
+    "missing": "meta.title is absent",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "no pre-existing automated test names this rule (it may be exercised indirectly); now covered here",
+      "presence/form only: placeholder text (TBD, n/a) and invisible-only text satisfy it (LIM-01, DEF-01)"
+    ],
+    "note": ""
+  },
+  {
+    "id": "T-03",
+    "area": "template",
+    "severity": "blocking",
+    "weight": 2,
+    "check": "nonEmpty",
+    "requirement": "Program is empty.",
+    "fix": "Choose the program",
+    "inputs": "meta.program",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "meta.program is empty",
+    "missing": "meta.program is absent",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "no pre-existing automated test names this rule (it may be exercised indirectly); now covered here",
+      "presence/form only: placeholder text (TBD, n/a) and invisible-only text satisfy it (LIM-01, DEF-01)"
+    ],
+    "note": ""
+  },
+  {
+    "id": "T-04",
+    "area": "template",
+    "severity": "blocking",
+    "weight": 3,
+    "check": "nonEmpty",
+    "requirement": "Course description (III) is empty.",
+    "fix": "Write the course description",
+    "inputs": "description; .t of each item",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "description paragraph is empty",
+    "missing": "no description paragraphs",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "no pre-existing automated test names this rule (it may be exercised indirectly); now covered here",
+      "presence/form only: placeholder text (TBD, n/a) and invisible-only text satisfy it (LIM-01, DEF-01)"
+    ],
+    "note": ""
+  },
+  {
+    "id": "T-05",
+    "area": "template",
+    "severity": "blocking",
+    "weight": 2,
+    "check": "nonEmpty",
+    "requirement": "Pre-requisite (IV) is empty.",
+    "fix": "Enter the pre-requisite",
+    "inputs": "meta.prereq",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "meta.prereq is empty",
+    "missing": "meta.prereq is absent",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "no pre-existing automated test names this rule (it may be exercised indirectly); now covered here",
+      "presence/form only: placeholder text (TBD, n/a) and invisible-only text satisfy it (LIM-01, DEF-01)"
+    ],
+    "note": ""
+  },
+  {
+    "id": "T-06",
+    "area": "template",
+    "severity": "blocking",
+    "weight": 2,
+    "check": "nonEmpty",
+    "requirement": "Lecture and laboratory units (V) are not both entered.",
+    "fix": "Enter the lecture and laboratory units",
+    "inputs": "meta.lecture; meta.lab",
+    "valid": [
+      "the conforming syllabus",
+      "zero laboratory units is entered"
+    ],
+    "invalid": "lecture units not a number",
+    "missing": "laboratory units blank",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "no pre-existing automated test names this rule (it may be exercised indirectly); now covered here",
+      "presence/form only: placeholder text (TBD, n/a) and invisible-only text satisfy it (LIM-01, DEF-01)"
+    ],
+    "note": ""
+  },
+  {
+    "id": "T-07",
+    "area": "template",
+    "severity": "blocking",
+    "weight": 3,
+    "check": "nonEmpty",
+    "requirement": "There are no course learning outcomes (VI).",
+    "fix": "Ask an administrator to add the course learning outcomes",
+    "inputs": "clos",
+    "valid": [
+      "the conforming syllabus",
+      "exactly one CLO"
+    ],
+    "invalid": "no CLOs",
+    "missing": "CLO list absent",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "no pre-existing automated test names this rule (it may be exercised indirectly); now covered here",
+      "presence/form only: placeholder text (TBD, n/a) and invisible-only text satisfy it (LIM-01, DEF-01)"
+    ],
+    "note": ""
+  },
+  {
+    "id": "T-08",
+    "area": "template",
+    "severity": "blocking",
+    "weight": 3,
+    "check": "nonEmpty",
+    "requirement": "The Learning Plan (VII) has no lesson with a learning outcome (ILO).",
+    "fix": "Add a lesson with a learning outcome (ILO)",
+    "inputs": "plan",
+    "valid": [
+      "the conforming syllabus",
+      "exactly one lesson has an ILO"
+    ],
+    "invalid": "every ILO text is blank",
+    "missing": "empty plan",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "no pre-existing automated test names this rule (it may be exercised indirectly); now covered here",
+      "presence/form only: placeholder text (TBD, n/a) and invisible-only text satisfy it (LIM-01, DEF-01)"
+    ],
+    "note": ""
+  },
+  {
+    "id": "T-09",
+    "area": "template",
+    "severity": "blocking",
+    "weight": 3,
+    "check": "equalsCatalog",
+    "requirement": "The vision in this syllabus is not the school's current vision.",
+    "fix": "Resubmit so the syllabus carries the current vision",
+    "inputs": "catalog.vision",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "stored vision differs from the live vision",
+    "missing": "no stored catalog copy (a draft)",
+    "behaviour": "neutral (not applicable): no credit, no deduction; no companion rule",
+    "existing": [
+      "server/lib/compliance/rules.test.js",
+      "server/routes/compliance.routes.test.js",
+      "src/lib/complianceRules.parity.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "skipped for drafts / when its context is absent; nothing else covers that case"
+    ],
+    "note": "Skipped for a draft: there is no stored copy to compare."
+  },
+  {
+    "id": "T-10",
+    "area": "template",
+    "severity": "blocking",
+    "weight": 3,
+    "check": "equalsCatalog",
+    "requirement": "The mission in this syllabus is not the school's current mission.",
+    "fix": "Resubmit so the syllabus carries the current mission",
+    "inputs": "catalog.mission",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "stored mission differs",
+    "missing": "no stored catalog copy",
+    "behaviour": "neutral (not applicable): no credit, no deduction; no companion rule",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "skipped for drafts / when its context is absent; nothing else covers that case"
+    ],
+    "note": "Skipped for a draft."
+  },
+  {
+    "id": "T-11",
+    "area": "template",
+    "severity": "blocking",
+    "weight": 3,
+    "check": "equalsCatalog",
+    "requirement": "The graduate attributes (EGAs) in this syllabus are not the program's current ones.",
+    "fix": "Resubmit so the syllabus carries the current graduate attributes",
+    "inputs": "catalog.egas",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "stored EGAs differ",
+    "missing": "no stored catalog copy",
+    "behaviour": "neutral (not applicable): no credit, no deduction; no companion rule",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "skipped for drafts / when its context is absent; nothing else covers that case"
+    ],
+    "note": "Skipped for a draft."
+  },
+  {
+    "id": "T-12",
+    "area": "template",
+    "severity": "blocking",
+    "weight": 3,
+    "check": "equalsCatalog",
+    "requirement": "The program outcomes (POs) in this syllabus are not the program's current ones.",
+    "fix": "Resubmit so the syllabus carries the current program outcomes",
+    "inputs": "catalog.pos",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "stored POs differ",
+    "missing": "no stored catalog copy",
+    "behaviour": "neutral (not applicable): no credit, no deduction; no companion rule",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "skipped for drafts / when its context is absent; nothing else covers that case"
+    ],
+    "note": "Skipped for a draft."
+  },
+  {
+    "id": "T-13",
+    "area": "template",
+    "severity": "blocking",
+    "weight": 3,
+    "check": "tagsResolve",
+    "requirement": "‹where› has no CLO tag.",
+    "fix": "Tag every ILO with the CLO it builds",
+    "inputs": "plan[].ilos[].tags; clos[].id; program POs/EGAs",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "an ILO with text has no CLO tag",
+    "missing": "tags property absent",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [
+      "server/lib/compliance/rules.test.js",
+      "server/lib/syllabuscheck/reliability.test.js",
+      "server/lib/syllabuscheck/stage-c3.test.js",
+      "server/routes/compliance.routes.test.js",
+      "src/lib/complianceRules.parity.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [],
+    "note": ""
+  },
+  {
+    "id": "T-14",
+    "area": "template",
+    "severity": "blocking",
+    "weight": 3,
+    "check": "tagsResolve",
+    "requirement": "‹where› has a tag that no longer resolves: ‹tag›.",
+    "fix": "Fix the outcome tags that no longer resolve",
+    "inputs": "plan[].ilos[].tags; clos[].id; program POs/EGAs",
+    "valid": [
+      "the conforming syllabus",
+      "a PO tag that exists"
+    ],
+    "invalid": "tags that resolve to nothing",
+    "missing": "no tags at all",
+    "behaviour": "neutral (not applicable): no credit, no deduction; companion T-13 flags it",
+    "existing": [
+      "server/lib/compliance/rules.test.js",
+      "server/routes/compliance.routes.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [],
+    "note": "Only tags that exist are judged; an untagged ILO is T-13's job."
+  },
+  {
+    "id": "T-15",
+    "area": "template",
+    "severity": "blocking",
+    "weight": 1,
+    "check": "columnsFilled",
+    "requirement": "Learning Plan row ‹row› is missing the column: ‹missing›.",
+    "fix": "Complete the Learning Plan columns",
+    "inputs": "plan columns: week, ilos, contents, activities, tasks, values",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "a row lacks the Assessment column",
+    "missing": "a row lacks the ILO column",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [
+      "server/lib/compliance/rules.test.js",
+      "server/lib/syllabuscheck/stage-c3.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "presence/form only: placeholder text (TBD, n/a) and invisible-only text satisfy it (LIM-01, DEF-01)"
+    ],
+    "note": ""
+  },
+  {
+    "id": "T-16",
+    "area": "template",
+    "severity": "major",
+    "weight": 2,
+    "check": "columnsFilled",
+    "requirement": "‹where› has nothing in: ‹missing›.",
+    "fix": "Fill in the empty Learning Plan columns",
+    "inputs": "plan columns: contents, activities, tasks, values",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "a lesson has no value",
+    "missing": "a lesson has no content",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [
+      "server/lib/compliance/rules.test.js",
+      "server/lib/syllabuscheck/stage-c3.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "presence/form only: placeholder text (TBD, n/a) and invisible-only text satisfy it (LIM-01, DEF-01)",
+      "partial credit (fraction of the rule's share), by design"
+    ],
+    "note": "Partial credit: a lesson missing 1 of 4 columns earns 3/4 of that lesson's share."
+  },
+  {
+    "id": "T-17",
+    "area": "template",
+    "severity": "minor",
+    "weight": 1,
+    "check": "iloNumbering",
+    "requirement": "‹where› has an empty ILO before a filled one, so the printed numbering has a gap.",
+    "fix": "Remove the empty ILO between filled ones",
+    "inputs": "plan[].ilos[].text",
+    "valid": [
+      "the conforming syllabus",
+      "trailing empty ILO only"
+    ],
+    "invalid": "empty ILO before a filled ILO",
+    "missing": "a lesson without ILO list",
+    "behaviour": "scope-limited: still applies and passes on its narrow property; companion T-15 flags the absence",
+    "existing": [],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "no pre-existing automated test names this rule (it may be exercised indirectly); now covered here",
+      "presence/form only: placeholder text (TBD, n/a) and invisible-only text satisfy it (LIM-01, DEF-01)"
+    ],
+    "note": "Judges numbering only; a missing ILO list is flagged by T-15."
+  },
+  {
+    "id": "T-18",
+    "area": "template",
+    "severity": "minor",
+    "weight": 1,
+    "check": "weeksOrder",
+    "requirement": "Learning Plan row ‹row› comes before an earlier week.",
+    "fix": "Put the Learning Plan rows in week order",
+    "inputs": "plan[].week",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "rows out of week order",
+    "missing": "no week values",
+    "behaviour": "scope-limited: still applies and passes on its narrow property; companion H-02 flags the absence",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [],
+    "note": "Judges order among rows that have a week; missing weeks are flagged by H-02."
+  },
+  {
+    "id": "T-19",
+    "area": "template",
+    "severity": "blocking",
+    "weight": 2,
+    "check": "numberedRequirements",
+    "requirement": "Course requirements (VIII): ‹have› listed, at least ‹need› needed.",
+    "fix": "List at least three course requirements",
+    "inputs": "reqs[].t",
+    "valid": [
+      "the conforming syllabus",
+      "exactly three requirements"
+    ],
+    "invalid": "only two requirements",
+    "missing": "no requirements",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "presence/form only: placeholder text (TBD, n/a) and invisible-only text satisfy it (LIM-01, DEF-01)"
+    ],
+    "note": ""
+  },
+  {
+    "id": "T-20",
+    "area": "template",
+    "severity": "minor",
+    "weight": 1,
+    "check": "numberedRequirements",
+    "requirement": "Requirement \"‹text›\" starts with its own number; the form numbers the list for you.",
+    "fix": "Remove the typed numbers from the requirements",
+    "inputs": "reqs[].t",
+    "valid": [
+      "the conforming syllabus",
+      "\"1 Attendance\" (no dot) is not a manual number"
+    ],
+    "invalid": "a requirement carries its own number",
+    "missing": "no requirements",
+    "behaviour": "neutral (not applicable): no credit, no deduction; companion T-19 flags it",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "presence/form only: placeholder text (TBD, n/a) and invisible-only text satisfy it (LIM-01, DEF-01)"
+    ],
+    "note": ""
+  },
+  {
+    "id": "T-21",
+    "area": "template",
+    "severity": "blocking",
+    "weight": 3,
+    "check": "referenceGroups",
+    "requirement": "References (‹letter›. ‹title›) has no entries and is not marked not applicable.",
+    "fix": "Fill in each reference group or mark it not applicable",
+    "inputs": "refs.{books,program,online,electronics}",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "a group is empty and not marked N/A",
+    "missing": "refs absent",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "presence/form only: placeholder text (TBD, n/a) and invisible-only text satisfy it (LIM-01, DEF-01)"
+    ],
+    "note": ""
+  },
+  {
+    "id": "T-22",
+    "area": "template",
+    "severity": "minor",
+    "weight": 1,
+    "check": "referenceGroups",
+    "requirement": "References (‹letter›. ‹title›) is marked not applicable but has entries.",
+    "fix": "Resolve the reference group marked not applicable that has entries",
+    "inputs": "refs.{books,program,online,electronics}",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "marked N/A but has entries",
+    "missing": "refs absent",
+    "behaviour": "neutral (not applicable): no credit, no deduction; companion T-21 flags it",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "presence/form only: placeholder text (TBD, n/a) and invisible-only text satisfy it (LIM-01, DEF-01)"
+    ],
+    "note": ""
+  },
+  {
+    "id": "T-23",
+    "area": "template",
+    "severity": "blocking",
+    "weight": 2,
+    "check": "nonEmpty",
+    "requirement": "The Grading System (X) has no components.",
+    "fix": "Add the grading components",
+    "inputs": "grading.rows",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "no grading components",
+    "missing": "grading absent",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "presence/form only: placeholder text (TBD, n/a) and invisible-only text satisfy it (LIM-01, DEF-01)"
+    ],
+    "note": ""
+  },
+  {
+    "id": "T-24",
+    "area": "template",
+    "severity": "blocking",
+    "weight": 4,
+    "check": "gradingTotal",
+    "requirement": "The grading components total ‹total›%, not ‹need›%.",
+    "fix": "Make the grading components total 100%",
+    "inputs": "grading.rows[].pct",
+    "valid": [
+      "the conforming syllabus",
+      "33.3 + 33.3 + 33.4 totals 100"
+    ],
+    "invalid": "components total 90",
+    "missing": "no grading rows",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [
+      "server/lib/compliance/rules.test.js",
+      "server/lib/syllabuscheck/alignment-safety.test.js",
+      "server/routes/compliance.routes.test.js",
+      "src/lib/complianceRules.parity.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [],
+    "note": ""
+  },
+  {
+    "id": "T-25",
+    "area": "template",
+    "severity": "blocking",
+    "weight": 2,
+    "check": "gradingFormula",
+    "requirement": "The override formulas cannot be empty.",
+    "fix": "Fill in the override formulas or switch them off",
+    "inputs": "grading.rows, grading.override, exam rows",
+    "valid": [
+      "the conforming syllabus",
+      "override on with both formulas"
+    ],
+    "invalid": "override on with an empty formula",
+    "missing": "override off",
+    "behaviour": "neutral (not applicable): no credit, no deduction; no companion rule",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "skipped for drafts / when its context is absent; nothing else covers that case"
+    ],
+    "note": "Applies only when the override is switched on."
+  },
+  {
+    "id": "T-26",
+    "area": "template",
+    "severity": "major",
+    "weight": 2,
+    "check": "gradingFormula",
+    "requirement": "The ‹which› formula does not mention ‹missing›.",
+    "fix": "Make the grading formulas name every component and exam term",
+    "inputs": "grading.rows, grading.override, exam rows",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "override formula omits a component",
+    "missing": "no grading rows and no exam rows",
+    "behaviour": "neutral (not applicable): no credit, no deduction; companion T-23, A-03 flags it",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "earns credit by construction while the grading override is off"
+    ],
+    "note": "Tautological while the override is off: the generated formula always names every component, so the rule earns full credit by construction."
+  },
+  {
+    "id": "T-27",
+    "area": "template",
+    "severity": "minor",
+    "weight": 1,
+    "check": "signoffRoles",
+    "requirement": "The sign-off block is not as the form requires: ‹problem›.",
+    "fix": "Check the sign-off block",
+    "inputs": "signoff; preparer",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "names entered by hand in the sign-off",
+    "missing": "the preparer is unknown",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [],
+    "note": ""
+  },
+  {
+    "id": "C-01",
+    "area": "completeness",
+    "severity": "major",
+    "weight": 2,
+    "check": "textLength",
+    "requirement": "The course description is ‹words› ‹nouns›; about ‹need› are expected.",
+    "fix": "Expand the course description",
+    "inputs": "description",
+    "valid": [
+      "the conforming syllabus",
+      "exactly 30 words"
+    ],
+    "invalid": "29 words",
+    "missing": "no description text",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "presence/form only: placeholder text (TBD, n/a) and invisible-only text satisfy it (LIM-01, DEF-01)",
+      "partial credit (fraction of the rule's share), by design"
+    ],
+    "note": "Partial credit: n/30 of the rule's share below 30 words."
+  },
+  {
+    "id": "C-02",
+    "area": "completeness",
+    "severity": "minor",
+    "weight": 2,
+    "check": "textLength",
+    "requirement": "‹where› is only ‹words› ‹nouns›; an ILO states what the student will do.",
+    "fix": "Write fuller learning outcomes (ILOs)",
+    "inputs": "plan[].ilos[].text",
+    "valid": [
+      "the conforming syllabus",
+      "a 4-word ILO"
+    ],
+    "invalid": "a 3-word ILO",
+    "missing": "every ILO blank",
+    "behaviour": "neutral (not applicable): no credit, no deduction; companion T-08 flags it",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "presence/form only: placeholder text (TBD, n/a) and invisible-only text satisfy it (LIM-01, DEF-01)"
+    ],
+    "note": ""
+  },
+  {
+    "id": "C-03",
+    "area": "completeness",
+    "severity": "minor",
+    "weight": 1,
+    "check": "textLength",
+    "requirement": "CLO ‹n› has no ‹missing›.",
+    "fix": "Ask an administrator to complete the CLO titles and statements",
+    "inputs": "clos[].title/.statement",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "a CLO has no statement",
+    "missing": "a CLO has no title",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "no pre-existing automated test names this rule (it may be exercised indirectly); now covered here",
+      "presence/form only: placeholder text (TBD, n/a) and invisible-only text satisfy it (LIM-01, DEF-01)"
+    ],
+    "note": ""
+  },
+  {
+    "id": "C-04",
+    "area": "completeness",
+    "severity": "minor",
+    "weight": 1,
+    "check": "referenceAge",
+    "requirement": "There are ‹have› references; at least ‹need› are expected.",
+    "fix": "Add more references",
+    "inputs": "refs.*.items[].t; evaluation year",
+    "valid": [
+      "the conforming syllabus",
+      "exactly three references"
+    ],
+    "invalid": "two references",
+    "missing": "no references",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [],
+    "hybrid": "NOT APPLIED",
+    "result": "PASS",
+    "gaps": [
+      "not applied in Hybrid-2 (replaced by link checks)",
+      "no pre-existing automated test names this rule (it may be exercised indirectly); now covered here"
+    ],
+    "note": ""
+  },
+  {
+    "id": "P-01",
+    "area": "co_po",
+    "severity": "blocking",
+    "weight": 3,
+    "check": "cloConventions",
+    "requirement": "CLO ‹n› is not tagged with a valid graduate attribute (EGA).",
+    "fix": "Ask an administrator to tag each CLO with graduate attributes",
+    "inputs": "clos[].egas, clos[].pos; program POs/EGAs",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "a CLO has no EGA tag",
+    "missing": "egas property absent",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [],
+    "note": ""
+  },
+  {
+    "id": "P-02",
+    "area": "co_po",
+    "severity": "blocking",
+    "weight": 3,
+    "check": "cloConventions",
+    "requirement": "CLO ‹n› is not tagged with a valid program outcome (PO).",
+    "fix": "Ask an administrator to tag each CLO with program outcomes",
+    "inputs": "clos[].egas, clos[].pos; program POs/EGAs",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "a CLO has no PO tag",
+    "missing": "a CLO tags a PO that does not exist",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [],
+    "note": ""
+  },
+  {
+    "id": "P-03",
+    "area": "co_po",
+    "severity": "major",
+    "weight": 2,
+    "check": "cloConventions",
+    "requirement": "CLO ‹n› is tagged PO ‹po›, which maps to EGA ‹ega›, but EGA ‹ega› is not tagged.",
+    "fix": "Ask an administrator to tag the EGAs the POs imply",
+    "inputs": "clos[].egas, clos[].pos; program POs/EGAs",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "PO 2 maps to EGA 2 but EGA 2 is not tagged",
+    "missing": "a CLO with no PO tags",
+    "behaviour": "scope-limited: still applies and passes on its narrow property; companion P-02 flags the absence",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [],
+    "note": "A CLO with no PO tags is skipped by this rule (P-02 reports it); other CLOs are still checked."
+  },
+  {
+    "id": "P-04",
+    "area": "co_po",
+    "severity": "minor",
+    "weight": 1,
+    "check": "cloConventions",
+    "requirement": "CLO ‹n›'s tags would not print as ‹format›: numbers must be unique and in order.",
+    "fix": "Ask an administrator to put the CLO tags in order",
+    "inputs": "clos[].egas, clos[].pos; program POs/EGAs",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "EGA numbers not increasing",
+    "missing": "duplicate PO numbers",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [],
+    "note": ""
+  },
+  {
+    "id": "P-05",
+    "area": "co_po",
+    "severity": "major",
+    "weight": 3,
+    "check": "cloCoverage",
+    "requirement": "CLO ‹n› is not built by any ILO in the Learning Plan.",
+    "fix": "Cover every course outcome in the Learning Plan",
+    "inputs": "clos[].id; plan[].ilos[].tags",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "CLO 4 is built by no ILO",
+    "missing": "no lessons at all",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [],
+    "note": ""
+  },
+  {
+    "id": "A-01",
+    "area": "assessment",
+    "severity": "major",
+    "weight": 3,
+    "check": "columnsFilled",
+    "requirement": "‹where› has no assessment task.",
+    "fix": "Add an assessment task to every lesson",
+    "inputs": "plan columns: tasks",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "a lesson has no assessment task",
+    "missing": "a lesson task is absent",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [
+      "server/lib/compliance/rules.test.js",
+      "server/lib/syllabuscheck/stage-c3.test.js",
+      "server/routes/compliance.routes.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "presence/form only: placeholder text (TBD, n/a) and invisible-only text satisfy it (LIM-01, DEF-01)"
+    ],
+    "note": ""
+  },
+  {
+    "id": "A-02",
+    "area": "assessment",
+    "severity": "major",
+    "weight": 3,
+    "check": "cloCoverage",
+    "requirement": "CLO ‹n› is not assessed: no week that builds it has an assessment task.",
+    "fix": "Assess every course learning outcome",
+    "inputs": "clos[].id; plan[].ilos[].tags; plan[].tasks",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "CLO 1 has no assessed week",
+    "missing": "no lessons",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [
+      "server/lib/compliance/recommend.test.js",
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [],
+    "note": ""
+  },
+  {
+    "id": "A-03",
+    "area": "assessment",
+    "severity": "major",
+    "weight": 3,
+    "check": "examRowsPerTerm",
+    "requirement": "There is no ‹term› examination row in the Learning Plan.",
+    "fix": "Add the missing examination rows",
+    "inputs": "plan[] exam rows (Prelim/Midterm/Final)",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "no Midterm examination row",
+    "missing": "no examination rows",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [
+      "server/lib/compliance/rules.test.js",
+      "server/routes/compliance.routes.test.js",
+      "src/lib/complianceRules.parity.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [],
+    "note": ""
+  },
+  {
+    "id": "A-04",
+    "area": "assessment",
+    "severity": "major",
+    "weight": 2,
+    "check": "gradingHasExam",
+    "requirement": "The grading system has no examination component.",
+    "fix": "Include an examination in the grading system",
+    "inputs": "grading.rows[].label",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "no examination component in grading",
+    "missing": "no grading rows",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "presence/form only: placeholder text (TBD, n/a) and invisible-only text satisfy it (LIM-01, DEF-01)"
+    ],
+    "note": ""
+  },
+  {
+    "id": "H-01",
+    "area": "contact_hours",
+    "severity": "major",
+    "weight": 2,
+    "check": "contactUnits",
+    "requirement": "The credit units are not usable: lecture ‹lecture›, laboratory ‹lab›.",
+    "fix": "Correct the credit units",
+    "inputs": "meta.lecture, meta.lab",
+    "valid": [
+      "the conforming syllabus",
+      "the 6 + 6 maximum"
+    ],
+    "invalid": "lecture units above the maximum of 6",
+    "missing": "lecture units blank",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [],
+    "note": ""
+  },
+  {
+    "id": "H-02",
+    "area": "contact_hours",
+    "severity": "major",
+    "weight": 4,
+    "check": "weeksCover",
+    "requirement": "The plan covers ‹planned› of ‹expected› weeks‹hours›.",
+    "fix": "Plan the full term",
+    "inputs": "plan[].week",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "week 5 is not planned",
+    "missing": "empty plan",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "partial credit (fraction of the rule's share), by design"
+    ],
+    "note": "Partial credit: planned/18 of the rule's share."
+  },
+  {
+    "id": "H-03",
+    "area": "contact_hours",
+    "severity": "major",
+    "weight": 2,
+    "check": "weeksCover",
+    "requirement": "Row ‹row› has a week that is not within 1 to ‹to›: \"‹week›\".",
+    "fix": "Fix the weeks outside the term",
+    "inputs": "plan[].week",
+    "valid": [
+      "the conforming syllabus",
+      "week 18 is within 1 to 18"
+    ],
+    "invalid": "a row has week 20",
+    "missing": "a row with no week",
+    "behaviour": "scope-limited: still applies and passes on its narrow property; companion H-02 flags the absence",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [],
+    "note": "Judges the weeks that are written; a row with no week is flagged by H-02 (coverage)."
+  },
+  {
+    "id": "H-04",
+    "area": "contact_hours",
+    "severity": "minor",
+    "weight": 1,
+    "check": "weeksCover",
+    "requirement": "Week‹s› ‹weeks› appear‹verb› in more than one row.",
+    "fix": "Resolve the weeks used by more than one row",
+    "inputs": "plan[].week",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "week 3 appears in two rows",
+    "missing": "no weeks at all",
+    "behaviour": "scope-limited: still applies and passes on its narrow property; companion H-02, T-08 flags the absence",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [],
+    "note": "Judges overlap among written weeks; an empty plan is flagged by H-02 and T-08."
+  },
+  {
+    "id": "R-01",
+    "area": "reference_currency",
+    "severity": "major",
+    "weight": 2,
+    "check": "referenceAge",
+    "requirement": "There are no references.",
+    "fix": "Add references",
+    "inputs": "refs.*.items[].t; evaluation year",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "no references",
+    "missing": "refs absent",
+    "behaviour": "finding raised, credit withheld",
+    "existing": [],
+    "hybrid": "applied",
+    "result": "PASS",
+    "gaps": [
+      "no pre-existing automated test names this rule (it may be exercised indirectly); now covered here"
+    ],
+    "note": ""
+  },
+  {
+    "id": "R-02",
+    "area": "reference_currency",
+    "severity": "minor",
+    "weight": 2,
+    "check": "referenceAge",
+    "requirement": "A reference has no year: \"‹text›\".",
+    "fix": "Add the year to each reference",
+    "inputs": "refs.*.items[].t; evaluation year",
+    "valid": [
+      "the conforming syllabus"
+    ],
+    "invalid": "a reference with no year",
+    "missing": "no references",
+    "behaviour": "neutral (not applicable): no credit, no deduction; companion R-01 flags it",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "NOT APPLIED",
+    "result": "PASS",
+    "gaps": [
+      "not applied in Hybrid-2 (replaced by link checks)"
+    ],
+    "note": ""
+  },
+  {
+    "id": "R-03",
+    "area": "reference_currency",
+    "severity": "major",
+    "weight": 4,
+    "check": "referenceAge",
+    "requirement": "A reference is ‹age› years old (‹year›); the limit is ‹limit›: \"‹text›\".",
+    "fix": "Replace the outdated references",
+    "inputs": "refs.*.items[].t; evaluation year",
+    "valid": [
+      "the conforming syllabus",
+      "a reference exactly 10 years old"
+    ],
+    "invalid": "a reference 11 years old",
+    "missing": "year not supplied to the evaluation",
+    "behaviour": "neutral (not applicable): no credit, no deduction; no companion rule",
+    "existing": [
+      "server/lib/compliance/rules.test.js"
+    ],
+    "hybrid": "NOT APPLIED",
+    "result": "PASS",
+    "gaps": [
+      "not applied in Hybrid-2 (replaced by link checks)",
+      "skipped for drafts / when its context is absent; nothing else covers that case"
+    ],
+    "note": "Skipped when the evaluation year is unknown."
+  }
+]

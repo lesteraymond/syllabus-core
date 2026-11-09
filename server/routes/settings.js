@@ -1,7 +1,13 @@
 const express = require('express');
-const { requireAdmin } = require('../middleware/auth');
+const { requireAdmin, requireAuth } = require('../middleware/auth');
+const adminSettings = require('../lib/adminSettings');
 const router = express.Router();
-const DEFAULTS = Object.freeze({ template: 'Undergraduate Syllabus v4', academicYear: '2026–2027', department: 'College of Information Technology and Engineering', aiChecking: true, strictValidation: false, emailNotifications: true });
+const { DEFAULTS } = adminSettings; // lib/adminSettings.js: also what each switch does
+// The switches that change how the app behaves for everyone (strict step order in the builder, AI checking, email), as booleans. Any signed-in
+// person may read them: the builder needs strictValidation, the AI Checker aiChecking. Nothing else of the administrator's settings is sent.
+router.get('/policy', requireAuth, async (req, res) => {
+  res.json(await adminSettings.policy(req.app.locals.db));
+});
 router.get('/', requireAdmin, async (req, res) => {
   try {
     const [rows] = await req.app.locals.db.query("SELECT setting_value FROM app_settings WHERE setting_key = 'administration'");

@@ -1,4 +1,5 @@
 'use strict';
+process.env.SESSION_SECRET = process.env.SESSION_SECRET || 'existing-suite-test-secret-0123456789'; // verification tokens are signed only with a configured secret
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('node:path');
@@ -54,6 +55,7 @@ async function createTestHarness(t, { syllabusStatus = 'draft', initialReport = 
 
   app.locals.db = {
     query: async (sql, params = []) => {
+      if (/program_po_reference_remediation/.test(sql)) return [[]];
       if (sql.startsWith('SELECT user_id FROM users')) {
         return [[{ user_id: params[0] }]];
       }

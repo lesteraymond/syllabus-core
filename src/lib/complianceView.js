@@ -25,7 +25,8 @@ export const stepLabel = (key) => (STEP_INFO[key] ? 'Step ' + STEP_INFO[key].n +
 // 'none' (never checked), 'insufficient' (not enough written to score) or 'scored'.
 export function runState(run) {
   if (!run) return 'none';
-  if (run.status === 'incomplete' || (run.hybrid && !run.hybrid.ready && !run.hybrid.critical)) return 'incomplete';
+  // A saved report of a syllabus under record review is held back from being a current check (ready: false), but it keeps the score it was saved with.
+  if (run.status === 'incomplete' || (run.hybrid && !run.hybrid.ready && !run.hybrid.critical && !run.recordReview?.savedReady)) return 'incomplete';
   return run.status === 'insufficient' || run.overall === null || run.overall === undefined ? 'insufficient' : 'scored';
 }
 
@@ -139,20 +140,6 @@ export function provisionalOf(run) {
   if (!c || !c.verified || (c.total && c.verified / c.total < PROVISIONAL_MIN_COVERAGE)) return null;
   const { verified, total } = c;
   return { score: h.provisionalScore, verified, total, rule: h.summary ? h.summary.status === 'mandatory_open' : false };
-}
-
-// The advisory verdict (server verdict.js) of a run, or null for a report saved before it existed or one whose builder failed. Display only.
-export function verdictOf(run) {
-  const v = run && run.hybrid && run.hybrid.verdict;
-  return v && !v.unavailable && v.overall ? v : null;
-}
-// Findings worth showing first: failures, then reviews, then what could not be checked. Grouped counts for the headline come from the server.
-const VERDICT_ORDER = { FAIL: 0, NEEDS_REVIEW: 1, NOT_CHECKED: 2, NOT_APPLICABLE: 3, PASS: 4 };
-const SEVERITY_ORDER = { CRITICAL: 0, MAJOR: 1, MINOR: 2, INFO: 3 };
-export function verdictIssues(v) {
-  return ((v && v.findings) || [])
-    .filter((f) => f.status === 'FAIL' || (f.status === 'NEEDS_REVIEW' && f.severity !== 'INFO') || f.explanationReview?.length || f.draftReview?.length || f.draftWarnings?.length)
-    .sort((a, b) => VERDICT_ORDER[a.status] - VERDICT_ORDER[b.status] || SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity]);
 }
 
 export const scoreText = (run) => (runState(run) === 'scored' ? run.overall + '%' : '—');

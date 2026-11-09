@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { syllabusCheck } from '../lib/api';
-import { decideSuggestion, hardGatesOf } from '../lib/hybridCheck';
+import { decideSuggestion, hardGatesOf, undoSuggestion } from '../lib/hybridCheck';
 import { memoryOf } from '../lib/panelMemory';
 import { useAiGate } from '../lib/checkPolicy';
 import { canRefine, linkProblems, problemsOf, suggestionSection } from '../lib/hybridView';
 import HybridProblem from './HybridProblem';
 import { t, tr } from '../i18n';
-import {isAcademicV2} from '../lib/academicEvaluation';
+import {isAcademicV2, integratedAcademicV2Of} from '../lib/academicEvaluation';
 
 const without = (map, key) => { const next = { ...map }; delete next[key]; return next; };
 
@@ -19,6 +19,7 @@ export default function HybridCheckPanel({ run, onApplyDraft }) {
   // Feedback belongs on the card that was clicked: its own error, and which card is being applied right now.
   const [errors, setErrors] = useState({});
   const [working, setWorking] = useState('');
+  const [notice, setNotice] = useState(''); // success feedback for Undo
   const [appliedValue, setAppliedValue] = useState({}); // what this session put into the syllabus, so Undo can check the field still holds it
   const [decisionText, setDecisionText] = useState({}); // the text of a saved "edit" decision, so Undo still works after a reload
   const [refining, setRefining] = useState(''); // the recommendation being checked and improved right now
@@ -80,6 +81,28 @@ export default function HybridCheckPanel({ run, onApplyDraft }) {
     }
     finally { decisionLock.current = false; setBusy(false); setWorking(''); }
   };
+  // Undo an applied recommendation through the existing path (lib/hybridCheck.js undoSuggestion): the original text is restored only while the field still
+  // holds exactly what was applied (a newer faculty edit makes it refuse, and a save made from an outdated copy is refused by the server), then the
+  // reversal is recorded as an append-only decision. It is offered only to the author of an editable syllabus, for a recommendation that was accepted or
+  // edited and whose original text was recorded.
+  const appliedTextOf = s => appliedValue[s.id] ?? (decisions[s.id] === 'edit' ? decisionText[s.id] : s.replacement);
+  const canUndo = s => !!onApplyDraft && ready && isHandled(s) && Object.hasOwn(s, 'originalValue') && !s.originalMissing && typeof appliedTextOf(s) === 'string';
+  const undo = async (suggestion) => {
+    if (decisionLock.current) return;
+    decisionLock.current = true;
+    setBusy(true); setWorking(suggestion.id); setNotice('');
+    setErrors(current => without(current, suggestion.id));
+    try {
+      await undoSuggestion({ suggestion, appliedValue: appliedTextOf(suggestion), applyDraft: onApplyDraft, recordDecision: body => syllabusCheck.decide(run.id, body) });
+      setDecisions(current => ({ ...current, [suggestion.id]: 'undo' })); // back in the active list
+      setAppliedValue(current => without(current, suggestion.id));
+      setRefinedKept(current => without(current, suggestion.id)); // the earlier verification belonged to the applied text: check again before applying
+      setNotice(t('hybrid.undone'));
+    } catch (e) {
+      const message = e.message?.startsWith('hybrid.') ? t(e.message) : e.message;
+      setErrors(current => ({ ...current, [suggestion.id]: e.draftSaved ? t('hybrid.savedDecisionFailed', { message }) : message || t('hybrid.undoFailed') }));
+    } finally { decisionLock.current = false; setBusy(false); setWorking(''); }
+  };
   // Check one recommendation against every relationship its text touches (server: lib/syllabuscheck/refine.js). A rewrite the check had to
   // write itself is put in the text box, so that "Apply verified rewrite" applies exactly what was checked. Nothing is applied here.
   const refine = async (suggestion) => {
@@ -121,8 +144,9 @@ export default function HybridCheckPanel({ run, onApplyDraft }) {
       : !hybrid.ready && outOfCredits && <div className="hy-lock" role="alert"><b>{t('hybrid.lockedTitle')}</b><span>{t('hybrid.locked')}</span></div>}
     {error && <div role="alert" className="info-banner warning">{error}</div>}
     {hybrid.suggestions.length > 0 && <details className="hy-recs" open>
-      <summary><h4>{t(pending.length === 1 ? 'hybrid.recommendation' : 'hybrid.recommendations', { count: pending.length })}</h4></summary>
+      <summary><h4>{t(pending.length === 1 ? 'hybrid.recommendation' : 'hybrid.recommendations', { count: pending.length })}{run.stale && <span className="hy-pill warn" role="status"> {t(run.recordReview ? 'hybrid.savedReportChip' : 'hybrid.staleChip')}</span>}</h4></summary>
       <div className="hy-box">
+      {run.stale && !run.recordReview && <p className="hy-note" role="alert">{t('hybrid.staleRecs')}</p>}
       {pending.length > 0 && <p className="hy-note">{onApplyDraft ? t('hybrid.applyNote') : t('hybrid.readOnlyNote')}</p>}
       {pending.length === 0 && <div className="hy-clear" role="status">{t('hybrid.allHandled')}</div>}
       {pending.map(s => {
@@ -133,6 +157,9 @@ export default function HybridCheckPanel({ run, onApplyDraft }) {
         const rw = refined[s.id];
         const useRewrite = !!rw && rw.status === 'verified' && rw.usedRewrite && edits[s.id] === rw.text; // the text box still holds exactly what was checked
         const checkable = !!onApplyDraft && canRefine(s) && !stale;
+        // With Policy V2 integrated, the server accepts a decision only for text verified by Check & Improve (409 otherwise). The draft is saved BEFORE the decision is
+        // recorded, so an unverified Accept would change the draft and then be refused: the button waits for the verification, as the Policy V2 panel's does.
+        const needsVerification = !!integratedAcademicV2Of(run) && !!onApplyDraft && !(rw && rw.status === 'verified' && rw.text === shown);
         return <article key={s.id} className={'hy-rec' + (decided ? ' decided ' + decided : '')}>
           <div className="hy-rec-head">
             <strong>{s.title}</strong>
@@ -160,23 +187,26 @@ export default function HybridCheckPanel({ run, onApplyDraft }) {
               <ul>{rw.blockers.map(b => <li key={b.id}><strong>{b.type}</strong> {t('hybrid.label.' + b.from)} → {t('hybrid.label.' + b.to)}{b.why ? ' · ' + b.why : ''}</li>)}</ul>
             </details>}
           </div>}
+          {onApplyDraft && needsVerification && !rw && checkable && <p className="hy-hint" role="note">{t('academicV2.verifyFirst')}</p>}
           {onApplyDraft && <div className="hy-actions">
-            <button type="button" className="btn primary" disabled={busy || stale || !ready || refining === s.id} onClick={() => decide(s, (useRewrite || hasEdit) ? 'edit' : 'accept')}>{working === s.id ? t('hybrid.applying') : t(useRewrite ? 'hybrid.applyVerified' : 'hybrid.accept')}</button>
+            <button type="button" className="btn primary" disabled={busy || stale || !ready || refining === s.id || needsVerification} onClick={() => decide(s, (useRewrite || hasEdit) ? 'edit' : 'accept')}>{working === s.id ? t('hybrid.applying') : t(useRewrite ? 'hybrid.applyVerified' : 'hybrid.accept')}</button>
             {checkable && <button type="button" className="btn outline" disabled={busy || !!refining || !ready} onClick={() => refine(s)}>{refining === s.id ? t('hybrid.refining') : t('hybrid.refine')}</button>}
             <button type="button" className="btn ghost" disabled={busy || !ready} onClick={() => decide(s, 'reject')}>{t('hybrid.reject')}</button>
           </div>}
         </article>;
       })}
-      {handled.length > 0 && <details className="hy-handled">
+      {handled.length > 0 && <details className="hy-handled" open={Object.keys(appliedValue).length > 0 ? true : undefined}>
         <summary>{t('hybrid.handled', { count: handled.length })}</summary>
         <ul>{handled.map(s => <li key={s.id}>
           <div className="hy-rec-head">
             <strong>{s.title}</strong>
             {s.path && <span className="hy-pill">{suggestionSection(s.path, { tr, t })}</span>}
           </div>
+          {canUndo(s) && <div className="hy-actions"><button type="button" className="btn ghost" disabled={busy} onClick={() => undo(s)}>{working === s.id ? t('hybrid.undoing') : t('hybrid.undo')}</button></div>}
           {errors[s.id] && <div className="hy-err" role="alert">{errors[s.id]}</div>}
         </li>)}</ul>
       </details>}
+      {notice && <div className="hy-clear" role="status">{notice}</div>}
       </div>
     </details>}
     </div>

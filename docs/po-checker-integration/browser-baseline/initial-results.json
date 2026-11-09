@@ -1,0 +1,41 @@
+{
+  "mode": "baseline",
+  "kind": "LOCAL full React/Express browser E2E, isolated synthetic DB, corrected development reference snapshot, scripted provider",
+  "results": [
+    {
+      "program": "BSIT",
+      "mode": "baseline",
+      "steps": [],
+      "status": "FAIL",
+      "error": "locator.fill: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[aria-label=\"For example, 2022-2023\"]')\u001b[22m\n"
+    },
+    {
+      "program": "BSIE",
+      "mode": "baseline",
+      "steps": [],
+      "status": "FAIL",
+      "error": "locator.fill: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[aria-label=\"For example, 2022-2023\"]')\u001b[22m\n"
+    },
+    {
+      "program": "BSCPE",
+      "mode": "baseline",
+      "steps": [],
+      "status": "FAIL",
+      "error": "locator.fill: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[aria-label=\"For example, 2022-2023\"]')\u001b[22m\n"
+    },
+    {
+      "program": "BSIT-CYBERSECURITY",
+      "mode": "baseline",
+      "steps": [],
+      "status": "FAIL",
+      "error": "locator.fill: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[aria-label=\"For example, 2022-2023\"]')\u001b[22m\n"
+    }
+  ],
+  "passed": 0,
+  "failed": 4,
+  "providerRequests": 0,
+  "blockedNetwork": [],
+  "liveClaudeCalls": 0,
+  "profile": "comprehensive-testing",
+  "ordinaryDevelopmentFlagsModified": false
+}

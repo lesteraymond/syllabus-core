@@ -1,0 +1,46 @@
+{
+  "registeredDeterministicRules": 47,
+  "directHybrid2Rules": 44,
+  "weights": [
+    20,
+    20,
+    20,
+    15,
+    10,
+    15
+  ],
+  "passingThreshold": 79,
+  "programs": [
+    {
+      "program": "BSIT",
+      "legacyScore": 100,
+      "comprehensiveScore": 100,
+      "deductionsEqual": true,
+      "syntheticContent": true
+    },
+    {
+      "program": "BSIT-CYBERSECURITY",
+      "legacyScore": 100,
+      "comprehensiveScore": 100,
+      "deductionsEqual": true,
+      "syntheticContent": true
+    },
+    {
+      "program": "BSIE",
+      "legacyScore": 100,
+      "comprehensiveScore": 100,
+      "deductionsEqual": true,
+      "syntheticContent": true
+    },
+    {
+      "program": "BSCPE",
+      "legacyScore": 100,
+      "comprehensiveScore": 100,
+      "deductionsEqual": true,
+      "syntheticContent": true
+    }
+  ],
+  "submissionAndApprovalPoliciesChanged": false,
+  "formalInstitutionalApproval": "not_recorded",
+  "note": "Scripted positive judgments test software/reference transport, not real Claude academic accuracy."
+}

@@ -4,13 +4,15 @@ import { t as translateUI } from "../../i18n/index.js";
 import { useEffect, useState } from 'react';
 import ComplianceCard from '../ComplianceCard';
 import { useCompliance } from './useCompliance';
+import InactiveYearNotice, { useInactiveYear } from '../../components/InactiveYearNotice';
 
 // Opening the review step only loads the saved report. Provider calls start
 // exclusively from the single AI CHECK action, including in React Strict Mode.
 // `canCheck` is false for a syllabus the viewer cannot re-check: then it only shows the stored run.
 // `onRun` tells the builder what the latest run says, so the submit button can say "Submit anyway" when warnings remain.
-export default function ComplianceSection({ syllabusId, saveFirst, canCheck, onOpenStep, onRun, onApplyDraft }) {
+export default function ComplianceSection({ syllabusId, saveFirst, canCheck, onOpenStep, onRun, onApplyDraft, syllabusYear }) {
   const { run, installed, busy, error, load, check } = useCompliance({ syllabusId, saveFirst });
+  const inactiveYear = useInactiveYear(syllabusYear); // another academic year: its saved report stays readable, a new check is not offered
   // True once a recommendation has been applied: the stored result no longer describes the syllabus until it is checked again.
   const [changed, setChanged] = useState(false);
   const apply = onApplyDraft ? async (patch) => { const done = await onApplyDraft(patch); setChanged(true); return done; } : undefined;
@@ -30,13 +32,14 @@ export default function ComplianceSection({ syllabusId, saveFirst, canCheck, onO
           <h3 id="cmp-title">{translateUI("ui.compliance_check_cf2d1e")}</h3>
           <p className="cmp-small">{translateUI("ui.checked_against_the_undergraduate_syllabus_form_only_a_form_that__68429a")}</p>
         </div>
-        {canCheck && installed && <StableButton type="button" className="btn primary" disabled={busy} onClick={recheck}>{busy ? translateUI("ui.checking_820d60") : translateUI(run ? "hybrid.recheckButton" : "hybrid.checkButton")}</StableButton>}
+        {canCheck && installed && !inactiveYear && <StableButton type="button" className="btn primary" disabled={busy} onClick={recheck}>{busy ? translateUI("ui.checking_820d60") : translateUI(run ? "hybrid.recheckButton" : "hybrid.checkButton")}</StableButton>}
       </div>
       {needsCheck && (
         <div className="hy-stale" role="status">
           <span>{translateUI(legacy && !changed ? 'hybrid.refreshSuggestions' : 'hybrid.recheckBanner')}</span>
         </div>
       )}
+      {installed && <InactiveYearNotice inactive={inactiveYear} />}
       {!installed && <div className="info-banner warning">{translateUI('hybrid.unavailable')}</div>}
       {error && <div className="info-banner warning" role="alert">{tr(error)}</div>}
       {installed && !run && !error && !busy && <p className="cmp-small">{translateUI("ui.not_checked_yet_8ea64e")}</p>}

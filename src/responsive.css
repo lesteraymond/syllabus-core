@@ -129,10 +129,10 @@
 /* ---- Sign-in, register and forgot-password (they share .login-page) ---- */
 /* Laptops: the two columns are equal, so the half-width brand side gets a smaller logo circle and heading to keep the text from being cut off. */
 @media (max-width: 1599.98px) {
-	.login-brand { padding: 56px 4vw; gap: 28px; }
+	.login-brand { padding: 28px 4vw 68px; gap: 0; }
 	.login-brand > div:last-child { min-width: 0; }
-	.brand-orb { width: 170px; height: 170px; min-width: 170px; padding: 14px; }
-	.login-brand h1 { font-size: clamp(28px, 3vw, 46px); overflow-wrap: anywhere; }
+	.brand-orb { width: 230px; height: 230px; min-width: 230px; padding: 0; margin-bottom: -8px; }
+	.login-brand h1 { font-size: clamp(26px, 2.8vw, 44px); white-space: nowrap; }
 	.login-brand p { font-size: var(--text-base); overflow-wrap: anywhere; }
 }
 @media (max-width: 1279.98px) {

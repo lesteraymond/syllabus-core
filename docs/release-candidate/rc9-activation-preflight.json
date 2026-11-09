@@ -1,0 +1,294 @@
+{
+  "at": "2026-11-06T08:52:59.779Z",
+  "source": "b11c15c8713e44f4065ad28c8e4a6d288c5fb97ad51a46f5cddf2fe48cf1ceba",
+  "note": "Counts and hashes only. All restore, migration and rollback steps ran on an isolated copy; the development database was only read.",
+  "backup": {
+    "createdAt": "2026-11-06T08:51:08.382Z",
+    "database": "syllabus_cms_plus",
+    "identityHash": "f7fbc8b43dce865b2c95eb7ea0718238e40455a93c0aa25dac2930ec9e124fd3",
+    "bytes": 34679779,
+    "sha256": "e1fab66620023bfc54ce3c0b57efb0470e6b44f38db2531cb7e954e0e77e20dd",
+    "ms": 1725,
+    "tables": 53,
+    "rows": 8027,
+    "routines": 0,
+    "triggers": 0,
+    "events": 0,
+    "inventoryHash": "1c1234c59fd04e9f2af2b2412faf3b3e81bad785999d561c4bbff4b1649dba02",
+    "unchangedDuringBackup": true,
+    "charset": "utf8mb4",
+    "collation": "utf8mb4_general_ci"
+  },
+  "steps": [
+    {
+      "name": "isolated server identity verified, event scheduler OFF",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "backup hash re-read equals the manifest",
+      "ok": true,
+      "detail": "e1fab66620023bfc"
+    },
+    {
+      "name": "restored tables, row counts, data hashes and table definitions equal the development inventory",
+      "ok": true,
+      "detail": "53 tables, 8027 rows; differences []"
+    },
+    {
+      "name": "snapshot of the restored copy",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "fresh RC9 schema built for comparison",
+      "ok": true,
+      "detail": "{\"scratchDatabase\":\"syllabus_e2e_fresh\",\"migrationsRun\":28,\"tables\":43,\"missing\":[],\"problems\":[]}"
+    },
+    {
+      "name": "the migration ran on the isolated copy",
+      "ok": true,
+      "detail": "Reference versions are ready. No version was created and no existing row was changed."
+    },
+    {
+      "name": "integrity verification: VERIFIED",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "the migration changed only the reference tables",
+      "ok": true,
+      "detail": "[\"program_po_reference_active\",\"program_po_reference_versions\"] added [\"program_po_reference_audit\"]"
+    },
+    {
+      "name": "running the migration again changes nothing",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "rollback before any Admin save returns the copy to the backup exactly",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "after a save the rollback tool refuses",
+      "ok": true,
+      "detail": "REFUSED, data would be lost: the audit table has rows. Recover from the verified backup under separate authorization instead."
+    },
+    {
+      "name": "recovery from the backup alone returns exactly the original",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "tablesChangedByMigration": [
+    {
+      "table": "program_po_reference_active",
+      "rows": true,
+      "data": false,
+      "ddl": false
+    },
+    {
+      "table": "program_po_reference_versions",
+      "rows": true,
+      "data": false,
+      "ddl": false
+    }
+  ],
+  "tablesAdded": [
+    "program_po_reference_audit"
+  ],
+  "schema": {
+    "onlyInDevelopment": [
+      "chk_decisions.decision_id int(11) NO",
+      "chk_decisions.run_id int(11) NO",
+      "chk_decisions.finding_id varchar(200) NO",
+      "chk_decisions.action varchar(20) NO",
+      "chk_decisions.edited_text longtext YES",
+      "chk_decisions.note varchar(1000) YES",
+      "chk_decisions.user_id int(11) YES",
+      "chk_decisions.created_at timestamp NO",
+      "chk_documents.document_id int(11) NO",
+      "chk_documents.owner_id int(11) YES",
+      "chk_documents.syllabus_id int(11) YES",
+      "chk_documents.file_name varchar(300) NO",
+      "chk_documents.file_kind varchar(20) NO",
+      "chk_documents.file_size int(11) NO",
+      "chk_documents.sha256 char(64) NO",
+      "chk_documents.family_key varchar(120) YES",
+      "chk_documents.storage_path varchar(400) YES",
+      "chk_documents.extraction longtext YES",
+      "chk_documents.created_at timestamp NO",
+      "chk_examples.example_id int(11) NO",
+      "chk_examples.kind varchar(24) NO",
+      "chk_examples.family_key varchar(120) NO",
+      "chk_examples.split_name varchar(8) NO",
+      "chk_examples.program_key varchar(80) YES",
+      "chk_examples.reference_version varchar(120) YES",
+      "chk_examples.data longtext NO",
+      "chk_examples.reviewer_id int(11) YES",
+      "chk_examples.source_run_id int(11) YES",
+      "chk_examples.synthetic tinyint(1) NO",
+      "chk_examples.created_at timestamp NO",
+      "chk_reference_events.event_id int(11) NO",
+      "chk_reference_events.set_id int(11) NO",
+      "chk_reference_events.event varchar(24) NO",
+      "chk_reference_events.user_id int(11) YES",
+      "chk_reference_events.note varchar(1000) YES",
+      "chk_reference_events.detail longtext YES",
+      "chk_reference_events.created_at timestamp NO",
+      "chk_reference_sets.set_id int(11) NO",
+      "chk_reference_sets.kind varchar(24) NO",
+      "chk_reference_sets.scope_key varchar(120) NO",
+      "chk_reference_sets.label varchar(200) NO",
+      "chk_reference_sets.version_label varchar(60) NO",
+      "chk_reference_sets.status varchar(12) NO",
+      "chk_reference_sets.synthetic tinyint(1) NO",
+      "chk_reference_sets.source_file varchar(400) YES",
+      "chk_reference_sets.data longtext NO",
+      "chk_reference_sets.issues longtext YES",
+      "chk_reference_sets.created_by int(11) YES",
+      "chk_reference_sets.approved_by int(11) YES",
+      "chk_reference_sets.approved_at timestamp YES",
+      "chk_reference_sets.created_at timestamp NO",
+      "chk_reference_sets.updated_at timestamp NO",
+      "chk_runs.run_id int(11) NO",
+      "chk_runs.document_id int(11) NO",
+      "chk_runs.parent_run_id int(11) YES",
+      "chk_runs.owner_id int(11) YES",
+      "chk_runs.created_by int(11) YES",
+      "chk_runs.overall varchar(30) NO",
+      "chk_runs.program_status varchar(12) NO",
+      "chk_runs.curriculum_set_id int(11) YES",
+      "chk_runs.versions longtext NO",
+      "chk_runs.report longtext NO",
+      "chk_runs.created_at timestamp NO",
+      "courses.lecture_units decimal(3,1) YES",
+      "courses.lab_units decimal(3,1) YES",
+      "course_prerequisites.course_id int(11) NO",
+      "course_prerequisites.position int(11) NO",
+      "course_prerequisites.prereq_course_id int(11) YES",
+      "course_prerequisites.label varchar(60) NO",
+      "co_po_mapping.mapping_id int(11) NO",
+      "co_po_mapping.curriculum_id int(11) NO",
+      "co_po_mapping.co_number int(11) NO",
+      "co_po_mapping.po_number int(11) NO",
+      "co_po_mapping.level enum('I','R','M') YES",
+      "co_po_mapping.updated_at timestamp NO",
+      "program_po_reference_migrations.migration_id varchar(80) NO",
+      "program_po_reference_migrations.status varchar(30) NO",
+      "program_po_reference_migrations.backup_sha256 char(64) NO",
+      "program_po_reference_migrations.after_json longtext NO",
+      "program_po_reference_migrations.created_at timestamp NO",
+      "program_po_reference_remediation.migration_id varchar(80) NO",
+      "program_po_reference_remediation.entity_type varchar(30) NO",
+      "program_po_reference_remediation.entity_id int(11) NO",
+      "program_po_reference_remediation.status varchar(30) NO",
+      "program_po_reference_remediation.details_json longtext NO",
+      "standard_changes.change_id int(11) NO",
+      "standard_changes.who varchar(80) NO",
+      "standard_changes.rev int(11) NO",
+      "standard_changes.kind varchar(10) NO",
+      "standard_changes.changes longtext NO",
+      "standard_changes.changed_at timestamp NO"
+    ],
+    "onlyInFresh": [],
+    "tablesOnlyInDevelopment": [
+      "chk_decisions",
+      "chk_documents",
+      "chk_examples",
+      "chk_reference_events",
+      "chk_reference_sets",
+      "chk_runs",
+      "course_prerequisites",
+      "co_po_mapping",
+      "program_po_reference_migrations",
+      "program_po_reference_remediation",
+      "standard_changes"
+    ],
+    "tablesOnlyInFresh": []
+  },
+  "references": {
+    "programs": {
+      "BSIT": {
+        "pos": 9,
+        "source": "BSIT",
+        "version": "lcup-po-2026-10-29",
+        "kind": "official_source"
+      },
+      "BSIE": {
+        "pos": 13,
+        "source": "BSIE",
+        "version": "lcup-po-2026-10-29",
+        "kind": "official_source"
+      },
+      "BSCPE": {
+        "pos": 13,
+        "source": "BSCPE",
+        "version": "lcup-po-2026-10-29",
+        "kind": "official_source"
+      },
+      "BSIT-CYBERSECURITY": {
+        "pos": 9,
+        "source": "BSIT",
+        "version": "lcup-po-2026-10-29",
+        "kind": "official_source"
+      }
+    },
+    "syllabusStates": {
+      "no structured content": 1,
+      "no subject": 3,
+      "subject missing": 5,
+      "editable, mapped, review notice, check po_mapping_remediation_required": 2,
+      "editable, no mappings, check curriculum_reference_review_required": 1
+    },
+    "syllabusIds": {
+      "no structured content": [
+        16
+      ],
+      "no subject": [
+        40,
+        41,
+        74
+      ],
+      "subject missing": [
+        43,
+        93,
+        97,
+        99,
+        100
+      ],
+      "editable, mapped, review notice, check po_mapping_remediation_required": [
+        101,
+        102
+      ],
+      "editable, no mappings, check curriculum_reference_review_required": [
+        110
+      ]
+    },
+    "statuses": [
+      {
+        "status": "approved",
+        "n": 1
+      },
+      {
+        "status": "for_revision",
+        "n": 2
+      },
+      {
+        "status": "draft",
+        "n": 9
+      }
+    ],
+    "versions": 3,
+    "pointers": 3,
+    "reports": 202,
+    "unversionedPrograms": [
+      {
+        "code": "DFSFASDA",
+        "year": "2026–2027",
+        "pos": 1
+      }
+    ]
+  }
+}

@@ -11,9 +11,9 @@ const PEOPLE = { 1: { first_name: 'Ann', last_name: 'A', role: 'admin' }, 5: { f
 function makeDb() {
   const s = {
     syllabi: {
-      1: { syllabus_id: 1, user_id: 5, status: 'submitted', version: 'v1.0', title: 'Programming 2', course_code: 'IT 204', admin_comment: '' },
+      1: { syllabus_id: 1, user_id: 5, status: 'submitted', version: 'v1.0', title: 'Programming 2', course_code: 'IT 204', course_id: 204, admin_comment: '' },
       2: { syllabus_id: 2, user_id: 5, status: 'draft', version: 'v1.0', title: 'A draft', course_code: 'IT 205', admin_comment: '' },
-      3: { syllabus_id: 3, user_id: 6, status: 'under_review', version: 'v1.0', title: 'Networks', course_code: 'IT 301', admin_comment: '' },
+      3: { syllabus_id: 3, user_id: 6, status: 'under_review', version: 'v1.0', title: 'Networks', course_code: 'IT 301', course_id: 301, admin_comment: '' },
     },
     comments: [], notifications: [], logs: [], clock: 0,
     readsInstalled: false, reads: {}, // the comment_reads table, once the migration has been run
@@ -27,7 +27,8 @@ function makeDb() {
     if (sql.startsWith('SELECT 1 FROM syllabus_review_stages')) return [[]];
     if (sql.startsWith('SELECT syllabus_id, MAX(version_id) AS version_id FROM syllabus_versions')) return [p[0].map((id) => ({ syllabus_id: id, version_id: 1 }))];
     if (sql.startsWith('SELECT s.syllabus_id, s.version_id, s.stage')) return [p[0].flatMap((id) => ['dean', 'asst_vpaa', 'lic_director'].map((stage) => ({ syllabus_id: id, version_id: 1, stage, reviewer_id: 1, note: '', cleared_at: null, first_name: 'Rev', last_name: 'Iewer' })))];
-    if (sql.startsWith('SELECT version_id, version_label, content FROM syllabus_versions')) return [[{ version_id: 1, content: '{}' }]];
+    if (sql.startsWith('SELECT version_id, version_label, content FROM syllabus_versions')) return [[{ version_id: 1, content: JSON.stringify({ meta: { courseId: s.syllabi[p[0]] && s.syllabi[p[0]].course_id, program: 'BSIT' } }) }]];
+    if (sql.startsWith('SELECT c.course_id AS subject_id')) return [[204, 301].includes(p[0]) ? [{ subject_id: p[0], subject_code: 'IT ' + p[0], program_id: 1, code: 'BSIT' }] : []]; // lib/subjectValidation.js
     if (sql.startsWith('SELECT c.comment_id') && sql.includes('WHERE c.syllabus_id')) return [s.comments.filter((c) => c.syllabus_id === p[0]).sort((a, b) => a.created_at - b.created_at || a.comment_id - b.comment_id).map(joined)];
     if (sql.startsWith('SELECT c.comment_id') && sql.includes('WHERE c.comment_id')) return [s.comments.filter((c) => c.comment_id === p[0]).map(joined)];
     if (sql.startsWith('INSERT INTO comments')) {
@@ -131,6 +132,7 @@ test('nobody can read or write on a syllabus they cannot see: other faculty, and
 }));
 
 test('approving needs no reason, but a note is kept as an approval comment', () => withServer(async ({ call, db }) => {
+  db.s.syllabi[1].status = 'under_review'; // the first cleared stage does this
   const plain = await call(vpaa, 'PUT', '/1', { status: 'approved' });
   assert.strictEqual(plain.status, 200);
   assert.strictEqual(db.s.syllabi[1].status, 'approved');
@@ -251,3 +253,16 @@ test('the comment_reads table is defined the same way in the migration and in sc
   assert.ok(sql.includes(ddl[0].replace(/\s+/g, ' ').trim()), 'schema.sql differs from comment-reads-ddl.js');
   ['user_id', 'syllabus_id', 'last_comment_id', 'PRIMARY KEY (user_id, syllabus_id)'].forEach((x) => assert.ok(ddl[0].includes(x), x));
 });
+
+// Approved is final, and a decision needs a syllabus that is waiting for one. Every call here is by an account that may otherwise make it, so each refusal comes from the status rule, not the role.
+const REFUSED = { approved_final: 'This syllabus is approved. Approval is final, so its status can no longer change.', approval_requires_review: 'Only a syllabus under review can be approved. A returned syllabus must be submitted again by its author first.', resubmission_required: 'A returned syllabus goes back to review only when its author submits it again.', not_awaiting_decision: 'This syllabus is not waiting for a review decision.' };
+const refused = async (call, db, who, from, status, code) => { db.s.syllabi[3].status = from; const before = JSON.stringify([db.s.syllabi[3], db.s.comments, db.s.logs, db.s.notifications]); const r = await call(who, 'PUT', '/3', { status, adminComment: 'A reason long enough to be accepted.' }); assert.strictEqual(r.status, 409, from + ' to ' + status); assert.strictEqual(r.body.code, code); assert.strictEqual(r.body.error, REFUSED[code]); assert.strictEqual(JSON.stringify([db.s.syllabi[3], db.s.comments, db.s.logs, db.s.notifications]), before, 'a refused change leaves no trace'); };
+test('BYPASS 1, 2: the VPAA cannot approve a syllabus returned for revision or rejected', () => withServer(async ({ call, db }) => { await refused(call, db, vpaa, 'for_revision', 'approved', 'approval_requires_review'); await refused(call, db, vpaa, 'rejected', 'approved', 'approval_requires_review'); }));
+test('BYPASS 3: no reviewer can set a returned syllabus back to under review', () => withServer(async ({ call, db }) => { for (const who of [admin, vpaa]) for (const from of ['for_revision', 'rejected']) await refused(call, db, who, from, 'under_review', 'resubmission_required'); }));
+test('BYPASS 4, 5: approved is final, for the dean and for the VPAA, whatever is asked', () => withServer(async ({ call, db }) => { await refused(call, db, admin, 'approved', 'for_revision', 'approved_final'); await refused(call, db, vpaa, 'approved', 'rejected', 'approved_final'); await refused(call, db, vpaa, 'approved', 'for_revision', 'approved_final'); await refused(call, db, vpaa, 'approved', 'under_review', 'approved_final'); await refused(call, db, vpaa, 'approved', 'approved', 'approved_final'); }));
+test('a returned syllabus is not returned or rejected again: it waits for its author', () => withServer(async ({ call, db }) => { await refused(call, db, admin, 'for_revision', 'for_revision', 'not_awaiting_decision'); await refused(call, db, vpaa, 'rejected', 'for_revision', 'not_awaiting_decision'); await refused(call, db, vpaa, 'for_revision', 'rejected', 'not_awaiting_decision'); await refused(call, db, vpaa, 'under_review', 'under_review', 'resubmission_required'); }));
+test('the valid decisions still work: approve from under review, return or reject from submitted or under review, and a role refusal still comes first', () => withServer(async ({ call, db }) => {
+  for (const [who, from, status] of [[vpaa, 'under_review', 'approved'], [admin, 'submitted', 'for_revision'], [admin, 'under_review', 'for_revision'], [vpaa, 'under_review', 'for_revision'], [vpaa, 'submitted', 'rejected'], [vpaa, 'under_review', 'rejected'], [admin, 'submitted', 'under_review']]) { db.s.syllabi[3].status = from; const r = await call(who, 'PUT', '/3', { status, adminComment: 'A reason long enough to be accepted.' }); assert.strictEqual(r.status, 200, from + ' to ' + status + ': ' + JSON.stringify(r.body)); assert.strictEqual(db.s.syllabi[3].status, status); }
+  db.s.syllabi[3].status = 'under_review'; assert.strictEqual((await call(admin, 'PUT', '/3', { status: 'approved' })).status, 403); assert.strictEqual((await call(admin, 'PUT', '/3', { status: 'rejected', adminComment: 'A reason long enough to be accepted.' })).status, 403); assert.strictEqual(db.s.syllabi[3].status, 'under_review');
+  db.s.syllabi[3].status = 'approved'; assert.strictEqual((await call(admin, 'PUT', '/3', { status: 'approved' })).status, 403, 'a role refusal says so, whatever the state');
+}));

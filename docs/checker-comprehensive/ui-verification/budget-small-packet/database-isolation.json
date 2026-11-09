@@ -1,0 +1,10 @@
+{
+  "requestedPort": 3407,
+  "reached": {
+    "port": 3407,
+    "datadir": "C:\\Users\\JPDELR~1\\AppData\\Local\\Temp\\claude\\c1b6183b01fcad24\\ea7d6514-277e-438b-b897-a55dc0e9f07f\\scratchpad\\mariadb-iso\\data\\",
+    "globalPacket": 1048576,
+    "sessionPacket": 1048576
+  },
+  "requiredMinPacket": 1048576
+}

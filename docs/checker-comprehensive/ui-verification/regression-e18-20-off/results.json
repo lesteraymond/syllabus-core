@@ -1,0 +1,317 @@
+{
+  "summary": {
+    "label": "LOCAL browser verification, comprehensive-testing profile (staging-like topology, isolated scratch database, SYNTHETIC data, SCRIPTED provider). Not a staging test and not a Claude test: no live model request was made.",
+    "suite": "regression",
+    "profile": "comprehensive-testing",
+    "configuration": {
+      "E2E_DB_PORT": "3408",
+      "SYLLABUS_CHECK_PROFILE": "comprehensive-testing",
+      "SYLLABUS_CHECK_ACADEMIC_V2": "off",
+      "SYLLABUS_CHECK_AI_MAX_COST_USD": "100"
+    },
+    "browser": "Microsoft Edge (Chromium) via playwright-core",
+    "node": "v26.12.1",
+    "finishedAt": "2026-11-05T11:36:39.104Z",
+    "scenarios": {
+      "total": 3,
+      "passed": 1,
+      "failed": 2
+    },
+    "checks": {
+      "total": 60,
+      "passed": 55,
+      "knownDefects": 0
+    },
+    "providerRequests": 0,
+    "blockedNetwork": 0
+  },
+  "results": [
+    {
+      "id": "E18",
+      "title": "Admin sets a subject's academic year, semester, year level and pre-requisite; faculty picks it, the values fill in and cannot be changed",
+      "status": "FAIL",
+      "checks": [
+        {
+          "ok": true,
+          "message": "the separate Academic years card is gone"
+        },
+        {
+          "ok": true,
+          "message": "the subject's academic year is a fixed line showing the current year, 2026–2027 (not a dropdown)"
+        },
+        {
+          "ok": true,
+          "message": "there is no academic year dropdown, so no year can be picked or invented inside the form"
+        },
+        {
+          "ok": true,
+          "message": "Add subject stays disabled until the semester, year level and pre-requisite are chosen"
+        },
+        {
+          "ok": true,
+          "message": "the year level dropdown offers Year 1 to Year 4 (Year 1,Year 2,Year 3,Year 4)"
+        },
+        {
+          "ok": true,
+          "message": "Add subject is enabled once the three are filled"
+        },
+        {
+          "ok": true,
+          "message": "the subjects table shows the new subject with its term (in the current year) and pre-requisite"
+        },
+        {
+          "ok": true,
+          "message": "the administrator's academic year list counts the programs and subjects of the year ({\"label\":\"2026–2027\",\"startYear\":2026,\"isCurrent\":true,\"programs\":1,\"subjects\":3})"
+        },
+        {
+          "ok": true,
+          "message": "the subject was assigned to the faculty member (HTTP 200)"
+        },
+        {
+          "ok": true,
+          "message": "E18-admin: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E18-admin: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E18-admin: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E18-admin: no request left this machine (none blocked)"
+        },
+        {
+          "ok": false,
+          "message": "scenario aborted: locator.click: Timeout 12000ms exceeded. Call log: \u001b[2m  - waiting for getByText('IT 205').first().locator('xpath=ancestor::*[.//button[contains(., \"Edit\")]][1]').getByRole('button', { name: /edit/i }).first()\u001b[22m "
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=0 users=6"
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/regression-e18-20-off/E18-admin-subject-term-1440.png"
+      ],
+      "failed": true,
+      "ms": 27807
+    },
+    {
+      "id": "E19",
+      "title": "Subjects table filters: program, semester and year level combine, hide subjects without a term, and clear",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "the unfiltered table lists every subject (3)"
+        },
+        {
+          "ok": true,
+          "message": "the subject count is shown"
+        },
+        {
+          "ok": true,
+          "message": "there is no academic year filter in the table: the page shows one year's catalog"
+        },
+        {
+          "ok": true,
+          "message": "semester + year level together find IT 306"
+        },
+        {
+          "ok": true,
+          "message": "a different semester hides it and the table says nothing matches"
+        },
+        {
+          "ok": true,
+          "message": "Clear filters brings every subject back"
+        },
+        {
+          "ok": true,
+          "message": "subjects without a term (and those of other levels) are hidden by a term filter"
+        },
+        {
+          "ok": true,
+          "message": "the program filter still works alongside the others"
+        },
+        {
+          "ok": true,
+          "message": "E19: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E19: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E19: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E19: no request left this machine (none blocked)"
+        },
+        {
+          "ok": true,
+          "message": "at 375 px the filters wrap and the page has no horizontal overflow (scrollWidth 375 <= 375)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=0 users=6"
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/regression-e18-20-off/E19-subject-filters-1440.png",
+        "docs/checker-comprehensive/ui-verification/regression-e18-20-off/E19-subject-filters-375.png"
+      ],
+      "failed": false,
+      "ms": 11095
+    },
+    {
+      "id": "E20",
+      "title": "Academic year scope: a new current year starts empty, last year stays stored and filterable, faculty see only the previous and current year, the admin sees all and always sees the current one",
+      "status": "FAIL",
+      "checks": [
+        {
+          "ok": true,
+          "message": "the administrator sees the current academic year in the top bar on every page"
+        },
+        {
+          "ok": true,
+          "message": "the administrator sees every academic year"
+        },
+        {
+          "ok": true,
+          "message": "a faculty member sees only the previous and the current year (2025–2026, 2026–2027)"
+        },
+        {
+          "ok": true,
+          "message": "a faculty member may not ask for a year that is not previous or current"
+        },
+        {
+          "ok": false,
+          "message": "in the current year the faculty member has syllabi, each stamped 2026–2027 (0)"
+        },
+        {
+          "ok": true,
+          "message": "Program & Subjects shows the current academic year"
+        },
+        {
+          "ok": true,
+          "message": "the change is explained and confirmed first"
+        },
+        {
+          "ok": true,
+          "message": "the top bar now shows 2027–2028 as current"
+        },
+        {
+          "ok": true,
+          "message": "exactly one year is current"
+        },
+        {
+          "ok": true,
+          "message": "the faculty member now sees 2026–2027 (previous) and 2027–2028 (current), no longer 2025–2026"
+        },
+        {
+          "ok": true,
+          "message": "the new academic year starts with no syllabi for the faculty member"
+        },
+        {
+          "ok": true,
+          "message": "last year's syllabi are still stored and found by choosing 2026–2027"
+        },
+        {
+          "ok": true,
+          "message": "the year before the previous one is closed to the faculty member"
+        },
+        {
+          "ok": true,
+          "message": "the compliance list (AI Checker, Dashboard, Analytics) also starts empty"
+        },
+        {
+          "ok": false,
+          "message": "and still has last year's checks under 2026–2027"
+        },
+        {
+          "ok": true,
+          "message": "My Syllabi is empty in the new year"
+        },
+        {
+          "ok": false,
+          "message": "choosing 2026–2027 in the year filter brings last year's syllabus back"
+        },
+        {
+          "ok": true,
+          "message": "the faculty member can start a new syllabus on IT 204 in 2027–2028 (HTTP 200 {\"savedAt\":\"2026-11-05T11:36:26.211Z\",\"bytes\":603,\"clos\":[{\"id\":\"c1\",\"title\":\"Outcome 1\",\"level\":\"Introductory\",\"stateme)"
+        },
+        {
+          "ok": true,
+          "message": "the new syllabus is stamped with the current year"
+        },
+        {
+          "ok": true,
+          "message": "Step 1 can read the syllabus year"
+        },
+        {
+          "ok": true,
+          "message": "the administrator may open any year"
+        },
+        {
+          "ok": true,
+          "message": "the VPAA, like everyone but the administrator, starts on the current year"
+        },
+        {
+          "ok": false,
+          "message": "the work queues ask for all visible years, so last year's submissions are still there"
+        },
+        {
+          "ok": true,
+          "message": "the VPAA may not open a year older than the previous one"
+        },
+        {
+          "ok": true,
+          "message": "Review & Approval defaults to the previous and current year"
+        },
+        {
+          "ok": true,
+          "message": "E20-vpaa: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E20-vpaa: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E20-vpaa: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E20-vpaa: no request left this machine (none blocked)"
+        },
+        {
+          "ok": true,
+          "message": "E20-admin: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E20-admin: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E20-admin: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E20-admin: no request left this machine (none blocked)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=0 users=6"
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/regression-e18-20-off/E20-admin-change-current-year-1440.png",
+        "docs/checker-comprehensive/ui-verification/regression-e18-20-off/E20-faculty-previous-year-1440.png"
+      ],
+      "failed": true,
+      "ms": 26154
+    }
+  ]
+}

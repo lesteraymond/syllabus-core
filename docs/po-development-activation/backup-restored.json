@@ -1,0 +1,17 @@
+{
+  "verifiedAt": "2026-11-05T11:07:27.085Z",
+  "backupPath": "C:\\Users\\JPDELR~1\\AppData\\Local\\Temp\\lcup-dev-po-activation-x7VyTW\\development-full-before.sql",
+  "backupSha256": "9809ce02a8b1076d8e087d03bb59fb0b7b563a3059ecc748109cce4ff69bb46d",
+  "restoreDatabase": "lcup_dev_restore_1793876812450",
+  "restorePort": 43309,
+  "restoreServerIdentityVerified": true,
+  "eventScheduler": "OFF",
+  "fullTableCount": 48,
+  "totalRows": 8311,
+  "routines": 0,
+  "triggers": 0,
+  "events": 0,
+  "differences": [],
+  "restoreVerified": true,
+  "originalDatabaseModified": false
+}

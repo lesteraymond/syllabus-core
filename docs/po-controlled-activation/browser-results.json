@@ -1,0 +1,37 @@
+{
+  "kind": "LOCAL COMPONENT BROWSER E2E with real existing components and isolated-database service fixtures; no existing environment accessed",
+  "results": [
+    {
+      "program": "BSIT",
+      "status": "PASS",
+      "poCount": 9,
+      "poSource": "BSIT",
+      "curriculumSource": "BSIT"
+    },
+    {
+      "program": "BSIT-CYBERSECURITY",
+      "status": "PASS",
+      "poCount": 9,
+      "poSource": "BSIT",
+      "curriculumSource": "BSIT"
+    },
+    {
+      "program": "BSIE",
+      "status": "PASS",
+      "poCount": 13,
+      "poSource": "BSIE",
+      "curriculumSource": "BSIE"
+    },
+    {
+      "program": "BSCPE",
+      "status": "PASS",
+      "poCount": 13,
+      "poSource": "BSCPE",
+      "curriculumSource": "BSCPE"
+    }
+  ],
+  "failed": 0,
+  "englishAndFilipino": true,
+  "pageErrors": [],
+  "paidAiCalls": 0
+}

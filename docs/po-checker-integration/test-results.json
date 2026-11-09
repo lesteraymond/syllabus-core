@@ -1,0 +1,174 @@
+{
+  "repository": {
+    "tests": 2151,
+    "pass": 2151,
+    "fail": 0,
+    "skipped": 0,
+    "todo": 0,
+    "cancelled": 0,
+    "log": "tmp/po-checker-integration/test.log",
+    "exit": 0
+  },
+  "vpaa": {
+    "tests": 294,
+    "pass": 294,
+    "fail": 0,
+    "skipped": 0,
+    "todo": 0,
+    "cancelled": 0,
+    "log": "tmp/po-checker-integration/vpaa.log",
+    "exit": 0
+  },
+  "focused": {
+    "tests": 15,
+    "pass": 15,
+    "fail": 0,
+    "skipped": 0,
+    "todo": 0,
+    "cancelled": 0,
+    "log": "tmp/po-checker-integration/focused.log",
+    "exit": 0
+  },
+  "optimization": {
+    "tests": 21,
+    "pass": 21,
+    "fail": 0,
+    "skipped": 0,
+    "todo": 0,
+    "cancelled": 0,
+    "log": "tmp/po-checker-integration/optimization.log",
+    "exit": 0
+  },
+  "source": {
+    "tests": 4,
+    "pass": 4,
+    "fail": 0,
+    "skipped": 0,
+    "todo": 0,
+    "cancelled": 0,
+    "log": "tmp/po-checker-integration/source.log",
+    "exit": 0
+  },
+  "build": {
+    "exit": 0,
+    "log": "tmp/po-checker-integration/build.log",
+    "warning": "Existing non-fatal large-bundle warning"
+  },
+  "browserRegression": {
+    "label": "LOCAL browser verification, comprehensive-testing profile (staging-like topology, isolated scratch database, SYNTHETIC data, SCRIPTED provider). Not a staging test and not a Claude test: no live model request was made.",
+    "suite": "regression",
+    "profile": "none (baseline control: Policy V2 on, no profile)",
+    "configuration": {},
+    "browser": "Microsoft Edge (Chromium) via playwright-core",
+    "node": "v26.12.1",
+    "finishedAt": "2026-11-05T11:43:08.091Z",
+    "scenarios": {
+      "total": 23,
+      "passed": 21,
+      "failed": 2
+    },
+    "checks": {
+      "total": 353,
+      "passed": 351,
+      "knownDefects": 0
+    },
+    "providerRequests": 101,
+    "blockedNetwork": 0,
+    "failed": [
+      {
+        "id": "E19",
+        "title": "Subjects table filters: program, semester and year level combine, hide subjects without a term, and clear",
+        "checks": [
+          {
+            "ok": false,
+            "message": "scenario aborted: locator.click: Timeout 12000ms exceeded. Call log: \u001b[2m  - waiting for getByRole('option', { name: /2nd Semester/ }).first()\u001b[22m "
+          }
+        ]
+      },
+      {
+        "id": "E23",
+        "title": "Add subject with a new program: the administrator types its EGAs, Program Outcomes and the school vision; faculty get them for that program and subject; a later change reaches existing subjects only through Apply to subjects",
+        "checks": [
+          {
+            "ok": false,
+            "message": "scenario aborted: locator.click: Timeout 12000ms exceeded. Call log: \u001b[2m  - waiting for getByRole('button', { name: /2 learning outcomes/i })\u001b[22m \u001b[2m    - locator resolved to <button type=\"button\" class=\"locked\" aria-disabled=\"true\" title=\"Finish step 1 first\">…</button>\u001b[22m"
+          }
+        ]
+      }
+    ]
+  },
+  "comprehensive": {
+    "label": "LOCAL browser verification, comprehensive-testing profile (staging-like topology, isolated scratch database, SYNTHETIC data, SCRIPTED provider). Not a staging test and not a Claude test: no live model request was made.",
+    "suite": "comprehensive",
+    "profile": "comprehensive-testing",
+    "configuration": {
+      "E2E_DB_PORT": "43310",
+      "SYLLABUS_CHECK_PROFILE": "comprehensive-testing",
+      "SYLLABUS_CHECK_ACADEMIC_V2": "off",
+      "SYLLABUS_CHECK_AI_MAX_COST_USD": "100"
+    },
+    "browser": "Microsoft Edge (Chromium) via playwright-core",
+    "node": "v26.12.1",
+    "finishedAt": "2026-11-05T12:04:45.016Z",
+    "scenarios": {
+      "total": 10,
+      "passed": 10,
+      "failed": 0
+    },
+    "checks": {
+      "total": 287,
+      "passed": 287,
+      "knownDefects": 0
+    },
+    "providerRequests": 186,
+    "blockedNetwork": 0
+  },
+  "correctedReferenceBrowser": {
+    "baseline": {
+      "passed": 4,
+      "failed": 0,
+      "requests": 400
+    },
+    "optimized": {
+      "passed": 4,
+      "failed": 0,
+      "requests": 400
+    },
+    "filterProbe": {
+      "status": "PASS",
+      "scope": "Follow-up to baseline E19; existing product filter with settled scroll; no product/test-suite source edited",
+      "options": [
+        "All semesters",
+        "1st Semester",
+        "2nd Semester"
+      ]
+    }
+  },
+  "note": "Suite counts overlap. Browser scenarios, internal assertions, rule types and relationship instances are separate counts. Initial new-harness locator/setup failures were repaired in test code only; raw existing regression failures remain reported.",
+  "budget": {
+    "label": "LOCAL browser verification, comprehensive-testing profile (staging-like topology, isolated scratch database, SYNTHETIC data, SCRIPTED provider). Not a staging test and not a Claude test: no live model request was made.",
+    "suite": "budget",
+    "profile": "comprehensive-testing",
+    "configuration": {
+      "E2E_DB_PORT": "43310",
+      "SYLLABUS_CHECK_PROFILE": "comprehensive-testing",
+      "SYLLABUS_CHECK_ACADEMIC_V2": "off",
+      "SYLLABUS_CHECK_AI_MAX_COST_USD": "6"
+    },
+    "browser": "Microsoft Edge (Chromium) via playwright-core",
+    "node": "v26.12.1",
+    "finishedAt": "2026-11-05T12:09:40.060Z",
+    "scenarios": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0
+    },
+    "checks": {
+      "total": 37,
+      "passed": 37,
+      "knownDefects": 0
+    },
+    "providerRequests": 26,
+    "blockedNetwork": 0
+  }
+}

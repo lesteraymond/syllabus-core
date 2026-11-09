@@ -1,0 +1,203 @@
+{
+  "summary": {
+    "label": "LOCAL browser verification, comprehensive-testing profile (staging-like topology, isolated scratch database, SYNTHETIC data, SCRIPTED provider). Not a staging test and not a Claude test: no live model request was made.",
+    "suite": "budget",
+    "profile": "comprehensive-testing",
+    "configuration": {
+      "E2E_DB_PORT": "3407",
+      "SYLLABUS_CHECK_PROFILE": "comprehensive-testing",
+      "SYLLABUS_CHECK_ACADEMIC_V2": "off",
+      "SYLLABUS_CHECK_AI_MAX_COST_USD": "6"
+    },
+    "browser": "Microsoft Edge (Chromium) via playwright-core",
+    "node": "v26.12.1",
+    "finishedAt": "2026-11-05T00:07:57.479Z",
+    "scenarios": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0
+    },
+    "checks": {
+      "total": 39,
+      "passed": 39,
+      "knownDefects": 0
+    },
+    "providerRequests": 23,
+    "blockedNetwork": 0
+  },
+  "results": [
+    {
+      "id": "B01",
+      "title": "Tight budget (browser): the required VPAA coverage does not fit, so the page says so, items stay NOT_CHECKED, nothing is invented, and the official result is unchanged",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "[api] a synthetic syllabus was saved"
+        },
+        {
+          "ok": true,
+          "message": "[api] the configured cap is tight (6 USD) and was not raised"
+        },
+        {
+          "ok": true,
+          "message": "[api] the cap was respected: 5.934685 reserved of 6"
+        },
+        {
+          "ok": true,
+          "message": "[api] the official result is still scored against 79 (overall 99, status scored)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the official score and the 79% pass line are shown as usual"
+        },
+        {
+          "ok": true,
+          "message": "[api] the report states that the required evaluations did not fit (estimated need 8.38 > cap 6)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the page shows the \"required academic evaluations did not fit\" alert"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the alert says nothing was invented, that an operator decision is needed, and states the cap: The AI budget configured for one check was too small for the required academic evaluations, so some VPAA or CLO items are Not checked. Nothing was invented for them. An operator decision is needed: ra"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the seven-relationship coverage is shown as incomplete"
+        },
+        {
+          "ok": true,
+          "message": "[api] VPAA-01: every instance not sent is NOT_CHECKED and not attempted (12 of 15)"
+        },
+        {
+          "ok": true,
+          "message": "[api] VPAA-01 is not reported as supported while 12 instances were never checked (status PARTIALLY_EVALUATED)"
+        },
+        {
+          "ok": true,
+          "message": "[api] VPAA-02: every instance not sent is NOT_CHECKED and not attempted (12 of 15)"
+        },
+        {
+          "ok": true,
+          "message": "[api] VPAA-02 is not reported as supported while 12 instances were never checked (status PARTIALLY_EVALUATED)"
+        },
+        {
+          "ok": true,
+          "message": "[api] VPAA-03: every instance not sent is NOT_CHECKED and not attempted (0 of 15)"
+        },
+        {
+          "ok": true,
+          "message": "[api] VPAA-04: every instance not sent is NOT_CHECKED and not attempted (15 of 15)"
+        },
+        {
+          "ok": true,
+          "message": "[api] VPAA-04 is not reported as supported while 15 instances were never checked (status NOT_CHECKED)"
+        },
+        {
+          "ok": true,
+          "message": "[api] VPAA-05: every instance not sent is NOT_CHECKED and not attempted (0 of 15)"
+        },
+        {
+          "ok": true,
+          "message": "[api] VPAA-06: every instance not sent is NOT_CHECKED and not attempted (15 of 15)"
+        },
+        {
+          "ok": true,
+          "message": "[api] VPAA-06 is not reported as supported while 15 instances were never checked (status NOT_CHECKED)"
+        },
+        {
+          "ok": true,
+          "message": "[api] VPAA-07: every instance not sent is NOT_CHECKED and not attempted (15 of 15)"
+        },
+        {
+          "ok": true,
+          "message": "[api] VPAA-07 is not reported as supported while 15 instances were never checked (status NOT_CHECKED)"
+        },
+        {
+          "ok": true,
+          "message": "[api] some required VPAA instances were not sent because of the cap (69)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule STR-07 is still Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule ADM-04 is still Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule ADM-05 is still Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule CUR-10 is still Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule CLO-05 is still Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule CLO-10 is still Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule PLAN-05 is still Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule PLAN-06 is still Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule ALN-03 is still Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule ALN-04 is still Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule ALN-10 is still Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[api] the optional supporting checks were deferred first (22), not the required ones"
+        },
+        {
+          "ok": true,
+          "message": "[api] the budget went to the required work, not the optional work"
+        },
+        {
+          "ok": true,
+          "message": "B01: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "B01: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "B01: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "B01: no request left this machine (none blocked)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=0 users=6",
+        "budget at the tight cap: {\"limits\":{\"maxRequests\":120,\"maxTokens\":8000000,\"maxCostUsd\":6},\"used\":{\"requests\":23,\"reservedTokens\":1225584,\"reservedCostUsd\":5.934685},\"byPriority\":{\"scored\":{\"requests\":19,\"reservedCostUsd\":4.932279},\"v2\":{\"requests\":4,\"reservedCostUsd\":1.002406},\"optional\":{\"requests\":0,\"reservedCostUsd\":0}},\"deferredOptional\":22,\"requiredIncomplete\":true,\"advice\":{\"estimatedRequiredCostUsd\":8.38,\"currentCapUsd\":6,\"options\":[\"raise_cost_cap\",\"run_fewer_optional_checks\"]}}"
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/budget/B01-1-required-coverage-incomplete.png",
+        "docs/checker-comprehensive/ui-verification/budget/B01-2-coverage-with-unchecked-vpaa.png"
+      ],
+      "failed": false,
+      "ms": 10540
+    }
+  ]
+}

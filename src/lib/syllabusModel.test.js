@@ -2,7 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  defaultModel as M, createModel, emptyDraft, migrateContent, hydrateContent, applyCourse, syncClos, clearCourse, SCHEMA_VERSION, STEPS,
+  defaultModel as M, createModel, emptyDraft, migrateContent, hydrateContent, applyCourse, syncClos, clearCourse, standardsSet, withStandards, poReviewPending, SCHEMA_VERSION, STEPS,
   weekNums, weekSet, renderMarkup, esc, abbr, gradeTotal, clone,
 } from './syllabusModel.js';
 import { INSTITUTION, PROGRAMS } from '../data/outcomesSeed.js';
@@ -508,4 +508,32 @@ test('outcome selection requires both fields while retained catalog snapshots re
   for(const meta of [{program:'',courseId:1},{program:'BSIT',courseId:null},{program:'UNKNOWN',courseId:1}]) assert.equal(m.hasOutcomeSelection({meta}),false);
   assert.equal(m.hasOutcomeSelection({meta:{program:'BSIT',courseId:1}}),true);
   assert.equal(m.hasOutcomeSelection({meta:{program:'BSIT',courseId:null},catalog:{program:{code:'BSIT'}}}),true);
+});
+
+test('the administrator vision, mission, EGAs and POs are put back into a syllabus that changed them, and a matching one is returned as it is', () => {
+  const admin = { vision: 'V', mission: { lead: 'L', items: ['a'] }, egas: [{ no: 1, name: 'E', short: 'e' }], pos: [{ no: 1, short: 'p', text: 'P', egas: [1] }] };
+  assert.equal(standardsSet(admin), true);
+  assert.equal(standardsSet({ vision: '', mission: { lead: '', items: [] }, egas: [], pos: [] }), false);
+  const d = { outcomes: { vision: 'mine', mission: { lead: '', items: [] }, egas: [], pos: [] }, clos: [] };
+  const fixed = withStandards(d, admin);
+  assert.notEqual(fixed, d);
+  assert.deepEqual([fixed.outcomes.vision, fixed.outcomes.egas.length, fixed.outcomes.pos.length], ['V', 1, 1]);
+  assert.equal(withStandards(fixed, admin), fixed, 'already equal: the same object, so an effect applying it cannot loop');
+  assert.equal(withStandards(d, { vision: '', mission: { lead: '', items: [] }, egas: [], pos: [] }), d, 'nothing set by the administrator: the draft is untouched');
+});
+
+test('a mapped syllabus keeps its PO statements when it opens; a draft with no mappings still fills in', () => {
+  const stored = [{ no: 1, short: 'P1', text: 'Old statement.', egas: [1] }];
+  const standards = { vision: 'V', mission: { lead: 'L', items: ['I'] }, egas: [{ no: 1, name: 'E', short: 'E' }], pos: [{ no: 1, short: 'P1', text: 'New statement.', egas: [1] }] };
+  const mapped = { outcomes: { vision: '', mission: { lead: '', items: [] }, egas: [], pos: stored }, clos: [{ pos: [1] }], plan: [] };
+  assert.equal(poReviewPending(mapped, standards), true);
+  const opened = withStandards(mapped, standards);
+  assert.equal(opened.outcomes.pos[0].text, 'Old statement.', 'opening does not adopt'); assert.equal(opened.outcomes.vision, 'V', 'the vision still follows the subject');
+  const tagged = { ...mapped, clos: [], plan: [{ ilos: [{ tags: ['po:1'] }] }] };
+  assert.equal(poReviewPending(tagged, standards), true, 'a learning plan tag is a mapping too');
+  const unmapped = { ...mapped, clos: [{ pos: [] }] };
+  assert.equal(poReviewPending(unmapped, standards), false);
+  assert.equal(withStandards(unmapped, standards).outcomes.pos[0].text, 'New statement.', 'a draft with no mappings fills in as before');
+  assert.equal(poReviewPending({ ...mapped, outcomes: { ...mapped.outcomes, pos: [{ no: 1, text: ' New   statement. ' }] } }, standards), false, 'spacing is not a change');
+  assert.equal(poReviewPending({ ...mapped, outcomes: { ...mapped.outcomes, pos: [] } }, standards), false, 'a new draft has nothing to keep');
 });

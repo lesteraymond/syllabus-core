@@ -1,0 +1,37 @@
+[
+  {
+    "name": "repository",
+    "exit": 0,
+    "start": "2026-11-05T13:14:52.520Z",
+    "finished": "2026-11-05T13:16:56.369Z",
+    "log": "tmp\\e2e-stability-2026-11-05\\repository.log"
+  },
+  {
+    "name": "vpaa",
+    "exit": 0,
+    "start": "2026-11-05T13:16:56.383Z",
+    "finished": "2026-11-05T13:17:25.656Z",
+    "log": "tmp\\e2e-stability-2026-11-05\\vpaa.log"
+  },
+  {
+    "name": "build",
+    "exit": 0,
+    "start": "2026-11-05T13:17:25.659Z",
+    "finished": "2026-11-05T13:17:34.395Z",
+    "log": "tmp\\e2e-stability-2026-11-05\\build.log"
+  },
+  {
+    "name": "focused",
+    "exit": 0,
+    "start": "2026-11-05T13:17:34.398Z",
+    "finished": "2026-11-05T13:17:47.145Z",
+    "log": "tmp\\e2e-stability-2026-11-05\\focused.log"
+  },
+  {
+    "name": "optimization",
+    "exit": 0,
+    "start": "2026-11-05T13:17:47.384Z",
+    "finished": "2026-11-05T13:18:01.081Z",
+    "log": "tmp\\e2e-stability-2026-11-05\\optimization.log"
+  }
+]

@@ -1,0 +1,670 @@
+{
+  "generatedAt": "2026-11-05T12:16:20.591Z",
+  "developmentTarget": {
+    "host": "localhost",
+    "port": 3306,
+    "database": "syllabus_cms_plus",
+    "identityHash": "f7fbc8b43dce865b2c95eb7ea0718238e40455a93c0aa25dac2930ec9e124fd3"
+  },
+  "programs": [
+    {
+      "code": "BSIT",
+      "count": 9,
+      "referenceId": "lcup-po-2026-10-29-BSIT",
+      "referenceVersion": "lcup-po-2026-10-29",
+      "source": "BSIT",
+      "curriculumIds": [
+        1
+      ]
+    },
+    {
+      "code": "BSIE",
+      "count": 13,
+      "referenceId": "lcup-po-2026-10-29-BSIE",
+      "referenceVersion": "lcup-po-2026-10-29",
+      "source": "BSIE",
+      "curriculumIds": [
+        2
+      ]
+    },
+    {
+      "code": "BSCPE",
+      "count": 13,
+      "referenceId": "lcup-po-2026-10-29-BSCPE",
+      "referenceVersion": "lcup-po-2026-10-29",
+      "source": "BSCPE",
+      "curriculumIds": [
+        3
+      ]
+    },
+    {
+      "code": "BSIT-CYBERSECURITY",
+      "count": 9,
+      "referenceId": "lcup-po-2026-10-29-BSIT",
+      "referenceVersion": "lcup-po-2026-10-29",
+      "source": "BSIT",
+      "curriculumIds": [
+        1
+      ]
+    }
+  ],
+  "subjects": [
+    {
+      "code": "BSIT",
+      "course": {
+        "code": "IT 202",
+        "title": "COMPUTER PROGRAMMING 1 (FUNDAMENTALS OF PROGRAMMING)",
+        "lecture": 2,
+        "lab": 1,
+        "prereq": "IT 101",
+        "rawPrerequisite": "IT 101",
+        "corequisite": "",
+        "yearLevel": 2,
+        "semester": "1st Semester",
+        "page": 1,
+        "lectureHours": 2,
+        "labHours": 3,
+        "sourceFile": "BSIT-1.jpeg",
+        "sourceSha256": "a71664c8ad1a47d1d97b1d75d2b199edacb9762362b2067f1fb0f60d205a6877"
+      },
+      "existingCatalogCourseId": 41,
+      "catalogSubjectPoCount": 9,
+      "catalogAuthoredCloCount": 0,
+      "curriculumId": 1,
+      "curriculumYear": "2022-2023",
+      "sourceProgram": "BSIT",
+      "poReferenceId": "lcup-po-2026-10-29-BSIT"
+    },
+    {
+      "code": "BSIE",
+      "course": {
+        "code": "IE-402",
+        "title": "SYSTEMS ENGINEERING",
+        "lecture": 3,
+        "lab": 0,
+        "prereq": "4th Yr",
+        "rawPrerequisite": "4th Yr",
+        "corequisite": "",
+        "yearLevel": 4,
+        "semester": "1st Semester",
+        "page": 2,
+        "lectureHours": 3,
+        "labHours": 0,
+        "sourceFile": "BSIE-2 (1).jpeg",
+        "sourceSha256": "92cabc29bc21d1fcc029a0eb583c3a8a06eac3b41fb8e4401697f66ff5ff9a17"
+      },
+      "existingCatalogCourseId": 130,
+      "catalogSubjectPoCount": 13,
+      "catalogAuthoredCloCount": 0,
+      "curriculumId": 2,
+      "curriculumYear": "2022-2023",
+      "sourceProgram": "BSIE",
+      "poReferenceId": "lcup-po-2026-10-29-BSIE"
+    },
+    {
+      "code": "BSCPE",
+      "course": {
+        "code": "CpE-304",
+        "title": "FUNDAMENTALS OF MIXED SIGNALS AND SENSORS",
+        "lecture": 3,
+        "lab": 0,
+        "prereq": "FUNEC, FUNELC",
+        "rawPrerequisite": "FUNEC, FUNELC",
+        "corequisite": "",
+        "yearLevel": 3,
+        "semester": "1st Semester",
+        "page": 1,
+        "lectureHours": 3,
+        "labHours": 0,
+        "sourceFile": "BSCPE-1.jpeg",
+        "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+      },
+      "existingCatalogCourseId": 182,
+      "catalogSubjectPoCount": 13,
+      "catalogAuthoredCloCount": 0,
+      "curriculumId": 3,
+      "curriculumYear": "2022-2023",
+      "sourceProgram": "BSCPE",
+      "poReferenceId": "lcup-po-2026-10-29-BSCPE"
+    },
+    {
+      "code": "BSIT-CYBERSECURITY",
+      "course": {
+        "code": "IT 202",
+        "title": "COMPUTER PROGRAMMING 1 (FUNDAMENTALS OF PROGRAMMING)",
+        "lecture": 2,
+        "lab": 1,
+        "prereq": "IT 101",
+        "rawPrerequisite": "IT 101",
+        "corequisite": "",
+        "yearLevel": 2,
+        "semester": "1st Semester",
+        "page": 1,
+        "lectureHours": 2,
+        "labHours": 3,
+        "sourceFile": "BSIT-1.jpeg",
+        "sourceSha256": "a71664c8ad1a47d1d97b1d75d2b199edacb9762362b2067f1fb0f60d205a6877"
+      },
+      "existingCatalogCourseId": 226,
+      "catalogSubjectPoCount": 9,
+      "catalogAuthoredCloCount": 0,
+      "curriculumId": 1,
+      "curriculumYear": "2022-2023",
+      "sourceProgram": "BSIT",
+      "poReferenceId": "lcup-po-2026-10-29-BSIT"
+    }
+  ],
+  "historical": [
+    {
+      "syllabusId": 43,
+      "status": "needs_review",
+      "contentSha256": "26c980f6c0072fd814eeecf269ab084755c07f8c986e10b76b6ba3d8f2093323",
+      "reviewCode": "po_mapping_remediation_required",
+      "proposedMappings": null
+    },
+    {
+      "syllabusId": 93,
+      "status": "needs_review",
+      "contentSha256": "4e2e80a4de1e3650b0fefa747eaeea4a99d9bf6ec87ec92c4d398ce1ede19f54",
+      "reviewCode": "po_mapping_remediation_required",
+      "proposedMappings": null
+    },
+    {
+      "syllabusId": 97,
+      "status": "needs_review",
+      "contentSha256": "169a538d6d0c931ff258791f7a3ec04aa37a5cadd132f8c99238b2d4342b1ffd",
+      "reviewCode": "po_mapping_remediation_required",
+      "proposedMappings": null
+    },
+    {
+      "syllabusId": 99,
+      "status": "needs_review",
+      "contentSha256": "66844be3c088256fdb3fc04f60f8a8c8cf8b1c75a9617f7367a250e74f14cf8e",
+      "reviewCode": "po_mapping_remediation_required",
+      "proposedMappings": null
+    },
+    {
+      "syllabusId": 100,
+      "status": "needs_review",
+      "contentSha256": "dbe786f6273c032f5dfcbb06a6923edd83725d53c309f4b9003562f6e3b27725",
+      "reviewCode": "po_mapping_remediation_required",
+      "proposedMappings": null
+    },
+    {
+      "syllabusId": 101,
+      "status": "needs_review",
+      "contentSha256": "448a33ea66c9fb197bd2afd87a924aa610c88bf91d78badcd60407bf4810bdd8",
+      "reviewCode": "po_mapping_remediation_required",
+      "proposedMappings": null
+    },
+    {
+      "syllabusId": 102,
+      "status": "needs_review",
+      "contentSha256": "41ea3eef9d6b42fd89326dc39a814d27e9e2419b130170f786fa2141226d194d",
+      "reviewCode": "po_mapping_remediation_required",
+      "proposedMappings": null
+    },
+    {
+      "syllabusId": 110,
+      "status": "needs_review",
+      "contentSha256": "01a2a747f15a821d9ebda9690e31b1fe49306f991ab4a336c12e042ef1fafce1",
+      "reviewCode": "curriculum_reference_review_required",
+      "proposedMappings": null
+    }
+  ],
+  "canonicalActive": [
+    {
+      "program_id": 1,
+      "reference_id": "lcup-po-2026-10-29-BSIT"
+    },
+    {
+      "program_id": 15,
+      "reference_id": "lcup-po-2026-10-29-BSIE"
+    },
+    {
+      "program_id": 16,
+      "reference_id": "lcup-po-2026-10-29-BSCPE"
+    }
+  ],
+  "fullInventory": [
+    {
+      "name": "academic_years",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 5,
+      "sha256": "6960ff314817f76ac1fdd480412e08f780bf938965787756c7e3917f428fb685",
+      "ddlSha256": "481aca670c39c454e6a06a23c40abceb0da6ccb72831eab1af7d4ccf219decf4"
+    },
+    {
+      "name": "ai_check_area_scores",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 1758,
+      "sha256": "9b92550dde23cbd8ecaa364908bcd9e64490551aab8708e5db3e25667b8fe3b4",
+      "ddlSha256": "d90d07b97a80dd85911d7fbc21339669ea93966ac1e54cc382c2b07820347768"
+    },
+    {
+      "name": "ai_check_runs",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 293,
+      "sha256": "5b5534f15b99d369672c0de71afb63dd91f681398fb2f36fd7b3b8b1eac92cce",
+      "ddlSha256": "554591a99888e9c2b7b8c98478b6c739a666bbe3b661c3a71521e6d4e8f88805"
+    },
+    {
+      "name": "ai_findings",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 3926,
+      "sha256": "bead4ae7abfab40be5c784c9ab6ebc0567462f292cb6118e9bd5f778f0807117",
+      "ddlSha256": "acb911f9e05eadeb542b1b0c9c1bb4cc48be5d743b17b580e5cb66321da2295d"
+    },
+    {
+      "name": "app_settings",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 1,
+      "sha256": "4133e5841633227b2b95f5463eaee08e6f479c1e560c1451ea1e2c01ce27012b",
+      "ddlSha256": "6f918f99dafaa301976caafd96899900bd92494a368c6f6e4cc988437bd2bc89"
+    },
+    {
+      "name": "catalog_events",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 7,
+      "sha256": "90091bae1c249f79c6aeb04dc7883ad192a6c5331bcb7a8a73c74a164b3e119f",
+      "ddlSha256": "45c9f1b2243c7367e47317160dd8393bd6428fbacf0ea374b872c15ff4aeffd5"
+    },
+    {
+      "name": "catalog_file_cleanup",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "ddlSha256": "685c81e1e09ba04a9dfb6fa14f32a367f10267b3d2213f190b799b4b4d236951"
+    },
+    {
+      "name": "chk_decisions",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "ddlSha256": "757dadda3109fe8c2080ba00305db33dbb22c802188aac8250eee86fd4919993"
+    },
+    {
+      "name": "chk_documents",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 42,
+      "sha256": "adbc4957f2fdf3ef7c0ba91b84a8a91d7adab377e28c573686b8ec0372ef2a7e",
+      "ddlSha256": "4c60592c808e9a92c819151cff7afa8bbb482ba7cddfab6ad05d1cadca460c24"
+    },
+    {
+      "name": "chk_examples",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "ddlSha256": "e8a258e193a8008cf0df49a08b6e348be66a5d61a49e7c9fa184ca0e7eeda796"
+    },
+    {
+      "name": "chk_reference_events",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "ddlSha256": "2a14cfb4ec10bc0362b65008d2e9d794d0feb6169fba018d1eddfd5057dbef98"
+    },
+    {
+      "name": "chk_reference_sets",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "ddlSha256": "8188c32951bfec181fc4097c3faddf9ed5f1307cec1558c7a4dd3f83876ad23a"
+    },
+    {
+      "name": "chk_runs",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 1,
+      "sha256": "23795da8600a46d992e19a00a57fa46931233a1be7c4e34021430d241cdf49ce",
+      "ddlSha256": "8708a1e1ef784f2e6fd4de91b5666996161774ae1c24dbf94be4299228a6490e"
+    },
+    {
+      "name": "comments",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 4,
+      "sha256": "adbab311ad27237f42a9639a008eaa8aec9f2383273a39bf980e04f0998eca23",
+      "ddlSha256": "0b596181f44c4e83c9f8cad659af2e534bd428e6eb6f0b9020d9c3280a1a9811"
+    },
+    {
+      "name": "comment_reads",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 4,
+      "sha256": "6bb50a81e2240f11d81e44978dd78746c93103533fc8d925c88c48095087087e",
+      "ddlSha256": "b46fd2fead3c3497678bb136f6b210b2730be1ce3632d10db322277639d0cb70"
+    },
+    {
+      "name": "courses",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 243,
+      "sha256": "4649bd068b8b0f41404be78be699809c38db5eee4badaa59dcee7c4fc2d3d02a",
+      "ddlSha256": "f6cd67f1ab55c279d7ee54dcdf2f7b6f75c046f3d61a0d3f04b5d42aa6121e62"
+    },
+    {
+      "name": "course_assignments",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "ddlSha256": "2f586d22c93cef6261b484d7bb8d01cb91455052d5dc9845c587643b43b86506"
+    },
+    {
+      "name": "course_clos",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "ddlSha256": "759ae8f321c073c9efbf646495184f6d8c3c1fa01710f4bdb4dcc63faacf70b5"
+    },
+    {
+      "name": "course_prerequisites",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "ddlSha256": "22f76afca2cb220770e00e3bc658fe2b6114b95acbb1195e25f47bffb58e788c"
+    },
+    {
+      "name": "co_po_mapping",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "ddlSha256": "4c5c13a62e4f1a6d5bd90ec8346c2cb06727b4e35f8a5f324511aedfe9cc1b47"
+    },
+    {
+      "name": "curriculum",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 39,
+      "sha256": "fb66bff31a96b18a60f09f87b3da39621a76352a8c1b076cd5d1925c5dcf2d0c",
+      "ddlSha256": "405fe0d8d6edee584b6a2a4baeecb705d0e88b28412877e1237ee680bfa93eb0"
+    },
+    {
+      "name": "deadline_notices",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "ddlSha256": "52a4b569615347e2cc86c5e874bd0917044df284892dd4c0cedb0ab29987a064"
+    },
+    {
+      "name": "faculty_courses",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 68,
+      "sha256": "4be9d2f195fae60931577537f37dd5ea0adb8e08a4fb61d90ade5b611caea9bb",
+      "ddlSha256": "6d491c1416113352b9606aa5a6a963700b06856877e3c832ffa1f5743faa9847"
+    },
+    {
+      "name": "faculty_programs",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 8,
+      "sha256": "c1c87c7e981e54e861cb49883a18f3f12b8b22c8e089033db8cd1b9d133876f2",
+      "ddlSha256": "4a229233adc3aa2630be9f7639ee5381bc87ff0a3321da4d2de3f1ac576d5477"
+    },
+    {
+      "name": "institution_egas",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 4,
+      "sha256": "83688727349142a36412f471b3cf3a72889055070192047a900a629a11b89c15",
+      "ddlSha256": "fe0ccfec01d12275fcb9fe7e2b165637f02d773c0096f2be53f70ac167bff5e4"
+    },
+    {
+      "name": "institution_settings",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 1,
+      "sha256": "8e200d6fd14364885199013f6678dec3227fc36b7f8ab72f113e73db8e6ad618",
+      "ddlSha256": "b59f9c67a59875c2118b21e88788e78e32e48d98cfb9c3b146bd92bb1be2bd9c"
+    },
+    {
+      "name": "messages",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 5,
+      "sha256": "8af4ed961a1aac395d10b316231f1ac50bb83d21234829d5f34f32970d593751",
+      "ddlSha256": "6cbec47d8e5569b2d083b0b6ffdc62bfa611eb66999049ab79b3f182591c37ec"
+    },
+    {
+      "name": "notifications",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 31,
+      "sha256": "d023c1f8bb2d5f258817ba87726c43adffae626e3afa8722c76d1cfa4f1ba962",
+      "ddlSha256": "1e84a77bda838a45c880fc81ef2e1c34505c466df676041dd32885be20912b67"
+    },
+    {
+      "name": "password_temp",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "ddlSha256": "9cc208d2f1d157388def507a95a59be42fdf1ea741a20103108aeeb7d8b3285e"
+    },
+    {
+      "name": "programs",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 5,
+      "sha256": "67ea17b862568310156ce3d5f133045cfe0189a418149b5337fb2550f57d0b87",
+      "ddlSha256": "a270a47e13e53018287785419d3732e31814d7c517e8a465687317f6f7224069"
+    },
+    {
+      "name": "program_code_aliases",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "ddlSha256": "8fbc1eb9a3af04a48dc3ae451b7ed977e407520c77bbd1aaf9291c214757f7d7"
+    },
+    {
+      "name": "program_egas",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 20,
+      "sha256": "e7fad5088f82a10312f77c01b6430187f6bcdaf7dad46595ed45a76af0114bc6",
+      "ddlSha256": "b6d5c2c22626768b720a3cba13f80d931b50a772e4f583cfc9d5773ff37a9d1f"
+    },
+    {
+      "name": "program_name_aliases",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "ddlSha256": "70d9551720c0a68a12df24b5c9b222a0b1af8fa75bbfe842f2d968f1e61526a3"
+    },
+    {
+      "name": "program_outcomes",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 36,
+      "sha256": "600a7496455aa3a2b1641df954d0fa8b39c4fc1ee38643250574bb0d3c96e6ac",
+      "ddlSha256": "3d008f7022dfb79cbb679471492312ac8c6aba49fa046522e5068cef0f646ff2"
+    },
+    {
+      "name": "program_outcome_sources",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 1,
+      "sha256": "292da37e9149a38da7d98ecf1367fca3492897113100a8499d73112c5921289b",
+      "ddlSha256": "e17f9e47f350f91902b39b08e8736858e973faf25b04ecd45445d27f0017b29f"
+    },
+    {
+      "name": "program_po_reference_active",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 3,
+      "sha256": "a60968a3f8a0c958467cdeb9aa724ceb037936ee99657261f3b0109642fc2e08",
+      "ddlSha256": "fe5c9c92555db3bf239a9c0a249108bf7db63f3595f57b49fe119a18dd23fe66"
+    },
+    {
+      "name": "program_po_reference_migrations",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 1,
+      "sha256": "5ac622248efb2735a136c0178bd819c39c359387971f824a2278761d7f07cbb8",
+      "ddlSha256": "8fcd43982cba2192bbb6ab24ecdf57c18977e5493c67873c431899b2f67cdb28"
+    },
+    {
+      "name": "program_po_reference_remediation",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 8,
+      "sha256": "5c1298a686fc81337a44ccc1ad8b132ebbbc0b54a445966c9704ac21e611264c",
+      "ddlSha256": "e4c63d1a77779299a66e11bbbab47c6b62c91a3754c93abcdcdd2fa3c7819316"
+    },
+    {
+      "name": "program_po_reference_versions",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 3,
+      "sha256": "4d53792b650101bc85eee15f1eb7b9527ed13c21af4c79768447bdc001dff7b2",
+      "ddlSha256": "03a0031e0e989d8bcea2431e1ca6be7ef5f28b73a9ebc0ad6d38d757ec251fad"
+    },
+    {
+      "name": "remember_tokens",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "ddlSha256": "de20bfd844a93965522e6ae0aac07081081c59ca06789f15e084ccfb990167af"
+    },
+    {
+      "name": "standard_changes",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "ddlSha256": "187fa5b19b249c25c2ec1094d702d15f165a15c5f0c40590146be9d35cf7a223"
+    },
+    {
+      "name": "student_enrollments",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "ddlSha256": "03a00ba8ed061f4fb7a4dd307a0d366b68285fc9e44087a348bd1dbbd5a4b218"
+    },
+    {
+      "name": "student_profiles",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "ddlSha256": "c395bf48e6d6cfeff1a26a294aa7e7f023068215efd6cee2536b41e36e3558a3"
+    },
+    {
+      "name": "subject_deadlines",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "ddlSha256": "b96fc3318107cfccff25bf6f69c7ce594ec8b5605504ab3d6d1dac7294f46464"
+    },
+    {
+      "name": "submission_logs",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 694,
+      "sha256": "838f9d5729b51dab488d8366c127fd2f9bba781fcb23902bc0df8c10a24d4ae5",
+      "ddlSha256": "d408f19ef79da815399be37b49cc8c903fa1d6c4e01832f2d34578e6cfa814dd"
+    },
+    {
+      "name": "syllabi",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 15,
+      "sha256": "2f9908939e42ae360443181c594682354ff694a2c80a803177590150ae550c50",
+      "ddlSha256": "1d9923fc5436cab47acc75ffc460c5dcc6cb37f1f63acdd6d536ffe38c01c819"
+    },
+    {
+      "name": "syllabus_check_curricula",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 4,
+      "sha256": "e431a1f9a2b8f3fdd02c4bc7b8f9868f2952a33073c43e05927035571a2216ee",
+      "ddlSha256": "cf46830cb6d4133495cf98795acc53ba620a416e0494d51929aa263de73545e6"
+    },
+    {
+      "name": "syllabus_check_decisions",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 820,
+      "sha256": "2e63bd813a169df6f10e1a3aa91a00a0fbfa60a048960f91a96b84c309a710a2",
+      "ddlSha256": "1525c4e193d1c7cc955d8b2b9b37e27e426fa9bf405f26e8fd2f2647fc9949e9"
+    },
+    {
+      "name": "syllabus_check_reports",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 202,
+      "sha256": "cfcf808c6721cdef59329618ae26719e87ad7b8fed65117261bc6532575d6694",
+      "ddlSha256": "a5170c2db45b7fef81879eb58a3ec7cb977b8889514cf8509a2d51febe0a6679"
+    },
+    {
+      "name": "syllabus_review_stages",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "ddlSha256": "99d88cea66cc360738255b7010985b7e3a6fd05d255b9a0c2766f43a2d59bbe0"
+    },
+    {
+      "name": "syllabus_versions",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 18,
+      "sha256": "d1fed85089c92de5313411e0ebceda1f4041f38dea3f598f48733e0909c48ade",
+      "ddlSha256": "a044cf3d37ed19ed0073d8f4271dba02b621956ec4242a5c4badb4bb5252132a"
+    },
+    {
+      "name": "usage_daily",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 43,
+      "sha256": "52cdffb512aa0ebab8e1569c68697343d8c2143dc7f3b468157011e318c56944",
+      "ddlSha256": "6716396730846822302b07c6c88f03f5a1b3f0ae4be105f6ec4e75109d4f3a65"
+    },
+    {
+      "name": "users",
+      "type": "BASE TABLE",
+      "engine": "InnoDB",
+      "rows": 3,
+      "sha256": "98ba65fda7af275ad4cf1e2889efdadeb21c7cea5e6c0d2e26c254836908c926",
+      "ddlSha256": "c2d9888ec35e25911c163304fc231d9fda064630bca398e1dc285c59a90e44a2"
+    }
+  ],
+  "fullInventoryHash": "40eb7d1d311b7909e699bbb7c87788e5d920fe726c23bcca4f445fdd5c32edfa",
+  "readOnly": true,
+  "developmentUnchanged": false,
+  "changesDuringVerification": [
+    {
+      "table": "usage_daily",
+      "beforeRows": 43,
+      "afterRows": 43,
+      "dataChanged": true,
+      "schemaChanged": false,
+      "beforeDataSha256": "d4ce08e4987def50c09933389176b8961e69dbfb9fb4df97e62a6d86713157fd",
+      "afterDataSha256": "52cdffb512aa0ebab8e1569c68697343d8c2143dc7f3b468157011e318c56944"
+    }
+  ],
+  "historicalReviewContentsUnchanged": true
+}

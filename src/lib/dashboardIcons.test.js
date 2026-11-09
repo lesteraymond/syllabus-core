@@ -23,9 +23,9 @@ test('the dashboard icons take their colour from the brand theme, and it beats t
   assert.match(readFileSync(new URL('../tailwind.css', import.meta.url), 'utf8'), /@import "\.\/styles\.css" layer\(legacy\);\s*@import "\.\/theme\.css" layer\(legacy\);/, 'theme.css is imported after styles.css, in the same layer');
 });
 
-test('the stat icons are white on the sidebar gradient, and readable on every stop of it', () => {
-  assert.match(theme, /\.stat-icon \{[^}]*background: linear-gradient\([^)]*var\(--side-top\)[^}]*var\(--side-bottom\)/);
-  ['side-top', 'side-mid', 'side-bottom'].forEach((stop) => assert.ok(contrast('#ffffff', token(stop)) >= 4.5, 'white icon on ' + stop + ': ' + contrast('#ffffff', token(stop)).toFixed(1)));
+test('the stat icons are white on the primary button blue (like New syllabus), and readable on it', () => {
+  assert.match(theme, /\.stat-icon \{[^}]*background: var\(--btn-primary\)/);
+  assert.ok(contrast('#ffffff', token('btn-primary')) >= 4.5, 'white icon on the blue: ' + contrast('#ffffff', token('btn-primary')).toFixed(1));
   assert.ok(contrast('#000000', '#f1f4f3') >= 4.5, 'black icon on the white-gray quick-action chip: ' + contrast('#000000', '#f1f4f3').toFixed(1));
 });
 

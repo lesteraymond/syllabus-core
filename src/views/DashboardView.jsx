@@ -1,16 +1,18 @@
+import { YearFilter, useYearScope } from '../components/AcademicYearScope';
 import StableButton, { StableLabel } from '../components/StableButton';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useMemo, useState } from 'react';
 import { PageHead, Card, Icon, Progress, QualityMini } from '../components/ui';
 import UpcomingDeadlines from '../components/UpcomingDeadlines';
+import ProgramTrendModal from '../components/ProgramTrendModal';
 import TimeUsageCard from '../components/TimeUsageCard';
-import { afterCleared, describeActivity, groupByDay, readClearedAt, writeClearedAt } from '../lib/activityView';
+import { describeActivity, groupByDay } from '../lib/activityView';
 import TypewriterText from '../components/TypewriterText';
-import { compliance as complianceApi, courses as coursesApi, outcomes as outcomesApi } from '../lib/api';
+import { compliance as complianceApi, courses as coursesApi, outcomes as outcomesApi, logs as logsApi, users as usersApi } from '../lib/api';
 import { adminStatCards } from '../lib/adminDashboardStats';
-import { isReviewer, roleAllows } from '../lib/roles';
-import { aiAverage, approval, areaAverages, programScores } from '../lib/complianceStats';
+import { canAuthor, isReviewer, roleAllows } from '../lib/roles';
+import { FACULTY_SUBMITTED, aiAverage, approval, programCoverage, snapshotOf } from '../lib/complianceStats';
 import { sentenceCase } from '../lib/sentenceCase';
 import { dayPeriod } from '../lib/phTime';
 import Select from '../components/Select';
@@ -46,7 +48,9 @@ const QA_SUB_KEYS = {
   settings: 'dashboard.quickActions.sub.settings',
 };
 
-export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, setConfirm }) {
+// onNewSyllabus: opens the builder on a NEW syllabus (App clears whatever was being edited, as My Syllabi does); without it the builder simply opens.
+export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus }) {
+  const yearScope = useYearScope(), year = yearScope ? yearScope.param('data') : undefined; // the academic year of this screen (undefined: the current one)
   // Settings updates this shared profile after a successful save.
   const name = user.firstName?.trim();
   // Morning, afternoon or evening on the Manila clock (checked again each minute, so a dashboard left open changes at 12:00 and 18:00).
@@ -105,49 +109,89 @@ export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, set
   const [checks, setChecks] = useState(null);
   useEffect(() => {
     let live = true;
-    complianceApi.list('all').then(res => { if (live) setChecks(res && res.installed !== false ? res : null); }, () => {});
+    complianceApi.list('all', year).then(res => { if (live) setChecks(res && res.installed !== false ? res : null); }, () => {});
     return () => { live = false; };
-  }, []);
+  }, [year]);
   const rows = checks && Array.isArray(checks.syllabi) ? checks.syllabi : null;
   const aiScore = aiAverage(rows);
   const share = approval(data);
 
-  // Admin summary cards also count the catalog. Read once when the dashboard opens; a failed read shows a dash, never breaks the page.
-  const [catalogCounts, setCatalogCounts] = useState({ programs: null, subjects: null });
+  // Admin summary cards also count the catalog, and Program Compliance measures each program against its subjects. Read once when the dashboard opens;
+  // a failed read shows a dash, never breaks the page.
+  const [catalog, setCatalog] = useState({ programs: null, subjects: null });
   useEffect(() => {
-    if (!isReviewer(user.role)) return undefined;
+    if (!isReviewer(user.role) && !isFac) return undefined; // faculty: the server sends only their assigned programs and subjects
     let live = true;
-    const count = request => request.then(rows => (Array.isArray(rows) ? rows.length : null), () => null);
-    Promise.all([count(outcomesApi.programs()), count(coursesApi.list())]).then(([programs, subjects]) => { if (live) setCatalogCounts({ programs, subjects }); });
+    const read = request => request.then(rows => (Array.isArray(rows) ? rows : null), () => null);
+    // the catalog of the academic year this screen shows (a new academic year starts with none); an administrator's "all years" counts the current one
+    const catalogYear = year === 'all' ? undefined : year;
+    Promise.all([read(outcomesApi.programs(catalogYear)), read(coursesApi.list(undefined, undefined, catalogYear))]).then(([programs, subjects]) => { if (live) setCatalog({ programs, subjects }); });
     return () => { live = false; };
-  }, [user.role]);
+  }, [user.role, year, isFac]);
+  const [trendOpen, setTrendOpen] = useState(false); // "View analytics" on Program Compliance (reviewers): the trend over time
+  const catalogCounts = { programs: catalog.programs ? catalog.programs.length : null, subjects: catalog.subjects ? catalog.subjects.length : null };
 
   const stats = isFac
     ? [['My Submissions', String(total), 'Total uploaded', 'blue'], ['Approved', String(approved), translateUI('dashboard.stats.approvedHint', { pct: share.percent }), 'green'], ['Pending Review', String(submitted + underReview), 'Awaiting decision', 'gold'], ['For Revision', String(forRevision), 'Needs changes', 'teal'], ['AI Compliance Score', aiScore === null ? '—' : `${aiScore}%`, translateUI(aiScore === null ? 'dashboard.stats.noChecks' : 'dashboard.stats.avgHint'), 'purple']]
     : adminStatCards({ programs: catalogCounts.programs, subjects: catalogCounts.subjects, syllabi });
 
   // Recent Activity as sentences under Today / Yesterday / a date (see lib/activityView.js); times are Philippine time.
-  // Each account sees only its own activity: the server sends only that (GET /api/logs), and "Clear Logs" hides it up to now, per account.
-  const [cleared, setCleared] = useState(() => readClearedAt(user.id));
+  // Each account sees only its own activity: the server sends only that (GET /api/logs): the review (submit, check, approve, ...) and the account's own
+  // activity (sign-in and sign-out, password, name, photo, language, drafts, edits, deletions, account management). It is an audit trail kept for
+  // transparency, so it cannot be cleared or hidden: there is no "Clear Logs", and a hide remembered in this browser from before is no longer applied.
+  // The administrator alone may also read everyone's, or one person's (GET /api/logs?scope=all[&userId=]); the server refuses anyone else.
+  const isAdminUser = user.role === 'admin';
+  const [activityScope, setActivityScope] = useState('mine'); // 'mine' | 'all' | a user id
+  const [people, setPeople] = useState([]);
+  const [others, setOthers] = useState({ rows: [], loading: false, error: '' });
+  useEffect(() => {
+    if (!isAdminUser) return undefined;
+    let live = true;
+    usersApi.list().then((list) => { if (live) setPeople(Array.isArray(list) ? list.filter((p) => p.role !== 'student') : []); }, () => {});
+    return () => { live = false; };
+  }, [isAdminUser]);
+  useEffect(() => {
+    if (!isAdminUser || activityScope === 'mine') return undefined;
+    let live = true;
+    setOthers((x) => ({ ...x, loading: true, error: '' }));
+    logsApi.list({ scope: 'all', userId: activityScope === 'all' ? undefined : activityScope })
+      .then((rows) => { if (live) setOthers({ rows: Array.isArray(rows) ? rows : [], loading: false, error: '' }); },
+        (e) => { if (live) setOthers({ rows: [], loading: false, error: e.message || '' }); });
+    return () => { live = false; };
+  }, [isAdminUser, activityScope, logs]); // read again whenever the app refreshes the person's own list
+  const viewingOthers = isAdminUser && activityScope !== 'mine';
   const activityGroups = useMemo(() => {
-    const mine = afterCleared(logs.filter(l => l.userId === user.id), cleared);
-    return groupByDay(mine.map((l, i) => describeActivity(l, i, user.id)));
-  }, [logs, user, cleared]);
+    const source = viewingOthers ? others.rows : logs.filter(l => l.userId === user.id);
+    return groupByDay(source.map((l, i) => describeActivity(l, i, user.id)));
+  }, [logs, user, viewingOthers, others.rows]);
+  const activityPicker = isAdminUser ? (
+    <Select aria-label={translateUI('accountActivity.viewLabel')} value={activityScope} onChange={(e) => setActivityScope(e.target.value || 'mine')}>
+      <option value="mine">{translateUI('accountActivity.mine')}</option>
+      <option value="all">{translateUI('accountActivity.everyone')}</option>
+      {people.filter((p) => p.id !== user.id).map((p) => <option key={p.id} value={String(p.id)}>{(p.firstName + ' ' + p.lastName).trim() || p.email}</option>)}
+    </Select>
+  ) : null;
 
-  // Per program: the average AI score of its checked syllabi (the bar) and, separately, how many were approved. Until the checks have been
-  // read, the plain syllabus list gives the approval numbers and the bars show a dash.
-  const programs = useMemo(() => programScores(rows || syllabi), [rows, syllabi]);
+  // The administrator's side (and the other reviewers): each program's subjects with an approved syllabus, out of all its subjects; AI check or not.
+  // 100% when every subject of the program has an approved syllabus (lib/complianceStats.js programCoverage).
+  // A faculty member: for each assigned program, their assigned subjects they have submitted a syllabus for (Submitted, Under Review or Approved), out of
+  // all their assigned subjects in it; 100% when every assigned subject has been submitted. Their own syllabi only.
+  const coverage = useMemo(() => (catalog.programs && catalog.subjects
+    ? (isFac ? programCoverage(catalog.programs, catalog.subjects, my, { statuses: FACULTY_SUBMITTED }) : programCoverage(catalog.programs, catalog.subjects, syllabi))
+    : null), [isFac, catalog, syllabi, my]);
   const SNAPSHOT_LABELS = { template: 'ui.format_041a5d', completeness: 'ui.completeness_778184', co_po: 'ui.co_po_9c8106', assessment: 'ui.assessment_ef136f' };
-  const snapshot = useMemo(() => areaAverages(checks && checks.summary), [checks]);
+  // The final AI check score (the rules' score minus the AI deductions) and the four areas after those deductions, with the lowest named (lib/complianceStats.js)
+  const snapshot = useMemo(() => snapshotOf(checks && checks.summary), [checks]);
 
   return (
     <div className="dashboard-view">
-      <PageHead title={<TypewriterText text={greeting} />} subtitle={translateUI("ui.here_s_what_is_happening_with_your_undergraduate_syllabi_834d17")} actions={<>{!isFac && <StableButton className="btn primary" onClick={() => setPage('builder')}>{translateUI("ui.new_syllabus_c4c7a9")}</StableButton>}</>} />
-      <section className="stat-grid">{stats.map(([a, b, c, d]) => <div className="stat-card" key={a}><div className={`stat-icon ${d}`}><Icon weight="regular" name={STAT_ICONS[a]} size={20} /></div><span>{sentenceCase(tr(a))}</span><strong>{b}</strong><small>{tr(c)}</small></div>)}</section>
+      <PageHead title={<TypewriterText text={greeting} />} subtitle={translateUI("ui.here_s_what_is_happening_with_your_undergraduate_syllabi_834d17")} actions={<><YearFilter group="data" />{canAuthor(user.role) && <StableButton className="btn primary" onClick={() => (onNewSyllabus ? onNewSyllabus() : setPage('builder'))}>{translateUI("ui.new_syllabus_c4c7a9")}</StableButton>}</>} />
+      <section className="stat-grid">{stats.map(([a, b, c, d]) => <div className="stat-card" key={a}><div className={`stat-icon ${d}`}><Icon weight="regular" name={STAT_ICONS[a]} size={20} /></div><span>{tr(a)}</span><strong>{b}</strong><small>{tr(c)}</small></div>)}</section>
       <div className="dashboard-grids-wrap">
         <section className="dashboard-grid">
-        <Card title={translateUI("ui.recent_activity_8aebf3")} action={<StableButton className="btn ghost" style={{ padding: '4px 8px', fontSize: '12px' }} onClick={() => setConfirm({ title: translateUI("ui.clear_logs_7c3089"), message: translateUI("ui.clear_your_activity_from_this_list_nothing_is_deleted_it_only_hid_fb5d0d"), label: 'Clear', onConfirm: () => { setCleared(writeClearedAt(user.id)); clearLogs(); } })}>{translateUI("ui.clear_logs_7c3089")}</StableButton>}>
+        <Card title={translateUI('accountActivity.title')} action={activityPicker}>
           <div className="feed">
+            {viewingOthers && others.error && <div className="info-banner warning" role="alert">{translateUI('accountActivity.unreadable') + tr(others.error)}</div>}
             {activityGroups.map((g) => (
               <section className="feed-day" key={g.label} aria-label={tr(g.label)}>
                 <h4 className="feed-date">{tr(g.label)}</h4>
@@ -156,8 +200,8 @@ export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, set
                     <li className={'feed-item ' + it.tone} key={it.key}>
                       <span className="feed-ico"><Icon name={it.icon} size={18} weight="regular" /></span>
                       <div className="feed-body">
-                        <p><strong>{tr(it.who)}</strong> {tr(it.verb)} <strong>{it.subject}</strong></p>
-                        {it.detail && <small>{it.detail}</small>}
+                        <p><strong>{tr(it.who)}</strong> {tr(it.verb)}{it.subject && <> <strong>{it.subject}</strong></>}</p>
+                        {(it.detail || it.note) && <small>{[it.detail, it.note && tr(it.note)].filter(Boolean).join(' · ')}</small>}
                       </div>
                       <time dateTime={it.iso}>{it.time}</time>
                     </li>
@@ -165,7 +209,8 @@ export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, set
                 </ol>
               </section>
             ))}
-            {activityGroups.length === 0 && <div className="empty">{isFac ? translateUI("ui.nothing_yet_what_you_upload_submit_and_update_appears_here_f8bbff") : translateUI("ui.nothing_yet_your_reviews_and_decisions_appear_here_6bd686")}</div>}
+            {activityGroups.length === 0 && viewingOthers && !others.error && <div className="empty">{translateUI(others.loading ? 'accountActivity.loading' : 'accountActivity.none')}</div>}
+            {activityGroups.length === 0 && !viewingOthers && <div className="empty">{isFac ? translateUI("ui.nothing_yet_what_you_upload_submit_and_update_appears_here_f8bbff") : translateUI("ui.nothing_yet_your_reviews_and_decisions_appear_here_6bd686")}</div>}
           </div>
         </Card>
         <Card title={translateUI("dashboard.usage.title")}>
@@ -220,16 +265,25 @@ export default function Dashboard({ setPage, user, syllabi, logs, clearLogs, set
         </Card>
       </section>
       <section className="dashboard-grid lower">
-        <Card title={translateUI("ui.program_compliance_943fac")} action={tr("View analytics")}>
-          {programs.length > 0
-            ? programs.map(p => <Progress key={p.program} label={p.program} value={p.average} note={translateUI(p.checked ? 'dashboard.stats.programChecked' : 'dashboard.stats.programNone', { checked: p.checked, total: p.total, approved: p.approved, pct: p.approvedPercent })} />)
+        <Card title={translateUI("ui.program_compliance_943fac")} action={isFac ? tr("View analytics") : <button type="button" className="link-btn card-action-btn" data-testid="view-analytics" disabled={!catalog.programs || !catalog.subjects} onClick={() => setTrendOpen(true)}>{tr("View analytics")}</button>}>
+          {coverage && coverage.length > 0
+            ? coverage.map(p => <Progress key={p.program} label={p.program} value={p.percent} note={isFac
+              ? (p.total ? translateUI('dashboard.stats.programAssigned', { done: p.approved, total: p.total }) : translateUI('dashboard.stats.programNoneAssigned'))
+              : (p.total ? translateUI('dashboard.stats.programSubjects', { approved: p.approved, total: p.total }) : translateUI('dashboard.stats.programNoSubjects'))} />)
             : <div className="empty">{translateUI("ui.no_program_data_yet_c5b890")}</div>
           }
         </Card>
-        <Card title={translateUI("ui.ai_quality_snapshot_c296aa")}>{snapshot.map(a => <QualityMini key={a.key} label={translateUI(SNAPSHOT_LABELS[a.key])} value={a.average} />)}<p className="cmp-small">{translateUI(snapshot.some(a => a.average !== null) ? "dashboard.stats.snapshotNote" : "dashboard.stats.noScore")}</p></Card>
-        {(isFac || user.role === 'admin') && <Card title={translateUI("ui.upcoming_deadlines_b56518")} hideScrollbar><UpcomingDeadlines role={user.role} onOpen={() => setPage(isFac ? 'my-syllabi' : 'courses')} /></Card>}
+        <Card title={translateUI("ui.ai_quality_snapshot_c296aa")}>
+          {/* the four rings centered, each area after the AI deductions; the lowest is red and its tooltip names it */}
+          <div className="quality-row">{snapshot.areas.map(a => {
+            const low = !!snapshot.lowest && snapshot.lowest.key === a.key;
+            return <QualityMini key={a.key} label={translateUI(SNAPSHOT_LABELS[a.key])} value={a.score} low={low} title={low ? translateUI('snapshot.lowest', { area: translateUI(SNAPSHOT_LABELS[a.key]), score: a.score }) : undefined} />;
+          })}</div>
+        </Card>
+        {(isFac || user.role === 'admin') && <Card title={translateUI("ui.upcoming_deadlines_b56518")} hideScrollbar><UpcomingDeadlines role={user.role} onOpen={() => setPage(isFac ? 'my-syllabi' : 'courses')} onOpenOwn={() => setPage('my-syllabi')} /></Card>}
       </section>
       </div>
+      {trendOpen && <ProgramTrendModal programs={catalog.programs || []} subjects={catalog.subjects || []} year={year === 'all' ? undefined : year} onClose={() => setTrendOpen(false)} />}
       {customizeOpen && (
         <CustomizeQuickActionsModal
           availableItems={availableNav}

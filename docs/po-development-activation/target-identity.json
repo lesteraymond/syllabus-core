@@ -1,0 +1,21 @@
+{
+  "configuredHost": "localhost",
+  "configuredPort": 3306,
+  "configuredName": "syllabus_cms_plus",
+  "nodeEnvironment": "development (default)",
+  "identity": {
+    "database": "syllabus_cms_plus",
+    "hostname": "JpDelRosario",
+    "port": 3306,
+    "datadir": "C:\\xampp\\mysql\\data\\"
+  },
+  "databaseIdentityHash": "f7fbc8b43dce865b2c95eb7ea0718238e40455a93c0aa25dac2930ec9e124fd3",
+  "matchesPreviouslyReviewedTarget": true,
+  "developmentTestingOnly": true,
+  "institutionalApproval": "not_recorded",
+  "server": {
+    "version": "10.4.32-MariaDB",
+    "event_scheduler": "OFF",
+    "read_only": 0
+  }
+}

@@ -4,7 +4,7 @@ import { createModel } from '../../lib/syllabusModel';
 import { CURRENT_SCHOOL_YEAR } from '../../lib/schoolYear';
 
 // Live drafts read only their selected subject's setup; locked syllabi keep their submitted snapshot.
-export function useCatalog(programCode, { snapshot = null, live = false, courseId = null } = {}) {
+export function useCatalog(programCode, { snapshot = null, live = false, courseId = null, year = undefined } = {}) {
   const [programList,setProgramList]=useState([]);
   const [subject,setSubject]=useState(null);
   const [loaded,setLoaded]=useState(false);
@@ -13,9 +13,9 @@ export function useCatalog(programCode, { snapshot = null, live = false, courseI
   const refresh=useCallback(()=>setVersion(v=>v+1),[]);
   useEffect(()=>{
     let active=true;
-    outcomes.programs().then(rows=>{if(active){setProgramList(rows);setLoaded(true);setError('');}}).catch(e=>{if(active)setError(e.message);});
+    outcomes.programs(year).then(rows=>{if(active){setProgramList(rows);setLoaded(true);setError('');}}).catch(e=>{if(active)setError(e.message);});
     return()=>{active=false;};
-  },[version]);
+  },[version,year]);
   useEffect(()=>{
     if(!courseId || snapshot){setSubject(null);return;}
     let active=true;

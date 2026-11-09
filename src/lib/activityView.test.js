@@ -88,3 +88,54 @@ test('an AI check and an answer to a recommendation read as sentences, with the 
   assert.strictEqual(verb('something else'), 'answered a recommendation on');
   assert.strictEqual(verb(null), 'answered a recommendation on');
 });
+
+// The account's own activity (server/lib/accountActivity.js): rows that are about the account read without a syllabus; drafts, edits and deletions
+// say whether it was a draft. Never a password: only how the person signed in.
+test('the account activity reads as sentences: sign-in and sign-out, password, name, photo and language, without a syllabus', () => {
+  const row = (action, notes, over = {}) => describeActivity(log({ action, notes, courseCode: null, title: null, userId: 5, ...over }), 0, 5);
+  const said = (a) => [a.who, a.verb, a.subject, a.detail, a.note];
+  assert.deepStrictEqual(said(row('login', 'password')), ['You', 'signed in', '', '', 'with a password']);
+  assert.deepStrictEqual(said(row('login', 'google')), ['You', 'signed in', '', '', 'with Google']);
+  assert.deepStrictEqual(said(row('login', 'temporary')), ['You', 'signed in', '', '', 'with a temporary password']);
+  assert.deepStrictEqual(said(row('logout', null)), ['You', 'signed out', '', '', '']);
+  assert.deepStrictEqual(said(row('password_change', 'self')), ['You', 'changed the password', '', '', '']);
+  assert.deepStrictEqual(said(row('password_change', 'required')), ['You', 'changed the password', '', '', 'after a generated password, as required']);
+  assert.deepStrictEqual(said(row('name_change', 'Fay F → Faye Flores')), ['You', 'changed the name', '', 'Fay F → Faye Flores', '']);
+  assert.deepStrictEqual(said(row('photo_change', 'upload')), ['You', 'changed the profile photo', '', '', '']);
+  assert.deepStrictEqual(said(row('photo_change', 'google')), ['You', 'used the Google photo as the profile photo', '', '', '']);
+  assert.deepStrictEqual(said(row('photo_change', 'remove')), ['You', 'removed the profile photo', '', '', '']);
+  assert.deepStrictEqual(said(row('photo_change', 'remove_other', { courseCode: 'Gus Gomez' })), ['You', 'removed the profile photo of', 'Gus Gomez', '', '']);
+  assert.deepStrictEqual(said(row('language_change', 'tl')), ['You', 'changed the language', '', '', 'Tagalog']);
+  assert.deepStrictEqual(said(row('language_change', 'en')), ['You', 'changed the language', '', '', 'English']);
+  for (const action of ['login', 'logout', 'password_change', 'name_change', 'photo_change', 'language_change']) assert.strictEqual(KINDS[action].account, true, action);
+});
+
+test('drafts, edits and deletions name the syllabus and say whether it was a draft', () => {
+  const row = (action, notes, over = {}) => { const a = describeActivity(log({ action, notes, ...over })); return [a.verb, a.subject, a.detail]; };
+  assert.deepStrictEqual(row('draft_create', null, { courseCode: '', title: '' }), ['started a new draft', '', ''], 'a new draft has no subject yet');
+  assert.deepStrictEqual(row('draft_create', null), ['started a new draft of', 'FM 202', 'Fundamentals of Mathematics'], 'once a subject is chosen the line names it');
+  assert.deepStrictEqual(row('content_edit', 'draft'), ['edited the draft of', 'FM 202', 'Fundamentals of Mathematics']);
+  assert.deepStrictEqual(row('content_edit', 'for_revision'), ['edited', 'FM 202', 'Fundamentals of Mathematics']);
+  assert.deepStrictEqual(row('syllabus_delete', 'draft'), ['deleted the draft of', 'FM 202', 'Fundamentals of Mathematics']);
+  assert.deepStrictEqual(row('syllabus_delete', 'submitted', { title: '' }), ['deleted', 'FM 202', '']);
+  assert.deepStrictEqual([describeActivity(log({ action: 'syllabus_delete', notes: 'draft' })).icon, describeActivity(log({ action: 'syllabus_delete' })).tone], ['trash', 'warn']);
+  assert.strictEqual(describeActivity(log({ action: 'update' })).verb, 'updated', 'the review history reads as before');
+});
+
+test('refused sign-ins, a remembered device and the administrator\'s management of accounts read as sentences', () => {
+  const row = (action, notes, over = {}) => { const a = describeActivity(log({ action, notes, courseCode: null, title: null, userId: 5, ...over }), 0, 5); return [a.who, a.verb, a.subject, a.note, a.tone]; };
+  assert.deepStrictEqual(row('login', 'remembered'), ['You', 'signed in', '', 'on a remembered device', 'quiet']);
+  assert.deepStrictEqual(row('login_failed', 'password'), ['You', 'failed to sign in', '', 'wrong password', 'bad']);
+  assert.deepStrictEqual(row('login_failed', 'disabled'), ['You', 'failed to sign in', '', 'the account is disabled', 'bad']);
+  assert.deepStrictEqual(row('login_failed', 'disabled_remembered'), ['You', 'failed to sign in', '', 'the account is disabled (remembered device)', 'bad']);
+  const fay = { courseCode: 'Fay Flores' }; // the account's name, recorded at the time (server/lib/accountActivity.js listFor)
+  assert.deepStrictEqual(row('user_create', 'lic_director', fay), ['You', 'registered the account of', 'Fay Flores', 'LIC Director', 'info']);
+  assert.deepStrictEqual(row('user_credentials', null, fay), ['You', 'sent new sign-in details to', 'Fay Flores', '', 'info']);
+  assert.deepStrictEqual(row('user_disable', null, fay), ['You', 'disabled the account of', 'Fay Flores', '', 'bad']);
+  assert.deepStrictEqual(row('user_enable', null, fay), ['You', 'enabled the account of', 'Fay Flores', '', 'good']);
+  assert.deepStrictEqual(row('user_delete', null, fay), ['You', 'removed the account of', 'Fay Flores', '', 'bad']);
+  assert.deepStrictEqual(row('user_assignments', '3', fay), ['You', 'changed the assignments of', 'Fay Flores', 'Subjects assigned: 3', 'quiet']);
+  assert.deepStrictEqual(row('user_disable', null), ['You', 'disabled the account of', 'an account', '', 'bad'], 'no name recorded');
+  // in the administrator's view of everyone, somebody else's line names them
+  assert.strictEqual(describeActivity(log({ action: 'login_failed', notes: 'password', user: 'Gus Go', userId: 6 }), 0, 1).who, 'Gus Go');
+});

@@ -6,6 +6,7 @@ const { gradingTotal, weeksOf, mappingChecks } = require('./validation');
 const { bindSuggestions } = require('./suggestions');
 const standard = require('../compliance/standard-v4.json');
 const { checkLinks } = require('./links');
+const { samePrerequisite, isBlankCell, notListedMessage } = require('./prerequisite');
 const { align, createRequestBudget, isAdvisory, REF_PAIR, blockedNow } = require('./gemini');
 const { stageFlags, C3 } = require('./stages');
 const { mappingAdviceOf, iloCandidates, anyCloPairs, iloMappingAdviceOf } = require('./mapping');
@@ -37,7 +38,7 @@ const equal = (a, b) => canonical(a) === canonical(b);
 const { titleRelation, titleDecision, titlePolicyOf, officialComparison, TITLE_POLICY_VERSION } = require('./titles');
 const { identityOf, NEEDS_IDENTITY } = require('./identity');
 // Why a draft was held back (gemini.js draftReviewOf), for the "needs your decision" list.
-const DRAFT_CHECKS = { copies_reference: 'it copies the text it is checked against instead of revising this one', keeps_off_subject: 'it keeps most of the off-subject wording of the text it replaces', copies_other_relationship: 'it may import unsupported details from another relationship', adds_participant: 'it may introduce participants the lesson does not describe', adds_activity: 'it may introduce an activity the lesson does not describe', adds_resource: 'it may introduce a resource the lesson does not describe', adds_week: 'it may introduce work outside the stated lesson weeks', value_not_expressed: 'it may keep a value name without describing how the value is expressed', unnecessary_practical: 'it may add a practical performance beyond the conceptual ILO', expands_competency: 'it may expand the required competency or project scope', assumes_resource: 'it assumes an instructional resource whose availability is not established' };
+const DRAFT_CHECKS = { copies_reference: 'it copies the text it is checked against instead of revising this one', keeps_off_subject: 'it keeps most of the off-subject wording of the text it replaces', copies_other_relationship: 'it may import unsupported details from another relationship', adds_participant: 'it may introduce participants the lesson does not describe', adds_activity: 'it may introduce an activity the lesson does not describe', adds_resource: 'it may introduce a resource the lesson does not describe', adds_week: 'it may introduce work outside the stated lesson weeks', value_not_expressed: 'it may keep a value name without describing how the value is expressed', unnecessary_practical: 'it may add a practical performance beyond the conceptual ILO', expands_competency: 'it may expand the required competency or project scope', assumes_resource: 'it assumes an instructional resource whose availability is not established', replaces_core_value: 'it replaces the core value the faculty selected for this lesson with a different one; keep the selected value and show what students do or decide in this lesson that expresses it, or review the choice if that value does not fit the lesson' };
 
 // Advisory quality notes (quality.js). They never score or block, and a fault in them must never break a check.
 function qualityNotes(content) {
@@ -47,7 +48,7 @@ function qualityNotes(content) {
 const textAt = (content, path) => textOf(String(path).replace(/\[(\d+)\]/g, '.$1').split('.').reduce((value, key) => value?.[key], content));
 function coded(content, masters = {}, opts = {}) {
   const c = content || {}, meta = c.meta || {};
-  const base = evaluate(c, codedStandard, { year: masters.year || 2026 });
+  const base = evaluate(c, codedStandard, { year: masters.year || 2026, coverage: true });
   const findings = [...base.findings];
   const suggestions = [];
   const checks = [];
@@ -78,9 +79,12 @@ function coded(content, masters = {}, opts = {}) {
       check('CUR-CODE', 'meta.code', true, meta.code, course.code, 'Course exists in the selected curriculum.');
       // The title comparison follows the title policy (titles.js): exact unless SYLLABUS_CHECK_TITLE_POLICY=normalized. A caller that names no comparison
       // (the submission gate in compliance/service.js) gets the one the policy makes official, so the check and the gate always decide alike.
-      // The prerequisite is always exact: only the title is covered by the normalisation policy.
+      // The prerequisite is exact (only the title is covered by the normalisation policy), except that the ways of writing "no pre-requisite"
+      // (empty, None, N/A, the import's blank-cell sentence) are one value: prerequisite.js. A real pre-requisite on either side is still compared exactly.
       check('CUR-FIELD', 'meta.title', titleDecision(opts.titleComparison || officialComparison(titlePolicyOf(process.env)), meta.title, course.title), meta.title, course.title, 'title differs from the official curriculum.', { replacement: course.title });
-      check('CUR-FIELD', 'meta.prereq', str(meta.prereq) === str(course.prereq), meta.prereq, course.prereq, 'prereq differs from the official curriculum.', { replacement: course.prereq });
+      // Same check, same status and severity; only the wording differs for a blank curriculum cell, which is never offered as replacement text (prerequisite.js).
+      const blankCell = isBlankCell(course.prereq);
+      check('CUR-FIELD', 'meta.prereq', samePrerequisite(meta.prereq, course.prereq), meta.prereq, course.prereq, blankCell ? notListedMessage(meta.prereq) : 'prereq differs from the official curriculum.', blankCell ? {} : { replacement: course.prereq });
       for (const key of ['lecture', 'lab', 'yearLevel']) check('CUR-FIELD', `meta.${key}`, !!str(meta[key]).trim() && Number(meta[key]) === Number(course[key]), meta[key], course[key], `${key} differs from the official curriculum.`, { replacement: String(course[key]) });
     }
   }
@@ -152,7 +156,8 @@ async function run(content, masters, options = {}) {
     if (options.academicPolicy !== v2.POLICY.id) throw Object.assign(Error('Unknown academic policy'), {status:400});
     return v2.evaluate(content, masters, options, coded);
   }
-  const env0 = options.env || process.env;
+  const env0 = options.profileResolved ? options.env : require('./checkingProfile').resolve(options.env || process.env);
+  options = { ...options, env: env0, evaluationOnly:options.evaluationOnly === true && !!options.env };
   const requestBudget = options.requestBudget || createRequestBudget(env0);
   // Title policy (titles.js). 'exact' keeps the original comparison; 'shadow' (the default) keeps it as the OFFICIAL one and also computes what the normalised
   // comparison would decide, reported in hybrid.shadowCurriculum; 'normalized' makes the normalised comparison official and needs explicit approval.
@@ -223,7 +228,10 @@ async function run(content, masters, options = {}) {
   // evidence contract and findings. A separate advisory request preserves the
   // core scored pair list; missing inputs are kept, never silently counted as fit.
   if (flags.requirements) {
-    const pairs = requirementsAdvice.pairsOf(content);
+    // Under the comprehensive profile Policy V2 owns Title ↔ Description (excludeAdvisoryTypes): it is neither asked nor given an unasked placeholder here, so a
+    // verified V2 answer is never contradicted by a stray "not checked" record. If V2 cannot verify it, V2's own report says so.
+    const v2Owned = new Set(options.excludeAdvisoryTypes || []);
+    const pairs = requirementsAdvice.pairsOf(content).filter(pair => !v2Owned.has(pair.type));
     const requestPairs = pairs.filter(pair=>!pair.contextLimited);
     const usable = !identityStop && !(semantic.failure && semantic.failure.kind !== 'invalid_output') && !blockedNow();
     const extra = usable && requestPairs.length ? await align(content, masters, {...alignOptions,env:env0,pairs:requestPairs,skipEmpty:false,previous:undefined}) : null;
@@ -315,6 +323,14 @@ async function run(content, masters, options = {}) {
   // Drafts that failed a static check of gemini.js (draftReviewOf: a copy of the reference text, or a rewrite that keeps the off-subject wording). They are
   // never offered as a fix; their field is listed for the author's decision below.
   const heldDrafts = [];
+  // The core value the faculty selected is kept. A rewrite of a lesson's values statement that names none of the core values the faculty wrote there would
+  // replace their choice, so it is not offered: it is held for the author's review with that reason (heldDrafts, verdict "value_replaced"). Deterministic;
+  // the judgement, its finding, its points and the value rules are unchanged, and a lesson that names no value yet can still be offered one.
+  for (const judgement of semantic.judgements || []) {
+    if (judgement.type !== 'Module-value' || !judgement.draft || judgement.label === 'ALIGNED') continue;
+    const row = /^plan\[(\d+)\]/.exec(judgement.targetPath || judgement.path || ''), selected = row ? valuesStage.namedValues(content.plan?.[Number(row[1])]?.values) : [];
+    if (selected.length && !valuesStage.namedValues(judgement.draft).some(v => selected.includes(v))) judgement.draftReview = [...new Set([...(judgement.draftReview || []), 'replaces_core_value'])];
+  }
   for (const judgement of semantic.judgements || []) {
     if (judgement.label === 'ALIGNED') continue;
     // Not reached because the provider call failed: nothing is known about the relationship. The check is already marked incomplete (AI-REQUIRED),
@@ -505,11 +521,13 @@ async function run(content, masters, options = {}) {
       quality, summary, corrections, unresolved,
       scoring: { official: { policy: POLICY.version, deducted: points, score: provisionalScore }, shadow: shadowOf({ base: partA.base.overall, deductions, critical: partA.critical }) }, links, alignment: semantic, suggestions: bindSuggestions(content, suggestions), outcomeSource: masters.outcomeSource || null, mappingAdvice, stageC: semantic.stageC, stageD: semantic.stageD, references: referenceEntries, valuesDefinitions: valueDefinitions ? valueDefinitions.status : null, valuesClassification, valuesProfile: flags.d1 ? valuesStage.valuesProfile(content, semantic.judgements || [], valueDefinitions) : null, coverage: flags.b4 ? coverageTable(content, semantic.judgements || []) : null, coverageSummary: flags.b4 ? coverageSummary(content, coverageTable(content, semantic.judgements || []), semantic.judgements || []) : null, stages: flags, synthetic: !!masters.synthetic, checkedMeta: content.meta, checkedAt: new Date().toISOString(), curriculum: partA.curriculum ? { id: partA.curriculum.id, source: partA.curriculum.source, program: partA.curriculum.program, curriculumYear: partA.curriculum.curriculumYear } : null },
   };
+  if(masters.referenceContext)result.hybrid.referenceContext=masters.referenceContext;
   // Shadow verdict (verdict.js): typed findings and separate completeness / curriculum / alignment answers. A fault here must never break a check.
   try { result.hybrid.verdict = verdict.buildVerdict(result, content); } catch (error) {
     console.error('VERDICT ERROR (advisory layer skipped, the check is unaffected):', error && error.stack || error);
     result.hybrid.verdict = { version: VERDICT_VERSION, unavailable: true };
   }
+  result.hybrid.ruleCoverage = require('./ruleCoverage').coverageOf(result, content, masters, env0);
   return withholdReviewedDrafts(result);
 }
 module.exports = { run, coded, VERSION, VALUES, HEADERS, PENALTIES, normCode };

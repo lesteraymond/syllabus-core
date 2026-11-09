@@ -1,0 +1,109 @@
+{
+  "run": "final-off",
+  "passed": true,
+  "traceScope": "Synthetic browser UI events only",
+  "pages": [
+    {
+      "page": "page-29.json",
+      "events": [
+        {
+          "kind": "pointerdown",
+          "t": 2708.5999999940395,
+          "scrollY": 0,
+          "tag": "SPAN",
+          "role": null,
+          "label": "Semester",
+          "text": "All semesters",
+          "expanded": "false",
+          "options": []
+        },
+        {
+          "kind": "click",
+          "t": 2710.0999999940395,
+          "scrollY": 0,
+          "tag": "SPAN",
+          "role": null,
+          "label": "Semester",
+          "text": "All semesters",
+          "expanded": "false",
+          "options": []
+        },
+        {
+          "kind": "expanded",
+          "t": 2712.5,
+          "scrollY": 0,
+          "tag": "BUTTON",
+          "role": "combobox",
+          "label": "Semester",
+          "text": "All semesters",
+          "expanded": "true",
+          "options": [
+            "All semesters",
+            "1st Semester",
+            "2nd Semester"
+          ]
+        },
+        {
+          "kind": "expanded",
+          "t": 2765,
+          "scrollY": 0,
+          "tag": "BUTTON",
+          "role": "combobox",
+          "label": "Semester",
+          "text": "2nd Semester",
+          "expanded": "false",
+          "options": []
+        },
+        {
+          "kind": "pointerdown",
+          "t": 3776.7000000178814,
+          "scrollY": 0,
+          "tag": "SPAN",
+          "role": null,
+          "label": "Semester",
+          "text": "2nd Semester",
+          "expanded": "false",
+          "options": []
+        },
+        {
+          "kind": "click",
+          "t": 3777.5,
+          "scrollY": 0,
+          "tag": "SPAN",
+          "role": null,
+          "label": "Semester",
+          "text": "2nd Semester",
+          "expanded": "false",
+          "options": []
+        },
+        {
+          "kind": "expanded",
+          "t": 3779.800000011921,
+          "scrollY": 0,
+          "tag": "BUTTON",
+          "role": "combobox",
+          "label": "Semester",
+          "text": "2nd Semester",
+          "expanded": "true",
+          "options": [
+            "All semesters",
+            "1st Semester",
+            "2nd Semester"
+          ]
+        },
+        {
+          "kind": "expanded",
+          "t": 3830,
+          "scrollY": 0,
+          "tag": "BUTTON",
+          "role": "combobox",
+          "label": "Semester",
+          "text": "1st Semester",
+          "expanded": "false",
+          "options": []
+        }
+      ]
+    }
+  ],
+  "historicalFailingEventNotRecorded": true
+}

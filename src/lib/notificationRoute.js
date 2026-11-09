@@ -11,6 +11,8 @@ export function notificationTarget(n, role) {
   if (n.type === 'deadline') return { kind: 'page', page: role === 'admin' ? 'courses' : 'my-syllabi' };
   // A syllabus the three reviewers have cleared is ready for the VPAA: it opens Review & Approval.
   if (n.type === 'chain') return { kind: 'page', page: 'review' };
+  // The VPAA approved a syllabus: the dean, the Asst. VPAA, the LIC Director (and any other VPAA) are told, and it opens the Repository, where approved syllabi live.
+  if (n.type === 'approval') return { kind: 'page', page: 'repository' };
   if (role === 'faculty' && n.syllabusId && (n.type === 'comment' || n.type === 'status')) return { kind: 'comments', id: n.syllabusId };
   // A new submission or a resubmission is checked in the AI Checker first, by the dean, the Asst. VPAA and the LIC Director alike.
   if (isReviewer(role) && role !== 'vpaa' && (n.type === 'submission' || n.type === 'edit')) return { kind: 'page', page: 'ai' };

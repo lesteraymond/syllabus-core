@@ -1,3 +1,4 @@
+import { YearFilter, useYearScope } from '../components/AcademicYearScope';
 import StableButton from '../components/StableButton';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
@@ -23,6 +24,7 @@ function Dimensions({ areas }) {
 }
 
 export default function Analytics({ syllabi, user }) {
+  const yearScope = useYearScope(), year = yearScope ? yearScope.param('data') : undefined; // the academic year of this screen (undefined: the current one)
   const isFaculty = user.role === 'faculty';
   const mine = useMemo(() => (isFaculty ? syllabi.filter(s => s.userId === user.id) : syllabi), [syllabi, user, isFaculty]);
 
@@ -31,9 +33,9 @@ export default function Analytics({ syllabi, user }) {
   const [loaded, setLoaded] = useState(false);
   useEffect(() => {
     let live = true;
-    complianceApi.list('all').then(res => { if (live) { setChecks(res && res.installed !== false ? res : null); setLoaded(true); } }, () => { if (live) setLoaded(true); });
+    complianceApi.list('all', year).then(res => { if (live) { setChecks(res && res.installed !== false ? res : null); setLoaded(true); } }, () => { if (live) setLoaded(true); });
     return () => { live = false; };
-  }, []);
+  }, [year]);
   const rows = checks && Array.isArray(checks.syllabi) ? checks.syllabi : null;
 
   const average = aiAverage(rows);
@@ -69,7 +71,7 @@ export default function Analytics({ syllabi, user }) {
   const none = <div className="empty">{translateUI(loaded ? 'analytics.empty' : 'analytics.loading')}</div>;
   return (
     <>
-      <PageHead title={isFaculty ? translateUI("ui.my_analytics_1ab328") : translateUI("ui.analytics_quality_dashboard_b85172")} subtitle={isFaculty ? translateUI("ui.track_your_personal_compliance_scores_and_submission_performance_b66964") : translateUI("ui.monitor_compliance_curriculum_coverage_submission_performance_and_78b463")} actions={<><Select><option value="AY 2026–2027">{translateUI("ui.ay_2026_2027_830f3e")}</option><option value="AY 2025–2026">{translateUI("ui.ay_2025_2026_8b00a8")}</option></Select><StableButton className="btn outline">{translateUI("ui.download_report_9f36e2")}</StableButton></>} />
+      <PageHead title={isFaculty ? translateUI("ui.my_analytics_1ab328") : translateUI("ui.analytics_quality_dashboard_b85172")} subtitle={isFaculty ? translateUI("ui.track_your_personal_compliance_scores_and_submission_performance_b66964") : translateUI("ui.monitor_compliance_curriculum_coverage_submission_performance_and_78b463")} actions={<><YearFilter group="data" /><StableButton className="btn outline">{translateUI("ui.download_report_9f36e2")}</StableButton></>} />
       <div className="analytics-grid two">
         <ChartCard title={translateUI('analytics.spreadTitle')} subtitle={translateUI(isFaculty ? 'analytics.spreadSubtitleFaculty' : 'analytics.spreadSubtitleAdmin')}>
           {bands.count ? <DonutBreakdown value={average} high={bands.high} med={bands.medium} low={bands.low} /> : none}

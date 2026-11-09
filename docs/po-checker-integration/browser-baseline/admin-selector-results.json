@@ -1,0 +1,89 @@
+{
+  "mode": "baseline",
+  "kind": "LOCAL full React/Express browser E2E, isolated synthetic DB, corrected development reference snapshot, scripted provider",
+  "results": [
+    {
+      "program": "BSIT",
+      "mode": "baseline",
+      "steps": [
+        "program/subject selection; exact corrected PO text; subset mapping options",
+        "synthetic syllabus saved; Review step renders classifications",
+        "comprehensive check through UI; score/VPAA/CLO/PO findings; report saved and reloaded"
+      ],
+      "status": "FAIL",
+      "syllabusId": 1,
+      "score": 99,
+      "passThreshold": 79,
+      "poCount": 9,
+      "poSource": "BSIT",
+      "referenceId": "lcup-po-2026-10-29-BSIT",
+      "vpaa": 7,
+      "classifications": 4,
+      "error": "locator.click: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('option', { name: /^BSIT (?:–|—|-)/ }).first()\u001b[22m\n"
+    },
+    {
+      "program": "BSIE",
+      "mode": "baseline",
+      "steps": [
+        "program/subject selection; exact corrected PO text; subset mapping options",
+        "synthetic syllabus saved; Review step renders classifications",
+        "comprehensive check through UI; score/VPAA/CLO/PO findings; report saved and reloaded"
+      ],
+      "status": "FAIL",
+      "syllabusId": 2,
+      "score": 99,
+      "passThreshold": 79,
+      "poCount": 13,
+      "poSource": "BSIE",
+      "referenceId": "lcup-po-2026-10-29-BSIE",
+      "vpaa": 7,
+      "classifications": 4,
+      "error": "locator.click: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('option', { name: /^BSIE (?:–|—|-)/ }).first()\u001b[22m\n"
+    },
+    {
+      "program": "BSCPE",
+      "mode": "baseline",
+      "steps": [
+        "program/subject selection; exact corrected PO text; subset mapping options",
+        "synthetic syllabus saved; Review step renders classifications",
+        "comprehensive check through UI; score/VPAA/CLO/PO findings; report saved and reloaded"
+      ],
+      "status": "FAIL",
+      "syllabusId": 3,
+      "score": 99,
+      "passThreshold": 79,
+      "poCount": 13,
+      "poSource": "BSCPE",
+      "referenceId": "lcup-po-2026-10-29-BSCPE",
+      "vpaa": 7,
+      "classifications": 4,
+      "error": "locator.click: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('option', { name: /^BSCPE (?:–|—|-)/ }).first()\u001b[22m\n"
+    },
+    {
+      "program": "BSIT-CYBERSECURITY",
+      "mode": "baseline",
+      "steps": [
+        "program/subject selection; exact corrected PO text; subset mapping options",
+        "synthetic syllabus saved; Review step renders classifications",
+        "comprehensive check through UI; score/VPAA/CLO/PO findings; report saved and reloaded"
+      ],
+      "status": "FAIL",
+      "syllabusId": 4,
+      "score": 99,
+      "passThreshold": 79,
+      "poCount": 9,
+      "poSource": "BSIT",
+      "referenceId": "lcup-po-2026-10-29-BSIT",
+      "vpaa": 7,
+      "classifications": 4,
+      "error": "locator.click: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('option', { name: /^BSIT-CYBERSECURITY (?:–|—|-)/ }).first()\u001b[22m\n"
+    }
+  ],
+  "passed": 0,
+  "failed": 4,
+  "providerRequests": 200,
+  "blockedNetwork": [],
+  "liveClaudeCalls": 0,
+  "profile": "comprehensive-testing",
+  "ordinaryDevelopmentFlagsModified": false
+}

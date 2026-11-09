@@ -18,6 +18,7 @@ function makeDb({ linked = false, tableExists = true, cyberPos } = {}) {
     courses: { 20: { course_id: 20, code: 'CS-301', title: 'Digital Forensics', clos_version: 1, program_id: 2, program_code: 'BSIT-CYBERSECURITY', program_name: 'BSIT Cyber', standards_json: JSON.stringify({ vision: 'V', mission: { lead: 'L', items: [] }, egas: [{ no: 1, name: 'EGA 1', short: 'E1' }], pos: [{ no: 1, short: 'OLD', text: 'Outdated stored copy', egas: [1] }], versions: { vision: 1, egas: 1, pos: 1 } }) } },
   };
   const query = async (sql, p = []) => {
+    if (/FROM academic_years/.test(sql)) throw Object.assign(new Error('not migrated'), { code: 'ER_NO_SUCH_TABLE' }); // a database before the academic year scope
     if (/FROM program_po_reference_active/.test(sql)) throw Object.assign(new Error('not migrated'),{code:'ER_NO_SUCH_TABLE'});
     if (/^CREATE TABLE IF NOT EXISTS program_outcome_sources/.test(sql)) { s.ddl++; return [{}]; }
     if (/FROM program_outcome_sources/.test(sql)) {
@@ -78,14 +79,14 @@ test('a linked specialization resolves to the authoritative POs, EGAs and versio
   assert.equal((await loadResolvedProgram(linked, linked.s.programs[2])).pos[0].text, 'Industrial outcome');
   const bsit = await loadResolvedProgram(linked, linked.s.programs[0]); assert.equal(bsit.inheritedFrom, undefined);
   const none = makeDb({ tableExists: false, cyberPos: [PO(1, 'Own copy')] });
-  assert.equal((await loadResolvedProgram(none, none.s.programs[1])).pos[0].text, 'Own copy');
+  assert.deepEqual((await loadResolvedProgram(none, none.s.programs[1])).pos, []);
 });
 test('a subject of a linked specialization never reads its outdated stored PO copy', async () => {
   const linked = makeDb({ linked: true });
   const course = await loadCourse(linked, 20);
   assert.equal(course.standards.pos[0].text, 'Authoritative outcome 1'); assert.equal(course.standards.inheritedFrom.code, 'BSIT'); assert.equal(course.standards.vision, 'V');
   const unlinked = makeDb({ linked: false });
-  assert.equal((await loadCourse(unlinked, 20)).standards.pos[0].text, 'Outdated stored copy');
+  assert.deepEqual((await loadCourse(unlinked, 20)).standards.pos, []);
 });
 test('inheritStandards leaves a program without a link alone', async () => {
   const db = makeDb(); const standards = { egas: [], pos: [], versions: { egas: 1, pos: 1 } };
@@ -118,10 +119,10 @@ test('permissions are unchanged: faculty and anonymous callers are refused befor
     for (const user of [{ id: 2, role: 'faculty' }, null]) assert.ok([401, 403].includes((await call('PUT', '/BSIT-CYBERSECURITY/outcomes', { pos: [], version: 1 }, user)).status));
   });
 });
-test('requireOwnOutcomes lets an unlinked program through and works without the table', async () => {
+test('canonical programs remain editable; missing inheritance cannot authorize a separate Cyber master', async () => {
   const db = makeDb({ linked: true });
   await requireOwnOutcomes(db, await findProgram(db, 'BSIE'));
-  await requireOwnOutcomes(makeDb({ tableExists: false }), { program_id: 2, code: 'BSIT-CYBERSECURITY' });
+  await assert.rejects(requireOwnOutcomes(makeDb({ tableExists: false }), { program_id: 2, code: 'BSIT-CYBERSECURITY' }),e=>e.body?.code==='outcomes_inherited');
   await assert.rejects(requireOwnOutcomes(db, await findProgram(db, 'BSIT-CYBERSECURITY')), /Edit them in BSIT/);
 });
 

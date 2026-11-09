@@ -26,10 +26,10 @@ export default function Login({ onLogin, onGoogleLogin }) {
       <section className="login-brand">
         <div className="brand-orb"><img src="/cite-logo.png" alt={translateUI("ui.college_logo_1df91f")} /></div>
         <div>
-          <span className="eyebrow light">{translateUI("ui.academic_quality_93a706")}</span>
-          <h1>{translateUI("ui.syllabus_1b731d")}<br />{translateUI("ui.management_system_738978")}</h1>
+
+          <h1>{translateUI("ui.syllabus_1b731d")} {translateUI("ui.management_system_738978")}</h1>
           <p>{translateUI("ui.build_validate_review_approve_archive_and_analyze_undergraduate_s_0aef77")}</p>
-          <div className="feature-pills"><span><Icon name="sparkle" size={16} />{translateUI("ui.ai_compliance_602783")}</span><span><Icon name="sealCheck" size={16} />{translateUI("ui.approval_workflow_cc8935")}</span></div>
+          <div className="feature-pills"><span><Icon name="sparkle" size={16} />{translateUI("ui.ai_compliance_602783")}</span><span><Icon name="sealCheck" size={16} />{translateUI("ui.approval_workflow_cc8935")}</span><span><Icon name="graduationCap" size={16} />{translateUI("ui.academic_quality_93a706")}</span></div>
         </div>
       </section>
       <section className="login-panel">

@@ -1,0 +1,15 @@
+{
+  "readOnlyDevelopment": true,
+  "referenceProgramsEqual": true,
+  "reviewsEqual": true,
+  "changedTablesDuringRun": [
+    {
+      "table": "usage_daily",
+      "beforeRows": 43,
+      "afterRows": 43
+    }
+  ],
+  "sharedEnvironmentUnchanged": true,
+  "developmentMigrationsExecuted": 0,
+  "allMigrationsExecuted": 0
+}

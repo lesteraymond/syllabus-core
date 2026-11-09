@@ -1,6 +1,9 @@
 const crypto = require('crypto');
+const { activeOnly, isDisabled, disabledBody } = require('../lib/accountStatus');
 const { avatarUrlFor } = require('../lib/avatar');
-const { isReviewer, isApprover } = require('../lib/roles');
+const { isReviewer, isApprover, canAuthor } = require('../lib/roles');
+const { cookieSettingsOf } = require('../lib/hostConfig');
+const accountActivity = require('../lib/accountActivity'); // a session restored from a remembered device is a sign-in too (Recent Activity, best effort)
 
 const REMEMBER_COOKIE = 'remember_token';
 const REMEMBER_DAYS = 30;
@@ -32,7 +35,7 @@ function readCookie(req, name) {
 }
 
 function cookieOpts() {
-  return { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', path: '/' };
+  return cookieSettingsOf(process.env); // httpOnly always; Secure in staging and production; SameSite from SESSION_COOKIE_SAMESITE (default lax): the same flags as the session cookie
 }
 
 async function issueRememberToken(db, res, userId) {
@@ -68,10 +71,17 @@ async function restoreSession(req, res, next) {
       return next();
     }
     const u = rows[0];
+    if (u.disabled_at) { // a disabled account is never signed in from a remembered device
+      await db.query('DELETE FROM remember_tokens WHERE user_id = ?', [u.user_id]);
+      res.clearCookie(REMEMBER_COOKIE, cookieOpts());
+      await accountActivity.record(db, { userId: u.user_id, action: 'login_failed', notes: 'disabled_remembered' });
+      return next();
+    }
     await db.query('DELETE FROM remember_tokens WHERE token_id = ?', [u.token_id]);
     req.session.user = toSessionUser(u);
     req.session.cookie.maxAge = REMEMBER_MS;
     await issueRememberToken(db, res, u.user_id);
+    await accountActivity.record(db, { userId: u.user_id, action: 'login', notes: 'remembered' });
     next();
   } catch (err) {
     next(err);
@@ -86,7 +96,10 @@ function makeRequireAuth({ allowPasswordChange }) {
   return async function requireAuth(req, res, next) {
     try {
       if (!req.session.user) return res.status(401).json({ error: 'Not authenticated' });
-      const [rows] = await req.app.locals.db.query('SELECT user_id FROM users WHERE user_id = ?', [req.session.user.id]);
+      const [rows] = await activeOnly(req.app.locals.db, 'SELECT user_id FROM users WHERE user_id = ?', [req.session.user.id]);
+      if (rows.length === 0 && await isDisabled(req.app.locals.db, req.session.user.id).catch(() => false)) {
+        return req.session.destroy(() => res.status(403).json(disabledBody())); // disabled since this session began: it ends here
+      }
       if (rows.length === 0) {
         return req.session.destroy(() => res.status(403).json({ message: 'Access Denied. Account not registered.', error: 'Access Denied. Account not registered.' }));
       }
@@ -118,6 +131,15 @@ function requireReviewer(req, res, next) {
     next();
   });
 }
+// The people who write syllabi: faculty and the administrator (lib/roles.js AUTHOR_ROLES). The Asst. VPAA, the LIC Director and the VPAA review only.
+const AUTHORS_ONLY = 'Only faculty and the administrator write syllabi. The Asst. VPAA, the LIC Director and the VPAA review them.';
+function requireAuthor(req, res, next) {
+  requireAuth(req, res, (err) => {
+    if (err) return next(err);
+    if (!canAuthor(req.session.user)) return res.status(403).json({ error: AUTHORS_ONLY, code: 'authors_only' });
+    next();
+  });
+}
 function requireApprover(req, res, next) {
   requireAuth(req, res, (err) => {
     if (err) return next(err);
@@ -126,4 +148,4 @@ function requireApprover(req, res, next) {
   });
 }
 
-module.exports = { toSessionUser, requireAuth, requireSignedIn, requireAdmin, requireReviewer, requireApprover, restoreSession, issueRememberToken, revokeRememberToken, REMEMBER_MS };
+module.exports = { toSessionUser, requireAuth, requireSignedIn, requireAdmin, requireReviewer, requireApprover, requireAuthor, AUTHORS_ONLY, restoreSession, issueRememberToken, revokeRememberToken, REMEMBER_MS };

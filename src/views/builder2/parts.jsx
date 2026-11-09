@@ -1,6 +1,8 @@
 import { tr } from "../../i18n/index.js";
 import { t as translateUI } from "../../i18n/index.js";
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { pickerPosition } from '../../lib/pickerPosition';
 
 const PATHS = {
   up: 'M8 13V3M4 7l4-4 4 4', down: 'M8 3v10M4 9l4 4 4-4', copy: 'M5.5 5.5h7v7h-7zM3.5 10.5v-7h7',
@@ -43,21 +45,34 @@ export function Tag({ info, onRemove }) {
 }
 
 // One picker for CLO, EGA and PO tags, searchable by name, number or statement.
-export function OutcomePicker({ model, d, kinds, rect, title, selected, onToggle, onClose }) {
+// It is drawn in a portal on document.body: the builder's cards keep a transform from their entry animation, and a transform makes `position: fixed` relative to
+// that card instead of the window, which put the picker far from its button. From the body it is always placed against the window, next to its button
+// (`anchor`, followed while the page scrolls or the window resizes; `rect` is where the button was when it was clicked).
+export function OutcomePicker({ model, d, kinds, rect, anchor, title, selected, onToggle, onClose }) {
   const ref = useRef(null);
   const [q, setQ] = useState('');
+  const [box, setBox] = useState(rect);
   useEffect(() => {
     const input = ref.current && ref.current.querySelector('input[type="search"]');
-    if (input) input.focus();
+    if (input) input.focus({ preventScroll: true });
     const out = (e) => { if (ref.current && !ref.current.contains(e.target)) onClose(); };
     const key = (e) => { if (e.key === 'Escape') onClose(); };
+    let frame = 0;
+    const follow = (e) => {
+      if (e && e.target && ref.current && ref.current.contains(e.target)) return; // scrolling the list itself
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => { if (anchor && anchor.isConnected) setBox(anchor.getBoundingClientRect()); });
+    };
     document.addEventListener('mousedown', out);
     document.addEventListener('keydown', key);
-    window.addEventListener('resize', onClose);
+    window.addEventListener('resize', follow);
+    window.addEventListener('scroll', follow, true);
     return () => {
+      cancelAnimationFrame(frame);
       document.removeEventListener('mousedown', out);
       document.removeEventListener('keydown', key);
-      window.removeEventListener('resize', onClose);
+      window.removeEventListener('resize', follow);
+      window.removeEventListener('scroll', follow, true);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -71,13 +86,10 @@ export function OutcomePicker({ model, d, kinds, rect, title, selected, onToggle
   if (kinds.includes('po')) groups.push({ kind: 'po', title: 'Program outcomes · ' + d.meta.program, items: pos.map((o) => mk('po:' + o.no)) });
   groups.forEach((g) => { g.items = g.items.filter((it) => !ql || (it.info.label + ' ' + it.info.name + ' ' + it.info.text).toLowerCase().includes(ql)); });
 
-  const h = Math.min(380, window.innerHeight - 24);
-  const top = rect.bottom + 6;
-  const style = { left: Math.max(8, Math.min(rect.left, window.innerWidth - 388)), width: 380, maxHeight: h };
-  if (top + h > window.innerHeight) style.bottom = Math.max(8, window.innerHeight - rect.top + 6); else style.top = top;
+  const style = pickerPosition(box || rect, { width: window.innerWidth, height: window.innerHeight });
   const any = groups.some((g) => g.items.length);
 
-  return (
+  return createPortal(
     <div className="bld2-pop" ref={ref} style={style} role="dialog" aria-label={title || translateUI("ui.tag_outcomes_9af691")}>
       <input type="search" className="in" value={q} placeholder={translateUI("ui.search_by_name_or_number_63632c")} aria-label={translateUI("ui.search_outcomes_3d2fd6")} onChange={(e) => setQ(e.target.value)} />
       {groups.filter((g) => !ql || g.items.length).map((g) => (
@@ -93,7 +105,8 @@ export function OutcomePicker({ model, d, kinds, rect, title, selected, onToggle
         </div>
       ))}
       {!any && q && <div className="none">{translateUI("ui.nothing_matches_019f8e")}{'“'}{q}{'”'}.</div>}
-    </div>
+    </div>,
+    document.body
   );
 }
 

@@ -1,3 +1,4 @@
+import { YearFilter } from '../components/AcademicYearScope';
 import StableButton from '../components/StableButton';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
@@ -22,7 +23,7 @@ export default function ReviewApproval({ syllabi, user, setViewCode, setPage }) 
   const shown = useMemo(() => filterRows(rows, { q }), [rows, q]);
   return (
     <>
-      <PageHead title={translateUI("ui.review_approval_c4c871")} subtitle={translateUI(isApprover(user.role) ? 'reviewChain.subtitleApprover' : 'reviewChain.subtitleReviewer')} actions={<span className="rv-count" role="status"><strong>{pending.length}</strong><span>{translateUI("ui.pending_b6d850").trim()}</span></span>} />
+      <PageHead title={translateUI("ui.review_approval_c4c871")} subtitle={translateUI(isApprover(user.role) ? 'reviewChain.subtitleApprover' : 'reviewChain.subtitleReviewer')} actions={<><YearFilter group="queue" /><span className="rv-count" role="status"><strong>{pending.length}</strong><span>{translateUI("ui.pending_b6d850").trim()}</span></span></>} />
       {waiting > 0 && (
         <div className="info-banner rv-waiting" role="status">
           <span>{tr(waiting + (waiting === 1 ? ' submission is' : ' submissions are')) + translateUI("ui.waiting_for_the_ai_checker_check_37ebe7") + tr(waiting === 1 ? 'it' : 'them') + translateUI("ui.there_first_then_9f79fd") + tr(waiting === 1 ? 'it appears' : 'they appear') + translateUI("ui.here_for_your_decision_b13f6c")}</span>
