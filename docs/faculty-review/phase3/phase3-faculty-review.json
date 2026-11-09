@@ -1,7 +1,7 @@
 {
   "packageVersion": "phase3-faculty-review-1",
   "manifestVersion": "phase3-1",
-  "manifestSha256": "2da030d93433c36511cce9a2196096511f17568053d611e22521d267fad0ae36",
+  "manifestSha256": "cc71563ddef7889a8c070de3d2c004fec96e24910690b4f7fa95623db034b84e",
   "status": "DRAFT — developer-written expectation, NOT faculty-reviewed",
   "offlineOnly": true,
   "autoPopulatedFacultyVerdicts": 0,
@@ -5579,14 +5579,14 @@
           "plan[12].activities",
           "plan[12].tasks"
         ],
-        "withheld": null,
-        "withheldNote": null,
-        "summary": "plan[12].contents | plan[12].ilos[0].text | plan[12].activities | plan[12].tasks"
+        "withheld": "value_replaced",
+        "withheldNote": "The proposed rewrite named a different core value from the one you selected, so it is not offered. Keep your selected value and show what students do or decide in this lesson that expresses it; if that value does not fit the lesson, review your choice. The academic judgment and your original text are unchanged.",
+        "summary": "plan[12].contents | plan[12].ilos[0].text | plan[12].activities | plan[12].tasks | Precedence withholding active: value_replaced (The proposed rewrite named a different core value from the one you selected, so it is not offered. Keep your selected value and show what students do or decide in this lesson that expresses it; if that value does not fit the lesson, review your choice. The academic judgment and your original text are unchanged.)"
       },
       "recommendation": {
-        "recommendationType": "REWRITE_TEXT",
-        "withheld": null,
-        "suggestedText": "[REWRITE_TEXT — UNVERIFIED PROPOSAL — generated for testing/review; requires faculty approval before any syllabus change.]\nCommunity-orientedness: teams coordinate their subsystem integration plans and interface definitions with another team so both subsystems work together.",
+        "recommendationType": "REVIEW_REQUIRED",
+        "withheld": "value_replaced",
+        "suggestedText": "[WITHHELD (value_replaced)]: The proposed rewrite named a different core value from the one you selected, so it is not offered. Keep your selected value and show what students do or decide in this lesson that expresses it; if that value does not fit the lesson, review your choice. The academic judgment and your original text are unchanged.",
         "requiresFacultyApproval": true,
         "reviewConsiderations": []
       },

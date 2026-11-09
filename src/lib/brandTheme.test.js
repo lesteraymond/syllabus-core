@@ -122,9 +122,17 @@ test('status tags are styled for both spellings of a status, and each carries an
 
 test('the time-usage chart keeps its bars and the range buttons readable', () => {
   assert.ok(contrast('#b9842a', '#ffffff') >= 3, 'today bar on the white card (a graphic: 3:1)');
-  assert.ok(contrast(token('blue'), '#ffffff') >= 3, 'ordinary bars on the white card');
-  assert.ok(contrast('#ffffff', token('blue')) >= 4.5, 'selected range label');
+  assert.ok(contrast(token('btn-primary'), '#ffffff') >= 3, 'ordinary bars on the white card (the primary button blue)');
+  assert.ok(theme.includes('.usage-bar { fill: var(--btn-primary); }'), 'the bars use the primary button blue, like New syllabus');
+  assert.ok(contrast('#ffffff', token('btn-primary')) >= 4.5, 'selected range label on the primary button blue');
+  assert.ok(theme.includes('.usage-range button.on { background: var(--btn-primary); color: #ffffff; }'), 'the selected range button uses the primary button blue, like New syllabus');
   assert.ok(theme.includes('--usage-today: #b9842a'), 'the today colour is the one tested above');
+});
+
+test('the AI Quality Snapshot rings are the primary button blue, with the lowest area still red', () => {
+  assert.ok(theme.includes('.quality-ring { background: conic-gradient(var(--btn-primary) 0 var(--p), #e3e7ea var(--p)); }'), 'the rings use the blue of New syllabus');
+  assert.ok(contrast(token('btn-primary'), '#e3e7ea') >= 3, 'the blue arc stands out from the grey track (a graphic: 3:1)');
+  assert.ok(theme.includes('.quality-mini.low .quality-ring { background: conic-gradient(var(--red) 0 var(--p), #e3e7ea var(--p)); }'), 'the lowest area keeps its red ring');
 });
 
 test('the open dropdown list stays readable: option text, the chosen option on the highlight, and the filter hint', () => {
@@ -173,7 +181,7 @@ test('subject edit and delete moved from the modal to a last, left-aligned Actio
   const table = readFileSync(new URL('../views/CourseOutcomes.jsx', import.meta.url), 'utf8');
   assert.ok(!table.includes('SubjectModal') && !table.includes('ui.clos_a33483'), 'the admin table no longer opens learning-outcome authoring');
   assert.ok(table.includes('className="col-actions"') && table.includes('<SubjectRowActions'), 'each row has the actions');
-  assert.ok(table.includes('colSpan={deadlineState.enabled ? 5 : 4}'), 'the empty row spans every column, the Deadline one too once it is shown');
+  assert.ok(table.includes('colSpan={deadlineState.enabled ? 8 : 7}'), 'the empty row spans every column (code, title, program, curriculum year, term, pre-requisite, actions), the Deadline one too once it is shown');
   assert.ok(theme.includes('.col-actions { width: 112px; min-width: 112px; white-space: nowrap; text-align: left; }'), 'the header and cells are left-aligned');
   assert.ok(theme.includes('.sm-actions .icon-btn { color: #9aa3b2;') && theme.includes('.sm-actions .icon-btn.is-delete:hover') && theme.includes('color: #c84848;'), 'the icons are soft grey, and delete turns red on hover, like the Programs card');
   const actions = readFileSync(new URL('../components/SubjectActions.jsx', import.meta.url), 'utf8');
@@ -226,10 +234,59 @@ test('faculty see deadlines on the dashboard card and on each of their syllabi, 
   assert.ok(contrast('#9b1f27', token('tint-crimson')) >= 4.5, 'the date box of a missed deadline');
 });
 
-test('the Remind buttons look like the other icon buttons and fit the people list', () => {
-  assert.ok(theme.includes('.dl-remind { color: var(--blue); border-width: 2px; border-color: #b8c8ec; }'), 'blue, like the edit buttons');
-  assert.ok(theme.includes('grid-template-columns: minmax(0, 1fr) auto 34px'), 'a 34px column for the 34px button');
+test('the people list has no Remind button on each row (one Remind all does it), and a reminder refreshes who was last reminded', () => {
+  assert.ok(!theme.includes('.dl-remind'), 'no per-person bell button');
+  assert.ok(theme.includes('.dl-people li { display: grid; grid-template-columns: minmax(0, 1fr) auto;'), 'two columns: the name and the status');
   assert.ok(contrast(token('blue'), '#ffffff') >= 4.5, 'the bell icon on white');
   const dialog = readFileSync(new URL('../components/DeadlineDialog.jsx', import.meta.url), 'utf8');
   assert.ok(dialog.includes("deadlinesApi.remind(selected, userIds)") && dialog.includes('setReload((n) => n + 1)'), 'a reminder refreshes who was last reminded');
+});
+
+// Primary buttons use their own lighter blue (--btn-primary #0866ff), not the navy brand blue; the white label stays readable on it and on its hover.
+test('primary buttons are the lighter blue #0866ff, with a readable white label (4.5:1) at rest and on hover', () => {
+  assert.strictEqual(token('btn-primary'), '#0866ff');
+  for (const name of ['btn-primary', 'btn-primary-hover']) assert.ok(contrast('#ffffff', token(name)) >= 4.5, 'white label on ' + name + ': ' + contrast('#ffffff', token(name)).toFixed(2));
+  assert.ok(theme.includes('.btn.primary { background: var(--btn-primary);'), 'the primary button uses it');
+  assert.ok(theme.includes('.btn.primary:hover { background: var(--btn-primary-hover); }'));
+  assert.ok(theme.includes('.asg-btn.primary { background: var(--btn-primary); }'), 'and the assignment screen\'s primary button');
+});
+
+// The sidebar's hover and its selected item are both white-grey (the selected one a step deeper, so the two stay apart), with dark text and no side
+// strip; the label is always dark, the icon at rest a light grey, and hovered or selected the icon is the primary blue (like the stat icons).
+test('the sidebar hover and selected item are white-grey, readable, with no side strip, and the selected icon stays visible', () => {
+  assert.notStrictEqual(token('side-active'), token('side-hover'), 'selected and hover can be told apart');
+  for (const name of ['side-hover', 'side-active', 'side-active-hover']) {
+    assert.ok(contrast(token('ink'), token(name)) >= 4.5, 'label on ' + name);
+    assert.ok(contrast(token('btn-primary'), token(name)) >= 3, 'blue icon on ' + name);
+  }
+  assert.ok(theme.includes('.sidebar nav button.active { background: var(--side-active); color: var(--ink); box-shadow: none; }'), 'no side strip');
+  assert.ok(theme.includes('.sidebar nav button.active:hover { background: var(--side-active-hover); color: var(--ink); }'));
+  assert.ok(theme.includes('.sidebar nav button:hover .nav-icon, .sidebar nav button.active .nav-icon { color: var(--btn-primary); }'), 'the icon turns blue when hovered or selected');
+  assert.ok(theme.includes('padding-bottom: 6px; color: var(--text); }'), 'the label is dark');
+  assert.ok(contrast(token('text'), token('bg')) >= 4.5, 'and readable on the sidebar');
+  assert.ok(theme.includes('.sidebar nav button .nav-icon { color: var(--side-icon); }'), 'the icon at rest: light grey');
+  assert.ok(contrast(token('side-icon'), token('bg')) >= 3, 'still visible on the sidebar (a graphic: 3:1; the collapsed sidebar shows only icons): ' + contrast(token('side-icon'), token('bg')).toFixed(2));
+});
+
+// Secondary (outline) buttons: a light grey fill (#e2e5e9) with black bold text and no blue edge; the hover a step darker. Readable at rest and on hover.
+test('outline buttons are light grey with black bold text and no blue border', () => {
+  assert.strictEqual(token('btn-secondary'), '#e2e5e9');
+  for (const name of ['btn-secondary', 'btn-secondary-hover']) assert.ok(contrast('#000000', token(name)) >= 7, 'black label on ' + name);
+  assert.ok(theme.includes('.btn.outline { background: var(--btn-secondary); color: #000; font-weight: var(--fw-bold); border-color: var(--btn-secondary); }'));
+  assert.ok(theme.includes('.btn.outline:hover { background: var(--btn-secondary-hover); border-color: var(--btn-secondary-hover); }'));
+  assert.ok(!/\.btn\.outline[^{]*\{[^}]*color: var\(--blue\)/.test(theme), 'no outline button keeps the blue text');
+});
+
+// The dashboard's stat card icons use the primary button blue (#0866ff, like New syllabus), with a white icon.
+test('the dashboard stat icons are the primary button blue with a white icon', () => {
+  assert.ok(theme.includes('.stat-grid .stat-card .stat-icon { width: 28px; height: 28px; border-radius: 8px; background: var(--btn-primary); color: #ffffff;'));
+  assert.ok(contrast('#ffffff', token('btn-primary')) >= 3, 'the white icon on the blue (a graphic: 3:1)');
+});
+
+// The syllabus builder's selected step (1-7) uses the primary button blue, not the navy: a blue badge with a white number, and its darker shade for the label.
+test('the selected builder step is the primary button blue, and readable', () => {
+  assert.ok(theme.includes('.stepper button.active { background: var(--btn-primary-tint); color: var(--btn-primary-hover); }'));
+  assert.ok(theme.includes('.stepper button.active span { background: var(--btn-primary); color: #ffffff; }'));
+  assert.ok(contrast(token('btn-primary-hover'), token('btn-primary-tint')) >= 4.5, 'the step label on the tint');
+  assert.ok(contrast('#ffffff', token('btn-primary')) >= 4.5, 'the white step number on the blue badge');
 });

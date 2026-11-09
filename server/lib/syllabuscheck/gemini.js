@@ -7,11 +7,12 @@ const { VALUE_NAMES } = require('./values');
 const requirementsAdvice = require('./requirementsAdvice');
 const { coveragePairs } = require('./coverage');
 const cloClassification = require('./cloClassification');
+const costPlan = require('./costPlan');
 const v2Activation = require('./academicV2Activation');
 const { isTrivialRewrite } = require('./stewardship');
 const { reviewExplanation, reviewDraft } = require('./answerReview');
 const { LESSON_TYPES, RESOURCE_REVIEW_VERSION } = require('./recommendationReview');
-const { anthropicMessage, anthropicReady, configKeyOf, MODEL_ID: CLAUDE_MODEL, PRICES_AS_OF, priceOf: claudePriceOf, PRICES: CLAUDE_PRICES, US_ONLY_FACTOR } = require('./anthropicClient');
+const { anthropicMessage, anthropicSettings, anthropicReady, configKeyOf, MODEL_ID: CLAUDE_MODEL, PRICES_AS_OF, priceOf: claudePriceOf, PRICES: CLAUDE_PRICES, US_ONLY_FACTOR } = require('./anthropicClient');
 const { caseOnlyEnumMismatches } = require('./anthropicSchema');
 const VALUES = VALUE_NAMES; // one list for the coded VALUE check, the scored Module-value relationship and Stage D1 (values.js)
 const LABELS = ['ALIGNED', 'PARTIALLY_ALIGNED', 'NOT_ALIGNED', 'INSUFFICIENT_EVIDENCE'];
@@ -454,12 +455,14 @@ function salvage(raw, pairs, extended = false) {
   if (!raw || typeof raw !== 'object' || !Array.isArray(raw.judgements)) return [];
   const times = new Map();
   for (const j of raw.judgements) if (j && typeof j.id === 'string') times.set(j.id, (times.get(j.id) || 0) + 1);
+  const pairIds = new Set(pairs.map(p => p.id));
+  const unknownBodies = new Set(raw.judgements.filter(j => j && typeof j.id === 'string' && !pairIds.has(j.id)).map(j => JSON.stringify([j.label, j.sourceQuote, j.targetQuote, j.explanation])));
   const kept = [], seen = new Set();
   for (const j of raw.judgements) {
-    if (!j || times.get(j.id) !== 1) continue;
+    if (!j || times.get(j.id) !== 1 || unknownBodies.has(JSON.stringify([j.label, j.sourceQuote, j.targetQuote, j.explanation]))) continue;
     try { kept.push(checkOne(j, pairs, seen, extended)); } catch { /* this one is asked again */ }
   }
-  return kept;
+  return kept.length < pairs.length ? kept : [];
 }
 // Why each relationship of a rejected answer was refused: [{ id, reason, code, codes?, problems?, given? }]. For the reader of a log or an evaluation,
 // and for the retry policy (judgeStaged), never for the verdicts. `codes` lists every problem of an answer that had more than one. A refused quote
@@ -490,8 +493,15 @@ function rejections(raw, pairs, extended = false) {
 // `unverified`: it is safe to ask again. Transport, HTTP and quota failures are never marked, so they are not retried.
 function verifyAnswer(text, pairs, extended = false) {
   let raw;
-  try { raw = JSON.parse(text); } catch (error) { throw Object.assign(error, { unverified: true, code: 'invalid_json', salvaged: [], rejected: rejections(undefined, pairs, extended) }); }
-  try { return validate(raw, pairs, extended); } catch (error) { error.unverified = true; error.code = error.code || 'invalid_answer'; error.salvaged = salvage(raw, pairs, extended); error.rejected = rejections(raw, pairs, extended); throw error; }
+  try { raw = JSON.parse(text); } catch (error) {
+    Object.defineProperty(error, 'rawText', { value: typeof text === 'string' ? text.slice(0, 1200) : '' });
+    throw Object.assign(error, { unverified: true, code: 'invalid_json', salvaged: [], rejected: rejections(undefined, pairs, extended) });
+  }
+  try { return validate(raw, pairs, extended); } catch (error) {
+    const rawById = new Map(Array.isArray(raw?.judgements) ? raw.judgements.filter(j => j && typeof j.id === 'string').map(j => [j.id, j]) : []);
+    Object.defineProperties(error, { rawText: { value: typeof text === 'string' ? text.slice(0, 1200) : '' }, rawById: { value: rawById } });
+    error.unverified = true; error.code = error.code || 'invalid_answer'; error.salvaged = salvage(raw, pairs, extended); error.rejected = rejections(raw, pairs, extended); throw error;
+  }
 }
 // What the AI is told about the course itself, so a judgement and a rewrite stay within the subject: the pairs alone are only snippets.
 // Sent with every request next to the pairs. `outcomes` (the CLO statements) is context only and is left out of a pair's fingerprint.
@@ -506,12 +516,21 @@ function courseOf(content) {
 }
 // The part of the course that decides a verdict: a changed title, program or description is a different question.
 const courseKeyOf = course => JSON.stringify([course.code, course.title, course.program, course.yearLevel, course.description]);
+// GAP-01: CLO relationships can be judged without the course description (CLO ↔ Course Description is not a VPAA relationship, and Policy V2 already blanks it).
+// SYLLABUS_CHECK_CLO_DESCRIPTION=off sends a request that carries any CLO relationship without it. It is OFF by default (unset): every request is then byte for byte what it
+// always was. The shared service sets it for the legacy run of a check while Policy V2 is on; an operator may set it too.
+// With it on, the reuse key of those relationships is made from the course without the description, so a changed description never re-asks them.
+const CLO_CONTEXT = /^(Course-CLO|CLO-set|CLO-PO|CLO-EGA|CLO-anyPO|CLO-anyEGA|ILO-CLO|ILO-anyCLO|CLO-coverage|CLO-classification)$/;
+const courseWithoutDescription = course => ({ ...course, description: '' });
+const cloDescriptionOff = (env = process.env) => String(env?.SYLLABUS_CHECK_CLO_DESCRIPTION || '').trim().toLowerCase() === 'off';
 // The user message: the course and the pairs and, when a staged check asks a relationship again, the corrections for it (judgeStaged). Without
 // corrections it is exactly the message it always was. The r2 recommendation contract adds recommendation_context for its scoped pairs.
-function userMessageOf(course, pairs, corrections, recommendation = null) {
+function userMessageOf(course, pairs, corrections, recommendation = null, withoutCloDescription = false, scopedContext = false) {
   const own = (corrections || []).filter(c => pairs.some(pair => pair.id === c.id));
   const context = recommendation ? recommendation.contextFor(pairs) : null;
-  return JSON.stringify({ course, document_data: pairs, ...(context ? { recommendation_context: context } : {}), ...(own.length ? { corrections: own } : {}) });
+  // scopedContext (SYLLABUS_CHECK_COURSE_CONTEXT=scoped, costPlan.js): the description goes only to requests that carry a type which reads it.
+  const shown = (withoutCloDescription && pairs.some(pair => CLO_CONTEXT.test(pair.type))) || (scopedContext && !pairs.some(pair => costPlan.needsDescription(pair.type))) ? courseWithoutDescription(course) : course;
+  return JSON.stringify({ course: shown, document_data: pairs, ...(context ? { recommendation_context: context } : {}), ...(own.length ? { corrections: own } : {}) });
 }
 function cancelledRequest(signal) {
   return Object.assign(Error('AI checking was cancelled before all relationships were evaluated.'), { kind: 'request_cancelled', retryable: false, cause: signal?.reason });
@@ -527,7 +546,7 @@ async function requestGemini(pairs,{ env = process.env, transport = fetch, cours
   const contract = contractOf(env, course);
   const schema = alignmentSchema(true, explanationFirst(variant), contract.aspectKeys, contract.recommend);
   const maxOutputTokens = 8192;
-  const requestBody = JSON.stringify({ systemInstruction: { parts: [{ text: systemPromptOf(variant, env, pairs, academicPolicy) }] }, contents: [{ role: 'user', parts: [{ text: userMessageOf(course, pairs, corrections) }] }], generationConfig: { temperature: 0, maxOutputTokens, responseMimeType: 'application/json', responseSchema: schema } });
+  const requestBody = JSON.stringify({ systemInstruction: { parts: [{ text: systemPromptOf(variant, env, pairs, academicPolicy) }] }, contents: [{ role: 'user', parts: [{ text: userMessageOf(course, pairs, corrections, null, cloDescriptionOff(env)) }] }], generationConfig: { temperature: 0, maxOutputTokens, responseMimeType: 'application/json', responseSchema: schema } });
   onRequest?.(requestBody, maxOutputTokens);
   let response;
   try { response = await transport(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
@@ -552,7 +571,7 @@ async function requestOpenRouter(pairs, { env = process.env, transport = fetch, 
   const schema = alignmentSchema(false, explanationFirst(variant), contract.aspectKeys, contract.recommend, minItemsOn(env, model) ? 1 : 0);
   const systemPrompt = freeJson ? `${prompt}\nReturn only a JSON object matching this schema: ${JSON.stringify(schema)}\nKeep explanations concise. Quote short verbatim spans. Never include markdown fences.` : prompt;
   const requestBody = JSON.stringify({ model, temperature: 0, stream: false, max_tokens: 8192,
-    messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessageOf(course, pairs, corrections) }],
+    messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessageOf(course, pairs, corrections, null, cloDescriptionOff(env)) }],
     response_format: freeJson ? { type: 'json_object' } : { type: 'json_schema', json_schema: { name: 'syllabus_alignment', strict: true, schema } },
     ...(model === NEMOTRON_FREE ? { reasoning: { effort: 'low' } } : model === LAGUNA_FREE ? { reasoning: { enabled: false } } : {}), // Laguna returns a null content while reasoning
     provider: { // Nemotron's free provider does not advertise JSON mode, so requiring it matches no endpoint (404); the answer is verified server-side instead.
@@ -584,15 +603,22 @@ async function requestOpenRouter(pairs, { env = process.env, transport = fetch, 
 // refused or cut off (it was billed all the same), with enumCaseOnly when the answer had enum values that differ from the schema only in capitalisation
 // (enumCaseOf). options.anthropicTimeoutMs and options.sleep are for tests.
 // options.recommendation is the prepared r2 contract (align passes it; academicV2Recommendation.js prepare).
-async function requestAnthropic(pairs, { env = process.env, transport, course, corrections, onUsage, onRequest, signal, sleep, anthropicTimeoutMs, academicPolicy, recommendation = null } = {}) {
+async function requestAnthropic(pairs, { env = process.env, transport, course, corrections, onUsage, onRequest, signal, sleep, anthropicTimeoutMs, academicPolicy, recommendation = null, prefixGate = null } = {}) {
   if (signal?.aborted) throw cancelledRequest(signal);
   if (recommendation && typeof recommendation.scopeOf !== 'function') throw Error('A recommendation contract must be prepared (academicV2Recommendation.js prepare) before it is sent.');
   const variant = variantOf(env);
-  const contract = contractOf(env, course, recommendation);
+  const fullContract = contractOf(env, course, recommendation);
+  // F6 (costPlan.js): ask only for the structured fields this request's relationship types use; the schema and the verification of the answer use the same list.
+  const contract = costPlan.outputFieldsOn(env) && !recommendation ? { ...fullContract, aspectKeys: costPlan.aspectKeysForPairs(fullContract.aspectKeys, pairs) } : fullContract;
   const schema = alignmentSchema(false, explanationFirst(variant), contract.aspectKeys, contract.recommend, 0, recommendation ? recommendation.fields : null);
   let answer;
+  const system = systemPromptOf(variant, env, pairs, academicPolicy, recommendation);
+  // F2 (costPlan.js): size max_tokens, and so the reservation, from the request instead of the account-wide ceiling. Off: undefined, so nothing changes.
+  const maxTokens = costPlan.outputPlanOn(env) ? costPlan.plannedMaxTokens({ pairCount: pairs.length, recommendation: !!recommendation, thinking: anthropicSettings(env).thinking !== 'off', ceiling: anthropicSettings(env).maxTokens }) : undefined;
+  const send = () => anthropicMessage({ model: env.ANTHROPIC_MODEL, system, user: userMessageOf(course, pairs, corrections, recommendation, cloDescriptionOff(env), costPlan.scopedContextOn(env)), schema, subject: 'alignment' }, { env, transport, sleep, timeoutMs: anthropicTimeoutMs, signal, onRequest, maxTokens });
   try {
-    answer = await anthropicMessage({ model: env.ANTHROPIC_MODEL, system: systemPromptOf(variant, env, pairs, academicPolicy, recommendation), user: userMessageOf(course, pairs, corrections, recommendation), schema, subject: 'alignment' }, { env, transport, sleep, timeoutMs: anthropicTimeoutMs, signal, onRequest });
+    // F4: with the warm-up on, the first request that carries a given system prompt runs alone and the rest read the prompt cache it wrote.
+    answer = costPlan.warmupOn(env) && prefixGate ? await costPlan.throughGate(prefixGate, crypto.createHash('sha256').update(String(env.ANTHROPIC_MODEL) + '\u0000' + system).digest('hex'), send) : await send();
   } catch (error) { if (error.usage) onUsage?.(error.usage); throw error; }
   onUsage?.({ ...answer.usage, ...enumCaseOf(answer.text, schema) });
   return verifyAnswer(answer.text, pairs, contract);
@@ -637,6 +663,15 @@ const promptVersionOf = (model, env = process.env) => {
 const inRange = (value, low, high, fallback) => { const n = Number.parseInt(value, 10); return Number.isInteger(n) && n >= low && n <= high ? n : fallback; };
 // One conservative budget shared by every AI request in a Re-Check, including validator retries, staged follow-ups and Policy V2 slices.
 // Input is reserved by UTF-8 request-body bytes (a conservative token upper bound) plus the provider's configured maximum output tokens.
+//
+// Budget planning (Policy V2 / comprehensive profile). Requests carry a priority:
+//   'scored'    a legacy relationship that feeds the official score (the default, so every older caller behaves exactly as before)
+//   'v2'        the required Policy V2 evaluations: the seven VPAA links, the four CLO classifications and the existing V2 course checks
+//   'optional'  supporting checks that advise only (the staged follow-ups and advisory-only questions)
+// holdFor(n) sets aside room for n 'v2' requests. An 'optional' request is sent only if it fits WITHOUT touching that room, so optional work can no
+// longer use up the budget before the required evaluations run. A refused optional request is deferred (reported as not checked), never sent, and it
+// does not stop the check: it is not a budget exhaustion. 'scored' and 'v2' requests are refused only by the ordinary limits, as before, and the
+// caps themselves are never raised here.
 function createRequestBudget(env = process.env) {
   const maxRequests = inRange(env.SYLLABUS_CHECK_AI_MAX_REQUESTS, 0, 1000, 512);
   const maxTokens = inRange(env.SYLLABUS_CHECK_AI_MAX_TOKENS, 0, 100000000, 8000000);
@@ -644,23 +679,34 @@ function createRequestBudget(env = process.env) {
   const maxCostUsd = Number.isFinite(costParsed) && costParsed > 0 ? costParsed : null;
   let requests = 0, reservedTokens = 0, rejectedRequests = 0, stopReason = null;
   let reservedCostUsd = 0, reconciledCostUsd = 0;
+  const reported = { requests: 0, inputTokens: 0, outputTokens: 0, cacheCreationInputTokens: 0, cacheReadInputTokens: 0, calculatedUsd: 0, unpriced: 0 };
+  let planning = false, heldRequests = 0, plannedRequired = 0, deferredOptional = 0, maxSeenCost = 0, maxSeenTokens = 0;
+  const byPriority = { scored: { requests: 0, costUsd: 0 }, v2: { requests: 0, costUsd: 0 }, optional: { requests: 0, costUsd: 0 } };
   const fail = reason => {
     stopReason ||= reason;
     rejectedRequests += 1;
     const kindDesc = reason === 'request_limit' ? 'request' : reason === 'cost_budget' ? 'cost' : 'token';
     return Object.assign(Error(`The configured per-check AI ${kindDesc} budget is exhausted; remaining relationships were not sent.`), { kind: 'request_budget', retryable: false, budgetReason: stopReason });
   };
+  // Not sticky: later required requests are still allowed.
+  const defer = () => {
+    deferredOptional += 1;
+    return Object.assign(Error('This optional supporting check was not sent: the per-check AI budget is being kept for the required academic evaluations.'), { kind: 'request_budget', retryable: false, budgetReason: 'optional_deferred' });
+  };
   return {
-    reserveRequest(body, maxOutputTokens = 0, { model = '', estimatedCost = null } = {}) {
-      if (stopReason) throw fail(stopReason);
+    holdFor(count) { planning = true; plannedRequired = heldRequests = Math.max(0, Math.floor(Number(count)) || 0); },
+    isPlanning: () => planning,
+    reserveRequest(body, maxOutputTokens = 0, { model = '', estimatedCost = null, priority = 'scored' } = {}) {
+      // Optional handling exists only while a planning hold is active (Policy V2 runs); everywhere else every request is treated exactly as it always was.
+      const kind = priority === 'v2' ? 'v2' : priority === 'optional' && planning ? 'optional' : 'scored';
+      if (stopReason && kind !== 'optional') throw fail(stopReason);
+      if (stopReason && kind === 'optional') throw defer();
       const serialized = typeof body === 'string' ? body : JSON.stringify(body ?? {});
       const inputBytes = Buffer.byteLength(serialized, 'utf8');
       const outputMax = Math.max(0, Number(maxOutputTokens) || 0);
       const estimate = inputBytes + outputMax;
-      if (requests >= maxRequests) throw fail('request_limit');
-      if (reservedTokens + estimate > maxTokens) throw fail('token_budget');
+      let estCost = 0;
       if (maxCostUsd !== null) {
-        let estCost = 0;
         if (Number.isFinite(estimatedCost) && estimatedCost >= 0) {
           estCost = estimatedCost;
         } else if (freeJsonModel(model)) {
@@ -676,13 +722,33 @@ function createRequestBudget(env = process.env) {
         } else {
           estCost = ((inputBytes * 3) + (outputMax * 15)) / 1e6;
         }
-        if (reservedCostUsd + estCost > maxCostUsd) throw fail('cost_budget');
-        reservedCostUsd += estCost;
       }
+      if (kind === 'optional') {
+        // Room kept for the required V2 requests still to come: sized from the largest required request seen (or this one), with headroom.
+        const hold = planning ? heldRequests : 0;
+        const perCost = Math.max(maxSeenCost, estCost) * 1.25, perTokens = Math.max(maxSeenTokens, estimate) * 1.25;
+        if (requests + 1 + hold > maxRequests) throw defer();
+        if (reservedTokens + estimate + hold * perTokens > maxTokens) throw defer();
+        if (maxCostUsd !== null && reservedCostUsd + estCost + hold * perCost > maxCostUsd) throw defer();
+      } else {
+        if (requests >= maxRequests) throw fail('request_limit');
+        if (reservedTokens + estimate > maxTokens) throw fail('token_budget');
+        if (maxCostUsd !== null && reservedCostUsd + estCost > maxCostUsd) throw fail('cost_budget');
+      }
+      reservedCostUsd += estCost;
       requests += 1; reservedTokens += estimate;
+      byPriority[kind].requests += 1; byPriority[kind].costUsd += estCost;
+      if (kind === 'v2' && heldRequests > 0) heldRequests -= 1;
+      if (kind !== 'optional') { maxSeenCost = Math.max(maxSeenCost, estCost); maxSeenTokens = Math.max(maxSeenTokens, estimate); }
       return estimate;
     },
     reconcileUsage(used) {
+      // Accounting (reporting only): what the provider reported, kept apart from the reservation estimates. A request with no usage adds nothing.
+      if (used && (used.inputTokens != null || used.outputTokens != null)) {
+        reported.requests += 1;
+        for (const key of ['inputTokens', 'outputTokens', 'cacheCreationInputTokens', 'cacheReadInputTokens']) reported[key] += Number(used[key]) || 0;
+        if (Number.isFinite(used.estimatedUsd)) reported.calculatedUsd = Math.round((reported.calculatedUsd + used.estimatedUsd) * 1e8) / 1e8; else reported.unpriced += 1;
+      }
       if (!used || maxCostUsd === null) return;
       if (Number.isFinite(used.estimatedUsd)) {
         reconciledCostUsd = Math.round((reconciledCostUsd + used.estimatedUsd) * 1e8) / 1e8;
@@ -695,6 +761,10 @@ function createRequestBudget(env = process.env) {
         remainingRequests: Math.max(0, maxRequests - requests),
         remainingTokens: Math.max(0, maxTokens - reservedTokens),
         rejectedRequests, exhausted: !!stopReason, stopReason,
+        ...(planning ? { planned: true, plannedRequiredRequests: plannedRequired, heldRequests, deferredOptional } : {}),
+        // What the provider itself reported (token counts) and the charge those tokens come to at the published list prices (not an invoice).
+        ...(reported.requests ? { providerReported: { ...reported, calculatedUsd: reported.unpriced ? null : reported.calculatedUsd } } : {}),
+        ...(planning || deferredOptional ? { byPriority: Object.fromEntries(Object.entries(byPriority).map(([k, v]) => [k, { requests: v.requests, ...(maxCostUsd !== null ? { reservedCostUsd: Math.round(v.costUsd * 1e6) / 1e6 } : {}) }])) } : {}),
         ...(maxCostUsd !== null ? {
           maxCostUsd,
           reservedCostUsd: Math.round(reservedCostUsd * 1e6) / 1e6,
@@ -716,8 +786,10 @@ const cooldownOf = (env = process.env) => inRange(env.SYLLABUS_CHECK_AI_COOLDOWN
 const concurrencyOf = (env = process.env) => inRange(env.SYLLABUS_CHECK_AI_CONCURRENCY, 1, 6, 3);
 // Identifies one question put to the AI: change the prompt, the model, or either text and it is a different question. Under the CLO classification contract
 // the classification context and the contract version are part of the question too (cloClassification.js); a relationship without one keeps its key.
-function pairKey(pair, provider, model, promptVersion, courseKey = '') {
-  return crypto.createHash('sha256').update(JSON.stringify([promptVersion, provider, model, pair.type, pair.source, pair.target, ...(courseKey ? [courseKey] : []), ...(pair.classificationContext || pair.classificationSource ? [cloClassification.VERSION, pair.classificationContext ?? null, pair.classificationSource ?? null] : [])])).digest('hex');
+// referenceKey: the published Program Outcome reference version a CLO-PO / CLO-anyPO relationship was judged under (align passes it only for those types, and only when one applies). A new version
+// is a new question even when the statement happens to read the same, so an earlier judgement made under another version is never reused; without a versioned reference the key is what it always was.
+function pairKey(pair, provider, model, promptVersion, courseKey = '', referenceKey = '') {
+  return crypto.createHash('sha256').update(JSON.stringify([promptVersion, provider, model, pair.type, pair.source, pair.target, ...(courseKey ? [courseKey] : []), ...(pair.classificationContext || pair.classificationSource ? [cloClassification.VERSION, pair.classificationContext ?? null, pair.classificationSource ?? null] : []), ...(referenceKey ? ['po-reference', referenceKey] : [])])).digest('hex');
 }
 const SINGLE_RETRIES = 2;
 // The system prompt of one request: the wording of the stages that are on and, only when SYLLABUS_CHECK_PROMPT_TRIM=on, just the bullets of the
@@ -745,9 +817,12 @@ const unverifiedOf = (pair, error, extra = {}) => ({ id: pair.id, type: pair.typ
 // a relationship that still cannot be verified is reported as INSUFFICIENT_EVIDENCE for that relationship alone, which keeps the
 // check from completing, instead of discarding the rest of the batch and the run. Transport failures propagate unchanged.
 // With a stage on (options.halve) the bounded policy below is used instead; with every stage off this is the behaviour it always was.
-async function judgeBatch(request, batch, options) {
+const isPolicyV2 = options => Boolean(options?.integratedAcademic || options?.academicPolicy);
+async function judgeBatch(request, batch, options = {}) {
   // options.history: each relationship's earlier attempts, passed by an evaluation that resumes a run; the application never passes it.
-  if (options.halve) return judgeStaged(request, batch, options, options.history);
+  // options.history is read as the per-relationship Map only when it IS one: the shared service also passes the author's correction history under this
+  // name (a plain object, repository.correctionHistory), and calling .get() on that made every batch fail whenever a stage was on (DEF-05).
+  if (options.halve || isPolicyV2(options)) return judgeStaged(request, batch, options, options.history instanceof Map ? options.history : undefined);
   try { return await request(batch, options); } catch (error) {
     if (!error.unverified) throw error;
     // Keep the answers that did verify and ask again only for the rest, instead of re-asking the whole batch one by one.
@@ -823,12 +898,23 @@ const CORRECTIONS = {
   retag_with_rewrite: () => 'RETAG_OUTCOME keeps the faculty text exactly as written: leave the draft empty.',
   invalid_json: UNREADABLE, invalid_answer: UNREADABLE, incomplete_output: UNREADABLE, invalid_output: UNREADABLE,
 };
-function correctionOf(pair, reason) {
+function correctionOf(pair, reason, previous = undefined) {
   const codes = reason.codes || [reason.code || 'invalid_output'], sided = reason.problems || [];
   const problems = [...sided, ...codes.filter(code => !sided.some(p => p.code === code)).map(code => ({ code }))];
   const instruction = [...new Set(problems.map(p => CORRECTIONS[p.code]?.(pair, p)).filter(Boolean))].join(' ');
   if (!instruction) return null;
-  return { id: pair.id, refused: [...new Set(codes)], instruction, ...(reason.given ? { previousQuotes: { sourceQuote: reason.given.sourceQuote ?? '', targetQuote: reason.given.targetQuote ?? '' } } : {}) };
+  const given = reason.given || (previous?.rawItem && (previous.rawItem.sourceQuote !== undefined || previous.rawItem.targetQuote !== undefined)
+    ? { sourceQuote: clipQuote(previous.rawItem.sourceQuote ?? ''), targetQuote: clipQuote(previous.rawItem.targetQuote ?? '') } : null);
+  const originalResponse = previous === undefined ? undefined : previous?.rawItem
+    ? { id: previous.rawItem.id, label: previous.rawItem.label ?? null, sourceQuote: clipQuote(previous.rawItem.sourceQuote ?? ''), targetQuote: clipQuote(previous.rawItem.targetQuote ?? ''),
+      sourceBloom: previous.rawItem.sourceBloom ?? null, targetBloom: previous.rawItem.targetBloom ?? null,
+      ...(previous.rawItem.recommendation !== undefined ? { recommendation: previous.rawItem.recommendation } : {}),
+      ...(previous.rawItem.correctionField !== undefined ? { correctionField: previous.rawItem.correctionField } : {}),
+      draft: clipQuote(previous.rawItem.draft ?? ''), explanation: clipQuote(previous.rawItem.explanation ?? '') }
+    : { status: codes[0], ...(previous?.rawText ? { rawExcerpt: String(previous.rawText).slice(0, 300) } : {}) };
+  return { id: pair.id, refused: [...new Set(codes)], ...(previous !== undefined && reason.reason ? { reason: reason.reason } : {}), instruction,
+    ...(given ? { previousQuotes: { sourceQuote: given.sourceQuote ?? '', targetQuote: given.targetQuote ?? '' } } : {}),
+    ...(originalResponse !== undefined ? { originalResponse } : {}) };
 }
 // The retry policy of a staged check (Stage E.4; Stage E.5 made every retry a corrective one). The earlier cascade (keep what verified, ask the rest
 // again, halve, then three tries for each single relationship) sent one relationship up to six times; in the Stage E.3 smoke run it spent 8 requests on
@@ -847,7 +933,10 @@ function correctionOf(pair, reason) {
 // The judgement that never verified carries every reason it was refused (failureCodes), each refusal's details (refusals: the refused quotes, which
 // side failed and where a quote came from) and why the asking stopped (stoppedBecause).
 const MAX_ATTEMPTS = 3;
-async function judgeStaged(request, batch, options, history = new Map()) {
+const V2_MAX_ATTEMPTS = 2;
+async function judgeStaged(request, batch, options = {}, history = new Map()) {
+  const v2Bounded = isPolicyV2(options);
+  const maxAttempts = v2Bounded ? V2_MAX_ATTEMPTS : MAX_ATTEMPTS;
   let error;
   const corrections = batch.map(pair => history.get(pair.id)?.correction).filter(Boolean);
   try { return await request(batch, corrections.length ? { ...options, corrections } : options); } catch (e) { if (!e.unverified) throw e; error = e; }
@@ -862,14 +951,20 @@ async function judgeStaged(request, batch, options, history = new Map()) {
     const seen = history.get(pair.id) || { attempts: 0, codes: [] };
     // The problems the correction sent with this request had named already. An unreadable reply to a group is not one yet: the group can still be split.
     const keys = problemKeysOf(reason), recurring = keys.filter(key => (seen.keys || []).includes(key));
-    const repeated = recurring.length > 0 && !(unattributed && batch.length > 1);
-    seen.attempts += 1; seen.codes.push(codes[0]); seen.keys = keys; seen.correction = correctionOf(pair, reason);
-    seen.refusals = [...(seen.refusals || []), { codes, ...(reason.problems ? { problems: reason.problems } : {}), ...(reason.given ? { given: reason.given } : {}) }];
+    const repeated = !v2Bounded && recurring.length > 0 && !(unattributed && batch.length > 1);
+    seen.attempts += 1; seen.codes.push(codes[0]); seen.keys = keys;
+    seen.correction = correctionOf(pair, reason, v2Bounded ? { rawItem: error.rawById?.get(pair.id), rawText: error.rawText } : undefined);
+    seen.refusals = [...(seen.refusals || []), { codes, ...(reason.problems ? { problems: reason.problems } : {}), ...(reason.given ? { given: reason.given } : {}), ...(v2Bounded && seen.correction?.originalResponse ? { originalResponse: seen.correction.originalResponse } : {}) }];
     history.set(pair.id, seen);
     const classOfKey = key => errorClassOf(key === 'unanswered' ? 'not_answered' : key.split(':')[0]);
-    const stoppedBecause = repeated ? `repeated_${CLASS_ORDER.find(c => recurring.some(key => classOfKey(key) === c)) || 'output'}_error` : 'attempt_limit';
-    if (seen.attempts >= MAX_ATTEMPTS || repeated) out.push(unverifiedOf(pair, { message: reason.reason }, { failureCode: codes[0], failureCodes: [...seen.codes], attempts: seen.attempts, stoppedBecause, refusals: seen.refusals }));
+    const stoppedBecause = (repeated || (v2Bounded && recurring.length > 0 && seen.attempts >= maxAttempts))
+      ? `repeated_${CLASS_ORDER.find(c => recurring.some(key => classOfKey(key) === c)) || 'output'}_error` : 'attempt_limit';
+    if (seen.attempts >= maxAttempts || repeated) out.push(unverifiedOf(pair, { message: reason.reason }, { failureCode: codes[0], failureCodes: [...seen.codes], attempts: seen.attempts, stoppedBecause, refusals: seen.refusals }));
     else again.push(pair);
+  }
+  if (v2Bounded) {
+    if (again.length) out.push(...await judgeStaged(request, again, options, history));
+    return out;
   }
   // Split before asking: the history changes while the first group is asked.
   const isolate = pair => history.get(pair.id).attempts >= MAX_ATTEMPTS - 1 || problemKeysOf(named.get(pair.id) || {}).some(key => key.startsWith('quote_from_other_pair'));
@@ -898,7 +993,7 @@ function classifyFailure(error) {
 }
 // Why a check has no AI part when no provider can be asked.
 function notConfiguredReason(provider, env) {
-  if (provider === 'off') return 'AI checking is turned off on this server (SYLLABUS_CHECK_AI_PROVIDER=off), so no AI request was sent; the coded rules ran.';
+  if (provider === 'off') return env.SYLLABUS_CHECK_AI_OFF_BY === 'settings' ? require('../adminSettings').AI_OFF_MESSAGE : 'AI checking is turned off on this server (SYLLABUS_CHECK_AI_PROVIDER=off), so no AI request was sent; the coded rules ran.'; // the administrator's switch (lib/adminSettings.js) or the server's environment
   if (provider === 'openrouter') return 'OpenRouter requires OPENROUTER_API_KEY and a supported checker model.';
   if (provider === 'anthropic') return anthropicReady(env) && !anthropicApproved(env, env.ANTHROPIC_MODEL || '') ? 'Claude (the direct Anthropic API) is experimental and not approved for official checking on this server (SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL), so no AI request was sent; the coded rules ran.' : 'Anthropic requires ANTHROPIC_API_KEY and a supported claude-* ANTHROPIC_MODEL, with thinking and effort settings that model accepts.';
   return 'No active AI provider is configured.';
@@ -922,7 +1017,7 @@ async function align(content, masters, options = {}) {
   const {hasPairEvidence}=require('./evidencePresence');
   // Only under the CLO classification contract does an ILO-CLO relationship carry its CLO's LCUP classification and lesson context, and a relationship
   // that states a CLO level state the required one. Without it the request is the one it always was.
-  const pairs = cloClassification.prepare((options.pairs || pairsOf(content, masters, options.links, { stageA: flags.a, stageB: flags.b, stageB4: flags.b4 })).filter(pair => !options.skipEmpty || hasPairEvidence(pair,content)), content, classification, masters);
+  const pairs = cloClassification.prepare((options.pairs || pairsOf(content, masters, options.links, { stageA: flags.a, stageB: flags.b, stageB4: flags.b4 })).filter(pair => !(options.excludeAdvisoryTypes || []).includes(pair.type) && (!options.skipEmpty || hasPairEvidence(pair,content))), content, classification, masters);
   if (!pairs.length) return { status: 'not_evaluated', reason: 'There are no outcome relationships to evaluate.', judgements: [], failure: { kind: 'insufficient_context', retryable: false }, requestBudget: requestBudget.summary(), ...marked };
   const inputIds = pairs.map(pair => pair?.id), seenInputIds = new Set(), duplicateInputIds = new Set();
   for (const id of inputIds) { if (typeof id !== 'string' || !id.trim() || seenInputIds.has(id)) duplicateInputIds.add(id); else seenInputIds.add(id); }
@@ -936,7 +1031,12 @@ async function align(content, masters, options = {}) {
   // Reuse: a relationship whose text, prompt version, provider and model are all unchanged since an earlier verified judgement of this
   // syllabus is not sent to the AI again (options.reuse: fingerprint -> judgement, loaded by the caller from this syllabus's own earlier
   // checks). Only what changed is asked. The judgement is rebound to the pair's current id and place, because the same text can move.
-  const promptVersion = promptVersionOf(model, env) + (options.academicPolicy ? '-' + require('./academicV2Plan').POLICY.id : '') + (recommendation ? '-' + recommendation.version : '');
+  // F1 (costPlan.js) applies to the direct Anthropic path only: the other providers' requests, versions and keys are untouched.
+  // (A Policy V2 request already carries no course description, so it has nothing to scope.)
+  const scopedOn = provider === 'anthropic' && !integratedAcademic && costPlan.scopedContextOn(env);
+  // F6 changes the question only where a Stage C/D field exists to be left out.
+  const fieldsOn = provider === 'anthropic' && !integratedAcademic && costPlan.outputFieldsOn(env) && aspectKeysFor(flags).length > 0;
+  const promptVersion = promptVersionOf(model, env) + (options.academicPolicy ? '-' + require('./academicV2Plan').POLICY.id : '') + (recommendation ? '-' + recommendation.version : '') + (scopedOn ? '-' + costPlan.COURSE_CONTEXT_VERSION : '') + (fieldsOn ? '-' + costPlan.OUTPUT_FIELDS_VERSION : '');
   if (options.academicPolicy) require('./academicV2Plan').extendPrompt('', options.academicPolicy);
   const course = courseOf(content);
   // Policy V2 relationship pairs supply Course Description directly where it is allowed. Do not leave it in shared course context, where a model could
@@ -944,7 +1044,7 @@ async function align(content, masters, options = {}) {
   if (integratedAcademic) course.description = '';
   // For Claude the thinking mode and the effort are part of the question too (anthropicClient.js configKeyOf).
   const modelKey = provider === 'anthropic' ? configKeyOf(env) : model;
-  const keys = new Map(pairs.map(pair => [pair.id, pairKey(pair, provider, modelKey, promptVersion, courseKeyOf(course))]));
+  const keys = new Map(pairs.map(pair => [pair.id, pairKey(pair, provider, modelKey, promptVersion, courseKeyOf((cloDescriptionOff(env) && CLO_CONTEXT.test(pair.type)) || (scopedOn && !costPlan.needsDescription(pair.type)) ? courseWithoutDescription(course) : course), /^CLO-(PO|anyPO)$/.test(pair.type) && masters?.poReference?.id ? `${masters.poReference.id}:${masters.poReference.contentSha256 || masters.poReference.sourceSha256 || ''}` : '')]));
   const earlier = options.reuse instanceof Map ? options.reuse : new Map();
   const known = new Map();
   // A relationship with an empty side cannot be judged: say so here, without asking the AI (which could only guess), and never reuse it.
@@ -966,6 +1066,7 @@ async function align(content, masters, options = {}) {
   const reuse = { reused: known.size - blank.size, asked: fresh.length, requests: 0 }; // requests: provider calls this check made (retries included)
   const usage = provider === 'anthropic' ? usageTotal() : null;
   const asked = [];
+  const attemptedIds = new Set();
   const askedById = new Map(), askedIndexes = new Map();
   const duplicateResultIds = new Set();
   let stoppedBy = null, wall = null;
@@ -983,7 +1084,7 @@ async function align(content, masters, options = {}) {
     askedById.set(judgement.id, judgement);
   };
   const notChecked = (pair, kind) => ({ id: pair.id, type: pair.type, path: pair.path, targetPath: pair.targetPath, label: 'INSUFFICIENT_EVIDENCE', unverified: true, failureKind: kind, key: keys.get(pair.id),
-    explanation: 'The AI did not answer for this relationship, so it has not been checked yet. Run the check again after resolving the request failure.', sourceQuote: '', targetQuote: '', evidenceMatching: { source: 'not_evaluated', target: 'not_evaluated' }, sourceBloom: 'N/A', targetBloom: 'N/A', draft: '' });
+    explanation: kind === 'budget_deferred' ? 'This optional supporting check was not sent: the per-check AI budget was kept for the required academic evaluations. It has not been checked. Raise the configured budget, or run the check again with fewer optional checks, to include it.' : 'The AI did not answer for this relationship, so it has not been checked yet. Run the check again after resolving the request failure.', sourceQuote: '', targetQuote: '', evidenceMatching: { source: 'not_evaluated', target: 'not_evaluated' }, sourceBloom: 'N/A', targetBloom: 'N/A', draft: '' });
   // Every requested relationship appears exactly once and in input order. A missing or duplicate response is explicitly unverified, never omitted or
   // converted into ALIGNED by a Map overwrite.
   const merged = () => {
@@ -994,9 +1095,11 @@ async function align(content, masters, options = {}) {
     }
     const budgetState = requestBudget.summary();
     const missingKind = stoppedBy ? classifyFailure(stoppedBy).kind : options.signal?.aborted ? 'request_cancelled' : budgetState.exhausted ? 'request_budget' : wall ? 'provider_access' : 'invalid_output';
-    return pairs.map(pair => known.get(pair.id) || (duplicates.has(pair.id) || duplicateResultIds.has(pair.id) ? notChecked(pair, 'duplicate_result_id') : byId.get(pair.id) || notChecked(pair, missingKind)));
+    return pairs.map(pair => ({ ...(known.get(pair.id) || (duplicates.has(pair.id) || duplicateResultIds.has(pair.id) ? notChecked(pair, 'duplicate_result_id') : byId.get(pair.id) || notChecked(pair, missingKind))), attempted:attemptedIds.has(pair.id) }));
   };
   const batchSize = batchSizeOf(model, env);
+  // F4 (costPlan.js): one gate per check, shared by every align call that uses this budget; null (and ignored) unless the warm-up is on.
+  const prefixGate = provider === 'anthropic' && costPlan.warmupOn(env) ? costPlan.gateFor(requestBudget) : null;
   let batch = 0, failure = null;
   try {
     const providerRequest = provider === 'openrouter' ? requestOpenRouter : provider === 'anthropic' ? requestAnthropic : requestGemini;
@@ -1004,8 +1107,10 @@ async function align(content, masters, options = {}) {
       reuse.requests += 1;
       let judgements;
       const counted = usage ? { onUsage: used => { usage.add(used); requestBudget.reconcileUsage?.(used); requestOptions.onUsage?.(used); } } : { onUsage: used => { requestBudget.reconcileUsage?.(used); requestOptions.onUsage?.(used); } };
-      const onRequest = (body, maxOutputTokens) => { requestBudget.reserveRequest(body, maxOutputTokens, { model }); requestOptions.onRequest?.(body, maxOutputTokens); };
-      try { judgements = await providerRequest(batch, { ...requestOptions, course, recommendation, onRequest, ...counted }); } catch (error) {
+      // Budget priority (createRequestBudget): the required Policy V2 evaluations, the relationships that feed the official score, or optional advisory-only questions.
+      const priority = options.integratedAcademic ? 'v2' : batch.some(pair => !isAdvisory(pair.type)) ? 'scored' : 'optional';
+      const onRequest = (body, maxOutputTokens) => { requestBudget.reserveRequest(body, maxOutputTokens, { model, priority }); batch.forEach(pair=>attemptedIds.add(pair.id)); requestOptions.onRequest?.(body, maxOutputTokens); };
+      try { judgements = await providerRequest(batch, { ...requestOptions, course, recommendation, onRequest, prefixGate, ...counted }); } catch (error) {
         if (error.salvaged) appendAsked(error.salvaged.map(j => ({ ...j, key: keys.get(j.id) })));
         throw error;
       }
@@ -1015,19 +1120,48 @@ async function align(content, masters, options = {}) {
     // still goes through judgeBatch (its own verification and retry). After the first failure no new batch starts; calls already in
     // flight finish and keep their verified results, and the failure is reported exactly as before.
     // With the prompt trimmed, batches are made of one relationship type at a time, so each request carries only the tests it needs.
-    const ordered = trimOn(env) ? (() => { const rank = new Map(); for (const pair of fresh) if (!rank.has(pair.type)) rank.set(pair.type, rank.size); return fresh.slice().sort((a, b) => rank.get(a.type) - rank.get(b.type)); })() : fresh;
-    const batchCount = Math.ceil(ordered.length / batchSize);
-    const staged = { ...options, halve: flags.a || flags.b || flags.b3 || flags.b4 || flags.c1 || flags.c2 || flags.c3 || flags.d1 || flags.d2 };
+    const orderedAll = trimOn(env) ? (() => { const rank = new Map(); for (const pair of fresh) if (!rank.has(pair.type)) rank.set(pair.type, rank.size); return fresh.slice().sort((a, b) => rank.get(a.type) - rank.get(b.type)); })() : fresh;
+    // With budget planning on (Policy V2 runs), the relationships that feed the official score are sent before the advisory-only ones, so the optional
+    // batches cannot be the ones that find the budget gone. The order inside each group is unchanged; nothing is dropped or added.
+    const ordered = requestBudget.isPlanning?.() && !options.integratedAcademic ? [...orderedAll.filter(pair => !isAdvisory(pair.type)), ...orderedAll.filter(pair => isAdvisory(pair.type))] : orderedAll;
+    // How the relationships are cut into requests (costPlan.js planBatches). With nothing configured this is the fixed-size slicing it always was.
+    // F1: description-free and description-reading relationships are never mixed in one request (so the key of each says what the model saw); the
+    // earlier grouping (scored before optional) stays the major order. F3: Policy V2 relationships may be grouped by week.
+    const planning = requestBudget.isPlanning?.() && !options.integratedAcademic;
+    const runs = !scopedOn ? [ordered] : (() => {
+      const keyOf = pair => (planning && isAdvisory(pair.type) ? 2 : 0) + (costPlan.needsDescription(pair.type) ? 1 : 0);
+      const split = []; let last;
+      for (const pair of costPlan.partitionByContext(ordered, pair => (planning && isAdvisory(pair.type) ? 1 : 0))) { const key = keyOf(pair); if (key !== last) { split.push([]); last = key; } split[split.length - 1].push(pair); }
+      return split;
+    })();
+    const grouping = options.integratedAcademic ? costPlan.groupingOf(env) : 'default';
+    const batches = runs.flatMap(run => costPlan.planBatches(run, batchSize, grouping));
+    const batchCount = batches.length;
+    const staged = { ...options, halve: isPolicyV2(options) || flags.a || flags.b || flags.b3 || flags.b4 || flags.c1 || flags.c2 || flags.c3 || flags.d1 || flags.d2 };
     let next = 0, transient = 0;
     const worker = async () => {
       while (!failure && next < batchCount) {
-        const batchIndex = next++, mine = ordered.slice(batchIndex * batchSize, Math.min((batchIndex + 1) * batchSize, ordered.length));
+        const batchIndex = next++, mine = batches[batchIndex];
         batch = Math.max(batch, next);
         try { appendAsked((await judgeBatch(request, mine, staged)).map(j => ({ ...j, key: keys.get(j.id) }))); } catch (error) {
+          // An optional batch the planned budget would not cover: not sent, reported as not checked, and the other batches still run (nothing is exhausted).
+          if (error?.budgetReason === 'optional_deferred') {
+            const answered = new Set(asked.map(j => j.id));
+            for (const pair of mine) if (!answered.has(pair.id)) appendAsked([notChecked(pair, 'budget_deferred')]);
+            continue;
+          }
           // A timeout or a server error on ONE batch says nothing about the others, so the rest still run: the check judges as much as it can and
           // reports exactly which relationships it could not reach. A quota or access error means every later call would fail too, and a provider
           // that keeps failing (three batches) is not hammered further: then the check stops as it always did.
           const kind = classifyFailure(error).kind;
+          // With budget planning on (Policy V2 runs) a batch of advisory-only questions is optional: if the provider fails it, those questions are reported not checked and
+          // the required batches still run and keep their verified results. It can neither abort the check nor turn the official AI-scored part into "not evaluated".
+          // A credit or access refusal still stops everything: every later call would fail too.
+          if (requestBudget.isPlanning?.() && !options.integratedAcademic && mine.every(pair => isAdvisory(pair.type)) && ['provider_timeout', 'provider_error', 'provider_quota', 'invalid_output'].includes(kind)) {
+            const answered = new Set(asked.map(j => j.id));
+            for (const pair of mine) if (!answered.has(pair.id)) appendAsked([notChecked(pair, kind)]);
+            continue;
+          }
           if ((kind === 'provider_timeout' || kind === 'provider_error') && ++transient <= 2) {
             const answered = new Set(asked.map(j => j.id));
             for (const pair of mine) if (!answered.has(pair.id)) appendAsked([notChecked(pair, kind)]);
@@ -1077,7 +1211,7 @@ async function align(content, masters, options = {}) {
     const incompleteFailure = providerMissed ? { kind: providerMissed.failureKind, retryable: ['provider_timeout', 'provider_quota', 'provider_error', 'invalid_output'].includes(providerMissed.failureKind), count: unverified }
       : budgetState.exhausted ? { kind: 'request_budget', retryable: false }
         : unverified ? { kind: 'invalid_output', retryable: true, count: unverified } : { kind: 'insufficient_text', retryable: false };
-    return { status: completed && !options.simulated ? 'completed' : 'not_evaluated', reason: options.simulated ? 'Simulated transport: not a real AI evaluation.' : completed ? '' : wall ? `The AI provider refused a request a moment ago (HTTP ${wall.status || '4xx'}: credits or access), so no request was sent. Try again after ${new Date(wall.until).toISOString().slice(11, 16)} UTC, once credits or access are restored.` : budgetState.exhausted ? `The configured per-check AI ${budgetState.stopReason === 'request_limit' ? 'request' : budgetState.stopReason === 'cost_budget' ? 'cost' : 'token'} budget was exhausted; some relationships were not sent.` : unverified ? `${unverified} of ${pairs.length} relationships could not be verified. Click Re-Check again.` : 'Some relationships have insufficient evidence.', provider, model, promptVersion, reuse, judgements, coverage, ...(budgetState.exhausted ? { requestBudget: budgetState } : {}), ...(usage ? { usage: usage.total } : {}), ...marked, ...(completed || options.simulated ? {} : { failure: incompleteFailure }) };
-  } catch (error) { stoppedBy = stoppedBy || error; const judgements = cloClassification.mark(merged(), pairs, content, classification), budgetState = requestBudget.summary(); return { status: 'not_evaluated', reason: `${error.message} (batch ${batch}/${Math.ceil(fresh.length / batchSize)}; ${judgements.filter(j => !j.unverified && j.label !== 'INSUFFICIENT_EVIDENCE').length}/${pairs.length} relationships verified).`, provider, model, reuse, judgements, coverage: { total: pairs.length, verified: judgements.filter(j => !j.unverified && j.label !== 'INSUFFICIENT_EVIDENCE').length }, ...(budgetState.exhausted ? { requestBudget: budgetState } : {}), ...(usage ? { usage: usage.total } : {}), ...marked, failure: classifyFailure(error) }; }
+    return { status: completed && !options.simulated ? 'completed' : 'not_evaluated', reason: options.simulated ? 'Simulated transport: not a real AI evaluation.' : completed ? '' : wall ? `The AI provider refused a request a moment ago (HTTP ${wall.status || '4xx'}: credits or access), so no request was sent. Try again after ${new Date(wall.until).toISOString().slice(11, 16)} UTC, once credits or access are restored.` : budgetState.exhausted ? `The configured per-check AI ${budgetState.stopReason === 'request_limit' ? 'request' : budgetState.stopReason === 'cost_budget' ? 'cost' : 'token'} budget was exhausted; some relationships were not sent.` : unverified ? `${unverified} of ${pairs.length} relationships could not be verified. Click Re-Check again.` : 'Some relationships have insufficient evidence.', provider, model, promptVersion, reuse, judgements, coverage, ...(budgetState.exhausted || budgetState.deferredOptional ? { requestBudget: budgetState } : {}), ...(usage ? { usage: usage.total } : {}), ...marked, ...(completed || options.simulated ? {} : { failure: incompleteFailure }) };
+  } catch (error) { stoppedBy = stoppedBy || error; const judgements = cloClassification.mark(merged(), pairs, content, classification), budgetState = requestBudget.summary(); return { status: 'not_evaluated', reason: `${error.message} (batch ${batch}/${Math.ceil(fresh.length / batchSize)}; ${judgements.filter(j => !j.unverified && j.label !== 'INSUFFICIENT_EVIDENCE').length}/${pairs.length} relationships verified).`, provider, model, reuse, judgements, coverage: { total: pairs.length, verified: judgements.filter(j => !j.unverified && j.label !== 'INSUFFICIENT_EVIDENCE').length }, ...(budgetState.exhausted || budgetState.deferredOptional ? { requestBudget: budgetState } : {}), ...(usage ? { usage: usage.total } : {}), ...marked, failure: classifyFailure(error) }; }
 }
 module.exports = { topicStems, aspectKeysFor, ASPECTS, ASPECT_KEYS, ASPECTS_REQUIRED, alignmentSchema, minItemsOn, resetProviderBlock, blockedNow, createRequestBudget, systemPromptOf, align, judgeBatch, classifyFailure, pairsOf, validate, salvage, rejections, verifyAnswer, contractOf, CONTRACT_CODES, EVIDENCE_CODES, COVERAGE_CODES, OUTPUT_CODES, errorClassOf, failureClassOf, correctionOf, userMessageOf, MAX_ATTEMPTS, STAGED_BATCH, RECOMMENDATIONS, roleSwap, draftReviewOf, courseOf, courseKeyOf, evidenceQuote, requestGemini, requestOpenRouter, requestAnthropic, usageTotal, providerConfig, verifiedGemini, verifiedAlignment, NEMOTRON_FREE, LAGUNA_FREE, freeJsonModel, PROMPT, CLASSIFICATION_PROMPT, REF_PAIR, COURSE_CLO, CLO_SET, CONTENT_COURSE, PLAN_SEQUENCE, CONTENT_ILO, examLike, isAdvisory, isNoRewrite, pairKey, promptVersionOf, batchSizeOf, concurrencyOf, timeoutOf };

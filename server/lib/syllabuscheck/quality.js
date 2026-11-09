@@ -191,7 +191,9 @@ function qualityOf(content) {
   const SEVERITY = { minor: 0, info: 1 };
   const ORDER = ['outcome_quality', 'learning_progression', 'assessment_quality', 'coverage', 'workload', 'accessibility'];
   findings.sort((a, b) => SEVERITY[a.severity] - SEVERITY[b.severity] || ORDER.indexOf(a.category) - ORDER.indexOf(b.category) || (a.id < b.id ? -1 : 1));
-  return { version: VERSION, advisory: true, findings, counts: { total: findings.length, minor: findings.filter((f) => f.severity === 'minor').length, info: findings.filter((f) => f.severity === 'info').length } };
+  const applicability = {'outcome.vagueVerb':outcomes.some(o=>text(o.text)), 'outcome.broad':outcomes.some(o=>text(o.text)), 'outcome.practicalCompetency':outcomes.some(o=>text(o.text)), 'outcome.duplicate':clos.length>1, 'progression.singleLesson':(c.clos||[]).length>0&&rows.length>0, 'coverage.repeatedContent':rows.length>1, 'assessment.namedOnly':rows.length>0, 'assessment.noRubricMentioned':gradingRows.length>0, 'assessment.dominantComponent':gradingRows.length>1, 'workload.manyTasksInAWeek':rows.length>0, 'workload.assessmentClustering':withTasks.length>=5, 'access.dependsOnResources':rows.length>0};
+  const checks = Object.entries(applicability).map(([ruleId,applicable])=>({ruleId,applicable,executed:true,status:!applicable?'NOT_APPLICABLE':findings.some(f=>f.check===ruleId)?'NEEDS_REVIEW':'PASS'}));
+  return { version: VERSION, advisory: true, findings, checks, counts: { total: findings.length, minor: findings.filter((f) => f.severity === 'minor').length, info: findings.filter((f) => f.severity === 'info').length } };
 }
 
 module.exports = { qualityOf, VERSION, verbsIn };

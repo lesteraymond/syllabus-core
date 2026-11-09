@@ -64,3 +64,8 @@ test('reviewers open the AI Checker for a new submission, the VPAA and every rev
   assert.deepStrictEqual(notificationTarget({ type: 'status', syllabusId: 1 }, 'lic_director'), { kind: 'page', page: 'review' });
   assert.deepStrictEqual(notificationTarget({ type: 'message', syllabusId: 1 }, 'vpaa'), { kind: 'chat', id: 1 });
 });
+
+test('the VPAA\'s approval, sent to the dean, the Asst. VPAA and the LIC Director, opens the Repository', () => {
+  for (const role of ['admin', 'asst_vpaa', 'lic_director', 'vpaa']) assert.deepStrictEqual(notificationTarget({ type: 'approval', syllabusId: 1 }, role), { kind: 'page', page: 'repository' }, role);
+  assert.deepStrictEqual(notificationTarget({ type: 'status', syllabusId: 1 }, 'faculty'), { kind: 'comments', id: 1 }, 'the owner\'s own decision notice still opens their comments');
+});

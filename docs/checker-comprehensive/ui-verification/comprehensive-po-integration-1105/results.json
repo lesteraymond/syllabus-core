@@ -1,0 +1,1364 @@
+{
+  "summary": {
+    "label": "LOCAL browser verification, comprehensive-testing profile (staging-like topology, isolated scratch database, SYNTHETIC data, SCRIPTED provider). Not a staging test and not a Claude test: no live model request was made.",
+    "suite": "comprehensive",
+    "profile": "comprehensive-testing",
+    "configuration": {
+      "E2E_DB_PORT": "43310",
+      "SYLLABUS_CHECK_PROFILE": "comprehensive-testing",
+      "SYLLABUS_CHECK_ACADEMIC_V2": "off",
+      "SYLLABUS_CHECK_AI_MAX_COST_USD": "100"
+    },
+    "browser": "Microsoft Edge (Chromium) via playwright-core",
+    "node": "v26.12.1",
+    "finishedAt": "2026-11-05T12:04:45.016Z",
+    "scenarios": {
+      "total": 10,
+      "passed": 10,
+      "failed": 0
+    },
+    "checks": {
+      "total": 287,
+      "passed": 287,
+      "knownDefects": 0
+    },
+    "providerRequests": 186,
+    "blockedNetwork": 0
+  },
+  "results": [
+    {
+      "id": "K01",
+      "title": "Syllabus Builder (browser): faculty completes the syllabus (Step 1 through the form, Steps 2–6 saved through the API) and opens the review step",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "[browser] the draft was created through the form (id 1)"
+        },
+        {
+          "ok": true,
+          "message": "[api] Steps 2–6 saved through PUT /syllabi/:id/content (HTTP 200)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the builder shows 7 of 7 steps complete"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the Review step renders the full syllabus preview"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the review preview shows the four CLO classifications"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the Review step points the author to the AI Checker tab for checking"
+        },
+        {
+          "ok": true,
+          "message": "K01: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "K01: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "K01: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "K01: no request left this machine (none blocked)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=0 users=6",
+        "Steps 2–6 (outcomes, 18-week plan, requirements, references, grading) were supplied through the real API to keep the run bounded; Step 1, the review step and everything after were driven through the UI."
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K01-builder-review-step.png"
+      ],
+      "failed": false,
+      "ms": 17178
+    },
+    {
+      "id": "K02",
+      "title": "AI Checker (browser): run the comprehensive check, official score, seven VPAA relationships, four CLO classifications, findings, coverage, reserved rules",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "[browser] official score shown: 99% Excellent, Meets the standard (pass line 79%)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] VPAA relationship Content-course is rendered (weekly rows)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] VPAA relationship Content-ILO is rendered (weekly rows)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] VPAA relationship ILO-CLO is rendered (weekly rows)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] VPAA relationship Content-activity is rendered (weekly rows)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] VPAA relationship ILO-activity is rendered (weekly rows)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] VPAA relationship Content-assessment is rendered (weekly rows)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] VPAA relationship Activity-assessment is rendered (weekly rows)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the page states that academic alignment is advisory: no score, deductions, passing mark or gate effect"
+        },
+        {
+          "ok": true,
+          "message": "[browser] AI status: Evaluated by the (scripted) approved provider/model"
+        },
+        {
+          "ok": true,
+          "message": "[browser] no incomplete-coverage warning (all seven relationships evaluated)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] structural check \"Four required CLO classifications\" is rendered and Supported"
+        },
+        {
+          "ok": true,
+          "message": "[browser] semantic check \"Semantic appropriateness of CLO classifications\" is rendered"
+        },
+        {
+          "ok": true,
+          "message": "[browser] relationship evidence for CLO 1 classification is rendered (clo0-classification)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] relationship evidence for CLO 2 classification is rendered (clo1-classification)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] relationship evidence for CLO 3 classification is rendered (clo2-classification)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] relationship evidence for CLO 4 classification is rendered (clo3-classification)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] findings and correction recommendations are rendered (human review only)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the scripted gaps appear as \"Evaluated: requires revision\" and \"Needs faculty review\" findings, in the same words the coverage list uses"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the card lists the findings that sit behind the official score (1 finding behind the score)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the collapsed coverage section reports its denominator (Check coverage: 151 of 195 catalogue entries verified)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the coverage list shows entries with status \"Evaluated: supported\""
+        },
+        {
+          "ok": true,
+          "message": "[browser] the coverage list shows entries with status \"Evaluated: requires revision\""
+        },
+        {
+          "ok": true,
+          "message": "[browser] the coverage list shows entries with status \"Needs faculty review\""
+        },
+        {
+          "ok": true,
+          "message": "[browser] the coverage list shows entries with status \"Not checked\""
+        },
+        {
+          "ok": true,
+          "message": "[browser] the coverage list shows entries with status \"Not applicable\""
+        },
+        {
+          "ok": true,
+          "message": "[browser] the coverage list shows entries with status \"Partially evaluated\""
+        },
+        {
+          "ok": true,
+          "message": "[browser] the coverage list shows entries with status \"Replaced by an authorized alternative check\""
+        },
+        {
+          "ok": true,
+          "message": "[browser] the coverage summary counts Requires revision / Needs faculty review / Partially evaluated / Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser] C-04 is shown as replaced by an authorized alternative check, not as a bare \"Not checked\""
+        },
+        {
+          "ok": true,
+          "message": "[browser] R-02 is shown as replaced by an authorized alternative check, not as a bare \"Not checked\""
+        },
+        {
+          "ok": true,
+          "message": "[browser] R-03 is shown as replaced by an authorized alternative check, not as a bare \"Not checked\""
+        },
+        {
+          "ok": true,
+          "message": "[browser] the page says verification does not imply a pass"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule STR-07 is \"Not checked\" with its institutional dependency (STR-07 · Not checked VPAA must identify the approved export template/v…), never Passed"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule ADM-04 is \"Not checked\" with its institutional dependency (ADM-04 · Not checked VPAA/Registrar must supply an approved, versioned…), never Passed"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule ADM-05 is \"Not checked\" with its institutional dependency (ADM-05 · Not checked VPAA/Registrar must specify required approver rol…), never Passed"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule CUR-10 is \"Not checked\" with its institutional dependency (CUR-10 · Not checked Registrar must supply approved curriculum/referen…), never Passed"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule CLO-05 is \"Not checked\" with its institutional dependency (CLO-05 · Not checked VPAA must supply the authoritative definition, sc…), never Passed"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule CLO-10 is \"Not checked\" with its institutional dependency (CLO-10 · Not checked VPAA must supply the authoritative definition, sc…), never Passed"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule PLAN-05 is \"Not checked\" with its institutional dependency (PLAN-05 · Not checked VPAA must supply the authoritative definition, s…), never Passed"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule PLAN-06 is \"Not checked\" with its institutional dependency (PLAN-06 · Not checked VPAA must supply the authoritative definition, s…), never Passed"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule ALN-03 is \"Not checked\" with its institutional dependency (ALN-03 · Not checked VPAA must supply the authoritative definition, sc…), never Passed"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule ALN-04 is \"Not checked\" with its institutional dependency (ALN-04 · Not checked VPAA must supply the authoritative definition, sc…), never Passed"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule ALN-10 is \"Not checked\" with its institutional dependency (ALN-10 · Not checked VPAA must supply the authoritative definition, sc…), never Passed"
+        },
+        {
+          "ok": true,
+          "message": "[browser] coverage lists VPAA-01"
+        },
+        {
+          "ok": true,
+          "message": "[browser] coverage lists VPAA-02"
+        },
+        {
+          "ok": true,
+          "message": "[browser] coverage lists VPAA-03"
+        },
+        {
+          "ok": true,
+          "message": "[browser] coverage lists VPAA-04"
+        },
+        {
+          "ok": true,
+          "message": "[browser] coverage lists VPAA-05"
+        },
+        {
+          "ok": true,
+          "message": "[browser] coverage lists VPAA-06"
+        },
+        {
+          "ok": true,
+          "message": "[browser] coverage lists VPAA-07"
+        },
+        {
+          "ok": true,
+          "message": "[browser] coverage lists CLO1:structure"
+        },
+        {
+          "ok": true,
+          "message": "[browser] coverage lists CLO1:semantic"
+        },
+        {
+          "ok": true,
+          "message": "[browser] coverage lists CLO2:structure"
+        },
+        {
+          "ok": true,
+          "message": "[browser] coverage lists CLO2:semantic"
+        },
+        {
+          "ok": true,
+          "message": "[browser] coverage lists CLO3:structure"
+        },
+        {
+          "ok": true,
+          "message": "[browser] coverage lists CLO3:semantic"
+        },
+        {
+          "ok": true,
+          "message": "[browser] coverage lists CLO4:structure"
+        },
+        {
+          "ok": true,
+          "message": "[browser] coverage lists CLO4:semantic"
+        },
+        {
+          "ok": true,
+          "message": "[api] the required academic evaluations fit the configured per-check budget (requiredIncomplete=false)"
+        },
+        {
+          "ok": true,
+          "message": "[api] Policy V2 completed: the optional supporting checks did not use up the budget before it ran"
+        },
+        {
+          "ok": true,
+          "message": "[browser] with room for every check no budget notice is shown"
+        },
+        {
+          "ok": true,
+          "message": "[api] the check was saved as a report (run 1): overall 99, passed true, threshold 79"
+        },
+        {
+          "ok": true,
+          "message": "[browser] after a full page reload the saved report is shown again (score, coverage and V2 panel)"
+        },
+        {
+          "ok": true,
+          "message": "[api] reloading did not create a second report (same run id)"
+        },
+        {
+          "ok": true,
+          "message": "K02: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "K02: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "K02: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "K02: no request left this machine (none blocked)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=1 users=6",
+        "per-check budget: {\"limits\":{\"maxRequests\":120,\"maxTokens\":8000000,\"maxCostUsd\":100},\"used\":{\"requests\":52,\"reservedTokens\":2545352,\"reservedCostUsd\":11.616334},\"byPriority\":{\"scored\":{\"requests\":19,\"reservedCostUsd\":4.1813},\"v2\":{\"requests\":11,\"reservedCostUsd\":2.65804},\"optional\":{\"requests\":22,\"reservedCostUsd\":4.776994}},\"deferredOptional\":0}",
+        "scripted provider requests for this first check: 52"
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K02-1-official-score-and-checker-1440.png",
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K02-full-page.png",
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K02-2-vpaa-relationships-heading.png",
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K02-3-coverage-vpaa-01-07.png",
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K02-4-coverage-clo-classifications.png",
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K02-5-coverage-eleven-reserved-rules-not-checked.png",
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K02-6-coverage-summary-and-counts.png",
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K02-7-coverage-incomplete-or-unavailable.png"
+      ],
+      "failed": false,
+      "ms": 22092
+    },
+    {
+      "id": "K03",
+      "title": "Saved report audit (API): profile active, all deterministic rules executed, seven VPAA and four CLO classifications verified, reserved rules pending, duplicates, budget",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "[api] the saved coverage manifest records the resolved profile \"comprehensive-testing\""
+        },
+        {
+          "ok": true,
+          "message": "[api] Policy V2 ran although the V2 flag was explicitly OFF: the profile switched it on (status completed)"
+        },
+        {
+          "ok": true,
+          "message": "[api] CLO classification contract lcup-ilo-clo-classification-3"
+        },
+        {
+          "ok": true,
+          "message": "[api] VPAA-01 Content-course: 15/15 instances verified and attempted, status PASS"
+        },
+        {
+          "ok": true,
+          "message": "[api] VPAA-02 Content-ILO: 15/15 instances verified and attempted, status PASS"
+        },
+        {
+          "ok": true,
+          "message": "[api] VPAA-03 ILO-CLO: 15/15 instances verified and attempted, status PASS"
+        },
+        {
+          "ok": true,
+          "message": "[api] VPAA-04 Content-activity: 15/15 instances verified and attempted, status PASS"
+        },
+        {
+          "ok": true,
+          "message": "[api] VPAA-05 ILO-activity: 15/15 instances verified and attempted, status NEEDS_REVIEW"
+        },
+        {
+          "ok": true,
+          "message": "[api] VPAA-06 Content-assessment: 15/15 instances verified and attempted, status FAIL"
+        },
+        {
+          "ok": true,
+          "message": "[api] VPAA-07 Activity-assessment: 15/15 instances verified and attempted, status PASS"
+        },
+        {
+          "ok": true,
+          "message": "[api] CLO1 (Introductory): structure PASS, semantic PASS, both executed and verified"
+        },
+        {
+          "ok": true,
+          "message": "[api] CLO2 (Enabling): structure PASS, semantic PASS, both executed and verified"
+        },
+        {
+          "ok": true,
+          "message": "[api] CLO3 (Demonstrating): structure PASS, semantic PASS, both executed and verified"
+        },
+        {
+          "ok": true,
+          "message": "[api] CLO4 (Integration of Values): structure PASS, semantic PASS, both executed and verified"
+        },
+        {
+          "ok": true,
+          "message": "[api] 47 registered standard rules are catalogued (47)"
+        },
+        {
+          "ok": true,
+          "message": "[api] every registered rule executed or carries a reason (44 executed; non-executed: C-04=NOT_CHECKED, R-02=NOT_CHECKED, R-03=NOT_CHECKED)"
+        },
+        {
+          "ok": true,
+          "message": "[api] every coded hybrid validation (CUR-REF … AI-REQUIRED) executed or is not applicable"
+        },
+        {
+          "ok": true,
+          "message": "[api] exactly the eleven reserved rules are catalogued"
+        },
+        {
+          "ok": true,
+          "message": "[api] none of the eleven reserved rules is enabled, implemented, executed, verified or has an instance (no false pass)"
+        },
+        {
+          "ok": true,
+          "message": "[api] no reserved rule is reported PASS anywhere"
+        },
+        {
+          "ok": true,
+          "message": "[api] no relationship id repeats inside the legacy list or inside the V2 list"
+        },
+        {
+          "ok": true,
+          "message": "[api] no rule id repeats in the coverage manifest"
+        },
+        {
+          "ok": true,
+          "message": "[api] every overlap outside the four documented scored relationships is only an unasked placeholder (no second model request)"
+        },
+        {
+          "ok": true,
+          "message": "[api] the advisory types V2 owns (Course-CLO, Description-plan, Content-course, Content-ILO) are not asked a second time by the legacy path"
+        },
+        {
+          "ok": true,
+          "message": "[api] the shared per-check budget did not starve any V2 relationship"
+        },
+        {
+          "ok": true,
+          "message": "[api] six official areas weighted 20/20/20/15/10/15 and the pass line 79"
+        },
+        {
+          "ok": true,
+          "message": "[api] the V2 academic layer carries no numeric score"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=1 users=6",
+        "registered standards by status: {\"PASS\":38,\"NOT_APPLICABLE\":6,\"NOT_CHECKED\":3}",
+        "relationship ids present in BOTH the legacy scored list and the V2 list: 46 {\"CLO-PO\":8,\"CLO-EGA\":8,\"ILO-CLO\":15,\"ILO-activity\":15}; of which legacy placeholders without a request: 0 ()",
+        "shared per-check budget (cap $100): requests 52 sent this check; reserved cost recorded by the final summary: {\"requests\":52,\"maxRequests\":120,\"reservedTokens\":2545352,\"maxTokens\":8000000,\"remainingRequests\":68,\"remainingTokens\":5454648,\"rejectedRequests\":0,\"exhausted\":false,\"stopReason\":null,\"planned\":true,\"plannedRequiredRequests\":11,\"heldRequests\":0,\"deferredOptional\":0,\"providerReported\":{\"requests\":52,\"inputTokens\":5200,\"outputTokens\":5200,\"cacheCreationInputTokens\":0,\"cacheReadInputTokens\":0,\"calculatedUsd\":0.0624,\"unpriced\":0},\"byPriority\":{\"scored\":{\"requests\":19,\"reservedCostUsd\":4.1813},\"v2\":{\"requests\":11,\"reservedCostUsd\":2.65804},\"optional\":{\"requests\":22,\"reservedCostUsd\":4.776994}},\"maxCostUsd\":100,\"reservedCostUsd\":11.616334,\"reconciledCostUsd\":0.0624,\"remainingCostUsd\":88.383666}"
+      ],
+      "evidence": [],
+      "failed": false,
+      "ms": 2867
+    },
+    {
+      "id": "K04",
+      "title": "Editing a checked syllabus (browser): the old result is marked out of date, is not presented as current, and a re-check restores it",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "[api] the faculty edit was saved"
+        },
+        {
+          "ok": true,
+          "message": "[api] the saved report is flagged stale after the edit (stale=true)"
+        },
+        {
+          "ok": true,
+          "message": "[api] the edit did not silently re-run or replace the report"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the page shows the \"Out of date: the syllabus changed after this check\" chip on the old result"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the out-of-date banner is rendered ABOVE the stale V2 results and the coverage list (banner y=472, V2 panel y=581)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the banner is sticky, so it stays in view while the long results are read"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the V2 panel heading itself carries an \"Out of date\" marker"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the banner says the results describe the earlier version and to Re-Check before acting"
+        },
+        {
+          "ok": true,
+          "message": "[browser] after scrolling down the page the banner is still visible at the top of the screen"
+        },
+        {
+          "ok": true,
+          "message": "[api] Re-Check produced a new current report (run 2, stale=false)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] after Re-Check the out-of-date chip is gone and the current result is shown"
+        },
+        {
+          "ok": true,
+          "message": "[api] official score after the re-check: 99 / pass line 79"
+        },
+        {
+          "ok": true,
+          "message": "[api] the check and re-check did not change any faculty-authored content"
+        },
+        {
+          "ok": true,
+          "message": "K04: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "K04: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "K04: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "K04: no request left this machine (none blocked)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=1 users=6",
+        "stale page, text near the top: Compliance check Checked against the Undergraduate Syllabus form. Only a form that does not follow the template stops you from submitting; the score and the other findings are advice for you and the reviewer. Re-Check again Out of date. The syllabus changed after this check. Everything below (the score, the VPAA and CLO results, the findings and the recommendations) describes t",
+        "Submit to Admin while the result is out of date: enabled",
+        "vertical position of the out-of-date banner vs the stale V2 panel and coverage section: {\"banner\":472,\"bannerSticky\":\"sticky\",\"v2\":581,\"v2Chip\":true,\"coverage\":546,\"pageHeight\":7507}"
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K04-1-out-of-date-result.png",
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K04-1b-out-of-date-full-page.png",
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K04-1c-stale-banner-while-scrolled.png",
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K04-2-after-recheck.png"
+      ],
+      "failed": false,
+      "ms": 21062
+    },
+    {
+      "id": "K05",
+      "title": "Submission and administrator interface (browser): submit locks, admin runs the comprehensive check, sees the same report, returns it for revision",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "[browser] after Submit to Admin the page shows Submitted and says the syllabus is locked"
+        },
+        {
+          "ok": true,
+          "message": "[api] a submitted syllabus refuses edits from its own owner (HTTP 409)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] Review & Approval holds the submission back until the AI Checker has been run on it"
+        },
+        {
+          "ok": true,
+          "message": "[api] the administrator cannot approve an unchecked submission (HTTP 403)"
+        },
+        {
+          "ok": true,
+          "message": "[browser][admin] official result 99% meets the standard"
+        },
+        {
+          "ok": true,
+          "message": "[browser][admin] relationship Content-course is rendered"
+        },
+        {
+          "ok": true,
+          "message": "[browser][admin] relationship Content-ILO is rendered"
+        },
+        {
+          "ok": true,
+          "message": "[browser][admin] relationship ILO-CLO is rendered"
+        },
+        {
+          "ok": true,
+          "message": "[browser][admin] relationship Content-activity is rendered"
+        },
+        {
+          "ok": true,
+          "message": "[browser][admin] relationship ILO-activity is rendered"
+        },
+        {
+          "ok": true,
+          "message": "[browser][admin] relationship Content-assessment is rendered"
+        },
+        {
+          "ok": true,
+          "message": "[browser][admin] relationship Activity-assessment is rendered"
+        },
+        {
+          "ok": true,
+          "message": "[browser][admin] CLO classification results are rendered"
+        },
+        {
+          "ok": true,
+          "message": "[browser][admin] the advisory statement is shown"
+        },
+        {
+          "ok": true,
+          "message": "[browser][admin] reserved rule STR-07 is Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser][admin] reserved rule ADM-04 is Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser][admin] reserved rule ADM-05 is Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser][admin] reserved rule CUR-10 is Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser][admin] reserved rule CLO-05 is Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser][admin] reserved rule CLO-10 is Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser][admin] reserved rule PLAN-05 is Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser][admin] reserved rule PLAN-06 is Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser][admin] reserved rule ALN-03 is Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser][admin] reserved rule ALN-04 is Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser][admin] reserved rule ALN-10 is Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[api] the administrator's check was saved with the profile manifest (run 4, 99%)"
+        },
+        {
+          "ok": true,
+          "message": "[api] an administrator cannot edit the faculty member's content (HTTP 403)"
+        },
+        {
+          "ok": true,
+          "message": "[browser][admin] the reviewer sees the document with Clear my check, Return for revision and the three clearing stages"
+        },
+        {
+          "ok": true,
+          "message": "[api] the return for revision was accepted"
+        },
+        {
+          "ok": true,
+          "message": "K05-admin: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "K05-admin: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "K05-admin: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "K05-admin: no request left this machine (none blocked)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=1 users=6"
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K05-1-admin-official-check.png",
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K05-2-admin-reserved-not-checked.png",
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K05-3-admin-review-and-approval.png"
+      ],
+      "failed": false,
+      "ms": 29966
+    },
+    {
+      "id": "K06",
+      "title": "Recommendations (browser): Check & Improve, Edit, Accept, Reject and Undo; nothing silently overwrites faculty-authored content",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "[browser] My Syllabi shows the returned syllabus as For Revision"
+        },
+        {
+          "ok": true,
+          "message": "[api] after check → submit → administrator check → return, the faculty-authored content is exactly what the faculty saved (differs at: nothing; the server-stamped catalog.savedAt is not content)"
+        },
+        {
+          "ok": true,
+          "message": "[api] the faculty edited week 1 so the next answer is asked afresh"
+        },
+        {
+          "ok": true,
+          "message": "[browser] unauthorized field: the correction is shown as text for human review"
+        },
+        {
+          "ok": true,
+          "message": "[browser] unauthorized field: no Accept / Check & Improve control is offered because no field could be identified (the contract withholds the draft instead of guessing)"
+        },
+        {
+          "ok": true,
+          "message": "[api] the faculty saved a new baseline wording for week 1"
+        },
+        {
+          "ok": true,
+          "message": "[api] the Re-Check itself did not change any faculty-authored content"
+        },
+        {
+          "ok": true,
+          "message": "[browser] 1 recommendation card(s) are offered"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the card offers Check & Improve, Accept and Reject"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the card offers an editable proposed-text box (Edit)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] Accept is disabled until Check & Improve has verified the wording"
+        },
+        {
+          "ok": true,
+          "message": "[api] clicking the disabled Accept changed nothing"
+        },
+        {
+          "ok": true,
+          "message": "[browser] after the faculty edits the proposed text, Accept is disabled again until that exact text is verified"
+        },
+        {
+          "ok": true,
+          "message": "[browser] Check & Improve asked the (scripted) provider to verify the faculty-edited wording"
+        },
+        {
+          "ok": true,
+          "message": "[api] Check & Improve alone changed nothing in the syllabus"
+        },
+        {
+          "ok": true,
+          "message": "[browser] Accept is enabled once the edited wording is verified"
+        },
+        {
+          "ok": true,
+          "message": "[api] Edit + Accept changed exactly one field: plan[0].activities"
+        },
+        {
+          "ok": true,
+          "message": "[api] the saved text is exactly what the faculty wrote, not the machine proposal"
+        },
+        {
+          "ok": true,
+          "message": "[api] the machine proposal was not written over the faculty edit"
+        },
+        {
+          "ok": true,
+          "message": "[api] the Accept was recorded by the decisions API"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the Applied recommendations list opens by itself after an apply, so Undo is in view"
+        },
+        {
+          "ok": true,
+          "message": "[browser] an Undo change button is offered for the applied recommendation"
+        },
+        {
+          "ok": true,
+          "message": "[api] Undo restored the syllabus to exactly its state before the recommendation was applied"
+        },
+        {
+          "ok": true,
+          "message": "[browser] Undo reports success on the page"
+        },
+        {
+          "ok": true,
+          "message": "[api] the reversal was recorded as an append-only decision"
+        },
+        {
+          "ok": true,
+          "message": "[browser] after Undo the recommendation is offered again and must be verified again before it can be applied"
+        },
+        {
+          "ok": true,
+          "message": "[api] the server refuses an Accept that was not verified by Check & Improve (HTTP 409: {\"error\":\"Policy V2 recommendations must be verified with Check & Improve before being accepted or applied.\"})"
+        },
+        {
+          "ok": true,
+          "message": "[api] the refused Accept changed nothing"
+        },
+        {
+          "ok": true,
+          "message": "[browser] after the Undo and a re-check the recommendation is offered again"
+        },
+        {
+          "ok": true,
+          "message": "[api] Check & Improve + Accept wrote only the recommended field (plan[0].activities)"
+        },
+        {
+          "ok": true,
+          "message": "[api] the faculty saved a newer edit of the same field (HTTP 200)"
+        },
+        {
+          "ok": true,
+          "message": "[api] the faculty's newer edit survived: Accept from the outdated page did not overwrite it"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the card tells the author that newer changes exist and the recommendation was not applied"
+        },
+        {
+          "ok": true,
+          "message": "[api] Reject changed nothing in the saved syllabus"
+        },
+        {
+          "ok": true,
+          "message": "[api] Reject was recorded by the decisions API"
+        },
+        {
+          "ok": true,
+          "message": "K06: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "K06: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "K06: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "K06: no request left this machine (none blocked)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=1 users=6",
+        "buttons on the first card: Accept | Check & improve | Reject",
+        "after clicking Accept on a recommendation whose target changed: field value is \"Newer faculty wording written after the recommendation. Not the proposal.\"; page notice: Newer changes to this syllabus were saved elsewhere, so this recommendation was NOT applied. The latest version has been loaded: review it, then click Re-Check again."
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K06-0-correction-withheld-no-actions.png",
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K06-1-recommendation-verified.png",
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K06-2-after-edit-and-accept.png",
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K06-2b-undo-offered.png",
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K06-2c-after-undo.png",
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K06-4-stale-accept-refused.png",
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K06-3-after-reject.png"
+      ],
+      "failed": false,
+      "ms": 75488
+    },
+    {
+      "id": "K07",
+      "title": "Incomplete and unavailable checks (browser): with the AI provider down nothing is reported as passed; the official score and pass line are unchanged",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "[api] a second synthetic syllabus (IT 205) was saved (HTTP 200)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] with the AI down on a first-ever check the page says Verification incomplete / no final AI score yet / AI unavailable"
+        },
+        {
+          "ok": true,
+          "message": "[browser] no \"Meets the standard\" verdict is shown when the AI-scored part could not run"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the incomplete seven-relationship coverage is stated explicitly (0 of 7)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the advisory AI gate still lets the author submit (the AI never blocks or approves)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] VPAA-01 is \"Not checked\" while the provider is down (not supported)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] VPAA-02 is \"Not checked\" while the provider is down (not supported)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] VPAA-03 is \"Not checked\" while the provider is down (not supported)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] VPAA-04 is \"Not checked\" while the provider is down (not supported)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] VPAA-05 is \"Not checked\" while the provider is down (not supported)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] VPAA-06 is \"Not checked\" while the provider is down (not supported)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] VPAA-07 is \"Not checked\" while the provider is down (not supported)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] CLO1:semantic is \"Not checked\" while the provider is down"
+        },
+        {
+          "ok": true,
+          "message": "[browser] CLO2:semantic is \"Not checked\" while the provider is down"
+        },
+        {
+          "ok": true,
+          "message": "[browser] CLO3:semantic is \"Not checked\" while the provider is down"
+        },
+        {
+          "ok": true,
+          "message": "[browser] CLO4:semantic is \"Not checked\" while the provider is down"
+        },
+        {
+          "ok": true,
+          "message": "[browser] deterministic checks (T-01, CLO1:structure) still ran and report their own result without the AI"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule STR-07 is still Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule ADM-04 is still Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule ADM-05 is still Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule CUR-10 is still Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule CLO-05 is still Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule CLO-10 is still Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule PLAN-05 is still Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule PLAN-06 is still Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule ALN-03 is still Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule ALN-04 is still Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[browser] reserved rule ALN-10 is still Not checked"
+        },
+        {
+          "ok": true,
+          "message": "[api] every VPAA relationship is NOT_CHECKED and unverified in the saved report"
+        },
+        {
+          "ok": true,
+          "message": "[api] with the provider back, all seven relationships are evaluated"
+        },
+        {
+          "ok": true,
+          "message": "[api] down: official score 99, passed true, pass line 79 are unchanged"
+        },
+        {
+          "ok": true,
+          "message": "[api] down: coverage is either reported incomplete with a reason, or every verified relationship is flagged as reused from the earlier successful check, never fresh (complete=true, 7/7, reason=null, all verified instances reused=true)"
+        },
+        {
+          "ok": true,
+          "message": "[api] down: no reserved rule becomes Passed"
+        },
+        {
+          "ok": true,
+          "message": "[api] rate: official score 99, passed true, pass line 79 are unchanged"
+        },
+        {
+          "ok": true,
+          "message": "[api] rate: coverage is either reported incomplete with a reason, or every verified relationship is flagged as reused from the earlier successful check, never fresh (complete=true, 7/7, reason=null, all verified instances reused=true)"
+        },
+        {
+          "ok": true,
+          "message": "[api] rate: no reserved rule becomes Passed"
+        },
+        {
+          "ok": true,
+          "message": "[api] invalid: official score 99, passed true, pass line 79 are unchanged"
+        },
+        {
+          "ok": true,
+          "message": "[api] invalid: coverage is either reported incomplete with a reason, or every verified relationship is flagged as reused from the earlier successful check, never fresh (complete=true, 7/7, reason=null, all verified instances reused=true)"
+        },
+        {
+          "ok": true,
+          "message": "[api] invalid: no reserved rule becomes Passed"
+        },
+        {
+          "ok": true,
+          "message": "K07: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "K07: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "K07: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "K07: no request left this machine (none blocked)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=1 users=6",
+        "coverage counts with the provider down (first-ever check): {\"catalogued\":195,\"implemented\":184,\"enabled\":180,\"applicable\":170,\"executed\":137,\"attempted\":129,\"verified\":111,\"failed\":4,\"needsReview\":3,\"partiallyEvaluated\":1,\"notApplicable\":21,\"notChecked\":62}",
+        "baseline (provider ok): overall=99 counts={\"catalogued\":195,\"implemented\":184,\"enabled\":180,\"applicable\":169,\"executed\":162,\"attempted\":155,\"verified\":151,\"failed\":6,\"needsReview\":5,\"partiallyEvaluated\":3,\"notApplicable\":22,\"notChecked\":19}",
+        "The first check above had nothing to reuse, so it shows no score. The per-mode checks reuse the verified judgements of the earlier successful check of the same syllabus (SYLLABUS_CHECK_REUSE), so the official score stays while the seven-relationship coverage drops."
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K07-1-provider-down-page.png",
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K07-2-provider-down-coverage-counts.png",
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K07-3-provider-down-vpaa-not-checked.png"
+      ],
+      "failed": false,
+      "ms": 19140
+    },
+    {
+      "id": "K08",
+      "title": "Official scoring parity and saved-report compatibility: profile on vs profile off vs V2 only; older saved reports still open in the page",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "[api] all three servers produced a run on the same syllabus"
+        },
+        {
+          "ok": true,
+          "message": "[api] only the first server resolved the comprehensive profile (comprehensive-testing | existing-flags | existing-flags)"
+        },
+        {
+          "ok": true,
+          "message": "[api] Policy V2 is on in the profile and V2-only servers and off in the legacy server"
+        },
+        {
+          "ok": true,
+          "message": "[api] official score, band, passed, pass line and six area scores identical with the profile on and with everything off (99 vs 99)"
+        },
+        {
+          "ok": true,
+          "message": "[api] official score, band, passed, pass line and six area scores identical with the profile on and with V2 only (99 vs 99)"
+        },
+        {
+          "ok": true,
+          "message": "[api] no finding of the legacy run is lost under the profile (lost: none)"
+        },
+        {
+          "ok": true,
+          "message": "[api] every finding the profile adds is advisory: none deducts points or blocks (0 added; scoring/blocking: none)"
+        },
+        {
+          "ok": true,
+          "message": "[api] no finding of the V2 only run is lost under the profile (lost: none)"
+        },
+        {
+          "ok": true,
+          "message": "[api] every finding the profile adds is advisory: none deducts points or blocks (0 added; scoring/blocking: none)"
+        },
+        {
+          "ok": true,
+          "message": "[api] the pass line is 79 on all three"
+        },
+        {
+          "ok": true,
+          "message": "[api] the hybrid scoring block (policy, deducted points, score) is identical with the profile on and off"
+        },
+        {
+          "ok": true,
+          "message": "[browser] a report saved before the coverage manifest existed still opens: the official score and verdict are shown"
+        },
+        {
+          "ok": true,
+          "message": "[browser] a report saved before the coverage manifest existed shows no coverage section (no receipts are fabricated)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] a report saved before the coverage manifest existed is not mislabelled as a failed coverage build"
+        },
+        {
+          "ok": true,
+          "message": "K08 a report saved before the coverage manifest existed: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "K08 a report saved before the coverage manifest existed: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "K08 a report saved before the coverage manifest existed: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "K08 a report saved before the coverage manifest existed: no request left this machine (none blocked)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] a report saved before Policy V2 and the coverage manifest existed still opens: the official score and verdict are shown"
+        },
+        {
+          "ok": true,
+          "message": "[browser] a report saved before Policy V2 and the coverage manifest existed shows no coverage section (no receipts are fabricated)"
+        },
+        {
+          "ok": true,
+          "message": "[browser] a report saved before Policy V2 and the coverage manifest existed is not mislabelled as a failed coverage build"
+        },
+        {
+          "ok": true,
+          "message": "K08 a report saved before Policy V2 and the coverage manifest existed: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "K08 a report saved before Policy V2 and the coverage manifest existed: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "K08 a report saved before Policy V2 and the coverage manifest existed: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "K08 a report saved before Policy V2 and the coverage manifest existed: no request left this machine (none blocked)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=2 users=6",
+        "findings list, profile vs legacy: added by the profile = []; present in legacy but missing under the profile = []",
+        "findings list, profile vs V2 only: added by the profile = []; present in V2 only but missing under the profile = []",
+        "hybrid official scoring blocks: profile={\"policy\":\"syllabus-policy-2\",\"deducted\":1,\"score\":99} legacy={\"policy\":\"syllabus-policy-2\",\"deducted\":1,\"score\":99} v2only={\"policy\":\"syllabus-policy-2\",\"deducted\":1,\"score\":99}"
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K08-older-report-no-coverage.png",
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K08-older-report-no-v2.png"
+      ],
+      "failed": false,
+      "ms": 38052
+    },
+    {
+      "id": "K10",
+      "title": "Two browser tabs on one syllabus: a save from the outdated tab is refused (HTTP 409), the newer text survives, the author is told and can load the latest version",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "[browser] both tabs show the Course Information step of the same syllabus"
+        },
+        {
+          "ok": true,
+          "message": "[api] tab A saved its edit through the builder autosave"
+        },
+        {
+          "ok": true,
+          "message": "[browser] tab A's own save was accepted (no conflict for the up-to-date tab)"
+        },
+        {
+          "ok": true,
+          "message": "[api] a save with no base revision is refused with HTTP 428 revision_required (HTTP 428)"
+        },
+        {
+          "ok": true,
+          "message": "[api] the refused save wrote nothing"
+        },
+        {
+          "ok": true,
+          "message": "[api] a save with a base that is not the stored revision is refused with HTTP 409 (HTTP 409)"
+        },
+        {
+          "ok": true,
+          "message": "[api] the conflicting save wrote nothing"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the outdated tab's save was answered HTTP 409 by the server"
+        },
+        {
+          "ok": true,
+          "message": "[api] the newer faculty content was preserved: tab B overwrote nothing"
+        },
+        {
+          "ok": true,
+          "message": "[browser] tab B shows the conflict notice"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the notice says newer changes exist, that the save did NOT happen, which section, and what loading will do: Newer changes were saved This syllabus was changed in another tab or session after you opened it. Your last change was NOT saved, so nothing newer was overwritt"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the autosave indicator says Not saved"
+        },
+        {
+          "ok": true,
+          "message": "[api] retrying from the outdated tab still wrote nothing"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the notice is gone after loading the latest version"
+        },
+        {
+          "ok": true,
+          "message": "[browser] tab B now shows tab A's newer text"
+        },
+        {
+          "ok": true,
+          "message": "[api] after loading the latest version tab B's next edit is saved on top of tab A's"
+        },
+        {
+          "ok": true,
+          "message": "[browser] the protection is symmetric: the tab that became outdated is refused too"
+        },
+        {
+          "ok": true,
+          "message": "K10 tab B: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "K10 tab B: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "K10 tab B: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "K10 tab B: no request left this machine (none blocked)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=2 users=6"
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K10-1-outdated-tab-conflict-notice.png",
+        "docs/checker-comprehensive/ui-verification/comprehensive-po-integration-1105/K10-2-after-loading-latest.png"
+      ],
+      "failed": false,
+      "ms": 37944
+    },
+    {
+      "id": "K09",
+      "title": "No unintended network request: every provider request was answered by the scripted double; nothing left the machine",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "[probe] the offline guard refuses a request to a public host (BLOCKED:E2E offline guard: blocked non-loopback request to example.org)"
+        },
+        {
+          "ok": true,
+          "message": "[server log] every provider request of the run (186) was answered by the scripted double"
+        },
+        {
+          "ok": true,
+          "message": "[server log] the server attempted no request to any other host during the whole run"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=2 users=6",
+        "provider request modes: {\"ok\":171,\"unauthorized-field\":5,\"down\":10}"
+      ],
+      "evidence": [],
+      "failed": false,
+      "ms": 1033
+    }
+  ]
+}

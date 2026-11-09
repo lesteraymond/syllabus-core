@@ -378,7 +378,9 @@
     },
     "BSIT-CYBERSECURITY": {
       "inheritsFrom": "BSIT",
-      "curriculum": "2025-2026 (unchanged; not an outcome source)"
+      "curriculumSource": "BSIT",
+      "curriculum": "Approved BSIT curriculum reference; historical specialization curriculum records remain preserved",
+      "curriculumAuthorization": "User instruction 2026-11-05; formal institutional approval is not inferred"
     }
   }
 }

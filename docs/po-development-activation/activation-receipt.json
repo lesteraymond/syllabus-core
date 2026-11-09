@@ -1,0 +1,20 @@
+{
+  "confirmed": true,
+  "authorizedBy": "User explicit instruction in this conversation",
+  "authorizationRecord": "Controlled corrected PO activation in the EXISTING DEVELOPMENT DATABASE ONLY, with full backup and restore verification; 2026-11-05. No staging/production/formal VPAA approval.",
+  "migrationId": "lcup-po-2026-10-29",
+  "databaseIdentityHash": "f7fbc8b43dce865b2c95eb7ea0718238e40455a93c0aa25dac2930ec9e124fd3",
+  "beforeHash": "80ba46cda6d6cbc93d9a8a3c2fac6c0cc80905a749838b88c490009b67d94e9e",
+  "programIds": [
+    1,
+    15,
+    16,
+    17
+  ],
+  "developmentTestingOnly": true,
+  "institutionalApproval": "not_recorded",
+  "appliedAt": "2026-11-05T11:09:11.043Z",
+  "applied": true,
+  "remediationItems": 8,
+  "backupSha256": "9809ce02a8b1076d8e087d03bb59fb0b7b563a3059ecc748109cce4ff69bb46d"
+}

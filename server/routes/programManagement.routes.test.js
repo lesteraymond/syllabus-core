@@ -14,6 +14,7 @@ function makeDb() {
   };
   let backup;
   const query = async (sql,p=[]) => {
+    if (sql.startsWith('SELECT label, start_year, is_current FROM academic_years')) throw Object.assign(new Error("Table 'academic_years' doesn't exist"), { code: 'ER_NO_SUCH_TABLE' }); // these fixtures are a database before the academic year scope
     // Route tests never expose cleanup jobs to the real filesystem worker.
     // program_outcome_sources: s.links is [{program, source}] (a specialization and the program it inherits its outcomes from).
     if(sql.startsWith('SELECT p.program_id AS id, p.code, p.name FROM program_outcome_sources'))return [s.links.filter(l=>l.source===p[0]).map(l=>{const {id,code,name}=s.programs.find(r=>r.id===l.program);return {id,code,name};})];
@@ -31,6 +32,7 @@ function makeDb() {
     if(sql.startsWith('SELECT name FROM program_name_aliases'))return [s.aliases.filter(r=>r.program_id===p[0]).map(({name})=>({name}))];
     if(sql.startsWith('SELECT course_id AS id'))return [s.courses.filter(r=>r.program_id===p[0]).map(({program_id,...r})=>r)];
     if(sql.startsWith('SELECT curriculum_id AS id'))return [s.curricula.filter(r=>p[0].includes(r.name.toLowerCase())).map(({id})=>({id}))];
+    if(sql.startsWith("SELECT s.syllabus_id AS id, s.course_code AS code, s.title, s.status FROM syllabi s WHERE s.status = 'approved'"))return [s.syllabi.filter(r=>r.status==='approved'&&p[0].includes(r.curriculum_id)).map(({id,code,title,status})=>({id,code,title,status}))];
     if(sql.startsWith('SELECT s.syllabus_id AS id'))return [s.syllabi.filter(r=>p[0].includes(r.course_id)||(r.course_id==null && (p[1].includes(r.program)||p[2].includes(r.curriculum_id)||p[3].includes(r.code.toLowerCase())))).map(({course_id,program,curriculum_id,...r})=>r)];
     if(sql.startsWith('SELECT version_id AS id'))return [s.versions.filter(r=>p[0].includes(r.syllabus_id)).map(r=>({...r}))];
     if(sql.startsWith('SELECT user_id FROM faculty_programs'))return [s.programAssignments.filter(r=>r.program_id===p[0]).map(({user_id})=>({user_id}))];
@@ -67,6 +69,8 @@ async function withServer(fn){
   try{await fn({db,call});}finally{await new Promise(resolve=>server.close(resolve));}
 }
 const confirmation=preview=>({previewToken:preview.previewToken,confirmCode:preview.program.code,acknowledgeCascade:true});
+// The deletion contract below applies to programs without approved syllabi; approved ones are refused first (see the end of this file).
+const unapprove=db=>{db.s.syllabi[0].status='rejected';};
 
 test('administrator preview reports subjects, all syllabus statuses, versions, assignments and files without deleting',()=>withServer(async({db,call})=>{
   const r=await call('GET','/1/deletion-preview');assert.equal(r.status,200);
@@ -77,27 +81,27 @@ test('faculty, students and anonymous requests cannot preview, rename or delete 
   for(const user of [{id:2,role:'faculty'},{id:3,role:'student'},null])for(const [method,path,body]of [['GET','/1/deletion-preview'],['PATCH','/1',{name:'Changed',expectedName:'Information Technology'}],['DELETE','/1',{}]])assert.equal((await call(method,path,body,user)).status,user?403:401);
 }));
 test('deletion requires a signed preview, exact typed code and explicit acknowledgement',()=>withServer(async({db,call})=>{
-  assert.equal((await call('DELETE','/1',{})).status,409);const p=(await call('GET','/1/deletion-preview')).body;
+  unapprove(db);assert.equal((await call('DELETE','/1',{})).status,409);const p=(await call('GET','/1/deletion-preview')).body;
   for(const body of [{...confirmation(p),confirmCode:'BSCS'},{...confirmation(p),acknowledgeCascade:false}])assert.equal((await call('DELETE','/1',body)).status,400);
   assert.equal((await call('DELETE','/1',{...confirmation(p),previewToken:p.previewToken+'x'})).status,409);assert.equal(db.s.programs.length,2);
 }));
-test('preview tokens are bound to their administrator and program',()=>withServer(async({call})=>{
-  const p=(await call('GET','/1/deletion-preview')).body;
+test('preview tokens are bound to their administrator and program',()=>withServer(async({db,call})=>{
+  unapprove(db);const p=(await call('GET','/1/deletion-preview')).body;
   assert.equal((await call('DELETE','/2',confirmation(p))).status,409);
   assert.equal((await call('DELETE','/1',confirmation(p),{id:9,role:'admin'})).status,409);
 }));
 test('an expired preview cannot authorize deletion',async()=>{
-  const db=makeDb();const preview=await svc.preview(db,1,1);const realNow=Date.now;
+  const db=makeDb();unapprove(db);const preview=await svc.preview(db,1,1);const realNow=Date.now;
   try{Date.now=()=>realNow()+11*60*1000;await assert.rejects(svc.remove(db,1,1,confirmation(preview)),error=>error.status===409);}finally{Date.now=realNow;}
   assert.equal(db.s.programs.length,2);
 });
 test('changed subjects, new syllabi and changed versions require a new preview',()=>withServer(async({db,call})=>{
-  for(const mutate of [()=>db.s.courses[0].title='Changed title',()=>db.s.syllabi.push({id:101,course_id:10,code:'IT101',title:'New draft',status:'draft'}),()=>db.s.versions.push({id:2,syllabus_id:100,file_path:null})]){
+  unapprove(db);for(const mutate of [()=>db.s.courses[0].title='Changed title',()=>db.s.syllabi.push({id:101,course_id:10,code:'IT101',title:'New draft',status:'draft'}),()=>db.s.versions.push({id:2,syllabus_id:100,file_path:null})]){
     const p=(await call('GET','/1/deletion-preview')).body;mutate();const r=await call('DELETE','/1',confirmation(p));assert.equal(r.status,409);assert.equal(r.body.code,'preview_required');
   }assert.equal(db.s.events.length,0);
 }));
 test('confirmed deletion removes only the targeted program, subjects and syllabi and records an audit event',()=>withServer(async({db,call})=>{
-  const p=(await call('GET','/1/deletion-preview')).body;const r=await call('DELETE','/1',confirmation(p));assert.equal(r.status,200);
+  unapprove(db);const p=(await call('GET','/1/deletion-preview')).body;const r=await call('DELETE','/1',confirmation(p));assert.equal(r.status,200);
   assert.deepEqual(db.s.programs.map(r=>r.id),[2]);assert.deepEqual(db.s.courses.map(r=>r.id),[20]);assert.deepEqual(db.s.syllabi.map(r=>r.id),[200]);assert.equal(db.s.versions.length,0);assert.equal(db.s.programAssignments.length,0);assert.equal(db.s.subjectAssignments.length,0);assert.equal(db.s.events[0][1],'delete_program');assert.equal(db.s.jobs[0].file_path,'/uploads/123-test.pdf');
   assert.equal((await call('DELETE','/1',confirmation(p))).status,404);
 }));
@@ -111,7 +115,7 @@ test('legacy uploads are included by curriculum, course code and retained progra
   const p=(await call('GET','/1/deletion-preview')).body;assert.equal(p.counts.syllabi,3);
 }));
 test('a failure rolls back the deletion, audit event and file-cleanup outbox together',async()=>{
-  const db=makeDb();const p=await svc.preview(db,1,1);db.s.failDelete=true;
+  const db=makeDb();unapprove(db);const p=await svc.preview(db,1,1);db.s.failDelete=true;
   await assert.rejects(svc.remove(db,1,1,confirmation(p)),/Simulated deletion failure/);
   assert.equal(db.s.programs.length,2);assert.equal(db.s.syllabi.length,2);assert.equal(db.s.events.length,0);assert.equal(db.s.jobs.length,0);
 });
@@ -152,7 +156,7 @@ test('historical codes cannot be recycled when creating a new program',async()=>
   await assert.rejects(require('../lib/programs').createProgram(db,{code:'OLD-IT',name:'Different program'}),error=>error.status===409);
 });
 test('a code change invalidates pending deletion previews and keeps historical code references visible',()=>withServer(async({db,call})=>{
-  db.s.syllabi.push({id:101,course_id:null,code:'LEGACY',program:'bsit',title:'Legacy program',status:'submitted'});
+  unapprove(db);db.s.syllabi.push({id:101,course_id:null,code:'LEGACY',program:'bsit',title:'Legacy program',status:'submitted'});
   const old=(await call('GET','/1/deletion-preview')).body;
   assert.equal((await call('PATCH','/1',{name:'Information Technology',expectedName:'Information Technology',code:'NEW-IT',expectedCode:'BSIT'})).status,200);
   const r=await call('DELETE','/1',confirmation(old));assert.equal(r.status,409);assert.equal(r.body.code,'preview_required');
@@ -176,4 +180,27 @@ test('the specialization itself can be deleted, its preview names the program it
 }));
 test('programs without specializations keep the old preview and deletion behaviour (no new blocking)',()=>withServer(async({call})=>{
   const p=(await call('GET','/2/deletion-preview')).body;assert.equal(p.blocked,false);assert.deepEqual(p.specializations,[]);assert.equal(p.inheritsFrom,null);assert.ok(p.previewToken);
+}));
+
+const snapshot=db=>structuredClone({programs:db.s.programs,courses:db.s.courses,syllabi:db.s.syllabi,versions:db.s.versions,programAssignments:db.s.programAssignments,subjectAssignments:db.s.subjectAssignments,events:db.s.events,jobs:db.s.jobs});
+test('a program with an approved syllabus cannot be deleted: the preview names it and carries no token, and nothing changes',()=>withServer(async({db,call})=>{
+  const before=snapshot(db);const preview=await call('GET','/1/deletion-preview');
+  assert.equal(preview.status,200);assert.equal(preview.body.blocked,true);assert.equal(preview.body.previewToken,undefined);assert.deepEqual(preview.body.approved.map(r=>r.id),[100]);
+  const refused=await call('DELETE','/1',{confirmCode:'BSIT',acknowledgeCascade:true});
+  assert.equal(refused.status,409);assert.equal(refused.body.code,'approved_records_protected');assert.equal(refused.body.count,1);assert.deepEqual(refused.body.affected.map(r=>r.id),[100]);
+  assert.match(refused.body.error,/BSIT cannot be deleted\. Approved syllabi that depend on it: 1\./);assert.doesNotMatch(refused.body.error,/foreign key|constraint/i);
+  assert.deepEqual(snapshot(db),before);
+}));
+test('a syllabus approved after the preview still stops the deletion, whatever the token says',()=>withServer(async({db,call})=>{
+  unapprove(db);const p=(await call('GET','/1/deletion-preview')).body;assert.ok(p.previewToken);
+  db.s.syllabi[0].status='approved';const before=snapshot(db);
+  const r=await call('DELETE','/1',confirmation(p));assert.equal(r.status,409);assert.equal(r.body.code,'approved_records_protected');assert.deepEqual(snapshot(db),before);
+}));
+test('an approved syllabus only linked by curriculum stops the deletion too: the foreign key would clear that link',()=>withServer(async({db,call})=>{
+  unapprove(db);db.s.curricula.push({id:11,name:'BSIT'});db.s.syllabi.push({id:300,course_id:20,curriculum_id:11,code:'CS101',title:'Linked',status:'approved'});
+  const before=snapshot(db);const preview=await call('GET','/1/deletion-preview');assert.equal(preview.body.blocked,true);assert.deepEqual(preview.body.approved.map(r=>r.id),[300]);
+  const r=await call('DELETE','/1',{confirmCode:'BSIT',acknowledgeCascade:true});assert.equal(r.status,409);assert.equal(r.body.code,'approved_records_protected');assert.deepEqual(snapshot(db),before);
+}));
+test('renaming a program with approved syllabi still works: only deletion is refused',()=>withServer(async({db,call})=>{
+  assert.equal((await call('PATCH','/1',{name:'Renamed IT',expectedName:'Information Technology'})).status,200);assert.equal(db.s.syllabi[0].status,'approved');
 }));

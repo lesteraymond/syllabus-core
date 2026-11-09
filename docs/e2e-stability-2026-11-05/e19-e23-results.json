@@ -1,0 +1,342 @@
+[
+  {
+    "run": "final-off",
+    "cases": [
+      {
+        "id": "E19",
+        "title": "Subjects table filters: program, semester and year level combine, hide subjects without a term, and clear",
+        "status": "PASS",
+        "checks": [
+          {
+            "ok": true,
+            "message": "the unfiltered table lists every subject (3)"
+          },
+          {
+            "ok": true,
+            "message": "the subject count is shown"
+          },
+          {
+            "ok": true,
+            "message": "there is no academic year filter in the table: the page shows one year's catalog"
+          },
+          {
+            "ok": true,
+            "message": "there is exactly one Semester filter on the page (1)"
+          },
+          {
+            "ok": true,
+            "message": "semester + year level together find IT 306"
+          },
+          {
+            "ok": true,
+            "message": "a different semester hides it and the table says nothing matches"
+          },
+          {
+            "ok": true,
+            "message": "Clear filters brings every subject back"
+          },
+          {
+            "ok": true,
+            "message": "subjects without a term (and those of other levels) are hidden by a term filter"
+          },
+          {
+            "ok": true,
+            "message": "the program filter still works alongside the others"
+          },
+          {
+            "ok": true,
+            "message": "E19: no uncaught page errors (none)"
+          },
+          {
+            "ok": true,
+            "message": "E19: no JavaScript console errors (none)"
+          },
+          {
+            "ok": true,
+            "message": "E19: no unexpected API failures (none)"
+          },
+          {
+            "ok": true,
+            "message": "E19: no request left this machine (none blocked)"
+          },
+          {
+            "ok": true,
+            "message": "at 375 px the filters wrap and the page has no horizontal overflow (scrollWidth 375 <= 375)"
+          }
+        ],
+        "notes": [
+          "scratch database at scenario start: syllabi=2 users=6"
+        ],
+        "evidence": [
+          "docs/checker-comprehensive/ui-verification/regression-baseline-no-profile-stability-final-off/E19-subject-filters-1440.png",
+          "docs/checker-comprehensive/ui-verification/regression-baseline-no-profile-stability-final-off/E19-subject-filters-375.png"
+        ],
+        "failed": false,
+        "ms": 10008
+      },
+      {
+        "id": "E23",
+        "title": "Add subject with a new program: the administrator types its EGAs, Program Outcomes and the school vision; faculty get them for that program and subject; a later change reaches existing subjects only through Apply to subjects",
+        "status": "PASS",
+        "checks": [
+          {
+            "ok": true,
+            "message": "a new program code opens the outcomes part of the form and says the program is new"
+          },
+          {
+            "ok": true,
+            "message": "the program was created with its EGA and its Program Outcome ({\"id\":14,\"code\":\"BSEE\",\"name\":\"BS Electrical Engineering (synthetic)\",\"outcomeCount\":1,\"egaCount\":1,\"inheritedFrom\":null})"
+          },
+          {
+            "ok": true,
+            "message": "the subject list no longer reports the EGAs, POs or vision as missing ([\"the learning outcomes of EE 101\"])"
+          },
+          {
+            "ok": true,
+            "message": "the school vision typed in the form was saved"
+          },
+          {
+            "ok": true,
+            "message": "the subject was assigned to the faculty member (HTTP 200)"
+          },
+          {
+            "ok": true,
+            "message": "what faculty get for this program and subject is exactly the program EGAs and POs and the school vision"
+          },
+          {
+            "ok": true,
+            "message": "the faculty member started a syllabus on it (HTTP 200)"
+          },
+          {
+            "ok": true,
+            "message": "Step 2 of the builder shows the EGA the administrator typed"
+          },
+          {
+            "ok": true,
+            "message": "and the vision"
+          },
+          {
+            "ok": true,
+            "message": "the existing subject keeps its own copy after the program is edited"
+          },
+          {
+            "ok": true,
+            "message": "Apply to subjects gives the existing subject the revised outcome"
+          },
+          {
+            "ok": true,
+            "message": "E23-admin: no uncaught page errors (none)"
+          },
+          {
+            "ok": true,
+            "message": "E23-admin: no JavaScript console errors (none)"
+          },
+          {
+            "ok": true,
+            "message": "E23-admin: no unexpected API failures (none)"
+          },
+          {
+            "ok": true,
+            "message": "E23-admin: no request left this machine (none blocked)"
+          },
+          {
+            "ok": true,
+            "message": "E23-faculty: no uncaught page errors (none)"
+          },
+          {
+            "ok": true,
+            "message": "E23-faculty: no JavaScript console errors (none)"
+          },
+          {
+            "ok": true,
+            "message": "E23-faculty: no unexpected API failures (none)"
+          },
+          {
+            "ok": true,
+            "message": "E23-faculty: no request left this machine (none blocked)"
+          }
+        ],
+        "notes": [
+          "scratch database at scenario start: syllabi=3 users=6"
+        ],
+        "evidence": [
+          "docs/checker-comprehensive/ui-verification/regression-baseline-no-profile-stability-final-off/E23-admin-add-subject-outcomes-1440.png",
+          "docs/checker-comprehensive/ui-verification/regression-baseline-no-profile-stability-final-off/E23-faculty-step2-1440.png",
+          "docs/checker-comprehensive/ui-verification/regression-baseline-no-profile-stability-final-off/E23-admin-apply-to-subjects-1440.png"
+        ],
+        "failed": false,
+        "ms": 23666
+      }
+    ]
+  },
+  {
+    "run": "final-on",
+    "cases": [
+      {
+        "id": "E19",
+        "title": "Subjects table filters: program, semester and year level combine, hide subjects without a term, and clear",
+        "status": "PASS",
+        "checks": [
+          {
+            "ok": true,
+            "message": "the unfiltered table lists every subject (3)"
+          },
+          {
+            "ok": true,
+            "message": "the subject count is shown"
+          },
+          {
+            "ok": true,
+            "message": "there is no academic year filter in the table: the page shows one year's catalog"
+          },
+          {
+            "ok": true,
+            "message": "there is exactly one Semester filter on the page (1)"
+          },
+          {
+            "ok": true,
+            "message": "semester + year level together find IT 306"
+          },
+          {
+            "ok": true,
+            "message": "a different semester hides it and the table says nothing matches"
+          },
+          {
+            "ok": true,
+            "message": "Clear filters brings every subject back"
+          },
+          {
+            "ok": true,
+            "message": "subjects without a term (and those of other levels) are hidden by a term filter"
+          },
+          {
+            "ok": true,
+            "message": "the program filter still works alongside the others"
+          },
+          {
+            "ok": true,
+            "message": "E19: no uncaught page errors (none)"
+          },
+          {
+            "ok": true,
+            "message": "E19: no JavaScript console errors (none)"
+          },
+          {
+            "ok": true,
+            "message": "E19: no unexpected API failures (none)"
+          },
+          {
+            "ok": true,
+            "message": "E19: no request left this machine (none blocked)"
+          },
+          {
+            "ok": true,
+            "message": "at 375 px the filters wrap and the page has no horizontal overflow (scrollWidth 375 <= 375)"
+          }
+        ],
+        "notes": [
+          "scratch database at scenario start: syllabi=2 users=6"
+        ],
+        "evidence": [
+          "docs/checker-comprehensive/ui-verification/regression-baseline-no-profile-stability-final-on/E19-subject-filters-1440.png",
+          "docs/checker-comprehensive/ui-verification/regression-baseline-no-profile-stability-final-on/E19-subject-filters-375.png"
+        ],
+        "failed": false,
+        "ms": 9854
+      },
+      {
+        "id": "E23",
+        "title": "Add subject with a new program: the administrator types its EGAs, Program Outcomes and the school vision; faculty get them for that program and subject; a later change reaches existing subjects only through Apply to subjects",
+        "status": "PASS",
+        "checks": [
+          {
+            "ok": true,
+            "message": "a new program code opens the outcomes part of the form and says the program is new"
+          },
+          {
+            "ok": true,
+            "message": "the program was created with its EGA and its Program Outcome ({\"id\":18,\"code\":\"BSEE\",\"name\":\"BS Electrical Engineering (synthetic)\",\"outcomeCount\":1,\"egaCount\":1,\"inheritedFrom\":null})"
+          },
+          {
+            "ok": true,
+            "message": "the subject list no longer reports the EGAs, POs or vision as missing ([\"the learning outcomes of EE 101\"])"
+          },
+          {
+            "ok": true,
+            "message": "the school vision typed in the form was saved"
+          },
+          {
+            "ok": true,
+            "message": "the subject was assigned to the faculty member (HTTP 200)"
+          },
+          {
+            "ok": true,
+            "message": "what faculty get for this program and subject is exactly the program EGAs and POs and the school vision"
+          },
+          {
+            "ok": true,
+            "message": "the faculty member started a syllabus on it (HTTP 200)"
+          },
+          {
+            "ok": true,
+            "message": "Step 2 of the builder shows the EGA the administrator typed"
+          },
+          {
+            "ok": true,
+            "message": "and the vision"
+          },
+          {
+            "ok": true,
+            "message": "the existing subject keeps its own copy after the program is edited"
+          },
+          {
+            "ok": true,
+            "message": "Apply to subjects gives the existing subject the revised outcome"
+          },
+          {
+            "ok": true,
+            "message": "E23-admin: no uncaught page errors (none)"
+          },
+          {
+            "ok": true,
+            "message": "E23-admin: no JavaScript console errors (none)"
+          },
+          {
+            "ok": true,
+            "message": "E23-admin: no unexpected API failures (none)"
+          },
+          {
+            "ok": true,
+            "message": "E23-admin: no request left this machine (none blocked)"
+          },
+          {
+            "ok": true,
+            "message": "E23-faculty: no uncaught page errors (none)"
+          },
+          {
+            "ok": true,
+            "message": "E23-faculty: no JavaScript console errors (none)"
+          },
+          {
+            "ok": true,
+            "message": "E23-faculty: no unexpected API failures (none)"
+          },
+          {
+            "ok": true,
+            "message": "E23-faculty: no request left this machine (none blocked)"
+          }
+        ],
+        "notes": [
+          "scratch database at scenario start: syllabi=3 users=6"
+        ],
+        "evidence": [
+          "docs/checker-comprehensive/ui-verification/regression-baseline-no-profile-stability-final-on/E23-admin-add-subject-outcomes-1440.png",
+          "docs/checker-comprehensive/ui-verification/regression-baseline-no-profile-stability-final-on/E23-faculty-step2-1440.png",
+          "docs/checker-comprehensive/ui-verification/regression-baseline-no-profile-stability-final-on/E23-admin-apply-to-subjects-1440.png"
+        ],
+        "failed": false,
+        "ms": 28642
+      }
+    ]
+  }
+]

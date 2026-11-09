@@ -1,0 +1,529 @@
+{
+  "v2only": [
+    {
+      "case": "A",
+      "mode": "v2only",
+      "requests": 20,
+      "requestsByPriority": {
+        "scored": 7,
+        "v2": 11,
+        "optional": 2
+      },
+      "legacyRelationships": 98,
+      "policyV2Relationships": 129,
+      "requestBodyBytes": 505520,
+      "largestRequestBytes": 46409,
+      "inAppReservation": {
+        "reservedUsd": 4.63,
+        "reservedTokens": 825520,
+        "recommendedPerCheckCapUsd": 6
+      },
+      "estimate": {
+        "low": {
+          "requests": 20,
+          "inputTokens": 144434,
+          "outputTokens": 88332,
+          "dollars": 0.953
+        },
+        "expected": {
+          "requests": 20,
+          "inputTokens": 144434,
+          "outputTokens": 136982,
+          "dollars": 1.494
+        },
+        "high": {
+          "requests": 26,
+          "inputTokens": 187764,
+          "outputTokens": 281294,
+          "dollars": 3.507
+        }
+      },
+      "minutes": {
+        "expected": 0.8,
+        "high": 1.1
+      },
+      "offlineOfficial": {
+        "overall": 84,
+        "passed": true,
+        "passThreshold": 79,
+        "deterministicBlockingFindings": 0,
+        "v2": "completed"
+      },
+      "vpaaInstances": {
+        "VPAA-01": 15,
+        "VPAA-02": 15,
+        "VPAA-03": 15,
+        "VPAA-04": 15,
+        "VPAA-05": 15,
+        "VPAA-06": 15,
+        "VPAA-07": 15
+      },
+      "cloClassificationPairs": 4
+    },
+    {
+      "case": "B",
+      "mode": "v2only",
+      "requests": 20,
+      "requestsByPriority": {
+        "scored": 7,
+        "v2": 11,
+        "optional": 2
+      },
+      "legacyRelationships": 98,
+      "policyV2Relationships": 129,
+      "requestBodyBytes": 504135,
+      "largestRequestBytes": 46364,
+      "inAppReservation": {
+        "reservedUsd": 4.63,
+        "reservedTokens": 824135,
+        "recommendedPerCheckCapUsd": 6
+      },
+      "estimate": {
+        "low": {
+          "requests": 20,
+          "inputTokens": 144039,
+          "outputTokens": 88332,
+          "dollars": 0.952
+        },
+        "expected": {
+          "requests": 20,
+          "inputTokens": 144039,
+          "outputTokens": 136982,
+          "dollars": 1.494
+        },
+        "high": {
+          "requests": 26,
+          "inputTokens": 187251,
+          "outputTokens": 281294,
+          "dollars": 3.506
+        }
+      },
+      "minutes": {
+        "expected": 0.8,
+        "high": 1.1
+      },
+      "offlineOfficial": {
+        "overall": 84,
+        "passed": true,
+        "passThreshold": 79,
+        "deterministicBlockingFindings": 0,
+        "v2": "completed"
+      },
+      "vpaaInstances": {
+        "VPAA-01": 15,
+        "VPAA-02": 15,
+        "VPAA-03": 15,
+        "VPAA-04": 15,
+        "VPAA-05": 15,
+        "VPAA-06": 15,
+        "VPAA-07": 15
+      },
+      "cloClassificationPairs": 4
+    },
+    {
+      "case": "C",
+      "mode": "v2only",
+      "requests": 20,
+      "requestsByPriority": {
+        "scored": 7,
+        "v2": 11,
+        "optional": 2
+      },
+      "legacyRelationships": 98,
+      "policyV2Relationships": 129,
+      "requestBodyBytes": 491236,
+      "largestRequestBytes": 43808,
+      "inAppReservation": {
+        "reservedUsd": 4.6,
+        "reservedTokens": 811236,
+        "recommendedPerCheckCapUsd": 6
+      },
+      "estimate": {
+        "low": {
+          "requests": 20,
+          "inputTokens": 140353,
+          "outputTokens": 88332,
+          "dollars": 0.951
+        },
+        "expected": {
+          "requests": 20,
+          "inputTokens": 140353,
+          "outputTokens": 136982,
+          "dollars": 1.491
+        },
+        "high": {
+          "requests": 26,
+          "inputTokens": 182459,
+          "outputTokens": 281294,
+          "dollars": 3.496
+        }
+      },
+      "minutes": {
+        "expected": 0.8,
+        "high": 1.1
+      },
+      "offlineOfficial": {
+        "overall": 84,
+        "passed": true,
+        "passThreshold": 79,
+        "deterministicBlockingFindings": 0,
+        "v2": "completed"
+      },
+      "vpaaInstances": {
+        "VPAA-01": 15,
+        "VPAA-02": 15,
+        "VPAA-03": 15,
+        "VPAA-04": 15,
+        "VPAA-05": 15,
+        "VPAA-06": 15,
+        "VPAA-07": 15
+      },
+      "cloClassificationPairs": 4
+    },
+    {
+      "case": "D",
+      "mode": "v2only",
+      "requests": 20,
+      "requestsByPriority": {
+        "scored": 7,
+        "v2": 11,
+        "optional": 2
+      },
+      "legacyRelationships": 98,
+      "policyV2Relationships": 129,
+      "requestBodyBytes": 492666,
+      "largestRequestBytes": 44992,
+      "inAppReservation": {
+        "reservedUsd": 4.6,
+        "reservedTokens": 812666,
+        "recommendedPerCheckCapUsd": 6
+      },
+      "estimate": {
+        "low": {
+          "requests": 20,
+          "inputTokens": 140762,
+          "outputTokens": 88332,
+          "dollars": 0.951
+        },
+        "expected": {
+          "requests": 20,
+          "inputTokens": 140762,
+          "outputTokens": 136982,
+          "dollars": 1.491
+        },
+        "high": {
+          "requests": 26,
+          "inputTokens": 182991,
+          "outputTokens": 281294,
+          "dollars": 3.497
+        }
+      },
+      "minutes": {
+        "expected": 0.8,
+        "high": 1.1
+      },
+      "offlineOfficial": {
+        "overall": 82,
+        "passed": true,
+        "passThreshold": 79,
+        "deterministicBlockingFindings": 0,
+        "v2": "completed"
+      },
+      "vpaaInstances": {
+        "VPAA-01": 15,
+        "VPAA-02": 15,
+        "VPAA-03": 15,
+        "VPAA-04": 15,
+        "VPAA-05": 15,
+        "VPAA-06": 15,
+        "VPAA-07": 15
+      },
+      "cloClassificationPairs": 4
+    }
+  ],
+  "model": "claude-sonnet-5-5",
+  "prices": {
+    "inputPerM": 2,
+    "outputPerM": 10,
+    "cacheReadPerM": 0.1,
+    "usOnlyFactor": 1.1
+  },
+  "calibration": {
+    "legacyOutPerPair": {
+      "low": 309,
+      "expected": 400,
+      "high": 760
+    },
+    "v2OutPerPair": {
+      "low": 450,
+      "expected": 758,
+      "high": 1100
+    },
+    "charsPerToken": 3.5,
+    "cachedShare": {
+      "low": 0.8,
+      "expected": 0.6,
+      "high": 0
+    },
+    "extraRequestsHigh": 0.3,
+    "secondsPerRequest": 7.3,
+    "concurrency": 3
+  },
+  "cases": [
+    {
+      "case": "A",
+      "mode": "comprehensive",
+      "requests": 51,
+      "requestsByPriority": {
+        "scored": 19,
+        "v2": 11,
+        "optional": 21
+      },
+      "legacyRelationships": 151,
+      "policyV2Relationships": 129,
+      "requestBodyBytes": 1966860,
+      "largestRequestBytes": 46409,
+      "inAppReservation": {
+        "reservedUsd": 13.3,
+        "reservedTokens": 2782860,
+        "recommendedPerCheckCapUsd": 17
+      },
+      "estimate": {
+        "low": {
+          "requests": 51,
+          "inputTokens": 561960,
+          "outputTokens": 104709,
+          "dollars": 1.317
+        },
+        "expected": {
+          "requests": 51,
+          "inputTokens": 561960,
+          "outputTokens": 158182,
+          "dollars": 2.065
+        },
+        "high": {
+          "requests": 66,
+          "inputTokens": 730548,
+          "outputTokens": 333658,
+          "dollars": 5.277
+        }
+      },
+      "minutes": {
+        "expected": 2.1,
+        "high": 2.7
+      },
+      "offlineOfficial": {
+        "overall": 84,
+        "passed": true,
+        "passThreshold": 79,
+        "deterministicBlockingFindings": 0,
+        "v2": "completed"
+      },
+      "vpaaInstances": {
+        "VPAA-01": 15,
+        "VPAA-02": 15,
+        "VPAA-03": 15,
+        "VPAA-04": 15,
+        "VPAA-05": 15,
+        "VPAA-06": 15,
+        "VPAA-07": 15
+      },
+      "cloClassificationPairs": 4
+    },
+    {
+      "case": "B",
+      "mode": "comprehensive",
+      "requests": 51,
+      "requestsByPriority": {
+        "scored": 19,
+        "v2": 11,
+        "optional": 21
+      },
+      "legacyRelationships": 151,
+      "policyV2Relationships": 129,
+      "requestBodyBytes": 1965023,
+      "largestRequestBytes": 46364,
+      "inAppReservation": {
+        "reservedUsd": 13.3,
+        "reservedTokens": 2781023,
+        "recommendedPerCheckCapUsd": 17
+      },
+      "estimate": {
+        "low": {
+          "requests": 51,
+          "inputTokens": 561435,
+          "outputTokens": 104709,
+          "dollars": 1.317
+        },
+        "expected": {
+          "requests": 51,
+          "inputTokens": 561435,
+          "outputTokens": 158182,
+          "dollars": 2.065
+        },
+        "high": {
+          "requests": 66,
+          "inputTokens": 729866,
+          "outputTokens": 333658,
+          "dollars": 5.276
+        }
+      },
+      "minutes": {
+        "expected": 2.1,
+        "high": 2.7
+      },
+      "offlineOfficial": {
+        "overall": 84,
+        "passed": true,
+        "passThreshold": 79,
+        "deterministicBlockingFindings": 0,
+        "v2": "completed"
+      },
+      "vpaaInstances": {
+        "VPAA-01": 15,
+        "VPAA-02": 15,
+        "VPAA-03": 15,
+        "VPAA-04": 15,
+        "VPAA-05": 15,
+        "VPAA-06": 15,
+        "VPAA-07": 15
+      },
+      "cloClassificationPairs": 4
+    },
+    {
+      "case": "C",
+      "mode": "comprehensive",
+      "requests": 51,
+      "requestsByPriority": {
+        "scored": 19,
+        "v2": 11,
+        "optional": 21
+      },
+      "legacyRelationships": 151,
+      "policyV2Relationships": 129,
+      "requestBodyBytes": 1943872,
+      "largestRequestBytes": 44634,
+      "inAppReservation": {
+        "reservedUsd": 13.25,
+        "reservedTokens": 2759872,
+        "recommendedPerCheckCapUsd": 17
+      },
+      "estimate": {
+        "low": {
+          "requests": 51,
+          "inputTokens": 555392,
+          "outputTokens": 104709,
+          "dollars": 1.314
+        },
+        "expected": {
+          "requests": 51,
+          "inputTokens": 555392,
+          "outputTokens": 158182,
+          "dollars": 2.059
+        },
+        "high": {
+          "requests": 66,
+          "inputTokens": 722010,
+          "outputTokens": 333658,
+          "dollars": 5.259
+        }
+      },
+      "minutes": {
+        "expected": 2.1,
+        "high": 2.7
+      },
+      "offlineOfficial": {
+        "overall": 84,
+        "passed": true,
+        "passThreshold": 79,
+        "deterministicBlockingFindings": 0,
+        "v2": "completed"
+      },
+      "vpaaInstances": {
+        "VPAA-01": 15,
+        "VPAA-02": 15,
+        "VPAA-03": 15,
+        "VPAA-04": 15,
+        "VPAA-05": 15,
+        "VPAA-06": 15,
+        "VPAA-07": 15
+      },
+      "cloClassificationPairs": 4
+    },
+    {
+      "case": "D",
+      "mode": "comprehensive",
+      "requests": 51,
+      "requestsByPriority": {
+        "scored": 19,
+        "v2": 11,
+        "optional": 21
+      },
+      "legacyRelationships": 151,
+      "policyV2Relationships": 129,
+      "requestBodyBytes": 1947099,
+      "largestRequestBytes": 44992,
+      "inAppReservation": {
+        "reservedUsd": 13.26,
+        "reservedTokens": 2763099,
+        "recommendedPerCheckCapUsd": 17
+      },
+      "estimate": {
+        "low": {
+          "requests": 51,
+          "inputTokens": 556314,
+          "outputTokens": 104709,
+          "dollars": 1.314
+        },
+        "expected": {
+          "requests": 51,
+          "inputTokens": 556314,
+          "outputTokens": 158182,
+          "dollars": 2.06
+        },
+        "high": {
+          "requests": 66,
+          "inputTokens": 723208,
+          "outputTokens": 333658,
+          "dollars": 5.261
+        }
+      },
+      "minutes": {
+        "expected": 2.1,
+        "high": 2.7
+      },
+      "offlineOfficial": {
+        "overall": 82,
+        "passed": true,
+        "passThreshold": 79,
+        "deterministicBlockingFindings": 0,
+        "v2": "completed"
+      },
+      "vpaaInstances": {
+        "VPAA-01": 15,
+        "VPAA-02": 15,
+        "VPAA-03": 15,
+        "VPAA-04": 15,
+        "VPAA-05": 15,
+        "VPAA-06": 15,
+        "VPAA-07": 15
+      },
+      "cloClassificationPairs": 4
+    }
+  ],
+  "spendRegister": {
+    "capUsd": 10,
+    "chargedUsd": 2.9216,
+    "remainingUsd": 7.0784
+  },
+  "allFourCases": {
+    "low": 5.26,
+    "expected": 8.25,
+    "high": 21.07
+  },
+  "allFourV2Only": {
+    "low": 3.81,
+    "expected": 5.97,
+    "high": 14.01
+  }
+}

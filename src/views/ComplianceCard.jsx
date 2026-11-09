@@ -2,10 +2,11 @@ import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
 import { SOURCE_LABEL, STEP_INFO, areaNames, basis, blockersOf, groupFindings, headline, provisionalOf, runState, stepLabel, tone, ringAngle, when } from '../lib/complianceView';
 import HybridCheckPanel from '../components/HybridCheckPanel';
-import VerdictPanel from '../components/VerdictPanel';
 import { useAiGate } from '../lib/checkPolicy';
-import {isAcademicV2} from '../lib/academicEvaluation';
+import {isAcademicV2,isIntegratedAcademicV2} from '../lib/academicEvaluation';
 import AcademicEvaluationPanel from '../components/AcademicEvaluationPanel';
+import RuleCoveragePanel from '../components/RuleCoveragePanel';
+import CoordinatedPlanPanel from '../components/CoordinatedPlanPanel';
 
 const lastScores = new Map();
 
@@ -20,7 +21,10 @@ export default function ComplianceCard({ run, checking = false, onOpenStep, show
   const how = basis(run);
   const provisional = provisionalOf(run); // an unfinished check still shows its score so far, labelled as provisional
   const aiGate = useAiGate();
-  if(isAcademicV2(run))return <AcademicEvaluationPanel run={run} onApplyDraft={onApplyDraft}/>;
+  // A saved report of a syllabus under record review is read as history: nothing in it can be applied to the draft.
+  const applyDraft = run?.recordReview ? undefined : onApplyDraft;
+  const reviewNotice = run?.recordReview && <div className="info-banner warning cmp-stale" role="alert" data-testid="saved-report-banner"><strong>{translateUI('hybrid.savedReportTitle')}</strong> {translateUI(run.recordReview.code === 'curriculum_reference_review_required' ? 'hybrid.savedReportBodyCurriculum' : 'hybrid.savedReportBody')}</div>;
+  if(isAcademicV2(run))return <>{reviewNotice}{run?.hybrid?.improvementPlan && <CoordinatedPlanPanel run={run} onPlanApplied={applyDraft} />}<AcademicEvaluationPanel run={run} onApplyDraft={applyDraft}/></>;
   const blockers = blockersOf(run, aiGate);
   const recs = (run && run.recommendations) || [];
   const memKey = run?.syllabusId ?? run?.id ?? 'default';
@@ -58,7 +62,12 @@ export default function ComplianceCard({ run, checking = false, onOpenStep, show
 
   return (
     <div className="cmp">
-      <VerdictPanel run={run} />
+      {/* Staleness is stated before anything it qualifies: the V2 results, the coverage list and the recommendations below all describe the earlier version. */}
+      {reviewNotice}
+      {run && run.stale && !run.recordReview && <div className="info-banner warning cmp-stale" role="alert" data-testid="stale-banner"><strong>{translateUI('hybrid.staleTitle')}</strong> {translateUI('hybrid.staleBody')}</div>}
+      <RuleCoveragePanel coverage={run?.hybrid?.ruleCoverage} />
+      {run?.hybrid?.improvementPlan && <CoordinatedPlanPanel run={run} onPlanApplied={applyDraft} />}
+      {isIntegratedAcademicV2(run) && <AcademicEvaluationPanel run={run} />}
       <div className="cmp-top">
         {checking
           ? <div className="big-ring cmp-ring checking" style={ringStyle} role="img" aria-label={translateUI("ui.checking_your_syllabus_1278c5")}><div><strong aria-hidden="true">…</strong><small>{translateUI("ui.checking_820d60")}</small></div></div>
@@ -70,12 +79,16 @@ export default function ComplianceCard({ run, checking = false, onOpenStep, show
         <div className="cmp-head">
           <p className="cmp-line">{provisional
             ? translateUI(provisional.rule ? 'hybrid.provisionalRule' : provisional.total ? 'hybrid.provisionalCoverage' : 'hybrid.provisionalPlain', { verified: provisional.verified, total: provisional.total })
-            : aiGate === 'advisory' && state === 'incomplete' && blockers.length === 0 ? translateUI('hybrid.advisoryIncomplete') : tr(headline(run))}</p>
+            : run?.recordReview ? translateUI('hybrid.savedReportLine') : aiGate === 'advisory' && state === 'incomplete' && blockers.length === 0 ? translateUI('hybrid.advisoryIncomplete') : tr(headline(run))}</p>
           <div className="cmp-chips">
+            {run?.hybrid?.referenceContext?.po?.reference && <span className="chip quiet" title={translateUI('hybrid.poReferenceNote')}>
+              {translateUI('hybrid.poReferenceBasis',{program:run.hybrid.referenceContext.program.code,source:run.hybrid.referenceContext.po.source,version:run.hybrid.referenceContext.po.reference.version,curriculum:run.hybrid.referenceContext.curriculum.source||'—'})}
+            </span>}
             {run?.hybrid && run.hybrid.alignment.status !== 'completed' && <span className="hy-pill warn">{translateUI('hybrid.alignment', { status: translateUI(`hybrid.status.${run.hybrid.alignment.status}`) })}</span>}
+            {run?.hybrid?.semanticCoverage && !run.hybrid.semanticCoverage.complete && <span className="hy-pill warn" title={translateUI('hybrid.vpaaCoverageNote.' + run.hybrid.semanticCoverage.reason)}>{translateUI('hybrid.vpaaCoverage', { done: run.hybrid.semanticCoverage.evaluated, total: run.hybrid.semanticCoverage.total })}</span>}
             {run && how.label && <span className={'chip basis ' + how.kind}>{tr(how.label)}</span>}
             {run && run.checkedBy === 'admin' && <span className="chip quiet">{translateUI("ui.checked_by_an_administrator_2cf77d")}</span>}
-            {run && run.stale && <span className="chip stale">{translateUI("ui.out_of_date_the_syllabus_changed_after_this_check_384297")}</span>}
+            {run && run.stale && <span className="chip stale">{run.recordReview ? translateUI('hybrid.savedReportChip') : translateUI("ui.out_of_date_the_syllabus_changed_after_this_check_384297")}</span>}
             {run && <span className="chip quiet">{translateUI("ui.standard_f00ef0") + run.standard}{when(run.createdAt) ? translateUI("ui.checked_e3b884") + when(run.createdAt) : ''}</span>}
           </div>
           {run && run.contact && run.contact.termHours !== null && run.contact.termHours !== undefined && (
@@ -126,7 +139,7 @@ export default function ComplianceCard({ run, checking = false, onOpenStep, show
           ))}
         </details>
       )}
-      <HybridCheckPanel run={run} onApplyDraft={onApplyDraft} />
+      <HybridCheckPanel run={run} onApplyDraft={applyDraft} />
     </div>
   );
 }

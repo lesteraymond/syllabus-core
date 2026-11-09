@@ -19,9 +19,14 @@ const readJson=s=>{try{return s?JSON.parse(s):null;}catch{return null;}};
 async function exists(db,table){const [rows]=await db.query('SELECT table_name FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name=?',[table]);return !!rows.length;}
 async function rowsIf(db,table){if(!await exists(db,table))return [];return (await db.query(`SELECT * FROM ${table}`))[0];}
 const sorted=rows=>[...rows].sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
-async function snapshot(db){
-  const [programs]=await db.query('SELECT * FROM programs WHERE code IN (?,?,?,?) ORDER BY program_id',CODES);
-  if(programs.length!==4)throw Error('All four supported programs are required');
+async function snapshot(db,{programIds}={}){
+  if(programIds&&(!Array.isArray(programIds)||programIds.length!==4||new Set(programIds).size!==4||programIds.some(id=>!Number.isSafeInteger(id)||id<1)))throw Error('Four explicit unique program IDs are required');
+  const [programs]=await db.query(programIds?'SELECT * FROM programs WHERE program_id IN (?,?,?,?) ORDER BY program_id':'SELECT * FROM programs WHERE code IN (?,?,?,?) ORDER BY program_id',programIds||CODES);
+  if(programs.length!==4||new Set(programs.map(p=>p.code)).size!==4||programs.some(p=>!CODES.includes(p.code)))throw Error('Exactly the four supported program selections are required; select explicit IDs when academic-year catalogs coexist');
+  const {loadYears,currentOf}=require('../lib/academicYear');
+  const currentYear=currentOf(await loadYears(db))?.label;
+  const selectedYears=new Set(programs.map(p=>p.academic_year||currentYear).filter(Boolean));
+  if(selectedYears.size>1)throw Error('Target program IDs must belong to the same academic-year catalog');
   const ids=programs.map(p=>p.program_id);
   const [pos]=await db.query('SELECT * FROM program_outcomes WHERE program_id IN (?,?,?,?) ORDER BY program_id,po_no',ids);
   const links=sorted(await rowsIf(db,'program_outcome_sources'));
@@ -29,7 +34,10 @@ async function snapshot(db){
   const activeVersions=sorted((await rowsIf(db,'program_po_reference_versions')).filter(r=>active.some(a=>a.reference_id===r.reference_id)));
   const protectedHashes={};
   for(const table of protectedTables){const rows=sorted(await rowsIf(db,table));protectedHashes[table]={rows:rows.length,sha256:hash(rows)};}
-  return {programs,pos,links,active,activeVersions,protectedHashes};
+  const [allPrograms]=await db.query('SELECT * FROM programs ORDER BY program_id');
+  const [allPos]=await db.query('SELECT * FROM program_outcomes ORDER BY program_id,po_no');
+  const unrelatedHash=hash({programs:allPrograms.filter(p=>!ids.includes(p.program_id)),pos:allPos.filter(p=>!ids.includes(p.program_id))});
+  return {programs,pos,links,active,activeVersions,protectedHashes,unrelatedHash};
 }
 async function impacts(db,snap){
   const output=[];const ids=new Map(snap.programs.map(p=>[p.program_id,p.code]));
@@ -37,20 +45,35 @@ async function impacts(db,snap){
   const courses=await rowsIf(db,'courses'), byCourse=new Map(courses.map(c=>[c.course_id,c]));
   for(const row of await rowsIf(db,'syllabi')){
     const content=readJson(row.content),course=byCourse.get(row.course_id),code=ids.get(course?.program_id)||content?.meta?.program;
+    if(course&&!ids.has(course.program_id))continue;
     if(!CODES.includes(code)||!hasPoMappings(content))continue;
     const basis=content.outcomes?.pos||content.catalog?.program?.pos;
-    if(!sameBasis(basis,target(code)))output.push({type:'syllabus',id:row.syllabus_id,program:code,status:row.status,contentSha256:hash(row.content||''),oldBasis:basis||null,cloMappings:(content.clos||[]).map(c=>({id:c.id,pos:c.pos||[]})),directIloPoMappings:(content.plan||[]).flatMap((row,rowIndex)=>(row.ilos||[]).flatMap((ilo,iloIndex)=>{const tags=(ilo.tags||[]).filter(tag=>/^po:\d+$/.test(tag));return tags.length?[{rowIndex,iloIndex,tags}]:[];})),proposedMappings:null,reason:'Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk.'});
+    const obsoleteMappings=(content.clos||[]).flatMap(c=>(c.pos||[]).filter(no=>!target(code).some(p=>p.no===Number(no))).map(no=>({cloId:c.id,po:no})));
+    (content.plan||[]).forEach((r,rowIndex)=>(r.ilos||[]).forEach((ilo,iloIndex)=>(ilo.tags||[]).filter(tag=>/^po:\d+$/.test(tag)).forEach(tag=>{const no=Number(tag.slice(3));if(!target(code).some(p=>p.no===no))obsoleteMappings.push({rowIndex,iloIndex,po:no});})));
+    if(!sameBasis(basis,target(code))||obsoleteMappings.length)output.push({type:'syllabus',id:row.syllabus_id,program:code,status:row.status,contentSha256:hash(row.content||''),previousReference:content.outcomes?.poReference||'previous_or_unknown',proposedReference:ID+'-'+(code==='BSIT-CYBERSECURITY'?'BSIT':code),oldBasis:basis||null,obsoleteMappings,cloMappings:(content.clos||[]).map(c=>({id:c.id,pos:c.pos||[]})),directIloPoMappings:(content.plan||[]).flatMap((row,rowIndex)=>(row.ilos||[]).flatMap((ilo,iloIndex)=>{const tags=(ilo.tags||[]).filter(tag=>/^po:\d+$/.test(tag));return tags.length?[{rowIndex,iloIndex,tags}]:[];})),proposedMappings:null,reason:'Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk.'});
   }
   const clos=await rowsIf(db,'course_clos');
   for(const course of courses){const code=ids.get(course.program_id),mapped=clos.filter(c=>c.course_id===course.course_id&&String(c.po_nos).trim());if(!code||!mapped.length)continue;
     const basis=readJson(course.standards_json)?.pos;
     if(!sameBasis(basis,target(code)))output.push({type:'catalog_course',id:course.course_id,program:code,oldBasis:basis||null,cloMappings:mapped.map(c=>({id:c.clo_id,pos:c.po_nos})),proposedMappings:null,reason:'Catalog CLO mappings must be reviewed before new course adoption.'});
   }
+  // Curriculum inheritance is a reference-link change, never a rewrite of old
+  // content or deletion of an obsolete specialization curriculum record.
+  const parentRefs=(await rowsIf(db,'syllabus_check_curricula')).filter(r=>r.program_code==='BSIT'&&r.status==='approved');
+  for(const row of await rowsIf(db,'syllabi')){
+    const content=readJson(row.content),course=byCourse.get(row.course_id);
+    if(course&&!ids.has(course.program_id))continue;
+    if((ids.get(course?.program_id)||content?.meta?.program)!=='BSIT-CYBERSECURITY')continue;
+    const refs=parentRefs.filter(r=>!content?.meta?.curriculumYear||r.curriculum_year===content.meta.curriculumYear);
+    const code=String(content?.meta?.code||'').trim().replace(/\s+/g,' ').toUpperCase();
+    const fits=refs.length===1&&(readJson(refs[0].courses_json)||[]).some(c=>String(c.code||'').trim().replace(/\s+/g,' ').toUpperCase()===code);
+    if(!fits){const existing=output.find(r=>r.type==='syllabus'&&r.id===row.syllabus_id);const detail={previousProgram:'BSIT-CYBERSECURITY',proposedProgram:'BSIT',selectedYear:content?.meta?.curriculumYear||null,availableReferenceIds:parentRefs.map(r=>r.reference_id),automaticRewrite:false};if(existing)existing.curriculumReview=detail;else output.push({type:'syllabus',id:row.syllabus_id,program:'BSIT-CYBERSECURITY',status:row.status,curriculumReview:detail,proposedMappings:null,reason:'Faculty must review the approved BSIT curriculum selection and course identity; historical curriculum records remain unchanged.'});}
+  }
   return output;
 }
-async function plan(db){const before=await snapshot(db);return {migrationId:ID,officialSha256:hash(official),before,beforeSha256:hash(before),impacts:await impacts(db,before)};}
+async function plan(db,options={}){const before=await snapshot(db,options);return {migrationId:ID,authorization:official.authorization,institutionalApproval:'not_recorded',officialSha256:hash(official),before,beforeSha256:hash(before),impacts:await impacts(db,before)};}
 function writeBackup(file,value){fs.writeFileSync(file,JSON.stringify(value,null,2)+'\n',{flag:'wx',mode:0o600});return hash(fs.readFileSync(file,'utf8'));}
-function loadBackup(file,expected){const raw=fs.readFileSync(file,'utf8'),value=JSON.parse(raw);if(value.migrationId!==ID||value.officialSha256!==hash(official)||value.beforeSha256!==hash(value.before)||expected!==value.beforeSha256)throw Error('Backup/source/precondition hash mismatch');return {value,sha256:hash(raw)};}
+function loadBackup(file,expected){const raw=fs.readFileSync(file,'utf8'),value=JSON.parse(raw);if(value.migrationId!==ID||value.officialSha256!==hash(official)||value.beforeSha256!==hash(value.before)||expected!==value.beforeSha256)throw Error('Backup/source/precondition hash mismatch');const options={programIds:value.before.programs.map(p=>p.program_id)};return {value,sha256:hash(raw),options};}
 function verifySources(){for(const [code,ref] of Object.entries(official.programs)){if(ref.inheritsFrom)continue;const expected=code==='BSIT'?9:13;if(ref.outcomes.length!==expected||ref.outcomes.some((p,i)=>p.no!==i+1))throw Error('Invalid official numbering');const actual=crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname,'../..',ref.sourceFile))).digest('hex');if(actual!==ref.sha256)throw Error('Official source PDF changed');}}
 async function applied(db){if(!await exists(db,'program_po_reference_migrations'))return null;const [rows]=await db.query('SELECT * FROM program_po_reference_migrations WHERE migration_id=?',[ID]);return rows[0]||null;}
 async function apply(db,{backupFile,expectedBeforeHash,maintenanceConfirmed=false}){
@@ -58,11 +81,11 @@ async function apply(db,{backupFile,expectedBeforeHash,maintenanceConfirmed=fals
   if(!maintenanceConfirmed)throw Error('A maintenance window and verified backup are required');
   const backup=loadBackup(backupFile,expectedBeforeHash),state=await applied(db);
   if(state?.status==='applied'){
-    if(state.backup_sha256!==backup.sha256||hash(await snapshot(db))!==hash(JSON.parse(state.after_json)))throw Error('Applied state drift; refusing idempotent replay');
+    if(state.backup_sha256!==backup.sha256||hash(await snapshot(db,backup.options))!==hash(JSON.parse(state.after_json)))throw Error('Applied state drift; refusing idempotent replay');
     return {alreadyApplied:true};
   }
   if(state)throw Error('This migration ID has already been rolled back; use a reviewed new version');
-  if(hash(await snapshot(db))!==backup.value.beforeSha256)throw Error('Database changed since backup');
+  if(hash(await snapshot(db,backup.options))!==backup.value.beforeSha256)throw Error('Database changed since backup');
   const child=backup.value.before.programs.find(p=>p.code==='BSIT-CYBERSECURITY'),source=backup.value.before.programs.find(p=>p.code==='BSIT');
   const link=backup.value.before.links.find(l=>l.program_id===child.program_id);
   if(link&&link.source_program_id!==source.program_id)throw Error('Cyber is linked to a different source');
@@ -71,14 +94,16 @@ async function apply(db,{backupFile,expectedBeforeHash,maintenanceConfirmed=fals
   const [egas]=await db.query('SELECT program_id,ega_no,name,short_name FROM program_egas WHERE program_id IN (?,?) ORDER BY program_id,ega_no',[source.program_id,child.program_id]);
   const egaRows=id=>egas.filter(e=>e.program_id===id).map(({program_id,...e})=>e);
   if(JSON.stringify(egaRows(source.program_id))!==JSON.stringify(egaRows(child.program_id)))throw Error('Existing inheritance mechanism also shares EGAs; EGA drift must be reviewed first');
+  const parentCurricula=(await rowsIf(db,'syllabus_check_curricula')).filter(r=>r.program_code==='BSIT'&&r.status==='approved');
+  if(!parentCurricula.length)throw Error('Approved BSIT curriculum reference required before Cyber inheritance activation');
   // DDL commits independently in MySQL. It is additive and deliberately precedes
   // the single DML transaction; a failed DML attempt leaves only empty support tables.
   for(const sql of DDL)await db.query(sql);
   await db.query('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE');
   await db.beginTransaction();
   try{
-    await db.query('SELECT program_id FROM programs WHERE code IN (?,?,?,?) FOR UPDATE',CODES);
-    if(hash(await snapshot(db))!==backup.value.beforeSha256)throw Error('Database changed while preparing migration');
+    await db.query('SELECT program_id FROM programs WHERE program_id IN (?,?,?,?) FOR UPDATE',backup.options.programIds);
+    if(hash(await snapshot(db,backup.options))!==backup.value.beforeSha256)throw Error('Database changed while preparing migration');
     for(const program of backup.value.before.programs){
       await db.query('DELETE FROM program_outcomes WHERE program_id=?',[program.program_id]);
       if(program.code!=='BSIT-CYBERSECURITY'){
@@ -90,9 +115,10 @@ async function apply(db,{backupFile,expectedBeforeHash,maintenanceConfirmed=fals
       await db.query('UPDATE programs SET pos_version=pos_version+1 WHERE program_id=?',[program.program_id]);
     }
     await db.query('INSERT INTO program_outcome_sources(program_id,source_program_id,specialization) VALUES(?,?,?) ON DUPLICATE KEY UPDATE source_program_id=VALUES(source_program_id),specialization=VALUES(specialization)',[child.program_id,source.program_id,'Cyber Security']);
-    const after=await snapshot(db);
+    const after=await snapshot(db,backup.options);
     for(const program of after.programs){const rows=after.pos.filter(p=>p.program_id===program.program_id);if(program.code==='BSIT-CYBERSECURITY'){if(rows.length)throw Error('Competing Cyber PO copy remains');}else if(!sameBasis(rows.map(p=>({no:p.po_no,text:p.outcome_text})),official.programs[program.code].outcomes))throw Error('Official PO verification failed before commit');}
     if(JSON.stringify(after.protectedHashes)!==JSON.stringify(backup.value.before.protectedHashes))throw Error('Protected data changed; rolling back');
+    if(after.unrelatedHash!==backup.value.before.unrelatedHash)throw Error('Non-target program data changed; rolling back');
     await db.query('INSERT INTO program_po_reference_migrations(migration_id,status,backup_sha256,after_json) VALUES(?,?,?,?)',[ID,'applied',backup.sha256,JSON.stringify(after)]);
     for(const item of backup.value.impacts)await db.query('INSERT INTO program_po_reference_remediation(migration_id,entity_type,entity_id,status,details_json) VALUES(?,?,?,?,?)',[ID,item.type,item.id,'needs_review',JSON.stringify(item)]);
     await db.commit();return {applied:true,remediationItems:backup.value.impacts.length,after};
@@ -103,12 +129,12 @@ async function rollback(db,{backupFile,expectedBeforeHash,maintenanceConfirmed=f
   const backup=loadBackup(backupFile,expectedBeforeHash),state=await applied(db);
   if(!state||state.backup_sha256!==backup.sha256)throw Error('Matching applied migration/backup required');
   if(state.status==='rolled_back')return {alreadyRolledBack:true};
-  if(hash(await snapshot(db))!==hash(JSON.parse(state.after_json)))throw Error('Post-migration data changed; refusing rollback to avoid reinterpreting newer records');
+  if(hash(await snapshot(db,backup.options))!==hash(JSON.parse(state.after_json)))throw Error('Post-migration data changed; refusing rollback to avoid reinterpreting newer records');
   await db.query('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE');
   await db.beginTransaction();
   try{
-    await db.query('SELECT program_id FROM programs WHERE code IN (?,?,?,?) FOR UPDATE',CODES);
-    if(hash(await snapshot(db))!==hash(JSON.parse(state.after_json)))throw Error('Post-migration data changed while locking rollback');
+    await db.query('SELECT program_id FROM programs WHERE program_id IN (?,?,?,?) FOR UPDATE',backup.options.programIds);
+    if(hash(await snapshot(db,backup.options))!==hash(JSON.parse(state.after_json)))throw Error('Post-migration data changed while locking rollback');
     const prior=backup.value.before;
     for(const p of prior.programs){
       await db.query('DELETE FROM program_outcomes WHERE program_id=?',[p.program_id]);
@@ -118,11 +144,12 @@ async function rollback(db,{backupFile,expectedBeforeHash,maintenanceConfirmed=f
       await db.query('UPDATE programs SET pos_version=? WHERE program_id=?',[p.pos_version,p.program_id]);
       for(const link of prior.links.filter(v=>v.program_id===p.program_id))await db.query('INSERT INTO program_outcome_sources(program_id,source_program_id,specialization) VALUES(?,?,?)',[link.program_id,link.source_program_id,link.specialization]);
     }
-    if(hash(await snapshot(db))!==priorHash(prior))throw Error('Rollback verification failed');
+    if(hash(await snapshot(db,backup.options))!==priorHash(prior))throw Error('Rollback verification failed');
     await db.query("UPDATE program_po_reference_remediation SET status='rolled_back' WHERE migration_id=?",[ID]);
     await db.query("UPDATE program_po_reference_migrations SET status='rolled_back' WHERE migration_id=?",[ID]);
     await db.commit();return {rolledBack:true};
   }catch(error){await db.rollback();throw error;}
 }
 const priorHash=hash;
-module.exports={ID,CODES,DDL,hash,plan,snapshot,impacts,writeBackup,apply,rollback,protectedTables};
+async function verify(db,options={}){verifySources();const state=await applied(db);if(!state||state.status!=='applied')return {active:false,reason:'migration_not_applied'};const recorded=JSON.parse(state.after_json);const actual=await snapshot(db,{programIds:recorded.programs.map(p=>p.program_id)});if(hash(actual)!==hash(recorded))throw Error('Activated reference state drift');return {active:true,migrationId:ID,targets:actual.programs.map(p=>({id:p.program_id,code:p.code})),authorization:official.authorization,institutionalApproval:'not_recorded'};}
+module.exports={ID,CODES,DDL,hash,plan,snapshot,impacts,writeBackup,apply,rollback,verify,verifySources,protectedTables};

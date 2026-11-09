@@ -76,7 +76,7 @@ small {
 	@apply tw:min-h-screen tw:grid tw:[grid-template-columns:minmax(0,_1fr)_minmax(0,_1fr)] tw:[background:white];
 }
 .login-brand {
-	@apply tw:relative tw:overflow-hidden tw:flex tw:items-center tw:[gap:42px] tw:[padding:70px_5vw] tw:[color:white] tw:[background:linear-gradient(140deg,_#061a55_0%,_#0b2d8f_58%,_#2c36b4_100%)];
+	@apply tw:relative tw:overflow-hidden tw:flex tw:flex-col tw:justify-center tw:items-center tw:text-center tw:[gap:0] tw:[padding:36px_5vw_84px] tw:[color:white] tw:[background:linear-gradient(140deg,_#061a55_0%,_#0b2d8f_58%,_#2c36b4_100%)];
 }
 .login-brand:before,
 .login-brand:after {
@@ -95,9 +95,9 @@ small {
 	@apply tw:[bottom:-440px];
 }
 .brand-orb {
-	@apply tw:[width:260px];
-	@apply tw:[height:260px];
-	@apply tw:[min-width:260px] tw:[padding:18px];
+	@apply tw:[width:300px];
+	@apply tw:[height:300px];
+	@apply tw:[min-width:300px] tw:[padding:0] tw:[margin-bottom:-10px] tw:self-center;
 }
 .brand-orb img {
 	@apply tw:w-full;
@@ -105,12 +105,12 @@ small {
 }
 .login-brand h1 {
 	font:
-		var(--fw-heavy) var(--text-hero) / 1.05 var(--font-display),
+		var(--fw-heavy) clamp(30px, 3vw, 52px) / 1.15 var(--font-display),
 		sans-serif;
-	@apply tw:[margin:13px_0_22px];
+	@apply tw:[margin:0_0_22px] tw:text-center tw:whitespace-nowrap;
 }
 .login-brand p {
-	@apply tw:[max-width:650px] tw:[font-size:var(--text-lg)];
+	@apply tw:[max-width:650px] tw:mx-auto tw:[font-size:var(--text-lg)];
 	@apply tw:[line-height:1.7] tw:[color:#dbe5ff];
 }
 .eyebrow {
@@ -121,7 +121,7 @@ small {
 	@apply tw:[color:#f7cf83];
 }
 .feature-pills {
-	@apply tw:flex tw:[gap:10px] tw:flex-wrap tw:[margin-top:24px];
+	@apply tw:flex tw:justify-center tw:[gap:10px] tw:flex-wrap tw:[margin-top:24px];
 }
 .feature-pills span {
 	@apply tw:[border:1px_solid_rgba(255,_255,_255,_0.2)] tw:[background:rgba(255,_255,_255,_0.08)] tw:[padding:9px_12px];
@@ -771,6 +771,10 @@ a:focus-visible {
 }
 .info-banner.warning {
 	@apply tw:[background:#fff7e8] tw:[border-color:#f6ddb0] tw:[color:#9b6814];
+}
+/* the out-of-date notice stays in view while the (long) results it qualifies are read */
+.cmp-stale {
+	@apply tw:sticky tw:[top:8px] tw:[z-index:4];
 }
 .outcome-row {
 	@apply tw:grid tw:[grid-template-columns:42px_1fr_32px] tw:[gap:8px] tw:[align-items:start] tw:[margin:10px_0];
@@ -1637,6 +1641,8 @@ a:focus-visible {
 .syl-grid {
 	@apply tw:grid tw:[grid-template-columns:repeat(2,_1fr)] tw:[gap:14px];
 }
+/* the "no syllabi yet" message spans the whole grid (it was stuck in the first of two columns) and is centered in it */
+.syl-grid > .empty { grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; min-height: 40vh; padding: 24px; }
 .syl-card {
 	@apply tw:[background:white] tw:[border:1px_solid_var(--line)];
 	@apply tw:[border-radius:12px] tw:[box-shadow:var(--shadow)] tw:[padding:18px];
@@ -3542,8 +3548,11 @@ table,
 	@apply tw:[font-weight:var(--fw-semibold)];
 }
 .sm-toolbar {
-	@apply tw:flex tw:items-end tw:justify-between tw:[gap:12px] tw:[padding:12px_14px] tw:[border-bottom:1px_solid_var(--line)];
+	@apply tw:flex tw:flex-wrap tw:items-end tw:justify-between tw:[gap:12px] tw:[padding:12px_14px] tw:[border-bottom:1px_solid_var(--line)];
 }
+.sm-filters { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; min-width: 0; }
+.sm-filters .field { margin: 0; }
+.sm-toolbar .sm-count { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .sm-toolbar .field {
 	@apply tw:[min-width:200px];
 }
@@ -3952,6 +3961,8 @@ table,
 
 /* AI Checker: syllabus picker (.pick-) and result dialog (.cm-) */
 .pick-card { @apply tw:[padding:22px_24px] tw:grid tw:[gap:18px]; }
+/* "Check my syllabus" (the administrator's own) above "Choose a syllabus": the same space as above the check history */
+.pick-card + .pick-card { @apply tw:[margin-top:20px]; }
 .pick-head h3 { @apply tw:[margin:0_0_2px] tw:[font:var(--fw-bold)_var(--text-md)_var(--font-display)]; }
 .pick-head p { @apply tw:[margin:0] tw:[font-size:var(--text-sm)]; @apply tw:[font-weight:var(--fw-medium)] tw:[color:var(--muted)]; }
 .pick-grid { @apply tw:grid tw:grid-cols-3 tw:[gap:14px]; }
@@ -3964,6 +3975,9 @@ table,
 .pick-meta { @apply tw:[font-size:var(--text-sm)]; @apply tw:[font-weight:var(--fw-medium)] tw:[color:var(--muted)]; }
 .pick-note { @apply tw:basis-full tw:[font-size:var(--text-xs)]; @apply tw:[font-weight:var(--fw-medium)] tw:[color:var(--warn,_#8f6310)]; }
 .pick-foot .btn { @apply tw:flex-none; }
+/* the two choices of a reviewer: review without an AI check, or check with AI (components/SyllabusPicker.jsx) */
+.pick-actions { @apply tw:flex tw:flex-wrap tw:items-center tw:justify-end tw:[gap:10px]; }
+.pick-confirm { @apply tw:flex tw:flex-wrap tw:items-center tw:justify-between tw:[gap:12px] tw:[margin-top:12px]; }
 
 .cm-modal { @apply tw:[width:min(780px,_95vw)]; }
 .cm-head > div { @apply tw:[min-width:0]; }
@@ -4189,6 +4203,12 @@ html { scrollbar-gutter: stable; }
 .quick-actions small .stable-label { @apply tw:[font:inherit] tw:text-inherit; }
 
 .program-management { @apply tw:[margin-bottom:16px] tw:[min-width:0]; }
+.year-filter { margin: 0; min-width: 140px; }
+.year-filter > span { font-size: 12px; }
+.topbar-heading { align-items: flex-start; }
+.subject-term { display: block; }
+.subject-term small { display: block; color: var(--muted); }
+.term-warning { display: block; margin-top: 4px; color: var(--warn); font-size: 12px; }
 .program-dialog { @apply tw:scrollbar-gutter-stable tw:[width:min(640px,_100%)]; @apply tw:[max-height:calc(100dvh_-_40px)] tw:overflow-y-auto tw:text-left; }
 .program-dialog .confirm-actions { @apply tw:flex-wrap tw:[margin-top:20px]; }
 .program-delete-impact dl { @apply tw:grid tw:grid-cols-5 tw:[gap:10px] tw:[margin:16px_0]; }
@@ -4230,3 +4250,64 @@ html { scrollbar-gutter: stable; }
 	.catalog-page .btn, .catalog-page .ac-row { @apply tw:[transition:none]; }
 	.catalog-page .btn:hover, .catalog-page .btn:active:not(:disabled) { @apply tw:transform-none; }
 }
+
+/* Setting up a program's EGAs and Program Outcomes, and the school vision and mission (Program & Subjects) */
+.setup-badge { display: inline-block; margin-left: 10px; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; background: var(--warn-bg, #fff4d6); color: var(--warn-ink, #7a5200); border: 1px solid var(--warn-line, #e8c66a); white-space: nowrap; }
+.outcomes-open { padding: 6px 12px; min-height: 0; }
+.program-dialog.outcomes-dialog { width: min(980px, 100%); }
+.outcomes-dialog h4 { margin: 18px 0 8px; }
+.outcomes-rows { display: grid; gap: 10px; }
+.outcomes-row { display: grid; gap: 10px; align-items: end; padding: 10px; border: 1px solid var(--line, #d9dee7); border-radius: 10px; }
+.outcomes-ega { grid-template-columns: 70px minmax(0, 2fr) minmax(0, 1fr) auto; }
+.outcomes-po { grid-template-columns: 70px minmax(0, 1fr) auto; }
+.outcomes-po .outcomes-statement, .outcomes-po .outcomes-maps { grid-column: 1 / -1; }
+.outcomes-maps { display: flex; flex-wrap: wrap; gap: 6px 14px; border: 0; padding: 0; margin: 0; }
+.outcomes-maps legend { font-size: 13px; color: var(--muted); padding: 0; margin-bottom: 4px; }
+.outcomes-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; margin-top: 10px; }
+.institution-form { display: grid; gap: 14px; margin-top: 12px; }
+.institution-group { display: grid; gap: 14px; padding: 14px 16px; border: 1px solid var(--line, #e3e7ea); border-radius: 12px; background: var(--surface, #fff); min-width: 0; }
+.institution-form .field { margin: 0; }
+.institution-form textarea { width: 100%; box-sizing: border-box; resize: vertical; line-height: 1.5; }
+.institution-items { display: grid; gap: 10px; min-width: 0; }
+.institution-label { font-size: 13px; font-weight: 600; color: var(--ink, #1f2a37); }
+.institution-item { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 10px; align-items: start; }
+.institution-no { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; margin-top: 6px; border-radius: 50%; background: var(--line, #e3e7ea); color: var(--muted, #5d6981); font-size: 12px; font-weight: 600; }
+.institution-item .icon-btn { margin-top: 4px; }
+.institution-add { display: flex; justify-content: flex-start; }
+@media (max-width: 640px) {
+  .outcomes-ega { grid-template-columns: 70px minmax(0, 1fr) auto; }
+  .outcomes-ega label:nth-of-type(2), .outcomes-ega label:nth-of-type(3) { grid-column: 1 / -1; }
+}
+
+/* Outcomes, vision and mission inside the Add subject form; Apply to subjects in the Outcomes dialog */
+.subject-setup { grid-column: 1 / -1; border: 1px solid var(--line, #e3e7ea); border-radius: 12px; padding: 14px 16px; margin: 6px 0 0; min-width: 0; }
+
+.subject-setup h4 { margin: 14px 0 6px; }
+.po-review { display: grid; gap: 10px; }
+.po-review p { margin: 0; }
+.po-review-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.po-review-rows { width: 100%; border-collapse: collapse; }
+.po-review-rows th { text-align: left; font-size: 12px; font-weight: 600; padding: 4px 8px; }
+.po-review-rows td { padding: 6px 8px; vertical-align: top; border-top: 1px solid var(--line, #e3e7ea); }
+@media (max-width: 640px) { .po-review-rows, .po-review-rows tbody, .po-review-rows tr, .po-review-rows td { display: block; width: 100%; } .po-review-rows thead { display: none; } }
+.po-reference { display: grid; gap: 10px; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line, #e3e7ea); min-width: 0; }
+.po-reference h5 { margin: 10px 0 4px; font-size: 13px; font-weight: 600; color: var(--ink, #1f2a37); }
+.po-reference p { margin: 0 0 6px; }
+.po-reference ul { margin: 0; padding-left: 18px; }
+.po-reference .field textarea { width: 100%; }
+.po-reference li { margin-bottom: 4px; }
+.outcomes-sync { display: grid; gap: 8px; justify-items: start; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line, #e3e7ea); }
+.outcomes-skipped { margin: 0; padding-left: 20px; color: var(--muted); }
+
+/* The academic-year control in the Program & Subjects header: one row (year dropdown, Make current / Copy from, + Add year); the add-year form is a popover under its button, so the row never changes size */
+.year-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; min-width: 0; }
+.year-row { margin: -4px 0 16px; min-height: 40px; }
+.year-row .year-bar { justify-content: flex-start; }
+.year-row .year-bar .ay-pop { left: 0; right: auto; }   /* the bar now starts at the left, so the Add year pop-up opens rightwards instead of off the left edge */
+.year-bar .field { margin: 0; min-width: 140px; }
+.year-bar .ay-anchor { position: relative; }
+.year-bar .ay-pop { position: absolute; top: calc(100% + 8px); right: 0; z-index: 30; display: grid; gap: 10px; width: min(340px, calc(100vw - 32px)); padding: 14px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 12px 30px rgba(16, 24, 40, 0.16); text-align: left; }
+.year-bar .ay-pop .field { min-width: 0; }
+.year-bar .ay-pop .field input { width: 100%; }
+.year-bar .ay-pop p { margin: 0; }
+.year-bar .ay-pop-actions { display: flex; justify-content: flex-end; gap: 8px; }

@@ -1,0 +1,67 @@
+{
+  "run": "comprehensive-on",
+  "suite": "comprehensive",
+  "mode": "on",
+  "label": "rc9",
+  "database": "syllabus_e2e_dyn_comprehensive",
+  "port": "43310",
+  "schema": "fresh bootstrap (init.js + every migrate-* script)",
+  "start": "2026-11-06T07:21:59.619Z",
+  "finished": "2026-11-06T07:25:44.191Z",
+  "exit": 0,
+  "scenarios": [
+    {
+      "result": "PASS",
+      "id": "K01"
+    },
+    {
+      "result": "PASS",
+      "id": "K02"
+    },
+    {
+      "result": "PASS",
+      "id": "K03"
+    },
+    {
+      "result": "PASS",
+      "id": "K04"
+    },
+    {
+      "result": "PASS",
+      "id": "K05"
+    },
+    {
+      "result": "PASS",
+      "id": "K06"
+    },
+    {
+      "result": "PASS",
+      "id": "K07"
+    },
+    {
+      "result": "PASS",
+      "id": "K08"
+    },
+    {
+      "result": "PASS",
+      "id": "K10"
+    },
+    {
+      "result": "PASS",
+      "id": "K09"
+    }
+  ],
+  "failedChecks": [],
+  "flags": {
+    "SYLLABUS_CHECK_CACHE_WARMUP": "on",
+    "SYLLABUS_CHECK_OUTPUT_PLAN": "on",
+    "SYLLABUS_CHECK_OUTPUT_FIELDS": "scoped",
+    "SYLLABUS_CHECK_COURSE_CONTEXT": "off",
+    "SYLLABUS_CHECK_V2_GROUPING": "off",
+    "SYLLABUS_CHECK_PROMPT_TRIM": "off"
+  },
+  "snapshotSourceHash": "b11c15c8713e44f4065ad28c8e4a6d288c5fb97ad51a46f5cddf2fe48cf1ceba",
+  "workingTreeSourceHashBefore": "b11c15c8713e44f4065ad28c8e4a6d288c5fb97ad51a46f5cddf2fe48cf1ceba",
+  "workingTreeSourceHashAfter": "b11c15c8713e44f4065ad28c8e4a6d288c5fb97ad51a46f5cddf2fe48cf1ceba",
+  "log": "docs\\release-candidate\\dyn-comprehensive-on.log"
+}

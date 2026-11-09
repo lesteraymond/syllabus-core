@@ -28,6 +28,7 @@ function makeDb() {
     ],
     temp: new Map(), // user_id -> { temp_hash, expires }
     rememberDeletes: [],
+    activity: [], // account_activity rows (lib/accountActivity.js): { user_id, action, syllabus_id, subject, notes }
   };
   const byId = (id) => s.users.find((u) => u.user_id === id);
   const handle = (sql, p = []) => {
@@ -38,6 +39,7 @@ function makeDb() {
     if (sql.startsWith('SELECT user_id FROM users WHERE LOWER(email)')) return [s.users.filter((u) => u.email.toLowerCase() === p[0]).map((u) => ({ user_id: u.user_id }))];
     if (sql.startsWith('SELECT user_id, email, first_name FROM users WHERE LOWER(email)')) return [s.users.filter((u) => u.email.toLowerCase() === p[0])];
     if (sql.startsWith('SELECT user_id, email, role, first_name FROM users WHERE user_id')) return [s.users.filter((u) => u.user_id === p[0])];
+    if (sql.startsWith('SELECT disabled_at FROM users WHERE user_id')) return [s.users.filter((u) => u.user_id === p[0]).map((u) => ({ disabled_at: u.disabled_at || null }))]; // lib/accountStatus.js
     if (sql.startsWith('SELECT user_id, password_hash FROM users WHERE user_id')) return [s.users.filter((u) => u.user_id === p[0])];
     if (sql.startsWith('SELECT temp_hash FROM password_temp')) { const t = s.temp.get(p[0]); return [t && t.expires > s.now ? [{ temp_hash: t.temp_hash }] : []]; }
     if (sql.startsWith('INSERT INTO password_temp')) { s.temp.set(p[0], { temp_hash: p[1], expires: s.now + 30 * 60 * 1000 }); return [{}]; }
@@ -52,6 +54,8 @@ function makeDb() {
       s.users.push(u);
       return [{ insertId: u.user_id }];
     }
+    if (sql.startsWith('SELECT first_name, last_name FROM users WHERE user_id')) return [s.users.filter((u) => u.user_id === p[0]).map((u) => ({ first_name: u.first_name, last_name: u.last_name }))]; // lib/accountActivity.js personOf
+    if (sql.startsWith('INSERT INTO account_activity')) { const [user_id, action, syllabus_id, subject, notes] = p; s.activity.push({ user_id, action, syllabus_id, subject, notes }); return [{}]; }
     if (/program_outcome_sources/.test(sql)) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' }); // not migrated yet
     throw new Error('unexpected query: ' + sql);
   };
@@ -334,3 +338,51 @@ test('schema.sql carries the same definitions as the migration', () => {
   assert.match(ddl.tables[0].replace(/\s+/g, ' '), /CREATE TABLE IF NOT EXISTS password_temp \( user_id INT NOT NULL PRIMARY KEY, temp_hash VARCHAR\(255\) NOT NULL, expires_at DATETIME NOT NULL,/);
   assert.match(schema, /CREATE TABLE IF NOT EXISTS password_temp \( user_id INT NOT NULL PRIMARY KEY, temp_hash VARCHAR\(255\) NOT NULL, expires_at DATETIME NOT NULL,/);
 });
+
+// Recent Activity for transparency (lib/accountActivity.js): signing in and out, a password change and a name change are recorded for the account that did
+// them, with how (never the password itself). A failed sign-in is recorded on the account it was for; an unknown email has no account to record it on.
+test('signing in and out, changing the password and changing the name are recorded in the account activity, never with a password', () => withServer(async ({ db, client }) => {
+  const fay = client();
+  assert.strictEqual((await fay.login('nobody@x.ph', 'wrong-pass-1')).status, 403);
+  assert.deepStrictEqual(db.s.activity, [], 'an unknown email: no account to record it on');
+  assert.strictEqual((await fay.login('fay@x.ph', 'wrong-pass-1')).status, 401);
+  assert.deepStrictEqual(db.s.activity.map((a) => [a.user_id, a.action, a.notes]), [[2, 'login_failed', 'password']], 'a failed sign-in is recorded on the account it was for');
+  await fay.login('fay@x.ph', 'Fay-pass-12');
+  await fay('PATCH', '/users/me/profile', { firstName: 'Faye', lastName: 'Updated' });
+  await fay('PATCH', '/users/me/profile', { firstName: 'Faye', lastName: 'Updated' }); // the same name again: nothing new
+  await fay('POST', '/auth/change-password', { currentPassword: 'Fay-pass-12', newPassword: 'Another-pass-5' });
+  await fay('POST', '/auth/logout');
+  await fay('POST', '/auth/logout'); // already signed out: nothing new
+  assert.deepStrictEqual(db.s.activity.map((a) => [a.user_id, a.action, a.notes]), [
+    [2, 'login_failed', 'password'], [2, 'login', 'password'], [2, 'name_change', 'Fay F → Faye Updated'], [2, 'password_change', 'self'], [2, 'logout', null]]);
+  const all = JSON.stringify(db.s.activity);
+  for (const secret of ['Fay-pass-12', 'Another-pass-5', 'wrong-pass-1']) assert.ok(!all.includes(secret), 'no password is ever recorded');
+}));
+
+test('a sign-in with a temporary password and the required change after it say so in the account activity', () => withServer(async ({ db, client }) => {
+  const sent = outbox();
+  await client()('POST', '/auth/forgot-password', { email: 'fay@x.ph' });
+  await authRoutes.settled();
+  const temp = passwordIn(sent[0]);
+  const fay = client();
+  assert.strictEqual((await fay.login('fay@x.ph', temp)).status, 200);
+  assert.strictEqual((await fay('POST', '/auth/change-password', { newPassword: 'Brand-new-pass-7' })).status, 200);
+  assert.deepStrictEqual(db.s.activity.map((a) => [a.user_id, a.action, a.notes]), [[2, 'login', 'temporary'], [2, 'password_change', 'required']]);
+  assert.ok(!JSON.stringify(db.s.activity).includes(temp));
+}));
+
+// The administrator's management of accounts is on the administrator's Recent Activity, naming the account (lib/accountActivity.js). New sign-in details
+// are recorded only when they were sent (otherwise nothing changed). Never a password.
+test('registering an account and sending new sign-in details are recorded on the administrator, naming the account; a send that failed is not', () => withServer(async ({ db, client }) => {
+  const sent = outbox();
+  const admin = client(); await admin.login('dean@x.ph', 'Dean-pass-1');
+  assert.strictEqual((await admin('POST', '/users', { ...newUser, role: 'lic_director' })).status, 201);
+  assert.strictEqual((await admin('POST', '/users/2/resend-credentials')).status, 200);
+  mailer.setTransport({ sendMail: async () => { throw Object.assign(new Error('bad login'), { code: 'EAUTH' }); } });
+  const origErr = console.error; console.error = () => {};
+  try { assert.strictEqual((await admin('POST', '/users/2/resend-credentials')).body.emailSent, false); } finally { console.error = origErr; }
+  assert.deepStrictEqual(db.s.activity.filter((a) => a.action !== 'login').map((a) => [a.user_id, a.action, a.subject, a.notes]), [
+    [1, 'user_create', 'Gus G', 'lic_director'], [1, 'user_credentials', 'Fay F', null]]);
+  const all = JSON.stringify(db.s.activity);
+  for (const mail of sent) assert.ok(!all.includes(passwordIn(mail)), 'never a generated password');
+}));

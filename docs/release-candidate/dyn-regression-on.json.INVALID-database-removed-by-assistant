@@ -1,0 +1,23 @@
+{
+  "run": "regression-on",
+  "suite": "regression",
+  "mode": "on",
+  "label": "rc4h",
+  "database": "syllabus_e2e_dyn_regression",
+  "port": "43310",
+  "schema": "fresh bootstrap (init.js + every migrate-* script)",
+  "start": "2026-11-05T19:50:31.656Z",
+  "finished": "2026-11-05T19:50:34.409Z",
+  "exit": 2,
+  "scenarios": [],
+  "failedChecks": [],
+  "flags": {
+    "SYLLABUS_CHECK_CACHE_WARMUP": "on",
+    "SYLLABUS_CHECK_OUTPUT_PLAN": "on",
+    "SYLLABUS_CHECK_OUTPUT_FIELDS": "scoped",
+    "SYLLABUS_CHECK_COURSE_CONTEXT": "off",
+    "SYLLABUS_CHECK_V2_GROUPING": "off",
+    "SYLLABUS_CHECK_PROMPT_TRIM": "off"
+  },
+  "log": "docs\\release-candidate\\dyn-regression-on.log"
+}

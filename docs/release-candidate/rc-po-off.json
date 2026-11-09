@@ -1,0 +1,39 @@
+{
+  "run": "po-off",
+  "suite": "po",
+  "mode": "off",
+  "label": "rc3h",
+  "database": "syllabus_e2e_po_1105_workflow_baseline",
+  "start": "2026-11-05T18:18:08.136Z",
+  "finished": "2026-11-05T18:20:25.038Z",
+  "exit": 0,
+  "scenarios": [
+    {
+      "result": "PASS",
+      "id": "SIT"
+    },
+    {
+      "result": "PASS",
+      "id": "SIE"
+    },
+    {
+      "result": "PASS",
+      "id": "SCPE"
+    },
+    {
+      "result": "PASS",
+      "id": "SIT-CYBERSECURITY"
+    }
+  ],
+  "failedChecks": [],
+  "migrationsExecuted": 0,
+  "flags": {
+    "SYLLABUS_CHECK_CACHE_WARMUP": "off",
+    "SYLLABUS_CHECK_OUTPUT_PLAN": "off",
+    "SYLLABUS_CHECK_OUTPUT_FIELDS": "off",
+    "SYLLABUS_CHECK_COURSE_CONTEXT": "off",
+    "SYLLABUS_CHECK_V2_GROUPING": "off",
+    "SYLLABUS_CHECK_PROMPT_TRIM": "off"
+  },
+  "log": "docs\\release-candidate\\rc-po-off.log"
+}

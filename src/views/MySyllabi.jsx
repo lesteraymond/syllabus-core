@@ -1,3 +1,4 @@
+import { YearFilter, useYearScope } from '../components/AcademicYearScope';
 import StableButton from '../components/StableButton';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
@@ -15,6 +16,7 @@ import { phDateTime } from '../lib/phTime';
 const STATUS_LABELS = { draft: 'Draft', submitted: 'Submitted', under_review: 'Under Review', for_revision: 'For Revision', approved: 'Approved', rejected: 'Rejected' };
 
 export default function MySyllabi({ syllabi, user, messages, commentCounts = {}, setEditing, setPage, setHistCode, setChatCode, setCommentCode, handleDelete, setConfirm, notify }) {
+  const yearScope = useYearScope(), year = yearScope ? yearScope.param('data') : undefined; // the academic year of this screen (undefined: the current one)
   // Programs and subjects an admin assigned to me: a syllabus whose subject is not in the list is read-only.
   const isFaculty = user.role === 'faculty';
   const [resuming, setResuming] = useState(null);
@@ -24,9 +26,9 @@ export default function MySyllabi({ syllabi, user, messages, commentCounts = {},
   const [showArchived, setShowArchived] = useState(false);
   useEffect(() => {
     let live = true;
-    syllabiApi.archived().then((rows) => { if (live) setArchivedRows(rows.filter((r) => r.userId === user.id)); }).catch(() => {});
+    syllabiApi.archived(undefined, year).then((rows) => { if (live) setArchivedRows(rows.filter((r) => r.userId === user.id)); }).catch(() => {});
     return () => { live = false; };
-  }, [user.id, syllabi]);
+  }, [user.id, syllabi, year]);
   useEffect(() => {
     let live = true;
     usersApi.myAssignments().then((a) => { if (live) setMine(a); }).catch(() => {});
@@ -45,7 +47,7 @@ export default function MySyllabi({ syllabi, user, messages, commentCounts = {},
   const my = useMemo(() => [...syllabi.filter(s => s.userId === user.id), ...(showArchived ? archivedRows : [])].map(s => ({ ...s, unreadCount: messages.filter(m => m.syllabusId === s.id && m.receiverId === user.id && !m.isRead).length })), [syllabi, user, messages, showArchived, archivedRows]);
   return (
     <>
-      <PageHead title={translateUI("ui.my_syllabi_3da1e8")} subtitle={translateUI("publication.mySubtitle")} actions={<><StableButton className="btn primary" disabled={nothingAssigned} title={nothingAssigned ? tr(ASSIGNMENT_MESSAGES[state]) : ''} onClick={() => { setEditing(null); setPage('builder'); }}>{translateUI("ui.new_syllabus_c4c7a9")}</StableButton></>} />
+      <PageHead title={translateUI("ui.my_syllabi_3da1e8")} subtitle={translateUI("publication.mySubtitle")} actions={<><YearFilter group="data" /><StableButton className="btn primary" disabled={nothingAssigned} title={nothingAssigned ? tr(ASSIGNMENT_MESSAGES[state]) : ''} onClick={() => { setEditing(null); setPage('builder'); }}>{translateUI("ui.new_syllabus_c4c7a9")}</StableButton></>} />
       {nothingAssigned && <div className="info-banner warning">{tr(ASSIGNMENT_MESSAGES[state])}{translateUI("ui.you_can_create_a_syllabus_once_a_subject_is_assigned_to_you_b8383e")}</div>}
       {archivedRows.length > 0 && <label className="syl-archive-toggle"><input type="checkbox" checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} />{translateUI("syllabi.showArchived", { count: archivedRows.length })}</label>}
       <div className="syl-grid">

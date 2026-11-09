@@ -1,9 +1,11 @@
 'use strict';
 const express = require('express');
+const { assertActiveYear } = require('../lib/activeYearGate');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { httpError, sendError } = require('../lib/http');
 const repo = require('../lib/syllabuscheck/repository');
 const { readReport } = repo;
+const { assertRecordReview } = require('../lib/programPoReferences');
 const { canView, canEdit, isOwner, lockedMessage } = require('../lib/syllabusRules');
 const { providerConfig, promptVersionOf } = require('../lib/syllabuscheck/gemini');
 const refine = require('../lib/syllabuscheck/refine');
@@ -30,6 +32,7 @@ router.post('/syllabi/:id/academic-v2-preview', wrap(async (req,res)=>{
   const [rows]=await req.app.locals.db.query('SELECT * FROM syllabi WHERE syllabus_id = ?',[syllabusId]);
   const syllabus=rows[0];
   if(!syllabus||!canView(req.session.user,syllabus))throw httpError(404,'Syllabus not found');
+  await assertActiveYear(req.app.locals.db,syllabus);
   let content;try{content=JSON.parse(syllabus.content);}catch{throw httpError(409,'No saved structured form is available.');}
   const v2=require('../lib/syllabuscheck/academicPolicyV2');
   const report=await require('../lib/compliance/service').checkHybrid(req.app.locals.db,content,{academicPolicy:v2.POLICY.id,offlineReplay:replay,syllabusId});
@@ -88,6 +91,8 @@ router.post('/runs/:id/decisions', wrap(async (req, res) => {
   if (!canEdit(req.session.user, syllabus)) throw httpError(409, lockedMessage(syllabus));
   const body = req.body || {};
   if (!['accept', 'edit', 'reject', 'undo'].includes(body.action)) throw httpError(400, 'Choose Accept, Edit, Reject or Undo');
+  // A new decision acts on what the report said about references the faculty still has to review. Reading the report and its past decisions stays open (GET above).
+  await assertRecordReview(req.app.locals.db, syllabus.syllabus_id);
   const allSuggestions = [
     ...(report.hybrid?.suggestions || []),
     ...(report.hybrid?.academicV2?.academic?.suggestions || []),
@@ -121,6 +126,7 @@ router.post('/runs/:id/decisions', wrap(async (req, res) => {
       replacement: textToApply,
       contextHash
     });
+    if (!verification.valid && verification.reason === 'secret_not_configured') throw httpError(503, refine.SECRET_MESSAGE);
     if (!verification.valid) {
       if (verification.reason === 'expired') {
         throw httpError(409, 'Verification token has expired. Run Check & improve again.');
@@ -161,6 +167,7 @@ router.post('/runs/:id/suggestions/:suggestionId/refine', wrap(async (req, res) 
   const { runId, syllabus, report } = await visibleRun(req);
   if (!isOwner(me, syllabus)) throw httpError(403, 'Only the author can check and improve a recommendation.');
   if (!canEdit(me, syllabus)) throw httpError(409, lockedMessage(syllabus));
+  await assertActiveYear(req.app.locals.db, syllabus); // an AI request: only for the active academic year (lib/activeYearGate.js)
   const allSuggestions = [
     ...((report.hybrid && report.hybrid.suggestions) || []),
     ...(report.hybrid?.academicV2?.academic?.suggestions || []),
@@ -169,8 +176,11 @@ router.post('/runs/:id/suggestions/:suggestionId/refine', wrap(async (req, res) 
   ];
   const suggestion = allSuggestions.find(s => s.id === req.params.suggestionId);
   if (!suggestion) throw httpError(400, 'Unknown draft suggestion');
+  // Every refinement is an AI request: none while the administrator has turned AI checking off (lib/adminSettings.js)
+  if (!(await require('../lib/adminSettings').policy(req.app.locals.db)).aiChecking) throw httpError(409, require('../lib/adminSettings').AI_OFF_REFUSAL, { code: 'ai_checking_off' });
   const { model, configured } = providerConfig();
   if (!configured) throw httpError(503, 'No active AI provider is configured.');
+  if (!refine.signingSecret()) throw httpError(503, refine.SECRET_MESSAGE); // before any AI request is spent
   const promptVer = report.hybrid?.alignment?.promptVersion || '';
   const expectedVer = promptVersionOf(model);
   if (promptVer && promptVer !== expectedVer && !report.evaluationPolicy && !report.hybrid?.academicV2 && !suggestion.policy) {
@@ -209,5 +219,183 @@ router.post('/runs/:id/suggestions/:suggestionId/refine', wrap(async (req, res) 
     throw error.status ? error : httpError(502, 'The AI could not check this recommendation: ' + String(error.message || error).slice(0, 200));
   } finally { refining.delete(req.app); }
 }));
+
+// --- Coordinated Improvement Plan Routes ---
+const coordinatedPlanEngine = require('../lib/syllabuscheck/coordinatedPlanEngine');
+const contentRevision = require('../lib/contentRevision');
+const compliance = require('../lib/compliance/service');
+const { applyCatalog, MAX_CONTENT_BYTES } = require('./syllabusContent');
+const subjectLock = require('../lib/subjectLock');
+const assignments = require('../lib/assignments');
+const accountActivity = require('../lib/accountActivity');
+const { inTransaction } = require('../lib/http');
+
+router.get('/runs/:id/improvement-plan', wrap(async (req, res) => {
+  const { runId, syllabus, report } = await visibleRun(req);
+  let plan = report.hybrid?.improvementPlan || null;
+  if (!plan && coordinatedPlanEngine.enabled(process.env)) {
+    try {
+      let content = null;
+      try { content = JSON.parse(syllabus.content); } catch { content = null; }
+      if (content) {
+        const masters = await repo.mastersFor(req.app.locals.db, content, { syllabusId: syllabus.syllabus_id });
+        plan = coordinatedPlanEngine.buildPlan({
+          content,
+          masters,
+          syllabusId: syllabus.syllabus_id,
+          result: report,
+          env: process.env,
+        });
+      }
+    } catch {
+      plan = null;
+    }
+  }
+  res.json({ plan });
+}));
+
+router.post('/runs/:id/improvement-plan/apply', wrap(async (req, res) => {
+  const me = req.session.user;
+  const { runId, syllabus, report } = await visibleRun(req);
+
+  // Author and editable state checks
+  if (!isOwner(me, syllabus)) throw httpError(403, 'Only the author can apply an improvement plan.');
+  if (!canEdit(me, syllabus)) throw httpError(409, lockedMessage(syllabus));
+  if (syllabus.status === 'approved') throw httpError(409, 'Approved syllabi are immutable and cannot be modified.');
+
+  await assertActiveYear(req.app.locals.db, syllabus);
+  await assertRecordReview(req.app.locals.db, syllabus.syllabus_id);
+
+  let plan = report.hybrid?.improvementPlan || null;
+  if (!plan && coordinatedPlanEngine.enabled(process.env)) {
+    let content = null;
+    try { content = JSON.parse(syllabus.content); } catch { content = null; }
+    if (content) {
+      const masters = await repo.mastersFor(req.app.locals.db, content, { syllabusId: syllabus.syllabus_id });
+      plan = coordinatedPlanEngine.buildPlan({
+        content,
+        masters,
+        syllabusId: syllabus.syllabus_id,
+        result: report,
+        env: process.env,
+      });
+    }
+  }
+
+  if (!plan) throw httpError(404, 'No coordinated improvement plan is available for this check.');
+  if (req.body?.planId && req.body.planId !== plan.planId) {
+    throw httpError(400, 'The specified planId does not match this check run.');
+  }
+
+  const result = await inTransaction(req.app.locals.db, async (conn) => {
+    const [rows] = await conn.query(
+      'SELECT syllabus_id, user_id, status, title, course_code, content, course_id, archived_at, content_schema_version FROM syllabi WHERE syllabus_id = ? FOR UPDATE',
+      [syllabus.syllabus_id]
+    );
+    const syl = rows[0];
+    if (!syl || !canView(me, syl)) throw httpError(404, 'Syllabus not found');
+    if (!isOwner(me, syl)) throw httpError(403, 'Only the author can edit syllabus content');
+    if (!canEdit(me, syl)) throw httpError(409, lockedMessage(syl));
+    if (syl.status === 'approved') throw httpError(409, 'Approved syllabi are immutable and cannot be modified.');
+
+    await assignments.requireCourseAccess(conn, me, syl.course_id);
+
+    let current = {};
+    if (syl.content) { try { current = JSON.parse(syl.content); } catch { current = {}; } }
+
+    const clientHash = req.body?.sourceHash;
+    if (clientHash && clientHash !== plan.sourceHash) {
+      throw httpError(409, 'The improvement plan source version does not match the client version. Run Check with AI again.', {
+        code: 'stale_syllabus_version',
+        clientHash,
+        planHash: plan.sourceHash,
+      });
+    }
+
+    const currentHash = compliance.hashOf(current);
+    if (currentHash !== plan.sourceHash) {
+      throw httpError(409, 'Syllabus content has changed since this improvement plan was generated. Run Check with AI again.', {
+        code: 'stale_syllabus_version',
+        currentHash,
+        expectedHash: plan.sourceHash,
+      });
+    }
+
+    const approvedIds = Array.isArray(req.body?.approvedChangeIds) && req.body.approvedChangeIds.length > 0
+      ? req.body.approvedChangeIds
+      : null;
+
+    const candidateContent = coordinatedPlanEngine.applyChanges(current, plan.changes, approvedIds);
+
+    if (candidateContent.meta && Number.isInteger(candidateContent.meta.courseId)) {
+      await assignments.requireCourseAccess(conn, me, candidateContent.meta.courseId);
+    }
+    const course = await applyCatalog(conn, candidateContent, me, current);
+    if (course && course.id !== syl.course_id) {
+      await subjectLock.assertSubjectFree(conn, me, course.id, syl.syllabus_id);
+    }
+
+    const json = JSON.stringify(candidateContent);
+    const maxBytes = MAX_CONTENT_BYTES || (512 * 1024);
+    if (Buffer.byteLength(json, 'utf8') > maxBytes) {
+      throw httpError(413, `This syllabus is too large to save (limit ${maxBytes / 1024} KB)`);
+    }
+
+    const title = candidateContent.meta && typeof candidateContent.meta.title === 'string' ? candidateContent.meta.title : syl.title;
+    const code = candidateContent.meta && typeof candidateContent.meta.code === 'string' ? candidateContent.meta.code : syl.course_code;
+    const version = syl.content_schema_version || 2;
+
+    await conn.query(
+      'UPDATE syllabi SET content = ?, content_schema_version = ?, content_updated_at = NOW(), title = ?, course_code = ?, course_id = ? WHERE syllabus_id = ?',
+      [json, version, title, code, course ? course.id : null, syl.syllabus_id]
+    );
+
+    const toApply = Array.isArray(approvedIds)
+      ? plan.changes.filter(c => approvedIds.includes(c.changeId) || approvedIds.includes(c.id))
+      : plan.changes;
+
+    for (const c of toApply) {
+      const suggestionId = c.sourceSuggestionId || c.changeId;
+      await conn.query(
+        'INSERT INTO syllabus_check_decisions (run_id, suggestion_id, action, edited_text, user_id) VALUES (?, ?, ?, ?, ?)',
+        [runId, suggestionId, 'accept', null, me.id]
+      );
+    }
+
+    await activity.record(conn, {
+      syllabusId: syl.syllabus_id,
+      userId: me.id,
+      action: 'recommend',
+      notes: `Applied whole-syllabus improvement plan (${toApply.length} coordinated changes applied).`,
+    });
+
+    return {
+      applied: true,
+      planId: plan.planId,
+      appliedCount: toApply.length,
+      appliedChanges: toApply.map(c => c.changeId),
+      revisions: contentRevision.revisionsOf(candidateContent),
+      subject: accountActivity.subjectLine(code, title),
+      status: syl.status,
+    };
+  });
+
+  await accountActivity.recordEdit(req.app.locals.db, {
+    userId: me.id,
+    syllabusId: syllabus.syllabus_id,
+    subject: result.subject,
+    notes: result.status,
+  });
+
+  res.json({
+    applied: true,
+    planId: result.planId,
+    appliedCount: result.appliedCount,
+    appliedChanges: result.appliedChanges,
+    revisions: result.revisions,
+  });
+}));
+
+
 module.exports = router;
 module.exports.curriculumInput = curriculumInput;

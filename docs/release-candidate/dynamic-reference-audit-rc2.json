@@ -1,0 +1,658 @@
+{
+  "kind": "OFFLINE audit: scripted Claude double, isolated synthetic database, no network, no migration",
+  "root": "C:\\Users\\JP Del Rosario\\Syllabus-Repository\\tmp\\release-candidate\\rc2",
+  "at": "2026-11-05T16:12:23.517Z",
+  "findings": [],
+  "steps": {
+    "control": {
+      "httpStatus": 200,
+      "overall": 99,
+      "status": "scored",
+      "passed": true,
+      "threshold": 79,
+      "v2": {
+        "relationships": 131,
+        "notChecked": 8,
+        "vpaaTypes": 13
+      },
+      "cloPoV2": {
+        "count": 8,
+        "notChecked": 8,
+        "reasons": [
+          "po_reference_review"
+        ]
+      },
+      "legacyCloPo": 12,
+      "reference": null,
+      "referenceContext": {
+        "program": {
+          "id": 40,
+          "code": "BSIT"
+        },
+        "po": {
+          "source": "BSIT",
+          "status": "legacy_unversioned",
+          "reference": null
+        },
+        "curriculum": {
+          "source": "BSIT",
+          "selectedYear": "test-2026",
+          "referenceIds": [
+            16
+          ]
+        }
+      },
+      "p03": [
+        "PASS"
+      ],
+      "blocking": [],
+      "coverageCounts": {
+        "catalogued": 195,
+        "implemented": 184,
+        "enabled": 180,
+        "applicable": 169,
+        "executed": 162,
+        "attempted": 155,
+        "verified": 151,
+        "failed": 10,
+        "needsReview": 5,
+        "partiallyEvaluated": 3,
+        "notApplicable": 22,
+        "notChecked": 19
+      }
+    },
+    "createProgram": {
+      "status": 200,
+      "body": {
+        "id": 60,
+        "programCreated": true,
+        "program": {
+          "id": 41,
+          "code": "ZZNEW",
+          "name": "BS Zeta Computing (synthetic program)"
+        }
+      },
+      "dbProgram": {
+        "program_id": 41,
+        "code": "ZZNEW",
+        "pos_version": 1,
+        "egas_version": 1,
+        "academic_year": "2026–2027"
+      }
+    },
+    "curriculumBefore": {
+      "zzRows": 0
+    },
+    "saveNewProgramSyllabus": {
+      "status": 200
+    },
+    "newProgramNoCurriculum": {
+      "httpStatus": 200,
+      "overall": null,
+      "status": "incomplete",
+      "passed": false,
+      "threshold": 79,
+      "v2": {
+        "relationships": 131,
+        "notChecked": 33,
+        "vpaaTypes": 13
+      },
+      "cloPoV2": {
+        "count": 8,
+        "notChecked": 8,
+        "reasons": [
+          "po_reference_review"
+        ]
+      },
+      "legacyCloPo": 12,
+      "reference": null,
+      "referenceContext": {
+        "program": {
+          "id": 41,
+          "code": "ZZNEW"
+        },
+        "po": {
+          "source": "ZZNEW",
+          "status": "legacy_unversioned",
+          "reference": null
+        },
+        "curriculum": {
+          "source": "ZZNEW",
+          "selectedYear": "zeta-2026",
+          "referenceIds": []
+        }
+      },
+      "p03": [
+        "PASS"
+      ],
+      "blocking": [
+        "CUR-REF:Official approved curriculum unavailable for ZZNEW. Submission is blocked until ",
+        "INST-EXACT:egas must match the institutional master exactly."
+      ],
+      "coverageCounts": {
+        "catalogued": 195,
+        "implemented": 184,
+        "enabled": 180,
+        "applicable": 169,
+        "executed": 149,
+        "attempted": 139,
+        "verified": 124,
+        "failed": 12,
+        "needsReview": 7,
+        "partiallyEvaluated": 1,
+        "notApplicable": 22,
+        "notChecked": 48
+      }
+    },
+    "curriculumCreated": {
+      "createStatus": 201,
+      "approveStatus": 200
+    },
+    "newProgramWithCurriculum": {
+      "httpStatus": 200,
+      "overall": null,
+      "status": "incomplete",
+      "passed": false,
+      "threshold": 79,
+      "v2": {
+        "relationships": 131,
+        "notChecked": 8,
+        "vpaaTypes": 13
+      },
+      "cloPoV2": {
+        "count": 8,
+        "notChecked": 8,
+        "reasons": [
+          "po_reference_review"
+        ]
+      },
+      "legacyCloPo": 12,
+      "reference": null,
+      "referenceContext": {
+        "program": {
+          "id": 41,
+          "code": "ZZNEW"
+        },
+        "po": {
+          "source": "ZZNEW",
+          "status": "legacy_unversioned",
+          "reference": null
+        },
+        "curriculum": {
+          "source": "ZZNEW",
+          "selectedYear": "zeta-2026",
+          "referenceIds": [
+            17
+          ]
+        }
+      },
+      "p03": [
+        "PASS"
+      ],
+      "blocking": [
+        "INST-EXACT:egas must match the institutional master exactly."
+      ],
+      "coverageCounts": {
+        "catalogued": 195,
+        "implemented": 184,
+        "enabled": 180,
+        "applicable": 169,
+        "executed": 161,
+        "attempted": 121,
+        "verified": 151,
+        "failed": 12,
+        "needsReview": 5,
+        "partiallyEvaluated": 3,
+        "notApplicable": 22,
+        "notChecked": 19
+      }
+    },
+    "variantInstitutionEgasAndUnmappedPo": {
+      "saveStatus": 200,
+      "httpStatus": 200,
+      "overall": 99,
+      "status": "scored",
+      "passed": true,
+      "threshold": 79,
+      "v2": {
+        "relationships": 130,
+        "notChecked": 8,
+        "vpaaTypes": 13
+      },
+      "cloPoV2": {
+        "count": 8,
+        "notChecked": 8,
+        "reasons": [
+          "po_reference_review"
+        ]
+      },
+      "legacyCloPo": 12,
+      "reference": null,
+      "referenceContext": {
+        "program": {
+          "id": 41,
+          "code": "ZZNEW"
+        },
+        "po": {
+          "source": "ZZNEW",
+          "status": "legacy_unversioned",
+          "reference": null
+        },
+        "curriculum": {
+          "source": "ZZNEW",
+          "selectedYear": "zeta-2026",
+          "referenceIds": [
+            17
+          ]
+        }
+      },
+      "p03": [
+        "NOT_CHECKED"
+      ],
+      "blocking": [],
+      "coverageCounts": {
+        "catalogued": 195,
+        "implemented": 184,
+        "enabled": 180,
+        "applicable": 169,
+        "executed": 161,
+        "attempted": 115,
+        "verified": 150,
+        "failed": 10,
+        "needsReview": 5,
+        "partiallyEvaluated": 3,
+        "notApplicable": 22,
+        "notChecked": 20
+      },
+      "p03Detail": [
+        {
+          "status": "NOT_CHECKED",
+          "verified": false,
+          "reason": "Approved PO-to-EGA crosswalk is unavailable for one or more selected POs. A vacuous legacy pass is not verified mapping consistency; existin"
+        }
+      ]
+    },
+    "editPo": {
+      "status": 200,
+      "body": {
+        "versions": {
+          "egas": 1,
+          "pos": 2
+        },
+        "poReference": null
+      }
+    },
+    "recheckAfterPoEdit": {
+      "httpStatus": 200,
+      "overall": null,
+      "status": "incomplete",
+      "passed": false,
+      "threshold": 79,
+      "v2": {
+        "relationships": 131,
+        "notChecked": 8,
+        "vpaaTypes": 13
+      },
+      "cloPoV2": {
+        "count": 8,
+        "notChecked": 8,
+        "reasons": [
+          "po_reference_review"
+        ]
+      },
+      "legacyCloPo": 12,
+      "reference": null,
+      "referenceContext": {
+        "program": {
+          "id": 41,
+          "code": "ZZNEW"
+        },
+        "po": {
+          "source": "ZZNEW",
+          "status": "legacy_unversioned",
+          "reference": null
+        },
+        "curriculum": {
+          "source": "ZZNEW",
+          "selectedYear": "zeta-2026",
+          "referenceIds": [
+            17
+          ]
+        }
+      },
+      "p03": [
+        "PASS"
+      ],
+      "blocking": [
+        "INST-EXACT:egas must match the institutional master exactly.",
+        "PO-EXACT:Program outcomes must match the selected program master."
+      ],
+      "coverageCounts": {
+        "catalogued": 195,
+        "implemented": 184,
+        "enabled": 180,
+        "applicable": 169,
+        "executed": 161,
+        "attempted": 116,
+        "verified": 151,
+        "failed": 13,
+        "needsReview": 5,
+        "partiallyEvaluated": 3,
+        "notApplicable": 22,
+        "notChecked": 19
+      }
+    },
+    "historicalReport": {
+      "firstRunId": 133,
+      "oldReportStillHasOldPoText": true,
+      "oldReportRecordsPoVersion": false,
+      "oldReportReferenceContext": {
+        "source": "ZZNEW",
+        "status": "legacy_unversioned",
+        "reference": null
+      },
+      "oldReportInstitutionVersion": null
+    },
+    "poStorage": {
+      "livePo1": "ems. EDITED-BY-ADMIN",
+      "tables": [
+        "program_outcomes",
+        "program_outcome_sources"
+      ]
+    },
+    "subjectSnapshot": {
+      "subjectKeepsOwnSnapshot": true,
+      "snapshotStillHasOldPo1": true
+    },
+    "newYear": {
+      "create": 200,
+      "makeCurrent": 200,
+      "copyCatalog": 200,
+      "copyBody": {
+        "from": "2026–2027",
+        "to": "2027–2028",
+        "programs": 2,
+        "subjects": 3,
+        "years": [
+          {
+            "label": "2026–2027",
+            "startYear": 2026,
+            "isCurrent": false,
+            "programs": 2,
+            "subjects": 3
+          },
+          {
+            "label": "2027–2028",
+            "startYear": 2027,
+            "isCurrent": true,
+            "programs": 2,
+            "subjects": 3
+          }
+        ]
+      },
+      "programRows": [
+        {
+          "program_id": 41,
+          "code": "ZZNEW",
+          "academic_year": "2026–2027",
+          "pos_version": 2
+        },
+        {
+          "program_id": 43,
+          "code": "ZZNEW",
+          "academic_year": "2027–2028",
+          "pos_version": 1
+        }
+      ],
+      "isolation": {
+        "editStatus": 200,
+        "copiedPoCount": 5,
+        "copiedEgas": 3,
+        "year1Unchanged": true,
+        "year2Edited": true
+      }
+    },
+    "institution": {
+      "singleRowId1": true,
+      "version": 1,
+      "perYearOrVersioned": false,
+      "note": "institution_settings is one row (setting_id=1) with a version counter; no historical rows"
+    }
+  },
+  "summary": {
+    "control": {
+      "httpStatus": 200,
+      "overall": 99,
+      "status": "scored",
+      "passed": true,
+      "threshold": 79,
+      "v2": {
+        "relationships": 131,
+        "notChecked": 8,
+        "vpaaTypes": 13
+      },
+      "cloPoV2": {
+        "count": 8,
+        "notChecked": 8,
+        "reasons": [
+          "po_reference_review"
+        ]
+      },
+      "legacyCloPo": 12,
+      "reference": null,
+      "referenceContext": {
+        "program": {
+          "id": 40,
+          "code": "BSIT"
+        },
+        "po": {
+          "source": "BSIT",
+          "status": "legacy_unversioned",
+          "reference": null
+        },
+        "curriculum": {
+          "source": "BSIT",
+          "selectedYear": "test-2026",
+          "referenceIds": [
+            16
+          ]
+        }
+      },
+      "p03": [
+        "PASS"
+      ],
+      "blocking": [],
+      "coverageCounts": {
+        "catalogued": 195,
+        "implemented": 184,
+        "enabled": 180,
+        "applicable": 169,
+        "executed": 162,
+        "attempted": 155,
+        "verified": 151,
+        "failed": 10,
+        "needsReview": 5,
+        "partiallyEvaluated": 3,
+        "notApplicable": 22,
+        "notChecked": 19
+      }
+    },
+    "newNoCur": {
+      "httpStatus": 200,
+      "overall": null,
+      "status": "incomplete",
+      "passed": false,
+      "threshold": 79,
+      "v2": {
+        "relationships": 131,
+        "notChecked": 33,
+        "vpaaTypes": 13
+      },
+      "cloPoV2": {
+        "count": 8,
+        "notChecked": 8,
+        "reasons": [
+          "po_reference_review"
+        ]
+      },
+      "legacyCloPo": 12,
+      "reference": null,
+      "referenceContext": {
+        "program": {
+          "id": 41,
+          "code": "ZZNEW"
+        },
+        "po": {
+          "source": "ZZNEW",
+          "status": "legacy_unversioned",
+          "reference": null
+        },
+        "curriculum": {
+          "source": "ZZNEW",
+          "selectedYear": "zeta-2026",
+          "referenceIds": []
+        }
+      },
+      "p03": [
+        "PASS"
+      ],
+      "blocking": [
+        "CUR-REF:Official approved curriculum unavailable for ZZNEW. Submission is blocked until ",
+        "INST-EXACT:egas must match the institutional master exactly."
+      ],
+      "coverageCounts": {
+        "catalogued": 195,
+        "implemented": 184,
+        "enabled": 180,
+        "applicable": 169,
+        "executed": 149,
+        "attempted": 139,
+        "verified": 124,
+        "failed": 12,
+        "needsReview": 7,
+        "partiallyEvaluated": 1,
+        "notApplicable": 22,
+        "notChecked": 48
+      }
+    },
+    "newWithCur": {
+      "httpStatus": 200,
+      "overall": null,
+      "status": "incomplete",
+      "passed": false,
+      "threshold": 79,
+      "v2": {
+        "relationships": 131,
+        "notChecked": 8,
+        "vpaaTypes": 13
+      },
+      "cloPoV2": {
+        "count": 8,
+        "notChecked": 8,
+        "reasons": [
+          "po_reference_review"
+        ]
+      },
+      "legacyCloPo": 12,
+      "reference": null,
+      "referenceContext": {
+        "program": {
+          "id": 41,
+          "code": "ZZNEW"
+        },
+        "po": {
+          "source": "ZZNEW",
+          "status": "legacy_unversioned",
+          "reference": null
+        },
+        "curriculum": {
+          "source": "ZZNEW",
+          "selectedYear": "zeta-2026",
+          "referenceIds": [
+            17
+          ]
+        }
+      },
+      "p03": [
+        "PASS"
+      ],
+      "blocking": [
+        "INST-EXACT:egas must match the institutional master exactly."
+      ],
+      "coverageCounts": {
+        "catalogued": 195,
+        "implemented": 184,
+        "enabled": 180,
+        "applicable": 169,
+        "executed": 161,
+        "attempted": 121,
+        "verified": 151,
+        "failed": 12,
+        "needsReview": 5,
+        "partiallyEvaluated": 3,
+        "notApplicable": 22,
+        "notChecked": 19
+      }
+    },
+    "afterEdit": {
+      "httpStatus": 200,
+      "overall": null,
+      "status": "incomplete",
+      "passed": false,
+      "threshold": 79,
+      "v2": {
+        "relationships": 131,
+        "notChecked": 8,
+        "vpaaTypes": 13
+      },
+      "cloPoV2": {
+        "count": 8,
+        "notChecked": 8,
+        "reasons": [
+          "po_reference_review"
+        ]
+      },
+      "legacyCloPo": 12,
+      "reference": null,
+      "referenceContext": {
+        "program": {
+          "id": 41,
+          "code": "ZZNEW"
+        },
+        "po": {
+          "source": "ZZNEW",
+          "status": "legacy_unversioned",
+          "reference": null
+        },
+        "curriculum": {
+          "source": "ZZNEW",
+          "selectedYear": "zeta-2026",
+          "referenceIds": [
+            17
+          ]
+        }
+      },
+      "p03": [
+        "PASS"
+      ],
+      "blocking": [
+        "INST-EXACT:egas must match the institutional master exactly.",
+        "PO-EXACT:Program outcomes must match the selected program master."
+      ],
+      "coverageCounts": {
+        "catalogued": 195,
+        "implemented": 184,
+        "enabled": 180,
+        "applicable": 169,
+        "executed": 161,
+        "attempted": 116,
+        "verified": 151,
+        "failed": 13,
+        "needsReview": 5,
+        "partiallyEvaluated": 3,
+        "notApplicable": 22,
+        "notChecked": 19
+      }
+    }
+  }
+}

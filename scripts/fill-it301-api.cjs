@@ -106,7 +106,7 @@ async function main() {
   await fs.mkdir(backupDir, { recursive: true });
   const backup = path.join(backupDir, `it301-draft-${id}-${Date.now()}.json`);
   await fs.writeFile(backup, JSON.stringify(before, null, 2), { flag: 'wx' });
-  const save = await request(`/syllabi/${id}/content`, { method: 'PUT', body: JSON.stringify({ sections, schemaVersion: SCHEMA_VERSION }) });
+  const save = await request(`/syllabi/${id}/content`, { method: 'PUT', body: JSON.stringify({ sections, schemaVersion: SCHEMA_VERSION, baseRevisions: latest.revisions }) });
   const after = await request(`/syllabi/${id}/content`);
   assert.equal(after.status, 'draft');
   for (const key of Object.keys(sections)) assert.deepEqual(after.content[key], d[key], 'Persisted section: ' + key);

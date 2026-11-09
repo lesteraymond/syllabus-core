@@ -12,11 +12,13 @@ async function createNotification(db, { userId, type, syllabusId = null, title, 
   }
 }
 
-// Notify everyone who holds one of these roles (optionally except one user, e.g. the person who triggered it). Also never throws.
+// Notify everyone who holds one of these roles (optionally except one user or a list of users, e.g. the person who triggered it and the owner,
+// who is told separately). Also never throws.
 async function notifyRoles(db, roles, { exceptUserId = null, ...n }) {
   try {
     if (!roles || !roles.length) return;
-    const [people] = await db.query('SELECT user_id FROM users WHERE role IN (?) AND user_id <> ?', [roles, exceptUserId ?? 0]);
+    const except = [].concat(exceptUserId ?? []).filter((v) => v != null);
+    const [people] = await db.query('SELECT user_id FROM users WHERE role IN (?) AND user_id NOT IN (?)', [roles, except.length ? except : [0]]);
     await Promise.all(people.map((p) => createNotification(db, { ...n, userId: p.user_id })));
   } catch (err) {
     console.error('NOTIFICATION ERROR:', err.message);

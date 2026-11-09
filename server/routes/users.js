@@ -8,12 +8,15 @@ const { requireAuth, requireAdmin, toSessionUser } = require('../middleware/auth
 const googleProfile = require('../lib/googleProfile');
 const { AVATAR_DIR, avatarRelPath, avatarFile, avatarUrlFor } = require('../lib/avatar');
 const { inTransaction } = require('../lib/http');
+const { approvedTiedToAccount, accountRefused, CODE: APPROVED_CODE } = require('../lib/approvedRecords');
+const accountStatus = require('../lib/accountStatus');
 const { createNotification } = require('../lib/notify');
 const { createLimiter } = require('../lib/rateLimit');
 const { generatePassword } = require('../lib/passwords');
 const mailer = require('../lib/mailer');
 const { domain, isSchoolEmail } = require('../lib/emailDomain');
 const assignments = require('../lib/assignments');
+const accountActivity = require('../lib/accountActivity'); // name, language and photo changes in the account's Recent Activity (best effort)
 const router = express.Router();
 
 const { STAFF_ROLES: ROLES, isReviewer } = require('../lib/roles'); // admin = Dean / Academic Administrator; asst_vpaa, lic_director and vpaa review in the approval chain
@@ -39,6 +42,8 @@ router.patch('/me/profile', requireAuth, async (req, res) => {
     const [rows] = await db.query('SELECT user_id, email, role, first_name, last_name, avatar_path, must_change_password, preferred_language FROM users WHERE user_id = ?', [req.session.user.id]);
     if (!rows[0]) return fail(res, 404, 'Account not found');
     await db.query('UPDATE users SET first_name = ?, last_name = ? WHERE user_id = ?', [firstName.trim(), lastName.trim(), req.session.user.id]);
+    const before = `${rows[0].first_name} ${rows[0].last_name}`, after = `${firstName.trim()} ${lastName.trim()}`;
+    if (before !== after) await accountActivity.record(db, { userId: req.session.user.id, action: 'name_change', notes: `${before} → ${after}` }); // saving the same name records nothing
     const user = toSessionUser({ ...rows[0], first_name: firstName.trim(), last_name: lastName.trim() });
     req.session.user = user;
     res.json({ user });
@@ -58,6 +63,7 @@ router.patch('/me/preferences', requireAuth, async (req, res) => {
     }
     const [result] = await req.app.locals.db.query('UPDATE users SET preferred_language = ? WHERE user_id = ?', [body.preferredLanguage, req.session.user.id]);
     if (!result.affectedRows) return fail(res, 404, 'Account not found');
+    if (req.session.user.preferredLanguage !== body.preferredLanguage) await accountActivity.record(req.app.locals.db, { userId: req.session.user.id, action: 'language_change', notes: body.preferredLanguage });
     req.session.user.preferredLanguage = body.preferredLanguage;
     res.json({ preferredLanguage: body.preferredLanguage });
   } catch { fail(res, 500, 'Could not save your language preference. Please try again.'); }
@@ -69,7 +75,8 @@ router.get('/', requireAdmin, async (req, res) => {
     const [rows] = await req.app.locals.db.query(
       'SELECT user_id, email, role, first_name, last_name, avatar_path, created_at FROM users ORDER BY created_at DESC'
     );
-    res.json(rows.map(toUser));
+    const off = await accountStatus.disabledIds(req.app.locals.db);
+    res.json(rows.map((r) => ({ ...toUser(r), disabled: off.has(Number(r.user_id)) })));
   } catch (err) {
     console.error('USERS ERROR:', err);
     fail(res, 500, err.message);
@@ -102,6 +109,8 @@ router.post('/', requireAdmin, async (req, res) => {
       [email, hash, role, firstName, lastName]
     );
     const mail = await mailer.sendCredentials({ to: email, name: firstName, password, reason: 'welcome' });
+    // In the administrator's Recent Activity (lib/accountActivity.js): whom they registered, and as what. Never the password.
+    await accountActivity.record(db, { userId: req.session.user.id, action: 'user_create', subject: `${firstName} ${lastName}`, notes: role });
     res.status(201).json({ id: result.insertId, email, role, firstName, lastName, emailSent: mail.sent, ...(mail.sent ? {} : { emailReason: mail.reason }) });
   } catch (err) {
     console.error('USERS ERROR:', err);
@@ -125,6 +134,7 @@ router.post('/:id/resend-credentials', requireAdmin, async (req, res) => {
     const [rows] = await db.query('SELECT user_id, email, role, first_name FROM users WHERE user_id = ?', [id]);
     const user = rows[0];
     if (!user) return fail(res, 404, 'User not found');
+    if (await accountStatus.isDisabled(db, id)) return res.status(409).json({ message: accountStatus.RESEND_DISABLED, error: accountStatus.RESEND_DISABLED, code: accountStatus.CODE });
     if (user.role === 'student' || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(user.email)) return fail(res, 400, 'This account signs in with a student ID, not an email address.');
 
     // Send first, change the password only if the email went out: a failed send must never leave someone with a password nobody has seen.
@@ -134,6 +144,7 @@ router.post('/:id/resend-credentials', requireAdmin, async (req, res) => {
       await db.query('UPDATE users SET password_hash = ?, must_change_password = 1 WHERE user_id = ?', [await bcrypt.hash(password, 10), id]);
       await db.query('DELETE FROM password_temp WHERE user_id = ?', [id]).catch(() => {});
       await db.query('DELETE FROM remember_tokens WHERE user_id = ?', [id]);
+      await accountActivity.record(db, { userId: req.session.user.id, action: 'user_credentials', subject: await accountActivity.personOf(db, id) }); // only when the password was replaced
     }
     res.json({ id, email: user.email, emailSent: mail.sent, ...(mail.sent ? {} : { emailReason: mail.reason }) });
   } catch (err) {
@@ -157,13 +168,14 @@ router.get('/me/assignments', requireAuth, async (req, res) => {
   }
 });
 
-// Only faculty are assignable. 404 for an unknown id, 400 for an admin.
+// Faculty and administrators are assignable (an administrator writes syllabi too, and is then held to the subject's deadlines: lib/deadlines.js).
+// The other reviewers (Asst. VPAA, LIC Director, VPAA) do not write syllabi and are not. 404 for an unknown id, 400 for a reviewer or a student.
 async function findFaculty(db, rawId) {
   const id = Number(rawId);
   if (!Number.isInteger(id) || id <= 0) throw Object.assign(new Error('User not found'), { status: 404 });
   const [rows] = await db.query('SELECT user_id, role, first_name, last_name FROM users WHERE user_id = ?', [id]);
   if (!rows[0]) throw Object.assign(new Error('User not found'), { status: 404 });
-  if (rows[0].role !== 'faculty') throw Object.assign(new Error('Only faculty can be assigned programs and courses'), { status: 400 });
+  if (!['faculty', 'admin'].includes(rows[0].role)) throw Object.assign(new Error('Only faculty and administrators can be assigned programs and courses'), { status: 400 });
   return rows[0];
 }
 
@@ -203,6 +215,7 @@ router.put('/:id/assignments', requireAdmin, async (req, res) => {
     const same = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
     const changed = !same(before.programIds, next.programIds) || !same(before.courseIds, next.courseIds);
     if (changed) {
+      await accountActivity.record(db, { userId: req.session.user.id, action: 'user_assignments', subject: `${user.first_name} ${user.last_name}`, notes: String(next.courseIds.length) }); // the number of subjects now assigned
       // After the commit: a failed notification never affects the result.
       await createNotification(db, {
         userId: user.user_id,
@@ -267,6 +280,7 @@ router.post('/me/avatar/google', requireAuth, async (req, res) => {
       : await googleProfile.getGooglePhoto(req.body?.token, rows[0].email);
     const avatarUrl = await saveAvatar(db, me.id, buffer, 'webp');
     req.session.user.avatarUrl = avatarUrl;
+    await accountActivity.record(db, { userId: me.id, action: 'photo_change', notes: 'google' });
     res.json({ avatarUrl });
   } catch (err) {
     fail(res, err.status || 500, err.status ? err.message : 'Could not sync your Google photo. Please try again.');
@@ -290,6 +304,7 @@ router.post('/me/avatar', requireAuth, (req, res) => {
       const db = req.app.locals.db;
       const avatarUrl = await saveAvatar(db, userId, req.file.buffer, ext);
       req.session.user.avatarUrl = avatarUrl;
+      await accountActivity.record(db, { userId, action: 'photo_change', notes: 'upload' });
       res.json({ avatarUrl });
     } catch (err) {
       console.error('AVATAR ERROR:', err);
@@ -306,6 +321,7 @@ router.delete('/me/avatar', requireAuth, async (req, res) => {
     await db.query('UPDATE users SET avatar_path = NULL WHERE user_id = ?', [userId]);
     await removeFile(avatarFile(rows[0]?.avatar_path));
     req.session.user.avatarUrl = null;
+    if (rows[0]?.avatar_path) await accountActivity.record(db, { userId, action: 'photo_change', notes: 'remove' }); // there was a photo to remove
     res.json({ avatarUrl: null });
   } catch (err) {
     console.error('AVATAR ERROR:', err);
@@ -366,8 +382,9 @@ router.delete('/:id/avatar', requireAdmin, async (req, res) => {
     if (rows.length === 0) return fail(res, 404, 'User not found');
     await db.query('UPDATE users SET avatar_path = NULL WHERE user_id = ?', [targetId]);
     await removeFile(avatarFile(rows[0].avatar_path));
-    // submission_logs needs a syllabus and a fixed action list, so moderation is recorded in the server log.
+    // In the administrator's Recent Activity (account_activity, lib/accountActivity.js), naming whose photo it was; the server log keeps its line too.
     console.warn(`AVATAR MODERATION: admin ${req.session.user.id} removed the photo of user ${targetId}`);
+    if (rows[0].avatar_path) await accountActivity.record(db, { userId: req.session.user.id, action: 'photo_change', subject: await accountActivity.personOf(db, targetId), notes: 'remove_other' });
     res.json({ avatarUrl: null });
   } catch (err) {
     console.error('AVATAR ERROR:', err);
@@ -375,14 +392,41 @@ router.delete('/:id/avatar', requireAdmin, async (req, res) => {
   }
 });
 
+// Disabling ends access and keeps every record the account is part of (lib/accountStatus.js). Re-enabling restores sign-in.
+async function setAccountDisabled(req, res, disabled) {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id <= 0) return fail(res, 404, 'User not found');
+    const { changed, ...result } = await accountStatus.setDisabled(req.app.locals.db, req.session.user.id, id, disabled);
+    // On the administrator's Recent Activity, naming the account; asking again for what is already so records nothing
+    if (changed) await accountActivity.record(req.app.locals.db, { userId: req.session.user.id, action: disabled ? 'user_disable' : 'user_enable', subject: await accountActivity.personOf(req.app.locals.db, id) });
+    res.json(result);
+  } catch (err) {
+    if (err.status) return res.status(err.status).json({ message: err.message, error: err.message, ...(err.body || {}) });
+    console.error('USERS ERROR:', err);
+    fail(res, 500, 'Could not change this account. Please try again.');
+  }
+}
+router.post('/:id/disable', requireAdmin, (req, res) => setAccountDisabled(req, res, true));
+router.post('/:id/enable', requireAdmin, (req, res) => setAccountDisabled(req, res, false));
+
 // Offboarding: deleting the row removes access (the user can no longer sign in).
 router.delete('/:id', requireAdmin, async (req, res) => {
   try {
     if (Number(req.params.id) === req.session.user.id) return fail(res, 400, 'You cannot remove your own account');
-    const [result] = await req.app.locals.db.query('DELETE FROM users WHERE user_id = ?', [req.params.id]);
+    const whose = Number.isInteger(Number(req.params.id)) ? await accountActivity.personOf(req.app.locals.db, Number(req.params.id)) : null; // read before the row is gone
+    const result = await inTransaction(req.app.locals.db, async (conn) => {
+      const approved = await approvedTiedToAccount(conn, req.params.id);
+      if (approved.length) throw accountRefused(approved);
+      const [deleted] = await conn.query('DELETE FROM users WHERE user_id = ?', [req.params.id]);
+      return deleted;
+    });
     if (result.affectedRows === 0) return fail(res, 404, 'User not found');
+    // On the administrator's record: the removed account's own activity goes with it (account_activity.user_id ON DELETE CASCADE), this line stays.
+    await accountActivity.record(req.app.locals.db, { userId: req.session.user.id, action: 'user_delete', subject: whose });
     res.json({ message: 'User deleted' });
   } catch (err) {
+    if (err.body && err.body.code === APPROVED_CODE) return res.status(err.status).json({ message: err.message, error: err.message, ...err.body });
     console.error('USERS ERROR:', err);
     fail(res, 500, err.message);
   }

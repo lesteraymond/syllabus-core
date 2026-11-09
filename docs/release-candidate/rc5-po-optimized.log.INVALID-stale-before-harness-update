@@ -1,0 +1,20 @@
+BSIT FAIL locator.waitFor: Timeout 12000ms exceeded.
+Call log:
+[2m  - waiting for locator('.ie-po').first() to be visible[22m
+
+FAIL BSIT optimized
+BSIE FAIL locator.waitFor: Timeout 12000ms exceeded.
+Call log:
+[2m  - waiting for locator('.ie-po').first() to be visible[22m
+
+FAIL BSIE optimized
+BSCPE FAIL locator.waitFor: Timeout 12000ms exceeded.
+Call log:
+[2m  - waiting for locator('.ie-po').first() to be visible[22m
+
+FAIL BSCPE optimized
+BSIT-CYBERSECURITY FAIL locator.waitFor: Timeout 12000ms exceeded.
+Call log:
+[2m  - waiting for locator('.ie-po').first() to be visible[22m
+
+FAIL BSIT-CYBERSECURITY optimized

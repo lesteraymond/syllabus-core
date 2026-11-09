@@ -34,8 +34,9 @@ export function useDraft(editing) {
   const running = useRef(false);
   const again = useRef(false);
   const pending = useRef(false); // changes not yet confirmed by the server
+  const [reloadTick, setReloadTick] = useState(0);
 
-  // initial load
+  // initial load (and every explicit reload after a save conflict)
   useEffect(() => {
     let live = true;
     (async () => {
@@ -47,7 +48,7 @@ export function useDraft(editing) {
           const r = await syllabiApi.getContent(idRef.current);
           content = r.content;
           adoptedOutcomes = r.adoptedOutcomes;
-          info = { editable: r.editable, status: r.status, version: r.version, lockedReason: r.lockedReason || '', nextVersion: r.nextVersion || '', reviewerNote: r.reviewerNote || '' };
+          info = { editable: r.editable, status: r.status, version: r.version, academicYear: r.academicYear || '', lockedReason: r.lockedReason || '', nextVersion: r.nextVersion || '', reviewerNote: r.reviewerNote || '' };
         }
         let d;
         if (content) {
@@ -69,6 +70,17 @@ export function useDraft(editing) {
     })();
     return () => { live = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reloadTick]);
+
+  // After the server refused a save because a newer version exists (code revision_conflict), the author may choose to load that version. This drops
+  // the unsaved local copy of the draft and reads the server's content and revisions again; it never writes anything.
+  const reload = useCallback(() => {
+    clearTimeout(timer.current);
+    touched.current = false; pending.current = false; again.current = false;
+    savedJson.current = {};
+    setSave({ state: 'saved', time: '' });
+    setLoad((l) => ({ ...l, loading: true, error: '' }));
+    setReloadTick((n) => n + 1);
   }, []);
 
   // Saves the changed sections. Resolves true when everything is on the server, false if a save failed.
@@ -92,7 +104,7 @@ export function useDraft(editing) {
         } while (again.current);
         return true;
       } catch (e) {
-        setSave((s) => ({ ...s, state: 'error', message: e.message, code: e.data && e.data.code }));
+        setSave((s) => ({ ...s, state: 'error', message: e.message, code: e.data && e.data.code, sections: e.data && e.data.sections }));
         return false;
       } finally {
         running.current = false;
@@ -134,5 +146,5 @@ export function useDraft(editing) {
   }, [flush]);
   const saveNow = useCallback(() => { clearTimeout(timer.current); return flush(); }, [flush]);
 
-  return { draft, apply, set, setAndSave, save, saveNow, load, syllabusId: () => idRef.current };
+  return { draft, apply, set, setAndSave, save, saveNow, reload, load, syllabusId: () => idRef.current };
 }

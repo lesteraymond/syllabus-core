@@ -2,7 +2,7 @@ import { installLocalizedValidation } from './i18n/validation';
 import { tr } from "./i18n/index.js";
 import { t as translateUI } from "./i18n/index.js";
 import { getLanguage, setLanguage, subscribeLanguage } from './i18n';
-import { isReviewer, roleAllows } from './lib/roles';
+import { canAuthor, isReviewer, roleAllows } from './lib/roles';
 import { createLanguagePreference } from './i18n/preference';
 import { useLanguageTransition } from './i18n/useLanguageTransition';
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
@@ -40,6 +40,8 @@ import StudentHome from './views/StudentHome';
 import SyllabusBuilder from './views/SyllabusBuilder';
 import UsersRoles from './views/UsersRoles';
 import SyllabusBuilderV2 from './views/builder2';
+import { AcademicYearContext, useAcademicYearScope } from './components/AcademicYearScope';
+import { groupOfPage } from './lib/academicYearScope';
 
 // The rebuilt syllabus builder (src/views/builder2) is behind a flag until it is approved: the current builder stays
 // the default. Set VITE_NEW_BUILDER=true in .env to use the rebuilt one.
@@ -96,8 +98,13 @@ export default function App() {
     return () => document.removeEventListener('keydown', onKey);
   }, [narrow, mobileNavOpen]);
   const [page, setPage] = useState('dashboard');
+  // The academic year each screen shows (lib/academicYearScope.js): the data screens start on the current year, the work queues on every year the person may see.
+  const yearScope = useAcademicYearScope(user);
+  const yearParam = yearScope.param(groupOfPage(page));
   // The compliance check moved into step 7 of the builder: an old 'ai' link sends faculty there, and only admins have the overview.
   useEffect(() => { if (user && !isReviewer(user.role) && user.role !== 'faculty' && page === 'ai') setPage('dashboard'); }, [user, page]);
+  // Only faculty and the administrator write syllabi: whatever leads a reviewer (Asst. VPAA, LIC Director, VPAA) to the builder or My Syllabi, they land on the dashboard.
+  useEffect(() => { if (user && !canAuthor(user.role) && (page === 'builder' || page === 'my-syllabi')) setPage('dashboard'); }, [user, page]);
   const [toast, setToast] = useState('');
   const [syllabi, setSyllabi] = useState([]);
   const [logs, setLogs] = useState([]);
@@ -139,11 +146,11 @@ export default function App() {
   const fetchSyllabi = useCallback(async () => {
     try {
       const startedAt = Date.now();
-      const data = await syllabiApi.list();
+      const data = await syllabiApi.list(yearParam); // the page's academic year: changing it (or the page's group) reads the list again
       seedAvatars(data.map(s => [s.userId, s.ownerAvatarUrl]), startedAt);
       setSyllabi(data);
     } catch (err) { console.error('Failed to fetch syllabi:', err); }
-  }, []);
+  }, [yearParam]);
 
   const fetchLogs = useCallback(async () => {
     try {
@@ -389,7 +396,6 @@ export default function App() {
     } catch (err) { notify(translateUI("ui.delete_failed_c834e9") + err.message); }
   };
 
-  const clearLogs = () => { setLogs([]); notify(translateUI("ui.your_activity_list_was_cleared_642fa2")); };
 
   const nav = navItems.filter(([, , , r]) => roleAllows(r, user?.role));
 
@@ -400,6 +406,7 @@ export default function App() {
   if (user.role === 'student') return <StudentHome user={user} onLogout={handleLogout} />;
 
   return (
+    <AcademicYearContext.Provider value={yearScope}>
     <div ref={languageShell} className="app-shell" data-sidebar-collapsed={sidebarCollapsed ? 'true' : 'false'} data-page={page}>
       {!narrow && <Sidebar page={page} setPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); }} nav={nav} collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(c => !c)} />}
       <main className="workspace" data-page={page}>
@@ -407,14 +414,14 @@ export default function App() {
         {narrow && <MobileNav page={page} setPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); setMobileNavOpen(false); }} nav={nav} open={mobileNavOpen} onToggle={() => setMobileNavOpen(o => !o)} />}
         <div className={`page-wrap ${page === 'dashboard' ? 'page-wrap-dashboard' : ''}`}>
 
-          {page === 'dashboard' && <Dashboard setPage={setPage} user={user} syllabi={syllabi} logs={logs} clearLogs={clearLogs} setConfirm={setConfirm} />}
-          {page === 'builder' && ((NEW_BUILDER || user.role === 'admin')
+          {page === 'dashboard' && <Dashboard setPage={setPage} user={user} syllabi={syllabi} logs={logs} onNewSyllabus={() => { setEditing(null); setPage('builder'); }} />}
+          {page === 'builder' && canAuthor(user.role) && ((NEW_BUILDER || user.role === 'admin')
             ? <SyllabusBuilderV2 key={editing ? editing.syllabusId : 'new'} editing={editing} user={user} notify={notify} setPage={setPage} onSubmitted={handleBuilderSubmitted} onOpenChecker={async (draftRef) => { await fetchSyllabi(); setEditing(draftRef); }} />
             : <SyllabusBuilder notify={notify} onSubmit={submitSyllabus} editing={editing} setEditing={setEditing} />)}
-          {page === 'my-syllabi' && <MySyllabi syllabi={syllabi} user={user} messages={messages} commentCounts={commentCounts} setCommentCode={setCommentCode} setEditing={setEditing} setPage={setPage} setHistCode={setHistCode} setChatCode={setChatCode} handleDelete={handleDelete} setConfirm={setConfirm} notify={notify} />}
-          {page === 'ai' && (isReviewer(user.role) || user.role === 'faculty') && <AIChecker user={user} syllabi={syllabi} editing={editing} setEditing={setEditing} setPage={setPage} notify={notify} onSubmitted={handleBuilderSubmitted} onApproved={async () => { await fetchSyllabi(); await fetchLogs(); notify(translateUI('publication.approvedRepository')); setEditing(null); setPage('my-syllabi'); }} onEditDraft={async id => { await syllabiApi.resumeDraft(id); setEditing({ syllabusId: id, status: 'draft' }); setPage('builder'); }} />}
+          {page === 'my-syllabi' && canAuthor(user.role) && <MySyllabi syllabi={syllabi} user={user} messages={messages} commentCounts={commentCounts} setCommentCode={setCommentCode} setEditing={setEditing} setPage={setPage} setHistCode={setHistCode} setChatCode={setChatCode} handleDelete={handleDelete} setConfirm={setConfirm} notify={notify} />}
+          {page === 'ai' && (isReviewer(user.role) || user.role === 'faculty') && <AIChecker user={user} syllabi={syllabi} editing={editing} setEditing={setEditing} setPage={setPage} notify={notify} onSubmitted={handleBuilderSubmitted} onApproved={async () => { await fetchSyllabi(); await fetchLogs(); notify(translateUI('publication.approvedRepository')); setEditing(null); setPage('my-syllabi'); }} onEditDraft={async id => { await syllabiApi.resumeDraft(id); setEditing({ syllabusId: id, status: 'draft' }); setPage('builder'); }} onChanged={fetchSyllabi} />}
           {page === 'review' && <ReviewApproval syllabi={syllabi} user={user} setViewCode={setViewCode} setPage={setPage} />}
-          {page === 'repository' && <Repository syllabi={syllabi} user={user} notify={notify} setChatCode={setChatCode} setHistCode={setHistCode} />}
+          {page === 'repository' && <Repository syllabi={syllabi} user={user} notify={notify} setHistCode={setHistCode} />}
           {page === 'compliance' && <Compliance syllabi={syllabi} />}
           {page === 'analytics' && <Analytics syllabi={syllabi} user={user} />}
           {page === 'reports' && <Reports syllabi={syllabi} user={user} notify={notify} />}
@@ -439,5 +446,6 @@ export default function App() {
       })()}
       {confirm && <ConfirmModal {...confirm} onClose={() => setConfirm(null)} />}
     </div>
+    </AcademicYearContext.Provider>
   );
 }

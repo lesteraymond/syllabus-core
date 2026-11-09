@@ -1,0 +1,144 @@
+{
+  "preparedAt": "2026-11-05T10:42:00.324Z",
+  "migrationId": "lcup-po-2026-10-29",
+  "authorization": "User instruction 2026-10-29: IT101 / IE403 / CPE404 authoritative",
+  "institutionalApproval": "not_recorded",
+  "databaseIdentityHash": "f7fbc8b43dce865b2c95eb7ea0718238e40455a93c0aa25dac2930ec9e124fd3",
+  "beforeHash": "80ba46cda6d6cbc93d9a8a3c2fac6c0cc80905a749838b88c490009b67d94e9e",
+  "backupSha256": "f8ea7ed17659d76e59dc97a8a42c5a6bdc40401ccb5caf7e67ff2e6566af8465",
+  "privateBackupPath": "tmp/po-controlled-activation/reference-backup-review.json",
+  "targets": [
+    {
+      "id": 1,
+      "code": "BSIT",
+      "academicYear": null
+    },
+    {
+      "id": 15,
+      "code": "BSIE",
+      "academicYear": null
+    },
+    {
+      "id": 16,
+      "code": "BSCPE",
+      "academicYear": null
+    },
+    {
+      "id": 17,
+      "code": "BSIT-CYBERSECURITY",
+      "academicYear": null
+    }
+  ],
+  "impacts": [
+    {
+      "type": "syllabus",
+      "id": 43,
+      "program": "BSIT",
+      "status": "draft",
+      "contentSha256": "26c980f6c0072fd814eeecf269ab084755c07f8c986e10b76b6ba3d8f2093323",
+      "previousReference": "previous_or_unknown",
+      "proposedReference": "lcup-po-2026-10-29-BSIT",
+      "obsoleteMappings": [],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "syllabus",
+      "id": 93,
+      "program": "BSIT",
+      "status": "for_revision",
+      "contentSha256": "4e2e80a4de1e3650b0fefa747eaeea4a99d9bf6ec87ec92c4d398ce1ede19f54",
+      "previousReference": "previous_or_unknown",
+      "proposedReference": "lcup-po-2026-10-29-BSIT",
+      "obsoleteMappings": [],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "syllabus",
+      "id": 97,
+      "program": "BSIE",
+      "status": "draft",
+      "contentSha256": "169a538d6d0c931ff258791f7a3ec04aa37a5cadd132f8c99238b2d4342b1ffd",
+      "previousReference": "previous_or_unknown",
+      "proposedReference": "lcup-po-2026-10-29-BSIE",
+      "obsoleteMappings": [],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "syllabus",
+      "id": 99,
+      "program": "BSIT",
+      "status": "draft",
+      "contentSha256": "66844be3c088256fdb3fc04f60f8a8c8cf8b1c75a9617f7367a250e74f14cf8e",
+      "previousReference": "previous_or_unknown",
+      "proposedReference": "lcup-po-2026-10-29-BSIT",
+      "obsoleteMappings": [
+        {
+          "cloId": "bss99_team",
+          "po": 10
+        }
+      ],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "syllabus",
+      "id": 100,
+      "program": "BSIE",
+      "status": "draft",
+      "contentSha256": "dbe786f6273c032f5dfcbb06a6923edd83725d53c309f4b9003562f6e3b27725",
+      "previousReference": "previous_or_unknown",
+      "proposedReference": "lcup-po-2026-10-29-BSIE",
+      "obsoleteMappings": [],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "syllabus",
+      "id": 101,
+      "program": "BSIE",
+      "status": "for_revision",
+      "contentSha256": "448a33ea66c9fb197bd2afd87a924aa610c88bf91d78badcd60407bf4810bdd8",
+      "previousReference": "previous_or_unknown",
+      "proposedReference": "lcup-po-2026-10-29-BSIE",
+      "obsoleteMappings": [],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "syllabus",
+      "id": 102,
+      "program": "BSIT",
+      "status": "draft",
+      "contentSha256": "41ea3eef9d6b42fd89326dc39a814d27e9e2419b130170f786fa2141226d194d",
+      "previousReference": "previous_or_unknown",
+      "proposedReference": "lcup-po-2026-10-29-BSIT",
+      "obsoleteMappings": [],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "syllabus",
+      "id": 110,
+      "program": "BSIT-CYBERSECURITY",
+      "status": "draft",
+      "curriculumReview": {
+        "previousProgram": "BSIT-CYBERSECURITY",
+        "proposedProgram": "BSIT",
+        "selectedYear": null,
+        "availableReferenceIds": [
+          1
+        ],
+        "automaticRewrite": false
+      },
+      "proposedMappings": null,
+      "reason": "Faculty must review the approved BSIT curriculum selection and course identity; historical curriculum records remain unchanged."
+    }
+  ],
+  "existingDatabaseWrites": 0,
+  "activationPerformed": false,
+  "operatorAuthorization": false,
+  "fullPhysicalBackupRequiredBeforeActivation": true
+}

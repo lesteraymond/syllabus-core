@@ -20,6 +20,7 @@ async function withServer(fn) {
   ].map(u => ({ ...u, first_name: 'Original', last_name: 'Name', avatar_path: null, password_hash: bcrypt.hashSync('Test-pass-12', 4) }));
   let storedSettings;
   let failWrites = false;
+  const activity = []; // account_activity rows (lib/accountActivity.js)
   const app = express();
   app.use(express.json());
   app.use(session({ secret: 'test-session', resave: false, saveUninitialized: false }));
@@ -38,6 +39,8 @@ async function withServer(fn) {
     if (sql.startsWith('INSERT INTO app_settings')) { if (failWrites) throw new Error('test database unavailable'); storedSettings = params[0]; return [{}]; }
     if (sql.startsWith('SELECT verification_status FROM student_profiles')) return [[{ verification_status: 'approved' }]];
     if (sql.startsWith('DELETE FROM remember_tokens')) return [{}];
+    if (sql.startsWith('SELECT disabled_at FROM users WHERE user_id')) return [rows.filter(u => u.user_id === params[0]).map(() => ({ disabled_at: null }))]; // lib/accountStatus.js
+    if (sql.startsWith('INSERT INTO account_activity')) { const [user_id, action, , , notes] = params; activity.push({ user_id, action, notes }); return [{}]; }
     throw new Error('Unexpected query: ' + sql);
   } };
   app.use('/api/auth', auth);
@@ -54,7 +57,7 @@ async function withServer(fn) {
       return { status: response.status, body: await response.json() };
     };
   };
-  try { await fn({ client, rows, failWrites: value => { failWrites = value; } }); }
+  try { await fn({ client, rows, activity, failWrites: value => { failWrites = value; } }); }
   finally { await new Promise(resolve => server.close(resolve)); }
 }
 
@@ -137,4 +140,32 @@ test('refresh restores the database language when another session changed the pr
   for (const account of [first, second]) await account('/auth/login', 'POST', { email: 'faculty@x.ph', password: 'Test-pass-12' });
   await second('/users/me/preferences', 'PATCH', { preferredLanguage: 'tl' });
   assert.equal((await first('/auth/me')).body.user.preferredLanguage, 'tl');
+}));
+
+// Recent Activity for transparency (lib/accountActivity.js): a language change is recorded for the account; saving the same language again, or a save
+// that failed, records nothing.
+test('a language change is recorded in the account activity, once, and only when it was saved', () => withServer(async ({ client, activity, failWrites }) => {
+  const faculty = client();
+  await faculty('/auth/login', 'POST', { email: 'faculty@x.ph', password: 'Test-pass-12' });
+  assert.equal((await faculty('/users/me/preferences', 'PATCH', { preferredLanguage: 'tl' })).status, 200);
+  assert.equal((await faculty('/users/me/preferences', 'PATCH', { preferredLanguage: 'tl' })).status, 200);
+  failWrites(true);
+  assert.equal((await faculty('/users/me/preferences', 'PATCH', { preferredLanguage: 'en' })).status, 500);
+  failWrites(false);
+  assert.deepEqual(activity.filter(a => a.action !== 'login').map(a => [a.user_id, a.action, a.notes]), [[2, 'language_change', 'tl']]);
+}));
+
+// The switches that change the app for everyone (lib/adminSettings.js) can be read by any signed-in person: the builder needs "Strict format validation"
+// and the AI Checker "AI compliance checking". Only those three booleans leave the server this way; the rest of the settings stay administrator-only.
+test('any signed-in person reads the three switches, and only them; a change by the administrator shows at once', () => withServer(async ({ client }) => {
+  const admin = client(), faculty = client(), stranger = client();
+  await admin('/auth/login', 'POST', { email: 'admin@x.ph', password: 'Test-pass-12' });
+  await faculty('/auth/login', 'POST', { email: 'faculty@x.ph', password: 'Test-pass-12' });
+  assert.equal((await stranger('/settings/policy')).status, 401);
+  assert.deepEqual((await faculty('/settings/policy')).body, { strictValidation: false, aiChecking: true, emailNotifications: true }, 'nothing saved: the defaults');
+  await admin('/settings', 'PUT', { ...settings.DEFAULTS, department: 'Secret department', strictValidation: true, aiChecking: false, emailNotifications: false });
+  const read = await faculty('/settings/policy');
+  assert.equal(read.status, 200);
+  assert.deepEqual(read.body, { strictValidation: true, aiChecking: false, emailNotifications: false });
+  assert.ok(!JSON.stringify(read.body).includes('Secret department'), 'nothing else of the settings');
 }));

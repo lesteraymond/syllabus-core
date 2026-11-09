@@ -1,0 +1,114 @@
+{
+  "label": "po-off",
+  "start": "2026-11-05T13:38:23.128Z",
+  "finished": "2026-11-05T13:40:30.646Z",
+  "exit": 0,
+  "suite": "po",
+  "mode": "off",
+  "configuration": {
+    "SYLLABUS_CHECK_CACHE_WARMUP": "off",
+    "SYLLABUS_CHECK_OUTPUT_PLAN": "off",
+    "SYLLABUS_CHECK_OUTPUT_FIELDS": "off",
+    "SYLLABUS_CHECK_COURSE_CONTEXT": "off",
+    "SYLLABUS_CHECK_V2_GROUPING": "off",
+    "SYLLABUS_CHECK_PROMPT_TRIM": "off"
+  },
+  "snapshot": "C:\\Users\\JP Del Rosario\\Syllabus-Repository\\tmp\\e2e-stability-2026-11-05\\source-1793883247019",
+  "migrationsExecuted": 0,
+  "log": "tmp\\e2e-stability-2026-11-05\\po-off.log",
+  "resultPath": "C:\\Users\\JP Del Rosario\\Syllabus-Repository\\tmp\\e2e-stability-2026-11-05\\source-1793883247019\\docs\\po-checker-integration\\browser-baseline\\results.json",
+  "result": {
+    "mode": "baseline",
+    "kind": "LOCAL full React/Express browser E2E, isolated synthetic DB, corrected development reference snapshot, scripted provider",
+    "results": [
+      {
+        "program": "BSIT",
+        "mode": "baseline",
+        "steps": [
+          "program/subject selection; exact corrected PO text; subset mapping options",
+          "synthetic syllabus saved; Review step renders classifications",
+          "comprehensive check through UI; score/VPAA/CLO/PO findings; report saved and reloaded",
+          "administrator checked and read synthetic submission; no approval performed"
+        ],
+        "status": "PASS",
+        "syllabusId": 5,
+        "score": 99,
+        "passThreshold": 79,
+        "poCount": 9,
+        "poSource": "BSIT",
+        "referenceId": "lcup-po-2026-10-29-BSIT",
+        "vpaa": 7,
+        "classifications": 4,
+        "adminScore": 99
+      },
+      {
+        "program": "BSIE",
+        "mode": "baseline",
+        "steps": [
+          "program/subject selection; exact corrected PO text; subset mapping options",
+          "synthetic syllabus saved; Review step renders classifications",
+          "comprehensive check through UI; score/VPAA/CLO/PO findings; report saved and reloaded",
+          "administrator checked and read synthetic submission; no approval performed"
+        ],
+        "status": "PASS",
+        "syllabusId": 6,
+        "score": 99,
+        "passThreshold": 79,
+        "poCount": 13,
+        "poSource": "BSIE",
+        "referenceId": "lcup-po-2026-10-29-BSIE",
+        "vpaa": 7,
+        "classifications": 4,
+        "adminScore": 99
+      },
+      {
+        "program": "BSCPE",
+        "mode": "baseline",
+        "steps": [
+          "program/subject selection; exact corrected PO text; subset mapping options",
+          "synthetic syllabus saved; Review step renders classifications",
+          "comprehensive check through UI; score/VPAA/CLO/PO findings; report saved and reloaded",
+          "administrator checked and read synthetic submission; no approval performed"
+        ],
+        "status": "PASS",
+        "syllabusId": 7,
+        "score": 99,
+        "passThreshold": 79,
+        "poCount": 13,
+        "poSource": "BSCPE",
+        "referenceId": "lcup-po-2026-10-29-BSCPE",
+        "vpaa": 7,
+        "classifications": 4,
+        "adminScore": 99
+      },
+      {
+        "program": "BSIT-CYBERSECURITY",
+        "mode": "baseline",
+        "steps": [
+          "program/subject selection; exact corrected PO text; subset mapping options",
+          "synthetic syllabus saved; Review step renders classifications",
+          "comprehensive check through UI; score/VPAA/CLO/PO findings; report saved and reloaded",
+          "administrator checked and read synthetic submission; no approval performed"
+        ],
+        "status": "PASS",
+        "syllabusId": 8,
+        "score": 99,
+        "passThreshold": 79,
+        "poCount": 9,
+        "poSource": "BSIT",
+        "referenceId": "lcup-po-2026-10-29-BSIT",
+        "vpaa": 7,
+        "classifications": 4,
+        "adminScore": 99
+      }
+    ],
+    "passed": 4,
+    "failed": 0,
+    "filterProbe": null,
+    "providerRequests": 400,
+    "blockedNetwork": [],
+    "liveClaudeCalls": 0,
+    "profile": "comprehensive-testing",
+    "ordinaryDevelopmentFlagsModified": false
+  }
+}

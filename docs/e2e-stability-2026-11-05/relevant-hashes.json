@@ -1,0 +1,54 @@
+[
+  {
+    "file": "package-lock.json",
+    "sha256": "441a342990d1447b640d61818064bd4fbc6b598d0fd71a0c148fdce9e248076a"
+  },
+  {
+    "file": "package.json",
+    "sha256": "9eee5d6ec25a72473fc6374e8652148fc56ee1dc3d0fd569ce15b41fa9eeb37d"
+  },
+  {
+    "file": "scripts/e2e/scenarios.cjs",
+    "sha256": "47726602d9cd462755dc7e1f354ec196513d9b9a4097725018958adc7802c2ff"
+  },
+  {
+    "file": "server/lib/syllabuscheck/academicPolicyV2.js",
+    "sha256": "26f4f802b67dea1a147c82e1f760cd56da0d46831eec5fd491a1c4efedcc4959"
+  },
+  {
+    "file": "server/lib/syllabuscheck/costPlan.js",
+    "sha256": "075ab334a197d86b17b15361170bda76d73ccf33382256fe8357496510038889"
+  },
+  {
+    "file": "server/lib/syllabuscheck/engine.js",
+    "sha256": "50d745c89e33702c55841a07b12f71f32aa0598d05f896548333f2aeb83372ff"
+  },
+  {
+    "file": "server/package-lock.json",
+    "sha256": "e998562503c8dc64fffa78b3b9038ab87df6e9f8067198347e57f3ead33611ab"
+  },
+  {
+    "file": "server/package.json",
+    "sha256": "34e36527df4aa952d15a13f8b6e9fcc7792bafd0047a483d6fbe39015b7017eb"
+  },
+  {
+    "file": "src/components/Select.jsx",
+    "sha256": "c7a9bc21704010ec5b5906406104374d1ec913f01f4609b377a3aa6e7a03a063"
+  },
+  {
+    "file": "src/components/SubjectActions.jsx",
+    "sha256": "3ef8f7e26a27af7fa96c632f2eda7746c50590d2d8e77f6a2176ca4333c52778"
+  },
+  {
+    "file": "src/components/SubjectSetup.jsx",
+    "sha256": "571325528e14d7ad7d3d99278ce13c97db130b0430710d9f808754a4aae6b704"
+  },
+  {
+    "file": "src/data/officialProgramOutcomes.json",
+    "sha256": "a60940b9b22f6658013c7199bded9ddb8a707fe24b8bd8d4a7bc53746f19f7ca"
+  },
+  {
+    "file": "src/views/CourseOutcomes.jsx",
+    "sha256": "36760018d8e79529335dad7b4b9908f6a1f187fe562042395f8ef3d647d3eea8"
+  }
+]

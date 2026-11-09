@@ -1,0 +1,30 @@
+[
+  {
+    "id": "CUR-FIELD:meta.title",
+    "path": "meta.title",
+    "title": "Use the exact master text",
+    "text": "COMPUTER PROGRAMMING 1 (FUNDAMENTALS OF PROGRAMMING)",
+    "replacement": "COMPUTER PROGRAMMING 1 (FUNDAMENTALS OF PROGRAMMING)",
+    "source": "rule",
+    "basedOn": [
+      "CUR-FIELD:meta.title"
+    ],
+    "tier": "mandatory",
+    "originalValue": "Computer Programming 1",
+    "targetIds": {}
+  },
+  {
+    "id": "CUR-FIELD:meta.prereq",
+    "path": "meta.prereq",
+    "title": "Use the exact master text",
+    "text": "IT 101",
+    "replacement": "IT 101",
+    "source": "rule",
+    "basedOn": [
+      "CUR-FIELD:meta.prereq"
+    ],
+    "tier": "mandatory",
+    "originalValue": "IT 202 - Programming 1",
+    "targetIds": {}
+  }
+]

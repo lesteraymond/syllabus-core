@@ -1,0 +1,516 @@
+{
+  "verifiedAt": "2026-11-05T11:08:40.237Z",
+  "active": true,
+  "developmentTestingOnly": true,
+  "formalInstitutionalApproval": "not_recorded",
+  "migrationId": "lcup-po-2026-10-29",
+  "programs": [
+    {
+      "id": 1,
+      "code": "BSIT",
+      "physicalPoCount": 9,
+      "resolvedPoCount": 9,
+      "poSource": "BSIT",
+      "referenceId": "lcup-po-2026-10-29-BSIT",
+      "referenceVersion": "lcup-po-2026-10-29",
+      "institutionalApproval": "not_recorded",
+      "curriculum": {
+        "source": "BSIT",
+        "selectedYear": null,
+        "referenceIds": [
+          1
+        ]
+      }
+    },
+    {
+      "id": 17,
+      "code": "BSIT-CYBERSECURITY",
+      "physicalPoCount": 0,
+      "resolvedPoCount": 9,
+      "poSource": "BSIT",
+      "referenceId": "lcup-po-2026-10-29-BSIT",
+      "referenceVersion": "lcup-po-2026-10-29",
+      "institutionalApproval": "not_recorded",
+      "curriculum": {
+        "source": "BSIT",
+        "selectedYear": null,
+        "referenceIds": [
+          1
+        ]
+      }
+    },
+    {
+      "id": 15,
+      "code": "BSIE",
+      "physicalPoCount": 13,
+      "resolvedPoCount": 13,
+      "poSource": "BSIE",
+      "referenceId": "lcup-po-2026-10-29-BSIE",
+      "referenceVersion": "lcup-po-2026-10-29",
+      "institutionalApproval": "not_recorded",
+      "curriculum": {
+        "source": "BSIE",
+        "selectedYear": null,
+        "referenceIds": [
+          2
+        ]
+      }
+    },
+    {
+      "id": 16,
+      "code": "BSCPE",
+      "physicalPoCount": 13,
+      "resolvedPoCount": 13,
+      "poSource": "BSCPE",
+      "referenceId": "lcup-po-2026-10-29-BSCPE",
+      "referenceVersion": "lcup-po-2026-10-29",
+      "institutionalApproval": "not_recorded",
+      "curriculum": {
+        "source": "BSCPE",
+        "selectedYear": null,
+        "referenceIds": [
+          3
+        ]
+      }
+    }
+  ],
+  "canonicalActiveReferences": [
+    {
+      "program_id": 1,
+      "reference_id": "lcup-po-2026-10-29-BSIT"
+    },
+    {
+      "program_id": 15,
+      "reference_id": "lcup-po-2026-10-29-BSIE"
+    },
+    {
+      "program_id": 16,
+      "reference_id": "lcup-po-2026-10-29-BSCPE"
+    }
+  ],
+  "reviewQueue": [
+    {
+      "syllabusId": 43,
+      "status": "needs_review",
+      "reviewCode": "po_mapping_remediation_required",
+      "proposedReference": "lcup-po-2026-10-29-BSIT",
+      "curriculumReview": false,
+      "automaticRemapping": false
+    },
+    {
+      "syllabusId": 93,
+      "status": "needs_review",
+      "reviewCode": "po_mapping_remediation_required",
+      "proposedReference": "lcup-po-2026-10-29-BSIT",
+      "curriculumReview": false,
+      "automaticRemapping": false
+    },
+    {
+      "syllabusId": 97,
+      "status": "needs_review",
+      "reviewCode": "po_mapping_remediation_required",
+      "proposedReference": "lcup-po-2026-10-29-BSIE",
+      "curriculumReview": false,
+      "automaticRemapping": false
+    },
+    {
+      "syllabusId": 99,
+      "status": "needs_review",
+      "reviewCode": "po_mapping_remediation_required",
+      "proposedReference": "lcup-po-2026-10-29-BSIT",
+      "curriculumReview": false,
+      "automaticRemapping": false
+    },
+    {
+      "syllabusId": 100,
+      "status": "needs_review",
+      "reviewCode": "po_mapping_remediation_required",
+      "proposedReference": "lcup-po-2026-10-29-BSIE",
+      "curriculumReview": false,
+      "automaticRemapping": false
+    },
+    {
+      "syllabusId": 101,
+      "status": "needs_review",
+      "reviewCode": "po_mapping_remediation_required",
+      "proposedReference": "lcup-po-2026-10-29-BSIE",
+      "curriculumReview": false,
+      "automaticRemapping": false
+    },
+    {
+      "syllabusId": 102,
+      "status": "needs_review",
+      "reviewCode": "po_mapping_remediation_required",
+      "proposedReference": "lcup-po-2026-10-29-BSIT",
+      "curriculumReview": false,
+      "automaticRemapping": false
+    },
+    {
+      "syllabusId": 110,
+      "status": "needs_review",
+      "reviewCode": "curriculum_reference_review_required",
+      "proposedReference": null,
+      "curriculumReview": true,
+      "automaticRemapping": false
+    }
+  ],
+  "protectedHashes": {
+    "syllabi": {
+      "rows": 15,
+      "sha256": "b81de55b9c32b2a237f889570bb53a8cf5f36667bf99fc442f5f6c585fdba23c"
+    },
+    "syllabus_versions": {
+      "rows": 18,
+      "sha256": "3aba02528acb53ca0f37e86250b999750cab96d6a2d1a0897ca4c9e581898d3b"
+    },
+    "syllabus_check_reports": {
+      "rows": 202,
+      "sha256": "81e499e31367dda8caee5cb523521655d398e95832d1b7a48dedd69bc147909b"
+    },
+    "ai_check_runs": {
+      "rows": 293,
+      "sha256": "d7b5fb29d21d9adaea825db798bf9b3d7288b2d5a4c4acc3c3fe1fad68266f99"
+    },
+    "syllabus_check_decisions": {
+      "rows": 820,
+      "sha256": "48234a10565d340065c14cc8d68f52b39c725f5af1e6f4d5b53241b7fabe09e0"
+    },
+    "syllabus_check_curricula": {
+      "rows": 4,
+      "sha256": "d14af13102de4fb50258ab0d439a7a380cff9eea600e777bbcc183ae8fc88731"
+    },
+    "curriculum": {
+      "rows": 39,
+      "sha256": "2213f1bbaf9f6a79637805b80f32bbab0a19461b314facc1123d981cf349a4b8"
+    },
+    "courses": {
+      "rows": 243,
+      "sha256": "ac2776489d06333cecf777a31e9c7228fe0138ac3a618e0e26b7b96c087ea167"
+    },
+    "course_clos": {
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "program_egas": {
+      "rows": 20,
+      "sha256": "0b77ce0eaa6e244fc326c1cdca9d37b4570c230c05a2a8b5a2e107c4d4b10e7d"
+    },
+    "institution_egas": {
+      "rows": 4,
+      "sha256": "cc4a8a7770198c1e74625c2874cda24663dbc6b425278d60e418d8b11c925907"
+    },
+    "institution_settings": {
+      "rows": 1,
+      "sha256": "746a26e2a8981ac9446740a2be060113550902f85e32089ab145774029f6e7a6"
+    }
+  },
+  "unrelatedProgramHash": "4ef4711537fa00ef5762c8b55278bc57f4059e32516373abfe3d484c37f50cfd",
+  "unchangedOriginalTables": [
+    {
+      "table": "academic_years",
+      "rows": 5,
+      "sha256": "6960ff314817f76ac1fdd480412e08f780bf938965787756c7e3917f428fb685",
+      "unchanged": true
+    },
+    {
+      "table": "ai_check_area_scores",
+      "rows": 1758,
+      "sha256": "9b92550dde23cbd8ecaa364908bcd9e64490551aab8708e5db3e25667b8fe3b4",
+      "unchanged": true
+    },
+    {
+      "table": "ai_check_runs",
+      "rows": 293,
+      "sha256": "5b5534f15b99d369672c0de71afb63dd91f681398fb2f36fd7b3b8b1eac92cce",
+      "unchanged": true
+    },
+    {
+      "table": "ai_findings",
+      "rows": 3926,
+      "sha256": "bead4ae7abfab40be5c784c9ab6ebc0567462f292cb6118e9bd5f778f0807117",
+      "unchanged": true
+    },
+    {
+      "table": "app_settings",
+      "rows": 1,
+      "sha256": "4133e5841633227b2b95f5463eaee08e6f479c1e560c1451ea1e2c01ce27012b",
+      "unchanged": true
+    },
+    {
+      "table": "catalog_events",
+      "rows": 7,
+      "sha256": "90091bae1c249f79c6aeb04dc7883ad192a6c5331bcb7a8a73c74a164b3e119f",
+      "unchanged": true
+    },
+    {
+      "table": "catalog_file_cleanup",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "unchanged": true
+    },
+    {
+      "table": "chk_decisions",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "unchanged": true
+    },
+    {
+      "table": "chk_documents",
+      "rows": 42,
+      "sha256": "adbc4957f2fdf3ef7c0ba91b84a8a91d7adab377e28c573686b8ec0372ef2a7e",
+      "unchanged": true
+    },
+    {
+      "table": "chk_examples",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "unchanged": true
+    },
+    {
+      "table": "chk_reference_events",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "unchanged": true
+    },
+    {
+      "table": "chk_reference_sets",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "unchanged": true
+    },
+    {
+      "table": "chk_runs",
+      "rows": 1,
+      "sha256": "23795da8600a46d992e19a00a57fa46931233a1be7c4e34021430d241cdf49ce",
+      "unchanged": true
+    },
+    {
+      "table": "comments",
+      "rows": 4,
+      "sha256": "adbab311ad27237f42a9639a008eaa8aec9f2383273a39bf980e04f0998eca23",
+      "unchanged": true
+    },
+    {
+      "table": "comment_reads",
+      "rows": 4,
+      "sha256": "6bb50a81e2240f11d81e44978dd78746c93103533fc8d925c88c48095087087e",
+      "unchanged": true
+    },
+    {
+      "table": "courses",
+      "rows": 243,
+      "sha256": "4649bd068b8b0f41404be78be699809c38db5eee4badaa59dcee7c4fc2d3d02a",
+      "unchanged": true
+    },
+    {
+      "table": "course_assignments",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "unchanged": true
+    },
+    {
+      "table": "course_clos",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "unchanged": true
+    },
+    {
+      "table": "course_prerequisites",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "unchanged": true
+    },
+    {
+      "table": "co_po_mapping",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "unchanged": true
+    },
+    {
+      "table": "curriculum",
+      "rows": 39,
+      "sha256": "fb66bff31a96b18a60f09f87b3da39621a76352a8c1b076cd5d1925c5dcf2d0c",
+      "unchanged": true
+    },
+    {
+      "table": "deadline_notices",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "unchanged": true
+    },
+    {
+      "table": "faculty_courses",
+      "rows": 68,
+      "sha256": "4be9d2f195fae60931577537f37dd5ea0adb8e08a4fb61d90ade5b611caea9bb",
+      "unchanged": true
+    },
+    {
+      "table": "faculty_programs",
+      "rows": 8,
+      "sha256": "c1c87c7e981e54e861cb49883a18f3f12b8b22c8e089033db8cd1b9d133876f2",
+      "unchanged": true
+    },
+    {
+      "table": "institution_egas",
+      "rows": 4,
+      "sha256": "83688727349142a36412f471b3cf3a72889055070192047a900a629a11b89c15",
+      "unchanged": true
+    },
+    {
+      "table": "institution_settings",
+      "rows": 1,
+      "sha256": "8e200d6fd14364885199013f6678dec3227fc36b7f8ab72f113e73db8e6ad618",
+      "unchanged": true
+    },
+    {
+      "table": "messages",
+      "rows": 5,
+      "sha256": "8af4ed961a1aac395d10b316231f1ac50bb83d21234829d5f34f32970d593751",
+      "unchanged": true
+    },
+    {
+      "table": "notifications",
+      "rows": 31,
+      "sha256": "d023c1f8bb2d5f258817ba87726c43adffae626e3afa8722c76d1cfa4f1ba962",
+      "unchanged": true
+    },
+    {
+      "table": "password_temp",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "unchanged": true
+    },
+    {
+      "table": "program_code_aliases",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "unchanged": true
+    },
+    {
+      "table": "program_egas",
+      "rows": 20,
+      "sha256": "e7fad5088f82a10312f77c01b6430187f6bcdaf7dad46595ed45a76af0114bc6",
+      "unchanged": true
+    },
+    {
+      "table": "program_name_aliases",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "unchanged": true
+    },
+    {
+      "table": "remember_tokens",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "unchanged": true
+    },
+    {
+      "table": "standard_changes",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "unchanged": true
+    },
+    {
+      "table": "student_enrollments",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "unchanged": true
+    },
+    {
+      "table": "student_profiles",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "unchanged": true
+    },
+    {
+      "table": "subject_deadlines",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "unchanged": true
+    },
+    {
+      "table": "submission_logs",
+      "rows": 694,
+      "sha256": "838f9d5729b51dab488d8366c127fd2f9bba781fcb23902bc0df8c10a24d4ae5",
+      "unchanged": true
+    },
+    {
+      "table": "syllabi",
+      "rows": 15,
+      "sha256": "2f9908939e42ae360443181c594682354ff694a2c80a803177590150ae550c50",
+      "unchanged": true
+    },
+    {
+      "table": "syllabus_check_curricula",
+      "rows": 4,
+      "sha256": "e431a1f9a2b8f3fdd02c4bc7b8f9868f2952a33073c43e05927035571a2216ee",
+      "unchanged": true
+    },
+    {
+      "table": "syllabus_check_decisions",
+      "rows": 820,
+      "sha256": "2e63bd813a169df6f10e1a3aa91a00a0fbfa60a048960f91a96b84c309a710a2",
+      "unchanged": true
+    },
+    {
+      "table": "syllabus_check_reports",
+      "rows": 202,
+      "sha256": "cfcf808c6721cdef59329618ae26719e87ad7b8fed65117261bc6532575d6694",
+      "unchanged": true
+    },
+    {
+      "table": "syllabus_review_stages",
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "unchanged": true
+    },
+    {
+      "table": "syllabus_versions",
+      "rows": 18,
+      "sha256": "d1fed85089c92de5313411e0ebceda1f4041f38dea3f598f48733e0909c48ade",
+      "unchanged": true
+    },
+    {
+      "table": "usage_daily",
+      "rows": 43,
+      "sha256": "d4ce08e4987def50c09933389176b8961e69dbfb9fb4df97e62a6d86713157fd",
+      "unchanged": true
+    },
+    {
+      "table": "users",
+      "rows": 3,
+      "sha256": "98ba65fda7af275ad4cf1e2889efdadeb21c7cea5e6c0d2e26c254836908c926",
+      "unchanged": true
+    }
+  ],
+  "newTables": [
+    {
+      "table": "program_outcome_sources",
+      "rows": 1
+    },
+    {
+      "table": "program_po_reference_active",
+      "rows": 3
+    },
+    {
+      "table": "program_po_reference_migrations",
+      "rows": 1
+    },
+    {
+      "table": "program_po_reference_remediation",
+      "rows": 8
+    },
+    {
+      "table": "program_po_reference_versions",
+      "rows": 3
+    }
+  ],
+  "originalTableCount": 48,
+  "afterTableCount": 53,
+  "originalFacultyContentUnchanged": true,
+  "originalReportsAndApprovalHistoryUnchanged": true,
+  "kind": "restored full development backup on PRIVATE isolated port 43309",
+  "actualDevelopmentModified": false,
+  "rollbackVerified": true,
+  "originalReferenceStateRestored": true
+}

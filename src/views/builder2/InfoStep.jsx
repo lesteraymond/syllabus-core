@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useYearScope } from '../../components/AcademicYearScope';
 import { t as translateUI } from "../../i18n/index.js";
 import { tr } from "../../i18n/index.js";
 import { STATUS_LABELS } from '../../lib/syllabusRules';
@@ -5,11 +7,22 @@ import { Field } from '../../components/ui';
 import { Auto, Ic } from './parts';
 import { newId } from './useDraft';
 import Select from '../../components/Select';
+import { lockedFields, prerequisiteOf, semesterKey } from '../../lib/subjectTerm';
 
 // Step 1: Course Information (form sections I-V).
-export default function InfoStep({ d, apply, model, programList, courseList, onChooseCourse, onChooseProgram }) {
+export default function InfoStep({ d, apply, editable = true, syllabusYear = '', model, programList, courseList, onChooseCourse, onChooseProgram, lockTerm = false }) {
   const m = d.meta;
   const setM = (k, v) => apply((x) => { x.meta[k] = v; return x; });
+  // Year level, pre-requisite, academic year and semester the administrator set for the chosen subject: shown, not editable (the server forces them on every save)
+  const term = (courseList.find((c) => c.id === m.courseId) || {}).term;
+  const lock = lockedFields(term);
+  const yearScope = useYearScope();
+  const yearShown = syllabusYear || (yearScope && yearScope.current ? yearScope.current.label : ''); // a new draft takes the current academic year when it is created
+  // A draft saved before the administrator set these values still holds the old ones: bring Step 1 in line so what is shown is what is saved and checked.
+  const wantPrereq = lock.prereq ? prerequisiteOf(term) : null, wantYear = lock.yearLevel ? String(term.yearLevel) : null;
+  useEffect(() => {
+    if (editable && ((wantPrereq !== null && m.prereq !== wantPrereq) || (wantYear !== null && String(m.yearLevel ?? '') !== wantYear))) apply((x) => { if (wantPrereq !== null) x.meta.prereq = wantPrereq; if (wantYear !== null) x.meta.yearLevel = wantYear; return x; });
+  }, [editable, wantPrereq, wantYear, m.prereq, m.yearLevel]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <div className="form-grid">
       <Field label={translateUI("ui.program_2f03bb")}>
@@ -39,8 +52,12 @@ export default function InfoStep({ d, apply, model, programList, courseList, onC
         </span>
       </Field>
       <Field label={translateUI('hybrid.curriculumYear')}><input value={m.curriculumYear || ''} onChange={e => setM('curriculumYear', e.target.value)} aria-label={translateUI('hybrid.curriculumYear')} placeholder={translateUI('hybrid.yearExample')} maxLength={40} /></Field>
-      <Field label={translateUI('hybrid.yearLevel')}><input type="number" min="1" max="8" value={m.yearLevel || ''} onChange={e => setM('yearLevel', e.target.value)} aria-label={translateUI('hybrid.yearLevel')} /></Field>
-      <Field label={translateUI("ui.pre_requisite_iv_1c46d5")} full><input value={m.prereq} onChange={(e) => setM('prereq', e.target.value)} aria-label={translateUI("ui.pre_requisite_d4ec8c")} maxLength={255} /></Field>
+      {/* the academic year is the syllabus's own (the year it was created in), shown read-only; the semester is the subject's */}
+      {yearShown && <Field label={translateUI('term.academicYear')}><input value={yearShown} readOnly aria-label={translateUI('term.academicYear')} /></Field>}
+      {/* faculty never type these: they are the administrator's (a subject the administrator has not filled in yet shows a note instead of an editable box) */}
+      {(lockTerm || lock.semester) && <Field label={translateUI('term.semester')}><input value={lock.semester ? (semesterKey(term.semester) ? translateUI(semesterKey(term.semester)) : term.semester) : (m.semester || '')} readOnly aria-label={translateUI('term.semester')} />{lockTerm && m.courseId && !lock.semester && <span className="linkline">{translateUI('term.notSetByAdmin')}</span>}</Field>}
+      <Field label={translateUI('hybrid.yearLevel')}><input type="number" min="1" max="4" value={m.yearLevel || ''} readOnly={lockTerm || lock.yearLevel} onChange={e => setM('yearLevel', e.target.value)} aria-label={translateUI('hybrid.yearLevel')} />{lock.yearLevel ? <span className="linkline">{translateUI('term.lockedHint')}</span> : lockTerm && m.courseId && <span className="linkline">{translateUI('term.notSetByAdmin')}</span>}</Field>
+      <Field label={translateUI("ui.pre_requisite_iv_1c46d5")} full><input value={m.prereq} readOnly={lockTerm || lock.prereq} onChange={(e) => setM('prereq', e.target.value)} aria-label={translateUI("ui.pre_requisite_d4ec8c")} maxLength={255} />{lock.prereq ? <span className="linkline">{translateUI('term.lockedHint')}</span> : lockTerm && m.courseId && <span className="linkline">{translateUI('term.notSetByAdmin')}</span>}</Field>
       <div className="field full">
         <span>{translateUI("ui.course_description_iii_db7708")}</span>
         {d.description.map((x, i) => (

@@ -126,12 +126,20 @@ export function applyCourse(d, course) {
   n.meta.code = course.code;
   n.meta.title = course.title;
   n.meta.program = course.program.code;
+  // the administrator's year level, pre-requisite, academic year and semester for this subject (the server forces them on every save; a subject without them leaves Step 1 as typed)
+  const term = course.term || {};
+  if (term.prerequisite) n.meta.prereq = term.prerequisite;
+  else if (term.semester || term.yearLevel != null) n.meta.prereq = 'None'; // set up without a pre-requisite: it has none (as the server does); the academic year alone is not a set-up
+  if (term.yearLevel != null) n.meta.yearLevel = String(term.yearLevel);
+  if (term.academicYear) n.meta.academicYear = term.academicYear;
+  if (term.semester) n.meta.semester = term.semester;
   if (d.meta.courseId === course.id && d.outcomes) return n;
   delete n.catalog;
   n.clos = clone(course.clos);
   const setup = course.standards || { vision: '', mission: { lead: '', items: [] }, egas: [], pos: [] };
   // Copy existing subject values once; all subsequent edits belong to this syllabus.
   n.outcomes = clone({ vision: setup.vision, mission: setup.mission, egas: setup.egas, pos: setup.pos });
+  if(setup.poReference)n.outcomes.poReference=clone(Object.fromEntries(['id','version','sourceFile','sourceSha256','authorization','institutionalApproval'].filter(key=>setup.poReference[key]!==undefined).map(key=>[key,setup.poReference[key]])));
   const ids = new Set(n.clos.map((c) => c.id));
   n.plan.forEach((r) => r.ilos.forEach((il) => { il.tags = d.meta.courseId && d.meta.courseId !== course.id ? [] : il.tags.filter((t) => t.indexOf('clo:') !== 0 || ids.has(parseTag(t).id)); }));
   return n;
@@ -142,10 +150,37 @@ export function clearCourse(d) {
   n.meta.courseId = null;
   n.meta.code = '';
   n.meta.title = '';
+  delete n.meta.academicYear; delete n.meta.semester; // administrator-owned values go with the subject; prereq and year level stay as typed, like before
   n.clos = [];
   n.outcomes = { vision: '', mission: { lead: '', items: [] }, egas: [], pos: [] };
   delete n.catalog;
   n.plan.forEach((r) => r.ilos.forEach((il) => { il.tags = []; }));
+  return n;
+}
+// The vision, mission, EGAs and program outcomes the administrator set on the subject are constants for its syllabi: faculty see them filled in and cannot change them
+// (the server forces them on every save too: server/lib/syllabusOutcomes.js forceStandards). `standards` is course.standards from the catalog.
+const hasText = (v) => !!String(v == null ? '' : v).trim();
+export const standardsSet = (s) => !!s && (hasText(s.vision) || hasText(s.mission && s.mission.lead) || ((s.mission && s.mission.items) || []).some(hasText) || (s.egas || []).length > 0 || (s.pos || []).length > 0);
+const standardsOf = (s) => ({ vision: s.vision || '', mission: { lead: (s.mission && s.mission.lead) || '', items: (s.mission && s.mission.items) || [] }, egas: s.egas || [], pos: s.pos || [] });
+const poBasis = (rows) => JSON.stringify((rows || []).map((p) => [Number(p.no), String(p.text || '').replace(/\s+/g, ' ').trim()]).sort((a, b) => a[0] - b[0]));
+const hasPoMappings = (d) => (d.clos || []).some((c) => (c.pos || []).length) || (d.plan || []).some((row) => (row.ilos || []).some((il) => (il.tags || []).some((tag) => /^po:\d+$/.test(tag))));
+// A syllabus with CLO-PO mappings keeps its PO statements until its author reviews and adopts the changed ones (Step 2); the server holds the same line on every save. A draft with no mappings fills in as usual.
+export function poReviewPending(d, standards) {
+  const stored = d && d.outcomes && d.outcomes.pos, next = standards && standards.pos;
+  return !!(stored && stored.length && next && next.length && hasPoMappings(d) && poBasis(stored) !== poBasis(next));
+}
+// Returns `d` itself when its outcomes already match (so an effect that applies this does not loop), otherwise a copy holding the administrator's values.
+export function withStandards(d, standards) {
+  if (!d || !d.outcomes || !standardsSet(standards)) return d;
+  const want = standardsOf(standards);
+  if (poReviewPending(d, standards)) {
+    want.pos = d.outcomes.pos;
+    if (want.pos.some((p) => (p.egas || []).some((n) => !want.egas.some((e) => e.no === n)))) want.egas = d.outcomes.egas;
+  }
+  const have = { vision: d.outcomes.vision, mission: d.outcomes.mission, egas: d.outcomes.egas, pos: d.outcomes.pos };
+  if (JSON.stringify(have) === JSON.stringify(want)) return d;
+  const n = clone(d);
+  Object.assign(n.outcomes, clone(want));
   return n;
 }
 // Refreshes the CLOs from the catalog after an administrator edited them. Tags are kept: one that now points at a

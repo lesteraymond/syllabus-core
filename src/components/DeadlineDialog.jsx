@@ -38,6 +38,12 @@ export function DeadlineChip({ subject, deadline, onOpen }) {
 }
 
 const years = () => schoolYearOptions(CURRENT_SCHOOL_YEAR.startYear);
+// The subject's own term: the academic year and semester set when the subject was added, which cannot be changed afterwards. A deadline is for that
+// term, so it is not asked again. null for an older subject that has none (the school year and semester are then chosen here, as before).
+export const subjectTermOf = (subject) => {
+  const term = subject && subject.term;
+  return term && term.academicYear && term.semester ? termOf(String(term.academicYear).replace(/[–—]/g, '-'), term.semester) : null;
+};
 const blankForm = () => ({ schoolYear: years()[1], semester: SEMESTERS[0], dueAt: '', opensAt: toDayValue(new Date().toISOString()), instructions: '' });
 function formOf(deadline) {
   if (!deadline) return blankForm();
@@ -45,7 +51,8 @@ function formOf(deadline) {
   return { schoolYear: parts.schoolYear, semester: parts.semester, dueAt: toInputValue(deadline.dueAt), opensAt: toDayValue(deadline.opensAt), instructions: deadline.instructions || '' };
 }
 
-// Each assigned faculty member with their status, and a Remind button for those who have not submitted (the notification and an email).
+// Each assigned faculty member with their status. "Remind all" (the notification and an email) reminds everyone who has not submitted; there is no
+// separate button per person.
 const PENDING = ['upcoming', 'due_today', 'failed'];
 export function DeadlineProgress({ state, onRemind, reminding = false, message = '' }) {
   const pending = state.status === 'ready' ? state.data.people.filter((p) => PENDING.includes(p.status)) : [];
@@ -68,9 +75,6 @@ export function DeadlineProgress({ state, onRemind, reminding = false, message =
         {state.data.people.map((p) => <li key={p.userId}>
           <span className="dl-name">{p.name}</span>
           <span className={'status dl-' + p.status}>{t('deadline.status.' + p.status)}</span>
-          {PENDING.includes(p.status)
-            ? <button type="button" className="icon-btn dl-remind" disabled={reminding} title={t('deadline.remind')} aria-label={t('deadline.remindLabel', { name: p.name })} onClick={() => onRemind([p.userId])}><Icon name="bellRinging" size={18} weight="regular" /></button>
-            : <span />}
           <small>{p.submittedAt ? t('deadline.submittedOn', { date: phDateTime(p.submittedAt) }) : t('deadline.notSubmitted')}{p.lastNoticeAt && PENDING.includes(p.status) ? ' · ' + t('deadline.lastReminded', { date: phDateTime(p.lastNoticeAt) }) : ''}</small>
         </li>)}
       </ul>
@@ -85,6 +89,10 @@ export function DeadlineDialog({ subject, deadlines, onClose, onChanged, onRemin
   const first = currentDeadline(deadlines);
   const [selected, setSelected] = useState(first ? first.id : 'new');
   const chosen = deadlines.find((d) => d.id === selected) || null;
+  const existing = chosen;                            // a deadline being edited keeps its own term
+  const subjectTerm = subjectTermOf(subject);           // a new one is for the subject's own term
+  // another deadline for a new term only when one can be made: not when the subject's own term already has one (it would be refused)
+  const offerNew = !subjectTerm || !deadlines.some((d) => d.term === subjectTerm);
   const [form, setForm] = useState(() => formOf(first));
   const [progress, setProgress] = useState({ status: 'loading' });
   const [reload, setReload] = useState(0);              // bumped after a reminder, so the list shows who was just reminded
@@ -125,7 +133,9 @@ export function DeadlineDialog({ subject, deadlines, onClose, onChanged, onRemin
     event.preventDefault();
     const dueAt = fromInputValue(form.dueAt);
     if (!dueAt) { setError(t('deadline.invalidDue')); return; }
-    const body = { term: termOf(form.schoolYear, form.semester), dueAt, opensAt: fromDayValue(form.opensAt) || undefined, instructions: form.instructions };
+    // an existing deadline keeps its term; a new one is for the subject's own term (or, for an older subject without one, the chosen year and semester)
+    const term = existing ? existing.term : (subjectTerm || termOf(form.schoolYear, form.semester));
+    const body = { term, dueAt, opensAt: fromDayValue(form.opensAt) || undefined, instructions: form.instructions };
     run(() => (selected === 'new' ? deadlinesApi.create(subject.id, body) : deadlinesApi.update(selected, body)).then(checked), 'saved');
   };
   const remind = async (userIds) => {
@@ -157,10 +167,11 @@ export function DeadlineDialog({ subject, deadlines, onClose, onChanged, onRemin
         {deadlines.length > 0 && <label className="field dl-term"><span>{t('deadline.term')}</span>
           <Select value={String(selected)} disabled={busy} onChange={(e) => choose(e.target.value)}>
             {deadlines.map((d) => <option key={d.id} value={String(d.id)}>{termDisplay(d.term)}</option>)}
-            <option value="new">{t('deadline.newTerm')}</option>
+            {offerNew && <option value="new">{t('deadline.newTerm')}</option>}
           </Select>
         </label>}
-        <div className="program-edit-fields dl-fields">
+        {(existing || subjectTerm) && <p className="dl-term-fixed" data-testid="dl-term-fixed">{t('deadline.termFixed', { term: termDisplay(existing ? existing.term : subjectTerm) })}</p>}
+        {!existing && !subjectTerm && <div className="program-edit-fields dl-fields">
           <label className="field"><span>{t('deadline.schoolYear')}</span>
             <Select value={form.schoolYear} disabled={busy} onChange={(e) => change('schoolYear', e.target.value)}>
               {[...new Set([...years(), form.schoolYear])].map((y) => <option key={y} value={y}>{y}</option>)}
@@ -171,7 +182,7 @@ export function DeadlineDialog({ subject, deadlines, onClose, onChanged, onRemin
               {SEMESTERS.map((s) => <option key={s} value={s}>{t(SEMESTER_KEYS[s])}</option>)}
             </Select>
           </label>
-        </div>
+        </div>}
         <label className="field"><span>{t('deadline.dueAt')}</span>
           <DatePicker type="datetime-local" value={form.dueAt} required disabled={busy} onChange={(e) => change('dueAt', e.target.value)} />
         </label>

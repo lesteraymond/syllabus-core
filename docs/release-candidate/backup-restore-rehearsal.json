@@ -1,0 +1,41 @@
+{
+  "at": "2026-11-06T03:05:44.388Z",
+  "database": "synthetic isolated (not the development database)",
+  "steps": [
+    {
+      "name": "source inventory taken",
+      "ok": true,
+      "detail": "43 tables, 119 rows"
+    },
+    {
+      "name": "backup completed with the documented options",
+      "ok": true,
+      "detail": "3869228 bytes in 494 ms; sha256 6954c8024cd6f6aa"
+    },
+    {
+      "name": "the dump contains no database-selection statement (it cannot overwrite another database)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "restored into a separate database",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tables, row counts and per-table checksums equal the source",
+      "ok": true,
+      "detail": "43 tables compared"
+    },
+    {
+      "name": "the comparison detects damage after the backup",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "recovery from the backup returns exactly the original data, reports and reference versions included",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

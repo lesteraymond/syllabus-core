@@ -20,6 +20,7 @@ const { aiGate } = require('../syllabuscheck/policy');
 const { titleDecisionChanged } = require('../syllabuscheck/titles');
 const academicV2Activation = require('../syllabuscheck/academicV2Activation');
 const academicV2 = require('../syllabuscheck/academicPolicyV2');
+const { semanticCoverageOf } = require('../syllabuscheck/semanticCoverage');
 // Invalidate legacy cached scores; they contain no semantic verification.
 standard.version = hybridEngine.VERSION;
 
@@ -32,22 +33,40 @@ async function checkHybrid(db, content, options = {}) {
     return result; // no legacy history, deductions, report writes or gate use
   }
   // When the caller names the syllabus, the AI is only asked about what changed since its earlier checks (SYLLABUS_CHECK_REUSE=off asks everything).
-  const env = options.env || process.env;
+  const profile = require('../syllabuscheck/checkingProfile');
+  const env = profile.resolve(options.env || process.env);
+  options = {...options, env, evaluationOnly:options.evaluationOnly === true && !!options.env};
   const requestBudget = options.requestBudget || createRequestBudget(env);
   const reuse = options.syllabusId && env.SYLLABUS_CHECK_REUSE !== 'off' ? await hybridRepo.reusableJudgements(db, options.syllabusId) : undefined;
   // What the author already corrected: lets the checker tell an unresolved problem from a new one and stop after a few attempts.
   const history = options.syllabusId ? await hybridRepo.correctionHistory(db, options.syllabusId) : undefined;
-  const result = await hybridEngine.run(content, masters, { ...options, requestBudget, reuse, history });
+  // Policy V2 owns the seven VPAA relationships when it is on, so the legacy stages that ask the same ones again (Stage B: Title ↔ Content and Content ↔ ILO;
+  // Stage C3: the three content/activity/assessment links) are held off for this check: no relationship is evaluated or reported twice. They stay available
+  // when V2 is off. ILO ↔ CLO and ILO ↔ Activities also stay in the legacy path because they are SCORED relationships (official deductions); the merged
+  // recommendation list below keeps one recommendation per relationship.
+  const v2On = academicV2Activation.enabled(env);
+  const comprehensive = profile.enabled(env);
+  const legacyOptions = v2On ? { env: { ...env, SYLLABUS_CHECK_STAGE_B: comprehensive ? 'on' : 'off', SYLLABUS_CHECK_STAGE_C3: 'off', SYLLABUS_CHECK_CLO_DESCRIPTION: 'off' }, ...(comprehensive ? {excludeAdvisoryTypes:profile.V2_ADVISORY} : {}) } : {};
+  // Budget planning: set room aside for the required Policy V2 evaluations before the optional staged checks can use it up. The caps are not changed.
+  let plannedV2 = 0;
+  if (v2On && options.useAi !== false && typeof requestBudget.holdFor === 'function') {
+    try { plannedV2 = academicV2.plannedRequests(content, masters, env); requestBudget.holdFor(plannedV2); } catch { /* planning only protects coverage: without it the budget behaves as before */ }
+  }
+  const result = await hybridEngine.run(content, masters, { ...options, ...legacyOptions, profileResolved:true, requestBudget, reuse, history });
   if (academicV2Activation.enabled(env)) {
     try {
-      result.hybrid.academicV2 = await academicV2.evaluateIntegrated(content, masters, hybridEngine.coded, { env, syllabusId: options.syllabusId, requestBudget, signal: options.signal, ...(options.transport ? { transport: options.transport } : {}) });
+      result.hybrid.academicV2 = await academicV2.evaluateIntegrated(content, masters, hybridEngine.coded, { env, syllabusId: options.syllabusId, requestBudget, reuse, useAi: options.useAi, signal: options.signal, ...(options.transport ? { transport: options.transport } : {}) });
       if (result.hybrid.academicV2?.academic?.suggestions?.length) {
         const existingIds = new Set((result.hybrid.suggestions || []).map(s => s.id));
+        const existingRelationships = new Set((result.hybrid.suggestions || []).flatMap(s => (s.basedOn || [s.id]).map(id => String(id).replace(/^SEM:/, ''))));
         result.hybrid.suggestions = [
           ...(result.hybrid.suggestions || []),
-          ...result.hybrid.academicV2.academic.suggestions.filter(s => !existingIds.has(s.id))
+          ...result.hybrid.academicV2.academic.suggestions.filter(s => !existingIds.has(s.id) && !(s.basedOn || [s.relationshipId]).some(id => existingRelationships.has(String(id))))
         ];
       }
+      // A week Policy V2 found off-topic for the course: the rewrites that would keep its topic are withheld (listed in suggestionsWithheld), so the lesson's
+      // one recommendation is the Policy V2 finding. Suggestions only: no judgement, finding, deduction or score changes (syllabuscheck/offTopicLessons.js).
+      Object.assign(result.hybrid, require('../syllabuscheck/offTopicLessons').withholdConflicts(result.hybrid));
     } catch (error) {
       result.hybrid.academicV2 = { version: academicV2.POLICY.id, mode: 'live-application', status: 'not_evaluated',
         contracts: { policy: academicV2.POLICY.id }, alignment: { status: 'not_evaluated', reason: `Policy V2 could not prepare this academic check: ${error.message}` },
@@ -55,10 +74,31 @@ async function checkHybrid(db, content, options = {}) {
           coverage: { required: 0, supported: 0, notEvaluated: 0 }, provenance: { kind: 'live-application', liveModelCalls: 0, networkRequests: 0, facultyValidated: false } } };
     }
   }
+  const coordinatedPlan = require('../syllabuscheck/coordinatedPlanEngine');
+  if (coordinatedPlan.enabled(env)) {
+    try {
+      result.hybrid.improvementPlan = coordinatedPlan.buildPlan({
+        content,
+        masters,
+        syllabusId: options.syllabusId,
+        result,
+        env,
+      });
+    } catch {
+      /* plan generation is advisory and never disrupts the core check */
+    }
+  }
   result.referenceHash = masters.fingerprint;
+  if (typeof requestBudget.summary === 'function') {
+    const budget = require('../syllabuscheck/budgetReport').budgetReport(requestBudget.summary(), { plannedRequired: plannedV2, v2Status: result.hybrid.academicV2 ? result.hybrid.academicV2.alignment?.status || null : null });
+    if (budget && (budget.planned || budget.exhausted || budget.deferredOptional)) result.hybrid.budget = budget;
+  }
+  result.hybrid.semanticCoverage = semanticCoverageOf(result, { v2On }); // advisory: how many of the seven VPAA relationships this report really covers
+  result.hybrid.ruleCoverage = require('../syllabuscheck/ruleCoverage').coverageOf(result, content, masters, env);
   return result;
 }
-async function requireHybrid(db, syllabusId, content, { hardOnly = false } = {}) {
+// aiOff: the administrator turned AI checking off (lib/adminSettings.js): no AI check can be made, so none is required; the coded hard gates still apply.
+async function requireHybrid(db, syllabusId, content, { hardOnly = false, aiOff = false } = {}) {
   if (!(await isInstalled(db))) throw httpError(503, 'AI Checker must be set up before submission or publishing.');
   const masters = await hybridRepo.mastersFor(db, content, {syllabusId});
   const hard = hybridEngine.coded(content, masters);
@@ -66,7 +106,7 @@ async function requireHybrid(db, syllabusId, content, { hardOnly = false } = {})
   if (failed.length) throw httpError(409, failed.find(f => f.ruleId === 'CUR-CODE')?.message || failed[0].message, { code: 'syllabus_hard_gate', score: hard.critical ? 0 : null, failed });
   // The coded hard gates above always apply. A completed AI check is only required when the policy says so: otherwise the AI's
   // judgements and recommendations are advice, and the author (to submit) or the administrator (to approve) decides.
-  if (hardOnly || aiGate() === 'advisory') return;
+  if (hardOnly || aiOff || aiGate() === 'advisory') return;
   const cached = await cachedRun(db, syllabusId, contentHash(content, standard.version));
   const report = cached ? await hybridRepo.readReport(db, cached.run_id) : null;
   const checkedAt = Date.parse(report?.hybrid?.checkedAt || '');
@@ -235,6 +275,7 @@ async function loadDetail(db, run, currentHash) {
     out.model = report.hybrid.alignment.model || null;
     out.aiError = report.hybrid.alignment.reason || null;
     out.referenceHash = report.fingerprint;
+    const savedReady = !!report.hybrid.ready; // what the report said when it was saved, before anything below qualifies it for today
     // Normalize historical partial reports too: they used to expose their coded
     // baseline as an AI score even though Gemini had never evaluated the form.
     if (!report.hybrid.ready && !report.hybrid.critical) {
@@ -243,7 +284,8 @@ async function loadDetail(db, run, currentHash) {
       out.status = 'incomplete';
       out.passed = false;
     }
-    const masters = await hybridRepo.mastersFor(db, { meta: report.hybrid.checkedMeta });
+    // Reading a saved report judges nothing, so an open record review does not refuse it (historicalRead). Only this read may pass it: a new check, a submit and a recommendation decision stay refused.
+    const masters = await hybridRepo.mastersFor(db, { meta: report.hybrid.checkedMeta }, { syllabusId: run.syllabus_id, historicalRead: true });
     const checkedTime = Date.parse(report.hybrid.checkedAt);
     // A check goes out of date when the rules or the official references changed since it was made. It also expires after 30 minutes, but
     // only where a fresh AI check is a gate to submit ('required'); as advice it stays valid until the syllabus itself changes (that is
@@ -254,6 +296,17 @@ async function loadDetail(db, run, currentHash) {
       out.stale = true;
       out.hybrid = { ...out.hybrid, ready: false };
     }
+    // A syllabus waiting for its record review has no current check: this report is history, whatever its fingerprint says, so nothing can treat it as a check that clears a gate.
+    // The stored score, findings and references are returned as saved; savedReady lets a screen show that score instead of "incomplete". Nothing here is written.
+    if (masters.recordReview) {
+      out.stale = true;
+      out.hybrid = { ...out.hybrid, ready: false };
+      out.recordReview = { code: masters.recordReview.code, savedReady };
+    }
+  } else {
+    // A run with no saved hybrid report is history in the same way: the review is stated, and its stored score is not offered as a current check.
+    const review = await hybridRepo.recordReviewOf(db, run.syllabus_id);
+    if (review) { out.stale = true; out.recordReview = { code: review.code, savedReady: true }; }
   }
   out.findings = rows.filter((r) => r.kind === 'finding').map((r) => ({
     id: r.rule_id + ':' + r.path, area: r.area, source: r.source, ruleId: r.rule_id, severity: r.severity, step: r.step, path: r.path, message: r.message, evidence: parse(r.evidence) || {},
@@ -305,7 +358,7 @@ async function versionFile(db, versionId) {
 }
 
 // ---- has the administrator checked what was submitted? ----
-// For each syllabus id: { checkable, checked }. checkable: its newest version has a form or a file the check can read. checked: the
+// For each syllabus id: { checkable, checked, versionId }. checkable: its newest version has a form or a file the check can read. checked: the
 // administrator's own check (ADMIN_RUN_SQL) was made on that newest version, so a new version submitted since needs a new check.
 // A database without the tables yet has no checks, so every checkable syllabus reads as not checked.
 async function adminCheckStates(db, ids) {
@@ -317,7 +370,7 @@ async function adminCheckStates(db, ids) {
   );
   const [runs] = await db.query('SELECT DISTINCT syllabus_id, version_id FROM ai_check_runs WHERE syllabus_id IN (?) AND ' + ADMIN_RUN_SQL, [ids]);
   const checkedOn = new Set(runs.map((r) => r.syllabus_id + ':' + r.version_id));
-  versions.forEach((v) => out.set(v.syllabus_id, { checkable: !!Number(v.checkable), checked: checkedOn.has(v.syllabus_id + ':' + v.version_id) }));
+  versions.forEach((v) => out.set(v.syllabus_id, { checkable: !!Number(v.checkable), checked: checkedOn.has(v.syllabus_id + ':' + v.version_id), versionId: v.version_id }));
   return out;
 }
 

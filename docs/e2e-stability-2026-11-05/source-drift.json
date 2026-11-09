@@ -1,0 +1,43 @@
+{
+  "checkedAt": "2026-11-05T13:46:16.482Z",
+  "ownerConfirmedFinished": true,
+  "applicationDrift": [
+    {
+      "file": "src/i18n/extra.js",
+      "testedSha256": "4d70a878b96d8b34eb38d8b23e61eb8310b623740c082aa05ea4b5c266995ad1",
+      "currentSha256": "c535a24ddf3d33a92798187f1726681fc76ed6dad6f132b230e880c3b38c8d2a"
+    },
+    {
+      "file": "src/styles.css",
+      "testedSha256": "a62eb630cb2147156da80df2134a335be999cfb2be81a30e66af1d40595472d3",
+      "currentSha256": "b6df7398f4d6c73d669211e37ceff45f6c45c08897efa51a87ab34e794a4505e"
+    },
+    {
+      "file": "src/views/CourseOutcomes.jsx",
+      "testedSha256": "36760018d8e79529335dad7b4b9908f6a1f187fe562042395f8ef3d647d3eea8",
+      "currentSha256": "e96156ef833afd064e9c65a48cd33d3b0791a2447ea83810658068c7c23685f2"
+    }
+  ],
+  "otherTestedFileDrift": [
+    {
+      "file": "scripts/e2e/scenarios.cjs",
+      "testedSha256": "47726602d9cd462755dc7e1f354ec196513d9b9a4097725018958adc7802c2ff",
+      "currentSha256": "fbeac733e4507257fd6efd73651175711fc8f5e51c5dceea6faf6aadb153e0c1"
+    },
+    {
+      "file": "tests/i18n-ui.test.jsx",
+      "testedSha256": "18ab79ef42e721faa227750aa7adcf84a4f0d1cb3a3dce47c30ddac223f3270c",
+      "currentSha256": "7386cb28adb8affba2210e7faea2bcb5efdfaf0516de9eabe7b20f29052ce5cd"
+    }
+  ],
+  "newApplicationFiles": [
+    "src/components/AcademicYearControl.jsx"
+  ],
+  "fullUncommittedInventory": "git-status-final.txt",
+  "statusCounts": {
+    "modified": 102,
+    "deleted": 1,
+    "untracked": 12980
+  },
+  "workingTreeMatchesTestedSnapshot": false
+}

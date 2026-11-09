@@ -1,0 +1,55 @@
+{
+  "summary": {
+    "label": "LOCAL browser verification, comprehensive-testing profile (staging-like topology, isolated scratch database, SYNTHETIC data, SCRIPTED provider). Not a staging test and not a Claude test: no live model request was made.",
+    "suite": "budget",
+    "profile": "comprehensive-testing",
+    "configuration": {
+      "E2E_DB_PORT": "3407",
+      "SYLLABUS_CHECK_PROFILE": "comprehensive-testing",
+      "SYLLABUS_CHECK_ACADEMIC_V2": "off",
+      "SYLLABUS_CHECK_AI_MAX_COST_USD": "6"
+    },
+    "browser": "Microsoft Edge (Chromium) via playwright-core",
+    "node": "v26.12.1",
+    "finishedAt": "2026-11-05T00:11:09.678Z",
+    "scenarios": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1
+    },
+    "checks": {
+      "total": 2,
+      "passed": 1,
+      "knownDefects": 0
+    },
+    "providerRequests": 23,
+    "blockedNetwork": 0
+  },
+  "results": [
+    {
+      "id": "B01",
+      "title": "Tight budget (browser): the required VPAA coverage does not fit, so the page says so, items stay NOT_CHECKED, nothing is invented, and the official result is unchanged",
+      "status": "FAIL",
+      "checks": [
+        {
+          "ok": true,
+          "message": "[api] a synthetic syllabus was saved"
+        },
+        {
+          "ok": false,
+          "message": "scenario aborted: page.waitForFunction: Timeout 120000ms exceeded.     at C:\\Users\\JP Del Rosario\\Syllabus-Repository\\scripts\\e2e\\scenarios-budget.cjs:26:18     at async scenario (C:\\Users\\JP Del Rosario\\Syllabus-Repository\\scripts\\e2e\\run-comprehensive-ui.cjs:51:9)     at async run (C:\\Users\\JP Del Rosario\\Syllabus-Repository\\scripts\\e2e\\scenarios-budget.cjs:15:3)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=0 users=6",
+        "page text when the V2 panel did not appear: CITE DASHBOARD SYLLABUS BUILDER AI CHECKER MY SYLLABI REPOSITORY ANALYTICS REPORTS SETTINGS SYLLABUS MANAGEMENT SYSTEM TF Test Faculty Faculty Log out AI Syllabus Checker Checked against the Undergraduate Syllabus form. Only a form that does not follow the template stops you from submitting; the score and the other findings are advice for you and the reviewer. Choose a syllabus SUBJECT IT 205 — Data Structures and Algorithms (synthetic) Draft Edit Syllabus Compliance check Checked against the Undergraduate Syllabus form. Only a form that does not follow the template stops you from submitting; the score and the other findings are advice for you and the reviewer. AI Checker The checking report is too large for this database to store (about 1.01 MB; the database accepts 1.00 MB per write). Nothing was saved and the syllabus is unchanged. Ask the system administrator to raise the database se",
+        "API calls: GET /api/syllabi 200, GET /api/notifications/summary 200, POST /api/usage/heartbeat 200, GET /api/notifications/summary 200, POST /api/usage/heartbeat 200, GET /api/messages 200, GET /api/messages/partners 200, GET /api/syllabi 200"
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/budget-small-packet/B01-x-v2-panel-missing.png"
+      ],
+      "failed": true,
+      "ms": 125904
+    }
+  ]
+}

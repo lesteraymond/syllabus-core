@@ -1,6 +1,6 @@
 {
   "cap": 10,
-  "total": 1.4421591,
+  "total": 2.92159495,
   "ledgers": {
     "p1-smoke-ledger.json": {
       "model": "claude-sonnet-5-5",
@@ -57,6 +57,20 @@
       "charged": 0.0896475,
       "outputTokens": 2275,
       "updatedAt": "2026-10-29T09:03:21.139Z"
+    },
+    "../ai-checker-sample-comparison-2026-11-05/provider-ledger.json": {
+      "model": "claude-sonnet-5-5",
+      "requests": 1,
+      "charged": 0.23008425,
+      "outputTokens": 16000,
+      "updatedAt": "2026-11-04T20:10:07.174Z"
+    },
+    "../ai-checker-sample-comparison-2026-11-05/attempt-2/provider-ledger.json": {
+      "model": "claude-sonnet-5-5",
+      "requests": 22,
+      "charged": 1.2493516,
+      "outputTokens": 107054,
+      "updatedAt": "2026-11-04T20:23:52.576Z"
     }
   }
 }

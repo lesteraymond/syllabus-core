@@ -24,12 +24,18 @@ async function init() {
   }
   console.log('Schema created.');
 
-  const seed = fs.readFileSync(path.join(__dirname, 'seed.sql'), 'utf8');
-  const seedStmts = seed.split(';').filter(s => s.trim());
-  for (const stmt of seedStmts) {
-    await conn.query(stmt);
+  // seed.sql holds DEMO accounts with publicly known passwords. They are for local development only: with NODE_ENV=staging or production they are never inserted
+  // (create the first administrator with db/create-admin.js instead).
+  if (['staging', 'production'].includes(String(process.env.NODE_ENV || '').trim().toLowerCase())) {
+    console.log('Seed data skipped: NODE_ENV=' + process.env.NODE_ENV + ' never receives the demo accounts. Create the first administrator with: node db/create-admin.js');
+  } else {
+    const seed = fs.readFileSync(path.join(__dirname, 'seed.sql'), 'utf8');
+    const seedStmts = seed.split(';').filter(s => s.trim());
+    for (const stmt of seedStmts) {
+      await conn.query(stmt);
+    }
+    console.log('Seed data inserted.');
   }
-  console.log('Seed data inserted.');
 
   await conn.end();
   console.log('Done.');

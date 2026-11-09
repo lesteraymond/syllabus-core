@@ -32,7 +32,9 @@ export function readOptions(children) {
     if (child.type === 'optgroup') return walk(child.props.children);
     if (child.type !== 'option') return;
     const label = textOf(child.props.children);
-    out.push({ value: String(child.props.value ?? label), label, disabled: !!child.props.disabled, lang: child.props.lang });
+    // data-short: the text the closed button shows instead of the full label (the open list still shows the full label, e.g. "2026–2027 · Current")
+    const short = child.props['data-short'];
+    out.push({ value: String(child.props.value ?? label), label, ...(short === undefined ? {} : { short: String(short) }), disabled: !!child.props.disabled, lang: child.props.lang });
   });
   walk(children);
   return out;
@@ -64,7 +66,8 @@ export default function Select({ value, defaultValue, onChange, disabled = false
   const filtering = items.length > FILTER_ABOVE;
   const shown = filtering ? filterItems(items, query) : items.map((item, index) => ({ ...item, index }));
   const selectedIndex = items.findIndex((item) => item.value === current);
-  const label = selectedIndex >= 0 ? items[selectedIndex].label : '';
+  const shortOf = (item) => item.short ?? item.label;
+  const label = selectedIndex >= 0 ? shortOf(items[selectedIndex]) : '';
   const listId = uid + '-list';
   const optionId = (position) => uid + '-o-' + position;
 
@@ -152,7 +155,7 @@ export default function Select({ value, defaultValue, onChange, disabled = false
         onClick={() => (open ? close() : openList())} onKeyDown={onKeyDown} {...rest}>
         <span className="select-value">
           <span className="select-current" lang={selectedIndex >= 0 ? items[selectedIndex].lang : undefined}>{label}</span>
-          <span className="select-sizer" aria-hidden="true">{items.map((item) => <span key={item.value} data-value={item.value} lang={item.lang}>{item.label}</span>)}</span>
+          <span className="select-sizer" aria-hidden="true">{items.map((item) => <span key={item.value} data-value={item.value} lang={item.lang}>{shortOf(item)}</span>)}</span>
         </span>
         <svg className="select-chevron" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
       </button>

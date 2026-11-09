@@ -1,0 +1,66 @@
+# Continuous integration. NOT VERIFIED on GitHub: it was written from the commands that pass locally (npm test, npm run test:vpaa, npm run build,
+# npm run test:db-bootstrap) and has never run on a GitHub runner. It deploys nothing, needs no secret, and makes no model request (the tests use a scripted
+# provider and a guard that fails on any non-loopback request). Deployment is deliberately NOT automated: see docs/deployment/RUNBOOK.md for the approval gates.
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            server/package-lock.json
+      - run: npm ci
+      - run: npm ci
+        working-directory: server
+      - name: Unit, integration and security tests
+        run: npm test
+      - name: VPAA conformance (server suites and UI suite)
+        run: npm run test:vpaa
+      - name: Production build
+        run: npm run build
+        env:
+          VITE_API_URL: https://api.invalid/api
+  database-bootstrap:
+    # A new database can be provisioned from the repository alone: init.js plus every migration, on a throwaway MariaDB service.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "yes"
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - run: npm ci
+        working-directory: server
+      - run: node scripts/e2e/db-bootstrap-check.cjs
+        env:
+          E2E_DB_HOST: 127.0.0.1
+          E2E_DB_USER: root
+          E2E_DB_PASS: ""
+  # The browser E2E (npm run test:e2e) needs a Chromium and a MariaDB, and its ports are fixed by environment variables. It passed locally (17 scenarios) but is not wired
+  # into CI yet: add it as a job that installs a Chromium, sets E2E_BROWSER_PATH, once a runner image is chosen (scripts/e2e/seed-e2e.cjs and stack.cjs currently assume a local root MariaDB user with an empty password and would first need to read E2E_DB_*).

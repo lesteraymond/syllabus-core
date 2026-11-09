@@ -80,7 +80,7 @@ async function main() {
   await fs.mkdir(backupDir, { recursive: true });
   const backup = path.join(backupDir, `bsie-before-misalignment-${id}-${Date.now()}.json`);
   await fs.writeFile(backup, JSON.stringify(before, null, 2), { flag: 'wx' });
-  await request(`/syllabi/${id}/content`, { sections, schemaVersion: 3 });
+  await request(`/syllabi/${id}/content`, { sections, schemaVersion: 3, baseRevisions: latest.revisions });
   const after = await request(`/syllabi/${id}/content`);
   assert.equal(after.status, 'draft');
   for (const key of keys) assert.deepEqual(after.content[key], d[key], `Persisted ${key}`);

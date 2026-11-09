@@ -6,11 +6,14 @@ import { Icon } from './ui';
 import { useModalLayer } from './useModalLayer';
 import { outcomes } from '../lib/api';
 import { t, tr } from '../i18n';
+import ProgramOutcomesEditor from './ProgramOutcomesEditor';
+import { needsSetup } from '../lib/outcomesSetup';
 const STATUS_LABELS = { draft: 'Draft', submitted: 'Submitted', under_review: 'Under Review', approved: 'Approved', for_revision: 'For Revision', rejected: 'Rejected' };
 
 export function DeletionImpact({ preview }) {
   return <div className="program-delete-impact">
-    {preview.blocked && <p className="info-banner warning" role="alert">{t('programs.blockedBySpecializations', { code: preview.program.code, list: preview.specializations.map(row => row.code).join(', ') })}</p>}
+    {preview.approved?.length > 0 && <p className="info-banner warning" role="alert" data-testid="approved-protected">{t('programs.blockedByApproved', { code: preview.program.code, count: preview.approved.length })}</p>}
+    {preview.specializations?.length > 0 && <p className="info-banner warning" role="alert">{t('programs.blockedBySpecializations', { code: preview.program.code, list: preview.specializations.map(row => row.code).join(', ') })}</p>}
     {preview.inheritsFrom && <p className="info-banner" role="status">{t('programs.inheritsNote', { code: preview.program.code, source: preview.inheritsFrom })}</p>}
     <dl>{['subjects', 'syllabi', 'versions', 'assignments', 'files'].map(key => <div key={key}><dt>{t('programs.count.' + key)}</dt><dd>{preview.counts[key]}</dd></div>)}</dl>
     <p className="info-banner warning">{t('programs.cascadeWarning')}</p>
@@ -97,8 +100,9 @@ export function ProgramDialog({ program, mode, onClose, onComplete, onReload }) 
     </section>
   </div></CatalogModalPortal>;
 }
-export default function ProgramManagement({ programs, onChanged, notify }) {
+export default function ProgramManagement({ programs, onChanged, notify, readOnly = false, year = '' }) {
   const [selected, setSelected] = useState(null);
+  const [outcomesFor, setOutcomesFor] = useState(null);   // the program whose EGAs and Program Outcomes are open
   const [refreshError, setRefreshError] = useState('');
   const heading = useRef(null);
   const table = useRef(null);
@@ -113,12 +117,14 @@ export default function ProgramManagement({ programs, onChanged, notify }) {
     <div className="card-head"><h3 id="program-management-title" ref={heading} tabIndex={-1}>{t('programs.heading')}</h3></div>
     {refreshError && <div className="form-error" role="alert">{refreshError}<StableButton type="button" className="btn outline" onClick={async () => { try { await onChanged(); setRefreshError(''); } catch (error) { setRefreshError(tr(error.message)); } }}>{t('ui.reload_cce715')}</StableButton></div>}
     <div className="table-wrap" ref={table}><table><thead><tr><th>{t('ui.program_code_18ae83')}</th><th>{t('ui.program_name_699413')}</th><th className="col-actions">{t('ui.actions_c3cd63')}</th></tr></thead><tbody>
-      {programs.map(program => <tr key={program.id} data-catalog-row={'program-' + program.id}><td className="mono">{program.code}</td><td>{program.name}</td><td className="col-actions"><div className="program-management-actions">
-        <button className="icon-btn" type="button" title={t('programs.rename')} aria-label={t('programs.renameTitle', { code: program.code })} onClick={() => setSelected({ program, mode: 'rename' })}><Icon name="pencilSquare" size={18} /></button>
-        <button className="icon-btn is-delete" type="button" title={t('programs.delete')} aria-label={t('programs.deleteTitle', { code: program.code })} onClick={() => setSelected({ program, mode: 'delete' })}><Icon name="bin" size={18} /></button>
+      {programs.map(program => <tr key={program.id} data-catalog-row={'program-' + program.id}><td className="mono">{program.code}</td><td>{program.name}{needsSetup(program) && <span className="setup-badge" role="status">{t('outcomes.setupBadge')}</span>}</td><td className="col-actions"><div className="program-management-actions">
+        <button className="btn outline outcomes-open" type="button" title={t('outcomes.buttonTitle', { code: program.code })} aria-label={t('outcomes.buttonTitle', { code: program.code })} onClick={() => setOutcomesFor(program)}>{t('outcomes.button')}</button>
+        <button className="icon-btn" type="button" disabled={readOnly} title={t('programs.rename')} aria-label={t('programs.renameTitle', { code: program.code })} onClick={() => setSelected({ program, mode: 'rename' })}><Icon name="pencilSquare" size={18} /></button>
+        <button className="icon-btn is-delete" type="button" disabled={readOnly} title={t('programs.delete')} aria-label={t('programs.deleteTitle', { code: program.code })} onClick={() => setSelected({ program, mode: 'delete' })}><Icon name="bin" size={18} /></button>
       </div></td></tr>)}
       {!programs.length && <tr><td colSpan="3">{t('programs.empty')}</td></tr>}
     </tbody></table></div>
+    {outcomesFor && <ProgramOutcomesEditor key={outcomesFor.id} program={outcomesFor} year={year} readOnlyYear={readOnly} onClose={() => setOutcomesFor(null)} onSaved={onChanged} notify={notify} />}
     {selected && <ProgramDialog key={selected.program.id + selected.mode} {...selected} onClose={() => setSelected(null)} onComplete={complete} onReload={onChanged} />}
   </section>;
 }

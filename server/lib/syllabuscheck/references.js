@@ -118,10 +118,17 @@ function parseReference(text, ctx = {}) {
   }
   const definite = issues.some(i => i.severity === 'definite'), possible = issues.some(i => i.severity === 'possible');
   const status = definite ? 'FAIL' : possible || confidence === 'none' || confidence === 'low' ? 'NEEDS_REVIEW' : 'PASS';
+  // Record predicates reached, including successful predicates. Issues alone
+  // cannot establish execution; kind-specific checks stay non-applicable.
+  const checkedCodes = ['DATE_MISSING','RETRIEVED','TITLE_QUOTES','ACCESSED','DOI_MALFORMED','URL_TWICE',
+    ...(date ? ['DATE_PERIOD','AUTHOR_MISSING','TITLE_MISSING', ...(/^\d{4}/.test(date[1]) ? ['DATE_RANGE'] : [])] : []),
+    ...(authors ? ['AUTHOR_PERIOD','AUTHOR_FORM','AUTHOR_INITIALS', ...(individual.length>=2?['AUTHOR_AND','AUTHOR_COMMA','AUTHOR_AMPERSAND']:[])] : []),
+    ...({journal:['JOURNAL_VOLUME','JOURNAL_PAGES','JOURNAL_NAME'],book:['BOOK_PUBLISHER','BOOK_LOCATION'],chapter:['CHAPTER_PAGES','CHAPTER_PUBLISHER'],report:['REPORT_PUBLISHER'],conference:['CONF_IN'],website:['WEB_URL'],official:['WEB_URL']}[kind] || []),
+    ...(doi ? ['DOI_FORM'] : []), ...(urls.length ? ['URL_HTTP','URL_MALFORMED'] : [])];
   return {
     text: t, blank: false, type: { kind, confidence, signals },
     components: { authors, groupAuthor, authorCount: individual.length, date: date ? date[1] : null, title, rest, volume: volume ? volume[1] : null, pages: pages ? pages[0] : null, publisher: kind === 'book' ? rest : null, doi: doi ? { value: doi, form: doiForm, valid: doiOk } : null, urls },
-    issues, missing, format: { status, uncertain: confidence === 'none' || confidence === 'low' }, suggestedText: suggested !== t ? suggested : null, authenticity: { status: 'not_verified' },
+    issues, missing, checkedCodes, format: { status, uncertain: confidence === 'none' || confidence === 'low' }, suggestedText: suggested !== t ? suggested : null, authenticity: { status: 'not_verified' },
   };
 }
 

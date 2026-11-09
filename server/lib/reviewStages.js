@@ -60,4 +60,63 @@ async function approvalOf(db, syllabusId) {
   return rows[0] ? { by: nameOf(rows[0]), at: rows[0].action_date || null } : null;
 }
 
-module.exports = { isInstalled, resetInstalledCache, summarize, stagesOf, clear, approvalOf };
+// ---- when a syllabus reaches the VPAA ----
+// The VPAA's work starts when the chain is done: a syllabus reaches the VPAA once the dean, the Asst. VPAA and the LIC Director have cleared its NEWEST
+// version, or once it is approved. Before that it is not in the VPAA's lists (Review & Approval, the dashboard), the AI Checker's queue or its history, and
+// the VPAA can neither check nor decide it. A resubmission is a new version, so it leaves the VPAA again until the three clear it. (The VPAA is notified
+// when the third stage clears: routes/reviewChain.js.) The other reviewers are not affected. Without the stage table nothing is cleared, so the VPAA
+// sees approved syllabi only, as nothing else could be approved either.
+const NOT_READY_FOR_APPROVER = 'This syllabus reaches the VPAA once the dean, the Asst. VPAA and the LIC Director have cleared it.';
+const readyForApprover = (status, summary) => status === 'approved' || !!(summary && summary.allCleared);
+// rows: [{ syllabus_id, status }] -> the Set of syllabus ids the VPAA may see. Reads the chain in two queries however many rows.
+async function approverVisible(db, rows) {
+  const ids = (rows || []).map((r) => r.syllabus_id);
+  let stages = new Map();
+  if (ids.length) { try { stages = await stagesOf(db, ids); } catch { stages = new Map(); } }
+  return new Set((rows || []).filter((r) => readyForApprover(r.status, stages.get(r.syllabus_id))).map((r) => r.syllabus_id));
+}
+// One syllabus, inside a route: refuses (409, code STAGES_PENDING) when it has not reached the VPAA yet.
+async function assertReadyForApprover(db, syl) {
+  if (!(await approverVisible(db, [syl])).has(syl.syllabus_id)) {
+    const { httpError } = require('./http');
+    throw httpError(409, NOT_READY_FOR_APPROVER, { code: 'STAGES_PENDING' });
+  }
+}
+
+// ---- an administrator's own syllabus before it is sent for review ----
+// The dean (an administrator) checks their own syllabus in the AI Checker first: "Continue to check" in the builder, or "Check my syllabus" in the AI
+// Checker, saves a version and makes it Under Review. It reaches the other reviewers (the Asst. VPAA, the LIC Director, the VPAA and any other
+// administrator) only when the dean sends it for review, which clears the dean stage on that version with the dean as its author
+// (routes/syllabusContent.js publish). Until then it is not in their lists, AI Checker queue or history, and they can neither check it, clear a stage on
+// it, choose to review it without AI, nor decide it. A faculty member's syllabus is not affected.
+const AWAITING_AUTHOR = ['submitted', 'under_review'];
+const NOT_SENT = 'This syllabus has not been sent for review yet: its author, the dean, is still checking it.';
+const awaitingAuthor = (ownerRole, status, summary) => ownerRole === 'admin' && AWAITING_AUTHOR.includes(status) && !(summary && summary.dean && summary.dean.cleared);
+// rows: [{ syllabus_id, user_id, status }], viewerId -> the Set of syllabus ids hidden from that viewer (never their own). `stages` may be passed when
+// the caller already read them. The authors' roles are read in one query; if they cannot be read nothing is hidden or refused (a database that cannot
+// read the users table cannot serve these routes anyway). If the stages cannot be read, an administrator's Under Review syllabus stays hidden.
+async function hiddenFromReviewers(db, rows, viewerId, stages) {
+  const candidates = (rows || []).filter((r) => r.user_id !== viewerId && AWAITING_AUTHOR.includes(r.status));
+  if (!candidates.length) return new Set();
+  let roles;
+  try {
+    const [users] = await db.query('SELECT user_id, role FROM users WHERE user_id IN (?)', [[...new Set(candidates.map((r) => r.user_id))]]);
+    roles = new Map(users.map((u) => [u.user_id, u.role]));
+  } catch { return new Set(); }
+  const byAdmins = candidates.filter((r) => roles.get(r.user_id) === 'admin');
+  if (!byAdmins.length) return new Set();
+  let summaries = stages && byAdmins.every((r) => stages.has(r.syllabus_id)) ? stages : null;
+  if (!summaries) { try { summaries = await stagesOf(db, byAdmins.map((r) => r.syllabus_id)); } catch { summaries = new Map(); } }
+  return new Set(byAdmins.filter((r) => awaitingAuthor('admin', r.status, summaries.get(r.syllabus_id))).map((r) => r.syllabus_id));
+}
+// One syllabus, inside a route: refuses (409, code not_sent_for_review) a reviewer who is not its author while the dean has not sent it yet.
+async function assertSentForReview(db, syl, viewer) {
+  if (!syl || !viewer || syl.user_id === viewer.id) return;
+  if ((await hiddenFromReviewers(db, [syl], viewer.id)).has(syl.syllabus_id)) {
+    const { httpError } = require('./http');
+    throw httpError(409, NOT_SENT, { code: 'not_sent_for_review' });
+  }
+}
+
+module.exports = { isInstalled, resetInstalledCache, summarize, stagesOf, clear, approvalOf, NOT_READY_FOR_APPROVER, readyForApprover, approverVisible, assertReadyForApprover,
+  NOT_SENT, awaitingAuthor, hiddenFromReviewers, assertSentForReview };

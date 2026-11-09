@@ -1,0 +1,31 @@
+{
+  "run": "budget-on",
+  "suite": "budget",
+  "mode": "on",
+  "label": "rc8",
+  "database": "syllabus_e2e_dyn_budget",
+  "port": "43310",
+  "schema": "fresh bootstrap (init.js + every migrate-* script)",
+  "start": "2026-11-06T00:38:29.981Z",
+  "finished": "2026-11-06T00:38:54.586Z",
+  "exit": 0,
+  "scenarios": [
+    {
+      "result": "PASS",
+      "id": "B01"
+    }
+  ],
+  "failedChecks": [],
+  "flags": {
+    "SYLLABUS_CHECK_CACHE_WARMUP": "on",
+    "SYLLABUS_CHECK_OUTPUT_PLAN": "on",
+    "SYLLABUS_CHECK_OUTPUT_FIELDS": "scoped",
+    "SYLLABUS_CHECK_COURSE_CONTEXT": "off",
+    "SYLLABUS_CHECK_V2_GROUPING": "off",
+    "SYLLABUS_CHECK_PROMPT_TRIM": "off"
+  },
+  "snapshotSourceHash": "5edd97a3468a64642ad322830a9bf3925cfc5de39c82e96b9a9379013e1859b2",
+  "workingTreeSourceHashBefore": "5edd97a3468a64642ad322830a9bf3925cfc5de39c82e96b9a9379013e1859b2",
+  "workingTreeSourceHashAfter": "5edd97a3468a64642ad322830a9bf3925cfc5de39c82e96b9a9379013e1859b2",
+  "log": "docs\\release-candidate\\dyn-budget-on.log"
+}

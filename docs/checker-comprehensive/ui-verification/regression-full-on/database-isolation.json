@@ -1,0 +1,10 @@
+{
+  "requestedPort": 3408,
+  "reached": {
+    "port": 3408,
+    "datadir": "C:\\Users\\JP Del Rosario\\AppData\\Local\\Temp\\claude\\c1b6183b01fcad24\\ea7d6514-277e-438b-b897-a55dc0e9f07f\\scratchpad\\isodb2\\",
+    "globalPacket": 16777216,
+    "sessionPacket": 16777216
+  },
+  "requiredMinPacket": 16777216
+}

@@ -1,0 +1,10 @@
+{
+  "confirmed": false,
+  "authorizedBy": "REPLACE_ONLY_AFTER_EXPLICIT_AUTHORIZATION",
+  "authorizationRecord": "RECORD_OF_USER_AND_INSTITUTIONAL_DECISION",
+  "migrationId": "lcup-po-2026-10-29",
+  "databaseIdentityHash": "FROM_REVIEWED_PLAN",
+  "beforeHash": "FROM_REVIEWED_BACKUP",
+  "programIds": [],
+  "institutionalApproval": "not_recorded"
+}

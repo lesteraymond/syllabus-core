@@ -8,7 +8,10 @@ const fit=require('./lessonfit');
 const {buildVerdict}=require('./verdict');
 const {namedValues}=require('./values');
 const {replayOptions}=require('./academicV2Replay');
-const {providerConfig}=require('./gemini');
+const {providerConfig,batchSizeOf}=require('./gemini');
+const costPlan=require('./costPlan');
+// The relationships the integrated pass asks: the seven confirmed weekly links and the existing course checks.
+const INCLUDED=new Set([...POLICY.weeklyTypes,'Course-CLO','CLO-PO','CLO-EGA','CLO-classification','Title-description','Description-plan']);
 const cloClassification=require('./cloClassification');
 const recommendationV2=require('./academicV2Recommendation');
 const v2Activation=require('./academicV2Activation');
@@ -18,6 +21,10 @@ const S='SUPPORTED_BY_SUPPLIED_EVIDENCE',R='REQUIRES_REVISION',F='FACULTY_REVIEW
 const DETERMINISTIC_REQUIREMENTS=new Set(['course.identity','course.fourCLOs','course.classificationLabels','schedule.weeks1to18','structure.requiredFields','references.APA7text']);
 const deterministicRequirement=r=>DETERMINISTIC_REQUIREMENTS.has(r.id)||r.id.startsWith('references:');
 const isV2=report=>report?.evaluationPolicy?.id===POLICY.id;
+// Why a relationship was not evaluated, in words an author can act on. Unlisted reasons stay as their code.
+const cloNumber=pair=>{const m=/^clo(\d+)-/.exec(pair.id||'');return m?'CLO '+(Number(m[1])+1):'this CLO';};
+const REASON_TEXT={clo_classification_missing:pair=>`The classification of ${cloNumber(pair)} is not saved, so whether its statement suits its classification was not evaluated, and no classification was assumed. Select a classification for this CLO in the CLO step, then check again.`};
+const reasonText=(pair,reason)=>REASON_TEXT[reason]?REASON_TEXT[reason](pair):reason;
 const error=message=>Object.assign(Error(message),{status:400,code:'academic_v2_offline_only',body:{code:'academic_v2_offline_only'}});
 function aggregate(records){
  const statuses=records.map(r=>r.status==='NOT_CHECKED'?N:r.status);
@@ -39,8 +46,10 @@ function record(pair,j,context,reason,{notChecked=false}={}){
  if(!hasContent(pair.source)||!hasContent(pair.target)){status=notChecked?'NOT_CHECKED':N;review.push('missing_evidence');}
  if(j?.draftReview?.length)review.push('recommendation_withheld');
  if(j?.correction&&j.correction.decision!=='NO_CHANGE')review.push('faculty_review_required');
- return {id:pair.id,relationshipType:pair.type,path:pair.path,sourceText:pair.source,targetText:pair.target,academicJudgment:j?.unverified||j?.label==='INSUFFICIENT_EVIDENCE'?null:j?.label||null,status,
-  evidence:{sourceQuote:j?.sourceQuote||'',targetQuote:j?.targetQuote||'',matching:j?.evidenceMatching||null},explanation:j?.explanation||reason||'This relationship has not been evaluated.',
+ const weeklyIndex=POLICY.weeklyTypes.indexOf(pair.type),rowIndex=/^row(\d+)-/.exec(pair.id||'');
+ const fields={'Content-course':['meta.title','contents'],'Content-ILO':['contents','ilos'],'ILO-CLO':['clos','ilos'],'Content-activity':['contents','activities'],'ILO-activity':['ilos','activities'],'Content-assessment':['contents','tasks'],'Activity-assessment':['activities','tasks']}[pair.type]||[null,null];
+ return {id:pair.id,relationshipType:pair.type,relationshipId:weeklyIndex<0?null:`VPAA-${String(weeklyIndex+1).padStart(2,'0')}`,path:pair.path,section:rowIndex?'plan':String(pair.path||'').split(/[.\[]/)[0]||null,week:rowIndex?context.rows.find(r=>r.i===Number(rowIndex[1]))?.row.week??null:null,sourceField:fields[0],targetField:fields[1],attempted:!!j?.attempted,reused:!!j?.reused,sourceText:pair.source,targetText:pair.target,academicJudgment:j?.unverified||j?.label==='INSUFFICIENT_EVIDENCE'?null:j?.label||null,status,
+  evidence:{sourceQuote:j?.sourceQuote||'',targetQuote:j?.targetQuote||'',matching:j?.evidenceMatching||null},explanation:j?.explanation||reasonText(pair,reason)||'This relationship has not been evaluated.',
   recommendedCorrection:j?.draftReview?.length||j?.correction&&!j.correction.draftOffered?null:j?.draft||null,recommendationType:j?.correction?.decision||j?.recommendation||null,
   correction:j?.correction||null,cloClassification:j?.cloClassification||null,classificationContext:pair.classificationContext||null,reviewRequirements:[...new Set(review)],
   aspects:j?.aspects||null,provenance:{policyVersion:POLICY.id,kind:context.runMode==='application'?'live-application':'offline-Claude-replay',liveModelCall:context.runMode==='application'?!!context.liveModelCall&&!!j:false,facultyValidated:false,inputHash:context.inputHash,referenceHash:context.referenceHash,promptVersion:j?.key?context.promptVersion:null},
@@ -98,6 +107,7 @@ async function evaluateWith(content,masters,options,coded,context,part,request,{
  for(const [id,type] of [['course.descriptionTitle','Title-description'],['course.descriptionContent','Description-plan'],['course.CLORelevance','Course-CLO'],['course.CLOClassificationMeaning','CLO-classification'],['week1.introduction','Week1-introduction']]){
   if(integrated&&id==='week1.introduction')continue;
   const scoped=records.filter(r=>r.relationshipType===type);requirements.push(criterion(id,scoped));
+  if(scoped.some(r=>r.reviewRequirements.includes('clo_classification_missing')))requirements.at(-1).reviewRequirements=['clo_classification_missing'];
  }
  const intro=requirements.find(r=>r.id==='week1.introduction');
  if(intro?.status===S&&context.rows.some(({row})=>require('./planrows').weeksIn(row.week).includes(1)&&require('./planrows').weeksIn(row.week).length>1)){intro.status=F;intro.reviewRequirements=['confirm_week1_timing_within_group'];}
@@ -130,7 +140,7 @@ async function evaluateWith(content,masters,options,coded,context,part,request,{
  const policy={...POLICY,active:false};
  const hardFailures=part.findings.filter(f=>f.severity==='blocking');
  const conformance={ok:!hardFailures.length,failed:hardFailures};
- const provenance=integrated?{kind:'live-application',liveModelCalls:alignment?.liveModelCalls||0,networkRequests:alignment?.requestBudget?.requests??alignment?.liveModelCalls??0,facultyValidated:false,inputHash:context.inputHash,referenceHash:context.referenceHash}:
+ const provenance=integrated?{kind:'live-application',liveModelCalls:alignment?.liveModelCalls||0,networkRequests:alignment?.liveModelCalls??0,facultyValidated:false,inputHash:context.inputHash,referenceHash:context.referenceHash}:
   {kind:'offline-Claude-replay',liveModelCalls:0,networkRequests:0,adapterRequests:adapter.requests(),facultyValidated:false,inputHash:context.inputHash,referenceHash:context.referenceHash};
  const segments=path=>String(path||'').replace(/\[(\d+)\]/g,'.$1').split('.');
  const getValue=(c,p)=>(!p||!c)?undefined:segments(p).reduce((v,k)=>(v===undefined||v===null?undefined:v[k]),c);
@@ -158,7 +168,7 @@ async function evaluateWith(content,masters,options,coded,context,part,request,{
    ['APA visual formatting and source authenticity are not established by plain text.','Mocked judgments demonstrate software behavior, not academic accuracy or faculty approval.'],
   ...(integrated?{}:{originalContext:{content:structuredClone(content),referenceHash:context.referenceHash}}),
   diagnostics:{iloAssessment:records.filter(r=>r.relationshipType==='ILO-assessment'),c2:records.filter(r=>r.relationshipType==='Assessment-fit'),c2Eligibility:c2,affectsDisposition:false}};
- if(integrated)return {version:POLICY.id,mode:'live-application',status:alignment?.status||'not_evaluated',contracts:{policy:POLICY.id,cloClassification:cloClassification.VERSION,recommendation:recommendationV2.VERSION},alignment:{status:alignment?.status||'not_evaluated',provider:alignment?.provider||null,model:alignment?.model||null,reason:alignment?.reason||'',promptVersion:context.promptVersion||null,liveModelCalls:provenance.liveModelCalls,requestBudget:alignment?.requestBudget||null},academic,suggestions};
+ if(integrated)return {version:POLICY.id,mode:'live-application',status:alignment?.status||'not_evaluated',contracts:{policy:POLICY.id,cloClassification:cloClassification.VERSION,recommendation:recommendationV2.VERSION},alignment:{status:alignment?.status||'not_evaluated',provider:alignment?.provider||null,model:alignment?.model||null,reason:alignment?.reason||'',promptVersion:context.promptVersion||null,liveModelCalls:provenance.liveModelCalls,requestBudget:alignment?.requestBudget||null,judgements:answers},academic,suggestions};
  return {standard:POLICY.id,evaluationPolicy:policy,status:'offline-preview',score:null,overall:null,passed:false,
   compliance:{policyVersion:'hybrid-2-compliance',ruleCount:47,score:part.base.overall,passThreshold:79,passed:part.base.passed,conformance,rulesConformance:part.base.conformance,findings:part.findings,codedChecks:part.checks},
   academic,
@@ -170,37 +180,82 @@ async function evaluate(content,masters,options,coded){
  const context=plan(content,masters),adapter=replayOptions(options.offlineReplay,context),part=coded(content,masters);
  const request=async(pairs,answers,ctx)=>{
   if(adapter.unavailable)return;
-  for(let i=0;i<pairs.length;i+=120){const result=await align(content,masters,{...adapter,pairs:pairs.slice(i,i+120)});ctx.promptVersion=result.promptVersion;answers.push(...(result.judgements||[]));}
+  const seen=new Set(answers.map(j=>j?.id).filter(Boolean));
+  for(let i=0;i<pairs.length;i+=120){
+   const slice=pairs.slice(i,i+120).filter(pair=>!seen.has(pair.id));
+   if(!slice.length)continue;
+   const result=await align(content,masters,{...adapter,pairs:slice});
+   ctx.promptVersion=result.promptVersion||ctx.promptVersion;
+   for(const j of result.judgements||[])if(j?.id&&!seen.has(j.id)){seen.add(j.id);answers.push(j);}
+  }
  };
  return evaluateWith(content,masters,options,coded,context,part,request,{adapter});
 }
+const STOP_KINDS=new Set(['request_budget','request_cancelled','provider_access','provider_budget','provider_quota','not_configured','duplicate_relationship_id']);
+const uncheckedOf=(pair,kind='not_checked')=>({id:pair.id,type:pair.type,path:pair.path,targetPath:pair.targetPath,label:'INSUFFICIENT_EVIDENCE',unverified:true,failureKind:kind,
+ explanation:'The AI did not answer for this relationship, so it has not been checked yet. Run the check again after resolving the request failure.',
+ sourceQuote:'',targetQuote:'',evidenceMatching:{source:'not_evaluated',target:'not_evaluated'},sourceBloom:'N/A',targetBloom:'N/A',draft:'',attempted:false});
 async function evaluateIntegrated(content,masters,coded,options={}){
  const env=options.env||process.env;
  if(!v2Activation.enabled(env))throw error('Policy V2 application checking is disabled; enable its explicit server configuration flag first.');
  const context=plan(content,masters),part=coded(content,masters);
  // The integrated pass asks only the seven confirmed weekly links and the existing course checks. Stage D1 values and optional diagnostics stay in their existing checker path.
- const included=new Set([...POLICY.weeklyTypes,'Course-CLO','CLO-PO','CLO-EGA','CLO-classification','Title-description','Description-plan']);
- context.pairs=context.pairs.filter(pair=>included.has(pair.type));
+ context.pairs=context.pairs.filter(pair=>INCLUDED.has(pair.type));
  context.pairs=cloClassification.prepare(context.pairs,content,cloClassification.VERSION,masters);
  const flagsOff={...env,SYLLABUS_CHECK_STAGE_A:'off',SYLLABUS_CHECK_STAGE_B:'off',SYLLABUS_CHECK_STAGE_B3:'off',SYLLABUS_CHECK_STAGE_B4:'off',SYLLABUS_CHECK_STAGE_C1:'off',SYLLABUS_CHECK_STAGE_C2:'off',SYLLABUS_CHECK_STAGE_C3:'off',SYLLABUS_CHECK_STAGE_D1:'off',SYLLABUS_CHECK_STAGE_D2:'off',SYLLABUS_CHECK_REQUIREMENTS_ADVICE:'off'};
  const requestBudget=options.requestBudget||createRequestBudget(flagsOff);
- const configured=providerConfig(flagsOff),canCall=configured.provider==='anthropic'&&configured.configured;
- let answers=[];let liveModelCalls=0,reason=canCall?'':'Policy V2 requires the explicitly approved Claude provider; no academic AI request was sent.';
+ const sentBefore=requestBudget.summary().requests; // requests already sent by the legacy run that shares this budget
+ const configured=providerConfig(flagsOff),canCall=options.useAi!==false&&configured.provider==='anthropic'&&configured.configured;
+ let answers=[];let reason=canCall?'':options.useAi===false?'AI was explicitly disabled for this check; no Policy V2 model request was sent.':'Policy V2 requires the explicitly approved Claude provider; no academic AI request was sent.';
  const request=async(pairs,out,ctx)=>{
   answers=out;
   if(!canCall)return;
+  const seen=new Set(out.map(j=>j?.id).filter(Boolean));
+  const chunkReasons=[];
+  let stopKind=null;
   for(let i=0;i<pairs.length;i+=120){
-   const result=await align(content,masters,{env:flagsOff,...(options.transport?{transport:options.transport}:{}),requestBudget,signal:options.signal,pairs:pairs.slice(i,i+120),skipEmpty:false,
+   const slice=pairs.slice(i,i+120).filter(pair=>!seen.has(pair.id));
+   if(!slice.length)continue;
+   if(stopKind){
+    for(const pair of slice){seen.add(pair.id);out.push(uncheckedOf(pair,stopKind));}
+    continue;
+   }
+   const result=await align(content,masters,{env:flagsOff,...(options.transport?{transport:options.transport}:{}),requestBudget,reuse:options.reuse,signal:options.signal,pairs:slice,skipEmpty:false,
     academicPolicy:POLICY.id,integratedAcademic:true,cloClassification:cloClassification.VERSION,recommendation:recommendationV2.VERSION});
-    ctx.promptVersion=result.promptVersion||ctx.promptVersion;out.push(...(result.judgements||[]));
-   liveModelCalls+=result.reuse?.requests||0;if(result.reason)reason=reason?`${reason} ${result.reason}`:result.reason;
-   if(result.failure&&!['invalid_output','insufficient_text'].includes(result.failure.kind))break;
+   ctx.promptVersion=result.promptVersion||ctx.promptVersion;
+   for(const j of result.judgements||[])if(j?.id&&!seen.has(j.id)){seen.add(j.id);out.push(j);}
+   for(const pair of slice)if(!seen.has(pair.id)){seen.add(pair.id);out.push(uncheckedOf(pair,result.failure?.kind||'not_checked'));}
+   if(result.reason&&!/^\d+ of \d+ relationships could not be verified\./.test(result.reason)&&!chunkReasons.includes(result.reason))chunkReasons.push(result.reason);
+   if(requestBudget.summary().exhausted)stopKind='request_budget';
+   else if(options.signal?.aborted)stopKind='request_cancelled';
+   else if(result.failure&&(STOP_KINDS.has(result.failure.kind)||(result.status==='not_evaluated'&&!['invalid_output','insufficient_text'].includes(result.failure.kind)&&!(result.coverage?.verified>0))))stopKind=result.failure.kind;
   }
+  const unverifiedCount=out.filter(j=>j?.unverified||j?.label==='INSUFFICIENT_EVIDENCE').length;
+  if(chunkReasons.length)reason=chunkReasons.join(' ');
+  else if(unverifiedCount>0)reason=`${unverifiedCount} of ${pairs.length} relationships could not be verified. Click Re-Check again.`;
  };
  const expected=()=>context.pairs.filter(pair=>!context.unavailable.has(pair.id));
  const evaluated=()=>{const byId=new Map(answers.map(j=>[j.id,j]));return expected().filter(pair=>{const j=byId.get(pair.id);return j&&!j.unverified&&j.label!=='INSUFFICIENT_EVIDENCE';}).length;};
- const alignment={get status(){const total=expected().length,checked=evaluated();return total&&checked===total?'completed':checked?'partially_evaluated':'not_evaluated';},provider:canCall?configured.provider:configured.provider||null,model:canCall?configured.model||null:null,
-  get reason(){return reason;},get liveModelCalls(){return liveModelCalls;},get requestBudget(){return requestBudget.summary();}};
+ const requiredComplete=()=>{
+  const exp=expected(),byId=new Map(answers.map(j=>[j.id,j]));
+  return exp.length>0&&answers.length===exp.length&&exp.every(pair=>{
+   const j=byId.get(pair.id);
+   return Boolean(j&&!j.unverified&&j.label!=='INSUFFICIENT_EVIDENCE');
+  });
+ };
+ const alignment={get status(){const total=expected().length,checked=evaluated();return total&&checked===total&&requiredComplete()?'completed':checked?'partially_evaluated':'not_evaluated';},provider:canCall?configured.provider:configured.provider||null,model:canCall?configured.model||null:null,
+  get reason(){return reason;},get liveModelCalls(){return requestBudget.summary().requests-sentBefore;},get requestBudget(){return requestBudget.summary();}};
  return evaluateWith(content,masters,options,coded,context,part,request,{runMode:'application',alignment,notChecked:true,integrated:true});
 }
-module.exports={POLICY,isV2,plan,evaluate,evaluateIntegrated,aggregate};
+// The upper bound of provider requests the required integrated evaluation sends (one per batch of relationships), for the shared budget's planning hold.
+// Reuse can only lower it; it never counts optional work.
+function plannedRequests(content,masters,env=process.env){
+ const context=plan(content,masters);
+ const pairs=cloClassification.prepare(context.pairs.filter(pair=>INCLUDED.has(pair.type)),content,cloClassification.VERSION,masters).filter(pair=>!context.unavailable.has(pair.id));
+ const flagsOff={...env,SYLLABUS_CHECK_STAGE_A:'off',SYLLABUS_CHECK_STAGE_B:'off',SYLLABUS_CHECK_STAGE_B3:'off',SYLLABUS_CHECK_STAGE_B4:'off',SYLLABUS_CHECK_STAGE_C1:'off',SYLLABUS_CHECK_STAGE_C2:'off',SYLLABUS_CHECK_STAGE_C3:'off',SYLLABUS_CHECK_STAGE_D1:'off',SYLLABUS_CHECK_STAGE_D2:'off',SYLLABUS_CHECK_REQUIREMENTS_ADVICE:'off'};
+ // The same cutting as align (costPlan.planBatches): the existing fixed-size batches unless SYLLABUS_CHECK_V2_GROUPING selects week grouping.
+ const size=batchSizeOf(providerConfig(flagsOff).model,flagsOff),grouping=costPlan.groupingOf(env);let total=0;
+ for(let i=0;i<pairs.length;i+=120)total+=costPlan.countBatches(pairs.slice(i,i+120),size,grouping);
+ return total;
+}
+module.exports={POLICY,isV2,plan,evaluate,evaluateIntegrated,aggregate,plannedRequests};

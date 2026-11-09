@@ -206,3 +206,27 @@ test('the list and the progress say a deadline is settled once everyone submitte
   db.state.users[9] = ['Ida', 'Tan']; db.state.assigned.push([9, 10]);                                                       // a new person is assigned
   assert.equal((await d.listForAdmin(db, now))[0].settled, false);
 });
+
+// An administrator has deadlines too: on a subject assigned to them (they can be assigned subjects like faculty), and on a subject they are writing a
+// syllabus for without having it assigned. Their submission is when they SENT it for review (the 'submit' log), not a saved version: checking their own
+// syllabus in the AI Checker saves one before they send it.
+test('an administrator is held to a deadline on an assigned subject and on a subject they are writing, counted from sending it for review', async () => {
+  const db = makeDb();
+  db.state.users[1] = ['Diana', 'Evale']; db.state.users[2] = ['Ann', 'Dean'];
+  db.state.roles = { 1: 'admin', 2: 'admin' };
+  db.state.assigned.push([1, 20]);                 // the administrator assigned CS 101
+  db.state.adminSyllabi.push([2, 10]);             // another administrator writing IT 204, not assigned
+  const form = { term: '2026-2027 · 1st Sem', dueAt: new Date(DUE).toISOString() };
+  const it204 = (await d.createDeadline(db, 1, 10, form, NOW)).deadline.id;
+  const cs101 = (await d.createDeadline(db, 1, 20, form, NOW)).deadline.id;
+  submit(db, 2, 10, NOW + HOUR);                   // a saved version (the AI check): not a submission for an administrator
+  const people = async (id) => (await d.progress(db, id, NOW + 2 * HOUR)).people.map((p) => [p.userId, p.status]);
+  assert.deepStrictEqual((await people(it204)).find(([u]) => u === 2), [2, 'upcoming'], 'writing it: on the list, not submitted yet');
+  assert.deepStrictEqual((await people(cs101)).map(([u]) => u).sort(), [1, 8], 'assigned: on the list with the faculty member');
+  db.state.adminSubmits.push({ user: 2, course: 10, at: NOW + 3 * HOUR }); // sent for review
+  assert.deepStrictEqual((await people(it204)).find(([u]) => u === 2), [2, 'submitted']);
+  // their own list: the assigned subject and the one they are writing
+  assert.deepStrictEqual((await d.mine(db, 1, NOW, { admin: true })).map((x) => x.id), [cs101]);
+  assert.deepStrictEqual((await d.mine(db, 2, NOW + 4 * HOUR, { admin: true })).map((x) => [x.id, x.status]), [[it204, 'submitted']]);
+  assert.deepStrictEqual((await d.mine(db, 5, NOW)).map((x) => x.id), [it204], 'a faculty member\'s list is as before');
+});

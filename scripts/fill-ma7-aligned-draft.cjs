@@ -96,9 +96,10 @@ function alignedContent(before, institution, program) {
   const backupDir = path.join(root, '.api-test-backups'); await fs.mkdir(backupDir, { recursive: true });
   const backup = path.join(backupDir, `ma7-before-aligned-draft-${id}-${Date.now()}.json`);
   await fs.writeFile(backup, JSON.stringify(before, null, 2), { flag: 'wx' });
-  assert.deepEqual((await request(`/syllabi/${id}/content`)).content, before.content, 'Concurrent edit; refusing overwrite.');
+  const latestForSave = await request(`/syllabi/${id}/content`);
+  assert.deepEqual(latestForSave.content, before.content, 'Concurrent edit; refusing overwrite.');
   const keys = ['outcomes', 'description', 'clos', 'plan', 'reqs', 'grading'];
-  await request(`/syllabi/${id}/content`, 'PUT', { schemaVersion: 3, sections: Object.fromEntries(keys.map(key => [key, d[key]])) });
+  await request(`/syllabi/${id}/content`, 'PUT', { schemaVersion: 3, sections: Object.fromEntries(keys.map(key => [key, d[key]])), baseRevisions: latestForSave.revisions });
   const saved = await request(`/syllabi/${id}/content`);
   for (const key of keys) assert.deepEqual(saved.content[key], d[key], `Saved ${key}`);
   assert.deepEqual(saved.content.meta, before.content.meta);

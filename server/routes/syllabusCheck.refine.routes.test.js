@@ -1,3 +1,4 @@
+process.env.SESSION_SECRET = process.env.SESSION_SECRET || 'existing-suite-test-secret-0123456789'; // verification tokens are signed only with a configured secret
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const express = require('express');
@@ -19,7 +20,8 @@ const network = (calls) => async (url, request) => {
   return Array.isArray(payload) ? reply({ judgements: payload.map(verdict) }) : reply({ text: 'rewritten [fit]' });
 };
 
-async function harness(t, { status = 'draft' } = {}) {
+// aiChecking: the administrator's switch as saved (lib/adminSettings.js); left out, the settings are not readable here and AI checking counts as on.
+async function harness(t, { status = 'draft', aiChecking } = {}) {
   const saved = {};
   for (const [key, value] of Object.entries(ENV)) { saved[key] = process.env[key]; process.env[key] = value; }
   t.after(() => { for (const [key, value] of Object.entries(saved)) { if (value === undefined) delete process.env[key]; else process.env[key] = value; } });
@@ -39,6 +41,7 @@ async function harness(t, { status = 'draft' } = {}) {
   app.locals.db = { query: async (sql, params) => {
     if (sql.startsWith('SELECT user_id FROM users')) return [[{ user_id: params[0] }]];
     if (sql.startsWith('SELECT s.*, r.run_id')) return [[{ syllabus_id: 100, user_id: 26, status, content: JSON.stringify(content) }]];
+    if (aiChecking !== undefined && sql.includes("setting_key = 'administration'")) return [[{ setting_value: JSON.stringify({ aiChecking }) }]];
     throw Error('Unexpected query: ' + sql);
   } };
   app.use((req, res, next) => { const who = req.headers['x-test-role']; req.session = who ? { user: { id: who === 'admin' ? 1 : who === 'other' ? 27 : 26, role: who === 'admin' ? 'admin' : 'faculty' } } : {}; next(); });
@@ -105,4 +108,23 @@ test('an AI provider failure is a 502 with the reason, not a verdict', async (t)
   const res = await call('faculty');
   assert.equal(res.status, 502);
   assert.match(res.body.error, /429/);
+});
+
+// The administrator turned AI checking off (Settings > AI & Notifications; lib/adminSettings.js): checking a recommendation is only an AI request,
+// so it is refused before anything is sent. With AI checking on it works as before.
+test('with AI checking turned off in Settings, checking a recommendation is refused and nothing is sent to the AI', async (t) => {
+  const { call, calls } = await harness(t, { aiChecking: false });
+  const before = calls.length;
+  const res = await call('faculty');
+  assert.equal(res.status, 409);
+  assert.equal(res.body.code, 'ai_checking_off');
+  assert.match(res.body.error, /AI compliance checking is turned off in Settings/);
+  assert.equal(calls.length, before, 'no AI request');
+});
+
+test('with AI checking on in Settings the author still gets a verified rewrite', async (t) => {
+  const { call } = await harness(t, { aiChecking: true });
+  const res = await call('faculty');
+  assert.equal(res.status, 200, JSON.stringify(res.body));
+  assert.equal(res.body.status, 'verified');
 });

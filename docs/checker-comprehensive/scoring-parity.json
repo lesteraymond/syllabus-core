@@ -1,0 +1,76 @@
+{
+  "weights": [
+    {
+      "key": "template",
+      "name": "Format Compliance",
+      "weight": 20,
+      "stage": 1
+    },
+    {
+      "key": "completeness",
+      "name": "Content Completeness",
+      "weight": 20,
+      "stage": 2
+    },
+    {
+      "key": "co_po",
+      "name": "CO–PO Alignment",
+      "weight": 20,
+      "stage": 2
+    },
+    {
+      "key": "assessment",
+      "name": "Assessment Alignment",
+      "weight": 15,
+      "stage": 2
+    },
+    {
+      "key": "contact_hours",
+      "name": "Contact Hours",
+      "weight": 10,
+      "stage": 2
+    },
+    {
+      "key": "reference_currency",
+      "name": "Reference Currency",
+      "weight": 15,
+      "stage": 2
+    }
+  ],
+  "threshold": 79,
+  "observed": [
+    {
+      "key": "score",
+      "legacy": 100,
+      "comprehensive": 100,
+      "equal": true
+    },
+    {
+      "key": "baseScore",
+      "legacy": 100,
+      "comprehensive": 100,
+      "equal": true
+    },
+    {
+      "key": "passed",
+      "legacy": true,
+      "comprehensive": true,
+      "equal": true
+    },
+    {
+      "key": "passThreshold",
+      "legacy": 79,
+      "comprehensive": 79,
+      "equal": true
+    },
+    {
+      "key": "deductions",
+      "legacy": [],
+      "comprehensive": [],
+      "equal": true
+    }
+  ],
+  "additionalEvidence": "comprehensive.conformance.test.js: four scored-label cases; coded-rules.conformance.test.js: grouping, deductions, threshold, gates; existing route conformance and authorization tests",
+  "formulaChanged": false,
+  "gatesChanged": false
+}

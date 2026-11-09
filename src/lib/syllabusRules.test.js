@@ -15,7 +15,7 @@ test('client and server deletion permissions agree: faculty own drafts only; adm
     for (const status of ['draft', 'submitted', 'under_review', 'for_revision', 'approved', 'rejected']) {
       for (const ownerId of [5, 6]) {
         const user = { id: 5, role };
-        const expected = role === 'admin' ? ownerId === 5 || status !== 'draft' : role === 'faculty' && ownerId === 5 && status === 'draft';
+        const expected = status !== 'approved' && (role === 'admin' ? ownerId === 5 || status !== 'draft' : role === 'faculty' && ownerId === 5 && status === 'draft');
         assert.strictEqual(canDeleteSyllabus(user, { userId: ownerId, status }), expected);
         assert.strictEqual(serverRules.canDelete(user, { user_id: ownerId, status }), expected);
       }

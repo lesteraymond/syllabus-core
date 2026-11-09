@@ -1,0 +1,177 @@
+{
+  "status": "incomplete-original",
+  "before": {
+    "publishedScore": null,
+    "deterministicBaseline": 96,
+    "diagnosticScore": 81,
+    "alignment": "not_evaluated",
+    "coverage": {
+      "total": 139,
+      "verified": 0
+    },
+    "labels": {
+      "UNVERIFIED": 139
+    },
+    "deductions": [
+      {
+        "id": "LINK:https://www.w3schools.com/java/default.asp",
+        "points": 2,
+        "reason": "unchecked",
+        "kind": "link",
+        "path": "refs:https://www.w3schools.com/java/default.asp"
+      },
+      {
+        "id": "LINK:https://www.codecademy.com/learn/learn-java",
+        "points": 2,
+        "reason": "unchecked",
+        "kind": "link",
+        "path": "refs:https://www.codecademy.com/learn/learn-java"
+      },
+      {
+        "id": "LINK:https://www.programiz.com/java-programming",
+        "points": 2,
+        "reason": "unchecked",
+        "kind": "link",
+        "path": "refs:https://www.programiz.com/java-programming"
+      },
+      {
+        "id": "LINK:https://www.tutorialspoint.com/java/index.htm",
+        "points": 2,
+        "reason": "unchecked",
+        "kind": "link",
+        "path": "refs:https://www.tutorialspoint.com/java/index.htm"
+      },
+      {
+        "id": "LINK:https://beginnersbook.com/java-tutorial-for-beginners-with-",
+        "points": 2,
+        "reason": "unchecked",
+        "kind": "link",
+        "path": "refs:https://beginnersbook.com/java-tutorial-for-beginners-with-"
+      },
+      {
+        "id": "LINK:https://doi.org/10.1109/tse.2023.3241639",
+        "points": 2,
+        "reason": "unchecked",
+        "kind": "link",
+        "path": "refs:https://doi.org/10.1109/tse.2023.3241639"
+      },
+      {
+        "id": "LINK:https://doi.org/10.1108/IJWIS-08-2019-0038",
+        "points": 2,
+        "reason": "unchecked",
+        "kind": "link",
+        "path": "refs:https://doi.org/10.1108/IJWIS-08-2019-0038"
+      },
+      {
+        "id": "VALUE:plan[3].values",
+        "points": 1,
+        "reason": "Missing core value",
+        "kind": "value",
+        "path": "plan[3].values"
+      }
+    ],
+    "suggestions": 2,
+    "reason": "not sent: 1 rate limit(s), timeout(s), network or server error(s) (the last: network: fetch failed) (batch 3/12; 0/139 relationships verified)."
+  },
+  "usage": {
+    "requests": 1,
+    "thisRun": 1,
+    "model": 1,
+    "priceLookups": 0,
+    "keyChecks": 0,
+    "invalidAnswers": 0,
+    "unproductiveInARow": 0,
+    "transient": 1,
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "cachedTokens": 0,
+    "reportedCost": 0,
+    "charged": 0.23008425,
+    "accounting": {
+      "rule": "reconcile",
+      "requests": {
+        "reconciled": 0,
+        "conservative": 0,
+        "worst_case": 1,
+        "refused": 0
+      },
+      "chargedConservatively": 0.23008425
+    },
+    "warnings": [],
+    "limits": {
+      "maxRequests": 60,
+      "maxCost": 2,
+      "maxTransient": 1,
+      "maxInvalid": null,
+      "warnInvalid": null,
+      "maxUnproductive": null,
+      "maxTokens": null
+    },
+    "stopped": "1 rate limit(s), timeout(s), network or server error(s) (the last: network: fetch failed)",
+    "anthropic": {
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "prices": {
+        "model": "claude-sonnet-5-5",
+        "asOf": "2026-10-27",
+        "geoFactor": 1.1,
+        "perMillionTokens": {
+          "input": 2,
+          "output": 10,
+          "cacheRead": 0.2,
+          "listedCacheRead": 0.1,
+          "cacheWrite5m": 2.5,
+          "cacheWrite1h": 4
+        }
+      },
+      "modelsReturned": {},
+      "inputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "cacheReadInputTokens": 0,
+      "outputTokens": 0,
+      "thinkingTokens": 0,
+      "thinkingReports": {
+        "nonzero": 0,
+        "zero": 0,
+        "unavailable": 1
+      },
+      "thinkingBlocks": 0,
+      "atListPrices": 0,
+      "estimatedCost": 0,
+      "notEstimated": 1,
+      "chargedThisRun": 0.23008425,
+      "outputTokensCharged": 16000,
+      "stopReasons": {},
+      "refusalCategories": {},
+      "inferenceGeo": {},
+      "serviceTier": {},
+      "errors": {
+        "network": 1
+      },
+      "latencyMs": null,
+      "limits": {
+        "maxOutputTokens": null,
+        "register": {
+          "cap": 10,
+          "chargedByEveryLedger": 1.67224335
+        }
+      }
+    }
+  },
+  "source": {
+    "key": "prog1",
+    "label": "BSIT - IT 202 Computer Programming 1",
+    "pdf": "C:\\Users\\JP Del Rosario\\Syllabus-Repository\\reference-data\\IT-202-Programming-1.pdf",
+    "sha256": "6376fe94981ae65f25054234e1ae63cd50be8f70f12b774ea72949e07d561845",
+    "caveat": "Application PDF import into a fixture-backed builder document; catalog code/year and institutional outcomes come from local reference transcriptions. Some untouched template fields may be defaults. Not an audit of the original PDF as a complete document."
+  },
+  "skippedLinks": [
+    "https://www.w3schools.com/java/default.asp",
+    "https://www.codecademy.com/learn/learn-java",
+    "https://www.programiz.com/java-programming",
+    "https://www.tutorialspoint.com/java/index.htm",
+    "https://beginnersbook.com/java-tutorial-for-beginners-with-",
+    "https://doi.org/10.1109/tse.2023.3241639",
+    "https://doi.org/10.1108/IJWIS-08-2019-0038"
+  ]
+}

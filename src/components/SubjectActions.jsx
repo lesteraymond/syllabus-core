@@ -6,36 +6,39 @@ import { useModalLayer } from './useModalLayer';
 import { useActionExit } from '../lib/catalogMotion';
 import { courses as coursesApi } from '../lib/api';
 import { t, tr } from '../i18n';
+import CurriculumYearField from './CurriculumYearField';
+import { normalizeCurriculumYear } from '../lib/subjectTerm';
 
 // Edit and delete for one subject, from its row in the Subjects table (they used to be the "Subject Details" card inside the subject
-// modal). Same calls as before: coursesApi.update(id, { code, title }) and coursesApi.remove(id). The dialogs follow the Programs card's
+// modal). Same calls as before: coursesApi.update(id, { code, title, curriculumYear }) and coursesApi.remove(id). The dialogs follow the Programs card's
 // dialogs (catalog motion, modal layer, Esc and outside click close them) so the page behaves the same in both places.
 
 // The two icon buttons of a row. The row itself opens the subject on click or Enter, so these keep their own clicks and keys to themselves.
-export function SubjectRowActions({ subject, onEdit, onDelete }) {
+export function SubjectRowActions({ subject, onEdit, onDelete, readOnly = false }) {
   const own = (action) => ({ onClick: (e) => { e.stopPropagation(); action(); }, onKeyDown: (e) => e.stopPropagation() });
   return <div className="sm-actions">
-    <button type="button" className="icon-btn" title={t('subjects.edit')} aria-label={t('subjects.editTitle', { code: subject.code })} {...own(onEdit)}><Icon name="pencilSquare" size={18} /></button>
-    <button type="button" className="icon-btn is-delete" title={t('subjects.delete')} aria-label={t('subjects.deleteTitle', { code: subject.code })} {...own(onDelete)}><Icon name="bin" size={18} /></button>
+    <button type="button" className="icon-btn" disabled={readOnly} title={t('subjects.edit')} aria-label={t('subjects.editTitle', { code: subject.code })} {...own(onEdit)}><Icon name="pencilSquare" size={18} /></button>
+    <button type="button" className="icon-btn is-delete" disabled={readOnly} title={t('subjects.delete')} aria-label={t('subjects.deleteTitle', { code: subject.code })} {...own(onDelete)}><Icon name="bin" size={18} /></button>
   </div>;
 }
 
-export function SubjectDialog({ subject, mode, onClose, onComplete }) {
+export function SubjectDialog({ subject, mode, onClose, onComplete, curriculumOptions = [], references = [] }) {
   const dialog = useRef(null);
   const inFlight = useRef(false);
   const motion = useActionExit(dialog);
-  const [head, setHead] = useState({ code: subject.code, title: subject.title });
+  const [head, setHead] = useState({ code: subject.code, title: subject.title, curriculumYear: subject.curriculumYear || '' });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const close = () => { if (!inFlight.current) motion.dismiss(onClose); };
   useModalLayer(dialog, close);
-  const valid = !!(head.code.trim() && head.title.trim());
+  const valid = !!(head.code.trim() && head.title.trim()) && (!head.curriculumYear.trim() || !!normalizeCurriculumYear(head.curriculumYear));
+  const curriculumChanged = (normalizeCurriculumYear(head.curriculumYear) || null) !== (subject.curriculumYear || null);   // sent only when changed: an unchanged subject is saved exactly as before
   const submit = async (event) => {
     event.preventDefault();
     if (inFlight.current || motion.isClosing() || (mode === 'edit' && !valid)) return;
     inFlight.current = true; setBusy(true); setError('');
     try {
-      if (mode === 'edit') await coursesApi.update(subject.id, head);
+      if (mode === 'edit') await coursesApi.update(subject.id, { code: head.code, title: head.title, ...(curriculumChanged ? { curriculumYear: normalizeCurriculumYear(head.curriculumYear) } : {}) });
       else await coursesApi.remove(subject.id);
       await motion.dismiss(() => onComplete(mode));
     } catch (e) { setError(tr(e.message)); }
@@ -51,6 +54,7 @@ export function SubjectDialog({ subject, mode, onClose, onComplete }) {
         {editing && <div className="program-edit-fields">
           <label className="field"><span>{t('ui.subject_code_8e42db')}</span><input className="mono" value={head.code} maxLength={50} required disabled={busy || motion.closing} onChange={(e) => setHead({ ...head, code: e.target.value })} /></label>
           <label className="field"><span>{t('ui.subject_title_dce28f')}</span><input value={head.title} maxLength={255} required disabled={busy || motion.closing} onChange={(e) => setHead({ ...head, title: e.target.value })} /></label>
+          <CurriculumYearField value={head.curriculumYear} onChange={(v) => setHead({ ...head, curriculumYear: v })} options={curriculumOptions} references={references} program={subject.program} disabled={busy || motion.closing} />
         </div>}
         {error && <p className="form-error" role="alert">{error}</p>}
         <div className="confirm-actions">

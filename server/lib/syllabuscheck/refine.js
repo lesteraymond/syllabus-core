@@ -168,6 +168,15 @@ function relatedContextHash(content, masters, path) {
   }
 }
 
+// The signing secret of a Check & Improve token (DEF-04). Only a configured SESSION_SECRET of at least 16 characters counts: there is no built-in fallback,
+// and the constant this file used to fall back to is public, so it is refused even when supplied. Without a secret nothing is signed or accepted.
+const { isStrongSecret } = require('../sessionSecret'); // one rule for every signing secret: at least 16 varied characters, not a publicly known default
+// (the former built-in constant is in that list of publicly known defaults, so it is refused even when supplied)
+const SECRET_MESSAGE = 'Verification signing is not configured on this server: set SESSION_SECRET (at least 16 characters). Check & Improve and Policy V2 acceptance are unavailable until it is.';
+function signingSecret(secret = process.env.SESSION_SECRET) {
+  const value = String(secret ?? '').trim();
+  return isStrongSecret(value) ? value : null;
+}
 function createVerificationToken({ runId, suggestionId, syllabusId, path, originalValue, replacement, contextHash, ttlMs = 15 * 60 * 1000 }, secret) {
   const now = Date.now();
   const payload = {
@@ -181,7 +190,8 @@ function createVerificationToken({ runId, suggestionId, syllabusId, path, origin
     issuedAt: now,
     expiresAt: now + ttlMs
   };
-  const key = secret || process.env.SESSION_SECRET || 'syllabus-academic-verification-secret';
+  const key = signingSecret(secret);
+  if (!key) throw Object.assign(Error(SECRET_MESSAGE), { status: 503, code: 'verification_secret_not_configured' });
   const hmac = crypto.createHmac('sha256', key);
   hmac.update(JSON.stringify(payload));
   const sig = hmac.digest('hex');
@@ -193,7 +203,8 @@ function verifyVerificationToken(token, expected = {}, secret) {
   try {
     const raw = Buffer.from(token, 'base64url').toString('utf8');
     const { payload, sig } = JSON.parse(raw);
-    const key = secret || process.env.SESSION_SECRET || 'syllabus-academic-verification-secret';
+    const key = signingSecret(secret);
+    if (!key) return { valid: false, reason: 'secret_not_configured' };
     const hmac = crypto.createHmac('sha256', key);
     hmac.update(JSON.stringify(payload));
     const expectedSig = hmac.digest('hex');
@@ -231,4 +242,4 @@ function verifyVerificationToken(token, expected = {}, secret) {
   }
 }
 
-module.exports = { refineSuggestion, verify, requirementsFor, getValue, setValue, FIELD, REWRITE_PROMPT, createVerificationToken, verifyVerificationToken, relatedContextHash };
+module.exports = { refineSuggestion, verify, requirementsFor, getValue, setValue, FIELD, REWRITE_PROMPT, createVerificationToken, verifyVerificationToken, relatedContextHash, signingSecret, SECRET_MESSAGE };

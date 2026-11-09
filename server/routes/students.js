@@ -13,6 +13,7 @@ const multer = require('multer');
 const sharp = require('sharp');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { inTransaction, httpError, sendError } = require('../lib/http');
+const { pastCourseIds } = require('../lib/academicYear');
 const { PRIVATE_ROOT } = require('../lib/avatar');
 const { readText } = require('../lib/corOcr');
 const { parseCor } = require('../lib/corParser');
@@ -61,7 +62,9 @@ router.post('/scan', rateLimit, upload.single('cor'), async (req, res) => {
 
 // Courses of the catalog that a COR subject matches: by code (spaces and case ignored), else by exact title.
 async function matchCourses(db, subjects) {
-  const [courses] = await db.query('SELECT course_id, code, title FROM courses');
+  const [all] = await db.query('SELECT course_id, code, title FROM courses');
+  const past = await pastCourseIds(db); // a student matches the current academic year's subjects
+  const courses = all.filter((c) => !past.has(c.course_id));
   const key = (s) => String(s).toUpperCase().replace(/[^A-Z0-9]/g, '');
   const byCode = new Map(courses.map((c) => [key(c.code), c.course_id]));
   const byTitle = new Map(courses.map((c) => [key(c.title), c.course_id]));

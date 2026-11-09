@@ -1,0 +1,954 @@
+{
+  "capturedAt": "2026-11-04T21:06:27.196Z",
+  "registered": [
+    {
+      "id": "T-01",
+      "area": "template",
+      "step": "info",
+      "severity": "blocking",
+      "weight": 3,
+      "check": "nonEmpty",
+      "params": {
+        "path": "meta.code"
+      },
+      "message": "Course code (I) is empty.",
+      "fix": "Enter the course code"
+    },
+    {
+      "id": "T-02",
+      "area": "template",
+      "step": "info",
+      "severity": "blocking",
+      "weight": 3,
+      "check": "nonEmpty",
+      "params": {
+        "path": "meta.title"
+      },
+      "message": "Course title (II) is empty.",
+      "fix": "Enter the course title"
+    },
+    {
+      "id": "T-03",
+      "area": "template",
+      "step": "info",
+      "severity": "blocking",
+      "weight": 2,
+      "check": "nonEmpty",
+      "params": {
+        "path": "meta.program"
+      },
+      "message": "Program is empty.",
+      "fix": "Choose the program"
+    },
+    {
+      "id": "T-04",
+      "area": "template",
+      "step": "info",
+      "severity": "blocking",
+      "weight": 3,
+      "check": "nonEmpty",
+      "params": {
+        "path": "description",
+        "items": "t"
+      },
+      "message": "Course description (III) is empty.",
+      "fix": "Write the course description"
+    },
+    {
+      "id": "T-05",
+      "area": "template",
+      "step": "info",
+      "severity": "blocking",
+      "weight": 2,
+      "check": "nonEmpty",
+      "params": {
+        "path": "meta.prereq"
+      },
+      "message": "Pre-requisite (IV) is empty.",
+      "fix": "Enter the pre-requisite"
+    },
+    {
+      "id": "T-06",
+      "area": "template",
+      "step": "info",
+      "severity": "blocking",
+      "weight": 2,
+      "check": "nonEmpty",
+      "params": {
+        "paths": [
+          "meta.lecture",
+          "meta.lab"
+        ],
+        "numeric": true
+      },
+      "message": "Lecture and laboratory units (V) are not both entered.",
+      "fix": "Enter the lecture and laboratory units"
+    },
+    {
+      "id": "T-07",
+      "area": "template",
+      "step": "clos",
+      "severity": "blocking",
+      "weight": 3,
+      "check": "nonEmpty",
+      "params": {
+        "path": "clos",
+        "minItems": 1
+      },
+      "message": "There are no course learning outcomes (VI).",
+      "fix": "Ask an administrator to add the course learning outcomes"
+    },
+    {
+      "id": "T-08",
+      "area": "template",
+      "step": "plan",
+      "severity": "blocking",
+      "weight": 3,
+      "check": "nonEmpty",
+      "params": {
+        "path": "plan",
+        "minItems": 1,
+        "where": "lessonWithIlo"
+      },
+      "message": "The Learning Plan (VII) has no lesson with a learning outcome (ILO).",
+      "fix": "Add a lesson with a learning outcome (ILO)"
+    },
+    {
+      "id": "T-09",
+      "area": "template",
+      "step": "clos",
+      "severity": "blocking",
+      "weight": 3,
+      "check": "equalsCatalog",
+      "params": {
+        "field": "vision"
+      },
+      "message": "The vision in this syllabus is not the school's current vision.",
+      "fix": "Resubmit so the syllabus carries the current vision",
+      "note": "A draft has no stored copy (it always shows the live text) and a submit stores the live text, so this fails only if the stored snapshot differs from the live catalog, for example when an admin edited it after the syllabus was submitted."
+    },
+    {
+      "id": "T-10",
+      "area": "template",
+      "step": "clos",
+      "severity": "blocking",
+      "weight": 3,
+      "check": "equalsCatalog",
+      "params": {
+        "field": "mission"
+      },
+      "message": "The mission in this syllabus is not the school's current mission.",
+      "fix": "Resubmit so the syllabus carries the current mission"
+    },
+    {
+      "id": "T-11",
+      "area": "template",
+      "step": "clos",
+      "severity": "blocking",
+      "weight": 3,
+      "check": "equalsCatalog",
+      "params": {
+        "field": "egas"
+      },
+      "message": "The graduate attributes (EGAs) in this syllabus are not the program's current ones.",
+      "fix": "Resubmit so the syllabus carries the current graduate attributes"
+    },
+    {
+      "id": "T-12",
+      "area": "template",
+      "step": "clos",
+      "severity": "blocking",
+      "weight": 3,
+      "check": "equalsCatalog",
+      "params": {
+        "field": "pos"
+      },
+      "message": "The program outcomes (POs) in this syllabus are not the program's current ones.",
+      "fix": "Resubmit so the syllabus carries the current program outcomes"
+    },
+    {
+      "id": "T-13",
+      "area": "template",
+      "step": "plan",
+      "severity": "blocking",
+      "weight": 3,
+      "check": "tagsResolve",
+      "params": {
+        "mode": "cloTagPresent"
+      },
+      "message": "{where} has no CLO tag.",
+      "fix": "Tag every ILO with the CLO it builds"
+    },
+    {
+      "id": "T-14",
+      "area": "template",
+      "step": "plan",
+      "severity": "blocking",
+      "weight": 3,
+      "check": "tagsResolve",
+      "params": {
+        "mode": "resolve"
+      },
+      "message": "{where} has a tag that no longer resolves: {tag}.",
+      "fix": "Fix the outcome tags that no longer resolve"
+    },
+    {
+      "id": "T-15",
+      "area": "template",
+      "step": "plan",
+      "severity": "blocking",
+      "weight": 1,
+      "check": "columnsFilled",
+      "params": {
+        "mode": "present",
+        "columns": [
+          "week",
+          "ilos",
+          "contents",
+          "activities",
+          "tasks",
+          "values"
+        ]
+      },
+      "message": "Learning Plan row {row} is missing the column: {missing}.",
+      "fix": "Complete the Learning Plan columns"
+    },
+    {
+      "id": "T-16",
+      "area": "template",
+      "step": "plan",
+      "severity": "major",
+      "weight": 2,
+      "check": "columnsFilled",
+      "params": {
+        "mode": "filled",
+        "rows": "lesson",
+        "columns": [
+          "contents",
+          "activities",
+          "tasks",
+          "values"
+        ]
+      },
+      "message": "{where} has nothing in: {missing}.",
+      "fix": "Fill in the empty Learning Plan columns",
+      "note": "The builder only advises about empty columns, so this is major, not blocking."
+    },
+    {
+      "id": "T-17",
+      "area": "template",
+      "step": "plan",
+      "severity": "minor",
+      "weight": 1,
+      "check": "iloNumbering",
+      "params": {},
+      "message": "{where} has an empty ILO before a filled one, so the printed numbering has a gap.",
+      "fix": "Remove the empty ILO between filled ones",
+      "note": "ILO numbers are generated by position (ILO1, ILO2, ...), so the only way to break the numbering is an empty ILO between filled ones."
+    },
+    {
+      "id": "T-18",
+      "area": "template",
+      "step": "plan",
+      "severity": "minor",
+      "weight": 1,
+      "check": "weeksOrder",
+      "params": {},
+      "message": "Learning Plan row {row} comes before an earlier week.",
+      "fix": "Put the Learning Plan rows in week order",
+      "note": "Added: rows printed out of week order. The builder allows any order."
+    },
+    {
+      "id": "T-19",
+      "area": "template",
+      "step": "reqs",
+      "severity": "blocking",
+      "weight": 2,
+      "check": "numberedRequirements",
+      "params": {
+        "mode": "count",
+        "min": 3
+      },
+      "message": "Course requirements (VIII): {have} listed, at least {need} needed.",
+      "fix": "List at least three course requirements"
+    },
+    {
+      "id": "T-20",
+      "area": "template",
+      "step": "reqs",
+      "severity": "minor",
+      "weight": 1,
+      "check": "numberedRequirements",
+      "params": {
+        "mode": "noManualNumber"
+      },
+      "message": "Requirement \"{text}\" starts with its own number; the form numbers the list for you.",
+      "fix": "Remove the typed numbers from the requirements"
+    },
+    {
+      "id": "T-21",
+      "area": "template",
+      "step": "refs",
+      "severity": "blocking",
+      "weight": 3,
+      "check": "referenceGroups",
+      "params": {
+        "mode": "filledOrNa"
+      },
+      "message": "References ({letter}. {title}) has no entries and is not marked not applicable.",
+      "fix": "Fill in each reference group or mark it not applicable"
+    },
+    {
+      "id": "T-22",
+      "area": "template",
+      "step": "refs",
+      "severity": "minor",
+      "weight": 1,
+      "check": "referenceGroups",
+      "params": {
+        "mode": "naConsistent"
+      },
+      "message": "References ({letter}. {title}) is marked not applicable but has entries.",
+      "fix": "Resolve the reference group marked not applicable that has entries"
+    },
+    {
+      "id": "T-23",
+      "area": "template",
+      "step": "grade",
+      "severity": "blocking",
+      "weight": 2,
+      "check": "nonEmpty",
+      "params": {
+        "path": "grading.rows",
+        "minItems": 1
+      },
+      "message": "The Grading System (X) has no components.",
+      "fix": "Add the grading components"
+    },
+    {
+      "id": "T-24",
+      "area": "template",
+      "step": "grade",
+      "severity": "blocking",
+      "weight": 4,
+      "check": "gradingTotal",
+      "params": {
+        "total": 100
+      },
+      "message": "The grading components total {total}%, not {need}%.",
+      "fix": "Make the grading components total 100%"
+    },
+    {
+      "id": "T-25",
+      "area": "template",
+      "step": "grade",
+      "severity": "blocking",
+      "weight": 2,
+      "check": "gradingFormula",
+      "params": {
+        "mode": "overrideFilled"
+      },
+      "message": "The override formulas cannot be empty.",
+      "fix": "Fill in the override formulas or switch them off"
+    },
+    {
+      "id": "T-26",
+      "area": "template",
+      "step": "grade",
+      "severity": "major",
+      "weight": 2,
+      "check": "gradingFormula",
+      "params": {
+        "mode": "wording"
+      },
+      "message": "The {which} formula does not mention {missing}.",
+      "fix": "Make the grading formulas name every component and exam term",
+      "note": "The Term Grade formula must list every grading component with its percentage; the Final Rating formula must name every examination term."
+    },
+    {
+      "id": "T-27",
+      "area": "template",
+      "step": "review",
+      "severity": "minor",
+      "weight": 1,
+      "check": "signoffRoles",
+      "params": {},
+      "message": "The sign-off block is not as the form requires: {problem}.",
+      "fix": "Check the sign-off block",
+      "note": "UNSURE. The preparer comes from the owner's account and the other two roles are added by the system, so this can only fail when the stored sign-off holds names a faculty member should not enter."
+    },
+    {
+      "id": "C-01",
+      "area": "completeness",
+      "step": "info",
+      "severity": "major",
+      "weight": 2,
+      "check": "textLength",
+      "params": {
+        "target": "description",
+        "minWords": 30
+      },
+      "message": "The course description is {words} {nouns}; about {need} are expected.",
+      "fix": "Expand the course description"
+    },
+    {
+      "id": "C-02",
+      "area": "completeness",
+      "step": "plan",
+      "severity": "minor",
+      "weight": 2,
+      "check": "textLength",
+      "params": {
+        "target": "ilo",
+        "minWords": 4
+      },
+      "message": "{where} is only {words} {nouns}; an ILO states what the student will do.",
+      "fix": "Write fuller learning outcomes (ILOs)"
+    },
+    {
+      "id": "C-03",
+      "area": "completeness",
+      "step": "clos",
+      "severity": "minor",
+      "weight": 1,
+      "check": "textLength",
+      "params": {
+        "target": "clo",
+        "minWords": 1
+      },
+      "message": "CLO {n} has no {missing}.",
+      "fix": "Ask an administrator to complete the CLO titles and statements"
+    },
+    {
+      "id": "C-04",
+      "area": "completeness",
+      "step": "refs",
+      "severity": "minor",
+      "weight": 1,
+      "check": "referenceAge",
+      "params": {
+        "mode": "count",
+        "min": 3
+      },
+      "message": "There are {have} references; at least {need} are expected.",
+      "fix": "Add more references"
+    },
+    {
+      "id": "P-01",
+      "area": "co_po",
+      "step": "clos",
+      "severity": "blocking",
+      "weight": 3,
+      "check": "cloConventions",
+      "params": {
+        "mode": "egaTagged"
+      },
+      "message": "CLO {n} is not tagged with a valid graduate attribute (EGA).",
+      "fix": "Ask an administrator to tag each CLO with graduate attributes",
+      "note": "Admin-managed data; the builder already holds faculty at step 2 for this."
+    },
+    {
+      "id": "P-02",
+      "area": "co_po",
+      "step": "clos",
+      "severity": "blocking",
+      "weight": 3,
+      "check": "cloConventions",
+      "params": {
+        "mode": "poTagged"
+      },
+      "message": "CLO {n} is not tagged with a valid program outcome (PO).",
+      "fix": "Ask an administrator to tag each CLO with program outcomes",
+      "note": "Admin-managed data; the builder already holds faculty at step 2 for this."
+    },
+    {
+      "id": "P-03",
+      "area": "co_po",
+      "step": "clos",
+      "severity": "major",
+      "weight": 2,
+      "check": "cloConventions",
+      "params": {
+        "mode": "poImpliesEga"
+      },
+      "message": "CLO {n} is tagged PO {po}, which maps to EGA {ega}, but EGA {ega} is not tagged.",
+      "fix": "Ask an administrator to tag the EGAs the POs imply"
+    },
+    {
+      "id": "P-04",
+      "area": "co_po",
+      "step": "clos",
+      "severity": "minor",
+      "weight": 1,
+      "check": "cloConventions",
+      "params": {
+        "mode": "format"
+      },
+      "message": "CLO {n}'s tags would not print as {format}: numbers must be unique and in order.",
+      "fix": "Ask an administrator to put the CLO tags in order"
+    },
+    {
+      "id": "P-05",
+      "area": "co_po",
+      "step": "plan",
+      "severity": "major",
+      "weight": 3,
+      "check": "cloCoverage",
+      "params": {
+        "requireColumn": null
+      },
+      "message": "CLO {n} is not built by any ILO in the Learning Plan.",
+      "fix": "Cover every course outcome in the Learning Plan"
+    },
+    {
+      "id": "A-01",
+      "area": "assessment",
+      "step": "plan",
+      "severity": "major",
+      "weight": 3,
+      "check": "columnsFilled",
+      "params": {
+        "mode": "filled",
+        "rows": "lesson",
+        "columns": [
+          "tasks"
+        ]
+      },
+      "message": "{where} has no assessment task.",
+      "fix": "Add an assessment task to every lesson"
+    },
+    {
+      "id": "A-02",
+      "area": "assessment",
+      "step": "plan",
+      "severity": "major",
+      "weight": 3,
+      "check": "cloCoverage",
+      "params": {
+        "requireColumn": "tasks"
+      },
+      "message": "CLO {n} is not assessed: no week that builds it has an assessment task.",
+      "fix": "Assess every course learning outcome"
+    },
+    {
+      "id": "A-03",
+      "area": "assessment",
+      "step": "plan",
+      "severity": "major",
+      "weight": 3,
+      "check": "examRowsPerTerm",
+      "params": {},
+      "message": "There is no {term} examination row in the Learning Plan.",
+      "fix": "Add the missing examination rows"
+    },
+    {
+      "id": "A-04",
+      "area": "assessment",
+      "step": "grade",
+      "severity": "major",
+      "weight": 2,
+      "check": "gradingHasExam",
+      "params": {},
+      "message": "The grading system has no examination component.",
+      "fix": "Include an examination in the grading system"
+    },
+    {
+      "id": "H-01",
+      "area": "contact_hours",
+      "step": "info",
+      "severity": "major",
+      "weight": 2,
+      "check": "contactUnits",
+      "params": {},
+      "message": "The credit units are not usable: lecture {lecture}, laboratory {lab}.",
+      "fix": "Correct the credit units"
+    },
+    {
+      "id": "H-02",
+      "area": "contact_hours",
+      "step": "plan",
+      "severity": "major",
+      "weight": 4,
+      "check": "weeksCover",
+      "params": {
+        "mode": "cover",
+        "from": 1,
+        "to": 18
+      },
+      "message": "The plan covers {planned} of {expected} weeks{hours}.",
+      "fix": "Plan the full term"
+    },
+    {
+      "id": "H-03",
+      "area": "contact_hours",
+      "step": "plan",
+      "severity": "major",
+      "weight": 2,
+      "check": "weeksCover",
+      "params": {
+        "mode": "range",
+        "from": 1,
+        "to": 18
+      },
+      "message": "Row {row} has a week that is not within 1 to {to}: \"{week}\".",
+      "fix": "Fix the weeks outside the term"
+    },
+    {
+      "id": "H-04",
+      "area": "contact_hours",
+      "step": "plan",
+      "severity": "minor",
+      "weight": 1,
+      "check": "weeksCover",
+      "params": {
+        "mode": "overlap"
+      },
+      "message": "Week{s} {weeks} appear{verb} in more than one row.",
+      "fix": "Resolve the weeks used by more than one row"
+    },
+    {
+      "id": "R-01",
+      "area": "reference_currency",
+      "step": "refs",
+      "severity": "major",
+      "weight": 2,
+      "check": "referenceAge",
+      "params": {
+        "mode": "any"
+      },
+      "message": "There are no references.",
+      "fix": "Add references"
+    },
+    {
+      "id": "R-02",
+      "area": "reference_currency",
+      "step": "refs",
+      "severity": "minor",
+      "weight": 2,
+      "check": "referenceAge",
+      "params": {
+        "mode": "dated"
+      },
+      "message": "A reference has no year: \"{text}\".",
+      "fix": "Add the year to each reference"
+    },
+    {
+      "id": "R-03",
+      "area": "reference_currency",
+      "step": "refs",
+      "severity": "major",
+      "weight": 4,
+      "check": "referenceAge",
+      "params": {
+        "mode": "current",
+        "maxAgeYears": 10
+      },
+      "message": "A reference is {age} years old ({year}); the limit is {limit}: \"{text}\".",
+      "fix": "Replace the outdated references",
+      "note": "Age is measured from the school year the syllabus belongs to, never from today's date."
+    }
+  ],
+  "replaced": [
+    "C-04",
+    "R-02",
+    "R-03"
+  ],
+  "sources": [
+    {
+      "file": "server/lib/syllabuscheck/engine.js",
+      "sha256": "727e023b96778bdc9d069e0d1a429c62054780a59a3641b6b8d2bdbee86d58bb",
+      "mentionedRuleIds": [
+        "CLO",
+        "CLO-",
+        "CLO-EGA",
+        "CLO-PO",
+        "CLOSEST",
+        "CUR-CODE",
+        "CUR-FIELD",
+        "CUR-REF",
+        "GRADE-100",
+        "GRADE-RANGE",
+        "HEADER",
+        "HEADERS",
+        "ILO",
+        "ILO-",
+        "ILO-CLO",
+        "ILO-GAP",
+        "ILO-MISSING",
+        "ILO-NUM",
+        "INST-EXACT",
+        "INST-MASTER",
+        "LINK",
+        "PLAN",
+        "PO",
+        "PO-EXACT",
+        "PO-MASTER",
+        "POLICY",
+        "REF",
+        "REF-",
+        "REF-PLAN",
+        "REFERENCES",
+        "VALUE",
+        "VALUES",
+        "WEEK",
+        "WEEK-DUP",
+        "WEEK-GAP"
+      ]
+    },
+    {
+      "file": "server/lib/syllabuscheck/gemini.js",
+      "sha256": "f2faedf8167e7f276aafb83e82c9b97113d8fc14b67adfb7d2f9b0e549db771f",
+      "mentionedRuleIds": [
+        "CLO",
+        "CLO-",
+        "CLO-EGA",
+        "CLO-PO",
+        "CLO1",
+        "CLO2",
+        "CLO3",
+        "CLO4",
+        "ILO",
+        "ILO-",
+        "ILO-CLO",
+        "PO",
+        "POLICY",
+        "POST",
+        "REF-",
+        "VALUE",
+        "VALUES"
+      ]
+    },
+    {
+      "file": "server/lib/syllabuscheck/academicPolicyV2.js",
+      "sha256": "9fc7b31d793804dd713e13e238ce0340bae1905ad8375abd7d0e001c64fb4a67",
+      "mentionedRuleIds": [
+        "CLO",
+        "CLO-",
+        "CLO-01",
+        "CLO-08",
+        "CLO-EGA",
+        "CLO-PO",
+        "CUR-0",
+        "ILO",
+        "ILO-",
+        "ILO-CLO",
+        "PLAN-01",
+        "PO",
+        "POLICY"
+      ]
+    },
+    {
+      "file": "server/lib/syllabuscheck/academicV2Plan.js",
+      "sha256": "95a355b434e11d83d1c82dfe1d955b4264964cb7d3046082093a5ef51f1f061d",
+      "mentionedRuleIds": [
+        "CLO",
+        "CLO-",
+        "CLO-EGA",
+        "CLO-PO",
+        "CLO1",
+        "CLO2",
+        "CLO3",
+        "CLO4",
+        "ILO",
+        "ILO-",
+        "ILO-CLO",
+        "PO",
+        "POLICY"
+      ]
+    },
+    {
+      "file": "server/lib/syllabuscheck/stages.js",
+      "sha256": "6e7313155371c7af771f1fb40c2a00158bdcc3baab9ed17cd6a1a1a860338047",
+      "mentionedRuleIds": [
+        "CLO",
+        "CLO-",
+        "CLO-EGA",
+        "CLO-PO",
+        "ILO",
+        "ILO-",
+        "ILO-CLO",
+        "PO",
+        "PO-",
+        "REF-",
+        "VAL-04"
+      ]
+    },
+    {
+      "file": "server/lib/syllabuscheck/verdict.js",
+      "sha256": "20d6072bb7ca3ea5982b38e8e7405f6115069bc3751b27259718fc33bc947c48",
+      "mentionedRuleIds": [
+        "ADM-03",
+        "ADM-04",
+        "ADM-05",
+        "ALN-00",
+        "ALN-01",
+        "ALN-02",
+        "ALN-03",
+        "ALN-04",
+        "ALN-05",
+        "ALN-06",
+        "ALN-07",
+        "ALN-08",
+        "ALN-09",
+        "ALN-10",
+        "ALN-11",
+        "ALN-12",
+        "ALN-13",
+        "CLO",
+        "CLO-",
+        "CLO-01",
+        "CLO-02",
+        "CLO-03",
+        "CLO-05",
+        "CLO-06",
+        "CLO-07",
+        "CLO-08",
+        "CLO-09",
+        "CLO-10",
+        "CLO-EGA",
+        "CLO-ID",
+        "CLO-MAP",
+        "CLO-PO",
+        "CUR",
+        "CUR-01",
+        "CUR-02",
+        "CUR-03",
+        "CUR-04",
+        "CUR-05",
+        "CUR-06",
+        "CUR-07",
+        "CUR-08",
+        "CUR-09",
+        "CUR-10",
+        "CUR-11",
+        "CUR-CODE",
+        "CUR-FIELD",
+        "CUR-REF",
+        "GRADE-100",
+        "GRADE-RANGE",
+        "HEADER",
+        "ILO",
+        "ILO-",
+        "ILO-CLO",
+        "ILO-GAP",
+        "ILO-MAP",
+        "ILO-MISSING",
+        "ILO-NUM",
+        "INST",
+        "LINK",
+        "PLAN-01",
+        "PLAN-02",
+        "PLAN-03",
+        "PLAN-04",
+        "PLAN-05",
+        "PLAN-06",
+        "PLAN-10",
+        "PLAN-11",
+        "PO",
+        "REF",
+        "REF-",
+        "REF-02",
+        "REF-03",
+        "REF-04",
+        "REF-05",
+        "STR-01",
+        "STR-04",
+        "STR-05",
+        "STR-06",
+        "STR-07",
+        "VAL",
+        "VAL-01",
+        "VAL-02",
+        "VAL-03",
+        "VAL-04",
+        "VAL-05",
+        "VALUE",
+        "WEEK",
+        "WEEK-DUP",
+        "WEEK-GAP"
+      ]
+    },
+    {
+      "file": "server/lib/syllabuscheck/quality.js",
+      "sha256": "363507e3c229ee7c809afd9c58176880522b7b0f7e7d1b4e8659056b75234a91",
+      "mentionedRuleIds": [
+        "CLO",
+        "ILO"
+      ]
+    },
+    {
+      "file": "server/lib/syllabuscheck/validation.js",
+      "sha256": "6ffd230dd3e71614a2aaf93444641f2799dbec3359f0df90fc12fc0b7b1dbbc9",
+      "mentionedRuleIds": [
+        "CLO",
+        "CLO-ID",
+        "CLO-MAP",
+        "ILO",
+        "ILO-MAP",
+        "POLICY"
+      ]
+    },
+    {
+      "file": "server/lib/syllabuscheck/references.js",
+      "sha256": "71fbeb500fc175fb5fe11b43ff7194428c3ea8d832b54c8f0bb1f997541c6c5f",
+      "mentionedRuleIds": [
+        "REF-"
+      ]
+    },
+    {
+      "file": "server/lib/syllabuscheck/policy.js",
+      "sha256": "fbdf25a42e35dcdadc7a95f8756c8add807d2c5c5a2d5ba9020954d2f656e383",
+      "mentionedRuleIds": [
+        "CLO",
+        "CLO-",
+        "ILO",
+        "ILO-",
+        "POLICY"
+      ]
+    },
+    {
+      "file": "server/lib/compliance/standard-v4.json",
+      "sha256": "1be5c5ba969b6c7464601aac34c72b7c71949b59d76ed746412937a8c6907612",
+      "mentionedRuleIds": [
+        "CLO",
+        "ILO",
+        "ILO1",
+        "ILO2",
+        "PO"
+      ]
+    },
+    {
+      "file": "server/lib/compliance/rules.js",
+      "sha256": "cf8177ca89f2b24b58dc3fd5325ded19384535e9a065b3221e2edfdd53ea9f40",
+      "mentionedRuleIds": [
+        "CLO",
+        "ILO"
+      ]
+    },
+    {
+      "file": "server/lib/compliance/service.js",
+      "sha256": "52a6e085aa068c614cc874da8583c40116e0cbdb206595c65c51cba84412aff0",
+      "mentionedRuleIds": [
+        "CLO",
+        "CUR-CODE",
+        "ILO",
+        "POLICY",
+        "VALUES"
+      ]
+    }
+  ],
+  "activation": "Default stage flags and V2 are off. Implementation does not prove execution.",
+  "pending": [
+    "STR-07",
+    "ADM-04",
+    "ADM-05",
+    "CUR-10",
+    "CLO-05",
+    "CLO-10",
+    "PLAN-05",
+    "PLAN-06",
+    "ALN-03",
+    "ALN-04",
+    "ALN-10"
+  ]
+}

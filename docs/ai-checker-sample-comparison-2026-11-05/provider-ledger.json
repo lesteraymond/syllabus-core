@@ -1,0 +1,48 @@
+{
+  "provider": "anthropic",
+  "model": "claude-sonnet-5-5",
+  "modelsReturned": {},
+  "pricesAsOf": "2026-10-27",
+  "outputTokens": 16000,
+  "requests": 1,
+  "charged": 0.23008425,
+  "conservative": 0.23008425,
+  "accounting": "reconcile",
+  "transient": 1,
+  "invalid": 0,
+  "unproductive": 0,
+  "entries": [
+    {
+      "n": 1,
+      "kind": "model",
+      "at": "2026-11-04T20:10:06.057Z",
+      "error": "network: fetch failed",
+      "worst": 0.23008425,
+      "charged": 0.23008425,
+      "accounting": "worst_case",
+      "conservativeCharge": 0.23008425,
+      "ids": [
+        "clo0-po1",
+        "clo0-po2",
+        "clo0-po3",
+        "clo0-po6",
+        "clo0-po8",
+        "clo0-ega1",
+        "clo0-ega3",
+        "clo0-ega4",
+        "clo0-anypo",
+        "clo0-anyega",
+        "clo1-po1",
+        "clo1-po2"
+      ],
+      "maxTokens": 16000,
+      "requestId": null,
+      "modelReturned": null,
+      "ms": 40,
+      "stopReason": null,
+      "thinkingBlocks": null,
+      "estimatedCost": null,
+      "tokens": null
+    }
+  ]
+}

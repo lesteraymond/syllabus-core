@@ -1,0 +1,102 @@
+{
+  "mode": "optimized",
+  "kind": "LOCAL full React/Express browser E2E, isolated synthetic DB, corrected development reference snapshot, scripted provider",
+  "results": [
+    {
+      "program": "BSIT",
+      "mode": "optimized",
+      "steps": [
+        "program/subject selection; exact corrected PO text; subset mapping options",
+        "synthetic syllabus saved; Review step renders classifications",
+        "comprehensive check through UI; score/VPAA/CLO/PO findings; report saved and reloaded",
+        "administrator checked and read synthetic submission; no approval performed"
+      ],
+      "status": "PASS",
+      "syllabusId": 1,
+      "score": 99,
+      "passThreshold": 79,
+      "poCount": 9,
+      "poSource": "BSIT",
+      "referenceId": "lcup-po-2026-10-29-BSIT",
+      "vpaa": 7,
+      "classifications": 4,
+      "adminScore": 99
+    },
+    {
+      "program": "BSIE",
+      "mode": "optimized",
+      "steps": [
+        "program/subject selection; exact corrected PO text; subset mapping options",
+        "synthetic syllabus saved; Review step renders classifications",
+        "comprehensive check through UI; score/VPAA/CLO/PO findings; report saved and reloaded",
+        "administrator checked and read synthetic submission; no approval performed"
+      ],
+      "status": "PASS",
+      "syllabusId": 2,
+      "score": 99,
+      "passThreshold": 79,
+      "poCount": 13,
+      "poSource": "BSIE",
+      "referenceId": "lcup-po-2026-10-29-BSIE",
+      "vpaa": 7,
+      "classifications": 4,
+      "adminScore": 99
+    },
+    {
+      "program": "BSCPE",
+      "mode": "optimized",
+      "steps": [
+        "program/subject selection; exact corrected PO text; subset mapping options",
+        "synthetic syllabus saved; Review step renders classifications",
+        "comprehensive check through UI; score/VPAA/CLO/PO findings; report saved and reloaded",
+        "administrator checked and read synthetic submission; no approval performed"
+      ],
+      "status": "PASS",
+      "syllabusId": 3,
+      "score": 99,
+      "passThreshold": 79,
+      "poCount": 13,
+      "poSource": "BSCPE",
+      "referenceId": "lcup-po-2026-10-29-BSCPE",
+      "vpaa": 7,
+      "classifications": 4,
+      "adminScore": 99
+    },
+    {
+      "program": "BSIT-CYBERSECURITY",
+      "mode": "optimized",
+      "steps": [
+        "program/subject selection; exact corrected PO text; subset mapping options",
+        "synthetic syllabus saved; Review step renders classifications",
+        "comprehensive check through UI; score/VPAA/CLO/PO findings; report saved and reloaded",
+        "administrator checked and read synthetic submission; no approval performed"
+      ],
+      "status": "PASS",
+      "syllabusId": 4,
+      "score": 99,
+      "passThreshold": 79,
+      "poCount": 9,
+      "poSource": "BSIT",
+      "referenceId": "lcup-po-2026-10-29-BSIT",
+      "vpaa": 7,
+      "classifications": 4,
+      "adminScore": 99
+    }
+  ],
+  "passed": 4,
+  "failed": 0,
+  "filterProbe": {
+    "status": "PASS",
+    "scope": "Follow-up to baseline E19; existing product filter with settled scroll; no product/test-suite source edited",
+    "options": [
+      "All semesters",
+      "1st Semester",
+      "2nd Semester"
+    ]
+  },
+  "providerRequests": 400,
+  "blockedNetwork": [],
+  "liveClaudeCalls": 0,
+  "profile": "comprehensive-testing",
+  "ordinaryDevelopmentFlagsModified": false
+}

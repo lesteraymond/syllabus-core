@@ -68,7 +68,7 @@ const root = path.resolve(__dirname, '..');
   assert.deepEqual(current.content, before.content, 'Concurrent edit; refusing overwrite.');
   assert.equal(current.status, before.status);
   const keys = ['outcomes', 'description', 'clos', 'plan', 'reqs', 'grading'];
-  await request(`/syllabi/${id}/content`, 'PUT', { schemaVersion: 3, sections: Object.fromEntries(keys.map(k => [k, content[k]])) });
+  await request(`/syllabi/${id}/content`, 'PUT', { schemaVersion: 3, sections: Object.fromEntries(keys.map(k => [k, content[k]])), baseRevisions: current.revisions });
   const saved = await request(`/syllabi/${id}/content`);
   for (const k of keys) assert.deepEqual(saved.content[k], content[k], `Saved ${k}`);
   assert.deepEqual(saved.content.meta, before.content.meta);

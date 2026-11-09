@@ -5,6 +5,7 @@ const { inTransaction, httpError, sendError } = require('../lib/http');
 const { loadOutcomes } = require('../lib/institution');
 const { egasInUse, inUseMessages, inUseError } = require('../lib/catalogUse');
 const { isStale, STALE_MESSAGE } = require('../lib/programEgas');
+const { auditIfReady } = require('../lib/programPoReferences');
 const router = express.Router();
 
 router.get('/outcomes', requireAuth, async (req, res) => {
@@ -51,6 +52,7 @@ router.put('/outcomes', requireAuth, requireAdmin, async (req, res) => {
       // A save from an out-of-date screen is refused, so two admins never overwrite each other.
       const [[row]] = await conn.query('SELECT version FROM institution_settings WHERE setting_id = 1 FOR UPDATE');
       if (row && isStale(version, row.version)) throw httpError(409, STALE_MESSAGE);
+      const before = await loadOutcomes(conn);
       await conn.query(
         `INSERT INTO institution_settings (setting_id, vision, mission_lead, mission_items) VALUES (1, ?, ?, ?)
          ON DUPLICATE KEY UPDATE vision = VALUES(vision), mission_lead = VALUES(mission_lead), mission_items = VALUES(mission_items), version = version + 1`,
@@ -63,6 +65,8 @@ router.put('/outcomes', requireAuth, requireAdmin, async (req, res) => {
           [no, name, short]
         );
       }
+      // one school-wide record with no version table: the audit row keeps the statements before and after, with the record's version numbers
+      await auditIfReady(conn, { programId: null, action: 'institution_saved', actorId: req.session.user.id, details: { previous: { version: 'Institution v' + (row ? row.version : 0), vision: before.vision, mission: before.mission, egas: before.egas }, next: { version: 'Institution v' + (row ? Number(row.version) + 1 : 1), vision: v, mission: { lead, items }, egas: list.map(([no, name, short]) => ({ no, name, short })) } } });
     });
     res.json(await loadOutcomes(db));
   } catch (err) { sendError(res, err); }

@@ -3,13 +3,22 @@
 const { httpError } = require('./http');
 const { loadProgramEgas } = require('./programEgas');
 const poReferences = require('./programPoReferences');
+const { loadYears, currentOf, catalogColumnReady } = require('./academicYear');
 
-// `idOrCode` is the numeric program id or the program code (e.g. BSIT).
-async function findProgram(db, idOrCode) {
+// `idOrCode` is the numeric program id or the program code (e.g. BSIT). The same code can exist in several academic years (each year has its own program rows): a code
+// resolves to the program of `year` (default the current academic year), and when that year has none, to the newest one, so a link made by code keeps working.
+async function findProgram(db, idOrCode, { year } = {}) {
   const key = String(idOrCode);
-  const [rows] = /^\d+$/.test(key)
-    ? await db.query('SELECT program_id, code, name, egas_version, pos_version FROM programs WHERE program_id = ?', [Number(key)])
-    : await db.query('SELECT program_id, code, name, egas_version, pos_version FROM programs WHERE code = ?', [key.toUpperCase()]);
+  let rows;
+  if (/^\d+$/.test(key)) [rows] = await db.query('SELECT program_id, code, name, egas_version, pos_version FROM programs WHERE program_id = ?', [Number(key)]);
+  else {
+    const current = currentOf(await loadYears(db));
+    const scoped = !!current && await catalogColumnReady(db);
+    const target = year || (current && current.label);
+    [rows] = scoped
+      ? await db.query('SELECT program_id, code, name, egas_version, pos_version FROM programs WHERE code = ? ORDER BY (COALESCE(academic_year, ?) = ?) DESC, academic_year DESC, program_id DESC LIMIT 1', [key.toUpperCase(), current.label, target])
+      : await db.query('SELECT program_id, code, name, egas_version, pos_version FROM programs WHERE code = ?', [key.toUpperCase()]);
+  }
   if (rows[0]) return rows[0];
   // Old codes resolve to the same stable program ID; submitted content stays unchanged.
   if (!/^\d+$/.test(key)) {
@@ -59,19 +68,28 @@ async function inheritedFrom(db, program) {
 const sourceInfo = source => ({ id: source.program_id, code: source.code, name: source.name });
 // loadProgram, but a specialization shows (and is checked against) the EGAs and POs of the program it inherits from, with `inheritedFrom`.
 async function loadResolvedProgram(db, program) {
-  const own = await loadProgram(db, program);
   const source = await inheritedFrom(db, program);
-  if (!source) return own;
+  // A specialization's historical copy is never a second authoritative master.
+  // Until the controlled link is installed, expose missing references through
+  // the existing PO-MASTER/CUR-REF checks rather than blessing the copied list.
+  if (program.code === 'BSIT-CYBERSECURITY' && (!source || source.code !== 'BSIT')) return {
+    id:program.program_id,code:program.code,name:program.name,egas:[],pos:[],
+    versions:{egas:program.egas_version||1,pos:program.pos_version||1},referenceStatus:'inheritance_not_configured'
+  };
+  if (!source) return loadProgram(db, program);
   const shared = await loadProgram(db, source);
-  return { ...own, egas: shared.egas, pos: shared.pos, versions: shared.versions, ...(shared.poReference ? {poReference:shared.poReference} : {}), inheritedFrom: sourceInfo(source) };
+  return { id:program.program_id,code:program.code,name:program.name,egas: shared.egas, pos: shared.pos, versions: shared.versions, ...(shared.poReference ? {poReference:shared.poReference} : {}), inheritedFrom: sourceInfo(source) }; // outcomes only: the curriculum stays the specialization's own (syllabuscheck/repository.js)
 }
 // The same for a subject's stored standards snapshot (courses.standards_json): the stored copy of a specialization's EGAs/POs is never used
 // as is, so an edit of the source program cannot leave a subject reading outdated outcomes. Vision and mission are institutional and untouched.
-async function inheritStandards(db, programId, standards) {
+// A subject of a program with a source version in force reads that version. Once an Admin has saved a newer version, a subject stays on the version it was given until Apply to Subjects.
+async function inheritStandards(db, programId, standards, {code} = {}) {
   const source = await inheritedFrom(db, { program_id: programId });
+  if(code==='BSIT-CYBERSECURITY'&&source?.code!=='BSIT')return {...standards,pos:[],poReference:null,referenceStatus:'inheritance_not_configured'};
   if (!source) {
     const poReference = await poReferences.activeFor(db,programId);
     if(!poReference)return standards;
+    if(poReference.kind==='admin_published'&&!poReferences.sameBasis(standards.pos,poReference.outcomes))return poReferences.withAssignedVersion(db,programId,standards);
     const program = await loadProgram(db,await findProgram(db,programId));
     return {...standards,pos:program.pos,poReference,versions:{...standards.versions,pos:program.versions.pos}};
   }
@@ -81,6 +99,7 @@ async function inheritStandards(db, programId, standards) {
 // Refuses to edit outcomes that a program inherits. The message names where to edit them.
 async function requireOwnOutcomes(db, program) {
   const source = await inheritedFrom(db, program);
+  if(program.code==='BSIT-CYBERSECURITY'&&!source)throw httpError(409, `${program.code} inherits its Program Outcomes and EGAs from BSIT. Edit them in BSIT.`, {code:'outcomes_inherited',source:'BSIT'});
   if (source) throw httpError(409, `${program.code} inherits its Program Outcomes and EGAs from ${source.code}. Edit them in ${source.code}.`, { code: 'outcomes_inherited', source: source.code });
 }
 // Programs that inherit their outcomes from `programId` (empty without the table).
@@ -100,18 +119,26 @@ const normalizeName = (s) => String(s || '').trim().replace(/\s+/g, ' ').toLower
 // Creates a program inside the caller's transaction (`conn`). The code is already trimmed and upper-cased. A new program has
 // no EGAs or outcomes until an administrator configures them. A name already used by another program is refused. Returns its id. A concurrent creation of the same code is
 // the unique key's job: it becomes a 409.
-async function createProgram(conn, { code, name }) {
-  const [named] = await conn.query('SELECT code, name FROM programs ORDER BY program_id FOR UPDATE');
+// With `year` (the catalog is per academic year) the program belongs to that year and the name and code checks look only at that year's programs, so last year's BSIT does
+// not stop this year's BSIT; without it (before the migration) they look at every program.
+async function createProgram(conn, { code, name, year, current }) {
+  const [named] = year
+    ? await conn.query('SELECT code, name FROM programs WHERE COALESCE(academic_year, ?) = ? ORDER BY program_id FOR UPDATE', [current, year])
+    : await conn.query('SELECT code, name FROM programs ORDER BY program_id FOR UPDATE');
   const taken = named.find((p) => normalizeName(p.name) === normalizeName(name));
   if (taken) throw httpError(409, `That name is already used by ${taken.code}.`);
-  // Never recycle a code retained by historical records from another program.
+  // Never recycle a code retained by historical records from another program (of the same academic year).
   try {
-    const [aliases] = await conn.query('SELECT program_id FROM program_code_aliases WHERE code = ? FOR UPDATE', [code]);
+    const [aliases] = year
+      ? await conn.query('SELECT a.program_id FROM program_code_aliases a JOIN programs p ON p.program_id = a.program_id WHERE a.code = ? AND COALESCE(p.academic_year, ?) = ? FOR UPDATE', [code, current, year])
+      : await conn.query('SELECT program_id FROM program_code_aliases WHERE code = ? FOR UPDATE', [code]);
     if (aliases.length) throw httpError(409, 'That program code is reserved by existing records. Choose another code.');
   } catch (error) { if (error.code !== 'ER_NO_SUCH_TABLE') throw error; }
   let result;
   try {
-    [result] = await conn.query('INSERT INTO programs (code, name) VALUES (?, ?)', [code, name]);
+    [result] = year
+      ? await conn.query('INSERT INTO programs (code, name, academic_year) VALUES (?, ?, ?)', [code, name, year])
+      : await conn.query('INSERT INTO programs (code, name) VALUES (?, ?)', [code, name]);
   } catch (err) {
     if (err && err.code === 'ER_DUP_ENTRY') throw httpError(409, 'That program was just created. Try again.');
     throw err;

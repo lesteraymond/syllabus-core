@@ -29,6 +29,7 @@ function makeDb() {
     },
     syllabi: [{ user_id: 5, status: 'submitted' }, { user_id: 6, status: 'draft' }],
     messages: [],
+    activity: [], // account_activity rows (lib/accountActivity.js)
   };
   Object.values(s.users).forEach(user => Object.assign(user, { email: `user${user.user_id}@x.ph`, first_name: 'First', last_name: 'Last', must_change_password: 0 }));
   const handle = (sql, p = []) => {
@@ -41,6 +42,8 @@ function makeDb() {
     if (sql.startsWith("SELECT user_id FROM users WHERE role = 'admin' ORDER BY user_id ASC LIMIT 1")) return [Object.values(s.users).filter((u) => u.role === 'admin').sort((a, b) => a.user_id - b.user_id).slice(0, 1).map((u) => ({ user_id: u.user_id }))];
     if (sql.startsWith("SELECT 1 FROM syllabi WHERE user_id = ? AND status <> 'draft'")) return [s.syllabi.filter((x) => x.user_id === p[0] && x.status !== 'draft').map(() => ({ 1: 1 }))];
     if (sql.startsWith('SELECT avatar_path FROM users WHERE user_id')) return [s.users[p[0]] ? [{ avatar_path: s.users[p[0]].avatar_path }] : []];
+    if (sql.startsWith('INSERT INTO account_activity')) { const [user_id, action, syllabus_id, subject, notes] = p; s.activity.push({ user_id, action, syllabus_id, subject, notes }); return [{}]; }
+    if (sql.startsWith('SELECT first_name, last_name FROM users WHERE user_id')) return [s.users[p[0]] ? [{ first_name: s.users[p[0]].first_name, last_name: s.users[p[0]].last_name }] : []];
     if (/program_outcome_sources/.test(sql)) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' }); // not migrated yet
     throw new Error('unexpected query: ' + sql);
   };
@@ -231,3 +234,20 @@ test('direct sync verifies audience, expiry and account identity before importin
   assert.strictEqual(downloads, 1);
   await assert.rejects(getGooglePhotoWithAccessToken('', 'user6@x.ph', dependencies), { status: 400 });
 });
+
+// Recent Activity for transparency (lib/accountActivity.js): each photo change is recorded for the account that made it; an administrator's removal of
+// someone else's photo is recorded for the administrator, naming whose it was. Removing a photo that is not there records nothing.
+test('photo changes are recorded in the account activity: the Google photo, a removal, and an administrator removing another account\'s photo', () => withServer(async ({ call, db }) => {
+  const googleProfile = require('../lib/googleProfile');
+  const original = googleProfile.getGooglePhoto;
+  googleProfile.getGooglePhoto = async () => Buffer.from('verified-photo-bytes');
+  try {
+    assert.strictEqual((await call(gus, 'POST', '/me/avatar/google', { token: 'verified-token' })).status, 200);
+    assert.strictEqual((await call(gus, 'DELETE', '/me/avatar')).status, 200);
+    assert.strictEqual((await call(gus, 'DELETE', '/me/avatar')).status, 200); // nothing left to remove
+  } finally { googleProfile.getGooglePhoto = original; }
+  db.s.users[5].first_name = 'Fay'; db.s.users[5].last_name = 'Flores';
+  assert.strictEqual((await call(admin1, 'DELETE', '/5/avatar')).status, 200);
+  assert.deepStrictEqual(db.s.activity.map((a) => [a.user_id, a.action, a.notes, a.subject]), [
+    [6, 'photo_change', 'google', null], [6, 'photo_change', 'remove', null], [1, 'photo_change', 'remove_other', 'Fay Flores']]);
+}));

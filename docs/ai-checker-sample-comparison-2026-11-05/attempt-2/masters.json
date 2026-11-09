@@ -1,0 +1,528 @@
+{
+  "synthetic": false,
+  "institution": {
+    "vision": "Moved by the Spirit of the Risen Christ, La Consolacion University Philippines, envisions itself to become a catalyst for the wholistic transformational development of Catholic Augustinian Marian graduates rooted in Gospel values.",
+    "mission": {
+      "lead": "To achieve the above vision, LCUP commits itself to generate and make available to its Augustinian Marian students, programs and services that will make them:",
+      "items": [
+        "exhibit academic and technical competence in their respective areas of discipline in the local and international environment;",
+        "demonstrate their knowledge, critical thinking and creativity by exploring the various avenues of learning and searching for truth;",
+        "manifest their willingness to serve specially the marginalized sector of our society;",
+        "demonstrate productivity in various areas of learning as responsible citizens of the society; and",
+        "live the Gospel values in the varied aspects of their personal and professional lives"
+      ]
+    },
+    "egas": [
+      {
+        "no": 1,
+        "name": "Critical and Creative thinker",
+        "short": "Critical and Creative Thinker"
+      },
+      {
+        "no": 2,
+        "name": "Competent Catholic Augustinian-Marian Professional",
+        "short": "Competent Professional"
+      },
+      {
+        "no": 3,
+        "name": "Socially Responsive Steward",
+        "short": "Socially Responsive Steward"
+      },
+      {
+        "no": 4,
+        "name": "Transformative Lifelong learner",
+        "short": "Transformative Lifelong Learner"
+      }
+    ]
+  },
+  "pos": [
+    {
+      "no": 1,
+      "short": "PO 1",
+      "text": "Articulate and discuss the latest developments in the specific field of practice;",
+      "egas": []
+    },
+    {
+      "no": 2,
+      "short": "PO 2",
+      "text": "Effectively communicate orally and in writing using both English and Filipino;",
+      "egas": []
+    },
+    {
+      "no": 3,
+      "short": "PO 3",
+      "text": "Work effectively and independently in multi-disciplinary and multi-cultural teams;",
+      "egas": []
+    },
+    {
+      "no": 4,
+      "short": "PO 4",
+      "text": "Act in recognition of professional, social ethical responsibility;",
+      "egas": []
+    },
+    {
+      "no": 5,
+      "short": "PO 5",
+      "text": "Preserve and promote “Filipino historical and cultural heritage;",
+      "egas": []
+    },
+    {
+      "no": 6,
+      "short": "PO 6",
+      "text": "Analyze complex problems, and identify and define the computing requirements needed to design and appropriate solution;",
+      "egas": []
+    },
+    {
+      "no": 7,
+      "short": "PO 7",
+      "text": "Apply computing and other knowledge domains to address real-world problems;",
+      "egas": []
+    },
+    {
+      "no": 8,
+      "short": "PO 8",
+      "text": "Design and develop computing solutions using a system-level perspective;",
+      "egas": []
+    },
+    {
+      "no": 9,
+      "short": "PO 9",
+      "text": "Utilize modern computing tools.",
+      "egas": []
+    }
+  ],
+  "curricula": [
+    {
+      "program": "BSIT",
+      "curriculumYear": "2022-2023",
+      "status": "approved",
+      "source": "db/local-curriculum-data.cjs (transcribed from the curriculum images in reference-data/)",
+      "courses": [
+        {
+          "code": "IT 101",
+          "title": "INTRODUCTION TO COMPUTING",
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 1
+        },
+        {
+          "code": "GE - US",
+          "title": "UNDERSTANDING SELF",
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 1
+        },
+        {
+          "code": "GE - PC",
+          "title": "PURPOSIVE COMMUNICATION",
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 1
+        },
+        {
+          "code": "GE - RPH",
+          "title": "READINGS IN PHILIPPINE HISTORY",
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 1
+        },
+        {
+          "code": "PATHFit 1",
+          "title": "MOVEMENT COMPETENCY TRAINING",
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "lecture": 2,
+          "lab": 0,
+          "yearLevel": 1
+        },
+        {
+          "code": "NSTP 1",
+          "title": "CWTS 1",
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 1
+        },
+        {
+          "code": "TH 1",
+          "title": "SALVATION HISTORY(OLD TESTAMENT)",
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 1
+        },
+        {
+          "code": "OFFTOOLS",
+          "title": "OFFICE TOOLS",
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "lecture": 0,
+          "lab": 1,
+          "yearLevel": 1
+        },
+        {
+          "code": "IT 102",
+          "title": "DISCRETE MATHEMATICS",
+          "prereq": "IT 101",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 1
+        },
+        {
+          "code": "GE - RC",
+          "title": "THE LIFE AND WORKS OF RIZAL",
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 1
+        },
+        {
+          "code": "GE - ET",
+          "title": "ETHICS",
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 1
+        },
+        {
+          "code": "GE - CW",
+          "title": "THE CONTEMPORARY WORLD",
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 1
+        },
+        {
+          "code": "PATHFit 2",
+          "title": "EXERCISE-BASED FITNESS ACTIVITY",
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "lecture": 2,
+          "lab": 0,
+          "yearLevel": 1
+        },
+        {
+          "code": "NSTP 2",
+          "title": "CWTS 2",
+          "prereq": "NSTP 1",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 1
+        },
+        {
+          "code": "TH 2",
+          "title": "CHRISTOLOGY(NEW TESTAMENT)",
+          "prereq": "TH 1",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 1
+        },
+        {
+          "code": "IT 202",
+          "title": "COMPUTER PROGRAMMING 1 (FUNDAMENTALS OF PROGRAMMING)",
+          "prereq": "IT 101",
+          "lecture": 2,
+          "lab": 1,
+          "yearLevel": 2
+        },
+        {
+          "code": "IT 203",
+          "title": "DATA STRUCTURE AND ALGORITHM",
+          "prereq": "IT 102",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 2
+        },
+        {
+          "code": "GE - STS",
+          "title": "SCIENCE, TECHNOLOGY AND SOCIETY",
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 2
+        },
+        {
+          "code": "GE - MMW",
+          "title": "MATHEMATIC IN THE MODERN WORLD",
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 2
+        },
+        {
+          "code": "GE - ELECT KOMFIL",
+          "title": "KONTEKSTWALISADONG KOMUNIKASYON SA FILIPINO",
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 2
+        },
+        {
+          "code": "PATHFit 3",
+          "title": "DANCE FOR FITNESS",
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "lecture": 2,
+          "lab": 0,
+          "yearLevel": 2
+        },
+        {
+          "code": "TH 3",
+          "title": "ECCLESIOLOGY",
+          "prereq": "TH 2",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 2
+        },
+        {
+          "code": "IT-204",
+          "title": "COMPUTER PROGRAMMING 2(INTERMEDIATE PROGRAMMING)",
+          "prereq": "IT 202",
+          "lecture": 2,
+          "lab": 1,
+          "yearLevel": 2
+        },
+        {
+          "code": "IT-205",
+          "title": "INTRODUCTION TO HUMAN COMPUTER INTERACTION",
+          "prereq": "IT 202",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 2
+        },
+        {
+          "code": "GE - ELECT DL",
+          "title": "DALUMAT SA FILIPINO",
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 2
+        },
+        {
+          "code": "GE - ELECT SOSLIT",
+          "title": "SOSYEDAD AT LITERATURANG/ PANITIKANG PANLIPUNAN",
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 2
+        },
+        {
+          "code": "GE - ART",
+          "title": "ART APPRECIATION",
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 2
+        },
+        {
+          "code": "PATHFit 4",
+          "title": "SPORTS FOR FITNESS",
+          "prereq": "PATHFit 1, PATHFit 2, PATHFit 3",
+          "lecture": 2,
+          "lab": 0,
+          "yearLevel": 2
+        },
+        {
+          "code": "TH 4",
+          "title": "LITURGY AND SACRAMENT",
+          "prereq": "TH 3",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 2
+        },
+        {
+          "code": "IT 301",
+          "title": "COMPUTER PROGRAMMING 3 (OBJECT ORIENTED PROGRAMMING)",
+          "prereq": "IT-204",
+          "lecture": 2,
+          "lab": 1,
+          "yearLevel": 3
+        },
+        {
+          "code": "IT-302",
+          "title": "INFORMATION MANAGEMENT 1 (DATABASE FUNDAMENTAL)",
+          "prereq": "IT 202",
+          "lecture": 2,
+          "lab": 1,
+          "yearLevel": 3
+        },
+        {
+          "code": "IT-303",
+          "title": "SYSTEM INTEGRATION AND ARCHITECTURE",
+          "prereq": "IT-204",
+          "lecture": 2,
+          "lab": 1,
+          "yearLevel": 3
+        },
+        {
+          "code": "IT-304",
+          "title": "COMPUTER NETWORKS 1 (FUNDAMENTALS OF NETWORKING)",
+          "prereq": "IT 101",
+          "lecture": 2,
+          "lab": 1,
+          "yearLevel": 3
+        },
+        {
+          "code": "IT-305",
+          "title": "WEB SYSTEMS AND TECHNOLOGIES",
+          "prereq": "IT-205",
+          "lecture": 2,
+          "lab": 1,
+          "yearLevel": 3
+        },
+        {
+          "code": "IT-ELEC1",
+          "title": "IT ELECTIVE 1 (INTRO.TO DATA SCIENCE IN PYTHON)",
+          "prereq": "3rd Yr",
+          "lecture": 2,
+          "lab": 1,
+          "yearLevel": 3
+        },
+        {
+          "code": "TH 5",
+          "title": "CHRISTIAN AND SOCIAL MORALITY",
+          "prereq": "TH 4",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 3
+        },
+        {
+          "code": "CAPSPRO1",
+          "title": "CAPSTONE PROJECT 1",
+          "prereq": "3rd Yr",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 3
+        },
+        {
+          "code": "TECHPREN-CITE",
+          "title": "TECHNOPRENEURSHIP",
+          "prereq": "3rd Yr",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 3
+        },
+        {
+          "code": "IT 306",
+          "title": "INFORMATION MANAGEMENT 2 (ADVANCED DATABASE)",
+          "prereq": "IT-302",
+          "lecture": 2,
+          "lab": 1,
+          "yearLevel": 3
+        },
+        {
+          "code": "IT-307",
+          "title": "COMPUTER NETWORKS 2 (ADVANCED NETWORKING)",
+          "prereq": "IT-304",
+          "lecture": 2,
+          "lab": 1,
+          "yearLevel": 3
+        },
+        {
+          "code": "IT-308",
+          "title": "SYSTEM INTEGRATION AND ARCHITECTURE 2",
+          "prereq": "IT-303",
+          "lecture": 2,
+          "lab": 1,
+          "yearLevel": 3
+        },
+        {
+          "code": "IT-309",
+          "title": "INFORMATION ASSURANCE AND SECURITY",
+          "prereq": "3rd Yr",
+          "lecture": 2,
+          "lab": 1,
+          "yearLevel": 3
+        },
+        {
+          "code": "IT-ELEC2",
+          "title": "IT ELECTIVE 2 (MOBILE APPLICATION DEVELOPMENT)",
+          "prereq": "3rd Yr",
+          "lecture": 2,
+          "lab": 1,
+          "yearLevel": 3
+        },
+        {
+          "code": "TH 6",
+          "title": "CHRISTIAN SOCIAL RESPONSIBILITY",
+          "prereq": "TH 5",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 3
+        },
+        {
+          "code": "CAPSPRO 2",
+          "title": "CAPSTONE PROJECT 2",
+          "prereq": "CAPSPRO1",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 4
+        },
+        {
+          "code": "IT-401",
+          "title": "QUANTITATIVE METHODS (INCLUDING MODELING AND SIMULATION)",
+          "prereq": "IT 102",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 4
+        },
+        {
+          "code": "IT-402",
+          "title": "SOCIAL AND PROFESSIONAL ISSUES",
+          "prereq": "4th Yr",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 4
+        },
+        {
+          "code": "IT-403",
+          "title": "APPLICATION DEVELOPMENT AND EMERGING THEORIES",
+          "prereq": "4th Yr",
+          "lecture": 2,
+          "lab": 1,
+          "yearLevel": 4
+        },
+        {
+          "code": "IT-404",
+          "title": "SYSTEM ADMINISTRATION AND MAINTENANCE",
+          "prereq": "4th Yr",
+          "lecture": 2,
+          "lab": 1,
+          "yearLevel": 4
+        },
+        {
+          "code": "IT-ELEC3",
+          "title": "IT ELECTIVE 3 (MULTIMEDIA SYSTEM)",
+          "prereq": "IT-ELEC2, 4th Yr",
+          "lecture": 2,
+          "lab": 1,
+          "yearLevel": 4
+        },
+        {
+          "code": "IT-ELEC4",
+          "title": "IT ELECTIVE 4 (WEB SYSTEMS AND TECHNOLOGIES 2)",
+          "prereq": "IT-ELEC2, 4th Yr",
+          "lecture": 2,
+          "lab": 1,
+          "yearLevel": 4
+        },
+        {
+          "code": "IT-PRAC",
+          "title": "IT PRACTICUM",
+          "prereq": "4th Yr",
+          "lecture": 6,
+          "lab": 0,
+          "yearLevel": 4
+        },
+        {
+          "code": "IS-CITE",
+          "title": "INTEGRATING SEMINAR",
+          "prereq": "4th Yr",
+          "lecture": 3,
+          "lab": 0,
+          "yearLevel": 4
+        }
+      ]
+    }
+  ]
+}

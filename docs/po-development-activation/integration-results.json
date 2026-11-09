@@ -1,0 +1,68 @@
+{
+  "kind": "read-only development DB references with synthetic content and scripted model; no real syllabi or reports modified",
+  "programs": [
+    {
+      "code": "BSIT",
+      "count": 9,
+      "referenceId": "lcup-po-2026-10-29-BSIT",
+      "poSource": "BSIT",
+      "curriculumSource": "BSIT",
+      "legacyScore": 100,
+      "comprehensiveScore": 100,
+      "passThreshold": 79,
+      "sevenVpaaRelationshipsEvaluated": 7,
+      "providerDisabledVerifiedRelationships": 0,
+      "scriptedRequests": 39,
+      "liveModelCalls": 0,
+      "reportSerialization": "verified; no report written to development"
+    },
+    {
+      "code": "BSIT-CYBERSECURITY",
+      "count": 9,
+      "referenceId": "lcup-po-2026-10-29-BSIT",
+      "poSource": "BSIT",
+      "curriculumSource": "BSIT",
+      "legacyScore": 100,
+      "comprehensiveScore": 100,
+      "passThreshold": 79,
+      "sevenVpaaRelationshipsEvaluated": 7,
+      "providerDisabledVerifiedRelationships": 0,
+      "scriptedRequests": 39,
+      "liveModelCalls": 0,
+      "reportSerialization": "verified; no report written to development"
+    },
+    {
+      "code": "BSIE",
+      "count": 13,
+      "referenceId": "lcup-po-2026-10-29-BSIE",
+      "poSource": "BSIE",
+      "curriculumSource": "BSIE",
+      "legacyScore": 100,
+      "comprehensiveScore": 100,
+      "passThreshold": 79,
+      "sevenVpaaRelationshipsEvaluated": 7,
+      "providerDisabledVerifiedRelationships": 0,
+      "scriptedRequests": 39,
+      "liveModelCalls": 0,
+      "reportSerialization": "verified; no report written to development"
+    },
+    {
+      "code": "BSCPE",
+      "count": 13,
+      "referenceId": "lcup-po-2026-10-29-BSCPE",
+      "poSource": "BSCPE",
+      "curriculumSource": "BSCPE",
+      "legacyScore": 100,
+      "comprehensiveScore": 100,
+      "passThreshold": 79,
+      "sevenVpaaRelationshipsEvaluated": 7,
+      "providerDisabledVerifiedRelationships": 0,
+      "scriptedRequests": 39,
+      "liveModelCalls": 0,
+      "reportSerialization": "verified; no report written to development"
+    }
+  ],
+  "developmentDataWrites": 0,
+  "liveModelCalls": 0,
+  "formalInstitutionalApproval": "not_recorded"
+}

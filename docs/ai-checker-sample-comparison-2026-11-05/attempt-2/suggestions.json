@@ -1,0 +1,1105 @@
+[
+  {
+    "id": "CUR-FIELD:meta.title",
+    "path": "meta.title",
+    "title": "Use the exact master text",
+    "text": "COMPUTER PROGRAMMING 1 (FUNDAMENTALS OF PROGRAMMING)",
+    "replacement": "COMPUTER PROGRAMMING 1 (FUNDAMENTALS OF PROGRAMMING)",
+    "source": "rule",
+    "basedOn": [
+      "CUR-FIELD:meta.title"
+    ],
+    "tier": "mandatory",
+    "originalValue": "Computer Programming 1",
+    "targetIds": {}
+  },
+  {
+    "id": "CUR-FIELD:meta.prereq",
+    "path": "meta.prereq",
+    "title": "Use the exact master text",
+    "text": "IT 101",
+    "replacement": "IT 101",
+    "source": "rule",
+    "basedOn": [
+      "CUR-FIELD:meta.prereq"
+    ],
+    "tier": "mandatory",
+    "originalValue": "IT 202 - Programming 1",
+    "targetIds": {}
+  },
+  {
+    "id": "SEM:clo0-anyega",
+    "path": "clos[0].statement",
+    "title": "Suggested alignment revision",
+    "text": "Analyze and define the computing requirements needed for an effective solution, and creatively design original Java-based solutions that are holistic and impactful.",
+    "replacement": "Analyze and define the computing requirements needed for an effective solution, and creatively design original Java-based solutions that are holistic and impactful.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:clo0-anyega",
+      "SEM:clo0-ega1",
+      "SEM:clo0-ega3",
+      "SEM:clo0-ega4"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "Define and analyze the computing requirements needed for an effective solution that is essential for developing holistic and impactful solutions.",
+    "targetIds": {
+      "row": "real-prog1-2"
+    }
+  },
+  {
+    "id": "SEM:clo3-anypo",
+    "path": "clos[3].statement",
+    "title": "Suggested alignment revision",
+    "text": "Act in recognition of professional, social and ethical responsibility by demonstrating Filipino-Catholic Augustinian Spirituality through value webbing applied to decisions made in Java programming solutions.",
+    "replacement": "Act in recognition of professional, social and ethical responsibility by demonstrating Filipino-Catholic Augustinian Spirituality through value webbing applied to decisions made in Java programming solutions.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:clo3-anypo",
+      "SEM:clo3-anyega",
+      "SEM:clo3-po4",
+      "SEM:clo3-po5",
+      "SEM:clo3-ega2"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "Demonstrate the Filipino- Catholic Augustinian Spirituality through value webbing.",
+    "targetIds": {
+      "row": "real-prog1-5"
+    }
+  },
+  {
+    "id": "SEM:row0-ilo0-clo:real-prog1-2",
+    "path": "plan[0].ilos[0].text",
+    "title": "Suggested alignment revision",
+    "text": "ILO 1: Explain the course structure and expectations and identify the computing requirements of a simple real-world IT problem that Java programming can address, citing professional ethical standards.",
+    "replacement": "ILO 1: Explain the course structure and expectations and identify the computing requirements of a simple real-world IT problem that Java programming can address, citing professional ethical standards.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row0-ilo0-clo:real-prog1-2"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "ILO 1: Demonstrate a clear understanding of the course structure, expectations, and key programming concepts in Java, including how these skills align with real- world IT challenges and professional ethical standards.",
+    "targetIds": {
+      "row": "real-prog1-7",
+      "ilo": "real-prog1-6"
+    }
+  },
+  {
+    "id": "SEM:row0-ilo0-content",
+    "path": "plan[0].contents",
+    "title": "Suggested alignment revision",
+    "text": "I. Orientation\nA. Introduction to the Course Contents and Course Requirements and Activities\nB. Course Objectives, Grading System and Policies on Absences, Tardiness and Examinations\nC. Overview of key Java programming concepts (program, source code, compiler, variables, control structures)\nD. How programming skills address real-world IT challenges\nE. Professional ethical standards in programming",
+    "replacement": "I. Orientation\nA. Introduction to the Course Contents and Course Requirements and Activities\nB. Course Objectives, Grading System and Policies on Absences, Tardiness and Examinations\nC. Overview of key Java programming concepts (program, source code, compiler, variables, control structures)\nD. How programming skills address real-world IT challenges\nE. Professional ethical standards in programming",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row0-ilo0-content"
+    ],
+    "tier": "optional",
+    "attempt": 1,
+    "originalValue": "I. Orientation\nA. Introduction to the Course Contents\nB. Course Requirements and Activities\nC. Course Objectives Grading System and Policies on Absences, Tardiness and Examinations",
+    "targetIds": {
+      "row": "real-prog1-7"
+    }
+  },
+  {
+    "id": "SEM:row0-ilo0-activity",
+    "path": "plan[0].activities",
+    "title": "Suggested alignment revision",
+    "text": "• Setting and sharing of Expectations from the Course\n• Discussion on the Vision, Mission and Goals of LCUP and of CITE\n• Presentation of Course Objectives and Contents, Course Requirements and Activities, and Review of Policies on Absences, Tardiness, Examinations and Grading System\n• Short guided discussion where students explain, in their own words, what Java is used for and how programming addresses real-world IT challenges\n• Small-group discussion of a case on professional ethical standards in programming",
+    "replacement": "• Setting and sharing of Expectations from the Course\n• Discussion on the Vision, Mission and Goals of LCUP and of CITE\n• Presentation of Course Objectives and Contents, Course Requirements and Activities, and Review of Policies on Absences, Tardiness, Examinations and Grading System\n• Short guided discussion where students explain, in their own words, what Java is used for and how programming addresses real-world IT challenges\n• Small-group discussion of a case on professional ethical standards in programming",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row0-ilo0-activity"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Setting and sharing of Expectations from the Course\n• Discussion on the Vision, Mission and Goals of LCUP and of CITE\n• Presentation of Course Objectives and Contents, Course Requirements and Activities Review of Policies on Absences, Tardiness,\nExaminations, Grading System",
+    "targetIds": {
+      "row": "real-prog1-7"
+    }
+  },
+  {
+    "id": "SEM:row0-ilo0-assessment",
+    "path": "plan[0].tasks",
+    "title": "Suggested alignment revision",
+    "text": "• Statement of Expectations\n• Review of Course Contents, Objectives, Activities and Assessment Tools\n• Review of Policies on Absences, Tardiness, Examinations, Grading System\n• Short written reflection explaining key Java programming concepts, one real-world IT challenge Java can address, and one professional ethical standard for programmers",
+    "replacement": "• Statement of Expectations\n• Review of Course Contents, Objectives, Activities and Assessment Tools\n• Review of Policies on Absences, Tardiness, Examinations, Grading System\n• Short written reflection explaining key Java programming concepts, one real-world IT challenge Java can address, and one professional ethical standard for programmers",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row0-ilo0-assessment"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Statement of Expectations\n• Review of Course Contents, Objectives, Activities and Assessment Tools\n• Review of Policies on Absences, Tardiness, Examinations, Grading System",
+    "targetIds": {
+      "row": "real-prog1-7"
+    }
+  },
+  {
+    "id": "SEM:row0-value",
+    "path": "plan[0].values",
+    "title": "Suggested alignment revision",
+    "text": "• Courage – students voice their honest expectations and questions about the course when they share and review it\n• Humility – students listen to classmates' expectations and accept the course policies on absences, tardiness and examinations\n• Community-orientedness – students commit to shared class norms and recognize how the LCUP and CITE vision and mission guide their work in IT",
+    "replacement": "• Courage – students voice their honest expectations and questions about the course when they share and review it\n• Humility – students listen to classmates' expectations and accept the course policies on absences, tardiness and examinations\n• Community-orientedness – students commit to shared class norms and recognize how the LCUP and CITE vision and mission guide their work in IT",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row0-value"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Compassion\n• Courage\n• Open mindedness\n• Respect\n• Obedience",
+    "targetIds": {
+      "row": "real-prog1-7"
+    }
+  },
+  {
+    "id": "SEM:row1-ilo0-clo:real-prog1-2",
+    "path": "plan[1].ilos[0].text",
+    "title": "Suggested alignment revision",
+    "text": "LO1. Explain the basic concepts and principles of Java programming that are needed to define the computing requirements of a solution.",
+    "replacement": "LO1. Explain the basic concepts and principles of Java programming that are needed to define the computing requirements of a solution.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row1-ilo0-clo:real-prog1-2"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "LO1. Explain the basic concepts and principles of Java programming,",
+    "targetIds": {
+      "row": "real-prog1-9",
+      "ilo": "real-prog1-8"
+    }
+  },
+  {
+    "id": "SEM:row1-ilo0-content",
+    "path": "plan[1].contents",
+    "title": "Suggested alignment revision",
+    "text": "II. Introduction to Java Programming\n• A Brief History of Java language\n• Characteristics of Java Language\n• Reasons why programmers use Java language, Features of Java Programming\n• Basic concepts and principles: structure of a Java program, compiling and running (JDK, JVM, bytecode), basic syntax, variables and data types, and introduction to object-oriented principles\n• Worked examples of simple Java programs explained line by line",
+    "replacement": "II. Introduction to Java Programming\n• A Brief History of Java language\n• Characteristics of Java Language\n• Reasons why programmers use Java language, Features of Java Programming\n• Basic concepts and principles: structure of a Java program, compiling and running (JDK, JVM, bytecode), basic syntax, variables and data types, and introduction to object-oriented principles\n• Worked examples of simple Java programs explained line by line",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row1-ilo0-content"
+    ],
+    "tier": "optional",
+    "attempt": 1,
+    "originalValue": "II. Introduction to Java Programming\n• A Brief History of Java language\n• Characteristics of Java Language\n• Reasons why programmers use Java language Features of Java Programming",
+    "targetIds": {
+      "row": "real-prog1-9"
+    }
+  },
+  {
+    "id": "SEM:row1-ilo0-activity",
+    "path": "plan[1].activities",
+    "title": "Suggested alignment revision",
+    "text": "• Lecture-Discussion with recitation using PowerPoint Presentation, where students explain Java concepts in their own words\n• Video Presentation on how Java programs are written and run\n• Discovery Learning: students explore and run simple Java programs and describe how the basic concepts work\n• Functioning Knowledge: students explain Java principles to a partner using examples",
+    "replacement": "• Lecture-Discussion with recitation using PowerPoint Presentation, where students explain Java concepts in their own words\n• Video Presentation on how Java programs are written and run\n• Discovery Learning: students explore and run simple Java programs and describe how the basic concepts work\n• Functioning Knowledge: students explain Java principles to a partner using examples",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row1-ilo0-activity"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Lecture- Discussion/Recitat ion using Power Point Presentation\n• Video Presentation\n• Discovery Learning\n• Functioning Knowledge",
+    "targetIds": {
+      "row": "real-prog1-9"
+    }
+  },
+  {
+    "id": "SEM:row1-ilo0-assessment",
+    "path": "plan[1].tasks",
+    "title": "Suggested alignment revision",
+    "text": "• Brain Storming: class list of Java features and basic concepts\n• Quiz: short questions in which students explain basic Java concepts and principles (program structure, syntax, data types, object-oriented principles)\n• Assignment: written explanation of how a simple Java program works, citing the basic concepts it uses",
+    "replacement": "• Brain Storming: class list of Java features and basic concepts\n• Quiz: short questions in which students explain basic Java concepts and principles (program structure, syntax, data types, object-oriented principles)\n• Assignment: written explanation of how a simple Java program works, citing the basic concepts it uses",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row1-ilo0-assessment"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Brain Storming\n• Quiz\n• Assignment",
+    "targetIds": {
+      "row": "real-prog1-9"
+    }
+  },
+  {
+    "id": "SEM:row1-value",
+    "path": "plan[1].values",
+    "title": "Suggested alignment revision",
+    "text": "• Courage – students volunteer to explain Java concepts aloud in recitation and brainstorming, even when unsure\n• Humility – students accept correction on quizzes and assignments and learn from classmates' explanations of Java principles\n• Community-orientedness – students help one another understand the basic concepts through partner explanations",
+    "replacement": "• Courage – students volunteer to explain Java concepts aloud in recitation and brainstorming, even when unsure\n• Humility – students accept correction on quizzes and assignments and learn from classmates' explanations of Java principles\n• Community-orientedness – students help one another understand the basic concepts through partner explanations",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row1-value"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Self Awareness\n• Active participation and involvement\n• Courage\n• Humility\n• Analytical Skills",
+    "targetIds": {
+      "row": "real-prog1-9"
+    }
+  },
+  {
+    "id": "SEM:row2-ilo0-clo:real-prog1-2",
+    "path": "plan[2].ilos[0].text",
+    "title": "Suggested alignment revision",
+    "text": "ILO1: Analyze the computing requirements of a simple problem and identify the Java syntax and semantics (variables, constants, operators, console input/output) needed to meet them.",
+    "replacement": "ILO1: Analyze the computing requirements of a simple problem and identify the Java syntax and semantics (variables, constants, operators, console input/output) needed to meet them.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row2-ilo0-clo:real-prog1-2",
+      "SEM:row2-ilo0-clo:real-prog1-3"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "ILO1: Demonstrate the skills by knowing the syntax and semantics of Java. of Language.",
+    "targetIds": {
+      "row": "real-prog1-12",
+      "ilo": "real-prog1-10"
+    }
+  },
+  {
+    "id": "SEM:row2-ilo0-content",
+    "path": "plan[2].contents",
+    "title": "Suggested alignment revision",
+    "text": "III. The Basic Input/Output Statements of Java Console\n• Java installation and setting up the Eclipse IDE\n• Basic input/output statements, with worked examples using Scanner and System.out\n• Variable declaration, rules for naming variables, and the meaning (semantics) of assignment\n• Constants and operators (arithmetic, relational, logical), with traced examples of how expressions are evaluated\n• Worked console programs that combine input, variables and operators",
+    "replacement": "III. The Basic Input/Output Statements of Java Console\n• Java installation and setting up the Eclipse IDE\n• Basic input/output statements, with worked examples using Scanner and System.out\n• Variable declaration, rules for naming variables, and the meaning (semantics) of assignment\n• Constants and operators (arithmetic, relational, logical), with traced examples of how expressions are evaluated\n• Worked console programs that combine input, variables and operators",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row2-ilo0-content",
+      "SEM:row2-ilo1-content"
+    ],
+    "tier": "optional",
+    "attempt": 1,
+    "originalValue": "III. The Basic Input/Output Statements of Java Console\n• The Basic Input/Output\n• Variable Declaration\n• Rules in declaring variables, ➢ Constants ➢ Operators\n• Java Installation Java Eclipse GUI",
+    "targetIds": {
+      "row": "real-prog1-12"
+    }
+  },
+  {
+    "id": "SEM:row2-ilo0-activity",
+    "path": "plan[2].activities",
+    "title": "Suggested alignment revision",
+    "text": "• Discussion of Java syntax and semantics using PowerPoint\n• Instructor demonstration of writing and running a console program in Eclipse\n• Guided hands-on coding: students type, run and trace programs that use variables, constants, operators and input/output\n• Discovery learning: students predict and then test the output of short code snippets\n• Pair debugging of syntax errors",
+    "replacement": "• Discussion of Java syntax and semantics using PowerPoint\n• Instructor demonstration of writing and running a console program in Eclipse\n• Guided hands-on coding: students type, run and trace programs that use variables, constants, operators and input/output\n• Discovery learning: students predict and then test the output of short code snippets\n• Pair debugging of syntax errors",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row2-ilo0-activity",
+      "SEM:row2-ilo1-activity"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Discussion using PowerPoint Presentation\n• Discovery Learning\n• Functional Knowledge\n• Research Study\n• Demonstration",
+    "targetIds": {
+      "row": "real-prog1-12"
+    }
+  },
+  {
+    "id": "SEM:row2-ilo0-assessment",
+    "path": "plan[2].tasks",
+    "title": "Suggested alignment revision",
+    "text": "• Machine Problem: write and run a Java console program that declares variables and constants, reads user input and computes results with operators, graded on correct syntax and output\n• Quiz: short items on syntax rules and tracing the output of code snippets (semantics)\n• Recitation/group participation: explain a code snippet's behaviour aloud\n• Assignment: correct the syntax and logic errors in a given program and explain each fix",
+    "replacement": "• Machine Problem: write and run a Java console program that declares variables and constants, reads user input and computes results with operators, graded on correct syntax and output\n• Quiz: short items on syntax rules and tracing the output of code snippets (semantics)\n• Recitation/group participation: explain a code snippet's behaviour aloud\n• Assignment: correct the syntax and logic errors in a given program and explain each fix",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row2-ilo0-assessment",
+      "SEM:row2-ilo1-assessment"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Recitation Group Participation •\n• Quiz\n• Machine Problem\n• Assignment",
+    "targetIds": {
+      "row": "real-prog1-12"
+    }
+  },
+  {
+    "id": "SEM:row2-ilo1-clo:real-prog1-4",
+    "path": "plan[2].ilos[1].text",
+    "title": "Suggested alignment revision",
+    "text": "ILO2: Apply basic Java programming concepts through hands-on practice by working with classmates from different backgrounds to build a simple program that addresses a community need.",
+    "replacement": "ILO2: Apply basic Java programming concepts through hands-on practice by working with classmates from different backgrounds to build a simple program that addresses a community need.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row2-ilo1-clo:real-prog1-4",
+      "SEM:row2-ilo1-clo:real-prog1-3"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "ILO2: Ensures that students gain a foundational understanding of Java and are able to apply basic programming concepts through hands-on practice.",
+    "targetIds": {
+      "row": "real-prog1-12",
+      "ilo": "real-prog1-11"
+    }
+  },
+  {
+    "id": "SEM:row2-value",
+    "path": "plan[2].values",
+    "title": "Suggested alignment revision",
+    "text": "• Interiority: students reflect on their own coding habits and on honesty in doing their machine problems, writing and explaining their own code rather than copying.\n• Courage: students try new Java syntax, run programs that may fail, and present and explain their code and errors in recitation.",
+    "replacement": "• Interiority: students reflect on their own coding habits and on honesty in doing their machine problems, writing and explaining their own code rather than copying.\n• Courage: students try new Java syntax, run programs that may fail, and present and explain their code and errors in recitation.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row2-value"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Interiority\n• Work Ethics\n• Interpersonal Skills\n• Courage\n• Critical Thinking\n• Courage •",
+    "targetIds": {
+      "row": "real-prog1-12"
+    }
+  },
+  {
+    "id": "SEM:row3-ilo0-clo:real-prog1-2",
+    "path": "plan[3].ilos[0].text",
+    "title": "Suggested alignment revision",
+    "text": "ILO 1: Analyze the data input and output requirements of a problem and apply Java streams to read and write data that meets them.",
+    "replacement": "ILO 1: Analyze the data input and output requirements of a problem and apply Java streams to read and write data that meets them.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row3-ilo0-clo:real-prog1-2",
+      "SEM:row3-ilo0-clo:real-prog1-3"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "ILO 1: Inference read and write data using Java streams",
+    "targetIds": {
+      "row": "real-prog1-16",
+      "ilo": "real-prog1-13"
+    }
+  },
+  {
+    "id": "SEM:row3-ilo0-content",
+    "path": "plan[3].contents",
+    "title": "Suggested alignment revision",
+    "text": "IV. Java Libraries Program\n• Parts of a Java program\n• The print and println function\n• Data types: int, float, double, char\n• Reasons to declare variables\n• Java streams: InputStream/OutputStream and Reader/Writer classes\n• Reading input with Scanner and writing output to the console and to a text file\n• Worked example: tracing data read from a file, processed, and written to a new file\n• Handling input errors responsibly",
+    "replacement": "IV. Java Libraries Program\n• Parts of a Java program\n• The print and println function\n• Data types: int, float, double, char\n• Reasons to declare variables\n• Java streams: InputStream/OutputStream and Reader/Writer classes\n• Reading input with Scanner and writing output to the console and to a text file\n• Worked example: tracing data read from a file, processed, and written to a new file\n• Handling input errors responsibly",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row3-ilo0-content",
+      "SEM:row3-ilo1-content",
+      "SEM:row3-ilo2-content"
+    ],
+    "tier": "optional",
+    "attempt": 1,
+    "originalValue": "IV. Java Libraries Program\n• Parts of a Java program\n• The print and println function Data type\n• Int (Integer)\n• Float\n• Double\n• Char\n• Reasons to declare variables",
+    "targetIds": {
+      "row": "real-prog1-16"
+    }
+  },
+  {
+    "id": "SEM:row3-ilo0-activity",
+    "path": "plan[3].activities",
+    "title": "Suggested alignment revision",
+    "text": "• Lecture-Discussion using PowerPoint presentation on Java streams\n• Seatwork: trace code that reads and writes data with streams\n• Laboratory: write a Java program that reads data from the keyboard or a file using streams and writes results to a file\n• Machine Problem Video Presentation: demonstrate and explain the stream-based program",
+    "replacement": "• Lecture-Discussion using PowerPoint presentation on Java streams\n• Seatwork: trace code that reads and writes data with streams\n• Laboratory: write a Java program that reads data from the keyboard or a file using streams and writes results to a file\n• Machine Problem Video Presentation: demonstrate and explain the stream-based program",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row3-ilo0-activity",
+      "SEM:row3-ilo1-activity"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Lecture-Discussion using Power Point presentation\n• Seatwork\n• Laboratory\n• Machine Problem Video Presentation",
+    "targetIds": {
+      "row": "real-prog1-16"
+    }
+  },
+  {
+    "id": "SEM:row3-ilo0-assessment",
+    "path": "plan[3].tasks",
+    "title": "Suggested alignment revision",
+    "text": "• Recitation on how Java streams read and write data\n• Laboratory exercise: submit a Java program that reads records from a text file and writes a processed report to another file, graded with a rubric on correct stream use and output",
+    "replacement": "• Recitation on how Java streams read and write data\n• Laboratory exercise: submit a Java program that reads records from a text file and writes a processed report to another file, graded with a rubric on correct stream use and output",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row3-ilo0-assessment",
+      "SEM:row3-ilo1-assessment",
+      "SEM:row3-ilo2-assessment"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Recitation\n• Quiz Simulation of the external and internal parts of the System Unit",
+    "targetIds": {
+      "row": "real-prog1-16"
+    }
+  },
+  {
+    "id": "SEM:row3-ilo2-clo:real-prog1-4",
+    "path": "plan[3].ilos[2].text",
+    "title": "Suggested alignment revision",
+    "text": "ILO 4: Apply the syntax and semantics of Java to write working programs with a classmate for a simple community-related problem.",
+    "replacement": "ILO 4: Apply the syntax and semantics of Java to write working programs with a classmate for a simple community-related problem.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row3-ilo2-clo:real-prog1-4"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "ILO4: Demonstrate the skills by knowing the syntax and semantics of Java. of Language.",
+    "targetIds": {
+      "row": "real-prog1-16",
+      "ilo": "real-prog1-15"
+    }
+  },
+  {
+    "id": "SEM:row3-value",
+    "path": "plan[3].values",
+    "title": "Suggested alignment revision",
+    "text": "• Humility: students ask for and give help when debugging, and accept corrections to their syntax errors in the laboratory.\n• Community-orientedness: students share working code and explain it to classmates during the Machine Problem Video Presentation.\n• Interiority: students reflect on whether their program is honest and careful work.",
+    "replacement": "• Humility: students ask for and give help when debugging, and accept corrections to their syntax errors in the laboratory.\n• Community-orientedness: students share working code and explain it to classmates during the Machine Problem Video Presentation.\n• Interiority: students reflect on whether their program is honest and careful work.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row3-value"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Understanding\n• Exactness\n• Patience\n• Critical Thinking\n• Active participation and involvement\n• Critical Thinking\n• Patience\n• Appreciation",
+    "targetIds": {
+      "row": "real-prog1-16"
+    }
+  },
+  {
+    "id": "SEM:row5-ilo0-clo:real-prog1-2",
+    "path": "plan[5].ilos[0].text",
+    "title": "Suggested alignment revision",
+    "text": "ILO3: Analyze the requirements of a given problem and explain how structured logic (decisions, loops, and array manipulation) can be used to meet them.",
+    "replacement": "ILO3: Analyze the requirements of a given problem and explain how structured logic (decisions, loops, and array manipulation) can be used to meet them.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row5-ilo0-clo:real-prog1-2",
+      "SEM:row5-ilo0-clo:real-prog1-4"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "ILO3: Understand the fundamentals of structured logic using decisions, loops, and array manipulation.",
+    "targetIds": {
+      "row": "real-prog1-21",
+      "ilo": "real-prog1-19"
+    }
+  },
+  {
+    "id": "SEM:row5-ilo0-content",
+    "path": "plan[5].contents",
+    "title": "Suggested alignment revision",
+    "text": "V. Structured Logic in Java\n• Conditional Statements: syntax, if statement, if-else statement, switch/case, with sample programs that trace which branch runs\n• Looping Constructs: for, while, do-while, with traced examples of repeated tasks\n• Arrays: declaring, accessing and traversing arrays with loops, with worked examples combining decisions, loops, and arrays",
+    "replacement": "V. Structured Logic in Java\n• Conditional Statements: syntax, if statement, if-else statement, switch/case, with sample programs that trace which branch runs\n• Looping Constructs: for, while, do-while, with traced examples of repeated tasks\n• Arrays: declaring, accessing and traversing arrays with loops, with worked examples combining decisions, loops, and arrays",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row5-ilo0-content",
+      "SEM:row5-ilo1-content"
+    ],
+    "tier": "optional",
+    "attempt": 1,
+    "originalValue": "V. . Conditional Statements\n• The Conditional Statements Syntax\n• If Statement\n• If Else Statement Switch/case Language",
+    "targetIds": {
+      "row": "real-prog1-21"
+    }
+  },
+  {
+    "id": "SEM:row5-ilo0-activity",
+    "path": "plan[5].activities",
+    "title": "Suggested alignment revision",
+    "text": "• Discussion using PowerPoint Presentation on decisions, loops, and arrays\n• Video Presentation on structured logic in Java\n• Laboratory Exercises: tracing and explaining short Java programs that use if/else, loops, and arrays, done in pairs or small groups",
+    "replacement": "• Discussion using PowerPoint Presentation on decisions, loops, and arrays\n• Video Presentation on structured logic in Java\n• Laboratory Exercises: tracing and explaining short Java programs that use if/else, loops, and arrays, done in pairs or small groups",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row5-ilo0-activity",
+      "SEM:row5-ilo1-activity"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Discussion using PowerPoint Presentation\n• Video Presentation\n• Laboratory Exercises: Machine Language Group Dynamics",
+    "targetIds": {
+      "row": "real-prog1-21"
+    }
+  },
+  {
+    "id": "SEM:row5-ilo0-assessment",
+    "path": "plan[5].tasks",
+    "title": "Suggested alignment revision",
+    "text": "• Recitation: explaining how decisions, loops, and arrays control program flow\n• Seatwork: tracing code that uses if/else, loops, and arrays and stating the output\n• Laboratory Exercises: short Java programs using decisions, loops, and arrays, with a written explanation of the logic",
+    "replacement": "• Recitation: explaining how decisions, loops, and arrays control program flow\n• Seatwork: tracing code that uses if/else, loops, and arrays and stating the output\n• Laboratory Exercises: short Java programs using decisions, loops, and arrays, with a written explanation of the logic",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row5-ilo0-assessment",
+      "SEM:row5-ilo1-assessment"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Recitation\n• Seatwork on the topics discussed\n• Laboratory Exercises",
+    "targetIds": {
+      "row": "real-prog1-21"
+    }
+  },
+  {
+    "id": "SEM:row5-ilo1-clo:real-prog1-3",
+    "path": "plan[5].ilos[1].text",
+    "title": "Suggested alignment revision",
+    "text": "ILO4: Be able to apply conditional statements in Java to control program flow based on specific conditions, and write programs that make decisions dynamically depending on user input or computed values, applying ethical standards such as honest, fair, and safe handling of input so the program serves the common good.",
+    "replacement": "ILO4: Be able to apply conditional statements in Java to control program flow based on specific conditions, and write programs that make decisions dynamically depending on user input or computed values, applying ethical standards such as honest, fair, and safe handling of input so the program serves the common good.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row5-ilo1-clo:real-prog1-3",
+      "SEM:row5-ilo1-clo:real-prog1-4"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "ILO4: Be able to apply conditional statements in Java to control program flow based on specific conditions, and write programs\nthat make decisions dynamically depending on user input or computed values.",
+    "targetIds": {
+      "row": "real-prog1-21",
+      "ilo": "real-prog1-20"
+    }
+  },
+  {
+    "id": "SEM:row5-value",
+    "path": "plan[5].values",
+    "title": "Suggested alignment revision",
+    "text": "• Humility: students accept feedback from peers and the instructor when their conditional logic gives wrong output, and fix their code.\n• Courage: students attempt and defend their own Java solutions for decision-making programs during recitation and laboratory exercises, even when unsure.\n• Community-orientedness: students work in pairs or groups in the laboratory exercises, sharing code reviews so everyone can write correct conditional programs.",
+    "replacement": "• Humility: students accept feedback from peers and the instructor when their conditional logic gives wrong output, and fix their code.\n• Courage: students attempt and defend their own Java solutions for decision-making programs during recitation and laboratory exercises, even when unsure.\n• Community-orientedness: students work in pairs or groups in the laboratory exercises, sharing code reviews so everyone can write correct conditional programs.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row5-value"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Patience\n• Humility\n• Cooperation\n• Accuracy\n• Appreciation\n• Leadership Skills\n• Courage",
+    "targetIds": {
+      "row": "real-prog1-21"
+    }
+  },
+  {
+    "id": "SEM:row6-ilo0-clo:real-prog1-2",
+    "path": "plan[6].ilos[0].text",
+    "title": "Suggested alignment revision",
+    "text": "ILO1: Analyze the requirements of a repetitive real-world task and utilize looping constructs (for, while, do-while) in Java to design programs that efficiently handle repetitive processes and iterations.",
+    "replacement": "ILO1: Analyze the requirements of a repetitive real-world task and utilize looping constructs (for, while, do-while) in Java to design programs that efficiently handle repetitive processes and iterations.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row6-ilo0-clo:real-prog1-2",
+      "SEM:row6-ilo0-clo:real-prog1-3",
+      "SEM:row6-ilo0-clo:real-prog1-4"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "ILO1: Utilize various looping constructs (for, while, do-while) in Java to execute repeated tasks, and design programs that efficiently handle repetitive processes and iterations, incorporating loops to solve real-world problems.  ,",
+    "targetIds": {
+      "row": "real-prog1-24",
+      "ilo": "real-prog1-22"
+    }
+  },
+  {
+    "id": "SEM:row6-ilo0-content",
+    "path": "plan[6].contents",
+    "title": "Suggested alignment revision",
+    "text": "XI. Looping Statements\n• Java Loops\n▪ For Loops\n▪ While Loops\n▪ Do While Loop\n▪ Break/Continue\n• Choosing the right loop for a task and avoiding infinite loops\n• Nested loops and worked examples\n• Worked examples: applying loops to real-world problems (e.g., totals, averages, menus, patterns)",
+    "replacement": "XI. Looping Statements\n• Java Loops\n▪ For Loops\n▪ While Loops\n▪ Do While Loop\n▪ Break/Continue\n• Choosing the right loop for a task and avoiding infinite loops\n• Nested loops and worked examples\n• Worked examples: applying loops to real-world problems (e.g., totals, averages, menus, patterns)",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row6-ilo0-content",
+      "SEM:row6-ilo1-content"
+    ],
+    "tier": "optional",
+    "attempt": 1,
+    "originalValue": "XI. Looping Statements\n• Java Loops\n▪ For Loops\n▪ Do While Loop\n▪ Break/Continue",
+    "targetIds": {
+      "row": "real-prog1-24"
+    }
+  },
+  {
+    "id": "SEM:row6-ilo0-activity",
+    "path": "plan[6].activities",
+    "title": "Suggested alignment revision",
+    "text": "• Discussion using PowerPoint Presentation on for, while and do-while loops\n• Laboratory Exercises: students write and run Java programs using for, while and do-while loops to handle repetitive tasks\n• Students design and code a loop-based program that solves a real-world problem (e.g., grade computation, ATM menu)",
+    "replacement": "• Discussion using PowerPoint Presentation on for, while and do-while loops\n• Laboratory Exercises: students write and run Java programs using for, while and do-while loops to handle repetitive tasks\n• Students design and code a loop-based program that solves a real-world problem (e.g., grade computation, ATM menu)",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row6-ilo0-activity",
+      "SEM:row6-ilo1-activity"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Discussion using PowerPoint Presentation\n• Functioning Knowledge\n• Laboratory Exercises.",
+    "targetIds": {
+      "row": "real-prog1-24"
+    }
+  },
+  {
+    "id": "SEM:row6-ilo0-assessment",
+    "path": "plan[6].tasks",
+    "title": "Suggested alignment revision",
+    "text": "• Recitation on loop concepts\n• Group Participation in laboratory work\n• Quiz on loop syntax and tracing loop output\n• Machine Problem: write a Java program using for, while and do-while loops to solve a real-world repetitive problem, graded on correctness and efficiency",
+    "replacement": "• Recitation on loop concepts\n• Group Participation in laboratory work\n• Quiz on loop syntax and tracing loop output\n• Machine Problem: write a Java program using for, while and do-while loops to solve a real-world repetitive problem, graded on correctness and efficiency",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row6-ilo0-assessment",
+      "SEM:row6-ilo1-assessment"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Recitation\n• Group Participation\n• Quiz\n• Machine Problem",
+    "targetIds": {
+      "row": "real-prog1-24"
+    }
+  },
+  {
+    "id": "SEM:row6-value",
+    "path": "plan[6].values",
+    "title": "Suggested alignment revision",
+    "text": "• Humility: students admit and correct errors in their loops (such as infinite loops) during laboratory exercises and accept classmates' feedback.\n• Community-orientedness: in group participation, students help one another debug loop programs in the Machine Problem.\n• Interiority: students reflect on the precision and accuracy their code needs.",
+    "replacement": "• Humility: students admit and correct errors in their loops (such as infinite loops) during laboratory exercises and accept classmates' feedback.\n• Community-orientedness: in group participation, students help one another debug loop programs in the Machine Problem.\n• Interiority: students reflect on the precision and accuracy their code needs.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row6-value"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Critical Thinking\n• Understanding\n• Precision\n• Accuracy\n• Appreciation\n• Humility",
+    "targetIds": {
+      "row": "real-prog1-24"
+    }
+  },
+  {
+    "id": "SEM:row8-ilo0-clo:real-prog1-2",
+    "path": "plan[8].ilos[0].text",
+    "title": "Suggested alignment revision",
+    "text": "ILO4: Analyze the data storage requirements of a problem and declare, initialize, and manipulate one-dimensional and multi-dimensional arrays in Java to store, retrieve, and process data in various applications.",
+    "replacement": "ILO4: Analyze the data storage requirements of a problem and declare, initialize, and manipulate one-dimensional and multi-dimensional arrays in Java to store, retrieve, and process data in various applications.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row8-ilo0-clo:real-prog1-2",
+      "SEM:row8-ilo0-clo:real-prog1-3"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "ILO4: declare, initialize, and manipulate arrays in Java, effectively using one-\ndimensional and multi-dimensional arrays to store, retrieve, and process data in various applications",
+    "targetIds": {
+      "row": "real-prog1-29",
+      "ilo": "real-prog1-27"
+    }
+  },
+  {
+    "id": "SEM:row8-ilo0-content",
+    "path": "plan[8].contents",
+    "title": "Suggested alignment revision",
+    "text": "X. Arrays\n• One-dimensional arrays: declaration and initialization\n• Accessing, storing and retrieving elements\n• Processing arrays with loops (traversal, sum, search)\n• Two-dimensional arrays: syntax, declaration, initialization and processing\n• Worked examples of arrays in applications (e.g., grades, seating chart)",
+    "replacement": "X. Arrays\n• One-dimensional arrays: declaration and initialization\n• Accessing, storing and retrieving elements\n• Processing arrays with loops (traversal, sum, search)\n• Two-dimensional arrays: syntax, declaration, initialization and processing\n• Worked examples of arrays in applications (e.g., grades, seating chart)",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row8-ilo0-content",
+      "SEM:row8-ilo1-content"
+    ],
+    "tier": "optional",
+    "attempt": 1,
+    "originalValue": "X. . Array\n• Array\n• Example of Array\n• Two-Dimensional Arrays syntax:",
+    "targetIds": {
+      "row": "real-prog1-29"
+    }
+  },
+  {
+    "id": "SEM:row8-ilo0-activity",
+    "path": "plan[8].activities",
+    "title": "Suggested alignment revision",
+    "text": "• Discussion using PowerPoint presentation on one-dimensional and two-dimensional arrays\n• Guided discovery learning: students declare and initialize arrays and trace their contents\n• Laboratory exercises: students write Java programs that store, retrieve and process data (searching, summing, sorting) in one-dimensional and multi-dimensional arrays\n• Short quiz on array syntax",
+    "replacement": "• Discussion using PowerPoint presentation on one-dimensional and two-dimensional arrays\n• Guided discovery learning: students declare and initialize arrays and trace their contents\n• Laboratory exercises: students write Java programs that store, retrieve and process data (searching, summing, sorting) in one-dimensional and multi-dimensional arrays\n• Short quiz on array syntax",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row8-ilo0-activity",
+      "SEM:row8-ilo1-activity"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Discussion using Power Point Presentation\n• Functioning knowledge\n• Discovery Learning\n• Quiz on the discussed topic Laboratory Exercises",
+    "targetIds": {
+      "row": "real-prog1-29"
+    }
+  },
+  {
+    "id": "SEM:row8-ilo1-assessment",
+    "path": "plan[8].tasks",
+    "title": "Suggested alignment revision",
+    "text": "• Recitation\n• Quiz on error types and debugging techniques\n• Machine problem: students debug given faulty Java console programs (including array programs), submit the corrected code and a short debugging log explaining each error and its fix",
+    "replacement": "• Recitation\n• Quiz on error types and debugging techniques\n• Machine problem: students debug given faulty Java console programs (including array programs), submit the corrected code and a short debugging log explaining each error and its fix",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row8-ilo1-assessment"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Recitation\n• Quiz\n• Machine problem: Hands-on exercises using Java Console programs",
+    "targetIds": {
+      "row": "real-prog1-29"
+    }
+  },
+  {
+    "id": "SEM:row8-value",
+    "path": "plan[8].values",
+    "title": "Suggested alignment revision",
+    "text": "• Compassion: while debugging array programs in the laboratory, students patiently help classmates find and fix errors and give kind, constructive feedback\n• Humility: students admit their own coding mistakes and learn from corrections as they work toward the array and debugging ILOs",
+    "replacement": "• Compassion: while debugging array programs in the laboratory, students patiently help classmates find and fix errors and give kind, constructive feedback\n• Humility: students admit their own coding mistakes and learn from corrections as they work toward the array and debugging ILOs",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row8-value"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Active participation and involvement\n• Understanding\n• Compassion Critical Thinking",
+    "targetIds": {
+      "row": "real-prog1-29"
+    }
+  },
+  {
+    "id": "SEM:row9-ilo0-clo:real-prog1-2",
+    "path": "plan[9].ilos[0].text",
+    "title": "Suggested alignment revision",
+    "text": "ILO1: Analyze the text-processing requirements of a problem and apply suitable Java string manipulation methods to meet them.",
+    "replacement": "ILO1: Analyze the text-processing requirements of a problem and apply suitable Java string manipulation methods to meet them.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row9-ilo0-clo:real-prog1-2",
+      "SEM:row9-ilo0-clo:real-prog1-3"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "ILO1: Apply various string manipulation methods in Java.  .",
+    "targetIds": {
+      "row": "real-prog1-32",
+      "ilo": "real-prog1-30"
+    }
+  },
+  {
+    "id": "SEM:row9-ilo0-content",
+    "path": "plan[9].contents",
+    "title": "Suggested alignment revision",
+    "text": "XIII. Strings\n• String basics and immutability\n• String manipulation methods with worked Java examples: length(), charAt(), indexOf(), concat(), replace(), equalsIgnoreCase(), toLowerCase()/toUpperCase(), substring()\n• Applying the methods to everyday tasks (validating input, extracting parts of text, formatting names)",
+    "replacement": "XIII. Strings\n• String basics and immutability\n• String manipulation methods with worked Java examples: length(), charAt(), indexOf(), concat(), replace(), equalsIgnoreCase(), toLowerCase()/toUpperCase(), substring()\n• Applying the methods to everyday tasks (validating input, extracting parts of text, formatting names)",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row9-ilo0-content",
+      "SEM:row9-ilo1-content"
+    ],
+    "tier": "optional",
+    "attempt": 1,
+    "originalValue": "XIII. Strings\n• String Manipulation ➢ Length() ➢ charAt() ➢ indexOf() ➢ concat() ➢ replace ➢ ignorecase() ➢ substring()",
+    "targetIds": {
+      "row": "real-prog1-32"
+    }
+  },
+  {
+    "id": "SEM:row9-ilo0-assessment",
+    "path": "plan[9].tasks",
+    "title": "Suggested alignment revision",
+    "text": "• Recitation on string methods\n• Quiz on the behaviour of length(), charAt(), indexOf(), concat(), replace() and substring()\n• Seatwork (trial and error discovery learning): students write Java programs that manipulate strings\n• Accurate program output: working Java programs that correctly apply the string manipulation methods",
+    "replacement": "• Recitation on string methods\n• Quiz on the behaviour of length(), charAt(), indexOf(), concat(), replace() and substring()\n• Seatwork (trial and error discovery learning): students write Java programs that manipulate strings\n• Accurate program output: working Java programs that correctly apply the string manipulation methods",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row9-ilo0-assessment",
+      "SEM:row9-ilo1-assessment"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Recitation\n• Quiz\n• Seatwork-Trial and Error for discovery learning\n• Accurate Program output",
+    "targetIds": {
+      "row": "real-prog1-32"
+    }
+  },
+  {
+    "id": "SEM:row9-ilo1-clo:real-prog1-4",
+    "path": "plan[9].ilos[1].text",
+    "title": "Suggested alignment revision",
+    "text": "LO2: Synthesize debugging skills by collaborating with classmates from diverse backgrounds to find and fix errors in Java programs that address a social challenge.",
+    "replacement": "LO2: Synthesize debugging skills by collaborating with classmates from diverse backgrounds to find and fix errors in Java programs that address a social challenge.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row9-ilo1-clo:real-prog1-4",
+      "SEM:row9-ilo1-clo:real-prog1-3"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "LO2: Synthesize skills in De-bugging Java Language program.",
+    "targetIds": {
+      "row": "real-prog1-32",
+      "ilo": "real-prog1-31"
+    }
+  },
+  {
+    "id": "SEM:row9-ilo1-activity",
+    "path": "plan[9].activities",
+    "title": "Suggested alignment revision",
+    "text": "Lecture:\n• Discussion using PowerPoint Presentation on common Java errors and debugging techniques\n• Quiz\n• Laboratory Exercises: students are given faulty Java String programs, trace and locate the errors, fix them and re-test (Machine Problem)\n• Seatwork using trial and error discovery learning: students debug and improve their own Java programs and explain each fix",
+    "replacement": "Lecture:\n• Discussion using PowerPoint Presentation on common Java errors and debugging techniques\n• Quiz\n• Laboratory Exercises: students are given faulty Java String programs, trace and locate the errors, fix them and re-test (Machine Problem)\n• Seatwork using trial and error discovery learning: students debug and improve their own Java programs and explain each fix",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row9-ilo1-activity"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "Lecture:\n• Discussion using Powerpoint Presentation\n• Quiz\n• Laboratory: :Exercises: ➢ Machine Problem\n• Seatwork using trial and error discovery learning",
+    "targetIds": {
+      "row": "real-prog1-32"
+    }
+  },
+  {
+    "id": "SEM:row9-value",
+    "path": "plan[9].values",
+    "title": "Suggested alignment revision",
+    "text": "• Humility: students admit and learn from their own coding errors and accept classmates' feedback when debugging String programs\n• Courage: students run, test and try fixes on faulty Java code without fear of failure, and present their solutions in recitation\n• Patience and critical thinking: students trace their code step by step through trial and error until the output is correct",
+    "replacement": "• Humility: students admit and learn from their own coding errors and accept classmates' feedback when debugging String programs\n• Courage: students run, test and try fixes on faulty Java code without fear of failure, and present their solutions in recitation\n• Patience and critical thinking: students trace their code step by step through trial and error until the output is correct",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row9-value"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Critical Thinking\n• Active participation and involvement\n• Open mindedness\n• Humility\n• Patience\n• Courage",
+    "targetIds": {
+      "row": "real-prog1-32"
+    }
+  },
+  {
+    "id": "SEM:row10-ilo0-clo:real-prog1-2",
+    "path": "plan[10].ilos[0].text",
+    "title": "Suggested alignment revision",
+    "text": "ILO4: Analyze the requirements of a given problem and demonstrate the Java syntax and semantics needed to meet them.",
+    "replacement": "ILO4: Analyze the requirements of a given problem and demonstrate the Java syntax and semantics needed to meet them.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row10-ilo0-clo:real-prog1-2",
+      "SEM:row10-ilo0-clo:real-prog1-3"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "ILO4: Demonstrate the skills by knowing the syntax and semantics of Java.",
+    "targetIds": {
+      "row": "real-prog1-36",
+      "ilo": "real-prog1-33"
+    }
+  },
+  {
+    "id": "SEM:row10-ilo0-content",
+    "path": "plan[10].contents",
+    "title": "Suggested alignment revision",
+    "text": "XII. JAVA METHODS\n• Method syntax: declaring and calling methods, return types\n• Java parameters: how arguments are passed and what a method returns (semantics), with traced examples\n• Methods calling other methods and objects\n• Java recursion: base case and recursive case, with worked examples and output tracing",
+    "replacement": "XII. JAVA METHODS\n• Method syntax: declaring and calling methods, return types\n• Java parameters: how arguments are passed and what a method returns (semantics), with traced examples\n• Methods calling other methods and objects\n• Java recursion: base case and recursive case, with worked examples and output tracing",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row10-ilo0-content",
+      "SEM:row10-ilo1-content",
+      "SEM:row10-ilo2-content"
+    ],
+    "tier": "optional",
+    "attempt": 1,
+    "originalValue": "XII. JAVA METHOD\n• Java Parameters\n• Object Connection Java Recursion",
+    "targetIds": {
+      "row": "real-prog1-36"
+    }
+  },
+  {
+    "id": "SEM:row10-ilo0-activity",
+    "path": "plan[10].activities",
+    "title": "Suggested alignment revision",
+    "text": "• Discussion using PowerPoint Presentation on Java method syntax, parameters and recursion\n• Blended Learning: online practice on writing Java methods\n• Quiz on the discussed topic\n• Laboratory Exercises: students write, run and trace Java methods with parameters and recursion, and explain what each program does",
+    "replacement": "• Discussion using PowerPoint Presentation on Java method syntax, parameters and recursion\n• Blended Learning: online practice on writing Java methods\n• Quiz on the discussed topic\n• Laboratory Exercises: students write, run and trace Java methods with parameters and recursion, and explain what each program does",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row10-ilo0-activity",
+      "SEM:row10-ilo1-activity",
+      "SEM:row10-ilo2-activity"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Discussion using Power Point Presentation\n• Functioning knowledge\n• Blended Learning\n• Quiz on the discussed topic\n• Laboratory Exercises",
+    "targetIds": {
+      "row": "real-prog1-36"
+    }
+  },
+  {
+    "id": "SEM:row10-ilo0-assessment",
+    "path": "plan[10].tasks",
+    "title": "Suggested alignment revision",
+    "text": "• Recitation: explain the syntax and the output of given Java methods\n• Quiz on Java method syntax, parameters and recursion\n• Machine problem: hands-on exercises writing Java programs with methods, parameters and recursion, graded on correct syntax and accurate output",
+    "replacement": "• Recitation: explain the syntax and the output of given Java methods\n• Quiz on Java method syntax, parameters and recursion\n• Machine problem: hands-on exercises writing Java programs with methods, parameters and recursion, graded on correct syntax and accurate output",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row10-ilo0-assessment",
+      "SEM:row10-ilo1-assessment",
+      "SEM:row10-ilo2-assessment"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Recitation\n• Quiz\n• Machine problem: Hands-on exercises using C programs",
+    "targetIds": {
+      "row": "real-prog1-36"
+    }
+  },
+  {
+    "id": "SEM:row10-ilo1-clo:real-prog1-2",
+    "path": "plan[10].ilos[1].text",
+    "title": "Suggested alignment revision",
+    "text": "ILO5: Build robust Java console applications that meet computing requirements the student has defined and analyzed.",
+    "replacement": "ILO5: Build robust Java console applications that meet computing requirements the student has defined and analyzed.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row10-ilo1-clo:real-prog1-2",
+      "SEM:row10-ilo1-clo:real-prog1-3"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "ILO5: Build robust applications using Java console code.",
+    "targetIds": {
+      "row": "real-prog1-36",
+      "ilo": "real-prog1-34"
+    }
+  },
+  {
+    "id": "SEM:row10-ilo2-clo:real-prog1-4",
+    "path": "plan[10].ilos[2].text",
+    "title": "Suggested alignment revision",
+    "text": "ILO6: Synthesize debugging skills for Java programs by collaborating with diverse teammates to find and fix errors in a Java solution that addresses a social challenge.",
+    "replacement": "ILO6: Synthesize debugging skills for Java programs by collaborating with diverse teammates to find and fix errors in a Java solution that addresses a social challenge.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row10-ilo2-clo:real-prog1-4",
+      "SEM:row10-ilo2-clo:real-prog1-3"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "ILO6: Synthesize skills in De-bugging\nJava Language program.",
+    "targetIds": {
+      "row": "real-prog1-36",
+      "ilo": "real-prog1-35"
+    }
+  },
+  {
+    "id": "SEM:row10-value",
+    "path": "plan[10].values",
+    "title": "Suggested alignment revision",
+    "text": "• Interiority: during debugging in the laboratory exercises, students reflect honestly on their own mistakes and how they approached the problem before changing the code.\n• Courage: students present and defend their Java console application in recitation and admit and fix errors found by peers, rather than hiding them.",
+    "replacement": "• Interiority: during debugging in the laboratory exercises, students reflect honestly on their own mistakes and how they approached the problem before changing the code.\n• Courage: students present and defend their Java console application in recitation and admit and fix errors found by peers, rather than hiding them.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row10-value"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Active participation and involvement\n• Understanding\n• Interiority\n• Courage\n• Critical Thinking",
+    "targetIds": {
+      "row": "real-prog1-36"
+    }
+  },
+  {
+    "id": "SEM:row11-ilo0-clo:real-prog1-4",
+    "path": "plan[11].ilos[0].text",
+    "title": "Suggested alignment revision",
+    "text": "ILO1: Retrieve data from a relational database using a Java class, working with teammates to build a Java solution that addresses a social challenge.",
+    "replacement": "ILO1: Retrieve data from a relational database using a Java class, working with teammates to build a Java solution that addresses a social challenge.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row11-ilo0-clo:real-prog1-4",
+      "SEM:row11-ilo0-clo:real-prog1-3"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "ILO1 Retreve data from a relational database using java class.",
+    "targetIds": {
+      "row": "real-prog1-39",
+      "ilo": "real-prog1-37"
+    }
+  },
+  {
+    "id": "SEM:row11-ilo1-content",
+    "path": "plan[11].contents",
+    "title": "Suggested alignment revision",
+    "text": "X. JAVA DATABASE CONNECTION\n• Improvised Database UCanAccess Connection\nValue webbing: Filipino-Catholic Augustinian Spirituality (community, humility, love of service) linked to responsible handling of stored data, with a sample value web connecting database use to the common good",
+    "replacement": "X. JAVA DATABASE CONNECTION\n• Improvised Database UCanAccess Connection\nValue webbing: Filipino-Catholic Augustinian Spirituality (community, humility, love of service) linked to responsible handling of stored data, with a sample value web connecting database use to the common good",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row11-ilo1-content",
+      "SEM:row11-ilo0-content"
+    ],
+    "tier": "optional",
+    "attempt": 1,
+    "originalValue": "X. JAVA DATABASE CONNECTION\n• Improvised Database UCanAccess Connection",
+    "targetIds": {
+      "row": "real-prog1-39"
+    }
+  },
+  {
+    "id": "SEM:row11-ilo1-activity",
+    "path": "plan[11].activities",
+    "title": "Suggested alignment revision",
+    "text": "• Discussion using PowerPoint on Augustinian values in responsible data handling\n• Cooperative learning: groups create a value web linking Filipino-Catholic Augustinian Spirituality (community, humility, love of service) to their database program\n• Group presentation of the value web\n• Group Dynamics Laboratory Exercises on Java database connection",
+    "replacement": "• Discussion using PowerPoint on Augustinian values in responsible data handling\n• Cooperative learning: groups create a value web linking Filipino-Catholic Augustinian Spirituality (community, humility, love of service) to their database program\n• Group presentation of the value web\n• Group Dynamics Laboratory Exercises on Java database connection",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row11-ilo1-activity",
+      "SEM:row11-ilo0-activity"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Discussion using Power Point Presentation\n• Quiz on the discussed topic\n• Cooperative Learning\n• Group Dynamics Laboratory Exercises",
+    "targetIds": {
+      "row": "real-prog1-39"
+    }
+  },
+  {
+    "id": "SEM:row11-ilo1-assessment",
+    "path": "plan[11].tasks",
+    "title": "Suggested alignment revision",
+    "text": "• Recitation\n• Quiz\n• Value web output: each group submits a value web showing how Filipino-Catholic Augustinian Spirituality (community, humility, love of service) applies to their database program, graded with a rubric\n• Machine problem: hands-on exercises using Java programs",
+    "replacement": "• Recitation\n• Quiz\n• Value web output: each group submits a value web showing how Filipino-Catholic Augustinian Spirituality (community, humility, love of service) applies to their database program, graded with a rubric\n• Machine problem: hands-on exercises using Java programs",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row11-ilo1-assessment",
+      "SEM:row11-ilo0-assessment"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Recitation\n• Quiz\n• Groupings\n• Machine problem: Hands-on exercises using Java programs",
+    "targetIds": {
+      "row": "real-prog1-39"
+    }
+  },
+  {
+    "id": "SEM:row11-value",
+    "path": "plan[11].values",
+    "title": "Suggested alignment revision",
+    "text": "• Community-orientedness: students work in groups on the database laboratory exercises and the value web, sharing code and helping one another.\n• Courage: students try retrieving data from a database, face connection errors and debug them, and present their value web.\n• Humility: students accept peer feedback on their code and value web.",
+    "replacement": "• Community-orientedness: students work in groups on the database laboratory exercises and the value web, sharing code and helping one another.\n• Courage: students try retrieving data from a database, face connection errors and debug them, and present their value web.\n• Humility: students accept peer feedback on their code and value web.",
+    "source": "ai",
+    "basedOn": [
+      "SEM:row11-value"
+    ],
+    "tier": "material",
+    "attempt": 1,
+    "originalValue": "• Active participation and involvement\n• Understanding\n• Teamwork Skills\n• Courage Critical Thinking",
+    "targetIds": {
+      "row": "real-prog1-39"
+    }
+  },
+  {
+    "id": "SEM:description-plan",
+    "path": "description",
+    "title": "Suggested alignment revision",
+    "text": "This course introduces students to the vital role of computers and computer programmers in shaping modern society. It builds a strong foundation in logical problem formulation and good coding practices. Students learn the fundamentals of Java programming: console input/output, variables, data types and operators, conditional statements, loops, arrays, strings, methods and recursion, and connecting Java programs to a database using UCanAccess. In line with La Consolacion University Philippines' commitment to forming Christo-centric Catholic professionals, the course integrates Marian Augustinian values in each lesson, so that students grow intellectually and cultivate moral and ethical responsibility in the digital age. This holistic approach nurtures individuals who contribute positively to society, embodying community, humility, and love of service, as exemplified by the Blessed Virgin Mary and Saint Augustine. By the end of the course, students will have created their own Java applications, demonstrating both technical proficiency and a sense of purpose rooted in their Catholic faith.",
+    "replacement": [
+      {
+        "id": "real-prog1-1",
+        "t": "This course introduces students to the vital role of computers and computer programmers in shaping modern society. It builds a strong foundation in logical problem formulation and good coding practices. Students learn the fundamentals of Java programming: console input/output, variables, data types and operators, conditional statements, loops, arrays, strings, methods and recursion, and connecting Java programs to a database using UCanAccess. In line with La Consolacion University Philippines' commitment to forming Christo-centric Catholic professionals, the course integrates Marian Augustinian values in each lesson, so that students grow intellectually and cultivate moral and ethical responsibility in the digital age. This holistic approach nurtures individuals who contribute positively to society, embodying community, humility, and love of service, as exemplified by the Blessed Virgin Mary and Saint Augustine. By the end of the course, students will have created their own Java applications, demonstrating both technical proficiency and a sense of purpose rooted in their Catholic faith."
+      }
+    ],
+    "source": "ai",
+    "basedOn": [
+      "SEM:description-plan"
+    ],
+    "tier": "optional",
+    "attempt": 1,
+    "originalValue": [
+      {
+        "id": "real-prog1-1",
+        "t": "This course introduces students to the vital role of computers and computer programmers in shaping modern society. It aims to foster a strong foundation in logical formulation techniques essential for programming, while promoting the development of good coding practices. Students will be taught the fundamentals of Java programming and explore significant real-world applications. In line with La Consolacion University Philippines' commitment to forming Christo-centric Catholic professionals , the course integrates Marian Augustinian values in each lesson, ensuring that students not only achieve intellectual growth but also cultivate moral and ethical responsibility in the digital age. This holistic approach nurtures individuals who contribute positively to society, embodying community, humility, and love of service , as exemplified by the Blessed Virgin Mary and Saint Augustine. By the end of the course, students will have created their own Java applications, demonstrating both technical proficiency and a sense of purpose rooted in their Catholic faith."
+      }
+    ],
+    "targetIds": {}
+  }
+]

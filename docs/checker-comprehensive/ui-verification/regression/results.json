@@ -1,0 +1,1352 @@
+{
+  "summary": {
+    "label": "LOCAL browser verification, comprehensive-testing profile (staging-like topology, isolated scratch database, SYNTHETIC data, SCRIPTED provider). Not a staging test and not a Claude test: no live model request was made.",
+    "suite": "regression",
+    "profile": "comprehensive-testing",
+    "configuration": {
+      "SYLLABUS_CHECK_PROFILE": "comprehensive-testing",
+      "SYLLABUS_CHECK_ACADEMIC_V2": "off",
+      "SYLLABUS_CHECK_AI_MAX_COST_USD": "100"
+    },
+    "browser": "Microsoft Edge (Chromium) via playwright-core",
+    "node": "v26.12.1",
+    "finishedAt": "2026-11-04T23:50:03.188Z",
+    "scenarios": {
+      "total": 18,
+      "passed": 18,
+      "failed": 0
+    },
+    "checks": {
+      "total": 260,
+      "passed": 260,
+      "knownDefects": 0
+    },
+    "providerRequests": 169,
+    "blockedNetwork": 0
+  },
+  "results": [
+    {
+      "id": "E01",
+      "title": "Authentication in a real browser: failed login, successful login, session cookie flags, logout",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "a wrong password shows the error message and stays on the login form"
+        },
+        {
+          "ok": true,
+          "message": "the failed login was answered 401 by the API"
+        },
+        {
+          "ok": true,
+          "message": "an unregistered account is refused with its own message"
+        },
+        {
+          "ok": true,
+          "message": "the faculty dashboard renders with the signed-in name"
+        },
+        {
+          "ok": true,
+          "message": "connect.sid is HttpOnly, Secure and SameSite=Lax over https (httpOnly=true secure=true sameSite=Lax)"
+        },
+        {
+          "ok": true,
+          "message": "no remember-me cookie unless it was requested"
+        },
+        {
+          "ok": true,
+          "message": "the session authenticates API calls made with credentials from the https frontend origin"
+        },
+        {
+          "ok": true,
+          "message": "CORS answers the configured frontend origin only, with credentials ({\"origin\":\"https://localhost:3944\",\"credentials\":\"true\",\"vary\":\"Origin\"})"
+        },
+        {
+          "ok": true,
+          "message": "after logging out the API refuses the old session (401)"
+        },
+        {
+          "ok": true,
+          "message": "the login form is shown again after logout"
+        },
+        {
+          "ok": true,
+          "message": "E01: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E01: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E01: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E01: no request left this machine (none blocked)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=0 users=6"
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/regression/E01-faculty-dashboard-1440.png"
+      ],
+      "failed": false,
+      "ms": 7335
+    },
+    {
+      "id": "E02",
+      "title": "Faculty creates a syllabus: Step 1 through the real form (validation, selects, units), Steps 2–6 supplied through the real API, save and reload",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "a new faculty account starts with no syllabi"
+        },
+        {
+          "ok": true,
+          "message": "a new draft starts with 0 of 7 steps complete"
+        },
+        {
+          "ok": true,
+          "message": "the form lists what is still missing before Step 1 can be completed (form validation)"
+        },
+        {
+          "ok": true,
+          "message": "Step 1 shows as complete once the required fields are filled"
+        },
+        {
+          "ok": true,
+          "message": "the missing-field list disappears when Step 1 is complete"
+        },
+        {
+          "ok": true,
+          "message": "the draft exists in the database (id 1)"
+        },
+        {
+          "ok": true,
+          "message": "Steps 2–6 saved through PUT /syllabi/:id/content (HTTP 200 )"
+        },
+        {
+          "ok": true,
+          "message": "after a full page reload the draft is listed in My Syllabi"
+        },
+        {
+          "ok": true,
+          "message": "reopening the draft shows 7 of 7 steps complete (save and reload persistence)"
+        },
+        {
+          "ok": true,
+          "message": "the Step 1 choices were persisted"
+        },
+        {
+          "ok": true,
+          "message": "the review preview renders the outcomes with the four CLO classifications and the learning plan"
+        },
+        {
+          "ok": true,
+          "message": "E02: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E02: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E02: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E02: no request left this machine (none blocked)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=0 users=6",
+        "Steps 2–6 were supplied through the real API (not typed into the form) to keep the run bounded; Step 1 and the review step were driven through the UI."
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/regression/E02-builder-review-1440.png"
+      ],
+      "failed": false,
+      "ms": 15560
+    },
+    {
+      "id": "E03",
+      "title": "Faculty runs the checker on the draft: official compliance score, six areas, all seven VPAA relationships, advisory only",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "the official score is shown against the 79% pass line"
+        },
+        {
+          "ok": true,
+          "message": "relationship Content-course is evaluated and rendered"
+        },
+        {
+          "ok": true,
+          "message": "relationship Content-ILO is evaluated and rendered"
+        },
+        {
+          "ok": true,
+          "message": "relationship ILO-CLO is evaluated and rendered"
+        },
+        {
+          "ok": true,
+          "message": "relationship Content-activity is evaluated and rendered"
+        },
+        {
+          "ok": true,
+          "message": "relationship ILO-activity is evaluated and rendered"
+        },
+        {
+          "ok": true,
+          "message": "relationship Content-assessment is evaluated and rendered"
+        },
+        {
+          "ok": true,
+          "message": "relationship Activity-assessment is evaluated and rendered"
+        },
+        {
+          "ok": true,
+          "message": "the page states that the academic alignment is advisory only"
+        },
+        {
+          "ok": true,
+          "message": "the AI status shows the approved provider and model (scripted) as Evaluated"
+        },
+        {
+          "ok": true,
+          "message": "a draft preview offers no automatic correction"
+        },
+        {
+          "ok": true,
+          "message": "the scripted gaps are reported as findings (Requires revision / Faculty review)"
+        },
+        {
+          "ok": true,
+          "message": "the provider was reached only through the scripted double, and every request was counted by the shared budget (52 request(s), budget counted 52 of 120)"
+        },
+        {
+          "ok": true,
+          "message": "no request to any other host was attempted by the server"
+        },
+        {
+          "ok": true,
+          "message": "E03: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E03: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E03: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E03: no request left this machine (none blocked)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=1 users=6"
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/regression/E03-faculty-checker-1440.png"
+      ],
+      "failed": false,
+      "ms": 6319
+    },
+    {
+      "id": "E04",
+      "title": "Faculty submits through the UI; the syllabus locks; another faculty member and signed-out callers cannot reach it",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "My Syllabi shows Submitted with the review chain (Dean, Asst. VPAA, LIC Director)"
+        },
+        {
+          "ok": true,
+          "message": "the page explains that the submitted syllabus is locked"
+        },
+        {
+          "ok": true,
+          "message": "the submit call was answered 200"
+        },
+        {
+          "ok": true,
+          "message": "a locked syllabus refuses edits from its own owner (HTTP 409)"
+        },
+        {
+          "ok": true,
+          "message": "a faculty account is refused an administrator API (HTTP 403)"
+        },
+        {
+          "ok": true,
+          "message": "another faculty member cannot read the first member's syllabus (HTTP 404)"
+        },
+        {
+          "ok": true,
+          "message": "another faculty member cannot write to it (HTTP 404)"
+        },
+        {
+          "ok": true,
+          "message": "a recommendation action by a non-owner is not accepted (HTTP 404)"
+        },
+        {
+          "ok": true,
+          "message": "the other member's My Syllabi does not list it"
+        },
+        {
+          "ok": true,
+          "message": "signed-out callers get 401 from every protected API (401,401,401,401)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=1 users=6"
+      ],
+      "evidence": [],
+      "failed": false,
+      "ms": 8925
+    },
+    {
+      "id": "E05",
+      "title": "Administrator runs the official check: six weighted areas, 100% against 79, seven VPAA relationships, advisory panel, read-only for content",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "the administrator sees the administration menus"
+        },
+        {
+          "ok": true,
+          "message": "Review & Approval holds the submission back until the AI Checker has run"
+        },
+        {
+          "ok": true,
+          "message": "the official result is 100% and meets the standard"
+        },
+        {
+          "ok": true,
+          "message": "area scored: Format Compliance"
+        },
+        {
+          "ok": true,
+          "message": "area scored: Content Completeness"
+        },
+        {
+          "ok": true,
+          "message": "area scored: CO–PO Alignment"
+        },
+        {
+          "ok": true,
+          "message": "area scored: Assessment Alignment"
+        },
+        {
+          "ok": true,
+          "message": "area scored: Contact Hours"
+        },
+        {
+          "ok": true,
+          "message": "area scored: Reference Currency"
+        },
+        {
+          "ok": true,
+          "message": "relationship Content-course appears in the saved report view"
+        },
+        {
+          "ok": true,
+          "message": "relationship Content-ILO appears in the saved report view"
+        },
+        {
+          "ok": true,
+          "message": "relationship ILO-CLO appears in the saved report view"
+        },
+        {
+          "ok": true,
+          "message": "relationship Content-activity appears in the saved report view"
+        },
+        {
+          "ok": true,
+          "message": "relationship ILO-activity appears in the saved report view"
+        },
+        {
+          "ok": true,
+          "message": "relationship Content-assessment appears in the saved report view"
+        },
+        {
+          "ok": true,
+          "message": "relationship Activity-assessment appears in the saved report view"
+        },
+        {
+          "ok": true,
+          "message": "no incomplete-coverage warning when all seven relationships were evaluated"
+        },
+        {
+          "ok": true,
+          "message": "the advisory panel states that it has no numeric score or passing mark"
+        },
+        {
+          "ok": true,
+          "message": "the official check ran through the shared hybrid service (POST ... 200: POST /api/auth/login 200, POST /api/syllabi/1/compliance/recheck 200)"
+        },
+        {
+          "ok": true,
+          "message": "an administrator cannot edit the faculty member's syllabus content (HTTP 403)"
+        },
+        {
+          "ok": true,
+          "message": "E05: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E05: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E05: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E05: no request left this machine (none blocked)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=1 users=6"
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/regression/E05-admin-official-check-1440.png"
+      ],
+      "failed": false,
+      "ms": 7773
+    },
+    {
+      "id": "E06",
+      "title": "Administrator opens the checked submission in Review & Approval and returns it for revision with a note",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "the checked submission now appears as pending"
+        },
+        {
+          "ok": true,
+          "message": "the reviewer sees the document with Clear my check and Return for revision"
+        },
+        {
+          "ok": true,
+          "message": "the three clearing stages are shown"
+        },
+        {
+          "ok": true,
+          "message": "the full syllabus is readable in the review document"
+        },
+        {
+          "ok": true,
+          "message": "the return was accepted by the API (POST /api/auth/login 200, PUT /api/syllabi/1 200)"
+        },
+        {
+          "ok": true,
+          "message": "the item leaves the pending list once returned"
+        },
+        {
+          "ok": true,
+          "message": "E06: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E06: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E06: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E06: no request left this machine (none blocked)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=1 users=6"
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/regression/E06-review-document-1440.png"
+      ],
+      "failed": false,
+      "ms": 10277
+    },
+    {
+      "id": "E07",
+      "title": "Faculty, after the return: sees For Revision and the note, opens the official report, and reviews the recommendation",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "My Syllabi shows the returned syllabus as For Revision"
+        },
+        {
+          "ok": true,
+          "message": "the official report offers a corrections section"
+        },
+        {
+          "ok": true,
+          "message": "the scripted gaps produce at least one correction recommendation"
+        },
+        {
+          "ok": true,
+          "message": "E07: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E07: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E07: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E07: no request left this machine (none blocked)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=1 users=6",
+        "buttons on the faculty checker after the return: REPORTS | SETTINGS | 1 | TF Test Faculty Faculty | Log out | IT 204 — Computer Programming 2 | Edit Syllabus | Re-Check again | Accept | Check & improve | Reject | Submit new version to Admin"
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/regression/E07-faculty-after-return-1440.png"
+      ],
+      "failed": false,
+      "ms": 6778
+    },
+    {
+      "id": "E08",
+      "title": "Recommendation actions in the real UI: Check & improve, Accept (the draft changes), Undo (it changes back), Reject",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "one correctable recommendation offers Check & improve"
+        },
+        {
+          "ok": true,
+          "message": "Check & improve completed without an error message"
+        },
+        {
+          "ok": true,
+          "message": "Check & improve asked the (scripted) provider to verify the proposed wording"
+        },
+        {
+          "ok": true,
+          "message": "Accept wrote the recommended text into the saved draft"
+        },
+        {
+          "ok": true,
+          "message": "the accepted change was saved through the content API"
+        },
+        {
+          "ok": true,
+          "message": "an Undo control is offered for the applied recommendation"
+        },
+        {
+          "ok": true,
+          "message": "Undo restored the original saved text"
+        },
+        {
+          "ok": true,
+          "message": "Undo reports success on the page"
+        },
+        {
+          "ok": true,
+          "message": "E08: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E08: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E08: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E08: no request left this machine (none blocked)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=1 users=6",
+        "after Check & improve: Corrections for human review Correction target: learning_activity · plan[0].activities. Scripted revised text for faculty review. row0-ilo0-activity · Requires faculty review; never applied automatically Correction target: course_content · plan[0].contents. Scripted test-double reason. row0-contentassessment · Requires faculty review; never applied automatically Scope and limitations Structured syllabus and text-based references; visual APA formatting and source authenticity are not established. Advisory academic alignment has no numeric score, deductions or submission-gate effect. Recommendations require faculty review; syllabus content and mappings are never changed automatically. The offi",
+        "recommendation card after Check & improve: Suggested academic alignment revision | Step 3: Learning Plan · Learning plan (Row 1) | EDIT PROPOSED TEXT |  | Checked against 2 related items: 1 improve and none get worse. It is safe to accept. |  | Accept | Check & improve | Reject || disabled: Accept=false, Check & improve=false, Reject=false",
+        "after Accept buttons: 1 | TF\nTest Faculty\nFaculty | Log out | IT 204 — Computer Programming 2 | Edit Syllabus | Re-Check again | Undo change | Submit new version to Admin",
+        "syllabus-check calls: POST /api/syllabus-check/runs/3/suggestions/review%3Arow0-ilo0-activity/refine 200 :: {\"status\":\"verified\",\"usedRewrite\":false,\"text\":\"Scripted revised text for faculty review.\",\"stats\":{\"checked\":2,\"improved\":1,\"worse\":0,\"same\":1,\"unverified\":0,\"points\":-1},\"blockers\":[],\"verificationToken\":\"<redacted>\"} || POST /api/syllabus-check/runs/3/decisions 201 :: {\"id\":1,\"action\":\"accept\",\"draft\":{\"path\":\"plan[0].activities\",\"replacement\":\"Scripted revised text for faculty review.\"}} || POST /api/syllabus-check/runs/3/decisions 201 :: {\"id\":2,\"action\":\"undo\",\"draft\":null}",
+        "failed responses: GET /api/auth/me 401 :: {\"error\":\"Not authenticated\"}"
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/regression/E08-recommendation-actions-1440.png"
+      ],
+      "failed": false,
+      "ms": 19291
+    },
+    {
+      "id": "E09",
+      "title": "Faculty: Reject a recommendation, then Check & improve + Accept the next one, Re-Check, write what changed and submit the new version",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "a Re-Check offers the correctable recommendation again"
+        },
+        {
+          "ok": true,
+          "message": "Reject was recorded by the decisions API"
+        },
+        {
+          "ok": true,
+          "message": "Reject changed nothing in the saved draft"
+        },
+        {
+          "ok": true,
+          "message": "Check & improve then Accept changed the saved draft"
+        },
+        {
+          "ok": true,
+          "message": "the Re-Check after the correction still meets the standard (official score is not changed by the advisory result)"
+        },
+        {
+          "ok": true,
+          "message": "Submit new version stays disabled until the author says what changed"
+        },
+        {
+          "ok": true,
+          "message": "Submit new version is enabled once the change note is written"
+        },
+        {
+          "ok": true,
+          "message": "the corrected syllabus is Submitted again"
+        },
+        {
+          "ok": true,
+          "message": "a new version (v1.1) exists in the history"
+        },
+        {
+          "ok": true,
+          "message": "E09: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E09: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E09: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E09: no request left this machine (none blocked)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=1 users=6",
+        "recommendation cards after Reject + Re-Check: 1"
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/regression/E09-resubmitted-1440.png"
+      ],
+      "failed": false,
+      "ms": 39456
+    },
+    {
+      "id": "E10",
+      "title": "Review chain through the UI: administrator re-checks and clears, Asst. VPAA and LIC Director clear, VPAA approves; approval gates are enforced",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "the VPAA cannot decide on a version the AI Checker has not checked (HTTP 409)"
+        },
+        {
+          "ok": true,
+          "message": "the re-check of the corrected version is 100% and meets the standard"
+        },
+        {
+          "ok": true,
+          "message": "the VPAA cannot approve while the three stages have not cleared (HTTP 409 {\"error\":\"The dean, the Asst. VPAA and the LIC Director must each clear this syllabus before it can be approved.\",\"code\")"
+        },
+        {
+          "ok": true,
+          "message": "a Dean (administrator) cannot approve: only the VPAA can (HTTP 403)"
+        },
+        {
+          "ok": true,
+          "message": "the Dean stage shows as cleared (Decision Comments Messages Dean Test Administrator Asst. VPAA Not yet LIC Director Not yet Note to the faculty member Return for revision Revision history Close)"
+        },
+        {
+          "ok": true,
+          "message": "asst stage cleared through the UI"
+        },
+        {
+          "ok": true,
+          "message": "lic stage cleared through the UI"
+        },
+        {
+          "ok": true,
+          "message": "once all three stages cleared, the VPAA is offered Approve"
+        },
+        {
+          "ok": true,
+          "message": "the approved item leaves the pending list"
+        },
+        {
+          "ok": true,
+          "message": "the faculty member sees the syllabus as Approved"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=1 users=6",
+        "Dean confirm: Confirm",
+        "VPAA confirm button: Confirm",
+        "VPAA calls: POST /api/auth/login 200, PUT /api/syllabi/1 200"
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/regression/E10-vpaa-approval-1440.png"
+      ],
+      "failed": false,
+      "ms": 43539
+    },
+    {
+      "id": "E11",
+      "title": "Repository and read-only behaviour after approval: faculty and administrator see it, nobody can edit it, a faculty account has no administrator surface",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "the approved syllabus is listed in the faculty Repository"
+        },
+        {
+          "ok": true,
+          "message": "an approved syllabus is locked against edits by its own owner (HTTP 409)"
+        },
+        {
+          "ok": true,
+          "message": "an approved syllabus is not re-checked (HTTP 409)"
+        },
+        {
+          "ok": true,
+          "message": "a faculty account is not offered the administrator menus"
+        },
+        {
+          "ok": true,
+          "message": "administrator APIs answer 403 to a faculty account (403,403,403)"
+        },
+        {
+          "ok": true,
+          "message": "E11-faculty: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E11-faculty: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E11-faculty: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E11-faculty: no request left this machine (none blocked)"
+        },
+        {
+          "ok": true,
+          "message": "the administrator sees the approved syllabus in the Repository"
+        },
+        {
+          "ok": true,
+          "message": "an administrator cannot rewrite faculty content in the repository (HTTP 403)"
+        },
+        {
+          "ok": true,
+          "message": "E11-admin: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E11-admin: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E11-admin: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E11-admin: no request left this machine (none blocked)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=1 users=6"
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/regression/E11-faculty-repository-1440.png"
+      ],
+      "failed": false,
+      "ms": 6352
+    },
+    {
+      "id": "E12",
+      "title": "AI offline: provider outage, rejected credentials, rate limit and an invalid answer never stop the deterministic checker or fake a verification",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "a second synthetic syllabus (IT 205) was saved (HTTP 200)"
+        },
+        {
+          "ok": true,
+          "message": "with the AI down on a first-ever check the page says Verification incomplete / no final AI score yet / AI unavailable, and does not report a pass"
+        },
+        {
+          "ok": true,
+          "message": "no \"Meets the standard\" verdict is shown when the AI-scored part could not run"
+        },
+        {
+          "ok": true,
+          "message": "the advisory AI gate still lets the author submit (the AI never blocks or approves)"
+        },
+        {
+          "ok": true,
+          "message": "the page does not claim the AI evaluation succeeded"
+        },
+        {
+          "ok": true,
+          "message": "the incomplete seven-relationship coverage is stated explicitly (0 of 7)"
+        },
+        {
+          "ok": true,
+          "message": "E12-ui: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E12-ui: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E12-ui: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E12-ui: no request left this machine (none blocked)"
+        },
+        {
+          "ok": true,
+          "message": "ok: the check scores and all seven relationships are evaluated"
+        },
+        {
+          "ok": true,
+          "message": "an unchanged syllabus re-checked while the AI is down keeps its verified result and sends no provider request (reuse)"
+        },
+        {
+          "ok": true,
+          "message": "down: the check still answers (HTTP 200), the deterministic checker keeps working"
+        },
+        {
+          "ok": true,
+          "message": "down: it is reported incomplete (AI failed), with no score and no pass claimed (status incomplete, overall null, passed false)"
+        },
+        {
+          "ok": true,
+          "message": "down: the seven-relationship coverage is incomplete with a reason (v2_partial, 0/7)"
+        },
+        {
+          "ok": true,
+          "message": "rate: the check still answers (HTTP 200), the deterministic checker keeps working"
+        },
+        {
+          "ok": true,
+          "message": "rate: it is reported incomplete (AI failed), with no score and no pass claimed (status incomplete, overall null, passed false)"
+        },
+        {
+          "ok": true,
+          "message": "rate: the seven-relationship coverage is incomplete with a reason (v2_partial, 0/7)"
+        },
+        {
+          "ok": true,
+          "message": "invalid: the check still answers (HTTP 200), the deterministic checker keeps working"
+        },
+        {
+          "ok": true,
+          "message": "invalid: it is reported incomplete (AI failed), with no score and no pass claimed (status incomplete, overall null, passed false)"
+        },
+        {
+          "ok": true,
+          "message": "invalid: the seven-relationship coverage is incomplete with a reason (v2_partial, 0/7)"
+        },
+        {
+          "ok": true,
+          "message": "auth: the check still answers (HTTP 200), the deterministic checker keeps working"
+        },
+        {
+          "ok": true,
+          "message": "auth: it is reported incomplete (AI failed), with no score and no pass claimed (status incomplete, overall null, passed false)"
+        },
+        {
+          "ok": true,
+          "message": "auth: the seven-relationship coverage is incomplete with a reason (v2_partial, 0/7)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=1 users=6",
+        "page text with the AI down: Compliance check Checked against the Undergraduate Syllabus form. Only a form that does not follow the template stops you from submitting; the score and the other findings are advice for you and the reviewer. Re-Check again Check coverage: 111 of 195 catalogue entries verified Academic Evaluation Policy V2 Integrated AI academic alignment · advisory only academic-evaluation-v2-preview-1 Academic alignment Not checked Academic alignment has no numeric score, deductions or passing mark. AI evaluation status Not checked anthropic · claude-sonnet-5-5 Academic alignment is separate from deterministic compliance. It has no effect on the official score, deductions, passing mark or submission gate. ",
+        "page tail with the AI down:  supplied reference. No faculty error is inferred. Historical PO mappings need a reference review. No number was remapped. — Verification incomplete The AI check is incomplete, so there is no final AI score yet. You can still submit. AI alignment: not evaluated VPAA relationships checked: 0 of 7 AI unavailable Standard hybrid-2 · checked Nov 5, 2026 Contact hours: 5 a week, about 90 for the term. The plan covers 18 of 18 weeks. 2 findings behind the score 1 warning remains in the compliance check. They do not block you: the reviewer will see them, so fix what you can first. Submit to Admin The check supports — but does not replace — faculty, curriculum committee, and academic quality review.",
+        "failure-mode outcomes: {\"ok\":{\"http\":200,\"overall\":99,\"passed\":true,\"status\":\"scored\",\"aiStatus\":\"ok\",\"evaluated\":7,\"complete\":true,\"reason\":null},\"down\":{\"http\":200,\"overall\":null,\"passed\":false,\"status\":\"incomplete\",\"aiStatus\":\"failed\",\"evaluated\":0,\"complete\":false,\"reason\":\"v2_partial\"},\"rate\":{\"http\":200,\"overall\":null,\"passed\":false,\"status\":\"incomplete\",\"aiStatus\":\"failed\",\"evaluated\":0,\"complete\":false,\"reason\":\"v2_partial\"},\"invalid\":{\"http\":200,\"overall\":null,\"passed\":false,\"status\":\"incomplete\",\"aiStatus\":\"failed\",\"evaluated\":0,\"complete\":false,\"reason\":\"v2_partial\"},\"auth\":{\"http\":200,\"overall\":null,\"passed\":false,\"status\":\"incomplete\",\"aiStatus\":\"failed\",\"evaluated\":0,\"complete\":false,\"reason\":\"v2_partial\"}}"
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/regression/E12-ai-down-1440.png"
+      ],
+      "failed": false,
+      "ms": 13086
+    },
+    {
+      "id": "E13",
+      "title": "English / Filipino localization in the real UI: switch language, navigation and checker texts change, the choice survives a reload and is restored",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "the interface starts in English"
+        },
+        {
+          "ok": true,
+          "message": "the navigation is shown in Filipino"
+        },
+        {
+          "ok": true,
+          "message": "the AI Checker and the Policy V2 panel are shown in Filipino"
+        },
+        {
+          "ok": true,
+          "message": "no English heading is left in the translated panel"
+        },
+        {
+          "ok": true,
+          "message": "the language choice survives a full reload (saved on the account)"
+        },
+        {
+          "ok": true,
+          "message": "switching back restores English"
+        },
+        {
+          "ok": true,
+          "message": "E13: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E13: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E13: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E13: no request left this machine (none blocked)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=2 users=6"
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/regression/E13-filipino-checker-1440.png"
+      ],
+      "failed": false,
+      "ms": 13431
+    },
+    {
+      "id": "E14",
+      "title": "Responsive layouts at 375, 768, 1024 and 1440 px: no horizontal overflow, navigation reachable, key pages usable",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "phone 375px: Dashboard renders"
+        },
+        {
+          "ok": true,
+          "message": "phone 375px: Dashboard has no horizontal page overflow (scrollWidth 375 <= 375)"
+        },
+        {
+          "ok": true,
+          "message": "phone 375px: My Syllabi renders"
+        },
+        {
+          "ok": true,
+          "message": "phone 375px: My Syllabi has no horizontal page overflow (scrollWidth 375 <= 375)"
+        },
+        {
+          "ok": true,
+          "message": "phone 375px: AI Checker renders"
+        },
+        {
+          "ok": true,
+          "message": "phone 375px: AI Checker has no horizontal page overflow (scrollWidth 375 <= 375)"
+        },
+        {
+          "ok": true,
+          "message": "phone 375px: Repository renders"
+        },
+        {
+          "ok": true,
+          "message": "phone 375px: Repository has no horizontal page overflow (scrollWidth 375 <= 375)"
+        },
+        {
+          "ok": true,
+          "message": "E14-375: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E14-375: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E14-375: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E14-375: no request left this machine (none blocked)"
+        },
+        {
+          "ok": true,
+          "message": "tablet 768px: Dashboard renders"
+        },
+        {
+          "ok": true,
+          "message": "tablet 768px: Dashboard has no horizontal page overflow (scrollWidth 768 <= 768)"
+        },
+        {
+          "ok": true,
+          "message": "tablet 768px: My Syllabi renders"
+        },
+        {
+          "ok": true,
+          "message": "tablet 768px: My Syllabi has no horizontal page overflow (scrollWidth 768 <= 768)"
+        },
+        {
+          "ok": true,
+          "message": "tablet 768px: AI Checker renders"
+        },
+        {
+          "ok": true,
+          "message": "tablet 768px: AI Checker has no horizontal page overflow (scrollWidth 768 <= 768)"
+        },
+        {
+          "ok": true,
+          "message": "tablet 768px: Repository renders"
+        },
+        {
+          "ok": true,
+          "message": "tablet 768px: Repository has no horizontal page overflow (scrollWidth 768 <= 768)"
+        },
+        {
+          "ok": true,
+          "message": "E14-768: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E14-768: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E14-768: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E14-768: no request left this machine (none blocked)"
+        },
+        {
+          "ok": true,
+          "message": "laptop 1024px: Dashboard renders"
+        },
+        {
+          "ok": true,
+          "message": "laptop 1024px: Dashboard has no horizontal page overflow (scrollWidth 1024 <= 1024)"
+        },
+        {
+          "ok": true,
+          "message": "laptop 1024px: My Syllabi renders"
+        },
+        {
+          "ok": true,
+          "message": "laptop 1024px: My Syllabi has no horizontal page overflow (scrollWidth 1024 <= 1024)"
+        },
+        {
+          "ok": true,
+          "message": "laptop 1024px: AI Checker renders"
+        },
+        {
+          "ok": true,
+          "message": "laptop 1024px: AI Checker has no horizontal page overflow (scrollWidth 1024 <= 1024)"
+        },
+        {
+          "ok": true,
+          "message": "laptop 1024px: Repository renders"
+        },
+        {
+          "ok": true,
+          "message": "laptop 1024px: Repository has no horizontal page overflow (scrollWidth 1024 <= 1024)"
+        },
+        {
+          "ok": true,
+          "message": "E14-1024: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E14-1024: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E14-1024: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E14-1024: no request left this machine (none blocked)"
+        },
+        {
+          "ok": true,
+          "message": "desktop 1440px: Dashboard renders"
+        },
+        {
+          "ok": true,
+          "message": "desktop 1440px: Dashboard has no horizontal page overflow (scrollWidth 1440 <= 1440)"
+        },
+        {
+          "ok": true,
+          "message": "desktop 1440px: My Syllabi renders"
+        },
+        {
+          "ok": true,
+          "message": "desktop 1440px: My Syllabi has no horizontal page overflow (scrollWidth 1440 <= 1440)"
+        },
+        {
+          "ok": true,
+          "message": "desktop 1440px: AI Checker renders"
+        },
+        {
+          "ok": true,
+          "message": "desktop 1440px: AI Checker has no horizontal page overflow (scrollWidth 1440 <= 1440)"
+        },
+        {
+          "ok": true,
+          "message": "desktop 1440px: Repository renders"
+        },
+        {
+          "ok": true,
+          "message": "desktop 1440px: Repository has no horizontal page overflow (scrollWidth 1440 <= 1440)"
+        },
+        {
+          "ok": true,
+          "message": "E14-1440: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E14-1440: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E14-1440: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E14-1440: no request left this machine (none blocked)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=2 users=6"
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/regression/E14-checker-375.png",
+        "docs/checker-comprehensive/ui-verification/regression/E14-checker-768.png",
+        "docs/checker-comprehensive/ui-verification/regression/E14-checker-1024.png",
+        "docs/checker-comprehensive/ui-verification/regression/E14-checker-1440.png"
+      ],
+      "failed": false,
+      "ms": 29203
+    },
+    {
+      "id": "E15",
+      "title": "Official scoring parity: the same syllabus gets the identical official result with Policy V2 on and with Policy V2 off",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "both servers produced a run (V2 on, V2 off)"
+        },
+        {
+          "ok": true,
+          "message": "the first server has Policy V2 integrated"
+        },
+        {
+          "ok": true,
+          "message": "the second server has Policy V2 off"
+        },
+        {
+          "ok": true,
+          "message": "official score, bands, six area scores and rule findings are identical with Policy V2 on and off (99 vs 99)"
+        },
+        {
+          "ok": true,
+          "message": "the passing threshold is 79 in both"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=2 users=6",
+        "V2 on: overall=99 areas=6 | V2 off: overall=99 areas=6"
+      ],
+      "evidence": [],
+      "failed": false,
+      "ms": 3905
+    },
+    {
+      "id": "E16",
+      "title": "No unintended network request: the guard blocks every non-loopback connection, and the whole run produced only scripted provider requests",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "the offline guard refuses a request to a public host (BLOCKED:E2E offline guard: blocked non-loopback request to example.org)"
+        },
+        {
+          "ok": true,
+          "message": "every provider request of the run was answered by the scripted double (169 requests)"
+        },
+        {
+          "ok": true,
+          "message": "the server attempted no request to any other host during the whole run"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=2 users=6",
+        "provider request modes: {\"ok\":130,\"down\":20,\"rate\":6,\"invalid\":10,\"auth\":3}"
+      ],
+      "evidence": [],
+      "failed": false,
+      "ms": 180
+    },
+    {
+      "id": "E17",
+      "title": "Post-deployment smoke test (scripts/smoke-test.cjs) passes against the https staging-like stack",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "the smoke test exits 0 (no failing check)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=2 users=6",
+        "[PASS] the API is reached over https : localhost:3943 || [PASS] GET /api/health is 200 with the database reachable : HTTP 200 || [PASS] the health response reveals nothing but status and database || [PASS] an unauthenticated request is refused (401) : HTTP 401 || [PASS] CORS answers the configured frontend origin with credentials || [PASS] a foreign origin gets no CORS permission || [PASS] the allowed origin is never a wildcard || [PASS] a state-changing request from a foreign origin is refused (403 origin_not_allowed) : HTTP 403 || [PASS] a protected API is closed without a session (401) : HTTP 401 || [PASS] no session cookie is issued to an anonymous visitor ||  || SMOKE TEST PASSED: every check passed. || This test is read-only: it used no account and sent no model request."
+      ],
+      "evidence": [],
+      "failed": false,
+      "ms": 279
+    },
+    {
+      "id": "E18",
+      "title": "Admin sets a subject's academic year, semester, year level and pre-requisite; faculty picks it, the values fill in and cannot be changed",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "the new academic year 2027–2028 is listed on the Program & Subjects tab"
+        },
+        {
+          "ok": true,
+          "message": "Add subject stays disabled until the academic year, semester, year level and pre-requisite are chosen"
+        },
+        {
+          "ok": true,
+          "message": "the year level dropdown offers Year 1 to Year 4 (Year 1,Year 2,Year 3,Year 4)"
+        },
+        {
+          "ok": true,
+          "message": "Add subject is enabled once all four are filled"
+        },
+        {
+          "ok": true,
+          "message": "the subjects table shows the new subject with its term and pre-requisite"
+        },
+        {
+          "ok": true,
+          "message": "the subject was assigned to the faculty member (HTTP 200)"
+        },
+        {
+          "ok": true,
+          "message": "E18-admin: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E18-admin: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E18-admin: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E18-admin: no request left this machine (none blocked)"
+        },
+        {
+          "ok": true,
+          "message": "choosing the subject filled the pre-requisite automatically"
+        },
+        {
+          "ok": true,
+          "message": "choosing the subject filled the year level automatically"
+        },
+        {
+          "ok": true,
+          "message": "the academic year and semester are shown"
+        },
+        {
+          "ok": true,
+          "message": "the pre-requisite and year level cannot be edited by faculty"
+        },
+        {
+          "ok": true,
+          "message": "the page says the administrator set them"
+        },
+        {
+          "ok": true,
+          "message": "a forged save is accepted (HTTP 200)"
+        },
+        {
+          "ok": true,
+          "message": "the server stored the administrator's values, not the forged ones (IT 204 - Computer Programming 2 | 3 | 2027–2028 | 2nd Semester)"
+        },
+        {
+          "ok": true,
+          "message": "E18-faculty: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E18-faculty: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E18-faculty: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E18-faculty: no request left this machine (none blocked)"
+        }
+      ],
+      "notes": [
+        "scratch database at scenario start: syllabi=2 users=6"
+      ],
+      "evidence": [
+        "docs/checker-comprehensive/ui-verification/regression/E18-admin-subject-term-1440.png",
+        "docs/checker-comprehensive/ui-verification/regression/E18-faculty-locked-1440.png"
+      ],
+      "failed": false,
+      "ms": 18729
+    }
+  ]
+}

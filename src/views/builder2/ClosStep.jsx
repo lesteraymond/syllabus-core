@@ -1,14 +1,15 @@
 import { t, tr } from '../../i18n';
-import { LEVELS } from '../../lib/syllabusModel';
+import { LEVELS, standardsSet } from '../../lib/syllabusModel';
 import { newId } from './useDraft';
 import { Auto, CoverageStrip } from './parts';
 import Select from '../../components/Select';
 import { Icon } from '../../components/ui';
 import StableButton from '../../components/StableButton';
 import ReadOnlyOutcomes from './ReadOnlyOutcomes';
+import PoReviewNotice from './PoReviewNotice';
 
 // Step 2 edits the same draft as the other builder steps; it never writes the subject catalog.
-export default function ClosStep({ d, model, apply, editable = !!apply }) {
+export default function ClosStep({ d, model, apply, editable = !!apply, lockStandards = false, poReview = null }) {
   if (!editable) return <ReadOnlyOutcomes d={d} model={model} />;
   if (!model.hasOutcomeSelection(d)) return <div className="info-banner" role="status">{t('outcomes.chooseProgramSubject')}</div>;
   const o = d.outcomes || { ...model.institutionFor(d), egas: model.egaList(d), pos: model.poList(d) };
@@ -29,8 +30,16 @@ export default function ClosStep({ d, model, apply, editable = !!apply }) {
   </div>;
   const removeButton = (label, disabled, onClick) => <button type="button" className="ib del" aria-label={label} title={disabled ? t('outcomes.inUse') : label} disabled={disabled} onClick={onClick}><Icon name="bin" size={16} /></button>;
   return <div className="sm-stack learning-outcomes-editor">
-    <p className="hint">{t('outcomes.authoringNote')}</p>
-    <section className="sm-card">
+    <p className="hint">{lockStandards ? t('outcomes.lockedStandards') : t('outcomes.authoringNote')}</p>
+    {poReview && <PoReviewNotice {...poReview} />}
+    {lockStandards && !standardsSet(o) && <div className="info-banner warning" role="status">{t('outcomes.standardsNotSet')}</div>}
+    {lockStandards ? <section className="sm-card">
+      <header className="sm-card-h"><h4>{t('ui.vision_and_mission_4c8752')}</h4></header>
+      <div className="sm-card-b vm" aria-label={t('ui.vision_and_mission_4c8752')}>
+        <div><span className="lbl">{t('ui.vision_40b090')}</span><p>{o.vision}</p></div>
+        <div><span className="lbl">{t('ui.mission_e4698d')}</span><p>{o.mission.lead}</p><ul>{o.mission.items.map((text, i) => <li key={i}>{text}</li>)}</ul></div>
+      </div>
+    </section> : <section className="sm-card">
       <header className="sm-card-h"><h4>{t('ui.vision_and_mission_4c8752')}</h4></header>
       <div className="sm-card-b">
         <label className="field"><span>{t('ui.vision_40b090')}</span><Auto className="in" value={o.vision} label={t('ui.vision_40b090')} onChange={value => edit(x => { x.vision = value; })} /></label>
@@ -43,8 +52,17 @@ export default function ClosStep({ d, model, apply, editable = !!apply }) {
         </div>)}
         <button type="button" className="link" disabled={o.mission.items.length >= 50} onClick={() => edit(x => { x.mission.items.push(''); })}>{t('ui.add_mission_statement_0ad1c2')}</button>
       </div>
-    </section>
-    <div className="sm-pair">
+    </section>}
+    {lockStandards ? <div className="sm-pair">
+      <section className="sm-card">
+        <header className="sm-card-h"><h4>{t('ui.expected_graduate_attributes_86f980')}</h4></header>
+        <div className="sm-card-b">{o.egas.map((e) => <div className="refi" key={e.no}><span className="cd">{t('ui.ega_4f085b') + e.no}</span><span className="rt">{e.name}</span></div>)}</div>
+      </section>
+      <section className="sm-card">
+        <header className="sm-card-h"><h4>{t('ui.program_outcomes_858de9')}</h4></header>
+        <div className="sm-card-b">{o.pos.map((p) => <div className="refi" key={p.no}><span className="cd">{t('ui.po_3756d6') + p.no}</span><span className="rt">{p.text + ' '}{p.egas.map((g) => <span className="map" key={g}>{t('ui.ega_7bee0f') + g + '] '}</span>)}</span></div>)}</div>
+      </section>
+    </div> : <div className="sm-pair">
       <section className="sm-card">
         <header className="sm-card-h"><h4>{t('ui.expected_graduate_attributes_86f980')}</h4></header>
         <div className="sm-card-b">
@@ -72,7 +90,7 @@ export default function ClosStep({ d, model, apply, editable = !!apply }) {
           <button type="button" className="link" disabled={o.pos.length >= 50} onClick={() => edit(x => { x.pos.push({ no: nextNo(x.pos), short: '', text: '', egas: [] }); })}>{t('ui.add_program_outcome_cd9147')}</button>
         </div>
       </section>
-    </div>
+    </div>}
     <section className="sm-card">
       <header className="sm-card-h"><h4>{t('ui.course_learning_outcomes_503861')}</h4></header>
       <div className="sm-card-b">

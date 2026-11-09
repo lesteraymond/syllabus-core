@@ -1,0 +1,562 @@
+[
+  {
+    "program": "BSIT",
+    "types": [
+      {
+        "id": "VPAA-01",
+        "instances": 15,
+        "verified": 15,
+        "status": "PASS"
+      },
+      {
+        "id": "VPAA-02",
+        "instances": 15,
+        "verified": 15,
+        "status": "PASS"
+      },
+      {
+        "id": "VPAA-03",
+        "instances": 15,
+        "verified": 15,
+        "status": "PASS"
+      },
+      {
+        "id": "VPAA-04",
+        "instances": 15,
+        "verified": 15,
+        "status": "PASS"
+      },
+      {
+        "id": "VPAA-05",
+        "instances": 15,
+        "verified": 15,
+        "status": "NEEDS_REVIEW"
+      },
+      {
+        "id": "VPAA-06",
+        "instances": 15,
+        "verified": 15,
+        "status": "FAIL"
+      },
+      {
+        "id": "VPAA-07",
+        "instances": 15,
+        "verified": 15,
+        "status": "PASS"
+      }
+    ],
+    "classifications": [
+      {
+        "id": "CLO1:structure",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO1:semantic",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO2:structure",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO2:semantic",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO3:structure",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO3:semantic",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO4:structure",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO4:semantic",
+        "verified": true,
+        "status": "PASS"
+      }
+    ],
+    "P03": {
+      "ruleId": "P-03",
+      "category": "co_po",
+      "namespace": "registered_standard",
+      "implemented": true,
+      "enabled": true,
+      "applicable": true,
+      "executed": true,
+      "attempted": true,
+      "verified": false,
+      "status": "NOT_CHECKED",
+      "activationState": "IMPLEMENTED_BUT_NOT_EVALUATED",
+      "reason": "Approved PO-to-EGA crosswalk is unavailable for one or more selected POs. A vacuous legacy pass is not verified mapping consistency; existing score is unchanged.",
+      "instances": [
+        {
+          "id": "P-03",
+          "path": null,
+          "week": null,
+          "status": "NOT_CHECKED",
+          "verified": false,
+          "attempted": true,
+          "reused": false,
+          "reason": null
+        }
+      ]
+    },
+    "referenceContext": {
+      "program": {
+        "id": 1,
+        "code": "BSIT"
+      },
+      "po": {
+        "source": "BSIT",
+        "status": "versioned",
+        "reference": {
+          "id": "lcup-po-2026-10-29-BSIT",
+          "version": "lcup-po-2026-10-29",
+          "sourceFile": "docs/academic-references/IT-101-Introduction-to-Computing-.pdf",
+          "sourceSha256": "0375ce27ff4b1059c569a73cf8c77211de016aaeedbebe13de2efc6fe330fa14",
+          "authorization": "User instruction 2026-10-29: IT101 / IE403 / CPE404 authoritative",
+          "institutionalApproval": "not_recorded"
+        }
+      },
+      "curriculum": {
+        "source": "BSIT",
+        "selectedYear": "2022-2023",
+        "referenceIds": [
+          1
+        ]
+      }
+    }
+  },
+  {
+    "program": "BSIE",
+    "types": [
+      {
+        "id": "VPAA-01",
+        "instances": 15,
+        "verified": 15,
+        "status": "PASS"
+      },
+      {
+        "id": "VPAA-02",
+        "instances": 15,
+        "verified": 15,
+        "status": "PASS"
+      },
+      {
+        "id": "VPAA-03",
+        "instances": 15,
+        "verified": 15,
+        "status": "PASS"
+      },
+      {
+        "id": "VPAA-04",
+        "instances": 15,
+        "verified": 15,
+        "status": "PASS"
+      },
+      {
+        "id": "VPAA-05",
+        "instances": 15,
+        "verified": 15,
+        "status": "NEEDS_REVIEW"
+      },
+      {
+        "id": "VPAA-06",
+        "instances": 15,
+        "verified": 15,
+        "status": "FAIL"
+      },
+      {
+        "id": "VPAA-07",
+        "instances": 15,
+        "verified": 15,
+        "status": "PASS"
+      }
+    ],
+    "classifications": [
+      {
+        "id": "CLO1:structure",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO1:semantic",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO2:structure",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO2:semantic",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO3:structure",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO3:semantic",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO4:structure",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO4:semantic",
+        "verified": true,
+        "status": "PASS"
+      }
+    ],
+    "P03": {
+      "ruleId": "P-03",
+      "category": "co_po",
+      "namespace": "registered_standard",
+      "implemented": true,
+      "enabled": true,
+      "applicable": true,
+      "executed": true,
+      "attempted": true,
+      "verified": false,
+      "status": "NOT_CHECKED",
+      "activationState": "IMPLEMENTED_BUT_NOT_EVALUATED",
+      "reason": "Approved PO-to-EGA crosswalk is unavailable for one or more selected POs. A vacuous legacy pass is not verified mapping consistency; existing score is unchanged.",
+      "instances": [
+        {
+          "id": "P-03",
+          "path": null,
+          "week": null,
+          "status": "NOT_CHECKED",
+          "verified": false,
+          "attempted": true,
+          "reused": false,
+          "reason": null
+        }
+      ]
+    },
+    "referenceContext": {
+      "program": {
+        "id": 2,
+        "code": "BSIE"
+      },
+      "po": {
+        "source": "BSIE",
+        "status": "versioned",
+        "reference": {
+          "id": "lcup-po-2026-10-29-BSIE",
+          "version": "lcup-po-2026-10-29",
+          "sourceFile": "docs/academic-references/IE-403-Operation-Management.pdf",
+          "sourceSha256": "bdb90b9b09eaf505e13bc82cfc1fdc51e283901455064617997d0426592c57a4",
+          "authorization": "User instruction 2026-10-29: IT101 / IE403 / CPE404 authoritative",
+          "institutionalApproval": "not_recorded"
+        }
+      },
+      "curriculum": {
+        "source": "BSIE",
+        "selectedYear": "2022-2023",
+        "referenceIds": [
+          2
+        ]
+      }
+    }
+  },
+  {
+    "program": "BSCPE",
+    "types": [
+      {
+        "id": "VPAA-01",
+        "instances": 15,
+        "verified": 15,
+        "status": "PASS"
+      },
+      {
+        "id": "VPAA-02",
+        "instances": 15,
+        "verified": 15,
+        "status": "PASS"
+      },
+      {
+        "id": "VPAA-03",
+        "instances": 15,
+        "verified": 15,
+        "status": "PASS"
+      },
+      {
+        "id": "VPAA-04",
+        "instances": 15,
+        "verified": 15,
+        "status": "PASS"
+      },
+      {
+        "id": "VPAA-05",
+        "instances": 15,
+        "verified": 15,
+        "status": "NEEDS_REVIEW"
+      },
+      {
+        "id": "VPAA-06",
+        "instances": 15,
+        "verified": 15,
+        "status": "FAIL"
+      },
+      {
+        "id": "VPAA-07",
+        "instances": 15,
+        "verified": 15,
+        "status": "PASS"
+      }
+    ],
+    "classifications": [
+      {
+        "id": "CLO1:structure",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO1:semantic",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO2:structure",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO2:semantic",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO3:structure",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO3:semantic",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO4:structure",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO4:semantic",
+        "verified": true,
+        "status": "PASS"
+      }
+    ],
+    "P03": {
+      "ruleId": "P-03",
+      "category": "co_po",
+      "namespace": "registered_standard",
+      "implemented": true,
+      "enabled": true,
+      "applicable": true,
+      "executed": true,
+      "attempted": true,
+      "verified": false,
+      "status": "NOT_CHECKED",
+      "activationState": "IMPLEMENTED_BUT_NOT_EVALUATED",
+      "reason": "Approved PO-to-EGA crosswalk is unavailable for one or more selected POs. A vacuous legacy pass is not verified mapping consistency; existing score is unchanged.",
+      "instances": [
+        {
+          "id": "P-03",
+          "path": null,
+          "week": null,
+          "status": "NOT_CHECKED",
+          "verified": false,
+          "attempted": true,
+          "reused": false,
+          "reason": null
+        }
+      ]
+    },
+    "referenceContext": {
+      "program": {
+        "id": 3,
+        "code": "BSCPE"
+      },
+      "po": {
+        "source": "BSCPE",
+        "status": "versioned",
+        "reference": {
+          "id": "lcup-po-2026-10-29-BSCPE",
+          "version": "lcup-po-2026-10-29",
+          "sourceFile": "docs/academic-references/CPE-404-Digital-Signal-Processing.pdf",
+          "sourceSha256": "9e16f9d0524b5a328ce992306a7897b4a5d6cd70933a388fa01412e427ab754a",
+          "authorization": "User instruction 2026-10-29: IT101 / IE403 / CPE404 authoritative",
+          "institutionalApproval": "not_recorded"
+        }
+      },
+      "curriculum": {
+        "source": "BSCPE",
+        "selectedYear": "2022-2023",
+        "referenceIds": [
+          3
+        ]
+      }
+    }
+  },
+  {
+    "program": "BSIT-CYBERSECURITY",
+    "types": [
+      {
+        "id": "VPAA-01",
+        "instances": 15,
+        "verified": 15,
+        "status": "PASS"
+      },
+      {
+        "id": "VPAA-02",
+        "instances": 15,
+        "verified": 15,
+        "status": "PASS"
+      },
+      {
+        "id": "VPAA-03",
+        "instances": 15,
+        "verified": 15,
+        "status": "PASS"
+      },
+      {
+        "id": "VPAA-04",
+        "instances": 15,
+        "verified": 15,
+        "status": "PASS"
+      },
+      {
+        "id": "VPAA-05",
+        "instances": 15,
+        "verified": 15,
+        "status": "NEEDS_REVIEW"
+      },
+      {
+        "id": "VPAA-06",
+        "instances": 15,
+        "verified": 15,
+        "status": "FAIL"
+      },
+      {
+        "id": "VPAA-07",
+        "instances": 15,
+        "verified": 15,
+        "status": "PASS"
+      }
+    ],
+    "classifications": [
+      {
+        "id": "CLO1:structure",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO1:semantic",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO2:structure",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO2:semantic",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO3:structure",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO3:semantic",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO4:structure",
+        "verified": true,
+        "status": "PASS"
+      },
+      {
+        "id": "CLO4:semantic",
+        "verified": true,
+        "status": "PASS"
+      }
+    ],
+    "P03": {
+      "ruleId": "P-03",
+      "category": "co_po",
+      "namespace": "registered_standard",
+      "implemented": true,
+      "enabled": true,
+      "applicable": true,
+      "executed": true,
+      "attempted": true,
+      "verified": false,
+      "status": "NOT_CHECKED",
+      "activationState": "IMPLEMENTED_BUT_NOT_EVALUATED",
+      "reason": "Approved PO-to-EGA crosswalk is unavailable for one or more selected POs. A vacuous legacy pass is not verified mapping consistency; existing score is unchanged.",
+      "instances": [
+        {
+          "id": "P-03",
+          "path": null,
+          "week": null,
+          "status": "NOT_CHECKED",
+          "verified": false,
+          "attempted": true,
+          "reused": false,
+          "reason": null
+        }
+      ]
+    },
+    "referenceContext": {
+      "program": {
+        "id": 4,
+        "code": "BSIT-CYBERSECURITY"
+      },
+      "po": {
+        "source": "BSIT",
+        "status": "versioned",
+        "reference": {
+          "id": "lcup-po-2026-10-29-BSIT",
+          "version": "lcup-po-2026-10-29",
+          "sourceFile": "docs/academic-references/IT-101-Introduction-to-Computing-.pdf",
+          "sourceSha256": "0375ce27ff4b1059c569a73cf8c77211de016aaeedbebe13de2efc6fe330fa14",
+          "authorization": "User instruction 2026-10-29: IT101 / IE403 / CPE404 authoritative",
+          "institutionalApproval": "not_recorded"
+        }
+      },
+      "curriculum": {
+        "source": "BSIT",
+        "selectedYear": "2022-2023",
+        "referenceIds": [
+          1
+        ]
+      }
+    }
+  }
+]

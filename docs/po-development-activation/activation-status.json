@@ -1,0 +1,17 @@
+{
+  "correctedPoReferences": "ACTIVE_IN_DEVELOPMENT_DATABASE",
+  "developmentTarget": {
+    "host": "localhost",
+    "port": 3306,
+    "database": "syllabus_cms_plus"
+  },
+  "staging": "NOT_ACTIVATED",
+  "production": "NOT_ACTIVATED",
+  "formalInstitutionalApproval": "not_recorded",
+  "policyV2Runtime": "unset; default off",
+  "comprehensiveRuntimeProfile": "unset; legacy default",
+  "policyV2OfflineTests": "PASS; all seven required relationship types for each selection",
+  "comprehensiveOfflineTests": "PASS; scripted model only",
+  "liveModelCalls": 0,
+  "environmentFilesModified": false
+}

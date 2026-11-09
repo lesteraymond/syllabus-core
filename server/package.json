@@ -32,7 +32,15 @@
     "migrate-deadlines": "node db/migrate-deadlines.js",
     "migrate-archive": "node db/migrate-archive.js",
     "migrate-activity-log": "node db/migrate-activity-log.js",
-    "migrate-subject-owner": "node db/migrate-subject-owner.js"
+    "migrate-subject-owner": "node db/migrate-subject-owner.js",
+    "migrate-subject-term": "node db/migrate-subject-term.js",
+    "migrate-academic-year-scope": "node db/migrate-academic-year-scope.js",
+    "migrate-catalog-year": "node db/migrate-catalog-year.js",
+    "migrate-po-reference-publication": "node db/migrate-po-reference-publication.js",
+    "migrate-account-status": "node db/migrate-account-status.js",
+    "migrate-curriculum-year": "node db/migrate-curriculum-year.js",
+    "migrate-review-ai-choice": "node db/migrate-review-ai-choice.js",
+    "migrate-account-activity": "node db/migrate-account-activity.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "1.3.0",

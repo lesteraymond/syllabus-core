@@ -1,0 +1,63 @@
+{
+  "run": "comprehensive-on",
+  "suite": "comprehensive",
+  "mode": "on",
+  "label": "rc3h",
+  "database": "syllabus_e2e_po_1105_comprehensive",
+  "start": "2026-11-05T18:13:48.712Z",
+  "finished": "2026-11-05T18:17:41.380Z",
+  "exit": 0,
+  "scenarios": [
+    {
+      "result": "PASS",
+      "id": "K01"
+    },
+    {
+      "result": "PASS",
+      "id": "K02"
+    },
+    {
+      "result": "PASS",
+      "id": "K03"
+    },
+    {
+      "result": "PASS",
+      "id": "K04"
+    },
+    {
+      "result": "PASS",
+      "id": "K05"
+    },
+    {
+      "result": "PASS",
+      "id": "K06"
+    },
+    {
+      "result": "PASS",
+      "id": "K07"
+    },
+    {
+      "result": "PASS",
+      "id": "K08"
+    },
+    {
+      "result": "PASS",
+      "id": "K10"
+    },
+    {
+      "result": "PASS",
+      "id": "K09"
+    }
+  ],
+  "failedChecks": [],
+  "migrationsExecuted": 0,
+  "flags": {
+    "SYLLABUS_CHECK_CACHE_WARMUP": "on",
+    "SYLLABUS_CHECK_OUTPUT_PLAN": "on",
+    "SYLLABUS_CHECK_OUTPUT_FIELDS": "scoped",
+    "SYLLABUS_CHECK_COURSE_CONTEXT": "off",
+    "SYLLABUS_CHECK_V2_GROUPING": "off",
+    "SYLLABUS_CHECK_PROMPT_TRIM": "off"
+  },
+  "log": "docs\\release-candidate\\rc-comprehensive-on.log"
+}

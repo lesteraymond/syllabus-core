@@ -4,6 +4,7 @@ import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useId, useMemo, useState } from 'react';
 import { canCheckNow } from '../lib/complianceView';
 import Select from './Select';
+import InactiveYearNotice, { useInactiveYear } from './InactiveYearNotice';
 
 const STATUS_LABELS = { draft: 'Draft', submitted: 'Submitted', under_review: 'Under Review', for_revision: 'For Revision', approved: 'Approved', rejected: 'Rejected' };
 
@@ -13,15 +14,19 @@ const STATUS_LABELS = { draft: 'Draft', submitted: 'Submitted', under_review: 'U
 //   groups    from groupByFacultyProgram(waiting rows)      loading   true while the list loads
 //   busy      true while a check runs (the button waits)
 //   onCheck(row)   called with the chosen row when "Check compliance" is pressed
-export default function SyllabusPicker({ groups, loading = false, busy = false, onCheck }) {
+//   onWithoutAi(row)  called after the reviewer confirms "Review without AI check" (each reviewer chooses for themselves; server/lib/reviewAiChoice.js).
+//                  Absent when the institution requires the AI check (SYLLABUS_CHECK_AI_GATE=required): the button is then not offered.
+export default function SyllabusPicker({ groups, loading = false, busy = false, onCheck, onWithoutAi }) {
   const uid = useId();
   const [facultyKey, setFacultyKey] = useState('');
   const [programKey, setProgramKey] = useState('');
   const [syllabusId, setSyllabusId] = useState('');
+  const [confirmingId, setConfirmingId] = useState(null); // the syllabus whose "Review without AI check" waits for the reviewer's confirmation
 
   const faculty = useMemo(() => groups.find((f) => f.key === facultyKey) || null, [groups, facultyKey]);
   const program = faculty ? faculty.programs.find((p) => p.key === programKey) || null : null;
   const row = program ? program.rows.find((r) => String(r.syllabusId) === syllabusId) || null : null;
+  const inactiveYear = useInactiveYear(row ? row.academicYear : null); // a syllabus of another academic year is not checked anew
 
   // When the chosen syllabus is checked it leaves the list: clear whatever no longer exists so the selects never show a stale choice.
   useEffect(() => {
@@ -35,6 +40,8 @@ export default function SyllabusPicker({ groups, loading = false, busy = false, 
 
   const empty = !loading && groups.length === 0;
   const ready = canCheckNow(row);
+  const confirming = !!row && confirmingId === row.syllabusId;
+  const chosen = !!(row && row.reviewedWithoutAi);
 
   return (
     <section className="card pick-card" aria-label={translateUI("ui.choose_a_syllabus_to_check_b6f6d2")}>
@@ -72,13 +79,28 @@ export default function SyllabusPicker({ groups, loading = false, busy = false, 
             <>
               <span className={'status ' + row.status}>{tr(STATUS_LABELS[row.status] || row.status)}</span>
               <span className="pick-meta">{busy ? translateUI("ui.checking_820d60") : (row.version ? row.version + ' · ' : '') + translateUI("ui.not_checked_yet_82bd72")}</span>
+              {row.recordReview && <span className="pick-note" role="note" data-testid="review-required-note">{translateUI('hybrid.reviewRequiredNote')}</span>}
+              <InactiveYearNotice inactive={inactiveYear} />
               {row.upload && <span className="pick-note">{translateUI("ui.this_syllabus_was_uploaded_as_a_file_so_only_the_file_and_its_cou_b947f8")}</span>}
               {!ready && !row.upload && <span className="pick-note">{translateUI("ui.there_is_nothing_in_this_syllabus_that_can_be_checked_32e258")}</span>}
+              {chosen && <span className="pick-note" role="note" data-testid="without-ai-note">{translateUI('aiChoice.chosenNote')}</span>}
             </>
           ) : <span className="pick-meta">{loading ? translateUI("ui.loading_syllabi_264639") : empty ? translateUI("ui.every_submitted_syllabus_has_been_checked_see_the_history_below_4c13bf") : translateUI("ui.nothing_chosen_yet_a7c4c2")}</span>}
         </div>
-        <StableButton type="button" className="btn primary" disabled={!row || !ready || busy} onClick={() => onCheck(row)}>{busy ? translateUI("ui.checking_820d60") : translateUI("ui.check_compliance_342b8f")}</StableButton>
+        <div className="pick-actions">
+          {onWithoutAi && <StableButton type="button" className="btn outline" disabled={!row || busy || chosen || confirming} onClick={() => setConfirmingId(row.syllabusId)} data-testid="review-without-ai">{translateUI('aiChoice.withoutAi')}</StableButton>}
+          <StableButton type="button" className="btn primary" disabled={!row || !ready || busy || !!row.recordReview || !!inactiveYear} onClick={() => onCheck(row)}>{busy ? translateUI("ui.checking_820d60") : translateUI("ui.check_compliance_342b8f")}</StableButton>
+        </div>
       </div>
+      {confirming && onWithoutAi && (
+        <div className="info-banner warning pick-confirm" role="alertdialog" aria-label={translateUI('aiChoice.withoutAi')}>
+          <span>{translateUI('aiChoice.confirm', { code: row.courseCode || row.title })}</span>
+          <span className="pick-actions">
+            <StableButton type="button" className="btn outline" disabled={busy} onClick={() => setConfirmingId(null)}>{translateUI('aiChoice.cancel')}</StableButton>
+            <StableButton type="button" className="btn primary" disabled={busy} onClick={async () => { const done = await onWithoutAi(row); if (done !== false) setConfirmingId(null); }}>{translateUI('aiChoice.confirmButton')}</StableButton>
+          </span>
+        </div>
+      )}
     </section>
   );
 }

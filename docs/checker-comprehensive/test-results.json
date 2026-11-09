@@ -1,0 +1,46 @@
+{
+  "baseline": {
+    "available": true,
+    "tests": 1960,
+    "pass": 1960,
+    "fail": 0,
+    "skipped": 0,
+    "todo": 0,
+    "cancelled": 0,
+    "log": "tmp/checker-comprehensive/baseline-test.log"
+  },
+  "targeted": {
+    "available": true,
+    "tests": 64,
+    "pass": 64,
+    "fail": 0,
+    "skipped": 0,
+    "todo": 0,
+    "cancelled": 0,
+    "log": "tmp/checker-comprehensive/new-tests.log"
+  },
+  "vpaa": {
+    "available": true,
+    "tests": 288,
+    "pass": 288,
+    "fail": 0,
+    "skipped": 0,
+    "todo": 0,
+    "cancelled": 0,
+    "log": "tmp/checker-comprehensive/test-vpaa.log"
+  },
+  "regression": {
+    "available": true,
+    "tests": 2026,
+    "pass": 2026,
+    "fail": 0,
+    "skipped": 0,
+    "todo": 0,
+    "cancelled": 0,
+    "log": "tmp/checker-comprehensive/test.log"
+  },
+  "build": {
+    "log": "tmp/checker-comprehensive/build.log",
+    "exit": 0
+  }
+}

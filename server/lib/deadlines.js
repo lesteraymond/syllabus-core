@@ -11,6 +11,7 @@
 // written with FROM_UNIXTIME, so the database server's time zone cannot shift a deadline.
 
 const { httpError } = require('./http');
+const { pastCourseIds } = require('./academicYear');
 
 const TERM_MAX = 30;
 const INSTRUCTIONS_MAX = 1000;
@@ -88,16 +89,43 @@ async function loadDeadline(db, id) {
 }
 
 // Faculty assigned to the subject, and when each first submitted at or after opens_at (null if they have not).
+// Who a deadline is for: whoever the subject is assigned to (faculty, or an administrator, who can be assigned subjects too), and an administrator who
+// is writing a syllabus for the subject without having it assigned (the dean writes syllabi). Sorted by name, each person once.
+async function peopleOf(db, courseId) {
+  const [assigned] = await db.query(
+    `SELECT fc.user_id, u.first_name, u.last_name, u.role FROM faculty_courses fc JOIN users u ON u.user_id = fc.user_id
+     WHERE fc.course_id = ? AND u.role IN ('faculty', 'admin') ORDER BY u.last_name, u.first_name`, [courseId]);
+  const [authors] = await db.query(
+    `SELECT DISTINCT s.user_id, u.first_name, u.last_name, u.role FROM syllabi s JOIN users u ON u.user_id = s.user_id
+     WHERE s.course_id = ? AND u.role = 'admin' AND s.archived_at IS NULL`, [courseId]);
+  const byId = new Map();
+  for (const p of [...assigned, ...authors]) if (!byId.has(p.user_id)) byId.set(p.user_id, p);
+  return [...byId.values()].sort((a, b) => `${a.last_name} ${a.first_name}`.localeCompare(`${b.last_name} ${b.first_name}`));
+}
+
+// When an administrator's own syllabus for the subject was first SENT FOR REVIEW (its 'submit' log), since the deadline opened. For an administrator
+// a saved version does not mean submitted: checking their own syllabus in the AI Checker saves one before they send it. -> Map(userId -> ms)
+async function adminSubmissions(db, courseId, opensAt, userIds) {
+  if (!userIds.length) return new Map();
+  const [rows] = await db.query(
+    `SELECT s.user_id, MIN(UNIX_TIMESTAMP(l.action_date)) AS at FROM submission_logs l JOIN syllabi s ON s.syllabus_id = l.syllabus_id
+     WHERE s.course_id = ? AND l.user_id = s.user_id AND l.action = 'submit' AND l.action_date >= FROM_UNIXTIME(?) AND s.user_id IN (?) GROUP BY s.user_id`,
+    [courseId, secs(opensAt), userIds]);
+  return new Map(rows.filter((r) => r.at !== null && r.at !== undefined).map((r) => [r.user_id, fromSecs(r.at)]));
+}
+
 async function requirements(db, deadline, now) {
-  const [people] = await db.query(
-    `SELECT fc.user_id, u.first_name, u.last_name FROM faculty_courses fc JOIN users u ON u.user_id = fc.user_id
-     WHERE fc.course_id = ? AND u.role = 'faculty' ORDER BY u.last_name, u.first_name`, [deadline.courseId]);
+  const people = await peopleOf(db, deadline.courseId);
   if (!people.length) return [];
   const [subs] = await db.query(
     `SELECT s.user_id, MIN(UNIX_TIMESTAMP(v.created_at)) AS at FROM syllabus_versions v JOIN syllabi s ON s.syllabus_id = v.syllabus_id
      WHERE s.course_id = ? AND v.created_by = s.user_id AND v.status_at_save <> 'draft' AND v.created_at >= FROM_UNIXTIME(?) GROUP BY s.user_id`,
     [deadline.courseId, secs(deadline.opensAt)]);
   const first = new Map(subs.map((r) => [r.user_id, fromSecs(r.at)]));
+  // an administrator counts from sending for review, not from a saved version
+  const admins = people.filter((p) => p.role === 'admin').map((p) => p.user_id);
+  const sent = await adminSubmissions(db, deadline.courseId, deadline.opensAt, admins);
+  for (const id of admins) { if (sent.has(id)) first.set(id, sent.get(id)); else first.delete(id); }
   return people.map((p) => {
     const submittedAt = first.has(p.user_id) ? first.get(p.user_id) : null;
     return { userId: p.user_id, name: `${p.first_name} ${p.last_name}`.trim(), submittedAt, status: statusOf({ now, dueAt: deadline.dueAt, submittedAt }) };
@@ -107,13 +135,15 @@ async function requirements(db, deadline, now) {
 // Every active deadline as stored (times in milliseconds), soonest first. The reminder job walks this list.
 async function activeDeadlines(db) {
   const [rows] = await db.query(SELECT + ' WHERE d.cancelled_at IS NULL ORDER BY d.due_at, d.deadline_id');
-  return rows.map(shape);
+  const past = await pastCourseIds(db); // a past academic year's subjects get no reminders and are not listed
+  return rows.filter((r) => !past.has(r.course_id)).map(shape);
 }
 
 // All active deadlines for the administrator, soonest first, each with the numbers of its requirements.
 async function listForAdmin(db, now = Date.now()) {
   const [rows] = await db.query(SELECT + ' WHERE d.cancelled_at IS NULL ORDER BY d.due_at, d.deadline_id');
-  const deadlines = rows.map(shape);
+  const past = await pastCourseIds(db);
+  const deadlines = rows.filter((r) => !past.has(r.course_id)).map(shape);
   const people = await Promise.all(deadlines.map((d) => requirements(db, d, now)));
   return deadlines.map((d, i) => ({ ...publicForm(d), summary: summarize(people[i].map((p) => p.status)), settled: isSettled(summarize(people[i].map((p) => p.status))), unassigned: people[i].length === 0 }));
 }
@@ -133,18 +163,24 @@ async function progress(db, id, now = Date.now()) {
   return { deadline: publicForm(deadline), summary, settled: isSettled(summary), people: withNotice, unassigned: people.length === 0 };
 }
 
-// A faculty member's own deadlines: the active ones for the subjects assigned to them, soonest first, with their own status.
-async function mine(db, userId, now = Date.now()) {
-  const [rows] = await db.query(
-    SELECT + ' JOIN faculty_courses fc ON fc.course_id = d.course_id WHERE fc.user_id = ? AND d.cancelled_at IS NULL ORDER BY d.due_at, d.deadline_id', [userId]);
+// A person's own deadlines, soonest first, with their own status. Faculty: the subjects assigned to them. An administrator ({ admin: true }): the subjects
+// assigned to them and the subjects they are writing a syllabus for; their submission is when they sent it for review.
+async function mine(db, userId, now = Date.now(), { admin = false } = {}) {
+  const [rows] = admin
+    ? await db.query(SELECT + ' WHERE d.cancelled_at IS NULL AND (d.course_id IN (SELECT course_id FROM faculty_courses WHERE user_id = ?) OR d.course_id IN (SELECT course_id FROM syllabi WHERE user_id = ? AND archived_at IS NULL AND course_id IS NOT NULL)) ORDER BY d.due_at, d.deadline_id', [userId, userId])
+    : await db.query(SELECT + ' JOIN faculty_courses fc ON fc.course_id = d.course_id WHERE fc.user_id = ? AND d.cancelled_at IS NULL ORDER BY d.due_at, d.deadline_id', [userId]);
   const out = [];
   for (const row of rows) {
     const deadline = shape(row);
-    const [subs] = await db.query(
-      `SELECT MIN(UNIX_TIMESTAMP(v.created_at)) AS at FROM syllabus_versions v JOIN syllabi s ON s.syllabus_id = v.syllabus_id
-       WHERE s.course_id = ? AND s.user_id = ? AND v.created_by = s.user_id AND v.status_at_save <> 'draft' AND v.created_at >= FROM_UNIXTIME(?)`,
-      [deadline.courseId, userId, secs(deadline.opensAt)]);
-    const submittedAt = subs.length && subs[0].at !== null && subs[0].at !== undefined ? fromSecs(subs[0].at) : null;
+    let submittedAt = null;
+    if (admin) submittedAt = (await adminSubmissions(db, deadline.courseId, deadline.opensAt, [userId])).get(userId) || null;
+    else {
+      const [subs] = await db.query(
+        `SELECT MIN(UNIX_TIMESTAMP(v.created_at)) AS at FROM syllabus_versions v JOIN syllabi s ON s.syllabus_id = v.syllabus_id
+         WHERE s.course_id = ? AND s.user_id = ? AND v.created_by = s.user_id AND v.status_at_save <> 'draft' AND v.created_at >= FROM_UNIXTIME(?)`,
+        [deadline.courseId, userId, secs(deadline.opensAt)]);
+      submittedAt = subs.length && subs[0].at !== null && subs[0].at !== undefined ? fromSecs(subs[0].at) : null;
+    }
     out.push({ ...publicForm(deadline), submittedAt: iso(submittedAt), status: statusOf({ now, dueAt: deadline.dueAt, submittedAt }) });
   }
   return out;

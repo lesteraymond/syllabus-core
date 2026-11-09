@@ -1,4 +1,4 @@
-// One syllabus for each subject for each person. An administrator assigns a subject to one faculty member (lib/assignments.js) and
+// One syllabus for each subject for each person IN EACH ACADEMIC YEAR. An administrator assigns a subject to one faculty member (lib/assignments.js) and
 // reassigns it to change who writes it, so the syllabus on a subject belongs to whoever it is assigned to. A draft may take a subject only
 // when this person has no other syllabus on it, in any state: a draft, submitted, under review, returned for revision, approved or
 // rejected (a returned or rejected one is edited and sent again, not replaced by a new draft). What another person wrote for the subject
@@ -6,6 +6,7 @@
 // (PUT /:id/content), inside that save's transaction, where the subject row is already locked, so two tabs cannot both claim it. Drafts that
 // already share a subject are left alone (and an archived syllabus, from before the subject was reassigned, is a record: it does not count): the rule applies when a subject is chosen, not to rows that exist.
 const { httpError } = require('./http');
+const { queryInSameYear } = require('./academicYear');
 
 const LABELS = { draft: 'Draft', submitted: 'Submitted', under_review: 'Under Review', for_revision: 'For Revision', approved: 'Approved', rejected: 'Rejected' };
 
@@ -35,7 +36,8 @@ function takenBySubject(rows, me) {
 
 async function assertSubjectFree(conn, me, courseId, exceptId) {
   if (!courseId) return;
-  const [others] = await conn.query('SELECT syllabus_id, user_id, status FROM syllabi WHERE course_id = ? AND syllabus_id <> ? AND user_id = ? AND archived_at IS NULL', [courseId, exceptId, me.id]);
+  // only this academic year's syllabi count: a new academic year starts a new syllabus on the same subject (lib/academicYear.js)
+  const [others] = await queryInSameYear(conn, 'SELECT syllabus_id, user_id, status FROM syllabi WHERE course_id = ? AND syllabus_id <> ? AND user_id = ? AND archived_at IS NULL', [courseId, exceptId, me.id], exceptId);
   const conflict = conflictFor(others, me);
   if (conflict) throw httpError(409, messageFor(conflict), { code: 'syllabus_exists', existingId: conflict.id, existingStatus: conflict.status });
 }

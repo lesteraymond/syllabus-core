@@ -1394,8 +1394,8 @@ extraTl["publication.openChecker"] = "I-save at buksan ang AI Checker";
 extraEn["outcomes.subjectSaved"] = "Subject vision and mission saved.";
 extraTl["outcomes.subjectSaved"] = "Na-save ang bisyon at misyon ng asignatura.";
 
-extraEn["outcomes.subjectIncomplete"] = "An administrator must complete this subject’s vision, mission, EGAs, POs and CLOs in Program & Subjects before Learning Outcomes can be shown.";
-extraTl["outcomes.subjectIncomplete"] = "Kailangang kumpletuhin ng administrador ang bisyon, misyon, EGA, PO at CLO ng asignaturang ito sa Programa at mga Asignatura bago maipakita ang Mga Kinalabasan ng Pagkatuto.";
+extraEn["outcomes.subjectIncomplete"] = "An administrator must complete this subject’s vision, mission, EGAs, POs and CLOs in Curriculum before Learning Outcomes can be shown.";
+extraTl["outcomes.subjectIncomplete"] = "Kailangang kumpletuhin ng administrador ang bisyon, misyon, EGA, PO at CLO ng asignaturang ito sa Kurikulum bago maipakita ang Mga Kinalabasan ng Pagkatuto.";
 
 extraEn["outcomes.setupSaved"] = "Subject outcomes saved.";
 extraTl["outcomes.setupSaved"] = "Na-save ang mga kinalabasan ng asignatura.";
@@ -1537,6 +1537,10 @@ extraTl['outcomes.submitIncomplete'] = 'Kumpletuhin ang Vision, Mission, EGA, PO
 extraEn['outcomes.changeLabel'] = 'Learning outcomes';
 extraTl['outcomes.changeLabel'] = 'Mga kinalabasan ng pagkatuto';
 extraTl['outcomes.authoringNote'] = 'Gawin ang Vision, Mission, EGA, PO at CLO para sa silabus na ito. Awtomatikong nase-save ang mga pagbabago.';
+extraEn['outcomes.lockedStandards'] = 'The Vision, Mission, EGA and PO were set by your administrator for this subject and cannot be changed. Write your CLOs and map them to the EGA and PO. Changes save automatically.';
+extraTl['outcomes.lockedStandards'] = 'Ang Vision, Mission, EGA at PO ay itinakda ng iyong administrator para sa asignaturang ito at hindi mababago. Isulat ang iyong mga CLO at i-map sa EGA at PO. Awtomatikong nase-save ang mga pagbabago.';
+extraEn['outcomes.standardsNotSet'] = 'Your administrator has not set the Vision, Mission, EGA and PO for this subject yet. Ask them to add these; you cannot enter them here.';
+extraTl['outcomes.standardsNotSet'] = 'Hindi pa naitatakda ng iyong administrator ang Vision, Mission, EGA at PO para sa asignaturang ito. Hilingin sa kanila na idagdag ang mga ito; hindi mo ito maitatala rito.';
 extraEn['outcomes.inUse'] = 'Remove the dependent outcome mappings first.';
 extraTl['outcomes.inUse'] = 'Alisin muna ang mga pagmamapang gumagamit ng kinalabasang ito.';
 extraEn['outcomes.authorInStep2'] = 'Create your learning outcomes in step 2.';
@@ -1616,8 +1620,8 @@ extraEn["subjects.editTitle"] = "Edit subject {code}";
 extraTl["subjects.editTitle"] = "I-edit ang asignaturang {code}";
 extraEn["subjects.deleteTitle"] = "Delete subject {code}";
 extraTl["subjects.deleteTitle"] = "Burahin ang asignaturang {code}";
-extraEn["subjects.editNote"] = "Change the subject code and title. Its outcomes and syllabi stay as they are.";
-extraTl["subjects.editNote"] = "Baguhin ang kodigo at pamagat ng asignatura. Mananatili ang mga kinalabasan at silabus nito.";
+extraEn["subjects.editNote"] = "Change the subject code, title and curriculum year. Its outcomes and syllabi stay as they are.";
+extraTl["subjects.editNote"] = "Baguhin ang kodigo, pamagat at taon ng kurikulum ng asignatura. Mananatili ang mga kinalabasan at silabus nito.";
 extraEn["subjects.deleteNote"] = "{code} will be removed. Syllabi that use it keep the outcomes they were saved with, but new drafts can no longer pick it.";
 extraTl["subjects.deleteNote"] = "Aalisin ang {code}. Pananatilihin ng mga silabus na gumagamit nito ang mga kinalabasang naka-save sa kanila, ngunit hindi na ito mapipili ng mga bagong draft.";
 extraEn["subjects.deleteAction"] = "Delete subject";
@@ -1640,6 +1644,7 @@ const deadlineText = {
   "deadline.dialogNote": ["Every faculty member assigned to this subject must submit a syllabus by this date. Late submissions are still accepted and marked late.", "Dapat magpasa ng silabus ang bawat gurong nakatalaga sa asignaturang ito bago ang petsang ito. Tinatanggap pa rin ang huling pagpasa at namamarkahang huli."],
   "deadline.term": ["Term", "Termino"],
   "deadline.newTerm": ["New term", "Bagong termino"],
+  "deadline.termFixed": ["Term: {term} (from the subject)", "Termino: {term} (mula sa asignatura)"],
   "deadline.schoolYear": ["School year", "Taong panuruan"],
   "deadline.semester": ["Semester", "Semestre"],
   "deadline.sem.first": ["1st Semester", "Unang Semestre"],
@@ -1684,7 +1689,9 @@ const deadlineMore = {
   "deadline.failedCount": ["{count} failed", "{count} ang hindi nakapagpasa"],
   "deadline.cardOff": ["Deadlines are not set up yet.", "Hindi pa naka-set up ang mga takdang petsa."],
   "deadline.cardEmptyFaculty": ["No deadlines for your subjects yet.", "Wala pang takdang petsa para sa iyong mga asignatura."],
-  "deadline.cardEmptyAdmin": ["No deadlines set yet. Set one from Programs and Subjects.", "Wala pang takdang petsa. Magtakda mula sa Programs and Subjects."],
+  "deadline.cardEmptyAdmin": ["No deadlines set yet. Set one from Curriculum.", "Wala pang takdang petsa. Magtakda mula sa Kurikulum."],
+  "deadline.mineTitle": ["My deadlines", "Aking mga takdang petsa"],
+  "deadline.allTitle": ["All faculty deadlines", "Lahat ng takdang petsa ng guro"],
 };
 for (const [key, [en, tl]] of Object.entries(deadlineMore)) { extraEn[key] = en; extraTl[key] = tl; }
 
@@ -1738,3 +1745,172 @@ const planHeadings = {
   "plan.heading.values": ["Expected Value/s To Be Integrated", "Inaasahang Pagpapahalaga na Isasama"],
 };
 for (const [key, [en, tl]] of Object.entries(planHeadings)) { extraEn[key] = en; extraTl[key] = tl; }
+
+// Academic year, semester, year level and pre-requisite of a subject (Program & Subjects tab, builder Step 1), and the academic years list.
+const termMessages = {
+  "term.academicYear": ["Academic year", "Taong panuruan"],
+  "term.semester": ["Semester", "Semestre"],
+  "term.yearLevel": ["Year level", "Antas ng taon"],
+  "term.yearOption": ["Year {n}", "Taon {n}"],
+  "term.prerequisite": ["Pre-requisite", "Paunang kinakailangan"],
+  "term.prerequisiteHint": ["Leave it empty if the subject has no pre-requisite: the syllabus then shows \"None\". Faculty cannot change it.", "Iwanang blangko kung walang paunang kinakailangan ang asignatura: \"None\" ang lalabas sa silabus. Hindi ito mababago ng guro."],
+  "term.optional": ["(optional)", "(opsiyonal)"],
+  "term.none": ["None", "Wala"],
+  "term.choose": ["Choose…", "Pumili…"],
+  "term.column": ["Term", "Termino"],
+  "term.line": ["{year} · {semester} · Year {level}", "{year} · {semester} · Taon {level}"],
+  "term.notSet": ["Not set", "Hindi pa naitakda"],
+  "term.lockedHint": ["Set by the administrator for this subject; faculty cannot change it.", "Itinakda ng administrator para sa asignaturang ito; hindi ito mababago ng guro."],
+  "term.notSetByAdmin": ["Not set by the administrator yet. Ask the administrator to fill it in; faculty cannot enter it.", "Hindi pa naitatakda ng administrator. Hilingin sa administrator na punan ito; hindi ito maitatala ng guro."],
+  "term.curriculumWarning": ["The approved curriculum ({year}) lists this subject with {details}. Faculty may be stopped at submit until they match.", "Ang aprubadong kurikulum ({year}) ay naglilista ng asignaturang ito na may {details}. Maaaring mahinto ang mga guro sa pagsusumite hanggang magtugma ang mga ito."],
+  "term.diff.prerequisite": ["pre-requisite \"{value}\"", "paunang kinakailangang \"{value}\""],
+  "term.diff.yearLevel": ["year level {value}", "antas ng taon na {value}"],
+  "subjects.allYears": ["All academic years", "Lahat ng taong panuruan"],
+  "subjects.allSemesters": ["All semesters", "Lahat ng semestre"],
+  "subjects.allLevels": ["All year levels", "Lahat ng antas ng taon"],
+  "subjects.noMatch": ["No subject matches these filters.", "Walang asignaturang tumutugma sa mga filter na ito."],
+  "subjects.clearFilters": ["Clear filters", "I-clear ang mga filter"],
+  "curriculumYear.label": ["Curriculum year", "Taon ng kurikulum"],
+  "curriculumYear.column": ["Curriculum", "Kurikulum"],
+  "curriculumYear.hint": ["The curriculum this subject is taught under, for example 2022-2023. It is separate from the academic year.", "Ang kurikulum na sinusunod ng asignaturang ito, halimbawa 2022-2023. Hiwalay ito sa taong panuruan."],
+  "curriculumYear.invalid": ["Enter two consecutive years as YYYY-YYYY, for example 2022-2023.", "Ilagay ang dalawang magkasunod na taon bilang YYYY-YYYY, halimbawa 2022-2023."],
+  "curriculumYear.hasReference": ["The AI Checker has the approved {program} {year} curriculum to compare this subject with.", "May aprubadong kurikulum ng {program} {year} ang AI Checker na paghahambingan ng asignaturang ito."],
+  "curriculumYear.noReference": ["No approved {program} {year} curriculum is on file (on file: {list}). The AI Checker cannot compare this subject with an official curriculum until one is added.", "Walang aprubadong kurikulum ng {program} {year} na nakatala (nakatala: {list}). Hindi maihahambing ng AI Checker ang asignaturang ito sa opisyal na kurikulum hangga't walang naidaragdag."],
+  "curriculumYear.none": ["none", "wala"],
+  "curriculumYear.all": ["All curriculum years", "Lahat ng taon ng kurikulum"],
+  "curriculumYear.notSetOption": ["Not set", "Hindi pa naitakda"],
+  "curriculumYear.approvedOption": ["{year} · approved curriculum on file", "{year} · may aprubadong kurikulum"],
+  "years.addHint": ["Add the next academic year, for example 2028 for 2028–2029.", "Idagdag ang susunod na taong panuruan, halimbawa 2028 para sa 2028–2029."],
+  "years.copyButton": ["Copy from {year}", "Kopyahin mula sa {year}"],
+  "years.copyTitle": ["Copy the {from} catalog into {to}?", "Kopyahin ang katalogo ng {from} papunta sa {to}?"],
+  "years.copyBody": ["This copies the programs, their EGAs and POs, the subjects and their CLOs into {to} as new records you can then edit. Faculty assignments, deadlines and syllabi are not copied. {from} stays unchanged.", "Kokopyahin nito ang mga programa, ang kanilang EGA at PO, ang mga asignatura at ang kanilang CLO papunta sa {to} bilang bagong tala na maaari mong baguhin. Hindi kokopyahin ang mga takdang-gawain ng guro, deadline at silabus. Hindi mababago ang {from}."],
+  "years.copyConfirm": ["Copy catalog", "Kopyahin ang katalogo"],
+  "years.copied": ["Copied {programs} programs and {subjects} subjects from {from}.", "Nakopya ang {programs} programa at {subjects} asignatura mula sa {from}."],
+  "catalog.pastYear": ["{year} is a past academic year: its catalog is shown for reference and cannot be changed.", "Ang {year} ay nakaraang taong panuruan: ipinapakita ang katalogo nito bilang sanggunian at hindi na mababago."],
+  "catalog.emptyYear": ["No programs or subjects yet for {year}. Add a subject (its program is created with it), or copy last year's catalog above.", "Wala pang programa o asignatura para sa {year}. Magdagdag ng asignatura (kasabay nitong nalilikha ang programa nito), o kopyahin ang katalogo ng nakaraang taon sa itaas."],
+  "term.yearFixedHint": ["The academic year of the catalog this subject belongs to.", "Ang taong panuruan ng katalogong kinabibilangan ng asignaturang ito."],
+  "years.makeCurrent": ["Make current", "Gawing kasalukuyan"],
+  "years.addToggle": ["+ Add year", "+ Magdagdag ng taon"],
+  "years.currentTag": ["current", "kasalukuyan"],
+  "scope.currentIs": ["current: {year}", "kasalukuyan: {year}"],
+  "scope.bothYears": ["Previous and current year", "Nakaraan at kasalukuyang taon"],
+  "years.changeTitle": ["Make {year} the current academic year?", "Gawing kasalukuyang taong panuruan ang {year}?"],
+  "years.changeBody": ["Everyone else starts with empty lists for {year}, and its catalog starts with no programs, subjects or assignments (you can copy last year's catalog afterwards). The previous year stays visible to them as it was. Older academic years become visible to administrators only. No syllabus or catalog is changed.", "Magsisimula sa walang laman na listahan ang lahat ng iba para sa {year}, at walang programa, asignatura o takdang-gawain ang katalogo nito (maaari mong kopyahin ang katalogo ng nakaraang taon pagkatapos). Mananatiling nakikita nila ang nakaraang taon kung ano ito. Administrator na lang ang makakakita ng mas lumang taon. Walang silabus o katalogo na babaguhin."],
+  "years.changeConfirm": ["Make current", "Gawing kasalukuyan"],
+  "years.deleteButton": ["Delete year", "Burahin ang taon"],
+  "years.deleteTitle": ["Delete {year}?", "Burahin ang {year}?"],
+  "years.deleteBody": ["This permanently removes the academic year {year} from the list. It is refused if any syllabus, program or subject still belongs to it, and the current year can never be deleted. This cannot be undone.", "Permanenteng aalisin ang taong panuruan na {year} sa listahan. Tatanggihan ito kung may silabus, programa o asignatura pang kabilang dito, at hindi kailanman mabubura ang kasalukuyang taon. Hindi na ito maibabalik."],
+  "years.deleteBlockedTitle": ["{year} cannot be deleted yet", "Hindi pa mabubura ang {year}"],
+  "years.deleteBlockedBody": ["{year} still has {programs} program(s) and {subjects} subject(s). An academic year can only be deleted when nothing belongs to it. Delete its programs first (in the Programs table, which also removes their subjects), then delete the year.", "May {programs} programa at {subjects} asignatura pa ang {year}. Mabubura lamang ang taong panuruan kapag wala nang nakakabilang dito. Burahin muna ang mga programa nito (sa talaan ng Programs, na magbubura rin ng mga asignatura), saka burahin ang taon."],
+  "years.deleteConfirm": ["Delete year", "Burahin ang taon"],
+  "years.deleted": ["{year} was deleted.", "Nabura ang {year}."],
+  "years.changed": ["{year} is now the current academic year.", "Ang {year} na ang kasalukuyang taong panuruan."],
+  "years.notMigrated": ["The academic year scope is not set up yet. Run npm run migrate-academic-year-scope.", "Hindi pa naka-set up ang saklaw ng taong panuruan. Patakbuhin ang npm run migrate-academic-year-scope."],
+  "years.inUse": ["in use by {count} subjects", "ginagamit ng {count} asignatura"],
+  "years.inUseOne": ["in use by 1 subject", "ginagamit ng 1 asignatura"],
+  "years.notUsed": ["not used yet", "hindi pa ginagamit"],
+  "years.addNew": ["+ Add a new academic year…", "+ Magdagdag ng bagong taong panuruan"],
+  "years.firstYear": ["First year (for example 2027)", "Unang taon (halimbawa 2027)"],
+  "years.add": ["Add academic year", "Magdagdag ng taong panuruan"],
+  "years.adding": ["Adding…", "Idinadagdag…"],
+  "years.added": ["Academic year added.", "Naidagdag ang taong panuruan."],
+  "years.hint": ["An academic year is two consecutive years, for example 2027–2028: enter the first one.", "Ang taong panuruan ay dalawang magkasunod na taon, halimbawa 2027–2028: ilagay ang una."],
+};
+// Two tabs (or sessions) editing one syllabus: the server refuses a save made from an outdated copy (HTTP 409, code revision_conflict).
+const conflictMessages = {
+  "conflict.title": ["Newer changes were saved", "May mas bago nang naisave na pagbabago"],
+  "conflict.body": ["This syllabus was changed in another tab or session after you opened it. Your last change was NOT saved, so nothing newer was overwritten.", "Nabago ang silabus na ito sa ibang tab o session matapos mo itong buksan. HINDI na-save ang huli mong pagbabago, kaya walang mas bagong nabura."],
+  "conflict.sections": ["Affected: {sections}", "Apektado: {sections}"],
+  "conflict.requiredTitle": ["This copy is not up to date", "Hindi pa napapanahon ang kopyang ito"],
+  "conflict.requiredBody": ["This page could not say which version of the syllabus it was editing, so the save was refused rather than risk replacing newer content. Nothing was changed.", "Hindi masabi ng pahinang ito kung aling bersiyon ng silabus ang ine-edit nito, kaya tinanggihan ang pag-save upang hindi mapalitan ang mas bagong nilalaman. Walang binago."],
+  "hybrid.revisionRequired": ["This recommendation was NOT applied: the page could not confirm which version of the syllabus it was based on. The latest version has been loaded: review it, then click Re-Check again.", "HINDI inilapat ang mungkahing ito: hindi makumpirma ng pahina kung aling bersiyon ng silabus ang pinagbatayan nito. Na-load na ang pinakabagong bersiyon: suriin ito, saka pindutin ang Re-Check again."],
+  "conflict.load": ["Load the latest version", "I-load ang pinakabagong bersiyon"],
+  "conflict.loadNote": ["Loading replaces your unsaved changes to the affected sections. Copy any text you want to keep first.", "Papalitan ng pag-load ang hindi pa na-save mong pagbabago sa mga apektadong seksiyon. Kopyahin muna ang tekstong gusto mong panatilihin."],
+  "hybrid.revisionConflict": ["Newer changes to this syllabus were saved elsewhere, so this recommendation was NOT applied. The latest version has been loaded: review it, then click Re-Check again.", "May mas bago nang pagbabago sa silabus na ito na na-save sa iba, kaya HINDI inilapat ang mungkahing ito. Na-load na ang pinakabagong bersiyon: suriin ito, saka pindutin ang Re-Check again."],
+};
+for (const [key, [en, tl]] of Object.entries(termMessages)) { extraEn[key] = en; extraTl[key] = tl; }
+for (const [key, [en, tl]] of Object.entries(conflictMessages)) { extraEn[key] = en; extraTl[key] = tl; }
+
+// Setting up a program's EGAs and Program Outcomes, and the school's vision and mission (Program & Subjects, administrator).
+const outcomesSetupMessages = {
+  "outcomes.button": ["Outcomes", "Mga kinalabasan"],
+  "outcomes.buttonTitle": ["EGAs and Program Outcomes of {code}", "Mga EGA at Program Outcome ng {code}"],
+  "outcomes.setupBadge": ["Set up EGAs and POs", "I-set up ang EGA at PO"],
+  "outcomes.setupBanner": ["These programs in {year} still have no EGAs or Program Outcomes: {list}. Click Outcomes on a program to set them up; faculty cannot tag CLOs until it is done.", "Wala pang EGA o Program Outcome ang mga programang ito sa {year}: {list}. I-click ang Mga kinalabasan sa programa para i-set up; hindi makapag-tag ng CLO ang mga guro hangga't hindi ito tapos."],
+  "outcomes.createdNeedsSetup": ["Subject added. {code} is a new program: set up its EGAs and Program Outcomes with its Outcomes button.", "Naidagdag ang asignatura. Bagong programa ang {code}: i-set up ang mga EGA at Program Outcome nito gamit ang button na Mga kinalabasan."],
+  "outcomes.dialogTitle": ["EGAs and Program Outcomes of {code}", "Mga EGA at Program Outcome ng {code}"],
+  "outcomes.dialogNote": ["{name} in {year}. Faculty tag their CLOs against these, and the syllabus checker uses them. Save the EGAs first, then the outcomes.", "{name} sa {year}. Dito iti-tag ng mga guro ang kanilang CLO at ginagamit ito ng syllabus checker. I-save muna ang mga EGA, saka ang mga kinalabasan."],
+  "outcomes.aria.ega": ["{field}, EGA {n}", "{field}, EGA {n}"],
+  "outcomes.aria.po": ["{field}, PO {n}", "{field}, PO {n}"],
+  "outcomes.loading": ["Loading…", "Naglo-load…"],
+  "outcomes.close": ["Close", "Isara"],
+  "outcomes.egaHeading": ["Expected graduate attributes (EGAs)", "Inaasahang katangian ng nagtapos (EGA)"],
+  "outcomes.poHeading": ["Program outcomes (POs)", "Mga kinalabasan ng programa (PO)"],
+  "outcomes.col.no": ["No.", "Blg."],
+  "outcomes.col.name": ["Name", "Pangalan"],
+  "outcomes.col.short": ["Short name", "Maikling pangalan"],
+  "outcomes.col.statement": ["Statement", "Pahayag"],
+  "outcomes.col.egas": ["Maps to EGAs", "Nakaugnay sa mga EGA"],
+  "outcomes.addEga": ["Add EGA", "Magdagdag ng EGA"],
+  "outcomes.addPo": ["Add outcome", "Magdagdag ng kinalabasan"],
+  "outcomes.remove": ["Remove row {no}", "Alisin ang hanay {no}"],
+  "outcomes.saveEgas": ["Save EGAs", "I-save ang mga EGA"],
+  "outcomes.savePos": ["Save outcomes", "I-save ang mga kinalabasan"],
+  "outcomes.egasSaved": ["EGAs saved.", "Na-save ang mga EGA."],
+  "outcomes.posSaved": ["Program outcomes saved.", "Na-save ang mga Program Outcome."],
+  "outcomes.addEgasFirst": ["Add at least one EGA above first (click Add EGA and fill in its number, name and short name). Then Add outcome becomes available, and each outcome maps to those EGAs.", "Magdagdag muna ng kahit isang EGA sa itaas (i-click ang Add EGA at punan ang numero, pangalan at maikling pangalan nito). Pagkatapos ay magagamit na ang Add outcome, at ang bawat kinalabasan ay maiuugnay sa mga EGA na iyon."],
+  "outcomes.saveEgasFirst": ["Save the EGAs first: an outcome can only map to saved EGAs.", "I-save muna ang mga EGA: sa mga na-save na EGA lamang maiuugnay ang kinalabasan."],
+  "outcomes.noPos": ["No program outcomes yet.", "Wala pang Program Outcome."],
+  "outcomes.noEgaRows": ["No EGAs yet.", "Wala pang EGA."],
+  "outcomes.readonly.year": ["{year} is a past academic year: its EGAs and outcomes are shown for reference and cannot be changed.", "Nakaraang taong panuruan ang {year}: ipinapakita bilang sanggunian ang mga EGA at kinalabasan nito at hindi na mababago."],
+  "outcomes.readonly.inherited": ["{code} uses the EGAs and Program Outcomes of {source}. Edit them in {source}.", "Ginagamit ng {code} ang mga EGA at Program Outcome ng {source}. Baguhin ang mga ito sa {source}."],
+  "outcomes.readonly.reference": ["These Program Outcomes have a saved reference version, and this database cannot keep a new one yet. Apply the reference migration before editing them.", "May naka-save na bersyon ng sanggunian ang mga Program Outcome na ito, at hindi pa makapagtabi ng bago ang database na ito. Ilapat muna ang migration ng sanggunian bago baguhin ang mga ito."],
+  "outcomes.err.number": ["Row {row}: the number must be a whole number from 1 to 99 and not used twice.", "Hanay {row}: dapat buong bilang mula 1 hanggang 99 ang numero at hindi dapat ulitin."],
+  "outcomes.err.noEgas": ["Add at least one EGA.", "Magdagdag ng kahit isang EGA."],
+  "outcomes.err.tooManyEgas": ["A program can have at most {max} EGAs.", "Hanggang {max} EGA lamang ang maaaring mayroon ang isang programa."],
+  "outcomes.err.egaText": ["EGA {no} needs a name and a short name.", "Kailangan ng pangalan at maikling pangalan ang EGA {no}."],
+  "outcomes.err.egaLong": ["EGA {no} is too long (name up to 255 characters, short name up to 120).", "Masyadong mahaba ang EGA {no} (hanggang 255 titik ang pangalan, 120 ang maikling pangalan)."],
+  "outcomes.err.tooManyPos": ["A program can have at most {max} program outcomes.", "Hanggang {max} Program Outcome lamang ang maaaring mayroon ang isang programa."],
+  "outcomes.err.poText": ["PO {no} needs a short name and a statement.", "Kailangan ng maikling pangalan at pahayag ang PO {no}."],
+  "outcomes.err.poLong": ["PO {no} is too long (short name up to 120 characters, statement up to 2000).", "Masyadong mahaba ang PO {no} (hanggang 120 titik ang maikling pangalan, 2000 ang pahayag)."],
+  "outcomes.err.poEga": ["PO {no} maps to an EGA that is not saved for this program.", "May inuugnay ang PO {no} na EGA na hindi pa na-save para sa programang ito."],
+  "inst.vision": ["Vision", "Bisyon"],
+  "inst.missionLead": ["Mission (introduction)", "Misyon (panimula)"],
+  "inst.missionItems": ["Mission items", "Mga bahagi ng misyon"],
+  "inst.item": ["Mission item {n}", "Bahagi ng misyon {n}"],
+  "inst.addItem": ["Add mission item", "Magdagdag ng bahagi ng misyon"],
+  "inst.removeItem": ["Remove mission item {n}", "Alisin ang bahagi ng misyon {n}"],
+  "inst.save": ["Save vision and mission", "I-save ang bisyon at misyon"],
+  "inst.saved": ["Vision and mission saved.", "Na-save ang bisyon at misyon."],
+  "inst.needsEgas": ["The school-wide EGA list is empty, so the vision and mission cannot be saved here yet.", "Walang laman ang listahan ng EGA ng paaralan, kaya hindi pa ma-save dito ang bisyon at misyon."],
+  "inst.err.required": ["Enter the vision, the mission introduction and at least one mission item.", "Ilagay ang bisyon, ang panimula ng misyon at kahit isang bahagi ng misyon."],
+};
+for (const [key, [en, tl]] of Object.entries(outcomesSetupMessages)) { extraEn[key] = en; extraTl[key] = tl; }
+
+// Setting up outcomes inside the Add subject form, and copying them into existing subjects.
+const subjectSetupMessages = {
+  "programs.addButton": ["+ Add program", "+ Magdagdag ng programa"],
+  "programs.add": ["Add program", "Magdagdag ng programa"],
+  "programs.addTitle": ["Add program", "Magdagdag ng programa"],
+  "programs.addNote": ["The program is made in the current academic year ({year}). Fill in its Vision, Mission, EGAs and Program Outcomes now, or leave them and set them up later with its Outcomes button. Every subject you add to this program starts with a copy that faculty see, filled in and not editable, when they pick the program and the subject.", "Gagawin ang programa sa kasalukuyang taong panuruan ({year}). Punan ngayon ang Vision, Mission, mga EGA at Program Outcome nito, o iwan at i-set up sa ibang pagkakataon gamit ang button na Mga kinalabasan. Ang bawat asignaturang idadagdag mo sa programang ito ay magsisimula sa kopyang makikita ng mga guro, nakapuno na at hindi mababago, kapag pinili nila ang programa at ang asignatura."],
+  "programs.created": ["{code} added with its EGAs and Program Outcomes. Add its subjects with Add subject.", "Naidagdag ang {code} kasama ang mga EGA at Program Outcome nito. Idagdag ang mga asignatura nito gamit ang Add subject."],
+  "programs.createdNeedsOutcomes": ["{code} added. Set up its EGAs and Program Outcomes with its Outcomes button before faculty use it.", "Naidagdag ang {code}. I-set up ang mga EGA at Program Outcome nito gamit ang button na Mga kinalabasan bago ito gamitin ng mga guro."],
+  "subjects.chooseProgram": ["Choose a program", "Pumili ng programa"],
+  "subjects.noProgramsYet": ["No programs yet", "Wala pang programa"],
+  "subjects.addProgramFirst": ["Add a program first, then add its subjects.", "Magdagdag muna ng programa, saka idagdag ang mga asignatura nito."],
+  "programs.allRequired": ["All fields marked * are required: the program code and name, the Vision and Mission, at least one EGA and at least one Program Outcome.", "Kailangang punan ang lahat ng may *: ang code at pangalan ng programa, ang Vision at Mission, kahit isang EGA at kahit isang Program Outcome."],
+  "outcomes.err.noPos": ["Add at least one Program Outcome.", "Magdagdag ng kahit isang Program Outcome."],
+  "setup.heading": ["Outcomes, vision and mission", "Mga kinalabasan, bisyon at misyon"],
+  "setup.programHeading": ["EGAs and Program Outcomes of {code}", "Mga EGA at Program Outcome ng {code}"],
+  "setup.newProgramNote": ["{code} is a new program. Add its EGAs and Program Outcomes here and they are created with the program: every subject you add to {code} starts with a copy that faculty see when they pick it. You can leave them empty now and set them up later with the Outcomes button.", "Bagong programa ang {code}. Idagdag dito ang mga EGA at Program Outcome nito at malilikha ang mga ito kasama ng programa: ang bawat asignaturang idadagdag mo sa {code} ay magsisimula sa kopyang makikita ng mga guro kapag pinili ito. Maaari mo itong iwanang walang laman ngayon at i-set up sa ibang pagkakataon gamit ang button na Mga kinalabasan."],
+  "setup.existingProgramNote": ["These belong to {code} in {year}, so they apply to every subject of {code} in that year. Changes are saved when you add the subject. This subject starts with a copy; subjects that already exist keep theirs until you use Apply to subjects in the program's Outcomes.", "Nabibilang ang mga ito sa {code} sa {year}, kaya nalalapat sa bawat asignatura ng {code} sa taong iyon. Isasave ang mga pagbabago kapag idinagdag mo ang asignatura. Magsisimula ang asignaturang ito sa kopya; ang mga asignaturang mayroon na ay mananatili sa kanila hanggang gamitin mo ang Ilapat sa mga asignatura sa Mga kinalabasan ng programa."],
+  "setup.schoolHeading": ["School vision and mission", "Bisyon at misyon ng paaralan"],
+  "setup.schoolNote": ["School-wide: the same for every program and academic year, and what the syllabus checker compares with. Changing it here saves it for everyone.", "Para sa buong paaralan: pareho sa bawat programa at taong panuruan, at ito ang pinaghahambing ng syllabus checker. Ang pagbabago rito ay isasave para sa lahat."],
+  "setup.createdWithOutcomes": ["Subject added with the EGAs and Program Outcomes of {code}. Faculty see them when they pick this program and subject.", "Naidagdag ang asignatura kasama ang mga EGA at Program Outcome ng {code}. Makikita ito ng mga guro kapag pinili ang programa at asignaturang ito."],
+  "setup.programUpdated": ["Subject added. The outcomes of {code} were updated. Open Outcomes on {code} and use Apply to subjects to give the changes to its other subjects.", "Naidagdag ang asignatura. Na-update ang mga kinalabasan ng {code}. Buksan ang Mga kinalabasan ng {code} at gamitin ang Ilapat sa mga asignatura para ibigay ang mga pagbabago sa iba pa nitong asignatura."],
+  "outcomes.syncNote": ["{count} subjects of this program keep their own copy of the EGAs, outcomes, vision and mission. Apply to subjects copies the saved setup into them (a subject whose CLOs still use something that was removed is skipped and listed).", "Ang {count} asignatura ng programang ito ay may sariling kopya ng mga EGA, kinalabasan, bisyon at misyon. Kinokopya ng Ilapat sa mga asignatura ang na-save na setup sa kanila (lalaktawan at ililista ang asignaturang ang mga CLO ay gumagamit pa ng inalis na bagay)."],
+  "outcomes.sync": ["Apply to {count} subjects", "Ilapat sa {count} asignatura"],
+  "outcomes.synced": ["Applied to subjects: {updated} updated, {unchanged} already the same.", "Nailapat sa mga asignatura: {updated} ang na-update, {unchanged} ang pareho na."],
+  "outcomes.skipped": ["{code} was skipped: {reason}.", "Nilaktawan ang {code}: {reason}."],
+};
+for (const [key, [en, tl]] of Object.entries(subjectSetupMessages)) { extraEn[key] = en; extraTl[key] = tl; }

@@ -6,6 +6,9 @@ import ClosStep from '../src/views/builder2/ClosStep';
 import FormPaper from '../src/views/builder2/FormPaper';
 import { createModel, emptyDraft } from '../src/lib/syllabusModel';
 import ProgramManagement, { DeletionImpact, ProgramDialog } from '../src/components/ProgramManagement';
+import SubjectSetup from '../src/components/SubjectSetup';
+import AcademicYearControl from '../src/components/AcademicYearControl';
+import { AcademicYearContext } from '../src/components/AcademicYearScope';
 import StableButton from '../src/components/StableButton';
 import { t } from '../src/i18n';
 import { dayPeriod } from '../src/lib/phTime';
@@ -16,7 +19,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import Settings from '../src/views/Settings';
 import AdministrativeSettings from '../src/components/AdministrativeSettings';
 import Sidebar from '../src/components/Sidebar';
-import { Icon, Avatar } from '../src/components/ui';
+import { Icon, Avatar, QualityMini } from '../src/components/ui';
 import CheckHistory from '../src/components/CheckHistory';
 import Compliance from '../src/views/Compliance';
 import Select, { readOptions } from '../src/components/Select';
@@ -25,9 +28,12 @@ import { DeadlineChip, DeadlineDialog, DeadlineProgress } from '../src/component
 import UpcomingDeadlines, { DeadlineRows } from '../src/components/UpcomingDeadlines';
 import TimeUsageCard, { Ready as TimeUsageReady } from '../src/components/TimeUsageCard';
 import { recordAvatar, resetAvatars } from '../src/lib/avatarStore';
-import VerdictPanel from '../src/components/VerdictPanel';
 import Topbar from '../src/components/Topbar';
 import Dashboard from '../src/views/DashboardView';
+import AIChecker from '../src/views/AIChecker';
+import OwnSyllabusPicker from '../src/components/OwnSyllabusPicker';
+import { TrendChart, TrendTable, TrendSummary } from '../src/components/ProgramTrendModal';
+import { programTrend } from '../src/lib/programTrend';
 import Repository, { repositoryProgram } from '../src/views/Repository';
 import { navItems } from '../src/data/initialData';
 import { roleAllows } from '../src/lib/roles';
@@ -70,7 +76,7 @@ test('navigation, dashboard summaries and roles switch language while account na
   const nav = renderToStaticMarkup(<Sidebar page="settings" setPage={noop} nav={navItems} collapsed={false} onToggle={noop} />);
   assert.match(nav, /Pangkalahatang Tanaw/); assert.match(nav, /Mga Setting/); assert.match(nav, /Tagabuo ng Silabus/);
   const dashboard = renderToStaticMarkup(<Dashboard user={user} syllabi={[]} logs={[]} setPage={noop} clearLogs={noop} setConfirm={noop} />);
-  assert.match(dashboard, /Aking mga naipasa/); assert.match(dashboard, /Kabuuang na-upload/);
+  assert.match(dashboard, /Aking mga Naipasa/); assert.match(dashboard, /Kabuuang na-upload/);
   const topbar = renderToStaticMarkup(<Topbar user={user} page="settings" unread={0} threads={[]} msgDrop={false} onLogout={noop} setMsgDrop={noop} notifications={{ unreadCount: 0, items: [] }} />);
   assert.match(topbar, /Approved Settings/); assert.match(topbar, /Guro/); assert.match(topbar, /Mag-sign out/);
 });
@@ -104,10 +110,10 @@ test('the admin dashboard shows its own five summary cards; faculty keeps theirs
   const render = role => renderToStaticMarkup(<Dashboard user={{ ...user, role }} syllabi={[{ id: 1, userId: 9, status: 'submitted' }, { id: 2, userId: 9, status: 'approved' }]} logs={[]} setPage={noop} clearLogs={noop} setConfirm={noop} />);
   const admin = render('admin');
   assert.equal((admin.match(/class="stat-card"/g) || []).length, 5);
-  for (const label of ['Programs', 'Subjects', 'Under review', 'Approved', 'For revision']) assert.match(admin, new RegExp('<span>' + label + '</span>'));
+  for (const label of ['Programs', 'Subjects', 'Under Review', 'Approved', 'For Revision']) // labels keep their capitals assert.match(admin, new RegExp('<span>' + label + '</span>'));
   assert.doesNotMatch(admin, /AI compliance score|Total courses|Submitted syllabi/i);
   const faculty = render('faculty');
-  assert.match(faculty, /My submissions/); assert.match(faculty, /AI compliance score/);
+  assert.match(faculty, /My Submissions/); assert.match(faculty, /AI Compliance Score/);
 });
 test('the brand dashboard icons draw in the theme colour at the requested size and are hidden from screen readers by default', () => {
   for (const name of ['program', 'subject', 'underReview', 'approved', 'revise']) {
@@ -142,17 +148,23 @@ test('every picture of the same user changes together when a new photo is record
 test('the compliance cards show the own photo of each faculty member, or initials, and never merge two people with the same name', () => {
   resetAvatars(); setLanguage('en');
   const rows = [
-    { id: 1, userId: 5, faculty: 'Ana Cruz', ownerAvatarUrl: '/api/users/5/avatar?v=10', status: 'approved' },
-    { id: 2, userId: 5, faculty: 'Ana Cruz', ownerAvatarUrl: '/api/users/5/avatar?v=10', status: 'submitted' },
-    { id: 3, userId: 6, faculty: 'Ana Cruz', ownerAvatarUrl: null, status: 'approved' },
+    { id: 1, userId: 5, courseId: 1, faculty: 'Ana Cruz', ownerAvatarUrl: '/api/users/5/avatar?v=10', status: 'approved' },
+    { id: 2, userId: 5, courseId: 2, faculty: 'Ana Cruz', ownerAvatarUrl: '/api/users/5/avatar?v=10', status: 'submitted' },
+    { id: 3, userId: 6, courseId: 3, faculty: 'Ana Cruz', ownerAvatarUrl: null, status: 'approved' },
   ];
-  const html = renderToStaticMarkup(<Compliance syllabi={rows} />);
+  // the cards are the faculty accounts (each with their own photo), measured against their assigned subjects (src/lib/facultyCompliance.js)
+  const data = {
+    faculty: [{ id: 5, firstName: 'Ana', lastName: 'Cruz', avatarUrl: '/api/users/5/avatar?v=10' }, { id: 6, firstName: 'Ana', lastName: 'Cruz', avatarUrl: null }],
+    holders: [{ courseId: 1, userId: 5 }, { courseId: 2, userId: 5 }, { courseId: 3, userId: 6 }],
+    subjects: [{ id: 1, code: 'IT 101', program: 'BSIT' }, { id: 2, code: 'IT 102', program: 'BSIT' }, { id: 3, code: 'IT 103', program: 'BSIT' }],
+  };
+  const html = renderToStaticMarkup(<Compliance syllabi={rows} data={data} />);
   assert.equal((html.match(/class="comp-card"/g) || []).length, 2);
   assert.equal((html.match(/<img[^>]*class="comp-av"/g) || []).length, 1);
   assert.match(html, /<img[^>]*avatar\?v=10/);
   assert.match(html, /<span class="comp-av">AC<\/span>/);
   recordAvatar(6, '/api/users/6/avatar?v=99', 99);
-  assert.equal((renderToStaticMarkup(<Compliance syllabi={rows} />).match(/<img[^>]*class="comp-av"/g) || []).length, 2);
+  assert.equal((renderToStaticMarkup(<Compliance syllabi={rows} data={data} />).match(/<img[^>]*class="comp-av"/g) || []).length, 2);
   resetAvatars();
 });
 test('the time usage card shows today, a bar per day and the averages, in English and Tagalog, and a calm state before any data', () => {
@@ -306,7 +318,7 @@ test('the Upcoming Deadlines card says so while loading, instead of showing samp
   const html = renderToStaticMarkup(<UpcomingDeadlines role="faculty" onOpen={noop} />);
   assert.match(html, /Loading progress/); assert.doesNotMatch(html, /Department syllabus submission|5 days remaining/);
 });
-test('the progress list offers Remind only to faculty who have not submitted, and says when they were last reminded', () => {
+test('the progress list has one Remind all button (no bell on each person), and says when each was last reminded', () => {
   const person = (userId, name, status, extra = {}) => ({ userId, name, status, submittedAt: null, lastNoticeAt: null, ...extra });
   const data = { summary: { total: 4, submitted: 1, late: 1, waiting: 1, failed: 1 }, unassigned: false, people: [
     person(5, 'Fay Cruz', 'failed', { lastNoticeAt: '2026-10-14T07:00:00.000Z' }), person(6, 'Gus Lim', 'upcoming'),
@@ -314,8 +326,8 @@ test('the progress list offers Remind only to faculty who have not submitted, an
   ] };
   setLanguage('en');
   const html = renderToStaticMarkup(<DeadlineProgress state={{ status: 'ready', data }} onRemind={noop} />);
-  assert.equal((html.match(/class="icon-btn dl-remind"/g) || []).length, 2, 'only the two who have not submitted');
-  assert.match(html, /aria-label="Remind Fay Cruz"/); assert.match(html, /aria-label="Remind Gus Lim"/); assert.doesNotMatch(html, /aria-label="Remind Hana Reyes"/);
+  assert.doesNotMatch(html, /dl-remind|aria-label="Remind Fay Cruz"/, 'no bell button on each person: the one Remind all button does it');
+  assert.equal((html.match(/<button/g) || []).length, 1, 'one button: Remind all');
   assert.match(html, /Reminded Oct 14, 2026, 3:00 PM/); assert.match(html, /Not submitted yet/); assert.match(html, /Submitted Oct 10, 2026, 10:00 AM/);
   assert.match(html, /Reminder/); assert.doesNotMatch(html, /Reminder[^>]*disabled/);
   assert.match(html, /<span class="status dl-failed">Failed to submit<\/span>/); assert.match(html, /<span class="status dl-submitted_late">Submitted late<\/span>/);
@@ -324,7 +336,7 @@ test('the progress list offers Remind only to faculty who have not submitted, an
   assert.match(renderToStaticMarkup(<DeadlineProgress state={{ status: 'ready', data }} onRemind={noop} reminding message="Reminded 1 by notification and 1 by email." />), /role="status">Reminded 1 by notification/);
   setLanguage('tl');
   const tl = renderToStaticMarkup(<DeadlineProgress state={{ status: 'ready', data }} onRemind={noop} />);
-  assert.match(tl, /Paalalahanan si Fay Cruz/); assert.match(tl, /Napaalalahanan noong/); assert.match(tl, /Paalala</);
+  assert.doesNotMatch(tl, /Paalalahanan si Fay Cruz/, 'no per-person button in Tagalog either'); assert.match(tl, /Napaalalahanan noong/); assert.match(tl, /Paalala</);
   setLanguage('en');
 });
 test('translated repository filters retain canonical option values and original syllabus titles', () => {
@@ -385,7 +397,38 @@ test('program actions use shared buttons and preserve stored program names in bo
     assert.match(html, /class="icon-btn"/); assert.match(html, /class="icon-btn is-delete"/);
     assert.match(html, /aria-label="(Rename program BSIT|Palitan ang pangalan ng programang BSIT)"/);
     assert.match(html, /aria-labelledby="program-management-title"/);
-    assert.equal((html.match(/<button /g)||[]).length, 2);
+    assert.match(html, /aria-label="(EGAs and Program Outcomes of BSIT|Mga EGA at Program Outcome ng BSIT)"/);
+    assert.match(html, /Set up EGAs and POs|I-set up ang EGA at PO/, 'a program with no EGAs or outcomes is flagged as needing setup');
+    assert.equal((html.match(/<button /g)||[]).length, 3);
+  }
+});
+test('the Add subject form offers the school vision and mission before any program is typed, and the program EGAs and outcomes only once there is a program code', () => {
+  for (const language of ['en', 'tl']) {
+    setLanguage(language);
+    const bare = renderToStaticMarkup(<SubjectSetup programCode="" existing={null} isNew={false} year="2026–2027" onStatus={noop} notify={noop} />);
+    assert.match(bare, /class="subject-setup full"/);
+    assert.doesNotMatch(bare, /<legend|<h4|ac-hint/, 'the section has no legend, heading or hint of its own (the Add program form is the title)');
+    assert.doesNotMatch(bare, /Expected graduate attributes|Inaasahang katangian/);
+    const withProgram = renderToStaticMarkup(<SubjectSetup programCode="BSEE" existing={null} isNew={true} year="2026–2027" onStatus={noop} notify={noop} />);
+    assert.match(withProgram, /Expected graduate attributes|Inaasahang katangian/);
+    assert.match(withProgram, /Add at least one EGA above first|Magdagdag muna ng kahit isang EGA/, 'with no EGA typed yet, Add outcome is disabled and the form says why');
+  }
+});
+test('one academic-year control replaces the Current academic year card: dropdown, + Add year, Make current only for another year, Copy from only for an empty current year', () => {
+  const years = [{ label: '2025–2026', startYear: 2025, isCurrent: false, programs: 2, subjects: 9 }, { label: '2026–2027', startYear: 2026, isCurrent: true, programs: 0, subjects: 0 }];
+  const scope = (selected) => ({ years, current: years[1], isAdmin: true, options: () => [{ value: '', label: '2026–2027 · current' }, { value: '2025–2026', label: '2025–2026' }, { value: 'all', label: 'All academic years' }], selection: () => selected, select: noop, reload: noop });
+  const html = (selected) => renderToStaticMarkup(<AcademicYearContext.Provider value={scope(selected)}><AcademicYearControl years={years} onChanged={noop} onAddYear={noop} notify={noop} /></AcademicYearContext.Provider>);
+  for (const language of ['en', 'tl']) {
+    setLanguage(language);
+    const current = html('');
+    assert.match(current, /class="year-bar"/); assert.match(current, /class="field year-filter"/);
+    assert.match(current, /\+ Add year|\+ Magdagdag ng taon/);
+    assert.doesNotMatch(current, /Make current|Gawing kasalukuyan/, 'the current year needs no Make current');
+    assert.match(current, /Copy from 2025–2026|Kopyahin mula sa 2025–2026/, 'the empty current year offers to copy from the year that has a catalog');
+    assert.doesNotMatch(current, /current-year|cy-change|Current academic year/, 'no card');
+    const other = html('2025–2026');
+    assert.match(other, /Make current|Gawing kasalukuyan/);
+    assert.doesNotMatch(other, /Copy from|Kopyahin mula/);
   }
 });
 test('deletion begins with a non-destructive impact review, never an enabled final submit', () => {
@@ -575,16 +618,22 @@ test('My Syllabi keeps faculty communication and hides it for administrators whi
   }
 });
 
-test('admin repository hides messaging for owned syllabi and keeps faculty messaging and history',()=>{
+// An approved syllabus is final: the Repository offers no message button to anyone (owner or not, any reviewer role), and keeps the history button.
+test('the repository has no message button for any approved syllabus, for every reviewer role, and keeps the history',()=>{
   for(const language of ['en','tl']) {
     setLanguage(language);
-    const html=renderToStaticMarkup(<Repository user={{...user,role:'admin'}} syllabi={[
-      {id:91,userId:user.id,status:'approved',courseCode:'OWN101',title:'Own syllabus'},
-      {id:92,userId:999,status:'approved',courseCode:'FAC101',title:'Faculty syllabus'}
-    ]} notify={noop} setChatCode={noop} setHistCode={noop}/>);
-    assert.ok(!html.includes(t('ui.open_chat_for_p0_633dd9',{p0:'OWN101'})));
-    assert.ok(html.includes(t('ui.open_chat_for_p0_633dd9',{p0:'FAC101'})));
-    assert.ok(html.includes(t('ui.view_history_for_p0_46396f',{p0:'OWN101'})));
+    for(const role of ['admin','asst_vpaa','lic_director','vpaa']) {
+      const html=renderToStaticMarkup(<Repository user={{...user,role}} syllabi={[
+        {id:91,userId:user.id,status:'approved',courseCode:'OWN101',title:'Own syllabus'},
+        {id:92,userId:999,status:'approved',courseCode:'FAC101',title:'Faculty syllabus'}
+      ]} notify={noop} setHistCode={noop}/>);
+      assert.ok(html.includes('FAC101') && html.includes('OWN101'), role + ': both approved syllabi are listed');
+      for(const code of ['OWN101','FAC101']) {
+        assert.ok(!html.includes(t('ui.open_chat_for_p0_633dd9',{p0:code})), role + ' ' + code + ': no message button');
+        assert.ok(html.includes(t('ui.view_history_for_p0_46396f',{p0:code})), role + ' ' + code + ': history kept');
+      }
+      assert.ok(!html.includes('✉'), role + ': no message icon anywhere in the list');
+    }
   }
 });
 
@@ -604,26 +653,6 @@ test('CO–PO Mapping has no navigation, dashboard shortcut or login feature for
   }
 });
 
-const verdictRun = (over = {}) => ({ hybrid: { verdict: { version: 'verdict-1', advisory: true, mode: 'offline', completeness: { percent: 100 }, curriculum: 'PASS', alignment: 'NOT_CHECKED', overall: 'PARTIAL_VALIDATION', unverified: [{ ruleId: 'ALN-01' }, { ruleId: 'ALN-02' }],
-  findings: [{ ruleId: 'CLO-01', status: 'FAIL', severity: 'MAJOR', method: 'deterministic', week: null, explanation: 'The syllabus has 3 CLOs.', recommendation: 'Ask the administrator to set exactly 4 CLOs for this course.', actual: '3' },
-    { ruleId: 'ALN-05', status: 'FAIL', severity: 'MAJOR', method: 'ai_semantic', week: '7', explanation: 'Folk dance does not teach programs.', recommendation: 'Write and test a Java program.', actual: 'Folk dance' }], ...over } } });
-test('the verdict panel separates completeness from alignment and labels status, method and week', () => {
-  const html = renderToStaticMarkup(<VerdictPanel run={verdictRun()} />);
-  assert.match(html, /Academic verdict \(advisory\)/); assert.match(html, /100%/);
-  assert.match(html, /Not checked/); assert.match(html, /Partly validated/);
-  assert.match(html, /Fixed rule/); assert.match(html, /AI review/); assert.match(html, /Week 7/);
-  assert.match(html, /2 checks could not be made/); assert.match(html, /needs your approval/);
-});
-test('the verdict panel is translated to Tagalog', () => {
-  setLanguage('tl');
-  const html = renderToStaticMarkup(<VerdictPanel run={verdictRun()} />);
-  assert.match(html, /Akademikong hatol/); assert.match(html, /Hindi nasuri/); assert.match(html, /Linggo 7/);
-  assert.doesNotMatch(html, /Academic verdict/);
-});
-test('reports saved before the verdict existed, or whose builder failed, render nothing', () => {
-  for (const run of [null, {}, { hybrid: {} }, { hybrid: { verdict: { unavailable: true } } }]) assert.equal(renderToStaticMarkup(<VerdictPanel run={run} />), '');
-});
-
 const impact = over => ({ program: { id: 1, code: 'BSIT', name: 'IT' }, counts: { subjects: 0, syllabi: 0, versions: 0, assignments: 0, files: 0 }, subjects: [], syllabi: [], specializations: [], inheritsFrom: null, blocked: false, ...over });
 test('the deletion preview explains, in both languages, that a program others inherit outcomes from cannot be deleted', () => {
   const blocked = impact({ blocked: true, specializations: [{ id: 2, code: 'BSIT-CYBERSECURITY', name: 'Cyber' }] });
@@ -633,147 +662,6 @@ test('the deletion preview explains, in both languages, that a program others in
   setLanguage('en');
   assert.match(renderToStaticMarkup(<DeletionImpact preview={impact({ program: { id: 2, code: 'BSIT-CYBERSECURITY', name: 'Cyber' }, inheritsFrom: 'BSIT' })} />), /inherits its Program Outcomes and EGAs from BSIT/);
   assert.doesNotMatch(renderToStaticMarkup(<DeletionImpact preview={impact()} />), /cannot be deleted|inherits/);
-});
-
-test('the verdict panel says which element is responsible for a weekly finding, in both languages', () => {
-  const run = verdictRun({ findings: [{ ruleId: 'ALN-01', status: 'NEEDS_REVIEW', severity: 'MINOR', method: 'ai_semantic', week: '3', responsible: 'course_content', explanation: 'x', verification: 'quotes_verified', reference: 'Week 3: Java', actual: 'Explain the history of operating systems.' }] });
-  assert.match(renderToStaticMarkup(<VerdictPanel run={run} />), /Fix: course content/);
-  setLanguage('tl');
-  assert.match(renderToStaticMarkup(<VerdictPanel run={run} />), /Ayusin: nilalaman ng kurso/);
-});
-
-test('the verdict panel keeps reference format, authenticity and value definitions apart, and says when findings were cut, in both languages', () => {
-  const run = verdictRun({ omitted: 7, findings: [
-    { ruleId: 'REF-02', status: 'FAIL', severity: 'MINOR', method: 'deterministic', responsible: 'references', authenticity: 'not_verified', explanation: 'x', actual: 'Doe, J. and Lee, K. (2020).' },
-    { ruleId: 'VAL-03', status: 'NEEDS_REVIEW', severity: 'MINOR', method: 'ai_semantic', week: '3', responsible: 'values', carriedBy: 'none', definitions: 'pending_approval', explanation: 'y' }] });
-  setLanguage('en');
-  const en = renderToStaticMarkup(<VerdictPanel run={run} />);
-  for (const text of [/Fix: reference list/, /Authenticity not verified/, /Fix: values statement/, /Nothing in the lesson carries the value/, /7 more finding\(s\) are not listed/]) assert.match(en, text);
-  setLanguage('tl');
-  const tl = renderToStaticMarkup(<VerdictPanel run={run} />);
-  for (const text of [/Ayusin: listahan ng sanggunian/, /Hindi napatunayan kung totoo ang sanggunian/, /Walang bahagi ng aralin na nagdadala ng pagpapahalaga/, /May 7 pang natuklasan/]) assert.match(tl, text);
-  setLanguage('en');
-});
-
-test('the verdict panel shows the separate results, the course identity, provisional feedback, the title suggestion and value classification, in both languages', () => {
-  const run = verdictRun({ states: { identity: { status: 'code_not_found', elsewhere: [{ program: 'BSIE', curriculumYear: '2022-2023' }] }, structure: 'PASS', curriculum: 'FAIL', academicAlignment: 'NOT_CHECKED', values: 'NEEDS_REVIEW', references: { format: 'PASS', relevance: 'NOT_CHECKED', authenticity: 'NOT_CHECKED' } },
-    informational: [{ kind: 'formatting', entered: 'Systems Engineering', approved: 'SYSTEMS ENGINEERING' }],
-    findings: [{ ruleId: 'VAL-05', status: 'NEEDS_REVIEW', severity: 'MINOR', method: 'ai_semantic', week: '3', responsible: 'values', identityBasis: 'provisional', verification: 'provisional_identity', classification: { canonicalCoreValue: 'Community-orientedness', supportingValue: ['Respect'], classificationStatus: 'core_supported' }, explanation: 'x' }] });
-  setLanguage('en');
-  const en = renderToStaticMarkup(<VerdictPanel run={run} />);
-  for (const text of [/Course identity/, /Course code not in the approved curriculum/, /This code exists in: BSIE 2022-2023/, /References: authenticity/, /approved spelling is[^<]*SYSTEMS ENGINEERING/, /Provisional: course not verified/, /Core value: Community-orientedness/, /Supporting value: Respect/]) assert.match(en, text);
-  setLanguage('tl');
-  const tl = renderToStaticMarkup(<VerdictPanel run={run} />);
-  for (const text of [/Pagkakakilanlan ng kurso/, /Wala sa aprubadong kurikulum ang code ng kurso/, /Mga sanggunian: pagiging totoo/, /Pansamantala/, /Pangunahing pagpapahalaga: Community-orientedness/]) assert.match(tl, text);
-  setLanguage('en');
-});
-
-test('the verdict panel says why no rewrite is offered in the selected language, and repeats neither a pill nor the alignment result', () => {
-  const run = verdictRun({ states: { identity: { status: 'verified', elsewhere: [] }, structure: 'PASS', curriculum: 'PASS', academicAlignment: 'FAIL', values: 'PASS', references: { format: 'PASS', relevance: 'PASS', authenticity: 'NOT_CHECKED' } },
-    findings: [{ ruleId: 'ALN-07', status: 'FAIL', severity: 'MAJOR', method: 'ai_semantic', week: '3', responsible: 'activity', withheld: 'activity_invalid', withheldNote: 'English note from the server', explanation: 'x' },
-      { ruleId: 'CUR-04', status: 'FAIL', severity: 'MAJOR', method: 'deterministic', verification: 'deterministic', explanation: 'y' }] });
-  setLanguage('en');
-  const en = renderToStaticMarkup(<VerdictPanel run={run} />);
-  assert.match(en, /No rewrite offered:<\/b> The learning activity is not aligned, so correct the activity first/);
-  assert.equal((en.match(/>Academic alignment</g) || []).length, 1, 'one alignment result');
-  assert.equal((en.match(/>Fixed rule</g) || []).length, 1, 'the method is not repeated as the verification');
-  setLanguage('tl');
-  const tl = renderToStaticMarkup(<VerdictPanel run={run} />);
-  assert.match(tl, /Walang iminumungkahing muling pagsulat:<\/b> Hindi nakahanay ang gawaing pampagkatuto, kaya ayusin muna ang gawain/);
-  setLanguage('en');
-});
-
-test('the verdict panel distinguishes quote verification, advisory reasoning warnings and withheld drafts in both languages', () => {
-  const run = verdictRun({ findings: [
-    { ruleId: 'REF-05', status: 'PASS', severity: 'INFO', method: 'ai_semantic', responsible: 'references', verification: 'quotes_verified', explanation: 'MODEL EXPLANATION', explanationReview: ['venue_claim', 'venue_claim'], reviewEvidence: { explanation: [{ code: 'venue_claim', evidence: 'technical press <untrusted>' }] } },
-    { ruleId: 'VAL-03', status: 'FAIL', severity: 'MINOR', method: 'ai_semantic', explanation: 'MODEL VALUE EXPLANATION', actual: 'FACULTY ORIGINAL', withheld: 'draft_review', draftReview: ['adds_participant'], reviewEvidence: { draft: [{ code: 'adds_participant', evidence: 'another section' }] } },
-    { ruleId: 'ALN-05', status: 'NEEDS_REVIEW', severity: 'MINOR', method: 'ai_semantic', recommendation: 'SUGGESTED DRAFT' },
-  ] });
-  setLanguage('en');
-  const en = renderToStaticMarkup(<VerdictPanel run={run} />);
-  assert.match(en, /Quotes verified/);
-  assert.match(en, /Explanation needs faculty review/);
-  assert.match(en, /do not change the academic judgment/);
-  assert.match(en, /Verified quotes do not verify the reasoning/);
-  assert.doesNotMatch(en, /Fix: reference list/);
-  assert.equal((en.match(/A claim about the publisher, journal or source/g) || []).length, 1);
-  assert.match(en, /technical press &lt;untrusted&gt;/);
-  assert.match(en, /The draft is withheld/);
-  assert.match(en, /participants not established in this lesson/);
-  assert.match(en, /FACULTY ORIGINAL/);
-  assert.match(en, /Suggested rewrite \(unverified; needs your approval\)/);
-  assert.match(t('hybrid.unresolved.draft_needs_review'), /possible unsupported or copied wording/);
-  assert.doesNotMatch(t('hybrid.unresolved.draft_needs_review'), /failed a static check/);
-  assert.match(t('verdict.review.code.copies_other_relationship'), /another relationship seen by the AI/);
-  setLanguage('tl');
-  const tl = renderToStaticMarkup(<VerdictPanel run={run} />);
-  assert.match(tl, /Napatunayan ang mga sipi/);
-  assert.match(tl, /Kailangang suriin ng guro ang paliwanag/);
-  assert.match(tl, /Hindi binabago.*akademikong pasya/);
-  assert.match(tl, /Hindi iniaalok ang draft/);
-  assert.match(tl, /mga kalahok na hindi nakasaad/);
-  assert.match(tl, /FACULTY ORIGINAL/);
-  assert.match(tl, /hindi pa napatunayan; kailangan ang iyong pag-apruba/);
-  assert.match(t('hybrid.unresolved.draft_needs_review'), /hindi nagbabago ang orihinal na teksto ng guro/);
-  assert.match(t('verdict.review.code.copies_other_relationship'), /ibang ugnayang nakita ng AI/);
-  assert.doesNotMatch(tl, /verdict\.review\./);
-  setLanguage('en');
-});
-
-test('the verdict panel separates advisory draft cautions from resource and competency withholding in both languages', () => {
-  const warned = verdictRun({ findings: [
-    { ruleId: 'ALN-05', status: 'FAIL', severity: 'MINOR', method: 'ai_semantic', actual: 'FACULTY LESSON', recommendation: 'ELIGIBLE PROPOSAL', draftWarnings: ['borrowed_wording', 'borrowed_wording', 'conditional_resource'], reviewEvidence: { draftWarnings: [{ code: 'borrowed_wording', evidence: 'shared <term>' }, { code: 'conditional_resource', evidence: 'if available' }] } },
-  ] });
-  const held = verdictRun({ findings: [
-    { ruleId: 'ALN-05', status: 'FAIL', severity: 'MINOR', method: 'ai_semantic', actual: 'FACULTY LESSON', withheld: 'draft_review', draftReview: ['assumes_resource', 'unnecessary_practical', 'expands_competency'], reviewEvidence: { draft: [{ code: 'assumes_resource', evidence: 'specialized laboratory' }] } },
-  ] });
-  setLanguage('en');
-  const en = renderToStaticMarkup(<VerdictPanel run={warned} />);
-  assert.match(en, /Advisory draft caution/);
-  assert.match(en, /caution alone does not withhold the draft/);
-  assert.match(en, /ELIGIBLE PROPOSAL/);
-  assert.doesNotMatch(en, /The draft is withheld/);
-  assert.equal((en.match(/The draft shares wording/g) || []).length, 1);
-  assert.match(en, /shared &lt;term&gt;/);
-  assert.match(en, /resource use conditional/);
-  const enHeld = renderToStaticMarkup(<VerdictPanel run={held} />);
-  assert.match(enHeld, /The draft is withheld/);
-  assert.match(enHeld, /availability is not established/);
-  assert.match(enHeld, /conceptual ILO does not require/);
-  assert.match(enHeld, /expand the required competency/);
-  assert.match(enHeld, /FACULTY LESSON/);
-  setLanguage('tl');
-  const tl = renderToStaticMarkup(<VerdictPanel run={warned} />);
-  assert.match(tl, /Paalala lamang tungkol sa draft/);
-  assert.match(tl, /hindi dahilan upang ipagkait ang draft/);
-  assert.match(tl, /ELIGIBLE PROPOSAL/);
-  assert.doesNotMatch(tl, /Hindi iniaalok ang draft/);
-  const tlHeld = renderToStaticMarkup(<VerdictPanel run={held} />);
-  assert.match(tlHeld, /Hindi iniaalok ang draft/);
-  assert.match(tlHeld, /hindi pa natitiyak na magagamit/);
-  assert.match(tlHeld, /konseptuwal na ILO/);
-  assert.match(tlHeld, /higit sa ILO/);
-  assert.doesNotMatch(tl + tlHeld, /verdict\.review\./);
-  setLanguage('en');
-});
-
-test('the printable verdict panel hides stale withheld corrections and translates material proposals and uncertainty', () => {
-  const run = verdictRun({ findings: [
-    { ruleId: 'ALN-05', status: 'NEEDS_REVIEW', severity: 'MINOR', method: 'ai_semantic', actual: 'FACULTY ORIGINAL', draftReview: ['assumes_resource'], recommendation: 'UNSUPPORTED NOTES CORRECTION', reviewEvidence: { draft: [{ code: 'assumes_resource', evidence: 'syntax notes' }] } },
-    { ruleId: 'ALN-06', status: 'NEEDS_REVIEW', severity: 'MINOR', method: 'ai_semantic', actual: 'FACULTY ORIGINAL', withheld: 'draft_review', recommendation: 'STALE DERIVED CORRECTION' },
-    { ruleId: 'ALN-05', status: 'NEEDS_REVIEW', severity: 'MINOR', method: 'ai_semantic', recommendation: 'FACULTY MAY PREPARE NOTES', draftWarnings: ['proposed_resource', 'resource_needs_confirmation'], reviewEvidence: { draftWarnings: [{ code: 'proposed_resource', evidence: 'lecture notes' }, { code: 'resource_needs_confirmation', evidence: 'reference materials' }] } },
-  ] });
-  try {
-    for (const lang of ['en', 'tl']) {
-      setLanguage(lang);
-      const markup = renderToStaticMarkup(<VerdictPanel run={run} />);
-      assert.doesNotMatch(markup, /UNSUPPORTED NOTES CORRECTION|STALE DERIVED CORRECTION/);
-      assert.match(markup, /FACULTY ORIGINAL/); assert.match(markup, /FACULTY MAY PREPARE NOTES/);
-      assert.doesNotMatch(markup, /verdict\.review\.code\./);
-      assert.ok(markup.includes(t('verdict.review.code.proposed_resource')));
-      assert.ok(markup.includes(t('verdict.review.code.resource_needs_confirmation')));
-    }
-  } finally { setLanguage('en'); }
 });
 
 test('the review panel: the dean, the Asst. VPAA and the LIC Director clear their check and cannot approve; the VPAA approves only after all three, in both languages', () => {
@@ -813,4 +701,177 @@ test('Review & Approval lists, for each role, what needs that person now', () =>
   const forVpaa = renderToStaticMarkup(<ReviewApproval syllabi={rows} user={{ ...user, role: 'vpaa', id: 4 }} setViewCode={noop} setPage={noop} />);
   assert.ok(forVpaa.includes('Ready for the VPAA') && !forVpaa.includes('Open check'));
   assert.ok(forVpaa.includes(t('reviewChain.restApprover', { count: 1 })));
+});
+
+// Only faculty and the administrator write syllabi: the dashboard's New syllabus button is theirs, never a reviewer's.
+test('the dashboard offers New syllabus to faculty and the administrator, not to the Asst. VPAA, the LIC Director or the VPAA',()=>{
+  for(const language of ['en','tl']) {
+    setLanguage(language);
+    const label=t('ui.new_syllabus_c4c7a9');
+    const render=role=>renderToStaticMarkup(<Dashboard user={{...user,role}} syllabi={[]} logs={[]} setPage={noop} clearLogs={noop} setConfirm={noop}/>);
+    for(const role of ['faculty','admin']) assert.ok(render(role).includes(label), language+': '+role);
+    for(const role of ['asst_vpaa','lic_director','vpaa']) assert.ok(!render(role).includes(label), language+': '+role);
+  }
+});
+
+// Recent Activity is the account's audit trail, kept for transparency: no role can clear or hide it from the dashboard.
+test('the Recent Activity card has no Clear Logs button, for any role or language', () => {
+  for (const language of ['en', 'tl']) {
+    setLanguage(language);
+    for (const role of ['faculty', 'admin', 'asst_vpaa', 'lic_director', 'vpaa']) {
+      const html = renderToStaticMarkup(<Dashboard user={{ ...user, role }} syllabi={[]} logs={[]} setPage={noop} />);
+      assert.ok(html.includes(language === 'en' ? '<h3>Audit Log</h3>' : '<h3>Talaan ng Audit</h3>'), language + ': ' + role + ': the card is still there, titled Audit Log');
+      assert.ok(!html.includes('Recent Activity') && !html.includes('Kamakailang aktibidad'), language + ': ' + role + ': the old title is gone');
+      assert.doesNotMatch(html, /Clear Logs|I-clear ang talaan/, language + ': ' + role);
+    }
+  }
+  setLanguage('en');
+});
+
+// The account's own activity on the dashboard (server/lib/accountActivity.js), in both languages: how the person signed in, a name change, a deleted draft.
+test('Recent Activity shows the account activity in English and Tagalog', () => {
+  const now = new Date().toISOString();
+  const logs = [
+    { id: 'a1', userId: 1, action: 'login', notes: 'google', actionDate: now },
+    { id: 'a2', userId: 1, action: 'name_change', notes: 'Ann A → Ann Approved', actionDate: now },
+    { id: 'a3', userId: 1, action: 'syllabus_delete', notes: 'draft', courseCode: 'FM 202', title: 'Fundamentals of Mathematics', actionDate: now },
+    { id: 'a4', userId: 9, action: 'logout', actionDate: now }, // someone else's: never shown
+  ];
+  const render = () => renderToStaticMarkup(<Dashboard user={user} syllabi={[]} logs={logs} setPage={noop} />);
+  setLanguage('en');
+  const en = render();
+  for (const text of ['signed in', 'with Google', 'changed the name', 'Ann A → Ann Approved', 'deleted the draft of', 'FM 202']) assert.ok(en.includes(text), 'en: ' + text);
+  assert.ok(!en.includes('signed out'), 'only the signed-in account\'s own activity');
+  setLanguage('tl');
+  const tl = render();
+  for (const text of ['nag-sign in', 'gamit ang Google', 'pinalitan ang pangalan', 'Ann A → Ann Approved', 'binura ang draft ng']) assert.ok(tl.includes(text), 'tl: ' + text);
+  setLanguage('en');
+});
+
+// Only the administrator gets the choice of whose Recent Activity to read (everyone's, or one person's); the server refuses anyone else (routes/logs.js).
+test('the Recent Activity card offers the administrator My activity / Everyone, and nobody else', () => {
+  for (const language of ['en', 'tl']) {
+    setLanguage(language);
+    const render = (role) => renderToStaticMarkup(<Dashboard user={{ ...user, role }} syllabi={[]} logs={[]} setPage={noop} />);
+    const [mine, everyone] = language === 'en' ? ['My activity', 'Everyone'] : ['Aking aktibidad', 'Lahat'];
+    const admin = render('admin');
+    assert.ok(admin.includes(mine) && admin.includes(everyone), language + ': admin');
+    for (const role of ['faculty', 'asst_vpaa', 'lic_director', 'vpaa']) assert.ok(!render(role).includes(mine), language + ': ' + role);
+  }
+  setLanguage('en');
+});
+
+// The administrator writes syllabi too, so their AI Checker also offers their own drafts and returned syllabi ("Check my syllabus"); nobody else gets that
+// card, and only the administrator's own syllabi that can be checked now are listed in it.
+test('the administrator\'s AI Checker offers their own drafts to check; no other role gets the card', () => {
+  setLanguage('en');
+  const syllabi = [
+    { id: 1, userId: 1, status: 'draft', courseCode: 'IT 101', title: 'Intro' },
+    { id: 2, userId: 1, status: 'for_revision', courseCode: 'IT 102', title: 'Returned' },
+    { id: 3, userId: 1, status: 'under_review', courseCode: 'IT 103', title: 'Already sent' },
+    { id: 4, userId: 1, status: 'approved', courseCode: 'IT 104', title: 'Final' },
+    { id: 5, userId: 9, status: 'draft', courseCode: 'IT 105', title: 'Someone else' },
+    { id: 6, userId: 1, status: 'draft', courseCode: 'IT 106', title: 'Archived', archived: true },
+  ];
+  const render = (role) => renderToStaticMarkup(<AIChecker user={{ ...user, id: 1, role }} syllabi={syllabi} setPage={noop} notify={noop} />);
+  const admin = render('admin');
+  assert.ok(admin.includes('data-testid="own-syllabus-picker"') && admin.includes('Check my syllabus'), 'admin: the card');
+  for (const role of ['asst_vpaa', 'lic_director', 'vpaa']) assert.ok(!render(role).includes('own-syllabus-picker'), role);
+  const picker = renderToStaticMarkup(<OwnSyllabusPicker rows={syllabi.filter((x) => x.userId === 1 && !x.archived && ['draft', 'for_revision', 'rejected'].includes(x.status))} onCheck={noop} onOpen={noop} />);
+  for (const code of ['IT 101', 'IT 102']) assert.ok(picker.includes(code), code);
+  for (const code of ['IT 103', 'IT 104', 'IT 105', 'IT 106']) assert.ok(!picker.includes(code), code);
+  setLanguage('tl');
+  assert.ok(render('admin').includes('Suriin ang aking silabus'));
+  assert.ok(renderToStaticMarkup(<OwnSyllabusPicker rows={[]} onCheck={noop} onOpen={noop} />).includes('Wala kang draft o ibinalik na silabus na susuriin.'));
+  setLanguage('en');
+});
+
+// The Compliance tab measures each faculty member against the subjects the administrator assigned to them: submitted out of assigned, what is still
+// missing (with a returned syllabus's status), and Compliant only when every assigned subject is submitted. In English and Tagalog.
+test('the Compliance tab follows each faculty member\'s assigned subjects, in English and Tagalog', () => {
+  const data = {
+    faculty: [{ id: 5, firstName: 'Ana', lastName: 'Cruz' }, { id: 6, firstName: 'Ben', lastName: 'Go' }, { id: 7, firstName: 'Cy', lastName: 'Dee' }],
+    holders: [{ courseId: 1, userId: 5 }, { courseId: 2, userId: 5 }, { courseId: 3, userId: 5 }, { courseId: 4, userId: 6 }],
+    subjects: [1, 2, 3, 4].map((id) => ({ id, code: 'IT 10' + id, program: 'BSIT' })),
+  };
+  const syllabi = [{ userId: 5, courseId: 1, status: 'approved' }, { userId: 5, courseId: 2, status: 'for_revision' }, { userId: 6, courseId: 4, status: 'submitted' }];
+  setLanguage('en');
+  const en = renderToStaticMarkup(<Compliance syllabi={syllabi} data={data} />);
+  assert.equal((en.match(/data-testid="comp-card"/g) || []).length, 3);
+  assert.ok(en.includes('1 of 3 assigned subjects submitted'), 'Ana: 1 of her 3');
+  assert.ok(en.includes('Not submitted yet: IT 102 (For Revision), IT 103'), 'what Ana still has to submit');
+  assert.ok(en.includes('1 of 1 assigned subjects submitted') && en.includes('Compliant'), 'Ben: all of his');
+  assert.ok(en.includes('No subjects assigned'), 'Cy: nothing assigned');
+  assert.ok(!/ of 2 required/.test(en), 'no fixed number of required syllabi');
+  setLanguage('tl');
+  assert.ok(renderToStaticMarkup(<Compliance syllabi={syllabi} data={data} />).includes('1 sa 3 naka-assign na asignatura ang naipasa'));
+  setLanguage('en');
+});
+
+// The AI Quality Snapshot: only the four rings, centered, with no final-score line and no notes; the lowest area's ring is marked.
+test('the AI Quality Snapshot shows only the centered rings, no final-score line or notes, and marks the lowest area', () => {
+  setLanguage('en');
+  const html = renderToStaticMarkup(<Dashboard user={{ ...user, role: 'admin' }} syllabi={[]} logs={[]} setPage={noop} />);
+  assert.ok(!html.includes('snap-final'), 'no final-score line');
+  assert.match(html, /<div class="quality-row">/, 'the rings in one centered row');
+  assert.ok(!html.includes('No score yet') && !html.includes('Each area is shown after'), 'no notes under the rings');
+  assert.ok(renderToStaticMarkup(<QualityMini label="CO–PO" value={70} low title="Lowest: CO–PO at 70%" />).includes('class="quality-mini low" title="Lowest: CO–PO at 70%"'));
+  assert.ok(renderToStaticMarkup(<QualityMini label="Format" value={100} />).includes('class="quality-mini"'));
+});
+
+// The subject's own academic year and semester (set when it was added, fixed since) are the deadline's term: the dialog shows them and does not ask again.
+test('setting a deadline on a subject that has its academic year and semester does not ask for them again', () => {
+  setLanguage('en');
+  const subject = { id: 3, code: 'IT 204', title: 'Data Structures', term: { academicYear: '2026–2027', semester: '1st Semester', yearLevel: 2, prerequisite: 'IT 101' } };
+  const fresh = renderToStaticMarkup(<DeadlineDialog subject={subject} deadlines={[]} onClose={noop} onChanged={noop} />);
+  assert.match(fresh, /data-testid="dl-term-fixed">Term: 2026-2027 · 1st Semester \(from the subject\)/, 'the subject\'s term, shown');
+  assert.doesNotMatch(fresh, /data-value="Summer"|data-value="2026-2027"/, 'no school year or semester to choose');
+  assert.match(fresh, /Due date and time/);
+  const one = { id: 7, term: '2026-2027 · 1st Semester', dueAt: '2099-10-30T08:00:00.000Z', opensAt: '2099-10-01T00:00:00.000Z', instructions: '', course: { code: 'IT 204' }, summary: { total: 1, submitted: 0, late: 0, waiting: 1, failed: 0 } };
+  const existing = renderToStaticMarkup(<DeadlineDialog subject={subject} deadlines={[one]} onClose={noop} onChanged={noop} />);
+  assert.doesNotMatch(existing, /data-value="new"/, 'the subject\'s term already has its deadline: no "New term"');
+  assert.match(existing, /Term: 2026-2027 · 1st Semester/);
+  setLanguage('tl');
+  assert.match(renderToStaticMarkup(<DeadlineDialog subject={subject} deadlines={[]} onClose={noop} onChanged={noop} />), /Termino: 2026-2027/);
+  setLanguage('en');
+});
+
+// Program compliance over time (the dashboard's View analytics, reviewers): a line per program with a legend and end labels, and a table of the same numbers.
+test('View analytics on Program Compliance opens a trend chart and table for reviewers; faculty keep their own card', () => {
+  setLanguage('en');
+  const programs = [{ code: 'BSIT', name: 'Information Technology' }, { code: 'BSCPE', name: 'Computer Engineering' }, { code: 'BSN', name: 'Nursing' }];
+  const subjects = [1, 2, 3, 4].map((id) => ({ id, program: 'BSIT' })).concat([{ id: 5, program: 'BSCPE' }]);
+  const now = new Date('2026-11-08T00:00:00.000Z');
+  const trend = programTrend({ programs, subjects, approvals: [{ courseId: 1, approvedAt: '2026-10-20T00:00:00.000Z' }, { courseId: 5, approvedAt: '2026-11-01T00:00:00.000Z' }], now });
+  const chart = renderToStaticMarkup(<TrendChart trend={trend} />);
+  assert.equal((chart.match(/class="trend-line"/g) || []).length, 2, 'a line for each program with subjects');
+  assert.match(chart, /class="trend-legend"/); assert.match(chart, /BSCPE <tspan class="trend-end-value">100%/); assert.match(chart, /BSIT <tspan class="trend-end-value">25%/);
+  assert.match(chart, /aria-pressed="true"/, 'the legend shows and hides a program');
+  assert.match(chart, /role="img"/); assert.match(chart, /tabindex="0"/, 'the chart can be read with the arrow keys');
+  const table = renderToStaticMarkup(<TrendTable trend={trend} />);
+  assert.match(table, /1 of 4/); assert.match(table, /25%/); assert.match(table, /BSN[\s\S]*No subjects yet/);
+  const admin = renderToStaticMarkup(<Dashboard user={{ ...user, role: 'admin' }} syllabi={[]} logs={[]} setPage={noop} />);
+  assert.match(admin, /<button type="button" class="link-btn card-action-btn" data-testid="view-analytics"/, 'a real button for the administrator');
+  const faculty = renderToStaticMarkup(<Dashboard user={{ ...user, role: 'faculty' }} syllabi={[]} logs={[]} setPage={noop} />);
+  assert.ok(!faculty.includes('view-analytics'), 'faculty: no trend');
+  setLanguage('tl');
+  assert.match(renderToStaticMarkup(<TrendTable trend={trend} />), /1 sa 4/);
+  setLanguage('en');
+});
+
+// The trend's summary tiles (overall compliance and its change, approved subjects, programs fully compliant) and its day and month views.
+test('the trend summary shows the overall compliance with its change in words, and the chart reads by day and by month', () => {
+  setLanguage('en');
+  const programs = [{ code: 'BSIT', name: 'Information Technology' }, { code: 'BSCPE', name: 'Computer Engineering' }];
+  const subjects = [1, 2, 3, 4].map((id) => ({ id, program: 'BSIT' })).concat([{ id: 5, program: 'BSCPE' }]);
+  const now = new Date('2026-11-08T00:00:00.000Z');
+  const approvals = [{ courseId: 1, approvedAt: '2026-10-20T00:00:00.000Z' }, { courseId: 5, approvedAt: '2026-11-01T00:00:00.000Z' }];
+  const summary = renderToStaticMarkup(<TrendSummary trend={programTrend({ programs, subjects, approvals, now })} />);
+  assert.match(summary, /Overall compliance[\s\S]*40%/); assert.match(summary, /▲ \+40 pts since/); assert.match(summary, /2<em> \/ 5<\/em>/); assert.match(summary, /Programs fully compliant[\s\S]*1<em> \/ 2/);
+  const day = renderToStaticMarkup(<TrendChart trend={programTrend({ programs, subjects, approvals, granularity: 'day', now })} />);
+  assert.match(day, /By day: each line steps up/); assert.match(day, /d="M[^"]*H[^"]*V/, 'a step line by day');
+  assert.match(renderToStaticMarkup(<TrendChart trend={programTrend({ programs, subjects, approvals, granularity: 'month', now })} />), /By month: the share at the end of each month/);
+  setLanguage('tl');
+  assert.match(renderToStaticMarkup(<TrendSummary trend={programTrend({ programs, subjects, approvals, now })} />), /Kabuuang pagsunod/);
+  setLanguage('en');
 });

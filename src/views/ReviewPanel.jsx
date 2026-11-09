@@ -82,6 +82,9 @@ export default function ReviewPanel({ syllabus, user, messages, handleStatus, ha
               {onOpenChecker && <StableButton type="button" className="btn outline" onClick={onOpenChecker}>{translateUI("ui.open_the_ai_checker_ea8956")}</StableButton>}
             </div>
           )}
+          {syllabus.reviewedWithoutAi && decidable && (
+            <div className="info-banner" role="note" data-testid="reviewed-without-ai"><span>{translateUI('aiChoice.panelNote')}</span>{onOpenChecker && <StableButton type="button" className="btn outline" onClick={onOpenChecker}>{translateUI("ui.open_the_ai_checker_ea8956")}</StableButton>}</div>
+          )}
           {!decidable && !unchecked && (
             <p className="rp-status done">
               <Icon name="checkCircle" size={20} />

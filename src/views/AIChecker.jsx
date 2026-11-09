@@ -1,19 +1,23 @@
+import { YearFilter, useYearScope } from '../components/AcademicYearScope';
 import { canApproveAdminDraft, STATUS_LABELS, isReturned, noteMissing } from '../lib/syllabusRules';
-import { isReviewer } from '../lib/roles';
+import { isApprover, isReviewer } from '../lib/roles';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { PageHead } from '../components/ui';
 import StableButton from '../components/StableButton';
 import Select from '../components/Select';
-import { compliance as api, syllabi as syllabiApi } from '../lib/api';
+import { compliance as api, syllabi as syllabiApi, isRevisionConflict } from '../lib/api';
 import { groupByFacultyProgram, listBasis, needsCheck, rangeToInstants, warningCount } from '../lib/complianceView';
 import SyllabusPicker from '../components/SyllabusPicker';
+import OwnSyllabusPicker from '../components/OwnSyllabusPicker';
 import ComplianceModal from '../components/ComplianceModal';
 import CheckHistory from '../components/CheckHistory';
 import ComplianceSection from './builder2/ComplianceSection';
 import { canSubmitHybrid, applySuggestion } from '../lib/hybridCheck';
+import { sectionsOf } from '../lib/draftSave';
 import { useAiGate } from '../lib/checkPolicy';
+import { useAdminPolicy } from '../lib/adminPolicy';
 
 // The history's date filter is kept in this browser, so it is still applied after a reload or a visit to another page, until the admin
 // changes or resets it. A view preference only: every read and write is guarded, and the page works without storage.
@@ -31,7 +35,9 @@ const writeRange = (r) => { try { if (r.from || r.to) localStorage.setItem(RANGE
 function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, notify, onSubmitted }) {
   const uid = useId();
   const aiGate = useAiGate();
-  const mine = useMemo(() => syllabi.filter(s => s.userId === user.id), [syllabi, user.id]);
+  const policy = useAdminPolicy(); // the administrator's AI checking switch: off means the format rules only
+  // An approved syllabus is final and lives in the Repository: it is not offered here.
+  const mine = useMemo(() => syllabi.filter(s => s.userId === user.id && s.status !== 'approved'), [syllabi, user.id]);
   const [selectedId, setSelectedId] = useState(() => editing?.syllabusId || mine[0]?.id || null);
   const [doc, setDoc] = useState({ loading: false, error: '', content: null, editable: false, status: 'draft', version: 'v1.0' });
   const [lastRun, setLastRun] = useState(null);
@@ -57,7 +63,7 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
     setSubmitFailed([]);
     syllabiApi.getContent(selectedId).then(res => {
       if (!live) return;
-      setDoc({ loading: false, error: '', content: res.content || null, editable: !!res.editable, status: res.status || 'draft', version: res.version || 'v1.0' });
+      setDoc({ loading: false, error: '', content: res.content || null, editable: !!res.editable, status: res.status || 'draft', version: res.version || 'v1.0', academicYear: res.academicYear || null });
     }).catch(err => {
       if (!live) return;
       setDoc({ loading: false, error: err.message || '', content: null, editable: false, status: 'draft', version: 'v1.0' });
@@ -73,7 +79,17 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
     if (!selectedId || !doc.content) return false;
     const next = applySuggestion(doc.content, patch, { requireOriginal: true });
     setLastRun(null);
-    await syllabiApi.saveContent(selectedId, next, next.schemaVersion || 3);
+    try {
+      await syllabiApi.saveContent(selectedId, sectionsOf(next), next.schemaVersion || 3);
+    } catch (e) {
+      // Another tab saved newer content: nothing was written. Load what is stored now so the page no longer shows (or saves from) the older copy, and say so.
+      if (isRevisionConflict(e)) {
+        await syllabiApi.getContent(selectedId).then(res => setDoc(prev => ({ ...prev, content: res.content || prev.content, editable: !!res.editable, status: res.status || prev.status, version: res.version || prev.version }))).catch(() => {});
+        throw Object.assign(new Error(e.status === 428 ? 'hybrid.revisionRequired' : 'hybrid.revisionConflict'), { code: e.status === 428 ? 'revision_required' : 'revision_conflict' });
+      }
+      throw e;
+    }
+    // only the editable sections: the stored content also holds schemaVersion and catalog, which the server rejects
     setDoc(prev => ({ ...prev, content: next }));
     return true;
   };
@@ -108,7 +124,7 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
 
   return (
     <>
-      <PageHead title={translateUI("ui.ai_syllabus_checker_0c99c9")} subtitle={translateUI("ui.checked_against_the_undergraduate_syllabus_form_only_a_form_that__68429a")} />
+      <PageHead title={translateUI("ui.ai_syllabus_checker_0c99c9")} subtitle={translateUI("ui.checked_against_the_undergraduate_syllabus_form_only_a_form_that__68429a")} actions={<YearFilter group="queue" />} />
       {!selectedId && mine.length === 0 ? (
         <div className="empty">{translateUI("ui.no_syllabi_yet_click_new_syllabus_to_get_started_2e4bc9")}</div>
       ) : (
@@ -134,6 +150,7 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
             </div>
           </section>
 
+          {policy.loaded && !policy.aiChecking && <div className="ai-note" role="note" data-testid="ai-off-note">{translateUI('policy.aiOff')}</div>}
           {doc.error && <div className="info-banner warning" role="alert">{tr(doc.error)}</div>}
           {submitFailed.length > 0 && (
             <div className="blockers" role="alert">
@@ -148,6 +165,7 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
               syllabusId={() => selectedId}
               saveFirst={async () => true}
               canCheck={doc.editable}
+              syllabusYear={doc.academicYear}
               onOpenStep={openBuilder}
               onRun={receiveRun}
               onApplyDraft={doc.editable && doc.content ? applyDraftRecommendation : undefined}
@@ -181,16 +199,18 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
           )}
         </>
       )}
-      <div className="ai-note">{translateUI("ui.the_check_supports_but_does_not_replace_faculty_curriculum_commit_e24080")}</div>
     </>
   );
 }
 
 // The AI Checker page is the administrator's view of the compliance checks of submitted syllabi, and the faculty member's
 // dedicated tab for checking and submitting their syllabus drafts.
-export default function AIChecker({ user, syllabi = [], editing, setEditing, setPage, notify, onSubmitted, onEditDraft, onApproved }) {
+// onChanged: read the syllabus list again (the administrator's own syllabus moved from Draft to Under Review when it was sent here to be checked).
+export default function AIChecker({ user, syllabi = [], editing, setEditing, setPage, notify, onSubmitted, onEditDraft, onApproved, onChanged }) {
+  const yearScope = useYearScope(), year = yearScope ? yearScope.param('queue') : undefined; // the work queue's academic year (undefined: the current one; 'all': every year this person may see)
   const reviewer = isReviewer(user?.role); // the dean, the Asst. VPAA, the LIC Director and the VPAA check submitted syllabi here
   const aiGate = useAiGate(); // 'advisory': the administrator decides after reading the check; 'required': a completed AI check too
+  const policy = useAdminPolicy(); // the administrator's AI checking switch: off means the format rules only
   const [list, setList] = useState(null);     // { installed, syllabi: [row], summary }
   const [editingDraft, setEditingDraft] = useState(false);
   const [approving, setApproving] = useState(false);
@@ -206,7 +226,7 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
   const [busy, setBusy] = useState({});       // syllabus id -> true while its check runs
   const checkLocks = useRef(new Set());
 
-  const loadList = useCallback(async () => { try { setList(await api.list('all')); setError(''); } catch (e) { setError(e.message); } }, []);
+  const loadList = useCallback(async () => { try { setList(await api.list('all', year)); setError(''); } catch (e) { setError(e.message); } }, [year]);
   const loadDetail = useCallback(async (id) => { try { setDetail(await api.list(id)); setError(''); return true; } catch (e) { setError(e.message); return false; } }, []);
 
   // The cards already shown stay on screen while a new range loads, so the card does not jump.
@@ -214,10 +234,10 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
     const mine = ++asked.current;
     setHistory((x) => ({ ...x, loading: true }));
     try {
-      const h = await api.history(rangeToInstants(range.from, range.to) || {});
+      const h = await api.history({ ...(rangeToInstants(range.from, range.to) || {}), ...(year ? { year } : {}) });
       if (mine === asked.current) setHistory({ runs: h.runs || [], loading: false, error: '' });
     } catch (e) { if (mine === asked.current) setHistory((x) => ({ ...x, loading: false, error: e.message })); }
-  }, [range]);
+  }, [range, year]);
 
   useEffect(() => {
     if (!reviewer) return undefined;
@@ -241,6 +261,9 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
 
   const rows = list ? list.syllabi.filter(row => row.status !== 'draft') : [];
   const waiting = useMemo(() => groupByFacultyProgram(rows.filter(row => needsCheck(row) || (row.userId === user?.id && row.status === 'under_review'))), [rows, user?.id]); // unchecked and not approved: what the picker offers
+  // The administrator writes syllabi too: their own drafts, and their syllabi returned for revision or rejected, can be checked from here as well as from the
+  // builder (OwnSyllabusPicker). Once sent to be checked one is Under Review and is in the list above with everyone else's.
+  const ownToCheck = useMemo(() => (user?.role === 'admin' ? syllabi.filter((s) => s.userId === user.id && !s.archived && ['draft', 'for_revision', 'rejected'].includes(s.status)) : []), [syllabi, user?.id, user?.role]);
 
   // A check started before this page was left is still running on the server (the row says so): keep the button waiting, look again until it
   // ends, then refresh the history so the new check appears.
@@ -290,8 +313,41 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
     loadHistory();
     say(row.userId === user.id && row.status === 'under_review' ? translateUI('publication.reviewResult') : 'Checked ' + row.courseCode + '. It is now in the history.');
   };
+  // The administrator's own syllabus: send it to the AI Checker exactly as the builder's "Continue to check" does (a saved version, status Under Review;
+  // the server refuses an incomplete form and says what is missing), then check it and open the result, where it is sent for review.
+  const prepareAndCheck = async (row) => {
+    const id = row.id;
+    if (checkLocks.current.has(id)) return;
+    setError('');
+    setBusy((b) => ({ ...b, [id]: true }));
+    let prepared = false;
+    try { await syllabiApi.prepareCheck(id); prepared = true; }
+    catch (e) { setError(translateUI('ownCheck.notReady') + tr(e.message)); }
+    finally { setBusy((b) => { const n = { ...b }; delete n[id]; return n; }); }
+    if (!prepared) return;
+    if (onChanged) await onChanged();
+    await loadList();
+    await checkAndOpen({ syllabusId: id, userId: user.id, status: 'under_review', courseCode: row.courseCode });
+  };
+  const openOwn = (row) => { if (setEditing) setEditing({ syllabusId: row.id, status: row.status }); if (setPage) setPage('builder'); };
+  // The other choice: review the newest version without an AI check. Recorded for this reviewer only; the syllabus then waits in their Review & Approval.
+  const reviewWithoutAi = async (row) => {
+    const id = row.syllabusId;
+    if (checkLocks.current.has(id)) return false;
+    checkLocks.current.add(id);
+    setBusy((b) => ({ ...b, [id]: true }));
+    setError('');
+    try {
+      await syllabiApi.reviewWithoutAi(id);
+      await loadList();
+      say(translateUI('aiChoice.done', { code: row.courseCode || row.title }));
+      if (setPage) setPage('review');
+      return true;
+    } catch (e) { setError(e.message); return false; }
+    finally { checkLocks.current.delete(id); setBusy((b) => { const n = { ...b }; delete n[id]; return n; }); }
+  };
   const applyRange = (r) => { const next = { from: r.from || '', to: r.to || '' }; setRange(next); writeRange(next); };
-  // A history card: read that exact run (an earlier one, or an approved syllabus), then show it in the same dialog.
+  // A history card: read that exact run, then show it in the same dialog. (An approved syllabus is not in the history: it is in the Repository.)
   const openRun = async (item) => {
     setOpening(item.runId);
     setError('');
@@ -336,17 +392,20 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
 
   return (
     <>
-      <PageHead title={translateUI("ui.ai_syllabus_checker_0c99c9")} subtitle={translateUI("publication.checkerSubtitle") + tr(how) + '.'} />
+      <PageHead title={translateUI("ui.ai_syllabus_checker_0c99c9")} subtitle={translateUI("publication.checkerSubtitle") + tr(how) + '.'} actions={<YearFilter group="queue" />} />
 
       {!open && error && <div className="info-banner warning" role="alert">{tr(error)}</div>}
       {!error && !loading && !installed && <div className="info-banner warning">{translateUI("ui.compliance_checks_are_not_set_up_on_this_server_yet_ask_an_admini_815abc")}</div>}
 
-      {installed && <SyllabusPicker groups={waiting} loading={loading} busy={working} onCheck={checkAndOpen} />}
+      {installed && policy.loaded && !policy.aiChecking && <div className="ai-note" role="note" data-testid="ai-off-note">{translateUI('policy.aiOff')}</div>}
+      {installed && isApprover(user.role) && <div className="ai-note" role="note" data-testid="approver-queue-note">{translateUI('reviewChain.approverQueueNote')}</div>}
+      {installed && user.role === 'admin' && <OwnSyllabusPicker rows={ownToCheck} busy={working} onCheck={prepareAndCheck} onOpen={openOwn} />}
+      {installed && <SyllabusPicker groups={waiting} loading={loading} busy={working} onCheck={checkAndOpen} onWithoutAi={aiGate === 'required' ? undefined : reviewWithoutAi} />}
+      {installed && aiGate === 'required' && <div className="ai-note" role="note">{translateUI('aiChoice.requiredNote')}</div>}
 
       {installed && <CheckHistory runs={history.runs} loading={history.loading} error={history.error} opening={opening} onOpen={openRun} range={range} onApply={applyRange} onReset={() => applyRange(NO_RANGE)} />}
 
       {open && <ComplianceModal syllabus={open} run={detail.run} isLatest={detail.isLatest !== false} error={tr(error)} onClose={closeModal} onOpenDraft={onEditDraft && ownSyllabus ? editDraft : undefined} onApprove={ownSyllabus ? approveDraft : undefined} approvalDisabled={!approveEnabled} approving={approving} editing={editingDraft} />}
-      <div className="ai-note">{translateUI("ui.the_check_supports_but_does_not_replace_faculty_curriculum_commit_e24080")}</div>
     </>
   );
 }

@@ -1,6 +1,8 @@
 const crypto = require('crypto');
 const { inTransaction, httpError } = require('./http');
 const { normalizeName, specializationsOf, inheritedFrom, findProgram } = require('./programs');
+const { programYear } = require('./academicYear');
+const { programRefused } = require('./approvedRecords');
 const secret = process.env.SESSION_SECRET ? crypto.createHash('sha256').update('program-deletion:' + process.env.SESSION_SECRET).digest() : crypto.randomBytes(32);
 const sign = value => crypto.createHmac('sha256', secret).update(value).digest('base64url');
 const jsonProgram = alias => "LOWER(COALESCE(JSON_UNQUOTE(JSON_EXTRACT(IF(JSON_VALID(" + alias + ".content), " + alias + ".content, NULL), '$.meta.program')), JSON_UNQUOTE(JSON_EXTRACT(IF(JSON_VALID(" + alias + ".content), " + alias + ".content, NULL), '$.catalog.program.code'))))";
@@ -8,6 +10,8 @@ const ids = rows => rows.map(row => row.id);
 const nonempty = list => list.length ? list : [null];
 const digest = impact => crypto.createHash('sha256').update(JSON.stringify(impact)).digest('hex');
 const missing = () => httpError(404, 'Program not found');
+// Approved syllabi this deletion would remove, or (the curriculum link is set to NULL) change. They are protected records, so a program that has any stays.
+const approvedOf = impact => [...new Map([...impact.syllabi.filter(row => row.status === 'approved'), ...impact.curriculumApproved].map(row => [row.id, row])).values()];
 const dependentError = impact => httpError(409, `${impact.program.code} cannot be deleted while ${impact.specializations.map(row => row.code).join(', ')} inherit${impact.specializations.length === 1 ? 's' : ''} its Program Outcomes. Delete or relink ${impact.specializations.length === 1 ? 'that specialization' : 'those specializations'} first.`, { code: 'has_specializations', specializations: impact.specializations.map(row => row.code) });
 
 async function impactOf(conn, id) {
@@ -19,27 +23,32 @@ async function impactOf(conn, id) {
   const [courses] = await conn.query('SELECT course_id AS id, code, title, clos_version FROM courses WHERE program_id = ? ORDER BY course_id FOR UPDATE', [id]);
   const courseIds = nonempty(ids(courses));
   const codes = nonempty(courses.map(row => row.code.trim().toLowerCase()));
-  const [conflicts] = await conn.query('SELECT program_id AS id, code, name FROM programs WHERE program_id <> ? AND (LOWER(TRIM(name)) IN (?) OR LOWER(code) IN (?)) FOR UPDATE', [id, names, names]);
+  // The catalog is per academic year: only programs of this program's own year can clash with it (last year's BSIT is not a conflict for this year's BSIT).
+  const where = await programYear(conn, id);
+  const [conflicts] = where.scoped
+    ? await conn.query('SELECT program_id AS id, code, name FROM programs WHERE program_id <> ? AND (LOWER(TRIM(name)) IN (?) OR LOWER(code) IN (?)) AND COALESCE(academic_year, ?) = ? FOR UPDATE', [id, names, names, where.current, where.year])
+    : await conn.query('SELECT program_id AS id, code, name FROM programs WHERE program_id <> ? AND (LOWER(TRIM(name)) IN (?) OR LOWER(code) IN (?)) FOR UPDATE', [id, names, names]);
   if (conflicts.length) throw httpError(409, 'A legacy program name is also used by another program. Resolve the conflicting names before deleting.');
   const [curricula] = await conn.query('SELECT curriculum_id AS id FROM curriculum WHERE LOWER(TRIM(program_name)) IN (?) ORDER BY curriculum_id FOR UPDATE', [names]);
   const curriculumIds = nonempty(ids(curricula));
-  const [syllabi] = await conn.query('SELECT s.syllabus_id AS id, s.course_code AS code, s.title, s.status, s.version, s.updated_at, s.file_path FROM syllabi s WHERE s.course_id IN (?) OR (s.course_id IS NULL AND (' + jsonProgram('s') + ' IN (?) OR s.curriculum_id IN (?) OR LOWER(TRIM(s.course_code)) IN (?) OR EXISTS (SELECT 1 FROM syllabus_versions v WHERE v.syllabus_id = s.syllabus_id AND (' + jsonProgram('v') + ' IN (?) OR v.curriculum_id IN (?) OR (v.content IS NULL AND LOWER(TRIM(v.course_code)) IN (?)))))) ORDER BY s.syllabus_id FOR UPDATE', [courseIds, names, curriculumIds, codes, names, curriculumIds, codes]);
+  const [syllabi] = await conn.query('SELECT s.syllabus_id AS id, s.course_code AS code, s.title, s.status, s.version, s.updated_at, s.file_path FROM syllabi s WHERE s.course_id IN (?) OR (s.course_id IS NULL' + (where.scoped ? ' AND COALESCE(s.academic_year, ?) = ?' : '') + ' AND (' + jsonProgram('s') + ' IN (?) OR s.curriculum_id IN (?) OR LOWER(TRIM(s.course_code)) IN (?) OR EXISTS (SELECT 1 FROM syllabus_versions v WHERE v.syllabus_id = s.syllabus_id AND (' + jsonProgram('v') + ' IN (?) OR v.curriculum_id IN (?) OR (v.content IS NULL AND LOWER(TRIM(v.course_code)) IN (?)))))) ORDER BY s.syllabus_id FOR UPDATE', [courseIds, ...(where.scoped ? [where.current, where.year] : []), names, curriculumIds, codes, names, curriculumIds, codes]);
   const [versions] = syllabi.length ? await conn.query('SELECT version_id AS id, syllabus_id, file_path FROM syllabus_versions WHERE syllabus_id IN (?) ORDER BY version_id FOR UPDATE', [ids(syllabi)]) : [[]];
+  const [curriculumApproved] = await conn.query("SELECT s.syllabus_id AS id, s.course_code AS code, s.title, s.status FROM syllabi s WHERE s.status = 'approved' AND s.curriculum_id IN (?) ORDER BY s.syllabus_id FOR UPDATE", [curriculumIds]);
   const [programAssignments] = await conn.query('SELECT user_id FROM faculty_programs WHERE program_id = ? ORDER BY user_id FOR UPDATE', [id]);
   const [subjectAssignments] = courses.length ? await conn.query('SELECT user_id, course_id FROM faculty_courses WHERE course_id IN (?) ORDER BY user_id, course_id FOR UPDATE', [ids(courses)]) : [[]];
   const files = [...new Set([...syllabi, ...versions].map(row => row.file_path).filter(Boolean))].sort();
   // Specializations that inherit this program's outcomes depend on it; this program may itself inherit from another (that link is simply removed with it).
   const specializations = (await specializationsOf(conn, id)).map(({ id: sid, code, name }) => ({ id: sid, code, name }));
   const parent = await inheritedFrom(conn, { program_id: id });
-  return { program, courses, curricula, syllabi, versions, programAssignments, subjectAssignments, files, specializations, inheritsFrom: parent ? parent.code : null };
+  return { program, courses, curricula, syllabi, curriculumApproved, versions, programAssignments, subjectAssignments, files, specializations, inheritsFrom: parent ? parent.code : null };
 }
 function summary(impact) {
-  return { program: { id: impact.program.id, code: impact.program.code, name: impact.program.name }, subjects: impact.courses.map(({ id, code, title }) => ({ id, code, title })), syllabi: impact.syllabi.slice(0, 100).map(({ id, code, title, status }) => ({ id, code, title, status })), counts: { subjects: impact.courses.length, syllabi: impact.syllabi.length, versions: impact.versions.length, assignments: impact.programAssignments.length + impact.subjectAssignments.length, files: impact.files.length }, specializations: impact.specializations, inheritsFrom: impact.inheritsFrom, blocked: impact.specializations.length > 0 };
+  return { program: { id: impact.program.id, code: impact.program.code, name: impact.program.name }, subjects: impact.courses.map(({ id, code, title }) => ({ id, code, title })), syllabi: impact.syllabi.slice(0, 100).map(({ id, code, title, status }) => ({ id, code, title, status })), counts: { subjects: impact.courses.length, syllabi: impact.syllabi.length, versions: impact.versions.length, assignments: impact.programAssignments.length + impact.subjectAssignments.length, files: impact.files.length }, specializations: impact.specializations, inheritsFrom: impact.inheritsFrom, approved: approvedOf(impact).slice(0, 100).map(({ id, code, title }) => ({ id, code, title })), blocked: impact.specializations.length > 0 || approvedOf(impact).length > 0 };
 }
 async function preview(db, id, actor) {
   const impact = await inTransaction(db, conn => impactOf(conn, id));
   // A blocked program still gets a preview so the dialog can explain why; only the token that allows deletion is withheld.
-  if (impact.specializations.length) return summary(impact);
+  if (impact.specializations.length || approvedOf(impact).length) return summary(impact);
   const payload = Buffer.from(JSON.stringify({ id, actor, hash: digest(impact), expires: Date.now() + 10 * 60 * 1000 })).toString('base64url');
   return { ...summary(impact), previewToken: payload + '.' + sign(payload) };
 }
@@ -58,10 +67,14 @@ async function remove(db, id, actor, body) {
   // A program that others inherit from is refused with a plain explanation before anything else (a blocked preview carries no token).
   const blockers = await specializationsOf(db, id);
   if (blockers.length) throw dependentError({ program: await findProgram(db, id), specializations: blockers });
+  // The same plain explanation for a program with approved syllabi: its preview carries no token either. The transaction below decides, on locked rows.
+  const current = await inTransaction(db, conn => impactOf(conn, id));
+  if (approvedOf(current).length) throw programRefused(current.program.code, approvedOf(current));
   const intent = verify(body.previewToken, id, actor);
   return inTransaction(db, async conn => {
     const impact = await impactOf(conn, id);
     if (impact.specializations.length) throw dependentError(impact);
+    if (approvedOf(impact).length) throw programRefused(impact.program.code, approvedOf(impact));
     if (digest(impact) !== intent.hash) throw httpError(409, 'The program changed after the preview. Review the affected records again.', { code: 'preview_required' });
     if (body.confirmCode !== impact.program.code || body.acknowledgeCascade !== true) throw httpError(400, 'Type the program code and acknowledge permanent deletion.', { code: 'confirmation_required' });
     // Record the event and file outbox in the same transaction as the cascade.
@@ -79,7 +92,11 @@ async function rename(db, id, actor, body) {
   const name = typeof body.name === 'string' ? body.name.trim().replace(/\s+/g, ' ') : '';
   if (name.length < 2 || name.length > 255 || !/\p{L}.*\p{L}/u.test(name) || typeof body.expectedName !== 'string') throw httpError(400, 'Enter a valid program name and reload the current record.');
   return inTransaction(db, async conn => {
-    const [programs] = await conn.query('SELECT program_id AS id, code, name FROM programs ORDER BY program_id FOR UPDATE');
+    const where = await programYear(conn, id);
+    const [everyProgram] = where.scoped
+      ? await conn.query('SELECT program_id AS id, code, name, COALESCE(academic_year, ?) AS year FROM programs ORDER BY program_id FOR UPDATE', [where.current])
+      : await conn.query('SELECT program_id AS id, code, name FROM programs ORDER BY program_id FOR UPDATE');
+    const programs = where.scoped ? everyProgram.filter(row => row.year === where.year) : everyProgram; // names and codes clash only within one academic year
     const program = programs.find(row => row.id === id);
     if (!program) throw missing();
     const code = body.code === undefined ? program.code : typeof body.code === 'string' ? body.code.trim().toUpperCase() : '';
@@ -89,7 +106,7 @@ async function rename(db, id, actor, body) {
     if (programs.some(row => row.id !== id && normalizeName(row.name) === normalizeName(name))) throw httpError(409, 'Another program already uses that name.');
     if (programs.some(row => row.id !== id && (row.code === code || normalizeName(row.name) === normalizeName(code)))) throw httpError(409, 'Another program already uses that code.');
     const [aliases] = await conn.query('SELECT program_id, code FROM program_code_aliases WHERE code IN (?) FOR UPDATE', [[code, program.code]]);
-    if (aliases.some(row => row.program_id !== id)) throw httpError(409, 'That program code is reserved by existing records. Choose another code.');
+    if (aliases.some(row => row.program_id !== id && (!where.scoped || programs.some(p => p.id === row.program_id)))) throw httpError(409, 'That program code is reserved by existing records. Choose another code.');
     await conn.query('INSERT IGNORE INTO program_name_aliases (program_id, name) VALUES (?, ?)', [id, program.name]);
     if (code !== program.code) await conn.query('INSERT IGNORE INTO program_code_aliases (code, program_id) VALUES (?, ?)', [program.code, id]);
     await conn.query('UPDATE programs SET code = ?, name = ? WHERE program_id = ?', [code, name, id]);

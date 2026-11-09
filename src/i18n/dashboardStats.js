@@ -43,10 +43,18 @@ export const dashboardStatsEn = {
   'analytics.insight.uncheckedText': '{count} submitted syllabi have no AI check yet.',
   'dashboard.stats.programChecked': '{checked} of {total} checked by AI · {approved} approved ({pct}%)',
   'dashboard.stats.programNone': 'No AI checks yet · {approved} of {total} approved ({pct}%)',
+  // the administrator's Program Compliance: subjects with an approved syllabus out of the program's subjects (lib/complianceStats.js programCoverage)
+  'dashboard.stats.programSubjects': '{approved} of {total} subjects approved',
+  'dashboard.stats.programNoSubjects': 'No subjects in this program yet',
+  // a faculty member's own: their assigned subjects with a submitted syllabus (Submitted, Under Review or Approved)
+  'dashboard.stats.programAssigned': '{done} of {total} assigned subjects submitted',
+  'dashboard.stats.programNoneAssigned': 'No subject of this program is assigned to you yet',
   'dashboard.stats.avgHint': 'Average of your latest AI checks',
   'dashboard.stats.noChecks': 'No AI checks yet',
   'dashboard.stats.approvedHint': '{pct}% of your syllabi',
   'dashboard.stats.snapshotNote': 'Average of the latest AI check of each syllabus.',
+  // the AI Quality Snapshot: the final score and where it was lost (lib/complianceStats.js snapshotOf)
+  'snapshot.lowest': 'Lowest: {area} at {score}%',
   'dashboard.stats.noScore': 'No score yet',
 };
 export const dashboardStatsTl = {
@@ -93,9 +101,14 @@ export const dashboardStatsTl = {
   'analytics.insight.uncheckedText': '{count} isinumiteng silabus ang wala pang pagsusuri ng AI.',
   'dashboard.stats.programChecked': '{checked} sa {total} ang nasuri ng AI · {approved} ang inaprubahan ({pct}%)',
   'dashboard.stats.programNone': 'Wala pang pagsusuri ng AI · {approved} sa {total} ang inaprubahan ({pct}%)',
+  'dashboard.stats.programSubjects': '{approved} sa {total} asignatura ang aprubado',
+  'dashboard.stats.programNoSubjects': 'Wala pang asignatura sa programang ito',
+  'dashboard.stats.programAssigned': '{done} sa {total} naka-assign na asignatura ang naipasa',
+  'dashboard.stats.programNoneAssigned': 'Wala pang asignatura ng programang ito na naka-assign sa iyo',
   'dashboard.stats.avgHint': 'Karaniwan ng iyong mga huling pagsusuri ng AI',
   'dashboard.stats.noChecks': 'Wala pang pagsusuri ng AI',
   'dashboard.stats.approvedHint': '{pct}% ng iyong mga silabus',
   'dashboard.stats.snapshotNote': 'Karaniwan ng huling pagsusuri ng AI sa bawat silabus.',
+  'snapshot.lowest': 'Pinakamababa: {area} sa {score}%',
   'dashboard.stats.noScore': 'Wala pang marka',
 };

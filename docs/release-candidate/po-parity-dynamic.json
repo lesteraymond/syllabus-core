@@ -1,0 +1,490 @@
+{
+  "kind": "MODELED/scripted; reads the development database SELECT-only; no writes, no provider call",
+  "recommended": {
+    "SYLLABUS_CHECK_CACHE_WARMUP": "on",
+    "SYLLABUS_CHECK_OUTPUT_PLAN": "on",
+    "SYLLABUS_CHECK_OUTPUT_FIELDS": "scoped"
+  },
+  "programs": [
+    {
+      "program": "BSIT",
+      "courseUsed": "IT 202 COMPUTER PROGRAMMING 1 (FUNDAMENTALS OF PROGRAMMING)",
+      "curriculum": "BSIT 2022-2023",
+      "posResolved": 9,
+      "inheritedFrom": null,
+      "firstPo": "Articulate and discuss the latest developments in the specif",
+      "lastPoNo": 9,
+      "runs": {
+        "baseline": {
+          "requests": 51,
+          "bytes": 1967438,
+          "reservedUsd": 13.304364,
+          "official": [
+            85,
+            "scored",
+            true,
+            79
+          ],
+          "vpaa": {
+            "Content-course": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-ILO": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "ILO-CLO": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-activity": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "ILO-activity": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-assessment": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Activity-assessment": {
+              "total": 15,
+              "notChecked": 0
+            }
+          },
+          "cloClassifications": {
+            "total": 4,
+            "notChecked": 0
+          },
+          "verdictsHash": "33fde17d9c53",
+          "checked": 281,
+          "correctedPoTextSent": true,
+          "areas": "486506b5f01b",
+          "ruleChecks": 44,
+          "ms": 677
+        },
+        "optimized": {
+          "requests": 51,
+          "bytes": 1917589,
+          "reservedUsd": 11.628296,
+          "official": [
+            85,
+            "scored",
+            true,
+            79
+          ],
+          "vpaa": {
+            "Content-course": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-ILO": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "ILO-CLO": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-activity": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "ILO-activity": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-assessment": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Activity-assessment": {
+              "total": 15,
+              "notChecked": 0
+            }
+          },
+          "cloClassifications": {
+            "total": 4,
+            "notChecked": 0
+          },
+          "verdictsHash": "33fde17d9c53",
+          "checked": 281,
+          "correctedPoTextSent": true,
+          "areas": "486506b5f01b",
+          "ruleChecks": 44,
+          "ms": 146
+        }
+      },
+      "parity": {
+        "official": true,
+        "verdicts": true,
+        "areas": true,
+        "vpaaIdentical": true,
+        "classificationsIdentical": true
+      }
+    },
+    {
+      "program": "BSIE",
+      "courseUsed": "MA 9DE DIFFERENTIAL EQUATIONS",
+      "curriculum": "BSIE 2022-2023",
+      "posResolved": 13,
+      "inheritedFrom": null,
+      "firstPo": "Ability to apply knowledge of mathematics and science to sol",
+      "lastPoNo": 13,
+      "runs": {
+        "baseline": {
+          "requests": 51,
+          "bytes": 1969247,
+          "reservedUsd": 13.308343,
+          "official": [
+            85,
+            "scored",
+            true,
+            79
+          ],
+          "vpaa": {
+            "Content-course": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-ILO": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "ILO-CLO": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-activity": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "ILO-activity": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-assessment": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Activity-assessment": {
+              "total": 15,
+              "notChecked": 0
+            }
+          },
+          "cloClassifications": {
+            "total": 4,
+            "notChecked": 0
+          },
+          "verdictsHash": "33fde17d9c53",
+          "checked": 281,
+          "correctedPoTextSent": true,
+          "areas": "486506b5f01b",
+          "ruleChecks": 44,
+          "ms": 145
+        },
+        "optimized": {
+          "requests": 51,
+          "bytes": 1919398,
+          "reservedUsd": 11.632276,
+          "official": [
+            85,
+            "scored",
+            true,
+            79
+          ],
+          "vpaa": {
+            "Content-course": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-ILO": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "ILO-CLO": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-activity": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "ILO-activity": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-assessment": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Activity-assessment": {
+              "total": 15,
+              "notChecked": 0
+            }
+          },
+          "cloClassifications": {
+            "total": 4,
+            "notChecked": 0
+          },
+          "verdictsHash": "33fde17d9c53",
+          "checked": 281,
+          "correctedPoTextSent": true,
+          "areas": "486506b5f01b",
+          "ruleChecks": 44,
+          "ms": 147
+        }
+      },
+      "parity": {
+        "official": true,
+        "verdicts": true,
+        "areas": true,
+        "vpaaIdentical": true,
+        "classificationsIdentical": true
+      }
+    },
+    {
+      "program": "BSCPE",
+      "courseUsed": "MA 9DE DIFFERENTIAL EQUATIONS",
+      "curriculum": "BSCPE 2022-2023",
+      "posResolved": 13,
+      "inheritedFrom": null,
+      "firstPo": "Ability to apply knowledge of mathematics and science to sol",
+      "lastPoNo": 13,
+      "runs": {
+        "baseline": {
+          "requests": 51,
+          "bytes": 1969325,
+          "reservedUsd": 13.308515,
+          "official": [
+            85,
+            "scored",
+            true,
+            79
+          ],
+          "vpaa": {
+            "Content-course": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-ILO": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "ILO-CLO": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-activity": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "ILO-activity": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-assessment": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Activity-assessment": {
+              "total": 15,
+              "notChecked": 0
+            }
+          },
+          "cloClassifications": {
+            "total": 4,
+            "notChecked": 0
+          },
+          "verdictsHash": "33fde17d9c53",
+          "checked": 281,
+          "correctedPoTextSent": true,
+          "areas": "486506b5f01b",
+          "ruleChecks": 44,
+          "ms": 146
+        },
+        "optimized": {
+          "requests": 51,
+          "bytes": 1919476,
+          "reservedUsd": 11.632447,
+          "official": [
+            85,
+            "scored",
+            true,
+            79
+          ],
+          "vpaa": {
+            "Content-course": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-ILO": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "ILO-CLO": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-activity": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "ILO-activity": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-assessment": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Activity-assessment": {
+              "total": 15,
+              "notChecked": 0
+            }
+          },
+          "cloClassifications": {
+            "total": 4,
+            "notChecked": 0
+          },
+          "verdictsHash": "33fde17d9c53",
+          "checked": 281,
+          "correctedPoTextSent": true,
+          "areas": "486506b5f01b",
+          "ruleChecks": 44,
+          "ms": 141
+        }
+      },
+      "parity": {
+        "official": true,
+        "verdicts": true,
+        "areas": true,
+        "vpaaIdentical": true,
+        "classificationsIdentical": true
+      }
+    },
+    {
+      "program": "BSIT-CYBERSECURITY",
+      "courseUsed": "IT 202 COMPUTER PROGRAMMING 1 (FUNDAMENTALS OF PROGRAMMING)",
+      "curriculum": "BSIT 2022-2023",
+      "posResolved": 9,
+      "inheritedFrom": "BSIT",
+      "firstPo": "Articulate and discuss the latest developments in the specif",
+      "lastPoNo": 9,
+      "runs": {
+        "baseline": {
+          "requests": 51,
+          "bytes": 1968530,
+          "reservedUsd": 13.306766,
+          "official": [
+            85,
+            "scored",
+            true,
+            79
+          ],
+          "vpaa": {
+            "Content-course": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-ILO": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "ILO-CLO": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-activity": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "ILO-activity": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-assessment": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Activity-assessment": {
+              "total": 15,
+              "notChecked": 0
+            }
+          },
+          "cloClassifications": {
+            "total": 4,
+            "notChecked": 0
+          },
+          "verdictsHash": "33fde17d9c53",
+          "checked": 281,
+          "correctedPoTextSent": true,
+          "areas": "486506b5f01b",
+          "ruleChecks": 44,
+          "ms": 142
+        },
+        "optimized": {
+          "requests": 51,
+          "bytes": 1918681,
+          "reservedUsd": 11.630698,
+          "official": [
+            85,
+            "scored",
+            true,
+            79
+          ],
+          "vpaa": {
+            "Content-course": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-ILO": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "ILO-CLO": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-activity": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "ILO-activity": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Content-assessment": {
+              "total": 15,
+              "notChecked": 0
+            },
+            "Activity-assessment": {
+              "total": 15,
+              "notChecked": 0
+            }
+          },
+          "cloClassifications": {
+            "total": 4,
+            "notChecked": 0
+          },
+          "verdictsHash": "33fde17d9c53",
+          "checked": 281,
+          "correctedPoTextSent": true,
+          "areas": "486506b5f01b",
+          "ruleChecks": 44,
+          "ms": 138
+        }
+      },
+      "parity": {
+        "official": true,
+        "verdicts": true,
+        "areas": true,
+        "vpaaIdentical": true,
+        "classificationsIdentical": true
+      }
+    }
+  ]
+}

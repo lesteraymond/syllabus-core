@@ -82,7 +82,7 @@ async function prepare() {
     assert.deepEqual(current.content, expected, 'Draft changed concurrently; refusing to overwrite.');
     assert.ok(current.editable && current.status === 'draft');
     const content = tests[name];
-    await request(`/syllabi/${id}/content`, 'PUT', { sections: Object.fromEntries(sections.map(key => [key, content[key]])), schemaVersion: 3 });
+    await request(`/syllabi/${id}/content`, 'PUT', { sections: Object.fromEntries(sections.map(key => [key, content[key]])), schemaVersion: 3, baseRevisions: current.revisions });
     const saved = await request(`/syllabi/${id}/content`);
     for (const key of sections) assert.deepEqual(saved.content[key], content[key], `${name}: saved ${key}`);
     expected = saved.content;

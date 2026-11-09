@@ -1,4 +1,9 @@
-const { blankStandards, readStandards, updateStandards } = require('../lib/subjectStandards');
+const { readStandards, updateStandards, standardsFromMasters } = require('../lib/subjectStandards');
+const { loadMasters } = require('../lib/programMasters');
+const { loadOutcomes } = require('../lib/institution');
+const { cleanProgram, parseTypedOutcomes, insertOutcomes } = require('../lib/programCreate');
+const { recordNewProgram } = require('../lib/programPoReferences');
+const { approvedOfCourse, subjectRefused } = require('../lib/approvedRecords');
 // Course catalog: course code, title, program and the course learning outcomes (CLOs).
 // Everyone signed in reads; only admins write. Faculty cannot change a course's CLOs: syllabus content
 // always takes them from here (see routes/syllabusContent.js).
@@ -8,10 +13,18 @@ const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { inTransaction, httpError, sendError } = require('../lib/http');
 const { LEVELS, cloKey, parseCloKey, loadCourse, loadClos } = require('../lib/courses');
 const { isStale, STALE_MESSAGE } = require('../lib/programEgas');
-const { createProgram, PROGRAM_CODE, requireOwnOutcomes, inheritStandards, findProgram } = require('../lib/programs');
+const { createProgram, requireOwnOutcomes, inheritStandards, findProgram } = require('../lib/programs');
 const { catalogGaps } = require('../lib/catalogReady');
 const { takenBySubject } = require('../lib/subjectLock');
+const { queryInSameYear, catalogYear, programYearClause, assertSubjectEditable } = require('../lib/academicYear');
+const { TERM_COLUMNS, termOf, hasTerm, withColumnFallbacks, parseTerm, saveTerm } = require('../lib/subjectTerm');
+const { COLUMN: CURRICULUM_YEAR_COLUMN, parseCurriculumYear, curriculumYearOf, saveCurriculumYear } = require('../lib/curriculumYear');
+const { curriculumNote, approvedCurricula } = require('../lib/curriculumNote');
 const router = express.Router();
+
+// With the catalog per academic year the administrator no longer picks a subject's academic year: it is the year of the catalog it is made in. Sent only when the rest of the
+// term is sent (the term is all four fields or none).
+const withYear = (body, label) => ((body && ['semester', 'yearLevel', 'prerequisite'].some((k) => body[k] !== undefined && body[k] !== null && body[k] !== '')) ? { ...body, academicYear: label } : body);
 
 const parseId = (raw) => {
   const id = Number(raw);
@@ -31,20 +44,30 @@ router.get('/', requireAuth, async (req, res) => {
     const params = [];
     const conds = [];
     if (req.query.program) { conds.push('p.code = ?'); params.push(String(req.query.program).toUpperCase()); }
+    // The catalog belongs to an academic year: the requested one (an administrator may ask for any, others only the current and the previous), the current one by default.
+    // A new academic year therefore starts with no subjects. The year goes before the user id: the fakes of the tests read the user id last.
+    const inYear = programYearClause(await catalogYear(req.app.locals.db, req.session.user, req.query.year));
+    if (inYear.sql) { conds.push(inYear.sql.replace(/^ AND /, '')); params.push(...inYear.params); }
     // Faculty see only the courses an admin assigned to them; admins see every course.
     if (!isReviewer(req.session.user)) { conds.push('c.course_id IN (SELECT course_id FROM faculty_courses WHERE user_id = ?)'); params.push(req.session.user.id); }
     const where = conds.length ? 'WHERE ' + conds.join(' AND ') : '';
-    const [rows] = await req.app.locals.db.query(
-      `SELECT c.course_id, c.code, c.title, c.program_id, p.code AS program_code, COUNT(k.clo_id) AS clo_count, c.standards_json
+    const select = (term, curriculum) => `SELECT c.course_id, c.code, c.title, c.program_id, p.code AS program_code, COUNT(k.clo_id) AS clo_count, c.standards_json${term ? ', ' + TERM_COLUMNS : ''}${curriculum ? ', ' + CURRICULUM_YEAR_COLUMN : ''}
        FROM courses c JOIN programs p ON p.program_id = c.program_id LEFT JOIN course_clos k ON k.course_id = c.course_id
-       ${where} GROUP BY c.course_id, c.code, c.title, c.program_id, p.code ORDER BY c.code`, params);
-    const list = rows.map((r) => ({ id: r.course_id, code: r.code, title: r.title, program: r.program_code, cloCount: Number(r.clo_count) }));
+       ${where} GROUP BY c.course_id, c.code, c.title, c.program_id, p.code ORDER BY c.code`;
+    const [rows] = await withColumnFallbacks(req.app.locals.db, [select(true, true), select(true, false), select(false, false)], params);
+    // term: the administrator-set academic year, semester, year level and pre-requisite (empty values for a subject that has none yet);
+    // curriculumYear: the curriculum the subject belongs to (lib/curriculumYear.js), null when not set
+    const list = rows.map((r) => ({ id: r.course_id, code: r.code, title: r.title, program: r.program_code, cloCount: Number(r.clo_count), term: termOf(r), curriculumYear: curriculumYearOf(r) }));
 
     // For an admin, say what is still missing before faculty can use each subject (the vision, mission, the program's
     // EGAs and POs, the subject's CLOs). Faculty do not get this: their list is unchanged.
     if (req.session.user.role === 'admin') {
       const db = req.app.locals.db;
+      // warn (never block) where the approved curriculum lists a subject with a different pre-requisite or year level
+      const curricula = list.some((c) => hasTerm(c.term)) ? await approvedCurricula(db) : [];
       rows.forEach((r, i) => {
+        const note = curriculumNote({ programCode: r.program_code, code: r.code, term: list[i].term, curriculumYear: list[i].curriculumYear }, curricula);
+        if (note) list[i].curriculumNote = note;
         const standards = readStandards(r.standards_json);
         list[i].gaps = catalogGaps({
           vision: standards.vision, mission: standards.mission,
@@ -58,7 +81,7 @@ router.get('/', requireAuth, async (req, res) => {
     // ?except= is the syllabus being edited: its own subject is not "taken" by itself.
     if (req.query.taken === '1' && list.length) {
       const except = Number(req.query.except) > 0 ? Number(req.query.except) : 0;
-      const [held] = await req.app.locals.db.query('SELECT syllabus_id, course_id, user_id, status FROM syllabi WHERE course_id IN (?) AND syllabus_id <> ? AND user_id = ? AND archived_at IS NULL', [list.map((c) => c.id), except, req.session.user.id]);
+      const [held] = await queryInSameYear(req.app.locals.db, 'SELECT syllabus_id, course_id, user_id, status FROM syllabi WHERE course_id IN (?) AND syllabus_id <> ? AND user_id = ? AND archived_at IS NULL', [list.map((c) => c.id), except, req.session.user.id], except); // this academic year's syllabi only
       const taken = takenBySubject(held, req.session.user);
       list.forEach((c) => { if (taken.has(c.id)) c.taken = taken.get(c.id); });
     }
@@ -77,41 +100,60 @@ router.get('/:id', requireAuth, async (req, res) => {
 router.post('/', requireAuth, requireAdmin, async (req, res) => {
   try {
     const db = req.app.locals.db;
-    const { code, title, program, programName } = req.body || {};
+    const { code, title, program, programName, outcomes } = req.body || {};
     const c = text(code, 50, 'Subject code');
     const t = text(title, 255, 'Subject title');
     const progCode = String(program || '').trim().toUpperCase();
     if (!progCode) throw httpError(400, 'Enter the program code');
+    // The catalog is per academic year: a subject (and a program created with it) is always made in the CURRENT year, and its academic year is that year.
+    const scope = await catalogYear(db, req.session.user);
+    const term = await parseTerm(db, scope.scoped ? withYear(req.body, scope.label) : req.body); // academic year, semester, year level, pre-requisite: all four or none
+    const curriculumYear = parseCurriculumYear(req.body); // optional and independent of the academic year (lib/curriculumYear.js)
+
+    // The EGAs and Program Outcomes typed for a NEW program, checked before anything is written (the same rules as the program's own edit routes).
+    const typed = parseTypedOutcomes(outcomes, progCode);
 
     // An existing program is used as it is (programName is ignored). A new one is created together with its first
     // subject in ONE transaction, so a failure leaves nothing behind.
     const made = await inTransaction(db, async (conn) => {
-      const [progRows] = await conn.query('SELECT program_id FROM programs WHERE code = ?', [progCode]);
+      const [progRows] = scope.scoped
+        ? await conn.query('SELECT program_id FROM programs WHERE code = ? AND COALESCE(academic_year, ?) = ?', [progCode, scope.current, scope.label])
+        : await conn.query('SELECT program_id FROM programs WHERE code = ?', [progCode]);
       let programId = progRows[0] && progRows[0].program_id;
       let programCreated = false;
       if (!programId) {
-        if (!PROGRAM_CODE.test(progCode)) throw httpError(400, 'A program code uses 2 to 20 letters, digits or hyphens, for example BSIT.');
-        const name = typeof programName === 'string' ? programName.trim().replace(/\s+/g, ' ') : '';
-        if (!name) throw httpError(400, "Enter the program's full name");
-        if (name.length < 2 || !/[A-Za-z].*[A-Za-z]/.test(name)) throw httpError(400, "The program's name needs at least two letters");
-        if (name.length > 255) throw httpError(400, 'The program name is too long (max 255 characters)');
-        programId = await createProgram(conn, { code: progCode, name });
+        const { name } = cleanProgram({ code: progCode, name: programName });
+        programId = await createProgram(conn, scope.scoped ? { code: progCode, name, year: scope.label, current: scope.current } : { code: progCode, name });
         programCreated = true;
       }
+      if (typed && !programCreated) throw httpError(400, "Outcomes can only be sent with a new program. Change an existing program's outcomes in its Outcomes dialog.");
+      let masters;
+      if (typed) {
+        await insertOutcomes(conn, programId, typed);
+        await recordNewProgram(conn, { program_id: programId, code: progCode }, typed, { actorId: req.session.user.id, academicYear: scope.scoped ? scope.label : null });
+        const school = await loadOutcomes(conn);
+        masters = { institution: { vision: school.vision, mission: school.mission }, egas: typed.egas, pos: typed.pos };
+      } else masters = await loadMasters(conn, programId);   // the subject starts with a copy of what its program already has (blank when the program has nothing yet)
       const [dup] = await conn.query('SELECT 1 FROM courses WHERE code = ? AND program_id = ?', [c, programId]);
       if (dup.length) throw httpError(409, `${c} already exists`);
-      const [r] = await conn.query('INSERT INTO courses (code, title, program_id, standards_json) VALUES (?, ?, ?, ?)', [c, t, programId, JSON.stringify(blankStandards())]);
+      const [r] = await conn.query('INSERT INTO courses (code, title, program_id, standards_json) VALUES (?, ?, ?, ?)', [c, t, programId, JSON.stringify(standardsFromMasters(masters))]);
+      if (term) await saveTerm(conn, r.insertId, term);
+      else if (scope.scoped) await conn.query('UPDATE courses SET academic_year = ? WHERE course_id = ?', [scope.label, r.insertId]);
+      if (curriculumYear) await saveCurriculumYear(conn, r.insertId, curriculumYear); // in the same transaction: a missing column leaves no subject behind
       return { id: r.insertId, programCreated };
     });
-    res.json({ ...(await loadCourse(db, made.id)), programCreated: made.programCreated });
+    const created = await loadCourse(db, made.id);
+    const note = term ? curriculumNote({ programCode: created.program.code, code: created.code, term: created.term, curriculumYear: created.curriculumYear }, await approvedCurricula(db)) : null;
+    res.json({ ...created, programCreated: made.programCreated, ...(note ? { curriculumNote: note } : {}) });
   } catch (err) { sendError(res, err); }
 });
 
-// Code and title only. The program is fixed: a CLO's PO tags are validated against it.
+// Code, title and (optionally) the term. The program is fixed: a CLO's PO tags are validated against it.
 router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
   try {
     const db = req.app.locals.db;
     const id = parseId(req.params.id);
+    await assertSubjectEditable(db, id); // a past academic year's catalog is view only
     const { code, title } = req.body || {};
     const c = text(code, 50, 'Subject code');
     const t = text(title, 255, 'Subject title');
@@ -119,8 +161,17 @@ router.put('/:id', requireAuth, requireAdmin, async (req, res) => {
     if (!course) throw httpError(404, 'Subject not found');
     const [dup] = await db.query('SELECT 1 FROM courses WHERE code = ? AND course_id <> ? AND program_id = ?', [c, id, course.program.id]);
     if (dup.length) throw httpError(409, `${c} already exists`);
-    await db.query('UPDATE courses SET code = ?, title = ? WHERE course_id = ?', [c, t, id]);
-    res.json(await loadCourse(db, id));
+    const scope = await catalogYear(db, req.session.user);
+    const term = await parseTerm(db, scope.scoped ? withYear(req.body, course.term.academicYear || scope.current) : req.body); // none sent: the subject's term is left as it is
+    const curriculumYear = parseCurriculumYear(req.body); // undefined: left as it is; null: cleared
+    await inTransaction(db, async (conn) => {
+      await conn.query('UPDATE courses SET code = ?, title = ? WHERE course_id = ?', [c, t, id]);
+      if (term) await saveTerm(conn, id, term);
+      if (curriculumYear !== undefined) await saveCurriculumYear(conn, id, curriculumYear);
+    });
+    const updated = await loadCourse(db, id);
+    const note = term || curriculumYear !== undefined ? curriculumNote({ programCode: updated.program.code, code: updated.code, term: updated.term, curriculumYear: updated.curriculumYear }, await approvedCurricula(db)) : null;
+    res.json({ ...updated, ...(note ? { curriculumNote: note } : {}) });
   } catch (err) { sendError(res, err); }
 });
 
@@ -128,8 +179,17 @@ router.delete('/:id', requireAuth, requireAdmin, async (req, res) => {
   try {
     const db = req.app.locals.db;
     const id = parseId(req.params.id);
+    await assertSubjectEditable(db, id);
     if (!(await loadCourse(db, id))) throw httpError(404, 'Subject not found');
-    await db.query('DELETE FROM courses WHERE course_id = ?', [id]); // syllabi.course_id becomes NULL; saved versions keep their snapshot
+    await inTransaction(db, async (conn) => {
+      // The syllabi first, then the subject: submitting and approving lock the syllabus row before they read its subject, so taking the locks in the same
+      // order means a deletion and a submission or approval wait for each other instead of deadlocking (lib/subjectValidation.js).
+      const approved = await approvedOfCourse(conn, id);
+      const [locked] = await conn.query('SELECT course_id FROM courses WHERE course_id = ? FOR UPDATE', [id]);
+      if (!locked.length) throw httpError(404, 'Subject not found');
+      if (approved.length) throw subjectRefused(approved);
+      await conn.query('DELETE FROM courses WHERE course_id = ?', [id]); // syllabi.course_id becomes NULL; saved versions keep their snapshot
+    });
     res.json({ message: 'Subject deleted' });
   } catch (err) { sendError(res, err); }
 });
@@ -140,6 +200,7 @@ router.put('/:id/clos', requireAuth, requireAdmin, async (req, res) => {
   try {
     const db = req.app.locals.db;
     const id = parseId(req.params.id);
+    await assertSubjectEditable(db, id);
     const course = await loadCourse(db, id);
     if (!course) throw httpError(404, 'Subject not found');
     const { clos, version } = req.body || {};
@@ -190,6 +251,7 @@ router.put('/:id/clos', requireAuth, requireAdmin, async (req, res) => {
 router.put('/:id/standards', requireAuth, requireAdmin, async (req,res) => {
   try {
     const id=parseId(req.params.id); const db=req.app.locals.db;
+    await assertSubjectEditable(db, id);
     const { section, value, version }=req.body||{};
     await inTransaction(db,async conn=>{
       const [[row]]=await conn.query('SELECT standards_json, program_id FROM courses WHERE course_id = ? FOR UPDATE',[id]);

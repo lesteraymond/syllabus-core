@@ -21,8 +21,9 @@ const isApprover = roles.isApprover;
 
 const canView = (user, syllabus) => isOwner(user, syllabus) || (isReviewer(user) && syllabus.status !== 'draft');
 // Faculty may discard only their own drafts. Keep existing administrator access unchanged.
-const canDelete = (user, syllabus) => (isAdmin(user) && canView(user, syllabus))
-  || (user.role === 'faculty' && isOwner(user, syllabus) && syllabus.status === 'draft');
+// An approved syllabus is a protected record: no one deletes it (lib/approvedRecords.js).
+const canDelete = (user, syllabus) => syllabus.status !== 'approved' && ((isAdmin(user) && canView(user, syllabus))
+  || (user.role === 'faculty' && isOwner(user, syllabus) && syllabus.status === 'draft'));
 // A syllabus is archived when its subject is assigned to another faculty member (lib/assignments.js): it stays as a record, read-only.
 const isArchived = (syllabus) => !!(syllabus && syllabus.archived_at);
 const canEdit = (user, syllabus) => isOwner(user, syllabus) && EDITABLE_STATUSES.includes(syllabus.status) && !isArchived(syllabus);
@@ -31,6 +32,16 @@ const canEdit = (user, syllabus) => isOwner(user, syllabus) && EDITABLE_STATUSES
 const canDecide = isApprover;
 const canReturn = (user) => isReviewer(user) && !isApprover(user);
 const canSetStatus = (user, status) => (isApprover(user) ? ['approved', 'for_revision', 'rejected', 'under_review'].includes(status) : canReturn(user) && ['for_revision', 'under_review'].includes(status));
+
+// The review decisions a reviewer may record, by the status a syllabus must be in (routes/syllabi.js, PUT /:id). Roles are canSetStatus; this is the state. Approved is final: nothing leaves it.
+// A returned syllabus leaves for_revision or rejected only through its author's resubmission (statusAfterOwnerEdit), so a reviewer never sets it back.
+const DECISION_FROM = { approved: ['under_review'], rejected: ['submitted', 'under_review'], for_revision: ['submitted', 'under_review'], under_review: ['submitted'] };
+const canTransition = (from, to) => (DECISION_FROM[to] || []).includes(from);
+const APPROVED_FINAL = 'This syllabus is approved. Approval is final, so its status can no longer change.';
+const transitionRefusal = (from, to) => (from === 'approved' ? { message: APPROVED_FINAL, code: 'approved_final' }
+  : to === 'approved' ? { message: 'Only a syllabus under review can be approved. A returned syllabus must be submitted again by its author first.', code: 'approval_requires_review' }
+    : to === 'under_review' ? { message: 'A returned syllabus goes back to review only when its author submits it again.', code: 'resubmission_required' }
+      : { message: 'This syllabus is not waiting for a review decision.', code: 'not_awaiting_decision' });
 
 // A returned (for revision or rejected) edit is a resubmission, and saving a draft as a version submits it. (A submitted or under-review syllabus cannot be edited.)
 const statusAfterOwnerEdit = (status) => (isReturned(status) || status === 'draft' ? 'submitted' : status);
@@ -54,4 +65,4 @@ const lockedMessage = (syllabus) => (isArchived(syllabus) ? ARCHIVED_MESSAGE : s
   ? 'This syllabus was submitted and is locked. It can be edited again only if the administrator returns it for revision.'
   : `This syllabus is ${String(syllabus.status).replace('_', ' ')} and can no longer be edited`);
 
-module.exports = { ARCHIVED_MESSAGE, isArchived, MIN_NOTE, UNCHANGED, NEED_NOTE, lockedMessage, isOwner, isAdmin, isReviewer, isApprover, EDITABLE_STATUSES, RETURNED_STATUSES, isReturned, STATUSES, canView, canEdit, canDelete, canDecide, canReturn, canSetStatus, statusAfterOwnerEdit, nextVersionLabel };
+module.exports = { canTransition, transitionRefusal, APPROVED_FINAL, ARCHIVED_MESSAGE, isArchived, MIN_NOTE, UNCHANGED, NEED_NOTE, lockedMessage, isOwner, isAdmin, isReviewer, isApprover, EDITABLE_STATUSES, RETURNED_STATUSES, isReturned, STATUSES, canView, canEdit, canDelete, canDecide, canReturn, canSetStatus, statusAfterOwnerEdit, nextVersionLabel };

@@ -1,0 +1,227 @@
+{
+  "migrationId": "lcup-po-2026-10-29",
+  "beforeHash": "80ba46cda6d6cbc93d9a8a3c2fac6c0cc80905a749838b88c490009b67d94e9e",
+  "targets": [
+    {
+      "id": 1,
+      "code": "BSIT",
+      "posVersion": 1
+    },
+    {
+      "id": 15,
+      "code": "BSIE",
+      "posVersion": 2
+    },
+    {
+      "id": 16,
+      "code": "BSCPE",
+      "posVersion": 2
+    },
+    {
+      "id": 17,
+      "code": "BSIT-CYBERSECURITY",
+      "posVersion": 2
+    }
+  ],
+  "beforeCounts": [
+    {
+      "program": "BSIT",
+      "physicalPoCount": 10
+    },
+    {
+      "program": "BSIE",
+      "physicalPoCount": 13
+    },
+    {
+      "program": "BSCPE",
+      "physicalPoCount": 13
+    },
+    {
+      "program": "BSIT-CYBERSECURITY",
+      "physicalPoCount": 10
+    }
+  ],
+  "referenceIds": [
+    "lcup-po-2026-10-29-BSIT",
+    "lcup-po-2026-10-29-BSIE",
+    "lcup-po-2026-10-29-BSCPE"
+  ],
+  "changes": {
+    "program_outcomes": "Replace only the three target canonical sets with 9/13/13 exact statements; remove the target Cyber copy after preserving it in backup.",
+    "programs": "Increment only the four target pos_version values.",
+    "program_outcome_sources": "Link target Cyber program to target BSIT program.",
+    "program_po_reference_versions": "Insert exactly three source-attributed immutable versions.",
+    "program_po_reference_active": "Activate exactly three canonical references; Cyber inherits parent.",
+    "program_po_reference_migrations": "Insert one applied migration audit.",
+    "program_po_reference_remediation": "Insert eight needs_review sidecar rows; no faculty content edits."
+  },
+  "impacts": [
+    {
+      "type": "syllabus",
+      "id": 43,
+      "program": "BSIT",
+      "status": "draft",
+      "contentSha256": "26c980f6c0072fd814eeecf269ab084755c07f8c986e10b76b6ba3d8f2093323",
+      "previousReference": "previous_or_unknown",
+      "proposedReference": "lcup-po-2026-10-29-BSIT",
+      "obsoleteMappings": [],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "syllabus",
+      "id": 93,
+      "program": "BSIT",
+      "status": "for_revision",
+      "contentSha256": "4e2e80a4de1e3650b0fefa747eaeea4a99d9bf6ec87ec92c4d398ce1ede19f54",
+      "previousReference": "previous_or_unknown",
+      "proposedReference": "lcup-po-2026-10-29-BSIT",
+      "obsoleteMappings": [],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "syllabus",
+      "id": 97,
+      "program": "BSIE",
+      "status": "draft",
+      "contentSha256": "169a538d6d0c931ff258791f7a3ec04aa37a5cadd132f8c99238b2d4342b1ffd",
+      "previousReference": "previous_or_unknown",
+      "proposedReference": "lcup-po-2026-10-29-BSIE",
+      "obsoleteMappings": [],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "syllabus",
+      "id": 99,
+      "program": "BSIT",
+      "status": "draft",
+      "contentSha256": "66844be3c088256fdb3fc04f60f8a8c8cf8b1c75a9617f7367a250e74f14cf8e",
+      "previousReference": "previous_or_unknown",
+      "proposedReference": "lcup-po-2026-10-29-BSIT",
+      "obsoleteMappings": [
+        {
+          "cloId": "bss99_team",
+          "po": 10
+        }
+      ],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "syllabus",
+      "id": 100,
+      "program": "BSIE",
+      "status": "draft",
+      "contentSha256": "dbe786f6273c032f5dfcbb06a6923edd83725d53c309f4b9003562f6e3b27725",
+      "previousReference": "previous_or_unknown",
+      "proposedReference": "lcup-po-2026-10-29-BSIE",
+      "obsoleteMappings": [],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "syllabus",
+      "id": 101,
+      "program": "BSIE",
+      "status": "for_revision",
+      "contentSha256": "448a33ea66c9fb197bd2afd87a924aa610c88bf91d78badcd60407bf4810bdd8",
+      "previousReference": "previous_or_unknown",
+      "proposedReference": "lcup-po-2026-10-29-BSIE",
+      "obsoleteMappings": [],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "syllabus",
+      "id": 102,
+      "program": "BSIT",
+      "status": "draft",
+      "contentSha256": "41ea3eef9d6b42fd89326dc39a814d27e9e2419b130170f786fa2141226d194d",
+      "previousReference": "previous_or_unknown",
+      "proposedReference": "lcup-po-2026-10-29-BSIT",
+      "obsoleteMappings": [],
+      "proposedMappings": null,
+      "reason": "Faculty must compare meanings and explicitly confirm each new mapping; no automatic number crosswalk."
+    },
+    {
+      "type": "syllabus",
+      "id": 110,
+      "program": "BSIT-CYBERSECURITY",
+      "status": "draft",
+      "curriculumReview": {
+        "previousProgram": "BSIT-CYBERSECURITY",
+        "proposedProgram": "BSIT",
+        "selectedYear": null,
+        "availableReferenceIds": [
+          1
+        ],
+        "automaticRewrite": false
+      },
+      "proposedMappings": null,
+      "reason": "Faculty must review the approved BSIT curriculum selection and course identity; historical curriculum records remain unchanged."
+    }
+  ],
+  "unrelatedProgramHash": "4ef4711537fa00ef5762c8b55278bc57f4059e32516373abfe3d484c37f50cfd",
+  "protectedTables": {
+    "syllabi": {
+      "rows": 15,
+      "sha256": "b81de55b9c32b2a237f889570bb53a8cf5f36667bf99fc442f5f6c585fdba23c"
+    },
+    "syllabus_versions": {
+      "rows": 18,
+      "sha256": "3aba02528acb53ca0f37e86250b999750cab96d6a2d1a0897ca4c9e581898d3b"
+    },
+    "syllabus_check_reports": {
+      "rows": 202,
+      "sha256": "81e499e31367dda8caee5cb523521655d398e95832d1b7a48dedd69bc147909b"
+    },
+    "ai_check_runs": {
+      "rows": 293,
+      "sha256": "d7b5fb29d21d9adaea825db798bf9b3d7288b2d5a4c4acc3c3fe1fad68266f99"
+    },
+    "syllabus_check_decisions": {
+      "rows": 820,
+      "sha256": "48234a10565d340065c14cc8d68f52b39c725f5af1e6f4d5b53241b7fabe09e0"
+    },
+    "syllabus_check_curricula": {
+      "rows": 4,
+      "sha256": "d14af13102de4fb50258ab0d439a7a380cff9eea600e777bbcc183ae8fc88731"
+    },
+    "curriculum": {
+      "rows": 39,
+      "sha256": "2213f1bbaf9f6a79637805b80f32bbab0a19461b314facc1123d981cf349a4b8"
+    },
+    "courses": {
+      "rows": 243,
+      "sha256": "ac2776489d06333cecf777a31e9c7228fe0138ac3a618e0e26b7b96c087ea167"
+    },
+    "course_clos": {
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "program_egas": {
+      "rows": 20,
+      "sha256": "0b77ce0eaa6e244fc326c1cdca9d37b4570c230c05a2a8b5a2e107c4d4b10e7d"
+    },
+    "institution_egas": {
+      "rows": 4,
+      "sha256": "cc4a8a7770198c1e74625c2874cda24663dbc6b425278d60e418d8b11c925907"
+    },
+    "institution_settings": {
+      "rows": 1,
+      "sha256": "746a26e2a8981ac9446740a2be060113550902f85e32089ab145774029f6e7a6"
+    }
+  },
+  "fullTableCount": 48,
+  "programsModified": [
+    1,
+    17,
+    15,
+    16
+  ],
+  "formalInstitutionalApproval": "not_recorded",
+  "dryRunOnly": true,
+  "developmentTestingOnly": true
+}

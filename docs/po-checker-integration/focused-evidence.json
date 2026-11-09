@@ -1,0 +1,171 @@
+{
+  "kind": "Scripted software conformance using read-only actual development references; no live Claude accuracy claim",
+  "recommendedOptimization": {
+    "SYLLABUS_CHECK_CACHE_WARMUP": "on",
+    "SYLLABUS_CHECK_OUTPUT_PLAN": "on",
+    "SYLLABUS_CHECK_OUTPUT_FIELDS": "scoped"
+  },
+  "optionalCourseContext": "scoped",
+  "records": [
+    {
+      "code": "BSIT",
+      "phase": "deterministic",
+      "valid": "PASS",
+      "invalidMissingObsolete": "detected",
+      "P03": "NOT_CHECKED",
+      "noOfficialCrosswalkInvented": true
+    },
+    {
+      "code": "BSIT",
+      "phase": "semantic",
+      "wrongButExistingPo": "NOT_ALIGNED",
+      "sourceQuotesVerified": true,
+      "facultyContentUnchanged": true,
+      "mappingsAreSyntheticChoices": true,
+      "liveModelCalls": 0
+    },
+    {
+      "code": "BSIT",
+      "phase": "profile/optimization/storage",
+      "sevenVpaa": 7,
+      "fourClassifications": 4,
+      "baselineRequests": 37,
+      "recommendedRequests": 37,
+      "optionalScopedRequests": 37,
+      "officialScore": 100,
+      "threshold": 79,
+      "scoringAndJudgmentParity": true,
+      "inMemoryReportReload": true,
+      "providerOffVerified": 0
+    },
+    {
+      "code": "BSIE",
+      "phase": "deterministic",
+      "valid": "PASS",
+      "invalidMissingObsolete": "detected",
+      "P03": "NOT_CHECKED",
+      "noOfficialCrosswalkInvented": true
+    },
+    {
+      "code": "BSIE",
+      "phase": "semantic",
+      "wrongButExistingPo": "NOT_ALIGNED",
+      "sourceQuotesVerified": true,
+      "facultyContentUnchanged": true,
+      "mappingsAreSyntheticChoices": true,
+      "liveModelCalls": 0
+    },
+    {
+      "code": "BSIE",
+      "phase": "profile/optimization/storage",
+      "sevenVpaa": 7,
+      "fourClassifications": 4,
+      "baselineRequests": 37,
+      "recommendedRequests": 37,
+      "optionalScopedRequests": 37,
+      "officialScore": 100,
+      "threshold": 79,
+      "scoringAndJudgmentParity": true,
+      "inMemoryReportReload": true,
+      "providerOffVerified": 0
+    },
+    {
+      "code": "BSCPE",
+      "phase": "deterministic",
+      "valid": "PASS",
+      "invalidMissingObsolete": "detected",
+      "P03": "NOT_CHECKED",
+      "noOfficialCrosswalkInvented": true
+    },
+    {
+      "code": "BSCPE",
+      "phase": "semantic",
+      "wrongButExistingPo": "NOT_ALIGNED",
+      "sourceQuotesVerified": true,
+      "facultyContentUnchanged": true,
+      "mappingsAreSyntheticChoices": true,
+      "liveModelCalls": 0
+    },
+    {
+      "code": "BSCPE",
+      "phase": "profile/optimization/storage",
+      "sevenVpaa": 7,
+      "fourClassifications": 4,
+      "baselineRequests": 37,
+      "recommendedRequests": 37,
+      "optionalScopedRequests": 37,
+      "officialScore": 100,
+      "threshold": 79,
+      "scoringAndJudgmentParity": true,
+      "inMemoryReportReload": true,
+      "providerOffVerified": 0
+    },
+    {
+      "code": "BSIT-CYBERSECURITY",
+      "phase": "deterministic",
+      "valid": "PASS",
+      "invalidMissingObsolete": "detected",
+      "P03": "NOT_CHECKED",
+      "noOfficialCrosswalkInvented": true
+    },
+    {
+      "code": "BSIT-CYBERSECURITY",
+      "phase": "semantic",
+      "wrongButExistingPo": "NOT_ALIGNED",
+      "sourceQuotesVerified": true,
+      "facultyContentUnchanged": true,
+      "mappingsAreSyntheticChoices": true,
+      "liveModelCalls": 0
+    },
+    {
+      "code": "BSIT-CYBERSECURITY",
+      "phase": "profile/optimization/storage",
+      "sevenVpaa": 7,
+      "fourClassifications": 4,
+      "baselineRequests": 37,
+      "recommendedRequests": 37,
+      "optionalScopedRequests": 37,
+      "officialScore": 100,
+      "threshold": 79,
+      "scoringAndJudgmentParity": true,
+      "inMemoryReportReload": true,
+      "providerOffVerified": 0
+    },
+    {
+      "phase": "vpaa-adversarial",
+      "types": [
+        "Content-course",
+        "Content-ILO",
+        "ILO-CLO",
+        "Content-activity",
+        "ILO-activity",
+        "Content-assessment",
+        "Activity-assessment"
+      ],
+      "scriptedLabels": [
+        "NOT_ALIGNED",
+        "PARTIALLY_ALIGNED",
+        "ALIGNED",
+        "NOT_ALIGNED",
+        "PARTIALLY_ALIGNED",
+        "INSUFFICIENT_EVIDENCE",
+        "ALIGNED"
+      ],
+      "independent": true
+    },
+    {
+      "phase": "classification-variants",
+      "levels": [
+        "Introductory",
+        "Enabling",
+        "Demonstrating",
+        "Integration of Values"
+      ],
+      "wrongSemantics": "detected despite valid label",
+      "missing": "not assumed/not asked",
+      "ambiguous": "faculty review",
+      "automaticReclassification": false
+    }
+  ],
+  "liveModelCalls": 0
+}

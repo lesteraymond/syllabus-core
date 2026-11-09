@@ -18,6 +18,14 @@ import { PaperPlaneTilt } from '@phosphor-icons/react/dist/csr/PaperPlaneTilt';
 import { UploadSimple } from '@phosphor-icons/react/dist/csr/UploadSimple';
 import { SquaresFour } from '@phosphor-icons/react/dist/csr/SquaresFour';
 import { SignOut } from '@phosphor-icons/react/dist/csr/SignOut';
+// the account's own activity in Recent Activity (lib/activityView.js)
+import { SignIn } from '@phosphor-icons/react/dist/csr/SignIn';
+import { Key } from '@phosphor-icons/react/dist/csr/Key';
+import { IdentificationCard } from '@phosphor-icons/react/dist/csr/IdentificationCard';
+import { UserCircle } from '@phosphor-icons/react/dist/csr/UserCircle';
+import { Translate } from '@phosphor-icons/react/dist/csr/Translate';
+import { FilePlus } from '@phosphor-icons/react/dist/csr/FilePlus';
+import { Trash } from '@phosphor-icons/react/dist/csr/Trash';
 import { PencilRuler } from '@phosphor-icons/react/dist/csr/PencilRuler';
 import { Sparkle } from '@phosphor-icons/react/dist/csr/Sparkle';
 import { GridFour } from '@phosphor-icons/react/dist/csr/GridFour';
@@ -54,9 +62,10 @@ export function Progress({ label, value, note }) {
 }
 
 // `value` is 0-100, or null when no syllabus has a score for this area yet.
-export function QualityMini({ label, value }) {
+// low: the lowest of the areas shown (the AI Quality Snapshot marks where the score was lost)
+export function QualityMini({ label, value, low = false, title }) {
   const known = Number.isFinite(value);
-  return <div className="quality-mini"><div className="quality-ring" style={{ '--p': `${known ? value * 3.6 : 0}deg` }}><span>{known ? value : '—'}</span></div><span>{label}</span></div>;
+  return <div className={'quality-mini' + (low ? ' low' : '')} title={title}><div className="quality-ring" style={{ '--p': `${known ? value * 3.6 : 0}deg` }}><span>{known ? value : '—'}</span></div><span>{label}</span></div>;
 }
 
 export function Deadline({ day, mon, title, note }) {
@@ -101,7 +110,7 @@ export function Policy({ title, text }) {
 
 // One icon set (Phosphor) for the whole UI. Only the icons listed here are bundled.
 // Decorative by default (aria-hidden); pass `label` when the icon alone conveys meaning.
-const ICONS = { signOut: SignOut, arrowUpRight: ArrowUpRight, arrowUUpLeft: ArrowUUpLeft, xCircle: XCircle, chatText: ChatCircleText, clockBack: ClockCounterClockwise, notebook: Notebook, sealCheck: SealCheck, hourglassMedium: HourglassMedium, notePencil: NotePencil, shieldCheck: ShieldCheck, graduationCap: GraduationCap, paperPlaneTilt: PaperPlaneTilt, uploadSimple: UploadSimple, squaresFour: SquaresFour, pencilRuler: PencilRuler, sparkle: Sparkle, gridFour: GridFour, archive: Archive, chartBar: ChartBar, downloadSimple: DownloadSimple, usersThree: UsersThree, gearSix: GearSix, caretRight: CaretRight, eye: Eye, eyeSlash: EyeSlash, envelope: Envelope, bell: Bell, magnifyingGlass: MagnifyingGlass, checkCircle: CheckCircle, warning: Warning, floppyDisk: FloppyDisk, calendarBlank: CalendarBlank, bellRinging: BellRinging, program: ProgramIcon, subject: SubjectIcon, underReview: UnderReviewIcon, approved: ApprovedIcon, revise: ReviseIcon, bin: BinIcon, pencilSquare: PencilSquareIcon, denied: DeniedIcon };
+const ICONS = { signOut: SignOut, arrowUpRight: ArrowUpRight, arrowUUpLeft: ArrowUUpLeft, xCircle: XCircle, chatText: ChatCircleText, clockBack: ClockCounterClockwise, notebook: Notebook, sealCheck: SealCheck, hourglassMedium: HourglassMedium, notePencil: NotePencil, shieldCheck: ShieldCheck, graduationCap: GraduationCap, paperPlaneTilt: PaperPlaneTilt, uploadSimple: UploadSimple, squaresFour: SquaresFour, pencilRuler: PencilRuler, sparkle: Sparkle, gridFour: GridFour, archive: Archive, chartBar: ChartBar, downloadSimple: DownloadSimple, usersThree: UsersThree, gearSix: GearSix, caretRight: CaretRight, eye: Eye, eyeSlash: EyeSlash, envelope: Envelope, bell: Bell, magnifyingGlass: MagnifyingGlass, checkCircle: CheckCircle, warning: Warning, floppyDisk: FloppyDisk, calendarBlank: CalendarBlank, bellRinging: BellRinging, program: ProgramIcon, subject: SubjectIcon, underReview: UnderReviewIcon, approved: ApprovedIcon, revise: ReviseIcon, bin: BinIcon, pencilSquare: PencilSquareIcon, denied: DeniedIcon, signIn: SignIn, key: Key, identificationCard: IdentificationCard, userCircle: UserCircle, translate: Translate, filePlus: FilePlus, trash: Trash };
 export function Icon({ name, size = 20, weight = 'duotone', label, className, ...rest }) {
   const Glyph = ICONS[name];
   if (!Glyph) return null;

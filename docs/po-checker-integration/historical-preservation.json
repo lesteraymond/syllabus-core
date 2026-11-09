@@ -1,0 +1,42 @@
+{
+  "tables": [
+    {
+      "table": "syllabi",
+      "unchangedSinceActivation": true
+    },
+    {
+      "table": "syllabus_versions",
+      "unchangedSinceActivation": true
+    },
+    {
+      "table": "syllabus_check_reports",
+      "unchangedSinceActivation": true
+    },
+    {
+      "table": "ai_check_runs",
+      "unchangedSinceActivation": true
+    },
+    {
+      "table": "syllabus_check_decisions",
+      "unchangedSinceActivation": true
+    },
+    {
+      "table": "institution_settings",
+      "unchangedSinceActivation": true
+    },
+    {
+      "table": "institution_egas",
+      "unchangedSinceActivation": true
+    },
+    {
+      "table": "program_egas",
+      "unchangedSinceActivation": true
+    },
+    {
+      "table": "syllabus_check_curricula",
+      "unchangedSinceActivation": true
+    }
+  ],
+  "reviewsUnresolved": 8,
+  "realFacultyContentRewritten": false
+}

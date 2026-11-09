@@ -16,7 +16,7 @@ export const STATUS_LABELS = { draft: 'Draft', submitted: 'Submitted', under_rev
 export const canEditSyllabus = (user, syllabus) => user.id === syllabus.userId && EDITABLE_STATUSES.includes(syllabus.status) && !syllabus.archived;
 
 // Keep in sync with server/lib/syllabusRules.js. Submission records stay in the review workflow.
-export const canDeleteSyllabus = (user, syllabus) => (user.role === 'admin' && (user.id === syllabus.userId || syllabus.status !== 'draft'))
+export const canDeleteSyllabus = (user, syllabus) => syllabus.status !== 'approved' && (user.role === 'admin' && (user.id === syllabus.userId || syllabus.status !== 'draft'))
   || (user.role === 'faculty' && user.id === syllabus.userId && syllabus.status === 'draft');
 
 export const ARCHIVED_REASON = 'This syllabus is archived because its subject was assigned to another faculty member. You can still read it.';

@@ -1,0 +1,785 @@
+{
+  "meta": {
+    "case": "D",
+    "synthetic": true,
+    "course": "IT 204 Computer Programming 2 (fictional)",
+    "generatedBy": "scripts/live-claude/fixtures.cjs",
+    "provisionalExpectations": true
+  },
+  "content": {
+    "schemaVersion": 2,
+    "meta": {
+      "courseId": 10,
+      "code": "IT 204",
+      "title": "Computer Programming 2",
+      "program": "BSIT",
+      "lecture": "2",
+      "lab": "1",
+      "prereq": "IT 202 - Programming 1",
+      "yearLevel": "2",
+      "curriculumYear": "test-2026"
+    },
+    "description": [
+      {
+        "id": "d1",
+        "t": "This course continues the study of programming using the Java language, with emphasis on object-oriented design. Students learn to model problems with classes, inheritance, polymorphism and interfaces, to handle errors, to store data in collections and files, and to test their programs. Throughout the term they practice working in teams and taking responsibility for the quality and honesty of their software, culminating in a team mini-project."
+      }
+    ],
+    "clos": [
+      {
+        "id": "c1",
+        "title": "Object-oriented concepts",
+        "level": "Introductory",
+        "statement": "Explain the basic concepts of object-oriented programming, namely classes, objects, encapsulation and inheritance, using Java examples.",
+        "egas": [
+          1
+        ],
+        "pos": [
+          1
+        ]
+      },
+      {
+        "id": "c2",
+        "title": "Object-oriented problem solving",
+        "level": "Enabling",
+        "statement": "Appreciate programming.",
+        "egas": [
+          1,
+          2
+        ],
+        "pos": [
+          1,
+          3
+        ]
+      },
+      {
+        "id": "c3",
+        "title": "Robust programs",
+        "level": "Demonstrating",
+        "statement": "Develop console applications that use exception handling, collections and file input and output, and verify them with unit tests.",
+        "egas": [
+          1,
+          2
+        ],
+        "pos": [
+          2,
+          3
+        ]
+      },
+      {
+        "id": "c4",
+        "title": "Responsible teamwork",
+        "level": "Integration of Values",
+        "statement": "Work with teammates to deliver a software application, practicing honesty, collaboration and respect for the data of its users in the process.",
+        "egas": [
+          3,
+          4
+        ],
+        "pos": [
+          4,
+          5
+        ]
+      }
+    ],
+    "plan": [
+      {
+        "id": "r1",
+        "kind": "lesson",
+        "week": "1",
+        "ilos": [
+          {
+            "id": "i1",
+            "text": "Describe the purpose of a class and an object in a Java program",
+            "tags": [
+              "clo:c1"
+            ]
+          }
+        ],
+        "contents": "Course orientation; review of Java syntax; classes and objects",
+        "activities": "Lecture-discussion on classes and objects; guided coding of a Student class",
+        "tasks": "- Seatwork: identify the classes and objects in a short problem description",
+        "values": "Core Value: Excellence"
+      },
+      {
+        "id": "r2",
+        "kind": "lesson",
+        "week": "2",
+        "ilos": [
+          {
+            "id": "i2",
+            "text": "Explain how encapsulation protects the data of an object",
+            "tags": [
+              "clo:c1"
+            ]
+          }
+        ],
+        "contents": "Encapsulation: access modifiers, constructors, getters and setters",
+        "activities": "Live coding of an Account class with private fields; pair debugging exercise",
+        "tasks": "- Quiz 1: encapsulation concepts",
+        "values": "Core Value: Integrity"
+      },
+      {
+        "id": "r3",
+        "kind": "lesson",
+        "week": "3",
+        "ilos": [
+          {
+            "id": "i3",
+            "text": "Understand the lesson",
+            "tags": [
+              "clo:c1"
+            ]
+          }
+        ],
+        "contents": "Various topics",
+        "activities": "Class activities",
+        "tasks": "- Assessment",
+        "values": "Core Value: Excellence"
+      },
+      {
+        "id": "r4",
+        "kind": "lesson",
+        "week": "4",
+        "ilos": [
+          {
+            "id": "i4",
+            "text": "Apply polymorphism to write code that handles different subclasses through one superclass type",
+            "tags": [
+              "clo:c2"
+            ]
+          }
+        ],
+        "contents": "Polymorphism and abstract classes",
+        "activities": "Laboratory: implement a Shape hierarchy with an abstract class and an overridden area method",
+        "tasks": "- Laboratory exercise 1: Shape hierarchy program",
+        "values": "Core Value: Excellence"
+      },
+      {
+        "id": "r5",
+        "kind": "lesson",
+        "week": "5",
+        "ilos": [
+          {
+            "id": "i5",
+            "text": "Implement an interface in a class to satisfy a defined contract",
+            "tags": [
+              "clo:c2"
+            ]
+          }
+        ],
+        "contents": "Interfaces and their use as contracts",
+        "activities": "Laboratory: implement a Payable interface in several Employee classes",
+        "tasks": "- Laboratory exercise 2: interface implementation",
+        "values": "Core Value: Integrity"
+      },
+      {
+        "id": "x6",
+        "kind": "exam",
+        "week": "6",
+        "ilos": [
+          {
+            "id": "xi6",
+            "text": "",
+            "tags": []
+          }
+        ],
+        "contents": "PRELIM EXAMINATION",
+        "activities": "",
+        "tasks": "",
+        "values": ""
+      },
+      {
+        "id": "r7",
+        "kind": "lesson",
+        "week": "7",
+        "ilos": [
+          {
+            "id": "i7",
+            "text": "Organize classes into packages and justify a design using cohesion and coupling",
+            "tags": [
+              "clo:c2"
+            ]
+          }
+        ],
+        "contents": "Packages, access control and design principles: cohesion and coupling",
+        "activities": "Group refactoring workshop on a poorly organized program",
+        "tasks": "- Seatwork: refactoring write-up",
+        "values": "Core Value: Collaboration"
+      },
+      {
+        "id": "r8",
+        "kind": "lesson",
+        "week": "8",
+        "ilos": [
+          {
+            "id": "i8",
+            "text": "Understand the lesson",
+            "tags": [
+              "clo:c2"
+            ]
+          }
+        ],
+        "contents": "Various topics",
+        "activities": "Class activities",
+        "tasks": "- Assessment",
+        "values": "Core Value: Collaboration"
+      },
+      {
+        "id": "r9",
+        "kind": "lesson",
+        "week": "9",
+        "ilos": [
+          {
+            "id": "i9",
+            "text": "Write code that handles runtime errors with exceptions",
+            "tags": [
+              "clo:c3"
+            ]
+          }
+        ],
+        "contents": "Exception handling: try, catch, finally and custom exceptions",
+        "activities": "Laboratory: add input validation and exception handling to a banking program",
+        "tasks": "- Laboratory exercise 3: exception handling",
+        "values": "Core Value: Responsibility"
+      },
+      {
+        "id": "r10",
+        "kind": "lesson",
+        "week": "10",
+        "ilos": [
+          {
+            "id": "i10",
+            "text": "Use collections to store and process groups of objects",
+            "tags": [
+              "clo:c3"
+            ]
+          }
+        ],
+        "contents": "The collections framework: lists, sets and maps",
+        "activities": "Laboratory: build a student record manager with ArrayList and HashMap",
+        "tasks": "- Laboratory exercise 4: collections",
+        "values": "Core Value: Excellence"
+      },
+      {
+        "id": "r11",
+        "kind": "lesson",
+        "week": "11",
+        "ilos": [
+          {
+            "id": "i11",
+            "text": "Understand the lesson",
+            "tags": [
+              "clo:c3"
+            ]
+          }
+        ],
+        "contents": "Various topics",
+        "activities": "Class activities",
+        "tasks": "- Assessment",
+        "values": "Core Value: Excellence"
+      },
+      {
+        "id": "x12",
+        "kind": "exam",
+        "week": "12",
+        "ilos": [
+          {
+            "id": "xi12",
+            "text": "",
+            "tags": []
+          }
+        ],
+        "contents": "MIDTERM EXAMINATION",
+        "activities": "",
+        "tasks": "",
+        "values": ""
+      },
+      {
+        "id": "r13",
+        "kind": "lesson",
+        "week": "13",
+        "ilos": [
+          {
+            "id": "i13",
+            "text": "Read and write data in text files from a Java program",
+            "tags": [
+              "clo:c3"
+            ]
+          }
+        ],
+        "contents": "File input and output: reading and writing text files",
+        "activities": "Laboratory: save and load the student record manager from a file",
+        "tasks": "- Laboratory exercise 5: file persistence",
+        "values": "Core Value: Responsibility"
+      },
+      {
+        "id": "r14",
+        "kind": "lesson",
+        "week": "14",
+        "ilos": [
+          {
+            "id": "i14",
+            "text": "Create unit tests that verify the behavior of classes",
+            "tags": [
+              "clo:c3"
+            ]
+          }
+        ],
+        "contents": "Unit testing with JUnit and debugging practices",
+        "activities": "Pair programming: write tests for the record manager, then fix the defects they reveal",
+        "tasks": "- Laboratory exercise 6: unit tests",
+        "values": "Core Value: Integrity"
+      },
+      {
+        "id": "r15",
+        "kind": "lesson",
+        "week": "15",
+        "ilos": [
+          {
+            "id": "i15",
+            "text": "Collaborate with teammates using version control and code review",
+            "tags": [
+              "clo:c4"
+            ]
+          }
+        ],
+        "contents": "Teamwork in software development: version control and code review",
+        "activities": "Team workshop on a shared repository; peer code review with a checklist",
+        "tasks": "- Peer code review report",
+        "values": "Core Value: Collaboration"
+      },
+      {
+        "id": "r16",
+        "kind": "lesson",
+        "week": "16",
+        "ilos": [
+          {
+            "id": "i16",
+            "text": "Understand the lesson",
+            "tags": [
+              "clo:c4"
+            ]
+          }
+        ],
+        "contents": "Various topics",
+        "activities": "Class activities",
+        "tasks": "- Assessment",
+        "values": "Core Value: Integrity"
+      },
+      {
+        "id": "r17",
+        "kind": "lesson",
+        "week": "17",
+        "ilos": [
+          {
+            "id": "i17",
+            "text": "Present and demonstrate a team application, stating honestly what it can and cannot do",
+            "tags": [
+              "clo:c4"
+            ]
+          }
+        ],
+        "contents": "Mini-project presentation and demonstration",
+        "activities": "Team project demonstrations with a question-and-answer round",
+        "tasks": "- Mini-project demonstration with a rubric-based evaluation",
+        "values": "Core Value: Collaboration"
+      },
+      {
+        "id": "x18",
+        "kind": "exam",
+        "week": "18",
+        "ilos": [
+          {
+            "id": "xi18",
+            "text": "",
+            "tags": []
+          }
+        ],
+        "contents": "FINAL EXAMINATION",
+        "activities": "",
+        "tasks": "",
+        "values": ""
+      }
+    ],
+    "reqs": [
+      {
+        "id": "q1",
+        "t": "Class attendance"
+      },
+      {
+        "id": "q2",
+        "t": "Quizzes"
+      },
+      {
+        "id": "q3",
+        "t": "Examinations"
+      },
+      {
+        "id": "q4",
+        "t": "Programming project"
+      }
+    ],
+    "refs": {
+      "books": {
+        "na": false,
+        "items": [
+          {
+            "id": "b1",
+            "t": "Balti, H., & Galloway, A. (2021). Job ready Java. John Wiley & Sons."
+          },
+          {
+            "id": "b2",
+            "t": "Boyarsky, J. (2020). OCP Java. Sybex."
+          }
+        ]
+      },
+      "program": {
+        "na": false,
+        "items": [
+          {
+            "id": "p1",
+            "t": "Oracle (2023). The Java tutorials."
+          }
+        ]
+      },
+      "online": {
+        "na": false,
+        "items": [
+          {
+            "id": "o1",
+            "t": "W3Schools (2024). Java tutorial."
+          }
+        ]
+      },
+      "electronics": {
+        "na": true,
+        "items": []
+      }
+    },
+    "grading": {
+      "rows": [
+        {
+          "id": "g1",
+          "label": "Class Standing",
+          "pct": 60
+        },
+        {
+          "id": "g2",
+          "label": "Examination",
+          "pct": 40
+        }
+      ],
+      "override": {
+        "on": false,
+        "term": "",
+        "final": ""
+      }
+    },
+    "signoff": {},
+    "catalog": {
+      "institution": {
+        "vision": "A leading university of Gospel values.",
+        "mission": {
+          "lead": "Moved by the Spirit, we form learners to:",
+          "items": [
+            "exhibit academic competence",
+            "serve the marginalized"
+          ]
+        },
+        "egas": [
+          {
+            "no": 1,
+            "name": "Competence in the discipline",
+            "short": "Competence"
+          },
+          {
+            "no": 2,
+            "name": "Critical and creative thinking",
+            "short": "Thinking"
+          },
+          {
+            "no": 3,
+            "name": "Collaboration and communication",
+            "short": "Collaboration"
+          },
+          {
+            "no": 4,
+            "name": "Integrity and service",
+            "short": "Integrity"
+          }
+        ]
+      },
+      "program": {
+        "code": "BSIT",
+        "name": "BS Information Technology",
+        "egas": [
+          {
+            "no": 1,
+            "name": "Attribute 1",
+            "short": "A1"
+          },
+          {
+            "no": 2,
+            "name": "Attribute 2",
+            "short": "A2"
+          },
+          {
+            "no": 3,
+            "name": "Attribute 3",
+            "short": "A3"
+          },
+          {
+            "no": 4,
+            "name": "Attribute 4",
+            "short": "A4"
+          }
+        ],
+        "pos": [
+          {
+            "no": 1,
+            "short": "PO 1",
+            "text": "Program outcome 1",
+            "egas": [
+              1
+            ]
+          },
+          {
+            "no": 2,
+            "short": "PO 2",
+            "text": "Program outcome 2",
+            "egas": [
+              2
+            ]
+          },
+          {
+            "no": 3,
+            "short": "PO 3",
+            "text": "Program outcome 3",
+            "egas": [
+              3
+            ]
+          },
+          {
+            "no": 4,
+            "short": "PO 4",
+            "text": "Program outcome 4",
+            "egas": [
+              4
+            ]
+          },
+          {
+            "no": 5,
+            "short": "PO 5",
+            "text": "Program outcome 5",
+            "egas": [
+              1
+            ]
+          }
+        ]
+      },
+      "savedAt": "2026-01-05T00:00:00.000Z"
+    },
+    "outcomes": {
+      "vision": "A leading university of Gospel values.",
+      "mission": {
+        "lead": "Moved by the Spirit, we form learners to:",
+        "items": [
+          "exhibit academic competence",
+          "serve the marginalized"
+        ]
+      },
+      "egas": [
+        {
+          "no": 1,
+          "name": "Competence in the discipline",
+          "short": "Competence"
+        },
+        {
+          "no": 2,
+          "name": "Critical and creative thinking",
+          "short": "Thinking"
+        },
+        {
+          "no": 3,
+          "name": "Collaboration and communication",
+          "short": "Collaboration"
+        },
+        {
+          "no": 4,
+          "name": "Integrity and service",
+          "short": "Integrity"
+        }
+      ],
+      "pos": [
+        {
+          "no": 1,
+          "short": "PO 1",
+          "text": "Apply knowledge of computing and mathematics to solve computing problems.",
+          "egas": [
+            1
+          ]
+        },
+        {
+          "no": 2,
+          "short": "PO 2",
+          "text": "Analyze a problem and identify the computing requirements appropriate to its solution.",
+          "egas": [
+            2
+          ]
+        },
+        {
+          "no": 3,
+          "short": "PO 3",
+          "text": "Design, implement and evaluate computing-based solutions to meet desired needs.",
+          "egas": [
+            1,
+            2
+          ]
+        },
+        {
+          "no": 4,
+          "short": "PO 4",
+          "text": "Work effectively in teams and communicate clearly with technical and non-technical audiences.",
+          "egas": [
+            3
+          ]
+        },
+        {
+          "no": 5,
+          "short": "PO 5",
+          "text": "Practice professional, ethical and socially responsible conduct in computing.",
+          "egas": [
+            4
+          ]
+        }
+      ]
+    }
+  },
+  "masters": {
+    "synthetic": true,
+    "institution": {
+      "vision": "A leading university of Gospel values.",
+      "mission": {
+        "lead": "Moved by the Spirit, we form learners to:",
+        "items": [
+          "exhibit academic competence",
+          "serve the marginalized"
+        ]
+      },
+      "egas": [
+        {
+          "no": 1,
+          "name": "Competence in the discipline",
+          "short": "Competence"
+        },
+        {
+          "no": 2,
+          "name": "Critical and creative thinking",
+          "short": "Thinking"
+        },
+        {
+          "no": 3,
+          "name": "Collaboration and communication",
+          "short": "Collaboration"
+        },
+        {
+          "no": 4,
+          "name": "Integrity and service",
+          "short": "Integrity"
+        }
+      ]
+    },
+    "pos": [
+      {
+        "no": 1,
+        "short": "PO 1",
+        "text": "Apply knowledge of computing and mathematics to solve computing problems.",
+        "egas": [
+          1
+        ]
+      },
+      {
+        "no": 2,
+        "short": "PO 2",
+        "text": "Analyze a problem and identify the computing requirements appropriate to its solution.",
+        "egas": [
+          2
+        ]
+      },
+      {
+        "no": 3,
+        "short": "PO 3",
+        "text": "Design, implement and evaluate computing-based solutions to meet desired needs.",
+        "egas": [
+          1,
+          2
+        ]
+      },
+      {
+        "no": 4,
+        "short": "PO 4",
+        "text": "Work effectively in teams and communicate clearly with technical and non-technical audiences.",
+        "egas": [
+          3
+        ]
+      },
+      {
+        "no": 5,
+        "short": "PO 5",
+        "text": "Practice professional, ethical and socially responsible conduct in computing.",
+        "egas": [
+          4
+        ]
+      }
+    ],
+    "curricula": [
+      {
+        "program": "BSIT",
+        "curriculumYear": "test-2026",
+        "status": "approved",
+        "courses": [
+          {
+            "code": "IT 204",
+            "title": "Computer Programming 2",
+            "prereq": "IT 202 - Programming 1",
+            "lecture": 2,
+            "lab": 1,
+            "yearLevel": 2
+          }
+        ]
+      }
+    ]
+  },
+  "expectations": {
+    "relationships": [
+      {
+        "week": 3,
+        "type": "all weekly relationships",
+        "expect": "insufficient evidence: the text is too vague to judge alignment either way"
+      },
+      {
+        "week": 8,
+        "type": "all weekly relationships",
+        "expect": "insufficient evidence: the text is too vague to judge alignment either way"
+      },
+      {
+        "week": 11,
+        "type": "all weekly relationships",
+        "expect": "insufficient evidence: the text is too vague to judge alignment either way"
+      },
+      {
+        "week": 16,
+        "type": "all weekly relationships",
+        "expect": "insufficient evidence: the text is too vague to judge alignment either way"
+      }
+    ],
+    "classification": [
+      {
+        "clo": 2,
+        "label": "Enabling",
+        "expect": "insufficient evidence: \"Appreciate programming\" does not state a competence"
+      }
+    ],
+    "note": "Weeks 3, 8, 11 and 16 and CLO 2 are deliberately vague. The checker should say it cannot tell (INSUFFICIENT_EVIDENCE / Not checked), never invent support."
+  }
+}
