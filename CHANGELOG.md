@@ -1292,3 +1292,721 @@ Each program has its own expected graduate attributes (EGAs) and program outcome
 - Upgrade notes: syllabi already approved stay approved; syllabi still submitted or under review need the three checks again. See `docs/review-chain.md`.
 
 **Tests:** new `server/lib/roles.test.js`, `server/lib/reviewStages.test.js`, `server/routes/reviewChain.routes.test.js`, `src/lib/roles.test.js`; the stage, enforcement, comments, compliance and password route tests, the review, notification and navigation tests were updated for "only the VPAA approves".
+
+---
+
+### v1.56.0 — Academic Years: Term per Subject, Year-Scoped Lists, a Catalog per Year and Setting Up Outcomes in Add Subject
+**Date:** November 5, 2026
+
+**Subject term (Program & Subjects):**
+- An administrator sets each subject's **semester, year level (1–4) and pre-requisite**; the academic year of a subject is the year of the catalog it is in. Faculty see these filled in when they pick the subject in the syllabus builder and cannot change them; the server stores the administrator's values even if a client sends others.
+- The subjects table has Program, Semester and Year level filters that combine and clear.
+- A difference from the approved curriculum is shown as a warning only; it never blocks.
+
+**Current academic year and year-scoped lists:**
+- One academic year is **current**. Syllabi, the AI Checker queue, Compliance, Analytics, Reports, Repository, Dashboard and My Syllabi are listed by academic year. Faculty and reviewers see the current and the previous year; an administrator sees every year. A syllabus is stamped with the year it was created in, and the one-syllabus-per-subject rule is per year.
+- One academic-year control in the Program & Subjects header replaces the separate "Current academic year" card and the top-bar year chip: the year dropdown, **Make current** (confirmed first, only while another year is shown), **+ Add year** (a small popover under its button) and **Copy from {year}**. Every other year filter is a dropdown only, with the current year tagged "· current" (and "· current: {year}" on the "all years" choices). Their "Academic year" caption was removed; the accessible name stays.
+
+**A catalog per academic year:**
+- Programs and subjects belong to an academic year, so a **new year starts with no programs and no subjects**, even for the administrator. An earlier year's catalog is **view only**: every change is refused with `403 catalog_year_read_only`. The same program code can exist in two years, each with its own EGAs, Program Outcomes and CLOs.
+- **Copy from last year** is optional, never automatic, and only fills an empty current year: it copies programs, their EGAs and POs, specializations and subjects with their CLOs as new records. Faculty assignments, deadlines, syllabi and aliases are not copied. Done in one transaction (`POST /api/academic-years/copy-catalog`: `409` when the year already has programs or no earlier year has a catalog).
+- The AI Checker resolves a syllabus's program by id, so an older year's syllabus is still checked against its own year's program outcomes. Assignments, deadlines and student lists follow the current year's catalog.
+
+**EGAs, Program Outcomes, vision and mission in Add subject:**
+- The Add subject form has an **Outcomes, vision and mission** section. For a **new program** the administrator types its EGAs and Program Outcomes; they are created together with the program and the subject in one step (`POST /api/courses` accepts `outcomes` for a new program only). For an existing program the saved ones are shown for editing (version-checked, so a stale screen is refused). The school vision and mission have their own **Save vision and mission** button and are one school-wide record for every program and year.
+- A **new subject starts with a copy** of its program's EGAs and Program Outcomes and the school vision and mission, so the faculty builder shows them (Step 2) when faculty pick the program and subject. The subject keeps its own copy afterwards; a draft whose Step 2 was already edited keeps its own text, and a submitted syllabus keeps its snapshot.
+- Each program has an **Outcomes** dialog (EGAs and POs, read-only for a past year, a specialization or POs from an official reference) and an **Apply to subjects** button that copies the saved setup into its existing subjects (a subject whose CLOs still use something removed is skipped and listed). A program with no EGAs or POs shows a "Set up EGAs and POs" badge and the page lists it.
+- The AI Checker, its 47 rules, the 79 threshold and the scoring are unchanged: the checker still compares with the program's EGAs and POs and the school vision and mission.
+
+**Server:**
+- New migrations for an existing database: `npm run migrate-academic-year-scope` and `npm run migrate-catalog-year` (both idempotent; either sets up the academic years itself, so their order does not matter; the subject term columns come from the existing `migrate-subject-term`). Before they run, the application behaves as before.
+- New `server/lib/catalogCopy.js`, `server/lib/programMasters.js` (`loadMasters`, `syncSubjects`), `server/lib/programOutcomesInput.js` (one set of EGA/PO validation rules shared by the program routes and the new-program path); `server/lib/subjectStandards.js` gains `standardsFromMasters` and `applyMasters`.
+- New `POST /api/programs/:id/sync-subjects`; `GET /api/programs` returns `egaCount` and `inheritedFrom`; `GET /api/academic-years` returns each year's program and subject counts to an administrator.
+
+**Client:**
+- New `AcademicYearControl`, `ProgramOutcomesEditor`, `OutcomesFields`, `VisionMissionFields`, `SubjectSetup`; `CurrentAcademicYear`, the standalone vision/mission card, the top-bar year chip and unused strings and styles were removed. English and Filipino pairs for every new text.
+
+**Tests and validation:**
+- New `server/lib/catalogCopy.test.js`, `server/lib/programMasters.test.js`, `src/lib/outcomesSetup.test.js`; extended the catalog-year, academic-year, enforcement and UI tests. `npm test` 2,048 tests, `npm run test:vpaa`, the localization audit and `npm run build` pass; the database bootstrap check builds a scratch database with every migration.
+- Browser E2E (isolated database and ports, scripted provider, no live AI request): 24 scenarios, 395 checks. New E21–E24 cover the empty new year, Copy from last year, the view-only past year, setting up a new program's outcomes, the faculty builder receiving them, and every closed year filter naming the current year.
+- Not run: any live Claude request, any real development or staging database.
+
+**Upgrade notes:** existing programs and subjects are stamped with the year that is current when `migrate-catalog-year` runs. Subjects created before this change keep their own EGAs, POs, vision and mission until the administrator uses **Apply to subjects** on their program.
+
+---
+
+### v1.57.0 — Administrator Owns a Subject's Vision, Mission, EGA, PO and Term
+**Date:** November 6, 2026
+
+- Added **Edit Vision, Mission, EGA and PO of this subject** to the subject edit dialog (Program & Subjects). It saves each section with `PUT /api/courses/:id/standards`, which was already on the server but had no screen.
+- In the faculty builder, year level, semester and pre-requisite (Step 1) and Vision, Mission, EGA and PO (Step 2) are now always read-only for faculty. A subject the administrator has not filled in shows a note instead of an editable box. Year level accepts 1 to 4, as the server does.
+- No server or database change: `applyTerm` and `forceStandards` already forced these values on every faculty save.
+
+---
+
+### v1.58.0 — Add Program Button; Add Subject Picks a Program
+**Date:** November 6, 2026
+
+- Added an **Add program** button beside **Add subject** on Program & Subjects. Its form takes the program code and name, and holds the Vision, Mission, EGA and Program Outcomes form (the Vision and Mission are the school's one record; the EGAs and POs belong to the program). The outcomes are optional and can be set later with the program's Outcomes button.
+- Added `POST /api/programs` (administrator only, current academic year, one transaction). The checks and the EGA/PO insert are shared with `POST /api/courses` (`server/lib/programCreate.js`), which still creates a program implicitly for existing API callers.
+- **Add subject** now picks the program from a list instead of asking for a typed code and name, and no longer shows the outcomes section.
+- Tests: two new route tests in `server/routes/catalogYear.routes.test.js`. The browser scenarios E22 and E23 were updated to the new flow and were not run.
+
+**Update (same day):** the per-subject "Edit Vision, Mission, EGA and PO of this subject" dialog from v1.57.0 was removed again at the administrator's request. Vision, Mission, EGAs and POs are set through the program (Add program form and the program's Outcomes button) and reach existing subjects with **Apply to subjects**. The server route `PUT /api/courses/:id/standards` is unchanged.
+
+---
+
+### v1.59.0 — Edit Subject Is Code and Title Only
+**Date:** November 6, 2026
+
+- The subject **edit** dialog now has only the subject code and title (semester, year level and pre-requisite are set when the subject is added).
+
+---
+
+### v1.60.0 — Program Outcome Reference Versions and Faculty Review and Adopt
+**Date:** November 6–7, 2026
+
+**Reference versions:**
+- Program Outcomes are now database-driven reference versions. Each administrator save of a program's POs records an immutable version (for example `lcup-po-2026-10-29`, `DFSFASDA-2026–2027-v3`), and the AI Checker uses the version in force. The administrator's save is the reference: there is no separate approval or publish step, and faculty see versions read-only.
+- A specialization (BSIT-Cyber Security) uses the POs of the program it inherits from in the same academic year. Copying a catalog into a new year links each new program to the same version instead of copying it.
+- The Outcomes dialog has a **Program Outcome reference** panel: the version in force, its history, and a comparison of any two versions (`GET /api/programs/:id/po-reference`, `.../compare`, `.../candidates`; `POST .../record`, `POST .../adopt`).
+- Every saved AI Checker report records the exact references it used: program, academic year, PO version and content hashes.
+
+**Faculty Review and Adopt:**
+- When the administrator applies changed POs to a subject, a syllabus written against the earlier POs shows a review of current versus updated statements. It changes only when its author adopts the update (`GET /api/syllabi/:id/po-review`, `POST /api/syllabi/:id/po-review/adopt`, `PoReviewNotice`). Saving or opening a draft no longer adopts new POs silently.
+- A PO that the update removes but a CLO still maps blocks adoption until that mapping is changed.
+- Historical syllabi whose PO mappings need academic review are marked `needs_review`. A new AI check on them is refused (`po_mapping_remediation_required`) until the review is resolved; their saved reports stay readable.
+
+**Database:** additive migration `npm run migrate-po-reference-publication`. Applied to the development database on November 7, 2026, after raising `max_allowed_packet` to 16M.
+
+**Unchanged:** the 47 deterministic rules, the seven VPAA relationships, the four CLO classifications, the official scoring and the passing threshold of 79.
+
+---
+
+### v1.61.0 — Saved Reports Open for Syllabi Under Academic Review
+**Date:** November 7, 2026
+
+- Fixed: a syllabus with an open `needs_review` record could not open its saved AI Checker report, because opening it re-resolved today's references and was refused. The saved report now opens as it was saved (score, threshold and references), marked as a saved report, and nothing is re-checked.
+- Server: `mastersFor(..., { historicalRead })` and `recordReviewOf`; `loadDetail` marks the run with `recordReview`. Client: a saved-report notice in the compliance card, in English and Filipino.
+- Tests: `server/lib/syllabuscheck/historical-report-retrieval.test.js` and `scripts/release/report-retrieval.integration.test.cjs` (65 checks on a restored copy of the development database).
+
+---
+
+### v1.62.0 — Approval Decisions Follow the Review Chain
+**Date:** November 7, 2026
+
+- Closed five ways a syllabus could be approved without the required state. A syllabus is approved only from Under Review, after the dean, the Asst. VPAA and the LIC Director have cleared its newest version. Approved is final, and a returned or rejected syllabus must be resubmitted first. Refusals carry the codes `approval_requires_review`, `approved_final`, `resubmission_required` and `not_awaiting_decision`.
+- Accepting or rejecting a recommendation is refused while the syllabus has an open academic review.
+- The compliance list and check history mark runs of syllabi under academic review; these never count as passed. The AI Checker picker shows a note and disables the check for them.
+- Tests: `server/routes/record-review-decisions.routes.test.js`, plus an approval security audit on a restored copy with no bypass found.
+
+---
+
+### v1.63.0 — Approved Syllabi Are Protected Records
+**Date:** November 7, 2026
+
+- Nobody, including an administrator, can delete an approved syllabus through the application.
+- Deleting a program, a subject or an account that an approved syllabus depends on is refused too, with the number of affected syllabi (`409 approved_records_protected`). The program deletion preview explains this and offers no way to continue.
+- The check runs on locked rows inside the deleting transaction, so a deletion racing an approval never removes an approved syllabus.
+- New `server/lib/approvedRecords.js`; refusal messages in English and Filipino. Tests: `server/routes/approved-records.routes.test.js`, program-management tests, and concurrency rounds on a restored copy.
+
+---
+
+### v1.64.0 — A Valid Subject Is Required; Accounts Can Be Disabled
+**Date:** November 7, 2026
+
+**Subject validation:**
+- Submitting a syllabus (faculty submit, administrator send to AI Checker and send for review) and VPAA approval now require a valid subject. The subject must exist, be the one the form names, and belong to the syllabus's program and academic year. Refusals return `409 subject_required` or `subject_mismatch`. Drafts still save without a subject.
+- A subject deleted while a syllabus is under review stops its approval. After the syllabus is returned for revision, the author can choose an existing subject and resubmit.
+- Deleting a subject now locks its syllabi first, so it no longer deadlocks with a submission running at the same time.
+
+**Account disabling:**
+- Users & Roles has **Disable** and **Enable** buttons and shows a **Disabled** badge.
+- A disabled account cannot sign in with a password or Google, and its remembered devices and temporary password are removed. An open session ends at its next request, "Forgot password" sends nothing, and an administrator cannot resend its credentials. Everything the account authored or reviewed is kept.
+- An administrator cannot disable their own account, and the last active administrator cannot be disabled.
+- New `server/lib/subjectValidation.js` and `server/lib/accountStatus.js`; messages in English and Filipino.
+
+**Database:** additive migration `npm run migrate-account-status`, which adds `users.disabled_at` and `users.disabled_by`. Applied to the development database on November 7, 2026. Before the migration, every account counts as active.
+
+---
+
+### v1.65.0 — AI Checking Only for the Active Academic Year
+**Date:** November 7, 2026
+
+- Institutional policy: a new AI check is performed only for syllabi of the active academic year, which the administrator chooses. This covers a check or re-check, AI refinement of a recommendation, the V2 preview, and submission (which stores a check run); anything else is refused with `409 inactive_academic_year`.
+- The active year is read before any AI request, and again under a lock in the transaction that stores the result. A year switch during a check therefore never stores a result for a year that is no longer active.
+- Old-year syllabi and their saved reports stay readable, and nothing is re-checked or regenerated. A syllabus keeps its own academic year.
+- Fixed: a syllabus whose subject link was gone was resolved against the current year's program, so it could borrow another year's Program Outcomes. It now resolves only in its own academic year.
+- Client: for a syllabus of another academic year, the AI Check button is hidden and a notice explains why, in English and Filipino (builder, AI Checker and reviewer picker).
+- Note: an old-year syllabus cannot be submitted until its academic year is active again.
+- New `server/lib/activeYearGate.js` and `src/components/InactiveYearNotice.jsx`.
+
+**Verification (v1.60.0–v1.65.0):** on isolated restored copies of the development database with scripted AI responses and no paid AI request:
+- `npm test` 2,255 tests and VPAA conformance 304.
+- Dynamic references 24, four-program PO workflow 4 of 4, report retrieval 65.
+- Browser suites E01–E25 (optimizations off and on), K01–K10 and B01.
+- Isolated end-to-end UAT, 34 of 34 scenarios.
+
+Release candidate RC14b (source hash `f0c2a9e1…`) runs on the development server with AI requests, email delivery, deadline notices and usage tracking turned off.
+
+---
+
+### v1.66.0 — Subject Curriculum Year
+**Date:** November 8, 2026
+
+- Subjects now have a **curriculum year** (for example 2022-2023): the curriculum a subject is taught under. It is separate from the academic year, so one academic year's catalog can hold subjects of different curricula.
+- **Add subject** asks for the curriculum year (required in the form) from a dropdown: the curricula of the last 20 years and next year, the years already in use, and the program's approved curriculum references, marked "approved curriculum on file". A hint says whether the AI Checker has an approved curriculum for that program and year.
+- **Edit subject** can change or clear it. Program & Subjects has a **Curriculum** column and a **Curriculum year** filter (with "Not set"), combinable with the program, semester and year level filters.
+- Copying a catalog into a new academic year keeps each subject's curriculum year. The curriculum warning on the subject list now compares a subject only with its own curriculum when it has one.
+- Server: new `server/lib/curriculumYear.js` (YYYY-YYYY, two consecutive years, stored with a plain hyphen; `400` when invalid). `POST /api/courses` accepts `curriculumYear` (optional for API compatibility); `PUT /api/courses/:id` changes it, clears it when sent empty and leaves it alone when not sent. Subject reads return `curriculumYear`.
+- Without the migration, reads work as before (not set) and setting a curriculum year answers `503` naming the migration.
+
+**Database:** additive migration `npm run migrate-curriculum-year`, which adds the nullable `courses.curriculum_year`. Applied to the development database on November 8, 2026, after a backup; no row changed.
+
+**Tests:** `server/lib/curriculumYear.test.js`, route tests in `server/routes/catalogYear.routes.test.js`, filter tests in `src/lib/subjectTerm.test.js`; one structural assertion in `src/lib/brandTheme.test.js` updated for the added column. `npm test` passes (2,152 tests plus the localization and UI suites). Real-SQL routes verified against a temporary copy of the table, rolled back.
+
+- A subject's semester can now also be **Summer** (as deadlines already allowed): the official BSIT-Cyber Security 2025-2026 curriculum has a 3rd-year summer term. Summer is shown with its own label (Tag-init in Filipino) on the subject list and the builder. The route test that refused Summer now refuses an invalid value instead, and the semester list test expects three values.
+
+**Data (development database, November 8, 2026):** the 2026–2027 catalog was filled with the 243 subjects of the four official curricula (BSIT 53, BSIE 63, BSCPE 66 from 2022-2023; BSIT-Cyber Security 61 from 2025-2026) through the subject route, each with its curriculum year, semester, year level and pre-requisite, after checking every row against the approved curriculum reference. A blank pre-requisite cell keeps the reference's wording, so the submit check matches. Backup before: `2026-11-08-pre-curriculum-import`.
+
+**Not changed:** the syllabus form's own Curriculum year field, the AI Checker's rules and scoring.
+
+---
+
+### v1.67.0 — Reviewers Choose: Check with AI or Review Without It
+**Date:** November 8, 2026
+
+- The dean (administrator), the Asst. VPAA, the LIC Director and the VPAA each choose, per submitted version, to **check it with AI** (as before) or to **review it without an AI check**. The AI Checker's syllabus picker has a **Review without AI check** button next to **Check compliance**, with a confirmation. After confirming, the syllabus is in that reviewer's Review & Approval.
+- The choice is the reviewer's own: it opens their stage clear (`POST /api/syllabi/:id/stage-clear`) or the VPAA's decision (`PUT /api/syllabi/:id`) and nobody else's. A resubmission is a new version, so the choice is asked again. The AI check stays available after choosing.
+- Every choice is logged in the syllabus's activity ("Chose to review v1.0 without an AI check"), with an optional reason. Choosing changes no status and clears no stage.
+- Unchanged: the review chain (all three stages before the VPAA), the coded hard gates at approval, approved records. When the institution sets `SYLLABUS_CHECK_AI_GATE=required` the choice is not offered and a stored one does not count. If a choice cannot be read, the gate fails closed.
+- Server: `POST /api/syllabi/:id/review-without-ai` (reviewers only; not their own syllabus; submitted or under review), `server/lib/reviewAiChoice.js`; the lists report `awaitingAiCheck` per reviewer and `reviewedWithoutAi`. The refusal now says "…or choose to review it without an AI check" (`code: ai_check_or_choice_required`).
+- Fixed: the builder's CLO/EGA/PO **Tag** picker opened far from its button. A card keeps a transform after its entry animation, which made the fixed picker position against the card; it is now drawn on the page body, placed under (or above) its button and kept next to it while scrolling (`src/lib/pickerPosition.js`).
+
+**Database:** additive migration `npm run migrate-review-ai-choice` (table `syllabus_review_ai_choices`, one row per syllabus, version and reviewer). Applied to the development database on November 8, 2026, after a backup; no other table changed.
+
+**Tests:** `server/lib/reviewAiChoice.test.js`, four route tests in `server/routes/stages.routes.test.js`, `src/lib/pickerPosition.test.js`. `npm test` passes (2,167 tests plus the localization and UI suites). Real-SQL check of the choice in a rolled-back transaction.
+
+---
+
+### v1.68.0 — A Syllabus Reaches the VPAA After the Three Stages
+**Date:** November 8, 2026
+
+- A submitted syllabus reaches the VPAA only once the dean (administrator), the Asst. VPAA and the LIC Director have all cleared its newest version (or once it is approved). Before that it is not in the VPAA's Review & Approval, dashboard or syllabus lists, the AI Checker's queue or its check history, and the VPAA cannot check it, choose to review it without AI, return it or reject it (`409 STAGES_PENDING`).
+- The VPAA is notified when the third stage clears (unchanged); the submission notifications go to the administrator, the Asst. VPAA and the LIC Director only (unchanged). A resubmission is a new version, so it leaves the VPAA until the three clear it again. What the VPAA returned for revision stays in the VPAA's list until it is resubmitted; approved syllabi stay visible.
+- The VPAA's AI Checker says so: "Syllabi appear here for you once the dean, the Asst. VPAA and the LIC Director have all cleared them." Nothing changes for the other reviewers or for faculty.
+- Server: one rule in `server/lib/reviewStages.js` (`readyForApprover`, `approverVisible`, `assertReadyForApprover`) used by `GET /api/syllabi`, `PUT /api/syllabi/:id`, `GET /api/compliance`, `GET /api/compliance/history`, `POST /api/syllabi/:id/compliance/recheck` and `POST /api/syllabi/:id/review-without-ai`. When the chain cannot be read nothing unfinished reaches the VPAA. No database change.
+
+**Tests:** rule tests in `server/lib/reviewStages.test.js`; route tests in `server/routes/stages.routes.test.js` and `server/routes/compliance.routes.test.js`. One test from v1.67.0 that let the VPAA choose before the chain was done now proves the refusal. `npm test` passes (2,172 tests plus the localization and UI suites).
+
+---
+
+### v1.68.1 — No Message Button in the Repository
+**Date:** November 8, 2026
+
+- The Repository tab no longer shows a message button on any row, for any user: everything there is approved, and an approved syllabus is final. Each row keeps its history button. Earlier conversations stay readable in Messages; messaging on syllabi that are not yet approved (My Syllabi, Review & Approval) is unchanged.
+- `src/views/Repository.jsx`, `src/App.jsx` (the Repository no longer receives the chat opener). The UI test that expected a message button for faculty-owned rows in the administrator's Repository now checks that no reviewer role sees one and that the history button stays (`tests/i18n-ui.test.jsx`).
+
+---
+
+### v1.68.2 — Only Faculty and the Administrator Write Syllabi
+**Date:** November 8, 2026
+
+- The Asst. VPAA, the LIC Director and the VPAA no longer have the Syllabus Builder or My Syllabi, by any path: the menu, the dashboard shortcuts, a notification link or a page left open all lead them to the Dashboard. They review in the AI Checker and Review & Approval as before.
+- The server enforces it: creating a draft (`POST /api/syllabi/drafts`), saving content (`PUT /api/syllabi/:id/content`), adopting a Program Outcome update (`POST /api/syllabi/:id/po-review/adopt`) and submitting (`POST /api/syllabi/:id/submit`) answer `403 authors_only` for those roles, before anything is read or written. The administrator-only routes (prepare check, send for review, resume draft) and the refused legacy upload are unchanged.
+- The dashboard's **New syllabus** button is shown to faculty and the administrator only (it was shown to every non-faculty role, and for a reviewer it only led back to the dashboard). It now always starts a new syllabus: like My Syllabi, it clears whatever was being edited before opening the builder.
+- One rule, `AUTHOR_ROLES = [faculty, admin]` / `canAuthor`, in `server/lib/roles.js` and `src/lib/roles.js` (a test keeps them equal), used by `requireAuthor` (`server/middleware/auth.js`), the menu (`src/data/initialData.js`) and the page guard (`src/App.jsx`).
+
+**Tests:** role parity and menu tests in `src/lib/roles.test.js`; refusal test in `server/routes/compliance.routes.test.js`. `npm test` passes (2,175 tests plus the localization and UI suites).
+
+---
+
+### v1.68.3 — The Academic Year Filter Lists the Years Only
+**Date:** November 8, 2026
+
+- The academic year filter offers only the years: the current academic year (tagged "current") and the earlier years the person may see. The combined choices "Previous and current year" (faculty and reviewers) and "All academic years" (administrator) are gone.
+- Every screen, the work queues included (Review & Approval, AI Checker), starts on the current academic year; a submission still waiting from an earlier year is found by choosing that year. A remembered "all" choice falls back to the current year. Which years a person may see is unchanged (the server decides: an administrator every year, everyone else the current and the previous one).
+- `src/lib/academicYearScope.js`, `src/components/AcademicYearScope.jsx`; the tests in `src/lib/academicYearScope.test.js` now expect the years only.
+
+---
+
+### v1.68.4 — The VPAA's Decision Reaches the Whole Review Chain
+**Date:** November 8, 2026
+
+- When the VPAA approves a syllabus, the faculty member who submitted it still gets their own notice. Now every administrator (the dean), the Asst. VPAA and the LIC Director (and any other VPAA account) are notified as well: "Syllabus approved: <code>", "Approved by the VPAA (<name>). It is now in the Repository." Clicking it opens the Repository. The VPAA who approved is not notified of their own decision.
+- A VPAA rejection reaches the same people, with its reason. A return for revision still tells only the owner.
+- The status itself was already shared: every role's lists and the Repository read it from the database. Only the notifications were missing.
+- `server/routes/syllabi.js` (after the commit, never affecting the result), `server/lib/notify.js` (`notifyRoles` takes one user or a list to leave out), `src/lib/notificationRoute.js` (type `approval` opens the Repository). New tests in `server/routes/stages.routes.test.js` and `src/lib/notificationRoute.test.js`. No database change.
+
+---
+
+### v1.68.5 — Approved Syllabi Leave the AI Checker
+**Date:** November 8, 2026
+
+- An approved syllabus no longer appears anywhere in the AI Checker. It is gone from the reviewers' Check History (Admin, Asst. VPAA, LIC Director, VPAA) and from the faculty member's subject list. The "to check" picker already left it out. Approved syllabi are in the Repository.
+- Its stored checks are kept and can still be read (`GET /compliance/runs/:id`). The Dashboard and Analytics still count it, since they read `GET /compliance`, which is unchanged.
+- `server/routes/compliance.js` (history: `syllabus_status NOT IN ('draft', 'approved')`), `src/views/AIChecker.jsx` (faculty list). New test in `server/routes/compliance.routes.test.js`. No database change.
+
+---
+
+### v1.68.6 — Recent Activity Cannot Be Cleared
+**Date:** November 8, 2026
+
+- The **Clear Logs** button is removed from the Dashboard's Recent Activity card for every role. The activity list is the account's audit trail, kept for transparency.
+- Clear Logs never deleted anything (the server has no route that deletes logs). It only hid entries in that browser. A hide saved in a browser from before is no longer applied, so those entries show again.
+- `src/views/DashboardView.jsx`, `src/App.jsx`. New test in `tests/i18n-ui.test.jsx`. The unused helpers in `src/lib/activityView.js` (`readClearedAt`, `writeClearedAt`, `afterCleared`) and their test are left in place. No server or database change.
+
+---
+
+### v1.69.0 — Recent Activity Records Everything the Account Does
+**Date:** November 8, 2026
+
+- Recent Activity now records what each person does, for transparency: **signing in** (with a password, Google or a temporary password) and **signing out**; **changing the password** (and whether it was the required change after a generated one); **changing the name** (old → new); **changing the profile photo** (uploaded, Google photo, removed; an administrator removing someone else's photo is recorded for the administrator, naming whose); **changing the language**; **starting a draft**; **editing** a syllabus (one line per editing session of 30 minutes, since autosave saves every few seconds, saying whether it was a draft); and **deleting** a syllabus (named by its subject and status, kept even though the syllabus is gone). AI checks, submissions and review decisions were already recorded and still are.
+- Nothing that is not the account's own is shown, and no password is ever recorded. Nothing is recorded for a failed sign-in, a refused save or deletion, or saving the same name or language again.
+- New table `account_activity` (`server/db/account-activity-ddl.js`, `npm run migrate-account-activity` with `--dry-run`, also in `schema.sql`). Rows are only added. A deleted syllabus keeps its rows (`syllabus_id` becomes NULL; `subject` still names it). Until the migration runs, nothing new is recorded and Recent Activity shows the review history as before. Recording never makes the action fail.
+- `server/lib/accountActivity.js` (new); hooks in `server/routes/auth.js`, `users.js`, `syllabusContent.js`, `syllabi.js`; `GET /api/logs` merges both sources, newest first, up to 50 rows (was 30). Client: `src/lib/activityView.js` (new kinds, notes), `src/views/DashboardView.jsx`, icons in `src/components/ui.jsx`, English and Tagalog in `src/i18n/accountActivity.js`.
+- Tests: new `server/lib/accountActivity.test.js`; new cases in `logs`, `passwords`, `avatar`, `preferences`, `contentRevision` and `enforcement` route tests, `src/lib/activityView.test.js` and `tests/i18n-ui.test.jsx`. The logs test cap check now expects 50 (its fixture has more rows and dates that rise with the id, as real ones do).
+
+---
+
+### v1.70.0 — Failed Sign-ins, Remembered Devices, Account Management, and the Admin's View of Everyone
+**Date:** November 8, 2026
+
+- **Failed sign-ins** are recorded on the account they were for: a wrong password, or a disabled account (also from a remembered device). An unknown email has no account to record it on. What the person signing in is told is unchanged. Never the password typed.
+- **"Remember me" sign-ins**: a session restored from a remembered device is recorded as a sign-in "on a remembered device".
+- **The Admin's management of accounts** is recorded on the Admin, naming the account: registering an account (with its role), sending new sign-in details (only when the email went out), disabling and enabling (only when it changed), removing an account, and changing a faculty member's assignments (only when they changed, with the number of subjects).
+- **The Admin's view of everyone**: the Recent Activity card has a selector, for the Admin only, with "My activity", "Everyone", or one person (up to 100 entries, newest first). `GET /api/logs?scope=all[&userId=]` refuses anyone else (403). Everyone else still sees only their own.
+- `lib/accountStatus.js` `setDisabled` also says whether it changed anything (kept out of the response). No database change: the actions are new values in the existing `account_activity.action` column.
+- Removing an account also removes that account's own activity rows (`account_activity.user_id ON DELETE CASCADE`). The Admin's line recording the removal stays.
+- Tests: new cases in `server/lib/accountActivity.test.js` (remembered device), `logs`, `passwords`, `account-status`, `approved-records` and `assignments` route tests, `src/lib/activityView.test.js` and `tests/i18n-ui.test.jsx`. The two v1.69.0 tests that said a failed sign-in records nothing, and that listed the actions, now expect the new rules.
+
+---
+
+### v1.70.1 — Recent Activity Is Now the Audit Log
+**Date:** November 8, 2026
+
+- The Dashboard card titled "Recent Activity" is now **Audit Log** (Tagalog: "Talaan ng Audit"), for every role. What it shows is unchanged.
+- `src/views/DashboardView.jsx` uses the new key `accountActivity.title` (`src/i18n/accountActivity.js`). The old `ui.recent_activity_8aebf3` string is left in place, unused. `tests/i18n-ui.test.jsx` now checks the new title and that the old one is gone.
+
+---
+
+### v1.71.0 — The AI & Notifications Switches Now Work
+**Date:** November 8, 2026
+
+Before this version the three switches on Settings > AI & Notifications were saved but mostly did nothing: AI Compliance Checking and Strict Format Validation were read nowhere, and Email Notifications controlled only the deadline reminder emails.
+
+- **Strict Format Validation** ON: faculty complete builder steps 1–7 in order (step N before N+1), as before. OFF: faculty open any step; what is still missing stays listed ("Complete before submitting:") and a note says the steps are open. Submitting still needs every step complete either way (the Submit button and the server's submit checks are unchanged). The Admin is never held to the order. Until the setting is read, or if it cannot be read, the strict order applies.
+- **AI Compliance Checking** OFF: an AI check runs the coded format rules and score only, with no AI provider request; the result says "AI compliance checking is turned off in Settings…". "Check and improve a recommendation" (an AI request) is refused (409 `ai_checking_off`). The AI Checker and the builder's Review step show a note. If the server requires an AI check before submit or approval (`SYLLABUS_CHECK_AI_GATE=required`), that requirement is lifted while AI is off, since no AI check can be made; the coded hard gates always apply. ON: as configured.
+- **Email Notifications** ON: besides the deadline reminders, the faculty member is emailed when their syllabus is approved, returned for revision or rejected (sent in the background; a mail problem never affects the decision). OFF: no emails. The in-app notifications are sent either way.
+- New `GET /api/settings/policy` (any signed-in person) returns only the three switches. The Settings page describes what each switch does.
+- New `server/lib/adminSettings.js`, `server/lib/decisionEmail.js`, `src/lib/adminPolicy.js`, `src/lib/stepGate.js`, `src/i18n/adminPolicy.js` (English and Tagalog). Changed: `server/routes/settings.js`, `compliance.js`, `syllabusCheck.js`, `syllabi.js`, `syllabusContent.js`, `server/lib/compliance/service.js` (`requireHybrid` `aiOff`), `server/lib/syllabuscheck/gemini.js` (the reason text only), `src/views/builder2/index.jsx`, `src/views/AIChecker.jsx`, `src/components/AdministrativeSettings.jsx`, `src/lib/api.js`. No database change.
+- Tests: new `server/lib/adminSettings.test.js` (including that no request is sent with AI off), `server/lib/decisionEmail.test.js` and `src/lib/stepGate.test.js`; new cases in the compliance, refine, preferences (settings) and stages route tests. A fake mail transport only: no real email was sent.
+
+---
+
+### v1.71.1 — The Admin Checks Their Own Syllabi in the AI Checker
+**Date:** November 8, 2026
+
+- The Admin's AI Checker has a new **Check my syllabus** card above the list of submissions. It lists the Admin's own drafts and their syllabi returned for revision or rejected (not archived). **Check my syllabus** sends the chosen one to the AI Checker exactly as the builder's "Continue to check" does (a saved version, status Under Review; an incomplete form is refused with what is missing), runs the check and opens the result, where the Admin sends it for review. **Open in builder** opens it for editing. Before this the Admin could only reach the check from the builder.
+- Only the Admin gets the card (the Asst. VPAA, LIC Director and VPAA do not write syllabi). No server or database change: it uses the existing prepare-check, check and send-for-review routes.
+- New `src/components/OwnSyllabusPicker.jsx`, `src/i18n/ownCheck.js` (English and Tagalog); `src/views/AIChecker.jsx`, `src/App.jsx` (`onChanged` refreshes the list). New case in `tests/i18n-ui.test.jsx`.
+
+---
+
+### v1.71.2 — The Admin's Own Syllabus Reaches the Other Reviewers Only When Sent for Review
+**Date:** November 8, 2026
+
+- When the Admin (the dean) checks their own syllabus ("Continue to check" in the builder, or "Check my syllabus" in the AI Checker) it becomes Under Review. Until now the Asst. VPAA and the LIC Director could already see it then, check it and clear their stage, before the Admin sent it. Now it stays with the Admin until they press **Send for review**.
+- Send for review (unchanged) clears the dean stage automatically, with the Admin as its author, and notifies the Asst. VPAA and the LIC Director, who review in any order. The VPAA gets it once all three stages are cleared, then approves.
+- Before it is sent, other reviewers (Asst. VPAA, LIC Director, VPAA, any other administrator) do not see it in Review & Approval, the Dashboard, the AI Checker queue or its history. They also cannot check it, clear a stage on it, choose to review it without AI, or decide it (409 `not_sent_for_review`). A faculty member's syllabus is not affected. A new version the Admin prepares after editing is held back again until sent.
+- `server/lib/reviewStages.js` (`awaitingAuthor`, `hiddenFromReviewers`, `assertSentForReview`), applied in `server/routes/syllabi.js` (list, decisions), `compliance.js` (queue, history, check) and `reviewChain.js` (stage clear, review without AI). No database change. Tests: new cases in `server/lib/reviewStages.test.js`, `stages.routes.test.js` and `compliance.routes.test.js` (including the whole flow: check, hidden, send, notified, visible).
+
+---
+
+### v1.71.3 — AI Checker Spacing and Footer Note
+**Date:** November 8, 2026
+
+- A 20px gap between the Admin's "Check my syllabus" card and the "Choose a syllabus" card, the same as above the check history (`src/styles.css`, `.pick-card + .pick-card`).
+- The always-shown note at the bottom of the AI Checker ("The check supports but does not replace…") is removed, for reviewers and faculty (`src/views/AIChecker.jsx`). The notes that appear only when they apply stay: AI checking turned off, an AI check required by the server, and the VPAA's queue note.
+
+---
+
+### v1.71.4 — Lighter Blue Primary Buttons
+**Date:** November 8, 2026
+
+- Primary buttons (New syllabus, Next, Check, Save, Send for review, …) use a lighter, brighter blue, **#0866ff**, instead of the navy brand blue (#1a2196); hover is a step darker (#0656d6). The white label stays readable (4.8:1, above the 4.5:1 minimum). The assignment screen's navy primary button uses it too.
+- Only the primary buttons change: links, tabs, outline buttons and the sidebar keep the brand blue. New tokens `--btn-primary` and `--btn-primary-hover` in `src/theme.css`; a contrast test in `src/lib/brandTheme.test.js`.
+
+---
+
+### v1.71.5 — White-Grey Selected Item in the Sidebar
+**Date:** November 8, 2026
+
+- The selected sidebar item is no longer navy with white text: it is white-grey (#e4e8ee) with dark text, a step deeper than the hover grey (#eceff2) so the two can be told apart; hovering the selected item deepens it slightly (#dde2e9).
+- Its side marker and icon change from gold to the brand blue, which stays visible on grey (gold would be about 1.8:1).
+- `src/theme.css` (`--side-active`, `--side-active-hover`); a readability test in `src/lib/brandTheme.test.js`.
+
+---
+
+### v1.71.6 — No Side Strip on the Selected Sidebar Item
+**Date:** November 8, 2026
+
+- The colored strip on the left of the selected sidebar item is removed. The selected item is marked by its white-grey background and blue icon (`src/theme.css`; the test in `src/lib/brandTheme.test.js` now checks there is no strip).
+
+---
+
+### v1.71.7 — Grey Secondary Buttons
+**Date:** November 8, 2026
+
+- Outline buttons (white with blue text and a blue border, e.g. Open in builder, Edit draft, Cancel, Export list, ← previous step) now have a light grey fill **#e2e5e9**, **black bold** text and no blue border; hover is a step darker (#d4d8de). The quieter list buttons (`syl-quiet`) use the same grey on hover.
+- Not changed: the solid blue primary buttons, and the deadline list's bell icon button (Remind).
+- `src/theme.css` (`--btn-secondary`, `--btn-secondary-hover`); a test in `src/lib/brandTheme.test.js`.
+
+---
+
+### v1.71.8 — Dashboard Card Labels Keep Their Capitals
+**Date:** November 8, 2026
+
+- The Dashboard's summary cards showed their labels lowercased after the first word ("My submissions", "Pending review", "Under review", "For revision", "AI compliance score"; in Tagalog "Aking mga naipasa", "Mga programa"). They now show the label as written: **My Submissions, Pending Review, Under Review, For Revision, AI Compliance Score**, and in Tagalog **Aking mga Naipasa, Mga Programa, Mga Asignatura**.
+- `src/views/DashboardView.jsx` no longer passes these labels through `sentenceCase` (the helper itself is unchanged). `tests/i18n-ui.test.jsx` now expects the capitals.
+
+---
+
+### v1.72.0 — Program Compliance Counts Approved Subjects
+**Date:** November 8, 2026
+
+- On the Admin's Dashboard (and the Asst. VPAA's, LIC Director's and VPAA's), **Program Compliance** now shows, for each program, how many of its **subjects** have an approved syllabus out of all the subjects the program has in the catalog: "3 of 12 subjects approved", and the bar fills to 100% when every subject has one. An approved syllabus counts whether or not it was checked by AI. Before, the bar was the average AI score (a dash when nothing was AI-checked) and the note counted syllabi ("1 of 1 approved").
+- Every program in the catalog is listed, including one with no approved syllabus yet (0%) or no subjects yet. A subject with several approved syllabi counts once; an archived syllabus does not count. Same academic year as the screen.
+- Faculty keep their own view (their syllabi's AI average and approvals).
+- New `programCoverage` in `src/lib/complianceStats.js` (tested in `complianceStats.test.js`); `src/views/DashboardView.jsx`; English and Tagalog notes in `src/i18n/dashboardStats.js`. No server change.
+
+---
+
+### v1.72.1 — Faculty Program Compliance Follows Their Assigned Subjects
+**Date:** November 8, 2026
+
+- On a faculty member's Dashboard, **Program Compliance** now shows, for each program assigned to them, how many of their **assigned subjects** they have submitted a syllabus for, out of all their assigned subjects in that program: "3 of 5 assigned subjects submitted" (60%), reaching 100% when every assigned subject is submitted. It updates as they submit.
+- Counted: Submitted, Under Review and Approved. Not counted: a draft, or a syllabus returned for revision or rejected (it must be submitted again). A program assigned with no subject yet says so.
+- Before, the faculty bar was the average AI score of their syllabi. The administrator's side is unchanged from v1.72.0 (subjects with an approved syllabus).
+- `src/lib/complianceStats.js` (`programCoverage` takes the statuses to count; `FACULTY_SUBMITTED`), `src/views/DashboardView.jsx` (faculty read their assigned programs and subjects; the unused AI-average program list is removed), English and Tagalog in `src/i18n/dashboardStats.js`, a test in `complianceStats.test.js`. No server change.
+
+---
+
+### v1.72.2 — The Compliance Tab Follows Each Faculty Member's Assigned Subjects
+**Date:** November 8, 2026
+
+- The Admin's **Compliance** tab measured every faculty member against a fixed "2 required" syllabi. It now measures each one against **the subjects the Admin assigned to them** for the academic year on screen, so it can be used as PACUCOA evidence: "3 of 5 assigned subjects submitted", the bar to 100% when all are submitted, how many are approved, the programs, and **what is still missing by subject code** (a syllabus returned for revision or rejected is named with its status).
+- **Compliant** only when every assigned subject is submitted (Submitted, Under Review or Approved). A faculty member with nothing assigned this year shows "No subjects assigned" and is listed last. Every active faculty account is shown, not only those who already submitted something. Disabled accounts are left out.
+- Reads the faculty accounts, who holds each subject (`GET /api/users/subject-holders`) and the year's subjects; no server change. New `src/lib/facultyCompliance.js` (+ tests), `src/i18n/facultyCompliance.js` (English and Tagalog); `src/views/Compliance.jsx` rewritten. The existing photo test in `tests/i18n-ui.test.jsx` now passes the faculty accounts, and a new test checks the assigned-subject numbers.
+- Not yet changed: the **Reports** page's Faculty Compliance Report still uses the fixed "2 required".
+
+---
+
+### v1.72.3 — AI Quality Snapshot Shows the Final Score and Where It Was Lost
+**Date:** November 8, 2026
+
+- The Dashboard's **AI Quality Snapshot** now shows the **final AI check score** on top: the coded rules' score minus the AI check's deductions, averaged over the latest check of each syllabus.
+- The four rings (Format, Content Completeness, CO–PO Alignment, Assessment Alignment) now show each area **after the AI deductions**, and the **lowest one is marked in red and named** ("Lowest: CO–PO Alignment at 70%"). Before, the rings showed only the rules' area scores, which could all read 100% while the AI had taken points off the final score.
+- Each AI deduction is charged to the area it is about: CLO, ILO and outcome alignment to CO–PO; activities, tasks and assessment to Assessment; broken reference links to Reference Currency; a missing core value to Completeness. An area loses its share of the points by its weight, so the weighted areas add back up to the final score. Display only: the official score and the stored area scores are unchanged.
+- New `server/lib/compliance/finalAreas.js` (+ tests); `GET /api/compliance` adds each run's `areasFinal` and each summary area's `final` (the deductions are read from the stored reports with JSON_EXTRACT); `snapshotOf` in `src/lib/complianceStats.js` (+ test); `src/views/DashboardView.jsx`, `QualityMini` `low`, styles in `src/theme.css`, English and Tagalog in `src/i18n/dashboardStats.js`. No database change.
+
+---
+
+### v1.72.4 — A Cleaner AI Quality Snapshot
+**Date:** November 8, 2026
+
+- The note beside the final AI check score is removed; its meaning is now the score's tooltip. The final score is centered above the rings.
+- The four rings are centered in one row.
+- The two small notes under the rings ("Lowest: … at …%" and the explanation) are removed. The lowest area is still marked: its ring is red, and its tooltip says "Lowest: … at …%".
+- `src/views/DashboardView.jsx`, `QualityMini` `title`, `src/theme.css` (`.quality-row`, `.snap-final` centered); the two unused texts removed from `src/i18n/dashboardStats.js`; the UI test updated.
+
+---
+
+### v1.72.5 — AI Quality Snapshot: Rings Only
+**Date:** November 8, 2026
+
+- The final AI check score line above the rings is removed. The card shows only the four rings, centered, each area after the AI deductions, with the lowest in red (its tooltip names it).
+- `src/views/DashboardView.jsx`, `src/theme.css` (`.snap-final` removed), the unused text removed from `src/i18n/dashboardStats.js`, the UI test updated.
+
+---
+
+### v1.72.6 — AI Quality Snapshot Rings Centered
+**Date:** November 8, 2026
+
+- The four rings sit in the middle of the card (vertically and horizontally) instead of at its top, in four equal columns with each ring and its label centered (`src/theme.css`).
+
+---
+
+### v1.73.0 — Deadlines and Assignments for the Admin
+**Date:** November 8, 2026
+
+- **The Admin can be assigned subjects**, like faculty (Users & Roles → Assignments on an Admin row). The rule stays: one person per subject. Assigning a subject to the Admin archives other faculty members' syllabi for it, as with faculty; the Admin's own syllabi are never archived. An assignment never restricts the Admin: they can still write any subject. The Asst. VPAA, LIC Director and VPAA are still not assignable (they do not write syllabi).
+- **Deadlines count the Admin**: a subject's deadline now applies to whoever the subject is assigned to (faculty or the Admin), and also to an **Admin who is writing a syllabus for it** without having it assigned. They appear in the deadline's progress, get its notices and reminders (and emails while Email notifications is on), and can show as failed to submit.
+- **For the Admin, "submitted" means sent for review** (the first "submit" in their syllabus log), not a saved version: checking their own syllabus in the AI Checker saves a version before they send it. Faculty are counted as before.
+- **The Admin's Upcoming Deadlines card** now shows **My deadlines** (their own, with their own status; a row opens My Syllabi) above **All faculty deadlines** (the overview, as before).
+- **The Compliance tab** also lists an Admin who has been assigned subjects.
+- Server: `server/lib/deadlines.js` (`peopleOf`, `adminSubmissions`, `mine(..., { admin })`), `GET /api/deadlines/mine` answers the Admin too, `server/routes/users.js` (faculty and admins assignable). Client: `UpcomingDeadlines.jsx`, `UsersRoles.jsx`, `Compliance.jsx`, `DashboardView.jsx`; texts in `src/i18n/extra.js`; styles in `src/theme.css`. No database change.
+- Tests: a new Admin case in `server/lib/deadlines.test.js` (assigned, writing, submitted only when sent, their own list); the test fake answers the new queries. Two tests that encoded the old rules now expect the new ones: `/mine` returns the Admin's own deadlines (still never another person's), and an Admin can be assigned (a reviewer target is still 400).
+
+---
+
+### v1.73.1 — Set Deadline Uses the Subject's Own Term
+**Date:** November 8, 2026
+
+- The Set deadline dialog no longer asks for the **school year** and **semester**. A subject's academic year and semester are set when it is added and cannot be changed afterwards, so the deadline is for that term: the dialog shows it read-only ("Term: 2026-2027 · 1st Semester (from the subject)").
+- Editing an existing deadline keeps its own term. "New term" is no longer offered once the subject's term already has a deadline (a second one for the same term is refused anyway).
+- An older subject that has no academic year or semester still shows the two pickers, so a deadline can still be set for it.
+- `src/components/DeadlineDialog.jsx` (`subjectTermOf`), the text in `src/i18n/extra.js`, a style in `src/theme.css`, a test in `tests/i18n-ui.test.jsx`. No server change.
+
+---
+
+### v1.73.2 — One Remind Button in the Deadline Dialog
+**Date:** November 8, 2026
+
+- The small bell button on each person's row in the deadline's Faculty progress list is removed, since it repeated the **Remind all** button above the list. Remind all still reminds everyone who has not submitted (notification and email), and each row still says when that person was last reminded.
+- `src/components/DeadlineDialog.jsx`; `src/theme.css` (the list has two columns, the unused `.dl-remind` styles removed); the two tests that checked the per-person button now check that it is gone.
+
+---
+
+### v1.73.3 — The Pre-requisite Is Optional When Adding a Subject
+**Date:** November 8, 2026
+
+- On the Admin's **Add Subject** form (and the subject's edit dialog) the **Pre-requisite** is now optional, marked "(optional)": many subjects have none. The academic year, semester and year level are still required. Before, a pre-requisite had to be typed ("None").
+- A subject saved without one stores nothing; the subject list shows **None** in its pre-requisite column, and a syllabus for it shows **None** in step 1, locked for faculty like the other values the Admin sets (so faculty are never stuck on an empty pre-requisite). The curriculum check does not warn about an empty pre-requisite.
+- `server/lib/subjectTerm.js` (`parseTerm` optional pre-requisite, `applyTerm` "None"), `src/lib/subjectTerm.js` (`termComplete`, `lockedFields`), `src/lib/syllabusModel.js` (`applyCourse`), `src/components/SubjectTermFields.jsx`, `src/views/CourseOutcomes.jsx`, texts in `src/i18n/extra.js`. New `server/lib/subjectTerm.test.js`; the client and route tests that required a pre-requisite now expect it to be optional. No database change.
+
+---
+
+### v1.73.4 — Users Listed by Role
+**Date:** November 8, 2026
+
+- **Users & Roles** lists people by role, in a fixed order: **VPAA, Asst. VPAA, LIC Director, Admin, Faculty**, then by last and first name. Before, they were listed newest account first, with the roles mixed.
+- The Role choice in the Add User form follows the same order (Faculty is still preselected).
+- `ROLE_ORDER` and `byRoleOrder` in `src/lib/roles.js` (+ a test in `roles.test.js`); `src/views/UsersRoles.jsx`. No server change.
+
+---
+
+### v1.73.5 — Blue Stat Icons on the Dashboard
+**Date:** November 8, 2026
+
+- The icons on the Dashboard's summary cards use the same blue as the primary buttons such as **New syllabus** (#0866ff), with a white icon, instead of the navy gradient (`src/theme.css`; a test in `src/lib/brandTheme.test.js`).
+
+---
+
+### v1.73.6 — Sidebar: Grey at Rest, Blue Icon on Hover and Selected
+**Date:** November 8, 2026
+
+- Sidebar items at rest now have a **grey** label and icon (#6b7280, the lightest grey that stays readable on the near-white sidebar: 4.6:1; a lighter "white-grey" would be about 1.7:1 and hard to read).
+- **Hovered or selected**, the label is dark and the **icon turns the primary blue** (#0866ff), the same blue as the Dashboard's stat icons and the New syllabus button. The white-grey hover and selected backgrounds are unchanged.
+- `src/theme.css`; the sidebar test in `src/lib/brandTheme.test.js` now checks the grey label and the blue icon.
+
+---
+
+### v1.73.7 — Sidebar: Only the Icon Is Grey at Rest
+**Date:** November 8, 2026
+
+- Correction to v1.73.6: the sidebar **labels stay dark** at all times. Only the **icon** is grey at rest: a light grey (#8b919c, the lightest that stays visible on the near-white sidebar at 3:1, which the collapsed sidebar needs since it shows only icons). Hovered or selected, the icon is the primary blue (#0866ff), as before.
+- `src/theme.css` (`--side-icon`); the sidebar test in `src/lib/brandTheme.test.js` checks the dark label and the grey icon.
+
+---
+
+### v1.74.0 — Program Compliance Over Time (View Analytics)
+**Date:** November 8, 2026
+
+- On the Dashboard's **Program Compliance** card, **View analytics** is now a button for the Admin (and the Asst. VPAA, LIC Director and VPAA). It opens **Program compliance over time**: a modal that starts with the definition ("Program compliance for syllabus analytics refers to the automated, data-driven process of evaluating university syllabi to ensure they adhere to institutional policies, governmental mandates, and accreditation standards.") and shows a **trend line per program**: the share of the program's subjects with an approved syllabus (AI check or not), week by week up to today, for the academic year on screen.
+- The chart: a line per program in a fixed colour (the reference palette, validated for colour-blind separation), a legend, the current value at each line end, a crosshair with each program's value on hover (or with the left and right arrow keys), and a **Table** view with each program's approved subjects out of its subjects (programs with no subjects listed too). Up to eight lines; more programs are in the table.
+- New `GET /api/compliance/program-approvals` (reviewers only): when each subject's approved syllabus was first approved (its approval log; its last change when an older one has none), for the academic year asked for.
+- New `src/lib/programTrend.js` (+ tests), `src/components/ProgramTrendModal.jsx` (`TrendChart`, `TrendTable`), `src/i18n/programTrend.js` (English and Tagalog), styles in `src/theme.css`; `src/views/DashboardView.jsx`, `src/lib/api.js`, `server/routes/compliance.js`. Tests: `programTrend.test.js`, a route test in `compliance.routes.test.js`, a UI test in `tests/i18n-ui.test.jsx`. Faculty keep their card unchanged. No database change.
+
+---
+
+### v1.74.1 — A Larger Program Compliance Modal
+**Date:** November 8, 2026
+
+- The Program compliance over time modal is now large: up to 1080px wide (it still fits smaller screens), and the chart is drawn for that room (a wider, taller plot with the text kept at its size) (`src/theme.css`, `src/components/ProgramTrendModal.jsx`).
+
+---
+
+### v1.75.0 — A Professional Program Compliance Trend: Daily, Weekly, Monthly
+**Date:** November 8, 2026
+
+- The Program compliance over time modal now reads **by day, week or month** (Daily / Weekly / Monthly). By day the lines are step lines that rise on the day a subject's syllabus is approved; by month there is a point at the end of each month (Philippine time) and today.
+- **Summary tiles** above the chart: overall compliance across all programs with its change over the period ("▲ +18 pts since Sep 2", in words and with an arrow, not colour alone), approved subjects ("14 / 36"), and programs fully compliant (every subject approved).
+- **A cleaner chart**: a white chart panel, recessive gridlines with a firmer baseline, value labels at the line ends with the value in bold, and pill-shaped legend entries that **hide or show** a program on click and **highlight** it on hover (its line thickens with a soft fill, the others fade). The **tooltip** lists the programs sorted by value with "approved / total" for each. The colours are unchanged: the validated reference palette, each program keeping its colour.
+- The **table** shows a key colour, a progress bar and the percentage for each program.
+- `src/lib/programTrend.js` (granularity, overall), `src/components/ProgramTrendModal.jsx` (`TrendSummary`, `TrendChart`, `TrendTable`), `src/i18n/programTrend.js` (English and Tagalog), styles in `src/theme.css`. Tests: day, month and overall cases in `programTrend.test.js`; summary and day/month views in `tests/i18n-ui.test.jsx`. Checked in headless Chrome: each view, the legend highlight, the tooltip and the table. No server or database change.
+
+---
+
+### v1.75.1 — Time Usage Bars in the Button Blue
+**Date:** November 8, 2026
+
+- The Dashboard's **Time Usage** bars use the same blue as the primary buttons such as **New syllabus** (#0866ff) instead of the navy blue; today's bar stays gold so it still stands out (`src/theme.css`; the theme test checks the new colour).
+
+---
+
+### v1.75.2 — Builder Steps in the Button Blue
+**Date:** November 8, 2026
+
+- The selected step (1-7) in the Syllabus Builder no longer uses the navy blue: its number badge is the primary button blue (#0866ff, like **New syllabus**) with a white number, its label the darker shade of that blue (#0656d6), on a light blue tint (#e8f0ff). The button blue itself is too light for small text on a tint, so the label uses its darker shade (5.5:1). Done, attention and locked steps keep their marks.
+- `src/theme.css` (`--btn-primary-tint`); a readability test in `src/lib/brandTheme.test.js`.
+
+---
+
+### v1.75.3 — Time Usage Range Buttons in the Button Blue
+**Date:** November 9, 2026
+
+- The selected range button on the Dashboard's **Time Usage** card now uses the primary button blue (#0866ff, like **New syllabus**) instead of the navy blue, and the hover highlight on each day uses the same blue (`src/theme.css`). No server or database change.
+
+---
+
+### v1.75.4 — AI Quality Snapshot Rings in the Button Blue
+**Date:** November 9, 2026
+
+- The Dashboard's **AI Quality Snapshot** rings (Format, Completeness, CO–PO, Assessment) are now the primary button blue (#0866ff, like **New syllabus**) instead of gold. The ring of the lowest area stays red so it still shows where the final score was lost (`src/theme.css`; a check in `src/lib/brandTheme.test.js`). No server or database change.
+
+---
+
+### v1.75.5 — Program & Subjects Renamed to Curriculum
+**Date:** November 9, 2026
+
+- The administrator's **Program & Subjects** tab is now **Curriculum** (Tagalog: **Kurikulum**) in the sidebar, the mobile menu and the page title. The help texts that pointed to the old name (the empty deadlines card, the Assignments panel note, the incomplete-subject message in Learning Outcomes) now say Curriculum.
+- The **+ Add subject** button on that page is now **+ Add Curriculum** (Tagalog: **+ Magdagdag ng Kurikulum**). It still opens the same form.
+- `src/data/initialData.js`, `src/i18n/messages.js`, `src/i18n/extra.js`. The page key and the routes are unchanged. No server or database change.
+
+---
+
+### v1.76.0 — A Specialization Is Checked Against Its Own Curriculum
+**Date:** November 9, 2026
+
+- **The AI Checker now picks the curriculum reference by the syllabus's own program**, separately from where its Program Outcomes come from. Before, a fixed rule for **BSIT–Cyber Security** made the checker ignore Cyber Security's own approved curriculum. It used BSIT's curriculum instead (or none when the BSIT link was missing), so Cyber Security's specialization subjects were reported as not in the curriculum.
+- A BSIT–Cyber Security syllabus now uses **its own approved curriculum** (core and specialization subjects) and **the BSIT Program Outcomes** through the existing inheritance link, with no duplicate POs. Its academic year and its identity as Cyber Security are kept. The report records the curriculum source as Cyber Security and the PO source as BSIT.
+- No program code is singled out for the curriculum any more. Every program, including any future specialization, is matched against its own approved references (and the curriculum year when one is given).
+- Unchanged:
+  - the 47 rules, the 7 VPAA relationships, the scoring and the threshold of 79;
+  - PO inheritance and the rule that Cyber Security cannot keep a separate PO master;
+  - historical reports.
+- `server/lib/syllabuscheck/repository.js` (curriculum selection) and `server/lib/programs.js` (the unused `curriculumSource` marker removed from PO inheritance).
+- Tests:
+  - `server/lib/syllabuscheck/outcome-source.test.js` replaces the test that encoded the old rule, and adds tests for the curriculum year, a made-up second specialization, and recognition of specialization subjects;
+  - the release and rehearsal scripts that asserted the old rule were updated.
+- Proved on an isolated copy of the database with a scripted AI: a Cyber Security specialization subject matched its own reference with the CUR-CODE rule passing, its POs came from BSIT, and a BSIT subject was unchanged. No live database change.
+
+---
+
+### v1.76.1 — No Pre-requisite Means the Same Thing Everywhere
+**Date:** November 9, 2026
+
+- **Root cause of the release integration test failure** (a check on a new program): v1.73.3 made the syllabus show **None** for any subject with a term. Every subject of a catalog year is stamped with that year automatically, so a subject whose term the Admin never set up also got **None**, replacing its real pre-requisite. The curriculum check then reported a mismatch. The application was wrong; the test expectation was right.
+  - Now **None** is shown only for a subject the Admin set up (a semester, year level or pre-requisite entered) without a pre-requisite.
+  - A subject whose term was never set keeps the pre-requisite as typed, as before v1.73.3.
+  - Server: `server/lib/subjectTerm.js` (`setUp`). Client, the same rule: `src/lib/subjectTerm.js` (`subjectSetUp`, `prerequisiteOf`, locking) and `src/lib/syllabusModel.js` (pre-fill).
+  - The builder's Step 1 now also shows **None** for a set-up subject without a pre-requisite, as the server saves it (`InfoStep.jsx`).
+- **Second defect found while checking, which would have hit the catalog rebuild:** the official curriculum references record a blank pre-requisite cell as *"Not specified in the source curriculum (blank prerequisite cell)."* The curriculum check compared pre-requisites exactly, so a subject the Admin added without a pre-requisite (**None**) failed against that sentence with a **blocking** CUR-FIELD finding.
+  - The check now treats the ways of writing "no pre-requisite" as one value: empty, **None**, **N/A**, and the blank-cell sentence (`server/lib/syllabuscheck/prerequisite.js`, used by `engine.js`).
+  - The data is not reinterpreted.
+  - A real pre-requisite is still compared exactly, so genuine mismatches are still found and still block: **None** against **IT 101**, **IT 101** against a blank cell, **IT 101** against **IT 102**.
+- Unchanged: the 47 rules (the CUR-07 rule, its severity and the other curriculum fields, lecture, lab, year level and title, stay as they were), the 7 VPAA relationships, the threshold of 79, the scoring, dynamic program and PO references, the active-year restriction and historical reports.
+- Tests:
+  - new `server/lib/syllabuscheck/prerequisite.test.js` (recognized forms; matches; genuine mismatches still blocking; lecture hours not loosened);
+  - `server/lib/subjectTerm.test.js` and `src/lib/subjectTerm.test.js` (the year stamp alone invents nothing and locks nothing).
+- Results:
+  - the release integration test passes 24 of 24 on an isolated server;
+  - an isolated regression run on a copy of the database passed all its checks: no pre-requisite, a valid one, a mismatch, a new program, BSIT, Cyber Security with BSIT POs, the active-year block, and earlier runs and reports unchanged;
+  - the full suite passes (2,261 tests plus the localization and UI suites) and the build is clean.
+- No live database change, migration, paid AI request or deployment.
+
+---
+
+### v1.76.2 — A Clear Recommendation for a Blank Curriculum Pre-requisite
+**Date:** November 9, 2026
+
+- When a syllabus names a pre-requisite but the approved curriculum's pre-requisite cell is blank, the AI Checker no longer suggests copying the internal placeholder *"Not specified in the source curriculum (blank prerequisite cell)."* into the syllabus. It offers no replacement text and says instead:
+  - no pre-requisite is listed in the approved curriculum, but the syllabus names one;
+  - a blank cell does not prove the subject has none, so verify it against the official curriculum or with the program chair;
+  - if the subject has none, its pre-requisite can be left empty; if it has one, the curriculum reference should be corrected.
+- Unchanged:
+  - the check itself: same result, still blocking, same score;
+  - a real official pre-requisite is still offered as the correction;
+  - no pre-requisite against a blank cell is still valid;
+  - the stored evidence still records the reference exactly as it is.
+- `server/lib/syllabuscheck/prerequisite.js` (`isBlankCell`, `notListedMessage`), `server/lib/syllabuscheck/engine.js` (the pre-requisite check's wording and suggestion), tests in `server/lib/syllabuscheck/prerequisite.test.js`.
+
+---
+
+### v1.77.0 — One Consistent Recommendation per Lesson, and the Faculty's Core Value Kept
+**Date:** November 9, 2026
+
+- **Off-topic lessons (Policy V2 on):** when Policy V2 finds a week's content is not about the course (Course Title ↔ Course Content NOT_ALIGNED), the other rewrites proposed for that week are no longer offered. These are the ILO, activity, assessment, values and content-to-ILO drafts, all written for the current topic, so they would keep it (for example "use Excel formulas to build truth tables").
+  - The lesson's recommendation is the Policy V2 finding: review the week's topic. Its explanation and evidence are unchanged, and a Title ↔ Content rewrite of the topic toward the course is still offered.
+  - Withheld drafts are recorded in the report (`suggestionsWithheld`, reason `off_topic_lesson`).
+  - Partly aligned weeks, other weeks, CLOs and the description are untouched.
+  - Nothing is rewritten automatically.
+  - `server/lib/syllabuscheck/offTopicLessons.js`, applied in `server/lib/compliance/service.js`.
+- **Faculty-selected core values:** a proposed values rewrite that names none of the core values the faculty wrote for that lesson is no longer offered as a replacement. It is held for review (`replaces_core_value`). The verdict says why (`value_replaced`) and asks the faculty member to keep their value and show what students do that expresses it, or to review the choice if it does not fit.
+  - Rewrites that keep the selected value are offered as before.
+  - A lesson with no value yet can still be offered one.
+  - A value that does not fit the lesson is still judged and listed as NOT_ALIGNED.
+  - Deterministic; the prompt is unchanged (its alignment-10 identity is kept).
+  - `server/lib/syllabuscheck/engine.js`, `server/lib/syllabuscheck/verdict.js`, `src/i18n/hybrid.js` (English and Tagalog).
+- **Unchanged:** judgements, findings, deductions, official scores, the 47 rules, the 7 VPAA relationships, the threshold of 79, Policy V2 (advisory, off in production), dynamic programs and references, PO inheritance, the active-year rule, Faculty Review and Adopt, and historical reports.
+- **Tests:**
+  - new `server/lib/syllabuscheck/recommendation-quality.test.js` (6 tests);
+  - updated to the new policy: one assertion in `vpaa-conformance/staging-rehearsal.conformance.test.js` and one expectation (in three places) in `eval/phase3/manifest-phase3-1.json`, for the week 13 Compassion case, now review-required with `value_replaced`;
+  - the generated `docs/faculty-review/phase3` files changed for that one record.
+- **Offline replay of the final real Claude run through this code:**
+  - identical official scores (0 and 69), deductions, seven-relationship coverage and Policy V2 labels;
+  - weak syllabus: suggestions on the off-topic weeks went from 27 to 1 (23 withheld), and value-replacing drafts from 6 to 0 (held for review);
+  - strong syllabus: value-replacing drafts went from 3 to 0, and nothing else changed.
+
+
+---
+
+### v1.78.0 — Whole-Syllabus Coordinated Improvement Plan & Candidate Pre-Validation
+**Date:** November 9, 2026
+
+- **Whole-Syllabus Improvement Plan (Flag: `SYLLABUS_CHECK_COORDINATED_PLAN`, off by default):**
+  - Consolidates all root causes, affected weeks, and pedagogical adjustments into ONE unified, academically coordinated improvement plan after a single "Check with AI" action.
+  - Cross-relationship root-cause analysis: coordinates Course Content, ILOs, Teaching-Learning Activities (TLAs), Assessment Tasks, and CLO mappings so changes never introduce predictable downstream mismatches.
+  - Conflict reconciliation: Policy V2 authoritative suggestions supersede piecemeal legacy drafts, eliminating contradictory replacements for the same path.
+  - Off-topic lesson coordination: replaces entire weekly modules (Content, ILO, TLA, and Assessment) with official curriculum topics, purging off-topic material coherently.
+  - Full CLO mapping coverage: detects unmapped Course Learning Outcomes across all 18 weeks and coordinates mapping restorations.
+- **Institutional Core-Value Immutability:**
+  - Strictly protects faculty-selected LCUP core values against AI substitution drafts; records preserved values in `plan.preservations`.
+- **Pre-Application Candidate Validation:**
+  - Assembles the candidate syllabus in-memory and evaluates it against all 47 deterministic compliance rules and cross-week coverage metrics before faculty apply changes.
+  - Classifies package status honestly as `VERIFIED`, `NEEDS_FACULTY_REVIEW`, `UNRESOLVED`, or `NOT_CHECKED`. Zero fabricated semantic validations.
+- **Atomic Concurrency & Stale-Version Gate:**
+  - Applies approved changes in a single SQL transaction protected by row locks and `sourceHash` verification (`POST /runs/:id/improvement-plan/apply`).
+  - Rejects concurrent edits with HTTP 409 `stale_syllabus_version`. Rejects non-owners with 403. Approved syllabi remain strictly immutable.
+  - Automatically records audit decisions in `syllabus_check_decisions` and logs activity. Never automatically submits or approves a syllabus.
+- **Faculty Interface & Localization:**
+  - Added `CoordinatedPlanPanel.jsx` with root causes breakdown, Original vs. Proposed diff view, validation badge, selective approval checkboxes, and "Apply All Approved Changes" action.
+  - Full English and Tagalog localization in `hybrid.js`.
+- **Unchanged:**
+  - 47 deterministic compliance rules, 7 VPAA relationships, passing threshold 79, official scoring and deductions, dynamic programs and references, PO inheritance, and active-year restrictions.
+- **Tests & Verification:**
+  - `server/lib/syllabuscheck/coordinated-plan.test.js` (11/11 tests passing, verifying Scenarios A through J and feature flag isolation).
+  - `server/routes/syllabusCheck.coordinatedPlan.routes.test.js` (5/5 tests passing, verifying routes, concurrency rejection, and atomic DB application).
+  - Zero real AI API calls, zero cost, and zero live database modifications.
+
+
+---
+
+### v1.78.1 — Controlled Faculty Acceptance Testing & Staging Walkthrough
+**Date:** November 9, 2026
+
+- **Controlled Faculty Acceptance Testing (Isolated Staging):**
+  - Verified Whole-Syllabus Coordinated Recommendation Engine across multi-week synthetic conflicts (Weak ILO, mismatched TLAs, unaligned assessments, and unmapped CLOs).
+  - Passed all 12/12 staging academic acceptance criteria with 0 paid API spend and 0 live database modifications.
+  - Verified atomic cross-field recommendation synthesis: modifying upstream learning outcomes automatically aligns connected activities, assessments, and mappings in ONE plan.
+- **End-to-End Practical Faculty Walkthrough:**
+  - Validated complete 10-step faculty workflow in isolated staging: Check with AI -> Review Coordinated Plan -> Side-by-Side Diff Inspection -> Selective Approval -> Atomic Apply All -> Re-check Conformance.
+  - Confirmed already-correct syllabus components remain untouched, and institutional core values are strictly preserved against replacement.
+  - Rejection and concurrency gates confirmed: stale version edits return HTTP 409, non-owner modifications return HTTP 403, and approved syllabi remain permanently immutable.
+- **Full Offline Regression & Conformance Verification:**
+  - 108/108 offline unit, route, and UI acceptance tests passing (including 6/6 Anthropic model lock, 12/12 OpenRouter legacy, 11/11 Coordinated Engine, 5/5 API routes, 8/8 Coordinated Plan UI, 28/28 VPAA UI, and 38/38 verdict/compliance tests).
+  - Client production build (`npm run build`) passing with zero errors.
+- **Production Safety Status:**
+  - Live settings remain strictly protected (`SYLLABUS_CHECK_AI_PROVIDER=anthropic`, `SYLLABUS_CHECK_COORDINATED_PLAN=off`).
+  - Production database `syllabus_cms_plus` (MySQL 3306) and Syllabus #111 (`approved`) remain untouched and pristine.
