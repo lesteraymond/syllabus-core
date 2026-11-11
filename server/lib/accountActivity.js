@@ -24,13 +24,43 @@ const report = (action, error) => {
 
 const text = (value, max) => { const s = value === null || value === undefined ? '' : String(value).trim(); return s ? s.slice(0, max) : null; };
 
-async function record(db, { userId, action, syllabusId = null, subject = null, notes = null }) {
-  if (!ACTIONS.includes(action) || !Number.isInteger(userId)) return false;
+// Does the table have the columns of db/migrate-audit-retention.js (ip_address, user_agent)? Learnt from the first write, then remembered.
+let auditColumns = null;
+const _resetColumnsProbe = () => { auditColumns = null; }; // tests only
+const OLD_COLUMNS = new Set(['ER_BAD_FIELD_ERROR', 'ER_BAD_NULL_ERROR']);
+
+// request: the Express request, for the address and browser of the line (both optional; cut to fit). userId may be null only for a failed sign-in on an
+// email that is not registered (subject then holds what was typed): there is no account to put it on. Before the migration that line cannot be stored.
+async function record(db, { userId, action, syllabusId = null, subject = null, notes = null, request = null }) {
+  if (!ACTIONS.includes(action)) return false;
+  if (!Number.isInteger(userId) && !(userId === null && action === 'login_failed')) return false;
+  const base = [userId, action, Number.isInteger(syllabusId) ? syllabusId : null, text(subject, 300), text(notes, 500)];
+  const ip = request ? text(request.ip, 45) : null;
+  const agent = request && request.headers ? text(request.headers['user-agent'], 255) : null;
   try {
-    await db.query('INSERT INTO account_activity (user_id, action, syllabus_id, subject, notes) VALUES (?, ?, ?, ?, ?)',
-      [userId, action, Number.isInteger(syllabusId) ? syllabusId : null, text(subject, 300), text(notes, 500)]);
+    if (auditColumns !== false) {
+      try {
+        await db.query('INSERT INTO account_activity (user_id, action, syllabus_id, subject, notes, ip_address, user_agent) VALUES (?, ?, ?, ?, ?, ?, ?)', [...base, ip, agent]);
+        auditColumns = true;
+        return true;
+      } catch (error) {
+        if (!(error && OLD_COLUMNS.has(error.code))) throw error;
+        auditColumns = false; // a table from before db/migrate-audit-retention.js
+      }
+    }
+    if (userId === null) return false; // the old table needs an account on every line
+    await db.query('INSERT INTO account_activity (user_id, action, syllabus_id, subject, notes) VALUES (?, ?, ?, ?, ?)', base);
     return true;
   } catch (error) { report(action, error); return false; }
+}
+
+// Just before an account is deleted: its name is written on its audit rows, which then stay with no account (ON DELETE SET NULL). Best effort: before the
+// migration there is no column for it (and the rows go with the account, as before), and an error here never stops the deletion.
+async function keepAuditName(db, userId, name) {
+  if (!name) return;
+  for (const table of ['submission_logs', 'account_activity']) {
+    try { await db.query(`UPDATE ${table} SET actor = ? WHERE user_id = ? AND actor IS NULL`, [String(name).slice(0, 300), Number(userId)]); } catch { /* not migrated: nothing to keep */ }
+  }
 }
 
 // One "edited" line per editing session: nothing new when the person already has one for this syllabus from the last EDIT_SESSION_MINUTES.
@@ -69,15 +99,15 @@ async function personOf(db, userId) {
 async function listFor(db, userId, limit) {
   try {
     const [rows] = await db.query(
-      `SELECT a.activity_id, a.user_id, a.action, a.syllabus_id, a.subject, a.notes, a.created_at, u.first_name, u.last_name, s.course_code, s.title
-       FROM account_activity a JOIN users u ON u.user_id = a.user_id LEFT JOIN syllabi s ON s.syllabus_id = a.syllabus_id
+      `SELECT a.activity_id, a.user_id, a.action, a.syllabus_id, a.subject, a.notes, a.created_at, u.first_name, u.last_name, s.course_code, s.title, a.*
+       FROM account_activity a LEFT JOIN users u ON u.user_id = a.user_id LEFT JOIN syllabi s ON s.syllabus_id = a.syllabus_id
        ${userId === null ? '' : 'WHERE a.user_id = ? '}ORDER BY a.created_at DESC, a.activity_id DESC LIMIT ${Number(limit)}`, userId === null ? [] : [userId]);
     return rows.map((r) => {
       // the syllabus as it is now; a deleted one (or one with no code yet) by the name recorded at the time
       const [code, ...rest] = String(r.subject || '').split(' — ');
       return {
         id: 'a' + r.activity_id, syllabusId: r.syllabus_id, userId: r.user_id, action: r.action, actionDate: r.created_at, notes: r.notes,
-        user: `${r.first_name} ${r.last_name}`, title: r.title || rest.join(' — ') || null, courseCode: r.course_code || code || null,
+        user: r.first_name || r.last_name ? `${r.first_name} ${r.last_name}` : r.actor || (r.user_id === null ? 'Unknown account' : 'user #' + r.user_id), title: r.title || rest.join(' — ') || null, courseCode: r.course_code || code || null,
       };
     });
   } catch (error) {
@@ -86,4 +116,4 @@ async function listFor(db, userId, limit) {
   }
 }
 
-module.exports = { ACTIONS, EDIT_SESSION_MINUTES, record, recordEdit, subjectOf, subjectLine, personOf, listFor };
+module.exports = { ACTIONS, EDIT_SESSION_MINUTES, record, recordEdit, subjectOf, subjectLine, personOf, listFor, keepAuditName, _resetColumnsProbe };

@@ -61,6 +61,19 @@ async function harness(t, { status = 'draft', aiChecking } = {}) {
   return { call, calls, report, suggestion, original };
 }
 
+test('"Check & improve" is counted per person per day: past the ceiling it is 429 and nothing is sent to the AI', async (t) => {
+  const quota = require('../lib/aiQuota');
+  quota.setAiQuota(quota.createAiQuota({ checksPerUser: 1, checksTotal: 1, refinesPerUser: 1 }));
+  t.after(() => quota.setAiQuota(null));
+  const { call, calls } = await harness(t);
+  assert.equal((await call('faculty')).status, 200);
+  const before = calls.length;
+  const refused = await call('faculty');
+  assert.equal(refused.status, 429);
+  assert.equal(refused.body.code, 'ai_daily_limit');
+  assert.equal(calls.length, before, 'no AI request');
+});
+
 test('the author gets a verified rewrite back, and nothing is saved', async (t) => {
   const { call, calls, suggestion } = await harness(t);
   const before = calls.length;

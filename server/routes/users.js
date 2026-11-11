@@ -4,10 +4,10 @@ const multer = require('multer');
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const { randomUUID } = require('node:crypto');
-const { requireAuth, requireAdmin, toSessionUser } = require('../middleware/auth');
+const { requireAuth, requireAdmin, toSessionUser, endSessionsOf } = require('../middleware/auth');
 const googleProfile = require('../lib/googleProfile');
 const { AVATAR_DIR, avatarRelPath, avatarFile, avatarUrlFor } = require('../lib/avatar');
-const { inTransaction } = require('../lib/http');
+const { inTransaction, SERVER_ERROR } = require('../lib/http'); // SERVER_ERROR: what a client is told about an unexpected failure (the reason is logged)
 const { approvedTiedToAccount, accountRefused, CODE: APPROVED_CODE } = require('../lib/approvedRecords');
 const accountStatus = require('../lib/accountStatus');
 const { createNotification } = require('../lib/notify');
@@ -79,7 +79,7 @@ router.get('/', requireAdmin, async (req, res) => {
     res.json(rows.map((r) => ({ ...toUser(r), disabled: off.has(Number(r.user_id)) })));
   } catch (err) {
     console.error('USERS ERROR:', err);
-    fail(res, 500, err.message);
+    fail(res, 500, SERVER_ERROR);
   }
 });
 
@@ -114,7 +114,7 @@ router.post('/', requireAdmin, async (req, res) => {
     res.status(201).json({ id: result.insertId, email, role, firstName, lastName, emailSent: mail.sent, ...(mail.sent ? {} : { emailReason: mail.reason }) });
   } catch (err) {
     console.error('USERS ERROR:', err);
-    fail(res, 500, err.message);
+    fail(res, 500, SERVER_ERROR);
   }
 });
 
@@ -144,12 +144,13 @@ router.post('/:id/resend-credentials', requireAdmin, async (req, res) => {
       await db.query('UPDATE users SET password_hash = ?, must_change_password = 1 WHERE user_id = ?', [await bcrypt.hash(password, 10), id]);
       await db.query('DELETE FROM password_temp WHERE user_id = ?', [id]).catch(() => {});
       await db.query('DELETE FROM remember_tokens WHERE user_id = ?', [id]);
+      endSessionsOf(id); // the account's open sessions end too: the new password is the only way back in
       await accountActivity.record(db, { userId: req.session.user.id, action: 'user_credentials', subject: await accountActivity.personOf(db, id) }); // only when the password was replaced
     }
     res.json({ id, email: user.email, emailSent: mail.sent, ...(mail.sent ? {} : { emailReason: mail.reason }) });
   } catch (err) {
     console.error('USERS ERROR:', err);
-    fail(res, 500, err.message);
+    fail(res, 500, SERVER_ERROR);
   }
 });
 
@@ -164,7 +165,7 @@ router.get('/me/assignments', requireAuth, async (req, res) => {
     res.json({ unrestricted: false, ...(await assignments.describeAssignments(db, await assignments.loadAssignments(db, me.id))) });
   } catch (err) {
     console.error('ASSIGNMENTS ERROR:', err);
-    fail(res, 500, err.message);
+    fail(res, 500, SERVER_ERROR);
   }
 });
 
@@ -183,7 +184,7 @@ const sendAssignmentsError = (res, err) => {
   if (err.status) return res.status(err.status).json({ message: err.message, error: err.message, ...(err.body || {}) });
   if (err && err.code === 'ER_DUP_ENTRY') return fail(res, 409, 'A subject was just assigned to someone else. Reload and try again; a subject has one faculty member.');
   console.error('ASSIGNMENTS ERROR:', err);
-  return fail(res, 500, err.message);
+  return fail(res, 500, SERVER_ERROR);
 };
 
 // Who holds each subject (one faculty member per subject), so the assignment screen can show it before the admin ticks.
@@ -418,17 +419,18 @@ router.delete('/:id', requireAdmin, async (req, res) => {
     const result = await inTransaction(req.app.locals.db, async (conn) => {
       const approved = await approvedTiedToAccount(conn, req.params.id);
       if (approved.length) throw accountRefused(approved);
+      await accountActivity.keepAuditName(conn, req.params.id, whose); // its review history and activity stay, under this name (ON DELETE SET NULL)
       const [deleted] = await conn.query('DELETE FROM users WHERE user_id = ?', [req.params.id]);
       return deleted;
     });
     if (result.affectedRows === 0) return fail(res, 404, 'User not found');
-    // On the administrator's record: the removed account's own activity goes with it (account_activity.user_id ON DELETE CASCADE), this line stays.
+    // On the administrator's record. The removed account's own activity and review history stay too, with no account (db/migrate-audit-retention.js).
     await accountActivity.record(req.app.locals.db, { userId: req.session.user.id, action: 'user_delete', subject: whose });
     res.json({ message: 'User deleted' });
   } catch (err) {
     if (err.body && err.body.code === APPROVED_CODE) return res.status(err.status).json({ message: err.message, error: err.message, ...err.body });
     console.error('USERS ERROR:', err);
-    fail(res, 500, err.message);
+    fail(res, 500, SERVER_ERROR);
   }
 });
 

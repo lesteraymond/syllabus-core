@@ -15,27 +15,50 @@ const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { inTransaction, httpError, sendError } = require('../lib/http');
 const { pastCourseIds } = require('../lib/academicYear');
 const { PRIVATE_ROOT } = require('../lib/avatar');
-const { readText } = require('../lib/corOcr');
+const { validatePassword } = require('../lib/passwords');
+const corOcr = require('../lib/corOcr');
 const { parseCor } = require('../lib/corParser');
+const { createLimiter } = require('../lib/rateLimit');
 const router = express.Router();
 
 const COR_DIR = path.join(PRIVATE_ROOT, 'cor');
 const SCAN_TTL_MS = 30 * 60 * 1000;
+const NOT_AN_IMAGE = 'Upload a photo of your COR (JPG, PNG or WebP).';
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 10 * 1024 * 1024, files: 1 },
-  fileFilter: (req, file, cb) => (/^image\/(jpeg|png|webp)$/.test(file.mimetype) ? cb(null, true) : cb(httpError(400, 'Upload a photo of your COR (JPG, PNG or WebP).'))),
+  limits: { fileSize: 10 * 1024 * 1024, files: 1, fields: 5 },
+  fileFilter: (req, file, cb) => (/^image\/(jpeg|png|webp)$/.test(file.mimetype) ? cb(null, true) : cb(httpError(400, NOT_AN_IMAGE))),
+});
+// multer's own refusals become a JSON answer that says why (not the generic error of the final handler).
+const onePhoto = (req, res, next) => upload.single('cor')(req, res, (err) => {
+  if (!err) return next();
+  if (err.status) return sendError(res, err);
+  if (err.code === 'LIMIT_FILE_SIZE') return sendError(res, httpError(413, 'That photo is larger than 10 MB.'));
+  return sendError(res, httpError(400, NOT_AN_IMAGE));
 });
 
-// A few scans per address per hour: OCR is slow and this route is open to anyone.
-const hits = new Map();
+// This route is open to anyone and OCR is slow (a few seconds of every core per scan), so it is held back three ways: a few scans per address per hour,
+// only SCAN_CONCURRENCY scans read at the same moment for the whole server, and nothing that is not really an image of a sensible size is read at all.
+const SCANS_PER_HOUR = 15;
+const SCAN_CONCURRENCY = 2;
+const MAX_PIXELS = 40 * 1000 * 1000; // 40 megapixels: more than any phone photo of a page
+const scanLimiter = createLimiter({ max: SCANS_PER_HOUR, windowMs: 60 * 60 * 1000 }); // shared with POST /register; prunes itself (lib/rateLimit.js)
 function rateLimit(req, res, next) {
-  const now = Date.now();
-  const list = (hits.get(req.ip) || []).filter((t) => now - t < 60 * 60 * 1000);
-  if (list.length >= 15) return res.status(429).json({ message: 'Too many attempts. Try again later.', error: 'Too many attempts. Try again later.' });
-  list.push(now);
-  hits.set(req.ip, list);
-  next();
+  const slot = scanLimiter.take('ip:' + req.ip);
+  if (slot.ok) return next();
+  res.set('Retry-After', String(slot.retryAfterSec));
+  return res.status(429).json({ message: 'Too many attempts. Try again later.', error: 'Too many attempts. Try again later.' });
+}
+let scansRunning = 0;
+let readText = corOcr.readText;
+const setReader = (fn) => { readText = fn || corOcr.readText; }; // tests replace the OCR (like mailer.setTransport)
+
+// What the bytes are, from their first bytes: the declared type and the file name are never trusted.
+function imageKind(buf) {
+  if (buf.length >= 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return 'jpeg';
+  if (buf.length >= 8 && buf.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))) return 'png';
+  if (buf.length >= 12 && buf.toString('latin1', 0, 4) === 'RIFF' && buf.toString('latin1', 8, 12) === 'WEBP') return 'webp';
+  return null;
 }
 
 const removeFile = (rel) => (rel ? fs.promises.unlink(path.join(COR_DIR, path.basename(rel))).catch(() => {}) : Promise.resolve());
@@ -46,18 +69,27 @@ const publicScan = (p) => ({
   section: p.section, schoolYear: p.schoolYear, term: p.term, subjects: p.subjects.map((s) => ({ code: s.code, title: s.title })),
 });
 
-router.post('/scan', rateLimit, upload.single('cor'), async (req, res) => {
+router.post('/scan', rateLimit, onePhoto, async (req, res) => {
+  let counted = false;
   try {
     if (!req.file) throw httpError(400, 'Choose a photo of your COR.');
+    if (!imageKind(req.file.buffer)) throw httpError(400, NOT_AN_IMAGE);
+    let meta;
+    try { meta = await sharp(req.file.buffer, { limitInputPixels: false }).metadata(); } catch { throw httpError(400, NOT_AN_IMAGE); } // the header only: no pixels are decoded
+    if (!meta.width || !meta.height) throw httpError(400, NOT_AN_IMAGE);
+    if (meta.width * meta.height > MAX_PIXELS) throw httpError(413, 'That photo is too large. Take it again with your phone camera at its normal size.');
+    if (scansRunning >= SCAN_CONCURRENCY) { res.set('Retry-After', '10'); throw httpError(503, 'Other photos are being read right now. Try again in a few seconds.', { code: 'scanner_busy' }); }
+    scansRunning += 1; counted = true;
     const parsed = parseCor(await readText(req.file.buffer));
     if (!parsed.studentId) throw httpError(422, 'We could not read the student ID on your COR. Retake the photo: full page, flat, in good light.');
     await fs.promises.mkdir(COR_DIR, { recursive: true });
     const file = `${crypto.randomBytes(12).toString('hex')}.jpg`;
-    await sharp(req.file.buffer).rotate().resize({ width: 2000, withoutEnlargement: true }).jpeg({ quality: 82 }).toFile(path.join(COR_DIR, file));
+    await sharp(req.file.buffer, { limitInputPixels: MAX_PIXELS }).rotate().resize({ width: 2000, withoutEnlargement: true }).jpeg({ quality: 82 }).toFile(path.join(COR_DIR, file));
     if (req.session.corScan) await removeFile(req.session.corScan.file);
     req.session.corScan = { file, parsed, at: Date.now() };
     res.json(publicScan(parsed));
   } catch (err) { sendError(res, err); }
+  finally { if (counted) scansRunning -= 1; }
 });
 
 // Courses of the catalog that a COR subject matches: by code (spaces and case ignored), else by exact title.
@@ -75,7 +107,8 @@ router.post('/register', rateLimit, async (req, res) => {
   const db = req.app.locals.db;
   try {
     const password = String(req.body.password || '');
-    if (password.length < 8) throw httpError(400, 'Use a password of at least 8 characters.');
+    const problem = validatePassword(password); // the one rule for a password a person chooses (lib/passwords.js): 8 to 72 characters, a letter and a number
+    if (problem) throw httpError(400, problem);
     const scan = req.session.corScan;
     if (!scan || Date.now() - scan.at > SCAN_TTL_MS) throw httpError(400, 'Scan your COR again to continue.');
     const p = scan.parsed;
@@ -159,3 +192,7 @@ router.post('/:id/verify', requireAdmin, async (req, res) => {
 });
 
 module.exports = router;
+module.exports.scanLimiter = scanLimiter;
+module.exports.setReader = setReader;
+module.exports.SCAN_CONCURRENCY = SCAN_CONCURRENCY;
+module.exports.SCANS_PER_HOUR = SCANS_PER_HOUR;

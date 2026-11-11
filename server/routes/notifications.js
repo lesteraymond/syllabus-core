@@ -1,4 +1,5 @@
 const express = require('express');
+const { serverError } = require('../lib/http'); // an unexpected failure: logged here, answered generically
 const { requireAuth } = require('../middleware/auth');
 const router = express.Router();
 
@@ -15,7 +16,7 @@ router.get('/', requireAuth, async (req, res) => {
     const [[{ n }]] = await db.query('SELECT COUNT(*) AS n FROM notifications WHERE user_id = ? AND is_read = 0', [me]);
     res.json({ notifications: rows.map(toNotification), unreadCount: n });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    serverError(res, err, 'NOTIFICATIONS ERROR:');
   }
 });
 
@@ -29,7 +30,7 @@ router.get('/summary', requireAuth, async (req, res) => {
     const [[l]] = await db.query('SELECT MAX(created_at) AS latest FROM messages WHERE sender_id = ? OR receiver_id = ?', [me, me]);
     res.json({ unreadMessages: m.n, unreadNotifications: n.n, latestMessageAt: l.latest ? new Date(l.latest).toISOString() : null });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    serverError(res, err, 'NOTIFICATIONS ERROR:');
   }
 });
 
@@ -38,7 +39,7 @@ router.put('/read-all', requireAuth, async (req, res) => {
     await req.app.locals.db.query('UPDATE notifications SET is_read = 1 WHERE user_id = ? AND is_read = 0', [req.session.user.id]);
     res.json({ message: 'Notifications marked as read' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    serverError(res, err, 'NOTIFICATIONS ERROR:');
   }
 });
 
@@ -49,7 +50,7 @@ router.put('/:id/read', requireAuth, async (req, res) => {
     if (result.affectedRows === 0) return res.status(404).json({ error: 'Notification not found' });
     res.json({ message: 'Notification marked as read' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    serverError(res, err, 'NOTIFICATIONS ERROR:');
   }
 });
 

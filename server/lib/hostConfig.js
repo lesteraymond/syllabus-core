@@ -18,6 +18,7 @@
 //                             loopback | linklocal | uniquelocal. Required in staging and production: this server speaks plain HTTP, so Secure cookies and the
 //                             request protocol depend on the proxy's X-Forwarded-Proto. "true" is refused (it trusts a forgeable header).
 const { hardened } = require('./sessionSecret');
+const { SERVER_ERROR } = require('./http');
 
 const LOOPBACK = new Set(['localhost', '127.0.0.1', '[::1]']);
 const DEV_DEFAULT_ORIGINS = Object.freeze(['http://localhost:5173']); // exactly what this server allowed before this module existed
@@ -94,15 +95,57 @@ function originGuard(config) {
   };
 }
 
-// Order matters and is the same everywhere: proxy trust first (so req.protocol and Secure cookies are right), then CORS, then the guard, before the session
-// and the body parsers run. index.js and the tests both call this one function.
+// Headers on every answer of this server (it answers JSON, a profile photo or an uploaded PDF; the application's own pages are served elsewhere, and their
+// Content-Security-Policy belongs to whatever serves them). Nothing here may be framed, sniffed or used as a document's source; a browser that has seen the
+// server over HTTPS keeps using HTTPS (staging and production only: development is plain http on localhost). API answers are never stored by the browser;
+// a route that wants its own caching (the profile photo) sets it after this.
+const HSTS = 'max-age=15552000; includeSubDomains'; // 180 days
+function securityHeaders(config) {
+  return function setSecurityHeaders(req, res, next) {
+    res.set({
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'DENY',
+      'Referrer-Policy': 'no-referrer',
+      'Content-Security-Policy': "default-src 'none'; frame-ancestors 'none'",
+      'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=()',
+    });
+    if (config.strict) res.set('Strict-Transport-Security', HSTS);
+    if (/^\/api(\/|$)/.test(req.path)) res.set('Cache-Control', 'no-store');
+    next();
+  };
+}
+
+// The largest JSON body the server reads: a full syllabus save is at most 512 KB of content (routes/syllabusContent.js MAX_CONTENT_BYTES) plus its wrapper.
+const JSON_BODY_LIMIT = '700kb';
+
+// Order matters and is the same everywhere: proxy trust first (so req.protocol and Secure cookies are right), the headers, then CORS, then the guard, before
+// the session and the body parsers run. index.js and the tests both call this one function.
 function applyHostSecurity(app, config) {
   const cors = require('cors');
+  app.disable('x-powered-by');
   if (config.trustProxy !== undefined) app.set('trust proxy', config.trustProxy);
+  app.use(securityHeaders(config));
   app.use(cors(corsOptions(config)));
   app.use(originGuard(config));
   return config;
 }
+
+// The last thing mounted, after every route: what is answered when no route matched, and when a route or a middleware failed. Always short JSON for the API,
+// in every mode: never Express's own error page, which prints the stack trace and file paths unless NODE_ENV is exactly "production".
+function applyErrorHandling(app) {
+  app.use('/api', (req, res) => res.status(404).json({ error: 'Not found' }));
+  app.use((req, res) => res.sendStatus(404));
+  // eslint-disable-next-line no-unused-vars
+  app.use((err, req, res, next) => {
+    if (res.headersSent) return next(err);
+    if (err && err.type === 'entity.parse.failed') return res.status(400).json({ error: 'The request body is not valid JSON.', code: 'invalid_json' });
+    if (err && err.type === 'entity.too.large') return res.status(413).json({ error: 'The request is too large.', code: 'request_too_large' });
+    const status = err && Number.isInteger(err.status) && err.status >= 400 && err.status < 500 ? err.status : 500;
+    if (status !== 500) return res.status(status).json({ error: 'The request could not be processed.', code: 'bad_request' });
+    console.error('SERVER ERROR: ' + req.method + ' ' + req.path, err); // the detail stays here
+    return res.status(500).json({ error: SERVER_ERROR, code: 'server_error' });
+  });
+}
 const sessionOptions = (secret, config) => ({ secret, resave: false, saveUninitialized: false, cookie: config.sessionCookie });
 
-module.exports = { resolveHostConfig, cookieSettingsOf, parseOrigins, parseTrustProxy, corsOptions, originGuard, applyHostSecurity, sessionOptions, DEV_DEFAULT_ORIGINS, LOOPBACK };
+module.exports = { resolveHostConfig, cookieSettingsOf, parseOrigins, parseTrustProxy, corsOptions, originGuard, securityHeaders, applyHostSecurity, applyErrorHandling, sessionOptions, JSON_BODY_LIMIT, DEV_DEFAULT_ORIGINS, LOOPBACK };

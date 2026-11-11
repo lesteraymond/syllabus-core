@@ -10,7 +10,7 @@ const { canView, canEdit, isOwner, lockedMessage } = require('../lib/syllabusRul
 const { providerConfig, promptVersionOf } = require('../lib/syllabuscheck/gemini');
 const refine = require('../lib/syllabuscheck/refine');
 const { createVerificationToken, verifyVerificationToken, getValue, relatedContextHash } = refine;
-const { createLimiter } = require('../lib/rateLimit');
+const { createLimiter } = require('../lib/rateLimit'); const { aiQuota, MESSAGES: AI_LIMIT } = require('../lib/aiQuota'); // the daily ceilings on AI requests
 const { aiGate } = require('../lib/syllabuscheck/policy');
 const activity = require('../lib/activity');
 const router = express.Router();
@@ -192,6 +192,7 @@ router.post('/runs/:id/suggestions/:suggestionId/refine', wrap(async (req, res) 
   if (refining.has(req.app)) throw httpError(409, 'Another recommendation is being checked. Try again in a moment.');
   const slot = refineLimiter.take(String(me.id));
   if (!slot.ok) { res.set('Retry-After', String(slot.retryAfterSec)); throw httpError(429, 'You are checking recommendations too often. Try again in ' + slot.retryAfterSec + ' seconds.'); }
+  const quota = aiQuota().take('refine', me.id); if (!quota.ok) { res.set('Retry-After', String(quota.retryAfterSec)); throw httpError(429, AI_LIMIT[quota.reason], { code: 'ai_daily_limit', scope: quota.reason }); } // a paid request: counted for today (lib/aiQuota.js)
   refining.add(req.app);
   try {
     const masters = await repo.mastersFor(req.app.locals.db, content, {syllabusId:syllabus.syllabus_id});

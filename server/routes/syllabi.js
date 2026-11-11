@@ -8,6 +8,7 @@ const { createNotification, notifyRoles } = require('../lib/notify');
 const accountActivity = require('../lib/accountActivity'); // a deleted syllabus stays in its deleter's Recent Activity (best effort)
 const decisionEmail = require('../lib/decisionEmail'); // the faculty member's email about a decision on their syllabus
 const rules = require('../lib/syllabusRules');
+const { SERVER_ERROR } = require('../lib/http');
 const assignments = require('../lib/assignments');
 const { validateReason, typeForStatus, MAX_LENGTH } = require('../lib/reviewComments');
 const { syllabusRefused } = require('../lib/approvedRecords');
@@ -164,7 +165,18 @@ const discardUpload = async (file) => { if (file) await fs.promises.unlink(file.
 const sendError = (res, err) => {
   if (err.status) return res.status(err.status).json({ error: err.message, ...(err.body || {}) });
   console.error('SYLLABUS ERROR:', err);
-  return res.status(500).json({ error: err.message });
+  return res.status(500).json({ error: SERVER_ERROR }); // the reason is in the server log (above), never in the answer
+};
+
+// Each field of a syllabus edit or a status change has one type, checked before anything is read: an object or a list sent as JSON would otherwise reach a
+// query as text the driver made up ("[object Object]", or a list spliced into the statement). curriculumId may be a number or text (a form sends text).
+const TEXT_FIELDS = { title: 'The title', courseCode: 'The course code', note: 'The note', status: 'The status', adminComment: 'The comment' };
+const checkTypes = (body) => {
+  for (const [field, label] of Object.entries(TEXT_FIELDS)) {
+    if (body[field] !== undefined && typeof body[field] !== 'string') throw httpError(400, `${label} must be text.`, { code: 'invalid_type', field });
+  }
+  const c = body.curriculumId;
+  if (c !== undefined && c !== null && typeof c !== 'string' && !Number.isInteger(c)) throw httpError(400, 'The curriculum must be an id.', { code: 'invalid_type', field: 'curriculumId' });
 };
 
 // MySQL here is not in strict mode and would silently cut long values, so reject them instead.
@@ -178,6 +190,7 @@ router.post('/', requireAuth, onePdf, async (req, res) => {
   try {
     const db = req.app.locals.db;
     if (rules.isReviewer(req.session.user)) throw httpError(403, 'Use the syllabus builder and AI Checker to publish your own syllabus.');
+    checkTypes(req.body || {});
     const { title, courseCode } = req.body;
     checkLengths({ title, courseCode });
     await assignments.requireCourseCodeAccess(db, req.session.user, courseCode); // faculty: only an assigned course
@@ -198,6 +211,7 @@ router.put('/:id', requireAuth, onePdf, async (req, res) => {
   try {
     const id = Number(req.params.id);
     if (!Number.isInteger(id) || id <= 0) throw httpError(404, 'Syllabus not found');
+    checkTypes(req.body || {});
     const { title, courseCode, curriculumId, note, status, adminComment } = req.body;
     checkLengths({ title, courseCode });
     const hasContent = title !== undefined || courseCode !== undefined || curriculumId !== undefined || !!req.file;
@@ -331,6 +345,8 @@ router.delete('/:id', requireAuth, async (req, res) => {
     if (rows[0].status === 'approved') throw syllabusRefused();
     if (!rules.canDelete(me, rows[0])) throw httpError(409, 'Only draft syllabi can be deleted by faculty.');
     const subject = await accountActivity.subjectOf(db, id); // read before it is gone, so the record still names it
+    // its review history stays after the delete (submission_logs ON DELETE SET NULL), under its name. Best effort: before the migration there is no column.
+    if (subject) await db.query('UPDATE submission_logs SET subject = ? WHERE syllabus_id = ? AND subject IS NULL', [subject, id]).catch(() => {});
     // Enforce both restrictions in the mutation too: a concurrent submission or approval must never be deleted. The read above can already be out of date; this statement cannot.
     const [result] = await db.query(
       rules.isAdmin(me) ? "DELETE FROM syllabi WHERE syllabus_id = ? AND status <> 'approved'" : "DELETE FROM syllabi WHERE syllabus_id = ? AND user_id = ? AND status = 'draft'",

@@ -3,7 +3,7 @@ import { localizeChanges } from '../i18n/changes';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useRef, useState } from 'react';
-import { API_ORIGIN, syllabi as syllabiApi } from '../lib/api';
+import { syllabusFileUrl, syllabi as syllabiApi } from '../lib/api';
 import { STATUS_LABELS } from '../lib/syllabusRules';
 import { fmt } from '../lib/utils';
 import { useModalLayer } from './useModalLayer';
@@ -54,7 +54,7 @@ export default function VersionHistoryModal({ syllabus, onClose }) {
                       ? <small className="vh-changes">{translateUI("ui.changed_since_the_version_before_01d3f5") + localizeChanges(v.changes)}</small>
                       : v.changed.length > 0 && <small>{translateUI("ui.changed_8d443e")}{v.changed.map(c => tr(FIELD_LABELS[c] || c)).join(', ')}</small>}
                     {v.decision && <small className={'vh-decision ' + v.decision.action}>{tr(DECISION_LABELS[v.decision.action]) + translateUI("ui.by_876074") + v.decision.by + translateUI("ui.on_bac8e7") + fmt(v.decision.at) + (v.decision.reason ? ': ' + v.decision.reason : '')}</small>}
-                    {v.filePath && <small><a href={`${API_ORIGIN}${v.filePath}`} target="_blank" rel="noreferrer" download>{translateUI("ui.download_file_774025")}</a></small>}
+                    {v.filePath && <small><a href={syllabusFileUrl(id, v.id, true)} target="_blank" rel="noreferrer" download>{translateUI("ui.download_file_774025")}</a></small>}
                     <StableButton type="button" className="btn outline vh-view" onClick={() => setViewing(v.id)}>{translateUI("ui.view_version_1109c5") + v.version}</StableButton>
                   </div>
                 </div>

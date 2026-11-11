@@ -611,7 +611,8 @@ test('an admin\'s subject list says what is still missing for each subject; the 
 test('a deleted syllabus is recorded in the account activity of whoever deleted it, by name and status; a refused deletion records nothing', async () => {
   const syllabi = { 1: { syllabus_id: 1, user_id: 5, status: 'draft', course_code: 'FM 202', title: 'Fundamentals of Mathematics' }, 2: { syllabus_id: 2, user_id: 5, status: 'submitted', course_code: 'IT 351', title: 'Networks' }, 3: { syllabus_id: 3, user_id: 5, status: 'approved', course_code: 'IT 352', title: 'Security' } };
   await withServer({ syllabi }, async ({ call, db }) => {
-    const recorded = () => db.writes.filter((w) => w.sql.startsWith('INSERT INTO account_activity')).map((w) => w.params);
+    // the first five values; the address and browser that follow (db/migrate-audit-retention.js) are not part of a deletion line
+    const recorded = () => db.writes.filter((w) => w.sql.startsWith('INSERT INTO account_activity')).map((w) => w.params.slice(0, 5));
     assert.strictEqual((await call(fay, 'DELETE', '/syllabi/2')).status, 409);
     assert.strictEqual((await call(admin, 'DELETE', '/syllabi/3')).status, 409);
     assert.deepStrictEqual(recorded(), [], 'refused: nothing recorded');

@@ -119,15 +119,18 @@ CREATE TABLE IF NOT EXISTS syllabi (
   FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE SET NULL
 );
 
+-- The review history of each syllabus. It outlives the syllabus and the account (SET NULL): subject and actor keep their names (db/migrate-audit-retention.js).
 CREATE TABLE IF NOT EXISTS submission_logs (
   log_id INT AUTO_INCREMENT PRIMARY KEY,
-  syllabus_id INT NOT NULL,
-  user_id INT NOT NULL,
+  syllabus_id INT NULL,
+  user_id INT NULL,
   action ENUM('upload', 'update', 'submit', 'approve', 'reject', 'revision', 'delete', 'check', 'recommend') NOT NULL,
   action_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   notes TEXT,
-  FOREIGN KEY (syllabus_id) REFERENCES syllabi(syllabus_id) ON DELETE CASCADE,
-  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+  subject VARCHAR(300) NULL,
+  actor VARCHAR(300) NULL,
+  CONSTRAINT fk_submission_logs_syllabus FOREIGN KEY (syllabus_id) REFERENCES syllabi(syllabus_id) ON DELETE SET NULL,
+  CONSTRAINT fk_submission_logs_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS comments (
@@ -430,14 +433,17 @@ CREATE TABLE IF NOT EXISTS syllabus_review_ai_choices (
 -- The account's own activity for Recent Activity: sign-in/out, password, name, photo, language, drafts, edits, deletions (lib/accountActivity.js, db/account-activity-ddl.js)
 CREATE TABLE IF NOT EXISTS account_activity (
     activity_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
+    user_id INT NULL,
     action VARCHAR(30) NOT NULL,
     syllabus_id INT NULL,
     subject VARCHAR(300) NULL,
     notes VARCHAR(500) NULL,
+    actor VARCHAR(300) NULL,
+    ip_address VARCHAR(45) NULL,
+    user_agent VARCHAR(255) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_account_activity_user (user_id, created_at),
     INDEX idx_account_activity_edit (user_id, syllabus_id, action, created_at),
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    CONSTRAINT fk_account_activity_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL,
     FOREIGN KEY (syllabus_id) REFERENCES syllabi(syllabus_id) ON DELETE SET NULL
   );

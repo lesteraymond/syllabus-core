@@ -3,7 +3,7 @@ import { localizeChanges } from '../i18n/changes';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useRef, useState } from 'react';
-import { API_ORIGIN, syllabi as syllabiApi } from '../lib/api';
+import { syllabusFileUrl, syllabi as syllabiApi } from '../lib/api';
 import { STATUS_LABELS } from '../lib/syllabusRules';
 import { fileName, noFormMessage, programLabel, subjectLabel, toneStyle, versionOption } from '../lib/reviewView';
 import { Avatar } from './ui';
@@ -83,8 +83,8 @@ export default function SyllabusViewModal({ syllabusId, onClose, aside, avatarUr
             : (
               <div className="svm-nofile">
                 <p>{tr(noFormMessage(payload.file))}</p>
-                {payload.file && <p><a className="btn outline" href={`${API_ORIGIN}${payload.file.path}`} target="_blank" rel="noreferrer">{translateUI("ui.open_79d37e") + fileName(payload.file.path)}</a></p>}
-                {payload.file && /\.pdf$/i.test(payload.file.path) && <iframe className="svm-pdf" title={translateUI("ui.uploaded_syllabus_73f85b")} src={`${API_ORIGIN}${payload.file.path}`} />}
+                {payload.file && <p><a className="btn outline" href={syllabusFileUrl(syllabusId, payload.version ? payload.version.id : null)} target="_blank" rel="noreferrer">{translateUI("ui.open_79d37e") + fileName(payload.file.path)}</a></p>}
+                {payload.file && /\.pdf$/i.test(payload.file.path) && <iframe className="svm-pdf" title={translateUI("ui.uploaded_syllabus_73f85b")} src={syllabusFileUrl(syllabusId, payload.version ? payload.version.id : null)} />}
               </div>
             ))}
         </div>

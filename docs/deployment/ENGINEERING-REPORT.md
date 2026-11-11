@@ -9,7 +9,7 @@ Date of the evidence: 2026-11-05. Nothing is committed, pushed or deployed. No p
 | Decision | Status | Why |
 |---|---|---|
 | CODE READY | **VERIFIED**, one open defect | 1,949 repository tests, 222 conformance tests, build, and a 17-scenario real-browser run all pass; the open defect is the missing Undo control (section 7) |
-| SECURITY READY | **REQUIRES OWNER ACTION** | login is not rate limited; sessions use MemoryStore; two credentials exposed in chats are still live; no security headers set by the app (section 3, 13) |
+| SECURITY READY | **REQUIRES OWNER ACTION** | 2026-11-12: sign-in is now rate limited, uploads are private, sessions are renewed and ended, errors and headers are fixed (section 3). Still open: sessions use MemoryStore; two credentials exposed in chats are not confirmed rotated; the remaining audit findings in `docs/security/SECURITY-AUDIT-REPORT.md` (section 13) |
 | STAGING CONFIGURATION READY | **REQUIRES OWNER ACTION** | templates, validation and preflight are done; the real staging file does not exist, and the preflight on the development file reports 3 missing items, as it should |
 | STAGING HOST READY | **NOT STARTED** | no staging host, domain, proxy or database exists |
 | STAGING E2E VERIFIED | **NOT STARTED** (LOCAL E2E VERIFIED) | the browser run used a local staging-like stack, labeled LOCAL E2E |
@@ -30,10 +30,13 @@ The workflow Faculty authentication → Syllabus Builder → save → AI Checker
 
 | Severity | Finding | Evidence | Status |
 |---|---|---|---|
-| HIGH (production) | **Login has no rate limit**; only forgot-password, compliance, PDF import, refine and resend are limited | `server/routes/auth.js` uses `createLimiter` only for `forgot` | REQUIRES OWNER ACTION (decision: per-IP/per-account limiter, or proxy-level limiting) |
+| FIXED 2026-11-12 | Login had no rate limit | failed password sign-ins are limited per account and per address, failed Google sign-ins per address (`server/lib/signInLimits.js`, `routes/auth.js`); `server/routes/signin-security.routes.test.js` | VERIFIED offline (in-memory limiter, one process: a proxy-level limit is still advised) |
+| FIXED 2026-11-12 | Uploaded files were served to anyone from a public `/uploads` folder, and the avatars block could be bypassed (audit SEC-01, SEC-03) | no static mount; `GET /api/syllabi/:id/file` checks who is asking; `server/routes/syllabusFiles.routes.test.js` | VERIFIED offline |
+| FIXED 2026-11-12 | Sign-in said which emails are registered; the session id was kept across sign-in; other sessions survived a password change (SEC-04, SEC-05, SEC-06) | `routes/auth.js`, `middleware/auth.js`; `signin-security.routes.test.js` | VERIFIED offline. Session ending is kept in process memory, like the sessions; it must move with them if the store changes |
+| FIXED 2026-11-12 | Stack traces and file paths in development and staging; raw SQL error text in every mode (SEC-07) | `applyErrorHandling` in `lib/hostConfig.js`, `serverError` in `lib/http.js`; `server/routes/error-and-headers.routes.test.js` | VERIFIED offline |
 | HIGH (production) | Exposed credentials (Gmail app password, a Gemini key still in a commented line) | `node scripts/credential-readiness.cjs`: 3 manual actions | REQUIRES OWNER ACTION (revoke; nothing was rotated) |
 | MEDIUM | MemoryStore sessions | `server/index.js` | REQUIRES OWNER ACTION (decision in `STAGING-ARCHITECTURE.md` section 4) |
-| MEDIUM | No security headers (HSTS, CSP, frame options) from the app | no helmet; static site served elsewhere | set at the proxy/static host; REQUIRES OWNER ACTION |
+| FIXED 2026-11-12 (API) | No security headers (HSTS, CSP, frame options) from the app | the API now sets them on every response (`securityHeaders` in `lib/hostConfig.js`, HSTS in staging and production), with no new dependency | VERIFIED offline. The Content-Security-Policy of the React app itself is still set by whatever serves `dist/`: REQUIRES OWNER ACTION |
 | FIXED | `init.js` inserted demo accounts with known passwords into any database | `seed.sql`; now skipped for `NODE_ENV=staging|production`, plus `db/create-admin.js` | VERIFIED (`npm run test:db-bootstrap`) |
 | OK | secrets fail closed, no printing, token forging/replay, ownership, role checks, SQL parameterization (dynamic fragments are constants), XSS (`renderMarkup` escapes before markup) | conformance suites, E04, E11, code review | VERIFIED |
 
@@ -79,7 +82,13 @@ E15 plus `VPAA-V2-SCORE-PARITY`, `VPAA-V2-BASELINE-PARITY`: identical official r
 
 ## 13. Production security assessment — NOT READY
 
-Open: login rate limiting; exposed credentials; session store decision; security headers; first administrator (now `db/create-admin.js`, VERIFIED); demo accounts (no longer inserted by `init.js` in staging/production; **remove them from any existing database** by hand); least-privilege database user; HTTPS enforcement and HSTS at the proxy; audit-log retention policy.
+Closed on 2026-11-12 (audit batches A to D, `docs/security/SECURITY-AUDIT-REPORT.md` section 8): login rate limiting; public uploads; account enumeration at sign-in; session renewal and ending; error leakage; security headers on the API.
+
+Also closed in code on 2026-11-12 (audit batch I, section 10 of the same report): the server checks its database account's grants, refuses `root` and an empty password, requires TLS to a remote database, bounds the connection pool, and refuses to start while an account has a demo password from `seed.sql`, all in staging and production (`server/lib/dbConfig.js`). These take effect only once the owner creates the least-privilege account.
+
+Also on 2026-11-12 (audit batches E, F, G, H, J, section 11 of the same report): input type checks on syllabus edits; the browser no longer keeps the sign-in token; the public COR scan checks the image and limits concurrent OCR, and abandoned COR photos are swept; daily AI request ceilings; an audit trail that survives deletion and records the address and browser of each sign-in (needs `npm run migrate-audit-retention`, not yet run); an opt-in strict SQL mode (`DB_SQL_STRICT`, off).
+
+Open: run the audit-retention migration; turn on strict SQL mode after a strict-database E2E; the audit's remaining findings (SEC-09 session store, SEC-10 public OCR route, SEC-11 AI cost ceiling, SEC-14 to SEC-16, SEC-18 to SEC-24); a proxy-level rate limit in front of `/api/auth`; the Content-Security-Policy of the static site; exposed credentials; first administrator (now `db/create-admin.js`, VERIFIED); demo accounts (no longer inserted by `init.js` in staging/production; **remove them from any existing database** by hand); least-privilege database user; HTTPS enforcement and HSTS at the proxy; audit-log retention policy.
 
 ## 14. Monitoring plan — IMPLEMENTED BUT NOT VERIFIED
 

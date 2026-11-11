@@ -17,6 +17,7 @@ const { requireAuth } = require('../middleware/auth');
 const activity = require('../lib/activity');
 const { inTransaction, httpError, sendError } = require('../lib/http');
 const { createLimiter } = require('../lib/rateLimit');
+const { aiQuota, MESSAGES: AI_LIMIT } = require('../lib/aiQuota'); // the daily ceilings on AI requests (per person and for everyone)
 const { openRecordReviews } = require('../lib/programPoReferences');
 const { assertActiveYear } = require('../lib/activeYearGate');
 const reviewAiChoice = require('../lib/reviewAiChoice');
@@ -163,6 +164,12 @@ router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => 
     if (!slot.ok) {
       res.set('Retry-After', String(slot.retryAfterSec));
       throw httpError(429, 'You are checking too often. Try again in ' + slot.retryAfterSec + ' seconds.');
+    }
+    // A check with AI checking on is a paid provider request: it counts against today's ceilings (lib/aiQuota.js). An uploaded file, or a check with AI checking
+    // turned off in Settings, runs the coded rules only and is not counted.
+    if (!isUpload && (await adminSettings.policy(db)).aiChecking) {
+      const quota = aiQuota().take('check', me.id);
+      if (!quota.ok) { res.set('Retry-After', String(quota.retryAfterSec)); throw httpError(429, AI_LIMIT[quota.reason], { code: 'ai_daily_limit', scope: quota.reason }); }
     }
 
     // A form is checked against the catalog as it is now: tags resolve against the program's current EGAs and POs, and a submitted syllabus

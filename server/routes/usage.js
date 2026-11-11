@@ -1,4 +1,5 @@
 const express = require('express');
+const { serverError } = require('../lib/http'); // an unexpected failure: logged here, answered generically
 const { requireAuth } = require('../middleware/auth');
 const router = express.Router();
 
@@ -17,7 +18,7 @@ router.get('/summary', requireAuth, async (req, res) => {
     if (!usage) return res.json({ enabled: false });
     res.json(await usage.summary(req.session.user.id, Number(req.query.days) === 30 ? 30 : 7));
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    serverError(res, err, 'USAGE ERROR:');
   }
 });
 

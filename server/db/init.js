@@ -13,8 +13,10 @@ async function init() {
 
   console.log('Connected to MySQL.');
 
-  await conn.query(`CREATE DATABASE IF NOT EXISTS ${process.env.DB_NAME}`);
-  await conn.query(`USE ${process.env.DB_NAME}`);
+  // The name is an identifier, not a value: letters, digits and underscores only, and quoted.
+  if (!/^[A-Za-z0-9_]{1,64}$/.test(String(process.env.DB_NAME || ''))) throw new Error('DB_NAME must be 1 to 64 letters, digits or underscores.');
+  await conn.query('CREATE DATABASE IF NOT EXISTS `' + process.env.DB_NAME + '`');
+  await conn.query('USE `' + process.env.DB_NAME + '`');
   console.log(`Database "${process.env.DB_NAME}" ready.`);
 
   const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
