@@ -16,6 +16,12 @@ function createLimiter({ max, windowMs, now = Date.now }) {
       h.count += 1;
       return { ok: true };
     },
+    // Hands back one slot taken in the current window: for a limiter that counts only failures, where a slot is taken before the outcome is
+    // known (so two requests at once cannot both slip past the limit) and returned when the attempt turns out to be a success.
+    give(key) {
+      const h = hits.get(key);
+      if (h && now() - h.start < windowMs && h.count > 0) h.count -= 1;
+    },
     reset() { hits.clear(); },
   };
 }

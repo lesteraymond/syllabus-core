@@ -1,4 +1,5 @@
 const express = require('express');
+const { serverError } = require('../lib/http'); // an unexpected failure: logged here, answered generically
 const { requireAuth } = require('../middleware/auth');
 const { avatarUrlFor } = require('../lib/avatar');
 const { createNotification } = require('../lib/notify');
@@ -89,7 +90,7 @@ router.get('/partners', requireAuth, async (req, res) => {
     });
     res.json({ partners });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    serverError(res, err, 'MESSAGES ERROR:');
   }
 });
 
@@ -110,7 +111,7 @@ router.get('/', requireAuth, async (req, res) => {
     `, [me, me]);
     res.json(rows.filter(r => r.sender_id !== r.receiver_id && !(req.session.user.role === 'admin' && r.syllabus_owner_id === me)).map(toMessage));
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    serverError(res, err, 'MESSAGES ERROR:');
   }
 });
 
@@ -127,7 +128,7 @@ router.get('/:syllabusId', requireAuth, async (req, res) => {
     `, [t.syllabusId]);
     res.json(rows.map(r => ({ id: r.message_id, syllabusId: r.syllabus_id, senderId: r.sender_id, receiverId: r.receiver_id, text: r.message_text, isRead: r.is_read, time: r.created_at, sender: `${r.first_name} ${r.last_name}`, senderAvatarUrl: avatarUrlFor(r.sender_id, r.avatar_path) })));
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    serverError(res, err, 'MESSAGES ERROR:');
   }
 });
 
@@ -159,7 +160,7 @@ router.post('/:syllabusId', requireAuth, async (req, res) => {
     });
     res.json({ id: result.insertId, message: 'Message sent' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    serverError(res, err, 'MESSAGES ERROR:');
   }
 });
 
@@ -170,7 +171,7 @@ router.put('/read/:syllabusId', requireAuth, async (req, res) => {
     await t.db.query('UPDATE messages SET is_read = 1 WHERE syllabus_id = ? AND receiver_id = ?', [t.syllabusId, t.me.id]);
     res.json({ message: 'Messages marked as read' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    serverError(res, err, 'MESSAGES ERROR:');
   }
 });
 

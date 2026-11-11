@@ -2010,3 +2010,64 @@ Before this version the three switches on Settings > AI & Notifications were sav
 - **Production Safety Status:**
   - Live settings remain strictly protected (`SYLLABUS_CHECK_AI_PROVIDER=anthropic`, `SYLLABUS_CHECK_COORDINATED_PLAN=off`).
   - Production database `syllabus_cms_plus` (MySQL 3306) and Syllabus #111 (`approved`) remain untouched and pristine.
+
+---
+
+### v1.79.0 — Security Hardening: Private Uploads, Sign-in Limits, Session Renewal, Safe Errors
+**Date:** November 12, 2026
+
+From the security audit in `docs/security/SECURITY-AUDIT-REPORT.md` (batches A to D). No review-chain or alignment rule changed.
+
+- **Uploaded files are private (SEC-01, SEC-03):**
+  - The server no longer serves a public `/uploads` folder; every path under it answers 404, signed in or not.
+  - New `GET /api/syllabi/:id/file` (`?version=<id>`, `&download=1`) sends an uploaded syllabus PDF only to its owner, or to a reviewer once the syllabus is not a draft. Signed-out callers get 401, everyone else 404.
+  - The stored path is resolved inside the upload folder only, never the old avatars folder, and only for a PDF. The review window and the version history now link to this route.
+- **Failed sign-ins are limited (SEC-02):**
+  - Password sign-in: 10 failures per account and 50 per address in 15 minutes, then 429 with `Retry-After`. Google sign-in: 50 failed verifications per address. A correct sign-in is never counted.
+  - New settings `SIGNIN_MAX_FAILURES_PER_ACCOUNT`, `SIGNIN_MAX_FAILURES_PER_IP`, `SIGNIN_WINDOW_MINUTES` (`server/lib/signInLimits.js`). They cannot be turned off; a bad value stops the server at startup, by name.
+- **Sign-in no longer says which emails are registered (SEC-04):** an unknown email gets the same 401 "Invalid email or password" as a wrong password, after the same work. **Changed behaviour:** it used to answer 403 "Access Denied. Account not registered." (Google sign-in keeps its own message.)
+- **Sessions (SEC-05, SEC-06):**
+  - Every sign-in (password, Google, remembered device) starts a new session id.
+  - Changing the password, or an administrator sending new credentials, ends the account's other open sessions; the session that changed the password continues on a new id.
+- **Generated and temporary passwords (SEC-12, SEC-13):** a Google sign-in on an account that still has its generated password must choose its own first; a temporary password from "Forgot password" signs in once; a student registration password follows the same rule as every other chosen password (8 to 72 characters, a letter and a number). **Changed behaviour** for student registration: letters-only or digits-only passwords are refused.
+- **Errors and headers (SEC-07, SEC-08, SEC-17, SEC-21):**
+  - A final JSON error handler: malformed JSON 400, oversized body 413, unknown API path 404, anything else a generic 500. No stack trace, file path or SQL text reaches the client in any mode; the detail is in the server log.
+  - Every route's own 500 answer is now "Something went wrong on the server. Please try again." instead of the error's message.
+  - Every response carries `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Content-Security-Policy` and `Permissions-Policy`; `Strict-Transport-Security` in staging and production; no `X-Powered-By`. API answers are `Cache-Control: no-store`.
+  - The JSON body limit is 700 KB, so a full syllabus save (512 KB of content) is no longer cut off at the 100 KB default.
+- **Tests:** 33 new tests in `server/routes/syllabusFiles.routes.test.js`, `signin-security.routes.test.js` and `error-and-headers.routes.test.js`, wired into `npm test`. Two assertions in `passwords.routes.test.js` and one in `scripts/e2e/scenarios.cjs` were updated for the changed unknown-email answer.
+- **Verification:** `npm test` 2,357 of 2,364 pass; the 7 failures are in the AI evaluation scripts (prompt-version labels) and touch none of the changed files. Conformance suites 276 of 276. `npm run build` passes. The browser E2E was not run.
+
+---
+
+### v1.80.0 — Database Hardening: Checked Connection Settings, a Least-Privilege Account, No Demo Passwords
+**Date:** November 12, 2026
+
+From the security audit in `docs/security/SECURITY-AUDIT-REPORT.md` (batch I: DB-01, DB-02, DB-05, DB-06, DB-07). No review-chain or alignment rule changed.
+
+- **The database connection is configured and checked in one place (`server/lib/dbConfig.js`):**
+  - New settings `DB_PORT`, `DB_SSL` (`off` or `required`), `DB_SSL_CA`, `DB_POOL_SIZE`, `DB_POOL_QUEUE`. The pool now has a connect timeout of 10 seconds and a queue of 200 waiting requests instead of an unlimited one.
+  - In staging and production: `DB_HOST`, `DB_USER`, `DB_PASS` and `DB_NAME` are all required, `DB_USER` may not be `root`, and a database on another machine must use `DB_SSL=required`. A bad value stops the server at startup, by name.
+- **The server checks its own database account before it listens:** it reads `SHOW GRANTS`, and in staging and production it does not start if the account can do more than SELECT, INSERT, UPDATE and DELETE (for example CREATE, ALTER, DROP, ALL PRIVILEGES or GRANT OPTION). Development only warns. Run the scripts in `server/db/` with a separate account by setting `DB_USER` and `DB_PASS` for that command only.
+- **No demo passwords:** in staging and production the server does not start while any account still has a password hash from `db/seed.sql`. Development only warns.
+- **If the database cannot be reached or checked at startup,** staging and production now refuse to start (before, the server started and `/api/health` reported the database as unreachable). **Changed behaviour.**
+- **`db/init.js`** checks and quotes the database name before `CREATE DATABASE`.
+- **Local browser E2E:** `scripts/e2e/stack.cjs` sets `DB_E2E_SCRATCH=1`, which turns the account rules into warnings only for a local database whose name contains "e2e"; it is refused anywhere else.
+- **Tests:** 14 new tests in `server/lib/dbConfig.test.js`, wired into `npm test`.
+- **Verification:** `npm test` 2,371 of 2,378 pass (the same 7 failures in the AI evaluation scripts as before). Conformance suites 276 of 276. `npm run build` passes. Not run: any real database (the grant check was tested against a fake that answers `SHOW GRANTS`), a TLS connection, and the browser E2E.
+
+---
+
+### v1.81.0 — Security Hardening: Input Types, COR Scan Limits, Daily AI Ceilings, a Lasting Audit Trail, Strict SQL Mode
+**Date:** November 12, 2026
+
+From the security audit in `docs/security/SECURITY-AUDIT-REPORT.md` (batches E, F, G, H, J). No review-chain or alignment rule changed.
+
+- **Input types (SEC-14):** `PUT /api/syllabi/:id` and `POST /api/syllabi` refuse with 400 a title, course code, note, status or reviewer comment that is not text, and a curriculum that is not an id, before anything is read.
+- **No sign-in token in the browser (SEC-16):** the browser no longer keeps the sign-in token in localStorage (it removes one an older version left) and no longer sends it; the session cookie authorizes everything, as before. The server still returns the token for older scripts. `middleware/canEditSyllabus.js` is marked as unused and unsafe to mount.
+- **The public COR scan (SEC-10, SEC-22):** an upload must really be a JPG, PNG or WebP by its bytes and at most 40 megapixels (413 otherwise), checked before any OCR; at most 2 scans are read at once (503 with Retry-After); the per-address limit now uses the shared limiter that cleans up after itself; a refused upload gets a JSON reason. COR photos of registrations that were never finished are removed after an hour (`server/lib/corCleanup.js`, every 15 minutes).
+- **Daily AI ceilings (SEC-11):** `AI_CHECKS_PER_USER_PER_DAY` (default 40), `AI_CHECKS_PER_DAY` (default 400) and `AI_REFINES_PER_USER_PER_DAY` (default 60), per calendar day in the Philippines (`server/lib/aiQuota.js`). Past them a check or a "Check & improve" is 429 and nothing is sent to the provider. Checks with AI checking off, and uploaded files, are not counted. The ceilings cannot be turned off; a bad value stops the server.
+- **A lasting audit trail (SEC-15, DB-04):** new migration `npm run migrate-audit-retention` (with `--dry-run`). After it, deleting an account or a syllabus keeps its review history (`submission_logs`) and account activity, under the name it had; each sign-in line records the address and browser; a failed sign-in on an unregistered email is recorded with no account. Before the migration the app behaves as before. **The migration has not been run on any database.**
+- **Strict SQL mode (DB-03):** `DB_SQL_STRICT=on` sets a strict sql_mode on every connection and is checked at startup. Off by default: turn it on only after the browser E2E has passed against a strict database.
+- **Tests:** new `input-types.routes.test.js`, `cor-scan.routes.test.js`, `lib/aiQuota.test.js`, `lib/auditRetention.test.js`, and more in `lib/dbConfig.test.js`, `compliance.routes.test.js`, `syllabusCheck.refine.routes.test.js`. Assertions in `passwords.routes.test.js` and `enforcement.routes.test.js` were updated for the recorded unknown-email attempt and the two new activity columns.
+- **Verification:** npm test 2,401 of 2,408 pass; the 7 failures are the same evaluation-script tests as before (anthropic-harness 4, stage-c3-eval 2, stage-e8-canary 1). Conformance suites 276 of 276. npm run build passes.

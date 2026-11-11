@@ -176,6 +176,7 @@ async function withServer(opts, fn) {
   svc.setProvider(opts.provider === undefined ? new MockProvider() : opts.provider);
   const compliance = require('./compliance');
   compliance.limiter.reset();
+  require('../lib/aiQuota').setAiQuota(null); // a fresh daily count for each test (lib/aiQuota.js)
   const app = express();
   app.use(express.json());
   app.use((req, res, next) => { const h = req.headers['x-test-user']; req.session = h ? { user: JSON.parse(h) } : {}; next(); });
@@ -367,6 +368,22 @@ test('before migration, mandatory verification blocks submission and checker rou
   assert.strictEqual(re.status, 503);
   assert.match(re.body.error, /not set up/);
   assert.strictEqual((await call(fay, 'GET', '/compliance?syllabus=all')).body.installed, false);
+}));
+
+test('AI checks are counted per person per day: past the ceiling a re-check is 429 with Retry-After, nothing is sent and no run is stored', () => withServer(async ({ call, db }) => {
+  const quota = require('../lib/aiQuota');
+  quota.setAiQuota(quota.createAiQuota({ checksPerUser: 2, checksTotal: 3, refinesPerUser: 1 }));
+  try {
+    setContent(db, 1, withGaps(conformingContent()));
+    for (let i = 0; i < 2; i++) assert.strictEqual((await call(fay, 'POST', '/syllabi/1/compliance/recheck', { force: true })).status, 200, 'check ' + i);
+    const runs = db.s.runs.length;
+    const refused = await call(fay, 'POST', '/syllabi/1/compliance/recheck', { force: true });
+    assert.strictEqual(refused.status, 429);
+    assert.strictEqual(refused.body.code, 'ai_daily_limit');
+    assert.strictEqual(refused.body.scope, 'user');
+    assert.ok(Number(refused.headers.get('retry-after')) > 0);
+    assert.strictEqual(db.s.runs.length, runs, 'no run was stored');
+  } finally { quota.setAiQuota(null); }
 }));
 
 test('re-check: the same content gives the same run and does not use the limit; force makes a new run with the same score', () => withServer(async ({ call, db }) => {

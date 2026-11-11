@@ -22,7 +22,7 @@ const good = (text) => { const p = parseCor(text); return !!p.studentId && p.bsi
 async function readText(input) {
   const worker = await createWorker('eng');
   try {
-    const base = await sharp(input).rotate().png().toBuffer(); // lossless; applies the EXIF orientation when there is one
+    const base = await sharp(input, { limitInputPixels: 40 * 1000 * 1000 }).rotate().png().toBuffer(); // lossless; applies the EXIF orientation when there is one; refuses a pixel bomb
     let best = null;
     for (const angle of [0, 270, 90, 180]) {
       const full = await cleanup(sharp(base).rotate(angle), 2000);

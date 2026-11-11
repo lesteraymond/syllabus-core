@@ -104,6 +104,7 @@ function startApi({ port, work, front, control, providerLog, serverLog, extraEnv
     NODE_ENV: 'staging', PORT: String(port),
     SESSION_SECRET: E2E_SESSION_SECRET, JWT_SECRET: E2E_JWT_SECRET,
     DB_HOST: 'localhost', DB_USER: 'root', DB_PASS: '', DB_NAME,
+    DB_E2E_SCRATCH: '1', // server/lib/dbConfig.js: this scratch database is reached as the local root account; honoured only for a local database whose name contains "e2e"
     CORS_ALLOWED_ORIGINS: front, TRUST_PROXY: '1', SESSION_COOKIE_SAMESITE: 'lax',
     SMTP_HOST: '', MAIL_FROM: '', APP_URL: front, GOOGLE_CLIENT_ID: '',
     SYLLABUS_CHECK_ACADEMIC_V2: 'on', SYLLABUS_CHECK_AI_PROVIDER: 'anthropic', ANTHROPIC_API_KEY: E2E_ANTHROPIC_STAND_IN,

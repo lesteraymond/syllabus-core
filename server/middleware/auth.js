@@ -24,6 +24,37 @@ const toSessionUser = (row) => ({
 
 const hash = (token) => crypto.createHash('sha256').update(token).digest('hex');
 
+// ---- starting and ending sessions ----
+// A sign-in always starts a NEW session (a new id): whatever session cookie the browser held before, planted or not, is never the signed-in one.
+// Ending an account's sessions (its password changed, or an administrator sent it new credentials): the moment is kept here, and a session that began
+// before it is refused at its next request. The moments live in this process's memory, exactly like the sessions themselves (the default session store):
+// a restart ends every session and clears these together. If sessions move to a shared store, this must move with them.
+const sessionsEndedAt = new Map(); // user id -> ms
+function endSessionsOf(userId) { sessionsEndedAt.set(Number(userId), Date.now()); }
+function sessionEnded(req) {
+  const user = req.session && req.session.user;
+  if (!user) return false;
+  const endedAt = sessionsEndedAt.get(Number(user.id));
+  if (endedAt === undefined) return false;
+  // a real session always carries the moment it began; a request object without one (a test that sets req.session itself) has no session to end
+  const began = typeof req.session.beganAt === 'number' ? req.session.beganAt : typeof req.session.regenerate === 'function' ? 0 : Infinity;
+  return began < endedAt;
+}
+// Signs `user` (a toSessionUser object) in on a new session id. keepCookie: carry over how long the cookie lasts (a browser-session cookie stays one,
+// a remembered one stays remembered), for a session that is being replaced rather than begun.
+function startSession(req, user, { keepCookie = false } = {}) {
+  const stamp = () => { req.session.user = user; req.session.beganAt = Math.max(Date.now(), (sessionsEndedAt.get(Number(user.id)) || 0) + 1); };
+  if (!req.session || typeof req.session.regenerate !== 'function') { stamp(); return Promise.resolve(); }
+  const previous = keepCookie && req.session.cookie ? { expires: req.session.cookie.expires, maxAge: req.session.cookie.originalMaxAge } : null;
+  return new Promise((resolve, reject) => req.session.regenerate((err) => {
+    if (err) return reject(err);
+    stamp();
+    if (previous) { if (!previous.expires) req.session.cookie.expires = false; else if (previous.maxAge) req.session.cookie.maxAge = previous.maxAge; }
+    resolve();
+  }));
+}
+const endThisSession = (req, res, status, body) => (req.session && typeof req.session.destroy === 'function' ? req.session.destroy(() => res.status(status).json(body)) : res.status(status).json(body));
+
 function readCookie(req, name) {
   const header = req.headers.cookie;
   if (!header) return null;
@@ -55,6 +86,7 @@ async function revokeRememberToken(db, req, res) {
 // and rotate the token (each token is single-use).
 async function restoreSession(req, res, next) {
   try {
+    if (req.session.user && sessionEnded(req)) delete req.session.user; // ended since it began (password changed, new credentials sent): not signed in any more
     if (req.session.user) return next();
     const token = readCookie(req, REMEMBER_COOKIE);
     if (!token) return next();
@@ -74,14 +106,14 @@ async function restoreSession(req, res, next) {
     if (u.disabled_at) { // a disabled account is never signed in from a remembered device
       await db.query('DELETE FROM remember_tokens WHERE user_id = ?', [u.user_id]);
       res.clearCookie(REMEMBER_COOKIE, cookieOpts());
-      await accountActivity.record(db, { userId: u.user_id, action: 'login_failed', notes: 'disabled_remembered' });
+      await accountActivity.record(db, { userId: u.user_id, action: 'login_failed', notes: 'disabled_remembered', request: req });
       return next();
     }
     await db.query('DELETE FROM remember_tokens WHERE token_id = ?', [u.token_id]);
-    req.session.user = toSessionUser(u);
+    await startSession(req, toSessionUser(u)); // a new session id: the cookie the browser sent is not the one that gets signed in
     req.session.cookie.maxAge = REMEMBER_MS;
     await issueRememberToken(db, res, u.user_id);
-    await accountActivity.record(db, { userId: u.user_id, action: 'login', notes: 'remembered' });
+    await accountActivity.record(db, { userId: u.user_id, action: 'login', notes: 'remembered', request: req });
     next();
   } catch (err) {
     next(err);
@@ -96,6 +128,7 @@ function makeRequireAuth({ allowPasswordChange }) {
   return async function requireAuth(req, res, next) {
     try {
       if (!req.session.user) return res.status(401).json({ error: 'Not authenticated' });
+      if (sessionEnded(req)) return endThisSession(req, res, 401, { error: 'Not authenticated' }); // the password changed, or new credentials were sent, after this session began
       const [rows] = await activeOnly(req.app.locals.db, 'SELECT user_id FROM users WHERE user_id = ?', [req.session.user.id]);
       if (rows.length === 0 && await isDisabled(req.app.locals.db, req.session.user.id).catch(() => false)) {
         return req.session.destroy(() => res.status(403).json(disabledBody())); // disabled since this session began: it ends here
@@ -148,4 +181,4 @@ function requireApprover(req, res, next) {
   });
 }
 
-module.exports = { toSessionUser, requireAuth, requireSignedIn, requireAdmin, requireReviewer, requireApprover, requireAuthor, AUTHORS_ONLY, restoreSession, issueRememberToken, revokeRememberToken, REMEMBER_MS };
+module.exports = { startSession, endSessionsOf, sessionEnded, toSessionUser, requireAuth, requireSignedIn, requireAdmin, requireReviewer, requireApprover, requireAuthor, AUTHORS_ONLY, restoreSession, issueRememberToken, revokeRememberToken, REMEMBER_MS };

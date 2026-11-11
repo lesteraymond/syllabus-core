@@ -1,3 +1,5 @@
+// NOT MOUNTED ANYWHERE, and not safe to mount as it is (docs/security/SECURITY-AUDIT-REPORT.md SEC-16): it authorizes from the Bearer token instead of the session,
+// and ignores disabled accounts and a pending password change. Every route uses middleware/auth.js. Kept only until the owner decides to delete it.
 const { verifyAccessToken } = require('./jwt');
 
 const EDITOR_ROLES = ['faculty', 'admin']; // faculty = TEACHER, admin = DEAN / Administrator

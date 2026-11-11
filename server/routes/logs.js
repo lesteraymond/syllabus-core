@@ -1,4 +1,5 @@
 const express = require('express');
+const { serverError } = require('../lib/http'); // an unexpected failure: logged here, answered generically
 const { requireAuth } = require('../middleware/auth');
 const { isAdmin } = require('../lib/syllabusRules');
 const accountActivity = require('../lib/accountActivity');
@@ -30,18 +31,18 @@ router.get('/', requireAuth, async (req, res) => {
     const [rows] = await db.query(`
       SELECT l.*, u.first_name, u.last_name, s.title, s.course_code
       FROM submission_logs l
-      JOIN users u ON l.user_id = u.user_id
-      JOIN syllabi s ON l.syllabus_id = s.syllabus_id
+      LEFT JOIN users u ON l.user_id = u.user_id
+      LEFT JOIN syllabi s ON l.syllabus_id = s.syllabus_id
       ${who === null ? '' : 'WHERE l.user_id = ?'}
       ORDER BY l.action_date DESC
       LIMIT ${limit}
     `, who === null ? [] : [who]);
-    const review = rows.map(r => ({ id: r.log_id, syllabusId: r.syllabus_id, userId: r.user_id, action: r.action, actionDate: r.action_date, notes: r.notes, user: `${r.first_name} ${r.last_name}`, title: r.title, courseCode: r.course_code }));
+    const review = rows.map(r => ({ id: r.log_id, syllabusId: r.syllabus_id, userId: r.user_id, action: r.action, actionDate: r.action_date, notes: r.notes, user: r.first_name || r.last_name ? `${r.first_name} ${r.last_name}` : r.actor || 'Deleted account', title: r.title || r.subject || null, courseCode: r.course_code || null })); // a deleted account or syllabus keeps its history
     const account = await accountActivity.listFor(db, who, limit);
     const time = (x) => { const t = new Date(x.actionDate).getTime(); return Number.isNaN(t) ? 0 : t; };
     res.json([...review, ...account].sort((a, b) => time(b) - time(a)).slice(0, limit));
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    serverError(res, err, 'LOGS ERROR:');
   }
 });
 

@@ -2,13 +2,22 @@ import { tr } from "../i18n/index.js";
 import { baseRevisionsFor, nextKnown, isRevisionProblem } from './contentRevisions.js';
 import { approvedRefusalText } from './approvedRefusal.js';
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-// Origin that serves /uploads (the API URL without its /api suffix).
+// The API's origin (the API URL without its /api suffix): profile photo URLs are relative to it.
 export const API_ORIGIN = API.replace(/\/api\/?$/, '');
+// Where an uploaded syllabus file is read: the authorized route (the server has no public /uploads folder). versionId: one of the syllabus's versions.
+export const syllabusFileUrl = (syllabusId, versionId = null, download = false) => {
+  const query = [versionId ? 'version=' + encodeURIComponent(versionId) : '', download ? 'download=1' : ''].filter(Boolean).join('&');
+  return `${API}/syllabi/${encodeURIComponent(syllabusId)}/file${query ? '?' + query : ''}`;
+};
 const TOKEN_KEY = 'sms_jwt';
 
+// The server signs the browser in with an HttpOnly session cookie, and that cookie is what authorizes every call. The sign-in answer still carries a token for older
+// scripts, but the browser does not keep it: anything in localStorage can be read by a script injected into the page, and this token authorizes nothing here.
+// A token an older version of the app left behind is removed.
+try { localStorage.removeItem(TOKEN_KEY); } catch {}
 export const tokenStore = {
-  get: () => { try { return localStorage.getItem(TOKEN_KEY); } catch { return null; } },
-  set: (t) => { try { localStorage.setItem(TOKEN_KEY, t); } catch {} },
+  get: () => null,
+  set: () => {},
   clear: () => { try { localStorage.removeItem(TOKEN_KEY); } catch {} },
 };
 

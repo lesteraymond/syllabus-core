@@ -40,7 +40,8 @@
     "migrate-account-status": "node db/migrate-account-status.js",
     "migrate-curriculum-year": "node db/migrate-curriculum-year.js",
     "migrate-review-ai-choice": "node db/migrate-review-ai-choice.js",
-    "migrate-account-activity": "node db/migrate-account-activity.js"
+    "migrate-account-activity": "node db/migrate-account-activity.js",
+    "migrate-audit-retention": "node db/migrate-audit-retention.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "1.3.0",

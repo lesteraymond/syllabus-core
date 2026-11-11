@@ -324,8 +324,9 @@ test('the domain comes from ALLOWED_EMAIL_DOMAIN and defaults to email.lcup.edu.
   } finally { process.env.ALLOWED_EMAIL_DOMAIN = old; }
 });
 
-test('the existing sign-in answers are unchanged', () => withServer(async ({ client }) => {
-  assert.strictEqual((await client().login('nobody@x.ph', 'x')).status, 403);
+// An unknown email now gets the answer of a wrong password (401), so the reply does not say which emails are registered (SEC-04; signin-security.routes.test.js).
+test('the sign-in answers: a wrong password and an unknown email are both 401', () => withServer(async ({ client }) => {
+  assert.strictEqual((await client().login('nobody@x.ph', 'x')).status, 401);
   assert.strictEqual((await client().login('fay@x.ph', 'nope')).status, 401);
 }));
 
@@ -343,8 +344,10 @@ test('schema.sql carries the same definitions as the migration', () => {
 // them, with how (never the password itself). A failed sign-in is recorded on the account it was for; an unknown email has no account to record it on.
 test('signing in and out, changing the password and changing the name are recorded in the account activity, never with a password', () => withServer(async ({ db, client }) => {
   const fay = client();
-  assert.strictEqual((await fay.login('nobody@x.ph', 'wrong-pass-1')).status, 403);
-  assert.deepStrictEqual(db.s.activity, [], 'an unknown email: no account to record it on');
+  assert.strictEqual((await fay.login('nobody@x.ph', 'wrong-pass-1')).status, 401); // the same answer as a wrong password (SEC-04)
+  // an unknown email has no account: the attempt is recorded with none, naming what was typed (lib/accountActivity.js, after db/migrate-audit-retention.js)
+  assert.deepStrictEqual(db.s.activity.map(({ user_id, action, subject, notes }) => ({ user_id, action, subject, notes })), [{ user_id: null, action: 'login_failed', subject: 'nobody@x.ph', notes: 'unknown_account' }]);
+  db.s.activity.length = 0;
   assert.strictEqual((await fay.login('fay@x.ph', 'wrong-pass-1')).status, 401);
   assert.deepStrictEqual(db.s.activity.map((a) => [a.user_id, a.action, a.notes]), [[2, 'login_failed', 'password']], 'a failed sign-in is recorded on the account it was for');
   await fay.login('fay@x.ph', 'Fay-pass-12');

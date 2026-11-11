@@ -22,7 +22,7 @@ module.exports = async function run(ctx, h) {
     check(s.issues.apiCalls.some((c) => c === 'POST /api/auth/login 401'), 'the failed login was answered 401 by the API');
     await s.login('nobody', 'whatever-123');
     await s.page.waitForTimeout(1200);
-    check(/Access Denied|not registered/i.test(await s.text()), 'an unregistered account is refused with its own message');
+    check(/Invalid email or password/i.test(await s.text()), 'an unregistered account gets the same message as a wrong password (the reply does not say which emails are registered)');
     await s.loginOk('faculty');
     const text = await s.text();
     check(/Test Faculty/.test(text) && /Dashboard/i.test(text), 'the faculty dashboard renders with the signed-in name');
