@@ -2,6 +2,7 @@ import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
 import { SOURCE_LABEL, STEP_INFO, areaNames, basis, blockersOf, groupFindings, headline, provisionalOf, runState, stepLabel, tone, ringAngle, when } from '../lib/complianceView';
 import HybridCheckPanel from '../components/HybridCheckPanel';
+import AlignmentScorePanel from '../components/AlignmentScorePanel';
 import { useAiGate } from '../lib/checkPolicy';
 import {isAcademicV2,isIntegratedAcademicV2} from '../lib/academicEvaluation';
 import AcademicEvaluationPanel from '../components/AcademicEvaluationPanel';
@@ -139,6 +140,7 @@ export default function ComplianceCard({ run, checking = false, onOpenStep, show
           ))}
         </details>
       )}
+      <AlignmentScorePanel run={run} />
       <HybridCheckPanel run={run} onApplyDraft={applyDraft} />
     </div>
   );
