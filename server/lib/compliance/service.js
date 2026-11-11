@@ -53,6 +53,17 @@ async function checkHybrid(db, content, options = {}) {
     try { plannedV2 = academicV2.plannedRequests(content, masters, env); requestBudget.holdFor(plannedV2); } catch { /* planning only protects coverage: without it the budget behaves as before */ }
   }
   const result = await hybridEngine.run(content, masters, { ...options, ...legacyOptions, profileResolved:true, requestBudget, reuse, history });
+  // Whole-syllabus improvement plan (syllabuscheck/wholeSyllabusPlan.js, SYLLABUS_CHECK_WHOLE_PLAN=on): the recommendations worked out together on a copy and
+  // verified together, so applying them does not move the conflicts to other fields. Its own request budget; advisory: a failure never disrupts the check.
+  const wholePlan = require('../syllabuscheck/wholeSyllabusPlan');
+  if (!v2On && options.useAi !== false && wholePlan.enabled(env)) {
+    try {
+      const plan = await wholePlan.buildWholePlan({ content, masters, result, syllabusId: options.syllabusId, options: { ...options, profileResolved: true, reuse, history } });
+      if (plan) result.hybrid.improvementPlan = plan;
+    } catch (error) {
+      result.hybrid.improvementPlanError = String(error && error.message || error).slice(0, 300);
+    }
+  }
   if (academicV2Activation.enabled(env)) {
     try {
       result.hybrid.academicV2 = await academicV2.evaluateIntegrated(content, masters, hybridEngine.coded, { env, syllabusId: options.syllabusId, requestBudget, reuse, useAi: options.useAi, signal: options.signal, ...(options.transport ? { transport: options.transport } : {}) });
@@ -75,7 +86,7 @@ async function checkHybrid(db, content, options = {}) {
     }
   }
   const coordinatedPlan = require('../syllabuscheck/coordinatedPlanEngine');
-  if (coordinatedPlan.enabled(env)) {
+  if (!result.hybrid.improvementPlan && coordinatedPlan.enabled(env)) {
     try {
       result.hybrid.improvementPlan = coordinatedPlan.buildPlan({
         content,

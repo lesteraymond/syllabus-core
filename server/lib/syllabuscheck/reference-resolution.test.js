@@ -45,9 +45,12 @@ test('a syllabus whose authored Program Outcomes differ from the published refer
 test('a CLO mapped to a PO number the published reference does not have is held on its own; the others are still judged', () => {
   const ctx = refOf(setup({ cloPos: [[1], [2], [3], [9]] }));
   assert.equal(ctx.reference.poUsable, true);
-  assert.deepEqual([...ctx.reference.mappingsOutsideReference.entries()], [[3, [9]]]);
+  assert.deepEqual(Object.entries(ctx.reference.mappingsOutsideReference), [['3', [9]]]);
+  // A plain object, so it survives the saved report's JSON (a Map was saved as {} and its content lost).
+  assert.deepEqual(JSON.parse(JSON.stringify(ctx.reference.mappingsOutsideReference)), { 3: [9] });
   const held = [...ctx.unavailable.entries()].filter(([id, why]) => why === 'po_reference_review').map(([id]) => id);
-  assert.ok(held.length === 0 || held.every((id) => id.startsWith('clo3-')), 'only the CLO with the unknown PO is held: ' + held.join(','));
+  // The CLO's whole-list PO question is held (it was never held while the id pattern read /^clo(d+)-/), and only that CLO's.
+  assert.ok(held.length > 0 && held.every((id) => id.startsWith('clo3-')), 'only the CLO with the unknown PO is held: ' + held.join(','));
 });
 test('an inheritance that is not configured is reported, and the inherited program is named from data (outcomeSource), not from a code literal', () => {
   const ctx = refOf(setup({ program: 'ZZSPEC', extra: { outcomeSource: 'ZZNEW' } })); assert.equal(ctx.reference.poSource, 'ZZNEW'); assert.equal(ctx.reference.poUsable, true);

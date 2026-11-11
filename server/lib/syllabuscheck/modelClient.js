@@ -3,7 +3,7 @@
 // in gemini.js keep their own transport; this uses the same provider settings, endpoints, key handling and failure behaviour:
 //   - an answer that arrives but cannot be read (broken JSON, a cut-off reply) is marked `unverified`, so a caller may ask again;
 //   - transport, HTTP and quota failures carry no such mark and are never retried here.
-const { providerConfig, NEMOTRON_FREE, LAGUNA_FREE, freeJsonModel, timeoutOf } = require('./gemini');
+const { providerConfig, NEMOTRON_FREE, LAGUNA_FREE, freeJsonModel, timeoutOf, routerReasoningOf } = require('./gemini');
 const { anthropicMessage } = require('./anthropicClient');
 
 // `schema(native)` builds the JSON schema: native Gemini wants upper-case type names, OpenRouter and Anthropic want additionalProperties: false.
@@ -18,6 +18,16 @@ async function askJson({ system, payload, schema, name = 'answer', maxTokens = 4
     try { answer = await anthropicMessage({ model, system, user: JSON.stringify(payload), schema: schema(false) }, { env, transport, sleep }); } catch (error) { if (error.usage) onUsage?.(error.usage); throw error; }
     onUsage?.(answer.usage);
     text = answer.text;
+  } else if (provider === 'groq') {
+    // The direct Groq API (groqClient.js): JSON-object mode, so the schema goes into the prompt.
+    const groq = require('./groqClient');
+    const answer = await groq.groqChat({ model, system: system + groq.jsonInstruction(schema(false)), user: JSON.stringify(payload), maxTokens: Math.min(maxTokens, groq.MAX_TOKENS) }, { env, transport, timeoutMs: timeoutOf(model, env) });
+    text = answer.text;
+  } else if (provider === 'deepseek') {
+    // The direct DeepSeek API (deepseekClient.js): JSON-object mode, so the schema goes into the prompt with the word json.
+    const deepseek = require('./deepseekClient');
+    const answer = await deepseek.deepseekChat({ model, system: system + deepseek.jsonInstruction(schema(false)), user: JSON.stringify(payload), maxTokens: Math.min(maxTokens, deepseek.MAX_TOKENS) }, { env, transport, timeoutMs: timeoutOf(model, env) });
+    text = answer.text;
   } else if (provider === 'openrouter') {
     const freeJson = freeJsonModel(model);
     const systemPrompt = freeJson ? `${system}\nReturn only a JSON object matching this schema: ${JSON.stringify(schema(false))}\nNever include markdown fences.` : system;
@@ -27,7 +37,7 @@ async function askJson({ system, payload, schema, name = 'answer', maxTokens = 4
       body: JSON.stringify({ model, temperature: 0, stream: false, max_tokens: maxTokens,
         messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: JSON.stringify(payload) }],
         response_format: freeJson ? { type: 'json_object' } : { type: 'json_schema', json_schema: { name, strict: true, schema: schema(false) } },
-        ...(model === NEMOTRON_FREE ? { reasoning: { effort: 'low' } } : model === LAGUNA_FREE ? { reasoning: { enabled: false } } : {}), // Laguna returns a null content while reasoning
+        ...routerReasoningOf(model), // low effort for Nemotron and DeepSeek; Laguna returns a null content while reasoning
         provider: { // Nemotron's free provider does not advertise JSON mode, so requiring it matches no endpoint (404); the answer is verified server-side instead.
         ...(freeJson ? {} : { require_parameters: true }), ...(freeJson ? { allow_fallbacks: false, max_price: { prompt: 0, completion: 0 } } : {}) },
       }),

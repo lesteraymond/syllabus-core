@@ -510,7 +510,10 @@ function scoreRun(result, syllabus, variantSpec, options = {}) {
     let recOk = true;
     if (exp.recommendation) {
       recommendationTotal += 1;
-      if (f?.recommendationType === exp.recommendation) recommendationMatched += 1;
+      // A rewrite deferred by the top-down order (suggestionOrder.js) is still the expected kind of change: it waits for an earlier field of
+      // the same check and is written on the next check, so it agrees with an expected REWRITE_TEXT.
+      const deferredRewrite = exp.recommendation === 'REWRITE_TEXT' && f?.withheld === 'waits_for_upstream';
+      if (f?.recommendationType === exp.recommendation || deferredRewrite) recommendationMatched += 1;
       else recOk = false;
     }
 

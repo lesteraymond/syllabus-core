@@ -1,0 +1,21 @@
+{
+  "note": "Reviewed lock of the two submission-gate functions. gate-functions-before.json is the historical lock recorded before the Policy V2 work (2026-11-04) and is not edited. Policy V2 itself still changes neither function; the two changes below are deliberate, made outside Policy V2 and committed in 0446696.",
+  "reviewedOn": "2026-11-11",
+  "previous": {
+    "requireHybrid": "802b6f876533cb198dcab3ca26a4494b02bfe338dbcdf15a5beea9071831871f",
+    "coded": "4e1e765c54db7ac6307575c0090c0363b2867294197236513235a95632b5447e"
+  },
+  "requireHybrid": "76b2d002217235e712aed80743906d977766b6c288c27e4ab4efdc347ab87913",
+  "coded": "42e9b933c7e1f0d5e6b55eb3d37881c38e69c5ec3ffd1bc517c0f3ef002bda50",
+  "reviewedChanges": [
+    {
+      "function": "requireHybrid",
+      "change": "aiOff option: when the administrator turns AI checking off (lib/adminSettings.js, 2026-11-08) no AI check is required; the coded hard gates still apply."
+    },
+    {
+      "function": "coded",
+      "change": "prerequisite.js: the ways of writing no prerequisite (empty, None, N/A, the import blank-cell sentence) compare as one value; a real prerequisite is still compared exactly; same rule, status and severity."
+    }
+  ],
+  "hashing": "sha256 of the function source with CRLF line endings read as LF, so a Windows and a Linux checkout give the same value"
+}

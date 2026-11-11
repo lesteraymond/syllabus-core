@@ -32,14 +32,15 @@ function referencesFor(content,masters){
  const program=ctx.program?.code||content.meta?.program||null;
  const reference=masters.poReference||null;
  const poSource=masters.outcomeSource||program;
- const issues=[],outside=new Map();
+ // outside: CLO index -> its PO numbers that the saved reference does not have. A plain object (not a Map) so it survives the saved report's JSON.
+ const issues=[],outside={};
  const official=Array.isArray(reference?.outcomes)?reference.outcomes:[];
  if(!reference)issues.push({code:'po_reference_unpublished',message:'No saved Program Outcome reference applies to this program and academic year; faculty text was not judged against Program Outcomes. An administrator must save the program outcomes.'});
  else if(!official.length||!sameBasis(masters.pos,official))issues.push({code:'po_reference_unavailable',message:'The Program Outcomes in use do not match the saved reference version for this program; faculty text was not judged against them.'});
  if(ctx.po?.status==='inheritance_not_configured')issues.push({code:'inheritance_unverified',message:'This program inherits its Program Outcomes, but the inheritance is not established in this reference context; its own curriculum is retained.'});
  if(reference&&content.clos?.some(c=>c.pos?.length)&&!sameBasis(content.outcomes?.pos||content.catalog?.program?.pos,official))issues.push({code:'authored_po_basis_review',message:'Historical CLO–PO numbers have a previous or unknown authored basis. No number was remapped.'});
  const known=new Set(official.map(p=>Number(p.no)));
- if(reference)(content.clos||[]).forEach((c,i)=>{const bad=(c.pos||[]).filter(n=>!known.has(Number(n)));if(bad.length){outside.set(i,bad);issues.push({code:'authored_mapping_outside_reference',clo:i,pos:bad,message:'A CLO is mapped to a Program Outcome number that does not exist in the saved reference; those mappings were not judged and not changed.'});}});
+ if(reference)(content.clos||[]).forEach((c,i)=>{const bad=(c.pos||[]).filter(n=>!known.has(Number(n)));if(bad.length){outside[i]=bad;issues.push({code:'authored_mapping_outside_reference',clo:i,pos:bad,message:'A CLO is mapped to a Program Outcome number that does not exist in the saved reference; those mappings were not judged and not changed.'});}});
  const poUsable=!issues.some(i=>i.code!=='authored_mapping_outside_reference'),egaUsable=Array.isArray(masters.institution?.egas)&&masters.institution.egas.length>0;
  if(!egaUsable)issues.push({code:'ega_reference_unavailable',message:'An EGA reference is unavailable; no faculty error is inferred.'});
  const definitions=masters.valueDefinitions||values.loadDefinitions({});
@@ -83,7 +84,7 @@ function plan(content,masters){
  const unavailable=new Map();
  for(const pair of pairs){
   if(/CLO-(PO|anyPO)/.test(pair.type)&&!reference.poUsable)unavailable.set(pair.id,'po_reference_review');
-  else if(/CLO-(PO|anyPO)/.test(pair.type)){const m=/^clo(d+)-/.exec(pair.id);if(m&&reference.mappingsOutsideReference.has(Number(m[1])))unavailable.set(pair.id,'po_reference_review');}
+  else if(/CLO-(PO|anyPO)/.test(pair.type)){const m=/^clo(\d+)-/.exec(pair.id);if(m&&Object.hasOwn(reference.mappingsOutsideReference,m[1]))unavailable.set(pair.id,'po_reference_review');}
   if(/CLO-(EGA|anyEGA)/.test(pair.type)&&!reference.egaUsable)unavailable.set(pair.id,'ega_reference_unavailable');
   if(pair.contextLimited)unavailable.set(pair.id,'context_limit');
   // Existing factories bound their inputs. Disclose the omission rather than

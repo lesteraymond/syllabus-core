@@ -24,6 +24,7 @@ const { qualityOf, VERSION: QUALITY_VERSION } = require('./quality');
 const verdict = require('./verdict'); // called as verdict.buildVerdict so a test can replace it
 const VERDICT_VERSION = verdict.VERSION;
 const { withholdReviewedDrafts } = require('./reportSafety');
+const suggestionOrder = require('./suggestionOrder');
 const VERSION = 'hybrid-2';
 const VALUES = ['Compassion', 'Courage', 'Community-orientedness', 'Humility', 'Interiority', 'Missionary Spirit'];
 const HEADERS = ['I. COURSE CODE', 'II. COURSE TITLE', 'III. COURSE DESCRIPTION', 'IV. PRE-REQUISITE', 'V. CREDIT UNITS', 'VI. COURSE LEARNING OUTCOMES', 'VII. LEARNING PLAN', 'VIII. COURSE REQUIREMENTS', 'IX. REFERENCES', 'X. GRADING SYSTEM'];
@@ -439,6 +440,20 @@ async function run(content, masters, options = {}) {
     // The problem is still there (its finding and points stay); there is just no useful rewrite to offer, so say so and stop.
     const worst = driving.slice().sort((a, b) => VERDICT_RANK[b.label] - VERDICT_RANK[a.label])[0];
     unresolved.push({ path: s.path, reason, detail: repeats ? `The proposed topic mostly repeats week ${repeats.week}.` : change.reason, repeatsWeek: repeats ? repeats.week : undefined, tier: s.tier, attempts, label: worst?.label || null, relationships: driving.map(j => j.id), explanation: worst ? String(worst.explanation || '').slice(0, 500) : '' });
+  }
+  // Top-down order (suggestionOrder.js): a rewrite drafted against a field that this check also rewrites (an ILO draft against a CLO being
+  // rewritten, an activity draft against an ILO being rewritten, the description against weekly contents being rewritten) waits for that field,
+  // so that applying every recommendation never leaves one fitted to the old text of another. Display only: findings and points are unchanged.
+  const ordering = suggestionOrder.enabled(env0) ? suggestionOrder.orderSuggestions({ offered, judgements: semantic.judgements || [], content, rejectedPaths: history?.rejected || [] }) : null;
+  if (ordering) {
+    offered.length = 0;
+    offered.push(...ordering.offered);
+    for (const { suggestion: s, waitsFor } of ordering.waiting) {
+      const driving = (s.basedOn || []).map(b => verdictNow.get(String(b).replace(/^SEM:/, ''))).filter(Boolean);
+      const worst = driving.slice().sort((a, b) => VERDICT_RANK[b.label] - VERDICT_RANK[a.label])[0];
+      unresolved.push({ path: s.path, reason: 'waits_for_upstream', status: 'WAITING', tier: s.tier, attempts: history?.attempts?.[s.path] || 0, label: worst?.label || null, relationships: driving.map(j => j.id), explanation: worst ? String(worst.explanation || '').slice(0, 500) : '', waitsFor,
+        detail: `Its rewrite was written against ${waitsFor.join(', ')}, which this check also recommends changing. Decide on that recommendation first, then check again: the next check writes this one against the revised text. The finding stands.` });
+    }
   }
   // A lesson that names no core value and gets no grounded draft: the field is listed for the author's decision (NEEDS_REVIEW), with the finding and its
   // point unchanged. A draft the model wrote from the lesson's own text (it passed the quote checks) is offered instead; nothing is chosen blindly.

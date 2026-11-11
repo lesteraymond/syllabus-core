@@ -14,7 +14,7 @@ function hasPairEvidence(pair,content){
   'Activity-assessment':['activities','tasks'], 'ILO-activity':['activities'],
   'ILO-content':['contents'], 'Module-value':['contents','values'],
   'Activity-fit':['contents','activities'], 'Value-use':['contents','values'],
-  'Week1-introduction':['contents']
+  'Week1-introduction':['contents'], 'Week2-topic':['contents']
  }[pair.type]||[];
  return dependencies.every(field=>hasContent(row[field]));
 }

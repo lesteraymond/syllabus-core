@@ -59,6 +59,8 @@ export default function HybridCheckPanel({ run, onApplyDraft }) {
   const isRejected = s => decisions[s.id] === 'reject';
   const pending = hybrid.suggestions.filter(s => !isHandled(s) && !isRejected(s));
   const handled = hybrid.suggestions.filter(isHandled);
+  // Rewrites that wait for an earlier field this check also recommends changing (server: syllabuscheck/suggestionOrder.js).
+  const waiting = (hybrid.unresolved || []).filter(u => u.reason === 'waits_for_upstream' && Array.isArray(u.waitsFor));
   const decide = async (suggestion, action) => {
     if (decisionLock.current) return;
     decisionLock.current = true;
@@ -195,7 +197,17 @@ export default function HybridCheckPanel({ run, onApplyDraft }) {
           </div>}
         </article>;
       })}
-      {handled.length > 0 && <details className="hy-handled" open={Object.keys(appliedValue).length > 0 ? true : undefined}>
+      {waiting.length > 0 && <details className="hy-handled hy-waiting">
+        <summary>{t('hybrid.waiting', { count: waiting.length })}</summary>
+        <p className="hy-note">{t('hybrid.waitingNote')}</p>
+        <ul>{waiting.map(u => <li key={u.path}>
+          <div className="hy-rec-head">
+            <span className="hy-pill">{suggestionSection(u.path, { tr, t })}</span>
+          </div>
+          <p className="hy-hint">{t('hybrid.waitsFor', { fields: u.waitsFor.map(p => suggestionSection(p, { tr, t })).join(', ') })}</p>
+        </li>)}</ul>
+      </details>}
+      {handled.length > 0 &&<details className="hy-handled" open={Object.keys(appliedValue).length > 0 ? true : undefined}>
         <summary>{t('hybrid.handled', { count: handled.length })}</summary>
         <ul>{handled.map(s => <li key={s.id}>
           <div className="hy-rec-head">

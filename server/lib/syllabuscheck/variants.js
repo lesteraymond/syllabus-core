@@ -26,7 +26,18 @@ const RUBRIC_ILO = '- ILO-CLO (does the ILO contribute to achieving the CLO?): A
 const SEVERAL = 'When the source asks for several things (a PO with two skills, an ILO with two verbs), every one must be shown. If one is missing the pair is PARTIALLY_ALIGNED, not ALIGNED.';
 const SEVERAL_SCOPED = 'For the lesson-level relationships (ILO-activity, ILO-content, ILO-assessment, Module-value), when the source asks for several things (an ILO with two verbs), every one must be shown; if one is missing the pair is PARTIALLY_ALIGNED. For CLO-PO, CLO-EGA and ILO-CLO the target needs to contribute substantially, as described above, not to cover everything the source asks.';
 
-const NAMES = ['current', 'calibrated', 'rubric', 'rubric-ordered'];
+// rules-aligned   rubric-ordered + the institution's own rules written into the prompt (2026-11-11):
+//                   M14  a CLO is judged against the PO / EGA text and the course identity only, never the course description (and the
+//                        request leaves the description out of CLO questions: gemini.js cloDescriptionOff);
+//                   the core value the faculty already named is kept in a Module-value draft unless it clearly does not fit;
+//                   a draft changes only what its listed gaps need (smaller rewrites that keep the author's text).
+const M14 = ' For every CLO relationship (CLO-PO, CLO-EGA, CLO-anyPO, CLO-anyEGA) judge the CLO only against the PO or EGA text and the course code, title, program and year level: the course description is never evidence for or against a CLO, and a CLO draft never moves the CLO toward the description.';
+const VALUE_DRAFT = 'For PARTIALLY_ALIGNED or NOT_ALIGNED the draft names the Marian value or values that fit the ILO(s) and how they are integrated.';
+const VALUE_KEEP = 'For PARTIALLY_ALIGNED or NOT_ALIGNED the draft keeps the core value or values the author already named when they fit the lesson and adds how they are integrated; it names another of these values only when none is named or the named one clearly does not fit the ILO(s).';
+const KEEP_WORDING = 'Keep the author\'s wording and meaning wherever it already works,';
+const MINIMAL = 'Change as little as the listed gaps need: rewrite only the parts they name, keep the rest of the author\'s text word for word and about the same length. Keep the author\'s wording and meaning wherever it already works,';
+
+const NAMES = ['current', 'calibrated', 'rubric', 'rubric-ordered', 'rules-aligned'];
 const variantOf = (env = process.env) => {
   const name = String(env.SYLLABUS_CHECK_PROMPT_VARIANT || 'current').toLowerCase();
   return NAMES.includes(name) ? name : 'current';
@@ -44,9 +55,15 @@ function promptFor(base, variant = 'current', flags = { a: true, b: true, b3: tr
   text = replaceOnce(text, CLO_BULLET, RUBRIC_CLO);
   text = replaceOnce(text, ILO_BULLET, RUBRIC_ILO);
   text = replaceOnce(text, SEVERAL, SEVERAL_SCOPED);
+  if (variant !== 'rules-aligned') return text;
+  text = replaceOnce(text, RUBRIC_CLO, RUBRIC_CLO + M14);
+  text = replaceOnce(text, VALUE_DRAFT, VALUE_KEEP);
+  text = replaceOnce(text, KEEP_WORDING, MINIMAL);
   return text;
 }
 // True when the model should write its explanation before its label (the JSON schema lists the fields in that order).
-const explanationFirst = (variant) => variant === 'rubric-ordered';
+const explanationFirst = (variant) => variant === 'rubric-ordered' || variant === 'rules-aligned';
+// M14 in the request itself: under rules-aligned a CLO question is sent without the course description (gemini.js cloDescriptionOff).
+const cloWithoutDescription = (variant) => variant === 'rules-aligned';
 
-module.exports = { NAMES, variantOf, promptFor, explanationFirst };
+module.exports = { NAMES, variantOf, promptFor, explanationFirst, cloWithoutDescription };
