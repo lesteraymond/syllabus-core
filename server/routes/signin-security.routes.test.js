@@ -145,6 +145,19 @@ test('the limits come from the environment, with safe defaults, and a bad value 
   }
 });
 
+// ---- SEC-16: no sign-in token ----
+
+test('signing in answers with the user only: no token is made, by password or by Google, and the JWT code is gone', () => withServer(async ({ client }) => {
+  const byPassword = await client().login('fay@x.ph', 'Fay-pass-12');
+  assert.strictEqual(byPassword.status, 200);
+  assert.deepStrictEqual(Object.keys(byPassword.body), ['user']);
+  const byGoogle = await client()('POST', '/auth/google', { token: 'google:fay@x.ph' });
+  assert.strictEqual(byGoogle.status, 200);
+  assert.deepStrictEqual(Object.keys(byGoogle.body), ['user']);
+  const fs = require('node:fs'), path = require('node:path');
+  for (const gone of ['jwt.js', 'canEditSyllabus.js']) assert.ok(!fs.existsSync(path.join(__dirname, '..', 'middleware', gone)), gone);
+}));
+
 // ---- SEC-04: the same answer ----
 
 test('an unknown email and a wrong password get the same status and the same message', () => withServer(async ({ client }) => {

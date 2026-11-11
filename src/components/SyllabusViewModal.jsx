@@ -78,6 +78,14 @@ export default function SyllabusViewModal({ syllabusId, onClose, aside, avatarUr
         <div className="modal-body svm-body">
           {error && <div className="info-banner warning" role="alert">{tr(error)}</div>}
           {!error && !payload && <div className="empty">{translateUI("ui.opening_the_syllabus_51c75a")}</div>}
+          {/* For reviewers: text in this version that seems addressed to the AI checker (server/lib/aiInstructions.js). A warning only: it changes nothing. */}
+          {payload && Array.isArray(payload.aiInstructions) && payload.aiInstructions.length > 0 && (
+            <div className="info-banner warning" role="note">
+              <strong>{tr('Text addressed to the AI checker')}</strong>
+              <p>{tr('Some text in this version reads like an instruction to the AI checker, not to a reader. It does not change any score, recommendation or decision, but read the AI check of this syllabus with care, and judge these places yourself:')}</p>
+              <ul>{payload.aiInstructions.map((f) => <li key={f.path}><code>{f.path}</code>: {f.excerpt}</li>)}</ul>
+            </div>
+          )}
           {payload && (payload.content
             ? <ReviewDocument content={payload.content} facultyName={s.facultyName} signoffs={signoffs} />
             : (

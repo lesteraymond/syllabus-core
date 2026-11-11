@@ -30,7 +30,14 @@ const hash = (token) => crypto.createHash('sha256').update(token).digest('hex');
 // before it is refused at its next request. The moments live in this process's memory, exactly like the sessions themselves (the default session store):
 // a restart ends every session and clears these together. If sessions move to a shared store, this must move with them.
 const sessionsEndedAt = new Map(); // user id -> ms
-function endSessionsOf(userId) { sessionsEndedAt.set(Number(userId), Date.now()); }
+// With sessions in the database (SESSION_STORE=mysql, lib/sessionStore.js) ending an account's sessions also deletes its rows, so every server process sees it and
+// a restart does not bring them back. Set once by index.js.
+let sharedStore = null;
+const setSharedSessionStore = (store) => { sharedStore = store || null; };
+async function endSessionsOf(userId) {
+  sessionsEndedAt.set(Number(userId), Date.now());
+  if (sharedStore) await sharedStore.destroyUser(userId);
+}
 function sessionEnded(req) {
   const user = req.session && req.session.user;
   if (!user) return false;
@@ -181,4 +188,4 @@ function requireApprover(req, res, next) {
   });
 }
 
-module.exports = { startSession, endSessionsOf, sessionEnded, toSessionUser, requireAuth, requireSignedIn, requireAdmin, requireReviewer, requireApprover, requireAuthor, AUTHORS_ONLY, restoreSession, issueRememberToken, revokeRememberToken, REMEMBER_MS };
+module.exports = { startSession, endSessionsOf, setSharedSessionStore, sessionEnded, toSessionUser, requireAuth, requireSignedIn, requireAdmin, requireReviewer, requireApprover, requireAuthor, AUTHORS_ONLY, restoreSession, issueRememberToken, revokeRememberToken, REMEMBER_MS };

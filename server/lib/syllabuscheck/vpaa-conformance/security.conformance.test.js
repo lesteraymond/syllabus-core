@@ -43,7 +43,7 @@ test('[VPAA-SEC-FAIL-CLOSED] the real server REFUSES to start in staging and pro
     ['staging', {}, 'SESSION_SECRET'], ['production', {}, 'SESSION_SECRET'],
     ['staging', { SESSION_SECRET: 'capstone-secret', JWT_SECRET: GOOD_B }, 'SESSION_SECRET'], ['production', { SESSION_SECRET: 'SENT-short', JWT_SECRET: GOOD_B }, 'SESSION_SECRET'],
     ['staging', { SESSION_SECRET: 'aaaaaaaaaaaaaaaaaaaaaaaa', JWT_SECRET: GOOD_B }, 'SESSION_SECRET'],
-    ['staging', { SESSION_SECRET: GOOD_A }, 'JWT_SECRET'], ['production', { SESSION_SECRET: GOOD_A, JWT_SECRET: 'SENT-jwt' }, 'JWT_SECRET'],
+    // JWT_SECRET is no longer required: the server makes no sign-in token (docs/security/SECURITY-AUDIT-REPORT.md SEC-16)
     // host settings (secrets are fine here): each missing or unsafe one stops the server too
     ...[
       [{}, 'CORS_ALLOWED_ORIGINS'], [{ CORS_ALLOWED_ORIGINS: '*', TRUST_PROXY: '1' }, 'CORS_ALLOWED_ORIGINS'], [{ CORS_ALLOWED_ORIGINS: 'https://app.staging.invalid/', TRUST_PROXY: '1' }, 'CORS_ALLOWED_ORIGINS'],

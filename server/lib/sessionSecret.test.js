@@ -38,7 +38,7 @@ test('production and staging REFUSE a missing or unacceptable session secret and
 test('the error never contains the configured value', () => {
   for (const value of ['SENT-short', 'capstone-secret', 'aaaaaaaaaaaaaaaaaaaa']) {
     assert.throws(() => resolveSessionSecret({ NODE_ENV: 'staging', SESSION_SECRET: value }), (e) => !e.message.includes(value), JSON.stringify(value));
-    assert.throws(() => assertHardenedSecrets({ NODE_ENV: 'production', SESSION_SECRET: GOOD, JWT_SECRET: value }), (e) => !e.message.includes(value), JSON.stringify(value));
+    assert.throws(() => assertHardenedSecrets({ NODE_ENV: 'production', SESSION_SECRET: value }), (e) => !e.message.includes(value), JSON.stringify(value));
   }
 });
 
@@ -57,12 +57,12 @@ test('outside the hardened modes a random per-process secret replaces a missing 
   assert.equal(resolveSessionSecret({ NODE_ENV: 'development', SESSION_SECRET: GOOD }, { warn: () => assert.fail('no warning for a good secret') }).source, 'configured', 'development with a configured secret keeps using it');
 });
 
-test('hardened startup also requires an acceptable JWT_SECRET and does nothing in development', () => {
+test('hardened startup requires an acceptable SESSION_SECRET only: JWT_SECRET is no longer used (SEC-16), and development is not enforced', () => {
   assert.deepEqual(assertHardenedSecrets({ NODE_ENV: undefined }), [], 'development: not enforced');
   assert.deepEqual(assertHardenedSecrets({ NODE_ENV: 'test' }), []);
-  const ok = { NODE_ENV: 'staging', SESSION_SECRET: GOOD, JWT_SECRET: 'another-random-jwt-secret-9876543210' };
-  assert.deepEqual(assertHardenedSecrets(ok), ['SESSION_SECRET', 'JWT_SECRET']);
-  assert.throws(() => assertHardenedSecrets({ ...ok, JWT_SECRET: undefined }), (e) => e.variable === 'JWT_SECRET');
+  const ok = { NODE_ENV: 'staging', SESSION_SECRET: GOOD };
+  assert.deepEqual(assertHardenedSecrets(ok), ['SESSION_SECRET']);
+  assert.deepEqual(assertHardenedSecrets({ ...ok, NODE_ENV: 'production', JWT_SECRET: 'short' }), ['SESSION_SECRET'], 'a leftover JWT_SECRET is ignored');
   assert.throws(() => assertHardenedSecrets({ ...ok, SESSION_SECRET: 'capstone-secret' }), (e) => e.variable === 'SESSION_SECRET');
-  assert.throws(() => assertHardenedSecrets({ ...ok, NODE_ENV: 'production', JWT_SECRET: 'short' }), (e) => e.variable === 'JWT_SECRET' && /NODE_ENV=production/.test(e.message));
+  assert.throws(() => assertHardenedSecrets({ ...ok, NODE_ENV: 'production', SESSION_SECRET: 'short' }), (e) => e.variable === 'SESSION_SECRET' && /NODE_ENV=production/.test(e.message));
 });

@@ -13,6 +13,7 @@ const accountStatus = require('../lib/accountStatus');
 const { createNotification } = require('../lib/notify');
 const { createLimiter } = require('../lib/rateLimit');
 const { generatePassword } = require('../lib/passwords');
+const passwordExpiry = require('../lib/passwordExpiry'); // a generated password works for GENERATED_PASSWORD_DAYS days
 const mailer = require('../lib/mailer');
 const { domain, isSchoolEmail } = require('../lib/emailDomain');
 const assignments = require('../lib/assignments');
@@ -108,6 +109,7 @@ router.post('/', requireAdmin, async (req, res) => {
       'INSERT INTO users (email, password_hash, must_change_password, role, first_name, last_name) VALUES (?, ?, 1, ?, ?, ?)',
       [email, hash, role, firstName, lastName]
     );
+    await passwordExpiry.setExpiry(db, result.insertId);
     const mail = await mailer.sendCredentials({ to: email, name: firstName, password, reason: 'welcome' });
     // In the administrator's Recent Activity (lib/accountActivity.js): whom they registered, and as what. Never the password.
     await accountActivity.record(db, { userId: req.session.user.id, action: 'user_create', subject: `${firstName} ${lastName}`, notes: role });
@@ -142,9 +144,10 @@ router.post('/:id/resend-credentials', requireAdmin, async (req, res) => {
     const mail = await mailer.sendCredentials({ to: user.email, name: user.first_name, password, reason: 'welcome' });
     if (mail.sent) {
       await db.query('UPDATE users SET password_hash = ?, must_change_password = 1 WHERE user_id = ?', [await bcrypt.hash(password, 10), id]);
+      await passwordExpiry.setExpiry(db, id);
       await db.query('DELETE FROM password_temp WHERE user_id = ?', [id]).catch(() => {});
       await db.query('DELETE FROM remember_tokens WHERE user_id = ?', [id]);
-      endSessionsOf(id); // the account's open sessions end too: the new password is the only way back in
+      await endSessionsOf(id); // the account's open sessions end too: the new password is the only way back in
       await accountActivity.record(db, { userId: req.session.user.id, action: 'user_credentials', subject: await accountActivity.personOf(db, id) }); // only when the password was replaced
     }
     res.json({ id, email: user.email, emailSent: mail.sent, ...(mail.sent ? {} : { emailReason: mail.reason }) });

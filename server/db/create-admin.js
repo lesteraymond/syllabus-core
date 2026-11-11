@@ -16,6 +16,7 @@ async function createAdmin(db, { email, password, first = 'System', last = 'Admi
   if (existing.length) throw new Error('An account with that email already exists; nothing was changed.');
   const hash = await bcrypt.hash(String(password), 10);
   const [result] = await db.query('INSERT INTO users (email, password_hash, must_change_password, role, first_name, last_name) VALUES (?, ?, 1, ?, ?, ?)', [address, hash, 'admin', first, last]);
+  await require('../lib/passwordExpiry').setExpiry(db, result.insertId); // like every generated password, it must be replaced within GENERATED_PASSWORD_DAYS days
   return result.insertId;
 }
 

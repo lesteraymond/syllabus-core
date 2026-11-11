@@ -1,5 +1,6 @@
 'use strict';
-// One rule for every server-side signing secret (session cookies, recommendation verification tokens).
+// One rule for every server-side signing secret (session cookies, recommendation verification tokens). JWT_SECRET is no longer used: the server makes no
+// sign-in token (docs/security/SECURITY-AUDIT-REPORT.md SEC-16), so it is neither required nor read.
 //
 //   An ACCEPTABLE secret is at least 16 characters, uses at least 6 different characters, and is not a publicly known default.
 //   NODE_ENV=production or staging ("hardened"): a missing or unacceptable secret STOPS the server from starting; nothing is guessed or defaulted.
@@ -34,8 +35,8 @@ function secretError(name, why, mode) {
 }
 
 // Hardened modes only: every secret the running server needs must be acceptable before it listens. Throws on the first problem; returns the list of
-// variables checked otherwise. Other modes are left alone (JWT_SECRET missing there already fails when a token is first needed).
-function assertHardenedSecrets(env = process.env, names = ['SESSION_SECRET', 'JWT_SECRET']) {
+// variables checked otherwise. Other modes are left alone.
+function assertHardenedSecrets(env = process.env, names = ['SESSION_SECRET']) {
   if (!hardened(env)) return [];
   const mode = String(env.NODE_ENV).trim().toLowerCase();
   for (const name of names) {

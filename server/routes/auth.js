@@ -3,12 +3,12 @@ const { activeOnly, isDisabled, disabledBody } = require('../lib/accountStatus')
 const bcrypt = require('bcryptjs');
 const { issueRememberToken, revokeRememberToken, toSessionUser, requireSignedIn, REMEMBER_MS, startSession, endSessionsOf, sessionEnded } = require('../middleware/auth');
 const { resolveSignInLimits } = require('../lib/signInLimits');
+const passwordExpiry = require('../lib/passwordExpiry'); // a generated password that was never replaced stops working (SEC-12)
 const { createLimiter } = require('../lib/rateLimit');
 const { generatePassword, validatePassword } = require('../lib/passwords');
 const mailer = require('../lib/mailer');
 const { domain, isSchoolEmail } = require('../lib/emailDomain');
 const { OAuth2Client } = require('google-auth-library');
-const { signAccessToken, JWT_TTL } = require('../middleware/jwt');
 const accountActivity = require('../lib/accountActivity'); // sign-in, sign-out and password changes in the account's Recent Activity
 const router = express.Router();
 
@@ -52,7 +52,7 @@ async function findTemp(db, userId) {
 // Responses carry both `message` and `error` so the UI and older callers can read either.
 const fail = (res, status, message) => res.status(status).json({ message, error: message });
 
-// Verify a Google ID token, check the pre-registered allowlist, issue an 8-hour JWT.
+// Verify a Google ID token, check the pre-registered allowlist, and sign in with the session cookie.
 router.post('/google', async (req, res) => {
   try {
     const idToken = req.body.token ?? req.body.idToken;
@@ -60,10 +60,6 @@ router.post('/google', async (req, res) => {
     if (!process.env.GOOGLE_CLIENT_ID) {
       console.error('GOOGLE AUTH ERROR: GOOGLE_CLIENT_ID is not set in server/.env');
       return fail(res, 500, 'Google sign-in is not configured on the server.');
-    }
-    if (!process.env.JWT_SECRET) {
-      console.error('GOOGLE AUTH ERROR: JWT_SECRET is not set in server/.env');
-      return fail(res, 500, 'Server is missing its JWT secret.');
     }
 
     const ipKey = 'ip:' + req.ip;
@@ -99,7 +95,7 @@ router.post('/google', async (req, res) => {
     const sessionUser = toSessionUser(user); // carries mustChangePassword: an account that still has its generated password chooses its own first
     await startSession(req, sessionUser);
     await accountActivity.record(db, { userId: user.user_id, action: 'login', notes: 'google', request: req }); // the account's Recent Activity (best effort)
-    res.json({ token: signAccessToken(user), tokenType: 'Bearer', expiresIn: JWT_TTL, user: sessionUser });
+    res.json({ user: sessionUser }); // the session cookie is the sign-in; no token is made (SEC-16)
   } catch (error) {
     console.error('GOOGLE AUTH ERROR:', error);
     fail(res, 500, 'Sign-in failed because of a server error. Please try again.');
@@ -140,7 +136,12 @@ router.post('/login', async (req, res) => {
     // email has no account to record it on. The answer to the person signing in is unchanged.
     if (!valid) { await accountActivity.record(db, { userId: user.user_id, action: 'login_failed', notes: 'password', request: req }); return fail(res, 401, INVALID); }
     ipFailures.give(ipKey); accountFailures.give(accountKey); // the password is right: this attempt is not a failure, whatever is answered next
-    if (user.disabled_at) { await accountActivity.record(db, { userId: user.user_id, action: 'login_failed', notes: 'disabled', request: req }); return res.status(403).json(disabledBody()); } // only after the password is proven, so the answer reveals nothing to a guesser
+    if (user.disabled_at) { await accountActivity.record(db, { userId: user.user_id, action: 'login_failed', notes: 'disabled', request: req }); return res.status(403).json(disabledBody()); }
+    // A generated password past its time (only after the password is proven, so a guesser learns nothing). The temporary password of "Forgot password" is apart.
+    if (!viaTemp && passwordExpiry.isExpired(user)) {
+      await accountActivity.record(db, { userId: user.user_id, action: 'login_failed', notes: 'password_expired', request: req });
+      return res.status(403).json({ message: passwordExpiry.EXPIRED, error: passwordExpiry.EXPIRED, code: 'password_expired' });
+    } // only after the password is proven, so the answer reveals nothing to a guesser
     if (viaTemp) { // the current password stays valid until the new one is chosen
       await db.query('DELETE FROM password_temp WHERE user_id = ?', [user.user_id]).catch(() => {}); // a temporary password signs in once
       await db.query('UPDATE users SET must_change_password = 1 WHERE user_id = ?', [user.user_id]);
@@ -163,7 +164,7 @@ router.post('/login', async (req, res) => {
       await revokeRememberToken(db, req, res);
     }
     await accountActivity.record(db, { userId: user.user_id, action: 'login', notes: viaTemp ? 'temporary' : 'password', request: req }); // the account's Recent Activity (best effort)
-    res.json({ token: signAccessToken(user), tokenType: 'Bearer', expiresIn: JWT_TTL, user: sessionUser });
+    res.json({ user: sessionUser }); // the session cookie is the sign-in; no token is made (SEC-16)
   } catch (err) {
     console.error('LOGIN ERROR:', err);
     fail(res, 500, 'Sign-in failed because of a server error. Please try again.');
@@ -224,7 +225,7 @@ router.post('/change-password', requireSignedIn, async (req, res) => {
     await db.query('UPDATE users SET password_hash = ?, must_change_password = 0 WHERE user_id = ?', [hash, me.id]);
     await db.query('DELETE FROM password_temp WHERE user_id = ?', [me.id]).catch(() => {}); // a database without the table has nothing to clear
     await db.query('DELETE FROM remember_tokens WHERE user_id = ?', [me.id]); // devices that stayed signed in must sign in again
-    endSessionsOf(me.id); // every other open session of this account ends at its next request
+    await endSessionsOf(me.id); // every other open session of this account ends (with the database store: its rows are deleted, for every server process)
     await startSession(req, { ...me, mustChangePassword: false }, { keepCookie: true }); // and this one continues on a new session id
     await accountActivity.record(db, { userId: me.id, action: 'password_change', notes: me.mustChangePassword ? 'required' : 'self', request: req }); // never the password itself
     res.json({ message: 'Your password was changed.', user: req.session.user });

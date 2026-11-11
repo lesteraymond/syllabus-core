@@ -23,7 +23,7 @@ const env = dotenv.parse(raw);
 // kind: generated (we create it) | credential (issued by a provider) | database | identifier (not secret). exposure: what the project notes record.
 const REGISTRY = [
   { name: 'SESSION_SECRET', kind: 'generated', needed: 'required', use: 'signs session cookies and recommendation verification tokens', staging: 'Generate a NEW random value for staging (32+ random characters). Never reuse the development value.' },
-  { name: 'JWT_SECRET', kind: 'generated', needed: 'required', use: 'signs login tokens', staging: 'Generate a NEW random value for staging. Never reuse the development value.' },
+  { name: 'JWT_SECRET', kind: 'generated', needed: 'no longer used', use: 'signed login tokens, which the server no longer makes (SEC-16)', staging: 'Not needed: delete the line.' },
   { name: 'DB_PASS', kind: 'database', needed: 'required', use: 'the staging database password', staging: 'Create a dedicated staging database user with its own password and least privilege. An empty password (local development) must never be used.' },
   { name: 'ANTHROPIC_API_KEY', kind: 'credential', format: /^sk-ant-/, needed: 'required', use: 'Claude requests for Policy V2', staging: 'Create a SEPARATE staging key in its own Anthropic workspace with a hard monthly spend limit. Do not reuse the development key.' },
   { name: 'SMTP_PASS', kind: 'credential', needed: 'optional', exposure: 'pasted into a chat (project notes)', use: 'sending password emails', staging: 'Revoke the Gmail app password and create a new one, or leave mail unconfigured in staging.' },
@@ -52,7 +52,7 @@ for (const r of REGISTRY) {
   if (defs(r.name) > 1) problems.push(defs(r.name) + ' definitions (the last silently wins)');
   if (commented(r.name)) problems.push('a COMMENTED-OUT line still holds a value');
   if (r.exposure && (present || commented(r.name))) problems.push('EXPOSED: ' + r.exposure);
-  if (present && r.needed === 'unused-by-v2') problems.push('present but not needed');
+  if (present && ['unused-by-v2', 'no longer used'].includes(r.needed)) problems.push('present but not needed');
   const blocking = problems.some((p) => /^(MISSING|WEAK|EMPTY|SAME VALUE|EXPOSED|unexpected key format|a COMMENTED)/.test(p));
   rows.push({ ...r, present, bucket: present ? bucket(v) : '-', problems, blocking });
 }

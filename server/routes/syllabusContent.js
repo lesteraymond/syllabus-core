@@ -17,6 +17,7 @@ const compliance = require('../lib/compliance/service');
 const { changedSections, describeChanges, normalize } = require('../lib/versionChange');
 const contentRevision = require('../lib/contentRevision');
 const { LABEL_SQL, labelsOf } = require('../lib/syllabusLabels');
+const { findAiInstructions } = require('../lib/aiInstructions'); // the reviewer's warning about text addressed to the AI (advisory only)
 const { currentLabel } = require('../lib/academicYear');
 const accountActivity = require('../lib/accountActivity'); // a new draft and each editing session in the author's Recent Activity (best effort)
 const router = express.Router();
@@ -318,6 +319,9 @@ router.get('/:id/review', requireAuth, async (req, res) => {
       content,
       catalog: content && content.catalog ? content.catalog : null,
       file: filePath ? { path: filePath } : null,
+      // For reviewers: places in this version that seem addressed to the AI checker (lib/aiInstructions.js). A warning to read with care, nothing more: it
+      // changes no score, finding, recommendation or decision, and what the AI is sent is unchanged.
+      ...(rules.isReviewer(me) ? { aiInstructions: findAiInstructions(content) } : {}),
     });
   } catch (err) { sendError(res, err); }
 });
