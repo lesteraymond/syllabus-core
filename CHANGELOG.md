@@ -2071,3 +2071,19 @@ From the security audit in `docs/security/SECURITY-AUDIT-REPORT.md` (batches E, 
 - **Strict SQL mode (DB-03):** `DB_SQL_STRICT=on` sets a strict sql_mode on every connection and is checked at startup. Off by default: turn it on only after the browser E2E has passed against a strict database.
 - **Tests:** new `input-types.routes.test.js`, `cor-scan.routes.test.js`, `lib/aiQuota.test.js`, `lib/auditRetention.test.js`, and more in `lib/dbConfig.test.js`, `compliance.routes.test.js`, `syllabusCheck.refine.routes.test.js`. Assertions in `passwords.routes.test.js` and `enforcement.routes.test.js` were updated for the recorded unknown-email attempt and the two new activity columns.
 - **Verification:** npm test 2,401 of 2,408 pass; the 7 failures are the same evaluation-script tests as before (anthropic-harness 4, stage-c3-eval 2, stage-e8-canary 1). Conformance suites 276 of 276. npm run build passes.
+
+---
+
+### v1.82.0 — Security Hardening: Expiring Generated Passwords, AI-Instruction Warning, No Sign-in Token, Patched Packages, Pinned CI, Sessions in the Database
+**Date:** November 12, 2026
+
+The last six open findings of `docs/security/SECURITY-AUDIT-REPORT.md` (SEC-12, SEC-20, SEC-16, SEC-19, SEC-24, SEC-09). No review-chain or alignment rule, score, finding or recommendation changed.
+
+- **Generated passwords expire (SEC-12):** a password the system makes (new account, "Resend credentials", `db/create-admin.js`) works for `GENERATED_PASSWORD_DAYS` days (default 7) if it is not replaced; after that sign-in answers 403 `password_expired` with a way forward. Chosen passwords never expire. Needs `npm run migrate-password-expiry`; before it, nothing expires.
+- **AI-instruction warning (SEC-20):** reviewers reading a syllabus see a warning listing places whose text reads like an instruction to the AI checker (`server/lib/aiInstructions.js`). Advisory only: what is sent to the AI, the coded check, the official score, the findings and the recommendations are unchanged, and nothing is blocked; a test proves each of these.
+- **No sign-in token (SEC-16):** sign-in answers `{ user }` only; `middleware/jwt.js` and `middleware/canEditSyllabus.js` are deleted; `JWT_SECRET` is no longer required or read (the credential report and the Policy V2 preflight say it can be deleted); `jsonwebtoken` is removed.
+- **Packages (SEC-19):** `npm audit --omit=dev` found 0 issues in the app and 3 in the server (body-parser high, nodemailer and qs moderate); all fixed by non-breaking updates. `multer` upgraded from 1.4.5 to 2.5.0. Both folders now report 0 vulnerabilities.
+- **Pinned CI (SEC-24):** `actions/checkout` and `actions/setup-node` are pinned to the commits of v4.4.0; new `.github/dependabot.yml` proposes updates for the actions and both npm folders weekly.
+- **Sessions in the database (SEC-09):** `SESSION_STORE=mysql` keeps sessions in the table `sessions` (`server/lib/sessionStore.js`, no new dependency): they survive a restart, are shared by every server process, end on the server, are stored under a hash of their id, and ending an account's sessions deletes them for every process. Always on in staging and production (memory is refused); development keeps memory by default. Needs `npm run migrate-session-store`.
+- **Tests:** new `password-expiry.routes.test.js`, `lib/aiInstructions.test.js`, `lib/sessionStore.test.js`, and tests added to `signin-security.routes.test.js` and `review.routes.test.js`. `sessionSecret.test.js` and the VPAA security conformance test were updated because `JWT_SECRET` is no longer required.
+- **Verification:** npm test 2,427 of 2,434 pass; the 7 failures are the same evaluation-script tests as before (anthropic-harness 4, stage-c3-eval 2, stage-e8-canary 1). Conformance suites 276 of 276. npm run build passes. npm audit --omit=dev: 0 vulnerabilities in the root and in server/.

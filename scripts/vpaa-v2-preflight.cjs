@@ -34,7 +34,7 @@ add('required', !!(env.ANTHROPIC_API_KEY && String(env.ANTHROPIC_API_KEY).trim()
 add('required', provider.provider === 'anthropic' && !!provider.model, 'ANTHROPIC_MODEL is a verified Claude model', `model "${provider.model || '(none)'}"`);
 add('required', provider.configured === true && provider.approved === true, 'SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL equals ANTHROPIC_MODEL, and the provider is configured', `configured=${provider.configured} approved=${provider.approved}`);
 add('required', !!signingSecret(env.SESSION_SECRET), 'SESSION_SECRET configured (at least 16 characters, not the retired public constant)', signingSecret(env.SESSION_SECRET) ? 'valid (value not shown)' : 'missing or too short: Check & Improve and Policy V2 acceptance fail closed (503)');
-add('required', isStrongSecret(env.JWT_SECRET), 'JWT_SECRET configured (login needs it; at least 16 varied characters, not a known default)', isStrongSecret(env.JWT_SECRET) ? 'valid (value not shown)' : 'missing or not acceptable');
+add('info', true, 'JWT_SECRET is no longer used (the server makes no sign-in token, SEC-16)', env.JWT_SECRET ? 'present but not needed: delete the line' : 'not set');
 add('required', aiGate(env) === 'advisory', 'SYLLABUS_CHECK_AI_GATE is advisory (the default)', `gate is "${aiGate(env)}"`);
 // NODE_ENV=staging is what makes the server refuse to start with a missing or publicly known secret. A staging evaluation must never run as production.
 const nodeEnv = String(env.NODE_ENV || '').trim().toLowerCase();

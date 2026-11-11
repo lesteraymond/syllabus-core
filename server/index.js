@@ -9,14 +9,16 @@ const { resolveSessionSecret, assertHardenedSecrets } = require("./lib/sessionSe
 
 // Secrets are checked before anything else starts. With NODE_ENV=staging or production a missing or publicly known secret stops the server (no default is
 // ever used); in development a random per-process session secret is used instead of a constant. No secret value is ever printed.
-let sessionSecret, hostConfig, dbConfig;
+let sessionSecret, hostConfig, dbConfig, sessionStoreKind;
 try {
 	assertHardenedSecrets(process.env);
 	sessionSecret = resolveSessionSecret(process.env).secret;
 	hostConfig = resolveHostConfig(process.env); // CORS origins, cookie flags and proxy trust: validated here, so a bad setting stops the server before it listens
 	dbConfig = require("./lib/dbConfig").resolveDbConfig(process.env); // the database connection: port, TLS, pool bounds; a remote database must use TLS in staging and production
-	require("./lib/signInLimits").resolveSignInLimits(process.env);
-	require("./lib/aiQuota").resolveAiQuota(process.env); // the daily ceilings on AI requests (lib/aiQuota.js): a bad value stops the server here, by name // the failed sign-in limits (routes/auth.js): a bad value stops the server here, by name
+	require("./lib/signInLimits").resolveSignInLimits(process.env); // the failed sign-in limits (routes/auth.js): a bad value stops the server here, by name
+	require("./lib/aiQuota").resolveAiQuota(process.env); // the daily ceilings on AI requests (lib/aiQuota.js): a bad value stops the server here, by name
+	require("./lib/passwordExpiry").resolveGeneratedPasswordDays(process.env); // GENERATED_PASSWORD_DAYS: a bad value stops the server here, by name
+	sessionStoreKind = require("./lib/sessionStore").resolveSessionStore(process.env); // memory (development) or mysql (always in staging and production)
 } catch (error) {
 	console.error("FATAL: " + error.message);
 	process.exit(1);
@@ -29,21 +31,28 @@ applyHostSecurity(app, hostConfig); // trust proxy, the security headers, CORS f
 console.log(`HOST: CORS allows ${hostConfig.origins.length} origin(s) (${hostConfig.originSource}); cookies Secure=${hostConfig.cookie.secure} SameSite=${hostConfig.cookie.sameSite}; trust proxy ${hostConfig.trustProxy === undefined ? "off" : JSON.stringify(hostConfig.trustProxy)}.`);
 app.use(express.json({ limit: JSON_BODY_LIMIT }));
 app.use(express.urlencoded({ extended: true }));
+
+const pool = mysql.createPool(dbConfig.pool); // lib/dbConfig.js
+require("./lib/dbConfig").applySessionSettings(pool, dbConfig); // DB_SQL_STRICT=on: a strict sql_mode on every connection
+
+// Sessions: in the database with SESSION_STORE=mysql (always in staging and production; lib/sessionStore.js), so they survive a restart and are shared by every
+// server process, and ending an account's sessions reaches all of them. Development keeps the in-memory store unless SESSION_STORE=mysql.
+const { MySqlSessionStore, assertSessionTableReady } = require("./lib/sessionStore");
+const sessionStore = sessionStoreKind === "mysql" ? new MySqlSessionStore(pool) : null;
+require("./middleware/auth").setSharedSessionStore(sessionStore);
 app.use(
 	session({
 		secret: sessionSecret,
 		resave: false,
 		saveUninitialized: false,
 		cookie: hostConfig.sessionCookie,
+		...(sessionStore ? { store: sessionStore } : {}),
 	}),
 );
 
 // No folder is served publicly. An uploaded syllabus file is read through GET /api/syllabi/:id/file (routes/syllabusFiles.js), which checks who is asking;
 // a profile photo through GET /api/users/:id/avatar. Anything under /uploads answers 404, signed in or not.
 app.use("/uploads", (req, res) => res.sendStatus(404));
-
-const pool = mysql.createPool(dbConfig.pool); // lib/dbConfig.js
-require("./lib/dbConfig").applySessionSettings(pool, dbConfig); // DB_SQL_STRICT=on: a strict sql_mode on every connection
 
 app.locals.db = pool;
 require('./lib/catalogFileCleanup').startCleanup(pool);
@@ -100,7 +109,8 @@ applyErrorHandling(app);
 
 // Before the server listens: the application's database account may only read and write rows, and no account may still have a demo password (lib/dbConfig.js).
 // In staging and production a failed check stops the server; in development it is a warning.
-require("./lib/dbConfig").assertDatabaseSafe(pool, process.env).then((database) => {
+require("./lib/dbConfig").assertDatabaseSafe(pool, process.env).then(async (database) => {
+if (sessionStore) await assertSessionTableReady(pool); // the sessions table must be there before anyone signs in
 for (const warning of database.warnings) console.warn("DATABASE: " + warning);
 app.listen(PORT, () => {
 	console.log(`Server running on http://localhost:${PORT}`);
@@ -111,7 +121,7 @@ app.listen(PORT, () => {
 			console.log(`  ${method.toUpperCase().padEnd(5)} /api/auth${layer.route.path}`);
 		}
 	}
-	for (const key of ["GOOGLE_CLIENT_ID", "JWT_SECRET"]) {
+	for (const key of ["GOOGLE_CLIENT_ID"]) {
 		if (!process.env[key]) console.warn(`WARNING: ${key} is not set in server/.env - Google sign-in will fail`);
 	}
 	if (!require("./lib/mailer").configured()) console.warn("MAIL: SMTP_HOST and MAIL_FROM are not set in server/.env - no credentials or password emails will be sent.");

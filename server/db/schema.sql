@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS users (
   email VARCHAR(255) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   must_change_password TINYINT(1) NOT NULL DEFAULT 0,
+  password_expires_at DATETIME NULL, -- a generated password stops working after this unless replaced (db/migrate-password-expiry.js)
   role ENUM('faculty', 'admin', 'student', 'asst_vpaa', 'lic_director', 'vpaa') NOT NULL DEFAULT 'faculty',
   first_name VARCHAR(100) NOT NULL,
   last_name VARCHAR(100) NOT NULL,
@@ -117,6 +118,17 @@ CREATE TABLE IF NOT EXISTS syllabi (
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
   FOREIGN KEY (curriculum_id) REFERENCES curriculum(curriculum_id) ON DELETE SET NULL,
   FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE SET NULL
+);
+
+-- Sessions, kept in the database (server/lib/sessionStore.js, db/migrate-session-store.js). The key is the SHA-256 of the session id.
+CREATE TABLE IF NOT EXISTS sessions (
+  session_id CHAR(64) NOT NULL PRIMARY KEY,
+  user_id INT NULL,
+  expires DATETIME NOT NULL,
+  data MEDIUMTEXT NOT NULL,
+  INDEX idx_sessions_user (user_id),
+  INDEX idx_sessions_expires (expires),
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 -- The review history of each syllabus. It outlives the syllabus and the account (SET NULL): subject and actor keep their names (db/migrate-audit-retention.js).

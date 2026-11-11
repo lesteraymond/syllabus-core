@@ -1,0 +1,18 @@
+# Dependabot proposes updates as pull requests; nothing is merged automatically. It keeps the pinned GitHub Actions (by commit hash, see workflows/ci.yml)
+# current, and flags vulnerable npm packages in the app (root) and the server.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+  - package-ecosystem: npm
+    directory: /server
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5

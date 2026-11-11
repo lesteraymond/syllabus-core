@@ -478,3 +478,34 @@ Each batch was written test-first: its new tests were run and failed, then the c
 npm test 2,401 of 2,408 pass; the 7 failures are the same evaluation-script tests as before (anthropic-harness 4, stage-c3-eval 2, stage-e8-canary 1). Conformance suites 276 of 276. npm run build passes.
 
 Not run: any real database (the migration was tested against a fake that answers information_schema; the exact output of your MariaDB or MySQL version is unverified), real OCR (replaced by a fake in the tests), any live provider, and the browser E2E.
+
+## 12. Phase 3: the last six findings (implemented 2026-11-12, not committed)
+
+| Finding | Status | What changed | Test |
+|---|---|---|---|
+| SEC-12 generated passwords never expired | **FIXED in code; needs the migration** | `lib/passwordExpiry.js`, `db/migrate-password-expiry.js`; expiry set on create, resend and `create-admin.js`; checked at sign-in after the password is proven; `GENERATED_PASSWORD_DAYS` validated at startup | `password-expiry.routes.test.js` (9) |
+| SEC-20 prompt injection | **WARNING ADDED; model behaviour not tested** | `lib/aiInstructions.js` finds instruction-like text; `GET /api/syllabi/:id/review` returns it to reviewers; the review window shows it | `lib/aiInstructions.test.js` (6): detection, no false positives on the sample syllabi, content unchanged, `pairsOf` (what the AI is sent) and `svc.check` (score, findings, recommendations) identical, only the review route uses it; one test in `review.routes.test.js` |
+| SEC-16 unused JWT | **FIXED** | token no longer made or returned; `jwt.js`, `canEditSyllabus.js` and `jsonwebtoken` removed; `JWT_SECRET` not required | `signin-security.routes.test.js`, `sessionSecret.test.js`, conformance suite |
+| SEC-19 dependencies | **FIXED** | 3 server advisories fixed by `npm audit fix`; `multer` 2.5.0; `jsonwebtoken` removed | `npm audit --omit=dev`: 0 in both folders; upload route tests (70) pass on multer 2 |
+| SEC-24 CI actions by tag | **FIXED** | pinned to `11d5960a326750d5838078e36cf38b85af677262` (checkout v4.4.0) and `49933ea5288caeca8642d1e84afbd3f7d6820020` (setup-node v4.4.0), read from GitHub with `git ls-remote`; `.github/dependabot.yml` | not run on GitHub |
+| SEC-09 MemoryStore | **FIXED in code; needs the migration** | `lib/sessionStore.js` (a store on the existing pool, chosen over `express-mysql-session` because that package pins its own mysql2 3.10.2); sessions keyed by SHA-256 of the id; `endSessionsOf` deletes the account's rows; `SESSION_STORE` validated, memory refused in staging and production; table checked before listening | `lib/sessionStore.test.js` (10): restart, second process, revocation across processes, expiry, hashing |
+
+### Behaviour that changed on purpose
+
+- Sign-in no longer returns `token`, `tokenType` or `expiresIn`. Any outside script that read them will get `undefined`; the session cookie is what signs in.
+- A generated password unused for 7 days stops working (after the migration).
+- In staging and production the server will not start until the `sessions` table exists, and sessions now survive restarts there.
+- Reviewers may see a new warning above a syllabus. Nothing else changes for them.
+
+### What you must do
+
+1. Back up, then run with the migration account: `npm run migrate-password-expiry`, `npm run migrate-session-store`, and `npm run migrate-audit-retention` from batch H (each has `--dry-run`).
+2. Delete `JWT_SECRET` from your `.env` files (it is ignored now).
+3. In development, set `SESSION_STORE=mysql` once the table exists if you want sessions to survive restarts there too.
+4. On GitHub, Dependabot starts once `.github/dependabot.yml` is pushed; review its pull requests before merging.
+
+### Verification
+
+npm test 2,427 of 2,434 pass; the 7 failures are the same evaluation-script tests as before (anthropic-harness 4, stage-c3-eval 2, stage-e8-canary 1). Conformance suites 276 of 276. npm run build passes. npm audit --omit=dev: 0 vulnerabilities in the root and in server/.
+
+Not run: any real database (the three migrations and the session store were tested against fakes), the CI workflow on GitHub, the browser E2E (which now needs the `sessions` table in its scratch database; `init.js` creates it from `schema.sql`), and a live AI model against the injection examples.
