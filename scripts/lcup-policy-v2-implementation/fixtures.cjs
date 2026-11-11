@@ -11,6 +11,12 @@ function fixture(program='BSIT'){
  content.meta.program=program;
  masters.pos=structuredClone(official.programs[program==='BSIT-CYBERSECURITY'?'BSIT':program].outcomes);
  masters.outcomeSource=program==='BSIT-CYBERSECURITY'?'BSIT':null;
+ // Since the dynamic references (2026-11-06) Policy V2 judges CLO-PO only against a SAVED Program Outcome version (masters.poReference, resolved by
+ // repository.mastersFor from the Admin's saves). A synthetic saved version of the same official statements, as mastersFor would supply it.
+ const source=masters.outcomeSource||program, statements=structuredClone(masters.pos);
+ masters.poReference={id:`po-${source.toLowerCase()}-test-v1`,version:1,kind:'synthetic_test_reference',status:'published',outcomes:statements,
+  contentSha256:require('node:crypto').createHash('sha256').update(JSON.stringify(statements)).digest('hex'),sourceFile:'src/data/officialProgramOutcomes.json (software-test copy)'};
+ masters.referenceContext={program:{id:null,code:program},po:{source,status:'versioned',reference:{id:masters.poReference.id,version:1}}};
  masters.valueDefinitions={status:'configured',version:'synthetic-reference-for-software-tests',source:'Not an institutional approval; isolated mock reference',definitions:Object.fromEntries(VALUE_NAMES.map(name=>[name,`${name}: synthetic value-definition context for software tests.`]))};
  masters.curricula[0].program=program;masters.curricula[0].curriculumYear=program==='BSIT-CYBERSECURITY'?'2025-2026':'test-2026';content.meta.curriculumYear=masters.curricula[0].curriculumYear;
  content.outcomes={...structuredClone(masters.institution),pos:structuredClone(masters.pos)};

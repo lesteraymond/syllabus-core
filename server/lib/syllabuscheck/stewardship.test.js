@@ -88,6 +88,18 @@ test('correctionHistory starts counting again once the field has passed, and ign
   assert.ok(!h.attempts['meta.title'], 'a rule suggestion is the exact official value and has no attempt limit');
 });
 
+test('correctionHistory lists the fields whose AI rewrite the author rejected in the latest check only (suggestionOrder.js)', async () => {
+  const ilo = sug('r0-clo', 'plan[0].ilos[0].text', ['r0-clo']), act = sug('r0-act', 'plan[0].activities', ['r0-act']);
+  const rule = { id: 'CUR-FIELD:meta.title', path: 'meta.title', source: 'rule', replacement: 'x' };
+  const db = fakeDb({
+    reports: [report(13, { 'r0-clo': 'NOT_ALIGNED' }, [ilo, act, rule]), report(12, { 'r0-clo': 'NOT_ALIGNED' }, [act])],
+    decisions: [{ run_id: 12, suggestion_id: 'SEM:r0-act', action: 'reject' }, { run_id: 13, suggestion_id: 'SEM:r0-clo', action: 'reject' },
+      { run_id: 13, suggestion_id: 'SEM:r0-act', action: 'reject' }, { run_id: 13, suggestion_id: 'SEM:r0-act', action: 'undo' }, { run_id: 13, suggestion_id: 'CUR-FIELD:meta.title', action: 'reject' }],
+  });
+  const h = await correctionHistory(db, 1);
+  assert.deepEqual(h.rejected, ['plan[0].ilos[0].text'], 'an undone rejection, an older check and a rule suggestion do not count');
+});
+
 test('correctionHistory with no stored checks, or a database problem, is simply no history', async () => {
   const none = { attempts: {}, last: {}, previous: {} };
   assert.deepEqual(await correctionHistory(fakeDb({ reports: [], decisions: [] }), 1), none);

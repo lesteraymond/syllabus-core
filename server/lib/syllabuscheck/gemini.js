@@ -17,12 +17,19 @@ const { caseOnlyEnumMismatches } = require('./anthropicSchema');
 const VALUES = VALUE_NAMES; // one list for the coded VALUE check, the scored Module-value relationship and Stage D1 (values.js)
 const LABELS = ['ALIGNED', 'PARTIALLY_ALIGNED', 'NOT_ALIGNED', 'INSUFFICIENT_EVIDENCE'];
 const BLOOM = ['Remember', 'Understand', 'Apply', 'Analyze', 'Evaluate', 'Create'];
+const deepseek = require('./deepseekClient'); // the direct DeepSeek API
+const groq = require('./groqClient'); // the direct Groq API
 const NEMOTRON_FREE = 'nvidia/nemotron-3-ultra-550b-a55b:free';
 const MINIMAX_PAID = 'minimax/minimax-m3.1-flash'; // paid: supports strict structured outputs, so it uses the json_schema path
 const LAGUNA_FREE = 'poolside/laguna-xs-2.1:free';
 // Free models: JSON-object mode with the schema in the prompt, zero-price routing and no paid fallback.
 const freeJsonModel = model => model === NEMOTRON_FREE || model === LAGUNA_FREE;
-const supportedRouterModel = model => freeJsonModel(model) || /^google\/gemini-[\w.:-]+$/.test(model) || model === MINIMAX_PAID;
+// Paid DeepSeek V4 models (2026-11-10 trial): they support strict structured outputs, so they use the json_schema path like MiniMax. They reason by
+// default; the request asks for low reasoning effort so the answer fits the token cap and the cost stays low (routerReasoningOf).
+const DEEPSEEK_PAID = new Set(['deepseek/deepseek-v4-pro', 'deepseek/deepseek-v4.1-flash']);
+const supportedRouterModel = model => freeJsonModel(model) || /^google\/gemini-[\w.:-]+$/.test(model) || model === MINIMAX_PAID || DEEPSEEK_PAID.has(model);
+// The reasoning setting an OpenRouter request carries for a model, if any. Laguna returns a null content while reasoning, so it is turned off.
+const routerReasoningOf = model => (model === NEMOTRON_FREE || DEEPSEEK_PAID.has(model) ? { reasoning: { effort: 'low' } } : model === LAGUNA_FREE ? { reasoning: { enabled: false } } : {});
 // Claude is experimental: the application uses it only for the one model the operator approved (SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL, unset by default).
 const anthropicApproved = (env, model) => !!model && String(env.SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL || '').trim() === model;
 function providerConfig(env = process.env, { evaluation = false } = {}) {
@@ -36,6 +43,17 @@ function providerConfig(env = process.env, { evaluation = false } = {}) {
     const model = env.ANTHROPIC_MODEL || '', approved = anthropicApproved(env, model);
     return { provider, model, configured: anthropicReady(env) && (approved || evaluation), approved, ...(evaluation ? { evaluationOnly: true } : {}) };
   }
+  // The direct DeepSeek API (deepseekClient.js): its own key and one of the documented models. It runs checks once configured, but a DeepSeek check
+  // counts as verified only for the model an operator approved by name (verifiedAlignment), as for Claude.
+  if (provider === 'deepseek') {
+    const model = deepseek.modelOf(env);
+    return { provider, model, configured: !!env.DEEPSEEK_API_KEY && deepseek.supported(model), approved: deepseek.approved(env, model) };
+  }
+  // The direct Groq API (groqClient.js): its own key and one of the documented models; verified only for the model an operator approved.
+  if (provider === 'groq') {
+    const model = groq.modelOf(env);
+    return { provider, model, configured: !!env.GROQ_API_KEY && groq.supported(model), approved: groq.approved(env, model) };
+  }
   const model = provider === 'openrouter' ? env.OPENROUTER_MODEL || NEMOTRON_FREE : env.GEMINI_MODEL || 'gemini-3.8-flash';
   const configured = provider === 'openrouter' ? !!env.OPENROUTER_API_KEY && supportedRouterModel(model) : provider === 'gemini' && !!env.GEMINI_API_KEY;
   return { provider, model, configured };
@@ -47,7 +65,7 @@ function verifiedGemini(alignment) {
 // one, and an evaluation-only result never counts, whichever provider made it.
 function verifiedAlignment(alignment, env = process.env) {
   if (alignment?.status !== 'completed' || alignment.evaluationOnly) return false;
-  return alignment.provider === 'gemini' || (alignment.provider === 'openrouter' && supportedRouterModel(alignment.model || '')) || (alignment.provider === 'anthropic' && CLAUDE_MODEL.test(alignment.model || '') && anthropicApproved(env, alignment.model));
+  return alignment.provider === 'gemini' || (alignment.provider === 'openrouter' && supportedRouterModel(alignment.model || '')) || (alignment.provider === 'deepseek' && deepseek.supported(alignment.model) && deepseek.approved(env, alignment.model)) || (alignment.provider === 'groq' && groq.supported(alignment.model) && groq.approved(env, alignment.model)) || (alignment.provider === 'anthropic' && CLAUDE_MODEL.test(alignment.model || '') && anthropicApproved(env, alignment.model));
 }
 // Stage C structured fields. They are part of the answer only when a Stage C flag is on (the schema is the legacy one otherwise). Each is an enum, so the
 // answer says in a field what it used to say in a sentence; a value outside its enum is treated as malformed, never as a pass.
@@ -522,7 +540,8 @@ const courseKeyOf = course => JSON.stringify([course.code, course.title, course.
 // With it on, the reuse key of those relationships is made from the course without the description, so a changed description never re-asks them.
 const CLO_CONTEXT = /^(Course-CLO|CLO-set|CLO-PO|CLO-EGA|CLO-anyPO|CLO-anyEGA|ILO-CLO|ILO-anyCLO|CLO-coverage|CLO-classification)$/;
 const courseWithoutDescription = course => ({ ...course, description: '' });
-const cloDescriptionOff = (env = process.env) => String(env?.SYLLABUS_CHECK_CLO_DESCRIPTION || '').trim().toLowerCase() === 'off';
+// The rules-aligned prompt variant writes rule M14 into the prompt, so it also leaves the description out of the CLO questions themselves.
+const cloDescriptionOff = (env = process.env) => String(env?.SYLLABUS_CHECK_CLO_DESCRIPTION || '').trim().toLowerCase() === 'off' || require('./variants').cloWithoutDescription(variantOf(env));
 // The user message: the course and the pairs and, when a staged check asks a relationship again, the corrections for it (judgeStaged). Without
 // corrections it is exactly the message it always was. The r2 recommendation contract adds recommendation_context for its scoped pairs.
 function userMessageOf(course, pairs, corrections, recommendation = null, withoutCloDescription = false, scopedContext = false) {
@@ -558,6 +577,40 @@ async function requestGemini(pairs,{ env = process.env, transport = fetch, cours
   const text = body.candidates?.[0]?.content?.parts?.filter(p => !p.thought).map(p => p.text || '').join('');
   return verifyAnswer(text, pairs, contract);
 }
+// The direct DeepSeek API: JSON-object mode with the schema in the prompt (the API has no strict json_schema), and the same server-side checks of the
+// answer as every provider (verifyAnswer).
+async function requestDeepSeek(pairs, { env = process.env, transport = fetch, course, corrections, academicPolicy, onRequest, signal } = {}) {
+  if (signal?.aborted) throw cancelledRequest(signal);
+  const model = deepseek.modelOf(env);
+  if (!deepseek.supported(model)) throw Error('Unsupported checker model');
+  const variant = variantOf(env);
+  const contract = contractOf(env, course);
+  const schema = alignmentSchema(false, explanationFirst(variant), contract.aspectKeys, contract.recommend, minItemsOn(env, model) ? 1 : 0);
+  const system = `${systemPromptOf(variant, env, pairs, academicPolicy)}${deepseek.jsonInstruction(schema)}\nKeep explanations concise. Quote short verbatim spans.`;
+  const user = userMessageOf(course, pairs, corrections, null, cloDescriptionOff(env));
+  onRequest?.(JSON.stringify({ model, system, user }), deepseek.MAX_TOKENS);
+  let answer;
+  try { answer = await deepseek.deepseekChat({ model, system, user }, { env, transport, signal, timeoutMs: timeoutOf(model, env) }); }
+  catch (error) { if (signal?.aborted) throw cancelledRequest(signal); if (!error.unverified && !/; alignment not evaluated$/.test(error.message)) error.message += '; alignment not evaluated'; throw error; }
+  return verifyAnswer(answer.text, pairs, contract);
+}
+// The direct Groq API: JSON-object mode with the schema in the prompt; the answer is verified server-side like every provider's.
+async function requestGroq(pairs, { env = process.env, transport = fetch, course, corrections, academicPolicy, onRequest, signal } = {}) {
+  if (signal?.aborted) throw cancelledRequest(signal);
+  const model = groq.modelOf(env);
+  if (!groq.supported(model)) throw Error('Unsupported checker model');
+  const variant = variantOf(env);
+  const contract = contractOf(env, course);
+  const schema = alignmentSchema(false, explanationFirst(variant), contract.aspectKeys, contract.recommend, minItemsOn(env, model) ? 1 : 0);
+  const system = `${systemPromptOf(variant, env, pairs, academicPolicy)}${groq.jsonInstruction(schema)}
+Keep explanations concise. Quote short verbatim spans.`;
+  const user = userMessageOf(course, pairs, corrections, null, cloDescriptionOff(env));
+  onRequest?.(JSON.stringify({ model, system, user }), groq.MAX_TOKENS);
+  let answer;
+  try { answer = await groq.groqChat({ model, system, user }, { env, transport, signal, timeoutMs: timeoutOf(model, env) }); }
+  catch (error) { if (signal?.aborted) throw cancelledRequest(signal); if (!error.unverified && !/; alignment not evaluated$/.test(error.message)) error.message += '; alignment not evaluated'; throw error; }
+  return verifyAnswer(answer.text, pairs, contract);
+}
 async function requestOpenRouter(pairs, { env = process.env, transport = fetch, course, corrections, academicPolicy, onRequest, signal } = {}) {
   if (signal?.aborted) throw cancelledRequest(signal);
   const model = env.OPENROUTER_MODEL || NEMOTRON_FREE;
@@ -573,7 +626,7 @@ async function requestOpenRouter(pairs, { env = process.env, transport = fetch, 
   const requestBody = JSON.stringify({ model, temperature: 0, stream: false, max_tokens: 8192,
     messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessageOf(course, pairs, corrections, null, cloDescriptionOff(env)) }],
     response_format: freeJson ? { type: 'json_object' } : { type: 'json_schema', json_schema: { name: 'syllabus_alignment', strict: true, schema } },
-    ...(model === NEMOTRON_FREE ? { reasoning: { effort: 'low' } } : model === LAGUNA_FREE ? { reasoning: { enabled: false } } : {}), // Laguna returns a null content while reasoning
+    ...routerReasoningOf(model),
     provider: { // Nemotron's free provider does not advertise JSON mode, so requiring it matches no endpoint (404); the answer is verified server-side instead.
       ...(freeJson ? {} : { require_parameters: true }), ...(freeJson ? { allow_fallbacks: false, max_price: { prompt: 0, completion: 0 } } : {}) },
   });
@@ -778,12 +831,15 @@ function createRequestBudget(env = process.env) {
 // With a stage on, an answer carries up to 22 fields per relationship. In the Stage E.3 smoke run one batch of 8 came back with 7 empty explanations,
 // while batches of 1-3 had none, so a staged check sends STAGED_BATCH relationships per call. A check with every stage off keeps 12 (8 on free models).
 const STAGED_BATCH = 4;
-const batchSizeOf = (model, env = process.env) => inRange(env.SYLLABUS_CHECK_AI_BATCH, 1, 24, anyStage(stageFlags(env)) ? STAGED_BATCH : freeJsonModel(model) ? 8 : 12);
+const batchSizeOf = (model, env = process.env) => inRange(env.SYLLABUS_CHECK_AI_BATCH, 1, 24, groq.supported(model) ? groq.BATCH : anyStage(stageFlags(env)) ? STAGED_BATCH : freeJsonModel(model) ? 8 : 12);
 // How long one provider call may take. The free Nemotron model reasons before it answers (20-50 s for ONE relationship), so it gets longer.
 // SYLLABUS_CHECK_AI_TIMEOUT_SEC (10-900) overrides it.
-const timeoutOf = (model, env = process.env) => inRange(env.SYLLABUS_CHECK_AI_TIMEOUT_SEC, 10, 900, freeJsonModel(model) ? 240 : 90) * 1000;
-const cooldownOf = (env = process.env) => inRange(env.SYLLABUS_CHECK_AI_COOLDOWN_SEC, 0, 3600, 300) * 1000;
-const concurrencyOf = (env = process.env) => inRange(env.SYLLABUS_CHECK_AI_CONCURRENCY, 1, 6, 3);
+// DeepSeek answers a batch of twelve in one long JSON reply, so it gets the same allowance as the free models.
+const timeoutOf = (model, env = process.env) => inRange(env.SYLLABUS_CHECK_AI_TIMEOUT_SEC, 10, 900, freeJsonModel(model) || deepseek.supported(model) ? 240 : 90) * 1000;
+// Groq's limits are per minute, so a rate limit is waited out for a minute (not five).
+const cooldownOf = (env = process.env) => inRange(env.SYLLABUS_CHECK_AI_COOLDOWN_SEC, 0, 3600, String(env.SYLLABUS_CHECK_AI_PROVIDER || '').toLowerCase() === 'groq' ? 65 : 300) * 1000;
+// Groq's 8K tokens per minute allow one request at a time.
+const concurrencyOf = (env = process.env) => inRange(env.SYLLABUS_CHECK_AI_CONCURRENCY, 1, 6, String(env.SYLLABUS_CHECK_AI_PROVIDER || '').toLowerCase() === 'groq' ? 1 : 3);
 // Identifies one question put to the AI: change the prompt, the model, or either text and it is a different question. Under the CLO classification contract
 // the classification context and the contract version are part of the question too (cloClassification.js); a relationship without one keeps its key.
 // referenceKey: the published Program Outcome reference version a CLO-PO / CLO-anyPO relationship was judged under (align passes it only for those types, and only when one applies). A new version
@@ -944,6 +1000,10 @@ async function judgeStaged(request, batch, options = {}, history = new Map()) {
   const named = new Map((error.rejected || []).filter(r => r.id !== '*').map(r => [r.id, r]));
   const failed = batch.filter(pair => !have.has(pair.id));
   const unattributed = !failed.some(pair => named.has(pair.id));
+  // Policy V2 has only V2_MAX_ATTEMPTS per relationship, so an unreadable reply to a GROUP (broken JSON, a cut-off answer) blames none of its members:
+  // it uses no attempt, and the group is asked again in two halves. The healthy half is answered; the half with the cause splits again until the cause is
+  // asked alone, where its attempts count as usual. Before, the same whole group was asked again and every member reached the limit with it.
+  const v2Split = v2Bounded && unattributed && batch.length > 1;
   const out = [...kept], again = [];
   for (const pair of failed) {
     const reason = named.get(pair.id) || { reason: String(error.message), code: error.code || 'invalid_output' };
@@ -952,7 +1012,8 @@ async function judgeStaged(request, batch, options = {}, history = new Map()) {
     // The problems the correction sent with this request had named already. An unreadable reply to a group is not one yet: the group can still be split.
     const keys = problemKeysOf(reason), recurring = keys.filter(key => (seen.keys || []).includes(key));
     const repeated = !v2Bounded && recurring.length > 0 && !(unattributed && batch.length > 1);
-    seen.attempts += 1; seen.codes.push(codes[0]); seen.keys = keys;
+    if (!v2Split) seen.attempts += 1;
+    seen.codes.push(codes[0]); seen.keys = keys;
     seen.correction = correctionOf(pair, reason, v2Bounded ? { rawItem: error.rawById?.get(pair.id), rawText: error.rawText } : undefined);
     seen.refusals = [...(seen.refusals || []), { codes, ...(reason.problems ? { problems: reason.problems } : {}), ...(reason.given ? { given: reason.given } : {}), ...(v2Bounded && seen.correction?.originalResponse ? { originalResponse: seen.correction.originalResponse } : {}) }];
     history.set(pair.id, seen);
@@ -963,7 +1024,9 @@ async function judgeStaged(request, batch, options = {}, history = new Map()) {
     else again.push(pair);
   }
   if (v2Bounded) {
-    if (again.length) out.push(...await judgeStaged(request, again, options, history));
+    const half = Math.ceil(again.length / 2);
+    const groups = !again.length ? [] : v2Split && again.length > 1 ? [again.slice(0, half), again.slice(half)] : [again];
+    for (const group of groups) out.push(...await judgeStaged(request, group, options, history));
     return out;
   }
   // Split before asking: the history changes while the first group is asked.
@@ -995,6 +1058,8 @@ function classifyFailure(error) {
 function notConfiguredReason(provider, env) {
   if (provider === 'off') return env.SYLLABUS_CHECK_AI_OFF_BY === 'settings' ? require('../adminSettings').AI_OFF_MESSAGE : 'AI checking is turned off on this server (SYLLABUS_CHECK_AI_PROVIDER=off), so no AI request was sent; the coded rules ran.'; // the administrator's switch (lib/adminSettings.js) or the server's environment
   if (provider === 'openrouter') return 'OpenRouter requires OPENROUTER_API_KEY and a supported checker model.';
+  if (provider === 'groq') return `Groq requires GROQ_API_KEY and a supported model (GROQ_MODEL: ${[...groq.MODELS].join(' or ')}).`;
+  if (provider === 'deepseek') return `DeepSeek requires DEEPSEEK_API_KEY and a supported model (DEEPSEEK_MODEL: ${[...deepseek.MODELS].join(' or ')}).`;
   if (provider === 'anthropic') return anthropicReady(env) && !anthropicApproved(env, env.ANTHROPIC_MODEL || '') ? 'Claude (the direct Anthropic API) is experimental and not approved for official checking on this server (SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL), so no AI request was sent; the coded rules ran.' : 'Anthropic requires ANTHROPIC_API_KEY and a supported claude-* ANTHROPIC_MODEL, with thinking and effort settings that model accepts.';
   return 'No active AI provider is configured.';
 }
@@ -1043,7 +1108,7 @@ async function align(content, masters, options = {}) {
   // implicitly use it as evidence for a CLO link; the legacy checker keeps its existing course context unchanged.
   if (integratedAcademic) course.description = '';
   // For Claude the thinking mode and the effort are part of the question too (anthropicClient.js configKeyOf).
-  const modelKey = provider === 'anthropic' ? configKeyOf(env) : model;
+  const modelKey = provider === 'anthropic' ? configKeyOf(env) : provider === 'deepseek' ? deepseek.configKeyOf(env) : provider === 'groq' ? groq.configKeyOf(env) : model;
   const keys = new Map(pairs.map(pair => [pair.id, pairKey(pair, provider, modelKey, promptVersion, courseKeyOf((cloDescriptionOff(env) && CLO_CONTEXT.test(pair.type)) || (scopedOn && !costPlan.needsDescription(pair.type)) ? courseWithoutDescription(course) : course), /^CLO-(PO|anyPO)$/.test(pair.type) && masters?.poReference?.id ? `${masters.poReference.id}:${masters.poReference.contentSha256 || masters.poReference.sourceSha256 || ''}` : '')]));
   const earlier = options.reuse instanceof Map ? options.reuse : new Map();
   const known = new Map();
@@ -1102,7 +1167,7 @@ async function align(content, masters, options = {}) {
   const prefixGate = provider === 'anthropic' && costPlan.warmupOn(env) ? costPlan.gateFor(requestBudget) : null;
   let batch = 0, failure = null;
   try {
-    const providerRequest = provider === 'openrouter' ? requestOpenRouter : provider === 'anthropic' ? requestAnthropic : requestGemini;
+    const providerRequest = provider === 'openrouter' ? requestOpenRouter : provider === 'anthropic' ? requestAnthropic : provider === 'deepseek' ? requestDeepSeek : provider === 'groq' ? requestGroq : requestGemini;
     const request = async (batch, requestOptions) => {
       reuse.requests += 1;
       let judgements;
@@ -1214,4 +1279,4 @@ async function align(content, masters, options = {}) {
     return { status: completed && !options.simulated ? 'completed' : 'not_evaluated', reason: options.simulated ? 'Simulated transport: not a real AI evaluation.' : completed ? '' : wall ? `The AI provider refused a request a moment ago (HTTP ${wall.status || '4xx'}: credits or access), so no request was sent. Try again after ${new Date(wall.until).toISOString().slice(11, 16)} UTC, once credits or access are restored.` : budgetState.exhausted ? `The configured per-check AI ${budgetState.stopReason === 'request_limit' ? 'request' : budgetState.stopReason === 'cost_budget' ? 'cost' : 'token'} budget was exhausted; some relationships were not sent.` : unverified ? `${unverified} of ${pairs.length} relationships could not be verified. Click Re-Check again.` : 'Some relationships have insufficient evidence.', provider, model, promptVersion, reuse, judgements, coverage, ...(budgetState.exhausted || budgetState.deferredOptional ? { requestBudget: budgetState } : {}), ...(usage ? { usage: usage.total } : {}), ...marked, ...(completed || options.simulated ? {} : { failure: incompleteFailure }) };
   } catch (error) { stoppedBy = stoppedBy || error; const judgements = cloClassification.mark(merged(), pairs, content, classification), budgetState = requestBudget.summary(); return { status: 'not_evaluated', reason: `${error.message} (batch ${batch}/${Math.ceil(fresh.length / batchSize)}; ${judgements.filter(j => !j.unverified && j.label !== 'INSUFFICIENT_EVIDENCE').length}/${pairs.length} relationships verified).`, provider, model, reuse, judgements, coverage: { total: pairs.length, verified: judgements.filter(j => !j.unverified && j.label !== 'INSUFFICIENT_EVIDENCE').length }, ...(budgetState.exhausted || budgetState.deferredOptional ? { requestBudget: budgetState } : {}), ...(usage ? { usage: usage.total } : {}), ...marked, failure: classifyFailure(error) }; }
 }
-module.exports = { topicStems, aspectKeysFor, ASPECTS, ASPECT_KEYS, ASPECTS_REQUIRED, alignmentSchema, minItemsOn, resetProviderBlock, blockedNow, createRequestBudget, systemPromptOf, align, judgeBatch, classifyFailure, pairsOf, validate, salvage, rejections, verifyAnswer, contractOf, CONTRACT_CODES, EVIDENCE_CODES, COVERAGE_CODES, OUTPUT_CODES, errorClassOf, failureClassOf, correctionOf, userMessageOf, MAX_ATTEMPTS, STAGED_BATCH, RECOMMENDATIONS, roleSwap, draftReviewOf, courseOf, courseKeyOf, evidenceQuote, requestGemini, requestOpenRouter, requestAnthropic, usageTotal, providerConfig, verifiedGemini, verifiedAlignment, NEMOTRON_FREE, LAGUNA_FREE, freeJsonModel, PROMPT, CLASSIFICATION_PROMPT, REF_PAIR, COURSE_CLO, CLO_SET, CONTENT_COURSE, PLAN_SEQUENCE, CONTENT_ILO, examLike, isAdvisory, isNoRewrite, pairKey, promptVersionOf, batchSizeOf, concurrencyOf, timeoutOf };
+module.exports = { topicStems, aspectKeysFor, ASPECTS, ASPECT_KEYS, ASPECTS_REQUIRED, alignmentSchema, minItemsOn, resetProviderBlock, blockedNow, createRequestBudget, systemPromptOf, align, judgeBatch, classifyFailure, pairsOf, validate, salvage, rejections, verifyAnswer, contractOf, CONTRACT_CODES, EVIDENCE_CODES, COVERAGE_CODES, OUTPUT_CODES, errorClassOf, failureClassOf, correctionOf, userMessageOf, MAX_ATTEMPTS, STAGED_BATCH, RECOMMENDATIONS, roleSwap, draftReviewOf, courseOf, courseKeyOf, evidenceQuote, requestGemini, requestOpenRouter, requestAnthropic, requestDeepSeek, requestGroq, usageTotal, providerConfig, verifiedGemini, verifiedAlignment, NEMOTRON_FREE, LAGUNA_FREE, DEEPSEEK_PAID, routerReasoningOf, supportedRouterModel, freeJsonModel, PROMPT, CLASSIFICATION_PROMPT, REF_PAIR, COURSE_CLO, CLO_SET, CONTENT_COURSE, PLAN_SEQUENCE, CONTENT_ILO, examLike, isAdvisory, isNoRewrite, pairKey, promptVersionOf, batchSizeOf, concurrencyOf, timeoutOf };

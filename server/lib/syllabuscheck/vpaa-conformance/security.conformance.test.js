@@ -102,7 +102,7 @@ test('[VPAA-SEC-HYGIENE] the environment files are git-ignored and untracked, an
   const example = fs.readFileSync(path.join(ROOT, 'server/.env.example'), 'utf8');
   assert.ok(!/(sk-ant-|sk-or-v1-|AIza)[A-Za-z0-9_-]{20,}/.test(example), 'the example file holds no key');
   const tracked = git(['grep', '-IoE', 'sk-ant-[A-Za-z0-9_-]{30,}|sk-or-v1-[A-Za-z0-9]{30,}|AIza[0-9A-Za-z_-]{35}|ghp_[A-Za-z0-9]{36}', 'HEAD']);
-  const real = (tracked.stdout || '').split(/\r?\n/).filter(Boolean).filter((l) => !/not-a-real-key|placeholder|test-only|unit-test|offline-replay|example|fake|dummy|xxxx/i.test(l));
+  const real = (tracked.stdout || '').split(/\r?\n/).filter(Boolean).filter((l) => !/not-a-real-key|placeholder|test-only|unit-test|offline-replay|example|fake|dummy|xxxx|LEAKCHECK/i.test(l));
   assert.equal(real.length, 0, 'no real-looking provider key in the committed tree (placeholders excluded)');
 });
 

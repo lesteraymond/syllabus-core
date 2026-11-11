@@ -90,3 +90,31 @@ test('a check run under a variant is cached under that variant\'s version, so it
   assert.ok(calls.length > 0 && defaulted.reuse.reused === 0, 'the default prompt does not reuse verdicts made under a variant');
   assert.equal(sameVariant.reuse.reused, first.judgements.length);
 });
+
+test('rules-aligned: rubric-ordered plus the institution rules (M14, keep the selected core value, smaller drafts); the current prompt is unchanged', () => {
+  const text = promptFor(PROMPT, 'rules-aligned');
+  const ordered = promptFor(PROMPT, 'rubric-ordered');
+  assert.ok(!text.includes(DOUBT), 'no "when in doubt choose PARTIAL" fallback');
+  assert.match(text, /does the CLO contribute to the program outcome/);
+  assert.match(text, /the course description is never evidence for or against a CLO/);
+  assert.match(text, /keeps the core value or values the author already named/);
+  assert.match(text, /Change as little as the listed gaps need/);
+  assert.ok(!ordered.includes('never evidence for or against a CLO'), 'the earlier variants are unchanged');
+  assert.ok(promptFor(PROMPT, 'current').includes(DOUBT), 'production wording unchanged');
+  assert.equal(explanationFirst('rules-aligned'), true);
+});
+
+test('rules-aligned also leaves the course description out of the CLO questions themselves (M14), and only those', () => {
+  const { content, masters } = sample();
+  const env = { SYLLABUS_CHECK_AI_PROVIDER: 'openrouter', OPENROUTER_API_KEY: 'test-only', SYLLABUS_CHECK_PROMPT_VARIANT: 'rules-aligned' };
+  const pairs = pairsOf(content, masters);
+  const sent = [];
+  const transport = async (url, request) => {
+    const body = JSON.parse(request.body), user = JSON.parse(body.messages[1].content);
+    sent.push({ types: user.document_data.map(p => p.type), description: user.course.description });
+    return { ok: true, json: async () => ({ model: 'nvidia/nemotron-3-ultra-550b-a55b:free', choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ judgements: user.document_data.map(p => ({ id: p.id, label: 'ALIGNED', explanation: 'Fits.', sourceQuote: p.source.slice(0, 5), targetQuote: p.target.slice(0, 5), sourceBloom: 'Apply', targetBloom: 'Apply', draft: '' })) }) } }] }) };
+  };
+  return requestOpenRouter(pairs.filter(p => p.type === 'CLO-PO').slice(0, 2), { env, transport, course: { code: 'X', title: 'T', description: 'A description.', outcomes: [] } }).then(() => {
+    assert.equal(sent[0].description, '', 'a CLO question carries no description');
+  });
+});

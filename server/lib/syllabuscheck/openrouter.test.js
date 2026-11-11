@@ -176,3 +176,24 @@ test('the paid MiniMax model is a supported checker model and uses strict JSON-s
   };
   assert.equal((await requestOpenRouter(pairs, { env: paidEnv, transport }))[0].label, 'NOT_ALIGNED');
 });
+
+test('the paid DeepSeek V4 models are supported checker models: strict JSON-schema output and low reasoning effort; other DeepSeek models are not', async () => {
+  for (const model of ['deepseek/deepseek-v4-pro', 'deepseek/deepseek-v4.1-flash']) {
+    const paidEnv = { ...env, OPENROUTER_MODEL: model };
+    assert.equal(providerConfig(paidEnv).configured, true, model);
+    const { content, masters } = sample();
+    const pairs = pairsOf(content, masters).slice(0, 1);
+    const transport = async (url, request) => {
+      const body = JSON.parse(request.body);
+      assert.equal(body.model, model);
+      assert.equal(body.response_format.type, 'json_schema');
+      assert.equal(body.response_format.json_schema.strict, true);
+      assert.equal(body.provider.require_parameters, true);
+      assert.deepEqual(body.reasoning, { effort: 'low' });
+      assert.equal(body.provider.max_price, undefined, 'a paid model is not limited to zero-price routing');
+      return { ok: true, json: async () => ({ model, choices: [{ finish_reason: 'stop', message: { content: JSON.stringify({ judgements: pairs.map(judgement) }) } }] }) };
+    };
+    assert.equal((await requestOpenRouter(pairs, { env: paidEnv, transport }))[0].label, 'NOT_ALIGNED');
+  }
+  for (const model of ['deepseek/deepseek-v4-pro:free', 'deepseek/deepseek-chat', '~deepseek/deepseek-pro-latest']) assert.equal(providerConfig({ ...env, OPENROUTER_MODEL: model }).configured, false, model);
+});

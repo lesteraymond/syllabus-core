@@ -113,7 +113,9 @@ async function reusableJudgements(db, syllabusId, checks = 3) {
       let report;
       try { report = JSON.parse(row.report_json); } catch { continue; }
       if (require('./academicPolicyV2').isV2(report)) continue;
-      for (const j of [...(report.hybrid?.alignment?.judgements || []), ...(report.hybrid?.academicV2?.alignment?.judgements || [])]) {
+      // The whole-syllabus plan's verified answers (wholeSyllabusPlan.js) count too: they were asked about exactly the revised text, so a check made
+      // after applying the plan reuses them instead of judging that text again. A key matches only identical text, so nothing else can reuse them.
+      for (const j of [...(report.hybrid?.alignment?.judgements || []), ...(report.hybrid?.academicV2?.alignment?.judgements || []), ...(report.hybrid?.improvementPlan?.verifiedJudgements || [])]) {
         if (typeof j.key === 'string' && !j.unverified && j.label !== 'INSUFFICIENT_EVIDENCE' && !found.has(j.key)) found.set(j.key, j);
       }
     }
@@ -150,7 +152,10 @@ async function correctionHistory(db, syllabusId, runs = 8) {
         last[s.path] = { runId: report.id, basedOn, before: Object.fromEntries(basedOn.filter((id) => labels.has(id)).map((id) => [id, labels.get(id)])) };
       }
     }
-    return { attempts, last, previous: Object.fromEntries(labelsOf(reports[reports.length - 1].hybrid)) };
+    // The fields whose AI rewrite the author rejected in the latest check: kept as written, so later fields are no longer held back for them (suggestionOrder.js).
+    const newest = reports[reports.length - 1];
+    const rejected = [...new Set((newest.hybrid.suggestions || []).filter((s) => s.source === 'ai' && s.path && latest.get(`${newest.id}|${s.id}`) === 'reject').map((s) => s.path))];
+    return { attempts, last, previous: Object.fromEntries(labelsOf(newest.hybrid)), rejected };
   } catch { return none; }
 }
 module.exports = { mastersFor, saveReport, readReport, reusableJudgements, correctionHistory, recordReviewOf };

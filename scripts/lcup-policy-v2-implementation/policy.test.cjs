@@ -114,7 +114,7 @@ for(const program of ['BSIT','BSIT-CYBERSECURITY','BSIE','BSCPE'])test(`${progra
 test('conflicting or absent official references cause faculty/reference review without remapping or deductions',async()=>{
  const f=fixture();f.masters.pos.push({no:10,text:'Old reference meaning'});f.content.outcomes.pos=structuredClone(f.masters.pos);const before=structuredClone(f);
  const result=await exec(f);assert.equal(result.academic.references.poUsable,false);assert.equal(criterion(result,'course.clo0.PO').status,F);assert.equal(result.academic.disposition,F);assert.deepEqual(f,before);assert.deepEqual(result.hybrid.deductions,[]);
- const child=fixture('BSIT-CYBERSECURITY');child.masters.outcomeSource=null;const absent=await exec(child);assert.ok(absent.academic.references.issues.some(i=>i.code==='inheritance_unverified'));assert.notEqual(absent.academic.disposition,S);
+ const child=fixture('BSIT-CYBERSECURITY');child.masters.outcomeSource=null;child.masters.referenceContext.po.status='inheritance_not_configured';const absent=await exec(child); // how mastersFor reports an unset program_outcome_sources row since the dynamic referencesassert.ok(absent.academic.references.issues.some(i=>i.code==='inheritance_unverified'));assert.notEqual(absent.academic.disposition,S);
 });
 test('optional ILO–Assessment never changes V2 disposition and retains C2 eligibility behavior',async()=>{
  const f=fixture(),baseline=await exec(f),result=await exec(f,p=>p.id==='row2-ilo0-assessment'?fail(p):{});
@@ -155,5 +155,8 @@ test('preview cannot be persisted as an official run/report and historical JSON 
 });
 test('47 rules, mark 79, coded checks and the existing submission gate implementation remain identical',()=>{
  const standard=require('../../server/lib/compliance/standard-v4.json');assert.equal(standard.rules.length,47);assert.equal(standard.passThreshold,79);assert.ok(!legacyPolicy.advisoryTypes.includes('ILO-assessment'));
- const h=f=>crypto.createHash('sha256').update(String(f)).digest('hex');const before=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../docs/lcup-policy-v2-implementation/gate-functions-before.json')));assert.equal(h(coded),before.coded);assert.equal(h(service.requireHybrid),before.requireHybrid);
+ const h=f=>crypto.createHash('sha256').update(String(f)).digest('hex');// The reviewed lock (gate-functions-reviewed.json) names the deliberate later changes to these functions; any other change fails here.
+ const lf=f=>h(String(f).replace(/\r\n/g,'\n')); // the same value on a Windows (CRLF) and a Linux (LF) checkout
+ const reviewed=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../docs/lcup-policy-v2-implementation/gate-functions-reviewed.json')));assert.equal(lf(coded),reviewed.coded);assert.equal(lf(service.requireHybrid),reviewed.requireHybrid);
+ const before=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../docs/lcup-policy-v2-implementation/gate-functions-before.json')));assert.deepEqual(reviewed.previous,before,'the historical lock is kept unchanged');
 });

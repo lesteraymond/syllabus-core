@@ -102,7 +102,7 @@ function buildCoverage(result,content,masters={},env={}) {
   try {
     legacyPlan=require('./gemini').pairsOf(content,masters,h.links||[],{stageA:flags.a,stageB:flags.b,stageB4:flags.b4});
     if(profile.enabled(env)&&v2Activation.enabled(env))legacyPlan=legacyPlan.filter(p=>!profile.V2_ADVISORY.includes(p.type));
-    const extras=new Set([...(flags.c1?['Activity-fit']:[]),...(flags.c2?['Assessment-fit']:[]),...(flags.c3?['Content-activity','Content-assessment','Activity-assessment']:[]),...(flags.d1?['Value-use']:[]),...(flags.d2?['Ref-relevance']:[]),...(flags.requirements?['Week1-introduction',...(profile.enabled(env)?[]:['Title-description'])]:[])]);
+    const extras=new Set([...(flags.c1?['Activity-fit']:[]),...(flags.c2?['Assessment-fit']:[]),...(flags.c3?['Content-activity','Content-assessment','Activity-assessment']:[]),...(flags.d1?['Value-use']:[]),...(flags.d2?['Ref-relevance']:[]),...(flags.requirements?['Week1-introduction','Week2-topic',...(profile.enabled(env)?[]:['Title-description'])]:[])]);
     legacyPlan=[...new Map([...legacyPlan,...planned.filter(p=>extras.has(p.type))].map(p=>[p.id,p])).values()];
   } catch { /* rule-level missing receipts still disclose malformed planning */ }
   const instanceList=[...merge(legacyPlan,judgments.map(semantic)).map(r=>({scope:'legacy',...r})),...(v2Activation.enabled(env)?v2Receipts.map(r=>({scope:'policy-v2',...r})):[])];

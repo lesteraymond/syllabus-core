@@ -80,10 +80,12 @@ test('title/description and Week 1 advice add no deductions, readiness change, r
 test('missing Week 1, missing title/description/objectives and empty sides are never passed or sent as invented text',async()=>{
  const {content,masters}=sample();content.plan=content.plan.filter(r=>String(r.week)!=='1');content.description=[];
  const {result,asked}=await execute(content,masters);
- assert.ok(!asked.some(p=>advice.TYPES.includes(p.type)));
- const found=result.hybrid.alignment.judgements.filter(j=>advice.TYPES.includes(j.type));
+ // Week 2 (Week2-topic) is still present here, so it is judged; the missing Week 1 and the empty description are not.
+ const EMPTY=advice.TYPES.filter(type=>type!=='Week2-topic');
+ assert.ok(!asked.some(p=>EMPTY.includes(p.type)));
+ const found=result.hybrid.alignment.judgements.filter(j=>EMPTY.includes(j.type));
  assert.equal(found.length,2);assert.ok(found.every(j=>j.label==='INSUFFICIENT_EVIDENCE'&&j.failureKind==='insufficient_text'));
- assert.ok(all(result,content).filter(f=>advice.TYPES.includes(f.legacyRuleId)).every(f=>f.status!=='PASS'));
+ assert.ok(all(result,content).filter(f=>EMPTY.includes(f.legacyRuleId)).every(f=>f.status!=='PASS'));
  const blank=advice.pairsOf({meta:{},clos:[],plan:[],description:[]});assert.ok(blank.every(p=>!p.source&&!p.target));
 });
 test('grouped weeks include Week 1 once, examinations stay out of the weekly chain, and missing CLO tags stay unresolved',async()=>{
@@ -130,7 +132,7 @@ test('all four CLO classifications and the four-CLO count are advisory; repeated
 test('provider unavailable or unapproved: no invented alignment passes or extra paid requests',async()=>{
  for(const env of [{SYLLABUS_CHECK_AI_PROVIDER:'off',SYLLABUS_CHECK_REQUIREMENTS_ADVICE:'on'},{SYLLABUS_CHECK_AI_PROVIDER:'anthropic',ANTHROPIC_MODEL:'claude-sonnet-4-6',ANTHROPIC_API_KEY:'sk-ant-test-only-not-a-real-key',SYLLABUS_CHECK_REQUIREMENTS_ADVICE:'on'}]){
   const {content,masters}=sample(),{result,asked}=await execute(content,masters,null,env);assert.equal(asked.length,0);assert.equal(result.hybrid.alignment.status,'not_evaluated');
-  const findings=all(result,content).filter(f=>advice.TYPES.includes(f.legacyRuleId));assert.equal(findings.length,2);assert.ok(findings.every(f=>f.status==='NOT_CHECKED'));
+  const findings=all(result,content).filter(f=>advice.TYPES.includes(f.legacyRuleId));assert.equal(findings.length,advice.TYPES.length);assert.ok(findings.every(f=>f.status==='NOT_CHECKED'));
  }
  const {content,masters}=sample(),{result,asked}=await execute(content,masters,null,ON,{outage:true});
  assert.ok(asked.length);assert.ok(!asked.some(p=>advice.TYPES.includes(p.type)));assert.ok(all(result,content).filter(f=>advice.TYPES.includes(f.legacyRuleId)).every(f=>f.status==='NOT_CHECKED'));

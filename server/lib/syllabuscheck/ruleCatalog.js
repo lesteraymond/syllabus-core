@@ -19,7 +19,7 @@ const classification = require('../../../src/data/academicPolicyV2.json').classi
 // A rule may share a model request/aspect with another rule; these are not new requests.
 const stages = [
  ['CLO-03','Course-CLO','A'],['CLO-09','CLO-set','A'],['CLO-06','CLO-PO','A'],['CLO-07','CLO-EGA','A'],
- ['PLAN-03','Content-course','B'],['PLAN-04','Plan-sequence','B'],['ALN-01','Content-ILO','B'],['CUR-11','Title-description','REQUIREMENTS_ADVICE'],['PLAN-11','Week1-introduction','REQUIREMENTS_ADVICE'],
+ ['PLAN-03','Content-course','B'],['PLAN-04','Plan-sequence','B'],['ALN-01','Content-ILO','B'],['CUR-11','Title-description','REQUIREMENTS_ADVICE'],['PLAN-11','Week1-introduction','REQUIREMENTS_ADVICE'],['PLAN-12','Week2-topic','REQUIREMENTS_ADVICE'],
  ['ALN-02','ILO-anyCLO','B3'],['PLAN-10','CLO-coverage','B4'],['ALN-05','Activity-fit','C1'],['ALN-06','Activity-fit','C1'],
  ['ALN-07','Assessment-fit','C2'],['ALN-08','Assessment-fit','C2'],['ALN-09','Assessment-fit','C2'],
  ['ALN-11','Content-activity','C3'],['ALN-12','Content-assessment','C3'],['ALN-13','Activity-assessment','C3'],

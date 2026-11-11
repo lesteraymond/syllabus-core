@@ -242,4 +242,4 @@ function verifyVerificationToken(token, expected = {}, secret) {
   }
 }
 
-module.exports = { refineSuggestion, verify, requirementsFor, getValue, setValue, FIELD, REWRITE_PROMPT, createVerificationToken, verifyVerificationToken, relatedContextHash, signingSecret, SECRET_MESSAGE };
+module.exports = { refineSuggestion, verify, requirementsFor, rewrite, getValue, setValue, FIELD, REWRITE_PROMPT, createVerificationToken, verifyVerificationToken, relatedContextHash, signingSecret, SECRET_MESSAGE };

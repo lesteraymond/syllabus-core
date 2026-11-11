@@ -249,7 +249,12 @@ export default function CoordinatedPlanPanel({ run, onPlanApplied }) {
                       <span>{c.field ? c.field.toUpperCase() : t('coordinatedPlan.changeDefault')}</span>
                       <code style={{ fontSize: '0.82rem', color: '#64748b' }}>{c.path}</code>
                     </label>
-                    {c.semanticUnverified && (
+                    {c.verification ? (
+                      // Whole-syllabus plan: the result of checking this change together with all the others.
+                      <span className={'hy-pill' + (c.verification === VALIDATION_STATUS.VERIFIED ? '' : ' warn')} style={{ fontSize: '0.75rem' }}>
+                        {t(`coordinatedPlan.status.${c.verification}`)}
+                      </span>
+                    ) : c.semanticUnverified && (
                       <span className="hy-pill warn" style={{ fontSize: '0.75rem' }}>
                         {t('coordinatedPlan.needsFacultyReviewBadge')}
                       </span>

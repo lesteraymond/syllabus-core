@@ -287,7 +287,9 @@ test('without the new precedence rule, a correct week content would be rewritten
   const s = programSyllabus('bsit'), sc = SCENARIOS.ILO;
   try {
     fit.draftWithheld = (type, ...rest) => (type === 'ILO-content' ? null : original(type, ...rest)); // the behaviour before Stage E.2
-    const before = await check(s, { env: ALL, rules: sc.rules, mutate: sc.mutate });
+    // The top-down suggestion order (suggestionOrder.js) also holds that content rewrite back while the ILO is rewritten, so the
+    // reconstruction of the old behaviour turns it off as well.
+    const before = await check(s, { env: { ...ALL, SYLLABUS_CHECK_SUGGESTION_ORDER: 'off' }, rules: sc.rules, mutate: sc.mutate });
     assert.ok(contradictionsOf(before.result, before.content).some(x => /week 8 content that was verified/.test(x)), 'the old behaviour is a contradiction');
   } finally { fit.draftWithheld = original; }
   const after = await check(s, { env: ALL, rules: sc.rules, mutate: sc.mutate });
