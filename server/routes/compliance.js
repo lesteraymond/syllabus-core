@@ -34,6 +34,7 @@ const router = express.Router();
 
 const NOT_SET_UP = 'Compliance checks are not set up on this server yet. Ask an administrator to run the database update.';
 const APPROVED = 'This syllabus is approved, so it cannot be checked again.';
+const SUBMITTED = 'This syllabus has been submitted and is with the reviewers, so it cannot be checked here. You can check it again if it is returned for revision or rejected.';
 const NO_SUBJECT_ADMIN = 'This syllabus has neither a form nor an uploaded file to check.';
 const limiter = createLimiter({ max: 10, windowMs: 60 * 1000 });
 // Syllabi whose check is running right now. A page that was left and opened again asks (GET .../compliance `checking`) so it can show the
@@ -136,6 +137,9 @@ router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => 
     if (rules.isReviewer(me) && syl.status === 'draft') throw httpError(409,'Drafts stay in My Syllabi. Complete the form and send it to AI Checker first.');
     if (!owner && !rules.isReviewer(me)) throw httpError(403, 'Only the owner or a reviewer can check a syllabus');
     if (syl.status === 'approved') throw httpError(409, APPROVED, { code: 'approved' }); // before the limiter: a refusal costs nothing
+    // A faculty owner checks only what they can still edit: a draft, or a syllabus sent back. A submitted one is with the reviewers (owner decision
+    // 2026-11-15; the faculty AI Checker no longer lists it). A reviewer's own syllabus keeps its own flow (sent to be checked as Under Review).
+    if (owner && !rules.isReviewer(me) && !rules.EDITABLE_STATUSES.includes(syl.status)) throw httpError(409, SUBMITTED, { code: 'submitted' });
     if (isApprover(me)) await reviewStages.assertReadyForApprover(db, syl); // the VPAA checks what has reached them, after the three stages
     if (!owner) await reviewStages.assertSentForReview(db, syl, me); // the dean's own syllabus: only once the dean has sent it for review
     if (!(await svc.isInstalled(db))) throw httpError(503, NOT_SET_UP);
@@ -306,6 +310,9 @@ router.get('/compliance', requireAuth, async (req, res) => {
 
     // Averages over the syllabi that have a score (a run with "not enough content", or a file upload, has none).
     const scored = list.filter((x) => x.run && x.run.overall !== null);
+    // The AI Quality Snapshot counts only checks whose AI step COMPLETED (ai_status 'ok'): a check made with AI checking off has a score from the
+    // no-AI rules alone, which is not an AI result (2026-11-15: a rules-only 95 stood beside an AI-checked 93). Those are counted apart (notAiChecked).
+    const aiScored = scored.filter((x) => x.run.aiStatus === 'ok');
     const avg = (xs) => (xs.length ? Math.round(xs.reduce((a, b) => a + b, 0) / xs.length) : null);
     res.json({
       installed,
@@ -317,11 +324,17 @@ router.get('/compliance', requireAuth, async (req, res) => {
         uploaded: list.filter((x) => !x.checkable).length,
         average: avg(scored.map((x) => x.run.overall)),
         passed: scored.filter((x) => x.run.passed && !x.run.recordReview).length,
+        aiChecked: aiScored.length,
+        notAiChecked: scored.length - aiScored.length,
+        aiAverage: avg(aiScored.map((x) => x.run.overall)),
         areas: svc.standard.areas.map((a) => ({
           key: a.key, name: a.name, weight: a.weight,
           average: avg(scored.map((x) => (x.run.areas.find((y) => y.key === a.key) || {}).score).filter((v) => typeof v === 'number')),
           // the same area after the AI check's deductions: where the final score was lost (lib/compliance/finalAreas.js)
           final: avg(scored.map((x) => ((x.run.areasFinal || []).find((y) => y.key === a.key) || {}).score).filter((v) => typeof v === 'number')),
+          // the same two, over AI-completed checks only (the AI Quality Snapshot)
+          aiRules: avg(aiScored.map((x) => (x.run.areas.find((y) => y.key === a.key) || {}).score).filter((v) => typeof v === 'number')),
+          aiFinal: avg(aiScored.map((x) => ((x.run.areasFinal || []).find((y) => y.key === a.key) || {}).score).filter((v) => typeof v === 'number')),
         })),
       },
     });

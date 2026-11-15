@@ -1,0 +1,223 @@
+{
+  "status": "completed",
+  "planted": [
+    {
+      "id": "P1",
+      "what": "CLO 3 is about baking bread in a programming course",
+      "expect": [
+        "CLO-TITLE"
+      ],
+      "where": "clo:c3",
+      "found": true,
+      "changedByPlan": true
+    },
+    {
+      "id": "P2",
+      "what": "CLO 4 is saved as Introductory instead of Integration of Values",
+      "expect": [
+        "CLO-LEVEL-LABEL"
+      ],
+      "where": "clolevel:c4",
+      "found": true,
+      "changedByPlan": true
+    },
+    {
+      "id": "P3",
+      "what": "Week 5 ILO is about database design while the week teaches conditionals",
+      "expect": [
+        "ILO-CONTENT"
+      ],
+      "where": "ilo:i5",
+      "found": true,
+      "changedByPlan": true
+    },
+    {
+      "id": "P4",
+      "what": "Week 8 offers one learning activity only",
+      "expect": [
+        "ACTIVITY-OPTIONS"
+      ],
+      "where": "activities:r8",
+      "found": true,
+      "changedByPlan": true
+    },
+    {
+      "id": "P5",
+      "what": "Week 10 names \"Honesty\", not one of the six core values",
+      "expect": [
+        "VALUES-WEEKLY"
+      ],
+      "where": "values:r10",
+      "found": true,
+      "changedByPlan": true
+    },
+    {
+      "id": "P6",
+      "what": "Week 11 task is an essay on Roman history for a strings week",
+      "expect": [
+        "TASK-FIT"
+      ],
+      "where": "tasks:r11",
+      "found": true,
+      "changedByPlan": true
+    },
+    {
+      "id": "P7",
+      "what": "A 2015 reference (older than 5 years)",
+      "expect": [
+        "REF-RECENCY"
+      ],
+      "where": "ref:books:b3",
+      "found": true,
+      "changedByPlan": false
+    },
+    {
+      "id": "P8",
+      "what": "Week 14 ILO is written as what the teacher does",
+      "expect": [
+        "ILO-CLO"
+      ],
+      "where": "ilo:i14",
+      "found": true,
+      "changedByPlan": true
+    }
+  ],
+  "before": {
+    "misalignments": 26,
+    "review": 2,
+    "advice": 3,
+    "notChecked": 0,
+    "complete": true,
+    "deductions": 45
+  },
+  "plan": {
+    "clean": true,
+    "rounds": 2,
+    "changes": 14,
+    "verified": 1,
+    "unresolved": 0,
+    "manual": 0,
+    "regressions": 1
+  },
+  "convergence": {
+    "recheckQuestionsAsked": 0,
+    "recheckMisalignments": 0,
+    "manualLeft": 0
+  },
+  "guard": {
+    "requests": 50,
+    "thisRun": 50,
+    "model": 50,
+    "priceLookups": 0,
+    "keyChecks": 0,
+    "invalidAnswers": 0,
+    "unproductiveInARow": 0,
+    "transient": 0,
+    "promptTokens": 226895,
+    "completionTokens": 26408,
+    "cachedTokens": 183345,
+    "reportedCost": 0,
+    "charged": 0.391782,
+    "accounting": {
+      "rule": "reconcile",
+      "requests": {
+        "reconciled": 50,
+        "conservative": 0,
+        "worst_case": 0,
+        "refused": 0
+      },
+      "chargedConservatively": 0.91444925
+    },
+    "warnings": [],
+    "limits": {
+      "maxRequests": 60,
+      "maxCost": 3,
+      "maxTransient": 1,
+      "maxInvalid": null,
+      "warnInvalid": null,
+      "maxUnproductive": null,
+      "maxTokens": null
+    },
+    "stopped": null,
+    "anthropic": {
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "prices": {
+        "model": "claude-sonnet-5-5",
+        "asOf": "2026-10-27",
+        "geoFactor": 1.1,
+        "perMillionTokens": {
+          "input": 2,
+          "output": 10,
+          "cacheRead": 0.2,
+          "listedCacheRead": 0.1,
+          "cacheWrite5m": 2.5,
+          "cacheWrite1h": 4
+        }
+      },
+      "modelsReturned": {
+        "claude-sonnet-5-5": 50
+      },
+      "inputTokens": 35684,
+      "cacheCreationInputTokens": 7866,
+      "cacheReadInputTokens": 183345,
+      "outputTokens": 26408,
+      "thinkingTokens": 1032,
+      "thinkingReports": {
+        "nonzero": 2,
+        "zero": 48,
+        "unavailable": 0
+      },
+      "thinkingBlocks": 2,
+      "atListPrices": 0.3734475,
+      "estimatedCost": 0.3734475,
+      "notEstimated": 0,
+      "chargedThisRun": 0.391782,
+      "outputTokensCharged": 26408,
+      "stopReasons": {
+        "end_turn": 50
+      },
+      "refusalCategories": {},
+      "inferenceGeo": {
+        "global": 50
+      },
+      "serviceTier": {
+        "standard": 50
+      },
+      "errors": {},
+      "latencyMs": {
+        "answers": 50,
+        "median": 3231,
+        "p90": 6015,
+        "max": 13090
+      },
+      "limits": {
+        "maxOutputTokens": null,
+        "register": {
+          "cap": 10,
+          "chargedByEveryLedger": 3.31337695
+        }
+      }
+    }
+  },
+  "provider": {
+    "judgeRequests": 37,
+    "rewriteRequests": 13,
+    "failures": 0,
+    "inputTokens": 35684,
+    "outputTokens": 26408,
+    "cacheReadInputTokens": 183345,
+    "cacheCreationInputTokens": 7866,
+    "estimatedUsd": 0.3734475,
+    "unpriced": 0,
+    "budget": {
+      "maxCostUsd": 3,
+      "maxRequests": 60,
+      "requests": 50,
+      "spentUsd": 0.3734475,
+      "refused": 0,
+      "stopReason": null,
+      "remainingUsd": 2.6265525
+    }
+  }
+}

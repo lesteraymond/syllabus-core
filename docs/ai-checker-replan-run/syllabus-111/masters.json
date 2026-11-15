@@ -1,0 +1,2065 @@
+{
+  "institution": {
+    "vision": "Moved by the Spirit of the Risen Christ, La Consolacion University Philippines, rooted in Gospel values as a Catholic Augustinian-Marian institution, envisions to become a catalyst for the holistic transformation of all persons and communities.",
+    "mission": {
+      "lead": "LCUP commits to generate and make available to all persons and communities’ programs and services that will enable them to:",
+      "items": [
+        "exhibit academic and technical competence in their respective areas of discipline in the local and international environment;",
+        "demonstrate their knowledge, critical thinking and creativity by exploring the various avenues of learning and searching for truth;",
+        "manifest their willingness to serve specially the marginalized sector of our society;",
+        "demonstrate productivity in various areas of learning as responsible citizens of the society; and",
+        "live the Gospel values in the varied aspects of their personal and professional lives."
+      ]
+    },
+    "egas": [
+      {
+        "no": 1,
+        "name": "Critical and Creative thinker",
+        "short": "Critical and Creative thinker"
+      },
+      {
+        "no": 2,
+        "name": "Competent Catholic AugustinianMarian Professional",
+        "short": "Competent Catholic AugustinianMarian Professional"
+      },
+      {
+        "no": 3,
+        "name": "Socially Responsive Steward",
+        "short": "Socially Responsive Steward"
+      },
+      {
+        "no": 4,
+        "name": "Transformative Lifelong learner",
+        "short": "Transformative Lifelong learner"
+      }
+    ]
+  },
+  "pos": [
+    {
+      "no": 1,
+      "short": "PO1",
+      "text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+      "egas": []
+    },
+    {
+      "no": 2,
+      "short": "PO2",
+      "text": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+      "egas": []
+    },
+    {
+      "no": 3,
+      "short": "PO3",
+      "text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+      "egas": []
+    },
+    {
+      "no": 4,
+      "short": "PO4",
+      "text": "Ability to function on multidisciplinary teams",
+      "egas": []
+    },
+    {
+      "no": 5,
+      "short": "PO5",
+      "text": "Ability to identify; formulate, and solve complex engineering problems;",
+      "egas": []
+    },
+    {
+      "no": 6,
+      "short": "PO6",
+      "text": "Understanding of professional and ethical responsibility.",
+      "egas": []
+    },
+    {
+      "no": 7,
+      "short": "PO7",
+      "text": "Ability to communicate effectively",
+      "egas": []
+    },
+    {
+      "no": 8,
+      "short": "PO8",
+      "text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+      "egas": []
+    },
+    {
+      "no": 9,
+      "short": "PO9",
+      "text": "Recognition of the need for, and an ability to engage in life-long learning;",
+      "egas": []
+    },
+    {
+      "no": 10,
+      "short": "PO10",
+      "text": "Knowledge of contemporary issues;",
+      "egas": []
+    },
+    {
+      "no": 11,
+      "short": "PO11",
+      "text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and",
+      "egas": []
+    },
+    {
+      "no": 12,
+      "short": "PO12",
+      "text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in multidisciplinary environments",
+      "egas": []
+    },
+    {
+      "no": 13,
+      "short": "PO13",
+      "text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy",
+      "egas": []
+    }
+  ],
+  "curricula": [
+    {
+      "id": 3,
+      "source": "reference-data/BSCPE-1.jpeg SHA256:a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc; reference-data/BSCPE-2.jpeg SHA256:79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22",
+      "program": "BSCPE",
+      "curriculumYear": "2022-2023",
+      "status": "approved",
+      "courses": [
+        {
+          "code": "MA 7",
+          "title": "DIFFERENTIAL CALCULUS",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "rawPrerequisite": "",
+          "corequisite": "",
+          "yearLevel": 1,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "CHEMENG",
+          "title": "CHEMISTRY FOR ENGINEERS",
+          "lecture": 3,
+          "lab": 1,
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "rawPrerequisite": "",
+          "corequisite": "",
+          "yearLevel": 1,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 3,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "CENGDIS",
+          "title": "COMPUTER ENGINEER AS DISCIPLINE",
+          "lecture": 1,
+          "lab": 0,
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "rawPrerequisite": "",
+          "corequisite": "",
+          "yearLevel": 1,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 1,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "GE - PC",
+          "title": "PURPOSIVE COMMUNICATION",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "rawPrerequisite": "",
+          "corequisite": "",
+          "yearLevel": 1,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "GE - US",
+          "title": "UNDERSTANDING SELF",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "rawPrerequisite": "",
+          "corequisite": "",
+          "yearLevel": 1,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "GE - RPH",
+          "title": "READINGS IN PHILIPPINE HISTORY",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "rawPrerequisite": "",
+          "corequisite": "",
+          "yearLevel": 1,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "PATHFit 1",
+          "title": "MOVEMENT COMPETENCY TRAINING",
+          "lecture": 2,
+          "lab": 0,
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "rawPrerequisite": "",
+          "corequisite": "",
+          "yearLevel": 1,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 2,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "NSTP 1",
+          "title": "CWTS 1",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "rawPrerequisite": "",
+          "corequisite": "",
+          "yearLevel": 1,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "TH 1",
+          "title": "SALVATION HISTORY(OLD TESTAMENT)",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "rawPrerequisite": "",
+          "corequisite": "",
+          "yearLevel": 1,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "MA 8",
+          "title": "INTEGRAL CALCULUS",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "MA 7",
+          "rawPrerequisite": "MA 7",
+          "corequisite": "",
+          "yearLevel": 1,
+          "semester": "2nd Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "PHYENG",
+          "title": "PHYSICS FOR ENGINEERS",
+          "lecture": 3,
+          "lab": 1,
+          "prereq": "MA 7",
+          "rawPrerequisite": "MA 7",
+          "corequisite": "",
+          "yearLevel": 1,
+          "semester": "2nd Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 3,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "CPE 101",
+          "title": "DISCRETE MATHEMATICS",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "rawPrerequisite": "",
+          "corequisite": "",
+          "yearLevel": 1,
+          "semester": "2nd Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "GE - RC",
+          "title": "THE LIFE AND WORKS OF RIZAL",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "rawPrerequisite": "",
+          "corequisite": "",
+          "yearLevel": 1,
+          "semester": "2nd Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "GE - ET",
+          "title": "ETHICS",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "rawPrerequisite": "",
+          "corequisite": "",
+          "yearLevel": 1,
+          "semester": "2nd Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "GE - CW",
+          "title": "THE CONTEMPORARY WORLD",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "rawPrerequisite": "",
+          "corequisite": "",
+          "yearLevel": 1,
+          "semester": "2nd Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "PATHFit 2",
+          "title": "EXERCISE-BASED FITNESS ACTIVITY",
+          "lecture": 2,
+          "lab": 0,
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "rawPrerequisite": "",
+          "corequisite": "",
+          "yearLevel": 1,
+          "semester": "2nd Semester",
+          "page": 1,
+          "lectureHours": 2,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "NSTP 2",
+          "title": "CWTS 2",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "NSTP 1",
+          "rawPrerequisite": "NSTP 1",
+          "corequisite": "",
+          "yearLevel": 1,
+          "semester": "2nd Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "TH 2",
+          "title": "CHRISTOLOGY(NEW TESTAMENT)",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "TH 1",
+          "rawPrerequisite": "TH 1",
+          "corequisite": "",
+          "yearLevel": 1,
+          "semester": "2nd Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "MA 9DE",
+          "title": "DIFFERENTIAL EQUATIONS",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "MA 8",
+          "rawPrerequisite": "MA 8",
+          "corequisite": "",
+          "yearLevel": 2,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "ENGDA",
+          "title": "ENGINEERING DATA ANALYSIS",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "MA 7, MA 8",
+          "rawPrerequisite": "MA 7, MA 8",
+          "corequisite": "",
+          "yearLevel": 2,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "PROLOG",
+          "title": "PROGRAMMING LOGIC AND DESIGN",
+          "lecture": 0,
+          "lab": 2,
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "rawPrerequisite": "",
+          "corequisite": "",
+          "yearLevel": 2,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 0,
+          "labHours": 6,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "FUNELC",
+          "title": "FUNDAMENTALS OF ELECTRICAL CIRCUITS",
+          "lecture": 3,
+          "lab": 1,
+          "prereq": "PHYENG",
+          "rawPrerequisite": "PHYENG",
+          "corequisite": "",
+          "yearLevel": 2,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 3,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "GE - STS",
+          "title": "SCIENCE, TECHNOLOGY AND SOCIETY",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "rawPrerequisite": "",
+          "corequisite": "",
+          "yearLevel": 2,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "GE - MMW",
+          "title": "MATHEMATIC IN THE MODERN WORLD",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "rawPrerequisite": "",
+          "corequisite": "",
+          "yearLevel": 2,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "GE - ELECT KOMFIL",
+          "title": "KONTEKSTWALISADONG KOMUNIKASYON SA FILIPINO",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "rawPrerequisite": "",
+          "corequisite": "",
+          "yearLevel": 2,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "PATHFit 3",
+          "title": "DANCE FOR FITNESS",
+          "lecture": 2,
+          "lab": 0,
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "rawPrerequisite": "",
+          "corequisite": "",
+          "yearLevel": 2,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 2,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "TH 3",
+          "title": "ECCLESIOLOGY",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "TH 2",
+          "rawPrerequisite": "TH 2",
+          "corequisite": "",
+          "yearLevel": 2,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "OOPENG",
+          "title": "OBJECT ORIENTED PROGRAMMING",
+          "lecture": 0,
+          "lab": 2,
+          "prereq": "PROLOG",
+          "rawPrerequisite": "PROLOG",
+          "corequisite": "",
+          "yearLevel": 2,
+          "semester": "2nd Semester",
+          "page": 1,
+          "lectureHours": 0,
+          "labHours": 6,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "ENGEC",
+          "title": "ENGINEERING ECONOMICS",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "2nd Yr",
+          "rawPrerequisite": "2nd Yr",
+          "corequisite": "",
+          "yearLevel": 2,
+          "semester": "2nd Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "NUMET",
+          "title": "NUMERICAL METHODS",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "MA 7",
+          "rawPrerequisite": "MA 7",
+          "corequisite": "",
+          "yearLevel": 2,
+          "semester": "2nd Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "FUNEC",
+          "title": "FUNDAMENTALS OF ELECTRONIC CIRCUITS",
+          "lecture": 3,
+          "lab": 1,
+          "prereq": "FUNELC",
+          "rawPrerequisite": "FUNELC",
+          "corequisite": "",
+          "yearLevel": 2,
+          "semester": "2nd Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 3,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "CAD",
+          "title": "COMPUTER AIDED DRAFTING",
+          "lecture": 0,
+          "lab": 1,
+          "prereq": "2nd Yr",
+          "rawPrerequisite": "2nd Yr",
+          "corequisite": "",
+          "yearLevel": 2,
+          "semester": "2nd Semester",
+          "page": 1,
+          "lectureHours": 0,
+          "labHours": 3,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "GE - ELECT DL",
+          "title": "DALUMAT SA FILIPINO",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "rawPrerequisite": "",
+          "corequisite": "",
+          "yearLevel": 2,
+          "semester": "2nd Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "GE - ART",
+          "title": "ART APPRECIATION",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "rawPrerequisite": "",
+          "corequisite": "",
+          "yearLevel": 2,
+          "semester": "2nd Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "GE - ELECT SOSLIT",
+          "title": "SOSYEDAD AT LITERATURANG/ PANITIKANG PANLIPUNAN",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "Not specified in the source curriculum (blank prerequisite cell).",
+          "rawPrerequisite": "",
+          "corequisite": "",
+          "yearLevel": 2,
+          "semester": "2nd Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "PATHFit 4",
+          "title": "SPORTS FOR FITNESS",
+          "lecture": 2,
+          "lab": 0,
+          "prereq": "PATHFit 1, PATHFit 2, PATHFit 3",
+          "rawPrerequisite": "PATHFit 1, PATHFit 2, PATHFit 3",
+          "corequisite": "",
+          "yearLevel": 2,
+          "semester": "2nd Semester",
+          "page": 1,
+          "lectureHours": 2,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "TH 4",
+          "title": "LITURGY AND SACRAMENT",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "TH 3",
+          "rawPrerequisite": "TH 3",
+          "corequisite": "",
+          "yearLevel": 2,
+          "semester": "2nd Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "CpE-300",
+          "title": "DATA STRUCTURES AND ALGORITHMS",
+          "lecture": 0,
+          "lab": 2,
+          "prereq": "OOPENG",
+          "rawPrerequisite": "OOPENG",
+          "corequisite": "",
+          "yearLevel": 3,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 0,
+          "labHours": 6,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "CpE 301",
+          "title": "LOGIC CIRCUIT AND DESIGN",
+          "lecture": 3,
+          "lab": 1,
+          "prereq": "FUNEC, FUNELC",
+          "rawPrerequisite": "FUNEC, FUNELC",
+          "corequisite": "",
+          "yearLevel": 3,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 3,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "CpE 302",
+          "title": "DATA AND DIGITAL COMMUNICATIONS",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "FUNEC, FUNELC",
+          "rawPrerequisite": "FUNEC, FUNELC",
+          "corequisite": "",
+          "yearLevel": 3,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "CpE-303",
+          "title": "FEEDBACK AND CONTROL SYSTEMS",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "FUNELC, FUNEC",
+          "rawPrerequisite": "FUNELC, FUNEC",
+          "corequisite": "",
+          "yearLevel": 3,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "CpE-304",
+          "title": "FUNDAMENTALS OF MIXED SIGNALS AND SENSORS",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "FUNEC, FUNELC",
+          "rawPrerequisite": "FUNEC, FUNELC",
+          "corequisite": "",
+          "yearLevel": 3,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "CpE-305",
+          "title": "OPERATING SYSTEM",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "ENGDA",
+          "rawPrerequisite": "ENGDA",
+          "corequisite": "",
+          "yearLevel": 3,
+          "semester": "1st Semester",
+          "page": 1,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-1.jpeg",
+          "sourceSha256": "a2572018209a342e9bf329186e88632aca36f4c3d7557bc4e162b72944b28ddc"
+        },
+        {
+          "code": "CpE-306",
+          "title": "CpE LAWS AND PROFESSIONAL PRACTICE",
+          "lecture": 2,
+          "lab": 0,
+          "prereq": "3rd Yr",
+          "rawPrerequisite": "3rd Yr",
+          "corequisite": "",
+          "yearLevel": 3,
+          "semester": "1st Semester",
+          "page": 2,
+          "lectureHours": 2,
+          "labHours": 0,
+          "sourceFile": "BSCPE-2.jpeg",
+          "sourceSha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        },
+        {
+          "code": "COE 7",
+          "title": "COMPUTER ENGINEERING DRAFTING AND DESIGN",
+          "lecture": 0,
+          "lab": 1,
+          "prereq": "CAD",
+          "rawPrerequisite": "CAD",
+          "corequisite": "",
+          "yearLevel": 3,
+          "semester": "1st Semester",
+          "page": 2,
+          "lectureHours": 0,
+          "labHours": 3,
+          "sourceFile": "BSCPE-2.jpeg",
+          "sourceSha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        },
+        {
+          "code": "CpE-ELEC1",
+          "title": "COGNATE/ELECTIVE 1(INTRO.TO DATA SCIENCE IN PYTHON)",
+          "lecture": 2,
+          "lab": 1,
+          "prereq": "3rd Yr",
+          "rawPrerequisite": "3rd Yr",
+          "corequisite": "",
+          "yearLevel": 3,
+          "semester": "1st Semester",
+          "page": 2,
+          "lectureHours": 2,
+          "labHours": 3,
+          "sourceFile": "BSCPE-2.jpeg",
+          "sourceSha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        },
+        {
+          "code": "TH 5",
+          "title": "CHRISTIAN AND SOCIAL MORALITY",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "TH 4",
+          "rawPrerequisite": "TH 4",
+          "corequisite": "",
+          "yearLevel": 3,
+          "semester": "1st Semester",
+          "page": 2,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-2.jpeg",
+          "sourceSha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        },
+        {
+          "code": "SOFTDES",
+          "title": "SOFTWARE DESIGN",
+          "lecture": 3,
+          "lab": 1,
+          "prereq": "CpE-300",
+          "rawPrerequisite": "CpE-300",
+          "corequisite": "",
+          "yearLevel": 3,
+          "semester": "2nd Semester",
+          "page": 2,
+          "lectureHours": 3,
+          "labHours": 3,
+          "sourceFile": "BSCPE-2.jpeg",
+          "sourceSha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        },
+        {
+          "code": "ENGBOHS",
+          "title": "BASIC OCCUPATIONAL HEALTH AND SAFETY",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "3rd Yr",
+          "rawPrerequisite": "3rd Yr",
+          "corequisite": "",
+          "yearLevel": 3,
+          "semester": "2nd Semester",
+          "page": 2,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-2.jpeg",
+          "sourceSha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        },
+        {
+          "code": "CpE 307",
+          "title": "COMPUTER NETWORKS AND SECURITY",
+          "lecture": 3,
+          "lab": 1,
+          "prereq": "CpE 302",
+          "rawPrerequisite": "CpE 302",
+          "corequisite": "",
+          "yearLevel": 3,
+          "semester": "2nd Semester",
+          "page": 2,
+          "lectureHours": 3,
+          "labHours": 3,
+          "sourceFile": "BSCPE-2.jpeg",
+          "sourceSha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        },
+        {
+          "code": "CpE 308",
+          "title": "MICROPROCESSORS",
+          "lecture": 3,
+          "lab": 1,
+          "prereq": "CpE 301",
+          "rawPrerequisite": "CpE 301",
+          "corequisite": "",
+          "yearLevel": 3,
+          "semester": "2nd Semester",
+          "page": 2,
+          "lectureHours": 3,
+          "labHours": 3,
+          "sourceFile": "BSCPE-2.jpeg",
+          "sourceSha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        },
+        {
+          "code": "CpE 309",
+          "title": "METHODS OF RESEARCH",
+          "lecture": 2,
+          "lab": 0,
+          "prereq": "CpE 301, ENGDA, GE - PC",
+          "rawPrerequisite": "CpE 301, ENGDA, GE - PC",
+          "corequisite": "",
+          "yearLevel": 3,
+          "semester": "2nd Semester",
+          "page": 2,
+          "lectureHours": 2,
+          "labHours": 0,
+          "sourceFile": "BSCPE-2.jpeg",
+          "sourceSha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        },
+        {
+          "code": "CpE-310",
+          "title": "INTRODUCTION TO HDL",
+          "lecture": 0,
+          "lab": 1,
+          "prereq": "FUNEC, CpE 301",
+          "rawPrerequisite": "FUNEC, CpE 301",
+          "corequisite": "",
+          "yearLevel": 3,
+          "semester": "2nd Semester",
+          "page": 2,
+          "lectureHours": 0,
+          "labHours": 3,
+          "sourceFile": "BSCPE-2.jpeg",
+          "sourceSha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        },
+        {
+          "code": "TECHPREN-CITE",
+          "title": "TECHNOPRENEURSHIP",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "3rd Yr",
+          "rawPrerequisite": "3rd Yr",
+          "corequisite": "",
+          "yearLevel": 3,
+          "semester": "2nd Semester",
+          "page": 2,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-2.jpeg",
+          "sourceSha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        },
+        {
+          "code": "CpE-ELEC2",
+          "title": "COGNATE/ELECTIVE 2(PLATFORM TECHNOLOGIES)",
+          "lecture": 2,
+          "lab": 1,
+          "prereq": "3rd Yr",
+          "rawPrerequisite": "3rd Yr",
+          "corequisite": "",
+          "yearLevel": 3,
+          "semester": "2nd Semester",
+          "page": 2,
+          "lectureHours": 2,
+          "labHours": 3,
+          "sourceFile": "BSCPE-2.jpeg",
+          "sourceSha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        },
+        {
+          "code": "TH 6",
+          "title": "CHRISTIAN SOCIAL RESPONSIBILITY",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "TH 5",
+          "rawPrerequisite": "TH 5",
+          "corequisite": "",
+          "yearLevel": 3,
+          "semester": "2nd Semester",
+          "page": 2,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-2.jpeg",
+          "sourceSha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        },
+        {
+          "code": "CpE 401",
+          "title": "EMBEDDED SYSTEM",
+          "lecture": 3,
+          "lab": 1,
+          "prereq": "CpE 308",
+          "rawPrerequisite": "CpE 308",
+          "corequisite": "",
+          "yearLevel": 4,
+          "semester": "1st Semester",
+          "page": 2,
+          "lectureHours": 3,
+          "labHours": 3,
+          "sourceFile": "BSCPE-2.jpeg",
+          "sourceSha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        },
+        {
+          "code": "CpE 402",
+          "title": "COMPUTER ARCHITECTURE AND ORGANIZATION",
+          "lecture": 3,
+          "lab": 1,
+          "prereq": "CpE 308",
+          "rawPrerequisite": "CpE 308",
+          "corequisite": "",
+          "yearLevel": 4,
+          "semester": "1st Semester",
+          "page": 2,
+          "lectureHours": 3,
+          "labHours": 3,
+          "sourceFile": "BSCPE-2.jpeg",
+          "sourceSha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        },
+        {
+          "code": "CpE-403",
+          "title": "EMERGING TECHNOLOGIES IN CpE",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "4th Yr",
+          "rawPrerequisite": "4th Yr",
+          "corequisite": "",
+          "yearLevel": 4,
+          "semester": "1st Semester",
+          "page": 2,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-2.jpeg",
+          "sourceSha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        },
+        {
+          "code": "CpE-404",
+          "title": "DIGITAL SIGNAL PROCESSING",
+          "lecture": 3,
+          "lab": 1,
+          "prereq": "CpE-303",
+          "rawPrerequisite": "CpE-303",
+          "corequisite": "",
+          "yearLevel": 4,
+          "semester": "1st Semester",
+          "page": 2,
+          "lectureHours": 3,
+          "labHours": 3,
+          "sourceFile": "BSCPE-2.jpeg",
+          "sourceSha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        },
+        {
+          "code": "DesPro-1",
+          "title": "DESIGN PROJECT 1",
+          "lecture": 0,
+          "lab": 1,
+          "prereq": "CpE 308, CpE 309",
+          "rawPrerequisite": "CpE 308, CpE 309",
+          "corequisite": "",
+          "yearLevel": 4,
+          "semester": "1st Semester",
+          "page": 2,
+          "lectureHours": 0,
+          "labHours": 3,
+          "sourceFile": "BSCPE-2.jpeg",
+          "sourceSha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        },
+        {
+          "code": "CpE-ELEC3",
+          "title": "COGNATE/ELECTIVE 3 (WEB AND MOBILE TECHNOLOGIES)",
+          "lecture": 2,
+          "lab": 1,
+          "prereq": "4th Yr",
+          "rawPrerequisite": "4th Yr",
+          "corequisite": "",
+          "yearLevel": 4,
+          "semester": "1st Semester",
+          "page": 2,
+          "lectureHours": 2,
+          "labHours": 3,
+          "sourceFile": "BSCPE-2.jpeg",
+          "sourceSha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        },
+        {
+          "code": "CpE-405",
+          "title": "SEMINAR AND FIELDTRIPS",
+          "lecture": 0,
+          "lab": 1,
+          "prereq": "4th Yr",
+          "rawPrerequisite": "4th Yr",
+          "corequisite": "",
+          "yearLevel": 4,
+          "semester": "2nd Semester",
+          "page": 2,
+          "lectureHours": 0,
+          "labHours": 3,
+          "sourceFile": "BSCPE-2.jpeg",
+          "sourceSha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        },
+        {
+          "code": "DesPro-2",
+          "title": "DESIGN PROJECT 2",
+          "lecture": 0,
+          "lab": 2,
+          "prereq": "DesPro-1",
+          "rawPrerequisite": "DesPro-1",
+          "corequisite": "",
+          "yearLevel": 4,
+          "semester": "2nd Semester",
+          "page": 2,
+          "lectureHours": 0,
+          "labHours": 6,
+          "sourceFile": "BSCPE-2.jpeg",
+          "sourceSha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        },
+        {
+          "code": "CpE-PRAC",
+          "title": "CpE PRACTICUM/OJT",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "4th Yr",
+          "rawPrerequisite": "4th Yr",
+          "corequisite": "",
+          "yearLevel": 4,
+          "semester": "2nd Semester",
+          "page": 2,
+          "lectureHours": 240,
+          "labHours": 0,
+          "sourceFile": "BSCPE-2.jpeg",
+          "sourceSha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        },
+        {
+          "code": "IS-CITE",
+          "title": "INTEGRATING SEMINAR",
+          "lecture": 3,
+          "lab": 0,
+          "prereq": "4th Yr",
+          "rawPrerequisite": "4th Yr",
+          "corequisite": "",
+          "yearLevel": 4,
+          "semester": "2nd Semester",
+          "page": 2,
+          "lectureHours": 3,
+          "labHours": 0,
+          "sourceFile": "BSCPE-2.jpeg",
+          "sourceSha256": "79256f4f44f8fbeee15bfcb36688de796819c9e00b70c00c0697ace16767dc22"
+        }
+      ]
+    }
+  ],
+  "poReference": {
+    "id": "po-32-v1",
+    "version": "BSCPE-2026–2027-v1",
+    "sourceFile": "admin-published:BSCPE:2026–2027",
+    "sourceSha256": "810cdbb9a6f993b1ca462b11e70a2c8a30c2d0879184e4f97b0db73de50beee0",
+    "outcomes": [
+      {
+        "no": 1,
+        "short": "PO1",
+        "text": "Ability to apply knowledge of mathematics and science to solve complex engineering problems;",
+        "egas": []
+      },
+      {
+        "no": 2,
+        "short": "PO2",
+        "text": "Ability to design and conduct experiments, as well as to analyze and interpret data;",
+        "egas": []
+      },
+      {
+        "no": 3,
+        "short": "PO3",
+        "text": "Ability to design a system, component, or process to meet desired needs within realistic constraints such as economic, environmental, social, political, ethical, health and safety, manufacturability and sustainability, in accordance with standards.",
+        "egas": []
+      },
+      {
+        "no": 4,
+        "short": "PO4",
+        "text": "Ability to function on multidisciplinary teams",
+        "egas": []
+      },
+      {
+        "no": 5,
+        "short": "PO5",
+        "text": "Ability to identify; formulate, and solve complex engineering problems;",
+        "egas": []
+      },
+      {
+        "no": 6,
+        "short": "PO6",
+        "text": "Understanding of professional and ethical responsibility.",
+        "egas": []
+      },
+      {
+        "no": 7,
+        "short": "PO7",
+        "text": "Ability to communicate effectively",
+        "egas": []
+      },
+      {
+        "no": 8,
+        "short": "PO8",
+        "text": "Broad education necessary to understand the impact of engineering solutions in a global, economic, environmental, and societal context.",
+        "egas": []
+      },
+      {
+        "no": 9,
+        "short": "PO9",
+        "text": "Recognition of the need for, and an ability to engage in life-long learning;",
+        "egas": []
+      },
+      {
+        "no": 10,
+        "short": "PO10",
+        "text": "Knowledge of contemporary issues;",
+        "egas": []
+      },
+      {
+        "no": 11,
+        "short": "PO11",
+        "text": "Ability to use techniques, skills and modern engineering tools necessary for engineering practice; and",
+        "egas": []
+      },
+      {
+        "no": 12,
+        "short": "PO12",
+        "text": "Knowledge and understanding of engineering and management principles as a member and leader in a team, to manage projects and in multidisciplinary environments",
+        "egas": []
+      },
+      {
+        "no": 13,
+        "short": "PO13",
+        "text": "Ability to design, develop, implement and improve integrated system that include people materials, implementation, equipment and energy",
+        "egas": []
+      }
+    ],
+    "kind": "admin_published",
+    "status": "published",
+    "academicYear": "2026–2027",
+    "contentSha256": "810cdbb9a6f993b1ca462b11e70a2c8a30c2d0879184e4f97b0db73de50beee0",
+    "association": "owner",
+    "ownerProgramId": 32,
+    "publishedAt": "2026-11-07T20:34:42.000Z",
+    "publishedBy": 1,
+    "supersedes": null
+  },
+  "referenceContext": {
+    "program": {
+      "id": 32,
+      "code": "BSCPE",
+      "academicYear": "2026–2027",
+      "versions": {
+        "egas": 2,
+        "pos": 2
+      }
+    },
+    "po": {
+      "source": "BSCPE",
+      "status": "versioned",
+      "reference": {
+        "id": "po-32-v1",
+        "version": "BSCPE-2026–2027-v1",
+        "sourceFile": "admin-published:BSCPE:2026–2027",
+        "sourceSha256": "810cdbb9a6f993b1ca462b11e70a2c8a30c2d0879184e4f97b0db73de50beee0",
+        "authorization": null,
+        "kind": "admin_published",
+        "status": "published",
+        "academicYear": "2026–2027",
+        "publishedAt": "2026-11-07T20:34:42.000Z",
+        "publishedBy": 1,
+        "supersedes": null,
+        "contentSha256": "810cdbb9a6f993b1ca462b11e70a2c8a30c2d0879184e4f97b0db73de50beee0"
+      },
+      "sourceProgram": {
+        "id": 32,
+        "code": "BSCPE"
+      }
+    },
+    "curriculum": {
+      "source": "BSCPE",
+      "selectedYear": null,
+      "referenceIds": [
+        3
+      ],
+      "sha256": [
+        "3c06079da7d07f957095ccfe2c3962f16985c0d14266ee77287c32c0d2888ef8"
+      ]
+    },
+    "ega": {
+      "source": "program",
+      "programId": 32,
+      "version": 2,
+      "count": 4,
+      "sha256": "e51509731da9a81e0a8c9b5ce361efafbe584f4d2dc79ba8e960b64e33718aff"
+    },
+    "institution": {
+      "version": 3
+    }
+  },
+  "otherCurricula": [
+    {
+      "program": "BSIT",
+      "curriculumYear": "2022-2023",
+      "courses": [
+        {
+          "code": "IT 101",
+          "title": "INTRODUCTION TO COMPUTING"
+        },
+        {
+          "code": "GE - US",
+          "title": "UNDERSTANDING SELF"
+        },
+        {
+          "code": "GE - PC",
+          "title": "PURPOSIVE COMMUNICATION"
+        },
+        {
+          "code": "GE - RPH",
+          "title": "READINGS IN PHILIPPINE HISTORY"
+        },
+        {
+          "code": "PATHFit 1",
+          "title": "MOVEMENT COMPETENCY TRAINING"
+        },
+        {
+          "code": "NSTP 1",
+          "title": "CWTS 1"
+        },
+        {
+          "code": "TH 1",
+          "title": "SALVATION HISTORY(OLD TESTAMENT)"
+        },
+        {
+          "code": "OFFTOOLS",
+          "title": "OFFICE TOOLS"
+        },
+        {
+          "code": "IT 102",
+          "title": "DISCRETE MATHEMATICS"
+        },
+        {
+          "code": "GE - RC",
+          "title": "THE LIFE AND WORKS OF RIZAL"
+        },
+        {
+          "code": "GE - ET",
+          "title": "ETHICS"
+        },
+        {
+          "code": "GE - CW",
+          "title": "THE CONTEMPORARY WORLD"
+        },
+        {
+          "code": "PATHFit 2",
+          "title": "EXERCISE-BASED FITNESS ACTIVITY"
+        },
+        {
+          "code": "NSTP 2",
+          "title": "CWTS 2"
+        },
+        {
+          "code": "TH 2",
+          "title": "CHRISTOLOGY(NEW TESTAMENT)"
+        },
+        {
+          "code": "IT 202",
+          "title": "COMPUTER PROGRAMMING 1 (FUNDAMENTALS OF PROGRAMMING)"
+        },
+        {
+          "code": "IT 203",
+          "title": "DATA STRUCTURE AND ALGORITHM"
+        },
+        {
+          "code": "GE - STS",
+          "title": "SCIENCE, TECHNOLOGY AND SOCIETY"
+        },
+        {
+          "code": "GE - MMW",
+          "title": "MATHEMATIC IN THE MODERN WORLD"
+        },
+        {
+          "code": "GE - ELECT KOMFIL",
+          "title": "KONTEKSTWALISADONG KOMUNIKASYON SA FILIPINO"
+        },
+        {
+          "code": "PATHFit 3",
+          "title": "DANCE FOR FITNESS"
+        },
+        {
+          "code": "TH 3",
+          "title": "ECCLESIOLOGY"
+        },
+        {
+          "code": "IT-204",
+          "title": "COMPUTER PROGRAMMING 2(INTERMEDIATE PROGRAMMING)"
+        },
+        {
+          "code": "IT-205",
+          "title": "INTRODUCTION TO HUMAN COMPUTER INTERACTION"
+        },
+        {
+          "code": "GE - ELECT DL",
+          "title": "DALUMAT SA FILIPINO"
+        },
+        {
+          "code": "GE - ELECT SOSLIT",
+          "title": "SOSYEDAD AT LITERATURANG/ PANITIKANG PANLIPUNAN"
+        },
+        {
+          "code": "GE - ART",
+          "title": "ART APPRECIATION"
+        },
+        {
+          "code": "PATHFit 4",
+          "title": "SPORTS FOR FITNESS"
+        },
+        {
+          "code": "TH 4",
+          "title": "LITURGY AND SACRAMENT"
+        },
+        {
+          "code": "IT 301",
+          "title": "COMPUTER PROGRAMMING 3 (OBJECT ORIENTED PROGRAMMING)"
+        },
+        {
+          "code": "IT-302",
+          "title": "INFORMATION MANAGEMENT 1 (DATABASE FUNDAMENTAL)"
+        },
+        {
+          "code": "IT-303",
+          "title": "SYSTEM INTEGRATION AND ARCHITECTURE"
+        },
+        {
+          "code": "IT-304",
+          "title": "COMPUTER NETWORKS 1 (FUNDAMENTALS OF NETWORKING)"
+        },
+        {
+          "code": "IT-305",
+          "title": "WEB SYSTEMS AND TECHNOLOGIES"
+        },
+        {
+          "code": "IT-ELEC1",
+          "title": "IT ELECTIVE 1 (INTRO.TO DATA SCIENCE IN PYTHON)"
+        },
+        {
+          "code": "TH 5",
+          "title": "CHRISTIAN AND SOCIAL MORALITY"
+        },
+        {
+          "code": "CAPSPRO1",
+          "title": "CAPSTONE PROJECT 1"
+        },
+        {
+          "code": "TECHPREN-CITE",
+          "title": "TECHNOPRENEURSHIP"
+        },
+        {
+          "code": "IT 306",
+          "title": "INFORMATION MANAGEMENT 2 (ADVANCED DATABASE)"
+        },
+        {
+          "code": "IT-307",
+          "title": "COMPUTER NETWORKS 2 (ADVANCED NETWORKING)"
+        },
+        {
+          "code": "IT-308",
+          "title": "SYSTEM INTEGRATION AND ARCHITECTURE 2"
+        },
+        {
+          "code": "IT-309",
+          "title": "INFORMATION ASSURANCE AND SECURITY"
+        },
+        {
+          "code": "IT-ELEC2",
+          "title": "IT ELECTIVE 2 (MOBILE APPLICATION DEVELOPMENT)"
+        },
+        {
+          "code": "TH 6",
+          "title": "CHRISTIAN SOCIAL RESPONSIBILITY"
+        },
+        {
+          "code": "CAPSPRO 2",
+          "title": "CAPSTONE PROJECT 2"
+        },
+        {
+          "code": "IT-401",
+          "title": "QUANTITATIVE METHODS (INCLUDING MODELING AND SIMULATION)"
+        },
+        {
+          "code": "IT-402",
+          "title": "SOCIAL AND PROFESSIONAL ISSUES"
+        },
+        {
+          "code": "IT-403",
+          "title": "APPLICATION DEVELOPMENT AND EMERGING THEORIES"
+        },
+        {
+          "code": "IT-404",
+          "title": "SYSTEM ADMINISTRATION AND MAINTENANCE"
+        },
+        {
+          "code": "IT-ELEC3",
+          "title": "IT ELECTIVE 3 (MULTIMEDIA SYSTEM)"
+        },
+        {
+          "code": "IT-ELEC4",
+          "title": "IT ELECTIVE 4 (WEB SYSTEMS AND TECHNOLOGIES 2)"
+        },
+        {
+          "code": "IT-PRAC",
+          "title": "IT PRACTICUM"
+        },
+        {
+          "code": "IS-CITE",
+          "title": "INTEGRATING SEMINAR"
+        }
+      ]
+    },
+    {
+      "program": "BSIE",
+      "curriculumYear": "2022-2023",
+      "courses": [
+        {
+          "code": "MA 7",
+          "title": "DIFFERENTIAL CALCULUS"
+        },
+        {
+          "code": "CHEMENG",
+          "title": "CHEMISTRY FOR ENGINEERS"
+        },
+        {
+          "code": "GE - US",
+          "title": "UNDERSTANDING SELF"
+        },
+        {
+          "code": "GE - PC",
+          "title": "PURPOSIVE COMMUNICATION"
+        },
+        {
+          "code": "GE - RPH",
+          "title": "READINGS IN PHILIPPINE HISTORY"
+        },
+        {
+          "code": "PATHFit 1",
+          "title": "MOVEMENT COMPETENCY TRAINING"
+        },
+        {
+          "code": "NSTP 1",
+          "title": "CWTS 1"
+        },
+        {
+          "code": "TH 1",
+          "title": "SALVATION HISTORY(OLD TESTAMENT)"
+        },
+        {
+          "code": "MA 8",
+          "title": "INTEGRAL CALCULUS"
+        },
+        {
+          "code": "PHYENG",
+          "title": "PHYSICS FOR ENGINEERS"
+        },
+        {
+          "code": "PRIECO",
+          "title": "PRINCIPLES OF ECONOMICS"
+        },
+        {
+          "code": "GE - RC",
+          "title": "THE LIFE AND WORKS OF RIZAL"
+        },
+        {
+          "code": "GE - ET",
+          "title": "ETHICS"
+        },
+        {
+          "code": "GE - CW",
+          "title": "THE CONTEMPORARY WORLD"
+        },
+        {
+          "code": "PATHFit 2",
+          "title": "EXERCISE-BASED FITNESS ACTIVITY"
+        },
+        {
+          "code": "NSTP 2",
+          "title": "CWTS 2"
+        },
+        {
+          "code": "TH 2",
+          "title": "CHRISTOLOGY(NEW TESTAMENT)"
+        },
+        {
+          "code": "MA 9DE",
+          "title": "DIFFERENTIAL EQUATIONS"
+        },
+        {
+          "code": "EMEC",
+          "title": "Engineering Mechanics"
+        },
+        {
+          "code": "FUNELC-IE",
+          "title": "ELEMENTARY ELECTRICAL ENGINEERING"
+        },
+        {
+          "code": "COMPRO",
+          "title": "COMPUTER FUNDAMENTALS AND PROGRAMMING"
+        },
+        {
+          "code": "GE - STS",
+          "title": "SCIENCE, TECHNOLOGY AND SOCIETY"
+        },
+        {
+          "code": "GE - MMW",
+          "title": "MATHEMATIC IN THE MODERN WORLD"
+        },
+        {
+          "code": "GE - ELECT KOMFIL",
+          "title": "KONTEKSTWALISADONG KOMUNIKASYON SA FILIPINO"
+        },
+        {
+          "code": "PATHFit 3",
+          "title": "DANCE FOR FITNESS"
+        },
+        {
+          "code": "TH 3",
+          "title": "ECCLESIOLOGY"
+        },
+        {
+          "code": "ENGEC",
+          "title": "ENGINEERING ECONOMICS"
+        },
+        {
+          "code": "STATIE1",
+          "title": "STATISTICAL ANALYSIS FOR INDUSTRIAL ENGINEERING 1"
+        },
+        {
+          "code": "ADEMAIE",
+          "title": "ADVANCE MATHEMATICS FOR INDUSTRIAL ENGINEERING"
+        },
+        {
+          "code": "CAD",
+          "title": "COMPUTER AIDED DRAFTING"
+        },
+        {
+          "code": "GE - ELECT DL",
+          "title": "DALUMAT SA FILIPINO"
+        },
+        {
+          "code": "GE - ART",
+          "title": "ART APPRECIATION"
+        },
+        {
+          "code": "GE - ELECT SOSLIT",
+          "title": "SOSYEDAD AT LITERATURANG/ PANITIKANG PANLIPUNAN"
+        },
+        {
+          "code": "PATHFit 4",
+          "title": "SPORTS FOR FITNESS"
+        },
+        {
+          "code": "TH 4",
+          "title": "LITURGY AND SACRAMENT"
+        },
+        {
+          "code": "IMAP",
+          "title": "INDUSTRIAL MATERIALS AND PROCESSES"
+        },
+        {
+          "code": "STATIE2",
+          "title": "STATISTICAL ANALYSIS FOR INDUSTRIAL ENGINEERING 2"
+        },
+        {
+          "code": "OR 1",
+          "title": "OPERATION RESEARCH 1"
+        },
+        {
+          "code": "ME",
+          "title": "THERMODYNAMICS"
+        },
+        {
+          "code": "IOAM",
+          "title": "INDUSTRIAL ORGANIZATION AND MANAGEMENT"
+        },
+        {
+          "code": "ACC1-IE",
+          "title": "FINANCIAL ACCOUNTING"
+        },
+        {
+          "code": "TH 5",
+          "title": "CHRISTIAN AND SOCIAL MORALITY"
+        },
+        {
+          "code": "IE 301",
+          "title": "WORK STUDY AND MANAGEMENT"
+        },
+        {
+          "code": "ENGBOHS",
+          "title": "BASIC OCCUPATIONAL HEALTH AND SAFETY"
+        },
+        {
+          "code": "TECHPREN-CITE",
+          "title": "TECHNOPRENEURSHIP"
+        },
+        {
+          "code": "IE 302",
+          "title": "QUALITY MANAGEMENT SYSTEM"
+        },
+        {
+          "code": "ACC2-IE",
+          "title": "MANAGERIAL ACCOUNTING"
+        },
+        {
+          "code": "OR 2",
+          "title": "OPERATION RESEARCH 2"
+        },
+        {
+          "code": "ERGO 1",
+          "title": "ERGONOMICS 1"
+        },
+        {
+          "code": "TH 6",
+          "title": "CHRISTIAN SOCIAL RESPONSIBILITY"
+        },
+        {
+          "code": "ERGO 2",
+          "title": "ERGONOMICS 2"
+        },
+        {
+          "code": "IE-401",
+          "title": "INFORMATION SYSTEMS"
+        },
+        {
+          "code": "IE-402",
+          "title": "SYSTEMS ENGINEERING"
+        },
+        {
+          "code": "IE-403",
+          "title": "OPERATION MANAGEMENT"
+        },
+        {
+          "code": "IE 404",
+          "title": "ENVIRONMENTAL SCIENCE"
+        },
+        {
+          "code": "IE-ELEC1",
+          "title": "IE-ELECTIVE 1 (LEAN MANUFACTURING)"
+        },
+        {
+          "code": "IE-ELEC2",
+          "title": "IE-ELECTIVE 2 (PROJECT MANAGEMENT)"
+        },
+        {
+          "code": "IE-ELEC3",
+          "title": "IE-ELECTIVE 3 (MULTI-CRITERIA DECISION MAKING)"
+        },
+        {
+          "code": "IE-405",
+          "title": "PROJECT FEASIBILITY"
+        },
+        {
+          "code": "IE-406",
+          "title": "SUPPLY CHAIN MANAGEMENT"
+        },
+        {
+          "code": "IE-PRAC",
+          "title": "IE PRACTICUM"
+        },
+        {
+          "code": "CapsPro-IE",
+          "title": "IE CAPSTONE PROJECT"
+        },
+        {
+          "code": "IS-CITE",
+          "title": "INTEGRATING SEMINAR"
+        }
+      ]
+    },
+    {
+      "program": "BSIT-CYBERSECURITY",
+      "curriculumYear": "2025-2026",
+      "courses": [
+        {
+          "code": "IT 101",
+          "title": "INTRODUCTION TO COMPUTING"
+        },
+        {
+          "code": "IT 102-",
+          "title": "DISCRETE MATHEMATICS"
+        },
+        {
+          "code": "OFFTOOLS",
+          "title": "OFFICE TOOLS"
+        },
+        {
+          "code": "GE - US",
+          "title": "UNDERSTANDING SELF"
+        },
+        {
+          "code": "GE - PC",
+          "title": "PURPOSIVE COMMUNICATION"
+        },
+        {
+          "code": "GE - RPH",
+          "title": "READINGS IN PHILIPPINE HISTORY"
+        },
+        {
+          "code": "PATHFit 1",
+          "title": "MOVEMENT COMPETENCY TRAINING"
+        },
+        {
+          "code": "NSTP 1",
+          "title": "CWTS 1"
+        },
+        {
+          "code": "TH 1",
+          "title": "SALVATION HISTORY(OLD TESTAMENT)"
+        },
+        {
+          "code": "IT 103-",
+          "title": "COMPUTER PROGRAMMING 1 (FUNDAMENTALS OF PROGRAMMING)"
+        },
+        {
+          "code": "IT 104",
+          "title": "DATA STRUCTURE AND ALGORITHM"
+        },
+        {
+          "code": "IT 105",
+          "title": "INTRODUCTION TO HUMAN COMPUTER INTERACTION"
+        },
+        {
+          "code": "GE - RC",
+          "title": "THE LIFE AND WORKS OF RIZAL"
+        },
+        {
+          "code": "GE - ET",
+          "title": "ETHICS"
+        },
+        {
+          "code": "GE - CW",
+          "title": "THE CONTEMPORARY WORLD"
+        },
+        {
+          "code": "PATHFit 2",
+          "title": "EXERCISE-BASED FITNESS ACTIVITY"
+        },
+        {
+          "code": "NSTP 2",
+          "title": "CWTS 2"
+        },
+        {
+          "code": "TH 2",
+          "title": "CHRISTOLOGY(NEW TESTAMENT)"
+        },
+        {
+          "code": "IT-201",
+          "title": "COMPUTER PROGRAMMING 2 (INTERMEDIATE PROGRAMMING)"
+        },
+        {
+          "code": "IT-202",
+          "title": "SYSTEM INTEGRATION AND ARCHITECTURE 1"
+        },
+        {
+          "code": "IT-203",
+          "title": "COMPUTER NETWORKS 1 (FUNDAMENTALS OF NETWORKING)"
+        },
+        {
+          "code": "IT-204-",
+          "title": "QUANTITATIVE METHODS (INCLUDING MODELING AND SIMULATION)"
+        },
+        {
+          "code": "IT 205-",
+          "title": "INFORMATION MANAGEMENT 1 (DATABASE FUNDAMENTAL)"
+        },
+        {
+          "code": "GE - STS",
+          "title": "SCIENCE, TECHNOLOGY AND SOCIETY"
+        },
+        {
+          "code": "GE - MMW",
+          "title": "MATHEMATIC IN THE MODERN WORLD"
+        },
+        {
+          "code": "PATHFit 3",
+          "title": "DANCE FOR FITNESS"
+        },
+        {
+          "code": "TH 3",
+          "title": "ECCLESIOLOGY"
+        },
+        {
+          "code": "IT 206-",
+          "title": "COMPUTER PROGRAMMING 3 (OBJECT ORIENTED PROGRAMMING)"
+        },
+        {
+          "code": "IT 207-",
+          "title": "INFORMATION MANAGEMENT 2 (ADVANCED DATABASE)"
+        },
+        {
+          "code": "IT 208-",
+          "title": "COMPUTER NETWORKS 2 (ADVANCED NETWORKING)"
+        },
+        {
+          "code": "IT 209-",
+          "title": "SYSTEM INTEGRATION AND ARCHITECTURE 2"
+        },
+        {
+          "code": "IT-210",
+          "title": "SOCIAL AND PROFESSIONAL ISSUES"
+        },
+        {
+          "code": "GE - ART",
+          "title": "ART APPRECIATION"
+        },
+        {
+          "code": "PATHFit 4",
+          "title": "SPORTS FOR FITNESS"
+        },
+        {
+          "code": "TH 4",
+          "title": "LITURGY AND SACRAMENT"
+        },
+        {
+          "code": "CS-301",
+          "title": "INTRODUCTION TO DIGITAL FORENSICS"
+        },
+        {
+          "code": "CS-302",
+          "title": "INTERNET TO THINGS (IoT)"
+        },
+        {
+          "code": "CS-303",
+          "title": "ESSENTIAL SECURITY PRINCIPLES"
+        },
+        {
+          "code": "CS-304",
+          "title": "CYBERSECURITY AND DATA PRIVACY: LAW, POLICIES, AND PRACTICES"
+        },
+        {
+          "code": "IT-305",
+          "title": "WEB SYSTEMS AND TECHNOLOGIES"
+        },
+        {
+          "code": "IT-306",
+          "title": "APPLICATION DEVELOPMENT AND EMERGING THEORIES"
+        },
+        {
+          "code": "IT-ELEC1-",
+          "title": "IT ELECTIVE 1 (INTRO.TO DATA SCIENCE IN PHYTON)"
+        },
+        {
+          "code": "TH 5",
+          "title": "CHRISTIAN AND SOCIAL MORALITY"
+        },
+        {
+          "code": "CAPCYB 1",
+          "title": "CAPSTONE FOR CYBERSECURITY 1"
+        },
+        {
+          "code": "TECHPREN-CITE",
+          "title": "TECHNOPRENEURSHIP"
+        },
+        {
+          "code": "CS-307",
+          "title": "APPLIED CRYPTOGRAPHY"
+        },
+        {
+          "code": "CS-308",
+          "title": "CLOUD COMPUTING FOR CYBERSECURITY"
+        },
+        {
+          "code": "CS-309",
+          "title": "HARDWARE AND SOFTWARE SECURITY"
+        },
+        {
+          "code": "CS-310",
+          "title": "INFORMATION ASSURANCE AND SECURITY"
+        },
+        {
+          "code": "IT-307-",
+          "title": "SYSTEM ADMINISTRATION AND MAINTENANCE"
+        },
+        {
+          "code": "TH 6",
+          "title": "CHRISTIAN SOCIAL RESPONSIBILITY"
+        },
+        {
+          "code": "IT-ELEC2",
+          "title": "IT ELECTIVE 2(MOBILE APPLICATION DEVELOPMENT)"
+        },
+        {
+          "code": "IT-ELEC3",
+          "title": "IT ELECTIVE 3 (MULTIMEDIA SYSTEM)"
+        },
+        {
+          "code": "IT-ELEC4",
+          "title": "IT ELECTIVE 4 (WEB SYSTEMS AND TECHNOLOGIES 2)"
+        },
+        {
+          "code": "CAPCYB 2",
+          "title": "CAPSTONE FOR CYBERSECURITY 2"
+        },
+        {
+          "code": "CS-401",
+          "title": "ETHICAL HACKING AND COUNTER MEASURES"
+        },
+        {
+          "code": "CS-402",
+          "title": "NETWORK INFRASTRUCTURE TECHNOLOGY AND IMPLEMENTATION"
+        },
+        {
+          "code": "CS-403",
+          "title": "CYBERSECURITY RISK AND MANAGEMENT TECHNOLOGY"
+        },
+        {
+          "code": "CS-404",
+          "title": "CYBERSECURITY ATTACKS AND DEFENSE STRATEGIES"
+        },
+        {
+          "code": "IS-",
+          "title": "INTEGRATING SEMINAR"
+        },
+        {
+          "code": "IT-PRAC",
+          "title": "IT PRACTICUM"
+        }
+      ]
+    }
+  ],
+  "programCodes": [
+    "BSCPE"
+  ],
+  "outcomeSource": null,
+  "fingerprint": "0c0ac5fbf21792fcc6334e98f49f3ece6cf318d708e8d4269da651ee748ad8a9"
+}

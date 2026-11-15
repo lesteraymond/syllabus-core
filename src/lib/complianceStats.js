@@ -11,7 +11,10 @@ const average = (values) => (values.length ? Math.round(values.reduce((sum, v) =
 const percent = (part, whole) => (whole ? Math.round((part / whole) * 100) : 0);
 
 // Only syllabi with a score count towards an average: one that was never checked, or whose check has no score yet, is not a zero.
-export const aiAverage = (rows) => average((rows || []).map(scoreOf).filter((v) => v !== null));
+// A check made with AI checking off has a score from the no-AI rules alone: it is not an AI result, so it is left out. A row whose run does not say
+// (an older server without aiStatus) still counts, as before.
+const aiCompleted = (row) => !(row && row.run && typeof row.run.aiStatus === 'string') || row.run.aiStatus === 'ok';
+export const aiAverage = (rows) => average((rows || []).filter(aiCompleted).map(scoreOf).filter((v) => v !== null));
 
 // Approved syllabi as a share of all of them.
 export function approval(rows) {
@@ -86,14 +89,22 @@ export function programCoverage(programs, subjects, syllabi, { statuses = ['appr
 // each syllabus), and the four areas after those deductions (server/lib/compliance/finalAreas.js), with the lowest one named: where the score was lost.
 //   summary  what GET /api/compliance?syllabus=all returns: { average, areas: [{ key, average (rules), final (after AI) }] }
 // -> { final, areas: [{ key, rules, score }], lowest: { key, score } | null } (lowest: only an area below 100)
+// A server that sends the AI-only numbers (aiAverage, areas[].aiRules / aiFinal, notAiChecked) is read from those: only checks whose AI step
+// completed count, and notAiChecked says how many scored syllabi were left out. An older server: the plain averages, as before.
 export function snapshotOf(summary) {
   const areas = (summary && Array.isArray(summary.areas)) ? summary.areas : [];
+  const aiOnly = !!summary && Object.prototype.hasOwnProperty.call(summary, 'aiAverage');
   const list = SNAPSHOT_AREAS.map((key) => {
     const found = areas.find((a) => a && a.key === key) || {};
-    const rules = Number.isFinite(found.average) ? found.average : null;
-    return { key, rules, score: Number.isFinite(found.final) ? found.final : rules };
+    const rulesValue = aiOnly ? found.aiRules : found.average, finalValue = aiOnly ? found.aiFinal : found.final;
+    const rules = Number.isFinite(rulesValue) ? rulesValue : null;
+    return { key, rules, score: Number.isFinite(finalValue) ? finalValue : rules };
   });
   const scored = list.filter((a) => a.score !== null);
   const low = scored.length ? scored.reduce((min, a) => (a.score < min.score ? a : min)) : null;
-  return { final: summary && Number.isFinite(summary.average) ? summary.average : null, areas: list, lowest: low && low.score < 100 ? { key: low.key, score: low.score } : null };
+  const finalValue = summary ? (aiOnly ? summary.aiAverage : summary.average) : null;
+  return {
+    final: Number.isFinite(finalValue) ? finalValue : null, areas: list, lowest: low && low.score < 100 ? { key: low.key, score: low.score } : null,
+    notAiChecked: aiOnly && Number.isFinite(summary.notAiChecked) ? summary.notAiChecked : 0,
+  };
 }

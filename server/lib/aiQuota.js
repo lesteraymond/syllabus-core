@@ -67,6 +67,26 @@ function createAiQuota(limits, { now = Date.now } = {}) {
   };
 }
 
+// The per-check spending limit (docs/ai-checker-audit-2026-11-12.md A-2). Without SYLLABUS_CHECK_AI_MAX_COST_USD one check is bounded only by its request and
+// token caps (512 requests, 8,000,000 reserved tokens): with a paid model that is tens of dollars for a single check. The value is the most one check may
+// reserve, in US dollars, read by createRequestBudget in syllabuscheck/gemini.js (the staging template sets 10).
+//   Any mode: a value that is not a dollar amount above 0 and at most 1000 stops the server, by name.
+//   Staging and production: REQUIRED whenever an AI provider is configured. Development: optional, as before.
+// -> the limit in dollars, or null when there is none.
+function resolveCheckCostCap(env = process.env) {
+  const raw = String(env?.SYLLABUS_CHECK_AI_MAX_COST_USD ?? '').trim();
+  if (raw) {
+    const n = Number(raw);
+    if (!(/^\d+(\.\d+)?$/.test(raw) && n > 0 && n <= 1000)) throw fail('SYLLABUS_CHECK_AI_MAX_COST_USD must be a dollar amount above 0 and at most 1000 (the most one AI check may cost, for example 10).');
+    return n;
+  }
+  const { hardened } = require('./sessionSecret');
+  if (hardened(env) && require('./syllabuscheck/gemini').providerConfig(env).configured) {
+    throw fail(`SYLLABUS_CHECK_AI_MAX_COST_USD is required with NODE_ENV=${String(env.NODE_ENV).trim().toLowerCase()} when an AI provider is configured: set the most one AI check may cost, in US dollars (the staging template uses 10).`);
+  }
+  return null;
+}
+
 // The server's one quota, built from the environment when first used (index.js validates the settings before it listens).
 let shared = null;
 const aiQuota = () => (shared ||= createAiQuota(resolveAiQuota(process.env)));
@@ -77,4 +97,4 @@ const MESSAGES = {
   total: 'The system has reached today\'s limit of AI requests. It starts again at midnight. Ask the administrator if this is urgent.',
 };
 
-module.exports = { resolveAiQuota, createAiQuota, aiQuota, setAiQuota, SETTINGS, MESSAGES };
+module.exports = { resolveAiQuota, resolveCheckCostCap, createAiQuota, aiQuota, setAiQuota, SETTINGS, MESSAGES };

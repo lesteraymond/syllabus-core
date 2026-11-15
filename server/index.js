@@ -17,6 +17,7 @@ try {
 	dbConfig = require("./lib/dbConfig").resolveDbConfig(process.env); // the database connection: port, TLS, pool bounds; a remote database must use TLS in staging and production
 	require("./lib/signInLimits").resolveSignInLimits(process.env); // the failed sign-in limits (routes/auth.js): a bad value stops the server here, by name
 	require("./lib/aiQuota").resolveAiQuota(process.env); // the daily ceilings on AI requests (lib/aiQuota.js): a bad value stops the server here, by name
+	require("./lib/aiQuota").resolveCheckCostCap(process.env); // the per-check AI spending limit: required in staging and production when an AI provider is configured
 	require("./lib/passwordExpiry").resolveGeneratedPasswordDays(process.env); // GENERATED_PASSWORD_DAYS: a bad value stops the server here, by name
 	sessionStoreKind = require("./lib/sessionStore").resolveSessionStore(process.env); // memory (development) or mysql (always in staging and production)
 } catch (error) {

@@ -854,6 +854,7 @@ test('View analytics on Program Compliance opens a trend chart and table for rev
   assert.match(admin, /<button type="button" class="link-btn card-action-btn" data-testid="view-analytics"/, 'a real button for the administrator');
   const faculty = renderToStaticMarkup(<Dashboard user={{ ...user, role: 'faculty' }} syllabi={[]} logs={[]} setPage={noop} />);
   assert.ok(!faculty.includes('view-analytics'), 'faculty: no trend');
+  assert.ok(!faculty.includes('View analytics'), 'faculty: no View analytics label either (the overall trend is the administrator\'s)');
   setLanguage('tl');
   assert.match(renderToStaticMarkup(<TrendTable trend={trend} />), /1 sa 4/);
   setLanguage('en');

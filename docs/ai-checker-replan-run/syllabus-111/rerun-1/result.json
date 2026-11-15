@@ -1,0 +1,564 @@
+{
+  "status": "stopped",
+  "syllabus": "CpE-404 DIGITAL SIGNAL PROCESSING",
+  "noAi": {
+    "status": "incomplete",
+    "score": null,
+    "baseScore": 96,
+    "blocking": [
+      "AI-REQUIRED"
+    ]
+  },
+  "official": {
+    "score": 72,
+    "ready": true,
+    "alignment": "completed",
+    "coverage": {
+      "total": 125,
+      "verified": 125
+    },
+    "points": 24,
+    "areaPoints": {
+      "clo": 5,
+      "content": 0,
+      "ilo": 5,
+      "activities": 5,
+      "tasks": 0,
+      "values": 0,
+      "references": 0
+    },
+    "misalignments": 56,
+    "review": 12,
+    "notChecked": 0
+  },
+  "suggestions": [
+    {
+      "id": "RP:clo:kmw6v8zowahw4i5",
+      "path": "clos[1].statement",
+      "title": "Suggested alignment revision (needs faculty review)",
+      "before": "Demonstrate ethical responsibility and professionalism in designing DSP systems that uphold social, environmental, and moral standards.and communicate technical ideas effecfively ",
+      "after": "Apply digital signal processing techniques, such as filtering and spectral analysis, to analyze and evaluate the performance of discrete-time systems and communicate the results clearly.",
+      "why": "Replaced the ethics and responsibility focus (CLO 4's) with a skill-development focus on applying and evaluating DSP techniques, using apply, analyze and evaluate level verbs, and kept the communication intent while staying distinct from the other CLOs.",
+      "fixes": [
+        "SEM:CLO-LEVEL|clo:kmw6v8zowahw4i5",
+        "SEM:CLO-PO|clo:kmw6v8zowahw4i5|po:12"
+      ]
+    },
+    {
+      "id": "RP:clo:kmw6v9i6snl77dk",
+      "path": "clos[2].statement",
+      "title": "Suggested alignment revision (needs faculty review)",
+      "before": "Evaluate the societal and environmental impacts of DSP technologies, ensuring responsible innovation in engineering solutions.",
+      "after": "Create a digital signal processing application, such as a filter or spectrum analyzer, that addresses a community, environmental or societal need and justify its benefits and trade-offs for the people and settings it serves.",
+      "why": "Kept the CLO 3 create-level DSP design intent but tied the solution to a real community, environmental or societal need and its impact, so it supports PO 8 and EGA 3 while staying distinct from CLO 4's ethics focus.",
+      "fixes": [
+        "SEM:CLO-LEVEL|clo:kmw6v9i6snl77dk"
+      ]
+    },
+    {
+      "id": "RP:clo:kmw6vabm2v1ooy6",
+      "path": "clos[3].statement",
+      "title": "Suggested alignment revision (needs faculty review)",
+      "before": " Engage in continuous learning and exploration of emerging DSP techniques and tools to adapt to technological advancements.",
+      "after": "Evaluate the ethical responsibilities of a digital signal processing engineer, including honesty in reporting results and accountability for the effects of DSP-based systems, and justify a commitment to keep learning so that one's practice stays current, responsible and ethically sound.",
+      "why": "Added a life-long learning dimension (keeping current to practice DSP responsibly), so the CLO supports PO 9 and EGA 4, while keeping the evaluate-level ethics and responsibility focus for CLO 4.",
+      "fixes": [
+        "SEM:CLO-LEVEL|clo:kmw6vabm2v1ooy6"
+      ]
+    },
+    {
+      "id": "RP:ilo:kmw6w6ag9f6swcv",
+      "path": "plan[5].ilos[0].text",
+      "title": "Suggested alignment revision",
+      "before": "Show\nunderstanding, and\ndeep appreciation on\nthe nature and\ncomponents of digital\nsignal processing.",
+      "after": "Use the MATLAB Command Window to evaluate arithmetic expressions with scalar variables, built-in math functions and the correct order of precedence, and to create vectors and matrices.",
+      "why": "Replaced the off-topic DSP nature/components wording with a student-performed apply-level task on MATLAB commands, scalar variables, math functions and arrays from the week's content, staying within CLO 1's apply level and distinct from the other ILOs.",
+      "fixes": [
+        "SEM:ILO-CONTENT|ilo:kmw6w6ag9f6swcv"
+      ]
+    },
+    {
+      "id": "RP:ilo:kmw6w6o88m6bbdd",
+      "path": "plan[5].ilos[1].text",
+      "title": "Suggested alignment revision",
+      "before": "Show\nunderstanding in the\nfundamental\nconcepts of digital\nsignal processing.\n",
+      "after": "Explain MATLAB's rules for naming variables, its predefined variables and its display formats, and tell scalar variables apart from vectors and matrices.",
+      "why": "Replaced the generic DSP statement with a student-centered ILO at the understand level (within CLO 1) that draws on MATLAB variable naming, predefined variables, display formats and array types from the week's content, without repeating ILO 1's arithmetic and array-creation focus.",
+      "fixes": [
+        "SEM:ILO-CONTENT|ilo:kmw6w6o88m6bbdd"
+      ]
+    },
+    {
+      "id": "RP:ilo:kmw6wb83d1m976h",
+      "path": "plan[7].ilos[0].text",
+      "title": "Suggested alignment revision",
+      "before": "Show\nunderstanding in the\nfundamental\nconcepts of digital\nsignal processing.",
+      "after": "Explain what correlation is and calculate and graph the autocorrelation and cross correlation of sample discrete-time signals using a computational tool.",
+      "why": "Replaced 'differentiate' (analyze level) with explain and calculate/graph (understand and apply levels) so the ILO stays at or below CLO 1's apply ceiling while keeping the week's definition, autocorrelation and cross correlation topics.",
+      "fixes": [
+        "SEM:ILO-CONTENT|ilo:kmw6wb83d1m976h"
+      ]
+    },
+    {
+      "id": "RP:ilo:kmw6welpxd770oj",
+      "path": "plan[8].ilos[0].text",
+      "title": "Suggested alignment revision",
+      "before": "Show\nunderstanding in the\nfundamental\nconcepts of digital\nsignal processing.\n",
+      "after": "Compute decibel values and quantization error for a given number of bits, and explain how aliasing is prevented by an anti-aliasing filter.",
+      "why": "Replaced the generic DSP wording with specific Week 14 topics (dB computation, quantization error, aliasing, anti-aliasing filter) at apply/understand level, which fits CLO 1 and the lecture-discussion and problem-solving activities.",
+      "fixes": [
+        "SEM:ILO-CONTENT|ilo:kmw6welpxd770oj"
+      ]
+    },
+    {
+      "id": "RP:ilo:kmw6wha4qa8tfnt",
+      "path": "plan[9].ilos[0].text",
+      "title": "Suggested alignment revision",
+      "before": "Show\nunderstanding in the\nfundamental\nconcepts of digital\nsignal processing.",
+      "after": "Calculate and graph the convolution of two simple discrete-time signals by flipping and shifting one signal and applying the convolution formula.",
+      "why": "The ILO now names specific Week 15 convolution topics (formula, flipping, calculating and graphing), stays within the week's content at the apply level, and remains distinct from the application and spirituality ILOs while fitting the problem-solving activities.",
+      "fixes": [
+        "SEM:ILO-CONTENT|ilo:kmw6wha4qa8tfnt"
+      ]
+    },
+    {
+      "id": "RP:ilo:kmw6wkxvsuxvjh1",
+      "path": "plan[10].ilos[0].text",
+      "title": "Suggested alignment revision",
+      "before": "Show\nunderstanding in the\nfundamental\nconcepts of digital\nsignal processing.",
+      "after": "Explain the relationship between period and frequency of a sinusoidal wave and describe how its amplitude and Nth harmonics build a waveform in the time and frequency domains.",
+      "why": "Replaced the generic DSP statement with an ILO naming week topics (period-frequency relationship, sinusoidal wave, amplitude, harmonics, time/frequency domain) at the understand level, within CLO 1's range and distinct from ILOs 2 and 3.",
+      "fixes": [
+        "SEM:ILO-CONTENT|ilo:kmw6wkxvsuxvjh1"
+      ]
+    },
+    {
+      "id": "RP:values:kmw6vh5edddb3z4",
+      "path": "plan[0].values",
+      "title": "Suggested alignment revision",
+      "before": "Understanding\n• Open\nmindedness\n• Respect\n• Obedience",
+      "after": "Humility: openly acknowledging prior knowledge gaps in signals and mathematics during the orientation. Interiority: honestly reflecting on personal goals, study habits and readiness for Digital Signal Processing.",
+      "why": "Replaced the non-core values (Understanding, Open mindedness, Respect, Obedience) with the core values Humility and Interiority, which can be practised through the Week 1 orientation and honest self-assessment.",
+      "fixes": [
+        "SEM:RULE:VALUES-WEEKLY:{\"week\":\"1\",\"row\":\"kmw6vh5edddb3z4\"}"
+      ]
+    },
+    {
+      "id": "RP:values:kmw6w2n3in511xy",
+      "path": "plan[3].values",
+      "title": "Suggested alignment revision",
+      "before": "• Understanding\n• Honesty Problem-Solving\n",
+      "after": "Interiority: taking the examination with honest self-assessment of what one truly understands. Humility: accepting the limits of one's own knowledge and learning from mistakes.",
+      "why": "Replaced the non-core terms (Understanding, Honesty, Problem-Solving) with the exact core values Interiority and Humility, which the examination week can integrate through honest self-assessment.",
+      "fixes": [
+        "SEM:RULE:VALUES-WEEKLY:{\"week\":\"6\",\"row\":\"kmw6w2n3in511xy\"}"
+      ]
+    },
+    {
+      "id": "RP:values:kmw6w99qbdcuv82",
+      "path": "plan[6].values",
+      "title": "Suggested alignment revision",
+      "before": "• Understanding\n• Honesty\nProblemSolving",
+      "after": "Interiority: honest self-assessment of what one has truly learned in Digital Signal Processing, and taking the examination with integrity. Humility: accepting one's gaps in understanding as areas for further growth.",
+      "why": "Replaced the non-core values (Understanding, Honesty, ProblemSolving) with the exact core values Interiority and Humility, which can be practised through honest self-assessment during the examination week.",
+      "fixes": [
+        "SEM:RULE:VALUES-WEEKLY:{\"week\":\"12\",\"row\":\"kmw6w99qbdcuv82\"}"
+      ]
+    },
+    {
+      "id": "RP:values:kmw6wlva59nsc6h",
+      "path": "plan[11].values",
+      "title": "Suggested alignment revision",
+      "before": "• Understan\nding\n• Honesty\n• ProblemSolving",
+      "after": "Interiority: honest self-assessment during the examination, relying on one's own preparation and integrity in answering. Humility: accepting the examination results as a basis for further growth.",
+      "why": "Replaced the non-core values with the exact core values Interiority and Humility, which the examination can integrate through honest self-assessment and openness to feedback.",
+      "fixes": [
+        "SEM:RULE:VALUES-WEEKLY:{\"week\":\"18\",\"row\":\"kmw6wlva59nsc6h\"}"
+      ]
+    },
+    {
+      "id": "RP:ilo:kmw6vqajoe6crzi",
+      "path": "plan[1].ilos[3].text",
+      "title": "Suggested alignment revision",
+      "before": "Demonstrate\nthe Filipino-Catholic\nAugustinian\nSpirituality through\nvalue webbing.\n",
+      "after": "Compare analog and digital filters, and classify common digital filter types, by their advantages and typical uses in processing signals.",
+      "why": "Replaced the off-topic Augustinian value-webbing ILO with a student-performed compare/classify task on analog vs. digital filters and digital filter types from the week's content, which builds toward CLO 2's analysis of filtering and stays distinct from ILOs 1-3.",
+      "fixes": [
+        "SEM:ILO-CONTENT|ilo:kmw6vqajoe6crzi"
+      ]
+    },
+    {
+      "id": "RP:ilo:kmw6w144wgoaw7i",
+      "path": "plan[2].ilos[2].text",
+      "title": "Suggested alignment revision",
+      "before": "Demonstrate\nthe Filipino-Catholic\nAugustinian\nSpirituality through\nvalue webbing.\n",
+      "after": "Compare FIR and IIR filters by their advantages and disadvantages, and justify which one suits a simple application such as signal conditioning with sensors or transducers.",
+      "why": "Replaced the Augustinian value-webbing ILO with a student-centered ILO on FIR vs IIR filters and their applications, which comes from the week's content, is at the analyze/evaluate level that builds toward CLO 2, and stays distinct from ILOs 1 and 2.",
+      "fixes": [
+        "SEM:ILO-CONTENT|ilo:kmw6w144wgoaw7i"
+      ]
+    },
+    {
+      "id": "RP:ilo:kmw6w4b1z022h06",
+      "path": "plan[4].ilos[2].text",
+      "title": "Suggested alignment revision",
+      "before": "Demonstrate the Filipino-Catholic Augustinian Spirituality through\nvalue webbing.",
+      "after": "Use sampling interval and sampling instant to represent an analog signal as a sequence of samples written in short hand notation, and compute the samples for a given sampling rate.",
+      "why": "Replaced the off-topic spirituality ILO with a student-performed apply-level task on sampling (interval, instant, short hand notation, sample representation) from the week's content, building toward applying DSP techniques in CLO 2 and distinct from ILOs 1 and 2.",
+      "fixes": [
+        "SEM:ILO-CONTENT|ilo:kmw6w4b1z022h06",
+        "SEM:ILO-CLO|ilo:kmw6w4b1z022h06|clo:kmw6v8zowahw4i5"
+      ]
+    },
+    {
+      "id": "RP:ilo:kmw6wcoytlepxjv",
+      "path": "plan[7].ilos[2].text",
+      "title": "Suggested alignment revision",
+      "before": "Demonstrate\nthe Filipino\n-Catholic\nAugustinian\nSpirituality through\nvalue webbing.",
+      "after": "Use cross correlation to measure the similarity between two signals and apply autocorrelation to distinguish a deterministic signal from random noise, then summarize the findings in a short written conclusion.",
+      "why": "Replaced the off-topic Augustinian value webbing with a correlation-based ILO (cross correlation, autocorrelation, deterministic signals vs random noise, conclusion) at the apply level, so it stays within Week 13 content and builds CLO 2's application and communication of results, distinct from ILOs 1 and 2.",
+      "fixes": [
+        "SEM:ILO-CONTENT|ilo:kmw6wcoytlepxjv"
+      ]
+    },
+    {
+      "id": "RP:ilo:kmw6wesk9k84niv",
+      "path": "plan[8].ilos[1].text",
+      "title": "Suggested alignment revision",
+      "before": "Demonstrate\nthe Filipino\n-Catholic\nAugustinian\nSpirituality through\nvalue webbing.\n",
+      "after": "Compare how the number of bits used in different digital system applications affects audio quality, in light of the tolerance of human hearing to decibel levels, and explain which bit depth suits each application.",
+      "why": "Reworded the ILO to an analyze-level verb (compare) with an explanation, so it clearly sits at or below CLO 2's range, while keeping the bit-depth and hearing-tolerance topic distinct from ILO 1.",
+      "fixes": [
+        "SEM:ILO-CONTENT|ilo:kmw6wesk9k84niv"
+      ]
+    },
+    {
+      "id": "RP:ilo:kmw6wi5jcymfluq",
+      "path": "plan[9].ilos[2].text",
+      "title": "Suggested alignment revision (needs faculty review)",
+      "before": "Demonstrate\nthe Filipino-Catholic\nAugustinian\nSpirituality through\nvalue webbing",
+      "after": "Apply convolution to a worked problem from a practical setting, such as combining two short sequences, and interpret what the resulting sequence shows about the situation.",
+      "why": "Removed the moving-average filter, impulse response and system terms that the week does not list, so the ILO now rests on the application of convolution only, stays at apply level for CLO 2, and differs from ILO 1 (calculating and graphing) and ILO 2 (defining and explaining).",
+      "fixes": [
+        "SEM:ILO-CONTENT|ilo:kmw6wi5jcymfluq"
+      ]
+    },
+    {
+      "id": "RP:ilo:kmw6wlbh7r7wko3",
+      "path": "plan[10].ilos[2].text",
+      "title": "Suggested alignment revision",
+      "before": "Demonstrate\nthe Filipino-Catholic\nAugustinian\nSpirituality through\nvalue webbing.",
+      "after": "Use MATLAB to plot sinusoidal waves of different amplitudes and frequencies and sum a fundamental with its harmonics to construct a composite waveform, then compare its time-domain and frequency-domain views.",
+      "why": "Replaced the off-topic spirituality ILO with a student-performed apply/analyze task on sinusoidal waves, harmonics, and time/frequency domains from the week's content, supporting CLO 2 and fitting the MATLAB activities, while differing from ILO 1 and ILO 2.",
+      "fixes": [
+        "SEM:ILO-CONTENT|ilo:kmw6wlbh7r7wko3",
+        "SEM:ILO-CLO|ilo:kmw6wlbh7r7wko3|clo:kmw6v8zowahw4i5"
+      ]
+    },
+    {
+      "id": "RP:ilo:kmw6vp2ma2gk5ks",
+      "path": "plan[1].ilos[2].text",
+      "title": "Suggested alignment revision",
+      "before": "Show understanding in practical application of DSP",
+      "after": "Explain the advantages of digital over analog signal processing, citing why processing is needed, so that a sound case can be made for choosing a digital approach to a given signal problem.",
+      "why": "Replaced the out-of-scope 'practical application of DSP' with the week's topics on the need for processing and the advantages of digital over analog, at the understand level (below CLO 3's create level) and distinct from ILOs 1, 2 and 4.",
+      "fixes": [
+        "SEM:ILO-CONTENT|ilo:kmw6vp2ma2gk5ks",
+        "SEM:ILO-CLO|ilo:kmw6vp2ma2gk5ks|clo:kmw6vabm2v1ooy6"
+      ]
+    },
+    {
+      "id": "RP:ilo:kmw6w6pynsw6ub5",
+      "path": "plan[5].ilos[2].text",
+      "title": "Suggested alignment revision",
+      "before": "Show understanding in practical application of DSP.",
+      "after": "Write a short MATLAB script that defines scalar variables and builds a vector of sampled sine values using trigonometric math functions, then display the result in a chosen display format.",
+      "why": "Replaced the generic DSP-application wording with a student task on MATLAB topics from the week (scalar variables, trigonometric functions, vectors, display formats), at apply level so it steps toward CLO 3 and differs from ILOs 1, 2 and 4.",
+      "fixes": [
+        "SEM:ILO-CONTENT|ilo:kmw6w6pynsw6ub5",
+        "SEM:ILO-CLO|ilo:kmw6w6pynsw6ub5|clo:kmw6vabm2v1ooy6"
+      ]
+    },
+    {
+      "id": "RP:ilo:kmw6w73yfczm93c",
+      "path": "plan[5].ilos[3].text",
+      "title": "Suggested alignment revision",
+      "before": "Demonstrate the Filipino-Catholic\nAugustinian Spirituality through\nvalue webbing",
+      "after": "Build a small MATLAB example that creates a vector of sampled values from a trigonometric function and arranges several such vectors in a matrix, to model a simple signal such as a tone or a sensor reading that a community could use.",
+      "why": "Replaced the off-topic spirituality ILO with one built on the week's MATLAB content (trigonometric functions, vectors, 2D arrays) that is a creating step toward CLO 3's DSP application, distinct from ILOs 1-3 and fitting the discovery and problem-solving activities.",
+      "fixes": [
+        "SEM:ILO-CONTENT|ilo:kmw6w73yfczm93c",
+        "SEM:ILO-CLO|ilo:kmw6w73yfczm93c|clo:kmw6v9i6snl77dk"
+      ]
+    },
+    {
+      "id": "RP:ilo:kmw6wbdxp1z11ph",
+      "path": "plan[7].ilos[1].text",
+      "title": "Suggested alignment revision",
+      "before": "Show\nunderstanding in\npractical appli\ncation of DSP",
+      "after": "Differentiate the three operations of correlation by comparing how each one is computed and what it shows when applied to two sample discrete-time signals.",
+      "why": "Replaced the generic 'practical applications of DSP' with the week's own 'three operations of correlation' topic, leaving out the calculating, graphing and deterministic-versus-noise tasks that ILOs 1 and 3 cover, while keeping the Bloom level (analyze) within CLO 3's allowed range (apply/create) through a lower-level 'compare' framing suited to discussion and discovery activities.",
+      "fixes": [
+        "SEM:ILO-CONTENT|ilo:kmw6wbdxp1z11ph",
+        "SEM:ILO-CLO|ilo:kmw6wbdxp1z11ph|clo:kmw6vabm2v1ooy6"
+      ]
+    },
+    {
+      "id": "RP:ilo:kmw6whfk1wrqduw",
+      "path": "plan[9].ilos[1].text",
+      "title": "Suggested alignment revision (needs faculty review)",
+      "before": "Show understanding in practical appli\ncation of DSP. ",
+      "after": "Explain the definition of convolution in their own words and describe how a system's output arises from an input signal and its impulse response, using a simple everyday example such as echo or smoothing.",
+      "why": "Replaced the vague 'practical application of DSP' with an understand-level ILO on the listed topic of the definition of convolution, distinct from ILO 1 (calculating and graphing) and ILO 3 (applying convolution to a system output), and within CLO 3's level.",
+      "fixes": [
+        "SEM:ILO-CONTENT|ilo:kmw6whfk1wrqduw",
+        "SEM:ILO-CLO|ilo:kmw6whfk1wrqduw|clo:kmw6vabm2v1ooy6"
+      ]
+    },
+    {
+      "id": "RP:ilo:kmw6wl3bvi592e3",
+      "path": "plan[10].ilos[1].text",
+      "title": "Suggested alignment revision (needs faculty review)",
+      "before": "Show understanding in practical application of DSP.\n",
+      "after": "Solve problems on periodic functions by computing the period or frequency of a given sinusoid and identifying its amplitude and the fundamental frequency of a signal made up of harmonics.",
+      "why": "Replaced the generic 'practical application of DSP' with a student-performed problem-solving ILO on periodic functions (period, frequency, amplitude, fundamental and harmonics), which suits the problem-solving activity, stays within this week's content, is at apply level (within CLO 3), and differs from ILO 1 (explaining) and ILO 3 (MATLAB plotting and summing).",
+      "fixes": [
+        "SEM:ILO-CONTENT|ilo:kmw6wl3bvi592e3",
+        "SEM:ILO-CLO|ilo:kmw6wl3bvi592e3|clo:kmw6vabm2v1ooy6"
+      ]
+    },
+    {
+      "id": "RP:activities:kmw6w034c0mwszl",
+      "path": "plan[2].activities",
+      "title": "Suggested alignment revision",
+      "before": "Lecture-Discussion\nusing Power Point\nPresentation",
+      "after": "- Guided lecture-discussion with a Power Point presentation on FIR and IIR filters, types of DSP, microprocessor and signal processor architecture, integrators, companding, bandwidth restrictions, sensors and transducers, followed by a short quiz-style recap\n- Visual and collaborative: in pairs, build a comparison table of FIR and IIR advantages and disadvantages, then justify to the class which filter suits a sensor or transducer signal-conditioning example\n- Hands-on and self-paced: study a simple illustration of a sensor or transducer signal chain and use a worked-example worksheet to choose FIR or IIR, noting the effect of bandwidth restriction, integrators or companding, and give written reasons\n- Reflective: write a short journal entry or concept map linking the nature, components and fundamental concepts of DSP to its applications, explaining why each matters",
+      "why": "Replaced the single lecture with a lecture plus several alternative activities (collaborative, hands-on/self-paced, reflective) in which students practise comparing and justifying FIR vs IIR and relating DSP concepts to applications, still on the week's content, so the quiz task still fits.",
+      "fixes": [
+        "SEM:ACTIVITY-FIT|activities:kmw6w034c0mwszl"
+      ]
+    },
+    {
+      "id": "RP:activities:kmw6w377yzdofy5",
+      "path": "plan[4].activities",
+      "title": "Suggested alignment revision",
+      "before": "LectureDiscussion using\nPower Point\nPresentation\n",
+      "after": "- Guided lecture-discussion with a PowerPoint block diagram of DSP, followed by a labeling exercise where students identify the digital signal processor, the systems that process digital signals and sample applications of DSP (visual, collaborative learners)\n- Hands-on worked examples in pairs: given an analog signal and a sampling rate, students find the sampling interval, mark the sampling instants and write the samples in short hand notation (hands-on, practice learners)\n- Self-paced worksheet or spreadsheet/simulation exercise where students sample a sine wave at different rates and show the samples as a table, a list and a graph, then compare the ways to represent them (self-paced, independent learners)\n- Small-group concept mapping and short sharing: groups summarize the nature and components of DSP and the fundamental sampling concepts, and explain why DSP matters in real applications (verbal, reflective learners)",
+      "why": "Replaced the single lecture with four varied activities (visual, hands-on, self-paced, collaborative) that cover the week's content and let students practise understanding DSP concepts and representing and computing samples, so the existing quiz still fits.",
+      "fixes": [
+        "SEM:ACTIVITY-FIT|activities:kmw6w377yzdofy5"
+      ]
+    },
+    {
+      "id": "RP:values:kmw6w034c0mwszl",
+      "path": "plan[2].values",
+      "title": "Suggested alignment revision",
+      "before": "• Patience\n• Understandin\ng\n• Resourcefuln\ness\n• Open\nmindedness\nActive\nparticipation and\ninvolvement",
+      "after": "Humility: openness to other views when comparing FIR and IIR filters and accepting that a design choice may need revising. Interiority: reflecting on one's own understanding of DSP concepts and appreciating how they apply to real signals.",
+      "why": "Replaced the non-core values (Patience, Understanding, Resourcefulness, Open-mindedness) with the core values Humility and Interiority, which the week's ILOs on appreciation, understanding and justified filter comparison can integrate.",
+      "fixes": [
+        "SEM:RULE:VALUES-WEEKLY:{\"week\":\"4-5\",\"row\":\"kmw6w034c0mwszl\"}"
+      ]
+    },
+    {
+      "id": "RP:values:kmw6w377yzdofy5",
+      "path": "plan[4].values",
+      "title": "Suggested alignment revision",
+      "before": "• Patience\n• Understandin\ng\n• Resourcefuln\ness\n• Open\nmindedness\nActive\nparticipation and\ninvolvement\n",
+      "after": "Humility: acknowledging gaps in understanding of sampling concepts and learning from peers' corrections. Interiority: reflecting honestly on one's own grasp of digital signal processing fundamentals while computing samples.",
+      "why": "Replaced the non-core values (Patience, Understanding, Resourcefulness, Open-mindedness) with the core Augustinian-Marian values Humility and Interiority, which the week's ILOs on understanding DSP concepts and computing samples can integrate.",
+      "fixes": [
+        "SEM:RULE:VALUES-WEEKLY:{\"week\":\"7-8\",\"row\":\"kmw6w377yzdofy5\"}"
+      ]
+    }
+  ],
+  "plan": {
+    "clean": false,
+    "changes": 30,
+    "verified": 24,
+    "unresolved": [
+      {
+        "key": "values:kmw6vlfck2zt38j",
+        "reason": "waits for a field above it, or the round limit was reached"
+      },
+      {
+        "key": "values:kmw6w5sg5l1mala",
+        "reason": "waits for a field above it, or the round limit was reached"
+      },
+      {
+        "key": "values:kmw6w9ov7ws4f8l",
+        "reason": "waits for a field above it, or the round limit was reached"
+      },
+      {
+        "key": "values:kmw6weabrfd9he3",
+        "reason": "waits for a field above it, or the round limit was reached"
+      },
+      {
+        "key": "values:kmw6wgkdldns6fw",
+        "reason": "waits for a field above it, or the round limit was reached"
+      },
+      {
+        "key": "values:kmw6wkls2mw4g7r",
+        "reason": "waits for a field above it, or the round limit was reached"
+      },
+      {
+        "key": "activities:kmw6vlfck2zt38j",
+        "reason": "waits for a field above it, or the round limit was reached"
+      },
+      {
+        "key": "activities:kmw6w9ov7ws4f8l",
+        "reason": "waits for a field above it, or the round limit was reached"
+      }
+    ],
+    "manual": [],
+    "regressions": [
+      {
+        "id": "CLO-PO|clo:kmw6v8zowahw4i5|po:8",
+        "label": "CLO 2",
+        "verdict": "NOT_ALIGNED",
+        "involves": [
+          "clo:kmw6v8zowahw4i5",
+          "po:8"
+        ]
+      },
+      {
+        "id": "CLO-PO|clo:kmw6v9i6snl77dk|po:10",
+        "label": "CLO 3",
+        "verdict": "NOT_ALIGNED",
+        "involves": [
+          "clo:kmw6v9i6snl77dk",
+          "po:10"
+        ]
+      },
+      {
+        "id": "CLO-PO|clo:kmw6vabm2v1ooy6|po:11",
+        "label": "CLO 4",
+        "verdict": "NOT_ALIGNED",
+        "involves": [
+          "clo:kmw6vabm2v1ooy6",
+          "po:11"
+        ]
+      }
+    ]
+  },
+  "convergence": {
+    "recheckQuestionsAsked": 12,
+    "recheckMisalignments": 8
+  },
+  "guard": {
+    "requests": 75,
+    "thisRun": 75,
+    "model": 75,
+    "priceLookups": 0,
+    "keyChecks": 0,
+    "invalidAnswers": 0,
+    "unproductiveInARow": 0,
+    "transient": 0,
+    "promptTokens": 379976,
+    "completionTokens": 51192,
+    "cachedTokens": 282556,
+    "reportedCost": 0,
+    "charged": 0.7688462,
+    "accounting": {
+      "rule": "reconcile",
+      "requests": {
+        "reconciled": 75,
+        "conservative": 0,
+        "worst_case": 0,
+        "refused": 0
+      },
+      "chargedConservatively": 1.608046
+    },
+    "warnings": [],
+    "limits": {
+      "maxRequests": 120,
+      "maxCost": 1,
+      "maxTransient": 1,
+      "maxInvalid": null,
+      "warnInvalid": null,
+      "maxUnproductive": null,
+      "maxTokens": null
+    },
+    "stopped": "cost cap: $0.7688462 already charged + $0.2318965 worst case of the next request > $1",
+    "anthropic": {
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "prices": {
+        "model": "claude-sonnet-5-5",
+        "asOf": "2026-10-27",
+        "geoFactor": 1.1,
+        "perMillionTokens": {
+          "input": 2,
+          "output": 10,
+          "cacheRead": 0.2,
+          "listedCacheRead": 0.1,
+          "cacheWrite5m": 2.5,
+          "cacheWrite1h": 4
+        }
+      },
+      "modelsReturned": {
+        "claude-sonnet-5-5": 75
+      },
+      "inputTokens": 86270,
+      "cacheCreationInputTokens": 11150,
+      "cacheReadInputTokens": 282556,
+      "outputTokens": 51192,
+      "thinkingTokens": 2816,
+      "thinkingReports": {
+        "nonzero": 3,
+        "zero": 72,
+        "unavailable": 0
+      },
+      "thinkingBlocks": 3,
+      "atListPrices": 0.7405906,
+      "estimatedCost": 0.7405906,
+      "notEstimated": 0,
+      "chargedThisRun": 0.7688462,
+      "outputTokensCharged": 51192,
+      "stopReasons": {
+        "end_turn": 75
+      },
+      "refusalCategories": {},
+      "inferenceGeo": {
+        "global": 75
+      },
+      "serviceTier": {
+        "standard": 75
+      },
+      "errors": {},
+      "latencyMs": {
+        "answers": 75,
+        "median": 3175,
+        "p90": 9085,
+        "max": 19317
+      },
+      "limits": {
+        "maxOutputTokens": null,
+        "register": {
+          "cap": 10,
+          "chargedByEveryLedger": 4.69364105
+        }
+      }
+    }
+  },
+  "provider": {
+    "judgeRequests": 44,
+    "rewriteRequests": 35,
+    "failures": 4,
+    "inputTokens": 86270,
+    "outputTokens": 51192,
+    "cacheReadInputTokens": 282556,
+    "cacheCreationInputTokens": 11150,
+    "estimatedUsd": 0.7405906,
+    "unpriced": 0,
+    "budget": {
+      "maxCostUsd": 1,
+      "maxRequests": 120,
+      "requests": 76,
+      "spentUsd": 0.9654526,
+      "refused": 3,
+      "stopReason": "cost_budget",
+      "remainingUsd": 0.0345474
+    }
+  }
+}

@@ -1,0 +1,177 @@
+{
+  "version": "replan-plan-1",
+  "rounds": 2,
+  "usage": {
+    "checks": 4,
+    "judgeRequests": 17,
+    "rewriteRequests": 13
+  },
+  "changes": [
+    {
+      "key": "clolevel:c4",
+      "field": "cloLevel",
+      "label": "CLO 4 classification",
+      "before": "Introductory",
+      "after": "Integration of Values",
+      "explanation": "CLO 4 must be classified \"Integration of Values\" (fixed by its number); it is saved as \"Introductory\".",
+      "source": "mechanical",
+      "status": "VERIFIED"
+    },
+    {
+      "key": "clo:c3",
+      "field": "clo",
+      "label": "CLO 3",
+      "before": "Bake artisan bread using traditional fermentation and kneading techniques.",
+      "after": "Develop Python programs that apply file handling, modules, and basic classes to solve given real-world problems.",
+      "explanation": "Replaced the bread-baking outcome with a CLO 3 (Demonstrating: apply/create) statement about building Python programs, which fits the course title, PO 3 (implementing computer-based solutions), and EGA 2 (creative problem solving), and covers the file, module and class topics of the child ILOs.",
+      "source": "ai",
+      "status": "NEEDS_FACULTY_REVIEW"
+    },
+    {
+      "key": "ilo:i2",
+      "field": "ilo",
+      "label": "Week 2 ILO 1",
+      "before": "Write and run a simple Python program using the interpreter and an editor.",
+      "after": "Describe the steps for installing Python and explain how the interpreter and an editor are used to write and run a first program.",
+      "explanation": "Replaced the apply-level verb 'write and run' with the understand-level verbs 'describe' and 'explain' so the ILO sits within CLO 1's levels while keeping the Week 2 topics of installation, interpreter, editor and first program that the activities rely on.",
+      "source": "ai",
+      "status": "NEEDS_FACULTY_REVIEW"
+    },
+    {
+      "key": "ilo:i4",
+      "field": "ilo",
+      "label": "Week 4 ILO 1",
+      "before": "Evaluate Python expressions that combine arithmetic, comparison and logical operators.",
+      "after": "Explain how Python evaluates expressions that combine arithmetic, comparison and logical operators, using operator precedence to state the result of each expression.",
+      "explanation": "Replaced the verb 'Evaluate' with 'Explain' so the ILO sits at the understand level, within CLO 1's remember/understand range, while keeping the operators and precedence topics that the worked examples and practice set rely on.",
+      "source": "ai",
+      "status": "NEEDS_FACULTY_REVIEW"
+    },
+    {
+      "key": "ilo:i5",
+      "field": "ilo",
+      "label": "Week 5 ILO 1",
+      "before": "Design a normalized relational database schema for a library system.",
+      "after": "Explain how if, elif and else statements, including nested conditions, direct which block of a Python program runs for a given input.",
+      "explanation": "Replaced the database schema design (create level, off-topic) with an understand-level ILO about Python conditional statements, which matches Week 5 content, steps toward CLO 1, and fits the coding and flowchart activities and Interiority.",
+      "source": "ai",
+      "status": "NEEDS_FACULTY_REVIEW"
+    },
+    {
+      "key": "activities:r7",
+      "field": "activities",
+      "label": "Week 7 activities",
+      "before": "- Trace-the-loop exercises\n- Option: pair programming on loop puzzles",
+      "after": "- Hands-on coding lab: write while and for loops using range, break and continue to repeat a task and stop on a condition, then run and test them in an editor\n- Collaborative pair programming: take turns as driver and navigator to write loops that solve short puzzles, such as a countdown or a sum of numbers, and stop on a condition\n- Self-paced guided worksheet: complete partly written loops and then write your own loop for each prompt, checking the output against sample results\n- Visual flowchart-to-code task: turn a loop flowchart into Python code and use break or continue to stop or skip steps",
+      "explanation": "Replaced tracing-only work with activities in which students write loops and offered genuinely different formats (hands-on, collaborative, self-paced, visual) that all practise the ILO and stay on Week 7 loop content, so the quiz on loops still fits.",
+      "source": "ai",
+      "status": "NEEDS_FACULTY_REVIEW"
+    },
+    {
+      "key": "activities:r8",
+      "field": "activities",
+      "label": "Week 8 activities",
+      "before": "- Lecture on functions",
+      "after": "- Collaborative problem-decomposition workshop: in pairs, students break a word problem (e.g., a grade calculator) into smaller tasks and sketch which Python functions, parameters and return values each needs\n- Hands-on coding lab: students refactor a given long script into functions with parameters and return values, then trace variable scope with print statements\n- Self-paced visual activity: students study a flowchart or function-call diagram, then annotate it to show how data passes through parameters and return values and where each variable's scope begins and ends",
+      "explanation": "Replaced the single lecture with three student-centered alternatives (collaborative, hands-on, self-paced visual) that practise analyzing and decomposing problems into functions on the week's content, and that prepare students for the refactoring lab task.",
+      "source": "ai",
+      "status": "NEEDS_FACULTY_REVIEW"
+    },
+    {
+      "key": "activities:r10",
+      "field": "activities",
+      "label": "Week 10 activities",
+      "before": "- Worked examples on word counting\n- Option: peer teaching in small groups",
+      "after": "- Hands-on lab: write a word-frequency counter in Python, first deciding whether a dictionary or a set suits each lookup need, then coding it with keys, values and membership tests\n- Collaborative problem analysis: in small groups, read short lookup scenarios (e.g., finding duplicate or common words in two texts), choose dictionaries or sets, justify the choice, and solve one using set operations\n- Self-paced visual practice: complete a worksheet that maps sample data to dictionary key-value diagrams and set Venn diagrams, then code the solutions and test them",
+      "explanation": "Replaced passive worked examples and peer teaching with three distinct activities (hands-on, collaborative, self-paced) in which students analyze lookup problems and solve them with dictionaries and sets, keeping the word-counting focus that the lab task relies on.",
+      "source": "ai",
+      "status": "NEEDS_FACULTY_REVIEW"
+    },
+    {
+      "key": "tasks:r11",
+      "field": "tasks",
+      "label": "Week 11 tasks",
+      "before": "- Essay on the history of the Roman Empire",
+      "after": "- Coding exercise: write a Python script that cleans a messy text input using string methods (strip, lower, replace, split) and prints the result\n- Short formatting task: use f-strings and format() to produce a neatly aligned report from given data\n- Quiz: predict the output of short code snippets that use common string methods",
+      "explanation": "Replaced the off-topic Roman history essay with Python string tasks (text cleaning, formatting, method quiz) that assess Week 11 content and mirror the live coding and string formatting notebook activities.",
+      "source": "ai",
+      "status": "NEEDS_FACULTY_REVIEW"
+    },
+    {
+      "key": "values:r9",
+      "field": "values",
+      "label": "Week 9 values",
+      "before": "Compassion",
+      "after": "Humility: acknowledging that a first choice between a list and a tuple may be wrong, and being open to feedback and revision when justifying the better data structure.",
+      "explanation": "Replaced Compassion with Humility, which can be practised when students evaluate and justify list versus tuple choices and accept peer feedback on their reasoning.",
+      "source": "ai",
+      "status": "NEEDS_FACULTY_REVIEW"
+    },
+    {
+      "key": "values:r10",
+      "field": "values",
+      "label": "Week 10 values",
+      "before": "Honesty",
+      "after": "Humility: acknowledging when a list or loop is a poor fit for a lookup problem and accepting a dictionary or set as the better choice, and learning from peers' alternative solutions.",
+      "explanation": "Replaced \"Honesty\", which is not one of the six core values, with Humility, which students can practise by admitting a first approach was weaker and learning from others while analyzing lookup problems with dictionaries and sets.",
+      "source": "ai",
+      "status": "NEEDS_FACULTY_REVIEW"
+    },
+    {
+      "key": "ilo:i14",
+      "field": "ilo",
+      "label": "Week 14 ILO 1",
+      "before": "The teacher will discuss exception handling in Python.",
+      "after": "Write Python code that uses try, except, and finally blocks and raises errors to handle common runtime problems in a small program.",
+      "explanation": "Rewrote the ILO as a student action (write/use) at the apply level, within CLO 3's level, using only Week 14 exception topics so the debugging and pair-programming activities and the Humility value still fit.",
+      "source": "ai",
+      "status": "NEEDS_FACULTY_REVIEW"
+    },
+    {
+      "key": "activities:r2",
+      "field": "activities",
+      "label": "Week 2 activities",
+      "before": "- Guided installation and first program\n- Option: video walkthrough with a step-by-step handout",
+      "after": "- Hands-on lab: install Python and an editor, run a first program in the interpreter and in the editor, then write down each step in your own words and explain what the interpreter and the editor each do\n- Visual option: watch a video walkthrough of the installation, then draw a labeled flowchart or diagram of the steps from installing to running the first program and explain it to a partner\n- Collaborative option: in pairs, take turns as guide and learner to install Python and run a first program, with the guide describing each step aloud and the learner checking it against a step-by-step handout",
+      "explanation": "Replaced the single task and passive video option with three distinct activities (hands-on, visual, collaborative) that each have students describe and explain the installation steps and the roles of the interpreter and editor while still working toward the first program lab exercise.",
+      "source": "ai",
+      "status": "NEEDS_FACULTY_REVIEW"
+    },
+    {
+      "key": "activities:r16",
+      "field": "activities",
+      "label": "Week 16 activities",
+      "before": "- Modeling real objects as classes\n- Option: design-on-paper activity before coding",
+      "after": "- Hands-on coding lab: individually write a Python class for a real object (e.g., Student or BankAccount) with attributes in __init__ and at least two methods, then create objects and call the methods\n- Collaborative pair design: sketch a class diagram on paper for a chosen real object, then swap roles as driver and navigator to code the class in Python and test it\n- Self-paced visual tutorial: follow a guided walkthrough on classes, objects, attributes and methods, then modify the example class and add a new method",
+      "explanation": "Replaced the single paper-preliminary option with three distinct alternatives (hands-on, collaborative, self-paced) that each have students write Python classes with attributes and methods, matching the ILO and the week's content and still supporting the class design lab task.",
+      "source": "ai",
+      "status": "NEEDS_FACULTY_REVIEW"
+    }
+  ],
+  "unresolved": [],
+  "manual": [],
+  "regressions": [
+    {
+      "id": "TASK-ILO|tasks:r2",
+      "label": "Week 2 tasks",
+      "verdict": "PARTIALLY_ALIGNED"
+    }
+  ],
+  "before": {
+    "misalignments": 26,
+    "review": 2,
+    "advice": 3,
+    "notChecked": 0,
+    "complete": true,
+    "deductions": 45
+  },
+  "after": {
+    "misalignments": 0,
+    "review": 1,
+    "advice": 4,
+    "notChecked": 0,
+    "complete": true,
+    "deductions": 0
+  },
+  "clean": true
+}

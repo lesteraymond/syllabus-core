@@ -141,6 +141,9 @@ env.SYLLABUS_CHECK_STAGE_C3 = has('legacy') ? 'off' : (datasetName === 'stage-c3
 env.SYLLABUS_CHECK_STAGE_B4 = has('legacy') ? 'off' : (datasetName === 'stage-b4' || has('stage-b4')) ? 'on' : (env.SYLLABUS_CHECK_STAGE_B4 || 'off');
 env.SYLLABUS_CHECK_STAGE_B = has('legacy') ? 'off' : (datasetName === 'stage-b' || has('stage-b')) ? 'on' : (env.SYLLABUS_CHECK_STAGE_B || 'off');
 env.SYLLABUS_CHECK_SCHEMA_MIN_ITEMS = has('min-items') ? 'on' : 'off'; // Stage E.6: only with --min-items, and only in this object
+// --legacy is the alignment-10 request exactly: the switches that add relationships or change what a request carries are off too, whatever a local env file
+// says (the requirements advice counts as a stage; the scoped course context and output fields are part of the prompt version).
+if (has('legacy')) Object.assign(env, { SYLLABUS_CHECK_REQUIREMENTS_ADVICE: 'off', SYLLABUS_CHECK_COURSE_CONTEXT: '', SYLLABUS_CHECK_OUTPUT_FIELDS: '' });
 if (claude) applyClaudeEnv(env, claudeOptions); // the model and its settings, in this object only, and no approval switch
 else if (providerName) env.SYLLABUS_CHECK_AI_PROVIDER = providerName;
 const claudeRequest = claude ? requestConfigOf(claudeOptions.model, anthropicSettings(env)) : null; // the thinking and effort every request carries

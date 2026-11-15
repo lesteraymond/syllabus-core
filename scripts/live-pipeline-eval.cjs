@@ -135,6 +135,9 @@ function envFor() {
   const file = path.join(root, 'server', '.env');
   if (fs.existsSync(file)) for (const line of fs.readFileSync(file, 'utf8').split(/\r?\n/)) { const m = line.match(/^([A-Z_]+)=(.*)$/); if (m && env[m[1]] === undefined) env[m[1]] = m[2].trim(); }
   for (const k of STAGES) env['SYLLABUS_CHECK_STAGE_' + k] = legacy ? 'off' : 'on';
+  // --legacy is the alignment-10 request exactly: Stage C3 (not in STAGES, so the "every stage on" run stays as it was), the requirements advice, and the
+  // prompt-shaping cost flags are off too, whatever server/.env says.
+  if (legacy) Object.assign(env, { SYLLABUS_CHECK_STAGE_C3: 'off', SYLLABUS_CHECK_REQUIREMENTS_ADVICE: 'off', SYLLABUS_CHECK_COURSE_CONTEXT: '', SYLLABUS_CHECK_OUTPUT_FIELDS: '' });
   env.SYLLABUS_CHECK_PROMPT_TRIM = has('trim') ? 'on' : 'off';
   env.SYLLABUS_CHECK_SCHEMA_MIN_ITEMS = has('min-items') ? 'on' : 'off'; // Stage E.6: only with --min-items, and only in this object
   if (claude) applyClaudeEnv(env, claudeOptions); // Stage S7: the model and its settings, in this object only, and no approval switch

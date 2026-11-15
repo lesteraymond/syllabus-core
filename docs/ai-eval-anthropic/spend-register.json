@@ -1,6 +1,6 @@
 {
   "cap": 10,
-  "total": 2.92159495,
+  "total": 4.69364105,
   "ledgers": {
     "p1-smoke-ledger.json": {
       "model": "claude-sonnet-5-5",
@@ -71,6 +71,27 @@
       "charged": 1.2493516,
       "outputTokens": 107054,
       "updatedAt": "2026-11-04T20:23:52.576Z"
+    },
+    "../ai-checker-replan-run/synthetic-1/provider-ledger.json": {
+      "model": "claude-sonnet-5-5",
+      "requests": 50,
+      "charged": 0.391782,
+      "outputTokens": 26408,
+      "updatedAt": "2026-11-15T05:54:51.616Z"
+    },
+    "../ai-checker-replan-run/syllabus-111/provider-ledger.json": {
+      "model": "claude-sonnet-5-5",
+      "requests": 80,
+      "charged": 0.6114179,
+      "outputTokens": 38462,
+      "updatedAt": "2026-11-15T07:29:34.262Z"
+    },
+    "../ai-checker-replan-run/syllabus-111/rerun-1/provider-ledger.json": {
+      "model": "claude-sonnet-5-5",
+      "requests": 75,
+      "charged": 0.7688462,
+      "outputTokens": 51192,
+      "updatedAt": "2026-11-15T07:45:13.003Z"
     }
   }
 }

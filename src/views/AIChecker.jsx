@@ -1,5 +1,5 @@
 import { YearFilter, useYearScope } from '../components/AcademicYearScope';
-import { canApproveAdminDraft, STATUS_LABELS, isReturned, noteMissing } from '../lib/syllabusRules';
+import { canApproveAdminDraft, STATUS_LABELS, isReturned, noteMissing, EDITABLE_STATUSES } from '../lib/syllabusRules';
 import { isApprover, isReviewer } from '../lib/roles';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
@@ -36,19 +36,24 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
   const uid = useId();
   const aiGate = useAiGate();
   const policy = useAdminPolicy(); // the administrator's AI checking switch: off means the format rules only
-  // An approved syllabus is final and lives in the Repository: it is not offered here.
-  const mine = useMemo(() => syllabi.filter(s => s.userId === user.id && s.status !== 'approved'), [syllabi, user.id]);
-  const [selectedId, setSelectedId] = useState(() => editing?.syllabusId || mine[0]?.id || null);
+  // Only a syllabus the faculty can still edit is offered: a draft, or one sent back (returned for revision, or rejected). A submitted one is with the
+  // reviewers and an approved one is final (it lives in the Repository); neither is checked again from here (owner decision 2026-11-15; the server
+  // refuses it too, routes/compliance.js recheck).
+  const mine = useMemo(() => syllabi.filter(s => s.userId === user.id && !s.archived && EDITABLE_STATUSES.includes(s.status)), [syllabi, user.id]);
+  const hasOthers = useMemo(() => syllabi.some(s => s.userId === user.id && !EDITABLE_STATUSES.includes(s.status)), [syllabi, user.id]);
+  const offered = (id) => !!id && mine.some(s => s.id === id);
+  const [selectedId, setSelectedId] = useState(() => (offered(editing?.syllabusId) ? editing.syllabusId : mine[0]?.id || null));
   const [doc, setDoc] = useState({ loading: false, error: '', content: null, editable: false, status: 'draft', version: 'v1.0' });
   const [lastRun, setLastRun] = useState(null);
   const [note, setNote] = useState('');
   const [submitFailed, setSubmitFailed] = useState([]);
   const [submitting, setSubmitting] = useState(false);
 
+  // The selection is always one of the offered syllabi: one opened from the builder that has since been submitted (or approved) is not kept.
   useEffect(() => {
-    if (editing?.syllabusId) setSelectedId(editing.syllabusId);
-    else if (!selectedId && mine.length > 0) setSelectedId(mine[0].id);
-  }, [editing?.syllabusId, mine, selectedId]);
+    if (offered(editing?.syllabusId)) { if (selectedId !== editing.syllabusId) setSelectedId(editing.syllabusId); }
+    else if (!offered(selectedId)) setSelectedId(mine[0]?.id || null);
+  }, [editing?.syllabusId, mine, selectedId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!selectedId) {
@@ -126,7 +131,7 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
     <>
       <PageHead title={translateUI("ui.ai_syllabus_checker_0c99c9")} subtitle={translateUI("ui.checked_against_the_undergraduate_syllabus_form_only_a_form_that__68429a")} actions={<YearFilter group="queue" />} />
       {!selectedId && mine.length === 0 ? (
-        <div className="empty">{translateUI("ui.no_syllabi_yet_click_new_syllabus_to_get_started_2e4bc9")}</div>
+        <div className="empty">{translateUI(hasOthers ? 'aiChecker.nothingToCheck' : "ui.no_syllabi_yet_click_new_syllabus_to_get_started_2e4bc9")}</div>
       ) : (
         <>
           <section className="card pick-card" aria-label={translateUI("ui.choose_a_syllabus_to_check_b6f6d2")}>

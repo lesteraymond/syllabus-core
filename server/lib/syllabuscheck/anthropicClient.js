@@ -140,7 +140,7 @@ function failureOf(error, status, key, tail, usage) {
   if (error instanceof sdk.APIConnectionError) return Object.assign(Error(`Anthropic connection failed${tail}`), { usage });
   return Object.assign(Error(`Anthropic request failed: ${redact(error?.message, key)}${tail}`), { usage });
 }
-// One question: `system` is cached (ANTHROPIC_PROMPT_CACHE=off turns it off) and the answer must match `schema` (structured outputs). `subject` names
+// One question: `system` (a text, or a list of up to 4 texts) is cached (ANTHROPIC_PROMPT_CACHE=off turns it off) and the answer must match `schema` (structured outputs). `subject` names
 // what is not evaluated when it fails ('alignment' for gemini.js). options.transport replaces fetch (tests); options.sleep and options.timeoutMs are for
 // tests too. Returns { text, stopReason, stopCategory, model, requestId, latencyMs, usage }. Every error it throws after a request was sent carries
 // `usage`: a refused or cut-off answer was billed all the same.
@@ -163,7 +163,9 @@ async function anthropicMessage({ model, system, user, schema, subject = '' }, {
   // options.maxTokens (a planned output ceiling, costPlan.js) can only lower the configured ANTHROPIC_MAX_TOKENS, never raise it, and never below 1024.
   const outputLimit = Number.isInteger(maxTokens) && maxTokens > 0 ? Math.max(1024, Math.min(settings.maxTokens, maxTokens)) : settings.maxTokens;
   const body = { model, max_tokens: outputLimit, thinking: config.thinking,
-    system: [{ type: 'text', text: system, ...(settings.cache ? { cache_control: { type: 'ephemeral' } } : {}) }],
+    // `system` is one text, or a list of texts in a fixed order (stable rules first, then context shared by several requests): each block gets its own
+    // cache breakpoint, so a request that shares only the first block still reads it from the cache. At most 4 breakpoints per request (the API's limit).
+    system: (Array.isArray(system) ? system : [system]).filter(text => typeof text === 'string' && text).slice(0, 4).map(text => ({ type: 'text', text, ...(settings.cache ? { cache_control: { type: 'ephemeral' } } : {}) })),
     messages: [{ role: 'user', content: user }],
     output_config: { effort: config.effort, format: { type: 'json_schema', schema } } };
   const started = Date.now(), deadline = started + limit;

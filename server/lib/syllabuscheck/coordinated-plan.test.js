@@ -474,3 +474,70 @@ test('Scenario J - Atomic Faculty Apply All & Stale-Version Rejection', () => {
 
   assert.notEqual(driftedHash, plan.sourceHash, 'Drifted hash must differ from plan sourceHash');
 });
+
+// ---- Off-topic weeks are replaced from THIS syllabus, never from another course (the engine once proposed Logic Circuits topics for every course) ----
+function programmingSyllabus() {
+  return {
+    schemaVersion: 2,
+    meta: { courseId: 202, code: 'IT 202', title: 'Computer Programming 1', program: 'BSIT' },
+    description: [{ t: 'Fundamentals of structured programming: variables, control structures, functions and arrays.' }],
+    clos: [
+      { id: 'p1', statement: 'Write programs that use variables, expressions and control structures.' },
+      { id: 'p2', statement: 'Design functions that solve small problems.' },
+      { id: 'p3', statement: 'Use arrays to store and process data.' },
+    ],
+    plan: Array.from({ length: 18 }, (_, i) => ({
+      week: i + 1,
+      contents: `Week ${i + 1} programming topic`,
+      ilos: [{ text: `Write a short program for week ${i + 1}.`, tags: [`clo:p${(i % 3) + 1}`] }],
+      activities: 'Laboratory exercise',
+      tasks: 'Programming exercise',
+      values: 'Excellence',
+    })),
+  };
+}
+const offTopicIn = (rows) => ({
+  standard: { version: 'hybrid-2' }, findings: [],
+  hybrid: { academicV2: { academic: { relationships: rows.map((r) => ({ id: `rel_w${r + 1}`, relationshipType: 'Content-course', week: r + 1, path: `plan[${r}].contents`, academicJudgment: 'NOT_ALIGNED' })) } } },
+});
+const ANOTHER_COURSE = /Logic|Boolean|Karnaugh|K-Map|circuit|Flip-Flop|Latch|Finite State|Adders|Hardware Registers|digital/i;
+
+test('Off-topic weeks of a non-Logic course get replacements built from that course: its title and the CLO the week supports, never another course', () => {
+  const content = programmingSyllabus();
+  for (const r of [3, 6, 10, 14, 16]) content.plan[r].contents = '19th Century French Poetry';
+  const plan = buildPlan({ content, masters: mockMasters, result: offTopicIn([3, 6, 10, 14, 16]), env: { SYLLABUS_CHECK_COORDINATED_PLAN: 'on' } });
+  const offTopic = plan.changes.filter((c) => /^plan\[(3|6|10|14|16)\]\.(contents|ilos\[0\]\.text|activities|tasks)$/.test(c.path));
+  assert.equal(offTopic.length, 20, 'four coordinated fields for each of the five weeks');
+  for (const c of offTopic) {
+    assert.doesNotMatch(String(c.proposedValue), ANOTHER_COURSE, `${c.path}: nothing from another course`);
+    assert.doesNotMatch(String(c.proposedValue), /Poetry|French/i, `${c.path}: the off-topic text is gone`);
+    assert.equal(c.semanticUnverified, true, `${c.path}: a draft for the faculty to finish, not a verified fix`);
+  }
+  for (const r of [3, 6, 10, 14, 16]) {
+    const contents = plan.changes.find((c) => c.path === `plan[${r}].contents`).proposedValue;
+    assert.match(contents, /Computer Programming 1/, 'names this course');
+    const cloNo = (r % 3) + 1; // the CLO the week's ILO is tagged with
+    assert.match(contents, new RegExp(`CLO ${cloNo} \\(`));
+    assert.ok(contents.includes(content.clos[cloNo - 1].statement.replace(/\.$/, '')), 'quotes the CLO of this syllabus');
+  }
+  assert.equal(plan.validation.status, VALIDATION_STATUS.NEEDS_FACULTY_REVIEW, 'the package is never presented as verified');
+  assert.doesNotMatch(JSON.stringify(plan.rootCauses), /official curriculum/i);
+});
+
+test('With no title or CLOs to draw on, the replacement says so instead of inventing a topic', () => {
+  const content = programmingSyllabus();
+  content.meta.title = '';
+  content.clos = [];
+  content.description = [];
+  content.plan[3].contents = '19th Century French Poetry';
+  const plan = buildPlan({ content, masters: mockMasters, result: offTopicIn([3]), env: { SYLLABUS_CHECK_COORDINATED_PLAN: 'on' } });
+  const contents = plan.changes.find((c) => c.path === 'plan[3].contents');
+  assert.ok(contents);
+  assert.doesNotMatch(contents.proposedValue, ANOTHER_COURSE);
+  assert.match(contents.proposedValue, /this course/i);
+});
+
+test('The engine holds no topic, outcome or activity text of any particular course', () => {
+  const source = require('node:fs').readFileSync(require('node:path').join(__dirname, 'coordinatedPlanEngine.js'), 'utf8');
+  assert.doesNotMatch(source, /Karnaugh|Flip-Flop|Logic Circuits|Finite State Machines|Adders, Subtractors|logic circuit problems|circuit design simulation/i);
+});

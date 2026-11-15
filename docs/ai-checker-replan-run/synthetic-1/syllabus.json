@@ -1,0 +1,464 @@
+{
+  "schemaVersion": 2,
+  "meta": {
+    "courseId": 9999,
+    "code": "SYN 101",
+    "title": "Introduction to Python Programming",
+    "program": "BSIT",
+    "lecture": "2",
+    "lab": "1",
+    "prereq": "None"
+  },
+  "description": [
+    {
+      "id": "d1",
+      "t": "A synthetic course used only to evaluate the checker."
+    }
+  ],
+  "clos": [
+    {
+      "id": "c1",
+      "title": "Python foundations",
+      "statement": "Explain the basic concepts of Python programming, including data types, operators and control structures.",
+      "pos": [
+        1
+      ],
+      "egas": [
+        1
+      ],
+      "level": "Introductory"
+    },
+    {
+      "id": "c2",
+      "title": "Problem analysis",
+      "statement": "Analyze programming problems and evaluate alternative Python solutions that use functions and data structures.",
+      "pos": [
+        2
+      ],
+      "egas": [
+        1,
+        2
+      ],
+      "level": "Enabling"
+    },
+    {
+      "id": "c3",
+      "title": "Bread making",
+      "statement": "Bake artisan bread using traditional fermentation and kneading techniques.",
+      "pos": [
+        3
+      ],
+      "egas": [
+        2
+      ],
+      "level": "Demonstrating"
+    },
+    {
+      "id": "c4",
+      "title": "Responsible software",
+      "statement": "Evaluate the ethical responsibilities of programmers and create a Python application that respects user privacy and the common good.",
+      "pos": [
+        4
+      ],
+      "egas": [
+        3
+      ],
+      "level": "Introductory"
+    }
+  ],
+  "plan": [
+    {
+      "id": "r1",
+      "kind": "lesson",
+      "week": "1",
+      "contents": "Course orientation: vision, mission, course outcomes, requirements, grading system and class policies",
+      "ilos": [
+        {
+          "id": "i1",
+          "text": "Explain the course outcomes, requirements and grading policies of the course.",
+          "tags": [
+            "clo:c1"
+          ]
+        }
+      ],
+      "activities": "- Orientation talk and syllabus walkthrough\n- Option: small-group discussion of class agreements",
+      "tasks": "- Short reflection on learning goals",
+      "values": "Community-orientedness"
+    },
+    {
+      "id": "r2",
+      "kind": "lesson",
+      "week": "2",
+      "contents": "Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program",
+      "ilos": [
+        {
+          "id": "i2",
+          "text": "Write and run a simple Python program using the interpreter and an editor.",
+          "tags": [
+            "clo:c1"
+          ]
+        }
+      ],
+      "activities": "- Guided installation and first program\n- Option: video walkthrough with a step-by-step handout",
+      "tasks": "- Lab exercise: first program",
+      "values": "Humility"
+    },
+    {
+      "id": "r3",
+      "kind": "lesson",
+      "week": "3",
+      "contents": "Variables and data types: integers, floats, strings, booleans and type conversion",
+      "ilos": [
+        {
+          "id": "i3",
+          "text": "Explain Python data types and convert values between types.",
+          "tags": [
+            "clo:c1"
+          ]
+        }
+      ],
+      "activities": "- Lecture-discussion with live coding\n- Option: pair programming on type-conversion exercises",
+      "tasks": "- Quiz on data types",
+      "values": "Interiority"
+    },
+    {
+      "id": "r4",
+      "kind": "lesson",
+      "week": "4",
+      "contents": "Operators and expressions: arithmetic, comparison and logical operators, operator precedence",
+      "ilos": [
+        {
+          "id": "i4",
+          "text": "Evaluate Python expressions that combine arithmetic, comparison and logical operators.",
+          "tags": [
+            "clo:c1"
+          ]
+        }
+      ],
+      "activities": "- Worked examples on the board\n- Option: self-paced practice set with instant feedback",
+      "tasks": "- Problem set on expressions",
+      "values": "Courage"
+    },
+    {
+      "id": "r5",
+      "kind": "lesson",
+      "week": "5",
+      "contents": "Conditional statements: if, elif and else; nested conditions",
+      "ilos": [
+        {
+          "id": "i5",
+          "text": "Design a normalized relational database schema for a library system.",
+          "tags": [
+            "clo:c1"
+          ]
+        }
+      ],
+      "activities": "- Live coding of decision programs\n- Option: flowchart-first exercise for visual learners",
+      "tasks": "- Lab exercise: grade calculator with conditions",
+      "values": "Interiority"
+    },
+    {
+      "id": "r6",
+      "kind": "exam",
+      "week": "6",
+      "contents": "PRELIM EXAMINATION",
+      "ilos": [
+        {
+          "id": "i6",
+          "text": "",
+          "tags": []
+        }
+      ],
+      "activities": "",
+      "tasks": "",
+      "values": "Interiority"
+    },
+    {
+      "id": "r7",
+      "kind": "lesson",
+      "week": "7",
+      "contents": "Loops: while and for loops, range, break and continue",
+      "ilos": [
+        {
+          "id": "i7",
+          "text": "Write Python loops that repeat tasks and stop on a condition.",
+          "tags": [
+            "clo:c2"
+          ]
+        }
+      ],
+      "activities": "- Trace-the-loop exercises\n- Option: pair programming on loop puzzles",
+      "tasks": "- Quiz on loops",
+      "values": "Courage"
+    },
+    {
+      "id": "r8",
+      "kind": "lesson",
+      "week": "8",
+      "contents": "Functions: defining functions, parameters, return values and scope",
+      "ilos": [
+        {
+          "id": "i8",
+          "text": "Analyze a problem and decompose it into Python functions with parameters and return values.",
+          "tags": [
+            "clo:c2"
+          ]
+        }
+      ],
+      "activities": "- Lecture on functions",
+      "tasks": "- Lab exercise: refactor a program into functions",
+      "values": "Humility"
+    },
+    {
+      "id": "r9",
+      "kind": "lesson",
+      "week": "9",
+      "contents": "Lists and tuples: indexing, slicing, list methods and iteration",
+      "ilos": [
+        {
+          "id": "i9",
+          "text": "Evaluate when to use a list or a tuple to solve a programming problem.",
+          "tags": [
+            "clo:c2"
+          ]
+        }
+      ],
+      "activities": "- Live coding with lists and tuples\n- Option: card-sorting activity on choosing data structures",
+      "tasks": "- Problem set on lists and tuples",
+      "values": "Compassion"
+    },
+    {
+      "id": "r10",
+      "kind": "lesson",
+      "week": "10",
+      "contents": "Dictionaries and sets: keys and values, membership, set operations",
+      "ilos": [
+        {
+          "id": "i10",
+          "text": "Analyze problems that need lookups and solve them with dictionaries and sets.",
+          "tags": [
+            "clo:c2"
+          ]
+        }
+      ],
+      "activities": "- Worked examples on word counting\n- Option: peer teaching in small groups",
+      "tasks": "- Lab exercise: word-frequency counter",
+      "values": "Honesty"
+    },
+    {
+      "id": "r11",
+      "kind": "lesson",
+      "week": "11",
+      "contents": "Strings: string methods, formatting and text processing",
+      "ilos": [
+        {
+          "id": "i11",
+          "text": "Apply string methods to clean and format text data in Python.",
+          "tags": [
+            "clo:c2"
+          ]
+        }
+      ],
+      "activities": "- Live coding on text cleaning\n- Option: self-paced notebook on string formatting",
+      "tasks": "- Essay on the history of the Roman Empire",
+      "values": "Interiority"
+    },
+    {
+      "id": "r12",
+      "kind": "exam",
+      "week": "12",
+      "contents": "MIDTERM EXAMINATION",
+      "ilos": [
+        {
+          "id": "i12",
+          "text": "",
+          "tags": []
+        }
+      ],
+      "activities": "",
+      "tasks": "",
+      "values": "Interiority"
+    },
+    {
+      "id": "r13",
+      "kind": "lesson",
+      "week": "13",
+      "contents": "File handling: reading and writing text and CSV files",
+      "ilos": [
+        {
+          "id": "i13",
+          "text": "Create Python programs that read and write text and CSV files.",
+          "tags": [
+            "clo:c3"
+          ]
+        }
+      ],
+      "activities": "- Guided lab on file input and output\n- Option: video demonstration with a practice file set",
+      "tasks": "- Lab exercise: CSV report generator",
+      "values": "Missionary Spirit"
+    },
+    {
+      "id": "r14",
+      "kind": "lesson",
+      "week": "14",
+      "contents": "Exceptions: try, except, finally; raising and handling errors",
+      "ilos": [
+        {
+          "id": "i14",
+          "text": "The teacher will discuss exception handling in Python.",
+          "tags": [
+            "clo:c3"
+          ]
+        }
+      ],
+      "activities": "- Debugging clinic on common errors\n- Option: pair programming on error-handling exercises",
+      "tasks": "- Quiz on exceptions",
+      "values": "Humility"
+    },
+    {
+      "id": "r15",
+      "kind": "lesson",
+      "week": "15",
+      "contents": "Modules and packages: importing modules, the standard library, creating a module",
+      "ilos": [
+        {
+          "id": "i15",
+          "text": "Create a reusable Python module and import it into a program.",
+          "tags": [
+            "clo:c3"
+          ]
+        }
+      ],
+      "activities": "- Live coding of a small module\n- Option: research task on one standard-library module",
+      "tasks": "- Lab exercise: build and import a module",
+      "values": "Community-orientedness"
+    },
+    {
+      "id": "r16",
+      "kind": "lesson",
+      "week": "16",
+      "contents": "Introduction to object-oriented programming: classes, objects, attributes and methods",
+      "ilos": [
+        {
+          "id": "i16",
+          "text": "Create simple Python classes with attributes and methods.",
+          "tags": [
+            "clo:c3"
+          ]
+        }
+      ],
+      "activities": "- Modeling real objects as classes\n- Option: design-on-paper activity before coding",
+      "tasks": "- Lab exercise: class design",
+      "values": "Courage"
+    },
+    {
+      "id": "r17",
+      "kind": "lesson",
+      "week": "17",
+      "contents": "Final project: a small Python application that handles user data responsibly",
+      "ilos": [
+        {
+          "id": "i17",
+          "text": "Create a small Python application that protects user data and evaluate the ethical choices made in its design.",
+          "tags": [
+            "clo:c4",
+            "clo:c3"
+          ]
+        }
+      ],
+      "activities": "- Project work in teams with mentoring\n- Option: individual project option with weekly check-ins",
+      "tasks": "- Final project and ethics reflection paper",
+      "values": "Missionary Spirit"
+    },
+    {
+      "id": "r18",
+      "kind": "exam",
+      "week": "18",
+      "contents": "FINAL EXAMINATION",
+      "ilos": [
+        {
+          "id": "i18",
+          "text": "",
+          "tags": []
+        }
+      ],
+      "activities": "",
+      "tasks": "",
+      "values": "Interiority"
+    }
+  ],
+  "reqs": [
+    {
+      "id": "q1",
+      "t": "Laboratory exercises"
+    },
+    {
+      "id": "q2",
+      "t": "Quizzes"
+    },
+    {
+      "id": "q3",
+      "t": "Examinations"
+    },
+    {
+      "id": "q4",
+      "t": "Final project"
+    }
+  ],
+  "refs": {
+    "books": {
+      "na": false,
+      "items": [
+        {
+          "id": "b1",
+          "t": "Matthes, E. (2023). Python crash course (3rd ed.). No Starch Press."
+        },
+        {
+          "id": "b2",
+          "t": "Sweigart, A. (2025). Automate the boring stuff with Python (3rd ed.). No Starch Press."
+        },
+        {
+          "id": "b3",
+          "t": "Downey, A. B. (2015). Think Python: How to think like a computer scientist. O'Reilly Media."
+        }
+      ]
+    },
+    "program": {
+      "na": true,
+      "items": []
+    },
+    "online": {
+      "na": false,
+      "items": [
+        {
+          "id": "o1",
+          "t": "Python Software Foundation. (2025). The Python tutorial. https://docs.python.org/3/tutorial/"
+        }
+      ]
+    },
+    "electronics": {
+      "na": true,
+      "items": []
+    }
+  },
+  "grading": {
+    "rows": [
+      {
+        "id": "g1",
+        "label": "Class Standing",
+        "pct": 60
+      },
+      {
+        "id": "g2",
+        "label": "Examination",
+        "pct": 40
+      }
+    ],
+    "override": {
+      "on": false,
+      "term": "",
+      "final": ""
+    }
+  },
+  "signoff": {}
+}

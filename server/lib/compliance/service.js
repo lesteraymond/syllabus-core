@@ -52,16 +52,41 @@ async function checkHybrid(db, content, options = {}) {
   if (v2On && options.useAi !== false && typeof requestBudget.holdFor === 'function') {
     try { plannedV2 = academicV2.plannedRequests(content, masters, env); requestBudget.holdFor(plannedV2); } catch { /* planning only protects coverage: without it the budget behaves as before */ }
   }
-  const result = await hybridEngine.run(content, masters, { ...options, ...legacyOptions, profileResolved:true, requestBudget, reuse, history });
+  // Re-planned checker as the OFFICIAL AI check (syllabuscheck/pipeline/official.js, SYLLABUS_CHECK_REPLAN=official): the old engine runs with its AI step
+  // off (no-AI rules, base score, links; no AI cost) and the new checker fills the AI findings, points and drafts. Only when it is ready (direct Anthropic
+  // provider, AI checking on, its own cost cap); otherwise, and with Policy V2 on, the old checker runs exactly as before.
+  const officialReplan = require('../syllabuscheck/pipeline/official');
+  const replanOfficial = !v2On && options.useAi !== false && officialReplan.readiness(env).ok;
+  const result = await hybridEngine.run(content, masters, { ...options, ...legacyOptions, ...(replanOfficial ? { env: { ...env, SYLLABUS_CHECK_AI_PROVIDER: 'off' } } : {}), profileResolved:true, requestBudget, reuse, history });
+  if (replanOfficial) {
+    try {
+      await officialReplan.officialize({ noAi: result, content, masters, env, db, transport: options.transport });
+    } catch (error) {
+      // never a score from a failed AI step: the report stays the no-AI report (incomplete), with the reason
+      result.hybrid.replan = { mode: 'official', error: String(error && error.message || error).slice(0, 300) };
+      result.hybrid.alignment = { ...(result.hybrid.alignment || {}), status: 'not_evaluated', reason: 'The AI Checker could not complete: ' + result.hybrid.replan.error };
+    }
+  }
   // Whole-syllabus improvement plan (syllabuscheck/wholeSyllabusPlan.js, SYLLABUS_CHECK_WHOLE_PLAN=on): the recommendations worked out together on a copy and
   // verified together, so applying them does not move the conflicts to other fields. Its own request budget; advisory: a failure never disrupts the check.
   const wholePlan = require('../syllabuscheck/wholeSyllabusPlan');
-  if (!v2On && options.useAi !== false && wholePlan.enabled(env)) {
+  if (!v2On && !replanOfficial && options.useAi !== false && wholePlan.enabled(env)) {
     try {
       const plan = await wholePlan.buildWholePlan({ content, masters, result, syllabusId: options.syllabusId, options: { ...options, profileResolved: true, reuse, history } });
       if (plan) result.hybrid.improvementPlan = plan;
     } catch (error) {
       result.hybrid.improvementPlanError = String(error && error.message || error).slice(0, 300);
+    }
+  }
+  // Re-planned checker in shadow (syllabuscheck/pipeline/shadow.js, SYLLABUS_CHECK_REPLAN=shadow|plan, off by default): the same syllabus checked by the
+  // new pipeline, attached for comparison only. Its own cost cap; it changes nothing above, and a failure never disrupts the check.
+  const replan = require('../syllabuscheck/pipeline/shadow');
+  if (options.useAi !== false && replan.enabled(env)) {
+    try {
+      const shadow = await replan.runShadow({ content, masters, officialResult: result, env, transport: options.transport, db });
+      if (shadow) result.hybrid.replanShadow = shadow;
+    } catch (error) {
+      result.hybrid.replanShadow = { mode: replan.modeOf(env), error: String(error && error.message || error).slice(0, 300) };
     }
   }
   if (academicV2Activation.enabled(env)) {
@@ -86,7 +111,7 @@ async function checkHybrid(db, content, options = {}) {
     }
   }
   const coordinatedPlan = require('../syllabuscheck/coordinatedPlanEngine');
-  if (!result.hybrid.improvementPlan && coordinatedPlan.enabled(env)) {
+  if (!replanOfficial && !result.hybrid.improvementPlan && coordinatedPlan.enabled(env)) {
     try {
       result.hybrid.improvementPlan = coordinatedPlan.buildPlan({
         content,

@@ -82,7 +82,17 @@ async function buildWholePlan({ content, masters, result, syllabusId = null, opt
   let candidate = content, current = result, rounds = 0, stop = null;
   const attempts = new Map(), changes = new Map();
   for (let round = 1; round <= maxRounds; round++) {
-    const todo = (current.hybrid.suggestions || []).filter(s => s.source === 'ai' && planField(s.path) && !declined.has(s.path) && !kept.has(s.path) && (attempts.get(s.path) || 0) < MAX_ATTEMPTS);
+    let todo = (current.hybrid.suggestions || []).filter(s => s.source === 'ai' && planField(s.path) && !declined.has(s.path) && !kept.has(s.path) && (attempts.get(s.path) || 0) < MAX_ATTEMPTS);
+    // Content first (VR-14; the owner's decision of 2026-11-12): the week's course content is the anchor. An ILO this plan rewrote that no longer fits its
+    // week's content is re-fitted, with one rewrite written for all of its relationships (its CLO and its content together), and the content is never
+    // rewritten to suit it. The same week's activities, tasks and values wait for the re-fitted ILO, so they are not written against a text about to change.
+    const refit = judgementsOf(current).filter(j => j.type === 'ILO-content' && failing(j) && changes.has(j.path) && !declined.has(j.path) && !kept.has(j.path)
+      && (attempts.get(j.path) || 0) < MAX_ATTEMPTS && !todo.some(s => s.path === j.path));
+    if (refit.length) {
+      const rows = new Set(refit.map(j => (/^plan\[(\d+)\]/.exec(j.path) || [])[1]).filter(Boolean));
+      todo = todo.filter(s => !rows.has((/^plan\[(\d+)\]\.(?:activities|tasks|values)$/.exec(s.path) || [])[1]));
+      for (const j of refit) todo.push({ id: `SEM:${j.id}`, path: j.path, source: 'ai', basedOn: [`SEM:${j.id}`], text: String(j.explanation || ''), replacement: undefined });
+    }
     if (!todo.length) break;
     const byId = new Map(judgementsOf(current).map(j => [j.id, j]));
     let applied = 0, newlyKept = 0;

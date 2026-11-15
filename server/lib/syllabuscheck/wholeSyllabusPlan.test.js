@@ -33,10 +33,13 @@ const fakeAi = () => {
   const transport = async (url, request) => {
     const payload = JSON.parse(JSON.parse(request.body).messages[1].content).document_data;
     if (Array.isArray(payload)) { asked.push(...payload.map(p => p.id)); return reply({ judgements: payload.map(verdict) }); }
-    // The combined rewrite (refine.js): one text for every relationship the field takes part in as the target.
+    // The combined rewrite (refine.js): one text for every relationship the field takes part in as the target, and, content first (VR-14), it keeps
+    // fitting the week's course content the field is judged against (ILO-content, where the ILO is the source and the content is the anchor). The
+    // content's tag comes first, because a relationship reads the first tag of its source.
     rewrites.push(payload);
+    const anchors = payload.relationships.filter(r => r.thisFieldIsThe === 'source' && r.relationship === 'ILO-content').flatMap(r => tags(r.otherSide).slice(0, 1));
     const needed = payload.relationships.filter(r => r.thisFieldIsThe === 'target').flatMap(r => tags(r.otherSide).slice(0, 1));
-    return reply({ text: [untagged(payload.current), ...new Set(needed)].join(' ') });
+    return reply({ text: [untagged(payload.current), ...new Set([...anchors, ...needed])].join(' ') });
   };
   return { transport, asked, rewrites };
 };
@@ -73,17 +76,22 @@ test('the problem: applying the check\'s recommendations and checking again show
   assert.deepEqual(row0Problems(second), ['row0-ilo0-activity', 'row0-ilo0-assessment', 'row0-ilo0-content'], 'fixing the ILO broke the three fields fitted to the old ILO');
 });
 
-test('the whole-syllabus plan writes every dependent field against the revised text and verifies the package: applying it leaves no conflict', async () => {
+test('content first: the plan re-fits the ILO to the week\'s course content and its CLO, never the content to the ILO, and verifies the package', async () => {
   const { content, masters } = cascade();
   const ai = fakeAi();
   const first = await check(content, masters, ai);
   const plan = await buildWholePlan({ content, masters, result: first, syllabusId: 7, options: { ...options, transport: ai.transport } });
   assert.equal(plan.status, STATUS.VERIFIED, plan.validation.summaryText);
-  assert.deepEqual(plan.changes.map(c => c.path), ['plan[0].ilos[0].text', 'plan[0].contents', 'plan[0].activities', 'plan[0].tasks'], 'in order: the ILO first, then what depends on it');
-  assert.deepEqual(plan.changes.map(c => c.proposedValue), ['Explain topic 1 #c1', 'Topic 1 #c1', 'Lecture #c1', '- Quiz #c1']);
+  // Round 1 fits the ILO to CLO 1, which breaks its fit with the week's content. Round 2 re-fits the ILO to both. The content is the anchor and is not
+  // changed, and the activity and task, already fitted to that content, keep fitting the re-fitted ILO, so they are not changed either.
+  assert.deepEqual(plan.changes.map(c => c.path), ['plan[0].ilos[0].text']);
+  assert.deepEqual(plan.changes.map(c => c.proposedValue), ['Explain topic 1 #old #c1']);
+  assert.ok(!plan.changes.some(c => c.path === 'plan[0].contents'), 'the course content is never rewritten to fit the ILO');
   assert.ok(plan.changes.every(c => c.verification === STATUS.VERIFIED));
-  assert.deepEqual(plan.changes.map(c => c.rounds), [[1], [2], [2], [2]]);
-  assert.equal(plan.changes[0].sourceSuggestionId, first.hybrid.suggestions.find(s => s.path === 'plan[0].ilos[0].text').id, 'the first-round change is the recommendation the author saw');
+  assert.deepEqual(plan.changes.map(c => c.rounds), [[1, 2]]);
+  // Revised in two rounds, so it is no longer exactly the recommendation the author saw (sourceSuggestionId is kept for single-round changes only), but it
+  // still names it among what it is based on.
+  assert.ok(plan.changes[0].basedOn.includes(first.hybrid.suggestions.find(s => s.path === 'plan[0].ilos[0].text').id), 'it builds on the recommendation the author saw');
   assert.deepEqual(plan.validation.regressions, []);
   // The apply route compares the plan with compliance.hashOf of the stored syllabus.
   assert.equal(plan.sourceHash, contentHash(content, VERSION));
@@ -179,8 +187,9 @@ test('a CLO that is only partly aligned is kept as written (listed for review), 
   assert.ok(!plan.changes.some(c => c.path === 'clos[0].statement'), 'the CLO is not rewritten');
   assert.deepEqual(plan.preservations.map(p => p.path), ['clos[0].statement']);
   assert.match(plan.preservations[0].reason, /only partly aligned/);
+  // Content first: the ILO is fitted to the kept CLO and to the week's content; the content and the fields already fitted to it stay as written.
   assert.deepEqual(plan.changes.map(c => [c.path, c.proposedValue]).filter(([p]) => p.startsWith('plan[0]')),
-    [['plan[0].ilos[0].text', 'Explain topic 1 #c1'], ['plan[0].contents', 'Topic 1 #c1'], ['plan[0].activities', 'Lecture #c1'], ['plan[0].tasks', '- Quiz #c1']]);
+    [['plan[0].ilos[0].text', 'Explain topic 1 #old #c1']]);
 });
 
 test('a CLO that is clearly NOT_ALIGNED is still rewritten by the plan', async () => {

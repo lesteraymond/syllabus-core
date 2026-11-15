@@ -54,6 +54,36 @@ function applyChanges(content, changes, approvedIds = null) {
   return result;
 }
 
+// The draft replacement for an off-topic week, from this syllabus alone: its course title and the CLO the week supports (the week's ILO tags first, then the
+// CLOs in turn). Without a title or a CLO it says so rather than inventing a topic. -> { course, cloLabel, contents, ilo, activities, tasks }
+function onTopicDraft(content, row, rowIdx) {
+  const title = normalizeText(content.meta?.title);
+  const course = title || 'this course';
+  const clos = (Array.isArray(content.clos) ? content.clos : []).map((c, i) => ({ i, id: c?.id, text: normalizeText(c?.statement || c?.text).replace(/\.$/, '') })).filter((c) => c.text);
+  const tagged = (row.ilos || []).flatMap((il) => il.tags || []).filter((t) => /^clo:/.test(t)).map((t) => t.slice(4));
+  const clo = clos.find((c) => tagged.includes(String(c.id)) || tagged.includes(`c${c.i + 1}`)) || (clos.length ? clos[rowIdx % clos.length] : null);
+  const description = normalizeText((Array.isArray(content.description) ? content.description.map((d) => d?.t || '').join(' ') : content.description) || '');
+  const week = row.week || rowIdx + 1;
+  if (clo) {
+    const label = `CLO ${clo.i + 1}`;
+    return {
+      course, cloLabel: label,
+      contents: `${title ? title + ': ' : ''}Week ${week} lesson building toward ${label} (${clo.text}). [Draft: write the topic this course teaches in Week ${week}.]`,
+      ilo: `Demonstrate progress toward ${label}: ${clo.text.charAt(0).toLowerCase() + clo.text.slice(1)}.`,
+      activities: `Guided instruction and active practice on the Week ${week} lesson of ${course}, building toward ${label}.`,
+      tasks: `A formative task (exercise or quiz) that checks progress toward ${label} on the Week ${week} lesson.`,
+    };
+  }
+  const scope = description ? ` within the course description (${description.slice(0, 120)}${description.length > 120 ? '…' : ''})` : '';
+  return {
+    course, cloLabel: null,
+    contents: `Week ${week} lesson of ${course}${scope}. [Draft: write the topic this course teaches in Week ${week}.]`,
+    ilo: `Demonstrate understanding of the Week ${week} lesson of ${course}.`,
+    activities: `Guided instruction and active practice on the Week ${week} lesson of ${course}.`,
+    tasks: `A formative task (exercise or quiz) on the Week ${week} lesson of ${course}.`,
+  };
+}
+
 function normalizeText(t) {
   return String(t || '').replace(/\s+/g, ' ').trim();
 }
@@ -178,32 +208,21 @@ function buildPlan({ content, masters = {}, syllabusId = null, result = {}, env 
       relationshipIds: [ot.id],
     });
 
-    // Determine an on-topic replacement from available syllabus context / curriculum
-    const courseTitle = content.meta?.title || 'Logic Circuits and Design';
-    const courseDesc = Array.isArray(content.description)
-      ? content.description.map((d) => d.t || '').join(' ')
-      : String(content.description || '');
-
-    // Coordinated replacement package for the entire week
-    let topicName = `Core Principles of ${courseTitle}`;
-    if (rowIdx === 3 || row.week === 4) {
-      topicName = 'Karnaugh Maps (K-Maps) and Boolean Simplification: 3-variable and 4-variable minimization techniques';
-    } else if (rowIdx === 6 || row.week === 7) {
-      topicName = 'Combinational Logic Design: Adders, Subtractors, and Arithmetic Logic Circuits';
-    } else if (rowIdx === 10 || row.week === 11) {
-      topicName = 'Sequential Logic Circuits: Latches, Flip-Flops, and Clocked Circuit Behavior';
-    } else if (rowIdx >= 14) {
-      topicName = 'Digital Design Implementation: Finite State Machines and Hardware Registers';
-    }
+    // A replacement package for the whole week, built ONLY from this syllabus: its course title and the CLO the week supports (onTopicDraft below). The
+    // engine knows no course's real weekly topics, so every field is a draft the faculty member must finish: it is marked semanticUnverified, which keeps
+    // the package at NEEDS_FACULTY_REVIEW, and the explanation says what to write.
+    const draft = onTopicDraft(content, row, rowIdx);
+    const finish = `A draft built from this syllabus's own course title and ${draft.cloLabel || 'course description'}. The plan does not know this course's real weekly topics: replace it with the actual lesson before submitting.`;
 
     addChange({
       rootCauseId: rcId,
       field: 'course_content',
       path: `plan[${rowIdx}].contents`,
-      proposedValue: topicName,
-      explanation: `Replaces off-topic material with official curriculum content for ${courseTitle}.`,
+      proposedValue: draft.contents,
+      explanation: `Replaces the off-topic material with a lesson of ${draft.course}. ${finish}`,
       affectedRelationships: ['Content-course', 'Content-ILO', 'Content-activity', 'Content-assessment'],
       priority: 10,
+      semanticUnverified: true,
     });
 
     // Coordinated ILO
@@ -212,10 +231,11 @@ function buildPlan({ content, masters = {}, syllabusId = null, result = {}, env 
         rootCauseId: rcId,
         field: 'ilo',
         path: `plan[${rowIdx}].ilos[0].text`,
-        proposedValue: `Analyze and solve logic circuit problems using ${topicName.split(':')[0]}.`,
-        explanation: `Coordinates weekly learning outcome with the revised course content.`,
+        proposedValue: draft.ilo,
+        explanation: `Coordinates the weekly learning outcome with the revised content and ${draft.cloLabel || 'the course'}. ${finish}`,
         affectedRelationships: ['Content-ILO', 'ILO-CLO', 'ILO-activity'],
         priority: 10,
+        semanticUnverified: true,
       });
     }
 
@@ -224,10 +244,11 @@ function buildPlan({ content, masters = {}, syllabusId = null, result = {}, env 
       rootCauseId: rcId,
       field: 'learning_activity',
       path: `plan[${rowIdx}].activities`,
-      proposedValue: `Interactive lecture, guided simplification exercises, and circuit design simulation on ${topicName.split(':')[0]}.`,
-      explanation: `Aligns teaching-learning activity to actively practice the revised lesson outcome.`,
+      proposedValue: draft.activities,
+      explanation: `Aligns the teaching-learning activity with the revised lesson outcome. ${finish}`,
       affectedRelationships: ['Content-activity', 'ILO-activity', 'Activity-assessment'],
       priority: 10,
+      semanticUnverified: true,
     });
 
     // Coordinated Assessment Task
@@ -235,10 +256,11 @@ function buildPlan({ content, masters = {}, syllabusId = null, result = {}, env 
       rootCauseId: rcId,
       field: 'assessment_task',
       path: `plan[${rowIdx}].tasks`,
-      proposedValue: `Problem set and laboratory design quiz evaluating ${topicName.split(':')[0]}.`,
-      explanation: `Aligns assessment task to directly evaluate student mastery of the revised outcome.`,
+      proposedValue: draft.tasks,
+      explanation: `Aligns the assessment task with the revised lesson outcome. ${finish}`,
       affectedRelationships: ['Content-assessment', 'Activity-assessment'],
       priority: 10,
+      semanticUnverified: true,
     });
   }
 

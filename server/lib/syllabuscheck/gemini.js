@@ -536,8 +536,9 @@ function courseOf(content) {
 const courseKeyOf = course => JSON.stringify([course.code, course.title, course.program, course.yearLevel, course.description]);
 // GAP-01: CLO relationships can be judged without the course description (CLO ↔ Course Description is not a VPAA relationship, and Policy V2 already blanks it).
 // SYLLABUS_CHECK_CLO_DESCRIPTION=off sends a request that carries any CLO relationship without it. It is OFF by default (unset): every request is then byte for byte what it
-// always was. The shared service sets it for the legacy run of a check while Policy V2 is on; an operator may set it too.
-// With it on, the reuse key of those relationships is made from the course without the description, so a changed description never re-asks them.
+// always was (VPAA-DESCRIPTION-EXCLUSION-DEFAULT: an owner decision). The shared service sets it for the legacy run of a check while Policy V2 is on; an operator may
+// set it too. With it on, a request that carries a CLO relationship never also carries a relationship that reads the description (the batches are cut apart
+// in align()), and the reuse key of those relationships is made from the course without the description, so a changed description never re-asks them.
 const CLO_CONTEXT = /^(Course-CLO|CLO-set|CLO-PO|CLO-EGA|CLO-anyPO|CLO-anyEGA|ILO-CLO|ILO-anyCLO|CLO-coverage|CLO-classification)$/;
 const courseWithoutDescription = course => ({ ...course, description: '' });
 // The rules-aligned prompt variant writes rule M14 into the prompt, so it also leaves the description out of the CLO questions themselves.
@@ -1193,12 +1194,22 @@ async function align(content, masters, options = {}) {
     // F1: description-free and description-reading relationships are never mixed in one request (so the key of each says what the model saw); the
     // earlier grouping (scored before optional) stays the major order. F3: Policy V2 relationships may be grouped by week.
     const planning = requestBudget.isPlanning?.() && !options.integratedAcademic;
-    const runs = !scopedOn ? [ordered] : (() => {
+    const cloOff = cloDescriptionOff(env);
+    const runs = scopedOn ? (() => {
       const keyOf = pair => (planning && isAdvisory(pair.type) ? 2 : 0) + (costPlan.needsDescription(pair.type) ? 1 : 0);
       const split = []; let last;
       for (const pair of costPlan.partitionByContext(ordered, pair => (planning && isAdvisory(pair.type) ? 1 : 0))) { const key = keyOf(pair); if (key !== last) { split.push([]); last = key; } split[split.length - 1].push(pair); }
       return split;
-    })();
+    })() : cloOff ? (() => {
+      // Rule M14: a request with a CLO relationship is sent without the description, so CLO relationships are kept apart from the rest. Otherwise a mixed
+      // request would strip the description from the relationships that are about it (Description-plan, Content-course). The earlier grouping (scored
+      // before optional) stays the major order, and the order inside each group is unchanged.
+      const keyOf = pair => (planning && isAdvisory(pair.type) ? 2 : 0) + (CLO_CONTEXT.test(pair.type) ? 1 : 0);
+      const sorted = ordered.map((pair, index) => ({ pair, index, key: keyOf(pair) })).sort((a, b) => a.key - b.key || a.index - b.index);
+      const split = []; let last;
+      for (const { pair, key } of sorted) { if (key !== last) { split.push([]); last = key; } split[split.length - 1].push(pair); }
+      return split;
+    })() : [ordered];
     const grouping = options.integratedAcademic ? costPlan.groupingOf(env) : 'default';
     const batches = runs.flatMap(run => costPlan.planBatches(run, batchSize, grouping));
     const batchCount = batches.length;

@@ -1,0 +1,53 @@
+{
+  "synthetic": true,
+  "institution": {
+    "egas": [
+      {
+        "no": 1,
+        "name": "Competent professional",
+        "text": "Competent professional: applies the knowledge and skills of the discipline with excellence."
+      },
+      {
+        "no": 2,
+        "name": "Creative problem solver",
+        "text": "Creative problem solver: designs and evaluates solutions to real problems."
+      },
+      {
+        "no": 3,
+        "name": "Socially responsible person",
+        "text": "Socially responsible person of faith and values: acts ethically for the common good."
+      }
+    ]
+  },
+  "pos": [
+    {
+      "no": 1,
+      "text": "Apply knowledge of computing fundamentals appropriate to the discipline.",
+      "egas": [
+        1
+      ]
+    },
+    {
+      "no": 2,
+      "text": "Analyze complex computing problems and identify the requirements appropriate to their solution.",
+      "egas": [
+        1,
+        2
+      ]
+    },
+    {
+      "no": 3,
+      "text": "Design, implement and evaluate computer-based solutions that meet given requirements.",
+      "egas": [
+        2
+      ]
+    },
+    {
+      "no": 4,
+      "text": "Act ethically and responsibly in professional computing practice, with respect for privacy and the common good.",
+      "egas": [
+        3
+      ]
+    }
+  ]
+}

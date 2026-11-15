@@ -366,6 +366,11 @@ async function run(content, masters, options = {}) {
     const groupKey = tagKey(judgement);
     if (judgement.draft && judgement.targetPath && groupKey && representative.has(groupKey) && representative.get(groupKey) !== judgement) {
       alsoFlagged.push([judgement.targetPath, id]); // flagged and costing points, but not the one the draft is written for
+    } else if (judgement.type === 'ILO-content' && !flags.b) {
+      // Content first (VR-14; the owner's decision of 2026-11-12): the week's course contents are the anchor. Without Stage B nothing has judged the contents
+      // against the course, so there is no evidence they are the part that is wrong, and an ILO-content answer does not rewrite them to fit the ILO (a real
+      // check of IT 202 on 2026-11-05 rewrote the contents of 10 weeks this way). Its finding above stays as advice (advisory: no points). With Stage B on,
+      // the precedence rules below decide: the rewrite is withheld while the content fits the course and offered when the content itself is off-course.
     } else if (judgement.draft && judgement.targetPath && !(flags.b3 && judgement.type === 'ILO-CLO' && behindEarlierProblem(judgement)) && !behindOffCourseClo(judgement) && !fit.draftWithheld(judgement.type, judgement.id, content, semantic.judgements, flags) && !(provisionalAi && NEEDS_IDENTITY.has(judgement.type)) && !fit.contradictory(judgement)) {
       const held = proposals.get(judgement.targetPath);
       if (judgement.draftReview?.length) heldDrafts.push(judgement);

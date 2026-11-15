@@ -2087,3 +2087,362 @@ The last six open findings of `docs/security/SECURITY-AUDIT-REPORT.md` (SEC-12, 
 - **Sessions in the database (SEC-09):** `SESSION_STORE=mysql` keeps sessions in the table `sessions` (`server/lib/sessionStore.js`, no new dependency): they survive a restart, are shared by every server process, end on the server, are stored under a hash of their id, and ending an account's sessions deletes them for every process. Always on in staging and production (memory is refused); development keeps memory by default. Needs `npm run migrate-session-store`.
 - **Tests:** new `password-expiry.routes.test.js`, `lib/aiInstructions.test.js`, `lib/sessionStore.test.js`, and tests added to `signin-security.routes.test.js` and `review.routes.test.js`. `sessionSecret.test.js` and the VPAA security conformance test were updated because `JWT_SECRET` is no longer required.
 - **Verification:** npm test 2,427 of 2,434 pass; the 7 failures are the same evaluation-script tests as before (anthropic-harness 4, stage-c3-eval 2, stage-e8-canary 1). Conformance suites 276 of 276. npm run build passes. npm audit --omit=dev: 0 vulnerabilities in the root and in server/.
+
+---
+
+### v1.82.1 — Evaluation Scripts: --legacy Is the Legacy Request Again; Tests Independent of a Local .env
+**Date:** November 12, 2026
+
+- **Cause of the 7 failing tests:** `scripts/eval-alignment.cjs` and `scripts/live-pipeline-eval.cjs` take every setting the environment does not name from a local env file (`.env`, `server/.env`). The tests named most settings but not `SYLLABUS_CHECK_REQUIREMENTS_ADVICE` or `SYLLABUS_CHECK_COURSE_CONTEXT`, so on a machine whose `server/.env` switched those on, the scripts printed a different prompt label, stage list, batch size and request count, and the tests failed. On a machine with no env file (CI) they passed.
+- **A real defect behind it:** `--legacy` did not turn those switches off, so on such a machine a "legacy" (alignment-10) evaluation was not the alignment-10 request. Both scripts now turn off the requirements advice, the scoped course context and the scoped output fields with `--legacy`, and `live-pipeline-eval.cjs` also turns off Stage C3, whatever the env file says.
+- **Tests:** a new helper (`server/lib/syllabuscheck/eval/neutralCheckerEnv.js`) names every `SYLLABUS_CHECK_*` setting the checker reads, read from the checker's own source, so no env file can fill one. A new test shows `--legacy` holds when those switches are on; it failed against the previous scripts.
+- **The live checker is unchanged:** no file the application runs was edited; only the two evaluation scripts and their tests.
+- **Verification:** `npm test` 2,435 of 2,435 pass. Conformance suites 276 of 276. `npm run build` passes.
+
+---
+
+### v1.82.2 — Improvement Plan: Off-Topic Weeks Are Replaced from the Syllabus Itself
+**Date:** November 12, 2026
+
+- **The defect:** when the whole-syllabus improvement plan (`SYLLABUS_CHECK_COORDINATED_PLAN=on`, off by default) found an off-topic week, it proposed a hard-coded Logic Circuits package for every course: Karnaugh maps, adders and subtractors, flip-flops and finite state machines as the topic, "Analyze and solve logic circuit problems" as the ILO, and circuit simulation as the activity. Applying it would have written another course's content into any syllabus.
+- **The fix (`server/lib/syllabuscheck/coordinatedPlanEngine.js`):** the replacement is built only from the syllabus itself: its course title and the CLO the week supports (from the week's ILO tags, else the CLOs in turn), or the course description when there is no CLO. Each of the four fields is marked as a draft for the faculty member to finish (`semanticUnverified`), so the package is shown as NEEDS_FACULTY_REVIEW and never as verified, and its explanation says the plan does not know the course's real weekly topics. "Official curriculum content" is no longer claimed.
+- **Unchanged:** every other part of the plan, the AI check, scoring, findings, recommendations outside this package, and the review chain.
+- **Tests:** three new tests in `coordinated-plan.test.js` (a Programming syllabus gets nothing from another course and quotes its own CLOs; no title or CLO gives a "this course" draft; the engine holds no course-specific text). They failed against the previous engine.
+- **Verification:** `npm test` 2,438 of 2,438 pass. Conformance suites 276 of 276. `npm run build` passes.
+
+---
+
+### v1.83.0 — AI Checker: Content First Everywhere
+**Date:** November 12, 2026
+
+The owner's decision of 12 November 2026: VPAA rule VR-14 (Course Content → ILO → Learning Activities → Assessment Tasks) applies everywhere. A week's course contents are the anchor; the ILO is fitted to them, never the contents to the ILO. Analysis: `docs/ai-checker-accuracy-review-2026-11-12.md` (cause C-6).
+
+- **The check (`server/lib/syllabuscheck/engine.js`):** with Stage B off, an ILO-content answer no longer offers to rewrite the week's course contents; its finding stays as advice. A real check of IT 202 on 5 November 2026 (Stage B off) had rewritten the contents of 10 weeks to fit their ILOs. With Stage B on nothing changes: the rewrite was already withheld while the contents fit the course, and the contents are still rewritten when Content-course finds them off-course.
+- **The whole-syllabus plan (`wholeSyllabusPlan.js`):** when the plan rewrites an ILO and it no longer fits its week's content, the plan re-fits the ILO with one rewrite for its CLO and its content together, and holds that week's activities, tasks and values until it settles. It never rewrites the content to suit the ILO. Before, it rewrote the ILO, then the content, activity and task to match the new ILO.
+- **Unchanged:** every score, deduction, finding and gate (ILO-content is advisory and costs no points), the prompt and its version, and the review chain.
+- **Tests:** `content-first.test.js` (5 tests). The fake rewriter in `wholeSyllabusPlan.test.js` now keeps the week's content, as the real rewrite prompt does, and three of its expectations now describe the content-first plan. Two tests in `revision-cycles.test.js` and `suggestionOrder.test.js` used an ILO-content rewrite of the contents only as an example; they now use the course description and a Content-course rewrite.
+- **Rules document:** `scripts/export-checker-rules.cjs` now states the content-first rule (section 5b). `docs/ai-checker-rules.md` itself was **not** regenerated: its content is pinned by hash in the Stage C3 addendum and Phase 3 tests, so it changes only with an owner-approved re-freeze. (Corrected in v1.84.0; this line first said the document had been regenerated.)
+- **Verification:** `npm test` 2,443 of 2,443; conformance 276 of 276; VPAA UI 28 of 28; `npm run build` passes. Not run: any real AI model.
+
+---
+
+### v1.84.0 — AI Checker: Reliability Refactor (Rules Unchanged)
+**Date:** November 12, 2026
+
+Changes to how the AI Checker sends its questions and protects its budget. The rules, the relationships asked, the prompt wording, every score, deduction, finding and gate, and the review chain are unchanged. Analysis: `docs/ai-checker-accuracy-review-2026-11-12.md` (section 9).
+
+- **CLO questions and the course description (`server/lib/syllabuscheck/gemini.js`):** when CLO relationships are sent without the course description (`SYLLABUS_CHECK_CLO_DESCRIPTION=off`, rule M14), a request no longer mixes a CLO relationship with one that reads the description. Before, a mixed request had the description removed for all of its relationships, so Content-course, Ref-relevance, Title-description or Description-plan could be judged without the text they are about, and the answer was reused later as if the description had been sent. The default (switch unset: the description travels with every request) is unchanged. A check with the switch off may send a few more requests (the offline benchmark went from 51 to 53).
+- **Per-check spending limit (`server/lib/aiQuota.js`, `server/index.js`):** `SYLLABUS_CHECK_AI_MAX_COST_USD` is now required in staging and production whenever an AI provider is configured, and a malformed value stops the server in any mode, naming the setting. Without it one check was bounded only by 512 requests and 8,000,000 reserved tokens. Development is unchanged (optional). Added to `server/.env.example` and `docs/deployment/production.env.template`.
+- **Replay of the recorded real run (`real-run-replay.test.js`, 4 tests):** the 143 answers Claude Sonnet 5.5 gave for IT 202 on 5 November 2026 are fed back through today's engine by relationship id, offline. It pins that the same relationships are asked, that the 85 deductions and 118 points are exactly the recorded ones, that no ILO-content answer rewrites the contents (the run had proposed 10), and that every other rewrite the run proposed is still offered or listed as waiting for the field above it. Two of the four tests fail on the engine before v1.83.0.
+- **Not changed, on purpose:** the M14 default (an earlier owner decision, pinned by the VPAA-DESCRIPTION-EXCLUSION-DEFAULT conformance test); the prompt wording of ILO-content and ILO-CLO (needs approval and a paid comparison, review R-3); the scoring (R-4); the stages switched on in `server/.env` (R-1); Policy V2 (R-5).
+- **Tests:** `clo-description.test.js` (4; the mixed-request case failed before the fix), three new cases in `aiQuota.test.js`, `real-run-replay.test.js` (4). `optimization.test.js` request counts updated (51 to 53) with the reason.
+- **Verification:** `npm test` 2,454 of 2,454 plus the UI suites; conformance 276 of 276; VPAA UI 28 of 28; `npm run build` passes. Not run: any real AI model.
+
+### v1.85.0 — AI Checker Re-plan, Phase 1: Owner Rules as Data, Extraction and Fixed Rules
+
+Start of the re-planned checker (`docs/ai-checker-replan.md`), built offline in `server/lib/syllabuscheck/pipeline/`. **Not wired into the running server; `engine.js`, the prompt and the official score are unchanged.** No AI model was called.
+
+- **`rules.js`:** the owner's rules and the six answers of 2026-11-12 as data. It holds:
+  - the dependency chain (EGA/PO, then CLO 1-4, Content, ILO, Activities, Tasks, Values; references on the side);
+  - the four fixed CLO classifications;
+  - Week 1 orientation and Week 2 first topic;
+  - at least 2 activity options per topic week;
+  - a core value every week, including orientation and exam weeks;
+  - references within 5 years (older ones go to review);
+  - the AI checklists per relationship;
+  - `verdictOf`, where code sets the verdict from yes/no/unclear answers and an incomplete answer is never a pass;
+  - `deductions`, with per-area caps that are still null because the cap values are not chosen.
+- **`extract.js`:** turns a syllabus and its masters into one map (course, EGAs/POs, CLOs with their required level, weeks with kind, ILOs, activity and task items, named values, references). Each field has a text fingerprint.
+- **`fixedRules.js`:** the rules that need no AI. It checks CLO count and fixed level (with a mechanical fix), at least one PO and one EGA per CLO, unknown tags, CLO coverage by ILOs, Week 1 orientation, Week 2 first topic, content first, ILO-to-CLO tags, activity options, tasks, weekly values, APA 7th format, and recency (review only). Findings are ordered top-down.
+- **Offline result on the real IT 202 syllabus:** 21 findings and 2 review items (CLO 2-4 saved as Introductory, CLO 4 reached by no ILO, 4 untagged ILOs, 4 weeks with values not among the six, 9 references not in APA 7th format, 2 references from 2019).
+- **Tests:** `pipeline/rules.test.js` (6), `pipeline/extract.test.js` (5), `pipeline/fixedRules.test.js` (8), added to `npm test`.
+
+### v1.86.0 — AI Checker Re-plan, Phase 2: Checklist Judging, One Verified Repair Plan, Reference Lookups
+
+Built and tested offline with scripted model answers only (`docs/ai-checker-replan.md` section 6). **Not wired into the running server; no real AI model was called; `engine.js`, the prompt in use and the official score are unchanged.**
+
+- **`pipeline/prompt.js`:** one system prompt with the owner's rules, identical for every request. The AI answers yes/no/unclear per checklist item with a quote and an explanation. An answer is refused when an item is missing, invented or invalid, when the question is answered twice, or when the quote is not in the texts. Texts used by several questions are sent once per request. The rewrite prompt sends the field, its parents, the failed items and its children.
+- **`pipeline/judge.js`:** the questions of the whole syllabus, grouped into one request for the CLOs, one per week and one for the syllabus (sequence, references). The course description is never sent.
+  - Answers are stored by exact text, model, prompt and rules version, so a re-check asks only what changed.
+  - A refused answer is asked once more. A provider failure is not retried and never passes.
+  - Code sets the statuses: ok, failing (root), waiting (parent failing), review (an extra tag that does not fit; no penalty), advice, not_checked.
+- **`pipeline/plan.js`:** one repair plan, built top-down.
+  - Mechanical fixes come first (fixed CLO classification, APA repairs from the reference's own characters).
+  - Then root fields are rewritten against settled parents, and the copy is re-checked. Content is never rewritten to suit an ILO.
+  - Limits: 3 rounds, and at most 2 rewrites per field.
+  - Each change is marked VERIFIED, NEEDS_FACULTY_REVIEW or NOT_CHECKED. The plan also lists what is unresolved, what only the author can fix, and any regression. `applyPlan` applies all changes or only the accepted ones.
+- **`pipeline/lookup.js`:** reference existence checks, run only when asked.
+  - Crossref for DOIs (title compared), Open Library for ISBNs and for book titles, and the existing safe link checker for links.
+  - A broken link is a finding. A source not found, or a DOI/ISBN that belongs to another work, goes to faculty review, never "fake".
+  - Only the reference text is sent.
+- **`rules.js`:** added CONTENT-SEQUENCE (advice), and ILO-CLO now counts the best of an ILO's CLO tags.
+- **Measured offline:**
+  - 18-week test syllabus: 142 questions in 20 requests.
+  - Real IT 202 syllabus: 153 questions in 13 requests (the recorded real run used 22).
+  - Convergence test: a syllabus with 13 misalignments is repaired with 5 AI rewrites and 1 mechanical fix. The re-check after `applyPlan` asks 0 questions and shows 0 misalignments.
+- **Tests:** `pipeline/judge.test.js` (11), `pipeline/plan.test.js` (10), `pipeline/lookup.test.js` (5); `rules.test.js` updated. 45 pipeline tests in all.
+- **Next (Phase 3, needs approval):** a provider adapter with a cost cap, shadow mode in the server, and one small paid run on synthetic syllabi.
+
+### v1.87.0 — AI Checker Re-plan, Phase 3: Claude Provider with a Cost Cap, Shadow Mode, Guarded Paid-Run Script (Not Run)
+
+Built and tested offline (`docs/ai-checker-replan.md` section 7). **No real AI model was called. The shadow is off by default; the official check, findings, score and suggestions are unchanged.**
+
+- **`pipeline/provider.js`:** the pipeline's `ask` and `rewrite` on the existing direct Claude transport (`anthropicClient.js`).
+  - A cost cap is required: nothing is sent without it.
+  - Every request is reserved against the per-run budget before sending and settled at the tokens reported. The request that would pass the cap is refused before it is sent.
+  - Usage is recorded.
+  - The reuse key includes the model's thinking mode and effort.
+- **Answer format:** checklist items are now a list of `{id, answer}`, because Anthropic structured outputs need `additionalProperties: false` on every object. Both schemas pass `anthropicSchema.js`.
+- **`pipeline/shadow.js` + 11 lines in `server/lib/compliance/service.js`:**
+  - `SYLLABUS_CHECK_REPLAN=shadow|plan` (default `off`) runs the new pipeline after the official result is built and attaches `hybrid.replanShadow` for comparison only.
+  - The shadow has its own required cap (`SYLLABUS_CHECK_REPLAN_MAX_COST_USD`) and runs on the direct Anthropic provider only.
+  - Answers are kept in a bounded in-memory store. A failure is caught and recorded.
+  - Documented in `server/.env.example`; `production.env.template` sets it to `off`.
+- **`scripts/replan-paid-run.cjs` + `pipeline/eval/synthetic.js`:** the first paid run, prepared and NOT run.
+  - It uses one synthetic syllabus (SYN 101 Introduction to Python Programming, invented outcomes and masters) with 8 planted problems.
+  - It checks the syllabus, builds the repair plan, re-checks with the plan applied, and reports what was found, fixed and left.
+  - Dry run by default. A live run needs `--live --confirm-paid --max-cost <usd>` (at most $5).
+  - It refuses before reading `server/.env` when the confirmation or cap is missing, and refuses to overwrite an earlier result.
+  - It runs behind the evaluation guard, the $10 spend register (currently $2.92 charged), the pipeline's own cap, and a blocked global fetch.
+  - Dry run: 138 questions in 20 requests, schemas accepted.
+- **Tests:** `pipeline/phase3.test.js` (11). It covers the cost cap stopping before send, provider failures, shadow off, skipped and untouched-official cases, the service hook, the script's refusals, and the synthetic syllabus end to end (all 8 planted problems found, plan converges, re-check asks nothing).
+- **Not done:** the paid run (needs the owner's approval of a budget, and the Anthropic balance checked first); faculty review and answer key; area caps; persisting shadow answers; shadow in the UI.
+
+### v1.88.0 — AI Checker Re-plan: Cached Prompt Layout and a Spend-Based Cost Cap
+
+Offline; no AI model was called. Prompt version `replan-prompt-3` (`docs/ai-checker-replan.md`, "Prompt caching layout and the cost cap").
+
+- **Checklists once:** every relationship's checklist is written once in the cached rules block instead of with each question, and requests are compact JSON.
+- **Shared SYLLABUS CONTEXT:** a second cached system block, identical for every request of a check. It holds the course title, POs, EGAs, fixed CLO classifications, CLOs and the weekly topic list (never the course description). Questions refer to those texts by label.
+- **`anthropicClient.js`:** `system` may be a list of up to 4 texts, each with its own cache marker. A single text is sent exactly as before (test added).
+- **Estimated input cost of one check (offline):**
+  - IT 202: $0.0622 to $0.0377.
+  - Synthetic course: $0.0503 to $0.0309.
+  - About 39% less input, almost all from the checklists and compact JSON. The context block on its own is about cost-neutral, and is kept so every request sees the whole syllabus.
+  - Input was about 12% of the last real run's cost (output about 86%), so the whole check is about 5% cheaper.
+- **Cost cap fixed (`pipeline/provider.js` `spendCap`):** the Phase 3 provider reused a reservation budget that never released worst cases, so a $2 cap stopped after about 10 requests that cost a cent each. A request is now sent only while the amount already spent plus its own worst case fits the cap. The reservation is released when the answer settles, and a timeout settles at its worst case.
+- **Tests:** judge (2 rewritten, 2 new) and phase3 (4 new: two cached system blocks through the real client, the single-text form unchanged, spend-based cap, timeout settling). `npm test` 2,516 of 2,516.
+
+### v1.89.0 — AI Checker Re-plan: Five Prompt Fixes (replan-prompt-4)
+
+Offline; no AI model was called. Details in `docs/ai-checker-replan.md`, "Prompt fixes".
+
+- **Values in orientation and examination weeks:** VALUE-ILO now accepts the orientation or the examination itself, so the owner's every-week rule no longer fails those weeks by construction.
+- **Bloom levels:** the prompt gives the Bloom scale with typical verbs, and the Bloom levels of each CLO classification (`rules.js` `BLOOM_ORDER`). The mapping is a working one inferred from the labels and marked not yet confirmed (`BLOOM_SOURCE`). Owner confirmation is needed before the paid run.
+- **Answer calibration:** "no" means the text is there and lacks it; "unclear" only for a missing, cut-short or ambiguous text.
+- **Rewrite format:**
+  - A FIELD FORMAT per field, the checklists in the rewrite prompt, and an instruction not to copy a parent's wording.
+  - `validateRewrite` refuses multi-line outcomes, teacher-centred ILOs, and a CLO or ILO that copies its parent word for word.
+- **Worked examples:** five invented calibration examples and an answer-format example, in the cached rules block.
+- **Cost:** estimated input cost of one IT 202 check $0.0377 to $0.0402 (the original was $0.0622).
+- **Tests:** `pipeline/prompt.test.js` (8). `npm test` 2,524 of 2,524.
+
+### v1.89.1 — AI Checker Re-plan: Bloom Mapping Confirmed by the Owner
+
+- The owner confirmed the Bloom levels of the CLO classifications on 2026-11-12: CLO 1 remember, understand; CLO 2 apply, analyze, evaluate; CLO 3 apply, create; CLO 4 evaluate, create.
+- `pipeline/rules.js` `BLOOM_SOURCE` records the confirmation, and `prompt.test.js` pins the mapping. The prompt text is unchanged (`replan-prompt-4`).
+
+### v1.90.0 — AI Checker Re-plan: Shadow Mode On in Development, and a Read-Only Shadow Report
+
+- **Development `server/.env`** (not in git): `SYLLABUS_CHECK_REPLAN=shadow` and `SYLLABUS_CHECK_REPLAN_MAX_COST_USD=2`, at the owner's request. A dry check confirmed the shadow is ready on claude-sonnet-5-5. It takes effect after a server restart. Official results still come from the old checker.
+- **`scripts/replan-shadow-report.cjs`:** lists stored checks with a shadow result next to their official score and deductions. `--run <id>` shows everything the new checker found. It runs only SELECT statements inside a read-only transaction, sends nothing to any AI provider, and prints no setting.
+- **`pipeline/shadowReport.js`:** the formatting, tested by `pipeline/shadowReport.test.js` (4 tests).
+- **Not verified:** a run against the development database (MySQL refused the connection on 2026-11-15), and any shadow result from a real check.
+
+### v1.90.1 — AI Checker Re-plan: Judge Requests Three at a Time
+
+- **`pipeline/judge.js`:** the new checker sent its requests one at a time. With real answers taking 20-30 s each, that would have added about 7-10 minutes to every AI check in shadow mode, and the server runs one AI check at a time.
+  - The first request is now sent alone, so it writes the prompt cache.
+  - The rest go 3 at a time, like the live checker (option `concurrency`, 1-6).
+  - Results do not depend on the order answers arrive.
+  - The spend cap and the evaluation guard already count requests in flight.
+- **Test:** `judge.test.js` checks at most 3 in flight, the first request alone, and the same verdicts as sending one at a time. `npm test` passes.
+- **Still expected:** a shadow check adds roughly 4 minutes (estimate) to an AI check, because the shadow runs after the official result within the same request.
+
+### v1.90.2 — AI Checker Re-plan: First Paid Run, and Regressions Counted per Change
+
+- **First paid run** (by the owner, 2026-11-15; `docs/ai-checker-replan-run/synthetic-1/`). Synthetic course only.
+  - 50 requests, about $0.37 at list prices ($0.39 by the guard); spend register $3.31 of $10.
+  - All 8 planted problems found. The plan made 1 mechanical fix and 13 AI rewrites in 2 rounds, and nothing was left unresolved.
+  - The re-check after the plan asked 0 questions and found 0 misalignments.
+- **Bug fixed (`pipeline/plan.js`):** a single advice-only relationship that slipped (Week 2 TASK-ILO, which costs no points) had marked all 13 AI changes NEEDS_FACULTY_REVIEW.
+  - Now only SCORED relationships count as `regressions`, and a regression holds back only the changes it involves (the field it judges, or a field it is judged against or depends on).
+  - Advice relationships that slip are listed apart as `adviceRegressions` (also in the shadow result and the paid-run summary).
+  - Re-scored offline, the paid run's 13 AI changes would all be VERIFIED. The saved run files are left as recorded.
+- **Tests:** `plan.test.js` adds 2 (the paid run's advice slip; a scored regression holding back only its own change). `npm test` passes.
+- **Owner question from the run:** with the CLO 1 Bloom mapping (remember, understand), the model turned "Write and run a simple Python program" into "Describe the steps for installing Python...". This is correct by the rule, but debatable for an introductory programming week.
+
+### v1.90.3 — AI Checker Re-plan: CLO 1 Also Takes "Apply" (replan-prompt-5)
+
+- The owner added **apply** to the Bloom levels of CLO 1 (Introductory) on 2026-11-15, after the first paid run turned "Write and run a simple Python program" into "Describe the steps for installing Python...". CLO 1 is now remember, understand, apply; CLOs 2-4 are unchanged.
+- `pipeline/rules.js` `CLO_LEVELS` and `BLOOM_SOURCE` record the change.
+- The prompt version is now `replan-prompt-5`, so no answer stored under the old mapping is reused.
+- `prompt.test.js` pins the new mapping. `npm test` passes.
+
+### v1.90.4 — AI Checker Re-plan: First Shadow Check, and Review, Unchecked and Advice Items Kept
+
+- **First shadow check in the app** (2026-11-15, check 444, CAPSPRO1 Capstone Project 1).
+  - Old checker (official): score 69, 27 deductions (31 points), 13 suggestions, 37 requests, about $0.52.
+  - New checker: 7 misalignments (7 points), 9 for review, 2 not checked, 18 requests, 52 s, about $0.27.
+  - The new checker's findings: 5 activity sets that list sequential steps rather than alternatives for diverse learners; CLO 4 at the apply level; a Week 1 ILO slightly beyond its content.
+- **`pipeline/shadow.js`:** the shadow result now also keeps the items that went to faculty review (extra tags; fixed rules a person must confirm), the items not checked, and advice, each with what it was judged against and why.
+- **`pipeline/shadowReport.js`:** `--run` shows them in three sections. A check stored before this change says the lists were not kept.
+- **Test:** `shadowReport.test.js` adds 1. `npm test` passes.
+
+### v1.91.0 — AI Checker Re-plan: Answers Kept in the Database (replan_answers)
+
+- **Why:** the second shadow check of CAPSPRO1 (check 445) repeated the 5 main findings of check 444, but 3 borderline findings flipped, because the stored answers lived only in server memory and a reload had cleared them.
+- **New table `replan_answers`** (`server/db/replan-answers-ddl.js`, `schema.sql`).
+  - Keyed by a SHA-256 of the rules version, prompt version, model, course and the exact texts; it holds the verified answer.
+  - Not linked to a syllabus, and not read by the live checker or the official score.
+  - Migration: `npm run migrate-replan-answers` (additive, idempotent, `--dry-run`). Rollback: `DROP TABLE replan_answers;`.
+- **Applied to the development database on 2026-11-15** after a full backup (`LCUP-DB-Backups/2026-11-15-pre-replan-answers-migration`, sha256 835fdcdf, 56 tables, 958 rows, unchanged during the backup). Afterwards: 57 tables, `replan_answers` added, no existing table changed.
+- **`pipeline/answerStore.js`:** memory in front of the database. One read and one write per check. A missing table or database error falls back to memory and says why. `pruneUnused(db, days)` exists but never runs automatically.
+- **`pipeline/judge.js`:** waits for an asynchronous store. Reuse keys are now full SHA-256 values.
+- **`pipeline/shadow.js` + `compliance/service.js`:** the shadow gets the server's database. `shadowReport.js` shows where the answers were kept.
+- **Tests:** `pipeline/answerStore.test.js` (7), including a simulated restart that reuses all 142 answers and asks the AI nothing. `npm test` 2,539 of 2,539.
+
+### v1.92.0 — AI Checker Re-plan: Official Mode Behind a Switch; 5-Point Area Caps
+
+Owner decisions of 2026-11-15: make the new checker official behind a switch (to cut the cost of running both), and lose at most 5 points per area. Built and tested offline. The development server still runs `SYLLABUS_CHECK_REPLAN=shadow` until the setting is changed.
+
+- **`SYLLABUS_CHECK_REPLAN=official`** (`pipeline/official.js`, hooked into `compliance/service.js`).
+  - The old engine runs with its AI step off: no-AI rules, base score and links, at no AI cost.
+  - The new checker then fills the AI part of the same report: `alignment`, its points in `deductions`, and its verified repair plan as drafts in `suggestions`. Score, ready, status, band, conformance and summary are recomputed.
+  - Used only with the direct Anthropic provider, AI checking on, and `SYLLABUS_CHECK_REPLAN_MAX_COST_USD` set. Otherwise, and with Policy V2 on, the old checker runs as before.
+  - A failure never makes a score.
+  - The old whole-syllabus and coordinated plans are skipped in official mode.
+- **Area caps:** `pipeline/rules.js` `AREA_CAPS` is now 5 per area (it was null).
+- **No points:** extra tags, advice and the new checker's no-AI rules are advisory and cost no points. A draft that fixes a rule is linked to it.
+- **Known limit:** "Check & improve" on a new-checker draft still uses the old checker's refine step.
+- **Tests:** `pipeline/official.test.js` (7: the real old engine with AI off plus the new checker on a scripted model; the app's `hybridView.js` shows the problems, links the drafts and can apply each one; caps; extra tags; provider failure; the service hook). `rules.test.js` updated for the caps. `npm test` 2,546 of 2,546.
+
+### v1.92.1 — AI Checker: First Official Check, the DSP Test, and Three Fixes
+
+- **First official check** (2026-11-15, #446, CAPSPRO1).
+  - Score 93 (the old checker gave 69); 8 misalignments, 7 points (activities reached the 5-point cap).
+  - 8 drafts: 7 verified, plus CLO 4 held for faculty review because the rewrite dropped "collaborative" and with it the link to PO 3.
+  - $0.40, 105 s, 166 answers stored.
+  - The dashboard's AI Quality Snapshot reads it unchanged (final 93; Assessment 67 is the lowest area).
+  - The owner kept the activities rule strict, capstone weeks included.
+- **DSP test** (CpE-404 #111, BSCPE; new `scripts/replan-syllabus-run.cjs`).
+  - It exports one syllabus read-only, then runs official mode outside the app under the evaluation guard. Owner-approved $1 cap; $0.58 spent ($0.61 by the guard); spend register $3.92 of $10.
+  - The output in `docs/ai-checker-replan-run/syllabus-111/` holds real syllabus text: keep it local.
+  - The official check worked: 125 of 125 answered, score 72, 56 findings (CLO 3 and CLO 4 levels, value-webbing ILOs in technical weeks, single-lecture activities, values outside the six).
+- **Fixed: the test script built the repair plan twice.** The second round of rewrites ran into the cap and 81 requests were refused. `officialize` now hands back the plan it made (`out`), and the script re-checks with it.
+- **Fixed: unknown answers were counted as regressions.** An answer that could not be had after the plan (refused, failed or "unclear") is now listed under `notRechecked` and holds back only its own field's change.
+- **Fixed: two ILOs of the same week were rewritten into near copies** ("Compare FIR and IIR filters ..." twice).
+  - Rewrites now see the current text of the other ILOs of the same week, or of the other CLOs (`plan.js` `siblingsOf`), under `keepDistinctFrom`.
+  - `validateRewrite` refuses a near copy: 80% of words shared, or the same leading verb with 45% and at least 5 words shared.
+  - The rewrite prompt has its own version (`replan-rewrite-2`), so stored judge answers (`replan-prompt-5`) stay valid.
+- **Tests:** plan (2), official (1), prompt (1). Two existing plan tests first caught an over-eager near-copy rule ("Explain ..." CLOs), corrected before release. `npm test` passes.
+
+### v1.92.2 — AI Checker: DSP Re-run, Fixes Keep Working Links, and a Rule for Copied ILOs
+
+- **DSP re-run** (2026-11-15, owner-approved $1 cap, one request at a time; `docs/ai-checker-replan-run/syllabus-111/rerun-1/`, real syllabus text, keep local).
+  - The official check was the same as the first run: 125 of 125 answered, score 72.
+  - The plan wrote 30 fixes and verified 24 (the first run: 3 of 22). No near-copy rewrites, and no unknown answer counted as a regression.
+  - It stopped at the cap with 8 fields waiting. $0.74 estimated ($0.77 by the guard); spend register $4.69 of $10.
+  - Three CLO rewrites dropped a PO link the faculty had tagged and were held for review.
+  - `scripts/replan-syllabus-run.cjs` gains `--label` (a later run in its own subfolder) and `--concurrency` (1 under a tight cap, so worst cases reserved for requests in flight do not crowd out the budget). `officialize` and `buildPlan` pass `concurrency` through.
+- **Fixes keep working links** (`plan.js` `jobOf` `keep`, prompt `mustKeep`, rewrite prompt `replan-rewrite-3`). A rewrite is told which of its field's relationships fit now (a PO or EGA the CLO already supports) and must keep them. The judge prompt (`replan-prompt-5`) is unchanged, so stored answers stay valid.
+- **New no-AI rule ILO-DUPLICATE** (`fixedRules.js`).
+  - It flags a near copy of an earlier ILO in the same week, and the same text as an ILO of an earlier week (case and punctuation ignored). The first occurrence stays.
+  - The plan rewrites the copy (`judge.js` FIXED_TEXT_RULES).
+  - On DSP it finds 20 copied ILOs (the same three ILOs across 8 weeks), which neither checker had flagged before.
+  - `nearCopy` moved to `extract.js` (shared).
+- **Tests:** fixedRules (1), plan (1), prompt updated. `npm test` passes.
+- **Note:** DSP now has 20 more fields to rewrite, so a full plan for it may approach the $2 per-check cap in the app.
+
+### v1.92.3 — AI Checker: UI Check of the First Official Run
+
+- **UI check** (2026-11-15, offline, read-only).
+  - The real AI Checker card (`src/views/ComplianceCard`) was rendered from stored run #446 in the shape GET /api/compliance returns, for the author and the admin view.
+  - Both rendered with no React errors or warnings: score 93% shown, all 8 suggestions shown with their buttons, points on screen equal to points deducted, every suggestion applyable and linked to its problem.
+  - The frontend build passes.
+  - The live page in the browser pane was not checked (it was not signed in).
+- **Fixed (`pipeline/official.js`):** a question the AI answered "unclear" showed as a red "fix first" problem, though it costs no points and is not a problem in the syllabus. It now shows as an advisory "<relationship> (not checked)" note. This applies to new checks; #446 keeps its stored form.
+- **Test:** `official.test.js` (1). `npm test` 2,553 of 2,553.
+
+### v1.92.4 — Dashboard: the AI Quality Snapshot Counts Only AI-Checked Syllabi
+
+- **Problem:** the snapshot and the "Average of your latest AI checks" stat averaged every syllabus's latest score, including checks made with AI checking off. Those scores come from the no-AI rules alone. On the development database, DSP's rules-only 95 (check #439) stood beside CAPSPRO1's AI-checked 93 (#446), and the admin view showed only DSP's 95.
+- **`server/routes/compliance.js`** (GET /api/compliance?syllabus=all): the summary adds `aiChecked`, `notAiChecked`, `aiAverage` and, per area, `aiRules` and `aiFinal`, counting only checks whose AI step completed (`aiStatus` ok). The existing `average`, `passed` and `areas[].average` / `final` are unchanged (the Analytics page uses them).
+- **`src/lib/complianceStats.js`:**
+  - `snapshotOf` uses the AI-only numbers when the server sends them, and returns `notAiChecked`.
+  - `aiAverage` leaves out runs whose `aiStatus` is not ok. A run without `aiStatus`, from an older server, counts as before.
+- **`src/views/DashboardView.jsx` + `src/theme.css` + `src/i18n/dashboardStats.js`:** under the rings, "1 syllabus is not included: its latest check ran without AI." (or "{count} syllabi ..."), in English and Filipino.
+- **Tests:** `complianceStats.test.js` (2, including the real dev numbers) and `compliance.routes.test.js` (the new summary fields).
+- **Verification:** `npm test` 2,554 of 2,555 in the full run. The one failure was a Windows file lock writing `docs/lcup-approved-offline/deterministic-baseline.json` in a conformance test, which passes on its own (10 of 10). `npm run build` passes.
+
+### v1.92.5 — Dashboard: What the Assessment Ring Covers
+
+- The AI Quality Snapshot charges the AI Checker's learning-activity findings to the standard's Assessment Alignment area (`finalAreas.js` `areaOf`). On CAPSPRO1, the Assessment ring's 67 came from activities, not from assessment tasks.
+- The six institutional areas and the scoring are unchanged. The Assessment ring's tooltip now says what it covers: "Assessment covers the assessment tasks, grading and requirements, and the learning activities." It is joined to the "Lowest: ..." tooltip when that ring is the lowest, in English and Filipino.
+- Moving activity findings to another area was offered as an alternative and not made (owner decision).
+- **Verification:** `npm run build` passes, the localization audit passes (2,842 bilingual keys), `npm test` 2,555 of 2,555.
+
+### v1.92.6 — Faculty AI Checker: Only Editable Syllabi Can Be Checked
+
+Owner decision of 2026-11-15: on the faculty side, the AI Checker lists and checks only a syllabus the faculty can still edit (a draft, or one returned for revision or rejected). A submitted syllabus is with the reviewers, and an approved one is final; neither is offered or checked. Administrators and reviewers are unchanged.
+
+- **`src/views/AIChecker.jsx` (faculty view):**
+  - The subject dropdown lists only the faculty's own, not archived syllabi in `EDITABLE_STATUSES` (the shared list: draft, for_revision, rejected). Before, it was every status except approved.
+  - A syllabus opened from the builder that has since been submitted is no longer kept selected.
+  - With nothing to check but submitted or approved syllabi, the page says why (new key `aiChecker.nothingToCheck`, English and Filipino) instead of "No syllabi yet".
+- **`server/routes/compliance.js`:** POST /syllabi/:id/compliance/recheck refuses a faculty owner's check of a syllabus outside `EDITABLE_STATUSES` (409, code `submitted`, "...with the reviewers..."), so the rule holds even without the page. Approved keeps its own refusal. A reviewer's own syllabus keeps its flow.
+- **Tests:** `compliance.routes.test.js` adds a status matrix (draft, for_revision and rejected checked; submitted and under_review refused; approved refused). Three tests that had an owner re-check a submitted syllabus now make that check while it is still a draft, and assert that the re-check is refused. `npm test` 2,556 of 2,556; build and localization pass.
+
+### v1.92.7 — Dashboard: Minimalist View Analytics Window
+
+A visual redesign of the View analytics window on the dashboard's Program Compliance card, and faculty no longer see its label. No number is counted differently. The Analytics page, the Program Compliance rows and the AI Quality Snapshot are unchanged (a redesign of them was tried and reverted at the owner's request).
+
+- **View analytics (`src/components/ProgramTrendModal.jsx`, `src/theme.css`):** the three summary figures sit in one row split by hairlines (no boxes), the chart has no second frame, the legend entries are flat (no pill borders), the eyebrow is muted, the close button is quiet, the tooltip is the card colour with a lighter shadow, and the hover fill is a 12% wash. The chart's right margin is 170 (was 130), so a long end label such as "BSIT-CYBERSECURITY 0%" stays inside the window. At phone width the table no longer scrolls sideways (tighter cells, each compliance bar over its value). Markup, controls and numbers are unchanged.
+- **Faculty dashboard (`src/views/DashboardView.jsx`):** the Program Compliance card no longer shows a "View analytics" label; the overall trend is the reviewers' view (admin, dean, Asst. VPAA, LIC Director, VPAA), who keep the button.
+- **Tests:** `tests/i18n-ui.test.jsx` also asserts that the faculty dashboard has no "View analytics" label.
+
+### v1.92.8 — Analytics Page: Minimalist Charts and Tables
+
+A visual redesign of the Analytics page for every role (faculty see "My Analytics"; admin, dean, Asst. VPAA, LIC Director and VPAA see the program view). No number is counted differently: every value still comes from `complianceStats.js` (`aiAverage`, `scoreBands`, `programScores`) and the stored checks, as before. The dashboard is not touched.
+
+- **How syllabi scored (`src/views/Analytics.jsx`):** the donut filled to the average while its legend showed band shares. It is replaced by the average AI score as one large number, a thin bar split into the high, medium and low bands (the green, gold and red status colours, each named in the legend with its share), and "Shares of N scored syllabi". With no AI-completed check, the average shows "—" (before: "null%").
+- **Average AI score by program / AI score of each syllabus:** horizontal bars in one colour (the primary button blue) with the value at the tip and a hairline 0–100 scale, instead of gradient columns. Long course codes wrap instead of crowding. Hovering a program bar gives its checked count.
+- **Chart / Table:** both charts have a switch (`ViewSwitch` in `src/components/ui.jsx`, the same control and keys as the View analytics window). The tables give every value. `ChartCard` takes an optional `action` beside its title.
+- **Quality Dimensions:** names and values in ink with tabular figures, a 6px solid bar on a hairline-grey track (scoped to `.radar-like`, so the dashboard's Program Compliance rows keep their look).
+- **Actionable Insights:** a plain numbered list split by hairlines instead of boxed tiles with tinted badges; one column at phone width.
+- **Styles:** one block at the end of `src/theme.css`, colours as tokens only. The app has no dark theme yet, so dark mode could not be viewed.
+- **Strings:** 11 new keys in `src/i18n/dashboardStats.js`, English and Filipino.
+- **Checked in the browser** with the demo admin and faculty accounts, at desktop and phone width (no horizontal scroll at 375px).
+
+### v1.92.9 — View Analytics: Fits the Screen, New Line Colours
+
+The admin's (and other reviewers') View analytics window on the dashboard's Program Compliance card. No number is counted differently.
+
+- **Fits without scrolling:** the chart takes the height the screen has left (`.trend-chart`: between 200px and 420px) and is drawn at that measured size (`ProgramTrendModal.jsx`: a layout effect plus a ResizeObserver, so text keeps its size). Header, summary figures and spacing are tighter. Checked in the browser: the whole window fits at 1366×768 (698px tall) and 1366×900 (770px), chart and table. The table view scrolls inside its own box under a sticky header when a catalog has many programs; the window itself does not.
+- **Line colours (`src/lib/programTrend.js` `SERIES_COLORS`):** a new fixed eight starting from the primary button blue: `#0866ff`, `#e07320`, `#16a37f`, `#b0413e`, `#0f9fb8`, `#a87a00`, `#8b5cf6`, `#d6457a`. Validated with the dataviz palette checks on white: all eight at least 3:1, adjacent colour-blind separation >= 11.2 and normal >= 22; the first four (the usual catalog) also pass every pair. A program still keeps its slot by code order.
+- **Y-axis:** it reaches the smallest of 5, 10, 20, 25, 50 or 100% that holds the highest share shown, so shares near 0% are readable (the axis is labelled, and starts at 0).
+- **Hover line:** a quiet ink hairline instead of mid-grey. **Table:** each program's compliance bar wears its line colour; tabular figures; tighter rows.
+- **Legend:** program codes only, in one row; the full program name is in the tooltip and the table.
+- **End labels:** when several programs sit at 0%, the stacked labels now move up from the baseline instead of running into the dates. On a phone the end labels are left out (the legend and tooltip name the lines) and the plot takes the full width.
+- **Focus ring:** the dialog box itself no longer shows the browser's focus outline when it opens; its controls keep theirs.
+
+### v1.92.10 — Dashboard: Program Compliance Bar Colours
+
+- The Program Compliance bars on the dashboard (every role) are a meter in the primary button blue (`--btn-primary`, like the AI Quality Snapshot rings, the time-usage bars and the first line of View analytics) on a light track of the same blue (`--btn-primary-tint`), instead of a navy gradient on grey. Only the colours change; the rows, notes and numbers are as before.
+- `src/theme.css` (scoped to `.dashboard-grid`); `src/lib/brandTheme.test.js` pins both rules and checks the fill is at least 3:1 on the white card and on its track.
+
+### v1.92.11 — Phone and Tablet Menu Matches the Sidebar
+
+- On narrow screens (where the sidebar folds into the page menu, `.mnav` in `src/responsive.css`), the menu was still the old navy gradient with a gold selected item, while the desktop sidebar had moved to the light look. It now matches the sidebar: a white card with a hairline border and the card shadow, dark labels, grey icons (`--side-icon`), the hover and selected item in the sidebar's white-greys (`--side-hover`, `--side-active`) with a primary-blue icon, the current page's icon on a light-blue tile, and a muted subtitle and chevron. Tokens only; the markup and behaviour are unchanged.
+- Checked in the browser at 375px (closed and open) with the demo admin account.
+
+### v1.92.12 — AI Checker: Minimalist Score Rings
+
+Only the look and motion change; scores, bands and the score shown are as before.
+
+- **Score ring of a check** (`.big-ring.cmp-ring`, Check my syllabus and the builder's step 7): the water-bottle ring (two sliding wave layers, a glass gradient, a coloured glow, an outer bezel, and two counter-rotating orbit rings while checking) is replaced by one 9px arc on a grey track with a flat white centre. Colours by state: green (meets the standard), amber `#a8740f` (below the pass line; 4.1:1 on white, 3.3:1 on the track, instead of the 2.2:1 gold), the primary button blue (provisional, checking). Motion: the arc sweeps once to the new score from the last one (0.9s, ease-out); while checking, one blue quarter arc turns around the track (1.1s). Not checked: the empty grey track instead of a dashed outline.
+- **Report ring** (a check opened from the history, `.cm-ring`): an 8px arc instead of 22px, the same colours, sweeping to the score when the report opens.
+- **Check history badges:** a ring in the state's colour on white, without the tinted fill.
+- **Reduced motion:** none of the rings move.
+- `src/theme.css` (the ring block replaced; `ComplianceCard.jsx` still sets `--water`, now unused and harmless); `src/lib/brandTheme.test.js` checks the ring colours on white and on the track, that no water or orbit animation is left, and that the checking arc stops with reduced motion.
+- Checked in the browser as the demo admin: a preview of the five ring states with the real classes (no paid AI check was run), the report ring, and the history badge.
