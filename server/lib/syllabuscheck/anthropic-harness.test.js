@@ -32,7 +32,8 @@ fs.writeFileSync(NO_SOCKETS, "'use strict';\nconst net = require('node:net');\nn
 // The child's environment: every setting the scripts read is stated, so server/.env fills none of them (it is read, never written). The application's
 // approval switch names the evaluation model on purpose: an evaluation must neither need it nor be turned into an official check by it.
 const STAGES_OFF = Object.fromEntries(['A', 'B', 'B3', 'B4', 'C1', 'C2', 'D1', 'D2'].map(stage => [`SYLLABUS_CHECK_STAGE_${stage}`, 'off']));
-const childEnv = extra => ({ ...process.env, ...STAGES_OFF, NODE_OPTIONS: '', SYLLABUS_CHECK_AI_PROVIDER: 'off', ANTHROPIC_API_KEY: KEY, ANTHROPIC_MODEL: 'claude-sonnet-4-6', SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL: MODEL,
+// neutralCheckerEnv: every SYLLABUS_CHECK_* setting named (empty), so a local env file cannot switch one on (eval/neutralCheckerEnv.js)
+const childEnv = extra => ({ ...process.env, ...require('./eval/neutralCheckerEnv').neutralCheckerEnv(), ...STAGES_OFF, NODE_OPTIONS: '', SYLLABUS_CHECK_AI_PROVIDER: 'off', ANTHROPIC_API_KEY: KEY, ANTHROPIC_MODEL: 'claude-sonnet-4-6', SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL: MODEL,
   ANTHROPIC_THINKING: '', ANTHROPIC_EFFORT: '', ANTHROPIC_MAX_TOKENS: '', ANTHROPIC_TIMEOUT_SEC: '', ANTHROPIC_MAX_RETRIES: '', ANTHROPIC_PROMPT_CACHE: '', ANTHROPIC_CUSTOM_HEADERS: '',
   OPENROUTER_API_KEY: '', GEMINI_API_KEY: '', SYLLABUS_CHECK_PROMPT_TRIM: 'off', SYLLABUS_CHECK_PROMPT_VARIANT: 'current', SYLLABUS_CHECK_AI_BATCH: '', SYLLABUS_CHECK_REF_VERIFY: 'off',
   SYLLABUS_CHECK_OFFLINE_REPLAY: 'test', SYLLABUS_CHECK_REPLAY_FAULTS: '', SYLLABUS_CHECK_REPLAY_THINKING: '', SYLLABUS_CHECK_REPLAY_MODEL: '', ...extra });
@@ -341,6 +342,20 @@ test('a Claude request that never settled (the process was killed) is charged it
   assert.equal(router.ledger.charged, 0);
   assert.equal(fs.readFileSync(routerLedger, 'utf8').includes('unsettled'), false);
   assert.equal(ANTHROPIC_MESSAGES, 'https://api.anthropic.com/v1/messages');
+});
+
+test('--legacy is the alignment-10 request even when the environment switches on the requirements advice, Stage C3 and the prompt-shaping cost flags', () => {
+  const leaky = { SYLLABUS_CHECK_REQUIREMENTS_ADVICE: 'on', SYLLABUS_CHECK_STAGE_C3: 'on', SYLLABUS_CHECK_COURSE_CONTEXT: 'scoped', SYLLABUS_CHECK_OUTPUT_FIELDS: 'scoped' };
+  const pipeline = runScript('live-pipeline-eval.cjs', ['--provider', 'anthropic', '--legacy', '--syllabi', 'bsit-aligned'], leaky);
+  assert.equal(pipeline.status, 0, pipeline.all);
+  assert.match(pipeline.stdout, /prompt alignment-10 \(every stage off: --legacy\)/);
+  assert.match(pipeline.stdout, /\| BSIT - IT 202 Computer Programming 1 \(aligned\) \| 9 \| 100 \| 927 \|/);
+  const benchmark = runScript('eval-alignment.cjs', ['--provider', 'anthropic', '--plan', '--dataset', 'general', '--legacy', '--ids', P1_IDS, '--runs', '1'], leaky);
+  assert.equal(benchmark.status, 0, benchmark.all);
+  assert.match(benchmark.stdout, /^Prompt alignment-10 \(no stage on\)$/m);
+  assert.match(benchmark.stdout, /^Evaluation mode A: legacy academic alignment benchmark \(stages on: none; recommendation field no\)$/m);
+  assert.match(benchmark.stdout, /1 batches per run \(batch size 12\)/);
+  assert.doesNotMatch(benchmark.stdout, /req1|"requirements":true/);
 });
 
 test('live-pipeline-eval.cjs: the Claude plan offline, synthetic syllabi only, and a paid --legacy run whose result is evaluation only and keeps officialDetail', () => {

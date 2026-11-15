@@ -10,7 +10,8 @@ const { POLICY } = require('./policy');
 // applied rewrites fixed some relationships and flagged new ones. The model is scripted here, so each test says exactly what the AI answers.
 const options = { useAi: true, linkChecker: async url => ({ url, status: 'ok', httpStatus: 200 }), env: { SYLLABUS_CHECK_AI_PROVIDER: 'gemini', GEMINI_API_KEY: 'test-only' } };
 const ACTIVITY = 'row0-ilo0-activity';   // ILO text plan[0].ilos[0].text  ->  activities plan[0].activities (scored)
-const CONTENT = 'row0-ilo0-content';     // advisory
+const DESCRIPTION = 'description-plan';   // advisory (course description against the plan); test 6 uses it as the optional-advice example
+                                          // (an ILO-content answer no longer rewrites the course contents: content first, content-first.test.js)
 const ILO_TEXT = 'plan[0].ilos[0].text';
 const ACTIVITIES = 'plan[0].activities';
 
@@ -109,11 +110,11 @@ test('5. a "rewrite" that changes nothing is never offered (the loop found in th
 
 test('6. optional advice is labelled optional and never presented as a mandatory correction; required rules are labelled mandatory', async () => {
   const { content, masters } = sample();
-  const optional = (await check(content, masters, p => (p.id === CONTENT ? { label: 'NOT_ALIGNED', explanation: 'Contents unrelated.', draft: 'Topics that match the ILO.' } : null))).result;
-  const s = forPath(optional, 'plan[0].contents')[0];
+  const optional = (await check(content, masters, p => (p.id === DESCRIPTION ? { label: 'NOT_ALIGNED', explanation: 'The description is about another subject.', draft: 'A course on the topics this plan teaches, week by week.' } : null))).result;
+  const s = forPath(optional, 'description')[0];
   assert.equal(s.tier, 'optional');
   assert.equal(optional.hybrid.deductions.length, 0, 'it costs nothing');
-  assert.ok(optional.findings.find(f => f.id === 'SEM:' + CONTENT).severity === 'minor', 'and is only a minor finding');
+  assert.ok(optional.findings.find(f => f.id === 'SEM:' + DESCRIPTION).severity === 'minor', 'and is only a minor finding');
   assert.equal(optional.hybrid.summary.status, 'no_changes_needed', 'optional advice does not make the syllabus "not done"');
   assert.ok(optional.hybrid.summary.counts.optional >= 1);
 

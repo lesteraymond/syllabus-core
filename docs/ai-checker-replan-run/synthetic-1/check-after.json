@@ -1,0 +1,19 @@
+{
+  "summary": {
+    "misalignments": 0,
+    "review": 1,
+    "advice": 4,
+    "notChecked": 0,
+    "complete": true,
+    "deductions": 0
+  },
+  "usage": {
+    "questions": 139,
+    "reused": 139,
+    "asked": 0,
+    "requests": 0,
+    "retries": 0,
+    "providerFailures": 0
+  },
+  "misalignments": []
+}

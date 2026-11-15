@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { t } from '../i18n/index.js';
 import { useModalLayer } from './useModalLayer';
@@ -12,8 +12,12 @@ import { programTrend, SERIES_COLORS } from '../lib/programTrend';
 // table view. The lines use the fixed reference palette (lib/programTrend.js SERIES_COLORS); text never wears a line colour. The modal is rendered on
 // document.body so no transformed ancestor can move it; TrendSummary, TrendChart and TrendTable are its parts (tested on their own).
 //   programs, subjects  the catalog of the year on screen (the dashboard already has them)    year  the academic year asked for (undefined: the current one)
-const W = 980, H = 400, M = { top: 18, right: 130, bottom: 32, left: 48 }; // drawn for the large modal: the text stays at its size, the plot gets the room
-const PLOT_W = W - M.left - M.right, PLOT_H = H - M.top - M.bottom;
+// The chart is drawn at the size of its box (measured), so the whole window fits the screen without scrolling and the text stays at its own size.
+// FALLBACK is the size before the box is measured (and on the server). M: room for the axes and the end labels.
+const FALLBACK = { w: 980, h: 340 }, M = { top: 12, right: 170, bottom: 28, left: 44 };
+// The y-axis reaches the smallest of these that holds the highest share shown, so shares near 0% are still readable: [top, step], in percent.
+const SCALES = [[5, 1], [10, 2], [20, 5], [25, 5], [50, 10], [100, 25]];
+const scaleOf = (highest) => SCALES.find(([top]) => highest <= top) || SCALES[SCALES.length - 1];
 const MAX_LINES = SERIES_COLORS.length;
 const GRAINS = [['day', 'trend.daily'], ['week', 'trend.weekly'], ['month', 'trend.monthly']];
 
@@ -59,7 +63,7 @@ export default function ProgramTrendModal({ programs, subjects, year, onClose })
             <button type="button" role="tab" aria-selected={view === 'table'} className={view === 'table' ? 'active' : ''} onClick={() => setView('table')}>{t('trend.table')}</button>
           </div>
         </div>
-        {view === 'chart' ? <TrendChart trend={trend} /> : <TrendTable trend={trend} />}
+        {view === 'chart' ? <TrendChart trend={trend} /> : <div className="trend-table-wrap"><TrendTable trend={trend} /></div>}
       </>}
     </section>
   </div>, document.body);
@@ -93,19 +97,43 @@ export function TrendChart({ trend }) {
   const [hover, setHover] = useState(null);   // the index of the point under the pointer (or the keyboard)
   const [hidden, setHidden] = useState(() => new Set());
   const [focus, setFocus] = useState(null);   // the program whose legend entry is hovered
+  const box = useRef(null);
+  const [size, setSize] = useState(FALLBACK); // the chart box in CSS pixels
+  useLayoutEffect(() => {
+    const el = box.current;
+    if (!el) return undefined;
+    // clientWidth/Height: the box's own size, not changed by the window's opening animation (a transform)
+    const measure = () => { if (el.clientWidth > 0 && el.clientHeight > 0) setSize((now) => (now.w === el.clientWidth && now.h === el.clientHeight ? now : { w: el.clientWidth, h: el.clientHeight })); };
+    measure(); // at once, so the first frame is drawn at the right size
+    if (typeof ResizeObserver === 'undefined') { window.addEventListener('resize', measure); return () => window.removeEventListener('resize', measure); }
+    const watch = new ResizeObserver(measure); // then whenever the window (and so the box) changes size
+    watch.observe(el);
+    return () => watch.disconnect();
+  }, []);
+  // a narrow chart (a phone) keeps no room for end labels: the legend and the tooltip name the lines, and the plot gets the width
+  const wide = size.w >= 560;
+  const W = size.w, H = size.h, PLOT_W = Math.max(40, W - M.left - (wide ? M.right : 12)), PLOT_H = Math.max(40, H - M.top - M.bottom);
   const all = trend.series.slice(0, MAX_LINES);
   const lines = all.filter((s) => !hidden.has(s.program));
   const n = trend.dates.length;
+  const [top, stepBy] = scaleOf(Math.max(0, ...lines.flatMap((s) => s.points)));
+  const levels = []; for (let v = 0; v <= top; v += stepBy) levels.push(v);
   const x = (i) => M.left + (n > 1 ? (i / (n - 1)) * PLOT_W : PLOT_W);
-  const y = (pct) => M.top + PLOT_H - (pct / 100) * PLOT_H;
+  const y = (pct) => M.top + PLOT_H - (pct / top) * PLOT_H;
   const step = trend.granularity === 'day';
   const pathOf = (pts) => pts.map((v, i) => (i === 0 ? `M${x(0)},${y(v)}` : step ? `H${x(i)}V${y(v)}` : `L${x(i)},${y(v)}`)).join('');
   const areaOf = (pts) => pathOf(pts) + `V${y(0)}H${x(0)}Z`;
   const maxTicks = 7;
   const every = Math.max(1, Math.ceil(n / maxTicks));
   const ticks = []; for (let i = 0; i < n; i += every) ticks.push(i); if (ticks[ticks.length - 1] !== n - 1) { if (n - 1 - ticks[ticks.length - 1] < every / 2) ticks.pop(); ticks.push(n - 1); }
-  const endLabels = lines.length > 4 ? [] : lines.map((s) => ({ s, y: y(s.points[n - 1]) })).sort((a, b) => a.y - b.y);
+  const endLabels = !wide || lines.length > 4 ? [] : lines.map((s) => ({ s, y: y(s.points[n - 1]) })).sort((a, b) => a.y - b.y);
   for (let i = 1; i < endLabels.length; i++) if (endLabels[i].y - endLabels[i - 1].y < 15) endLabels[i].y = endLabels[i - 1].y + 15;
+  // labels pushed past the baseline (several programs at 0%) move back up as a stack, so they never run into the dates under the plot
+  const floor = M.top + PLOT_H;
+  if (endLabels.length && endLabels[endLabels.length - 1].y > floor) {
+    endLabels[endLabels.length - 1].y = floor;
+    for (let i = endLabels.length - 2; i >= 0; i--) if (endLabels[i + 1].y - endLabels[i].y < 15) endLabels[i].y = endLabels[i + 1].y - 15;
+  }
   const pick = (event) => {
     const svg = event.currentTarget.ownerSVGElement || event.currentTarget;
     const box = svg.getBoundingClientRect();
@@ -122,17 +150,17 @@ export function TrendChart({ trend }) {
   const tipRows = hover === null ? [] : [...lines].sort((a, b) => b.points[hover] - a.points[hover] || a.program.localeCompare(b.program));
   return <div className="trend-panel">
     {all.length > 1 && <ul className="trend-legend" aria-label={t('trend.legend')}>
-      {all.map((s) => <li key={s.program}><button type="button" aria-pressed={!hidden.has(s.program)} className={hidden.has(s.program) ? 'off' : ''} title={t('trend.toggle', { program: s.program })}
+      {all.map((s) => <li key={s.program}><button type="button" aria-pressed={!hidden.has(s.program)} className={hidden.has(s.program) ? 'off' : ''} title={(s.name ? s.name + ' · ' : '') + t('trend.toggle', { program: s.program })}
         onClick={() => toggle(s.program)} onMouseEnter={() => setFocus(s.program)} onMouseLeave={() => setFocus(null)} onFocus={() => setFocus(s.program)} onBlur={() => setFocus(null)}>
-        <i style={{ background: hidden.has(s.program) ? 'transparent' : SERIES_COLORS[s.slot], borderColor: SERIES_COLORS[s.slot] }} aria-hidden="true" />{s.program}{s.name ? <small>{s.name}</small> : null}
+        <i style={{ background: hidden.has(s.program) ? 'transparent' : SERIES_COLORS[s.slot], borderColor: SERIES_COLORS[s.slot] }} aria-hidden="true" />{s.program}
       </button></li>)}
     </ul>}
-    <div className="trend-chart">
+    <div className="trend-chart" ref={box}>
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={t('trend.chartLabel')} tabIndex={0} onKeyDown={keys} onBlur={() => setHover(null)}>
         <defs>{lines.map((s) => <linearGradient key={s.program} id={'trend-fill-' + s.slot} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={SERIES_COLORS[s.slot]} stopOpacity="0.22" /><stop offset="100%" stopColor={SERIES_COLORS[s.slot]} stopOpacity="0" />
+          <stop offset="0%" stopColor={SERIES_COLORS[s.slot]} stopOpacity="0.12" /><stop offset="100%" stopColor={SERIES_COLORS[s.slot]} stopOpacity="0" />
         </linearGradient>)}</defs>
-        {[0, 25, 50, 75, 100].map((v) => <g key={v}>
+        {levels.map((v) => <g key={v}>
           <line x1={M.left} x2={M.left + PLOT_W} y1={y(v)} y2={y(v)} className={v === 0 ? 'trend-baseline' : 'trend-grid'} />
           <text x={M.left - 10} y={y(v)} className="trend-axis" textAnchor="end" dominantBaseline="middle">{v}%</text>
         </g>)}
@@ -162,7 +190,7 @@ export function TrendTable({ trend }) {
     <thead><tr><th>{t('trend.program')}</th><th>{t('trend.approved')}</th><th>{t('trend.compliance')}</th></tr></thead>
     <tbody>
       {trend.series.map((s) => <tr key={s.program}><td><span className="trend-key" style={{ background: SERIES_COLORS[s.slot] }} aria-hidden="true" /><b>{s.program}</b>{s.name ? <small>{s.name}</small> : null}</td><td>{t('trend.ofSubjects', { approved: s.approved, total: s.total })}</td>
-        <td><span className="trend-bar"><i style={{ width: s.percent + '%' }} /></span>{s.percent}%</td></tr>)}
+        <td><span className="trend-bar"><i style={{ width: s.percent + '%', background: SERIES_COLORS[s.slot] }} /></span>{s.percent}%</td></tr>)}
       {trend.empty.map((p) => <tr key={p.program}><td><b>{p.program}</b>{p.name ? <small>{p.name}</small> : null}</td><td colSpan={2}>{t('trend.noSubjectsYet')}</td></tr>)}
     </tbody>
   </table>;

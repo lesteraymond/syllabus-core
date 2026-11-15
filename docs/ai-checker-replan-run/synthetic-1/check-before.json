@@ -1,0 +1,4936 @@
+{
+  "summary": {
+    "misalignments": 26,
+    "review": 2,
+    "advice": 3,
+    "notChecked": 0,
+    "complete": true,
+    "deductions": 45
+  },
+  "usage": {
+    "questions": 138,
+    "reused": 0,
+    "asked": 138,
+    "requests": 20,
+    "retries": 0,
+    "providerFailures": 0
+  },
+  "misalignments": [
+    {
+      "source": "rule",
+      "rule": "CLO-LEVEL-LABEL",
+      "area": "clo",
+      "field": "clo",
+      "where": {
+        "clo": 4,
+        "cloId": "c4"
+      },
+      "message": "CLO 4 must be classified \"Integration of Values\" (fixed by its number); it is saved as \"Introductory\"."
+    },
+    {
+      "source": "rule",
+      "rule": "ACTIVITY-OPTIONS",
+      "area": "activities",
+      "field": "activities",
+      "where": {
+        "week": "8",
+        "row": "r8"
+      },
+      "message": "Week 8 offers 1 learning activity; give at least 2 alternatives for diverse learners."
+    },
+    {
+      "source": "rule",
+      "rule": "VALUES-WEEKLY",
+      "area": "values",
+      "field": "values",
+      "where": {
+        "week": "10",
+        "row": "r10"
+      },
+      "message": "Week 10 names no core value by its exact name (\"Honesty\"). Use one of: Compassion, Courage, Community-orientedness, Humility, Interiority, Missionary Spirit."
+    },
+    {
+      "source": "ai",
+      "rule": "CLO-TITLE",
+      "area": "clo",
+      "field": "clo",
+      "fieldKey": "clo:c3",
+      "label": "CLO 3",
+      "status": "failing",
+      "verdict": "NOT_ALIGNED",
+      "message": "Baking bread has nothing to do with Introduction to Python Programming."
+    },
+    {
+      "source": "ai",
+      "rule": "CLO-LEVEL",
+      "area": "clo",
+      "field": "clo",
+      "fieldKey": "clo:c3",
+      "label": "CLO 3",
+      "status": "failing",
+      "verdict": "NOT_ALIGNED",
+      "message": "Baking is a practical skill, but it is not a computing application or creation, so it does not match Demonstrating in the programming course. The focus is bread-making, not application of Python."
+    },
+    {
+      "source": "ai",
+      "rule": "CLO-PO",
+      "area": "clo",
+      "field": "clo",
+      "fieldKey": "clo:c3",
+      "label": "CLO 3",
+      "status": "failing",
+      "verdict": "NOT_ALIGNED",
+      "message": "Baking bread does not build the design, implementation or evaluation of computer-based solutions."
+    },
+    {
+      "source": "ai",
+      "rule": "CLO-EGA",
+      "area": "clo",
+      "field": "clo",
+      "fieldKey": "clo:c3",
+      "label": "CLO 3",
+      "status": "failing",
+      "verdict": "NOT_ALIGNED",
+      "message": "Bread baking does not contribute to designing and evaluating solutions to real problems in computing."
+    },
+    {
+      "source": "ai",
+      "rule": "ILO-CLO",
+      "area": "ilo",
+      "field": "ilo",
+      "fieldKey": "ilo:i2",
+      "label": "Week 2 ILO 1",
+      "status": "failing",
+      "verdict": "PARTIALLY_ALIGNED",
+      "message": "Writing and running a first program builds foundational knowledge of Python, so it is a step toward CLO 1. However, 'write' is at the apply level, which is above CLO 1's remember/understand levels. The ILO describes what the student does."
+    },
+    {
+      "source": "ai",
+      "rule": "ILO-CLO",
+      "area": "ilo",
+      "field": "ilo",
+      "fieldKey": "ilo:i4",
+      "label": "Week 4 ILO 1",
+      "status": "failing",
+      "verdict": "PARTIALLY_ALIGNED",
+      "message": "Working with operators builds the basic concepts CLO 1 asks for, and the student is the actor. However, 'Evaluate' here means working out the value of an expression, which is closer to apply, but as worded the verb sits at the evaluate level, above CLO 1's remember/understand levels."
+    },
+    {
+      "source": "ai",
+      "rule": "ILO-CONTENT",
+      "area": "ilo",
+      "field": "ilo",
+      "fieldKey": "ilo:i5",
+      "label": "Week 5 ILO 1",
+      "status": "failing",
+      "verdict": "NOT_ALIGNED",
+      "message": "The ILO is about database schema design, which does not appear in the Week 5 content on conditional statements."
+    },
+    {
+      "source": "ai",
+      "rule": "ILO-CLO",
+      "area": "ilo",
+      "field": "ilo",
+      "fieldKey": "ilo:i5",
+      "label": "Week 5 ILO 1",
+      "status": "failing",
+      "verdict": "NOT_ALIGNED",
+      "message": "Database schema design does not build the explanation of Python basics asked by CLO 1. Design is the create level, above CLO 1's remember/understand levels. The ILO is written as a student action."
+    },
+    {
+      "source": "ai",
+      "rule": "ACTIVITY-FIT",
+      "area": "activities",
+      "field": "activities",
+      "fieldKey": "activities:r5",
+      "label": "Week 5 activities",
+      "status": "waiting",
+      "verdict": "PARTIALLY_ALIGNED",
+      "message": "The activities work on conditional statements, but they do not let students practise designing a database schema. Two alternatives are offered, a live coding session and a flowchart-first exercise, but the ILO is off-topic."
+    },
+    {
+      "source": "ai",
+      "rule": "TASK-ILO",
+      "area": "tasks",
+      "field": "tasks",
+      "fieldKey": "tasks:r5",
+      "label": "Week 5 tasks",
+      "status": "waiting",
+      "verdict": "PARTIALLY_ALIGNED",
+      "message": "A grade calculator lab does not show whether students can design a normalized database schema."
+    },
+    {
+      "source": "ai",
+      "rule": "ACTIVITY-FIT",
+      "area": "activities",
+      "field": "activities",
+      "fieldKey": "activities:r7",
+      "label": "Week 7 activities",
+      "status": "failing",
+      "verdict": "PARTIALLY_ALIGNED",
+      "message": "The activities work on loops. Tracing loops does not have students write loops, and pair programming is only a variant of the same work, so the options are not truly different for diverse learners. The ILO asks for writing, so only the pair programming option practises it."
+    },
+    {
+      "source": "ai",
+      "rule": "ACTIVITY-FIT",
+      "area": "activities",
+      "field": "activities",
+      "fieldKey": "activities:r8",
+      "label": "Week 8 activities",
+      "status": "failing",
+      "verdict": "PARTIALLY_ALIGNED",
+      "message": "A lecture on functions covers the week's content, but students only listen and do not analyze or decompose problems. Only one option is offered, so there are no alternatives."
+    },
+    {
+      "source": "ai",
+      "rule": "TASK-FIT",
+      "area": "tasks",
+      "field": "tasks",
+      "fieldKey": "tasks:r8",
+      "label": "Week 8 tasks",
+      "status": "waiting",
+      "verdict": "PARTIALLY_ALIGNED",
+      "message": "The lab task assesses functions, the week's content. The activity was only a lecture, so students did not practise refactoring before the task."
+    },
+    {
+      "source": "ai",
+      "rule": "VALUE-ILO",
+      "area": "values",
+      "field": "values",
+      "fieldKey": "values:r9",
+      "label": "Week 9 values",
+      "status": "failing",
+      "verdict": "NOT_ALIGNED",
+      "message": "Compassion has no clear link to choosing between lists and tuples in a technical coding task, so this value cannot be practised through the ILO or its activities."
+    },
+    {
+      "source": "ai",
+      "rule": "ACTIVITY-FIT",
+      "area": "activities",
+      "field": "activities",
+      "fieldKey": "activities:r10",
+      "label": "Week 10 activities",
+      "status": "failing",
+      "verdict": "PARTIALLY_ALIGNED",
+      "message": "Word counting uses dictionaries, so it fits the content. However, worked examples and peer teaching do not clearly have students analyze problems and solve them themselves, and the two options are not clearly different alternatives that each fit the ILO."
+    },
+    {
+      "source": "ai",
+      "rule": "TASK-FIT",
+      "area": "tasks",
+      "field": "tasks",
+      "fieldKey": "tasks:r11",
+      "label": "Week 11 tasks",
+      "status": "failing",
+      "verdict": "NOT_ALIGNED",
+      "message": "The task is about Roman history, not strings or Python, and does not follow from the coding activities."
+    },
+    {
+      "source": "ai",
+      "rule": "ILO-CLO",
+      "area": "ilo",
+      "field": "ilo",
+      "fieldKey": "ilo:i13",
+      "label": "Week 13 ILO 1",
+      "status": "waiting",
+      "verdict": "NOT_ALIGNED",
+      "message": "CLO 3 is about baking bread, so writing Python file programs does not build it. The ILO's create level fits the apply/create range and the student is the actor."
+    },
+    {
+      "source": "ai",
+      "rule": "ILO-CLO",
+      "area": "ilo",
+      "field": "ilo",
+      "fieldKey": "ilo:i14",
+      "label": "Week 14 ILO 1",
+      "status": "waiting",
+      "verdict": "NOT_ALIGNED",
+      "message": "CLO 3 is about baking artisan bread, so exception handling is no step toward it. The ILO also describes what the teacher does, so there is no student action to place on Bloom's levels."
+    },
+    {
+      "source": "ai",
+      "rule": "ACTIVITY-FIT",
+      "area": "activities",
+      "field": "activities",
+      "fieldKey": "activities:r14",
+      "label": "Week 14 activities",
+      "status": "waiting",
+      "verdict": "PARTIALLY_ALIGNED",
+      "message": "Both activities work on error handling, which is the week's content. The ILO has the teacher discussing and asks nothing of students, so the activities do not practise it. Two alternatives are offered, a clinic and pair programming."
+    },
+    {
+      "source": "ai",
+      "rule": "TASK-ILO",
+      "area": "tasks",
+      "field": "tasks",
+      "fieldKey": "tasks:r14",
+      "label": "Week 14 tasks",
+      "status": "waiting",
+      "verdict": "PARTIALLY_ALIGNED",
+      "message": "The ILO states no student outcome, so a quiz cannot show whether students reached it."
+    },
+    {
+      "source": "ai",
+      "rule": "ILO-CLO",
+      "area": "ilo",
+      "field": "ilo",
+      "fieldKey": "ilo:i15",
+      "label": "Week 15 ILO 1",
+      "status": "waiting",
+      "verdict": "NOT_ALIGNED",
+      "message": "CLO 3 is about baking bread, so creating a Python module does not build it, which makes step a critical no. The ILO is a student action, and the create level does not exceed the CLO's apply/create level."
+    },
+    {
+      "source": "ai",
+      "rule": "ILO-CLO",
+      "area": "ilo",
+      "field": "ilo",
+      "fieldKey": "ilo:i16",
+      "label": "Week 16 ILO 1",
+      "status": "waiting",
+      "verdict": "NOT_ALIGNED",
+      "message": "CLO 3 is about baking bread, so creating Python classes is not a step toward it. The ILO is student-written and at the create level, which is not above the CLO's create level."
+    },
+    {
+      "source": "ai",
+      "rule": "ACTIVITY-FIT",
+      "area": "activities",
+      "field": "activities",
+      "fieldKey": "activities:r16",
+      "label": "Week 16 activities",
+      "status": "waiting",
+      "verdict": "PARTIALLY_ALIGNED",
+      "message": "The activities work on classes and objects and let students practise designing classes. The single option is only a paper preliminary to the same activity, not a distinct alternative for different learners, and neither activity has students write the Python classes with methods."
+    }
+  ],
+  "results": [
+    {
+      "id": "CLO-TITLE|clo:c1",
+      "relationship": "CLO-TITLE",
+      "area": "clo",
+      "scored": true,
+      "field": "clo",
+      "fieldKey": "clo:c1",
+      "label": "CLO 1",
+      "text": "Explain the basic concepts of Python programming, including data types, operators and control structures.",
+      "to": [
+        {
+          "field": "courseTitle",
+          "key": "course",
+          "label": "Course title",
+          "text": "SYN 101 Introduction to Python Programming"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "subject": "yes"
+      },
+      "failedItems": [],
+      "quote": "Explain the basic concepts of Python programming",
+      "explanation": "The CLO concerns Python programming, the subject of the course title.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CLO-LEVEL|clo:c1",
+      "relationship": "CLO-LEVEL",
+      "area": "clo",
+      "scored": true,
+      "field": "clo",
+      "fieldKey": "clo:c1",
+      "label": "CLO 1",
+      "text": "Explain the basic concepts of Python programming, including data types, operators and control structures.",
+      "to": [
+        {
+          "field": "cloLevel",
+          "key": "level:1",
+          "label": "CLO 1 classification",
+          "text": "Introductory (Foundational Knowledge)"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "verb": "yes",
+        "focus": "yes"
+      },
+      "failedItems": [],
+      "quote": "Explain the basic concepts of Python programming",
+      "explanation": "Explain is the understand level, and the CLO covers foundational knowledge of data types, operators and control structures.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CLO-PO|clo:c1|po:1",
+      "relationship": "CLO-PO",
+      "area": "clo",
+      "scored": true,
+      "field": "clo",
+      "fieldKey": "clo:c1",
+      "label": "CLO 1",
+      "text": "Explain the basic concepts of Python programming, including data types, operators and control structures.",
+      "to": [
+        {
+          "field": "po",
+          "key": "po:1",
+          "label": "PO 1",
+          "text": "Apply knowledge of computing fundamentals appropriate to the discipline."
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "supports": "yes"
+      },
+      "failedItems": [],
+      "quote": "basic concepts of Python programming, including data types, operators and control structures",
+      "explanation": "Knowing these concepts builds computing fundamentals, which PO 1 asks students to apply.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CLO-EGA|clo:c1|ega:1",
+      "relationship": "CLO-EGA",
+      "area": "clo",
+      "scored": true,
+      "field": "clo",
+      "fieldKey": "clo:c1",
+      "label": "CLO 1",
+      "text": "Explain the basic concepts of Python programming, including data types, operators and control structures.",
+      "to": [
+        {
+          "field": "ega",
+          "key": "ega:1",
+          "label": "EGA 1",
+          "text": "Competent professional: applies the knowledge and skills of the discipline with excellence."
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "supports": "yes"
+      },
+      "failedItems": [],
+      "quote": "basic concepts of Python programming",
+      "explanation": "Foundational Python knowledge contributes to being a competent professional who applies discipline knowledge.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CLO-TITLE|clo:c2",
+      "relationship": "CLO-TITLE",
+      "area": "clo",
+      "scored": true,
+      "field": "clo",
+      "fieldKey": "clo:c2",
+      "label": "CLO 2",
+      "text": "Analyze programming problems and evaluate alternative Python solutions that use functions and data structures.",
+      "to": [
+        {
+          "field": "courseTitle",
+          "key": "course",
+          "label": "Course title",
+          "text": "SYN 101 Introduction to Python Programming"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "subject": "yes"
+      },
+      "failedItems": [],
+      "quote": "evaluate alternative Python solutions that use functions and data structures",
+      "explanation": "The CLO is about Python problem solving, which is the subject of the course title.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CLO-LEVEL|clo:c2",
+      "relationship": "CLO-LEVEL",
+      "area": "clo",
+      "scored": true,
+      "field": "clo",
+      "fieldKey": "clo:c2",
+      "label": "CLO 2",
+      "text": "Analyze programming problems and evaluate alternative Python solutions that use functions and data structures.",
+      "to": [
+        {
+          "field": "cloLevel",
+          "key": "level:2",
+          "label": "CLO 2 classification",
+          "text": "Enabling (Skill Development / Evaluate)"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "verb": "yes",
+        "focus": "yes"
+      },
+      "failedItems": [],
+      "quote": "Analyze programming problems and evaluate alternative Python solutions",
+      "explanation": "Analyze and evaluate are in the Enabling levels, and the CLO targets skill development and evaluation.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CLO-PO|clo:c2|po:2",
+      "relationship": "CLO-PO",
+      "area": "clo",
+      "scored": true,
+      "field": "clo",
+      "fieldKey": "clo:c2",
+      "label": "CLO 2",
+      "text": "Analyze programming problems and evaluate alternative Python solutions that use functions and data structures.",
+      "to": [
+        {
+          "field": "po",
+          "key": "po:2",
+          "label": "PO 2",
+          "text": "Analyze complex computing problems and identify the requirements appropriate to their solution."
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "supports": "yes"
+      },
+      "failedItems": [],
+      "quote": "Analyze programming problems",
+      "explanation": "Analyzing programming problems builds the ability to analyze computing problems and identify requirements.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CLO-EGA|clo:c2|ega:1",
+      "relationship": "CLO-EGA",
+      "area": "clo",
+      "scored": true,
+      "field": "clo",
+      "fieldKey": "clo:c2",
+      "label": "CLO 2",
+      "text": "Analyze programming problems and evaluate alternative Python solutions that use functions and data structures.",
+      "to": [
+        {
+          "field": "ega",
+          "key": "ega:1",
+          "label": "EGA 1",
+          "text": "Competent professional: applies the knowledge and skills of the discipline with excellence."
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "supports": "yes"
+      },
+      "failedItems": [],
+      "quote": "evaluate alternative Python solutions that use functions and data structures",
+      "explanation": "Applying functions and data structures skillfully contributes to professional competence.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CLO-EGA|clo:c2|ega:2",
+      "relationship": "CLO-EGA",
+      "area": "clo",
+      "scored": true,
+      "field": "clo",
+      "fieldKey": "clo:c2",
+      "label": "CLO 2",
+      "text": "Analyze programming problems and evaluate alternative Python solutions that use functions and data structures.",
+      "to": [
+        {
+          "field": "ega",
+          "key": "ega:2",
+          "label": "EGA 2",
+          "text": "Creative problem solver: designs and evaluates solutions to real problems."
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "supports": "yes"
+      },
+      "failedItems": [],
+      "quote": "Analyze programming problems and evaluate alternative Python solutions",
+      "explanation": "Analyzing problems and evaluating solutions contributes to being a creative problem solver.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CLO-TITLE|clo:c3",
+      "relationship": "CLO-TITLE",
+      "area": "clo",
+      "scored": true,
+      "field": "clo",
+      "fieldKey": "clo:c3",
+      "label": "CLO 3",
+      "text": "Bake artisan bread using traditional fermentation and kneading techniques.",
+      "to": [
+        {
+          "field": "courseTitle",
+          "key": "course",
+          "label": "Course title",
+          "text": "SYN 101 Introduction to Python Programming"
+        }
+      ],
+      "parents": [],
+      "verdict": "NOT_ALIGNED",
+      "items": {
+        "subject": "no"
+      },
+      "failedItems": [
+        "subject"
+      ],
+      "quote": "Bake artisan bread using traditional fermentation and kneading techniques.",
+      "explanation": "Baking bread has nothing to do with Introduction to Python Programming.",
+      "reused": false,
+      "reason": null,
+      "status": "failing"
+    },
+    {
+      "id": "CLO-LEVEL|clo:c3",
+      "relationship": "CLO-LEVEL",
+      "area": "clo",
+      "scored": true,
+      "field": "clo",
+      "fieldKey": "clo:c3",
+      "label": "CLO 3",
+      "text": "Bake artisan bread using traditional fermentation and kneading techniques.",
+      "to": [
+        {
+          "field": "cloLevel",
+          "key": "level:3",
+          "label": "CLO 3 classification",
+          "text": "Demonstrating (Application / Create)"
+        }
+      ],
+      "parents": [],
+      "verdict": "NOT_ALIGNED",
+      "items": {
+        "verb": "no",
+        "focus": "no"
+      },
+      "failedItems": [
+        "verb",
+        "focus"
+      ],
+      "quote": "Bake artisan bread using traditional fermentation and kneading techniques.",
+      "explanation": "Baking is a practical skill, but it is not a computing application or creation, so it does not match Demonstrating in the programming course. The focus is bread-making, not application of Python.",
+      "reused": false,
+      "reason": null,
+      "status": "failing"
+    },
+    {
+      "id": "CLO-PO|clo:c3|po:3",
+      "relationship": "CLO-PO",
+      "area": "clo",
+      "scored": true,
+      "field": "clo",
+      "fieldKey": "clo:c3",
+      "label": "CLO 3",
+      "text": "Bake artisan bread using traditional fermentation and kneading techniques.",
+      "to": [
+        {
+          "field": "po",
+          "key": "po:3",
+          "label": "PO 3",
+          "text": "Design, implement and evaluate computer-based solutions that meet given requirements."
+        }
+      ],
+      "parents": [],
+      "verdict": "NOT_ALIGNED",
+      "items": {
+        "supports": "no"
+      },
+      "failedItems": [
+        "supports"
+      ],
+      "quote": "Bake artisan bread",
+      "explanation": "Baking bread does not build the design, implementation or evaluation of computer-based solutions.",
+      "reused": false,
+      "reason": null,
+      "status": "failing"
+    },
+    {
+      "id": "CLO-EGA|clo:c3|ega:2",
+      "relationship": "CLO-EGA",
+      "area": "clo",
+      "scored": true,
+      "field": "clo",
+      "fieldKey": "clo:c3",
+      "label": "CLO 3",
+      "text": "Bake artisan bread using traditional fermentation and kneading techniques.",
+      "to": [
+        {
+          "field": "ega",
+          "key": "ega:2",
+          "label": "EGA 2",
+          "text": "Creative problem solver: designs and evaluates solutions to real problems."
+        }
+      ],
+      "parents": [],
+      "verdict": "NOT_ALIGNED",
+      "items": {
+        "supports": "no"
+      },
+      "failedItems": [
+        "supports"
+      ],
+      "quote": "Bake artisan bread using traditional fermentation and kneading techniques.",
+      "explanation": "Bread baking does not contribute to designing and evaluating solutions to real problems in computing.",
+      "reused": false,
+      "reason": null,
+      "status": "failing"
+    },
+    {
+      "id": "CLO-TITLE|clo:c4",
+      "relationship": "CLO-TITLE",
+      "area": "clo",
+      "scored": true,
+      "field": "clo",
+      "fieldKey": "clo:c4",
+      "label": "CLO 4",
+      "text": "Evaluate the ethical responsibilities of programmers and create a Python application that respects user privacy and the common good.",
+      "to": [
+        {
+          "field": "courseTitle",
+          "key": "course",
+          "label": "Course title",
+          "text": "SYN 101 Introduction to Python Programming"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "subject": "yes"
+      },
+      "failedItems": [],
+      "quote": "create a Python application that respects user privacy and the common good",
+      "explanation": "The CLO concerns building a Python application, which is the subject of the course.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CLO-LEVEL|clo:c4",
+      "relationship": "CLO-LEVEL",
+      "area": "clo",
+      "scored": true,
+      "field": "clo",
+      "fieldKey": "clo:c4",
+      "label": "CLO 4",
+      "text": "Evaluate the ethical responsibilities of programmers and create a Python application that respects user privacy and the common good.",
+      "to": [
+        {
+          "field": "cloLevel",
+          "key": "level:4",
+          "label": "CLO 4 classification",
+          "text": "Integration of Values (Ethics & Responsibility / Evaluate & Create)"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "verb": "yes",
+        "focus": "yes"
+      },
+      "failedItems": [],
+      "quote": "Evaluate the ethical responsibilities of programmers and create a Python application",
+      "explanation": "Evaluate and create are the required levels, and the CLO focuses on ethics, privacy and the common good.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CLO-PO|clo:c4|po:4",
+      "relationship": "CLO-PO",
+      "area": "clo",
+      "scored": true,
+      "field": "clo",
+      "fieldKey": "clo:c4",
+      "label": "CLO 4",
+      "text": "Evaluate the ethical responsibilities of programmers and create a Python application that respects user privacy and the common good.",
+      "to": [
+        {
+          "field": "po",
+          "key": "po:4",
+          "label": "PO 4",
+          "text": "Act ethically and responsibly in professional computing practice, with respect for privacy and the common good."
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "supports": "yes"
+      },
+      "failedItems": [],
+      "quote": "respects user privacy and the common good",
+      "explanation": "This directly builds ethical and responsible practice with respect for privacy and the common good.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CLO-EGA|clo:c4|ega:3",
+      "relationship": "CLO-EGA",
+      "area": "clo",
+      "scored": true,
+      "field": "clo",
+      "fieldKey": "clo:c4",
+      "label": "CLO 4",
+      "text": "Evaluate the ethical responsibilities of programmers and create a Python application that respects user privacy and the common good.",
+      "to": [
+        {
+          "field": "ega",
+          "key": "ega:3",
+          "label": "EGA 3",
+          "text": "Socially responsible person of faith and values: acts ethically for the common good."
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "supports": "yes"
+      },
+      "failedItems": [],
+      "quote": "Evaluate the ethical responsibilities of programmers",
+      "explanation": "Evaluating ethical responsibility and respecting the common good contributes to being a socially responsible person of faith and values.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CONTENT|ilo:i1",
+      "relationship": "ILO-CONTENT",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i1",
+      "label": "Week 1 ILO 1",
+      "text": "Explain the course outcomes, requirements and grading policies of the course.",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r1",
+          "label": "Week 1 content",
+          "text": "Course orientation: vision, mission, course outcomes, requirements, grading system and class policies"
+        }
+      ],
+      "parents": [
+        "content:r1"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "topic": "yes",
+        "within": "yes"
+      },
+      "failedItems": [],
+      "quote": "Course orientation: vision, mission, course outcomes, requirements, grading system and class policies",
+      "explanation": "The ILO names course outcomes, requirements and grading policies, all listed in the Week 1 orientation content, and adds no other topic.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "VALUE-ILO|values:r1",
+      "relationship": "VALUE-ILO",
+      "area": "values",
+      "scored": true,
+      "field": "values",
+      "fieldKey": "values:r1",
+      "label": "Week 1 values",
+      "text": "Community-orientedness",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i1",
+          "label": "Week 1 ILO 1",
+          "text": "Explain the course outcomes, requirements and grading policies of the course."
+        }
+      ],
+      "parents": [
+        "ilo:i1"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "fits": "yes"
+      },
+      "failedItems": [],
+      "quote": "Explain the course outcomes, requirements and grading policies of the course.",
+      "explanation": "In the orientation week, understanding shared course requirements and class policies can be practised as community-orientedness, since the class commits to common expectations and works together as a learning community.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-TITLE|content:r2",
+      "relationship": "CONTENT-TITLE",
+      "area": "content",
+      "scored": true,
+      "field": "content",
+      "fieldKey": "content:r2",
+      "label": "Week 2 content",
+      "text": "Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program",
+      "to": [
+        {
+          "field": "courseTitle",
+          "key": "course",
+          "label": "Course title",
+          "text": "SYN 101 Introduction to Python Programming"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "subject": "yes"
+      },
+      "failedItems": [],
+      "quote": "installing Python, using the interpreter and an editor, writing and running a first program",
+      "explanation": "Installing Python and writing a first program are basic parts of Introduction to Python Programming.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-SEQUENCE|content:r2",
+      "relationship": "CONTENT-SEQUENCE",
+      "area": "content",
+      "scored": false,
+      "field": "content",
+      "fieldKey": "content:r2",
+      "label": "Week 2 content",
+      "text": "Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program",
+      "to": [
+        {
+          "field": "plan",
+          "key": "plan",
+          "label": "All weekly topics, in order",
+          "text": "Week 2: Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program\nWeek 3: Variables and data types: integers, floats, strings, booleans and type conversion\nWeek 4: Operators and expressions: arithmetic, comparison and logical operators, operator precedence\nWeek 5: Conditional statements: if, elif and else; nested conditions\nWeek 7: Loops: while and for loops, range, break and continue\nWeek 8: Functions: defining functions, parameters, return values and scope\nWeek 9: Lists and tuples: indexing, slicing, list methods and iteration\nWeek 10: Dictionaries and sets: keys and values, membership, set operations\nWeek 11: Strings: string methods, formatting and text processing\nWeek 13: File handling: reading and writing text and CSV files\nWeek 14: Exceptions: try, except, finally; raising and handling errors\nWeek 15: Modules and packages: importing modules, the standard library, creating a module\nWeek 16: Introduction to object-oriented programming: classes, objects, attributes and methods\nWeek 17: Final project: a small Python application that handles user data responsibly"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "order": "yes",
+        "distinct": "yes"
+      },
+      "failedItems": [],
+      "quote": "writing and running a first program",
+      "explanation": "The opening topic needs nothing from later weeks and is not repeated elsewhere.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CONTENT|ilo:i2",
+      "relationship": "ILO-CONTENT",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i2",
+      "label": "Week 2 ILO 1",
+      "text": "Write and run a simple Python program using the interpreter and an editor.",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r2",
+          "label": "Week 2 content",
+          "text": "Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program"
+        }
+      ],
+      "parents": [
+        "content:r2"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "topic": "yes",
+        "within": "yes"
+      },
+      "failedItems": [],
+      "quote": "Write and run a simple Python program using the interpreter and an editor.",
+      "explanation": "The ILO names the interpreter, the editor and writing and running a program, all of which are listed in Week 2. It adds no topic beyond the week's content.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CLO|ilo:i2|clo:c1",
+      "relationship": "ILO-CLO",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i2",
+      "label": "Week 2 ILO 1",
+      "text": "Write and run a simple Python program using the interpreter and an editor.",
+      "to": [
+        {
+          "field": "clo",
+          "key": "clo:c1",
+          "label": "CLO 1 (Introductory)",
+          "text": "Explain the basic concepts of Python programming, including data types, operators and control structures."
+        }
+      ],
+      "parents": [
+        "clo:c1"
+      ],
+      "verdict": "PARTIALLY_ALIGNED",
+      "items": {
+        "step": "yes",
+        "level": "no",
+        "student": "yes"
+      },
+      "failedItems": [
+        "level"
+      ],
+      "quote": "Write and run a simple Python program",
+      "explanation": "Writing and running a first program builds foundational knowledge of Python, so it is a step toward CLO 1. However, 'write' is at the apply level, which is above CLO 1's remember/understand levels. The ILO describes what the student does.",
+      "reused": false,
+      "reason": null,
+      "status": "failing"
+    },
+    {
+      "id": "ACTIVITY-FIT|activities:r2",
+      "relationship": "ACTIVITY-FIT",
+      "area": "activities",
+      "scored": true,
+      "field": "activities",
+      "fieldKey": "activities:r2",
+      "label": "Week 2 activities",
+      "text": "- Guided installation and first program - Option: video walkthrough with a step-by-step handout",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r2",
+          "label": "Week 2 content",
+          "text": "Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program"
+        },
+        {
+          "field": "ilo",
+          "key": "ilo:i2",
+          "label": "Week 2 ILO 1",
+          "text": "Write and run a simple Python program using the interpreter and an editor."
+        }
+      ],
+      "parents": [
+        "content:r2",
+        "ilo:i2"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "content": "yes",
+        "ilo": "yes",
+        "diverse": "yes"
+      },
+      "failedItems": [],
+      "quote": "Guided installation and first program - Option: video walkthrough with a step-by-step handout",
+      "explanation": "The activities work on installing Python and writing a first program, and students practise doing so. The video walkthrough with handout is an alternative to the guided session, so there are two options.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "TASK-FIT|tasks:r2",
+      "relationship": "TASK-FIT",
+      "area": "tasks",
+      "scored": true,
+      "field": "tasks",
+      "fieldKey": "tasks:r2",
+      "label": "Week 2 tasks",
+      "text": "- Lab exercise: first program",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r2",
+          "label": "Week 2 content",
+          "text": "Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program"
+        },
+        {
+          "field": "activities",
+          "key": "activities:r2",
+          "label": "Week 2 activities",
+          "text": "- Guided installation and first program - Option: video walkthrough with a step-by-step handout"
+        }
+      ],
+      "parents": [
+        "content:r2",
+        "activities:r2"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "content": "yes",
+        "activities": "yes"
+      },
+      "failedItems": [],
+      "quote": "Lab exercise: first program",
+      "explanation": "The lab exercise assesses writing and running a first program, which is the week's content. It follows from the guided first-program activity.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "TASK-ILO|tasks:r2",
+      "relationship": "TASK-ILO",
+      "area": "tasks",
+      "scored": false,
+      "field": "tasks",
+      "fieldKey": "tasks:r2",
+      "label": "Week 2 tasks",
+      "text": "- Lab exercise: first program",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i2",
+          "label": "Week 2 ILO 1",
+          "text": "Write and run a simple Python program using the interpreter and an editor."
+        }
+      ],
+      "parents": [
+        "ilo:i2"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "measures": "yes"
+      },
+      "failedItems": [],
+      "quote": "Lab exercise: first program",
+      "explanation": "A lab exercise in which students produce a first program shows whether they can write and run a simple program.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "VALUE-ILO|values:r2",
+      "relationship": "VALUE-ILO",
+      "area": "values",
+      "scored": true,
+      "field": "values",
+      "fieldKey": "values:r2",
+      "label": "Week 2 values",
+      "text": "Humility",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i2",
+          "label": "Week 2 ILO 1",
+          "text": "Write and run a simple Python program using the interpreter and an editor."
+        }
+      ],
+      "parents": [
+        "ilo:i2"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "fits": "yes"
+      },
+      "failedItems": [],
+      "quote": "Humility",
+      "explanation": "Humility can be practised when beginners accept errors, ask for help and learn step by step while writing and running their first programs.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-TITLE|content:r3",
+      "relationship": "CONTENT-TITLE",
+      "area": "content",
+      "scored": true,
+      "field": "content",
+      "fieldKey": "content:r3",
+      "label": "Week 3 content",
+      "text": "Variables and data types: integers, floats, strings, booleans and type conversion",
+      "to": [
+        {
+          "field": "courseTitle",
+          "key": "course",
+          "label": "Course title",
+          "text": "SYN 101 Introduction to Python Programming"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "subject": "yes"
+      },
+      "failedItems": [],
+      "quote": "Variables and data types: integers, floats, strings, booleans and type conversion",
+      "explanation": "Variables and data types are core parts of Introduction to Python Programming.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-SEQUENCE|content:r3",
+      "relationship": "CONTENT-SEQUENCE",
+      "area": "content",
+      "scored": false,
+      "field": "content",
+      "fieldKey": "content:r3",
+      "label": "Week 3 content",
+      "text": "Variables and data types: integers, floats, strings, booleans and type conversion",
+      "to": [
+        {
+          "field": "plan",
+          "key": "plan",
+          "label": "All weekly topics, in order",
+          "text": "Week 2: Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program\nWeek 3: Variables and data types: integers, floats, strings, booleans and type conversion\nWeek 4: Operators and expressions: arithmetic, comparison and logical operators, operator precedence\nWeek 5: Conditional statements: if, elif and else; nested conditions\nWeek 7: Loops: while and for loops, range, break and continue\nWeek 8: Functions: defining functions, parameters, return values and scope\nWeek 9: Lists and tuples: indexing, slicing, list methods and iteration\nWeek 10: Dictionaries and sets: keys and values, membership, set operations\nWeek 11: Strings: string methods, formatting and text processing\nWeek 13: File handling: reading and writing text and CSV files\nWeek 14: Exceptions: try, except, finally; raising and handling errors\nWeek 15: Modules and packages: importing modules, the standard library, creating a module\nWeek 16: Introduction to object-oriented programming: classes, objects, attributes and methods\nWeek 17: Final project: a small Python application that handles user data responsibly"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "order": "yes",
+        "distinct": "yes"
+      },
+      "failedItems": [],
+      "quote": "integers, floats, strings, booleans and type conversion",
+      "explanation": "Data types can be taught after the Week 2 setup and are new content.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CONTENT|ilo:i3",
+      "relationship": "ILO-CONTENT",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i3",
+      "label": "Week 3 ILO 1",
+      "text": "Explain Python data types and convert values between types.",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r3",
+          "label": "Week 3 content",
+          "text": "Variables and data types: integers, floats, strings, booleans and type conversion"
+        }
+      ],
+      "parents": [
+        "content:r3"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "topic": "yes",
+        "within": "yes"
+      },
+      "failedItems": [],
+      "quote": "Explain Python data types and convert values between types.",
+      "explanation": "The ILO names data types and type conversion, both listed in the week's content, and adds no other topic.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CLO|ilo:i3|clo:c1",
+      "relationship": "ILO-CLO",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i3",
+      "label": "Week 3 ILO 1",
+      "text": "Explain Python data types and convert values between types.",
+      "to": [
+        {
+          "field": "clo",
+          "key": "clo:c1",
+          "label": "CLO 1 (Introductory)",
+          "text": "Explain the basic concepts of Python programming, including data types, operators and control structures."
+        }
+      ],
+      "parents": [
+        "clo:c1"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "step": "yes",
+        "level": "yes",
+        "student": "yes"
+      },
+      "failedItems": [],
+      "quote": "Explain Python data types and convert values between types.",
+      "explanation": "Explaining data types builds the basic concepts CLO 1 asks for. Explain is at the understand level, which CLO 1 allows, and convert is apply, which is above CLO 1's levels of remember and understand. The ILO is written as a student action, and the explain part fits CLO 1 well enough for level to be yes.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ACTIVITY-FIT|activities:r3",
+      "relationship": "ACTIVITY-FIT",
+      "area": "activities",
+      "scored": true,
+      "field": "activities",
+      "fieldKey": "activities:r3",
+      "label": "Week 3 activities",
+      "text": "- Lecture-discussion with live coding - Option: pair programming on type-conversion exercises",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r3",
+          "label": "Week 3 content",
+          "text": "Variables and data types: integers, floats, strings, booleans and type conversion"
+        },
+        {
+          "field": "ilo",
+          "key": "ilo:i3",
+          "label": "Week 3 ILO 1",
+          "text": "Explain Python data types and convert values between types."
+        }
+      ],
+      "parents": [
+        "content:r3",
+        "ilo:i3"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "content": "yes",
+        "ilo": "yes",
+        "diverse": "yes"
+      },
+      "failedItems": [],
+      "quote": "Option: pair programming on type-conversion exercises",
+      "explanation": "Live coding and type-conversion exercises work on data types and conversion. The two options (lecture-discussion with live coding, or pair programming) suit different learners and let students practise explaining and converting.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "TASK-FIT|tasks:r3",
+      "relationship": "TASK-FIT",
+      "area": "tasks",
+      "scored": true,
+      "field": "tasks",
+      "fieldKey": "tasks:r3",
+      "label": "Week 3 tasks",
+      "text": "- Quiz on data types",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r3",
+          "label": "Week 3 content",
+          "text": "Variables and data types: integers, floats, strings, booleans and type conversion"
+        },
+        {
+          "field": "activities",
+          "key": "activities:r3",
+          "label": "Week 3 activities",
+          "text": "- Lecture-discussion with live coding - Option: pair programming on type-conversion exercises"
+        }
+      ],
+      "parents": [
+        "content:r3",
+        "activities:r3"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "content": "yes",
+        "activities": "yes"
+      },
+      "failedItems": [],
+      "quote": "Quiz on data types",
+      "explanation": "A quiz on data types assesses the week's content and follows from the lecture and the type exercises.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "TASK-ILO|tasks:r3",
+      "relationship": "TASK-ILO",
+      "area": "tasks",
+      "scored": false,
+      "field": "tasks",
+      "fieldKey": "tasks:r3",
+      "label": "Week 3 tasks",
+      "text": "- Quiz on data types",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i3",
+          "label": "Week 3 ILO 1",
+          "text": "Explain Python data types and convert values between types."
+        }
+      ],
+      "parents": [
+        "ilo:i3"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "measures": "yes"
+      },
+      "failedItems": [],
+      "quote": "Quiz on data types",
+      "explanation": "A quiz on data types can show whether students can explain them. It does not clearly test converting values, but it largely shows the ILO was reached.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "VALUE-ILO|values:r3",
+      "relationship": "VALUE-ILO",
+      "area": "values",
+      "scored": true,
+      "field": "values",
+      "fieldKey": "values:r3",
+      "label": "Week 3 values",
+      "text": "Interiority",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i3",
+          "label": "Week 3 ILO 1",
+          "text": "Explain Python data types and convert values between types."
+        }
+      ],
+      "parents": [
+        "ilo:i3"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "fits": "yes"
+      },
+      "failedItems": [],
+      "quote": "Interiority",
+      "explanation": "Interiority can be practised through reflecting on one's own understanding and carefully checking one's own conversions and code.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-TITLE|content:r4",
+      "relationship": "CONTENT-TITLE",
+      "area": "content",
+      "scored": true,
+      "field": "content",
+      "fieldKey": "content:r4",
+      "label": "Week 4 content",
+      "text": "Operators and expressions: arithmetic, comparison and logical operators, operator precedence",
+      "to": [
+        {
+          "field": "courseTitle",
+          "key": "course",
+          "label": "Course title",
+          "text": "SYN 101 Introduction to Python Programming"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "subject": "yes"
+      },
+      "failedItems": [],
+      "quote": "arithmetic, comparison and logical operators, operator precedence",
+      "explanation": "Operators and expressions are core parts of Introduction to Python Programming.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-SEQUENCE|content:r4",
+      "relationship": "CONTENT-SEQUENCE",
+      "area": "content",
+      "scored": false,
+      "field": "content",
+      "fieldKey": "content:r4",
+      "label": "Week 4 content",
+      "text": "Operators and expressions: arithmetic, comparison and logical operators, operator precedence",
+      "to": [
+        {
+          "field": "plan",
+          "key": "plan",
+          "label": "All weekly topics, in order",
+          "text": "Week 2: Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program\nWeek 3: Variables and data types: integers, floats, strings, booleans and type conversion\nWeek 4: Operators and expressions: arithmetic, comparison and logical operators, operator precedence\nWeek 5: Conditional statements: if, elif and else; nested conditions\nWeek 7: Loops: while and for loops, range, break and continue\nWeek 8: Functions: defining functions, parameters, return values and scope\nWeek 9: Lists and tuples: indexing, slicing, list methods and iteration\nWeek 10: Dictionaries and sets: keys and values, membership, set operations\nWeek 11: Strings: string methods, formatting and text processing\nWeek 13: File handling: reading and writing text and CSV files\nWeek 14: Exceptions: try, except, finally; raising and handling errors\nWeek 15: Modules and packages: importing modules, the standard library, creating a module\nWeek 16: Introduction to object-oriented programming: classes, objects, attributes and methods\nWeek 17: Final project: a small Python application that handles user data responsibly"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "order": "yes",
+        "distinct": "yes"
+      },
+      "failedItems": [],
+      "quote": "arithmetic, comparison and logical operators, operator precedence",
+      "explanation": "Operators build on the Week 3 data types and add new topics.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CONTENT|ilo:i4",
+      "relationship": "ILO-CONTENT",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i4",
+      "label": "Week 4 ILO 1",
+      "text": "Evaluate Python expressions that combine arithmetic, comparison and logical operators.",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r4",
+          "label": "Week 4 content",
+          "text": "Operators and expressions: arithmetic, comparison and logical operators, operator precedence"
+        }
+      ],
+      "parents": [
+        "content:r4"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "topic": "yes",
+        "within": "yes"
+      },
+      "failedItems": [],
+      "quote": "Evaluate Python expressions that combine arithmetic, comparison and logical operators.",
+      "explanation": "The ILO names arithmetic, comparison and logical operators, all listed in the week's content, and adds no other topic.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CLO|ilo:i4|clo:c1",
+      "relationship": "ILO-CLO",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i4",
+      "label": "Week 4 ILO 1",
+      "text": "Evaluate Python expressions that combine arithmetic, comparison and logical operators.",
+      "to": [
+        {
+          "field": "clo",
+          "key": "clo:c1",
+          "label": "CLO 1 (Introductory)",
+          "text": "Explain the basic concepts of Python programming, including data types, operators and control structures."
+        }
+      ],
+      "parents": [
+        "clo:c1"
+      ],
+      "verdict": "PARTIALLY_ALIGNED",
+      "items": {
+        "step": "yes",
+        "level": "no",
+        "student": "yes"
+      },
+      "failedItems": [
+        "level"
+      ],
+      "quote": "Evaluate Python expressions that combine arithmetic, comparison and logical operators.",
+      "explanation": "Working with operators builds the basic concepts CLO 1 asks for, and the student is the actor. However, 'Evaluate' here means working out the value of an expression, which is closer to apply, but as worded the verb sits at the evaluate level, above CLO 1's remember/understand levels.",
+      "reused": false,
+      "reason": null,
+      "status": "failing"
+    },
+    {
+      "id": "ACTIVITY-FIT|activities:r4",
+      "relationship": "ACTIVITY-FIT",
+      "area": "activities",
+      "scored": true,
+      "field": "activities",
+      "fieldKey": "activities:r4",
+      "label": "Week 4 activities",
+      "text": "- Worked examples on the board - Option: self-paced practice set with instant feedback",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r4",
+          "label": "Week 4 content",
+          "text": "Operators and expressions: arithmetic, comparison and logical operators, operator precedence"
+        },
+        {
+          "field": "ilo",
+          "key": "ilo:i4",
+          "label": "Week 4 ILO 1",
+          "text": "Evaluate Python expressions that combine arithmetic, comparison and logical operators."
+        }
+      ],
+      "parents": [
+        "content:r4",
+        "ilo:i4"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "content": "yes",
+        "ilo": "yes",
+        "diverse": "yes"
+      },
+      "failedItems": [],
+      "quote": "Option: self-paced practice set with instant feedback",
+      "explanation": "Worked examples and a practice set both work on operators and expressions, and practice lets students evaluate expressions. Two alternatives are offered, one teacher-led and one self-paced.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "TASK-FIT|tasks:r4",
+      "relationship": "TASK-FIT",
+      "area": "tasks",
+      "scored": true,
+      "field": "tasks",
+      "fieldKey": "tasks:r4",
+      "label": "Week 4 tasks",
+      "text": "- Problem set on expressions",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r4",
+          "label": "Week 4 content",
+          "text": "Operators and expressions: arithmetic, comparison and logical operators, operator precedence"
+        },
+        {
+          "field": "activities",
+          "key": "activities:r4",
+          "label": "Week 4 activities",
+          "text": "- Worked examples on the board - Option: self-paced practice set with instant feedback"
+        }
+      ],
+      "parents": [
+        "content:r4",
+        "activities:r4"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "content": "yes",
+        "activities": "yes"
+      },
+      "failedItems": [],
+      "quote": "Problem set on expressions",
+      "explanation": "A problem set on expressions assesses the week's operators content and follows from the practice the students did.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "TASK-ILO|tasks:r4",
+      "relationship": "TASK-ILO",
+      "area": "tasks",
+      "scored": false,
+      "field": "tasks",
+      "fieldKey": "tasks:r4",
+      "label": "Week 4 tasks",
+      "text": "- Problem set on expressions",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i4",
+          "label": "Week 4 ILO 1",
+          "text": "Evaluate Python expressions that combine arithmetic, comparison and logical operators."
+        }
+      ],
+      "parents": [
+        "ilo:i4"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "measures": "yes"
+      },
+      "failedItems": [],
+      "quote": "Problem set on expressions",
+      "explanation": "Solving expression problems shows whether students can evaluate expressions combining the operators.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "VALUE-ILO|values:r4",
+      "relationship": "VALUE-ILO",
+      "area": "values",
+      "scored": true,
+      "field": "values",
+      "fieldKey": "values:r4",
+      "label": "Week 4 values",
+      "text": "Courage",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i4",
+          "label": "Week 4 ILO 1",
+          "text": "Evaluate Python expressions that combine arithmetic, comparison and logical operators."
+        }
+      ],
+      "parents": [
+        "ilo:i4"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "fits": "yes"
+      },
+      "failedItems": [],
+      "quote": "Courage",
+      "explanation": "Courage can be practised by attempting and committing to answers on tricky expressions and precedence, accepting possible mistakes and learning from them.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-TITLE|content:r5",
+      "relationship": "CONTENT-TITLE",
+      "area": "content",
+      "scored": true,
+      "field": "content",
+      "fieldKey": "content:r5",
+      "label": "Week 5 content",
+      "text": "Conditional statements: if, elif and else; nested conditions",
+      "to": [
+        {
+          "field": "courseTitle",
+          "key": "course",
+          "label": "Course title",
+          "text": "SYN 101 Introduction to Python Programming"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "subject": "yes"
+      },
+      "failedItems": [],
+      "quote": "Conditional statements: if, elif and else; nested conditions",
+      "explanation": "Conditional statements are a core part of Python programming, the subject of the course.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-SEQUENCE|content:r5",
+      "relationship": "CONTENT-SEQUENCE",
+      "area": "content",
+      "scored": false,
+      "field": "content",
+      "fieldKey": "content:r5",
+      "label": "Week 5 content",
+      "text": "Conditional statements: if, elif and else; nested conditions",
+      "to": [
+        {
+          "field": "plan",
+          "key": "plan",
+          "label": "All weekly topics, in order",
+          "text": "Week 2: Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program\nWeek 3: Variables and data types: integers, floats, strings, booleans and type conversion\nWeek 4: Operators and expressions: arithmetic, comparison and logical operators, operator precedence\nWeek 5: Conditional statements: if, elif and else; nested conditions\nWeek 7: Loops: while and for loops, range, break and continue\nWeek 8: Functions: defining functions, parameters, return values and scope\nWeek 9: Lists and tuples: indexing, slicing, list methods and iteration\nWeek 10: Dictionaries and sets: keys and values, membership, set operations\nWeek 11: Strings: string methods, formatting and text processing\nWeek 13: File handling: reading and writing text and CSV files\nWeek 14: Exceptions: try, except, finally; raising and handling errors\nWeek 15: Modules and packages: importing modules, the standard library, creating a module\nWeek 16: Introduction to object-oriented programming: classes, objects, attributes and methods\nWeek 17: Final project: a small Python application that handles user data responsibly"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "order": "yes",
+        "distinct": "yes"
+      },
+      "failedItems": [],
+      "quote": "if, elif and else; nested conditions",
+      "explanation": "Conditionals use the comparison and logical operators from Week 4 and introduce new constructs.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CONTENT|ilo:i5",
+      "relationship": "ILO-CONTENT",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i5",
+      "label": "Week 5 ILO 1",
+      "text": "Design a normalized relational database schema for a library system.",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r5",
+          "label": "Week 5 content",
+          "text": "Conditional statements: if, elif and else; nested conditions"
+        }
+      ],
+      "parents": [
+        "content:r5"
+      ],
+      "verdict": "NOT_ALIGNED",
+      "items": {
+        "topic": "no",
+        "within": "no"
+      },
+      "failedItems": [
+        "topic",
+        "within"
+      ],
+      "quote": "Design a normalized relational database schema for a library system.",
+      "explanation": "The ILO is about database schema design, which does not appear in the Week 5 content on conditional statements.",
+      "reused": false,
+      "reason": null,
+      "status": "failing"
+    },
+    {
+      "id": "ILO-CLO|ilo:i5|clo:c1",
+      "relationship": "ILO-CLO",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i5",
+      "label": "Week 5 ILO 1",
+      "text": "Design a normalized relational database schema for a library system.",
+      "to": [
+        {
+          "field": "clo",
+          "key": "clo:c1",
+          "label": "CLO 1 (Introductory)",
+          "text": "Explain the basic concepts of Python programming, including data types, operators and control structures."
+        }
+      ],
+      "parents": [
+        "clo:c1"
+      ],
+      "verdict": "NOT_ALIGNED",
+      "items": {
+        "step": "no",
+        "level": "no",
+        "student": "yes"
+      },
+      "failedItems": [
+        "step",
+        "level"
+      ],
+      "quote": "Design a normalized relational database schema for a library system.",
+      "explanation": "Database schema design does not build the explanation of Python basics asked by CLO 1. Design is the create level, above CLO 1's remember/understand levels. The ILO is written as a student action.",
+      "reused": false,
+      "reason": null,
+      "status": "failing"
+    },
+    {
+      "id": "ACTIVITY-FIT|activities:r5",
+      "relationship": "ACTIVITY-FIT",
+      "area": "activities",
+      "scored": true,
+      "field": "activities",
+      "fieldKey": "activities:r5",
+      "label": "Week 5 activities",
+      "text": "- Live coding of decision programs - Option: flowchart-first exercise for visual learners",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r5",
+          "label": "Week 5 content",
+          "text": "Conditional statements: if, elif and else; nested conditions"
+        },
+        {
+          "field": "ilo",
+          "key": "ilo:i5",
+          "label": "Week 5 ILO 1",
+          "text": "Design a normalized relational database schema for a library system."
+        }
+      ],
+      "parents": [
+        "content:r5",
+        "ilo:i5"
+      ],
+      "verdict": "PARTIALLY_ALIGNED",
+      "items": {
+        "content": "yes",
+        "ilo": "no",
+        "diverse": "yes"
+      },
+      "failedItems": [
+        "ilo"
+      ],
+      "quote": "Live coding of decision programs - Option: flowchart-first exercise for visual learners",
+      "explanation": "The activities work on conditional statements, but they do not let students practise designing a database schema. Two alternatives are offered, a live coding session and a flowchart-first exercise, but the ILO is off-topic.",
+      "reused": false,
+      "reason": null,
+      "status": "waiting"
+    },
+    {
+      "id": "TASK-FIT|tasks:r5",
+      "relationship": "TASK-FIT",
+      "area": "tasks",
+      "scored": true,
+      "field": "tasks",
+      "fieldKey": "tasks:r5",
+      "label": "Week 5 tasks",
+      "text": "- Lab exercise: grade calculator with conditions",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r5",
+          "label": "Week 5 content",
+          "text": "Conditional statements: if, elif and else; nested conditions"
+        },
+        {
+          "field": "activities",
+          "key": "activities:r5",
+          "label": "Week 5 activities",
+          "text": "- Live coding of decision programs - Option: flowchart-first exercise for visual learners"
+        }
+      ],
+      "parents": [
+        "content:r5",
+        "activities:r5"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "content": "yes",
+        "activities": "yes"
+      },
+      "failedItems": [],
+      "quote": "Lab exercise: grade calculator with conditions",
+      "explanation": "The grade calculator assesses conditional statements and follows from the live coding of decision programs.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "TASK-ILO|tasks:r5",
+      "relationship": "TASK-ILO",
+      "area": "tasks",
+      "scored": false,
+      "field": "tasks",
+      "fieldKey": "tasks:r5",
+      "label": "Week 5 tasks",
+      "text": "- Lab exercise: grade calculator with conditions",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i5",
+          "label": "Week 5 ILO 1",
+          "text": "Design a normalized relational database schema for a library system."
+        }
+      ],
+      "parents": [
+        "ilo:i5"
+      ],
+      "verdict": "PARTIALLY_ALIGNED",
+      "items": {
+        "measures": "no"
+      },
+      "failedItems": [
+        "measures"
+      ],
+      "quote": "Lab exercise: grade calculator with conditions",
+      "explanation": "A grade calculator lab does not show whether students can design a normalized database schema.",
+      "reused": false,
+      "reason": null,
+      "status": "waiting"
+    },
+    {
+      "id": "VALUE-ILO|values:r5",
+      "relationship": "VALUE-ILO",
+      "area": "values",
+      "scored": true,
+      "field": "values",
+      "fieldKey": "values:r5",
+      "label": "Week 5 values",
+      "text": "Interiority",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i5",
+          "label": "Week 5 ILO 1",
+          "text": "Design a normalized relational database schema for a library system."
+        }
+      ],
+      "parents": [
+        "ilo:i5"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "fits": "yes"
+      },
+      "failedItems": [],
+      "quote": "Interiority",
+      "explanation": "Interiority can be practised through reflective, careful design work such as designing a schema, so the value fits the ILO.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "VALUE-ILO|values:r6",
+      "relationship": "VALUE-ILO",
+      "area": "values",
+      "scored": true,
+      "field": "values",
+      "fieldKey": "values:r6",
+      "label": "Week 6 values",
+      "text": "Interiority",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r6",
+          "label": "Week 6 content (examination week)",
+          "text": "PRELIM EXAMINATION"
+        }
+      ],
+      "parents": [
+        "content:r6"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "fits": "yes"
+      },
+      "failedItems": [],
+      "quote": "PRELIM EXAMINATION",
+      "explanation": "In an examination week, Interiority can be practised through honest self-assessment and integrity during the exam, so the named value fits.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-TITLE|content:r7",
+      "relationship": "CONTENT-TITLE",
+      "area": "content",
+      "scored": true,
+      "field": "content",
+      "fieldKey": "content:r7",
+      "label": "Week 7 content",
+      "text": "Loops: while and for loops, range, break and continue",
+      "to": [
+        {
+          "field": "courseTitle",
+          "key": "course",
+          "label": "Course title",
+          "text": "SYN 101 Introduction to Python Programming"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "subject": "yes"
+      },
+      "failedItems": [],
+      "quote": "Loops: while and for loops, range, break and continue",
+      "explanation": "Loops are a core part of Python programming, the subject of the course title.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-SEQUENCE|content:r7",
+      "relationship": "CONTENT-SEQUENCE",
+      "area": "content",
+      "scored": false,
+      "field": "content",
+      "fieldKey": "content:r7",
+      "label": "Week 7 content",
+      "text": "Loops: while and for loops, range, break and continue",
+      "to": [
+        {
+          "field": "plan",
+          "key": "plan",
+          "label": "All weekly topics, in order",
+          "text": "Week 2: Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program\nWeek 3: Variables and data types: integers, floats, strings, booleans and type conversion\nWeek 4: Operators and expressions: arithmetic, comparison and logical operators, operator precedence\nWeek 5: Conditional statements: if, elif and else; nested conditions\nWeek 7: Loops: while and for loops, range, break and continue\nWeek 8: Functions: defining functions, parameters, return values and scope\nWeek 9: Lists and tuples: indexing, slicing, list methods and iteration\nWeek 10: Dictionaries and sets: keys and values, membership, set operations\nWeek 11: Strings: string methods, formatting and text processing\nWeek 13: File handling: reading and writing text and CSV files\nWeek 14: Exceptions: try, except, finally; raising and handling errors\nWeek 15: Modules and packages: importing modules, the standard library, creating a module\nWeek 16: Introduction to object-oriented programming: classes, objects, attributes and methods\nWeek 17: Final project: a small Python application that handles user data responsibly"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "order": "yes",
+        "distinct": "yes"
+      },
+      "failedItems": [],
+      "quote": "while and for loops, range, break and continue",
+      "explanation": "Loops rely on conditions from Week 5, and no earlier week covers them.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CONTENT|ilo:i7",
+      "relationship": "ILO-CONTENT",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i7",
+      "label": "Week 7 ILO 1",
+      "text": "Write Python loops that repeat tasks and stop on a condition.",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r7",
+          "label": "Week 7 content",
+          "text": "Loops: while and for loops, range, break and continue"
+        }
+      ],
+      "parents": [
+        "content:r7"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "topic": "yes",
+        "within": "yes"
+      },
+      "failedItems": [],
+      "quote": "Write Python loops that repeat tasks and stop on a condition.",
+      "explanation": "The ILO names loops and stopping on a condition (break), both listed in the week's content, and adds no other topic.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CLO|ilo:i7|clo:c2",
+      "relationship": "ILO-CLO",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i7",
+      "label": "Week 7 ILO 1",
+      "text": "Write Python loops that repeat tasks and stop on a condition.",
+      "to": [
+        {
+          "field": "clo",
+          "key": "clo:c2",
+          "label": "CLO 2 (Enabling)",
+          "text": "Analyze programming problems and evaluate alternative Python solutions that use functions and data structures."
+        }
+      ],
+      "parents": [
+        "clo:c2"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "step": "yes",
+        "level": "yes",
+        "student": "yes"
+      },
+      "failedItems": [],
+      "quote": "Analyze programming problems and evaluate alternative Python solutions that use functions and data structures.",
+      "explanation": "Writing loops is a skill step toward analyzing and solving problems in Python. Its level (apply) is below the CLO's analyze/evaluate level, and the student is the actor.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ACTIVITY-FIT|activities:r7",
+      "relationship": "ACTIVITY-FIT",
+      "area": "activities",
+      "scored": true,
+      "field": "activities",
+      "fieldKey": "activities:r7",
+      "label": "Week 7 activities",
+      "text": "- Trace-the-loop exercises - Option: pair programming on loop puzzles",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r7",
+          "label": "Week 7 content",
+          "text": "Loops: while and for loops, range, break and continue"
+        },
+        {
+          "field": "ilo",
+          "key": "ilo:i7",
+          "label": "Week 7 ILO 1",
+          "text": "Write Python loops that repeat tasks and stop on a condition."
+        }
+      ],
+      "parents": [
+        "content:r7",
+        "ilo:i7"
+      ],
+      "verdict": "PARTIALLY_ALIGNED",
+      "items": {
+        "content": "yes",
+        "ilo": "no",
+        "diverse": "no"
+      },
+      "failedItems": [
+        "ilo",
+        "diverse"
+      ],
+      "quote": "Trace-the-loop exercises - Option: pair programming on loop puzzles",
+      "explanation": "The activities work on loops. Tracing loops does not have students write loops, and pair programming is only a variant of the same work, so the options are not truly different for diverse learners. The ILO asks for writing, so only the pair programming option practises it.",
+      "reused": false,
+      "reason": null,
+      "status": "failing"
+    },
+    {
+      "id": "TASK-FIT|tasks:r7",
+      "relationship": "TASK-FIT",
+      "area": "tasks",
+      "scored": true,
+      "field": "tasks",
+      "fieldKey": "tasks:r7",
+      "label": "Week 7 tasks",
+      "text": "- Quiz on loops",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r7",
+          "label": "Week 7 content",
+          "text": "Loops: while and for loops, range, break and continue"
+        },
+        {
+          "field": "activities",
+          "key": "activities:r7",
+          "label": "Week 7 activities",
+          "text": "- Trace-the-loop exercises - Option: pair programming on loop puzzles"
+        }
+      ],
+      "parents": [
+        "content:r7",
+        "activities:r7"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "content": "yes",
+        "activities": "yes"
+      },
+      "failedItems": [],
+      "quote": "- Quiz on loops",
+      "explanation": "A quiz on loops assesses this week's content and follows from the loop tracing and puzzle activities.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "TASK-ILO|tasks:r7",
+      "relationship": "TASK-ILO",
+      "area": "tasks",
+      "scored": false,
+      "field": "tasks",
+      "fieldKey": "tasks:r7",
+      "label": "Week 7 tasks",
+      "text": "- Quiz on loops",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i7",
+          "label": "Week 7 ILO 1",
+          "text": "Write Python loops that repeat tasks and stop on a condition."
+        }
+      ],
+      "parents": [
+        "ilo:i7"
+      ],
+      "verdict": "PARTIALLY_ALIGNED",
+      "items": {
+        "measures": "no"
+      },
+      "failedItems": [
+        "measures"
+      ],
+      "quote": "- Quiz on loops",
+      "explanation": "A quiz alone does not show that students can write loops that stop on a condition; a coding task is missing.",
+      "reused": false,
+      "reason": null,
+      "status": "advice"
+    },
+    {
+      "id": "VALUE-ILO|values:r7",
+      "relationship": "VALUE-ILO",
+      "area": "values",
+      "scored": true,
+      "field": "values",
+      "fieldKey": "values:r7",
+      "label": "Week 7 values",
+      "text": "Courage",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i7",
+          "label": "Week 7 ILO 1",
+          "text": "Write Python loops that repeat tasks and stop on a condition."
+        }
+      ],
+      "parents": [
+        "ilo:i7"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "fits": "yes"
+      },
+      "failedItems": [],
+      "quote": "Courage",
+      "explanation": "Courage can be practised by persevering through debugging and tackling tricky loop problems such as infinite loops.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-TITLE|content:r8",
+      "relationship": "CONTENT-TITLE",
+      "area": "content",
+      "scored": true,
+      "field": "content",
+      "fieldKey": "content:r8",
+      "label": "Week 8 content",
+      "text": "Functions: defining functions, parameters, return values and scope",
+      "to": [
+        {
+          "field": "courseTitle",
+          "key": "course",
+          "label": "Course title",
+          "text": "SYN 101 Introduction to Python Programming"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "subject": "yes"
+      },
+      "failedItems": [],
+      "quote": "Functions: defining functions, parameters, return values and scope",
+      "explanation": "Functions are a core part of Python programming, the subject named in the course title.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-SEQUENCE|content:r8",
+      "relationship": "CONTENT-SEQUENCE",
+      "area": "content",
+      "scored": false,
+      "field": "content",
+      "fieldKey": "content:r8",
+      "label": "Week 8 content",
+      "text": "Functions: defining functions, parameters, return values and scope",
+      "to": [
+        {
+          "field": "plan",
+          "key": "plan",
+          "label": "All weekly topics, in order",
+          "text": "Week 2: Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program\nWeek 3: Variables and data types: integers, floats, strings, booleans and type conversion\nWeek 4: Operators and expressions: arithmetic, comparison and logical operators, operator precedence\nWeek 5: Conditional statements: if, elif and else; nested conditions\nWeek 7: Loops: while and for loops, range, break and continue\nWeek 8: Functions: defining functions, parameters, return values and scope\nWeek 9: Lists and tuples: indexing, slicing, list methods and iteration\nWeek 10: Dictionaries and sets: keys and values, membership, set operations\nWeek 11: Strings: string methods, formatting and text processing\nWeek 13: File handling: reading and writing text and CSV files\nWeek 14: Exceptions: try, except, finally; raising and handling errors\nWeek 15: Modules and packages: importing modules, the standard library, creating a module\nWeek 16: Introduction to object-oriented programming: classes, objects, attributes and methods\nWeek 17: Final project: a small Python application that handles user data responsibly"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "order": "yes",
+        "distinct": "yes"
+      },
+      "failedItems": [],
+      "quote": "defining functions, parameters, return values and scope",
+      "explanation": "Functions can be taught with the earlier control structures, and they are new content.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CONTENT|ilo:i8",
+      "relationship": "ILO-CONTENT",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i8",
+      "label": "Week 8 ILO 1",
+      "text": "Analyze a problem and decompose it into Python functions with parameters and return values.",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r8",
+          "label": "Week 8 content",
+          "text": "Functions: defining functions, parameters, return values and scope"
+        }
+      ],
+      "parents": [
+        "content:r8"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "topic": "yes",
+        "within": "yes"
+      },
+      "failedItems": [],
+      "quote": "decompose it into Python functions with parameters and return values",
+      "explanation": "The ILO names functions, parameters and return values, all listed in the week's content, and adds no topic the week does not list.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CLO|ilo:i8|clo:c2",
+      "relationship": "ILO-CLO",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i8",
+      "label": "Week 8 ILO 1",
+      "text": "Analyze a problem and decompose it into Python functions with parameters and return values.",
+      "to": [
+        {
+          "field": "clo",
+          "key": "clo:c2",
+          "label": "CLO 2 (Enabling)",
+          "text": "Analyze programming problems and evaluate alternative Python solutions that use functions and data structures."
+        }
+      ],
+      "parents": [
+        "clo:c2"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "step": "yes",
+        "level": "yes",
+        "student": "yes"
+      },
+      "failedItems": [],
+      "quote": "Analyze a problem and decompose it into Python functions",
+      "explanation": "Analyzing problems and building function-based solutions is a step toward CLO 2, whose Bloom levels include analyze. The ILO is a student action.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ACTIVITY-FIT|activities:r8",
+      "relationship": "ACTIVITY-FIT",
+      "area": "activities",
+      "scored": true,
+      "field": "activities",
+      "fieldKey": "activities:r8",
+      "label": "Week 8 activities",
+      "text": "- Lecture on functions",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r8",
+          "label": "Week 8 content",
+          "text": "Functions: defining functions, parameters, return values and scope"
+        },
+        {
+          "field": "ilo",
+          "key": "ilo:i8",
+          "label": "Week 8 ILO 1",
+          "text": "Analyze a problem and decompose it into Python functions with parameters and return values."
+        }
+      ],
+      "parents": [
+        "content:r8",
+        "ilo:i8"
+      ],
+      "verdict": "PARTIALLY_ALIGNED",
+      "items": {
+        "content": "yes",
+        "ilo": "no",
+        "diverse": "no"
+      },
+      "failedItems": [
+        "ilo",
+        "diverse"
+      ],
+      "quote": "- Lecture on functions",
+      "explanation": "A lecture on functions covers the week's content, but students only listen and do not analyze or decompose problems. Only one option is offered, so there are no alternatives.",
+      "reused": false,
+      "reason": null,
+      "status": "failing"
+    },
+    {
+      "id": "TASK-FIT|tasks:r8",
+      "relationship": "TASK-FIT",
+      "area": "tasks",
+      "scored": true,
+      "field": "tasks",
+      "fieldKey": "tasks:r8",
+      "label": "Week 8 tasks",
+      "text": "- Lab exercise: refactor a program into functions",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r8",
+          "label": "Week 8 content",
+          "text": "Functions: defining functions, parameters, return values and scope"
+        },
+        {
+          "field": "activities",
+          "key": "activities:r8",
+          "label": "Week 8 activities",
+          "text": "- Lecture on functions"
+        }
+      ],
+      "parents": [
+        "content:r8",
+        "activities:r8"
+      ],
+      "verdict": "PARTIALLY_ALIGNED",
+      "items": {
+        "content": "yes",
+        "activities": "no"
+      },
+      "failedItems": [
+        "activities"
+      ],
+      "quote": "Lab exercise: refactor a program into functions",
+      "explanation": "The lab task assesses functions, the week's content. The activity was only a lecture, so students did not practise refactoring before the task.",
+      "reused": false,
+      "reason": null,
+      "status": "waiting"
+    },
+    {
+      "id": "TASK-ILO|tasks:r8",
+      "relationship": "TASK-ILO",
+      "area": "tasks",
+      "scored": false,
+      "field": "tasks",
+      "fieldKey": "tasks:r8",
+      "label": "Week 8 tasks",
+      "text": "- Lab exercise: refactor a program into functions",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i8",
+          "label": "Week 8 ILO 1",
+          "text": "Analyze a problem and decompose it into Python functions with parameters and return values."
+        }
+      ],
+      "parents": [
+        "ilo:i8"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "measures": "yes"
+      },
+      "failedItems": [],
+      "quote": "Lab exercise: refactor a program into functions",
+      "explanation": "Refactoring a program into functions shows whether students can decompose a problem into functions, which is what the ILO asks.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "VALUE-ILO|values:r8",
+      "relationship": "VALUE-ILO",
+      "area": "values",
+      "scored": true,
+      "field": "values",
+      "fieldKey": "values:r8",
+      "label": "Week 8 values",
+      "text": "Humility",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i8",
+          "label": "Week 8 ILO 1",
+          "text": "Analyze a problem and decompose it into Python functions with parameters and return values."
+        }
+      ],
+      "parents": [
+        "ilo:i8"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "fits": "yes"
+      },
+      "failedItems": [],
+      "quote": "Humility",
+      "explanation": "Humility can be practised when students accept feedback on their decomposition and consider alternative designs while analyzing and decomposing a problem.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-TITLE|content:r9",
+      "relationship": "CONTENT-TITLE",
+      "area": "content",
+      "scored": true,
+      "field": "content",
+      "fieldKey": "content:r9",
+      "label": "Week 9 content",
+      "text": "Lists and tuples: indexing, slicing, list methods and iteration",
+      "to": [
+        {
+          "field": "courseTitle",
+          "key": "course",
+          "label": "Course title",
+          "text": "SYN 101 Introduction to Python Programming"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "subject": "yes"
+      },
+      "failedItems": [],
+      "quote": "Lists and tuples: indexing, slicing, list methods and iteration",
+      "explanation": "Lists and tuples are core Python data structures and part of an introduction to Python programming.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-SEQUENCE|content:r9",
+      "relationship": "CONTENT-SEQUENCE",
+      "area": "content",
+      "scored": false,
+      "field": "content",
+      "fieldKey": "content:r9",
+      "label": "Week 9 content",
+      "text": "Lists and tuples: indexing, slicing, list methods and iteration",
+      "to": [
+        {
+          "field": "plan",
+          "key": "plan",
+          "label": "All weekly topics, in order",
+          "text": "Week 2: Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program\nWeek 3: Variables and data types: integers, floats, strings, booleans and type conversion\nWeek 4: Operators and expressions: arithmetic, comparison and logical operators, operator precedence\nWeek 5: Conditional statements: if, elif and else; nested conditions\nWeek 7: Loops: while and for loops, range, break and continue\nWeek 8: Functions: defining functions, parameters, return values and scope\nWeek 9: Lists and tuples: indexing, slicing, list methods and iteration\nWeek 10: Dictionaries and sets: keys and values, membership, set operations\nWeek 11: Strings: string methods, formatting and text processing\nWeek 13: File handling: reading and writing text and CSV files\nWeek 14: Exceptions: try, except, finally; raising and handling errors\nWeek 15: Modules and packages: importing modules, the standard library, creating a module\nWeek 16: Introduction to object-oriented programming: classes, objects, attributes and methods\nWeek 17: Final project: a small Python application that handles user data responsibly"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "order": "yes",
+        "distinct": "yes"
+      },
+      "failedItems": [],
+      "quote": "indexing, slicing, list methods and iteration",
+      "explanation": "Iteration over lists uses the Week 7 loops, and lists and tuples are new.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CONTENT|ilo:i9",
+      "relationship": "ILO-CONTENT",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i9",
+      "label": "Week 9 ILO 1",
+      "text": "Evaluate when to use a list or a tuple to solve a programming problem.",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r9",
+          "label": "Week 9 content",
+          "text": "Lists and tuples: indexing, slicing, list methods and iteration"
+        }
+      ],
+      "parents": [
+        "content:r9"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "topic": "yes",
+        "within": "yes"
+      },
+      "failedItems": [],
+      "quote": "Evaluate when to use a list or a tuple to solve a programming problem.",
+      "explanation": "The ILO names lists and tuples, both listed in the week's content, and adds no other topic.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CLO|ilo:i9|clo:c2",
+      "relationship": "ILO-CLO",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i9",
+      "label": "Week 9 ILO 1",
+      "text": "Evaluate when to use a list or a tuple to solve a programming problem.",
+      "to": [
+        {
+          "field": "clo",
+          "key": "clo:c2",
+          "label": "CLO 2 (Enabling)",
+          "text": "Analyze programming problems and evaluate alternative Python solutions that use functions and data structures."
+        }
+      ],
+      "parents": [
+        "clo:c2"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "step": "yes",
+        "level": "yes",
+        "student": "yes"
+      },
+      "failedItems": [],
+      "quote": "Evaluate when to use a list or a tuple to solve a programming problem.",
+      "explanation": "Choosing between data structures builds toward evaluating alternative Python solutions that use data structures. Evaluate is within CLO 2's levels (apply, analyze, evaluate), and the student is the actor.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ACTIVITY-FIT|activities:r9",
+      "relationship": "ACTIVITY-FIT",
+      "area": "activities",
+      "scored": true,
+      "field": "activities",
+      "fieldKey": "activities:r9",
+      "label": "Week 9 activities",
+      "text": "- Live coding with lists and tuples - Option: card-sorting activity on choosing data structures",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r9",
+          "label": "Week 9 content",
+          "text": "Lists and tuples: indexing, slicing, list methods and iteration"
+        },
+        {
+          "field": "ilo",
+          "key": "ilo:i9",
+          "label": "Week 9 ILO 1",
+          "text": "Evaluate when to use a list or a tuple to solve a programming problem."
+        }
+      ],
+      "parents": [
+        "content:r9",
+        "ilo:i9"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "content": "yes",
+        "ilo": "yes",
+        "diverse": "yes"
+      },
+      "failedItems": [],
+      "quote": "Option: card-sorting activity on choosing data structures",
+      "explanation": "Live coding works on lists and tuples, and the card-sorting option practises choosing between structures, which is what the ILO asks. Two alternatives are offered, but they suit different learners.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "TASK-FIT|tasks:r9",
+      "relationship": "TASK-FIT",
+      "area": "tasks",
+      "scored": true,
+      "field": "tasks",
+      "fieldKey": "tasks:r9",
+      "label": "Week 9 tasks",
+      "text": "- Problem set on lists and tuples",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r9",
+          "label": "Week 9 content",
+          "text": "Lists and tuples: indexing, slicing, list methods and iteration"
+        },
+        {
+          "field": "activities",
+          "key": "activities:r9",
+          "label": "Week 9 activities",
+          "text": "- Live coding with lists and tuples - Option: card-sorting activity on choosing data structures"
+        }
+      ],
+      "parents": [
+        "content:r9",
+        "activities:r9"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "content": "yes",
+        "activities": "yes"
+      },
+      "failedItems": [],
+      "quote": "Problem set on lists and tuples",
+      "explanation": "The problem set assesses the week's content and follows from the live coding practice on lists and tuples.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "TASK-ILO|tasks:r9",
+      "relationship": "TASK-ILO",
+      "area": "tasks",
+      "scored": false,
+      "field": "tasks",
+      "fieldKey": "tasks:r9",
+      "label": "Week 9 tasks",
+      "text": "- Problem set on lists and tuples",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i9",
+          "label": "Week 9 ILO 1",
+          "text": "Evaluate when to use a list or a tuple to solve a programming problem."
+        }
+      ],
+      "parents": [
+        "ilo:i9"
+      ],
+      "verdict": "PARTIALLY_ALIGNED",
+      "items": {
+        "measures": "no"
+      },
+      "failedItems": [
+        "measures"
+      ],
+      "quote": "Problem set on lists and tuples",
+      "explanation": "The task does not say it requires students to judge or justify when to use a list or a tuple, so it may only test usage, not the evaluation the ILO asks for.",
+      "reused": false,
+      "reason": null,
+      "status": "advice"
+    },
+    {
+      "id": "VALUE-ILO|values:r9",
+      "relationship": "VALUE-ILO",
+      "area": "values",
+      "scored": true,
+      "field": "values",
+      "fieldKey": "values:r9",
+      "label": "Week 9 values",
+      "text": "Compassion",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i9",
+          "label": "Week 9 ILO 1",
+          "text": "Evaluate when to use a list or a tuple to solve a programming problem."
+        }
+      ],
+      "parents": [
+        "ilo:i9"
+      ],
+      "verdict": "NOT_ALIGNED",
+      "items": {
+        "fits": "no"
+      },
+      "failedItems": [
+        "fits"
+      ],
+      "quote": "Compassion",
+      "explanation": "Compassion has no clear link to choosing between lists and tuples in a technical coding task, so this value cannot be practised through the ILO or its activities.",
+      "reused": false,
+      "reason": null,
+      "status": "failing"
+    },
+    {
+      "id": "CONTENT-TITLE|content:r10",
+      "relationship": "CONTENT-TITLE",
+      "area": "content",
+      "scored": true,
+      "field": "content",
+      "fieldKey": "content:r10",
+      "label": "Week 10 content",
+      "text": "Dictionaries and sets: keys and values, membership, set operations",
+      "to": [
+        {
+          "field": "courseTitle",
+          "key": "course",
+          "label": "Course title",
+          "text": "SYN 101 Introduction to Python Programming"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "subject": "yes"
+      },
+      "failedItems": [],
+      "quote": "Dictionaries and sets: keys and values, membership, set operations",
+      "explanation": "Dictionaries and sets are core Python data structures and part of an introduction to Python programming.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-SEQUENCE|content:r10",
+      "relationship": "CONTENT-SEQUENCE",
+      "area": "content",
+      "scored": false,
+      "field": "content",
+      "fieldKey": "content:r10",
+      "label": "Week 10 content",
+      "text": "Dictionaries and sets: keys and values, membership, set operations",
+      "to": [
+        {
+          "field": "plan",
+          "key": "plan",
+          "label": "All weekly topics, in order",
+          "text": "Week 2: Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program\nWeek 3: Variables and data types: integers, floats, strings, booleans and type conversion\nWeek 4: Operators and expressions: arithmetic, comparison and logical operators, operator precedence\nWeek 5: Conditional statements: if, elif and else; nested conditions\nWeek 7: Loops: while and for loops, range, break and continue\nWeek 8: Functions: defining functions, parameters, return values and scope\nWeek 9: Lists and tuples: indexing, slicing, list methods and iteration\nWeek 10: Dictionaries and sets: keys and values, membership, set operations\nWeek 11: Strings: string methods, formatting and text processing\nWeek 13: File handling: reading and writing text and CSV files\nWeek 14: Exceptions: try, except, finally; raising and handling errors\nWeek 15: Modules and packages: importing modules, the standard library, creating a module\nWeek 16: Introduction to object-oriented programming: classes, objects, attributes and methods\nWeek 17: Final project: a small Python application that handles user data responsibly"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "order": "yes",
+        "distinct": "yes"
+      },
+      "failedItems": [],
+      "quote": "keys and values, membership, set operations",
+      "explanation": "Dictionaries and sets need only earlier topics and are new structures.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CONTENT|ilo:i10",
+      "relationship": "ILO-CONTENT",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i10",
+      "label": "Week 10 ILO 1",
+      "text": "Analyze problems that need lookups and solve them with dictionaries and sets.",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r10",
+          "label": "Week 10 content",
+          "text": "Dictionaries and sets: keys and values, membership, set operations"
+        }
+      ],
+      "parents": [
+        "content:r10"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "topic": "yes",
+        "within": "yes"
+      },
+      "failedItems": [],
+      "quote": "solve them with dictionaries and sets",
+      "explanation": "The ILO names dictionaries and sets, both listed in the week's content, and adds no other topic.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CLO|ilo:i10|clo:c2",
+      "relationship": "ILO-CLO",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i10",
+      "label": "Week 10 ILO 1",
+      "text": "Analyze problems that need lookups and solve them with dictionaries and sets.",
+      "to": [
+        {
+          "field": "clo",
+          "key": "clo:c2",
+          "label": "CLO 2 (Enabling)",
+          "text": "Analyze programming problems and evaluate alternative Python solutions that use functions and data structures."
+        }
+      ],
+      "parents": [
+        "clo:c2"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "step": "yes",
+        "level": "yes",
+        "student": "yes"
+      },
+      "failedItems": [],
+      "quote": "Analyze problems that need lookups and solve them with dictionaries and sets.",
+      "explanation": "Analyzing problems and solving them with data structures builds CLO 2. Analyze and apply are within the CLO's levels (apply, analyze, evaluate), and the student is the actor.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ACTIVITY-FIT|activities:r10",
+      "relationship": "ACTIVITY-FIT",
+      "area": "activities",
+      "scored": true,
+      "field": "activities",
+      "fieldKey": "activities:r10",
+      "label": "Week 10 activities",
+      "text": "- Worked examples on word counting - Option: peer teaching in small groups",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r10",
+          "label": "Week 10 content",
+          "text": "Dictionaries and sets: keys and values, membership, set operations"
+        },
+        {
+          "field": "ilo",
+          "key": "ilo:i10",
+          "label": "Week 10 ILO 1",
+          "text": "Analyze problems that need lookups and solve them with dictionaries and sets."
+        }
+      ],
+      "parents": [
+        "content:r10",
+        "ilo:i10"
+      ],
+      "verdict": "PARTIALLY_ALIGNED",
+      "items": {
+        "content": "yes",
+        "ilo": "no",
+        "diverse": "no"
+      },
+      "failedItems": [
+        "ilo",
+        "diverse"
+      ],
+      "quote": "Worked examples on word counting - Option: peer teaching in small groups",
+      "explanation": "Word counting uses dictionaries, so it fits the content. However, worked examples and peer teaching do not clearly have students analyze problems and solve them themselves, and the two options are not clearly different alternatives that each fit the ILO.",
+      "reused": false,
+      "reason": null,
+      "status": "failing"
+    },
+    {
+      "id": "TASK-FIT|tasks:r10",
+      "relationship": "TASK-FIT",
+      "area": "tasks",
+      "scored": true,
+      "field": "tasks",
+      "fieldKey": "tasks:r10",
+      "label": "Week 10 tasks",
+      "text": "- Lab exercise: word-frequency counter",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r10",
+          "label": "Week 10 content",
+          "text": "Dictionaries and sets: keys and values, membership, set operations"
+        },
+        {
+          "field": "activities",
+          "key": "activities:r10",
+          "label": "Week 10 activities",
+          "text": "- Worked examples on word counting - Option: peer teaching in small groups"
+        }
+      ],
+      "parents": [
+        "content:r10",
+        "activities:r10"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "content": "yes",
+        "activities": "yes"
+      },
+      "failedItems": [],
+      "quote": "Lab exercise: word-frequency counter",
+      "explanation": "A word-frequency counter uses dictionaries and follows from the word-counting examples in the activities.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "TASK-ILO|tasks:r10",
+      "relationship": "TASK-ILO",
+      "area": "tasks",
+      "scored": false,
+      "field": "tasks",
+      "fieldKey": "tasks:r10",
+      "label": "Week 10 tasks",
+      "text": "- Lab exercise: word-frequency counter",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i10",
+          "label": "Week 10 ILO 1",
+          "text": "Analyze problems that need lookups and solve them with dictionaries and sets."
+        }
+      ],
+      "parents": [
+        "ilo:i10"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "measures": "yes"
+      },
+      "failedItems": [],
+      "quote": "Lab exercise: word-frequency counter",
+      "explanation": "Building a word-frequency counter shows whether students can solve a lookup problem with dictionaries.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-TITLE|content:r11",
+      "relationship": "CONTENT-TITLE",
+      "area": "content",
+      "scored": true,
+      "field": "content",
+      "fieldKey": "content:r11",
+      "label": "Week 11 content",
+      "text": "Strings: string methods, formatting and text processing",
+      "to": [
+        {
+          "field": "courseTitle",
+          "key": "course",
+          "label": "Course title",
+          "text": "SYN 101 Introduction to Python Programming"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "subject": "yes"
+      },
+      "failedItems": [],
+      "quote": "Strings: string methods, formatting and text processing",
+      "explanation": "String handling is a core part of introductory Python programming.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-SEQUENCE|content:r11",
+      "relationship": "CONTENT-SEQUENCE",
+      "area": "content",
+      "scored": false,
+      "field": "content",
+      "fieldKey": "content:r11",
+      "label": "Week 11 content",
+      "text": "Strings: string methods, formatting and text processing",
+      "to": [
+        {
+          "field": "plan",
+          "key": "plan",
+          "label": "All weekly topics, in order",
+          "text": "Week 2: Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program\nWeek 3: Variables and data types: integers, floats, strings, booleans and type conversion\nWeek 4: Operators and expressions: arithmetic, comparison and logical operators, operator precedence\nWeek 5: Conditional statements: if, elif and else; nested conditions\nWeek 7: Loops: while and for loops, range, break and continue\nWeek 8: Functions: defining functions, parameters, return values and scope\nWeek 9: Lists and tuples: indexing, slicing, list methods and iteration\nWeek 10: Dictionaries and sets: keys and values, membership, set operations\nWeek 11: Strings: string methods, formatting and text processing\nWeek 13: File handling: reading and writing text and CSV files\nWeek 14: Exceptions: try, except, finally; raising and handling errors\nWeek 15: Modules and packages: importing modules, the standard library, creating a module\nWeek 16: Introduction to object-oriented programming: classes, objects, attributes and methods\nWeek 17: Final project: a small Python application that handles user data responsibly"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "order": "yes",
+        "distinct": "yes"
+      },
+      "failedItems": [],
+      "quote": "string methods, formatting and text processing",
+      "explanation": "This week extends the Week 3 string type with methods and formatting, so it adds something new without needing later weeks.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CONTENT|ilo:i11",
+      "relationship": "ILO-CONTENT",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i11",
+      "label": "Week 11 ILO 1",
+      "text": "Apply string methods to clean and format text data in Python.",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r11",
+          "label": "Week 11 content",
+          "text": "Strings: string methods, formatting and text processing"
+        }
+      ],
+      "parents": [
+        "content:r11"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "topic": "yes",
+        "within": "yes"
+      },
+      "failedItems": [],
+      "quote": "Apply string methods to clean and format text data in Python.",
+      "explanation": "The ILO names string methods and formatting, and cleaning text is text processing, so it stays inside the week's content.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CLO|ilo:i11|clo:c2",
+      "relationship": "ILO-CLO",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i11",
+      "label": "Week 11 ILO 1",
+      "text": "Apply string methods to clean and format text data in Python.",
+      "to": [
+        {
+          "field": "clo",
+          "key": "clo:c2",
+          "label": "CLO 2 (Enabling)",
+          "text": "Analyze programming problems and evaluate alternative Python solutions that use functions and data structures."
+        }
+      ],
+      "parents": [
+        "clo:c2"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "step": "yes",
+        "level": "yes",
+        "student": "yes"
+      },
+      "failedItems": [],
+      "quote": "Apply string methods to clean and format text data in Python.",
+      "explanation": "Using string methods builds skill toward analyzing problems and evaluating Python solutions. Apply is below analyze/evaluate, and the student performs the action.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ACTIVITY-FIT|activities:r11",
+      "relationship": "ACTIVITY-FIT",
+      "area": "activities",
+      "scored": true,
+      "field": "activities",
+      "fieldKey": "activities:r11",
+      "label": "Week 11 activities",
+      "text": "- Live coding on text cleaning - Option: self-paced notebook on string formatting",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r11",
+          "label": "Week 11 content",
+          "text": "Strings: string methods, formatting and text processing"
+        },
+        {
+          "field": "ilo",
+          "key": "ilo:i11",
+          "label": "Week 11 ILO 1",
+          "text": "Apply string methods to clean and format text data in Python."
+        }
+      ],
+      "parents": [
+        "content:r11",
+        "ilo:i11"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "content": "yes",
+        "ilo": "yes",
+        "diverse": "yes"
+      },
+      "failedItems": [],
+      "quote": "Live coding on text cleaning - Option: self-paced notebook on string formatting",
+      "explanation": "Both activities work on string handling and let students practise applying string methods. They offer two alternatives for different learners: guided live coding and a self-paced notebook.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "TASK-FIT|tasks:r11",
+      "relationship": "TASK-FIT",
+      "area": "tasks",
+      "scored": true,
+      "field": "tasks",
+      "fieldKey": "tasks:r11",
+      "label": "Week 11 tasks",
+      "text": "- Essay on the history of the Roman Empire",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r11",
+          "label": "Week 11 content",
+          "text": "Strings: string methods, formatting and text processing"
+        },
+        {
+          "field": "activities",
+          "key": "activities:r11",
+          "label": "Week 11 activities",
+          "text": "- Live coding on text cleaning - Option: self-paced notebook on string formatting"
+        }
+      ],
+      "parents": [
+        "content:r11",
+        "activities:r11"
+      ],
+      "verdict": "NOT_ALIGNED",
+      "items": {
+        "content": "no",
+        "activities": "no"
+      },
+      "failedItems": [
+        "content",
+        "activities"
+      ],
+      "quote": "Essay on the history of the Roman Empire",
+      "explanation": "The task is about Roman history, not strings or Python, and does not follow from the coding activities.",
+      "reused": false,
+      "reason": null,
+      "status": "failing"
+    },
+    {
+      "id": "TASK-ILO|tasks:r11",
+      "relationship": "TASK-ILO",
+      "area": "tasks",
+      "scored": false,
+      "field": "tasks",
+      "fieldKey": "tasks:r11",
+      "label": "Week 11 tasks",
+      "text": "- Essay on the history of the Roman Empire",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i11",
+          "label": "Week 11 ILO 1",
+          "text": "Apply string methods to clean and format text data in Python."
+        }
+      ],
+      "parents": [
+        "ilo:i11"
+      ],
+      "verdict": "PARTIALLY_ALIGNED",
+      "items": {
+        "measures": "no"
+      },
+      "failedItems": [
+        "measures"
+      ],
+      "quote": "Essay on the history of the Roman Empire",
+      "explanation": "An essay on Roman history would not show whether students can apply string methods to clean and format text.",
+      "reused": false,
+      "reason": null,
+      "status": "advice"
+    },
+    {
+      "id": "VALUE-ILO|values:r11",
+      "relationship": "VALUE-ILO",
+      "area": "values",
+      "scored": true,
+      "field": "values",
+      "fieldKey": "values:r11",
+      "label": "Week 11 values",
+      "text": "Interiority",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i11",
+          "label": "Week 11 ILO 1",
+          "text": "Apply string methods to clean and format text data in Python."
+        }
+      ],
+      "parents": [
+        "ilo:i11"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "fits": "yes"
+      },
+      "failedItems": [],
+      "quote": "Apply string methods to clean and format text data in Python.",
+      "explanation": "Interiority can be practised through careful, reflective checking of one's own code and output while cleaning and formatting text.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "VALUE-ILO|values:r12",
+      "relationship": "VALUE-ILO",
+      "area": "values",
+      "scored": true,
+      "field": "values",
+      "fieldKey": "values:r12",
+      "label": "Week 12 values",
+      "text": "Interiority",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r12",
+          "label": "Week 12 content (examination week)",
+          "text": "MIDTERM EXAMINATION"
+        }
+      ],
+      "parents": [
+        "content:r12"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "fits": "yes"
+      },
+      "failedItems": [],
+      "quote": "MIDTERM EXAMINATION",
+      "explanation": "In an examination week the value can be practised through the examination itself; honest self-assessment and integrity during the midterm exercise interiority.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-TITLE|content:r13",
+      "relationship": "CONTENT-TITLE",
+      "area": "content",
+      "scored": true,
+      "field": "content",
+      "fieldKey": "content:r13",
+      "label": "Week 13 content",
+      "text": "File handling: reading and writing text and CSV files",
+      "to": [
+        {
+          "field": "courseTitle",
+          "key": "course",
+          "label": "Course title",
+          "text": "SYN 101 Introduction to Python Programming"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "subject": "yes"
+      },
+      "failedItems": [],
+      "quote": "File handling: reading and writing text and CSV files",
+      "explanation": "File handling in Python is part of Introduction to Python Programming.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-SEQUENCE|content:r13",
+      "relationship": "CONTENT-SEQUENCE",
+      "area": "content",
+      "scored": false,
+      "field": "content",
+      "fieldKey": "content:r13",
+      "label": "Week 13 content",
+      "text": "File handling: reading and writing text and CSV files",
+      "to": [
+        {
+          "field": "plan",
+          "key": "plan",
+          "label": "All weekly topics, in order",
+          "text": "Week 2: Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program\nWeek 3: Variables and data types: integers, floats, strings, booleans and type conversion\nWeek 4: Operators and expressions: arithmetic, comparison and logical operators, operator precedence\nWeek 5: Conditional statements: if, elif and else; nested conditions\nWeek 7: Loops: while and for loops, range, break and continue\nWeek 8: Functions: defining functions, parameters, return values and scope\nWeek 9: Lists and tuples: indexing, slicing, list methods and iteration\nWeek 10: Dictionaries and sets: keys and values, membership, set operations\nWeek 11: Strings: string methods, formatting and text processing\nWeek 13: File handling: reading and writing text and CSV files\nWeek 14: Exceptions: try, except, finally; raising and handling errors\nWeek 15: Modules and packages: importing modules, the standard library, creating a module\nWeek 16: Introduction to object-oriented programming: classes, objects, attributes and methods\nWeek 17: Final project: a small Python application that handles user data responsibly"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "order": "yes",
+        "distinct": "yes"
+      },
+      "failedItems": [],
+      "quote": "reading and writing text and CSV files",
+      "explanation": "File handling uses earlier strings and loops, and it is a new topic.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CONTENT|ilo:i13",
+      "relationship": "ILO-CONTENT",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i13",
+      "label": "Week 13 ILO 1",
+      "text": "Create Python programs that read and write text and CSV files.",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r13",
+          "label": "Week 13 content",
+          "text": "File handling: reading and writing text and CSV files"
+        }
+      ],
+      "parents": [
+        "content:r13"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "topic": "yes",
+        "within": "yes"
+      },
+      "failedItems": [],
+      "quote": "Create Python programs that read and write text and CSV files.",
+      "explanation": "The ILO names reading and writing text and CSV files, which is exactly the week's content, and adds no other topic.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CLO|ilo:i13|clo:c3",
+      "relationship": "ILO-CLO",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i13",
+      "label": "Week 13 ILO 1",
+      "text": "Create Python programs that read and write text and CSV files.",
+      "to": [
+        {
+          "field": "clo",
+          "key": "clo:c3",
+          "label": "CLO 3 (Demonstrating)",
+          "text": "Bake artisan bread using traditional fermentation and kneading techniques."
+        }
+      ],
+      "parents": [
+        "clo:c3"
+      ],
+      "verdict": "NOT_ALIGNED",
+      "items": {
+        "step": "no",
+        "level": "yes",
+        "student": "yes"
+      },
+      "failedItems": [
+        "step"
+      ],
+      "quote": "Bake artisan bread using traditional fermentation and kneading techniques.",
+      "explanation": "CLO 3 is about baking bread, so writing Python file programs does not build it. The ILO's create level fits the apply/create range and the student is the actor.",
+      "reused": false,
+      "reason": null,
+      "status": "waiting"
+    },
+    {
+      "id": "ACTIVITY-FIT|activities:r13",
+      "relationship": "ACTIVITY-FIT",
+      "area": "activities",
+      "scored": true,
+      "field": "activities",
+      "fieldKey": "activities:r13",
+      "label": "Week 13 activities",
+      "text": "- Guided lab on file input and output - Option: video demonstration with a practice file set",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r13",
+          "label": "Week 13 content",
+          "text": "File handling: reading and writing text and CSV files"
+        },
+        {
+          "field": "ilo",
+          "key": "ilo:i13",
+          "label": "Week 13 ILO 1",
+          "text": "Create Python programs that read and write text and CSV files."
+        }
+      ],
+      "parents": [
+        "content:r13",
+        "ilo:i13"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "content": "yes",
+        "ilo": "yes",
+        "diverse": "yes"
+      },
+      "failedItems": [],
+      "quote": "Guided lab on file input and output - Option: video demonstration with a practice file set",
+      "explanation": "Both options work on file handling and let students practise with files. They suit different learners: hands-on lab versus video with practice files.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "TASK-FIT|tasks:r13",
+      "relationship": "TASK-FIT",
+      "area": "tasks",
+      "scored": true,
+      "field": "tasks",
+      "fieldKey": "tasks:r13",
+      "label": "Week 13 tasks",
+      "text": "- Lab exercise: CSV report generator",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r13",
+          "label": "Week 13 content",
+          "text": "File handling: reading and writing text and CSV files"
+        },
+        {
+          "field": "activities",
+          "key": "activities:r13",
+          "label": "Week 13 activities",
+          "text": "- Guided lab on file input and output - Option: video demonstration with a practice file set"
+        }
+      ],
+      "parents": [
+        "content:r13",
+        "activities:r13"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "content": "yes",
+        "activities": "yes"
+      },
+      "failedItems": [],
+      "quote": "Lab exercise: CSV report generator",
+      "explanation": "The CSV report generator assesses file reading and writing, which the guided lab and practice files covered.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "TASK-ILO|tasks:r13",
+      "relationship": "TASK-ILO",
+      "area": "tasks",
+      "scored": false,
+      "field": "tasks",
+      "fieldKey": "tasks:r13",
+      "label": "Week 13 tasks",
+      "text": "- Lab exercise: CSV report generator",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i13",
+          "label": "Week 13 ILO 1",
+          "text": "Create Python programs that read and write text and CSV files."
+        }
+      ],
+      "parents": [
+        "ilo:i13"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "measures": "yes"
+      },
+      "failedItems": [],
+      "quote": "Lab exercise: CSV report generator",
+      "explanation": "Building a CSV report generator shows whether students can create programs that read and write files.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "VALUE-ILO|values:r13",
+      "relationship": "VALUE-ILO",
+      "area": "values",
+      "scored": true,
+      "field": "values",
+      "fieldKey": "values:r13",
+      "label": "Week 13 values",
+      "text": "Missionary Spirit",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i13",
+          "label": "Week 13 ILO 1",
+          "text": "Create Python programs that read and write text and CSV files."
+        }
+      ],
+      "parents": [
+        "ilo:i13"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "fits": "yes"
+      },
+      "failedItems": [],
+      "quote": "Missionary Spirit",
+      "explanation": "Students can practise Missionary Spirit by building programs that serve others and by sharing their skills and results with classmates.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-TITLE|content:r14",
+      "relationship": "CONTENT-TITLE",
+      "area": "content",
+      "scored": true,
+      "field": "content",
+      "fieldKey": "content:r14",
+      "label": "Week 14 content",
+      "text": "Exceptions: try, except, finally; raising and handling errors",
+      "to": [
+        {
+          "field": "courseTitle",
+          "key": "course",
+          "label": "Course title",
+          "text": "SYN 101 Introduction to Python Programming"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "subject": "yes"
+      },
+      "failedItems": [],
+      "quote": "Exceptions: try, except, finally; raising and handling errors",
+      "explanation": "Exception handling is a standard part of Python programming, the subject of the course title.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-SEQUENCE|content:r14",
+      "relationship": "CONTENT-SEQUENCE",
+      "area": "content",
+      "scored": false,
+      "field": "content",
+      "fieldKey": "content:r14",
+      "label": "Week 14 content",
+      "text": "Exceptions: try, except, finally; raising and handling errors",
+      "to": [
+        {
+          "field": "plan",
+          "key": "plan",
+          "label": "All weekly topics, in order",
+          "text": "Week 2: Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program\nWeek 3: Variables and data types: integers, floats, strings, booleans and type conversion\nWeek 4: Operators and expressions: arithmetic, comparison and logical operators, operator precedence\nWeek 5: Conditional statements: if, elif and else; nested conditions\nWeek 7: Loops: while and for loops, range, break and continue\nWeek 8: Functions: defining functions, parameters, return values and scope\nWeek 9: Lists and tuples: indexing, slicing, list methods and iteration\nWeek 10: Dictionaries and sets: keys and values, membership, set operations\nWeek 11: Strings: string methods, formatting and text processing\nWeek 13: File handling: reading and writing text and CSV files\nWeek 14: Exceptions: try, except, finally; raising and handling errors\nWeek 15: Modules and packages: importing modules, the standard library, creating a module\nWeek 16: Introduction to object-oriented programming: classes, objects, attributes and methods\nWeek 17: Final project: a small Python application that handles user data responsibly"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "order": "yes",
+        "distinct": "yes"
+      },
+      "failedItems": [],
+      "quote": "try, except, finally; raising and handling errors",
+      "explanation": "Exceptions can be taught after file handling, and no earlier week covers them.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CONTENT|ilo:i14",
+      "relationship": "ILO-CONTENT",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i14",
+      "label": "Week 14 ILO 1",
+      "text": "The teacher will discuss exception handling in Python.",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r14",
+          "label": "Week 14 content",
+          "text": "Exceptions: try, except, finally; raising and handling errors"
+        }
+      ],
+      "parents": [
+        "content:r14"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "topic": "yes",
+        "within": "yes"
+      },
+      "failedItems": [],
+      "quote": "The teacher will discuss exception handling in Python.",
+      "explanation": "The ILO names exception handling, which is the week's topic, and adds no topic the week does not list.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CLO|ilo:i14|clo:c3",
+      "relationship": "ILO-CLO",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i14",
+      "label": "Week 14 ILO 1",
+      "text": "The teacher will discuss exception handling in Python.",
+      "to": [
+        {
+          "field": "clo",
+          "key": "clo:c3",
+          "label": "CLO 3 (Demonstrating)",
+          "text": "Bake artisan bread using traditional fermentation and kneading techniques."
+        }
+      ],
+      "parents": [
+        "clo:c3"
+      ],
+      "verdict": "NOT_ALIGNED",
+      "items": {
+        "step": "no",
+        "level": "no",
+        "student": "no"
+      },
+      "failedItems": [
+        "step",
+        "level",
+        "student"
+      ],
+      "quote": "The teacher will discuss exception handling in Python.",
+      "explanation": "CLO 3 is about baking artisan bread, so exception handling is no step toward it. The ILO also describes what the teacher does, so there is no student action to place on Bloom's levels.",
+      "reused": false,
+      "reason": null,
+      "status": "waiting"
+    },
+    {
+      "id": "ACTIVITY-FIT|activities:r14",
+      "relationship": "ACTIVITY-FIT",
+      "area": "activities",
+      "scored": true,
+      "field": "activities",
+      "fieldKey": "activities:r14",
+      "label": "Week 14 activities",
+      "text": "- Debugging clinic on common errors - Option: pair programming on error-handling exercises",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r14",
+          "label": "Week 14 content",
+          "text": "Exceptions: try, except, finally; raising and handling errors"
+        },
+        {
+          "field": "ilo",
+          "key": "ilo:i14",
+          "label": "Week 14 ILO 1",
+          "text": "The teacher will discuss exception handling in Python."
+        }
+      ],
+      "parents": [
+        "content:r14",
+        "ilo:i14"
+      ],
+      "verdict": "PARTIALLY_ALIGNED",
+      "items": {
+        "content": "yes",
+        "ilo": "no",
+        "diverse": "yes"
+      },
+      "failedItems": [
+        "ilo"
+      ],
+      "quote": "Debugging clinic on common errors - Option: pair programming on error-handling exercises",
+      "explanation": "Both activities work on error handling, which is the week's content. The ILO has the teacher discussing and asks nothing of students, so the activities do not practise it. Two alternatives are offered, a clinic and pair programming.",
+      "reused": false,
+      "reason": null,
+      "status": "waiting"
+    },
+    {
+      "id": "TASK-FIT|tasks:r14",
+      "relationship": "TASK-FIT",
+      "area": "tasks",
+      "scored": true,
+      "field": "tasks",
+      "fieldKey": "tasks:r14",
+      "label": "Week 14 tasks",
+      "text": "- Quiz on exceptions",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r14",
+          "label": "Week 14 content",
+          "text": "Exceptions: try, except, finally; raising and handling errors"
+        },
+        {
+          "field": "activities",
+          "key": "activities:r14",
+          "label": "Week 14 activities",
+          "text": "- Debugging clinic on common errors - Option: pair programming on error-handling exercises"
+        }
+      ],
+      "parents": [
+        "content:r14",
+        "activities:r14"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "content": "yes",
+        "activities": "yes"
+      },
+      "failedItems": [],
+      "quote": "Quiz on exceptions",
+      "explanation": "The quiz assesses exceptions, which is the week's content, and it covers what the debugging and error-handling activities practised.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "TASK-ILO|tasks:r14",
+      "relationship": "TASK-ILO",
+      "area": "tasks",
+      "scored": false,
+      "field": "tasks",
+      "fieldKey": "tasks:r14",
+      "label": "Week 14 tasks",
+      "text": "- Quiz on exceptions",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i14",
+          "label": "Week 14 ILO 1",
+          "text": "The teacher will discuss exception handling in Python."
+        }
+      ],
+      "parents": [
+        "ilo:i14"
+      ],
+      "verdict": "PARTIALLY_ALIGNED",
+      "items": {
+        "measures": "no"
+      },
+      "failedItems": [
+        "measures"
+      ],
+      "quote": "The teacher will discuss exception handling in Python.",
+      "explanation": "The ILO states no student outcome, so a quiz cannot show whether students reached it.",
+      "reused": false,
+      "reason": null,
+      "status": "waiting"
+    },
+    {
+      "id": "VALUE-ILO|values:r14",
+      "relationship": "VALUE-ILO",
+      "area": "values",
+      "scored": true,
+      "field": "values",
+      "fieldKey": "values:r14",
+      "label": "Week 14 values",
+      "text": "Humility",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i14",
+          "label": "Week 14 ILO 1",
+          "text": "The teacher will discuss exception handling in Python."
+        }
+      ],
+      "parents": [
+        "ilo:i14"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "fits": "yes"
+      },
+      "failedItems": [],
+      "quote": "Humility",
+      "explanation": "Humility can be practised in this week by admitting mistakes and learning from errors when handling exceptions and debugging.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-TITLE|content:r15",
+      "relationship": "CONTENT-TITLE",
+      "area": "content",
+      "scored": true,
+      "field": "content",
+      "fieldKey": "content:r15",
+      "label": "Week 15 content",
+      "text": "Modules and packages: importing modules, the standard library, creating a module",
+      "to": [
+        {
+          "field": "courseTitle",
+          "key": "course",
+          "label": "Course title",
+          "text": "SYN 101 Introduction to Python Programming"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "subject": "yes"
+      },
+      "failedItems": [],
+      "quote": "Modules and packages: importing modules, the standard library, creating a module",
+      "explanation": "Modules, packages and the standard library are part of Python programming.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-SEQUENCE|content:r15",
+      "relationship": "CONTENT-SEQUENCE",
+      "area": "content",
+      "scored": false,
+      "field": "content",
+      "fieldKey": "content:r15",
+      "label": "Week 15 content",
+      "text": "Modules and packages: importing modules, the standard library, creating a module",
+      "to": [
+        {
+          "field": "plan",
+          "key": "plan",
+          "label": "All weekly topics, in order",
+          "text": "Week 2: Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program\nWeek 3: Variables and data types: integers, floats, strings, booleans and type conversion\nWeek 4: Operators and expressions: arithmetic, comparison and logical operators, operator precedence\nWeek 5: Conditional statements: if, elif and else; nested conditions\nWeek 7: Loops: while and for loops, range, break and continue\nWeek 8: Functions: defining functions, parameters, return values and scope\nWeek 9: Lists and tuples: indexing, slicing, list methods and iteration\nWeek 10: Dictionaries and sets: keys and values, membership, set operations\nWeek 11: Strings: string methods, formatting and text processing\nWeek 13: File handling: reading and writing text and CSV files\nWeek 14: Exceptions: try, except, finally; raising and handling errors\nWeek 15: Modules and packages: importing modules, the standard library, creating a module\nWeek 16: Introduction to object-oriented programming: classes, objects, attributes and methods\nWeek 17: Final project: a small Python application that handles user data responsibly"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "order": "yes",
+        "distinct": "yes"
+      },
+      "failedItems": [],
+      "quote": "importing modules, the standard library, creating a module",
+      "explanation": "Modules build on functions from Week 8 and are not repeated elsewhere.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CONTENT|ilo:i15",
+      "relationship": "ILO-CONTENT",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i15",
+      "label": "Week 15 ILO 1",
+      "text": "Create a reusable Python module and import it into a program.",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r15",
+          "label": "Week 15 content",
+          "text": "Modules and packages: importing modules, the standard library, creating a module"
+        }
+      ],
+      "parents": [
+        "content:r15"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "topic": "yes",
+        "within": "yes"
+      },
+      "failedItems": [],
+      "quote": "Create a reusable Python module and import it into a program.",
+      "explanation": "The ILO names creating and importing a module, both listed in the week's content, and adds no other topic.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CLO|ilo:i15|clo:c3",
+      "relationship": "ILO-CLO",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i15",
+      "label": "Week 15 ILO 1",
+      "text": "Create a reusable Python module and import it into a program.",
+      "to": [
+        {
+          "field": "clo",
+          "key": "clo:c3",
+          "label": "CLO 3 (Demonstrating)",
+          "text": "Bake artisan bread using traditional fermentation and kneading techniques."
+        }
+      ],
+      "parents": [
+        "clo:c3"
+      ],
+      "verdict": "NOT_ALIGNED",
+      "items": {
+        "step": "no",
+        "level": "yes",
+        "student": "yes"
+      },
+      "failedItems": [
+        "step"
+      ],
+      "quote": "Bake artisan bread using traditional fermentation and kneading techniques.",
+      "explanation": "CLO 3 is about baking bread, so creating a Python module does not build it, which makes step a critical no. The ILO is a student action, and the create level does not exceed the CLO's apply/create level.",
+      "reused": false,
+      "reason": null,
+      "status": "waiting"
+    },
+    {
+      "id": "ACTIVITY-FIT|activities:r15",
+      "relationship": "ACTIVITY-FIT",
+      "area": "activities",
+      "scored": true,
+      "field": "activities",
+      "fieldKey": "activities:r15",
+      "label": "Week 15 activities",
+      "text": "- Live coding of a small module - Option: research task on one standard-library module",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r15",
+          "label": "Week 15 content",
+          "text": "Modules and packages: importing modules, the standard library, creating a module"
+        },
+        {
+          "field": "ilo",
+          "key": "ilo:i15",
+          "label": "Week 15 ILO 1",
+          "text": "Create a reusable Python module and import it into a program."
+        }
+      ],
+      "parents": [
+        "content:r15",
+        "ilo:i15"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "content": "yes",
+        "ilo": "yes",
+        "diverse": "yes"
+      },
+      "failedItems": [],
+      "quote": "Live coding of a small module - Option: research task on one standard-library module",
+      "explanation": "Both activities work on module content. Live coding of a module supports creating one, and the research option offers an alternative for different learners. The research task practises the standard library and not the ILO's create-and-import skill, but the overall set still fits the ILO.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "TASK-FIT|tasks:r15",
+      "relationship": "TASK-FIT",
+      "area": "tasks",
+      "scored": true,
+      "field": "tasks",
+      "fieldKey": "tasks:r15",
+      "label": "Week 15 tasks",
+      "text": "- Lab exercise: build and import a module",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r15",
+          "label": "Week 15 content",
+          "text": "Modules and packages: importing modules, the standard library, creating a module"
+        },
+        {
+          "field": "activities",
+          "key": "activities:r15",
+          "label": "Week 15 activities",
+          "text": "- Live coding of a small module - Option: research task on one standard-library module"
+        }
+      ],
+      "parents": [
+        "content:r15",
+        "activities:r15"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "content": "yes",
+        "activities": "yes"
+      },
+      "failedItems": [],
+      "quote": "Lab exercise: build and import a module",
+      "explanation": "The lab task assesses module creation and importing, which matches the week's content and the live coding activity.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "TASK-ILO|tasks:r15",
+      "relationship": "TASK-ILO",
+      "area": "tasks",
+      "scored": false,
+      "field": "tasks",
+      "fieldKey": "tasks:r15",
+      "label": "Week 15 tasks",
+      "text": "- Lab exercise: build and import a module",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i15",
+          "label": "Week 15 ILO 1",
+          "text": "Create a reusable Python module and import it into a program."
+        }
+      ],
+      "parents": [
+        "ilo:i15"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "measures": "yes"
+      },
+      "failedItems": [],
+      "quote": "Lab exercise: build and import a module",
+      "explanation": "Building and importing a module directly shows whether the student reached the ILO.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "VALUE-ILO|values:r15",
+      "relationship": "VALUE-ILO",
+      "area": "values",
+      "scored": true,
+      "field": "values",
+      "fieldKey": "values:r15",
+      "label": "Week 15 values",
+      "text": "Community-orientedness",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i15",
+          "label": "Week 15 ILO 1",
+          "text": "Create a reusable Python module and import it into a program."
+        }
+      ],
+      "parents": [
+        "ilo:i15"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "fits": "yes"
+      },
+      "failedItems": [],
+      "quote": "Create a reusable Python module and import it into a program.",
+      "explanation": "A reusable module can be shared with others and used by classmates, so community-orientedness can be practised through it.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-TITLE|content:r16",
+      "relationship": "CONTENT-TITLE",
+      "area": "content",
+      "scored": true,
+      "field": "content",
+      "fieldKey": "content:r16",
+      "label": "Week 16 content",
+      "text": "Introduction to object-oriented programming: classes, objects, attributes and methods",
+      "to": [
+        {
+          "field": "courseTitle",
+          "key": "course",
+          "label": "Course title",
+          "text": "SYN 101 Introduction to Python Programming"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "subject": "yes"
+      },
+      "failedItems": [],
+      "quote": "Introduction to object-oriented programming: classes, objects, attributes and methods",
+      "explanation": "Object-oriented programming with classes and methods is part of introductory Python programming.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-SEQUENCE|content:r16",
+      "relationship": "CONTENT-SEQUENCE",
+      "area": "content",
+      "scored": false,
+      "field": "content",
+      "fieldKey": "content:r16",
+      "label": "Week 16 content",
+      "text": "Introduction to object-oriented programming: classes, objects, attributes and methods",
+      "to": [
+        {
+          "field": "plan",
+          "key": "plan",
+          "label": "All weekly topics, in order",
+          "text": "Week 2: Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program\nWeek 3: Variables and data types: integers, floats, strings, booleans and type conversion\nWeek 4: Operators and expressions: arithmetic, comparison and logical operators, operator precedence\nWeek 5: Conditional statements: if, elif and else; nested conditions\nWeek 7: Loops: while and for loops, range, break and continue\nWeek 8: Functions: defining functions, parameters, return values and scope\nWeek 9: Lists and tuples: indexing, slicing, list methods and iteration\nWeek 10: Dictionaries and sets: keys and values, membership, set operations\nWeek 11: Strings: string methods, formatting and text processing\nWeek 13: File handling: reading and writing text and CSV files\nWeek 14: Exceptions: try, except, finally; raising and handling errors\nWeek 15: Modules and packages: importing modules, the standard library, creating a module\nWeek 16: Introduction to object-oriented programming: classes, objects, attributes and methods\nWeek 17: Final project: a small Python application that handles user data responsibly"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "order": "yes",
+        "distinct": "yes"
+      },
+      "failedItems": [],
+      "quote": "classes, objects, attributes and methods",
+      "explanation": "Object-oriented programming builds on functions and data structures from earlier weeks, and it is new.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CONTENT|ilo:i16",
+      "relationship": "ILO-CONTENT",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i16",
+      "label": "Week 16 ILO 1",
+      "text": "Create simple Python classes with attributes and methods.",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r16",
+          "label": "Week 16 content",
+          "text": "Introduction to object-oriented programming: classes, objects, attributes and methods"
+        }
+      ],
+      "parents": [
+        "content:r16"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "topic": "yes",
+        "within": "yes"
+      },
+      "failedItems": [],
+      "quote": "Create simple Python classes with attributes and methods.",
+      "explanation": "The ILO names classes, attributes and methods, all listed in Week 16 content, and adds no other topic.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CLO|ilo:i16|clo:c3",
+      "relationship": "ILO-CLO",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i16",
+      "label": "Week 16 ILO 1",
+      "text": "Create simple Python classes with attributes and methods.",
+      "to": [
+        {
+          "field": "clo",
+          "key": "clo:c3",
+          "label": "CLO 3 (Demonstrating)",
+          "text": "Bake artisan bread using traditional fermentation and kneading techniques."
+        }
+      ],
+      "parents": [
+        "clo:c3"
+      ],
+      "verdict": "NOT_ALIGNED",
+      "items": {
+        "step": "no",
+        "level": "yes",
+        "student": "yes"
+      },
+      "failedItems": [
+        "step"
+      ],
+      "quote": "Bake artisan bread using traditional fermentation and kneading techniques.",
+      "explanation": "CLO 3 is about baking bread, so creating Python classes is not a step toward it. The ILO is student-written and at the create level, which is not above the CLO's create level.",
+      "reused": false,
+      "reason": null,
+      "status": "waiting"
+    },
+    {
+      "id": "ACTIVITY-FIT|activities:r16",
+      "relationship": "ACTIVITY-FIT",
+      "area": "activities",
+      "scored": true,
+      "field": "activities",
+      "fieldKey": "activities:r16",
+      "label": "Week 16 activities",
+      "text": "- Modeling real objects as classes - Option: design-on-paper activity before coding",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r16",
+          "label": "Week 16 content",
+          "text": "Introduction to object-oriented programming: classes, objects, attributes and methods"
+        },
+        {
+          "field": "ilo",
+          "key": "ilo:i16",
+          "label": "Week 16 ILO 1",
+          "text": "Create simple Python classes with attributes and methods."
+        }
+      ],
+      "parents": [
+        "content:r16",
+        "ilo:i16"
+      ],
+      "verdict": "PARTIALLY_ALIGNED",
+      "items": {
+        "content": "yes",
+        "ilo": "yes",
+        "diverse": "no"
+      },
+      "failedItems": [
+        "diverse"
+      ],
+      "quote": "Modeling real objects as classes - Option: design-on-paper activity before coding",
+      "explanation": "The activities work on classes and objects and let students practise designing classes. The single option is only a paper preliminary to the same activity, not a distinct alternative for different learners, and neither activity has students write the Python classes with methods.",
+      "reused": false,
+      "reason": null,
+      "status": "waiting"
+    },
+    {
+      "id": "TASK-FIT|tasks:r16",
+      "relationship": "TASK-FIT",
+      "area": "tasks",
+      "scored": true,
+      "field": "tasks",
+      "fieldKey": "tasks:r16",
+      "label": "Week 16 tasks",
+      "text": "- Lab exercise: class design",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r16",
+          "label": "Week 16 content",
+          "text": "Introduction to object-oriented programming: classes, objects, attributes and methods"
+        },
+        {
+          "field": "activities",
+          "key": "activities:r16",
+          "label": "Week 16 activities",
+          "text": "- Modeling real objects as classes - Option: design-on-paper activity before coding"
+        }
+      ],
+      "parents": [
+        "content:r16",
+        "activities:r16"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "content": "yes",
+        "activities": "yes"
+      },
+      "failedItems": [],
+      "quote": "Lab exercise: class design",
+      "explanation": "A class design lab assesses the OOP content and follows from the activity of modeling objects as classes.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "TASK-ILO|tasks:r16",
+      "relationship": "TASK-ILO",
+      "area": "tasks",
+      "scored": false,
+      "field": "tasks",
+      "fieldKey": "tasks:r16",
+      "label": "Week 16 tasks",
+      "text": "- Lab exercise: class design",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i16",
+          "label": "Week 16 ILO 1",
+          "text": "Create simple Python classes with attributes and methods."
+        }
+      ],
+      "parents": [
+        "ilo:i16"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "measures": "yes"
+      },
+      "failedItems": [],
+      "quote": "Lab exercise: class design",
+      "explanation": "A lab exercise on class design would show whether students can create Python classes, although details are brief.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "VALUE-ILO|values:r16",
+      "relationship": "VALUE-ILO",
+      "area": "values",
+      "scored": true,
+      "field": "values",
+      "fieldKey": "values:r16",
+      "label": "Week 16 values",
+      "text": "Courage",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i16",
+          "label": "Week 16 ILO 1",
+          "text": "Create simple Python classes with attributes and methods."
+        }
+      ],
+      "parents": [
+        "ilo:i16"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "fits": "yes"
+      },
+      "failedItems": [],
+      "quote": "Courage",
+      "explanation": "Courage can be practised by attempting to design and build new classes from scratch and risking mistakes.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-TITLE|content:r17",
+      "relationship": "CONTENT-TITLE",
+      "area": "content",
+      "scored": true,
+      "field": "content",
+      "fieldKey": "content:r17",
+      "label": "Week 17 content",
+      "text": "Final project: a small Python application that handles user data responsibly",
+      "to": [
+        {
+          "field": "courseTitle",
+          "key": "course",
+          "label": "Course title",
+          "text": "SYN 101 Introduction to Python Programming"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "subject": "yes"
+      },
+      "failedItems": [],
+      "quote": "a small Python application that handles user data responsibly",
+      "explanation": "A final Python project is part of Introduction to Python Programming.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "CONTENT-SEQUENCE|content:r17",
+      "relationship": "CONTENT-SEQUENCE",
+      "area": "content",
+      "scored": false,
+      "field": "content",
+      "fieldKey": "content:r17",
+      "label": "Week 17 content",
+      "text": "Final project: a small Python application that handles user data responsibly",
+      "to": [
+        {
+          "field": "plan",
+          "key": "plan",
+          "label": "All weekly topics, in order",
+          "text": "Week 2: Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program\nWeek 3: Variables and data types: integers, floats, strings, booleans and type conversion\nWeek 4: Operators and expressions: arithmetic, comparison and logical operators, operator precedence\nWeek 5: Conditional statements: if, elif and else; nested conditions\nWeek 7: Loops: while and for loops, range, break and continue\nWeek 8: Functions: defining functions, parameters, return values and scope\nWeek 9: Lists and tuples: indexing, slicing, list methods and iteration\nWeek 10: Dictionaries and sets: keys and values, membership, set operations\nWeek 11: Strings: string methods, formatting and text processing\nWeek 13: File handling: reading and writing text and CSV files\nWeek 14: Exceptions: try, except, finally; raising and handling errors\nWeek 15: Modules and packages: importing modules, the standard library, creating a module\nWeek 16: Introduction to object-oriented programming: classes, objects, attributes and methods\nWeek 17: Final project: a small Python application that handles user data responsibly"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "order": "yes",
+        "distinct": "yes"
+      },
+      "failedItems": [],
+      "quote": "a small Python application that handles user data responsibly",
+      "explanation": "The final project integrates earlier topics only, and as a capstone application it adds a new activity.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CONTENT|ilo:i17",
+      "relationship": "ILO-CONTENT",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i17",
+      "label": "Week 17 ILO 1",
+      "text": "Create a small Python application that protects user data and evaluate the ethical choices made in its design.",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r17",
+          "label": "Week 17 content",
+          "text": "Final project: a small Python application that handles user data responsibly"
+        }
+      ],
+      "parents": [
+        "content:r17"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "topic": "yes",
+        "within": "yes"
+      },
+      "failedItems": [],
+      "quote": "Create a small Python application that protects user data",
+      "explanation": "The ILO names the small Python application that handles user data, which the week lists. Evaluating ethical choices in its design stays within responsible handling of data.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CLO|ilo:i17|clo:c4",
+      "relationship": "ILO-CLO",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i17",
+      "label": "Week 17 ILO 1",
+      "text": "Create a small Python application that protects user data and evaluate the ethical choices made in its design.",
+      "to": [
+        {
+          "field": "clo",
+          "key": "clo:c4",
+          "label": "CLO 4 (Integration of Values)",
+          "text": "Evaluate the ethical responsibilities of programmers and create a Python application that respects user privacy and the common good."
+        }
+      ],
+      "parents": [
+        "clo:c4"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "step": "yes",
+        "level": "yes",
+        "student": "yes"
+      },
+      "failedItems": [],
+      "quote": "evaluate the ethical choices made in its design",
+      "explanation": "The ILO creates a privacy-respecting application and evaluates ethical choices, which matches CLO 4. Create and evaluate are within CLO 4's level, and the student acts.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "ILO-CLO|ilo:i17|clo:c3",
+      "relationship": "ILO-CLO",
+      "area": "ilo",
+      "scored": true,
+      "field": "ilo",
+      "fieldKey": "ilo:i17",
+      "label": "Week 17 ILO 1",
+      "text": "Create a small Python application that protects user data and evaluate the ethical choices made in its design.",
+      "to": [
+        {
+          "field": "clo",
+          "key": "clo:c3",
+          "label": "CLO 3 (Demonstrating)",
+          "text": "Bake artisan bread using traditional fermentation and kneading techniques."
+        }
+      ],
+      "parents": [
+        "clo:c3"
+      ],
+      "verdict": "NOT_ALIGNED",
+      "items": {
+        "step": "no",
+        "level": "yes",
+        "student": "yes"
+      },
+      "failedItems": [
+        "step"
+      ],
+      "quote": "Bake artisan bread using traditional fermentation and kneading techniques.",
+      "explanation": "CLO 3 is about baking bread, so the ILO about a Python application is not a step toward it. The level (create) is within CLO 3's create level, and the student is the actor.",
+      "reused": false,
+      "reason": null,
+      "status": "review"
+    },
+    {
+      "id": "ACTIVITY-FIT|activities:r17",
+      "relationship": "ACTIVITY-FIT",
+      "area": "activities",
+      "scored": true,
+      "field": "activities",
+      "fieldKey": "activities:r17",
+      "label": "Week 17 activities",
+      "text": "- Project work in teams with mentoring - Option: individual project option with weekly check-ins",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r17",
+          "label": "Week 17 content",
+          "text": "Final project: a small Python application that handles user data responsibly"
+        },
+        {
+          "field": "ilo",
+          "key": "ilo:i17",
+          "label": "Week 17 ILO 1",
+          "text": "Create a small Python application that protects user data and evaluate the ethical choices made in its design."
+        }
+      ],
+      "parents": [
+        "content:r17",
+        "ilo:i17"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "content": "yes",
+        "ilo": "yes",
+        "diverse": "yes"
+      },
+      "failedItems": [],
+      "quote": "Project work in teams with mentoring - Option: individual project option with weekly check-ins",
+      "explanation": "Project work builds the final application and practises creating it. The team and individual options suit different learners and both fit the ILO.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "TASK-FIT|tasks:r17",
+      "relationship": "TASK-FIT",
+      "area": "tasks",
+      "scored": true,
+      "field": "tasks",
+      "fieldKey": "tasks:r17",
+      "label": "Week 17 tasks",
+      "text": "- Final project and ethics reflection paper",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r17",
+          "label": "Week 17 content",
+          "text": "Final project: a small Python application that handles user data responsibly"
+        },
+        {
+          "field": "activities",
+          "key": "activities:r17",
+          "label": "Week 17 activities",
+          "text": "- Project work in teams with mentoring - Option: individual project option with weekly check-ins"
+        }
+      ],
+      "parents": [
+        "content:r17",
+        "activities:r17"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "content": "yes",
+        "activities": "yes"
+      },
+      "failedItems": [],
+      "quote": "Final project and ethics reflection paper",
+      "explanation": "The final project assesses the week's content, and it follows from the project work practised in the activities.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "TASK-ILO|tasks:r17",
+      "relationship": "TASK-ILO",
+      "area": "tasks",
+      "scored": false,
+      "field": "tasks",
+      "fieldKey": "tasks:r17",
+      "label": "Week 17 tasks",
+      "text": "- Final project and ethics reflection paper",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i17",
+          "label": "Week 17 ILO 1",
+          "text": "Create a small Python application that protects user data and evaluate the ethical choices made in its design."
+        }
+      ],
+      "parents": [
+        "ilo:i17"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "measures": "yes"
+      },
+      "failedItems": [],
+      "quote": "Final project and ethics reflection paper",
+      "explanation": "The project shows whether students can create the application, and the reflection paper shows whether they can evaluate ethical choices.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "VALUE-ILO|values:r17",
+      "relationship": "VALUE-ILO",
+      "area": "values",
+      "scored": true,
+      "field": "values",
+      "fieldKey": "values:r17",
+      "label": "Week 17 values",
+      "text": "Missionary Spirit",
+      "to": [
+        {
+          "field": "ilo",
+          "key": "ilo:i17",
+          "label": "Week 17 ILO 1",
+          "text": "Create a small Python application that protects user data and evaluate the ethical choices made in its design."
+        }
+      ],
+      "parents": [
+        "ilo:i17"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "fits": "yes"
+      },
+      "failedItems": [],
+      "quote": "Missionary Spirit",
+      "explanation": "Building software that protects user data and serves the common good can be practised as service and mission to others.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "VALUE-ILO|values:r18",
+      "relationship": "VALUE-ILO",
+      "area": "values",
+      "scored": true,
+      "field": "values",
+      "fieldKey": "values:r18",
+      "label": "Week 18 values",
+      "text": "Interiority",
+      "to": [
+        {
+          "field": "content",
+          "key": "content:r18",
+          "label": "Week 18 content (examination week)",
+          "text": "FINAL EXAMINATION"
+        }
+      ],
+      "parents": [
+        "content:r18"
+      ],
+      "verdict": "ALIGNED",
+      "items": {
+        "fits": "yes"
+      },
+      "failedItems": [],
+      "quote": "FINAL EXAMINATION",
+      "explanation": "In an examination week the value can be practised through the examination itself; honest self-assessment and integrity during the final exam practise Interiority.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "REF-RELEVANCE|ref:books:b1",
+      "relationship": "REF-RELEVANCE",
+      "area": "references",
+      "scored": true,
+      "field": "references",
+      "fieldKey": "ref:books:b1",
+      "label": "Reference (books)",
+      "text": "Matthes, E. (2023). Python crash course (3rd ed.). No Starch Press.",
+      "to": [
+        {
+          "field": "courseTitle",
+          "key": "course",
+          "label": "Course title",
+          "text": "SYN 101 Introduction to Python Programming"
+        },
+        {
+          "field": "plan",
+          "key": "plan",
+          "label": "All weekly topics, in order",
+          "text": "Week 2: Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program\nWeek 3: Variables and data types: integers, floats, strings, booleans and type conversion\nWeek 4: Operators and expressions: arithmetic, comparison and logical operators, operator precedence\nWeek 5: Conditional statements: if, elif and else; nested conditions\nWeek 7: Loops: while and for loops, range, break and continue\nWeek 8: Functions: defining functions, parameters, return values and scope\nWeek 9: Lists and tuples: indexing, slicing, list methods and iteration\nWeek 10: Dictionaries and sets: keys and values, membership, set operations\nWeek 11: Strings: string methods, formatting and text processing\nWeek 13: File handling: reading and writing text and CSV files\nWeek 14: Exceptions: try, except, finally; raising and handling errors\nWeek 15: Modules and packages: importing modules, the standard library, creating a module\nWeek 16: Introduction to object-oriented programming: classes, objects, attributes and methods\nWeek 17: Final project: a small Python application that handles user data responsibly"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "subject": "yes"
+      },
+      "failedItems": [],
+      "quote": "Python crash course (3rd ed.)",
+      "explanation": "This is an introductory Python programming book, which matches the course subject.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "REF-RELEVANCE|ref:books:b2",
+      "relationship": "REF-RELEVANCE",
+      "area": "references",
+      "scored": true,
+      "field": "references",
+      "fieldKey": "ref:books:b2",
+      "label": "Reference (books)",
+      "text": "Sweigart, A. (2025). Automate the boring stuff with Python (3rd ed.). No Starch Press.",
+      "to": [
+        {
+          "field": "courseTitle",
+          "key": "course",
+          "label": "Course title",
+          "text": "SYN 101 Introduction to Python Programming"
+        },
+        {
+          "field": "plan",
+          "key": "plan",
+          "label": "All weekly topics, in order",
+          "text": "Week 2: Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program\nWeek 3: Variables and data types: integers, floats, strings, booleans and type conversion\nWeek 4: Operators and expressions: arithmetic, comparison and logical operators, operator precedence\nWeek 5: Conditional statements: if, elif and else; nested conditions\nWeek 7: Loops: while and for loops, range, break and continue\nWeek 8: Functions: defining functions, parameters, return values and scope\nWeek 9: Lists and tuples: indexing, slicing, list methods and iteration\nWeek 10: Dictionaries and sets: keys and values, membership, set operations\nWeek 11: Strings: string methods, formatting and text processing\nWeek 13: File handling: reading and writing text and CSV files\nWeek 14: Exceptions: try, except, finally; raising and handling errors\nWeek 15: Modules and packages: importing modules, the standard library, creating a module\nWeek 16: Introduction to object-oriented programming: classes, objects, attributes and methods\nWeek 17: Final project: a small Python application that handles user data responsibly"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "subject": "yes"
+      },
+      "failedItems": [],
+      "quote": "Automate the boring stuff with Python (3rd ed.)",
+      "explanation": "This book teaches Python programming, including file handling and strings, which the course covers.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "REF-RELEVANCE|ref:books:b3",
+      "relationship": "REF-RELEVANCE",
+      "area": "references",
+      "scored": true,
+      "field": "references",
+      "fieldKey": "ref:books:b3",
+      "label": "Reference (books)",
+      "text": "Downey, A. B. (2015). Think Python: How to think like a computer scientist. O'Reilly Media.",
+      "to": [
+        {
+          "field": "courseTitle",
+          "key": "course",
+          "label": "Course title",
+          "text": "SYN 101 Introduction to Python Programming"
+        },
+        {
+          "field": "plan",
+          "key": "plan",
+          "label": "All weekly topics, in order",
+          "text": "Week 2: Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program\nWeek 3: Variables and data types: integers, floats, strings, booleans and type conversion\nWeek 4: Operators and expressions: arithmetic, comparison and logical operators, operator precedence\nWeek 5: Conditional statements: if, elif and else; nested conditions\nWeek 7: Loops: while and for loops, range, break and continue\nWeek 8: Functions: defining functions, parameters, return values and scope\nWeek 9: Lists and tuples: indexing, slicing, list methods and iteration\nWeek 10: Dictionaries and sets: keys and values, membership, set operations\nWeek 11: Strings: string methods, formatting and text processing\nWeek 13: File handling: reading and writing text and CSV files\nWeek 14: Exceptions: try, except, finally; raising and handling errors\nWeek 15: Modules and packages: importing modules, the standard library, creating a module\nWeek 16: Introduction to object-oriented programming: classes, objects, attributes and methods\nWeek 17: Final project: a small Python application that handles user data responsibly"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "subject": "yes"
+      },
+      "failedItems": [],
+      "quote": "Think Python: How to think like a computer scientist.",
+      "explanation": "This is an introductory Python programming textbook that matches the course subject.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    },
+    {
+      "id": "REF-RELEVANCE|ref:online:o1",
+      "relationship": "REF-RELEVANCE",
+      "area": "references",
+      "scored": true,
+      "field": "references",
+      "fieldKey": "ref:online:o1",
+      "label": "Reference (online)",
+      "text": "Python Software Foundation. (2025). The Python tutorial. https://docs.python.org/3/tutorial/",
+      "to": [
+        {
+          "field": "courseTitle",
+          "key": "course",
+          "label": "Course title",
+          "text": "SYN 101 Introduction to Python Programming"
+        },
+        {
+          "field": "plan",
+          "key": "plan",
+          "label": "All weekly topics, in order",
+          "text": "Week 2: Introduction to Python: installing Python, using the interpreter and an editor, writing and running a first program\nWeek 3: Variables and data types: integers, floats, strings, booleans and type conversion\nWeek 4: Operators and expressions: arithmetic, comparison and logical operators, operator precedence\nWeek 5: Conditional statements: if, elif and else; nested conditions\nWeek 7: Loops: while and for loops, range, break and continue\nWeek 8: Functions: defining functions, parameters, return values and scope\nWeek 9: Lists and tuples: indexing, slicing, list methods and iteration\nWeek 10: Dictionaries and sets: keys and values, membership, set operations\nWeek 11: Strings: string methods, formatting and text processing\nWeek 13: File handling: reading and writing text and CSV files\nWeek 14: Exceptions: try, except, finally; raising and handling errors\nWeek 15: Modules and packages: importing modules, the standard library, creating a module\nWeek 16: Introduction to object-oriented programming: classes, objects, attributes and methods\nWeek 17: Final project: a small Python application that handles user data responsibly"
+        }
+      ],
+      "parents": [],
+      "verdict": "ALIGNED",
+      "items": {
+        "subject": "yes"
+      },
+      "failedItems": [],
+      "quote": "The Python tutorial. https://docs.python.org/3/tutorial/",
+      "explanation": "The official Python tutorial directly concerns the course subject.",
+      "reused": false,
+      "reason": null,
+      "status": "ok"
+    }
+  ],
+  "fixed": {
+    "version": "replan-rules-1",
+    "findings": [
+      {
+        "rule": "CLO-LEVEL-LABEL",
+        "severity": "finding",
+        "area": "clo",
+        "field": "clo",
+        "layer": 1,
+        "where": {
+          "clo": 4,
+          "cloId": "c4"
+        },
+        "message": "CLO 4 must be classified \"Integration of Values\" (fixed by its number); it is saved as \"Introductory\".",
+        "fix": {
+          "level": "Integration of Values"
+        }
+      },
+      {
+        "rule": "ACTIVITY-OPTIONS",
+        "severity": "finding",
+        "area": "activities",
+        "field": "activities",
+        "layer": 4,
+        "where": {
+          "week": "8",
+          "row": "r8"
+        },
+        "message": "Week 8 offers 1 learning activity; give at least 2 alternatives for diverse learners."
+      },
+      {
+        "rule": "VALUES-WEEKLY",
+        "severity": "finding",
+        "area": "values",
+        "field": "values",
+        "layer": 6,
+        "where": {
+          "week": "10",
+          "row": "r10"
+        },
+        "message": "Week 10 names no core value by its exact name (\"Honesty\"). Use one of: Compassion, Courage, Community-orientedness, Humility, Interiority, Missionary Spirit."
+      },
+      {
+        "rule": "REF-RECENCY",
+        "severity": "review",
+        "area": "references",
+        "field": "references",
+        "layer": 7,
+        "where": {
+          "group": "books",
+          "ref": "b3"
+        },
+        "message": "Published 2015, more than 5 years ago. Keep it only if it is a classic in the field; otherwise use a newer source."
+      }
+    ],
+    "summary": {
+      "finding": 3,
+      "review": 1
+    }
+  }
+}

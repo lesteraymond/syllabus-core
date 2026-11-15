@@ -265,7 +265,7 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
         </Card>
       </section>
       <section className="dashboard-grid lower">
-        <Card title={translateUI("ui.program_compliance_943fac")} action={isFac ? tr("View analytics") : <button type="button" className="link-btn card-action-btn" data-testid="view-analytics" disabled={!catalog.programs || !catalog.subjects} onClick={() => setTrendOpen(true)}>{tr("View analytics")}</button>}>
+        <Card title={translateUI("ui.program_compliance_943fac")} action={isFac ? null : <button type="button" className="link-btn card-action-btn" data-testid="view-analytics" disabled={!catalog.programs || !catalog.subjects} onClick={() => setTrendOpen(true)}>{tr("View analytics")}</button>}>
           {coverage && coverage.length > 0
             ? coverage.map(p => <Progress key={p.program} label={p.program} value={p.percent} note={isFac
               ? (p.total ? translateUI('dashboard.stats.programAssigned', { done: p.approved, total: p.total }) : translateUI('dashboard.stats.programNoneAssigned'))
@@ -277,8 +277,13 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
           {/* the four rings centered, each area after the AI deductions; the lowest is red and its tooltip names it */}
           <div className="quality-row">{snapshot.areas.map(a => {
             const low = !!snapshot.lowest && snapshot.lowest.key === a.key;
-            return <QualityMini key={a.key} label={translateUI(SNAPSHOT_LABELS[a.key])} value={a.score} low={low} title={low ? translateUI('snapshot.lowest', { area: translateUI(SNAPSHOT_LABELS[a.key]), score: a.score }) : undefined} />;
+            // the Assessment ring also holds the AI Checker's learning-activity findings (server/lib/compliance/finalAreas.js areaOf): its tooltip says so
+            const hint = a.key === 'assessment' ? translateUI('snapshot.assessmentHint') : '';
+            const tip = [low ? translateUI('snapshot.lowest', { area: translateUI(SNAPSHOT_LABELS[a.key]), score: a.score }) : '', hint].filter(Boolean).join(' · ');
+            return <QualityMini key={a.key} label={translateUI(SNAPSHOT_LABELS[a.key])} value={a.score} low={low} title={tip || undefined} />;
           })}</div>
+          {/* checks made with AI checking off are not AI results: left out of the snapshot, and counted here */}
+          {snapshot.notAiChecked > 0 && <div className="snapshot-note">{translateUI(snapshot.notAiChecked === 1 ? 'snapshot.notAiCheckedOne' : 'snapshot.notAiChecked', { count: snapshot.notAiChecked })}</div>}
         </Card>
         {(isFac || user.role === 'admin') && <Card title={translateUI("ui.upcoming_deadlines_b56518")} hideScrollbar><UpcomingDeadlines role={user.role} onOpen={() => setPage(isFac ? 'my-syllabi' : 'courses')} onOpenOwn={() => setPage('my-syllabi')} /></Card>}
       </section>

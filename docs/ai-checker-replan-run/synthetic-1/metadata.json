@@ -1,0 +1,31 @@
+{
+  "startedAt": "2026-11-15T05:51:20.177Z",
+  "model": "claude-sonnet-5-5|thinking=adaptive|effort=high",
+  "rules": "replan-rules-1",
+  "prompt": "replan-prompt-4",
+  "limits": {
+    "maxCostUsd": 3,
+    "maxRequests": 60,
+    "registerCapUsd": 10
+  },
+  "syllabus": "SYN 101 Introduction to Python Programming (synthetic)",
+  "planted": [
+    "P1: CLO 3 is about baking bread in a programming course -> CLO-TITLE",
+    "P2: CLO 4 is saved as Introductory instead of Integration of Values -> CLO-LEVEL-LABEL",
+    "P3: Week 5 ILO is about database design while the week teaches conditionals -> ILO-CONTENT",
+    "P4: Week 8 offers one learning activity only -> ACTIVITY-OPTIONS",
+    "P5: Week 10 names \"Honesty\", not one of the six core values -> VALUES-WEEKLY",
+    "P6: Week 11 task is an essay on Roman history for a strings week -> TASK-FIT",
+    "P7: A 2015 reference (older than 5 years) -> REF-RECENCY",
+    "P8: Week 14 ILO is written as what the teacher does -> ILO-CLO"
+  ],
+  "check": {
+    "questions": 138,
+    "requests": 20
+  },
+  "schemaProblems": {
+    "answer": [],
+    "rewrite": []
+  },
+  "note": "The repair plan adds one request per rewritten field and re-asks only the weeks those fields belong to; the re-check after applying the plan should ask nothing."
+}

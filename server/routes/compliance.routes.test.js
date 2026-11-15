@@ -464,16 +464,19 @@ test('a faculty member cannot read, list or re-check another one\'s runs; an adm
   assert.ok((await call(admin, 'GET', '/syllabi/1/compliance')).body.run); // and that one is what the administrator sees
 }));
 
-test('an admin sees only an administrator\'s check: not the run the faculty member\'s submit stored, nor a re-check the owner ran afterwards', () => withServer(async ({ call, db }) => {
+test('an admin sees only an administrator\'s check: not the run the faculty member\'s submit stored; and the owner cannot re-check a submitted syllabus', () => withServer(async ({ call, db }) => {
   assert.strictEqual((await call(fay, 'POST', '/syllabi/1/submit', {})).status, 200);
   db.s.syllabi[1].status = 'submitted';
   const submitRun = db.s.runs[0].run_id;
   const edited = JSON.parse(db.s.syllabi[1].content);
   edited.plan[0].contents = 'Edited after the submit';
   setContent(db, 1, edited);
+  // a submitted syllabus is with the reviewers: its owner no longer checks it (owner decision 2026-11-15)
   const recheck = await call(fay, 'POST', '/syllabi/1/compliance/recheck', {});
-  assert.notStrictEqual(recheck.body.run.id, submitRun);
-  assert.strictEqual((await call(fay, 'GET', '/syllabi/1/compliance')).body.run.id, recheck.body.run.id); // the owner sees their newest
+  assert.strictEqual(recheck.status, 409);
+  assert.strictEqual(recheck.body.code, 'submitted');
+  assert.strictEqual(db.s.runs.length, 1, 'nothing was checked or stored');
+  assert.strictEqual((await call(fay, 'GET', '/syllabi/1/compliance')).body.run.id, submitRun); // the owner still sees the run their submit stored
   // nothing the faculty member ran counts for the administrator
   assert.strictEqual((await call(admin, 'GET', '/syllabi/1/compliance')).body.run, null);
   assert.strictEqual((await call(admin, 'GET', '/compliance?syllabus=1')).body.run, null);
@@ -485,7 +488,7 @@ test('an admin sees only an administrator\'s check: not the run the faculty memb
   assert.strictEqual(mine.body.run.checkedBy, 'admin');
   assert.strictEqual(mine.body.run.versionId, 77);
   assert.strictEqual(mine.body.run.stale, false);
-  assert.ok(![submitRun, recheck.body.run.id].includes(mine.body.run.id));
+  assert.notStrictEqual(mine.body.run.id, submitRun);
   assert.strictEqual((await call(admin, 'GET', '/syllabi/1/compliance')).body.run.id, mine.body.run.id);
   assert.strictEqual((await call(admin, 'GET', '/compliance?syllabus=all')).body.syllabi[0].run.id, mine.body.run.id);
   assert.strictEqual((await call(admin, 'POST', '/syllabi/1/compliance/recheck', {})).body.cached, false); // now the administrator's own run answers the same content
@@ -537,10 +540,11 @@ test('GET /compliance: an admin sees every submitted syllabus with the administr
   setContent(db, 1, conformingContent());
   addSyllabus(db, 2, { user_id: 6, status: 'for_revision', course_code: 'IT 205', content: JSON.stringify(conformingContent()) });
   addSyllabus(db, 3, { user_id: 6, status: 'draft', course_code: 'IT 206', content: JSON.stringify(conformingContent()) });
-  addSyllabus(db, 4, { user_id: 5, status: 'submitted', course_code: 'IT 207', content: JSON.stringify(F.empty()) });
+  addSyllabus(db, 4, { user_id: 5, status: 'draft', course_code: 'IT 207', content: JSON.stringify(F.empty()) }); // checked by its owner as a draft, then submitted below
   assert.strictEqual((await call(fay, 'POST', '/syllabi/1/submit', {})).status, 200);
   assert.strictEqual((await call(gus, 'POST', '/syllabi/2/submit', { note: 'Added the missing references.' })).status, 200);
   await call(fay, 'POST', '/syllabi/4/compliance/recheck', {}); // only a check, never submitted through the builder
+  db.s.syllabi[4].status = 'submitted';
   db.s.syllabi[1].status = 'submitted';
 
   // after the submits no administrator has checked anything: every submitted syllabus is still waiting
@@ -559,6 +563,12 @@ test('GET /compliance: an admin sees every submitted syllabus with the administr
   const score = adminList.body.syllabi.find((x) => x.syllabusId === 1).run.overall; // syllabi 1 and 2 have the same content
   assert.strictEqual(adminList.body.syllabi.find((x) => x.syllabusId === 2).run.overall, score);
   assert.strictEqual(adminList.body.summary.average, score);
+  // the AI Quality Snapshot's numbers count only checks whose AI step completed; the others are counted apart (2026-11-15)
+  const aiOk = adminList.body.syllabi.filter((x) => x.run && x.run.overall !== null && x.run.aiStatus === 'ok');
+  assert.strictEqual(adminList.body.summary.aiChecked, aiOk.length);
+  assert.strictEqual(adminList.body.summary.notAiChecked, 2 - aiOk.length);
+  assert.strictEqual(adminList.body.summary.aiAverage, aiOk.length ? score : null);
+  assert.ok(adminList.body.summary.areas.every((a) => 'aiRules' in a && 'aiFinal' in a));
   assert.strictEqual(adminList.body.syllabi.find((x) => x.syllabusId === 4).run, null);
   assert.strictEqual(adminList.body.summary.areas.length, 6);
   assert.ok(adminList.body.syllabi.every((x) => !('findings' in (x.run || {}))));
@@ -616,9 +626,23 @@ test('an admin checks the submitted version, not the faculty member\'s working d
   assert.notStrictEqual(db.s.runs[0].content_hash, svc.hashOf(working));
 }));
 
+test('a faculty owner can check only what they can still edit: a draft, or one returned for revision or rejected; never a submitted or approved one (2026-11-15)', () => withServer(async ({ call, db }) => {
+  const statuses = { 2: 'draft', 3: 'for_revision', 4: 'rejected', 5: 'submitted', 6: 'under_review', 7: 'approved' };
+  for (const [id, status] of Object.entries(statuses)) addSyllabus(db, Number(id), { user_id: 5, status, course_code: 'IT 30' + id, content: JSON.stringify(conformingContent()) });
+  const answer = {};
+  for (const [id, status] of Object.entries(statuses)) { const r = await call(fay, 'POST', `/syllabi/${id}/compliance/recheck`, {}); answer[status] = r.status === 200 ? 'checked' : `${r.status} ${r.body.code}`; }
+  assert.deepStrictEqual(answer, { draft: 'checked', for_revision: 'checked', rejected: 'checked', submitted: '409 submitted', under_review: '409 submitted', approved: '409 approved' });
+  assert.match((await call(fay, 'POST', '/syllabi/5/compliance/recheck', {})).body.error, /with the reviewers/);
+}));
+
 test('a check an author made on the same content does not stand in for the administrator\'s check of the version', () => withServer(async ({ call, db }) => {
   submittedBefore(db, 2);
+  const refused = await call(fay, 'POST', '/syllabi/2/compliance/recheck', {});
+  assert.strictEqual(refused.status, 409); // submitted: with the reviewers, not checked by its owner (2026-11-15)
+  assert.strictEqual(refused.body.code, 'submitted');
+  db.s.syllabi[2].status = 'draft'; // the author's check is made while the syllabus is still theirs to edit, on the same content
   assert.strictEqual((await call(fay, 'POST', '/syllabi/2/compliance/recheck', {})).status, 200); // no version stored with this one
+  db.s.syllabi[2].status = 'submitted';
   assert.strictEqual(db.s.runs[0].version_id, null);
   const admins = await call(admin, 'POST', '/syllabi/2/compliance/recheck', {});
   assert.strictEqual(admins.body.cached, false);

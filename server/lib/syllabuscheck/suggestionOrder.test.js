@@ -112,9 +112,10 @@ test('the rounds converge: after the ILO is applied, the next check writes the a
 
 test('the course description waits while a week\'s contents are rewritten in the same check', async () => {
   const { content, masters } = sample();
-  const script = p => (p.id === 'row0-ilo0-content' ? { label: 'NOT_ALIGNED', draft: 'Topic 1 explained with worked examples' }
+  // Content first: the week's contents are rewritten only by their own check against the course (Content-course, Stage B), never to fit an ILO.
+  const script = p => (p.id === 'row0-content' ? { label: 'NOT_ALIGNED', draft: 'Topic 1 explained with worked examples' }
     : p.id === 'description-plan' ? { label: 'PARTIALLY_ALIGNED', draft: 'A course about topics one to eighteen.' } : null);
-  const { result } = await check(content, masters, script);
+  const { result } = await check(content, masters, script, { env: { SYLLABUS_CHECK_STAGE_B: 'on' } });
   assert.deepEqual(paths(result), [CONTENTS]);
   assert.deepEqual(waits(result).map(u => [u.path, u.waitsFor]), [['description', [CONTENTS]]]);
 });

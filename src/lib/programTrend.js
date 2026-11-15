@@ -10,10 +10,11 @@
 //    series: programs with subjects, in code order; `slot` is the program's fixed colour (its place in that order, so a colour follows its program);
 //    overall: all those programs' subjects together (change: percentage points since the first point); empty: programs with no subjects yet.
 
-// The chart's line colours, in the fixed order of the reference categorical palette (validated: adjacent colour-blind separation >= 9, normal >= 19.6
-// on a white card; three are below 3:1 on white, so the chart carries direct labels, a legend and a table view). Never cycled: past eight programs the
-// chart shows the first eight and the table shows all.
-export const SERIES_COLORS = Object.freeze(['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300', '#6250d6', '#e34948']);
+// The chart's line colours, in a fixed order that starts from the app's primary button blue (validated with the dataviz palette checks on a white card:
+// every colour at least 3:1, adjacent colour-blind separation >= 11.2 and normal >= 22; the first four, the usual catalog, also pass every pair against
+// each other). The chart still carries direct labels, a legend and a table view. Never cycled: past eight programs the chart shows the first eight and
+// the table shows all.
+export const SERIES_COLORS = Object.freeze(['#0866ff', '#e07320', '#16a37f', '#b0413e', '#0f9fb8', '#a87a00', '#8b5cf6', '#d6457a']);
 export const GRANULARITIES = Object.freeze(['day', 'week', 'month']);
 
 const DAY = 24 * 3600 * 1000;

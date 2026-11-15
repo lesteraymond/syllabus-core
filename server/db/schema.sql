@@ -459,3 +459,16 @@ CREATE TABLE IF NOT EXISTS account_activity (
     CONSTRAINT fk_account_activity_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL,
     FOREIGN KEY (syllabus_id) REFERENCES syllabi(syllabus_id) ON DELETE SET NULL
   );
+
+-- The re-planned AI Checker's stored answers (db/replan-answers-ddl.js, server/lib/syllabuscheck/pipeline/answerStore.js)
+  CREATE TABLE IF NOT EXISTS replan_answers (
+    answer_key CHAR(64) NOT NULL PRIMARY KEY,
+    relationship VARCHAR(40) NOT NULL,
+    model VARCHAR(120) NOT NULL,
+    prompt_version VARCHAR(40) NOT NULL,
+    rules_version VARCHAR(40) NOT NULL,
+    answer_json TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_replan_answers_updated (updated_at)
+  );

@@ -53,14 +53,15 @@
 	.msg-wrap { position: static; }
 	.msg-drop { top: calc(100% - 6px); left: 12px; right: 12px; width: auto; }
 
-	/* The sidebar, folded into the page: the same blue panel and link styling, collapsing to a header with the current page. */
+	/* The sidebar, folded into the page: the same look as the desktop sidebar (theme.css: a light panel, dark labels, grey icons, the selected item a
+	   white-grey with a primary-blue icon), collapsing to a header with the current page. Tokens only, so the two stay one look if the theme changes. */
 	.mnav {
 		margin: 12px 12px 0;
-		/* Same gradient tokens as the desktop sidebar (theme.css), so the two stay one colour if the theme changes. */
-		background: linear-gradient(180deg, var(--side-top) 0%, var(--side-mid) 40%, var(--side-bottom) 100%);
-		color: #fff;
+		background: var(--card);
+		color: var(--ink);
+		border: 1px solid var(--line);
 		border-radius: 16px;
-		box-shadow: 0 8px 22px rgba(6, 18, 60, 0.25);
+		box-shadow: var(--shadow);
 		overflow: hidden;
 	}
 	.mnav-card {
@@ -73,15 +74,15 @@
 		padding: 12px 16px;
 		text-align: left;
 		background: transparent;
-		color: #fff;
+		color: var(--ink);
 		border: 0;
 		cursor: pointer;
 	}
-	.mnav-tile { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: rgba(255, 255, 255, 0.14); color: #fff; }
+	.mnav-tile { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--btn-primary-tint); color: var(--btn-primary); }
 	.mnav-heading { display: grid; min-width: 0; line-height: 1.25; }
 	.mnav-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--text-sm); font-weight: var(--fw-bold); text-transform: uppercase; letter-spacing: var(--tracking-label); }
-	.mnav-heading small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--text-xs); color: #c3cdee; }
-	.mnav-chevron { transition: transform 200ms ease; }
+	.mnav-heading small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--text-xs); color: var(--muted); }
+	.mnav-chevron { color: var(--muted); transition: transform 200ms ease; }
 	.mnav[data-open="true"] .mnav-chevron { transform: rotate(180deg); }
 	.mnav-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 220ms ease; }
 	.mnav[data-open="true"] .mnav-panel { grid-template-rows: 1fr; }
@@ -93,7 +94,7 @@
 		gap: 5px;
 		padding: 0 10px;
 	}
-	.mnav[data-open="true"] .mnav-list { padding: 4px 10px 12px; max-height: 70dvh; overflow-y: auto; border-top: 1px solid rgba(255, 255, 255, 0.12); }
+	.mnav[data-open="true"] .mnav-list { padding: 8px 10px 12px; max-height: 70dvh; overflow-y: auto; border-top: 1px solid var(--line); }
 	.mnav-list button {
 		display: grid;
 		grid-template-columns: 24px minmax(0, 1fr);
@@ -104,7 +105,7 @@
 		padding: 8px 12px;
 		text-align: left;
 		background: transparent;
-		color: #d8e0f6;
+		color: var(--text);
 		border: 0;
 		border-radius: 9px;
 		font-size: var(--text-sm);
@@ -112,8 +113,11 @@
 		text-transform: uppercase;
 		letter-spacing: var(--tracking-label);
 	}
-	.mnav-list button:hover { background: rgba(255, 255, 255, 0.08); }
-	.mnav-list button.active { background: linear-gradient(90deg, #d79a2b, #e6b75f); color: #12285e; }
+	.mnav-list button .nav-icon { color: var(--side-icon); }
+	.mnav-list button:hover { background: var(--side-hover); color: var(--ink); }
+	.mnav-list button.active { background: var(--side-active); color: var(--ink); }
+	.mnav-list button.active:hover { background: var(--side-active-hover); }
+	.mnav-list button:hover .nav-icon, .mnav-list button.active .nav-icon { color: var(--btn-primary); }
 }
 
 /* Phone */

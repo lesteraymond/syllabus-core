@@ -135,6 +135,24 @@ test('the AI Quality Snapshot rings are the primary button blue, with the lowest
   assert.ok(theme.includes('.quality-mini.low .quality-ring { background: conic-gradient(var(--red) 0 var(--p), #e3e7ea var(--p)); }'), 'the lowest area keeps its red ring');
 });
 
+test('the AI Checker score rings are one thin arc per state, readable on white and on their track, with no water or orbit effects', () => {
+  assert.ok(theme.includes(':root { --ring-good: var(--green); --ring-warn: #a8740f; --ring-busy: var(--btn-primary); --ring-track: #e3e7ea; }'), 'the ring colours');
+  [['green', token('green')], ['warn', token('ring-warn')], ['busy', token('btn-primary')]].forEach(([name, hex]) => {
+    assert.ok(contrast(hex, '#ffffff') >= 3, name + ' arc on white (a graphic: 3:1)');
+    assert.ok(contrast(hex, '#e3e7ea') >= 3, name + ' arc on the grey track');
+  });
+  assert.ok(!/--water|cmpWave|cmpRingOrbit/.test(theme), 'no water fill or orbiting rings');
+  assert.ok(theme.includes('.big-ring.cmp-ring.checking::before {') && theme.includes('animation: ringTurn 1.1s linear infinite'), 'checking: one turning arc');
+  assert.ok(/prefers-reduced-motion: reduce\)\s*\{[^}]*\.big-ring\.cmp-ring\.checking::before/.test(theme), 'and it stops with reduced motion');
+});
+
+test('the dashboard Program Compliance bars are a primary-blue meter on a light track of the same blue', () => {
+  assert.ok(theme.includes('.dashboard-grid .progress-row .bar i { background: var(--btn-primary); }'), 'the fill is the blue of New syllabus');
+  assert.ok(theme.includes('.dashboard-grid .progress-row .bar { background: var(--btn-primary-tint); }'), 'the track is the light step of the same blue');
+  assert.ok(contrast(token('btn-primary'), '#ffffff') >= 3, 'the fill stands out on the white card (a graphic: 3:1)');
+  assert.ok(contrast(token('btn-primary'), token('btn-primary-tint')) >= 3, 'and on its own track');
+});
+
 test('the open dropdown list stays readable: option text, the chosen option on the highlight, and the filter hint', () => {
   assert.ok(contrast(token('text'), '#ffffff') >= 7, 'option text on the panel');
   assert.ok(contrast(token('blue'), token('tint-cobalt')) >= 4.5, 'chosen option on the highlighted row');

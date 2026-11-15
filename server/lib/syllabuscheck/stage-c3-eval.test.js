@@ -176,7 +176,8 @@ const NO_SOCKETS = path.join(tempDir(), 'no-sockets.cjs');
 fs.writeFileSync(NO_SOCKETS, "'use strict';\nconst net = require('node:net');\nnet.Socket.prototype.connect = function () { throw new Error('offline test: no socket may be opened'); };\n");
 const KEY = 'sk-ant-test-only-c3-eval-not-a-real-key';
 const STAGES_OFF = Object.fromEntries(['A', 'B', 'B3', 'B4', 'C1', 'C2', 'C3', 'D1', 'D2'].map(stage => [`SYLLABUS_CHECK_STAGE_${stage}`, 'off']));
-const childEnv = () => ({ ...process.env, ...STAGES_OFF, NODE_OPTIONS: '', SYLLABUS_CHECK_AI_PROVIDER: 'off', ANTHROPIC_API_KEY: KEY, ANTHROPIC_MODEL: 'claude-sonnet-4-6', SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL: '',
+// neutralCheckerEnv: every SYLLABUS_CHECK_* setting named (empty), so a local env file cannot switch one on (eval/neutralCheckerEnv.js)
+const childEnv = () => ({ ...process.env, ...require('./eval/neutralCheckerEnv').neutralCheckerEnv(), ...STAGES_OFF, NODE_OPTIONS: '', SYLLABUS_CHECK_AI_PROVIDER: 'off', ANTHROPIC_API_KEY: KEY, ANTHROPIC_MODEL: 'claude-sonnet-4-6', SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL: '',
   ANTHROPIC_THINKING: '', ANTHROPIC_EFFORT: '', ANTHROPIC_MAX_TOKENS: '', ANTHROPIC_TIMEOUT_SEC: '', ANTHROPIC_MAX_RETRIES: '', ANTHROPIC_PROMPT_CACHE: '', ANTHROPIC_CUSTOM_HEADERS: '',
   OPENROUTER_API_KEY: '', GEMINI_API_KEY: '', SYLLABUS_CHECK_PROMPT_TRIM: 'off', SYLLABUS_CHECK_PROMPT_VARIANT: 'current', SYLLABUS_CHECK_AI_BATCH: '', SYLLABUS_CHECK_REF_VERIFY: 'off',
   SYLLABUS_CHECK_OFFLINE_REPLAY: 'test', SYLLABUS_CHECK_REPLAY_FAULTS: '', SYLLABUS_CHECK_REPLAY_THINKING: '', SYLLABUS_CHECK_REPLAY_MODEL: '' });

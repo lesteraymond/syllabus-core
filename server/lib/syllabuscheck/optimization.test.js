@@ -123,15 +123,17 @@ test('costPlan: the cache warm-up gate sends the first request of a prefix alone
 
 test('defaults: with no flag set the requests are the ones the checker always sent (count, ceiling, no new fields) and the budget reports provider usage apart from the reservation', async () => {
   const b = bench(), run = await b.check({ mode: 'comprehensive' });
-  assert.equal(run.requests.length, 51, 'the comprehensive check of the synthetic course A sent 51 requests before this work and still does');
+  // 53, not the 51 measured when the cost work began: since 2026-11-12 a request with a CLO relationship never also carries one that reads the course
+  // description while the description is held back from CLO questions (clo-description.test.js), which costs this check two more requests.
+  assert.equal(run.requests.length, 53, 'the comprehensive check of the synthetic course A sends 53 requests');
   assert.ok(run.requests.every((r) => r.body.max_tokens === 16000), 'max_tokens is the configured ceiling');
   assert.deepEqual([...new Set(run.requests.flatMap((r) => Object.keys(r.body)))].sort(), ['max_tokens', 'messages', 'model', 'output_config', 'system', 'thinking']);
   assert.ok(run.requests.every((r) => r.body.system[0].cache_control && r.body.system.length === 1), 'the system prompt is the one cached block');
   const s = run.budget;
-  assert.equal(s.providerReported.requests, 51); assert.equal(s.providerReported.inputTokens, 5100); // the scripted double reports 100 in / 100 out per answer
+  assert.equal(s.providerReported.requests, 53); assert.equal(s.providerReported.inputTokens, 5300); // the scripted double reports 100 in / 100 out per answer
   assert.ok(s.reservedCostUsd > 0 && s.providerReported.calculatedUsd < s.reservedCostUsd, 'a reservation is an upper bound, apart from reported usage');
   const report = budgetReport(s, { plannedRequired: 11, v2Status: 'completed' });
-  assert.equal(report.accounting.reservedCostUsd, s.reservedCostUsd); assert.equal(report.accounting.providerReported.requests, 51);
+  assert.equal(report.accounting.reservedCostUsd, s.reservedCostUsd); assert.equal(report.accounting.providerReported.requests, 53);
   assert.equal(budgetReport({ ...s, providerReported: undefined }, {}).accounting, undefined, 'without provider-reported usage nothing is claimed');
 });
 

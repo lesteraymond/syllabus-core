@@ -95,6 +95,32 @@ test('a faculty member\'s program compliance is their assigned subjects submitte
   assert.deepStrictEqual(programCoverage(programs, subjects, [{ courseId: 1, status: 'rejected' }], { statuses: FACULTY_SUBMITTED })[0].approved, 0, 'rejected: not counted');
 });
 
+// A check made with AI checking off is not an AI result (2026-11-15: DSP's rules-only 95 stood beside CAPSPRO1's AI-checked 93).
+test('the AI average leaves out checks made without AI; a row from an older server (no aiStatus) still counts', () => {
+  const ai = (overall, aiStatus) => ({ programCode: 'BSCPE', status: 'draft', run: { overall, aiStatus } });
+  assert.strictEqual(aiAverage([ai(93, 'ok'), ai(95, 'none')]), 93);
+  assert.strictEqual(aiAverage([ai(95, 'none'), ai(60, 'failed')]), null);
+  assert.strictEqual(aiAverage([row('BSIT', 'approved', 90), ai(80, 'ok')]), 85, 'no aiStatus: counted as before');
+});
+
+test('the snapshot uses the AI-only numbers when the server sends them, and says how many syllabi were left out', async () => {
+  const { snapshotOf } = await import('./complianceStats.js');
+  // the dev database on 2026-11-15: CAPSPRO1 checked by the AI (93; assessment 67, co_po 90), DSP checked with AI off (95; assessment 73)
+  const summary = { average: 94, aiAverage: 93, aiChecked: 1, notAiChecked: 1, areas: [
+    { key: 'template', average: 100, final: 100, aiRules: 100, aiFinal: 100 }, { key: 'completeness', average: 100, final: 100, aiRules: 100, aiFinal: 100 },
+    { key: 'co_po', average: 100, final: 95, aiRules: 100, aiFinal: 90 }, { key: 'assessment', average: 100, final: 70, aiRules: 100, aiFinal: 67 },
+  ] };
+  const s = snapshotOf(summary);
+  assert.strictEqual(s.final, 93);
+  assert.deepStrictEqual(s.areas.map((a) => [a.key, a.score]), [['template', 100], ['completeness', 100], ['co_po', 90], ['assessment', 67]]);
+  assert.deepStrictEqual(s.lowest, { key: 'assessment', score: 67 });
+  assert.strictEqual(s.notAiChecked, 1);
+  const none = snapshotOf({ average: 95, aiAverage: null, notAiChecked: 1, areas: [{ key: 'co_po', average: 100, final: 100, aiRules: null, aiFinal: null }] });
+  assert.strictEqual(none.final, null, 'no AI-checked syllabus: no AI score, never the rules-only one');
+  assert.strictEqual(none.areas.find((a) => a.key === 'co_po').score, null);
+  assert.strictEqual(snapshotOf({ average: 90, areas: [] }).notAiChecked, 0, 'an older server: nothing to report');
+});
+
 // The AI Quality Snapshot: the final score (rules minus AI deductions), the four areas after the AI deductions, and the lowest named.
 test('the snapshot shows the final AI score and each area after the AI deductions, naming the lowest', async () => {
   const { snapshotOf } = await import('./complianceStats.js');

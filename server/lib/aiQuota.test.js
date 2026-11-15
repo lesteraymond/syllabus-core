@@ -52,3 +52,30 @@ test('the counts never grow without bound: only today is kept', () => {
   for (let d = 0; d < 3; d++) { day.t = d * 86400000; for (let u = 0; u < 50; u++) q.take('check', u); }
   assert.equal(q.size(), 50);
 });
+
+// ---- The per-check spending limit (SYLLABUS_CHECK_AI_MAX_COST_USD; docs/ai-checker-audit-2026-11-12.md A-2) ----
+const { resolveCheckCostCap } = require('./aiQuota');
+const GEMINI = { SYLLABUS_CHECK_AI_PROVIDER: 'gemini', GEMINI_API_KEY: 'test-only' };
+const capProblem = (env, re) => assert.throws(() => resolveCheckCostCap(env), (e) => e.code === 'ai_quota_invalid' && e.message.includes('SYLLABUS_CHECK_AI_MAX_COST_USD') && re.test(e.message));
+
+test('staging and production refuse to start with an AI provider configured and no per-check spending limit', () => {
+  for (const mode of ['staging', 'production']) {
+    capProblem({ NODE_ENV: mode, ...GEMINI }, /required/);
+    assert.equal(resolveCheckCostCap({ NODE_ENV: mode, ...GEMINI, SYLLABUS_CHECK_AI_MAX_COST_USD: '10' }), 10);
+    assert.equal(resolveCheckCostCap({ NODE_ENV: mode, SYLLABUS_CHECK_AI_PROVIDER: 'off' }), null, 'no AI provider: no AI cost, nothing to limit');
+  }
+});
+
+test('development keeps working without one, and a malformed limit is refused in every mode', () => {
+  assert.equal(resolveCheckCostCap({ ...GEMINI }), null);
+  assert.equal(resolveCheckCostCap({ ...GEMINI, SYLLABUS_CHECK_AI_MAX_COST_USD: '2.50' }), 2.5);
+  for (const bad of ['0', '-1', 'ten', '10abc', '1001', 'Infinity']) {
+    for (const mode of ['', 'staging']) capProblem({ NODE_ENV: mode, ...GEMINI, SYLLABUS_CHECK_AI_MAX_COST_USD: bad }, /above 0/);
+  }
+});
+
+test('server/index.js checks the per-check spending limit before it listens', () => {
+  const source = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'index.js'), 'utf8');
+  const check = source.indexOf('resolveCheckCostCap(process.env)'), listen = source.indexOf('app.listen(');
+  assert.ok(check > 0 && check < listen);
+});

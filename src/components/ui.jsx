@@ -88,8 +88,16 @@ export function Recommendation({ level, title, text }) {
   return <div className="recommend"><span className={`priority ${level.toLowerCase()}`}>{level}</span><div><strong>{tr(title)}</strong><p>{tr(text)}</p></div></div>;
 }
 
-export function ChartCard({ title, subtitle, children }) {
-  return <div className="chart-card"><div><h3>{title}</h3><p>{subtitle}</p></div>{children}</div>;
+// `action`: an optional control at the right of the title (the Chart / Table switch).
+export function ChartCard({ title, subtitle, action, children }) {
+  return <div className="chart-card"><div className="chart-card-head"><div><h3>{title}</h3><p>{subtitle}</p></div>{action}</div>{children}</div>;
+}
+
+// Chart / Table: every chart on the Analytics page has a table with the same numbers (the same switch as the dashboard's View analytics).
+export function ViewSwitch({ view, setView }) {
+  return <div className="trend-seg chart-switch" role="tablist" aria-label={translateUI('trend.viewLabel')}>
+    {['chart', 'table'].map((key) => <button key={key} type="button" role="tab" aria-selected={view === key} className={view === key ? 'active' : ''} onClick={() => setView(key)}>{key === 'chart' ? translateUI('trend.chart') : translateUI('trend.table')}</button>)}
+  </div>;
 }
 
 export function Insight({ n, title, text }) {

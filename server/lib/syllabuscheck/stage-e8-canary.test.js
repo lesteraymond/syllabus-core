@@ -11,6 +11,7 @@ const { stageFlags } = require('./stages');
 const root = path.resolve(__dirname, '../../..');
 const SAFE_ENV = {
   ...process.env,
+  ...require('./eval/neutralCheckerEnv').neutralCheckerEnv(), // every SYLLABUS_CHECK_* setting named (empty), so a local env file cannot switch one on (eval/neutralCheckerEnv.js)
   ...Object.fromEntries(['A', 'B', 'B3', 'B4', 'D1', 'D2'].map(name => [`SYLLABUS_CHECK_STAGE_${name}`, 'off'])),
   SYLLABUS_CHECK_STAGE_C1: 'on', SYLLABUS_CHECK_STAGE_C2: 'on',
   SYLLABUS_CHECK_AI_PROVIDER: 'openrouter', OPENROUTER_MODEL: 'minimax/minimax-m3.1-flash',
