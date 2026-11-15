@@ -40,7 +40,9 @@
     "migrate-account-status": "node db/migrate-account-status.js",
     "migrate-curriculum-year": "node db/migrate-curriculum-year.js",
     "migrate-review-ai-choice": "node db/migrate-review-ai-choice.js",
-    "migrate-account-activity": "node db/migrate-account-activity.js"
+    "migrate-account-activity": "node db/migrate-account-activity.js",
+    "seed-student-demo": "node db/seed-student-demo.js",
+    "seed-student-demo-syllabi": "node db/seed-student-demo-syllabi.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "1.3.0",

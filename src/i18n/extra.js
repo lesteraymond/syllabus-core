@@ -1914,3 +1914,37 @@ const subjectSetupMessages = {
   "outcomes.skipped": ["{code} was skipped: {reason}.", "Nilaktawan ang {code}: {reason}."],
 };
 for (const [key, [en, tl]] of Object.entries(subjectSetupMessages)) { extraEn[key] = en; extraTl[key] = tl; }
+
+// The student's read-only view of the approved syllabi of their enrolled subjects (views/StudentHome.jsx).
+const studentViewMessages = {
+  "studentView.noSubjects": ["No subjects were found on your COR.", "Walang nakitang asignatura sa iyong COR."],
+  "studentView.subject": ["Subject", "Asignatura"],
+  "studentView.faculty": ["Faculty", "Guro"],
+  "studentView.version": ["Version", "Bersyon"],
+  "studentView.syllabus": ["Syllabus", "Syllabus"],
+  "studentView.view": ["View syllabus", "Tingnan ang syllabus"],
+  "studentView.loading": ["Loading…", "Naglo-load…"],
+  "studentView.none": ["No approved syllabus yet", "Wala pang aprubadong syllabus"],
+  "studentView.back": ["← Back to syllabi", "← Bumalik sa mga syllabus"],
+  "studentView.loadingSyllabus": ["Loading the syllabus…", "Nilo-load ang syllabus…"],
+  "studentView.empty": ["This syllabus has no readable content yet.", "Wala pang mababasang nilalaman ang syllabus na ito."],
+  "studentView.dashSubtitle": ["Your enrollment details and the syllabi of your subjects.", "Ang detalye ng iyong enrollment at ang mga syllabus ng iyong mga asignatura."],
+  "studentView.profile": ["My profile", "Aking profile"],
+  "studentView.studentId": ["Student ID", "ID ng mag-aaral"],
+  "studentView.program": ["Program", "Programa"],
+  "studentView.yearLevel": ["Year level", "Antas ng taon"],
+  "studentView.section": ["Section", "Seksyon"],
+  "studentView.term": ["Term", "Termino"],
+  "studentView.available": ["{available} of {total} subjects have an approved syllabus.", "{available} sa {total} asignatura ang may aprubadong syllabus."],
+  "studentView.openSyllabi": ["Browse all syllabi", "Tingnan ang lahat ng syllabus"],
+  "studentView.syllabiTitle": ["Syllabi", "Mga syllabus"],
+  "studentView.syllabiSubtitle": ["Every approved syllabus. You can read them; you cannot change them.", "Lahat ng aprubadong syllabus. Maaari mo itong basahin ngunit hindi mabago."],
+  "studentView.mine": ["Your subject", "Iyong asignatura"],
+  "studentView.ay": ["AY", "AY"],
+  "studentView.allYears": ["All years", "Lahat ng taon"],
+  "studentView.noSyllabi": ["No approved syllabus matches.", "Walang aprubadong syllabus na tumutugma."],
+  "studentView.searchHint": ["Subject code or title", "Code o pamagat ng asignatura"],
+  "studentView.verified": ["Verified", "Napatunayan"],
+  "studentView.hasSyllabus": ["Syllabus available", "May syllabus"],
+};
+for (const [key, [en, tl]] of Object.entries(studentViewMessages)) { extraEn[key] = en; extraTl[key] = tl; }

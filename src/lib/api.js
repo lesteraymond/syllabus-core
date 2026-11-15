@@ -43,8 +43,9 @@ async function request(path, options = {}) {
 
 // Student registration: scan the COR (multipart), then register with only a password; the server keeps the scan.
 export const students = {
-  scan: async (file) => {
+  scan: async (file, consent = false) => {
     const fd = new FormData();
+    fd.append('consent', consent ? 'yes' : 'no'); // text fields go before the file so the server sees them first
     fd.append('cor', file);
     let res;
     try { res = await fetch(`${API}/students/scan`, { method: 'POST', credentials: 'include', body: fd }); }
@@ -55,6 +56,9 @@ export const students = {
   },
   register: (password) => request('/students/register', { method: 'POST', body: JSON.stringify({ password }) }),
   me: () => request('/students/me'),
+  // Read-only: the approved syllabi of the student's enrolled subjects, and one of them with its content.
+  syllabi: () => request('/students/syllabi'),
+  syllabus: (id) => request(`/students/syllabi/${id}`),
 };
 
 export const auth = {

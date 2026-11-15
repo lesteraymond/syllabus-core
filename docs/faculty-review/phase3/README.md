@@ -1,6 +1,6 @@
 # Stage E.9 Phase 3 — Whole-Syllabus Faculty Review Package
 
-Generated offline by `node scripts/export-phase3-faculty-review.cjs` from `server/lib/syllabuscheck/eval/phase3/manifest-phase3-1.json` (manifest SHA-256: `cc71563ddef7889a8c070de3d2c004fec96e24910690b4f7fa95623db034b84e`).
+Generated offline by `node scripts/export-phase3-faculty-review.cjs` from `server/lib/syllabuscheck/eval/phase3/manifest-phase3-1.json` (manifest SHA-256: `3c9b7873f90d3ea781a50184e1644f2087848a42738dffe6b3da45ecfae1049b`).
 
 - **Status:** `DRAFT — developer-written expectation, NOT faculty-reviewed`
 - **Offline execution:** `true` (zero AI provider calls, zero database access)

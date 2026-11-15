@@ -1383,3 +1383,62 @@ html { scrollbar-gutter: auto; }
 :root { --btn-primary-tint: #e8f0ff; }
 .stepper button.active { background: var(--btn-primary-tint); color: var(--btn-primary-hover); }
 .stepper button.active span { background: var(--btn-primary); color: #ffffff; }
+
+/* Student pages (views/StudentViews.jsx): the profile card and the enrolled-subjects list */
+/* its own grid (not the Dashboard's, which fixes row heights and has its own phone rules): two equal cards, the profile card sets the height, the subjects list scrolls inside */
+.student-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: stretch; }
+.student-grid > .card { display: flex; flex-direction: column; min-width: 0; }
+.student-grid .card-head { border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 10px; min-height: 36px; }
+.student-grid > .card > .card-body { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.student-facts { flex: 1; grid-auto-rows: 1fr; } /* the tiles share the height the card is stretched to, so there is no empty strip under them */
+.student-facts > div { align-content: center; }
+.student-grid > .card:last-child { contain: size; overflow: hidden; }
+.student-grid > .card:last-child > .card-body { overflow-y: auto; padding-right: 4px; }
+@media (max-width: 900px) {
+  .student-grid { grid-template-columns: minmax(0, 1fr); }
+  .student-grid > .card:last-child { contain: none; }
+  .student-grid > .card:last-child > .card-body { max-height: 420px; }
+  .student-facts { grid-auto-rows: auto; }
+}
+.student-id-head { display: flex; align-items: center; gap: 14px; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid var(--line); }
+.student-id-head > div { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.student-id-head strong { font-size: var(--text-md, 16px); color: var(--ink); overflow-wrap: anywhere; }
+.student-id-head small { color: var(--muted); font-variant-numeric: tabular-nums; }
+.student-initials { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; border-radius: 50%; background: var(--btn-primary); color: #ffffff; font-weight: var(--fw-bold); font-size: 18px; letter-spacing: 0.02em; }
+.student-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; }
+.student-facts > div { display: grid; gap: 3px; padding: 11px 14px; border: 1px solid var(--line); border-radius: 10px; background: #ffffff; min-width: 0; }
+.student-facts > div.wide { grid-column: 1 / -1; }
+.student-facts dt { font-size: var(--text-xs); font-weight: var(--fw-semibold); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--muted); }
+.student-facts dd { margin: 0; font-weight: var(--fw-semibold); color: var(--ink); overflow-wrap: anywhere; }
+.student-count { margin: 0 0 10px; }
+.student-subjects { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 8px; }
+.student-subjects li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: #ffffff; }
+@media (max-width: 600px) { .student-subjects li { grid-template-columns: minmax(0, 1fr) auto; } .student-subjects .student-title { grid-column: 1 / -1; grid-row: 2; } .student-code { min-width: 0; } .student-facts { grid-template-columns: minmax(0, 1fr); } }
+.student-code { font-weight: var(--fw-bold); color: var(--btn-primary); white-space: nowrap; min-width: 74px; }
+.student-title { color: var(--ink); overflow-wrap: anywhere; }
+.student-mine { margin-left: 8px; vertical-align: middle; }
+.student-ay { white-space: nowrap; } /* "2026–2027" stays on one line */
+/* the student Syllabi table keeps a readable width and scrolls sideways inside its card on a phone, instead of squeezing its columns into each other */
+.table-card.repository-table.student-table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.student-fit-paper .svm-paper { overflow-x: visible; }
+.table-card.repository-table.student-table table { table-layout: auto; width: 100%; min-width: 820px; }
+.table-card.repository-table.student-table th,
+.table-card.repository-table.student-table td { padding-right: 14px; overflow-wrap: normal; word-break: normal; text-align: left; }
+.table-card.repository-table.student-table th:not(:first-child),
+.table-card.repository-table.student-table td:not(:first-child) { white-space: nowrap; }
+.table-card.repository-table.student-table td:first-child { min-width: 200px; }
+.table-card.repository-table.student-table td .btn.student-view-btn {
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+  width: auto; min-width: 0; height: 32px; min-height: 0; padding: 0 12px;
+  border-radius: 999px; font-size: 13px; line-height: 1; font-weight: var(--fw-bold);
+  background: transparent; color: var(--btn-primary); border: 1.5px solid var(--btn-primary);
+  transition: background .15s ease, color .15s ease, transform .1s ease;
+}
+.table-card.repository-table.student-table td .btn.student-view-btn:hover { background: var(--btn-primary); color: #fff; border-color: var(--btn-primary); }
+.table-card.repository-table.student-table td .btn.student-view-btn:active { transform: scale(.96); }
+.table-card.repository-table.student-table td .btn.student-view-btn svg { flex: none; }
+.table-card.repository-table.student-table td:first-child small { white-space: normal; overflow-wrap: anywhere; }
+/* the student Syllabi filters with the AY control: Program, a short AY box, Search, Reset (the Repository bar is built for three controls) */
+.filter-card.repository-filters.student-filters-ay { grid-template-columns: minmax(0, 1fr) 150px minmax(0, 1.5fr) auto; }
+@media (max-width: 900px) { .filter-card.repository-filters.student-filters-ay { grid-template-columns: repeat(2, minmax(0, 1fr)); } .filter-card.repository-filters.student-filters-ay .reset { justify-self: start; } }
+@media (max-width: 700px) { .filter-card.repository-filters.student-filters-ay { grid-template-columns: minmax(0, 1fr); } }
