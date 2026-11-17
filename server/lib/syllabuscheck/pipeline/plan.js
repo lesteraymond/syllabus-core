@@ -187,7 +187,9 @@ async function buildPlan(content, masters, opts = {}) {
   const changed = new Set(changes.keys());
   const leftKeys = new Set([...current.misalignments.map(m => m.fieldKey || (m.source === 'rule' ? fieldKeyOfFinding({ rule: m.rule, where: m.where }) : null))].filter(Boolean));
   const manualOnly = k => current.misalignments.filter(m => m.fieldKey === k).every(m => m.source === 'ai' && R.isManual(m.rule));
-  const unresolved = [...leftKeys].filter(k => !changed.has(k)).map(k => ({ key: k, reason: rejections.get(k) || (manualOnly(k) ? 'for the faculty: the activities and tasks of the weeks mapped to this CLO do not reach its verb level (raise an ILO with its activities and tasks; the CLO is not rewritten for this)' : (attempts.get(k) || 0) >= maxAttempts ? 'not fixed after ' + maxAttempts + ' rewrites' : 'waits for a field above it, or the round limit was reached') }));
+  // a field the AI never rewrites (a reference: rules.CHAIN rewritable false) is the author's to replace, not something "waiting for a field above it"
+  const notRewritable = k => { const field = structure(current.map).info.get(k)?.field || (k.startsWith('ref:') ? 'references' : null); return !!field && !REWRITABLE.has(field); };
+  const unresolved = [...leftKeys].filter(k => !changed.has(k)).map(k => ({ key: k, reason: rejections.get(k) || (notRewritable(k) ? 'for the faculty: the AI never rewrites a reference; replace or remove this source' : manualOnly(k) ?'for the faculty: the activities and tasks of the weeks mapped to this CLO do not reach its verb level (raise an ILO with its activities and tasks; the CLO is not rewritten for this)' : (attempts.get(k) || 0) >= maxAttempts ? 'not fixed after ' + maxAttempts + ' rewrites' : 'waits for a field above it, or the round limit was reached') }));
   const manual = current.fixed.findings.filter(f => f.severity === 'finding' && AUTHOR_RULES.has(f.rule)).map(f => ({ rule: f.rule, where: f.where, message: f.message }));
   return {
     version: PLAN_VERSION, rounds, usage,

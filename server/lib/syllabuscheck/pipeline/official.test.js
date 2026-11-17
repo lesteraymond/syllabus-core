@@ -122,7 +122,7 @@ test('officialize hands back the check and plan it made, so a caller never build
 test('compliance/service.js runs the old engine with AI off only in official mode, and keeps the old path otherwise', () => {
   const source = fs.readFileSync(path.join(__dirname, '..', '..', 'compliance', 'service.js'), 'utf8');
   assert.match(source, /const replanOfficial = !v2On && options\.useAi !== false && officialReplan\.readiness\(env\)\.ok;/);
-  assert.match(source, /\.\.\.\(replanOfficial \? \{ env: \{ \.\.\.env, SYLLABUS_CHECK_AI_PROVIDER: 'off' \} \} : \{\}\)/);
+  assert.match(source, /\.\.\.\(replanOfficial \? \{ env: officialReplan\.noAiEnv\(env\) \} : \{\}\)/);
   assert.match(source, /if \(replanOfficial\) \{\s*try \{\s*await officialReplan\.officialize/);
   assert.match(source, /if \(!v2On && !replanOfficial && options\.useAi !== false && wholePlan\.enabled\(env\)\)/);
 });

@@ -2580,3 +2580,16 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Versions unchanged:** the values questions now carry other texts, so their stored answers do not match and they are asked again once; nothing else is.
 - **Tests:** new `pipeline/values-activities.test.js` (3; the first fails against the old question). `npm test` passes.
 - Not yet re-checked with the real model: re-check CPE 101 in the app.
+
+---
+
+### v1.94.9 — AI Checker: CPE 101 Re-Check Shows Suggestions Again; No "AI Provider Unavailable" Findings
+**Date:** November 17, 2026
+
+- **Symptom:** CPE 101 check #458 completed with score 85 and six deductions but no suggestion (plan rounds 0), and three findings said "This original-requirement relationship was not checked; the course identity or AI provider is unavailable".
+- **Cause 1, a deadlock** (`pipeline/judge.js` setStatuses): CLO-EVIDENCE (a manual relationship, fixed in its weeks, never by rewriting the CLO) made CLO 3 "failing". The Week 10 ILO tagged to CLO 3 then waited on its CLO, the week's activities and tasks waited on the ILO, and CLO-EVIDENCE waited on the activities and tasks: nothing was a rewrite root, so the plan rewrote nothing. A failing manual relationship no longer makes its field a parent that others wait on; the same rule applies to `official.js` unresolvedOf.
+- **Cause 2** (`pipeline/plan.js`): a reference the AI flagged was listed as "waits for a field above it". The AI never rewrites a reference, so it now reads "for the faculty: the AI never rewrites a reference; replace or remove this source".
+- **Cause 3** (`compliance/service.js`, `pipeline/official.js` noAiEnv): official mode ran the old engine with its AI off but its original-requirements advice still on (`SYLLABUS_CHECK_REQUIREMENTS_ADVICE=on`), so each of its questions was recorded as "not checked". Official mode now turns that advice off too; the no-AI rules and the base score are unchanged.
+- **Versions unchanged:** no question or prompt changed; stored answers are reused.
+- **Verified offline:** a read-only replay of CPE 101 with the stored answers (no AI request) gives 0 "not checked" findings, the Week 10 ILO as a rewrite root, the reference reason above, score 85. New `pipeline/cpe101-458.test.js` (3 tests); `npm test` passes (2,603 server + 127).
+- Not yet re-checked with the real model: re-check CPE 101 in the app.

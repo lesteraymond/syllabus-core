@@ -57,7 +57,7 @@ async function checkHybrid(db, content, options = {}) {
   // provider, AI checking on, its own cost cap); otherwise, and with Policy V2 on, the old checker runs exactly as before.
   const officialReplan = require('../syllabuscheck/pipeline/official');
   const replanOfficial = !v2On && options.useAi !== false && officialReplan.readiness(env).ok;
-  const result = await hybridEngine.run(content, masters, { ...options, ...legacyOptions, ...(replanOfficial ? { env: { ...env, SYLLABUS_CHECK_AI_PROVIDER: 'off' } } : {}), profileResolved:true, requestBudget, reuse, history });
+  const result = await hybridEngine.run(content, masters, { ...options, ...legacyOptions, ...(replanOfficial ? { env: officialReplan.noAiEnv(env) } : {}), profileResolved:true, requestBudget, reuse, history });
   if (replanOfficial) {
     try {
       await officialReplan.officialize({ noAi: result, content, masters, env, db, transport: options.transport });

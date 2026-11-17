@@ -70,6 +70,11 @@ function keyOfPath(content, path) {
   if (m) { const row = (content.plan || [])[Number(m[1])]; return row && row.id ? `${m[2] === 'contents' ? 'content' : m[2]}:${row.id}` : null; }
   return null;
 }
+// The settings the OLD engine runs under in official mode: its AI step off, and its optional original-requirements advice off too. With no AI that
+// advice can only record each of its questions as "not checked; the course identity or AI provider is unavailable", which showed as findings beside a
+// score the new checker had made (CPE 101 #458). The new checker judges those requirements itself (WEEK1-ORIENTATION, WEEK2-FIRST-TOPIC).
+const noAiEnv = env => ({ ...env, SYLLABUS_CHECK_AI_PROVIDER: 'off', SYLLABUS_CHECK_REQUIREMENTS_ADVICE: 'off' });
+
 // The builder can apply a draft only to these text fields (the same list as src/lib/hybridView.js canRefine).
 const APPLYABLE = /^(?:clos\[\d+\]\.statement|plan\[\d+\]\.(?:values|contents|activities|tasks)|plan\[\d+\]\.ilos\[\d+\]\.text)$/;
 
@@ -134,7 +139,8 @@ function officialParts(content, result, plan) {
 // waitsFor). A field waits when one of the fields it depends on still has a misalignment of its own; otherwise it needs a person (draft_needs_review).
 function unresolvedOf(content, result, plan, drafted) {
   if (!plan) return [];
-  const failingKeys = new Set(result.misalignments.map(m => m.fieldKey || (m.source === 'rule' ? fieldKeyOfFinding({ rule: m.rule, where: m.where }) : null)).filter(Boolean));
+  // the same rule as judge.js: a manual relationship (CLO-EVIDENCE) does not make its CLO a field the others wait for
+  const failingKeys = new Set(result.misalignments.filter(m => !(m.source === 'ai' && R.isManual(m.rule))).map(m => m.fieldKey || (m.source === 'rule' ? fieldKeyOfFinding({ rule: m.rule, where: m.where }) : null)).filter(Boolean));
   const out = [];
   for (const u of plan.unresolved || []) {
     const path = pathOf(content, u.key);
@@ -221,4 +227,4 @@ async function officialize({ noAi, content, masters, env = process.env, db, tran
   return noAi;
 }
 
-module.exports = { isOfficial, readiness, maxRequestsOf, officialize, officialParts, unresolvedOf, pathOf, keyOfPath, APPLYABLE, MODE, MAX_CAP_USD };
+module.exports = { isOfficial, readiness, noAiEnv, maxRequestsOf, officialize, officialParts, unresolvedOf, pathOf, keyOfPath, APPLYABLE, MODE, MAX_CAP_USD };
