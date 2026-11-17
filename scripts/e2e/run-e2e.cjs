@@ -1,6 +1,7 @@
 'use strict';
 // LOCAL E2E (staging-like topology): real Edge/Chromium, the real React build, the real Express server as NODE_ENV=staging behind a throwaway TLS proxy, an isolated
-// scratch MySQL database with SYNTHETIC data, and a SCRIPTED provider (no byte leaves this machine). This is NOT a staging E2E and NOT a Claude test.
+// scratch MySQL database with SYNTHETIC data, and the new AI Checker answered by an OFFLINE stand-in for the Anthropic API (scripts/e2e/fake-anthropic.cjs;
+// no byte leaves this machine). This is NOT a staging E2E and NOT a Claude test.
 //   node scripts/e2e/run-e2e.cjs                 builds, starts the stack, runs every scenario, writes docs/vpaa-conformance/e2e/results.json
 //   E2E_STACK_FILE=path/stack.json node ...      reuse an already running stack (development of the scenarios only)
 const fs = require('node:fs');
@@ -10,7 +11,7 @@ const OUT = path.join(ROOT, 'docs/vpaa-conformance/e2e');
 const L = require('./lib.cjs');
 const { seed } = require('./seed-e2e.cjs');
 const { startStack, DB_NAME } = require('./stack.cjs');
-const harness = require(path.join(ROOT, 'server/lib/syllabuscheck/vpaa-conformance/harness'));
+const fixture = require('./syllabus-fixture.cjs'); // the synthetic syllabus and masters (the new checker's conforming syllabus)
 const { LEVELS } = require('./seed-e2e.cjs');
 
 const RELATIONSHIPS = ['Content-course', 'Content-ILO', 'ILO-CLO', 'Content-activity', 'ILO-activity', 'Content-assessment', 'Activity-assessment'];
@@ -67,12 +68,12 @@ async function main() {
   const browser = await L.launch();
   const ctx = { stack, browser, seeded, state: {} };
 
-  try { await require('./scenarios.cjs')(ctx, { scenario, check, known, note, evidence, assertClean, L, harness, LEVELS, RELATIONSHIPS, AREAS, DESCRIPTION, OUT, ROOT }); }
+  try { await require('./scenarios.cjs')(ctx, { scenario, check, known, note, evidence, assertClean, L, fixture, LEVELS, RELATIONSHIPS, AREAS, DESCRIPTION, OUT, ROOT }); }
   finally { await browser.close(); }
 
   const providerEvents = stack.providerEvents();
   const summary = {
-    label: 'LOCAL E2E (staging-like topology: https frontend, TLS proxy, NODE_ENV=staging server, isolated scratch database, scripted provider). Not a staging E2E; no live Claude request.',
+    label: 'LOCAL E2E (staging-like topology: https frontend, TLS proxy, NODE_ENV=staging server, isolated scratch database, the new AI Checker on an offline stand-in for the Anthropic API). Not a staging E2E; no live Claude request.',
     browser: 'Microsoft Edge (Chromium) via playwright-core', node: process.version, finishedAt: new Date().toISOString(),
     scenarios: { total: results.length, passed: results.filter((r) => r.status === 'PASS').length, failed: results.filter((r) => r.status === 'FAIL').length },
     checks: { total: results.reduce((n, r) => n + r.checks.length, 0), passed: results.reduce((n, r) => n + r.checks.filter((c) => c.ok).length, 0), knownDefects: results.reduce((n, r) => n + r.checks.filter((c) => c.known).length, 0) },

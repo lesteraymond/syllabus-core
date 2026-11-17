@@ -6,9 +6,9 @@ const path = require('node:path');
 const { SECOND } = require('./seed-e2e.cjs');
 
 module.exports = async function run(ctx, h) {
-  const { scenario, check, known, note, evidence, assertClean, L, harness, LEVELS, RELATIONSHIPS, DESCRIPTION, RESERVED, ROOT } = h;
+  const { scenario, check, known, note, evidence, assertClean, L, fixture, LEVELS, RELATIONSHIPS, DESCRIPTION, RESERVED, ROOT } = h;
   const { stack, browser, state } = ctx;
-  const { content: sample } = harness.sample();
+  const { content: sample } = fixture.sample();
   const sections = { clos: sample.clos.map((clo, i) => ({ ...clo, level: LEVELS[i] })), plan: sample.plan, reqs: sample.reqs, refs: sample.refs, grading: sample.grading, outcomes: sample.outcomes };
   const idOf = async (s) => { const list = await s.api('GET', '/syllabi'); const rows = Array.isArray(list.body) ? list.body : list.body?.syllabi || []; return (rows.find((r) => /IT 204/.test(r.course_code || r.courseCode || '')) || {}).syllabus_id ?? (rows[0] || {}).id; };
   const savedRun = async (s, id = state.syllabusId) => (await s.api('GET', '/compliance?syllabus=' + id)).body?.run;
