@@ -55,7 +55,7 @@ test('the rewrite is told everything it must satisfy: its parents, the failed ch
   assert.equal(job.field.kind, 'ilo');
   assert.deepEqual(job.dependsOn.map(p => p.kind).sort(), ['clo', 'content']);
   assert.ok(job.mustSatisfy.some(m => m.relationship === 'ILO-CLO' && m.failedItems.length));
-  assert.deepEqual(job.keepFittingChildren.map(ch => ch.kind).sort(), ['activities', 'values']);
+  assert.deepEqual(job.keepFittingChildren.map(ch => ch.kind).sort(), ['activities', 'tasks', 'values'], 'the tasks depend on the verb level of the ILO');
 });
 
 test('content first: a misfit between an ILO and its week rewrites the ILO, never the content', async () => {
@@ -185,7 +185,7 @@ test('a rewrite is told the links that fit now and must keep them (DSP re-run, 2
   assert.ok(!job.mustKeep.some(k => k.relationship === 'CLO-LEVEL'), 'what failed is not in mustKeep');
   const P = require('./prompt');
   assert.match(P.REWRITE_SYSTEM, /mustKeep fits NOW/);
-  assert.equal(P.REWRITE_VERSION, 'replan-rewrite-3');
+  assert.equal(P.REWRITE_VERSION, 'replan-rewrite-4');
 });
 
 test('without a rewrite provider the plan only reports', async () => {

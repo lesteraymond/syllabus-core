@@ -20,6 +20,11 @@ function createMemoryDb({ syllabus } = {}) {
         state.runs.push(row); return [{ insertId: row.run_id }];
       }
       if (/^UPDATE ai_check_runs SET provider = \?, model = \?, ai_error = \? WHERE run_id = \?/.test(sql)) { Object.assign(state.runs.find((r) => r.run_id === params[3]), { provider: params[0], model: params[1], ai_error: params[2] }); return [{ affectedRows: 1 }]; }
+      // service.js storeRun also records the prompt version (VARCHAR(20) in schema.sql), so a stored run says which checker made it
+      if (/^UPDATE ai_check_runs SET provider = \?, model = \?, ai_error = \?, prompt_version = \? WHERE run_id = \?/.test(sql)) {
+        if (params[3] !== null && String(params[3]).length > 20) throw new Error('memdb: prompt_version longer than VARCHAR(20)');
+        Object.assign(state.runs.find((r) => r.run_id === params[4]), { provider: params[0], model: params[1], ai_error: params[2], prompt_version: params[3] }); return [{ affectedRows: 1 }];
+      }
       if (/^INSERT INTO ai_check_area_scores/.test(sql)) { params[0].forEach(([run_id, area_key, name, weight, score]) => state.areas.push({ run_id, area_key, name, weight, score })); return [{ affectedRows: params[0].length }]; }
       if (/^INSERT INTO ai_findings/.test(sql)) { const c = cols(sql); params[0].forEach((v) => state.findings.push(Object.fromEntries(c.map((k, i) => [k, v[i]])))); return [{ affectedRows: params[0].length }]; }
       if (/^INSERT INTO syllabus_check_reports/.test(sql)) { state.reports.set(params[0], { reference_hash: params[1], report_json: params[2] }); return [{ affectedRows: 1 }]; }

@@ -14,7 +14,7 @@ test('one request for the CLOs, one per week, one for the whole syllabus; every 
   const log = [];
   const result = await run(T.conforming(), { ask: T.scriptedJudge({ log }) });
   assert.equal(result.judged.usage.requests, 20); // 1 CLOs + 18 weeks + 1 syllabus
-  assert.equal(result.judged.usage.questions, 142);
+  assert.equal(result.judged.usage.questions, 146);
   assert.equal(result.summary.misalignments, 0);
   assert.equal(result.summary.complete, true);
   const week3 = log.map(l => l.questions).find(qs => qs.some(q => q.id === 'CONTENT-TITLE|content:r3'));
@@ -24,7 +24,7 @@ test('one request for the CLOs, one per week, one for the whole syllabus; every 
 test('which questions are asked: CLOs against title, level, each tagged PO and EGA; orientation has no CLO question; exam weeks are asked about values only', () => {
   const qs = questionsOf(extract(T.conforming()));
   const of = key => qs.filter(q => q.from.key === key || q.group === key).map(q => q.relationship);
-  assert.deepEqual(of('clo:c1'), ['CLO-TITLE', 'CLO-LEVEL', 'CLO-PO', 'CLO-PO', 'CLO-EGA', 'CLO-EGA']);
+  assert.deepEqual(of('clo:c1'), ['CLO-TITLE', 'CLO-LEVEL', 'CLO-PO', 'CLO-PO', 'CLO-EGA', 'CLO-EGA', 'CLO-EVIDENCE']);
   assert.deepEqual(of('week:r1').sort(), ['ILO-CONTENT', 'VALUE-ILO']);
   assert.deepEqual(of('week:x6'), ['VALUE-ILO']);
   assert.ok(qs.every(q => q.relationship !== 'CONTENT-TITLE' || q.group.startsWith('week:')));
@@ -49,13 +49,16 @@ test('answers whose exact texts are unchanged are reused; an edited ILO re-asks 
   const store = new Map(), c = T.conforming();
   await run(c, { ask: T.scriptedJudge(), store });
   const again = await run(c, { ask: T.failIfCalled, store });
-  assert.equal(again.judged.usage.reused, 142);
+  assert.equal(again.judged.usage.reused, 146);
   assert.equal(again.judged.usage.requests, 0);
   c.plan[2].ilos[0].text = 'Explain topic number 3 with a worked example';
   const log = [];
   const edited = await run(c, { ask: T.scriptedJudge({ log }), store });
-  assert.equal(edited.judged.usage.requests, 1);
-  assert.ok(log[0].questions.every(q => q.id.includes('r3') || q.id.includes('i3')));
+  // its own week, plus the whole-syllabus request with only the evidence question of the CLO it is mapped to (that question quotes the ILO)
+  assert.equal(edited.judged.usage.requests, 2);
+  const asked = log.flatMap(l => l.questions);
+  assert.ok(asked.every(q => q.id.includes('r3') || q.id.includes('i3') || q.relationship === 'CLO-EVIDENCE'), asked.map(q => q.id).join(' '));
+  assert.deepEqual(asked.filter(q => q.relationship === 'CLO-EVIDENCE').map(q => q.id), ['CLO-EVIDENCE|clo:c3']);
 });
 
 test('a different model never reuses an answer (the prompt and rules versions are in the same key)', async () => {
@@ -83,10 +86,11 @@ test('a rejected answer is asked once more; still rejected it is not checked (ne
 
 test('a provider failure is not retried and leaves its questions not checked', async () => {
   let calls = 0;
-  const ask = async message => { calls++; if (JSON.parse(message.user).questions.some(q => q.id.startsWith('CLO-'))) throw new Error('HTTP 429'); return T.scriptedJudge()(message); };
+  // only the CLO request fails (CLO-EVIDENCE travels with the whole-syllabus request)
+  const ask = async message => { calls++; if (JSON.parse(message.user).questions.some(q => q.id.startsWith('CLO-TITLE'))) throw new Error('HTTP 429'); return T.scriptedJudge()(message); };
   const result = await run(T.conforming(), { ask });
   assert.equal(calls, 20);
-  const clo = result.judged.results.filter(r => r.relationship.startsWith('CLO-'));
+  const clo = result.judged.results.filter(r => r.relationship.startsWith('CLO-') && r.relationship !== 'CLO-EVIDENCE'); // that one travels with the whole-syllabus request
   assert.ok(clo.every(r => r.status === 'not_checked' && /provider failed: HTTP 429/.test(r.reason)));
   assert.equal(result.judged.usage.providerFailures, 1);
   assert.equal(result.summary.complete, false);

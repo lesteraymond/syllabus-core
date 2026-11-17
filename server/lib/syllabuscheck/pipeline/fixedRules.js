@@ -7,7 +7,7 @@
 // Every finding names its area (rules.AREAS), its field and where it is, so the repair plan can order fixes top-down (rules.CHAIN).
 const R = require('./rules');
 const { parseReference } = require('../references');
-const { nearCopy } = require('./extract');
+const { nearCopy, leadingVerbs } = require('./extract');
 
 function finding(rule, severity, area, field, where, message, fix) {
   return { rule, severity, area, field, layer: R.layerOf(field), where, message, ...(fix ? { fix } : {}) };
@@ -89,6 +89,29 @@ function duplicateIloRules(map, out) {
   }
 }
 
+// One observable verb per outcome (owner, 2026-11-17, following the CHED Implementation Handbook for OBE and ISA, rule 7 of writing learning outcomes:
+// "Choose only one observable verb/behavior in a statement of outcome; choose the behavior that is of a higher dimension of complexity").
+// A CLO or ILO that OPENS with two or more joined verbs ("Define and explain ...") is a finding on its own text; the plan drafts a one-verb rewrite
+// (judge.js FIXED_TEXT_RULES). Like every rule of the new checker that needs no AI, it costs no points in official mode.
+const BLOOM_RANK = Object.fromEntries(R.BLOOM_ORDER.flatMap((b, i) => b.verbs.split(/,\s*/).map(v => [v, i])));
+const higherOf = verbs => [...verbs].sort((a, b) => (BLOOM_RANK[b] ?? -1) - (BLOOM_RANK[a] ?? -1))[0];
+const verbAdvice = verbs => {
+  const list = verbs.map(v => `"${v}"`).join(verbs.length === 2 ? ' and ' : ', ');
+  // name the one to keep only when every verb has a known Bloom level (otherwise the faculty, or the plan's AI rewrite, chooses)
+  const keep = verbs.every(v => BLOOM_RANK[v] !== undefined) ? higherOf(verbs) : null;
+  return `It uses ${verbs.length} verbs (${list}); CHED advises one observable verb per outcome, the one of higher complexity${keep ? ` (here "${keep}")` : ''}.`;
+};
+function oneVerbRules(map, out) {
+  for (const clo of map.clos) {
+    const verbs = leadingVerbs(clo.statement);
+    if (verbs.length > 1) out.push(finding('OUTCOME-ONE-VERB', 'finding', 'clo', 'clo', { clo: clo.no, cloId: clo.id, verbs }, `CLO ${clo.no}: ${verbAdvice(verbs)}`));
+  }
+  for (const w of map.weeks) w.ilos.forEach((ilo, i) => {
+    const verbs = leadingVerbs(ilo.text);
+    if (verbs.length > 1) out.push(finding('OUTCOME-ONE-VERB', 'finding', 'ilo', 'ilo', { week: w.label, row: w.rowId, ilo: ilo.id, verbs }, `${weekName(w)} ILO ${i + 1}: ${verbAdvice(verbs)}`));
+  });
+}
+
 function referenceRules(map, out, year) {
   if (!map.references.length) { out.push(finding('REF-NONE', 'finding', 'references', 'references', {}, 'The syllabus lists no references.')); return; }
   for (const ref of map.references) {
@@ -110,10 +133,11 @@ function check(map, ctx = {}) {
   scheduleRules(map, findings);
   weekRules(map, findings);
   duplicateIloRules(map, findings);
+  oneVerbRules(map, findings);
   referenceRules(map, findings, year);
   findings.sort((a, b) => (a.layer ?? 99) - (b.layer ?? 99));
   const count = severity => findings.filter(f => f.severity === severity).length;
   return { version: R.VERSION, findings, summary: { finding: count('finding'), review: count('review') } };
 }
 
-module.exports = { check };
+module.exports = { check, higherOf };

@@ -9,6 +9,8 @@ const { assertRecordReview } = require('../lib/programPoReferences');
 const { canView, canEdit, isOwner, lockedMessage } = require('../lib/syllabusRules');
 const { providerConfig, promptVersionOf } = require('../lib/syllabuscheck/gemini');
 const refine = require('../lib/syllabuscheck/refine');
+const replanRefine = require('../lib/syllabuscheck/pipeline/refine'); // Check & improve for the re-planned checker's drafts
+const replanPrompt = require('../lib/syllabuscheck/pipeline/prompt');
 const { createVerificationToken, verifyVerificationToken, getValue, relatedContextHash } = refine;
 const { createLimiter } = require('../lib/rateLimit'); const { aiQuota, MESSAGES: AI_LIMIT } = require('../lib/aiQuota'); // the daily ceilings on AI requests
 const { aiGate } = require('../lib/syllabuscheck/policy');
@@ -181,9 +183,17 @@ router.post('/runs/:id/suggestions/:suggestionId/refine', wrap(async (req, res) 
   const { model, configured } = providerConfig();
   if (!configured) throw httpError(503, 'No active AI provider is configured.');
   if (!refine.signingSecret()) throw httpError(503, refine.SECRET_MESSAGE); // before any AI request is spent
+  // A draft of the re-planned checker (official mode) is checked by that checker (pipeline/refine.js), against its own prompt version; any other
+  // draft by the old checker, as before. Without this, every new-checker draft was refused here as "made by an older checker version".
+  const replanned = replanRefine.isReplanned(report);
+  if (replanned) {
+    const limits = replanRefine.refineLimits(process.env);
+    if (!limits.ok) throw httpError(409, 'This check was made by the new AI Checker, which is not active on this server now. Run the check again first.');
+    if ((report.hybrid.alignment.promptVersion || '') !== replanPrompt.PROMPT_VERSION) throw httpError(409, 'This check was made by an older checker version. Run the check again first.');
+  }
   const promptVer = report.hybrid?.alignment?.promptVersion || '';
   const expectedVer = promptVersionOf(model);
-  if (promptVer && promptVer !== expectedVer && !report.evaluationPolicy && !report.hybrid?.academicV2 && !suggestion.policy) {
+  if (!replanned && promptVer && promptVer !== expectedVer && !report.evaluationPolicy && !report.hybrid?.academicV2 && !suggestion.policy) {
     throw httpError(409, 'This check was made by an older checker version. Run the check again first.');
   }
   let content = null;
@@ -202,7 +212,9 @@ router.post('/runs/:id/suggestions/:suggestionId/refine', wrap(async (req, res) 
     const effectiveSuggestion = editedText && typeof suggestion.replacement === 'string'
       ? { ...suggestion, replacement: editedText, userEdited: editedText !== suggestion.replacement }
       : suggestion;
-    const out = await refine.refineSuggestion({ content, masters, report, suggestion: effectiveSuggestion });
+    const out = replanned
+      ? await replanRefine.refineDraft({ content, masters, suggestion: effectiveSuggestion, env: process.env, db: req.app.locals.db })
+      : await refine.refineSuggestion({ content, masters, report, suggestion: effectiveSuggestion });
     if (out && out.status === 'verified') {
       const contextHash = relatedContextHash(content, masters, suggestion.path);
       out.verificationToken = createVerificationToken({
@@ -234,7 +246,7 @@ const { inTransaction } = require('../lib/http');
 router.get('/runs/:id/improvement-plan', wrap(async (req, res) => {
   const { runId, syllabus, report } = await visibleRun(req);
   let plan = report.hybrid?.improvementPlan || null;
-  if (!plan && coordinatedPlanEngine.enabled(process.env)) {
+  if (!plan && coordinatedPlanEngine.enabled(process.env) && !replanRefine.isReplanned(report)) {
     try {
       let content = null;
       try { content = JSON.parse(syllabus.content); } catch { content = null; }
@@ -268,7 +280,7 @@ router.post('/runs/:id/improvement-plan/apply', wrap(async (req, res) => {
   await assertRecordReview(req.app.locals.db, syllabus.syllabus_id);
 
   let plan = report.hybrid?.improvementPlan || null;
-  if (!plan && coordinatedPlanEngine.enabled(process.env)) {
+  if (!plan && coordinatedPlanEngine.enabled(process.env) && !replanRefine.isReplanned(report)) {
     let content = null;
     try { content = JSON.parse(syllabus.content); } catch { content = null; }
     if (content) {

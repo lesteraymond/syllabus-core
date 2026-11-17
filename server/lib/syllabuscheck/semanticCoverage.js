@@ -12,8 +12,19 @@ const POLICY = require('../../../src/data/academicPolicyV2.json');
 const VERSION = 'vpaa-coverage-1';
 const TYPES = POLICY.weeklyTypes; // the seven, in VPAA order
 
+// The re-planned checker (pipeline/, official mode) asks the seven under its own checklist names. ACTIVITY-FIT judges the activities against the
+// week's content AND its ILOs in one question, and TASK-FIT the tasks against the content and the activities, so each covers two of the seven.
+const REPLANNED = {
+  'Content-course': ['CONTENT-TITLE'], 'Content-ILO': ['ILO-CONTENT'], 'ILO-CLO': ['ILO-CLO'], 'Content-activity': ['ACTIVITY-FIT'],
+  'ILO-activity': ['ACTIVITY-FIT'], 'Content-assessment': ['TASK-FIT'], 'Activity-assessment': ['TASK-FIT'],
+};
+// official.js names an unanswered question "<relationship> (not checked)" and an extra tag "<relationship> (extra tag)"
+const baseType = type => String(type || '').replace(/ \((?:not checked|extra tag)\)$/, '');
+const isReplanned = hybrid => hybrid.alignment?.engine === 're-planned';
+
 function semanticCoverageOf(result, { v2On = false } = {}) {
   const hybrid = result?.hybrid || {};
+  if (isReplanned(hybrid) && !v2On) return replannedCoverage(hybrid);
   const v2 = hybrid.academicV2 || null;
   const records = v2?.academic?.relationships || [];
   const judgements = hybrid.alignment?.judgements || [];
@@ -36,4 +47,20 @@ function semanticCoverageOf(result, { v2On = false } = {}) {
   return { version: VERSION, advisoryOnly: true, primaryPath: v2On ? 'policy-v2' : 'legacy', policyV2: { enabled: !!v2On, status: v2Status }, evaluated, total: TYPES.length, complete, reason, relationships };
 }
 
-module.exports = { semanticCoverageOf, VERSION, TYPES };
+// Coverage of a report the re-planned checker made: a relationship is evaluated when every question of its checklist got an answer.
+function replannedCoverage(hybrid) {
+  const judgements = (hybrid.alignment?.judgements || []).filter(j => j.status !== 'rule' && j.status !== 'rule_review');
+  const relationships = TYPES.map((type, index) => {
+    const names = REPLANNED[type] || [];
+    const asked = judgements.filter(j => names.includes(baseType(j.type)));
+    const verified = asked.filter(j => !j.unverified && j.label !== 'INSUFFICIENT_EVIDENCE').length;
+    return { n: index + 1, type, source: asked.length ? 're-planned' : null, asks: names, expected: asked.length, verified, status: asked.length && verified === asked.length ? 'evaluated' : verified ? 'partial' : 'not_evaluated' };
+  });
+  const evaluated = relationships.filter(r => r.status === 'evaluated').length;
+  const complete = evaluated === TYPES.length;
+  // why it is not complete: some answers could not be had (provider, cap, "unclear"), or the syllabus lacks the text a relationship needs
+  const reason = complete ? null : hybrid.alignment?.status !== 'completed' && !relationships.some(r => r.verified) ? 'replan_not_evaluated' : relationships.some(r => r.status === 'partial') ? 'replan_partial' : 'missing_evidence';
+  return { version: VERSION, advisoryOnly: true, primaryPath: 're-planned', policyV2: { enabled: false, status: 'off' }, evaluated, total: TYPES.length, complete, reason, relationships };
+}
+
+module.exports = { semanticCoverageOf, VERSION, TYPES, REPLANNED };

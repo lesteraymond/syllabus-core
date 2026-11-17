@@ -20,7 +20,7 @@ test('the chain is top-down: every field aligns only to fields above it; EGA and
   assert.equal(R.CHAIN.find(r => r.field === 'ega').rewritable, false);
   assert.equal(R.CHAIN.find(r => r.field === 'po').rewritable, false);
   assert.ok(!R.CHAIN.find(r => r.field === 'clo').alignsTo.includes('description'), 'CLOs are never judged against the course description');
-  assert.deepEqual(R.CHAIN.find(r => r.field === 'tasks').alignsTo, ['content', 'activities']);
+  assert.deepEqual(R.CHAIN.find(r => r.field === 'tasks').alignsTo, ['content', 'activities', 'ilo'], 'the tasks assess at the verb level of the ILO (constructive alignment, 2026-11-17)');
 });
 
 test('checklists: every relationship has a known area and field, at least one critical item, and only TASK-ILO and CONTENT-SEQUENCE are advice', () => {
@@ -28,7 +28,8 @@ test('checklists: every relationship has a known area and field, at least one cr
     assert.ok(R.AREAS.includes(list.area), name);
     assert.notEqual(R.layerOf(list.from), null, name);
     assert.ok(list.items.length >= 1 && new Set(list.items.map(i => i.id)).size === list.items.length, name);
-    assert.ok(list.items.some(i => i.critical) || !list.scored, name);
+    // CLO-EVIDENCE has no critical item: a level mismatch is partly aligned (-1), the owner's choice of 2026-11-17
+    assert.ok(list.items.some(i => i.critical) || !list.scored || R.isManual(name), name);
   }
   assert.deepEqual(Object.entries(R.CHECKLISTS).filter(([, l]) => !l.scored).map(([n]) => n), ['CONTENT-SEQUENCE', 'TASK-ILO']);
 });

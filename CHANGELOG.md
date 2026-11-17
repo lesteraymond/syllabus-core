@@ -2446,3 +2446,106 @@ Only the look and motion change; scores, bands and the score shown are as before
 - **Reduced motion:** none of the rings move.
 - `src/theme.css` (the ring block replaced; `ComplianceCard.jsx` still sets `--water`, now unused and harmless); `src/lib/brandTheme.test.js` checks the ring colours on white and on the track, that no water or orbit animation is left, and that the checking arc stops with reduced motion.
 - Checked in the browser as the demo admin: a preview of the five ring states with the real classes (no paid AI check was run), the report ring, and the history badge.
+
+### v1.93.0 — AI Checker: Official Mode No Longer Uses the Old Checker for Check & Improve
+
+An audit of official mode (SYLLABUS_CHECK_REPLAN=official) for places still wired to the old checker, and for bugs in the new one. No score, deduction, rule or prompt changes; no paid AI run.
+
+- **Fixed: Check & improve refused every new-checker draft.** `routes/syllabusCheck.js` compared the report's prompt version (`replan-prompt-5`) with the old checker's and answered 409 "This check was made by an older checker version"; past that check it would have used the old checker's refine step (`refine.js`, `gemini.js` align).
+  - New `pipeline/refine.js`: a new-checker draft (or the author's edit) is checked with the new checker's rules, prompt and stored answers. It passes when its field has no misalignment left (AI or no-AI rule), no scored relationship touching the field got worse, and every touched question was answered; an advice relationship that slips never blocks (the plan's rule). Otherwise the new rewriter gets one try with the repair plan's own job (parents, failures, what to keep, sibling ILOs). Same answer shape as before, so the app is unchanged.
+  - Its own cap: `SYLLABUS_CHECK_REFINE_MAX_COST_USD` (default the smaller of $0.50 and the check's cap; never above it) and `SYLLABUS_CHECK_REFINE_MAX_REQUESTS` (1-60, default 12). A provider failure is a 502, never a pass.
+  - The route sends a report to it only when `hybrid.alignment.engine` is `re-planned`; it refuses (409, before any AI request) when the new checker is not active or the report is from an older new-checker prompt. Old-checker reports go to the old step as before.
+- **Fixed: the old whole-syllabus plan routes** (`/runs/:id/improvement-plan`, `/apply`) could build the old coordinated plan from a new-checker report when SYLLABUS_CHECK_COORDINATED_PLAN was on. They no longer do.
+- **Fixed: VPAA coverage pill** (`semanticCoverage.js`) read only the old relationship names, so every new-checker report showed 0 of 7 with "Policy V2 is off". It now maps the new checklists to the seven (ACTIVITY-FIT covers Content-activity and ILO-activity; TASK-FIT covers Content-assessment and Activity-assessment). New reasons `replan_partial` and `replan_not_evaluated`, in English and Filipino.
+- **Fixed: rule coverage** (`ruleCoverage.js`) listed every old AI relationship rule as NOT_CHECKED. They are now marked superseded (`replaced_by_replan`), and the relationship instances are the new checker's own questions. Each new-checker judgement records `attempted` and `reused`.
+- **Fixed: fields the plan could not fix were invisible.** They stayed in `hybrid.replan` only. They now join `hybrid.unresolved` (waiting for a failing parent, with `waitsFor`, or needing review), so the app's "waiting" list shows them and the summary count matches the list.
+- **Fixed: settings bounds** (`pipeline/official.js`). `SYLLABUS_CHECK_REPLAN_MAX_REQUESTS` is 1-300 (default 80); before, "-5" made every request refused and "abc" silently became 80. `SYLLABUS_CHECK_REPLAN_MAX_COST_USD` above 1000 is refused, as for the main AI cap.
+- **Stored runs say which checker made them:** `storeRun` writes `ai_check_runs.prompt_version` (e.g. `replan-prompt-5`). The column is VARCHAR(20) and the old checker's versions are about 32 characters, so those stay NULL as before rather than fail the insert.
+- **Tests:** `pipeline/refine.test.js` (9), `pipeline/refine.route.test.js` (6; four of them fail against the old route with the 409 above), `pipeline/coverage.test.js` (4), `official.test.js` (+4); `vpaa-conformance/memdb.js` accepts the new UPDATE. `npm test` 2,581 of 2,581 plus the UI suites; `npm run build` passes.
+- **Not changed:** the old AI Alignment Score shadow has no data in official mode (its panel hides itself).
+- **Limits:** scripted model answers only; Check & improve on a new-checker draft has not been run against the real model.
+
+### v1.93.1 — Check & improve Tested Live; Development Database Repaired
+
+- **Live test of v1.93.0** (2026-11-17, owner-approved, $0.50 cap; CPE 101, check #450, the Week 3 ILO draft that turned "The instructor will discuss De Morgan's laws..." into a student outcome). Same code the button runs (`pipeline/refine.js`), real Claude Sonnet 5.5, the app's answer store.
+  - The draft as proposed: verified from stored answers alone (148 of 148), no request, $0. Of the 5 relationships it touches, 2 improved, none got worse (2 points fewer).
+  - An author's edit of it: verified with 1 request to Claude, 7 seconds, about $0.022; 5 new answers stored. Same 2 improved, none worse.
+  - Not exercised live: the blocked path and the one-time rewrite (they are covered by the scripted tests).
+- **Development database repaired** (no code change). MariaDB crashed while reading `institution_settings`. Offline `innochecksum` found two damaged table files, both written at a server start from the XAMPP Control Panel button: `institution_settings` (page 0) and `standard_changes` (page 1). A DROP TABLE crashed the server again (InnoDB must read page 0), so both files were replaced, with the server stopped, by the good copies from the 2026-11-15 backup (same tablespace ids 34 and 91). Afterwards: all 200 table files pass `innochecksum`, all 57 tables pass CHECK TABLE, the institution row equals the 2026-11-15 dump in every column, `standard_changes` is empty as it was, and the health script reports healthy. The damaged files are kept in `LCUP-DB-Backups/2026-11-17-pre-crash-check-datadir`. Start MariaDB with `LCUP-MariaDB-Tools/Start-MariaDB.ps1`, not the XAMPP button.
+
+### v1.94.0 — AI Checker: Constructive Alignment (Outcome Verb Matches Activities and Assessment Tasks)
+
+Owner decision of 2026-11-17, citing the CHED Handbook on Typology, Outcomes-Based Education, and Institutional Sustainability Assessment: an outcome's verb must match its teaching-learning activities (TLAs) and its assessment tasks (ATs). If an outcome says "apply", students must solve problems, perform tasks or use concepts in real scenarios, and be assessed doing so, not only take memorization quizzes. "Apply" stays allowed for CLO 1 (Introductory). The owner chose: checked each week and each CLO; both the TLAs and the ATs must match; a mismatch is partly aligned (-1).
+
+- **Each week** (`pipeline/rules.js`, `judge.js`):
+  - ACTIVITY-FIT gains the item `level`: the activities make students work at the cognitive level of the ILO's verb.
+  - TASK-FIT gains the item `level` and is now judged against the week's ILOs too: the tasks assess at the ILO's verb level. Whether the tasks fully measure the ILO stays advice (TASK-ILO). This refines the 2026-11-12 decision that tasks are scored against content and activities only.
+- **Each CLO** (new relationship CLO-EVIDENCE, scored, CLO area): the CLO's own verb level is reached by the activities AND the tasks of at least one week whose ILO is mapped to it. One question per mapped CLO, with the whole-syllabus request; it waits while one of those weeks' activities or tasks is still failing (fix the weeks first). An unmapped CLO gets no question (the CLO-COVERAGE rule covers it).
+- **Scoring:** a level mismatch is partly aligned, -1, inside the existing 5-point area caps. No item of the new rule is critical.
+- **Repair plan** (`plan.js`): the tasks now depend on the week's ILOs. A CLO-EVIDENCE finding never makes the plan rewrite the CLO (that would lower its verb); it is listed for the faculty ("raise an ILO with its activities and tasks"), no draft claims to fix it, and it never holds back another rewrite of the CLO. The weekly level items drive drafts of activities and tasks.
+- **Prompt** (`prompt.js`): the rules text states constructive alignment; worked example F (an "apply" ILO under lectures and a definition quiz); the rewrite formats for activities and tasks ask for the ILO's verb level.
+- **Versions:** rules `replan-rules-2`, judge prompt `replan-prompt-6`, rewrite prompt `replan-rewrite-4`. No stored answer is reused under the new rules, so the next AI check of each syllabus asks every question again (one full check, about $0.40 to $0.65 on the syllabi checked so far). Earlier reports (for example #446, #450) now ask for a new check before Check & improve.
+- **Tests:** new `pipeline/constructive.test.js` (8: the rule as data, the prompt, the questions, -1 for activities, tasks and a CLO, waiting, the plan leaving the CLO verb alone, official mode). Existing tests updated for the new questions (146 instead of 142 on the test syllabus; an edited ILO also re-asks its CLO's evidence question). With the plan's CLO guard switched off, the plan test sees 2 CLO rewrites. `npm test` 2,589 of 2,589 plus the UI suites.
+- **Not run with the real model yet.**
+
+### v1.94.1 — AI Checker: An ILO Is Judged Against Its CLO's Own Verb
+
+Owner decision of 2026-11-17. The ILO-CLO `level` item asked whether an ILO is "at or below the CLO's level", which could be read as the highest level the CLO's classification allows (apply, for CLO 1 Introductory) or as the CLO's own verb. It now says the CLO's own main verb, as written.
+
+- **Effect:** under a CLO 1 that says "Define and explain ...", an "apply" ILO such as "Write and run a simple program" is above its CLO: partly aligned, -1 in the ILO area, and the plan's draft brings the ILO to the CLO's level. Under a CLO 1 that says "Apply ...", the same ILO fits. The CLO's own check (CLO-LEVEL) is unchanged: Introductory allows remember, understand and apply.
+- `pipeline/rules.js` (the item's wording), `pipeline/prompt.js` (rule 4 of the rules text, the ILO rewrite format, worked example G; the examples are in order A to G again).
+- **Versions unchanged** (`replan-rules-2`, `replan-prompt-6`): v1.94.0 had not been used yet, and no answer is stored under those versions (`replan_answers` holds only `replan-prompt-5` answers).
+- **Tests:** `constructive.test.js` adds 1 (the wording, the rules text, example G, the example order). `npm test` passes.
+- Not run with the real model yet.
+
+### v1.94.2 — AI Checker: Weeks With Several ILOs
+
+Owner decision of 2026-11-17. A week can have two or three ILOs tagged to different CLOs, but it has one activities field and one tasks field. The activity and task questions were worded for one ILO ("the ILO's verb") while being asked against all of the week's ILOs, so it was not stated whether every ILO had to be covered, or whether "at least two alternatives" meant per ILO.
+
+- **Now explicit** (`pipeline/rules.js`):
+  - ACTIVITY-FIT `ilo`: EVERY ILO of the week has at least one activity that lets students practise it. `level`: each ILO is practised by at least one activity at the level of that ILO's own verb. `diverse`: two alternatives for the week as a whole, not two per ILO.
+  - TASK-FIT `level`: each ILO of the week is assessed by at least one task at the level of that ILO's own verb; one task may cover several ILOs.
+  - TASK-ILO (advice): whether the tasks show that students reached each of the week's ILOs.
+- **Prompt** (`pipeline/prompt.js`): rules 5 and 6 of the rules text; the rewrite formats for activities and tasks (every ILO, at its own level; two alternatives per week); worked example H (a week with an ILO under CLO 1 and an ILO under CLO 4, activities and tasks covering only the first).
+- Unchanged: each ILO keeps its own CLO question (an extra tag that does not fit goes to review); the week counts as evidence for every CLO an ILO of it is tagged to; a repair draft is one activities list and one tasks list written with every ILO of the week under dependsOn (already the case, now tested).
+- **Versions unchanged** (`replan-rules-2`, `replan-prompt-6`): still no answer stored under them.
+- **Tests:** `constructive.test.js` adds 2 (the wording and example H; a week with an ILO under CLO 3 and one under CLO 4: both ILOs in the activity and task questions and in their rewrite jobs, each ILO's own CLO question, the CLO 4 evidence quoting the new ILO). `npm test` passes.
+- Not run with the real model yet.
+
+### v1.94.3 — AI Checker: CLO 3 (Demonstrating) Takes Analyze and Evaluate
+
+Owner decision of 2026-11-17, after reading the CHED Implementation Handbook for OBE and ISA (2014). CHED defines a course as "I (introductory course to an outcome), E (enabling course or a course that strengthens the outcome), or D (demonstrative course or a course that demonstrates an outcome)", with a second legend "Introduce, Practice skills with supervision, Demonstrate skills without supervision". It ties no verb range to a stage, and its examples of demonstrated outcomes (projects, portfolios, reflection papers, designing a product) span analyzing, evaluating and creating. CLO 3 had only apply and create.
+
+- **`pipeline/rules.js`:** CLO 3 (Demonstrating) takes apply, analyze, evaluate and create. A CLO 3 such as "Evaluate network designs for ..." no longer loses a point on its verb. `BLOOM_SOURCE` records the change and its source. New `CHED_STAGES`: the CHED meaning of Introductory, Enabling and Demonstrating (Integration of Values is LCUP's own classification, not a CHED stage).
+- **`pipeline/prompt.js`:** each CLO line of the rules text carries its CHED meaning (for example CLO 3: "students demonstrate the outcome independently, without supervision, in a product, performance or solution"), so the CLO's focus is judged by it.
+- CLO 1, 2 and 4 are unchanged.
+- **Versions unchanged** (`replan-rules-2`, `replan-prompt-6`): still no answer stored under them.
+- **Tests:** `prompt.test.js` (the mapping, its source, the CHED meanings in the rules text, none for CLO 4). `npm test` passes.
+- Not run with the real model yet.
+
+### v1.94.4 — AI Checker: One Observable Verb per Outcome (CHED)
+
+Owner request of 2026-11-17. The CHED Implementation Handbook for OBE and ISA (2014), rule 7 of writing learning outcomes: "Choose only one observable verb/behavior in a statement of outcome; choose the behavior that is of a higher dimension of complexity."
+
+- **New no-AI rule OUTCOME-ONE-VERB** (`pipeline/fixedRules.js`): a CLO or ILO that opens with two or more joined verbs ("Define and explain ...", "Design, implement, and test ...", "Analyze/evaluate ...", "Students will be able to identify and correct ...") is a finding on its own field. A verb later in the sentence does not count ("Apply De Morgan's laws and ..." is one verb). The message names the verb of higher complexity to keep when every verb has a Bloom level ("here \"explain\""); otherwise it leaves the choice open.
+- **Detection** (`pipeline/extract.js` `leadingVerbs`, `OUTCOME_VERBS`): the first word after an optional preamble ("At the end of the course, the student will be able to") and every verb joined to it by "and", "or", ",", "/" or "&". Only words on the verb list count (revised Bloom verbs and the CHED handbook's Annex 4).
+- **Scoring:** none. Like the new checker's other no-AI rules, it is advisory in official mode.
+- **Repair** (`judge.js` FIXED_TEXT_RULES, `prompt.js`): the plan drafts a one-verb rewrite of the field; the rewrite formats for CLOs and ILOs ask for ONE measurable verb; `validateRewrite` refuses a rewrite that still opens with two (after the more specific copy checks). Worked examples A and G now use one verb.
+- **On the development database:** none of the three syllabi (CpE-404, CAPSPRO1, CPE 101; 68 outcomes) opens an outcome with two verbs, so their results do not change.
+- **Test fixtures:** the conforming test syllabus's CLOs ("Explain and apply Java programming outcome n") and the synthetic syllabus's Week 2 ILO ("Write and run ...") now use one verb; the synthetic test's scripted CLO fix too.
+- **Versions unchanged** (`replan-rules-2`, `replan-prompt-6`, `replan-rewrite-4`).
+- **Tests:** new `pipeline/onever.test.js` (4: detection, the finding and its field, rewrite refusal and format, the plan's one-verb draft). `npm test` passes.
+
+### v1.94.5 — AI Checker: CLO 4 (Integration of Values) Takes Affective Verbs
+
+Owner decision of 2026-11-17. The CHED Implementation Handbook for OBE and ISA (2014) tells faculty to "consider the three domains of learning" (cognitive, psychomotor, affective) and lists affective verbs in Annex 4. A values outcome such as "Advocate the responsible use of computing" or "Practice honesty and accountability in engineering work" lost a point because CLO 4 took only evaluate and create.
+
+- **`pipeline/rules.js`:**
+  - New `AFFECTIVE_ORDER`: receive, respond, value, organize, internalize, each with its meaning and the CHED handbook's sample verbs; `AFFECTIVE_SOURCE` records the decision.
+  - CLO 4 takes the affective levels value, organize and internalize, besides evaluate and create. CLOs 1 to 3 take none.
+  - CLO-LEVEL `verb` accepts the affective levels for CLO 4. ILO-CLO `level`: under an affective CLO, an affective ILO at or below its level fits, and so does a cognitive ILO.
+- **`pipeline/prompt.js`:** the CLO 4 line lists its affective levels; a new AFFECTIVE LEVELS block (the scale, the verbs, and how an affective outcome is practised and assessed: role-plays, case discussions, service or group work; observed behavior with a rubric, a reflection on one's own conduct, a defended position; a written quiz about the value alone does not assess it); worked example I (an "Advocate ..." CLO 4, a cognitive and an affective ILO under it, and its evidence). The CLO rewrite format allows an affective verb for CLO 4.
+- **`pipeline/extract.js`:** the one-verb rule knows the remaining affective verbs of Annex 4 ("Advocate and practice ..." is two verbs).
+- **Versions unchanged** (`replan-rules-2`, `replan-prompt-6`): still no answer stored under them.
+- **Tests:** `constructive.test.js` adds 1 (the scale and its verbs, CLO 4 only, the checklist wording, what the AI is told, the one-verb rule with affective verbs); `prompt.test.js` updated. `npm test` passes.
+- Not run with the real model yet.

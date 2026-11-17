@@ -53,11 +53,11 @@ test('the migration creates the table only when it is missing, and a dry run cre
 test('SURVIVES A RESTART: a re-check after the server restarts reuses every answer from the database and asks the AI nothing', async () => {
   const db = fakeDb();
   const first = await run(layeredStore(memoryStore(), dbAnswerStore(db)), T.scriptedJudge());
-  assert.equal(first.judged.usage.asked, 142);
-  assert.equal(db.table.size, 142);
+  assert.equal(first.judged.usage.asked, 146);
+  assert.equal(db.table.size, 146);
   // a new process: empty memory, same database
   const afterRestart = await run(layeredStore(memoryStore(), dbAnswerStore(db)), T.failIfCalled);
-  assert.equal(afterRestart.judged.usage.reused, 142);
+  assert.equal(afterRestart.judged.usage.reused, 146);
   assert.equal(afterRestart.judged.usage.requests, 0);
   assert.deepEqual(afterRestart.judged.results.map(r => [r.id, r.verdict]), first.judged.results.map(r => [r.id, r.verdict]));
   const row = [...db.table.values()][0];
@@ -88,10 +88,10 @@ test('the shadow keeps answers in the database when the server passes its db, an
   const provider = { ask: T.scriptedJudge(), rewrite: T.scriptedRewriter(), model: 'scripted' };
   const shadow = await runShadow({ content: T.conforming(), officialResult: { hybrid: {} }, env: { SYLLABUS_CHECK_REPLAN: 'shadow' }, provider, db });
   assert.equal(shadow.usage.store.kind, 'layered');
-  assert.equal(shadow.usage.store.back.writes, 142);
-  assert.equal(db.table.size, 142);
+  assert.equal(shadow.usage.store.back.writes, 146);
+  assert.equal(db.table.size, 146);
   const { summarize, renderDetail } = require('./shadowReport');
-  assert.match(renderDetail(summarize({ run_id: 1, report_json: JSON.stringify({ hybrid: { replanShadow: shadow } }) })), /Answers kept in: database \(0 reused from it, 142 saved\)/);
+  assert.match(renderDetail(summarize({ run_id: 1, report_json: JSON.stringify({ hybrid: { replanShadow: shadow } }) })), /Answers kept in: database \(0 reused from it, 146 saved\)/);
 });
 
 test('pruneUnused deletes only answers unused for the given number of days, and refuses a bad number', async () => {

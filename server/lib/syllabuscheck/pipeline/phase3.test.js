@@ -189,7 +189,8 @@ test('synthetic syllabus end to end with a model that sees the planted problems:
     return { q: q.id, items, quote: q.field.text.split(' ').slice(0, 3).join(' '), explanation: 'Planted problem.' };
   };
   const better = {
-    clo: 'Design, implement and evaluate Python programs that use files, exceptions, modules and classes to meet given requirements.',
+    // one observable verb (CHED): a three-verb CLO rewrite is refused by validateRewrite since 2026-11-17
+    clo: 'Develop Python programs that use files, exceptions, modules and classes to meet given requirements.',
     ilo: { i5: 'Write Python programs that choose between actions with if, elif and else statements.', i14: 'Handle runtime errors in Python programs with try, except and finally.' },
     tasks: '- Lab exercise: clean and format a text file with string methods',
   };

@@ -105,4 +105,39 @@ function nearCopy(a, b) {
   return overlap >= 0.8 || (x[0] === y[0] && overlap >= 0.45 && shared >= 5);
 }
 
-module.exports = { extract, itemsOf, fingerprint, clean, nearCopy };
+// ---- the action verbs an outcome opens with ----
+// CHED (Implementation Handbook for OBE and ISA, 2014, "Writing learning outcomes", rule 7): "Choose only one observable verb/behavior in a statement
+// of outcome; choose the behavior that is of a higher dimension of complexity." This finds the verbs an outcome STARTS with when two or more are
+// joined ("Define and explain ...", "Design, implement, and test ..."). Only words on this list count as verbs, so "Apply De Morgan's laws and ..."
+// is one verb. Sources: the revised Bloom verbs (rules.BLOOM_ORDER) and the CHED handbook's Annex 4 (cognitive, psychomotor and affective verbs).
+const OUTCOME_VERBS = new Set(`
+  define list identify recall recognize name state label match memorize repeat reproduce outline record
+  explain describe summarize classify discuss interpret illustrate paraphrase compare contrast infer exemplify translate estimate predict distinguish relate express report review restate locate
+  apply use implement solve demonstrate write compute calculate perform execute operate show prepare practice employ modify construct produce manipulate sketch operate run test simulate configure install code program draw measure
+  analyze analyse differentiate examine organize deconstruct attribute investigate categorize diagram break question detect separate debug trace
+  evaluate judge justify critique assess appraise argue defend support check verify rate select choose prioritize recommend conclude decide validate weigh
+  create design develop plan formulate compose generate propose build invent devise assemble integrate synthesize model author originate
+  adopt commit advocate exemplify influence serve act display share participate volunteer value reflect respect appreciate observe apply
+  correct fix revise edit present communicate collaborate lead manage conduct document derive prove convert graph plot troubleshoot maintain deploy
+  optimize optimise analyse organise summarise recognise criticize critique cite discover research explore
+  acknowledge comply contribute cooperate initiate balance rank theorize adapt adjust conceptualize embrace uphold
+`.split(/\s+/).filter(Boolean));
+// The words before the main verb that are not part of it: "Students will be able to", "The learner will", "Be able to".
+const PREAMBLE = /^(?:(?:at the end of [^,]*,\s*)?(?:the\s+)?(?:students?|learners?)\s+(?:will|should|shall|must|can)\s+(?:be\s+able\s+to\s+)?|(?:be\s+)?able\s+to\s+)/i;
+function leadingVerbs(text) {
+  const body = clean(text).replace(PREAMBLE, '');
+  const words = body.toLowerCase().match(/[a-z]+|[,/&]/g) || [];
+  if (!words.length || !OUTCOME_VERBS.has(words[0])) return [];
+  const verbs = [words[0]];
+  // after the first verb: a joiner (",", "and", "or", "/", "&", "and/or"), then another verb; anything else ends the list
+  for (let i = 1; i < words.length;) {
+    let j = i, joined = false;
+    while (j < words.length && [',', 'and', 'or', '/', '&'].includes(words[j])) { j++; joined = true; }
+    if (!joined || j >= words.length || !OUTCOME_VERBS.has(words[j])) break;
+    verbs.push(words[j]);
+    i = j + 1;
+  }
+  return verbs;
+}
+
+module.exports = { extract, itemsOf, fingerprint, clean, nearCopy, leadingVerbs, OUTCOME_VERBS };

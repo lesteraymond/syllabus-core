@@ -14,6 +14,10 @@ function summaryOf(rows) {
 }
 function buildCoverage(result,content,masters={},env={}) {
   const h=result.hybrid||{}, v2=h.academicV2, judgments=h.alignment?.judgements||[], records=v2?.academic?.relationships||[];
+  // A report the re-planned checker made (pipeline/official.js): its questions use its own checklist names, so the old checker's AI relationship rules
+  // were never asked and would all read NOT_CHECKED. They are superseded here, and the instances below are the new checker's own questions.
+  const replanned=h.alignment?.engine==='re-planned';
+  const replanQuestions=replanned?judgments.filter(j=>j.status!=='rule'&&j.status!=='rule_review'):[];
   // Optional supporting questions the planned budget did not cover (gemini.js createRequestBudget): never sent, so never a pass or a fail.
   const deferredIds=new Set(judgments.filter(j=>j.failureKind==='budget_deferred').map(j=>j.id));
   let verdict=[];
@@ -87,6 +91,8 @@ function buildCoverage(result,content,masters={},env={}) {
       executed=instances.some(r=>r.verified||r.attempted);
       if(['STR-05','PLAN-02','CLO-02'].includes(rule.ruleId)&&h.verdict&&!h.verdict.unavailable&&!instances.length){executed=true;applicable=rule.ruleId==='CLO-02'?(content.clos||[]).length>1:rule.ruleId==='PLAN-02'?(content.plan||[]).some(r=>require('./validation').weeksOf(r.week)?.includes(1)):true;if(applicable)instances=[receipt({ruleId:rule.ruleId,status:'PASS'})];}
     }
+    const superseded=replanned&&(rule.namespace==='semantic_type'||((rule.namespace==='verdict_rule'||rule.namespace==='report_alias')&&!!rule.stage&&!!rule.type));
+    if(superseded){applicable=false;instances=[];reason='Superseded by the re-planned AI Checker, which asks this under its own checklists (relationshipInstances, scope re-planned).';}
     if(!enabled) reason=reason||rule.requirement||'Implemented but disabled by configuration';
     if(!instances.length&&enabled&&applicable)reason=reason||'No evaluator receipt: missing evidence, stage dependency, request cap, provider unavailable or unassessed scope. This is not a pass.';
     if(instances.length&&instances.every(r=>r.status==='NOT_APPLICABLE'))applicable=false;
@@ -95,7 +101,7 @@ function buildCoverage(result,content,masters={},env={}) {
     const status=!enabled?'NOT_CHECKED':!applicable?'NOT_APPLICABLE':!instances.length?'NOT_CHECKED':!verified?(instances.some(r=>r.verified)?'PARTIALLY_EVALUATED':'NOT_CHECKED'):instances.some(r=>r.status==='FAIL')?'FAIL':instances.some(r=>r.status==='NEEDS_REVIEW')?'NEEDS_REVIEW':'PASS';
     const budgetDeferred=['NOT_CHECKED','PARTIALLY_EVALUATED'].includes(status)&&instances.some(r=>r.status==='NOT_CHECKED'&&deferredIds.has(r.id));
     const activationState=rule.pendingState||(!rule.implemented?'NOT_IMPLEMENTED':!enabled?'IMPLEMENTED_BUT_DISABLED':verified?'ACTIVE':'IMPLEMENTED_BUT_NOT_EVALUATED');
-    return {ruleId:rule.ruleId,category:rule.category,namespace:rule.namespace,implemented:rule.implemented,enabled,applicable,executed,attempted:instances.some(r=>r.attempted),verified,status,activationState,reason,...(budgetDeferred?{reasonCode:'budget_deferred'}:replaced.includes(rule.ruleId)?{reasonCode:'replaced'}:{}),instances};
+    return {ruleId:rule.ruleId,category:rule.category,namespace:rule.namespace,implemented:rule.implemented,enabled,applicable,executed,attempted:instances.some(r=>r.attempted),verified,status,activationState,reason,...(budgetDeferred?{reasonCode:'budget_deferred'}:superseded?{reasonCode:'replaced_by_replan'}:replaced.includes(rule.ruleId)?{reasonCode:'replaced'}:{}),instances};
   });
   const flags=h.stages||{};
   let legacyPlan=[];
@@ -105,7 +111,8 @@ function buildCoverage(result,content,masters={},env={}) {
     const extras=new Set([...(flags.c1?['Activity-fit']:[]),...(flags.c2?['Assessment-fit']:[]),...(flags.c3?['Content-activity','Content-assessment','Activity-assessment']:[]),...(flags.d1?['Value-use']:[]),...(flags.d2?['Ref-relevance']:[]),...(flags.requirements?['Week1-introduction','Week2-topic',...(profile.enabled(env)?[]:['Title-description'])]:[])]);
     legacyPlan=[...new Map([...legacyPlan,...planned.filter(p=>extras.has(p.type))].map(p=>[p.id,p])).values()];
   } catch { /* rule-level missing receipts still disclose malformed planning */ }
-  const instanceList=[...merge(legacyPlan,judgments.map(semantic)).map(r=>({scope:'legacy',...r})),...(v2Activation.enabled(env)?v2Receipts.map(r=>({scope:'policy-v2',...r})):[])];
+  const replanReceipt=j=>{const answered=!j.unverified&&j.label!=='INSUFFICIENT_EVIDENCE';return {scope:'re-planned',id:j.id,path:j.path||null,week:null,status:answered?({ALIGNED:'PASS',NOT_ALIGNED:'FAIL',PARTIALLY_ALIGNED:'NEEDS_REVIEW'}[j.label]||'NOT_CHECKED'):'NOT_CHECKED',verified:answered,attempted:!!j.attempted,reused:!!j.reused,reason:answered?null:(j.explanation||'No valid answer').slice(0,300)};};
+  const instanceList=replanned?replanQuestions.map(replanReceipt):[...merge(legacyPlan,judgments.map(semantic)).map(r=>({scope:'legacy',...r})),...(v2Activation.enabled(env)?v2Receipts.map(r=>({scope:'policy-v2',...r})):[])];
   return {version:'rule-coverage-1',advisoryOnly:true,profile:profile.enabled(env)?profile.NAME:'existing-flags',registeredStandard:47,directHybridRules:44,replacedRuleIds:replaced,
     counts:summaryOf(rows),byNamespace:Object.fromEntries([...new Set(rows.map(r=>r.namespace))].map(n=>[n,summaryOf(rows.filter(r=>r.namespace===n))])),
     relationshipInstances:{expected:instanceList.length,attempted:instanceList.filter(r=>r.attempted).length,verified:instanceList.filter(r=>r.verified).length,notChecked:instanceList.filter(r=>!r.verified).length,rows:instanceList},
