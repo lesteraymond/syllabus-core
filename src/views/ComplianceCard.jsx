@@ -24,8 +24,7 @@ export default function ComplianceCard({ run, checking = false, onOpenStep, show
   const aiGate = useAiGate();
   // A saved report of a syllabus under record review is read as history: nothing in it can be applied to the draft.
   const applyDraft = run?.recordReview ? undefined : onApplyDraft;
-  const reviewNotice = run?.recordReview && <div className="info-banner warning cmp-stale" role="alert" data-testid="saved-report-banner"><strong>{translateUI('hybrid.savedReportTitle')}</strong> {translateUI(run.recordReview.code === 'curriculum_reference_review_required' ? 'hybrid.savedReportBodyCurriculum' : 'hybrid.savedReportBody')}</div>;
-  if(isAcademicV2(run))return <>{reviewNotice}{run?.hybrid?.improvementPlan && <CoordinatedPlanPanel run={run} onPlanApplied={applyDraft} />}<AcademicEvaluationPanel run={run} onApplyDraft={applyDraft}/></>;
+  if(isAcademicV2(run))return <>{run?.hybrid?.improvementPlan && <CoordinatedPlanPanel run={run} onPlanApplied={applyDraft} />}<AcademicEvaluationPanel run={run} onApplyDraft={applyDraft}/></>;
   const blockers = blockersOf(run, aiGate);
   const recs = (run && run.recommendations) || [];
   const memKey = run?.syllabusId ?? run?.id ?? 'default';
@@ -63,10 +62,7 @@ export default function ComplianceCard({ run, checking = false, onOpenStep, show
 
   return (
     <div className="cmp">
-      {/* Staleness is stated before anything it qualifies: the V2 results, the coverage list and the recommendations below all describe the earlier version. */}
-      {reviewNotice}
-      {run && run.stale && !run.recordReview && <div className="info-banner warning cmp-stale" role="alert" data-testid="stale-banner"><strong>{translateUI('hybrid.staleTitle')}</strong> {translateUI('hybrid.staleBody')}</div>}
-      <RuleCoveragePanel coverage={run?.hybrid?.ruleCoverage} />
+      <RuleCoveragePanel coverage={run?.hybrid?.ruleCoverage} part="notices" />
       {run?.hybrid?.improvementPlan && <CoordinatedPlanPanel run={run} onPlanApplied={applyDraft} />}
       {isIntegratedAcademicV2(run) && <AcademicEvaluationPanel run={run} />}
       <div className="cmp-top">
@@ -142,6 +138,8 @@ export default function ComplianceCard({ run, checking = false, onOpenStep, show
       )}
       <AlignmentScorePanel run={run} />
       <HybridCheckPanel run={run} onApplyDraft={applyDraft} />
+      {/* The rule-by-rule coverage is a reference, not the result: it follows the results instead of sitting above the score. */}
+      <RuleCoveragePanel coverage={run?.hybrid?.ruleCoverage} part="list" />
     </div>
   );
 }

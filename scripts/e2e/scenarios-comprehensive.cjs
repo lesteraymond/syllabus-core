@@ -241,24 +241,12 @@ module.exports = async function run(ctx, h) {
     note('Submit to Admin while the result is out of date: ' + ((await submit.count()) ? (await submit.isDisabled() ? 'disabled' : 'enabled') : 'absent'));
     await s.shot(evidence('K04-1-out-of-date-result.png'));
     await s.page.screenshot({ path: evidence('K04-1b-out-of-date-full-page.png'), fullPage: true });
-    // where is the marker relative to the stale result it qualifies? (document y-coordinates; 0 = top of the page)
-    const pos = await s.page.evaluate(() => {
-      const top = (el) => el && Math.round(el.getBoundingClientRect().top + scrollY);
-      const banner = document.querySelector('[data-testid="stale-banner"]');
-      const v2 = [...document.querySelectorAll('h2,h3,h4')].find((e) => /Academic Evaluation Policy V2/.test(e.innerText));
-      const cov = [...document.querySelectorAll('summary')].find((e) => /Check coverage/.test(e.innerText));
-      return { banner: top(banner), bannerSticky: banner ? getComputedStyle(banner).position : null, v2: top(v2), v2Chip: !!document.querySelector('[data-testid="stale-chip"]'), coverage: top(cov), pageHeight: document.documentElement.scrollHeight };
-    });
-    note('vertical position of the out-of-date banner vs the stale V2 panel and coverage section: ' + JSON.stringify(pos));
-    check(pos.banner != null && pos.v2 != null && pos.banner < pos.v2 && pos.banner < pos.coverage, '[browser] the out-of-date banner is rendered ABOVE the stale V2 results and the coverage list (banner y=' + pos.banner + ', V2 panel y=' + pos.v2 + ')');
-    check(pos.bannerSticky === 'sticky', '[browser] the banner is sticky, so it stays in view while the long results are read');
-    check(pos.v2Chip, '[browser] the V2 panel heading itself carries an "Out of date" marker');
-    check(/Out of date\./.test(await s.text()) && /Re-Check again before acting on a recommendation or submitting/.test(await s.text()), '[browser] the banner says the results describe the earlier version and to Re-Check before acting');
-    await s.page.evaluate(() => scrollTo(0, 3000));
-    await s.page.waitForTimeout(300);
-    const stuck = await s.page.evaluate(() => { const el = document.querySelector('[data-testid="stale-banner"]'); const r = el && el.getBoundingClientRect(); return !!r && r.top >= 0 && r.top < 80; });
-    check(stuck, '[browser] after scrolling down the page the banner is still visible at the top of the screen');
-    await s.shot(evidence('K04-1c-stale-banner-while-scrolled.png'));
+    // the out-of-date marker is a quiet chip under the score and the V2 panel's own marker (there is no banner)
+    const marks = await s.page.evaluate(() => ({ banner: !!document.querySelector('[data-testid="stale-banner"]'), chip: !!document.querySelector('.cmp-chips .chip.stale'), v2Chip: !!document.querySelector('[data-testid="stale-chip"]') }));
+    note('out-of-date markers: ' + JSON.stringify(marks));
+    check(!marks.banner, '[browser] there is no out-of-date banner');
+    check(marks.chip, '[browser] the out-of-date chip is shown under the score');
+    check(marks.v2Chip, '[browser] the V2 panel heading itself carries an "Out of date" marker');
     await s.page.evaluate(() => scrollTo(0, 0));
     await s.page.getByRole('button', { name: /re-check again/i }).first().click();
     await s.page.waitForFunction(() => !/Out of date: the syllabus changed/.test(document.body.innerText), null, { timeout: 120000 });

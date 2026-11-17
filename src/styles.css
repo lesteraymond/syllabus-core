@@ -772,10 +772,6 @@ a:focus-visible {
 .info-banner.warning {
 	@apply tw:[background:#fff7e8] tw:[border-color:#f6ddb0] tw:[color:#9b6814];
 }
-/* the out-of-date notice stays in view while the (long) results it qualifies are read */
-.cmp-stale {
-	@apply tw:sticky tw:[top:8px] tw:[z-index:4];
-}
 .outcome-row {
 	@apply tw:grid tw:[grid-template-columns:42px_1fr_32px] tw:[gap:8px] tw:[align-items:start] tw:[margin:10px_0];
 }

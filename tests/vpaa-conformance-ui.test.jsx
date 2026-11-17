@@ -133,18 +133,16 @@ for (const language of ['en','tl']) test(`[VPAA-COMP-UI-${language}] existing re
 });
 
 // Hardening: stale results are announced before the results they qualify, the budget notices say exactly what happened, and both panels use one vocabulary.
-for (const language of ['en', 'tl']) test(`[HARDEN-STALE-${language}] a stale report shows its out-of-date banner BEFORE the V2 results, the coverage list and the recommendations`, () => {
+for (const language of ['en', 'tl']) test(`[HARDEN-STALE-${language}] a stale report is marked out of date with a quiet chip (no banner), and the V2 panel carries its own marker`, () => {
   setLanguage(language);
   const run = structuredClone(runs.v2 || runs.scored); run.stale = true;
   const markup = html(run), shown = text(markup);
-  assert.ok(markup.includes('data-testid="stale-banner"'), 'the banner is rendered');
-  assert.ok(shown.includes(t('hybrid.staleTitle')) && shown.includes(t('hybrid.staleBody')));
-  const banner = markup.indexOf('data-testid="stale-banner"');
-  for (const later of ['hy-details', 'class="vd"', 'class="hy-recs"']) { const at = markup.indexOf(later); if (at >= 0) assert.ok(banner < at, `the banner comes before ${later}`); }
+  assert.ok(!markup.includes('data-testid="stale-banner"'), 'there is no out-of-date banner');
+  assert.ok(markup.includes('class="chip stale"'), 'the out-of-date chip is rendered');
   if (markup.includes('class="vd"')) assert.ok(markup.includes('data-testid="stale-chip"'), 'the V2 panel heading carries its own out-of-date marker');
   assert.ok(!shown.includes('hybrid.stale'), 'translation keys never leak');
-  const fresh = text(html({ ...structuredClone(run), stale: false }));
-  assert.ok(!fresh.includes(t('hybrid.staleBody')), 'a current report shows no out-of-date banner');
+  const fresh = markup.includes('class="chip stale"') && html({ ...structuredClone(run), stale: false }).includes('class="chip stale"');
+  assert.ok(!fresh, 'a current report has no out-of-date chip');
 });
 
 for (const language of ['en', 'tl']) test(`[HARDEN-BUDGET-${language}] budget notices: deferred optional checks are said to be Not checked; incomplete required coverage asks for an operator decision`, () => {
@@ -185,13 +183,11 @@ const underReview = (code = 'po_mapping_remediation_required') => { const run = 
 for (const language of ['en', 'tl']) test(`[SAVED-REPORT-${language}] a report under record review shows its saved score and an accurate notice, not "out of date"`, () => {
   setLanguage(language);
   const run = underReview(), markup = html(run), shown = text(markup);
-  assert.ok(markup.includes('data-testid="saved-report-banner"'), 'the notice is rendered');
-  assert.ok(shown.includes(t('hybrid.savedReportTitle')) && shown.includes(t('hybrid.savedReportBody')) && shown.includes(t('hybrid.savedReportLine')) && shown.includes(t('hybrid.savedReportChip')));
+  assert.ok(!markup.includes('data-testid="saved-report-banner"'), 'there is no saved-report banner');
+  assert.ok(shown.includes(t('hybrid.savedReportLine')) && shown.includes(t('hybrid.savedReportChip')));
   assert.ok(shown.includes(run.overall + '%'), 'the saved score is on the screen'); assert.ok(!shown.includes(t('hybrid.incomplete')), 'it is not called incomplete');
   assert.ok(!markup.includes('data-testid="stale-banner"') && !shown.includes(t('hybrid.staleBody')) && !shown.includes(t('hybrid.staleRecs')), 'it does not say the syllabus changed');
   assert.ok(!shown.includes('hybrid.savedReport'), 'translation keys never leak');
-  assert.ok(markup.indexOf('data-testid="saved-report-banner"') < markup.indexOf('class="cmp-top"'), 'the notice comes before the results it qualifies');
-  const later = text(html(underReview('curriculum_reference_review_required'))); assert.ok(later.includes(t('hybrid.savedReportBodyCurriculum')) && !later.includes(t('hybrid.savedReportBody')));
   setLanguage('en');
 });
 test('[SAVED-REPORT-readonly] nothing in a report under record review can be applied to the draft', () => {
@@ -203,7 +199,7 @@ test('[SAVED-REPORT-readonly] nothing in a report under record review can be app
 test('[SAVED-REPORT-modal] the result dialog shows the saved score', () => {
   setLanguage('en');
   const run = underReview(), out = text(renderToStaticMarkup(<ComplianceModal syllabus={{ courseCode: 'X 1', title: 'T' }} run={run} onClose={() => {}} />));
-  assert.ok(out.includes(run.overall + '%')); assert.ok(out.includes(t('hybrid.savedReportTitle')));
+  assert.ok(out.includes(run.overall + '%')); assert.ok(out.includes(t('hybrid.savedReportLine')));
 });
 test('[SAVED-REPORT-i18n] English and Tagalog both carry the notice and the refusal, in different words', async () => {
   for (const key of ['hybrid.poMappingRemediation', 'hybrid.savedReportTitle', 'hybrid.savedReportBody', 'hybrid.savedReportBodyCurriculum', 'hybrid.savedReportLine', 'hybrid.savedReportChip']) {
