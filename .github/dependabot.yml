@@ -1,12 +1,13 @@
 # Dependabot proposes updates as pull requests; nothing is merged automatically. It keeps the pinned GitHub Actions (by commit hash, see workflows/ci.yml)
 # current, and flags vulnerable npm packages in the app (root) and the server.
-# Version updates are monthly and grouped, so there is one pull request per folder instead of one per package. Security updates are not held back by this.
+# Version-update pull requests are turned off (limit 0). Security updates for vulnerable packages still open pull requests, because they use their own limit.
 version: 2
 updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: monthly
+    open-pull-requests-limit: 0
     groups:
       actions:
         patterns: ["*"]
@@ -14,7 +15,7 @@ updates:
     directory: /
     schedule:
       interval: monthly
-    open-pull-requests-limit: 1
+    open-pull-requests-limit: 0
     groups:
       app-deps:
         patterns: ["*"]
@@ -22,7 +23,7 @@ updates:
     directory: /server
     schedule:
       interval: monthly
-    open-pull-requests-limit: 1
+    open-pull-requests-limit: 0
     groups:
       server-deps:
         patterns: ["*"]
