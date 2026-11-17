@@ -176,6 +176,15 @@ select {
 .check {
 	@apply tw:flex tw:[gap:7px] tw:items-center;
 }
+.login-card .consent-box {
+	display: flex; flex-direction: row; align-items: flex-start; gap: 12px;
+	padding: 12px 14px; border: 1px solid #d5dbea; border-radius: 10px; background: #f6f8fd;
+	font-weight: 400; cursor: pointer;
+}
+.login-card .consent-box input { flex: none; width: 18px; height: 18px; padding: 0; margin: 2px 0 0; accent-color: var(--blue); }
+.consent-box span { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.consent-box b { font-size: var(--text-sm); font-weight: 600; color: #26324a; }
+.consent-box small { font-size: 0.78rem; line-height: 1.4; color: #5b667d; font-weight: 400; }
 .link-btn,
 .card-head button {
 	@apply tw:[border:0] tw:[background:none] tw:[color:var(--blue)] tw:[font-size:var(--text-sm)];

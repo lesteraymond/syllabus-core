@@ -15,4 +15,6 @@ export const navItems = [
   ['reports', 'downloadSimple', 'Reports', null],
   ['users', 'usersThree', 'Users & Roles', 'admin'],
   ['settings', 'gearSix', 'Settings', null],
+  ['student-dashboard', 'squaresFour', 'Dashboard', 'student'], // a student's own pages (views/StudentViews.jsx): read-only
+  ['student-syllabi', 'archive', 'Syllabi', 'student'],
 ];

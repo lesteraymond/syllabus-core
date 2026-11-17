@@ -44,7 +44,9 @@
     "migrate-audit-retention": "node db/migrate-audit-retention.js",
     "migrate-password-expiry": "node db/migrate-password-expiry.js",
     "migrate-session-store": "node db/migrate-session-store.js",
-    "migrate-replan-answers": "node db/migrate-replan-answers.js"
+    "migrate-replan-answers": "node db/migrate-replan-answers.js",
+    "seed-student-demo": "node db/seed-student-demo.js",
+    "seed-student-demo-syllabi": "node db/seed-student-demo-syllabi.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "1.3.0",

@@ -1,7 +1,7 @@
 {
   "packageVersion": "phase3-faculty-review-1",
   "manifestVersion": "phase3-1",
-  "manifestSha256": "cc71563ddef7889a8c070de3d2c004fec96e24910690b4f7fa95623db034b84e",
+  "manifestSha256": "3c9b7873f90d3ea781a50184e1644f2087848a42738dffe6b3da45ecfae1049b",
   "status": "DRAFT — developer-written expectation, NOT faculty-reviewed",
   "offlineOnly": true,
   "autoPopulatedFacultyVerdicts": 0,
