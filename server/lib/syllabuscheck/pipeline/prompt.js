@@ -186,7 +186,15 @@ const parse = raw => {
   const text = String(raw ?? '').trim().replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '');
   return JSON.parse(text);
 };
-const squash = text => clean(text).toLowerCase().replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
+// How a quote is compared with the texts: case, spacing and typographic variants a model may type differently when it copies are ignored. Before, a
+// dash, a non-breaking hyphen or an ellipsis copied as "-" or "..." made a correct answer "the quote is not in the texts"; asked again and rejected
+// again, the question stayed unanswered and the whole check incomplete (no score, no recommendations). Only the comparison changes: nothing is sent
+// differently, and the quote kept with the answer is the model's own.
+const squash = text => clean(String(text ?? '').replace(/[­​-‍⁠﻿]/g, '')) // soft hyphen, zero-width characters
+  .toLowerCase()
+  .replace(/[“”„‟″]/g, '"').replace(/[‘’‚‛′]/g, "'")
+  .replace(/[‐-―−﹘﹣－]/g, '-') // hyphens, non-breaking hyphen, en and em dashes, minus sign
+  .replace(/…/g, '...'); // ellipsis character
 
 // Checks a judge reply against the request. Returns { answers: Map(questionId -> { items, quote, explanation }), rejected: [{ q, reason }] }.
 // A reply that cannot be read rejects every question; nothing rejected ever becomes a verdict.

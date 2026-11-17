@@ -2646,3 +2646,14 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Versions unchanged:** no question or prompt changed; stored answers are reused, so a re-check of an unchanged syllabus costs nothing.
 - **Tests:** new `pipeline/cpe101-461.test.js` (3) and `[UI-NEEDS-DECISION-en/tl]` in the UI conformance test; `official.test.js` updated. `npm test` passes (1,376 server + 127).
 - **Reference labels:** an item or recommendation on a reference is labelled by its group and number ("References · Books, no. 3" / "Mga aklat, blg. 3"), not "Draft" (`hybridView.js` suggestionKind `ref`; new strings `hybrid.kind.ref` and `hybrid.refGroup.*`). Verified on CPE 101: check #462 offered the CLO 4 classification, it was accepted (decision recorded, syllabus saved), and check #463 lists the four items for the author; both checks sent no AI request.
+
+---
+
+### v1.97.2 — AI Checker: A Quote Copied With a Plain Dash or "..." Is No Longer Rejected
+**Date:** November 18, 2026
+
+- **Found in a review of the new AI Checker:** every AI answer must quote the syllabus text it rests on, and the quote was compared ignoring case, spacing and curly quotes only. A dash or a non-breaking hyphen copied as "-", an ellipsis copied as "...", or a soft hyphen or zero-width character in the text made a correct answer "the quote is not in the texts". Asked again and rejected again, the question stayed unanswered and the whole check incomplete (no score, no recommendations), the same failure as CPE 101 #451/#452. All three syllabi in the development database contain en or em dashes.
+- **Fix** (`pipeline/prompt.js` squash, used only by this comparison): hyphen and dash variants, the minus sign, the ellipsis character, curly and low quote marks, primes, soft hyphens and zero-width characters are compared as their plain forms. Nothing is sent differently and the stored quote is the model's own; a quote that is really not in the texts is still refused.
+- **Versions unchanged:** no question or prompt changed; stored answers are reused.
+- **Tests:** new `pipeline/quote-match.test.js` (2; the old comparison rejects all five legitimate variants). `npm test` passes (1,378 server + 127).
+- **Also found, not changed (owner's choice):** a syllabus with missing or duplicate row, ILO or CLO ids never completes and says "Run the check again" (not reachable through the form or PDF import, which always assign unique ids); Check & improve can return its own rewrite with `usedRewrite: false` when neither candidate passes (not shown by the page).
