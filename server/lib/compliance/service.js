@@ -191,7 +191,10 @@ async function storeRun(conn, { syllabusId, versionId = null, content, result, c
   if (result.hybrid) {
     await hybridRepo.saveReport(conn, runId, result, result.referenceHash);
     const alignment = result.hybrid.alignment;
-    await conn.query('UPDATE ai_check_runs SET provider = ?, model = ?, ai_error = ? WHERE run_id = ?', [alignment.provider || null, alignment.model || null, alignment.reason?.slice(0, 255) || null, runId]);
+    // prompt_version: which prompt made the AI answers, so a stored run says which checker made it (the re-planned checker's 'replan-prompt-N'). The column is
+    // VARCHAR(20) and the old checker's versions are longer (about 32 characters): those stay NULL as before, never cut to a misleading prefix or an error.
+    const promptVersion = typeof alignment.promptVersion === 'string' && alignment.promptVersion.length <= 20 ? alignment.promptVersion : null;
+    await conn.query('UPDATE ai_check_runs SET provider = ?, model = ?, ai_error = ?, prompt_version = ? WHERE run_id = ?', [alignment.provider || null, alignment.model || null, alignment.reason?.slice(0, 255) || null, promptVersion, runId]);
   }
   await conn.query('INSERT INTO ai_check_area_scores (run_id, area_key, name, weight, score) VALUES ?', [result.areas.map((a) => [runId, a.key, a.name, a.weight, a.score])]);
   if (result.findings.length) {

@@ -60,6 +60,7 @@ function structure(map) {
       link(key, k('content'));
       for (const id of ilo.cloIds) if (map.clos.some(c => c.id === id)) link(key, `clo:${id}`);
       link(k('activities'), key);
+      link(k('tasks'), key); // the tasks assess at the ILO's verb level (constructive alignment)
       link(k('values'), key);
     });
     link(k('activities'), k('content'));
@@ -75,7 +76,8 @@ function rootsOf(result, attempts, maxAttempts) {
   const { parents, info } = structure(result.map);
   const own = new Map();
   const note = (key, entry) => { if (!own.has(key)) own.set(key, { failures: [], rules: [] }); entry(own.get(key)); };
-  for (const r of result.judged.results) if (r.status === 'failing' || r.status === 'waiting') note(r.fieldKey, o => o.failures.push(r));
+  // a manual relationship (CLO-EVIDENCE) is fixed in other fields by the faculty: it never makes its own field a root to rewrite
+  for (const r of result.judged.results) if ((r.status === 'failing' || r.status === 'waiting') && !R.isManual(r.relationship)) note(r.fieldKey, o => o.failures.push(r));
   for (const f of result.fixed.findings) if (f.severity === 'finding') { const key = fieldKeyOfFinding(f); if (key) note(key, o => o.rules.push(f.message)); }
   const failing = new Set(own.keys());
   const roots = [];
@@ -100,6 +102,7 @@ function jobOf(root, result) {
     failures: root.failures.map(r => ({ relationship: r.relationship, to: r.to, failedItems: r.failedItems, explanation: r.explanation })),
     // what the field already does right: its relationships that are ALIGNED now (a PO or EGA a CLO already supports, the CLO an ILO already builds).
     // A rewrite must keep them, so fixing one link does not break another (DSP re-run, 2026-11-15: three CLO rewrites dropped a PO).
+    // a CLO rewrite must also keep a CLO-EVIDENCE that fits now (its verb level is reached in its weeks): it may not raise the verb past them
     keep: result.judged.results.filter(r => r.fieldKey === root.key && r.status === 'ok').map(r => ({ relationship: r.relationship, to: r.to })),
     rules: root.rules,
     children: [...(children.get(root.key) || [])].map(asText).filter(c => c.text),
@@ -119,7 +122,8 @@ function siblingsOf(content, key) {
   return [];
 }
 
-const misaligned = (result, key) => result.misalignments.some(m => m.fieldKey === key || (m.source === 'rule' && fieldKeyOfFinding({ rule: m.rule, where: m.where }) === key));
+// a manual relationship (CLO-EVIDENCE) is not the field's own problem to rewrite away, so it never holds a rewrite of that field back
+const misaligned = (result, key) => result.misalignments.some(m => (m.fieldKey === key && !(m.source === 'ai' && R.isManual(m.rule))) || (m.source === 'rule' && fieldKeyOfFinding({ rule: m.rule, where: m.where }) === key));
 
 // Build the plan. opts: ask (judge provider), rewrite (rewrite provider; same shape as ask), store, model, year, maxRounds (3), maxAttempts (2).
 async function buildPlan(content, masters, opts = {}) {
@@ -182,7 +186,8 @@ async function buildPlan(content, masters, opts = {}) {
   }));
   const changed = new Set(changes.keys());
   const leftKeys = new Set([...current.misalignments.map(m => m.fieldKey || (m.source === 'rule' ? fieldKeyOfFinding({ rule: m.rule, where: m.where }) : null))].filter(Boolean));
-  const unresolved = [...leftKeys].filter(k => !changed.has(k)).map(k => ({ key: k, reason: rejections.get(k) || ((attempts.get(k) || 0) >= maxAttempts ? 'not fixed after ' + maxAttempts + ' rewrites' : 'waits for a field above it, or the round limit was reached') }));
+  const manualOnly = k => current.misalignments.filter(m => m.fieldKey === k).every(m => m.source === 'ai' && R.isManual(m.rule));
+  const unresolved = [...leftKeys].filter(k => !changed.has(k)).map(k => ({ key: k, reason: rejections.get(k) || (manualOnly(k) ? 'for the faculty: the activities and tasks of the weeks mapped to this CLO do not reach its verb level (raise an ILO with its activities and tasks; the CLO is not rewritten for this)' : (attempts.get(k) || 0) >= maxAttempts ? 'not fixed after ' + maxAttempts + ' rewrites' : 'waits for a field above it, or the round limit was reached') }));
   const manual = current.fixed.findings.filter(f => f.severity === 'finding' && AUTHOR_RULES.has(f.rule)).map(f => ({ rule: f.rule, where: f.where, message: f.message }));
   return {
     version: PLAN_VERSION, rounds, usage,
@@ -200,4 +205,4 @@ function applyPlan(content, plan, keys = null) {
   return out;
 }
 
-module.exports = { buildPlan, applyPlan, rootsOf, structure, siblingsOf, getField, setField, PLAN_VERSION, STATUS };
+module.exports = { buildPlan, applyPlan, rootsOf, structure, jobOf, siblingsOf, misaligned, getField, setField, PLAN_VERSION, STATUS };

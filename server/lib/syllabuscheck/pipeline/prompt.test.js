@@ -8,7 +8,7 @@ const R = require('./rules');
 const S = require('./eval/synthetic');
 
 test('the prompt version records the change', () => {
-  assert.equal(P.PROMPT_VERSION, 'replan-prompt-5');
+  assert.equal(P.PROMPT_VERSION, 'replan-prompt-6');
 });
 
 test('1. the values question accepts the orientation or the examination itself', () => {
@@ -19,11 +19,17 @@ test('1. the values question accepts the orientation or the examination itself',
 });
 
 test('2. Bloom levels are given for every CLO classification and as an ordered scale; the mapping is the owner-confirmed one', () => {
-  for (const l of R.CLO_LEVELS) assert.ok(P.JUDGE_SYSTEM.includes(`CLO ${l.no}: ${l.level} (${l.focus}); Bloom levels: ${l.bloom.join(', ')}.`), l.level);
+  // CLO 4 also lists its affective levels (2026-11-17)
+  for (const l of R.CLO_LEVELS) assert.ok(P.JUDGE_SYSTEM.includes(`CLO ${l.no}: ${l.level} (${l.focus}); Bloom levels: ${l.bloom.join(', ')}${l.affective ? `; or the affective levels: ${l.affective.join(', ')}` : ''}.`), l.level);
   assert.deepEqual(R.BLOOM_ORDER.map(b => b.level), ['remember', 'understand', 'apply', 'analyze', 'evaluate', 'create']);
   for (const b of R.BLOOM_ORDER) assert.match(P.JUDGE_SYSTEM, new RegExp(`\\d\\. ${b.level}: `));
   assert.match(R.BLOOM_SOURCE, /confirmed by the owner on 2026-11-12; apply added to CLO 1 by the owner on 2026-11-15/);
-  assert.deepEqual(R.CLO_LEVELS.map(l => l.bloom), [['remember', 'understand', 'apply'], ['apply', 'analyze', 'evaluate'], ['apply', 'create'], ['evaluate', 'create']]);
+  // CLO 3 takes analyze and evaluate too (owner, 2026-11-17, after the CHED Implementation Handbook for OBE and ISA)
+  assert.deepEqual(R.CLO_LEVELS.map(l => l.bloom), [['remember', 'understand', 'apply'], ['apply', 'analyze', 'evaluate'], ['apply', 'analyze', 'evaluate', 'create'], ['evaluate', 'create']]);
+  assert.match(R.BLOOM_SOURCE, /analyze and evaluate added to CLO 3 by the owner on 2026-11-17/);
+  assert.match(P.JUDGE_SYSTEM, /CLO 3: Demonstrating \(Application \/ Create\); Bloom levels: apply, analyze, evaluate, create\. CHED meaning: students demonstrate the outcome independently, without supervision, in a product, performance or solution\./);
+  assert.match(P.JUDGE_SYSTEM, /CLO 2: Enabling [^\n]*CHED meaning: the course strengthens the outcome through practice with supervision\./);
+  assert.doesNotMatch(P.JUDGE_SYSTEM.split('\n').find(l => l.startsWith('   CLO 4:')), /CHED meaning/, 'Integration of Values is LCUP\'s own classification, not a CHED stage');
 });
 
 test('3. "no" and "unclear" are told apart: unclear only for a missing, cut-short or ambiguous text', () => {
@@ -69,7 +75,7 @@ test('near copies: the DSP twins are caught, genuinely different ILOs of the sam
   assert.equal(P.nearCopy('Write loops', 'Write loops'), false, 'too short to judge');
   assert.equal(P.nearCopy('Explain folk dance outcome two', 'Explain and apply Java programming outcome one'), false, 'the same first verb alone is not a copy');
   assert.match(P.REWRITE_SYSTEM, /keepDistinctFrom/);
-  assert.equal(P.PROMPT_VERSION, 'replan-prompt-5', 'the judge prompt did not change, so stored answers stay valid');
+  assert.equal(P.PROMPT_VERSION, 'replan-prompt-6', 'the near-copy rule did not change the judge prompt (6 is constructive alignment)');
   assert.match(P.REWRITE_VERSION, /^replan-rewrite-\d+$/);
 });
 

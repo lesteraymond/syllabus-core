@@ -24,13 +24,25 @@ const PASS_THRESHOLD = require('../../compliance/standard-v4.json').passThreshol
 const MODE = 'official';
 const isOfficial = (env = process.env) => String(env.SYLLABUS_CHECK_REPLAN || '').trim().toLowerCase() === MODE;
 
+// The largest per-check cap accepted: the same ceiling aiQuota.js puts on SYLLABUS_CHECK_AI_MAX_COST_USD. A typo such as 2000 must not let one check
+// spend that much; the old checker then runs instead and the reason says why.
+const MAX_CAP_USD = 1000;
 // Can the new checker make the official AI check under these settings? When it cannot, the old checker runs as before.
 function readiness(env = process.env) {
   if (!isOfficial(env)) return { ok: false, reason: 'SYLLABUS_CHECK_REPLAN is not official' };
   if (String(env.SYLLABUS_CHECK_AI_PROVIDER || '').trim().toLowerCase() !== 'anthropic') return { ok: false, reason: 'AI checking is off, or the provider is not the direct Anthropic provider' };
   const cap = Number.parseFloat(env.SYLLABUS_CHECK_REPLAN_MAX_COST_USD);
   if (!(Number.isFinite(cap) && cap > 0)) return { ok: false, reason: 'SYLLABUS_CHECK_REPLAN_MAX_COST_USD is required' };
+  if (cap > MAX_CAP_USD) return { ok: false, reason: `SYLLABUS_CHECK_REPLAN_MAX_COST_USD must be at most ${MAX_CAP_USD}` };
   return { ok: true, cap };
+}
+// Requests one official check may send (SYLLABUS_CHECK_REPLAN_MAX_REQUESTS, 1-300; default 80). A value outside that range, such as "-5" or "abc",
+// falls back to the default instead of refusing every request (which made the check incomplete) or lifting the limit.
+const DEFAULT_MAX_REQUESTS = 80;
+function maxRequestsOf(env = process.env, fallback = DEFAULT_MAX_REQUESTS) {
+  const raw = String(env.SYLLABUS_CHECK_REPLAN_MAX_REQUESTS ?? '').trim();
+  const n = Number(raw);
+  return raw && Number.isInteger(n) && n >= 1 && n <= 300 ? n : fallback;
 }
 
 // ---- where a field lives in the content JSON (the app's paths) ----
@@ -45,6 +57,17 @@ function pathOf(content, key) {
   if (kind === 'content') { const r = rowIndex(a); return r >= 0 ? `plan[${r}].contents` : null; }
   if (['activities', 'tasks', 'values'].includes(kind)) { const r = rowIndex(a); return r >= 0 ? `plan[${r}].${kind}` : null; }
   if (kind === 'ref') { const i = (content.refs?.[a]?.items || []).findIndex(x => x.id === b); return i >= 0 ? `refs.${a}.items[${i}].t` : null; }
+  return null;
+}
+// The reverse of pathOf: the field key of an app path, or null. Only the text fields a draft can target (APPLYABLE below).
+function keyOfPath(content, path) {
+  const p = String(path || '');
+  let m = /^clos\[(\d+)\]\.statement$/.exec(p);
+  if (m) { const clo = (content.clos || [])[Number(m[1])]; return clo && clo.id ? `clo:${clo.id}` : null; }
+  m = /^plan\[(\d+)\]\.ilos\[(\d+)\]\.text$/.exec(p);
+  if (m) { const ilo = ((content.plan || [])[Number(m[1])]?.ilos || [])[Number(m[2])]; return ilo && ilo.id ? `ilo:${ilo.id}` : null; }
+  m = /^plan\[(\d+)\]\.(contents|activities|tasks|values)$/.exec(p);
+  if (m) { const row = (content.plan || [])[Number(m[1])]; return row && row.id ? `${m[2] === 'contents' ? 'content' : m[2]}:${row.id}` : null; }
   return null;
 }
 // The builder can apply a draft only to these text fields (the same list as src/lib/hybridView.js canRefine).
@@ -65,6 +88,8 @@ function officialParts(content, result, plan) {
     judgements.push({
       id: r.id, type, path: pathOf(content, r.fieldKey), label: r.verdict, explanation: r.explanation || r.reason || null,
       sourceQuote: r.quote || null, targetQuote: null, status: r.status, against: (r.to || []).map(t => t.label).join(', '),
+      // what the coverage reports read (ruleCoverage.js): whether the question was really put to the model, or answered from the store
+      attempted: !r.reason, reused: !!r.reused,
       ...(r.status === 'not_checked' ? { unverified: true, ...(String(r.reason || '').startsWith('provider failed') ? { failureKind: 'provider_error' } : {}) } : {}),
     });
   }
@@ -94,7 +119,8 @@ function officialParts(content, result, plan) {
     if (c.source !== 'ai') continue;
     const path = pathOf(content, c.key);
     if (!path || !APPLYABLE.test(path)) continue;
-    const basedOn = [...result.judged.results.filter(r => r.fieldKey === c.key && r.status !== 'ok').map(r => 'SEM:' + r.id), ...(ruleIdsByField.get(c.key) || [])];
+    // a manual relationship (CLO-EVIDENCE) is not fixed by rewriting this field, so a draft never claims to fix it
+    const basedOn = [...result.judged.results.filter(r => r.fieldKey === c.key && r.status !== 'ok' && !R.isManual(r.relationship)).map(r => 'SEM:' + r.id), ...(ruleIdsByField.get(c.key) || [])];
     suggestions.push({
       id: 'RP:' + c.key, path, title: c.status === 'VERIFIED' ? 'Suggested alignment revision' : 'Suggested alignment revision (needs faculty review)',
       text: c.explanation || 'A rewrite that satisfies every relationship of this field.', replacement: c.after, source: 'ai', basedOn,
@@ -102,6 +128,27 @@ function officialParts(content, result, plan) {
     });
   }
   return { judgements, deductions, advisoryTypes: [...advisoryTypes], suggestions: bindSuggestions(content, suggestions), used };
+}
+
+// The plan's unresolved fields, in the shape the app's list reads (engine.js `unresolved`; HybridCheckPanel shows reason 'waits_for_upstream' with
+// waitsFor). A field waits when one of the fields it depends on still has a misalignment of its own; otherwise it needs a person (draft_needs_review).
+function unresolvedOf(content, result, plan, drafted) {
+  if (!plan) return [];
+  const failingKeys = new Set(result.misalignments.map(m => m.fieldKey || (m.source === 'rule' ? fieldKeyOfFinding({ rule: m.rule, where: m.where }) : null)).filter(Boolean));
+  const out = [];
+  for (const u of plan.unresolved || []) {
+    const path = pathOf(content, u.key);
+    if (!path || drafted.has(path) || out.some(x => x.path === path)) continue;
+    const own = result.judged.results.filter(r => r.fieldKey === u.key && r.status !== 'ok');
+    const waitsFor = [...new Set(own.flatMap(r => r.parents || []))].filter(k => k !== u.key && failingKeys.has(k)).map(k => pathOf(content, k)).filter(Boolean);
+    const worst = [...own].sort((a, b) => (R.DEDUCTION[b.verdict] || 0) - (R.DEDUCTION[a.verdict] || 0))[0];
+    out.push({
+      path, reason: waitsFor.length ? 'waits_for_upstream' : 'draft_needs_review', status: waitsFor.length ? 'WAITING' : 'NEEDS_REVIEW', tier: 'material',
+      attempts: 0, label: worst ? worst.verdict : null, relationships: own.map(r => 'SEM:' + r.id), explanation: String(worst?.explanation || u.reason || '').slice(0, 500),
+      detail: u.reason || null, ...(waitsFor.length ? { waitsFor } : {}), source: 're-planned',
+    });
+  }
+  return out;
 }
 
 // Fill the AI part of an old-engine report made with AI off (`noAi`) from the new checker. Returns the same report object, changed.
@@ -113,7 +160,8 @@ async function officialize({ noAi, content, masters, env = process.env, db, tran
   const h = noAi.hybrid;
   if (!provider) {
     const ready = readiness(env);
-    provider = claudeProvider({ env, transport, maxCostUsd: ready.cap, maxRequests: Number.parseInt(env.SYLLABUS_CHECK_REPLAN_MAX_REQUESTS, 10) || 80 });
+    if (!ready.ok) throw Error(ready.reason);
+    provider = claudeProvider({ env, transport, maxCostUsd: ready.cap, maxRequests: maxRequestsOf(env) });
     if (!provider.ready) throw Error(provider.reason);
   }
   if (!store) { const { storeFor } = require('./shadow'); store = storeFor(db); }
@@ -147,10 +195,14 @@ async function officialize({ noAi, content, masters, env = process.env, db, tran
   };
   h.deductions = deductions;
   h.suggestions = [...(h.suggestions || []).filter(s => s.source !== 'ai'), ...parts.suggestions];
+  // Fields the plan could not fix in this check (waiting for a field above it, the round or request limit, or a rewrite it refused). They were only in
+  // hybrid.replan before, so the app showed nothing for them; now they join the old engine's no-AI review items in the list the app reads.
+  const unresolved = unresolvedOf(content, result, plan, new Set(parts.suggestions.map(s => s.path)));
+  h.unresolved = [...(h.unresolved || []).filter(u => !unresolved.some(x => x.path === u.path)), ...unresolved];
   h.policy = { ...(h.policy || {}), advisoryTypes: [...new Set([...(h.policy?.advisoryTypes || []), ...parts.advisoryTypes])], areaCaps: R.AREA_CAPS };
   h.score = score; h.provisionalScore = provisionalScore; h.ready = ready;
   h.scoring = { ...(h.scoring || {}), official: { policy: `${R.VERSION}+caps${R.AREA_CAPS.ilo}`, deducted: points, score: provisionalScore } };
-  h.summary = summarize({ findings, quality: h.quality, semanticCompleted: complete, missingValues: result.misalignments.length, unresolved: plan ? plan.unresolved : [], corrections: [] });
+  h.summary = summarize({ findings, quality: h.quality, semanticCompleted: complete, missingValues: result.misalignments.length, unresolved: h.unresolved, corrections: [] });
   h.replan = {
     mode: MODE, versions: { rules: R.VERSION, prompt: P.PROMPT_VERSION }, summary: result.summary, areaPoints: parts.used,
     review: result.judged.results.filter(r => r.status === 'review').length, advice: result.judged.results.filter(r => r.status === 'advice').length,
@@ -160,4 +212,4 @@ async function officialize({ noAi, content, masters, env = process.env, db, tran
   return noAi;
 }
 
-module.exports = { isOfficial, readiness, officialize, officialParts, pathOf, APPLYABLE, MODE };
+module.exports = { isOfficial, readiness, maxRequestsOf, officialize, officialParts, unresolvedOf, pathOf, keyOfPath, APPLYABLE, MODE, MAX_CAP_USD };

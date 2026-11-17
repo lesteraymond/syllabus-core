@@ -126,3 +126,45 @@ test('compliance/service.js runs the old engine with AI off only in official mod
   assert.match(source, /if \(replanOfficial\) \{\s*try \{\s*await officialReplan\.officialize/);
   assert.match(source, /if \(!v2On && !replanOfficial && options\.useAi !== false && wholePlan\.enabled\(env\)\)/);
 });
+
+test('the request limit is 1-300 (default 80) and the cost cap at most 1000: a bad value never refuses every request or lifts the limit', () => {
+  assert.equal(O.maxRequestsOf({}), 80);
+  assert.equal(O.maxRequestsOf({ SYLLABUS_CHECK_REPLAN_MAX_REQUESTS: '120' }), 120);
+  for (const bad of ['-5', '0', 'abc', '12.5', '301', ' ']) assert.equal(O.maxRequestsOf({ SYLLABUS_CHECK_REPLAN_MAX_REQUESTS: bad }), 80, bad);
+  const on = { SYLLABUS_CHECK_REPLAN: 'official', SYLLABUS_CHECK_AI_PROVIDER: 'anthropic' };
+  assert.equal(O.readiness({ ...on, SYLLABUS_CHECK_REPLAN_MAX_COST_USD: '1000' }).ok, true);
+  assert.match(O.readiness({ ...on, SYLLABUS_CHECK_REPLAN_MAX_COST_USD: '2000' }).reason, /at most 1000/);
+});
+
+test('keyOfPath is the reverse of pathOf for every field a draft can target', () => {
+  const { content } = sample();
+  const keys = [`clo:${content.clos[1].id}`, `ilo:${content.plan[2].ilos[0].id}`, ...['content', 'activities', 'tasks', 'values'].map(k => `${k}:${content.plan[4].id}`)];
+  for (const key of keys) {
+    const p = O.pathOf(content, key);
+    assert.ok(O.APPLYABLE.test(p), p);
+    assert.equal(O.keyOfPath(content, p), key);
+  }
+  assert.equal(O.keyOfPath(content, 'plan[99].contents'), null);
+  assert.equal(O.keyOfPath(content, 'meta.title'), null);
+});
+
+test('fields the plan could not fix reach the list the app shows: a child waits for its failing parent, the parent needs review', async () => {
+  const refuse = { ask: T.scriptedJudge(), rewrite: async () => JSON.stringify({ text: '', explanation: 'none' }), model: 'scripted' };
+  const { report, content } = await official(c => { c.clos[2].statement = 'OFFTOPIC ' + c.clos[2].statement; }, refuse);
+  const h = report.hybrid;
+  const clo = h.unresolved.find(u => u.path === 'clos[2].statement');
+  assert.ok(clo && clo.reason === 'draft_needs_review' && clo.source === 're-planned');
+  const waiting = h.unresolved.filter(u => u.reason === 'waits_for_upstream');
+  assert.ok(waiting.length > 0);
+  assert.ok(waiting.every(u => Array.isArray(u.waitsFor) && u.waitsFor.includes('clos[2].statement')), 'each names the CLO it waits for');
+  assert.ok(waiting.every(u => O.APPLYABLE.test(u.path) || /^plan\[\d+\]\./.test(u.path)));
+  assert.equal(h.summary.counts.unresolved, h.unresolved.length, 'the summary counts what the list shows');
+  assert.ok(!h.suggestions.some(s => s.path === 'clos[2].statement'), 'no draft for a field whose rewrite was refused');
+  assert.equal(content.clos[2].statement.startsWith('OFFTOPIC'), true);
+});
+
+test('each AI judgement says whether it was answered, for the coverage reports', async () => {
+  const { report } = await official(weakIlo);
+  const ai = report.hybrid.alignment.judgements.filter(j => j.status !== 'rule' && j.status !== 'rule_review');
+  assert.ok(ai.length > 0 && ai.every(j => j.attempted === true && typeof j.reused === 'boolean'));
+});

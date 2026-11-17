@@ -13,7 +13,7 @@ Status: **Phases 1–3 built and tested offline** (2026-11-12), with scripted mo
 - **CLO** is written by faculty and aligned to the course title, PO and EGA. There are exactly four, in order, each with a fixed classification:
   - CLO 1 Introductory (Foundational Knowledge)
   - CLO 2 Enabling (Skill Development / Evaluate)
-  - CLO 3 Demonstrating (Application / Create)
+  - CLO 3 Demonstrating (Application / Create; verb levels apply, analyze, evaluate, create since 2026-11-17)
   - CLO 4 Integration of Values (Ethics & Responsibility / Evaluate & Create)
 - **Course Content** is per week, based on the course title, and written before the ILO.
 - **ILO** is based on the week's content and aligned to a CLO.
@@ -34,6 +34,10 @@ Status: **Phases 1–3 built and tested offline** (2026-11-12), with scripted mo
 | 4 | Values | **Every week, including Week 1 and exam weeks**, names at least one of the six values, and it must fit the ILO. |
 | 5 | References | Mostly **within 5 years**. Older classics are allowed but flagged for faculty confirmation, not penalized. Existence is looked up on **Crossref (DOI) and Open Library (ISBN)**, plus live link checks. A source that cannot be confirmed shows as "not verified", never "fake". Only the reference text is sent. |
 | 6 | Scoring | Keep −1 partial and −3 not aligned, with a **maximum deduction per area**. The cap values are **not chosen yet**. |
+| 7 | Constructive alignment (2026-11-17) | Following the CHED Handbook on Typology, Outcomes-Based Education, and Institutional Sustainability Assessment: an outcome's verb must match its **teaching-learning activities and its assessment tasks** (both). If an outcome says "apply", students solve problems, perform tasks or use concepts in real scenarios, and are assessed doing so; a memorization quiz alone does not assess it. Checked **each week** (activities and tasks reach the level of the week's ILO verb: a `level` item in ACTIVITY-FIT and TASK-FIT; TASK-FIT now also reads the ILOs) and **each CLO** (CLO-EVIDENCE: the CLO's own verb level is reached by the activities and the tasks of at least one week mapped to it). A mismatch is **partly aligned, −1**, inside the area caps. The repair plan fixes the weeks; it never lowers a CLO's verb for CLO-EVIDENCE, which goes to the faculty. This refines answer 2: the tasks are now also scored against the ILO's level; whether they fully measure the ILO stays advice (TASK-ILO). |
+| 8 | ILO level against the CLO (2026-11-17) | An ILO is judged against its **CLO's own main verb as written**, not the highest level the CLO's classification allows. Under a CLO 1 (Introductory) that says "Define and explain ...", an "apply" ILO (for example "Write and run a simple program") is above the CLO: ILO-CLO `level` = no, partly aligned (−1). Under a CLO 1 that says "Apply ...", the same ILO fits. Introductory still allows remember, understand and apply for the CLO itself (CLO-LEVEL). |
+| 9 | Weeks with several ILOs (2026-11-17) | A week may have two or three ILOs tagged to different CLOs (for example ILO 1 → CLO 1, ILO 2 → CLO 2 and 3, ILO 3 → CLO 4). The week still has one activities field and one tasks field. **Every ILO** of the week needs at least one activity and at least one task at **its own verb's level** (one task may cover several ILOs). The **two alternatives** for diverse learners are for the **week as a whole**, not two per ILO. Each ILO keeps its own CLO question (an extra tag that does not fit goes to review), and the week counts as evidence for every CLO one of its ILOs is tagged to. A repair draft is one activities list and one tasks list written with all the week's ILOs in view. |
+| 10 | One observable verb per outcome (2026-11-17) | Following the CHED Implementation Handbook for OBE and ISA (writing learning outcomes, rule 7): "Choose only one observable verb/behavior in a statement of outcome; choose the behavior that is of a higher dimension of complexity." A no-AI rule, OUTCOME-ONE-VERB, finds a CLO or ILO that opens with two or more joined verbs ("Define and explain …", "Design, implement, and test …", "Analyze/evaluate …"); a verb later in the sentence does not count. The finding names the higher verb to keep when both have a Bloom level. Like the new checker's other no-AI rules it costs no points; the repair plan drafts a one-verb rewrite, and a rewrite that still opens with two verbs is refused. |
 
 ## 2. Dependency chain
 
@@ -285,14 +289,26 @@ The cached rules block grew (judge prompt about 7,700 characters, rewrite prompt
 
 **The Bloom mapping, confirmed by the owner on 2026-11-12** (`BLOOM_SOURCE`). It was derived from the classification labels:
 
-| CLO | Bloom levels |
-|---|---|
-| CLO 1 | remember, understand, apply (apply added by the owner on 2026-11-15) |
-| CLO 2 | apply, analyze, evaluate |
-| CLO 3 | apply, create |
-| CLO 4 | evaluate, create |
+| CLO | Bloom levels | CHED meaning (Implementation Handbook for OBE and ISA, 2014) |
+|---|---|---|
+| CLO 1 Introductory | remember, understand, apply (apply added by the owner on 2026-11-15) | the course introduces students to the outcome |
+| CLO 2 Enabling | apply, analyze, evaluate | the course strengthens the outcome through practice with supervision |
+| CLO 3 Demonstrating | apply, analyze, evaluate, create (analyze and evaluate added by the owner on 2026-11-17) | students demonstrate the outcome independently, without supervision, in a product, performance or solution |
+| CLO 4 Integration of Values | evaluate, create; or the affective levels value, organize, internalize (added by the owner on 2026-11-17) | LCUP's own classification; not a CHED stage |
 
-ILO-CLO asks that an ILO sit at or below its CLO's level.
+**Affective levels for CLO 4 (2026-11-17).** The CHED handbook tells faculty to "consider the three domains of learning" and lists affective verbs in Annex 4. A values outcome is often affective ("Advocate …", "Practice …", "Commit to …"), so CLO 4 takes the top three affective levels besides evaluate and create (`rules.js` `AFFECTIVE_ORDER`, `AFFECTIVE_SOURCE`):
+
+| Affective level | Meaning | CHED's sample verbs |
+|---|---|---|
+| value | attaches value or worth to something | adopt, assume responsibility, behave according to, choose, commit, express, initiate, justify, propose, show concern |
+| organize | conceptualizes the value and resolves conflict between it and other values | adapt, adjust, arrange, balance, classify, conceptualize, formulate, organize, prepare, rank, theorize |
+| internalize | integrates the value into a value system that controls behavior | act upon, advocate, defend, exemplify, influence, perform, practice, serve, support |
+
+Receive and respond are listed for the AI as the lower levels, but no CLO takes them. Under an affective CLO 4, an affective ILO at or below its level fits, and so does a cognitive ILO (the thinking a value rests on). Constructive alignment for an affective outcome: it is practised in role-plays, case discussions, service or group work where students act on the value, and assessed by observed behavior or performance with a rubric, a reflection on one's own conduct, or a defended position; a written quiz about the value alone does not assess it (worked example I).
+
+CHED defines the curriculum-map stages as "I (introductory course to an outcome), E (enabling course or a course that strengthens the outcome), or D (demonstrative course or a course that demonstrates an outcome)", with a second legend "Introduce, Practice skills with supervision, Demonstrate skills without supervision". It ties no Bloom range to a stage; the ranges above are LCUP's. The rules text sends each CHED meaning with its CLO.
+
+ILO-CLO asks that an ILO sit at or below the level of its CLO's own main verb (2026-11-17).
 
 In the first paid run, the original CLO 1 mapping (remember, understand) made the model rewrite "Write and run a simple Python program" as "Describe the steps for installing Python...". The owner therefore added **apply** to CLO 1 on 2026-11-15 (`replan-prompt-5`). An introductory week may now ask students to write and run code.
 
@@ -356,7 +372,7 @@ How an official check runs (`pipeline/official.js`, hooked into `compliance/serv
 
 The old checker's whole-syllabus plan and coordinated plan are skipped in official mode. Stored answers (`replan_answers`) make an unchanged re-check reuse its answers.
 
-**Known limit:** "Check & improve" on a new-checker draft still uses the old checker's refine step.
+**Check & improve (fixed in v1.93.0):** before, the route refused every new-checker draft ("made by an older checker version"), because it compared the report's `replan-prompt-N` with the old checker's prompt version; past that check it would have used the old checker's refine step. A new-checker draft now goes to `pipeline/refine.js`: the field is checked with the new checker's rules, prompt and stored answers, the draft passes when its field has no misalignment left and no scored relationship got worse, and otherwise the new rewriter gets one try with the plan's own job. Its own small cap: `SYLLABUS_CHECK_REFINE_MAX_COST_USD` (default the smaller of $0.50 and the check's cap) and `SYLLABUS_CHECK_REFINE_MAX_REQUESTS` (1-60, default 12).
 
 **Tests:** `pipeline/official.test.js` (7). They run the real old engine with AI off plus the new checker on a scripted model, and they include the app's own `src/lib/hybridView.js`: problems shown, drafts linked, every draft applyable.
 

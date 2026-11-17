@@ -12,7 +12,7 @@ const R = require('./rules');
 const LEVELS = ['Introductory', 'Enabling', 'Demonstrating', 'Integration of Values'];
 function conforming() {
   const c = F.good();
-  c.clos.forEach((clo, i) => { clo.level = LEVELS[i]; clo.statement = `Explain and apply Java programming outcome ${i + 1}`; });
+  c.clos.forEach((clo, i) => { clo.level = LEVELS[i]; clo.statement = `Apply Java programming outcome ${i + 1}`; }); // one observable verb (CHED)
   c.plan[0].contents = 'Course orientation: vision, mission, course outcomes, requirements and grading system';
   c.plan[0].ilos[0].text = 'Explain the course outcomes, requirements and grading policies';
   c.plan.forEach(row => {

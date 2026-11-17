@@ -6,7 +6,11 @@
 // Source of the rules: the owner's statement of 2026-11-12 and the answers to the six rule questions the same day (see
 // docs/ai-checker-replan.md). Change a rule here and the version below, never in a prompt.
 
-const VERSION = 'replan-rules-1';
+// 2: constructive alignment (owner, 2026-11-17): activities and tasks must reach the verb level of the week's ILO, and each CLO's own verb level must
+//    be reached by the activities and tasks of at least one week mapped to it (CLO-EVIDENCE). A new version: no answer stored under 1 is reused.
+const VERSION = 'replan-rules-2';
+// Where the constructive-alignment rule comes from, as the owner stated it on 2026-11-17.
+const CONSTRUCTIVE_ALIGNMENT_SOURCE = 'Constructive alignment as the CHED Handbook on Typology, Outcomes-Based Education, and Institutional Sustainability Assessment describes it: the outcome\'s verb must match the teaching-learning activities (TLAs) and the assessment tasks (ATs). Owner decision 2026-11-17: checked each week and each CLO, both TLAs and ATs must match, a mismatch is partly aligned (-1).';
 
 // The six core Augustinian-Marian values (same list and order as values.js, which the current checker uses).
 const { VALUE_NAMES } = require('../values');
@@ -24,12 +28,33 @@ const BLOOM_ORDER = Object.freeze([
   { level: 'evaluate', verbs: 'evaluate, judge, justify, critique' },
   { level: 'create', verbs: 'design, create, develop, construct' },
 ]);
-const BLOOM_SOURCE = 'derived from the CLO classification labels; confirmed by the owner on 2026-11-12; apply added to CLO 1 by the owner on 2026-11-15';
+const BLOOM_SOURCE = 'derived from the CLO classification labels; confirmed by the owner on 2026-11-12; apply added to CLO 1 by the owner on 2026-11-15; analyze and evaluate added to CLO 3 by the owner on 2026-11-17, after the CHED Implementation Handbook for OBE and ISA (2014): I introduces an outcome, E strengthens it, D demonstrates it';
+// The affective domain (Krathwohl, Bloom and Masia, 1964), lowest to highest, with the sample verbs of the CHED Implementation Handbook for OBE and
+// ISA (2014), Annex 4 "Recommended Verbs for Writing Learning Outcomes". Only CLO 4 takes affective levels (CLO_LEVELS[3].affective).
+const AFFECTIVE_ORDER = Object.freeze([
+  { level: 'receive', meaning: 'selectively responds to stimuli', verbs: 'acknowledge, choose, demonstrate awareness, demonstrate tolerance, locate, select' },
+  { level: 'respond', meaning: 'responds to stimuli', verbs: 'answer, communicate, comply, contribute, cooperate, discuss, participate willingly, volunteer' },
+  { level: 'value', meaning: 'attaches value or worth to something', verbs: 'adopt, assume responsibility, behave according to, choose, commit, express, initiate, justify, propose, show concern' },
+  { level: 'organize', meaning: 'conceptualizes the value and resolves conflict between it and other values', verbs: 'adapt, adjust, arrange, balance, classify, conceptualize, formulate, organize, prepare, rank, theorize' },
+  { level: 'internalize', meaning: 'integrates the value into a value system that controls behavior', verbs: 'act upon, advocate, defend, exemplify, influence, perform, practice, serve, support' },
+]);
+const AFFECTIVE_SOURCE = 'CLO 4 takes the affective levels value, organize and internalize besides evaluate and create: owner, 2026-11-17, after the CHED Implementation Handbook for OBE and ISA (2014), "consider the three domains of learning" and Annex 4 (affective verbs)';
+// What CHED's curriculum-map stages mean (CHED Implementation Handbook for OBE and ISA, 2014), sent with the CLO rule so the focus is judged by them.
+// CLO 4 (Integration of Values) is LCUP's own classification, not a CHED stage.
+const CHED_STAGES = Object.freeze({
+  Introductory: 'the course introduces students to the outcome',
+  Enabling: 'the course strengthens the outcome through practice with supervision',
+  Demonstrating: 'students demonstrate the outcome independently, without supervision, in a product, performance or solution',
+});
 const CLO_LEVELS = Object.freeze([
   { no: 1, level: 'Introductory', focus: 'Foundational Knowledge', bloom: ['remember', 'understand', 'apply'] }, // apply added by the owner 2026-11-15
   { no: 2, level: 'Enabling', focus: 'Skill Development / Evaluate', bloom: ['apply', 'analyze', 'evaluate'] },
-  { no: 3, level: 'Demonstrating', focus: 'Application / Create', bloom: ['apply', 'create'] },
-  { no: 4, level: 'Integration of Values', focus: 'Ethics & Responsibility / Evaluate & Create', bloom: ['evaluate', 'create'] },
+  // analyze and evaluate added by the owner 2026-11-17: CHED's "demonstrative" means the outcome is demonstrated independently, with higher-order skills
+  // (analyzing, evaluating, creating); the CHED handbook ties no verb range to a stage
+  { no: 3, level: 'Demonstrating', focus: 'Application / Create', bloom: ['apply', 'analyze', 'evaluate', 'create'] },
+  // the affective levels added by the owner 2026-11-17: a values outcome is often affective ("Advocate ...", "Practice ...", "Commit to ..."); the CHED
+  // handbook tells faculty to consider the three domains and lists affective verbs (Annex 4)
+  { no: 4, level: 'Integration of Values', focus: 'Ethics & Responsibility / Evaluate & Create', bloom: ['evaluate', 'create'], affective: ['value', 'organize', 'internalize'] },
 ]);
 
 // The dependency chain: what each field depends on. Judging and repairing both follow this order (top-down); a field is never rewritten to suit a
@@ -40,8 +65,8 @@ const CHAIN = Object.freeze([
   { layer: 1, field: 'clo', alignsTo: ['courseTitle', 'po', 'ega'], rewritable: true, note: 'Exactly 4, fixed classification by number. Never judged against the course description.' },
   { layer: 2, field: 'content', alignsTo: ['courseTitle'], rewritable: true, note: 'Per week; written before the ILO. Never rewritten to fit an ILO (content first).' },
   { layer: 3, field: 'ilo', alignsTo: ['content', 'clo'], rewritable: true, note: 'Per week; built from that week\'s content and aligned to one CLO. Week 1 is orientation.' },
-  { layer: 4, field: 'activities', alignsTo: ['content', 'ilo'], rewritable: true, note: 'At least 2 alternative options per topic week for diverse learners.' },
-  { layer: 5, field: 'tasks', alignsTo: ['content', 'activities'], rewritable: true, note: 'Scored against content and activities; the ILO link is advice only.' },
+  { layer: 4, field: 'activities', alignsTo: ['content', 'ilo'], rewritable: true, note: 'At least 2 alternative options per topic week for diverse learners, at the cognitive level of the ILO\'s verb.' },
+  { layer: 5, field: 'tasks', alignsTo: ['content', 'activities', 'ilo'], rewritable: true, note: 'Scored against content and activities, and against the cognitive level of the ILO\'s verb (constructive alignment, 2026-11-17). Whether the tasks fully measure the ILO stays advice (TASK-ILO).' },
   { layer: 6, field: 'values', alignsTo: ['ilo'], rewritable: true, note: 'Every week, including Week 1 and exam weeks: at least one of the six values that fits the ILO.' },
   { layer: 7, field: 'references', alignsTo: ['courseTitle'], rewritable: false, note: 'APA 7th; mostly within 5 years (older classics go to faculty review); existence looked up, never invented.' },
 ]);
@@ -72,7 +97,7 @@ const CHECKLISTS = Object.freeze({
     { id: 'supports', critical: true, ask: 'Does achieving this CLO contribute to this graduate attribute?' },
   ] },
   'CLO-LEVEL': { from: 'clo', to: 'cloLevel', area: 'clo', scored: true, items: [
-    { id: 'verb', critical: false, ask: 'Is the CLO\'s main action verb at the cognitive level of its fixed classification?' },
+    { id: 'verb', critical: false, ask: 'Is the CLO\'s main action verb at one of the levels of its fixed classification (its Bloom levels, or for CLO 4 also its affective levels)?' },
     { id: 'focus', critical: true, ask: 'Does the CLO describe the focus of its fixed classification (for CLO 4: ethics, values or responsibility)?' },
   ] },
   'CONTENT-TITLE': { from: 'content', to: 'courseTitle', area: 'content', scored: true, items: [
@@ -88,20 +113,35 @@ const CHECKLISTS = Object.freeze({
   ] },
   'ILO-CLO': { from: 'ilo', to: 'clo', area: 'ilo', scored: true, need: 'any', items: [
     { id: 'step', critical: true, ask: 'Is the ILO a step toward the CLO (it builds what the CLO asks), without needing to repeat the CLO\'s words?' },
-    { id: 'level', critical: false, ask: 'Is the ILO\'s cognitive level at or below the CLO\'s level?' },
+    // the CLO's OWN verb, not the highest level its classification allows (owner, 2026-11-17): under a CLO 1 that says "explain", an "apply" ILO is
+    // above it, although Introductory itself allows apply
+    // an affective CLO (CLO 4 "Advocate ..."): an affective ILO at or below its level fits, and so does a cognitive ILO (the thinking a value rests on)
+    { id: 'level', critical: false, ask: 'Is the ILO\'s level at or below the level of the CLO\'s own main verb (as the CLO is written, not the highest level its classification allows)? When the CLO\'s verb is affective, an affective ILO at or below that affective level fits, and so does a cognitive ILO.' },
     { id: 'student', critical: false, ask: 'Is the ILO written as something the student does (not what the teacher does)?' },
   ] },
   'ACTIVITY-FIT': { from: 'activities', to: ['content', 'ilo'], area: 'activities', scored: true, items: [
     { id: 'content', critical: true, ask: 'Do the activities work on this week\'s content?' },
-    { id: 'ilo', critical: false, ask: 'Do the activities let students practise what the ILO asks them to do?' },
-    { id: 'diverse', critical: false, ask: 'Do the activities offer at least two alternatives suited to different learners, each fitting the ILO?' },
+    // A week may have several ILOs, tagged to different CLOs (owner, 2026-11-17): EVERY ILO needs at least one activity, at its OWN verb's level;
+    // the two alternatives for diverse learners are for the week as a whole, not two per ILO.
+    { id: 'ilo', critical: false, ask: 'Does EVERY ILO of the week have at least one activity that lets students practise what that ILO asks them to do?' },
+    { id: 'level', critical: false, ask: 'Is each ILO of the week practised by at least one activity at the cognitive level of that ILO\'s own verb (for "apply": solve problems, perform tasks or use concepts in a real scenario; listening, reading or recalling alone is below it)?' },
+    { id: 'diverse', critical: false, ask: 'Does the week offer at least two alternative activities suited to different learners (two for the week as a whole, not two per ILO), each fitting an ILO of the week?' },
   ] },
-  'TASK-FIT': { from: 'tasks', to: ['content', 'activities'], area: 'tasks', scored: true, items: [
+  'TASK-FIT': { from: 'tasks', to: ['content', 'activities', 'ilo'], area: 'tasks', scored: true, items: [
     { id: 'content', critical: true, ask: 'Do the tasks assess this week\'s content?' },
     { id: 'activities', critical: false, ask: 'Do the tasks follow from the activities (they assess what students practised)?' },
+    // every ILO of the week is assessed by at least one task at its own verb's level (one task may cover several ILOs)
+    { id: 'level', critical: false, ask: 'Is each ILO of the week assessed by at least one task at the cognitive level of that ILO\'s own verb (for "apply": students solve problems or perform a task; a recall or memorization quiz alone does not assess an outcome above "remember")? One task may cover several ILOs.' },
+  ] },
+  // Per CLO: its OWN verb level must be reached somewhere in the weeks mapped to it (an "apply" CLO that is only ever practised and quizzed by recall
+  // fails). Judged against the ILOs, activities and tasks of the weeks whose ILOs are tagged to the CLO. repair 'manual': the fix belongs in those
+  // weeks (raise an ILO with its activities and tasks), never in lowering the CLO's verb, so the repair plan does not rewrite the CLO for it.
+  'CLO-EVIDENCE': { from: 'clo', to: 'plan', area: 'clo', scored: true, repair: 'manual', items: [
+    { id: 'activities', critical: false, ask: 'Do the learning activities of the weeks mapped to this CLO include work at the CLO\'s own verb level (for "apply": solving problems, performing tasks or using concepts in a real scenario), not only lower-level work?' },
+    { id: 'tasks', critical: false, ask: 'Do the assessment tasks of those weeks include at least one task at the CLO\'s own verb level, not only recall or memorization?' },
   ] },
   'TASK-ILO': { from: 'tasks', to: 'ilo', area: 'tasks', scored: false, items: [
-    { id: 'measures', critical: false, ask: 'Would the tasks show whether students reached the ILO?' },
+    { id: 'measures', critical: false, ask: 'Would the tasks show whether students reached each of the week\'s ILOs?' },
   ] },
   'VALUE-ILO': { from: 'values', to: 'ilo', area: 'values', scored: true, items: [
     { id: 'fits', critical: true, ask: 'Can the named value be practised through this week\'s ILO and activities, or, in the orientation week or an examination week, through the orientation or the examination itself (for example Interiority through honest self-assessment)?' },
@@ -147,7 +187,10 @@ function deductions(results, caps = AREA_CAPS) {
   return { uncapped: lost, capped, total: AREAS.reduce((sum, area) => sum + capped[area], 0) };
 }
 
+// A relationship whose misalignment the repair plan never rewrites its own field for (it goes to the faculty): CLO-EVIDENCE.
+const isManual = relationship => CHECKLISTS[relationship]?.repair === 'manual';
+
 module.exports = {
-  VERSION, VALUE_NAMES, CLO_COUNT, CLO_LEVELS, BLOOM_ORDER, BLOOM_SOURCE, CHAIN, layerOf, SCHEDULE, MIN_ACTIVITY_OPTIONS, REFERENCE_RECENCY_YEARS, VALUES_REQUIRED_IN,
+  VERSION, CONSTRUCTIVE_ALIGNMENT_SOURCE, isManual, VALUE_NAMES, CLO_COUNT, CLO_LEVELS, BLOOM_ORDER, BLOOM_SOURCE, AFFECTIVE_ORDER, AFFECTIVE_SOURCE, CHED_STAGES, CHAIN, layerOf, SCHEDULE, MIN_ACTIVITY_OPTIONS, REFERENCE_RECENCY_YEARS, VALUES_REQUIRED_IN,
   CHECKLISTS, VERDICT, ANSWERS, verdictOf, DEDUCTION, AREAS, AREA_CAPS, deductions,
 };

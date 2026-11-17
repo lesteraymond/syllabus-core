@@ -28,6 +28,7 @@ const RANK = { ALIGNED: 0, PARTIALLY_ALIGNED: 1, NOT_ALIGNED: 2, INSUFFICIENT_EV
 const FIXED_TEXT_RULES = {
   'CLO-STATEMENT': f => `clo:${f.where.cloId}`, 'CONTENT-MISSING': f => `content:${f.where.row}`, 'ACTIVITY-OPTIONS': f => `activities:${f.where.row}`,
   'TASKS-MISSING': f => `tasks:${f.where.row}`, 'VALUES-WEEKLY': f => `values:${f.where.row}`, 'ILO-DUPLICATE': f => `ilo:${f.where.ilo}`,
+  'OUTCOME-ONE-VERB': f => (f.where.ilo ? `ilo:${f.where.ilo}` : `clo:${f.where.cloId}`),
 };
 const fieldKeyOfFinding = f => (FIXED_TEXT_RULES[f.rule] ? FIXED_TEXT_RULES[f.rule](f) : null);
 
@@ -70,13 +71,26 @@ function questionsOf(map) {
     if (w.kind === 'lesson') {
       for (const { ilo, ...t } of ilos) for (const id of ilo.cloIds) if (cloById.get(id)?.statement) add('ILO-CLO', group, t, [cloTarget(cloById.get(id))], [`clo:${id}`], `clo:${id}`);
       if (activities.text && content.text) add('ACTIVITY-FIT', group, activities, [content, ...iloTargets], [content.key, ...iloTargets.map(t => t.key)]);
-      if (tasks.text && content.text) add('TASK-FIT', group, tasks, [content, ...(activities.text ? [activities] : [])], [content.key, activities.key]);
+      // the ILOs too, for the level item (constructive alignment): an "apply" ILO is not assessed by a recall quiz
+      if (tasks.text && content.text) add('TASK-FIT', group, tasks, [content, ...(activities.text ? [activities] : []), ...iloTargets], [content.key, activities.key, ...iloTargets.map(t => t.key)]);
       if (tasks.text && iloTargets.length) add('TASK-ILO', group, tasks, iloTargets, iloTargets.map(t => t.key));
     }
     if (w.values.named.length) {
       if (iloTargets.length) add('VALUE-ILO', group, values, iloTargets, iloTargets.map(t => t.key));
       else if (content.text) add('VALUE-ILO', group, values, [{ ...content, label: `${weekLabel(w)} content (${w.kind === 'exam' ? 'examination week' : 'no ILO'})` }], [content.key]);
     }
+  }
+  // each CLO's own verb level, against the weeks mapped to it (constructive alignment): their ILOs, activities and tasks, one line per week.
+  // Its parents are those weeks' activities and tasks, so it waits while one of them is still failing (fix the weeks first).
+  for (const clo of map.clos) {
+    if (!clo.statement) continue;
+    const weeks = map.weeks.filter(w => w.kind === 'lesson' && w.ilos.some(ilo => ilo.cloIds.includes(clo.id)));
+    if (!weeks.length) continue; // an unmapped CLO is a fixed rule (CLO-COVERAGE), not a level question
+    const lines = weeks.map(w => `${weekLabel(w)}. ILO: ${w.ilos.filter(ilo => ilo.cloIds.includes(clo.id)).map(ilo => clean(ilo.text)).join(' / ') || '(none)'} | Activities: ${clean(w.activities.text) || '(none)'} | Tasks: ${clean(w.tasks.text) || '(none)'}`);
+    const from = { field: 'clo', key: `clo:${clo.id}`, label: `CLO ${clo.no}`, text: clo.statement };
+    const mapped = { field: 'plan', key: `evidence:${clo.id}`, label: `Weeks mapped to CLO ${clo.no}`, text: lines.join('\n') };
+    // asked with the whole-syllabus questions: it reads several weeks, and the CLO request already carries up to ~24 questions
+    add('CLO-EVIDENCE', 'syllabus', from, [mapped], weeks.flatMap(w => [`activities:${w.rowId}`, `tasks:${w.rowId}`]));
   }
   // references
   const topics = { field: 'plan', key: 'plan', label: 'All weekly topics, in order', text: planText };
