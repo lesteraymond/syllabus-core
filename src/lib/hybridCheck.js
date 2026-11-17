@@ -24,7 +24,7 @@ const sameValue = (a, b) => {
   return keys.length === other.length && keys.every((key, i) => key === other[i] && sameValue(a[key], b[key]));
 };
 export function applySuggestion(draft, patch, { requireOriginal = false } = {}) {
-  if (!patch || !/^(meta\.(title|prereq|lecture|lab|yearLevel)|outcomes\.(vision|mission|egas|pos)|description|clos\[\d+\]\.statement|plan\[\d+\]\.(values|contents|activities|tasks)|plan\[\d+\]\.ilos\[\d+\]\.text)$/.test(patch.path)) throw Error('This suggestion cannot be applied to the form.');
+  if (!patch || !/^(meta\.(title|prereq|lecture|lab|yearLevel)|outcomes\.(vision|mission|egas|pos)|description|clos\[\d+\]\.statement|clos\[\d+\]\.level|refs\.[a-z]+\.items\[\d+\]\.t|plan\[\d+\]\.(values|contents|activities|tasks)|plan\[\d+\]\.ilos\[\d+\]\.text)$/.test(patch.path)) throw Error('This suggestion cannot be applied to the form.');
   if (requireOriginal && !Object.hasOwn(patch, 'originalValue')) throw Error('hybrid.refreshSuggestions');
   const result = structuredClone(draft);
   const parts = patch.path.replace(/\[(\d+)\]/g, '.$1').split('.');

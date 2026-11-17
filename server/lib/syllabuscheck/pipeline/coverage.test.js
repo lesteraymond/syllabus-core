@@ -44,21 +44,20 @@ test('questions without an answer make it partial, with a reason the app can sho
   assert.equal((i18n.match(/'hybrid\.vpaaCoverageNote\.replan_partial'/g) || []).length, 2, 'English and Filipino');
 });
 
-test('an old-checker report is read exactly as before', () => {
+test('a report the new checker has not answered (a check without AI, or an old-checker report) covers none of the seven', () => {
   const old = { hybrid: { alignment: { status: 'completed', judgements: [{ id: 'a', type: 'ILO-CLO', label: 'ALIGNED' }] } } };
-  const cov = semanticCoverageOf(old, { v2On: false });
-  assert.equal(cov.primaryPath, 'legacy');
-  assert.equal(cov.reason, 'policy_v2_off');
-  assert.equal(cov.relationships.find(r => r.type === 'ILO-CLO').status, 'evaluated');
+  const cov = semanticCoverageOf(old);
+  assert.equal(cov.primaryPath, 're-planned');
+  assert.equal(cov.evaluated, 0);
+  assert.equal(cov.relationships.find(r => r.type === 'ILO-CLO').status, 'not_evaluated');
+  assert.equal(semanticCoverageOf({ hybrid: { alignment: { status: 'not_evaluated', judgements: [] } } }).reason, 'replan_not_evaluated');
 });
 
-test('rule coverage: the old AI rules are superseded, not NOT_CHECKED, and the instances are the new checker\'s questions', async () => {
+test('rule coverage: only the fixed (no-AI) rules are catalogued, and the instances are the new checker\'s questions', async () => {
   const { report, content, masters } = await official();
-  const cov = coverageOf(report, content, masters, {});
+  const cov = coverageOf(report, content, masters);
   assert.ok(!cov.unavailable);
-  const semantic = cov.rules.filter(r => r.namespace === 'semantic_type');
-  assert.ok(semantic.length > 0);
-  assert.ok(semantic.every(r => r.status === 'NOT_APPLICABLE' && r.reasonCode === 'replaced_by_replan'), JSON.stringify(semantic.filter(r => r.reasonCode !== 'replaced_by_replan').map(r => [r.ruleId, r.status])));
+  assert.deepEqual([...new Set(cov.rules.map(r => r.namespace))].sort(), ['hybrid_validation', 'quality', 'registered_standard'], 'no old AI, Policy V2, staged or verdict rules');
   const rows = cov.relationshipInstances.rows;
   const asked = report.hybrid.alignment.judgements.filter(j => j.status !== 'rule' && j.status !== 'rule_review');
   assert.equal(rows.length, asked.length);

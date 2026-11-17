@@ -9,7 +9,7 @@ test('only the author records a decision, and only while the syllabus is editabl
   const activity = [];
   let status = 'draft';
   const suggestion = { id: 'SEM:pair1', path: 'plan[0].tasks', replacement: 'Design and demonstrate a tested program.' };
-  t.mock.method(repo, 'readReport', async () => ({ hybrid: { suggestions: [suggestion] } }));
+  t.mock.method(repo, 'readReport', async () => ({ hybrid: { alignment: { status: 'completed', engine: 're-planned' }, suggestions: [suggestion] } })) // a report of the new AI Checker (decisions on an old-checker report are refused);
   // Route imports readReport by reference when loaded, so patch before requiring it.
   delete require.cache[require.resolve('./syllabusCheck')];
   const app = express(); app.use(express.json());

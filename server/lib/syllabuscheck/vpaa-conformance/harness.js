@@ -8,8 +8,6 @@
 // `liveGuard()` fails the suite if any real fetch is attempted.
 const { sample } = require('../fixtures');
 const engine = require('../engine');
-const policy = require('../academicPolicyV2');
-const { POLICY } = require('../academicV2Plan');
 
 const MODEL = 'claude-sonnet-5-5';
 const SYNTHETIC_KEY = 'sk-ant-conformance-test-only-not-a-real-key';
@@ -28,10 +26,6 @@ const coded = (content, masters) => engine.coded(content, masters);
 // Fail loudly if anything in a test reaches the real network. A conformance test must never spend money.
 // Loopback stays open because route tests talk to their own ephemeral 127.0.0.1 server; anything else is a live call.
 function liveGuard(t) {
-  // A provider refusal (401/402/403) starts a process-wide cooldown (gemini.js breaker); reset it so one test cannot silence the next.
-  const gemini = require('../gemini');
-  gemini.resetProviderBlock();
-  t.after(() => gemini.resetProviderBlock());
   const original = globalThis.fetch;
   const loopback = (url) => /^https?:\/\/(127\.0\.0\.1|localhost|\[::1\])(:\d+)?(\/|$)/i.test(String(url?.url || url));
   globalThis.fetch = async (url, init) => {
@@ -99,13 +93,6 @@ function scriptedTransport(script = () => undefined, { onCall } = {}) {
   return transport;
 }
 
-// Run the integrated Policy V2 evaluator (the production path behind SYLLABUS_CHECK_ACADEMIC_V2) over a synthetic syllabus.
-async function evaluateV2(content, masters, { script, transport, env, signal } = {}) {
-  const t = transport || scriptedTransport(script);
-  const result = await policy.evaluateIntegrated(content, masters, coded, { env: envFor(env), transport: t, signal });
-  return { result, transport: t, sent: t.sent, record: (id) => result.academic.relationships.find((r) => r.id === id) };
-}
-
 // ---- synthetic syllabus builder: one controlled lesson row, everything else neutral --------------------------------------------------
 // Returns { content, masters, rowIndex } with exactly the lesson fields the scenario sets. The shared fixture supplies the approved
 // curriculum, official outcomes and four classified CLOs so the identity gate is satisfied (synthetic masters, never real curricula).
@@ -123,4 +110,4 @@ function syllabus(fields = {}) {
   return { content, masters, rowIndex, row };
 }
 
-module.exports = { MODEL, POLICY, envFor, coded, liveGuard, message, answerFor, scriptedTransport, evaluateV2, syllabus, sample, engine, policy };
+module.exports = { MODEL, envFor, coded, liveGuard, message, answerFor, scriptedTransport, syllabus, sample, engine };

@@ -45,17 +45,13 @@ test('a reference the AI flags is the author\'s to replace, never "waiting for a
   assert.match(ref.reason, /^for the faculty: the AI never rewrites a reference; replace or remove this source$/);
 });
 
-test('official mode runs the old engine without its original-requirements advice: no "AI provider unavailable" findings beside the new checker\'s score', async () => {
-  const env = { SYLLABUS_CHECK_AI_PROVIDER: 'anthropic', SYLLABUS_CHECK_REQUIREMENTS_ADVICE: 'on', OTHER: 'kept' };
-  assert.deepEqual(O.noAiEnv(env), { SYLLABUS_CHECK_AI_PROVIDER: 'off', SYLLABUS_CHECK_REQUIREMENTS_ADVICE: 'off', OTHER: 'kept' });
+test('the engine beside the new checker has no AI: no "AI provider unavailable" findings, whatever the old advice switch says', async () => {
+  // the old engine's original-requirements advice ran with its AI off and left "not checked" findings (#458); the advice was removed with the old AI Checker
   const { content, masters } = sample();
   const links = { linkChecker: async url => ({ url, status: 'ok' }) };
   const notChecked = r => r.findings.filter(f => /original-requirement relationship was not checked/.test(f.message || '')).length;
-  const before = await engine.run(content, masters, { env: { ...env, SYLLABUS_CHECK_AI_PROVIDER: 'off' }, ...links });
-  const after = await engine.run(content, masters, { env: O.noAiEnv(env), ...links });
-  assert.ok(notChecked(before) > 0, 'the leftover findings this removes');
-  assert.equal(notChecked(after), 0);
-  assert.equal(after.hybrid.baseScore, before.hybrid.baseScore, 'the no-AI rules and the base score are the same');
-  const service = require('node:fs').readFileSync(require.resolve('../../compliance/service'), 'utf8');
-  assert.match(service, /oldAiOff \? \{ env: officialReplan\.noAiEnv\(env\) \}/, 'the service uses it');
+  const run = await engine.run(content, masters, { env: { SYLLABUS_CHECK_AI_PROVIDER: 'anthropic', SYLLABUS_CHECK_REQUIREMENTS_ADVICE: 'on' }, ...links });
+  assert.equal(notChecked(run), 0);
+  assert.deepEqual(run.hybrid.alignment.judgements, [], 'no AI judgement: those are the new checker\'s');
+  assert.equal(typeof O.noAiEnv, 'undefined', 'nothing left to switch off');
 });

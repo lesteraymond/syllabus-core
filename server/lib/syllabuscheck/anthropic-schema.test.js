@@ -8,13 +8,8 @@ const assert = require('node:assert/strict');
 const realFetch = globalThis.fetch;
 globalThis.fetch = async () => { throw new TypeError('fetch failed (network blocked in anthropic-schema.test.js)'); };
 test.after(() => { globalThis.fetch = realFetch; });
-const gemini = require('./gemini');
-const { alignmentSchema, contractOf, requestAnthropic, align, pairsOf, courseOf, classifyFailure, resetProviderBlock } = gemini;
-const { NAMES, explanationFirst } = require('./variants');
 const { anthropicMessage } = require('./anthropicClient');
-const { askJson } = require('./modelClient');
 const { schemaProblems, caseOnlyEnumMismatches, patternProblem } = require('./anthropicSchema');
-const { refineSuggestion, getValue } = require('./refine');
 const { sample } = require('./fixtures');
 
 const KEY = 'sk-ant-test-only-not-a-real-key';
@@ -32,68 +27,6 @@ function fake(answer) {
 }
 const asked = body => JSON.parse(body.messages[0].content).document_data;
 const judgement = pair => ({ id: pair.id, label: 'NOT_ALIGNED', explanation: 'Recall of flowers does not demonstrate engineering problem solving.', sourceQuote: pair.source.slice(0, 10), targetQuote: pair.target.slice(0, 10), sourceBloom: 'Create', targetBloom: 'Remember', draft: 'Construct a mathematical solution and demonstrate it with worked test cases.' });
-const one = () => { const { content, masters } = sample(); return { pairs: pairsOf(content, masters).slice(0, 1), course: courseOf(content) }; };
-test.beforeEach(() => resetProviderBlock());
-
-test('every alignment schema the checker can send to Claude passes the lint: all 256 stage combinations under each prompt variant', () => {
-  const distinct = new Set();
-  let widest = 0;
-  for (let mask = 0; mask < 2 ** STAGES.length; mask += 1) {
-    for (const variant of NAMES) {
-      const settings = { ...stagesOf(mask), SYLLABUS_CHECK_PROMPT_VARIANT: variant };
-      const contract = contractOf(settings);
-      const schema = alignmentSchema(false, explanationFirst(variant), contract.aspectKeys, contract.recommend);
-      assert.deepEqual(schemaProblems(schema), [], `stages ${mask.toString(2).padStart(8, '0')} variant ${variant}`);
-      // Every field is required (no optional property, no union), so Claude writes them in the order of the schema and the explanation-first
-      // variant keeps its order.
-      const item = schema.properties.judgements.items;
-      assert.deepEqual(item.required, Object.keys(item.properties));
-      widest = Math.max(widest, item.required.length);
-      distinct.add(JSON.stringify(schema));
-    }
-  }
-  assert.equal(widest, 22, 'every stage on: 8 fields, the recommendation and 13 stage fields');
-  assert.ok(distinct.size > 1);
-  // minItems: 1 (Stage E.6, OpenRouter only, never sent to Claude) is within Anthropic's limits too; 2 is not.
-  const contract = contractOf(stagesOf(255));
-  assert.deepEqual(schemaProblems(alignmentSchema(false, false, contract.aspectKeys, contract.recommend, 1)), []);
-  assert.match(schemaProblems(alignmentSchema(false, false, contract.aspectKeys, contract.recommend, 2)).join(), /minItems 2 is not supported/);
-  // The Gemini form of the same schema (upper-case type names, no additionalProperties) is not one Claude takes.
-  assert.ok(schemaProblems(alignmentSchema(true, false, contract.aspectKeys, contract.recommend)).length > 0);
-});
-
-test('the schema a request carries is exactly the one linted, for the stages and variants that change it', async () => {
-  const { pairs, course } = one();
-  for (const stages of [[], ['A'], ['B3'], ['C1'], ['C2'], ['D1'], ['D2'], STAGES]) {
-    for (const variant of ['current', 'rubric-ordered']) {
-      const settings = { ...env, ...stagesOf(stages.reduce((mask, stage) => mask | (1 << STAGES.indexOf(stage)), 0)), SYLLABUS_CHECK_PROMPT_VARIANT: variant, SYLLABUS_CHECK_VALUES_FILE: 'no-such-file.json' };
-      const sent = fake(() => message(JSON.stringify({ judgements: pairs.map(judgement) })));
-      await requestAnthropic(pairs, { env: settings, transport: sent.transport, course }).catch(() => {}); // only the request is compared here
-      const contract = contractOf(settings);
-      assert.equal(sent.calls.length, 1, `${stages.join('+') || 'no stage'} ${variant}`);
-      assert.deepEqual(sent.calls[0].output_config.format, { type: 'json_schema', schema: alignmentSchema(false, explanationFirst(variant), contract.aspectKeys, contract.recommend) });
-    }
-  }
-});
-
-test('the schema of an AI rewrite through Claude passes the lint', async () => {
-  const { content, masters } = sample();
-  // A pretend judge as in refine.test.js: a CLO-PO relationship is a problem until its text carries [fit]; any text carrying [bad] is a problem.
-  const verdict = pair => {
-    const text = pair.source + ' ' + pair.target, problem = text.includes('[bad]') || (pair.type === 'CLO-PO' && !text.includes('[fit]'));
-    return { id: pair.id, label: problem ? 'NOT_ALIGNED' : 'ALIGNED', explanation: problem ? 'Does not fit.' : 'Fits.', sourceQuote: pair.source.slice(0, 6), targetQuote: pair.target.slice(0, 6), sourceBloom: 'Apply', targetBloom: 'Apply', draft: problem ? 'A draft.' : '' };
-  };
-  const path = 'clos[0].statement', original = getValue(content, path);
-  const ai = fake(body => { const data = asked(body); return message(JSON.stringify(Array.isArray(data) ? { judgements: data.map(verdict) } : { text: original + ' [fit]' })); });
-  const report = { hybrid: { alignment: await align(content, masters, { env, transport: ai.transport }) } };
-  assert.equal(report.hybrid.alignment.status, 'completed');
-  const out = await refineSuggestion({ content, masters, report, suggestion: { id: 'SEM:x', path, source: 'ai', originalValue: original, replacement: original + ' [fit] [bad]' }, options: { env, transport: ai.transport } });
-  assert.deepEqual([out.status, out.usedRewrite], ['verified', true]);
-  const rewrites = ai.calls.filter(body => !Array.isArray(asked(body)));
-  assert.equal(rewrites.length, 1);
-  assert.deepEqual(rewrites[0].output_config.format.schema, { type: 'object', properties: { text: { type: 'string' } }, required: ['text'], additionalProperties: false });
-  assert.deepEqual(schemaProblems(rewrites[0].output_config.format.schema), []);
-});
 
 test('the lint accepts what Anthropic supports and names each thing it does not', () => {
   const object = (properties, required = Object.keys(properties)) => ({ type: 'object', properties, required, additionalProperties: false });
@@ -154,75 +87,4 @@ test('the lint accepts what Anthropic supports and names each thing it does not'
   for (const notSchema of [null, undefined, [], 'object', 3]) assert.deepEqual(schemaProblems(notSchema), ['$ is not a schema']);
   assert.equal(patternProblem('^[A-Za-z ]{1,100}$'), '');
   assert.equal(patternProblem(7), 'is not a string');
-});
-
-test('a schema Claude would refuse is refused before anything is sent, as provider_rejected: never retried, the check stops as for an HTTP 400', async () => {
-  const { pairs, course } = one();
-  const sent = fake(() => message('{}'));
-  const bad = { type: 'object', properties: { text: { type: 'string', maxLength: 4000 } }, required: ['text'] };
-  const error = await anthropicMessage({ model: MODEL, system: 's', user: 'u', schema: bad, subject: 'alignment' }, { env, transport: sent.transport }).then(() => null, e => e);
-  assert.equal(error.message, 'Anthropic structured outputs cannot take this schema: $: an object must set additionalProperties: false; $.text: maxLength is not supported; alignment not evaluated');
-  assert.deepEqual([error.kind, classifyFailure(error), 'usage' in error, sent.calls.length], ['provider_rejected', { kind: 'provider_rejected', retryable: false }, false, 0]);
-  // More than three problems: the first three are named.
-  const worse = { type: 'object', properties: { a: { type: 'string', minLength: 1 }, b: { type: 'integer', maximum: 3 }, c: { type: 'string', format: 'regex' } }, required: ['a', 'b', 'c'] };
-  assert.match((await anthropicMessage({ model: MODEL, system: 's', user: 'u', schema: worse }, { env, transport: sent.transport }).catch(e => e)).message, /\(and 1 more\)$/);
-  // An AI rewrite whose schema Claude would refuse sends nothing either.
-  const rewrite = { system: 'Rewrite the field.', payload: { current: 'Know programs.' }, schema: () => bad };
-  await assert.rejects(askJson(rewrite, { env, transport: sent.transport }), e => e.kind === 'provider_rejected');
-  // The alignment schemas themselves always pass: a request for a pair goes out.
-  await requestAnthropic(pairs, { env, transport: sent.transport, course }).catch(() => {});
-  assert.equal(sent.calls.length, 1);
-});
-
-test('the answer is read from the text blocks only, whatever thinking blocks come first; no text at all is incomplete output', async () => {
-  const { pairs, course } = one();
-  const valid = JSON.stringify({ judgements: pairs.map(judgement) }), half = Math.floor(valid.length / 2);
-  const thinking = { type: 'thinking', thinking: 'private reasoning that is never kept', signature: 'offline' }, redacted = { type: 'redacted_thinking', data: 'opaque-offline' };
-  const blocks = [redacted, thinking, { type: 'text', text: valid.slice(0, half) }, { type: 'text', text: valid.slice(half) }];
-  const sent = fake(() => message('', { content: blocks }));
-  const answer = await anthropicMessage({ model: MODEL, system: 's', user: 'u', schema: { type: 'object', properties: {}, required: [], additionalProperties: false } }, { env, transport: sent.transport });
-  assert.equal(answer.text, valid);
-  assert.equal(JSON.stringify(answer).includes('private reasoning') || JSON.stringify(answer).includes('opaque-offline'), false);
-  assert.equal((await requestAnthropic(pairs, { env, transport: sent.transport, course })).length, 1);
-  const empty = fake(() => message('', { content: [thinking] }));
-  const error = await requestAnthropic(pairs, { env, transport: empty.transport, course }).then(() => null, e => e);
-  assert.deepEqual([error.code, error.unverified, error.stopReason, error.message], ['incomplete_output', true, 'end_turn', 'Anthropic returned incomplete alignment output (stop_reason end_turn)']);
-});
-
-test('an enum value that differs only in capitalisation is refused exactly as before, and counted apart', async () => {
-  const contract = contractOf(stagesOf(255)), schema = alignmentSchema(false, false, contract.aspectKeys, contract.recommend);
-  const answer = { judgements: [{ id: 'p1', label: 'Not_Aligned', recommendation: 'REWRITE_TEXT', coreValue: 'Missionary spirit', basis: 'TITLE_ONLY', relevance: 'wrong' }, { id: 'p2', label: 'ALIGNED' }] };
-  assert.deepEqual(caseOnlyEnumMismatches(answer, schema), [
-    { path: ['judgements', 0, 'label'], given: 'Not_Aligned', expected: 'NOT_ALIGNED' },
-    { path: ['judgements', 0, 'coreValue'], given: 'Missionary spirit', expected: 'Missionary Spirit' },
-    { path: ['judgements', 0, 'basis'], given: 'TITLE_ONLY', expected: 'title_only' },
-  ], 'a wrong value (relevance) and an exact one are not capitalisation slips');
-  assert.deepEqual(caseOnlyEnumMismatches({ kind: 'Syllabus' }, { type: 'object', properties: { kind: { const: 'syllabus' } }, required: ['kind'], additionalProperties: false }), [{ path: ['kind'], given: 'Syllabus', expected: 'syllabus' }]);
-  for (const notAnswer of [null, 'text', [], {}]) assert.deepEqual(caseOnlyEnumMismatches(notAnswer, schema), []);
-
-  // One request: the label is refused (invalid_label), as from any provider, and the request's record names the slip.
-  const { pairs, course } = one();
-  const used = [], slipped = fake(() => message(JSON.stringify({ judgements: pairs.map(pair => ({ ...judgement(pair), label: 'Not_aligned' })) })));
-  const error = await requestAnthropic(pairs, { env, transport: slipped.transport, course, onUsage: u => used.push(u) }).then(() => null, e => e);
-  assert.deepEqual([error.code, error.unverified], ['invalid_label', true]);
-  assert.deepEqual(used[0].enumCaseOnly, [{ id: pairs[0].id, field: 'label', given: 'Not_aligned', expected: 'NOT_ALIGNED' }]);
-
-  // A whole check: the one slipped relationship is asked again and verified, and the check reports the slip apart from its verdicts.
-  const { content, masters } = sample();
-  const times = new Map();
-  const check = fake(body => message(JSON.stringify({ judgements: asked(body).map(pair => {
-    times.set(pair.id, (times.get(pair.id) || 0) + 1);
-    return times.size === 1 && times.get(pair.id) === 1 ? { ...judgement(pair), label: 'not_aligned' } : judgement(pair);
-  }) })));
-  const result = await align(content, masters, { env, transport: check.transport });
-  assert.equal(result.status, 'completed');
-  assert.equal(result.usage.enumCaseOnly, 1);
-  const [first] = times.keys();
-  assert.ok(result.judgements.every(j => !j.unverified));
-  assert.equal(result.judgements.find(j => j.id === first).label, 'NOT_ALIGNED');
-  assert.equal([...times.values()].filter(n => n > 1).length, 1, 'only the slipped relationship was asked again');
-  // Without a slip nothing is recorded.
-  const clean = [];
-  await requestAnthropic(pairs, { env, transport: fake(() => message(JSON.stringify({ judgements: pairs.map(judgement) }))).transport, course, onUsage: u => clean.push(u) });
-  assert.equal('enumCaseOnly' in clean[0], false);
 });

@@ -119,18 +119,16 @@ test('officialize hands back the check and plan it made, so a caller never build
   assert.doesNotMatch(script, /pipeline\.buildPlan\(/, 'the test script re-checks with the plan officialize made');
 });
 
-test('compliance/service.js runs the old engine with AI off unless SYLLABUS_CHECK_LEGACY_AI=on, and never falls back to the old AI', () => {
+test('compliance/service.js: the engine has no AI, the new checker alone fills the AI part, and nothing of the old AI Checker is left', () => {
   const source = fs.readFileSync(path.join(__dirname, '..', '..', 'compliance', 'service.js'), 'utf8');
-  assert.match(source, /const legacyAi = officialReplan\.legacyAiOn\(env\);\s*const v2On = legacyAi && academicV2Activation\.enabled\(env\);/);
-  assert.match(source, /const replanOfficial = !v2On && !!newReady && newReady\.ok;\s*const oldAiOff = !legacyAi \|\| replanOfficial;/);
-  assert.match(source, /\.\.\.\(oldAiOff \? \{ env: officialReplan\.noAiEnv\(env\) \} : \{\}\)/);
-  assert.match(source, /if \(newReady && !newReady\.ok && !legacyAi && officialReplan\.aiProviderOn\(env\)\) \{/);
-  assert.match(source, /if \(replanOfficial\) \{\s*try \{\s*await officialReplan\.officialize/);
-  assert.doesNotMatch(source, /require\('\.\.\/syllabuscheck\/(wholeSyllabusPlan|coordinatedPlanEngine)'\)/, 'the old plans are removed');
-  for (const gone of ['wholeSyllabusPlan.js', 'coordinatedPlanEngine.js']) assert.ok(!fs.existsSync(path.join(__dirname, '..', gone)), gone + ' is removed');
-  assert.match(source, /\n  if \(v2On\) \{\r?\n    try \{\r?\n      result\.hybrid\.academicV2 =/);
-  assert.equal(O.legacyAiOn({}), false, 'off unless set');
-  assert.equal(O.legacyAiOn({ SYLLABUS_CHECK_LEGACY_AI: 'on' }), true);
+  for (const line of ['const newReady = options.useAi !== false ? officialReplan.readiness(env) : null;', 'if (newReady && !newReady.ok && officialReplan.aiProviderOn(env)) {',
+    'if (newReady && newReady.ok) {', 'await officialReplan.officialize({ noAi: result, content, masters, env, db, transport: options.transport });']) assert.ok(source.includes(line), line);
+  assert.doesNotMatch(source, /academicV2|legacyAi|noAiEnv|requestBudget|correctionHistory|reusableJudgements|gemini/, 'no Policy V2, old switch, old budget, history or reuse');
+  const lib = path.join(__dirname, '..');
+  for (const gone of ['gemini.js', 'academicPolicyV2.js', 'wholeSyllabusPlan.js', 'coordinatedPlanEngine.js', 'stewardship.test.js', 'verdict.js', 'modelClient.js']) assert.ok(!fs.existsSync(path.join(lib, gone)), gone + ' is removed');
+  assert.equal(O.legacyAiOn, undefined);
+  const engineSource = fs.readFileSync(path.join(lib, 'engine.js'), 'utf8');
+  assert.doesNotMatch(engineSource, /require\('\.\/(gemini|stages|lessonfit|mapping|verdict|suggestionOrder)'\)/, 'the engine asks no AI');
 });
 
 test('the request limit is 1-300 (default 80) and the cost cap at most 1000: a bad value never refuses every request or lifts the limit', () => {
@@ -159,7 +157,9 @@ test('fields the plan could not fix reach the list the app shows: a child waits 
   const { report, content } = await official(c => { c.clos[2].statement = 'OFFTOPIC ' + c.clos[2].statement; }, refuse);
   const h = report.hybrid;
   const clo = h.unresolved.find(u => u.path === 'clos[2].statement');
-  assert.ok(clo && clo.reason === 'draft_needs_review' && clo.source === 're-planned');
+  // the rewrite was refused: no verified rewrite this check (before: draft_needs_review, which the page reads as "copied wording in the proposed rewrite")
+  assert.ok(clo && clo.reason === 'no_verified_rewrite' && clo.source === 're-planned', JSON.stringify(clo));
+  assert.ok(clo.excerpt && clo.excerpt.startsWith('OFFTOPIC'), 'it names the field by its text');
   const waiting = h.unresolved.filter(u => u.reason === 'waits_for_upstream');
   assert.ok(waiting.length > 0);
   assert.ok(waiting.every(u => Array.isArray(u.waitsFor) && u.waitsFor.includes('clos[2].statement')), 'each names the CLO it waits for');

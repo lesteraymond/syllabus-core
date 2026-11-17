@@ -248,8 +248,6 @@ export const syllabusCheck = {
     ...(typeof editedText === 'string' && editedText.trim() ? { body: JSON.stringify({ editedText }) } : {}),
   }),
   decide: (runId, body) => request(`/syllabus-check/runs/${runId}/decisions`, { method: 'POST', body: JSON.stringify(body) }),
-  getImprovementPlan: (runId) => request(`/syllabus-check/runs/${runId}/improvement-plan`),
-  applyImprovementPlan: (runId, body) => request(`/syllabus-check/runs/${runId}/improvement-plan/apply`, { method: 'POST', body: JSON.stringify(body || {}) }),
 };
 
 export const logs = {

@@ -2,7 +2,7 @@ import { t, tr } from '../i18n';
 
 // Extends the existing report only. Historical reports without receipts have no
 // synthetic coverage, and no verdict panel or workflow control is introduced.
-// The status words are the same ones the Policy V2 panel uses (hybrid.coverageStatus.* / academicV2.status.*); the backend status codes are unchanged.
+// The status words are hybrid.coverageStatus.*; the backend status codes are unchanged.
 // part="notices": only what must be seen first (coverage unavailable, or cut short by the budget). part="list": only the collapsed rule-by-rule list,
 // which the card puts after the results. Without `part`, both (the earlier behaviour).
 export default function RuleCoveragePanel({ coverage, part }) {

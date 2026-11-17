@@ -8,68 +8,34 @@ const standard = require('./standard-v4.json');
 const { evaluate } = require('./rules');
 const { contentHash } = require('./hash');
 const { recommend } = require('./recommend');
-const { MockProvider, LlmProvider } = require('./providers');
+const { MockProvider } = require('./providers');
 const { inTransaction } = require('../http');
 const { schoolYearStart } = require('../schoolYear');
 const uploadCheck = require('./upload');
 const hybridEngine = require('../syllabuscheck/engine');
 const hybridRepo = require('../syllabuscheck/repository');
 const { httpError } = require('../http');
-const { verifiedAlignment, createRequestBudget } = require('../syllabuscheck/gemini');
+const { verifiedAlignment } = require('../syllabuscheck/aiConfig');
+const officialReplan = require('../syllabuscheck/pipeline/official');
 const { aiGate } = require('../syllabuscheck/policy');
 const { titleDecisionChanged } = require('../syllabuscheck/titles');
-const academicV2Activation = require('../syllabuscheck/academicV2Activation');
-const academicV2 = require('../syllabuscheck/academicPolicyV2');
 const { semanticCoverageOf } = require('../syllabuscheck/semanticCoverage');
 // Invalidate legacy cached scores; they contain no semantic verification.
 standard.version = hybridEngine.VERSION;
 
 async function checkHybrid(db, content, options = {}) {
-  if (options.academicPolicy === require('../../../src/data/academicPolicyV2.json').id) require('../syllabuscheck/academicV2Input').validateInput(content, {});
   const masters = await hybridRepo.mastersFor(db, content, {syllabusId:options.syllabusId});
-  if (options.academicPolicy && options.academicPolicy !== 'legacy') {
-    const result = await hybridEngine.run(content, masters, options);
-    result.referenceHash = masters.fingerprint;
-    return result; // no legacy history, deductions, report writes or gate use
-  }
-  // When the caller names the syllabus, the AI is only asked about what changed since its earlier checks (SYLLABUS_CHECK_REUSE=off asks everything).
-  const profile = require('../syllabuscheck/checkingProfile');
-  const env = profile.resolve(options.env || process.env);
-  options = {...options, env, evaluationOnly:options.evaluationOnly === true && !!options.env};
-  const requestBudget = options.requestBudget || createRequestBudget(env);
-  const reuse = options.syllabusId && env.SYLLABUS_CHECK_REUSE !== 'off' ? await hybridRepo.reusableJudgements(db, options.syllabusId) : undefined;
-  // What the author already corrected: lets the checker tell an unresolved problem from a new one and stop after a few attempts.
-  const history = options.syllabusId ? await hybridRepo.correctionHistory(db, options.syllabusId) : undefined;
-  // Policy V2 owns the seven VPAA relationships when it is on, so the legacy stages that ask the same ones again (Stage B: Title ↔ Content and Content ↔ ILO;
-  // Stage C3: the three content/activity/assessment links) are held off for this check: no relationship is evaluated or reported twice. They stay available
-  // when V2 is off. ILO ↔ CLO and ILO ↔ Activities also stay in the legacy path because they are SCORED relationships (official deductions); the merged
-  // recommendation list below keeps one recommendation per relationship.
-  const officialReplan = require('../syllabuscheck/pipeline/official');
-  // The old checker's AI is retired (pipeline/official.js legacyAiOn): without SYLLABUS_CHECK_LEGACY_AI=on, Policy V2, the old AI stages and the old plans
-  // never run from here, and the old engine gives only its no-AI rules.
-  const legacyAi = officialReplan.legacyAiOn(env);
-  const v2On = legacyAi && academicV2Activation.enabled(env);
-  const comprehensive = profile.enabled(env);
-  const legacyOptions = v2On ? { env: { ...env, SYLLABUS_CHECK_STAGE_B: comprehensive ? 'on' : 'off', SYLLABUS_CHECK_STAGE_C3: 'off', SYLLABUS_CHECK_CLO_DESCRIPTION: 'off' }, ...(comprehensive ? {excludeAdvisoryTypes:profile.V2_ADVISORY} : {}) } : {};
-  // Budget planning: set room aside for the required Policy V2 evaluations before the optional staged checks can use it up. The caps are not changed.
-  let plannedV2 = 0;
-  if (v2On && options.useAi !== false && typeof requestBudget.holdFor === 'function') {
-    try { plannedV2 = academicV2.plannedRequests(content, masters, env); requestBudget.holdFor(plannedV2); } catch { /* planning only protects coverage: without it the budget behaves as before */ }
-  }
-  // Re-planned checker as the OFFICIAL AI check (syllabuscheck/pipeline/official.js, SYLLABUS_CHECK_REPLAN=official): the old engine runs with its AI step
-  // off (no-AI rules, base score, links; no AI cost) and the new checker fills the AI findings, points and drafts. Only when it is ready (direct Anthropic
-  // provider, AI checking on, its own cost cap). When it is not ready the check is incomplete with the reason: it never falls back to the old AI (only
-  // with SYLLABUS_CHECK_LEGACY_AI=on, which also lets Policy V2 take over as before).
+  const env = options.env || process.env;
+  // Only the new AI Checker (syllabuscheck/pipeline/official.js) makes AI judgements. The engine gives the fixed rules (required sections, format, week
+  // structure, links, core values, base score); the new checker fills in the alignment, its points and its drafts. When an AI check is asked for and an AI
+  // provider is set but the new checker is not ready, the check is incomplete with the reason. The old AI Checker was removed (2026-11-17).
   const newReady = options.useAi !== false ? officialReplan.readiness(env) : null;
-  const replanOfficial = !v2On && !!newReady && newReady.ok;
-  const oldAiOff = !legacyAi || replanOfficial;
-  const result = await hybridEngine.run(content, masters, { ...options, ...legacyOptions, ...(oldAiOff ? { env: officialReplan.noAiEnv(env) } : {}), profileResolved:true, requestBudget, reuse, history });
-  if (newReady && !newReady.ok && !legacyAi && officialReplan.aiProviderOn(env)) {
-    // an AI check was asked for and an AI provider is set, but the new checker cannot run: no score from the no-AI rules alone, and no old AI
+  const result = await hybridEngine.run(content, masters, { ...options, env });
+  if (newReady && !newReady.ok && officialReplan.aiProviderOn(env)) {
     result.hybrid.replan = { mode: 'official', error: 'The new AI Checker is not ready on this server: ' + newReady.reason };
     result.hybrid.alignment = { ...(result.hybrid.alignment || {}), status: 'not_evaluated', reason: result.hybrid.replan.error };
   }
-  if (replanOfficial) {
+  if (newReady && newReady.ok) {
     try {
       await officialReplan.officialize({ noAi: result, content, masters, env, db, transport: options.transport });
     } catch (error) {
@@ -78,10 +44,8 @@ async function checkHybrid(db, content, options = {}) {
       result.hybrid.alignment = { ...(result.hybrid.alignment || {}), status: 'not_evaluated', reason: 'The AI Checker could not complete: ' + result.hybrid.replan.error };
     }
   }
-  // The old checker's whole-syllabus and coordinated improvement plans (wholeSyllabusPlan.js, coordinatedPlanEngine.js) were removed with the old AI
-  // Checker; the new AI Checker's drafts are its plan (officialize above).
-  // Re-planned checker in shadow (syllabuscheck/pipeline/shadow.js, SYLLABUS_CHECK_REPLAN=shadow|plan, off by default): the same syllabus checked by the
-  // new pipeline, attached for comparison only. Its own cost cap; it changes nothing above, and a failure never disrupts the check.
+  // The new checker in shadow (syllabuscheck/pipeline/shadow.js, SYLLABUS_CHECK_REPLAN=shadow|plan, off by default): the same syllabus checked again, attached
+  // for comparison only. Its own cost cap; it changes nothing above, and a failure never disrupts the check.
   const replan = require('../syllabuscheck/pipeline/shadow');
   if (options.useAi !== false && replan.enabled(env)) {
     try {
@@ -91,34 +55,9 @@ async function checkHybrid(db, content, options = {}) {
       result.hybrid.replanShadow = { mode: replan.modeOf(env), error: String(error && error.message || error).slice(0, 300) };
     }
   }
-  if (v2On) {
-    try {
-      result.hybrid.academicV2 = await academicV2.evaluateIntegrated(content, masters, hybridEngine.coded, { env, syllabusId: options.syllabusId, requestBudget, reuse, useAi: options.useAi, signal: options.signal, ...(options.transport ? { transport: options.transport } : {}) });
-      if (result.hybrid.academicV2?.academic?.suggestions?.length) {
-        const existingIds = new Set((result.hybrid.suggestions || []).map(s => s.id));
-        const existingRelationships = new Set((result.hybrid.suggestions || []).flatMap(s => (s.basedOn || [s.id]).map(id => String(id).replace(/^SEM:/, ''))));
-        result.hybrid.suggestions = [
-          ...(result.hybrid.suggestions || []),
-          ...result.hybrid.academicV2.academic.suggestions.filter(s => !existingIds.has(s.id) && !(s.basedOn || [s.relationshipId]).some(id => existingRelationships.has(String(id))))
-        ];
-      }
-      // A week Policy V2 found off-topic for the course: the rewrites that would keep its topic are withheld (listed in suggestionsWithheld), so the lesson's
-      // one recommendation is the Policy V2 finding. Suggestions only: no judgement, finding, deduction or score changes (syllabuscheck/offTopicLessons.js).
-      Object.assign(result.hybrid, require('../syllabuscheck/offTopicLessons').withholdConflicts(result.hybrid));
-    } catch (error) {
-      result.hybrid.academicV2 = { version: academicV2.POLICY.id, mode: 'live-application', status: 'not_evaluated',
-        contracts: { policy: academicV2.POLICY.id }, alignment: { status: 'not_evaluated', reason: `Policy V2 could not prepare this academic check: ${error.message}` },
-        academic: { policyVersion: academicV2.POLICY.id, disposition: 'NOT_EVALUATED', requirements: [], relationships: [], remediation: { actions: [], rootReviews: [] },
-          coverage: { required: 0, supported: 0, notEvaluated: 0 }, provenance: { kind: 'live-application', liveModelCalls: 0, networkRequests: 0, facultyValidated: false } } };
-    }
-  }
   result.referenceHash = masters.fingerprint;
-  if (typeof requestBudget.summary === 'function') {
-    const budget = require('../syllabuscheck/budgetReport').budgetReport(requestBudget.summary(), { plannedRequired: plannedV2, v2Status: result.hybrid.academicV2 ? result.hybrid.academicV2.alignment?.status || null : null });
-    if (budget && (budget.planned || budget.exhausted || budget.deferredOptional)) result.hybrid.budget = budget;
-  }
-  result.hybrid.semanticCoverage = semanticCoverageOf(result, { v2On }); // advisory: how many of the seven VPAA relationships this report really covers
-  result.hybrid.ruleCoverage = require('../syllabuscheck/ruleCoverage').coverageOf(result, content, masters, env);
+  result.hybrid.semanticCoverage = semanticCoverageOf(result); // advisory: how many of the seven VPAA relationships this report covers
+  result.hybrid.ruleCoverage = require('../syllabuscheck/ruleCoverage').coverageOf(result, content, masters);
   return result;
 }
 // aiOff: the administrator turned AI checking off (lib/adminSettings.js): no AI check can be made, so none is required; the coded hard gates still apply.
@@ -168,7 +107,6 @@ const j = (v) => (v === undefined || v === null ? null : JSON.stringify(v));
 // Inside the caller's transaction. Returns the run id.
 // `ai: false` for a run that gets no AI step (an uploaded file has no form to describe to a provider): it stays 'none'.
 async function storeRun(conn, { syllabusId, versionId = null, content, result, createdBy = null, ai = true }) {
-  if (require('../syllabuscheck/academicPolicyV2').isV2(result)) throw httpError(409, 'Offline Policy V2 previews cannot be stored as official runs.', {code:'academic_preview_not_official'});
   const aiStatus = result.hybrid ? result.hybrid.alignment.status === 'completed' ? 'ok' : 'failed' : ai && result.status === 'scored' && result.findings.length ? 'pending' : 'none';
   const [ins] = await conn.query(
     `INSERT INTO ai_check_runs (syllabus_id, version_id, content_hash, standard_version, overall, status, passed, conformant, ai_status, contact, created_by)
@@ -219,7 +157,7 @@ let provider;
 function getProvider() {
   if (provider !== undefined) return provider;
   const name = String(process.env.COMPLIANCE_AI_PROVIDER || '').toLowerCase();
-  provider = name === 'mock' ? new MockProvider() : name === 'llm' ? new LlmProvider() : null;
+  provider = name === 'mock' ? new MockProvider() : null; // the old LLM provider stub was removed with the old AI Checker
   return provider;
 }
 const setProvider = (p) => { provider = p; };

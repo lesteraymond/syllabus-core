@@ -75,6 +75,7 @@ export function suggestionKind(path) {
   if (/^plan\[/.test(p)) return 'plan';
   if (/^outcomes\./.test(p)) return 'outcomes';
   if (/^meta\./.test(p)) return 'meta';
+  if (/^refs\./.test(p)) return 'ref';
   return 'other';
 }
 
@@ -104,6 +105,10 @@ export function suggestionSection(path, { tr = (x) => x, t = (x) => x } = {}) {
   const planMatch = p.match(/^plan\[(\d+)\]/);
   if (planMatch) {
     return `${stepText} · ${t('hybrid.kind.plan')} (${tr('Row')} ${Number(planMatch[1]) + 1})`;
+  }
+  const refMatch = p.match(/^refs\.([a-z]+)\.items\[(\d+)\]/);
+  if (refMatch) {
+    return `${stepText} · ${t('hybrid.kind.ref', { group: t(`hybrid.refGroup.${refMatch[1]}`), n: Number(refMatch[2]) + 1 })}`;
   }
   const kind = suggestionKind(p);
   const kindText = t(`hybrid.kind.${kind}`);

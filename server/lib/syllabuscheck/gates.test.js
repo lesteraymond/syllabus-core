@@ -12,13 +12,16 @@ const underGate = (t, mode) => {
   if (mode === undefined) delete process.env.SYLLABUS_CHECK_AI_GATE; else process.env.SYLLABUS_CHECK_AI_GATE = mode;
   t.after(() => { if (before === undefined) delete process.env.SYLLABUS_CHECK_AI_GATE; else process.env.SYLLABUS_CHECK_AI_GATE = before; });
 };
-test('strict policy (SYLLABUS_CHECK_AI_GATE=required): submission requires a current persisted Gemini report; clients cannot supply a score to bypass it', async t => {
+test('strict policy (SYLLABUS_CHECK_AI_GATE=required): submission requires a current persisted report of the new AI Checker; clients cannot supply a score to bypass it', async t => {
   underGate(t, 'required');
+  const approved = process.env.SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL; process.env.SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL = 'claude-sonnet-5-5';
+  t.after(() => { if (approved === undefined) delete process.env.SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL; else process.env.SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL = approved; });
+  const NEW = { status: 'completed', provider: 'anthropic', model: 'claude-sonnet-5-5', engine: 're-planned' };
   const { content, masters } = sample();
   delete masters.synthetic;
   masters.fingerprint = 'current-master';
   const hash = contentHash(content, svc.standard.version);
-  let report = { score: 85, referenceHash: masters.fingerprint, fingerprint: masters.fingerprint, hybrid: { ready: true, checkedAt: new Date().toISOString(), alignment: { status: 'completed', provider: 'gemini' }, deductions: [{ points: 3 }] } };
+  let report = { score: 85, referenceHash: masters.fingerprint, fingerprint: masters.fingerprint, hybrid: { ready: true, checkedAt: new Date().toISOString(), alignment: { ...NEW }, deductions: [{ points: 3 }] } };
   t.mock.method(repo, 'mastersFor', async () => masters);
   t.mock.method(repo, 'readReport', async () => report);
   const db = { query: async (sql, params) => {
@@ -28,9 +31,12 @@ test('strict policy (SYLLABUS_CHECK_AI_GATE=required): submission requires a cur
   } };
   svc.resetInstalledCache();
   assert.equal((await svc.requireHybrid(db, 100, content)).score, 85);
-  report.hybrid.alignment = { status: 'completed', provider: 'openrouter', model: 'google/gemini-2.5-flash' };
-  assert.equal((await svc.requireHybrid(db, 100, content)).score, 85);
-  report.hybrid.alignment = { status: 'completed', provider: 'openrouter', model: 'nvidia/nemotron-3-ultra-550b-a55b:free' };
+  // a completed report of the old AI Checker (removed 2026-11-17) no longer satisfies the gate: the author runs the check again
+  for (const old of [{ status: 'completed', provider: 'gemini' }, { status: 'completed', provider: 'openrouter', model: 'google/gemini-2.5-flash' }, { status: 'completed', provider: 'anthropic', model: 'claude-sonnet-5-5' }]) {
+    report.hybrid.alignment = old;
+    await assert.rejects(svc.requireHybrid(db, 100, content), /Complete active AI/);
+  }
+  report.hybrid.alignment = { ...NEW };
   assert.equal((await svc.requireHybrid(db, 100, content)).score, 85);
   const changed = structuredClone(content); changed.plan[0].tasks += ' changed';
   await assert.rejects(svc.requireHybrid(db, 100, changed), e => e.status === 409 && e.body.code === 'alignment_required');

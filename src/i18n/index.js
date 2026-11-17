@@ -5,7 +5,6 @@ import { hybridEn, hybridTl } from './hybrid.js';
 import { pdfImportEn, pdfImportTl } from './pdfImport.js';
 import { dashboardStatsEn, dashboardStatsTl } from './dashboardStats.js';
 import { lessonAuthoringEn, lessonAuthoringTl } from './lessonAuthoring.js';
-import {academicV2En,academicV2Tl} from './academicV2.js';
 import { reviewChainEn, reviewChainTl } from './reviewChain.js';
 import { accountActivityEn, accountActivityTl } from './accountActivity.js';
 import { adminPolicyEn, adminPolicyTl } from './adminPolicy.js';
@@ -13,8 +12,8 @@ import { ownCheckEn, ownCheckTl } from './ownCheck.js';
 import { facultyComplianceEn, facultyComplianceTl } from './facultyCompliance.js';
 import { programTrendEn, programTrendTl } from './programTrend.js';
 import { poReferenceEn, poReferenceTl } from './poReference.js';
-const en = { ...baseEn, ...extraEn, ...hybridEn, ...pdfImportEn, ...dashboardStatsEn, ...lessonAuthoringEn, ...academicV2En, ...reviewChainEn, ...poReferenceEn, ...accountActivityEn, ...adminPolicyEn, ...ownCheckEn, ...facultyComplianceEn, ...programTrendEn };
-const tl = { ...baseTl, ...extraTl, ...hybridTl, ...pdfImportTl, ...dashboardStatsTl, ...lessonAuthoringTl, ...academicV2Tl, ...reviewChainTl, ...poReferenceTl, ...accountActivityTl, ...adminPolicyTl, ...ownCheckTl, ...facultyComplianceTl, ...programTrendTl };
+const en = { ...baseEn, ...extraEn, ...hybridEn, ...pdfImportEn, ...dashboardStatsEn, ...lessonAuthoringEn, ...reviewChainEn, ...poReferenceEn, ...accountActivityEn, ...adminPolicyEn, ...ownCheckEn, ...facultyComplianceEn, ...programTrendEn };
+const tl = { ...baseTl, ...extraTl, ...hybridTl, ...pdfImportTl, ...dashboardStatsTl, ...lessonAuthoringTl, ...reviewChainTl, ...poReferenceTl, ...accountActivityTl, ...adminPolicyTl, ...ownCheckTl, ...facultyComplianceTl, ...programTrendTl };
 export { getLanguage, getLocale, setLanguage, subscribeLanguage, normalizeLanguage } from './store.js';
 export const dictionaries = { en, tl };
 export function translate(key, values = {}, language = getLanguage()) {

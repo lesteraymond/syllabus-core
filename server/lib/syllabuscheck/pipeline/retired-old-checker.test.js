@@ -48,8 +48,3 @@ test('a check without AI is the no-AI rules only, with no "not ready" reason', a
   assert.equal(result.hybrid.replan, undefined);
   assert.equal(result.hybrid.academicV2, undefined);
 });
-
-test('control: with SYLLABUS_CHECK_LEGACY_AI=on (the old code\'s own tests) the old AI does run, so the tests above would see it', async t => {
-  const { transport } = await check(t, { SYLLABUS_CHECK_LEGACY_AI: 'on' });
-  assert.ok(transport.sent.length > 0);
-});

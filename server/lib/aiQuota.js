@@ -81,7 +81,7 @@ function resolveCheckCostCap(env = process.env) {
     return n;
   }
   const { hardened } = require('./sessionSecret');
-  if (hardened(env) && require('./syllabuscheck/gemini').providerConfig(env).configured) {
+  if (hardened(env) && require('./syllabuscheck/aiConfig').providerConfig(env).configured) {
     throw fail(`SYLLABUS_CHECK_AI_MAX_COST_USD is required with NODE_ENV=${String(env.NODE_ENV).trim().toLowerCase()} when an AI provider is configured: set the most one AI check may cost, in US dollars (the staging template uses 10).`);
   }
   return null;
