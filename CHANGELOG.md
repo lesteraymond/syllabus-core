@@ -2569,3 +2569,14 @@ Owner-approved paid run of 2026-11-17 (`--run 113 --live --confirm-paid --max-co
 - **Result:** score 100 (the same as check #449 under the old rules), 141 of 141 answered, 0 misalignments, plan clean, the re-check asked nothing.
 - **No false positives from the new rules on a good syllabus:** ACTIVITY-FIT 11/11 and TASK-FIT 11/11 aligned (the level items included), CLO-EVIDENCE 4/4 aligned with reasons naming the work at each CLO's level (problem-tree analysis for CLO 1, feasibility justification for CLO 2, designs graded by rubric for CLO 3, consent-form validation for CLO 4), CLO-LEVEL 4/4.
 - **Review items (no points):** 9 extra tags that do not fit beside a tag that does: 6 CLO-PO and 1 CLO-EGA, and 3 ILO-CLO where the AI applied the CLO's own verb (for example "develop" is create level, above CLO 2's "evaluate"; the ILO fits its other tag, so it costs nothing).
+
+### v1.94.8 — AI Checker: The Values Question Sees the Week's Activities; Clearer "Incomplete" Message
+
+Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no suggestions.
+
+- **Bug:** VALUE-ILO's checklist asks whether the week's value can be practised through its ILO **and activities**, but the question carried only the ILO. In Week 17 the ILO is written for the teacher, so the value (Missionary Spirit) is carried by the "case-study discussion on ethical reliability". Claude quoted the activities, the quote was not in the question's texts, the answer was rejected twice, the question stayed unanswered, and one unanswered question makes the whole check incomplete: no score, no repair plan, no suggestions, on every re-check.
+- **Fix** (`pipeline/judge.js`): the values question now carries the week's activities as well as its ILOs (its ILOs only when the week has no activities). The repair order still follows the ILO only. `rules.js` CHAIN: values align to the ILO and the activities.
+- **Message** (`pipeline/official.js` `incompleteReason`): an incomplete check counts only the questions with NO valid answer and names up to three ("1 question of the new AI Checker had no valid answer: Week 17 values (VALUE-ILO): the quote is not in the texts. Run the check again."). An "unclear" answer is a valid answer and never made a check incomplete, but the old message counted it ("3 questions" meant one).
+- **Versions unchanged:** the values questions now carry other texts, so their stored answers do not match and they are asked again once; nothing else is.
+- **Tests:** new `pipeline/values-activities.test.js` (3; the first fails against the old question). `npm test` passes.
+- Not yet re-checked with the real model: re-check CPE 101 in the app.

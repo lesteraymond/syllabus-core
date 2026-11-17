@@ -76,7 +76,10 @@ function questionsOf(map) {
       if (tasks.text && iloTargets.length) add('TASK-ILO', group, tasks, iloTargets, iloTargets.map(t => t.key));
     }
     if (w.values.named.length) {
-      if (iloTargets.length) add('VALUE-ILO', group, values, iloTargets, iloTargets.map(t => t.key));
+      // The checklist asks whether the value can be practised through the week's ILO AND activities, so the activities are given too: without them an
+      // answer quoting the activities was rejected ("the quote is not in the texts"), the question stayed unanswered and the whole check was incomplete
+      // (CPE 101 Week 17, 2026-11-17: a teacher-centred ILO, the value carried by an ethics case discussion). The repair order still follows the ILO only.
+      if (iloTargets.length) add('VALUE-ILO', group, values, [...iloTargets, ...(activities.text ? [activities] : [])], iloTargets.map(t => t.key));
       else if (content.text) add('VALUE-ILO', group, values, [{ ...content, label: `${weekLabel(w)} content (${w.kind === 'exam' ? 'examination week' : 'no ILO'})` }], [content.key]);
     }
   }

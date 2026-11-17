@@ -151,6 +151,15 @@ function unresolvedOf(content, result, plan, drafted) {
   return out;
 }
 
+// Why a check is incomplete: only the questions that got NO valid answer (a refused, failed or rejected request). An "unclear" answer is a valid answer
+// (not checked, no points) and never makes a check incomplete, so it is not counted here; before, it was, and "3 questions had no valid answer" could
+// mean one. The first few are named, so the author can see what blocks the score.
+function incompleteReason(result) {
+  const missing = result.judged.results.filter(r => r.reason);
+  const named = missing.slice(0, 3).map(r => `${r.label} (${r.relationship}): ${String(r.reason).slice(0, 80)}`).join('; ');
+  return `${missing.length} question${missing.length === 1 ? '' : 's'} of the new AI Checker had no valid answer${named ? ': ' + named + (missing.length > 3 ? '; …' : '') : ''}. Run the check again.`;
+}
+
 // Fill the AI part of an old-engine report made with AI off (`noAi`) from the new checker. Returns the same report object, changed.
 // `out` (optional): receives { result, plan } (the check and the plan this call made), so a caller can re-check with the same plan without building it again.
 // `concurrency` (optional, 1-6): requests in flight at once (default 3, judge.js). A test run under a tight cap passes 1, so the worst cases reserved
@@ -188,7 +197,7 @@ async function officialize({ noAi, content, masters, env = process.env, db, tran
   noAi.conformance = { ok: !failed.length, failed };
   Object.assign(noAi, { score, overall: score, status: score === null ? 'incomplete' : 'scored', passed: ready && score >= PASS_THRESHOLD, band: score === null ? null : score >= 90 ? 'Excellent' : score >= 79 ? 'Meets the standard' : 'Needs work' });
   h.alignment = {
-    status: complete ? 'completed' : 'not_evaluated', reason: complete ? null : `${result.summary.notChecked} question(s) of the new AI Checker had no valid answer.`,
+    status: complete ? 'completed' : 'not_evaluated', reason: complete ? null : incompleteReason(result),
     provider: 'anthropic', model: String(provider.model || '').split('|')[0], promptVersion: P.PROMPT_VERSION, engine: 're-planned',
     judgements: parts.judgements, coverage: { total: result.judged.results.length, verified: result.judged.results.filter(r => r.status !== 'not_checked').length },
     usage: provider.usage ? provider.usage() : null,
