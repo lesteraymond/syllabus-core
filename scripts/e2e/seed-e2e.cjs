@@ -7,7 +7,7 @@ const path = require('node:path');
 const ROOT = path.resolve(__dirname, '../..');
 const mysql = require(path.join(ROOT, 'server/node_modules/mysql2/promise'));
 const bcrypt = require(path.join(ROOT, 'server/node_modules/bcryptjs'));
-const { sample } = require(path.join(ROOT, 'server/lib/syllabuscheck/vpaa-conformance/harness'));
+const { sample } = require('./syllabus-fixture.cjs');
 
 const LEVELS = ['Introductory', 'Enabling', 'Demonstrating', 'Integration of Values']; // the fixed LCUP CLO1..CLO4 classification
 const PASSWORD = 'E2e-Local-Only-Pass1!'; // test accounts of the scratch database only
@@ -29,7 +29,8 @@ async function seed(cfg) {
   const { content, masters } = sample();
   const hash = await bcrypt.hash(PASSWORD, 8);
   await db.query('SET FOREIGN_KEY_CHECKS=0');
-  for (const t of ['syllabus_check_reports', 'ai_check_runs', 'syllabus_review_stages', 'syllabus_versions', 'submission_logs', 'syllabi', 'faculty_courses', 'faculty_programs', 'course_clos', 'courses', 'syllabus_check_curricula', 'program_outcomes', 'program_egas', 'programs', 'institution_egas', 'institution_settings', 'remember_tokens', 'users']) await db.query('DELETE FROM ?? ', [t]).catch(() => {});
+  // replan_answers: the new AI Checker's stored answers (pipeline/answerStore.js), so every run starts with none and asks the offline stand-in itself
+  for (const t of ['replan_answers', 'syllabus_check_reports', 'ai_check_runs', 'syllabus_review_stages', 'syllabus_versions', 'submission_logs', 'syllabi', 'faculty_courses', 'faculty_programs', 'course_clos', 'courses', 'syllabus_check_curricula', 'program_outcomes', 'program_egas', 'programs', 'institution_egas', 'institution_settings', 'remember_tokens', 'users']) await db.query('DELETE FROM ?? ', [t]).catch(() => {});
   await db.query('SET FOREIGN_KEY_CHECKS=1');
 
   await db.query('INSERT INTO institution_settings (setting_id, vision, mission_lead, mission_items) VALUES (1, ?, ?, ?)', [masters.institution.vision, masters.institution.mission.lead, JSON.stringify(masters.institution.mission.items)]);

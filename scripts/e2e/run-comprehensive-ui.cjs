@@ -19,7 +19,7 @@ const OUT = path.join(ROOT, 'docs/checker-comprehensive/ui-verification', suiteA
 const L = require('./lib.cjs');
 const { seed, LEVELS } = require('./seed-e2e.cjs');
 const { startStack, DB_NAME } = require('./stack.cjs');
-const harness = require(path.join(ROOT, 'server/lib/syllabuscheck/vpaa-conformance/harness'));
+const fixture = require('./syllabus-fixture.cjs'); // the synthetic syllabus and masters (the new checker's conforming syllabus)
 
 const RELATIONSHIPS = ['Content-course', 'Content-ILO', 'ILO-CLO', 'Content-activity', 'ILO-activity', 'Content-assessment', 'Activity-assessment'];
 const AREAS = ['Format Compliance', 'Content Completeness', 'CO–PO Alignment', 'Assessment Alignment', 'Contact Hours', 'Reference Currency'];
@@ -97,9 +97,9 @@ async function main() {
   const browser = await L.launch();
   const ctx = { stack, browser, seeded, state: {}, profileEnv };
   try {
-    if (suiteArg === 'regression') await require('./scenarios.cjs')(ctx, { scenario, check, known, note, evidence, assertClean, L, harness, LEVELS, RELATIONSHIPS, AREAS, DESCRIPTION, OUT, ROOT });
-    else if (suiteArg === 'budget') await require('./scenarios-budget.cjs')(ctx, { scenario, check, known, note, evidence, assertClean, L, harness, LEVELS, RELATIONSHIPS, AREAS, DESCRIPTION, RESERVED, OUT, ROOT });
-    else await require('./scenarios-comprehensive.cjs')(ctx, { scenario, check, known, note, evidence, assertClean, L, harness, LEVELS, RELATIONSHIPS, AREAS, DESCRIPTION, RESERVED, OUT, ROOT });
+    if (suiteArg === 'regression') await require('./scenarios.cjs')(ctx, { scenario, check, known, note, evidence, assertClean, L, fixture, LEVELS, RELATIONSHIPS, AREAS, DESCRIPTION, OUT, ROOT });
+    else if (suiteArg === 'budget') await require('./scenarios-budget.cjs')(ctx, { scenario, check, known, note, evidence, assertClean, L, fixture, LEVELS, RELATIONSHIPS, AREAS, DESCRIPTION, RESERVED, OUT, ROOT });
+    else await require('./scenarios-comprehensive.cjs')(ctx, { scenario, check, known, note, evidence, assertClean, L, fixture, LEVELS, RELATIONSHIPS, AREAS, DESCRIPTION, RESERVED, OUT, ROOT });
   } finally { await browser.close(); }
 
   const providerEvents = stack.providerEvents();

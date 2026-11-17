@@ -1,7 +1,7 @@
 'use strict';
 // The old AI Checker is retired (owner, 2026-11-17: "don't use the old AI Checker anymore"). Through the real check service: with an AI provider set but
 // the new checker not ready, nothing is sent to any AI and the check is incomplete with the reason (before: the old checker ran with its AI, Policy V2 and
-// the whole-syllabus plan). Offline: scripted transport, network blocked.
+// the whole-syllabus plan). Offline: a recording transport, network blocked.
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const h = require('../vpaa-conformance/harness');
@@ -19,7 +19,10 @@ async function check(t, over, options = {}) {
   const { content, masters } = h.sample(); masters.synthetic = false; masters.fingerprint = 'retired-old-checker';
   t.mock.method(repo, 'mastersFor', async () => masters);
   const db = createMemoryDb({ syllabus: { content: JSON.stringify(content) } });
-  const transport = h.scriptedTransport();
+  // records any request instead of answering it: these checks must send none
+  const sent = [];
+  const transport = async (url, init) => { sent.push({ url, init }); throw new Error('no AI request may be sent here'); };
+  transport.sent = sent;
   const result = await svc.checkHybrid(db, content, { syllabusId: 100, env: h.envFor({ ...OLD_ALL_ON, ...over }), transport, linkChecker: link, ...options });
   return { result, transport };
 }

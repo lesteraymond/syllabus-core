@@ -6,9 +6,9 @@
 const { SECOND } = require('./seed-e2e.cjs');
 
 module.exports = async function run(ctx, h) {
-  const { scenario, check, note, evidence, assertClean, L, harness, LEVELS, RESERVED } = h;
+  const { scenario, check, note, evidence, assertClean, L, fixture, LEVELS, RESERVED } = h;
   const { stack, browser, state } = ctx;
-  const { content: sample } = harness.sample();
+  const { content: sample } = fixture.sample();
   const sections = { clos: sample.clos.map((clo, i) => ({ ...clo, level: LEVELS[i] })), plan: sample.plan, reqs: sample.reqs, refs: sample.refs, grading: sample.grading, outcomes: sample.outcomes,
     meta: { ...sample.meta, courseId: SECOND.courseId, code: SECOND.code, title: SECOND.title, prereq: SECOND.prereq }, description: sample.description };
 

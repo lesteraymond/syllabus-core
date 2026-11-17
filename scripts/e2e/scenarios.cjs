@@ -4,9 +4,9 @@
 const path = require('node:path');
 const { SECOND } = require('./seed-e2e.cjs');
 module.exports = async function run(ctx, h) {
-  const { scenario, check, known, note, evidence, assertClean, L, harness, LEVELS, RELATIONSHIPS, AREAS, DESCRIPTION, OUT, ROOT } = h;
+  const { scenario, check, known, note, evidence, assertClean, L, fixture, LEVELS, RELATIONSHIPS, AREAS, DESCRIPTION, OUT, ROOT } = h;
   const { stack, browser, state } = ctx;
-  const { content: sample } = harness.sample();
+  const { content: sample } = fixture.sample();
   const sections = {
     clos: sample.clos.map((clo, i) => ({ ...clo, level: LEVELS[i] })),
     plan: sample.plan, reqs: sample.reqs, refs: sample.refs, grading: sample.grading, outcomes: sample.outcomes,
@@ -56,7 +56,7 @@ module.exports = async function run(ctx, h) {
     await s.page.waitForTimeout(2000);
     let text = await s.text();
     check(/0 of 7 complete/.test(text), 'a new draft starts with 0 of 7 steps complete');
-    check(/To continue: Choose a program/.test(text) && /Add at least one description paragraph/.test(text), 'the form lists what is still missing before Step 1 can be completed (form validation)');
+    check(/(To continue|Complete before submitting): Choose a program/.test(text) && /Add at least one description paragraph/.test(text), 'the form lists what is still missing before Step 1 can be completed (form validation)');
     await s.pick(/Choose a program/, /BSIT/);
     await s.pick(/Choose a subject/, /IT 204/);
     await s.page.locator('[placeholder="Lecture units"],[aria-label="Lecture units"]').first().fill('2');
@@ -70,7 +70,7 @@ module.exports = async function run(ctx, h) {
     await s.page.waitForTimeout(800);
     text = await s.text();
     check(/1 Course Information ✓/.test(text), 'Step 1 shows as complete once the required fields are filled');
-    check(!/To continue: Choose a program/.test(text), 'the missing-field list disappears when Step 1 is complete');
+    check(!/(To continue|Complete before submitting): Choose a program/.test(text), 'the missing-field list disappears when Step 1 is complete');
     await s.page.getByRole('button', { name: /save as draft/i }).click();
     await s.page.waitForTimeout(1500);
     state.syllabusId = await idOf(s);
@@ -97,27 +97,33 @@ module.exports = async function run(ctx, h) {
   });
 
   // ---------------------------------------------------------------------------------------------------------------------------------------------
-  await scenario('E03', 'Faculty runs the checker on the draft: official compliance score, six areas, all seven VPAA relationships, advisory only', async () => {
+  await scenario('E03', 'Faculty runs the new AI Checker on the draft: official score with the AI points, all seven VPAA relationships evaluated, the scripted gap and its verified draft', async () => {
     const before = stack.providerEvents().filter((e) => e.kind === 'provider').length;
     const s = await L.session(browser, stack);
     await s.loginOk('faculty');
     await s.nav('AI Checker');
     await s.page.getByRole('button', { name: /^ai checker$/i }).nth(1).click();
-    await s.page.getByText('Academic Evaluation Policy V2').first().waitFor({ timeout: 60000 });
+    await s.page.getByText(/AI Recommendations? \(/).first().waitFor({ timeout: 60000 });
     await s.page.waitForTimeout(800);
     const text = await s.text();
-    check(/Meets the standard/.test(text) && /\(pass line 79%\)|79%/.test(text), 'the official score is shown against the 79% pass line');
-    for (const rel of RELATIONSHIPS) check(new RegExp(':' + rel + '\\b').test(text), `relationship ${rel} is evaluated and rendered`);
-    check(/has no effect on the official score, deductions, passing mark or submission gate/.test(text), 'the page states that the academic alignment is advisory only');
-    check(/anthropic · claude-sonnet-5-5/.test(text) && /Evaluated/.test(text), 'the AI status shows the approved provider and model (scripted) as Evaluated');
-    check(!/Requires faculty review; never applied automatically.*Check & Improve/.test(text), 'a draft preview offers no automatic correction');
-    check(/requires revision/i.test(text) && /faculty review/i.test(text), 'the scripted gaps are reported as findings (Requires revision / Faculty review)');
+    const run = (((await s.api('GET', '/compliance?syllabus=' + state.syllabusId)).body || {}).run) || {};
+    const hy = run.hybrid || {}, align = hy.alignment || {};
+    check(/Meets the standard \(pass line 79%\)/.test(text), 'the official score is shown against the 79% pass line');
+    // the new checker's AI part counts: the no-AI base score minus the scripted gap's point (ACTIVITY-FIT partly aligned: -1)
+    check(run.status === 'scored' && run.passed === true && run.overall === hy.baseScore - 1 && text.includes(run.overall + '%'), `the official score is the no-AI base score minus the scripted gap's 1 point, and the page shows it (${run.overall} = ${hy.baseScore} - 1)`);
+    check(align.engine === 're-planned' && align.status === 'completed' && align.provider === 'anthropic' && align.model === 'claude-sonnet-5-5' && /^replan-prompt-/.test(align.promptVersion || ''), `the AI part was made by the new AI Checker on the approved provider and model (${align.engine} · ${align.provider} · ${align.model} · ${align.promptVersion})`);
+    check(!hy.academicV2 && !hy.improvementPlan && !hy.coordinatedPlan, 'the report has no old-checker part (no Policy V2, no whole-syllabus or coordinated plan)');
+    const cov = hy.semanticCoverage || { relationships: [] };
+    for (const rel of RELATIONSHIPS) check((cov.relationships.find((r) => r.type === rel) || {}).status === 'evaluated', `VPAA relationship ${rel} is evaluated by the new checker`);
+    check(cov.complete === true && !text.includes('VPAA relationships checked'), 'all seven VPAA relationships were evaluated, so the page shows no incomplete-coverage warning');
+    check(/ACTIVITY-FIT/.test(text) && /Partly aligned/.test(text) && /−1 points/.test(text) && /do not let students practise the ILO at its level/.test(text), 'the scripted gap is shown with its relationship, verdict, points and explanation');
+    const draft = (hy.suggestions || []).find((x) => x.source === 'ai');
+    check(/Suggested alignment revision/.test(text) && draft && draft.verification === 'VERIFIED' && draft.path === 'plan[1].activities', 'the repair plan offers a verified draft for the Week 2 activities (' + (draft ? draft.verification + ' ' + draft.path : 'none') + ')');
+    check(/Check & improve/.test(text) && /Accept/.test(text) && /Reject/.test(text), 'the draft offers Accept, Check & improve and Reject; nothing is applied automatically');
     const calls = stack.providerEvents().filter((e) => e.kind === 'provider').length - before;
-    // Every provider request goes through the check's one shared budget, so the number of scripted requests must equal what the budget counted and stay within its configured limit
-    // (a fixed number would be wrong for every other profile: the comprehensive profile legitimately sends more than Policy V2 alone).
-    const budget = (((await s.api('GET', '/compliance?syllabus=' + state.syllabusId)).body || {}).run || {}).hybrid;
-    const counted = budget && budget.academicV2 && budget.academicV2.alignment && budget.academicV2.alignment.requestBudget;
-    check(calls > 0 && (!counted || (calls === counted.requests && calls <= counted.maxRequests)), `the provider was reached only through the scripted double, and every request was counted by the shared budget (${calls} request(s)${counted ? ', budget counted ' + counted.requests + ' of ' + counted.maxRequests : ''})`);
+    // every request of the check goes through its one spend cap (pipeline/provider.js), so the stand-in's request count must equal what the cap counted and stay within its limit
+    const counted = (align.usage || {}).budget;
+    check(calls > 0 && counted && calls === counted.requests && calls <= counted.maxRequests, `the provider was reached only through the offline stand-in, and every request was counted by the check's spend cap (${calls} request(s)${counted ? ', cap counted ' + counted.requests + ' of ' + counted.maxRequests : ''})`);
     check(stack.providerEvents().every((e) => !/^blocked/.test(e.kind)), 'no request to any other host was attempted by the server');
     await s.shot(evidence('E03-faculty-checker-1440.png'));
     assertClean(s, 'E03');
@@ -159,7 +165,7 @@ module.exports = async function run(ctx, h) {
   });
 
   // ---------------------------------------------------------------------------------------------------------------------------------------------
-  await scenario('E05', 'Administrator runs the official check: six weighted areas, 100% against 79, seven VPAA relationships, advisory panel, read-only for content', async () => {
+  await scenario('E05', 'Administrator runs the official check: six weighted areas, the score with the AI points against 79, seven VPAA relationships evaluated, the finding read-only for the administrator and for content', async () => {
     const s = await L.session(browser, stack);
     await s.loginOk('admin');
     const nav = await s.text();
@@ -171,14 +177,18 @@ module.exports = async function run(ctx, h) {
     await s.pick(/Choose a program/, /BSIT/);
     await s.pick(/Choose a subject/, /IT 204/);
     await s.page.getByRole('button', { name: /check compliance/i }).click();
-    await s.page.getByText('Academic Evaluation Policy V2').first().waitFor({ timeout: 60000 });
+    await s.page.getByText(/AI Recommendations? \(/).first().waitFor({ timeout: 60000 });
     await s.page.waitForTimeout(1000);
     const text = await s.text();
-    check(/Meets the standard/.test(text) && /100%/.test(text), 'the official result is 100% and meets the standard');
-    for (const area of AREAS) check(text.includes(area), 'area scored: ' + area);
-    for (const rel of RELATIONSHIPS) check(text.includes(':' + rel + ' ') || text.includes(':' + rel), 'relationship ' + rel + ' appears in the saved report view');
+    note('administrator report text: ' + text.slice(text.indexOf('Compliance check'), text.indexOf('Compliance check') + 1500));
+    const run = (((await s.api('GET', '/compliance?syllabus=' + state.syllabusId)).body || {}).run) || {};
+    const hy = run.hybrid || {};
+    check(/Meets the standard/.test(text) && run.overall === hy.baseScore - 1 && text.includes(run.overall + '%'), `the official result meets the standard: the base score minus the scripted gap's point (${run.overall}%)`);
+    for (const area of AREAS) check((run.areas || []).some((a) => a.name === area || a.label === area || a.id === area || JSON.stringify(a).includes(area)), 'area scored: ' + area);
+    check(((hy.semanticCoverage || {}).relationships || []).filter((r) => RELATIONSHIPS.includes(r.type) && r.status === 'evaluated').length === 7, 'the saved report has all seven VPAA relationships evaluated');
     check(!text.includes('VPAA relationships checked'), 'no incomplete-coverage warning when all seven relationships were evaluated');
-    check(/Academic alignment has no numeric score, deductions or passing mark/.test(text), 'the advisory panel states that it has no numeric score or passing mark');
+    check(/ACTIVITY-FIT/.test(text) && /Partly aligned/.test(text), "the administrator sees the new checker's finding and its verdict");
+    check(/Only the author can accept or change these/.test(text) && !(await s.page.getByRole('button', { name: /^accept$/i }).count()), 'the administrator can read the recommendation but not accept it (only the author can)');
     check(s.issues.apiCalls.some((c) => c.startsWith('POST /api/') && c.includes('check') && c.endsWith(' 200')), 'the official check ran through the shared hybrid service (POST ... 200: ' + s.issues.apiCalls.filter((c) => c.startsWith('POST') && !c.includes('heartbeat')).join(', ') + ')');
     await s.shot(evidence('E05-admin-official-check-1440.png'));
     const edit = await s.api('PUT', '/syllabi/' + state.syllabusId + '/content', { sections: { reqs: sections.reqs }, schemaVersion: 3 });
@@ -226,8 +236,8 @@ module.exports = async function run(ctx, h) {
     await s.nav('AI Checker');
     await s.page.waitForTimeout(2500);
     text = await s.text();
-    check(text.includes('Corrections for human review'), 'the official report offers a corrections section');
-    check(!text.includes('No correction is recommended for faculty review'), 'the scripted gaps produce at least one correction recommendation');
+    check(/AI Recommendations? \(1\)/.test(text), 'the official report offers its recommendations section, with the one draft');
+    check(/Suggested alignment revision/.test(text) && /ACTIVITY-FIT/.test(text), "the scripted gap's verified draft is offered to the author");
     const buttons = await s.page.$$eval('button', (els) => els.map((e) => e.innerText.split(String.fromCharCode(10)).join(' ').trim()).filter(Boolean));
     note('buttons on the faculty checker after the return: ' + buttons.slice(6).join(' | '));
     await s.shot(evidence('E07-faculty-after-return-1440.png'));
@@ -241,7 +251,8 @@ module.exports = async function run(ctx, h) {
     await s.loginOk('faculty');
     await s.nav('AI Checker');
     await s.page.waitForTimeout(2500);
-    const activities = async () => { const c = await s.api('GET', '/syllabi/' + state.syllabusId + '/content'); return JSON.stringify(c.body.content.plan[0].activities); };
+    // the draft is for the Week 2 activities (plan[1]): the stand-in's one deliberate gap
+    const activities = async () => { const c = await s.api('GET', '/syllabi/' + state.syllabusId + '/content'); return JSON.stringify(c.body.content.plan[1].activities); };
     const original = await activities();
     const verify = s.page.getByRole('button', { name: /check & improve/i }).first();
     check(await verify.count() === 1, 'one correctable recommendation offers Check & improve');
@@ -250,8 +261,10 @@ module.exports = async function run(ctx, h) {
     await s.page.waitForTimeout(6000);
     let text = await s.text();
     check(!/Check & improve failed|could not/i.test(text), 'Check & improve completed without an error message');
-    check(stack.providerEvents().filter((e) => e.kind === 'provider').length > providerBefore, 'Check & improve asked the (scripted) provider to verify the proposed wording');
-    note('after Check & improve: ' + text.slice(text.indexOf('Corrections for human review'), text.indexOf('Corrections for human review') + 700));
+    // Check & improve judges the proposed text against every related item; answers the repair plan already got for that exact text are reused, so it may need no new request
+    check(/Checked against \d+ related items: 1 improve and none get worse\. It is safe to accept\./.test(text) && (s.issues.checkBodies || []).some((b) => /\/refine 200 :: .*"status":"verified".*"engine":"re-planned"/.test(b)),'Check & improve verified the draft with the new checker: it fixes the gap and makes nothing worse');
+    note('provider requests during Check & improve: ' + (stack.providerEvents().filter((e) => e.kind === 'provider').length - providerBefore));
+    note('after Check & improve: ' + text.slice(text.indexOf('AI Recommendation'), text.indexOf('AI Recommendation') + 900));
     note('recommendation card after Check & improve: ' + (await s.page.locator('.hy-rec').first().evaluate((el) => el.innerText.split(String.fromCharCode(10)).join(' | ') + ' || disabled: ' + [...el.querySelectorAll('button')].map((x) => x.innerText.trim() + '=' + x.disabled).join(', '))));
     await s.page.getByRole('button', { name: /^accept$/i }).first().click();
     await s.page.waitForTimeout(3500);
@@ -280,7 +293,7 @@ module.exports = async function run(ctx, h) {
     await s.loginOk('faculty');
     await s.nav('AI Checker');
     await s.page.waitForTimeout(2000);
-    const activities = async () => { const c = await s.api('GET', '/syllabi/' + state.syllabusId + '/content'); return JSON.stringify(c.body.content.plan[0].activities); };
+    const activities = async () => { const c = await s.api('GET', '/syllabi/' + state.syllabusId + '/content'); return JSON.stringify(c.body.content.plan[1].activities); };
     const original = await activities();
     await s.page.getByRole('button', { name: /re-check again/i }).first().click();
     await s.page.waitForTimeout(6000);
@@ -306,7 +319,7 @@ module.exports = async function run(ctx, h) {
     check(/Meets the standard/.test(text), 'the Re-Check after the correction still meets the standard (official score is not changed by the advisory result)');
     const submit = s.page.getByRole('button', { name: /submit new version to admin/i });
     check(await submit.isDisabled(), 'Submit new version stays disabled until the author says what changed');
-    await s.page.getByLabel(/what did you change/i).fill('Synthetic E2E: rewrote the week 1 activity to practise the weekly topic.');
+    await s.page.getByLabel(/what did you change/i).fill('Synthetic E2E: rewrote the week 2 activities to practise the ILO at its level.');
     await s.page.waitForTimeout(500);
     check(!(await submit.isDisabled()), 'Submit new version is enabled once the change note is written');
     await submit.click();
@@ -339,8 +352,10 @@ module.exports = async function run(ctx, h) {
     await admin.pick(/Choose a program/, /BSIT/);
     await admin.pick(/Choose a subject/, /IT 204/);
     await admin.page.getByRole('button', { name: /check compliance/i }).click();
-    await admin.page.getByText('Academic Evaluation Policy V2').first().waitFor({ timeout: 60000 });
-    check(/Meets the standard/.test(await admin.text()) && /100%/.test(await admin.text()), 'the re-check of the corrected version is 100% and meets the standard');
+    await admin.page.getByText(/Meets the standard|Needs work|Verification incomplete/).first().waitFor({ timeout: 60000 });
+    await admin.page.waitForTimeout(800);
+    const rechecked = (((await admin.api('GET', '/compliance?syllabus=' + state.syllabusId)).body || {}).run) || {};
+    check(/Meets the standard/.test(await admin.text()) && rechecked.overall === (rechecked.hybrid || {}).baseScore && (await admin.text()).includes(rechecked.overall + '%'), `the re-check of the corrected version meets the standard with no AI points left (${rechecked.overall}%)`);
     await admin.page.getByRole('dialog').getByRole('button', { name: /^close$/i }).click(); // the result opens in a modal over the page
     // checked but not yet cleared by the three stages: the VPAA still cannot approve
     const early = await L.session(browser, stack);
@@ -401,7 +416,7 @@ module.exports = async function run(ctx, h) {
     const recheck = await f.api('POST', '/syllabi/' + state.syllabusId + '/compliance/recheck', { force: true });
     check(recheck.status === 409, 'an approved syllabus is not re-checked (HTTP ' + recheck.status + ')');
     const menu = await f.page.$$eval('aside button', (els) => els.map((e) => e.innerText.trim().toLowerCase()));
-    check(!menu.some((m) => /users & roles|program & subjects|review & approval/.test(m)), 'a faculty account is not offered the administrator menus');
+    check(!menu.some((m) => /users & roles|program & subjects|curriculum|review & approval/.test(m)), 'a faculty account is not offered the administrator menus');
     const adminApis = await Promise.all([f.api('GET', '/users'), f.api('POST', '/users', { email: 'x@e2e.invalid', role: 'admin' }), f.api('PUT', '/courses/10/clos', { clos: [] })]);
     check(adminApis.every((r) => r.status === 403), 'administrator APIs answer 403 to a faculty account (' + adminApis.map((r) => r.status).join(',') + ')');
     await f.shot(evidence('E11-faculty-repository-1440.png'));
@@ -422,7 +437,7 @@ module.exports = async function run(ctx, h) {
   // a second, editable syllabus (IT 205) for the scenarios that must not disturb the approved one
   const second = { meta: { ...sample.meta, courseId: SECOND.courseId, code: SECOND.code, title: SECOND.title, prereq: SECOND.prereq }, description: sample.description };
   const second_sections = { ...sections, ...second };
-  await scenario('E12', 'AI offline: provider outage, rejected credentials, rate limit and an invalid answer never stop the deterministic checker or fake a verification', async () => {
+  await scenario('E12', 'AI offline: provider outage, rejected credentials, rate limit and an invalid or unreadable answer never stop the deterministic checker or fake a verification', async () => {
     const outcomes = {};
     const f = await L.session(browser, stack);
     await f.loginOk('faculty');
@@ -430,6 +445,13 @@ module.exports = async function run(ctx, h) {
     const put = await f.api('PUT', '/syllabi/' + d.body.id + '/content', { sections: second_sections, schemaVersion: 3 });
     check(put.status === 200, 'a second synthetic syllabus (IT 205) was saved (HTTP ' + put.status + ')');
     state.secondId = d.body.id;
+    // Saving a syllabus for a subject gives it that subject's own CLOs (with their own ids), and the author then tags each ILO to them. Do the same:
+    // map the sample's CLO ids to the saved ones by position, so every ILO tag resolves (an unresolved tag blocks the check before any AI question).
+    const saved = ((await f.api('GET', '/syllabi/' + d.body.id + '/content')).body || {}).content || {};
+    const tagOf = new Map(sections.clos.map((c, i) => ['clo:' + c.id, 'clo:' + (((saved.clos || [])[i]) || c).id]));
+    second_sections.plan = sections.plan.map((row) => ({ ...row, ilos: (row.ilos || []).map((ilo) => ({ ...ilo, tags: (ilo.tags || []).map((t) => tagOf.get(t) || t) })) }));
+    const retag = await f.api('PUT', '/syllabi/' + d.body.id + '/content', { sections: { plan: second_sections.plan }, schemaVersion: 3 });
+    check(retag.status === 200, 'the ILOs are tagged to the CLOs the subject gave the syllabus (HTTP ' + retag.status + ', ' + JSON.stringify([...tagOf.values()]) + ')');
     // the first-ever run happens while the provider is down, through the real page
     stack.setProvider('down');
     await f.page.reload(); await f.page.waitForTimeout(2000); // the syllabus list was loaded before this draft existed
@@ -440,19 +462,19 @@ module.exports = async function run(ctx, h) {
     const text = await f.text();
     note('page text with the AI down: ' + text.slice(text.indexOf('Compliance check'), text.indexOf('Compliance check') + 700));
     note('page tail with the AI down: ' + text.slice(-700));
-    check(/Verification incomplete/.test(text) && /no final AI score yet/.test(text) && /AI unavailable/.test(text), 'with the AI down on a first-ever check the page says Verification incomplete / no final AI score yet / AI unavailable, and does not report a pass');
+    check(/Verification incomplete/.test(text) && /no final AI score yet|No final AI score is available/.test(text) && /AI alignment: not evaluated/.test(text), 'with the AI down on a first-ever check the page says Verification incomplete / no final AI score yet / AI alignment: not evaluated, and does not report a pass');
     check(!/Meets the standard/.test(text), 'no "Meets the standard" verdict is shown when the AI-scored part could not run');
     check(/You can still submit/.test(text), 'the advisory AI gate still lets the author submit (the AI never blocks or approves)');
     check(!/Evaluated/.test(text) || /Not evaluated|not evaluated/.test(text), 'the page does not claim the AI evaluation succeeded');
-    check(/VPAA relationships checked: 0 of 7|0 of 7/.test(text), 'the incomplete seven-relationship coverage is stated explicitly (0 of 7)');
+    // a relationship whose texts are the same as an earlier check's (here the ILO-CLO pairs, shared with IT 204) is answered from the stored answers, so it can count as evaluated
+    check(/VPAA relationships checked: [0-6] of 7/.test(text), 'the incomplete seven-relationship coverage is stated explicitly (' + ((text.match(/VPAA relationships checked: \d of 7/) || ['not shown'])[0]) + ')');
     await f.shot(evidence('E12-ai-down-1440.png'));
     assertClean(f, 'E12-ui', { allowStatus: [401, 409, 502, 503] });
-    // Each failure mode on a syllabus whose text changed since its last check, so there is nothing verified to reuse (SYLLABUS_CHECK_REUSE) and the provider really is needed.
-    // Order matters: a 401/403 starts a process-wide cooldown, so it goes last.
+    // Each failure mode on a syllabus whose text changed since its last check, so no stored answer fits (pipeline/answerStore.js) and the provider really is needed.
     const recheck = async () => { const r = await f.api('POST', '/syllabi/' + d.body.id + '/compliance/recheck', { force: true }); return { r, run: (r.body && r.body.run) || {} }; };
     let plan = structuredClone(second_sections.plan);
     const edit = async (tag) => { plan = plan.map((row) => (row.kind === 'exam' ? row : { ...row, contents: String(row.contents).split(' [')[0] + ' [' + tag + ']', activities: String(row.activities).split(' [')[0] + ' [' + tag + ']', tasks: String(row.tasks).split(' [')[0] + ' [' + tag + ']' })); return f.api('PUT', '/syllabi/' + d.body.id + '/content', { sections: { plan }, schemaVersion: 3 }); };
-    for (const mode of ['ok', 'down', 'rate', 'invalid', 'auth']) {
+    for (const mode of ['ok', 'down', 'rate', 'invalid', 'garbage', 'auth']) {
       stack.setProvider(mode);
       await edit(mode);
       const { r, run } = await recheck();
@@ -460,9 +482,10 @@ module.exports = async function run(ctx, h) {
       outcomes[mode] = { http: r.status, overall: run.overall, passed: run.passed, status: run.status, aiStatus: run.aiStatus, evaluated: cov && cov.evaluated, complete: cov && cov.complete, reason: cov && cov.reason };
       if (mode === 'ok') {
         check(r.status === 200 && run.status === 'scored' && run.passed === true && cov && cov.complete === true && cov.evaluated === 7, 'ok: the check scores and all seven relationships are evaluated');
-        // an UNCHANGED syllabus re-checked while the AI is down keeps what was already verified and sends no request (SYLLABUS_CHECK_REUSE)
-        stack.setProvider('down'); const before = stack.providerEvents().filter((e) => e.kind === 'provider').length; const same = await recheck();
-        check(same.run.status === 'scored' && same.run.hybrid.semanticCoverage.complete === true && stack.providerEvents().filter((e) => e.kind === 'provider').length === before, 'an unchanged syllabus re-checked while the AI is down keeps its verified result and sends no provider request (reuse)');
+        // an UNCHANGED syllabus re-checked while the AI is down answers every question from the stored answers and asks no judge question. (Its repair plan's
+        // rewrite is never stored, so that one request is tried and fails: the draft is then missing, the score is not touched.)
+        stack.setProvider('down'); const judged = () => stack.providerEvents().filter((e) => e.kind === 'provider' && e.request === 'judge').length; const before = judged(); const same = await recheck();
+        check(same.run.status === 'scored' && same.run.overall === run.overall && same.run.hybrid.semanticCoverage.complete === true && judged() === before, 'an unchanged syllabus re-checked while the AI is down keeps its result from the stored answers and asks no judge question (' + same.run.status + ', ' + same.run.overall + ' vs ' + run.overall + ', ' + (judged() - before) + ' judge request(s))');
         stack.setProvider('ok');
       }
       else {
@@ -491,8 +514,9 @@ module.exports = async function run(ctx, h) {
     await s.page.getByRole('button', { name: /^ai checker$/i }).first().click();
     await s.page.waitForTimeout(2500);
     text = await s.text();
-    check(/Tagasuri ng Silabus gamit ang AI/.test(text) && /Patakaran V2 sa Akademikong Pagsusuri|Akademikong pagkakaugnay/.test(text), 'the AI Checker and the Policy V2 panel are shown in Filipino');
-    check(!/Academic Evaluation Policy V2/.test(text), 'no English heading is left in the translated panel');
+    note('AI Checker page in Filipino: ' + text.slice(0, 1500));
+    check(/Tagasuri ng Silabus gamit ang AI/.test(text) && /Rekomendasyon ng AI|Hindi pa kumpleto ang beripikasyon/.test(text), "the AI Checker and the new checker's report are shown in Filipino");
+    check(!/AI Recommendation|Verification incomplete|Meets the standard/.test(text), 'no English report heading is left in the translated page');
     await s.shot(evidence('E13-filipino-checker-1440.png'));
     await s.page.reload();
     await s.page.waitForTimeout(2500);
@@ -525,41 +549,45 @@ module.exports = async function run(ctx, h) {
   });
 
   // ---------------------------------------------------------------------------------------------------------------------------------------------
-  await scenario('E15', 'Official scoring parity: the same syllabus gets the identical official result with Policy V2 on and with Policy V2 off', async () => {
+  await scenario('E15', "Stored answers and determinism: two fresh server processes check the same syllabus; the second asks no judge question and gets the identical official result", async () => {
     const { startApi, waitFor } = require('./stack.cjs');
-    const offPort = Number(new URL(stack.API).port) + 200, onPort = Number(new URL(stack.API).port) + 100;
-    // two fresh servers (V2 on, V2 off) rather than the main one: E12 ends with a rejected-credentials failure, which starts a 300 s provider cooldown inside that process
-    const on_ = startApi({ port: onPort, work: stack.work, front: stack.FRONT, control: stack.control, providerLog: stack.work + '/provider-log-v2on.jsonl', serverLog: stack.work + '/api-v2on.log', extraEnv: { ...(process.env.E2E_DB_PORT ? { E2E_DB_PORT: process.env.E2E_DB_PORT } : {}) } });
-    const off = startApi({ port: offPort, work: stack.work, front: stack.FRONT, control: stack.control, providerLog: stack.work + '/provider-log-v2off.jsonl', serverLog: stack.work + '/api-v2off.log', extraEnv: { ...(process.env.E2E_DB_PORT ? { E2E_DB_PORT: process.env.E2E_DB_PORT } : {}), SYLLABUS_CHECK_ACADEMIC_V2: 'off' } });
+    const firstPort = Number(new URL(stack.API).port) + 100, secondPort = Number(new URL(stack.API).port) + 200;
+    const dbPort = process.env.E2E_DB_PORT ? { E2E_DB_PORT: process.env.E2E_DB_PORT } : {};
+    // fresh processes, not the main one, so nothing can come from a process's memory: what the second one reuses comes from the database (pipeline/answerStore.js)
+    const logs = { first: stack.work + '/provider-log-first.jsonl', second: stack.work + '/provider-log-second.jsonl' };
+    const one = startApi({ port: firstPort, work: stack.work, front: stack.FRONT, control: stack.control, providerLog: logs.first, serverLog: stack.work + '/api-first.log', extraEnv: dbPort });
+    const two = startApi({ port: secondPort, work: stack.work, front: stack.FRONT, control: stack.control, providerLog: logs.second, serverLog: stack.work + '/api-second.log', extraEnv: dbPort });
+    const events = (file) => { try { return require('node:fs').readFileSync(file, 'utf8').split(/\r?\n/).filter(Boolean).map((l) => JSON.parse(l)).filter((e) => e.kind === 'provider'); } catch { return []; } };
     try {
-      await waitFor('http://127.0.0.1:' + offPort + '/api/health', 40000);
-      await waitFor('http://127.0.0.1:' + onPort + '/api/health', 40000);
+      await waitFor('http://127.0.0.1:' + firstPort + '/api/health', 40000);
+      await waitFor('http://127.0.0.1:' + secondPort + '/api/health', 40000);
       const call = async (base, cookie, method, url, body) => { const r = await fetch(base + '/api' + url, { method, headers: { 'Content-Type': 'application/json', Origin: stack.FRONT, 'X-Forwarded-Proto': 'https', ...(cookie ? { Cookie: cookie } : {}) }, body: body ? JSON.stringify(body) : undefined }); let j = null; try { j = await r.json(); } catch { /* none */ } return { r, status: r.status, body: j }; };
       const login = async (base) => { const r = await call(base, '', 'POST', '/auth/login', { email: 'e2e.faculty@e2e.invalid', password: L.PASSWORD }); return (r.r.headers.getSetCookie() || []).map((c) => c.split(';')[0]).filter((c) => c.startsWith('connect.sid')).join('; '); };
       const probe = async (base) => { const cookie = await login(base); const r = await call(base, cookie, 'POST', '/syllabi/' + state.secondId + '/compliance/recheck', { force: true }); return r.body && r.body.run; };
       stack.setProvider('ok');
-      const on = await probe('http://127.0.0.1:' + onPort);
-      const offRun = await probe('http://127.0.0.1:' + offPort);
-      check(on && offRun, 'both servers produced a run (V2 on, V2 off)');
-      check(on.hybrid.academicV2 && on.hybrid.academicV2.mode === 'live-application', 'the first server has Policy V2 integrated');
-      check(!offRun.hybrid.academicV2, 'the second server has Policy V2 off');
-      const official = (r) => JSON.stringify({ overall: r.overall, passed: r.passed, band: r.band, passThreshold: r.passThreshold, areas: (r.areas || []).map((a) => [a.id || a.name, a.score]), findings: (r.findings || []).map((x) => x.id || x.ruleId).sort() });
-      check(official(on) === official(offRun), 'official score, bands, six area scores and rule findings are identical with Policy V2 on and off (' + on.overall + ' vs ' + offRun.overall + ')');
-      check(on.passThreshold === 79 && offRun.passThreshold === 79, 'the passing threshold is 79 in both');
-      note('V2 on: overall=' + on.overall + ' areas=' + (on.areas || []).length + ' | V2 off: overall=' + offRun.overall + ' areas=' + (offRun.areas || []).length);
-    } finally { off.kill(); on_.kill(); }
+      const a = await probe('http://127.0.0.1:' + firstPort);
+      const b = await probe('http://127.0.0.1:' + secondPort);
+      check(a && b && a.status === 'scored' && b.status === 'scored', 'both fresh servers produced a scored run (' + (a && a.status) + ', ' + (b && b.status) + ')');
+      const official = (r) => JSON.stringify({ overall: r.overall, passed: r.passed, band: r.band, passThreshold: r.passThreshold, areas: (r.areas || []).map((x) => [x.id || x.name, x.score]), findings: (r.findings || []).map((x) => x.id || x.ruleId).sort(), deductions: ((r.hybrid || {}).deductions || []).map((d) => d.id + ':' + d.points).sort() });
+      check(official(a) === official(b), 'official score, band, six area scores, rule findings and AI deductions are identical in both processes (' + a.overall + ' vs ' + b.overall + ')');
+      check(a.passThreshold === 79 && b.passThreshold === 79, 'the passing threshold is 79 in both');
+      const judged = events(logs.second).filter((e) => e.request === 'judge').length;
+      check(judged === 0, `the second process asked no judge question: every answer came from the stored answers (${judged} judge request(s); ${events(logs.second).length} request(s) in all)`);
+      check(((b.hybrid || {}).replan || {}).usage && b.hybrid.replan.usage.reused === b.hybrid.replan.usage.questions, 'the second report says every question was answered from the store (' + JSON.stringify((((b.hybrid || {}).replan || {}).usage) ? { questions: b.hybrid.replan.usage.questions, reused: b.hybrid.replan.usage.reused } : null) + ')');
+      note('first process: ' + events(logs.first).length + ' provider request(s); second: ' + events(logs.second).length + ' (the repair plan\'s rewrites are never stored, so they are asked again)');
+    } finally { one.kill(); two.kill(); }
   });
 
   // ---------------------------------------------------------------------------------------------------------------------------------------------
-  await scenario('E16', 'No unintended network request: the guard blocks every non-loopback connection, and the whole run produced only scripted provider requests', async () => {
+  await scenario('E16', 'No unintended network request: the guard blocks every non-loopback connection, and the whole run produced only requests the offline stand-in answered', async () => {
     const { spawnSync } = require('node:child_process');
     const probe = spawnSync(process.execPath, ['-r', path.join(ROOT, 'scripts/e2e/offline-provider.cjs'), '-e', "fetch('https://example.org/').then(() => console.log('REACHED'), (e) => console.log('BLOCKED:' + e.message.split(String.fromCharCode(10))[0]))"], { encoding: 'utf8', env: { PATH: process.env.PATH, SystemRoot: process.env.SystemRoot } });
     check(/BLOCKED:E2E offline guard/.test(probe.stdout) && !/REACHED/.test(probe.stdout), 'the offline guard refuses a request to a public host (' + probe.stdout.trim().slice(0, 90) + ')');
     const events = stack.providerEvents();
     const providerCalls = events.filter((e) => e.kind === 'provider');
-    check(providerCalls.length > 0 && providerCalls.every((e) => e.url === 'https://api.anthropic.com/(scripted)'), 'every provider request of the run was answered by the scripted double (' + providerCalls.length + ' requests)');
+    check(providerCalls.length > 0 && providerCalls.every((e) => e.url === 'https://api.anthropic.com/(offline stand-in)' && ['judge', 'rewrite'].includes(e.request)), 'every provider request of the run was a new-checker judge or rewrite request answered by the offline stand-in (' + providerCalls.length + ' requests)');
     check(events.filter((e) => /^blocked/.test(e.kind)).length === 0, 'the server attempted no request to any other host during the whole run');
-    note('provider request modes: ' + JSON.stringify(providerCalls.reduce((m, e) => ({ ...m, [e.mode]: (m[e.mode] || 0) + 1 }), {})));
+    note('provider request modes: ' + JSON.stringify(providerCalls.reduce((m, e) => ({ ...m, [e.mode]: (m[e.mode] || 0) + 1 }), {})) + '; kinds: ' + JSON.stringify(providerCalls.reduce((m, e) => ({ ...m, [e.request]: (m[e.request] || 0) + 1 }), {})));
   });
 
   // ---------------------------------------------------------------------------------------------------------------------------------------------
@@ -574,8 +602,8 @@ module.exports = async function run(ctx, h) {
   await scenario('E18', "Admin sets a subject's academic year, semester, year level and pre-requisite; faculty picks it, the values fill in and cannot be changed", async () => {
     const a = await L.session(browser, stack);
     await a.loginOk('admin');
-    await a.nav('Program & Subjects');
-    await a.page.getByRole('button', { name: /add subject/i }).first().click();
+    await a.nav('Curriculum');
+    await a.page.getByRole('button', { name: /add curriculum|add subject/i }).first().click();
     await a.page.waitForTimeout(600);
     check((await a.page.getByRole('heading', { name: 'Academic years', level: 3 }).count()) === 0, 'the separate Academic years card is gone');
     // the catalog is per academic year: a subject's year is not chosen, it is the year of the catalog it is added to (the current year)
@@ -583,17 +611,18 @@ module.exports = async function run(ctx, h) {
     check(await yearBox().inputValue() === '2026–2027' && !(await yearBox().isEditable()), 'the subject\'s academic year is a fixed line showing the current year, 2026–2027 (not a dropdown)');
     check((await a.page.locator('.ac-form').getByRole('combobox', { name: 'Academic year', exact: true }).count()) === 0, 'there is no academic year dropdown, so no year can be picked or invented inside the form');
     const add = a.page.getByRole('button', { name: /^add subject$/i }).last();
-    check(await add.isDisabled(), 'Add subject stays disabled until the semester, year level and pre-requisite are chosen');
+    check(await add.isDisabled(), 'Add subject stays disabled until the curriculum year, semester and year level are chosen');
     await a.page.locator('.ac-form').getByRole('combobox', { name: 'Program', exact: true }).click(); await a.page.getByRole('option', { name: /^BSIT/ }).first().click();
     await a.page.getByPlaceholder('e.g. IT 204').fill('IT 306');
     await a.page.locator('.ac-form .field.full input').first().fill('Mobile Application Development (synthetic)');
     const pick = async (label, option) => { await a.page.locator('.ac-form').getByRole('combobox', { name: label, exact: true }).click(); await a.page.getByRole('option', { name: option }).first().click(); await a.page.waitForTimeout(300); };
+    await pick('Curriculum year', '2022-2023'); // required since the curriculum year column (2026-11-09)
     await pick('Semester', /2nd Semester/);
     const levels = await (async () => { await a.page.locator('.ac-form').getByRole('combobox', { name: 'Year level', exact: true }).click(); const names = await a.page.getByRole('option').allInnerTexts(); await a.page.keyboard.press('Escape'); return names.map((x) => x.trim()).filter((x) => /^Year [1-9]$/.test(x)); })();
     check(levels.join(',') === 'Year 1,Year 2,Year 3,Year 4', 'the year level dropdown offers Year 1 to Year 4 (' + levels.join(',') + ')');
     await pick('Year level', 'Year 3');
     await a.page.getByLabel('Pre-requisite', { exact: true }).fill('IT 204 - Computer Programming 2');
-    check(!(await add.isDisabled()), 'Add subject is enabled once the three are filled');
+    check(!(await add.isDisabled()), 'Add subject is enabled once they are filled');
     await add.click();
     await a.page.locator('table tbody tr[data-catalog-row^="subject-"]', { hasText: 'IT 306' }).first().waitFor({ timeout: 20000 });   // the add runs a few requests: wait for the row, not for a fixed time
     await a.page.waitForTimeout(500);
@@ -647,7 +676,7 @@ module.exports = async function run(ctx, h) {
   await scenario('E19', 'Subjects table filters: program, semester and year level combine, hide subjects without a term, and clear', async () => {
     const a = await L.session(browser, stack);
     await a.loginOk('admin');
-    await a.nav('Program & Subjects');
+    await a.nav('Curriculum');
     const rows = () => a.page.locator('table tbody tr[data-catalog-row^="subject-"]').count();
     const pick = async (label, option) => { await a.page.getByRole('combobox', { name: label, exact: true }).click(); await a.page.getByRole('option', { name: option }).first().click(); await a.page.waitForTimeout(400); };
     const total = await rows();
@@ -673,7 +702,7 @@ module.exports = async function run(ctx, h) {
     await a.close();
     const p = await L.session(browser, stack, { viewport: L.VIEWPORTS.phone });
     await p.loginOk('admin');
-    await p.nav('Program & Subjects');
+    await p.nav('Curriculum');
     const m = await p.page.evaluate(() => ({ sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth }));
     check(m.sw <= m.cw + 1, 'at 375 px the filters wrap and the page has no horizontal overflow (scrollWidth ' + m.sw + ' <= ' + m.cw + ')');
     await p.shot(evidence('E19-subject-filters-375.png'));
@@ -702,7 +731,7 @@ module.exports = async function run(ctx, h) {
     const yearShown = async (session, scope) => (await session.page.locator(scope + ' .select-current').first().innerText()).trim();
     const openListTags = async (session, scope, option) => { await session.page.locator(scope + ' .select-trigger').first().click(); const found = await session.page.getByRole('option', { name: option }).count(); await session.page.keyboard.press('Escape'); await session.page.waitForTimeout(200); return found === 1; };
     // one academic year control on Program & Subjects: + Add year, the year dropdown and Make current (no separate Current academic year card)
-    await a.nav('Program & Subjects');
+    await a.nav('Curriculum');
     check(await yearShown(a, '.year-bar .year-filter') === '2026–2027' && (await a.page.locator('.year-bar .year-filter').count()) === 1 && (await a.page.locator('.current-year').count()) === 0, 'Program & Subjects has one academic year control and no Current academic year card; closed, it shows the year alone');
     check(await openListTags(a, '.year-bar .year-filter', /^2026–2027 · current$/), 'the open list tags 2026–2027 as current');
     check((await a.page.getByRole('button', { name: 'Make current', exact: true }).count()) === 0, 'Make current is not offered while the current year is shown');
@@ -715,7 +744,7 @@ module.exports = async function run(ctx, h) {
     check(/already exists/.test(await a.page.locator('.ay-pop .form-error').innerText()), 'adding a year that exists is refused with the message inside the popover');
     const headerAfter = await a.page.locator('.page-head').boundingBox();
     check(Math.abs(headerAfter.height - headerBefore.height) < 2, 'the page header does not change height while the add-year popover is open (' + Math.round(headerBefore.height) + ' px before, ' + Math.round(headerAfter.height) + ' px after)');
-    check((await a.page.locator('.page-head').getByRole('button', { name: /add subject/i }).boundingBox()).y < headerBefore.y + headerBefore.height, '+ Add subject stays in the header row');
+    check((await a.page.locator('.page-head').getByRole('button', { name: /add curriculum|add subject/i }).boundingBox()).y < headerBefore.y + headerBefore.height, '+ Add subject stays in the header row');
     await a.shot(evidence('E20-admin-add-year-popover-1440.png'));
     await a.page.getByLabel('First year (for example 2027)').fill('2028');
     await a.page.getByRole('button', { name: 'Add academic year', exact: true }).click();
@@ -777,7 +806,8 @@ module.exports = async function run(ctx, h) {
     check((await v.api('GET', '/syllabi?year=all')).body.some((s) => s.academicYear === '2026–2027'), 'the work queues ask for all visible years, so last year\'s submissions are still there');
     check((await v.api('GET', '/syllabi?year=' + encodeURIComponent('2025–2026'))).status === 403, 'the VPAA may not open a year older than the previous one');
     await v.nav('Review & Approval');
-    check(await yearShown(v, '.year-filter') === 'Previous and current year' && await openListTags(v, '.year-filter', /^Previous and current year · current: 2027–2028$/), 'Review & Approval defaults to the previous and current year, and its open list names the current one');
+    // no combined "previous and current" choice (owner, 2026-11-08: src/lib/academicYearScope.js): the queue starts on the current year and last year is one pick away
+    check(await yearShown(v, '.year-filter') === '2027–2028' && await openListTags(v, '.year-filter', /^2027–2028 · current$/) && await openListTags(v, '.year-filter', /^2026–2027$/), 'Review & Approval starts on the current year, its open list tags it as current and still offers the previous year');
     assertClean(v, 'E20-vpaa', { allowStatus: [403] });
     await v.close();
     assertClean(a, 'E20-admin', { allowStatus: [403, 409] });   // 409: the duplicate year the popover test adds on purpose
@@ -801,7 +831,7 @@ module.exports = async function run(ctx, h) {
 
     // 1. the new year starts with no programs and no subjects, for the administrator too
     check((await a.api('GET', '/programs')).body.length === 0 && (await a.api('GET', '/courses')).body.length === 0, NEW + ' starts with no programs and no subjects, even for the administrator');
-    await a.nav('Program & Subjects');
+    await a.nav('Curriculum');
     await a.page.waitForTimeout(1200);
     const rows = () => a.page.locator('table tbody tr[data-catalog-row^="subject-"]').count();
     check(await rows() === 0 && /No programs or subjects yet for 2027–2028/.test(await a.text()), 'Program & Subjects lists nothing and says so for ' + NEW);
@@ -813,7 +843,7 @@ module.exports = async function run(ctx, h) {
     check(/Programs\s+0\s+In the catalog/.test(dash) && /Subjects\s+0\s+Across all programs/.test(dash), 'the Dashboard cards read 0 programs and 0 subjects');
 
     // 2. Copy from last year: confirmed first, then new records in the new year; nothing about syllabi, assignments or deadlines
-    await a.nav('Program & Subjects');
+    await a.nav('Curriculum');
     await a.page.getByRole('button', { name: 'Copy from ' + LAST, exact: true }).click();
     const dialog = a.page.getByRole('alertdialog');
     await dialog.waitFor();
@@ -838,12 +868,12 @@ module.exports = async function run(ctx, h) {
     check(refused.status === 403 && /view only/.test(JSON.stringify(refused.body)), 'changing a subject of ' + LAST + ' is refused by the server (HTTP ' + refused.status + ')');
     check((await a.api('DELETE', '/courses/' + old204.id)).status === 403, 'deleting a subject of ' + LAST + ' is refused too');
     check((await a.api('PUT', '/programs/' + lastPrograms[0].id + '/outcomes', { pos: [], version: 1 })).status === 403, 'so is changing a program\'s outcomes of ' + LAST);
-    await a.nav('Program & Subjects');
+    await a.nav('Curriculum');
     await a.page.locator('.year-filter .select-trigger').first().click();
     await a.page.getByRole('option', { name: new RegExp('^' + LAST + '$') }).click();
     await a.page.waitForTimeout(1500);
     check(/past academic year/.test(await a.text()) && await rows() === lastSubjects.length, 'choosing ' + LAST + ' shows its catalog with a "past academic year" notice');
-    check(await a.page.getByRole('button', { name: /add subject/i }).first().isDisabled(), 'Add subject is disabled for the past year');
+    check(await a.page.getByRole('button', { name: /add curriculum|add subject/i }).first().isDisabled(), 'Add subject is disabled for the past year');
     await a.shot(evidence('E21-admin-past-year-view-only-1440.png'));
 
     // 4. another new year: empty again, and the same program code can be created there (code is unique within a year, not across years)
@@ -869,7 +899,7 @@ module.exports = async function run(ctx, h) {
     await a.loginOk('admin');
     const bsit = (await a.api('GET', '/programs')).body.find((p) => p.code === 'BSIT');
     check(bsit && bsit.egaCount === 0 && bsit.outcomeCount === 0, 'the program created in ' + CUR + ' has no EGAs and no outcomes (' + JSON.stringify(bsit) + ')');
-    await a.nav('Program & Subjects');
+    await a.nav('Curriculum');
     await a.page.waitForTimeout(1500);
     const text = await a.text();
     check(/Set up EGAs and POs/.test(text) && /still have no EGAs or Program Outcomes: BSIT/.test(text), 'the program shows a "Set up EGAs and POs" badge and the page lists it in a banner');
@@ -953,7 +983,7 @@ module.exports = async function run(ctx, h) {
     const VISION = 'Vision typed while adding EE 101 (synthetic).';
     const a = await L.session(browser, stack);
     await a.loginOk('admin');
-    await a.nav('Program & Subjects');
+    await a.nav('Curriculum');
     await a.page.getByRole('button', { name: /add program/i }).first().click();
     await a.page.waitForTimeout(600);
     await a.page.getByPlaceholder('e.g. BSIT').fill('BSEE');
@@ -975,12 +1005,13 @@ module.exports = async function run(ctx, h) {
     const bsee = (await a.api('GET', '/programs')).body.find((p) => p.code === 'BSEE');
     check(bsee && bsee.egaCount === 1 && bsee.outcomeCount === 1, 'the program was created with its EGA and its Program Outcome (' + JSON.stringify(bsee) + ')');
     // then its subject: Add subject only picks the program from the list
-    await a.page.getByRole('button', { name: /add subject/i }).first().click();
+    await a.page.getByRole('button', { name: /add curriculum|add subject/i }).first().click();
     await a.page.waitForTimeout(600);
     await a.page.getByPlaceholder('e.g. IT 204').fill('EE 101');
     await a.page.locator('.ac-form .field.full input').first().fill('Circuits (synthetic)');
     const pick = async (label, option) => { await a.page.locator('.ac-form').getByRole('combobox', { name: label, exact: true }).click(); await a.page.getByRole('option', { name: option }).first().click(); await a.page.waitForTimeout(300); };
     await pick('Program', /BSEE/);
+    await pick('Curriculum year', '2022-2023'); // required since the curriculum year column (2026-11-09)
     await pick('Semester', /1st Semester/); await pick('Year level', 'Year 1');
     await a.page.getByLabel('Pre-requisite', { exact: true }).fill('None');
     await a.page.getByRole('button', { name: /^add subject$/i }).last().click();
@@ -1036,7 +1067,7 @@ module.exports = async function run(ctx, h) {
     await f.shot(evidence('E23-faculty-step2-1440.png'));
 
     // a later change to the program does not reach existing subjects by itself: Apply to subjects does
-    await a.nav('Program & Subjects');
+    await a.nav('Curriculum');
     await a.page.getByRole('button', { name: 'EGAs and Program Outcomes of BSEE', exact: true }).click();
     const dlg = a.page.getByRole('dialog', { name: /EGAs and Program Outcomes of BSEE/ });
     await dlg.waitFor(); await a.page.waitForTimeout(800);
