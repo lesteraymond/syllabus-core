@@ -2549,3 +2549,23 @@ Owner decision of 2026-11-17. The CHED Implementation Handbook for OBE and ISA (
 - **Versions unchanged** (`replan-rules-2`, `replan-prompt-6`): still no answer stored under them.
 - **Tests:** `constructive.test.js` adds 1 (the scale and its verbs, CLO 4 only, the checklist wording, what the AI is told, the one-verb rule with affective verbs); `prompt.test.js` updated. `npm test` passes.
 - Not run with the real model yet.
+
+### v1.94.6 — AI Checker: First Real-Model Run of the New Rules (CPE 101)
+
+Owner-approved paid run of 2026-11-17 (cap $1.50), `scripts/replan-syllabus-run.cjs --run 114 --live --confirm-paid --max-cost 1.5 --label new-rules`. No code change. Output in `docs/ai-checker-replan-run/syllabus-114/new-rules/` (a dev syllabus with planted problems; keep local, not committed).
+
+- **Cost and stop:** 65 requests, $0.72 charged ($0.67 estimated). The evaluation guard stopped the run before the re-check because its conservative total ($0.70 charged + the $0.27 worst case of the next request) passed the $1.50 cap; the app's own cap (`SYLLABUS_CHECK_REPLAN_MAX_COST_USD`) has no such accounting. 7 requests were refused, so one task field and four fields waiting on a failing week were left unresolved.
+- **Official check:** completed, 142 of 147 answered (5 "unclear", all on weeks whose ILO is written for the teacher), score 67 (the same as check #450 under the old rules), 52 misalignments, every area at its 5-point cap except content (3) and references (3).
+- **Constructive alignment works as designed:** TASK-FIT went from 10 aligned / 0 partial to 4 aligned / 4 partial (the tasks are now judged against the week's ILO); ACTIVITY-FIT is about the same; ILO-CLO against the CLO's own verb went from 5 aligned / 8 not to 8 aligned / 6 not.
+- **CLO-EVIDENCE:** CLO 1, 3 and 4 aligned, CLO 2 partial ("no mapped task reaches analyze"). After the plan rewrote Week 10 (a floral design project, the only design-level work), CLO 3 lost its evidence and became partial, which held back the changes of the weeks it involves.
+- **No outcome draft opens with two verbs** (0 of 7). Of 21 drafts, 16 verified, 2 need faculty review, 3 not checked.
+- **Not exercised:** a clean syllabus with a verb-level mismatch (CPE 101's planted problems dominate); the re-check after the plan.
+
+### v1.94.7 — AI Checker: Real-Model Run of the New Rules on a Clean Syllabus (CAPSPRO1)
+
+Owner-approved paid run of 2026-11-17 (`--run 113 --live --confirm-paid --max-cost 1 --concurrency 1 --label new-rules`). No code change. Output in `docs/ai-checker-replan-run/syllabus-113/new-rules/` (keep local, not committed).
+
+- **Cost:** 18 requests, $0.36 charged ($0.33 estimated); completed, not stopped.
+- **Result:** score 100 (the same as check #449 under the old rules), 141 of 141 answered, 0 misalignments, plan clean, the re-check asked nothing.
+- **No false positives from the new rules on a good syllabus:** ACTIVITY-FIT 11/11 and TASK-FIT 11/11 aligned (the level items included), CLO-EVIDENCE 4/4 aligned with reasons naming the work at each CLO's level (problem-tree analysis for CLO 1, feasibility justification for CLO 2, designs graded by rubric for CLO 3, consent-form validation for CLO 4), CLO-LEVEL 4/4.
+- **Review items (no points):** 9 extra tags that do not fit beside a tag that does: 6 CLO-PO and 1 CLO-EGA, and 3 ILO-CLO where the AI applied the CLO's own verb (for example "develop" is create level, above CLO 2's "evaluate"; the ILO fits its other tag, so it costs nothing).
