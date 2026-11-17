@@ -44,7 +44,11 @@ async function checkHybrid(db, content, options = {}) {
   // Stage C3: the three content/activity/assessment links) are held off for this check: no relationship is evaluated or reported twice. They stay available
   // when V2 is off. ILO ↔ CLO and ILO ↔ Activities also stay in the legacy path because they are SCORED relationships (official deductions); the merged
   // recommendation list below keeps one recommendation per relationship.
-  const v2On = academicV2Activation.enabled(env);
+  const officialReplan = require('../syllabuscheck/pipeline/official');
+  // The old checker's AI is retired (pipeline/official.js legacyAiOn): without SYLLABUS_CHECK_LEGACY_AI=on, Policy V2, the old AI stages and the old plans
+  // never run from here, and the old engine gives only its no-AI rules.
+  const legacyAi = officialReplan.legacyAiOn(env);
+  const v2On = legacyAi && academicV2Activation.enabled(env);
   const comprehensive = profile.enabled(env);
   const legacyOptions = v2On ? { env: { ...env, SYLLABUS_CHECK_STAGE_B: comprehensive ? 'on' : 'off', SYLLABUS_CHECK_STAGE_C3: 'off', SYLLABUS_CHECK_CLO_DESCRIPTION: 'off' }, ...(comprehensive ? {excludeAdvisoryTypes:profile.V2_ADVISORY} : {}) } : {};
   // Budget planning: set room aside for the required Policy V2 evaluations before the optional staged checks can use it up. The caps are not changed.
@@ -54,10 +58,17 @@ async function checkHybrid(db, content, options = {}) {
   }
   // Re-planned checker as the OFFICIAL AI check (syllabuscheck/pipeline/official.js, SYLLABUS_CHECK_REPLAN=official): the old engine runs with its AI step
   // off (no-AI rules, base score, links; no AI cost) and the new checker fills the AI findings, points and drafts. Only when it is ready (direct Anthropic
-  // provider, AI checking on, its own cost cap); otherwise, and with Policy V2 on, the old checker runs exactly as before.
-  const officialReplan = require('../syllabuscheck/pipeline/official');
-  const replanOfficial = !v2On && options.useAi !== false && officialReplan.readiness(env).ok;
-  const result = await hybridEngine.run(content, masters, { ...options, ...legacyOptions, ...(replanOfficial ? { env: officialReplan.noAiEnv(env) } : {}), profileResolved:true, requestBudget, reuse, history });
+  // provider, AI checking on, its own cost cap). When it is not ready the check is incomplete with the reason: it never falls back to the old AI (only
+  // with SYLLABUS_CHECK_LEGACY_AI=on, which also lets Policy V2 take over as before).
+  const newReady = options.useAi !== false ? officialReplan.readiness(env) : null;
+  const replanOfficial = !v2On && !!newReady && newReady.ok;
+  const oldAiOff = !legacyAi || replanOfficial;
+  const result = await hybridEngine.run(content, masters, { ...options, ...legacyOptions, ...(oldAiOff ? { env: officialReplan.noAiEnv(env) } : {}), profileResolved:true, requestBudget, reuse, history });
+  if (newReady && !newReady.ok && !legacyAi && officialReplan.aiProviderOn(env)) {
+    // an AI check was asked for and an AI provider is set, but the new checker cannot run: no score from the no-AI rules alone, and no old AI
+    result.hybrid.replan = { mode: 'official', error: 'The new AI Checker is not ready on this server: ' + newReady.reason };
+    result.hybrid.alignment = { ...(result.hybrid.alignment || {}), status: 'not_evaluated', reason: result.hybrid.replan.error };
+  }
   if (replanOfficial) {
     try {
       await officialReplan.officialize({ noAi: result, content, masters, env, db, transport: options.transport });
@@ -67,17 +78,8 @@ async function checkHybrid(db, content, options = {}) {
       result.hybrid.alignment = { ...(result.hybrid.alignment || {}), status: 'not_evaluated', reason: 'The AI Checker could not complete: ' + result.hybrid.replan.error };
     }
   }
-  // Whole-syllabus improvement plan (syllabuscheck/wholeSyllabusPlan.js, SYLLABUS_CHECK_WHOLE_PLAN=on): the recommendations worked out together on a copy and
-  // verified together, so applying them does not move the conflicts to other fields. Its own request budget; advisory: a failure never disrupts the check.
-  const wholePlan = require('../syllabuscheck/wholeSyllabusPlan');
-  if (!v2On && !replanOfficial && options.useAi !== false && wholePlan.enabled(env)) {
-    try {
-      const plan = await wholePlan.buildWholePlan({ content, masters, result, syllabusId: options.syllabusId, options: { ...options, profileResolved: true, reuse, history } });
-      if (plan) result.hybrid.improvementPlan = plan;
-    } catch (error) {
-      result.hybrid.improvementPlanError = String(error && error.message || error).slice(0, 300);
-    }
-  }
+  // The old checker's whole-syllabus and coordinated improvement plans (wholeSyllabusPlan.js, coordinatedPlanEngine.js) were removed with the old AI
+  // Checker; the new AI Checker's drafts are its plan (officialize above).
   // Re-planned checker in shadow (syllabuscheck/pipeline/shadow.js, SYLLABUS_CHECK_REPLAN=shadow|plan, off by default): the same syllabus checked by the
   // new pipeline, attached for comparison only. Its own cost cap; it changes nothing above, and a failure never disrupts the check.
   const replan = require('../syllabuscheck/pipeline/shadow');
@@ -89,7 +91,7 @@ async function checkHybrid(db, content, options = {}) {
       result.hybrid.replanShadow = { mode: replan.modeOf(env), error: String(error && error.message || error).slice(0, 300) };
     }
   }
-  if (academicV2Activation.enabled(env)) {
+  if (v2On) {
     try {
       result.hybrid.academicV2 = await academicV2.evaluateIntegrated(content, masters, hybridEngine.coded, { env, syllabusId: options.syllabusId, requestBudget, reuse, useAi: options.useAi, signal: options.signal, ...(options.transport ? { transport: options.transport } : {}) });
       if (result.hybrid.academicV2?.academic?.suggestions?.length) {
@@ -108,20 +110,6 @@ async function checkHybrid(db, content, options = {}) {
         contracts: { policy: academicV2.POLICY.id }, alignment: { status: 'not_evaluated', reason: `Policy V2 could not prepare this academic check: ${error.message}` },
         academic: { policyVersion: academicV2.POLICY.id, disposition: 'NOT_EVALUATED', requirements: [], relationships: [], remediation: { actions: [], rootReviews: [] },
           coverage: { required: 0, supported: 0, notEvaluated: 0 }, provenance: { kind: 'live-application', liveModelCalls: 0, networkRequests: 0, facultyValidated: false } } };
-    }
-  }
-  const coordinatedPlan = require('../syllabuscheck/coordinatedPlanEngine');
-  if (!replanOfficial && !result.hybrid.improvementPlan && coordinatedPlan.enabled(env)) {
-    try {
-      result.hybrid.improvementPlan = coordinatedPlan.buildPlan({
-        content,
-        masters,
-        syllabusId: options.syllabusId,
-        result,
-        env,
-      });
-    } catch {
-      /* plan generation is advisory and never disrupts the core check */
     }
   }
   result.referenceHash = masters.fingerprint;

@@ -1,4 +1,5 @@
 'use strict';
+process.env.SYLLABUS_CHECK_LEGACY_AI = 'on'; // the old AI Checker's own tests: it is retired everywhere else (pipeline/official.js legacyAiOn)
 // VPAA conformance, Tasks 1, 3 and 5: the seven relationships, scenario by scenario, against the PRODUCTION code with a SCRIPTED model.
 // A pass here is SOFTWARE conformance (right fields, right validation, right disposition, right recommendation behaviour). It is not evidence
 // of Claude's academic accuracy: the model is a test double and never makes a network call (liveGuard).

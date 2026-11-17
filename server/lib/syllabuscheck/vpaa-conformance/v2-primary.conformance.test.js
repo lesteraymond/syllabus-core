@@ -1,4 +1,5 @@
 'use strict';
+process.env.SYLLABUS_CHECK_LEGACY_AI = 'on'; // the old AI Checker's own tests: it is retired everywhere else (pipeline/official.js legacyAiOn)
 // Policy V2 as the PRIMARY seven-relationship semantic path, and advisory-only. Verifies: exactly the seven VPAA relationships with the right fields and
 // identifiers; no relationship evaluated or reported twice when several checking stages exist; official scoring and gates identical with V2 on and off;
 // honest "incomplete" reporting when V2 is off or the AI is unavailable; the shared budget; persistence; and the exact staging configuration.

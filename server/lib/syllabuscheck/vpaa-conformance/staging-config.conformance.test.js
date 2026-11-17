@@ -1,4 +1,5 @@
 'use strict';
+process.env.SYLLABUS_CHECK_LEGACY_AI = 'on'; // the old AI Checker's own tests: it is retired everywhere else (pipeline/official.js legacyAiOn)
 // Task 4: every claim POLICY-V2-ACTIVATION.md makes about the staging configuration, verified against the code with the document's OWN configuration block
 // (staging.js parses it). Scripted provider only; no network, no real key, no real secret.
 const test = require('node:test');

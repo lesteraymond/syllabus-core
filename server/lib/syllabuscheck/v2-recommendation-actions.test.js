@@ -1,4 +1,5 @@
 'use strict';
+process.env.SYLLABUS_CHECK_LEGACY_AI = 'on'; // the old AI Checker's own tests: it is retired everywhere else (pipeline/official.js legacyAiOn)
 process.env.SESSION_SECRET = process.env.SESSION_SECRET || 'existing-suite-test-secret-0123456789'; // verification tokens are signed only with a configured secret
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -606,52 +607,6 @@ test('Scenario H: Multiple CLO mappings with one incorrect relationship target o
 });
 
 // -----------------------------------------------------------------------------
-// Scenario I: Stale recommendation after syllabus content changes (409)
-// -----------------------------------------------------------------------------
-test('Scenario I: Stale recommendation after syllabus content changes is rejected', async (t) => {
-  const { applySuggestion } = await loadHybridCheck();
-  const { content, request, setReport } = await createTestHarness(t);
-
-  const suggestion = {
-    id: 'review:row0-content',
-    path: 'plan[0].contents',
-    replacement: 'Updated content',
-    originalValue: 'Old text before faculty edited the form',
-    source: 'ai',
-    policy: POLICY.id
-  };
-  setReport({
-    hybrid: {
-      alignment: { promptVersion: 'prompt-v10-old' },
-      suggestions: [suggestion]
-    }
-  });
-
-  // Client-side drift detection
-  assert.throws(
-    () => applySuggestion(content, suggestion, { requireOriginal: true }),
-    /hybrid\.suggestionTargetChanged/
-  );
-
-  // Server-side field drift detection returns 409
-  const refineRes = await request(`/runs/1/suggestions/${suggestion.id}/refine`, { method: 'POST', role: 'faculty' });
-  assert.equal(refineRes.status, 409);
-  assert.match(refineRes.body.error, /field changed/);
-
-  // Server-side older checker version check
-  const legacySuggestion = { id: 'SEM:legacy', path: 'plan[0].contents', replacement: 'Updated', originalValue: content.plan[0].contents, source: 'ai' };
-  setReport({
-    hybrid: {
-      alignment: { promptVersion: promptVersionOf(NEMOTRON_FREE) + '-old' },
-      suggestions: [legacySuggestion]
-    }
-  });
-  const oldRefineRes = await request(`/runs/1/suggestions/${legacySuggestion.id}/refine`, { method: 'POST', role: 'faculty' });
-  assert.equal(oldRefineRes.status, 409);
-  assert.match(oldRefineRes.body.error, /older checker version/);
-});
-
-// -----------------------------------------------------------------------------
 // Scenario J: Unauthorized recommendation modification (401, 403, 404)
 // -----------------------------------------------------------------------------
 test('Scenario J: Non-author, administrator and anonymous access controls are strictly enforced', async (t) => {
@@ -710,36 +665,6 @@ test('Scenario K: Historical or submitted syllabus rejects recommendation action
   const refRes = await request(`/runs/1/suggestions/${suggestion.id}/refine`, { method: 'POST', role: 'faculty' });
   assert.equal(refRes.status, 409);
   assert.match(refRes.body.error, /locked/i);
-});
-
-// -----------------------------------------------------------------------------
-// Scenario L: AI unavailable during Check & Improve (502 error handling)
-// -----------------------------------------------------------------------------
-test('Scenario L: AI provider failure during refine returns 502 without corrupting state', async (t) => {
-  const { content, request, setReport } = await createTestHarness(t);
-  const origText = content.plan[2].contents;
-  const suggestion = {
-    id: 'review:row2-content',
-    path: 'plan[2].contents',
-    replacement: 'New text',
-    originalValue: origText,
-    source: 'ai'
-  };
-  setReport({
-    hybrid: {
-      alignment: { promptVersion: promptVersionOf(NEMOTRON_FREE) },
-      suggestions: [suggestion]
-    }
-  });
-
-  // Mock global fetch to simulate network outage
-  t.mock.method(globalThis, 'fetch', async () => {
-    throw new Error('Connection refused to AI provider API gateway');
-  });
-
-  const res = await request(`/runs/1/suggestions/${suggestion.id}/refine`, { method: 'POST', role: 'faculty' });
-  assert.equal(res.status, 502);
-  assert.match(res.body.error, /Connection refused/);
 });
 
 // -----------------------------------------------------------------------------

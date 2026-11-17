@@ -1,4 +1,5 @@
 'use strict';
+process.env.SYLLABUS_CHECK_LEGACY_AI = 'on'; // the old AI Checker's own tests: it is retired everywhere else (pipeline/official.js legacyAiOn)
 const test=require('node:test'),assert=require('node:assert/strict');
 const h=require('./harness'),svc=require('../../compliance/service'),repo=require('../repository');
 const {createMemoryDb}=require('./memdb');

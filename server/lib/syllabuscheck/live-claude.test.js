@@ -1,4 +1,5 @@
 'use strict';
+process.env.SYLLABUS_CHECK_LEGACY_AI = 'on'; // the old AI Checker's own tests: it is retired everywhere else (pipeline/official.js legacyAiOn)
 // The controlled real-Claude test tooling (scripts/live-claude): fixtures, plan, evidence generator and the guarded runner. Everything here runs OFFLINE against a scripted
 // provider. These tests are what guarantee that no paid request can start without the exact authorization, and that the synthetic fixtures stay synthetic and deterministic.
 const test = require('node:test'), assert = require('node:assert/strict');
@@ -10,7 +11,7 @@ const F = require(path.join(ROOT, 'scripts/live-claude/fixtures.cjs'));
 const evidence = require(path.join(ROOT, 'scripts/live-claude/evidence.cjs'));
 const RUNNER = path.join(ROOT, 'scripts/live-claude/live.cjs');
 const PRELOAD = path.join(ROOT, 'scripts/e2e/offline-provider.cjs');
-const run = (args, extraEnv = {}) => spawnSync(process.execPath, ['-r', PRELOAD, RUNNER, ...args], { cwd: ROOT, encoding: 'utf8', env: { PATH: process.env.PATH, SystemRoot: process.env.SystemRoot, TEMP: process.env.TEMP, TMP: process.env.TMP, E2E_PROVIDER_LOG: path.join(os.tmpdir(), `live-claude-test-${process.pid}.jsonl`), ...extraEnv }, timeout: 240000 });
+const run = (args, extraEnv = {}) => spawnSync(process.execPath, ['-r', PRELOAD, RUNNER, ...args], { cwd: ROOT, encoding: 'utf8', env: { PATH: process.env.PATH, SystemRoot: process.env.SystemRoot, TEMP: process.env.TEMP, TMP: process.env.TMP, SYLLABUS_CHECK_LEGACY_AI: 'on', E2E_PROVIDER_LOG: path.join(os.tmpdir(), `live-claude-test-${process.pid}.jsonl`), ...extraEnv }, timeout: 240000 });
 const providerEvents = () => { try { return fs.readFileSync(path.join(os.tmpdir(), `live-claude-test-${process.pid}.jsonl`), 'utf8').split(/\r?\n/).filter(Boolean).map((l) => JSON.parse(l)); } catch { return []; } };
 const diffPaths = (a, b, prefix = '') => {
   if (JSON.stringify(a) === JSON.stringify(b)) return [];

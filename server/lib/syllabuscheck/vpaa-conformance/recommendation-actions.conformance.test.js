@@ -1,4 +1,5 @@
 'use strict';
+process.env.SYLLABUS_CHECK_LEGACY_AI = 'on'; // the old AI Checker's own tests: it is retired everywhere else (pipeline/official.js legacyAiOn)
 // VPAA conformance, Task 7: Check & Improve, Accept, Edit, Reject, Undo, through the REAL route code (server/routes/syllabusCheck.js) with an in-memory
 // database. Verifies authorization, stale-context protection, verification, replay protection and the audit trail. The model is never called:
 // Check & Improve's refinement step is replaced by a test double, and no network call is possible (liveGuard).
@@ -163,15 +164,16 @@ test('[VPAA-R13-AUDIT] every decision leaves an audit row and an activity note, 
   assert.deepEqual(api.log.unexpected, [], 'the route issued no query that could change the syllabus');
 });
 
-test('[VPAA-R13-CHECK-IMPROVE] Check & Improve returns a token only for a verified refinement; an unverified refinement cannot then be accepted', async (t) => {
+test('[VPAA-R13-CHECK-IMPROVE] Check & Improve (of the new AI Checker, the only one) returns a token only for a verified refinement; an unverified refinement cannot then be accepted', async (t) => {
   h.liveGuard(t);
   const fx = v2Fixture();
   const state = { status: 'draft', content: fx.content, masters: fx.masters };
-  const api = await boot(t, { report: fx.report, state });
-  const saved = { ...process.env }; Object.assign(process.env, { SYLLABUS_CHECK_AI_PROVIDER: 'anthropic', ANTHROPIC_MODEL: h.MODEL, SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL: h.MODEL, ANTHROPIC_API_KEY: 'sk-ant-conformance-test-only-not-a-real-key' });
+  const report = { hybrid: { alignment: { status: 'completed', engine: 're-planned', promptVersion: require('../pipeline/prompt').PROMPT_VERSION, judgements: [] }, suggestions: [fx.suggestion] } };
+  const api = await boot(t, { report, state });
+  const saved = { ...process.env }; Object.assign(process.env, { SYLLABUS_CHECK_REPLAN: 'official', SYLLABUS_CHECK_REPLAN_MAX_COST_USD: '2', SYLLABUS_CHECK_AI_PROVIDER: 'anthropic', ANTHROPIC_MODEL: h.MODEL, SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL: h.MODEL, ANTHROPIC_API_KEY: 'sk-ant-conformance-test-only-not-a-real-key' });
   t.after(() => { for (const k of Object.keys(process.env)) if (!(k in saved)) delete process.env[k]; Object.assign(process.env, saved); });
   const outcomes = [{ status: 'verified', text: 'Variables, data types and arithmetic expressions' }, { status: 'needs_revision', text: 'Not good enough' }];
-  t.mock.method(refine, 'refineSuggestion', async () => outcomes.shift());
+  t.mock.method(require('../pipeline/refine'), 'refineDraft', async () => outcomes.shift());
   const verified = await api.refine('faculty', fx.suggestion.id);
   assert.equal(verified.status, 200); assert.equal(verified.body.status, 'verified'); assert.ok(verified.body.verificationToken, 'a verified refinement carries a token');
   const unverified = await api.refine('faculty', fx.suggestion.id);

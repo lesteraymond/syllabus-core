@@ -2593,3 +2593,29 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Versions unchanged:** no question or prompt changed; stored answers are reused.
 - **Verified offline:** a read-only replay of CPE 101 with the stored answers (no AI request) gives 0 "not checked" findings, the Week 10 ILO as a rewrite root, the reference reason above, score 85. New `pipeline/cpe101-458.test.js` (3 tests); `npm test` passes (2,603 server + 127).
 - Not yet re-checked with the real model: re-check CPE 101 in the app.
+
+---
+
+### v1.95.0 — AI Checker: The Old AI Checker Is Retired
+**Date:** November 17, 2026
+
+- **Owner decision:** "don't use the old AI Checker anymore". AI judgements, deductions, drafts and Check & improve come only from the new AI Checker.
+- **Check** (`compliance/service.js`): the old engine always runs with its AI off and gives only its no-AI rules (required sections, format, week structure, links, base score). When an AI check is asked for, an AI provider is set and the new checker is not ready (for example `SYLLABUS_CHECK_REPLAN` is not `official`, or its cost cap is missing), the check is incomplete with the reason ("The new AI Checker is not ready on this server: ...") and sends nothing to any AI. Before, it fell back to the old checker with its AI stages, Policy V2 and the whole-syllabus plan.
+- Policy V2, the old whole-syllabus plan and the old coordinated plan no longer run from a check.
+- **Routes** (`routes/syllabusCheck.js`): Check & improve and the improvement plan refuse a report the old checker made (409 `old_checker_retired`: "This check was made by the old AI Checker, which is no longer used. Run Check with AI again ...").
+- **The old code is kept, not deleted:** its no-AI rules are the same engine, and its own tests still run. It runs its AI only with `SYLLABUS_CHECK_LEGACY_AI=on` (`pipeline/official.js` `legacyAiOn`), which no setup sets. The old checker's test files and the UI fixture builder set it in their own process; evaluation scripts of the old checker need it too.
+- **No change for the dev server:** it already ran the new checker (official mode, ready).
+- **Tests:** new `pipeline/retired-old-checker.test.js` (4, through the real check service: no AI request when the new checker is not ready, with every old AI path switched on; a control shows the old AI is seen when opted in); `refine.route.test.js` updated (old-checker report refused). `npm test` passes (2,608 server + 127).
+
+---
+
+### v1.96.0 — AI Checker: Old Checker Parts Not Connected to the New AI Checker Removed
+**Date:** November 17, 2026
+
+- **Owner decision:** remove what of the old checker is not connected to the new AI Checker. The old engine's no-AI rules (required sections, format, week structure, links, base score) stay: the new checker's score starts from them.
+- **Removed:** `wholeSyllabusPlan.js` (old whole-syllabus plan) and `coordinatedPlanEngine.js` (old coordinated plan), their calls in `compliance/service.js`, their tests (`wholeSyllabusPlan.test.js`, `coordinated-plan.test.js`, `routes/syllabusCheck.coordinatedPlan.routes.test.js`) and `scripts/staging-coordinated-plan-validation.cjs`. The new checker never made an improvement plan; its drafts are its suggestions.
+- **Routes** (`routes/syllabusCheck.js`): the improvement-plan routes now answer `{ plan: null }` and 409 `old_checker_retired` (so a page still showing an old report's plan gets a clear reply). Check & improve takes only the new checker's drafts; the old checker's branch (`refine.js` `refineSuggestion`) is gone even with `SYLLABUS_CHECK_LEGACY_AI=on`.
+- **Kept, because other code still uses it:** `refine.js` (token signing, field helpers used by the new Check & improve route and scripts), Policy V2 and the old AI inside `engine.js`/`gemini.js` (loaded by the engine, the repository, coverage and about 40 evaluation scripts). They stay switched off (v1.95.0).
+- **Tests:** `routes/syllabusCheck.refine.routes.test.js` rewritten for new-checker drafts (daily limit, author-only, locked, unknown/older/old-checker refused, 502, Settings switch); R13 and the staging rehearsal authorization test now run on a new-checker report (token only when verified, forged and replayed tokens refused, author-only, fail closed without the secret); four tests that only repeated covered rules through the removed path deleted. `npm test` passes (2,576 server + 127).
+- **Dev `server/.env`** (not in git; backup taken): removed the old-only settings `SYLLABUS_CHECK_STAGE_A/B/C1/C2/C3/D2`, `SYLLABUS_CHECK_WHOLE_PLAN`, `SYLLABUS_CHECK_REQUIREMENTS_ADVICE`, `SYLLABUS_CHECK_CACHE_WARMUP`, `SYLLABUS_CHECK_COURSE_CONTEXT`, `SYLLABUS_CHECK_OUTPUT_FIELDS`. The new checker's settings are unchanged and it is ready.
+- The interface panel `CoordinatedPlanPanel.jsx` is left as it is (it shows only for an old report that carries a plan); `ComplianceCard.jsx` has another contributor's uncommitted edits.

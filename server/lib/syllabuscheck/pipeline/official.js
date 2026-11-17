@@ -23,6 +23,12 @@ const { bindSuggestions } = require('../suggestions');
 const PASS_THRESHOLD = require('../../compliance/standard-v4.json').passThreshold; // the same pass mark engine.js uses
 const MODE = 'official';
 const isOfficial = (env = process.env) => String(env.SYLLABUS_CHECK_REPLAN || '').trim().toLowerCase() === MODE;
+// The OLD checker's AI is retired (owner, 2026-11-17: "don't use the old AI Checker anymore"): its AI stages, its original-requirements advice, Policy V2,
+// the whole-syllabus and coordinated plans, and its Check & improve run only with SYLLABUS_CHECK_LEGACY_AI=on, which no setup sets; it is kept so the old
+// code's own tests still run (each such test file sets it in its own process). Without it the old engine gives only its no-AI rules, and AI judgements
+// come only from the new checker.
+const legacyAiOn = (env = process.env) => [env.SYLLABUS_CHECK_LEGACY_AI, process.env.SYLLABUS_CHECK_LEGACY_AI].some(v => String(v || '').trim().toLowerCase() === 'on');
+const aiProviderOn = (env = process.env) => !['', 'off', 'none', 'false', '0'].includes(String(env.SYLLABUS_CHECK_AI_PROVIDER || '').trim().toLowerCase());
 
 // The largest per-check cap accepted: the same ceiling aiQuota.js puts on SYLLABUS_CHECK_AI_MAX_COST_USD. A typo such as 2000 must not let one check
 // spend that much; the old checker then runs instead and the reason says why.
@@ -227,4 +233,4 @@ async function officialize({ noAi, content, masters, env = process.env, db, tran
   return noAi;
 }
 
-module.exports = { isOfficial, readiness, noAiEnv, maxRequestsOf, officialize, officialParts, unresolvedOf, pathOf, keyOfPath, APPLYABLE, MODE, MAX_CAP_USD };
+module.exports = { isOfficial, legacyAiOn, aiProviderOn, readiness, noAiEnv, maxRequestsOf, officialize, officialParts, unresolvedOf, pathOf, keyOfPath, APPLYABLE, MODE, MAX_CAP_USD };

@@ -1,3 +1,4 @@
+process.env.SYLLABUS_CHECK_LEGACY_AI = 'on'; // the old AI Checker's own tests: it is retired everywhere else (pipeline/official.js legacyAiOn)
 // Recommendation consistency (2026-11-09): a lesson Policy V2 finds off-topic gets no rewrites that would keep its topic, and a draft never silently
 // replaces the core value the faculty selected. Suggestions only: judgements, findings, deductions and the official score are unchanged. Scripted AI only.
 const test = require('node:test');

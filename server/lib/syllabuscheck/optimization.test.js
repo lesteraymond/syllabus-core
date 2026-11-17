@@ -1,4 +1,5 @@
 'use strict';
+process.env.SYLLABUS_CHECK_LEGACY_AI = 'on'; // the old AI Checker's own tests: it is retired everywhere else (pipeline/official.js legacyAiOn)
 // Cost optimisation of the Comprehensive Hybrid AI Checker (costPlan.js). The flags only change how the SAME relationships are packed, sized, ordered and
 // reused, so every test asserts both sides: what got cheaper (or did not) AND that the academic coverage and the official score are untouched.
 // A scripted transport answers every request in-process: no provider request is made, nothing is billed. Synthetic fixtures only.

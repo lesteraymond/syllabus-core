@@ -20,7 +20,9 @@ async function oneRun({ env, exact = false, script, transport, changed, mutate, 
   repo.mastersFor = async () => masters;
   const db = createMemoryDb({ syllabus: { content: JSON.stringify(content) } });
   const tr = transport || h.scriptedTransport(script);
-  const result = await svc.checkHybrid(db, content, { syllabusId, env: exact ? env : h.envFor(env), transport: tr, linkChecker: LINK });
+  // the old AI Checker's reports: it is retired everywhere else (pipeline/official.js legacyAiOn), so these fixtures opt in
+  const runEnv = { ...(exact ? env : h.envFor(env)), SYLLABUS_CHECK_LEGACY_AI: 'on' };
+  const result = await svc.checkHybrid(db, content, { syllabusId, env: runEnv, transport: tr, linkChecker: LINK });
   const runId = await svc.storeRun(db, { syllabusId, versionId: null, content, result, createdBy: 26, ai: true });
   const [rows] = await db.query('SELECT * FROM ai_check_runs WHERE run_id = ?', [runId]);
   const shown = changed ? Object.assign(structuredClone(content), { description: [{ id: 'd1', t: 'Changed after the check.' }] }) : content;

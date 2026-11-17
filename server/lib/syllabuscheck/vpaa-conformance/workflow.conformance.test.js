@@ -1,4 +1,5 @@
 'use strict';
+process.env.SYLLABUS_CHECK_LEGACY_AI = 'on'; // the old AI Checker's own tests: it is retired everywhere else (pipeline/official.js legacyAiOn)
 // VPAA conformance, Tasks 5 and 8C: the whole Hybrid checking workflow in route order with the PRODUCTION service and routes and an in-memory
 // database:   submit gate → Re-Check → shared hybrid service → coded rules → (scripted) Claude evaluation → saved report → what the UI reads →
 //             recommendation actions → corrective re-check → stale detection → administrator approval gates.

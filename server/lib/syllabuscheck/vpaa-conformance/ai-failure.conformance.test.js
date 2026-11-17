@@ -1,4 +1,5 @@
 'use strict';
+process.env.SYLLABUS_CHECK_LEGACY_AI = 'on'; // the old AI Checker's own tests: it is retired everywhere else (pipeline/official.js legacyAiOn)
 // VPAA conformance, Task 6: what the checker does when the AI cannot be used. In every case the coded checks must keep working, no AI
 // relationship may be marked verified, no judgment may be invented, and the official score must not change. All failures are SIMULATED
 // by a test double: no network call is made.

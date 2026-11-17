@@ -1,4 +1,5 @@
 'use strict';
+process.env.SYLLABUS_CHECK_LEGACY_AI = 'on'; // the old AI Checker's own tests: it is retired everywhere else (pipeline/official.js legacyAiOn)
 // Budget planning for the comprehensive profile: optional supporting checks may not use up the per-check budget before the required academic evaluations
 // (the seven VPAA relationships, the four CLO classifications and the legacy relationships that feed the official score) have been sent.
 // The caps are never raised; what does not fit is reported NOT_CHECKED, never invented. Scripted transport: no provider request leaves the machine.

@@ -119,12 +119,18 @@ test('officialize hands back the check and plan it made, so a caller never build
   assert.doesNotMatch(script, /pipeline\.buildPlan\(/, 'the test script re-checks with the plan officialize made');
 });
 
-test('compliance/service.js runs the old engine with AI off only in official mode, and keeps the old path otherwise', () => {
+test('compliance/service.js runs the old engine with AI off unless SYLLABUS_CHECK_LEGACY_AI=on, and never falls back to the old AI', () => {
   const source = fs.readFileSync(path.join(__dirname, '..', '..', 'compliance', 'service.js'), 'utf8');
-  assert.match(source, /const replanOfficial = !v2On && options\.useAi !== false && officialReplan\.readiness\(env\)\.ok;/);
-  assert.match(source, /\.\.\.\(replanOfficial \? \{ env: officialReplan\.noAiEnv\(env\) \} : \{\}\)/);
+  assert.match(source, /const legacyAi = officialReplan\.legacyAiOn\(env\);\s*const v2On = legacyAi && academicV2Activation\.enabled\(env\);/);
+  assert.match(source, /const replanOfficial = !v2On && !!newReady && newReady\.ok;\s*const oldAiOff = !legacyAi \|\| replanOfficial;/);
+  assert.match(source, /\.\.\.\(oldAiOff \? \{ env: officialReplan\.noAiEnv\(env\) \} : \{\}\)/);
+  assert.match(source, /if \(newReady && !newReady\.ok && !legacyAi && officialReplan\.aiProviderOn\(env\)\) \{/);
   assert.match(source, /if \(replanOfficial\) \{\s*try \{\s*await officialReplan\.officialize/);
-  assert.match(source, /if \(!v2On && !replanOfficial && options\.useAi !== false && wholePlan\.enabled\(env\)\)/);
+  assert.doesNotMatch(source, /require\('\.\.\/syllabuscheck\/(wholeSyllabusPlan|coordinatedPlanEngine)'\)/, 'the old plans are removed');
+  for (const gone of ['wholeSyllabusPlan.js', 'coordinatedPlanEngine.js']) assert.ok(!fs.existsSync(path.join(__dirname, '..', gone)), gone + ' is removed');
+  assert.match(source, /\n  if \(v2On\) \{\r?\n    try \{\r?\n      result\.hybrid\.academicV2 =/);
+  assert.equal(O.legacyAiOn({}), false, 'off unless set');
+  assert.equal(O.legacyAiOn({ SYLLABUS_CHECK_LEGACY_AI: 'on' }), true);
 });
 
 test('the request limit is 1-300 (default 80) and the cost cap at most 1000: a bad value never refuses every request or lifts the limit', () => {

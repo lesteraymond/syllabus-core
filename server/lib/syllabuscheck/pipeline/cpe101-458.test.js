@@ -57,5 +57,5 @@ test('official mode runs the old engine without its original-requirements advice
   assert.equal(notChecked(after), 0);
   assert.equal(after.hybrid.baseScore, before.hybrid.baseScore, 'the no-AI rules and the base score are the same');
   const service = require('node:fs').readFileSync(require.resolve('../../compliance/service'), 'utf8');
-  assert.match(service, /replanOfficial \? \{ env: officialReplan\.noAiEnv\(env\) \}/, 'the service uses it');
+  assert.match(service, /oldAiOff \? \{ env: officialReplan\.noAiEnv\(env\) \}/, 'the service uses it');
 });

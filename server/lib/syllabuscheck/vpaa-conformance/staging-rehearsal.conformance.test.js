@@ -1,4 +1,5 @@
 'use strict';
+process.env.SYLLABUS_CHECK_LEGACY_AI = 'on'; // the old AI Checker's own tests: it is retired everywhere else (pipeline/official.js legacyAiOn)
 // Task 5: the staging rehearsal. The full workflow under the DOCUMENTED staging environment (staging.js parses it from POLICY-V2-ACTIVATION.md), a SCRIPTED provider,
 // synthetic syllabus data and an in-memory database. It dispatches no Anthropic request, uses no real credential and touches no real data: any non-loopback network
 // call fails the suite. A pass is software conformance and staging configuration readiness; it is NOT a live provider test.
@@ -118,14 +119,16 @@ test('[VPAA-STG-REHEARSAL-OFFLINE] with the AI unavailable the staging configura
 test('[VPAA-STG-REHEARSAL-AUTHORIZATION] Check & Improve and recommendation actions: only the author acts, an unverified or forged recommendation is never recorded, the administrator reads', async (t) => {
   h.liveGuard(t);
   const saved = { ...process.env };
-  Object.assign(process.env, STAGING); // the routes read the server environment; this is the documented staging environment with stand-in secrets
+  Object.assign(process.env, STAGING, { SYLLABUS_CHECK_REPLAN: 'official', SYLLABUS_CHECK_REPLAN_MAX_COST_USD: '2' }); // the routes read the server environment: the documented staging environment with stand-in secrets, and the new AI Checker on
   t.after(() => { for (const k of Object.keys(process.env)) if (!(k in saved)) delete process.env[k]; Object.assign(process.env, saved); });
   const { content, db } = world(t);
   const { result } = await check(db, content, STAGING, { script: FAIL });
+  // Check & Improve takes only the new AI Checker's drafts (the old checker's was removed): the stored report is marked as the new checker's
+  result.hybrid.alignment = { ...result.hybrid.alignment, engine: 're-planned', promptVersion: require('../pipeline/prompt').PROMPT_VERSION };
   const runId = await svc.storeRun(db, { syllabusId: 100, versionId: null, content, result, createdBy: 26, ai: true });
   const v2Suggestion = result.hybrid.suggestions.find((s) => s.policy && /row0-content/.test((s.basedOn || []).join()));
   assert.ok(v2Suggestion, 'a Policy V2 recommendation exists to act on');
-  t.mock.method(refine, 'refineSuggestion', async () => ({ status: 'verified', text: v2Suggestion.replacement }));
+  t.mock.method(require('../pipeline/refine'), 'refineDraft', async () => ({ status: 'verified', text: v2Suggestion.replacement }));
   const ROUTE = require.resolve('../../../routes/syllabusCheck');
   delete require.cache[ROUTE];
   const app = express(); app.use(express.json()); app.locals.db = db;
