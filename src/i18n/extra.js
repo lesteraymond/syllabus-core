@@ -2006,6 +2006,7 @@ const generatorMessages = {
   "generate.cost": ["Estimated AI cost of this run: ${cost}", "Tinatayang gastos ng AI sa pagpapatakbong ito: ${cost}"],
   "generate.resumed": ["A draft finished while you were away and was filled into your syllabus.", "May draft na natapos habang wala ka at inilagay sa iyong silabus."],
   "generate.failed": ["The draft could not be generated: {reason}", "Hindi nabuo ang draft: {reason}"],
+  "generate.msg.soft": ["The AI did not fully follow these quality guidelines after two tries, so please review them: {problems}", "Hindi lubos na nasunod ng AI ang mga alituntuning ito sa kalidad matapos ang dalawang subok, kaya pakisuri ang mga ito: {problems}"],
   "generate.msg.keptClos": ["Your four CLOs were kept as they are; the plan was written against them.", "Pinanatili ang apat mong CLO; ang plano ay isinulat batay sa mga ito."],
   "generate.msg.keptRefs": ["Your own references were kept.", "Pinanatili ang sarili mong mga sanggunian."],
   "generate.msg.noRefs": ["References were not generated: a model cannot look a source up, and the checker rejects invented ones. No book could be confirmed in the catalogue, so add your references in Step 5.", "Walang nabuong mga sanggunian: hindi makapaghahanap ng sanggunian ang modelo, at tinatanggihan ng tagasuri ang mga imbento. Walang aklat na nakumpirma sa katalogo, kaya idagdag ang iyong mga sanggunian sa Hakbang 5."],

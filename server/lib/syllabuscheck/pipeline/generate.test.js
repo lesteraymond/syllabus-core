@@ -413,24 +413,24 @@ test('the same number of activities in every week (a template) is sent back; two
   assert.match(read(mkWeeks({ 4: { tasks: ['t1', 't2', 't3', 't4'] } })).problems.join(' '), /Week 4: give at most 3 tasks/);
 });
 
-test('a packed week is sent back: more than 4 topic groups, or more than 260 characters', () => {
+test('a packed week is sent back: more than 5 topic groups, or more than 320 characters', () => {
   const reply = contents => JSON.stringify({ weeks: G.LESSON_WEEKS.map((week, i) => ({ week, clo: CLO_BY_WEEK[i], alsoClo: 0, contents: week === 3 ? contents : TOPICS[i] })) });
-  assert.ok(G.readOutline(reply('Linked lists; node structure; insertion and deletion; traversal')).map, 'four groups are fine');
-  assert.match(G.readOutline(reply('Linked lists; node structure; insertion; deletion; traversal')).problems.join(' '), /Week 3 has more than 4 topic groups/);
-  assert.match(G.readOutline(reply('Linked lists, ' + 'node structure and operations '.repeat(10))).problems.join(' '), /Week 3 content is too long \(at most 260 characters\): do not pack a week/);
+  assert.ok(G.readOutline(reply('Linked lists; node structure; insertion; deletion; traversal')).map, 'five groups are fine');
+  assert.match(G.readOutline(reply('Linked lists; node structure; insertion; deletion; traversal; arrays versus lists')).problems.join(' '), /Week 3 has more than 5 topic groups/);
+  assert.match(G.readOutline(reply('Linked lists, ' + 'node structure and operations '.repeat(12))).problems.join(' '), /Week 3 content is too long \(at most 320 characters\): do not pack a week/);
 });
 
 test('the rules are in the system prompt and in the weekly and outline requests, so the AI is told before it is checked', () => {
   assert.match(G.SYSTEM, /Raise the level with the course/);
   assert.match(G.SYSTEM, /never a week whose only task is a quiz/);
   assert.match(G.SYSTEM, /never the same number in every week/);
-  assert.match(G.SYSTEM, /3 or 4 topic groups separated by semicolons/);
+  assert.match(G.SYSTEM, /3 to 5 topic groups separated by semicolons/);
   const outline = new Map(G.LESSON_WEEKS.map(w => [w, { clo: 2, alsoClo: 0, contents: 'x' }]));
   const weeks = JSON.parse(G.weeksMessage({ subject: {}, clos: [1, 2, 3, 4].map(n => ({ level: 'L', statement: 's' + n })), outline, weeks: [2], before: [] }).user).format;
   assert.match(weeks.ilo, /CLO is 2, 3 or 4 the verb is at apply level or above/);
   assert.match(weeks.activities, /vary the number/);
   assert.match(weeks.tasks, /At most one quiz or test, and never only a quiz/);
-  assert.match(JSON.parse(G.outlineMessage({ subject: {}, clos: [1, 2, 3, 4].map(n => ({ level: 'L', statement: 's' + n })) }).user).format.contents, /3 or 4 topic groups separated by semicolons/);
+  assert.match(JSON.parse(G.outlineMessage({ subject: {}, clos: [1, 2, 3, 4].map(n => ({ level: 'L', statement: 's' + n })) }).user).format.contents, /3 to 5 topic groups separated by semicolons/);
 });
 
 test('an end-to-end generation whose first weekly answer breaks the guards is asked again with the problems named, and the second answer is used', async () => {
@@ -441,4 +441,50 @@ test('an end-to-end generation whose first weekly answer breaks the guards is as
   const out = await run(draft(), { provider: { ...provider([]), rewrite: spy } });
   assert.ok(seen.some(p => /must be at apply level or above/.test(p)), 'the problem was named in the second request');
   assert.ok(out.sections.plan.filter(r => r.kind === 'lesson' && r.week !== '1').every(r => /^Apply /.test(r.ilos[0].text)), 'and the second answer replaced the first');
+});
+
+// ---- the quality guards are SOFT: after the retry they become a warning, they never stop a run (found in the first general-education run, which was stopped by a packed week) ----
+const sixGroups = 'Patterns in nature; sequences and series; the Fibonacci sequence; the golden ratio; symmetry and tessellations; mathematics and art';
+
+test('in the second answer a quality problem is let through with a warning; a structural problem still stops the run', () => {
+  const reply = contents => JSON.stringify({ weeks: G.LESSON_WEEKS.map((week, i) => ({ week, clo: CLO_BY_WEEK[i], alsoClo: 0, contents: week === 2 ? contents : TOPICS[i] })) });
+  assert.ok(G.readOutline(reply(sixGroups)).problems, 'first answer: sent back');
+  const lenient = G.readOutline(reply(sixGroups), true);
+  assert.ok(lenient.map && !lenient.problems, 'second answer: accepted');
+  assert.match(lenient.soft.join(' '), /Week 2 has more than 5 topic groups/);
+  const missing = JSON.stringify({ weeks: G.LESSON_WEEKS.slice(1).map((week, i) => ({ week, clo: CLO_BY_WEEK[i + 1], alsoClo: 0, contents: TOPICS[i + 1] })) });
+  assert.match(G.readOutline(missing, true).problems.join(' '), /weeks 2 are missing/, 'a missing week is never let through');
+});
+
+test('weekly plan: the level, quiz, count and template guards are let through in the second answer, but a copied ILO or a missing value is not', () => {
+  const list = mkWeeks({ 3: { ilo: 'Describe how queues serve requests in order' }, 4: { tasks: ['Quiz on trees', 'Written test on trees'] }, 5: { activities: ['a', 'b', 'c', 'd', 'e'] } });
+  const strict = read(list, clo(2));
+  assert.ok(strict.problems && strict.problems.length >= 3, 'first answer: sent back');
+  const second = G.readWeeks(JSON.stringify({ weeks: list }), WEEKS7, [], clo(2), true);
+  assert.ok(second.map && second.map.size === 7, 'second answer: every week kept');
+  assert.equal(second.soft.length >= 3, true);
+  assert.match(second.soft.join(' '), /not "describe"/);
+  const copy = mkWeeks({ 4: { ilo: list[0].ilo }, 6: { values: 'being nice' } });
+  const bad = G.readWeeks(JSON.stringify({ weeks: copy }), WEEKS7, [], clo(1), true);
+  assert.match(bad.problems.join(' '), /repeats another ILO/);
+  assert.match(bad.problems.join(' '), /core value/);
+});
+
+test('end to end: an AI that keeps writing packed weeks does not stop the generation; the author is told which weeks to review', async () => {
+  let outlineRequests = 0;
+  const bad = { outline: body => { outlineRequests += 1; return { weeks: body.weeks.map((week, i) => ({ week, clo: CLO_BY_WEEK[i], alsoClo: 0, contents: week === 2 ? sixGroups : week === 3 ? 'Voting and fair division; apportionment methods; weighted voting; the Banzhaf power index; approval ballots; ranked choice' : TOPICS[i] })) }; } };
+  const out = await run(draft(), { provider: { ...provider([]), rewrite: model({ bad }) } });
+  assert.equal(out.status, 'generated');
+  assert.equal(outlineRequests, 2, 'asked again once, with the problem named');
+  assert.equal(out.sections.plan.length, 18);
+  const warning = out.warnings.find(w => /did not fully follow these quality guidelines after two tries/.test(w));
+  assert.ok(warning && /Week 2 has more than 5 topic groups/.test(warning) && /Week 3/.test(warning));
+});
+
+test('a run that stops still tells its caller what it spent: the thrown error carries the usage', async () => {
+  const bad = { outline: body => ({ weeks: body.weeks.slice(0, 3).map((week, i) => ({ week, clo: 1, alsoClo: 0, contents: TOPICS[i] })) }) };
+  let thrown = null;
+  try { await run(draft(), { provider: { ...provider([]), usage: () => ({ requests: 3, estimatedUsd: 0.07, budget: { requests: 3 } }), rewrite: model({ bad }) } }); } catch (error) { thrown = error; }
+  assert.ok(thrown && thrown.status === 502, 'weeks missing is still a stop');
+  assert.deepEqual([thrown.usage.estimatedUsd, thrown.usage.budget.requests], [0.07, 3]);
 });

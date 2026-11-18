@@ -188,7 +188,12 @@ router.post('/syllabi/:id/generate', wrap(async (req, res) => {
   if (!slot.ok) { res.set('Retry-After', String(slot.retryAfterSec)); throw httpError(429, 'You have generated the most syllabi allowed today. Try again tomorrow, or write this one yourself.', { code: 'generate_daily_limit' }); }
   const job = await generateJobs.start({ db, syllabusId: syllabus.syllabus_id, userId: me.id, run: async (onProgress) => {
     const masters = await repo.mastersFor(db, content, { syllabusId: syllabus.syllabus_id });
-    const out = await generator.generateSyllabus({ content, masters, env: process.env, store: require('../lib/syllabuscheck/pipeline/shadow').storeFor(db), guidance: body.guidance || '', onProgress });
+    let out;
+    try { out = await generator.generateSyllabus({ content, masters, env: process.env, store: require('../lib/syllabuscheck/pipeline/shadow').storeFor(db), guidance: body.guidance || '', onProgress }); } catch (error) {
+      const spent = error && error.usage ? error.usage : {}; // a run that stopped still spent what its requests cost: one line for the cost register
+      console.log(`AI Syllabus Generator STOPPED: syllabus ${syllabus.syllabus_id}, user ${me.id}, ${spent.budget ? spent.budget.requests : '?'} requests, estimated $${spent.estimatedUsd}, ${String(error && error.message).slice(0, 120)}`);
+      throw error;
+    }
     const u = out.usage || {}; // one line for the cost register: what this run estimated it spent
     console.log(`AI Syllabus Generator: syllabus ${syllabus.syllabus_id}, user ${me.id}, ${out.check && out.check.status}, ${u.budget ? u.budget.requests : '?'} requests, estimated $${u.estimatedUsd}`);
     await require('../lib/accountActivity').record(db, { userId: me.id, action: 'generate', syllabusId: syllabus.syllabus_id, subject: require('../lib/accountActivity').subjectLine(content.meta.code, content.meta.title), notes: (out.check && out.check.status) || null });
