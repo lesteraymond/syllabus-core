@@ -16,7 +16,7 @@ const R = require('./rules');
 const P = require('./prompt');
 const { check } = require('./check');
 const { fieldKeyOfFinding } = require('./judge');
-const { clean } = require('./extract');
+const { clean, uniqueIds } = require('./extract');
 
 const PLAN_VERSION = 'replan-plan-1';
 const STATUS = { VERIFIED: 'VERIFIED', NEEDS_FACULTY_REVIEW: 'NEEDS_FACULTY_REVIEW', NOT_CHECKED: 'NOT_CHECKED' };
@@ -127,6 +127,7 @@ const misaligned = (result, key) => result.misalignments.some(m => (m.fieldKey =
 
 // Build the plan. opts: ask (judge provider), rewrite (rewrite provider; same shape as ask), store, model, year, maxRounds (3), maxAttempts (2).
 async function buildPlan(content, masters, opts = {}) {
+  content = uniqueIds(content); // the plan's keys name fields by id (extract.js uniqueIds)
   const { rewrite, maxRounds = 3, maxAttempts = 2 } = opts;
   const checkOpts = { ask: opts.ask, store: opts.store || new Map(), model: opts.model, year: opts.year, ...(opts.concurrency ? { concurrency: opts.concurrency } : {}) };
   const state = structuredClone(content);

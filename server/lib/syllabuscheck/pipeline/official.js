@@ -17,6 +17,7 @@ const { check } = require('./check');
 const { buildPlan } = require('./plan');
 const { claudeProvider } = require('./provider');
 const { fieldKeyOfFinding } = require('./judge');
+const { uniqueIds } = require('./extract');
 const { summarize } = require('../stewardship');
 const { bindSuggestions } = require('../suggestions');
 
@@ -208,6 +209,8 @@ function incompleteReason(result) {
 // for requests in flight do not crowd out the budget.
 async function officialize({ noAi, content, masters, env = process.env, db, transport, store, provider, year, out, concurrency } = {}) {
   const startedAt = Date.now();
+  // A working copy with unique item ids (extract.js uniqueIds): the report's paths are by position, so they hold for the saved syllabus too.
+  content = uniqueIds(content);
   const h = noAi.hybrid;
   if (!provider) {
     const ready = readiness(env);

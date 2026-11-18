@@ -77,6 +77,37 @@ function referencesOf(refs) {
   return out;
 }
 
+// The syllabus with every item id unique: CLOs, ILOs (across all weeks), week rows, and the references of each group. Every question, plan key and
+// report path of the checker is found through these ids (`ilo:<id>`), so two items with one id made two questions with one name: the check stayed
+// incomplete on every run, or one item got the other's verdict and draft. The first item with an id keeps it; a repeated, missing or non-text id is
+// renamed (`<id>~<n>`, or `id~<n>` when there was none), the same way every time. Only ids change: ILO tags (`clo:<id>`) still name the CLO that
+// kept the id, as the editor shows them. Returns the content itself when every id is already unique, else a copy: the saved syllabus never changes.
+function uniqueIds(content) {
+  if (!content || typeof content !== 'object') return content;
+  const lists = [content.clos, (content.plan || []).flatMap(row => (row && row.ilos) || []), content.plan, ...Object.values(content.refs || {}).map(block => block && block.items)]
+    .map(list => (Array.isArray(list) ? list.filter(item => item && typeof item === 'object') : []));
+  const valid = id => typeof id === 'string' && id !== '';
+  const needsWork = list => { const seen = new Set(); return list.some(item => !valid(item.id) || seen.has(item.id) || !seen.add(item.id)); };
+  if (!lists.some(needsWork)) return content;
+  const copy = structuredClone(content);
+  const copyLists = [copy.clos, (copy.plan || []).flatMap(row => (row && row.ilos) || []), copy.plan, ...Object.values(copy.refs || {}).map(block => block && block.items)]
+    .map(list => (Array.isArray(list) ? list.filter(item => item && typeof item === 'object') : []));
+  const own = id => (typeof id === 'number' && Number.isFinite(id) ? String(id) : id); // a numeric id is the same id as text (tags are text)
+  for (const list of copyLists) {
+    const taken = new Set(list.map(item => own(item.id)).filter(valid));
+    const kept = new Set();
+    list.forEach((item, i) => {
+      const id0 = own(item.id);
+      if (valid(id0) && !kept.has(id0)) { item.id = id0; kept.add(id0); return; }
+      let id = `${valid(id0) ? id0 : 'id'}~${i + 1}`;
+      while (taken.has(id)) id += '~';
+      taken.add(id); kept.add(id);
+      item.id = id;
+    });
+  }
+  return copy;
+}
+
 // The structured map of one syllabus.
 function extract(content, masters) {
   const c = content || {};
@@ -140,4 +171,4 @@ function leadingVerbs(text) {
   return verbs;
 }
 
-module.exports = { extract, itemsOf, fingerprint, clean, nearCopy, leadingVerbs, OUTCOME_VERBS };
+module.exports = { extract, uniqueIds, itemsOf, fingerprint, clean, nearCopy, leadingVerbs, OUTCOME_VERBS };

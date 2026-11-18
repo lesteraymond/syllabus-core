@@ -3,7 +3,7 @@
 // verification token. The rewriting itself is the new AI Checker's (pipeline/refine.js); the old checker's Check & improve (its own judge, rewrite prompt and
 // model client) was removed with the old AI Checker.
 const crypto = require('crypto');
-const { extract } = require('./pipeline/extract');
+const { extract, uniqueIds } = require('./pipeline/extract');
 const { questionsOf } = require('./pipeline/judge');
 const { keyOfPath } = require('./pipeline/official');
 
@@ -27,6 +27,7 @@ function setValue(content, path, value) {
 function relatedContextHash(content, masters, path) {
   if (!content || !path) return '';
   try {
+    content = uniqueIds(content); // the field's own questions, not those of an item with the same id
     const key = keyOfPath(content, path);
     if (!key) return '';
     const related = [];
