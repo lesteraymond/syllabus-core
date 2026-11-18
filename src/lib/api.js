@@ -255,6 +255,10 @@ export const syllabusCheck = {
     ...(typeof editedText === 'string' && editedText.trim() ? { body: JSON.stringify({ editedText }) } : {}),
   }),
   decide: (runId, body) => request(`/syllabus-check/runs/${runId}/decisions`, { method: 'POST', body: JSON.stringify(body) }),
+  // AI Syllabus Generator: the sections of a first draft for the saved syllabus (the request saves nothing; the page saves the sections into the syllabus).
+  generate: (syllabusId, guidance) => request(`/syllabus-check/syllabi/${syllabusId}/generate`, { method: 'POST', body: JSON.stringify(guidance && guidance.trim() ? { guidance: guidance.trim() } : {}) }),
+  generateStatus: (syllabusId) => request(`/syllabus-check/syllabi/${syllabusId}/generate`),
+  generateClear: (syllabusId) => request(`/syllabus-check/syllabi/${syllabusId}/generate`, { method: 'DELETE' }),
 };
 
 export const logs = {

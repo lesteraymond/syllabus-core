@@ -207,7 +207,7 @@ const addSyllabus = (db, id, over) => { db.s.syllabi[id] = { ...db.s.syllabi[1],
 const withGaps = (c) => { c.plan[2].tasks = ''; return c; }; // one lesson without an assessment task: a warning, so there is something to recommend
 
 for (const failFirst of [false, true]) {
-  test(`overlapping checks are blocked across accounts and the slot is released after ${failFirst ? 'failure' : 'completion'}`, async (t) => withServer(async ({ call, db }) => {
+  test(`checks on different syllabi run at the same time, one syllabus is checked once at a time, and its slot is released after ${failFirst ? 'failure' : 'completion'}`, async (t) => withServer(async ({ call, db }) => {
     addSyllabus(db, 2, { user_id: gus.id });
     const original = svc.checkHybrid;
     let enter, release;
@@ -226,20 +226,23 @@ for (const failFirst of [false, true]) {
     const first = call(fay, 'POST', '/syllabi/1/compliance/recheck', {});
     try {
       await entered;
-      for (const [user, id] of [[fay, 1], [gus, 2]]) {
-        const blocked = await call(user, 'POST', `/syllabi/${id}/compliance/recheck`, { force: true });
-        assert.strictEqual(blocked.status, 409);
-        assert.strictEqual(blocked.body.code, 'ai_check_in_progress');
-        assert.match(blocked.body.error, /already running/);
-      }
+      // the same syllabus is not checked twice at once
+      const blocked = await call(fay, 'POST', '/syllabi/1/compliance/recheck', { force: true });
+      assert.strictEqual(blocked.status, 409);
+      assert.strictEqual(blocked.body.code, 'ai_check_in_progress');
+      assert.match(blocked.body.error, /already running for this syllabus/);
       assert.strictEqual(evaluations, 1);
-      assert.strictEqual(db.s.runs.length, 0);
+      // another person's syllabus is checked AT THE SAME TIME, with no waiting and no error
+      const alongside = await call(gus, 'POST', '/syllabi/2/compliance/recheck', {});
+      assert.strictEqual(alongside.status, 200, 'a second faculty member is not held up by the first');
+      assert.strictEqual(evaluations, 2);
+      assert.strictEqual(db.s.runs.length, 1, 'their run is stored while the first is still running');
       // Reading reports stays available, without starting another evaluation.
       const reading = await call(fay, 'GET', '/syllabi/1/compliance');
       assert.strictEqual(reading.status, 200);
       assert.strictEqual(reading.body.checking, true, 'a page opened again can see that this syllabus is being checked');
-      assert.strictEqual((await call(gus, 'GET', '/syllabi/2/compliance')).body.checking, false, 'another syllabus is not');
-      assert.strictEqual(evaluations, 1);
+      assert.strictEqual((await call(gus, 'GET', '/syllabi/2/compliance')).body.checking, false, 'the other syllabus has finished');
+      assert.strictEqual(evaluations, 2);
     } finally {
       release();
       const finished = await first;
@@ -247,12 +250,19 @@ for (const failFirst of [false, true]) {
       assert.strictEqual(finished.status, failFirst ? 503 : 200);
       await svc.settled();
     }
-    const next = await call(gus, 'POST', '/syllabi/2/compliance/recheck', {});
-    assert.strictEqual(next.status, 200);
-    assert.strictEqual(evaluations, 2);
-    assert.strictEqual(db.s.runs.length, failFirst ? 1 : 2);
+    const next = await call(fay, 'POST', '/syllabi/1/compliance/recheck', {});
+    assert.strictEqual(next.status, 200, 'the slot was released');
+    assert.strictEqual(evaluations, 3);
   }));
 }
+
+test('many faculty can run an AI check at the same moment: none is refused, none waits', () => withServer(async ({ call, db }) => {
+  for (let id = 2; id <= 6; id++) addSyllabus(db, id, { user_id: 10 + id });
+  const owners = [[fay, 1], ...[2, 3, 4, 5, 6].map(id => [{ id: 10 + id, role: 'faculty', firstName: 'F' + id, lastName: 'X' }, id])];
+  const results = await Promise.all(owners.map(([user, id]) => call(user, 'POST', `/syllabi/${id}/compliance/recheck`, {})));
+  assert.deepStrictEqual(results.map(r => r.status), [200, 200, 200, 200, 200, 200]);
+  assert.strictEqual(db.s.runs.length, 6);
+}));
 
 test('grading that does not total 100, or an ILO with no CLO tag, blocks the submit: 409 with the failed rules, nothing saved', () => withServer(async ({ call, db }) => {
   const c = conformingContent();

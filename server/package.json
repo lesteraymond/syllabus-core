@@ -41,6 +41,7 @@
     "migrate-curriculum-year": "node db/migrate-curriculum-year.js",
     "migrate-review-ai-choice": "node db/migrate-review-ai-choice.js",
     "migrate-account-activity": "node db/migrate-account-activity.js",
+    "migrate-generate-jobs": "node db/migrate-generate-jobs.js",
     "migrate-audit-retention": "node db/migrate-audit-retention.js",
     "migrate-password-expiry": "node db/migrate-password-expiry.js",
     "migrate-session-store": "node db/migrate-session-store.js",

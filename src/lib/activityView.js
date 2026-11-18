@@ -26,6 +26,7 @@ export const KINDS = {
   draft_create: { icon: 'filePlus', tone: 'info', verb: 'started a new draft' },
   content_edit: { icon: 'pencilSquare', tone: 'quiet', verb: 'edited' },
   syllabus_delete: { icon: 'trash', tone: 'warn', verb: 'deleted' },
+  generate: { icon: 'pencilRuler', tone: 'info', verb: 'generated an AI draft of' },
   // a sign-in that was refused, recorded on the account it was for
   login_failed: { icon: 'warning', tone: 'bad', verb: 'failed to sign in', account: true },
   // the administrator's management of accounts: the subject is the account acted on

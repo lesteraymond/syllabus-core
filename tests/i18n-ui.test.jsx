@@ -584,8 +584,8 @@ test('AI results expose an explicit approval and edit choice with busy and unava
 });
 
 test('builder review omits the embedded AI section by default and places AI Checker 3rd in the sidebar for both roles',()=>{
-  assert.deepEqual(navItems.slice(0,4).map(([page])=>page),['dashboard','builder','ai','my-syllabi']);
-  for (const role of ['faculty','admin']) assert.deepEqual(navItems.filter(([,,,gate])=>roleAllows(gate,role)).slice(0,4).map(([page])=>page),['dashboard','builder','ai','my-syllabi']); // the first four stay in this order for both authoring roles
+  assert.deepEqual(navItems.slice(0,5).map(([page])=>page),['dashboard','builder','ai','generator','my-syllabi']);
+  for (const role of ['faculty','admin']) assert.deepEqual(navItems.filter(([,,,gate])=>roleAllows(gate,role)).slice(0,5).map(([page])=>page),['dashboard','builder','ai','generator','my-syllabi']); // the first five stay in this order for both authoring roles
   for (const role of ['asst_vpaa','lic_director','vpaa']) { const pages=navItems.filter(([,,,gate])=>roleAllows(gate,role)).map(([page])=>page); assert.ok(pages.includes('ai')&&pages.includes('review')&&!pages.includes('builder')&&!pages.includes('my-syllabi')&&!pages.includes('users')&&!pages.includes('courses'), role); }
   const d=emptyDraft(()=>1);
   const model=createModel({institution:{vision:'',mission:{lead:'',items:[]},egas:[]},programs:{},year:2026});

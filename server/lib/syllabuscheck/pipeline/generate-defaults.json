@@ -1,0 +1,17 @@
+{
+  "source": "Fixed parts of a generated syllabus, kept here so the curriculum office can read and change them without touching code. Aligned on 2026-11-18 to the approved LCUP syllabus #111 (Digital Signal Processing): Week 1 is the orientation (course contents, requirements and activities, objectives, vision, mission and goals of LCUP and of the college), and Weeks 6, 12 and 18 are the examinations. The compliance standard (server/lib/compliance/standard-v4.json) fixes 18 weeks and the Prelim, Midterm and Final terms. The values are the six core Augustinian-Marian values the AI Checker requires every week, not the wording of #111. Not an official template: the repository has none.",
+  "weeks": 18,
+  "exams": [
+    { "week": 6, "name": "PRELIM EXAMINATION", "covers": "Weeks 2 to 5" },
+    { "week": 12, "name": "MIDTERM EXAMINATION", "covers": "Weeks 7 to 11" },
+    { "week": 18, "name": "FINAL EXAMINATION", "covers": "Weeks 13 to 17" }
+  ],
+  "examValue": "Interiority: honest, independent work and honest self-assessment in the examination",
+  "orientation": {
+    "contents": "Orientation: introduction to the course contents, course requirements and activities, course objectives, and the vision, mission and goals of LCUP and of the college",
+    "ilo": "Explain the course objectives, requirements, grading system and the vision, mission and goals of LCUP and of the college",
+    "activities": "- Setting and sharing of expectations from the course\n- Discussion on the vision, mission and goals of LCUP and of the college\n- Self-paced reading of the course outline, with a list of questions for the class",
+    "tasks": "- Statement of expectations from the course\n- Review of course contents, objectives, activities and assessment tools",
+    "values": "Community-orientedness: sharing expectations and working together from the first week"
+  }
+}

@@ -34,7 +34,7 @@ test('each kind of account activity is recorded with who did it, and nothing tha
   for (const action of activity.ACTIONS) assert.equal(await activity.record(db, { userId: 5, action, notes: action === 'login' ? 'password' : null }), true, action);
   assert.deepEqual(db.s.rows.map((r) => r.action), activity.ACTIONS);
   assert.deepEqual(activity.ACTIONS, ['login', 'logout', 'password_change', 'name_change', 'photo_change', 'language_change', 'draft_create', 'content_edit', 'syllabus_delete',
-    'login_failed', 'user_create', 'user_credentials', 'user_disable', 'user_enable', 'user_delete', 'user_assignments']);
+    'login_failed', 'user_create', 'user_credentials', 'user_disable', 'user_enable', 'user_delete', 'user_assignments', 'generate']);
   assert.equal(await activity.record(db, { userId: 5, action: 'approve' }), false, 'a review decision belongs to submission_logs');
   assert.equal(await activity.record(db, { userId: '5', action: 'login' }), false, 'a user id must be a number');
   assert.equal(await activity.record(db, { action: 'login' }), false);

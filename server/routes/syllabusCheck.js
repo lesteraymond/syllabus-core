@@ -22,7 +22,7 @@ const wrap = fn => async (req, res) => { try { await fn(req, res); } catch (erro
 const id = raw => { const value = Number(raw); if (!Number.isSafeInteger(value) || value <= 0) throw httpError(400, 'Invalid id'); return value; };
 router.get('/status', wrap(async (req, res) => {
   const { provider, model, configured } = providerConfig();
-  res.json({ provider: configured ? provider : null, selectedProvider: provider || null, model, configured, aiGate: aiGate(), mandatory: aiGate() === 'required' });
+  res.json({ provider: configured ? provider : null, selectedProvider: provider || null, model, configured, aiGate: aiGate(), mandatory: aiGate() === 'required', generator: (() => { const g = generator.generateLimits(process.env); return g.ok ? { available: true } : { available: false, reason: g.reason }; })() });
 }));
 router.get('/references', requireAdmin, wrap(async (req, res) => {
   const [rows] = await req.app.locals.db.query('SELECT reference_id AS id, program_code AS program, curriculum_year AS curriculumYear, status, source, courses_json FROM syllabus_check_curricula ORDER BY reference_id');
@@ -152,6 +152,58 @@ router.post('/runs/:id/suggestions/:suggestionId/refine', wrap(async (req, res) 
 }));
 
 
+// AI Syllabus Generator (lib/syllabuscheck/pipeline/generate.js): writes a first draft of the whole syllabus for the author's subject, checks it with the AI Checker's own rules
+// and makes one repair plan. It takes several minutes, so it runs as a background job (pipeline/generateJobs.js): POST starts it and answers 202 at once, GET reads its progress and,
+// when done, its result, DELETE removes a finished job once the screen has applied it. NOTHING is saved here: the sections come back and the screen puts them into the author's
+// syllabus, where the author reviews, edits and saves them like any other change. Author-only, an active academic year, AI checking on, its own switch and cost cap, one generation at
+// a time PER SYLLABUS (everyone else generates at the same time), and an optional per-person daily limit. Every generation is paid.
+const generator = require('../lib/syllabuscheck/pipeline/generate');
+const generateJobs = require('../lib/syllabuscheck/pipeline/generateJobs').createJobs();
+// No daily limit per person unless SYLLABUS_CHECK_GENERATE_PER_USER_PER_DAY is set (owner decision 2026-11-18). When it is, it is counted from the jobs table, so a restart does not reset it.
+// What still bounds the spend: the cost cap and the request cap of every run, one generation at a time per syllabus, and the administrator's AI switch.
+const generatePerDay = () => { const n = Number.parseInt(process.env.SYLLABUS_CHECK_GENERATE_PER_USER_PER_DAY, 10); return Number.isInteger(n) && n >= 1 ? n : null; };
+async function ownDraft(req) {
+  const me = req.session.user, db = req.app.locals.db;
+  const [rows] = await db.query('SELECT * FROM syllabi WHERE syllabus_id = ?', [id(req.params.id)]);
+  const syllabus = rows[0];
+  if (!syllabus || !canView(me, syllabus)) throw httpError(404, 'Syllabus not found');
+  if (!isOwner(me, syllabus)) throw httpError(403, 'Only the author can generate a draft for this syllabus.');
+  return { me, db, syllabus };
+}
+router.post('/syllabi/:id/generate', wrap(async (req, res) => {
+  const { me, db, syllabus } = await ownDraft(req);
+  if (!canEdit(me, syllabus)) throw httpError(409, lockedMessage(syllabus));
+  await assertActiveYear(db, syllabus);
+  if (!(await require('../lib/adminSettings').policy(db)).aiChecking) throw httpError(409, require('../lib/adminSettings').AI_OFF_REFUSAL, { code: 'ai_checking_off' });
+  const limits = generator.generateLimits(process.env);
+  if (!limits.ok) throw httpError(503, 'The AI Syllabus Generator is not available on this server: ' + limits.reason, { code: 'generator_unavailable' });
+  let content = null;
+  try { content = JSON.parse(syllabus.content); } catch { content = null; }
+  if (!content || !content.meta || !content.meta.courseId) throw httpError(409, 'Choose a subject for this syllabus first. The generator writes from the subject.', { code: 'subject_required' });
+  const body = req.body || {};
+  if (body.guidance !== undefined && (typeof body.guidance !== 'string' || body.guidance.length > 1500)) throw httpError(400, 'Your notes for the AI can be up to 1500 characters.');
+  if (generateJobs.isRunning(syllabus.syllabus_id)) throw httpError(409, 'This syllabus is already being generated. Wait until it finishes.', { code: 'generate_busy' }); // only the same syllabus: others generate at the same time
+  const perDay = generatePerDay();
+  const slot = perDay ? await generateJobs.allowance(db, me.id, perDay) : { ok: true };
+  if (!slot.ok) { res.set('Retry-After', String(slot.retryAfterSec)); throw httpError(429, 'You have generated the most syllabi allowed today. Try again tomorrow, or write this one yourself.', { code: 'generate_daily_limit' }); }
+  const job = await generateJobs.start({ db, syllabusId: syllabus.syllabus_id, userId: me.id, run: async (onProgress) => {
+    const masters = await repo.mastersFor(db, content, { syllabusId: syllabus.syllabus_id });
+    const out = await generator.generateSyllabus({ content, masters, env: process.env, store: require('../lib/syllabuscheck/pipeline/shadow').storeFor(db), guidance: body.guidance || '', onProgress });
+    const u = out.usage || {}; // one line for the cost register: what this run estimated it spent
+    console.log(`AI Syllabus Generator: syllabus ${syllabus.syllabus_id}, user ${me.id}, ${out.check && out.check.status}, ${u.budget ? u.budget.requests : '?'} requests, estimated $${u.estimatedUsd}`);
+    await require('../lib/accountActivity').record(db, { userId: me.id, action: 'generate', syllabusId: syllabus.syllabus_id, subject: require('../lib/accountActivity').subjectLine(content.meta.code, content.meta.title), notes: (out.check && out.check.status) || null });
+    return out;
+  } });
+  res.status(202).json(job);
+}));
+router.get('/syllabi/:id/generate', wrap(async (req, res) => {
+  const { me, db, syllabus } = await ownDraft(req);
+  res.json(await generateJobs.get(db, syllabus.syllabus_id, me.id));
+}));
+router.delete('/syllabi/:id/generate', wrap(async (req, res) => {
+  const { me, db, syllabus } = await ownDraft(req);
+  res.json({ cleared: await generateJobs.clear(db, syllabus.syllabus_id, me.id) });
+}));
 
 module.exports = router;
 module.exports.curriculumInput = curriculumInput;
