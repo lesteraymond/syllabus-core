@@ -2,7 +2,8 @@
 // Reference suggestions for the AI Syllabus Generator. The checker's rule is that a source is looked up, never invented, and a model cannot look one up. So the AI only NAMES candidates
 // (a title and the first author's surname): books, checked in the Open Library catalogue, and journal articles, checked in Crossref. A candidate is kept only when the catalogue confirms
 // it exists, and the reference text is built from the CATALOGUE's record (its authors, title, edition or journal, year, publisher or DOI), never from what the AI wrote. The text must pass the
-// checker's own APA check (references.js parseReference). Titles are put in APA sentence case by the AI in one more request, but only as a change of capital letters: a title whose letters differ from
+// checker's own APA check (references.js parseReference). When the newest edition Open Library knows is more than 5 years old, Crossref (which holds the publishers' newer books) is asked once for a
+// newer record of the same book (same title, same first author, a later year, a publisher), and the DOI it gives is written in the reference. Titles are put in APA sentence case by the AI in one more request, but only as a change of capital letters: a title whose letters differ from
 // the catalogue's in any other way keeps the catalogue's spelling. Websites are not suggested: nothing can confirm a page's title, author and date the way a catalogue confirms a book or a DOI.
 // Only the candidate's title and surname are sent to a catalogue: nothing about the user, the faculty or the syllabus. Anything that cannot be confirmed (no match, the network down, a record
 // missing its authors, publisher, journal or DOI) is left out; this module never throws, so a lookup problem can never stop a generation. The author still confirms each source.
@@ -11,6 +12,14 @@ const { titleMatch } = require('./lookup');
 const { clean } = require('./extract');
 const { REFERENCE_RECENCY_YEARS } = require('./rules');
 
+// The fields asked of Crossref. It refuses the WHOLE request (HTTP 400) when a field is not one it knows (edition-number is not), so only fields that exist are listed (a test pins this).
+const CROSSREF_BOOK_FIELDS = 'title,author,issued,publisher,DOI,type';
+const CROSSREF_ARTICLE_FIELDS = 'title,author,issued,container-title,volume,issue,page,DOI,type';
+// A publisher as APA writes it: the catalogue's "McGraw-Hill Companies, The" is "McGraw-Hill Companies"; a Crossref publisher with a place glued on ("Oxford University PressOxford") is not used.
+const cleanPublisher = text => clean(text).replace(/,\s*The$/i, '').replace(/[.]+$/, '');
+const gluedPlace = text => /(Press|Publishing|Publishers|Books|Inc|Ltd|LLC|Verlag)[A-Z][a-z]/.test(String(text));
+const OLD_AFTER = REFERENCE_RECENCY_YEARS; // a catalogue edition older than this triggers the Crossref look for a newer one
+const SCHOOL_LIMIT_YEARS = 10; // the school's compliance standard (standard-v4.json referenceMaxAgeYears)
 const MAX_BOOKS = 8, MAX_ARTICLES = 5, KEEP_BOOKS = 5, KEEP_ARTICLES = 3, CONCURRENCY = 4, MAX_EDITIONS = 8;
 const REQUEST_MS = 20000, BUDGET_MS = 90000; // each request may take 20 s (Open Library answers in 4 to 5 s on a good day), and no new candidate starts after 90 s
 // The only addresses a lookup may call: Open Library's search, one work's editions and one edition by ISBN, and Crossref's work search.
@@ -95,14 +104,33 @@ async function verifyBook(candidate, { fetchImpl, year }) {
   if (!editions.length) return { rejected: 'no edition with a year and a publisher' };
   const best = editions.sort((a, b) => b.published - a.published)[0]; // the newest edition
   const { title: bare, n } = editionOf(clean(best.edition.title).replace(/[.]+$/, '') + (best.edition.subtitle ? ': ' + clean(best.edition.subtitle).replace(/[.]+$/, '') : ''), best.edition.edition_name);
-  return { kind: 'book', parts: { names, year: best.published, title: bare, edition: n, publisher: best.publisher.replace(/[.]+$/, '') }, year: best.published, source: 'openlibrary', url: 'https://openlibrary.org' + doc.key };
+  const base = { kind: 'book', parts: { names, year: best.published, title: bare, edition: n, publisher: cleanPublisher(best.publisher) }, year: best.published, source: 'openlibrary', url: 'https://openlibrary.org' + doc.key };
+  if (best.published >= year - OLD_AFTER) return base;
+  try { return (await newerBook(base, { title, surname, fetchImpl, year })) || base; } catch { return base; } // a failed look never loses the book that was found
+}
+
+// Crossref's records of the same book, for one that is newer than the catalogue's newest edition: same title, same first author (surname), a later year that is not in the future, a publisher and
+// authors with given names. Crossref gives no edition number, so none is written for a book taken from it (unless its title says "Fourth Edition"); its DOI link is.
+async function newerBook(current, { title, surname, fetchImpl, year }) {
+  const q = new URLSearchParams({ 'query.bibliographic': (title + ' ' + surname).slice(0, 300), filter: 'type:book', rows: '10', select: CROSSREF_BOOK_FIELDS });
+  const result = await getJson('https://api.crossref.org/works?' + q.toString(), fetchImpl);
+  const items = (((result && result.message) || {}).items || []).map(item => {
+    const published = Number(((item.issued || {})['date-parts'] || [[]])[0][0]), people = item.author || [];
+    const names = people.length && people.length <= 6 && people.every(a => clean(a.family) && clean(a.given)) ? people.map(a => apaName(clean(a.given) + ' ' + clean(a.family))) : null;
+    return { item, published, names };
+  }).filter(({ item, published, names }) => published > current.year && published <= year && clean(item.publisher) && !gluedPlace(item.publisher) && clean(item.DOI) && names && names.every(Boolean)
+    && titleMatch(title, (item.title || [])[0]) && clean(item.author[0].family).toLowerCase() === surname.toLowerCase());
+  if (!items.length) return null;
+  const best = items.sort((a, b) => b.published - a.published)[0];
+  const { title: bare, n } = editionOf(clean((best.item.title || [])[0]).replace(/[.]+$/, ''), '');
+  return { kind: 'book', parts: { names: best.names, year: best.published, title: bare, edition: n, publisher: cleanPublisher(best.item.publisher), doi: clean(best.item.DOI) }, year: best.published, source: 'crossref', url: 'https://doi.org/' + clean(best.item.DOI) };
 }
 
 // ---- journal articles (Crossref) ----
 async function verifyArticle(candidate, { fetchImpl, year }) {
   const title = clean(candidate && candidate.title), surname = clean(candidate && candidate.firstAuthorSurname);
   if (!title || !surname) return { rejected: 'no title or author' };
-  const q = new URLSearchParams({ 'query.bibliographic': (title + ' ' + surname).slice(0, 300), filter: 'type:journal-article', rows: '5', select: 'title,author,issued,container-title,volume,issue,page,DOI,type' });
+  const q = new URLSearchParams({ 'query.bibliographic': (title + ' ' + surname).slice(0, 300), filter: 'type:journal-article', rows: '5', select: CROSSREF_ARTICLE_FIELDS });
   const result = await getJson('https://api.crossref.org/works?' + q.toString(), fetchImpl);
   const item = (((result && result.message) || {}).items || []).find(i => titleMatch(title, (i.title || [])[0]) && (i.author || []).some(a => clean(a.family).toLowerCase() === surname.toLowerCase()));
   if (!item) return { rejected: 'not in Crossref' };
@@ -120,7 +148,7 @@ async function verifyArticle(candidate, { fetchImpl, year }) {
 // The reference text from its parts (APA 7).
 function textOf({ kind, parts }) {
   const authors = authorBlock(parts.names);
-  if (kind === 'book') return `${authors} (${parts.year}). ${parts.title}${ordinal(parts.edition)}. ${parts.publisher}.`;
+  if (kind === 'book') return `${authors} (${parts.year}). ${parts.title}${ordinal(parts.edition)}. ${parts.publisher}.` + (parts.doi ? ` https://doi.org/${parts.doi}` : '');
   const tail = (parts.volume ? `, ${parts.volume}` : '') + (parts.issue ? `(${parts.issue})` : '') + (parts.pages ? `, ${parts.pages}` : '');
   return `${authors} (${parts.year}). ${parts.title}. ${parts.journal}${tail}. https://doi.org/${parts.doi}`;
 }
@@ -146,7 +174,7 @@ async function sentenceCase(entries, { ask, system }) {
 // opts: ask (the generator's provider call), system, subject, topics (the weekly topics), fetchImpl, year, newId.
 // -> { items: [{ id, t }] (books), articles: [{ id, t }], checked, kept, rejected: [{ title, reason }] }. Never throws.
 async function suggestReferences({ ask, system, subject, topics = [], fetchImpl = patient(fetch), year = new Date().getFullYear(), newId = (p) => p + Math.random().toString(36).slice(2, 10) } = {}) {
-  const none = (note) => ({ items: [], articles: [], checked: 0, kept: 0, rejected: [], note });
+  const none = (note) => ({ items: [], articles: [], tooOld: 0, checked: 0, kept: 0, rejected: [], note });
   let books = [], articles = [];
   try {
     const body = JSON.parse(await ask(candidateMessage({ system, subject, topics })));
@@ -171,7 +199,9 @@ async function suggestReferences({ ask, system, subject, topics = [], fetchImpl 
   // the checker's own APA rule has the last word on every text
   const build = (kind) => { const seenText = new Set(); return chosen.filter(r => r.kind === kind).map(r => textOf(r)).filter(t => !seenText.has(t) && seenText.add(t)).filter(t => parseReference(t, { year }).format.status !== 'FAIL').map(t => ({ id: newId(kind === 'book' ? 'b' : 'o'), t })); };
   const items = build('book'), articlesOut = build('article');
-  return { items, articles: articlesOut, checked: list.length, kept: items.length + articlesOut.length, rejected: results.filter(r => !r.parts).map(r => ({ title: clean(r.c.title).slice(0, 120), reason: r.rejected })) };
+  const textYear = t => { const m = /\((\d{4})\)/.exec(t); return m ? Number(m[1]) : null; };
+  const tooOld = [...items, ...articlesOut].filter(r => { const y = textYear(r.t); return y !== null && y < year - SCHOOL_LIMIT_YEARS; }).length;
+  return { items, articles: articlesOut, tooOld, checked: list.length, kept: items.length + articlesOut.length, rejected: results.filter(r => !r.parts).map(r => ({ title: clean(r.c.title).slice(0, 120), reason: r.rejected })) };
 }
 
-module.exports = { suggestReferences, verifyBook, verifyArticle, textOf, sentenceCase, editionOf, ordinal, apaName, authorBlock, candidateMessage, SCHEMA, CASE_SCHEMA, MAX_BOOKS, MAX_ARTICLES, KEEP_BOOKS, KEEP_ARTICLES };
+module.exports = { CROSSREF_BOOK_FIELDS, CROSSREF_ARTICLE_FIELDS, cleanPublisher, suggestReferences, newerBook, verifyBook, SCHOOL_LIMIT_YEARS, verifyArticle, textOf, sentenceCase, editionOf, ordinal, apaName, authorBlock, candidateMessage, SCHEMA, CASE_SCHEMA, MAX_BOOKS, MAX_ARTICLES, KEEP_BOOKS, KEEP_ARTICLES };

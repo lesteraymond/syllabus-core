@@ -292,6 +292,7 @@ const BOOKS = {
   'Introduction to Algorithms': { work: { key: '/works/OL1W', title: 'Introduction to Algorithms', author_name: ['Thomas H. Cormen', 'Charles E. Leiserson'], isbn: ['9780262046305'] }, edition: { title: 'Introduction to Algorithms', edition_name: '4th edition', publishers: ['MIT Press'], publish_date: '2022', languages: [{ key: '/languages/eng' }] } },
   'Clean Code': { work: { key: '/works/OL2W', title: 'Clean Code', author_name: ['Robert C. Martin'], isbn: ['9780132350884'] }, edition: { title: 'Clean Code', publishers: ['Prentice Hall'], publish_date: '2020', languages: [{ key: '/languages/eng' }] } },
 };
+BOOKS['Old Textbook'] = { work: { key: '/works/OL3W', title: 'Old Textbook', author_name: ['Pat Lee'], isbn: ['9780000000003'] }, edition: { title: 'Old Textbook', publishers: ['Press'], publish_date: '2005', languages: [{ key: '/languages/eng' }] } };
 const ARTICLES = [{ title: ['Active learning in introductory programming courses'], author: [{ given: 'Ana', family: 'Reyes' }, { given: 'Ben', family: 'Cruz' }], issued: { 'date-parts': [[2023, 4]] }, 'container-title': ['Journal of Computing Education'], volume: '12', issue: '2', page: '101-118', DOI: '10.1234/jce.2023.12', type: 'journal-article' }];
 const library = async (url) => {
   const reply = (body, status = 200) => ({ ok: status < 400, status, json: async () => body });
@@ -487,4 +488,11 @@ test('a run that stops still tells its caller what it spent: the thrown error ca
   try { await run(draft(), { provider: { ...provider([]), usage: () => ({ requests: 3, estimatedUsd: 0.07, budget: { requests: 3 } }), rewrite: model({ bad }) } }); } catch (error) { thrown = error; }
   assert.ok(thrown && thrown.status === 502, 'weeks missing is still a stop');
   assert.deepEqual([thrown.usage.estimatedUsd, thrown.usage.budget.requests], [0.07, 3]);
+});
+
+test('references: kept references older than the school\'s 10-year limit are named in a warning, so the author replaces them', async () => {
+  const old = { references: () => ({ books: [{ title: 'Old Textbook', firstAuthorSurname: 'Lee', year: 2005 }, { title: 'Clean Code', firstAuthorSurname: 'Martin', year: 2020 }], articles: [] }) };
+  const out = await run(draft(), { fetchImpl: library, provider: { ...provider([]), rewrite: model({ bad: old }) } });
+  assert.ok(out.sections.refs.books.items.some(i => /\(2005\)/.test(i.t)));
+  assert.ok(out.warnings.includes("1 reference(s) are more than 10 years old, the limit of the school's standard (no newer edition was found in the catalogues). Replace them with the newer editions you use."));
 });

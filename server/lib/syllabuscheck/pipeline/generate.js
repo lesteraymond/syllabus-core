@@ -386,7 +386,7 @@ async function generateInner({ content, masters, env = process.env, transport, p
   // 5. references: the AI names candidate books, only those the Open Library catalogue confirms are kept (referenceSuggest.js). Skipped when the author already has references.
   tick(6, 'references');
   const hasRefs = Object.values(content.refs || {}).some(g => g && Array.isArray(g.items) && g.items.some(i => clean(i && i.t)));
-  let found = { items: [], articles: [] };
+  let found = { items: [], articles: [], tooOld: 0 };
   if (!hasRefs && String(env.SYLLABUS_CHECK_GENERATE_REFERENCES ?? 'on').trim().toLowerCase() !== 'off') {
     found = await suggestReferences({ ask, system: SYSTEM, subject, topics: LESSON_WEEKS.map(w => clean(outline.get(w).contents).slice(0, 90)), year: year || new Date().getFullYear(), ...(fetchImpl ? { fetchImpl } : {}), newId });
   }
@@ -428,6 +428,7 @@ async function generateInner({ content, masters, env = process.env, transport, p
   if (foundCount) {
     warnings.push(`${foundCount} reference(s) confirmed in the Open Library and Crossref catalogues were added (books to Books, journal articles to Internet References; the other groups were marked not applicable). Check that each is the edition or article you use.`);
     if (foundCount < 3) warnings.push('The standard asks for at least 3 references: add more in Step 5.');
+    if (found.tooOld > 0) warnings.push(`${found.tooOld} reference(s) are more than 10 years old, the limit of the school's standard (no newer edition was found in the catalogues). Replace them with the newer editions you use.`);
   } else if (hasRefs) {
     warnings.push('Your own references were kept.');
   } else {

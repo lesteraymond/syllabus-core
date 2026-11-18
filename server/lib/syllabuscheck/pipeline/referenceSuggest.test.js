@@ -155,3 +155,59 @@ test('only the allowed catalogue addresses are ever called', async () => {
   assert.ok(log.length >= 2);
   for (const url of log) assert.match(url, /^https:\/\/(openlibrary\.org\/(search\.json\?|works\/OL\d+W\/editions\.json\?|isbn\/)|api\.crossref\.org\/works\?)/);
 });
+
+// ---- an old catalogue edition: Crossref is asked once for a newer record of the same book ----
+const GOODRICH = { title: ['Data Structures and Algorithms in Java'], author: [{ given: 'Michael T.', family: 'Goodrich' }, { given: 'Roberto', family: 'Tamassia' }], issued: { 'date-parts': [[2023]] }, publisher: 'Wiley', DOI: '10.1002/9781119.2023' };
+const oldBook = (extra = {}) => S.suggestReferences({ ask: async () => JSON.stringify({ books: [{ title: 'Data Structures and Algorithms in Java', firstAuthorSurname: 'Goodrich', year: 2023 }], articles: [] }), system: 's', subject: {}, topics: [], year: 2026, newId: p => p + 'x', ...extra });
+
+test('when the newest catalogue edition is more than 5 years old, a newer record of the same book in Crossref replaces it, with its DOI', async () => {
+  const log = [];
+  const out = await oldBook({ fetchImpl: library({ editions: [entry('Data Structures and Algorithms in Java', 2003)], crossref: [GOODRICH], log }) });
+  assert.equal(out.items[0].t, 'Goodrich, M. T., & Tamassia, R. (2023). Data Structures and Algorithms in Java. Wiley. https://doi.org/10.1002/9781119.2023');
+  assert.equal(parseReference(out.items[0].t, { year: 2026 }).format.status, 'PASS');
+  assert.equal(out.tooOld, 0, 'it is no longer over the school limit');
+  assert.equal(log.filter(u => /api\.crossref\.org/.test(u) && /type%3Abook/.test(u)).length, 1, 'one Crossref look, for books');
+});
+
+test('a Crossref record is used only if it is the same book: same first author, a later year not in the future, a publisher and a DOI', async () => {
+  const keep = async (item) => (await oldBook({ fetchImpl: library({ editions: [entry('Data Structures and Algorithms in Java', 2003)], crossref: [{ ...GOODRICH, ...item }] }) })).items[0].t;
+  const old = /\(2003\)\. Data Structures and Algorithms in Java\. Wiley\.$/;
+  assert.match(await keep({ author: [{ given: 'Ann', family: 'Smith' }] }), old, 'another first author');
+  assert.match(await keep({ issued: { 'date-parts': [[2002]] } }), old, 'not newer');
+  assert.match(await keep({ issued: { 'date-parts': [[2031]] } }), old, 'in the future');
+  assert.match(await keep({ publisher: '' }), old, 'no publisher');
+  assert.match(await keep({ DOI: '' }), old, 'no DOI');
+  assert.match(await keep({ title: ['Quantum Cooking'] }), old, 'another title');
+  assert.match(await keep({ author: [{ family: 'Goodrich' }] }), old, 'an author with no given name is not guessed');
+});
+
+test('a recent catalogue edition is not looked up again, and a failed Crossref look keeps the catalogue edition', async () => {
+  const log = [];
+  const recent = await oldBook({ fetchImpl: library({ editions: [entry('Data Structures and Algorithms in Java', 2022)], crossref: [GOODRICH], log }) });
+  assert.match(recent.items[0].t, /\(2022\)/);
+  assert.equal(log.filter(u => /api\.crossref\.org/.test(u)).length, 0);
+  const failing = async (url) => { if (/api\.crossref\.org/.test(url)) throw new Error('crossref down'); return library({ editions: [entry('Data Structures and Algorithms in Java', 2003)] })(url); };
+  const out = await oldBook({ fetchImpl: failing });
+  assert.match(out.items[0].t, /\(2003\)\. Data Structures and Algorithms in Java\. Wiley\.$/);
+  assert.equal(out.tooOld, 1, 'and the caller is told it is over the school limit of 10 years');
+});
+
+test('Crossref is only asked for fields it knows: an unknown field makes it answer HTTP 400 and the lookup silently finds nothing (found live with edition-number)', async () => {
+  const KNOWN = new Set('title author issued publisher DOI type container-title volume issue page abstract subject language license link reference'.split(' '));
+  const log = [];
+  await oldBook({ fetchImpl: library({ editions: [entry('Data Structures and Algorithms in Java', 2003)], crossref: [GOODRICH], log }) });
+  await S.suggestReferences({ ask: async () => JSON.stringify({ books: [], articles: [{ title: 'Active learning', firstAuthorSurname: 'Reyes', year: 2023 }] }), system: 's', subject: {}, year: 2026, fetchImpl: library({ log }) });
+  const selects = log.filter(u => /api\.crossref\.org/.test(u)).map(u => new URL(u).searchParams.get('select'));
+  assert.equal(selects.length, 2);
+  for (const select of selects) for (const field of select.split(',')) assert.ok(KNOWN.has(field), field + ' is a Crossref field');
+  assert.equal(S.CROSSREF_BOOK_FIELDS.includes('edition-number'), false);
+});
+
+test('publishers are written as APA writes them: ", The" at the end goes, and a Crossref publisher with a place glued on is not used', async () => {
+  assert.equal(S.cleanPublisher('McGraw-Hill Companies, The'), 'McGraw-Hill Companies');
+  assert.equal(S.cleanPublisher('Wiley.'), 'Wiley');
+  const glued = await oldBook({ fetchImpl: library({ editions: [entry('Data Structures and Algorithms in Java', 2003)], crossref: [{ ...GOODRICH, publisher: 'Oxford University PressOxford' }] }) });
+  assert.match(glued.items[0].t, /\(2003\)/, 'the glued record was skipped');
+  const clean = await oldBook({ fetchImpl: library({ editions: [entry('Data Structures and Algorithms in Java', 2022, { publishers: ['McGraw-Hill Companies, The'] })] }) });
+  assert.match(clean.items[0].t, /McGraw-Hill Companies\.$/);
+});

@@ -2826,3 +2826,13 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Cost of a stopped run:** the error now carries what the run spent, and the server prints one line for a stopped run as it already did for a finished one ("AI Syllabus Generator STOPPED: ..., N requests, estimated $X").
 - **Filipino:** the new warning has a Filipino version.
 - **Tests:** generator 41. `npm test` passes (1,477).
+
+
+### v1.98.11 — AI Syllabus Generator: Older References Get a Second Look and a Warning
+**Date:** November 19, 2026
+
+- **Found in the MMW run (syllabus 120):** the five suggested books were real but dated 2016, 2016, 2010, 2010 and 2007; three were over the school standard's 10-year limit, so Reference Currency scored 70 (the whole syllabus scored 96, "Excellent").
+- **Change:** when the newest edition Open Library knows is more than 5 years old, Crossref (`filter=type:book`) is asked once for a newer record of the same book: same title, same first author, a later year that is not in the future, a publisher and authors with given names. If one exists it replaces the old one and its DOI link is written in the reference (live check: a Springer book came out as 2023 with its DOI). If Crossref has nothing newer, or fails, the catalogue edition stays and the author is told: "N reference(s) are more than 10 years old, the limit of the school's standard ... Replace them with the newer editions you use" (English and Filipino).
+- **Live check, honest result:** for the MMW textbooks (Triola, Tannenbaum, Miller; Pearson and Prentice Hall) Crossref holds no newer record, so they stay 2010, 2010 and 2007 and the warning names them. Crossref only helps for publishers that register DOIs (Springer, Wiley, OUP, ...). A third source with newer editions (for example Google Books) would be needed to improve those.
+- **Found live, fixed:** asking Crossref for the field `edition-number` makes it refuse the whole request (HTTP 400), so the lookup would have silently found nothing; the fields are now a fixed list and a test pins that every field is one Crossref knows. Also: a catalogue publisher "McGraw-Hill Companies, The" is written "McGraw-Hill Companies", and a Crossref publisher with the place glued on ("Oxford University PressOxford") is skipped.
+- **Tests:** reference suggestions 19, generator 41. `npm test` passes.
