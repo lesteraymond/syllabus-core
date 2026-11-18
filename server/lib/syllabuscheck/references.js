@@ -1,16 +1,11 @@
 'use strict';
-// Stage D2: APA 7 references. Three questions that are kept apart everywhere (the report, the findings, the UI):
-//   FORMAT        does the reference follow APA 7 for its kind of source?      deterministic, from the text alone (this file)
-//   RELEVANCE     does the source concern the course?                          the AI, from the citation only (Ref-relevance, advisory)
-//   AUTHENTICITY  does the work exist, with this title and year?               'not_verified' unless a DOI was checked against an external source
-//                                                                              the operator switched on (SYLLABUS_CHECK_REF_VERIFY=crossref)
-// A well-formatted reference can be irrelevant or invented, and an authentic one can be badly formatted: no answer here is allowed to stand in for another.
+// APA 7 references: the FORMAT of a reference, deterministic, from the text alone (parseReference, used by pipeline/fixedRules.js), and the Crossref lookup
+// of a DOI (crossrefFetch, used by pipeline/lookup.js). Relevance to the course is a question of the new AI Checker (REF-RELEVANCE). The old checker's
+// Stage D2 report and relevance pairs were removed with the old AI Checker.
 // Nothing is invented. A suggested text exists only for a MECHANICAL repair that re-uses characters already in the reference (a DOI written as "doi:10.x/y"
 // becomes https://doi.org/10.x/y; "and" between authors becomes ", &"). Italics cannot be seen in plain text and are not checked.
 // What this cannot decide is reported as 'possible' or left NOT_CHECKED, never as a pass: a reference whose kind is not clear gets no kind-specific verdict.
-const { examLike, brief } = require('./planrows');
 
-const GROUPS = ['books', 'program', 'online', 'electronics'];
 const clean = text => String(text ?? '').replace(/\s+/g, ' ').trim();
 const DOI_BODY = /10\.\d{4,9}\/[^\s"<>]+/;
 const GROUP_AUTHOR = /\b(commission|department|ministry|office|bureau|republic|philippines|agency|council|board|institute|association|organization|organisation|society|university|authority|congress|senate|government)\b/i;
@@ -133,47 +128,6 @@ function parseReference(text, ctx = {}) {
 }
 
 // ---- the whole list ----
-function referenceReport(content, ctx = {}) {
-  const out = [];
-  const groups = content.refs || {};
-  for (const key of GROUPS) {
-    const group = groups[key];
-    if (!group || group.na) continue;
-    (group.items || []).forEach((item, k) => {
-      if (!clean(item && item.t)) return;
-      out.push({ path: `refs.${key}.items[${k}]`, group: key, index: k, ...parseReference(item.t, ctx) });
-    });
-  }
-  return out;
-}
-
-// ---- AUTHENTICITY: opt-in, one external source (Crossref), bounded, never required ----
-// verified     the DOI exists AND its title and year agree with the reference
-// mismatch     the DOI exists but its title or year do not agree: the reference may be wrong or invented
-// not_found    the DOI does not resolve in that source
-// unavailable  the source could not be reached: nothing is said (the reference stays not verified)
-const words = text => new Set((String(text ?? '').toLowerCase().match(/[a-z0-9]{3,}/g) || []));
-const overlap = (a, b) => { const x = words(a), y = words(b); if (!x.size || !y.size) return 0; let n = 0; for (const w of x) if (y.has(w)) n++; return n / Math.min(x.size, y.size); };
-async function verifyDois(entries, fetchJson, { max = 20 } = {}) {
-  let used = 0;
-  for (const entry of entries) {
-    const doi = entry.components && entry.components.doi && entry.components.doi.valid ? entry.components.doi.value : null;
-    if (!doi || used >= max) continue;
-    used += 1;
-    try {
-      const body = await fetchJson(`https://api.crossref.org/works/${encodeURIComponent(doi)}`);
-      if (body === null) { entry.authenticity = { status: 'not_found', source: 'crossref' }; continue; }
-      const message = body && body.message;
-      const title = Array.isArray(message && message.title) ? message.title[0] : '';
-      const issued = message && message.issued && message.issued['date-parts'] && message.issued['date-parts'][0] && message.issued['date-parts'][0][0];
-      const mine = Number(String(entry.components.date || '').slice(0, 4)) || null;
-      const titleOk = overlap(title, entry.components.title) >= 0.6, yearOk = !mine || !issued || Math.abs(mine - issued) <= 1;
-      entry.authenticity = { status: titleOk && yearOk ? 'verified' : 'mismatch', source: 'crossref', registered: { title: String(title).slice(0, 300), year: issued || null } };
-    } catch (error) { entry.authenticity = { status: 'unavailable', source: 'crossref' }; }
-  }
-  return entries;
-}
-// The default fetcher: Crossref only, JSON only, a short timeout; a missing work (404) is null, any other failure throws.
 async function crossrefFetch(url, fetchImpl = fetch) {
   if (!/^https:\/\/api\.crossref\.org\/works\//.test(url)) throw new Error('only Crossref work lookups are allowed');
   const response = await fetchImpl(url, { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(6000) });
@@ -183,22 +137,4 @@ async function crossrefFetch(url, fetchImpl = fetch) {
 }
 
 // ---- RELEVANCE: one scoped question per reference that no page-based question already covers ----
-const MAX_REF_QUESTIONS = 20;
-function courseTopics(content) {
-  const meta = content.meta || {};
-  const topics = (content.plan || []).filter(row => row.kind !== 'exam' && !examLike(row) && clean(row.contents)).map(row => `Week ${row.week}: ${brief(row.contents, 90)}`).join('\n');
-  const description = (content.description || []).map(d => clean(d && d.t)).filter(Boolean).join(' ');
-  return [`Course: ${[meta.code, meta.title].map(clean).filter(Boolean).join(' - ')}`, description ? `Description: ${description.slice(0, 600)}` : '', topics ? `Weekly topics:\n${topics}` : ''].filter(Boolean).join('\n').slice(0, 2600);
-}
-// `judgements` are the first-pass answers: a reference whose link was read and judged against the topics (REF-plan) is answered already and is not asked again.
-function relevanceTargets(content, entries, judgements = []) {
-  const judgedUrls = new Set(judgements.filter(j => j.type === 'REF-plan' && !j.unverified).map(j => String(j.path || '').replace(/^refs:/, '')));
-  const asked = [], reused = [];
-  for (const entry of entries) (entry.components.urls || []).some(url => judgedUrls.has(url)) ? reused.push(entry) : asked.push(entry);
-  return { asked: asked.slice(0, MAX_REF_QUESTIONS), reused };
-}
-function relevancePairs(content, entries) {
-  const source = courseTopics(content);
-  return entries.map(entry => ({ id: `ref-${entry.group}-${entry.index}`, type: 'Ref-relevance', source, target: entry.text.slice(0, 600), path: entry.path, targetPath: null }));
-}
-module.exports = { parseReference, referenceReport, verifyDois, crossrefFetch, relevanceTargets, relevancePairs, courseTopics, MAX_REF_QUESTIONS, GROUPS };
+module.exports = { parseReference, crossrefFetch };
