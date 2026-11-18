@@ -114,7 +114,6 @@ function startApi({ port, work, front, control, providerLog, serverLog, extraEnv
     SYLLABUS_CHECK_REPLAN: 'official', SYLLABUS_CHECK_AI_PROVIDER: 'anthropic', ANTHROPIC_API_KEY: E2E_ANTHROPIC_STAND_IN, ANTHROPIC_MODEL: 'claude-sonnet-5-5',
     SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL: 'claude-sonnet-5-5', // the one approved model (aiConfig.js): Check & improve and the submission gate need it
     SYLLABUS_CHECK_REPLAN_MAX_COST_USD: '20', SYLLABUS_CHECK_REFINE_MAX_COST_USD: '5', SYLLABUS_CHECK_AI_GATE: 'advisory', ANTHROPIC_MAX_RETRIES: '0',
-    SYLLABUS_CHECK_AI_MAX_REQUESTS: '120', SYLLABUS_CHECK_AI_MAX_COST_USD: '10', // the staging start-up guard requires a per-check cost limit once a provider is configured
     E2E_PROVIDER_CONTROL: control, E2E_PROVIDER_LOG: providerLog,
     ...extraEnv,
   };

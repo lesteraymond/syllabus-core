@@ -67,23 +67,24 @@ function createAiQuota(limits, { now = Date.now } = {}) {
   };
 }
 
-// The per-check spending limit (docs/ai-checker-audit-2026-11-12.md A-2). Without SYLLABUS_CHECK_AI_MAX_COST_USD one check is bounded only by its request and
-// token caps (512 requests, 8,000,000 reserved tokens): with a paid model that is tens of dollars for a single check. It was applied to each check by the old
-// checker's request budget (gemini.js, removed with the old AI Checker); it is now only validated here. The cap the AI Checker applies to each check is
-// SYLLABUS_CHECK_REPLAN_MAX_COST_USD (pipeline/official.js), which is at most the same 1000 ceiling.
+// The per-check spending limit (docs/ai-checker-audit-2026-11-12.md A-2): SYLLABUS_CHECK_REPLAN_MAX_COST_USD, the cap the AI Checker applies to every
+// check (pipeline/official.js, pipeline/provider.js). Checked here at startup so a server never runs AI checks without it. Before 2026-11-18 this checked
+// SYLLABUS_CHECK_AI_MAX_COST_USD, which only the removed old checker applied (gemini.js): a server could be required to set it while nothing used it.
+// That setting is now ignored.
 //   Any mode: a value that is not a dollar amount above 0 and at most 1000 stops the server, by name.
-//   Staging and production: REQUIRED whenever an AI provider is configured. Development: optional, as before.
+//   Staging and production: REQUIRED whenever an AI provider is configured. Development: optional (without it an AI check reports why it cannot run).
 // -> the limit in dollars, or null when there is none.
+const COST_CAP_SETTING = 'SYLLABUS_CHECK_REPLAN_MAX_COST_USD';
 function resolveCheckCostCap(env = process.env) {
-  const raw = String(env?.SYLLABUS_CHECK_AI_MAX_COST_USD ?? '').trim();
+  const raw = String(env?.[COST_CAP_SETTING] ?? '').trim();
   if (raw) {
     const n = Number(raw);
-    if (!(/^\d+(\.\d+)?$/.test(raw) && n > 0 && n <= 1000)) throw fail('SYLLABUS_CHECK_AI_MAX_COST_USD must be a dollar amount above 0 and at most 1000 (the most one AI check may cost, for example 10).');
+    if (!(/^\d+(\.\d+)?$/.test(raw) && n > 0 && n <= 1000)) throw fail(`${COST_CAP_SETTING} must be a dollar amount above 0 and at most 1000 (the most one AI check may cost, for example 2).`);
     return n;
   }
   const { hardened } = require('./sessionSecret');
   if (hardened(env) && require('./syllabuscheck/aiConfig').providerConfig(env).configured) {
-    throw fail(`SYLLABUS_CHECK_AI_MAX_COST_USD is required with NODE_ENV=${String(env.NODE_ENV).trim().toLowerCase()} when an AI provider is configured: set the most one AI check may cost, in US dollars (the staging template uses 10).`);
+    throw fail(`${COST_CAP_SETTING} is required with NODE_ENV=${String(env.NODE_ENV).trim().toLowerCase()} when an AI provider is configured: set the most one AI check may cost, in US dollars (the templates use 2).`);
   }
   return null;
 }

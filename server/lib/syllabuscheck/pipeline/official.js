@@ -26,7 +26,7 @@ const isOfficial = (env = process.env) => String(env.SYLLABUS_CHECK_REPLAN || ''
 // Is an AI provider set at all (anything but off)? With one set and the new checker not ready, an AI check says why (compliance/service.js).
 const aiProviderOn = (env = process.env) => !['', 'off', 'none', 'false', '0'].includes(String(env.SYLLABUS_CHECK_AI_PROVIDER || '').trim().toLowerCase());
 
-// The largest per-check cap accepted: the same ceiling aiQuota.js puts on SYLLABUS_CHECK_AI_MAX_COST_USD. A typo such as 2000 must not let one check
+// The largest per-check cap accepted: the same ceiling aiQuota.js checks at startup. A typo such as 2000 must not let one check
 // spend that much; the old checker then runs instead and the reason says why.
 const MAX_CAP_USD = 1000;
 // Can the new checker make the official AI check under these settings? When it cannot, the old checker runs as before.

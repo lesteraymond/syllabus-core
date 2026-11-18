@@ -2697,3 +2697,15 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Comments** in `HybridCheckPanel.jsx`, `aiQuota.js`, `anthropicClient.js` and `quality.js` no longer describe gemini.js, modelClient.js, OpenRouter or Policy V2.
 - **Found, not changed:** `SYLLABUS_CHECK_AI_MAX_COST_USD` is still required at startup in staging and production, but since the old checker's request budget was removed nothing applies it to a check; the AI Checker's per-check cap is `SYLLABUS_CHECK_REPLAN_MAX_COST_USD`. Left for the owner's decision.
 - **Tests:** `npm test` passes (1,389 server + 127).
+
+---
+
+### v1.97.6 — AI Checker: The Startup Cost Guard Checks the Cap That Is Applied
+**Date:** November 18, 2026
+
+- **Problem:** in staging and production the server refused to start without `SYLLABUS_CHECK_AI_MAX_COST_USD`, but since the old checker was removed nothing applied that value to a check; the cap the AI Checker applies is `SYLLABUS_CHECK_REPLAN_MAX_COST_USD`. A server had to set a value that limited nothing.
+- **Change** (`server/lib/aiQuota.js` resolveCheckCostCap): the startup guard now checks `SYLLABUS_CHECK_REPLAN_MAX_COST_USD` with the same rules (any mode: a value that is not a dollar amount above 0 and at most 1000 stops the server, naming the setting; staging and production: required once an AI provider is configured). `SYLLABUS_CHECK_AI_MAX_COST_USD` is ignored. Development is unchanged.
+- **Templates:** `server/.env.example`, `docs/deployment/staging.env.template` and `docs/deployment/production.env.template` set up the AI Checker (provider, official mode, $2 cap, 120 requests, approved Claude model); the old setting, Policy V2, the comprehensive profile and the stage settings are gone from them. Production keeps the AI Checker off until the owner approves it after a staging test, and lists what to set when it is approved. Before, the production template set `SYLLABUS_CHECK_REPLAN=off`, so turning the AI on from it would not have run the new checker.
+- **Also:** `scripts/e2e/stack.cjs` drops the old setting (it already sets the real cap); comments in `index.js` and `pipeline/official.js` name the real cap.
+- **Not changed:** the historical test reports and the old Policy V2 staging guides under `docs/` (records of past runs).
+- **Tests:** `aiQuota.test.js` checks the real cap and that the old setting no longer satisfies the guard; the staging template passes the guard and fails it without the cap. `npm test` passes (1,391 server + 127).
