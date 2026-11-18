@@ -137,3 +137,11 @@ test('the snapshot shows the final AI score and each area after the AI deduction
   assert.strictEqual(snapshotOf({ average: 90, areas: [{ key: 'co_po', average: 88 }] }).areas.find((a) => a.key === 'co_po').score, 88, 'an older server without the after-AI value: the rules value');
   assert.deepStrictEqual([snapshotOf(null).final, snapshotOf(null).lowest], [null, null]);
 });
+
+test('scoreTone: blue from 90, amber from 75, red below, none without a score', async () => {
+  const { scoreTone } = await import('./complianceStats.js');
+  assert.equal(scoreTone(100), 'good'); assert.equal(scoreTone(90), 'good');
+  assert.equal(scoreTone(89), 'mid'); assert.equal(scoreTone(75), 'mid');
+  assert.equal(scoreTone(74), 'bad'); assert.equal(scoreTone(0), 'bad');
+  assert.equal(scoreTone(null), null); assert.equal(scoreTone(undefined), null);
+});

@@ -49,6 +49,11 @@ export const reviewChainEn = {
   'reviewChain.error.ownSyllabus': 'You cannot clear a review stage on your own syllabus.',
   'reviewChain.error.notWaiting': 'This syllabus is not waiting for review.',
   'reviewChain.error.ownApproval': 'Send your own syllabus for review from the AI Checker. The VPAA approves it after the dean, the Asst. VPAA and the LIC Director have cleared it.',
+  'notif.all': 'All',
+  'notif.unread': 'Unread',
+  'notif.today': 'Today',
+  'notif.earlier': 'Earlier',
+  'notif.noUnread': 'No unread notifications.',
 };
 
 export const reviewChainTl = {
@@ -95,4 +100,9 @@ export const reviewChainTl = {
   'reviewChain.error.ownSyllabus': 'Hindi mo matatapos ang yugto ng pagsusuri sa sarili mong silabus.',
   'reviewChain.error.notWaiting': 'Hindi naghihintay ng pagsusuri ang silabus na ito.',
   'reviewChain.error.ownApproval': 'Ipadala ang sarili mong silabus para sa pagsusuri mula sa AI Checker. Aaprubahan ito ng VPAA kapag natapos na ito ng dekano, ng Asst. VPAA at ng LIC Director.',
+  'notif.all': 'Lahat',
+  'notif.unread': 'Hindi pa nababasa',
+  'notif.today': 'Ngayon',
+  'notif.earlier': 'Mas maaga',
+  'notif.noUnread': 'Walang notipikasyong hindi pa nababasa.',
 };

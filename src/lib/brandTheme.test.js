@@ -129,10 +129,12 @@ test('the time-usage chart keeps its bars and the range buttons readable', () =>
   assert.ok(theme.includes('--usage-today: #b9842a'), 'the today colour is the one tested above');
 });
 
-test('the AI Quality Snapshot rings are the primary button blue, with the lowest area still red', () => {
+test('the AI Quality Snapshot rings are the primary button blue at 90 and above, amber from 75, red below 75', () => {
   assert.ok(theme.includes('.quality-ring { background: conic-gradient(var(--btn-primary) 0 var(--p), #e3e7ea var(--p)); }'), 'the rings use the blue of New syllabus');
   assert.ok(contrast(token('btn-primary'), '#e3e7ea') >= 3, 'the blue arc stands out from the grey track (a graphic: 3:1)');
-  assert.ok(theme.includes('.quality-mini.low .quality-ring { background: conic-gradient(var(--red) 0 var(--p), #e3e7ea var(--p)); }'), 'the lowest area keeps its red ring');
+  assert.ok(theme.includes('.quality-mini.tone-bad .quality-ring { background: conic-gradient(var(--red) 0 var(--p), #e3e7ea var(--p)); }'), 'a score below 75 has a red ring');
+  assert.ok(theme.includes('.quality-mini.tone-mid .quality-ring { background: conic-gradient(var(--ring-warn) 0 var(--p), #e3e7ea var(--p)); }'), 'a score from 75 to 89 has an amber ring');
+  assert.ok(contrast(token('ring-warn'), '#e3e7ea') >= 3 && contrast(token('red'), '#ffffff') >= 4.5 && contrast(token('gold-ink'), '#ffffff') >= 4.5, 'the arcs stand out and the labels read on white');
 });
 
 test('the AI Checker score rings are one thin arc per state, readable on white and on their track, with no water or orbit effects', () => {
@@ -155,7 +157,7 @@ test('the dashboard Program Compliance bars are a primary-blue meter on a light 
 
 test('the open dropdown list stays readable: option text, the chosen option on the highlight, and the filter hint', () => {
   assert.ok(contrast(token('text'), '#ffffff') >= 7, 'option text on the panel');
-  assert.ok(contrast(token('blue'), token('tint-cobalt')) >= 4.5, 'chosen option on the highlighted row');
+  assert.ok(contrast(token('blue2'), token('tint-cobalt')) >= 4.5, 'chosen option on the highlighted row');
   assert.ok(contrast(token('muted'), '#ffffff') >= 4.5, 'filter hint on the panel');
   assert.ok(contrast('#8a8880', '#ffffff') >= 3, 'button border on white');
   assert.ok(contrast('#5b6270', '#f1f4f3') >= 4.5, 'disabled button text on its fill');
@@ -229,7 +231,7 @@ test('deadline tags and chips keep readable text on their fills (4.5:1)', () => 
   assert.ok(contrast(token('green-ink'), token('tint-green')) >= 4.5, 'done chip note');
   assert.ok(contrast(token('gold-ink'), token('tint-gold')) >= 4.5, 'due-today chip note');
   assert.ok(contrast(token('muted'), '#ffffff') >= 4.5, 'upcoming chip note');
-  assert.ok(contrast(token('blue'), '#ffffff') >= 4.5, 'the set-a-deadline chip');
+  assert.ok(contrast(token('blue2'), '#ffffff') >= 4.5, 'the set-a-deadline chip');
   assert.ok(contrast('#d92424', '#ffffff') >= 4.5, 'the failed count in the dialog');
 });
 

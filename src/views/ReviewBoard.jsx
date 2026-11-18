@@ -10,23 +10,23 @@ const CARD = [
   // layout: a 35px chip beside three stacked lines (program, subject, faculty note)
   'tw:group tw:relative tw:grid tw:w-full tw:min-w-0 tw:min-h-[120px] tw:[align-content:start] tw:items-start tw:gap-x-[11px] tw:gap-y-0.5 tw:overflow-hidden',
   "tw:grid-cols-[35px_minmax(0,1fr)] tw:grid-rows-[auto_auto_1fr] tw:[grid-template-areas:'icon_label'_'icon_value'_'icon_note']",
-  'tw:py-[14px] tw:pr-[34px] tw:pl-[14px] tw:text-left tw:cursor-pointer tw:text-inherit tw:[font:inherit]',
-  // the same surface as the dashboard tiles
-  'tw:rounded-card tw:border tw:border-line tw:bg-card tw:[box-shadow:var(--shadow)]',
-  // motion
-  'tw:[animation:fadeInUp_0.4s_ease-out_both] tw:[transition:transform_0.2s,box-shadow_0.25s]',
-  'tw:hover:[transform:translateY(-2px)] tw:hover:[box-shadow:0_12px_36px_rgba(15,35,85,0.1)]',
+  'tw:py-4 tw:pr-9 tw:pl-4 tw:text-left tw:cursor-pointer tw:text-inherit tw:[font:inherit]',
+  // minimal surface: flat, one hairline border, no shadow; the button blue (--btn-primary) shows on hover and focus
+  'tw:rounded-card tw:border tw:border-line tw:bg-card tw:[box-shadow:none]',
+  // motion: a quiet border-colour change, nothing lifts or moves
+  'tw:[transition:border-color_0.2s_ease,background-color_0.2s_ease]',
+  'tw:hover:border-[color:var(--btn-primary)] tw:hover:bg-[color:var(--btn-primary-tint)]',
   'tw:focus-visible:outline-2 tw:focus-visible:outline-offset-2 tw:focus-visible:outline-brand-2',
-  'tw:motion-reduce:[animation:none] tw:motion-reduce:[transition:none] tw:motion-reduce:hover:[transform:none]',
+  'tw:motion-reduce:[transition:none]',
 ].join(' ');
-const PROGRAM = 'tw:[grid-area:label] tw:block tw:max-w-full tw:rounded-[99px] tw:[background:none] tw:p-0 tw:text-brand tw:text-xs tw:leading-[18px] tw:font-semibold tw:uppercase tw:tracking-[var(--tracking-label)] tw:wrap-anywhere';
+const PROGRAM = 'tw:[grid-area:label] tw:block tw:max-w-full tw:rounded-[99px] tw:[background:none] tw:p-0 tw:text-muted tw:text-xs tw:leading-[18px] tw:font-semibold tw:uppercase tw:tracking-[var(--tracking-label)] tw:wrap-anywhere';
 const SUBJECT = 'tw:[grid-area:value] tw:mt-0.5 tw:text-md tw:leading-[1.3] tw:font-bold tw:font-display tw:text-[#000] tw:wrap-anywhere';
-const AVATAR = 'avatar tw:[grid-area:icon] tw:size-[35px] tw:flex-none tw:rounded-[9px] tw:[border:0] tw:bg-[color:var(--tone-soft)] tw:text-[color:var(--tone)] tw:text-xs tw:[box-shadow:none]';
+const AVATAR = 'avatar tw:[grid-area:icon] tw:size-[35px] tw:flex-none tw:rounded-full tw:[border:0] tw:bg-[color:var(--tone-soft)] tw:text-[color:var(--tone)] tw:text-xs tw:[box-shadow:none]';
 const FACULTY = 'tw:[grid-area:note] tw:[align-self:end] tw:mt-2 tw:min-w-0 tw:flex-[1_1_0] tw:text-xs tw:leading-[18px] tw:font-semibold tw:text-muted tw:wrap-anywhere';
 const ARROW = [
-  'tw:absolute tw:top-[14px] tw:right-[12px] tw:text-muted tw:opacity-50 tw:[transform:translate(-4px,4px)] tw:[transition:opacity_0.25s_ease,color_0.25s_ease]',
-  'tw:group-hover:opacity-100 tw:group-hover:text-[color:var(--tone)] tw:group-hover:[transform:none]',
-  'tw:group-focus-visible:opacity-100 tw:group-focus-visible:text-[color:var(--tone)] tw:group-focus-visible:[transform:none]',
+  'tw:absolute tw:top-4 tw:right-4 tw:text-muted tw:opacity-0 tw:[transform:translate(-4px,4px)] tw:[transition:opacity_0.2s_ease,color_0.2s_ease,transform_0.2s_ease]',
+  'tw:group-hover:opacity-100 tw:group-hover:text-[color:var(--btn-primary)] tw:group-hover:[transform:none]',
+  'tw:group-focus-visible:opacity-100 tw:group-focus-visible:text-[color:var(--btn-primary)] tw:group-focus-visible:[transform:none]',
   'tw:motion-reduce:[transition:none]',
 ].join(' ');
 

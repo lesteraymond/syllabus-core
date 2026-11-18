@@ -12,7 +12,7 @@ import TypewriterText from '../components/TypewriterText';
 import { compliance as complianceApi, courses as coursesApi, outcomes as outcomesApi, logs as logsApi, users as usersApi } from '../lib/api';
 import { adminStatCards } from '../lib/adminDashboardStats';
 import { canAuthor, isReviewer, roleAllows } from '../lib/roles';
-import { FACULTY_SUBMITTED, aiAverage, approval, programCoverage, snapshotOf } from '../lib/complianceStats';
+import { FACULTY_SUBMITTED, aiAverage, approval, programCoverage, scoreTone, snapshotOf } from '../lib/complianceStats';
 import { sentenceCase } from '../lib/sentenceCase';
 import { dayPeriod } from '../lib/phTime';
 import Select from '../components/Select';
@@ -288,7 +288,7 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
             // the Assessment ring also holds the AI Checker's learning-activity findings (server/lib/compliance/finalAreas.js areaOf): its tooltip says so
             const hint = a.key === 'assessment' ? translateUI('snapshot.assessmentHint') : '';
             const tip = [low ? translateUI('snapshot.lowest', { area: translateUI(SNAPSHOT_LABELS[a.key]), score: a.score }) : '', hint].filter(Boolean).join(' · ');
-            return <QualityMini key={a.key} label={translateUI(SNAPSHOT_LABELS[a.key])} value={a.score} low={low} title={tip || undefined} />;
+            return <QualityMini key={a.key} label={translateUI(SNAPSHOT_LABELS[a.key])} value={a.score} low={low} tone={scoreTone(a.score)} title={tip || undefined} />;
           })}</div>
           {/* checks made with AI checking off are not AI results: left out of the snapshot, and counted here */}
           {snapshot.notAiChecked > 0 && <div className="snapshot-note">{translateUI(snapshot.notAiChecked === 1 ? 'snapshot.notAiCheckedOne' : 'snapshot.notAiChecked', { count: snapshot.notAiChecked })}</div>}
