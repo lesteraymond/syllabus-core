@@ -53,7 +53,14 @@ const CHUNKS = Object.freeze([LESSON_WEEKS.slice(0, 7), LESSON_WEEKS.slice(7)]);
 const EXAM_VALUE = DEFAULTS.examValue;
 const ORIENTATION_ROW = Object.freeze({ ...DEFAULTS.orientation });
 const MAX_SECOND_ILOS = 4; // at most this many weeks have a second ILO, for a different CLO (a week may have several ILOs tagged to different CLOs)
-const MIN_WEEKS_PER_CLO = 2; // every CLO is built by at least two lesson weeks (CLO 4, the values CLO, was built by one in the first real run)
+const MIN_WEEKS_PER_CLO = 2;
+// Quality guards, from reading the first real run (a plan can pass the checker and still be thin): the ILO of a week that builds CLO 2, 3 or 4 is at apply level or above (recall and
+// understanding verbs are for CLO 1 weeks); a week is not packed with topics; the number of activities and tasks follows the content, not a template; and assessment is not mostly quizzes.
+const LOW_VERBS = new Set('define list identify recall state name label recognize describe explain summarize classify discuss outline interpret illustrate paraphrase restate review'.split(' '));
+const MAX_TOPIC_GROUPS = 4, MAX_TOPIC_CHARS = 260, MAX_ACTIVITIES = 4, MAX_TASKS = 3, MAX_QUIZ_SHARE = 0.3; // the first real run had 35%
+const QUIZ = /\b(quiz|quizzes|test|tests|exam|recitation|multiple[- ]choice|identification|true[- ]or[- ]false|fill[- ]in)\b/i;
+const verbOf = text => clean(text).replace(/^students?\s+(?:will|should)\s+(?:be able to\s+)?/i, '').toLowerCase().split(/[\s,]+/)[0];
+ // every CLO is built by at least two lesson weeks (CLO 4, the values CLO, was built by one in the first real run)
 const CLO_TITLES = R.CLO_LEVELS.map(l => String(l.focus).split(' / ')[0]);
 
 // ---- schemas (Anthropic structured outputs: anthropicSchema.js) ----
@@ -76,6 +83,9 @@ const GENERATE_RULES = [
   '- One observable verb per CLO and per ILO, at the Bloom levels of its CLO (see rule 2 and 4). Never "Define and explain". An ILO is what the STUDENT does.',
   '- Every ILO states its own outcome from its own week\'s content: no ILO repeats or paraphrases another, in the same week or another week.',
   '- A week may have a second ILO tagged to a different CLO (alsoClo). Then EVERY ILO of that week needs at least one activity and at least one task at the level of its own verb; the two alternatives for diverse learners are for the week as a whole, not per ILO.',
+  '- Raise the level with the course: the ILO of a week that builds CLO 2, 3 or 4 is at apply level or above (use, solve, build, implement, analyze, compare, evaluate, design, develop, defend). Describe, explain, define and summarize belong to CLO 1 weeks.',
+  '- A week is not packed: its content is 3 or 4 topic groups separated by semicolons, at most 260 characters in all.',
+  '- Fit the number of activities (2 to 4) and tasks (1 to 3) to the content: never the same number in every week. Mix the kinds of task (problem sets, labs or practical tasks, projects, case analyses, presentations, reflections); at most one quiz or test in a week, and never a week whose only task is a quiz.',
   '- Activities: one per line, each starting with "- ", at least 2 alternatives per week for diverse learners. At least one activity practises the ILO at the level of its verb (for "apply", students solve, build or perform; listening alone is below it). Tasks: one per line starting with "- ", at least one at the level of the ILO\'s verb.',
   `- Values: name at least one of ${VALUE_NAMES.join(', ')} by its exact name, optionally with a few words on how the week integrates it.`,
   '- The subject gives its units. When labUnits is above 0, the activities and tasks of the weeks include laboratory or hands-on work. Build on what the prerequisite subjects teach; do not teach again what subjectsTakenBefore covers, except as a short review.',
@@ -129,7 +139,7 @@ function outlineMessage({ subject, clos }, problems = []) {
     task: 'Write the course content of every lesson week and say which CLO each week builds. Content comes first: topics only, no outcomes and no activities.',
     subject, clos: clos.map((c, i) => ({ no: i + 1, classification: c.level, statement: c.statement })),
     weeks: LESSON_WEEKS, notLessonWeeks: { 1: 'orientation (fixed)', ...Object.fromEntries(EXAMS.map(e => [e.week, e.name.toLowerCase() + ' (fixed)'])) },
-    format: { week: 'each of the lesson weeks listed under "weeks", once', clo: 'the number (1 to 4) of the CLO this week builds', alsoClo: `0 for most weeks. In at most ${MAX_SECOND_ILOS} weeks, the number (1 to 4, not the same as clo) of a second CLO whose outcome this week\'s topics also support, for example a CLO 4 values outcome in a topic with an ethical side. Never to fill space.`, contents: 'the week\'s topics and subtopics as one short line or a short list, inside the subject; progress from foundations to application; never repeat a week' },
+    format: { week: 'each of the lesson weeks listed under "weeks", once', clo: 'the number (1 to 4) of the CLO this week builds', alsoClo: `0 for most weeks. In at most ${MAX_SECOND_ILOS} weeks, the number (1 to 4, not the same as clo) of a second CLO whose outcome this week\'s topics also support, for example a CLO 4 values outcome in a topic with an ethical side. Never to fill space.`, contents: 'the week\'s topics and subtopics as 3 or 4 topic groups separated by semicolons (at most 260 characters in all; do not pack a week), inside the subject; progress from foundations to application; never repeat a week' },
     rules: [`Every CLO 1 to 4 must be built by at least ${MIN_WEEKS_PER_CLO} weeks, so each CLO is reached more than once. CLO 1 weeks come first; the CLO 4 weeks (ethics, values, responsibility in the subject) come last.`, 'A week built toward a CLO must carry topics that CLO\'s outcome can be practised on.'],
     ...(problems.length ? { fixThese: problems } : {}),
   }) };
@@ -140,7 +150,7 @@ function weeksMessage({ subject, clos, outline, weeks, before }, problems = []) 
     subject, clos: clos.map((c, i) => ({ no: i + 1, classification: c.level, statement: c.statement })),
     weeks: weeks.map(w => ({ week: w, clo: outline.get(w).clo, ...(outline.get(w).alsoClo ? { alsoClo: outline.get(w).alsoClo } : {}), contents: outline.get(w).contents })),
     alreadyWritten: before, // the ILOs of earlier weeks: write a different one
-    format: { ilo: 'ONE sentence starting with ONE verb, what the student does, from this week\'s content, at a Bloom level at or below the level of the week\'s CLO\'s own verb', ilo2: 'for a week that lists alsoClo: a second ILO (same rules, for the alsoClo CLO, different from the first); for every other week an empty string', activities: 'at least 2 alternatives, each its own array item, no leading "- "; in a week with two ILOs, each ILO is practised by at least one of them', tasks: 'at least 1 (at least 2 in a week with two ILOs), each its own array item, no leading "- "; each ILO is assessed by at least one', values: 'at least one core value by its exact name' },
+    format: { ilo: 'ONE sentence starting with ONE verb, what the student does, from this week\'s content, at a Bloom level at or below the level of the week\'s CLO\'s own verb. In a week whose CLO is 2, 3 or 4 the verb is at apply level or above (use, solve, build, analyze, compare, evaluate, design, develop, defend); describe, explain, define and summarize are for CLO 1 weeks only', ilo2: 'for a week that lists alsoClo: a second ILO (same rules, for the alsoClo CLO, different from the first); for every other week an empty string', activities: '2 to 4 alternatives (vary the number from week to week with the content; not the same number every week), each its own array item, no leading "- "; in a week with two ILOs, each ILO is practised by at least one of them', tasks: '1 to 3 (at least 2 in a week with two ILOs), each its own array item, no leading "- "; each ILO is assessed by at least one. Mix the kinds: problem sets, labs or practical tasks, projects, case analyses, presentations, reflections. At most one quiz or test, and never only a quiz', values: 'at least one core value by its exact name' },
     ...(problems.length ? { fixThese: problems } : {}),
   }) };
 }
@@ -195,7 +205,8 @@ function readOutline(raw) {
     if (!LESSON_WEEKS.includes(week)) continue; // a fixed week (orientation, examination) or an invented one: ignored, never overwritten
     if (map.has(week)) { problems.push(`Week ${week} appears twice`); continue; }
     if (!contents) problems.push(`Week ${week} has no content`);
-    else if (contents.length > P.MAX_REWRITE.content) problems.push(`Week ${week} content is too long (at most ${P.MAX_REWRITE.content} characters)`);
+    else if (contents.length > MAX_TOPIC_CHARS) problems.push(`Week ${week} content is too long (at most ${MAX_TOPIC_CHARS} characters): do not pack a week`);
+    else if (contents.split(/[;\n]+/).map(clean).filter(Boolean).length > MAX_TOPIC_GROUPS) problems.push(`Week ${week} has more than ${MAX_TOPIC_GROUPS} topic groups: move some to another week`);
     if (!Number.isInteger(clo) || clo < 1 || clo > R.CLO_COUNT) problems.push(`Week ${week} must name the CLO it builds as 1 to ${R.CLO_COUNT}`);
     if (alsoClo && (!Number.isInteger(alsoClo) || alsoClo < 1 || alsoClo > R.CLO_COUNT || alsoClo === clo)) problems.push(`Week ${week}: alsoClo must be 0, or a CLO number (1 to ${R.CLO_COUNT}) other than the week's own CLO`);
     map.set(week, { clo, alsoClo: Number.isInteger(alsoClo) && alsoClo >= 1 && alsoClo <= R.CLO_COUNT && alsoClo !== clo ? alsoClo : 0, contents });
@@ -232,9 +243,16 @@ function readWeeks(raw, weeks, taken, outline = new Map()) {
     };
     checkIlo(ilo, 'ILO', written);
     if (outline.get(week) && outline.get(week).alsoClo) { checkIlo(second, 'second ILO', [...written, ilo]); if (tasks.length < 2) flag('a week with two ILOs needs a task for each'); }
+    // the level rises with the CLO: a week that builds CLO 2, 3 or 4 is not a recall or understanding week
+    for (const [text, clo, name] of [[ilo, outline.get(week) && outline.get(week).clo, 'ILO'], [second, outline.get(week) && outline.get(week).alsoClo, 'second ILO']]) {
+      if (text && clo >= 2 && LOW_VERBS.has(verbOf(text))) flag(`the ${name} builds CLO ${clo} (${R.CLO_LEVELS[clo - 1].level}) so it must be at apply level or above, not "${verbOf(text)}" (recall or understanding): use a verb such as use, solve, build, analyze, compare, evaluate, design or defend`);
+    }
     if (activities.length < R.MIN_ACTIVITY_OPTIONS) flag(`give at least ${R.MIN_ACTIVITY_OPTIONS} alternative activities`);
     if (bulletText(activities).length > P.MAX_REWRITE.activities) flag('the activities are too long');
     if (!tasks.length) flag('no assessment task');
+    else if (tasks.every(t => QUIZ.test(t))) flag('at least one task must be a problem set, practical task, project, case analysis or reflection, not only a quiz or test');
+    if (activities.length > MAX_ACTIVITIES) flag(`give at most ${MAX_ACTIVITIES} activities`);
+    if (tasks.length > MAX_TASKS) flag(`give at most ${MAX_TASKS} tasks`);
     if (bulletText(tasks).length > P.MAX_REWRITE.tasks) flag('the tasks are too long');
     if (!namedValues(values).length) flag(`name at least one core value by its exact name (${VALUE_NAMES.join(', ')})`);
     if (values.length > P.MAX_REWRITE.values) flag('the values are too long');
@@ -242,6 +260,11 @@ function readWeeks(raw, weeks, taken, outline = new Map()) {
   }
   const missing = weeks.filter(w => !map.has(w) && !problems.some(p => p.startsWith(`Week ${w}:`)));
   if (missing.length) problems.push(`weeks ${missing.join(', ')} are missing`);
+  // across the chunk: not a template, and not mostly quizzes
+  const counts = [...map.values()].map(v => itemsOf(v.activities).length);
+  if (counts.length >= 5 && new Set(counts).size === 1 && counts[0] >= 3) problems.push(`every week has ${counts[0]} activities: vary the number (2 to ${MAX_ACTIVITIES}) with each week's content`);
+  const everyTask = [...map.values()].flatMap(v => itemsOf(v.tasks));
+  if (everyTask.length >= 6 && everyTask.filter(t => QUIZ.test(t)).length / everyTask.length > MAX_QUIZ_SHARE) problems.push(`more than ${Math.round(MAX_QUIZ_SHARE * 100)}% of the tasks are quizzes or tests: use problem sets, practical tasks, projects, case analyses or reflections instead`);
   return problems.length ? { problems } : { map };
 }
 
@@ -349,7 +372,7 @@ async function generateSyllabus({ content, masters, env = process.env, transport
   // 5. references: the AI names candidate books, only those the Open Library catalogue confirms are kept (referenceSuggest.js). Skipped when the author already has references.
   tick(6, 'references');
   const hasRefs = Object.values(content.refs || {}).some(g => g && Array.isArray(g.items) && g.items.some(i => clean(i && i.t)));
-  let found = { items: [] };
+  let found = { items: [], articles: [] };
   if (!hasRefs && String(env.SYLLABUS_CHECK_GENERATE_REFERENCES ?? 'on').trim().toLowerCase() !== 'off') {
     found = await suggestReferences({ ask, system: SYSTEM, subject, topics: LESSON_WEEKS.map(w => clean(outline.get(w).contents).slice(0, 90)), year: year || new Date().getFullYear(), ...(fetchImpl ? { fetchImpl } : {}), newId });
   }
@@ -357,9 +380,13 @@ async function generateSyllabus({ content, masters, env = process.env, transport
   // the content as the checker will read it
   let draft = structuredClone(content);
   draft.clos = clos; draft.plan = plan;
-  if (found.items.length) {
-    const groups = ['books', 'program', 'online', 'electronics'], refs = { ...(draft.refs || {}) };
-    for (const g of groups) refs[g] = g === 'books' ? { na: false, items: found.items } : { na: true, items: [] }; // the groups with no source are marked not applicable; the author can change that
+  const foundCount = found.items.length + found.articles.length;
+  if (foundCount) {
+    // books go to Books, journal articles (with their DOI link) to Internet References; the groups with no source are marked not applicable, and the author can change that
+    const refs = { ...(draft.refs || {}) };
+    refs.books = found.items.length ? { na: false, items: found.items } : { na: true, items: [] };
+    refs.online = found.articles.length ? { na: false, items: found.articles } : { na: true, items: [] };
+    refs.program = { na: true, items: [] }; refs.electronics = { na: true, items: [] };
     draft.refs = refs;
   }
   if (admin) { draft.description = admin.description.map(t => ({ id: newId('d'), t })); draft.reqs = admin.reqs.map(t => ({ id: newId('q'), t })); draft.grading = { rows: admin.grading.map(g => ({ id: newId('g'), label: g.label, abbr: g.abbr, pct: String(g.pct) })), override: { on: false, term: '', final: '' } }; }
@@ -384,17 +411,17 @@ async function generateSyllabus({ content, masters, env = process.env, transport
     report = { status: 'not_checked', reason: String(error && error.message || error).slice(0, 240) };
   }
   if (report.status === 'clean' && !draft.refs?.books?.items?.length && !Object.values(draft.refs || {}).some(g => g && g.items && g.items.length)) report.status = 'needs_review';
-  if (found.items.length) {
-    warnings.push(`${found.items.length} reference(s) found in the Open Library catalogue were added to Books (the other groups were marked not applicable). Check that each is the edition you use; titles are written as the catalogue spells them.`);
-    if (found.items.length < 3) warnings.push('The standard asks for at least 3 references: add more in Step 5.');
+  if (foundCount) {
+    warnings.push(`${foundCount} reference(s) confirmed in the Open Library and Crossref catalogues were added (books to Books, journal articles to Internet References; the other groups were marked not applicable). Check that each is the edition or article you use.`);
+    if (foundCount < 3) warnings.push('The standard asks for at least 3 references: add more in Step 5.');
   } else if (hasRefs) {
     warnings.push('Your own references were kept.');
   } else {
     warnings.push('References were not generated: a model cannot look a source up, and the checker rejects invented ones. No book could be confirmed in the catalogue, so add your references in Step 5.');
   }
 
-  const sections = { plan: draft.plan, ...(written ? { clos: draft.clos } : {}), ...(admin ? { description: draft.description, reqs: draft.reqs, grading: draft.grading } : {}), ...(found.items.length ? { refs: draft.refs } : {}) };
+  const sections = { plan: draft.plan, ...(written ? { clos: draft.clos } : {}), ...(admin ? { description: draft.description, reqs: draft.reqs, grading: draft.grading } : {}), ...(foundCount ? { refs: draft.refs } : {}) };
   return { status: 'generated', version: VERSION, sections, keptClos: !!kept, check: report, warnings, usage: provider.usage() };
 }
 
-module.exports = { generateSyllabus, subjectOf, generateLimits, isOn, VERSION, LESSON_WEEKS, CHUNKS, EXAMS, SCHEMAS, readClos, readOutline, readWeeks, readAdmin, planRows, keptClos, closMessage, outlineMessage, weeksMessage, adminMessage, SYSTEM };
+module.exports = { LOW_VERBS, QUIZ, MAX_TOPIC_GROUPS, MAX_TOPIC_CHARS, generateSyllabus, subjectOf, generateLimits, isOn, VERSION, LESSON_WEEKS, CHUNKS, EXAMS, SCHEMAS, readClos, readOutline, readWeeks, readAdmin, planRows, keptClos, closMessage, outlineMessage, weeksMessage, adminMessage, SYSTEM };

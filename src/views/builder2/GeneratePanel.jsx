@@ -132,7 +132,7 @@ export default function GeneratePanel({ draft, editable, syllabusId, beforeRun, 
             {showCost && cost && <div>{translateUI('generate.cost', { cost })}</div>}
           </div></div>
         )}
-        <div className="confirm-actions" style={{ justifyContent: 'flex-start', gap: 8 }}>
+        <div className="confirm-actions" style={{ justifyContent: 'flex-start', gap: 8, marginTop: 14 }}>
           {phase === 'confirm'
             ? <>
               <StableButton type="button" className="btn primary" onClick={run}>{translateUI('generate.replace')}</StableButton>

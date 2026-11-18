@@ -292,8 +292,11 @@ const BOOKS = {
   'Introduction to Algorithms': { work: { key: '/works/OL1W', title: 'Introduction to Algorithms', author_name: ['Thomas H. Cormen', 'Charles E. Leiserson'], isbn: ['9780262046305'] }, edition: { title: 'Introduction to Algorithms', edition_name: '4th edition', publishers: ['MIT Press'], publish_date: '2022', languages: [{ key: '/languages/eng' }] } },
   'Clean Code': { work: { key: '/works/OL2W', title: 'Clean Code', author_name: ['Robert C. Martin'], isbn: ['9780132350884'] }, edition: { title: 'Clean Code', publishers: ['Prentice Hall'], publish_date: '2020', languages: [{ key: '/languages/eng' }] } },
 };
+const ARTICLES = [{ title: ['Active learning in introductory programming courses'], author: [{ given: 'Ana', family: 'Reyes' }, { given: 'Ben', family: 'Cruz' }], issued: { 'date-parts': [[2023, 4]] }, 'container-title': ['Journal of Computing Education'], volume: '12', issue: '2', page: '101-118', DOI: '10.1234/jce.2023.12', type: 'journal-article' }];
 const library = async (url) => {
   const reply = (body, status = 200) => ({ ok: status < 400, status, json: async () => body });
+  if (/api\.crossref\.org\/works\?/.test(url)) return reply({ message: { items: ARTICLES } });
+  if (/editions\.json/.test(url)) return reply({}, 404); // no editions list: the ISBNs are used
   if (/search\.json/.test(url)) { const title = new URL(url).searchParams.get('title'); return reply({ docs: BOOKS[title] ? [BOOKS[title].work] : [] }); }
   const isbn = /isbn\/(\d+)\.json/.exec(url)[1];
   const hit = Object.values(BOOKS).find(b => b.work.isbn.includes(isbn));
@@ -307,7 +310,7 @@ test('references: only books the catalogue confirms are added to Books, the othe
   const texts = out.sections.refs.books.items.map(i => i.t);
   assert.deepEqual(texts, ['Cormen, T. H., & Leiserson, C. E. (2022). Introduction to Algorithms (4th ed.). MIT Press.', 'Martin, R. C. (2020). Clean Code. Prentice Hall.']);
   assert.deepEqual([out.sections.refs.books.na, out.sections.refs.program.na, out.sections.refs.online.na, out.sections.refs.electronics.na], [false, true, true, true]);
-  assert.ok(out.warnings.some(w => w.startsWith('2 reference(s) found in the Open Library catalogue were added to Books')));
+  assert.ok(out.warnings.some(w => w.startsWith('2 reference(s) confirmed in the Open Library and Crossref catalogues were added')));
   assert.ok(out.warnings.includes('The standard asks for at least 3 references: add more in Step 5.'));
   assert.ok(!out.warnings.some(w => /References were not generated/.test(w)));
   const map = extract({ ...draft(), ...out.sections }, mastersOf(draft()));
@@ -365,4 +368,77 @@ test('a description that is too short, or too long, is sent back; the plan is no
   assert.match(G.readAdmin(body([])).problems.join(' '), /at least 30 words/);
   assert.match(G.readAdmin(body([Array(260).fill('word').join(' ')])).problems.join(' '), /too long/);
   assert.ok(G.readAdmin(body([Array(40).fill('word').join(' ')])).description, 'forty words is fine');
+});
+
+test('references: a journal article Crossref confirms goes to Internet References with its DOI, and the groups with no source are marked not applicable', async () => {
+  const only = { references: () => ({ books: [], articles: [{ title: 'Active learning in introductory programming courses', firstAuthorSurname: 'Reyes', year: 2023 }, { title: 'An article nobody wrote', firstAuthorSurname: 'Nobody', year: 2024 }] }) };
+  const out = await run(draft(), { fetchImpl: library, provider: { ...provider([]), rewrite: model({ bad: only }) } });
+  assert.deepEqual(out.sections.refs.online.items.map(i => i.t), ['Reyes, A., & Cruz, B. (2023). Active learning in introductory programming courses. Journal of Computing Education, 12(2), 101–118. https://doi.org/10.1234/jce.2023.12']);
+  assert.deepEqual([out.sections.refs.books.na, out.sections.refs.online.na, out.sections.refs.program.na, out.sections.refs.electronics.na], [true, false, true, true]);
+  assert.ok(out.warnings.some(w => w.startsWith('1 reference(s) confirmed in the Open Library and Crossref catalogues')));
+});
+
+// ---- quality guards (the first real run: 35% quizzes, 3 activities in every week): level rises with the CLO, no packed weeks, activities and tasks follow the content, not mostly quizzes ----
+const WEEKS7 = [2, 3, 4, 5, 6, 7, 8];
+const mkWeeks = (over = {}) => WEEKS7.map((week, i) => ({ week, ilo: 'Apply ' + TOPICS[i] + ' to ' + TAILS[i], ilo2: '', activities: Array.from({ length: [2, 3, 4, 2, 3, 2, 4][i] }, (_, k) => 'activity ' + (k + 1) + ' for week ' + week + ' on ' + i), tasks: ['Problem set ' + week, 'Lab report ' + week], values: 'Courage', ...(over[week] || {}) }));
+const read = (list, outline) => G.readWeeks(JSON.stringify({ weeks: list }), WEEKS7, [], outline || new Map());
+const clo = n => new Map(WEEKS7.map(w => [w, { clo: n, alsoClo: 0, contents: 'x' }]));
+
+test('a week that builds CLO 2, 3 or 4 needs an ILO at apply level or above; a CLO 1 week may be recall or understanding', () => {
+  const low = mkWeeks({ 3: { ilo: 'Describe how queues serve requests in order' } });
+  assert.ok(read(low, clo(1)).map, 'a CLO 1 week may describe');
+  assert.match(read(low, clo(2)).problems.join(' '), /Week 3: the ILO builds CLO 2 \(Enabling\) so it must be at apply level or above, not "describe"/);
+  assert.match(read(mkWeeks({ 4: { ilo: 'Explain why honest practice matters in code' } }), clo(4)).problems.join(' '), /CLO 4 \(Integration of Values\).*not "explain"/);
+  for (const verb of ['Use', 'Solve', 'Build', 'Compare', 'Evaluate', 'Design', 'Defend', 'Advocate']) assert.ok(read(mkWeeks({ 3: { ilo: verb + ' a queue to serve requests in order' } }), clo(3)).map, verb + ' is accepted');
+  const second = new Map(WEEKS7.map(w => [w, { clo: 1, alsoClo: w === 5 ? 4 : 0, contents: 'x' }]));
+  assert.match(read(mkWeeks({ 5: { ilo2: 'Recall the rules of honest code sharing' } }), second).problems.join(' '), /second ILO builds CLO 4/);
+});
+
+test('a week whose only task is a quiz or test is sent back, and so is a chunk of weeks that is mostly quizzes', () => {
+  assert.match(read(mkWeeks({ 3: { tasks: ['Quiz on queues', 'Written test on queues'] } })).problems.join(' '), /Week 3: at least one task must be a problem set, practical task/);
+  assert.ok(read(mkWeeks({ 3: { tasks: ['Quiz on queues', 'Problem set on queues'] } })).map, 'one quiz beside a problem set is fine');
+  const mostly = mkWeeks(Object.fromEntries(WEEKS7.map(w => [w, { tasks: ['Short quiz ' + w, 'Lab report ' + w] }])));
+  assert.match(read(mostly).problems.join(' '), /more than 30% of the tasks are quizzes or tests/);
+  const some = mkWeeks({ 2: { tasks: ['Short quiz 2', 'Lab report 2'] }, 3: { tasks: ['Short quiz 3', 'Case analysis 3'] } });
+  assert.ok(read(some).map, '2 quizzes in 14 tasks is fine');
+});
+
+test('the same number of activities in every week (a template) is sent back; two in every week, or a mix, is not', () => {
+  const three = mkWeeks(Object.fromEntries(WEEKS7.map(w => [w, { activities: ['a ' + w, 'b ' + w, 'c ' + w] }])));
+  assert.match(read(three).problems.join(' '), /every week has 3 activities: vary the number/);
+  const two = mkWeeks(Object.fromEntries(WEEKS7.map(w => [w, { activities: ['a ' + w, 'b ' + w] }])));
+  assert.ok(read(two).map, 'two everywhere is the minimum, not a template');
+  assert.ok(read(mkWeeks()).map, 'a mix of 2, 3 and 4 is fine');
+  assert.match(read(mkWeeks({ 4: { activities: ['a', 'b', 'c', 'd', 'e'] } })).problems.join(' '), /Week 4: give at most 4 activities/);
+  assert.match(read(mkWeeks({ 4: { tasks: ['t1', 't2', 't3', 't4'] } })).problems.join(' '), /Week 4: give at most 3 tasks/);
+});
+
+test('a packed week is sent back: more than 4 topic groups, or more than 260 characters', () => {
+  const reply = contents => JSON.stringify({ weeks: G.LESSON_WEEKS.map((week, i) => ({ week, clo: CLO_BY_WEEK[i], alsoClo: 0, contents: week === 3 ? contents : TOPICS[i] })) });
+  assert.ok(G.readOutline(reply('Linked lists; node structure; insertion and deletion; traversal')).map, 'four groups are fine');
+  assert.match(G.readOutline(reply('Linked lists; node structure; insertion; deletion; traversal')).problems.join(' '), /Week 3 has more than 4 topic groups/);
+  assert.match(G.readOutline(reply('Linked lists, ' + 'node structure and operations '.repeat(10))).problems.join(' '), /Week 3 content is too long \(at most 260 characters\): do not pack a week/);
+});
+
+test('the rules are in the system prompt and in the weekly and outline requests, so the AI is told before it is checked', () => {
+  assert.match(G.SYSTEM, /Raise the level with the course/);
+  assert.match(G.SYSTEM, /never a week whose only task is a quiz/);
+  assert.match(G.SYSTEM, /never the same number in every week/);
+  assert.match(G.SYSTEM, /3 or 4 topic groups separated by semicolons/);
+  const outline = new Map(G.LESSON_WEEKS.map(w => [w, { clo: 2, alsoClo: 0, contents: 'x' }]));
+  const weeks = JSON.parse(G.weeksMessage({ subject: {}, clos: [1, 2, 3, 4].map(n => ({ level: 'L', statement: 's' + n })), outline, weeks: [2], before: [] }).user).format;
+  assert.match(weeks.ilo, /CLO is 2, 3 or 4 the verb is at apply level or above/);
+  assert.match(weeks.activities, /vary the number/);
+  assert.match(weeks.tasks, /At most one quiz or test, and never only a quiz/);
+  assert.match(JSON.parse(G.outlineMessage({ subject: {}, clos: [1, 2, 3, 4].map(n => ({ level: 'L', statement: 's' + n })) }).user).format.contents, /3 or 4 topic groups separated by semicolons/);
+});
+
+test('an end-to-end generation whose first weekly answer breaks the guards is asked again with the problems named, and the second answer is used', async () => {
+  let asked = 0;
+  const bad = { weeks: body => { asked += 1; return { weeks: body.weeks.map(({ week, contents, clo: cl }) => ({ week, ilo: (asked <= 1 && cl >= 2 ? 'Describe ' : 'Apply ') + contents + ' to ' + TAILS[G.LESSON_WEEKS.indexOf(week)], ilo2: '', activities: ['Guided lab on ' + contents, 'Pair exercise on ' + contents, ...(G.LESSON_WEEKS.indexOf(week) % 2 ? ['Demo of ' + contents] : [])], tasks: ['Problem set on ' + contents, 'Lab report on ' + contents], values: 'Humility: accepting corrections' })) }; } };
+  const seen = [];
+  const spy = message => { const b = JSON.parse(message.user); if (b.fixThese) seen.push(b.fixThese.join(' | ')); return model({ bad })(message); };
+  const out = await run(draft(), { provider: { ...provider([]), rewrite: spy } });
+  assert.ok(seen.some(p => /must be at apply level or above/.test(p)), 'the problem was named in the second request');
+  assert.ok(out.sections.plan.filter(r => r.kind === 'lesson' && r.week !== '1').every(r => /^Apply /.test(r.ilos[0].text)), 'and the second answer replaced the first');
 });

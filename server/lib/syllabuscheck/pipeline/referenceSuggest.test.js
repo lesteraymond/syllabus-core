@@ -102,3 +102,56 @@ test('the AI is only asked to name books: its message says a catalogue will conf
   const { schemaProblems } = require('../anthropicSchema');
   assert.deepEqual(schemaProblems(message.schema), []);
 });
+
+// ---- the newest edition, sentence case, journal articles, and the address allowlist ----
+const WORK = { key: '/works/OL9W', title: 'Data Structures and Algorithms in Java', author_name: ['Michael T. Goodrich', 'Roberto Tamassia'], isbn: [] };
+const entry = (title, year, extra = {}) => ({ title, publish_date: String(year), publishers: ['Wiley'], languages: ENG, ...extra });
+const editionsList = entries => ({ editions: entries });
+function library({ works = [WORK], editions = null, crossref = [], log = [] } = {}) {
+  return async (url) => {
+    log.push(url);
+    if (/api\.crossref\.org/.test(url)) return reply({ message: { items: crossref } });
+    if (/editions\.json/.test(url)) return editions ? reply({ entries: editions }) : reply({}, 404);
+    if (/search\.json/.test(url)) { const title = new URL(url).searchParams.get('title').toLowerCase(); return reply({ docs: works.filter(w => w.title.toLowerCase() === title) }); }
+    return reply({}, 404);
+  };
+}
+
+test('the newest English edition of the work is used, from the work\'s own list of editions (one request), not the first one found', async () => {
+  const log = [];
+  const editions = [entry('Data Structures and Algorithms in Java', 2003), entry('Data Structures and Algorithms in Java, 6th Edition', 2014), entry('Data Structures and Algorithms in Java, Sixth Edition', 2023, { publishers: ['Wiley Global'] }), entry('Estructuras de datos', 2024, { languages: [{ key: '/languages/spa' }] }), entry('Data Structures and Algorithms in Java', 2030)];
+  const out = await suggest([{ title: 'Data Structures and Algorithms in Java', firstAuthorSurname: 'Goodrich', year: 2014 }], { fetchImpl: library({ editions, log }) });
+  assert.equal(out.items[0].t, 'Goodrich, M. T., & Tamassia, R. (2023). Data Structures and Algorithms in Java (6th ed.). Wiley Global.', 'the newest real edition: not 2003, not the Spanish 2024, not a year in the future');
+  assert.equal(log.filter(u => /editions\.json/.test(u)).length, 1);
+});
+
+test('a journal article Crossref confirms is written in APA 7 with its DOI; one with no DOI, a made-up author or no match is left out', async () => {
+  const article = { title: ['Active learning in introductory programming courses'], author: [{ given: 'Ana', family: 'Reyes' }, { given: 'Ben', family: 'Cruz' }], issued: { 'date-parts': [[2023, 4]] }, 'container-title': ['Journal of Computing Education'], volume: '12', issue: '2', page: '101-118', DOI: '10.1234/jce.2023.12' };
+  const asks = [{ title: 'Active learning in introductory programming courses', firstAuthorSurname: 'Reyes', year: 2023 }];
+  const out = await S.suggestReferences({ ask: async () => JSON.stringify({ books: [], articles: asks }), system: 's', subject: {}, topics: [], year: 2026, newId: p => p + 'x', fetchImpl: library({ crossref: [article] }) });
+  assert.deepEqual(out.articles.map(a => a.t), ['Reyes, A., & Cruz, B. (2023). Active learning in introductory programming courses. Journal of Computing Education, 12(2), 101–118. https://doi.org/10.1234/jce.2023.12']);
+  assert.equal(parseReference(out.articles[0].t, { year: 2026 }).format.status, 'PASS');
+  const noDoi = await S.suggestReferences({ ask: async () => JSON.stringify({ books: [], articles: asks }), system: 's', subject: {}, year: 2026, fetchImpl: library({ crossref: [{ ...article, DOI: '' }] }) });
+  assert.deepEqual(noDoi.articles, []);
+  assert.equal(noDoi.rejected[0].reason, 'the record has no year, journal or DOI');
+  const wrongAuthor = await S.suggestReferences({ ask: async () => JSON.stringify({ books: [], articles: [{ ...asks[0], firstAuthorSurname: 'Smith' }] }), system: 's', subject: {}, year: 2026, fetchImpl: library({ crossref: [article] }) });
+  assert.deepEqual(wrongAuthor.articles, []);
+  const group = await S.suggestReferences({ ask: async () => JSON.stringify({ books: [], articles: asks }), system: 's', subject: {}, year: 2026, fetchImpl: library({ crossref: [{ ...article, author: [{ family: 'Reyes' }] }] }) });
+  assert.deepEqual(group.articles, [], 'an author with no given name is not guessed');
+});
+
+test('APA sentence case is accepted only when the AI changed capital letters and nothing else', async () => {
+  const editions = [entry('Data Structures And Algorithms In Java', 2023)];
+  const books = [{ title: 'Data Structures And Algorithms In Java', firstAuthorSurname: 'Goodrich', year: 2023 }];
+  const run = (cased) => { let n = 0; return S.suggestReferences({ ask: async () => { n += 1; return JSON.stringify(n === 1 ? { books, articles: [] } : { titles: [{ n: 0, sentenceCase: cased }] }); }, system: 's', subject: {}, year: 2026, newId: p => p + 'x', fetchImpl: library({ works: [{ ...WORK, title: 'Data Structures And Algorithms In Java' }], editions }) }); };
+  assert.match((await run('Data structures and algorithms in Java')).items[0].t, /\(2023\)\. Data structures and algorithms in Java\. Wiley\./, 'capitals only: accepted');
+  assert.match((await run('Data structures and algorithms in Java, second edition')).items[0].t, /\. Data Structures And Algorithms In Java\. Wiley\./, 'a word was added: the catalogue\'s spelling stays');
+  assert.match((await run('Data structures and algorithm in Java')).items[0].t, /Data Structures And Algorithms In Java/, 'a letter changed: refused');
+});
+
+test('only the allowed catalogue addresses are ever called', async () => {
+  const log = [];
+  await suggest([{ title: 'Data Structures and Algorithms in Java', firstAuthorSurname: 'Goodrich', year: 2014 }], { fetchImpl: library({ editions: [entry('Data Structures and Algorithms in Java', 2014)], log }) });
+  assert.ok(log.length >= 2);
+  for (const url of log) assert.match(url, /^https:\/\/(openlibrary\.org\/(search\.json\?|works\/OL\d+W\/editions\.json\?|isbn\/)|api\.crossref\.org\/works\?)/);
+});

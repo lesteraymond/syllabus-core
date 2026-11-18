@@ -2789,3 +2789,23 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Change (owner):** the course description is not an official text; it is created from the Learning Plan, which makes the whole syllabus. The generator used to write it first, together with the CLOs and before any week existed, so it could describe topics the plan never covers, and it was left out when the author kept their own CLOs. Now the CLO request writes only the CLOs, and the description is written in the step after the weekly plan, from the finished plan: the CLOs, the topics of every week, and the tasks. It must say only what the plan contains, 30 to 250 words (the compliance standard asks for 30), and it is always written for the new plan, even when the author kept their CLOs, because an old description would describe the old plan.
 - **Screen:** the progress step and the "replace" note name the description (English and Filipino).
 - **Tests:** generator tests 30 (the description is never in the CLO request, it comes after the weekly plan with the CLOs and every week's topics, it is regenerated when CLOs are kept, too short and too long are sent back). `npm test` passes (1,462).
+
+
+### v1.98.7 — AI Syllabus Generator: Better References (Newest Edition, Sentence Case, Journal Articles)
+**Date:** November 18, 2026
+
+- **Newest edition:** the book's own list of editions on Open Library is read (one request) and the newest English edition with a year and a publisher is used (a translation, or a year in the future, never). Before, only up to 8 ISBNs from the search were tried, so an older edition could win. Live check: Introduction to Algorithms comes out as the 4th edition, 2022.
+- **APA sentence case:** the AI puts the titles in sentence case in one more request, accepted only when it changed capital letters and nothing else (letters and numbers must be identical to the catalogue's title, otherwise the catalogue's spelling stays).
+- **Journal articles:** the AI may also name up to 5 articles; only one that Crossref confirms is kept (title and first author's surname match, and the record has a year, a journal, authors with given names and a DOI), written in APA 7 from Crossref's record with its DOI link (live check: LeCun, Bengio and Hinton, 2015, Nature). Up to 5 books and 3 articles are kept; books go to Books, articles to Internet References, the other groups are marked not applicable. Websites are NOT suggested: nothing can confirm a page's title, author and date.
+- **Only these addresses are called:** Open Library search, one work's editions, one edition by ISBN, and Crossref's work search (allowlist in `referenceSuggest.js`).
+- **Phone width:** checked at 375 px in the browser: the generator page has no sideways scrolling and the card and its button fit; the hint now has space above the button.
+- **Tests:** reference suggestions 14, generator 31; `npm test` passes (1,467).
+
+
+### v1.98.8 — AI Syllabus Generator: Quality Guards (Level, Packed Weeks, Template Counts, Quiz Share)
+**Date:** November 19, 2026
+
+- **What was checked first:** the first real run (Data Structures and Algorithms) was replayed through the new rules. Findings: every one of the 14 lesson weeks had exactly 3 activities (a template: now caught); 35% of the tasks were quizzes or tests (now the limit is 30% per chunk of weeks); no ILO below apply level sat in a CLO 2, 3 or 4 week (low verbs were only in CLO 1 weeks, which is right), and no week was packed. So the level and packing rules are safeguards, not repairs of a seen failure.
+- **Rules in code** (`pipeline/generate.js`, each sent back once with the problem named, as every other check): an ILO of a week that builds CLO 2, 3 or 4 (also a second ILO) is at apply level or above, not a recall or understanding verb; a week's content is at most 4 topic groups (separated by semicolons) and 260 characters; 2 to 4 activities and 1 to 3 tasks, and a chunk of 5 or more weeks may not give every week the same number of 3 or more activities; a week's tasks are not only quizzes or tests; at most 30% of the tasks of a chunk are quizzes or tests.
+- **Told to the AI first:** the same rules are in the system prompt and in the outline and weekly requests, so the first answer is usually right and the retry (which costs a request) is rare.
+- **Tests:** generator tests 37. `npm test` passes.
