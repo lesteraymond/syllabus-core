@@ -1296,3 +1296,19 @@ html { scrollbar-gutter: auto; }
 .filter-card.repository-filters.student-filters-ay { grid-template-columns: minmax(0, 1fr) 150px minmax(0, 1.5fr) auto; }
 @media (max-width: 900px) { .filter-card.repository-filters.student-filters-ay { grid-template-columns: repeat(2, minmax(0, 1fr)); } .filter-card.repository-filters.student-filters-ay .reset { justify-self: start; } }
 @media (max-width: 700px) { .filter-card.repository-filters.student-filters-ay { grid-template-columns: minmax(0, 1fr); } }
+
+/* Student register: the read-only "Is this your COR?" confirmation window */
+.scan-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0 0 18px; }
+.scan-list > div { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; min-width: 0; }
+.scan-list > div:first-child, .scan-list > div:nth-child(2), .scan-list > div:nth-child(3) { grid-column: 1 / -1; }
+.scan-list dt { margin: 0 0 2px; font-size: var(--text-xs); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.scan-list dd { margin: 0; font-size: var(--text-md); font-weight: 600; color: var(--ink); overflow-wrap: anywhere; }
+.scan-list dd em { font-weight: 400; color: var(--muted); }
+.scan-subjects-title { margin: 0 0 8px; font-size: var(--text-sm); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.scan-subjects { list-style: none; margin: 0 0 18px; padding: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.scan-subjects li { display: flex; gap: 10px; align-items: baseline; padding: 8px 12px; font-size: var(--text-sm); color: var(--text); border-top: 1px solid var(--line); }
+.scan-subjects li:first-child { border-top: 0; }
+.scan-subjects li:nth-child(even) { background: var(--bg); }
+.scan-subjects li b { flex: 0 0 auto; min-width: 82px; padding: 2px 8px; border-radius: 6px; background: rgba(44, 54, 180, .08); color: var(--blue2); font-size: var(--text-xs); }
+@media (max-width: 560px) { .scan-list { grid-template-columns: minmax(0, 1fr); } .scan-subjects li { flex-direction: column; gap: 4px; } }
+
