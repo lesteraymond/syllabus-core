@@ -62,13 +62,13 @@ test('[VPAA-SEC-FAIL-CLOSED] the real server REFUSES to start in staging and pro
   }
 });
 
-test('[VPAA-SEC-READINESS-NO-LEAK] the credential report and the Policy V2 preflight never print a value, a prefix or a fragment of any secret', () => {
+test('[VPAA-SEC-READINESS-NO-LEAK] the credential report never prints a value, a prefix or a fragment of any secret', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vpaa-env-'));
   const secrets = { SESSION_SECRET: 'LEAKCHECK-session-ZQXJ-7788990011', JWT_SECRET: 'LEAKCHECK-jwt-WVKM-1122334455-66778899', DB_PASS: 'LEAKCHECK-dbpass-PLMN-4455', SMTP_PASS: 'LEAKCHECK-smtp-GHJK-3344', ANTHROPIC_API_KEY: 'sk-ant-LEAKCHECK-anthropic-RTYU-0099887766554433', OPENROUTER_API_KEY: 'sk-or-v1-LEAKCHECK-openrouter-FGHJ-5566778899aabbcc' };
   const file = path.join(dir, 'staging.env');
   fs.writeFileSync(file, Object.entries({ NODE_ENV: 'staging', SYLLABUS_CHECK_ACADEMIC_V2: 'on', SYLLABUS_CHECK_AI_PROVIDER: 'anthropic', ANTHROPIC_MODEL: 'claude-sonnet-5-5', SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL: 'claude-sonnet-5-5', ...secrets }).map(([k, v]) => `${k}=${v}`).join('\n') + '\n# GEMINI_API_KEY=LEAKCHECK-gemini-ABCD-1234567890\n');
   try {
-    for (const script of ['scripts/credential-readiness.cjs', 'scripts/vpaa-v2-preflight.cjs']) {
+    for (const script of ['scripts/credential-readiness.cjs']) { // the Policy V2 preflight was removed with the old AI Checker
       const r = spawnSync(process.execPath, [path.join(ROOT, script), '--env-file', file], { encoding: 'utf8', timeout: 60000 });
       const out = (r.stdout || '') + (r.stderr || '');
       assert.ok(out.length > 200, `${script} produced a report`);

@@ -1,5 +1,5 @@
 import { YearFilter, useYearScope } from '../components/AcademicYearScope';
-import { canApproveAdminDraft, STATUS_LABELS, isReturned, noteMissing, EDITABLE_STATUSES } from '../lib/syllabusRules';
+import { canApproveAdminDraft, isReturned, noteMissing, EDITABLE_STATUSES } from '../lib/syllabusRules';
 import { isApprover, isReviewer } from '../lib/roles';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
@@ -110,7 +110,6 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
   const needNote = noteMissing(doc.status, note);
   const warnings = warningCount(lastRun);
   const selectedRow = mine.find(s => s.id === selectedId) || null;
-  const activeStatus = selectedRow?.status || doc.status;
 
   const submitChecked = async () => {
     if (!selectedId || submitting) return;
@@ -134,25 +133,15 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
         <div className="empty">{translateUI(hasOthers ? 'aiChecker.nothingToCheck' : "ui.no_syllabi_yet_click_new_syllabus_to_get_started_2e4bc9")}</div>
       ) : (
         <>
-          <section className="card pick-card" aria-label={translateUI("ui.choose_a_syllabus_to_check_b6f6d2")}>
-            <div className="pick-head">
-              <h3>{translateUI("ui.choose_a_syllabus_cd5a79")}</h3>
+          <section className="card pick-card pick-compact" aria-label={translateUI("ui.choose_a_syllabus_to_check_b6f6d2")}>
+            <div className="pick-field">
+              <label htmlFor={uid + '-s'}>{translateUI("ui.subject_8d183d")}</label>
+              <Select id={uid + '-s'} value={selectedId ? String(selectedId) : ''} onChange={e => setSelectedId(e.target.value ? Number(e.target.value) : null)}>
+                <option value="">{translateUI("ui.choose_a_subject_554b9c")}</option>
+                {mine.map(s => <option key={s.id} value={String(s.id)}>{(s.courseCode || '—') + (s.title ? ' — ' + s.title : '')}</option>)}
+              </Select>
             </div>
-            <div className="pick-grid">
-              <div className="pick-field">
-                <label htmlFor={uid + '-s'}>{translateUI("ui.subject_8d183d")}</label>
-                <Select id={uid + '-s'} value={selectedId ? String(selectedId) : ''} onChange={e => setSelectedId(e.target.value ? Number(e.target.value) : null)}>
-                  <option value="">{translateUI("ui.choose_a_subject_554b9c")}</option>
-                  {mine.map(s => <option key={s.id} value={String(s.id)}>{(s.courseCode || '—') + (s.title ? ' — ' + s.title : '')}</option>)}
-                </Select>
-              </div>
-            </div>
-            <div className="pick-foot">
-              <div className="pick-info" aria-live="polite">
-                {selectedId && <span className={'status ' + activeStatus}>{tr(STATUS_LABELS[activeStatus] || activeStatus)}</span>}
-              </div>
-              <StableButton type="button" className="btn outline" disabled={!selectedId} onClick={openBuilder}>{translateUI('publication.editDraft')}</StableButton>
-            </div>
+            <StableButton type="button" className="btn outline" disabled={!selectedId} onClick={openBuilder}>{translateUI('publication.editDraft')}</StableButton>
           </section>
 
           {policy.loaded && !policy.aiChecking && <div className="ai-note" role="note" data-testid="ai-off-note">{translateUI('policy.aiOff')}</div>}

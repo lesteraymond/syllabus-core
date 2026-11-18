@@ -53,25 +53,31 @@ test('the counts never grow without bound: only today is kept', () => {
   assert.equal(q.size(), 50);
 });
 
-// ---- The per-check spending limit (SYLLABUS_CHECK_AI_MAX_COST_USD; docs/ai-checker-audit-2026-11-12.md A-2) ----
+// ---- The per-check spending limit (SYLLABUS_CHECK_REPLAN_MAX_COST_USD; docs/ai-checker-audit-2026-11-12.md A-2) ----
 const { resolveCheckCostCap } = require('./aiQuota');
-const GEMINI = { SYLLABUS_CHECK_AI_PROVIDER: 'gemini', GEMINI_API_KEY: 'test-only' };
-const capProblem = (env, re) => assert.throws(() => resolveCheckCostCap(env), (e) => e.code === 'ai_quota_invalid' && e.message.includes('SYLLABUS_CHECK_AI_MAX_COST_USD') && re.test(e.message));
+// the one AI provider the application uses (syllabuscheck/aiConfig.js): Claude with its approved model
+const CLAUDE = { SYLLABUS_CHECK_AI_PROVIDER: 'anthropic', ANTHROPIC_API_KEY: 'sk-ant-test-only-quota-not-a-real-key', ANTHROPIC_MODEL: 'claude-sonnet-5-5', SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL: 'claude-sonnet-5-5' };
+const capProblem = (env, re) => assert.throws(() => resolveCheckCostCap(env), (e) => e.code === 'ai_quota_invalid' && e.message.includes('SYLLABUS_CHECK_REPLAN_MAX_COST_USD') && re.test(e.message));
 
 test('staging and production refuse to start with an AI provider configured and no per-check spending limit', () => {
   for (const mode of ['staging', 'production']) {
-    capProblem({ NODE_ENV: mode, ...GEMINI }, /required/);
-    assert.equal(resolveCheckCostCap({ NODE_ENV: mode, ...GEMINI, SYLLABUS_CHECK_AI_MAX_COST_USD: '10' }), 10);
+    capProblem({ NODE_ENV: mode, ...CLAUDE }, /required/);
+    assert.equal(resolveCheckCostCap({ NODE_ENV: mode, ...CLAUDE, SYLLABUS_CHECK_REPLAN_MAX_COST_USD: '10' }), 10);
     assert.equal(resolveCheckCostCap({ NODE_ENV: mode, SYLLABUS_CHECK_AI_PROVIDER: 'off' }), null, 'no AI provider: no AI cost, nothing to limit');
   }
 });
 
 test('development keeps working without one, and a malformed limit is refused in every mode', () => {
-  assert.equal(resolveCheckCostCap({ ...GEMINI }), null);
-  assert.equal(resolveCheckCostCap({ ...GEMINI, SYLLABUS_CHECK_AI_MAX_COST_USD: '2.50' }), 2.5);
+  assert.equal(resolveCheckCostCap({ ...CLAUDE }), null);
+  assert.equal(resolveCheckCostCap({ ...CLAUDE, SYLLABUS_CHECK_REPLAN_MAX_COST_USD: '2.50' }), 2.5);
   for (const bad of ['0', '-1', 'ten', '10abc', '1001', 'Infinity']) {
-    for (const mode of ['', 'staging']) capProblem({ NODE_ENV: mode, ...GEMINI, SYLLABUS_CHECK_AI_MAX_COST_USD: bad }, /above 0/);
+    for (const mode of ['', 'staging']) capProblem({ NODE_ENV: mode, ...CLAUDE, SYLLABUS_CHECK_REPLAN_MAX_COST_USD: bad }, /above 0/);
   }
+});
+
+test('the old SYLLABUS_CHECK_AI_MAX_COST_USD no longer counts: it limited nothing once the old checker was removed, so it cannot stand in for the real cap', () => {
+  for (const mode of ['staging', 'production']) capProblem({ NODE_ENV: mode, ...CLAUDE, SYLLABUS_CHECK_AI_MAX_COST_USD: '10' }, /required/);
+  assert.equal(resolveCheckCostCap({ ...CLAUDE, SYLLABUS_CHECK_AI_MAX_COST_USD: 'not a number' }), null, 'ignored, even when malformed');
 });
 
 test('server/index.js checks the per-check spending limit before it listens', () => {

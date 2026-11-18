@@ -58,7 +58,3 @@ test('if the limit cannot be read the INSERT is simply attempted', async () => {
   await repo.saveReport(db, 7, report(1000), 'fp');
   assert.equal(db.inserts.length, 1);
 });
-
-test('the Policy V2 preview guard is unchanged', async () => {
-  await assert.rejects(repo.saveReport(fakeDb({ limit: 16 * MB }), 7, { mode: 'preview', evaluationPolicy: { id: 'academic-evaluation-v2-preview-1' }, hybrid: {} }, 'fp').then(() => { throw new Error('stored a preview'); }), (e) => e.message !== 'stored a preview');
-});

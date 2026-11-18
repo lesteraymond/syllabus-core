@@ -17,14 +17,17 @@ const { check } = require('./check');
 const { buildPlan } = require('./plan');
 const { claudeProvider } = require('./provider');
 const { fieldKeyOfFinding } = require('./judge');
+const { uniqueIds } = require('./extract');
 const { summarize } = require('../stewardship');
 const { bindSuggestions } = require('../suggestions');
 
 const PASS_THRESHOLD = require('../../compliance/standard-v4.json').passThreshold; // the same pass mark engine.js uses
 const MODE = 'official';
 const isOfficial = (env = process.env) => String(env.SYLLABUS_CHECK_REPLAN || '').trim().toLowerCase() === MODE;
+// Is an AI provider set at all (anything but off)? With one set and the new checker not ready, an AI check says why (compliance/service.js).
+const aiProviderOn = (env = process.env) => !['', 'off', 'none', 'false', '0'].includes(String(env.SYLLABUS_CHECK_AI_PROVIDER || '').trim().toLowerCase());
 
-// The largest per-check cap accepted: the same ceiling aiQuota.js puts on SYLLABUS_CHECK_AI_MAX_COST_USD. A typo such as 2000 must not let one check
+// The largest per-check cap accepted: the same ceiling aiQuota.js checks at startup. A typo such as 2000 must not let one check
 // spend that much; the old checker then runs instead and the reason says why.
 const MAX_CAP_USD = 1000;
 // Can the new checker make the official AI check under these settings? When it cannot, the old checker runs as before.
@@ -70,8 +73,15 @@ function keyOfPath(content, path) {
   if (m) { const row = (content.plan || [])[Number(m[1])]; return row && row.id ? `${m[2] === 'contents' ? 'content' : m[2]}:${row.id}` : null; }
   return null;
 }
+
 // The builder can apply a draft only to these text fields (the same list as src/lib/hybridView.js canRefine).
 const APPLYABLE = /^(?:clos\[\d+\]\.statement|plan\[\d+\]\.(?:values|contents|activities|tasks)|plan\[\d+\]\.ilos\[\d+\]\.text)$/;
+// A mechanical fix of the plan (plan.js): a CLO's fixed classification, or an APA 7 repair built from the reference's own characters. Offered as a rule
+// recommendation the author applies (src/lib/hybridCheck.js applySuggestion accepts these two paths); never rewritten by the AI, never "Check & improve".
+const MECHANICAL = /^(?:clos\[\d+\]\.level|refs\.[a-z]+\.items\[\d+\]\.t)$/;
+const ruleIdOf = f => `RULE:${f.rule}:${JSON.stringify(f.where || {})}`;
+// the rule finding a mechanical change answers
+const mechanicalFindingKey = f => (f.rule === 'CLO-LEVEL-LABEL' && f.where?.cloId ? `clolevel:${f.where.cloId}` : f.rule === 'REF-APA' && f.where?.ref ? `ref:${f.where.group}:${f.where.ref}` : null);
 
 const REVIEW_SUFFIX = ' (extra tag)';
 const NOT_CHECKED_SUFFIX = ' (not checked)';
@@ -109,13 +119,24 @@ function officialParts(content, result, plan) {
     const type = RULE_PREFIX + f.rule;
     advisoryTypes.add(type);
     const key = fieldKeyOfFinding(f) || (f.where?.cloId ? 'clo:' + f.where.cloId : f.where?.ref ? `ref:${f.where.group}:${f.where.ref}` : null);
-    const id = `RULE:${f.rule}:${JSON.stringify(f.where || {})}`;
+    const id = ruleIdOf(f);
     if (key) ruleIdsByField.set(key, [...(ruleIdsByField.get(key) || []), 'SEM:' + id]);
     judgements.push({ id, type, path: pathOf(content, key), label: f.severity === 'finding' ? 'PARTIALLY_ALIGNED' : 'ALIGNED', explanation: f.message, status: f.severity === 'finding' ? 'rule' : 'rule_review' });
   }
   // drafts from the verified repair plan
   const suggestions = [];
   for (const c of plan ? plan.changes : []) {
+    if (c.source === 'mechanical') {
+      // before: skipped, so a ready fix (CPE 101 #461: CLO 4 "Introductory" -> "Integration of Values") never reached the author
+      const path = pathOf(content, c.key);
+      if (!path || !MECHANICAL.test(path) || typeof c.after !== 'string') continue;
+      const basedOn = result.fixed.findings.filter(f => mechanicalFindingKey(f) === c.key).map(f => 'SEM:' + ruleIdOf(f));
+      suggestions.push({
+        id: 'RP:' + c.key, path, title: c.field === 'cloLevel' ? 'Use the fixed CLO classification' : 'Corrected APA 7 reference',
+        text: c.explanation || 'A fix built by the rules.', replacement: c.after, source: 'rule', basedOn, tier: 'mandatory', attempt: 1, verification: c.status,
+      });
+      continue;
+    }
     if (c.source !== 'ai') continue;
     const path = pathOf(content, c.key);
     if (!path || !APPLYABLE.test(path)) continue;
@@ -132,9 +153,16 @@ function officialParts(content, result, plan) {
 
 // The plan's unresolved fields, in the shape the app's list reads (engine.js `unresolved`; HybridCheckPanel shows reason 'waits_for_upstream' with
 // waitsFor). A field waits when one of the fields it depends on still has a misalignment of its own; otherwise it needs a person (draft_needs_review).
+// The text of a field by its app path, shortened, so an item the author must fix says WHICH source, outcome or week it is (the page has no syllabus text).
+const excerptAt = (content, path) => {
+  const value = String(path || '').replace(/\[(\d+)\]/g, '.$1').split('.').reduce((o, k) => (o == null ? undefined : o[k]), content);
+  const text = typeof value === 'string' ? value.replace(/\s+/g, ' ').trim() : '';
+  return text ? (text.length > 160 ? text.slice(0, 157) + '...' : text) : null;
+};
 function unresolvedOf(content, result, plan, drafted) {
   if (!plan) return [];
-  const failingKeys = new Set(result.misalignments.map(m => m.fieldKey || (m.source === 'rule' ? fieldKeyOfFinding({ rule: m.rule, where: m.where }) : null)).filter(Boolean));
+  // the same rule as judge.js: a manual relationship (CLO-EVIDENCE) does not make its CLO a field the others wait for
+  const failingKeys = new Set(result.misalignments.filter(m => !(m.source === 'ai' && R.isManual(m.rule))).map(m => m.fieldKey || (m.source === 'rule' ? fieldKeyOfFinding({ rule: m.rule, where: m.where }) : null)).filter(Boolean));
   const out = [];
   for (const u of plan.unresolved || []) {
     const path = pathOf(content, u.key);
@@ -142,13 +170,37 @@ function unresolvedOf(content, result, plan, drafted) {
     const own = result.judged.results.filter(r => r.fieldKey === u.key && r.status !== 'ok');
     const waitsFor = [...new Set(own.flatMap(r => r.parents || []))].filter(k => k !== u.key && failingKeys.has(k)).map(k => pathOf(content, k)).filter(Boolean);
     const worst = [...own].sort((a, b) => (R.DEDUCTION[b.verdict] || 0) - (R.DEDUCTION[a.verdict] || 0))[0];
+    // Why there is no draft: it waits for a field above it; it is the author's to fix (a manual relationship such as CLO-EVIDENCE, or a reference, which the
+    // AI never rewrites: plan.js says "for the faculty: ..."); or no verified rewrite was found in this check. Before, the last two were reported as
+    // draft_needs_review, which the page reads as "a static review found copied wording in the proposed rewrite" (CPE 101 #461).
+    const faculty = /^for the faculty: /.exec(u.reason || '');
+    const reason = waitsFor.length ? 'waits_for_upstream' : faculty ? 'faculty_fix' : 'no_verified_rewrite';
     out.push({
-      path, reason: waitsFor.length ? 'waits_for_upstream' : 'draft_needs_review', status: waitsFor.length ? 'WAITING' : 'NEEDS_REVIEW', tier: 'material',
+      path, excerpt: excerptAt(content, path), reason, status: waitsFor.length ? 'WAITING' : 'NEEDS_REVIEW', tier: 'material',
       attempts: 0, label: worst ? worst.verdict : null, relationships: own.map(r => 'SEM:' + r.id), explanation: String(worst?.explanation || u.reason || '').slice(0, 500),
-      detail: u.reason || null, ...(waitsFor.length ? { waitsFor } : {}), source: 're-planned',
+      detail: faculty ? u.reason.slice(faculty[0].length) : u.reason || null, ...(waitsFor.length ? { waitsFor } : {}), source: 're-planned',
     });
   }
+  // The rule findings only the author can fix (plan.js AUTHOR_RULES: Week 1 orientation, an APA reference it could not repair, ...). They were only in
+  // hybrid.replan.plan.manual, which the page never shows.
+  for (const m of plan.manual || []) {
+    const w = m.where || {};
+    const key = fieldKeyOfFinding({ rule: m.rule, where: w }) || (w.ref ? `ref:${w.group}:${w.ref}` : w.ilo ? `ilo:${w.ilo}` : w.cloId ? `clo:${w.cloId}` : w.row ? `content:${w.row}` : null);
+    const path = pathOf(content, key);
+    if (!path || drafted.has(path) || out.some(x => x.path === path && x.reason === 'faculty_fix')) continue;
+    out.push({ path, excerpt: excerptAt(content, path), reason: 'faculty_fix', status: 'NEEDS_REVIEW', tier: 'material', attempts: 0, label: null, relationships: ['SEM:' + ruleIdOf(m)], rule: m.rule,
+      explanation: String(m.message || '').slice(0, 500), detail: m.message || null, source: 're-planned' });
+  }
   return out;
+}
+
+// Why a check is incomplete: only the questions that got NO valid answer (a refused, failed or rejected request). An "unclear" answer is a valid answer
+// (not checked, no points) and never makes a check incomplete, so it is not counted here; before, it was, and "3 questions had no valid answer" could
+// mean one. The first few are named, so the author can see what blocks the score.
+function incompleteReason(result) {
+  const missing = result.judged.results.filter(r => r.reason);
+  const named = missing.slice(0, 3).map(r => `${r.label} (${r.relationship}): ${String(r.reason).slice(0, 80)}`).join('; ');
+  return `${missing.length} question${missing.length === 1 ? '' : 's'} of the new AI Checker had no valid answer${named ? ': ' + named + (missing.length > 3 ? '; …' : '') : ''}. Run the check again.`;
 }
 
 // Fill the AI part of an old-engine report made with AI off (`noAi`) from the new checker. Returns the same report object, changed.
@@ -157,6 +209,8 @@ function unresolvedOf(content, result, plan, drafted) {
 // for requests in flight do not crowd out the budget.
 async function officialize({ noAi, content, masters, env = process.env, db, transport, store, provider, year, out, concurrency } = {}) {
   const startedAt = Date.now();
+  // A working copy with unique item ids (extract.js uniqueIds): the report's paths are by position, so they hold for the saved syllabus too.
+  content = uniqueIds(content);
   const h = noAi.hybrid;
   if (!provider) {
     const ready = readiness(env);
@@ -196,7 +250,7 @@ async function officialize({ noAi, content, masters, env = process.env, db, tran
   noAi.conformance = { ok: !failed.length, failed };
   Object.assign(noAi, { score, overall: score, status: score === null ? 'incomplete' : 'scored', passed: ready && score >= PASS_THRESHOLD, band: score === null ? null : score >= 90 ? 'Excellent' : score >= 79 ? 'Meets the standard' : 'Needs work' });
   h.alignment = {
-    status: complete ? 'completed' : 'not_evaluated', reason: complete ? null : `${result.summary.notChecked} question(s) of the new AI Checker had no valid answer.`,
+    status: complete ? 'completed' : 'not_evaluated', reason: complete ? null : incompleteReason(result),
     provider: 'anthropic', model: String(provider.model || '').split('|')[0], promptVersion: P.PROMPT_VERSION, engine: 're-planned',
     judgements: parts.judgements, coverage: { total: result.judged.results.length, verified: result.judged.results.filter(r => r.status !== 'not_checked').length },
     usage: provider.usage ? provider.usage() : null,
@@ -220,4 +274,4 @@ async function officialize({ noAi, content, masters, env = process.env, db, tran
   return noAi;
 }
 
-module.exports = { isOfficial, readiness, maxRequestsOf, officialize, officialParts, unresolvedOf, pathOf, keyOfPath, APPLYABLE, MODE, MAX_CAP_USD };
+module.exports = { isOfficial, aiProviderOn, readiness, maxRequestsOf, officialize, officialParts, unresolvedOf, pathOf, keyOfPath, APPLYABLE, MODE, MAX_CAP_USD };

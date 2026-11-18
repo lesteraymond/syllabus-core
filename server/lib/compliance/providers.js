@@ -36,21 +36,6 @@ class MockProvider {
   }
 }
 
-// The real provider is a stub and is never called: nothing selects it yet. It needs a client with `complete(prompt) -> string`
-// supplied by the caller, so no SDK, key or network code lives here. Without one it fails with "not_configured".
-class LlmProvider {
-  constructor({ client, model = 'unconfigured' } = {}) {
-    this.name = 'llm';
-    this.model = model;
-    this.promptVersion = PROMPT_VERSION;
-    this._client = client || null;
-  }
-  async recommend(findings, excerpt, standard) {
-    if (!this._client || typeof this._client.complete !== 'function') throw new ProviderError('not_configured', 'No AI client is configured.');
-    return parseItems(await this._client.complete(buildPrompt(findings, excerpt, standard)));
-  }
-}
-
 function groupByRule(findings) {
   const by = new Map();
   findings.forEach((f) => { (by.get(f.ruleId) || by.set(f.ruleId, []).get(f.ruleId)).push(f); });
@@ -58,18 +43,6 @@ function groupByRule(findings) {
 }
 // The first finding's message, plus how many more are like it.
 const describe = (items) => items[0].message + (items.length > 1 ? ' ' + (items.length - 1) + ' more like this.' : '');
-
-function buildPrompt(findings, excerpt, standard) {
-  return [
-    'You review a university course syllabus against the ' + standard.title + ' standard.',
-    'Prompt version: ' + PROMPT_VERSION + '.',
-    'Using only the findings below, write at most ' + standard.recommendations.max + ' short, concrete recommendations for the author.',
-    'Reply with JSON only: an array of { "title": string, "text": string, "basedOn": [finding ids] }.',
-    'Every item must cite at least one finding id in basedOn. Do not give a priority, a score, a step or an area: those are set by the rules.',
-    'FINDINGS: ' + JSON.stringify(findings),
-    'EXCERPT: ' + JSON.stringify(excerpt),
-  ].join('\n');
-}
 
 // Accepts a bare array, or { items: [...] }, optionally wrapped in a ``` fence.
 function parseItems(output) {
@@ -83,4 +56,4 @@ function parseItems(output) {
   return items;
 }
 
-module.exports = { MockProvider, LlmProvider, ProviderError, PROMPT_VERSION, buildPrompt, parseItems, groupByRule, describe };
+module.exports = { MockProvider, ProviderError, PROMPT_VERSION, parseItems, groupByRule, describe };

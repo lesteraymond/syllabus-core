@@ -12,7 +12,7 @@ import TypewriterText from '../components/TypewriterText';
 import { compliance as complianceApi, courses as coursesApi, outcomes as outcomesApi, logs as logsApi, users as usersApi } from '../lib/api';
 import { adminStatCards } from '../lib/adminDashboardStats';
 import { canAuthor, isReviewer, roleAllows } from '../lib/roles';
-import { FACULTY_SUBMITTED, aiAverage, approval, programCoverage, snapshotOf } from '../lib/complianceStats';
+import { FACULTY_SUBMITTED, aiAverage, approval, programCoverage, scoreTone, snapshotOf } from '../lib/complianceStats';
 import { sentenceCase } from '../lib/sentenceCase';
 import { dayPeriod } from '../lib/phTime';
 import Select from '../components/Select';
@@ -63,6 +63,14 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
   const greeting = name ? translateUI(key, { name }) : translateUI(key + 'NoName');
   const my = useMemo(() => syllabi.filter(s => s.userId === user.id), [syllabi, user]);
   const isFac = user.role === 'faculty';
+  // A deadline row of the user's own: with no syllabus of theirs for that subject yet (nothing to show under My Syllabi) it opens the Syllabus Builder
+  // for a new one; with one already (draft, submitted...) it opens My Syllabi, where that syllabus is.
+  const openOwnDeadline = (deadline) => {
+    const hasSyllabus = my.some((s) => s.courseId === deadline.courseId && !s.archived);
+    if (hasSyllabus) setPage('my-syllabi');
+    else if (onNewSyllabus) onNewSyllabus();
+    else setPage('builder');
+  };
   const [customizeOpen, setCustomizeOpen] = useState(false);
   const defaultKeys = useMemo(() => isFac ? ['builder', 'my-syllabi'] : ['ai', 'review'], [isFac]);
   const storageKey = `lcup_qa_${user?.id || 'guest'}`;
@@ -280,12 +288,12 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
             // the Assessment ring also holds the AI Checker's learning-activity findings (server/lib/compliance/finalAreas.js areaOf): its tooltip says so
             const hint = a.key === 'assessment' ? translateUI('snapshot.assessmentHint') : '';
             const tip = [low ? translateUI('snapshot.lowest', { area: translateUI(SNAPSHOT_LABELS[a.key]), score: a.score }) : '', hint].filter(Boolean).join(' · ');
-            return <QualityMini key={a.key} label={translateUI(SNAPSHOT_LABELS[a.key])} value={a.score} low={low} title={tip || undefined} />;
+            return <QualityMini key={a.key} label={translateUI(SNAPSHOT_LABELS[a.key])} value={a.score} low={low} tone={scoreTone(a.score)} title={tip || undefined} />;
           })}</div>
           {/* checks made with AI checking off are not AI results: left out of the snapshot, and counted here */}
           {snapshot.notAiChecked > 0 && <div className="snapshot-note">{translateUI(snapshot.notAiChecked === 1 ? 'snapshot.notAiCheckedOne' : 'snapshot.notAiChecked', { count: snapshot.notAiChecked })}</div>}
         </Card>
-        {(isFac || user.role === 'admin') && <Card title={translateUI("ui.upcoming_deadlines_b56518")} hideScrollbar><UpcomingDeadlines role={user.role} onOpen={() => setPage(isFac ? 'my-syllabi' : 'courses')} onOpenOwn={() => setPage('my-syllabi')} /></Card>}
+        {(isFac || user.role === 'admin') && <Card title={translateUI("ui.upcoming_deadlines_b56518")} hideScrollbar><UpcomingDeadlines role={user.role} onOpen={isFac ? openOwnDeadline : () => setPage('courses')} onOpenOwn={openOwnDeadline} /></Card>}
       </section>
       </div>
       {trendOpen && <ProgramTrendModal programs={catalog.programs || []} subjects={catalog.subjects || []} year={year === 'all' ? undefined : year} onClose={() => setTrendOpen(false)} />}

@@ -6,7 +6,7 @@ const express = require('express');
 const repo = require('../lib/syllabuscheck/repository');
 const suggestion = { id: 'SEM:pair1', path: 'plan[0].tasks', replacement: 'Design and demonstrate a tested program.' };
 async function start(t, reviews) {
-  t.mock.method(repo, 'readReport', async () => ({ hybrid: { suggestions: [suggestion] } }));
+  t.mock.method(repo, 'readReport', async () => ({ hybrid: { alignment: { status: 'completed', engine: 're-planned' }, suggestions: [suggestion] } })) // a report of the new AI Checker (decisions on an old-checker report are refused);
   delete require.cache[require.resolve('./syllabusCheck')];
   const writes = [], app = express(); app.use(express.json());
   app.locals.db = { query: async (sql, params) => {

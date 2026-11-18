@@ -2,12 +2,8 @@ import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
 import { SOURCE_LABEL, STEP_INFO, areaNames, basis, blockersOf, groupFindings, headline, provisionalOf, runState, stepLabel, tone, ringAngle, when } from '../lib/complianceView';
 import HybridCheckPanel from '../components/HybridCheckPanel';
-import AlignmentScorePanel from '../components/AlignmentScorePanel';
 import { useAiGate } from '../lib/checkPolicy';
-import {isAcademicV2,isIntegratedAcademicV2} from '../lib/academicEvaluation';
-import AcademicEvaluationPanel from '../components/AcademicEvaluationPanel';
 import RuleCoveragePanel from '../components/RuleCoveragePanel';
-import CoordinatedPlanPanel from '../components/CoordinatedPlanPanel';
 
 const lastScores = new Map();
 
@@ -24,8 +20,6 @@ export default function ComplianceCard({ run, checking = false, onOpenStep, show
   const aiGate = useAiGate();
   // A saved report of a syllabus under record review is read as history: nothing in it can be applied to the draft.
   const applyDraft = run?.recordReview ? undefined : onApplyDraft;
-  const reviewNotice = run?.recordReview && <div className="info-banner warning cmp-stale" role="alert" data-testid="saved-report-banner"><strong>{translateUI('hybrid.savedReportTitle')}</strong> {translateUI(run.recordReview.code === 'curriculum_reference_review_required' ? 'hybrid.savedReportBodyCurriculum' : 'hybrid.savedReportBody')}</div>;
-  if(isAcademicV2(run))return <>{reviewNotice}{run?.hybrid?.improvementPlan && <CoordinatedPlanPanel run={run} onPlanApplied={applyDraft} />}<AcademicEvaluationPanel run={run} onApplyDraft={applyDraft}/></>;
   const blockers = blockersOf(run, aiGate);
   const recs = (run && run.recommendations) || [];
   const memKey = run?.syllabusId ?? run?.id ?? 'default';
@@ -63,12 +57,7 @@ export default function ComplianceCard({ run, checking = false, onOpenStep, show
 
   return (
     <div className="cmp">
-      {/* Staleness is stated before anything it qualifies: the V2 results, the coverage list and the recommendations below all describe the earlier version. */}
-      {reviewNotice}
-      {run && run.stale && !run.recordReview && <div className="info-banner warning cmp-stale" role="alert" data-testid="stale-banner"><strong>{translateUI('hybrid.staleTitle')}</strong> {translateUI('hybrid.staleBody')}</div>}
-      <RuleCoveragePanel coverage={run?.hybrid?.ruleCoverage} />
-      {run?.hybrid?.improvementPlan && <CoordinatedPlanPanel run={run} onPlanApplied={applyDraft} />}
-      {isIntegratedAcademicV2(run) && <AcademicEvaluationPanel run={run} />}
+      <RuleCoveragePanel coverage={run?.hybrid?.ruleCoverage} part="notices" />
       <div className="cmp-top">
         {checking
           ? <div className="big-ring cmp-ring checking" style={ringStyle} role="img" aria-label={translateUI("ui.checking_your_syllabus_1278c5")}><div><strong aria-hidden="true">…</strong><small>{translateUI("ui.checking_820d60")}</small></div></div>
@@ -127,7 +116,7 @@ export default function ComplianceCard({ run, checking = false, onOpenStep, show
           ))}
         </div>
       )}
-      {run && recs.length === 0 && state === 'scored' && run.findings && run.findings.length === 0 && <p className="cmp-small">{translateUI("ui.nothing_to_improve_every_check_passed_60de97")}</p>}
+      {run && recs.length === 0 && state === 'scored' && run.findings && run.findings.length === 0 && !run.hybrid?.suggestions?.length && !run.hybrid?.deductions?.length && !run.hybrid?.unresolved?.length && <p className="cmp-small">{translateUI("ui.nothing_to_improve_every_check_passed_60de97")}</p>}
 
       {showFindings && run && run.findings && run.findings.length > 0 && (
         <details className="cmp-find">
@@ -140,8 +129,9 @@ export default function ComplianceCard({ run, checking = false, onOpenStep, show
           ))}
         </details>
       )}
-      <AlignmentScorePanel run={run} />
       <HybridCheckPanel run={run} onApplyDraft={applyDraft} />
+      {/* The rule-by-rule coverage is a reference, not the result: it follows the results instead of sitting above the score. */}
+      <RuleCoveragePanel coverage={run?.hybrid?.ruleCoverage} part="list" />
     </div>
   );
 }

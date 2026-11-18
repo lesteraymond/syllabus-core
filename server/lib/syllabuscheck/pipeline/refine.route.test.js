@@ -11,7 +11,6 @@ const express = require('express');
 
 const repo = require('../repository');
 const { sample } = require('../fixtures');
-const oldRefine = require('../refine');
 const replanRefine = require('./refine');
 const P = require('./prompt');
 
@@ -53,7 +52,10 @@ async function harness(t, { env = ENV } = {}) {
     });
     req.on('error', reject); req.end(payload);
   });
-  return { content, masters, post, setReport: r => { report = r; } };
+  const get = p => new Promise((resolve, reject) => {
+    http.get(base + p, res => { let data = ''; res.on('data', c => { data += c; }); res.on('end', () => { let body = null; try { body = data ? JSON.parse(data) : null; } catch { body = data; } resolve({ status: res.statusCode, body }); }); }).on('error', reject);
+  });
+  return { content, masters, post, get, setReport: r => { report = r; } };
 }
 
 const draftOf = content => ({ id: 'RP:ilo:' + content.plan[2].ilos[0].id, path: 'plan[2].ilos[0].text', replacement: 'Apply topic 3 in a short guided exercise', originalValue: content.plan[2].ilos[0].text, source: 'ai', verification: 'VERIFIED' });
@@ -65,7 +67,6 @@ test('a new-checker draft goes to the new checker\'s Check & improve, never to t
   h.setReport(replannedReport(draft));
   const calls = [];
   t.mock.method(replanRefine, 'refineDraft', async args => { calls.push(args); return { status: 'verified', usedRewrite: false, text: args.suggestion.replacement, stats: { checked: 3, improved: 1, worse: 0, same: 2, unverified: 0, points: -1 }, blockers: [], engine: 're-planned' }; });
-  const old = t.mock.method(oldRefine, 'refineSuggestion', async () => { throw Error('the old checker must not be used'); });
   const res = await h.post(`/runs/7/suggestions/${encodeURIComponent(draft.id)}/refine`);
   assert.equal(res.status, 200, JSON.stringify(res.body));
   assert.equal(res.body.status, 'verified');
@@ -73,7 +74,6 @@ test('a new-checker draft goes to the new checker\'s Check & improve, never to t
   assert.equal(typeof res.body.verificationToken, 'string');
   assert.equal(calls.length, 1);
   assert.equal(calls[0].suggestion.id, draft.id);
-  assert.equal(old.mock.callCount(), 0);
 });
 
 test('the author\'s edit is what the new checker checks', async t => {
@@ -112,27 +112,22 @@ test('a new-checker report while the new checker is switched off is refused befo
   assert.equal(called.mock.callCount(), 0);
 });
 
-test('an old-checker report still goes to the old Check & improve', async t => {
+// a report the old AI Checker made: no engine, the old prompt version
+const oldReport = draft => ({ hybrid: { alignment: { status: 'completed', provider: 'anthropic', model: 'claude-sonnet-5-5', promptVersion: 'alignment-10' }, suggestions: [draft], improvementPlan: { planId: 'old-plan', sourceHash: 'x', changes: [] } } });
+
+test('an old-checker report is refused by Check & improve and the decisions, and nothing reaches any AI', async t => {
   const h = await harness(t);
   const draft = { ...draftOf(h.content), id: 'SEM:old' };
-  const { promptVersionOf } = require('../gemini');
-  h.setReport({ hybrid: { alignment: { status: 'completed', provider: 'anthropic', model: 'claude-sonnet-5-5', promptVersion: promptVersionOf('claude-sonnet-5-5') }, suggestions: [draft] } });
+  h.setReport(oldReport(draft));
   const newer = t.mock.method(replanRefine, 'refineDraft', async () => { throw Error('must not be called'); });
-  const old = t.mock.method(oldRefine, 'refineSuggestion', async ({ suggestion }) => ({ status: 'verified', usedRewrite: false, text: suggestion.replacement, stats: { checked: 1, improved: 1, worse: 0, same: 0, unverified: 0, points: -1 }, blockers: [] }));
   const res = await h.post(`/runs/7/suggestions/${encodeURIComponent(draft.id)}/refine`);
-  assert.equal(res.status, 200, JSON.stringify(res.body));
-  assert.equal(old.mock.callCount(), 1);
+  assert.equal(res.status, 409, JSON.stringify(res.body));
+  assert.equal(res.body.code, 'old_checker_retired');
+  assert.match(res.body.error || '', /old AI Checker, which is no longer used/);
+  const decision = await h.post('/runs/7/decisions', { suggestionId: draft.id, action: 'accept' });
+  assert.equal(decision.status, 409, JSON.stringify(decision.body));
+  assert.equal(decision.body.code, 'old_checker_retired');
   assert.equal(newer.mock.callCount(), 0);
-});
-
-test('the old whole-syllabus plan is never built from a new-checker report', async t => {
-  process.env.SYLLABUS_CHECK_COORDINATED_PLAN = 'on';
-  t.after(() => { delete process.env.SYLLABUS_CHECK_COORDINATED_PLAN; });
-  const h = await harness(t);
-  h.setReport(replannedReport(draftOf(h.content)));
-  const plans = require('../coordinatedPlanEngine');
-  const built = t.mock.method(plans, 'buildPlan', () => { throw Error('must not be called'); });
-  const res = await h.post('/runs/7/improvement-plan/apply', {});
-  assert.equal(res.status, 404);
-  assert.equal(built.mock.callCount(), 0);
+  const plan = await h.get('/runs/7/improvement-plan');
+  assert.equal(plan.status, 404, 'the old improvement-plan routes are gone');
 });

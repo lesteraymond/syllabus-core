@@ -27,22 +27,24 @@ test('settings that cannot be read: the strict step order, and AI and email as b
 });
 
 test('AI off: the check runs with no provider, whatever keys the server has, and says the administrator turned it off', () => {
-  const env = settings.aiOffEnv({ GEMINI_API_KEY: 'k', OPENROUTER_API_KEY: 'k', SYLLABUS_CHECK_AI_PROVIDER: 'gemini', OTHER: 'kept' });
+  const env = settings.aiOffEnv({ ANTHROPIC_API_KEY: 'k', SYLLABUS_CHECK_AI_PROVIDER: 'anthropic', OTHER: 'kept' });
   assert.equal(env.SYLLABUS_CHECK_AI_PROVIDER, 'off');
   assert.equal(env.OTHER, 'kept');
-  const gemini = require('./syllabuscheck/gemini');
-  assert.deepEqual(gemini.providerConfig(env), { provider: 'off', model: '', configured: false }, 'no provider is configured, so no request can be sent');
-  assert.equal(gemini.providerConfig({ GEMINI_API_KEY: 'k' }).configured, true, 'the same keys with AI on would be configured');
+  const { providerConfig } = require('./syllabuscheck/aiConfig');
+  assert.deepEqual(providerConfig(env), { provider: 'off', model: '', configured: false }, 'no provider is configured, so no request can be sent');
+  assert.equal(require('./syllabuscheck/pipeline/official').readiness(env).ok, false, 'the new AI Checker does not run');
 });
 
-test('AI off: the alignment step sends nothing and its reason names the Settings switch', async () => {
-  const gemini = require('./syllabuscheck/gemini');
+test('AI off: the check sends nothing and its reason names the Settings switch', async () => {
+  const engine = require('./syllabuscheck/engine');
+  const { sample } = require('./syllabuscheck/fixtures');
+  const { content, masters } = sample();
   const originalFetch = global.fetch;
   global.fetch = async () => { throw new Error('no request may be sent while AI checking is off'); };
   try {
-    const out = await gemini.align({ meta: {}, clos: [], plan: [] }, { egas: [], pos: [], clos: [] }, { env: settings.aiOffEnv({ GEMINI_API_KEY: 'k' }) });
-    assert.equal(out.status, 'not_evaluated');
-    assert.equal(out.reason, settings.AI_OFF_MESSAGE);
-    assert.equal(out.failure.kind, 'not_configured');
+    const out = await engine.run(content, masters, { env: settings.aiOffEnv({ SYLLABUS_CHECK_AI_PROVIDER: 'anthropic' }), linkChecker: async url => ({ url, status: 'ok' }) });
+    assert.equal(out.hybrid.alignment.status, 'not_evaluated');
+    assert.equal(out.hybrid.alignment.reason, settings.AI_OFF_MESSAGE);
+    assert.ok(out.findings.some(f => f.ruleId === 'AI-REQUIRED' && f.message.includes(settings.AI_OFF_MESSAGE)));
   } finally { global.fetch = originalFetch; }
 });

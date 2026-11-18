@@ -7,7 +7,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { findAiInstructions, MAX_FOUND } = require('./aiInstructions');
 const { sample } = require('./syllabuscheck/fixtures');
-const { pairsOf } = require('./syllabuscheck/gemini');
+const { extract } = require('./syllabuscheck/pipeline/extract');
+const { questionsOf } = require('./syllabuscheck/pipeline/judge');
+const questionsSent = (content, masters) => questionsOf(extract(content, masters)); // what the new AI Checker asks, texts included
 const F = require('./compliance/fixtures');
 const svc = require('./compliance/service');
 
@@ -62,7 +64,7 @@ test('what is sent to the AI, and the coded check with its score, findings and r
   content.clos[0].statement += ' ' + INJECTIONS[0];
   const without = clone(content), withWarning = clone(content);
   assert.ok(findAiInstructions(withWarning).length > 0);
-  assert.deepEqual(pairsOf(withWarning, masters), pairsOf(without, masters), 'the relationships sent to the AI, text included');
+  assert.deepEqual(questionsSent(withWarning, masters), questionsSent(without, masters), 'the questions sent to the AI, text included');
   const form = F.good();
   form.description = [{ t: INJECTIONS[3] }, ...(form.description || [])];
   const a = clone(form), b = clone(form);

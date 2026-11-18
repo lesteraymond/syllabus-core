@@ -42,6 +42,10 @@ export function programScores(rows) {
 
 // The four areas the dashboard's quality snapshot shows, each with the average of that area over the checked syllabi (null when none).
 // `summary.areas` is what the same endpoint returns: [{ key, name, average }].
+// The colour of a snapshot ring by its score: 'good' (90 and above, blue), 'mid' (75 to 89, amber), 'bad' (below 75, red); null when there is no score.
+export const SNAPSHOT_GOOD = 90;
+export const SNAPSHOT_MID = 75;
+export const scoreTone = (score) => (!Number.isFinite(score) ? null : score >= SNAPSHOT_GOOD ? 'good' : score >= SNAPSHOT_MID ? 'mid' : 'bad');
 export const SNAPSHOT_AREAS = ['template', 'completeness', 'co_po', 'assessment'];
 export function areaAverages(summary) {
   const areas = (summary && Array.isArray(summary.areas)) ? summary.areas : [];

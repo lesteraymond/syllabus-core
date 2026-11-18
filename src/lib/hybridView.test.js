@@ -51,6 +51,7 @@ test('suggestion kinds follow the target path', () => {
   assert.equal(suggestionKind('plan[3].values'), 'plan');
   assert.equal(suggestionKind('outcomes.vision'), 'outcomes');
   assert.equal(suggestionKind('meta.title'), 'meta');
+  assert.equal(suggestionKind('refs.books.items[2].t'), 'ref');
   assert.equal(suggestionKind('x'), 'other');
 });
 

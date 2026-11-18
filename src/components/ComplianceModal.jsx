@@ -31,6 +31,7 @@ export default function ComplianceModal({ syllabus, run, isLatest = true, error 
             <small>{(syllabus.facultyName || tr('Unknown faculty')) + ' · ' + program}</small>
             {when && <small className="cm-when">{translateUI("ui.checked_aca936") + when + (run && run.versionLabel ? ' · ' + tr('Version') + ' ' + run.versionLabel : '')}</small>}
           </div>
+          <button type="button" className="icon-btn cm-x" onClick={onClose} disabled={actionBusy} aria-label={translateUI("ui.close_report_12dfcd")} title={translateUI("ui.close_report_12dfcd")}>✕</button>
         </div>
 
         <div className="modal-body cm-body">

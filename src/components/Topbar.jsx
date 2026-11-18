@@ -1,4 +1,5 @@
 import StableButton from './StableButton';
+import GlobalSearch from './GlobalSearch';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useRef, useState } from 'react';
@@ -8,7 +9,7 @@ import { AVATAR_ACCEPT, prepareAvatar } from '../lib/avatar';
 import { fmt } from '../lib/utils';
 import { ROLE_LABELS } from '../lib/roles';
 
-export default function Topbar({ page, onLogout, user, unread, threads, msgDrop, setMsgDrop, setChatCode, markRead, notify, onAvatarChange, notifications, onOpenNotification, onMarkAllNotificationsRead }) {
+export default function Topbar({ page, onLogout, user, unread, threads, msgDrop, setMsgDrop, setChatCode, markRead, notify, onAvatarChange, notifications, onOpenNotification, onMarkAllNotificationsRead, syllabi, nav, onOpenSyllabus, onGoPage }) {
   const ref = useRef(null);
   useEffect(() => {
     const h = (e) => { if (ref.current && !ref.current.contains(e.target)) setMsgDrop(false); };
@@ -25,6 +26,12 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
     return () => document.removeEventListener('mousedown', onDown);
   }, [bellOpen]);
   const bellCount = notifications?.unreadCount || 0;
+  const [notifFilter, setNotifFilter] = useState('all'); // 'all' | 'unread'
+  const shown = (notifications?.items || []).filter((n) => notifFilter === 'all' || !n.isRead);
+  const midnight = new Date(); midnight.setHours(0, 0, 0, 0);
+  const isToday = (n) => { const d = new Date(n.createdAt); return !Number.isNaN(d.getTime()) && d >= midnight; };
+  const groups = [['today', translateUI('notif.today'), shown.filter(isToday)], ['earlier', translateUI('notif.earlier'), shown.filter((n) => !isToday(n))]].filter(([, , list]) => list.length > 0);
+  const notifIcon = (type) => (type === 'message' || type === 'comment' ? 'chatText' : type === 'deadline' ? 'calendarBlank' : 'bell');
 
   // Profile menu: Change / Remove photo. Closes on outside click and on Escape (focus returns to the button).
   const [menuOpen, setMenuOpen] = useState(false);
@@ -79,9 +86,9 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
       <div className="topbar-brand"><img src="/cite-logo.png" alt={translateUI("ui.cict_logo_dee290")} /><strong>{translateUI("ui.cite_brand_5b2e91")}</strong></div>
       <div className="topbar-heading"><span className="eyebrow">{translateUI("ui.syllabus_management_system_e49cab")}</span></div>
       <div className="top-actions">
-        <div className="search"><Icon name="magnifyingGlass" size={18} /><input placeholder={translateUI("ui.search_syllabus_course_faculty_67a24a")} /></div>
+        <GlobalSearch user={user} syllabi={syllabi || []} nav={nav || []} onOpenSyllabus={onOpenSyllabus} onGoPage={onGoPage} />
         <div className="msg-wrap" ref={ref}>
-          <button className="icon-btn" title={translateUI("ui.messages_f1702b")} aria-label={unread > 0 ? translateUI("ui.messages_p0_unread_f09423", { p0: (unread) }) : translateUI("ui.messages_f1702b")} onClick={() => { setBellOpen(false); setMsgDrop(!msgDrop); }}><Icon name="envelope" size={20} />{unread > 0 && <span className="pill" aria-hidden="true">{unread > 99 ? '99+' : unread}</span>}</button>
+          <button className={'icon-btn' + (msgDrop ? ' is-open' : '')} aria-expanded={msgDrop} title={translateUI("ui.messages_f1702b")} aria-label={unread > 0 ? translateUI("ui.messages_p0_unread_f09423", { p0: (unread) }) : translateUI("ui.messages_f1702b")} onClick={() => { setBellOpen(false); setMsgDrop(!msgDrop); }}><Icon name="envelope" size={20} weight="fill" />{unread > 0 && <span className="pill" aria-hidden="true">{unread > 99 ? '99+' : unread}</span>}</button>
           {msgDrop && <div className="msg-drop">
             <div className="msg-drop-head"><strong>{translateUI("ui.messages_f1702b")}</strong><span>{unread}{translateUI("ui.unread_2630a7")}</span></div>
             {threads.length === 0 && <div className="msg-empty">{translateUI("ui.no_conversations_yet_265928")}</div>}
@@ -93,15 +100,23 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
           </div>}
         </div>
         <div className="msg-wrap" ref={bellRef}>
-          <button className="icon-btn" title={translateUI("ui.notifications_753a22")} aria-label={bellCount > 0 ? translateUI("ui.notifications_p0_unread_5c2cb7", { p0: (bellCount) }) : translateUI("ui.notifications_753a22")} aria-haspopup="true" aria-expanded={bellOpen} onClick={() => { setMsgDrop(false); setBellOpen(o => !o); }}><Icon name="bell" size={20} />{bellCount > 0 && <span className="pill" aria-hidden="true">{bellCount > 99 ? '99+' : bellCount}</span>}</button>
+          <button className={'icon-btn' + (bellOpen ? ' is-open' : '')} title={translateUI("ui.notifications_753a22")} aria-label={bellCount > 0 ? translateUI("ui.notifications_p0_unread_5c2cb7", { p0: (bellCount) }) : translateUI("ui.notifications_753a22")} aria-haspopup="true" aria-expanded={bellOpen} onClick={() => { setMsgDrop(false); setBellOpen(o => !o); }}><Icon name="bell" size={20} weight="fill" />{bellCount > 0 && <span className="pill" aria-hidden="true">{bellCount > 99 ? '99+' : bellCount}</span>}</button>
           {bellOpen && <div className="msg-drop">
             <div className="msg-drop-head"><strong>{translateUI("ui.notifications_753a22")}</strong>{bellCount > 0 ? <button className="link-btn" onClick={onMarkAllNotificationsRead}>{translateUI("ui.mark_all_read_8958e2")}</button> : <span>{translateUI("ui.all_caught_up_47cbaf")}</span>}</div>
+            <div className="notif-tabs" role="tablist" aria-label={translateUI("ui.notifications_753a22")}>
+              {[['all', 'notif.all'], ['unread', 'notif.unread']].map(([key, label]) => <button key={key} type="button" role="tab" aria-selected={notifFilter === key} className={notifFilter === key ? 'active' : ''} onClick={() => setNotifFilter(key)}>{translateUI(label)}</button>)}
+            </div>
             <div className="notif-list">
               {(!notifications || notifications.items.length === 0) && <div className="msg-empty">{translateUI("ui.no_notifications_yet_5537c6")}</div>}
-              {notifications?.items.map(n => <button key={n.id} className={`thread notif-item${n.isRead ? '' : ' unread'}`} onClick={() => { setBellOpen(false); onOpenNotification(n); }}>
-                <div className="thread-body"><div className="thread-top"><strong>{tr(n.title)}</strong><small>{fmt(n.createdAt)}</small></div>{n.body && <p>{['message', 'comment'].includes(n.type) ? n.body : tr(n.body)}</p>}</div>
-                {!n.isRead && <span className="thread-dot" />}
-              </button>)}
+              {notifications && notifications.items.length > 0 && shown.length === 0 && <div className="msg-empty">{translateUI('notif.noUnread')}</div>}
+              {groups.map(([key, label, list]) => <section key={key} className="notif-group">
+                <h4>{label}</h4>
+                {list.map(n => <button key={n.id} className={`thread notif-item${n.isRead ? '' : ' unread'}`} onClick={() => { setBellOpen(false); onOpenNotification(n); }}>
+                  <span className="notif-ico" aria-hidden="true"><Icon name={notifIcon(n.type)} size={20} weight="fill" /></span>
+                  <div className="thread-body"><strong className="notif-title">{tr(n.title)}</strong>{n.body && <p>{['message', 'comment'].includes(n.type) ? n.body : tr(n.body)}</p>}<small className="notif-time">{fmt(n.createdAt)}</small></div>
+                  {!n.isRead && <span className="thread-dot" />}
+                </button>)}
+              </section>)}
             </div>
           </div>}
         </div>

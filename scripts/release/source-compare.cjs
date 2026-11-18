@@ -16,7 +16,6 @@ function current() {
 }
 const AREAS = [
   ['AI Checker services', /^server\/lib\/(syllabuscheck|compliance)\/(?!.*\.test\.)|^server\/routes\/syllabusCheck/],
-  ['Academic Policy V2', /academicPolicyV2|academicV2|cloClassification|vpaa/i],
   ['Cost optimizations', /costPlan|optimization|budgetReport|anthropicClient|scripts\/optimization/],
   ['Program Outcomes / curriculum', /programPoReferences|programOutcome|programMasters|officialProgramOutcomes|curriculum|po-controlled|lcup-po|programs\.js|programEgas/i],
   ['Subject management / academic year', /subject|academicYear|AcademicYear|CourseOutcomes|SubjectSetup|catalog/i],

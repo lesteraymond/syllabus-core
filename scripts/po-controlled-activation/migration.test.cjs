@@ -128,33 +128,6 @@ test('explicit target IDs preserve non-target catalogs; dry-run and verification
  await assert.rejects(()=>migration.snapshot(db,{programIds:[1,2,3,9000]}),/Exactly the four/);
  await assert.rejects(()=>migration.snapshot(db,{programIds:[9001,2,3,4]}),/same academic-year/);
 });
-test('all four selections share corrected PO context across legacy, V2, comprehensive checks and saved reports',async t=>{
- const h=require('../../server/lib/syllabuscheck/vpaa-conformance/harness');h.liveGuard(t);
- const svc=require('../../server/lib/compliance/service'),engine=require('../../server/lib/syllabuscheck/engine');
- const compliance=require('../../server/lib/compliance/rules'),standard=require('../../server/lib/compliance/standard-v4.json');
- for(const [i,code]of migration.CODES.entries()){
-  const {content}=h.sample();const p=await loadResolvedProgram(db,await findProgram(db,i+1));
-  content.meta={...content.meta,program:code,courseId:10+i,curriculumYear:'synthetic-current',prereq:'IT 101'};
-  const institution=await require('../../server/lib/institution').loadOutcomes(db);content.outcomes={vision:institution.vision,mission:institution.mission,egas:p.egas,pos:p.pos};
-  const masters=await mastersFor(db,content);assert.deepEqual(masters.pos,p.pos);assert.ok(masters.curricula.length===1);
-  const checks=engine.coded(content,masters).checks;assert.equal(checks.find(c=>c.ruleId==='PO-EXACT').status,'PASS');assert.ok(checks.filter(c=>c.ruleId==='CLO-MAP').every(c=>c.status==='PASS'));
-  const catalog={institution,program:{egas:p.egas,pos:p.pos}};
-  const withSnapshot={...content,catalog};const only=standard.rules.filter(r=>['T-12','P-01','P-02','P-03'].includes(r.id));
-  assert.equal(compliance.evaluate(withSnapshot,{...standard,rules:only},{catalog,year:2026}).findings.length,0);
-  if(code.startsWith('BSIT')){const bad=structuredClone(content);bad.clos[0].pos=[10];assert.ok(engine.coded(bad,masters).findings.some(f=>['CLO-MAP','P-02'].includes(f.ruleId)));assert.equal(bad.clos[0].pos[0],10);}
-  const transport=h.scriptedTransport();const comp=await svc.checkHybrid(db,content,{env:h.envFor({SYLLABUS_CHECK_PROFILE:'comprehensive-testing'}),transport,linkChecker:async url=>({url,status:'ok',httpStatus:200})});
-  const legacy=await svc.checkHybrid(db,content,{env:h.envFor({SYLLABUS_CHECK_ACADEMIC_V2:'off'}),transport:h.scriptedTransport(),linkChecker:async url=>({url,status:'ok',httpStatus:200})});
-  assert.equal(comp.passThreshold,79);assert.equal(comp.overall,100,'The aligned synthetic course must earn a numeric official score, not a vacuous null comparison');assert.equal(comp.overall,legacy.overall);assert.deepEqual(comp.hybrid.deductions,legacy.hybrid.deductions);
-  assert.equal(comp.hybrid.semanticCoverage.evaluated,7);assert.equal(comp.hybrid.academicV2.academic.references.poUsable,true);
-  assert.equal(comp.hybrid.ruleCoverage.rules.find(r=>r.ruleId==='P-03').verified,false,'Missing approved crosswalks never become verified mapping consistency');
-  const basis=comp.hybrid.referenceContext;assert.equal(basis.po.reference.version,official.version);assert.equal(basis.po.reference.institutionalApproval,'not_recorded');assert.equal(basis.curriculum.source,code);
-  const poPairs=transport.pairs().filter(p=>p.type==='CLO-PO');assert.ok(poPairs.length>0);for(const pair of poPairs){const no=Number(/-po(\d+)$/.exec(pair.id)[1]);assert.equal(pair.source,ref(code).outcomes.find(o=>o.no===no).text);}
-  const any=transport.pairs().filter(p=>p.type==='CLO-anyPO');assert.ok(any.length);for(const o of ref(code).outcomes)assert.ok(any[0].source.includes(o.text));
-  await db.beginTransaction();try{const id=await svc.storeRun(db,{syllabusId:i+1,content,result:comp,createdBy:5});const stored=await readReport(db,id);assert.deepEqual(stored.hybrid.referenceContext,basis);}finally{await db.rollback();}
-  evidence.push({code,legacyScore:legacy.overall,comprehensiveScore:comp.overall,sevenVPAA:comp.hybrid.semanticCoverage.evaluated,poSource:basis.po.source,curriculumSource:basis.curriculum.source,scriptedRequests:transport.sent.length,liveModelCalls:0});
-  browserFixtures.push({code,name:p.name,content,course:{id:10+i,code:content.meta.code,title:content.meta.title,program:{id:i+1,code,name:p.name},clos:content.clos,standards:{...content.outcomes,poReference:p.poReference}},report:comp});
- }
-});
 test('rollback restores legacy reference rows/versions and removes inheritance while preserving immutable audit history',async()=>{
  assert.equal((await migration.rollback(db,options())).rolledBack,true);
  assert.deepEqual(await migration.snapshot(db,scope),original);

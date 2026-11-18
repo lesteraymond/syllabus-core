@@ -2549,3 +2549,182 @@ Owner decision of 2026-11-17. The CHED Implementation Handbook for OBE and ISA (
 - **Versions unchanged** (`replan-rules-2`, `replan-prompt-6`): still no answer stored under them.
 - **Tests:** `constructive.test.js` adds 1 (the scale and its verbs, CLO 4 only, the checklist wording, what the AI is told, the one-verb rule with affective verbs); `prompt.test.js` updated. `npm test` passes.
 - Not run with the real model yet.
+
+### v1.94.6 — AI Checker: First Real-Model Run of the New Rules (CPE 101)
+
+Owner-approved paid run of 2026-11-17 (cap $1.50), `scripts/replan-syllabus-run.cjs --run 114 --live --confirm-paid --max-cost 1.5 --label new-rules`. No code change. Output in `docs/ai-checker-replan-run/syllabus-114/new-rules/` (a dev syllabus with planted problems; keep local, not committed).
+
+- **Cost and stop:** 65 requests, $0.72 charged ($0.67 estimated). The evaluation guard stopped the run before the re-check because its conservative total ($0.70 charged + the $0.27 worst case of the next request) passed the $1.50 cap; the app's own cap (`SYLLABUS_CHECK_REPLAN_MAX_COST_USD`) has no such accounting. 7 requests were refused, so one task field and four fields waiting on a failing week were left unresolved.
+- **Official check:** completed, 142 of 147 answered (5 "unclear", all on weeks whose ILO is written for the teacher), score 67 (the same as check #450 under the old rules), 52 misalignments, every area at its 5-point cap except content (3) and references (3).
+- **Constructive alignment works as designed:** TASK-FIT went from 10 aligned / 0 partial to 4 aligned / 4 partial (the tasks are now judged against the week's ILO); ACTIVITY-FIT is about the same; ILO-CLO against the CLO's own verb went from 5 aligned / 8 not to 8 aligned / 6 not.
+- **CLO-EVIDENCE:** CLO 1, 3 and 4 aligned, CLO 2 partial ("no mapped task reaches analyze"). After the plan rewrote Week 10 (a floral design project, the only design-level work), CLO 3 lost its evidence and became partial, which held back the changes of the weeks it involves.
+- **No outcome draft opens with two verbs** (0 of 7). Of 21 drafts, 16 verified, 2 need faculty review, 3 not checked.
+- **Not exercised:** a clean syllabus with a verb-level mismatch (CPE 101's planted problems dominate); the re-check after the plan.
+
+### v1.94.7 — AI Checker: Real-Model Run of the New Rules on a Clean Syllabus (CAPSPRO1)
+
+Owner-approved paid run of 2026-11-17 (`--run 113 --live --confirm-paid --max-cost 1 --concurrency 1 --label new-rules`). No code change. Output in `docs/ai-checker-replan-run/syllabus-113/new-rules/` (keep local, not committed).
+
+- **Cost:** 18 requests, $0.36 charged ($0.33 estimated); completed, not stopped.
+- **Result:** score 100 (the same as check #449 under the old rules), 141 of 141 answered, 0 misalignments, plan clean, the re-check asked nothing.
+- **No false positives from the new rules on a good syllabus:** ACTIVITY-FIT 11/11 and TASK-FIT 11/11 aligned (the level items included), CLO-EVIDENCE 4/4 aligned with reasons naming the work at each CLO's level (problem-tree analysis for CLO 1, feasibility justification for CLO 2, designs graded by rubric for CLO 3, consent-form validation for CLO 4), CLO-LEVEL 4/4.
+- **Review items (no points):** 9 extra tags that do not fit beside a tag that does: 6 CLO-PO and 1 CLO-EGA, and 3 ILO-CLO where the AI applied the CLO's own verb (for example "develop" is create level, above CLO 2's "evaluate"; the ILO fits its other tag, so it costs nothing).
+
+### v1.94.8 — AI Checker: The Values Question Sees the Week's Activities; Clearer "Incomplete" Message
+
+Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no suggestions.
+
+- **Bug:** VALUE-ILO's checklist asks whether the week's value can be practised through its ILO **and activities**, but the question carried only the ILO. In Week 17 the ILO is written for the teacher, so the value (Missionary Spirit) is carried by the "case-study discussion on ethical reliability". Claude quoted the activities, the quote was not in the question's texts, the answer was rejected twice, the question stayed unanswered, and one unanswered question makes the whole check incomplete: no score, no repair plan, no suggestions, on every re-check.
+- **Fix** (`pipeline/judge.js`): the values question now carries the week's activities as well as its ILOs (its ILOs only when the week has no activities). The repair order still follows the ILO only. `rules.js` CHAIN: values align to the ILO and the activities.
+- **Message** (`pipeline/official.js` `incompleteReason`): an incomplete check counts only the questions with NO valid answer and names up to three ("1 question of the new AI Checker had no valid answer: Week 17 values (VALUE-ILO): the quote is not in the texts. Run the check again."). An "unclear" answer is a valid answer and never made a check incomplete, but the old message counted it ("3 questions" meant one).
+- **Versions unchanged:** the values questions now carry other texts, so their stored answers do not match and they are asked again once; nothing else is.
+- **Tests:** new `pipeline/values-activities.test.js` (3; the first fails against the old question). `npm test` passes.
+- Not yet re-checked with the real model: re-check CPE 101 in the app.
+
+---
+
+### v1.94.9 — AI Checker: CPE 101 Re-Check Shows Suggestions Again; No "AI Provider Unavailable" Findings
+**Date:** November 17, 2026
+
+- **Symptom:** CPE 101 check #458 completed with score 85 and six deductions but no suggestion (plan rounds 0), and three findings said "This original-requirement relationship was not checked; the course identity or AI provider is unavailable".
+- **Cause 1, a deadlock** (`pipeline/judge.js` setStatuses): CLO-EVIDENCE (a manual relationship, fixed in its weeks, never by rewriting the CLO) made CLO 3 "failing". The Week 10 ILO tagged to CLO 3 then waited on its CLO, the week's activities and tasks waited on the ILO, and CLO-EVIDENCE waited on the activities and tasks: nothing was a rewrite root, so the plan rewrote nothing. A failing manual relationship no longer makes its field a parent that others wait on; the same rule applies to `official.js` unresolvedOf.
+- **Cause 2** (`pipeline/plan.js`): a reference the AI flagged was listed as "waits for a field above it". The AI never rewrites a reference, so it now reads "for the faculty: the AI never rewrites a reference; replace or remove this source".
+- **Cause 3** (`compliance/service.js`, `pipeline/official.js` noAiEnv): official mode ran the old engine with its AI off but its original-requirements advice still on (`SYLLABUS_CHECK_REQUIREMENTS_ADVICE=on`), so each of its questions was recorded as "not checked". Official mode now turns that advice off too; the no-AI rules and the base score are unchanged.
+- **Versions unchanged:** no question or prompt changed; stored answers are reused.
+- **Verified offline:** a read-only replay of CPE 101 with the stored answers (no AI request) gives 0 "not checked" findings, the Week 10 ILO as a rewrite root, the reference reason above, score 85. New `pipeline/cpe101-458.test.js` (3 tests); `npm test` passes (2,603 server + 127).
+- Not yet re-checked with the real model: re-check CPE 101 in the app.
+
+---
+
+### v1.95.0 — AI Checker: The Old AI Checker Is Retired
+**Date:** November 17, 2026
+
+- **Owner decision:** "don't use the old AI Checker anymore". AI judgements, deductions, drafts and Check & improve come only from the new AI Checker.
+- **Check** (`compliance/service.js`): the old engine always runs with its AI off and gives only its no-AI rules (required sections, format, week structure, links, base score). When an AI check is asked for, an AI provider is set and the new checker is not ready (for example `SYLLABUS_CHECK_REPLAN` is not `official`, or its cost cap is missing), the check is incomplete with the reason ("The new AI Checker is not ready on this server: ...") and sends nothing to any AI. Before, it fell back to the old checker with its AI stages, Policy V2 and the whole-syllabus plan.
+- Policy V2, the old whole-syllabus plan and the old coordinated plan no longer run from a check.
+- **Routes** (`routes/syllabusCheck.js`): Check & improve and the improvement plan refuse a report the old checker made (409 `old_checker_retired`: "This check was made by the old AI Checker, which is no longer used. Run Check with AI again ...").
+- **The old code is kept, not deleted:** its no-AI rules are the same engine, and its own tests still run. It runs its AI only with `SYLLABUS_CHECK_LEGACY_AI=on` (`pipeline/official.js` `legacyAiOn`), which no setup sets. The old checker's test files and the UI fixture builder set it in their own process; evaluation scripts of the old checker need it too.
+- **No change for the dev server:** it already ran the new checker (official mode, ready).
+- **Tests:** new `pipeline/retired-old-checker.test.js` (4, through the real check service: no AI request when the new checker is not ready, with every old AI path switched on; a control shows the old AI is seen when opted in); `refine.route.test.js` updated (old-checker report refused). `npm test` passes (2,608 server + 127).
+
+---
+
+### v1.96.0 — AI Checker: Old Checker Parts Not Connected to the New AI Checker Removed
+**Date:** November 17, 2026
+
+- **Owner decision:** remove what of the old checker is not connected to the new AI Checker. The old engine's no-AI rules (required sections, format, week structure, links, base score) stay: the new checker's score starts from them.
+- **Removed:** `wholeSyllabusPlan.js` (old whole-syllabus plan) and `coordinatedPlanEngine.js` (old coordinated plan), their calls in `compliance/service.js`, their tests (`wholeSyllabusPlan.test.js`, `coordinated-plan.test.js`, `routes/syllabusCheck.coordinatedPlan.routes.test.js`) and `scripts/staging-coordinated-plan-validation.cjs`. The new checker never made an improvement plan; its drafts are its suggestions.
+- **Routes** (`routes/syllabusCheck.js`): the improvement-plan routes now answer `{ plan: null }` and 409 `old_checker_retired` (so a page still showing an old report's plan gets a clear reply). Check & improve takes only the new checker's drafts; the old checker's branch (`refine.js` `refineSuggestion`) is gone even with `SYLLABUS_CHECK_LEGACY_AI=on`.
+- **Kept, because other code still uses it:** `refine.js` (token signing, field helpers used by the new Check & improve route and scripts), Policy V2 and the old AI inside `engine.js`/`gemini.js` (loaded by the engine, the repository, coverage and about 40 evaluation scripts). They stay switched off (v1.95.0).
+- **Tests:** `routes/syllabusCheck.refine.routes.test.js` rewritten for new-checker drafts (daily limit, author-only, locked, unknown/older/old-checker refused, 502, Settings switch); R13 and the staging rehearsal authorization test now run on a new-checker report (token only when verified, forged and replayed tokens refused, author-only, fail closed without the secret); four tests that only repeated covered rules through the removed path deleted. `npm test` passes (2,576 server + 127).
+- **Dev `server/.env`** (not in git; backup taken): removed the old-only settings `SYLLABUS_CHECK_STAGE_A/B/C1/C2/C3/D2`, `SYLLABUS_CHECK_WHOLE_PLAN`, `SYLLABUS_CHECK_REQUIREMENTS_ADVICE`, `SYLLABUS_CHECK_CACHE_WARMUP`, `SYLLABUS_CHECK_COURSE_CONTEXT`, `SYLLABUS_CHECK_OUTPUT_FIELDS`. The new checker's settings are unchanged and it is ready.
+- The interface panel `CoordinatedPlanPanel.jsx` is left as it is (it shows only for an old report that carries a plan); `ComplianceCard.jsx` has another contributor's uncommitted edits.
+
+---
+
+### v1.97.0 — AI Checker: The Old AI Checker Code Is Removed
+**Date:** November 17, 2026
+
+- **Owner decision:** back up, then delete or refactor every part of the old AI Checker that the new AI Checker does not use; leave what it uses untouched. Backup: git tag `backup/old-ai-checker-2026-11-17` (6163ad7) and a verified bundle, zip and `.env` copies outside the repository.
+- **Removed (about 290 files):** the old AI client `gemini.js` and its providers (Gemini, OpenRouter, DeepSeek, Groq), `modelClient.js`, `costPlan.js`, `checkingProfile.js`, `budgetReport.js`; Policy V2 (`academicPolicyV2.js`, `academicV2*.js`, `cloClassification.js`, `offTopicLessons.js`); the old engine's AI stages and their helpers (`mapping.js`, `coverage.js`, `valueClassification.js`, `suggestionOrder.js`, `acceptance.js`, `alignmentScore.js`, `scoring.js`, `reportSafety.js`, `verdict.js`, `pendingRules.js` and others); the old evaluation folder `eval/` with its datasets (except `providerGuard.js`, used by the new checker's paid-run scripts); the old checker's tests and its evaluation, benchmark, Policy V2 and faculty-review export scripts; the unused LLM recommendation stub; the interface panels `AcademicEvaluationPanel`, `CoordinatedPlanPanel`, `AlignmentScorePanel`, their helpers and the Policy V2 strings; the improvement-plan API calls and routes.
+- **Refactored:** `engine.js` runs only the fixed (no-AI) rules (557 to about 200 lines) and says why a report has no AI part yet (AI off in Settings, off on the server, a check without AI, or the new checker still to answer). `compliance/service.js` runs those rules and then the new checker; no fallback. New `aiConfig.js` (Claude only, approved model only) replaces what was still used of `gemini.js`. `refine.js` keeps the shared helpers; its related-context hash is built from the new checker's questions. `ruleCatalog.js`, `ruleCoverage.js` and `semanticCoverage.js` cover the fixed rules and the new checker's questions only. `repository.js` drops the old answer reuse and correction history.
+- **Kept, because the new checker loads them:** `values.js`, `lessonfit.js`, `stages.js`, `aspects.js`, `references.js`, `requirementsAdvice.js`, `planrows.js`, `anthropicClient.js`, `anthropicSchema.js`.
+- **Behaviour changes:** the submission gate accepts only a completed check of the new AI Checker (an old-checker report needs a re-check); decisions on old-checker reports are refused (`old_checker_retired`); the "verify first" step that only Policy V2 drafts had is gone (new-checker drafts never had it).
+- **Tests:** old-checker tests deleted; mixed files trimmed to their connected parts; new `aiConfig.test.js`; the gate, decision-route, coverage and UI conformance tests now use new-checker reports (the UI fixtures run the real engine and the new checker with its scripted judge). All suites pass, except six avatar/file-route tests that need a `.env` (unaffected files).
+- **Not done:** the browser E2E suite (`scripts/e2e`) still scripts the old checker's answers and needs a scripted provider for the new checker.
+
+---
+
+### v1.97.1 — AI Checker: Problems With No Draft Are Shown Again; No False "Every Check Passed"
+**Date:** November 18, 2026
+
+- **Symptom (CPE 101 check #461):** 96%, "Nothing to improve: every check passed", and no recommendation, although five problems were left (CLO 3 without evidence in its weeks, an off-topic reference, Week 1 not the orientation, a reference not in APA 7, CLO 4's classification). The old-checker removal did not cause it: check #460, made before, was the same.
+- **Page** (`HybridCheckPanel.jsx`): the "Needs your decision" list is back (the 2026-11-04 panel rework had removed it, so a problem with no draft was invisible). Each item shows where it is, the field's text, the reason and what to do. `ComplianceCard.jsx`: "Nothing to improve: every check passed" only when there is no recommendation, no deduction and nothing left for the author (it looked only at the fixed-rule findings, which the new checker does not use for its problems).
+- **Report** (`pipeline/official.js`): a problem only the author can fix (a manual relationship such as CLO-EVIDENCE, or a reference, which the AI never rewrites) has the new reason `faculty_fix` with the instruction; one with no verified rewrite this check has `no_verified_rewrite`. Both were `draft_needs_review`, which the page reads as "copied wording in the proposed rewrite". The rule findings only the author can fix (Week 1 orientation, an APA reference that could not be repaired, ...) are listed too; they were only in `hybrid.replan.plan.manual`. Each item carries an `excerpt` of its field.
+- **The plan's mechanical fixes** (a CLO's fixed classification, an APA 7 repair built from the reference's own characters) become rule recommendations the author can accept (`source: 'rule'`, never "Check & improve"); they were dropped. `src/lib/hybridCheck.js` applySuggestion accepts `clos[n].level` and `refs.<group>.items[n].t`.
+- **Strings:** `hybrid.unresolved.faculty_fix`, `hybrid.unresolved.no_verified_rewrite`, a new `hybrid.unresolvedNote` (English and Filipino).
+- **Versions unchanged:** no question or prompt changed; stored answers are reused, so a re-check of an unchanged syllabus costs nothing.
+- **Tests:** new `pipeline/cpe101-461.test.js` (3) and `[UI-NEEDS-DECISION-en/tl]` in the UI conformance test; `official.test.js` updated. `npm test` passes (1,376 server + 127).
+- **Reference labels:** an item or recommendation on a reference is labelled by its group and number ("References · Books, no. 3" / "Mga aklat, blg. 3"), not "Draft" (`hybridView.js` suggestionKind `ref`; new strings `hybrid.kind.ref` and `hybrid.refGroup.*`). Verified on CPE 101: check #462 offered the CLO 4 classification, it was accepted (decision recorded, syllabus saved), and check #463 lists the four items for the author; both checks sent no AI request.
+
+---
+
+### v1.97.2 — AI Checker: A Quote Copied With a Plain Dash or "..." Is No Longer Rejected
+**Date:** November 18, 2026
+
+- **Found in a review of the new AI Checker:** every AI answer must quote the syllabus text it rests on, and the quote was compared ignoring case, spacing and curly quotes only. A dash or a non-breaking hyphen copied as "-", an ellipsis copied as "...", or a soft hyphen or zero-width character in the text made a correct answer "the quote is not in the texts". Asked again and rejected again, the question stayed unanswered and the whole check incomplete (no score, no recommendations), the same failure as CPE 101 #451/#452. All three syllabi in the development database contain en or em dashes.
+- **Fix** (`pipeline/prompt.js` squash, used only by this comparison): hyphen and dash variants, the minus sign, the ellipsis character, curly and low quote marks, primes, soft hyphens and zero-width characters are compared as their plain forms. Nothing is sent differently and the stored quote is the model's own; a quote that is really not in the texts is still refused.
+- **Versions unchanged:** no question or prompt changed; stored answers are reused.
+- **Tests:** new `pipeline/quote-match.test.js` (2; the old comparison rejects all five legitimate variants). `npm test` passes (1,378 server + 127).
+- **Also found, not changed (owner's choice):** a syllabus with missing or duplicate row, ILO or CLO ids never completes and says "Run the check again" (not reachable through the form or PDF import, which always assign unique ids); Check & improve can return its own rewrite with `usedRewrite: false` when neither candidate passes (not shown by the page).
+
+---
+
+### v1.97.3 — E2E: The Browser Suite Runs on the New AI Checker
+**Date:** November 18, 2026
+
+- **Why:** the browser E2E suite (`npm run test:e2e`, `scripts/e2e/`) still scripted the old AI Checker's answers (the conformance harness's `scriptedTransport`, `document_data` pairs, `judgements`) and expected old reports (Policy V2 panel, coordinated plan, old drafts). That code was removed in v1.97.0, so the suite could not run.
+- **Offline stand-in for Anthropic** (new `scripts/e2e/fake-anthropic.cjs`): answers the new checker's two requests in their own format (`pipeline/prompt.js`): JUDGE (`{ answers }`, every checklist item yes/no/unclear with a quote from the texts, via `pipeline/testSyllabus.js` `scriptedAnswer`) and REWRITE (`{ text, explanation }`). One deliberate, repeatable gap gives every report something to act on: the Week 2 activities do not practise their ILO at its level (ACTIVITY-FIT, item "level": partly aligned, -1 point). The rewriter repairs it and the judge accepts the repair, so the repair plan offers a VERIFIED draft. Modes for the failure tests: ok, down (503), auth (401), rate (429), invalid (an HTTP 200 body that is not a message), garbage (a message whose text is not the answer JSON). Nothing leaves the machine; it proves how the software handles answers, not how Claude judges.
+- **Preload** (`offline-provider.cjs`): answers `https://api.anthropic.com/` with the stand-in instead of the old scripted transport, logs each request's kind (judge or rewrite), and still blocks every other non-loopback fetch, socket and DNS lookup.
+- **Stack** (`stack.cjs`): the server runs the new checker as the official AI check (`SYLLABUS_CHECK_REPLAN=official`, `SYLLABUS_CHECK_AI_PROVIDER=anthropic`, approved model `claude-sonnet-5-5`, `SYLLABUS_CHECK_REPLAN_MAX_COST_USD=20`, `SYLLABUS_CHECK_REFINE_MAX_COST_USD=5`, the staging start-up cost limit). Policy V2 settings removed. The build sets `VITE_NEW_BUILDER=true` itself, so a checkout without a private `.env` (a worktree) no longer builds the legacy builder.
+- **Synthetic syllabus** (new `scripts/e2e/syllabus-fixture.cjs`): the new checker's conforming syllabus (`testSyllabus.js` `conforming`, every fixed rule passes) with the shared synthetic masters and their vision/mission/EGA/PO snapshot. The seed uses it and clears the stored answers (`replan_answers`) so every run asks the stand-in itself.
+- **Scenarios updated to the new report:** E03/E05 check the score (base score minus the gap's point, against 79), the new engine, provider and model, the seven VPAA relationships evaluated, the gap with its verdict and points, the verified draft, and that the spend cap counted every request; the administrator reads the finding but cannot accept it. E07-E09 use the draft for the Week 2 activities; Check & improve is checked by its result ("It is safe to accept"; answers the plan already got are reused, so it may send no request). E10 expects no AI points left after the fix. E12 adds the garbage mode, re-tags IT 205's ILOs to the CLOs its subject gave it, and checks that a re-check while the AI is down asks no judge question. E13 checks the new report in Filipino. E15 (was Policy V2 on/off parity) now checks stored answers and determinism: a second fresh server process asks no judge question and gets the identical official result. E16 checks that every provider request was a judge or rewrite request the stand-in answered.
+- **Scenarios fixed for UI changes made after the last green run (2026-11-05), not the checker:** the "Program & Subjects" menu is "Curriculum" and its header button "+ Add Curriculum"; the add-subject form requires a curriculum year; Builder Step 1 lists missing fields under "Complete before submitting:" when strict step order is off; Review & Approval starts on the current year (no combined "Previous and current year" choice, owner 2026-11-08).
+- **Harness** (`vpaa-conformance/harness.js`): the old scripted transport (`scriptedTransport`, `answerFor`, `fitToSchema`, `message`) and the unused `coded` and `syllabus` helpers are removed; `envFor` keeps only the Anthropic settings. `retired-old-checker.test.js` uses a recording transport instead.
+- **Not changed:** `scripts/e2e/run-comprehensive-ui.cjs` (K01-K10), `scenarios-budget.cjs` (B01) and the `scripts/release/run-suite*.cjs` and `stability-*` scripts drive the removed `comprehensive-testing` profile and old optimization flags; they are not part of `npm run test:e2e` and were left for a separate decision. So were `scripts/po-controlled-activation/development-integration.test.cjs`, `migration.test.cjs` and `checker-browser-seed.cjs` (not in `npm test`), which still call the removed scripted transport, Policy V2 profile and `POLICY`.
+- **Tests:** `npm run test:e2e` passes offline on a freshly built scratch database: 25/25 scenarios, 457/457 checks, 178 provider requests all answered by the stand-in, no attempt to leave the machine. `npm test`: 1,370 of 1,376 server and library tests pass; the 6 that fail (avatar and syllabus-file routes) use no changed file and fail only because this git worktree lives under a `.claude` folder and those routes send files with `dotfiles: 'deny'` (they pass from a path without a dot-folder). The localization, PDF-import UI and VPAA UI stages pass (28/28 UI conformance).
+
+---
+
+### v1.97.4 — AI Checker: The Last Old-Checker Code Is Removed
+**Date:** November 18, 2026
+
+- **Owner decision:** remove what of the old AI Checker is not related or connected to the new one.
+- **Modules the new checker loads, trimmed to what it uses:** `values.js` (the six core values and namedValues; the old Stage D1 definitions file, value questions and values profile removed), `references.js` (parseReference and crossrefFetch; the old Stage D2 report, DOI check and relevance pairs removed), `planrows.js` (examLike, ORIENTATION, weeksIn), `stewardship.js` (isTrivialRewrite, summarize; the old correction history removed), `identity.js` (identityOf). About 420 lines to 247.
+- **Deleted, used only by the old parts of those modules:** `lessonfit.js`, `stages.js`, `aspects.js`, `requirementsAdvice.js`.
+- **Old checker tooling deleted (21 scripts):** the comprehensive-profile and Policy V2 browser suites (`run-comprehensive-ui.cjs`, `scenarios-comprehensive.cjs`, `scenarios-budget.cjs`), the stability run/report/audit and their helpers, the release-candidate runners (`run-suite.cjs`, `run-suite-fresh.cjs`, `dynamic-reference-audit.cjs`, `report-retrieval.integration.test.cjs`) and the PO activation's checker-integration checks (`checker-browser*.cjs`, `checker-integration-*.cjs`, `checker-isolated-setup.cjs`, `development-integration.test.cjs`). `migration.test.cjs` loses its one old-checker test; `source-compare.cjs` its Policy V2 category; `development-report.cjs` no longer lists the deleted test. Kept: `npm run test:e2e` and its helpers (`stability-no-ddl.cjs` is used by its stack), the PO activation itself (activate, backup, restore, rollout, safety, audit) and `credential-readiness.cjs` (it flags leftover Gemini and OpenRouter keys).
+- **Translation strings:** the 65 keys only the deleted panels used (`alignmentScore.*`, `coordinatedPlan.*`), English and Filipino. Kept: every string an old stored report can still show (for example the "Needs your decision" reasons).
+- **Tests:** `npm test` passes (1,389 server + 127); the frontend builds.
+
+---
+
+### v1.97.5 — AI Checker: Settings Template, Messages and Comments Describe the New AI Checker
+**Date:** November 18, 2026
+
+- **`server/.env.example`:** the AI Checker section now sets up the new AI Checker (`SYLLABUS_CHECK_AI_PROVIDER=anthropic`, `SYLLABUS_CHECK_REPLAN=official`, a $2 cost cap, 120 requests, Claude with its approved model) and says what it needs to run. Before, it set up the old checker (OpenRouter as the provider) and listed 26 settings nothing reads any more (Gemini, OpenRouter, the old stages, Policy V2, batch and old cost flags); a server set up from it could not run the new checker. Verified: read as a `.env`, the template is ready once an API key and the model approval are filled in.
+- **Messages users see:** the submission refusals (`routes/syllabi.js`, `routes/syllabusContent.js`) said "mandatory Gemini alignment"; they now name the AI Checker's alignment check. The "verification signing is not configured" message no longer mentions Policy V2.
+- **`server/scripts/syllabus-check.cjs`:** runs the fixed (no-AI) rules; its `--ai gemini|openrouter` options did nothing and are refused with a pointer to `scripts/replan-syllabus-run.cjs`, the AI check.
+- **Comments** in `HybridCheckPanel.jsx`, `aiQuota.js`, `anthropicClient.js` and `quality.js` no longer describe gemini.js, modelClient.js, OpenRouter or Policy V2.
+- **Found, not changed:** `SYLLABUS_CHECK_AI_MAX_COST_USD` is still required at startup in staging and production, but since the old checker's request budget was removed nothing applies it to a check; the AI Checker's per-check cap is `SYLLABUS_CHECK_REPLAN_MAX_COST_USD`. Left for the owner's decision.
+- **Tests:** `npm test` passes (1,389 server + 127).
+
+---
+
+### v1.97.6 — AI Checker: The Startup Cost Guard Checks the Cap That Is Applied
+**Date:** November 18, 2026
+
+- **Problem:** in staging and production the server refused to start without `SYLLABUS_CHECK_AI_MAX_COST_USD`, but since the old checker was removed nothing applied that value to a check; the cap the AI Checker applies is `SYLLABUS_CHECK_REPLAN_MAX_COST_USD`. A server had to set a value that limited nothing.
+- **Change** (`server/lib/aiQuota.js` resolveCheckCostCap): the startup guard now checks `SYLLABUS_CHECK_REPLAN_MAX_COST_USD` with the same rules (any mode: a value that is not a dollar amount above 0 and at most 1000 stops the server, naming the setting; staging and production: required once an AI provider is configured). `SYLLABUS_CHECK_AI_MAX_COST_USD` is ignored. Development is unchanged.
+- **Templates:** `server/.env.example`, `docs/deployment/staging.env.template` and `docs/deployment/production.env.template` set up the AI Checker (provider, official mode, $2 cap, 120 requests, approved Claude model); the old setting, Policy V2, the comprehensive profile and the stage settings are gone from them. Production keeps the AI Checker off until the owner approves it after a staging test, and lists what to set when it is approved. Before, the production template set `SYLLABUS_CHECK_REPLAN=off`, so turning the AI on from it would not have run the new checker.
+- **Also:** `scripts/e2e/stack.cjs` drops the old setting (it already sets the real cap); comments in `index.js` and `pipeline/official.js` name the real cap.
+- **Not changed:** the historical test reports and the old Policy V2 staging guides under `docs/` (records of past runs).
+- **Tests:** `aiQuota.test.js` checks the real cap and that the old setting no longer satisfies the guard; the staging template passes the guard and fails it without the cap. `npm test` passes (1,391 server + 127).
+
+---
+
+### v1.97.7 — AI Checker Report: One "Close" Button
+**Date:** November 18, 2026
+
+- **Problem:** the ✕ added to the report window's header (6d13cf5) was also named "Close", so the window had two buttons with the same name next to the footer's Close; screen readers announced two identical buttons and the browser tests could not tell them apart (E10, E11, E20 failed). It also sat inside the title block, so it showed under the date line instead of at the top right where the header styles place it.
+- **Change** (`src/components/ComplianceModal.jsx`, `src/i18n/messages.js`): the ✕ is named "Close report" (Filipino "Isara ang ulat", also its tooltip) and is the header's right-hand item.
+- **Tests:** `npm test` passes (1,391 server + the client suites); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks.
+
+---
+
+### v1.97.8 — AI Checker: Repeated or Missing Item IDs No Longer Stall or Mix Up a Check
+**Date:** November 18, 2026
+
+- **Problem:** every question of the AI Checker is named after the hidden id of the item it judges (`ILO-CONTENT|ilo:<id>`). Two CLOs, ILOs, week rows or references with one id (or two without one) made two questions with one name. In one request the reply was refused as "answered more than once", the retry was refused the same way, and the check stayed incomplete on every run (reproduced: a repeated ILO id in one week, a repeated CLO id, a repeated week-row id). In two requests the later answer was given to both: in a test, a good Week 3 ILO got the off-topic Week 4 ILO's NOT_ALIGNED, and the deduction and the draft went to the wrong ILO.
+- **Change** (`pipeline/extract.js` `uniqueIds`): the checker works on a copy in which every id is unique. The first item with an id keeps it; a repeated, missing or numeric id is renamed (`<id>~<n>`), the same way every time. Only ids change, and only in the copy: the saved syllabus is never changed. ILO tags still name the CLO that kept the id, as the editor shows them. `check`, `buildPlan`, `officialize`, `refineDraft` (Check & improve) and `relatedContextHash` (decisions) all use it, so the report, the plan, Check & improve and the decision check agree. Report paths are by position (`plan[3].ilos[0].text`), so they hold for the saved syllabus.
+- **Found in the data:** no syllabus or saved version in the dev database has a repeated or missing id (4 syllabi, 2 versions scanned read-only). The editor makes random ids, so this comes from imported, copied or older content.
+- **Tests:** `pipeline/unique-ids.test.js` (6): the copy rules; one week, two weeks, CLOs, week rows, missing ILO, CLO and reference ids; numeric ids keep their tags; the official report, Check & improve and the decision context point at the right ILO. `npm test` passes (1,397 server + the client suites); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks.

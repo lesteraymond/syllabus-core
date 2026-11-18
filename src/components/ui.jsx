@@ -63,9 +63,9 @@ export function Progress({ label, value, note }) {
 
 // `value` is 0-100, or null when no syllabus has a score for this area yet.
 // low: the lowest of the areas shown (the AI Quality Snapshot marks where the score was lost)
-export function QualityMini({ label, value, low = false, title }) {
+export function QualityMini({ label, value, low = false, tone, title }) {
   const known = Number.isFinite(value);
-  return <div className={'quality-mini' + (low ? ' low' : '')} title={title}><div className="quality-ring" style={{ '--p': `${known ? value * 3.6 : 0}deg` }}><span>{known ? value : '—'}</span></div><span>{label}</span></div>;
+  return <div className={'quality-mini' + (low ? ' low' : '') + (tone ? ' tone-' + tone : '')} title={title}><div className="quality-ring" style={{ '--p': `${known ? value * 3.6 : 0}deg` }}><span>{known ? value : '—'}</span></div><span>{label}</span></div>;
 }
 
 export function Deadline({ day, mon, title, note }) {

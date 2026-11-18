@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { evaluate } = require('./rules');
 const { recommend, validateItems, buildExcerpt, redact, ruleRecommendations, linksOf } = require('./recommend');
-const { MockProvider, LlmProvider, ProviderError, PROMPT_VERSION } = require('./providers');
+const { MockProvider, ProviderError, PROMPT_VERSION } = require('./providers');
 const { contentHash } = require('./hash');
 const standard = require('./standard-v4.json');
 const F = require('./fixtures');
@@ -114,26 +114,6 @@ test('when the provider throws, times out, or returns nothing usable, rule-based
   const none = await run(null);
   assert.strictEqual(none.ai.reason, 'not_configured');
   assert.ok(none.items.length > 0);
-});
-
-test('the LLM stub fails closed without a client; with one it is parsed and validated like any provider', async () => {
-  const off = await run(new LlmProvider());
-  assert.strictEqual(off.ai.status, 'failed');
-  assert.strictEqual(off.ai.reason, 'not_configured');
-  assert.strictEqual(off.source, 'rule');
-
-  const id = bad().findings[0].id;
-  const seen = [];
-  const reply = '```json\n' + JSON.stringify({ items: [{ title: 'Do it', text: 'Now.', basedOn: [id] }] }) + '\n```';
-  const on = await run(new LlmProvider({ client: { complete: async (prompt) => { seen.push(prompt); return reply; } }, model: 'm-1' }));
-  assert.strictEqual(on.source, 'ai');
-  assert.deepStrictEqual([on.ai.provider, on.ai.model, on.ai.promptVersion], ['llm', 'm-1', PROMPT_VERSION]);
-  assert.match(seen[0], new RegExp('Prompt version: ' + PROMPT_VERSION));
-  assert.match(seen[0], /Do not give a priority, a score, a step or an area/);
-
-  const garbage = await run(new LlmProvider({ client: { complete: async () => 'sure! here are some ideas' } }));
-  assert.strictEqual(garbage.ai.reason, 'bad_output');
-  assert.strictEqual(garbage.source, 'rule');
 });
 
 test('a provider never sees names, emails, phone numbers or the sign-off', async () => {
