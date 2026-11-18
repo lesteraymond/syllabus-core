@@ -165,7 +165,14 @@ async function officialize({ noAi, content, masters, env = process.env, db, tran
     if (!provider.ready) throw Error(provider.reason);
   }
   if (!store) { const { storeFor } = require('./shadow'); store = storeFor(db); }
-  const opts = { ask: provider.ask, store, model: provider.model, year, ...(concurrency ? { concurrency } : {}) };
+  // print every AI provider failure to the server console (the message only: never the key or the syllabus text)
+  const ask = async (...args) => {
+    try { return await provider.ask(...args); } catch (error) {
+      console.error(`[ai-provider] request failed (${provider.model || 'unknown model'}): ${error?.kind || error?.name || 'Error'}: ${String(error?.message || error).slice(0, 300)}`);
+      throw error;
+    }
+  };
+  const opts = { ask, store, model: provider.model, year, ...(concurrency ? { concurrency } : {}) };
   const result = await check(content, masters, opts);
   const plan = result.summary.complete ? await buildPlan(content, masters, { ...opts, rewrite: provider.rewrite }) : null;
   if (out && typeof out === 'object') Object.assign(out, { result, plan });
@@ -174,6 +181,7 @@ async function officialize({ noAi, content, masters, env = process.env, db, tran
 
   // findings: the old engine's, without its "AI must complete" block, which the new checker now answers
   const findings = noAi.findings.filter(f => f.ruleId !== 'AI-REQUIRED');
+  if (!complete) console.error(`[ai-provider] alignment check incomplete: some relationships were not answered (${result.summary.reason || 'see earlier [ai-provider] lines'}).`);
   if (!complete) findings.push({ id: 'AI-REQUIRED:review', ruleId: 'AI-REQUIRED', path: 'review', step: 'review', area: 'assessment', severity: 'blocking', source: 'rule', message: 'AI alignment must complete before submission. Some questions could not be answered; run the check again.' });
   const failed = findings.filter(f => f.severity === 'blocking');
   const codedDeductions = (h.deductions || []).filter(d => d.kind !== 'alignment');

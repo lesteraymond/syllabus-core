@@ -275,21 +275,9 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
         throw new Error('pdfImport.saveFailed');
       }
       importBase.current = null;
-      try {
-        // Explicit Apply and AI CHECK action: use the existing endpoint and lock.
-        if (inactiveYear) throw new Error(translateUI('hybrid.inactiveYearTitle')); // the import is saved; the check is not available for this academic year
-        const result = await complianceApi.recheck(syllabusId(), true);
-        if (!result.run) throw new Error(translateUI('pdfImport.failed'));
-        setLastRun({ ...result.run, draftSignature: JSON.stringify(mapped.content) });
-        notify(translateUI('pdfImport.checked'));
-      } catch (error) {
-        // The save succeeded. Keep the imported text and allow an explicit retry
-        // through the normal checker if another check or the provider blocks it.
-        notify(translateUI('pdfImport.savedCheckFailed', { message: error.message }));
-      }
-      if (onOpenChecker) await onOpenChecker({ syllabusId: syllabusId(), status: load.status });
-      setMode('form'); setStep(6);
-      setPage('ai');
+      // Apply only fills and saves the form. AI CHECK is a separate, deliberate step (the Review step) once the person has fixed the extracted text.
+      notify(translateUI('pdfImport.checked'));
+      setMode('form'); setStep(0);
       return true;
     } finally { setBusy(false); }
   };
