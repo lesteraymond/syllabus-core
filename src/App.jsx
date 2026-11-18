@@ -36,7 +36,7 @@ import Reports from './views/Reports';
 import Repository from './views/Repository';
 import ReviewApproval from './views/ReviewApproval';
 import Settings from './views/Settings';
-import StudentHome from './views/StudentHome';
+import { StudentDashboard, StudentSyllabi } from './views/StudentViews';
 import SyllabusBuilder from './views/SyllabusBuilder';
 import UsersRoles from './views/UsersRoles';
 import SyllabusBuilderV2 from './views/builder2';
@@ -397,22 +397,27 @@ export default function App() {
   };
 
 
-  const nav = navItems.filter(([, , , r]) => roleAllows(r, user?.role));
+  const isStudent = user?.role === 'student';
+  // A student has their own pages inside the same shell; everyone else's navigation never lists them.
+  const studentPage = isStudent ? (String(page).startsWith('student-') ? page : 'student-dashboard') : page;
+  const nav = navItems.filter(([, , , r]) => (isStudent ? r === 'student' : roleAllows(r, user?.role)));
 
   if (loggingOut) return <div className="loading-screen" role="status" aria-live="polite" aria-busy="true"><div className="spinner" aria-hidden="true" /><p>{translateUI("ui.logging_out_3df779")}</p></div>;
   if (loading) return <div className="loading-screen"><div className="spinner" /><p>{translateUI("ui.loading_b04ba4")}</p></div>;
   if (!user) return <Login onLogin={handleLogin} onGoogleLogin={handleGoogleLogin} />;
   if (user.mustChangePassword) return <ChangePassword user={user} onDone={() => setUser((u) => ({ ...u, mustChangePassword: false }))} onLogout={handleLogout} />;
-  if (user.role === 'student') return <StudentHome user={user} onLogout={handleLogout} />;
 
   return (
     <AcademicYearContext.Provider value={yearScope}>
-    <div ref={languageShell} className="app-shell" data-sidebar-collapsed={sidebarCollapsed ? 'true' : 'false'} data-page={page}>
-      {!narrow && <Sidebar page={page} setPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); }} nav={nav} collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(c => !c)} />}
-      <main className="workspace" data-page={page}>
-        <Topbar page={page} onLogout={handleLogout} user={user} unread={unread} threads={threads} msgDrop={msgDrop} setMsgDrop={setMsgDrop} setChatCode={setChatCode} markRead={markRead} notify={notify} onAvatarChange={handleAvatarChange} notifications={notifications} onOpenNotification={openNotification} onMarkAllNotificationsRead={markAllNotificationsRead} syllabi={syllabi} nav={nav} onOpenSyllabus={setViewCode} onGoPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); }} />
-        {narrow && <MobileNav page={page} setPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); setMobileNavOpen(false); }} nav={nav} open={mobileNavOpen} onToggle={() => setMobileNavOpen(o => !o)} />}
+    <div ref={languageShell} className="app-shell" data-sidebar-collapsed={sidebarCollapsed ? 'true' : 'false'} data-page={studentPage}>
+      {!narrow && <Sidebar page={studentPage} setPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); }} nav={nav} collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(c => !c)} />}
+      <main className="workspace" data-page={studentPage}>
+        <Topbar page={studentPage} onLogout={handleLogout} user={user} unread={unread} threads={threads} msgDrop={msgDrop} setMsgDrop={setMsgDrop} setChatCode={setChatCode} markRead={markRead} notify={notify} onAvatarChange={handleAvatarChange} notifications={notifications} onOpenNotification={openNotification} onMarkAllNotificationsRead={markAllNotificationsRead} />
+        {narrow && <MobileNav page={studentPage} setPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); setMobileNavOpen(false); }} nav={nav} open={mobileNavOpen} onToggle={() => setMobileNavOpen(o => !o)} />}
         <div className={`page-wrap ${page === 'dashboard' ? 'page-wrap-dashboard' : ''}`}>
+          {isStudent && studentPage === 'student-dashboard' && <StudentDashboard user={user} setPage={setPage} />}
+          {isStudent && studentPage === 'student-syllabi' && <StudentSyllabi />}
+          {!isStudent && (<>
 
           {page === 'dashboard' && <Dashboard setPage={setPage} user={user} syllabi={syllabi} logs={logs} onNewSyllabus={() => { setEditing(null); setPage('builder'); }} />}
           {page === 'builder' && canAuthor(user.role) && ((NEW_BUILDER || user.role === 'admin')
@@ -428,6 +433,7 @@ export default function App() {
           {page === 'users' && <UsersRoles notify={notify} onManageSubjects={() => setPage('courses')} />}
           {page === 'courses' && user.role === 'admin' && <CourseOutcomes notify={notify} onCatalogChanged={() => { fetchSyllabi(); fetchLogs(); fetchMessages(); fetchNotifications(); }} />}
           {page === 'settings' && <Settings user={user} notify={notify} onAvatarChange={handleAvatarChange} onProfileChange={handleProfileChange} language={language} languageBusy={languageBusy} onLanguageChange={changeLanguage} />}
+          </>)}
         </div>
       </main>
       {toast && <div className="toast">{tr(toast)}</div>}

@@ -204,7 +204,7 @@ test('a date range becomes Philippine-day instants: the start of the first day u
   assert.deepStrictEqual(rangeToInstants('', ''), { from: null, to: null });
   assert.strictEqual(rangeToInstants('2026-03-02', '').to, null);
   assert.strictEqual(rangeToInstants('', '2026-03-02').from, null);
-  assert.strictEqual(new Date(rangeToInstants('2026-02-27', '2026-02-28').to).getDate(), 1); // the day after the 28th crosses the month
+  assert.strictEqual(rangeToInstants('2026-02-27', '2026-02-28').to, '2026-02-28T16:00:00.000Z'); // the day after the 28th is Mar 1 in Manila (the month crosses), whatever the computer's own time zone
 });
 
 test('an invalid range has no instants: an impossible date, or a range that ends before it starts', () => {

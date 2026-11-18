@@ -180,6 +180,9 @@ async function anthropicMessage({ model, system, user, schema, subject = '' }, {
     // Reserve each SDK attempt immediately before it can reach the provider. Keep this outside the transport catch so a local budget refusal is
     // neither mistaken for an API error nor retried by the SDK wrapper.
     onRequest?.(body, body.max_tokens, attempt);
+    // AbortSignal.timeout() is unref'd: with a request that only waits for its deadline, Node 22 sees nothing left to wait for and ends the event loop
+    // (tests: "Promise resolution is still pending but the event loop has already resolved"). A ref'd timer keeps it alive until the deadline can fire.
+    const keepAlive = setTimeout(() => {}, remaining + 1000);
     try { message = await Promise.race([client.messages.create(body, { timeout: remaining, signal: attemptSignal }), expired]); } catch (error) {
       if (refused) throw attempt > 1 && !refused.usage ? Object.assign(refused, { usage: usageOf(model, null, attempt - 1) }) : refused; // the attempts before it were sent
       if (signal?.aborted) throw Object.assign(Error(`Anthropic request cancelled${tail}`), { kind: 'request_cancelled', retryable: false, cause: signal.reason, latencyMs: Date.now() - started, usage: usageOf(model, null, attempt) });
@@ -192,7 +195,7 @@ async function anthropicMessage({ model, system, user, schema, subject = '' }, {
       const wait = retryable && attempt <= settings.maxRetries ? waitOf(error, attempt - 1) : null;
       if (wait !== null && Date.now() + wait + MIN_ATTEMPT_MS <= deadline) { await sleep(wait); continue; }
       throw Object.assign(failureOf(error, status, key, tail, usageOf(model, null, attempt, ending)), { latencyMs: Date.now() - started });
-    }
+    } finally { clearTimeout(keepAlive); }
     const requestId = message._request_id || null, latencyMs = Date.now() - started;
     const usage = usageOf(model, message.usage, attempt, endingOf(requestId, message));
     const stopCategory = message.stop_reason === 'refusal' ? message.stop_details?.category ?? null : null;

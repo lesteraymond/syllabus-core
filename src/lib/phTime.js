@@ -43,6 +43,14 @@ export function phCompact(value) {
   return p.day + ' ' + p.month + ' ' + p.year + ' • ' + p.hour + ':' + p.minute + ' ' + String(p.dayPeriod || '').toUpperCase();
 }
 
+// "14 Oct 2026": the date alone, with no time of day.
+export function phShortDate(value) {
+  const d = toDate(value);
+  if (!d) return '';
+  const p = Object.fromEntries(formatter({ day: 'numeric', month: 'short', year: 'numeric' }).formatToParts(d).map((x) => [x.type, x.value]));
+  return p.day + ' ' + p.month + ' ' + p.year;
+}
+
 // The start of a Philippine calendar day ('YYYY-MM-DD') as an instant, plus a number of days. null for a date that does not exist (2026-02-31).
 export function phDayStart(ymd, plusDays = 0) {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(ymd || ''));

@@ -64,7 +64,12 @@ test('a real PDF table is recovered as six columns without flattening cell conte
 });
 test('a scanned table is recovered from local OCR word boxes and printed grid lines', { timeout: 120000 }, async () => {
   const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
-  const task = pdfjs.getDocument({ data: new Uint8Array(tablePdf()), useSystemFonts: true });
+  // The image must not depend on the computer's own fonts (Arial on Windows, DejaVu on Linux: on Linux the OCR missed the word "Learning" in two
+  // header cells and no row was recovered). The standard fonts bundled with pdfjs-dist give the same glyphs everywhere. pdfjs loads them only from a
+  // path that uses "/" and ends in "/": a Windows path throws, and a file: URL is silently ignored (the computer's own fonts are used again).
+  const path = require('node:path'), fontDir = path.join(path.dirname(require.resolve('pdfjs-dist/package.json')), 'standard_fonts');
+  const standardFontDataUrl = fontDir.split(path.sep).join('/') + '/';
+  const task = pdfjs.getDocument({ data: new Uint8Array(tablePdf()), useSystemFonts: false, standardFontDataUrl });
   const document = await task.promise;
   const page = await document.getPage(1), viewport = page.getViewport({ scale: 2 });
   const { createCanvas } = require('@napi-rs/canvas');

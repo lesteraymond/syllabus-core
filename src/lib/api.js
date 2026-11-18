@@ -52,8 +52,9 @@ async function request(path, options = {}) {
 
 // Student registration: scan the COR (multipart), then register with only a password; the server keeps the scan.
 export const students = {
-  scan: async (file) => {
+  scan: async (file, consent = false) => {
     const fd = new FormData();
+    fd.append('consent', consent ? 'yes' : 'no'); // text fields go before the file so the server sees them first
     fd.append('cor', file);
     let res;
     try { res = await fetch(`${API}/students/scan`, { method: 'POST', credentials: 'include', body: fd }); }
@@ -64,6 +65,9 @@ export const students = {
   },
   register: (password) => request('/students/register', { method: 'POST', body: JSON.stringify({ password }) }),
   me: () => request('/students/me'),
+  // Read-only: the approved syllabi of the student's enrolled subjects, and one of them with its content.
+  syllabi: () => request('/students/syllabi'),
+  syllabus: (id) => request(`/students/syllabi/${id}`),
 };
 
 export const auth = {
@@ -93,23 +97,26 @@ export const isRevisionConflict = isRevisionProblem; // a 409 (outdated copy) or
 // "?year=..." for a list request, or "" when no year is asked for (the server then uses the current academic year). `joiner` is '?' for the first parameter, '&' after one.
 const yearQuery = (year, joiner = '?') => (year ? `${joiner}year=${encodeURIComponent(year)}` : '');
 
+async function postPdf(path, file) {
+  const body = new FormData(); body.append('file', file);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 150000);
+  try {
+    const res = await fetch(`${API}${path}`, { method: 'POST', credentials: 'include', headers: authHeaders(), body, signal: controller.signal });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw Object.assign(new Error(data.error || 'pdfImport.failed'), { status: res.status, data });
+    if (!data.fields || !Array.isArray(data.pages)) throw new Error('pdfImport.failed');
+    return data;
+  } catch (error) {
+    if (error.name === 'AbortError') throw new Error('pdfImport.timeout');
+    throw error;
+  } finally { clearTimeout(timeout); }
+}
 export const syllabi = {
   pdfImportConfig: ({ signal } = {}) => request('/syllabi/pdf-import/config', { signal }),
-  importPdf: async (id, file) => {
-    const body = new FormData(); body.append('file', file);
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 150000);
-    try {
-      const res = await fetch(`${API}/syllabi/${id}/import-pdf`, { method: 'POST', credentials: 'include', headers: authHeaders(), body, signal: controller.signal });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw Object.assign(new Error(data.error || 'pdfImport.failed'), { status: res.status, data });
-      if (!data.fields || !Array.isArray(data.pages)) throw new Error('pdfImport.failed');
-      return data;
-    } catch (error) {
-      if (error.name === 'AbortError') throw new Error('pdfImport.timeout');
-      throw error;
-    } finally { clearTimeout(timeout); }
-  },
+  importPdf: (id, file) => postPdf(`/syllabi/${id}/import-pdf`, file),
+  // No subject chosen yet: the server scans the PDF and returns the assigned subject its course code names (preview.subject).
+  extractPdf: (file) => postPdf('/syllabi/pdf-import/extract', file),
   // `year` is the academic year (a label, or 'all'); without it the server answers for the current academic year (lib/academicYear.js)
   list: (year) => request('/syllabi' + yearQuery(year)),
   repository: (year) => request('/syllabi?scope=repository' + yearQuery(year, '&')),

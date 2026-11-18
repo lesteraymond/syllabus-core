@@ -5,6 +5,7 @@ import './tailwind.css'; // Tailwind (prefixed, no reset) plus styles.css and th
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
+
     <App />
   </React.StrictMode>,
 );

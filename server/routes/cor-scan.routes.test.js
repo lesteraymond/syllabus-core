@@ -1,6 +1,6 @@
 // HTTP-level tests for the public COR scan (POST /api/students/scan) and for clearing away COR photos nobody needs any more (docs/security/SECURITY-AUDIT-REPORT.md
 // SEC-10, SEC-22). The upload must really be an image of a sensible size, only a few scans are read at once, a refused upload gets a JSON answer that says why, and a
-// photo whose registration was never finished is removed. The OCR is replaced by a fake (setReader), so no Tesseract worker runs. Run: npm test (project root).
+// photo whose registration was never finished is removed. The Claude reader is replaced by a fake (setReader), so no paid call is made. Run: npm test (project root).
 const test = require('node:test');
 const assert = require('node:assert');
 const fs = require('node:fs');
@@ -9,6 +9,7 @@ const path = require('node:path');
 const express = require('express');
 const session = require('express-session');
 const sharp = require('sharp');
+const { parseCor } = require('../lib/corParser');
 
 const DIR = 'private-cor-test-' + process.pid;
 process.env.PRIVATE_DIR = DIR;
@@ -23,14 +24,15 @@ const png = (width, height) => sharp({ create: { width, height, channels: 3, bac
 
 async function withServer(fn, { reader } = {}) {
   students.scanLimiter.reset();
-  students.setReader(reader || (async () => COR_TEXT));
+  students.setReader(reader || (async () => parseCor(COR_TEXT)));
   const app = express();
   app.use(session({ secret: 't', resave: false, saveUninitialized: false }));
   app.locals.db = { query: async () => [[]] };
   app.use('/api/students', students);
   const server = await new Promise((resolve) => { const sv = app.listen(0, () => resolve(sv)); });
-  const scan = async (buffer, { type = 'image/png', name = 'cor.png' } = {}) => {
+  const scan = async (buffer, { type = 'image/png', name = 'cor.png', consent = true } = {}) => {
     const form = new FormData();
+    if (consent) form.append('consent', 'yes');
     form.append('cor', new Blob([buffer], { type }), name);
     const res = await fetch(`http://127.0.0.1:${server.address().port}/api/students/scan`, { method: 'POST', body: form });
     return { status: res.status, headers: res.headers, body: await res.json().catch(() => null) };
@@ -45,14 +47,23 @@ test('a real image is read, and the photo is kept for the registration that foll
   assert.strictEqual(fs.readdirSync(path.join(ROOT, 'cor')).length >= 1, true);
 }));
 
-test('a file that only claims to be an image is refused with 400 and a reason, before any OCR', () => withServer(async (scan) => {
+test('a file that only claims to be an image is refused with 400 and a reason, before any read', () => withServer(async (scan) => {
   let read = 0;
-  students.setReader(async () => { read += 1; return COR_TEXT; });
+  students.setReader(async () => { read += 1; return parseCor(COR_TEXT); });
   for (const [buffer, type] of [[Buffer.from('<html><script>alert(1)</script></html>'), 'image/png'], [Buffer.from('%PDF-1.4 x %%EOF'), 'image/jpeg'], [Buffer.from('MZ\x90\x00 an exe'), 'image/webp']]) {
     const res = await scan(buffer, { type });
     assert.strictEqual(res.status, 400);
     assert.match(res.body.error, /JPG, PNG or WebP/);
   }
+  assert.strictEqual(read, 0);
+}));
+
+test('a scan without the privacy consent is refused with 400 before any read', () => withServer(async (scan) => {
+  let read = 0;
+  students.setReader(async () => { read += 1; return parseCor(COR_TEXT); });
+  const res = await scan(await png(400, 500), { consent: false });
+  assert.strictEqual(res.status, 400);
+  assert.match(res.body.error, /privacy/i);
   assert.strictEqual(read, 0);
 }));
 
@@ -62,9 +73,9 @@ test('a declared type that is not an image gets the same JSON reason, not a gene
   assert.match(res.body.error, /JPG, PNG or WebP/);
 }));
 
-test('an image with too many pixels is refused with 413 before any OCR', () => withServer(async (scan) => {
+test('an image with too many pixels is refused with 413 before any read', () => withServer(async (scan) => {
   let read = 0;
-  students.setReader(async () => { read += 1; return COR_TEXT; });
+  students.setReader(async () => { read += 1; return parseCor(COR_TEXT); });
   const res = await scan(await png(9000, 9000)); // 81 million pixels: far more than any phone photo of a page
   assert.strictEqual(res.status, 413);
   assert.match(res.body.error, /too large/i);
@@ -84,7 +95,7 @@ test('only a few scans are read at once: one more is answered 503 with Retry-Aft
     release();
     for (const r of await Promise.all(running)) assert.strictEqual(r.status, 200);
     assert.strictEqual((await scan(image)).status, 200);
-  }, { reader: async () => { started += 1; await waiting; return COR_TEXT; } });
+  }, { reader: async () => { started += 1; await waiting; return parseCor(COR_TEXT); } });
 });
 
 test('scans are limited per address, with the shared limiter that cleans up after itself', () => withServer(async (scan) => {

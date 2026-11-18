@@ -91,3 +91,11 @@ for(const key of ['it202','ie402','cpe304'])test(`${key}: real worker preview an
     for(const name of ['contents','activities','tasks','values'])assert.equal(actual[name].replace(/\s/g,''),verified[name].replace(/\s/g,''));
   }
 });
+test('a subject code spelled with a space matches the curriculum spelling with a hyphen',()=>{
+  const d=base();d.meta={...d.meta,code:'IT 204',title:'Computer Programming 2 (Intermediate Programming)'};
+  const c=context(d);c.curricula[0].courses=[{code:'IT-204',title:'COMPUTER PROGRAMMING 2(INTERMEDIATE PROGRAMMING)'}];
+  const f={...fields(),code:'IT 204',title:'Computer Programming 2'};
+  assert.doesNotThrow(()=>apply(f,d,{identityContext:c}));
+  const other=context(d);other.curricula[0].courses=[{code:'IT-205',title:'COMPUTER PROGRAMMING 2(INTERMEDIATE PROGRAMMING)'}];
+  assert.throws(()=>apply(f,d,{identityContext:other}),/selectMatchingSubject/);
+});

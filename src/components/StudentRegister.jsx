@@ -59,6 +59,7 @@ export default function StudentRegister({ onBack }) {
   const [form, setForm] = useState({ pass: '', confirm: '' });
   const [showPass, setShowPass] = useState(false);
   const [file, setFile] = useState(null);
+  const [consent, setConsent] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState('');
   const [scanning, setScanning] = useState(false);
@@ -80,10 +81,11 @@ export default function StudentRegister({ onBack }) {
     if (form.pass.length < 8) { setError(translateUI("ui.use_a_password_of_at_least_8_characters_69cc28")); return; }
     if (form.pass !== form.confirm) { setError(translateUI("ui.the_passwords_do_not_match_540a66")); return; }
     if (!file) { setError(translateUI("ui.upload_your_cor_to_continue_da868b")); return; }
+    if (!consent) { setError('Please agree to the data privacy notice to continue.'); return; }
     setScanning(true);
     setError('');
     try {
-      setScan(await students.scan(file));
+      setScan(await students.scan(file, consent));
       setModalError('');
     } catch (err) {
       setError(err.message);
@@ -140,6 +142,13 @@ export default function StudentRegister({ onBack }) {
           </span>
         </label>
         <label>{translateUI("ui.confirm_password_228465")}<input type={showPass ? 'text' : 'password'} value={form.confirm} onChange={e => setForm({ ...form, confirm: e.target.value })} placeholder={translateUI("ui.type_it_again_488399")} autoComplete="new-password" />
+        </label>
+        <label className="check consent-box">
+          <input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} />
+          <span>
+            <b>I agree to AI reading of my COR.</b>
+            <small>My COR photo is sent to Anthropic's Claude to read my details (RA 10173). It is stored privately and used only to verify my enrollment.</small>
+          </span>
         </label>
         {error && <div className="form-error">{tr(error)}</div>}
         <StableButton className="btn primary wide" type="submit" disabled={scanning}>{scanning ? translateUI("ui.reading_your_cor_this_can_take_a_few_seconds_595ad5") : translateUI("ui.scan_cor_and_continue_696299")}</StableButton>

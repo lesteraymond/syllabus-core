@@ -16,8 +16,7 @@ const { inTransaction, httpError, sendError } = require('../lib/http');
 const { pastCourseIds } = require('../lib/academicYear');
 const { PRIVATE_ROOT } = require('../lib/avatar');
 const { validatePassword } = require('../lib/passwords');
-const corOcr = require('../lib/corOcr');
-const { parseCor } = require('../lib/corParser');
+const { scanCor } = require('../lib/corClaude');
 const { createLimiter } = require('../lib/rateLimit');
 const router = express.Router();
 
@@ -37,7 +36,7 @@ const onePhoto = (req, res, next) => upload.single('cor')(req, res, (err) => {
   return sendError(res, httpError(400, NOT_AN_IMAGE));
 });
 
-// This route is open to anyone and OCR is slow (a few seconds of every core per scan), so it is held back three ways: a few scans per address per hour,
+// This route is open to anyone and every scan is a paid Claude call, so it is held back three ways: a few scans per address per hour,
 // only SCAN_CONCURRENCY scans read at the same moment for the whole server, and nothing that is not really an image of a sensible size is read at all.
 const SCANS_PER_HOUR = 15;
 const SCAN_CONCURRENCY = 2;
@@ -50,8 +49,8 @@ function rateLimit(req, res, next) {
   return res.status(429).json({ message: 'Too many attempts. Try again later.', error: 'Too many attempts. Try again later.' });
 }
 let scansRunning = 0;
-let readText = corOcr.readText;
-const setReader = (fn) => { readText = fn || corOcr.readText; }; // tests replace the OCR (like mailer.setTransport)
+let readCor = scanCor; // image bytes -> the parsed COR
+const setReader = (fn) => { readCor = fn || scanCor; }; // tests replace the reader (like mailer.setTransport)
 
 // What the bytes are, from their first bytes: the declared type and the file name are never trusted.
 function imageKind(buf) {
@@ -73,6 +72,7 @@ router.post('/scan', rateLimit, onePhoto, async (req, res) => {
   let counted = false;
   try {
     if (!req.file) throw httpError(400, 'Choose a photo of your COR.');
+    if (req.body.consent !== 'yes') throw httpError(400, 'Please agree to the data privacy notice to continue.');
     if (!imageKind(req.file.buffer)) throw httpError(400, NOT_AN_IMAGE);
     let meta;
     try { meta = await sharp(req.file.buffer, { limitInputPixels: false }).metadata(); } catch { throw httpError(400, NOT_AN_IMAGE); } // the header only: no pixels are decoded
@@ -80,7 +80,7 @@ router.post('/scan', rateLimit, onePhoto, async (req, res) => {
     if (meta.width * meta.height > MAX_PIXELS) throw httpError(413, 'That photo is too large. Take it again with your phone camera at its normal size.');
     if (scansRunning >= SCAN_CONCURRENCY) { res.set('Retry-After', '10'); throw httpError(503, 'Other photos are being read right now. Try again in a few seconds.', { code: 'scanner_busy' }); }
     scansRunning += 1; counted = true;
-    const parsed = parseCor(await readText(req.file.buffer));
+    const parsed = await readCor(req.file.buffer);
     if (!parsed.studentId) throw httpError(422, 'We could not read the student ID on your COR. Retake the photo: full page, flat, in good light.');
     await fs.promises.mkdir(COR_DIR, { recursive: true });
     const file = `${crypto.randomBytes(12).toString('hex')}.jpg`;
@@ -153,8 +153,73 @@ router.get('/me', requireAuth, async (req, res) => {
     if (req.session.user.role !== 'student') throw httpError(403, 'Students only');
     const db = req.app.locals.db;
     const [[profile]] = await db.query('SELECT student_id, student_name, program, year_level, section, school_year, term, verification_status FROM student_profiles WHERE user_id = ?', [req.session.user.id]);
-    const [subjects] = await db.query('SELECT subject_code, subject_title, section FROM student_enrollments WHERE user_id = ? ORDER BY enrollment_id', [req.session.user.id]);
+    const [subjects] = await db.query('SELECT subject_code, subject_title, section, course_id FROM student_enrollments WHERE user_id = ? ORDER BY enrollment_id', [req.session.user.id]);
     res.json({ profile: profile || null, subjects });
+  } catch (err) { sendError(res, err); }
+});
+
+// What a student may read: every APPROVED syllabus, like the Repository (the subjects on their own COR are marked). Read-only: no draft, no unapproved
+// version, no archived one, and nothing here writes anything. The ? in ENROLLED is the student's id.
+const ENROLLED = '(s.course_id IN (SELECT course_id FROM student_enrollments WHERE user_id = ? AND course_id IS NOT NULL))';
+const FOR_STUDENT = `FROM syllabi s JOIN users u ON u.user_id = s.user_id
+  LEFT JOIN courses c ON c.course_id = s.course_id LEFT JOIN programs p ON p.program_id = c.program_id
+  WHERE s.status = 'approved' AND s.archived_at IS NULL`;
+// The academic year is the syllabus's own (syllabi.academic_year); a database before that migration has no such column, so the read is repeated without it.
+async function readSyllabi(db, sql, params) {
+  try { return await db.query(sql.replace('/*Y*/', ', s.academic_year'), params); }
+  catch (err) { if (err && err.code === 'ER_BAD_FIELD_ERROR') return db.query(sql.replace('/*Y*/', ''), params); throw err; }
+}
+const studentOnly = (req) => { if (req.session.user.role !== 'student') throw httpError(403, 'Students only'); };
+const summaryOf = (r) => ({ id: r.syllabus_id, courseId: r.course_id, courseCode: r.course_code, title: r.title, version: r.version, program: r.program_code || '', academicYear: r.academic_year || null, enrolled: !!r.enrolled, faculty: [r.first_name, r.last_name].filter(Boolean).join(' '), updatedAt: r.updated_at, hasFile: !!r.file_path });
+
+router.get('/syllabi', requireAuth, async (req, res) => {
+  try {
+    studentOnly(req);
+    const [rows] = await readSyllabi(req.app.locals.db, 'SELECT s.syllabus_id, s.course_id, s.course_code, s.title, s.version, s.file_path, s.updated_at, u.first_name, u.last_name, p.code AS program_code/*Y*/, ' + ENROLLED + ' AS enrolled ' + FOR_STUDENT + ' ORDER BY s.uploaded_at DESC', [req.session.user.id]);
+    const seen = new Set();
+    // the newest approved one per subject (a syllabus with no catalog subject stands on its own)
+    res.json({ syllabi: rows.filter((r) => (r.course_id == null ? true : seen.has(r.course_id) ? false : seen.add(r.course_id))).map(summaryOf) });
+  } catch (err) { sendError(res, err); }
+});
+
+router.get('/syllabi/:id', requireAuth, async (req, res) => {
+  try {
+    studentOnly(req);
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id <= 0) throw httpError(404, 'Syllabus not found');
+    const [rows] = await readSyllabi(req.app.locals.db, 'SELECT s.syllabus_id, s.course_id, s.course_code, s.title, s.version, s.file_path, s.content, s.updated_at, u.first_name, u.last_name, p.code AS program_code/*Y*/, ' + ENROLLED + ' AS enrolled ' + FOR_STUDENT + ' AND s.syllabus_id = ?', [req.session.user.id, id]);
+    const r = rows[0];
+    if (!r) throw httpError(404, 'Syllabus not found'); // not approved, archived, or not there: the same answer
+    let content = null;
+    if (r.content) { try { content = JSON.parse(r.content); } catch { content = null; } }
+    // The viewer needs the program's outcomes, and students cannot read the outcomes API: send the snapshot stored with the syllabus, or build one.
+    if (content && !content.catalog) { try { content.catalog = await require('./syllabusContent').catalogSnapshot(req.app.locals.db, content); } catch { /* the viewer then shows what it can */ } }
+    res.json({ syllabus: summaryOf(r), content, file: r.file_path ? { path: r.file_path } : null });
+  } catch (err) { sendError(res, err); }
+});
+
+// The uploaded PDF of an approved syllabus a student may read (same rule as the detail route above). ?download=1 sends it as a download.
+router.get('/syllabi/:id/file', requireAuth, async (req, res) => {
+  try {
+    studentOnly(req);
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id <= 0) throw httpError(404, 'File not found');
+    const [rows] = await readSyllabi(req.app.locals.db, 'SELECT s.syllabus_id, s.file_path/*Y*/, ' + ENROLLED + ' AS enrolled ' + FOR_STUDENT + ' AND s.syllabus_id = ?', [req.session.user.id, id]);
+    const file = rows[0] && require('./syllabusFiles').storedFile(rows[0].file_path);
+    if (!file) throw httpError(404, 'File not found');
+    const name = path.basename(file).replace(/[^A-Za-z0-9._ -]/g, '_');
+    res.removeHeader('X-Frame-Options');
+    res.sendFile(file, {
+      dotfiles: 'deny',
+      cacheControl: false,
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `${req.query.download === '1' ? 'attachment' : 'inline'}; filename="${name}"`,
+        'Cache-Control': 'private, no-store',
+        'X-Content-Type-Options': 'nosniff',
+        'Content-Security-Policy': "frame-ancestors 'self'",
+      },
+    }, (err) => { if (err && !res.headersSent) res.status(404).json({ error: 'File not found' }); });
   } catch (err) { sendError(res, err); }
 });
 
