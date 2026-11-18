@@ -194,7 +194,7 @@ router.post('/', requireAuth, onePdf, async (req, res) => {
     const { title, courseCode } = req.body;
     checkLengths({ title, courseCode });
     await assignments.requireCourseCodeAccess(db, req.session.user, courseCode); // faculty: only an assigned course
-    throw httpError(409, 'File-only submissions cannot bypass mandatory Gemini alignment. Complete the structured builder form and run the hybrid check before submitting.', { code: 'alignment_required' });
+    throw httpError(409, 'File-only submissions cannot bypass the required AI alignment check. Complete the structured builder form and run the AI Checker before submitting.', { code: 'alignment_required' });
   } catch (err) {
     await discardUpload(req.file);
     sendError(res, err);
@@ -295,7 +295,7 @@ router.put('/:id', requireAuth, onePdf, async (req, res) => {
       // Faculty: the syllabus's course (and the code being typed) must be assigned to them, or it is read-only.
       if (syl.course_id) await assignments.requireCourseAccess(conn, me, syl.course_id);
       await assignments.requireCourseCodeAccess(conn, me, next.courseCode);
-      throw httpError(409, 'Use the structured builder form and complete mandatory Gemini alignment before submission.', { code: 'alignment_required' });
+      throw httpError(409, 'Use the structured builder form and complete the required AI alignment check before submission.', { code: 'alignment_required' });
     });
 
     committed = true;

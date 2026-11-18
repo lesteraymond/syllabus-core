@@ -46,7 +46,7 @@ function relatedContextHash(content, masters, path) {
 // and the constant this file used to fall back to is public, so it is refused even when supplied. Without a secret nothing is signed or accepted.
 const { isStrongSecret } = require('../sessionSecret'); // one rule for every signing secret: at least 16 varied characters, not a publicly known default
 // (the former built-in constant is in that list of publicly known defaults, so it is refused even when supplied)
-const SECRET_MESSAGE = 'Verification signing is not configured on this server: set SESSION_SECRET (at least 16 characters). Check & Improve and Policy V2 acceptance are unavailable until it is.';
+const SECRET_MESSAGE = 'Verification signing is not configured on this server: set SESSION_SECRET (at least 16 characters). Check & Improve is unavailable until it is.';
 function signingSecret(secret = process.env.SESSION_SECRET) {
   const value = String(secret ?? '').trim();
   return isStrongSecret(value) ? value : null;

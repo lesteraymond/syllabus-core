@@ -8,7 +8,7 @@
 //   AI_REFINES_PER_USER_PER_DAY   "Check & improve" requests by one person. Default 60. 1 to 10000.
 //
 // They cannot be turned off: 0, "off" or a value out of range stops the server at startup (index.js), naming the setting. A request refused here is answered
-// 429 with Retry-After until midnight and is never sent to the provider. The per-check cost budget (lib/syllabuscheck/gemini.js) still bounds each request.
+// 429 with Retry-After until midnight and is never sent to the provider. The AI Checker's own per-check cost cap (SYLLABUS_CHECK_REPLAN_MAX_COST_USD, pipeline/official.js) still bounds each check.
 // The counts live in this process's memory: a restart starts the day's count again, and several server processes each keep their own.
 const SETTINGS = Object.freeze({
   checksPerUser: { name: 'AI_CHECKS_PER_USER_PER_DAY', fallback: 40, min: 1, max: 10000 },
@@ -68,8 +68,9 @@ function createAiQuota(limits, { now = Date.now } = {}) {
 }
 
 // The per-check spending limit (docs/ai-checker-audit-2026-11-12.md A-2). Without SYLLABUS_CHECK_AI_MAX_COST_USD one check is bounded only by its request and
-// token caps (512 requests, 8,000,000 reserved tokens): with a paid model that is tens of dollars for a single check. The value is the most one check may
-// reserve, in US dollars, read by createRequestBudget in syllabuscheck/gemini.js (the staging template sets 10).
+// token caps (512 requests, 8,000,000 reserved tokens): with a paid model that is tens of dollars for a single check. It was applied to each check by the old
+// checker's request budget (gemini.js, removed with the old AI Checker); it is now only validated here. The cap the AI Checker applies to each check is
+// SYLLABUS_CHECK_REPLAN_MAX_COST_USD (pipeline/official.js), which is at most the same 1000 ceiling.
 //   Any mode: a value that is not a dollar amount above 0 and at most 1000 stops the server, by name.
 //   Staging and production: REQUIRED whenever an AI provider is configured. Development: optional, as before.
 // -> the limit in dollars, or null when there is none.

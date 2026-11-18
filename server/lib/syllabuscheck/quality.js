@@ -3,7 +3,7 @@
 // they point at evidence in the syllabus and say what it may mean for the learner and what could be done.
 //
 // Everything here is deterministic and conservative on purpose. A note appears only when the syllabus's own words or numbers show the
-// pattern; missing information is reported as missing, never as a defect. The AI relationships (gemini.js) judge meaning; this module
+// pattern; missing information is reported as missing, never as a defect. The AI Checker (pipeline/) judges meaning; this module
 // covers what plain evidence can show, so it costs no provider call. Mandatory compliance stays in rules.js and engine.js.
 //
 // Finding: { id, category, check, severity: 'minor' | 'info', confidence: 'high' | 'medium' | 'low', advisory: true,

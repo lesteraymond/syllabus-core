@@ -137,7 +137,7 @@ export default function HybridCheckPanel({ run, onApplyDraft }) {
   const hardGates = hardGatesOf(run);
   const { forSuggestion } = linkProblems(problems, hybrid.suggestions);
   const done = hybrid.alignment.status === 'completed';
-  // The lock notices only appear when the API billing is out of credits (OpenRouter answers HTTP 402 "Insufficient credits").
+  // The lock notices only appear when the AI provider's billing is out of credits (HTTP 402, or a message about credits or quota).
   const outOfCredits = !done && /\b402\b|insufficient credits|more credits|out of credits|credit balance|quota/i.test(hybrid.alignment.reason || '');
   return <section className="hy" aria-label={t('hybrid.label')}>
     <div className="hy-body">
@@ -173,8 +173,6 @@ export default function HybridCheckPanel({ run, onApplyDraft }) {
         const rw = refined[s.id];
         const useRewrite = !!rw && rw.status === 'verified' && rw.usedRewrite && edits[s.id] === rw.text; // the text box still holds exactly what was checked
         const checkable = !!onApplyDraft && canRefine(s) && !stale;
-        // With Policy V2 integrated, the server accepts a decision only for text verified by Check & Improve (409 otherwise). The draft is saved BEFORE the decision is
-        // recorded, so an unverified Accept would change the draft and then be refused: the button waits for the verification, as the Policy V2 panel's does.
         return <article key={s.id} className={'hy-rec' + (decided ? ' decided ' + decided : '')}>
           <div className="hy-rec-head">
             <strong>{s.title}</strong>

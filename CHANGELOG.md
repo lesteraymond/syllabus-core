@@ -2685,3 +2685,15 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Old checker tooling deleted (21 scripts):** the comprehensive-profile and Policy V2 browser suites (`run-comprehensive-ui.cjs`, `scenarios-comprehensive.cjs`, `scenarios-budget.cjs`), the stability run/report/audit and their helpers, the release-candidate runners (`run-suite.cjs`, `run-suite-fresh.cjs`, `dynamic-reference-audit.cjs`, `report-retrieval.integration.test.cjs`) and the PO activation's checker-integration checks (`checker-browser*.cjs`, `checker-integration-*.cjs`, `checker-isolated-setup.cjs`, `development-integration.test.cjs`). `migration.test.cjs` loses its one old-checker test; `source-compare.cjs` its Policy V2 category; `development-report.cjs` no longer lists the deleted test. Kept: `npm run test:e2e` and its helpers (`stability-no-ddl.cjs` is used by its stack), the PO activation itself (activate, backup, restore, rollout, safety, audit) and `credential-readiness.cjs` (it flags leftover Gemini and OpenRouter keys).
 - **Translation strings:** the 65 keys only the deleted panels used (`alignmentScore.*`, `coordinatedPlan.*`), English and Filipino. Kept: every string an old stored report can still show (for example the "Needs your decision" reasons).
 - **Tests:** `npm test` passes (1,389 server + 127); the frontend builds.
+
+---
+
+### v1.97.5 — AI Checker: Settings Template, Messages and Comments Describe the New AI Checker
+**Date:** November 18, 2026
+
+- **`server/.env.example`:** the AI Checker section now sets up the new AI Checker (`SYLLABUS_CHECK_AI_PROVIDER=anthropic`, `SYLLABUS_CHECK_REPLAN=official`, a $2 cost cap, 120 requests, Claude with its approved model) and says what it needs to run. Before, it set up the old checker (OpenRouter as the provider) and listed 26 settings nothing reads any more (Gemini, OpenRouter, the old stages, Policy V2, batch and old cost flags); a server set up from it could not run the new checker. Verified: read as a `.env`, the template is ready once an API key and the model approval are filled in.
+- **Messages users see:** the submission refusals (`routes/syllabi.js`, `routes/syllabusContent.js`) said "mandatory Gemini alignment"; they now name the AI Checker's alignment check. The "verification signing is not configured" message no longer mentions Policy V2.
+- **`server/scripts/syllabus-check.cjs`:** runs the fixed (no-AI) rules; its `--ai gemini|openrouter` options did nothing and are refused with a pointer to `scripts/replan-syllabus-run.cjs`, the AI check.
+- **Comments** in `HybridCheckPanel.jsx`, `aiQuota.js`, `anthropicClient.js` and `quality.js` no longer describe gemini.js, modelClient.js, OpenRouter or Policy V2.
+- **Found, not changed:** `SYLLABUS_CHECK_AI_MAX_COST_USD` is still required at startup in staging and production, but since the old checker's request budget was removed nothing applies it to a check; the AI Checker's per-check cap is `SYLLABUS_CHECK_REPLAN_MAX_COST_USD`. Left for the owner's decision.
+- **Tests:** `npm test` passes (1,389 server + 127).
