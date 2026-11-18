@@ -1,5 +1,5 @@
 import { YearFilter, useYearScope } from '../components/AcademicYearScope';
-import { canApproveAdminDraft, STATUS_LABELS, isReturned, noteMissing, EDITABLE_STATUSES } from '../lib/syllabusRules';
+import { canApproveAdminDraft, isReturned, noteMissing, EDITABLE_STATUSES } from '../lib/syllabusRules';
 import { isApprover, isReviewer } from '../lib/roles';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
@@ -110,7 +110,6 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
   const needNote = noteMissing(doc.status, note);
   const warnings = warningCount(lastRun);
   const selectedRow = mine.find(s => s.id === selectedId) || null;
-  const activeStatus = selectedRow?.status || doc.status;
 
   const submitChecked = async () => {
     if (!selectedId || submitting) return;
@@ -141,9 +140,6 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
                 <option value="">{translateUI("ui.choose_a_subject_554b9c")}</option>
                 {mine.map(s => <option key={s.id} value={String(s.id)}>{(s.courseCode || '—') + (s.title ? ' — ' + s.title : '')}</option>)}
               </Select>
-            </div>
-            <div className="pick-info" aria-live="polite">
-              {selectedId && <span className={'status ' + activeStatus}>{tr(STATUS_LABELS[activeStatus] || activeStatus)}</span>}
             </div>
             <StableButton type="button" className="btn outline" disabled={!selectedId} onClick={openBuilder}>{translateUI('publication.editDraft')}</StableButton>
           </section>

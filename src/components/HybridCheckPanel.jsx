@@ -155,7 +155,7 @@ export default function HybridCheckPanel({ run, onApplyDraft }) {
           <div className="hy-rec-head"><span className="hy-pill">{suggestionSection(u.path, { tr, t })}</span></div>
           {u.excerpt && <p className="hy-quote">“{u.excerpt}”</p>}
           <p className="hy-why">{t(`hybrid.unresolved.${u.reason}`, { attempts: u.attempts, value: u.value })}</p>
-          {(u.reason === 'faculty_fix' || u.reason === 'no_verified_rewrite') && u.detail && <p className="hy-detail">{u.detail}</p>}
+          {(u.reason === 'faculty_fix' || u.reason === 'no_verified_rewrite') && u.detail && <div className="hy-todo"><span>{t('hybrid.unresolved.todo')}</span><p className="hy-detail">{u.detail}</p></div>}
         </li>)}</ul>
       </div>
     </details>}

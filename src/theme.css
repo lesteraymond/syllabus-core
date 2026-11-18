@@ -24,7 +24,7 @@
 	--line: #e3e7ea;
 	--green: #2f7d5b;
 	--teal: #a85a36;
-	--red: #b3262e;
+	--red: #d92424;
 	--purple: #3f4bb8;
 	/* Type scale: a steady progression instead of 14 -> 20 -> 28. 12px stays the floor for readability. */
 	--text-xs: 12px;
@@ -57,7 +57,7 @@
 	--tint-gold: #fbf1da;
 	--tint-copper: #f8e9df;
 	--tint-green: #e6f2ec;
-	--tint-crimson: #f8e7e8;
+	--tint-crimson: #fef2f2;
 }
 button:focus-visible,
 [role="button"]:focus-visible,
@@ -163,7 +163,7 @@ a:focus-visible { outline-color: var(--blue2); }
 
 .login-card input, .field input, .field select, .field textarea, .topbar input, select { border-color: #8a8880; border-radius: 8px; padding: 9px 11px; }
 .login-card input:focus, .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--blue2); box-shadow: 0 0 0 3px var(--tint-cobalt); }
-.form-error { background: var(--tint-crimson); color: #9b1f27; }
+.form-error { background: var(--tint-crimson); color: #d92424; }
 
 .table-wrap th, .table-wrap td, .table-card th, .table-card td { padding: 9px 10px; border-bottom-color: #eceff0; }
 .table-wrap th, .table-card th { background: #f1f4f3; color: var(--muted); }
@@ -192,7 +192,7 @@ a:focus-visible { outline-color: var(--blue2); }
 .badge.gold, .status.under-review, .status.under_review { background: var(--tint-gold); color: var(--gold-ink); border-color: #ecd49a; }
 .badge.teal { background: var(--tint-copper); color: var(--copper-text); border-color: #efc9b4; }
 .status.for-revision, .status.for_revision { background: var(--tint-crimson); color: var(--red); border-color: #e7b7ba; }
-.status.rejected { background: #9b1f27; color: #ffffff; border-color: #9b1f27; }
+.status.rejected { background: #d92424; color: #ffffff; border-color: #d92424; }
 .status.draft { background: var(--tint-warm); color: #4b5563; border-color: #c4cac9; border-style: dashed; }
 
 /* Log out: light red on hover, solid red while pressed. */
@@ -394,7 +394,7 @@ html { scrollbar-gutter: auto; }
 /* Rename/edit and delete buttons: soft white-grey icons and borders; delete turns red only on hover/focus as the warning. */
 .program-management-actions .icon-btn, .sm-actions .icon-btn { color: #9aa3b2; border-width: 1px; border-color: var(--line); }
 .program-management-actions .icon-btn:hover, .sm-actions .icon-btn:hover, .program-management-actions .icon-btn:focus-visible, .sm-actions .icon-btn:focus-visible { background: #f1f4f3; color: #5d6981; }
-.program-management-actions .icon-btn.is-delete:hover, .sm-actions .icon-btn.is-delete:hover, .program-management-actions .icon-btn.is-delete:focus-visible, .sm-actions .icon-btn.is-delete:focus-visible { background: #fff3f3; color: #c84848; border-color: #f2bebe; }
+.program-management-actions .icon-btn.is-delete:hover, .sm-actions .icon-btn.is-delete:hover, .program-management-actions .icon-btn.is-delete:focus-visible, .sm-actions .icon-btn.is-delete:focus-visible { background: #fff3f3; color: #d92424; border-color: #f2bebe; }
 
 /* ---- Subject deadlines ---- */
 /* The deadline chip in a subject's row: set (dashed), upcoming, due today, done (everyone submitted) or failed (someone missed it). */
@@ -410,7 +410,7 @@ html { scrollbar-gutter: auto; }
 .dl-chip.tone-done { background: var(--tint-green); border-color: #b8d8c6; }
 .dl-chip.tone-done .dl-chip-main small { color: var(--green-ink); }
 .dl-chip.tone-failed { background: var(--tint-crimson); border-color: #e7b7ba; }
-.dl-chip.tone-failed .dl-chip-main small { color: #9b1f27; }
+.dl-chip.tone-failed .dl-chip-main small { color: #d92424; }
 
 /* The dialog: the form, then each faculty member's status. */
 .dl-dialog form { display: grid; gap: 12px; }
@@ -424,7 +424,7 @@ html { scrollbar-gutter: auto; }
 .dl-stats > div { padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: #ffffff; }
 .dl-stats dt { font-size: var(--text-xs); color: var(--muted); }
 .dl-stats dd { margin: 2px 0 0; font-size: var(--text-lg); font-weight: var(--fw-semibold); color: var(--ink); font-variant-numeric: tabular-nums; }
-.dl-stats .is-failed dd { color: #9b1f27; }
+.dl-stats .is-failed dd { color: #d92424; }
 .dl-people { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
 .dl-people li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px 12px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: #ffffff; }
 .dl-people .dl-name { font-size: var(--text-sm); font-weight: var(--fw-semibold); color: var(--ink); overflow-wrap: anywhere; }
@@ -438,7 +438,7 @@ html { scrollbar-gutter: auto; }
 .status.dl-upcoming::before, .status.dl-due_today::before, .status.dl-failed::before, .status.dl-submitted::before, .status.dl-submitted_late::before { content: ""; }
 .status.dl-upcoming { background: var(--tint-cobalt); color: var(--blue); border-color: #c4c7ec; }
 .status.dl-due_today { background: var(--tint-gold); color: var(--gold-ink); border-color: #ecd49a; }
-.status.dl-failed { background: #9b1f27; color: #ffffff; border-color: #9b1f27; }
+.status.dl-failed { background: #d92424; color: #ffffff; border-color: #d92424; }
 .status.dl-submitted { background: var(--tint-green); color: var(--green-ink); border-color: #b8d8c6; }
 .status.dl-submitted_late { background: var(--tint-gold); color: var(--gold-ink); border-color: #ecd49a; }
 
@@ -446,7 +446,7 @@ html { scrollbar-gutter: auto; }
 .deadline.dl-row { width: 100%; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; transition: background-color 0.15s; }
 .deadline.dl-row:hover { background: var(--tint-cobalt); }
 .deadline.dl-row:focus-visible { outline: 2px solid var(--blue2); outline-offset: -2px; }
-.deadline.dl-row.is-failed > div { background: var(--tint-crimson); color: #9b1f27; }
+.deadline.dl-row.is-failed > div { background: var(--tint-crimson); color: #d92424; }
 .deadline.dl-row small { color: var(--muted); font-size: var(--text-xs); }
 .deadline.dl-row:hover small { color: #4b5563; }
 .deadline.dl-row p { min-width: 0; }
@@ -710,6 +710,20 @@ html { scrollbar-gutter: auto; }
 .hy-rec:hover {
 	border-color: #c9ced3;
 }
+/* "Needs your decision": the card itself scrolls (its header stays put) with a thin visible scrollbar (the app hides scrollbars elsewhere).
+   Each item is a card with a gold edge: where it is, the text it is about, what to change. */
+.hy-unresolved[open] { scrollbar-width: thin !important; scrollbar-color: #b6bdc7 transparent; scrollbar-gutter: stable; }
+.hy-unresolved::-webkit-scrollbar { display: block; width: 8px; }
+.hy-unresolved::-webkit-scrollbar-thumb { background: #b6bdc7; border-radius: 8px; }
+.hy-unresolved::-webkit-scrollbar-thumb:hover { background: #8f98a5; }
+.hy-unresolved > summary h4::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 10px; border-radius: 50%; background: var(--gold); vertical-align: 1px; }
+.hy-unresolved .hy-box > ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.hy-unresolved .hy-rec { gap: 10px; padding: 14px 16px; border-radius: 10px; }
+.hy-unresolved .hy-quote { margin: 0; padding: 8px 12px; border-radius: 8px; background: var(--bg); color: var(--ink); font-size: var(--text-sm); line-height: 1.5; overflow-wrap: anywhere; }
+.hy-unresolved .hy-why { font-size: var(--text-xs); color: var(--muted); }
+.hy-unresolved .hy-todo { display: grid; gap: 3px; padding: 9px 12px; border-radius: 8px; background: var(--tint-gold); }
+.hy-unresolved .hy-todo > span { font-size: 11px; font-weight: var(--fw-semibold); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--gold-ink); }
+.hy-unresolved .hy-todo .hy-detail { margin: 0; font-size: var(--text-sm); line-height: 1.5; color: var(--ink); overflow-wrap: anywhere; }
 .hy-rec.decided.accept, .hy-rec.decided.edit {
 	background: #fbfdfc;
 }
@@ -936,7 +950,7 @@ html { scrollbar-gutter: auto; }
 	border-radius: 8px;
 	background: var(--tint-crimson);
 	border: 1px solid #e7b7ba;
-	color: #9b1f27;
+	color: #d92424;
 	font-size: var(--text-xs);
 	font-weight: var(--fw-semibold);
 }

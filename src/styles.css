@@ -34,7 +34,7 @@
 	--line: #e3e7ea;
 	--green: #28a66a;
 	--teal: #21a6a0;
-	--red: #e45a59;
+	--red: #d92424;
 	--purple: #7657d6;
 	--shadow: 0 8px 28px rgba(15, 35, 85, 0.07);
 	font-family: var(--font-body);
@@ -182,7 +182,7 @@ select {
 	@apply tw:[font-weight:var(--fw-semibold)];
 }
 .form-error {
-	@apply tw:[background:#fff1f1] tw:[color:#9b1f27] tw:[padding:10px] tw:[border-radius:8px] tw:[font-size:var(--text-sm)];
+	@apply tw:[background:#fff1f1] tw:[color:#d92424] tw:[padding:10px] tw:[border-radius:8px] tw:[font-size:var(--text-sm)];
 }
 .btn {
 	@apply tw:[border:0];
@@ -201,7 +201,7 @@ select {
 	@apply tw:[background:#eceefb] tw:[color:#40506b];
 }
 .btn.danger {
-	@apply tw:[background:#fff3f3] tw:[color:#c84848] tw:[border:1px_solid_#f2bebe];
+	@apply tw:[background:#fff3f3] tw:[color:#d92424] tw:[border:1px_solid_#f2bebe];
 }
 button:focus-visible,
 [role="button"]:focus-visible,
@@ -361,7 +361,7 @@ a:focus-visible {
 }
 .dot {
 	@apply tw:absolute tw:[width:7px];
-	@apply tw:[height:7px] tw:[background:#b3262e] tw:[border:2px_solid_white];
+	@apply tw:[height:7px] tw:[background:#d92424] tw:[border:2px_solid_white];
 	@apply tw:[border-radius:50%] tw:[top:7px];
 	@apply tw:[right:7px];
 }
@@ -978,7 +978,7 @@ a:focus-visible {
 	@apply tw:[line-height:1.1] tw:text-center;
 }
 .priority.high {
-	@apply tw:[background:#ffe8e8] tw:[color:#9b1f27];
+	@apply tw:[background:#ffe8e8] tw:[color:#d92424];
 }
 .priority.medium {
 	@apply tw:[background:#fff2db] tw:[color:#8f6310];
@@ -1449,7 +1449,7 @@ a:focus-visible {
 	}
 }
 .status.rejected {
-	@apply tw:[background:#ffe4e4] tw:[color:#9b1f27];
+	@apply tw:[background:#ffe4e4] tw:[color:#d92424];
 }
 .overlay {
 	@apply tw:fixed tw:[inset:0] tw:[background:rgba(9,_20,_50,_0.45)] tw:grid tw:place-items-center tw:z-50 tw:[padding:20px];
@@ -1611,7 +1611,7 @@ a:focus-visible {
 }
 .thread-dot {
 	@apply tw:[width:8px];
-	@apply tw:[height:8px] tw:[border-radius:50%] tw:[background:#b3262e] tw:shrink-0 tw:[margin-top:4px];
+	@apply tw:[height:8px] tw:[border-radius:50%] tw:[background:#d92424] tw:shrink-0 tw:[margin-top:4px];
 }
 .dropzone {
 	@apply tw:[border:2px_dashed_#c8d4e8];
@@ -1657,7 +1657,7 @@ a:focus-visible {
 	@apply tw:flex tw:[gap:12px] tw:flex-wrap tw:[font-size:var(--text-xs)] tw:[color:var(--muted)] tw:[margin-bottom:10px];
 }
 .syl-unread {
-	@apply tw:[background:#b3262e] tw:[color:white] tw:[padding:2px_7px] tw:[border-radius:99px] tw:[font-weight:var(--fw-semibold)];
+	@apply tw:[background:#d92424] tw:[color:white] tw:[padding:2px_7px] tw:[border-radius:99px] tw:[font-weight:var(--fw-semibold)];
 }
 .feedback-banner {
 	@apply tw:[background:#fff7e8] tw:[border:1px_solid_#f6ddb0];
@@ -1670,7 +1670,7 @@ a:focus-visible {
 	@apply tw:[font-size:var(--text-xs)] tw:[padding:7px_10px];
 }
 .syl-actions .btn.danger {
-	@apply tw:[background:#fff3f3] tw:[color:#c84848] tw:[border:1px_solid_#f2bebe];
+	@apply tw:[background:#fff3f3] tw:[color:#d92424] tw:[border:1px_solid_#f2bebe];
 }
 .queue-list {
 	@apply tw:flex tw:flex-col tw:[gap:6px] tw:[margin-bottom:14px] tw:[max-height:300px] tw:overflow-y-auto;
@@ -1696,7 +1696,7 @@ a:focus-visible {
 }
 .queue-dot {
 	@apply tw:[width:7px];
-	@apply tw:[height:7px] tw:[border-radius:50%] tw:[background:#b3262e];
+	@apply tw:[height:7px] tw:[border-radius:50%] tw:[background:#d92424];
 }
 .queue-info p {
 	@apply tw:[font-size:var(--text-sm)] tw:[color:var(--text)] tw:[margin:2px_0] tw:whitespace-nowrap tw:overflow-hidden tw:text-ellipsis;
@@ -1843,7 +1843,7 @@ a:focus-visible {
 	@apply tw:flex tw:[gap:6px];
 }
 .chat-del-confirm {
-	@apply tw:flex tw:items-center tw:[gap:8px] tw:[padding:10px_18px] tw:[background:#fff1f1] tw:[font-size:var(--text-sm)] tw:[color:#9b1f27];
+	@apply tw:flex tw:items-center tw:[gap:8px] tw:[padding:10px_18px] tw:[background:#fff1f1] tw:[font-size:var(--text-sm)] tw:[color:#d92424];
 }
 .chat-del-confirm span {
 	@apply tw:flex-1;
@@ -3486,7 +3486,7 @@ table,
 	@apply tw:[accent-color:var(--blue)];
 }
 .bld2 .ie-err {
-	@apply tw:[color:#9b1f27] tw:[font-size:var(--text-xs)];
+	@apply tw:[color:#d92424] tw:[font-size:var(--text-xs)];
 	@apply tw:[font-weight:var(--fw-semibold)] tw:[max-width:460px];
 }
 @media (max-width: 900px) {
@@ -3540,7 +3540,7 @@ table,
 	@apply tw:mr-auto;
 }
 .sm-stale {
-	@apply tw:[color:#9b1f27] tw:[font-size:var(--text-xs)];
+	@apply tw:[color:#d92424] tw:[font-size:var(--text-xs)];
 	@apply tw:[font-weight:var(--fw-semibold)];
 }
 .sm-toolbar {
@@ -3675,7 +3675,7 @@ table,
 .cmp .chip, .cmp-row .chip, .cmp-find .chip { @apply tw:[font-size:11px]; @apply tw:[font-weight:var(--fw-medium)] tw:[padding:3px_8px] tw:[border-radius:99px] tw:[background:#eceefb] tw:[color:var(--blue)]; @apply tw:[line-height:1.4]; }
 .cmp .chip.quiet, .cmp-row .chip.quiet { @apply tw:[background:#f1f4f3] tw:[color:var(--muted)] tw:[font-weight:var(--fw-medium)]; }
 .cmp .chip.stale, .cmp-row .chip.stale { @apply tw:[background:#fff0d7] tw:[color:#8f6310]; }
-.cmp .chip.basis.unavailable { @apply tw:[background:#ffe8e8] tw:[color:#9b1f27]; }
+.cmp .chip.basis.unavailable { @apply tw:[background:#ffe8e8] tw:[color:#d92424]; }
 .cmp .chip.basis.ai { @apply tw:[background:#efeaff] tw:[color:var(--purple)]; }
 .cmp .chip.src.rule, .cmp-find .chip.src.rule { @apply tw:[background:#e7f3ff] tw:[color:#3f68a8]; }
 .cmp .chip.src.ai { @apply tw:[background:#efeaff] tw:[color:var(--purple)]; }
@@ -3825,7 +3825,7 @@ table,
   --rv-radius: 18px;
   --rv-approve: #17794d; --rv-approve-ink: #ffffff;
   --rv-revise: #8f6310; --rv-revise-bg: #fff4dc;
-  --rv-reject: #a8262a; --rv-reject-bg: #fdecec;
+  --rv-reject: #d92424; --rv-reject-bg: #fef2f2;
   --rv-shadow: 0 1px 2px rgba(15, 35, 85, 0.05), 0 10px 28px rgba(15, 35, 85, 0.07);
 }
 
@@ -3963,6 +3963,11 @@ table,
 .pick-head p { @apply tw:[margin:0] tw:[font-size:var(--text-sm)]; @apply tw:[font-weight:var(--fw-medium)] tw:[color:var(--muted)]; }
 .pick-grid { @apply tw:grid tw:grid-cols-3 tw:[gap:14px]; }
 .pick-field { @apply tw:grid tw:[gap:6px] tw:[min-width:0]; }
+/* The AI Checker picker is just the subject drop-down and the Edit button, side by side, in a slim card. */
+.pick-card.pick-compact { display: flex; align-items: flex-end; gap: 12px; padding: 14px 16px; }
+.pick-card.pick-compact .pick-field { flex: 1 1 auto; }
+.pick-card.pick-compact > .btn { flex: none; height: 42px; padding: 0 22px; white-space: nowrap; }
+@media (max-width: 600px) { .pick-card.pick-compact { flex-wrap: wrap; } .pick-card.pick-compact > .btn { width: 100%; } }
 .pick-field label { @apply tw:[font-size:var(--text-xs)]; @apply tw:[font-weight:var(--fw-semibold)] tw:[color:var(--muted)] tw:uppercase tw:[letter-spacing:var(--tracking-label)]; }
 .pick-field select { @apply tw:w-full; @apply tw:[min-width:0] tw:text-ellipsis; }
 .pick-field select:disabled { @apply tw:[background:#f1f4f3] tw:[color:var(--muted)] tw:cursor-not-allowed tw:[border-color:var(--line)]; }
@@ -4076,7 +4081,7 @@ html { scrollbar-gutter: stable; }
 .vh-changes { @apply tw:block tw:[margin-top:4px] tw:[font-weight:var(--fw-semibold)] tw:[color:var(--blue)]; }
 .vh-decision { @apply tw:block tw:[margin-top:4px] tw:[padding:6px_10px] tw:[border-radius:8px] tw:[background:#fff1d6] tw:[color:var(--warn,_#8f6310)] tw:[font-weight:var(--fw-medium)]; }
 .vh-decision.approve { @apply tw:[background:#e6f5ee] tw:[color:#235f45]; }
-.vh-decision.reject { @apply tw:[background:#fdeaea] tw:[color:#9b1f27]; }
+.vh-decision.reject { @apply tw:[background:#fdeaea] tw:[color:#d92424]; }
 .vh-view { @apply tw:[margin-top:8px] tw:[padding:4px_12px] tw:[font-size:var(--text-xs)]; }
 .svm-changes { @apply tw:[font-weight:var(--fw-semibold)] tw:[color:var(--blue)]; }
 .rv-revising { @apply tw:grid tw:[gap:6px]; }
@@ -4106,7 +4111,7 @@ html { scrollbar-gutter: stable; }
 
 /* The unread badge on the topbar's message and notification icons: a 20px circle (a pill for two digits) with the number centered. The old
    16px badge had a 2px ring and an 18px text line inside 12px, so the digit sat low and its bottom was cut off. */
-.pill { @apply tw:box-border tw:flex tw:items-center tw:justify-center tw:[min-width:20px]; @apply tw:[height:20px] tw:[padding:0_5px] tw:[top:-8px]; @apply tw:[right:-8px] tw:[z-index:1] tw:[border:2px_solid_#fff] tw:[background:#b3262e] tw:[color:#fff] tw:[font-size:11px]; @apply tw:[font-weight:var(--fw-bold)]; @apply tw:[line-height:1]; @apply tw:[font-variant-numeric:tabular-nums] tw:[letter-spacing:0] tw:whitespace-nowrap; }
+.pill { @apply tw:box-border tw:flex tw:items-center tw:justify-center tw:[min-width:20px]; @apply tw:[height:20px] tw:[padding:0_5px] tw:[top:-8px]; @apply tw:[right:-8px] tw:[z-index:1] tw:[border:2px_solid_#fff] tw:[background:#d92424] tw:[color:#fff] tw:[font-size:11px]; @apply tw:[font-weight:var(--fw-bold)]; @apply tw:[line-height:1]; @apply tw:[font-variant-numeric:tabular-nums] tw:[letter-spacing:0] tw:whitespace-nowrap; }
 
 /* Recent Activity (dashboard): a timeline of sentences. Each event has an icon tile (color for decisions, grey for routine events), the
    actions are grouped under Today / Yesterday / a date, and the time sits on the right. */
@@ -4118,7 +4123,7 @@ html { scrollbar-gutter: stable; }
 .feed-ico { @apply tw:grid tw:place-items-center tw:[width:32px]; @apply tw:[height:32px] tw:[border-radius:10px] tw:[background:#f1f4f3] tw:[color:#6a758a] tw:relative tw:[z-index:1]; }
 .feed-item.good .feed-ico { @apply tw:[background:#e3f5ec] tw:[color:#1d7a4d]; }
 .feed-item.warn .feed-ico { @apply tw:[background:#fff1d6] tw:[color:#9a6410]; }
-.feed-item.bad .feed-ico { @apply tw:[background:#fdeaea] tw:[color:#b03a3a]; }
+.feed-item.bad .feed-ico { @apply tw:[background:#fdeaea] tw:[color:#d92424]; }
 .feed-item.info .feed-ico { @apply tw:[background:#eceefb] tw:[color:#2c36b4]; }
 .feed-body { @apply tw:[min-width:0]; }
 .feed-body p { @apply tw:[margin:0] tw:[font-size:var(--text-sm)]; @apply tw:[font-weight:var(--fw-regular)]; @apply tw:[line-height:1.4] tw:wrap-anywhere; }
@@ -4307,3 +4312,23 @@ html { scrollbar-gutter: stable; }
 .year-bar .ay-pop .field input { width: 100%; }
 .year-bar .ay-pop p { margin: 0; }
 .year-bar .ay-pop-actions { display: flex; justify-content: flex-end; gap: 8px; }
+/* ---- Dashboard "Upcoming Deadlines" (components/UpcomingDeadlines.jsx): minimal rows. A bare date, the subject, and the state as a coloured dot and word
+   instead of a filled badge. Only the due-date number turns red when a deadline was missed. The status classes themselves (theme.css) are unchanged. ---- */
+.card-body .deadline.dl-row { display: flex; align-items: center; gap: 16px; padding: 12px 14px; margin-bottom: 8px; border: 1px solid var(--line); border-radius: 10px; }
+.card-body .deadline.dl-row:last-child { margin-bottom: 0; }
+.card-body .deadline.dl-row.is-failed { border-color: #f3b4b4; }
+.card-body .deadline.dl-row:hover { background: #f7f8fa; }
+.card-body .deadline.dl-row > div { flex: none; width: 40px; height: auto; gap: 3px; border-radius: 0; background: transparent; color: var(--ink); }
+.card-body .deadline.dl-row > div b { font-size: var(--text-lg); font-weight: var(--fw-semibold); line-height: 1; font-variant-numeric: tabular-nums; }
+.card-body .deadline.dl-row > div span { font-size: 10px; font-weight: var(--fw-semibold); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.card-body .deadline.dl-row.is-failed > div { background: transparent; color: #d92424; }
+.card-body .deadline.dl-row.is-failed > div span { color: #d92424; }
+.card-body .deadline.dl-row p { gap: 4px; }
+.card-body .deadline.dl-row strong { font-size: var(--text-sm); font-weight: var(--fw-semibold); line-height: 1.35; }
+.card-body .deadline.dl-row small { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 10px; font-size: var(--text-xs); }
+.card-body .deadline.dl-row .status { display: inline-flex; align-items: center; gap: 6px; height: auto; padding: 0; border: 0; border-radius: 0; background: transparent; font-weight: var(--fw-semibold); }
+.card-body .deadline.dl-row .status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; -webkit-mask: none; mask: none; }
+.card-body .deadline.dl-row .status.dl-upcoming { color: var(--blue2); }
+.card-body .deadline.dl-row .status.dl-due_today, .card-body .deadline.dl-row .status.dl-submitted_late { color: var(--gold-ink); }
+.card-body .deadline.dl-row .status.dl-failed { color: #d92424; }
+.card-body .deadline.dl-row .status.dl-submitted { color: var(--green-ink); }
