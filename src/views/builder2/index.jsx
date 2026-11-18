@@ -226,10 +226,25 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
     }
   };
 
+  // No subject chosen: the PDF names it. The server scans the PDF and returns the one assigned subject its course code matches;
+  // select that subject, save the draft, and keep the preview so the file is not scanned twice.
+  const extractAndSelectSubject = async (file) => {
+    const preview = await syllabiApi.extractPdf(file);
+    let course;
+    try { course = await coursesApi.get(preview.subject.id); } catch { throw new Error('pdfImport.failed'); }
+    const next = applyCourse(draft, course);
+    if (!(await setAndSave(next))) throw new Error('pdfImport.saveFailed');
+    if (!syllabusId()) throw new Error('pdfImport.chooseSubject');
+    // Saving a subject lets the locked standards settle into the draft, so the form is not compared with this snapshot at Apply.
+    importBase.current = null;
+    importIdentity.current = preview.identityContext;
+    return preview;
+  };
+
   const importPdf = async (file) => {
     setBusy(true);
     try {
-      if (!draft.meta.courseId) throw new Error('pdfImport.chooseSubject');
+      if (!draft.meta.courseId) return await extractAndSelectSubject(file);
       // Extraction is read-only: an existing draft does not need to pass form
       // save validation merely to preview the PDF that will replace its fields.
       let id = syllabusId();
@@ -247,7 +262,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
     }
   };
   const applyPdfImport = async (fields, { planRows = null, prerequisiteChoice = null } = {}) => {
-    if (!load.editable || importBase.current !== JSON.stringify(draft)) throw new Error('pdfImport.draftChanged');
+    if (!load.editable || (importBase.current !== null && importBase.current !== JSON.stringify(draft))) throw new Error('pdfImport.draftChanged');
     const mapped = preparePdfImport(fields, draft, newId, { planRows, prerequisiteChoice, identityContext: importIdentity.current });
     setBusy(true);
     try {
