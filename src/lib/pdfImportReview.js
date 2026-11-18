@@ -16,7 +16,7 @@ export function importIdentity(fields, meta, context, required = false) {
     const candidates = courses.filter(c => codeKey(c.code) === codeKey(fields.code));
     if (!text(fields.code) || !text(fields.title) || candidates.length !== 1) return fail('course');
     const course = candidates[0];
-    if (course.code !== selected.code || !titleMatches(fields.title, course.title) || !titleMatches(selected.title, course.title)) return fail('title');
+    if (codeKey(course.code) !== codeKey(selected.code) || !titleMatches(fields.title, course.title) || !titleMatches(selected.title, course.title)) return fail('title');
     return { ok: true, program: selected.program, curriculumYear: curricula[0].curriculumYear, course };
   }
   if (required) return fail('context');

@@ -18,6 +18,7 @@ const { structure, jobOf, siblingsOf, misaligned, getField, setField } = require
 const { claudeProvider } = require('./provider');
 const { fieldKeyOfFinding } = require('./judge');
 const { readiness, keyOfPath, APPLYABLE } = require('./official');
+const { uniqueIds } = require('./extract');
 const { isTrivialRewrite } = require('../stewardship');
 
 const RANK = { ALIGNED: 0, PARTIALLY_ALIGNED: 1, NOT_ALIGNED: 2, INSUFFICIENT_EVIDENCE: 3 };
@@ -85,6 +86,7 @@ function jobFor(content, before, key, text) {
 
 // opts: env, db, transport (the provider's), or provider + store (tests), year.
 async function refineDraft({ content, masters, suggestion, env = process.env, db, transport, provider, store, year } = {}) {
+  content = uniqueIds(content); // the same item ids as the check that wrote the draft (extract.js uniqueIds)
   const path = suggestion && suggestion.path;
   if (!APPLYABLE.test(String(path)) || typeof suggestion.replacement !== 'string' || suggestion.source !== 'ai') throw fail('This recommendation cannot be checked and improved.', 400);
   const key = keyOfPath(content, path);

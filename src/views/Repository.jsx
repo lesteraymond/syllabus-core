@@ -5,7 +5,7 @@ import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useMemo, useState } from 'react';
 import { syllabi as syllabiApi } from '../lib/api';
 import { fmt } from '../lib/utils';
-import { Avatar, PageHead, Field } from '../components/ui';
+import { Avatar, Icon, PageHead, Field } from '../components/ui';
 import Select from '../components/Select';
 
 // Builder syllabi use the catalog program; older uploads may only have a curriculum program.
@@ -53,7 +53,7 @@ export default function Repository({ syllabi, user, notify, setHistCode }) {
       <PageHead title={translateUI("ui.syllabus_repository_95d8eb")} subtitle={isFaculty ? translateUI("ui.search_and_access_your_syllabi_approved_by_an_administrator_112b87") : translateUI("repository.approvedSubtitle")} actions={<><YearFilter group="data" /><StableButton className="btn outline" onClick={() => notify(translateUI("ui.repository_export_prepared_demo_02ceb3"))}>{translateUI("ui.export_list_b039ae")}</StableButton></>} />
       <div className="filter-card repository-filters">
         <Field label={translateUI("ui.program_9d6800")}><Select value={filters.program} onChange={e => setFilters({ ...filters, program: e.target.value })}><option value="All">{translateUI("ui.all_6a7208")}</option>{programs.map(program => <option key={program} value={program}>{program === 'No program' ? translateUI("ui.no_program_d8600a") : program}</option>)}</Select></Field>
-        <Field label={translateUI("ui.search_bce064")}><input value={filters.q} onChange={e => setFilters({ ...filters, q: e.target.value })} placeholder={translateUI("ui.course_code_title_or_faculty_1878e5")} /></Field>
+        <Field label={translateUI("ui.search_bce064")}><div className="repo-search"><Icon name="magnifyingGlass" size={18} /><input value={filters.q} onChange={e => setFilters({ ...filters, q: e.target.value })} placeholder={translateUI("ui.course_code_title_or_faculty_1878e5")} /></div></Field>
         <StableButton className="btn ghost reset" onClick={() => setFilters({ program: 'All', q: '' })}>{translateUI("ui.reset_44c57a")}</StableButton>
       </div>
       {archivedRows.length > 0 && <label className="syl-archive-toggle"><input type="checkbox" checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} />{translateUI("syllabi.showArchived", { count: archivedRows.length })}</label>}
@@ -71,7 +71,7 @@ export default function Repository({ syllabi, user, notify, setHistCode }) {
             <td><span className="user-cell"><Avatar userId={x.userId} src={x.ownerAvatarUrl} name={x.faculty} /><span>{x.faculty}</span></span></td>
             <td><span className="syl-tags"><span className={`status ${x.status}`}>{translateUI("ui.approved_afd61f")}</span>{x.archived && <span className="status archived">{translateUI("syllabi.archivedTag")}</span>}</span></td>
             <td>{fmt(x.updatedAt)}</td>
-            <td><div className="repository-actions"><button className="table-action" aria-label={translateUI("ui.view_history_for_p0_46396f", { p0: (x.courseCode) })} onClick={() => setHistCode(x.id)}>◷</button></div></td>
+            <td><div className="repository-actions"><button className="table-action" aria-label={translateUI("ui.view_history_for_p0_46396f", { p0: (x.courseCode) })} onClick={() => setHistCode(x.id)}><Icon name="clockBack" size={18} /></button></div></td>
           </tr>)}</tbody>
         </table>
         {isFaculty && repository.error && <div className="empty" role="alert">{translateUI("ui.unable_to_load_approved_syllabi_cd0cc5")}{tr(repository.error)}</div>}

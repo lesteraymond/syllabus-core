@@ -76,7 +76,10 @@ function questionsOf(map) {
       if (tasks.text && iloTargets.length) add('TASK-ILO', group, tasks, iloTargets, iloTargets.map(t => t.key));
     }
     if (w.values.named.length) {
-      if (iloTargets.length) add('VALUE-ILO', group, values, iloTargets, iloTargets.map(t => t.key));
+      // The checklist asks whether the value can be practised through the week's ILO AND activities, so the activities are given too: without them an
+      // answer quoting the activities was rejected ("the quote is not in the texts"), the question stayed unanswered and the whole check was incomplete
+      // (CPE 101 Week 17, 2026-11-17: a teacher-centred ILO, the value carried by an ethics case discussion). The repair order still follows the ILO only.
+      if (iloTargets.length) add('VALUE-ILO', group, values, [...iloTargets, ...(activities.text ? [activities] : [])], iloTargets.map(t => t.key));
       else if (content.text) add('VALUE-ILO', group, values, [{ ...content, label: `${weekLabel(w)} content (${w.kind === 'exam' ? 'examination week' : 'no ILO'})` }], [content.key]);
     }
   }
@@ -200,7 +203,9 @@ function setStatuses(results, fixed) {
     else if (extras.has(r)) r.status = 'review';
     else r.status = r.scored ? 'failing' : 'advice';
   }
-  const failingFields = new Set(results.filter(r => r.status === 'failing').map(r => r.fieldKey));
+  // A manual relationship (CLO-EVIDENCE) is fixed in OTHER fields (its weeks), never in its own: it does not make its field "failing" for the fields that
+  // depend on it. Before, it did, and the weeks it waits for waited on the CLO in turn: a cycle in which the plan rewrote nothing (CPE 101 #458, Week 10).
+  const failingFields = new Set(results.filter(r => r.status === 'failing' && !R.isManual(r.relationship)).map(r => r.fieldKey));
   for (const f of (fixed && fixed.findings) || []) if (f.severity === 'finding') { const key = fieldKeyOfFinding(f); if (key) failingFields.add(key); }
   for (const r of results) if ((r.status === 'failing' || r.status === 'advice') && r.parents.some(p => failingFields.has(p))) r.status = 'waiting';
   return results;

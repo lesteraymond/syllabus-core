@@ -1,7 +1,7 @@
 'use strict';
 // The direct Anthropic Messages API transport (SYLLABUS_CHECK_AI_PROVIDER=anthropic), through the official SDK. It sends one question and returns the
-// answer text and what the question used. The prompt, the schema and the verification of the answer stay with the callers (gemini.js, modelClient.js),
-// exactly as for OpenRouter, so this provider changes only how a question travels.
+// answer text and what the question used. The prompt, the schema and the verification of the answer stay with the caller (the AI Checker:
+// pipeline/provider.js), so this file changes only how a question travels.
 //   - The key is handed to the SDK in code and the base URL is fixed: ANTHROPIC_BASE_URL, ANTHROPIC_AUTH_TOKEN or a credential profile can neither
 //     redirect the key nor stand in for it, and every header ANTHROPIC_CUSTOM_HEADERS names is removed from the request. The SDK's logging, tracing,
 //     trace propagation and own retries are off.
@@ -57,7 +57,7 @@ function requestConfigOf(model, settings) {
 // Ready only with a key in Anthropic's own format, a verified claude-* model and settings that model accepts, so a key meant for another service is
 // never sent to Anthropic and no request goes out that the API would refuse for its parameters.
 const anthropicReady = (env = process.env) => KEY_FORMAT.test(env.ANTHROPIC_API_KEY || '') && MODEL_ID.test(env.ANTHROPIC_MODEL || '') && !requestConfigOf(env.ANTHROPIC_MODEL, anthropicSettings(env)).problem;
-// The configuration a verdict is made under, for the reuse fingerprint (gemini.js pairKey): a verdict made with one thinking mode or effort is never
+// The configuration a verdict is made under, for the reuse key of a stored answer (pipeline/provider.js): a verdict made with one thinking mode or effort is never
 // reused under another.
 function configKeyOf(env = process.env) {
   const config = requestConfigOf(env.ANTHROPIC_MODEL, anthropicSettings(env));
@@ -109,7 +109,7 @@ function usageOf(model, usage, attempts, ending = {}) {
 const endingOf = (requestId, message) => ({ ...(requestId ? { requestId } : {}), ...(message?.stop_reason ? { stopReason: message.stop_reason } : {}),
   ...(message?.stop_reason === 'refusal' ? { stopCategory: message.stop_details?.category ?? null } : {}) });
 // A spend limit (one the organisation or workspace set: HTTP 400; the usage tier's monthly cap: HTTP 429 enforced_spend_limit_reached) or a credit
-// balance that has run out. Asking again cannot succeed until someone acts, so it is never retried, and gemini.js reports it as provider_budget.
+// balance that has run out. Asking again cannot succeed until someone acts, so it is never retried, and it is reported as provider_budget.
 function budgetRefusal(status, body) {
   const error = body?.error;
   return (status === 400 && /specified (?:workspace )?API usage limits|credit balance is too low/i.test(String(error?.message || ''))) || (status === 429 && error?.details?.error_code === 'enforced_spend_limit_reached');
@@ -141,7 +141,7 @@ function failureOf(error, status, key, tail, usage) {
   return Object.assign(Error(`Anthropic request failed: ${redact(error?.message, key)}${tail}`), { usage });
 }
 // One question: `system` (a text, or a list of up to 4 texts) is cached (ANTHROPIC_PROMPT_CACHE=off turns it off) and the answer must match `schema` (structured outputs). `subject` names
-// what is not evaluated when it fails ('alignment' for gemini.js). options.transport replaces fetch (tests); options.sleep and options.timeoutMs are for
+// what is not evaluated when it fails (for example 're-planned judge'). options.transport replaces fetch (tests); options.sleep and options.timeoutMs are for
 // tests too. Returns { text, stopReason, stopCategory, model, requestId, latencyMs, usage }. Every error it throws after a request was sent carries
 // `usage`: a refused or cut-off answer was billed all the same.
 async function anthropicMessage({ model, system, user, schema, subject = '' }, { env = process.env, transport, sleep = pause, timeoutMs, signal, onRequest, maxTokens } = {}) {

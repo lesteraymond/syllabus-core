@@ -1,6 +1,6 @@
 'use strict';
 // Re-planned AI Checker: one check of the whole syllabus (extract -> fixed rules -> AI checklists). Not wired into the running server.
-const { extract } = require('./extract');
+const { extract, uniqueIds } = require('./extract');
 const fixedRules = require('./fixedRules');
 const { judge } = require('./judge');
 const { lookupReferences, findingsOf } = require('./lookup');
@@ -14,8 +14,9 @@ function misalignmentsOf(fixed, judged) {
 }
 
 // opts: ask, store, model, year (see judge.js and fixedRules.js).
+// The caller reads the result with the same ids only after uniqueIds too (official.js, plan.js and refine.js do; it returns unique content unchanged).
 async function check(content, masters, opts = {}) {
-  const map = extract(content, masters);
+  const map = extract(uniqueIds(content), masters);
   const fixed = fixedRules.check(map, { year: opts.year });
   // Reference lookups (Crossref, Open Library, links) only when the caller asks: opts.lookup = {} or { fetchImpl, urlChecker }.
   let lookups = null;

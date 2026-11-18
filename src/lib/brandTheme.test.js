@@ -129,10 +129,12 @@ test('the time-usage chart keeps its bars and the range buttons readable', () =>
   assert.ok(theme.includes('--usage-today: #b9842a'), 'the today colour is the one tested above');
 });
 
-test('the AI Quality Snapshot rings are the primary button blue, with the lowest area still red', () => {
+test('the AI Quality Snapshot rings are the primary button blue at 90 and above, amber from 75, red below 75', () => {
   assert.ok(theme.includes('.quality-ring { background: conic-gradient(var(--btn-primary) 0 var(--p), #e3e7ea var(--p)); }'), 'the rings use the blue of New syllabus');
   assert.ok(contrast(token('btn-primary'), '#e3e7ea') >= 3, 'the blue arc stands out from the grey track (a graphic: 3:1)');
-  assert.ok(theme.includes('.quality-mini.low .quality-ring { background: conic-gradient(var(--red) 0 var(--p), #e3e7ea var(--p)); }'), 'the lowest area keeps its red ring');
+  assert.ok(theme.includes('.quality-mini.tone-bad .quality-ring { background: conic-gradient(var(--red) 0 var(--p), #e3e7ea var(--p)); }'), 'a score below 75 has a red ring');
+  assert.ok(theme.includes('.quality-mini.tone-mid .quality-ring { background: conic-gradient(var(--ring-warn) 0 var(--p), #e3e7ea var(--p)); }'), 'a score from 75 to 89 has an amber ring');
+  assert.ok(contrast(token('ring-warn'), '#e3e7ea') >= 3 && contrast(token('red'), '#ffffff') >= 4.5 && contrast(token('gold-ink'), '#ffffff') >= 4.5, 'the arcs stand out and the labels read on white');
 });
 
 test('the AI Checker score rings are one thin arc per state, readable on white and on their track, with no water or orbit effects', () => {
@@ -155,7 +157,7 @@ test('the dashboard Program Compliance bars are a primary-blue meter on a light 
 
 test('the open dropdown list stays readable: option text, the chosen option on the highlight, and the filter hint', () => {
   assert.ok(contrast(token('text'), '#ffffff') >= 7, 'option text on the panel');
-  assert.ok(contrast(token('blue'), token('tint-cobalt')) >= 4.5, 'chosen option on the highlighted row');
+  assert.ok(contrast(token('blue2'), token('tint-cobalt')) >= 4.5, 'chosen option on the highlighted row');
   assert.ok(contrast(token('muted'), '#ffffff') >= 4.5, 'filter hint on the panel');
   assert.ok(contrast('#8a8880', '#ffffff') >= 3, 'button border on white');
   assert.ok(contrast('#5b6270', '#f1f4f3') >= 4.5, 'disabled button text on its fill');
@@ -201,7 +203,7 @@ test('subject edit and delete moved from the modal to a last, left-aligned Actio
   assert.ok(table.includes('className="col-actions"') && table.includes('<SubjectRowActions'), 'each row has the actions');
   assert.ok(table.includes('colSpan={deadlineState.enabled ? 8 : 7}'), 'the empty row spans every column (code, title, program, curriculum year, term, pre-requisite, actions), the Deadline one too once it is shown');
   assert.ok(theme.includes('.col-actions { width: 112px; min-width: 112px; white-space: nowrap; text-align: left; }'), 'the header and cells are left-aligned');
-  assert.ok(theme.includes('.sm-actions .icon-btn { color: #9aa3b2;') && theme.includes('.sm-actions .icon-btn.is-delete:hover') && theme.includes('color: #c84848;'), 'the icons are soft grey, and delete turns red on hover, like the Programs card');
+  assert.ok(theme.includes('.sm-actions .icon-btn { color: #9aa3b2;') && theme.includes('.sm-actions .icon-btn.is-delete:hover') && theme.includes('color: #d92424;'), 'the icons are soft grey, and delete turns red on hover, like the Programs card');
   const actions = readFileSync(new URL('../components/SubjectActions.jsx', import.meta.url), 'utf8');
   assert.ok(actions.includes('e.stopPropagation()') && actions.includes('onKeyDown: (e) => e.stopPropagation()'), 'clicking a button does not also open the row');
 });
@@ -225,12 +227,12 @@ test('deadline tags and chips keep readable text on their fills (4.5:1)', () => 
     assert.ok(contrast(fg, bg) >= 4.5, status + ': ' + fg + ' on ' + bg + ' = ' + contrast(fg, bg).toFixed(1));
     assert.ok(theme.includes(selector + '::before') || theme.includes(selector + '::before,'), status + ' shows its icon');
   }
-  assert.ok(contrast('#9b1f27', token('tint-crimson')) >= 4.5, 'failed chip note');
+  assert.ok(contrast('#d92424', token('tint-crimson')) >= 4.5, 'failed chip note');
   assert.ok(contrast(token('green-ink'), token('tint-green')) >= 4.5, 'done chip note');
   assert.ok(contrast(token('gold-ink'), token('tint-gold')) >= 4.5, 'due-today chip note');
   assert.ok(contrast(token('muted'), '#ffffff') >= 4.5, 'upcoming chip note');
-  assert.ok(contrast(token('blue'), '#ffffff') >= 4.5, 'the set-a-deadline chip');
-  assert.ok(contrast('#9b1f27', '#ffffff') >= 4.5, 'the failed count in the dialog');
+  assert.ok(contrast(token('blue2'), '#ffffff') >= 4.5, 'the set-a-deadline chip');
+  assert.ok(contrast('#d92424', '#ffffff') >= 4.5, 'the failed count in the dialog');
 });
 
 test('the Deadline column and dialog are wired into the subjects table, shown only once deadlines are set up', () => {
@@ -249,7 +251,7 @@ test('faculty see deadlines on the dashboard card and on each of their syllabi, 
   assert.ok(dash.includes('<UpcomingDeadlines role={user.role}') && !dash.includes('<Deadline day='), 'real deadlines replace the sample ones');
   assert.ok(mine.includes('deadlinesApi.mine()') && mine.includes("user.role !== 'faculty'") && mine.includes('deadlineForCard(deadlines, s)'), 'each faculty syllabus shows its subject\'s deadline');
   assert.ok(contrast('#4b5563', token('tint-cobalt')) >= 4.5 && theme.includes('.deadline.dl-row:hover small { color: #4b5563; }'), 'row notes stay readable on the hover fill');
-  assert.ok(contrast('#9b1f27', token('tint-crimson')) >= 4.5, 'the date box of a missed deadline');
+  assert.ok(contrast('#d92424', token('tint-crimson')) >= 4.5, 'the date box of a missed deadline');
 });
 
 test('the people list has no Remind button on each row (one Remind all does it), and a reminder refreshes who was last reminded', () => {

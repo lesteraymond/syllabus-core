@@ -3,7 +3,7 @@
 //   browser --https--> static frontend  https://localhost:FRONT   (the production build, with VITE_API_URL baked in)
 //   browser --https--> TLS proxy        https://localhost:PROXY   --http--> API 127.0.0.1:API   (adds X-Forwarded-Proto/For, like a real reverse proxy)
 // The API runs the REAL server/index.js with NODE_ENV=staging (so secrets, origins, Secure cookies and proxy trust are enforced exactly as on a staging host),
-// against an isolated scratch MySQL database, with the scripted provider preload (scripts/e2e/offline-provider.cjs). It is labeled LOCAL E2E, never STAGING E2E.
+// against an isolated scratch MySQL database, with the offline provider preload (scripts/e2e/offline-provider.cjs). It is labeled LOCAL E2E, never STAGING E2E.
 // Nothing is read from server/.env or the root .env: the API runs from an empty working directory with an explicit environment.
 const fs = require('node:fs');
 const os = require('node:os');
@@ -29,7 +29,9 @@ function makeCert(dir) {
 }
 
 function build({ outDir, apiUrl, log }) {
-  const env = { ...process.env, VITE_API_URL: apiUrl, VITE_GOOGLE_CLIENT_ID: '' };
+  // VITE_NEW_BUILDER: the Syllabus Builder the app ships (src/App.jsx). Set here so the build never depends on a developer's private .env (a checkout
+  // without one, such as a git worktree, would otherwise build the legacy builder).
+  const env = { ...process.env, VITE_API_URL: apiUrl, VITE_GOOGLE_CLIENT_ID: '', VITE_NEW_BUILDER: 'true' };
   const r = spawnSync(process.execPath, [path.join(ROOT, 'node_modules/vite/bin/vite.js'), 'build', '--outDir', outDir, '--emptyOutDir'], { cwd: ROOT, env, encoding: 'utf8' });
   fs.writeFileSync(log, (r.stdout || '') + (r.stderr || ''));
   if (r.status !== 0) throw new Error('the frontend build failed (see ' + log + ')');
@@ -96,7 +98,7 @@ async function startStack({ ports = { front: Number(process.env.E2E_FRONT_PORT) 
 }
 
 // The REAL server/index.js as NODE_ENV=staging against the isolated scratch database, with the scripted provider preload. Used for the main stack and, with
-// different flags (for example Policy V2 off), for a second API instance that proves official-score parity.
+// different flags, for a second API instance (for example a fresh process for a scenario that must not inherit the main one's state).
 function startApi({ port, work, front, control, providerLog, serverLog, extraEnv = {} }) {
   const empty = path.join(work, 'empty-cwd'); fs.mkdirSync(empty, { recursive: true });
   const env = {
@@ -107,9 +109,11 @@ function startApi({ port, work, front, control, providerLog, serverLog, extraEnv
     DB_E2E_SCRATCH: '1', // server/lib/dbConfig.js: this scratch database is reached as the local root account; honoured only for a local database whose name contains "e2e"
     CORS_ALLOWED_ORIGINS: front, TRUST_PROXY: '1', SESSION_COOKIE_SAMESITE: 'lax',
     SMTP_HOST: '', MAIL_FROM: '', APP_URL: front, GOOGLE_CLIENT_ID: '',
-    SYLLABUS_CHECK_ACADEMIC_V2: 'on', SYLLABUS_CHECK_AI_PROVIDER: 'anthropic', ANTHROPIC_API_KEY: E2E_ANTHROPIC_STAND_IN,
-    ANTHROPIC_MODEL: 'claude-sonnet-5-5', SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL: 'claude-sonnet-5-5', SYLLABUS_CHECK_AI_GATE: 'advisory',
-    SYLLABUS_CHECK_AI_MAX_REQUESTS: '120', SYLLABUS_CHECK_AI_MAX_COST_USD: '10', ANTHROPIC_MAX_RETRIES: '0',
+    // the new AI Checker (pipeline/official.js) as the official AI check, on the direct Anthropic provider, answered by the offline stand-in
+    // (scripts/e2e/fake-anthropic.cjs). The caps are the checker's own guards; the stand-in bills nothing.
+    SYLLABUS_CHECK_REPLAN: 'official', SYLLABUS_CHECK_AI_PROVIDER: 'anthropic', ANTHROPIC_API_KEY: E2E_ANTHROPIC_STAND_IN, ANTHROPIC_MODEL: 'claude-sonnet-5-5',
+    SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL: 'claude-sonnet-5-5', // the one approved model (aiConfig.js): Check & improve and the submission gate need it
+    SYLLABUS_CHECK_REPLAN_MAX_COST_USD: '20', SYLLABUS_CHECK_REFINE_MAX_COST_USD: '5', SYLLABUS_CHECK_AI_GATE: 'advisory', ANTHROPIC_MAX_RETRIES: '0',
     E2E_PROVIDER_CONTROL: control, E2E_PROVIDER_LOG: providerLog,
     ...extraEnv,
   };

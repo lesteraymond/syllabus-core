@@ -67,7 +67,7 @@ const CHAIN = Object.freeze([
   { layer: 3, field: 'ilo', alignsTo: ['content', 'clo'], rewritable: true, note: 'Per week; built from that week\'s content and aligned to one CLO. Week 1 is orientation.' },
   { layer: 4, field: 'activities', alignsTo: ['content', 'ilo'], rewritable: true, note: 'At least 2 alternative options per topic week for diverse learners, at the cognitive level of the ILO\'s verb.' },
   { layer: 5, field: 'tasks', alignsTo: ['content', 'activities', 'ilo'], rewritable: true, note: 'Scored against content and activities, and against the cognitive level of the ILO\'s verb (constructive alignment, 2026-11-17). Whether the tasks fully measure the ILO stays advice (TASK-ILO).' },
-  { layer: 6, field: 'values', alignsTo: ['ilo'], rewritable: true, note: 'Every week, including Week 1 and exam weeks: at least one of the six values that fits the ILO.' },
+  { layer: 6, field: 'values', alignsTo: ['ilo', 'activities'], rewritable: true, note: 'Every week, including Week 1 and exam weeks: at least one of the six values that fits the ILO; it may be practised through the activities (judged with both).' },
   { layer: 7, field: 'references', alignsTo: ['courseTitle'], rewritable: false, note: 'APA 7th; mostly within 5 years (older classics go to faculty review); existence looked up, never invented.' },
 ]);
 const layerOf = field => { const row = CHAIN.find(r => r.field === field); return row ? row.layer : null; };

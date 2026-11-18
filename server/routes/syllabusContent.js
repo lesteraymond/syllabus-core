@@ -422,7 +422,7 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
         const checkContent=compliance.publicationContent(content,content.catalog);
         const checked=await compliance.cachedRun(conn,id,compliance.hashOf(checkContent));
         if (reviewedRunId !== undefined && checked?.run_id !== reviewedRunId) throw httpError(409,'The AI check changed. Open the current result before approving.');
-        if (!checked || checked.created_by !== me.id || !checked.conformant || checked.status !== 'scored' || checked.ai_status !== 'ok') throw httpError(409,'Check the current saved form in AI Checker and wait for Gemini alignment to finish before sending it for review.');
+        if (!checked || checked.created_by !== me.id || !checked.conformant || checked.status !== 'scored' || checked.ai_status !== 'ok') throw httpError(409,'Check the current saved form in the AI Checker and wait for its AI alignment check to finish before sending it for review.');
       }
       if (publishing) {
         // The dean's own syllabus is not approved here: only the VPAA approves. Sending it for review records the checked revision and clears

@@ -7,38 +7,22 @@ const repo = require('../lib/syllabuscheck/repository');
 const { readReport } = repo;
 const { assertRecordReview } = require('../lib/programPoReferences');
 const { canView, canEdit, isOwner, lockedMessage } = require('../lib/syllabusRules');
-const { providerConfig, promptVersionOf } = require('../lib/syllabuscheck/gemini');
+const { providerConfig } = require('../lib/syllabuscheck/aiConfig');
 const refine = require('../lib/syllabuscheck/refine');
 const replanRefine = require('../lib/syllabuscheck/pipeline/refine'); // Check & improve for the re-planned checker's drafts
 const replanPrompt = require('../lib/syllabuscheck/pipeline/prompt');
-const { createVerificationToken, verifyVerificationToken, getValue, relatedContextHash } = refine;
+const { createVerificationToken, relatedContextHash } = refine;
 const { createLimiter } = require('../lib/rateLimit'); const { aiQuota, MESSAGES: AI_LIMIT } = require('../lib/aiQuota'); // the daily ceilings on AI requests
 const { aiGate } = require('../lib/syllabuscheck/policy');
 const activity = require('../lib/activity');
 const router = express.Router();
 router.use(requireAuth);
+const OLD_CHECKER_RETIRED = 'This check was made by the old AI Checker, which is no longer used. Run Check with AI again to get the new AI Checker\'s drafts.';
 const wrap = fn => async (req, res) => { try { await fn(req, res); } catch (error) { sendError(res, error); } };
 const id = raw => { const value = Number(raw); if (!Number.isSafeInteger(value) || value <= 0) throw httpError(400, 'Invalid id'); return value; };
 router.get('/status', wrap(async (req, res) => {
   const { provider, model, configured } = providerConfig();
   res.json({ provider: configured ? provider : null, selectedProvider: provider || null, model, configured, aiGate: aiGate(), mandatory: aiGate() === 'required' });
-}));
-// No production setup installs this capability. The offline integration harness
-// can supply static replay data; neither request bodies nor stage flags can turn
-// the preview on. It is read-only and never creates a run or decision.
-router.post('/syllabi/:id/academic-v2-preview', wrap(async (req,res)=>{
-  const replays=req.app.locals.academicV2OfflinePreviews;
-  if(!(replays instanceof Map))throw httpError(404,'Policy V2 preview is inactive.');
-  const syllabusId=id(req.params.id),replay=replays.get(syllabusId);
-  if(!replay)throw httpError(404,'No isolated replay is installed for this syllabus.');
-  const [rows]=await req.app.locals.db.query('SELECT * FROM syllabi WHERE syllabus_id = ?',[syllabusId]);
-  const syllabus=rows[0];
-  if(!syllabus||!canView(req.session.user,syllabus))throw httpError(404,'Syllabus not found');
-  await assertActiveYear(req.app.locals.db,syllabus);
-  let content;try{content=JSON.parse(syllabus.content);}catch{throw httpError(409,'No saved structured form is available.');}
-  const v2=require('../lib/syllabuscheck/academicPolicyV2');
-  const report=await require('../lib/compliance/service').checkHybrid(req.app.locals.db,content,{academicPolicy:v2.POLICY.id,offlineReplay:replay,syllabusId});
-  res.json(report);
 }));
 router.get('/references', requireAdmin, wrap(async (req, res) => {
   const [rows] = await req.app.locals.db.query('SELECT reference_id AS id, program_code AS program, curriculum_year AS curriculumYear, status, source, courses_json FROM syllabus_check_curricula ORDER BY reference_id');
@@ -95,67 +79,15 @@ router.post('/runs/:id/decisions', wrap(async (req, res) => {
   if (!['accept', 'edit', 'reject', 'undo'].includes(body.action)) throw httpError(400, 'Choose Accept, Edit, Reject or Undo');
   // A new decision acts on what the report said about references the faculty still has to review. Reading the report and its past decisions stays open (GET above).
   await assertRecordReview(req.app.locals.db, syllabus.syllabus_id);
-  const allSuggestions = [
-    ...(report.hybrid?.suggestions || []),
-    ...(report.hybrid?.academicV2?.academic?.suggestions || []),
-    ...(report.hybrid?.academicV2?.suggestions || []),
-    ...(report.academic?.suggestions || [])
-  ];
+  // a draft of the old AI Checker is not recorded any more: the author runs the check again (the old checker was removed)
+  if (!replanRefine.isReplanned(report)) throw httpError(409, OLD_CHECKER_RETIRED, { code: 'old_checker_retired' });
+  const allSuggestions = report.hybrid?.suggestions || [];
   const suggestion = allSuggestions.find(s => s.id === body.suggestionId);
   if (!suggestion) throw httpError(400, 'Unknown draft suggestion');
   if (body.action === 'edit' && (typeof body.editedText !== 'string' || !body.editedText.trim() || body.editedText.length > 10000 || typeof suggestion.replacement !== 'string')) throw httpError(400, 'Provide a draft revision of 1–10000 characters.');
 
-  let verification = null;
-  const isPolicyV2 = !!(suggestion.policy || report.evaluationPolicy || report.hybrid?.academicV2);
-  if (isPolicyV2 && (body.action === 'accept' || body.action === 'edit')) {
-    const textToApply = body.action === 'edit' ? body.editedText : suggestion.replacement;
-    let content = null;
-    try { content = JSON.parse(syllabus.content); } catch { content = null; }
-    if (content && suggestion.path) {
-      const current = getValue(content, suggestion.path);
-      if (current !== undefined && current !== suggestion.originalValue && current !== textToApply) {
-        throw httpError(409, 'This field changed in the syllabus since the recommendation was checked. Run the check again.');
-      }
-    }
-    const masters = await repo.mastersFor(req.app.locals.db, content, { syllabusId: syllabus.syllabus_id });
-    const contextHash = relatedContextHash(content, masters, suggestion.path);
-    verification = verifyVerificationToken(body.verificationToken, {
-      runId,
-      suggestionId: suggestion.id,
-      syllabusId: syllabus.syllabus_id,
-      path: suggestion.path,
-      originalValue: suggestion.originalValue,
-      replacement: textToApply,
-      contextHash
-    });
-    if (!verification.valid && verification.reason === 'secret_not_configured') throw httpError(503, refine.SECRET_MESSAGE);
-    if (!verification.valid) {
-      if (verification.reason === 'expired') {
-        throw httpError(409, 'Verification token has expired. Run Check & improve again.');
-      }
-      if (verification.reason === 'context_drift') {
-        throw httpError(409, 'Related academic content changed since this recommendation was checked. Run Check & improve again.');
-      }
-      throw httpError(409, 'Policy V2 recommendations must be verified with Check & Improve before being accepted or applied.');
-    }
-    req.app.locals.consumedVerificationTokens = req.app.locals.consumedVerificationTokens || new Set();
-    if (req.app.locals.consumedVerificationTokens.has(verification.sig)) {
-      throw httpError(409, 'This verification token has already been applied. Run Check & improve again.');
-    }
-    // Synchronously reserve token before any async operation to prevent concurrent double-consumption race
-    req.app.locals.consumedVerificationTokens.add(verification.sig);
-  }
-
   // Append-only human decision. The author explicitly applies the returned draft using the builder.
-  let saved;
-  try {
-    [saved] = await req.app.locals.db.query('INSERT INTO syllabus_check_decisions (run_id, suggestion_id, action, edited_text, user_id) VALUES (?, ?, ?, ?, ?)', [runId, suggestion.id, body.action, body.action === 'edit' ? body.editedText : null, req.session.user.id]);
-  } catch (dbErr) {
-    if (verification?.sig) {
-      req.app.locals.consumedVerificationTokens.delete(verification.sig);
-    }
-    throw dbErr;
-  }
+  const [saved] = await req.app.locals.db.query('INSERT INTO syllabus_check_decisions (run_id, suggestion_id, action, edited_text, user_id) VALUES (?, ?, ?, ?, ?)', [runId, suggestion.id, body.action, body.action === 'edit' ? body.editedText : null, req.session.user.id]);
   await activity.record(req.app.locals.db, { syllabusId: syllabus.syllabus_id, userId: req.session.user.id, action: 'recommend', notes: activity.decisionNote(body.action, suggestion.path) });
   res.status(201).json({ id: saved.insertId, action: body.action, draft: (body.action === 'reject' || body.action === 'undo') ? null : { path: suggestion.path, replacement: body.action === 'edit' ? body.editedText : suggestion.replacement } });
 }));
@@ -170,32 +102,20 @@ router.post('/runs/:id/suggestions/:suggestionId/refine', wrap(async (req, res) 
   if (!isOwner(me, syllabus)) throw httpError(403, 'Only the author can check and improve a recommendation.');
   if (!canEdit(me, syllabus)) throw httpError(409, lockedMessage(syllabus));
   await assertActiveYear(req.app.locals.db, syllabus); // an AI request: only for the active academic year (lib/activeYearGate.js)
-  const allSuggestions = [
-    ...((report.hybrid && report.hybrid.suggestions) || []),
-    ...(report.hybrid?.academicV2?.academic?.suggestions || []),
-    ...(report.hybrid?.academicV2?.suggestions || []),
-    ...(report.academic?.suggestions || [])
-  ];
+  const allSuggestions = report.hybrid?.suggestions || [];
   const suggestion = allSuggestions.find(s => s.id === req.params.suggestionId);
   if (!suggestion) throw httpError(400, 'Unknown draft suggestion');
   // Every refinement is an AI request: none while the administrator has turned AI checking off (lib/adminSettings.js)
   if (!(await require('../lib/adminSettings').policy(req.app.locals.db)).aiChecking) throw httpError(409, require('../lib/adminSettings').AI_OFF_REFUSAL, { code: 'ai_checking_off' });
-  const { model, configured } = providerConfig();
+  const { configured } = providerConfig();
   if (!configured) throw httpError(503, 'No active AI provider is configured.');
   if (!refine.signingSecret()) throw httpError(503, refine.SECRET_MESSAGE); // before any AI request is spent
-  // A draft of the re-planned checker (official mode) is checked by that checker (pipeline/refine.js), against its own prompt version; any other
-  // draft by the old checker, as before. Without this, every new-checker draft was refused here as "made by an older checker version".
-  const replanned = replanRefine.isReplanned(report);
-  if (replanned) {
-    const limits = replanRefine.refineLimits(process.env);
-    if (!limits.ok) throw httpError(409, 'This check was made by the new AI Checker, which is not active on this server now. Run the check again first.');
-    if ((report.hybrid.alignment.promptVersion || '') !== replanPrompt.PROMPT_VERSION) throw httpError(409, 'This check was made by an older checker version. Run the check again first.');
-  }
-  const promptVer = report.hybrid?.alignment?.promptVersion || '';
-  const expectedVer = promptVersionOf(model);
-  if (!replanned && promptVer && promptVer !== expectedVer && !report.evaluationPolicy && !report.hybrid?.academicV2 && !suggestion.policy) {
-    throw httpError(409, 'This check was made by an older checker version. Run the check again first.');
-  }
+  // Only a draft of the new AI Checker is checked, by that checker (pipeline/refine.js) against its own prompt version. The old checker's Check & improve
+  // (refine.js refineSuggestion) was removed with the old AI Checker: its drafts are refused.
+  if (!replanRefine.isReplanned(report)) throw httpError(409, OLD_CHECKER_RETIRED, { code: 'old_checker_retired' });
+  const limits = replanRefine.refineLimits(process.env);
+  if (!limits.ok) throw httpError(409, 'This check was made by the new AI Checker, which is not active on this server now. Run the check again first.');
+  if ((report.hybrid.alignment.promptVersion || '') !== replanPrompt.PROMPT_VERSION) throw httpError(409, 'This check was made by an older checker version. Run the check again first.');
   let content = null;
   try { content = JSON.parse(syllabus.content); } catch { content = null; }
   if (!content) throw httpError(409, 'There is no saved form to check.');
@@ -212,9 +132,7 @@ router.post('/runs/:id/suggestions/:suggestionId/refine', wrap(async (req, res) 
     const effectiveSuggestion = editedText && typeof suggestion.replacement === 'string'
       ? { ...suggestion, replacement: editedText, userEdited: editedText !== suggestion.replacement }
       : suggestion;
-    const out = replanned
-      ? await replanRefine.refineDraft({ content, masters, suggestion: effectiveSuggestion, env: process.env, db: req.app.locals.db })
-      : await refine.refineSuggestion({ content, masters, report, suggestion: effectiveSuggestion });
+    const out = await replanRefine.refineDraft({ content, masters, suggestion: effectiveSuggestion, env: process.env, db: req.app.locals.db });
     if (out && out.status === 'verified') {
       const contextHash = relatedContextHash(content, masters, suggestion.path);
       out.verificationToken = createVerificationToken({
@@ -233,181 +151,6 @@ router.post('/runs/:id/suggestions/:suggestionId/refine', wrap(async (req, res) 
   } finally { refining.delete(req.app); }
 }));
 
-// --- Coordinated Improvement Plan Routes ---
-const coordinatedPlanEngine = require('../lib/syllabuscheck/coordinatedPlanEngine');
-const contentRevision = require('../lib/contentRevision');
-const compliance = require('../lib/compliance/service');
-const { applyCatalog, MAX_CONTENT_BYTES } = require('./syllabusContent');
-const subjectLock = require('../lib/subjectLock');
-const assignments = require('../lib/assignments');
-const accountActivity = require('../lib/accountActivity');
-const { inTransaction } = require('../lib/http');
-
-router.get('/runs/:id/improvement-plan', wrap(async (req, res) => {
-  const { runId, syllabus, report } = await visibleRun(req);
-  let plan = report.hybrid?.improvementPlan || null;
-  if (!plan && coordinatedPlanEngine.enabled(process.env) && !replanRefine.isReplanned(report)) {
-    try {
-      let content = null;
-      try { content = JSON.parse(syllabus.content); } catch { content = null; }
-      if (content) {
-        const masters = await repo.mastersFor(req.app.locals.db, content, { syllabusId: syllabus.syllabus_id });
-        plan = coordinatedPlanEngine.buildPlan({
-          content,
-          masters,
-          syllabusId: syllabus.syllabus_id,
-          result: report,
-          env: process.env,
-        });
-      }
-    } catch {
-      plan = null;
-    }
-  }
-  res.json({ plan });
-}));
-
-router.post('/runs/:id/improvement-plan/apply', wrap(async (req, res) => {
-  const me = req.session.user;
-  const { runId, syllabus, report } = await visibleRun(req);
-
-  // Author and editable state checks
-  if (!isOwner(me, syllabus)) throw httpError(403, 'Only the author can apply an improvement plan.');
-  if (!canEdit(me, syllabus)) throw httpError(409, lockedMessage(syllabus));
-  if (syllabus.status === 'approved') throw httpError(409, 'Approved syllabi are immutable and cannot be modified.');
-
-  await assertActiveYear(req.app.locals.db, syllabus);
-  await assertRecordReview(req.app.locals.db, syllabus.syllabus_id);
-
-  let plan = report.hybrid?.improvementPlan || null;
-  if (!plan && coordinatedPlanEngine.enabled(process.env) && !replanRefine.isReplanned(report)) {
-    let content = null;
-    try { content = JSON.parse(syllabus.content); } catch { content = null; }
-    if (content) {
-      const masters = await repo.mastersFor(req.app.locals.db, content, { syllabusId: syllabus.syllabus_id });
-      plan = coordinatedPlanEngine.buildPlan({
-        content,
-        masters,
-        syllabusId: syllabus.syllabus_id,
-        result: report,
-        env: process.env,
-      });
-    }
-  }
-
-  if (!plan) throw httpError(404, 'No coordinated improvement plan is available for this check.');
-  if (req.body?.planId && req.body.planId !== plan.planId) {
-    throw httpError(400, 'The specified planId does not match this check run.');
-  }
-
-  const result = await inTransaction(req.app.locals.db, async (conn) => {
-    const [rows] = await conn.query(
-      'SELECT syllabus_id, user_id, status, title, course_code, content, course_id, archived_at, content_schema_version FROM syllabi WHERE syllabus_id = ? FOR UPDATE',
-      [syllabus.syllabus_id]
-    );
-    const syl = rows[0];
-    if (!syl || !canView(me, syl)) throw httpError(404, 'Syllabus not found');
-    if (!isOwner(me, syl)) throw httpError(403, 'Only the author can edit syllabus content');
-    if (!canEdit(me, syl)) throw httpError(409, lockedMessage(syl));
-    if (syl.status === 'approved') throw httpError(409, 'Approved syllabi are immutable and cannot be modified.');
-
-    await assignments.requireCourseAccess(conn, me, syl.course_id);
-
-    let current = {};
-    if (syl.content) { try { current = JSON.parse(syl.content); } catch { current = {}; } }
-
-    const clientHash = req.body?.sourceHash;
-    if (clientHash && clientHash !== plan.sourceHash) {
-      throw httpError(409, 'The improvement plan source version does not match the client version. Run Check with AI again.', {
-        code: 'stale_syllabus_version',
-        clientHash,
-        planHash: plan.sourceHash,
-      });
-    }
-
-    const currentHash = compliance.hashOf(current);
-    if (currentHash !== plan.sourceHash) {
-      throw httpError(409, 'Syllabus content has changed since this improvement plan was generated. Run Check with AI again.', {
-        code: 'stale_syllabus_version',
-        currentHash,
-        expectedHash: plan.sourceHash,
-      });
-    }
-
-    const approvedIds = Array.isArray(req.body?.approvedChangeIds) && req.body.approvedChangeIds.length > 0
-      ? req.body.approvedChangeIds
-      : null;
-
-    const candidateContent = coordinatedPlanEngine.applyChanges(current, plan.changes, approvedIds);
-
-    if (candidateContent.meta && Number.isInteger(candidateContent.meta.courseId)) {
-      await assignments.requireCourseAccess(conn, me, candidateContent.meta.courseId);
-    }
-    const course = await applyCatalog(conn, candidateContent, me, current);
-    if (course && course.id !== syl.course_id) {
-      await subjectLock.assertSubjectFree(conn, me, course.id, syl.syllabus_id);
-    }
-
-    const json = JSON.stringify(candidateContent);
-    const maxBytes = MAX_CONTENT_BYTES || (512 * 1024);
-    if (Buffer.byteLength(json, 'utf8') > maxBytes) {
-      throw httpError(413, `This syllabus is too large to save (limit ${maxBytes / 1024} KB)`);
-    }
-
-    const title = candidateContent.meta && typeof candidateContent.meta.title === 'string' ? candidateContent.meta.title : syl.title;
-    const code = candidateContent.meta && typeof candidateContent.meta.code === 'string' ? candidateContent.meta.code : syl.course_code;
-    const version = syl.content_schema_version || 2;
-
-    await conn.query(
-      'UPDATE syllabi SET content = ?, content_schema_version = ?, content_updated_at = NOW(), title = ?, course_code = ?, course_id = ? WHERE syllabus_id = ?',
-      [json, version, title, code, course ? course.id : null, syl.syllabus_id]
-    );
-
-    const toApply = Array.isArray(approvedIds)
-      ? plan.changes.filter(c => approvedIds.includes(c.changeId) || approvedIds.includes(c.id))
-      : plan.changes;
-
-    for (const c of toApply) {
-      const suggestionId = c.sourceSuggestionId || c.changeId;
-      await conn.query(
-        'INSERT INTO syllabus_check_decisions (run_id, suggestion_id, action, edited_text, user_id) VALUES (?, ?, ?, ?, ?)',
-        [runId, suggestionId, 'accept', null, me.id]
-      );
-    }
-
-    await activity.record(conn, {
-      syllabusId: syl.syllabus_id,
-      userId: me.id,
-      action: 'recommend',
-      notes: `Applied whole-syllabus improvement plan (${toApply.length} coordinated changes applied).`,
-    });
-
-    return {
-      applied: true,
-      planId: plan.planId,
-      appliedCount: toApply.length,
-      appliedChanges: toApply.map(c => c.changeId),
-      revisions: contentRevision.revisionsOf(candidateContent),
-      subject: accountActivity.subjectLine(code, title),
-      status: syl.status,
-    };
-  });
-
-  await accountActivity.recordEdit(req.app.locals.db, {
-    userId: me.id,
-    syllabusId: syllabus.syllabus_id,
-    subject: result.subject,
-    notes: result.status,
-  });
-
-  res.json({
-    applied: true,
-    planId: result.planId,
-    appliedCount: result.appliedCount,
-    appliedChanges: result.appliedChanges,
-    revisions: result.revisions,
-  });
-}));
 
 
 module.exports = router;

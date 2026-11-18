@@ -68,7 +68,6 @@ export default function UploadPanel({ draft, hasCourse, busy, disabled, disabled
     // Let the click explain missing prerequisites instead of silently disabling
     // the action. The API remains authoritative for availability and access.
     if (!file) { setError('pdfImport.chooseFile'); return; }
-    if (!hasCourse) { setError('pdfImport.chooseSubject'); return; }
     if (enabled === false) { setError('pdfImport.disabled'); return; }
     return perform(async () => {
       const value = await onExtract(file);
@@ -98,7 +97,6 @@ export default function UploadPanel({ draft, hasCourse, busy, disabled, disabled
       <h2 id="up-title">{t('pdfImport.title')}</h2>
       <p>{t('pdfImport.intro')}</p>
     </div></div>
-    {!hasCourse && <div className="info-banner warning">{t('pdfImport.chooseSubject')}{' '}<button type="button" className="link-btn" onClick={onChooseCourse}>{t('pdfImport.choose')}</button></div>}
     {disabled && <div className="info-banner warning" role="status">{disabledReason ? tr(disabledReason) : t('pdfImport.readOnly')}</div>}
     {enabled === null && !configError && <p role="status">{t('pdfImport.availabilityLoading')}</p>}
     {configError && <div className="info-banner warning" role="alert">{t('pdfImport.availabilityFailed')}{' '}<StableButton type="button" className="btn outline" disabled={blocked} onClick={() => setConfigAttempt(n => n + 1)}>{t('pdfImport.retry')}</StableButton></div>}

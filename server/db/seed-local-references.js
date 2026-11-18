@@ -4,7 +4,10 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const assert = require('node:assert/strict');
 require('dotenv').config({ path: path.join(__dirname, '../.env'), quiet: true });
-const { programs } = require('./local-curriculum-data.cjs');
+const { programs: allPrograms } = require('./local-curriculum-data.cjs');
+// Optional: SEED_PROGRAMS=BSIT,BSIE,BSCPE seeds only those programs (the default is all of them).
+const only = process.env.SEED_PROGRAMS ? new Set(process.env.SEED_PROGRAMS.split(',').map(x => x.trim())) : null;
+const programs = only ? allPrograms.filter(p => only.has(p.code)) : allPrograms;
 const { sources } = require('./local-outcome-data.cjs');
 const officialPoReferences = require('../../src/data/officialProgramOutcomes.json');
 const { migrate } = require('./migrate-course-program-codes');

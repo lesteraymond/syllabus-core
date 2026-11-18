@@ -23,5 +23,4 @@ function identityOf(meta, masters, sets, course) {
 // Relationships whose answer is a claim about THIS course (the CLOs, weekly topics, description and sequence fit the course). Without a verified
 // identity they make no claim: never a PASS and never a rewrite, even as provisional feedback. Every other check (fields, structure, the ILO chain
 // inside a lesson) does not depend on the course identity. The deterministic checks always run.
-const NEEDS_IDENTITY = new Set(['Course-CLO', 'CLO-set', 'Content-course', 'Description-plan', 'Plan-sequence', ...require('./requirementsAdvice').TYPES]);
-module.exports = { identityOf, NEEDS_IDENTITY, normCode };
+module.exports = { identityOf, normCode };

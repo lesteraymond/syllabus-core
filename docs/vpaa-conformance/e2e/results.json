@@ -1,20 +1,20 @@
 {
   "summary": {
-    "label": "LOCAL E2E (staging-like topology: https frontend, TLS proxy, NODE_ENV=staging server, isolated scratch database, scripted provider). Not a staging E2E; no live Claude request.",
+    "label": "LOCAL E2E (staging-like topology: https frontend, TLS proxy, NODE_ENV=staging server, isolated scratch database, the new AI Checker on an offline stand-in for the Anthropic API). Not a staging E2E; no live Claude request.",
     "browser": "Microsoft Edge (Chromium) via playwright-core",
     "node": "v26.12.1",
-    "finishedAt": "2026-11-05T14:47:03.975Z",
+    "finishedAt": "2026-11-17T22:38:39.032Z",
     "scenarios": {
-      "total": 24,
-      "passed": 24,
+      "total": 25,
+      "passed": 25,
       "failed": 0
     },
     "checks": {
-      "total": 395,
-      "passed": 395,
+      "total": 457,
+      "passed": 457,
       "knownDefects": 0
     },
-    "providerRequests": 101,
+    "providerRequests": 178,
     "blockedNetwork": 0
   },
   "results": [
@@ -33,7 +33,7 @@
         },
         {
           "ok": true,
-          "message": "an unregistered account is refused with its own message"
+          "message": "an unregistered account gets the same message as a wrong password (the reply does not say which emails are registered)"
         },
         {
           "ok": true,
@@ -53,7 +53,7 @@
         },
         {
           "ok": true,
-          "message": "CORS answers the configured frontend origin only, with credentials ({\"origin\":\"https://localhost:4304\",\"credentials\":\"true\",\"vary\":\"Origin\"})"
+          "message": "CORS answers the configured frontend origin only, with credentials ({\"origin\":\"https://localhost:3664\",\"credentials\":\"true\",\"vary\":\"Origin\"})"
         },
         {
           "ok": true,
@@ -85,7 +85,7 @@
         "docs/vpaa-conformance/e2e/E01-faculty-dashboard-1440.png"
       ],
       "failed": false,
-      "ms": 7714
+      "ms": 7377
     },
     {
       "id": "E02",
@@ -103,6 +103,14 @@
         {
           "ok": true,
           "message": "the form lists what is still missing before Step 1 can be completed (form validation)"
+        },
+        {
+          "ok": true,
+          "message": "faculty cannot edit the year level or pre-requisite"
+        },
+        {
+          "ok": true,
+          "message": "the administrator's year level and pre-requisite are filled in"
         },
         {
           "ok": true,
@@ -160,11 +168,11 @@
         "docs/vpaa-conformance/e2e/E02-builder-review-1440.png"
       ],
       "failed": false,
-      "ms": 16086
+      "ms": 17724
     },
     {
       "id": "E03",
-      "title": "Faculty runs the checker on the draft: official compliance score, six areas, all seven VPAA relationships, advisory only",
+      "title": "Faculty runs the new AI Checker on the draft: official score with the AI points, all seven VPAA relationships evaluated, the scripted gap and its verified draft",
       "status": "PASS",
       "checks": [
         {
@@ -173,51 +181,63 @@
         },
         {
           "ok": true,
-          "message": "relationship Content-course is evaluated and rendered"
+          "message": "the official score is the no-AI base score minus the scripted gap's 1 point, and the page shows it (99 = 100 - 1)"
         },
         {
           "ok": true,
-          "message": "relationship Content-ILO is evaluated and rendered"
+          "message": "the AI part was made by the new AI Checker on the approved provider and model (re-planned · anthropic · claude-sonnet-5-5 · replan-prompt-6)"
         },
         {
           "ok": true,
-          "message": "relationship ILO-CLO is evaluated and rendered"
+          "message": "the report has no old-checker part (no Policy V2, no whole-syllabus or coordinated plan)"
         },
         {
           "ok": true,
-          "message": "relationship Content-activity is evaluated and rendered"
+          "message": "VPAA relationship Content-course is evaluated by the new checker"
         },
         {
           "ok": true,
-          "message": "relationship ILO-activity is evaluated and rendered"
+          "message": "VPAA relationship Content-ILO is evaluated by the new checker"
         },
         {
           "ok": true,
-          "message": "relationship Content-assessment is evaluated and rendered"
+          "message": "VPAA relationship ILO-CLO is evaluated by the new checker"
         },
         {
           "ok": true,
-          "message": "relationship Activity-assessment is evaluated and rendered"
+          "message": "VPAA relationship Content-activity is evaluated by the new checker"
         },
         {
           "ok": true,
-          "message": "the page states that the academic alignment is advisory only"
+          "message": "VPAA relationship ILO-activity is evaluated by the new checker"
         },
         {
           "ok": true,
-          "message": "the AI status shows the approved provider and model (scripted) as Evaluated"
+          "message": "VPAA relationship Content-assessment is evaluated by the new checker"
         },
         {
           "ok": true,
-          "message": "a draft preview offers no automatic correction"
+          "message": "VPAA relationship Activity-assessment is evaluated by the new checker"
         },
         {
           "ok": true,
-          "message": "the scripted gaps are reported as findings (Requires revision / Faculty review)"
+          "message": "all seven VPAA relationships were evaluated, so the page shows no incomplete-coverage warning"
         },
         {
           "ok": true,
-          "message": "the provider was reached only through the scripted double, and every request was counted by the shared budget (20 request(s), budget counted 20 of 120)"
+          "message": "the scripted gap is shown with its relationship, verdict, points and explanation"
+        },
+        {
+          "ok": true,
+          "message": "the repair plan offers a verified draft for the Week 2 activities (VERIFIED plan[1].activities)"
+        },
+        {
+          "ok": true,
+          "message": "the draft offers Accept, Check & improve and Reject; nothing is applied automatically"
+        },
+        {
+          "ok": true,
+          "message": "the provider was reached only through the offline stand-in, and every request was counted by the check's spend cap (23 request(s), cap counted 23 of 80)"
         },
         {
           "ok": true,
@@ -245,7 +265,7 @@
         "docs/vpaa-conformance/e2e/E03-faculty-checker-1440.png"
       ],
       "failed": false,
-      "ms": 8276
+      "ms": 5082
     },
     {
       "id": "E04",
@@ -296,11 +316,11 @@
       "notes": [],
       "evidence": [],
       "failed": false,
-      "ms": 11899
+      "ms": 8624
     },
     {
       "id": "E05",
-      "title": "Administrator runs the official check: six weighted areas, 100% against 79, seven VPAA relationships, advisory panel, read-only for content",
+      "title": "Administrator runs the official check: six weighted areas, the score with the AI points against 79, seven VPAA relationships evaluated, the finding read-only for the administrator and for content",
       "status": "PASS",
       "checks": [
         {
@@ -313,7 +333,7 @@
         },
         {
           "ok": true,
-          "message": "the official result is 100% and meets the standard"
+          "message": "the official result meets the standard: the base score minus the scripted gap's point (99%)"
         },
         {
           "ok": true,
@@ -341,31 +361,7 @@
         },
         {
           "ok": true,
-          "message": "relationship Content-course appears in the saved report view"
-        },
-        {
-          "ok": true,
-          "message": "relationship Content-ILO appears in the saved report view"
-        },
-        {
-          "ok": true,
-          "message": "relationship ILO-CLO appears in the saved report view"
-        },
-        {
-          "ok": true,
-          "message": "relationship Content-activity appears in the saved report view"
-        },
-        {
-          "ok": true,
-          "message": "relationship ILO-activity appears in the saved report view"
-        },
-        {
-          "ok": true,
-          "message": "relationship Content-assessment appears in the saved report view"
-        },
-        {
-          "ok": true,
-          "message": "relationship Activity-assessment appears in the saved report view"
+          "message": "the saved report has all seven VPAA relationships evaluated"
         },
         {
           "ok": true,
@@ -373,7 +369,11 @@
         },
         {
           "ok": true,
-          "message": "the advisory panel states that it has no numeric score or passing mark"
+          "message": "the administrator sees the new checker's finding and its verdict"
+        },
+        {
+          "ok": true,
+          "message": "the administrator can read the recommendation but not accept it (only the author can)"
         },
         {
           "ok": true,
@@ -400,12 +400,14 @@
           "message": "E05: no request left this machine (none blocked)"
         }
       ],
-      "notes": [],
+      "notes": [
+        "administrator report text: "
+      ],
       "evidence": [
         "docs/vpaa-conformance/e2e/E05-admin-official-check-1440.png"
       ],
       "failed": false,
-      "ms": 8590
+      "ms": 6782
     },
     {
       "id": "E06",
@@ -458,7 +460,7 @@
         "docs/vpaa-conformance/e2e/E06-review-document-1440.png"
       ],
       "failed": false,
-      "ms": 10844
+      "ms": 9904
     },
     {
       "id": "E07",
@@ -471,11 +473,11 @@
         },
         {
           "ok": true,
-          "message": "the official report offers a corrections section"
+          "message": "the official report offers its recommendations section, with the one draft"
         },
         {
           "ok": true,
-          "message": "the scripted gaps produce at least one correction recommendation"
+          "message": "the scripted gap's verified draft is offered to the author"
         },
         {
           "ok": true,
@@ -495,13 +497,13 @@
         }
       ],
       "notes": [
-        "buttons on the faculty checker after the return: REPORTS | SETTINGS | 1 | TF Test Faculty Faculty | Log out | Previous and current year · current: 2026–2027 | IT 204 — Computer Programming 2 | Edit Syllabus | Re-Check again | Accept | Check & improve | Reject | Submit new version to Admin"
+        "buttons on the faculty checker after the return: REPORTS | SETTINGS | 1 | TF Test Faculty Faculty | Log out | 2026–2027 | IT 204 — Computer Programming 2 | Edit Syllabus | Re-Check again | Accept | Check & improve | Reject | Submit new version to Admin"
       ],
       "evidence": [
         "docs/vpaa-conformance/e2e/E07-faculty-after-return-1440.png"
       ],
       "failed": false,
-      "ms": 7205
+      "ms": 6614
     },
     {
       "id": "E08",
@@ -518,7 +520,7 @@
         },
         {
           "ok": true,
-          "message": "Check & improve asked the (scripted) provider to verify the proposed wording"
+          "message": "Check & improve verified the draft with the new checker: it fixes the gap and makes nothing worse"
         },
         {
           "ok": true,
@@ -558,17 +560,18 @@
         }
       ],
       "notes": [
-        "after Check & improve: Corrections for human review Correction target: learning_activity · plan[0].activities. Scripted revised text for faculty review. row0-ilo0-activity · Requires faculty review; never applied automatically Correction target: course_content · plan[0].contents. Scripted test-double reason. row0-contentassessment · Requires faculty review; never applied automatically Scope and limitations Structured syllabus and text-based references; visual APA formatting and source authenticity are not established. Advisory academic alignment has no numeric score, deductions or submission-gate effect. Recommendations require faculty review; syllabus content and mappings are never changed automatically. The offi",
-        "recommendation card after Check & improve: Suggested alignment revision | Step 3: Learning Plan · Learning plan (Row 1) | Why this is suggested: fixes 1 | ILO-activity | Partly aligned | −1 points | In plan[0].ilos[0].text |  | Scripted: the activity does not yet practise the week's content. |  | FROM THE SYLLABUS | Explain topic numb | COMPARED WITH | Lecture 1 | EDIT PROPOSED TEXT |  | Checked against 2 related items: 1 improve and none get worse. It is safe to accept. |  | Accept | Check & improve | Reject || disabled: Accept=false, Check & improve=false, Reject=false",
-        "after Accept buttons: 1 | TF\nTest Faculty\nFaculty | Log out | Previous and current year · current: 2026–2027 | IT 204 — Computer Programming 2 | Edit Syllabus | Re-Check again | Undo change | Submit new version to Admin",
-        "syllabus-check calls: POST /api/syllabus-check/runs/3/suggestions/SEM%3Arow0-ilo0-activity/refine 200 :: {\"status\":\"verified\",\"usedRewrite\":false,\"text\":\"Scripted revised text for faculty review.\",\"stats\":{\"checked\":2,\"improved\":1,\"worse\":0,\"same\":1,\"unverified\":0,\"points\":-1},\"blockers\":[],\"verificationToken\":\"<redacted>\"} || POST /api/syllabus-check/runs/3/decisions 201 :: {\"id\":1,\"action\":\"accept\",\"draft\":{\"path\":\"plan[0].activities\",\"replacement\":\"Scripted revised text for faculty review.\"}} || POST /api/syllabus-check/runs/3/decisions 201 :: {\"id\":2,\"action\":\"undo\",\"draft\":null}",
+        "provider requests during Check & improve: 0",
+        "after Check & improve: AI Recommendation (1) Accept applies and saves the displayed recommendation. Edit and apply saves your revision. You can accept other recommendations whose target fields are unchanged. Click Re-Check again when ready for a new score. Suggested alignment revision Step 3: Learning Plan · Learning plan (Row 2) Why this is suggested: fixes 1 ACTIVITY-FIT Partly aligned −1 points In plan[1].activities Scripted: the activities do not let students practise the ILO at its level. From the syllabus - Lecture-discussion on week Edit proposed text Checked against 4 related items: 1 improve and none get worse. It is safe to accept. Accept Check & improve Reject Check coverage: 69 of 81 catalogue entries verified What did you change? (required) Write at least a sentence so the reviewer knows what to look at. Submit new version to Admin",
+        "recommendation card after Check & improve: Suggested alignment revision | Step 3: Learning Plan · Learning plan (Row 2) | Why this is suggested: fixes 1 | ACTIVITY-FIT | Partly aligned | −1 points | In plan[1].activities |  | Scripted: the activities do not let students practise the ILO at its level. |  | From the syllabus | - Lecture-discussion on week | Edit proposed text |  | Checked against 4 related items: 1 improve and none get worse. It is safe to accept. |  | Accept | Check & improve | Reject || disabled: Accept=false, Check & improve=false, Reject=false",
+        "after Accept buttons: 1 | TF\nTest Faculty\nFaculty | Log out | 2026–2027 | IT 204 — Computer Programming 2 | Edit Syllabus | Re-Check again | Undo change | Submit new version to Admin",
+        "syllabus-check calls: POST /api/syllabus-check/runs/3/suggestions/RP%3Aactivities%3Ar2/refine 200 :: {\"status\":\"verified\",\"usedRewrite\":false,\"text\":\"- Scripted revision for faculty review: pairs solve guided problems on the week's topic\\n- Option: self-paced exercise or video walkthrough\",\"stats\":{\"checked\":4,\"improved\":1,\"worse\":0,\"same\":3,\"unverified\":0,\"points\":-1},\"blockers\":[],\"engine\":\"re-planned\",\"verificationToken\":\"<redacted>\"} || POST /api/syllabus-check/runs/3/decisions 201 :: {\"id\":1,\"action\":\"accept\",\"draft\":{\"path\":\"plan[1].activities\",\"replacement\":\"- Scripted revision for faculty review: pairs solve guided problems on the week's topic\\n- Option: self-paced exercise or video walkthrough\"}} || POST /api/syllabus-check/runs/3/decisions 201 :: {\"id\":2,\"action\":\"undo\",\"draft\":null}",
         "failed responses: GET /api/auth/me 401 :: {\"error\":\"Not authenticated\"}"
       ],
       "evidence": [
         "docs/vpaa-conformance/e2e/E08-recommendation-actions-1440.png"
       ],
       "failed": false,
-      "ms": 20334
+      "ms": 18558
     },
     {
       "id": "E09",
@@ -635,7 +638,7 @@
         "docs/vpaa-conformance/e2e/E09-resubmitted-1440.png"
       ],
       "failed": false,
-      "ms": 39385
+      "ms": 38623
     },
     {
       "id": "E10",
@@ -648,7 +651,7 @@
         },
         {
           "ok": true,
-          "message": "the re-check of the corrected version is 100% and meets the standard"
+          "message": "the re-check of the corrected version meets the standard with no AI points left (100%)"
         },
         {
           "ok": true,
@@ -692,7 +695,7 @@
         "docs/vpaa-conformance/e2e/E10-vpaa-approval-1440.png"
       ],
       "failed": false,
-      "ms": 42567
+      "ms": 41868
     },
     {
       "id": "E11",
@@ -765,11 +768,11 @@
         "docs/vpaa-conformance/e2e/E11-faculty-repository-1440.png"
       ],
       "failed": false,
-      "ms": 7379
+      "ms": 6142
     },
     {
       "id": "E12",
-      "title": "AI offline: provider outage, rejected credentials, rate limit and an invalid answer never stop the deterministic checker or fake a verification",
+      "title": "AI offline: provider outage, rejected credentials, rate limit and an invalid or unreadable answer never stop the deterministic checker or fake a verification",
       "status": "PASS",
       "checks": [
         {
@@ -778,7 +781,11 @@
         },
         {
           "ok": true,
-          "message": "with the AI down on a first-ever check the page says Verification incomplete / no final AI score yet / AI unavailable, and does not report a pass"
+          "message": "the ILOs are tagged to the CLOs the subject gave the syllabus (HTTP 200, [\"clo:c1\",\"clo:c2\",\"clo:c3\",\"clo:c4\"])"
+        },
+        {
+          "ok": true,
+          "message": "with the AI down on a first-ever check the page says Verification incomplete / no final AI score yet / AI alignment: not evaluated, and does not report a pass"
         },
         {
           "ok": true,
@@ -794,7 +801,7 @@
         },
         {
           "ok": true,
-          "message": "the incomplete seven-relationship coverage is stated explicitly (0 of 7)"
+          "message": "the incomplete seven-relationship coverage is stated explicitly (VPAA relationships checked: 0 of 7)"
         },
         {
           "ok": true,
@@ -818,7 +825,7 @@
         },
         {
           "ok": true,
-          "message": "an unchanged syllabus re-checked while the AI is down keeps its verified result and sends no provider request (reuse)"
+          "message": "an unchanged syllabus re-checked while the AI is down keeps its result from the stored answers and asks no judge question (scored, 99 vs 99, 0 judge request(s))"
         },
         {
           "ok": true,
@@ -830,7 +837,7 @@
         },
         {
           "ok": true,
-          "message": "down: the seven-relationship coverage is incomplete with a reason (v2_partial, 0/7)"
+          "message": "down: the seven-relationship coverage is incomplete with a reason (missing_evidence, 1/7)"
         },
         {
           "ok": true,
@@ -842,7 +849,7 @@
         },
         {
           "ok": true,
-          "message": "rate: the seven-relationship coverage is incomplete with a reason (v2_partial, 0/7)"
+          "message": "rate: the seven-relationship coverage is incomplete with a reason (missing_evidence, 1/7)"
         },
         {
           "ok": true,
@@ -854,7 +861,19 @@
         },
         {
           "ok": true,
-          "message": "invalid: the seven-relationship coverage is incomplete with a reason (v2_partial, 0/7)"
+          "message": "invalid: the seven-relationship coverage is incomplete with a reason (missing_evidence, 1/7)"
+        },
+        {
+          "ok": true,
+          "message": "garbage: the check still answers (HTTP 200), the deterministic checker keeps working"
+        },
+        {
+          "ok": true,
+          "message": "garbage: it is reported incomplete (AI failed), with no score and no pass claimed (status incomplete, overall null, passed false)"
+        },
+        {
+          "ok": true,
+          "message": "garbage: the seven-relationship coverage is incomplete with a reason (missing_evidence, 1/7)"
         },
         {
           "ok": true,
@@ -866,19 +885,19 @@
         },
         {
           "ok": true,
-          "message": "auth: the seven-relationship coverage is incomplete with a reason (v2_partial, 0/7)"
+          "message": "auth: the seven-relationship coverage is incomplete with a reason (missing_evidence, 1/7)"
         }
       ],
       "notes": [
-        "page text with the AI down: Compliance check Checked against the Undergraduate Syllabus form. Only a form that does not follow the template stops you from submitting; the score and the other findings are advice for you and the reviewer. Re-Check again Check coverage: 90 of 195 catalogue entries verified Academic Evaluation Policy V2 Integrated AI academic alignment · advisory only academic-evaluation-v2-preview-1 Academic alignment Not checked Academic alignment has no numeric score, deductions or passing mark. AI evaluation status Not checked anthropic · claude-sonnet-5-5 Academic alignment is separate from deterministic compliance. It has no effect on the official score, deductions, passing mark or submission gate. A",
-        "page tail with the AI down: labus content and mappings are never changed automatically. The official PO reference is unavailable or conflicts with the supplied reference. No faculty error is inferred. Historical PO mappings need a reference review. No number was remapped. — Verification incomplete The AI check is incomplete, so there is no final AI score yet. You can still submit. AI alignment: not evaluated VPAA relationships checked: 0 of 7 AI unavailable Standard hybrid-2 · checked Nov 5, 2026 Contact hours: 5 a week, about 90 for the term. The plan covers 18 of 18 weeks. 1 finding behind the score Submit to Admin The check supports — but does not replace — faculty, curriculum committee, and academic quality review.",
-        "failure-mode outcomes: {\"ok\":{\"http\":200,\"overall\":99,\"passed\":true,\"status\":\"scored\",\"aiStatus\":\"ok\",\"evaluated\":7,\"complete\":true,\"reason\":null},\"down\":{\"http\":200,\"overall\":null,\"passed\":false,\"status\":\"incomplete\",\"aiStatus\":\"failed\",\"evaluated\":0,\"complete\":false,\"reason\":\"v2_partial\"},\"rate\":{\"http\":200,\"overall\":null,\"passed\":false,\"status\":\"incomplete\",\"aiStatus\":\"failed\",\"evaluated\":0,\"complete\":false,\"reason\":\"v2_partial\"},\"invalid\":{\"http\":200,\"overall\":null,\"passed\":false,\"status\":\"incomplete\",\"aiStatus\":\"failed\",\"evaluated\":0,\"complete\":false,\"reason\":\"v2_partial\"},\"auth\":{\"http\":200,\"overall\":null,\"passed\":false,\"status\":\"incomplete\",\"aiStatus\":\"failed\",\"evaluated\":0,\"complete\":false,\"reason\":\"v2_partial\"}}"
+        "page text with the AI down: Compliance check Checked against the Undergraduate Syllabus form. Only a form that does not follow the template stops you from submitting; the score and the other findings are advice for you and the reviewer. Re-Check again — Verification incomplete The AI check is incomplete, so there is no final AI score yet. You can still submit. AI alignment: not evaluated VPAA relationships checked: 0 of 7 AI unavailable Standard hybrid-2 · checked Nov 18, 2026 Contact hours: 5 a week, about 90 for the term. The plan covers 18 of 18 weeks. 1 finding behind the score Check coverage: 68 of 81 catalogue entries verified Submit to Admin",
+        "page tail with the AI down: IT 205 — Data Structures and Algorithms (synthetic) Draft Edit Syllabus Compliance check Checked against the Undergraduate Syllabus form. Only a form that does not follow the template stops you from submitting; the score and the other findings are advice for you and the reviewer. Re-Check again — Verification incomplete The AI check is incomplete, so there is no final AI score yet. You can still submit. AI alignment: not evaluated VPAA relationships checked: 0 of 7 AI unavailable Standard hybrid-2 · checked Nov 18, 2026 Contact hours: 5 a week, about 90 for the term. The plan covers 18 of 18 weeks. 1 finding behind the score Check coverage: 68 of 81 catalogue entries verified Submit to Admin",
+        "failure-mode outcomes: {\"ok\":{\"http\":200,\"overall\":99,\"passed\":true,\"status\":\"scored\",\"aiStatus\":\"ok\",\"evaluated\":7,\"complete\":true,\"reason\":null},\"down\":{\"http\":200,\"overall\":null,\"passed\":false,\"status\":\"incomplete\",\"aiStatus\":\"failed\",\"evaluated\":1,\"complete\":false,\"reason\":\"missing_evidence\"},\"rate\":{\"http\":200,\"overall\":null,\"passed\":false,\"status\":\"incomplete\",\"aiStatus\":\"failed\",\"evaluated\":1,\"complete\":false,\"reason\":\"missing_evidence\"},\"invalid\":{\"http\":200,\"overall\":null,\"passed\":false,\"status\":\"incomplete\",\"aiStatus\":\"failed\",\"evaluated\":1,\"complete\":false,\"reason\":\"missing_evidence\"},\"garbage\":{\"http\":200,\"overall\":null,\"passed\":false,\"status\":\"incomplete\",\"aiStatus\":\"failed\",\"evaluated\":1,\"complete\":false,\"reason\":\"missing_evidence\"},\"auth\":{\"http\":200,\"overall\":null,\"passed\":false,\"status\":\"incomplete\",\"aiStatus\":\"failed\",\"evaluated\":1,\"complete\":false,\"reason\":\"missing_evidence\"}}"
       ],
       "evidence": [
         "docs/vpaa-conformance/e2e/E12-ai-down-1440.png"
       ],
       "failed": false,
-      "ms": 15844
+      "ms": 8697
     },
     {
       "id": "E13",
@@ -895,11 +914,11 @@
         },
         {
           "ok": true,
-          "message": "the AI Checker and the Policy V2 panel are shown in Filipino"
+          "message": "the AI Checker and the new checker's report are shown in Filipino"
         },
         {
           "ok": true,
-          "message": "no English heading is left in the translated panel"
+          "message": "no English report heading is left in the translated page"
         },
         {
           "ok": true,
@@ -926,12 +945,14 @@
           "message": "E13: no request left this machine (none blocked)"
         }
       ],
-      "notes": [],
+      "notes": [
+        "AI Checker page in Filipino: CITE PANGKALAHATANG TANAW TAGABUO NG SILABUS AI CHECKER AKING MGA SILABUS IMBAKAN ESTADISTIKA MGA ULAT MGA SETTING SISTEMA NG PAMAMAHALA NG SILABUS 2 TF Test Faculty Guro Mag-sign out Tagasuri ng Silabus gamit ang AI Sinusuri ayon sa form ng Undergraduate Syllabus. Ang hindi pagsunod sa template lamang ang pumipigil sa pagpasa; gabay para sa iyo at sa tagasuri ang marka at iba pang resulta. 2026–2027 ASIGNATURA IT 205 — Data Structures and Algorithms (synthetic) Draft Baguhin ang Silabus Pagsusuri sa pagsunod Sinusuri ayon sa form ng Undergraduate Syllabus. Ang hindi pagsunod sa template lamang ang pumipigil sa pagpasa; gabay para sa iyo at sa tagasuri ang marka at iba pang resulta. Re-Check again — Hindi pa kumpleto ang beripikasyon Hindi pa kumpleto ang pagsusuri ng AI, kaya wala pang huling marka mula rito. Maaari ka pa ring magsumite. Pagkakatugma ayon sa AI: hindi pa nasusuri Mga ugnayang VPAA na nasuri: 1 sa 7 AI check incomplete Pamantayan hybrid-2 · sinuri noong Nob 18, 2026 Oras ng klase: 5 kada linggo, humigit-kumulang 90 para sa termino. Saklaw ng plano ang 18 sa 18 linggo. 1 resulta batayang marka Saklaw ng pagsusuri: 68 sa 81 tala sa katalogo ang napatunayan Isumite sa Admin"
+      ],
       "evidence": [
         "docs/vpaa-conformance/e2e/E13-filipino-checker-1440.png"
       ],
       "failed": false,
-      "ms": 17483
+      "ms": 13143
     },
     {
       "id": "E14",
@@ -1139,44 +1160,44 @@
         "docs/vpaa-conformance/e2e/E14-checker-1440.png"
       ],
       "failed": false,
-      "ms": 34408
+      "ms": 28415
     },
     {
       "id": "E15",
-      "title": "Official scoring parity: the same syllabus gets the identical official result with Policy V2 on and with Policy V2 off",
+      "title": "Stored answers and determinism: two fresh server processes check the same syllabus; the second asks no judge question and gets the identical official result",
       "status": "PASS",
       "checks": [
         {
           "ok": true,
-          "message": "both servers produced a run (V2 on, V2 off)"
+          "message": "both fresh servers produced a scored run (scored, scored)"
         },
         {
           "ok": true,
-          "message": "the first server has Policy V2 integrated"
-        },
-        {
-          "ok": true,
-          "message": "the second server has Policy V2 off"
-        },
-        {
-          "ok": true,
-          "message": "official score, bands, six area scores and rule findings are identical with Policy V2 on and off (99 vs 99)"
+          "message": "official score, band, six area scores, rule findings and AI deductions are identical in both processes (99 vs 99)"
         },
         {
           "ok": true,
           "message": "the passing threshold is 79 in both"
+        },
+        {
+          "ok": true,
+          "message": "the second process asked no judge question: every answer came from the stored answers (0 judge request(s); 1 request(s) in all)"
+        },
+        {
+          "ok": true,
+          "message": "the second report says every question was answered from the store ({\"questions\":146,\"reused\":146})"
         }
       ],
       "notes": [
-        "V2 on: overall=99 areas=6 | V2 off: overall=99 areas=6"
+        "first process: 19 provider request(s); second: 1 (the repair plan's rewrites are never stored, so they are asked again)"
       ],
       "evidence": [],
       "failed": false,
-      "ms": 4648
+      "ms": 4606
     },
     {
       "id": "E16",
-      "title": "No unintended network request: the guard blocks every non-loopback connection, and the whole run produced only scripted provider requests",
+      "title": "No unintended network request: the guard blocks every non-loopback connection, and the whole run produced only requests the offline stand-in answered",
       "status": "PASS",
       "checks": [
         {
@@ -1185,7 +1206,7 @@
         },
         {
           "ok": true,
-          "message": "every provider request of the run was answered by the scripted double (101 requests)"
+          "message": "every provider request of the run was a new-checker judge or rewrite request answered by the offline stand-in (167 requests)"
         },
         {
           "ok": true,
@@ -1193,11 +1214,11 @@
         }
       ],
       "notes": [
-        "provider request modes: {\"ok\":62,\"down\":20,\"rate\":6,\"invalid\":10,\"auth\":3}"
+        "provider request modes: {\"ok\":49,\"down\":38,\"rate\":16,\"invalid\":16,\"garbage\":32,\"auth\":16}; kinds: {\"judge\":160,\"rewrite\":7}"
       ],
       "evidence": [],
       "failed": false,
-      "ms": 180
+      "ms": 165
     },
     {
       "id": "E17",
@@ -1210,11 +1231,11 @@
         }
       ],
       "notes": [
-        "[PASS] the API is reached over https : localhost:4303 || [PASS] GET /api/health is 200 with the database reachable : HTTP 200 || [PASS] the health response reveals nothing but status and database || [PASS] an unauthenticated request is refused (401) : HTTP 401 || [PASS] CORS answers the configured frontend origin with credentials || [PASS] a foreign origin gets no CORS permission || [PASS] the allowed origin is never a wildcard || [PASS] a state-changing request from a foreign origin is refused (403 origin_not_allowed) : HTTP 403 || [PASS] a protected API is closed without a session (401) : HTTP 401 || [PASS] no session cookie is issued to an anonymous visitor ||  || SMOKE TEST PASSED: every check passed. || This test is read-only: it used no account and sent no model request."
+        "[PASS] the API is reached over https : localhost:3663 || [PASS] GET /api/health is 200 with the database reachable : HTTP 200 || [PASS] the health response reveals nothing but status and database || [PASS] an unauthenticated request is refused (401) : HTTP 401 || [PASS] CORS answers the configured frontend origin with credentials || [PASS] a foreign origin gets no CORS permission || [PASS] the allowed origin is never a wildcard || [PASS] a state-changing request from a foreign origin is refused (403 origin_not_allowed) : HTTP 403 || [PASS] a protected API is closed without a session (401) : HTTP 401 || [PASS] no session cookie is issued to an anonymous visitor ||  || SMOKE TEST PASSED: every check passed. || This test is read-only: it used no account and sent no model request."
       ],
       "evidence": [],
       "failed": false,
-      "ms": 242
+      "ms": 340
     },
     {
       "id": "E18",
@@ -1235,7 +1256,7 @@
         },
         {
           "ok": true,
-          "message": "Add subject stays disabled until the semester, year level and pre-requisite are chosen"
+          "message": "Add subject stays disabled until the curriculum year, semester and year level are chosen"
         },
         {
           "ok": true,
@@ -1243,7 +1264,7 @@
         },
         {
           "ok": true,
-          "message": "Add subject is enabled once the three are filled"
+          "message": "Add subject is enabled once they are filled"
         },
         {
           "ok": true,
@@ -1324,7 +1345,7 @@
         "docs/vpaa-conformance/e2e/E18-faculty-locked-1440.png"
       ],
       "failed": false,
-      "ms": 16170
+      "ms": 16630
     },
     {
       "id": "E19",
@@ -1394,7 +1415,7 @@
         "docs/vpaa-conformance/e2e/E19-subject-filters-375.png"
       ],
       "failed": false,
-      "ms": 10532
+      "ms": 8757
     },
     {
       "id": "E20",
@@ -1427,7 +1448,11 @@
         },
         {
           "ok": true,
-          "message": "Program & Subjects has one academic year control in its header and no Current academic year card"
+          "message": "Program & Subjects has one academic year control and no Current academic year card; closed, it shows the year alone"
+        },
+        {
+          "ok": true,
+          "message": "the open list tags 2026–2027 as current"
         },
         {
           "ok": true,
@@ -1439,7 +1464,7 @@
         },
         {
           "ok": true,
-          "message": "the page header does not change height while the add-year popover is open (73 px before, 73 px after)"
+          "message": "the page header does not change height while the add-year popover is open (53 px before, 53 px after)"
         },
         {
           "ok": true,
@@ -1455,7 +1480,11 @@
         },
         {
           "ok": true,
-          "message": "the academic year dropdown now tags 2027–2028 as current"
+          "message": "the academic year dropdown now shows 2027–2028, and its open list tags it as current"
+        },
+        {
+          "ok": true,
+          "message": "Make current is gone once the current year is shown"
         },
         {
           "ok": true,
@@ -1491,7 +1520,11 @@
         },
         {
           "ok": true,
-          "message": "the closed year filter shows the current-year tag and is not clipped (\"2027–2028 · current\", {\"clipped\":false,\"scroll\":143,\"client\":143,\"trigger\":190})"
+          "message": "the closed year filter shows the year alone and is not clipped (\"2027–2028\", {\"clipped\":false,\"scroll\":93,\"client\":93,\"trigger\":140})"
+        },
+        {
+          "ok": true,
+          "message": "the open list tags the current year for faculty"
         },
         {
           "ok": true,
@@ -1499,7 +1532,7 @@
         },
         {
           "ok": true,
-          "message": "the faculty member can start a new syllabus on IT 204 in 2027–2028 (HTTP 200 {\"savedAt\":\"2026-11-05T14:44:49.647Z\",\"bytes\":603,\"clos\":[{\"id\":\"c1\",\"title\":\"Outcome 1\",\"level\":\"Introductory\",\"stateme)"
+          "message": "the faculty member can start a new syllabus on IT 204 in 2027–2028 (HTTP 200 {\"savedAt\":\"2026-11-17T22:36:33.494Z\",\"bytes\":731,\"clos\":[{\"id\":\"c1\",\"title\":\"Outcome 1\",\"level\":\"Introductory\",\"stateme)"
         },
         {
           "ok": true,
@@ -1527,7 +1560,7 @@
         },
         {
           "ok": true,
-          "message": "Review & Approval defaults to the previous and current year"
+          "message": "Review & Approval starts on the current year, its open list tags it as current and still offers the previous year"
         },
         {
           "ok": true,
@@ -1569,7 +1602,7 @@
         "docs/vpaa-conformance/e2e/E20-faculty-previous-year-1440.png"
       ],
       "failed": false,
-      "ms": 20087
+      "ms": 19543
     },
     {
       "id": "E21",
@@ -1696,7 +1729,7 @@
         "docs/vpaa-conformance/e2e/E21-admin-past-year-view-only-1440.png"
       ],
       "failed": false,
-      "ms": 18185
+      "ms": 13160
     },
     {
       "id": "E22",
@@ -1753,7 +1786,7 @@
         },
         {
           "ok": true,
-          "message": "the Add subject form shows the school vision and mission as soon as it opens, before any program code is typed"
+          "message": "the Add program form shows the saved school vision and mission as soon as it opens, before any program code is typed"
         },
         {
           "ok": true,
@@ -1791,7 +1824,7 @@
         "docs/vpaa-conformance/e2e/E22-admin-past-year-outcomes-1440.png"
       ],
       "failed": false,
-      "ms": 24932
+      "ms": 16538
     },
     {
       "id": "E23",
@@ -1800,7 +1833,7 @@
       "checks": [
         {
           "ok": true,
-          "message": "a new program code opens the outcomes part of the form and says the program is new"
+          "message": "the Add program form shows the EGA and Program Outcome part"
         },
         {
           "ok": true,
@@ -1828,7 +1861,43 @@
         },
         {
           "ok": true,
-          "message": "Step 2 of the builder shows the EGA the administrator typed"
+          "message": "Step 1 shows the syllabus academic year (2028–2029) read-only"
+        },
+        {
+          "ok": true,
+          "message": "Step 1 shows the administrator's year level, pre-requisite and semester"
+        },
+        {
+          "ok": true,
+          "message": "faculty cannot edit the year level, pre-requisite or semester"
+        },
+        {
+          "ok": true,
+          "message": "Step 1 is on the BSEE program"
+        },
+        {
+          "ok": true,
+          "message": "Step 2 shows the EGA statement the administrator typed ([{\"cd\":\"EGA 1\",\"rt\":\"Engineering practice (synthetic)\"},{\"cd\":\"PO 1\",\"rt\":\"Apply engineering knowledge to analyse circuits (synthetic). [EGA 1]\"}])"
+        },
+        {
+          "ok": true,
+          "message": "Step 2 shows the Program Outcome statement"
+        },
+        {
+          "ok": true,
+          "message": "Step 2 shows only BSEE's outcomes (1 EGA, 1 PO), not another program's"
+        },
+        {
+          "ok": true,
+          "message": "the vision, mission, EGAs and POs have no editable field for faculty"
+        },
+        {
+          "ok": true,
+          "message": "a forged save (HTTP 200) keeps the administrator's vision, EGAs and POs"
+        },
+        {
+          "ok": true,
+          "message": "faculty are refused the administrator's outcome routes (403,403,403)"
         },
         {
           "ok": true,
@@ -1836,7 +1905,27 @@
         },
         {
           "ok": true,
+          "message": "the new program has version 1 in force for 2028–2029, and the panel shows it"
+        },
+        {
+          "ok": true,
+          "message": "the panel asks for no approval or document, and a saved version has no edit control"
+        },
+        {
+          "ok": true,
           "message": "the existing subject keeps its own copy after the program is edited"
+        },
+        {
+          "ok": true,
+          "message": "Save outcomes put version 2 in force and kept version 1"
+        },
+        {
+          "ok": true,
+          "message": "the change log says who saved it, the previous version and the new one"
+        },
+        {
+          "ok": true,
+          "message": "the panel shows the new version and the change log without reopening the dialog"
         },
         {
           "ok": true,
@@ -1877,61 +1966,105 @@
       ],
       "notes": [],
       "evidence": [
-        "docs/vpaa-conformance/e2e/E23-admin-add-subject-outcomes-1440.png",
+        "docs/vpaa-conformance/e2e/E23-admin-add-program-outcomes-1440.png",
         "docs/vpaa-conformance/e2e/E23-faculty-step2-1440.png",
         "docs/vpaa-conformance/e2e/E23-admin-apply-to-subjects-1440.png"
       ],
       "failed": false,
-      "ms": 33080
+      "ms": 25328
     },
     {
       "id": "E24",
-      "title": "Every closed academic-year filter names the current year beside the year, for the administrator and for faculty",
+      "title": "Every closed academic-year filter shows the year alone and its open list tags the current year, for the administrator and for faculty",
       "status": "PASS",
       "checks": [
         {
           "ok": true,
-          "message": "admin Dashboard: the closed filter reads \"2028–2029 · current\""
+          "message": "admin Dashboard: the closed filter reads only the year (\"2028–2029\")"
         },
         {
           "ok": true,
-          "message": "admin My Syllabi: the closed filter reads \"2028–2029 · current\""
+          "message": "admin Dashboard: the open list tags 2028–2029 as current"
         },
         {
           "ok": true,
-          "message": "admin Repository: the closed filter reads \"2028–2029 · current\""
+          "message": "admin My Syllabi: the closed filter reads only the year (\"2028–2029\")"
         },
         {
           "ok": true,
-          "message": "admin Compliance: the closed filter reads \"2028–2029 · current\""
+          "message": "admin My Syllabi: the open list tags 2028–2029 as current"
         },
         {
           "ok": true,
-          "message": "admin Analytics: the closed filter reads \"2028–2029 · current\""
+          "message": "admin Repository: the closed filter reads only the year (\"2028–2029\")"
         },
         {
           "ok": true,
-          "message": "admin Reports: the closed filter reads \"2028–2029 · current\""
+          "message": "admin Repository: the open list tags 2028–2029 as current"
         },
         {
           "ok": true,
-          "message": "faculty Dashboard: the closed filter reads \"2028–2029 · current\""
+          "message": "admin Compliance: the closed filter reads only the year (\"2028–2029\")"
         },
         {
           "ok": true,
-          "message": "faculty My Syllabi: the closed filter reads \"2028–2029 · current\""
+          "message": "admin Compliance: the open list tags 2028–2029 as current"
         },
         {
           "ok": true,
-          "message": "faculty Repository: the closed filter reads \"2028–2029 · current\""
+          "message": "admin Analytics: the closed filter reads only the year (\"2028–2029\")"
         },
         {
           "ok": true,
-          "message": "faculty Analytics: the closed filter reads \"2028–2029 · current\""
+          "message": "admin Analytics: the open list tags 2028–2029 as current"
         },
         {
           "ok": true,
-          "message": "faculty Reports: the closed filter reads \"2028–2029 · current\""
+          "message": "admin Reports: the closed filter reads only the year (\"2028–2029\")"
+        },
+        {
+          "ok": true,
+          "message": "admin Reports: the open list tags 2028–2029 as current"
+        },
+        {
+          "ok": true,
+          "message": "faculty Dashboard: the closed filter reads only the year (\"2028–2029\")"
+        },
+        {
+          "ok": true,
+          "message": "faculty Dashboard: the open list tags 2028–2029 as current"
+        },
+        {
+          "ok": true,
+          "message": "faculty My Syllabi: the closed filter reads only the year (\"2028–2029\")"
+        },
+        {
+          "ok": true,
+          "message": "faculty My Syllabi: the open list tags 2028–2029 as current"
+        },
+        {
+          "ok": true,
+          "message": "faculty Repository: the closed filter reads only the year (\"2028–2029\")"
+        },
+        {
+          "ok": true,
+          "message": "faculty Repository: the open list tags 2028–2029 as current"
+        },
+        {
+          "ok": true,
+          "message": "faculty Analytics: the closed filter reads only the year (\"2028–2029\")"
+        },
+        {
+          "ok": true,
+          "message": "faculty Analytics: the open list tags 2028–2029 as current"
+        },
+        {
+          "ok": true,
+          "message": "faculty Reports: the closed filter reads only the year (\"2028–2029\")"
+        },
+        {
+          "ok": true,
+          "message": "faculty Reports: the open list tags 2028–2029 as current"
         }
       ],
       "notes": [],
@@ -1940,7 +2073,144 @@
         "docs/vpaa-conformance/e2e/E24-faculty-dashboard-year-filter-1440.png"
       ],
       "failed": false,
-      "ms": 53915
+      "ms": 46093
+    },
+    {
+      "id": "E25",
+      "title": "Review and adopt: a mapped syllabus keeps its Program Outcomes through opening, autosave and unrelated edits; the checker waits; the author adopts them in Step 2; mappings and reports stay",
+      "status": "PASS",
+      "checks": [
+        {
+          "ok": true,
+          "message": "the administrator added a program with two POs (HTTP 201)"
+        },
+        {
+          "ok": true,
+          "message": "and a subject (HTTP 200)"
+        },
+        {
+          "ok": true,
+          "message": "assigned to the faculty member"
+        },
+        {
+          "ok": true,
+          "message": "the faculty member mapped four CLOs to the two POs (HTTP 200 )"
+        },
+        {
+          "ok": true,
+          "message": "the first check ran (HTTP 200)"
+        },
+        {
+          "ok": true,
+          "message": "the administrator saved the updated PO"
+        },
+        {
+          "ok": true,
+          "message": "Apply to Subjects updated the subject ({\"masters\":true,\"subjects\":1,\"updated\":1,\"unchanged\":0,\"skipped\":[]})"
+        },
+        {
+          "ok": true,
+          "message": "Step 2 tells the author the Program Outcomes were updated"
+        },
+        {
+          "ok": true,
+          "message": "Step 2 still shows the stored statement"
+        },
+        {
+          "ok": true,
+          "message": "opening the syllabus did not adopt the update"
+        },
+        {
+          "ok": true,
+          "message": "an autosave of Step 1 kept the stored statement"
+        },
+        {
+          "ok": true,
+          "message": "saving only the References section kept the stored statement"
+        },
+        {
+          "ok": true,
+          "message": "a forged save did not replace the stored statement"
+        },
+        {
+          "ok": true,
+          "message": "the checker waits for the review (HTTP 409 po_reference_review_required)"
+        },
+        {
+          "ok": true,
+          "message": "the review shows the affected PO, the existing and updated statements, and the mapped CLOs"
+        },
+        {
+          "ok": true,
+          "message": "the review shows the reference versions"
+        },
+        {
+          "ok": true,
+          "message": "adopting stays disabled until the author confirms"
+        },
+        {
+          "ok": true,
+          "message": "opening the review adopted nothing"
+        },
+        {
+          "ok": true,
+          "message": "the update was adopted when the author confirmed it"
+        },
+        {
+          "ok": true,
+          "message": "the CLO-PO mappings are unchanged"
+        },
+        {
+          "ok": true,
+          "message": "the notice is gone"
+        },
+        {
+          "ok": true,
+          "message": "the next check runs on the new version (HTTP 200)"
+        },
+        {
+          "ok": true,
+          "message": "E25-faculty: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E25-faculty: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E25-faculty: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E25-faculty: no request left this machine (none blocked)"
+        },
+        {
+          "ok": true,
+          "message": "E25-admin: no uncaught page errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E25-admin: no JavaScript console errors (none)"
+        },
+        {
+          "ok": true,
+          "message": "E25-admin: no unexpected API failures (none)"
+        },
+        {
+          "ok": true,
+          "message": "E25-admin: no request left this machine (none blocked)"
+        }
+      ],
+      "notes": [
+        "compliance history after adoption: 75868 bytes"
+      ],
+      "evidence": [
+        "docs/vpaa-conformance/e2e/E25-faculty-review-notice-1440.png",
+        "docs/vpaa-conformance/e2e/E25-faculty-review-compare-1440.png",
+        "docs/vpaa-conformance/e2e/E25-faculty-after-adopt-1440.png"
+      ],
+      "failed": false,
+      "ms": 20590
     }
   ]
 }
