@@ -2709,3 +2709,12 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Also:** `scripts/e2e/stack.cjs` drops the old setting (it already sets the real cap); comments in `index.js` and `pipeline/official.js` name the real cap.
 - **Not changed:** the historical test reports and the old Policy V2 staging guides under `docs/` (records of past runs).
 - **Tests:** `aiQuota.test.js` checks the real cap and that the old setting no longer satisfies the guard; the staging template passes the guard and fails it without the cap. `npm test` passes (1,391 server + 127).
+
+---
+
+### v1.97.7 — AI Checker Report: One "Close" Button
+**Date:** November 18, 2026
+
+- **Problem:** the ✕ added to the report window's header (6d13cf5) was also named "Close", so the window had two buttons with the same name next to the footer's Close; screen readers announced two identical buttons and the browser tests could not tell them apart (E10, E11, E20 failed). It also sat inside the title block, so it showed under the date line instead of at the top right where the header styles place it.
+- **Change** (`src/components/ComplianceModal.jsx`, `src/i18n/messages.js`): the ✕ is named "Close report" (Filipino "Isara ang ulat", also its tooltip) and is the header's right-hand item.
+- **Tests:** `npm test` passes (1,391 server + the client suites); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks.
