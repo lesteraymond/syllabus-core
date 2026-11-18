@@ -1,8 +1,10 @@
 import StableButton from '../../components/StableButton';
 import { tr } from "../../i18n/index.js";
 import { t as translateUI } from "../../i18n/index.js";
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ComplianceCard from '../ComplianceCard';
+import ReportDrawer from '../../components/ReportDrawer';
+import { headline, runState, tone, when } from '../../lib/complianceView';
 import { useCompliance } from './useCompliance';
 import InactiveYearNotice, { useInactiveYear } from '../../components/InactiveYearNotice';
 
@@ -10,7 +12,9 @@ import InactiveYearNotice, { useInactiveYear } from '../../components/InactiveYe
 // exclusively from the single AI CHECK action, including in React Strict Mode.
 // `canCheck` is false for a syllabus the viewer cannot re-check: then it only shows the stored run.
 // `onRun` tells the builder what the latest run says, so the submit button can say "Submit anyway" when warnings remain.
-export default function ComplianceSection({ syllabusId, saveFirst, canCheck, onOpenStep, onRun, onApplyDraft, syllabusYear }) {
+// layout="panel" (the AI Checker tab): there is no card. The page draws the check button where it wants it (renderBar gets the state and the actions)
+// and the full report slides in from the right (ReportDrawer) when a check finishes or when the score is pressed. Any other layout keeps the report inline (the builder's review step).
+export default function ComplianceSection({ syllabusId, saveFirst, canCheck, onOpenStep, onRun, onApplyDraft, syllabusYear, layout = 'inline', subjectLabel = '', renderBar }) {
   const { run, installed, busy, error, load, check } = useCompliance({ syllabusId, saveFirst });
   const inactiveYear = useInactiveYear(syllabusYear); // another academic year: its saved report stays readable, a new check is not offered
   // True once a recommendation has been applied: the stored result no longer describes the syllabus until it is checked again.
@@ -22,8 +26,52 @@ export default function ComplianceSection({ syllabusId, saveFirst, canCheck, onO
   // The one check button (header) is the only way to refresh; this just decides whether to say the shown result is out of date.
   const needsCheck = (changed || legacy) && canCheck && installed && !!run;
 
+  const panel = layout === 'panel';
+  const [open, setOpen] = useState(false);
+  const wasBusy = useRef(false);
+  // A check that has just finished opens its report; the first load of a saved report does not.
+  useEffect(() => {
+    if (panel && wasBusy.current && !busy && run && !error) setOpen(true);
+    wasBusy.current = busy;
+  }, [busy]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => { load(); }, [load]);
   useEffect(() => { if (onRun) onRun(busy ? null : run); }, [run, busy]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (panel) {
+    const state = runState(run);
+    const canRun = canCheck && installed && !inactiveYear;
+    const stale = needsCheck && <div className="hy-stale" role="status"><span>{translateUI(legacy && !changed ? 'hybrid.refreshSuggestions' : 'hybrid.recheckBanner')}</span></div>;
+    return (
+      <>
+        {renderBar && renderBar({
+          installed, busy, canRun, run: busy ? null : run,
+          score: state === 'scored' ? run.overall : null,
+          tone: state === 'scored' ? tone(run.overall, run.passThreshold) : 'none',
+          label: run ? (state === 'scored' ? tr(run.band) : tr(headline(run))) : '',
+          recheck, openReport: () => setOpen(true),
+        })}
+        {installed && <InactiveYearNotice inactive={inactiveYear} />}
+        {!installed && <div className="info-banner warning">{translateUI('hybrid.unavailable')}</div>}
+        {error && <div className="info-banner warning" role="alert">{tr(error)}</div>}
+        {stale}
+        {open && run && (
+          <ReportDrawer
+            title={translateUI('aiChecker.reportTitle')}
+            subtitle={subjectLabel ? <small>{subjectLabel}</small> : null}
+            onClose={() => setOpen(false)}
+            footer={<>
+              {onOpenStep && <StableButton type="button" className="btn outline" onClick={() => onOpenStep()}>{translateUI('publication.editDraft')}</StableButton>}
+              {canRun && <StableButton type="button" className="btn primary" disabled={busy} onClick={recheck}>{busy ? translateUI('ui.checking_820d60') : translateUI('hybrid.recheckButton')}</StableButton>}
+            </>}
+          >
+            {stale}
+            <ComplianceCard run={run} checking={busy} onOpenStep={onOpenStep} onApplyDraft={apply} />
+          </ReportDrawer>
+        )}
+      </>
+    );
+  }
 
   return (
     <section className="cmp-card" id="cmp-card" aria-labelledby="cmp-title" aria-busy={busy}>

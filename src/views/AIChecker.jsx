@@ -126,6 +126,22 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
     }
   };
 
+  // One slim row: the subject, Edit Syllabus, then the check. The check state comes from ComplianceSection (ctl), which keeps the report drawer.
+  const pickBar = (ctl) => (
+    <section className="card pick-card pick-compact" aria-label={translateUI("ui.choose_a_syllabus_to_check_b6f6d2")}>
+      <div className="pick-field">
+        <label htmlFor={uid + '-s'}>{translateUI("ui.subject_8d183d")}</label>
+        <Select id={uid + '-s'} value={selectedId ? String(selectedId) : ''} onChange={e => setSelectedId(e.target.value ? Number(e.target.value) : null)}>
+          <option value="">{translateUI("ui.choose_a_subject_554b9c")}</option>
+          {mine.map(s => <option key={s.id} value={String(s.id)}>{(s.courseCode || '—') + (s.title ? ' — ' + s.title : '')}</option>)}
+        </Select>
+      </div>
+      <StableButton type="button" className="btn outline" disabled={!selectedId} onClick={openBuilder}>{translateUI('publication.editDraft')}</StableButton>
+      {ctl && ctl.run && !ctl.busy && <StableButton type="button" className={'btn outline pick-score ' + ctl.tone} onClick={ctl.openReport} title={translateUI('aiChecker.viewReport')}>{(ctl.score !== null ? ctl.score + '% · ' : '') + ctl.label}</StableButton>}
+      {ctl && ctl.canRun && <StableButton type="button" className="btn primary" disabled={ctl.busy} onClick={ctl.recheck}>{ctl.busy ? translateUI('ui.checking_820d60') : translateUI(ctl.run ? "hybrid.recheckButton" : "aiChecker.run")}</StableButton>}
+    </section>
+  );
+
   return (
     <>
       <PageHead title={translateUI("ui.ai_syllabus_checker_0c99c9")} subtitle={translateUI("ui.checked_against_the_undergraduate_syllabus_form_only_a_form_that__68429a")} actions={<YearFilter group="queue" />} />
@@ -133,16 +149,7 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
         <div className="empty">{translateUI(hasOthers ? 'aiChecker.nothingToCheck' : "ui.no_syllabi_yet_click_new_syllabus_to_get_started_2e4bc9")}</div>
       ) : (
         <>
-          <section className="card pick-card pick-compact" aria-label={translateUI("ui.choose_a_syllabus_to_check_b6f6d2")}>
-            <div className="pick-field">
-              <label htmlFor={uid + '-s'}>{translateUI("ui.subject_8d183d")}</label>
-              <Select id={uid + '-s'} value={selectedId ? String(selectedId) : ''} onChange={e => setSelectedId(e.target.value ? Number(e.target.value) : null)}>
-                <option value="">{translateUI("ui.choose_a_subject_554b9c")}</option>
-                {mine.map(s => <option key={s.id} value={String(s.id)}>{(s.courseCode || '—') + (s.title ? ' — ' + s.title : '')}</option>)}
-              </Select>
-            </div>
-            <StableButton type="button" className="btn outline" disabled={!selectedId} onClick={openBuilder}>{translateUI('publication.editDraft')}</StableButton>
-          </section>
+          {selectedId ? null : pickBar(null)}
 
           {policy.loaded && !policy.aiChecking && <div className="ai-note" role="note" data-testid="ai-off-note">{translateUI('policy.aiOff')}</div>}
           {doc.error && <div className="info-banner warning" role="alert">{tr(doc.error)}</div>}
@@ -163,6 +170,9 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
               onOpenStep={openBuilder}
               onRun={receiveRun}
               onApplyDraft={doc.editable && doc.content ? applyDraftRecommendation : undefined}
+              layout="panel"
+              renderBar={pickBar}
+              subjectLabel={selectedRow ? (selectedRow.courseCode || '—') + (selectedRow.title ? ' — ' + selectedRow.title : '') : ''}
             />
           )}
 
@@ -178,6 +188,7 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
 
           {selectedId && doc.editable && (
             <div className="editor-footer">
+              {!lastRun && <small className="hint" data-testid="submit-hint">{translateUI('aiChecker.submitHint')}</small>}
               <div>
                 <StableButton
                   type="button"

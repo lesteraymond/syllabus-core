@@ -1836,7 +1836,6 @@ const conflictMessages = {
   "conflict.requiredTitle": ["This copy is not up to date", "Hindi pa napapanahon ang kopyang ito"],
   "conflict.requiredBody": ["This page could not say which version of the syllabus it was editing, so the save was refused rather than risk replacing newer content. Nothing was changed.", "Hindi masabi ng pahinang ito kung aling bersiyon ng silabus ang ine-edit nito, kaya tinanggihan ang pag-save upang hindi mapalitan ang mas bagong nilalaman. Walang binago."],
   "aiChecker.run": ["Run AI Checker", "Patakbuhin ang AI Checker"],
-  "aiChecker.recheck": ["Check again", "Suriin muli"],
   "aiChecker.viewReport": ["View report", "Tingnan ang ulat"],
   "aiChecker.notChecked": ["Not checked yet. Run the AI Checker to see your score and what to improve.", "Hindi pa nasusuri. Patakbuhin ang AI Checker upang makita ang iyong iskor at kung ano ang pagbubutihin."],
   "aiChecker.reportTitle": ["AI Checker report", "Ulat ng AI Checker"],
