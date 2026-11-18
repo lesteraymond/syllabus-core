@@ -198,6 +198,31 @@ router.get('/syllabi/:id', requireAuth, async (req, res) => {
   } catch (err) { sendError(res, err); }
 });
 
+// The uploaded PDF of an approved syllabus a student may read (same rule as the detail route above). ?download=1 sends it as a download.
+router.get('/syllabi/:id/file', requireAuth, async (req, res) => {
+  try {
+    studentOnly(req);
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id <= 0) throw httpError(404, 'File not found');
+    const [rows] = await readSyllabi(req.app.locals.db, 'SELECT s.syllabus_id, s.file_path/*Y*/, ' + ENROLLED + ' AS enrolled ' + FOR_STUDENT + ' AND s.syllabus_id = ?', [req.session.user.id, id]);
+    const file = rows[0] && require('./syllabusFiles').storedFile(rows[0].file_path);
+    if (!file) throw httpError(404, 'File not found');
+    const name = path.basename(file).replace(/[^A-Za-z0-9._ -]/g, '_');
+    res.removeHeader('X-Frame-Options');
+    res.sendFile(file, {
+      dotfiles: 'deny',
+      cacheControl: false,
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `${req.query.download === '1' ? 'attachment' : 'inline'}; filename="${name}"`,
+        'Cache-Control': 'private, no-store',
+        'X-Content-Type-Options': 'nosniff',
+        'Content-Security-Policy': "frame-ancestors 'self'",
+      },
+    }, (err) => { if (err && !res.headersSent) res.status(404).json({ error: 'File not found' }); });
+  } catch (err) { sendError(res, err); }
+});
+
 router.get('/pending', requireAdmin, async (req, res) => {
   try {
     const [rows] = await req.app.locals.db.query(

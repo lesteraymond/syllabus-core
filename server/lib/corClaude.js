@@ -1,11 +1,11 @@
 // Reads a Certificate of Registration (COR) photo with Claude (vision) instead of OCR. Returns the same shape as
 // corParser.parseCor, so the registration route and the admin review queue are unchanged.
-// Needs ANTHROPIC_API_KEY; the model is ANTHROPIC_MODEL (default claude-sonnet-5-5).
+// Needs ANTHROPIC_API_KEY; the model is ANTHROPIC_MODEL (default claude-haiku-5-5).
 const sharp = require('sharp');
 const Anthropic = require('@anthropic-ai/sdk');
 const { httpError } = require('./http');
 
-const MODEL = () => process.env.ANTHROPIC_MODEL || 'claude-sonnet-5-5';
+const MODEL = () => process.env.ANTHROPIC_MODEL || 'claude-haiku-5-5';
 
 const PROMPT = `This is a photo or scan of a student's Certificate of Registration (an "Official Registration Form") from a Philippine university. It may be rotated, skewed, shadowed or partly cropped. Read it and reply with ONE JSON object and nothing else, using exactly these keys (null when a value is not printed or not legible; never guess):
 {
@@ -55,13 +55,13 @@ function normalize(raw) {
 
 async function scanCor(input) {
   if (!process.env.ANTHROPIC_API_KEY) throw httpError(503, 'COR scanning is not configured. Contact an administrator.');
-  const jpeg = await sharp(input).rotate().resize({ width: 2000, height: 2000, fit: 'inside', withoutEnlargement: true }).jpeg({ quality: 85 }).toBuffer();
+  const jpeg = await sharp(input).rotate().resize({ width: 1500, height: 1500, fit: 'inside', withoutEnlargement: true }).jpeg({ quality: 80 }).toBuffer();
   let message;
   try {
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 60000, maxRetries: 2 });
     message = await client.messages.create({
       model: MODEL(),
-      max_tokens: 4000,
+      max_tokens: 1500,
       messages: [{ role: 'user', content: [
         { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: jpeg.toString('base64') } },
         { type: 'text', text: PROMPT },
