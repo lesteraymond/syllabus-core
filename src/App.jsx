@@ -427,7 +427,7 @@ export default function App() {
           {page === 'my-syllabi' && canAuthor(user.role) && <MySyllabi syllabi={syllabi} user={user} messages={messages} commentCounts={commentCounts} setCommentCode={setCommentCode} setEditing={setEditing} setPage={setPage} setHistCode={setHistCode} setChatCode={setChatCode} handleDelete={handleDelete} setConfirm={setConfirm} notify={notify} />}
           {page === 'ai' && (isReviewer(user.role) || user.role === 'faculty') && <AIChecker user={user} syllabi={syllabi} editing={editing} setEditing={setEditing} setPage={setPage} notify={notify} onSubmitted={handleBuilderSubmitted} onApproved={async () => { await fetchSyllabi(); await fetchLogs(); notify(translateUI('publication.approvedRepository')); setEditing(null); setPage('my-syllabi'); }} onEditDraft={async id => { await syllabiApi.resumeDraft(id); setEditing({ syllabusId: id, status: 'draft' }); setPage('builder'); }} onChanged={fetchSyllabi} />}
           {page === 'review' && <ReviewApproval syllabi={syllabi} user={user} setViewCode={setViewCode} setPage={setPage} />}
-          {page === 'generator' && canAuthor(user.role) && <SyllabusGenerator user={user} syllabi={syllabi} editing={editing} setEditing={setEditing} setPage={setPage} />}
+          {page === 'generator' && canAuthor(user.role) && <SyllabusGenerator user={user} syllabi={syllabi} editing={editing} setEditing={setEditing} setPage={setPage} onChanged={fetchSyllabi} />}
           {page === 'repository' && <Repository syllabi={syllabi} user={user} notify={notify} setHistCode={setHistCode} />}
           {page === 'compliance' && <Compliance syllabi={syllabi} />}
           {page === 'analytics' && <Analytics syllabi={syllabi} user={user} />}

@@ -14,7 +14,8 @@ const MAX_POLL_FAILURES = 10;
 // It takes several minutes, so the server runs it as a background job: this panel starts it, shows its progress, and applies the result when it is done. The author can leave
 // the page and come back (the panel finds the running or finished job again). The server saves nothing: the sections go through onSections into the author's syllabus, where the
 // author reviews, edits and saves them as usual, and "Undo" puts back what was there before. It shows only when the server says the generator is on (GET /syllabus-check/status),
-// the author can edit, and a subject is chosen. References are never generated. beforeRun (optional) saves the author's open edits first; showCost shows the run's estimated cost.
+// the author can edit, and a subject is chosen. beforeRun (optional) runs first: it saves the author's open edits, or, for a subject with no draft yet (syllabusId null), creates the draft
+// and answers its id (a whole number), which the panel then uses; showCost shows the run's estimated cost.
 export default function GeneratePanel({ draft, editable, syllabusId, beforeRun, onSections, showCost = false }) {
   const id = typeof syllabusId === 'function' ? syllabusId() : syllabusId;
   const [available, setAvailable] = useState(false);
@@ -45,8 +46,14 @@ export default function GeneratePanel({ draft, editable, syllabusId, beforeRun, 
   };
   const fail = (text) => { setMessage(text); setPhase('error'); };
 
-  // Another syllabus chosen: start from a clean panel.
-  useEffect(() => { setPhase('idle'); setOut(null); setMessage(''); setProgress(null); previous.current = null; }, [id]);
+  // Another syllabus chosen: start from a clean panel. (A subject with no draft getting its draft, id none -> a number, is the same run: nothing is reset.)
+  const lastId = useRef(id);
+  useEffect(() => {
+    const before = lastId.current;
+    lastId.current = id;
+    if (before === null || before === undefined) return;
+    setPhase('idle'); setOut(null); setMessage(''); setProgress(null); previous.current = null;
+  }, [id]);
   // A job that is running, or finished while the author was away, is picked up again.
   useEffect(() => {
     if (!available || !editable || !hasDraft || !id) return undefined;
@@ -88,8 +95,10 @@ export default function GeneratePanel({ draft, editable, syllabusId, beforeRun, 
   const run = async () => {
     setPhase('starting'); setMessage(''); setProgress(null);
     try {
-      if ((beforeRun && (await beforeRun()) === false) || !id) throw new Error(translateUI('generate.notSaved')); // the server writes from the SAVED draft
-      const job = await syllabusCheck.generate(id, notes);
+      const made = beforeRun ? await beforeRun() : true; // the server writes from the SAVED draft; a subject with no draft gets one here and the id comes back
+      const target = Number.isInteger(made) ? made : id;
+      if (made === false || !target) throw new Error(translateUI('generate.notSaved'));
+      const job = await syllabusCheck.generate(target, notes);
       setProgress({ step: job.step, steps: job.steps, stage: job.stage });
       setPhase('working');
     } catch (e) { fail(e.message); }
@@ -107,6 +116,7 @@ export default function GeneratePanel({ draft, editable, syllabusId, beforeRun, 
       <header className="sm-card-h"><h4>{translateUI('generate.title')}</h4></header>
       <div className="sm-card-b">
         <p className="hint">{translateUI('generate.intro')}</p>
+        {!id && <p className="hint">{translateUI('generate.willCreate')}</p>}
         <label className="field">
           <span>{translateUI('generate.notesLabel')}</span>
           <textarea className="in" rows={3} maxLength={1500} value={notes} disabled={busy} aria-label={translateUI('generate.notesLabel')} onChange={(e) => setNotes(e.target.value)} />
