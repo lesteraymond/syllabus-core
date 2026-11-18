@@ -1968,6 +1968,9 @@ const studentViewMessages = {
   "studentView.searchHint": ["Subject code or title", "Code o pamagat ng asignatura"],
   "studentView.verified": ["Verified", "Napatunayan"],
   "studentView.hasSyllabus": ["Syllabus available", "May syllabus"],
+  "studentView.downloadPdf": ["Download PDF", "I-download ang PDF"],
+  "studentView.consentTitle": ["I agree to AI reading of my COR.", "Pumapayag ako na basahin ng AI ang aking COR."],
+  "studentView.consentBody": ["My COR photo is sent to Anthropic's Claude to read my details (RA 10173). It is stored privately and used only to verify my enrollment.", "Ipinapadala ang larawan ng aking COR sa Claude ng Anthropic upang mabasa ang aking detalye (RA 10173). Pribado itong iniimbak at ginagamit lamang upang patunayan ang aking enrollment."],
 };
 for (const [key, [en, tl]] of Object.entries(studentViewMessages)) { extraEn[key] = en; extraTl[key] = tl; }
 

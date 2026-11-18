@@ -213,8 +213,8 @@ export function StudentSyllabi() {
     return (
       <>
         <PageHead title={open ? open.syllabus.courseCode : translateUI('studentView.syllabus')} subtitle={open ? open.syllabus.title : ''} actions={<>
-          {open && pdfUrl && <a className="btn primary" href={pdfUrl + '?download=1'} download>Download PDF</a>}
-          {open && open.content && <StableButton className="btn primary" type="button" onClick={() => savePaperPdf(open.syllabus.courseCode)}>Download PDF</StableButton>}
+          {open && pdfUrl && <a className="btn primary" href={pdfUrl + '?download=1'} download>{translateUI('studentView.downloadPdf')}</a>}
+          {open && open.content && <StableButton className="btn primary" type="button" onClick={() => savePaperPdf(open.syllabus.courseCode)}>{translateUI('studentView.downloadPdf')}</StableButton>}
           <StableButton className="btn ghost" type="button" onClick={() => setOpenId(null)}>{translateUI('studentView.back')}</StableButton>
         </>} />
         {doc.loading && <div className="empty">{translateUI('studentView.loadingSyllabus')}</div>}
