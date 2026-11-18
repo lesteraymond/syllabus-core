@@ -2781,3 +2781,11 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Settings:** `AI_CHECKS_PER_USER_PER_DAY=100`, `AI_CHECKS_PER_DAY=1000`, `AI_REFINES_PER_USER_PER_DAY=200` (were 40, 400, 60: 19 faculty at 40 would have run past 400) and `DB_POOL_SIZE=30` (was 10), set in the development `server/.env`, shown as the recommended values in `server/.env.example`, and listed in the staging checklist (`docs/vpaa-conformance/STAGING-SETUP-CHECKLIST.md`, with the generator's two settings and its migration). A staging or production host must set them itself: it does not read the development file.
 - **New setting:** `AI_CHECKS_PER_MINUTE_PER_USER` (1 to 600, default 10, unchanged) for the per-person guard against a double click on "Check with AI"; 30 in development.
 - **Tests:** compliance routes and AI quota tests pass (68), conformance tests pass (7).
+
+
+### v1.98.6 — AI Syllabus Generator: The Course Description Is Written From the Finished Plan
+**Date:** November 18, 2026
+
+- **Change (owner):** the course description is not an official text; it is created from the Learning Plan, which makes the whole syllabus. The generator used to write it first, together with the CLOs and before any week existed, so it could describe topics the plan never covers, and it was left out when the author kept their own CLOs. Now the CLO request writes only the CLOs, and the description is written in the step after the weekly plan, from the finished plan: the CLOs, the topics of every week, and the tasks. It must say only what the plan contains, 30 to 250 words (the compliance standard asks for 30), and it is always written for the new plan, even when the author kept their CLOs, because an old description would describe the old plan.
+- **Screen:** the progress step and the "replace" note name the description (English and Filipino).
+- **Tests:** generator tests 30 (the description is never in the CLO request, it comes after the weekly plan with the CLOs and every week's topics, it is regenerated when CLOs are kept, too short and too long are sent back). `npm test` passes (1,462).

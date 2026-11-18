@@ -2,7 +2,7 @@
 // AI Syllabus Generator: writes a first draft of a whole syllabus that is built to pass the AI Checker, from the subject the author chose.
 //
 // It follows the same dependency chain the checker judges (rules.CHAIN), top-down, so every stage is written against settled parents:
-//   1. CLOs + description   the 4 CLOs (fixed classification by number, tagged to the program's POs and EGAs). CLOs the author already wrote are KEPT.
+//   1. CLOs                 the 4 CLOs (fixed classification by number, tagged to the program's POs and EGAs). CLOs the author already wrote are KEPT.
 //   2. outline              the week's course content for every lesson week, and the CLO each week builds (content first; every CLO reached).
 //   3. weekly plan          per lesson week: ILO, activities (>= 2 alternatives), tasks, values; written from that week's content, in two chunks.
 //   4. requirements+grading the requirements list and grading components (total 100).
@@ -61,10 +61,10 @@ const obj = (properties) => ({ type: 'object', additionalProperties: false, requ
 const strings = { type: 'array', items: { type: 'string' } };
 const ints = { type: 'array', items: { type: 'integer' } };
 const SCHEMAS = Object.freeze({
-  clos: obj({ clos: { type: 'array', items: obj({ statement: { type: 'string' }, pos: ints, egas: ints }) }, description: strings }),
+  clos: obj({ clos: { type: 'array', items: obj({ statement: { type: 'string' }, pos: ints, egas: ints }) }, }),
   outline: obj({ weeks: { type: 'array', items: obj({ week: { type: 'integer' }, clo: { type: 'integer' }, alsoClo: { type: 'integer' }, contents: { type: 'string' } }) } }),
   weeks: obj({ weeks: { type: 'array', items: obj({ week: { type: 'integer' }, ilo: { type: 'string' }, ilo2: { type: 'string' }, activities: strings, tasks: strings, values: { type: 'string' } }) } }),
-  admin: obj({ requirements: strings, grading: { type: 'array', items: obj({ label: { type: 'string' }, abbr: { type: 'string' }, pct: { type: 'integer' } }) } }),
+  admin: obj({ description: strings, requirements: strings, grading: { type: 'array', items: obj({ label: { type: 'string' }, abbr: { type: 'string' }, pct: { type: 'integer' } }) } }),
 });
 
 // ---- the system prompt: the checker's own rules, then what to write ----
@@ -118,9 +118,9 @@ const cloFacts = () => R.CLO_LEVELS.map(l => ({ no: l.no, classification: l.leve
 // ---- the messages ----
 function closMessage({ subject, standards }, problems = []) {
   return { system: SYSTEM, schema: SCHEMAS.clos, user: jsonOf({
-    task: 'Write the 4 course learning outcomes (CLOs) and a short course description for the subject.',
+    task: 'Write the 4 course learning outcomes (CLOs) for the subject. The course description is written later, from the finished plan.',
     subject, classifications: cloFacts(), programOutcomes: standards.pos, graduateAttributes: standards.egas,
-    format: { clos: 'Exactly 4, in order CLO 1 to CLO 4. Each: "statement" (one sentence, one observable verb at its classification\'s levels, on the subject but not ending with the course title), "pos" (the numbers of the program outcomes it supports, at least one), "egas" (the numbers of the graduate attributes it supports, at least one; use the attributes those program outcomes belong to).', description: '1 to 3 paragraphs: what the course is about, what students will do, and its place in the program. Not a list of outcomes.' },
+    format: { clos: 'Exactly 4, in order CLO 1 to CLO 4. Each: "statement" (one sentence, one observable verb at its classification\'s levels, on the subject but not ending with the course title), "pos" (the numbers of the program outcomes it supports, at least one), "egas" (the numbers of the graduate attributes it supports, at least one; use the attributes those program outcomes belong to).' },
     ...(problems.length ? { fixThese: problems } : {}),
   }) };
 }
@@ -144,11 +144,11 @@ function weeksMessage({ subject, clos, outline, weeks, before }, problems = []) 
     ...(problems.length ? { fixThese: problems } : {}),
   }) };
 }
-function adminMessage({ subject, tasks }, problems = []) {
+function adminMessage({ subject, tasks, clos = [], topics = [] }, problems = []) {
   return { system: SYSTEM, schema: SCHEMAS.admin, user: jsonOf({
-    task: 'Write the course requirements and the grading components.',
-    subject, assessmentTasksInThePlan: tasks,
-    format: { requirements: '4 to 10 short requirements students must complete (attendance, quizzes, projects, examinations ...), drawn from the assessment tasks', grading: '3 to 6 components: "label", "abbr" (up to 8 characters), "pct" (whole number). They must total exactly 100. The course has a Prelim, a Midterm and a Final examination: include them either as one component called "Periodic Examinations" or as three, each named (Prelim, Midterm, Final). Never name only some of them.' },
+    task: 'Write the course requirements, the grading components and the course description. The description comes last on purpose: it describes the finished plan below.',
+    subject, clos: clos.map((c, i) => ({ no: i + 1, statement: c.statement })), weeklyTopics: topics, assessmentTasksInThePlan: tasks,
+    format: { description: '1 to 3 short paragraphs (60 to 180 words in all) written from the finished plan above: what the course is about, the topics it covers in order, how students learn (the kinds of activities) and are assessed, and how it fits the program. Say only what the plan contains: never a topic, activity or assessment it does not have. Do not list the outcomes.', requirements: '4 to 10 short requirements students must complete (attendance, quizzes, projects, examinations ...), drawn from the assessment tasks', grading: '3 to 6 components: "label", "abbr" (up to 8 characters), "pct" (whole number). They must total exactly 100. The course has a Prelim, a Midterm and a Final examination: include them either as one component called "Periodic Examinations" or as three, each named (Prelim, Midterm, Final). Never name only some of them.' },
     ...(problems.length ? { fixThese: problems } : {}),
   }) };
 }
@@ -160,7 +160,7 @@ const bullets = list => (Array.isArray(list) ? list : []).map(t => clean(String(
 const bulletText = list => list.map(t => '- ' + t).join('\n');
 const teacherLed = text => /^\s*(the\s+)?(teacher|instructor|professor|faculty|lecturer)s?\b/i.test(text);
 
-// CLOs: -> { clos: [{ id, title, level, statement, pos, egas }], description: [string] } or { problems }.
+// CLOs: -> { clos: [{ id, title, level, statement, pos, egas }] } or { problems }. (The course description is not written here: it comes after the plan, see readAdmin.)
 function readClos(raw, standards, subjectTitle = '') {
   const body = parse(raw), problems = [];
   if (!body || !Array.isArray(body.clos)) return { problems: ['the reply is not the requested JSON'] };
@@ -182,9 +182,7 @@ function readClos(raw, standards, subjectTitle = '') {
   clos.forEach((c, i) => { const twin = clos.findIndex((o, j) => j < i && nearCopy(c.statement, o.statement)); if (twin >= 0) problems.push(`CLO ${i + 1} repeats CLO ${twin + 1}`); });
   const title = clean(subjectTitle).toLowerCase();
   if (title && clos.filter(c => c.statement.toLowerCase().replace(/[.\s]+$/, '').endsWith(' in ' + title)).length >= 2) problems.push('do not end the CLOs with "in <course title>"; name the subject area only where it reads naturally');
-  const description = (Array.isArray(body.description) ? body.description : []).map(oneLine).filter(Boolean).slice(0, 4);
-  if (!description.length) problems.push('write a course description');
-  return problems.length ? { problems } : { clos, description };
+  return problems.length ? { problems } : { clos };
 }
 
 // Outline: -> Map week -> { clo, contents } or { problems }.
@@ -253,6 +251,10 @@ function readAdmin(raw) {
   if (!body) return { problems: ['the reply is not the requested JSON'] };
   const reqs = bullets(body.requirements).slice(0, 12);
   if (reqs.length < 3) problems.push('list at least 3 requirements');
+  const description = (Array.isArray(body.description) ? body.description : []).map(oneLine).filter(Boolean).slice(0, 3);
+  const words = description.join(' ').split(/\s+/).filter(Boolean).length;
+  if (words < 30) problems.push('write a course description of at least 30 words, from the plan');
+  else if (words > 250) problems.push('the course description is too long (at most 250 words)');
   const grading = (Array.isArray(body.grading) ? body.grading : []).map(g => ({ label: oneLine(g && g.label), abbr: oneLine(g && g.abbr).slice(0, 8), pct: Number(g && g.pct) }));
   if (grading.length < 2 || grading.length > 8) problems.push('give 2 to 8 grading components');
   if (grading.some(g => !g.label || !Number.isInteger(g.pct) || g.pct <= 0 || g.pct > 100)) problems.push('every grading component needs a label and a whole-number percentage');
@@ -261,7 +263,7 @@ function readAdmin(raw) {
   const examLabels = grading.filter(g => /exam/i.test(g.label)).map(g => g.label.toLowerCase());
   if (!examLabels.length) problems.push('include the examinations as a grading component (Prelim, Midterm and Final)');
   else { const named = ['prelim', 'midterm', 'final'].filter(term => examLabels.some(l => l.includes(term))); if (named.length && named.length < 3) problems.push('the examinations must cover the Prelim, Midterm and Final: name all three terms, or use one "Periodic Examinations" component without naming a term'); }
-  return problems.length ? { problems } : { reqs, grading };
+  return problems.length ? { problems } : { reqs, grading, description };
 }
 
 // One stage: ask, validate, and on a problem ask ONCE more with the problems named. Both requests count against the cap. Throws when still unusable.
@@ -319,12 +321,11 @@ async function generateSyllabus({ content, masters, env = process.env, transport
   const ask = message => provider.rewrite(message);
   const subject = subjectOf(content, masters, guidance), warnings = [];
 
-  // 1. CLOs and description (the author's own CLOs are kept)
+  // 1. CLOs (the author's own CLOs are kept); the description is written after the plan, in step 4
   const kept = keptClos(content);
   tick(1, 'clos');
-  const written = kept ? null : await stage('CLOs and description', ask, problems => closMessage({ subject, standards }, problems), raw => readClos(raw, standards, subject.title));
+  const written = kept ? null : await stage('CLOs', ask, problems => closMessage({ subject, standards }, problems), raw => readClos(raw, standards, subject.title));
   const clos = kept || written.clos;
-  const description = written ? written.description : null;
   if (kept) warnings.push('Your four CLOs were kept as they are; the plan was written against them.');
   // 2. outline
   tick(2, 'outline');
@@ -342,8 +343,8 @@ async function generateSyllabus({ content, masters, env = process.env, transport
   tick(5, 'admin');
   const tasks = LESSON_WEEKS.flatMap(w => itemsOf(weekly.get(w).tasks)).slice(0, 40);
   let admin = null;
-  try { admin = await stage('requirements and grading', ask, problems => adminMessage({ subject, tasks }, problems), readAdmin); }
-  catch (error) { if (error.status === 429) throw error; warnings.push('The requirements and grading could not be written (' + error.message + ' ); add them in Steps 4 and 6.'); }
+  try { admin = await stage('description, requirements and grading', ask, problems => adminMessage({ subject, tasks, clos, topics: LESSON_WEEKS.map(w => ({ week: w, contents: clean(outline.get(w).contents).slice(0, 160) })) }, problems), readAdmin); }
+  catch (error) { if (error.status === 429) throw error; warnings.push('The description, requirements and grading could not be written (' + error.message + ' ); add them in Steps 1, 4 and 6.'); }
 
   // 5. references: the AI names candidate books, only those the Open Library catalogue confirms are kept (referenceSuggest.js). Skipped when the author already has references.
   tick(6, 'references');
@@ -361,8 +362,7 @@ async function generateSyllabus({ content, masters, env = process.env, transport
     for (const g of groups) refs[g] = g === 'books' ? { na: false, items: found.items } : { na: true, items: [] }; // the groups with no source are marked not applicable; the author can change that
     draft.refs = refs;
   }
-  if (description) draft.description = description.map(t => ({ id: newId('d'), t }));
-  if (admin) { draft.reqs = admin.reqs.map(t => ({ id: newId('q'), t })); draft.grading = { rows: admin.grading.map(g => ({ id: newId('g'), label: g.label, abbr: g.abbr, pct: String(g.pct) })), override: { on: false, term: '', final: '' } }; }
+  if (admin) { draft.description = admin.description.map(t => ({ id: newId('d'), t })); draft.reqs = admin.reqs.map(t => ({ id: newId('q'), t })); draft.grading = { rows: admin.grading.map(g => ({ id: newId('g'), label: g.label, abbr: g.abbr, pct: String(g.pct) })), override: { on: false, term: '', final: '' } }; }
 
   // 5. check with the checker's own rules and make ONE repair plan; only what the plan VERIFIED is applied
   let report;
@@ -393,7 +393,7 @@ async function generateSyllabus({ content, masters, env = process.env, transport
     warnings.push('References were not generated: a model cannot look a source up, and the checker rejects invented ones. No book could be confirmed in the catalogue, so add your references in Step 5.');
   }
 
-  const sections = { plan: draft.plan, ...(written ? { clos: draft.clos } : {}), ...(description ? { description: draft.description } : {}), ...(admin ? { reqs: draft.reqs, grading: draft.grading } : {}), ...(found.items.length ? { refs: draft.refs } : {}) };
+  const sections = { plan: draft.plan, ...(written ? { clos: draft.clos } : {}), ...(admin ? { description: draft.description, reqs: draft.reqs, grading: draft.grading } : {}), ...(found.items.length ? { refs: draft.refs } : {}) };
   return { status: 'generated', version: VERSION, sections, keptClos: !!kept, check: report, warnings, usage: provider.usage() };
 }
 

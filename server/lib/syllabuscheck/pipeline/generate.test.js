@@ -30,7 +30,7 @@ function model({ log = [], bad = {} } = {}) {
     if (/^Write the course content/.test(body.task || '')) return JSON.stringify(bad.outline ? bad.outline(body) : { weeks: body.weeks.map((week, i) => ({ week, clo: CLO_BY_WEEK[i], contents: TOPICS[i] })) });
     if (/^For each listed week/.test(body.task || '')) return JSON.stringify(bad.weeks ? bad.weeks(body) : { weeks: body.weeks.map(({ week, contents }) => ({ week, ilo: `Apply ${contents} to ${TAILS[G.LESSON_WEEKS.indexOf(week)]}`, activities: [`Guided lab on ${contents}`, `Pair programming exercise on ${contents}`], tasks: [`Problem set on ${contents}`], values: 'Humility: accepting corrections while debugging' })) });
     if (/^Name candidate reference books/.test(body.task || '')) return JSON.stringify(bad.references ? bad.references(body) : { books: [] });
-    if (/^Write the course requirements/.test(body.task || '')) return JSON.stringify(bad.admin ? bad.admin(body) : { requirements: ['Class attendance', 'Problem sets', 'Programming project', 'Periodic examinations'], grading: [{ label: 'Class Standing', abbr: 'CS', pct: 60 }, { label: 'Examinations', abbr: 'EX', pct: 40 }] });
+    if (/^Write the course requirements/.test(body.task || '')) return JSON.stringify(bad.admin ? bad.admin(body) : { description: ['This course follows the plan from the basics of variables and decisions to loops, methods, arrays and objects, then to testing and the ethics of programming. Students learn in guided labs and pair work, and are assessed by problem sets, a project and periodic examinations.'], requirements: ['Class attendance', 'Problem sets', 'Programming project', 'Periodic examinations'], grading: [{ label: 'Class Standing', abbr: 'CS', pct: 60 }, { label: 'Examinations', abbr: 'EX', pct: 40 }] });
     return repair(message);
   };
 }
@@ -150,7 +150,7 @@ test('a copied ILO, a teacher-led ILO, one activity, a missing value and a two-v
 });
 
 test('the grading must count the Prelim, Midterm and Final examinations, all three or one periodic component', () => {
-  const ok = (rows) => !G.readAdmin(JSON.stringify({ requirements: ['a', 'b', 'c'], grading: rows })).problems;
+  const ok = (rows) => !G.readAdmin(JSON.stringify({ description: [Array(40).fill('word').join(' ')], requirements: ['a', 'b', 'c'], grading: rows })).problems;
   const row = (label, pct) => ({ label, abbr: 'x', pct });
   assert.equal(ok([row('Class Standing', 60), row('Periodic Examinations', 40)]), true);
   assert.equal(ok([row('Class Standing', 40), row('Prelim Examination', 20), row('Midterm Examination', 20), row('Final Examination', 20)]), true);
@@ -333,4 +333,36 @@ test('with the catalogue down the generation still succeeds, says no book could 
   const spy = message => { if (/Name candidate/.test(JSON.parse(message.user).task || '')) candidatesAsked = true; return model({ bad: books })(message); };
   await run(draft(), { env: { SYLLABUS_CHECK_GENERATE_REFERENCES: 'off' }, fetchImpl: library, provider: { ...provider([]), rewrite: spy } });
   assert.equal(candidatesAsked, false, 'SYLLABUS_CHECK_GENERATE_REFERENCES=off skips the step');
+});
+
+test('the course description is written AFTER the plan, from the finished plan: never in the CLO request, always in the last writing request, with the CLOs and every week\'s topics', async () => {
+  const seen = [];
+  const spy = message => { const body = JSON.parse(message.user); if (body.task) seen.push({ task: body.task, body }); return model()(message); };
+  const out = await run(draft(), { provider: { ...provider([]), rewrite: spy } });
+  const clos = seen.find(s => /^Write the 4 course learning outcomes/.test(s.task));
+  assert.ok(!('description' in clos.body.format), 'the CLO request does not ask for a description');
+  assert.ok(!/course description/i.test(clos.body.task.replace('The course description is written later, from the finished plan.', '')));
+  const admin = seen.find(s => /^Write the course requirements/.test(s.task));
+  assert.match(admin.body.task, /description/);
+  assert.ok(admin.body.format.description && /finished plan/.test(admin.body.format.description));
+  assert.equal(admin.body.weeklyTopics.length, G.LESSON_WEEKS.length, 'every lesson week\'s topics are sent');
+  assert.equal(admin.body.weeklyTopics[0].contents, TOPICS[0]);
+  assert.equal(admin.body.clos.length, 4);
+  assert.ok(seen.indexOf(admin) > seen.findIndex(s => /^For each listed week/.test(s.task)), 'after the weekly plan');
+  assert.ok(out.sections.description.length >= 1 && out.sections.description[0].t.split(/\s+/).length >= 30);
+});
+
+test('the description is written for the new plan even when the author kept their own CLOs', async () => {
+  const clos = STATEMENTS.map((statement, i) => ({ id: 'mine' + i, title: 'T', level: R.CLO_LEVELS[i].level, statement, pos: [1], egas: [1] }));
+  const out = await run(draft({ clos, description: [{ id: 'old', t: 'An old description of an old plan.' }] }));
+  assert.ok(!('clos' in out.sections));
+  assert.ok(out.sections.description[0].t !== 'An old description of an old plan.', 'the old description described the old plan');
+});
+
+test('a description that is too short, or too long, is sent back; the plan is not touched', () => {
+  const body = d => JSON.stringify({ description: d, requirements: ['a', 'b', 'c'], grading: [{ label: 'Class Standing', abbr: 'CS', pct: 60 }, { label: 'Periodic Examinations', abbr: 'PE', pct: 40 }] });
+  assert.match(G.readAdmin(body(['Too short to describe a course.'])).problems.join(' '), /at least 30 words/);
+  assert.match(G.readAdmin(body([])).problems.join(' '), /at least 30 words/);
+  assert.match(G.readAdmin(body([Array(260).fill('word').join(' ')])).problems.join(' '), /too long/);
+  assert.ok(G.readAdmin(body([Array(40).fill('word').join(' ')])).description, 'forty words is fine');
 });
