@@ -136,6 +136,7 @@ test('refused sign-ins, a remembered device and the administrator\'s management 
   assert.deepStrictEqual(row('user_delete', null, fay), ['You', 'removed the account of', 'Fay Flores', '', 'bad']);
   assert.deepStrictEqual(row('user_assignments', '3', fay), ['You', 'changed the assignments of', 'Fay Flores', 'Subjects assigned: 3', 'quiet']);
   assert.deepStrictEqual(row('user_disable', null), ['You', 'disabled the account of', 'an account', '', 'bad'], 'no name recorded');
+  assert.deepStrictEqual(row('generate', 'needs_review', { courseCode: 'IT 204', title: 'Computer Programming 2' }).slice(0, 3), ['You', 'generated an AI draft of', 'IT 204'], 'an AI draft is its own line in Recent Activity');
   // in the administrator's view of everyone, somebody else's line names them
   assert.strictEqual(describeActivity(log({ action: 'login_failed', notes: 'password', user: 'Gus Go', userId: 6 }), 0, 1).who, 'Gus Go');
 });

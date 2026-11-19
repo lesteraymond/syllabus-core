@@ -35,7 +35,17 @@ TRUST_PROXY=<reverse-proxy hops, usually 1>
 SESSION_COOKIE_SAMESITE=<lax or none, from section C>
 DB_HOST=<…>  DB_NAME=<…>  DB_USER=<…>  DB_PASS=<…>
 APP_URL=<staging frontend URL>
+AI_CHECKS_PER_USER_PER_DAY=100
+AI_CHECKS_PER_DAY=1000
+AI_REFINES_PER_USER_PER_DAY=200
+AI_CHECKS_PER_MINUTE_PER_USER=30
+DB_POOL_SIZE=30
+SYLLABUS_CHECK_GENERATE=on
+SYLLABUS_CHECK_GENERATE_MAX_COST_USD=2
 ```
+
+- [ ] The last seven lines size the system for 19 faculty who all run the AI Checker and the AI Syllabus Generator at the same time (no waiting, no server-wide lock). The daily ceilings cannot be turned off, so raise them if the faculty grows; the whole-school number must be at least the per-person one. `SYLLABUS_CHECK_GENERATE` is off unless set to `on`.
+- [ ] `npm run migrate-generate-jobs` has been run on the staging database (the generator's jobs table; without it jobs live in memory and a restart forgets them).
 
 - [ ] Each of these keys appears **once** (with two lines the last wins silently).
 - [ ] `SYLLABUS_CHECK_STAGE_B` and `SYLLABUS_CHECK_STAGE_C3` are unset.

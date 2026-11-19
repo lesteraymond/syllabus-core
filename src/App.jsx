@@ -27,6 +27,7 @@ import { useNotificationPolling, usePeriodicRefresh } from './lib/usePolling';
 import { recordAvatar, seedAvatars } from './lib/avatarStore';
 import { useActiveTime } from './lib/useActiveTime';
 import AIChecker from './views/AIChecker';
+import SyllabusGenerator from './views/SyllabusGenerator';
 import Analytics from './views/Analytics';
 import Compliance from './views/Compliance';
 import CourseOutcomes from './views/CourseOutcomes';
@@ -104,7 +105,7 @@ export default function App() {
   // The compliance check moved into step 7 of the builder: an old 'ai' link sends faculty there, and only admins have the overview.
   useEffect(() => { if (user && !isReviewer(user.role) && user.role !== 'faculty' && page === 'ai') setPage('dashboard'); }, [user, page]);
   // Only faculty and the administrator write syllabi: whatever leads a reviewer (Asst. VPAA, LIC Director, VPAA) to the builder or My Syllabi, they land on the dashboard.
-  useEffect(() => { if (user && !canAuthor(user.role) && (page === 'builder' || page === 'my-syllabi')) setPage('dashboard'); }, [user, page]);
+  useEffect(() => { if (user && !canAuthor(user.role) && (page === 'builder' || page === 'my-syllabi' || page === 'generator')) setPage('dashboard'); }, [user, page]);
   const [toast, setToast] = useState('');
   const [syllabi, setSyllabi] = useState([]);
   const [logs, setLogs] = useState([]);
@@ -199,7 +200,7 @@ export default function App() {
   useEffect(() => { if (user && page === 'dashboard' && user.role !== 'student' && !user.mustChangePassword) fetchLogs(); }, [user, page, fetchLogs]);
   // The list says which submissions the administrator has checked: read it again when they open Review & Approval, so a check just made shows.
   useEffect(() => { if (user && isReviewer(user.role) && (page === 'review' || page === 'ai')) fetchSyllabi(); }, [user, page, fetchSyllabi]);
-  useEffect(() => { if (user && page === 'my-syllabi') { fetchSyllabi(); if (user.role === 'faculty') fetchCommentCounts(); } }, [user, page, fetchSyllabi, fetchCommentCounts]);
+  useEffect(() => { if (user && (page === 'my-syllabi' || page === 'generator')) { fetchSyllabi(); if (user.role === 'faculty') fetchCommentCounts(); } }, [user, page, fetchSyllabi, fetchCommentCounts]);
 
   // Other people's new profile pictures arrive with the syllabus list and the message partners: read both again now and then, and when the tab comes back.
   usePeriodicRefresh(!!user && user.role !== 'student' && !user.mustChangePassword && !loggingOut, () => { fetchSyllabi(); fetchMessages(); });
@@ -426,6 +427,7 @@ export default function App() {
           {page === 'my-syllabi' && canAuthor(user.role) && <MySyllabi syllabi={syllabi} user={user} messages={messages} commentCounts={commentCounts} setCommentCode={setCommentCode} setEditing={setEditing} setPage={setPage} setHistCode={setHistCode} setChatCode={setChatCode} handleDelete={handleDelete} setConfirm={setConfirm} notify={notify} />}
           {page === 'ai' && (isReviewer(user.role) || user.role === 'faculty') && <AIChecker user={user} syllabi={syllabi} editing={editing} setEditing={setEditing} setPage={setPage} notify={notify} onSubmitted={handleBuilderSubmitted} onApproved={async () => { await fetchSyllabi(); await fetchLogs(); notify(translateUI('publication.approvedRepository')); setEditing(null); setPage('my-syllabi'); }} onEditDraft={async id => { await syllabiApi.resumeDraft(id); setEditing({ syllabusId: id, status: 'draft' }); setPage('builder'); }} onChanged={fetchSyllabi} />}
           {page === 'review' && <ReviewApproval syllabi={syllabi} user={user} setViewCode={setViewCode} setPage={setPage} />}
+          {page === 'generator' && canAuthor(user.role) && <SyllabusGenerator user={user} syllabi={syllabi} editing={editing} setEditing={setEditing} setPage={setPage} onChanged={fetchSyllabi} />}
           {page === 'repository' && <Repository syllabi={syllabi} user={user} notify={notify} setHistCode={setHistCode} />}
           {page === 'compliance' && <Compliance syllabi={syllabi} />}
           {page === 'analytics' && <Analytics syllabi={syllabi} user={user} />}

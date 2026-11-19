@@ -2728,3 +2728,143 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Change** (`pipeline/extract.js` `uniqueIds`): the checker works on a copy in which every id is unique. The first item with an id keeps it; a repeated, missing or numeric id is renamed (`<id>~<n>`), the same way every time. Only ids change, and only in the copy: the saved syllabus is never changed. ILO tags still name the CLO that kept the id, as the editor shows them. `check`, `buildPlan`, `officialize`, `refineDraft` (Check & improve) and `relatedContextHash` (decisions) all use it, so the report, the plan, Check & improve and the decision check agree. Report paths are by position (`plan[3].ilos[0].text`), so they hold for the saved syllabus.
 - **Found in the data:** no syllabus or saved version in the dev database has a repeated or missing id (4 syllabi, 2 versions scanned read-only). The editor makes random ids, so this comes from imported, copied or older content.
 - **Tests:** `pipeline/unique-ids.test.js` (6): the copy rules; one week, two weeks, CLOs, week rows, missing ILO, CLO and reference ids; numeric ids keep their tags; the official report, Check & improve and the decision context point at the right ILO. `npm test` passes (1,397 server + the client suites); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks.
+
+
+### v1.98.0 — AI Syllabus Generator (off by default)
+**Date:** November 18, 2026
+
+- **New:** the **AI Syllabus Generator** sidebar tab (below AI Checker; faculty and administrators) writes a first draft of the CLOs, the 18-week learning plan, requirements and grading for the chosen subject, built to pass the AI Checker. It follows the checker's own dependency chain (CLOs, then content, then ILOs, activities, tasks and values), uses the checker's own rules text, then checks the result with the checker's no-AI rules and the AI judge and makes ONE repair plan; only a change the plan verified is applied. Nothing is saved by the server: the sections come back and the builder fills them into the author's draft, where the author reviews, edits and saves them like any other change. The AI never submits or approves.
+- **Fixed by code, not the AI:** the schedule (18 weeks; Prelim, Midterm and Final examinations in Weeks 6, 12 and 18), the Week 1 orientation row, the examination rows and their value, and each CLO's classification label. CLOs the author already wrote (all four) are kept and the plan is written against them. **References are not generated:** the checker's rule is that a source is looked up, never invented, and a model cannot look one up, so the author adds them (the checker reports the empty list).
+- **Safety:** off unless `SYLLABUS_CHECK_GENERATE=on`, the direct Anthropic provider and its OWN cost cap `SYLLABUS_CHECK_GENERATE_MAX_COST_USD` (covers generation, check and repair together, through the existing cost-capped provider) are set; author-only, active academic year, the administrator's AI switch, one generation at a time, and 5 per person per day (`SYLLABUS_CHECK_GENERATE_PER_USER_PER_DAY`). An answer that fails validation is asked for once more with the problems named, then refused: nothing partial is returned.
+- **Files:** `pipeline/generate.js`, `POST /api/syllabus-check/syllabi/:id/generate` and `generator` in `GET /api/syllabus-check/status` (`routes/syllabusCheck.js`), `views/builder2/GeneratePanel.jsx`, `generate.*` strings in English and Filipino, `RULES_FOR_REWRITE` exported from `pipeline/prompt.js` (no prompt text or version changed).
+- **Tests:** `pipeline/generate.test.js` (15) and `routes/syllabusCheck.generate.routes.test.js` (7), all offline with a scripted model. **Run for real (2026-11-18, owner-approved, cap $2):** a test subject through the real Claude client ($0.44, 25 requests, 214 s, no AI misalignment on the generated plan), then the sidebar tab in the browser for CENGDIS (about 5.5 minutes, saved, 1 flagged item: the references). The first real run showed that the grading could leave out the Prelim examination; the grading now must count all three examinations (one periodic component, or each term named). Each generation prints one cost line in the API console.
+
+
+### v1.98.1 — AI Syllabus Generator: Better Context, Background Job With Progress, Undo
+**Date:** November 18, 2026
+
+- **Quality:** the generator now knows the subject's units (laboratory work is added when the subject has lab units), its semester, its prerequisite subjects and the subjects the approved curriculum puts before it, so a topic is built on and not taught again. The curriculum lists no course description or topics, so the page has an optional "Notes for the AI" box (up to 1500 characters, sent as data, never in the system prompt) for topics, emphasis or the textbook. Every CLO must now be built by at least two weeks (CLO 4 was built by one in the first real run), and CLOs that end with the course title ("... in Data Structures") are sent back. The fixed rows are in `pipeline/generate-defaults.json` (aligned to the approved syllabus #111: the orientation week and the examination weeks), readable and editable without touching code. The repair pass is now tested end to end: a planted flaw is rewritten, verified by the checker and applied.
+- **Process:** a generation runs as a background job (`pipeline/generateJobs.js`): `POST /api/syllabus-check/syllabi/:id/generate` answers 202 at once, `GET` reads its progress (six steps) and, when done, its result, `DELETE` removes a finished job. The screen shows the step and a progress bar, finds the job again if the author leaves the page and comes back (kept 30 minutes in memory; a server restart forgets it), and applies the result. One generation at a time on the server. After a generation the author can **Undo** to restore the sections as they were; the administrator also sees the run's estimated cost. A finished generation is a line in Recent Activity ("generated an AI draft of ...").
+- **Not done, on purpose:** more than one ILO or CLO per week (each week is judged and repaired cleanly with one; more raises the check cost); reference suggestions (needs a source search the checker does not have); the Filipino strings are still my own translation.
+- **Tests:** generator tests 21, route tests 11 (job flow), `generateJobs.test.js` 3, activity view and account activity updated. `npm test` passes (1,434). **Not run:** a paid generation with the new job screen in the browser.
+
+
+### v1.98.2 — AI Syllabus Generator: Second ILO, Reference Suggestions, Jobs That Survive a Restart
+**Date:** November 18, 2026
+
+- **Second ILO:** the outline may give a week a second CLO (`alsoClo`, in at most 4 weeks), for example a CLO 4 values outcome in a topic with an ethical side. That week then has two ILOs, tagged to two CLOs, each with an activity and a task; it counts toward both CLOs' two-week minimum. Other weeks keep one ILO.
+- **References:** a new step (7 steps now) asks the AI to NAME up to 8 candidate books; only a book the Open Library catalogue confirms is kept (the title and the first author's surname are the only things sent), and its APA 7 text is built from the catalogue's record (authors, newest English edition with a year and a publisher, "(4th ed.)"), never from the AI's words, and must pass the checker's own APA rule. At most 5 go into Books, the groups with no source are marked not applicable, and the checker then judges them. A real run of the lookup rejected an invented book and a translated edition. The author's own references are never replaced; a failed lookup only means no reference is added. `SYLLABUS_CHECK_GENERATE_REFERENCES=off` skips the step.
+- **Jobs and the daily limit survive a restart:** new table `syllabus_generate_jobs` (`db/generate-jobs-ddl.js`, `npm run migrate-generate-jobs`, also in `schema.sql`). A finished result waits there until the screen applies it; a job that was running when the server stopped is reported as interrupted instead of running forever; the 5-per-day count is read from the table. Without the table everything still works in memory, as before, and the console says so once. Applied on the dev database 2026-11-18 (additive; rollback `DROP TABLE syllabus_generate_jobs;`), and the SQL was run against the real table (restart, count, applied, interrupted).
+- **Filipino:** the strings now use the app's own terms (Tagasuri ng AI, silabus, Tagabuo ng Silabus, ipasa, baguhin, plano ng pagkatuto, mga kinakailangan sa kurso, sistema ng pagmamarka, mga sanggunian), the page title is "Tagalikha ng Silabus ng AI", and the messages the server writes in English (warnings, limits, interruptions) have Filipino keys too. Still written by me, not by a native speaker: please have a Filipino speaker read them.
+- **Tests:** generator 27, reference suggestions 9, jobs 7, routes 13. `npm test` passes (1,456). **Not run:** a paid generation through the new reference step and screen in the browser.
+
+
+### v1.98.3 — AI Syllabus Generator: No Daily Limit Per Person By Default
+**Date:** November 18, 2026
+
+- **Change (owner decision):** the 5-per-person-per-day limit is off. It applies only when `SYLLABUS_CHECK_GENERATE_PER_USER_PER_DAY` is set (a whole number of 1 or more); the count is then read from the jobs table. What still bounds the spend: the cost cap (`SYLLABUS_CHECK_GENERATE_MAX_COST_USD`) and the request cap of every run, one generation at a time on the server, and the administrator's AI switch.
+- **Tests:** route tests 15 (no limit by default, and the opt-in limit still works).
+
+
+### v1.98.4 — AI Checker and AI Syllabus Generator: Everyone Can Run At the Same Time
+**Date:** November 18, 2026
+
+- **Change (owner decision):** there is no server-wide lock any more. Before, one AI check at a time ran on the whole server (`activeChecks`, scoped to the app, although `docs/syllabus-checker.md` described a per-syllabus lock) and one generation at a time ran on the whole server; anyone else got "already running". Now every faculty member and reviewer can run an AI check and an AI generation at the same moment, with no waiting. The only lock left is per syllabus: the same syllabus is not checked or generated twice at once, whoever asks (`409 ai_check_in_progress` / `generate_busy`). Reading a report while it runs still shows "checking".
+- **Still bounds the spend and the load:** the cost cap and request cap of every run; the daily AI check ceilings (`AI_CHECKS_PER_USER_PER_DAY` default 40 and `AI_CHECKS_PER_DAY` default 400, which cannot be turned off and now matter more: raise them to fit the number of faculty); 10 checks a minute per person; the Anthropic client retries a 429 or 529 after the wait the API asks for; the database pool (`DB_POOL_SIZE`, default 10) queues requests rather than failing them.
+- **Not removable by code:** if the Anthropic account runs out of credit or its rate limit is lower than the load, runs fail with the AI's message and save nothing.
+- **Tests:** the test that pinned the server-wide lock now checks the new rule (a different syllabus runs alongside, the same one is refused, the slot is released after success and failure); new tests: six faculty check at once and none is refused; seven syllabi generate at once; twelve jobs run side by side, each private to its author. `npm test` passes (1,459).
+
+
+### v1.98.5 — Sized for 19 Faculty Running Everything At Once
+**Date:** November 18, 2026
+
+- **Settings:** `AI_CHECKS_PER_USER_PER_DAY=100`, `AI_CHECKS_PER_DAY=1000`, `AI_REFINES_PER_USER_PER_DAY=200` (were 40, 400, 60: 19 faculty at 40 would have run past 400) and `DB_POOL_SIZE=30` (was 10), set in the development `server/.env`, shown as the recommended values in `server/.env.example`, and listed in the staging checklist (`docs/vpaa-conformance/STAGING-SETUP-CHECKLIST.md`, with the generator's two settings and its migration). A staging or production host must set them itself: it does not read the development file.
+- **New setting:** `AI_CHECKS_PER_MINUTE_PER_USER` (1 to 600, default 10, unchanged) for the per-person guard against a double click on "Check with AI"; 30 in development.
+- **Tests:** compliance routes and AI quota tests pass (68), conformance tests pass (7).
+
+
+### v1.98.6 — AI Syllabus Generator: The Course Description Is Written From the Finished Plan
+**Date:** November 18, 2026
+
+- **Change (owner):** the course description is not an official text; it is created from the Learning Plan, which makes the whole syllabus. The generator used to write it first, together with the CLOs and before any week existed, so it could describe topics the plan never covers, and it was left out when the author kept their own CLOs. Now the CLO request writes only the CLOs, and the description is written in the step after the weekly plan, from the finished plan: the CLOs, the topics of every week, and the tasks. It must say only what the plan contains, 30 to 250 words (the compliance standard asks for 30), and it is always written for the new plan, even when the author kept their CLOs, because an old description would describe the old plan.
+- **Screen:** the progress step and the "replace" note name the description (English and Filipino).
+- **Tests:** generator tests 30 (the description is never in the CLO request, it comes after the weekly plan with the CLOs and every week's topics, it is regenerated when CLOs are kept, too short and too long are sent back). `npm test` passes (1,462).
+
+
+### v1.98.7 — AI Syllabus Generator: Better References (Newest Edition, Sentence Case, Journal Articles)
+**Date:** November 18, 2026
+
+- **Newest edition:** the book's own list of editions on Open Library is read (one request) and the newest English edition with a year and a publisher is used (a translation, or a year in the future, never). Before, only up to 8 ISBNs from the search were tried, so an older edition could win. Live check: Introduction to Algorithms comes out as the 4th edition, 2022.
+- **APA sentence case:** the AI puts the titles in sentence case in one more request, accepted only when it changed capital letters and nothing else (letters and numbers must be identical to the catalogue's title, otherwise the catalogue's spelling stays).
+- **Journal articles:** the AI may also name up to 5 articles; only one that Crossref confirms is kept (title and first author's surname match, and the record has a year, a journal, authors with given names and a DOI), written in APA 7 from Crossref's record with its DOI link (live check: LeCun, Bengio and Hinton, 2015, Nature). Up to 5 books and 3 articles are kept; books go to Books, articles to Internet References, the other groups are marked not applicable. Websites are NOT suggested: nothing can confirm a page's title, author and date.
+- **Only these addresses are called:** Open Library search, one work's editions, one edition by ISBN, and Crossref's work search (allowlist in `referenceSuggest.js`).
+- **Phone width:** checked at 375 px in the browser: the generator page has no sideways scrolling and the card and its button fit; the hint now has space above the button.
+- **Tests:** reference suggestions 14, generator 31; `npm test` passes (1,467).
+
+
+### v1.98.8 — AI Syllabus Generator: Quality Guards (Level, Packed Weeks, Template Counts, Quiz Share)
+**Date:** November 19, 2026
+
+- **What was checked first:** the first real run (Data Structures and Algorithms) was replayed through the new rules. Findings: every one of the 14 lesson weeks had exactly 3 activities (a template: now caught); 35% of the tasks were quizzes or tests (now the limit is 30% per chunk of weeks); no ILO below apply level sat in a CLO 2, 3 or 4 week (low verbs were only in CLO 1 weeks, which is right), and no week was packed. So the level and packing rules are safeguards, not repairs of a seen failure.
+- **Rules in code** (`pipeline/generate.js`, each sent back once with the problem named, as every other check): an ILO of a week that builds CLO 2, 3 or 4 (also a second ILO) is at apply level or above, not a recall or understanding verb; a week's content is at most 4 topic groups (separated by semicolons) and 260 characters; 2 to 4 activities and 1 to 3 tasks, and a chunk of 5 or more weeks may not give every week the same number of 3 or more activities; a week's tasks are not only quizzes or tests; at most 30% of the tasks of a chunk are quizzes or tests.
+- **Told to the AI first:** the same rules are in the system prompt and in the outline and weekly requests, so the first answer is usually right and the retry (which costs a request) is rare.
+- **Tests:** generator tests 37. `npm test` passes.
+
+
+### v1.98.9 — AI Syllabus Generator: Assigned Subjects With No Draft Yet Can Be Generated
+**Date:** November 19, 2026
+
+- **Change (owner):** the generator page lists the subjects assigned to the faculty member (the same list the builder uses: `GET /api/courses?taken=1`; an administrator sees every subject) that have no draft yet, marked "no draft yet", next to their existing editable drafts. Choosing one and pressing Generate creates the draft the way the builder does when a subject is chosen (the subject's vision, mission, EGAs, POs and CLOs are copied in, `saveOnce`, and a refused subject, for example one the person already has a syllabus on, leaves no empty row behind), then generates into it. The page moves onto the new draft, the app's list of syllabi is read again, and the progress screen is not reset by the draft getting its id. A subject that already has a draft (or was just started) is no longer offered as new. When nothing is assigned, the page says so.
+- **Checked in the browser** (demo faculty, one temporarily assigned subject, generator cost cap set to $0.01 so the run was refused before any AI request, then restored to $2): the picker showed "CENGDIS — … · no draft yet" and the note that a draft is created; Generate created draft 119 with the subject's 13 POs and 4 EGAs; the run failed at step 1 with the cost-cap message and nothing was spent; the page then showed the new draft. The draft, the assignment and the temporary cap were removed afterwards. **Not checked:** a successful run from a subject with no draft (needs a paid generation).
+
+
+### v1.98.10 — AI Syllabus Generator: Quality Guards No Longer Stop a Run
+**Date:** November 19, 2026
+
+- **Found in the first general-education run** (Mathematics in the Modern World, BSIT, syllabus 120, run by the owner): the run stopped at the course outline with "The AI could not write a usable course outline (Week 2, Week 3 and Week 5 have more than 4 topic groups)". The v1.98.8 packed-week rule was applied as a hard rule, so after the retry the whole generation was refused and nothing was written (the CLO and outline requests had been spent).
+- **Change:** the quality guards are now SOFT: the level of an ILO in a CLO 2-4 week, a packed week, a week of only quizzes, more than 4 activities or 3 tasks, the same number of activities in every week, and too many quizzes. They are sent back once with the problem named (as before); if the second answer still has them, the run goes on and the author gets a warning naming the weeks to review ("The AI did not fully follow these quality guidelines after two tries ..."). Only structure still stops a run: invalid JSON, a missing week, a copied ILO, a teacher-led ILO, two verbs, a missing core value, too few activities or tasks, a missing CLO. The packed-week limit is now 5 topic groups and 320 characters (the prompt says "3 to 5").
+- **Cost of a stopped run:** the error now carries what the run spent, and the server prints one line for a stopped run as it already did for a finished one ("AI Syllabus Generator STOPPED: ..., N requests, estimated $X").
+- **Filipino:** the new warning has a Filipino version.
+- **Tests:** generator 41. `npm test` passes (1,477).
+
+
+### v1.98.11 — AI Syllabus Generator: Older References Get a Second Look and a Warning
+**Date:** November 19, 2026
+
+- **Found in the MMW run (syllabus 120):** the five suggested books were real but dated 2016, 2016, 2010, 2010 and 2007; three were over the school standard's 10-year limit, so Reference Currency scored 70 (the whole syllabus scored 96, "Excellent").
+- **Change:** when the newest edition Open Library knows is more than 5 years old, Crossref (`filter=type:book`) is asked once for a newer record of the same book: same title, same first author, a later year that is not in the future, a publisher and authors with given names. If one exists it replaces the old one and its DOI link is written in the reference (live check: a Springer book came out as 2023 with its DOI). If Crossref has nothing newer, or fails, the catalogue edition stays and the author is told: "N reference(s) are more than 10 years old, the limit of the school's standard ... Replace them with the newer editions you use" (English and Filipino).
+- **Live check, honest result:** for the MMW textbooks (Triola, Tannenbaum, Miller; Pearson and Prentice Hall) Crossref holds no newer record, so they stay 2010, 2010 and 2007 and the warning names them. Crossref only helps for publishers that register DOIs (Springer, Wiley, OUP, ...). A third source with newer editions (for example Google Books) would be needed to improve those.
+- **Found live, fixed:** asking Crossref for the field `edition-number` makes it refuse the whole request (HTTP 400), so the lookup would have silently found nothing; the fields are now a fixed list and a test pins that every field is one Crossref knows. Also: a catalogue publisher "McGraw-Hill Companies, The" is written "McGraw-Hill Companies", and a Crossref publisher with the place glued on ("Oxford University PressOxford") is skipped.
+- **Tests:** reference suggestions 19, generator 41. `npm test` passes.
+
+---
+
+### v1.98.12 — AI Checker: The 5-Year Reference Note Counts From the Syllabus's School Year
+**Date:** November 19, 2026
+
+- **Problem:** the AI Checker's "older than 5 years" note on a reference (REF-RECENCY, review only, no points) counted from today's calendar year: neither the official check (`compliance/service.js`) nor Check & improve (`routes/syllabusCheck.js`) passed a year. A 2023–2024 syllabus checked in 2026 had its 2019 book flagged, although it was recent enough for that syllabus.
+- **Change** (`pipeline/check.js` `yearOfSyllabus`): when no year is passed, the check uses the start year of the syllabus's own academic year (`meta.academicYear`, "2026–2027", which the server sets from the subject on every save); without one, the server's school year (`lib/schoolYear.js`, what the builder's compliance check uses), never today's date. The official check, the repair plan and Check & improve all go through it. A year the caller passes still wins.
+- **Not changed:** the builder's compliance check (rule R-03, 10 years, server-side `compliance/service.js` and the builder) still counts from the server's school year (`SCHOOL_YEAR_START`), not each syllabus's own year; the AI Checker's score does not use R-03 (`engine.js` leaves it out). Every syllabus in the dev database is 2026–2027, so nothing changes for them today.
+- **Tests:** `pipeline/reference-year.test.js` (3): the year from "2023–2024", "2023-2024" and "S.Y. 2025 - 2026"; a 2019 book is fine for 2023–2024 and 2024–2025 and noted for 2025–2026 and 2026–2027; the fallback and a passed year. All 1,486 server tests pass. `npm run test:e2e`: the checker scenarios pass (E03, E05, E12, E15); E09, E10, E11, E14 and E20 failed on the report drawer and AI Checker screens being reworked at the same time (uncommitted `ReportDrawer.jsx`, `AIChecker.jsx`, `scenarios.cjs`), not on reference years. `test:localization` and `test:pdf-import-ui` fail on the student and builder screens (commit 097e1169 and uncommitted builder edits), not on this change.
+
+---
+
+### v1.98.13 — Tests: Student Screens Translated; PDF Import Screen Tests Follow the New Import Flow
+**Date:** November 19, 2026
+
+- **Problem:** `npm test` stopped at the localization audit, so its last two suites never ran. Four texts on the student screens were in English only: the COR consent ("I agree to AI reading of my COR." and its explanation) in `StudentRegister.jsx`, and "Download PDF" twice in `StudentViews.jsx` (commit 097e1169). Behind it, `test:pdf-import-ui` failed 12 of 16 on the committed code: its tests still expected the old flow. Since 686a8512 the subject comes from the PDF (no subject needs to be chosen first), and since e0f22b56 the button is "Apply to form", which only fills and saves the form; AI CHECK is a separate step from the Review step.
+- **Change:** the four texts use new keys `studentView.downloadPdf`, `studentView.consentTitle` and `studentView.consentBody`, in English and Filipino (`src/i18n/extra.js`). `tests/pdf-import-ui.test.jsx` follows the current flow: with no subject the scan goes ahead; every Apply is "Apply to form"; in the builder, Apply saves once (or again after a failed save, without a second scan), never runs AI CHECK, says to run it from the Review step and returns to Step 1. The old "check failed after Apply" case is gone, because Apply no longer checks. The app's behaviour is unchanged.
+- **Tests:** the localization audit passes (no hardcoded display strings); `test:pdf-import-ui` passes 15/15 here and on a clean copy of the committed code; the whole `npm test` chain passes (1,486 server tests; the VPAA screens 28/28).
+
+---
+
+### v1.98.14 — AI Checker: The Report Slides In From the Right
+**Date:** November 19, 2026
+
+- **Change** (`src/components/ReportDrawer.jsx`, new): the AI Checker report is a panel that slides in from the right edge and back out when it is closed. It opens at a reading width; an arrow button widens it to the whole window and back. Esc, the backdrop and ✕ ("Close report") close it; focus stays inside while it is open and returns to the button that opened it (the same `useModalLayer` the dialogs use). Reduced-motion settings turn the animation off.
+- **AI Checker tab** (`src/views/AIChecker.jsx`, `src/views/builder2/ComplianceSection.jsx` `layout="panel"`): one slim row holds the subject, Edit Syllabus, the score of the saved check ("View report") and the check button ("Run AI Checker", then "Re-Check again"). A check that has just finished opens its report; a saved report opens from the score. Until a check has run, a hint under the form says to run the AI Checker before submitting. The builder's Review step keeps the report inline as before.
+- **Administrator's check report** (`src/components/ComplianceModal.jsx`): the same drawer instead of the centred dialog; Edit draft, Approve and Close are in its footer.
+- **Fixed before commit:** the drawer's check button said "Check again" while the row and the rest of the page say "Re-Check again"; it uses the same label now (the unused `aiChecker.recheck` key is removed). The row did not wrap between 600 px and about 1,100 px, so the AI Checker page was wider than a tablet or a small laptop (768 px: 1,056 px wide); it wraps at every width now.
+- **E2E** (`scripts/e2e/scenarios.cjs`): the scenarios open the report from the score when it is not already open, use the drawer's footer button to check again, close it before using the page behind it, and press "Run AI Checker".
+- **Not in this commit:** the AI Syllabus Generator's redesigned panel (`GeneratePanel.jsx`, `SyllabusGenerator.jsx`, its texts and styles) and the notification links in `App.jsx`, which are separate work in progress.
+- **Tests:** `npm test` passes (1,486 server tests, localization, PDF import 15/15, VPAA screens 28/28); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks. Both ran with the generator and notification work also in the working tree.

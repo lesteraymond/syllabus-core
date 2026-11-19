@@ -4,6 +4,7 @@ const { extract, uniqueIds } = require('./extract');
 const fixedRules = require('./fixedRules');
 const { judge } = require('./judge');
 const { lookupReferences, findingsOf } = require('./lookup');
+const { schoolYearStart } = require('../../schoolYear');
 
 // The misalignments a person would see: fixed-rule findings, and scored AI results that are failing or waiting on a failing parent.
 function misalignmentsOf(fixed, judged) {
@@ -13,9 +14,17 @@ function misalignmentsOf(fixed, judged) {
   ];
 }
 
-// opts: ask, store, model, year (see judge.js and fixedRules.js).
+// The school year a syllabus belongs to, by its start year: meta.academicYear ("2026–2027", set from its subject on every save), else the server's
+// school year (lib/schoolYear.js, what the builder's compliance check uses). Reference age is measured from it, never from today's date.
+function yearOfSyllabus(content) {
+  const m = /\b(19|20)\d{2}\b/.exec(String(content?.meta?.academicYear ?? ''));
+  return m ? Number(m[0]) : schoolYearStart();
+}
+
+// opts: ask, store, model, year (see judge.js and fixedRules.js; default: yearOfSyllabus).
 // The caller reads the result with the same ids only after uniqueIds too (official.js, plan.js and refine.js do; it returns unique content unchanged).
 async function check(content, masters, opts = {}) {
+  if (!Number.isFinite(opts.year)) opts = { ...opts, year: yearOfSyllabus(content) };
   const map = extract(uniqueIds(content), masters);
   const fixed = fixedRules.check(map, { year: opts.year });
   // Reference lookups (Crossref, Open Library, links) only when the caller asks: opts.lookup = {} or { fetchImpl, urlChecker }.
@@ -37,4 +46,4 @@ async function check(content, masters, opts = {}) {
   };
 }
 
-module.exports = { check, misalignmentsOf };
+module.exports = { check, misalignmentsOf, yearOfSyllabus };
