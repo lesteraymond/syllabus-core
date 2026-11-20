@@ -187,7 +187,9 @@ function readClos(raw, standards, subjectTitle = '') {
     const pos = [...new Set((c && Array.isArray(c.pos) ? c.pos : []).map(Number))].filter(n => poNos.has(n));
     let egas = [...new Set((c && Array.isArray(c.egas) ? c.egas : []).map(Number))].filter(n => egaNos.has(n));
     if (!pos.length) problems.push(`${label} must support at least one of the program outcomes ${[...poNos].join(', ')}`);
-    if (!egas.length) egas = [...new Set(pos.flatMap(n => standards.pos.find(p => p.no === n)?.egas || []))].filter(n => egaNos.has(n)); // the EGAs of its POs
+    // the EGAs its POs are linked to are always added to the model's own (as the builder ticks them, ClosStep): P-03 asks a CLO to carry every one of them.
+    // Before 2026-11-20 they were added only when the model gave none, so a CLO could miss one and lose points once the POs were linked.
+    egas = [...new Set([...egas, ...pos.flatMap(n => standards.pos.find(p => p.no === n)?.egas || [])])].filter(n => egaNos.has(n));
     if (!egas.length) problems.push(`${label} must support at least one graduate attribute ${[...egaNos].join(', ')}`);
     clos.push({ id: newId('c'), title: CLO_TITLES[i], level: R.CLO_LEVELS[i].level, statement, pos: pos.sort((a, b) => a - b), egas: egas.sort((a, b) => a - b) });
   });

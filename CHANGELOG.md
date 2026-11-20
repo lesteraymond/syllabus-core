@@ -2910,3 +2910,13 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Change** (`src/views/builder2/ClosStep.jsx`; helpers `linkedEgas`, `tickPo`, `missingPoEgas` in `src/lib/outcomesSetup.js`): ticking a PO on a CLO also ticks the EGAs it is linked to; unticking a PO leaves the EGAs (another PO may need them, or the author chose them). Each PO chip shows its EGAs ("PO 1 · EGA 1, 4"). When a linked EGA is not ticked, a note under the chips names it ("PO 1 serves EGA 4: tick it on this CLO too.") with an "Add the EGAs of its POs" button. English and Filipino.
 - **Not changed:** the author can still tick any EGA and PO; scoring, P-03 and the AI Checker are as before. A PO without links adds nothing (BSIT and BSCPE until an administrator links them).
 - **Tests:** the helpers (ticking, unticking, a PO without links, missing EGAs per PO); the CLO row rendered with a synthetic program in English and Filipino (chip, note, button). `npm test` passes (1,494 server tests, localization, PDF import 15/15, VPAA screens 32/32); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks.
+
+---
+
+### v1.98.19 — AI Syllabus Generator: A Generated CLO Carries the EGAs of Its POs
+**Date:** November 20, 2026
+
+- **Problem:** the generator added the EGAs a CLO's POs are linked to only when the model gave that CLO no EGA at all. When the model chose some EGAs, a linked one could be missing, so once the POs are linked (required since v1.98.17) a generated draft could fail P-03 and lose points on its first check, unlike a CLO ticked in the builder (v1.98.18).
+- **Change** (`pipeline/generate.js` `readClos`): the linked EGAs of each CLO's POs are always added to the ones the model chose (none twice; a PO without links adds nothing). The model still writes the statements and picks the POs; the AI Checker still checks that each EGA fits the CLO.
+- **Not changed:** with no links (BSIT and BSCPE today) generation is as before.
+- **Tests:** `generate.test.js` (+1): linked EGAs added to the model's, none twice, nothing for a PO without links. `npm test` passes (1,495 server tests, localization, PDF import 15/15, VPAA screens 32/32); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks.

@@ -496,3 +496,12 @@ test('references: kept references older than the school\'s 10-year limit are nam
   assert.ok(out.sections.refs.books.items.some(i => /\(2005\)/.test(i.t)));
   assert.ok(out.warnings.includes("1 reference(s) are more than 10 years old, the limit of the school's standard (no newer edition was found in the catalogues). Replace them with the newer editions you use."));
 });
+
+test('a generated CLO always carries the EGAs its POs are linked to, besides the ones the model chose (P-03, as the builder ticks them)', () => {
+  const standards = { egas: [1, 2, 3, 4].map(no => ({ no, name: 'E' + no })), pos: [{ no: 1, text: 'P1', egas: [1, 4] }, { no: 2, text: 'P2', egas: [2] }, { no: 3, text: 'P3', egas: [] }] };
+  const statements = ['Explain the basic concepts of data', 'Apply searching and sorting methods to solve problems', 'Develop programs that use stacks and queues', 'Advocate honest practice when sharing code'];
+  const tags = [{ pos: [1], egas: [1] }, { pos: [1, 2], egas: [3] }, { pos: [3], egas: [2] }, { pos: [2], egas: [] }];
+  const out = G.readClos(JSON.stringify({ clos: statements.map((statement, i) => ({ statement, ...tags[i] })) }), standards);
+  assert.deepEqual(out.problems || [], []);
+  assert.deepEqual(out.clos.map(c => c.egas), [[1, 4], [1, 2, 3, 4], [2], [2]], 'linked EGAs added, the ones the model chose kept, none twice; a PO without links adds nothing');
+});
