@@ -1062,7 +1062,9 @@ html { scrollbar-gutter: auto; }
 }
 .cmp .cmp-chips .chip.stale, .cmp .cmp-chips .hy-pill.warn { color: var(--gold-ink); font-weight: var(--fw-medium); }
 .cmp .cmp-chips .chip.basis.unavailable { color: var(--red); font-weight: var(--fw-medium); }
-.cmp .cmp-chips .chip.basis.ai, .cmp .cmp-chips .chip.src.ai, .cmp .cmp-chips .chip.src.rule { color: var(--muted); }
+.cmp .cmp-chips .chip.src.ai, .cmp .cmp-chips .chip.src.rule { color: var(--muted); }
+/* "AI-assisted check": the one fact worth noticing under the score, as a light-blue pill. */
+.cmp .cmp-chips .chip.basis.ai { padding: 2px 10px; border: 1px solid color-mix(in srgb, var(--btn-primary) 28%, #fff); border-radius: 999px; background: var(--btn-primary-tint); color: var(--btn-primary-hover); font-weight: var(--fw-semibold); }
 
 /* Check coverage: a quiet reference list after the results. One muted line when closed; opened, plain rows (rule id, status, reason) separated by hairlines. */
 .hy-details {

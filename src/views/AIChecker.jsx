@@ -14,6 +14,7 @@ import OwnSyllabusPicker from '../components/OwnSyllabusPicker';
 import ComplianceModal from '../components/ComplianceModal';
 import CheckHistory from '../components/CheckHistory';
 import ComplianceSection from './builder2/ComplianceSection';
+import ComplianceCard from './ComplianceCard';
 import { canSubmitHybrid, applySuggestion } from '../lib/hybridCheck';
 import { sectionsOf } from '../lib/draftSave';
 import { useAiGate } from '../lib/checkPolicy';
@@ -137,9 +138,36 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
         </Select>
       </div>
       <StableButton type="button" className="btn outline" disabled={!selectedId} onClick={openBuilder}>{translateUI('publication.editDraft')}</StableButton>
-      {ctl && ctl.run && !ctl.busy && <StableButton type="button" className={'btn outline pick-score ' + ctl.tone} onClick={ctl.openReport} title={translateUI('aiChecker.viewReport')}>{(ctl.score !== null ? ctl.score + '% · ' : '') + ctl.label}</StableButton>}
       {ctl && ctl.canRun && <StableButton type="button" className="btn primary" disabled={ctl.busy} onClick={ctl.recheck}>{ctl.busy ? translateUI('ui.checking_820d60') : translateUI(ctl.run ? "hybrid.recheckButton" : "aiChecker.run")}</StableButton>}
     </section>
+  );
+
+  // The right-hand column holds what the page always had under the report: for a returned syllabus the required "What did you change?" note,
+  // how many warnings remain, the submit hint and the submit button.
+  const submitOk = !!doc.content && canSubmitHybrid(lastRun, JSON.stringify(doc.content), 'advisory');
+  const submitRail = (
+    <aside className="chk-rail">
+      <section className="card chk-ready">
+        {revising && (
+          <label className="field">
+            <span>{translateUI("ui.what_did_you_change_required_c57040")}</span>
+            <textarea rows="3" maxLength={1000} value={note} aria-required="true" onChange={e => setNote(e.target.value)} placeholder={translateUI("ui.saved_with_this_version_in_the_history_e_g_updated_the_grading_co_4d98a9")} />
+            {needNote && <small className="hint">{translateUI("ui.write_at_least_a_sentence_so_the_reviewer_knows_what_to_look_at_3f7338")}</small>}
+          </label>
+        )}
+        {warnings > 0 && <div className="step-hint advice" role="note">{tr(warnings + (warnings === 1 ? ' warning remains' : ' warnings remain')) + translateUI("ui.in_the_compliance_check_they_do_not_block_you_the_reviewer_will_s_d35203")}</div>}
+        {!lastRun && <small className="hint" data-testid="submit-hint">{translateUI('aiChecker.submitHint')}</small>}
+        <StableButton
+          type="button"
+          className="btn primary chk-submit"
+          disabled={submitting || !doc.content || needNote || !submitOk}
+          title={!submitOk ? translateUI('hybrid.hardGateRequired') : undefined}
+          onClick={submitChecked}
+        >
+          {existing ? translateUI('hybrid.submitVersion') : translateUI('hybrid.submit')}
+        </StableButton>
+      </section>
+    </aside>
   );
 
   return (
@@ -172,35 +200,18 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
               onApplyDraft={doc.editable && doc.content ? applyDraftRecommendation : undefined}
               layout="panel"
               renderBar={pickBar}
+              renderResult={(ctl) => (
+                <div className={'chk-layout' + (doc.editable ? '' : ' solo')}>
+                  {ctl.installed && ctl.run && (
+                    <div className="chk-main">
+                      <section className="card chk-report"><ComplianceCard run={ctl.run} checking={ctl.busy} onOpenStep={openBuilder} onApplyDraft={ctl.onApplyDraft} /></section>
+                    </div>
+                  )}
+                  {doc.editable && submitRail}
+                </div>
+              )}
               subjectLabel={selectedRow ? (selectedRow.courseCode || '—') + (selectedRow.title ? ' — ' + selectedRow.title : '') : ''}
             />
-          )}
-
-          {revising && doc.editable && (
-            <label className="field" style={{ marginBottom: 14 }}>
-              <span>{translateUI("ui.what_did_you_change_required_c57040")}</span>
-              <textarea rows="3" maxLength={1000} value={note} aria-required="true" onChange={e => setNote(e.target.value)} placeholder={translateUI("ui.saved_with_this_version_in_the_history_e_g_updated_the_grading_co_4d98a9")} />
-              {needNote && <small className="hint">{translateUI("ui.write_at_least_a_sentence_so_the_reviewer_knows_what_to_look_at_3f7338")}</small>}
-            </label>
-          )}
-
-          {warnings > 0 && doc.editable && <div className="step-hint advice" role="note">{tr(warnings + (warnings === 1 ? ' warning remains' : ' warnings remain')) + translateUI("ui.in_the_compliance_check_they_do_not_block_you_the_reviewer_will_s_d35203")}</div>}
-
-          {selectedId && doc.editable && (
-            <div className="editor-footer">
-              {!lastRun && <small className="hint" data-testid="submit-hint">{translateUI('aiChecker.submitHint')}</small>}
-              <div>
-                <StableButton
-                  type="button"
-                  className="btn primary"
-                  disabled={submitting || !doc.content || needNote || !canSubmitHybrid(lastRun, JSON.stringify(doc.content), 'advisory')}
-                  title={!doc.content || !canSubmitHybrid(lastRun, JSON.stringify(doc.content), 'advisory') ? translateUI('hybrid.hardGateRequired') : undefined}
-                  onClick={submitChecked}
-                >
-                  {existing ? translateUI('hybrid.submitVersion') : translateUI('hybrid.submit')}
-                </StableButton>
-              </div>
-            </div>
           )}
         </>
       )}

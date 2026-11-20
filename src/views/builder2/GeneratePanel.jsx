@@ -126,18 +126,25 @@ export default function GeneratePanel({ draft, editable, syllabusId, beforeRun, 
   const total = (progress && progress.steps) || STAGES.length;
   const percent = phase === 'starting' || !progress ? 3 : Math.min(97, Math.max(6, Math.round(((stageIndex < 0 ? progress.step || 0 : stageIndex) / total) * 100) + 4));
   const showForm = !busy && phase !== 'done';
+  // The step list sits in the right-hand column. Before a run it only lists what the AI writes (numbered); during a run it follows the server's stage; after it, every step is done.
+  const stepState = (n) => (phase === 'done' ? 'done' : !busy ? 'idle' : stageIndex < 0 ? 'todo' : n < stageIndex ? 'done' : n === stageIndex ? 'now' : 'todo');
+  const subject = [draft.meta.code, draft.meta.title].filter(Boolean).join(' — ');
   return (
+    <div className="gen-layout">
     <section className={'sm-card gen-card' + (busy ? ' is-working' : '')} aria-label={translateUI('generate.title')} aria-busy={busy || undefined}>
       <header className="sm-card-h gen-head">
         <span className="gen-spark" aria-hidden="true">✦</span>
-        <h4>{translateUI('generate.title')}</h4>
+        <div className="gen-head-text">
+          <h4>{translateUI('generate.title')}</h4>
+          {subject && <small>{subject}</small>}
+        </div>
       </header>
       <div className="sm-card-b">
         {showForm && (
           <>
             <label className="field gen-notes">
               <span>{translateUI('generate.notesLabel')}</span>
-              <textarea className="in" rows={3} maxLength={1500} value={notes} aria-label={translateUI('generate.notesLabel')} onChange={(e) => setNotes(e.target.value)} />
+              <textarea className="in" rows={7} maxLength={1500} value={notes} aria-label={translateUI('generate.notesLabel')} onChange={(e) => setNotes(e.target.value)} />
               <span className="hint gen-notes-hint"><span>{translateUI('generate.notesHint')}</span><span className="gen-count" aria-hidden="true">{notes.length} / 1500</span></span>
             </label>
           </>
@@ -154,12 +161,6 @@ export default function GeneratePanel({ draft, editable, syllabusId, beforeRun, 
               <span className="gen-time">{translateUI('generate.elapsed', { time: mmss(elapsed) })}</span>
             </div>
             <div className="gen-bar" role="progressbar" aria-label={translateUI('generate.title')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent}><i style={{ width: percent + '%' }} /></div>
-            <ol className="gen-steps" aria-label={translateUI('generate.stepsLabel')}>
-              {STAGES.map((k, n) => {
-                const state = stageIndex < 0 ? 'todo' : n < stageIndex ? 'done' : n === stageIndex ? 'now' : 'todo';
-                return <li key={k} className={'gen-step ' + state} aria-current={state === 'now' ? 'step' : undefined}><span className="gen-dot" aria-hidden="true">{state === 'done' ? '✓' : ''}</span>{translateUI('generate.stage.' + k)}</li>;
-              })}
-            </ol>
             <p className="hint">{translateUI('generate.leaveNote')}</p>
           </div>
         )}
@@ -192,5 +193,15 @@ export default function GeneratePanel({ draft, editable, syllabusId, beforeRun, 
         </div>
       </div>
     </section>
+    <aside className="card gen-rail" aria-label={translateUI(busy || phase === 'done' ? 'generate.stepsLabel' : 'generate.writesLabel')}>
+      <h3>{translateUI(busy || phase === 'done' ? 'generate.stepsLabel' : 'generate.writesLabel')}</h3>
+      <ol className="gen-steps">
+        {STAGES.map((k, n) => {
+          const state = stepState(n);
+          return <li key={k} className={'gen-step ' + state} aria-current={state === 'now' ? 'step' : undefined}><span className="gen-dot" aria-hidden="true">{state === 'done' ? '✓' : state === 'idle' ? n + 1 : ''}</span>{translateUI('generate.stage.' + k)}</li>;
+        })}
+      </ol>
+    </aside>
+    </div>
   );
 }

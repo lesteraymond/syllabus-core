@@ -97,9 +97,9 @@ module.exports = async function run(ctx, h) {
   });
 
   // ---------------------------------------------------------------------------------------------------------------------------------------------
-  // The report slides in from the right. A check that has just finished opens it; a saved one is opened with the score button in the subject row.
-  const openReport = async (s) => { if (!(await s.page.locator('.rd-panel').count())) { await s.page.locator('.pick-score').click(); await s.page.locator('.rd-panel').waitFor(); await s.page.waitForTimeout(600); } };
-  const closeReport = async (s) => { if (await s.page.locator('.rd-panel').count()) { await s.page.locator('.rd-x').click(); await s.page.locator('.rd-panel').waitFor({ state: 'detached' }); } };
+  // The report is part of the page (the check card in the main column); there is no drawer. openReport waits for it.
+  const openReport = async (s) => { await s.page.locator('.chk-report').waitFor(); };
+  const closeReport = async () => {}; // nothing to close: the result is part of the page
   await scenario('E03', 'Faculty runs the new AI Checker on the draft: official score with the AI points, all seven VPAA relationships evaluated, the scripted gap and its verified draft', async () => {
     const before = stack.providerEvents().filter((e) => e.kind === 'provider').length;
     const s = await L.session(browser, stack);
@@ -308,7 +308,7 @@ module.exports = async function run(ctx, h) {
     await s.page.waitForTimeout(2500);
     check(s.issues.apiCalls.some((c) => c.includes('/decisions 201')), 'Reject was recorded by the decisions API');
     check(await activities() === original, 'Reject changed nothing in the saved draft');
-    await s.page.locator('.rd-foot').getByRole('button', { name: /re-check again/i }).click();
+    await s.page.getByRole('button', { name: /re-check again/i }).first().click();
     await s.page.waitForTimeout(6000);
     const again = await s.page.locator('.hy-rec').count();
     note('recommendation cards after Reject + Re-Check: ' + again);
@@ -319,11 +319,11 @@ module.exports = async function run(ctx, h) {
       await s.page.waitForTimeout(3500);
       check(await activities() !== original, 'Check & improve then Accept changed the saved draft');
     } else known('E2E-03', 'after Reject and a Re-Check the same recommendation did not return, so the Accept path could not be exercised on this syllabus');
-    await s.page.locator('.rd-foot').getByRole('button', { name: /re-check again/i }).click();
+    await s.page.getByRole('button', { name: /re-check again/i }).first().click();
     await s.page.waitForTimeout(6000);
     let text = await s.text();
     check(/Meets the standard/.test(text), 'the Re-Check after the correction still meets the standard (official score is not changed by the advisory result)');
-    await closeReport(s); // the page behind the drawer cannot be reached while it is open
+    await closeReport(s);
     const submit = s.page.getByRole('button', { name: /submit new version to admin/i });
     check(await submit.isDisabled(), 'Submit new version stays disabled until the author says what changed');
     await s.page.getByLabel(/what did you change/i).fill('Synthetic E2E: rewrote the week 2 activities to practise the ILO at its level.');

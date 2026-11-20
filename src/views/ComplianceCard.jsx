@@ -1,6 +1,6 @@
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
-import { SOURCE_LABEL, STEP_INFO, areaNames, basis, blockersOf, groupFindings, headline, provisionalOf, runState, stepLabel, tone, ringAngle, when } from '../lib/complianceView';
+import { SOURCE_LABEL, STEP_INFO, areaNames, basis, blockersOf, groupFindings, headline, provisionalOf, runState, stepLabel, tone, ringAngle } from '../lib/complianceView';
 import HybridCheckPanel from '../components/HybridCheckPanel';
 import { useAiGate } from '../lib/checkPolicy';
 import RuleCoveragePanel from '../components/RuleCoveragePanel';
@@ -71,19 +71,12 @@ export default function ComplianceCard({ run, checking = false, onOpenStep, show
             ? translateUI(provisional.rule ? 'hybrid.provisionalRule' : provisional.total ? 'hybrid.provisionalCoverage' : 'hybrid.provisionalPlain', { verified: provisional.verified, total: provisional.total })
             : run?.recordReview ? translateUI('hybrid.savedReportLine') : aiGate === 'advisory' && state === 'incomplete' && blockers.length === 0 ? translateUI('hybrid.advisoryIncomplete') : tr(headline(run))}</p>
           <div className="cmp-chips">
-            {run?.hybrid?.referenceContext?.po?.reference && <span className="chip quiet" title={translateUI('hybrid.poReferenceNote')}>
-              {translateUI('hybrid.poReferenceBasis',{program:run.hybrid.referenceContext.program.code,source:run.hybrid.referenceContext.po.source,version:run.hybrid.referenceContext.po.reference.version,curriculum:run.hybrid.referenceContext.curriculum.source||'—'})}
-            </span>}
             {run?.hybrid && run.hybrid.alignment.status !== 'completed' && <span className="hy-pill warn">{translateUI('hybrid.alignment', { status: translateUI(`hybrid.status.${run.hybrid.alignment.status}`) })}</span>}
             {run?.hybrid?.semanticCoverage && !run.hybrid.semanticCoverage.complete && <span className="hy-pill warn" title={translateUI('hybrid.vpaaCoverageNote.' + run.hybrid.semanticCoverage.reason)}>{translateUI('hybrid.vpaaCoverage', { done: run.hybrid.semanticCoverage.evaluated, total: run.hybrid.semanticCoverage.total })}</span>}
             {run && how.label && <span className={'chip basis ' + how.kind}>{tr(how.label)}</span>}
             {run && run.checkedBy === 'admin' && <span className="chip quiet">{translateUI("ui.checked_by_an_administrator_2cf77d")}</span>}
             {run && run.stale && <span className="chip stale">{run.recordReview ? translateUI('hybrid.savedReportChip') : translateUI("ui.out_of_date_the_syllabus_changed_after_this_check_384297")}</span>}
-            {run && <span className="chip quiet">{translateUI("ui.standard_f00ef0") + run.standard}{when(run.createdAt) ? translateUI("ui.checked_e3b884") + when(run.createdAt) : ''}</span>}
           </div>
-          {run && run.contact && run.contact.termHours !== null && run.contact.termHours !== undefined && (
-            <p className="cmp-small">{translateUI("ui.contact_hours_a41bbd") + run.contact.hoursPerWeek + translateUI("ui.a_week_about_47d819") + run.contact.termHours + translateUI("ui.for_the_term_the_plan_covers_825f4f") + run.contact.weeksPlanned + translateUI("ui.of_607f2d") + run.contact.weeksExpected + translateUI("ui.weeks_ff9807")}</p>
-          )}
         </div>
       </div>
 
