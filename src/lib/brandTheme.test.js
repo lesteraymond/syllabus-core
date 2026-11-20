@@ -263,8 +263,8 @@ test('the people list has no Remind button on each row (one Remind all does it),
 });
 
 // Primary buttons use their own lighter blue (--btn-primary #0866ff), not the navy brand blue; the white label stays readable on it and on its hover.
-test('primary buttons are the lighter blue #0866ff, with a readable white label (4.5:1) at rest and on hover', () => {
-  assert.strictEqual(token('btn-primary'), '#0866ff');
+test('primary buttons are the softer blue #2563eb, with a readable white label (4.5:1) at rest and on hover', () => {
+  assert.strictEqual(token('btn-primary'), '#2563eb');
   for (const name of ['btn-primary', 'btn-primary-hover']) assert.ok(contrast('#ffffff', token(name)) >= 4.5, 'white label on ' + name + ': ' + contrast('#ffffff', token(name)).toFixed(2));
   assert.ok(theme.includes('.btn.primary { background: var(--btn-primary);'), 'the primary button uses it');
   assert.ok(theme.includes('.btn.primary:hover { background: var(--btn-primary-hover); }'));

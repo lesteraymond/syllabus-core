@@ -38,7 +38,6 @@ export default function Reports({ syllabi, user, notify }) {
         </Card>
         <Card title={translateUI("ui.accreditation_audit_summary_aa0020")}>
           <div className="report-stats"><div><strong>{mySyllabi.length}</strong><small>{translateUI("ui.total_syllabi_6ef623")}</small></div><div><strong>{totalApproved}</strong><small>{translateUI("ui.approved_41b81e")}</small></div><div><strong>{mySyllabi.filter(s => s.status === 'under_review').length}</strong><small>{translateUI("ui.under_review_18afed")}</small></div><div><strong>{complianceRate}%</strong><small>{translateUI("ui.compliance_68f0ae")}</small></div></div>
-          <p className="muted" style={{ marginTop: 12 }}>{translateUI("ui.pacucoa_accreditation_report_generated_for_institutional_complian_60dc81")}</p>
         </Card>
         <Card title={translateUI("ui.historical_exports_5581a0")}>
           <div className="export-list">
