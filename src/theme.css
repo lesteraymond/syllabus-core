@@ -145,12 +145,12 @@ a:focus-visible { outline-color: var(--blue2); }
 /* ---- 4. Controls shared by every screen: buttons, inputs, tables, tabs and status badges ---- */
 :root { --green-ink: #235f45; --copper-text: #8c4726; --tint-warm: #eef1f0; }
 /* Primary buttons: a lighter, brighter blue than the navy brand (white label 4.8:1); hover a step darker. Links, tabs and the sidebar keep --blue. */
-:root { --btn-primary: #0866ff; --btn-primary-hover: #0656d6; }
+:root { --btn-primary: #2563eb; --btn-primary-hover: #1d4ed8; }
 /* Secondary (outline) buttons: a light grey fill with black bold text and no blue edge; hover a step darker. */
 :root { --btn-secondary: #e2e5e9; --btn-secondary-hover: #d4d8de; }
 
 .btn { padding: 9px 14px; border-radius: 8px; font-size: var(--text-sm); }
-.btn.primary { background: var(--btn-primary); box-shadow: 0 1px 2px rgba(8, 102, 255, 0.28); }
+.btn.primary { background: var(--btn-primary); box-shadow: 0 1px 2px rgba(37, 99, 235, 0.28); }
 .btn.primary:hover { background: var(--btn-primary-hover); }
 .asg-btn.primary { background: var(--btn-primary); }
 .btn.outline { background: var(--btn-secondary); color: #000; font-weight: var(--fw-bold); border-color: var(--btn-secondary); }
