@@ -36,13 +36,14 @@ const NOT_SET_UP = 'Compliance checks are not set up on this server yet. Ask an 
 const APPROVED = 'This syllabus is approved, so it cannot be checked again.';
 const SUBMITTED = 'This syllabus has been submitted and is with the reviewers, so it cannot be checked here. You can check it again if it is returned for revision or rejected.';
 const NO_SUBJECT_ADMIN = 'This syllabus has neither a form nor an uploaded file to check.';
-const limiter = createLimiter({ max: 10, windowMs: 60 * 1000 });
+// Checks one person may start per minute: only a guard against a double click or a stuck button, not a quota. AI_CHECKS_PER_MINUTE_PER_USER (1 to 600, default 10).
+const perMinute = (() => { const n = Number.parseInt(process.env.AI_CHECKS_PER_MINUTE_PER_USER, 10); return Number.isInteger(n) && n >= 1 && n <= 600 ? n : 10; })();
+const limiter = createLimiter({ max: perMinute, windowMs: 60 * 1000 });
 // Syllabi whose check is running right now. A page that was left and opened again asks (GET .../compliance `checking`) so it can show the
 // check as running and pick up the result, instead of looking idle while the server is still working.
 const runningChecks = new Set();
-// Shared by the builder and admin routes, not scoped to a user or syllabus.
-// Acquisition is synchronous so two requests cannot both enter the evaluator.
-const activeChecks = new WeakSet();
+// There is no server-wide lock: every faculty member and reviewer can run an AI check at the same time (owner decision 2026-11-18). The only lock is per syllabus, runningChecks above:
+// the same syllabus is never checked twice at once, whoever asks. Acquisition is synchronous, so two requests cannot both pass it.
 
 const parseId = (raw) => {
   const id = Number(raw);
@@ -128,7 +129,7 @@ router.get('/syllabi/:id/compliance', requireAuth, async (req, res) => {
 });
 
 router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => {
-  let releaseCheck, runningId, removeAbortListeners = () => {};
+  let runningId, removeAbortListeners = () => {};
   try {
     const db = req.app.locals.db;
     const me = req.session.user;
@@ -150,14 +151,11 @@ router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => 
     if (!subject.content && !isUpload) {
       throw httpError(409, owner ? 'There is nothing to check yet. Save some of the form first.' : NO_SUBJECT_ADMIN, { code: 'no_form' });
     }
-    const scope = req.app;
-    if (activeChecks.has(scope)) {
-      throw httpError(409, 'An AI check is already running. Wait until it finishes before starting another.', { code: 'ai_check_in_progress' });
+    if (runningChecks.has(syl.syllabus_id)) {
+      throw httpError(409, 'An AI check is already running for this syllabus. Wait until it finishes before starting another.', { code: 'ai_check_in_progress' });
     }
-    activeChecks.add(scope);
     runningId = syl.syllabus_id;
     runningChecks.add(runningId);
-    releaseCheck = () => activeChecks.delete(scope);
 
     const facts = isUpload ? svc.uploadCheck.readFacts(subject.file) : null;
     const content = isUpload ? svc.uploadFingerprint(subject.file, facts) : subject.content; // what the run's hash is made from
@@ -200,16 +198,17 @@ router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => 
       const [people] = await db.query('SELECT first_name, last_name FROM users WHERE user_id = ?', [syl.user_id]);
       const author = people[0] ? { firstName: people[0].first_name, lastName: people[0].last_name } : null;
       const job = svc.startAiJob(db, { runId, content, result, names: svc.namesFor(author, content) });
-      // Legacy reports can finish in the background. Keep their slot until the
+      // Legacy reports can finish in the background. Keep this syllabus marked as being checked until the
       // provider settles even if the HTTP response has already been sent.
-      const releaseJob = releaseCheck;
+      const heldId = runningId;
+      const releaseJob = () => runningChecks.delete(heldId);
       Promise.resolve(job).then(releaseJob, releaseJob);
-      releaseCheck = null;
+      runningId = undefined;
     }
     const [rows] = await db.query('SELECT * FROM ai_check_runs WHERE run_id = ?', [runId]);
     res.json({ installed: true, cached: false, run: await withVersionLabel(db, withChecker(await svc.loadDetail(db, rows[0], hash), syl.user_id)) });
   } catch (err) { sendError(res, err); }
-  finally { removeAbortListeners(); if (runningId !== undefined) runningChecks.delete(runningId); if (releaseCheck) releaseCheck(); }
+  finally { removeAbortListeners(); if (runningId !== undefined) runningChecks.delete(runningId); }
 });
 
 router.get('/compliance', requireAuth, async (req, res) => {

@@ -3993,9 +3993,10 @@ table,
 .pick-head p { @apply tw:[margin:0] tw:[font-size:var(--text-sm)]; @apply tw:[font-weight:var(--fw-medium)] tw:[color:var(--muted)]; }
 .pick-grid { @apply tw:grid tw:grid-cols-3 tw:[gap:14px]; }
 .pick-field { @apply tw:grid tw:[gap:6px] tw:[min-width:0]; }
-/* The AI Checker picker is just the subject drop-down and the Edit button, side by side, in a slim card. */
-.pick-card.pick-compact { display: flex; align-items: flex-end; gap: 12px; padding: 14px 16px; }
-.pick-card.pick-compact .pick-field { flex: 1 1 auto; }
+/* The AI Checker picker: the subject drop-down, Edit Syllabus, the score and the check button in one slim card. It wraps at every width: the row is */
+/* wider than a tablet or a small laptop (E14). */
+.pick-card.pick-compact { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; padding: 14px 16px; }
+.pick-card.pick-compact .pick-field { flex: 1 1 240px; min-width: 0; }
 .pick-card.pick-compact > .btn { flex: none; height: 42px; padding: 0 22px; white-space: nowrap; }
 @media (max-width: 600px) { .pick-card.pick-compact { flex-wrap: wrap; } .pick-card.pick-compact > .btn { width: 100%; } }
 .pick-field label { @apply tw:[font-size:var(--text-xs)]; @apply tw:[font-weight:var(--fw-semibold)] tw:[color:var(--muted)] tw:uppercase tw:[letter-spacing:var(--tracking-label)]; }
@@ -4541,3 +4542,37 @@ html { scrollbar-gutter: stable; }
 .card-body .deadline.dl-row .status.dl-due_today, .card-body .deadline.dl-row .status.dl-submitted_late { color: var(--gold-ink); }
 .card-body .deadline.dl-row .status.dl-failed { color: #d92424; }
 .card-body .deadline.dl-row .status.dl-submitted { color: var(--green-ink); }
+
+/* AI Checker tab: Edit Syllabus and the check button sit in the subject row; the report slides in from the right (ReportDrawer) */
+.pick-card.pick-compact > .btn.pick-edit { background: transparent; color: var(--blue); border: 1px solid transparent; padding: 0 14px; font-weight: var(--fw-semibold); text-decoration: underline; text-underline-offset: 3px; }
+.pick-card.pick-compact > .btn.pick-edit:hover { background: #eceefb; transform: none; }
+.pick-card.pick-compact > .btn.pick-score.good { color: #14663a; border-color: #b9dfc8; background: #f0faf4; }
+.pick-card.pick-compact > .btn.pick-score.warn { color: #8f6310; border-color: #f0d9a4; background: #fffaf0; }
+.editor-footer .hint { color: var(--muted); font-size: var(--text-xs); }
+.editor-footer { gap: 12px; }
+
+.rd-overlay { display: flex; justify-content: flex-end; align-items: stretch; padding: 0; animation: none; }
+.rd-panel { display: flex; flex-direction: column; width: min(720px, 100vw); max-width: 100vw; min-height: 0; background: #fff; box-shadow: -18px 0 50px rgba(6, 18, 60, 0.28); outline: none; transition: width 0.28s ease; animation: rdSlideIn 0.28s ease-out; }
+.rd-panel.is-wide { width: 100vw; }
+.rd-head { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--line); background: #f1f4f3; }
+.rd-title { flex: 1 1 auto; min-width: 0; display: grid; gap: 2px; }
+.rd-title h3 { margin: 0; font: var(--fw-bold) var(--text-md) var(--font-display); }
+.rd-title small { color: var(--muted); font-size: var(--text-xs); overflow-wrap: anywhere; }
+.rd-expand, .rd-x { flex: none; }
+.rd-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 20px 22px; }
+.rd-panel.is-wide .rd-body > * { max-width: 1040px; margin-inline: auto; }
+.rd-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 18px; border-top: 1px solid var(--line); background: #fff; }
+@keyframes rdSlideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes rdSlideOut { from { transform: translateX(0); } to { transform: translateX(100%); } }
+@keyframes rdFadeOut { from { opacity: 1; } to { opacity: 0; } }
+.rd-overlay.is-leaving { animation: rdFadeOut 0.26s ease-in forwards; pointer-events: none; }
+.rd-overlay.is-leaving .rd-panel { animation: rdSlideOut 0.26s ease-in forwards; }
+/* the administrator's check dialog uses the same drawer: keep its own inner layout, drop the old centered-modal frame */
+.rd-panel.cm-modal { width: min(720px, 100vw); border-radius: 0; }
+.rd-panel.is-wide.cm-modal { width: 100vw; }
+.rd-panel.cm-modal .rd-body { padding: 0; }
+.rd-panel.cm-modal .rd-head { padding: 16px 22px; }
+.rd-panel.cm-modal .rd-title h3 { overflow-wrap: anywhere; }
+.rd-title .cm-when { font-weight: var(--fw-semibold); }
+@media (max-width: 700px) { .rd-expand { display: none; } .rd-body { padding: 16px; } }
+@media (prefers-reduced-motion: reduce) { .rd-panel, .rd-overlay.is-leaving, .rd-overlay.is-leaving .rd-panel { animation: none; transition: none; } }

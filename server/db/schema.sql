@@ -472,3 +472,22 @@ CREATE TABLE IF NOT EXISTS account_activity (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_replan_answers_updated (updated_at)
   );
+
+-- The AI Syllabus Generator's background jobs and the daily count of generations (db/generate-jobs-ddl.js, server/lib/syllabuscheck/pipeline/generateJobs.js)
+CREATE TABLE IF NOT EXISTS syllabus_generate_jobs (
+    job_id CHAR(16) NOT NULL PRIMARY KEY,
+    syllabus_id INT NOT NULL,
+    user_id INT NOT NULL,
+    status ENUM('running', 'done', 'failed', 'applied') NOT NULL DEFAULT 'running',
+    step TINYINT NOT NULL DEFAULT 0,
+    steps TINYINT NOT NULL DEFAULT 7,
+    stage VARCHAR(20) NULL,
+    result_json LONGTEXT NULL,
+    error_json TEXT NULL,
+    started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    finished_at TIMESTAMP NULL,
+    INDEX idx_generate_jobs_user (user_id, started_at),
+    INDEX idx_generate_jobs_syllabus (syllabus_id, started_at),
+    FOREIGN KEY (syllabus_id) REFERENCES syllabi(syllabus_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+  );

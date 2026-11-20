@@ -269,4 +269,4 @@ function validateRewrite(job, raw) {
   return { text, explanation: clean(body.explanation) };
 }
 
-module.exports = { PROMPT_VERSION, RULES_TEXT, JUDGE_SYSTEM, REWRITE_SYSTEM, ANSWER_SCHEMA, REWRITE_SCHEMA, judgeMessage, syllabusContext, validateAnswers, rewriteMessage, validateRewrite, nearCopy, REWRITE_VERSION, MAX_REWRITE };
+module.exports = { PROMPT_VERSION, RULES_TEXT, RULES_FOR_REWRITE, JUDGE_SYSTEM, REWRITE_SYSTEM, ANSWER_SCHEMA, REWRITE_SCHEMA, judgeMessage, syllabusContext, validateAnswers, rewriteMessage, validateRewrite, nearCopy, REWRITE_VERSION, MAX_REWRITE };

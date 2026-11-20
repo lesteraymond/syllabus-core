@@ -146,8 +146,8 @@ export default function StudentRegister({ onBack }) {
         <label className="check consent-box">
           <input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} />
           <span>
-            <b>I agree to AI reading of my COR.</b>
-            <small>My COR photo is sent to Anthropic's Claude to read my details (RA 10173). It is stored privately and used only to verify my enrollment.</small>
+            <b>{translateUI('studentView.consentTitle')}</b>
+            <small>{translateUI('studentView.consentBody')}</small>
           </span>
         </label>
         {error && <div className="form-error">{tr(error)}</div>}

@@ -62,14 +62,15 @@ test('an availability error can be retried without losing the selected file', as
     assert.match(host.textContent, /Review extracted content/);
   });
 });
-test('missing subject and read-only access show their reasons and keep real safeguards', async t => {
+test('no subject chosen yet: the scan goes ahead (the subject comes from the PDF); read-only access shows its reason and keeps real safeguards', async t => {
   t.mock.method(syllabi, 'pdfImportConfig', async () => ({ enabled: true }));
-  await mount(t, { hasCourse: false }, async ({ host, button, pick }) => {
+  let extractions = 0;
+  await mount(t, { hasCourse: false, onExtract: async () => { extractions++; } }, async ({ host, button, pick }) => {
     await pick();
-    assert.match(host.textContent, /Choose your assigned subject/);
+    assert.doesNotMatch(host.textContent, /Choose your assigned subject|Choose your subject/);
     assert.equal(button('Scan PDF and preview').disabled, false);
     await act(async () => button('Scan PDF and preview').click());
-    assert.match(host.querySelector('[role=alert]').textContent, /Choose your assigned subject/);
+    assert.equal(extractions, 1, 'the PDF is scanned to find its subject');
   });
   await mount(t, { disabled: true, disabledReason: 'This syllabus was submitted and is locked.' }, async ({ host }) => {
     assert.equal(host.querySelector('fieldset').disabled, true);
@@ -112,8 +113,8 @@ test(`Apply shows its ${scenario} blocker beside the button and never calls the 
     await pick();
     await act(async () => button('Scan PDF and preview').click());
     if (scenario !== 'review') await act(async () => host.querySelector('.pdf-import-confirm input').click());
-    assert.equal(button('Apply and AI CHECK').disabled, false);
-    await act(async () => button('Apply and AI CHECK').click());
+    assert.equal(button('Apply to form').disabled, false);
+    await act(async () => button('Apply to form').click());
     const feedback = host.querySelector('.pdf-import-review [role=alert][tabindex]');
     assert.ok(feedback);
     assert.match(feedback.textContent, scenario === 'review' ? /Confirm the review checkbox/ : scenario === 'course' ? /IE 402.*MA 7/ : /More than 20 CLO/);
@@ -136,12 +137,12 @@ test('layout preview renders editable plan columns and source outcomes, and appl
     assert.match(host.querySelector('.pdf-import-table').textContent, /Source pages: 4, 5/);
     assert.match(host.querySelector('.pdf-import-outcomes').textContent, /Institutional and program text/);
     await act(async () => host.querySelector('.pdf-import-confirm input').click());
-    await act(async () => button('Apply and AI CHECK').click());
+    await act(async () => button('Apply to form').click());
     assert.deepEqual(applied, rows);
   });
 });
-for (const outcome of ['complete', 'check-failed', 'save-failed']) {
-test(`builder scans a dirty draft without saving old text, then saves before explicit AI CHECK: ${outcome}`, async t => {
+for (const outcome of ['complete', 'save-failed']) {
+test(`builder scans a dirty draft without saving old text; Apply to form saves and leaves AI CHECK to the Review step: ${outcome}`, async t => {
   t.mock.method(URL, 'createObjectURL', () => 'blob:test-pdf');
   t.mock.method(URL, 'revokeObjectURL', () => {});
   const content = structuredClone(draft);
@@ -169,7 +170,6 @@ test(`builder scans a dirty draft without saving old text, then saves before exp
   t.mock.method(compliance, 'get', async () => ({ installed: true, run: storedRun }));
   t.mock.method(compliance, 'recheck', async id => {
     assert.equal(id, 101); order.push('check'); aiChecks++;
-    if (outcome === 'check-failed') throw Error('Another check is running');
     storedRun = { id: 123, status: 'insufficient', overall: null, stale: false, findings: [], areas: [], recommendations: [], aiStatus: 'failed', filledSections: 0, passThreshold: 75 };
     return { run: storedRun };
   });
@@ -194,21 +194,19 @@ test(`builder scans a dirty draft without saving old text, then saves before exp
     assert.equal(aiChecks, 0);
     allowSave = true;
     await act(async () => host.querySelector('.pdf-import-confirm input').click());
-    const applyButton = button('Apply and AI CHECK');
+    const applyButton = button('Apply to form');
     await act(async () => { applyButton.click(); applyButton.click(); });
     if (outcome === 'save-failed') {
-      assert.equal(aiChecks, 0);
       assert.match(host.querySelector('.up-panel [role=alert]').textContent, /draft could not be saved/);
-      await act(async () => button('Apply and AI CHECK').click());
-      assert.equal(aiChecks, 1, 'retry saves and checks without forcing another PDF scan');
-      assert.ok(host.querySelector('.paper'));
+      await act(async () => button('Apply to form').click());
+      assert.deepEqual(order, ['save', 'save'], 'the retry saves without forcing another PDF scan');
     } else {
-      assert.deepEqual(order, ['save', 'check']);
-      assert.equal(aiChecks, 1);
-      assert.ok(host.querySelector('.paper'));
-      if (outcome === 'check-failed') assert.ok(notices.some(message => message.includes('imported draft was saved') && message.includes('Another check is running')));
-      else assert.ok(notices.some(message => message.includes('Imported syllabus checked')));
+      assert.deepEqual(order, ['save']);
     }
+    assert.equal(calls, 1, 'the PDF was scanned once');
+    assert.equal(aiChecks, 0, 'Apply to form never runs AI CHECK: that is the Review step');
+    assert.ok(notices.some(message => message.includes('Imported into the form') && message.includes('AI CHECK from the Review step')));
+    assert.ok(!host.querySelector('.up-panel'), 'back to the form (Step 1), not to the Review step');
     assert.equal(checks, 0);
   } finally { await act(async () => root.unmount()); host.remove(); }
 });
@@ -225,14 +223,14 @@ test(`prerequisite ${action} requires an explicit choice and forwards the exact 
     assert.match(host.textContent, /Current prerequisite: Existing prerequisite/);
     assert.match(host.textContent, /PDF prerequisite: PDF prerequisite/);
     await act(async () => host.querySelector('.pdf-import-confirm input').click());
-    await act(async () => button('Apply and AI CHECK').click());
+    await act(async () => button('Apply to form').click());
     assert.match(host.querySelector('.pdf-import-review [role=alert][tabindex]').textContent, /Choose whether to keep or replace/);
     assert.equal(applied, undefined);
     const radios=host.querySelectorAll('.pdf-import-prerequisite input');
     await act(async () => radios[action==='keep'?0:1].click());
     assert.equal(host.querySelector('.pdf-import-confirm input').checked, false);
     await act(async () => host.querySelector('.pdf-import-confirm input').click());
-    await act(async () => button('Apply and AI CHECK').click());
+    await act(async () => button('Apply to form').click());
     assert.deepEqual(applied.prerequisiteChoice, { existing:'Existing prerequisite', imported:'PDF prerequisite', action });
     assert.equal(d.meta.prereq, 'Existing prerequisite');
   });
@@ -250,7 +248,7 @@ test('editing the PDF prerequisite invalidates the previous replacement confirma
       input.dispatchEvent(new browser.Event('input',{bubbles:true}));
     });
     await act(async()=>host.querySelector('.pdf-import-confirm input').click());
-    await act(async()=>button('Apply and AI CHECK').click());
+    await act(async()=>button('Apply to form').click());
     assert.equal(applications,0);assert.match(host.textContent,/Choose whether to keep or replace/);
   });
 });
@@ -263,7 +261,7 @@ test('preview rejects BSIT content for Cyber IT-202, and missing curriculum cont
     await mount(t,{draft:d,onExtract:async()=>({fields,pages:[],...(scenario==='missing-context'?{identityContext:null}:{})}),onApply:async()=>{applications++;}},async({host,button,pick})=>{
       await pick();await act(async()=>button('Scan PDF and preview').click());
       await act(async()=>host.querySelector('.pdf-import-confirm input').click());
-      await act(async()=>button('Apply and AI CHECK').click());
+      await act(async()=>button('Apply to form').click());
       assert.equal(applications,0);assert.match(host.querySelector('[role=alert][tabindex]').textContent,/cannot be verified/);
     });
   }

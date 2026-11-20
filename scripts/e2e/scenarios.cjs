@@ -97,12 +97,15 @@ module.exports = async function run(ctx, h) {
   });
 
   // ---------------------------------------------------------------------------------------------------------------------------------------------
+  // The report slides in from the right. A check that has just finished opens it; a saved one is opened with the score button in the subject row.
+  const openReport = async (s) => { if (!(await s.page.locator('.rd-panel').count())) { await s.page.locator('.pick-score').click(); await s.page.locator('.rd-panel').waitFor(); await s.page.waitForTimeout(600); } };
+  const closeReport = async (s) => { if (await s.page.locator('.rd-panel').count()) { await s.page.locator('.rd-x').click(); await s.page.locator('.rd-panel').waitFor({ state: 'detached' }); } };
   await scenario('E03', 'Faculty runs the new AI Checker on the draft: official score with the AI points, all seven VPAA relationships evaluated, the scripted gap and its verified draft', async () => {
     const before = stack.providerEvents().filter((e) => e.kind === 'provider').length;
     const s = await L.session(browser, stack);
     await s.loginOk('faculty');
     await s.nav('AI Checker');
-    await s.page.getByRole('button', { name: /^ai checker$/i }).nth(1).click();
+    await s.page.getByRole('button', { name: /^run ai checker$/i }).first().click();
     await s.page.getByText(/AI Recommendations? \(/).first().waitFor({ timeout: 60000 });
     await s.page.waitForTimeout(800);
     const text = await s.text();
@@ -235,6 +238,7 @@ module.exports = async function run(ctx, h) {
     check(/For Revision/i.test(text), 'My Syllabi shows the returned syllabus as For Revision');
     await s.nav('AI Checker');
     await s.page.waitForTimeout(2500);
+    await openReport(s);
     text = await s.text();
     check(/AI Recommendations? \(1\)/.test(text), 'the official report offers its recommendations section, with the one draft');
     check(/Suggested alignment revision/.test(text) && /ACTIVITY-FIT/.test(text), "the scripted gap's verified draft is offered to the author");
@@ -251,6 +255,7 @@ module.exports = async function run(ctx, h) {
     await s.loginOk('faculty');
     await s.nav('AI Checker');
     await s.page.waitForTimeout(2500);
+    await openReport(s);
     // the draft is for the Week 2 activities (plan[1]): the stand-in's one deliberate gap
     const activities = async () => { const c = await s.api('GET', '/syllabi/' + state.syllabusId + '/content'); return JSON.stringify(c.body.content.plan[1].activities); };
     const original = await activities();
@@ -297,12 +302,13 @@ module.exports = async function run(ctx, h) {
     const original = await activities();
     await s.page.getByRole('button', { name: /re-check again/i }).first().click();
     await s.page.waitForTimeout(6000);
+    await openReport(s);
     check(await s.page.locator('.hy-rec').count() >= 1, 'a Re-Check offers the correctable recommendation again');
     await s.page.getByRole('button', { name: /^reject$/i }).first().click();
     await s.page.waitForTimeout(2500);
     check(s.issues.apiCalls.some((c) => c.includes('/decisions 201')), 'Reject was recorded by the decisions API');
     check(await activities() === original, 'Reject changed nothing in the saved draft');
-    await s.page.getByRole('button', { name: /re-check again/i }).first().click();
+    await s.page.locator('.rd-foot').getByRole('button', { name: /re-check again/i }).click();
     await s.page.waitForTimeout(6000);
     const again = await s.page.locator('.hy-rec').count();
     note('recommendation cards after Reject + Re-Check: ' + again);
@@ -313,10 +319,11 @@ module.exports = async function run(ctx, h) {
       await s.page.waitForTimeout(3500);
       check(await activities() !== original, 'Check & improve then Accept changed the saved draft');
     } else known('E2E-03', 'after Reject and a Re-Check the same recommendation did not return, so the Accept path could not be exercised on this syllabus');
-    await s.page.getByRole('button', { name: /re-check again/i }).first().click();
+    await s.page.locator('.rd-foot').getByRole('button', { name: /re-check again/i }).click();
     await s.page.waitForTimeout(6000);
     let text = await s.text();
     check(/Meets the standard/.test(text), 'the Re-Check after the correction still meets the standard (official score is not changed by the advisory result)');
+    await closeReport(s); // the page behind the drawer cannot be reached while it is open
     const submit = s.page.getByRole('button', { name: /submit new version to admin/i });
     check(await submit.isDisabled(), 'Submit new version stays disabled until the author says what changed');
     await s.page.getByLabel(/what did you change/i).fill('Synthetic E2E: rewrote the week 2 activities to practise the ILO at its level.');
@@ -457,7 +464,7 @@ module.exports = async function run(ctx, h) {
     await f.page.reload(); await f.page.waitForTimeout(2000); // the syllabus list was loaded before this draft existed
     await f.nav('AI Checker');
     if (!/IT 205/.test(await f.page.locator('.select-trigger').first().innerText())) await f.pick(/IT 20[45]/, /IT 205/);
-    await f.page.getByRole('button', { name: /^ai checker$/i }).nth(1).click();
+    await f.page.getByRole('button', { name: /^run ai checker$/i }).first().click();
     await f.page.getByText(/VPAA relationships checked/).first().waitFor({ timeout: 40000 });
     const text = await f.text();
     note('page text with the AI down: ' + text.slice(text.indexOf('Compliance check'), text.indexOf('Compliance check') + 700));
@@ -513,6 +520,7 @@ module.exports = async function run(ctx, h) {
     check(/Pangkalahatang Tanaw/i.test(text) && /Mga Setting/i.test(text) && /Tagabuo ng Silabus/i.test(text), 'the navigation is shown in Filipino');
     await s.page.getByRole('button', { name: /^ai checker$/i }).first().click();
     await s.page.waitForTimeout(2500);
+    await openReport(s);
     text = await s.text();
     note('AI Checker page in Filipino: ' + text.slice(0, 1500));
     check(/Tagasuri ng Silabus gamit ang AI/.test(text) && /Rekomendasyon ng AI|Hindi pa kumpleto ang beripikasyon/.test(text), "the AI Checker and the new checker's report are shown in Filipino");
