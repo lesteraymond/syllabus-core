@@ -62,5 +62,17 @@ export function checkPos(rows, egas) {
   return null;
 }
 
+// ---- a CLO's PO and EGA tags (Step 2 of the builder) ----
+// The EGAs the given POs are linked to (the program's PO-to-EGA links, required since 2026-11-20). P-03 asks a CLO to carry every one of them.
+const sorted = (list) => [...new Set(list.map(Number))].sort((a, b) => a - b);
+export const linkedEgas = (pos, poNos) => sorted((pos || []).filter((p) => (poNos || []).map(Number).includes(Number(p.no))).flatMap((p) => p.egas || []));
+// Ticking PO `no` on a CLO also ticks the EGAs it is linked to. Unticking a PO leaves the EGAs as they are: another PO may need them, or the author chose them.
+export const tickPo = (clo, no, pos) => {
+  const on = !(clo.pos || []).includes(no);
+  return { pos: on ? sorted([...(clo.pos || []), no]) : (clo.pos || []).filter((n) => n !== no), egas: on ? sorted([...(clo.egas || []), ...linkedEgas(pos, [no])]) : (clo.egas || []) };
+};
+// For each PO of the CLO, the linked EGAs the CLO does not carry: [{ po, egas }] (empty when P-03 would pass).
+export const missingPoEgas = (clo, pos) => (clo.pos || []).map((no) => ({ po: no, egas: linkedEgas(pos, [no]).filter((e) => !(clo.egas || []).includes(e)) })).filter((m) => m.egas.length);
+
 // The same rows with and without edits, so Save is offered only for a real change.
 export const sameRows = (a, b) => JSON.stringify(a) === JSON.stringify(b);

@@ -3494,6 +3494,10 @@ table,
 .bld2 .ie-chip input {
 	@apply tw:[accent-color:var(--blue)];
 }
+/* a CLO's PO chip: the EGAs that PO is linked to, quieter than the PO number; the note under the chips when one of them is not ticked (P-03) */
+.bld2 .ie-chip .po-egas { color: var(--muted); font-weight: var(--fw-regular); }
+.bld2 .clo-ega-hint { margin: 6px 0 0; color: #8f6310; font-size: var(--text-xs); }
+.bld2 .clo-ega-hint .link { font-size: inherit; }
 .bld2 .ie-err {
 	@apply tw:[color:#d92424] tw:[font-size:var(--text-xs)];
 	@apply tw:[font-weight:var(--fw-semibold)] tw:[max-width:460px];

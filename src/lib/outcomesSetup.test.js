@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { needsSetup, needsEgaLinks, programsNeedingEgaLinks, programsNeedingSetup, nextNo, egaRows, poRows, blankEga, blankPo, egaPayload, poPayload, checkEgas, checkPos, sameRows } from './outcomesSetup.js';
+import { linkedEgas, tickPo, missingPoEgas, needsSetup, needsEgaLinks, programsNeedingEgaLinks, programsNeedingSetup, nextNo, egaRows, poRows, blankEga, blankPo, egaPayload, poPayload, checkEgas, checkPos, sameRows } from './outcomesSetup.js';
 
 test('a program needs setup when it has no EGAs or no outcomes of its own; a specialization is set up in the program it inherits from', () => {
   assert.equal(needsSetup({ egaCount: 0, outcomeCount: 0 }), true);
@@ -65,4 +65,17 @@ test('a Program Outcome must be linked to at least one EGA before it can be save
   const egas = [{ no: 1 }, { no: 2 }];
   assert.deepEqual(checkPos([{ no: '1', short: 'P1', text: 'T', egas: [1] }, { no: '2', short: 'P2', text: 'T', egas: [] }], egas), { key: 'outcomes.err.poNoEga', params: { no: '2' } });
   assert.equal(checkPos([{ no: '1', short: 'P1', text: 'T', egas: [1] }, { no: '2', short: 'P2', text: 'T', egas: [1, 2] }], egas), null);
+});
+
+test('a CLO: ticking a PO also ticks the EGAs it is linked to; unticking leaves the EGAs; the missing ones are listed per PO (P-03)', () => {
+  const pos = [{ no: 1, egas: [1, 4] }, { no: 3, egas: [2] }, { no: 7, egas: [4] }, { no: 9, egas: [] }];
+  assert.deepEqual(linkedEgas(pos, [1, 3]), [1, 2, 4]);
+  assert.deepEqual(linkedEgas(pos, [9]), [], 'a PO without links adds nothing');
+  const clo = { pos: [7], egas: [4] };
+  assert.deepEqual(tickPo(clo, 3, pos), { pos: [3, 7], egas: [2, 4] }, 'PO 3 ticks EGA 2');
+  assert.deepEqual(tickPo({ pos: [3, 7], egas: [2, 4] }, 3, pos), { pos: [7], egas: [2, 4] }, 'unticking PO 3 keeps EGA 2 (the author may want it)');
+  assert.deepEqual(tickPo({ pos: [], egas: [] }, 9, pos), { pos: [9], egas: [] });
+  assert.deepEqual(missingPoEgas({ pos: [1, 3], egas: [1] }, pos), [{ po: 1, egas: [4] }, { po: 3, egas: [2] }]);
+  assert.deepEqual(missingPoEgas({ pos: [1, 3], egas: [1, 2, 4] }, pos), [], 'nothing missing: P-03 passes');
+  assert.deepEqual(missingPoEgas({ pos: [9], egas: [] }, pos), [], 'no links, nothing to ask for');
 });

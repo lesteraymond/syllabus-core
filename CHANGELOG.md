@@ -2900,3 +2900,13 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **AI Checker report:** when the syllabus's POs are not all linked, a notice at the top names them and says to ask the administrator (`ruleCoverage.posWithoutEga`, `RuleCoveragePanel`). Owner choice: it warns and blocks nothing; P-03 stays Not checked until the links exist.
 - **Not changed:** the new AI Checker's AI questions and its own fixed rules do not read the links (stored answers stay valid). The AI Syllabus Generator already uses them to fill a CLO's EGAs from its POs.
 - **Tests:** `parsePos` refuses a PO without an EGA; `checkPos`, `needsEgaLinks` and the program count; coverage lists the unlinked POs ([] when linked, null without POs); the report notice in English and Filipino. `npm test` passes (1,493 server tests, localization, PDF import 15/15, VPAA screens 32/32); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks.
+
+---
+
+### v1.98.18 — Builder: Ticking a PO on a CLO Ticks the EGAs It Serves
+**Date:** November 20, 2026
+
+- **Problem:** in Step 2 of the builder the EGA and PO checkboxes of a CLO did not know about each other. The PO-to-EGA links (required since v1.98.17) were shown only in the Program Outcomes card above, so an author had to remember them, and a CLO missing an EGA of its PO was found only after the AI Checker ran (P-03, which takes points).
+- **Change** (`src/views/builder2/ClosStep.jsx`; helpers `linkedEgas`, `tickPo`, `missingPoEgas` in `src/lib/outcomesSetup.js`): ticking a PO on a CLO also ticks the EGAs it is linked to; unticking a PO leaves the EGAs (another PO may need them, or the author chose them). Each PO chip shows its EGAs ("PO 1 · EGA 1, 4"). When a linked EGA is not ticked, a note under the chips names it ("PO 1 serves EGA 4: tick it on this CLO too.") with an "Add the EGAs of its POs" button. English and Filipino.
+- **Not changed:** the author can still tick any EGA and PO; scoring, P-03 and the AI Checker are as before. A PO without links adds nothing (BSIT and BSCPE until an administrator links them).
+- **Tests:** the helpers (ticking, unticking, a PO without links, missing EGAs per PO); the CLO row rendered with a synthetic program in English and Filipino (chip, note, button). `npm test` passes (1,494 server tests, localization, PDF import 15/15, VPAA screens 32/32); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks.
