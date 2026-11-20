@@ -5,6 +5,18 @@
 // its AI questions (hybrid.alignment.judgements), one receipt each, and aiQuestions, the same counted by kind. A report the new checker did not make has
 // neither (no synthetic coverage).
 const {catalog,replaced} = require('./ruleCatalog');
+const standardRules = Object.fromEntries(require('../compliance/standard-v4.json').rules.map(r => [r.id, r]));
+// Why a row does not apply to this syllabus, as a code the panel words (hybrid.reason.<code>, English and Filipino). Before, six rows had no reason at all and
+// the rest gave English-only technical text.
+function notApplicableCode(rule, h) {
+  const std = standardRules[rule.ruleId];
+  if (std?.check === 'equalsCatalog') return 'checked_by_exact';             // T-09..T-12: INST-EXACT and PO-EXACT compare them with the program setup
+  if (std?.check === 'gradingFormula' && std.params?.mode === 'overrideFilled') return 'no_override';
+  if (std?.check === 'signoffRoles') return 'signoff_by_system';
+  if (['INST-MASTER', 'PO-MASTER'].includes(rule.ruleId)) return 'master_present';
+  if (rule.ruleId === 'LINK') return h.critical ? 'identity_stopped' : 'no_reference_urls';
+  return 'not_applicable';
+}
 const good = s => ['PASS','FAIL','NEEDS_REVIEW'].includes(s);
 const normalize = s => ({PASS:'PASS',FAIL:'FAIL',NOT_EVALUATED:'NOT_CHECKED',NOT_CHECKED:'NOT_CHECKED',NOT_APPLICABLE:'NOT_APPLICABLE',NEEDS_REVIEW:'NEEDS_REVIEW'}[s] || 'NOT_CHECKED');
 function summaryOf(rows) {
@@ -46,7 +58,8 @@ function buildCoverage(result,content,masters={}) {
     const verified=enabled&&applicable&&relevant.length>0&&relevant.every(r=>r.verified);
     const status=!enabled?'NOT_CHECKED':!applicable?'NOT_APPLICABLE':!instances.length?'NOT_CHECKED':!verified?(instances.some(r=>r.verified)?'PARTIALLY_EVALUATED':'NOT_CHECKED'):instances.some(r=>r.status==='FAIL')?'FAIL':instances.some(r=>r.status==='NEEDS_REVIEW')?'NEEDS_REVIEW':'PASS';
     const activationState=!rule.implemented?'NOT_IMPLEMENTED':!enabled?'IMPLEMENTED_BUT_DISABLED':verified?'ACTIVE':'IMPLEMENTED_BUT_NOT_EVALUATED';
-    return {ruleId:rule.ruleId,category:rule.category,namespace:rule.namespace,implemented:rule.implemented,enabled,applicable,executed,attempted:instances.some(r=>r.attempted),verified,status,activationState,reason,...(replaced.includes(rule.ruleId)?{reasonCode:'replaced'}:{}),instances};
+    const reasonCode=replaced.includes(rule.ruleId)?'replaced':status==='NOT_APPLICABLE'?notApplicableCode(rule,h):null;
+    return {ruleId:rule.ruleId,category:rule.category,namespace:rule.namespace,implemented:rule.implemented,enabled,applicable,executed,attempted:instances.some(r=>r.attempted),verified,status,activationState,reason,...(reasonCode?{reasonCode}:{}),instances};
   });
   // The new AI Checker's own fixed rules: each one ran; no finding is a pass, a finding needs revision, a review item needs a person to confirm
   if(replanned)for(const r of h.replan?.fixedRules||[]){

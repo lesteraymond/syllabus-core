@@ -127,7 +127,7 @@ for (const language of ['en','tl']) test(`[VPAA-COMP-UI-${language}] existing re
   assert.ok(shown.includes(t('hybrid.coverageStatus.NOT_CHECKED')));
   const ai = coverage.aiQuestions;
   assert.ok(ai, 'a report of the new AI Checker counts its AI questions');
-  assert.ok(shown.includes(t('hybrid.ruleCoverageAi', { verified: coverage.counts.verified, total: coverage.counts.catalogued, answered: ai.answered, asked: ai.asked })));
+  assert.ok(shown.includes(t('hybrid.ruleCoverageApplicableAi', { verified: coverage.counts.verified, applicable: coverage.counts.applicable, skipped: coverage.counts.catalogued - coverage.counts.applicable, answered: ai.answered, asked: ai.asked })));
   assert.ok(shown.includes('CUR-CODE') && shown.includes('AI-REQUIRED'), 'the fixed rules are listed');
   assert.ok(!shown.includes('hybrid.coverageStatus.'), 'status translation keys never leak to faculty/admin');
   assert.ok(!/Academic verdict/.test(shown), 'deprecated verdict panel stays hidden');
@@ -142,7 +142,7 @@ for (const language of ['en', 'tl']) test(`[COVERAGE-NEW-CHECKER-${language}] ch
   const own = coverage.rules.filter((r) => r.namespace === 'new_ai_checker');
   assert.equal(own.length, 20, 'the 20 fixed rules of the new AI Checker are in the list');
   for (const r of own) assert.ok(shown.includes(`${r.ruleId} · ${t('hybrid.coverageStatus.' + r.status)}`), r.ruleId);
-  assert.ok(shown.includes(t('hybrid.ruleCoverageAi', { verified: coverage.counts.verified, total: coverage.counts.catalogued, answered: ai.answered, asked: ai.asked })), 'the heading counts the rules and the AI questions');
+  assert.ok(shown.includes(t('hybrid.ruleCoverageApplicableAi', { verified: coverage.counts.verified, applicable: coverage.counts.applicable, skipped: coverage.counts.catalogued - coverage.counts.applicable, answered: ai.answered, asked: ai.asked })), 'the heading counts the rules and the AI questions');
   assert.ok(ai.asked > 0 && ai.answered === ai.asked, 'every question of the scored run was answered');
   assert.ok(shown.includes(t('hybrid.aiQuestionsHeading')));
   for (const k of ai.byRelationship) assert.ok(shown.includes(`${k.relationship} · ${t('hybrid.aiQuestionsRow', k)}`), k.relationship);
@@ -163,6 +163,22 @@ for (const language of ['en', 'tl']) test(`[PO-EGA-NOTICE-${language}] unlinked 
   assert.ok(shown.includes(`${run.overall}%`), 'the score is still shown: nothing is blocked');
   run.hybrid.ruleCoverage.posWithoutEga = [];
   assert.ok(!html(run).includes('po-ega-unlinked'));
+});
+
+// Check coverage counts the rules that apply, and every row that does not apply (or is retired) says why, in the person's language.
+for (const language of ['en', 'tl']) test(`[COVERAGE-REASONS-${language}] rules that do not apply are counted apart and each says why; no technical English text is left`, () => {
+  setLanguage(language);
+  const run = structuredClone(runs.scored), coverage = run.hybrid.ruleCoverage;
+  const shown = text(html(run));
+  const skipped = coverage.rules.filter((r) => !r.applicable);
+  assert.ok(skipped.length > 0, 'the fixture has rows that do not apply');
+  assert.equal(coverage.counts.catalogued - coverage.counts.applicable, skipped.length);
+  for (const r of skipped) {
+    assert.ok(r.reasonCode, r.ruleId + ' has a reason code');
+    assert.ok(shown.includes(t('hybrid.reason.' + r.reasonCode)), r.ruleId + ' shows its reason');
+  }
+  assert.ok(!/Superseded by link verification|Missing-reference branch|No reference URLs to verify/.test(shown), 'the old technical reasons are not shown');
+  assert.ok(!/hybrid\.reason\./.test(shown), 'translation keys never leak');
 });
 
 // Hardening: stale results are announced before the results they qualify, the budget notices say exactly what happened, and both panels use one vocabulary.

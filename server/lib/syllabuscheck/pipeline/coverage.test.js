@@ -139,3 +139,16 @@ test('coverage names the syllabus POs not linked to an EGA (an administrator gap
   assert.equal(coverageOf(report, none, { ...masters, pos: [] }).posWithoutEga, null);
   assert.equal(report.status, 'scored', 'the gap never stops a check');
 });
+
+test('every coverage row that does not apply, and every retired one, carries a reason code the app words', async () => {
+  const { report, content, masters } = await official();
+  const cov = coverageOf(report, content, masters);
+  const code = id => cov.rules.find(r => r.ruleId === id)?.reasonCode;
+  for (const id of ['C-04', 'R-02', 'R-03']) assert.equal(code(id), 'replaced', id);
+  for (const r of cov.rules.filter(r => r.status === 'NOT_APPLICABLE')) assert.ok(r.reasonCode, r.ruleId + ' has a reason code');
+  const known = ['replaced', 'checked_by_exact', 'no_override', 'signoff_by_system', 'master_present', 'no_reference_urls', 'identity_stopped', 'not_applicable'];
+  assert.ok(cov.rules.every(r => !r.reasonCode || known.includes(r.reasonCode)));
+  assert.ok(cov.rules.filter(r => r.status === 'PASS' || r.status === 'FAIL').every(r => !r.reasonCode), 'a rule that ran has no "does not apply" code');
+  const i18n = require('fs').readFileSync(require.resolve('../../../../src/i18n/hybrid.js'), 'utf8');
+  for (const c of known) assert.equal((i18n.match(new RegExp("'hybrid\\.reason\\." + c + "'", 'g')) || []).length, 2, c + ': English and Filipino');
+});

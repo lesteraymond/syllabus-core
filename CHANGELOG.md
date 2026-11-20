@@ -2920,3 +2920,13 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Change** (`pipeline/generate.js` `readClos`): the linked EGAs of each CLO's POs are always added to the ones the model chose (none twice; a PO without links adds nothing). The model still writes the statements and picks the POs; the AI Checker still checks that each EGA fits the CLO.
 - **Not changed:** with no links (BSIT and BSCPE today) generation is as before.
 - **Tests:** `generate.test.js` (+1): linked EGAs added to the model's, none twice, nothing for a PO without links. `npm test` passes (1,495 server tests, localization, PDF import 15/15, VPAA screens 32/32); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks.
+
+---
+
+### v1.98.20 — AI Checker: Check Coverage Counts the Rules That Apply and Says Why the Others Do Not
+**Date:** November 20, 2026
+
+- **Problem:** the heading counted every catalogued rule, including the 12 that cannot apply to a syllabus (9 not applicable, 3 retired): syllabus 120 read "89 of 101" although every rule that applies had run. Six of those rows (T-09 to T-12, T-25, T-27) gave no reason; the rest gave English-only technical text ("Superseded by link verification…", "Missing-reference branch…"), also in Filipino.
+- **Change:** `ruleCoverage.js` gives every row that does not apply, and every retired one, a reason code (`replaced`, `checked_by_exact`, `no_override`, `signoff_by_system`, `master_present`, `no_reference_urls`, `identity_stopped`, `not_applicable`). `RuleCoveragePanel` words each one in plain English or Filipino, and its heading counts the rules that apply and says how many do not ("89 of 89 rules that apply checked (12 do not apply to this syllabus) · AI questions: 166 of 166 answered"). The old heading keys are removed.
+- **Not changed:** which rules run, the score and the findings.
+- **Tests:** `pipeline/coverage.test.js` (+1): every not-applicable and retired row has a known code, worded in both languages; a rule that ran has none. `tests/vpaa-conformance-ui.test.jsx` (+2, English and Filipino): the heading, a reason on every row that does not apply, and none of the old technical text. `npm test` passes (1,496 server tests, localization, PDF import 15/15, VPAA screens 34/34); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks.
