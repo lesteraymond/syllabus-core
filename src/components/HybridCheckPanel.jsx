@@ -163,7 +163,7 @@ export default function HybridCheckPanel({ run, onApplyDraft }) {
       <summary><h4>{t(pending.length === 1 ? 'hybrid.recommendation' : 'hybrid.recommendations', { count: pending.length })}{run.stale && <span className="hy-pill warn" role="status"> {t(run.recordReview ? 'hybrid.savedReportChip' : 'hybrid.staleChip')}</span>}</h4></summary>
       <div className="hy-box">
       {run.stale && !run.recordReview && <p className="hy-note" role="alert">{t('hybrid.staleRecs')}</p>}
-      {pending.length > 0 && <p className="hy-note">{onApplyDraft ? t('hybrid.applyNote') : t('hybrid.readOnlyNote')}</p>}
+      {pending.length > 0 && <p className="hy-note hy-apply-note">{onApplyDraft ? t('hybrid.applyNote') : t('hybrid.readOnlyNote')}</p>}
       {pending.length === 0 && <div className="hy-clear" role="status">{t('hybrid.allHandled')}</div>}
       {pending.map(s => {
         const stale = !!onApplyDraft && !Object.hasOwn(s, 'originalValue');

@@ -1,7 +1,7 @@
 // Run: npm test
 import test from 'node:test';
 import assert from 'node:assert';
-import { PROVISIONAL_MIN_COVERAGE, provisionalOf, runState, tone, ringAngle, basis, blockersOf, warningsOf, warningCount, headline, areaNames, groupFindings, scoreText, when, stepLabel, listBasis, STEP_INFO, rowState, actionLabel, timeOf, stamp, isLocked, needsCheck, canCheckNow, rangeToInstants, rangeLabel, bulkTargets, filterRows, groupByFacultyProgram } from './complianceView.js';
+import { PROVISIONAL_MIN_COVERAGE, provisionalOf, runState, tone, ringAngle, basis, blockersOf, warningsOf, warningCount, headline, areaNames, groupFindings, scoreText, when, stepLabel, listBasis, STEP_INFO, rowState, actionLabel, timeOf, stamp, isLocked, needsCheck, canCheckNow, rangeToInstants, rangeLabel, bulkTargets, filterRows, groupByFacultyProgram, historyTone, historyTally } from './complianceView.js';
 import { STEPS } from './syllabusModel.js';
 
 const area = (key, score) => ({ key, name: key.toUpperCase(), weight: 10, score });
@@ -254,4 +254,24 @@ test('a report that was incomplete when saved stays incomplete, under review or 
 });
 test('a normal report that is out of date is treated as before', () => {
   assert.strictEqual(runState(scored({ stale: true, hybrid: { ready: false, critical: false, alignment: { status: 'completed' } } })), 'incomplete');
+});
+
+test('a history check is good, below the pass line, or not scored; an open record review is never "good"', () => {
+  assert.strictEqual(historyTone({ scored: true, overall: 92, passed: true }), 'good');
+  assert.strictEqual(historyTone({ scored: true, overall: 71, passed: false }), 'warn');
+  assert.strictEqual(historyTone({ scored: true, overall: 92, passed: true, recordReview: { code: 'x' } }), 'warn');
+  assert.strictEqual(historyTone({ scored: false, overall: null }), 'none');
+  assert.strictEqual(historyTone({ scored: true, overall: null }), 'none');
+  assert.strictEqual(historyTone(null), 'none');
+});
+test('the numbers above the history count every check, those that met the pass line and those below it', () => {
+  const runs = [
+    { scored: true, overall: 99, passed: true },
+    { scored: true, overall: 80, passed: true },
+    { scored: true, overall: 60, passed: false },
+    { scored: false, overall: null },
+  ];
+  assert.deepStrictEqual(historyTally(runs), { checked: 4, meets: 2, below: 1 });
+  assert.deepStrictEqual(historyTally([]), { checked: 0, meets: 0, below: 0 });
+  assert.deepStrictEqual(historyTally(undefined), { checked: 0, meets: 0, below: 0 });
 });

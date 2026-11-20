@@ -8,7 +8,8 @@ import { PageHead } from '../components/ui';
 import StableButton from '../components/StableButton';
 import Select from '../components/Select';
 import { compliance as api, syllabi as syllabiApi, isRevisionConflict } from '../lib/api';
-import { groupByFacultyProgram, listBasis, needsCheck, rangeToInstants, warningCount } from '../lib/complianceView';
+import { groupByFacultyProgram, historyTally, listBasis, needsCheck, rangeToInstants, warningCount } from '../lib/complianceView';
+import CheckOverview from '../components/CheckOverview';
 import SyllabusPicker from '../components/SyllabusPicker';
 import OwnSyllabusPicker from '../components/OwnSyllabusPicker';
 import ComplianceModal from '../components/ComplianceModal';
@@ -171,7 +172,7 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
   );
 
   return (
-    <>
+    <div className="chk-page">
       <PageHead title={translateUI("ui.ai_syllabus_checker_0c99c9")} subtitle={translateUI("ui.checked_against_the_undergraduate_syllabus_form_only_a_form_that__68429a")} actions={<YearFilter group="queue" />} />
       {!selectedId && mine.length === 0 ? (
         <div className="empty">{translateUI(hasOthers ? 'aiChecker.nothingToCheck' : "ui.no_syllabi_yet_click_new_syllabus_to_get_started_2e4bc9")}</div>
@@ -215,7 +216,7 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
           )}
         </>
       )}
-    </>
+    </div>
   );
 }
 
@@ -377,6 +378,8 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
 
   const installed = !list || list.installed !== false;
   const how = listBasis(rows.map((r) => r.run));
+  const waitingCount = waiting.reduce((sum, f) => sum + f.count, 0); // the syllabi still waiting for their first check, across every faculty member
+  const tally = historyTally(history.runs);
   const working = Object.keys(busy).length > 0 || remoteChecking;
   const open = openId !== null && detail && detail.syllabus && detail.syllabus.syllabusId === openId
     ? { ...(rows.find((r) => r.syllabusId === openId) || {}), ...detail.syllabus }
@@ -413,11 +416,22 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
       {!open && error && <div className="info-banner warning" role="alert">{tr(error)}</div>}
       {!error && !loading && !installed && <div className="info-banner warning">{translateUI("ui.compliance_checks_are_not_set_up_on_this_server_yet_ask_an_admini_815abc")}</div>}
 
-      {installed && policy.loaded && !policy.aiChecking && <div className="ai-note" role="note" data-testid="ai-off-note">{translateUI('policy.aiOff')}</div>}
-      {installed && isApprover(user.role) && <div className="ai-note" role="note" data-testid="approver-queue-note">{translateUI('reviewChain.approverQueueNote')}</div>}
-      {installed && user.role === 'admin' && <OwnSyllabusPicker rows={ownToCheck} busy={working} onCheck={prepareAndCheck} onOpen={openOwn} />}
-      {installed && <SyllabusPicker groups={waiting} loading={loading} busy={working} onCheck={checkAndOpen} onWithoutAi={aiGate === 'required' ? undefined : reviewWithoutAi} />}
-      {installed && aiGate === 'required' && <div className="ai-note" role="note">{translateUI('aiChoice.requiredNote')}</div>}
+      {installed && (policy.loaded && !policy.aiChecking || isApprover(user.role) || aiGate === 'required') && (
+        <div className="chk-notes">
+          {policy.loaded && !policy.aiChecking && <div className="ai-note" role="note" data-testid="ai-off-note">{translateUI('policy.aiOff')}</div>}
+          {isApprover(user.role) && <div className="ai-note" role="note" data-testid="approver-queue-note">{translateUI('reviewChain.approverQueueNote')}</div>}
+          {aiGate === 'required' && <div className="ai-note" role="note">{translateUI('aiChoice.requiredNote')}</div>}
+        </div>
+      )}
+
+      {installed && <CheckOverview waiting={waitingCount} faculty={waiting.length} tally={tally} loading={loading || history.loading && history.runs.length === 0} />}
+
+      {installed && (
+        <div className={'chk-work' + (user.role === 'admin' ? '' : ' solo')}>
+          <SyllabusPicker groups={waiting} loading={loading} busy={working} onCheck={checkAndOpen} onWithoutAi={aiGate === 'required' ? undefined : reviewWithoutAi} />
+          {user.role === 'admin' && <OwnSyllabusPicker rows={ownToCheck} busy={working} onCheck={prepareAndCheck} onOpen={openOwn} />}
+        </div>
+      )}
 
       {installed && <CheckHistory runs={history.runs} loading={history.loading} error={history.error} opening={opening} onOpen={openRun} range={range} onApply={applyRange} onReset={() => applyRange(NO_RANGE)} />}
 

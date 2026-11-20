@@ -2940,3 +2940,13 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Change** (`src/components/RuleCoveragePanel.jsx`): the collapsed list reads "AI questions: {answered} of {asked} answered", with a short explanation and one line per kind. A report without AI questions shows no list. The notices at the top stay: Program Outcomes not linked to an EGA, and the budget notices of a saved old-checker report. The rule receipts stay in the saved report (`ruleCoverage.rules`, with their reason codes) for audit; only the screen no longer lists them. The 21 texts that only the rule rows used are removed in both languages.
 - **Not changed:** what is checked, the score, the findings and the AI questions themselves.
 - **Tests:** `tests/vpaa-conformance-ui.test.jsx`: an incomplete report counts its questions as not answered and never as aligned; a scored report lists every kind and no rule rows; a report without AI questions shows no list (English and Filipino). The rule-row screen tests are removed. `npm test` passes (1,496 server tests, localization, PDF import 15/15, VPAA screens 30/30); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks.
+
+---
+
+### v1.98.22 — AI Checker (administrator): clearer page layout
+**Date:** November 20, 2026
+
+- **Change:** the administrator's AI Checker page is laid out in the order it is used. The notices are grouped in one block under the title. Four numbers follow (syllabi waiting for a check, checks in the history, those that meet the standard and those below the pass line). "Choose a syllabus" and "Check my syllabus" now sit side by side (they stack when the right card cannot keep 400 px, so its two buttons always stay on one row), each with its status line and buttons in one row at the foot of the card instead of a blank gap above them. The tiles carry no coloured edge and their numbers are black. The check history's date filter lines its From and To fields up with their labels above and the Apply and Reset buttons on the same row.
+- **Files:** `src/views/AIChecker.jsx`, `src/components/CheckOverview.jsx` (new), `src/components/CheckHistory.jsx`, `src/styles.css` (.chk-notes, .chk-stats, .chk-work, .hist-field), `src/i18n/checkOverview.js` (new, English and Tagalog), `src/lib/complianceView.js` (`historyTone`, `historyTally`).
+- **Not changed:** what is checked, the scores, the buttons' behaviour, the faculty member's AI Checker tab, and the result dialog.
+- **Tests:** `complianceView.test.js` (+2): the tone of a stored check and the tally above the history. Localization audit passes (2,855 bilingual keys).

@@ -207,3 +207,15 @@ export function groupByFacultyProgram(rows) {
     })
     .sort((a, b) => byText(a.facultyName, b.facultyName));
 }
+
+// One stored check in the history, in a word: 'good' (it met the pass line), 'warn' (below it) or 'none' (not scored). A check that is under an open record
+// review is not shown as meeting the standard: that score is history, not the syllabus's current standing.
+export const historyTone = (r) => (!r || !r.scored || r.overall === null || r.overall === undefined ? 'none' : r.passed && !r.recordReview ? 'good' : 'warn');
+
+// The numbers above the check history: how many checks are listed, and how many of them met the pass line or fell below it (a check that was not scored is in neither).
+export function historyTally(runs) {
+  const list = Array.isArray(runs) ? runs : [];
+  let meets = 0, below = 0;
+  for (const r of list) { const t = historyTone(r); if (t === 'good') meets += 1; else if (t === 'warn') below += 1; }
+  return { checked: list.length, meets, below };
+}

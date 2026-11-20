@@ -3,7 +3,7 @@ import DatePicker from './DatePicker';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useId, useState } from 'react';
-import { rangeLabel, rangeToInstants, timeOf, when } from '../lib/complianceView';
+import { historyTone, rangeLabel, rangeToInstants, timeOf, when } from '../lib/complianceView';
 
 const STATUS_LABELS = { draft: 'Draft', submitted: 'Submitted', under_review: 'Under Review', for_revision: 'For Revision', approved: 'Approved', rejected: 'Rejected' };
 const PAGE = 12;
@@ -29,7 +29,7 @@ export default function CheckHistory({ runs, loading = false, error = '', openin
 
   // The score's tone in words as well as colour: "Meets the standard" / "Below the pass line" / "Not scored".
   // A card keeps its stored score. Under an open record review it is not shown as meeting the standard: that score is history, not the syllabus's current standing.
-  const toneOf = (r) => (!r.scored || r.overall === null ? 'none' : r.passed && !r.recordReview ? 'good' : 'warn');
+  const toneOf = historyTone;
   const toneText = { good: 'Meets the standard', warn: 'Below the pass line', none: 'Not scored' };
 
   return (
@@ -40,10 +40,14 @@ export default function CheckHistory({ runs, loading = false, error = '', openin
           <p>{translateUI("ui.each_checked_subject_appears_once_newest_first_open_one_to_see_it_468518")}</p>
         </div>
         <form className="hist-filter" onSubmit={apply} aria-label={translateUI("ui.filter_the_history_by_date_771c36")}>
-          <label htmlFor={uid + '-from'}>{translateUI("ui.from_3f6605")}</label>
-          <DatePicker id={uid + '-from'} type="date" value={draft.from} max={draft.to || undefined} onChange={(e) => setDraft({ ...draft, from: e.target.value })} />
-          <label htmlFor={uid + '-to'}>{translateUI("ui.to_ae79ea")}</label>
-          <DatePicker id={uid + '-to'} type="date" value={draft.to} min={draft.from || undefined} onChange={(e) => setDraft({ ...draft, to: e.target.value })} />
+          <div className="hist-field">
+            <label htmlFor={uid + '-from'}>{translateUI("ui.from_3f6605")}</label>
+            <DatePicker id={uid + '-from'} type="date" value={draft.from} max={draft.to || undefined} onChange={(e) => setDraft({ ...draft, from: e.target.value })} />
+          </div>
+          <div className="hist-field">
+            <label htmlFor={uid + '-to'}>{translateUI("ui.to_ae79ea")}</label>
+            <DatePicker id={uid + '-to'} type="date" value={draft.to} min={draft.from || undefined} onChange={(e) => setDraft({ ...draft, to: e.target.value })} />
+          </div>
           <StableButton type="submit" className="btn primary" disabled={!valid || !changed}>{translateUI("ui.apply_cfea41")}</StableButton>
           {active && <StableButton type="button" className="btn outline" onClick={onReset}>{translateUI("ui.reset_44c57a")}</StableButton>}
           {!valid && <span className="hist-filter-error" role="alert">{translateUI("ui.the_from_date_is_after_the_to_date_2c84ad")}</span>}
