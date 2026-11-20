@@ -2868,3 +2868,13 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **E2E** (`scripts/e2e/scenarios.cjs`): the scenarios open the report from the score when it is not already open, use the drawer's footer button to check again, close it before using the page behind it, and press "Run AI Checker".
 - **Not in this commit:** the AI Syllabus Generator's redesigned panel (`GeneratePanel.jsx`, `SyllabusGenerator.jsx`, its texts and styles) and the notification links in `App.jsx`, which are separate work in progress.
 - **Tests:** `npm test` passes (1,486 server tests, localization, PDF import 15/15, VPAA screens 28/28); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks. Both ran with the generator and notification work also in the working tree.
+
+---
+
+### v1.98.15 — Builder Opens Again; 404 and Error Pages Translated
+**Date:** November 20, 2026
+
+- **Problem:** the screen-in-the-address feature merged this morning (PR #56, `App.jsx`: `#reports`, `#ai`, so a refresh stays on the screen) turned `#builder` into My Syllabi on every address change, not only on a page load. Opening the builder sets `#builder` itself, so "New syllabus" and "Edit" closed the builder the moment it opened: nobody could create or edit a syllabus. E2E failed 15 of 25 (E02 first: the builder's "Choose a program" never appeared; the rest had no draft to check, submit or review).
+- **Change** (`src/App.jsx` `pageFromHash`): only a page load turns `#builder` into My Syllabi (a refreshed builder would open a blank draft, as the comment says); a hash change to `#builder` keeps the builder open. Every other screen was already in the menu list and was not affected.
+- **Also:** the new 404 page (`NotFound.jsx`) and error page (`ErrorBoundary.jsx`) were English only and stopped `npm test` at the localization audit; their texts now use translation keys in English and Filipino ("Reload" reuses the existing key). E2E E13 expected the dashboard greeting after a reload; a reload now stays on the AI Checker page, so it checks the Filipino text of that page instead.
+- **Tests:** `npm test` passes (1,491 server tests, localization, PDF import 15/15, VPAA screens 30/30); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks.

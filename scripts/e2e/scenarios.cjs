@@ -528,7 +528,9 @@ module.exports = async function run(ctx, h) {
     await s.shot(evidence('E13-filipino-checker-1440.png'));
     await s.page.reload();
     await s.page.waitForTimeout(2500);
-    check(/Magandang gabi|Magandang umaga|Magandang hapon/.test(await s.text()), 'the language choice survives a full reload (saved on the account)');
+    // a refresh stays on the screen it was on (#ai, App.jsx), so the AI Checker page is checked, not the dashboard greeting
+    text = await s.text();
+    check(/Tagasuri ng Silabus gamit ang AI/.test(text) && /Pangkalahatang Tanaw/i.test(text) && /Mga Setting/i.test(text), 'the language choice survives a full reload (saved on the account), on the same screen');
     await s.nav('Mga Setting');
     await s.page.locator('.select-trigger').first().click();
     await s.page.getByRole('option', { name: /english/i }).first().click();

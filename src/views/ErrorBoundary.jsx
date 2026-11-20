@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import { t as translateUI } from '../i18n/index.js';
 
 // Catches a crash while rendering any screen, so the person sees a message and a way out instead of a blank page.
 export default class ErrorBoundary extends Component {
@@ -14,11 +15,11 @@ export default class ErrorBoundary extends Component {
       <main className="loading-screen" role="alert">
         <div style={{ background: '#fff', border: '1px solid var(--line)', borderRadius: 16, padding: '40px 48px', maxWidth: 420, textAlign: 'center', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.06)' }}>
           <div aria-hidden="true" style={{ width: 56, height: 56, borderRadius: '50%', color: '#dc2626', fontSize: 40, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>!</div>
-          <h2 style={{ margin: '0 0 8px', fontSize: 20 }}>Something went wrong</h2>
-          <p style={{ margin: '0 0 24px', fontSize: 14, color: 'var(--muted)', textWrap: 'balance' }}>Reloading usually fixes it.</p>
+          <h2 style={{ margin: '0 0 8px', fontSize: 20 }}>{translateUI("ui.something_went_wrong_8d886c")}</h2>
+          <p style={{ margin: '0 0 24px', fontSize: 14, color: 'var(--muted)', textWrap: 'balance' }}>{translateUI("ui.reloading_usually_fixes_it_3e8be9")}</p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
-            <button type="button" className="btn primary" onClick={() => window.location.reload()}>Reload</button>
-            <a className="btn outline" href="/" style={{ textDecoration: 'none' }}>Go to dashboard</a>
+            <button type="button" className="btn primary" onClick={() => window.location.reload()}>{translateUI("ui.reload_cce715")}</button>
+            <a className="btn outline" href="/" style={{ textDecoration: 'none' }}>{translateUI("ui.go_to_dashboard_e5fa87")}</a>
           </div>
         </div>
       </main>

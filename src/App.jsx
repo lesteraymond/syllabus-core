@@ -100,12 +100,15 @@ export default function App() {
   }, [narrow, mobileNavOpen]);
   // The screen is kept in the URL hash (#reports), so a refresh stays on it and Back/Forward move between screens. The builder is not restored (its
   // draft lives in memory, so a refresh would open a blank one); an unknown or not-allowed hash falls back to the dashboard once the person is known.
-  const pageFromHash = () => {
+  // Only a page LOAD turns #builder into My Syllabi. Opening the builder sets #builder itself, and that hash change must not close it again: before,
+  // every hash change did, so "New syllabus" and "Edit" closed the builder the moment it opened (E2E E02, 2026-11-20).
+  const pageFromHash = ({ onLoad = false } = {}) => {
     let key = '';
     try { key = decodeURIComponent(window.location.hash.replace(/^#\/?/, '')); } catch { /* malformed hash */ }
-    return key === 'builder' ? 'my-syllabi' : (navItems.some(([k]) => k === key) ? key : 'dashboard');
+    if (key === 'builder') return onLoad ? 'my-syllabi' : 'builder';
+    return navItems.some(([k]) => k === key) ? key : 'dashboard';
   };
-  const [page, setPage] = useState(pageFromHash);
+  const [page, setPage] = useState(() => pageFromHash({ onLoad: true }));
   const hashChecked = useRef(false);
   useEffect(() => {
     if (!user || hashChecked.current) return;
