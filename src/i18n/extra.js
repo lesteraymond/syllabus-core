@@ -1975,6 +1975,20 @@ for (const [key, [en, tl]] of Object.entries(studentViewMessages)) { extraEn[key
 
 // AI Syllabus Generator (views/SyllabusGenerator.jsx, views/builder2/GeneratePanel.jsx); the Filipino follows the terms the app already uses
 const generatorMessages = {
+  "generate.writesLabel": ["What the AI writes", "Ang isinusulat ng AI"],
+  "generate.item.clos": ["CLOs", "Mga CLO"],
+  "generate.item.plan": ["18-week learning plan", "18-linggong plano ng pagkatuto"],
+  "generate.item.description": ["Course description", "Paglalarawan ng kurso"],
+  "generate.item.reqs": ["Requirements and grading", "Mga kinakailangan at pagmamarka"],
+  "generate.item.refs": ["References from library catalogues", "Mga sanggunian mula sa katalogo ng aklatan"],
+  "generate.takes": ["Takes a few minutes. You can leave this page; it keeps running.", "Aabutin ng ilang minuto. Maaari kang umalis sa pahinang ito; magpapatuloy ito."],
+  "generate.workingTitle": ["Generating your draft", "Binubuo ang iyong draft"],
+  "generate.preparing": ["Preparing your syllabus", "Inihahanda ang iyong silabus"],
+  "generate.elapsed": ["Elapsed {time}", "Lumipas na {time}"],
+  "generate.stepsLabel": ["Generation steps", "Mga hakbang ng pagbuo"],
+  "generate.leaveNote": ["You can leave this page. The draft is filled into your syllabus when it is ready, and you will find it here when you come back.", "Maaari kang umalis sa pahinang ito. Ilalagay ang draft sa iyong silabus kapag handa na ito, at makikita mo ito rito pagbalik mo."],
+  "generate.doneTitle": ["Your draft is ready", "Handa na ang iyong draft"],
+  "generate.again": ["Generate again", "Bumuo muli"],
   "generate.title": ["AI Syllabus Generator", "Tagalikha ng Silabus ng AI"],
   "generate.intro": ["Write a first draft of the CLOs and the 18-week learning plan for this subject, then the course description from that plan, the requirements and grading, and suggest references from books and journal articles that library catalogues confirm. It is checked with the AI Checker’s rules before you see it. You review and edit everything before you submit.", "Bumuo ng unang draft ng mga CLO, at ng 18-linggong plano ng pagkatuto para sa asignaturang ito, saka ng paglalarawan ng kurso batay sa planong iyon, mga kinakailangan sa kurso at sistema ng pagmamarka, at magmungkahi ng mga sanggunian mula sa mga aklat at artikulo ng journal na kinukumpirma ng mga katalogo ng aklatan. Sinusuri ito gamit ang mga patakaran ng Tagasuri ng AI bago mo makita. Susuriin at babaguhin mo ang lahat bago ipasa."],
   "generate.button": ["Generate draft", "Bumuo ng draft"],

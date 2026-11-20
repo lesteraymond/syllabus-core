@@ -4576,3 +4576,50 @@ html { scrollbar-gutter: stable; }
 .rd-title .cm-when { font-weight: var(--fw-semibold); }
 @media (max-width: 700px) { .rd-expand { display: none; } .rd-body { padding: 16px; } }
 @media (prefers-reduced-motion: reduce) { .rd-panel, .rd-overlay.is-leaving, .rd-overlay.is-leaving .rd-panel { animation: none; transition: none; } }
+
+/* AI Syllabus Generator: the card, the generating view (orb, progress, step list) and the result */
+.gen-card { margin-bottom: 16px; }
+.gen-card .sm-card-b { padding: 22px 24px; }
+.gen-head { align-items: center; justify-content: flex-start; padding: 14px 24px; background: transparent; }
+.gen-head h4 { font-size: var(--text-md); }
+.gen-spark { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 9px; background: color-mix(in srgb, var(--blue) 12%, #fff); color: var(--blue); font-size: 15px; }
+.gen-intro { margin: 0 0 14px; max-width: 78ch; line-height: 1.55; }
+.gen-writes { list-style: none; margin: 0 0 18px; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.gen-writes li { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 999px; background: #f1f4f8; color: var(--text); font-size: var(--text-xs); font-weight: var(--fw-semibold); }
+.gen-writes li span { color: var(--green); font-weight: var(--fw-heavy); }
+.gen-notes textarea { min-height: 84px; }
+.gen-notes-hint { display: flex; justify-content: space-between; gap: 12px; }
+.gen-count { flex: none; font-variant-numeric: tabular-nums; }
+.gen-actions { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-start; gap: 10px; margin-top: 16px; }
+.gen-takes { margin: 0; }
+
+.gen-run { display: grid; gap: 16px; }
+.gen-run-top { display: flex; align-items: center; gap: 16px; }
+.gen-run-text { display: grid; gap: 2px; flex: 1 1 auto; min-width: 0; }
+.gen-run-text strong { font: var(--fw-bold) var(--text-md) var(--font-display); }
+.gen-run-text span { color: var(--muted); font-size: var(--text-sm); }
+.gen-time { flex: none; color: var(--muted); font-size: var(--text-xs); font-variant-numeric: tabular-nums; font-weight: var(--fw-semibold); }
+.gen-orb { position: relative; flex: none; width: 52px; height: 52px; border-radius: 50%; background: conic-gradient(from 0deg, var(--blue), #7aa7ff, #c9dcff, var(--blue)); animation: genSpin 2.4s linear infinite; }
+.gen-orb i { position: absolute; inset: 6px; border-radius: 50%; background: #fff; animation: genPulse 1.6s ease-in-out infinite; }
+.gen-orb::after { content: '✦'; position: absolute; inset: 0; display: grid; place-items: center; color: var(--blue); font-size: 18px; animation: genSpin 2.4s linear infinite reverse; }
+.gen-bar { height: 8px; border-radius: 999px; background: #e6ebf2; overflow: hidden; }
+.gen-bar i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--blue), #6aa0ff, var(--blue)); background-size: 200% 100%; transition: width 0.8s ease; animation: genShimmer 1.6s linear infinite; }
+.gen-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.gen-step { display: flex; align-items: center; gap: 12px; padding: 7px 10px; border-radius: 10px; color: var(--muted); font-size: var(--text-sm); transition: background 0.3s ease, color 0.3s ease; }
+.gen-dot { flex: none; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; border: 2px solid #cfd7e3; font-size: 12px; font-weight: var(--fw-heavy); color: #fff; box-sizing: border-box; transition: background 0.3s ease, border-color 0.3s ease; }
+.gen-step.done { color: var(--text); }
+.gen-step.done .gen-dot { background: var(--green); border-color: var(--green); animation: genPop 0.35s ease-out; }
+.gen-step.now { background: color-mix(in srgb, var(--blue) 8%, #fff); color: var(--ink, var(--text)); font-weight: var(--fw-semibold); }
+.gen-step.now .gen-dot { border-color: #cfe0ff; border-top-color: var(--blue); animation: genSpin 0.9s linear infinite; }
+
+.gen-done { display: flex; align-items: flex-start; gap: 16px; padding: 16px 18px; border-radius: 12px; background: #f0faf4; border: 1px solid #b9dfc8; }
+.gen-check { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--green); color: #fff; font-size: 20px; font-weight: var(--fw-heavy); animation: genPop 0.5s cubic-bezier(0.2, 1.4, 0.4, 1); }
+.gen-done-text { display: grid; gap: 4px; min-width: 0; font-size: var(--text-sm); }
+.gen-done-text strong { font: var(--fw-bold) var(--text-md) var(--font-display); }
+
+@keyframes genSpin { to { transform: rotate(360deg); } }
+@keyframes genPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(0.9); } }
+@keyframes genShimmer { from { background-position: 0 0; } to { background-position: -200% 0; } }
+@keyframes genPop { 0% { transform: scale(0.4); opacity: 0; } 70% { transform: scale(1.12); opacity: 1; } 100% { transform: scale(1); } }
+@media (max-width: 600px) { .gen-card .sm-card-b { padding: 16px; } .gen-run-top { flex-wrap: wrap; } .gen-actions .btn { flex: 1 1 100%; } }
+@media (prefers-reduced-motion: reduce) { .gen-orb, .gen-orb i, .gen-orb::after, .gen-bar i, .gen-step.now .gen-dot, .gen-step.done .gen-dot, .gen-check { animation: none; } .gen-bar i { transition: none; } }

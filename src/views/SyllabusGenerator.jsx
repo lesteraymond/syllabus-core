@@ -101,7 +101,7 @@ export default function SyllabusGenerator({ user, syllabi = [], editing, setEdit
                 {unstarted.map((c) => <option key={'c' + c.id} value={'c:' + c.id}>{label(c.code, c.title) + ' · ' + translateUI('generate.noDraftYet')}</option>)}
               </Select>
             </div>
-            <StableButton type="button" className="btn outline" disabled={!selectedId} onClick={openBuilder}>{translateUI('generate.openBuilder')}</StableButton>
+            <StableButton type="button" className="btn ghost pick-edit" disabled={!selectedId} onClick={openBuilder}>{translateUI('generate.openBuilder')}</StableButton>
           </section>
           {doc.error && <div className="info-banner warning" role="alert">{tr(doc.error)}</div>}
           <GeneratePanel
@@ -110,6 +110,7 @@ export default function SyllabusGenerator({ user, syllabi = [], editing, setEdit
             syllabusId={selectedId}
             beforeRun={selectedId ? undefined : startDraft}
             onSections={saveGenerated}
+            onOpenBuilder={openBuilder}
             showCost={user.role === 'admin'}
           />
         </>
