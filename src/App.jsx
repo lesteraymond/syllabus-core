@@ -97,7 +97,31 @@ export default function App() {
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [narrow, mobileNavOpen]);
-  const [page, setPage] = useState('dashboard');
+  // The screen is kept in the URL hash (#reports), so a refresh stays on it and Back/Forward move between screens. The builder is not restored (its
+  // draft lives in memory, so a refresh would open a blank one); an unknown or not-allowed hash falls back to the dashboard once the person is known.
+  const pageFromHash = () => {
+    let key = '';
+    try { key = decodeURIComponent(window.location.hash.replace(/^#\/?/, '')); } catch { /* malformed hash */ }
+    return key === 'builder' ? 'my-syllabi' : (navItems.some(([k]) => k === key) ? key : 'dashboard');
+  };
+  const [page, setPage] = useState(pageFromHash);
+  const hashChecked = useRef(false);
+  useEffect(() => {
+    if (!user || hashChecked.current) return;
+    hashChecked.current = true;
+    const allowed = navItems.some(([k, , , r]) => k === page && (user.role === 'student' ? r === 'student' : r !== 'student' && roleAllows(r, user.role)));
+    if (!allowed) setPage('dashboard');
+  }, [user, page]);
+  useEffect(() => { if (!user) hashChecked.current = false; }, [user]);
+  useEffect(() => {
+    if (!user || window.location.hash === '#' + page) return;
+    window.location.hash = page;
+  }, [user, page]);
+  useEffect(() => {
+    const onHash = () => setPage(pageFromHash());
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
   // The academic year each screen shows (lib/academicYearScope.js): the data screens start on the current year, the work queues on every year the person may see.
   const yearScope = useAcademicYearScope(user);
   const yearParam = yearScope.param(groupOfPage(page));
