@@ -441,6 +441,8 @@ html { scrollbar-gutter: auto; }
 .status.dl-failed { background: #d92424; color: #ffffff; border-color: #d92424; }
 .status.dl-submitted { background: var(--tint-green); color: var(--green-ink); border-color: #b8d8c6; }
 .status.dl-submitted_late { background: var(--tint-gold); color: var(--gold-ink); border-color: #ecd49a; }
+/* a syllabus submitted late keeps the Submitted tag (and its arrow) but in yellow-orange */
+.status.submitted.is-late { background: #ffeccc; color: #b45309; border-color: #f3c78a; }
 
 /* Upcoming Deadlines rows are buttons (they go to the page where the deadline is handled); a missed one is marked on the left. */
 .deadline.dl-row { width: 100%; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; transition: background-color 0.15s; }
@@ -451,7 +453,8 @@ html { scrollbar-gutter: auto; }
 .deadline.dl-row:hover small { color: #4b5563; }
 .deadline.dl-row p { min-width: 0; }
 .deadline.dl-row strong { overflow-wrap: anywhere; color: var(--ink); }
-/* My Syllabi: the deadline of a syllabus's subject, above its details. */
+/* My Syllabi: the deadline of a syllabus's subject, on the same line as its program and update time (not a row of its own). */
+.syl-meta .syl-deadline { margin-bottom: 0; align-items: center; }
 .syl-deadline { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-bottom: 8px; font-size: var(--text-xs); color: var(--muted); }
 .dl-progress-head { display: flex; align-items: center; justify-content: space-between; gap: 8px 12px; flex-wrap: wrap; margin-bottom: 10px; }
 .dl-progress-head h4 { margin: 0; }

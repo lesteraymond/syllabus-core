@@ -3875,7 +3875,6 @@ table,
 .rp-tabs button:focus-visible { @apply tw:[outline:2px_solid_var(--blue2)]; @apply tw:outline-offset-1; }
 .rp-count { @apply tw:[min-width:20px] tw:[padding:0_6px] tw:[border-radius:99px] tw:[background:var(--rv-reject)] tw:[color:#fff] tw:[font-size:11px]; @apply tw:[font-weight:var(--fw-bold)]; @apply tw:[line-height:20px] tw:text-center; }
 /* The review chain in the reviewer's panel: the three stages (dean, Asst. VPAA, LIC Director) and who cleared each. */
-.syl-progress { margin: 0; font-size: var(--text-xs); color: var(--muted); }
 .rp-stages { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
 .rp-stages li { display: flex; align-items: flex-start; gap: 8px; min-width: 0; padding: 4px 2px; border: 0; border-top: 2px solid var(--line); border-radius: 0; background: none; color: var(--muted); font-size: var(--text-xs); }
 .rp-stages li svg { flex: none; margin-top: 1px; }
