@@ -18,6 +18,7 @@ const { buildPlan } = require('./plan');
 const { claudeProvider } = require('./provider');
 const { fieldKeyOfFinding } = require('./judge');
 const { uniqueIds } = require('./extract');
+const { RULE_IDS } = require('./fixedRules');
 const { summarize } = require('../stewardship');
 const { bindSuggestions } = require('../suggestions');
 
@@ -268,6 +269,8 @@ async function officialize({ noAi, content, masters, env = process.env, db, tran
   h.replan = {
     mode: MODE, versions: { rules: R.VERSION, prompt: P.PROMPT_VERSION }, summary: result.summary, areaPoints: parts.used,
     review: result.judged.results.filter(r => r.status === 'review').length, advice: result.judged.results.filter(r => r.status === 'advice').length,
+    // every fixed rule it ran and what each found (none: checked and passed), for the check coverage list (ruleCoverage.js)
+    fixedRules: RULE_IDS.map(ruleId => ({ ruleId, findings: parts.judgements.filter(j => j.type === RULE_PREFIX + ruleId).map(j => ({ status: j.status === 'rule' ? 'FAIL' : 'NEEDS_REVIEW', path: j.path || null })) })),
     plan: plan ? { clean: plan.clean, rounds: plan.rounds, changes: plan.changes.length, unresolved: plan.unresolved, manual: plan.manual, regressions: plan.regressions } : null,
     usage: { ...result.judged.usage, provider: provider.usage ? provider.usage() : null, store: typeof store.status === 'function' ? store.status() : null, ms: Date.now() - startedAt },
   };

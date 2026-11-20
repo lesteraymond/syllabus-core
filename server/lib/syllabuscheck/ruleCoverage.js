@@ -1,7 +1,9 @@
 'use strict';
 // Reporting only. No score/gate consumes this manifest. Evidence is collected from actual evaluator receipts, never inferred from a lack of findings.
-// Rows: the fixed (no-AI) checks of ruleCatalog.js. Relationship instances: the new AI Checker's own questions (pipeline/official.js puts them in
-// hybrid.alignment.judgements); before it has answered, there are none.
+// Rows: the fixed (no-AI) checks of ruleCatalog.js (the form standard, the institutional validation rules, the quality notes) and, on a report of the
+// new AI Checker, its own fixed rules (pipeline/fixedRules.js, recorded in hybrid.replan.fixedRules; namespace new_ai_checker). Relationship instances:
+// its AI questions (hybrid.alignment.judgements), one receipt each, and aiQuestions, the same counted by kind. A report the new checker did not make has
+// neither (no synthetic coverage).
 const {catalog,replaced} = require('./ruleCatalog');
 const good = s => ['PASS','FAIL','NEEDS_REVIEW'].includes(s);
 const normalize = s => ({PASS:'PASS',FAIL:'FAIL',NOT_EVALUATED:'NOT_CHECKED',NOT_CHECKED:'NOT_CHECKED',NOT_APPLICABLE:'NOT_APPLICABLE',NEEDS_REVIEW:'NEEDS_REVIEW'}[s] || 'NOT_CHECKED');
@@ -42,16 +44,26 @@ function buildCoverage(result,content,masters={}) {
     const activationState=!rule.implemented?'NOT_IMPLEMENTED':!enabled?'IMPLEMENTED_BUT_DISABLED':verified?'ACTIVE':'IMPLEMENTED_BUT_NOT_EVALUATED';
     return {ruleId:rule.ruleId,category:rule.category,namespace:rule.namespace,implemented:rule.implemented,enabled,applicable,executed,attempted:instances.some(r=>r.attempted),verified,status,activationState,reason,...(replaced.includes(rule.ruleId)?{reasonCode:'replaced'}:{}),instances};
   });
-  // The new AI Checker's questions, one receipt each ("rule" items are its fixed rules, already counted in the rows above)
+  // The new AI Checker's own fixed rules: each one ran; no finding is a pass, a finding needs revision, a review item needs a person to confirm
+  if(replanned)for(const r of h.replan?.fixedRules||[]){
+    const found=r.findings||[], instances=found.length?found.map(f=>receipt({id:r.ruleId,path:f.path,status:f.status})):[receipt({id:r.ruleId,status:'PASS'})];
+    const status=instances.some(i=>i.status==='FAIL')?'FAIL':instances.some(i=>i.status==='NEEDS_REVIEW')?'NEEDS_REVIEW':'PASS';
+    rows.push({ruleId:r.ruleId,category:'new_ai_checker_rule',namespace:'new_ai_checker',implemented:true,enabled:true,applicable:true,executed:true,attempted:true,verified:true,status,activationState:'ACTIVE',reason:null,instances});
+  }
+  // The new AI Checker's questions, one receipt each (its "rule" judgements are the fixed rules above)
   const replanReceipt=j=>{const answered=!j.unverified&&j.label!=='INSUFFICIENT_EVIDENCE';return {scope:'re-planned',id:j.id,path:j.path||null,week:null,status:answered?({ALIGNED:'PASS',NOT_ALIGNED:'FAIL',PARTIALLY_ALIGNED:'NEEDS_REVIEW'}[j.label]||'NOT_CHECKED'):'NOT_CHECKED',verified:answered,attempted:!!j.attempted,reused:!!j.reused,reason:answered?null:(j.explanation||'No valid answer').slice(0,300)};};
   const instanceList=replanned?judgments.filter(j=>j.status!=='rule'&&j.status!=='rule_review').map(replanReceipt):[];
-  return {version:'rule-coverage-2',advisoryOnly:true,profile:'new-ai-checker',registeredStandard:47,directHybridRules:22,replacedRuleIds:replaced,
+  // the same questions counted by kind (the relationship is the first part of the question id: "ILO-CONTENT|ilo:i3"), in the order they were asked
+  const kinds=new Map();
+  for(const q of instanceList){const k=String(q.id).split('|')[0];if(!kinds.has(k))kinds.set(k,{relationship:k,asked:0,passed:0,failed:0,review:0,notChecked:0});const c=kinds.get(k);c.asked++;c[{PASS:'passed',FAIL:'failed',NEEDS_REVIEW:'review'}[q.status]||'notChecked']++;}
+  const aiQuestions=replanned?{asked:instanceList.length,answered:instanceList.filter(r=>r.verified).length,byRelationship:[...kinds.values()]}:null;
+  return {version:'rule-coverage-2',advisoryOnly:true,profile:'new-ai-checker',registeredStandard:47,directHybridRules:22,replacedRuleIds:replaced,aiQuestions,
     counts:summaryOf(rows),byNamespace:Object.fromEntries([...new Set(rows.map(r=>r.namespace))].map(n=>[n,summaryOf(rows.filter(r=>r.namespace===n))])),
     relationshipInstances:{expected:instanceList.length,attempted:instanceList.filter(r=>r.attempted).length,verified:instanceList.filter(r=>r.verified).length,notChecked:instanceList.filter(r=>!r.verified).length,rows:instanceList},
     rules:rows,limitations:['The AI questions are the new AI Checker\'s; their checklists and versions are in hybrid.replan.','Model verification establishes response/evidence handling, not real-model academic accuracy or institutional approval.']};
 }
 function coverageOf(...args) {
   try { return buildCoverage(...args); }
-  catch { return {version:'rule-coverage-2',advisoryOnly:true,unavailable:true,reason:'coverage_preparation_failed',registeredStandard:47,directHybridRules:22,counts:summaryOf([]),rules:[],relationshipInstances:{expected:null,attempted:0,verified:0,notChecked:null,rows:[]}}; }
+  catch { return {version:'rule-coverage-2',advisoryOnly:true,unavailable:true,reason:'coverage_preparation_failed',registeredStandard:47,directHybridRules:22,aiQuestions:null,counts:summaryOf([]),rules:[],relationshipInstances:{expected:null,attempted:0,verified:0,notChecked:null,rows:[]}}; }
 }
 module.exports={coverageOf,summaryOf};

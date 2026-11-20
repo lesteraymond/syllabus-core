@@ -125,11 +125,30 @@ for (const language of ['en','tl']) test(`[VPAA-COMP-UI-${language}] existing re
   assert.ok(coverage && coverage.rules.length >= 47, 'the saved report carries evaluator receipts');
   const shown = text(html(run));
   assert.ok(shown.includes(t('hybrid.coverageStatus.NOT_CHECKED')));
-  assert.ok(shown.includes(t('hybrid.ruleCoverage', { verified: coverage.counts.verified, total: coverage.counts.catalogued })));
+  const ai = coverage.aiQuestions;
+  assert.ok(ai, 'a report of the new AI Checker counts its AI questions');
+  assert.ok(shown.includes(t('hybrid.ruleCoverageAi', { verified: coverage.counts.verified, total: coverage.counts.catalogued, answered: ai.answered, asked: ai.asked })));
   assert.ok(shown.includes('CUR-CODE') && shown.includes('AI-REQUIRED'), 'the fixed rules are listed');
   assert.ok(!shown.includes('hybrid.coverageStatus.'), 'status translation keys never leak to faculty/admin');
   assert.ok(!/Academic verdict/.test(shown), 'deprecated verdict panel stays hidden');
   assert.equal(run.overall, null, 'coverage cannot turn an incomplete check into a score');
+});
+
+// Check coverage in sync with the new AI Checker: its own fixed rules are listed with the others, and its AI questions are counted by kind.
+for (const language of ['en', 'tl']) test(`[COVERAGE-NEW-CHECKER-${language}] check coverage lists the AI Checker's own rules and its AI questions by kind`, () => {
+  setLanguage(language);
+  const run = structuredClone(runs.scored), coverage = run.hybrid.ruleCoverage, ai = coverage.aiQuestions;
+  const shown = text(html(run));
+  const own = coverage.rules.filter((r) => r.namespace === 'new_ai_checker');
+  assert.equal(own.length, 20, 'the 20 fixed rules of the new AI Checker are in the list');
+  for (const r of own) assert.ok(shown.includes(`${r.ruleId} · ${t('hybrid.coverageStatus.' + r.status)}`), r.ruleId);
+  assert.ok(shown.includes(t('hybrid.ruleCoverageAi', { verified: coverage.counts.verified, total: coverage.counts.catalogued, answered: ai.answered, asked: ai.asked })), 'the heading counts the rules and the AI questions');
+  assert.ok(ai.asked > 0 && ai.answered === ai.asked, 'every question of the scored run was answered');
+  assert.ok(shown.includes(t('hybrid.aiQuestionsHeading')));
+  for (const k of ai.byRelationship) assert.ok(shown.includes(`${k.relationship} · ${t('hybrid.aiQuestionsRow', k)}`), k.relationship);
+  assert.ok(shown.includes(t('hybrid.ruleCoverageScope')));
+  assert.ok(!/hybrid\.(ruleCoverage|aiQuestions)/.test(shown), 'translation keys never leak');
+  assert.ok(!/Hybrid-2/.test(shown), 'the old checker\'s name is gone from the explanation');
 });
 
 // Hardening: stale results are announced before the results they qualify, the budget notices say exactly what happened, and both panels use one vocabulary.

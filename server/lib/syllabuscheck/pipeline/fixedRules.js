@@ -140,4 +140,9 @@ function check(map, ctx = {}) {
   return { version: R.VERSION, findings, summary: { finding: count('finding'), review: count('review') } };
 }
 
-module.exports = { check, higherOf };
+// Every rule check() runs, in the order a syllabus is read. The check coverage list (ruleCoverage.js) shows each one, with no finding as checked and
+// passed; coverage.test.js fails when a rule above is missing here.
+const RULE_IDS = ['CLO-COUNT', 'CLO-STATEMENT', 'CLO-LEVEL-LABEL', 'CLO-PO-TAG', 'CLO-EGA-TAG', 'CLO-UNKNOWN-TAG', 'CLO-COVERAGE', 'WEEK1-ORIENTATION', 'WEEK2-FIRST-TOPIC',
+  'CONTENT-MISSING', 'ILO-MISSING', 'ILO-CLO-TAG', 'ACTIVITY-OPTIONS', 'TASKS-MISSING', 'VALUES-WEEKLY', 'ILO-DUPLICATE', 'OUTCOME-ONE-VERB', 'REF-NONE', 'REF-APA', 'REF-RECENCY'];
+
+module.exports = { check, higherOf, RULE_IDS };
