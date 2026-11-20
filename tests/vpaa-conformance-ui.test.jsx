@@ -151,6 +151,20 @@ for (const language of ['en', 'tl']) test(`[COVERAGE-NEW-CHECKER-${language}] ch
   assert.ok(!/Hybrid-2/.test(shown), 'the old checker\'s name is gone from the explanation');
 });
 
+// The program's POs not linked to an EGA: a notice at the top of the report, for the administrator to act on; it blocks nothing.
+for (const language of ['en', 'tl']) test(`[PO-EGA-NOTICE-${language}] unlinked Program Outcomes are named at the top of the report, and no notice when all are linked`, () => {
+  setLanguage(language);
+  const run = structuredClone(runs.scored);
+  run.hybrid.ruleCoverage.posWithoutEga = [3, 5];
+  const markup = html(run), shown = text(markup);
+  assert.ok(markup.includes('data-testid="po-ega-unlinked"'));
+  assert.ok(shown.includes(t('hybrid.poEgaUnlinked', { list: '3, 5', count: 2 })));
+  assert.ok(!shown.includes('hybrid.poEgaUnlinked'), 'the translation key never leaks');
+  assert.ok(shown.includes(`${run.overall}%`), 'the score is still shown: nothing is blocked');
+  run.hybrid.ruleCoverage.posWithoutEga = [];
+  assert.ok(!html(run).includes('po-ega-unlinked'));
+});
+
 // Hardening: stale results are announced before the results they qualify, the budget notices say exactly what happened, and both panels use one vocabulary.
 for (const language of ['en', 'tl']) test(`[HARDEN-STALE-${language}] a stale report is marked out of date with a quiet chip (no banner)`, () => {
   setLanguage(language);

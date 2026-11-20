@@ -127,3 +127,15 @@ test('a report the new checker did not make has no new-checker rows and no AI qu
   assert.ok(!cov.rules.some(r => r.namespace === 'new_ai_checker'));
   assert.equal(cov.relationshipInstances.expected, 0);
 });
+
+test('coverage names the syllabus POs not linked to an EGA (an administrator gap; nothing is blocked), [] when all are linked, null without POs', async () => {
+  const { report, content, masters } = await official();
+  assert.deepEqual(coverageOf(report, content, masters).posWithoutEga, [], 'the sample links every PO');
+  const unlinked = structuredClone(content);
+  unlinked.outcomes = { ...(unlinked.outcomes || {}), pos: [{ no: 1, short: 'P1', text: 'T', egas: [1] }, { no: 2, short: 'P2', text: 'T', egas: [] }, { no: 3, short: 'P3', text: 'T' }] };
+  assert.deepEqual(coverageOf(report, unlinked, masters).posWithoutEga, [2, 3]);
+  const none = structuredClone(content);
+  none.outcomes = { ...(none.outcomes || {}), pos: [] }; delete none.catalog;
+  assert.equal(coverageOf(report, none, { ...masters, pos: [] }).posWithoutEga, null);
+  assert.equal(report.status, 'scored', 'the gap never stops a check');
+});

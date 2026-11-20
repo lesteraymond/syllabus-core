@@ -17,6 +17,8 @@ export default function RuleCoveragePanel({ coverage, part }) {
   return <>
     {/* Required academic coverage cut short by the configured per-check budget: said first, outside the collapsed list, and never hidden behind a pass. */}
     {showNotices && budget?.requiredIncomplete && <div className="info-banner warning" role="alert" data-testid="budget-required-incomplete">{t('hybrid.budgetRequiredIncomplete', { cost: budget.advice?.estimatedRequiredCostUsd ?? '?', cap: budget.advice?.currentCapUsd ?? budget.limits?.maxCostUsd ?? '?' })}</div>}
+    {/* The program's POs not linked to an EGA: an administrator's setup gap, said first; it blocks nothing (P-03 is then Not checked). */}
+    {showNotices && coverage.posWithoutEga?.length > 0 && <div className="info-banner warning" role="status" data-testid="po-ega-unlinked">{t('hybrid.poEgaUnlinked', { list: coverage.posWithoutEga.join(', '), count: coverage.posWithoutEga.length })}</div>}
     {showNotices && !budget?.requiredIncomplete && budget?.deferredOptional > 0 && <div className="info-banner" role="status" data-testid="budget-optional-deferred">{t('hybrid.budgetDeferred', { count: budget.deferredOptional })}</div>}
     {showList && <details className="hy-details">
       <summary>{ai ? t('hybrid.ruleCoverageAi', { verified: counts.verified, total: counts.catalogued, answered: ai.answered, asked: ai.asked }) : t('hybrid.ruleCoverage', { verified: counts.verified, total: counts.catalogued })}</summary>

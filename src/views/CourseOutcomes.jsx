@@ -16,7 +16,7 @@ import { currentDeadline, groupByCourse } from '../lib/deadlineView';
 import Select from '../components/Select';
 import AcademicYearControl from '../components/AcademicYearControl';
 import AddProgramForm from '../components/AddProgramForm';
-import { programsNeedingSetup } from '../lib/outcomesSetup';
+import { programsNeedingSetup, programsNeedingEgaLinks } from '../lib/outcomesSetup';
 
 // Administrators manage program/subject identity and deadlines here. Learning-outcome authoring lives in builder Step 2.
 export default function CourseOutcomes({ notify, onCatalogChanged }) {
@@ -91,6 +91,7 @@ export default function CourseOutcomes({ notify, onCatalogChanged }) {
 
   const shown = useMemo(() => filterSubjects(list, filters), [list, filter, curriculumFilter, termFilter]); // eslint-disable-line react-hooks/exhaustive-deps
   const needSetup = useMemo(() => programsNeedingSetup(programs), [programs]);   // programs of this year still without EGAs or Program Outcomes
+  const needLinks = useMemo(() => programsNeedingEgaLinks(programs), [programs]); // programs whose POs are not all linked to an EGA yet
   // adding an academic year (from the Current academic year block): create it and reload
   const addYear = async (startYear) => { const made = await yearsApi.create(startYear); await refreshCatalog(); if (yearScope) await yearScope.reload(); notify(translateUI('years.added')); return made.label; };   // the header dropdown reads the application-wide year list
   const clearFilters = () => { setFilter(''); setCurriculumFilter(''); setTermFilter({ academicYear: '', semester: '', yearLevel: '' }); };
@@ -102,6 +103,7 @@ export default function CourseOutcomes({ notify, onCatalogChanged }) {
       <div className="year-row"><AcademicYearControl years={years} onChanged={refreshCatalog} onAddYear={addYear} notify={notify} /></div>
       {readOnly && <div className="info-banner" role="status">{translateUI('catalog.pastYear', { year })}</div>}
       {!readOnly && needSetup.length > 0 && <div className="info-banner warning" role="status">{translateUI('outcomes.setupBanner', { year: shownYear, list: needSetup.map((p) => p.code).join(', ') })}</div>}
+      {!readOnly && needLinks.length > 0 && <div className="info-banner warning" role="status">{translateUI('outcomes.linkBanner', { year: shownYear, list: needLinks.map((p) => p.code + ' (' + p.unlinkedPoCount + ')').join(', ') })}</div>}
       {addingProgram && !readOnly && <AddProgramForm year={shownYear} notify={notify} onCancel={() => setAddingProgram(false)} onCreated={async (made) => { await refreshCatalog(); setForm((current) => ({ ...current, program: made.code })); }} />}
       {adding && (
         <div ref={formRef} inert={formMotion.closing || undefined} className="card ac-form catalog-surface">

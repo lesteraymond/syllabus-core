@@ -36,7 +36,8 @@ router.get('/', requireAuth, async (req, res) => {
     if (inYear.sql) { conditions.push(inYear.sql.replace(/^ AND /, '')); values.push(...inYear.params); }
     if (mine) { conditions.push('p.program_id IN (SELECT program_id FROM faculty_programs WHERE user_id = ?)'); values.push(req.session.user.id); }
     const [rows] = await req.app.locals.db.query(
-      `SELECT p.program_id, p.code, p.name, COUNT(o.po_no) AS outcome_count, (SELECT COUNT(*) FROM program_egas e WHERE e.program_id = p.program_id) AS ega_count
+      `SELECT p.program_id, p.code, p.name, COUNT(o.po_no) AS outcome_count, SUM(o.po_no IS NOT NULL AND COALESCE(o.ega_nos, '') = '') AS unlinked_count,
+              (SELECT COUNT(*) FROM program_egas e WHERE e.program_id = p.program_id) AS ega_count
        FROM programs p LEFT JOIN program_outcomes o ON o.program_id = p.program_id
        ${conditions.length ? 'WHERE ' + conditions.join(' AND ') : ''}
        GROUP BY p.program_id, p.code, p.name ORDER BY p.code`,
@@ -47,8 +48,10 @@ router.get('/', requireAuth, async (req, res) => {
       const source=await inheritedFrom(req.app.locals.db,{program_id:row.program_id});
       const shared=source?await loadResolvedProgram(req.app.locals.db,source):null;
       const count=shared?shared.pos.length:row.code==='BSIT-CYBERSECURITY'?0:Number(row.outcome_count);
-      // egaCount and inheritedFrom tell the admin's screen which programs still need their EGAs and POs set up (a specialization is set up in the program it inherits from)
-      result.push({id:row.program_id,code:row.code,name:row.name,outcomeCount:count,egaCount:shared?shared.egas.length:row.code==='BSIT-CYBERSECURITY'?0:Number(row.ega_count)||0,inheritedFrom:source?source.code:null});
+      // egaCount and inheritedFrom tell the admin's screen which programs still need their EGAs and POs set up (a specialization is set up in the program it inherits from);
+      // unlinkedPoCount, how many POs are not linked to any EGA yet (the link is required, 2026-11-20)
+      const unlinked=shared?shared.pos.filter(p=>!(p.egas||[]).length).length:row.code==='BSIT-CYBERSECURITY'?0:Number(row.unlinked_count)||0;
+      result.push({id:row.program_id,code:row.code,name:row.name,outcomeCount:count,egaCount:shared?shared.egas.length:row.code==='BSIT-CYBERSECURITY'?0:Number(row.ega_count)||0,unlinkedPoCount:unlinked,inheritedFrom:source?source.code:null});
     }
     res.json(result);
   } catch (err) { sendError(res, err); }

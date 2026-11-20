@@ -7,7 +7,7 @@ import { useModalLayer } from './useModalLayer';
 import { outcomes } from '../lib/api';
 import { t, tr } from '../i18n';
 import ProgramOutcomesEditor from './ProgramOutcomesEditor';
-import { needsSetup } from '../lib/outcomesSetup';
+import { needsSetup, needsEgaLinks } from '../lib/outcomesSetup';
 const STATUS_LABELS = { draft: 'Draft', submitted: 'Submitted', under_review: 'Under Review', approved: 'Approved', for_revision: 'For Revision', rejected: 'Rejected' };
 
 export function DeletionImpact({ preview }) {
@@ -117,7 +117,7 @@ export default function ProgramManagement({ programs, onChanged, notify, readOnl
     <div className="card-head"><h3 id="program-management-title" ref={heading} tabIndex={-1}>{t('programs.heading')}</h3></div>
     {refreshError && <div className="form-error" role="alert">{refreshError}<StableButton type="button" className="btn outline" onClick={async () => { try { await onChanged(); setRefreshError(''); } catch (error) { setRefreshError(tr(error.message)); } }}>{t('ui.reload_cce715')}</StableButton></div>}
     <div className="table-wrap" ref={table}><table><thead><tr><th>{t('ui.program_code_18ae83')}</th><th>{t('ui.program_name_699413')}</th><th className="col-actions">{t('ui.actions_c3cd63')}</th></tr></thead><tbody>
-      {programs.map(program => <tr key={program.id} data-catalog-row={'program-' + program.id}><td className="mono">{program.code}</td><td>{program.name}{needsSetup(program) && <span className="setup-badge" role="status">{t('outcomes.setupBadge')}</span>}</td><td className="col-actions"><div className="program-management-actions">
+      {programs.map(program => <tr key={program.id} data-catalog-row={'program-' + program.id}><td className="mono">{program.code}</td><td>{program.name}{needsSetup(program) && <span className="setup-badge" role="status">{t('outcomes.setupBadge')}</span>}{needsEgaLinks(program) && <span className="setup-badge" role="status">{t('outcomes.linkBadge')}</span>}</td><td className="col-actions"><div className="program-management-actions">
         <button className="btn outline outcomes-open" type="button" title={t('outcomes.buttonTitle', { code: program.code })} aria-label={t('outcomes.buttonTitle', { code: program.code })} onClick={() => setOutcomesFor(program)}>{t('outcomes.button')}</button>
         <button className="icon-btn" type="button" disabled={readOnly} title={t('programs.rename')} aria-label={t('programs.renameTitle', { code: program.code })} onClick={() => setSelected({ program, mode: 'rename' })}><Icon name="pencilSquare" size={18} /></button>
         <button className="icon-btn is-delete" type="button" disabled={readOnly} title={t('programs.delete')} aria-label={t('programs.deleteTitle', { code: program.code })} onClick={() => setSelected({ program, mode: 'delete' })}><Icon name="bin" size={18} /></button>

@@ -5,6 +5,10 @@
 // A program "needs setup" when it has no EGAs or no Program Outcomes of its own. A specialization (it inherits both from another program) is set up there instead.
 export const needsSetup = (program) => !!program && !program.inheritedFrom && !(Number(program.egaCount) > 0 && Number(program.outcomeCount) > 0);
 export const programsNeedingSetup = (programs) => (programs || []).filter(needsSetup);
+// A program whose EGAs and POs exist but some PO is not linked to any EGA (unlinkedPoCount from GET /programs). The link is required (2026-11-20): the
+// AI Checker's P-03 checks CLO tags against it, and a PO without one can no longer be saved.
+export const needsEgaLinks = (program) => !!program && !program.inheritedFrom && !needsSetup(program) && Number(program.unlinkedPoCount) > 0;
+export const programsNeedingEgaLinks = (programs) => (programs || []).filter(needsEgaLinks);
 
 export const LIMITS = { egas: 20, pos: 50, egaName: 255, short: 120, poText: 2000 };
 
@@ -53,6 +57,7 @@ export function checkPos(rows, egas) {
     if (!r.short.trim() || !r.text.trim()) return { key: 'outcomes.err.poText', params: { no: r.no } };
     if (r.short.length > LIMITS.short || r.text.length > LIMITS.poText) return { key: 'outcomes.err.poLong', params: { no: r.no } };
     if (r.egas.some((n) => !known.has(Number(n)))) return { key: 'outcomes.err.poEga', params: { no: r.no } };
+    if (!r.egas.length) return { key: 'outcomes.err.poNoEga', params: { no: r.no } };
   }
   return null;
 }

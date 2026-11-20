@@ -17,6 +17,10 @@ function buildCoverage(result,content,masters={}) {
   const h=result.hybrid||{}, judgments=h.alignment?.judgements||[];
   const replanned=h.alignment?.engine==='re-planned';
   const receipt = (r, verified=good(normalize(r.status))) => ({id:r.id||r.ruleId,path:r.path||null,week:r.week??null,status:normalize(r.status),verified,attempted:r.attempted??verified,reused:!!r.reused,reason:r.reason||null});
+  // The syllabus's POs that are not linked to any EGA (the PO list P-03 reads). The link is required (2026-11-20) but older programs may lack it: the report
+  // says so at the top (RuleCoveragePanel), and nothing is blocked. [] when every PO is linked, null when the syllabus has no POs.
+  const poList=content.outcomes?.pos||content.catalog?.program?.pos||masters.pos||[];
+  const posWithoutEga=poList.length?poList.filter(p=>!(p.egas||[]).length).map(p=>p.no):null;
   const rows=catalog.map(rule=>{
     let enabled=rule.implemented&&!replaced.includes(rule.ruleId),applicable=true,executed=false,reason=null,instances=[];
     if(rule.namespace==='registered_standard') {
@@ -57,7 +61,7 @@ function buildCoverage(result,content,masters={}) {
   const kinds=new Map();
   for(const q of instanceList){const k=String(q.id).split('|')[0];if(!kinds.has(k))kinds.set(k,{relationship:k,asked:0,passed:0,failed:0,review:0,notChecked:0});const c=kinds.get(k);c.asked++;c[{PASS:'passed',FAIL:'failed',NEEDS_REVIEW:'review'}[q.status]||'notChecked']++;}
   const aiQuestions=replanned?{asked:instanceList.length,answered:instanceList.filter(r=>r.verified).length,byRelationship:[...kinds.values()]}:null;
-  return {version:'rule-coverage-2',advisoryOnly:true,profile:'new-ai-checker',registeredStandard:47,directHybridRules:22,replacedRuleIds:replaced,aiQuestions,
+  return {version:'rule-coverage-2',advisoryOnly:true,profile:'new-ai-checker',registeredStandard:47,directHybridRules:22,replacedRuleIds:replaced,aiQuestions,posWithoutEga,
     counts:summaryOf(rows),byNamespace:Object.fromEntries([...new Set(rows.map(r=>r.namespace))].map(n=>[n,summaryOf(rows.filter(r=>r.namespace===n))])),
     relationshipInstances:{expected:instanceList.length,attempted:instanceList.filter(r=>r.attempted).length,verified:instanceList.filter(r=>r.verified).length,notChecked:instanceList.filter(r=>!r.verified).length,rows:instanceList},
     rules:rows,limitations:['The AI questions are the new AI Checker\'s; their checklists and versions are in hybrid.replan.','Model verification establishes response/evidence handling, not real-model academic accuracy or institutional approval.']};

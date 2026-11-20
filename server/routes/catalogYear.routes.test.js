@@ -25,7 +25,7 @@ function makeDb() {
     if (sql.startsWith('SELECT 1 FROM academic_years WHERE label')) return [YEARS.filter((y) => y.label === p[0]).map(() => ({ 1: 1 }))];
     if (sql.startsWith('SELECT p.program_id, p.code, p.name, COUNT(o.po_no)')) {
       const year = sql.includes('COALESCE(p.academic_year, ?) = ?') ? p[1] : null;
-      return [s.programs.filter((x) => !year || yearOfProgram(x) === year).map((x) => ({ program_id: x.program_id, code: x.code, name: x.name, outcome_count: 0, ega_count: x.egaCount || 0 }))];
+      return [s.programs.filter((x) => !year || yearOfProgram(x) === year).map((x) => ({ program_id: x.program_id, code: x.code, name: x.name, outcome_count: 0, ega_count: x.egaCount || 0, unlinked_count: x.unlinkedCount || 0 }))];
     }
     if (sql.startsWith('SELECT c.course_id, c.code, c.title, c.program_id, p.code AS program_code, COUNT')) {
       const year = sql.includes('COALESCE(p.academic_year, ?) = ?') ? p[sql.includes('p.code = ?') ? 2 : 1] : null;
@@ -96,6 +96,9 @@ test('the program list tells which programs have EGAs and outcomes, so the admin
   assert.deepStrictEqual([row.egaCount, row.outcomeCount, row.inheritedFrom], [0, 0, null], 'a program with no EGAs and no outcomes reports zeros (needs setup)');
   db.s.programs.find((p) => p.code === 'BSIT').egaCount = 3;
   assert.strictEqual((await call(admin, 'GET', '/programs?year=' + encodeURIComponent('2026–2027'))).body[0].egaCount, 3);
+  assert.strictEqual(row.unlinkedPoCount, 0);
+  db.s.programs.find((p) => p.code === 'BSIT').unlinkedCount = 9;
+  assert.strictEqual((await call(admin, 'GET', '/programs?year=' + encodeURIComponent('2026–2027'))).body[0].unlinkedPoCount, 9, 'POs not linked to an EGA are counted (the link is required, 2026-11-20)');
 }));
 
 test('a faculty member may look at the previous and the current year only', () => withServer(async ({ call }) => {

@@ -41,6 +41,8 @@ test('EGA and PO input is validated with one set of rules', () => {
   for (const bad of [undefined, [], [{ no: 0, name: 'a', short: 'b' }], [{ no: 100, name: 'a', short: 'b' }], [{ no: 1, name: 'a', short: 'b' }, { no: 1, name: 'c', short: 'd' }], [{ no: 1, name: 'a', short: ' ' }], [{ no: 1, name: 'x'.repeat(256), short: 'b' }]]) assert.throws(() => parseEgas(bad), (e) => e.status === 400, JSON.stringify(bad));
   assert.deepStrictEqual(parsePos([{ no: 1, short: 'P', text: ' T ', egas: [2, 1, 2] }], new Set([1, 2])), [{ no: 1, short: 'P', text: 'T', egas: [1, 2] }]);
   assert.deepStrictEqual(parsePos([], new Set()), []);
+  // every PO must be linked to at least one EGA (owner decision 2026-11-20)
+  for (const unlinked of [{ no: 4, short: 'P', text: 'T' }, { no: 4, short: 'P', text: 'T', egas: [] }]) assert.throws(() => parsePos([unlinked], new Set([1, 2]), 'BSIT'), (e) => e.status === 400 && /PO 4 must be linked to at least one EGA of BSIT/.test(e.message));
   for (const bad of [undefined, [{ no: 1, short: '', text: 'T' }], [{ no: 1, short: 'P', text: '' }], [{ no: 1, short: 'P', text: 'T', egas: [3] }], [{ no: 1, short: 'P', text: 'x'.repeat(2001) }]]) assert.throws(() => parsePos(bad, new Set([1, 2])), (e) => e.status === 400, JSON.stringify(bad));
 });
 
