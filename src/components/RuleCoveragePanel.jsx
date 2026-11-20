@@ -1,44 +1,25 @@
-import { t, tr } from '../i18n';
+import { t } from '../i18n';
 
-// Extends the existing report only. Historical reports without receipts have no
-// synthetic coverage, and no verdict panel or workflow control is introduced.
-// The status words are hybrid.coverageStatus.*; the backend status codes are unchanged.
-// part="notices": only what must be seen first (coverage unavailable, or cut short by the budget). part="list": only the collapsed rule-by-rule list,
-// which the card puts after the results. Without `part`, both (the earlier behaviour).
-// A report of the new AI Checker also carries its own fixed rules (in coverage.rules) and its AI questions counted by kind (coverage.aiQuestions):
-// the heading counts the rules that APPLY to this syllabus (and says how many do not), and the questions; the list ends with the questions. The budget notices only appear on a saved report of the old checker, which recorded a budget.
-const REASON_CODES = ['budget_deferred', 'replaced', 'checked_by_exact', 'no_override', 'signoff_by_system', 'master_present', 'no_reference_urls', 'identity_stopped', 'not_applicable'];
-
+// Check coverage, at the end of the AI Checker report: the AI questions the new AI Checker asked about this syllabus, counted by kind (how many were aligned,
+// partly aligned, not aligned or not answered). Owner decision 2026-11-20: only the AI questions are listed; the rule-by-rule receipts stay in the saved
+// report (ruleCoverage.rules) for audit but are not shown. A report the new checker did not make (no aiQuestions) shows no list.
+// part="notices": only what must be seen first (coverage unavailable, Program Outcomes not linked to an EGA, and the budget notices of an old-checker
+// report, which recorded a budget). part="list": only the collapsed list, which the card puts after the results. Without `part`, both.
 export default function RuleCoveragePanel({ coverage, part }) {
   const showNotices = part !== 'list', showList = part !== 'notices';
   if (coverage?.unavailable) return showNotices ? <p className="hy-hint" role="alert">{t('hybrid.ruleCoverageUnavailable')}</p> : null;
   if (!coverage?.rules) return null;
-  const counts = coverage.counts, budget = coverage.budget, ai = coverage.aiQuestions;
-  // A rule replaced by an authorized alternative check keeps its NOT_CHECKED code but is shown as what it is.
-  const statusOf = rule => t('hybrid.coverageStatus.' + (rule.reasonCode === 'replaced' ? 'REPLACED' : rule.status));
-  // a row that does not apply, or a retired one, is explained in the person's language; any other reason is the rule's own text
-  const reasonOf = rule => REASON_CODES.includes(rule.reasonCode) ? t('hybrid.reason.' + rule.reasonCode) : rule.reason ? tr(rule.reason) : null;
-  const skipped = Math.max(0, counts.catalogued - counts.applicable);
-  const head = { verified: counts.verified, applicable: counts.applicable, skipped };
+  const budget = coverage.budget, ai = coverage.aiQuestions;
   return <>
     {/* Required academic coverage cut short by the configured per-check budget: said first, outside the collapsed list, and never hidden behind a pass. */}
     {showNotices && budget?.requiredIncomplete && <div className="info-banner warning" role="alert" data-testid="budget-required-incomplete">{t('hybrid.budgetRequiredIncomplete', { cost: budget.advice?.estimatedRequiredCostUsd ?? '?', cap: budget.advice?.currentCapUsd ?? budget.limits?.maxCostUsd ?? '?' })}</div>}
     {/* The program's POs not linked to an EGA: an administrator's setup gap, said first; it blocks nothing (P-03 is then Not checked). */}
     {showNotices && coverage.posWithoutEga?.length > 0 && <div className="info-banner warning" role="status" data-testid="po-ega-unlinked">{t('hybrid.poEgaUnlinked', { list: coverage.posWithoutEga.join(', '), count: coverage.posWithoutEga.length })}</div>}
     {showNotices && !budget?.requiredIncomplete && budget?.deferredOptional > 0 && <div className="info-banner" role="status" data-testid="budget-optional-deferred">{t('hybrid.budgetDeferred', { count: budget.deferredOptional })}</div>}
-    {showList && <details className="hy-details">
-      <summary>{ai ? t('hybrid.ruleCoverageApplicableAi', { ...head, answered: ai.answered, asked: ai.asked }) : t('hybrid.ruleCoverageApplicable', head)}</summary>
-      <p>{t('hybrid.ruleCoverageScope')}</p>
-      <p>{t('hybrid.ruleCoverageCounts', { failed: counts.failed, review: counts.needsReview, partial: counts.partiallyEvaluated, unchecked: counts.notChecked })}</p>
-      <ul>{coverage.rules.map(rule => <li key={(rule.namespace || '') + ':' + rule.ruleId}>
-        <code>{rule.ruleId}</code> · {statusOf(rule)}
-        {reasonOf(rule) && <p>{reasonOf(rule)}</p>}
-        {rule.instances.filter(i => i.status !== 'PASS').map((instance, i) => <span key={i}> {instance.path || ''}{instance.week ? ` (${instance.week})` : ''}</span>)}
-      </li>)}</ul>
-      {ai && ai.byRelationship.length > 0 && <>
-        <p><b>{t('hybrid.aiQuestionsHeading')}</b></p>
-        <ul>{ai.byRelationship.map(k => <li key={k.relationship}><code>{k.relationship}</code> · {t('hybrid.aiQuestionsRow', { asked: k.asked, passed: k.passed, review: k.review, failed: k.failed, notChecked: k.notChecked })}</li>)}</ul>
-      </>}
+    {showList && ai && ai.byRelationship.length > 0 && <details className="hy-details" data-testid="ai-coverage">
+      <summary>{t('hybrid.aiCoverageHeading', { answered: ai.answered, asked: ai.asked })}</summary>
+      <p>{t('hybrid.aiCoverageScope')}</p>
+      <ul>{ai.byRelationship.map(k => <li key={k.relationship}><code>{k.relationship}</code> · {t('hybrid.aiQuestionsRow', { asked: k.asked, passed: k.passed, review: k.review, failed: k.failed, notChecked: k.notChecked })}</li>)}</ul>
     </details>}
   </>;
 }

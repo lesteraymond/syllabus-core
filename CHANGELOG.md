@@ -2930,3 +2930,13 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Change:** `ruleCoverage.js` gives every row that does not apply, and every retired one, a reason code (`replaced`, `checked_by_exact`, `no_override`, `signoff_by_system`, `master_present`, `no_reference_urls`, `identity_stopped`, `not_applicable`). `RuleCoveragePanel` words each one in plain English or Filipino, and its heading counts the rules that apply and says how many do not ("89 of 89 rules that apply checked (12 do not apply to this syllabus) · AI questions: 166 of 166 answered"). The old heading keys are removed.
 - **Not changed:** which rules run, the score and the findings.
 - **Tests:** `pipeline/coverage.test.js` (+1): every not-applicable and retired row has a known code, worded in both languages; a rule that ran has none. `tests/vpaa-conformance-ui.test.jsx` (+2, English and Filipino): the heading, a reason on every row that does not apply, and none of the old technical text. `npm test` passes (1,496 server tests, localization, PDF import 15/15, VPAA screens 34/34); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks.
+
+---
+
+### v1.98.21 — AI Checker: Check Coverage Lists Only the AI Questions by Kind
+**Date:** November 20, 2026
+
+- **Owner decision:** the Check coverage list at the end of the AI Checker report shows only the AI questions the AI Checker asked, counted by kind (how many were aligned, partly aligned, not aligned or not answered). The 101 rule-by-rule rows (form standard, institutional rules, quality notes and the AI Checker's own rules) are no longer listed.
+- **Change** (`src/components/RuleCoveragePanel.jsx`): the collapsed list reads "AI questions: {answered} of {asked} answered", with a short explanation and one line per kind. A report without AI questions shows no list. The notices at the top stay: Program Outcomes not linked to an EGA, and the budget notices of a saved old-checker report. The rule receipts stay in the saved report (`ruleCoverage.rules`, with their reason codes) for audit; only the screen no longer lists them. The 21 texts that only the rule rows used are removed in both languages.
+- **Not changed:** what is checked, the score, the findings and the AI questions themselves.
+- **Tests:** `tests/vpaa-conformance-ui.test.jsx`: an incomplete report counts its questions as not answered and never as aligned; a scored report lists every kind and no rule rows; a report without AI questions shows no list (English and Filipino). The rule-row screen tests are removed. `npm test` passes (1,496 server tests, localization, PDF import 15/15, VPAA screens 30/30); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks.

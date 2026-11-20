@@ -149,6 +149,4 @@ test('every coverage row that does not apply, and every retired one, carries a r
   const known = ['replaced', 'checked_by_exact', 'no_override', 'signoff_by_system', 'master_present', 'no_reference_urls', 'identity_stopped', 'not_applicable'];
   assert.ok(cov.rules.every(r => !r.reasonCode || known.includes(r.reasonCode)));
   assert.ok(cov.rules.filter(r => r.status === 'PASS' || r.status === 'FAIL').every(r => !r.reasonCode), 'a rule that ran has no "does not apply" code');
-  const i18n = require('fs').readFileSync(require.resolve('../../../../src/i18n/hybrid.js'), 'utf8');
-  for (const c of known) assert.equal((i18n.match(new RegExp("'hybrid\\.reason\\." + c + "'", 'g')) || []).length, 2, c + ': English and Filipino');
 });
