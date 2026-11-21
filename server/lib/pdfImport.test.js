@@ -92,8 +92,38 @@ test('malformed, oversized, excessive pages and no-section documents fail closed
 });
 test('timed-out worker is terminated before its evaluation slot can be reused', async () => {
   let terminated = false;
+  class WatchWorker extends EventEmitter {
+    constructor() { super(); setImmediate(() => { this.emit('message', { 'watch:require': ['pdfImport.worker.js'] }); this.emit('message', { fields: { code: 'X' }, pages: [] }); }); }
+    terminate() { return Promise.resolve(); }
+  }
+  assert.deepEqual(await extractPdf(pdfBytes(text), { WorkerClass: WatchWorker }), { fields: { code: 'X' }, pages: [] }, 'node --watch notices from the worker are skipped');
   class HangingWorker extends EventEmitter { terminate() { terminated = true; return Promise.resolve(); } }
   await assert.rejects(extractPdf(pdfBytes(text), { timeoutMs: 10, WorkerClass: HangingWorker }), /pdfImport.timeout/);
   assert.equal(terminated, true);
 });
+// Pages given as lists of lines; an empty list is a blank page.
+function multiPagePdf(pageLines) {
+  const objs = ['<< /Type /Catalog /Pages 2 0 R >>', null, '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>'];
+  const kids = [];
+  for (const lines of pageLines) {
+    const stream = lines.length ? 'BT /F1 11 Tf 40 750 Td 16 TL ' + lines.map(line => '(' + line.replace(/[\\()]/g, '\\$&') + ') Tj T*').join('\n') + ' ET' : '';
+    objs.push('<< /Length ' + Buffer.byteLength(stream) + ' >>\nstream\n' + stream + '\nendstream');
+    objs.push('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents ' + objs.length + ' 0 R >>');
+    kids.push(objs.length + ' 0 R');
+  }
+  objs[1] = '<< /Type /Pages /Kids [' + kids.join(' ') + '] /Count ' + kids.length + ' >>';
+  let out = '%PDF-1.7\n';
+  const offsets = [];
+  objs.forEach((o, i) => { offsets.push(out.length); out += (i + 1) + ' 0 obj\n' + o + '\nendobj\n'; });
+  const xref = out.length;
+  out += 'xref\n0 ' + (objs.length + 1) + '\n0000000000 65535 f \n' + offsets.map(o => String(o).padStart(10, '0') + ' 00000 n \n').join('');
+  return Buffer.from(out + 'trailer\n<< /Size ' + (objs.length + 1) + ' /Root 1 0 R >>\nstartxref\n' + xref + '\n%%EOF', 'latin1');
+}
+test('a blank page is skipped and reported instead of failing the whole import', async () => {
+  const result = await extractPdf(multiPagePdf([text.split('\n'), []]));
+  assert.equal(result.fields.code, 'MA 7');
+  assert.deepEqual(result.pages.map(p => [p.page, p.method, p.reason]), [[1, 'text', undefined], [2, 'skipped', 'blank']]);
+  await assert.rejects(extractPdf(multiPagePdf([[], []])), /pdfImport.unreadable/, 'a PDF with no readable page still fails');
+});
 module.exports = { pdfBytes, text };
+

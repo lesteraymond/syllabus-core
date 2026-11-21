@@ -14,7 +14,8 @@ export function splitPdfSections(text) {
   // OCR commonly reads roman I as lowercase l, 1 or |. Tolerate that only
   // immediately before a known full section title, never in authored content.
   const pattern = ([roman, title]) => `${roman.replaceAll('I', '[Il1|]')}\\s*[.)]?\\s+${title}`;
-  const matches = [...String(text).matchAll(new RegExp(`^\\s*(${headings.map(pattern).join('|')})\\s*[:：]?[^\\S\\n]*`, 'gim'))];
+  // Some text layers put a stray numeral fragment before a heading ("I. V.\tCREDIT UNITS"): skip one such fragment.
+  const matches = [...String(text).matchAll(new RegExp(`^\\s*(?:[Il1|]\\s*[.)]\\s+)?(${headings.map(pattern).join('|')})\\s*[:：]?[^\\S\\n]*`, 'gim'))];
   for (let i = 0; i < matches.length; i++) {
     const index = headings.findIndex(heading => new RegExp(`^${pattern(heading)}$`, 'i').test(matches[i][1].trim()));
     if (index < 0) continue;
@@ -46,6 +47,24 @@ function referenceGroups(text, item) {
   }
   flush(); return groups;
 }
+// V. Credit Units -> { lecture, lab, explicit }. Reads "3", "3 units", "2 Lec 1 Lab", "1 Unit Laboratory 3 Units Lecture",
+// "Lecture: 2, Laboratory: 1", "3 (2 lec / 1 lab)". explicit: both parts were stated, so no review warning is needed.
+// A bare total is lecture units with 0 laboratory units (rule T-06 needs both numbers), flagged for review.
+export function parseCreditUnits(source) {
+  const text = String(source ?? '').replace(/\s+/g, ' ').trim();
+  if (!text) return null;
+  const num = '(\\d+(?:\\.\\d+)?)';
+  const pick = (word) => {
+    const after = text.match(new RegExp(`${num}\\s*(?:units?\\s*(?:of\\s*)?)?(?:${word})`, 'i'));
+    if (after) return after[1];
+    const before = text.match(new RegExp(`(?:${word})\\.?\\s*(?:units?)?\\s*[:=-]?\\s*${num}`, 'i'));
+    return before ? before[1] : null;
+  };
+  const lecture = pick('lec(?:ture)?s?\\b'), lab = pick('lab(?:oratory)?s?\\b');
+  if (lecture !== null || lab !== null) return { lecture: lecture ?? '0', lab: lab ?? '0', explicit: lecture !== null && lab !== null };
+  const total = text.match(new RegExp(`^${num}\\s*(?:units?)?\\.?$`, 'i'));
+  return total ? { lecture: total[1], lab: '0', explicit: false } : null;
+}
 export function mapPdfFields(fields, draft, makeId, { planRows = null, identityContext = null, requireIdentity = false, prerequisiteChoice = null } = {}) {
   const warnings = [];
   const unresolvedMappings = [];
@@ -71,11 +90,13 @@ export function mapPdfFields(fields, draft, makeId, { planRows = null, identityC
   if (mismatch) warnings.push({ key: 'pdfImport.identityMismatch', values: { code: fields.code?.trim() || '', selected: draft.meta.code } });
   if (fields.title?.trim() && normalize(fields.title) !== normalize(draft.meta.title)) warnings.push({ key: 'pdfImport.titleMismatch', values: {} });
   const prerequisite = prerequisiteReview(fields, draft.meta, prerequisiteChoice);
-  next.meta.prereq = prerequisite.value;
+  // IV. Pre-requisite is the one section an upload may leave empty. Submit (rule T-05) needs a value, so an empty one is imported as "None".
+  next.meta.prereq = String(prerequisite.value ?? '').trim() ? prerequisite.value : 'None';
+  if (next.meta.prereq === 'None' && !String(prerequisite.value ?? '').trim()) warnings.push({ key: 'pdfImport.prereqNone', values: {} });
   if (prerequisite.conflict) warnings.push({ key: 'pdfImport.prereqConflict', values: {} });
-  const credits = fields.credits?.match(/^\s*(\d+(?:\.\d+)?)\s*(?:units?)?\s*$/i);
-  if (credits) { next.meta.lecture = credits[1]; next.meta.lab = ''; }
-  if (fields.credits?.trim()) warnings.push({ key: 'pdfImport.creditsReview', values: {} });
+  const units = parseCreditUnits(fields.credits);
+  if (units) { next.meta.lecture = units.lecture; next.meta.lab = units.lab; }
+  if (fields.credits?.trim() && !units?.explicit) warnings.push({ key: 'pdfImport.creditsReview', values: {} });
   // Only labelled source columns replace institutional/program text. Unrecovered
   // columns retain the current form values and are explicitly flagged for review.
   next.description = [item((fields.description || '').replace(/\s*\n\s*/g, ' '))];

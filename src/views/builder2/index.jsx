@@ -261,7 +261,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
       setBusy(false);
     }
   };
-  const applyPdfImport = async (fields, { planRows = null, prerequisiteChoice = null } = {}) => {
+  const applyPdfImport = async (fields, { planRows = null, prerequisiteChoice = null, next = null } = {}) => {
     if (!load.editable || (importBase.current !== null && importBase.current !== JSON.stringify(draft))) throw new Error('pdfImport.draftChanged');
     const mapped = preparePdfImport(fields, draft, newId, { planRows, prerequisiteChoice, identityContext: importIdentity.current });
     setBusy(true);
@@ -276,8 +276,11 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
       }
       importBase.current = null;
       // Apply only fills and saves the form. AI CHECK is a separate, deliberate step (the Review step) once the person has fixed the extracted text.
-      notify(translateUI('pdfImport.checked'));
-      setMode('form'); setStep(0);
+      // The template scan passed in the upload panel. "Check with AI" and "Submit directly" both land on the Review step,
+      // where the AI CHECK and Submit buttons are; the form's own step rules still apply before submitting.
+      const reviewStep = STEP_CONFIG.findIndex((s) => s.key === 'review');
+      notify(translateUI(next === 'ai' ? 'pdfImport.nextAi' : next === 'submit' ? 'pdfImport.nextSubmit' : 'pdfImport.checked'));
+      setMode('form'); setStep(next && reviewStep >= 0 ? reviewStep : 0);
       return true;
     } finally { setBusy(false); }
   };

@@ -3,6 +3,39 @@ import { t, tr } from '../../i18n';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { syllabi } from '../../lib/api';
 import { PDF_FIELDS, PDF_OUTCOME_FIELDS, mapPdfFields } from '../../lib/pdfImport';
+import { scanTemplate } from '../../lib/pdfTemplateScan';
+
+// Animated template scan: sections are ticked one by one (about 140 ms each), then the summary shows.
+function TemplateScan({ scan, runKey }) {
+  const [shown, setShown] = useState(0);
+  useEffect(() => {
+    const reduce = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) { setShown(scan.items.length); return undefined; }
+    setShown(0);
+    let n = 0;
+    const timer = setInterval(() => { n += 1; setShown(n); if (n >= scan.items.length) clearInterval(timer); }, 140);
+    return () => clearInterval(timer);
+  }, [runKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  const done = shown >= scan.items.length;
+  const pct = Math.round((Math.min(shown, scan.items.length) / scan.items.length) * 100);
+  return <div className={'tpl-scan' + (done ? (scan.ok ? ' is-ok' : ' is-bad') : ' is-running')} role="status" aria-live="polite">
+    <div className="tpl-scan-head">
+      <span className="tpl-scan-title">{t('pdfImport.scanTitle')}</span>
+      <span className="tpl-scan-pct">{done ? (scan.ok ? t('pdfImport.scanOk') : t('pdfImport.scanMissing', { count: scan.missing.length })) : pct + '%'}</span>
+    </div>
+    <div className="tpl-scan-bar"><span style={{ width: pct + '%' }} /></div>
+    <ul className="tpl-scan-list">
+      {scan.items.map((item, i) => {
+        const state = i >= shown ? 'wait' : item.filled ? 'ok' : item.optional ? 'skip' : 'bad';
+        return <li key={item.key} className={'tpl-scan-item is-' + state} style={{ animationDelay: (i * 140) + 'ms' }}>
+          <span className="tpl-scan-dot" aria-hidden="true">{state === 'ok' ? '✓' : state === 'bad' ? '✕' : state === 'skip' ? '–' : ''}</span>
+          <span>{t(`pdfImport.field.${item.key}`)}</span>
+          <small>{state === 'wait' ? t('pdfImport.scanChecking') : state === 'ok' ? t('pdfImport.scanFilled') : state === 'skip' ? t('pdfImport.scanOptional') : t('pdfImport.scanEmpty')}</small>
+        </li>;
+      })}
+    </ul>
+  </div>;
+}
 
 const MAX_BYTES = 10 * 1024 * 1024;
 const PLAN_COLUMNS = ['week', 'ilo', 'contents', 'activities', 'tasks', 'values'];
@@ -50,6 +83,8 @@ export default function UploadPanel({ draft, hasCourse, busy, disabled, disabled
     try { return mapPdfFields(fields, draft, () => `pdf_preview_${++counter}`, { planRows, identityContext: preview?.identityContext, requireIdentity: true, prerequisiteChoice }); }
     catch (e) { return { error: e.message, warnings: [] }; }
   }, [fields, draft, planRows, preview, prerequisiteChoice]);
+  const scan = useMemo(() => fields ? scanTemplate(fields, planRows) : null, [fields, planRows]);
+  const [scanRun, setScanRun] = useState(0);
   const pick = f => {
     if (busy || working || disabled || !f) return;
     if (!/\.pdf$/i.test(f.name) && f.type !== 'application/pdf') { setError('pdfImport.invalid'); return; }
@@ -73,10 +108,10 @@ export default function UploadPanel({ draft, hasCourse, busy, disabled, disabled
       const value = await onExtract(file);
       if (!value?.fields || !Array.isArray(value.pages)) throw new Error('pdfImport.failed');
       setPreview(value); setFields(value.fields); setPlanRows(value.layout?.planRows?.length ? value.layout.planRows : null); setReviewed(false);
-      setPrerequisiteChoice(null);
+      setPrerequisiteChoice(null); setScanRun(n => n + 1);
     }, 'scan');
   };
-  const apply = () => {
+  const apply = (next) => {
     if (!reviewed) { setApplyError('pdfImport.reviewRequired'); return; }
     if (mapped?.error) { setApplyError(mapped.error); return; }
     if (mapped?.mismatch) {
@@ -85,7 +120,9 @@ export default function UploadPanel({ draft, hasCourse, busy, disabled, disabled
     }
     if (mapped?.prerequisiteConflict && !mapped.prerequisiteConflict.decision) { setApplyError('pdfImport.prereqReviewRequired'); return; }
     if (mapped?.unresolvedMappings?.length) { setApplyError('pdfImport.unresolvedMappings'); return; }
-    return perform(() => onApply(fields, { planRows, prerequisiteChoice }), 'apply');
+    // Template completeness: every section filled; only IV. Pre-requisite may be empty (lib/pdfTemplateScan.js).
+    if (scan && !scan.ok) { setApplyError(t('pdfImport.scanBlocked', { sections: scan.missing.map(k => t(`pdfImport.field.${k}`)).join(', ') })); return; }
+    return perform(() => onApply(fields, { planRows, prerequisiteChoice, next }), 'apply');
   };
   const editField = (key, value) => { setFields(current => ({ ...current, [key]: value })); setReviewed(false); setApplyError(''); };
   const editRow = (index, key, value) => { setPlanRows(current => current.map((row, i) => i === index ? { ...row, [key]: value } : row)); setReviewed(false); setApplyError(''); };
@@ -111,10 +148,12 @@ export default function UploadPanel({ draft, hasCourse, busy, disabled, disabled
       {preview && fields && <div className="pdf-import-review">
         <h3>{t('pdfImport.reviewTitle')}</h3>
         <p>{t('pdfImport.reviewNote')}</p>
+        {scan && <TemplateScan scan={scan} runKey={scanRun} />}
         <p>{t('pdfImport.pages', { count: preview.pages.length, ocr: preview.pages.filter(p => p.method === 'ocr').length })}</p>
         {preview.pages.some(p => p.method === 'ocr') && <div className="info-banner warning">{t('pdfImport.ocrReview')}</div>}
+        {preview.pages.some(p => p.method === 'skipped') && <div className="info-banner warning">{t('pdfImport.skippedPages', { pages: preview.pages.filter(p => p.method === 'skipped').map(p => p.page).join(', ') })}</div>}
         {mapped?.error && <div className="info-banner warning" role="alert">{t(mapped.error)}</div>}
-        {mapped?.warnings.length > 0 && <div className="info-banner warning"><ul>{mapped.warnings.map((warning, i) => <li key={i}>{t(warning.key, warning.values)}</li>)}</ul></div>}
+        {mapped?.warnings.length > 0 && <div className="info-banner warning pdf-import-warnings" tabIndex={0} role="region" aria-label={t('pdfImport.reviewTitle')}><ul>{mapped.warnings.map((warning, i) => <li key={i}>{t(warning.key, warning.values)}</li>)}</ul></div>}
         <details><summary>{t('pdfImport.sourceText')}</summary><pre className="pdf-import-source">{preview.text}</pre></details>
         {preview.layout?.warnings?.length > 0 && <div className="info-banner warning">{t('pdfImport.layoutWarning')}</div>}
         {!planRows && <p>{t('pdfImport.formatNote')}</p>}
@@ -159,7 +198,11 @@ export default function UploadPanel({ draft, hasCourse, busy, disabled, disabled
         {!reviewed && <p className="hint">{t('pdfImport.reviewRequired')}</p>}
         {mapped?.mismatch && <p className="hint">{t('pdfImport.identityMismatch', { code: fields.code?.trim(), selected: draft.meta.code })}</p>}
         {applyError && <div className="info-banner warning" role="alert" tabIndex={-1} ref={applyFeedback}>{applyError.startsWith('pdfImport.') ? t(applyError) : tr(applyError)}</div>}
-        <div className="up-actions"><StableButton type="button" className="btn primary" disabled={blocked} onClick={apply}>{phase === 'apply' ? t('pdfImport.checking') : t('pdfImport.apply')}</StableButton></div>
+        <div className="up-actions">
+          <StableButton type="button" className="btn outline" disabled={blocked} onClick={() => apply('submit')}>{phase === 'apply' ? t('pdfImport.checking') : t('pdfImport.applySubmit')}</StableButton>
+          <StableButton type="button" className="btn primary" disabled={blocked} onClick={() => apply('ai')}>{phase === 'apply' ? t('pdfImport.checking') : t('pdfImport.applyAi')}</StableButton>
+        </div>
+        <p className="hint">{t('pdfImport.pathNote')}</p>
       </div>}
     </fieldset>
   </section>;

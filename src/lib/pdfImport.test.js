@@ -100,3 +100,32 @@ test('bibliography wrapping and printed reference groups are preserved; a total 
   assert.equal(result.content.refs.electronics.items.length, 1);
   assert.equal(result.content.grading.rows.length, 2);
 });
+
+test('a stray numeral fragment before a heading does not hide the section (I. V. CREDIT UNITS)', () => {
+  const text = 'I. COURSE CODE: COE7\nII. COURSE TITLE: Drafting\nIV.\tPRE-REQUISITE\t:\tCAD\nI. V.\tCREDIT UNITS\t:\t1 Unit Laboratory 3 Units Lecture\nVI.\tCOURSE LEARNING OUTCOMES:\nCLO 1: Draw.';
+  const { fields, found } = splitPdfSections(text);
+  assert.equal(fields.prereq, 'CAD');
+  assert.equal(fields.credits, '1 Unit Laboratory 3 Units Lecture');
+  assert.ok(found.includes('credits'));
+  assert.equal(fields.code, 'COE7');
+});
+
+test('credit units: lecture and laboratory are read in any order and spelling', async () => {
+  const { parseCreditUnits } = await import('./pdfImport.js');
+  assert.deepEqual(parseCreditUnits('1 Unit Laboratory 3 Units Lecture'), { lecture: '3', lab: '1', explicit: true });
+  assert.deepEqual(parseCreditUnits('2 Lec 1 Lab'), { lecture: '2', lab: '1', explicit: true });
+  assert.deepEqual(parseCreditUnits('Lecture: 2, Laboratory: 1'), { lecture: '2', lab: '1', explicit: true });
+  assert.deepEqual(parseCreditUnits('3 (2 lec / 1 lab)'), { lecture: '2', lab: '1', explicit: true });
+  assert.deepEqual(parseCreditUnits('3 units lecture'), { lecture: '3', lab: '0', explicit: false });
+  assert.deepEqual(parseCreditUnits('3'), { lecture: '3', lab: '0', explicit: false });
+  assert.equal(parseCreditUnits('three'), null);
+  assert.equal(parseCreditUnits(''), null);
+});
+
+test('an empty pre-requisite is imported as "None" so the submit rule T-05 passes', () => {
+  const fields = { ...splitPdfSections(sample).fields, prereq: '' };
+  const mapped = map(fields);
+  assert.equal(mapped.content.meta.prereq, 'None');
+  assert.ok(mapped.warnings.some(w => w.key === 'pdfImport.prereqNone'));
+  assert.equal(map({ ...fields, prereq: 'MA 6' }).content.meta.prereq, 'MA 6');
+});

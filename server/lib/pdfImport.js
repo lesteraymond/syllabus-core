@@ -21,7 +21,9 @@ function extractPdf(buffer, { timeoutMs = 120000, WorkerClass = Worker } = {}) {
       if (error) reject(error); else resolve(value);
     };
     const timer = setTimeout(() => finish(httpError(422, 'pdfImport.timeout')), timeoutMs);
-    worker.once('message', message => message.error ? finish(httpError(422, message.error)) : finish(null, message));
+    // Under `node --watch` (npm run dev) Node posts its own { 'watch:require': [...] } / { 'watch:import': [...] } messages from the worker; skip them.
+    const isWatchNotice = message => !!message && typeof message === 'object' && Object.keys(message).some(key => key.startsWith('watch:'));
+    worker.on('message', message => { if (isWatchNotice(message)) return; message.error ? finish(httpError(422, message.error)) : finish(null, message); });
     worker.once('error', () => finish(httpError(422, 'pdfImport.unreadable')));
     worker.once('exit', () => { if (!settled) finish(httpError(422, 'pdfImport.unreadable')); });
   });

@@ -113,8 +113,8 @@ test(`Apply shows its ${scenario} blocker beside the button and never calls the 
     await pick();
     await act(async () => button('Scan PDF and preview').click());
     if (scenario !== 'review') await act(async () => host.querySelector('.pdf-import-confirm input').click());
-    assert.equal(button('Apply to form').disabled, false);
-    await act(async () => button('Apply to form').click());
+    assert.equal(button('Apply and submit directly').disabled, false);
+    await act(async () => button('Apply and submit directly').click());
     const feedback = host.querySelector('.pdf-import-review [role=alert][tabindex]');
     assert.ok(feedback);
     assert.match(feedback.textContent, scenario === 'review' ? /Confirm the review checkbox/ : scenario === 'course' ? /IE 402.*MA 7/ : /More than 20 CLO/);
@@ -126,7 +126,7 @@ test(`Apply shows its ${scenario} blocker beside the button and never calls the 
 test('layout preview renders editable plan columns and source outcomes, and applies the same structured rows', async t => {
   t.mock.method(syllabi, 'pdfImportConfig', async () => ({ enabled: true }));
   const fields = Object.fromEntries(['code', 'title', 'description', 'prereq', 'credits', 'clos', 'plan', 'reqs', 'refs', 'grading'].map(key => [key, '']));
-  Object.assign(fields, { code: 'MA 7', title: 'Differential Calculus', vision: 'Source vision', mission: 'Source mission', egas: 'EGA 1: Thinker', pos: 'PO1. Engineering', clos: 'CLO 3: Analyze a signal. [EGA 1] [PO 1]' });
+  Object.assign(fields, { description: 'Filled', credits: '3', reqs: 'Quiz', refs: 'Book', grading: '60/40', code: 'MA 7', title: 'Differential Calculus', vision: 'Source vision', mission: 'Source mission', egas: 'EGA 1: Thinker', pos: 'PO1. Engineering', clos: 'CLO 3: Analyze a signal. [EGA 1] [PO 1]' });
   const rows = [{ week: '2-3', ilo: 'ILO1: Analyze |x|. [CLO3]', contents: 'Signals | amplitudes', activities: 'Construct a model', tasks: 'Model defense', values: 'Humility', sourcePages: [4, 5], kind: 'lesson' }];
   let applied;
   await mount(t, { onExtract: async () => ({ fields, text: 'Source', pages: [{ method: 'text' }], layout: { version: 2, planRows: rows, warnings: [] } }), onApply: async (fields, options) => { applied = options.planRows; } }, async ({ host, button, pick }) => {
@@ -137,7 +137,7 @@ test('layout preview renders editable plan columns and source outcomes, and appl
     assert.match(host.querySelector('.pdf-import-table').textContent, /Source pages: 4, 5/);
     assert.match(host.querySelector('.pdf-import-outcomes').textContent, /Institutional and program text/);
     await act(async () => host.querySelector('.pdf-import-confirm input').click());
-    await act(async () => button('Apply to form').click());
+    await act(async () => button('Apply and submit directly').click());
     assert.deepEqual(applied, rows);
   });
 });
@@ -188,25 +188,25 @@ test(`builder scans a dirty draft without saving old text; Apply to form saves a
     await act(async () => { scanButton.click(); scanButton.click(); });
     assert.equal(calls, 1);
     assert.match(host.querySelector('.up-panel').textContent, /Reading PDF/);
-    await act(async () => resolve({ fields: { ...Object.fromEntries(['description', 'prereq', 'credits', 'clos', 'plan', 'reqs', 'refs', 'grading'].map(key => [key, ''])), code: 'MA 7', title: 'Differential Calculus' }, identityContext: identityContextFor(content), text: 'Source', pages: [{ method: 'text' }] }));
+    await act(async () => resolve({ fields: { ...Object.fromEntries(['description', 'prereq', 'credits', 'clos', 'plan', 'reqs', 'refs', 'grading'].map(key => [key, key === 'prereq' ? '' : 'Filled ' + key])), code: 'MA 7', title: 'Differential Calculus' }, identityContext: identityContextFor(content), text: 'Source', pages: [{ method: 'text' }] }));
     assert.match(host.querySelector('.up-panel').textContent, /Review extracted content/);
     assert.deepEqual(order, []);
     assert.equal(aiChecks, 0);
     allowSave = true;
     await act(async () => host.querySelector('.pdf-import-confirm input').click());
-    const applyButton = button('Apply to form');
+    const applyButton = button('Apply and submit directly');
     await act(async () => { applyButton.click(); applyButton.click(); });
     if (outcome === 'save-failed') {
       assert.match(host.querySelector('.up-panel [role=alert]').textContent, /draft could not be saved/);
-      await act(async () => button('Apply to form').click());
+      await act(async () => button('Apply and submit directly').click());
       assert.deepEqual(order, ['save', 'save'], 'the retry saves without forcing another PDF scan');
     } else {
       assert.deepEqual(order, ['save']);
     }
     assert.equal(calls, 1, 'the PDF was scanned once');
     assert.equal(aiChecks, 0, 'Apply to form never runs AI CHECK: that is the Review step');
-    assert.ok(notices.some(message => message.includes('Imported into the form') && message.includes('AI CHECK from the Review step')));
-    assert.ok(!host.querySelector('.up-panel'), 'back to the form (Step 1), not to the Review step');
+    assert.ok(notices.some(message => message.includes('Submit from this Review step')));
+    assert.ok(!host.querySelector('.up-panel'), 'back to the form, on the Review step');
     assert.equal(checks, 0);
   } finally { await act(async () => root.unmount()); host.remove(); }
 });
@@ -216,21 +216,21 @@ for (const action of ['keep', 'replace']) {
 test(`prerequisite ${action} requires an explicit choice and forwards the exact reviewed values`, async t => {
   t.mock.method(syllabi, 'pdfImportConfig', async () => ({ enabled: true }));
   const d = structuredClone(draft); d.meta.prereq = 'Existing prerequisite';
-  const fields = { code: 'MA 7', title: 'Differential Calculus', prereq: 'PDF prerequisite' };
+  const fields = { description: 'Filled', credits: '3', clos: 'CLO1. x', plan: 'Week 1', reqs: 'Quiz', refs: 'Book', grading: '60/40', code: 'MA 7', title: 'Differential Calculus', prereq: 'PDF prerequisite' };
   let applied;
   await mount(t, { draft: d, onExtract: async () => ({ fields, pages: [{ method: 'text' }] }), onApply: async (fields, options) => { applied = options; } }, async ({ host, button, pick }) => {
     await pick(); await act(async () => button('Scan PDF and preview').click());
     assert.match(host.textContent, /Current prerequisite: Existing prerequisite/);
     assert.match(host.textContent, /PDF prerequisite: PDF prerequisite/);
     await act(async () => host.querySelector('.pdf-import-confirm input').click());
-    await act(async () => button('Apply to form').click());
+    await act(async () => button('Apply and submit directly').click());
     assert.match(host.querySelector('.pdf-import-review [role=alert][tabindex]').textContent, /Choose whether to keep or replace/);
     assert.equal(applied, undefined);
     const radios=host.querySelectorAll('.pdf-import-prerequisite input');
     await act(async () => radios[action==='keep'?0:1].click());
     assert.equal(host.querySelector('.pdf-import-confirm input').checked, false);
     await act(async () => host.querySelector('.pdf-import-confirm input').click());
-    await act(async () => button('Apply to form').click());
+    await act(async () => button('Apply and submit directly').click());
     assert.deepEqual(applied.prerequisiteChoice, { existing:'Existing prerequisite', imported:'PDF prerequisite', action });
     assert.equal(d.meta.prereq, 'Existing prerequisite');
   });
@@ -239,7 +239,7 @@ test(`prerequisite ${action} requires an explicit choice and forwards the exact 
 test('editing the PDF prerequisite invalidates the previous replacement confirmation',async t=>{
   t.mock.method(syllabi, 'pdfImportConfig', async () => ({ enabled: true }));
   const d=structuredClone(draft);d.meta.prereq='Existing';let applications=0;
-  await mount(t,{draft:d,onExtract:async()=>({fields:{code:'MA 7',title:'Differential Calculus',prereq:'PDF value'},pages:[]}),onApply:async()=>{applications++;}},async({host,button,pick})=>{
+  await mount(t,{draft:d,onExtract:async()=>({fields:{description: 'Filled', credits: '3', clos: 'CLO1. x', plan: 'Week 1', reqs: 'Quiz', refs: 'Book', grading: '60/40', code:'MA 7',title:'Differential Calculus',prereq:'PDF value'},pages:[]}),onApply:async()=>{applications++;}},async({host,button,pick})=>{
     await pick();await act(async()=>button('Scan PDF and preview').click());
     await act(async()=>host.querySelectorAll('.pdf-import-prerequisite input')[1].click());
     const input=[...host.querySelectorAll('.pdf-import-section textarea')][3];
@@ -248,7 +248,7 @@ test('editing the PDF prerequisite invalidates the previous replacement confirma
       input.dispatchEvent(new browser.Event('input',{bubbles:true}));
     });
     await act(async()=>host.querySelector('.pdf-import-confirm input').click());
-    await act(async()=>button('Apply to form').click());
+    await act(async()=>button('Apply and submit directly').click());
     assert.equal(applications,0);assert.match(host.textContent,/Choose whether to keep or replace/);
   });
 });
@@ -257,11 +257,11 @@ test('preview rejects BSIT content for Cyber IT-202, and missing curriculum cont
   const d=structuredClone(draft);Object.assign(d.meta,{program:'BSIT-CYBERSECURITY',code:'IT-202',title:'SYSTEM INTEGRATION AND ARCHITECTURE 1'});
   for (const scenario of ['collision','missing-context']) {
     let applications=0;
-    const fields=scenario==='collision'?{code:'IT 202',title:'Computer Programming 1'}:{code:d.meta.code,title:d.meta.title};
+    const fields=scenario==='collision'?{description: 'Filled', credits: '3', clos: 'CLO1. x', plan: 'Week 1', reqs: 'Quiz', refs: 'Book', grading: '60/40', code:'IT 202',title:'Computer Programming 1'}:{description: 'Filled', credits: '3', clos: 'CLO1. x', plan: 'Week 1', reqs: 'Quiz', refs: 'Book', grading: '60/40', code:d.meta.code,title:d.meta.title};
     await mount(t,{draft:d,onExtract:async()=>({fields,pages:[],...(scenario==='missing-context'?{identityContext:null}:{})}),onApply:async()=>{applications++;}},async({host,button,pick})=>{
       await pick();await act(async()=>button('Scan PDF and preview').click());
       await act(async()=>host.querySelector('.pdf-import-confirm input').click());
-      await act(async()=>button('Apply to form').click());
+      await act(async()=>button('Apply and submit directly').click());
       assert.equal(applications,0);assert.match(host.querySelector('[role=alert][tabindex]').textContent,/cannot be verified/);
     });
   }

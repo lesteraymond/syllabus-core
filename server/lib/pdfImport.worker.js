@@ -60,6 +60,7 @@ function pageLines(items) {
       }
       if (planHeading) cloDone = true;
       let method = 'text', confidence = null;
+      const layerText = text, layerPositioned = positioned, layerBoxes = boxes;
       if (text.replace(/\s/g, '').length < 100) {
         if (!ocr) {
           const { createWorker } = require('tesseract.js');
@@ -73,15 +74,24 @@ function pageLines(items) {
         const canvas = createCanvas(Math.ceil(viewport.width), Math.ceil(viewport.height));
         await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
         const result = await ocr.recognize(canvas.toBuffer('image/png'), {}, { text: true, blocks: true });
-        text = result.data.text;
         confidence = result.data.confidence;
-        method = 'ocr';
-        if (confidence < 35) throw new Error('pdfImport.unreadable');
-        const words = (result.data.blocks || []).flatMap(block => block.paragraphs || []).flatMap(paragraph => paragraph.lines || []).flatMap(line => line.words || []);
-        positioned = words.map(word => ({ text: word.text, x: word.bbox.x0 / scale, y: word.bbox.y0 / scale, width: (word.bbox.x1 - word.bbox.x0) / scale, height: (word.bbox.y1 - word.bbox.y0) / scale }));
-        boxes = rasterBoxes(canvas, scale);
+        // A blank page, or a page OCR cannot read (a logo, a signature, a stamp), no longer fails the whole import: it keeps
+        // whatever text layer it had, or is skipped and reported. The import fails only if too little text is left overall.
+        if (result.data.text.trim() && confidence >= 35) {
+          text = result.data.text;
+          method = 'ocr';
+          const words = (result.data.blocks || []).flatMap(block => block.paragraphs || []).flatMap(paragraph => paragraph.lines || []).flatMap(line => line.words || []);
+          positioned = words.map(word => ({ text: word.text, x: word.bbox.x0 / scale, y: word.bbox.y0 / scale, width: (word.bbox.x1 - word.bbox.x0) / scale, height: (word.bbox.y1 - word.bbox.y0) / scale }));
+          boxes = rasterBoxes(canvas, scale);
+        } else {
+          text = layerText; positioned = layerPositioned; boxes = layerBoxes;
+        }
       }
-      if (!text.trim()) throw new Error('pdfImport.unreadable');
+      if (!text.trim()) {
+        pages.push({ page: number, text: '', method: 'skipped', confidence, reason: confidence !== null && confidence < 35 && confidence > 0 ? 'unreadable' : 'blank' });
+        page.cleanup();
+        continue;
+      }
       total += text.length;
       if (total > MAX_TEXT) throw new Error('pdfImport.tooMuchText');
       pages.push({ page: number, text, method, confidence });
@@ -90,7 +100,7 @@ function pageLines(items) {
     }
     if (total < 80) throw new Error('pdfImport.unreadable');
     const { splitPdfSections } = await import(pathToFileURL(path.resolve(__dirname, '../../src/lib/pdfImport.js')).href);
-    const text = pages.map(page => page.text).join('\n\n');
+    const text = pages.filter(page => page.text).map(page => page.text).join('\n\n');
     const { fields, found } = splitPdfSections(text);
     // Superscripts can sort above a preceding section heading. Use the bounded
     // source stream for these two prose fields when all delimiters were recovered.
@@ -105,7 +115,7 @@ function pageLines(items) {
     if (layout.planRows.length) fields.plan = layout.planRows.map(row => [row.week, row.ilo, row.contents, row.activities, row.tasks, row.values].map(cell => cell.replace(/\n/g, ' ')).join(' | ')).join('\n');
     else if (fields.plan?.trim()) layout.warnings.push({ code: 'plan_layout_not_recovered' });
     if (found.length < 2) throw new Error('pdfImport.noSections');
-    parentPort.postMessage({ fields, found, text, layout: { version: 2, planRows: layout.planRows, warnings: layout.warnings }, pages: pages.map(({ page, method, confidence }) => ({ page, method, confidence })), requiresReview: true, aiCheckTriggered: false });
+    parentPort.postMessage({ fields, found, text, layout: { version: 2, planRows: layout.planRows, warnings: layout.warnings }, pages: pages.map(({ page, method, confidence, reason }) => ({ page, method, confidence, ...(reason ? { reason } : {}) })), requiresReview: true, aiCheckTriggered: false });
   } catch (error) {
     if (process.env.PDF_IMPORT_DEBUG === '1') console.error(error.stack);
     const message = encrypted || error.name === 'PasswordException' ? 'pdfImport.encrypted' : error.message?.startsWith('pdfImport.') ? error.message : 'pdfImport.unreadable';

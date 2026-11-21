@@ -13,6 +13,25 @@ const limiter = createLimiter({ max: 5, windowMs: 10 * 60 * 1000 });
 const active = new WeakSet();
 const enabled = () => process.env.SYLLABUS_PDF_IMPORT !== 'off';
 const upload = multer({ storage: multer.memoryStorage(), limits: { files: 1, fileSize: importer.MAX_BYTES, fields: 0 } }).single('file');
+const RECEIVE_MS = 30 * 1000;
+const uploadError = error => httpError(error.code === 'LIMIT_FILE_SIZE' ? 413 : 400, error.code === 'LIMIT_FILE_SIZE' ? 'pdfImport.tooLarge' : 'pdfImport.invalid');
+// Reads the upload into memory before anything shared is taken, so a slow or stalled sender holds only its own request
+// (never the server-wide extraction slot or a rate-limit slot), and is cut off after RECEIVE_MS.
+function receive(req, res) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => { reject(httpError(408, 'pdfImport.uploadTimeout')); req.unpipe(); req.resume(); }, RECEIVE_MS);
+    upload(req, res, error => { clearTimeout(timer); if (error) reject(uploadError(error)); else resolve(); });
+  });
+}
+// Once a valid PDF is in memory: refuse while another import runs, then use one of this person's rate-limit slots, then hold the
+// extraction slot. Returns the release function.
+function claim(req, res, me) {
+  if (active.has(req.app)) throw httpError(409, 'pdfImport.busy');
+  const slot = limiter.take(String(me.id));
+  if (!slot.ok) { res.set('Retry-After', String(slot.retryAfterSec)); throw httpError(429, 'pdfImport.rateLimit'); }
+  active.add(req.app);
+  return () => active.delete(req.app);
+}
 router.get('/pdf-import/config', requireAuth, (req, res) => res.json({ enabled: enabled(), maxBytes: importer.MAX_BYTES, maxPages: 30 }));
 const codeKey = value => String(value ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '');
 // Same comparison the form uses at Apply (src/lib/pdfImportReview.js): case and punctuation ignored, a trailing "(...)" on the catalog title optional.
@@ -29,6 +48,15 @@ async function subjectsForCode(db, me, fields) {
   const program = String(fields.program ?? '').trim().toUpperCase();
   return rows.filter(r => codeKey(r.code) === key && titleMatches(fields.title, r.title) && !past.has(r.course_id) && (!assigned || assigned.has(r.course_id)) && (!program || String(r.program_code).toUpperCase() === program));
 }
+// When nothing matched: is the PDF's subject in this year's catalog but simply not assigned to this person? Then say so.
+async function existsUnassigned(db, me, fields) {
+  if (me.role === 'admin') return false;
+  const key = codeKey(fields.code);
+  if (!key || !String(fields.title ?? '').trim()) return false;
+  const [rows] = await db.query('SELECT c.course_id, c.code, c.title FROM courses c');
+  const past = await academicYear.pastCourseIds(db);
+  return rows.some(r => codeKey(r.code) === key && titleMatches(fields.title, r.title) && !past.has(r.course_id));
+}
 // Same preview as /:id/import-pdf, for a person who has not chosen a subject: the PDF names it.
 // Nothing is saved. The one assigned subject the PDF's code matches is returned so the form can select it.
 router.post('/pdf-import/extract', requireAuth, async (req, res) => {
@@ -37,15 +65,12 @@ router.post('/pdf-import/extract', requireAuth, async (req, res) => {
     if (!enabled()) throw httpError(503, 'pdfImport.disabled');
     const db = req.app.locals.db, me = req.session.user;
     await assignments.requireCourseAccess(db, me, null);
-    if (active.has(req.app)) throw httpError(409, 'pdfImport.busy');
-    const slot = limiter.take(String(me.id));
-    if (!slot.ok) { res.set('Retry-After', String(slot.retryAfterSec)); throw httpError(429, 'pdfImport.rateLimit'); }
-    active.add(req.app); release = () => active.delete(req.app);
-    await new Promise((resolve, reject) => upload(req, res, error => error ? reject(httpError(error.code === 'LIMIT_FILE_SIZE' ? 413 : 400, error.code === 'LIMIT_FILE_SIZE' ? 'pdfImport.tooLarge' : 'pdfImport.invalid')) : resolve()));
+    await receive(req, res);
     importer.validatePdf(req.file?.buffer);
+    release = claim(req, res, me);
     const preview = await importer.extractPdf(req.file?.buffer);
     const matches = await subjectsForCode(db, me, preview.fields || {});
-    if (!matches.length) throw httpError(409, 'pdfImport.subjectNotFound');
+    if (!matches.length) throw httpError(409, (await existsUnassigned(db, me, preview.fields || {})) ? 'pdfImport.subjectNotAssigned' : 'pdfImport.subjectNotFound');
     if (matches.length > 1) throw httpError(409, 'pdfImport.chooseSubject');
     const [match] = matches;
     await assignments.requireCourseAccess(db, me, match.course_id);
@@ -67,12 +92,9 @@ router.post('/:id/import-pdf', requireAuth, async (req, res) => {
     if (!rules.canEdit(me, syl)) throw httpError(409, rules.lockedMessage(syl));
     if (!syl.course_id) throw httpError(409, 'pdfImport.chooseSubject');
     await assignments.requireCourseAccess(db, me, syl.course_id);
-    if (active.has(req.app)) throw httpError(409, 'pdfImport.busy');
-    const slot = limiter.take(String(me.id));
-    if (!slot.ok) { res.set('Retry-After', String(slot.retryAfterSec)); throw httpError(429, 'pdfImport.rateLimit'); }
-    active.add(req.app); release = () => active.delete(req.app);
-    await new Promise((resolve, reject) => upload(req, res, error => error ? reject(httpError(error.code === 'LIMIT_FILE_SIZE' ? 413 : 400, error.code === 'LIMIT_FILE_SIZE' ? 'pdfImport.tooLarge' : 'pdfImport.invalid')) : resolve()));
+    await receive(req, res);
     importer.validatePdf(req.file?.buffer);
+    release = claim(req, res, me);
     const preview = await importer.extractPdf(req.file?.buffer);
     // A status/assignment change while extraction ran must not produce a usable
     // preview for an inaccessible draft. The normal content PUT checks again too.
