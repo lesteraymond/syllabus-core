@@ -25,8 +25,13 @@ export function useNotificationPolling(enabled, onChange, intervalMs = 25000) {
     if (!enabled) return undefined;
     let stopped = false;
     let last = null;
+    let hiddenAt = 0;
     const tick = async () => {
-      if (document.visibilityState !== 'visible') return; // hidden tab: no requests
+      // Hidden tab: one small summary request a minute at most, so a new notification can still chime and pop up on the desktop.
+      if (document.visibilityState !== 'visible') {
+        if (Date.now() - hiddenAt < 60000) return;
+        hiddenAt = Date.now();
+      }
       try {
         const s = await notificationsApi.summary();
         if (stopped) return;

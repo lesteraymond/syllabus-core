@@ -24,7 +24,7 @@ test('the academic year, semester and year level are still required, and a pre-r
 
 test('a syllabus shows the subject\'s pre-requisite, or "None" when the subject was set up without one', () => {
   assert.equal(applyTerm({ prereq: 'typed by faculty' }, { ...base, prerequisite: 'IT 101' }).prereq, 'IT 101');
-  assert.equal(applyTerm({ prereq: 'typed by faculty' }, { ...base, prerequisite: null }).prereq, 'None');
+  assert.equal(applyTerm({ prereq: 'typed by faculty' }, { ...base, prerequisite: null }).prereq, '');
   assert.equal(applyTerm({ prereq: 'as typed' }, null).prereq, 'as typed', 'a subject without a term leaves step 1 as typed');
 });
 
@@ -34,7 +34,7 @@ test('the automatic academic-year stamp alone does not make a pre-requisite: the
   const stampOnly = { academicYear: '2026–2027', semester: null, yearLevel: null, prerequisite: null };
   assert.equal(applyTerm({ prereq: 'ZZ 100 - Prerequisite' }, stampOnly).prereq, 'ZZ 100 - Prerequisite');
   assert.equal(applyTerm({ prereq: '' }, stampOnly).prereq, '', 'nothing typed, nothing set: still nothing');
-  assert.equal(applyTerm({ prereq: 'typed' }, { ...stampOnly, semester: '2nd Semester' }).prereq, 'None', 'a semester entered is a set-up');
-  assert.equal(applyTerm({ prereq: 'typed' }, { ...stampOnly, yearLevel: 2 }).prereq, 'None', 'a year level entered is a set-up');
+  assert.equal(applyTerm({ prereq: 'typed' }, { ...stampOnly, semester: '2nd Semester' }).prereq, '', 'a semester entered is a set-up');
+  assert.equal(applyTerm({ prereq: 'typed' }, { ...stampOnly, yearLevel: 2 }).prereq, '', 'a year level entered is a set-up');
   assert.equal(applyTerm({ prereq: 'typed' }, { ...stampOnly, prerequisite: 'IT 101' }).prereq, 'IT 101');
 });

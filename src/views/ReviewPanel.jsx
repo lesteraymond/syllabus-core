@@ -45,7 +45,10 @@ export default function ReviewPanel({ syllabus, user, messages, handleStatus, ha
     setConfirming(null); // handleStatus and handleClear already told the reviewer what went wrong
     if (ok && !clearing && onDecided) onDecided(); // a decision closes the window; clearing a stage leaves it open to show the stages
   };
-  const tabs = [['decision', 'Decision', 'sealCheck'], ['comments', 'Comments', 'notePencil'], ['messages', 'Messages', 'chatText']];
+  // Messages are between the syllabus owner and the dean (an administrator) only (server/routes/messages.js): the Asst. VPAA, the LIC Director and the VPAA
+  // write in Comments instead, and the dean has no conversation with themselves.
+  const canMessage = user.role === 'admin' && syllabus.userId !== user.id;
+  const tabs = [['decision', 'Decision', 'sealCheck'], ['comments', 'Comments', 'notePencil'], ...(canMessage ? [['messages', 'Messages', 'chatText']] : [])];
 
   return (
     <div className="rp">
@@ -126,7 +129,7 @@ export default function ReviewPanel({ syllabus, user, messages, handleStatus, ha
 
       {tab === 'comments' && <div className="rp-pane"><CommentsThread syllabusId={syllabus.id} canWrite /></div>}
 
-      {tab === 'messages' && (
+      {tab === 'messages' && canMessage && (
         <div className="rp-pane rp-chat">
           <ChatThread code={syllabus.id} syl={syllabus} user={user} messages={messages} sendMsg={sendMsg} markRead={markRead} />
         </div>

@@ -281,7 +281,7 @@ router.get('/:id/review', requireAuth, async (req, res) => {
     const [rows] = await db.query(
       'SELECT s.syllabus_id, s.user_id, s.status, s.version, s.title, s.course_code, s.file_path, s.content, ' + LABEL_SQL + ' WHERE s.syllabus_id = ?', [id]);
     const syl = rows[0];
-    if (!syl || !rules.canView(me, syl)) throw httpError(404, 'Syllabus not found');
+    if (!syl || !rules.canReadApproved(me, syl)) throw httpError(404, 'Syllabus not found');
 
     const [vrows] = await db.query(
       'SELECT version_id, version_label, status_at_save, note, created_at, file_path, (content IS NOT NULL) AS has_form FROM syllabus_versions WHERE syllabus_id = ? ORDER BY version_id DESC', [id]);
@@ -353,6 +353,15 @@ async function saveAdminRevision(conn, syl, content, me) {
   return label;
 }
 
+// Has the dean (the author) already sent this syllabus for review? The dean stage is cleared on its newest version (publish below clears it).
+const { aiGate } = require('../lib/syllabuscheck/policy');
+const ALREADY_SENT = 'This syllabus was already sent for review. The Asst. VPAA, the LIC Director and the VPAA have it now.';
+const ALREADY_SENT_LOCKED = 'This syllabus was already sent for review, so it cannot return to draft. A reviewer can return it to you for revision.';
+async function sentForReview(conn, id) {
+  const summary = (await reviewStages.stagesOf(conn, [id])).get(id);
+  return !!(summary && summary.dean && summary.dean.cleared);
+}
+
 async function finalizeSyllabus(req, res, publishing = false, preparing = false) {
   try {
     const db = req.app.locals.db;
@@ -370,6 +379,8 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
       if (!syl || !rules.canView(me, syl)) throw httpError(404, 'Syllabus not found');
       if (!rules.isOwner(me, syl)) throw httpError(403, 'Only the owner can submit a syllabus');
       if (publishing && syl.status !== 'under_review') throw httpError(409, 'Complete the form and send it to AI Checker before sending it for review.');
+      // Sent once is enough: the dean stage is cleared on this version and the other reviewers already have it (lib/reviewStages.js).
+      if (publishing && await sentForReview(conn, id)) throw httpError(409, ALREADY_SENT, { code: 'already_sent' });
       if (!rules.canEdit(me, syl) && !(publishing && rules.isAdmin(me) && syl.status === 'under_review')) throw httpError(409, rules.lockedMessage(syl));
       // Submitting stores a new check run: only for a syllabus of the active academic year, read locked in this transaction (lib/activeYearGate.js).
       await assertActiveYear(conn, syl, { lock: true });
@@ -384,9 +395,10 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
       await assignments.requireCourseAccess(conn, me, meta.courseId);
       // The checker uses institutional/program masters, never the author's own snapshot.
       // Validate raw saved identity before applyCatalog can overwrite it.
+      const aiOff = !(await require('../lib/adminSettings').policy(conn)).aiChecking; // AI checking off in Settings: no AI check can be required
       const verifiedResult = await compliance.requireHybrid(conn, id,
         publishing ? compliance.publicationContent(content, await catalogSnapshot(conn, content)) : content,
-        { hardOnly: preparing, aiOff: !(await require('../lib/adminSettings').policy(conn)).aiChecking }); // AI checking off in Settings: no AI check can be required
+        { hardOnly: preparing, aiOff });
       // Validate authored outcomes and snapshot the exact values being submitted.
       await applyCatalog(conn, content, me, JSON.parse(JSON.stringify(content)));
       if (content.outcomes) validateOutcomes(content.outcomes, content.clos || [], content.plan || [], { complete: true });
@@ -407,6 +419,11 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
         throw httpError(409, g.message, { failed: g.failed });
       }
       if (preparing) {
+        // Back from "For revision" or "Rejected" only with a change, as for faculty: an unchanged form would reuse the version the dean already sent.
+        if (rules.isReturned(syl.status)) {
+          const previous = await compliance.latestVersion(conn, id);
+          if (previous && JSON.stringify(adminRevisionContent(parseJson(previous.content))) === JSON.stringify(adminRevisionContent(content))) throw httpError(409, rules.UNCHANGED, { code: 'unchanged' });
+        }
         content.reviewCycle=(Number(content.reviewCycle)||0)+1;
         const json=JSON.stringify(content);
         if (Buffer.byteLength(json,'utf8')>MAX_CONTENT_BYTES) throw httpError(413,'This syllabus is too large to save.');
@@ -422,7 +439,11 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
         const checkContent=compliance.publicationContent(content,content.catalog);
         const checked=await compliance.cachedRun(conn,id,compliance.hashOf(checkContent));
         if (reviewedRunId !== undefined && checked?.run_id !== reviewedRunId) throw httpError(409,'The AI check changed. Open the current result before approving.');
-        if (!checked || checked.created_by !== me.id || !checked.conformant || checked.status !== 'scored' || checked.ai_status !== 'ok') throw httpError(409,'Check the current saved form in the AI Checker and wait for its AI alignment check to finish before sending it for review.');
+        if (!checked || checked.created_by !== me.id) throw httpError(409,'Check the current saved form in the AI Checker before sending it for review.');
+        // A finished AI check is needed only when the policy requires one and AI checking is on, the same rule as requireHybrid above. Otherwise (advisory, or AI
+        // checking off in Settings, where no AI check can ever finish) the dean decides after reading this check; the coded hard gates were enforced above.
+        const aiRequired = !aiOff && aiGate() === 'required';
+        if (aiRequired && (!checked.conformant || checked.status !== 'scored' || checked.ai_status !== 'ok')) throw httpError(409,'Check the current saved form in the AI Checker and wait for its AI alignment check to finish before sending it for review.');
       }
       if (publishing) {
         // The dean's own syllabus is not approved here: only the VPAA approves. Sending it for review records the checked revision and clears
@@ -511,6 +532,8 @@ router.post('/:id/resume-draft', requireAuth, requireAdmin, async (req,res)=>{
       if(!syl || !rules.canView(me,syl)) throw httpError(404,'Syllabus not found');
       if(!rules.isOwner(me,syl)) throw httpError(403,'Only the owner can edit syllabus content');
       if(syl.status!=='under_review') throw httpError(409,'Only a syllabus waiting for an AI decision can return to draft.');
+      // Once sent for review it is with the Asst. VPAA, the LIC Director and the VPAA: the dean cannot quietly take it back.
+      if(await sentForReview(conn,id)) throw httpError(409,ALREADY_SENT_LOCKED,{code:'already_sent'});
       // Preserve older completed syllabi before the first editable save overwrites them.
       const content = parseJson(syl.content);
       const label = content?.meta ? await saveAdminRevision(conn, syl, content, me) : syl.version;

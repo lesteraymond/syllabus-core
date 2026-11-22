@@ -1,9 +1,39 @@
 import StableButton from '../../components/StableButton';
+import { Icon } from '../../components/ui';
 import { t, tr } from '../../i18n';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { syllabi } from '../../lib/api';
 import { PDF_FIELDS, PDF_OUTCOME_FIELDS, mapPdfFields } from '../../lib/pdfImport';
 import { scanTemplate } from '../../lib/pdfTemplateScan';
+
+const formatFileSize = (bytes) => {
+  if (!Number.isFinite(bytes) || bytes <= 0) return '';
+  if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+};
+
+// Minimalist live scan animation shown while the server reads/OCRs the uploaded PDF.
+function ScanningStage({ fileName }) {
+  return (
+    <div className="up-scanning" role="status" aria-live="polite">
+      <div className="up-doc-scan" aria-hidden="true">
+        <span className="up-doc-line w70" />
+        <span className="up-doc-line w100" />
+        <span className="up-doc-line w85" />
+        <span className="up-doc-line w100" />
+        <span className="up-doc-line w60" />
+        <span className="up-doc-beam" />
+      </div>
+      <div className="up-scanning-body">
+        <div className="up-scanning-head">
+          <strong>{t('pdfImport.extracting')}</strong>
+          {fileName && <small className="up-scanning-file">{fileName}</small>}
+        </div>
+        <div className="up-scanning-bar" aria-hidden="true"><span /></div>
+      </div>
+    </div>
+  );
+}
 
 // Animated template scan: sections are ticked one by one (about 140 ms each), then the summary shows.
 function TemplateScan({ scan, runKey }) {
@@ -37,11 +67,18 @@ function TemplateScan({ scan, runKey }) {
   </div>;
 }
 
+const formatUnresolved = (items) => (items || []).slice(0, 5).map(u => {
+  const where = u.clo != null ? `CLO ${u.clo}` : u.week != null ? `Week ${u.week}` : '';
+  const bad = [...(u.unknown || []).map(n => `${u.label} ${n}`), ...(u.invalid || [])].filter(Boolean).join(', ');
+  return [where, bad].filter(Boolean).join(': ');
+}).filter(Boolean).join(' · ');
+
 const MAX_BYTES = 10 * 1024 * 1024;
 const PLAN_COLUMNS = ['week', 'ilo', 'contents', 'activities', 'tasks', 'values'];
 // Preview only; confirmation saves through useDraft, never file submission.
 export default function UploadPanel({ draft, hasCourse, busy, disabled, disabledReason, onChooseCourse, onExtract, onApply }) {
   const [file, setFile] = useState(null);
+  const [dragging, setDragging] = useState(false);
   const [preview, setPreview] = useState(null);
   const [fields, setFields] = useState(null);
   const [planRows, setPlanRows] = useState(null);
@@ -119,7 +156,11 @@ export default function UploadPanel({ draft, hasCourse, busy, disabled, disabled
       return;
     }
     if (mapped?.prerequisiteConflict && !mapped.prerequisiteConflict.decision) { setApplyError('pdfImport.prereqReviewRequired'); return; }
-    if (mapped?.unresolvedMappings?.length) { setApplyError('pdfImport.unresolvedMappings'); return; }
+    if (mapped?.unresolvedMappings?.length) {
+      const detail = formatUnresolved(mapped.unresolvedMappings);
+      setApplyError(detail ? `${t('pdfImport.unresolvedMappings')} (${detail})` : 'pdfImport.unresolvedMappings');
+      return;
+    }
     // Template completeness: every section filled; only IV. Pre-requisite may be empty (lib/pdfTemplateScan.js).
     if (scan && !scan.ok) { setApplyError(t('pdfImport.scanBlocked', { sections: scan.missing.map(k => t(`pdfImport.field.${k}`)).join(', ') })); return; }
     return perform(() => onApply(fields, { planRows, prerequisiteChoice, next }), 'apply');
@@ -139,12 +180,32 @@ export default function UploadPanel({ draft, hasCourse, busy, disabled, disabled
     {configError && <div className="info-banner warning" role="alert">{t('pdfImport.availabilityFailed')}{' '}<StableButton type="button" className="btn outline" disabled={blocked} onClick={() => setConfigAttempt(n => n + 1)}>{t('pdfImport.retry')}</StableButton></div>}
     {enabled === false && <div className="info-banner warning">{t('pdfImport.disabled')}</div>}
     <fieldset disabled={blocked} className="up-fields">
-      <label className="field"><span>{t('pdfImport.file')}</span><input type="file" accept=".pdf,application/pdf" onChange={e => { pick(e.target.files[0]); e.target.value = ''; }} /></label>
-      {file && <p>{file.name}</p>}
+      <label
+        className={'up-dropzone' + (dragging ? ' is-dragging' : '') + (file ? ' has-file' : '') + (phase === 'scan' ? ' is-scanning' : '')}
+        onDragEnter={e => { e.preventDefault(); if (!blocked) setDragging(true); }}
+        onDragOver={e => { e.preventDefault(); if (!blocked && !dragging) setDragging(true); }}
+        onDragLeave={e => { e.preventDefault(); if (!e.currentTarget.contains(e.relatedTarget)) setDragging(false); }}
+        onDrop={e => { e.preventDefault(); setDragging(false); if (!blocked) pick(e.dataTransfer?.files?.[0]); }}
+      >
+        <input type="file" accept=".pdf,application/pdf" className="up-file-input" onChange={e => { pick(e.target.files[0]); e.target.value = ''; }} />
+        <span className="up-drop-ico" aria-hidden="true">
+          <Icon name={file ? 'filePlus' : 'uploadSimple'} size={20} />
+        </span>
+        <span className="up-drop-copy">
+          <strong>{file ? file.name : t('pdfImport.file')}</strong>
+          <small>{file ? [formatFileSize(file.size), tr('Click or drop another PDF to replace')].filter(Boolean).join(' · ') : tr('Drop a PDF here or click to browse')}</small>
+        </span>
+      </label>
+      <div className="up-scan-bar">
+        <StableButton type="button" className="btn primary up-scan-btn" disabled={blocked} onClick={extract}>
+          <Icon name={phase === 'scan' ? 'sparkle' : 'magnifyingGlass'} size={15} />
+          <span>{phase === 'scan' ? t('pdfImport.extracting') : t('pdfImport.extract')}</span>
+        </StableButton>
+      </div>
+      {phase === 'scan' && <ScanningStage fileName={file?.name} />}
       {url && <details className="up-preview"><summary>{t('pdfImport.pdfPreview')}</summary><iframe title={t('pdfImport.pdfPreview')} src={url} /></details>}
       {error && <div className="info-banner warning" role="alert">{error.startsWith('pdfImport.') ? t(error) : tr(error)}</div>}
       {phase === 'apply' && <div className="info-banner" role="status">{t('pdfImport.checking')}</div>}
-      <StableButton type="button" className="btn primary" disabled={blocked} onClick={extract}>{phase === 'scan' ? t('pdfImport.extracting') : t('pdfImport.extract')}</StableButton>
       {preview && fields && <div className="pdf-import-review">
         <h3>{t('pdfImport.reviewTitle')}</h3>
         <p>{t('pdfImport.reviewNote')}</p>

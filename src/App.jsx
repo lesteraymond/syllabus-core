@@ -24,6 +24,7 @@ import { commentNotificationIds, notificationTarget } from './lib/notificationRo
 import { canChat, partnerOf, threadTitle } from './lib/chatPartner';
 import { canDeleteSyllabus, canEditSyllabus, editBlockedReason } from './lib/syllabusRules';
 import { useNotificationPolling, usePeriodicRefresh } from './lib/usePolling';
+import { newArrivals, playChime, showDesktop, askPermissionOnFirstGesture } from './lib/desktopAlert';
 import { recordAvatar, seedAvatars } from './lib/avatarStore';
 import { useActiveTime } from './lib/useActiveTime';
 import AIChecker from './views/AIChecker';
@@ -204,10 +205,23 @@ export default function App() {
     } catch (err) { console.error('Failed to fetch comment counts:', err); }
   }, []);
 
+  // A notification that arrives while the app is open chimes, and pops up on the desktop when the app is in the background (lib/desktopAlert.js).
+  const seenNotifications = useRef(null);
+  const openNotificationRef = useRef(null);
   const fetchNotifications = useCallback(async () => {
     try {
       const data = await notificationsApi.list();
       setNotifications({ items: data.notifications, unreadCount: data.unreadCount });
+      const { seen, fresh } = newArrivals(seenNotifications.current, data.notifications);
+      seenNotifications.current = seen;
+      if (fresh.length) {
+        playChime();
+        fresh.slice(0, 3).forEach((n) => showDesktop(n, {
+          title: tr(n.title),
+          body: n.body ? (['message', 'comment'].includes(n.type) ? n.body : tr(n.body)) : '',
+          onOpen: (x) => { if (openNotificationRef.current) openNotificationRef.current(x); },
+        }));
+      }
     } catch (err) { console.error('Failed to fetch notifications:', err); }
   }, []);
 
@@ -272,6 +286,7 @@ export default function App() {
       setMessages([]);
       setPartners({});
       setNotifications({ items: [], unreadCount: 0 });
+      seenNotifications.current = null; // the next person's existing notifications never chime
       setCommentCounts({});
       setPage('dashboard');
       setEditing(null);
@@ -333,6 +348,7 @@ export default function App() {
   };
 
   // Clicking a notification marks it read, then opens its chat or the page where the syllabus lives.
+  useEffect(() => askPermissionOnFirstGesture(), []);
   const openNotification = (n) => {
     markNotificationRead(n.id);
     const target = notificationTarget(n, user.role);
@@ -342,6 +358,7 @@ export default function App() {
     setPage(target.page);
   };
 
+  openNotificationRef.current = openNotification; // the desktop popup opens it too
   // Reading a syllabus's comments clears its badge now, and settles the bell's notifications about them.
   const clearCommentBadge = (id) => {
     setCommentCounts((c) => (c[id] && c[id].unread ? { ...c, [id]: { ...c[id], unread: 0 } } : c));
@@ -355,7 +372,7 @@ export default function App() {
       await messagesApi.send(syllabusId, text);
       const msgs = await messagesApi.list(syllabusId);
       setMessages(ms => [...ms.filter(m => m.syllabusId !== syllabusId), ...msgs]);
-    } catch (err) { console.error('Send failed:', err); }
+    } catch (err) { notify(translateUI('reviewChain.messageFailed', { reason: tr(err.message) })); } // say so: a refused message must not just vanish
   };
 
   const submitSyllabus = async (draft) => {
@@ -458,7 +475,7 @@ export default function App() {
           {page === 'review' && <ReviewApproval syllabi={syllabi} user={user} setViewCode={setViewCode} setPage={setPage} />}
           {page === 'repository' && <Repository syllabi={syllabi} user={user} notify={notify} setHistCode={setHistCode} />}
           {page === 'compliance' && <Compliance syllabi={syllabi} />}
-          {page === 'analytics' && <Analytics syllabi={syllabi} user={user} />}
+          {page === 'analytics' && <Analytics syllabi={syllabi} user={user} notify={notify} />}
           {page === 'reports' && <Reports syllabi={syllabi} user={user} notify={notify} />}
           {page === 'users' && <UsersRoles notify={notify} onManageSubjects={() => setPage('courses')} />}
           {page === 'courses' && user.role === 'admin' && <CourseOutcomes notify={notify} onCatalogChanged={() => { fetchSyllabi(); fetchLogs(); fetchMessages(); fetchNotifications(); }} />}
@@ -468,7 +485,7 @@ export default function App() {
       </main>
       {toast && <div className="toast">{tr(toast)}</div>}
       {chatCode && <ChatModal code={chatCode} syllabi={syllabi} user={user} messages={messages} partner={partners[chatCode]} sendMsg={sendMsg} markRead={markRead} deleteThread={deleteThread} onClose={() => setChatCode(null)} />}
-      {histCode && <VersionHistoryModal syllabus={syllabi.find(s => s.id === histCode)} onClose={() => setHistCode(null)} />}
+      {histCode && <VersionHistoryModal syllabus={typeof histCode === 'object' ? histCode : syllabi.find(s => s.id === histCode)} onClose={() => setHistCode(null)} />}
       {commentCode && (
         <SyllabusCommentsModal syllabus={syllabi.find((s) => s.id === commentCode)} viewerId={user.id} onClose={() => setCommentCode(null)}
           onRead={(id) => { clearCommentBadge(id); }} onReply={(id) => { setCommentCode(null); setChatCode(id); markRead(id); }} />

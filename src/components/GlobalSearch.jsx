@@ -10,7 +10,7 @@ const KIND_ICON = { syllabus: 'notebook', course: 'graduationCap', faculty: 'use
 
 // The top bar's search box: syllabi, courses (administrator), faculty and the pages of the side menu, with a results list under the box.
 // It searches what the app already holds; the administrator's course catalog and user list are read once, the first time the box is used.
-export default function GlobalSearch({ user, syllabi, nav, onOpenSyllabus, onGoPage }) {
+export default function GlobalSearch({ user, syllabi, nav, onOpenSyllabus, onGoPage, mobileOpen = false, onMobileClose }) {
   const id = useId();
   const wrapRef = useRef(null);
   const inputRef = useRef(null);
@@ -50,7 +50,20 @@ export default function GlobalSearch({ user, syllabi, nav, onOpenSyllabus, onGoP
     document.getElementById(`${id}-opt-${current}`)?.scrollIntoView({ block: 'nearest' });
   }, [showList, current, id]);
 
-  const close = () => { setOpen(false); setQ(''); };
+  useEffect(() => {
+    if (!mobileOpen) return undefined;
+    loadCatalog();
+    const idFocus = window.requestAnimationFrame(() => inputRef.current?.focus());
+    const onDown = (e) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target) && !e.target.closest?.('.mobile-search-btn')) onMobileClose?.();
+    };
+    const onKey = (e) => { if (e.key === 'Escape') onMobileClose?.(); };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => { window.cancelAnimationFrame(idFocus); document.removeEventListener('mousedown', onDown); document.removeEventListener('keydown', onKey); };
+  }, [mobileOpen, onMobileClose]);
+
+  const close = () => { setOpen(false); setQ(''); onMobileClose?.(); };
   const choose = (item) => {
     if (!item) return;
     if (item.kind === 'faculty') { setQ(item.title); setOpen(true); inputRef.current?.focus(); return; } // shows that person's syllabi
@@ -78,7 +91,7 @@ export default function GlobalSearch({ user, syllabi, nav, onOpenSyllabus, onGoP
 
   let index = -1;
   return (
-    <div className="search global-search" ref={wrapRef} role="search">
+    <div className={'search global-search' + (mobileOpen ? ' is-mobile-open' : '')} ref={wrapRef} role="search">
       <Icon name="magnifyingGlass" size={18} />
       <input
         ref={inputRef} type="text" value={q} autoComplete="off" spellCheck={false}

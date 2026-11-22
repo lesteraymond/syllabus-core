@@ -128,17 +128,9 @@ export default function GeneratePanel({ draft, editable, syllabusId, beforeRun, 
   const showForm = !busy && phase !== 'done';
   // The step list sits in the right-hand column. Before a run it only lists what the AI writes (numbered); during a run it follows the server's stage; after it, every step is done.
   const stepState = (n) => (phase === 'done' ? 'done' : !busy ? 'idle' : stageIndex < 0 ? 'todo' : n < stageIndex ? 'done' : n === stageIndex ? 'now' : 'todo');
-  const subject = [draft.meta.code, draft.meta.title].filter(Boolean).join(' — ');
   return (
     <div className="gen-layout">
     <section className={'sm-card gen-card' + (busy ? ' is-working' : '')} aria-label={translateUI('generate.title')} aria-busy={busy || undefined}>
-      <header className="sm-card-h gen-head">
-        <span className="gen-spark" aria-hidden="true">✦</span>
-        <div className="gen-head-text">
-          <h4>{translateUI('generate.title')}</h4>
-          {subject && <small>{subject}</small>}
-        </div>
-      </header>
       <div className="sm-card-b">
         {showForm && (
           <>

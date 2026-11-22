@@ -29,7 +29,7 @@ function term(yearLevel, semester, page, totalUnits, text) {
   return { yearLevel, semester, page, totalUnits, rows: text.trim().split('\n').map(line => {
     const [code, title, lec, lab, prerequisite = '', lectureHours, labHours] = line.trim().split('|');
     const lecture = Number(lec), laboratory = Number(lab);
-    return { code, title: title || common[code], lecture, lab: laboratory, prereq: prerequisite || BLANK,
+    return { code, title: title || common[code], lecture, lab: laboratory, prereq: prerequisite || '',
       rawPrerequisite: prerequisite, corequisite: '', yearLevel, semester, page,
       lectureHours: lectureHours === undefined || lectureHours === '' ? lecture : Number(lectureHours),
       labHours: labHours === undefined || labHours === '' ? laboratory * 3 : Number(labHours) };

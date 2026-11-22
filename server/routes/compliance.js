@@ -112,6 +112,7 @@ async function withVersionLabel(db, run) {
   const [rows] = await db.query('SELECT version_label FROM syllabus_versions WHERE version_id = ?', [run.versionId]);
   return { ...run, versionLabel: rows[0] ? rows[0].version_label : '' };
 }
+const shownOverall = (r, current) => { const v = current.has(r.run_id) ? current.get(r.run_id).overall : r.overall; return v === null || v === undefined ? null : Number(v); };
 const adminOnly = (me) => { if (!rules.isReviewer(me)) throw httpError(403, 'Only a reviewer can read the check history'); };
 
 router.get('/syllabi/:id/compliance', requireAuth, async (req, res) => {
@@ -138,6 +139,8 @@ router.post('/syllabi/:id/compliance/recheck', requireAuth, async (req, res) => 
     if (rules.isReviewer(me) && syl.status === 'draft') throw httpError(409,'Drafts stay in My Syllabi. Complete the form and send it to AI Checker first.');
     if (!owner && !rules.isReviewer(me)) throw httpError(403, 'Only the owner or a reviewer can check a syllabus');
     if (syl.status === 'approved') throw httpError(409, APPROVED, { code: 'approved' }); // before the limiter: a refusal costs nothing
+    // A syllabus sent back to its author (for revision, or rejected) is checked again only after they submit a new version.
+    if (!owner && rules.RETURNED_STATUSES.includes(syl.status)) throw httpError(409, 'This syllabus was sent back to the faculty member. Check it again after they submit a new version.', { code: 'returned' });
     // A faculty owner checks only what they can still edit: a draft, or a syllabus sent back. A submitted one is with the reviewers (owner decision
     // 2026-11-15; the faculty AI Checker no longer lists it). A reviewer's own syllabus keeps its own flow (sent to be checked as Under Review).
     if (owner && !rules.isReviewer(me) && !rules.EDITABLE_STATUSES.includes(syl.status)) throw httpError(409, SUBMITTED, { code: 'submitted' });
@@ -372,7 +375,7 @@ router.get('/compliance/history', requireAuth, async (req, res) => {
     if (!(await svc.isInstalled(db))) return res.json({ installed: false, runs: [] });
     const inYear = yearClause(await resolveYear(db, req.session.user, req.query.year), '(SELECT s2.academic_year FROM syllabi s2 WHERE s2.syllabus_id = r.syllabus_id)');
     const [rows] = await db.query(
-      'SELECT r.run_id, r.syllabus_id, r.version_id, (SELECT sv.version_label FROM syllabus_versions sv WHERE sv.version_id = r.version_id) AS version_label, r.overall, r.status, r.passed, r.ai_status, r.created_by, r.created_at, l.user_id, l.course_code, l.title, l.syllabus_status, l.first_name, l.last_name, l.course_title, l.program_code, l.program_name, l.curriculum_program '
+      'SELECT r.run_id, r.syllabus_id, r.version_id, r.standard_version, (SELECT sv.version_label FROM syllabus_versions sv WHERE sv.version_id = r.version_id) AS version_label, r.overall, r.status, r.passed, r.ai_status, r.created_by, r.created_at, l.user_id, l.course_code, l.title, l.syllabus_status, l.first_name, l.last_name, l.course_title, l.program_code, l.program_name, l.curriculum_program '
       + 'FROM ai_check_runs r JOIN (SELECT s.syllabus_id, s.user_id, s.course_code, s.title, s.status AS syllabus_status, ' + LABEL_SQL + ") l ON l.syllabus_id = r.syllabus_id "
       // An approved syllabus has left the AI Checker for the Repository: it is not in the history (its runs stay stored and readable with /compliance/runs/:id).
       + "WHERE r.version_id IS NOT NULL AND r.created_by IS NOT NULL AND r.created_by <> l.user_id AND l.syllabus_status NOT IN ('draft', 'approved') "
@@ -386,12 +389,25 @@ router.get('/compliance/history', requireAuth, async (req, res) => {
     const notSent = await reviewStages.hiddenFromReviewers(db, rows.map((r) => ({ syllabus_id: r.syllabus_id, user_id: r.user_id, status: r.syllabus_status })), req.session.user.id); // the dean's own, not sent yet
     const shown = (seen ? rows.filter((r) => seen.has(r.syllabus_id)) : rows).filter((r) => !notSent.has(r.syllabus_id));
     const reviews = await openRecordReviews(db, shown.map((r) => r.syllabus_id));
+    // A list row says what the run's own screen says: a stored score is withheld there once the check is out of date or unfinished (loadDetail), so it is withheld here too.
+    const current = new Map();
+    for (const r of shown) {
+      if (!/^hybrid-\d+$/.test(r.standard_version || '')) continue;
+      try {
+        const syl = await loadVisible(db, req.session.user, r.syllabus_id);
+        const [[stored]] = await db.query('SELECT * FROM ai_check_runs WHERE run_id = ?', [r.run_id]);
+        const d = await svc.loadDetail(db, stored, hashOfSubject(await subjectOf(db, req.session.user, syl)));
+        // the same rule as the screens (src/lib/complianceView.js runState): an unfinished or out-of-date report is not a score
+        const incomplete = d.status === 'incomplete' || (d.hybrid && !d.hybrid.ready && !d.hybrid.critical && !(d.recordReview && d.recordReview.savedReady));
+        current.set(r.run_id, incomplete ? { status: 'incomplete', overall: null, passed: false } : { status: d.status, overall: d.overall, passed: d.passed });
+      } catch (_) { /* keep the stored values: the list must still load */ }
+    }
     res.json({
       installed: true,
       runs: shown.map((r) => ({
         runId: r.run_id, syllabusId: r.syllabus_id, courseCode: r.course_code, status: r.syllabus_status, versionLabel: r.version_label || '',
         ...labelsOf(r, null),
-        overall: r.overall === null || r.overall === undefined ? null : Number(r.overall), passed: !!r.passed, scored: r.status === 'scored',
+        overall: shownOverall(r, current), passed: current.has(r.run_id) ? !!current.get(r.run_id).passed : !!r.passed, scored: (current.has(r.run_id) ? current.get(r.run_id).status : r.status) === 'scored',
         aiStatus: r.ai_status, checkedBy: r.created_by === null || r.created_by === undefined ? null : r.created_by === r.user_id ? 'author' : 'admin',
         createdAt: r.created_at || null, recordReview: reviews.get(r.syllabus_id) || null,
       })),

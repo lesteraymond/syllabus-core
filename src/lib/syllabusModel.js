@@ -129,7 +129,7 @@ export function applyCourse(d, course) {
   // the administrator's year level, pre-requisite, academic year and semester for this subject (the server forces them on every save; a subject without them leaves Step 1 as typed)
   const term = course.term || {};
   if (term.prerequisite) n.meta.prereq = term.prerequisite;
-  else if (term.semester || term.yearLevel != null) n.meta.prereq = 'None'; // set up without a pre-requisite: it has none (as the server does); the academic year alone is not a set-up
+  else if (term.semester || term.yearLevel != null) n.meta.prereq = ''; // set up without a pre-requisite: it has none, shown blank (as the server does); the academic year alone is not a set-up
   if (term.yearLevel != null) n.meta.yearLevel = String(term.yearLevel);
   if (term.academicYear) n.meta.academicYear = term.academicYear;
   if (term.semester) n.meta.semester = term.semester;
@@ -351,7 +351,7 @@ export function createModel({ institution, programs, year }) {
     if (key === 'info') {
       if (!d.meta.program) form('Choose a program.');
       else if (!d.meta.courseId) form('Choose a subject.');
-      if (blank(d.meta.prereq)) form('Pre-requisite is empty.');
+      // Pre-requisite is optional: a subject with none leaves it blank (shown as "None").
       if (isNaN(parseFloat(d.meta.lecture)) || isNaN(parseFloat(d.meta.lab))) form('Enter lecture and laboratory units.');
       if (!d.description.some((p) => p.t.trim())) form('Add at least one description paragraph.');
     }

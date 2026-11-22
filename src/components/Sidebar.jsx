@@ -40,7 +40,7 @@ export default function Sidebar({ page, setPage, nav, collapsed, onToggle }) {
             aria-current={page === key ? 'page' : undefined}
             title={tr(label)}
           >
-            <span className="nav-icon" aria-hidden="true"><Icon name={icon} size={22} /></span>
+            <span className="nav-icon" aria-hidden="true"><Icon name={icon} size={18} /></span>
             <span className="nav-label" aria-hidden={collapsed}>{tr(label)}</span>
           </button>
         ))}

@@ -14,8 +14,9 @@ import { facultyComplianceEn, facultyComplianceTl } from './facultyCompliance.js
 import { programTrendEn, programTrendTl } from './programTrend.js';
 import { globalSearchEn, globalSearchTl } from './globalSearch.js';
 import { poReferenceEn, poReferenceTl } from './poReference.js';
-const en = { ...baseEn, ...extraEn, ...hybridEn, ...pdfImportEn, ...dashboardStatsEn, ...lessonAuthoringEn, ...reviewChainEn, ...poReferenceEn, ...accountActivityEn, ...adminPolicyEn, ...ownCheckEn, ...checkOverviewEn, ...facultyComplianceEn, ...programTrendEn, ...globalSearchEn };
-const tl = { ...baseTl, ...extraTl, ...hybridTl, ...pdfImportTl, ...dashboardStatsTl, ...lessonAuthoringTl, ...reviewChainTl, ...poReferenceTl, ...accountActivityTl, ...adminPolicyTl, ...ownCheckTl, ...checkOverviewTl, ...facultyComplianceTl, ...programTrendTl, ...globalSearchTl };
+import { reportsEn, reportsTl } from './reports.js';
+const en = { ...baseEn, ...extraEn, ...hybridEn, ...pdfImportEn, ...dashboardStatsEn, ...lessonAuthoringEn, ...reviewChainEn, ...poReferenceEn, ...accountActivityEn, ...adminPolicyEn, ...ownCheckEn, ...checkOverviewEn, ...facultyComplianceEn, ...programTrendEn, ...globalSearchEn, ...reportsEn };
+const tl = { ...baseTl, ...extraTl, ...hybridTl, ...pdfImportTl, ...dashboardStatsTl, ...lessonAuthoringTl, ...reviewChainTl, ...poReferenceTl, ...accountActivityTl, ...adminPolicyTl, ...ownCheckTl, ...checkOverviewTl, ...facultyComplianceTl, ...programTrendTl, ...globalSearchTl, ...reportsTl };
 export { getLanguage, getLocale, setLanguage, subscribeLanguage, normalizeLanguage } from './store.js';
 export const dictionaries = { en, tl };
 export function translate(key, values = {}, language = getLanguage()) {

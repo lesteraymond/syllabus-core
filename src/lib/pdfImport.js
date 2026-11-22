@@ -30,6 +30,15 @@ const lines = text => String(text || '').split('\n').map(s => s.trim()).filter(B
 const clean = text => String(text || '').replace(/^[-•]\s*/, '').trim();
 const numbered = text => lines(text).filter(s => !/^(?:CLO|ILO|WEEK|SCHEDULE|COMPONENT|PERCENTAGE)\s*(?:\||\t|$)/i.test(s));
 const labelled = (text, label) => [...String(text || '').matchAll(new RegExp(`\\b${label}\\s*(\\d+)\\s*[.:]\\s*([\\s\\S]*?)(?=\\b${label}\\s*\\d+\\s*[.:]|$)`, 'gi'))].map(match => ({ no: Number(match[1]), text: match[2].replace(/\s+/g, ' ').trim() }));
+// Supports both sequential ("PO1. ...", "PO 2: ...") and EGA-hierarchical ("PO 1: 1. ...", "PO 1.3. ...", "PO 2.2 ...") PO lists.
+function parsePoEntries(text) {
+  const raw = String(text || '');
+  const hierarchical = [...raw.matchAll(/\bPO\s*\d+\s*[.:]\s*\d+\s*[.:]?\s*([\s\S]*?)(?=\bPO\s*\d+\s*[.:]\s*\d+|$)/gi)];
+  if (hierarchical.length >= 2) {
+    return hierarchical.map((match, idx) => ({ no: idx + 1, text: match[1].replace(/\s+/g, ' ').trim() }));
+  }
+  return labelled(raw, 'PO');
+}
 function referenceGroups(text, item) {
   const groups = Object.fromEntries(['books', 'program', 'online', 'electronics'].map(key => [key, { na: false, items: [] }]));
   let group = null, buffer = '';
@@ -65,6 +74,28 @@ export function parseCreditUnits(source) {
   const total = text.match(new RegExp(`^${num}\\s*(?:units?)?\\.?$`, 'i'));
   return total ? { lecture: total[1], lab: '0', explicit: false } : null;
 }
+// Pairs the PDF's PO (or EGA) list with the program's by wording, one to one. -> Map(pdfNo -> programNo).
+// Without a PDF list the PDF is taken to use the program's own numbering (the template prints the program's list).
+const OUTCOME_STOP = new Set(['the', 'and', 'for', 'with', 'using', 'that', 'into', 'from', 'both', 'other', 'their', 'need', 'needed', 'appropriate', 'ega']);
+const outcomeWords = s => new Set(String(s || '').toLowerCase().replace(/\(\s*ega[^)]*\)/g, ' ').replace(/[^a-z0-9]+/g, ' ').split(' ')
+  .filter(w => w.length > 2 && !OUTCOME_STOP.has(w)).map(w => w.replace(/(?:ing|ed|es|s)$/, '')));
+export function matchOutcomes(pdfList, programList, textOf) {
+  const map = new Map();
+  if (!pdfList.length) { for (const p of programList) map.set(p.no, p.no); return map; }
+  const pairs = [];
+  for (const a of pdfList) {
+    const A = outcomeWords(textOf(a));
+    for (const b of programList) {
+      const B = outcomeWords(textOf(b));
+      let shared = 0; for (const w of A) if (B.has(w)) shared++;
+      const score = A.size && B.size ? (2 * shared) / (A.size + B.size) : 0;
+      if (score >= 0.5) pairs.push({ a: a.no, b: b.no, score });
+    }
+  }
+  const usedB = new Set();
+  for (const p of pairs.sort((x, y) => y.score - x.score)) if (!map.has(p.a) && !usedB.has(p.b)) { map.set(p.a, p.b); usedB.add(p.b); }
+  return map;
+}
 export function mapPdfFields(fields, draft, makeId, { planRows = null, identityContext = null, requireIdentity = false, prerequisiteChoice = null } = {}) {
   const warnings = [];
   const unresolvedMappings = [];
@@ -74,13 +105,26 @@ export function mapPdfFields(fields, draft, makeId, { planRows = null, identityC
   const item = t => ({ id: id(), t: clean(t) });
   const next = structuredClone(draft);
   const outcomes = next.outcomes || { vision: '', mission: { lead: '', items: [] }, egas: [], pos: [] };
-  if (fields.vision?.trim()) outcomes.vision = fields.vision.trim();
-  if (fields.mission?.trim()) {
-    const parts = fields.mission.split(/\n\s*[•●▪-]\s*/).map(s => s.trim()).filter(Boolean);
-    outcomes.mission = { lead: parts[0] || '', items: parts.slice(1) };
+  const pdfEgas = fields.egas?.trim() ? labelled(fields.egas, 'EGA').map(entry => ({ no: entry.no, name: entry.text, short: entry.text.slice(0, 120) })) : [];
+  const pdfPos = fields.pos?.trim() ? parsePoEntries(fields.pos).map(entry => ({ no: entry.no, text: entry.text, short: `PO ${entry.no}`, egas: [] })) : [];
+  // Vision, Mission, EGA and PO are the program's administrator references (they are locked in the builder and the submit
+  // rules T-09..T-12 compare them with the catalog). When the subject has them, the PDF never replaces them: the PDF's own
+  // PO/EGA numbers are translated to the program's numbers by matching their text, so a CLO keeps its meaning.
+  const masters = !!draft.meta?.courseId && (outcomes.pos || []).length > 0 && (outcomes.egas || []).length > 0;
+  const translate = { PO: null, EGA: null };
+  if (masters) {
+    translate.PO = matchOutcomes(pdfPos, outcomes.pos, p => p.text);
+    translate.EGA = matchOutcomes(pdfEgas, outcomes.egas, e => e.name);
+    if ([fields.vision, fields.mission, fields.egas, fields.pos].some(v => String(v || '').trim())) warnings.push({ key: 'pdfImport.mastersKept', values: {} });
+  } else {
+    if (fields.vision?.trim()) outcomes.vision = fields.vision.trim();
+    if (fields.mission?.trim()) {
+      const parts = fields.mission.split(/\n\s*[•●▪-]\s*/).map(s => s.trim()).filter(Boolean);
+      outcomes.mission = { lead: parts[0] || '', items: parts.slice(1) };
+    }
+    if (pdfEgas.length) outcomes.egas = pdfEgas;
+    if (pdfPos.length) outcomes.pos = pdfPos;
   }
-  if (fields.egas?.trim()) outcomes.egas = labelled(fields.egas, 'EGA').map(entry => ({ no: entry.no, name: entry.text, short: entry.text.slice(0, 120) }));
-  if (fields.pos?.trim()) outcomes.pos = labelled(fields.pos, 'PO').map(entry => ({ no: entry.no, text: entry.text, short: `PO ${entry.no}`, egas: [] }));
   next.outcomes = outcomes;
   // Course identity remains controlled by the selected subject and its normal save API.
   const normalize = s => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
@@ -90,7 +134,7 @@ export function mapPdfFields(fields, draft, makeId, { planRows = null, identityC
   if (mismatch) warnings.push({ key: 'pdfImport.identityMismatch', values: { code: fields.code?.trim() || '', selected: draft.meta.code } });
   if (fields.title?.trim() && normalize(fields.title) !== normalize(draft.meta.title)) warnings.push({ key: 'pdfImport.titleMismatch', values: {} });
   const prerequisite = prerequisiteReview(fields, draft.meta, prerequisiteChoice);
-  // IV. Pre-requisite is the one section an upload may leave empty. Submit (rule T-05) needs a value, so an empty one is imported as "None".
+  // IV. Pre-requisite is the one section an upload may leave empty. An empty one is imported as "None" (the checker no longer requires a value).
   next.meta.prereq = String(prerequisite.value ?? '').trim() ? prerequisite.value : 'None';
   if (next.meta.prereq === 'None' && !String(prerequisite.value ?? '').trim()) warnings.push({ key: 'pdfImport.prereqNone', values: {} });
   if (prerequisite.conflict) warnings.push({ key: 'pdfImport.prereqConflict', values: {} });
@@ -111,18 +155,38 @@ export function mapPdfFields(fields, draft, makeId, { planRows = null, identityC
     const cells = line.split(/\t|\|/).map(s => s.trim()).filter(Boolean);
     const selected = (label, available) => {
       const refs = outcomeReferences(line, label);
+      const map = translate[label];
+      if (map) {
+        // The PDF's numbers are its own; keep only those whose outcome matched one of the program's, under the program's number.
+        const kept = [], dropped = [];
+        for (const n of refs.values) (map.has(n) ? kept.push(map.get(n)) : dropped.push(n));
+        if (dropped.length) warnings.push({ key: 'pdfImport.outcomeNotMatched', values: { clo: sourceNo, label, numbers: dropped.join(', ') } });
+        if (refs.invalid.length) unresolvedMappings.push({ clo: sourceNo, label, unknown: [], invalid: refs.invalid, source: line });
+        return [...new Set(kept)].sort((a, b) => a - b);
+      }
       const unknown = refs.values.filter(n => !available.some(p => p.no === n));
       if (unknown.length || refs.invalid.length) unresolvedMappings.push({ clo: sourceNo, label, unknown, invalid: refs.invalid, source: line });
       return refs.values.filter(n => available.some(p => p.no === n));
     };
     const statement = (cells.length > 1 && /^(?:CLO\s*)?\d+[.)]?$/i.test(cells[0]) ? cells[1] : line)
-      .replace(/^(?:CLO\s*)?\d+[.):\s]+/i, '').replace(/\s*\[?\b(?:POs?|EGAs?)\s*[:=]?\s*\d.*$/i, '').trim();
+      .replace(/^(?:CLO\s*)?\d+[.):\s]+/i, '').replace(/\s*[[(]?\s*\b(?:POs?|EGAs?)\s*[:=]?\s*\d.*$/i, '').trim();
     if (statement) sourceCloNumbers.push(sourceNo);
     return { id: id(), title: `CLO ${sourceNo}`, level: 'Introductory', statement,
       pos: selected('PO', outcomes.pos), egas: selected('EGA', outcomes.egas) };
   }).filter(c => c.statement);
   if (clos.length > 20) throw new Error('pdfImport.tooManyClos');
   if (new Set(sourceCloNumbers).size !== sourceCloNumbers.length) throw new Error('pdfImport.duplicateClos');
+  // Rule P-03: a CLO tagged with a PO also carries every EGA that PO serves in the program's list. With program references
+  // the import applies it, so the imported CLOs follow the same rule the builder and the checker apply.
+  if (masters) {
+    let added = 0;
+    for (const clo of clos) {
+      const implied = new Set(clo.pos.flatMap(no => (outcomes.pos.find(p => p.no === no)?.egas || [])));
+      for (const e of implied) if (!clo.egas.includes(e) && outcomes.egas.some(x => x.no === e)) { clo.egas.push(e); added++; }
+      clo.egas.sort((a, b) => a - b);
+    }
+    if (added) warnings.push({ key: 'pdfImport.egasImplied', values: { count: added } });
+  }
   // Replace CLOs together with the plan; never retain old mappings to replaced IDs.
   next.clos = clos;
   warnings.push({ key: 'pdfImport.outcomesReview', values: {} });

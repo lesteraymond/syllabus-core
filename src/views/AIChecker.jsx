@@ -1,5 +1,5 @@
 import { YearFilter, useYearScope } from '../components/AcademicYearScope';
-import { canApproveAdminDraft, isReturned, noteMissing, EDITABLE_STATUSES } from '../lib/syllabusRules';
+import { canApproveAdminDraft, isReturned, noteMissing, sentForReview, EDITABLE_STATUSES } from '../lib/syllabusRules';
 import { isApprover, isReviewer } from '../lib/roles';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
@@ -139,7 +139,7 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
         </Select>
       </div>
       <StableButton type="button" className="btn outline" disabled={!selectedId} onClick={openBuilder}>{translateUI('publication.editDraft')}</StableButton>
-      {ctl && ctl.canRun && <StableButton type="button" className="btn primary" disabled={ctl.busy} onClick={ctl.recheck}>{ctl.busy ? translateUI('ui.checking_820d60') : translateUI(ctl.run ? "hybrid.recheckButton" : "aiChecker.run")}</StableButton>}
+      {ctl && ctl.canRun && <StableButton type="button" className="btn primary" disabled={ctl.busy} onClick={ctl.recheck}>{ctl.busy && <span className="chk-btn-spin" aria-hidden="true" />}{ctl.busy ? translateUI('ui.checking_820d60') : translateUI(ctl.run ? "hybrid.recheckButton" : "aiChecker.run")}</StableButton>}
     </section>
   );
 
@@ -199,11 +199,12 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
               onOpenStep={openBuilder}
               onRun={receiveRun}
               onApplyDraft={doc.editable && doc.content ? applyDraftRecommendation : undefined}
+              hideError={!!doc.error}
               layout="panel"
               renderBar={pickBar}
               renderResult={(ctl) => (
                 <div className={'chk-layout' + (doc.editable ? '' : ' solo')}>
-                  {ctl.installed && ctl.run && (
+                  {ctl.installed && (ctl.run || ctl.busy) && (
                     <div className="chk-main">
                       <section className="card chk-report"><ComplianceCard run={ctl.run} checking={ctl.busy} onOpenStep={openBuilder} onApplyDraft={ctl.onApplyDraft} /></section>
                     </div>
@@ -277,7 +278,10 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
   }, [pending, openId, loadDetail]);
 
   const rows = list ? list.syllabi.filter(row => row.status !== 'draft') : [];
-  const waiting = useMemo(() => groupByFacultyProgram(rows.filter(row => needsCheck(row) || (row.userId === user?.id && row.status === 'under_review'))), [rows, user?.id]); // unchecked and not approved: what the picker offers
+  // The administrator's own syllabi already sent for review (the dean stage is cleared on the newest version): they are with the other reviewers now,
+  // so they are neither offered for checking again nor sent or taken back to draft from here (the server refuses both too).
+  const sentOwn = useMemo(() => new Set(syllabi.filter((s) => s.userId === user?.id && sentForReview(s)).map((s) => s.id)), [syllabi, user?.id]);
+  const waiting = useMemo(() => groupByFacultyProgram(rows.filter(row => needsCheck(row) || (row.userId === user?.id && row.status === 'under_review' && !sentOwn.has(row.syllabusId)))), [rows, user?.id, sentOwn]); // unchecked and not approved: what the picker offers
   // The administrator writes syllabi too: their own drafts, and their syllabi returned for revision or rejected, can be checked from here as well as from the
   // builder (OwnSyllabusPicker). Once sent to be checked one is Under Review and is in the list above with everyone else's.
   const ownToCheck = useMemo(() => (user?.role === 'admin' ? syllabi.filter((s) => s.userId === user.id && !s.archived && ['draft', 'for_revision', 'rejected'].includes(s.status)) : []), [syllabi, user?.id, user?.role]);
@@ -385,8 +389,8 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
     ? { ...(rows.find((r) => r.syllabusId === openId) || {}), ...detail.syllabus }
     : null;
 
-  const ownSyllabus = open?.userId === user.id && open.status === 'under_review';
-  const approveEnabled = canApproveAdminDraft(user,open,detail?.run,detail?.isLatest !== false,aiGate);
+  const ownSyllabus = open?.userId === user.id && open.status === 'under_review' && !sentOwn.has(open.syllabusId);
+  const approveEnabled = ownSyllabus && canApproveAdminDraft(user,open,detail?.run,detail?.isLatest !== false,aiGate,{ aiOff: policy.loaded && !policy.aiChecking });
   const editDraft = async () => {
     if (approvalLock.current || !ownSyllabus || !onEditDraft) return;
     approvalLock.current=true; setEditingDraft(true); setError('');
@@ -430,6 +434,16 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
         <div className={'chk-work' + (user.role === 'admin' ? '' : ' solo')}>
           <SyllabusPicker groups={waiting} loading={loading} busy={working} onCheck={checkAndOpen} onWithoutAi={aiGate === 'required' ? undefined : reviewWithoutAi} />
           {user.role === 'admin' && <OwnSyllabusPicker rows={ownToCheck} busy={working} onCheck={prepareAndCheck} onOpen={openOwn} />}
+        </div>
+      )}
+
+      {installed && working && (
+        <div className="chk-progress" role="status" aria-live="polite">
+          <span className="chk-progress-ring" aria-hidden="true" />
+          <div className="chk-progress-body">
+            <strong>{translateUI("ui.checking_your_syllabus_1278c5")}</strong>
+            <div className="chk-progress-bar" aria-hidden="true"><span /></div>
+          </div>
         </div>
       )}
 

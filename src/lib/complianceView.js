@@ -119,7 +119,9 @@ export const isLocked = (row) => !!row && row.status === 'approved';
 // The checker's queue: a submitted syllabus the administrator has not checked yet (the run a faculty member's own submit stored is not
 // one: the list only carries the administrator's own checks), or whose check is out of date because a new version was submitted since.
 // Once it is checked it moves to the history; an approved one is final and lives in the Repository. An uploaded file belongs here too.
-export const needsCheck = (row) => !!row && !isLocked(row) && (!row.run || !!row.run.stale);
+// Sent back to the faculty member (for revision, or rejected): nothing to check until they submit again.
+export const isReturned = (row) => !!row && (row.status === 'for_revision' || row.status === 'rejected');
+export const needsCheck = (row) => !!row && !isLocked(row) && !isReturned(row) && (!row.run || !!row.run.stale);
 
 // Whether the check can be run now. A syllabus built in the form can. An uploaded file will be checked by matching it to the template,
 // which needs the AI service: until that is switched on it waits in the queue. This is the one place to change when it is.

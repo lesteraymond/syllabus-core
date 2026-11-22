@@ -3,6 +3,7 @@ const multer = require('multer');
 const { requireAuth } = require('../middleware/auth');
 const { httpError, sendError } = require('../lib/http');
 const rules = require('../lib/syllabusRules');
+const subjectLock = require('../lib/subjectLock');
 const assignments = require('../lib/assignments');
 const { createLimiter } = require('../lib/rateLimit');
 const importer = require('../lib/pdfImport');
@@ -74,7 +75,24 @@ router.post('/pdf-import/extract', requireAuth, async (req, res) => {
     if (matches.length > 1) throw httpError(409, 'pdfImport.chooseSubject');
     const [match] = matches;
     await assignments.requireCourseAccess(db, me, match.course_id);
-    res.json({ ...preview, subject: { id: match.course_id, code: match.code, title: match.title, program: match.program_code }, identityContext: await identity.contextFor(db, match.course_id) });
+    // Check whether this user already has a syllabus on the matched subject in the current academic year.
+    // Editable drafts/returned syllabi are returned so the builder attaches to them instead of creating a duplicate (409 syllabus_exists).
+    // Locked syllabi (submitted, under_review, approved) are refused immediately with the real reason.
+    const [existingRows] = await academicYear.queryInSameYear(
+      db,
+      'SELECT syllabus_id, user_id, status FROM syllabi WHERE course_id = ? AND user_id = ? AND archived_at IS NULL',
+      [match.course_id, me.id],
+    );
+    const conflict = subjectLock.conflictFor((existingRows || []).filter((r) => r && r.syllabus_id), me);
+    if (conflict && !rules.canEdit(me, { user_id: me.id, status: conflict.status })) {
+      throw httpError(409, subjectLock.messageFor(conflict), { code: 'syllabus_exists', existingId: conflict.id, existingStatus: conflict.status });
+    }
+    res.json({
+      ...preview,
+      subject: { id: match.course_id, code: match.code, title: match.title, program: match.program_code },
+      ...(conflict ? { existingSyllabus: { id: conflict.id, status: conflict.status } } : {}),
+      identityContext: await identity.contextFor(db, match.course_id),
+    });
   } catch (error) { sendError(res, error); }
   finally { if (release) release(); }
 });

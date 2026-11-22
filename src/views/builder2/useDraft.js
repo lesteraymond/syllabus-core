@@ -146,5 +146,38 @@ export function useDraft(editing) {
   }, [flush]);
   const saveNow = useCallback(() => { clearTimeout(timer.current); return flush(); }, [flush]);
 
-  return { draft, apply, set, setAndSave, save, saveNow, reload, load, syllabusId: () => idRef.current };
+  // Attaches this builder session to an existing editable syllabus (e.g. when a PDF uploaded from a fresh builder matches a draft the user already owns).
+  const attachExisting = useCallback(async (id) => {
+    clearTimeout(timer.current);
+    const r = await syllabiApi.getContent(id);
+    const d = r.content ? hydrateContent(r.content, newId) : emptyDraft(newId);
+    const nextSaved = {};
+    if (r.content) {
+      SECTIONS.forEach((k) => {
+        if (r.content[k] !== undefined && !(r.adoptedOutcomes && ['outcomes', 'clos'].includes(k))) nextSaved[k] = JSON.stringify(d[k]);
+      });
+    }
+    idRef.current = id;
+    savedJson.current = nextSaved;
+    touched.current = false;
+    pending.current = false;
+    again.current = false;
+    latest.current = d;
+    dispatch({ type: 'SET', v: d });
+    setSave({ state: 'saved', time: '' });
+    setLoad({
+      loading: false,
+      error: '',
+      editable: !!r.editable,
+      status: r.status || 'draft',
+      version: r.version || 'v1.0',
+      academicYear: r.academicYear || '',
+      lockedReason: r.lockedReason || '',
+      nextVersion: r.nextVersion || '',
+      reviewerNote: r.reviewerNote || '',
+    });
+    return d;
+  }, []);
+
+  return { draft, apply, set, setAndSave, save, saveNow, reload, attachExisting, load, syllabusId: () => idRef.current };
 }

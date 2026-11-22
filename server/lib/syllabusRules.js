@@ -20,6 +20,8 @@ const isReviewer = roles.isReviewer;
 const isApprover = roles.isApprover;
 
 const canView = (user, syllabus) => isOwner(user, syllabus) || (isReviewer(user) && syllabus.status !== 'draft');
+// The Repository is shared: anyone signed in may read an approved syllabus (its history), never change it.
+const canReadApproved = (user, syllabus) => canView(user, syllabus) || (!!user && syllabus.status === 'approved');
 // Faculty may discard only their own drafts. Keep existing administrator access unchanged.
 // An approved syllabus is a protected record: no one deletes it (lib/approvedRecords.js).
 const canDelete = (user, syllabus) => syllabus.status !== 'approved' && ((isAdmin(user) && canView(user, syllabus))
@@ -65,4 +67,4 @@ const lockedMessage = (syllabus) => (isArchived(syllabus) ? ARCHIVED_MESSAGE : s
   ? 'This syllabus was submitted and is locked. It can be edited again only if the administrator returns it for revision.'
   : `This syllabus is ${String(syllabus.status).replace('_', ' ')} and can no longer be edited`);
 
-module.exports = { canTransition, transitionRefusal, APPROVED_FINAL, ARCHIVED_MESSAGE, isArchived, MIN_NOTE, UNCHANGED, NEED_NOTE, lockedMessage, isOwner, isAdmin, isReviewer, isApprover, EDITABLE_STATUSES, RETURNED_STATUSES, isReturned, STATUSES, canView, canEdit, canDelete, canDecide, canReturn, canSetStatus, statusAfterOwnerEdit, nextVersionLabel };
+module.exports = { canTransition, transitionRefusal, APPROVED_FINAL, ARCHIVED_MESSAGE, isArchived, MIN_NOTE, UNCHANGED, NEED_NOTE, lockedMessage, isOwner, isAdmin, isReviewer, isApprover, canReadApproved, EDITABLE_STATUSES, RETURNED_STATUSES, isReturned, STATUSES, canView, canEdit, canDelete, canDecide, canReturn, canSetStatus, statusAfterOwnerEdit, nextVersionLabel };

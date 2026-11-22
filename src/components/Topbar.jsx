@@ -18,6 +18,8 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
   }, [setMsgDrop]);
   // Notification bell: dropdown that closes on outside click and when the messages dropdown opens.
   const [bellOpen, setBellOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  useEffect(() => { setMobileSearchOpen(false); }, [page]);
   const bellRef = useRef(null);
   useEffect(() => {
     if (!bellOpen) return undefined;
@@ -86,9 +88,19 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
       <div className="topbar-brand"><img src="/cite-logo.png" alt={translateUI("ui.cict_logo_dee290")} /><strong>{translateUI("ui.cite_brand_5b2e91")}</strong></div>
       <div className="topbar-heading"><span className="eyebrow">{translateUI("ui.syllabus_management_system_e49cab")}</span></div>
       <div className="top-actions">
-        <GlobalSearch user={user} syllabi={syllabi || []} nav={nav || []} onOpenSyllabus={onOpenSyllabus} onGoPage={onGoPage} />
+        <button
+          type="button"
+          className={'icon-btn mobile-search-btn' + (mobileSearchOpen ? ' is-open' : '')}
+          title={translateUI('globalSearch.label')}
+          aria-label={translateUI('globalSearch.label')}
+          aria-expanded={mobileSearchOpen}
+          onClick={() => { setMsgDrop(false); setBellOpen(false); setMenuOpen(false); setMobileSearchOpen((o) => !o); }}
+        >
+          <Icon name="magnifyingGlass" size={20} weight="bold" />
+        </button>
+        <GlobalSearch user={user} syllabi={syllabi || []} nav={nav || []} onOpenSyllabus={onOpenSyllabus} onGoPage={onGoPage} mobileOpen={mobileSearchOpen} onMobileClose={() => setMobileSearchOpen(false)} />
         <div className="msg-wrap" ref={ref}>
-          <button className={'icon-btn' + (msgDrop ? ' is-open' : '')} aria-expanded={msgDrop} title={translateUI("ui.messages_f1702b")} aria-label={unread > 0 ? translateUI("ui.messages_p0_unread_f09423", { p0: (unread) }) : translateUI("ui.messages_f1702b")} onClick={() => { setBellOpen(false); setMsgDrop(!msgDrop); }}><Icon name="envelope" size={20} weight="fill" />{unread > 0 && <span className="pill" aria-hidden="true">{unread > 99 ? '99+' : unread}</span>}</button>
+          <button className={'icon-btn' + (msgDrop ? ' is-open' : '')} aria-expanded={msgDrop} title={translateUI("ui.messages_f1702b")} aria-label={unread > 0 ? translateUI("ui.messages_p0_unread_f09423", { p0: (unread) }) : translateUI("ui.messages_f1702b")} onClick={() => { setMobileSearchOpen(false); setBellOpen(false); setMsgDrop(!msgDrop); }}><Icon name="envelope" size={20} weight="fill" />{unread > 0 && <span className="pill" aria-hidden="true">{unread > 99 ? '99+' : unread}</span>}</button>
           {msgDrop && <div className="msg-drop">
             <div className="msg-drop-head"><strong>{translateUI("ui.messages_f1702b")}</strong><span>{unread}{translateUI("ui.unread_2630a7")}</span></div>
             {threads.length === 0 && <div className="msg-empty">{translateUI("ui.no_conversations_yet_265928")}</div>}
@@ -100,7 +112,7 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
           </div>}
         </div>
         <div className="msg-wrap" ref={bellRef}>
-          <button className={'icon-btn' + (bellOpen ? ' is-open' : '')} title={translateUI("ui.notifications_753a22")} aria-label={bellCount > 0 ? translateUI("ui.notifications_p0_unread_5c2cb7", { p0: (bellCount) }) : translateUI("ui.notifications_753a22")} aria-haspopup="true" aria-expanded={bellOpen} onClick={() => { setMsgDrop(false); setBellOpen(o => !o); }}><Icon name="bell" size={20} weight="fill" />{bellCount > 0 && <span className="pill" aria-hidden="true">{bellCount > 99 ? '99+' : bellCount}</span>}</button>
+          <button className={'icon-btn' + (bellOpen ? ' is-open' : '')} title={translateUI("ui.notifications_753a22")} aria-label={bellCount > 0 ? translateUI("ui.notifications_p0_unread_5c2cb7", { p0: (bellCount) }) : translateUI("ui.notifications_753a22")} aria-haspopup="true" aria-expanded={bellOpen} onClick={() => { setMobileSearchOpen(false); setMsgDrop(false); setBellOpen(o => !o); }}><Icon name="bell" size={20} weight="fill" />{bellCount > 0 && <span className="pill" aria-hidden="true">{bellCount > 99 ? '99+' : bellCount}</span>}</button>
           {bellOpen && <div className="msg-drop">
             <div className="msg-drop-head"><strong>{translateUI("ui.notifications_753a22")}</strong>{bellCount > 0 ? <button className="link-btn" onClick={onMarkAllNotificationsRead}>{translateUI("ui.mark_all_read_8958e2")}</button> : <span>{translateUI("ui.all_caught_up_47cbaf")}</span>}</div>
             <div className="notif-tabs" role="tablist" aria-label={translateUI("ui.notifications_753a22")}>

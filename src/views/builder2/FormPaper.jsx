@@ -26,7 +26,7 @@ export default function FormPaper({ d, model, preparedBy, signoffs = null }) {
         <img className="paper-logo paper-logo-wide" src="/testmark-logo.png" alt="Testmark logo" />
       </div>
       <div className="c" style={{ marginTop: 8 }}><b>{'SCHOOL YEAR ' + CURRENT_SCHOOL_YEAR.label}</b><br /><b>{COLLEGE_NAME.toUpperCase()}</b></div>
-      <div className="kv2"><b>I.</b><b>COURSE CODE</b><span>:</span><span>{d.meta.code}</span></div>
+      <div className="kv2"><b>I.</b><b>COURSE CODE</b><span>:</span><b>{d.meta.code}</b></div>
       <div className="kv2"><b>II.</b><b>COURSE TITLE</b><span>:</span><b>{d.meta.title}</b></div>
       <div className="kv2"><b>III.</b><b>COURSE DESCRIPTION</b><span>:</span><span /></div>
       {d.description.filter((x) => x.t.trim()).map((x) => <p key={x.id} className="typed-text" style={{ margin: '4px 0 4px 34px', textAlign: 'justify' }}>{x.t}</p>)}

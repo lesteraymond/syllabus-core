@@ -1,9 +1,12 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { initAppearance } from "./lib/appearance.js";
 import App from './App.jsx';
 import NotFound from './views/NotFound.jsx';
 import ErrorBoundary from './views/ErrorBoundary.jsx';
 import './tailwind.css'; // Tailwind (prefixed, no reset) plus styles.css and theme.css in the legacy layer
+
+initAppearance();
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>

@@ -86,7 +86,7 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
       }));
   }, [user?.role]);
 
-  const [customKeys, setCustomKeys] = useState(() => {
+  const readStoredQuickActions = () => {
     try {
       const stored = JSON.parse(localStorage.getItem(storageKey));
       if (Array.isArray(stored) && stored.length > 0) {
@@ -95,7 +95,11 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
       }
     } catch {}
     return defaultKeys;
-  });
+  };
+  const [customKeys, setCustomKeys] = useState(readStoredQuickActions);
+  useEffect(() => {
+    setCustomKeys(readStoredQuickActions());
+  }, [storageKey, availableNav, defaultKeys]);
 
   const handleSaveQuickActions = (newKeys) => {
     setCustomKeys(newKeys);

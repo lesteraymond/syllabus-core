@@ -50,7 +50,11 @@ test('faculty settings include profile and language, with no administrative card
   const html = renderToStaticMarkup(<Settings {...props} />);
   assert.match(html, /My Profile/); assert.match(html, /Display language/);
   assert.doesNotMatch(html, /Institutional Standard|AI &amp; Notifications|Save Settings|Loading administrator/);
-  assert.match(html, /<span class="select-current" lang="en">English<\/span>/);
+  // the language is a two-button toggle (a radio group), each choice named in its own language
+  assert.match(html, /role="radiogroup" aria-label="Display language"/);
+  assert.match(html, /role="radio" lang="en" aria-checked="true"[^>]*>English<\/button>/);
+  assert.match(html, /role="radio" lang="tl" aria-checked="false"[^>]*>Filipino<\/button>/);
+  assert.doesNotMatch(html, /<button[^>]*role="radio"[^>]*disabled/);
 });
 test('administrator settings load only in the administrator branch and keep real setting values', () => {
   const parent = renderToStaticMarkup(<Settings {...props} user={{ ...user, role: 'admin' }} />);
@@ -64,8 +68,10 @@ test('Tagalog settings translate labels, keep account names and setting values, 
   const html = renderToStaticMarkup(<Settings {...props} language="tl" languageBusy />);
   assert.match(html, /Mga Setting/); assert.match(html, /Aking Profile/); assert.match(html, /Baguhin ang Profile/);
   assert.match(html, /value="Approved"/); assert.match(html, /value="Settings"/);
-  assert.match(html, /<span class="select-current" lang="tl">Tagalog<\/span>/); assert.match(html, /Isine-save ang napiling wika/);
-  assert.match(html, /aria-live="polite"/);
+  // the chosen language is checked, and while it is being saved the section says it is busy and both choices are off
+  assert.match(html, /role="radio" lang="tl" aria-checked="true"[^>]*disabled=""[^>]*>Filipino<\/button>/);
+  assert.match(html, /role="radio" lang="en" aria-checked="false"[^>]*disabled=""[^>]*>English<\/button>/);
+  assert.match(html, /<section class="settings-card language-settings" aria-busy="true">/);
   const cards = renderToStaticMarkup(<AdministrativeSettings administration={admin} adminBusy={false} updateAdmin={noop} />);
   assert.match(cards, /Pamantayan ng Institusyon/); assert.match(cards, /AI at mga Abiso/);
   assert.match(cards, /<span data-value="Undergraduate Syllabus v4">Silabus ng Undergraduate v4<\/span>/); assert.match(cards, /<span class="select-current">Silabus ng Undergraduate v4<\/span>/);
@@ -339,14 +345,7 @@ test('the progress list has one Remind all button (no bell on each person), and 
   assert.doesNotMatch(tl, /Paalalahanan si Fay Cruz/, 'no per-person button in Tagalog either'); assert.match(tl, /Napaalalahanan noong/); assert.match(tl, /Paalala</);
   setLanguage('en');
 });
-test('translated repository filters retain canonical option values and original syllabus titles', () => {
-  setLanguage('tl');
-  const html = renderToStaticMarkup(<Repository user={{ ...user, role: 'admin' }} syllabi={[{ id: 5, userId: 2, status: 'approved', title: 'Settings', courseCode: 'IT 204', faculty: 'Approved', program: 'BSIT', uploadedAt: '2026-01-01' }]} notify={noop} setChatCode={noop} setHistCode={noop} />);
-  assert.doesNotMatch(html, /value="approved"|value="submitted"/); assert.match(html, /Aprubado/);
-  assert.match(html, /<small>Settings<\/small>/); assert.match(html, /Approved/);
-});
-
-
+// The Repository's rows come from the server now (GET /syllabi?scope=repository): its row, filter and export tests render with effects in tests/repository-ui.test.jsx.
 test('collapsed navigation keeps every destination accessible in English and Tagalog for both roles', () => {
   for (const language of ['en', 'tl']) {
     setLanguage(language);
@@ -463,25 +462,6 @@ test('program editor exposes editable code and name fields with bilingual labels
   }
 });
 
-test('repository uses current catalog programs for admin cells and dynamic filters in both languages', () => {
-  for (const language of ['en', 'tl']) {
-    setLanguage(language);
-    const html = renderToStaticMarkup(<Repository user={{...user,role:'admin'}} syllabi={[
-      {id:1, status:'approved', programCode:'BSNEW', program:'Obsolete curriculum', faculty:'Fay',title:'Original title',courseCode:'NEW101'},
-      {id:2, status:'approved', program:'Legacy program',faculty:'Gus',title:'Upload',courseCode:'OLD101'},
-      {id:3, status:'approved', programCode:'  ',program:' ',faculty:'Gus',title:'Unlinked upload',courseCode:'OLD102'},
-    ]} notify={noop} setChatCode={noop} setHistCode={noop} />);
-    assert.match(html, /<td>BSNEW<\/td>/);
-    assert.match(html, /<span data-value="BSNEW">BSNEW<\/span>/);
-    assert.match(html, /<td>Legacy program<\/td>/);
-    assert.match(html, /<span data-value="Legacy program">Legacy program<\/span>/);
-    assert.doesNotMatch(html, /Obsolete curriculum|value="Information Technology"|value="Computer Engineering"/);
-    assert.ok(html.includes('<td>' + t('ui.no_program_d8600a') + '</td>'));
-    assert.ok(html.includes('<span data-value="No program">' + t('ui.no_program_d8600a') + '</span>'));
-    assert.match(html, /filter-card repository-filters/);
-    assert.doesNotMatch(html, /value="submitted"/);
-  }
-});
 test('repository program lookup prefers the catalog and preserves legacy uploads and missing associations', () => {
   assert.equal(repositoryProgram({programCode:' BSNEW ',programName:'New program',program:'Old curriculum'}),'BSNEW');
   assert.equal(repositoryProgram({programCode:' ',programName:' New program ',program:'Old curriculum'}),'New program');
@@ -496,21 +476,6 @@ test('faculty and admin repository share table and filters without a status sele
     assert.equal((html.match(/scope="col"/g)||[]).length,6);
     assert.doesNotMatch(html,/value="submitted"|value="approved"|repository-filters-admin/);
     assert.equal((html.match(/role="combobox"/g)||[]).length,1);
-  }
-});
-
-test('administrator repository excludes every unapproved status from rows, filters and totals', () => {
-  for (const language of ['en','tl']) {
-    setLanguage(language);
-    const syllabi=['draft','submitted','under_review','for_revision','rejected','approved'].map((status,id)=>({id,status,programCode:'PROGRAM-'+status,courseCode:'SUBJECT-'+status,title:'Title-'+status,faculty:'Faculty'}));
-    const html=renderToStaticMarkup(<Repository user={{...user,role:'admin'}} syllabi={syllabi} notify={noop} setChatCode={noop} setHistCode={noop} />);
-    assert.match(html, /SUBJECT-approved/);
-    for (const status of ['draft','submitted','under_review','for_revision','rejected']) {
-      assert.ok(!html.includes('SUBJECT-'+status));
-      assert.ok(!html.includes('PROGRAM-'+status));
-    }
-    assert.match(html, /class="repo-stats"><span>[^<]+<b>1<\/b>/);
-    assert.doesNotMatch(html,/value="submitted"|value="approved"/);
   }
 });
 
@@ -619,24 +584,6 @@ test('My Syllabi keeps faculty communication and hides it for administrators whi
 });
 
 // An approved syllabus is final: the Repository offers no message button to anyone (owner or not, any reviewer role), and keeps the history button.
-test('the repository has no message button for any approved syllabus, for every reviewer role, and keeps the history',()=>{
-  for(const language of ['en','tl']) {
-    setLanguage(language);
-    for(const role of ['admin','asst_vpaa','lic_director','vpaa']) {
-      const html=renderToStaticMarkup(<Repository user={{...user,role}} syllabi={[
-        {id:91,userId:user.id,status:'approved',courseCode:'OWN101',title:'Own syllabus'},
-        {id:92,userId:999,status:'approved',courseCode:'FAC101',title:'Faculty syllabus'}
-      ]} notify={noop} setHistCode={noop}/>);
-      assert.ok(html.includes('FAC101') && html.includes('OWN101'), role + ': both approved syllabi are listed');
-      for(const code of ['OWN101','FAC101']) {
-        assert.ok(!html.includes(t('ui.open_chat_for_p0_633dd9',{p0:code})), role + ' ' + code + ': no message button');
-        assert.ok(html.includes(t('ui.view_history_for_p0_46396f',{p0:code})), role + ' ' + code + ': history kept');
-      }
-      assert.ok(!html.includes('✉'), role + ': no message icon anywhere in the list');
-    }
-  }
-});
-
 test('CO–PO Mapping has no navigation, dashboard shortcut or login feature for either role and language',()=>{
   assert.ok(navItems.every(([page])=>page!=='mapping'));
   for(const language of ['en','tl']) {

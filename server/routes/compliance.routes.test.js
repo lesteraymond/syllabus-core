@@ -467,6 +467,7 @@ test('a faculty member cannot read, list or re-check another one\'s runs; an adm
   assert.strictEqual(noVersion.status, 409);
   assert.strictEqual(noVersion.body.code, 'no_form');
   assert.strictEqual((await call(fay, 'GET', '/syllabi/999/compliance')).status, 404);
+  db.s.trackStatus = true; // the resubmit below moves it back to submitted, as the real database does
   db.s.syllabi[1].status = 'for_revision'; // a submitted syllabus is locked: it is the one returned for revision that is submitted again
   assert.strictEqual((await call(fay, 'POST', '/syllabi/1/submit', { note: 'Rewrote the grading section.' })).status, 200);
   assert.strictEqual((await call(admin, 'GET', '/syllabi/1/compliance')).body.run, null); // the submit stored the author's run: not an administrator's check
@@ -548,6 +549,7 @@ test('the stored run reads back whole: areas, findings with their rule and step,
 
 test('GET /compliance: an admin sees every submitted syllabus with the administrator\'s own check only, faculty only their own; averages skip unscored ones', () => withServer(async ({ call, db }) => {
   setContent(db, 1, conformingContent());
+  db.s.trackStatus = true; // a resubmit moves a returned syllabus back to submitted, as the real database does
   addSyllabus(db, 2, { user_id: 6, status: 'for_revision', course_code: 'IT 205', content: JSON.stringify(conformingContent()) });
   addSyllabus(db, 3, { user_id: 6, status: 'draft', course_code: 'IT 206', content: JSON.stringify(conformingContent()) });
   addSyllabus(db, 4, { user_id: 5, status: 'draft', course_code: 'IT 207', content: JSON.stringify(F.empty()) }); // checked by its owner as a draft, then submitted below
@@ -977,7 +979,9 @@ test('admin drafts cannot enter AI Checker; completed forms require an explicit 
   assert.strictEqual(check.status,200);await svc.settled();
   assert.strictEqual(db.s.syllabi[1].status,'under_review'); // a check never approves
   const state=db.s.runs[0].ai_status;
-  for (const ai_status of ['pending','failed']) { db.s.runs[0].ai_status=ai_status; assert.strictEqual((await call(admin,'POST','/syllabi/1/publish',{})).status,409); }
+  process.env.SYLLABUS_CHECK_AI_GATE='required'; // the required policy needs a finished AI check (the advisory one: see the next test)
+  try { for (const ai_status of ['pending','failed']) { db.s.runs[0].ai_status=ai_status; assert.strictEqual((await call(admin,'POST','/syllabi/1/publish',{})).status,409); } }
+  finally { delete process.env.SYLLABUS_CHECK_AI_GATE; }
   db.s.runs[0].ai_status=state;
   const newest=await call(admin,'POST','/syllabi/1/compliance/recheck',{force:true});await svc.settled();
   assert.strictEqual((await call(admin,'POST','/syllabi/1/publish',{reviewedRunId:check.body.run.id})).status,409);
@@ -987,7 +991,27 @@ test('admin drafts cannot enter AI Checker; completed forms require an explicit 
   assert.strictEqual(db.s.syllabi[1].status,'under_review');assert.strictEqual(db.s.versions.length,1); // the dean never approves their own syllabus
   assert.deepStrictEqual(db.s.stages.map((r)=>[r.syllabus_id,r.stage,r.reviewer_id]),[[1,'dean',admin.id]]);
   assert.ok(db.s.activity.some((a)=>a.action==='submit'&&/sent syllabus for review/.test(a.notes)));assert.ok(!db.s.activity.some((a)=>a.action==='approve'));
-  assert.strictEqual((await call(admin,'POST','/syllabi/1/publish',{})).status,200);assert.strictEqual(db.s.stages.length,1); // sending again clears the same stage, not another
+  const again=await call(admin,'POST','/syllabi/1/publish',{});
+  assert.strictEqual(again.status,409);assert.strictEqual(again.body.code,'already_sent');assert.strictEqual(db.s.stages.length,1); // sent once: not sent (and announced) again
+  const back=await call(admin,'POST','/syllabi/1/resume-draft',{});
+  assert.strictEqual(back.status,409);assert.strictEqual(back.body.code,'already_sent');assert.strictEqual(db.s.syllabi[1].status,'under_review'); // and not taken back from the reviewers
+}));
+test('the dean sends their own syllabus for review after reading a check when no finished AI check can be required: AI checking off, or an advisory policy with a failed AI step', () => withServer(async ({call,db}) => {
+  for (const mode of ['ai-off','advisory-failed']) {
+    db.s.stages=[];db.s.runs.length=0;db.s.versions.length=0;
+    const draft=JSON.parse(db.s.syllabi[1].content);const course=await require('../lib/courses').loadCourse(db,10);draft.clos=course.clos;Object.assign(draft.meta,{code:course.code,title:course.title,program:course.program.code});
+    Object.assign(db.s.syllabi[1],{content:JSON.stringify(draft),user_id:admin.id,status:'draft'});db.s.people[admin.id]={first_name:'Ann',last_name:'A'};db.s.trackStatus=true;
+    db.s.adminSettings={aiChecking:mode!=='ai-off'};
+    assert.strictEqual((await call(admin,'POST','/syllabi/1/prepare-check',{})).status,200,mode);
+    assert.strictEqual((await call(admin,'POST','/syllabi/1/publish',{})).status,409,mode+': a check comes first');
+    const check=await call(admin,'POST','/syllabi/1/compliance/recheck',{});assert.strictEqual(check.status,200,mode);await svc.settled();
+    db.s.runs[db.s.runs.length-1].ai_status='failed'; // what the engine stores when no AI alignment finished (AI off: not_evaluated); this fake completes it otherwise
+    if (mode==='ai-off') process.env.SYLLABUS_CHECK_AI_GATE='required'; // AI off counts even under the required policy
+    let sent; try { sent=await call(admin,'POST','/syllabi/1/publish',{reviewedRunId:check.body.run.id}); } finally { delete process.env.SYLLABUS_CHECK_AI_GATE; }
+    assert.strictEqual(sent.status,200,mode+': '+JSON.stringify(sent.body));assert.strictEqual(sent.body.status,'under_review');
+    assert.deepStrictEqual(db.s.stages.map((r)=>[r.syllabus_id,r.stage]),[[1,'dean']],mode);
+  }
+  db.s.adminSettings={aiChecking:true};
 }));
 test('incomplete admin forms remain drafts; returning for edits removes the item and invalidates its old check', () => withServer(async ({call,db}) => {
   db.s.syllabi[1].user_id=admin.id;db.s.trackStatus=true;
@@ -1191,4 +1215,14 @@ test('program approvals: each subject\'s first approval (or its last change when
   const r = await call(admin, 'GET', '/compliance/program-approvals');
   assert.strictEqual(r.status, 200);
   assert.deepStrictEqual(r.body.approvals, [{ courseId: 10, approvedAt: new Date(1762560000 * 1000).toISOString() }, { courseId: 11, approvedAt: new Date(1762000000 * 1000).toISOString() }], 'no date at all: left out');
+}));
+
+test('a syllabus sent back for revision or rejected cannot be re-checked by an admin until its author submits again', () => withServer(async ({ call, db }) => {
+  setContent(db, 1, conformingContent());
+  for (const status of ['for_revision', 'rejected']) {
+    db.s.syllabi[1].status = status;
+    const r = await call(admin, 'POST', '/syllabi/1/compliance/recheck', {});
+    assert.strictEqual(r.status, 409);
+    assert.strictEqual(r.body.code, 'returned');
+  }
 }));

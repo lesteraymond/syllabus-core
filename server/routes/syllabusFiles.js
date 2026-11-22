@@ -39,7 +39,7 @@ router.get('/:id/file', requireAuth, async (req, res) => {
     if (!Number.isInteger(id) || id <= 0) throw httpError(404, 'File not found');
     const [rows] = await db.query('SELECT syllabus_id, user_id, status, file_path FROM syllabi WHERE syllabus_id = ?', [id]);
     const syl = rows[0];
-    if (!syl || !rules.canView(req.session.user, syl)) throw httpError(404, 'File not found'); // never reveal it to non-participants
+    if (!syl || !rules.canReadApproved(req.session.user, syl)) throw httpError(404, 'File not found'); // never reveal it to non-participants
 
     let stored = syl.file_path;
     if (req.query.version !== undefined) {

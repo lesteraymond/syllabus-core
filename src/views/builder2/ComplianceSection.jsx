@@ -13,7 +13,7 @@ import InactiveYearNotice, { useInactiveYear } from '../../components/InactiveYe
 // `onRun` tells the builder what the latest run says, so the submit button can say "Submit anyway" when warnings remain.
 // layout="panel" (the AI Checker tab): there is no card. The page draws the check button where it wants it (renderBar gets the state and the actions)
 // and lays the stored result out itself (renderResult): there is no separate report. Any other layout keeps the report inline (the builder's review step).
-export default function ComplianceSection({ syllabusId, saveFirst, canCheck, onOpenStep, onRun, onApplyDraft, syllabusYear, layout = 'inline', subjectLabel = '', renderBar, renderResult }) {
+export default function ComplianceSection({ syllabusId, saveFirst, canCheck, onOpenStep, onRun, onApplyDraft, syllabusYear, layout = 'inline', subjectLabel = '', renderBar, renderResult, hideError = false }) {
   const { run, installed, busy, error, load, check } = useCompliance({ syllabusId, saveFirst });
   const inactiveYear = useInactiveYear(syllabusYear); // another academic year: its saved report stays readable, a new check is not offered
   // True once a recommendation has been applied: the stored result no longer describes the syllabus until it is checked again.
@@ -45,7 +45,7 @@ export default function ComplianceSection({ syllabusId, saveFirst, canCheck, onO
         })}
         {installed && <InactiveYearNotice inactive={inactiveYear} />}
         {!installed && <div className="info-banner warning">{translateUI('hybrid.unavailable')}</div>}
-        {error && <div className="info-banner warning" role="alert">{tr(error)}</div>}
+        {!hideError && error && <div className="info-banner warning" role="alert">{tr(error)}</div>}
         {stale}
         {/* renderResult (optional) lays the stored result out on the page itself. */}
         {renderResult && renderResult({ installed, run, busy, onApplyDraft: apply })}

@@ -110,7 +110,7 @@ router.get('/:id/stages', requireAuth, async (req, res) => {
     const id = parseId(req.params.id);
     const [rows] = await db.query('SELECT syllabus_id, user_id, status FROM syllabi WHERE syllabus_id = ?', [id]);
     const syl = rows[0];
-    if (!syl || !rules.canView(me, syl)) throw httpError(404, 'Syllabus not found');
+    if (!syl || !rules.canReadApproved(me, syl)) throw httpError(404, 'Syllabus not found');
     if (!(await reviewStages.isInstalled(db))) return res.json({ enabled: false });
     const stages = (await reviewStages.stagesOf(db, [id])).get(id);
     res.json({ enabled: true, stages, approved: syl.status === 'approved' ? await reviewStages.approvalOf(db, id) : null });

@@ -62,7 +62,10 @@ router.get('/', requireAuth, async (req, res) => {
     let query = `SELECT s.*, u.first_name, u.last_name, u.avatar_path, c.program_name, co.title AS course_title, pr.code AS program_code FROM syllabi s JOIN users u ON s.user_id = u.user_id LEFT JOIN curriculum c ON s.curriculum_id = c.curriculum_id LEFT JOIN courses co ON co.course_id = s.course_id LEFT JOIN programs pr ON pr.program_id = co.program_id`;
     const params = [];
 
-    if (!rules.isReviewer(req.session.user)) {
+    // The Repository is shared: every role sees every approved syllabus there (the status filter below keeps it approved-only).
+    if (req.query.scope === 'repository') {
+      query += ' WHERE 1 = 1';
+    } else if (!rules.isReviewer(req.session.user)) {
       query += ' WHERE s.user_id = ?';
       params.push(req.session.user.id);
     } else {
@@ -373,7 +376,7 @@ router.get('/:id/versions', requireAuth, async (req, res) => {
     const id = Number(req.params.id);
     if (!Number.isInteger(id) || id <= 0) throw httpError(404, 'Syllabus not found');
     const [syl] = await db.query('SELECT syllabus_id, user_id, status FROM syllabi WHERE syllabus_id = ?', [id]);
-    if (!syl[0] || !rules.canView(req.session.user, syl[0])) throw httpError(404, 'Syllabus not found');
+    if (!syl[0] || !rules.canReadApproved(req.session.user, syl[0])) throw httpError(404, 'Syllabus not found');
 
     const [rows] = await db.query(
       `SELECT v.*, u.first_name, u.last_name

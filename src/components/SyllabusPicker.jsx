@@ -89,7 +89,7 @@ export default function SyllabusPicker({ groups, loading = false, busy = false, 
         </div>
         <div className="pick-actions">
           {onWithoutAi && <StableButton type="button" className="btn outline" disabled={!row || busy || chosen || confirming} onClick={() => setConfirmingId(row.syllabusId)} data-testid="review-without-ai">{translateUI('aiChoice.withoutAi')}</StableButton>}
-          <StableButton type="button" className="btn primary" disabled={!row || !ready || busy || !!row.recordReview || !!inactiveYear} onClick={() => onCheck(row)}>{busy ? translateUI("ui.checking_820d60") : translateUI("ui.check_compliance_342b8f")}</StableButton>
+          <StableButton type="button" className="btn primary" disabled={!row || !ready || busy || !!row.recordReview || !!inactiveYear} onClick={() => onCheck(row)}>{busy && <span className="chk-btn-spin" aria-hidden="true" />}{busy ? translateUI("ui.checking_820d60") : translateUI("ui.check_compliance_342b8f")}</StableButton>
         </div>
       </div>
       {confirming && onWithoutAi && (

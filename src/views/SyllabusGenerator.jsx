@@ -24,8 +24,10 @@ export default function SyllabusGenerator({ user, syllabi = [], editing, setEdit
   const hasDraft = (id) => !!id && drafts.some((d) => d.id === id);
   const [choice, setChoice] = useState(() => (editing && hasDraft(editing.syllabusId) ? 's:' + editing.syllabusId : ''));
   const [doc, setDoc] = useState({ loading: false, error: '', content: null, editable: false, status: 'draft' });
-  const selectedId = choice.startsWith('s:') ? Number(choice.slice(2)) : null;
-  const subject = choice.startsWith('c:') ? unstarted.find((c) => c.id === Number(choice.slice(2))) || null : null;
+  const explicitValid = (choice.startsWith('s:') && hasDraft(Number(choice.slice(2)))) || (choice.startsWith('c:') && unstarted.some((c) => c.id === Number(choice.slice(2))));
+  const effectiveChoice = explicitValid ? choice : subjects === null ? '' : (drafts[0] ? 's:' + drafts[0].id : unstarted[0] ? 'c:' + unstarted[0].id : '');
+  const selectedId = effectiveChoice.startsWith('s:') ? Number(effectiveChoice.slice(2)) : null;
+  const subject = effectiveChoice.startsWith('c:') ? unstarted.find((c) => c.id === Number(effectiveChoice.slice(2))) || null : null;
 
   // The subjects assigned to this person; read again when the list of syllabi changes (a draft was started somewhere else).
   useEffect(() => {
@@ -34,12 +36,10 @@ export default function SyllabusGenerator({ user, syllabi = [], editing, setEdit
     return () => { live = false; };
   }, [syllabi.length, fresh.length]);
 
-  // Always one valid choice: a draft, else a subject with no draft, else nothing.
+  // Keep controlled choice in sync with the derived default once subjects load.
   useEffect(() => {
-    if (subjects === null) return;
-    const valid = (choice.startsWith('s:') && hasDraft(selectedId)) || (choice.startsWith('c:') && !!subject);
-    if (!valid) setChoice(drafts[0] ? 's:' + drafts[0].id : unstarted[0] ? 'c:' + unstarted[0].id : '');
-  }, [subjects, drafts, unstarted, choice]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (subjects !== null && choice !== effectiveChoice) setChoice(effectiveChoice);
+  }, [subjects, choice, effectiveChoice]);
 
   useEffect(() => {
     if (!selectedId) { setDoc({ loading: false, error: '', content: null, editable: false, status: 'draft' }); return undefined; }
@@ -86,7 +86,9 @@ export default function SyllabusGenerator({ user, syllabi = [], editing, setEdit
   return (
     <>
       <PageHead title={translateUI('generate.title')} subtitle={translateUI('generate.pageSubtitle')} />
-      {subjects !== null && drafts.length === 0 && unstarted.length === 0 ? (
+      {subjects === null ? (
+        <div className="empty" role="status" aria-busy="true">{tr('Loading…')}</div>
+      ) : drafts.length === 0 && unstarted.length === 0 ? (
         <div className="empty">
           <div>{translateUI('generate.noSubjects')}</div>
         </div>
@@ -95,7 +97,7 @@ export default function SyllabusGenerator({ user, syllabi = [], editing, setEdit
           <section className="card pick-card pick-compact" aria-label={translateUI('ui.choose_a_syllabus_to_check_b6f6d2')}>
             <div className="pick-field">
               <label htmlFor={uid + '-s'}>{translateUI('ui.subject_8d183d')}</label>
-              <Select id={uid + '-s'} value={choice} onChange={(e) => setChoice(e.target.value)}>
+              <Select id={uid + '-s'} value={effectiveChoice} onChange={(e) => setChoice(e.target.value)}>
                 <option value="">{translateUI('ui.choose_a_subject_554b9c')}</option>
                 {drafts.map((s) => <option key={'s' + s.id} value={'s:' + s.id}>{label(s.courseCode, s.title)}</option>)}
                 {unstarted.map((c) => <option key={'c' + c.id} value={'c:' + c.id}>{label(c.code, c.title) + ' · ' + translateUI('generate.noDraftYet')}</option>)}

@@ -19,6 +19,9 @@ const { namedValues } = require('../values');
 // CLO 3 takes apply, analyze, evaluate and create, and the rules text gives CHED's meaning of each stage. CLO 4 takes the affective levels value,
 // organize and internalize (the AFFECTIVE LEVELS block, how an affective outcome is practised and assessed, worked example I). All in 6: nothing was stored under 6 before.
 const PROMPT_VERSION = 'replan-prompt-6';
+// A syllabus written in Filipino (rules.isFilipinoSubject) is judged with the Filipino block added (JUDGE_SYSTEM_FIL, 2026-11-21) under its own version,
+// so its stored answers are its own; every other syllabus keeps PROMPT_VERSION, its prompt and its stored answers, unchanged.
+const PROMPT_VERSION_FIL = PROMPT_VERSION + '-fil-1';
 // The rewrite prompt's own version. Rewrites are never stored, so it is kept apart from PROMPT_VERSION (part of every stored answer's key): a change
 // to the rewrite prompt does not throw away stored judge answers. 2: keepDistinctFrom (2026-11-15, after the DSP test wrote two near-identical ILOs).
 // 3: mustKeep, the relationships that fit now (2026-11-15, after the DSP re-run's CLO rewrites dropped PO links).
@@ -119,6 +122,20 @@ const REWRITE_SYSTEM = [
   '- Reply in JSON only: {"text":"<the new field text>","explanation":"<one sentence: what changed and why>"}.',
 ].join('\n');
 
+// ---- a syllabus written in Filipino (rules.isFilipinoSubject): the same prompts with a Filipino block added at the end; used for those subjects only ----
+const FILIPINO_TEXT = [
+  'THIS SYLLABUS IS WRITTEN IN FILIPINO (a Filipino-language subject). Judge it in its own language, exactly as an English one; never mark a text "no" or "unclear" because it is in Filipino. A Filipino verb has the Bloom level of its English counterpart:',
+  ...R.BLOOM_ORDER_FIL.map((b, i) => `  ${i + 1}. ${b.level}: ${b.verbs}`),
+  `  affective (CLO 4): ${R.AFFECTIVE_VERBS_FIL}`,
+].join('\n');
+const JUDGE_SYSTEM_FIL = [JUDGE_SYSTEM, '', FILIPINO_TEXT].join('\n');
+const REWRITE_SYSTEM_FIL = [REWRITE_SYSTEM, '', FILIPINO_TEXT,
+  'LANGUAGE OF THE REWRITE: write the new text AND the explanation in formal academic Filipino, never in English; this replaces "in English" in the FIELD FORMAT. Outcomes still open with ONE measurable Filipino verb from the list above (for example Natutukoy, Nasusuri, Nakabubuo). Core values keep their exact names. Use English only for a proper name or a technical term with no common Filipino word.',
+].join('\n');
+const isFilipinoCourse = course => !!course && R.isFilipinoSubject(course.title, course.code);
+// The prompt version of a check: its own for a Filipino syllabus (its stored answers are kept apart), PROMPT_VERSION for every other one.
+const promptVersionFor = course => (isFilipinoCourse(course) ? PROMPT_VERSION_FIL : PROMPT_VERSION);
+
 const ANSWER_SCHEMA = {
   type: 'object', additionalProperties: false, required: ['answers'],
   properties: { answers: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['q', 'items', 'quote', 'explanation'],
@@ -165,10 +182,11 @@ function judgeMessage(request, context = null) {
   for (const q of request.questions) for (const t of q.to) if (t.text.length >= SHARED_MIN && !inContext(context, t)) uses.set(t.text, (uses.get(t.text) || 0) + 1);
   const shared = {}, idOf = new Map();
   for (const [text, n] of uses) if (n > 1) { const id = 'S' + (idOf.size + 1); idOf.set(text, id); shared[id] = text; }
+  const judgeSystem = isFilipinoCourse(request.course) ? JUDGE_SYSTEM_FIL : JUDGE_SYSTEM;
   const against = t => (inContext(context, t) ? { kind: t.field, label: t.label, inContext: true }
     : { kind: t.field, label: t.label, ...(idOf.has(t.text) ? { sharedText: idOf.get(t.text) } : { text: t.text }) });
   return {
-    promptVersion: PROMPT_VERSION, system: context ? [JUDGE_SYSTEM, context.text] : JUDGE_SYSTEM, schema: ANSWER_SCHEMA,
+    promptVersion: promptVersionFor(request.course), system: context ? [judgeSystem, context.text] : judgeSystem, schema: ANSWER_SCHEMA,
     user: JSON.stringify({
       course: request.course,
       ...(idOf.size ? { shared } : {}),
@@ -230,7 +248,7 @@ function validateAnswers(request, raw) {
 // ---- rewrite ----
 function rewriteMessage(job) {
   return {
-    promptVersion: PROMPT_VERSION, system: REWRITE_SYSTEM, schema: REWRITE_SCHEMA,
+    promptVersion: promptVersionFor(job.course), system: isFilipinoCourse(job.course) ? REWRITE_SYSTEM_FIL : REWRITE_SYSTEM, schema: REWRITE_SCHEMA,
     user: JSON.stringify({
       course: job.course,
       field: { kind: job.field, label: job.label, text: job.text },
@@ -269,4 +287,4 @@ function validateRewrite(job, raw) {
   return { text, explanation: clean(body.explanation) };
 }
 
-module.exports = { PROMPT_VERSION, RULES_TEXT, RULES_FOR_REWRITE, JUDGE_SYSTEM, REWRITE_SYSTEM, ANSWER_SCHEMA, REWRITE_SCHEMA, judgeMessage, syllabusContext, validateAnswers, rewriteMessage, validateRewrite, nearCopy, REWRITE_VERSION, MAX_REWRITE };
+module.exports = { PROMPT_VERSION, PROMPT_VERSION_FIL, JUDGE_SYSTEM_FIL, REWRITE_SYSTEM_FIL, isFilipinoCourse, promptVersionFor,RULES_TEXT, RULES_FOR_REWRITE, JUDGE_SYSTEM, REWRITE_SYSTEM, ANSWER_SCHEMA, REWRITE_SCHEMA, judgeMessage, syllabusContext, validateAnswers, rewriteMessage, validateRewrite, nearCopy, REWRITE_VERSION, MAX_REWRITE };

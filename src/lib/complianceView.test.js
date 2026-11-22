@@ -183,7 +183,9 @@ test('an approved syllabus is locked: it cannot be checked again, whatever else 
 
 test('the checker queue is the unchecked syllabi that are not approved, uploaded files included', () => {
   assert.strictEqual(needsCheck({ status: 'submitted', run: null, checkable: true }), true);
-  assert.strictEqual(needsCheck({ status: 'for_revision', run: null, checkable: false }), true); // an uploaded file waits too
+  assert.strictEqual(needsCheck({ status: 'under_review', run: null, checkable: false }), true); // an uploaded file waits too
+  assert.strictEqual(needsCheck({ status: 'for_revision', run: { id: 1, stale: true } }), false); // sent back: waits for the faculty member to resubmit
+  assert.strictEqual(needsCheck({ status: 'rejected', run: null }), false);
   assert.strictEqual(needsCheck({ status: 'submitted', run: { id: 1, stale: false } }), false); // checked once: it is in the history
   assert.strictEqual(needsCheck({ status: 'submitted', run: { id: 1, stale: true } }), true); // a new version was submitted since: it needs a new check
   assert.strictEqual(needsCheck({ status: 'approved', run: null }), false); // approved: in the Repository

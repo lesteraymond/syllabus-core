@@ -5,7 +5,7 @@
 const crypto = require('node:crypto');
 const { examLike, weeksIn, ORIENTATION } = require('../planrows');
 const { namedValues } = require('../values');
-const { CLO_LEVELS } = require('./rules');
+const { CLO_LEVELS, BLOOM_ORDER_FIL, AFFECTIVE_VERBS_FIL } = require('./rules');
 
 const clean = text => String(text ?? '').replace(/\s+/g, ' ').trim();
 const fingerprint = text => crypto.createHash('sha256').update(clean(text).toLowerCase()).digest('hex').slice(0, 16);
@@ -155,20 +155,30 @@ const OUTCOME_VERBS = new Set(`
 `.split(/\s+/).filter(Boolean));
 // The words before the main verb that are not part of it: "Students will be able to", "The learner will", "Be able to".
 const PREAMBLE = /^(?:(?:at the end of [^,]*,\s*)?(?:the\s+)?(?:students?|learners?)\s+(?:will|should|shall|must|can)\s+(?:be\s+able\s+to\s+)?|(?:be\s+)?able\s+to\s+)/i;
-function leadingVerbs(text) {
-  const body = clean(text).replace(PREAMBLE, '');
-  const words = body.toLowerCase().match(/[a-z]+|[,/&]/g) || [];
-  if (!words.length || !OUTCOME_VERBS.has(words[0])) return [];
+// The verbs after the first one: a joiner (",", "and", "or", "/", "&", "and/or"), then another verb on the list; anything else ends the list.
+function joinedVerbs(words, verbSet, joiners) {
+  if (!words.length || !verbSet.has(words[0])) return [];
   const verbs = [words[0]];
-  // after the first verb: a joiner (",", "and", "or", "/", "&", "and/or"), then another verb; anything else ends the list
   for (let i = 1; i < words.length;) {
     let j = i, joined = false;
-    while (j < words.length && [',', 'and', 'or', '/', '&'].includes(words[j])) { j++; joined = true; }
-    if (!joined || j >= words.length || !OUTCOME_VERBS.has(words[j])) break;
+    while (j < words.length && joiners.includes(words[j])) { j++; joined = true; }
+    if (!joined || j >= words.length || !verbSet.has(words[j])) break;
     verbs.push(words[j]);
     i = j + 1;
   }
   return verbs;
 }
+// An outcome written in Filipino (a Filipino-language subject): its own verb list (rules.BLOOM_ORDER_FIL, rules.AFFECTIVE_VERBS_FIL), its own preamble
+// ("Sa pagtatapos ng kurso, ang mga mag-aaral ay inaasahang ...") and its own joiners ("at", "o"). It is tried only when the English reading finds no
+// verb, so every English outcome is read exactly as before.
+const FILIPINO_VERBS = new Set([...BLOOM_ORDER_FIL.flatMap(b => b.verbs.split(/,\s*/)), ...AFFECTIVE_VERBS_FIL.split(/,\s*/)]);
+const PREAMBLE_FIL = /^(?:sa\s+pagtatapos\s+ng\s+[^,]*,\s*)?(?:ang\s+)?(?:mga\s+)?(?:mag-aaral|estudyante)\s+(?:ay\s+)?(?:inaasahang\s+|inaasahan\s+na\s+|dapat\s+na\s+)?/i;
+function leadingVerbs(text) {
+  const body = clean(text).replace(PREAMBLE, '');
+  const english = joinedVerbs(body.toLowerCase().match(/[a-z]+|[,/&]/g) || [], OUTCOME_VERBS, [',', 'and', 'or', '/', '&']);
+  if (english.length) return english;
+  // a hyphenated Filipino word stays whole ("naiisa-isa", "mabigyang-kahulugan")
+  return joinedVerbs(clean(text).replace(PREAMBLE_FIL, '').toLowerCase().match(/[a-zñ]+(?:-[a-zñ]+)*|[,/&]/g) || [], FILIPINO_VERBS, [',', 'at', 'o', '/', '&']);
+}
 
-module.exports = { extract, uniqueIds, itemsOf, fingerprint, clean, nearCopy, leadingVerbs, OUTCOME_VERBS };
+module.exports = { extract, uniqueIds, itemsOf, fingerprint, clean, nearCopy, leadingVerbs, OUTCOME_VERBS, FILIPINO_VERBS };

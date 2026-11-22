@@ -64,8 +64,8 @@ test('the academic-year stamp alone neither invents "None" nor locks the pre-req
   const typed = emptyDraft(newId); typed.meta.prereq = 'ZZ 100 - Prerequisite';
   assert.equal(applyCourse(typed, course(stampOnly)).meta.prereq, 'ZZ 100 - Prerequisite');
   const setUpNone = { ...stampOnly, semester: '1st Semester', yearLevel: 1 };
-  assert.equal(subjectSetUp(setUpNone), true); assert.equal(prerequisiteOf(setUpNone), 'None'); assert.equal(lockedFields(setUpNone).prereq, true);
-  assert.equal(applyCourse(typed, course(setUpNone)).meta.prereq, 'None');
+  assert.equal(subjectSetUp(setUpNone), true); assert.equal(prerequisiteOf(setUpNone), ''); assert.equal(lockedFields(setUpNone).prereq, true);
+  assert.equal(applyCourse(typed, course(setUpNone)).meta.prereq, '');
   assert.equal(prerequisiteOf({ ...setUpNone, prerequisite: 'IT 101' }), 'IT 101');
 });
 

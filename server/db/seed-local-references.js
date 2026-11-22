@@ -24,7 +24,7 @@ function validateData(data = programs) {
     for (const term of p.terms) {
       assert.equal(term.rows.reduce((sum, c) => sum + c.lecture + c.lab, 0), term.totalUnits, `${p.code}: term credit total`);
       for (const c of term.rows) {
-        assert.ok(c.code && c.title && c.prereq && c.sourceFile, `${p.code}: incomplete row`);
+        assert.ok(c.code && c.title && typeof c.prereq === 'string' && c.sourceFile, `${p.code}: incomplete row`);
         assert.ok([c.lecture, c.lab, c.lectureHours, c.labHours].every(n => Number.isFinite(n) && n >= 0));
         assert.ok(c.yearLevel >= 1 && c.yearLevel <= 4);
       }
