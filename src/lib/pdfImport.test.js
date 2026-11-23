@@ -224,3 +224,25 @@ test('surnames of several words and organisation authors start a new reference; 
     'World Health Organization. (2019). Three. Pearson Education.',
   ]);
 });
+test('a plan outcome column that lists CLOs line by line maps each line to its own CLO', () => {
+  const clos = 'CLO1: Demonstrate the use of a Java development kit.\nCLO2: Design a Java Swing application.\nCLO4: Create Java applets that use GUI components.';
+  const row = { week: '2', ilo: 'CLO1: Demonstrate the use of a Java development kit\nCLO2: Understand object-oriented programming concepts\nCLO4: Create Java applets that use\nGUI components.', contents: 'Lesson', activities: 'Lab', tasks: 'Quiz', values: 'Care' };
+  let n = 0;
+  const result = mapPdfFields({ clos }, emptyDraft(), () => `t${++n}`, { planRows: [row] });
+  const titleOf = tag => result.content.clos.find(c => `clo:${c.id}` === tag).title;
+  const ilos = result.content.plan[0].ilos;
+  assert.deepEqual(ilos.map(i => i.text), ['Demonstrate the use of a Java development kit', 'Understand object-oriented programming concepts', 'Create Java applets that use\nGUI components.']);
+  assert.deepEqual(ilos.map(i => i.tags.map(titleOf)), [['CLO 1'], ['CLO 2'], ['CLO 4']]);
+  // Only the line worded differently from its CLO in section VI is flagged.
+  assert.deepEqual(result.warnings.filter(w => w.key === 'pdfImport.iloMappingReview').map(w => w.values.outcome), [2]);
+  const annotated = mapPdfFields({ clos }, emptyDraft(), () => `u${++n}`, { planRows: [{ ...row, ilo: 'ILO1: Analyze a program.\nCLO 1.' }] }).content.plan[0].ilos;
+  assert.equal(annotated.length, 1, 'a bare "CLO 1." line annotates the outcome above it');
+  assert.equal(annotated[0].tags.length, 1);
+});
+test('a surname followed by initials without a comma starts a new reference', () => {
+  const refs = 'D. JOURNALS\nKok, A. J. et. Al., (2024). Analysis of a Java exercise repository. Informatics\nin Education.\nPark J. et. Al., (2023). Static Analysis of JNI Programs. IEEE.\nhttps://doi.org/10.1109/tse.2023.3241639';
+  assert.deepEqual(mapOnly({ refs }).content.refs.online.items.map(i => i.t), [
+    'Kok, A. J. et. Al., (2024). Analysis of a Java exercise repository. Informatics in Education.',
+    'Park J. et. Al., (2023). Static Analysis of JNI Programs. IEEE. https://doi.org/10.1109/tse.2023.3241639',
+  ]);
+});

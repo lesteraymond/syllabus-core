@@ -100,7 +100,8 @@ const yearQuery = (year, joiner = '?') => (year ? `${joiner}year=${encodeURIComp
 async function postPdf(path, file) {
   const body = new FormData(); body.append('file', file);
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 150000);
+  // A scanned syllabus is OCR'd page by page on the server (up to 9 minutes, server/lib/pdfImport.js MAX_MS); wait a little longer than that.
+  const timeout = setTimeout(() => controller.abort(), 10 * 60 * 1000);
   try {
     const res = await fetch(`${API}${path}`, { method: 'POST', credentials: 'include', headers: authHeaders(), body, signal: controller.signal });
     const data = await res.json().catch(() => ({}));

@@ -69,3 +69,7 @@ test('extract returns existingSyllabus for an editable draft and refuses a locke
     assert.equal(r.body.code, 'syllabus_exists');
   });
 });
+test('extract finds the subject when the PDF writes its title differently (& for and, II for 2)', async t => {
+  await withServer(t, { fields: { code: 'IT-204', title: 'Programming II', program: 'bsit' } }, async call => assert.equal((await call()).body.subject.id, 26));
+  await withServer(t, { fields: { code: 'MA 7', title: 'Differential & Integral Calculus' } }, async call => assert.equal((await call()).body.error, 'pdfImport.subjectNotFound'));
+});

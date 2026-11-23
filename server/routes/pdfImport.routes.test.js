@@ -90,3 +90,27 @@ test('feature switch, assignment refusal and per-user import limits are enforced
   for (let i = 0; i < 5; i++) assert.equal((await call()).status, 200);
   assert.equal((await call()).status, 429);
 }));
+test('different people import at the same time up to the server limit; one person runs one import', t => withServer(t, async ({ call }) => {
+  const old = process.env.SYLLABUS_PDF_IMPORT_CONCURRENCY;
+  process.env.SYLLABUS_PDF_IMPORT_CONCURRENCY = '2';
+  let release, running = 0;
+  const waiting = new Promise(resolve => { release = resolve; });
+  t.mock.method(importer, 'extractPdf', async () => { running++; await waiting; return { fields: {}, pages: [], requiresReview: true }; });
+  const until = async count => { while (running < count) await new Promise(resolve => setTimeout(resolve, 5)); };
+  try {
+    const first = call({ id: 5, role: 'faculty' });
+    await until(1);
+    assert.equal((await call({ id: 5, role: 'faculty' })).body.error, 'pdfImport.busy', 'the same person cannot start a second import');
+    // Another person's import runs alongside the first (the extract endpoint needs no draft of theirs).
+    const other = call({ id: 7, role: 'admin' }, true, '/pdf-import/extract');
+    await until(2);
+    assert.equal((await call({ id: 8, role: 'admin' }, true, '/pdf-import/extract')).body.error, 'pdfImport.busy', 'every slot is taken');
+    release();
+    assert.equal((await first).status, 200);
+    assert.notEqual((await other).body.error, 'pdfImport.busy');
+    assert.equal(running, 2);
+  } finally {
+    release();
+    if (old === undefined) delete process.env.SYLLABUS_PDF_IMPORT_CONCURRENCY; else process.env.SYLLABUS_PDF_IMPORT_CONCURRENCY = old;
+  }
+}));

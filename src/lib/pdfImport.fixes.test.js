@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { mapPdfFields, preparePdfImport } from './pdfImport.js';
+import { titleMatches } from './pdfImportReview.js';
 const require = createRequire(import.meta.url);
 const { extractPdf } = require('../../server/lib/pdfImport');
 const read = async file => JSON.parse(await fs.readFile(new URL(`../../docs/lcup-approved-offline/${file}`, import.meta.url)));
@@ -102,4 +103,10 @@ test('a subject code spelled with a space matches the curriculum spelling with a
   assert.doesNotThrow(()=>apply(f,d,{identityContext:c}));
   const other=context(d);other.curricula[0].courses=[{code:'IT-205',title:'COMPUTER PROGRAMMING 2(INTERMEDIATE PROGRAMMING)'}];
   assert.throws(()=>apply(f,d,{identityContext:other}),/selectMatchingSubject/);
+});
+test('course titles match across "&"/"and", roman/arabic numerals and an optional trailing note, but not two different notes', () => {
+  for (const [a, b] of [['Data Structures & Algorithms', 'DATA STRUCTURES AND ALGORITHMS'], ['Physics II', 'Physics 2'], ['Computer Programming 2', 'COMPUTER PROGRAMMING II (INTERMEDIATE PROGRAMMING)'], ['Physics 1 (Lecture)', 'Physics I']])
+    assert.equal(titleMatches(a, b), true, `${a} = ${b}`);
+  for (const [a, b] of [['Physics (Lecture)', 'Physics (Laboratory)'], ['Physics 2', 'Physics 3'], ['', '']])
+    assert.equal(titleMatches(a, b), false, `${a} != ${b}`);
 });

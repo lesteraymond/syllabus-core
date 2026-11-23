@@ -1,6 +1,6 @@
 // Conservative PDF-to-builder mapping. No provider, scoring, or persistence here.
 // Text that cannot be mapped safely remains in the review preview with a warning.
-import { importIdentity, outcomeReferences, iloChunks, prerequisiteReview } from './pdfImportReview.js';
+import { importIdentity, outcomeReferences, iloChunks, prerequisiteReview, titleMatches } from './pdfImportReview.js';
 export const PDF_FIELDS = ['code', 'title', 'description', 'prereq', 'credits', 'clos', 'plan', 'reqs', 'refs', 'grading'];
 export const PDF_OUTCOME_FIELDS = ['vision', 'mission', 'egas', 'pos'];
 // Words inside a title may be separated by any run of spaces or a tab (text layers and OCR both produce these).
@@ -49,12 +49,14 @@ function parsePoEntries(text) {
   return labelled(raw, 'PO');
 }
 // A line that opens a new citation: "Proakis, J.", a surname of several words with a year later on the line
-// ("Dela Cruz, J. (2021)", "Gomes de Sousa, D., ... (2025)"), or an organisation author ("World Health Organization. (2019)").
+// ("Dela Cruz, J. (2021)", "Gomes de Sousa, D., ... (2025)"), a surname followed by initials without a comma
+// ("Park J. et. Al., (2023)", with a year later on the line), or an organisation author ("World Health Organization. (2019)").
 const SURNAME = "[A-Z][\\p{L}'’-]+";
 const YEAR = '\\(\\s*(?:\\d{4}[a-z]?|n\\.\\s?d\\.)\\s*\\)';
 const CITATION_START = [
   new RegExp(`^${SURNAME},\\s*[A-Z]`, 'u'),
   new RegExp(`^${SURNAME}(?:\\s+(?:[a-z]{1,3}\\s+)*${SURNAME}){1,2},\\s*[A-Z](?=.*${YEAR})`, 'u'),
+  new RegExp(`^${SURNAME}\\s+[A-Z]\\.(?:\\s*[A-Z]\\.)*(?=.*${YEAR})`, 'u'),
   new RegExp(`^[A-Z][\\p{L}&'’ -]{2,80}?\\.?\\s*${YEAR}`, 'u'),
 ];
 function referenceGroups(text, item) {
@@ -97,16 +99,19 @@ export function parseCreditUnits(source) {
 const OUTCOME_STOP = new Set(['the', 'and', 'for', 'with', 'using', 'that', 'into', 'from', 'both', 'other', 'their', 'need', 'needed', 'appropriate', 'ega']);
 const outcomeWords = s => new Set(String(s || '').toLowerCase().replace(/\(\s*ega[^)]*\)/g, ' ').replace(/[^a-z0-9]+/g, ' ').split(' ')
   .filter(w => w.length > 2 && !OUTCOME_STOP.has(w)).map(w => w.replace(/(?:ing|ed|es|s)$/, '')));
+// Share of meaningful words two outcome statements have in common (0 to 1).
+function sameWording(a, b) {
+  const A = outcomeWords(a), B = outcomeWords(b);
+  let shared = 0; for (const w of A) if (B.has(w)) shared++;
+  return A.size && B.size ? (2 * shared) / (A.size + B.size) : 0;
+}
 export function matchOutcomes(pdfList, programList, textOf) {
   const map = new Map();
   if (!pdfList.length) { for (const p of programList) map.set(p.no, p.no); return map; }
   const pairs = [];
   for (const a of pdfList) {
-    const A = outcomeWords(textOf(a));
     for (const b of programList) {
-      const B = outcomeWords(textOf(b));
-      let shared = 0; for (const w of A) if (B.has(w)) shared++;
-      const score = A.size && B.size ? (2 * shared) / (A.size + B.size) : 0;
+      const score = sameWording(textOf(a), textOf(b));
       if (score >= 0.5) pairs.push({ a: a.no, b: b.no, score });
     }
   }
@@ -145,12 +150,11 @@ export function mapPdfFields(fields, draft, makeId, { planRows = null, identityC
   }
   next.outcomes = outcomes;
   // Course identity remains controlled by the selected subject and its normal save API.
-  const normalize = s => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
   const identity = importIdentity(fields, draft.meta, identityContext, requireIdentity);
   if (!fields.program && identityContext) warnings.push({ key: 'pdfImport.programReview', values: { program: draft.meta.program } });
   const mismatch = !identity.ok;
   if (mismatch) warnings.push({ key: 'pdfImport.identityMismatch', values: { code: fields.code?.trim() || '', selected: draft.meta.code } });
-  if (fields.title?.trim() && normalize(fields.title) !== normalize(draft.meta.title)) warnings.push({ key: 'pdfImport.titleMismatch', values: {} });
+  if (fields.title?.trim() && !titleMatches(fields.title, draft.meta.title)) warnings.push({ key: 'pdfImport.titleMismatch', values: {} });
   const prerequisite = prerequisiteReview(fields, draft.meta, prerequisiteChoice);
   // IV. Pre-requisite is the one section an upload may leave empty. An empty one is imported as "None" (the checker no longer requires a value).
   next.meta.prereq = String(prerequisite.value ?? '').trim() ? prerequisite.value : 'None';
@@ -222,14 +226,17 @@ export function mapPdfFields(fields, draft, makeId, { planRows = null, identityC
     const { week, ilo, contents, activities, tasks, values } = row;
     const kind = row.kind || (/EXAMINATION|\bEXAM\b/i.test(contents) ? 'exam' : 'lesson');
     const chunks = kind === 'exam' ? [{ text: ilo || '', ambiguous: false }] : iloChunks(ilo);
-    const ilos = chunks.map(({ text, ambiguous }, index) => {
+    const ilos = chunks.map(({ text, ambiguous, clo }, index) => {
       const refs = outcomeReferences(text, 'CLO'), targets = refs.values;
       const unknown = targets.filter(n => !sourceCloNumbers.includes(n));
       if (unknown.length || refs.invalid.length) unresolvedMappings.push({ week, label: 'CLO', unknown, invalid: refs.invalid, source: text });
       const tags = targets.map(no => clos[sourceCloNumbers.indexOf(no)]).filter(Boolean).map(c => `clo:${c.id}`);
-      if (kind !== 'exam' && (ambiguous || !tags.length)) warnings.push({ key: 'pdfImport.iloMappingReview', values: { week, outcome: index + 1 } });
-      // Remove only explicit CLO annotations; source wording is otherwise intact.
-      const statement = text.replace(/[[(]\s*CLO\s*\d[^\])]*[)\]]/gi, '').replace(/\bCLO\s*\d+(?:\s*[-–—,;.]\s*\d+)*/gi, '').trim();
+      // Remove only explicit CLO annotations (and a leading "CLO4:" label with its punctuation); source wording is otherwise intact.
+      const statement = text.replace(/^CLO\s*\d+\s*[:.]\s*/i, '').replace(/[[(]\s*CLO\s*\d[^\])]*[)\]]/gi, '').replace(/\bCLO\s*\d+(?:\s*[-–—,;.]\s*\d+)*/gi, '').trim();
+      // A plan line that names a CLO by number but words it differently from that CLO in section VI may point at the wrong one.
+      const named = clo != null ? clos[sourceCloNumbers.indexOf(clo)] : null;
+      const reworded = !!named && sameWording(statement, named.statement) < 0.5;
+      if (kind !== 'exam' && (ambiguous || !tags.length || reworded)) warnings.push({ key: 'pdfImport.iloMappingReview', values: { week, outcome: index + 1 } });
       return { id: id(), text: statement, tags: [...new Set(tags)] };
     });
     plan.push({ id: id(), week: week.replace(/^weeks?\s*/i, ''), kind,

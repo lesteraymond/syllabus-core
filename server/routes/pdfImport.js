@@ -1,5 +1,7 @@
 const express = require('express');
 const multer = require('multer');
+const path = require('node:path');
+const { pathToFileURL } = require('node:url');
 const { requireAuth } = require('../middleware/auth');
 const { httpError, sendError } = require('../lib/http');
 const rules = require('../lib/syllabusRules');
@@ -11,7 +13,10 @@ const identity = require('../lib/pdfImportIdentity');
 const academicYear = require('../lib/academicYear');
 const router = express.Router();
 const limiter = createLimiter({ max: 5, windowMs: 10 * 60 * 1000 });
-const active = new WeakSet();
+// Imports running now, per app: { users: Set of person ids }. Each person runs one import at a time; the server runs
+// up to SYLLABUS_PDF_IMPORT_CONCURRENCY (default 2, at most 8) at once, each in its own worker thread.
+const active = new WeakMap();
+const concurrency = () => Math.min(8, Math.max(1, Number.parseInt(process.env.SYLLABUS_PDF_IMPORT_CONCURRENCY, 10) || 2));
 const enabled = () => process.env.SYLLABUS_PDF_IMPORT !== 'off';
 const upload = multer({ storage: multer.memoryStorage(), limits: { files: 1, fileSize: importer.MAX_BYTES, fields: 0 } }).single('file');
 const RECEIVE_MS = 30 * 1000;
@@ -24,25 +29,29 @@ function receive(req, res) {
     upload(req, res, error => { clearTimeout(timer); if (error) reject(uploadError(error)); else resolve(); });
   });
 }
-// Once a valid PDF is in memory: refuse while another import runs, then use one of this person's rate-limit slots, then hold the
-// extraction slot. Returns the release function.
+// Once a valid PDF is in memory: refuse while this person already has an import running or every extraction slot is taken,
+// then use one of this person's rate-limit slots, then hold a slot. Returns the release function.
 function claim(req, res, me) {
-  if (active.has(req.app)) throw httpError(409, 'pdfImport.busy');
-  const slot = limiter.take(String(me.id));
+  if (!active.has(req.app)) active.set(req.app, { users: new Set() });
+  const running = active.get(req.app), user = String(me.id);
+  if (running.users.has(user) || running.users.size >= concurrency()) throw httpError(409, 'pdfImport.busy');
+  const slot = limiter.take(user);
   if (!slot.ok) { res.set('Retry-After', String(slot.retryAfterSec)); throw httpError(429, 'pdfImport.rateLimit'); }
-  active.add(req.app);
-  return () => active.delete(req.app);
+  running.users.add(user);
+  return () => running.users.delete(user);
 }
 router.get('/pdf-import/config', requireAuth, (req, res) => res.json({ enabled: enabled(), maxBytes: importer.MAX_BYTES, maxPages: 30 }));
 const codeKey = value => String(value ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '');
-// Same comparison the form uses at Apply (src/lib/pdfImportReview.js): case and punctuation ignored, a trailing "(...)" on the catalog title optional.
-const titleKey = value => String(value ?? '').normalize('NFKC').toUpperCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
-const titleMatches = (a, b) => !!titleKey(a) && (titleKey(a) === titleKey(b) || titleKey(a) === titleKey(String(b ?? '').replace(/\s*\([^()]+\)\s*$/, '')));
+// The very comparison the form uses at Apply, loaded from src/lib/pdfImportReview.js, so a subject found here is never
+// refused at Apply for its title (case, punctuation, "&"/"and", "II"/"2", a trailing "(...)").
+let review;
+const titleMatcher = async () => (review ??= import(pathToFileURL(path.resolve(__dirname, '../../src/lib/pdfImportReview.js')).href)).then(module => module.titleMatches);
 // Subjects the PDF's own course code AND title point at (one code can belong to different subjects in different programs), limited to what this person may write:
 // faculty only their assigned subjects, nobody a subject of a past academic year.
 async function subjectsForCode(db, me, fields) {
   const key = codeKey(fields.code);
   if (!key || !String(fields.title ?? '').trim()) return [];
+  const titleMatches = await titleMatcher();
   const [rows] = await db.query('SELECT c.course_id, c.code, c.title, p.code AS program_code FROM courses c JOIN programs p ON p.program_id = c.program_id');
   const past = await academicYear.pastCourseIds(db);
   const assigned = me.role === 'admin' ? null : new Set((await assignments.loadAssignments(db, me.id)).courseIds);
@@ -54,6 +63,7 @@ async function existsUnassigned(db, me, fields) {
   if (me.role === 'admin') return false;
   const key = codeKey(fields.code);
   if (!key || !String(fields.title ?? '').trim()) return false;
+  const titleMatches = await titleMatcher();
   const [rows] = await db.query('SELECT c.course_id, c.code, c.title FROM courses c');
   const past = await academicYear.pastCourseIds(db);
   return rows.some(r => codeKey(r.code) === key && titleMatches(fields.title, r.title) && !past.has(r.course_id));
