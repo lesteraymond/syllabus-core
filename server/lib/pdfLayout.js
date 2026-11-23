@@ -84,11 +84,51 @@ function headerOf(cells) {
   if (cells.length === 2 && labels.includes('VISION') && labels.includes('MISSION')) return { kind: 'institution', keys: { vision: labels.indexOf('VISION'), mission: labels.indexOf('MISSION') } };
   return null;
 }
+const isWeek = week => /^\d+(?:[-,]\d+)*$/.test(week);
+const PLAN_TEXT = ['ilo', 'contents', 'activities', 'tasks', 'values'];
+// Plan bands are collected first and joined afterwards, because a band without a week number means different things by position:
+// - the first plan band on a page continues the last week of the previous page;
+// - the last band on a page, below a finished week, is the top of the next week when that week's number is printed on the
+//   next page (the cell was split by the page break with its label on the lower half).
+function joinPlanBands(bands, warnings) {
+  const planRows = [];
+  let pending = null;
+  const appendTo = (target, part, page) => {
+    for (const key of PLAN_TEXT) if (part[key]) target[key] += (target[key] ? '\n' : '') + part[key];
+    if (!target.sourcePages.includes(page)) target.sourcePages.push(page);
+  };
+  for (let i = 0; i < bands.length; i++) {
+    const { row, week, exam, page, n, last } = bands[i];
+    if (isWeek(week)) {
+      const next = { ...row, week, kind: row.kind || 'lesson', sourcePages: [page] };
+      if (pending) {
+        for (const key of PLAN_TEXT) next[key] = [pending[key], next[key]].filter(Boolean).join('\n');
+        next.sourcePages = [...new Set([...pending.sourcePages, page])].sort((a, b) => a - b);
+        pending = null;
+      }
+      planRows.push(next);
+      continue;
+    }
+    if (week || exam) { warnings.push({ page, code: 'ambiguous_plan_row', observedWeek: row.week }); continue; }
+    const following = bands[i + 1];
+    if (n > 0 && last && following && following.page !== page && following.n === 0 && isWeek(following.week)) {
+      pending = { ...Object.fromEntries(PLAN_TEXT.map(key => [key, row[key] || ''])), sourcePages: [page] };
+    } else if (pending) appendTo(pending, row, page);
+    else if (planRows.length) appendTo(planRows.at(-1), row, page);
+    else warnings.push({ page, code: 'ambiguous_plan_row', observedWeek: row.week });
+  }
+  if (pending) {
+    if (planRows.length) { const previous = planRows.at(-1); appendTo(previous, pending, pending.sourcePages[0]); previous.sourcePages = [...new Set([...previous.sourcePages, ...pending.sourcePages])]; }
+    else warnings.push({ page: pending.sourcePages[0], code: 'ambiguous_plan_row', observedWeek: '' });
+  }
+  return planRows;
+}
 function recoverTables(pages) {
-  const fields = {}, planRows = [], warnings = [];
+  const fields = {}, warnings = [], planBands = [];
   let table = null;
   for (const page of pages) {
-    const stops = textLines(page.items, true).filter(item => /^(?:VIII|IX|X)\s*[.):]?\s*(?:COURSE REQUIREMENTS|REFERENCES|GRADING SYSTEM)/i.test(item.text.trim()));
+    let planBandsOnPage = 0;
+    const stops = textLines(page.items, true).filter(item => /^(?:VIII|IX|X)\s*[.):]?\s*(?:COURSE\s+REQUIREMENTS|(?:SUGGESTED\s+)?REFERENCES|GRADING\s+SYSTEM)/i.test(item.text.trim()));
     for (const band of tableBands(page)) {
       if (stops.some(item => item.y < band.top)) table = null;
       if (band.xs.length === 2 && band.bottom - band.top < page.height * .9 && stops.some(item => item.y >= band.top && item.y < band.bottom)) { table = null; continue; }
@@ -108,15 +148,11 @@ function recoverTables(pages) {
       const week = row.week.replace(/^weeks?\s*/i, '').replace(/\s/g, '').replace(/[–—]/g, '-');
       const exam = /^(?:PRELIM(?:INARY)?|MIDTERM|FINALS?)\s+EXAM(?:INATION)?S?$/i.test(row.contents.trim());
       if (exam) row.kind = 'exam';
-      if (/^\d+(?:[-,]\d+)*$/.test(week)) {
-        planRows.push({ ...row, week, kind: row.kind || 'lesson', sourcePages: [page.number] });
-      } else if (!week && planRows.length && !exam) {
-        const previous = planRows.at(-1);
-        for (const key of ['ilo', 'contents', 'activities', 'tasks', 'values']) if (row[key]) previous[key] += (previous[key] ? '\n' : '') + row[key];
-        if (!previous.sourcePages.includes(page.number)) previous.sourcePages.push(page.number);
-      } else warnings.push({ page: page.number, code: 'ambiguous_plan_row', observedWeek: row.week });
+      planBands.push({ row, week, exam, page: page.number, n: planBandsOnPage++, last: false });
     }
+    if (planBandsOnPage) planBands.at(-1).last = true;
   }
+  const planRows = joinPlanBands(planBands, warnings);
   return { fields, planRows, warnings };
 }
 module.exports = { textLines, paragraphs, tableBands, recoverTables };

@@ -3,17 +3,23 @@
 import { importIdentity, outcomeReferences, iloChunks, prerequisiteReview } from './pdfImportReview.js';
 export const PDF_FIELDS = ['code', 'title', 'description', 'prereq', 'credits', 'clos', 'plan', 'reqs', 'refs', 'grading'];
 export const PDF_OUTCOME_FIELDS = ['vision', 'mission', 'egas', 'pos'];
+// Words inside a title may be separated by any run of spaces or a tab (text layers and OCR both produce these).
 const headings = [
   ['I', 'COURSE CODE'], ['II', 'COURSE TITLE'], ['III', 'COURSE DESCRIPTION'],
-  ['IV', 'PRE\\s*[-–—]?\\s*REQUISITES?'], ['V', 'CREDIT UNITS'], ['VI', 'COURSE LEARNING OUTCOMES'],
-  ['VII', 'LEARNING PLAN'], ['VIII', 'COURSE REQUIREMENTS'], ['IX', 'REFERENCES'], ['X', 'GRADING SYSTEM'],
-];
+  ['IV', 'PRE\\s*[-–—]?\\s*REQUISITES?(?:\\s*\\(\\s*S\\s*\\))?'], ['V', 'CREDIT UNITS?'], ['VI', 'COURSE LEARNING OUTCOMES'],
+  ['VII', 'LEARNING PLAN'], ['VIII', 'COURSE REQUIREMENTS'], ['IX', '(?:SUGGESTED )?REFERENCES'], ['X', 'GRADING SYSTEM'],
+].map(([roman, title]) => [roman, title.replaceAll(' ', '[^\\S\\n]+')]);
+// The sign-off block (Prepared / Checked / Approved by ...) and the form's change checklist follow the last section; they are not syllabus content.
+const SIGN_OFF = /^[^\S\n]*(?:Prepared|Checked(?: and Reviewed)?|Reviewed|Approved|Noted)\s+by\s*:/im;
+// A line holding only a page number ("3", "Page 3 of 12") inside a section.
+const PAGE_NUMBER = /^[^\S\n]*(?:page[^\S\n]+)?\d{1,3}(?:[^\S\n]+of[^\S\n]+\d{1,3})?[^\S\n]*(?:\n|$)/gim;
 export function splitPdfSections(text) {
   const fields = Object.fromEntries(PDF_FIELDS.map(k => [k, '']));
   const found = [];
   // OCR commonly reads roman I as lowercase l, 1 or |. Tolerate that only
   // immediately before a known full section title, never in authored content.
-  const pattern = ([roman, title]) => `${roman.replaceAll('I', '[Il1|]')}\\s*[.)]?\\s+${title}`;
+  // After the numeral: a dot or bracket with optional space ("V.CREDIT UNITS"), or at least one space.
+  const pattern = ([roman, title]) => `${roman.replaceAll('I', '[Il1|]')}(?:\\s*[.)]\\s*|\\s+)${title}`;
   // Some text layers put a stray numeral fragment before a heading ("I. V.\tCREDIT UNITS"): skip one such fragment.
   const matches = [...String(text).matchAll(new RegExp(`^\\s*(?:[Il1|]\\s*[.)]\\s+)?(${headings.map(pattern).join('|')})\\s*[:：]?[^\\S\\n]*`, 'gim'))];
   for (let i = 0; i < matches.length; i++) {
@@ -21,7 +27,10 @@ export function splitPdfSections(text) {
     if (index < 0) continue;
     const key = PDF_FIELDS[index];
     if (found.includes(key)) continue; // repeated page headers do not replace a section
-    fields[key] = text.slice(matches[i].index + matches[i][0].length, matches[i + 1]?.index ?? text.length).trim();
+    let body = text.slice(matches[i].index + matches[i][0].length, matches[i + 1]?.index ?? text.length);
+    if (!matches[i + 1]) { const end = body.search(SIGN_OFF); if (end >= 0) body = body.slice(0, end); }
+    if (['reqs', 'refs', 'grading'].includes(key)) body = body.replace(PAGE_NUMBER, '').replace(/\n{3,}/g, '\n\n');
+    fields[key] = body.trim();
     found.push(key);
   }
   return { fields, found };
@@ -39,6 +48,15 @@ function parsePoEntries(text) {
   }
   return labelled(raw, 'PO');
 }
+// A line that opens a new citation: "Proakis, J.", a surname of several words with a year later on the line
+// ("Dela Cruz, J. (2021)", "Gomes de Sousa, D., ... (2025)"), or an organisation author ("World Health Organization. (2019)").
+const SURNAME = "[A-Z][\\p{L}'’-]+";
+const YEAR = '\\(\\s*(?:\\d{4}[a-z]?|n\\.\\s?d\\.)\\s*\\)';
+const CITATION_START = [
+  new RegExp(`^${SURNAME},\\s*[A-Z]`, 'u'),
+  new RegExp(`^${SURNAME}(?:\\s+(?:[a-z]{1,3}\\s+)*${SURNAME}){1,2},\\s*[A-Z](?=.*${YEAR})`, 'u'),
+  new RegExp(`^[A-Z][\\p{L}&'’ -]{2,80}?\\.?\\s*${YEAR}`, 'u'),
+];
 function referenceGroups(text, item) {
   const groups = Object.fromEntries(['books', 'program', 'online', 'electronics'].map(key => [key, { na: false, items: [] }]));
   let group = null, buffer = '';
@@ -50,7 +68,7 @@ function referenceGroups(text, item) {
     const heading = line.match(/^(?:[A-Z][.)]\s*)?(BOOKS|INTERNET PROGRAMMING|INTERNET REFERENCES|JOURNALS|ELECTRONICS)\s*:?\s*$/i);
     if (heading) { flush(); const name = heading[1].toUpperCase(); group = name === 'BOOKS' ? 'books' : name === 'INTERNET PROGRAMMING' ? 'program' : name === 'ELECTRONICS' ? 'electronics' : 'online'; continue; }
     if (/^(?:N\/?A|NOT APPLICABLE)\.?$/i.test(line) && group) { flush(); groups[group].na = true; continue; }
-    const startsCitation = /^[A-Z][\p{L}'’-]+,\s*[A-Z]/u.test(line) || /^\d+[.)]\s/.test(line) || /Accessed.*\b\d{4}\.?$/i.test(buffer);
+    const startsCitation = CITATION_START.some(rule => rule.test(line)) || /^\d+[.)]\s/.test(line) || /Accessed.*\b\d{4}\.?$/i.test(buffer);
     if (buffer && (startsCitation || group === 'electronics')) flush();
     buffer += (buffer ? ' ' : '') + line;
   }
@@ -113,8 +131,8 @@ export function mapPdfFields(fields, draft, makeId, { planRows = null, identityC
   const masters = !!draft.meta?.courseId && (outcomes.pos || []).length > 0 && (outcomes.egas || []).length > 0;
   const translate = { PO: null, EGA: null };
   if (masters) {
-    translate.PO = matchOutcomes(pdfPos, outcomes.pos, p => p.text);
-    translate.EGA = matchOutcomes(pdfEgas, outcomes.egas, e => e.name);
+    translate.PO = { map: matchOutcomes(pdfPos, outcomes.pos, p => p.text), known: new Set((pdfPos.length ? pdfPos : outcomes.pos).map(p => p.no)) };
+    translate.EGA = { map: matchOutcomes(pdfEgas, outcomes.egas, e => e.name), known: new Set((pdfEgas.length ? pdfEgas : outcomes.egas).map(e => e.no)) };
     if ([fields.vision, fields.mission, fields.egas, fields.pos].some(v => String(v || '').trim())) warnings.push({ key: 'pdfImport.mastersKept', values: {} });
   } else {
     if (fields.vision?.trim()) outcomes.vision = fields.vision.trim();
@@ -155,13 +173,15 @@ export function mapPdfFields(fields, draft, makeId, { planRows = null, identityC
     const cells = line.split(/\t|\|/).map(s => s.trim()).filter(Boolean);
     const selected = (label, available) => {
       const refs = outcomeReferences(line, label);
-      const map = translate[label];
-      if (map) {
+      if (translate[label]) {
+        const { map, known } = translate[label];
         // The PDF's numbers are its own; keep only those whose outcome matched one of the program's, under the program's number.
-        const kept = [], dropped = [];
-        for (const n of refs.values) (map.has(n) ? kept.push(map.get(n)) : dropped.push(n));
+        // A number the PDF's own list (or, without one, the program's list) does not have is a source error, not a wording
+        // difference: it stays unresolved so Apply waits for the person to correct it.
+        const kept = [], dropped = [], unknown = [];
+        for (const n of refs.values) (map.has(n) ? kept.push(map.get(n)) : known.has(n) ? dropped.push(n) : unknown.push(n));
         if (dropped.length) warnings.push({ key: 'pdfImport.outcomeNotMatched', values: { clo: sourceNo, label, numbers: dropped.join(', ') } });
-        if (refs.invalid.length) unresolvedMappings.push({ clo: sourceNo, label, unknown: [], invalid: refs.invalid, source: line });
+        if (unknown.length || refs.invalid.length) unresolvedMappings.push({ clo: sourceNo, label, unknown, invalid: refs.invalid, source: line });
         return [...new Set(kept)].sort((a, b) => a - b);
       }
       const unknown = refs.values.filter(n => !available.some(p => p.no === n));
@@ -228,7 +248,8 @@ export function mapPdfFields(fields, draft, makeId, { planRows = null, identityC
   warnings.push({ key: 'pdfImport.referencesReview', values: {} });
   const grading = [];
   for (const line of lines(fields.grading)) {
-    if (/^\s*TOTAL\b/i.test(line)) continue;
+    // TOTAL and the passing mark ("Passing Grade: 50%") are not graded components.
+    if (/^\s*(?:\d+[.)]\s*)?(?:TOTAL|PASSING\s+(?:GRADE|RATE|SCORE|MARK|PERCENTAGE))\b/i.test(line)) continue;
     const m = line.match(/^(.+?)\s*(?:\||\t|:|[-–])?\s*(\d+(?:\.\d+)?)\s*%\s*$/);
     if (m) grading.push({ id: id(), label: m[1].replace(/^\d+[.)]\s*/, '').replace(/[|:\t\s-]+$/, '').trim(), abbr: '', pct: m[2] });
   }

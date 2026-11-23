@@ -59,12 +59,16 @@ test('Cyber IT-202 cannot import BSIT IT202; approved unique punctuation variant
   Object.assign(d.meta,{program:'BSCPE',code:'CpE-304',title:'FUNDAMENTALS OF MIXED SIGNALS AND SENSORS'});
   assert.equal(apply({...fields(),code:'CpE 304',title:'Fundamentals of Mixed Signals and Sensors'},d).mismatch,false);
 });
-for(const key of ['it202','ie402','cpe304'])test(`${key}: real worker preview and Apply preserve verified CLO/PO/EGA/ILO information`,async()=>{
+for(const key of ['it202','ie402','cpe304'])test(`${key}: real worker preview and Apply preserve verified CLO/PO/EGA/ILO information`,async t=>{
   const fixture=await read(`${key}.fixture.json`),snapshot=await read('masters.json');
   const master=snapshot.programs[fixture.content.meta.program].masters;
   const course=master.curricula[0].courses.find(c=>c.code.toUpperCase().replace(/[^A-Z0-9]/g,'')===fixture.content.meta.code.toUpperCase().replace(/[^A-Z0-9]/g,''));
   const d=structuredClone(fixture.content);Object.assign(d.meta,{courseId:25,code:course.code,title:course.title});
-  const bytes=await fs.readFile(new URL(`../../${fixture.source.file}`,import.meta.url)),preview=await extractPdf(bytes);
+  // The approved source PDFs are kept local-only and may be absent from a checkout: skip, and say so, rather than fail.
+  let bytes;
+  try { bytes=await fs.readFile(new URL(`../../${fixture.source.file}`,import.meta.url)); }
+  catch(error){ if(error.code==='ENOENT'){ t.skip(`source PDF not in this checkout: ${fixture.source.file}`); return; } throw error; }
+  const preview=await extractPdf(bytes);
   const options={planRows:preview.layout.planRows,identityContext:{selected:{id:25,program:d.meta.program,code:course.code,title:course.title},curricula:master.curricula}};
   const unchanged=structuredClone(d);
   const result=apply(preview.fields,d,options),c=result.content,expected=fixture.content;

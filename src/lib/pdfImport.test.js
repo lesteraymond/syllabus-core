@@ -192,3 +192,35 @@ test('EGA-hierarchical PO numbering (PO 1: 1., PO 1.3., PO 2.2) maps sequentiall
   assert.deepEqual(result.content.clos[0].pos, [1, 2, 3, 6, 8]);
   assert.deepEqual(result.content.clos[1].pos, [1, 2, 3, 4, 6, 7, 8, 9]);
 });
+const emptyDraft = () => ({ meta: { code: '', title: '', program: '', prereq: '' }, outcomes: { vision: '', mission: { lead: '', items: [] }, egas: [], pos: [] } });
+const mapOnly = fields => { let n = 0; return mapPdfFields(fields, emptyDraft(), () => `t${++n}`); };
+test('section headings tolerate spacing, a missing space after the numeral, singular units and SUGGESTED REFERENCES', () => {
+  const head = 'I. COURSE CODE: X 1\nII. COURSE TITLE: T\nIII. COURSE DESCRIPTION: d\n';
+  for (const credits of ['V. CREDIT UNITS: 3', 'V. CREDIT  UNITS: 3', 'V. CREDIT\tUNITS: 3', 'V. CREDIT UNIT: 3', 'V.CREDIT UNITS: 3']) {
+    const { fields, found } = splitPdfSections(`${head}${credits}\nVI. COURSE LEARNING OUTCOMES: CLO1. x`);
+    assert.ok(found.includes('credits'), credits);
+    assert.equal(fields.credits, '3', credits);
+  }
+  const { fields } = splitPdfSections(`${head}VIII. COURSE REQUIREMENTS\n1. Quizzes\nIX. SUGGESTED REFERENCES\nA. BOOKS\nAwari, G. K. (2022). Ethics. CRC Press.\nX. GRADING SYSTEM\n1. Exams 100%`);
+  assert.equal(fields.reqs, '1. Quizzes');
+  assert.match(fields.refs, /^A\. BOOKS\nAwari/);
+  assert.equal(splitPdfSections(`${head}IV. PRE-REQUISITE(S): MATH 1`).fields.prereq, 'MATH 1');
+});
+test('the sign-off block and page numbers are not part of the last section', () => {
+  const { fields } = splitPdfSections('I. COURSE CODE: X\nII. COURSE TITLE: T\nX. GRADING SYSTEM\n1.\tClass Standing\t60%\n3\n2.\tExamination\t40%\nPrepared by:\tChecked and Reviewed by:\tApproved by:\nENGR. NAME\nModifications:\n__References');
+  assert.equal(fields.grading, '1.\tClass Standing\t60%\n2.\tExamination\t40%');
+});
+test('a passing mark is not imported as a grading component', () => {
+  const result = mapOnly({ grading: '1.\tClass Standing\t60%\n2.\tExamination\t40 %\n5.\tPassing Grade:\t50%\nTOTAL 100%' });
+  assert.deepEqual(result.content.grading.rows.map(row => [row.label, row.pct]), [['Class Standing', '60'], ['Examination', '40']]);
+  assert.equal(result.warnings.some(w => w.key === 'pdfImport.gradingReview'), false);
+});
+test('surnames of several words and organisation authors start a new reference; wrapped lines do not', () => {
+  const refs = 'A. BOOKS\nSantos, A. (2020). One.\nDela Cruz, J. (2021). Two.\nGomes de Sousa, D., Alves, C. (2025). Digital Signal Processing from Classical\nCoherent Systems to Continuous-Variable QKD: A Review. arXiv\nWorld Health Organization. (2019). Three.\nPearson Education.';
+  assert.deepEqual(mapOnly({ refs }).content.refs.books.items.map(i => i.t), [
+    'Santos, A. (2020). One.',
+    'Dela Cruz, J. (2021). Two.',
+    'Gomes de Sousa, D., Alves, C. (2025). Digital Signal Processing from Classical Coherent Systems to Continuous-Variable QKD: A Review. arXiv',
+    'World Health Organization. (2019). Three. Pearson Education.',
+  ]);
+});
