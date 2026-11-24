@@ -69,9 +69,8 @@ const SubjectSetup = forwardRef(function SubjectSetup({ programCode, existing, i
       if (isNew) return egas.length ? { outcomes: { egas: egaPayload(egas), pos: poPayload(pos) }, programChanged: false } : { programChanged: false };
       let programChanged = false;
       if (existing && data && !lockedProgram) {
-        let versions = data.versions;
-        if (egaChanged) { const fresh = await outcomes.saveProgramEgas(existing.id, egaPayload(egas), versions.egas); versions = fresh.versions; programChanged = true; }
-        if (poChanged && editPos) { await outcomes.saveProgram(existing.id, poPayload(pos), versions.pos); programChanged = true; }
+        // EGAs and POs are saved together in one step (PUT /programs/:id/setup): both or neither, so a refused PO never leaves new EGAs behind
+        if (egaChanged || (poChanged && editPos)) { await outcomes.saveProgramSetup(existing.id, egaPayload(egas), poPayload(editPos ? pos : poRows(data.pos)), data.versions); programChanged = true; }
       }
       return { programChanged };
     },

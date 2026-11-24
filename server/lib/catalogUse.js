@@ -42,6 +42,8 @@ async function egasInUse(db, programId) {
   const [pos] = await db.query('SELECT o.po_no, o.ega_nos, p.code AS program_code FROM program_outcomes o JOIN programs p ON p.program_id = o.program_id WHERE o.program_id = ?', [programId]);
   return egaUsage(await closRows(db, programId), pos);
 }
+// EGAs of ONE program still used by a CLO of its subjects (not counting its POs: for a save that replaces the POs in the same step, which checks them itself).
+async function egasUsedByClos(db, programId) { return egaUsage(await closRows(db, programId), []); }
 // POs of ONE program still tagged on a CLO of its subjects.
 async function posInUse(db, programId) { return poUsage(await closRows(db, programId)); }
 
@@ -51,4 +53,4 @@ async function subjectsOf(db, programId) {
   return rows.map((r) => r.code);
 }
 
-module.exports = { egaUsage, poUsage, inUseMessages, inUseError, egasInUse, posInUse, subjectsOf };
+module.exports = { egaUsage, poUsage, inUseMessages, inUseError, egasInUse, egasUsedByClos, posInUse, subjectsOf };

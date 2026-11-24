@@ -80,8 +80,9 @@ export default function Repository({ syllabi, user, notify, setHistCode }) {
             <td><div className="repository-actions"><button className="table-action" aria-label={translateUI("ui.view_history_for_p0_46396f", { p0: (x.courseCode) })} onClick={() => setHistCode(x)}><Icon name="clockBack" size={18} /></button></div></td>
           </tr>)}</tbody>
         </table>
-        {isFaculty && repository.error && <div className="empty" role="alert">{translateUI("ui.unable_to_load_approved_syllabi_cd0cc5")}{tr(repository.error)}</div>}
-        {rows.length === 0 && !(isFaculty && repository.error) && <div className="empty">{isFaculty && repository.loading ? translateUI("ui.loading_approved_syllabi_3ad229") : isFaculty && mySyllabi.length === 0 ? translateUI("ui.no_approved_syllabi_yet_your_syllabus_will_appear_here_once_an_ad_b167c3") : translateUI("ui.no_syllabi_match_your_filters_e09598")}</div>}
+        {/* Every role reads the same shared list, so every role sees its loading, error and empty states (E2E report 2026-11-23, BUG-026). */}
+        {repository.error && <div className="empty" role="alert">{translateUI("ui.unable_to_load_approved_syllabi_cd0cc5")}{tr(repository.error)}</div>}
+        {rows.length === 0 && !repository.error && <div className="empty">{repository.loading ? translateUI("ui.loading_approved_syllabi_3ad229") : mySyllabi.length === 0 ? translateUI(isFaculty ? "ui.no_approved_syllabi_yet_your_syllabus_will_appear_here_once_an_ad_b167c3" : "repository.emptyAll") : translateUI("ui.no_syllabi_match_your_filters_e09598")}</div>}
       </div>
     </>
   );

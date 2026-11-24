@@ -89,7 +89,7 @@ export default function CheckHistory({ runs, loading = false, error = '', openin
                     <time dateTime={r.createdAt || undefined}>{day}{time ? ' · ' + time : ''}</time>
                     <span className="hist-tags">
                       <span className={'status ' + r.status}>{tr(STATUS_LABELS[r.status] || r.status)}</span>
-                      <span className="chip quiet">{r.checkedBy === 'admin' ? translateUI("ui.by_administrator_c55e2e") : r.checkedBy === 'author' ? translateUI("ui.on_submit_952d52") : translateUI("ui.checked_b2bc0c")}</span>
+                      <span className="chip quiet">{r.checkedBy === 'admin' ? translateUI("ui.your_check") /* the history lists only the viewer's own checks (routes/compliance.js) */ : r.checkedBy === 'author' ? translateUI("ui.on_submit_952d52") : translateUI("ui.checked_b2bc0c")}</span>
                     </span>
                   </span>
                 </button>

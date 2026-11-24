@@ -111,9 +111,9 @@ function makeDb() {
     }
     if (sql.startsWith("UPDATE ai_check_runs SET ai_status = 'failed'")) { Object.assign(s.runs.find((r) => r.run_id === p[1]), { ai_status: 'failed', ai_error: p[0] }); return [{}]; }
     if (sql.startsWith('SELECT * FROM ai_check_runs WHERE syllabus_id = ? AND content_hash')) return [s.runs.filter((r) => r.syllabus_id === p[0] && r.content_hash === p[1] && r.standard_version === p[2] && keep(sql, r) && (!sql.includes('AND version_id = ?') || r.version_id === p[3])).slice(-1)];
-    if (sql.startsWith('SELECT * FROM ai_check_runs WHERE syllabus_id')) return [s.runs.filter((r) => r.syllabus_id === p[0] && keep(sql, r)).slice(-1)];
+    if (sql.startsWith('SELECT * FROM ai_check_runs WHERE syllabus_id')) return [s.runs.filter((r) => r.syllabus_id === p[0] && keep(sql, r) && (!sql.includes('AND created_by = ?') || r.created_by === p[1])).slice(-1)];
     if (sql.startsWith('SELECT * FROM ai_check_runs WHERE run_id')) return [s.runs.filter((r) => r.run_id === p[0])];
-    if (sql.startsWith('SELECT r.* FROM ai_check_runs')) return [p[0].map((id) => s.runs.filter((r) => r.syllabus_id === id && keep(sql, r)).slice(-1)[0]).filter(Boolean)];
+    if (sql.startsWith('SELECT r.* FROM ai_check_runs')) return [p[0].map((id) => s.runs.filter((r) => r.syllabus_id === id && keep(sql, r) && (!sql.includes('created_by = ?') || r.created_by === p[1])).slice(-1)[0]).filter(Boolean)];
     if (sql.startsWith('SELECT run_id, area_key')) return [s.areas.filter((a) => p[0].includes(a.run_id))];
     if (sql.startsWith('SELECT * FROM ai_findings')) return [s.findings.filter((f) => f.run_id === p[0]).sort((x, y) => x.position - y.position)];
     // the list: one row per syllabus with the faculty member, program and subject the real query joins in
@@ -124,13 +124,15 @@ function makeDb() {
       return [rows.map((x) => { const r = labelled(x); if (!sql.includes('s.content,')) delete r.content; return r; })];
     }
     if (sql.startsWith('SELECT r.run_id')) { // the history: runs stored with a version, newest first, with the syllabus's labels
-      let at = 0; // the placeholders after the first ?-free part: from, then to, then the limit, each only when the SQL has it
+      let at = 0; // the placeholders: whose checks (twice: the row and its "latest" subquery), from, then to, then the limit, each only when the SQL has it
+      const mine = sql.includes('r.created_by = ?') ? p[(at += 2) - 2] : null; // only the checks this reviewer ran
+      const isMine = (r) => mine === null || r.created_by === mine;
       const lo = sql.includes('>= FROM_UNIXTIME') ? p[at++] * 1000 : -Infinity;
       const hi = sql.includes('< FROM_UNIXTIME') ? p[at++] * 1000 : Infinity;
       const limit = p[at];
       const inRange = (r) => { const t = Date.parse(r.created_at); return t >= lo && t < hi; };
-      const latestOf = (id) => Math.max(...s.runs.filter((x) => x.syllabus_id === id && isAdminRun(x)).map((x) => x.run_id));
-      return [s.runs.filter((r) => isAdminRun(r) && s.syllabi[r.syllabus_id].status !== 'draft' && !(sql.includes("NOT IN ('draft', 'approved')") && s.syllabi[r.syllabus_id].status === 'approved') && r.run_id === latestOf(r.syllabus_id) && inRange(r)).reverse().slice(0, limit)
+      const latestOf = (id) => Math.max(...s.runs.filter((x) => x.syllabus_id === id && isAdminRun(x) && isMine(x)).map((x) => x.run_id));
+      return [s.runs.filter((r) => isAdminRun(r) && isMine(r) && s.syllabi[r.syllabus_id].status !== 'draft' && !(sql.includes("NOT IN ('draft', 'approved')") && s.syllabi[r.syllabus_id].status === 'approved') && r.run_id === latestOf(r.syllabus_id) && inRange(r)).reverse().slice(0, limit)
         .map((r) => ({ ...labelled(s.syllabi[r.syllabus_id]), run_id: r.run_id, syllabus_id: r.syllabus_id, version_label: (s.versions.find((v) => v.version_id === r.version_id) || {}).version_label, overall: r.overall, status: r.status, passed: r.passed, ai_status: r.ai_status, created_by: r.created_by, created_at: r.created_at, syllabus_status: s.syllabi[r.syllabus_id].status }))];
     }
     if (sql.startsWith('SELECT u.first_name, u.last_name')) return [s.syllabi[p[0]] ? [labelled(s.syllabi[p[0]])] : []];
@@ -142,6 +144,11 @@ function makeDb() {
     if (sql.startsWith('SELECT s.syllabus_id, s.version_id, s.stage')) return [(s.stages || []).filter((r) => p[0].includes(r.syllabus_id)).map((r) => ({ note: '', cleared_at: null, first_name: 'Rev', last_name: 'Iewer', ...r, reviewer_id: r.reviewer_id || 1 }))];
     if (sql.startsWith('SELECT user_id FROM users WHERE role IN (?)')) return [s.rolePeople ? Object.entries(s.rolePeople).filter(([, role]) => p[0].includes(role)).map(([id]) => ({ user_id: Number(id) })).filter((u) => !(p[1] || []).includes(u.user_id)) : []]; // nobody to notify unless a test names people
     if (sql.startsWith('INSERT INTO notifications') && s.notes) { s.notes.push({ userId: p[0], type: p[1], syllabusId: p[2], title: p[3] }); return [{}]; }
+    // lib/reviewStages.js carryForward: who returned it last (the log, with the roles in s.roles), and the stages cleared on the returned version
+    if (sql.startsWith('SELECT l.log_id, l.action, u.role FROM submission_logs')) { const last = s.activity.map((a, i) => ({ ...a, log_id: i + 1 })).filter((a) => a.syllabusId === p[0] && ['revision', 'reject', 'submit'].includes(a.action)).slice(-1)[0]; return [last ? [{ log_id: last.log_id, action: last.action, role: (s.roles || {})[last.userId] || 'faculty' }] : []]; }
+    if (sql.startsWith('SELECT MAX(version_id) AS version_id FROM syllabus_review_stages')) { const ids = (s.stages || []).filter((r) => r.syllabus_id === p[0] && r.stage === 'dean' && r.version_id < p[1]).map((r) => r.version_id); return [[{ version_id: ids.length ? Math.max(...ids) : null }]]; }
+    if (sql.startsWith('SELECT stage, reviewer_id, note, cleared_at FROM syllabus_review_stages')) return [(s.stages || []).filter((r) => r.syllabus_id === p[0] && r.version_id === p[1]).map((r) => ({ stage: r.stage, reviewer_id: r.reviewer_id, note: r.note || null, cleared_at: r.cleared_at || null }))];
+    if (sql.startsWith('UPDATE syllabi SET status = ? WHERE syllabus_id = ?')) { if (s.trackStatus) s.syllabi[p[1]].status = p[0]; return [{}]; }
     if (sql.startsWith('INSERT INTO syllabus_review_stages')) { s.stages = s.stages || []; if (!s.stages.some((r) => r.syllabus_id === p[0] && r.version_id === p[1] && r.stage === p[2])) s.stages.push({ syllabus_id: p[0], version_id: p[1], stage: p[2], reviewer_id: p[3] }); return [{}]; }
     if (sql.startsWith('INSERT INTO syllabus_versions')) { const v = { version_id: s.versionId + s.versions.length, syllabus_id: p[0], version_label: p[1], content: p[8] }; s.versions.push(v); return [{ insertId: v.version_id }]; }
     if (sql.startsWith('SELECT version_id, version_label, content FROM syllabus_versions')) return [s.versions.filter((v) => v.syllabus_id === p[0]).slice(-1)];
@@ -161,6 +168,7 @@ function makeDb() {
     if (sql.startsWith('SELECT user_id, role FROM users WHERE user_id IN (?)') && s.roles) return [p[0].map((id) => ({ user_id: id, role: s.roles[id] || 'faculty' }))];
     if (sql.includes("setting_key = 'administration'") && s.adminSettings) return [[{ setting_value: JSON.stringify(s.adminSettings) }]];
     if (sql.startsWith('SELECT label FROM academic_years WHERE is_current = 1')) { if (sql.includes('LOCK IN SHARE MODE') && s.switchOnLock) { s.activeYear = s.switchOnLock; s.switchOnLock = null; } return [s.activeYear ? [{ label: s.activeYear }] : []]; }
+    if (sql.startsWith('SELECT academic_year FROM syllabi')) return [[{ academic_year: null }]]; // lib/activeYearGate.js pastYearOf: no recorded year, so editable
     throw new Error('unexpected query: ' + sql);
   };
   const conn = { query: async (q, p) => handle(q, p), beginTransaction: async () => {}, commit: async () => {}, rollback: async () => {}, release: () => {} };
@@ -307,7 +315,7 @@ test('submit stores the run with the version, its area scores and findings, then
   setContent(db, 1, withGaps(conformingContent()));
   const r = await call(fay, 'POST', '/syllabi/1/submit', {});
   assert.strictEqual(r.status, 200);
-  assert.strictEqual(r.body.version, 'v1.0');
+  assert.strictEqual(r.body.version, 'v1'); // versions are whole numbers (2026-11-24)
   const run = db.s.runs[0];
   assert.strictEqual(run.version_id, 77);
   assert.strictEqual(run.syllabus_id, 1);
@@ -594,6 +602,33 @@ test('GET /compliance: an admin sees every submitted syllabus with the administr
   assert.strictEqual((await call(null, 'GET', '/compliance?syllabus=all')).status, 401);
 }));
 
+test('GET /compliance: the AI Quality Snapshot is per person: it counts only the checks this account ran, never another reviewer\'s', () => withServer(async ({ call, db }) => {
+  const other = { id: 2, role: 'admin', firstName: 'Bea', lastName: 'B' };
+  submittedBefore(db, 2);
+  submittedBefore(db, 3);
+  assert.strictEqual((await call(admin, 'POST', '/syllabi/2/compliance/recheck', {})).status, 200);
+  await svc.settled();
+
+  const ann = (await call(admin, 'GET', '/compliance?syllabus=all')).body.summary;
+  const bea = (await call(other, 'GET', '/compliance?syllabus=all')).body;
+  // the list does not show Ann's check to Bea: each reviewer sees only their own checks (2026-11-24) ...
+  assert.strictEqual(bea.syllabi.find((x) => x.syllabusId === 2).run, null);
+  // ... but the snapshot is Ann's alone: Bea ran no check, so hers is empty
+  assert.strictEqual(ann.aiChecked + ann.notAiChecked, 1);
+  assert.strictEqual(bea.summary.aiChecked, 0);
+  assert.strictEqual(bea.summary.notAiChecked, 0);
+  assert.strictEqual(bea.summary.aiAverage, null);
+  assert.ok(bea.summary.areas.every((a) => a.aiRules === null && a.aiFinal === null));
+
+  // Bea checks syllabus 3: her snapshot counts that one only, and Ann's is unchanged
+  assert.strictEqual((await call(other, 'POST', '/syllabi/3/compliance/recheck', {})).status, 200);
+  await svc.settled();
+  const bea2 = (await call(other, 'GET', '/compliance?syllabus=all')).body.summary;
+  const ann2 = (await call(admin, 'GET', '/compliance?syllabus=all')).body.summary;
+  assert.strictEqual(bea2.aiChecked + bea2.notAiChecked, 1);
+  assert.deepStrictEqual(ann2, { ...ann2, aiChecked: ann.aiChecked, notAiChecked: ann.notAiChecked, aiAverage: ann.aiAverage });
+}));
+
 // A syllabus that was submitted before the compliance tables existed: a version with the form, and no run stored with it.
 function submittedBefore(db, id, over = {}) {
   addSyllabus(db, id, { user_id: 5, status: 'submitted', course_code: 'IT 204', content: JSON.stringify(conformingContent()), ...over });
@@ -778,6 +813,35 @@ test('GET /compliance/runs/:id: one stored run in full, an earlier one too, an a
   assert.strictEqual((await call(admin, 'GET', '/compliance/runs/abc')).status, 404);
 }));
 
+// The AI Checker is per person (2026-11-24): faculty, the dean, the Asst. VPAA, the LIC Director and the VPAA each see only the checks they ran, in the history,
+// the list, a syllabus's stored result and a single run. The review chain's "checked" gate (adminCheckStates) is not per person and is not changed here.
+test('nobody sees another person\'s checks: history, list, stored result and single run are each person\'s own', () => withServer(async ({ call, db }) => {
+  const bea = { id: 2, role: 'admin', firstName: 'Bea', lastName: 'B' };
+  submittedBefore(db, 2);
+  const annRun = (await call(admin, 'POST', '/syllabi/2/compliance/recheck', {})).body.run;
+  await svc.settled();
+
+  // Bea ran no check: Ann's is not in her history, her list or her stored result, and she cannot open it by id
+  assert.deepStrictEqual((await call(bea, 'GET', '/compliance/history')).body.runs, []);
+  assert.strictEqual((await call(bea, 'GET', '/compliance?syllabus=all')).body.syllabi.find((x) => x.syllabusId === 2).run, null);
+  assert.strictEqual((await call(bea, 'GET', '/compliance?syllabus=2')).body.run, null);
+  assert.strictEqual((await call(bea, 'GET', '/syllabi/2/compliance')).body.run, null);
+  assert.strictEqual((await call(bea, 'GET', '/compliance/runs/' + annRun.id)).status, 404);
+  // the faculty author does not see the reviewer's check either
+  assert.strictEqual((await call(fay, 'GET', '/syllabi/2/compliance')).body.run, null);
+  assert.strictEqual((await call(fay, 'GET', '/compliance?syllabus=2')).body.run, null);
+
+  // Bea checks it herself: each now sees their own check, never the other's
+  const beaRun = (await call(bea, 'POST', '/syllabi/2/compliance/recheck', { force: true })).body.run;
+  await svc.settled();
+  assert.deepStrictEqual((await call(bea, 'GET', '/compliance/history')).body.runs.map((r) => r.runId), [beaRun.id]);
+  assert.deepStrictEqual((await call(admin, 'GET', '/compliance/history')).body.runs.map((r) => r.runId), [annRun.id], 'Bea\'s newer check does not replace Ann\'s in Ann\'s history');
+  assert.strictEqual((await call(admin, 'GET', '/syllabi/2/compliance')).body.run.id, annRun.id);
+  assert.strictEqual((await call(bea, 'GET', '/syllabi/2/compliance')).body.run.id, beaRun.id);
+  assert.strictEqual((await call(admin, 'GET', '/compliance/runs/' + beaRun.id)).status, 404);
+  assert.strictEqual((await call(admin, 'GET', '/compliance/runs/' + annRun.id)).body.isLatest, true, 'Ann\'s check is still her latest');
+}));
+
 test('GET /compliance/runs/:id before the migration: not installed', () => withServer({ installed: false }, async ({ call }) => {
   const r = await call(admin, 'GET', '/compliance/runs/1');
   assert.strictEqual(r.status, 200);
@@ -832,10 +896,10 @@ test('the history and the single-run read never show the run a faculty submit st
   const history = await call(admin, 'GET', '/compliance/history');
   assert.deepStrictEqual(history.body.runs.map((r) => r.runId), [mine.body.run.id]);
   assert.strictEqual(history.body.runs[0].checkedBy, 'admin');
-  assert.strictEqual(history.body.runs[0].versionLabel, 'v1.0'); // the card says which version the check was made on
+  assert.strictEqual(history.body.runs[0].versionLabel, 'v1'); // the card says which version the check was made on
   const read = await call(admin, 'GET', '/compliance/runs/' + mine.body.run.id);
   assert.strictEqual(read.status, 200);
-  assert.strictEqual(read.body.run.versionLabel, 'v1.0');
+  assert.strictEqual(read.body.run.versionLabel, 'v1');
   assert.strictEqual(read.body.isLatest, true);
 }));
 
@@ -924,7 +988,7 @@ test('back from "For revision": an unchanged resubmission saves nothing, a chang
   assert.strictEqual(db.s.versions.length, 1);
   const ok = await call(fay, 'POST', '/syllabi/1/submit', { note: 'Rewrote the course description.' });
   assert.strictEqual(ok.status, 200);
-  assert.strictEqual(ok.body.version, 'v1.1');
+  assert.strictEqual(ok.body.version, 'v2'); // after v1 (an old 'v1.0' counts as v1)
   assert.strictEqual(db.s.versions.length, 2);
 }));
 
@@ -995,6 +1059,21 @@ test('admin drafts cannot enter AI Checker; completed forms require an explicit 
   assert.strictEqual(again.status,409);assert.strictEqual(again.body.code,'already_sent');assert.strictEqual(db.s.stages.length,1); // sent once: not sent (and announced) again
   const back=await call(admin,'POST','/syllabi/1/resume-draft',{});
   assert.strictEqual(back.status,409);assert.strictEqual(back.body.code,'already_sent');assert.strictEqual(db.s.syllabi[1].status,'under_review'); // and not taken back from the reviewers
+  // The Asst. VPAA clears it, the LIC Director returns it: the dean revises and sends it again, and it goes back to the LIC Director (lib/reviewStages.js carryForward).
+  const sent=db.s.versions[0].version_id;
+  db.s.stages.push({syllabus_id:1,version_id:sent,stage:'asst_vpaa',reviewer_id:2});
+  db.s.roles={1:'admin',2:'asst_vpaa',3:'lic_director'};
+  db.s.activity.push({syllabusId:1,userId:3,action:'revision',notes:'Status changed to for_revision: cite newer references'});
+  db.s.syllabi[1].status='for_revision';
+  const revised=JSON.parse(db.s.syllabi[1].content);revised.plan[0].contents='Revised for the LIC Director';db.s.syllabi[1].content=JSON.stringify(revised);
+  assert.strictEqual((await call(admin,'POST','/syllabi/1/prepare-check',{})).status,200);
+  const v2=db.s.versions.slice(-1)[0].version_id;assert.notStrictEqual(v2,sent);
+  assert.deepStrictEqual(db.s.stages.filter((r)=>r.version_id===v2),[],'preparing the revision sends nothing yet');
+  const recheck=await call(admin,'POST','/syllabi/1/compliance/recheck',{});await svc.settled();
+  const resent=await call(admin,'POST','/syllabi/1/publish',{reviewedRunId:recheck.body.run.id});
+  assert.strictEqual(resent.status,200,JSON.stringify(resent.body));
+  assert.deepStrictEqual(db.s.stages.filter((r)=>r.version_id===v2).map((r)=>[r.stage,r.reviewer_id]),[['dean',admin.id],['asst_vpaa',2]],'the Asst. VPAA does not review it again');
+  assert.strictEqual((await require('../lib/reviewStages').stagesOf(db,[1])).get(1).turn,'lic_director');
 }));
 test('the dean sends their own syllabus for review after reading a check when no finished AI check can be required: AI checking off, or an advisory policy with a failed AI step', () => withServer(async ({call,db}) => {
   for (const mode of ['ai-off','advisory-failed']) {
@@ -1037,7 +1116,7 @@ test('incomplete admin forms remain drafts; returning for edits removes the item
   assert.strictEqual(saved.status,200,JSON.stringify(saved.body));
   assert.strictEqual(db.s.versions.length,1); // autosave leaves history untouched
   const next=await call(admin,'POST','/syllabi/1/prepare-check',{});
-  assert.strictEqual(next.status,200,JSON.stringify(next.body));assert.strictEqual(next.body.version,'v1.1');
+  assert.strictEqual(next.status,200,JSON.stringify(next.body));assert.strictEqual(next.body.version,'v2');
   assert.strictEqual(db.s.versions.length,2);assert.strictEqual(db.s.versions[0].content,prior);
   assert.ok(JSON.parse(db.s.versions[1].content).description.includes('Additional administrator revision after AI review.'));
 }));
@@ -1105,8 +1184,9 @@ test('the VPAA\'s AI Checker queue, check and history start when the three stage
   const version = db.s.versions.filter((v) => v.syllabus_id === 1).slice(-1)[0].version_id;
   db.s.stages = ['dean', 'asst_vpaa', 'lic_director'].map((stage) => ({ syllabus_id: 1, version_id: version, stage }));
   assert.deepStrictEqual(await ids(vpaa), [1], 'all three cleared: it reaches the VPAA');
-  assert.deepStrictEqual(await history(vpaa), [1]);
+  assert.deepStrictEqual(await history(vpaa), [], 'the dean\'s check is not in the VPAA\'s history: each reviewer sees only their own checks');
   assert.strictEqual((await call(vpaa, 'POST', '/syllabi/1/compliance/recheck', {})).status, 200, 'and the VPAA may check it');
+  assert.deepStrictEqual(await history(vpaa), [1], 'the VPAA\'s own check is in the VPAA\'s history');
 }));
 
 // Only faculty and the administrator write syllabi (server/middleware/auth.js requireAuthor): the Asst. VPAA, the LIC Director and the VPAA are refused on every
@@ -1182,12 +1262,14 @@ test('the dean\'s own syllabus is not in another reviewer\'s AI Checker until th
   assert.strictEqual(early.body.code, 'not_sent_for_review');
   db.s.stages = [{ syllabus_id: 7, version_id: 700, stage: 'dean' }]; // the dean sent it for review
   assert.ok((await queue(asst)).includes(7), 'sent: it is in the queue');
-  assert.ok((await history(asst)).includes(7), 'and the history');
+  assert.ok(!(await history(asst)).includes(7), 'but another reviewer\'s check (user 2) is never in the Asst. VPAA\'s history');
+  assert.strictEqual((await call(asst, 'POST', '/syllabi/7/compliance/recheck', {})).status, 200, 'the Asst. VPAA may check it now');
+  assert.ok((await history(asst)).includes(7), 'and their own check is in their history');
 }));
 
 // The dean's own syllabus end to end: after the dean's own check it is hidden from the Asst. VPAA; sending it for review clears the dean stage as its
 // author and tells the Asst. VPAA and the LIC Director (a 'submission' notice opens their AI Checker), and only then does it reach them.
-test('sending the dean\'s own syllabus for review clears the dean stage, tells the Asst. VPAA and the LIC Director, and only then shows it to them', () => withServer(async ({ call, db }) => {
+test('sending the dean\'s own syllabus for review clears the dean stage, tells the Asst. VPAA (next in the chain, not yet the LIC Director), and only then shows it to them', () => withServer(async ({ call, db }) => {
   const asst = { id: 3, role: 'asst_vpaa', firstName: 'Ash', lastName: 'V' };
   const draft = JSON.parse(db.s.syllabi[1].content); const course = await require('../lib/courses').loadCourse(db, 10); draft.clos = course.clos; Object.assign(draft.meta, { code: course.code, title: course.title, program: course.program.code }); db.s.syllabi[1].content = JSON.stringify(draft);
   db.s.syllabi[1].user_id = admin.id; db.s.people[admin.id] = { first_name: 'Ann', last_name: 'A' }; db.s.people[3] = { first_name: 'Ash', last_name: 'V' }; db.s.trackStatus = true;
@@ -1203,7 +1285,7 @@ test('sending the dean\'s own syllabus for review clears the dean stage, tells t
   const sent = await call(admin, 'POST', '/syllabi/1/publish', { reviewedRunId: check.body.run.id });
   assert.strictEqual(sent.status, 200, JSON.stringify(sent.body));
   assert.deepStrictEqual(db.s.stages.map((r) => [r.syllabus_id, r.stage, r.reviewer_id]), [[1, 'dean', admin.id]], 'the dean stage, cleared by the dean as author');
-  assert.deepStrictEqual(db.s.notes.map((n) => [n.userId, n.type, n.syllabusId]).sort(), [[3, 'submission', 1], [4, 'submission', 1]], 'the Asst. VPAA and the LIC Director, not the VPAA');
+  assert.deepStrictEqual(db.s.notes.map((n) => [n.userId, n.type, n.syllabusId]).sort(), [[3, 'submission', 1]], 'the Asst. VPAA, whose turn it is: not yet the LIC Director, not the VPAA');
   assert.ok(db.s.notes.every((n) => n.title === 'Syllabus sent for review: ' + course.code));
   assert.ok((await queue()).includes(1), 'sent: now in the Asst. VPAA\'s queue');
 }));
@@ -1225,4 +1307,73 @@ test('a syllabus sent back for revision or rejected cannot be re-checked by an a
     assert.strictEqual(r.status, 409);
     assert.strictEqual(r.body.code, 'returned');
   }
+}));
+
+
+// A resubmission goes back to the reviewer who returned it (lib/reviewStages.js carryForward): the stages cleared before that reviewer are kept on the new
+// version, so the dean and the Asst. VPAA do not review it again when the LIC Director returned it, and the dean does not when the Asst. VPAA returned it.
+test('a resubmission after a return keeps the stages cleared before the reviewer who returned it, and goes back to that reviewer', () => withServer(async ({ call, db }) => {
+  const reviewStages = require('../lib/reviewStages');
+  reviewStages.resetInstalledCache();
+  db.s.trackStatus = true;
+  db.s.roles = { 1: 'admin', 2: 'asst_vpaa', 3: 'lic_director', 4: 'vpaa', 5: 'faculty' };
+  db.s.rolePeople = { 2: 'asst_vpaa', 3: 'lic_director', 4: 'vpaa' }; db.s.notes = []; // who notifyRoles reaches (the dean is reached through notifyAdmins)
+  const toldRoles = () => { const told = db.s.notes.map((n) => db.s.roles[n.userId]); db.s.notes = []; return told; };
+  assert.strictEqual((await call(fay, 'POST', '/syllabi/1/submit', {})).status, 200);
+  assert.deepStrictEqual(toldRoles(), [], 'a first submission tells the dean only (not the Asst. VPAA or the LIC Director)');
+  const round = async (returner, cleared, note) => {
+    const from = db.s.versions.filter((v) => v.syllabus_id === 1).slice(-1)[0].version_id;
+    db.s.stages = (db.s.stages || []).concat(cleared.map(([stage, by]) => ({ syllabus_id: 1, version_id: from, stage, reviewer_id: by })));
+    db.s.activity.push({ syllabusId: 1, userId: returner, action: 'revision', notes: 'Status changed to for_revision: fix it' });
+    db.s.syllabi[1].status = 'for_revision';
+    const edited = JSON.parse(db.s.syllabi[1].content); edited.plan[0].contents = note; setContent(db, 1, edited);
+    const r = await call(fay, 'POST', '/syllabi/1/submit', { note });
+    assert.strictEqual(r.status, 200, JSON.stringify(r.body));
+    const to = db.s.versions.filter((v) => v.syllabus_id === 1).slice(-1)[0].version_id;
+    assert.notStrictEqual(to, from);
+    return { r, to, summary: (await reviewStages.stagesOf(db, [1])).get(1) };
+  };
+  // The LIC Director returned it: the dean and the Asst. VPAA stay cleared (same reviewers), and it is the LIC Director's turn.
+  let out = await round(3, [['dean', 1], ['asst_vpaa', 2]], 'Rewrote the references for the LIC Director.');
+  assert.deepStrictEqual(db.s.stages.filter((x) => x.version_id === out.to).map((x) => [x.stage, x.reviewer_id]), [['dean', 1], ['asst_vpaa', 2]]);
+  assert.strictEqual(out.summary.turn, 'lic_director');
+  assert.strictEqual(out.r.body.status, 'under_review', 'its review has already begun');
+  assert.strictEqual(db.s.syllabi[1].status, 'under_review');
+  assert.deepStrictEqual(toldRoles(), ['lic_director'], 'only the LIC Director, who returned it, is told');
+  // The Asst. VPAA returned the next one: only the dean stays.
+  out = await round(2, [], 'Fixed the grading for the Asst. VPAA.');
+  assert.deepStrictEqual(db.s.stages.filter((x) => x.version_id === out.to).map((x) => x.stage), ['dean']);
+  assert.strictEqual(out.summary.turn, 'asst_vpaa');
+  assert.deepStrictEqual(toldRoles(), ['asst_vpaa']);
+  // The dean returned it: nothing is kept, the chain starts with the dean again, and it is Submitted as before.
+  out = await round(1, [], 'Fixed the outcomes for the dean.');
+  assert.deepStrictEqual(db.s.stages.filter((x) => x.version_id === out.to), []);
+  assert.strictEqual(out.summary.turn, 'dean');
+  assert.strictEqual(out.r.body.status, 'submitted');
+  assert.deepStrictEqual(toldRoles(), [], 'the dean returned it: the dean only');
+  // The VPAA returned it after all three: it goes straight back to the VPAA.
+  out = await round(4, [['dean', 1], ['asst_vpaa', 2], ['lic_director', 3]], 'Fixed what the VPAA asked for.');
+  assert.deepStrictEqual(db.s.stages.filter((x) => x.version_id === out.to).map((x) => x.stage), ['dean', 'asst_vpaa', 'lic_director']);
+  assert.strictEqual(out.summary.allCleared, true);
+  assert.strictEqual(out.summary.turn, 'vpaa');
+  assert.deepStrictEqual(toldRoles(), ['vpaa'], 'straight back to the VPAA, who is told');
+}));
+
+
+// The AI Checker's list follows the order of the chain: a submission is offered to a stage reviewer for checking once it has reached them.
+test('the AI Checker list says whose turn each submission is: the dean first, then the Asst. VPAA, then the LIC Director', () => withServer(async ({ call, db }) => {
+  require('../lib/reviewStages').resetInstalledCache();
+  db.s.trackStatus = true;
+  assert.strictEqual((await call(fay, 'POST', '/syllabi/1/submit', {})).status, 200);
+  const rowFor = async (who) => (await call(who, 'GET', '/compliance?syllabus=all')).body.syllabi.find((x) => x.syllabusId === 1);
+  const asst = { id: 3, role: 'asst_vpaa', firstName: 'Ash', lastName: 'V' };
+  const lic = { id: 4, role: 'lic_director', firstName: 'Lee', lastName: 'D' };
+  let row = await rowFor(admin);
+  assert.deepStrictEqual([row.turn, row.myTurn], ['dean', true]);
+  row = await rowFor(asst);
+  assert.deepStrictEqual([row.turn, row.myTurn], ['dean', false], 'listed, but not offered to the Asst. VPAA yet');
+  const v = db.s.versions.filter((x) => x.syllabus_id === 1).slice(-1)[0].version_id;
+  db.s.stages = [{ syllabus_id: 1, version_id: v, stage: 'dean', reviewer_id: 1 }];
+  assert.deepStrictEqual([(await rowFor(asst)).myTurn, (await rowFor(lic)).myTurn], [true, false], 'the dean cleared it: the Asst. VPAA now');
+  assert.ok(!('myTurn' in (await rowFor(fay))), 'the author is not told about turns here');
 }));

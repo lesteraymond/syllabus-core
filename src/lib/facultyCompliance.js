@@ -15,7 +15,8 @@ export function facultyCompliance({ faculty = [], holders = [], subjects = [], s
   const subjectById = new Map(subjects.map((s) => [Number(s.id), s]));
   return faculty.map((f) => {
     const assigned = holders.filter((h) => Number(h.userId) === Number(f.id) && subjectById.has(Number(h.courseId))).map((h) => subjectById.get(Number(h.courseId)));
-    const mine = syllabi.filter((s) => s && Number(s.userId) === Number(f.id) && !s.archived && s.courseId != null);
+    // A draft is not submitted. The list holds none of a faculty member's, but it does hold the administrator's own (E2E report 2026-11-23, BUG-022).
+    const mine = syllabi.filter((s) => s && Number(s.userId) === Number(f.id) && !s.archived && s.courseId != null && s.status !== 'draft');
     const statusOf = (subjectId) => mine.filter((s) => Number(s.courseId) === Number(subjectId)).map((s) => s.status).sort((a, b) => (RANK[b] || 0) - (RANK[a] || 0))[0] || null;
     const rows = assigned.map((s) => ({ id: s.id, code: s.code, title: s.title, program: s.program, status: statusOf(s.id) }));
     const submitted = rows.filter((r) => FACULTY_SUBMITTED.includes(r.status)).length;

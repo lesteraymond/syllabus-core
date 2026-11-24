@@ -2,10 +2,12 @@
 // template in Step 7 (src/views/builder2/FormPaper.jsx): landscape Letter, LCUP & Testmark logos,
 // Roman-numeral sections I–X, Vision/Mission & EGA/PO/CLO tables, 6-column Learning Plan,
 // Term/Final grading formulas, and 3-column Prepared/Reviewed/Approved sign-off block.
-import { GROUPS, PLAN_HEADINGS, defaultModel } from './syllabusModel.js';
-import { CURRENT_SCHOOL_YEAR, COLLEGE_NAME, INSTITUTION_NAME, INSTITUTION_ADDRESS } from './schoolYear.js';
-import { STAGES, STAGE_LABELS } from './roles.js';
+import { PLAN_HEADINGS, defaultModel, gradeSubItems, finalRatingFraction, formulaBody, printedRefGroups, REFS_TITLE, MODIFICATIONS } from './syllabusModel.js';
+import { CURRENT_SCHOOL_YEAR, COLLEGE_NAME, INSTITUTION_NAME, INSTITUTION_FORMER_NAME, INSTITUTION_ADDRESS, FORM_CODE } from './schoolYear.js';
 import { phDate } from './phTime.js';
+
+// The titles printed under each name in the sign-off block (same as FormPaper.jsx).
+const SIGN_TITLES = { dean: 'Dean', asst_vpaa: 'Asst. Vice President for Academic Affairs', lic_director: 'LIC Director', vpaa: 'Vice President for Academic Affairs' };
 
 const CRC_TABLE = (() => {
   const table = new Uint32Array(256);
@@ -80,17 +82,19 @@ const xmlEsc = (s) => String(s ?? '')
 // Landscape Letter usable width: 15840 dxa - 2*720 dxa margins = 14400 dxa (10 inches)
 const PAGE_W = 14400;
 
-const run = (text, { bold = false, italic = false, size = 20, color = '000000' } = {}) => {
+const run = (text, { bold = false, italic = false, underline = false, caps = false, size = 20, color = '000000', font = 'Arial' } = {}) => {
   const lines = String(text ?? '').split('\n');
   const inner = lines.map((line, i) => (i > 0 ? '<w:br/>' : '') + `<w:t xml:space="preserve">${xmlEsc(line)}</w:t>`).join('');
-  return `<w:r><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>${bold ? '<w:b/>' : ''}${italic ? '<w:i/>' : ''}<w:color w:val="${color}"/><w:sz w:val="${size}"/><w:szCs w:val="${size}"/></w:rPr>${inner}</w:r>`;
+  return `<w:r><w:rPr><w:rFonts w:ascii="${font}" w:hAnsi="${font}" w:cs="${font}"/>${bold ? '<w:b/>' : ''}${italic ? '<w:i/>' : ''}${caps ? '<w:caps/>' : ''}<w:color w:val="${color}"/><w:sz w:val="${size}"/><w:szCs w:val="${size}"/>${underline ? '<w:u w:val="single"/>' : ''}</w:rPr>${inner}</w:r>`;
 };
 
 const para = (runs, { spaceBefore = 0, spaceAfter = 60, align = '', indentLeft = 0 } = {}) =>
   `<w:p><w:pPr>${align ? `<w:jc w:val="${align}"/>` : ''}${indentLeft ? `<w:ind w:left="${indentLeft}"/>` : ''}<w:spacing w:before="${spaceBefore}" w:after="${spaceAfter}"/></w:pPr>${Array.isArray(runs) ? runs.join('') : runs}</w:p>`;
 
+// Header cells are white like the institutional form (no shading); `header` only marks them for the reader of this code.
+// eslint-disable-next-line no-unused-vars
 const cell = (contentXml, { header = false, width = 0, vAlign = 'top' } = {}) =>
-  `<w:tc><w:tcPr>${width ? `<w:tcW w:w="${width}" w:type="dxa"/>` : ''}${header ? '<w:shd w:val="clear" w:color="auto" w:fill="F1F4F3"/>' : ''}<w:vAlign w:val="${vAlign}"/><w:tcMar><w:top w:w="70" w:type="dxa"/><w:bottom w:w="70" w:type="dxa"/><w:left w:w="100" w:type="dxa"/><w:right w:w="100" w:type="dxa"/></w:tcMar></w:tcPr>${contentXml}</w:tc>`;
+  `<w:tc><w:tcPr>${width ? `<w:tcW w:w="${width}" w:type="dxa"/>` : ''}<w:vAlign w:val="${vAlign}"/><w:tcMar><w:top w:w="70" w:type="dxa"/><w:bottom w:w="70" w:type="dxa"/><w:left w:w="100" w:type="dxa"/><w:right w:w="100" w:type="dxa"/></w:tcMar></w:tcPr>${contentXml}</w:tc>`;
 
 const borderedTable = (rowsXml, widths = []) => {
   const grid = widths.length ? `<w:tblGrid>${widths.map((w) => `<w:gridCol w:w="${w}"/>`).join('')}</w:tblGrid>` : '';
@@ -99,12 +103,14 @@ const borderedTable = (rowsXml, widths = []) => {
 
 const borderlessTable = (rowsXml, widths = []) => {
   const grid = widths.length ? `<w:tblGrid>${widths.map((w) => `<w:gridCol w:w="${w}"/>`).join('')}</w:tblGrid>` : '';
-  return `<w:tbl><w:tblPr><w:tblW w:w="${PAGE_W}" w:type="dxa"/><w:tblLayout w:type="fixed"/><w:tblBorders><w:top w:val="none"/><w:bottom w:val="none"/><w:left w:val="none"/><w:right w:val="none"/><w:insideH w:val="none"/><w:insideV w:val="none"/></w:tblBorders></w:tblPr>${grid}${rowsXml.join('')}</w:tbl>`;
+  const total = widths.length ? widths.reduce((s, w) => s + w, 0) : PAGE_W;
+  return `<w:tbl><w:tblPr><w:tblW w:w="${total}" w:type="dxa"/><w:tblLayout w:type="fixed"/><w:tblBorders><w:top w:val="none"/><w:bottom w:val="none"/><w:left w:val="none"/><w:right w:val="none"/><w:insideH w:val="none"/><w:insideV w:val="none"/></w:tblBorders></w:tblPr>${grid}${rowsXml.join('')}</w:tbl>`;
 };
 
 // Matches FormPaper.jsx's .kv2 row: Roman numeral | LABEL | : | Value
-const kvRow = (roman, label, value = '', { boldValue = false, spaceBefore = 80 } = {}) => {
-  const widths = [520, 2900, 260, PAGE_W - 3680];
+// `width` is the room it has: the page, or (for VIII to X) the inside of a bordered full-width row.
+const kvRow = (roman, label, value = '', { boldValue = false, spaceBefore = 80, width = PAGE_W } = {}) => {
+  const widths = [640, 2780, 260, width - 3680]; // wide enough for "VIII." on one line; the value column still starts at 3680
   return borderlessTable([
     `<w:tr>${cell(para(run(roman, { bold: true, size: 20 }), { spaceBefore, spaceAfter: 20 }), { width: widths[0] })}${cell(para(run(label, { bold: true, size: 20 }), { spaceBefore, spaceAfter: 20 }), { width: widths[1] })}${cell(para(run(label.endsWith(':') ? '' : ':', { size: 20 }), { spaceBefore, spaceAfter: 20 }), { width: widths[2] })}${cell(para(run(value, { bold: boldValue, size: 20 }), { spaceBefore, spaceAfter: 20 }), { width: widths[3] })}</w:tr>`,
   ], widths);
@@ -172,9 +178,7 @@ export function buildSyllabusDocx(content = {}, fallback = {}) {
       const idx = clos.findIndex((c) => c.id === tag.slice(4));
       return idx >= 0 ? `[CLO${idx + 1}]` : '';
     }
-    if (String(tag).startsWith('po:')) return `[PO${tag.slice(3)}]`;
-    if (String(tag).startsWith('ega:')) return `[EGA${tag.slice(4)}]`;
-    return '';
+    return ''; // an ILO prints its CLO only; the CLO carries the PO and EGA
   }).filter(Boolean).join(' ');
 
   const extraEntries = [];
@@ -204,16 +208,16 @@ export function buildSyllabusDocx(content = {}, fallback = {}) {
 
   const body = [];
 
-  // 1. Official LCUP Header (mirrors FormPaper.jsx .paper-head + School Year / College)
-  const headWidths = [1800, PAGE_W - 3600, 1800];
+  // 1. Official LCUP Header (mirrors FormPaper.jsx .paper-head + School Year / College): the logos close beside a letterhead in
+  // Monotype Corsiva (name, former name, address), as on the approved syllabi.
+  const headWidths = [3500, PAGE_W - 7000, 3500];
+  const script = { font: 'Monotype Corsiva', italic: true };
   body.push(borderlessTable([
-    `<w:tr>${cell(logos.lcup ? para(imageRun('rIdLogo1', 1, 'LCUP logo', 55, 55), { align: 'right', spaceAfter: 0 }) : para(run(''), { spaceAfter: 0 }), { width: headWidths[0], vAlign: 'center' })}${cell(para([run(INSTITUTION_NAME, { bold: true, size: 28 }), run('\n' + INSTITUTION_ADDRESS, { size: 20 })], { align: 'center', spaceAfter: 0 }), { width: headWidths[1], vAlign: 'center' })}${cell(logos.testmark ? para(imageRun('rIdLogo2', 2, 'Testmark logo', 70, 45), { align: 'left', spaceAfter: 0 }) : para(run(''), { spaceAfter: 0 }), { width: headWidths[2], vAlign: 'center' })}</w:tr>`,
+    `<w:tr>${cell(logos.lcup ? para(imageRun('rIdLogo1', 1, 'LCUP logo', 62, 62), { align: 'right', spaceAfter: 0 }) : para(run(''), { spaceAfter: 0 }), { width: headWidths[0], vAlign: 'center' })}${cell(para([run(INSTITUTION_NAME, { ...script, size: 32 }), run('\n' + INSTITUTION_FORMER_NAME, { ...script, size: 24 }), run('\n' + INSTITUTION_ADDRESS, { ...script, size: 24 })], { align: 'center', spaceAfter: 0 }), { width: headWidths[1], vAlign: 'center' })}${cell(logos.testmark ? para(imageRun('rIdLogo2', 2, 'Testmark logo', 70, 45), { align: 'left', spaceAfter: 0 }) : para(run(''), { spaceAfter: 0 }), { width: headWidths[2], vAlign: 'center' })}</w:tr>`,
   ], headWidths));
 
-  body.push(para([
-    run('SCHOOL YEAR ' + schoolYear, { bold: true, size: 20 }),
-    run('\n' + COLLEGE_NAME.toUpperCase(), { bold: true, size: 20 }),
-  ], { align: 'center', spaceBefore: 100, spaceAfter: 140 }));
+  body.push(para(run('SCHOOL YEAR ' + schoolYear, { bold: true, size: 20 }), { align: 'center', spaceBefore: 60, spaceAfter: 200 }));
+  body.push(para(run(COLLEGE_NAME.toUpperCase(), { bold: true, size: 20 }), { align: 'center', spaceAfter: 240 }));
 
   // 2. Sections I – V (exact .kv2 format from FormPaper.jsx)
   body.push(kvRow('I.', 'COURSE CODE', code, { boldValue: true, spaceBefore: 40 }));
@@ -291,62 +295,95 @@ export function buildSyllabusDocx(content = {}, fallback = {}) {
       return `<w:tr>${cell(para(run('Week ' + (r.week || ''), { size: 18 }), { spaceAfter: 0 }), { width: planWidths[0] })}${cell(iloXml, { width: planWidths[1] })}${cell(richCellParagraphs(r.contents, 18), { width: planWidths[2] })}${cell(richCellParagraphs(r.activities, 18), { width: planWidths[3] })}${cell(richCellParagraphs(r.tasks, 18), { width: planWidths[4] })}${cell(richCellParagraphs(r.values, 18), { width: planWidths[5] })}</w:tr>`;
     }),
   ];
-  body.push(borderedTable(planRowsXml, planWidths));
+  // VIII to X go in bordered full-width rows joined to the bottom of the Learning Plan table, as on the institutional form
+  // (FormPaper.jsx tr.paper-sec). Inside such a row there is the page width less the cell's side margins.
+  const SEC_W = PAGE_W - 200;
+  const secRow = (xml) => `<w:tr><w:tc><w:tcPr><w:tcW w:w="${PAGE_W}" w:type="dxa"/><w:gridSpan w:val="6"/><w:tcMar><w:top w:w="40" w:type="dxa"/><w:bottom w:w="80" w:type="dxa"/><w:left w:w="100" w:type="dxa"/><w:right w:w="100" w:type="dxa"/></w:tcMar></w:tcPr>${xml}${para(run('', { size: 8 }), { spaceAfter: 0 })}</w:tc></w:tr>`;
 
   // 5. Section VIII: Course Requirements
-  body.push(kvRow('VIII.', 'COURSE REQUIREMENTS', '', { spaceBefore: 120 }));
-  reqs.forEach((reqText, i) => body.push(para(run(`${i + 1}. ${reqText}`, { size: 20 }), { indentLeft: 520, spaceAfter: 40 })));
+  const reqXml = [kvRow('VIII.', 'COURSE REQUIREMENTS', '', { spaceBefore: 40, width: SEC_W }),
+    ...reqs.map((reqText, i) => para(run(`${i + 1}. ${reqText}`, { size: 20 }), { indentLeft: 520, spaceAfter: 40 }))];
 
   // 6. Section IX: References (exact A–D groups from FormPaper.jsx)
-  body.push(kvRow('IX.', 'REFERENCES', '', { spaceBefore: 100 }));
-  GROUPS.forEach(([key, groupTitle], gi) => {
-    const grp = refs[key] || { na: false, items: [] };
-    body.push(para(run(`${String.fromCharCode(65 + gi)}. ${groupTitle.toUpperCase()}`, { bold: true, size: 19 }), { indentLeft: 520, spaceBefore: 60, spaceAfter: 30 }));
-    if (grp.na) {
-      body.push(para(run('Not applicable.', { italic: true, size: 19, color: '555555' }), { indentLeft: 720, spaceAfter: 30 }));
-    } else {
-      const items = (grp.items || []).map((x) => (typeof x === 'string' ? x : x?.t || '').trim()).filter(Boolean);
-      items.forEach((item) => body.push(para(run(item, { size: 19 }), { indentLeft: 720, spaceAfter: 30 })));
-    }
+  // "IX. SUGGESTED REFERENCES" (no colon, as printed), then only the groups in use, lettered in order (printedRefGroups).
+  const refXml = [para([run('IX.', { bold: true, size: 20 }), run('\t' + REFS_TITLE, { bold: true, size: 20 })], { spaceBefore: 40, spaceAfter: 20, indentLeft: 100 }).replace('<w:pPr>', '<w:pPr><w:tabs><w:tab w:val="left" w:pos="740"/></w:tabs>')];
+  // (indented by the 100 dxa cell margin of the kvRow headings above and below, so "IX." lines up with "VIII." and "X.")
+  printedRefGroups(refs).forEach((g) => {
+    refXml.push(para(run(`${g.letter}. ${g.title.toUpperCase()}`, { bold: true, size: 19 }), { indentLeft: 520, spaceBefore: 60, spaceAfter: 30 }));
+    g.items.forEach((item) => refXml.push(para(run(item, { size: 19 }), { indentLeft: 720, spaceAfter: 30 })));
   });
 
-  // 7. Section X: Grading System (exact numbered weights + Term Grade + Final Rating)
-  body.push(kvRow('X.', 'GRADING SYSTEM', '', { spaceBefore: 120 }));
-  gradingRows.forEach((r, i) => {
-    body.push(para(run(`${i + 1}. ${r.label || ''}  ${Number(r.pct) || 0}%`, { size: 20 }), { indentLeft: 520, spaceAfter: 30 }));
+  // 7. Section X: Grading System, laid out like the printed form (FormPaper.jsx .paper-grade): a number, the component and
+  // what it includes, and on the right (under the heading's colon) its weight; then Term Grade and Final Rating as rows 3 and 4,
+  // the Final Rating as a fraction (the exam terms over their number).
+  const gradeHead = kvRow('X.', 'GRADING SYSTEM', '', { spaceBefore: 40, width: SEC_W });
+  const gradeWidths = [520, 400, 2760, SEC_W - 3680];
+  const gradeCell = (xml, w) => cell(xml, { width: w }).replace(/<w:tcMar>.*?<\/w:tcMar>/, '<w:tcMar><w:top w:w="0" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:left w:w="0" w:type="dxa"/><w:right w:w="80" w:type="dxa"/></w:tcMar>');
+  const gradeRow = (no, labelXml, valueXml) => `<w:tr>${gradeCell(para(run(''), { spaceAfter: 0 }), gradeWidths[0])}${gradeCell(para(run(no, { size: 20 }), { spaceAfter: 160 }), gradeWidths[1])}${gradeCell(labelXml, gradeWidths[2])}${gradeCell(valueXml, gradeWidths[3])}</w:tr>`;
+  const valuePara = (text) => para(run(text, { size: 20 }), { spaceAfter: 160 });
+  const gradeRowsXml = gradingRows.map((r, i) => {
+    const subs = gradeSubItems(r);
+    const labelXml = [para(run(r.label || '', { size: 20 }), { spaceAfter: subs.length ? 0 : 160 }), ...subs.map((s, k) => para(run(s, { size: 20 }), { spaceAfter: k === subs.length - 1 ? 160 : 0 }))].join('');
+    return gradeRow(`${i + 1}.`, labelXml, valuePara(`${Number(r.pct) || 0}%`));
   });
-  body.push(para(run(formulas.term.replace('Term Grade = ', 'Term Grade: '), { size: 20 }), { indentLeft: 520, spaceBefore: 40, spaceAfter: 30 }));
-  body.push(para(run(formulas.final.replace('Final Rating = ', 'Final Rating: '), { size: 20 }), { indentLeft: 520, spaceAfter: 140 }));
+  const n = gradingRows.length;
+  const frac = finalRatingFraction({ plan, grading: { rows: gradingRows, override: d.grading?.override || { on: false } } });
+  // The fraction: a small borderless table about as wide as its text (10 pt Arial is about 105 dxa a character), the exam terms
+  // underlined over their number, both centered.
+  const fracW = frac ? Math.min(gradeWidths[3] - 100, frac.num.length * 105 + 120) : 0;
+  const fracXml = frac
+    ? `<w:tbl><w:tblPr><w:tblW w:w="${fracW}" w:type="dxa"/><w:tblLayout w:type="fixed"/><w:tblBorders><w:top w:val="none"/><w:bottom w:val="none"/><w:left w:val="none"/><w:right w:val="none"/><w:insideH w:val="none"/><w:insideV w:val="none"/></w:tblBorders><w:tblCellMar><w:left w:w="0" w:type="dxa"/><w:right w:w="0" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid><w:gridCol w:w="${fracW}"/></w:tblGrid><w:tr><w:tc><w:tcPr><w:tcW w:w="${fracW}" w:type="dxa"/></w:tcPr>${para(run(frac.num, { underline: true, size: 20 }), { align: 'center', spaceAfter: 0 })}${para(run(String(frac.den), { size: 20 }), { align: 'center', spaceAfter: 0 })}</w:tc></w:tr></w:tbl>${para(run(''), { spaceAfter: 120 })}`
+    : valuePara(formulaBody(formulas.final, 'Final Rating'));
+  const gradeXml = gradeHead + borderlessTable([
+    ...gradeRowsXml,
+    gradeRow(`${n + 1}.`, valuePara('Term Grade'), valuePara(formulaBody(formulas.term, 'Term Grade'))),
+    gradeRow(`${n + 2}.`, valuePara('Final Rating'), fracXml),
+  ], gradeWidths);
 
-  // 8. Official 3-Column Sign-Off Block (mirrors FormPaper.jsx lines 83–91)
+  body.push(borderedTable([...planRowsXml, secRow(reqXml.join('')), secRow(refXml.join('')), secRow(gradeXml)], planWidths));
+  body.push(para(run(''), { spaceAfter: 120 }));
+
+  // 8. Sign-off block, as on the printed form (FormPaper.jsx .paper-sign): a light blue strip over three columns; Prepared by (faculty),
+  // Checked and Reviewed by (dean, Asst. VPAA, then References Certified by the LIC Director), Approved by (VPAA). Each name is bold,
+  // underlined and in capitals, centered over its title and date; a name not yet known is a blank line to sign on.
   const sigWidths = [Math.round(PAGE_W / 3), Math.round(PAGE_W / 3), PAGE_W - 2 * Math.round(PAGE_W / 3)];
-  const preparedXml = para([run('Prepared by:\n\n', { size: 19 }), run(preparedBy || '', { bold: true, size: 19 })], { spaceAfter: 0 });
-  const reviewedXml = signoffs?.stages && signoffs.stages.cleared > 0
-    ? [
-      para(run('Checked and Reviewed by:', { size: 19 }), { spaceAfter: 80 }),
-      ...STAGES.map((stage) => {
-        const st = signoffs.stages[stage];
-        if (st?.cleared) {
-          return para([
-            run(st.by || '', { bold: true, size: 18 }),
-            run(`\n${stage === 'dean' ? 'Dean' : STAGE_LABELS[stage]} - ${st.at ? phDate(st.at) : 'Date'}`, { size: 17 }),
-          ], { spaceAfter: 60 });
-        }
-        return para(run(`${STAGE_LABELS[stage]} - pending`, { italic: true, size: 17, color: '555555' }), { spaceAfter: 40 });
-      }),
-    ].join('')
-    : para([run('Checked and Reviewed by:\n\n', { size: 19 }), run('Added by the system on review', { bold: true, size: 18, color: '555555' })], { spaceAfter: 0 });
-  const approvedXml = signoffs?.approved
-    ? para([
-      run('Approved by:\n\n', { size: 19 }),
-      run(signoffs.approved.by || '', { bold: true, size: 19 }),
-      run(`\nVice President for Academic Affairs - ${signoffs.approved.at ? phDate(signoffs.approved.at) : 'Date'}`, { size: 17 }),
-    ], { spaceAfter: 0 })
-    : para([run('Approved by:\n\n', { size: 19 }), run('Added by the system on approval', { bold: true, size: 18, color: '555555' })], { spaceAfter: 0 });
+  const signLine = (name, title, at) => [
+    name
+      ? para(run(name, { bold: true, underline: true, caps: true, size: 19 }), { align: 'center', spaceBefore: 420, spaceAfter: 0 })
+      : para(run('________________________________', { size: 19 }), { align: 'center', spaceBefore: 420, spaceAfter: 0 }),
+    para(run(`${title} - ${at ? phDate(at) : 'Date'}`, { size: 18 }), { align: 'center', spaceAfter: 80 }),
+  ].join('');
+  const stageSign = (stage) => {
+    const st = signoffs?.stages?.[stage];
+    return st?.cleared ? signLine(st.by || '', SIGN_TITLES[stage], st.at) : signLine('', SIGN_TITLES[stage], null);
+  };
+  const label = (text, spaceBefore = 0) => para(run(text, { size: 19 }), { spaceBefore, spaceAfter: 0 });
+  // Each date is the day that step happened: submitted (faculty), cleared (each reviewer), approved (VPAA); "Date" until then.
+  const preparedXml = label('Prepared by:') + signLine(preparedBy || '', 'Faculty', signoffs?.submitted?.at || null);
+  const reviewedXml = label('Checked and Reviewed by:') + stageSign('dean') + stageSign('asst_vpaa') + label('References Certified by:', 120) + stageSign('lic_director');
+  const approvedXml = label('Approved by:') + (signoffs?.approved
+    ? signLine(signoffs.approved.by || '', SIGN_TITLES.vpaa, signoffs.approved.at)
+    : signLine('', SIGN_TITLES.vpaa, null));
+  // The strip keeps with the next row and that row never splits, so the whole block moves to the next page together.
+  const stripRow = `<w:tr><w:trPr><w:cantSplit/><w:trHeight w:val="140" w:hRule="exact"/></w:trPr><w:tc><w:tcPr><w:tcW w:w="${PAGE_W}" w:type="dxa"/><w:gridSpan w:val="3"/><w:shd w:val="clear" w:color="auto" w:fill="DBE5F1"/></w:tcPr><w:p><w:pPr><w:keepNext/><w:spacing w:before="0" w:after="0"/></w:pPr>${run('', { size: 2 })}</w:p></w:tc></w:tr>`;
 
   body.push(borderedTable([
-    `<w:tr>${cell(preparedXml, { width: sigWidths[0] })}${cell(reviewedXml, { width: sigWidths[1] })}${cell(approvedXml, { width: sigWidths[2] })}</w:tr>`,
+    stripRow,
+    `<w:tr><w:trPr><w:cantSplit/></w:trPr>${cell(preparedXml, { width: sigWidths[0] })}${cell(reviewedXml, { width: sigWidths[1] })}${cell(approvedXml, { width: sigWidths[2] })}</w:tr>`,
   ], sigWidths));
+
+  // 9. The template's Revision Date / Modifications box right under the sign-off block: two equal columns, as wide as every other
+  // table. Word joins two tables with nothing between them, so a hairline paragraph keeps them apart.
+  // In the downloaded file the Revision Date is left blank (to be written in by hand), and so is the checklist, as on the paper form.
+  body.push('<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="exact"/></w:pPr></w:p>');
+  const revWidths = [PAGE_W / 2, PAGE_W / 2];
+  const revTable = borderedTable([
+    `<w:tr><w:trPr><w:cantSplit/></w:trPr>${cell(para(run('Revision Date:', { size: 19 }), { spaceAfter: 60 }), { width: revWidths[0] })}${cell(para(run(''), { spaceAfter: 0 }), { width: revWidths[1] })}</w:tr>`,
+    `<w:tr><w:trPr><w:cantSplit/></w:trPr>${cell([para(run('Modifications:', { size: 19 }), { spaceAfter: 100 }), ...MODIFICATIONS.map((m) => para(run('__' + m, { size: 16 }), { spaceAfter: 0 })), para(run(''), { spaceAfter: 300 })].join(''), { width: revWidths[0] })}${cell(para(run(''), { spaceAfter: 0 }), { width: revWidths[1] })}</w:tr>`,
+  ], revWidths);
+  body.push(revTable);
+  // 10. The form control code, bottom-left under the box, as on the approved syllabi. Only the downloaded file carries it.
+  body.push(para(run(FORM_CODE, { bold: true, size: 18, font: 'Calibri' }), { spaceBefore: 360, spaceAfter: 0 }));
 
   const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">

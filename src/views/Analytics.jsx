@@ -123,7 +123,9 @@ export default function Analytics({ syllabi, user, notify }) {
 
   const barsTitle = translateUI(isFaculty ? 'analytics.barsTitleFaculty' : 'analytics.barsTitleAdmin');
   const none = <div className="empty">{translateUI(loaded ? 'analytics.empty' : 'analytics.loading')}</div>;
+  const hasData = bands.count > 0 || bars.length > 0 || areas.some(a => Number.isFinite(a.average));
   const downloadReport = () => {
+    if (!hasData) return;
     const title = isFaculty ? translateUI('ui.my_analytics_1ab328') : translateUI('ui.analytics_quality_dashboard_b85172');
     const out = [
       title.toUpperCase(),
@@ -152,7 +154,7 @@ export default function Analytics({ syllabi, user, notify }) {
   };
   return (
     <>
-      <PageHead title={isFaculty ? translateUI("ui.my_analytics_1ab328") : translateUI("ui.analytics_quality_dashboard_b85172")} subtitle={isFaculty ? translateUI("ui.track_your_personal_compliance_scores_and_submission_performance_b66964") : translateUI("ui.monitor_compliance_curriculum_coverage_submission_performance_and_78b463")} actions={<><YearFilter group="data" /><StableButton type="button" className="btn outline" disabled={!loaded} onClick={downloadReport}><Icon name="downloadSimple" size={15} />{translateUI("ui.download_report_9f36e2")}</StableButton></>} />
+      <PageHead title={isFaculty ? translateUI("ui.my_analytics_1ab328") : translateUI("ui.analytics_quality_dashboard_b85172")} subtitle={isFaculty ? translateUI("ui.track_your_personal_compliance_scores_and_submission_performance_b66964") : translateUI("ui.monitor_compliance_curriculum_coverage_submission_performance_and_78b463")} actions={<><YearFilter group="data" /><StableButton type="button" className="btn outline" disabled={!loaded || !hasData} onClick={downloadReport}><Icon name="downloadSimple" size={15} />{translateUI("ui.download_report_9f36e2")}</StableButton></>} />
       <div className="analytics-grid two">
         <ChartCard title={translateUI('analytics.spreadTitle')} subtitle={translateUI(isFaculty ? 'analytics.spreadSubtitleFaculty' : 'analytics.spreadSubtitleAdmin')} action={bands.count ? <ViewSwitch view={spreadView} setView={setSpreadView} /> : null}>
           {bands.count ? <ScoreSpread average={average} bands={bands} view={spreadView} /> : none}

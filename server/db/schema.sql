@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS syllabi (
   title VARCHAR(255),
   course_code VARCHAR(50),
   status ENUM('submitted', 'under_review', 'approved', 'rejected', 'for_revision', 'draft') DEFAULT 'submitted',
-  version VARCHAR(10) DEFAULT 'v1.0',
+  version VARCHAR(10) DEFAULT 'v1',
   admin_comment TEXT,
   content LONGTEXT NULL,
   content_schema_version INT NULL,

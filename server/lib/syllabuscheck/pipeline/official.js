@@ -204,6 +204,31 @@ function incompleteReason(result) {
   return `${missing.length} question${missing.length === 1 ? '' : 's'} of the new AI Checker had no valid answer${named ? ': ' + named + (missing.length > 3 ? '; …' : '') : ''}. Run the check again.`;
 }
 
+// The official score from an old-engine report made with AI off (`noAi`, not changed) and the new checker's result and parts (officialParts): the
+// engine's base score minus its no-AI deductions (links, core values) and the alignment points (capped per area). No score while a blocking finding
+// remains or the alignment is incomplete (the provisional score is still given). One formula for the AI Checker (officialize) and the AI Syllabus
+// Generator's expected score (generate.js), so the two can never disagree.
+const bandOf = score => (score === null ? null : score >= 90 ? 'Excellent' : score >= 79 ? 'Meets the standard' : 'Needs work');
+function scoreFrom({ noAi, result, parts, masters = {} }) {
+  const h = noAi.hybrid;
+  const complete = !!result.summary.complete;
+  // findings: the old engine's, without its "AI must complete" block, which the new checker now answers
+  const findings = noAi.findings.filter(f => f.ruleId !== 'AI-REQUIRED');
+  if (!complete) findings.push({ id: 'AI-REQUIRED:review', ruleId: 'AI-REQUIRED', path: 'review', step: 'review', area: 'assessment', severity: 'blocking', source: 'rule', message: 'AI alignment must complete before submission. Some questions could not be answered; run the check again.' });
+  const failed = findings.filter(f => f.severity === 'blocking');
+  const codedDeductions = (h.deductions || []).filter(d => d.kind !== 'alignment');
+  const deductions = [...codedDeductions, ...parts.deductions];
+  const points = deductions.reduce((s, d) => s + d.points, 0);
+  const base = h.baseScore ?? noAi.baseScore ?? 0;
+  const provisionalScore = h.critical ? 0 : Math.max(0, base - points);
+  const ready = !failed.length && complete && !masters.synthetic;
+  const score = h.critical ? 0 : ready ? provisionalScore : null;
+  return {
+    complete, findings, failed, deductions, points, base, provisionalScore, ready, score, passed: ready && score >= PASS_THRESHOLD, band: bandOf(score),
+    codedPoints: codedDeductions.reduce((s, d) => s + d.points, 0), alignmentPoints: parts.deductions.reduce((s, d) => s + d.points, 0),
+  };
+}
+
 // Fill the AI part of an old-engine report made with AI off (`noAi`) from the new checker. Returns the same report object, changed.
 // `out` (optional): receives { result, plan } (the check and the plan this call made), so a caller can re-check with the same plan without building it again.
 // `concurrency` (optional, 1-6): requests in flight at once (default 3, judge.js). A test run under a tight cap passes 1, so the worst cases reserved
@@ -233,23 +258,12 @@ async function officialize({ noAi, content, masters, env = process.env, db, tran
   if (out && typeof out === 'object') Object.assign(out, { result, plan });
   const parts = officialParts(content, result, plan);
   const complete = result.summary.complete;
-
-  // findings: the old engine's, without its "AI must complete" block, which the new checker now answers
-  const findings = noAi.findings.filter(f => f.ruleId !== 'AI-REQUIRED');
   if (!complete) console.error(`[ai-provider] alignment check incomplete: some relationships were not answered (${result.summary.reason || 'see earlier [ai-provider] lines'}).`);
-  if (!complete) findings.push({ id: 'AI-REQUIRED:review', ruleId: 'AI-REQUIRED', path: 'review', step: 'review', area: 'assessment', severity: 'blocking', source: 'rule', message: 'AI alignment must complete before submission. Some questions could not be answered; run the check again.' });
-  const failed = findings.filter(f => f.severity === 'blocking');
-  const codedDeductions = (h.deductions || []).filter(d => d.kind !== 'alignment');
-  const deductions = [...codedDeductions, ...parts.deductions];
-  const points = deductions.reduce((s, d) => s + d.points, 0);
-  const base = h.baseScore ?? noAi.baseScore ?? 0;
-  const provisionalScore = h.critical ? 0 : Math.max(0, base - points);
-  const ready = !failed.length && complete && !masters.synthetic;
-  const score = h.critical ? 0 : ready ? provisionalScore : null;
+  const { findings, failed, deductions, points, provisionalScore, ready, score, passed, band } = scoreFrom({ noAi, result, parts, masters });
 
   noAi.findings = findings;
   noAi.conformance = { ok: !failed.length, failed };
-  Object.assign(noAi, { score, overall: score, status: score === null ? 'incomplete' : 'scored', passed: ready && score >= PASS_THRESHOLD, band: score === null ? null : score >= 90 ? 'Excellent' : score >= 79 ? 'Meets the standard' : 'Needs work' });
+  Object.assign(noAi, { score, overall: score, status: score === null ? 'incomplete' : 'scored', passed, band });
   h.alignment = {
     status: complete ? 'completed' : 'not_evaluated', reason: complete ? null : incompleteReason(result),
     provider: 'anthropic', model: String(provider.model || '').split('|')[0], promptVersion: P.PROMPT_VERSION, engine: 're-planned',
@@ -277,4 +291,4 @@ async function officialize({ noAi, content, masters, env = process.env, db, tran
   return noAi;
 }
 
-module.exports = { isOfficial, aiProviderOn, readiness, maxRequestsOf, officialize, officialParts, unresolvedOf, pathOf, keyOfPath, APPLYABLE, MODE, MAX_CAP_USD };
+module.exports = { isOfficial, aiProviderOn, readiness, maxRequestsOf, officialize, officialParts, scoreFrom, PASS_THRESHOLD, unresolvedOf, pathOf, keyOfPath, APPLYABLE, MODE, MAX_CAP_USD };

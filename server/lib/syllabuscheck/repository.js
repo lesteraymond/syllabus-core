@@ -5,7 +5,7 @@ const { loadOutcomes } = require('../institution');
 const { loadResolvedProgram, findProgram } = require('../programs');
 const { httpError } = require('../http');
 const { programIdOfSyllabus, currentLabel } = require('../academicYear');
-const { assertContentBasis, assertRecordReview, recordReviewOf } = require('../programPoReferences');
+const { assertContentBasis, assertRecordReview, recordReviewOf, sameBasis } = require('../programPoReferences');
 // The references a syllabus is checked against. An open record review refuses this, so nothing new is judged against references the faculty has not reviewed.
 // `historicalRead` is for one caller only: service.loadDetail, which reads a SAVED report and compares its fingerprint. It judges nothing, so it is not refused; it is told about the review instead (recordReview).
 // The subject link is gone (or was never made): the program is found by its code, but only in the syllabus's OWN academic year. Before this, the code was looked
@@ -26,6 +26,16 @@ async function programOfOwnYear(db, syllabusId, code) {
   if (programYear !== year) throw httpError(404, 'This program has no catalog in the academic year of this syllabus.');
   return found;
 }
+// The Admin saved new Program Outcomes but has not used "Apply to subjects" yet: the syllabus's subject still offers the older statements, so the faculty has
+// nothing to review and adopt. The refusal then says who has to act. (Apply to subjects stays a manual Admin step: a subject never changes under its authors.)
+const PO_NOT_APPLIED = "The administrator saved new Program Outcomes for this program but has not applied them to this subject yet. Ask the administrator to open the program's Outcomes and click Apply to subjects; you can then review and adopt them in the Learning Outcomes step.";
+async function notAppliedToSubject(db, content, reference) {
+  const courseId = content?.meta?.courseId;
+  if (!courseId || !reference) return false;
+  let course;
+  try { course = await require('../courses').loadCourse(db, courseId); } catch { return false; } // no answer: keep the general refusal
+  return !!course && !sameBasis(course.standards?.pos, reference.outcomes);
+}
 async function mastersFor(db, content, { syllabusId = null, historicalRead = false } = {}) {
   const recordReview = historicalRead ? await recordReviewOf(db, syllabusId) : null;
   if (!historicalRead) await assertRecordReview(db,syllabusId);
@@ -37,7 +47,8 @@ async function mastersFor(db, content, { syllabusId = null, historicalRead = fal
     program = await loadResolvedProgram(db, byId ? await findProgram(db, byId) : await programOfOwnYear(db, syllabusId, content.meta?.program || ''));
   }
   catch (error) { if (error.status !== 404) throw error; program = { pos: [] }; }
-  assertContentBasis(content,program.poReference);
+  try { assertContentBasis(content,program.poReference); }
+  catch (error) { if (error.status === 409 && await notAppliedToSubject(db, content, program.poReference)) throw httpError(409, PO_NOT_APPLIED, { code: 'po_reference_not_applied' }); throw error; }
   // A renamed program keeps resolving through its code aliases; its curriculum rows must too. Both the saved code and the resolved one match.
   // The curriculum follows the syllabus's OWN program, never the program its outcomes are inherited from: PO inheritance and curriculum selection are
   // independent, so a specialization is checked against its own approved curriculum (its specialization subjects included) and its source program's POs.
@@ -100,4 +111,4 @@ async function readReport(db, runId) {
     return rows[0] ? { fingerprint: rows[0].reference_hash, ...JSON.parse(rows[0].report_json) } : null;
   } catch (error) { if (error.code === 'ER_NO_SUCH_TABLE') return null; throw error; }
 }
-module.exports = { mastersFor, saveReport, readReport, recordReviewOf };
+module.exports = { mastersFor, saveReport, readReport, recordReviewOf, notAppliedToSubject, PO_NOT_APPLIED };

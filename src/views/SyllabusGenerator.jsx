@@ -1,9 +1,10 @@
 import { useEffect, useId, useMemo, useState } from 'react';
 import { t as translateUI, tr } from '../i18n/index.js';
 import { PageHead } from '../components/ui';
+import { useYearScope } from '../components/AcademicYearScope';
 import Select from '../components/Select';
 import StableButton from '../components/StableButton';
-import { courses as coursesApi, syllabi as syllabiApi, isRevisionConflict } from '../lib/api';
+import { courses as coursesApi, syllabi as syllabiApi, syllabusCheck as checkApi, isRevisionConflict } from '../lib/api';
 import { SECTION_KEYS, saveOnce } from '../lib/draftSave';
 import { EDITABLE_STATUSES } from '../lib/syllabusRules';
 import { SCHEMA_VERSION, applyCourse, emptyDraft } from '../lib/syllabusModel';
@@ -16,7 +17,13 @@ import GeneratePanel from './builder2/GeneratePanel';
 // Choices are 's:<syllabus id>' (a draft) or 'c:<course id>' (an assigned subject with no draft).
 export default function SyllabusGenerator({ user, syllabi = [], editing, setEditing, setPage, onChanged }) {
   const uid = useId();
-  const mine = useMemo(() => syllabi.filter((s) => s.userId === user.id && !s.archived && EDITABLE_STATUSES.includes(s.status)), [syllabi, user.id]);
+  // Whether the server can generate at all (the same answer GeneratePanel reads): when it cannot, say so instead of an empty page (E2E report 2026-11-23, BUG-013).
+  const [genAvailable, setGenAvailable] = useState(null);
+  useEffect(() => { let live = true; checkApi.status().then((s) => { if (live) setGenAvailable(!!(s && s.generator && s.generator.available)); }).catch(() => { if (live) setGenAvailable(false); }); return () => { live = false; }; }, []);
+  // A past academic year's draft is view only (server lib/activeYearGate.js), so it is not offered for generation.
+  const yearScope = useYearScope();
+  const activeYear = yearScope && yearScope.current ? yearScope.current.label : null;
+  const mine = useMemo(() => syllabi.filter((s) => s.userId === user.id && !s.archived && EDITABLE_STATUSES.includes(s.status) && !(activeYear && s.academicYear && s.academicYear !== activeYear)), [syllabi, user.id, activeYear]);
   const [fresh, setFresh] = useState([]); // drafts created on this page that the app's list does not hold yet: [{ id, courseId, courseCode, title }]
   const [subjects, setSubjects] = useState(null); // the subjects assigned to this person (all subjects for an administrator), each with `taken` when a syllabus exists on it
   const drafts = useMemo(() => [...mine.map((s) => ({ id: s.id, courseCode: s.courseCode, title: s.title })), ...fresh.filter((f) => !mine.some((s) => s.id === f.id))], [mine, fresh]);
@@ -103,9 +110,10 @@ export default function SyllabusGenerator({ user, syllabi = [], editing, setEdit
                 {unstarted.map((c) => <option key={'c' + c.id} value={'c:' + c.id}>{label(c.code, c.title) + ' · ' + translateUI('generate.noDraftYet')}</option>)}
               </Select>
             </div>
-            <StableButton type="button" className="btn ghost pick-edit" disabled={!selectedId} onClick={openBuilder}>{translateUI('generate.openBuilder')}</StableButton>
+            <StableButton type="button" className="btn outline" disabled={!selectedId} onClick={openBuilder}>{translateUI('generate.openBuilder')}</StableButton>
           </section>
           {doc.error && <div className="info-banner warning" role="alert">{tr(doc.error)}</div>}
+          {genAvailable === false && <div className="info-banner warning" role="note" data-testid="generator-unavailable">{translateUI('generate.unavailable')}</div>}
           <GeneratePanel
             draft={selectedId ? doc.content : placeholder}
             editable={selectedId ? doc.editable : !!placeholder}

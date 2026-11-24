@@ -33,4 +33,31 @@ async function assertActiveYear(db, syl, options = {}) {
   return active;
 }
 
-module.exports = { CODE, MESSAGES, activeYear, assertActiveYear };
+// ---- editing ----
+// A syllabus of an academic year that is no longer the active one is a record: it can be viewed, never edited (owner decision 2026-11-23, after the E2E report's
+// BUG-010; the same rule as the Curriculum screen, where a past year is view only). Unlike a new AI check, a syllabus with no recorded year, or a server with no
+// active year, is NOT refused here: nothing says it belongs to a past year.
+const PAST_CODE = 'past_academic_year';
+const PAST_MESSAGE = (year, active) => `This syllabus belongs to the ${year} academic year, which is no longer active (${active} is). It is kept as a record and can only be viewed.`;
+
+// syl: a syllabus row. Its academic_year is used when the row has it; otherwise it is read (a database from before the column: nothing is past).
+// -> { year, active } when the syllabus is of another year than the active one, else null.
+async function pastYearOf(db, syl, { lock = false } = {}) {
+  if (!syl) return null;
+  let year;
+  if (Object.prototype.hasOwnProperty.call(syl, 'academic_year')) year = syl.academic_year;
+  else {
+    try { const [rows] = await db.query('SELECT academic_year FROM syllabi WHERE syllabus_id = ?', [syl.syllabus_id]); year = rows && rows[0] ? rows[0].academic_year : null; }
+    catch (error) { if (error && error.code === 'ER_BAD_FIELD_ERROR') return null; throw error; }
+  }
+  if (!year) return null;
+  const active = await activeYear(db, { lock });
+  return active && year !== active ? { year, active } : null;
+}
+// Throws 409 past_academic_year when the syllabus is of a past academic year.
+async function assertEditableYear(db, syl, options = {}) {
+  const past = await pastYearOf(db, syl, options);
+  if (past) throw httpError(409, PAST_MESSAGE(past.year, past.active), { code: PAST_CODE, activeYear: past.active, syllabusYear: past.year });
+}
+
+module.exports = { CODE, MESSAGES, activeYear, assertActiveYear, PAST_CODE, PAST_MESSAGE, pastYearOf, assertEditableYear };

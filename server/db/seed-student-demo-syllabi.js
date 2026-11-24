@@ -97,10 +97,10 @@ async function seedFaculty(email) {
       if (have.length) continue;
       const course = await loadCourse(db, courseId);
       const content = JSON.stringify(await withMasters(db, sampleContent(model, course, inst)));
-      const [r] = await db.query("INSERT INTO syllabi (user_id, title, course_code, status, version, content, content_schema_version, content_updated_at, course_id) VALUES (?, ?, ?, 'draft', 'v1.0', ?, 3, NOW(), ?)",
+      const [r] = await db.query("INSERT INTO syllabi (user_id, title, course_code, status, version, content, content_schema_version, content_updated_at, course_id) VALUES (?, ?, ?, 'draft', 'v1', ?, 3, NOW(), ?)",
         [user.user_id, course.title.slice(0, 255), course.code, content, courseId]);
       await stampYear(db, r.insertId, year);
-      try { await db.query("INSERT INTO syllabus_versions (syllabus_id, version_label, title, course_code, status_at_save, note, content, created_by) VALUES (?, 'v1.0', ?, ?, 'draft', 'Sample syllabus for testing', ?, ?)", [r.insertId, course.title.slice(0, 255), course.code, content, user.user_id]); }
+      try { await db.query("INSERT INTO syllabus_versions (syllabus_id, version_label, title, course_code, status_at_save, note, content, created_by) VALUES (?, 'v1', ?, ?, 'draft', 'Sample syllabus for testing', ?, ?)", [r.insertId, course.title.slice(0, 255), course.code, content, user.user_id]); }
       catch (e) { if (!(e && (e.code === 'ER_NO_SUCH_TABLE' || e.code === 'ER_BAD_FIELD_ERROR'))) throw e; }
       added += 1;
     }
@@ -131,10 +131,10 @@ async function main() {
       if (have.length) continue;
       const course = await loadCourse(db, courseId);
       const content = JSON.stringify(await withMasters(db, sampleContent(model, course, inst)));
-      const [r] = await db.query("INSERT INTO syllabi (user_id, title, course_code, status, version, content, content_schema_version, content_updated_at, course_id) VALUES (?, ?, ?, 'approved', 'v1.0', ?, 3, NOW(), ?)",
+      const [r] = await db.query("INSERT INTO syllabi (user_id, title, course_code, status, version, content, content_schema_version, content_updated_at, course_id) VALUES (?, ?, ?, 'approved', 'v1', ?, 3, NOW(), ?)",
         [author.user_id, course.title.slice(0, 255), course.code, content, courseId]);
       await stampYear(db, r.insertId, year);
-      try { await db.query("INSERT INTO syllabus_versions (syllabus_id, version_label, title, course_code, status_at_save, note, content, created_by) VALUES (?, 'v1.0', ?, ?, 'approved', 'Sample syllabus for testing the student view', ?, ?)", [r.insertId, course.title.slice(0, 255), course.code, content, author.user_id]); }
+      try { await db.query("INSERT INTO syllabus_versions (syllabus_id, version_label, title, course_code, status_at_save, note, content, created_by) VALUES (?, 'v1', ?, ?, 'approved', 'Sample syllabus for testing the student view', ?, ?)", [r.insertId, course.title.slice(0, 255), course.code, content, author.user_id]); }
       catch (e) { if (!(e && (e.code === 'ER_NO_SUCH_TABLE' || e.code === 'ER_BAD_FIELD_ERROR'))) throw e; } // before the versions migration: the syllabus alone is enough
       added += 1;
     }

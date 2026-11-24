@@ -45,7 +45,7 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
   const hasOthers = useMemo(() => syllabi.some(s => s.userId === user.id && !EDITABLE_STATUSES.includes(s.status)), [syllabi, user.id]);
   const offered = (id) => !!id && mine.some(s => s.id === id);
   const [selectedId, setSelectedId] = useState(() => (offered(editing?.syllabusId) ? editing.syllabusId : mine[0]?.id || null));
-  const [doc, setDoc] = useState({ loading: false, error: '', content: null, editable: false, status: 'draft', version: 'v1.0' });
+  const [doc, setDoc] = useState({ loading: false, error: '', content: null, editable: false, status: 'draft', version: 'v1' });
   const [lastRun, setLastRun] = useState(null);
   const [note, setNote] = useState('');
   const [submitFailed, setSubmitFailed] = useState([]);
@@ -59,7 +59,7 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
 
   useEffect(() => {
     if (!selectedId) {
-      setDoc({ loading: false, error: '', content: null, editable: false, status: 'draft', version: 'v1.0' });
+      setDoc({ loading: false, error: '', content: null, editable: false, status: 'draft', version: 'v1' });
       setLastRun(null);
       setSubmitFailed([]);
       return undefined;
@@ -70,10 +70,10 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
     setSubmitFailed([]);
     syllabiApi.getContent(selectedId).then(res => {
       if (!live) return;
-      setDoc({ loading: false, error: '', content: res.content || null, editable: !!res.editable, status: res.status || 'draft', version: res.version || 'v1.0', academicYear: res.academicYear || null });
+      setDoc({ loading: false, error: '', content: res.content || null, editable: !!res.editable, status: res.status || 'draft', version: res.version || 'v1', academicYear: res.academicYear || null });
     }).catch(err => {
       if (!live) return;
-      setDoc({ loading: false, error: err.message || '', content: null, editable: false, status: 'draft', version: 'v1.0' });
+      setDoc({ loading: false, error: err.message || '', content: null, editable: false, status: 'draft', version: 'v1' });
     });
     return () => { live = false; };
   }, [selectedId]);
@@ -281,7 +281,9 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
   // The administrator's own syllabi already sent for review (the dean stage is cleared on the newest version): they are with the other reviewers now,
   // so they are neither offered for checking again nor sent or taken back to draft from here (the server refuses both too).
   const sentOwn = useMemo(() => new Set(syllabi.filter((s) => s.userId === user?.id && sentForReview(s)).map((s) => s.id)), [syllabi, user?.id]);
-  const waiting = useMemo(() => groupByFacultyProgram(rows.filter(row => needsCheck(row) || (row.userId === user?.id && row.status === 'under_review' && !sentOwn.has(row.syllabusId)))), [rows, user?.id, sentOwn]); // unchecked and not approved: what the picker offers
+  // Unchecked and not approved: what the picker offers. A stage reviewer is offered a submission once it has reached them in the chain (myTurn from the
+  // server: the dean first, then the Asst. VPAA, then the LIC Director); a row without it (an older server) is offered as before.
+  const waiting = useMemo(() => groupByFacultyProgram(rows.filter(row => (needsCheck(row) && row.myTurn !== false) || (row.userId === user?.id && row.status === 'under_review' && !sentOwn.has(row.syllabusId)))), [rows, user?.id, sentOwn]);
   // The administrator writes syllabi too: their own drafts, and their syllabi returned for revision or rejected, can be checked from here as well as from the
   // builder (OwnSyllabusPicker). Once sent to be checked one is Under Review and is in the list above with everyone else's.
   const ownToCheck = useMemo(() => (user?.role === 'admin' ? syllabi.filter((s) => s.userId === user.id && !s.archived && ['draft', 'for_revision', 'rejected'].includes(s.status)) : []), [syllabi, user?.id, user?.role]);
@@ -432,7 +434,7 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
 
       {installed && (
         <div className={'chk-work' + (user.role === 'admin' ? '' : ' solo')}>
-          <SyllabusPicker groups={waiting} loading={loading} busy={working} onCheck={checkAndOpen} onWithoutAi={aiGate === 'required' ? undefined : reviewWithoutAi} />
+          <SyllabusPicker groups={waiting} loading={loading} busy={working} onCheck={checkAndOpen} onWithoutAi={aiGate === 'required' ? undefined : reviewWithoutAi} viewerId={user?.id ?? null} />
           {user.role === 'admin' && <OwnSyllabusPicker rows={ownToCheck} busy={working} onCheck={prepareAndCheck} onOpen={openOwn} />}
         </div>
       )}

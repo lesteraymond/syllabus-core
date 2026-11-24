@@ -1,4 +1,6 @@
 import { YearFilter, useYearScope } from '../components/AcademicYearScope';
+import ReviewProgress from '../components/ReviewProgress';
+import { stagesFromFlags } from '../lib/reviewView';
 import StableButton from '../components/StableButton';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
@@ -42,6 +44,9 @@ export default function MySyllabi({ syllabi, user, messages, commentCounts = {},
     deadlinesApi.mine().then((r) => { if (live) setDeadlines(r.enabled === false ? [] : r.deadlines || []); }).catch(() => {});
     return () => { live = false; };
   }, [user.role, syllabi]);
+  // A past academic year's syllabus is a record, view only, for every author (server lib/activeYearGate.js). Say so, rather than "no longer assigned to you".
+  const activeYear = yearScope && yearScope.current ? yearScope.current.label : null;
+  const pastYearOf = (s) => !!activeYear && !!s.academicYear && s.academicYear !== activeYear;
   const state = assignmentState(mine); // 'none' | 'noSubject' | 'ok' | null
   const nothingAssigned = user.role === 'faculty' && (state === 'none' || state === 'noSubject');
   const my = useMemo(() => [...syllabi.filter(s => s.userId === user.id), ...(showArchived ? archivedRows : [])].map(s => ({ ...s, unreadCount: messages.filter(m => m.syllabusId === s.id && m.receiverId === user.id && !m.isRead).length })), [syllabi, user, messages, showArchived, archivedRows]);
@@ -51,13 +56,14 @@ export default function MySyllabi({ syllabi, user, messages, commentCounts = {},
       {nothingAssigned && <div className="info-banner warning">{tr(ASSIGNMENT_MESSAGES[state])}{translateUI("ui.you_can_create_a_syllabus_once_a_subject_is_assigned_to_you_b8383e")}</div>}
       {archivedRows.length > 0 && <label className="syl-archive-toggle"><input type="checkbox" checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} />{translateUI("syllabi.showArchived", { count: archivedRows.length })}</label>}
       <div className="syl-grid">
-        {my.map(s => { const lock = courseLockReason(user, mine, s); const dl = deadlineForCard(deadlines, s); const lateSubmit = s.status === 'submitted' && dl?.status === 'submitted_late'; const isDraft = s.status === 'draft'; const resumable = user.role === 'admin' && s.userId === user.id && s.status === 'under_review' && !sentForReview(s); /* once sent for review it stays with the reviewers */ return <div className={'syl-card' + (s.archived ? ' syl-archived' : '')} key={s.id}>
-          <div className="syl-head"><div className="syl-info"><h4>{s.courseCode}</h4><p>{s.title}</p></div><span className="syl-tags"><span className={`status ${s.status}` + (lateSubmit ? ' is-late' : '')}>{lateSubmit ? translateUI('deadline.status.submitted_late') : tr(STATUS_LABELS[s.status] || s.status)}</span>{s.archived && <span className="status archived">{translateUI("syllabi.archivedTag")}</span>}</span></div>
+        {my.map(s => { const lock = pastYearOf(s) ? translateUI('syllabi.pastYearLocked', { year: s.academicYear }) : courseLockReason(user, mine, s); const dl = deadlineForCard(deadlines, s); const lateSubmit = (s.status === 'submitted' || s.status === 'under_review') && dl?.status === 'submitted_late'; const isDraft = s.status === 'draft'; const resumable = user.role === 'admin' && s.userId === user.id && s.status === 'under_review' && !sentForReview(s); /* once sent for review it stays with the reviewers */ return <div className={'syl-card' + (s.archived ? ' syl-archived' : '')} key={s.id}>
+          <div className="syl-head"><div className="syl-info"><h4>{s.courseCode}</h4><p>{s.title}</p></div><span className="syl-tags"><span className={lateSubmit ? 'status submitted is-late' : `status ${s.status}`}>{lateSubmit ? translateUI('deadline.status.submitted_late') : tr(STATUS_LABELS[s.status] || s.status)}</span>{s.archived && <span className="status archived">{translateUI("syllabi.archivedTag")}</span>}</span></div>
           <div className="syl-meta"><span>{s.programCode || s.program}</span><span>{translateUI("ui.updated_c95815")}{fmt(s.updatedAt)}</span>{dl && <span className="syl-deadline">{!lateSubmit && <span className={'status dl-' + dl.status}>{translateUI('deadline.status.' + dl.status)}</span>}<span>{translateUI('deadline.dueOn', { date: phDateTime(dl.dueAt) })}</span></span>}{isFaculty && s.unreadCount > 0 && <span className="syl-unread">{s.unreadCount}{translateUI("ui.unread_2630a7")}</span>}</div>
+          {s.status !== 'draft' && (s.stages || s.reviewProgress) && <ReviewProgress className="syl-progress" stages={s.stages || stagesFromFlags(s.reviewProgress)} status={s.status} decision={s.decision} />}
           {s.archived ? <><p className="syl-locked" role="note">{tr(editBlockedReason(s))}</p><div className="syl-actions"><StableButton className="btn outline syl-quiet" onClick={() => setHistCode(s.id)}><Icon name="clockBack" size={14} />{translateUI("ui.history_fefbcc")}</StableButton></div></> : <div className="syl-actions">
             <StableButton className="btn outline syl-quiet" disabled={resuming === s.id || (!canEditSyllabus(user, s) && !resumable) || !!lock} title={tr(lock || (canEditSyllabus(user, s) || resumable ? 'Edit this syllabus (saved as a new version)' : editBlockedReason(s)))} onClick={async () => { if (resuming !== null) return; setResuming(s.id); try { if (resumable) await syllabiApi.resumeDraft(s.id); setEditing(toBuilderShape(resumable ? { ...s, status: 'draft' } : s)); setPage('builder'); } catch(error) { notify?.(tr(error.message)); } finally { setResuming(null); } }}><Icon name="pencilSquare" size={14} />{translateUI("ui.edit_79cae4")}</StableButton>
             {resumable && <StableButton className="btn outline syl-quiet" onClick={() => setPage('ai')}><Icon name="shieldCheck" size={14} />{translateUI('publication.checkDraft')}</StableButton>}
-            {isFaculty && !isDraft && setCommentCode && (() => { const b = commentBadge(commentCounts[s.id]); return (
+            {!isDraft && setCommentCode && (() => { /* every author: the dean reads the reviewers' comments on their own syllabus too */ const b = commentBadge(commentCounts[s.id]); return (
               <StableButton className="btn outline syl-quiet syl-comments" title={translateUI("ui.notes_from_your_reviewer_about_this_syllabus_6ace96")} onClick={() => setCommentCode(s.id)}><Icon name="chatText" size={14} />{translateUI("ui.comments_e445b9")}{b.text && <span className={'syl-badge' + (b.fresh ? ' fresh' : '')} aria-label={b.fresh ? b.text + translateUI("ui.new_7cebfd") : b.text + translateUI("ui.in_total_ed532f")}>{b.text}</span>}</StableButton>
             ); })()}
             {isFaculty && canChat(s, user) && <StableButton className="btn outline syl-quiet" title={translateUI("ui.a_conversation_with_your_reviewer_0032bd")} onClick={() => { setChatCode(s.id); }}><Icon name="envelope" size={14} />{translateUI("ui.message_890761")}</StableButton>}

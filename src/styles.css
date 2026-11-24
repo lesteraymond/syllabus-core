@@ -48,10 +48,12 @@
 body {
 	margin: 0;
 	font-size: var(--text-base);
-	font-weight: var(--fw-light);
+	font-weight: var(--fw-regular);
 	line-height: 1.5;
 	background: var(--bg);
 	min-width: 1100px;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 button,
 input,
@@ -65,17 +67,17 @@ button {
 input,
 select,
 textarea {
-	font-weight: var(--fw-light);
+	font-weight: var(--fw-regular);
 }
 small {
-	font-weight: var(--fw-light);
+	font-weight: var(--fw-regular);
 }
 b,
 strong {
 	font-weight: var(--fw-bold);
 }
 .muted {
-	@apply tw:[color:var(--muted)] tw:[font-weight:var(--fw-light)];
+	@apply tw:[color:var(--muted)] tw:[font-weight:var(--fw-regular)];
 }
 .login-page {
 	@apply tw:min-h-screen tw:grid tw:[grid-template-columns:minmax(0,_1fr)_minmax(0,_1fr)] tw:[background:white];
@@ -190,6 +192,18 @@ select {
 .consent-box span { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .consent-box b { font-size: var(--text-sm); font-weight: 600; color: #26324a; }
 .consent-box small { font-size: 0.78rem; line-height: 1.4; color: #5b667d; font-weight: 400; }
+/* the consent title with the Terms and Conditions link at its top right: the title wraps beside it */
+.consent-box .consent-head { display: flex; flex-direction: row; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.consent-box .consent-head b { flex: 1 1 auto; min-width: 0; }
+.consent-box .terms-link { flex: none; padding: 0; margin-top: 1px; font-size: 0.8rem; line-height: 1.4; text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; cursor: pointer; }
+@media (max-width: 380px) { .consent-box .consent-head { flex-direction: column; gap: 2px; } } /* a phone: the link goes under the title */
+/* the Terms and Conditions dialog (components/CorTermsModal.jsx): a readable column that scrolls inside the dialog */
+.terms-modal { width: min(680px, 95vw); }
+.terms-body { font-size: var(--text-sm); line-height: 1.55; }
+.terms-body .terms-intro { margin: 0 0 14px; color: var(--muted); }
+.terms-body section + section { margin-top: 14px; }
+.terms-body h4 { margin: 0 0 6px; font-size: var(--text-sm); font-weight: 700; }
+.terms-body p { margin: 0 0 8px; }
 .link-btn,
 .card-head button {
 	@apply tw:[border:0] tw:[background:none] tw:[color:var(--blue)] tw:[font-size:var(--text-sm)];
@@ -202,7 +216,7 @@ select {
 	@apply tw:[border:0];
 	@apply tw:[border-radius:9px] tw:[padding:11px_16px] tw:[font-weight:var(--fw-semibold)] tw:[transition:background-color_0.18s,_color_0.18s,_border-color_0.18s,_box-shadow_0.18s,_transform_0.18s];
 }
-.btn:hover {
+.btn:hover:not(:disabled) {
 	@apply tw:[transform:translateY(-1px)];
 }
 .btn.primary {
@@ -1419,7 +1433,7 @@ a:focus-visible {
 }
 .toast {
 	@apply tw:fixed tw:[right:24px];
-	@apply tw:[bottom:24px] tw:[background:#0f224b] tw:[color:white] tw:[padding:12px_16px] tw:[border-radius:9px] tw:[box-shadow:0_12px_34px_rgba(0,_0,_0,_0.24)] tw:[font-size:var(--text-sm)] tw:[z-index:99];
+	@apply tw:[bottom:24px] tw:[background:#111827] tw:[color:white] tw:[padding:12px_16px] tw:[border-radius:9px] tw:[box-shadow:0_12px_34px_rgba(0,_0,_0,_0.24)] tw:[font-size:var(--text-sm)] tw:[z-index:99];
 }
 @keyframes pop {
 	from {
@@ -2369,45 +2383,40 @@ a:focus-visible {
 	@apply tw:[transform:translateY(-1px)] tw:[box-shadow:0_4px_12px_rgba(37,_99,_235,_0.15)];
 }
 
-/* Users & Roles: provision form (Tailwind-equivalent values) */
+/* Users & Roles: provision form */
 .user-form-grid {
-	@apply tw:grid tw:[grid-template-columns:1fr] tw:[gap:16px] tw:[padding:24px] tw:[margin-bottom:24px] tw:[background:#fff] tw:[border:1px_solid_#e2e8f0];
-	@apply tw:[border-radius:12px] tw:[box-shadow:0_1px_2px_rgba(0,_0,_0,_0.05)];
+	@apply tw:grid tw:[grid-template-columns:1fr] tw:[gap:16px] tw:[padding:20px_22px] tw:[margin-bottom:18px] tw:[background:var(--card)] tw:[border:1px_solid_var(--line)];
+	@apply tw:[border-radius:12px];
 }
 @media (min-width: 768px) {
 	.user-form-grid {
 		@apply tw:grid-cols-2;
 	}
 }
-@media (min-width: 1024px) {
-	.user-form-grid {
-		@apply tw:grid-cols-3;
-	}
-}
 .user-field {
-	@apply tw:flex tw:flex-col tw:[gap:6px];
+	@apply tw:flex tw:flex-col tw:[gap:6px] tw:[min-width:0];
 }
 .user-field-action {
 	@apply tw:items-stretch tw:justify-end;
 }
 .user-label {
 	@apply tw:[font-size:var(--text-xs)];
-	@apply tw:[font-weight:var(--fw-semibold)] tw:[color:#334155] tw:[letter-spacing:0.05em];
+	@apply tw:[font-weight:var(--fw-semibold)] tw:[color:var(--muted)];
 }
 .user-input {
-	@apply tw:w-full tw:[padding:8px_14px] tw:[font-size:var(--text-sm)] tw:[background:#f8fafc] tw:[border:1px_solid_#cbd5e1];
-	@apply tw:[border-radius:8px] tw:[transition:all_0.15s];
+	@apply tw:w-full tw:[padding:8px_12px] tw:[font-size:var(--text-sm)] tw:[background:var(--card)] tw:[color:var(--text)] tw:[border:1px_solid_var(--line-strong)];
+	@apply tw:[border-radius:8px] tw:[transition:border-color_0.15s,_box-shadow_0.15s,_background-color_0.15s];
 }
 .user-input:focus {
-	@apply tw:[outline:none] tw:[background:#fff] tw:[box-shadow:0_0_0_2px_#2563eb];
+	@apply tw:[outline:2px_solid_transparent] tw:[border-color:var(--btn-primary)] tw:[box-shadow:0_0_0_3px_var(--btn-primary-tint)];
 }
 .user-save-btn {
 	@apply tw:w-full tw:[padding:8px_16px] tw:[font-size:var(--text-sm)];
-	@apply tw:[font-weight:var(--fw-semibold)] tw:[color:#fff] tw:[background:#1e3a8a] tw:[border:0];
-	@apply tw:[border-radius:8px] tw:[transition:background-color_0.15s];
+	@apply tw:[font-weight:var(--fw-semibold)] tw:[color:#fff] tw:[background:var(--btn-primary)] tw:[border:1px_solid_transparent];
+	@apply tw:[border-radius:8px] tw:[transition:background-color_0.15s,_box-shadow_0.15s,_transform_0.15s];
 }
-.user-save-btn:hover {
-	@apply tw:[background:#1e40af];
+.user-save-btn:hover:not(:disabled) {
+	@apply tw:[background:var(--btn-primary-hover)];
 }
 .overflow-x-auto {
 	@apply tw:overflow-x-auto;
@@ -3010,7 +3019,7 @@ table,
 
 .bld2-toast {
 	@apply tw:fixed tw:[left:50%] tw:[transform:translateX(-50%)];
-	@apply tw:[bottom:18px] tw:[background:var(--navy)] tw:[color:#fff] tw:[padding:10px_12px_10px_16px] tw:[border-radius:10px] tw:[font-size:var(--text-xs)] tw:[z-index:70] tw:[max-width:calc(100vw_-_32px)] tw:flex tw:[gap:14px] tw:items-center;
+	@apply tw:[bottom:18px] tw:[background:#111827] tw:[color:#fff] tw:[padding:10px_12px_10px_16px] tw:[border-radius:10px] tw:[font-size:var(--text-xs)] tw:[z-index:70] tw:[max-width:calc(100vw_-_32px)] tw:flex tw:[gap:14px] tw:items-center;
 }
 .bld2-toast button {
 	@apply tw:[border:0] tw:[background:transparent] tw:text-inherit tw:[font-weight:var(--fw-bold)] tw:[text-decoration:underline];
@@ -3057,6 +3066,12 @@ table,
 .bld2 .item:hover .ib,
 .bld2 .item:focus-within .ib {
 	@apply tw:[opacity:1];
+}
+@media (hover: none) {
+	.bld2 .racts,
+	.bld2 .item .ib {
+		@apply tw:[opacity:1];
+	}
 }
 .bld2 .sugg {
 	@apply tw:flex tw:flex-wrap tw:[gap:6px] tw:[margin-top:10px];
@@ -3228,6 +3243,67 @@ table,
 	grid-template-columns: 34px 150px 12px 1fr;
 	margin-block: 3px;
 }
+/* X. Grading System as the printed form lays it out: a number, the component (and what it includes) and, on the right, under the colon
+   of the heading, its weight or formula. No borders. */
+:is(.bld2, .svm-paper) .paper table.paper-grade {
+	width: calc(100% - 34px);
+	margin: 2px 0 0 34px;
+}
+:is(.bld2, .svm-paper) .paper table.paper-grade td {
+	border: 0;
+	padding: 0 4px 9px 0;
+}
+:is(.bld2, .svm-paper) .paper table.paper-grade td:first-child { width: 26px; }
+:is(.bld2, .svm-paper) .paper table.paper-grade td:nth-child(2) { width: 136px; }
+:is(.bld2, .svm-paper) .paper .paper-frac {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+}
+:is(.bld2, .svm-paper) .paper .paper-frac > span:first-child { text-decoration: underline; }
+/* The sign-off block: three columns under a light blue strip; each name bold, underlined and in capitals, centered over its title. */
+:is(.bld2, .svm-paper) .paper table.paper-sign { margin: 14px 0 0; }
+:is(.bld2, .svm-paper) .paper table.paper-sign tr.strip td {
+	height: 7px;
+	padding: 0;
+	background: #dbe5f1;
+}
+/* The letterhead: the name, the former name and the address in a script italic, as on the approved syllabi. */
+:is(.bld2, .svm-paper) .paper .paper-letterhead {
+	font-family: "Monotype Corsiva", "Apple Chancery", "URW Chancery L", "Lucida Calligraphy", cursive;
+	font-style: italic;
+	font-size: 15px;
+	line-height: 1.25;
+}
+:is(.bld2, .svm-paper) .paper .paper-letterhead .name { font-size: 21px; }
+/* The Revision Date / Modifications box under the sign-off block: two equal columns, as wide as every other table on the form. */
+:is(.bld2, .svm-paper) .paper table.paper-rev {
+	width: 100%;
+	margin: 0;
+}
+:is(.bld2, .svm-paper) .paper table.paper-rev tr:first-child td { border-top: 0; }
+:is(.bld2, .svm-paper) .paper table.paper-rev td { padding: 5px 8px 8px; }
+:is(.bld2, .svm-paper) .paper table.paper-rev .list {
+	margin-top: 8px;
+	font-size: 10px;
+	line-height: 1.35;
+}
+/* VIII Course Requirements, IX References and X Grading System: full-width bordered rows under the Learning Plan. */
+:is(.bld2, .svm-paper) .paper tr.paper-sec > td { padding: 6px 8px 4px; }
+:is(.bld2, .svm-paper) .paper table.paper-sign td { padding: 5px 8px 10px; }
+:is(.bld2, .svm-paper) .paper table.paper-sign .sign {
+	text-align: center;
+	margin: 26px 0 6px;
+}
+:is(.bld2, .svm-paper) .paper table.paper-sign .sign .name {
+	display: inline-block;
+	min-width: 62%;
+	border-bottom: 1px solid currentColor;
+	font-weight: 700;
+	text-transform: uppercase;
+}
+:is(.bld2, .svm-paper) .paper table.paper-sign .sign .name.blank { height: 1.3em; }
+:is(.bld2, .svm-paper) .paper table.paper-sign .sub-label { margin-top: 10px; }
 /* ---- Courses & CLOs (admin) ---- */
 .ac-layout {
 	@apply tw:grid tw:[grid-template-columns:minmax(280px,_380px)_minmax(0,_1fr)] tw:[gap:14px] tw:[align-items:start];
@@ -3383,7 +3459,7 @@ table,
 	@apply tw:[border-radius:9px] tw:[padding:9px_11px] tw:[font-size:var(--text-sm)] tw:[color:var(--text)];
 }
 .asg-in:focus {
-	@apply tw:[outline:none] tw:[border-color:#7f9fe8] tw:[box-shadow:0_0_0_3px_rgba(23,_73,_189,_0.28)];
+	@apply tw:[outline:2px_solid_transparent] tw:[border-color:var(--btn-primary)] tw:[box-shadow:0_0_0_3px_var(--btn-primary-tint)];
 }
 .asg-search {
 	@apply tw:[margin-bottom:10px] tw:[width:calc(100%_-_32px)];
@@ -3884,13 +3960,21 @@ table,
 .rp-tabs button:focus-visible { @apply tw:[outline:2px_solid_var(--blue2)]; @apply tw:outline-offset-1; }
 .rp-count { @apply tw:[min-width:20px] tw:[padding:0_6px] tw:[border-radius:99px] tw:[background:var(--rv-reject)] tw:[color:#fff] tw:[font-size:11px]; @apply tw:[font-weight:var(--fw-bold)]; @apply tw:[line-height:20px] tw:text-center; }
 /* The review chain in the reviewer's panel: the three stages (dean, Asst. VPAA, LIC Director) and who cleared each. */
-.rp-stages { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.rp-stages { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
 .rp-stages li { display: flex; align-items: flex-start; gap: 8px; min-width: 0; padding: 4px 2px; border: 0; border-top: 2px solid var(--line); border-radius: 0; background: none; color: var(--muted); font-size: var(--text-xs); }
 .rp-stages li svg { flex: none; margin-top: 1px; }
 .rp-stages li.cleared { color: var(--green-ink, #176b3a); border-top-color: var(--green-ink, #176b3a); background: none; }
 .rp-stages li > span { display: flex; flex-direction: column; min-width: 0; }
 .rp-stages strong { font-weight: var(--fw-semibold); overflow-wrap: anywhere; }
 .rp-stages small { font-size: var(--text-xs); overflow-wrap: anywhere; }
+/* The review progress: whose turn it is now, and who returned it (components/ReviewProgress.jsx) */
+.rp-stages li.current { color: var(--ink); border-top-color: var(--ink); }
+.rp-stages li.current strong { font-weight: var(--fw-bold, 700); }
+.rp-stages li.returned { color: var(--gold-ink); border-top-color: var(--gold-ink); }
+.svm-progress { padding: 10px 22px; border-bottom: 1px solid var(--line); background: var(--card); }
+.syl-progress { margin-top: 10px; }
+.svm-aside .rp-stages { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 12px; } /* the review panel is narrow: two by two, so names do not break mid-word */
+@media (max-width: 520px) { .rp-stages { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .rp-status { @apply tw:flex tw:items-center tw:[gap:10px] tw:[margin:0] tw:[padding:12px_14px] tw:[border-radius:12px] tw:[font-size:var(--text-sm)]; @apply tw:[font-weight:var(--fw-semibold)]; @apply tw:[line-height:1.4]; }
 .rp-status.waiting { @apply tw:[background:var(--rv-revise-bg)] tw:[color:var(--rv-revise)]; }
 .rp-status.done { background: color-mix(in srgb, var(--muted) 12%, var(--card)); color: var(--muted); }
@@ -4373,6 +4457,13 @@ html { scrollbar-gutter: stable; }
 .po-reference li { margin-bottom: 4px; }
 .outcomes-sync { display: grid; gap: 8px; justify-items: start; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line, #e3e7ea); }
 .outcomes-skipped { margin: 0; padding-left: 20px; color: var(--muted); }
+.outcomes-sync p { margin: 0; }
+.outcomes-sync .outcomes-actions { justify-content: flex-start; margin-top: 0; }
+/* right after a save: the same section, highlighted like an info banner, with the reminder to apply (text on top, actions below, at any width) */
+.outcomes-sync.is-offer { padding: 12px 13px; border: 1px solid #cfddfb; border-radius: 9px; background: #eceefb; color: #38568f; }
+.outcomes-offer-text { font-weight: 600; }
+/* a PO's link to an EGA that is no longer in the list: shown so it can be unticked */
+.outcomes-maps .check.is-stale span { color: var(--danger, #b42318); text-decoration: line-through; }
 
 /* The academic-year control in the Program & Subjects header: one row (year dropdown, Make current / Copy from, + Add year); the add-year form is a popover under its button, so the row never changes size */
 .year-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; min-width: 0; }
@@ -4419,14 +4510,15 @@ html { scrollbar-gutter: stable; }
 .msg-drop-head span { font-size: var(--text-xs); color: var(--muted); }
 .msg-drop-head .link-btn { padding: 4px 8px; border-radius: 8px; color: var(--btn-primary-hover); font-size: var(--text-xs); font-weight: var(--fw-semibold); }
 .msg-drop-head .link-btn:hover { background: var(--btn-primary-tint); text-decoration: none; }
-.msg-drop .thread { align-items: center; gap: 12px; width: auto; margin: 0 8px; padding: 10px; border: 0; border-radius: 12px; background: transparent; transition: background-color 0.15s ease; }
+.msg-drop .thread { align-items: center; gap: 12px; width: calc(100% - 16px); margin: 0 8px; padding: 10px; border: 0; border-radius: 12px; background: transparent; transition: background-color 0.15s ease; }
 .msg-drop .thread:hover, .msg-drop .thread:focus-visible { background: color-mix(in srgb, var(--muted) 10%, #fff); outline: none; }
 .msg-drop .thread:last-child { margin-bottom: 8px; }
 .msg-drop .thread-av { width: 44px; height: 44px; font-size: var(--text-md); }
-.msg-drop .thread-top { align-items: baseline; gap: 10px; }
-.msg-drop .thread-top strong { font-size: var(--text-sm); font-weight: var(--fw-semibold); color: var(--text); }
+.msg-drop .thread-body { min-width: 0; }
+.msg-drop .thread-top { align-items: center; gap: 10px; min-width: 0; }
+.msg-drop .thread-top strong { display: block; flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--text-sm); font-weight: var(--fw-semibold); color: var(--text); }
 .msg-drop .thread-top small { flex: none; font-size: var(--text-xs); color: var(--muted); }
-.msg-drop .thread-body p { font-size: var(--text-xs); color: var(--muted); }
+.msg-drop .thread-body p { font-size: var(--text-xs); color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .msg-drop .thread-body span { font-size: var(--text-sm); color: var(--muted); font-weight: var(--fw-regular); }
 .msg-drop .thread.unread .thread-top strong { color: var(--text); font-weight: var(--fw-bold); }
 .msg-drop .thread.unread .thread-body span, .msg-drop .thread.unread .thread-body p { color: var(--text); font-weight: var(--fw-semibold); }

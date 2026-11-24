@@ -48,11 +48,18 @@ const transitionRefusal = (from, to) => (from === 'approved' ? { message: APPROV
 // A returned (for revision or rejected) edit is a resubmission, and saving a draft as a version submits it. (A submitted or under-review syllabus cannot be edited.)
 const statusAfterOwnerEdit = (status) => (isReturned(status) || status === 'draft' ? 'submitted' : status);
 
-// 'v1.0' -> 'v1.1'. Tolerates the doubled prefix ('vv1.1') an old client-side bump left in some rows;
-// anything else unparseable restarts at v1.0.
+// Versions are whole numbers: v1, v2, v3 ... (2026-11-24; "v1.1" read as confusing). The first version is FIRST_VERSION.
+const FIRST_VERSION = 'v1';
+// The version number a label stands for. Whole labels ('v3') are that number. A label from before 2026-11-24 ('v1.0', 'v1.1', ...) was the
+// (minor + 1)th version, so 'vA.B' counts as A + B ('v1.0' -> 1, 'v1.3' -> 4); the doubled prefix ('vv1.1') an old client-side bump left is
+// tolerated. Anything unparseable is 0 (no version yet). db/migrate-version-labels.js renumbers the stored labels the same way.
+function versionNumber(label) {
+  const m = /^v*(\d+)(?:\.(\d+))?$/.exec(String(label || '').trim());
+  return m ? Number(m[1]) + (m[2] === undefined ? 0 : Number(m[2])) : 0;
+}
+// 'v1' -> 'v2' (and an old 'v1.1' -> 'v3'); anything unparseable starts at v1.
 function nextVersionLabel(label) {
-  const m = /^v*(\d+)\.(\d+)$/.exec(String(label || ''));
-  return m ? `v${m[1]}.${Number(m[2]) + 1}` : 'v1.0';
+  return 'v' + (versionNumber(label) + 1);
 }
 
 // A syllabus returned for revision is submitted again only with a change, and a sentence saying what the change is. A version exists
@@ -67,4 +74,4 @@ const lockedMessage = (syllabus) => (isArchived(syllabus) ? ARCHIVED_MESSAGE : s
   ? 'This syllabus was submitted and is locked. It can be edited again only if the administrator returns it for revision.'
   : `This syllabus is ${String(syllabus.status).replace('_', ' ')} and can no longer be edited`);
 
-module.exports = { canTransition, transitionRefusal, APPROVED_FINAL, ARCHIVED_MESSAGE, isArchived, MIN_NOTE, UNCHANGED, NEED_NOTE, lockedMessage, isOwner, isAdmin, isReviewer, isApprover, canReadApproved, EDITABLE_STATUSES, RETURNED_STATUSES, isReturned, STATUSES, canView, canEdit, canDelete, canDecide, canReturn, canSetStatus, statusAfterOwnerEdit, nextVersionLabel };
+module.exports = { canTransition, transitionRefusal, APPROVED_FINAL, ARCHIVED_MESSAGE, isArchived, MIN_NOTE, UNCHANGED, NEED_NOTE, lockedMessage, isOwner, isAdmin, isReviewer, isApprover, canReadApproved, EDITABLE_STATUSES, RETURNED_STATUSES, isReturned, STATUSES, canView, canEdit, canDelete, canDecide, canReturn, canSetStatus, statusAfterOwnerEdit, nextVersionLabel, versionNumber, FIRST_VERSION };

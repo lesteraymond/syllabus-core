@@ -27,6 +27,7 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
     document.addEventListener('mousedown', onDown);
     return () => document.removeEventListener('mousedown', onDown);
   }, [bellOpen]);
+  const isStudent = user.role === 'student'; // a student changes no photo here and has no staff search, messages or notifications
   const bellCount = notifications?.unreadCount || 0;
   const [notifFilter, setNotifFilter] = useState('all'); // 'all' | 'unread'
   const shown = (notifications?.items || []).filter((n) => notifFilter === 'all' || !n.isRead);
@@ -88,6 +89,8 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
       <div className="topbar-brand"><img src="/cite-logo.png" alt={translateUI("ui.cict_logo_dee290")} /><strong>{translateUI("ui.cite_brand_5b2e91")}</strong></div>
       <div className="topbar-heading"><span className="eyebrow">{translateUI("ui.syllabus_management_system_e49cab")}</span></div>
       <div className="top-actions">
+        {/* Search, messages and notifications are staff tools: a student's account cannot reach them (server/index.js), so they are not offered. */}
+        {!isStudent && <>
         <button
           type="button"
           className={'icon-btn mobile-search-btn' + (mobileSearchOpen ? ' is-open' : '')}
@@ -106,7 +109,7 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
             {threads.length === 0 && <div className="msg-empty">{translateUI("ui.no_conversations_yet_265928")}</div>}
             {threads.map(t => <button key={t.code} className={`thread${t.unread ? ' unread' : ''}`} onClick={() => { setChatCode(t.code); markRead(t.code); setMsgDrop(false); }}>
               <Avatar className="thread-av" userId={t.partner?.id} src={t.partner?.avatarUrl} name={t.partner?.name} initials={t.partner?.initials || '?'} />
-              <div className="thread-body"><div className="thread-top"><strong>{t.title}</strong><small>{fmt(t.lastTime)}</small></div><p>{t.partner?.name || translateUI("ui.unknown_bc7819")}{t.partner?.roleLabel && <em className="thread-role">{' · ' + tr(t.partner.roleLabel)}</em>}</p><span>{t.lastMsg}</span></div>
+              <div className="thread-body"><div className="thread-top"><strong title={t.title}>{t.title}</strong></div><p>{t.partner?.name || translateUI("ui.unknown_bc7819")}{t.partner?.roleLabel && <em className="thread-role">{' · ' + tr(t.partner.roleLabel)}</em>}</p><span>{t.lastMsg}</span></div>
               {t.unread > 0 && <span className="thread-dot" />}
             </button>)}
           </div>}
@@ -132,8 +135,9 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
             </div>
           </div>}
         </div>
+        </>}
         <div className="profile-wrap" ref={profRef}>
-          <button className="profile-btn" title={user.name} ref={profBtnRef} aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(o => !o)}><Avatar userId={user.id} src={user.avatarUrl} name={user.name} initials={user.initials} /><span><strong>{user.name}</strong><small>{tr(ROLE_LABELS[user.role] || user.role || translateUI("ui.unknown_role_476868"))}</small></span></button>
+          <button className="profile-btn" title={user.name} ref={profBtnRef} aria-haspopup={isStudent ? undefined : 'menu'} aria-expanded={isStudent ? undefined : menuOpen} onClick={() => { if (!isStudent) setMenuOpen(o => !o); }}><Avatar userId={user.id} src={user.avatarUrl} name={user.name} initials={user.initials} /><span><strong>{user.name}</strong><small>{tr(ROLE_LABELS[user.role] || user.role || translateUI("ui.unknown_role_476868"))}</small></span></button>
           {menuOpen && <div className="profile-menu" role="menu" aria-label={translateUI("ui.profile_photo_33f385")}>
             <button type="button" role="menuitem" disabled={busy} onClick={() => { setMenuOpen(false); fileRef.current?.click(); }}>{translateUI("ui.change_photo_ed5690")}</button>
             {user.avatarUrl && <button type="button" role="menuitem" disabled={busy} onClick={removePhoto}>{translateUI("ui.remove_photo_c8f5ed")}</button>}

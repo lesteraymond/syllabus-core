@@ -202,3 +202,49 @@ test('approving needs the VPAA, a checked submission and all three stages cleare
   assert.deepStrictEqual(openStages(item(1, { stages: stagesOf(true, false, false) })), ['asst_vpaa', 'lic_director']);
   assert.deepStrictEqual(openStages({}), []);
 });
+
+// ---- the order of the chain and the review progress
+import { isMyTurn, canReturnNow, progressSteps, stagesFromFlags, PROGRESS_STEPS } from './reviewView.js';
+
+test('the chain goes in order: a stage reviewer\'s queue holds only what is their turn, and they clear or return it only then', () => {
+  const list = [item(1, { turn: 'dean', myTurn: true }), item(2, { turn: 'asst_vpaa', myTurn: false, myStageCleared: true }), item(3, { turn: 'dean', myTurn: false })];
+  assert.deepStrictEqual(reviewQueue(list, 'admin', 1).queue.map((s) => s.id), [1]);
+  assert.deepStrictEqual(reviewQueue(list, 'admin', 1).rest.map((s) => s.id), [2, 3], 'cleared by them, or still with an earlier reviewer');
+  const uncheckedEarlier = [item(1, { turn: 'dean', myTurn: false }), item(2, { turn: 'dean', myTurn: false, awaitingAiCheck: true })];
+  assert.deepStrictEqual(reviewQueue(uncheckedEarlier, 'asst_vpaa', 2).queue, []);
+  assert.deepStrictEqual(reviewQueue(uncheckedEarlier, 'asst_vpaa', 2).rest.map((s) => s.id), [1, 2], 'earlier-turn submissions still count in rest even when awaitingAiCheck is true');
+  assert.deepStrictEqual(reviewQueue(uncheckedEarlier, 'vpaa', 4).rest.map((s) => s.id), [1, 2], 'VPAA rest also counts unchecked earlier-turn submissions');
+  const waiting = item(3, { turn: 'dean' });
+  assert.strictEqual(isMyTurn('asst_vpaa', waiting), false);
+  assert.strictEqual(canClearStage('asst_vpaa', waiting, 2), false, 'the dean first');
+  assert.strictEqual(canReturnNow('asst_vpaa', waiting), false);
+  assert.strictEqual(canClearStage('admin', waiting, 1), true);
+  assert.strictEqual(canReturnNow('vpaa', item(4, { turn: 'vpaa' })), true);
+  assert.strictEqual(canReturnNow('vpaa', item(4, { turn: 'lic_director' })), false);
+  assert.strictEqual(isMyTurn('asst_vpaa', item(5)), true, 'an older server sends no turn: as before');
+});
+
+test('the review progress shows the four steps in order: who cleared, whose turn, who returned it, and the VPAA who approved', () => {
+  const state = (steps) => steps.map((s) => s.state);
+  assert.deepStrictEqual(PROGRESS_STEPS, ['dean', 'asst_vpaa', 'lic_director', 'vpaa']);
+  assert.deepStrictEqual(state(progressSteps(stagesOf(false, false, false), 'submitted')), ['current', 'waiting', 'waiting', 'waiting']);
+  assert.deepStrictEqual(state(progressSteps(stagesOf(true, false, false), 'under_review')), ['cleared', 'current', 'waiting', 'waiting']);
+  assert.deepStrictEqual(state(progressSteps(stagesOf(true, true, true), 'under_review')), ['cleared', 'cleared', 'cleared', 'current']);
+  const approved = progressSteps(stagesOf(true, true, true), 'approved', { action: 'approve', by: 'Vee Paa', role: 'vpaa', at: '2026-11-20' });
+  assert.deepStrictEqual(state(approved), ['cleared', 'cleared', 'cleared', 'cleared']);
+  assert.deepStrictEqual([approved[3].by, approved[3].at], ['Vee Paa', '2026-11-20'], 'the VPAA who approved it');
+  assert.strictEqual(progressSteps(stagesOf(true, true, true), 'approved', null, { by: 'V P', at: null })[3].by, 'V P', 'or from GET /:id/stages');
+  // Returned: the step that returned it is marked, the ones before it stay cleared (the resubmission comes back to it).
+  const byLic = progressSteps(stagesOf(true, true, false), 'for_revision', { action: 'revision', by: 'Lia', role: 'lic_director' });
+  assert.deepStrictEqual(state(byLic), ['cleared', 'cleared', 'returned', 'waiting']);
+  assert.strictEqual(byLic[2].by, 'Lia');
+  assert.deepStrictEqual(state(progressSteps(stagesOf(true, false, false), 'for_revision', { action: 'revision', role: 'asst_vpaa' })), ['cleared', 'returned', 'waiting', 'waiting']);
+  assert.deepStrictEqual(state(progressSteps(stagesOf(false, false, false), 'for_revision', { action: 'revision', role: 'admin' })), ['returned', 'waiting', 'waiting', 'waiting']);
+  const rejected = progressSteps(stagesOf(true, true, true), 'rejected', { action: 'reject', role: 'vpaa', by: 'V' });
+  assert.deepStrictEqual(state(rejected), ['cleared', 'cleared', 'cleared', 'returned']);
+  assert.strictEqual(rejected[3].action, 'reject');
+  // A resubmission with the dean and the Asst. VPAA kept goes to the LIC Director.
+  assert.deepStrictEqual(state(progressSteps(stagesOf(true, true, false), 'under_review')), ['cleared', 'cleared', 'current', 'waiting']);
+  assert.deepStrictEqual(progressSteps(null, 'submitted'), []);
+  assert.deepStrictEqual(state(progressSteps(stagesFromFlags({ dean: true, asst_vpaa: false, lic_director: false }), 'under_review')), ['cleared', 'current', 'waiting', 'waiting'], "the owner's flags");
+});

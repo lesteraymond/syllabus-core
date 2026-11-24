@@ -17,7 +17,8 @@ import ReviewBoard from './ReviewBoard';
 export default function ReviewApproval({ syllabi, user, setViewCode, setPage }) {
   // What needs this person now: a stage reviewer's open checks, or the VPAA's approvals. The rest are still with the other reviewers.
   const { queue: pending, rest } = useMemo(() => reviewQueue(syllabi, user.role, user.id), [syllabi, user.role, user.id]);
-  const waiting = useMemo(() => syllabi.filter((s) => waitsForCheck(s) && s.userId !== user.id).length, [syllabi, user.id]);
+  // Waiting for this person's AI check: only what is their turn in the chain (a later reviewer checks it once the earlier ones have cleared it)
+  const waiting = useMemo(() => syllabi.filter((s) => waitsForCheck(s) && s.userId !== user.id && s.myTurn !== false).length, [syllabi, user.id]);
   const [q, setQ] = useState('');
   const rows = useMemo(() => pending.map(toReviewRow), [pending]);
   const shown = useMemo(() => filterRows(rows, { q }), [rows, q]);

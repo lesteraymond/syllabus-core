@@ -15,7 +15,7 @@
 const crypto = require('node:crypto');
 const R = require('./rules');
 const P = require('./prompt');
-const { itemsOf, clean, nearCopy, leadingVerbs } = require('./extract');
+const { itemsOf, clean, nearCopy, leadingVerbs, uniqueIds } = require('./extract');
 const { namedValues, VALUE_NAMES } = require('../values');
 const { claudeProvider } = require('./provider');
 const { buildPlan, applyPlan, STATUS } = require('./plan');
@@ -352,7 +352,30 @@ async function generateSyllabus(args = {}) {
   const ctx = {};
   try { return await generateInner(args, ctx); } catch (error) { if (ctx.provider && error && typeof error === 'object') error.usage = ctx.provider.usage(); throw error; } // what a stopped run spent is known to the caller
 }
-async function generateInner({ content, masters, env = process.env, transport, provider, store, year, guidance = '', onProgress, fetchImpl } = {}, ctx = {}) {
+// The score the AI Checker would give a draft, made the way the official check makes it (official.js scoreFrom): the old engine's no-AI rules (required
+// sections, format, curriculum, week structure, reference links, core values, base score) and the new checker's alignment points. The alignment is read
+// from the answer store ONLY (no `ask`: no AI request, no cost): the generation's own check and repair plan stored those answers. A question it has no
+// answer for (a field the plan changed but did not apply) is left unanswered, and then the score is a provisional one. Advisory: the generator's
+// check never becomes the official record; the author still runs the AI Checker (owner 2026-11-21).
+async function expectedScore({ content, masters = {}, store, model = '', year, env = process.env, linkChecker } = {}) {
+  const engine = require('../engine');
+  const official = require('./official');
+  content = uniqueIds(content);
+  const noAi = await engine.run(content, masters, { useAi: false, env, ...(linkChecker ? { linkChecker } : {}) });
+  const result = await check(content, masters, { store, model, ...(Number.isFinite(year) ? { year } : {}) });
+  const parts = official.officialParts(content, result, null);
+  const s = official.scoreFrom({ noAi, result, parts, masters });
+  const blocking = s.failed.filter(f => f.ruleId !== 'AI-REQUIRED');
+  return {
+    status: s.score !== null ? 'scored' : 'provisional',
+    score: s.score, provisionalScore: s.provisionalScore, passed: s.passed, band: s.band, passMark: official.PASS_THRESHOLD,
+    baseScore: s.base, rulesPoints: s.codedPoints, alignmentPoints: s.alignmentPoints,
+    complete: s.complete, unanswered: result.judged.results.filter(r => r.reason).length,
+    blocking: blocking.length, blockingMessages: blocking.slice(0, 5).map(f => String(f.message || '').slice(0, 200)),
+  };
+}
+
+async function generateInner({ content, masters, env = process.env, transport, provider, store, year, guidance = '', onProgress, fetchImpl, linkChecker } = {}, ctx = {}) {
   const tick = (step, stage) => { if (typeof onProgress === 'function') { try { onProgress({ step, steps: STEPS, stage }); } catch { /* progress is only for the screen */ } } };
   if (!content || !content.meta || !clean(content.meta.title)) throw fail('Choose a subject for this syllabus first. The generator writes from the subject.', 409);
   const standards = standardsOf(content, masters);
@@ -437,6 +460,11 @@ async function generateInner({ content, masters, env = process.env, transport, p
   } catch (error) {
     report = { status: 'not_checked', reason: String(error && error.message || error).slice(0, 240) };
   }
+  // 6. the score the AI Checker would give this draft (expectedScore): its no-AI rules and the answers this run already has, no new request
+  if (report.status !== 'not_checked') {
+    try { report.expected = await expectedScore({ content: draft, masters, store, model: provider.model, year, env, linkChecker }); }
+    catch (error) { report.expected = { status: 'not_scored', reason: String(error && error.message || error).slice(0, 240) }; }
+  }
   if (report.status === 'clean' && !draft.refs?.books?.items?.length && !Object.values(draft.refs || {}).some(g => g && g.items && g.items.length)) report.status = 'needs_review';
   if (foundCount) {
     warnings.push(`${foundCount} reference(s) confirmed in the Open Library and Crossref catalogues were added (books to Books, journal articles to Internet References; the other groups were marked not applicable). Check that each is the edition or article you use.`);
@@ -452,4 +480,4 @@ async function generateInner({ content, masters, env = process.env, transport, p
   return { status: 'generated', version: VERSION, sections, keptClos: !!kept, check: report, warnings, usage: provider.usage() };
 }
 
-module.exports = { LOW_VERBS, QUIZ, MAX_TOPIC_GROUPS, MAX_TOPIC_CHARS, generateSyllabus, subjectOf, isFilipinoSubject, generateLimits, isOn, VERSION, LESSON_WEEKS, CHUNKS, EXAMS, SCHEMAS, readClos, readOutline, readWeeks, readAdmin, planRows, keptClos, closMessage, outlineMessage, weeksMessage, adminMessage, SYSTEM, SYSTEM_FIL, systemFor };
+module.exports = { LOW_VERBS, QUIZ, MAX_TOPIC_GROUPS, MAX_TOPIC_CHARS, generateSyllabus, expectedScore, subjectOf, isFilipinoSubject, generateLimits, isOn, VERSION, LESSON_WEEKS, CHUNKS, EXAMS, SCHEMAS, readClos, readOutline, readWeeks, readAdmin, planRows, keptClos, closMessage, outlineMessage, weeksMessage, adminMessage, SYSTEM, SYSTEM_FIL, systemFor };

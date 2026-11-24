@@ -47,7 +47,7 @@ export function checkEgas(rows) {
   }
   return null;
 }
-// `egas` are the program's SAVED EGAs (a PO can only map to those)
+// `egas` are the EGAs a PO may map to: the EGA list as it will be saved (the outcomes dialog saves both lists together; a new program's form, the typed EGAs)
 export function checkPos(rows, egas) {
   if (rows.length > LIMITS.pos) return { key: 'outcomes.err.tooManyPos', params: { max: LIMITS.pos } };
   const number = badNumber(rows);

@@ -33,6 +33,7 @@ function NotificationTest({ notify }) {
 export default function Settings({ user, notify, onAvatarChange, onProfileChange, language, languageBusy, onLanguageChange }) {
   const isAdmin = user.role === 'admin';
   const [administration, setAdministration] = useState(null);
+  const [savedAdministration, setSavedAdministration] = useState(null);
   const [adminBusy, setAdminBusy] = useState(false);
   const [adminError, setAdminError] = useState('');
   const [languageError, setLanguageError] = useState('');
@@ -40,16 +41,17 @@ export default function Settings({ user, notify, onAvatarChange, onProfileChange
   useEffect(() => {
     if (!isAdmin) return;
     let cancelled = false;
-    adminSettings.get().then(result => { if (!cancelled) setAdministration(result.settings); })
+    adminSettings.get().then(result => { if (!cancelled) { setAdministration(result.settings); setSavedAdministration(result.settings); } })
       .catch(error => { if (!cancelled) setAdminError(error.message); });
     return () => { cancelled = true; };
   }, [isAdmin]);
   const updateAdmin = (key, value) => setAdministration(current => ({ ...current, [key]: value }));
+  const adminChanged = !!(administration && savedAdministration && ['template', 'department', 'aiChecking', 'strictValidation', 'emailNotifications'].some(k => administration[k] !== savedAdministration[k]));
   const saveAdmin = async event => {
     event.preventDefault();
-    if (adminBusy || !administration) return;
+    if (adminBusy || !administration || !adminChanged) return;
     setAdminBusy(true); setAdminError('');
-    try { const result = await adminSettings.save(administration); setAdministration(result.settings); notify(translateUI("ui.settings_saved_f133b2")); }
+    try { const result = await adminSettings.save(administration); setAdministration(result.settings); setSavedAdministration(result.settings); notify(translateUI("ui.settings_saved_f133b2")); }
     catch (error) { setAdminError(error.message); }
     finally { setAdminBusy(false); }
   };
@@ -190,7 +192,7 @@ export default function Settings({ user, notify, onAvatarChange, onProfileChange
         {administration && <>
           <AdministrativeSettings administration={administration} adminBusy={adminBusy} updateAdmin={updateAdmin} />
           <div className="settings-actions">
-            <StableButton className="btn primary" type="submit" disabled={adminBusy}>{adminBusy ? translateUI("ui.saving_settings_984f7f") : translateUI("ui.save_settings_0022a3")}</StableButton>
+            <StableButton className="btn primary" type="submit" disabled={adminBusy || !adminChanged}>{adminBusy ? translateUI("ui.saving_settings_984f7f") : adminChanged ? translateUI("settings.saveChanges") : translateUI("ui.save_settings_0022a3")}</StableButton>
           </div>
         </>}
       </form>}

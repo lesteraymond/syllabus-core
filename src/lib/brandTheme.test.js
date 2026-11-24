@@ -238,7 +238,7 @@ test('deadline tags and chips keep readable text on their fills (4.5:1)', () => 
 
 test('the Deadline column and dialog are wired into the subjects table, shown only once deadlines are set up', () => {
   const table = readFileSync(new URL('../views/CourseOutcomes.jsx', import.meta.url), 'utf8');
-  assert.ok(table.includes('deadlineState.enabled && <th>') && table.includes('deadlineState.enabled && <td><DeadlineChip'), 'header and cell only when enabled');
+  assert.ok(table.includes('deadlineState.enabled && <th>') && table.includes('deadlineState.enabled && <td>{readOnly ? <span className="hint">—</span> : <DeadlineChip'), 'header and cell only when enabled; a past academic year gets no chip');
   assert.ok(table.indexOf('ui.program_9d6800') < table.indexOf('deadline.column') && table.indexOf('deadline.column') < table.indexOf('ui.actions_c3cd63'), 'the column sits between Program and Actions');
   assert.ok(table.includes('<DeadlineDialog') && table.includes('deadlinesApi.list()'), 'the dialog and the list are loaded');
   const dialog = readFileSync(new URL('../components/DeadlineDialog.jsx', import.meta.url), 'utf8');
@@ -263,13 +263,16 @@ test('the people list has no Remind button on each row (one Remind all does it),
   assert.ok(dialog.includes("deadlinesApi.remind(selected, userIds)") && dialog.includes('setReload((n) => n + 1)'), 'a reminder refreshes who was last reminded');
 });
 
-// Primary buttons use their own lighter blue (--btn-primary #0866ff), not the navy brand blue; the white label stays readable on it and on its hover.
+// Primary buttons use their own lighter blue (--btn-primary #2563eb), not the navy brand blue; the white label stays readable on it and on its hover.
 test('primary buttons are the softer blue #2563eb, with a readable white label (4.5:1) at rest and on hover', () => {
   assert.strictEqual(token('btn-primary'), '#2563eb');
   for (const name of ['btn-primary', 'btn-primary-hover']) assert.ok(contrast('#ffffff', token(name)) >= 4.5, 'white label on ' + name + ': ' + contrast('#ffffff', token(name)).toFixed(2));
   assert.ok(theme.includes('.btn.primary { background: var(--btn-primary);'), 'the primary button uses it');
   assert.ok(theme.includes('.btn.primary:hover { background: var(--btn-primary-hover); }'));
   assert.ok(theme.includes('.asg-btn.primary { background: var(--btn-primary); }'), 'and the assignment screen\'s primary button');
+  assert.ok(theme.includes('.asg-btn.primary:hover:not(:disabled) { background: var(--btn-primary-hover); box-shadow: none; }'), 'assignment primary button darkens on hover without the old gold bar');
+  assert.ok(!base.includes('#1e3a8a') && !base.includes('#1e40af'), 'admin user-save button no longer hard-codes navy blue');
+  assert.ok(theme.includes('.user-save-btn {') && theme.includes('background: var(--btn-primary);'), 'admin user-save button uses the primary button blue');
 });
 
 // Sidebar hover is grey with a grey icon and subtle zoom; selected (.active) or pressed (:active) uses light blue (~22–28% opacity) with the primary blue icon and a slightly stronger zoom.

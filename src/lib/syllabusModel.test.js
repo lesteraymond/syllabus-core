@@ -135,12 +135,14 @@ test('an invalid PO is flagged, and an empty program says so', () => {
 
 test('plan issues: untagged ILO, orphan tag, unresolved tag, uncovered CLO', () => {
   const { d, c3 } = fixture();
-  d.plan[0].ilos.push(ilo('no tag'), ilo('', ['ega:1']));
-  d.plan[1].ilos[0].tags.push('po:88');
+  d.plan[0].ilos.push(ilo('no tag'), ilo('', ['clo:gone']), ilo('', ['ega:1']));
+  d.plan[1].ilos[0].tags.push('clo:gone', 'po:88');
   const t = M.issues(d, 'plan').map((i) => i.text).join('\n');
   assert.match(t, /Week 1, ILO3 has no CLO tag/);
   assert.match(t, /Week 1, ILO4 is tagged but has no text/);
-  assert.match(t, /Week 2-3, ILO1 has a tag that no longer resolves: PO 88/);
+  assert.doesNotMatch(t, /Week 1, ILO5/, 'an old EGA tag on a blank ILO is ignored');
+  assert.match(t, /Week 2-3, ILO1 has a tag that no longer resolves: CLO/);
+  assert.doesNotMatch(t, /PO 88/, 'an old PO tag on an ILO is ignored');
   assert.match(t, /CLO 3 is not covered by any ILO yet/);
   assert.ok(M.issues(d, 'plan').some((i) => i.clo === c3));
 });
@@ -530,7 +532,7 @@ test('a mapped syllabus keeps its PO statements when it opens; a draft with no m
   const opened = withStandards(mapped, standards);
   assert.equal(opened.outcomes.pos[0].text, 'Old statement.', 'opening does not adopt'); assert.equal(opened.outcomes.vision, 'V', 'the vision still follows the subject');
   const tagged = { ...mapped, clos: [], plan: [{ ilos: [{ tags: ['po:1'] }] }] };
-  assert.equal(poReviewPending(tagged, standards), true, 'a learning plan tag is a mapping too');
+  assert.equal(poReviewPending(tagged, standards), false, 'an old PO tag on an ILO is not a mapping: only a CLO maps to a PO');
   const unmapped = { ...mapped, clos: [{ pos: [] }] };
   assert.equal(poReviewPending(unmapped, standards), false);
   assert.equal(withStandards(unmapped, standards).outcomes.pos[0].text, 'New statement.', 'a draft with no mappings fills in as before');

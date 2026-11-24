@@ -82,7 +82,7 @@ test('navigation, dashboard summaries and roles switch language while account na
   const nav = renderToStaticMarkup(<Sidebar page="settings" setPage={noop} nav={navItems} collapsed={false} onToggle={noop} />);
   assert.match(nav, /Pangkalahatang Tanaw/); assert.match(nav, /Mga Setting/); assert.match(nav, /Tagabuo ng Silabus/);
   const dashboard = renderToStaticMarkup(<Dashboard user={user} syllabi={[]} logs={[]} setPage={noop} clearLogs={noop} setConfirm={noop} />);
-  assert.match(dashboard, /Aking mga Naipasa/); assert.match(dashboard, /Kabuuang na-upload/);
+  assert.match(dashboard, /<span>Naipasa<\/span>/); assert.match(dashboard, /Kabuuang naipasa/);
   const topbar = renderToStaticMarkup(<Topbar user={user} page="settings" unread={0} threads={[]} msgDrop={false} onLogout={noop} setMsgDrop={noop} notifications={{ unreadCount: 0, items: [] }} />);
   assert.match(topbar, /Approved Settings/); assert.match(topbar, /Guro/); assert.match(topbar, /Mag-sign out/);
 });
@@ -111,15 +111,21 @@ test('dashboard typewriter greetings use the current saved account name for both
   }
 });
 
-test('the admin dashboard shows its own five summary cards; faculty keeps theirs', () => {
+test('the admin dashboard shows its own five summary cards plus My Submissions (the dean writes syllabi too); a reviewer who does not write keeps five; faculty keeps theirs', () => {
   setLanguage('en');
   const render = role => renderToStaticMarkup(<Dashboard user={{ ...user, role }} syllabi={[{ id: 1, userId: 9, status: 'submitted' }, { id: 2, userId: 9, status: 'approved' }]} logs={[]} setPage={noop} clearLogs={noop} setConfirm={noop} />);
   const admin = render('admin');
-  assert.equal((admin.match(/class="stat-card"/g) || []).length, 5);
+  assert.equal((admin.match(/class="stat-card"/g) || []).length, 6);
+  assert.match(admin, /<span>Submitted<\/span><strong>0<\/strong>/, "the dean's own syllabi (none in this list)");
+  // Submitted counts what was submitted: a draft is not counted, for faculty and for the dean alike
+  const mine = (role) => renderToStaticMarkup(<Dashboard user={{ ...user, role }} syllabi={[{ id: 4, userId: 1, status: 'submitted' }, { id: 5, userId: 1, status: 'approved' }, { id: 6, userId: 1, status: 'draft' }]} logs={[]} setPage={noop} clearLogs={noop} setConfirm={noop} />);
+  for (const role of ['faculty', 'admin']) assert.match(mine(role), /<span>Submitted<\/span><strong>2<\/strong>/, role + ': the draft is not counted');
+  const asst = render('asst_vpaa');
+  assert.equal((asst.match(/class="stat-card"/g) || []).length, 5); assert.doesNotMatch(asst, /<span>Submitted<\/span>/);
   for (const label of ['Programs', 'Subjects', 'Under Review', 'Approved', 'For Revision']) // labels keep their capitals assert.match(admin, new RegExp('<span>' + label + '</span>'));
   assert.doesNotMatch(admin, /AI compliance score|Total courses|Submitted syllabi/i);
   const faculty = render('faculty');
-  assert.match(faculty, /My Submissions/); assert.match(faculty, /AI Compliance Score/);
+  assert.match(faculty, /<span>Submitted<\/span>/); assert.match(faculty, /Compliance Score/);
 });
 test('the brand dashboard icons draw in the theme colour at the requested size and are hidden from screen readers by default', () => {
   for (const name of ['program', 'subject', 'underReview', 'approved', 'revise']) {
@@ -564,14 +570,15 @@ test('builder review omits the embedded AI section by default and places AI Chec
   }
 });
 
-test('My Syllabi keeps faculty communication and hides it for administrators while preserving history',()=>{
+test('My Syllabi keeps faculty communication, gives administrators their comments but no messages, and preserves history',()=>{
   for(const language of ['en','tl']) {
     setLanguage(language);
     for(const role of ['admin','faculty']) {
       const html=renderToStaticMarkup(<MySyllabi user={{...user,role}} syllabi={[{id:45,userId:user.id,status:'under_review',courseCode:'TEST',title:'Original title',adminComment:'Reviewer feedback sentinel'}]} messages={[{syllabusId:45,receiverId:user.id,isRead:false}]} commentCounts={{45:2}} setPage={noop} setEditing={noop} setHistCode={noop} setChatCode={noop} setCommentCode={noop} setConfirm={noop} handleDelete={noop}/>);
       assert.ok(html.includes(t('ui.history_fefbcc')));
       if(role==='admin') {
-        assert.doesNotMatch(html,/syl-comments|feedback-banner|syl-unread|Reviewer feedback sentinel/);
+        // Since the review chain the dean's own syllabi get reviewer comments, so the administrator reads them too (E2E report 2026-11-23, BUG-021); still no messages.
+        assert.match(html,/syl-comments/);assert.doesNotMatch(html,/feedback-banner|syl-unread|Reviewer feedback sentinel/);
         assert.ok(!html.includes(t('ui.message_890761')));
       } else {
         assert.match(html,/syl-comments/);assert.doesNotMatch(html,/feedback-banner/);assert.match(html,/syl-unread/);
@@ -667,8 +674,8 @@ test('the Recent Activity card has no Clear Logs button, for any role or languag
     setLanguage(language);
     for (const role of ['faculty', 'admin', 'asst_vpaa', 'lic_director', 'vpaa']) {
       const html = renderToStaticMarkup(<Dashboard user={{ ...user, role }} syllabi={[]} logs={[]} setPage={noop} />);
-      assert.ok(html.includes(language === 'en' ? '<h3>Audit Log</h3>' : '<h3>Talaan ng Audit</h3>'), language + ': ' + role + ': the card is still there, titled Audit Log');
-      assert.ok(!html.includes('Recent Activity') && !html.includes('Kamakailang aktibidad'), language + ': ' + role + ': the old title is gone');
+      assert.ok(html.includes(language === 'en' ? '<h3>Recent Activity</h3>' : '<h3>Mga Kamakailang Aktibidad</h3>'), language + ': ' + role + ': the card is still there, titled Recent Activity');
+      assert.ok(!html.includes('Audit Log') && !html.includes('Talaan ng Audit'), language + ': ' + role + ': the old title is gone');
       assert.doesNotMatch(html, /Clear Logs|I-clear ang talaan/, language + ': ' + role);
     }
   }

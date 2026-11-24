@@ -27,6 +27,8 @@ function makeDb() {
     if (sql.startsWith('INSERT INTO account_activity')) { const [user_id, action, syllabus_id, subject, notes] = p; s.activity.push({ user_id, action, syllabus_id, subject, notes, at: s.clock }); return [{}]; }
     if (sql.startsWith('SELECT label, start_year, is_current FROM academic_years')) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' }); // a database before the year scope
     if (sql.startsWith("INSERT INTO syllabi (user_id, title, course_code, status, version)")) return [{ insertId: 77 }];
+    if (sql.startsWith('SELECT academic_year FROM syllabi')) return [[{ academic_year: s.row.academic_year ?? null }]]; // lib/activeYearGate.js pastYearOf
+    if (sql.startsWith('SELECT label FROM academic_years WHERE is_current = 1')) return [s.activeYear ? [{ label: s.activeYear }] : []];
     throw new Error('unexpected query: ' + sql);
   };
   const conn = { query: async (q, p) => handle(q, p), beginTransaction: async () => {}, commit: async () => {}, rollback: async () => {}, release: () => {} };
@@ -198,4 +200,26 @@ test('a new draft and each editing session are recorded in the account activity;
   assert.strictEqual((await call(gus, 'PUT', '/syllabi/1/content', { sections: { description: ['x'] }, schemaVersion: 3, baseRevisions: { description: base.description } })).status, 404, 'not the owner: never revealed, nothing recorded');
   assert.deepStrictEqual(db.s.activity.map((a) => [a.user_id, a.action, a.syllabus_id, a.notes, a.at]), [
     [5, 'draft_create', 77, null, 0], [5, 'content_edit', 1, 'draft', 0], [5, 'content_edit', 1, 'draft', 45]]);
+}));
+
+// Owner decision 2026-11-23 (E2E report BUG-010): once another academic year is active, a syllabus of the earlier year is a record. The builder gets
+// editable: false with the reason and its code, and a save is refused with 409 past_academic_year; nothing is written.
+test('a draft of a past academic year is view only: not editable when opened, and a save is refused without writing', () => withServer(async ({ call, db }) => {
+  db.s.row.academic_year = '2026–2027';
+  db.s.activeYear = '2027–2028';
+  const opened = await call(fay, 'GET', '/syllabi/1/content');
+  assert.strictEqual(opened.status, 200);
+  assert.strictEqual(opened.body.editable, false);
+  assert.strictEqual(opened.body.lockedCode, 'past_academic_year');
+  assert.match(opened.body.lockedReason, /2026–2027 academic year, which is no longer active \(2027–2028 is\)/);
+  const before = db.s.row.content;
+  const save = await call(fay, 'PUT', '/syllabi/1/content', { sections: { description: ['An edit to last year\'s draft.'] }, schemaVersion: 3, baseRevisions: { description: opened.body.revisions.description } });
+  assert.strictEqual(save.status, 409);
+  assert.strictEqual(save.body.code, 'past_academic_year');
+  assert.strictEqual(db.s.saves, 0);
+  assert.strictEqual(db.s.row.content, before, 'nothing was written');
+  db.s.activeYear = '2026–2027'; // the same draft while its year is the active one: editable as before
+  const current = await call(fay, 'GET', '/syllabi/1/content');
+  assert.strictEqual(current.body.editable, true);
+  assert.strictEqual(current.body.lockedCode, null);
 }));

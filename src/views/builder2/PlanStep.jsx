@@ -1,7 +1,7 @@
 import StableButton from '../../components/StableButton';
 import { t as translateUI } from "../../i18n/index.js";
 import { useState } from 'react';
-import { blankRow, clone, renderMarkup, weekSet } from '../../lib/syllabusModel';
+import { blankRow, clone, isCloTag, renderMarkup, weekSet } from '../../lib/syllabusModel';
 import { orderedLesson, canCreateIlo, canEditLessonField } from '../../lib/lessonAuthoring';
 import { Auto, CoverageStrip, Ic, OutcomePicker, Tag } from './parts';
 import { newId } from './useDraft';
@@ -93,7 +93,7 @@ export default function PlanStep({ d, apply, model, filter, setFilter, onDeleteR
                               ? <Auto value={il.text} disabled={!canEditLessonField(r,'ilo',il.text)} describedBy={orderHint} placeholder={translateUI("ui.start_with_a_verb_6b1d63")} label={translateUI("ui.ilo_f12fa1") + (j + 1) + translateUI("ui.of_week_60075b") + r.week} onChange={(v) => updRow(r.id, (x) => { if(canEditLessonField(x,'ilo',x.ilos[j].text))x.ilos[j].text = v; })} />
                               : <div className="fmt typed-text">{il.text || '—'}</div>}
                             <div className="tagrow">
-                              {il.tags.map((t) => <Tag key={t} info={model.tagInfo(d, t)} onRemove={edit ? () => updRow(r.id, (x) => { x.ilos[j].tags = x.ilos[j].tags.filter((v) => v !== t); }) : null} />)}
+                              {il.tags.filter(isCloTag).map((t) => <Tag key={t} info={model.tagInfo(d, t)} onRemove={edit ? () => updRow(r.id, (x) => { x.ilos[j].tags = x.ilos[j].tags.filter((v) => v !== t); }) : null} />)}
                               {edit && <button type="button" className="tagbtn" aria-label={translateUI("ui.tag_outcomes_for_ilo_5f768a") + (j + 1)} onClick={(e) => setPicker({ row: r.id, ilo: il.id, rect: e.currentTarget.getBoundingClientRect(), anchor: e.currentTarget })}>{translateUI("ui.tag_eae765")}</button>}
                               {edit && r.ilos.length > 1 && <button type="button" className="ib del" aria-label={translateUI("ui.remove_ilo_4d0e7b")} onClick={() => updRow(r.id, (x) => { x.ilos.splice(j, 1); })}><Ic n="x" /></button>}
                             </div>
@@ -117,7 +117,7 @@ export default function PlanStep({ d, apply, model, filter, setFilter, onDeleteR
       </div>
       {edit && <div className="addrow"><StableButton type="button" className="btn outline" onClick={() => addRow('lesson')}>{translateUI("ui.add_week_3a833d")}</StableButton><StableButton type="button" className="btn outline" onClick={() => addRow('exam')}>{translateUI("ui.add_exam_row_19d3c0")}</StableButton></div>}
       {picker && pil && (
-        <OutcomePicker model={model} d={d} kinds={['clo', 'ega', 'po']} rect={picker.rect} anchor={picker.anchor} title={translateUI("ui.tag_outcomes_9af691")} selected={pil.tags} onClose={() => setPicker(null)}
+        <OutcomePicker model={model} d={d} kinds={['clo']} rect={picker.rect} anchor={picker.anchor} title={translateUI("ui.tag_outcomes_9af691")} selected={pil.tags} onClose={() => setPicker(null)}
           onToggle={(t) => updRow(picker.row, (x) => { const il = x.ilos.find((y) => y.id === picker.ilo); if (il) il.tags = il.tags.includes(t) ? il.tags.filter((v) => v !== t) : [...il.tags, t]; })} />
       )}
     </div>

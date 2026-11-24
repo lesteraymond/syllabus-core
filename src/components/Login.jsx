@@ -5,6 +5,7 @@ import { useState } from 'react';
 import StudentRegister from './StudentRegister';
 import GoogleSignInButton from './GoogleSignInButton';
 import ForgotPassword from './ForgotPassword';
+import LoginConstellation from './LoginConstellation';
 import { Icon } from './ui';
 
 
@@ -24,10 +25,10 @@ export default function Login({ onLogin, onGoogleLogin }) {
   return (
     <div className="login-page">
       <section className="login-brand">
-        <div className="brand-orb"><img src="/cite-logo.png" alt={translateUI("ui.college_logo_1df91f")} /></div>
-        <div>
-
-          <h1>{translateUI("ui.syllabus_1b731d")} {translateUI("ui.management_system_738978")}</h1>
+        <LoginConstellation />
+        <div className="login-brand-content">
+          <div className="brand-orb"><img src="/cite-logo.png" alt={translateUI("ui.college_logo_1df91f")} /></div>
+          <h1><span>{translateUI("ui.syllabus_1b731d")}</span> <span className="login-brand-accent">{translateUI("ui.management_system_738978")}</span></h1>
           <p>{translateUI("ui.build_validate_review_approve_archive_and_analyze_undergraduate_s_0aef77")}</p>
           <div className="feature-pills"><span><Icon name="sparkle" size={16} />{translateUI("ui.ai_compliance_602783")}</span><span><Icon name="sealCheck" size={16} />{translateUI("ui.approval_workflow_cc8935")}</span><span><Icon name="graduationCap" size={16} />{translateUI("ui.academic_quality_93a706")}</span></div>
         </div>

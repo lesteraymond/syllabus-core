@@ -63,6 +63,7 @@ async function loadVisible(db, me, id) {
   const [rows] = await db.query('SELECT * FROM syllabi WHERE syllabus_id = ?', [id]);
   const syl = rows[0];
   if (!syl || !rules.canView(me, syl)) throw httpError(404, 'Syllabus not found');
+  await reviewStages.assertReviewerMayOpen(db, syl, me); // what the lists hide from this reviewer stays closed here too
   return syl;
 }
 
@@ -106,7 +107,7 @@ const instantOf = (raw, name) => {
   if (Number.isNaN(ms)) throw httpError(400, name + ' must be a valid date');
   return Math.floor(ms / 1000);
 };
-// The label ("v1.1") of the version a run was made on, for the dialogs that show one run.
+// The label ("v2") of the version a run was made on, for the dialogs that show one run.
 async function withVersionLabel(db, run) {
   if (!run || run.versionId === null || run.versionId === undefined) return run;
   const [rows] = await db.query('SELECT version_label FROM syllabus_versions WHERE version_id = ?', [run.versionId]);
@@ -122,7 +123,7 @@ router.get('/syllabi/:id/compliance', requireAuth, async (req, res) => {
     const syl = await loadVisible(db, me, parseId(req.params.id));
     if (!(await svc.isInstalled(db))) return res.json({ installed: false, run: null });
     const checking = runningChecks.has(syl.syllabus_id);
-    const run = await svc.latestRun(db, syl.syllabus_id, { adminOnly: !rules.isOwner(me, syl) });
+    const run = await svc.latestRun(db, syl.syllabus_id, { adminOnly: !rules.isOwner(me, syl), createdBy: me.id }); // this person's own check only
     if (!run) return res.json({ installed: true, run: null, checking });
     const subject = await subjectOf(db, me, syl);
     res.json({ installed: true, checking, run: await withVersionLabel(db, withChecker(await svc.loadDetail(db, run, hashOfSubject(subject)), syl.user_id)) });
@@ -227,7 +228,7 @@ router.get('/compliance', requireAuth, async (req, res) => {
       const subject = await subjectOf(db, me, syl);
       const base = await baseOf(db, syl, subject);
       if (!installed) return res.json({ installed: false, syllabus: base, run: null });
-      const run = await svc.latestRun(db, syl.syllabus_id, { adminOnly: !rules.isOwner(me, syl) });
+      const run = await svc.latestRun(db, syl.syllabus_id, { adminOnly: !rules.isOwner(me, syl), createdBy: me.id }); // this person's own check only
       return res.json({ installed: true, syllabus: base, run: run ? withChecker(await svc.loadDetail(db, run, hashOfSubject(subject)), syl.user_id) : null });
     }
 
@@ -268,23 +269,35 @@ router.get('/compliance', requireAuth, async (req, res) => {
     const latest = new Map();
     let areasByRun = new Map();
     let deductionsByRun = new Map(); // run id -> its AI deductions
+    let mineOf = new Map(); // syllabus id -> the newest check this account ran on it (the AI Quality Snapshot)
     if (installed && syls.length) {
       const [runs] = await db.query(
-        // An admin sees the administrator's own check of each submitted syllabus; a faculty member sees their own newest run, re-checks included.
-        'SELECT r.* FROM ai_check_runs r JOIN (SELECT MAX(run_id) AS run_id FROM ai_check_runs WHERE syllabus_id IN (?)' + (rules.isReviewer(me) ? ' AND ' + svc.ADMIN_RUN_SQL : '') + ' GROUP BY syllabus_id) m ON m.run_id = r.run_id',
-        [syls.map((s) => s.syllabus_id)]
+        // A reviewer sees their own check of each submitted syllabus; a faculty member their own newest run, re-checks included. Never another
+        // person's check: faculty, dean, Asst. VPAA, LIC Director and VPAA each see only the checks they ran (2026-11-24).
+        'SELECT r.* FROM ai_check_runs r JOIN (SELECT MAX(run_id) AS run_id FROM ai_check_runs WHERE syllabus_id IN (?) AND created_by = ?' + (rules.isReviewer(me) ? ' AND ' + svc.ADMIN_RUN_SQL : '') + ' GROUP BY syllabus_id) m ON m.run_id = r.run_id',
+        [syls.map((s) => s.syllabus_id), me.id]
       );
       runs.forEach((r) => latest.set(r.syllabus_id, r));
-      areasByRun = await svc.loadAreas(db, runs.map((r) => r.run_id));
+      // The AI Quality Snapshot is per person: only the checks this account ran itself (its newest one on each syllabus), never another
+      // reviewer's or the author's, so two reviewers' snapshots do not follow each other (2026-11-24).
+      try {
+        const [own] = await db.query(
+          'SELECT r.* FROM ai_check_runs r JOIN (SELECT MAX(run_id) AS run_id FROM ai_check_runs WHERE syllabus_id IN (?) AND created_by = ? GROUP BY syllabus_id) m ON m.run_id = r.run_id',
+          [syls.map((s) => s.syllabus_id), me.id]
+        );
+        own.forEach((r) => mineOf.set(r.syllabus_id, r));
+      } catch { mineOf = new Map(); }
+      const runIds = [...new Set([...runs, ...mineOf.values()].map((r) => r.run_id))];
+      areasByRun = await svc.loadAreas(db, runIds);
       // The AI deductions of these runs, from their stored reports (only that part of each report is read). Without them the areas after AI are the rules'.
       try {
-        const [stored] = await db.query("SELECT run_id, JSON_EXTRACT(report_json, '$.hybrid.deductions') AS deductions FROM syllabus_check_reports WHERE run_id IN (?)", [runs.map((r) => r.run_id)]);
+        const [stored] = await db.query("SELECT run_id, JSON_EXTRACT(report_json, '$.hybrid.deductions') AS deductions FROM syllabus_check_reports WHERE run_id IN (?)", [runIds]);
         stored.forEach((r) => { let d = r.deductions; if (typeof d === 'string') { try { d = JSON.parse(d); } catch { d = null; } } if (Array.isArray(d)) deductionsByRun.set(r.run_id, d); });
       } catch { deductionsByRun = new Map(); }
     }
     if (installed && rules.isReviewer(me)) {
       for (const syl of syls.filter(s=>s.user_id===me.id)) {
-        const ownRun=await svc.latestRun(db,syl.syllabus_id);
+        const ownRun=await svc.latestRun(db,syl.syllabus_id,{ createdBy: me.id });
         if(ownRun) latest.set(syl.syllabus_id,ownRun);
       }
     }
@@ -294,6 +307,16 @@ router.get('/compliance', requireAuth, async (req, res) => {
     if (rules.isReviewer(me) && syls.length && reviewAiChoice.allowed()) { try { withoutAi = await reviewAiChoice.choicesOf(db, syls.map((s) => s.syllabus_id), me.id); } catch { withoutAi = new Set(); } }
     // Each syllabus's academic year, so the picker can say when a new check is not available (display only: the recheck route enforces it).
     const yearsOf = new Map(); if (syls.length) { try { const [ys] = await db.query('SELECT syllabus_id, academic_year FROM syllabi WHERE syllabus_id IN (?)', [syls.map((s) => s.syllabus_id)]); ys.forEach((y) => yearsOf.set(y.syllabus_id, y.academic_year)); } catch { /* a database before the year scope */ } }
+    // The review chain goes in order (dean, Asst. VPAA, LIC Director): for a stage reviewer, whose turn each submission is, so the picker offers a check
+    // only once it has reached them (lib/reviewStages.js turnOf). Without the stage table nothing is known and nothing is held back.
+    const myStage = require('../lib/roles').stageOf(me);
+    let turns = new Map();
+    if (myStage && syls.length) { try { turns = await reviewStages.stagesOf(db, syls.map((s) => s.syllabus_id)); } catch { turns = new Map(); } }
+    const turnFields = (s) => {
+      const st = turns.get(s.syllabus_id);
+      if (!st || s.user_id === me.id || !['submitted', 'under_review'].includes(s.status)) return {};
+      return { turn: st.turn, myTurn: st.turn === myStage };
+    };
     const list = syls.map((s) => {
       let run = latest.get(s.syllabus_id);
       // The administrator's check counts for the version that was checked: after a new version is submitted the old check is history, not "checked".
@@ -307,6 +330,7 @@ router.get('/compliance', requireAuth, async (req, res) => {
         recordReview: reviews.get(s.syllabus_id) || null,
         academicYear: yearsOf.get(s.syllabus_id) || null,
         ...(versionOf.has(s.syllabus_id) && withoutAi.has(s.syllabus_id + ':' + versionOf.get(s.syllabus_id)) ? { reviewedWithoutAi: true } : {}),
+        ...turnFields(s),
       };
     });
 
@@ -314,8 +338,15 @@ router.get('/compliance', requireAuth, async (req, res) => {
     const scored = list.filter((x) => x.run && x.run.overall !== null);
     // The AI Quality Snapshot counts only checks whose AI step COMPLETED (ai_status 'ok'): a check made with AI checking off has a score from the
     // no-AI rules alone, which is not an AI result (2026-11-15: a rules-only 95 stood beside an AI-checked 93). Those are counted apart (notAiChecked).
-    const aiScored = scored.filter((x) => x.run.aiStatus === 'ok');
-    const avg = (xs) => (xs.length ? Math.round(xs.reduce((a, b) => a + b, 0) / xs.length) : null);
+    // ... and only this account's own checks (mineOf): a reviewer's on the newest submitted version, as in the list; the snapshot is per person.
+    const ownScored = syls.map((s) => {
+      const run = mineOf.get(s.syllabus_id);
+      if (!run || (rules.isReviewer(me) && versionOf.has(s.syllabus_id) && run.version_id !== versionOf.get(s.syllabus_id))) return null;
+      const content = formOf.get(s.syllabus_id) || null;
+      return { run: { ...svc.summarize(run, areasByRun.get(run.run_id) || [], content ? svc.hashOf(content) : null), areasFinal: finalAreas(areasByRun.get(run.run_id) || [], deductionsByRun.get(run.run_id) || []) } };
+    }).filter((x) => x && x.run.overall !== null && x.run.overall !== undefined);
+    const aiScored = ownScored.filter((x) => x.run.aiStatus === 'ok');
+    const avg =(xs) => (xs.length ? Math.round(xs.reduce((a, b) => a + b, 0) / xs.length) : null);
     res.json({
       installed,
       syllabi: list,
@@ -327,7 +358,7 @@ router.get('/compliance', requireAuth, async (req, res) => {
         average: avg(scored.map((x) => x.run.overall)),
         passed: scored.filter((x) => x.run.passed && !x.run.recordReview).length,
         aiChecked: aiScored.length,
-        notAiChecked: scored.length - aiScored.length,
+        notAiChecked: ownScored.length - aiScored.length,
         aiAverage: avg(aiScored.map((x) => x.run.overall)),
         areas: svc.standard.areas.map((a) => ({
           key: a.key, name: a.name, weight: a.weight,
@@ -378,11 +409,12 @@ router.get('/compliance/history', requireAuth, async (req, res) => {
       'SELECT r.run_id, r.syllabus_id, r.version_id, r.standard_version, (SELECT sv.version_label FROM syllabus_versions sv WHERE sv.version_id = r.version_id) AS version_label, r.overall, r.status, r.passed, r.ai_status, r.created_by, r.created_at, l.user_id, l.course_code, l.title, l.syllabus_status, l.first_name, l.last_name, l.course_title, l.program_code, l.program_name, l.curriculum_program '
       + 'FROM ai_check_runs r JOIN (SELECT s.syllabus_id, s.user_id, s.course_code, s.title, s.status AS syllabus_status, ' + LABEL_SQL + ") l ON l.syllabus_id = r.syllabus_id "
       // An approved syllabus has left the AI Checker for the Repository: it is not in the history (its runs stay stored and readable with /compliance/runs/:id).
-      + "WHERE r.version_id IS NOT NULL AND r.created_by IS NOT NULL AND r.created_by <> l.user_id AND l.syllabus_status NOT IN ('draft', 'approved') "
-      + 'AND r.run_id = (SELECT MAX(r2.run_id) FROM ai_check_runs r2 WHERE r2.syllabus_id = r.syllabus_id AND r2.version_id IS NOT NULL AND r2.created_by IS NOT NULL AND r2.created_by <> l.user_id)'
+      // Only the checks this reviewer ran: the dean, the Asst. VPAA, the LIC Director and the VPAA never see one another's history (2026-11-24).
+      + "WHERE r.version_id IS NOT NULL AND r.created_by = ? AND r.created_by <> l.user_id AND l.syllabus_status NOT IN ('draft', 'approved') "
+      + 'AND r.run_id = (SELECT MAX(r2.run_id) FROM ai_check_runs r2 WHERE r2.syllabus_id = r.syllabus_id AND r2.version_id IS NOT NULL AND r2.created_by = ? AND r2.created_by <> l.user_id)'
       + (from !== null ? ' AND r.created_at >= FROM_UNIXTIME(?)' : '') + (to !== null ? ' AND r.created_at < FROM_UNIXTIME(?)' : '') + inYear.sql
       + ' ORDER BY r.run_id DESC LIMIT ?',
-      [...(from !== null ? [from] : []), ...(to !== null ? [to] : []), ...inYear.params, limit]
+      [req.session.user.id, req.session.user.id, ...(from !== null ? [from] : []), ...(to !== null ? [to] : []), ...inYear.params, limit]
     );
     // The VPAA's history: only syllabi that have reached the VPAA (lib/reviewStages.js)
     const seen = isApprover(req.session.user) ? await reviewStages.approverVisible(db, rows.map((r) => ({ syllabus_id: r.syllabus_id, status: r.syllabus_status }))) : null;
@@ -430,8 +462,9 @@ router.get('/compliance/runs/:runId', requireAuth, async (req, res) => {
     if (!stored || stored.version_id === null || stored.version_id === undefined || stored.created_by === null || stored.created_by === undefined) throw httpError(404, 'Check not found');
     const syl = await loadVisible(db, me, stored.syllabus_id);
     if (stored.created_by === syl.user_id) throw httpError(404, 'Check not found'); // the faculty member's own run is not the administrator's to read
+    if (stored.created_by !== me.id) throw httpError(404, 'Check not found'); // another reviewer's check is theirs alone (2026-11-24)
     const subject = await subjectOf(db, me, syl);
-    const latest = await svc.latestRun(db, syl.syllabus_id, { adminOnly: true });
+    const latest = await svc.latestRun(db, syl.syllabus_id, { adminOnly: true, createdBy: me.id });
     res.json({
       installed: true,
       syllabus: await baseOf(db, syl, subject),

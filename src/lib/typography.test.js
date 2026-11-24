@@ -19,7 +19,10 @@ test('forms and controls inherit the app font rather than the browser default', 
 
 test('no other typeface is set by name: only the Geist @font-face, the monospace token and the printed form', () => {
   const named = [...css.matchAll(/font-family:\s*([^;}]+)[;}]/g)].map((m) => m[1].trim());
-  const allowed = [(x) => x === '"Geist"', (x) => x === '"Inter"', (x) => x === '"Manrope"', (x) => x === '"Nunito"', (x) => x.startsWith('var(--font-'), (x) => x.startsWith('Arial, Helvetica')];
+  // The printed form's own fonts: Arial for the body and Monotype Corsiva for the letterhead, as on the approved institutional syllabi
+  // (styles.css .paper-letterhead).
+  const allowed = [(x) => x === '"Geist"', (x) => x === '"Inter"', (x) => x === '"Manrope"', (x) => x === '"Nunito"', (x) => x.startsWith('var(--font-'), (x) => x.startsWith('Arial, Helvetica'),
+    (x) => x.startsWith('"Monotype Corsiva"')];
   const stray = named.filter((x) => !allowed.some((ok) => ok(x)));
   assert.deepStrictEqual(stray, [], 'another typeface set directly: ' + stray.join(' | '));
   assert.match(css, /--font-mono:\s*ui-monospace/, 'the monospace token is unchanged');

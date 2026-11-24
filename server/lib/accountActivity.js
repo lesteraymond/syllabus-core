@@ -8,7 +8,8 @@
 // Writing is best effort on purpose, like lib/activity.js: losing a line must never make the action itself fail (a sign-in, a save). Without
 // the table (before npm run migrate-account-activity) nothing is recorded and the read returns nothing; the server console says so once.
 const ACTIONS = ['login', 'logout', 'password_change', 'name_change', 'photo_change', 'language_change', 'draft_create', 'content_edit', 'syllabus_delete',
-  'login_failed', 'user_create', 'user_credentials', 'user_disable', 'user_enable', 'user_delete', 'user_assignments', 'generate'];
+  'login_failed', 'user_create', 'user_credentials', 'user_disable', 'user_enable', 'user_delete', 'user_assignments', 'generate',
+  'terms_accept']; // a student's agreement to the registration Terms and Conditions (routes/students.js): notes = '<version> at <ISO time>'
 // Autosave writes the content every few seconds: one "edited" line per syllabus per editing session, not one per save. A save within this many
 // minutes of the person's last "edited" line for the same syllabus is part of that session.
 const EDIT_SESSION_MINUTES = 30;

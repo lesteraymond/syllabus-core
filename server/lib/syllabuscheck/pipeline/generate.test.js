@@ -99,6 +99,38 @@ test('the check ran with the checker\'s own rules and one repair plan; nothing w
   assert.ok(!('status' in out.sections) && !('signoff' in out.sections));
 });
 
+test('the result carries the score the AI Checker would give: its no-AI rules plus the alignment, from stored answers only (no new request)', async () => {
+  const asked = [];
+  const judge = T.scriptedJudge({ log: [] });
+  const p = { ready: true, model: 'scripted', ask: async (m) => { asked.push('judge'); return judge(m); }, rewrite: model(), usage: () => ({ requests: 0 }) };
+  const store = memoryStore();
+  const out = await run(draft(), { provider: p, store, linkChecker: async () => [] });
+  const e = out.check.expected;
+  assert.equal(e.passMark, 79);
+  // the AI Checker's no-AI rules run too: this draft leaves the units and the references to the author, so they block a final score, as in the AI Checker
+  assert.equal(e.status, 'provisional');
+  assert.equal(e.score, null);
+  assert.ok(e.blocking > 0 && e.blockingMessages.some(m => /References/.test(m)) && e.blockingMessages.some(m => /units/.test(m)));
+  assert.equal(typeof e.provisionalScore, 'number');
+  assert.equal(e.provisionalScore, Math.max(0, e.baseScore - e.rulesPoints - e.alignmentPoints), 'base minus the no-AI and alignment points, as official.js');
+  assert.equal(e.complete, true, 'every alignment question was answered from the run\'s own store');
+  // scoring the same draft again asks the AI nothing: the answers are all stored
+  const before = asked.length;
+  const again = await G.expectedScore({ content: { ...draft(), ...out.sections }, masters: mastersOf(draft()), store, model: 'scripted', year: 2026, linkChecker: async () => [] });
+  assert.equal(asked.length, before);
+  assert.equal(again.provisionalScore, e.provisionalScore);
+});
+
+test('the expected score sends no AI request: with an empty store the alignment is unanswered and the score only provisional', async () => {
+  const out = await run(draft(), { linkChecker: async () => [] });
+  const e = await G.expectedScore({ content: { ...draft(), ...out.sections }, masters: mastersOf(draft()), store: memoryStore(), model: 'scripted', year: 2026, linkChecker: async () => [] });
+  assert.equal(e.status, 'provisional');
+  assert.equal(e.score, null);
+  assert.equal(e.complete, false);
+  assert.ok(e.unanswered > 0);
+  assert.equal(e.alignmentPoints, 0);
+});
+
 test('CLOs the author already wrote are kept, and the plan is tagged to them', async () => {
   const log = [];
   const clos = STATEMENTS.map((statement, i) => ({ id: 'mine' + i, title: 'T', level: R.CLO_LEVELS[i].level, statement, pos: [1], egas: [1] }));

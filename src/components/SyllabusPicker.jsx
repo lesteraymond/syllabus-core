@@ -16,7 +16,8 @@ const STATUS_LABELS = { draft: 'Draft', submitted: 'Submitted', under_review: 'U
 //   onCheck(row)   called with the chosen row when "Check compliance" is pressed
 //   onWithoutAi(row)  called after the reviewer confirms "Review without AI check" (each reviewer chooses for themselves; server/lib/reviewAiChoice.js).
 //                  Absent when the institution requires the AI check (SYLLABUS_CHECK_AI_GATE=required): the button is then not offered.
-export default function SyllabusPicker({ groups, loading = false, busy = false, onCheck, onWithoutAi }) {
+// viewerId: the signed-in reviewer. Nobody reviews their own syllabus (routes/reviewChain.js), so on theirs "Review without AI check" is not offered.
+export default function SyllabusPicker({ groups, loading = false, busy = false, onCheck, onWithoutAi, viewerId = null }) {
   const uid = useId();
   const [facultyKey, setFacultyKey] = useState('');
   const [programKey, setProgramKey] = useState('');
@@ -26,6 +27,7 @@ export default function SyllabusPicker({ groups, loading = false, busy = false, 
   const faculty = useMemo(() => groups.find((f) => f.key === facultyKey) || null, [groups, facultyKey]);
   const program = faculty ? faculty.programs.find((p) => p.key === programKey) || null : null;
   const row = program ? program.rows.find((r) => String(r.syllabusId) === syllabusId) || null : null;
+  const ownRow = !!row && viewerId !== null && row.userId === viewerId;
   const inactiveYear = useInactiveYear(row ? row.academicYear : null); // a syllabus of another academic year is not checked anew
 
   // When the chosen syllabus is checked it leaves the list: clear whatever no longer exists so the selects never show a stale choice.
@@ -88,11 +90,11 @@ export default function SyllabusPicker({ groups, loading = false, busy = false, 
           ) : <span className="pick-meta">{loading ? translateUI("ui.loading_syllabi_264639") : empty ? translateUI("ui.every_submitted_syllabus_has_been_checked_see_the_history_below_4c13bf") : translateUI("ui.nothing_chosen_yet_a7c4c2")}</span>}
         </div>
         <div className="pick-actions">
-          {onWithoutAi && <StableButton type="button" className="btn outline" disabled={!row || busy || chosen || confirming} onClick={() => setConfirmingId(row.syllabusId)} data-testid="review-without-ai">{translateUI('aiChoice.withoutAi')}</StableButton>}
+          {onWithoutAi && <StableButton type="button" className="btn outline" disabled={!row || busy || chosen || confirming || ownRow} title={ownRow ? translateUI('reviewChain.error.ownReview') : undefined} onClick={() => setConfirmingId(row.syllabusId)} data-testid="review-without-ai">{translateUI('aiChoice.withoutAi')}</StableButton>}
           <StableButton type="button" className="btn primary" disabled={!row || !ready || busy || !!row.recordReview || !!inactiveYear} onClick={() => onCheck(row)}>{busy && <span className="chk-btn-spin" aria-hidden="true" />}{busy ? translateUI("ui.checking_820d60") : translateUI("ui.check_compliance_342b8f")}</StableButton>
         </div>
       </div>
-      {confirming && onWithoutAi && (
+      {confirming && onWithoutAi && !ownRow && (
         <div className="info-banner warning pick-confirm" role="alertdialog" aria-label={translateUI('aiChoice.withoutAi')}>
           <span>{translateUI('aiChoice.confirm', { code: row.courseCode || row.title })}</span>
           <span className="pick-actions">

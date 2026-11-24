@@ -121,6 +121,12 @@ export default function GeneratePanel({ draft, editable, syllabusId, beforeRun, 
 
   const busy = phase === 'starting' || phase === 'working';
   const check = out && out.check;
+  // The score the AI Checker would give this draft (its no-AI rules and the alignment, server pipeline/generate.js expectedScore). An older run has none.
+  const expected = check && check.expected && Number.isFinite(check.expected.provisionalScore) ? check.expected : null;
+  const expectedText = !expected ? null
+    : expected.score !== null && expected.score !== undefined ? translateUI('generate.expected', { score: expected.score, band: tr(expected.band || ''), pass: expected.passMark })
+    : expected.blocking > 0 ? translateUI('generate.expectedBlocked', { score: expected.provisionalScore, count: expected.blocking, first: tr((expected.blockingMessages || [])[0] || '') })
+    : translateUI('generate.expectedPartial', { score: expected.provisionalScore });
   const cost = out && out.usage && Number.isFinite(out.usage.estimatedUsd) ? out.usage.estimatedUsd.toFixed(2) : null;
   const stageIndex = progress && progress.stage ? STAGES.indexOf(progress.stage) : -1;
   const total = (progress && progress.steps) || STAGES.length;
@@ -167,6 +173,7 @@ export default function GeneratePanel({ draft, editable, syllabusId, beforeRun, 
               {check && check.status === 'clean' && <span>{translateUI('generate.clean')}</span>}
               {check && check.status === 'needs_review' && <span>{translateUI('generate.review', { count: (check.misalignmentsAfter || 0) + (check.notApplied || []).length })}</span>}
               {check && check.status === 'not_checked' && <span>{translateUI('generate.notChecked')}</span>}
+              {expectedText && <span className="gen-expected">{expectedText} {translateUI('generate.expectedNote')}</span>}
               {(out.warnings || []).map((w) => <span key={w}>{tr(w)}</span>)}
               {showCost && cost && <span>{translateUI('generate.cost', { cost })}</span>}
             </div>

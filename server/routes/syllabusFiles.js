@@ -72,3 +72,4 @@ router.get('/:id/file', requireAuth, async (req, res) => {
 
 module.exports = router;
 module.exports.storedFile = storedFile;
+module.exports.frameAncestors = frameAncestors;

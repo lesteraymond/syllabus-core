@@ -294,11 +294,12 @@ async function loadDetail(db, run, currentHash) {
 const ADMIN_RUN_SQL = 'version_id IS NOT NULL AND created_by IS NOT NULL AND created_by <> (SELECT s.user_id FROM syllabi s WHERE s.syllabus_id = ai_check_runs.syllabus_id)';
 
 // The newest run of a syllabus. `adminOnly` keeps to the administrator's checks (see ADMIN_RUN_SQL); without it the owner sees their own
-// newest run, a draft check included.
-async function latestRun(db, syllabusId, { adminOnly = false } = {}) {
+// newest run, a draft check included. `createdBy` keeps to one person's own checks: in the AI Checker nobody sees another person's checks
+// (faculty, dean, Asst. VPAA, LIC Director and VPAA each see only their own, 2026-11-24). The review chain's gate (adminCheckStates) is not per person.
+async function latestRun(db, syllabusId, { adminOnly = false, createdBy = null } = {}) {
   const [rows] = await db.query(
-    'SELECT * FROM ai_check_runs WHERE syllabus_id = ?' + (adminOnly ? ' AND ' + ADMIN_RUN_SQL : '') + ' ORDER BY run_id DESC LIMIT 1',
-    [syllabusId]
+    'SELECT * FROM ai_check_runs WHERE syllabus_id = ?' + (adminOnly ? ' AND ' + ADMIN_RUN_SQL : '') + (createdBy !== null ? ' AND created_by = ?' : '') + ' ORDER BY run_id DESC LIMIT 1',
+    createdBy !== null ? [syllabusId, createdBy] : [syllabusId]
   );
   return rows[0] || null;
 }

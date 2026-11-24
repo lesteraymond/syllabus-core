@@ -77,7 +77,7 @@ export default function ComplianceCard({ run, checking = false, onOpenStep, show
             {run?.hybrid && run.hybrid.alignment.status !== 'completed' && <span className="hy-pill warn">{translateUI('hybrid.alignment', { status: translateUI(`hybrid.status.${run.hybrid.alignment.status}`) })}</span>}
             {run?.hybrid?.semanticCoverage && !run.hybrid.semanticCoverage.complete && <span className="hy-pill warn" title={translateUI('hybrid.vpaaCoverageNote.' + run.hybrid.semanticCoverage.reason)}>{translateUI('hybrid.vpaaCoverage', { done: run.hybrid.semanticCoverage.evaluated, total: run.hybrid.semanticCoverage.total })}</span>}
             {run && how.label && <span className={'chip basis ' + how.kind}>{tr(how.label)}</span>}
-            {run && run.checkedBy === 'admin' && <span className="chip quiet">{translateUI("ui.checked_by_an_administrator_2cf77d")}</span>}
+            {run && run.checkedBy === 'admin' && <span className="chip quiet">{translateUI("ui.your_check")}</span>}
             {run && run.stale && <span className="chip stale">{run.recordReview ? translateUI('hybrid.savedReportChip') : translateUI("ui.out_of_date_the_syllabus_changed_after_this_check_384297")}</span>}
           </div>
         </div>

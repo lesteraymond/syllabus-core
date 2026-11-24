@@ -156,7 +156,7 @@ function FacultyReports({ mySyllabi, year, yearName, user, notify }) {
           <h3>{tr("My Syllabi Report")}</h3>
           <div className="fr-controls">
             <Select aria-label={tr("Filter by status")} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
-              <option value="all">{tr("All statuses")}</option>
+              <option value="all">{translateUI("reports.allStatuses")}</option>
               <option value="approved">{tr("Approved")}</option>
               <option value="pending">{tr("Pending Review")}</option>
               <option value="revision">{tr("For Revision / Rejected")}</option>
@@ -286,8 +286,6 @@ function FacultyReports({ mySyllabi, year, yearName, user, notify }) {
 
 function AdminReports({ syllabi, year, yearName, user, notify }) {
   const [checks, setChecks] = useState(null);
-  const [scope, setScope] = useState('all'); // 'all' | 'mine' | 'compliant' | 'attention'
-  const [q, setQ] = useState('');
   const [expandedKey, setExpandedKey] = useState(null);
   const [downloadingId, setDownloadingId] = useState(null);
 
@@ -338,24 +336,7 @@ function AdminReports({ syllabi, year, yearName, user, notify }) {
       .sort((a, b) => Number(b.isMe) - Number(a.isMe) || a.name.localeCompare(b.name));
   }, [syllabi, user.id, checkById]);
 
-  const hasOwnSyllabi = facultyGroups.some((f) => f.isMe);
-  const visibleGroups = useMemo(() => {
-    const query = q.trim().toLowerCase();
-    return facultyGroups.filter((f) => {
-      if (scope === 'mine' && !f.isMe) return false;
-      if (scope === 'compliant' && f.rate < 100) return false;
-      if (scope === 'attention' && f.rate >= 100) return false;
-      if (query) {
-        const matchName = f.name.toLowerCase().includes(query);
-        const matchCourse = f.items.some((s) => `${s.courseCode || ''} ${s.title || ''} ${s.programCode || s.program || ''}`.toLowerCase().includes(query));
-        if (!matchName && !matchCourse) return false;
-      }
-      return true;
-    });
-  }, [facultyGroups, scope, q]);
-
   const totalApproved = syllabi.filter((s) => s.status === 'approved').length;
-  const totalPending = syllabi.filter((s) => s.status === 'submitted' || s.status === 'under_review').length;
   const complianceRate = syllabi.length ? Math.round((totalApproved / syllabi.length) * 100) : 0;
 
   const toCsvRow = (s) => {
@@ -379,7 +360,7 @@ function AdminReports({ syllabi, year, yearName, user, notify }) {
   };
 
   const exportAllCsv = () => {
-    const items = visibleGroups.flatMap((f) => f.items.map(toCsvRow));
+    const items = facultyGroups.flatMap((f) => f.items.map(toCsvRow));
     const csv = buildAllFacultySyllabiCsv(items, { academicYear: yearName });
     downloadCsv(csv, 'all-faculty-reports.csv');
     notify?.(tr('All faculty CSV report downloaded.'));
@@ -443,7 +424,7 @@ function AdminReports({ syllabi, year, yearName, user, notify }) {
               <Icon name="filePlus" size={15} />
               <span>{tr('Summary TXT')}</span>
             </StableButton>
-            <StableButton type="button" className="btn primary" disabled={visibleGroups.length === 0} onClick={exportAllCsv}>
+            <StableButton type="button" className="btn primary" disabled={facultyGroups.length === 0} onClick={exportAllCsv}>
               <Icon name="downloadSimple" size={15} />
               <span>{tr('Export All CSV')}</span>
             </StableButton>
@@ -451,34 +432,8 @@ function AdminReports({ syllabi, year, yearName, user, notify }) {
         }
       />
 
-      <section className="card fr-kpis" aria-label={translateUI("ui.accreditation_audit_summary_aa0020")}>
-        <div className="fr-kpi"><strong>{syllabi.length}</strong><span>{translateUI("ui.total_syllabi_6ef623")}</span></div>
-        <div className="fr-kpi"><strong>{totalApproved}</strong><span>{translateUI("ui.approved_41b81e")}</span></div>
-        <div className="fr-kpi"><strong>{totalPending}</strong><span>{translateUI("ui.under_review_18afed")}</span></div>
-        <div className="fr-kpi"><strong>{complianceRate}%</strong><span>{translateUI("ui.compliance_68f0ae")}</span></div>
-      </section>
-
-      <div className="ar-bar">
-        <div className="ar-bar-left">
-          <h3>{translateUI("ui.faculty_compliance_report_91eba7")}</h3>
-          <span className="ar-count">{visibleGroups.length} {visibleGroups.length === 1 ? tr('faculty') : tr('faculty')}</span>
-        </div>
-        <div className="fr-controls">
-          <Select aria-label={tr("Filter faculty reports")} value={scope} onChange={(e) => setScope(e.target.value)}>
-            <option value="all">{tr("All faculty")}</option>
-            {hasOwnSyllabi && <option value="mine">{tr("My own report")}</option>}
-            <option value="compliant">{tr("100% compliant")}</option>
-            <option value="attention">{tr("Needs attention")}</option>
-          </Select>
-          <div className="fr-search">
-            <Icon name="magnifyingGlass" size={15} />
-            <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={tr("Search faculty or course…")} aria-label={tr("Search faculty reports")} />
-          </div>
-        </div>
-      </div>
-
       <section className="ar-grid" aria-label={tr("Faculty reports grid")}>
-        {visibleGroups.map((f) => {
+        {facultyGroups.map((f) => {
           const isOpen = expandedKey === f.key;
           return (
             <article className={'card ar-card' + (isOpen ? ' is-open' : '')} key={f.key}>
@@ -543,9 +498,9 @@ function AdminReports({ syllabi, year, yearName, user, notify }) {
             </article>
           );
         })}
-        {visibleGroups.length === 0 && (
+        {facultyGroups.length === 0 && (
           <div className="card ar-empty">
-            <div className="empty">{syllabi.length === 0 ? translateUI("ui.no_syllabi_yet_click_new_syllabus_to_get_started_2e4bc9") : translateUI("ui.no_syllabi_match_your_filters_e09598")}</div>
+            <div className="empty">{translateUI("ui.no_syllabi_yet_click_new_syllabus_to_get_started_2e4bc9")}</div>
           </div>
         )}
       </section>
@@ -559,10 +514,12 @@ export default function Reports({ syllabi, user, notify }) {
   // the report says which academic year it covers (the one selected on this screen), not a fixed year
   const yearName = yearScope ? selectionLabel(yearScope.selection('data'), yearScope.years, (key) => translateUI(key)) : '';
   const mySyllabi = useMemo(() => user.role === 'faculty' ? syllabi.filter(s => s.userId === user.id) : syllabi, [syllabi, user]);
+  const submittedOnly = useMemo(() => syllabi.filter((s) => s.status !== 'draft'), [syllabi]);
 
   if (user.role === 'faculty') {
     return <FacultyReports mySyllabi={mySyllabi} year={year} yearName={yearName} user={user} notify={notify} />;
   }
 
-  return <AdminReports syllabi={syllabi} year={year} yearName={yearName} user={user} notify={notify} />;
+  // Institutional numbers count submitted work only: the administrator's own drafts are in their list, but nobody else's drafts are (E2E report 2026-11-23, BUG-022).
+  return <AdminReports syllabi={submittedOnly} year={year} yearName={yearName} user={user} notify={notify} />;
 }

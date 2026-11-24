@@ -108,6 +108,10 @@ router.get('/', requireAuth, async (req, res) => {
     // and a syllabus the dean wrote reaches the other reviewers only once the dean sends it for review (lib/reviewStages.js hiddenFromReviewers)
     const notSent = reviewer ? await reviewStages.hiddenFromReviewers(db, rows, me.id, stages) : new Set();
     const visible = (require('../lib/roles').isApprover(me) ? rows.filter((r) => reviewStages.readyForApprover(r.status, stages.get(r.syllabus_id))) : rows).filter((r) => !notSent.has(r.syllabus_id));
+    // The last decision on a returned, rejected or approved syllabus, for the review progress: read only for the rows that carry it (a reviewer's list, or
+    // the owner's own syllabi), not for every approved syllabus another faculty member sees in the Repository.
+    const decided = visible.filter((r) => (reviewer || r.user_id === me.id) && ['approved', 'for_revision', 'rejected'].includes(r.status)).map((r) => r.syllabus_id);
+    const decisions = decided.length && stages.size ? await reviewStages.decisionsOf(db, decided) : new Map();
     res.json(visible.map(r => ({
       id: r.syllabus_id,
       userId: r.user_id,
@@ -132,8 +136,11 @@ router.get('/', requireAuth, async (req, res) => {
       ...(reviewer ? (() => { const st = states.get(r.syllabus_id); const chose = !!(st && withoutAi.has(r.syllabus_id + ':' + st.versionId)); return { awaitingAiCheck: !!(st && st.checkable && !st.checked && !chose), ...(chose && !st.checked ? { reviewedWithoutAi: true } : {}) }; })() : {}),
       // The review chain: a reviewer sees every stage with who cleared it; the owner sees only which stages are cleared.
       ...(stages.get(r.syllabus_id) && r.status !== 'draft' ? (reviewer
-        ? { stages: stages.get(r.syllabus_id), myStageCleared: myStage ? stages.get(r.syllabus_id)[myStage].cleared : null, readyForApproval: stages.get(r.syllabus_id).allCleared && ['submitted', 'under_review'].includes(r.status) }
-        : r.user_id === me.id ? { reviewProgress: stageFlags(stages.get(r.syllabus_id)) } : {}) : {}),
+        ? { stages: stages.get(r.syllabus_id), myStageCleared: myStage ? stages.get(r.syllabus_id)[myStage].cleared : null, readyForApproval: stages.get(r.syllabus_id).allCleared && ['submitted', 'under_review'].includes(r.status),
+          // whose turn it is in the chain (dean, then Asst. VPAA, then LIC Director, then the VPAA), and whether it is this reviewer's
+          turn: stages.get(r.syllabus_id).turn, myTurn: ['submitted', 'under_review'].includes(r.status) && r.user_id !== me.id && (myStage ? stages.get(r.syllabus_id).turn === myStage : require('../lib/roles').isApprover(me) && stages.get(r.syllabus_id).allCleared) }
+        : r.user_id === me.id ? { reviewProgress: { ...stageFlags(stages.get(r.syllabus_id)), turn: stages.get(r.syllabus_id).turn } } : {}) : {}),
+      ...(decisions.get(r.syllabus_id) && (reviewer || r.user_id === me.id) ? { decision: decisions.get(r.syllabus_id) } : {}),
     })));
   } catch (err) {
     sendError(res, err);
@@ -238,13 +245,18 @@ router.put('/:id', requireAuth, onePdf, async (req, res) => {
         const refuseTransition = () => { const refusal = rules.transitionRefusal(syl.status, status); throw httpError(409, refusal.message, { code: refusal.code }); };
         if (!rules.canTransition(syl.status, status) && !(status === 'approved' && syl.status === 'submitted')) refuseTransition();
         // Nobody decides on the dean's own syllabus before the dean has sent it for review
-        if (DECISIONS.includes(status)) await reviewStages.assertSentForReview(conn, syl, me);
+        // (every status change, not only the decisions: moving it to under_review is touching it too, E2E report 2026-11-23 BUG-001)
+        await reviewStages.assertSentForReview(conn, syl, me);
+        // The dean, the Asst. VPAA and the LIC Director return a syllabus for revision only on their turn in the chain, as they clear it (lib/reviewStages.js turnOf).
+        const myStage = require('../lib/roles').stageOf(me);
+        if (status === 'for_revision' && myStage && !rules.isOwner(me, syl) && await reviewStages.isInstalled(conn)) reviewStages.assertTurn((await reviewStages.stagesOf(conn, [id])).get(id), myStage);
         if (DECISIONS.includes(status) && await compliance.isInstalled(db)) { // the AI check comes first, then the administrator decides
           const state = (await compliance.adminCheckStates(conn, [id])).get(id);
           if (!(await reviewAiChoice.mayReview(conn, id, state, me.id))) throw httpError(409, CHECK_FIRST, { code: 'ai_check_or_choice_required' });
         }
         // The VPAA decides only what has reached them: the three stages cleared on the newest version (approving checks it again below, with its own message).
-        if (DECISIONS.includes(status) && status !== 'approved' && require('../lib/roles').isApprover(me)) await reviewStages.assertReadyForApprover(conn, syl);
+        // Any status the VPAA sets, under_review included; approving checks the chain again below with its own message.
+        if (status !== 'approved' && require('../lib/roles').isApprover(me)) await reviewStages.assertReadyForApprover(conn, syl);
         if (status === 'approved') {
           // The chain comes first: the dean, the Asst. VPAA and the LIC Director must each have cleared the newest version.
           if (!(await reviewStages.isInstalled(db))) throw httpError(503, 'The review chain is not set up on this server yet. Ask an administrator to run the database update.');
@@ -278,6 +290,7 @@ router.put('/:id', requireAuth, onePdf, async (req, res) => {
       // ---- content edit: the owner only ----
       if (rules.isReviewer(me) && !rules.isOwner(me, syl)) throw httpError(403, 'Reviewers cannot edit syllabus content');
       if (!rules.canEdit(me, syl)) throw httpError(409, rules.lockedMessage(syl));
+      await require('../lib/activeYearGate').assertEditableYear(conn, syl, { lock: true }); // a past academic year's syllabus is view only
 
       // The same rule as the builder's submit: back from "For revision" only with a change (a new file, or a different title, code or
       // curriculum), and a sentence saying what it is.

@@ -52,6 +52,15 @@ test('the Syllabus Builder and My Syllabi are in the menu of faculty and the adm
   }
 });
 
+test('Analytics and Reports are hidden from the Asst. VPAA, the LIC Director and the VPAA', () => {
+  const pages = (role) => navItems.filter(([, , , gate]) => roleAllows(gate, role)).map(([page]) => page);
+  for (const role of ['faculty', 'admin']) assert.ok(pages(role).includes('analytics') && pages(role).includes('reports'), role);
+  for (const role of ['asst_vpaa', 'lic_director', 'vpaa']) {
+    assert.ok(!pages(role).includes('analytics'), role + ': no Analytics');
+    assert.ok(!pages(role).includes('reports'), role + ': no Reports');
+  }
+});
+
 // Users & Roles lists people by role in a fixed order (the VPAA, the Asst. VPAA, the LIC Director, the administrator, faculty), then by name.
 test('people are listed by role (VPAA, Asst. VPAA, LIC Director, administrator, faculty), then by name', async () => {
   const { ROLE_ORDER, byRoleOrder } = await import('./roles.js');

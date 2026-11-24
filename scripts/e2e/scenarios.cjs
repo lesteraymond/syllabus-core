@@ -141,7 +141,8 @@ module.exports = async function run(ctx, h) {
     await s.page.getByRole('button', { name: /submit to admin/i }).click();
     await s.page.waitForTimeout(2500);
     let text = await s.text();
-    check(/Submitted/.test(text) && /Review: Dean/.test(text), 'My Syllabi shows Submitted with the review chain (Dean, Asst. VPAA, LIC Director)');
+    // The card's review-chain progress line was removed on purpose (1aa5b317); the Submitted tag and the locked note remain.
+    check(/Submitted/.test(text), 'My Syllabi shows the syllabus as Submitted');
     check(/submitted and is locked/i.test(text), 'the page explains that the submitted syllabus is locked');
     check(s.issues.apiCalls.some((c) => c === 'POST /api/syllabi/' + state.syllabusId + '/submit 200'), 'the submit call was answered 200');
     const edit = await s.api('PUT', '/syllabi/' + state.syllabusId + '/content', { sections: { reqs: sections.reqs }, schemaVersion: 3 });
@@ -334,7 +335,7 @@ module.exports = async function run(ctx, h) {
     text = await s.text();
     check(/Submitted/.test(text), 'the corrected syllabus is Submitted again');
     const h = await s.api('GET', '/syllabi/' + state.syllabusId + '/versions');
-    check(h.status === 200 && JSON.stringify(h.body).includes('v1.1'), 'a new version (v1.1) exists in the history');
+    check(h.status === 200 && JSON.stringify(h.body).includes('"v2"'), 'a new version (v2) exists in the history');
     await s.shot(evidence('E09-resubmitted-1440.png'));
     assertClean(s, 'E09');
     await s.close();
@@ -513,8 +514,7 @@ module.exports = async function run(ctx, h) {
     let text = await s.text();
     check(/Dashboard/i.test(text) && /Syllabus Builder/i.test(text), 'the interface starts in English');
     await s.nav('Settings');
-    await s.page.locator('.select-trigger').first().click();
-    await s.page.getByRole('option', { name: /tagalog/i }).first().click();
+    await s.page.locator('.lang-toggle button[lang="tl"]').click(); // Settings switches language with two buttons (no longer a select)
     await s.page.waitForTimeout(2000);
     text = await s.text();
     check(/Pangkalahatang Tanaw/i.test(text) && /Mga Setting/i.test(text) && /Tagabuo ng Silabus/i.test(text), 'the navigation is shown in Filipino');
@@ -532,10 +532,9 @@ module.exports = async function run(ctx, h) {
     text = await s.text();
     check(/Tagasuri ng Silabus gamit ang AI/.test(text) && /Pangkalahatang Tanaw/i.test(text) && /Mga Setting/i.test(text), 'the language choice survives a full reload (saved on the account), on the same screen');
     await s.nav('Mga Setting');
-    await s.page.locator('.select-trigger').first().click();
-    await s.page.getByRole('option', { name: /english/i }).first().click();
+    await s.page.locator('.lang-toggle button[lang="en"]').click();
     await s.page.waitForTimeout(1500);
-    check(/Dashboard/i.test(await s.text()) && /Display language/i.test(await s.text()), 'switching back restores English');
+    check(/Dashboard/i.test(await s.text()) && /Choose the language used throughout the system/i.test(await s.text()), 'switching back restores English'); // 'Display language' is only the toggle's aria-label, not page text
     assertClean(s, 'E13', { allowStatus: [409] });
     await s.close();
   });
@@ -920,11 +919,11 @@ module.exports = async function run(ctx, h) {
     const dlg = a.page.getByRole('dialog', { name: /EGAs and Program Outcomes of BSIT/ });
     await dlg.waitFor();
     await a.page.waitForTimeout(800);
-    check(await dlg.getByRole('button', { name: 'Add outcome', exact: true }).isDisabled(), 'an outcome cannot be added before an EGA is saved');
+    check(await dlg.getByRole('button', { name: 'Add outcome', exact: true }).isDisabled(), 'an outcome cannot be added before an EGA is added');
     await dlg.getByRole('button', { name: 'Add EGA', exact: true }).click();
     await dlg.getByLabel('Name, EGA 1', { exact: true }).fill('Critical and creative thinking (synthetic)');
     await dlg.getByLabel('Short name, EGA 1', { exact: true }).fill('Critical thinking');
-    await dlg.getByRole('button', { name: 'Save EGAs', exact: true }).click();
+    await dlg.getByRole('button', { name: 'Save EGAs and outcomes', exact: true }).click();
     await a.page.waitForTimeout(1500);
     const afterEga = (await a.api('GET', '/programs/' + bsit.id + '/outcomes')).body;
     check(afterEga.egas.length === 1 && afterEga.egas[0].no === 1 && afterEga.pos.length === 0, 'the EGA is saved for this program only (' + afterEga.egas.length + ' EGA, ' + afterEga.pos.length + ' outcomes)');
@@ -934,7 +933,7 @@ module.exports = async function run(ctx, h) {
     await dlg.getByLabel('Statement, PO 1', { exact: true }).fill('Apply knowledge of computing to solve problems (synthetic)');
     await dlg.locator('.outcomes-maps input[type=checkbox]').first().check();
     await a.shot(evidence('E22-admin-outcomes-editor-1440.png'));
-    await dlg.getByRole('button', { name: 'Save outcomes', exact: true }).click();
+    await dlg.getByRole('button', { name: 'Save EGAs and outcomes', exact: true }).click();
     await a.page.waitForTimeout(1500);
     const afterPo = (await a.api('GET', '/programs/' + bsit.id + '/outcomes')).body;
     check(afterPo.pos.length === 1 && afterPo.pos[0].egas.join() === '1', 'the outcome is saved and mapped to EGA 1');
@@ -954,7 +953,7 @@ module.exports = async function run(ctx, h) {
     const past = a.page.getByRole('dialog', { name: /EGAs and Program Outcomes of BSIT/ });
     await past.waitFor();
     await a.page.waitForTimeout(800);
-    check(/past academic year/.test(await past.innerText()) && await past.getByRole('button', { name: 'Save EGAs', exact: true }).count() === 0, PREV + ' shows its EGAs and outcomes read-only (no Save)');
+    check(/past academic year/.test(await past.innerText()) && await past.getByRole('button', { name: 'Save EGAs and outcomes', exact: true }).count() === 0, PREV + ' shows its EGAs and outcomes read-only (no Save)');
     await a.shot(evidence('E22-admin-past-year-outcomes-1440.png'));
     await past.getByRole('button', { name: 'Close', exact: true }).click();
     await a.page.waitForTimeout(500);
@@ -1088,11 +1087,11 @@ module.exports = async function run(ctx, h) {
     check(!!refV1.active && /-v1$/.test(refV1.active.version) && refV1.active.appliesTo[0].academicYear === yearNow && new RegExp(refV1.active.version).test(await panel.innerText()), 'the new program has version 1 in force for ' + yearNow + ', and the panel shows it');
     check(!/approv|VPAA|publish/i.test(await panel.innerText()) && (await panel.locator('input, textarea').count()) === 0, 'the panel asks for no approval or document, and a saved version has no edit control');
     await dlg.getByLabel('Statement, PO 1', { exact: true }).fill('Apply engineering knowledge to analyse and design circuits (synthetic, revised).');
-    await dlg.getByRole('button', { name: 'Save outcomes', exact: true }).click();
+    await dlg.getByRole('button', { name: 'Save EGAs and outcomes', exact: true }).click();
     await a.page.waitForTimeout(1500);
     check((await f.api('GET', '/courses/' + subject.id)).body.standards.pos[0].text.includes('analyse circuits'), 'the existing subject keeps its own copy after the program is edited');
     const refV2 = (await a.api('GET', '/programs/' + bsee.id + '/po-reference')).body;
-    check(/-v2$/.test(refV2.active.version) && refV2.history.length === 2 && refV2.history.some((h) => h.status === 'superseded' && h.id === refV1.active.id), 'Save outcomes put version 2 in force and kept version 1');
+    check(/-v2$/.test(refV2.active.version) && refV2.history.length === 2 && refV2.history.some((h) => h.status === 'superseded' && h.id === refV1.active.id), 'Saving the outcomes put version 2 in force and kept version 1');
     check(refV2.changes[0].next.id === refV2.active.id && refV2.changes[0].previous.id === refV1.active.id && /Test Administrator/.test(refV2.changes[0].by), 'the change log says who saved it, the previous version and the new one');
     await panel.getByText(refV2.active.version).first().waitFor();
     check(/Program Outcomes saved/.test(await panel.innerText()), 'the panel shows the new version and the change log without reopening the dialog');

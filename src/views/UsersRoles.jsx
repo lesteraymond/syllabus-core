@@ -14,6 +14,7 @@ const ROLE_PERMISSIONS = {
   asst_vpaa: 'Check and review',
   lic_director: 'Check and review',
   vpaa: 'Review and approve',
+  student: 'View approved syllabi',
 };
 // What to tell the admin when an email did not go out (the server sends a short reason, never anything secret).
 const MAIL_PROBLEM = {
@@ -25,11 +26,12 @@ const MAIL_PROBLEM = {
 const mailProblem = (reason) => MAIL_PROBLEM[reason] || MAIL_PROBLEM.failed;
 const EMPTY_FORM = { email: '', firstName: '', lastName: '', role: 'faculty' };
 
-export default function UsersRoles({ notify, onManageSubjects }) {
+export default function UsersRoles({ user, notify, onManageSubjects }) { // user: the signed-in administrator, whose own row cannot be disabled or removed
   const [people, setPeople] = useState([]);
   const ordered = useMemo(() => [...people].sort(byRoleOrder), [people]); // VPAA, Asst. VPAA, LIC Director, administrator, faculty; then by name
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
+  const [saving, setSaving] = useState(false);
   const [assigning, setAssigning] = useState(null); // the faculty member (or administrator: they write syllabi too) whose assignments are open
 
   const fetchUsers = () => usersApi.list().then(setPeople).catch(() => {});
@@ -38,6 +40,8 @@ export default function UsersRoles({ notify, onManageSubjects }) {
 
   const addUser = async (e) => {
     e.preventDefault();
+    if (saving) return;
+    setSaving(true);
     try {
       const made = await usersApi.create(form);
       setForm(EMPTY_FORM);
@@ -47,6 +51,7 @@ export default function UsersRoles({ notify, onManageSubjects }) {
         ? translateUI("ui.user_created_their_username_and_a_temporary_password_were_sent_to_c6e730") + made.email + '.'
         : translateUI("ui.user_created_but_no_email_was_sent_161a02") + tr(mailProblem(made.emailReason)) + translateUI("ui.use_resend_credentials_once_it_works_7a3632"));
     } catch (err) { notify(translateUI("ui.failed_9500be") + err.message); }
+    finally { setSaving(false); }
   };
 
   const resend = async (p) => {
@@ -76,34 +81,34 @@ export default function UsersRoles({ notify, onManageSubjects }) {
 
   return (
     <>
-      <PageHead title={translateUI("ui.users_roles_972dae")} subtitle={translateUI("ui.only_users_listed_here_can_sign_in_remove_a_user_to_revoke_their__f115b1")} actions={<StableButton className="btn primary" onClick={() => setShowForm(!showForm)}>{showForm ? translateUI("ui.cancel_77dfd2") : translateUI("ui.pre_register_user_2fa046")}</StableButton>} />
+      <PageHead title={translateUI("ui.users_roles_972dae")} subtitle={translateUI("ui.only_users_listed_here_can_sign_in_remove_a_user_to_revoke_their__f115b1")} actions={<StableButton className={showForm ? 'btn outline' : 'btn primary'} disabled={saving} onClick={() => setShowForm(!showForm)}>{showForm ? translateUI("ui.cancel_77dfd2") : translateUI("ui.pre_register_user_2fa046")}</StableButton>} />
       {showForm && (
-        <form onSubmit={addUser} className="user-form-grid">
-            <div className="user-field">
-              <label htmlFor="user-first-name" className="user-label">{translateUI("ui.first_name_b6ea99")}</label>
-              <input id="user-first-name" className="user-input" value={form.firstName} onChange={e => setForm({ ...form, firstName: e.target.value })} placeholder={translateUI("ui.juan_c5652d")} required />
-            </div>
-            <div className="user-field">
-              <label htmlFor="user-last-name" className="user-label">{translateUI("ui.last_name_863cb3")}</label>
-              <input id="user-last-name" className="user-input" value={form.lastName} onChange={e => setForm({ ...form, lastName: e.target.value })} placeholder={translateUI("ui.santos_cdb56f")} required />
-            </div>
-            <div className="user-field">
-              <label htmlFor="user-email" className="user-label">{translateUI("ui.institutional_email_29be78")}</label>
-              <input id="user-email" className="user-input" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder={translateUI("ui.name_email_lcup_edu_ph_2475c2")} pattern=".+@email\.lcup\.edu\.ph" title={translateUI("ui.an_institutional_address_ending_in_email_lcup_edu_ph_6749cb")} required />
-            </div>
-            <div className="user-field">
-              <label htmlFor="user-role" className="user-label">{translateUI("ui.role_c3f104")}</label>
-              <Select id="user-role" className="user-input" value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}>{ROLE_ORDER.filter(r => STAFF_ROLES.includes(r)).map(r => <option key={r} value={r}>{tr(ROLE_LABELS[r])}</option>)}</Select>
-            </div>
-          <div className="user-field user-field-action">
-            <button className="user-save-btn" type="submit">{translateUI("ui.save_efc007")}</button>
+        <form onSubmit={addUser} className="user-form-grid" aria-busy={saving}>
+          <div className="user-field">
+            <label htmlFor="user-first-name" className="user-label">{translateUI("ui.first_name_b6ea99")}</label>
+            <input id="user-first-name" className="user-input" value={form.firstName} disabled={saving} onChange={e => setForm({ ...form, firstName: e.target.value })} placeholder={translateUI("ui.juan_c5652d")} required />
           </div>
-          <p className="pw-note">{translateUI("ui.a_temporary_password_is_generated_and_emailed_to_the_user_with_th_9bb144")}</p>
+          <div className="user-field">
+            <label htmlFor="user-last-name" className="user-label">{translateUI("ui.last_name_863cb3")}</label>
+            <input id="user-last-name" className="user-input" value={form.lastName} disabled={saving} onChange={e => setForm({ ...form, lastName: e.target.value })} placeholder={translateUI("ui.santos_cdb56f")} required />
+          </div>
+          <div className="user-field">
+            <label htmlFor="user-email" className="user-label">{translateUI("ui.institutional_email_29be78")}</label>
+            <input id="user-email" className="user-input" type="email" value={form.email} disabled={saving} onChange={e => setForm({ ...form, email: e.target.value })} placeholder={translateUI("ui.name_email_lcup_edu_ph_2475c2")} pattern=".+@email\.lcup\.edu\.ph" title={translateUI("ui.an_institutional_address_ending_in_email_lcup_edu_ph_6749cb")} required />
+          </div>
+          <div className="user-field">
+            <label htmlFor="user-role" className="user-label">{translateUI("ui.role_c3f104")}</label>
+            <Select id="user-role" className="user-input" value={form.role} disabled={saving} onChange={e => setForm({ ...form, role: e.target.value })}>{ROLE_ORDER.filter(r => STAFF_ROLES.includes(r)).map(r => <option key={r} value={r}>{tr(ROLE_LABELS[r])}</option>)}</Select>
+          </div>
+          <div className="user-form-foot">
+            <p className="pw-note">{translateUI("ui.a_temporary_password_is_generated_and_emailed_to_the_user_with_th_9bb144")}</p>
+            <StableButton className="btn primary user-save-btn" type="submit" disabled={saving}>{saving ? translateUI("ui.saving_56a228") : translateUI("ui.save_efc007")}</StableButton>
+          </div>
         </form>
       )}
       <div className="table-card">
         <div className="overflow-x-auto w-full">
-          <table className="users-table"><thead><tr><th scope="col">{translateUI("ui.user_9f8a23")}</th><th scope="col">{translateUI("ui.role_c3f104")}</th><th scope="col">{translateUI("ui.permissions_d06d55")}</th><th scope="col" className="users-actions-col">{translateUI("ui.actions_c3cd63")}</th></tr></thead><tbody>{ordered.map(p => <tr key={p.id}><td><span className="user-cell"><Avatar src={p.avatarUrl} name={`${p.firstName} ${p.lastName}`} /><span className="user-id"><strong>{p.firstName} {p.lastName}{p.disabled && <span className="badge" data-testid="account-disabled">{translateUI('users.disabledChip')}</span>}</strong><small>{p.email}</small></span></span></td><td>{tr(ROLE_LABELS[p.role] || p.role)}</td><td className="user-perm">{tr(ROLE_PERMISSIONS[p.role] || translateUI("ui.unknown_bc7819"))}</td><td><span className="user-actions">{(p.role === 'faculty' || p.role === 'admin') && <StableButton className="user-act" onClick={() => setAssigning(p)}>{translateUI("ui.assignments_057d58")}</StableButton>}{ROLE_LABELS[p.role] && <StableButton className="user-act" onClick={() => resend(p)}>{translateUI("ui.resend_credentials_1ba6fd")}</StableButton>}<StableButton className="user-act" data-testid="account-toggle" onClick={() => toggleDisabled(p)}>{translateUI(p.disabled ? 'users.enable' : 'users.disable')}</StableButton><StableButton className="user-act danger" onClick={() => removeUser(p)}>{translateUI("ui.remove_e96390")}</StableButton></span></td></tr>)}</tbody></table>
+          <table className="users-table"><thead><tr><th scope="col">{translateUI("ui.user_9f8a23")}</th><th scope="col">{translateUI("ui.role_c3f104")}</th><th scope="col">{translateUI("ui.permissions_d06d55")}</th><th scope="col" className="users-actions-col">{translateUI("ui.actions_c3cd63")}</th></tr></thead><tbody>{ordered.map(p => <tr key={p.id}><td><span className="user-cell"><Avatar src={p.avatarUrl} name={`${p.firstName} ${p.lastName}`} /><span className="user-id"><strong>{p.firstName} {p.lastName}{p.disabled && <span className="badge" data-testid="account-disabled">{translateUI('users.disabledChip')}</span>}</strong><small>{p.email}</small></span></span></td><td>{tr(ROLE_LABELS[p.role] || p.role)}</td><td className="user-perm">{tr(ROLE_PERMISSIONS[p.role] || translateUI("ui.unknown_bc7819"))}</td><td><span className="user-actions">{(p.role === 'faculty' || p.role === 'admin') && <StableButton className="user-act" onClick={() => setAssigning(p)}>{translateUI("ui.assignments_057d58")}</StableButton>}{ROLE_LABELS[p.role] && <StableButton className="user-act" onClick={() => resend(p)}>{translateUI("ui.resend_credentials_1ba6fd")}</StableButton>}<StableButton className="user-act" data-testid="account-toggle" disabled={p.id === user?.id} title={p.id === user?.id ? translateUI('account.cannotDisableSelf') : undefined} onClick={() => toggleDisabled(p)}>{translateUI(p.disabled ? 'users.enable' : 'users.disable')}</StableButton><StableButton className="user-act danger" disabled={p.id === user?.id} title={p.id === user?.id ? translateUI('system.you_cannot_remove_your_own_account_bd66f1') : undefined} onClick={() => removeUser(p)}>{translateUI("ui.remove_e96390")}</StableButton></span></td></tr>)}</tbody></table>
         </div>
         {people.length === 0 && <div className="empty">{translateUI("ui.no_users_found_e611ef")}</div>}
       </div>

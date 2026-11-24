@@ -21,8 +21,9 @@ export default function ClosStep({ d, model, apply, editable = !!apply, lockStan
   });
   const toggle = (values, no) => values.includes(no) ? values.filter(n => n !== no) : [...values, no].sort((a, b) => a - b);
   const usesTag = tag => d.plan.some(row => row.ilos.some(il => il.tags.includes(tag)));
-  const egaUsed = no => o.pos.some(p => p.egas.includes(no)) || d.clos.some(c => c.egas.includes(no)) || usesTag('ega:' + no);
-  const poUsed = no => d.clos.some(c => c.pos.includes(no)) || usesTag('po:' + no);
+  // A PO or EGA is in use only through a CLO: an ILO aligns to a CLO, never to a PO or EGA directly.
+  const egaUsed = no => o.pos.some(p => p.egas.includes(no)) || d.clos.some(c => c.egas.includes(no));
+  const poUsed = no => d.clos.some(c => c.pos.includes(no));
   const nextNo = rows => Math.max(0, ...rows.map(row => row.no)) + 1;
   // `extra(row)`: more text on a chip (a CLO's PO chips show the EGAs the PO is linked to)
   const mapChoices = (rows, values, onChange, label, extra = null) => <div className="ie-egas" role="group" aria-label={label}>

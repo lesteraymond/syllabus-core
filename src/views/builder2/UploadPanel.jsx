@@ -13,7 +13,7 @@ const formatFileSize = (bytes) => {
 };
 
 // Minimalist live scan animation shown while the server reads/OCRs the uploaded PDF.
-function ScanningStage({ fileName }) {
+function ScanningStage({ fileName, fileSize }) {
   return (
     <div className="up-scanning" role="status" aria-live="polite">
       <div className="up-doc-scan" aria-hidden="true">
@@ -26,8 +26,11 @@ function ScanningStage({ fileName }) {
       </div>
       <div className="up-scanning-body">
         <div className="up-scanning-head">
-          <strong>{t('pdfImport.extracting')}</strong>
-          {fileName && <small className="up-scanning-file">{fileName}</small>}
+          <span className="up-scanning-title">
+            <span className="up-scan-pulse" aria-hidden="true" />
+            <strong>{t('pdfImport.extracting')}</strong>
+          </span>
+          {fileName && <small className="up-scanning-file">{[fileName, fileSize].filter(Boolean).join(' · ')}</small>}
         </div>
         <div className="up-scanning-bar" aria-hidden="true"><span /></div>
       </div>
@@ -76,8 +79,12 @@ const formatUnresolved = (items) => (items || []).slice(0, 5).map(u => {
 const MAX_BYTES = 10 * 1024 * 1024;
 const PLAN_COLUMNS = ['week', 'ilo', 'contents', 'activities', 'tasks', 'values'];
 // Preview only; confirmation saves through useDraft, never file submission.
-export default function UploadPanel({ draft, hasCourse, busy, disabled, disabledReason, onChooseCourse, onExtract, onApply }) {
+// resumeJob: a scan started before this panel opened (a page refresh, or a return to the upload tab). It is read again through
+// onResume(job, { signal, onStatus }) instead of uploading again, and onResumeFile(job, { name, signal }) brings its PDF back.
+export default function UploadPanel({ draft, hasCourse, busy, disabled, disabledReason, onChooseCourse, onExtract, onApply, resumeJob = null, onResume, onResumeFile }) {
   const [file, setFile] = useState(null);
+  const [resumedFile, setResumedFile] = useState(null); // { name, size } of a resumed scan until its PDF is back
+  const shownFile = file || resumedFile;
   const [dragging, setDragging] = useState(false);
   const [preview, setPreview] = useState(null);
   const [fields, setFields] = useState(null);
@@ -122,13 +129,7 @@ export default function UploadPanel({ draft, hasCourse, busy, disabled, disabled
   }, [fields, draft, planRows, preview, prerequisiteChoice]);
   const scan = useMemo(() => fields ? scanTemplate(fields, planRows) : null, [fields, planRows]);
   const [scanRun, setScanRun] = useState(0);
-  const pick = f => {
-    if (busy || working || disabled || !f) return;
-    if (!/\.pdf$/i.test(f.name) && f.type !== 'application/pdf') { setError('pdfImport.invalid'); return; }
-    if (f.size > MAX_BYTES) { setError('pdfImport.tooLarge'); return; }
-    setFile(f); setPreview(null); setFields(null); setPlanRows(null); setReviewed(false); setError(''); setApplyError('');
-    setPrerequisiteChoice(null);
-  };
+  const [pendingScan, setPendingScan] = useState(false);
   const perform = async (action, nextPhase) => {
     if (lock.current) return;
     lock.current = true; setPhase(nextPhase); setError(''); setApplyError('');
@@ -136,18 +137,66 @@ export default function UploadPanel({ draft, hasCourse, busy, disabled, disabled
     catch (e) { (nextPhase === 'apply' ? setApplyError : setError)(e.message || 'pdfImport.failed'); }
     finally { lock.current = false; setPhase(null); }
   };
-  const extract = () => {
-    // Let the click explain missing prerequisites instead of silently disabling
-    // the action. The API remains authoritative for availability and access.
-    if (!file) { setError('pdfImport.chooseFile'); return; }
-    if (enabled === false) { setError('pdfImport.disabled'); return; }
-    return perform(async () => {
-      const value = await onExtract(file);
-      if (!value?.fields || !Array.isArray(value.pages)) throw new Error('pdfImport.failed');
-      setPreview(value); setFields(value.fields); setPlanRows(value.layout?.planRows?.length ? value.layout.planRows : null); setReviewed(false);
-      setPrerequisiteChoice(null); setScanRun(n => n + 1);
-    }, 'scan');
+  const showPreview = (value) => {
+    if (!value?.fields || !Array.isArray(value.pages)) throw new Error('pdfImport.failed');
+    setPreview(value); setFields(value.fields); setPlanRows(value.layout?.planRows?.length ? value.layout.planRows : null); setReviewed(false);
+    setPrerequisiteChoice(null); setScanRun(n => n + 1);
   };
+  const extractFile = (targetFile) => {
+    if (!targetFile) { setError('pdfImport.chooseFile'); return; }
+    if (enabled === false) { setError('pdfImport.disabled'); return; }
+    return perform(async () => showPreview(await onExtract(targetFile)), 'scan');
+  };
+  // A scan that was running or finished before this panel opened: wait for it (or read its result) and bring its PDF back.
+  // Runs once, on opening; leaving the panel stops waiting (the scan itself goes on on the server).
+  const resumeFrom = useRef(resumeJob);
+  useEffect(() => {
+    const job = resumeFrom.current;
+    if (!job || !onResume || disabled) return undefined;
+    const controller = new AbortController();
+    const { signal } = controller;
+    let asked = false;
+    const onStatus = (status) => {
+      if (asked || signal.aborted || !status?.file) return;
+      asked = true;
+      setResumedFile({ name: status.file.name, size: status.file.size });
+      if (onResumeFile) onResumeFile(job, { name: status.file.name, signal }).then(f => { if (!signal.aborted && f) setFile(current => current || f); }).catch(() => {});
+    };
+    lock.current = true; setPhase('scan'); setError(''); setApplyError('');
+    Promise.resolve()
+      .then(() => onResume(job, { signal, onStatus }))
+      .then(value => { if (!signal.aborted) showPreview(value); })
+      .catch(e => { if (!signal.aborted) setError(e.message || 'pdfImport.failed'); })
+      .finally(() => { if (!signal.aborted) { lock.current = false; setPhase(null); } });
+    return () => { controller.abort(); lock.current = false; };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const pick = f => {
+    if (busy || working || disabled || !f) return;
+    if (!/\.pdf$/i.test(f.name) && f.type !== 'application/pdf') { setError('pdfImport.invalid'); return; }
+    if (f.size > MAX_BYTES) { setError('pdfImport.tooLarge'); return; }
+    setFile(f); setResumedFile(null); setPreview(null); setFields(null); setPlanRows(null); setReviewed(false); setError(''); setApplyError('');
+    setPrerequisiteChoice(null);
+    if (enabled === true) {
+      setPendingScan(false);
+      extractFile(f);
+    } else if (enabled === false) {
+      setPendingScan(false);
+      setError('pdfImport.disabled');
+    } else {
+      // Availability is still loading (or being retried): start reading automatically as soon as it resolves.
+      setPendingScan(true);
+    }
+  };
+  useEffect(() => {
+    if (!pendingScan || !file || busy || working || disabled) return;
+    if (enabled === true) {
+      setPendingScan(false);
+      extractFile(file);
+    } else if (enabled === false) {
+      setPendingScan(false);
+      setError('pdfImport.disabled');
+    }
+  }, [pendingScan, enabled, file, busy, working, disabled]); // eslint-disable-line react-hooks/exhaustive-deps
   const apply = (next) => {
     if (!reviewed) { setApplyError('pdfImport.reviewRequired'); return; }
     if (mapped?.error) { setApplyError(mapped.error); return; }
@@ -181,7 +230,7 @@ export default function UploadPanel({ draft, hasCourse, busy, disabled, disabled
     {enabled === false && <div className="info-banner warning">{t('pdfImport.disabled')}</div>}
     <fieldset disabled={blocked} className="up-fields">
       <label
-        className={'up-dropzone' + (dragging ? ' is-dragging' : '') + (file ? ' has-file' : '') + (phase === 'scan' ? ' is-scanning' : '')}
+        className={'up-dropzone' + (dragging ? ' is-dragging' : '') + (shownFile ? ' has-file' : '') + (phase === 'scan' ? ' is-scanning' : '')}
         onDragEnter={e => { e.preventDefault(); if (!blocked) setDragging(true); }}
         onDragOver={e => { e.preventDefault(); if (!blocked && !dragging) setDragging(true); }}
         onDragLeave={e => { e.preventDefault(); if (!e.currentTarget.contains(e.relatedTarget)) setDragging(false); }}
@@ -189,22 +238,20 @@ export default function UploadPanel({ draft, hasCourse, busy, disabled, disabled
       >
         <input type="file" accept=".pdf,application/pdf" className="up-file-input" onChange={e => { pick(e.target.files[0]); e.target.value = ''; }} />
         <span className="up-drop-ico" aria-hidden="true">
-          <Icon name={file ? 'filePlus' : 'uploadSimple'} size={20} />
+          <Icon name={shownFile ? 'filePlus' : 'uploadSimple'} size={22} />
         </span>
         <span className="up-drop-copy">
-          <strong>{file ? file.name : t('pdfImport.file')}</strong>
-          <small>{file ? [formatFileSize(file.size), tr('Click or drop another PDF to replace')].filter(Boolean).join(' · ') : tr('Drop a PDF here or click to browse')}</small>
+          <strong>{shownFile ? shownFile.name : t('pdfImport.file')}</strong>
+          <small>{shownFile ? [formatFileSize(shownFile.size), tr('Click or drop another PDF to replace')].filter(Boolean).join(' · ') : tr('Drop a PDF here or click to browse')}</small>
         </span>
+        {shownFile && phase !== 'scan' && <span className="up-replace-pill" aria-hidden="true">{t('pdfImport.replace')}</span>}
       </label>
-      <div className="up-scan-bar">
-        <StableButton type="button" className="btn primary up-scan-btn" disabled={blocked} onClick={extract}>
-          <Icon name={phase === 'scan' ? 'sparkle' : 'magnifyingGlass'} size={15} />
-          <span>{phase === 'scan' ? t('pdfImport.extracting') : t('pdfImport.extract')}</span>
-        </StableButton>
-      </div>
-      {phase === 'scan' && <ScanningStage fileName={file?.name} />}
+      {phase === 'scan' && <ScanningStage fileName={shownFile?.name} fileSize={formatFileSize(shownFile?.size)} />}
       {url && <details className="up-preview"><summary>{t('pdfImport.pdfPreview')}</summary><iframe title={t('pdfImport.pdfPreview')} src={url} /></details>}
-      {error && <div className="info-banner warning" role="alert">{error.startsWith('pdfImport.') ? t(error) : tr(error)}</div>}
+      {error && <div className="info-banner warning up-error-row" role="alert">
+        <span>{error.startsWith('pdfImport.') ? t(error) : tr(error)}</span>
+        {file && enabled !== false && !working && <StableButton type="button" className="btn outline up-retry-btn" disabled={blocked} onClick={() => extractFile(file)}>{t('pdfImport.extract')}</StableButton>}
+      </div>}
       {phase === 'apply' && <div className="info-banner" role="status">{t('pdfImport.checking')}</div>}
       {preview && fields && <div className="pdf-import-review">
         <h3>{t('pdfImport.reviewTitle')}</h3>

@@ -1,11 +1,13 @@
 // The review chain: the dean (admin), the Asst. VPAA and the LIC Director each check and review a submitted syllabus and clear their own
 // stage; once all three are cleared on its newest version the VPAA can approve it (routes/syllabi.js, PUT /:id). Mounted on /api/syllabi.
 //   POST /:id/stage-clear   a reviewer clears their own stage on the newest version ({ note? }); the AI check must have been made first
-//   GET  /:id/stages        who cleared which stage, and who approved it (what the printed form's sign-off block shows)
+//   GET  /:id/stages        who cleared which stage and when, who approved it and when, and when it was last submitted (the dates of the
+//                           printed form's sign-off block)
 //   POST /:id/review-without-ai   a reviewer (dean, Asst. VPAA, LIC Director, VPAA) chooses to review the newest version WITHOUT an AI check ({ note? });
 //                           the AI check stays available, and either one opens the reviewer's own stage or decision (lib/reviewAiChoice.js)
-// A reviewer who finds a problem returns the syllabus for revision with the status route; that is not recorded here, and the new version
-// the faculty member then submits starts the three checks again. Nothing here approves anything.
+// The stages are cleared in order: the dean, then the Asst. VPAA, then the LIC Director (lib/reviewStages.js turnOf); a reviewer clears only on their turn.
+// A reviewer who finds a problem returns the syllabus for revision with the status route (also only on their turn); the new version the faculty
+// member then submits keeps the stages cleared before that reviewer and goes back to them (lib/reviewStages.js carryForward). Nothing here approves anything.
 const express = require('express');
 const { requireAuth } = require('../middleware/auth');
 const { httpError, sendError, inTransaction } = require('../lib/http');
@@ -45,22 +47,38 @@ router.post('/:id/stage-clear', requireAuth, async (req, res) => {
       await reviewStages.assertSentForReview(conn, syl, me); // the dean's own syllabus: only once the dean has sent it for review
       if (rules.isArchived(syl)) throw httpError(409, rules.ARCHIVED_MESSAGE);
       if (!['submitted', 'under_review'].includes(syl.status)) throw httpError(409, 'This syllabus is not waiting for review.');
+      const before = (await reviewStages.stagesOf(conn, [id])).get(id);
+      // In order: the dean first, then the Asst. VPAA, then the LIC Director (lib/reviewStages.js turnOf), said before anything else about the review,
+      // as the return for revision does (routes/syllabi.js). Clearing again what is already cleared is answered below.
+      if (!(before && before[stage] && before[stage].cleared)) reviewStages.assertTurn(before, stage);
       if (await compliance.isInstalled(db)) { // the AI check comes first, then the reviewers sign
         const state = (await compliance.adminCheckStates(conn, [id])).get(id);
         if (!(await reviewAiChoice.mayReview(conn, id, state, me.id))) throw httpError(409, CHECK_FIRST, { code: 'ai_check_or_choice_required' });
       }
       const version = await compliance.latestVersion(conn, id);
       if (!version) throw httpError(409, 'This syllabus has no submitted version to review.');
-      const before = (await reviewStages.stagesOf(conn, [id])).get(id);
-      await reviewStages.clear(conn, { syllabusId: id, versionId: version.version_id, stage, reviewerId: me.id, note });
-      await conn.query('INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)',
-        [id, me.id, 'check', (`Cleared the ${STAGE_NAME[stage]} review` + (note ? ': ' + note : '')).slice(0, 500)]);
+      // Clearing a stage that is already cleared on this version changes nothing, so it is not logged again either (a double click wrote it twice: E2E report 2026-11-23, BUG-008).
+      // The syllabus row is locked above, so a second request waits here and then sees the first one's clear.
+      if (!(before && before[stage] && before[stage].cleared)) {
+        await reviewStages.clear(conn, { syllabusId: id, versionId: version.version_id, stage, reviewerId: me.id, note });
+        await conn.query('INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)',
+          [id, me.id, 'check', (`Cleared the ${STAGE_NAME[stage]} review` + (note ? ': ' + note : '')).slice(0, 500)]);
+      }
       if (syl.status === 'submitted') await conn.query("UPDATE syllabi SET status = 'under_review' WHERE syllabus_id = ?", [id]);
       const after = (await reviewStages.stagesOf(conn, [id])).get(id);
-      return { syl, stages: after, status: syl.status === 'submitted' ? 'under_review' : syl.status, completedNow: !!(after.allCleared && !(before && before.allCleared)) };
+      const clearedNow = !!(after && after[stage] && after[stage].cleared && !(before && before[stage] && before[stage].cleared));
+      return { syl, stages: after, status: syl.status === 'submitted' ? 'under_review' : syl.status, clearedNow, completedNow: !!(after.allCleared && !(before && before.allCleared)) };
     });
 
-    // After the commit: a notification never affects the result. The VPAA hears about it when the third stage clears.
+    // After the commit: a notification never affects the result. The next reviewer in the chain hears that it is their turn; the VPAA when the third stage clears.
+    const nextRole = { asst_vpaa: 'asst_vpaa', lic_director: 'lic_director' }[outcome.stages && outcome.stages.turn];
+    if (outcome.clearedNow && nextRole) {
+      await notifyRoles(db, [nextRole], {
+        exceptUserId: [me.id, outcome.syl.user_id], type: 'chain', syllabusId: id,
+        title: `Your review: ${outcome.syl.course_code || outcome.syl.title || 'a syllabus'}`,
+        body: `The ${STAGE_NAME[stage]} cleared it. It is your turn to review it.`,
+      });
+    }
     if (outcome.completedNow) {
       await notifyRoles(db, ['vpaa'], {
         type: 'chain', syllabusId: id,
@@ -111,9 +129,11 @@ router.get('/:id/stages', requireAuth, async (req, res) => {
     const [rows] = await db.query('SELECT syllabus_id, user_id, status FROM syllabi WHERE syllabus_id = ?', [id]);
     const syl = rows[0];
     if (!syl || !rules.canReadApproved(me, syl)) throw httpError(404, 'Syllabus not found');
+    await reviewStages.assertReviewerMayOpen(db, syl, me);
     if (!(await reviewStages.isInstalled(db))) return res.json({ enabled: false });
     const stages = (await reviewStages.stagesOf(db, [id])).get(id);
-    res.json({ enabled: true, stages, approved: syl.status === 'approved' ? await reviewStages.approvalOf(db, id) : null });
+    const decision = ['approved', 'for_revision', 'rejected'].includes(syl.status) ? (await reviewStages.decisionsOf(db, [id])).get(id) || null : null; // who returned, rejected or approved it (the progress)
+    res.json({ enabled: true, stages, status: syl.status, decision, approved: syl.status === 'approved' ? await reviewStages.approvalOf(db, id) : null, submitted: await reviewStages.submittedOf(db, id) });
   } catch (err) { sendError(res, err); }
 });
 

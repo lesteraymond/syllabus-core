@@ -11,7 +11,7 @@ const KEYS = Object.keys(PLAN_HEADINGS);
 test('the printed form keeps the exact headings of the institutional form', () => {
   const printed = Object.values(PLAN_HEADINGS).map((h) => h.toUpperCase());
   assert.deepEqual(printed, [
-    'INTENDED LEARNING OUTCOMES (ILO)', 'COURSE CONTENTS', 'SUGGESTED LEARNING ACTIVITIES', 'SUGGESTED ASSESSMENT TASKS', 'EXPECTED VALUE/S TO BE INTEGRATED',
+    'INTENDED LEARNING OUTCOMES', 'COURSE CONTENTS', 'SUGGESTED LEARNING ACTIVITIES', 'SUGGESTED ASSESSMENT TASKS', 'EXPECTED VALUE/S TO BE INTEGRATED',
   ]);
 });
 

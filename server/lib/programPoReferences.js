@@ -13,8 +13,8 @@ const crypto = require('node:crypto');
 const { httpError, inTransaction } = require('./http');
 const basis = rows => (Array.isArray(rows) ? rows : []).map(p => ({ no: Number(p?.no), text: String(p?.text || '').replace(/\s+/g, ' ').trim() })).sort((a,b)=>a.no-b.no);
 const sameBasis = (a,b) => JSON.stringify(basis(a)) === JSON.stringify(basis(b));
-const hasPoMappings = content => (content?.clos || []).some(c => c.pos?.length) ||
-  (content?.plan || []).some(row => (row.ilos || []).some(ilo => (ilo.tags || []).some(tag => /^po:\d+$/.test(tag))));
+// Only a CLO maps to a PO; an old po: tag on an ILO is ignored.
+const hasPoMappings = content => (content?.clos || []).some(c => c.pos?.length);
 // The canonical form of a list of outcomes, and its hash: what an administrator-published version is identified and verified by.
 const canonicalOutcomes = rows => (Array.isArray(rows) ? rows : []).map(p => ({ no: Number(p?.no), short: String(p?.short ?? '').trim(), text: String(p?.text ?? '').replace(/\s+/g, ' ').trim(), egas: [...new Set((Array.isArray(p?.egas) ? p.egas : []).map(Number))].sort((a, b) => a - b) })).sort((a, b) => a.no - b.no);
 const hashOutcomes = rows => crypto.createHash('sha256').update(JSON.stringify(canonicalOutcomes(rows))).digest('hex');
