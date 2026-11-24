@@ -22,6 +22,7 @@ import Sidebar from '../src/components/Sidebar';
 import { Icon, Avatar, QualityMini } from '../src/components/ui';
 import CheckHistory from '../src/components/CheckHistory';
 import Compliance from '../src/views/Compliance';
+import AuditLog from '../src/views/AuditLog';
 import Select, { readOptions } from '../src/components/Select';
 import { SubjectDialog, SubjectRowActions } from '../src/components/SubjectActions';
 import { DeadlineChip, DeadlineDialog, DeadlineProgress } from '../src/components/DeadlineDialog';
@@ -668,14 +669,14 @@ test('the dashboard offers New syllabus to faculty and the administrator, not to
   }
 });
 
-// Recent Activity is the account's audit trail, kept for transparency: no role can clear or hide it from the dashboard.
+// Recent Activity is the account's personal activity feed, kept for transparency: no role can clear or hide it from the dashboard.
 test('the Recent Activity card has no Clear Logs button, for any role or language', () => {
   for (const language of ['en', 'tl']) {
     setLanguage(language);
     for (const role of ['faculty', 'admin', 'asst_vpaa', 'lic_director', 'vpaa']) {
       const html = renderToStaticMarkup(<Dashboard user={{ ...user, role }} syllabi={[]} logs={[]} setPage={noop} />);
       assert.ok(html.includes(language === 'en' ? '<h3>Recent Activity</h3>' : '<h3>Mga Kamakailang Aktibidad</h3>'), language + ': ' + role + ': the card is still there, titled Recent Activity');
-      assert.ok(!html.includes('Audit Log') && !html.includes('Talaan ng Audit'), language + ': ' + role + ': the old title is gone');
+      assert.ok(!html.includes('<h3>Audit Log</h3>') && !html.includes('<h3>Talaan ng Audit</h3>'), language + ': ' + role + ': the card title is Recent Activity, not Audit Log');
       assert.doesNotMatch(html, /Clear Logs|I-clear ang talaan/, language + ': ' + role);
     }
   }
@@ -702,15 +703,16 @@ test('Recent Activity shows the account activity in English and Tagalog', () => 
   setLanguage('en');
 });
 
-// Only the administrator gets the choice of whose Recent Activity to read (everyone's, or one person's); the server refuses anyone else (routes/logs.js).
-test('the Recent Activity card offers the administrator My activity / Everyone, and nobody else', () => {
+// Only the administrator gets the Audit Log shortcut from Recent Activity, and the dedicated Audit Log page renders in English and Tagalog.
+test('the Recent Activity card links to Audit Log for the administrator only, and Audit Log renders in both languages', () => {
   for (const language of ['en', 'tl']) {
     setLanguage(language);
     const render = (role) => renderToStaticMarkup(<Dashboard user={{ ...user, role }} syllabi={[]} logs={[]} setPage={noop} />);
-    const [mine, everyone] = language === 'en' ? ['My activity', 'Everyone'] : ['Aking aktibidad', 'Lahat'];
-    const admin = render('admin');
-    assert.ok(admin.includes(mine) && admin.includes(everyone), language + ': admin');
-    for (const role of ['faculty', 'asst_vpaa', 'lic_director', 'vpaa']) assert.ok(!render(role).includes(mine), language + ': ' + role);
+    assert.ok(render('admin').includes('>Audit Log<'), language + ': admin sees Audit Log link');
+    for (const role of ['faculty', 'asst_vpaa', 'lic_director', 'vpaa']) assert.ok(!render(role).includes('>Audit Log<'), language + ': ' + role);
+    const auditHtml = renderToStaticMarkup(<AuditLog user={{ ...user, role: 'admin' }} notify={noop} />);
+    assert.ok(auditHtml.includes(language === 'en' ? 'All users' : 'Lahat ng user'), language + ': AuditLog user filter');
+    assert.ok(auditHtml.includes(language === 'en' ? 'Export CSV' : 'I-export ang CSV'), language + ': AuditLog export');
   }
   setLanguage('en');
 });

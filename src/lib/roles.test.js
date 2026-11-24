@@ -61,6 +61,14 @@ test('Analytics and Reports are hidden from the Asst. VPAA, the LIC Director and
   }
 });
 
+test('Audit Log is visible in the navigation menu for the administrator only', () => {
+  const pages = (role) => navItems.filter(([, , , gate]) => roleAllows(gate, role)).map(([page]) => page);
+  assert.ok(pages('admin').includes('audit-log'), 'admin sees Audit Log');
+  for (const role of ['faculty', 'asst_vpaa', 'lic_director', 'vpaa', 'student']) {
+    assert.ok(!pages(role).includes('audit-log'), role + ': no Audit Log');
+  }
+});
+
 // Users & Roles lists people by role in a fixed order (the VPAA, the Asst. VPAA, the LIC Director, the administrator, faculty), then by name.
 test('people are listed by role (VPAA, Asst. VPAA, LIC Director, administrator, faculty), then by name', async () => {
   const { ROLE_ORDER, byRoleOrder } = await import('./roles.js');

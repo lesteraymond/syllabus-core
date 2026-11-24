@@ -41,6 +41,7 @@ import Settings from './views/Settings';
 import { StudentDashboard, StudentSyllabi } from './views/StudentViews';
 import SyllabusBuilder from './views/SyllabusBuilder';
 import UsersRoles from './views/UsersRoles';
+import AuditLog from './views/AuditLog';
 import SyllabusBuilderV2 from './views/builder2';
 import { AcademicYearContext, useAcademicYearScope } from './components/AcademicYearScope';
 import { groupOfPage } from './lib/academicYearScope';
@@ -484,6 +485,7 @@ export default function App() {
           {page === 'analytics' && <Analytics syllabi={syllabi} user={user} notify={notify} />}
           {page === 'reports' && <Reports syllabi={syllabi} user={user} notify={notify} />}
           {page === 'users' && user.role === 'admin' && <UsersRoles user={user} notify={notify} onManageSubjects={() => setPage('courses')} />}
+          {page === 'audit-log' && user.role === 'admin' && <AuditLog user={user} notify={notify} />}
           {page === 'courses' && user.role === 'admin' && <CourseOutcomes notify={notify} onCatalogChanged={() => { fetchSyllabi(); fetchLogs(); fetchMessages(); fetchNotifications(); }} />}
           {page === 'settings' && <Settings user={user} notify={notify} onAvatarChange={handleAvatarChange} onProfileChange={handleProfileChange} language={language} languageBusy={languageBusy} onLanguageChange={changeLanguage} />}
           </>)}

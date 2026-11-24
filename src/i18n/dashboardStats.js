@@ -16,6 +16,7 @@ export const dashboardStatsEn = {
   'dashboard.quickActions.sub.analytics': 'AI scores and departmental analytics',
   'dashboard.quickActions.sub.reports': 'Generate and download accreditation reports',
   'dashboard.quickActions.sub.users': 'Manage faculty and administrative user access',
+  'dashboard.quickActions.sub.auditLog': 'Inspect system-wide security and workflow audit logs',
   'dashboard.quickActions.sub.settings': 'Configure account and language preferences',
 
   'analytics.loading': 'Reading the stored checks…',
@@ -99,6 +100,7 @@ export const dashboardStatsTl = {
   'dashboard.quickActions.sub.analytics': 'Mga marka ng AI at analitika ng departamento',
   'dashboard.quickActions.sub.reports': 'Bumuo at mag-download ng mga ulat sa akreditasyon',
   'dashboard.quickActions.sub.users': 'Pamahalaan ang access ng mga guro at kawani',
+  'dashboard.quickActions.sub.auditLog': 'Suriin ang mga tala ng audit ng seguridad at daloy ng trabaho',
   'dashboard.quickActions.sub.settings': 'I-configure ang account at mga kagustuhan sa wika',
 
   'analytics.loading': 'Binabasa ang mga naitalang pagsusuri…',

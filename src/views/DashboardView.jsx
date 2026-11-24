@@ -9,13 +9,12 @@ import ProgramTrendModal from '../components/ProgramTrendModal';
 import TimeUsageCard from '../components/TimeUsageCard';
 import { describeActivity, groupByDay } from '../lib/activityView';
 import TypewriterText from '../components/TypewriterText';
-import { compliance as complianceApi, courses as coursesApi, outcomes as outcomesApi, logs as logsApi, users as usersApi } from '../lib/api';
+import { compliance as complianceApi, courses as coursesApi, outcomes as outcomesApi } from '../lib/api';
 import { adminStatCards } from '../lib/adminDashboardStats';
 import { canAuthor, isReviewer, roleAllows } from '../lib/roles';
 import { FACULTY_SUBMITTED, aiAverage, approval, programCoverage, scoreTone, snapshotOf } from '../lib/complianceStats';
 import { sentenceCase } from '../lib/sentenceCase';
 import { dayPeriod } from '../lib/phTime';
-import Select from '../components/Select';
 import CustomizeQuickActionsModal from '../components/CustomizeQuickActionsModal';
 import { navItems } from '../data/initialData';
 import { reviewQueue } from '../lib/reviewView';
@@ -49,6 +48,7 @@ const QA_SUB_KEYS = {
   analytics: 'dashboard.quickActions.sub.analytics',
   reports: 'dashboard.quickActions.sub.reports',
   users: 'dashboard.quickActions.sub.users',
+  'audit-log': 'dashboard.quickActions.sub.auditLog',
   settings: 'dashboard.quickActions.sub.settings',
 };
 
@@ -155,41 +155,16 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
     // the dean writes syllabi too: what they submitted (drafts not counted) is a card of its own, as on the faculty dashboard
     : adminStatCards({ programs: catalogCounts.programs, subjects: catalogCounts.subjects, syllabi, mine: canAuthor(user.role) ? mySubmitted : null });
 
-  // Recent Activity as sentences under Today / Yesterday / a date (see lib/activityView.js); times are Philippine time.
-  // Each account sees only its own activity: the server sends only that (GET /api/logs): the review (submit, check, approve, ...) and the account's own
-  // activity (sign-in and sign-out, password, name, photo, language, drafts, edits, deletions, account management). It is an audit trail kept for
-  // transparency, so it cannot be cleared or hidden: there is no "Clear Logs", and a hide remembered in this browser from before is no longer applied.
-  // The administrator alone may also read everyone's, or one person's (GET /api/logs?scope=all[&userId=]); the server refuses anyone else.
+  // Recent Activity (personal): shows only the signed-in user's own activity; system-wide oversight lives in the dedicated Audit Log page for administrators.
   const isAdminUser = user.role === 'admin';
-  const [activityScope, setActivityScope] = useState('mine'); // 'mine' | 'all' | a user id
-  const [people, setPeople] = useState([]);
-  const [others, setOthers] = useState({ rows: [], loading: false, error: '' });
-  useEffect(() => {
-    if (!isAdminUser) return undefined;
-    let live = true;
-    usersApi.list().then((list) => { if (live) setPeople(Array.isArray(list) ? list.filter((p) => p.role !== 'student') : []); }, () => {});
-    return () => { live = false; };
-  }, [isAdminUser]);
-  useEffect(() => {
-    if (!isAdminUser || activityScope === 'mine') return undefined;
-    let live = true;
-    setOthers((x) => ({ ...x, loading: true, error: '' }));
-    logsApi.list({ scope: 'all', userId: activityScope === 'all' ? undefined : activityScope })
-      .then((rows) => { if (live) setOthers({ rows: Array.isArray(rows) ? rows : [], loading: false, error: '' }); },
-        (e) => { if (live) setOthers({ rows: [], loading: false, error: e.message || '' }); });
-    return () => { live = false; };
-  }, [isAdminUser, activityScope, logs]); // read again whenever the app refreshes the person's own list
-  const viewingOthers = isAdminUser && activityScope !== 'mine';
   const activityGroups = useMemo(() => {
-    const source = viewingOthers ? others.rows : logs.filter(l => l.userId === user.id);
+    const source = logs.filter(l => l.userId === user.id);
     return groupByDay(source.map((l, i) => describeActivity(l, i, user.id)));
-  }, [logs, user, viewingOthers, others.rows]);
-  const activityPicker = isAdminUser ? (
-    <Select aria-label={translateUI('accountActivity.viewLabel')} value={activityScope} onChange={(e) => setActivityScope(e.target.value || 'mine')}>
-      <option value="mine">{translateUI('accountActivity.mine')}</option>
-      <option value="all">{translateUI('accountActivity.everyone')}</option>
-      {people.filter((p) => p.id !== user.id).map((p) => <option key={p.id} value={String(p.id)}>{(p.firstName + ' ' + p.lastName).trim() || p.email}</option>)}
-    </Select>
+  }, [logs, user]);
+  const auditLogLink = isAdminUser ? (
+    <button type="button" className="link-btn" onClick={() => setPage('audit-log')}>
+      {translateUI('auditLog.openLink')}
+    </button>
   ) : null;
 
   // The administrator's side (and the other reviewers): each program's subjects with an approved syllabus, out of all its subjects; AI check or not.
@@ -209,9 +184,8 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
       <section className="stat-grid">{stats.map(([a, b, c, d]) => <div className="stat-card" key={a}><div className={`stat-icon ${d}`}><Icon weight="regular" name={STAT_ICONS[a]} size={20} /></div><span>{tr(a)}</span><strong>{b}</strong><small>{tr(c)}</small></div>)}</section>
       <div className="dashboard-grids-wrap">
         <section className="dashboard-grid">
-        <Card title={translateUI('accountActivity.title')} action={activityPicker}>
+        <Card title={translateUI('accountActivity.title')} action={auditLogLink}>
           <div className="feed">
-            {viewingOthers && others.error && <div className="info-banner warning" role="alert">{translateUI('accountActivity.unreadable') + tr(others.error)}</div>}
             {activityGroups.map((g) => (
               <section className="feed-day" key={g.label} aria-label={tr(g.label)}>
                 <h4 className="feed-date">{tr(g.label)}</h4>
@@ -229,8 +203,7 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
                 </ol>
               </section>
             ))}
-            {activityGroups.length === 0 && viewingOthers && !others.error && <div className="empty">{translateUI(others.loading ? 'accountActivity.loading' : 'accountActivity.none')}</div>}
-            {activityGroups.length === 0 && !viewingOthers && <div className="empty">{isFac ? translateUI("ui.nothing_yet_what_you_upload_submit_and_update_appears_here_f8bbff") : translateUI("ui.nothing_yet_your_reviews_and_decisions_appear_here_6bd686")}</div>}
+            {activityGroups.length === 0 && <div className="empty">{isFac ? translateUI("ui.nothing_yet_what_you_upload_submit_and_update_appears_here_f8bbff") : translateUI("ui.nothing_yet_your_reviews_and_decisions_appear_here_6bd686")}</div>}
           </div>
         </Card>
         <Card title={translateUI("dashboard.usage.title")}>

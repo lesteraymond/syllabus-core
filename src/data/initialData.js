@@ -15,6 +15,7 @@ export const navItems = [
   ['analytics', 'chartBar', 'Analytics', AUTHOR_ROLES], // hidden from the Asst. VPAA, LIC Director and VPAA
   ['reports', 'downloadSimple', 'Reports', AUTHOR_ROLES],
   ['users', 'usersThree', 'Users & Roles', 'admin'],
+  ['audit-log', 'clockBack', 'Audit Log', 'admin'],
   ['settings', 'gearSix', 'Settings', null],
   ['student-dashboard', 'squaresFour', 'Dashboard', 'student'], // a student's own pages (views/StudentViews.jsx): read-only
   ['student-syllabi', 'archive', 'Syllabi', 'student'],
