@@ -2950,3 +2950,110 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Files:** `src/views/AIChecker.jsx`, `src/components/CheckOverview.jsx` (new), `src/components/CheckHistory.jsx`, `src/styles.css` (.chk-notes, .chk-stats, .chk-work, .hist-field), `src/i18n/checkOverview.js` (new, English and Tagalog), `src/lib/complianceView.js` (`historyTone`, `historyTally`).
 - **Not changed:** what is checked, the scores, the buttons' behaviour, the faculty member's AI Checker tab, and the result dialog.
 - **Tests:** `complianceView.test.js` (+2): the tone of a stored check and the tally above the history. Localization audit passes (2,855 bilingual keys).
+
+---
+
+### v1.98.23 — My Syllabi: Late Submit on the Status Tag, Deadline in the Meta Line
+**Date:** November 21, 2026 (commit `1aa5b317`)
+
+- **Change:** a syllabus submitted after its subject's deadline keeps the Submitted tag, in yellow-orange, reading "Submitted late". The deadline status and due date sit on the same line as the program and the update time instead of on a row of their own.
+- **Removed:** the review-chain progress line on the My Syllabi card (and its `.syl-progress` style). The progress is shown in the review panel instead (v1.98.28).
+
+---
+
+### v1.98.24 — PDF Import: Template Completeness Check and Two Apply Paths
+**Date:** November 21, 2026 (commit `e8a4faa5`)
+
+- **Template check:** the upload preview runs an animated check that every section I to X is filled; only IV. Pre-requisite may be empty (`src/lib/pdfTemplateScan.js`). Placeholder text (TBA, N/A, -) counts as empty. Apply is refused while a required section is empty.
+- **Two ways to apply:** "Apply and check with AI" or "Apply and submit directly". Both open the Review step.
+- **Import fixes:**
+  - An empty pre-requisite imports as "None", so submit rule T-05 passes.
+  - Credit units read lecture and laboratory in any order and spelling.
+  - A blank or unreadable page is skipped and reported instead of failing the whole import.
+  - A stray numeral before a heading ("I. V. CREDIT UNITS") no longer hides the section.
+  - A subject that is in the catalog but not assigned to the person gets its own message (`pdfImport.subjectNotAssigned`).
+- **Server:** the upload is received and checked before the rate-limit slot and the server-wide import slot are taken, and receiving is capped at 30 seconds (`408 pdfImport.uploadTimeout`). Worker messages from `node --watch` are ignored (PDF import failed in development).
+- **Screen:** the review area stays inside its card; only the plan table scrolls sideways.
+
+---
+
+### v1.98.25 — Review Workflow Fixes, Translations and a Local Security Review
+**Date:** November 22, 2026 (commit `9b1e3ac9`)
+
+- **Review workflow:**
+  - The Messages tab is hidden from reviewers other than the dean (the server lets only the syllabus owner and the dean message). A refused send now shows a notice instead of vanishing.
+  - The dean can send their own syllabus for review when AI checking is off or advisory. A finished AI check is needed only under the `required` policy; the coded hard gates still apply.
+  - A syllabus cannot be pulled back out of review once sent, and a returned dean syllabus cannot be sent again with no changes.
+  - Repository **Export list** downloads a CSV of the rows shown.
+- **Translations:** the Reports, Settings (notifications, appearance) and PDF-upload texts are translated; `src/i18n/reports.js` is new.
+- **Also included:** desktop notifications, the Reports rewrite with DOCX and CSV export, the appearance and dark-theme work, and more checker tests.
+- **Tests:** server and client tests for the workflow fixes and the CSV export. The Repository screen tests moved to a browser-rendered suite (`tests/repository-ui.test.jsx`).
+- **Docs:** `docs/security-review-local-2026-11-22.md`, a local API security review (about 146 probes, no vulnerabilities found).
+
+---
+
+### v1.98.26 — PDF Import: More Template Variants, Correct Section Splits
+**Date:** November 23, 2026 (commit `0863ed83`)
+
+- Section headings tolerate extra spaces or tabs, a missing space after the numeral, and the spellings CREDIT UNIT, PRE-REQUISITE(S) and SUGGESTED REFERENCES. IT-101's references had been read into Course Requirements, which blocked Apply.
+- The sign-off block after the last section, and lone page-number lines, are no longer read into Course Requirements, References or Grading.
+- "Passing Grade: 50%" is no longer imported as a grading component.
+- References by multi-word surnames (Dela Cruz, Gomes de Sousa) and by organisations start a new citation instead of merging into the one before.
+- A week whose number is printed below a page break keeps the part above the break instead of joining the previous week.
+- A CLO tagged with a PO or EGA number that neither list has stays unresolved and blocks Apply.
+- Tests that read real PDFs are skipped when the local source PDF is absent.
+
+---
+
+### v1.98.27 — PDF Import: Scanned and Rotated Pages, Concurrent Imports, Looser Titles
+**Date:** November 23, 2026 (commit `57de847b`)
+
+- **Time limits:** the worker reports each page it starts. The server stops an import only when one page takes over 2 minutes or the whole import over 9 minutes (was a fixed 2 minutes). The browser waits up to 10 minutes.
+- **OCR:** runs only on a page with almost no text that shows an image, or with no text at all, and replaces the existing text only when it reads clearly more. A sign-off page keeps its real text.
+- **Concurrency:** up to 2 imports run at once (`SYLLABUS_PDF_IMPORT_CONCURRENCY`, at most 8); each person still runs one at a time.
+- **Course titles** match across "&"/"and", "II"/"2" and an optional trailing "(...)" on either side. The subject lookup and Apply share one comparison.
+- **Rotated pages:** text lines use displayed-page positions, so landscape pages with `/Rotate` are read in order.
+- **CLO column:** it ends at the next section heading even when that heading is printed in pieces; without a heading the column is not used.
+- **Plan outcome columns** that list "CLO n:" lines map each line to its CLO, and lines worded unlike that CLO in section VI are flagged.
+- References in the style "Park J. et. Al., (2023)" start a new reference.
+
+---
+
+### v1.98.28 — Review Chain in Order, COR for Three Programs, Resumable PDF Imports, Whole-Number Versions
+**Date:** November 24, 2026 (commit `00ac4f09`)
+
+**Review chain (`server/lib/reviewStages.js`, `server/routes/reviewChain.js`, `server/routes/syllabi.js`, `src/lib/reviewView.js`):**
+- The three stages are now cleared **in order**: the dean, then the Asst. VPAA, then the LIC Director, then the VPAA decides. Only the reviewer whose turn it is can clear their stage or return the syllabus; anyone else gets `409 stage_out_of_order`. The others can open and read it.
+- Each reviewer is notified only when the syllabus reaches them. A reviewer account created later is notified of pending syllabi already on its turn.
+- **A resubmission goes back to whoever returned it.** The stages cleared before that reviewer are copied onto the new version. A version saved while the syllabus is under review (not returned) still starts the chain again.
+- New **review progress** strip (`src/components/ReviewProgress.jsx`): dean, Asst. VPAA, LIC Director and VPAA, each cleared, reviewing now, returned, rejected, approved or waiting. `GET /api/syllabi/:id/stages` now also returns `status`, `decision` and `submitted`.
+- Every route that opens one syllabus for a reviewer (its form, comments, AI check and stages) refuses what the lists hide from that reviewer (`assertReviewerMayOpen`; E2E report 2026-11-23, BUG-001/002/003).
+- Clearing a stage that is already cleared is not logged a second time (BUG-008).
+
+**AI Checker:** each person sees only the checks they ran: faculty, dean, Asst. VPAA, LIC Director and VPAA never see one another's checks or history (owner decision 2026-11-24). The AI Quality Snapshot is per person too. The review chain's own gate is not per person.
+
+**Past academic years are view only:** a syllabus of an academic year that is no longer the active one can be viewed but never edited, by anyone, the administrator included (`server/lib/activeYearGate.js`, `409 past_academic_year`; BUG-010). No new deadline can be set on a past year's subject (BUG-020).
+
+**Student registration with the COR:**
+- BSIT, BSCPE and BSIE students can register (was BSIT only; owner decision 2026-11-24). Both COR readers decide the program through `server/lib/corPrograms.js`.
+- An unclear scan creates no account: there is no administrator review any more, and the student scans a clearer photo. Only a COR of the active academic year registers.
+- **Terms and Conditions** (`src/lib/corTerms.js`, version in `shared/corTerms.cjs`): the student opens and agrees to them on the registration form. The server refuses any other version and records the accepted version on the account (`account_activity` action `terms_accept`) as proof of consent under RA 10173.
+- The COR is read with `COR_SCAN_MODEL` (default `claude-haiku-5-5`), no longer with the AI Checker's `ANTHROPIC_MODEL`.
+- Scan limits: 120 scans per hour per address, 10 per browser session per hour, 240 registrations per hour per address.
+- The password rule is checked on the screen before the paid scan (`src/lib/passwordRule.js`, kept in step with `server/lib/passwords.js`).
+
+**PDF import survives a refresh:** the builder names each scan with a job id kept in the URL (`#builder?id=12&mode=upload&job=…`, `src/lib/builderRoute.js`). After a refresh it waits for the running scan or reads the finished preview without uploading or scanning again (`server/lib/pdfImportJobs.js`, `src/lib/pdfImportResume.js`). New routes: `GET /api/syllabi/pdf-import/job/:job` and `GET /api/syllabi/pdf-import/job/:job/file`. Jobs are kept in memory only, one per person, for 30 minutes after they end.
+
+**Whole-number syllabus versions:** versions are labelled v1, v2, v3 instead of v1.0, v1.1, v1.2. `server/db/migrate-version-labels.js` (`npm run migrate-version-labels` in `server/`, `--dry-run` to preview) renumbers the stored labels and sets the `syllabi.version` default to `v1`. Text already written into activity notes or emails keeps the old label. Take a database backup first: the old labels are not kept, and the change cannot be rolled back except by restoring that backup.
+
+**Printed form and Word download (`src/views/builder2/FormPaper.jsx`, `src/lib/syllabusDocx.js`):** the letterhead as on the approved syllabi; sections VIII to X joined to the Learning Plan; "IX. SUGGESTED REFERENCES" with only the groups in use; the grading system with the Final Rating as a fraction; the sign-off block with the date of each step (submitted, each stage cleared, approved); the blank Revision Date / Modifications box; and the form control number at the bottom of the Word file only.
+
+**Programs:** the outcomes dialog saves the EGAs and the Program Outcomes together in one transaction (`PUT /api/programs/:id/setup`). A PO may link to an EGA added in the same save.
+
+**Other:**
+- The current screen is kept in the URL hash, so a refresh stays on it and Back/Forward move between screens.
+- Dashboard counts: My Submissions counts submitted work only, and the Review & Approval quick action shows the same count as that page (BUG-019, BUG-022).
+- Login page constellation background (`src/components/LoginConstellation.jsx`), and theme and responsive style updates.
+- `server/.env.example` trimmed to the core settings.
+- Docs: `docs/deployment/PREDEPLOY-CHECK-PROMPT.md`, `docs/deployment/PREDEPLOY-READINESS-REPORT-2026-11-24.md` and `docs/agents/antigravity-e2e-prompt.md`.
+- **Tests added:** `migrate-version-labels.test.js`, `corPrograms.test.js`, `corTerms.test.js`, `pdfImportJobs.test.js`, `pdfImport.job.routes.test.js`, `pdfImportResume.test.js`, `builderRoute.test.js`, `passwordRule.test.js`, and `po-not-applied.test.js`, plus additions to the review-stage, review-chain, catalog and COR-scan tests. Not yet covered: `GET /:id/versions` and `GET /:id/file` still lack the reviewer check (pre-deploy report M4).

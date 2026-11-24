@@ -8,7 +8,7 @@ Step-by-step guide to run the full system (frontend + backend + database).
 
 Install these first:
 
-- [Node.js](https://nodejs.org/) (v18 or higher, includes npm)
+- [Node.js](https://nodejs.org/) (v22.13 or higher, includes npm; PDF import's PDF.js needs it, and CI runs Node 22)
 - [XAMPP](https://www.apachefriends.org/) (for MySQL)
 
 ---
@@ -47,13 +47,19 @@ Fill in `server/.env`:
 | Variable | Notes |
 |----------|-------|
 | `DB_HOST`, `DB_USER`, `DB_PASS`, `DB_NAME` | MySQL connection (XAMPP defaults: `localhost`, `root`, empty, `syllabus_cms_plus`) |
-| `SESSION_SECRET` | any long random string |
-| `JWT_SECRET` | any long random string. If missing, login and Google sign-in return 500 |
+| `SESSION_SECRET` | any long random string (the only signing secret; `JWT_SECRET` is no longer used, so delete it from older `.env` files) |
 | `GOOGLE_CLIENT_ID` | must match the frontend `VITE_GOOGLE_CLIENT_ID` (only needed for Google sign-in) |
 | `PORT`, `UPLOAD_DIR` | API port (default 3001) and upload folder |
 | `CURRENT_TERM`, `ALLOWED_EMAIL_DOMAIN` | optional (domain defaults to `email.lcup.edu.ph`) |
+| `SMTP_*`, `MAIL_FROM`, `APP_URL` | email for credentials, temporary passwords and decisions. Leave `SMTP_HOST` empty to send nothing |
+| `SYLLABUS_CHECK_AI_PROVIDER`, `SYLLABUS_CHECK_REPLAN`, `SYLLABUS_CHECK_REPLAN_MAX_COST_USD`, `SYLLABUS_CHECK_REPLAN_MAX_REQUESTS`, `SYLLABUS_CHECK_AI_GATE` | the AI Checker. Nothing is sent without a cost cap; `SYLLABUS_CHECK_AI_GATE` is `advisory` (default) or `required` |
+| `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`, `SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL` | Claude for the AI Checker. Nothing is sent until the approved model names the same model as `ANTHROPIC_MODEL` |
+| `COR_SCAN_MODEL` | optional: the model that reads a student's COR (default `claude-haiku-5-5`; it does not follow `ANTHROPIC_MODEL`) |
+| `SYLLABUS_PDF_IMPORT`, `SYLLABUS_PDF_IMPORT_CONCURRENCY` | optional: PDF import on/off (default on) and how many imports run at once (default 2, at most 8) |
 | `COMPLIANCE_AI_PROVIDER` | optional: `mock` shows AI-labelled recommendations in development; unset = plain rule-based check |
 | `SCHOOL_YEAR_START` | optional, default `2026` (used to measure reference age) |
+
+`server/.env.example` lists only the core settings (trimmed 2026-11-24). The staging and production settings, with every limit and switch, are in `docs/deployment/staging.env.template` and `docs/deployment/production.env.template`.
 
 > `npm run dev` restarts the API on file changes. After running a migration, restart it by hand.
 
@@ -88,8 +94,27 @@ npm run migrate-deadlines
 npm run migrate-subject-owner
 npm run migrate-activity-log
 npm run migrate-review-stages
+npm run migrate-archive
+npm run migrate-subject-term
+npm run migrate-academic-year-scope
+npm run migrate-catalog-year
+npm run migrate-curriculum-year
+npm run migrate-course-program-codes
+npm run migrate-po-reference-publication
+npm run migrate-program-outcome-sources
+npm run migrate-account-status
+npm run migrate-review-ai-choice
+npm run migrate-account-activity
+npm run migrate-audit-retention
+npm run migrate-password-expiry
+npm run migrate-session-store
+npm run migrate-syllabuscheck
+npm run migrate-replan-answers
+npm run migrate-generate-jobs
+npm run migrate-version-labels
 ```
 
+- `migrate-version-labels` renumbers syllabus versions as whole numbers (v1.0, v1.1, v1.2 become v1, v2, v3). It **changes existing data** and the old labels are not kept: take a database backup first and preview with `npm run migrate-version-labels -- --dry-run`. A fresh database made with `init-db` already uses whole numbers.
 - `migrate-review-stages` adds the VPAA, Asst. VPAA and LIC Director roles and the table that records who cleared which review stage (see `docs/review-chain.md`); until it is run nothing can be approved
 - `migrate-avatars-private`, `migrate-assignments`, `migrate-program-egas`, `migrate-subject-owner` and `migrate-review-stages` support `--dry-run` (e.g. `npm run migrate-assignments -- --dry-run`)
 - `migrate-activity-log` lets Recent Activity record AI checks and answers to recommendations. Without it everything still works; those two kinds of activity are just not written (the server console says so once).
@@ -141,7 +166,7 @@ Other ways in:
 
 - **Remember me** keeps you signed in for 30 days.
 - **Sign in with Google** works only for `@email.lcup.edu.ph` addresses that an admin has already added in Users & Roles.
-- **Register (for Students)**: upload a photo of your Certificate of Registration (JPG, PNG or WebP, up to 10MB) and choose a password. The server reads the COR with OCR; confirm the details in the "Is this your COR?" window. Your student ID (with or without dashes) is your username. A clearly readable BSIT COR is verified automatically; anything doubtful stays **pending** for an administrator, and pending or rejected students cannot sign in yet.
+- **Register (for Students)**: upload a photo of your Certificate of Registration (JPG, PNG or WebP, up to 10MB), choose a password, and agree to the **Terms and Conditions** (opened from the consent box). The server reads the COR; confirm the details in the "Is this your COR?" window. Your student ID (with or without dashes) is your username. BSIT, BSCPE and BSIE students can register, with a COR of the **active** academic year. A COR whose program, name, or school year and term cannot be confirmed creates no account: there is no administrator review, so retake a clearer photo and register again. The accepted terms version is recorded on the account.
 
 ---
 
@@ -171,7 +196,7 @@ DB_NAME=syllabus_cms_plus
 ```
 
 ### Login or Google sign-in returns 500
-`JWT_SECRET` is missing in `server/.env`. Add it and restart the API server.
+Check that `SESSION_SECRET` is set in `server/.env` and that the database is reachable, then restart the API server. `JWT_SECRET` is no longer used. Google sign-in answers 503 when `GOOGLE_CLIENT_ID` is not set.
 
 ### Google sign-in says 404 or "Access Denied"
 Restart the API server (an old process has no `/api/auth/google`). "Access Denied" means the email is not in Users & Roles.
@@ -180,7 +205,7 @@ Restart the API server (an old process has no `/api/auth/google`). "Access Denie
 Your database is behind. Run the migrations in *Upgrading an existing database*, then restart the API server.
 
 ### Student registration cannot read the COR
-Make sure `npm install` was run in `server/` (OCR needs `tesseract.js` and `sharp`) and that `server/eng.traineddata` exists. Test the reader on its own with `node scripts/ocr-cor-test.js [image]`. Small or tilted photos may not yield the subject list; the registration then goes to an administrator.
+Make sure `npm install` was run in `server/` (OCR needs `tesseract.js` and `sharp`) and that `server/eng.traineddata` exists. Test the reader on its own with `node scripts/ocr-cor-test.js [image]`. The scan also uses Claude when `ANTHROPIC_API_KEY` is set (model `COR_SCAN_MODEL`). Small or tilted photos may not yield the program, name or term; the student then retakes the photo (nothing goes to an administrator). A COR of another school year than the active one is refused.
 
 ### Port already in use
 Change the port in `server/.env`:
@@ -238,7 +263,7 @@ syllabus-cms-plus/
 | `node scripts/ocr-cor-test.js [image]` | Try the COR reader on the images in `server/sample_cor/` (git-ignored) or on a given image; prints the fields it read |
 
 ### Database migrations (`server/`)
-Each one upgrades an older database, is safe to run again, and touches no existing data. Run the ones you are missing, in this order, then restart the API server.
+Each one upgrades an older database and is safe to run again. Run the ones you are missing, in this order, then restart the API server. Most touch no existing data; the exceptions are listed under *Upgrading an existing database* (`migrate-version-labels` renumbers versions, `migrate-catalog-year` and `migrate-academic-year-scope` stamp existing rows with the current year). The table below covers the older ones; the newer ones describe themselves in the header of their file in `server/db/`.
 
 | Command | What it adds |
 |---------|--------------|
@@ -284,11 +309,14 @@ Where a script says it supports `--dry-run`, add it after `--` to only report wh
 | POST | /api/students/scan | Read a COR photo (public) |
 | POST | /api/students/register | Create the student account from the scan (public) |
 | GET | /api/students/me | A student's profile and subjects |
-| GET | /api/students/pending | Registrations waiting for review (admin) |
-| GET | /api/students/:id/cor | The COR photo of a pending student (admin) |
-| POST | /api/students/:id/verify | Approve or reject a pending student (admin) |
+| GET | /api/students/syllabi | Approved syllabi a student can read |
 | POST | /api/auth/google | Google sign-in |
 | GET | /api/syllabi/:id/review | Read-only view of a submitted version |
+| POST | /api/syllabi/:id/stage-clear | Clear the reviewer's stage, on their turn (see `docs/review-chain.md`) |
+| GET | /api/syllabi/:id/stages | Review stages, turn, last decision and sign-off dates |
+| POST | /api/syllabi/pdf-import/extract | Preview a PDF before a subject is chosen (see `docs/pdf-syllabus-import.md`) |
+| POST | /api/syllabi/:id/import-pdf | Preview a PDF into a draft |
+| GET | /api/syllabi/pdf-import/job/:job | Pick up a PDF scan again after a refresh |
 | GET/POST | /api/syllabi/:id/comments | Reviewer comments |
 | GET | /api/syllabi/:id/compliance | Stored compliance check |
 | POST | /api/syllabi/:id/compliance/recheck | Re-run the compliance check |

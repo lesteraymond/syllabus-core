@@ -71,13 +71,13 @@ Sign-in options: email and password (bcrypt-hashed), Google sign-in restricted t
 │  React SPA (Vite)      │ ──────────────▶ │  Express API (Node.js)    │ ─────────▶ │  MySQL   │
 │  src/  · port 5173     │ ◀────────────── │  server/ · port 3001      │ ◀───────── │          │
 └────────────────────────┘  session cookie └──────┬─────────┬──────────┘            └──────────┘
-                            / Bearer JWT          │         │
-                                                  │         ├── Uploads (PDFs, avatars) on disk
+                                                  │         │
+                                                  │         ├── Uploads (syllabus files, avatars) on disk
                                                   │         ├── SMTP (temp passwords, deadline notices)
                                                   │         └── OCR (Tesseract) for COR reading
                                                   ▼
-                                   External AI provider (Gemini / OpenRouter)
-                                   — optional, advisory, called only on explicit action
+                                   Anthropic Claude API (AI Checker, Generator, COR)
+                                   — off unless configured, cost-capped per check
 ```
 
 ### 3.2 Technology stack
@@ -106,7 +106,7 @@ Sign-in options: email and password (bcrypt-hashed), Google sign-in restricted t
 | `server/lib/compliance/` | Deterministic rule engine and the `standard-v4.json` rule set |
 | `server/lib/syllabuscheck/` | Hybrid (coded + AI) checker: engine, scoring, evidence, model clients, staged advisory checks |
 | `server/db/` | `schema.sql`, seed data, and idempotent `migrate-*.js` scripts |
-| `server/middleware/` | Authentication (session, remember-me, JWT) and edit-permission guards |
+| `server/middleware/` | Authentication (database-backed session, remember-me) and edit-permission guards |
 | `docs/` | Feature design notes, evaluation reports and the academic validation package |
 
 ---
@@ -198,8 +198,7 @@ MySQL schema defined in `server/db/schema.sql`, with additive `migrate-*.js` scr
 | Concern | Measure |
 |---|---|
 | Passwords | bcrypt-hashed; temporary passwords force a change on first sign-in |
-| Sessions | `httpOnly`, `sameSite=lax` cookies (`secure` in production); remember-me tokens stored as SHA-256 hashes, 30-day expiry |
-| API tokens | JWT bearer tokens for API clients |
+| Sessions | stored in the database in staging and production (`SESSION_STORE=mysql`); `httpOnly`, `sameSite=lax` cookies (`secure` in production); remember-me tokens stored as SHA-256 hashes, 30-day expiry |
 | Authorization | Server-side role checks (`requireAuth`, `requireAdmin`) and per-syllabus edit guards; the UI hides, but never solely enforces, access |
 | Domain restriction | Google sign-in and registration limited to the institution's email domain |
 | Brute force | Rate limiting on authentication routes |
@@ -213,8 +212,8 @@ MySQL schema defined in `server/db/schema.sql`, with additive `migrate-*.js` scr
 
 Full instructions: [HOW-TO-RUN.md](../HOW-TO-RUN.md). Summary:
 
-1. Install Node.js 18+ and start MySQL (XAMPP).
-2. `cd server && cp .env.example .env` and fill in DB credentials, `SESSION_SECRET`, `JWT_SECRET`, and optionally `GOOGLE_CLIENT_ID`, SMTP and AI provider keys.
+1. Install Node.js 22.13+ and start MySQL (XAMPP).
+2. `cd server && cp .env.example .env` and fill in DB credentials, `SESSION_SECRET`, and optionally `GOOGLE_CLIENT_ID`, SMTP and AI provider keys.
 3. `npm install && npm run init-db && npm run migrate-students && npm run dev` (API on `http://localhost:3001`).
 4. From the repository root: `npm install && npm run dev` (frontend on `http://localhost:5173`).
 5. For an existing database, run the `migrate-*` scripts you are missing, then restart the API.
