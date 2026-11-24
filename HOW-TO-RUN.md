@@ -59,7 +59,7 @@ Fill in `server/.env`:
 | `COMPLIANCE_AI_PROVIDER` | optional: `mock` shows AI-labelled recommendations in development; unset = plain rule-based check |
 | `SCHOOL_YEAR_START` | optional, default `2026` (used to measure reference age) |
 
-`server/.env.example` lists only the core settings (trimmed 2026-11-24). The staging and production settings, with every limit and switch, are in `docs/deployment/staging.env.template` and `docs/deployment/production.env.template`.
+`server/.env.example` lists only the core settings (trimmed 2026-11-24). Every other setting is described under **Server settings reference** below. For staging and production start from `docs/deployment/staging.env.template` or `docs/deployment/production.env.template`, which also hold the host settings (`CORS_ALLOWED_ORIGINS`, `TRUST_PROXY`, `SESSION_COOKIE_SAMESITE`).
 
 > `npm run dev` restarts the API on file changes. After running a migration, restart it by hand.
 
@@ -287,6 +287,107 @@ Each one upgrades an older database and is safe to run again. Run the ones you a
 | `npm run migrate-subject-owner` | Unique key on `faculty_courses.course_id` (one subject, one faculty member). Stops and lists any subject held by more than one faculty. Supports `--dry-run` |
 
 Where a script says it supports `--dry-run`, add it after `--` to only report what would change, e.g. `npm run migrate-assignments -- --dry-run`.
+
+---
+
+## Server settings reference
+
+Optional settings for `server/.env`. Leave a setting out to use its default. Restart the API server after a change.
+
+### AI Checker
+
+The AI Checker runs only when **all** of these are set: `SYLLABUS_CHECK_AI_PROVIDER=anthropic`, `SYLLABUS_CHECK_REPLAN=official`, `SYLLABUS_CHECK_REPLAN_MAX_COST_USD`, `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`, and the same model in `SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL`. With a provider set but something missing, a check is reported incomplete with the reason and nothing is sent. The fixed (no-AI) rules run on every check.
+
+| Variable | Default | What it does |
+|---|---|---|
+| `SYLLABUS_CHECK_AI_PROVIDER` | — | `anthropic`, or `off` to turn the AI off whatever keys are set (each check then says the AI is off) |
+| `SYLLABUS_CHECK_REPLAN` | — | `official`: the AI Checker makes the official AI findings, points (at most 5 per area) and drafts. `shadow` and `plan` only attach a comparison |
+| `SYLLABUS_CHECK_REPLAN_MAX_COST_USD` | — (required) | the most one check may spend, in US dollars (at most 1000). Nothing is sent without it, and in staging and production the server does not start without it once a provider is set |
+| `SYLLABUS_CHECK_REPLAN_MAX_REQUESTS` | 80 | requests per check (1–300). A full repair plan on a long syllabus can need more; 120 is suggested |
+| `SYLLABUS_CHECK_REFINE_MAX_COST_USD` | smaller of 0.50 and the check's cap | "Check & improve" on a draft: its own cost cap, never above the check's |
+| `SYLLABUS_CHECK_REFINE_MAX_REQUESTS` | 12 | "Check & improve" request limit (1–60) |
+| `SYLLABUS_CHECK_AI_GATE` | `advisory` | `advisory`: the AI result is advice, and only the coded hard gates (course in the curriculum, grading total, standard sections) stop a submit. `required`: a completed, current AI check is also needed first |
+| `SYLLABUS_CHECK_TITLE_POLICY` | `shadow` | course-title comparison: `shadow` (official stays exact; the normalised decision is reported beside it), `exact`, or `normalized` (capitalisation, Unicode form and spacing only, never fuzzy). `normalized` is official and changes submission: activate it only with approval, following `docs/title-policy-activation.md` |
+| `SYLLABUS_CHECK_VALUE_SUGGESTION` | `review` | a lesson naming no core value: the checker no longer picks one. `legacy` restores the old template suggestion (rollback only) |
+
+### AI Syllabus Generator
+
+Off unless `SYLLABUS_CHECK_GENERATE=on`, the direct Anthropic provider above is set, **and** its own cost cap is set. It writes a first draft of the CLOs, the 18-week plan, requirements and grading for the chosen subject, checks it with the AI Checker's rules and makes one repair plan. Every generation is a paid request. The request saves nothing: the page puts the sections into the author's syllabus for review.
+
+| Variable | Default | What it does |
+|---|---|---|
+| `SYLLABUS_CHECK_GENERATE` | off | `on` turns the generator on |
+| `SYLLABUS_CHECK_GENERATE_MAX_COST_USD` | — (required) | the most one whole run (generation, check and repair) may spend, at most 1000 |
+| `SYLLABUS_CHECK_GENERATE_MAX_REQUESTS` | 40 | request limit for one run (1–300) |
+| `SYLLABUS_CHECK_GENERATE_PER_USER_PER_DAY` | none | optional daily limit per person |
+| `SYLLABUS_CHECK_GENERATE_REFERENCES` | `on` | the reference step keeps only books the Open Library catalogue confirms; `off` skips it and the lookups |
+
+Run `npm run migrate-generate-jobs` once so jobs and the daily count survive a restart (without it they live in memory).
+
+### Claude (direct Anthropic API, paid)
+
+`ANTHROPIC_API_KEY` must be an `sk-ant-` key (any other format is never sent). `ANTHROPIC_MODEL` must be a verified id: `claude-sonnet-5-5`, `claude-haiku-5-5`, `claude-opus-5-5`, `claude-fable-5-1`, `claude-opus-5`, `claude-sonnet-5` or `claude-sonnet-4-6`; any other id sends nothing. Nothing is sent until `SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL` names that same model, so adding a key alone turns nothing on. The key stays on the server: never put it in a `VITE_` variable or commit it.
+
+| Variable | Default | What it does |
+|---|---|---|
+| `ANTHROPIC_TIMEOUT_SEC` | 180 | deadline of one request in seconds (10–300). A request that timed out, or was answered with 504, is never sent again (it may already be billed) |
+| `ANTHROPIC_MAX_RETRIES` | 2 | retries after a rate limit (429), an overload (529), a server error (500, 502, 503) or a dropped connection (0–3), within the deadline. A spend limit or an exhausted credit balance is never retried |
+| `ANTHROPIC_MAX_TOKENS` | 16000 | longest answer in tokens (1024–16000). Thinking counts against it and is billed as output |
+| `ANTHROPIC_THINKING` | `adaptive` | `adaptive` or `off`. `claude-opus-5-5` and `claude-fable-5-1` cannot turn thinking off, so with `off` they send nothing |
+| `ANTHROPIC_EFFORT` | the model's default | `low`, `medium`, `high`, `xhigh` or `max`. `xhigh` and `max` need thinking on, and `claude-sonnet-4-6` has no `xhigh`; a combination the API would refuse sends nothing |
+| `ANTHROPIC_PROMPT_CACHE` | `on` | caches the system prompt for 5 minutes so a check's later requests cost less; `off` turns that off |
+| `COR_SCAN_MODEL` | `claude-haiku-5-5` | the model that reads a student's COR (it does not follow `ANTHROPIC_MODEL`) |
+
+### PDF import
+
+| Variable | Default | What it does |
+|---|---|---|
+| `SYLLABUS_PDF_IMPORT` | `on` | `off` turns PDF import off. PDFs are read in memory only |
+| `SYLLABUS_PDF_IMPORT_CONCURRENCY` | 2 | how many imports run at once (1–8); each person runs one at a time |
+
+### Sign-in limits
+
+These cannot be turned off: `0`, `off` or a value out of range stops the server at startup. A correct sign-in is never counted. The address counted is the one the reverse proxy reports, so `TRUST_PROXY` must be right.
+
+| Variable | Default | What it does |
+|---|---|---|
+| `SIGNIN_MAX_FAILURES_PER_ACCOUNT` | 10 | failed password sign-ins for one account in one window (3–100) |
+| `SIGNIN_MAX_FAILURES_PER_IP` | 50 | failed password sign-ins, and separately failed Google sign-ins, from one address in one window (5–10000) |
+| `SIGNIN_WINDOW_MINUTES` | 15 | the length of the window in minutes (1–1440) |
+
+### AI daily ceilings
+
+Counted per calendar day in the Philippines. They cannot be turned off; a bad value stops the server. For 19 faculty who all run checks and generations at the same time, use 100, 1000 and 200 (the whole-school number must be at least the per-person one).
+
+| Variable | Default | What it does |
+|---|---|---|
+| `AI_CHECKS_PER_USER_PER_DAY` | 40 | AI checks by one person |
+| `AI_CHECKS_PER_DAY` | 400 | AI checks by everyone together |
+| `AI_REFINES_PER_USER_PER_DAY` | 60 | "Check & improve" requests by one person |
+| `AI_CHECKS_PER_MINUTE_PER_USER` | 10 | checks one person may start per minute (1–600): only a guard against a double click |
+
+### Database
+
+In staging and production `DB_HOST`, `DB_USER`, `DB_PASS` and `DB_NAME` are all required, `DB_USER` may not be `root`, and the server reads its own grants before it listens: the application account may only SELECT, INSERT, UPDATE and DELETE on its own database, or the server does not start. Run the scripts in `server/db/` (`init.js`, `migrate-*.js`, `create-admin.js`) with a separate account that may also CREATE and ALTER, by setting `DB_USER` and `DB_PASS` for that command only. The server also refuses to start while any account still has a demo password from `db/seed.sql`.
+
+| Variable | Default | What it does |
+|---|---|---|
+| `DB_PORT` | 3306 | the database port |
+| `DB_SSL` | `off` | `required` encrypts the connection and verifies the database server. Required in staging and production when `DB_HOST` is another machine |
+| `DB_SSL_CA` | — | the CA certificate file that signed the database server's certificate (only with `DB_SSL=required`; leave unset for a public CA) |
+| `DB_POOL_SIZE` | 10 | connections kept open (1–100). 30 is enough for 19 faculty running AI checks and generations at the same time |
+| `DB_POOL_QUEUE` | 200 | requests that may wait for a connection (1–10000) |
+| `DB_SQL_STRICT` | `off` | `on` refuses a value that is too long or of the wrong type instead of cutting it. Turn it on only after the full browser E2E has passed against a strict database; the server then checks at startup that it took effect |
+
+The server reads `DB_PORT`, `DB_SSL` and `DB_SSL_CA`; most scripts in `server/db/` do not yet (pre-deploy report 2026-11-24, B4).
+
+### Accounts and sessions
+
+| Variable | Default | What it does |
+|---|---|---|
+| `GENERATED_PASSWORD_DAYS` | 7 | how many days a password the system generates (new account, "Resend credentials", `db/create-admin.js`) works if it is not replaced (1–90) |
+| `SESSION_STORE` | `memory` in development | `memory` or `mysql`. Staging and production always use `mysql` (memory is refused); run `npm run migrate-session-store` first |
+| `PRIVATE_DIR` | `private` | folder for profile photos, under `server/` |
 
 ---
 

@@ -390,6 +390,7 @@ router.get('/:id/versions', requireAuth, async (req, res) => {
     if (!Number.isInteger(id) || id <= 0) throw httpError(404, 'Syllabus not found');
     const [syl] = await db.query('SELECT syllabus_id, user_id, status FROM syllabi WHERE syllabus_id = ?', [id]);
     if (!syl[0] || !rules.canReadApproved(req.session.user, syl[0])) throw httpError(404, 'Syllabus not found');
+    await reviewStages.assertReviewerMayOpen(db, syl[0], req.session.user); // what the lists hide from this reviewer stays closed here too (pre-deploy report M4)
 
     const [rows] = await db.query(
       `SELECT v.*, u.first_name, u.last_name

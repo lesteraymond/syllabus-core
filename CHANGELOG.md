@@ -3057,3 +3057,14 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - `server/.env.example` trimmed to the core settings.
 - Docs: `docs/deployment/PREDEPLOY-CHECK-PROMPT.md`, `docs/deployment/PREDEPLOY-READINESS-REPORT-2026-11-24.md` and `docs/agents/antigravity-e2e-prompt.md`.
 - **Tests added:** `migrate-version-labels.test.js`, `corPrograms.test.js`, `corTerms.test.js`, `pdfImportJobs.test.js`, `pdfImport.job.routes.test.js`, `pdfImportResume.test.js`, `builderRoute.test.js`, `passwordRule.test.js`, and `po-not-applied.test.js`, plus additions to the review-stage, review-chain, catalog and COR-scan tests. Not yet covered: `GET /:id/versions` and `GET /:id/file` still lack the reviewer check (pre-deploy report M4).
+
+---
+
+### v1.98.29 — Version History and Uploaded File Follow the Review Chain; Settings Reference
+**Date:** November 24, 2026
+
+- **Problem (pre-deploy report 2026-11-24, M4):** `GET /api/syllabi/:id/versions` and `GET /api/syllabi/:id/file` checked only who may read a syllabus, not what the lists hide from a reviewer. A reviewer calling them directly could read the version history or the uploaded file of a syllabus that had not reached the VPAA yet, or of the dean's own syllabus before the dean sent it for review.
+- **Change:** both routes now call `reviewStages.assertReviewerMayOpen`, like the form, comments, AI check and stages routes: `409 STAGES_PENDING` for the VPAA until the three stages clear, and `409 not_sent_for_review` for the dean's unsent syllabus. The author, and anyone on an approved syllabus, are never refused.
+- **Not changed:** who may read a syllabus otherwise, and the screens (they never offered these syllabi).
+- **Docs:** `HOW-TO-RUN.md` gains a **Server settings reference** with every optional server setting (AI Checker, Generator, Claude request tuning, PDF import, sign-in limits, AI daily ceilings, database, accounts and sessions). The descriptions had been removed from `server/.env.example` when it was trimmed in v1.98.28. `docs/review-chain.md` updated.
+- **Tests:** `syllabusFiles.routes.test.js` (+4) and `stages.routes.test.js` (+1): the VPAA before and after the three stages, an approved syllabus, the dean's syllabus before and after it is sent. They fail without the change. `npm test` passes (1,618 server tests, localization, PDF import, VPAA screens).

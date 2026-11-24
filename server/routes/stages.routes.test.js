@@ -244,6 +244,28 @@ test('the version history says what changed between versions and what the admini
   assert.strictEqual((await call({ id: 6, role: 'faculty', firstName: 'Gus', lastName: 'G' }, 'GET', '/syllabi/1/versions')).status, 404);
 }));
 
+// What the lists hide from a reviewer stays closed in the version history too (lib/reviewStages.js assertReviewerMayOpen; pre-deploy report 2026-11-24, M4).
+test('the version history reaches the VPAA only once the three stages are cleared, and the dean\'s unsent syllabus only its author', () => withServer(async ({ call, db }) => {
+  const asst = { id: 3, role: 'asst_vpaa', firstName: 'Ash', lastName: 'V' };
+  const early = await call(vpaa, 'GET', '/syllabi/1/versions');
+  assert.strictEqual(early.status, 409, 'just submitted: not the VPAA\'s yet');
+  assert.strictEqual(early.body.code, 'STAGES_PENDING');
+  assert.strictEqual((await call(asst, 'GET', '/syllabi/1/versions')).status, 200, 'a stage reviewer reads it');
+  clearAll(db, 1, 10);
+  assert.strictEqual((await call(vpaa, 'GET', '/syllabi/1/versions')).status, 200, 'all three cleared: it reaches the VPAA');
+  db.s.syllabi[2].status = 'approved';
+  assert.strictEqual((await call(vpaa, 'GET', '/syllabi/2/versions')).status, 200, 'an approved syllabus stays readable');
+
+  db.s.syllabi[4] = { syllabus_id: 4, user_id: 1, status: 'under_review', version: 'v1', title: 'Dean own', course_code: 'DN 101' };
+  db.s.versions.push({ version_id: 40, syllabus_id: 4, content: '{"meta":{}}', file_path: null });
+  const unsent = await call(asst, 'GET', '/syllabi/4/versions');
+  assert.strictEqual(unsent.status, 409, 'the dean has not sent it yet');
+  assert.strictEqual(unsent.body.code, 'not_sent_for_review');
+  assert.strictEqual((await call(admin, 'GET', '/syllabi/4/versions')).status, 200, 'its author reads it');
+  db.s.stages.push({ syllabus_id: 4, version_id: 40, stage: 'dean' }); // the dean sends it for review
+  assert.strictEqual((await call(asst, 'GET', '/syllabi/4/versions')).status, 200, 'sent: the Asst. VPAA reads it');
+}));
+
 // Each reviewer may check a submission with AI or review it without an AI check (lib/reviewAiChoice.js). The choice is theirs and the version's.
 const asst = { id: 21, role: 'asst_vpaa', firstName: 'As', lastName: 'St' };
 const lic = { id: 22, role: 'lic_director', firstName: 'Li', lastName: 'C' };
