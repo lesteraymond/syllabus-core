@@ -54,9 +54,7 @@ module.exports = { migrate };
 if (require.main === module) {
   (async () => {
     const mysql = require('mysql2/promise');
-    const db = await mysql.createConnection({
-      host: process.env.DB_HOST, user: process.env.DB_USER, password: process.env.DB_PASS, database: process.env.DB_NAME,
-    });
+    const db = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
     try {
       await migrate({ db, dryRun: process.argv.includes('--dry-run') });
     } finally {

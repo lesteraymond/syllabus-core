@@ -18,7 +18,7 @@ if (require.main === module) {
   const dryRun = process.argv.includes('--dry-run');
   (async () => {
     const mysql = require('mysql2/promise');
-    const conn = await mysql.createConnection({ host: process.env.DB_HOST, port: Number(process.env.DB_PORT) || 3306, user: process.env.DB_USER, password: process.env.DB_PASS, database: process.env.DB_NAME });
+    const conn = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
     try {
       const r = await migrate(conn, { dryRun });
       console.log(r.added ? (dryRun ? '[dry run] would add users.password_expires_at' : 'users.password_expires_at added') : 'users.password_expires_at already present');

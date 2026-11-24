@@ -28,6 +28,23 @@ const BLOOM_ORDER = Object.freeze([
   { level: 'evaluate', verbs: 'evaluate, judge, justify, critique' },
   { level: 'create', verbs: 'design, create, develop, construct' },
 ]);
+// The same Bloom levels in Filipino, for a syllabus written in Filipino (Dalumat sa Filipino, Panitikan ...). Outcomes in Filipino are usually written in
+// the ability form ("Natutukoy ...", "Nasusuri ...") or the infinitive after "Ang mga mag-aaral ay inaasahang ..." ("matukoy", "masuri"), so both are
+// listed. The levels are the owner's (BLOOM_ORDER); the Filipino words are translations added 2026-11-21 (FILIPINO_VERBS_SOURCE) for the owner to review.
+const BLOOM_ORDER_FIL = Object.freeze([
+  { level: 'remember', verbs: 'natutukoy, matukoy, tukuyin, naiisa-isa, maisa-isa, naitatala, maitala, nakikilala, makilala, nabibigyang-kahulugan, mabigyang-kahulugan, nagugunita, magunita' },
+  { level: 'understand', verbs: 'naipaliliwanag, naipapaliwanag, maipaliwanag, ipaliwanag, nailalarawan, mailarawan, ilarawan, nabubuod, mabuod, naiuuri, maiuri, natatalakay, matalakay, naibubuod, maibuod' },
+  { level: 'apply', verbs: 'nagagamit, magamit, gamitin, nailalapat, mailapat, nalulutas, malutas, naipakikita, naipapakita, maipakita, naisusulat, maisulat, naisasagawa, maisagawa, nakasusulat, nakasulat' },
+  { level: 'analyze', verbs: 'nasusuri, masuri, suriin, naihahambing, maihambing, napag-iiba, mapag-iba, nasisiyasat, masiyasat, naiuugnay, maiugnay' },
+  { level: 'evaluate', verbs: 'natataya, mataya, nabibigyang-katwiran, mabigyang-katwiran, napupuna, mapuna, nahahatulan, mahatulan, napagpapasyahan, mapagpasyahan, naipagtatanggol, maipagtanggol' },
+  { level: 'create', verbs: 'nakabubuo, nakakabuo, makabuo, bumuo, nakalilikha, nakakalikha, makalikha, lumikha, nadidisenyo, madisenyo, nakagagawa, nakakagawa, makagawa, nakapagsusulat, makapagsulat' },
+]);
+const AFFECTIVE_VERBS_FIL = 'napahahalagahan, napapahalagahan, mapahalagahan, pahalagahan, naisasabuhay, maisabuhay, naitataguyod, maitaguyod, naipamamalas, maipamalas, nakikiisa, makiisa, nakikilahok, makilahok, naipapahayag, naipahahayag, maipahayag, naninindigan, manindigan';
+const FILIPINO_VERBS_SOURCE = 'translations of the owner\'s Bloom levels (BLOOM_ORDER) and affective levels, added 2026-11-21 for syllabi written in Filipino; the word list awaits the owner\'s review';
+// A Filipino-language subject (taught and written in Filipino): the code starts with FIL, or the title names Filipino or a Filipino-language course
+// word. Only these subjects get the Filipino prompts (generator and checker); every other subject is handled exactly as before.
+const FILIPINO_TITLE = /\b(filipino|dalumat|panitikan|komunikasyon|pagbasa|pananaliksik|wika|sinesosyedad|retorika|masining|malikhaing|kontekstwalisadong|sanaysay)\b/i;
+const isFilipinoSubject = (title, code) => /^\s*fil/i.test(String(code || '')) || FILIPINO_TITLE.test(String(title || ''));
 const BLOOM_SOURCE = 'derived from the CLO classification labels; confirmed by the owner on 2026-11-12; apply added to CLO 1 by the owner on 2026-11-15; analyze and evaluate added to CLO 3 by the owner on 2026-11-17, after the CHED Implementation Handbook for OBE and ISA (2014): I introduces an outcome, E strengthens it, D demonstrates it';
 // The affective domain (Krathwohl, Bloom and Masia, 1964), lowest to highest, with the sample verbs of the CHED Implementation Handbook for OBE and
 // ISA (2014), Annex 4 "Recommended Verbs for Writing Learning Outcomes". Only CLO 4 takes affective levels (CLO_LEVELS[3].affective).
@@ -191,6 +208,6 @@ function deductions(results, caps = AREA_CAPS) {
 const isManual = relationship => CHECKLISTS[relationship]?.repair === 'manual';
 
 module.exports = {
-  VERSION, CONSTRUCTIVE_ALIGNMENT_SOURCE, isManual, VALUE_NAMES, CLO_COUNT, CLO_LEVELS, BLOOM_ORDER, BLOOM_SOURCE, AFFECTIVE_ORDER, AFFECTIVE_SOURCE, CHED_STAGES, CHAIN, layerOf, SCHEDULE, MIN_ACTIVITY_OPTIONS, REFERENCE_RECENCY_YEARS, VALUES_REQUIRED_IN,
+  VERSION, CONSTRUCTIVE_ALIGNMENT_SOURCE, isManual, VALUE_NAMES, CLO_COUNT, CLO_LEVELS, BLOOM_ORDER, BLOOM_SOURCE, BLOOM_ORDER_FIL, AFFECTIVE_VERBS_FIL, FILIPINO_VERBS_SOURCE, isFilipinoSubject, AFFECTIVE_ORDER, AFFECTIVE_SOURCE, CHED_STAGES, CHAIN, layerOf, SCHEDULE, MIN_ACTIVITY_OPTIONS, REFERENCE_RECENCY_YEARS, VALUES_REQUIRED_IN,
   CHECKLISTS, VERDICT, ANSWERS, verdictOf, DEDUCTION, AREAS, AREA_CAPS, deductions,
 };

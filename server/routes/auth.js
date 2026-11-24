@@ -59,7 +59,7 @@ router.post('/google', async (req, res) => {
     if (!idToken || typeof idToken !== 'string') return fail(res, 400, 'token is required');
     if (!process.env.GOOGLE_CLIENT_ID) {
       console.error('GOOGLE AUTH ERROR: GOOGLE_CLIENT_ID is not set in server/.env');
-      return fail(res, 500, 'Google sign-in is not configured on the server.');
+      return fail(res, 503, 'Google sign-in is not configured on the server.'); // a setup gap, not a crash (as lib/googleProfile.js)
     }
 
     const ipKey = 'ip:' + req.ip;
@@ -150,7 +150,9 @@ router.post('/login', async (req, res) => {
 
     if (user.role === 'student') {
       const [[profile]] = await db.query('SELECT verification_status FROM student_profiles WHERE user_id = ?', [user.user_id]);
-      if (!profile || profile.verification_status === 'pending') return fail(res, 403, 'Your registration is waiting for an administrator to verify your COR.');
+      // 'pending' is from before 2026-11-23, when an unclear scan still made an account for an administrator to check. Nobody checks them now: the
+      // administrator removes the account in Users & Roles, and the student registers again with a clearer photo.
+      if (!profile || profile.verification_status === 'pending') return fail(res, 403, 'Your registration could not be verified. Ask the administrator to remove it, then register again with a clearer photo of your COR.');
       if (profile.verification_status === 'rejected') return fail(res, 403, 'Your registration was rejected. Contact the administrator.');
     }
 

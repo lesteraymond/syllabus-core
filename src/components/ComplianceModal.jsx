@@ -3,7 +3,7 @@ import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
 import ReportDrawer from './ReportDrawer';
 import ComplianceCard from '../views/ComplianceCard';
-import { isLocked, ringAngle, runState, stamp, tone } from '../lib/complianceView';
+import { isLocked, provisionalOf, ringAngle, runState, stamp, tone } from '../lib/complianceView';
 
 // One syllabus's stored compliance check, in a dialog: who and what it is, the score ring, the six areas, then the shared
 // ComplianceCard (recommendations, blockers, findings). It only displays, and only reads: a syllabus is checked once, from the picker,
@@ -14,6 +14,7 @@ export default function ComplianceModal({ syllabus, run, isLatest = true, error 
   const actionBusy = approving || editing;
   const state = runState(run);
   const t = state === 'scored' ? tone(run.overall, run.passThreshold) : 'none';
+  const provisional = provisionalOf(run); // an unfinished check shows its score so far, labelled provisional, as the card does
   const program = syllabus.programCode ? syllabus.programCode + (syllabus.programName ? ' · ' + syllabus.programName : '') : (syllabus.programName || 'No program');
   const title = syllabus.courseTitle || syllabus.title;
   const locked = isLocked(syllabus);
@@ -43,6 +44,8 @@ export default function ComplianceModal({ syllabus, run, isLatest = true, error 
           <div className="cm-score">
             {state === 'scored'
               ? <div className={'big-ring cm-ring ' + t} style={{ '--p': ringAngle(run.overall) }} role="img" aria-label={translateUI("ui.compliance_score_7a084d") + run.overall + translateUI("ui.percent_c72154") + tr(run.band)}><div><strong>{run.overall}%</strong><small>{tr(run.band)}</small></div></div>
+              : provisional
+              ? <div className="big-ring cm-ring provisional" style={{ '--p': ringAngle(provisional.score) }} role="img" aria-label={translateUI('hybrid.provisionalAria', { score: provisional.score })}><div><strong>{provisional.score}%</strong><small>{translateUI('hybrid.provisional')}</small></div></div>
               : <div className="big-ring cm-ring none" role="img" aria-label={translateUI("ui.no_score_yet_3662ab")}><div><strong>—</strong><small>{state === 'incomplete' ? translateUI('hybrid.incomplete') : state === 'insufficient' ? translateUI("ui.not_enough_content_1c0e67") : translateUI("ui.not_checked_22705e")}</small></div></div>}
             {run && (
               <div className="cm-areas">

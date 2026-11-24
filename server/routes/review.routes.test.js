@@ -72,20 +72,20 @@ const admin = { id: 1, role: 'admin', firstName: 'Ann', lastName: 'A' };
 const fay = { id: 5, role: 'faculty', firstName: 'Fay', lastName: 'F' };
 const gus = { id: 6, role: 'faculty', firstName: 'Gus', lastName: 'G' };
 
-test('faculty repository includes only their approved syllabi, while the workflow list retains every status', () => withServer(async ({ call, db }) => {
+test('the repository shows every approved syllabus to every role, while the workflow list retains every status', () => withServer(async ({ call, db }) => {
   for (const [i, status] of ['draft', 'submitted', 'under_review', 'for_revision', 'rejected', 'approved'].entries()) {
     db.s.syllabi[20 + i] = { ...db.s.syllabi[1], syllabus_id: 20 + i, status };
   }
   const repository = await call(fay, '/?scope=repository&status=submitted');
   assert.strictEqual(repository.status, 200);
-  assert.deepStrictEqual(repository.body.map(x => x.id), [25]);
-  assert.ok(repository.body.every(x => x.userId === fay.id && x.status === 'approved'));
+  const ids = (r) => r.body.map(x => x.id).sort((a, b) => a - b); assert.deepStrictEqual(ids(repository), [3, 4, 25]); // others' approved syllabi too
+  assert.ok(repository.body.every(x => x.status === 'approved'));
   const workflow = await call(fay, '/');
   assert.strictEqual(workflow.status, 200);
   assert.deepStrictEqual(new Set(workflow.body.map(x => x.status)), new Set(['draft', 'submitted', 'under_review', 'for_revision', 'rejected', 'approved']));
   db.s.syllabi[20].status = 'approved'; // the existing approval transaction changes the same record
-  assert.deepStrictEqual((await call(fay, '/?scope=repository')).body.map(x => x.id), [20, 25]);
-  assert.deepStrictEqual((await call(gus, '/?scope=repository')).body.map(x => x.id), [3, 4]);
+  assert.deepStrictEqual(ids(await call(fay, '/?scope=repository')), [3, 4, 20, 25]);
+  assert.deepStrictEqual(ids(await call(gus, '/?scope=repository')), [3, 4, 20, 25]);
   assert.strictEqual((await call(null, '/?scope=repository')).status, 401);
 }));
 

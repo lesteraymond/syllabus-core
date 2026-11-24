@@ -2,8 +2,23 @@ import { tr } from "../../i18n/index.js";
 import { t as translateUI } from "../../i18n/index.js";
 import { STEPS } from '../../lib/syllabusModel';
 import { MIN_NOTE } from '../../lib/syllabusRules';
+import { useEffect, useState } from 'react';
+import { syllabi as syllabiApi } from '../../lib/api';
 import FormPaper from './FormPaper';
 import ComplianceSection from './ComplianceSection';
+
+// The saved syllabus's sign-off dates (submitted, each review stage cleared, approved) for the form's sign-off block, read once per
+// syllabus. A new draft has none, and a failure (or a server without the review chain) leaves the block's lines saying "Date".
+function useSignoffs(syllabusId) {
+  const [signoffs, setSignoffs] = useState(null);
+  useEffect(() => {
+    if (!syllabusId) { setSignoffs(null); return undefined; }
+    let live = true;
+    syllabiApi.stages(syllabusId).then((r) => { if (live) setSignoffs(r && r.enabled ? r : null); }).catch(() => { if (live) setSignoffs(null); });
+    return () => { live = false; };
+  }, [syllabusId]);
+  return signoffs;
+}
 
 
 // Step 7: Review & Check. The compliance controls and a read-only rendering of the finished form.
@@ -11,6 +26,7 @@ import ComplianceSection from './ComplianceSection';
 export default function ReviewStep({ d, model, go, preparedBy, editable, noteRequired, note = '', setNote, syllabusId, saveFirst, canCheck, submitFailed, onRun, onApplyDraft, showCompliance = false, syllabusYear }) {
   const openStep = (key) => go(STEPS.findIndex((s) => s.key === key));
   const needNote = noteRequired && note.trim().length < MIN_NOTE;
+  const signoffs = useSignoffs(syllabusId);
   return (
     <>
     {submitFailed && submitFailed.length > 0 && (
@@ -28,7 +44,7 @@ export default function ReviewStep({ d, model, go, preparedBy, editable, noteReq
       </label>
     )}
     <div className="rv">
-      <div className="scroll"><FormPaper d={d} model={model} preparedBy={preparedBy} /></div>
+      <div className="scroll"><FormPaper d={d} model={model} preparedBy={preparedBy} signoffs={signoffs} /></div>
     </div>
     </>
   );

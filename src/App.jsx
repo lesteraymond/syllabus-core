@@ -24,6 +24,7 @@ import { commentNotificationIds, notificationTarget } from './lib/notificationRo
 import { canChat, partnerOf, threadTitle } from './lib/chatPartner';
 import { canDeleteSyllabus, canEditSyllabus, editBlockedReason } from './lib/syllabusRules';
 import { useNotificationPolling, usePeriodicRefresh } from './lib/usePolling';
+import { newArrivals, playChime, showDesktop, askPermissionOnFirstGesture } from './lib/desktopAlert';
 import { recordAvatar, seedAvatars } from './lib/avatarStore';
 import { useActiveTime } from './lib/useActiveTime';
 import AIChecker from './views/AIChecker';
@@ -40,9 +41,11 @@ import Settings from './views/Settings';
 import { StudentDashboard, StudentSyllabi } from './views/StudentViews';
 import SyllabusBuilder from './views/SyllabusBuilder';
 import UsersRoles from './views/UsersRoles';
+import AuditLog from './views/AuditLog';
 import SyllabusBuilderV2 from './views/builder2';
 import { AcademicYearContext, useAcademicYearScope } from './components/AcademicYearScope';
 import { groupOfPage } from './lib/academicYearScope';
+import { pageOfHash, routeOnLoad } from './lib/builderRoute';
 
 // The rebuilt syllabus builder (src/views/builder2) is behind a flag until it is approved: the current builder stays
 // the default. Set VITE_NEW_BUILDER=true in .env to use the rebuilt one.
@@ -98,24 +101,27 @@ export default function App() {
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [narrow, mobileNavOpen]);
-  // The screen is kept in the URL hash (#reports), so a refresh stays on it and Back/Forward move between screens. The builder is not restored (its
-  // draft lives in memory, so a refresh would open a blank one); an unknown or not-allowed hash falls back to the dashboard once the person is known.
-  const pageFromHash = () => {
-    let key = '';
-    try { key = decodeURIComponent(window.location.hash.replace(/^#\/?/, '')); } catch { /* malformed hash */ }
-    return key === 'builder' ? 'my-syllabi' : (navItems.some(([k]) => k === key) ? key : 'dashboard');
+  // The screen is kept in the URL hash (#reports), so a refresh stays on it and Back/Forward move between screens; an unknown or not-allowed hash
+  // falls back to the dashboard once the person is known. The builder keeps its work in the hash too (#builder?id=12&mode=upload&job=..., lib/builderRoute.js):
+  // a page LOAD reopens that draft or PDF import, while a bare #builder (a new builder with nothing saved, so a refresh would open a blank one) opens My Syllabi.
+  // Only a page LOAD does that. Opening the builder sets #builder itself, and that hash change must not close it again: before,
+  // every hash change did, so "New syllabus" and "Edit" closed the builder the moment it opened (E2E E02, 2026-11-20).
+  const loadRoute = useRef(null);
+  if (!loadRoute.current) loadRoute.current = routeOnLoad(window.location.hash);
+  const pageFromHash = ({ onLoad = false } = {}) => {
+    const key = onLoad ? loadRoute.current.page : pageOfHash(window.location.hash);
+    if (key === 'builder') return 'builder';
+    return navItems.some(([k]) => k === key) ? key : 'dashboard';
   };
-  const [page, setPage] = useState(pageFromHash);
-  const hashChecked = useRef(false);
+  const [page, setPage] = useState(() => pageFromHash({ onLoad: true }));
+  // Checked on every screen change, not only on load: typing #users into the address bar later must not open a screen the role has no access to.
   useEffect(() => {
-    if (!user || hashChecked.current) return;
-    hashChecked.current = true;
+    if (!user) return;
     const allowed = navItems.some(([k, , , r]) => k === page && (user.role === 'student' ? r === 'student' : r !== 'student' && roleAllows(r, user.role)));
     if (!allowed) setPage('dashboard');
   }, [user, page]);
-  useEffect(() => { if (!user) hashChecked.current = false; }, [user]);
   useEffect(() => {
-    if (!user || window.location.hash === '#' + page) return;
+    if (!user || pageOfHash(window.location.hash) === page) return; // the builder's own "?id=..." stays
     window.location.hash = page;
   }, [user, page]);
   useEffect(() => {
@@ -135,7 +141,10 @@ export default function App() {
   const [logs, setLogs] = useState([]);
   const [messages, setMessages] = useState([]);
   const [partners, setPartners] = useState({}); // syllabus id -> who the conversation is with (the server's answer)
-  const [editing, setEditing] = useState(null);
+  const [editing, setEditing] = useState(() => loadRoute.current.editing); // a draft named in the URL on load (lib/builderRoute.js)
+  // What the builder reopens after a refresh (its PDF import and scan). Used by the builder that opens on load only: gone once the person moves on.
+  const [builderRestore, setBuilderRestore] = useState(() => loadRoute.current.restore);
+  useEffect(() => { if (builderRestore && (page !== 'builder' || editing !== loadRoute.current.editing)) setBuilderRestore(null); }, [page, editing, builderRestore]);
   const [chatCode, setChatCode] = useState(null);
   const [histCode, setHistCode] = useState(null);
   const [viewCode, setViewCode] = useState(null); // the syllabus open in the reviewer's window
@@ -201,10 +210,23 @@ export default function App() {
     } catch (err) { console.error('Failed to fetch comment counts:', err); }
   }, []);
 
+  // A notification that arrives while the app is open chimes, and pops up on the desktop when the app is in the background (lib/desktopAlert.js).
+  const seenNotifications = useRef(null);
+  const openNotificationRef = useRef(null);
   const fetchNotifications = useCallback(async () => {
     try {
       const data = await notificationsApi.list();
       setNotifications({ items: data.notifications, unreadCount: data.unreadCount });
+      const { seen, fresh } = newArrivals(seenNotifications.current, data.notifications);
+      seenNotifications.current = seen;
+      if (fresh.length) {
+        playChime();
+        fresh.slice(0, 3).forEach((n) => showDesktop(n, {
+          title: tr(n.title),
+          body: n.body ? (['message', 'comment'].includes(n.type) ? n.body : tr(n.body)) : '',
+          onOpen: (x) => { if (openNotificationRef.current) openNotificationRef.current(x); },
+        }));
+      }
     } catch (err) { console.error('Failed to fetch notifications:', err); }
   }, []);
 
@@ -214,7 +236,7 @@ export default function App() {
       fetchLogs();
       fetchMessages();
       fetchNotifications();
-      if (user.role === 'faculty') fetchCommentCounts();
+      if (canAuthor(user.role)) fetchCommentCounts();
     }
   }, [user, fetchSyllabi, fetchLogs, fetchMessages, fetchNotifications, fetchCommentCounts]);
 
@@ -224,13 +246,14 @@ export default function App() {
   useEffect(() => { if (user && page === 'dashboard' && user.role !== 'student' && !user.mustChangePassword) fetchLogs(); }, [user, page, fetchLogs]);
   // The list says which submissions the administrator has checked: read it again when they open Review & Approval, so a check just made shows.
   useEffect(() => { if (user && isReviewer(user.role) && (page === 'review' || page === 'ai')) fetchSyllabi(); }, [user, page, fetchSyllabi]);
-  useEffect(() => { if (user && (page === 'my-syllabi' || page === 'generator')) { fetchSyllabi(); if (user.role === 'faculty') fetchCommentCounts(); } }, [user, page, fetchSyllabi, fetchCommentCounts]);
+  useEffect(() => { if (user && (page === 'my-syllabi' || page === 'generator')) { fetchSyllabi(); if (canAuthor(user.role)) fetchCommentCounts(); } }, [user, page, fetchSyllabi, fetchCommentCounts]);
 
   // Other people's new profile pictures arrive with the syllabus list and the message partners: read both again now and then, and when the tab comes back.
   usePeriodicRefresh(!!user && user.role !== 'student' && !user.mustChangePassword && !loggingOut, () => { fetchSyllabi(); fetchMessages(); });
   // Time in the system: a heartbeat while the tab is visible and the person is active (students have no dashboard and the server closes this to them).
   useActiveTime(!!user && user.role !== 'student' && !user.mustChangePassword && !loggingOut);
-  useNotificationPolling(!!user && !user.mustChangePassword && !loggingOut, () => { fetchMessages(); fetchNotifications(); fetchSyllabi(); if (user.role === 'faculty') fetchCommentCounts(); });
+  // Students have no messages, notifications or syllabus list on the staff API (server/index.js refuses them), so nothing is polled for them.
+  useNotificationPolling(!!user && user.role !== 'student' && !user.mustChangePassword && !loggingOut, () => { fetchMessages(); fetchNotifications(); fetchSyllabi(); if (canAuthor(user.role)) fetchCommentCounts(); });
 
   const handleLogin = async (email, pass, remember) => {
     try {
@@ -269,6 +292,7 @@ export default function App() {
       setMessages([]);
       setPartners({});
       setNotifications({ items: [], unreadCount: 0 });
+      seenNotifications.current = null; // the next person's existing notifications never chime
       setCommentCounts({});
       setPage('dashboard');
       setEditing(null);
@@ -330,28 +354,30 @@ export default function App() {
   };
 
   // Clicking a notification marks it read, then opens its chat or the page where the syllabus lives.
+  useEffect(() => askPermissionOnFirstGesture(), []);
   const openNotification = (n) => {
     markNotificationRead(n.id);
     const target = notificationTarget(n, user.role);
     if (target.kind === 'chat') { setChatCode(target.id); markRead(target.id); return; }
     if (target.kind === 'comments') { setCommentCode(target.id); return; }
+    if (target.kind === 'view') { setPage(target.page); setViewCode(target.id); return; } // the page it belongs to, with that syllabus open
     setPage(target.page);
   };
 
+  openNotificationRef.current = openNotification; // the desktop popup opens it too
   // Reading a syllabus's comments clears its badge now, and settles the bell's notifications about them.
   const clearCommentBadge = (id) => {
     setCommentCounts((c) => (c[id] && c[id].unread ? { ...c, [id]: { ...c[id], unread: 0 } } : c));
     commentNotificationIds(notifications.items, id).forEach((nid) => markNotificationRead(nid));
   };
 
-  const deleteThread = (code) => setMessages(ms => ms.filter(m => m.syllabusId !== Number(code)));
 
   const sendMsg = async (syllabusId, text) => {
     try {
       await messagesApi.send(syllabusId, text);
       const msgs = await messagesApi.list(syllabusId);
       setMessages(ms => [...ms.filter(m => m.syllabusId !== syllabusId), ...msgs]);
-    } catch (err) { console.error('Send failed:', err); }
+    } catch (err) { notify(translateUI('reviewChain.messageFailed', { reason: tr(err.message) })); } // say so: a refused message must not just vanish
   };
 
   const submitSyllabus = async (draft) => {
@@ -437,34 +463,38 @@ export default function App() {
     <div ref={languageShell} className="app-shell" data-sidebar-collapsed={sidebarCollapsed ? 'true' : 'false'} data-page={studentPage}>
       {!narrow && <Sidebar page={studentPage} setPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); }} nav={nav} collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(c => !c)} />}
       <main className="workspace" data-page={studentPage}>
-        <Topbar page={studentPage} onLogout={handleLogout} user={user} unread={unread} threads={threads} msgDrop={msgDrop} setMsgDrop={setMsgDrop} setChatCode={setChatCode} markRead={markRead} notify={notify} onAvatarChange={handleAvatarChange} notifications={notifications} onOpenNotification={openNotification} onMarkAllNotificationsRead={markAllNotificationsRead} />
+        <Topbar page={studentPage} onLogout={handleLogout} user={user} unread={unread} threads={threads} msgDrop={msgDrop} setMsgDrop={setMsgDrop} setChatCode={setChatCode} markRead={markRead} notify={notify} onAvatarChange={handleAvatarChange} notifications={notifications} onOpenNotification={openNotification} onMarkAllNotificationsRead={markAllNotificationsRead}
+          syllabi={syllabi} nav={nav} onOpenSyllabus={setViewCode} onGoPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); }} />
         {narrow && <MobileNav page={studentPage} setPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); setMobileNavOpen(false); }} nav={nav} open={mobileNavOpen} onToggle={() => setMobileNavOpen(o => !o)} />}
         <div className={`page-wrap ${page === 'dashboard' ? 'page-wrap-dashboard' : ''}`}>
+          <div key={studentPage} className="page-stage">
           {isStudent && studentPage === 'student-dashboard' && <StudentDashboard user={user} setPage={setPage} />}
           {isStudent && studentPage === 'student-syllabi' && <StudentSyllabi />}
           {!isStudent && (<>
 
           {page === 'dashboard' && <Dashboard setPage={setPage} user={user} syllabi={syllabi} logs={logs} onNewSyllabus={() => { setEditing(null); setPage('builder'); }} />}
           {page === 'builder' && canAuthor(user.role) && ((NEW_BUILDER || user.role === 'admin')
-            ? <SyllabusBuilderV2 key={editing ? editing.syllabusId : 'new'} editing={editing} user={user} notify={notify} setPage={setPage} onSubmitted={handleBuilderSubmitted} onOpenChecker={async (draftRef) => { await fetchSyllabi(); setEditing(draftRef); }} />
+            ? <SyllabusBuilderV2 key={editing ? editing.syllabusId : 'new'} editing={editing} restore={builderRestore} user={user} notify={notify} setPage={setPage} onSubmitted={handleBuilderSubmitted} onOpenChecker={async (draftRef) => { await fetchSyllabi(); setEditing(draftRef); }} />
             : <SyllabusBuilder notify={notify} onSubmit={submitSyllabus} editing={editing} setEditing={setEditing} />)}
           {page === 'my-syllabi' && canAuthor(user.role) && <MySyllabi syllabi={syllabi} user={user} messages={messages} commentCounts={commentCounts} setCommentCode={setCommentCode} setEditing={setEditing} setPage={setPage} setHistCode={setHistCode} setChatCode={setChatCode} handleDelete={handleDelete} setConfirm={setConfirm} notify={notify} />}
           {page === 'ai' && (isReviewer(user.role) || user.role === 'faculty') && <AIChecker user={user} syllabi={syllabi} editing={editing} setEditing={setEditing} setPage={setPage} notify={notify} onSubmitted={handleBuilderSubmitted} onApproved={async () => { await fetchSyllabi(); await fetchLogs(); notify(translateUI('publication.approvedRepository')); setEditing(null); setPage('my-syllabi'); }} onEditDraft={async id => { await syllabiApi.resumeDraft(id); setEditing({ syllabusId: id, status: 'draft' }); setPage('builder'); }} onChanged={fetchSyllabi} />}
-          {page === 'review' && <ReviewApproval syllabi={syllabi} user={user} setViewCode={setViewCode} setPage={setPage} />}
           {page === 'generator' && canAuthor(user.role) && <SyllabusGenerator user={user} syllabi={syllabi} editing={editing} setEditing={setEditing} setPage={setPage} onChanged={fetchSyllabi} />}
+          {page === 'review' && isReviewer(user.role) && <ReviewApproval syllabi={syllabi} user={user} setViewCode={setViewCode} setPage={setPage} />}
           {page === 'repository' && <Repository syllabi={syllabi} user={user} notify={notify} setHistCode={setHistCode} />}
-          {page === 'compliance' && <Compliance syllabi={syllabi} />}
-          {page === 'analytics' && <Analytics syllabi={syllabi} user={user} />}
+          {page === 'compliance' && user.role === 'admin' && <Compliance syllabi={syllabi} />}
+          {page === 'analytics' && <Analytics syllabi={syllabi} user={user} notify={notify} />}
           {page === 'reports' && <Reports syllabi={syllabi} user={user} notify={notify} />}
-          {page === 'users' && <UsersRoles notify={notify} onManageSubjects={() => setPage('courses')} />}
+          {page === 'users' && user.role === 'admin' && <UsersRoles user={user} notify={notify} onManageSubjects={() => setPage('courses')} />}
+          {page === 'audit-log' && user.role === 'admin' && <AuditLog user={user} notify={notify} />}
           {page === 'courses' && user.role === 'admin' && <CourseOutcomes notify={notify} onCatalogChanged={() => { fetchSyllabi(); fetchLogs(); fetchMessages(); fetchNotifications(); }} />}
           {page === 'settings' && <Settings user={user} notify={notify} onAvatarChange={handleAvatarChange} onProfileChange={handleProfileChange} language={language} languageBusy={languageBusy} onLanguageChange={changeLanguage} />}
           </>)}
+          </div>
         </div>
       </main>
-      {toast && <div className="toast">{tr(toast)}</div>}
-      {chatCode && <ChatModal code={chatCode} syllabi={syllabi} user={user} messages={messages} partner={partners[chatCode]} sendMsg={sendMsg} markRead={markRead} deleteThread={deleteThread} onClose={() => setChatCode(null)} />}
-      {histCode && <VersionHistoryModal syllabus={syllabi.find(s => s.id === histCode)} onClose={() => setHistCode(null)} />}
+      {toast && <div className="toast" role="status" aria-live="polite">{tr(toast)}</div>}
+      {chatCode && <ChatModal code={chatCode} syllabi={syllabi} user={user} messages={messages} partner={partners[chatCode]} sendMsg={sendMsg} markRead={markRead} onClose={() => setChatCode(null)} />}
+      {histCode && <VersionHistoryModal syllabus={typeof histCode === 'object' ? histCode : syllabi.find(s => s.id === histCode)} onClose={() => setHistCode(null)} />}
       {commentCode && (
         <SyllabusCommentsModal syllabus={syllabi.find((s) => s.id === commentCode)} viewerId={user.id} onClose={() => setCommentCode(null)}
           onRead={(id) => { clearCommentBadge(id); }} onReply={(id) => { setCommentCode(null); setChatCode(id); markRead(id); }} />
@@ -472,7 +502,7 @@ export default function App() {
       {viewCode && (() => {
         const open = syllabi.find((s) => s.id === viewCode);
         return (
-          <SyllabusViewModal key={viewCode} syllabusId={viewCode} avatarUrl={open ? open.ownerAvatarUrl : null} onClose={() => setViewCode(null)}
+          <SyllabusViewModal key={viewCode} syllabusId={viewCode} avatarUrl={open ? open.ownerAvatarUrl : null} clearedCount={open && open.stages ? open.stages.cleared : null} onClose={() => setViewCode(null)}
             aside={open ? <ReviewPanel key={viewCode} syllabus={open} user={user} messages={messages} handleStatus={handleStatus} handleClear={handleClear} sendMsg={sendMsg} markRead={markRead} onDecided={() => setViewCode(null)} onHistory={() => setHistCode(viewCode)} onOpenChecker={() => { setViewCode(null); setPage('ai'); }} /> : null} />
         );
       })()}

@@ -1,8 +1,17 @@
 // PDF import review helpers only; no checking/scoring or persistence.
 const text = value => String(value ?? '').trim();
 const codeKey = value => text(value).toUpperCase().replace(/[^A-Z0-9]/g, '');
-const titleKey = value => text(value).normalize('NFKC').toUpperCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
-const titleMatches = (a, b) => titleKey(a) === titleKey(b) || titleKey(a) === titleKey(text(b).replace(/\s*\([^()]+\)\s*$/, ''));
+// Course titles are compared ignoring case and punctuation, with "&" read as "and" and a numeral written either way
+// ("Physics II" = "Physics 2"). A trailing "(...)" on either title is optional, but not on both at once, so
+// "Physics (Lecture)" and "Physics (Laboratory)" stay different. The server's subject lookup uses this same comparison.
+const ROMAN = { I: '1', II: '2', III: '3', IV: '4', V: '5', VI: '6', VII: '7', VIII: '8', IX: '9', X: '10' };
+export const titleKey = value => text(value).normalize('NFKC').toUpperCase().replace(/&/g, ' AND ').replace(/[^\p{L}\p{N}]+/gu, ' ').trim()
+  .split(' ').map(word => ROMAN[word] ?? word).join(' ');
+const withoutNote = value => text(value).replace(/\s*\([^()]+\)\s*$/, '');
+export const titleMatches = (a, b) => {
+  const A = titleKey(a), B = titleKey(b);
+  return !!A && (A === B || A === titleKey(withoutNote(b)) || titleKey(withoutNote(a)) === B);
+};
 
 export function importIdentity(fields, meta, context, required = false) {
   const fail = reason => ({ ok: false, reason });
@@ -44,12 +53,18 @@ export function iloChunks(source) {
   const raw = String(source || '');
   // Labels may be inline, wrapped or unpunctuated. Bracket-only references such
   // as [ILO 1] on an exam row are not new labelled outcome statements.
-  const labels = [...raw.matchAll(/\b(?:I\s*LO|LO)\s*\d+(?:\s*[:.]|\s+(?=\p{L}))/giu)];
-  const starts = [0, ...labels.map(m => m.index)].filter((v,i,a)=>a.indexOf(v)===i);
+  const labels = [...raw.matchAll(/\b(?:I\s*LO|LO)\s*\d+(?:\s*[:.]|\s+(?=\p{L}))/giu)].map(m => m.index);
+  // Older syllabi list the course outcomes themselves in this column, one per line ("CLO4: Create Java applets ...").
+  // A line that opens with such a label, followed by its wording, is one outcome mapped to that CLO. A bare "CLO 1."
+  // on its own line is an annotation of the line above, not a new outcome.
+  for (const m of raw.matchAll(/(?:^|\n)([^\S\n]*CLO[^\S\n]*\d+[^\S\n]*[:.])[^\S\n]*(?=\p{L})/giu)) labels.push(m.index + m[0].indexOf(m[1]));
+  const starts = [0, ...labels].sort((a, b) => a - b).filter((v,i,a)=>a.indexOf(v)===i);
   const chunks = [];
   for (let i = 0; i < starts.length; i++) {
     const block = raw.slice(starts[i], starts[i+1] ?? raw.length).trim();
     if (!block) continue;
+    const cloLabel = block.match(/^CLO\s*(\d+)\s*[:.]/i);
+    if (cloLabel) { chunks.push({ text: block, ambiguous: false, clo: Number(cloLabel[1]) }); continue; }
     const refs = outcomeReferences(block, 'CLO').matches;
     const last = refs.at(-1);
     let end = last ? last.index + last[0].length : 0;

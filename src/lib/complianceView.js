@@ -119,7 +119,9 @@ export const isLocked = (row) => !!row && row.status === 'approved';
 // The checker's queue: a submitted syllabus the administrator has not checked yet (the run a faculty member's own submit stored is not
 // one: the list only carries the administrator's own checks), or whose check is out of date because a new version was submitted since.
 // Once it is checked it moves to the history; an approved one is final and lives in the Repository. An uploaded file belongs here too.
-export const needsCheck = (row) => !!row && !isLocked(row) && (!row.run || !!row.run.stale);
+// Sent back to the faculty member (for revision, or rejected): nothing to check until they submit again.
+export const isReturned = (row) => !!row && (row.status === 'for_revision' || row.status === 'rejected');
+export const needsCheck = (row) => !!row && !isLocked(row) && !isReturned(row) && (!row.run || !!row.run.stale);
 
 // Whether the check can be run now. A syllabus built in the form can. An uploaded file will be checked by matching it to the template,
 // which needs the AI service: until that is switched on it waits in the queue. This is the one place to change when it is.
@@ -206,4 +208,16 @@ export function groupByFacultyProgram(rows) {
       return { key: f.key, userId: f.userId, facultyName: f.facultyName, count: all.length, scored: scored.length, average: avgOf(scored.map((r) => r.run.overall)), programs };
     })
     .sort((a, b) => byText(a.facultyName, b.facultyName));
+}
+
+// One stored check in the history, in a word: 'good' (it met the pass line), 'warn' (below it) or 'none' (not scored). A check that is under an open record
+// review is not shown as meeting the standard: that score is history, not the syllabus's current standing.
+export const historyTone = (r) => (!r || !r.scored || r.overall === null || r.overall === undefined ? 'none' : r.passed && !r.recordReview ? 'good' : 'warn');
+
+// The numbers above the check history: how many checks are listed, and how many of them met the pass line or fell below it (a check that was not scored is in neither).
+export function historyTally(runs) {
+  const list = Array.isArray(runs) ? runs : [];
+  let meets = 0, below = 0;
+  for (const r of list) { const t = historyTone(r); if (t === 'good') meets += 1; else if (t === 'warn') below += 1; }
+  return { checked: list.length, meets, below };
 }

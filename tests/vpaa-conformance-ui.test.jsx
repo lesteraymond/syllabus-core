@@ -119,17 +119,47 @@ test('[VPAA-T5-UI-ROBUST] a missing run, an empty run and a run with no AI part 
   }
 });
 
-for (const language of ['en','tl']) test(`[VPAA-COMP-UI-${language}] existing report shows coverage and incomplete states in the selected language`, () => {
+for (const language of ['en','tl']) test(`[VPAA-COMP-UI-${language}] an incomplete report lists its AI questions as not answered, never as aligned, in the selected language`, () => {
   setLanguage(language);
-  const run = structuredClone(runs.failed), coverage = run.hybrid.ruleCoverage;
-  assert.ok(coverage && coverage.rules.length >= 47, 'the saved report carries evaluator receipts');
+  const run = structuredClone(runs.failed), coverage = run.hybrid.ruleCoverage, ai = coverage.aiQuestions;
+  assert.ok(coverage && coverage.rules.length >= 47, 'the saved report still carries the rule receipts (not shown)');
+  assert.ok(ai && ai.asked > 0, 'a report of the new AI Checker counts its AI questions');
   const shown = text(html(run));
-  assert.ok(shown.includes(t('hybrid.coverageStatus.NOT_CHECKED')));
-  assert.ok(shown.includes(t('hybrid.ruleCoverage', { verified: coverage.counts.verified, total: coverage.counts.catalogued })));
-  assert.ok(shown.includes('CUR-CODE') && shown.includes('AI-REQUIRED'), 'the fixed rules are listed');
-  assert.ok(!shown.includes('hybrid.coverageStatus.'), 'status translation keys never leak to faculty/admin');
+  assert.ok(shown.includes(t('hybrid.aiCoverageHeading', { answered: ai.answered, asked: ai.asked })));
+  for (const k of ai.byRelationship) assert.equal(k.passed, 0, k.relationship + ': nothing unanswered is counted as aligned');
+  assert.ok(!/hybrid\.(aiCoverage|aiQuestions)/.test(shown), 'translation keys never leak');
   assert.ok(!/Academic verdict/.test(shown), 'deprecated verdict panel stays hidden');
   assert.equal(run.overall, null, 'coverage cannot turn an incomplete check into a score');
+});
+
+// Check coverage shows only the AI questions counted by kind (owner, 2026-11-20); the rule-by-rule receipts stay in the report but are not listed.
+for (const language of ['en', 'tl']) test(`[COVERAGE-AI-ONLY-${language}] check coverage lists the AI questions by kind and no rule rows`, () => {
+  setLanguage(language);
+  const run = structuredClone(runs.scored), coverage = run.hybrid.ruleCoverage, ai = coverage.aiQuestions;
+  const markup = html(run), shown = text(markup);
+  assert.ok(markup.includes('data-testid="ai-coverage"'));
+  assert.ok(ai.asked > 0 && ai.answered === ai.asked, 'every question of the scored run was answered');
+  assert.ok(shown.includes(t('hybrid.aiCoverageHeading', { answered: ai.answered, asked: ai.asked })));
+  assert.ok(shown.includes(t('hybrid.aiCoverageScope')));
+  for (const k of ai.byRelationship) assert.ok(shown.includes(`${k.relationship} · ${t('hybrid.aiQuestionsRow', k)}`), k.relationship);
+  for (const id of ['CUR-CODE', 'AI-REQUIRED', 'T-09', 'C-04', 'CLO-COUNT', 'REF-RECENCY']) assert.ok(!shown.includes(id + ' ·'), id + ' is not listed');
+  assert.ok(!/hybrid\.(aiCoverage|aiQuestions|coverageStatus|reason)\./.test(shown) && !/hybrid\.aiCoverage/.test(shown), 'translation keys never leak');
+  const noAi = structuredClone(run); noAi.hybrid.ruleCoverage.aiQuestions = null;
+  assert.ok(!html(noAi).includes('data-testid="ai-coverage"'), 'a report without AI questions shows no list');
+});
+
+// The program's POs not linked to an EGA: a notice at the top of the report, for the administrator to act on; it blocks nothing.
+for (const language of ['en', 'tl']) test(`[PO-EGA-NOTICE-${language}] unlinked Program Outcomes are named at the top of the report, and no notice when all are linked`, () => {
+  setLanguage(language);
+  const run = structuredClone(runs.scored);
+  run.hybrid.ruleCoverage.posWithoutEga = [3, 5];
+  const markup = html(run), shown = text(markup);
+  assert.ok(markup.includes('data-testid="po-ega-unlinked"'));
+  assert.ok(shown.includes(t('hybrid.poEgaUnlinked', { list: '3, 5', count: 2 })));
+  assert.ok(!shown.includes('hybrid.poEgaUnlinked'), 'the translation key never leaks');
+  assert.ok(shown.includes(`${run.overall}%`), 'the score is still shown: nothing is blocked');
+  run.hybrid.ruleCoverage.posWithoutEga = [];
+  assert.ok(!html(run).includes('po-ega-unlinked'));
 });
 
 // Hardening: stale results are announced before the results they qualify, the budget notices say exactly what happened, and both panels use one vocabulary.
@@ -148,10 +178,8 @@ for (const language of ['en', 'tl']) test(`[HARDEN-BUDGET-${language}] budget no
   setLanguage(language);
   const base = structuredClone(runs.failed), rows = base.hybrid.ruleCoverage;
   const deferred = structuredClone(base); deferred.hybrid.ruleCoverage.budget = { planned: true, deferredOptional: 17, requiredIncomplete: false, exhausted: false, limits: { maxCostUsd: 10 } };
-  const target = deferred.hybrid.ruleCoverage.rules.find((r) => r.status === 'NOT_CHECKED' && r.namespace !== 'reserved'); target.reasonCode = 'budget_deferred';
   const a = html(deferred), at = text(a);
   assert.ok(a.includes('data-testid="budget-optional-deferred"') && at.includes(t('hybrid.budgetDeferred', { count: 17 })));
-  assert.ok(at.includes(t('hybrid.reason.budget_deferred')), 'the deferred rule says why it was not sent');
   assert.ok(!a.includes('budget-required-incomplete'));
   const incomplete = structuredClone(base); incomplete.hybrid.ruleCoverage.budget = { planned: true, deferredOptional: 0, requiredIncomplete: true, exhausted: true, stopReason: 'cost_budget', limits: { maxCostUsd: 3 }, advice: { estimatedRequiredCostUsd: 7.5, currentCapUsd: 3, options: ['raise_cost_cap', 'run_fewer_optional_checks'] } };
   const b = html(incomplete), bt = text(b);
@@ -162,18 +190,6 @@ for (const language of ['en', 'tl']) test(`[HARDEN-BUDGET-${language}] budget no
   assert.ok(rows.rules.length >= 47);
 });
 
-for (const language of ['en', 'tl']) test(`[HARDEN-VOCAB-${language}] a replaced rule is shown as replaced, and a rule that was not checked never reads as supported`, () => {
-  setLanguage(language);
-  const run = structuredClone(runs.failed);
-  const replaced = run.hybrid.ruleCoverage.rules.find((r) => r.ruleId === 'C-04');
-  assert.ok(replaced, 'C-04 is in the manifest'); replaced.reasonCode = 'replaced';
-  const shown = text(html(run));
-  assert.ok(shown.includes('C-04 · ' + t('hybrid.coverageStatus.REPLACED')), 'a rule replaced by an authorized alternative check says so instead of a bare Not checked');
-  const unchecked = run.hybrid.ruleCoverage.rules.filter((r) => r.status === 'NOT_CHECKED' && r.reasonCode !== 'replaced');
-  assert.ok(unchecked.length > 0, 'the AI-REQUIRED rule of a failed check is not checked');
-  for (const r of unchecked) assert.ok(shown.includes(`${r.ruleId} · ${t('hybrid.coverageStatus.NOT_CHECKED')}`), `${r.ruleId} stays Not checked`);
-  assert.ok(!unchecked.some((r) => shown.includes(`${r.ruleId} · ${t('hybrid.coverageStatus.PASS')}`)), 'a rule that was not checked is never shown as supported');
-});
 
 // A saved report of a syllabus under record review: its own score, read as history, and never offered as something to act on.
 const underReview = (code = 'po_mapping_remediation_required') => { const run = structuredClone(runs.scored); run.stale = true; run.hybrid = { ...run.hybrid, ready: false }; run.recordReview = { code, savedReady: true }; return run; };

@@ -6,12 +6,7 @@ require('dotenv').config();
 const mysql = require('mysql2/promise');
 
 async function migrate() {
-  const conn = await mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-  });
+  const conn = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
   const [found] = await conn.query(
     "SELECT 1 FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'syllabi' AND column_name = 'archived_at'");
   if (found.length) console.log('syllabi.archived_at already exists.');

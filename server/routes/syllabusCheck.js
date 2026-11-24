@@ -58,8 +58,17 @@ router.post('/references/:id/retire', requireAdmin, wrap(async (req, res) => {
 }));
 async function visibleRun(req) {
   const runId = id(req.params.id);
-  const [rows] = await req.app.locals.db.query('SELECT s.*, r.run_id FROM ai_check_runs r JOIN syllabi s ON s.syllabus_id = r.syllabus_id WHERE r.run_id = ?', [runId]);
-  if (!rows[0] || !canView(req.session.user, rows[0])) throw httpError(404, 'Check not found');
+  const [rows] = await req.app.locals.db.query('SELECT s.*, r.run_id, r.created_by AS run_created_by FROM ai_check_runs r JOIN syllabi s ON s.syllabus_id = r.syllabus_id WHERE r.run_id = ?', [runId]);
+  const me = req.session.user;
+  if (!rows[0] || !canView(me, rows[0])) throw httpError(404, 'Check not found');
+  // An author's own check of their draft is theirs alone, as in routes/compliance.js GET /compliance/runs/:runId (E2E report 2026-11-23, BUG-011);
+  // and a reviewer reaches a check only on a syllabus the lists show them (lib/reviewStages.js).
+  const author = rows[0].user_id;
+  if (author !== me.id && rows[0].run_created_by === author) throw httpError(404, 'Check not found');
+  // Nobody reads another person's check (2026-11-24): faculty, dean, Asst. VPAA, LIC Director and VPAA each reach only the checks they ran.
+  // A run stored before checks had an owner (created_by NULL) stays the author's.
+  if (rows[0].run_created_by == null ? author !== me.id : rows[0].run_created_by !== me.id) throw httpError(404, 'Check not found');
+  await require('../lib/reviewStages').assertReviewerMayOpen(req.app.locals.db, rows[0], me);
   const report = await readReport(req.app.locals.db, runId);
   if (!report) throw httpError(404, 'Hybrid report not found');
   return { runId, syllabus: rows[0], report };

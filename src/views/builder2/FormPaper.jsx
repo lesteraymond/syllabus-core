@@ -1,32 +1,41 @@
-import { GROUPS, PLAN_HEADINGS, renderMarkup } from '../../lib/syllabusModel';
-import { CURRENT_SCHOOL_YEAR, COLLEGE_NAME, INSTITUTION_NAME, INSTITUTION_ADDRESS } from '../../lib/schoolYear';
-import { STAGES, STAGE_LABELS } from '../../lib/roles';
+import { PLAN_HEADINGS, isCloTag, renderMarkup, gradeSubItems, finalRatingFraction, formulaBody, printedRefGroups, REFS_TITLE, MODIFICATIONS } from '../../lib/syllabusModel';
+import { CURRENT_SCHOOL_YEAR, COLLEGE_NAME, INSTITUTION_NAME, INSTITUTION_FORMER_NAME, INSTITUTION_ADDRESS } from '../../lib/schoolYear';
 import { phDate } from '../../lib/phTime';
 
 const html = (t) => ({ __html: renderMarkup(t) });
 
 // The finished form, read-only, laid out like the institutional form. All free text is escaped before the
-// light markup (bullets, bold) is applied. There is no revision date and no modifications checklist:
-// the system adds the revision date when the syllabus is approved. Reusable by the admin review.
-// `signoffs` ({ stages, approved }, from GET /api/syllabi/:id/stages) fills the sign-off block with the names and dates of the dean, the
-// Asst. VPAA and the LIC Director who checked it and of the VPAA who approved it; without it the block says the system adds them.
+// light markup (bullets, bold) is applied. Faculty fill in no revision date and no modifications checklist: the form prints the
+// blank Revision Date / Modifications box of the template, and the system writes the revision date (the approval date) once approved.
+// Reusable by the admin review.
+// `signoffs` ({ stages, approved, submitted }, from GET /api/syllabi/:id/stages) fills the sign-off block: the date it was submitted beside
+// the faculty member, and the names and dates of the dean, the Asst. VPAA and the LIC Director who checked it and of the VPAA who approved it.
+// Each date appears when that step happens; until then the line says "Date" and an unsigned name is a blank signature line.
+// The grading system and the sign-off block follow the printed form: numbered rows with the weight or formula on the right, the
+// Final Rating as a fraction, and Prepared / Checked and Reviewed (dean, Asst. VPAA, References Certified by the LIC Director) / Approved.
 export default function FormPaper({ d, model, preparedBy, signoffs = null }) {
   const selected = model.outcomesReady(d);
   const I = selected ? model.institutionFor(d) : { vision: '', mission: { lead: '', items: [] } };
   const egas = selected ? model.egaList(d) : []; // this program's own EGAs
   const pos = selected ? model.poList(d) : [];
   const f = model.formulas(d);
+  const frac = finalRatingFraction(d);
+  const stageSign = (stage) => {
+    const st = signoffs && signoffs.stages && signoffs.stages[stage];
+    return st && st.cleared ? { name: st.by, title: SIGN_TITLES[stage], at: st.at } : { name: '', title: SIGN_TITLES[stage] };
+  };
   const cloTags = (c) => { const e = c.egas.join('&'); const po = c.pos.join(', '); return (e ? '[EGA ' + e + '] ' : '') + (po ? '[PO ' + po + ']' : ''); };
-  const iloTags = (il) => il.tags.map((t) => { const i = model.tagInfo(d, t); return i.kind === 'clo' ? '[CLO' + i.no + ']' : '[' + i.label.replace(' ', '') + ']'; }).join(' ');
+  const iloTags = (il) => il.tags.filter(isCloTag).map((t) => '[CLO' + model.tagInfo(d, t).no + ']').join(' '); // an ILO prints its CLO only
   return (
     <div className="paper">
       <div className="paper-head">
         <img className="paper-logo" src="/lcup-logo.png" alt="LCUP logo" />
-        <div className="c"><b style={{ fontSize: 14 }}>{INSTITUTION_NAME}</b><br />{INSTITUTION_ADDRESS}</div>
+        <div className="c paper-letterhead"><span className="name">{INSTITUTION_NAME}</span><br />{INSTITUTION_FORMER_NAME}<br />{INSTITUTION_ADDRESS}</div>
         <img className="paper-logo paper-logo-wide" src="/testmark-logo.png" alt="Testmark logo" />
       </div>
-      <div className="c" style={{ marginTop: 8 }}><b>{'SCHOOL YEAR ' + CURRENT_SCHOOL_YEAR.label}</b><br /><b>{COLLEGE_NAME.toUpperCase()}</b></div>
-      <div className="kv2"><b>I.</b><b>COURSE CODE</b><span>:</span><span>{d.meta.code}</span></div>
+      <div className="c" style={{ marginTop: 6 }}><b>{'SCHOOL YEAR ' + CURRENT_SCHOOL_YEAR.label}</b></div>
+      <div className="c" style={{ margin: '10px 0 14px' }}><b>{COLLEGE_NAME.toUpperCase()}</b></div>
+      <div className="kv2"><b>I.</b><b>COURSE CODE</b><span>:</span><b>{d.meta.code}</b></div>
       <div className="kv2"><b>II.</b><b>COURSE TITLE</b><span>:</span><b>{d.meta.title}</b></div>
       <div className="kv2"><b>III.</b><b>COURSE DESCRIPTION</b><span>:</span><span /></div>
       {d.description.filter((x) => x.t.trim()).map((x) => <p key={x.id} className="typed-text" style={{ margin: '4px 0 4px 34px', textAlign: 'justify' }}>{x.t}</p>)}
@@ -60,35 +69,83 @@ export default function FormPaper({ d, model, preparedBy, signoffs = null }) {
               <td dangerouslySetInnerHTML={html(r.values)} />
             </tr>
           ))}
+          {/* VIII to X sit in bordered full-width rows joined to the bottom of the Learning Plan, as on the institutional form. */}
+          <tr className="paper-sec"><td colSpan={6}>
+            <div className="kv2"><b>VIII.</b><b>COURSE REQUIREMENTS</b><span>:</span><span /></div>
+            <ol style={{ margin: '2px 0 6px 34px', paddingLeft: 18 }}>{d.reqs.filter((r) => r.t.trim()).map((r) => <li key={r.id}>{r.t}</li>)}</ol>
+          </td></tr>
+          <tr className="paper-sec"><td colSpan={6}>
+            <div className="kv2"><b>IX.</b><b style={{ gridColumn: '2 / -1' }}>{REFS_TITLE}</b></div>
+            {printedRefGroups(d.refs).map((g) => (
+              <div key={g.key} style={{ margin: '0 0 6px 34px' }}>
+                <b>{g.letter + '. ' + g.title.toUpperCase()}</b>
+                {g.items.map((t, k) => <div key={k} style={{ margin: '2px 0 2px 14px' }}>{t}</div>)}
+              </div>
+            ))}
+          </td></tr>
+          <tr className="paper-sec"><td colSpan={6}>
+            <div className="kv2"><b>X.</b><b>GRADING SYSTEM</b><span>:</span><span /></div>
+            <table className="paper-grade"><tbody>
+              {d.grading.rows.map((r, i) => (
+                <tr key={r.id}>
+                  <td>{(i + 1) + '.'}</td>
+                  <td>{r.label}{gradeSubItems(r).map((s, k) => <div key={k}>{s}</div>)}</td>
+                  <td>{(Number(r.pct) || 0) + '%'}</td>
+                </tr>
+              ))}
+              <tr><td>{(d.grading.rows.length + 1) + '.'}</td><td>Term Grade</td><td>{formulaBody(f.term, 'Term Grade')}</td></tr>
+              <tr><td>{(d.grading.rows.length + 2) + '.'}</td><td>Final Rating</td><td>{frac
+                ? <span className="paper-frac"><span>{frac.num}</span><span>{frac.den}</span></span>
+                : formulaBody(f.final, 'Final Rating')}</td></tr>
+            </tbody></table>
+          </td></tr>
         </tbody>
       </table>
-      <div className="kv2"><b>VIII.</b><b>COURSE REQUIREMENTS</b><span>:</span><span /></div>
-      <ol style={{ margin: '2px 0 2px 34px', paddingLeft: 18 }}>{d.reqs.filter((r) => r.t.trim()).map((r) => <li key={r.id}>{r.t}</li>)}</ol>
-      <div className="kv2"><b>IX.</b><b>REFERENCES</b><span>:</span><span /></div>
-      {GROUPS.map(([key, title], gi) => {
-        const grp = d.refs[key];
-        return (
-          <div key={key} style={{ marginLeft: 34 }}>
-            <b>{String.fromCharCode(65 + gi) + '. ' + title.toUpperCase()}</b>
-            {grp.na ? <div className="m">Not applicable.</div> : grp.items.filter((r) => r.t.trim()).map((r) => <div key={r.id} style={{ margin: '2px 0' }}>{r.t}</div>)}
-          </div>
-        );
-      })}
-      <div className="kv2" style={{ marginTop: 10 }}><b>X.</b><b>GRADING SYSTEM</b><span>:</span><span /></div>
-      <div style={{ marginLeft: 34 }}>
-        {d.grading.rows.map((r, i) => <div key={r.id}>{(i + 1) + '. ' + r.label + '  ' + (Number(r.pct) || 0) + '%'}</div>)}
-        <div>{f.term.replace('Term Grade = ', 'Term Grade: ')}</div>
-        <div>{f.final.replace('Final Rating = ', 'Final Rating: ')}</div>
-      </div>
-      <table style={{ marginTop: 14 }}><tbody><tr>
-        <td>Prepared by:<br /><br /><b>{preparedBy}</b></td>
-        <td>Checked and Reviewed by:<br /><br />{signoffs && signoffs.stages && signoffs.stages.cleared > 0
-          ? STAGES.map((stage) => { const st = signoffs.stages[stage]; return <div key={stage}>{st.cleared ? <><b>{st.by}</b><br />{(stage === 'dean' ? 'Dean' : STAGE_LABELS[stage]) + ' - ' + (st.at ? phDate(st.at) : 'Date')}</> : <span className="m">{STAGE_LABELS[stage] + ' - pending'}</span>}</div>; })
-          : <b className="m">Added by the system on review</b>}</td>
-        <td>Approved by:<br /><br />{signoffs && signoffs.approved
-          ? <><b>{signoffs.approved.by}</b><br />{'Vice President for Academic Affairs - ' + (signoffs.approved.at ? phDate(signoffs.approved.at) : 'Date')}</>
-          : <b className="m">Added by the system on approval</b>}</td>
-      </tr></tbody></table>
+      <table className="paper-sign"><tbody>
+        <tr className="strip"><td colSpan={3} /></tr>
+        <tr>
+          <td>
+            <div>Prepared by:</div>
+            <SignLine name={preparedBy} title="Faculty" at={signoffs && signoffs.submitted ? signoffs.submitted.at : null} />
+          </td>
+          <td>
+            <div>Checked and Reviewed by:</div>
+            <SignLine {...stageSign('dean')} />
+            <SignLine {...stageSign('asst_vpaa')} />
+            <div className="sub-label">References Certified by:</div>
+            <SignLine {...stageSign('lic_director')} />
+          </td>
+          <td>
+            <div>Approved by:</div>
+            <SignLine name={signoffs && signoffs.approved ? signoffs.approved.by : ''} title={SIGN_TITLES.vpaa} at={signoffs && signoffs.approved ? signoffs.approved.at : null} />
+          </td>
+        </tr>
+      </tbody></table>
+      {/* The template's Revision Date / Modifications box, as wide as the sign-off block above it. Faculty fill in neither: the revision
+          date is the approval date, written once the syllabus is approved; the checklist stays blank as on the paper form. */}
+      <table className="paper-rev"><tbody>
+        <tr><td>{'Revision Date: '}{signoffs && signoffs.approved && signoffs.approved.at ? phDate(signoffs.approved.at) : ''}</td><td /></tr>
+        <tr>
+          <td>
+            <div>Modifications:</div>
+            <div className="list">{MODIFICATIONS.map((m) => <div key={m}>{'__' + m}</div>)}</div>
+          </td>
+          <td />
+        </tr>
+      </tbody></table>
+    </div>
+  );
+}
+
+// The titles printed under each name in the sign-off block, as on the institutional form.
+const SIGN_TITLES = { dean: 'Dean', asst_vpaa: 'Asst. Vice President for Academic Affairs', lic_director: 'LIC Director', vpaa: 'Vice President for Academic Affairs' };
+
+// One signature line: the name, bold and underlined, and the title and date under it. With no name yet, a blank line to sign on.
+function SignLine({ name, title, at = null }) {
+  return (
+    <div className="sign">
+      {name ? <b className="name">{name}</b> : <span className="name blank" aria-label={title + ' signature'} />}
+      <div>{title + ' - ' + (at ? phDate(at) : 'Date')}</div>
     </div>
   );
 }

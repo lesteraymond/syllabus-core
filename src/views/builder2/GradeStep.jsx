@@ -28,6 +28,8 @@ export default function GradeStep({ d, apply, model }) {
               <span className="mono">%</span>
             </span>
             <button type="button" className="ib del" aria-label={translateUI("ui.remove_component_200c43")} onClick={() => upd((x) => { x.rows.splice(i, 1); })}><Ic n="x" /></button>
+            {/* Optional: what the component includes, one per line; the form lists them under its label (Class Standing: Quizzes/Recitation, Seat Work). */}
+            <textarea className="cell" rows={r.items ? Math.min(5, String(r.items).split('\n').length) : 1} style={{ gridColumn: '2 / 5', resize: 'vertical', fontSize: 12.5 }} value={r.items || ''} placeholder={translateUI("ui.grade_includes_placeholder")} aria-label={(r.label || tr('Component')) + translateUI("ui.grade_includes_label")} onChange={(e) => { const v = e.target.value; upd((x) => { x.rows[i].items = v; }); }} />
           </div>
         ))}
       </div>

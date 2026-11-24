@@ -1,7 +1,7 @@
 require('dotenv').config();
 const mysql = require('mysql2/promise');
 async function main() {
-  const db = await mysql.createConnection({ host: process.env.DB_HOST, user: process.env.DB_USER, password: process.env.DB_PASS, database: process.env.DB_NAME });
+  const db = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
   try {
     for (const ddl of [...require('./compliance-ddl'), ...require('./syllabuscheck-ddl')]) await db.query(ddl);
     const [normalized] = await db.query(`UPDATE ai_check_runs r

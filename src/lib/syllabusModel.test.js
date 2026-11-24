@@ -135,12 +135,14 @@ test('an invalid PO is flagged, and an empty program says so', () => {
 
 test('plan issues: untagged ILO, orphan tag, unresolved tag, uncovered CLO', () => {
   const { d, c3 } = fixture();
-  d.plan[0].ilos.push(ilo('no tag'), ilo('', ['ega:1']));
-  d.plan[1].ilos[0].tags.push('po:88');
+  d.plan[0].ilos.push(ilo('no tag'), ilo('', ['clo:gone']), ilo('', ['ega:1']));
+  d.plan[1].ilos[0].tags.push('clo:gone', 'po:88');
   const t = M.issues(d, 'plan').map((i) => i.text).join('\n');
   assert.match(t, /Week 1, ILO3 has no CLO tag/);
   assert.match(t, /Week 1, ILO4 is tagged but has no text/);
-  assert.match(t, /Week 2-3, ILO1 has a tag that no longer resolves: PO 88/);
+  assert.doesNotMatch(t, /Week 1, ILO5/, 'an old EGA tag on a blank ILO is ignored');
+  assert.match(t, /Week 2-3, ILO1 has a tag that no longer resolves: CLO/);
+  assert.doesNotMatch(t, /PO 88/, 'an old PO tag on an ILO is ignored');
   assert.match(t, /CLO 3 is not covered by any ILO yet/);
   assert.ok(M.issues(d, 'plan').some((i) => i.clo === c3));
 });
@@ -189,25 +191,25 @@ test('all seven completion statuses follow required fields, revoke on incomplete
   d.reqs = ['Requirement A', 'Requirement B', 'Requirement C'].map(t => ({ id: newId(), t }));
   Object.values(d.refs).forEach(group => { group.na = true; });
   assert.deepEqual(M.stepStatuses(d, {}).statuses, Array(7).fill('done'));
-  const prereq = d.meta.prereq;
-  d.meta.prereq = '';
+  const lecture = d.meta.lecture;
+  d.meta.lecture = '';
   const incomplete = M.stepStatuses(d, { 0: 1, 6: 1 });
   assert.equal(incomplete.statuses[0], 'attn');
   assert.equal(incomplete.statuses[6], 'attn');
   assert.equal(incomplete.complete, false);
-  d.meta.prereq = prereq;
+  d.meta.lecture = lecture;
   assert.deepEqual(M.stepStatuses(d, { 0: 1, 6: 1 }).statuses, Array(7).fill('done'));
 });
 
 test('sequential step indicators do not check auto-loaded outcomes until earlier required fields are complete', () => {
   const { d } = fixture();
-  d.meta.prereq = '';
+  d.meta.lecture = '';
   assert.equal(M.stepStatuses(d).statuses[1], 'done', 'catalog outcomes are already valid');
   const faculty = M.stepStatuses(d, { 0: 1 }, { sequential: true });
   assert.equal(faculty.firstBlocked, 0);
   assert.deepEqual(faculty.statuses, ['attn', 'locked', 'locked', 'locked', 'locked', 'locked', 'locked']);
   assert.equal(faculty.statuses.filter(status => status === 'done').length, 0);
-  d.meta.prereq = 'None';
+  d.meta.lecture = '2';
   const unlocked = M.stepStatuses(d, { 0: 1 }, { sequential: true });
   assert.equal(unlocked.firstBlocked, 3);
   assert.deepEqual(unlocked.statuses.slice(0, 3), ['done', 'done', 'done']);
@@ -217,7 +219,7 @@ test('sequential step indicators do not check auto-loaded outcomes until earlier
   d.reqs = ['A', 'B', 'C'].map(t => ({ id: newId(), t }));
   Object.values(d.refs).forEach(group => { group.na = true; });
   assert.deepEqual(M.stepStatuses(d, {}, { sequential: true }).statuses, Array(7).fill('done'));
-  d.meta.prereq = '';
+  d.meta.lecture = '';
   assert.equal(M.stepStatuses(d, { 1: 1 }, { sequential: true }).statuses[1], 'locked', 'invalidating an earlier step removes later checks');
 });
 
@@ -391,12 +393,12 @@ test('every issue says whether it blocks and who must fix it; advice never block
   assert.equal(M.stepStatuses(d, {}).statuses[2], 'done');
 });
 
-test('step 1 blocks on an empty program, subject, prerequisite, units or description', () => {
+test('step 1 blocks on an empty program, subject, units or description, never on an empty prerequisite', () => {
   const e = emptyDraft(newId);
   assert.ok(blockingOf(M, e, 'info').some((t) => /Choose a program/.test(t)));
   e.meta.program = 'BSIT';
   assert.ok(blockingOf(M, e, 'info').some((t) => /Choose a subject/.test(t)));
-  assert.ok(blockingOf(M, e, 'info').some((t) => /Pre-requisite is empty/.test(t)));
+  assert.ok(!blockingOf(M, e, 'info').some((t) => /Pre-requisite/.test(t)));
   assert.ok(blockingOf(M, e, 'info').some((t) => /units/.test(t)));
   assert.ok(blockingOf(M, e, 'info').some((t) => /description paragraph/.test(t)));
   const { d } = fixture();
@@ -492,7 +494,7 @@ test('firstBlocked finds the first of steps 1 to 6 that still has a blocker; not
   assert.equal(M.firstBlocked(d), 5);
   d.reqs = [];
   assert.equal(M.firstBlocked(d), 3);
-  d.meta.prereq = '';
+  d.meta.lecture = '';
   assert.equal(M.firstBlocked(d), 0);
   assert.equal(M.stepStatuses(d, {}).complete, false);
 });
@@ -530,7 +532,7 @@ test('a mapped syllabus keeps its PO statements when it opens; a draft with no m
   const opened = withStandards(mapped, standards);
   assert.equal(opened.outcomes.pos[0].text, 'Old statement.', 'opening does not adopt'); assert.equal(opened.outcomes.vision, 'V', 'the vision still follows the subject');
   const tagged = { ...mapped, clos: [], plan: [{ ilos: [{ tags: ['po:1'] }] }] };
-  assert.equal(poReviewPending(tagged, standards), true, 'a learning plan tag is a mapping too');
+  assert.equal(poReviewPending(tagged, standards), false, 'an old PO tag on an ILO is not a mapping: only a CLO maps to a PO');
   const unmapped = { ...mapped, clos: [{ pos: [] }] };
   assert.equal(poReviewPending(unmapped, standards), false);
   assert.equal(withStandards(unmapped, standards).outcomes.pos[0].text, 'New statement.', 'a draft with no mappings fills in as before');

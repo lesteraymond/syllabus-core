@@ -29,6 +29,8 @@ export const KINDS = {
   generate: { icon: 'pencilRuler', tone: 'info', verb: 'generated an AI draft of' },
   // a sign-in that was refused, recorded on the account it was for
   login_failed: { icon: 'warning', tone: 'bad', verb: 'failed to sign in', account: true },
+  // a student's agreement to the registration Terms and Conditions, with the version agreed to (src/lib/corTerms.js)
+  terms_accept: { icon: 'shieldCheck', tone: 'info', verb: 'agreed to the registration Terms and Conditions', account: true },
   // the administrator's management of accounts: the subject is the account acted on
   user_create: { icon: 'usersThree', tone: 'info', verb: 'registered the account of', manages: true },
   user_credentials: { icon: 'envelope', tone: 'info', verb: 'sent new sign-in details to', manages: true },
@@ -70,6 +72,7 @@ export function describeActivity(log, index = 0, viewerId = null) {
     subject = ''; detail = '';
     note = (NOTES[action] && NOTES[action][notes]) || '';
     if (action === 'name_change') detail = notes; // "Old Name → New Name": names, not translated
+    if (action === 'terms_accept') detail = notes.split(' at ')[0]; // the version agreed to ("2026-11-24")
     if (action === 'photo_change') { verb = PHOTO_VERBS[notes] || verb; if (notes === 'remove_other') subject = String((log && log.courseCode) || '').trim() || 'another account'; }
   } else if (kind.manages) {
     subject = code || 'an account'; detail = ''; // the account's name, recorded at the time

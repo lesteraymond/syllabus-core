@@ -7,7 +7,7 @@ const SEMESTERS = ['1st Semester', '2nd Semester', 'Summer']; // Summer: some of
 const YEAR_LEVELS = [1, 2, 3, 4];
 const YEAR_LABEL = /^(\d{4})[–-](\d{4})$/;
 const TERM_COLUMNS = 'c.academic_year, c.semester, c.year_level, c.prerequisite';
-const NO_PREREQUISITE = 'None'; // what a syllabus shows for a subject without a pre-requisite
+const NO_PREREQUISITE = ''; // a subject without a pre-requisite shows a blank field
 
 // The label an academic year is stored under, built from its first year: 2027 -> "2027–2028" (en dash, as everywhere in the application).
 const labelOf = (startYear) => `${startYear}–${startYear + 1}`;

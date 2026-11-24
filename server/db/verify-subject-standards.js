@@ -5,7 +5,7 @@ const assert=require('node:assert/strict');
 const {loadCourse}=require('../lib/courses');
 const {blankStandards,updateStandards}=require('../lib/subjectStandards');
 async function main(){
- const conn=await mysql.createConnection({host:process.env.DB_HOST,user:process.env.DB_USER,password:process.env.DB_PASS,database:process.env.DB_NAME});
+ const conn=await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
  try{
   await conn.beginTransaction();
   const marker='T'+Date.now();

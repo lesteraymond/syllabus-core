@@ -10,12 +10,7 @@ const DRY = process.argv.includes('--dry-run');
 const KEY = 'unique_course_owner';
 
 async function migrate() {
-  const conn = await mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-  });
+  const conn = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
   try {
     const [exists] = await conn.query(
       "SELECT 1 FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'faculty_courses' AND INDEX_NAME = ? LIMIT 1", [KEY]);

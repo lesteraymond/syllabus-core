@@ -24,7 +24,7 @@ function validateData(data = programs) {
     for (const term of p.terms) {
       assert.equal(term.rows.reduce((sum, c) => sum + c.lecture + c.lab, 0), term.totalUnits, `${p.code}: term credit total`);
       for (const c of term.rows) {
-        assert.ok(c.code && c.title && c.prereq && c.sourceFile, `${p.code}: incomplete row`);
+        assert.ok(c.code && c.title && typeof c.prereq === 'string' && c.sourceFile, `${p.code}: incomplete row`);
         assert.ok([c.lecture, c.lab, c.lectureHours, c.labHours].every(n => Number.isFinite(n) && n >= 0));
         assert.ok(c.yearLevel >= 1 && c.yearLevel <= 4);
       }
@@ -64,7 +64,7 @@ async function seed() {
   const hashes = {};
   for (const file of programs.flatMap(p => p.files)) hashes[file] = crypto.createHash('sha256').update(await fs.readFile(path.join(root, 'reference-data', file))).digest('hex');
   for(const ref of Object.values(officialPoReferences.programs).filter(p=>p.sourceFile))hashes[ref.sourceFile]=crypto.createHash('sha256').update(await fs.readFile(path.join(root,ref.sourceFile))).digest('hex');
-  const db = await require('mysql2/promise').createConnection({ host: process.env.DB_HOST, user: process.env.DB_USER, password: process.env.DB_PASS, database: process.env.DB_NAME });
+  const db = await require('mysql2/promise').createConnection(require('../lib/dbConfig').resolveConnectionConfig());
   try {
     if (process.argv.includes('--verify')) { console.log(JSON.stringify(await verify(db), null, 2)); return; }
     const plan = programs.map(p => ({ program: p.code, year: p.curriculumYear, subjects: p.terms.flatMap(t => t.rows).length, units: p.totalUnits, outcomePolicy: p.code === 'BSIT-CYBERSECURITY' ? 'Inherit BSIT via the official versioned PO migration; never create a copy' : 'Fill missing official outcome sets only; preserve populated sets' }));

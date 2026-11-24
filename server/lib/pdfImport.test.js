@@ -92,8 +92,79 @@ test('malformed, oversized, excessive pages and no-section documents fail closed
 });
 test('timed-out worker is terminated before its evaluation slot can be reused', async () => {
   let terminated = false;
+  class WatchWorker extends EventEmitter {
+    constructor() { super(); setImmediate(() => { this.emit('message', { 'watch:require': ['pdfImport.worker.js'] }); this.emit('message', { fields: { code: 'X' }, pages: [] }); }); }
+    terminate() { return Promise.resolve(); }
+  }
+  assert.deepEqual(await extractPdf(pdfBytes(text), { WorkerClass: WatchWorker }), { fields: { code: 'X' }, pages: [] }, 'node --watch notices from the worker are skipped');
   class HangingWorker extends EventEmitter { terminate() { terminated = true; return Promise.resolve(); } }
   await assert.rejects(extractPdf(pdfBytes(text), { timeoutMs: 10, WorkerClass: HangingWorker }), /pdfImport.timeout/);
   assert.equal(terminated, true);
 });
+// Pages given as lists of lines; an empty list is a blank page.
+function multiPagePdf(pageLines) {
+  const objs = ['<< /Type /Catalog /Pages 2 0 R >>', null, '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>'];
+  const kids = [];
+  for (const lines of pageLines) {
+    const stream = lines.length ? 'BT /F1 11 Tf 40 750 Td 16 TL ' + lines.map(line => '(' + line.replace(/[\\()]/g, '\\$&') + ') Tj T*').join('\n') + ' ET' : '';
+    objs.push('<< /Length ' + Buffer.byteLength(stream) + ' >>\nstream\n' + stream + '\nendstream');
+    objs.push('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents ' + objs.length + ' 0 R >>');
+    kids.push(objs.length + ' 0 R');
+  }
+  objs[1] = '<< /Type /Pages /Kids [' + kids.join(' ') + '] /Count ' + kids.length + ' >>';
+  let out = '%PDF-1.7\n';
+  const offsets = [];
+  objs.forEach((o, i) => { offsets.push(out.length); out += (i + 1) + ' 0 obj\n' + o + '\nendobj\n'; });
+  const xref = out.length;
+  out += 'xref\n0 ' + (objs.length + 1) + '\n0000000000 65535 f \n' + offsets.map(o => String(o).padStart(10, '0') + ' 00000 n \n').join('');
+  return Buffer.from(out + 'trailer\n<< /Size ' + (objs.length + 1) + ' /Root 1 0 R >>\nstartxref\n' + xref + '\n%%EOF', 'latin1');
+}
+test('a blank page is skipped and reported instead of failing the whole import', async () => {
+  const result = await extractPdf(multiPagePdf([text.split('\n'), []]));
+  assert.equal(result.fields.code, 'MA 7');
+  assert.deepEqual(result.pages.map(p => [p.page, p.method, p.reason]), [[1, 'text', undefined], [2, 'skipped', 'blank']]);
+  await assert.rejects(extractPdf(multiPagePdf([[], []])), /pdfImport.unreadable/, 'a PDF with no readable page still fails');
+});
 module.exports = { pdfBytes, text };
+
+// One page; each entry [text, x, y] is drawn at its own spot (the matrix [a b c d] is applied to every entry).
+function placedPdf(entries, { rotate = 0, matrix = [1, 0, 0, 1] } = {}) {
+  const stream = entries.map(([line, x, y]) => `BT /F1 11 Tf ${matrix.join(' ')} ${x} ${y} Tm (${line.replace(/[\\()]/g, '\\$&')}) Tj ET`).join('\n');
+  const objs = ['<< /Type /Catalog /Pages 2 0 R >>', '<< /Type /Pages /Kids [4 0 R] /Count 1 >>', '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>',
+    `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] ${rotate ? `/Rotate ${rotate}` : ''} /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>`,
+    `<< /Length ${Buffer.byteLength(stream)} >>\nstream\n${stream}\nendstream`];
+  let out = '%PDF-1.7\n';
+  const offsets = [];
+  objs.forEach((o, i) => { offsets.push(out.length); out += `${i + 1} 0 obj\n${o}\nendobj\n`; });
+  const xref = out.length;
+  out += `xref\n0 ${objs.length + 1}\n0000000000 65535 f \n${offsets.map(o => `${String(o).padStart(10, '0')} 00000 n \n`).join('')}`;
+  return Buffer.from(`${out}trailer\n<< /Size ${objs.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`, 'latin1');
+}
+test('a landscape page made with /Rotate keeps its lines in reading order', async () => {
+  // Displayed 90 degrees clockwise: text drawn turned a quarter-turn the other way reads upright, each next line further along x.
+  const lines = text.split('\n').map((line, i) => [line, 40 + i * 16, 40]);
+  const result = await extractPdf(placedPdf(lines, { rotate: 90, matrix: [0, 1, -1, 0] }));
+  assert.equal(result.found.length, 10);
+  assert.equal(result.fields.code, 'MA 7');
+  assert.equal(result.fields.title, 'Differential Calculus');
+});
+test('a page with a little real text and no image keeps its text layer instead of being OCR\'d', async () => {
+  const result = await extractPdf(multiPagePdf([text.split('\n'), ['Prepared by: Juan Dela Cruz']]));
+  assert.deepEqual(result.pages.map(p => [p.page, p.method, p.confidence]), [[1, 'text', null], [2, 'text', null]]);
+});
+test('the CLO column ends at a learning-plan heading printed in two pieces', async () => {
+  const head = ['I. COURSE CODE: MA 7', 'II. COURSE TITLE: Differential Calculus', 'III. COURSE DESCRIPTION: Study limits.', 'IV. PRE-REQUISITE: Algebra', 'V. CREDIT UNITS: 3', 'VI. COURSE LEARNING OUTCOMES:']
+    .map((line, i) => [line, 40, 750 - i * 16]);
+  const outcomes = [['CLO1: Analyze a model.', 300, 640], ['CLO2: Design a filter.', 300, 624]];
+  const after = [['1 | Week one plan text | Signals', 300, 560], ['VIII. COURSE REQUIREMENTS: Reports', 40, 500], ['IX. REFERENCES: https://example.org', 40, 484], ['X. GRADING SYSTEM: Exams 100%', 40, 468]];
+  const split = await extractPdf(placedPdf([...head, ...outcomes, ['VII.', 40, 590], ['LEARNING PLAN', 100, 590], ...after]));
+  assert.equal(split.fields.clos, 'CLO1: Analyze a model.\nCLO2: Design a filter.');
+});
+test('a worker that keeps reporting pages is not cut off, but the overall limit still applies', async () => {
+  class SlowWorker extends EventEmitter {
+    constructor() { super(); let n = 0; const tick = setInterval(() => { if (++n < 8) this.emit('message', { progress: { page: n, pages: 8 } }); else { clearInterval(tick); this.emit('message', { fields: {}, pages: [] }); } }, 10); this.tick = tick; }
+    terminate() { clearInterval(this.tick); return Promise.resolve(); }
+  }
+  assert.deepEqual(await extractPdf(pdfBytes(text), { timeoutMs: 40, WorkerClass: SlowWorker }), { fields: {}, pages: [] });
+  await assert.rejects(extractPdf(pdfBytes(text), { timeoutMs: 40, maxMs: 30, WorkerClass: SlowWorker }), /pdfImport.timeout/);
+});

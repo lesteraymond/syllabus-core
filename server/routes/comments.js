@@ -26,6 +26,7 @@ async function loadVisible(db, me, id) {
   const [rows] = await db.query('SELECT syllabus_id, user_id, status, title, course_code FROM syllabi WHERE syllabus_id = ?', [id]);
   const syl = rows[0];
   if (!syl || !rules.canView(me, syl)) throw httpError(404, 'Syllabus not found');
+  await require('../lib/reviewStages').assertReviewerMayOpen(db, syl, me); // what the lists hide from this reviewer stays closed here too
   return syl;
 }
 
@@ -55,7 +56,8 @@ router.get('/comment-summary', requireAuth, async (req, res) => {
   try {
     const db = req.app.locals.db;
     const me = req.session.user;
-    if (me.role === 'admin') return res.json({ installed: await commentReads.isInstalled(db), counts: {} }); // reviewers write comments; they have none to read
+    // Counted on the person's OWN syllabi only, so this also serves the dean (an administrator who writes syllabi: E2E report 2026-11-23, BUG-021);
+    // the other reviewers write none, so they get an empty list.
     res.json(await commentReads.counts(db, me.id));
   } catch (err) { sendError(res, err); }
 });

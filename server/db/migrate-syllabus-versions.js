@@ -5,12 +5,7 @@ require('dotenv').config();
 const mysql = require('mysql2/promise');
 
 async function migrate() {
-  const conn = await mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-  });
+  const conn = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
 
   await conn.query(`CREATE TABLE IF NOT EXISTS syllabus_versions (
     version_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -31,7 +26,7 @@ async function migrate() {
 
   const [result] = await conn.query(`INSERT INTO syllabus_versions
       (syllabus_id, version_label, title, course_code, curriculum_id, file_path, status_at_save, note, created_by, created_at)
-    SELECT s.syllabus_id, COALESCE(NULLIF(s.version, ''), 'v1.0'), s.title, s.course_code, s.curriculum_id, s.file_path,
+    SELECT s.syllabus_id, COALESCE(NULLIF(s.version, ''), 'v1'), s.title, s.course_code, s.curriculum_id, s.file_path,
            s.status, 'Initial version', s.user_id, s.uploaded_at
     FROM syllabi s
     WHERE NOT EXISTS (SELECT 1 FROM syllabus_versions v WHERE v.syllabus_id = s.syllabus_id)`);

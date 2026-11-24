@@ -45,9 +45,12 @@ function candidateMessage({ system, subject, topics }) {
       books: `Up to ${MAX_BOOKS} real textbooks or reference books that fit the subject and its topics: "title" (the exact title as published), "firstAuthorSurname", "year" (of the edition you have in mind, preferring the last ${REFERENCE_RECENCY_YEARS} years). Widely used college books only.`,
       articles: `Up to ${MAX_ARTICLES} real peer-reviewed journal articles about teaching or applying the subject, preferring the last ${REFERENCE_RECENCY_YEARS} years: "title" (exact), "firstAuthorSurname", "year". Name an article only if you are sure it exists; otherwise leave it out.`,
     },
-    rules: ['Never invent a title or an author. If you are not sure a source exists, leave it out; fewer candidates is fine, and an empty list is fine.', 'No websites, standards or news.'],
+    rules: ['Never invent a title or an author. If you are not sure a source exists, leave it out; fewer candidates is fine, and an empty list is fine.', 'No websites, standards or news.',
+      ...(subject && subject.writeIn === 'Filipino' ? [FILIPINO_RULE] : [])],
   }) };
 }
+// A Filipino-language subject only: books in Filipino first (sent in the request's rules, so every other subject's request is unchanged).
+const FILIPINO_RULE = 'This is a Filipino-language subject: name books written in Filipino first (by Filipino scholars, from Philippine publishers such as university presses), with the title exactly as published in Filipino; English books on the same subject may follow. Journal articles may be from Philippine journals in Filipino or English.';
 
 // "Thomas H. Cormen" -> "Cormen, T. H."; null when it does not look like one person's name (the catalogue sometimes holds citations or organisations in the author field).
 function apaName(full) {
@@ -75,9 +78,19 @@ const ordinal = n => { if (!(n > 1)) return ''; const s = n % 100 >= 11 && n % 1
 const letters = text => clean(text).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '');
 
 // ---- books (Open Library) ----
-// The editions of the work: the newest English one with a year and a publisher. The work's own list of editions first (one request); the ISBNs the search returned, one by one, if that fails.
-async function editionsOf(doc, title, { fetchImpl, year }) {
-  const usable = (edition, published, publisher) => edition && (edition.languages || []).some(l => /\/eng$/.test(String(l && l.key))) && published && published <= year && publisher && titleMatch(title, edition.title); // a translation is not the book the author means
+// The languages an edition may be in. English for every subject (a translation is not the book the author means). A Filipino-language subject (Dalumat sa
+// Filipino, Panitikan ...: subject.writeIn "Filipino", 2026-11-21) also takes Filipino and Tagalog editions, and an edition the catalogue gives no language
+// for (Open Library often leaves it out for Philippine publishers); the title and the author must still match the catalogue's.
+const LANGUAGES = Object.freeze({ english: Object.freeze({ codes: ['eng'], unlisted: false }), filipino: Object.freeze({ codes: ['eng', 'fil', 'tgl'], unlisted: true }) });
+const languagesFor = subject => (subject && subject.writeIn === 'Filipino' ? LANGUAGES.filipino : LANGUAGES.english);
+const inLanguage = (edition, languages) => {
+  const keys = (edition.languages || []).map(l => String(l && l.key));
+  if (!keys.length) return languages.unlisted;
+  return keys.some(k => languages.codes.some(code => k.endsWith('/' + code)));
+};
+// The editions of the work: the newest one in an accepted language with a year and a publisher. The work's own list of editions first (one request); the ISBNs the search returned, one by one, if that fails.
+async function editionsOf(doc, title, { fetchImpl, year, languages = LANGUAGES.english }) {
+  const usable = (edition, published, publisher) => edition && inLanguage(edition, languages) && published && published <= year && publisher && titleMatch(title, edition.title);
   const found = [];
   try {
     const list = await getJson(`https://openlibrary.org${doc.key}/editions.json?limit=50`, fetchImpl);
@@ -91,7 +104,7 @@ async function editionsOf(doc, title, { fetchImpl, year }) {
 }
 
 // One book candidate -> { kind: 'book', parts, year, source, url } or { rejected: reason }. `parts` are the pieces the text is built from (so a corrected title can be put back in).
-async function verifyBook(candidate, { fetchImpl, year }) {
+async function verifyBook(candidate, { fetchImpl, year, languages = LANGUAGES.english }) {
   const title = clean(candidate && candidate.title), surname = clean(candidate && candidate.firstAuthorSurname);
   if (!title || !surname) return { rejected: 'no title or author' };
   const q = new URLSearchParams({ title: title.slice(0, 200), author: surname.slice(0, 60), limit: '5', fields: 'key,title,author_name,first_publish_year,isbn' });
@@ -100,7 +113,7 @@ async function verifyBook(candidate, { fetchImpl, year }) {
   if (!doc) return { rejected: 'not in the Open Library catalogue' };
   const names = (doc.author_name || []).map(apaName).filter(Boolean).slice(0, 6);
   if (!names.length || !(doc.author_name || []).some(a => clean(a).toLowerCase().includes(surname.toLowerCase()) && apaName(a))) return { rejected: 'the catalogue gives no clear author names' };
-  const editions = await editionsOf(doc, title, { fetchImpl, year });
+  const editions = await editionsOf(doc, title, { fetchImpl, year, languages });
   if (!editions.length) return { rejected: 'no edition with a year and a publisher' };
   const best = editions.sort((a, b) => b.published - a.published)[0]; // the newest edition
   const { title: bare, n } = editionOf(clean(best.edition.title).replace(/[.]+$/, '') + (best.edition.subtitle ? ': ' + clean(best.edition.subtitle).replace(/[.]+$/, '') : ''), best.edition.edition_name);
@@ -185,11 +198,11 @@ async function suggestReferences({ ask, system, subject, topics = [], fetchImpl 
   const seen = new Set(), unique = [];
   for (const c of [...books, ...articles]) { const key = c.kind + ':' + clean(c.title).toLowerCase(); if (!seen.has(key)) { seen.add(key); unique.push(c); } }
   const list = [...unique.filter(c => c.kind === 'book').slice(0, MAX_BOOKS), ...unique.filter(c => c.kind === 'article').slice(0, MAX_ARTICLES)];
-  const results = [], started = Date.now();
+  const results = [], started = Date.now(), languages = languagesFor(subject);
   for (let i = 0; i < list.length; i += CONCURRENCY) {
     if (i > 0 && Date.now() - started > BUDGET_MS) { results.push(...list.slice(i).map(c => ({ c, rejected: 'not looked up: the time for this step ran out' }))); break; }
     results.push(...await Promise.all(list.slice(i, i + CONCURRENCY).map(async c => {
-      try { return { c, ...(await (c.kind === 'article' ? verifyArticle : verifyBook)(c, { fetchImpl, year })) }; } catch (error) { return { c, rejected: 'lookup failed: ' + clean(error && error.message).slice(0, 100) }; }
+      try { return { c, ...(await (c.kind === 'article' ? verifyArticle : verifyBook)(c, { fetchImpl, year, languages })) }; } catch (error) { return { c, rejected: 'lookup failed: ' + clean(error && error.message).slice(0, 100) }; }
     })));
   }
   const confirmed = results.filter(r => r.parts);
@@ -204,4 +217,4 @@ async function suggestReferences({ ask, system, subject, topics = [], fetchImpl 
   return { items, articles: articlesOut, tooOld, checked: list.length, kept: items.length + articlesOut.length, rejected: results.filter(r => !r.parts).map(r => ({ title: clean(r.c.title).slice(0, 120), reason: r.rejected })) };
 }
 
-module.exports = { CROSSREF_BOOK_FIELDS, CROSSREF_ARTICLE_FIELDS, cleanPublisher, suggestReferences, newerBook, verifyBook, SCHOOL_LIMIT_YEARS, verifyArticle, textOf, sentenceCase, editionOf, ordinal, apaName, authorBlock, candidateMessage, SCHEMA, CASE_SCHEMA, MAX_BOOKS, MAX_ARTICLES, KEEP_BOOKS, KEEP_ARTICLES };
+module.exports = { CROSSREF_BOOK_FIELDS, CROSSREF_ARTICLE_FIELDS, cleanPublisher, suggestReferences, newerBook, verifyBook, SCHOOL_LIMIT_YEARS, verifyArticle, textOf, sentenceCase, editionOf, ordinal, apaName, authorBlock, candidateMessage, SCHEMA, CASE_SCHEMA, LANGUAGES, languagesFor, FILIPINO_RULE, MAX_BOOKS, MAX_ARTICLES, KEEP_BOOKS, KEEP_ARTICLES };

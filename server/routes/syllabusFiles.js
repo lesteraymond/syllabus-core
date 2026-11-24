@@ -4,6 +4,8 @@
 //   ...&download=1             sent as a download instead of opened in the browser
 // Uploaded files are private. There is no public /uploads folder: this route is the only way to a file, and it answers the same people who may read the
 // syllabus (lib/syllabusRules.js canView: its owner, and a reviewer once it is not a draft). Everyone else gets 404, signed-out callers 401.
+// A reviewer is also kept out of what the lists hide from them (lib/reviewStages.js assertReviewerMayOpen): the VPAA until the three stages clear
+// (409 STAGES_PENDING), and the dean's own syllabus until the dean sends it for review (409 not_sent_for_review).
 // The stored path (syllabi.file_path, syllabus_versions.file_path: "/uploads/<name>.pdf") is resolved by storedFile below, which never leaves the upload
 // folder, never reaches the old avatars folder, and only ever names a PDF.
 const path = require('path');
@@ -39,7 +41,8 @@ router.get('/:id/file', requireAuth, async (req, res) => {
     if (!Number.isInteger(id) || id <= 0) throw httpError(404, 'File not found');
     const [rows] = await db.query('SELECT syllabus_id, user_id, status, file_path FROM syllabi WHERE syllabus_id = ?', [id]);
     const syl = rows[0];
-    if (!syl || !rules.canView(req.session.user, syl)) throw httpError(404, 'File not found'); // never reveal it to non-participants
+    if (!syl || !rules.canReadApproved(req.session.user, syl)) throw httpError(404, 'File not found'); // never reveal it to non-participants
+    await require('../lib/reviewStages').assertReviewerMayOpen(db, syl, req.session.user); // what the lists hide from this reviewer stays closed here too (pre-deploy report M4)
 
     let stored = syl.file_path;
     if (req.query.version !== undefined) {
@@ -72,3 +75,4 @@ router.get('/:id/file', requireAuth, async (req, res) => {
 
 module.exports = router;
 module.exports.storedFile = storedFile;
+module.exports.frameAncestors = frameAncestors;

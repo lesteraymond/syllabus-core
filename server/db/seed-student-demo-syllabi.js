@@ -83,7 +83,7 @@ const stampYear = async (db, id, year) => { if (year) await db.query('UPDATE syl
 
 async function seedFaculty(email) {
   const model = await import(pathToFileURL(path.join(__dirname, '..', '..', 'src', 'lib', 'syllabusModel.js')).href);
-  const db = await mysql.createConnection({ host: process.env.DB_HOST, user: process.env.DB_USER, password: process.env.DB_PASS, database: process.env.DB_NAME });
+  const db = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
   try {
     const [[user]] = await db.query("SELECT user_id FROM users WHERE email = ? AND role = 'faculty'", [email]);
     if (!user) throw new Error(`No faculty account has the email ${email}.`);
@@ -97,10 +97,10 @@ async function seedFaculty(email) {
       if (have.length) continue;
       const course = await loadCourse(db, courseId);
       const content = JSON.stringify(await withMasters(db, sampleContent(model, course, inst)));
-      const [r] = await db.query("INSERT INTO syllabi (user_id, title, course_code, status, version, content, content_schema_version, content_updated_at, course_id) VALUES (?, ?, ?, 'draft', 'v1.0', ?, 3, NOW(), ?)",
+      const [r] = await db.query("INSERT INTO syllabi (user_id, title, course_code, status, version, content, content_schema_version, content_updated_at, course_id) VALUES (?, ?, ?, 'draft', 'v1', ?, 3, NOW(), ?)",
         [user.user_id, course.title.slice(0, 255), course.code, content, courseId]);
       await stampYear(db, r.insertId, year);
-      try { await db.query("INSERT INTO syllabus_versions (syllabus_id, version_label, title, course_code, status_at_save, note, content, created_by) VALUES (?, 'v1.0', ?, ?, 'draft', 'Sample syllabus for testing', ?, ?)", [r.insertId, course.title.slice(0, 255), course.code, content, user.user_id]); }
+      try { await db.query("INSERT INTO syllabus_versions (syllabus_id, version_label, title, course_code, status_at_save, note, content, created_by) VALUES (?, 'v1', ?, ?, 'draft', 'Sample syllabus for testing', ?, ?)", [r.insertId, course.title.slice(0, 255), course.code, content, user.user_id]); }
       catch (e) { if (!(e && (e.code === 'ER_NO_SUCH_TABLE' || e.code === 'ER_BAD_FIELD_ERROR'))) throw e; }
       added += 1;
     }
@@ -116,7 +116,7 @@ async function main() {
   const studentId = process.argv[2];
   if (!studentId) throw new Error('Give the student ID: npm run seed-student-demo-syllabi -- 23-3389-455');
   const model = await import(pathToFileURL(path.join(__dirname, '..', '..', 'src', 'lib', 'syllabusModel.js')).href);
-  const db = await mysql.createConnection({ host: process.env.DB_HOST, user: process.env.DB_USER, password: process.env.DB_PASS, database: process.env.DB_NAME, port: process.env.DB_PORT || 3306 });
+  const db = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
   try {
     const [[profile]] = await db.query('SELECT user_id FROM student_profiles WHERE student_id = ?', [studentId]);
     if (!profile) throw new Error(`No registered student has the ID ${studentId}.`);
@@ -131,10 +131,10 @@ async function main() {
       if (have.length) continue;
       const course = await loadCourse(db, courseId);
       const content = JSON.stringify(await withMasters(db, sampleContent(model, course, inst)));
-      const [r] = await db.query("INSERT INTO syllabi (user_id, title, course_code, status, version, content, content_schema_version, content_updated_at, course_id) VALUES (?, ?, ?, 'approved', 'v1.0', ?, 3, NOW(), ?)",
+      const [r] = await db.query("INSERT INTO syllabi (user_id, title, course_code, status, version, content, content_schema_version, content_updated_at, course_id) VALUES (?, ?, ?, 'approved', 'v1', ?, 3, NOW(), ?)",
         [author.user_id, course.title.slice(0, 255), course.code, content, courseId]);
       await stampYear(db, r.insertId, year);
-      try { await db.query("INSERT INTO syllabus_versions (syllabus_id, version_label, title, course_code, status_at_save, note, content, created_by) VALUES (?, 'v1.0', ?, ?, 'approved', 'Sample syllabus for testing the student view', ?, ?)", [r.insertId, course.title.slice(0, 255), course.code, content, author.user_id]); }
+      try { await db.query("INSERT INTO syllabus_versions (syllabus_id, version_label, title, course_code, status_at_save, note, content, created_by) VALUES (?, 'v1', ?, ?, 'approved', 'Sample syllabus for testing the student view', ?, ?)", [r.insertId, course.title.slice(0, 255), course.code, content, author.user_id]); }
       catch (e) { if (!(e && (e.code === 'ER_NO_SUCH_TABLE' || e.code === 'ER_BAD_FIELD_ERROR'))) throw e; } // before the versions migration: the syllabus alone is enough
       added += 1;
     }

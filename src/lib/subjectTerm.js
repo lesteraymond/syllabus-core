@@ -8,7 +8,7 @@ export const emptyTerm = () => ({ academicYear: '', semester: '', yearLevel: '',
 export const termFrom = (term) => (term ? { academicYear: term.academicYear || '', semester: term.semester || '', yearLevel: term.yearLevel == null ? '' : String(term.yearLevel), prerequisite: term.prerequisite || '' } : emptyTerm());
 // The pre-requisite is optional: many subjects have none (the syllabus then shows NO_PREREQUISITE).
 export const termComplete = (value) => !!(value && value.academicYear && value.semester && YEAR_LEVELS.includes(Number(value.yearLevel)));
-export const NO_PREREQUISITE = 'None';
+export const NO_PREREQUISITE = ''; // a subject without a pre-requisite shows a blank field
 export const termSet = (term) => !!(term && (term.academicYear || term.semester || term.yearLevel != null || term.prerequisite));
 // What the API wants: the four fields, the year level as a number.
 export const termBody = (value) => ({ academicYear: value.academicYear, semester: value.semester, yearLevel: Number(value.yearLevel), prerequisite: String(value.prerequisite || '').trim() });

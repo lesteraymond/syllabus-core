@@ -4,16 +4,39 @@ The builder's upload tab now imports a PDF into the structured form. It does not
 submit a file, approve a syllabus, or invoke an alignment provider. Existing
 PDF-only records and their historical file checks are unchanged.
 
-1. Choose an assigned subject in the form.
-2. Open **Upload a file instead**, select a PDF, and choose **Scan PDF and preview**.
+1. Open **Upload a file instead**, select a PDF, and choose **Scan PDF and preview**.
+   A subject does not have to be chosen first: when none is chosen, the PDF's
+   course code and title pick the one assigned subject they match.
+2. The **Template check** runs on the preview: every section I to X must be filled;
+   only IV. Pre-requisite may be empty (`src/lib/pdfTemplateScan.js`). Placeholder
+   text (TBA, N/A, -) counts as empty. An empty pre-requisite imports as "None".
 3. Review the editable sections and source text. Correct OCR errors and table
    boundaries. Confirm that replacing the corresponding draft sections is intended.
-4. Choose **Apply and AI CHECK**. The existing draft save must succeed before
-   exactly one request is made to the existing checker endpoint. The builder then
-   opens Review & Check with the stored report and any AI Recommendations.
-5. Complete remaining fields, mappings, reference groups and units when flagged,
-   and click **AI CHECK** again explicitly when ready. Recommendation acceptance,
-   submission gates, ownership checks and the subject lock apply normally.
+4. Choose **Apply and check with AI** or **Apply and submit directly**. Both save
+   the draft first and open the Review step. Apply is refused while a required
+   section is empty, the course code differs, or a CLO names a PO or EGA number
+   that neither list has.
+5. Complete remaining fields, mappings, reference groups and units when flagged.
+   Recommendation acceptance, submission gates, ownership checks and the subject
+   lock apply normally.
+
+## A refresh does not lose the scan (since 2026-11-24)
+
+The builder gives each scan an id of its own and keeps it in the URL
+(`#builder?id=12&mode=upload&job=…`, `src/lib/builderRoute.js`). The server
+records the scan under the person who started it (`server/lib/pdfImportJobs.js`).
+After a browser refresh the builder reopens the upload tab and asks for that job
+(`src/lib/pdfImportResume.js`): a running scan is waited for, and a finished one
+hands back its preview and the PDF without uploading or scanning again.
+
+- `GET /api/syllabi/pdf-import/job/:job` answers `{ state: 'running' | 'done' | 'failed', kind, file }`,
+  with `result` when done or `status` and `error` when it failed. A finished scan
+  is checked again against the syllabus as it is now (a draft created or locked
+  since then changes the answer).
+- `GET /api/syllabi/pdf-import/job/:job/file` returns that scan's PDF to its owner only.
+- Jobs are kept in memory, never on disk: one per person (a new scan replaces the
+  last), dropped 30 minutes after they end. A server restart forgets them, and the
+  builder then says the scan was interrupted.
 
 ## Architecture
 
@@ -26,9 +49,16 @@ never written under public `/uploads`. The route performs no database mutations.
 `server/lib/pdfImport.js` validates actual PDF bytes and runs extraction in a
 bounded worker. PDF.js handles embedded text; scanned pages are rendered with
 `@napi-rs/canvas` and read by Tesseract using the installed English language data.
-No provider key or network OCR service is needed. Imports are serialized per API
-application, limited to five attempts per user per ten minutes, 10 MB, 30 pages,
-180,000 extracted characters and two minutes. Worker V8 heap is limited to 256 MB;
+No provider key or network OCR service is needed. Up to two imports run at once
+per API application (`SYLLABUS_PDF_IMPORT_CONCURRENCY`, 1 to 8) and each person
+runs one at a time. Imports are limited to five attempts per user per ten minutes,
+10 MB, 30 pages and 180,000 extracted characters. The upload is received before a
+rate-limit or import slot is taken, and receiving is cut off after 30 seconds. The
+worker reports each page it starts: an import stops when one page takes over two
+minutes or the whole import over nine (the browser waits up to ten). OCR runs only
+on a page with almost no text that shows an image, or no text at all, and replaces
+the existing text only when it reads clearly more. A blank or unreadable page is
+skipped and reported instead of failing the import. Worker V8 heap is limited to 256 MB;
 OCR images are capped near five million pixels. Unreadable pages, very low OCR
 confidence, malformed/encrypted files and timeouts fail without creating a draft
 or report. The extracted text is user content and is rendered as text, not HTML.
@@ -92,7 +122,18 @@ Recovered plans appear as six editable columns with source-page labels. Applying
 uses these same structured cells, so mathematical `|` characters and line breaks
 cannot shift columns. Faculty can add/remove/correct rows before confirmation.
 PDFs without reliable grid boundaries fall back to the editable source text with
-a warning and retain the complete extraction for comparison. Extraction cannot
+a warning and retain the complete extraction for comparison.
+
+Template variants the reader handles (2026-11-21 to 2026-11-23): headings with
+extra spaces or tabs, a missing space after the numeral, a stray numeral before a
+heading ("I. V. CREDIT UNITS"), and the spellings CREDIT UNIT, PRE-REQUISITE(S) and
+SUGGESTED REFERENCES; credit units with lecture and laboratory in any order;
+landscape pages rotated with `/Rotate` (read by displayed position); the sign-off
+block and lone page numbers kept out of the last sections; "Passing Grade: 50%"
+not read as a grading component; references by multi-word surnames, organisations
+and "Park J. et. Al., (2023)" style authors starting a new citation; a week number
+printed below a page break; and plan outcome columns that list "CLO n:" lines.
+Course titles match across "&"/"and", "II"/"2" and an optional trailing "(...)". Extraction cannot
 guarantee every possible layout: ambiguous or missing data still requires review,
 and extraction itself never produces an AI score.
 

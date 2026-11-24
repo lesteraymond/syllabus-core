@@ -14,7 +14,7 @@ test('all 243 source subjects match every printed term and program unit total', 
 });
 test('source blank prerequisites, practical hours and source code punctuation are preserved', () => {
   const ie = programs.find(p => p.code === 'BSIE').terms.flatMap(t => t.rows);
-  assert.equal(ie.find(c => c.code === 'MA 7').prereq, BLANK);
+  assert.equal(ie.find(c => c.code === 'MA 7').prereq, ''); // a blank cell is stored empty (no pre-requisite)
   assert.equal(ie.find(c => c.code === 'MA 7').rawPrerequisite, '');
   const practicum = ie.find(c => c.code === 'IE-PRAC');
   assert.equal(practicum.lectureHours, 240);

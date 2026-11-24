@@ -70,10 +70,13 @@ export function toBuilderShape(s) {
 // Approval is a separate administrator decision after reading a completed check of their own draft.
 // `gate` is the server's AI policy. 'required' (the default until it is known) needs a completed AI check; 'advisory' lets the
 // administrator decide after reading a current check of this draft, as long as no coded hard gate fails.
-export function canApproveAdminDraft(user, syllabus, run, isLatest = true, gate = 'required') {
-  const mine = !!(user?.role === 'admin' && syllabus?.userId === user.id && syllabus.status === 'under_review'
+// `aiOff`: the administrator turned AI checking off in Settings, so no AI check can finish and none is required (the server's rule too, routes/syllabusContent.js).
+// A syllabus already sent for review (`sent`: the dean stage is cleared on its newest version) is with the other reviewers and is not sent again.
+export const sentForReview = (syllabus) => !!(syllabus && syllabus.stages && syllabus.stages.dean && syllabus.stages.dean.cleared);
+export function canApproveAdminDraft(user, syllabus, run, isLatest = true, gate = 'required', { aiOff = false } = {}) {
+  const mine = !!(user?.role === 'admin' && syllabus?.userId === user.id && syllabus.status === 'under_review' && !sentForReview(syllabus)
     && isLatest && run?.id && run.syllabusId === syllabus.syllabusId && run.createdBy === user.id);
-  if (gate === 'advisory') return mine && !run.stale && hardGatesOf(run).length === 0;
+  if (gate === 'advisory' || aiOff) return mine && !run.stale && hardGatesOf(run).length === 0;
   return !!(mine && run.status === 'scored' && run.conformant && !run.stale && run.aiStatus === 'ok'
     && run.hybrid?.ready && run.hybrid.alignment?.status === 'completed');
 }

@@ -5,8 +5,9 @@ import { useState } from 'react';
 import { Icon } from '../components/ui';
 import ChatThread from '../components/ChatThread';
 import CommentsThread from './CommentsThread';
-import { CLEAR, DECISIONS, canApprove, canClearStage, canDecide, checkDecision, decisionKeysFor, openStages } from '../lib/reviewView';
-import { STAGES, STAGE_LABELS, isApprover } from '../lib/roles';
+import { CLEAR, DECISIONS, canApprove, canClearStage, canDecide, canReturnNow, checkDecision, decisionKeysFor, isMyTurn, openStages } from '../lib/reviewView';
+import { STAGE_LABELS, isApprover, stageOf } from '../lib/roles';
+import ReviewProgress from '../components/ReviewProgress';
 import { STATUS_LABELS } from '../lib/syllabusRules';
 
 // Each decision is drawn with the system button that already says what it is: success (go ahead), outline (send back), danger (close).
@@ -22,8 +23,11 @@ export default function ReviewPanel({ syllabus, user, messages, handleStatus, ha
   const [problem, setProblem] = useState('');
   const [busy, setBusy] = useState(false);
   const unchecked = !!syllabus.awaitingAiCheck; // not checked in the AI Checker yet: the server refuses a decision until it is
-  const decidable = canDecide(syllabus.status) && !unchecked;
   const approver = isApprover(user.role);
+  // The chain goes in order (dean, Asst. VPAA, LIC Director, then the VPAA): a stage reviewer acts only on their turn, and reads it otherwise.
+  const ownTurn = isMyTurn(user.role, syllabus);
+  const waitingOnEarlier = !approver && !!stageOf(user.role) && canDecide(syllabus.status) && !ownTurn && !syllabus.myStageCleared;
+  const decidable = canDecide(syllabus.status) && !unchecked && canReturnNow(user.role, syllabus);
   const clearable = canClearStage(user.role, syllabus, user.id);
   const approvable = canApprove(user.role, syllabus);
   const stillOpen = openStages(syllabus);
@@ -45,7 +49,10 @@ export default function ReviewPanel({ syllabus, user, messages, handleStatus, ha
     setConfirming(null); // handleStatus and handleClear already told the reviewer what went wrong
     if (ok && !clearing && onDecided) onDecided(); // a decision closes the window; clearing a stage leaves it open to show the stages
   };
-  const tabs = [['decision', 'Decision', 'sealCheck'], ['comments', 'Comments', 'notePencil'], ['messages', 'Messages', 'chatText']];
+  // Messages are between the syllabus owner and the dean (an administrator) only (server/routes/messages.js): the Asst. VPAA, the LIC Director and the VPAA
+  // write in Comments instead, and the dean has no conversation with themselves.
+  const canMessage = user.role === 'admin' && syllabus.userId !== user.id;
+  const tabs = [['decision', 'Decision', 'sealCheck'], ['comments', 'Comments', 'notePencil'], ...(canMessage ? [['messages', 'Messages', 'chatText']] : [])];
 
   return (
     <div className="rp">
@@ -60,18 +67,12 @@ export default function ReviewPanel({ syllabus, user, messages, handleStatus, ha
 
       {tab === 'decision' && (
         <div className="rp-pane">
-          {syllabus.stages && (
-            <ol className="rp-stages" aria-label={translateUI('reviewChain.stagesLabel')}>
-              {STAGES.map((stage) => {
-                const st = syllabus.stages[stage];
-                return (
-                  <li key={stage} className={st.cleared ? 'cleared' : ''}>
-                    <Icon name={st.cleared ? 'checkCircle' : 'hourglassMedium'} size={18} />
-                    <span><strong>{tr(STAGE_LABELS[stage])}</strong><small>{st.cleared ? st.by : translateUI('reviewChain.open')}</small></span>
-                  </li>
-                );
-              })}
-            </ol>
+          {syllabus.stages && <ReviewProgress stages={syllabus.stages} status={syllabus.status} decision={syllabus.decision} />}
+          {waitingOnEarlier && (
+            <div className="info-banner" role="status" data-testid="waiting-turn"><span>{translateUI('reviewChain.waitingTurn', { stage: tr(STAGE_LABELS[syllabus.turn] || syllabus.turn) })}</span></div>
+          )}
+          {!approver && stageOf(user.role) && canDecide(syllabus.status) && syllabus.myStageCleared && (
+            <div className="info-banner" role="status" data-testid="passed-on"><span>{translateUI('reviewChain.passedOn')}</span></div>
           )}
           {approver && decidable && stillOpen.length > 0 && (
             <div className="info-banner warning" role="status"><span>{translateUI('reviewChain.waitingFor', { stages: stillOpen.map((s) => tr(STAGE_LABELS[s])).join(', ') })}</span></div>
@@ -82,10 +83,7 @@ export default function ReviewPanel({ syllabus, user, messages, handleStatus, ha
               {onOpenChecker && <StableButton type="button" className="btn outline" onClick={onOpenChecker}>{translateUI("ui.open_the_ai_checker_ea8956")}</StableButton>}
             </div>
           )}
-          {syllabus.reviewedWithoutAi && decidable && (
-            <div className="info-banner" role="note" data-testid="reviewed-without-ai"><span>{translateUI('aiChoice.panelNote')}</span>{onOpenChecker && <StableButton type="button" className="btn outline" onClick={onOpenChecker}>{translateUI("ui.open_the_ai_checker_ea8956")}</StableButton>}</div>
-          )}
-          {!decidable && !unchecked && (
+          {!canDecide(syllabus.status) && !unchecked && (
             <p className="rp-status done">
               <Icon name="checkCircle" size={20} />
               <span>{translateUI("ui.this_syllabus_is_b75bb9") + tr(STATUS_LABELS[syllabus.status] || syllabus.status).toLowerCase() + translateUI("ui.there_is_nothing_to_decide_e4fd66")}</span>
@@ -126,7 +124,7 @@ export default function ReviewPanel({ syllabus, user, messages, handleStatus, ha
 
       {tab === 'comments' && <div className="rp-pane"><CommentsThread syllabusId={syllabus.id} canWrite /></div>}
 
-      {tab === 'messages' && (
+      {tab === 'messages' && canMessage && (
         <div className="rp-pane rp-chat">
           <ChatThread code={syllabus.id} syl={syllabus} user={user} messages={messages} sendMsg={sendMsg} markRead={markRead} />
         </div>

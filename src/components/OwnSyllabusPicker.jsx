@@ -37,7 +37,7 @@ export default function OwnSyllabusPicker({ rows, busy = false, onCheck, onOpen 
         <div className="pick-info" aria-live="polite">{row && <span className={'status ' + row.status}>{tr(STATUS_LABELS[row.status] || row.status)}</span>}</div>
         <div className="pick-actions">
           <StableButton type="button" className="btn outline" disabled={!row || busy} onClick={() => row && onOpen(row)}>{translateUI('ownCheck.open')}</StableButton>
-          <StableButton type="button" className="btn primary" disabled={!row || busy || !row.courseCode} title={row && !row.courseCode ? translateUI('ownCheck.chooseSubjectFirst') : undefined} onClick={() => row && onCheck(row)}>{busy ? translateUI('ownCheck.checking') : translateUI('ownCheck.check')}</StableButton>
+          <StableButton type="button" className="btn primary" disabled={!row || busy || !row.courseCode} title={row && !row.courseCode ? translateUI('ownCheck.chooseSubjectFirst') : undefined} onClick={() => row && onCheck(row)}>{busy && <span className="chk-btn-spin" aria-hidden="true" />}{busy ? translateUI('ownCheck.checking') : translateUI('ownCheck.check')}</StableButton>
         </div>
       </div>
     </section>

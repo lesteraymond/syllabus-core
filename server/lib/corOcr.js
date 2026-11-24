@@ -12,9 +12,9 @@ const cleanup = (img, width) => img.resize({ width, withoutEnlargement: false })
 // so only the parsed fields say whether a direction is really the right one.
 function quality(text) {
   const p = parseCor(text);
-  return (p.studentId ? 3 : 0) + (p.bsit === 'yes' ? 2 : p.bsit === 'maybe' ? 1 : 0) + (p.studentName ? 1 : 0) + (p.term ? 1 : 0) + (p.yearLevel ? 1 : 0) + Math.min(p.subjects.length, 3);
+  return (p.studentId ? 3 : 0) + (p.programOk === 'yes' ? 2 : p.programOk === 'maybe' ? 1 : 0) + (p.studentName ? 1 : 0) + (p.term ? 1 : 0) + (p.yearLevel ? 1 : 0) + Math.min(p.subjects.length, 3);
 }
-const good = (text) => { const p = parseCor(text); return !!p.studentId && p.bsit !== 'no' && !!p.term; };
+const good = (text) => { const p = parseCor(text); return !!p.studentId && p.programOk !== 'no' && !!p.term; };
 
 // Reads the whole page upright-first, then sideways/upside down only if the first reading was not good. The winning
 // direction is read again on its header (top half, where the labels are) two ways, because each pass gets different

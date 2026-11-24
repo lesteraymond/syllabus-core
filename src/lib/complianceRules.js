@@ -84,10 +84,11 @@ export const CHECKS = {
       const tags = arr(il.tags);
       if (p.mode === 'cloTagPresent') {
         if (!blank(il.text)) out.push(item(iloClos(il).length > 0, path, { where }));
-        else if (tags.length) out.push(item(false, path, { where }, {}, where + ' is tagged but has no text.'));
+        else if (iloClos(il).length) out.push(item(false, path, { where }, {}, where + ' is tagged but has no text.'));
       } else {
         tags.forEach((t, k) => {
           let ok = X.tagRe.test(String(t));
+          if (ok && /^(po|ega):/.test(String(t))) return; // an ILO aligns to a CLO only; old PO/EGA tags on an ILO are ignored
           if (ok) {
             const g = parseTag(t);
             if (g.kind === 'clo') ok = X.cloIds.has(g.id);

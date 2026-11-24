@@ -51,9 +51,10 @@ function makeDb({ chain = true, compliance = true } = {}) {
     }
     if (sql.startsWith('INSERT INTO submission_logs')) { s.logs.push({ syllabus_id: p[0], user_id: p[1], action: p[2], notes: p[3] }); return [{}]; }
     if (sql.startsWith("UPDATE syllabi SET status = 'under_review'")) { s.syllabi[p[0]].status = 'under_review'; return [{}]; }
-    if (sql.startsWith('SELECT user_id FROM users WHERE role IN (?)')) return [s.vpaaIds.filter((id) => p[0].includes('vpaa') && id !== p[1]).map((user_id) => ({ user_id }))];
+    if (sql.startsWith('SELECT user_id FROM users WHERE role IN (?)')) { const by = { vpaa: s.vpaaIds, asst_vpaa: [2], lic_director: [3] }; return [p[0].flatMap((role) => by[role] || []).filter((id) => ![].concat(p[1]).includes(id)).map((user_id) => ({ user_id }))]; }
     if (sql.startsWith('INSERT INTO notifications')) { s.notifications.push({ user_id: p[0], type: p[1], syllabus_id: p[2], title: p[3] }); return [{}]; }
     if (sql.startsWith('SELECT l.action_date, u.first_name, u.last_name FROM submission_logs')) return [[{ action_date: '2026-03-09T00:00:00Z', first_name: 'Vee', last_name: 'Paa' }]];
+    if (sql.startsWith("SELECT l.action_date FROM submission_logs l WHERE l.syllabus_id = ? AND l.action = 'submit'")) return [p[0] === 3 ? [{ action_date: '2026-03-01T00:00:00Z' }] : []];
     throw new Error('unexpected query: ' + sql);
   };
   const conn = { query: async (q, p) => handle(q, p), beginTransaction: async () => {}, commit: async () => {}, rollback: async () => {}, release: () => {} };
@@ -103,28 +104,41 @@ test('the AI check comes first: no stage is cleared until a reviewer has checked
   assert.match(db.s.logs[0].notes, /Cleared the dean review: Looks complete\./);
 }));
 
-test('each role clears its own stage; the VPAA is told only when the third clears, and clearing twice changes nothing', () => withServer(async ({ call, db }) => {
+test('each role clears its own stage, in order; the next reviewer is told it is their turn, the VPAA when the third clears, and clearing twice changes nothing', () => withServer(async ({ call, db }) => {
   checked(db);
-  const first = await call(asst, 'POST', '/1/stage-clear');
-  assert.strictEqual(first.body.stages.asst_vpaa.cleared, true);
-  assert.strictEqual(first.body.stages.allCleared, false);
+  // The dean first: the Asst. VPAA and the LIC Director wait, and are told whose turn it is.
+  for (const who of [asst, lic]) {
+    const early = await call(who, 'POST', '/1/stage-clear');
+    assert.strictEqual(early.status, 409, who.role); assert.strictEqual(early.body.code, 'stage_out_of_order'); assert.strictEqual(early.body.turn, 'dean');
+    assert.match(early.body.error, /with the dean now/);
+  }
+  assert.strictEqual(db.s.stages.length, 0);
+  assert.strictEqual(db.s.syllabi[1].status, 'submitted', 'a refused clear changes no status');
+  const first = await call(dean, 'POST', '/1/stage-clear');
+  assert.strictEqual(first.body.stages.dean.cleared, true);
+  assert.strictEqual(first.body.stages.turn, 'asst_vpaa');
+  assert.deepStrictEqual(db.s.notifications.map((n) => [n.user_id, n.type]), [[2, 'chain']]); // the Asst. VPAA: your turn
+  assert.match(db.s.notifications[0].title, /Your review: IT 204/);
+  assert.strictEqual((await call(lic, 'POST', '/1/stage-clear')).body.turn, 'asst_vpaa', 'the LIC Director still waits for the Asst. VPAA');
+  assert.strictEqual((await call(asst, 'POST', '/1/stage-clear')).body.stages.cleared, 2);
   assert.strictEqual((await call(asst, 'POST', '/1/stage-clear')).status, 200);
-  assert.strictEqual(db.s.stages.length, 1);
-  assert.strictEqual((await call(dean, 'POST', '/1/stage-clear')).body.stages.cleared, 2);
-  assert.strictEqual(db.s.notifications.length, 0);
+  assert.strictEqual(db.s.stages.length, 2);
+  assert.strictEqual(db.s.logs.filter((l) => l.action === 'check').length, 2, 'a repeat clear is not logged again');
+  assert.deepStrictEqual(db.s.notifications.map((n) => n.user_id), [2, 3]); // then the LIC Director, once
   const third = await call(lic, 'POST', '/1/stage-clear');
   assert.strictEqual(third.body.stages.allCleared, true);
-  assert.deepStrictEqual(db.s.notifications.map((n) => [n.user_id, n.type, n.syllabus_id]), [[4, 'chain', 1]]);
-  assert.match(db.s.notifications[0].title, /Ready for approval: IT 204/);
+  assert.strictEqual(third.body.stages.turn, 'vpaa');
+  assert.deepStrictEqual(db.s.notifications.slice(2).map((n) => [n.user_id, n.type, n.syllabus_id]), [[4, 'chain', 1]]);
+  assert.match(db.s.notifications[2].title, /Ready for approval: IT 204/);
   await call(lic, 'POST', '/1/stage-clear');
-  assert.strictEqual(db.s.notifications.length, 1); // not told again
+  assert.strictEqual(db.s.notifications.length, 3); // not told again
 }));
 
 test('a new version starts the three checks again', () => withServer(async ({ call, db }) => {
   checked(db);
   for (const who of [dean, asst, lic]) await call(who, 'POST', '/1/stage-clear');
   assert.strictEqual((await call(fay, 'GET', '/1/stages')).body.stages.allCleared, true);
-  db.s.versions.push({ version_id: 11, syllabus_id: 1 }); // the faculty member resubmitted
+  db.s.versions.push({ version_id: 11, syllabus_id: 1 }); // the faculty member saved a new version (not a return: routes/syllabusContent.js carries stages only after one)
   assert.strictEqual((await call(dean, 'GET', '/1/stages')).body.stages.cleared, 0);
   assert.strictEqual((await call(dean, 'POST', '/1/stage-clear')).status, 409); // and the new version needs its own check first
   checked(db, 1, 11);
@@ -150,14 +164,21 @@ test('before the database update the answer says so', () => withServer({ chain: 
 test('who sees the stages: reviewers and the owner; another faculty member gets a 404; the approver is named once approved', () => withServer(async ({ call, db }) => {
   checked(db);
   await call(dean, 'POST', '/1/stage-clear');
-  for (const who of [dean, asst, lic, vpaa, fay]) {
+  for (const who of [dean, asst, lic, fay]) {
     const r = await call(who, 'GET', '/1/stages');
     assert.strictEqual(r.status, 200, who.role);
     assert.strictEqual(r.body.stages.dean.by, 'Diana Evale');
     assert.strictEqual(r.body.approved, null);
   }
+  // The VPAA reaches it only once all three have cleared, as in the lists (lib/reviewStages.js assertReviewerMayOpen; E2E report 2026-11-23).
+  const early = await call(vpaa, 'GET', '/1/stages');
+  assert.strictEqual(early.status, 409);
+  assert.strictEqual(early.body.code, 'STAGES_PENDING');
   assert.strictEqual((await call(gus, 'GET', '/1/stages')).status, 404);
   assert.strictEqual((await call(dean, 'GET', '/2/stages')).status, 404); // a draft
   const approved = await call(fay, 'GET', '/3/stages');
   assert.deepStrictEqual(approved.body.approved, { by: 'Vee Paa', at: '2026-03-09T00:00:00Z' });
+  // The date of the last submit, for the form's "Faculty - Date" line; null when the log has none.
+  assert.deepStrictEqual(approved.body.submitted, { at: '2026-03-01T00:00:00Z' });
+  assert.strictEqual((await call(fay, 'GET', '/1/stages')).body.submitted, null);
 }));

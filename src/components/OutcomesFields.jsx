@@ -5,7 +5,7 @@ import { blankEga, blankPo } from '../lib/outcomesSetup';
 
 // The rows of a program's EGAs and Program Outcomes, one editor for the Outcomes dialog and the Add subject form.
 //   egas / pos        the editor rows (strings typed into inputs; see src/lib/outcomesSetup.js)
-//   mapTo             the EGA numbers an outcome may map to: the saved EGAs in the dialog, the EGAs typed so far in the form
+//   mapTo             the EGA numbers an outcome may map to: the EGAs typed so far (the dialog saves EGAs and POs together)
 //   editEgas/editPos  false shows the rows read-only (past year, specialization, official reference)
 //   egaFooter/poFooter  what goes under each list (problems, Save buttons)
 export default function OutcomesFields({ required = false, egas, pos, onEgas, onPos, mapTo, editEgas = true, editPos = true, busy = false, egaFooter = null, poFooter = null, poHint = '' }) {
@@ -33,11 +33,13 @@ export default function OutcomesFields({ required = false, egas, pos, onEgas, on
       {pos.map((row, i) => <div className="outcomes-row outcomes-po" key={i}>
         <label className="field"><span>{t('outcomes.col.no')}</span><input value={row.no} inputMode="numeric" maxLength={2} disabled={!editPos || busy} onChange={(e) => setPo(i, 'no', e.target.value.replace(/[^0-9]/g, ''))} aria-label={t('outcomes.aria.po', { field: t('outcomes.col.no'), n: i + 1 })} /></label>
         <label className="field"><span>{t('outcomes.col.short')}</span><input value={row.short} maxLength={120} disabled={!editPos || busy} onChange={(e) => setPo(i, 'short', e.target.value)} aria-label={t('outcomes.aria.po', { field: t('outcomes.col.short'), n: i + 1 })} /></label>
+        {editPos && remove(row.no, () => onPos(pos.filter((_, at) => at !== i)))}
         <label className="field outcomes-statement"><span>{t('outcomes.col.statement')}</span><textarea rows={2} value={row.text} maxLength={2000} disabled={!editPos || busy} onChange={(e) => setPo(i, 'text', e.target.value)} aria-label={t('outcomes.aria.po', { field: t('outcomes.col.statement'), n: i + 1 })} /></label>
         <fieldset className="outcomes-maps" disabled={!editPos || busy}><legend>{t('outcomes.col.egas')}</legend>
           {mapTo.map((no) => <label className="check" key={no}><input type="checkbox" checked={row.egas.includes(no)} onChange={() => toggle(i, no)} /><span>{no}</span></label>)}
+          {/* a link to an EGA that is no longer in the list (removed or renumbered above) stays visible, so it can be unticked */}
+          {row.egas.filter((no) => !mapTo.includes(no)).map((no) => <label className="check is-stale" key={'stale' + no} title={t('outcomes.staleLink', { no })}><input type="checkbox" checked onChange={() => toggle(i, no)} aria-label={t('outcomes.staleLink', { no })} /><span>{no}</span></label>)}
         </fieldset>
-        {editPos && remove(row.no, () => onPos(pos.filter((_, at) => at !== i)))}
       </div>)}
       {!pos.length && <p className="hint">{t('outcomes.noPos')}</p>}
     </div>

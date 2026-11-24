@@ -4,7 +4,7 @@
 
 **Label: LOCAL E2E (staging-like topology: https frontend, TLS proxy, NODE_ENV=staging server, isolated scratch database, the new AI Checker on an offline stand-in for the Anthropic API). Not a staging E2E; no live Claude request.**
 
-Browser: Microsoft Edge (Chromium) via playwright-core · Node v26.12.1 · finished 2026-11-17T22:38:39.032Z
+Browser: Microsoft Edge (Chromium) via playwright-core · Node v26.12.1 · finished 2026-11-20T10:19:34.053Z
 
 | | |
 |---|---|
@@ -60,7 +60,7 @@ Browser: Microsoft Edge (Chromium) via playwright-core · Node v26.12.1 · finis
 - ✔ connect.sid is HttpOnly, Secure and SameSite=Lax over https (httpOnly=true secure=true sameSite=Lax)
 - ✔ no remember-me cookie unless it was requested
 - ✔ the session authenticates API calls made with credentials from the https frontend origin
-- ✔ CORS answers the configured frontend origin only, with credentials ({"origin":"https://localhost:3664","credentials":"true","vary":"Origin"})
+- ✔ CORS answers the configured frontend origin only, with credentials ({"origin":"https://localhost:3644","credentials":"true","vary":"Origin"})
 - ✔ after logging out the API refuses the old session (401)
 - ✔ the login form is shown again after logout
 - ✔ E01: no uncaught page errors (none)
@@ -299,13 +299,13 @@ Evidence: [E12-ai-down-1440.png](E12-ai-down-1440.png)
 - ✔ the navigation is shown in Filipino
 - ✔ the AI Checker and the new checker's report are shown in Filipino
 - ✔ no English report heading is left in the translated page
-- ✔ the language choice survives a full reload (saved on the account)
+- ✔ the language choice survives a full reload (saved on the account), on the same screen
 - ✔ switching back restores English
 - ✔ E13: no uncaught page errors (none)
 - ✔ E13: no JavaScript console errors (none)
 - ✔ E13: no unexpected API failures (none)
 - ✔ E13: no request left this machine (none blocked)
-  - note: AI Checker page in Filipino: CITE PANGKALAHATANG TANAW TAGABUO NG SILABUS AI CHECKER AKING MGA SILABUS IMBAKAN ESTADISTIKA MGA ULAT MGA SETTING SISTEMA NG PAMAMAHALA NG SILABUS 2 TF Test Faculty Guro Mag-sign out Tagasuri ng Silabus gamit ang AI Sinusuri ayon sa form ng Undergraduate Syllabus. Ang hindi pagsunod sa template lamang ang pumipigil sa pagpasa; gabay para sa iyo at sa tagasuri ang mark
+  - note: AI Checker page in Filipino: CITE PANGKALAHATANG TANAW TAGABUO NG SILABUS AI CHECKER TAGALIKHA NG SILABUS NG AI AKING MGA SILABUS IMBAKAN ESTADISTIKA MGA ULAT MGA SETTING SISTEMA NG PAMAMAHALA NG SILABUS 2 TF Test Faculty Guro Mag-sign out Tagasuri ng Silabus gamit ang AI Sinusuri ayon sa form ng Undergraduate Syllabus. Ang hindi pagsunod sa template lamang ang pumipigil sa pagpasa; gabay para sa 
 
 Evidence: [E13-filipino-checker-1440.png](E13-filipino-checker-1440.png)
 
@@ -381,7 +381,7 @@ Evidence: [E14-checker-375.png](E14-checker-375.png), [E14-checker-768.png](E14-
 ### E17 — Post-deployment smoke test (scripts/smoke-test.cjs) passes against the https staging-like stack
 
 - ✔ the smoke test exits 0 (no failing check)
-  - note: [PASS] the API is reached over https : localhost:3663 \|\| [PASS] GET /api/health is 200 with the database reachable : HTTP 200 \|\| [PASS] the health response reveals nothing but status and database \|\| [PASS] an unauthenticated request is refused (401) : HTTP 401 \|\| [PASS] CORS answers the configured frontend origin with credentials \|\| [PASS] a foreign origin gets no CORS permission \|\| [P
+  - note: [PASS] the API is reached over https : localhost:3643 \|\| [PASS] GET /api/health is 200 with the database reachable : HTTP 200 \|\| [PASS] the health response reveals nothing but status and database \|\| [PASS] an unauthenticated request is refused (401) : HTTP 401 \|\| [PASS] CORS answers the configured frontend origin with credentials \|\| [PASS] a foreign origin gets no CORS permission \|\| [P
 
 ### E18 — Admin sets a subject's academic year, semester, year level and pre-requisite; faculty picks it, the values fill in and cannot be changed
 
@@ -460,7 +460,7 @@ Evidence: [E19-subject-filters-1440.png](E19-subject-filters-1440.png), [E19-sub
 - ✔ the closed year filter shows the year alone and is not clipped ("2027–2028", {"clipped":false,"scroll":93,"client":93,"trigger":140})
 - ✔ the open list tags the current year for faculty
 - ✔ choosing 2026–2027 in the year filter brings last year's syllabus back
-- ✔ the faculty member can start a new syllabus on IT 204 in 2027–2028 (HTTP 200 {"savedAt":"2026-11-17T22:36:33.494Z","bytes":731,"clos":[{"id":"c1","title":"Outcome 1","level":"Introductory","stateme)
+- ✔ the faculty member can start a new syllabus on IT 204 in 2027–2028 (HTTP 200 {"savedAt":"2026-11-20T10:17:21.770Z","bytes":731,"clos":[{"id":"c1","title":"Outcome 1","level":"Introductory","stateme)
 - ✔ the new syllabus is stamped with the current year
 - ✔ Step 1 can read the syllabus year
 - ✔ the administrator may open any year
@@ -514,7 +514,7 @@ Evidence: [E21-admin-empty-new-year-1440.png](E21-admin-empty-new-year-1440.png)
 
 ### E22 — A new program is flagged until the administrator sets its EGAs and Program Outcomes in the app; a past year is read-only; the school vision and mission are saved from the Add subject form, which replaced the separate card
 
-- ✔ the program created in 2028–2029 has no EGAs and no outcomes ({"id":3,"code":"BSIT","name":"Bachelor of Science in Information Technology","outcomeCount":0,"egaCount":0,"inheritedFrom":null})
+- ✔ the program created in 2028–2029 has no EGAs and no outcomes ({"id":3,"code":"BSIT","name":"Bachelor of Science in Information Technology","outcomeCount":0,"egaCount":0,"unlinkedPoCount":0,"inheritedFrom":null})
 - ✔ the program shows a "Set up EGAs and POs" badge and the page lists it in a banner
 - ✔ an outcome cannot be added before an EGA is saved
 - ✔ the EGA is saved for this program only (1 EGA, 0 outcomes)
@@ -540,7 +540,7 @@ Evidence: [E22-admin-needs-setup-1440.png](E22-admin-needs-setup-1440.png), [E22
 ### E23 — Add subject with a new program: the administrator types its EGAs, Program Outcomes and the school vision; faculty get them for that program and subject; a later change reaches existing subjects only through Apply to subjects
 
 - ✔ the Add program form shows the EGA and Program Outcome part
-- ✔ the program was created with its EGA and its Program Outcome ({"id":4,"code":"BSEE","name":"BS Electrical Engineering (synthetic)","outcomeCount":1,"egaCount":1,"inheritedFrom":null})
+- ✔ the program was created with its EGA and its Program Outcome ({"id":4,"code":"BSEE","name":"BS Electrical Engineering (synthetic)","outcomeCount":1,"egaCount":1,"unlinkedPoCount":0,"inheritedFrom":null})
 - ✔ the subject list no longer reports the EGAs, POs or vision as missing (["the learning outcomes of EE 101"])
 - ✔ the school vision typed in the form was saved
 - ✔ the subject was assigned to the faculty member (HTTP 200)
@@ -634,6 +634,6 @@ Evidence: [E24-admin-dashboard-year-filter-1440.png](E24-admin-dashboard-year-fi
 - ✔ E25-admin: no JavaScript console errors (none)
 - ✔ E25-admin: no unexpected API failures (none)
 - ✔ E25-admin: no request left this machine (none blocked)
-  - note: compliance history after adoption: 75868 bytes
+  - note: compliance history after adoption: 86625 bytes
 
 Evidence: [E25-faculty-review-notice-1440.png](E25-faculty-review-notice-1440.png), [E25-faculty-review-compare-1440.png](E25-faculty-review-compare-1440.png), [E25-faculty-after-adopt-1440.png](E25-faculty-after-adopt-1440.png)

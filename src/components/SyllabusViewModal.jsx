@@ -16,7 +16,7 @@ import Select from './Select';
 // `aside` is an optional panel shown beside the syllabus (Review & Approval puts the decision,
 // comments and messages there); the window itself only reads.
 // The version picker opens an earlier submitted version. Esc and a click outside close it, and focus returns to what opened it.
-export default function SyllabusViewModal({ syllabusId, onClose, aside, avatarUrl, initialVersionId = null }) {
+export default function SyllabusViewModal({ syllabusId, onClose, aside, avatarUrl, initialVersionId = null, clearedCount = null }) {
   const [payload, setPayload] = useState(null);
   const [versionId, setVersionId] = useState(initialVersionId); // a version chosen elsewhere (the history), else the newest
   const [error, setError] = useState('');
@@ -39,7 +39,7 @@ export default function SyllabusViewModal({ syllabusId, onClose, aside, avatarUr
     let live = true;
     syllabiApi.stages(syllabusId).then((r) => { if (live) setSignoffs(r && r.enabled !== false ? r : null); }, () => { if (live) setSignoffs(null); });
     return () => { live = false; };
-  }, [syllabusId, status]);
+  }, [syllabusId, status, clearedCount]); // clearedCount: a stage cleared while the window is open (the status stays under_review) reloads the sign-off
 
   // Esc, Tab, focus, scroll and stacking above or below other modals are handled by the shared layer (see useModalLayer).
   useModalLayer(dialog, onClose);

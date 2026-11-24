@@ -26,7 +26,7 @@ if (require.main === module) {
   require('dotenv').config();
   const mysql = require('mysql2/promise');
   (async () => {
-    const conn = await mysql.createConnection({ host: process.env.DB_HOST, user: process.env.DB_USER, password: process.env.DB_PASS, database: process.env.DB_NAME });
+    const conn = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
     try {
       const id = await createAdmin(conn, { email: process.env.CREATE_ADMIN_EMAIL, password: process.env.CREATE_ADMIN_PASSWORD, first: process.env.CREATE_ADMIN_FIRST || undefined, last: process.env.CREATE_ADMIN_LAST || undefined });
       console.log('Administrator created (user id ' + id + '). It must change its password at the first sign-in.');

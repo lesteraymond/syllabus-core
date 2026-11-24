@@ -4,7 +4,9 @@ const fs=require('node:fs');
 const crypto=require('node:crypto');
 const path=require('node:path');
 const official=require('../../src/data/officialProgramOutcomes.json');
-const {sameBasis,hasPoMappings}=require('../lib/programPoReferences');
+const {sameBasis}=require('../lib/programPoReferences');
+// This audit still lists legacy po: tags on ILOs (the builder now ignores them), so it keeps its own wider check.
+const hasPoMappings=content=>(content?.clos||[]).some(c=>c.pos?.length)||(content?.plan||[]).some(row=>(row.ilos||[]).some(ilo=>(ilo.tags||[]).some(tag=>/^po:\d+$/.test(tag))));
 const ID=official.version, CODES=['BSIT','BSIT-CYBERSECURITY','BSIE','BSCPE'];
 const hash=value=>crypto.createHash('sha256').update(typeof value==='string'?value:JSON.stringify(value)).digest('hex');
 const protectedTables=['syllabi','syllabus_versions','syllabus_check_reports','ai_check_runs','syllabus_check_decisions','syllabus_check_curricula','curriculum','courses','course_clos','program_egas','institution_egas','institution_settings'];

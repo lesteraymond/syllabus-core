@@ -8,6 +8,7 @@ test('only the author records a decision, and only while the syllabus is editabl
   const writes = [];
   const activity = [];
   let status = 'draft';
+  let runBy = 26; // who ran the check: each person reaches only their own checks (2026-11-24)
   const suggestion = { id: 'SEM:pair1', path: 'plan[0].tasks', replacement: 'Design and demonstrate a tested program.' };
   t.mock.method(repo, 'readReport', async () => ({ hybrid: { alignment: { status: 'completed', engine: 're-planned' }, suggestions: [suggestion] } })) // a report of the new AI Checker (decisions on an old-checker report are refused);
   // Route imports readReport by reference when loaded, so patch before requiring it.
@@ -15,7 +16,7 @@ test('only the author records a decision, and only while the syllabus is editabl
   const app = express(); app.use(express.json());
   app.locals.db = { query: async (sql, params) => {
     if (sql.startsWith('SELECT user_id FROM users')) return [[{ user_id: params[0] }]];
-    if (sql.startsWith('SELECT s.*, r.run_id')) return [[{ syllabus_id: 100, user_id: 26, status, content: JSON.stringify(original) }]];
+    if (sql.startsWith('SELECT s.*, r.run_id')) return [[{ syllabus_id: 100, user_id: 26, status, content: JSON.stringify(original), run_id: 1, run_created_by: runBy }]];
     if (sql.startsWith('SELECT decision_id')) return [[]];
     if (sql.startsWith('INSERT INTO submission_logs')) { activity.push({ syllabusId: params[0], userId: params[1], action: params[2], notes: params[3] }); return [{ insertId: activity.length }]; }
     if (sql.startsWith('INSERT INTO syllabus_check_decisions')) { writes.push(params); return [{ insertId: writes.length }]; }
@@ -40,8 +41,11 @@ test('only the author records a decision, and only while the syllabus is editabl
   assert.equal((await call('faculty', { suggestionId: suggestion.id, action: 'reject' })).body.draft, null);
   assert.equal(writes.length, 3);
 
-  // The administrator can read the recommendations but cannot accept, edit or reject them, even on a syllabus under review.
+  // The administrator cannot open the author's check at all (each person reaches only their own checks) ...
   status = 'under_review';
+  assert.equal((await fetch(url, { headers: { 'x-test-role': 'admin' } })).status, 404, 'the author\'s check is not the administrator\'s to read');
+  // ... and on their own check of the submitted version can read the recommendations but cannot accept, edit or reject them.
+  runBy = 1;
   for (const action of ['accept', 'reject']) {
     const refused = await call('admin', { suggestionId: suggestion.id, action });
     assert.equal(refused.status, 403, action);
@@ -49,7 +53,8 @@ test('only the author records a decision, and only while the syllabus is editabl
   }
   assert.equal((await call('admin', { suggestionId: suggestion.id, action: 'edit', editedText: 'An admin rewrite.' })).status, 403);
   const read = await fetch(url, { headers: { 'x-test-role': 'admin' } });
-  assert.equal(read.status, 200, 'the administrator can still read the author\'s decisions');
+  assert.equal(read.status, 200, 'the administrator can read the decisions on their own check');
+  runBy = 26;
 
   // Once the author has submitted, a decision cannot be recorded any more either (the syllabus is locked).
   const locked = await call('faculty', { suggestionId: suggestion.id, action: 'accept' });

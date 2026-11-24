@@ -1,11 +1,13 @@
 // Reads a Certificate of Registration (COR) photo with Claude (vision) instead of OCR. Returns the same shape as
 // corParser.parseCor, so the registration route and the admin review queue are unchanged.
-// Needs ANTHROPIC_API_KEY; the model is ANTHROPIC_MODEL (default claude-haiku-5-5).
+// Needs ANTHROPIC_API_KEY; the model is COR_SCAN_MODEL (default claude-haiku-5-5). It no longer follows ANTHROPIC_MODEL: that one is the AI Checker's
+// model (Sonnet on this server), and reading a COR is a small, public, paid call that Haiku does well (2026-11-23).
 const sharp = require('sharp');
 const Anthropic = require('@anthropic-ai/sdk');
 const { httpError } = require('./http');
+const { programOf } = require('./corPrograms');
 
-const MODEL = () => process.env.ANTHROPIC_MODEL || 'claude-haiku-5-5';
+const MODEL = () => process.env.COR_SCAN_MODEL || 'claude-haiku-5-5';
 
 const PROMPT = `This is a photo or scan of a student's Certificate of Registration (an "Official Registration Form") from a Philippine university. It may be rotated, skewed, shadowed or partly cropped. Read it and reply with ONE JSON object and nothing else, using exactly these keys (null when a value is not printed or not legible; never guess):
 {
@@ -13,21 +15,16 @@ const PROMPT = `This is a photo or scan of a student's Certificate of Registrati
   "studentName": "as printed, SURNAME, GIVEN NAMES",
   "program": "the Course/Major text as printed",
   "yearLevel": number 1-6,
-  "section": "the section of the first subject row, e.g. BSIT3A",
+  "section": "the section of the first subject row, e.g. BSIT3A, BSCPE2B or BSIE1A",
   "schoolYear": "e.g. 2025-2026",
   "term": "1st Semester, 2nd Semester or Summer",
-  "subjects": [{"code": "subject code as printed, e.g. IT-401", "title": "subject title", "section": "section as printed, e.g. BSIT3A"}]
+  "subjects": [{"code": "subject code as printed, e.g. IT-401", "title": "subject title", "section": "section as printed, e.g. BSIT3A, BSCPE2B or BSIE1A"}]
 }
 List every subject row of the enrolled-subjects table. If the image is not a COR, return all keys null with an empty subjects array.`;
 
 const str = (v) => (typeof v === 'string' && v.trim() ? v.trim().replace(/\s+/g, ' ') : null);
 
-// Same meaning as corParser: 'yes' = Information Technology, 'maybe' = a program was read but not clearly IT, 'no' = none.
-function bsitOf(program, subjects) {
-  if (program && /INFORMATION\s+TECHNOLOGY/i.test(program)) return 'yes';
-  if (subjects.some((s) => /^BS\s*IT\s*\d[A-Z]?$/i.test(s.section || ''))) return 'yes';
-  return program ? 'maybe' : 'no';
-}
+// The program, decided as corParser does (lib/corPrograms.js): BSIT, BSCPE or BSIE from the printed course, else from the sections on the subject rows.
 
 function normalize(raw) {
   const idMatch = String(raw.studentId || '').match(/(\d{2})\D{0,3}(\d{4})\D{0,3}(\d{3})/);
@@ -35,15 +32,16 @@ function normalize(raw) {
     .map((s) => ({ code: str(s && s.code) && str(s.code).toUpperCase(), title: str(s && s.title) || '', section: str(s && s.section) && str(s.section).toUpperCase().replace(/\s+/g, '') }))
     .filter((s) => s.code);
   const program = str(raw.program);
-  const bsit = bsitOf(program, subjects);
+  const found = programOf(program, [str(raw.section), ...subjects.map((s) => s.section)].filter(Boolean));
   const year = Number(raw.yearLevel);
   const ay = String(raw.schoolYear || '').match(/(\d{4})\s*[-–—]\s*(\d{4})/);
   const term = String(raw.term || '').match(/1st|first|2nd|second|summer|mid/i);
   return {
     studentId: idMatch ? `${idMatch[1]}-${idMatch[2]}-${idMatch[3]}` : null,
     studentName: str(raw.studentName),
-    program: bsit === 'yes' ? 'BACHELOR OF SCIENCE IN INFORMATION TECHNOLOGY' : program,
-    bsit,
+    program: found.ok === 'yes' ? found.name : program,
+    programCode: found.code,
+    programOk: found.ok,
     yearLevel: Number.isInteger(year) && year >= 1 && year <= 6 ? year : null,
     section: str(raw.section) ? str(raw.section).toUpperCase().replace(/\s+/g, '') : (subjects[0] && subjects[0].section) || null,
     schoolYear: ay ? `${ay[1]}-${ay[2]}` : null,
@@ -78,4 +76,4 @@ async function scanCor(input) {
   return normalize(raw || {});
 }
 
-module.exports = { scanCor, normalize };
+module.exports = { scanCor, normalize, MODEL };

@@ -59,13 +59,17 @@ test('reviewers open the AI Checker for a new submission, the VPAA and every rev
     assert.deepStrictEqual(notificationTarget({ type: 'submission', syllabusId: 1 }, role), { kind: 'page', page: 'ai' }, role);
     assert.deepStrictEqual(notificationTarget({ type: 'edit', syllabusId: 1 }, role), { kind: 'page', page: 'ai' }, role);
   }
-  assert.deepStrictEqual(notificationTarget({ type: 'chain', syllabusId: 1 }, 'vpaa'), { kind: 'page', page: 'review' });
+  assert.deepStrictEqual(notificationTarget({ type: 'chain', syllabusId: 1 }, 'vpaa'), { kind: 'view', id: 1, page: 'review' }, 'that syllabus opens, not just the list');
+  assert.deepStrictEqual(notificationTarget({ type: 'chain', syllabusId: null }, 'vpaa'), { kind: 'page', page: 'review' });
   assert.deepStrictEqual(notificationTarget({ type: 'submission', syllabusId: 1 }, 'vpaa'), { kind: 'page', page: 'review' });
   assert.deepStrictEqual(notificationTarget({ type: 'status', syllabusId: 1 }, 'lic_director'), { kind: 'page', page: 'review' });
   assert.deepStrictEqual(notificationTarget({ type: 'message', syllabusId: 1 }, 'vpaa'), { kind: 'chat', id: 1 });
 });
 
 test('the VPAA\'s approval, sent to the dean, the Asst. VPAA and the LIC Director, opens the Repository', () => {
-  for (const role of ['admin', 'asst_vpaa', 'lic_director', 'vpaa']) assert.deepStrictEqual(notificationTarget({ type: 'approval', syllabusId: 1 }, role), { kind: 'page', page: 'repository' }, role);
+  for (const role of ['admin', 'asst_vpaa', 'lic_director', 'vpaa']) assert.deepStrictEqual(notificationTarget({ type: 'approval', syllabusId: 1 }, role), { kind: 'view', id: 1, page: 'repository' }, role);
+  assert.deepStrictEqual(notificationTarget({ type: 'approval', syllabusId: 1 }, 'faculty'), { kind: 'page', page: 'repository' }, 'the owner goes to the Repository');
+  assert.deepStrictEqual(notificationTarget({ type: 'revision', syllabusId: 1 }, 'faculty'), { kind: 'comments', id: 1 }, 'a return for revision opens the reason');
+  assert.deepStrictEqual(notificationTarget({ type: 'rejection', syllabusId: 1 }, 'faculty'), { kind: 'comments', id: 1 });
   assert.deepStrictEqual(notificationTarget({ type: 'status', syllabusId: 1 }, 'faculty'), { kind: 'comments', id: 1 }, 'the owner\'s own decision notice still opens their comments');
 });

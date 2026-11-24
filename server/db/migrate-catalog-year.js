@@ -12,7 +12,7 @@ const tableExists = async (conn, name) => { const [rows] = await conn.query('SEL
 const hasColumn = async (conn, table, column) => { const [rows] = await conn.query('SHOW COLUMNS FROM ?? LIKE ?', [table, column]); return rows.length > 0; };
 
 async function main() {
-  const conn = await mysql.createConnection({ host: process.env.DB_HOST, user: process.env.DB_USER, password: process.env.DB_PASS, database: process.env.DB_NAME });
+  const conn = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
   try {
     // the academic years and the current one (the same setup as migrate-academic-year-scope, so the order of the two scripts does not matter)
     await conn.query('CREATE TABLE IF NOT EXISTS academic_years (label VARCHAR(9) NOT NULL PRIMARY KEY, start_year INT NOT NULL, UNIQUE KEY academic_years_start (start_year))');

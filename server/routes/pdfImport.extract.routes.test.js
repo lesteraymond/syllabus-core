@@ -12,11 +12,12 @@ const courses = [
   { course_id: 27, code: 'IT 204', title: 'Programming 2', program_code: 'BSCS' },
   { course_id: 28, code: 'OLD 1', title: 'Past subject', program_code: 'BSIT' },
 ];
-async function withServer(t, { fields, assigned = [25, 26, 27, 28], past = [28] }, fn) {
+async function withServer(t, { fields, assigned = [25, 26, 27, 28], past = [28], existing = [] }, fn) {
   t.mock.method(importer, 'extractPdf', async () => ({ fields, pages: [] }));
   t.mock.method(assignments, 'loadAssignments', async () => ({ programIds: [], courseIds: assigned }));
   t.mock.method(assignments, 'requireCourseAccess', async () => {});
   t.mock.method(academicYear, 'pastCourseIds', async () => new Set(past));
+  t.mock.method(academicYear, 'queryInSameYear', async () => [existing]);
   t.mock.method(identity, 'contextFor', async (db, id) => ({ selected: { id }, curricula: [] }));
   const app = express();
   app.locals.db = { query: async () => [courses] };
@@ -55,4 +56,20 @@ test('extract does not pick a subject that only shares the code: the title must 
   await withServer(t, { fields: { code: 'MA 7', title: 'Quantitative Methods' } }, async call => assert.equal((await call()).body.error, 'pdfImport.subjectNotFound'));
   await withServer(t, { fields: { code: 'MA 7', title: '' } }, async call => assert.equal((await call()).body.error, 'pdfImport.subjectNotFound'));
   await withServer(t, { fields: { code: 'IT 204', title: 'Programming 3' } }, async call => assert.equal((await call()).body.error, 'pdfImport.subjectNotFound'));
+});
+test('extract returns existingSyllabus for an editable draft and refuses a locked syllabus with 409', async t => {
+  await withServer(t, { fields: { code: 'MA 7', title: 'Differential Calculus' }, existing: [{ syllabus_id: 121, user_id: 5, status: 'draft' }] }, async call => {
+    const r = await call();
+    assert.equal(r.status, 200);
+    assert.deepEqual(r.body.existingSyllabus, { id: 121, status: 'draft' });
+  });
+  await withServer(t, { fields: { code: 'MA 7', title: 'Differential Calculus' }, existing: [{ syllabus_id: 122, user_id: 5, status: 'submitted' }] }, async call => {
+    const r = await call();
+    assert.equal(r.status, 409);
+    assert.equal(r.body.code, 'syllabus_exists');
+  });
+});
+test('extract finds the subject when the PDF writes its title differently (& for and, II for 2)', async t => {
+  await withServer(t, { fields: { code: 'IT-204', title: 'Programming II', program: 'bsit' } }, async call => assert.equal((await call()).body.subject.id, 26));
+  await withServer(t, { fields: { code: 'MA 7', title: 'Differential & Integral Calculus' } }, async call => assert.equal((await call()).body.error, 'pdfImport.subjectNotFound'));
 });

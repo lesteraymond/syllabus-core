@@ -46,12 +46,7 @@ const TABLES = {
 };
 
 async function migrate() {
-  const conn = await mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-  });
+  const conn = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
   const db = process.env.DB_NAME;
   const say = (m) => console.log((DRY ? '[dry run] ' : '') + m);
   const exists = async (name) => (await conn.query('SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?', [db, name]))[0].length > 0;

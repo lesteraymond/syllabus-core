@@ -7,8 +7,8 @@ Hand-written from the repository as it is. Nothing here was provisioned; no host
 | Part | Reality in the repository |
 |---|---|
 | Frontend | React 19 + Vite 8 single-page app. `npm run build` produces static files in `dist/`. It calls the API directly from the browser at `VITE_API_URL` (build-time, default `http://localhost:3001/api`) with `credentials: 'include'`. There is **no** dev proxy and no server-side rendering. |
-| Backend | One long-running Express process (`server/index.js`, `PORT`, default 3001). It owns timers (usage flush about once a minute, deadline notices, catalog file cleanup), a MySQL connection pool, and local disk (`uploads/`, profile photos, imported PDFs, an OCR language file). |
-| Sessions | `express-session` with its **default MemoryStore** plus a database-backed `remember_token` cookie. Sessions live in the memory of one process and end when it restarts. |
+| Backend | One long-running Express process (`server/index.js`, `PORT`, default 3001). It owns timers (usage flush about once a minute, deadline notices, catalog file cleanup), a MySQL connection pool, in-memory state (PDF import jobs, rate-limit counters, and the AI Syllabus Generator's jobs when its table is missing), and local disk (`UPLOAD_DIR` for syllabus files, `PRIVATE_DIR` for profile photos, an OCR language file). Imported PDFs stay in memory and are never written to disk. |
+| Sessions | `express-session` with `MySqlSessionStore` (`server/lib/sessionStore.js`) when `SESSION_STORE=mysql`, which staging and production always use (the server refuses to start without the `sessions` table: `migrate-session-store`). Sessions survive a restart and are shared by every process. Development keeps the in-memory store unless told otherwise. A database-backed `remember_token` cookie also exists. |
 | Database | MySQL/MariaDB. No ORM; parameterized queries. Bootstrap: `server/db/init.js` (schema + seed) then each `migrate-*` script of `server/package.json`. |
 | AI | Calls `https://api.anthropic.com` from the server only (never from the browser), inside the HTTP request of a check. A check is up to dozens of sequential/batched requests with a 180 s per-request timeout. |
 
@@ -16,10 +16,10 @@ Hand-written from the repository as it is. Nothing here was provisioned; no host
 
 | Requirement | Why | Consequence |
 |---|---|---|
-| A **long-running Node process** (Node 22 or later; the development machine runs 26) | timers, in-memory sessions, one connection pool | A serverless/function platform **cannot run the API unchanged**: functions are stateless and short-lived, so sessions would vanish between requests, timers would not run, and a check (minutes) would exceed typical function limits. |
-| **One instance**, or a shared session store | MemoryStore is per process | Do not run two API instances behind a load balancer without first replacing the session store (section 4). A restart logs everyone out. |
-| **Persistent disk or object storage** for `uploads/` | uploads, avatars, PDF import | An ephemeral container filesystem loses them on each deploy. Mount a persistent volume (or change the storage code, which is out of scope here). |
-| **Proxy read timeout of 10 minutes or more** on `/api/syllabus-check` and `/api/syllabi/*/compliance` | a real check is long | Default 30–60 s proxy timeouts would cut a check off while the server keeps spending provider money. |
+| A **long-running Node process** (Node 22.13 or later; CI runs 22, the development machine runs 26; no `engines` field pins it yet) | timers, in-memory jobs and rate limits, one connection pool | A serverless/function platform **cannot run the API unchanged**: functions are stateless and short-lived, timers would not run, and a check or a scanned PDF import (minutes) would exceed typical function limits. |
+| **One instance** recommended | PDF import jobs and the rate-limit counters live in one process's memory | Sessions are shared through the database, but two instances behind a load balancer would each count their own rate limits, and a refresh during a PDF import could reach the instance that does not have the scan. |
+| **Persistent disk or object storage** for `UPLOAD_DIR` and `PRIVATE_DIR` | syllabus files, profile photos | An ephemeral container filesystem loses them on each deploy. Mount a persistent volume for both and back both up (RUNBOOK section 2). |
+| **Proxy read timeout of 10 minutes or more** on `/api/syllabus-check`, `/api/syllabi/*/compliance` and the PDF import routes (`/api/syllabi/pdf-import/extract`, `/api/syllabi/*/import-pdf`) | a real check is long; a scanned PDF import may take up to 9 minutes | Default 30–60 s proxy timeouts would cut a check off while the server keeps spending provider money. |
 | **TLS-terminating reverse proxy** sending `X-Forwarded-Proto: https` and `X-Forwarded-For` | Secure cookies; the server speaks plain HTTP | Set `TRUST_PROXY` to the number of proxy hops. `true` and `*` are refused on purpose. |
 | **Outbound HTTPS** from the API host to `api.anthropic.com` only | provider calls | Egress should be limited to that host (and the SMTP relay if mail is on). |
 | A native-module-capable build (`@napi-rs/canvas`, Tesseract data) | PDF import and OCR | A minimal "alpine/musl" image or a build without native modules breaks PDF import; test it. |
@@ -38,14 +38,9 @@ browser ──https──► TLS reverse proxy ──http──► Node API (NOD
 
 Separate staging environment, database, credentials and Anthropic workspace; no production data; no hardcoded credential or domain. Configuration files: [`staging.env.template`](staging.env.template) and [`production.env.template`](production.env.template). This layout is what the local E2E rehearsed (a TLS proxy in front of the server running as `NODE_ENV=staging`); see `docs/vpaa-conformance/e2e/E2E-REPORT.md`. That rehearsal is **not** a staging verification.
 
-## 4. Session storage: decision for the owner
+## 4. Session storage (implemented)
 
-| Option | When it is enough |
-|---|---|
-| Keep MemoryStore | One API instance, brief logouts on each deploy/restart are acceptable (staging). |
-| Database-backed session store (a new dependency such as `express-mysql-session`, plus a table) | A production deployment where a restart must not log users out, or where two instances are wanted. **Not implemented**: it adds a dependency and a table, so it needs the owner's decision. |
-
-Remember-me (`remember_token`) already survives restarts: it is stored in the database, so a returning user is signed in again without a MemoryStore session.
+Sessions are stored in the database by the application's own `MySqlSessionStore` (`server/lib/sessionStore.js`, SEC-09), with no extra dependency. Staging and production always use it (`SESSION_STORE=mysql`); the server checks at startup that the `sessions` table exists and refuses to start without it. Run `npm run migrate-session-store` in `server/` with the migration account first. A restart no longer signs anyone out, and ending an account's sessions reaches every process. Remember-me (`remember_token`) is also stored in the database.
 
 ## 5. Deployment and rollback (preparation only)
 

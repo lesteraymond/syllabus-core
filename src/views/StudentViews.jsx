@@ -4,7 +4,7 @@ import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { students } from '../lib/api';
 import { phShortDate } from '../lib/phTime';
-import { Card, Field, PageHead } from '../components/ui';
+import { Card, Field, Icon, PageHead } from '../components/ui';
 import Select from '../components/Select';
 import ReviewDocument from './ReviewDocument';
 
@@ -207,7 +207,7 @@ export function StudentSyllabi() {
     .filter((x) => (program === 'All' || x.program === program) && (year === 'All' || x.academicYear === year) && [x.courseCode, x.title, x.faculty].join(' ').toLowerCase().includes(q.trim().toLowerCase()))
     .sort((a, b) => Number(b.enrolled) - Number(a.enrolled) || String(a.courseCode).localeCompare(String(b.courseCode))), [list, program, year, q]);
   const open = doc.value;
-  const pdfUrl = open && open.file && open.file.path ? `/api/students/syllabi/${openId}/file` : null; // served by the API: /uploads is private
+  const pdfUrl = open && open.file && open.file.path ? students.fileUrl(openId) : null; // served by the API: /uploads is private
 
   if (openId !== null) {
     return (
@@ -219,7 +219,7 @@ export function StudentSyllabi() {
         </>} />
         {doc.loading && <div className="empty">{translateUI('studentView.loadingSyllabus')}</div>}
         {doc.error && <div className="info-banner warning" role="alert">{tr(doc.error)}</div>}
-        {open && open.content && <FitPaper><ReviewDocument content={open.content} facultyName={open.syllabus.faculty} /></FitPaper>}
+        {open && open.content && <FitPaper><ReviewDocument content={open.content} facultyName={open.syllabus.faculty} signoffs={open.signoffs || null} /></FitPaper>}
         {open && !open.content && pdfUrl && <iframe title={open.syllabus.courseCode} src={pdfUrl} style={{ width: '100%', height: '80vh', border: 0 }} />}
         {open && !open.content && !pdfUrl && <div className="empty">{translateUI('studentView.empty')}</div>}
       </>
@@ -231,7 +231,7 @@ export function StudentSyllabi() {
       <div className={'filter-card repository-filters' + (years.length > 0 ? ' student-filters-ay' : '')}>
         <Field label={translateUI("ui.program_9d6800")}><Select value={program} onChange={(e) => setProgram(e.target.value)}><option value="All">{translateUI("ui.all_6a7208")}</option>{programs.map((x) => <option key={x} value={x}>{x}</option>)}</Select></Field>
         {years.length > 0 && <Field label={translateUI('studentView.ay')}><Select value={year} onChange={(e) => setYear(e.target.value)}><option value="All">{translateUI('studentView.allYears')}</option>{years.map((y) => <option key={y} value={y}>{y}</option>)}</Select></Field>}
-        <label className="field"><span>{translateUI("ui.search_bce064")}</span><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={translateUI('studentView.searchHint')} /></label>
+        <Field label={translateUI("ui.search_bce064")}><div className="repo-search"><Icon name="magnifyingGlass" size={18} /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={translateUI('studentView.searchHint')} /></div></Field>
         <StableButton className="btn ghost reset" onClick={() => { setProgram('All'); setYear('All'); setQ(''); }}>{translateUI("ui.reset_44c57a")}</StableButton>
       </div>
       {error && <div className="info-banner warning" role="alert">{tr(error)}</div>}

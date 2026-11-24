@@ -50,7 +50,7 @@ if (require.main === module) (async () => {
   const args = process.argv.slice(2);
   const confirm = (args.find(arg => arg.startsWith('--confirm=')) || '').slice(10);
   const verify = args.includes('--verify');
-  const db = await require('mysql2/promise').createConnection({ host: process.env.DB_HOST, user: process.env.DB_USER, password: process.env.DB_PASS, database: process.env.DB_NAME });
+  const db = await require('mysql2/promise').createConnection(require('../lib/dbConfig').resolveConnectionConfig());
   try {
     const report = await migrate(db, { dryRun: args.includes('--dry-run') || verify, force: args.includes('--force'), confirm });
     console.log(JSON.stringify(report, null, 2));

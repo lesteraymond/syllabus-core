@@ -16,7 +16,7 @@ import { currentDeadline, groupByCourse } from '../lib/deadlineView';
 import Select from '../components/Select';
 import AcademicYearControl from '../components/AcademicYearControl';
 import AddProgramForm from '../components/AddProgramForm';
-import { programsNeedingSetup } from '../lib/outcomesSetup';
+import { programsNeedingSetup, programsNeedingEgaLinks } from '../lib/outcomesSetup';
 
 // Administrators manage program/subject identity and deadlines here. Learning-outcome authoring lives in builder Step 2.
 export default function CourseOutcomes({ notify, onCatalogChanged }) {
@@ -40,6 +40,7 @@ export default function CourseOutcomes({ notify, onCatalogChanged }) {
   const [formError, setFormError] = useState('');
   const [busy, setBusy] = useState(false);
   const [filter, setFilter] = useState('');   // the program filter
+  const [search, setSearch] = useState('');   // quick filter by subject code or title
   const [curriculumFilter, setCurriculumFilter] = useState('');   // the curriculum year filter ('' all, CURRICULUM_NONE the subjects without one)
   const [references, setReferences] = useState([]);   // the approved curriculum references, for the curriculum year suggestions and hint (none when they cannot be read)
   const [termFilter, setTermFilter] = useState({ academicYear: '', semester: '', yearLevel: '' });   // academic year, semester and year level filters (all combine with the program)
@@ -89,11 +90,16 @@ export default function CourseOutcomes({ notify, onCatalogChanged }) {
     } catch (e) { setFormError(e.message); } finally { setBusy(false); }
   };
 
-  const shown = useMemo(() => filterSubjects(list, filters), [list, filter, curriculumFilter, termFilter]); // eslint-disable-line react-hooks/exhaustive-deps
+  const shown = useMemo(() => {
+    const base = filterSubjects(list, filters);
+    const q = search.trim().toLowerCase();
+    return q ? base.filter((c) => `${c.code || ''} ${c.title || ''}`.toLowerCase().includes(q)) : base;
+  }, [list, filter, curriculumFilter, termFilter, search]); // eslint-disable-line react-hooks/exhaustive-deps
   const needSetup = useMemo(() => programsNeedingSetup(programs), [programs]);   // programs of this year still without EGAs or Program Outcomes
+  const needLinks = useMemo(() => programsNeedingEgaLinks(programs), [programs]); // programs whose POs are not all linked to an EGA yet
   // adding an academic year (from the Current academic year block): create it and reload
   const addYear = async (startYear) => { const made = await yearsApi.create(startYear); await refreshCatalog(); if (yearScope) await yearScope.reload(); notify(translateUI('years.added')); return made.label; };   // the header dropdown reads the application-wide year list
-  const clearFilters = () => { setFilter(''); setCurriculumFilter(''); setTermFilter({ academicYear: '', semester: '', yearLevel: '' }); };
+  const clearFilters = () => { setFilter(''); setSearch(''); setCurriculumFilter(''); setTermFilter({ academicYear: '', semester: '', yearLevel: '' }); };
 
   return (
     <div className="bld2 catalog-page">
@@ -102,6 +108,7 @@ export default function CourseOutcomes({ notify, onCatalogChanged }) {
       <div className="year-row"><AcademicYearControl years={years} onChanged={refreshCatalog} onAddYear={addYear} notify={notify} /></div>
       {readOnly && <div className="info-banner" role="status">{translateUI('catalog.pastYear', { year })}</div>}
       {!readOnly && needSetup.length > 0 && <div className="info-banner warning" role="status">{translateUI('outcomes.setupBanner', { year: shownYear, list: needSetup.map((p) => p.code).join(', ') })}</div>}
+      {!readOnly && needLinks.length > 0 && <div className="info-banner warning" role="status">{translateUI('outcomes.linkBanner', { year: shownYear, list: needLinks.map((p) => p.code + ' (' + p.unlinkedPoCount + ')').join(', ') })}</div>}
       {addingProgram && !readOnly && <AddProgramForm year={shownYear} notify={notify} onCancel={() => setAddingProgram(false)} onCreated={async (made) => { await refreshCatalog(); setForm((current) => ({ ...current, program: made.code })); }} />}
       {adding && (
         <div ref={formRef} inert={formMotion.closing || undefined} className="card ac-form catalog-surface">
@@ -138,8 +145,11 @@ export default function CourseOutcomes({ notify, onCatalogChanged }) {
             <label className="field"><span>{translateUI("term.yearLevel")}</span>
               <Select value={termFilter.yearLevel} onChange={(e) => setTermFilter({ ...termFilter, yearLevel: e.target.value })} aria-label={translateUI("term.yearLevel")}><option value="">{translateUI("subjects.allLevels")}</option>{YEAR_LEVELS.map((n) => <option key={n} value={String(n)}>{translateUI("term.yearOption", { n })}</option>)}</Select>
             </label>
+            <label className="field sm-search-field"><span>{translateUI("ui.search_bce064")}</span>
+              <input type="search" value={search} placeholder={translateUI("ui.code_adac69") + ' / ' + translateUI("ui.title_768e0c")} aria-label={translateUI("ui.search_bce064")} onChange={(e) => setSearch(e.target.value)} />
+            </label>
           </div>
-          <span className="sm-count"><span className="hint">{tr(shown.length + (shown.length === 1 ? ' subject' : ' subjects'))}</span>{filtersActive(filters) && <StableButton type="button" className="btn outline" onClick={clearFilters}>{translateUI("subjects.clearFilters")}</StableButton>}</span>
+          <span className="sm-count"><span className="hint">{tr(shown.length + (shown.length === 1 ? ' subject' : ' subjects'))}</span>{(filtersActive(filters) || !!search.trim()) && <StableButton type="button" className="btn outline" onClick={clearFilters}>{translateUI("subjects.clearFilters")}</StableButton>}</span>
         </div>
         <div ref={tableRef} className="table-wrap">
           <table>
@@ -147,7 +157,7 @@ export default function CourseOutcomes({ notify, onCatalogChanged }) {
             <tbody>
               {shown.map((c) => (
                 <tr key={c.id} data-catalog-row={'subject-' + c.id}>
-                  <td className="mono">{c.code}</td><td>{c.title}</td><td>{c.program}</td><td className="mono">{c.curriculumYear || <span className="hint">{translateUI('term.notSet')}</span>}</td><td>{termLine(c.term, translateUI, (s) => (semesterKey(s) ? translateUI(semesterKey(s)) : s)) || <span className="hint">{translateUI('term.notSet')}</span>}{c.curriculumNote && <span className="term-warning" role="note">{translateUI('term.curriculumWarning', { year: c.curriculumNote.differences[0].curriculumYear, details: c.curriculumNote.differences.map((d) => translateUI(d.field === 'prerequisite' ? 'term.diff.prerequisite' : 'term.diff.yearLevel', { value: d.curriculum })).join(', ') })}</span>}</td><td>{c.term && c.term.prerequisite ? c.term.prerequisite : termSet(c.term) ? <span className="hint">{translateUI('term.none')}</span> : <span className="hint">{translateUI('term.notSet')}</span>}</td>{deadlineState.enabled && <td><DeadlineChip subject={c} deadline={currentDeadline(deadlinesByCourse.get(c.id))} onOpen={() => setDeadlineFor(c)} /></td>}<td className="col-actions"><SubjectRowActions subject={c} readOnly={readOnly} onEdit={() => setTarget({ subject: c, mode: 'edit' })} onDelete={() => setTarget({ subject: c, mode: 'delete' })} /></td>
+                  <td className="mono">{c.code}</td><td>{c.title}</td><td>{c.program}</td><td className="mono">{c.curriculumYear || <span className="hint">{translateUI('term.notSet')}</span>}</td><td>{termLine(c.term, translateUI, (s) => (semesterKey(s) ? translateUI(semesterKey(s)) : s)) || <span className="hint">{translateUI('term.notSet')}</span>}{c.curriculumNote && <span className="term-warning" role="note">{translateUI('term.curriculumWarning', { year: c.curriculumNote.differences[0].curriculumYear, details: c.curriculumNote.differences.map((d) => translateUI(d.field === 'prerequisite' ? 'term.diff.prerequisite' : 'term.diff.yearLevel', { value: d.curriculum })).join(', ') })}</span>}</td><td>{c.term && c.term.prerequisite ? c.term.prerequisite : termSet(c.term) ? <span className="hint">{translateUI('term.none')}</span> : <span className="hint">{translateUI('term.notSet')}</span>}</td>{deadlineState.enabled && <td>{readOnly ? <span className="hint">—</span> : <DeadlineChip subject={c} deadline={currentDeadline(deadlinesByCourse.get(c.id))} onOpen={() => setDeadlineFor(c)} />}</td>}<td className="col-actions"><SubjectRowActions subject={c} readOnly={readOnly} onEdit={() => setTarget({ subject: c, mode: 'edit' })} onDelete={() => setTarget({ subject: c, mode: 'delete' })} /></td>
                 </tr>
               ))}
               {!shown.length && <tr><td colSpan={deadlineState.enabled ? 8 : 7} style={{ color: 'var(--muted)', padding: 18 }}>{list.length && (curriculumFilter || termFilter.semester || termFilter.yearLevel) ? translateUI("subjects.noMatch") : filter ? translateUI("ui.no_subjects_in_p0_yet_4d9c7b", { p0: (filter) }) : !programs.length ? translateUI("catalog.emptyYear", { year: shownYear }) : translateUI("ui.no_subjects_yet_add_one_to_start_c6c29e")}</td></tr>}

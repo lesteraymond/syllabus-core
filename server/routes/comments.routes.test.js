@@ -26,7 +26,7 @@ function makeDb() {
     // the review chain: every syllabus has its newest version (1) cleared by all three stages, so the VPAA may decide
     if (sql.startsWith('SELECT 1 FROM syllabus_review_stages')) return [[]];
     if (sql.startsWith('SELECT syllabus_id, MAX(version_id) AS version_id FROM syllabus_versions')) return [p[0].map((id) => ({ syllabus_id: id, version_id: 1 }))];
-    if (sql.startsWith('SELECT s.syllabus_id, s.version_id, s.stage')) return [p[0].flatMap((id) => ['dean', 'asst_vpaa', 'lic_director'].map((stage) => ({ syllabus_id: id, version_id: 1, stage, reviewer_id: 1, note: '', cleared_at: null, first_name: 'Rev', last_name: 'Iewer' })))];
+    if (sql.startsWith('SELECT s.syllabus_id, s.version_id, s.stage')) return [p[0].flatMap((id) => (s.clearedStages || ['dean', 'asst_vpaa', 'lic_director']).map((stage) => ({ syllabus_id: id, version_id: 1, stage, reviewer_id: 1, note: '', cleared_at: null, first_name: 'Rev', last_name: 'Iewer' })))];
     if (sql.startsWith('SELECT version_id, version_label, content FROM syllabus_versions')) return [[{ version_id: 1, content: JSON.stringify({ meta: { courseId: s.syllabi[p[0]] && s.syllabi[p[0]].course_id, program: 'BSIT' } }) }]];
     if (sql.startsWith('SELECT c.course_id AS subject_id')) return [[204, 301].includes(p[0]) ? [{ subject_id: p[0], subject_code: 'IT ' + p[0], program_id: 1, code: 'BSIT' }] : []]; // lib/subjectValidation.js
     if (sql.startsWith('SELECT c.comment_id') && sql.includes('WHERE c.syllabus_id')) return [s.comments.filter((c) => c.syllabus_id === p[0]).sort((a, b) => a.created_at - b.created_at || a.comment_id - b.comment_id).map(joined)];
@@ -198,7 +198,9 @@ test('with the table, the summary counts unread comments, reading clears them, a
   assert.deepStrictEqual((await call(fay, 'GET', '/comment-summary')).body, { installed: true, counts: {} }); // nothing yet
   await asAdminComment(call, 'One');
   await asAdminComment(call, 'Two');
+  db.s.clearedStages = []; // the dean returns it on the dean's turn (lib/reviewStages.js turnOf)
   await call(admin, 'PUT', '/1', { status: 'for_revision', adminComment: 'Add the missing weeks.' }); // a decision reason is a comment too
+  db.s.clearedStages = undefined;
   assert.deepStrictEqual((await call(fay, 'GET', '/comment-summary')).body.counts, { 1: { total: 3, unread: 3 } });
   assert.strictEqual((await call(fay, 'GET', '/1/comments')).body.lastReadId, 0);
 
@@ -262,7 +264,7 @@ test('BYPASS 3: no reviewer can set a returned syllabus back to under review', (
 test('BYPASS 4, 5: approved is final, for the dean and for the VPAA, whatever is asked', () => withServer(async ({ call, db }) => { await refused(call, db, admin, 'approved', 'for_revision', 'approved_final'); await refused(call, db, vpaa, 'approved', 'rejected', 'approved_final'); await refused(call, db, vpaa, 'approved', 'for_revision', 'approved_final'); await refused(call, db, vpaa, 'approved', 'under_review', 'approved_final'); await refused(call, db, vpaa, 'approved', 'approved', 'approved_final'); }));
 test('a returned syllabus is not returned or rejected again: it waits for its author', () => withServer(async ({ call, db }) => { await refused(call, db, admin, 'for_revision', 'for_revision', 'not_awaiting_decision'); await refused(call, db, vpaa, 'rejected', 'for_revision', 'not_awaiting_decision'); await refused(call, db, vpaa, 'for_revision', 'rejected', 'not_awaiting_decision'); await refused(call, db, vpaa, 'under_review', 'under_review', 'resubmission_required'); }));
 test('the valid decisions still work: approve from under review, return or reject from submitted or under review, and a role refusal still comes first', () => withServer(async ({ call, db }) => {
-  for (const [who, from, status] of [[vpaa, 'under_review', 'approved'], [admin, 'submitted', 'for_revision'], [admin, 'under_review', 'for_revision'], [vpaa, 'under_review', 'for_revision'], [vpaa, 'submitted', 'rejected'], [vpaa, 'under_review', 'rejected'], [admin, 'submitted', 'under_review']]) { db.s.syllabi[3].status = from; const r = await call(who, 'PUT', '/3', { status, adminComment: 'A reason long enough to be accepted.' }); assert.strictEqual(r.status, 200, from + ' to ' + status + ': ' + JSON.stringify(r.body)); assert.strictEqual(db.s.syllabi[3].status, status); }
+  for (const [who, from, status] of [[vpaa, 'under_review', 'approved'], [admin, 'submitted', 'for_revision'], [admin, 'under_review', 'for_revision'], [vpaa, 'under_review', 'for_revision'], [vpaa, 'submitted', 'rejected'], [vpaa, 'under_review', 'rejected'], [admin, 'submitted', 'under_review']]) { db.s.syllabi[3].status = from; db.s.clearedStages = who === admin ? [] : undefined; /* the dean returns it on the dean's turn; the VPAA once all three are cleared */ const r = await call(who, 'PUT', '/3', { status, adminComment: 'A reason long enough to be accepted.' }); assert.strictEqual(r.status, 200, from + ' to ' + status + ': ' + JSON.stringify(r.body)); assert.strictEqual(db.s.syllabi[3].status, status); }
   db.s.syllabi[3].status = 'under_review'; assert.strictEqual((await call(admin, 'PUT', '/3', { status: 'approved' })).status, 403); assert.strictEqual((await call(admin, 'PUT', '/3', { status: 'rejected', adminComment: 'A reason long enough to be accepted.' })).status, 403); assert.strictEqual(db.s.syllabi[3].status, 'under_review');
   db.s.syllabi[3].status = 'approved'; assert.strictEqual((await call(admin, 'PUT', '/3', { status: 'approved' })).status, 403, 'a role refusal says so, whatever the state');
 }));

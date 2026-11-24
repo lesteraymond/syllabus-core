@@ -35,7 +35,7 @@ export default function VersionHistoryModal({ syllabus, onClose }) {
     <>
     <div className="overlay" onClick={onClose}>
       <div className="modal vh-modal" role="dialog" aria-modal="true" aria-label={translateUI("ui.version_history_91f865")} tabIndex={-1} ref={dialog} onClick={e => e.stopPropagation()}>
-        <div className="modal-head"><div><h3>{translateUI("ui.version_history_6974ab")}</h3><small>{syllabus.courseCode} • {syllabus.title}</small></div><button className="icon-btn" onClick={onClose}>✕</button></div>
+        <div className="modal-head"><div><h3>{translateUI("ui.version_history_6974ab")}</h3><small>{syllabus.courseCode} • {syllabus.title}</small></div><button type="button" className="icon-btn" aria-label={translateUI('trend.close')} onClick={onClose}>✕</button></div>
         <div className="modal-body">
           {error && <div className="empty">{tr(error)}</div>}
           {!error && versions === null && <div className="empty">{translateUI("ui.loading_history_02cb12")}</div>}

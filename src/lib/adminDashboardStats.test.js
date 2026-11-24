@@ -35,3 +35,11 @@ test('returning a syllabus for revision moves it from under review to for revisi
   assert.deepEqual([before[2][1], before[4][1]], ['1', '0']);
   assert.deepEqual([after[2][1], after[4][1]], ['0', '1']);
 });
+
+test('the dean, who writes syllabi too, gets a sixth card: My Submissions, the syllabi they submitted (drafts are not counted)', () => {
+  const cards = adminStatCards({ programs: 1, subjects: 1, syllabi: [syl('submitted')], mine: 3 });
+  assert.deepEqual(cards.map(c => c[0]), [...ADMIN_STAT_ORDER, 'Submitted']);
+  assert.equal(cards[5][1], '3');
+  assert.equal(adminStatCards({ syllabi: [], mine: 0 })[5][1], '0', 'zero is a real zero');
+  assert.equal(adminStatCards({ syllabi: [], mine: null }).length, 5, 'a reviewer who does not write syllabi has no such card');
+});

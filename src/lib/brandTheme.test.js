@@ -60,7 +60,8 @@ const declared = (selector, property) => {
 
 test('every status badge keeps readable text on its tint (4.5:1)', () => {
   const badges = [
-    ['.badge.green, .status.approved, .status.active', 'approved'],
+    ['.badge.green, .status.active', 'active'],
+    ['.status.approved', 'approved'],
     ['.badge.blue, .status.submitted', 'submitted'],
     ['.badge.gold, .status.under-review, .status.under_review', 'under review'],
     ['.status.for-revision, .status.for_revision', 'for revision'],
@@ -237,7 +238,7 @@ test('deadline tags and chips keep readable text on their fills (4.5:1)', () => 
 
 test('the Deadline column and dialog are wired into the subjects table, shown only once deadlines are set up', () => {
   const table = readFileSync(new URL('../views/CourseOutcomes.jsx', import.meta.url), 'utf8');
-  assert.ok(table.includes('deadlineState.enabled && <th>') && table.includes('deadlineState.enabled && <td><DeadlineChip'), 'header and cell only when enabled');
+  assert.ok(table.includes('deadlineState.enabled && <th>') && table.includes('deadlineState.enabled && <td>{readOnly ? <span className="hint">—</span> : <DeadlineChip'), 'header and cell only when enabled; a past academic year gets no chip');
   assert.ok(table.indexOf('ui.program_9d6800') < table.indexOf('deadline.column') && table.indexOf('deadline.column') < table.indexOf('ui.actions_c3cd63'), 'the column sits between Program and Actions');
   assert.ok(table.includes('<DeadlineDialog') && table.includes('deadlinesApi.list()'), 'the dialog and the list are loaded');
   const dialog = readFileSync(new URL('../components/DeadlineDialog.jsx', import.meta.url), 'utf8');
@@ -262,29 +263,29 @@ test('the people list has no Remind button on each row (one Remind all does it),
   assert.ok(dialog.includes("deadlinesApi.remind(selected, userIds)") && dialog.includes('setReload((n) => n + 1)'), 'a reminder refreshes who was last reminded');
 });
 
-// Primary buttons use their own lighter blue (--btn-primary #0866ff), not the navy brand blue; the white label stays readable on it and on its hover.
+// Primary buttons use their own lighter blue (--btn-primary #2563eb), not the navy brand blue; the white label stays readable on it and on its hover.
 test('primary buttons are the softer blue #2563eb, with a readable white label (4.5:1) at rest and on hover', () => {
   assert.strictEqual(token('btn-primary'), '#2563eb');
   for (const name of ['btn-primary', 'btn-primary-hover']) assert.ok(contrast('#ffffff', token(name)) >= 4.5, 'white label on ' + name + ': ' + contrast('#ffffff', token(name)).toFixed(2));
   assert.ok(theme.includes('.btn.primary { background: var(--btn-primary);'), 'the primary button uses it');
   assert.ok(theme.includes('.btn.primary:hover { background: var(--btn-primary-hover); }'));
   assert.ok(theme.includes('.asg-btn.primary { background: var(--btn-primary); }'), 'and the assignment screen\'s primary button');
+  assert.ok(theme.includes('.asg-btn.primary:hover:not(:disabled) { background: var(--btn-primary-hover); box-shadow: none; }'), 'assignment primary button darkens on hover without the old gold bar');
+  assert.ok(!base.includes('#1e3a8a') && !base.includes('#1e40af'), 'admin user-save button no longer hard-codes navy blue');
+  assert.ok(theme.includes('.user-save-btn {') && theme.includes('background: var(--btn-primary);'), 'admin user-save button uses the primary button blue');
 });
 
-// The sidebar's hover and its selected item are both white-grey (the selected one a step deeper, so the two stay apart), with dark text and no side
-// strip; the label is always dark, the icon at rest a light grey, and hovered or selected the icon is the primary blue (like the stat icons).
-test('the sidebar hover and selected item are white-grey, readable, with no side strip, and the selected icon stays visible', () => {
+// Sidebar hover is grey with a grey icon and subtle zoom; selected (.active) or pressed (:active) uses light blue (~22–28% opacity) with the primary blue icon and a slightly stronger zoom.
+test('the sidebar hover is grey with grey icon, selected/pressed is light blue with blue icon, and labels stay readable', () => {
   assert.notStrictEqual(token('side-active'), token('side-hover'), 'selected and hover can be told apart');
-  for (const name of ['side-hover', 'side-active', 'side-active-hover']) {
-    assert.ok(contrast(token('ink'), token(name)) >= 4.5, 'label on ' + name);
-    assert.ok(contrast(token('btn-primary'), token(name)) >= 3, 'blue icon on ' + name);
-  }
-  assert.ok(theme.includes('.sidebar nav button.active { background: var(--side-active); color: var(--ink); box-shadow: none; }'), 'no side strip');
-  assert.ok(theme.includes('.sidebar nav button.active:hover { background: var(--side-active-hover); color: var(--ink); }'));
-  assert.ok(theme.includes('.sidebar nav button:hover .nav-icon, .sidebar nav button.active .nav-icon { color: var(--btn-primary); }'), 'the icon turns blue when hovered or selected');
-  assert.ok(theme.includes('padding-bottom: 6px; color: var(--text); }'), 'the label is dark');
+  assert.ok(theme.includes('.sidebar nav button:hover { background: var(--side-hover); color: var(--ink); transform: scale(1.015); }'));
+  assert.ok(theme.includes('.sidebar nav button:hover .nav-icon { color: var(--side-icon); transform: scale(1.05); }'), 'hover keeps the icon grey');
+  assert.ok(theme.includes('.sidebar nav button.active, .sidebar nav button:active { background: var(--side-active-blue); color: var(--ink); box-shadow: none; transform: scale(1.025); }'), 'selected/pressed uses light blue with no side strip');
+  assert.ok(theme.includes('.sidebar nav button.active:hover, .sidebar nav button:hover:active { background: var(--side-active-blue-hover); color: var(--ink); transform: scale(1.035); }'));
+  assert.ok(theme.includes('.sidebar nav button.active .nav-icon, .sidebar nav button:active .nav-icon { color: var(--btn-primary); transform: scale(1.1); }'), 'icon turns blue on active/pressed');
+  assert.ok(theme.includes('padding-bottom: 6px; color: var(--text);'), 'the label is dark');
   assert.ok(contrast(token('text'), token('bg')) >= 4.5, 'and readable on the sidebar');
-  assert.ok(theme.includes('.sidebar nav button .nav-icon { color: var(--side-icon); }'), 'the icon at rest: light grey');
+  assert.ok(theme.includes('.sidebar nav button .nav-icon { color: var(--side-icon);'), 'the icon at rest: light grey');
   assert.ok(contrast(token('side-icon'), token('bg')) >= 3, 'still visible on the sidebar (a graphic: 3:1; the collapsed sidebar shows only icons): ' + contrast(token('side-icon'), token('bg')).toFixed(2));
 });
 

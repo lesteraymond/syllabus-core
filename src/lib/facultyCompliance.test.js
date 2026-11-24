@@ -33,3 +33,9 @@ test('with several syllabi for one subject the furthest one counts', () => {
   const ben = facultyCompliance({ faculty, holders, subjects, syllabi }).find((f) => f.userId === 6);
   assert.deepEqual([ben.submitted, ben.approved, ben.missing], [1, 1, []]);
 });
+
+test('an administrator\'s own draft is not submitted: it is missing with no status, never shown as (draft)', () => {
+  const syllabi = [{ userId: 6, courseId: 4, status: 'draft' }];
+  const ben = facultyCompliance({ faculty, holders, subjects, syllabi }).find((f) => f.userId === 6);
+  assert.deepEqual([ben.submitted, ben.missing], [0, [{ code: 'IT 104', status: null }]]);
+});

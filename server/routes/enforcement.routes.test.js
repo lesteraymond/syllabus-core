@@ -337,7 +337,7 @@ test('a submitted syllabus is locked: the owner cannot edit it until the adminis
     assert.strictEqual(get.body.editable, false, 'editable ' + id);
   }
   const back = (await call(fay, 'GET', '/syllabi/8/content')).body; // returned for revision: told what the next version will be
-  assert.strictEqual(back.nextVersion, 'v1.1');
+  assert.strictEqual(back.nextVersion, 'v2'); // after the old 'v1.0' (version 1)
   assert.strictEqual(back.reviewerNote, '');
   assert.ok(!('nextVersion' in (await call(fay, 'GET', '/syllabi/6/content')).body));
   for (const id of [8, 9]) { // a draft, or one returned for revision, can be edited
