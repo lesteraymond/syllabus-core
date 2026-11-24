@@ -4,7 +4,7 @@ const mysql=require('mysql2/promise');
 const {loadOutcomes}=require('../lib/institution');
 const {findProgram,loadProgram}=require('../lib/programs');
 async function main(){
- const conn=await mysql.createConnection({host:process.env.DB_HOST,user:process.env.DB_USER,password:process.env.DB_PASS,database:process.env.DB_NAME});
+ const conn=await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
  try{
   const [columns]=await conn.query("SHOW COLUMNS FROM courses LIKE 'standards_json'");
   if(!columns.length) await conn.query('ALTER TABLE courses ADD COLUMN standards_json LONGTEXT NULL');

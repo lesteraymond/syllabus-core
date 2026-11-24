@@ -16,7 +16,7 @@ async function migrate(conn, { dryRun = false } = {}) {
 if (require.main === module) {
   const dryRun = process.argv.includes('--dry-run');
   (async () => {
-    const conn = await mysql.createConnection({ host: process.env.DB_HOST, user: process.env.DB_USER, password: process.env.DB_PASS, database: process.env.DB_NAME }); // same connection as every migrate-* script
+    const conn = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig()); // same connection as every migrate-* script
     try {
       const r = await migrate(conn, { dryRun });
       console.log(r.created ? (dryRun ? '[dry run] would create syllabus_review_ai_choices' : 'syllabus_review_ai_choices created') : 'syllabus_review_ai_choices already present');

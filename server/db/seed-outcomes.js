@@ -11,12 +11,7 @@ const DRY = process.argv.includes('--dry-run');
 
 async function seed() {
   const { INSTITUTION, PROGRAMS, COURSES } = await import(pathToFileURL(path.join(__dirname, '..', '..', 'src', 'data', 'outcomesSeed.js')).href);
-  const conn = await mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-  });
+  const conn = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
   const say = (m) => console.log((DRY ? '[dry run] ' : '') + m);
   const run = async (sql, params) => { if (!DRY) await conn.query(sql, params); };
 

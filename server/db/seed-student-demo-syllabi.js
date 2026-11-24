@@ -83,7 +83,7 @@ const stampYear = async (db, id, year) => { if (year) await db.query('UPDATE syl
 
 async function seedFaculty(email) {
   const model = await import(pathToFileURL(path.join(__dirname, '..', '..', 'src', 'lib', 'syllabusModel.js')).href);
-  const db = await mysql.createConnection({ host: process.env.DB_HOST, user: process.env.DB_USER, password: process.env.DB_PASS, database: process.env.DB_NAME });
+  const db = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
   try {
     const [[user]] = await db.query("SELECT user_id FROM users WHERE email = ? AND role = 'faculty'", [email]);
     if (!user) throw new Error(`No faculty account has the email ${email}.`);
@@ -116,7 +116,7 @@ async function main() {
   const studentId = process.argv[2];
   if (!studentId) throw new Error('Give the student ID: npm run seed-student-demo-syllabi -- 23-3389-455');
   const model = await import(pathToFileURL(path.join(__dirname, '..', '..', 'src', 'lib', 'syllabusModel.js')).href);
-  const db = await mysql.createConnection({ host: process.env.DB_HOST, user: process.env.DB_USER, password: process.env.DB_PASS, database: process.env.DB_NAME, port: process.env.DB_PORT || 3306 });
+  const db = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
   try {
     const [[profile]] = await db.query('SELECT user_id FROM student_profiles WHERE student_id = ?', [studentId]);
     if (!profile) throw new Error(`No registered student has the ID ${studentId}.`);

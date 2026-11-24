@@ -18,7 +18,7 @@ async function migrate(db) {
   return { uniqueness: 'program_id,code' };
 }
 if (require.main === module) (async () => {
-  const db = await require('mysql2/promise').createConnection({ host: process.env.DB_HOST, user: process.env.DB_USER, password: process.env.DB_PASS, database: process.env.DB_NAME });
+  const db = await require('mysql2/promise').createConnection(require('../lib/dbConfig').resolveConnectionConfig());
   try { console.log(JSON.stringify(await migrate(db))); } finally { await db.end(); }
 })().catch(error => { console.error(error.message); process.exitCode = 1; });
 module.exports = { migrate };

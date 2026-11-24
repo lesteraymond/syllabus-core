@@ -62,13 +62,9 @@ function wholeNumber(env, name, fallback, min, max) {
   return Number(raw);
 }
 
-// -> { pool: the options for mysql2's createPool, ssl: 'off' | 'required', strict }. Throws a db_config_invalid error naming the setting.
-function resolveDbConfig(env = process.env) {
+// Shared TLS and port validation for both the server pool (resolveDbConfig) and standalone DB scripts (resolveConnectionConfig).
+function resolveTlsAndPort(env = process.env) {
   const strict = hardened(env), mode = clean(env.NODE_ENV).toLowerCase() || 'development';
-  if (accountRulesEnforced(env)) {
-    for (const name of ['DB_HOST', 'DB_USER', 'DB_PASS', 'DB_NAME']) if (!clean(env[name])) throw fail('db_config_invalid', `${name} is required with NODE_ENV=${mode}.`);
-    if (clean(env.DB_USER).toLowerCase() === 'root') throw fail('db_config_invalid', `DB_USER must not be the database's root account with NODE_ENV=${mode}: create an account for the application that may only ${NEEDED} on its own database.`);
-  }
   const host = clean(env.DB_HOST);
   const ssl = clean(env.DB_SSL).toLowerCase() || 'off';
   if (!['off', 'required'].includes(ssl)) throw fail('db_config_invalid', 'DB_SSL must be off or required.');
@@ -82,10 +78,36 @@ function resolveDbConfig(env = process.env) {
       try { tls.ca = fs.readFileSync(caPath, 'utf8'); } catch { throw fail('db_config_invalid', 'DB_SSL_CA names a file that cannot be read.'); }
     }
   }
+  const port = wholeNumber(env, 'DB_PORT', 3306, 1, 65535);
+  return { strict, mode, ssl, tls, port };
+}
+
+// Connection options for standalone scripts in server/db/ (init.js, migrate-*.js, create-admin.js, seed-*.js):
+// honours DB_HOST, DB_PORT, DB_USER, DB_PASS, DB_NAME, DB_SSL and DB_SSL_CA, without pool-only keys or the server's non-root rule.
+function resolveConnectionConfig(env = process.env, { includeDatabase = true } = {}) {
+  const { tls, port } = resolveTlsAndPort(env);
+  return {
+    host: env.DB_HOST,
+    port,
+    user: env.DB_USER,
+    password: env.DB_PASS,
+    ...(includeDatabase ? { database: env.DB_NAME } : {}),
+    connectTimeout: 10000,
+    ...(tls ? { ssl: tls } : {}),
+  };
+}
+
+// -> { pool: the options for mysql2's createPool, ssl: 'off' | 'required', strict }. Throws a db_config_invalid error naming the setting.
+function resolveDbConfig(env = process.env) {
+  const { strict, mode, ssl, tls, port } = resolveTlsAndPort(env);
+  if (accountRulesEnforced(env)) {
+    for (const name of ['DB_HOST', 'DB_USER', 'DB_PASS', 'DB_NAME']) if (!clean(env[name])) throw fail('db_config_invalid', `${name} is required with NODE_ENV=${mode}.`);
+    if (clean(env.DB_USER).toLowerCase() === 'root') throw fail('db_config_invalid', `DB_USER must not be the database's root account with NODE_ENV=${mode}: create an account for the application that may only ${NEEDED} on its own database.`);
+  }
   const sqlStrict = clean(env.DB_SQL_STRICT).toLowerCase() || 'off';
   if (!['on', 'off'].includes(sqlStrict)) throw fail('db_config_invalid', 'DB_SQL_STRICT must be on or off.');
   const pool = {
-    host: env.DB_HOST, port: wholeNumber(env, 'DB_PORT', 3306, 1, 65535), user: env.DB_USER, password: env.DB_PASS, database: env.DB_NAME,
+    host: env.DB_HOST, port, user: env.DB_USER, password: env.DB_PASS, database: env.DB_NAME,
     waitForConnections: true,
     connectionLimit: wholeNumber(env, 'DB_POOL_SIZE', 10, 1, 100),
     queueLimit: wholeNumber(env, 'DB_POOL_QUEUE', 200, 1, 10000), // never 0: that is an unlimited queue
@@ -164,4 +186,4 @@ async function assertDatabaseSafe(db, env = process.env) {
   return { checked: true, excess, demoAccounts, warnings: [...(excess.length ? [tooMuch] : []), ...(demoAccounts ? [demo] : []), ...(sqlModeWarning ? [sqlModeWarning] : [])] };
 }
 
-module.exports = { resolveDbConfig, applySessionSettings, excessPrivileges, seededAccounts, assertDatabaseSafe, e2eScratch, SEED_FILE, ALLOWED, LOOPBACK, STRICT_SQL_MODE };
+module.exports = { resolveDbConfig, resolveConnectionConfig, applySessionSettings, excessPrivileges, seededAccounts, assertDatabaseSafe, e2eScratch, SEED_FILE, ALLOWED, LOOPBACK, STRICT_SQL_MODE };

@@ -60,7 +60,7 @@ if (require.main === module) {
   const dryRun = process.argv.includes('--dry-run');
   (async () => {
     const mysql = require('mysql2/promise');
-    const conn = await mysql.createConnection({ host: process.env.DB_HOST, port: Number(process.env.DB_PORT) || 3306, user: process.env.DB_USER, password: process.env.DB_PASS, database: process.env.DB_NAME });
+    const conn = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
     try {
       const { steps } = await migrate(conn, { dryRun });
       if (!steps.length) console.log('The audit tables already keep their rows: nothing to do.');

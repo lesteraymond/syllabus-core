@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { resolveDbConfig, applySessionSettings, excessPrivileges, seededAccounts, assertDatabaseSafe, e2eScratch, SEED_FILE, STRICT_SQL_MODE } = require('./dbConfig');
+const { resolveDbConfig, resolveConnectionConfig, applySessionSettings, excessPrivileges, seededAccounts, assertDatabaseSafe, e2eScratch, SEED_FILE, STRICT_SQL_MODE } = require('./dbConfig');
 const { EventEmitter } = require('node:events');
 
 const problem = (fn, re) => assert.throws(fn, (e) => e.code === 'db_config_invalid' && re.test(e.message), String(re));
@@ -173,4 +173,33 @@ test('server/index.js builds its pool from this module and checks the database b
   assert.doesNotMatch(source, /process\.env\.DB_PASS/);
   const check = source.indexOf('assertDatabaseSafe(pool'), listen = source.indexOf('app.listen(');
   assert.ok(check > 0 && check < listen, 'assertDatabaseSafe runs before app.listen');
+});
+
+test('resolveConnectionConfig honours DB_PORT, DB_SSL, DB_SSL_CA and includeDatabase: false without pool-only keys', () => {
+  const dev = resolveConnectionConfig({ DB_HOST: 'localhost', DB_USER: 'root', DB_PASS: '', DB_NAME: 'syllabus_db' });
+  assert.deepEqual(dev, { host: 'localhost', port: 3306, user: 'root', password: '', database: 'syllabus_db', connectTimeout: 10000 });
+  const initCfg = resolveConnectionConfig({ ...base, DB_PORT: '3307', DB_HOST: 'db.internal.example', DB_SSL: 'required' }, { includeDatabase: false });
+  assert.equal(initCfg.port, 3307);
+  assert.equal('database' in initCfg, false);
+  assert.deepEqual(initCfg.ssl, { minVersion: 'TLSv1.2', rejectUnauthorized: true });
+  assert.equal('connectionLimit' in initCfg, false);
+  // Standalone migration scripts allow a separate migration/root account in staging/production, but still require TLS on non-loopback hosts.
+  assert.equal(resolveConnectionConfig({ ...staging, DB_USER: 'root' }).user, 'root');
+  problem(() => resolveConnectionConfig({ ...staging, DB_HOST: 'db.internal.example' }), /DB_SSL=required/);
+  problem(() => resolveConnectionConfig({ ...base, DB_PORT: 'bad' }), /DB_PORT/);
+});
+
+test('every standalone script in server/db/ connects through resolveConnectionConfig (honours DB_PORT and DB_SSL)', () => {
+  const dbDir = path.join(__dirname, '..', 'db');
+  const scripts = fs.readdirSync(dbDir).filter((f) => f.endsWith('.js') && !f.endsWith('.test.js'));
+  let checked = 0;
+  for (const file of scripts) {
+    const src = fs.readFileSync(path.join(dbDir, file), 'utf8');
+    if (!/createConnection|createPool/.test(src)) continue;
+    checked++;
+    assert.match(src, /resolveConnectionConfig/, `${file} must use resolveConnectionConfig from ../lib/dbConfig`);
+    assert.doesNotMatch(src, /createConnection\(\s*\{[\s\S]*?DB_HOST/, `${file} must not hardcode createConnection({ host: DB_HOST })`);
+    if (file === 'init.js') assert.match(src, /includeDatabase:\s*false/, 'init.js must omit database before CREATE DATABASE');
+  }
+  assert.ok(checked >= 40, 'expected to check all server/db scripts, got ' + checked);
 });

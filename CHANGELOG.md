@@ -3068,3 +3068,12 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Not changed:** who may read a syllabus otherwise, and the screens (they never offered these syllabi).
 - **Docs:** `HOW-TO-RUN.md` gains a **Server settings reference** with every optional server setting (AI Checker, Generator, Claude request tuning, PDF import, sign-in limits, AI daily ceilings, database, accounts and sessions). The descriptions had been removed from `server/.env.example` when it was trimmed in v1.98.28. `docs/review-chain.md` updated.
 - **Tests:** `syllabusFiles.routes.test.js` (+4) and `stages.routes.test.js` (+1): the VPAA before and after the three stages, an approved syllabus, the dean's syllabus before and after it is sent. They fail without the change. `npm test` passes (1,618 server tests, localization, PDF import, VPAA screens).
+
+---
+
+### v1.98.30 — Database Setup and Migration Scripts Honour `DB_PORT` and `DB_SSL`
+**Date:** November 24, 2026
+
+- **Problem (pre-deploy report 2026-11-24, B4):** `server/db/init.js` and the `migrate-*.js` / seed scripts connected directly with `DB_HOST`, `DB_USER`, `DB_PASS`, and `DB_NAME`, ignoring `DB_PORT`, `DB_SSL`, and `DB_SSL_CA`. Against a cloud database requiring TLS or a non-default port, setup and migrations would fail to connect.
+- **Change:** extracted shared TLS and port validation into `resolveConnectionConfig` in `server/lib/dbConfig.js` and wired all 45 standalone scripts in `server/db/` (`init.js` with `includeDatabase: false`, `create-admin.js`, all `migrate-*.js`, `seed-*.js`, and `verify-subject-standards.js`) to use it. Standalone scripts still allow a separate migration/admin account while enforcing `DB_SSL=required` on non-loopback hosts in `staging` and `production`.
+- **Tests:** `server/lib/dbConfig.test.js` (+2) covers `resolveConnectionConfig` (`DB_PORT`, `DB_SSL`, `DB_SSL_CA`, `includeDatabase: false`, remote TLS enforcement) and asserts that every standalone script in `server/db/` connects through `resolveConnectionConfig`. Full `npm test` passes.

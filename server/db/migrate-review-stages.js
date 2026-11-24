@@ -11,12 +11,7 @@ const dryRun = process.argv.includes('--dry-run');
 const say = (message) => console.log((dryRun ? '[dry run] would: ' : '') + message);
 
 async function migrate() {
-  const conn = await mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-  });
+  const conn = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
   const [cols] = await conn.query(
     "SELECT column_type FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'users' AND column_name = 'role'");
   if (!cols.length) throw new Error('users.role was not found. Run the base schema first.');

@@ -25,7 +25,7 @@ const COLUMNS = [
 const ACTIVE_COLUMNS = [['association', "VARCHAR(10) NOT NULL DEFAULT 'owner'"], ['associated_by', 'INT NULL'], ['associated_at', 'TIMESTAMP NULL DEFAULT NULL'], ['association_note', 'VARCHAR(500) NULL']];
 async function main() {
   require('dotenv').config();
-  const conn = await mysql.createConnection({ host: process.env.DB_HOST, port: process.env.DB_PORT ? Number(process.env.DB_PORT) : undefined, user: process.env.DB_USER, password: process.env.DB_PASS, database: process.env.DB_NAME });
+  const conn = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
   try {
     for (const ddl of TABLES) await conn.query(ddl);
     for (const [name, type] of COLUMNS) {

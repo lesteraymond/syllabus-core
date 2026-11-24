@@ -16,7 +16,7 @@ async function migrate(conn) {
 
 if (require.main === module) {
   (async () => {
-    const conn = await mysql.createConnection({ host: process.env.DB_HOST, user: process.env.DB_USER, password: process.env.DB_PASS, database: process.env.DB_NAME }); // same connection as every migrate-* script
+    const conn = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig()); // same connection as every migrate-* script
     try { const r = await migrate(conn); console.log(r.added ? `users: ${r.added} account-status column(s) added` : 'users: account-status columns already present'); }
     finally { await conn.end(); }
   })().catch((e) => { console.error('migrate-account-status failed:', e.code || e.message); process.exit(1); });
