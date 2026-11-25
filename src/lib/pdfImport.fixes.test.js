@@ -121,3 +121,13 @@ test('a PDF is matched with the administrator\'s subject of any curriculum year,
   assert.equal(importIdentity({ code: 'AI 201', title: 'Machine Learning 1' }, meta, context, true).curriculumYear, '2022-2023', 'a subject without a curriculum year leaves the draft\'s');
   assert.equal(importIdentity({ code: 'AI 999', title: 'Machine Learning 1' }, meta, context, true).ok, false, 'another code is still refused');
 });
+
+test('a PDF does not set the units where they are locked (faculty), and says so when they differ', () => {
+  const d = base(); Object.assign(d.meta, { lecture: '2', lab: '1' });
+  const f = { ...fields(), credits: '3 units lecture / 2 units laboratory' };
+  const open = apply(f, d).content.meta; assert.deepEqual([open.lecture, open.lab], ['3', '2'], 'an administrator\'s import reads them');
+  const locked = apply(f, d, { lockUnits: true });
+  assert.deepEqual([locked.content.meta.lecture, locked.content.meta.lab], ['2', '1']);
+  assert.ok(locked.warnings.some(w => w.key === 'pdfImport.unitsKept')); assert.ok(!locked.warnings.some(w => w.key === 'pdfImport.creditsReview'));
+  assert.ok(!apply({ ...f, credits: '2 units lecture / 1 unit laboratory' }, d, { lockUnits: true }).warnings.some(w => w.key === 'pdfImport.unitsKept'), 'nothing to say when they are the same');
+});

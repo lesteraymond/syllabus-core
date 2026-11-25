@@ -431,6 +431,23 @@ test('saving an editable draft canonicalizes the program code from its assigned 
   assert.deepStrictEqual(db.s.saved[0].plan, old.plan);
 }));
 
+test('faculty cannot set the units, not even while the administrator has not set them', () => withServer(async ({ call, db }) => {
+  const old = JSON.parse(db.s.syllabi[1].content);
+  const put = (who, meta) => call(who, 'PUT', '/syllabi/1/content', { sections: { meta: { ...old.meta, courseId: 10, ...meta } } });
+  // nothing on the subject, nothing in the syllabus of this subject: a typed or forged value is not kept
+  db.s.syllabi[1].content = JSON.stringify({ ...old, meta: { ...old.meta, courseId: 20 } });
+  assert.strictEqual((await put(fay, { lecture: '9', lab: '9' })).status, 200);
+  assert.deepStrictEqual([db.s.saved.at(-1).meta.lecture, db.s.saved.at(-1).meta.lab], ['', ''], 'another subject starts without units');
+  // a draft that already had units keeps them
+  db.s.syllabi[1].content = JSON.stringify({ ...old, meta: { ...old.meta, courseId: 10, lecture: '2', lab: '1' } });
+  assert.strictEqual((await put(fay, { lecture: '9', lab: '9' })).status, 200);
+  assert.deepStrictEqual([db.s.saved.at(-1).meta.lecture, db.s.saved.at(-1).meta.lab], ['2', '1'], 'the units it had stay');
+  // set by the administrator: forced
+  Object.assign(db.s.courses[0], { lecture_units: '3.0', lab_units: '0.0' });
+  assert.strictEqual((await put(fay, { lecture: '9', lab: '9' })).status, 200);
+  assert.deepStrictEqual([db.s.saved.at(-1).meta.lecture, db.s.saved.at(-1).meta.lab], ['3', '0']);
+}));
+
 test("the administrator's year level, pre-requisite and semester are forced into Step 1 on every save; a subject without them leaves Step 1 editable", () => withServer(async ({ call, db }) => {
   const old = JSON.parse(db.s.syllabi[1].content);
   // no term on the subject: the faculty member's own values are kept

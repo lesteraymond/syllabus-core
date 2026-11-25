@@ -59,8 +59,8 @@ module.exports = async function run(ctx, h) {
     check(/(To continue|Complete before submitting): Choose a program/.test(text) && /Add at least one description paragraph/.test(text), 'the form lists what is still missing before Step 1 can be completed (form validation)');
     await s.pick(/Choose a program/, /BSIT/);
     await s.pick(/Choose a subject/, /IT 204/);
-    await s.page.locator('[placeholder="Lecture units"],[aria-label="Lecture units"]').first().fill('2');
-    await s.page.locator('[placeholder="Laboratory units"],[aria-label="Laboratory units"]').first().fill('1');
+    const unit = (name) => s.page.getByLabel(name, { exact: true });
+    check(await unit('Lecture units').inputValue() === '2' && await unit('Laboratory units').inputValue() === '1' && !(await unit('Lecture units').isEditable()) && !(await unit('Laboratory units').isEditable()), "the administrator's units are filled in and faculty cannot type them");
     await s.page.locator('[placeholder="For example, 2022-2023"],[aria-label="For example, 2022-2023"]').first().fill('test-2026');
     check(!(await s.page.getByLabel('Year level', { exact: true }).isEditable()) && !(await s.page.getByLabel('Pre-requisite', { exact: true }).isEditable()), 'faculty cannot edit the year level or pre-requisite');
     check(await s.page.getByLabel('Year level', { exact: true }).inputValue() === '2' && await s.page.getByLabel('Pre-requisite', { exact: true }).inputValue() === 'IT 202 - Programming 1', "the administrator's year level and pre-requisite are filled in");
@@ -700,6 +700,22 @@ module.exports = async function run(ctx, h) {
     check(forged.status === 200, 'a forged save is accepted (HTTP ' + forged.status + ')');
     const meta = (await f.api('GET', '/syllabi/' + id + '/content')).body.content.meta;
     check(meta.prereq === 'IT 204 - Computer Programming 2' && String(meta.yearLevel) === '3' && meta.semester === '2nd Semester' && meta.lecture === '3' && meta.lab === '1' && meta.curriculumYear === '2022-2023', "the server stored the administrator's values, not the forged ones (" + [meta.prereq, meta.yearLevel, meta.academicYear, meta.semester].join(' | ') + ')');
+    // while the administrator has not set the units, faculty still cannot type them (2026-11-25)
+    const a2 = await L.session(browser, stack);
+    await a2.loginOk('admin');
+    const cleared = await a2.api('PUT', '/courses/' + state.termCourseId, { code: 'IT 306', title: 'Mobile Application Development (synthetic)', lecture: '', lab: '' });
+    check(cleared.status === 200 && cleared.body.units === null, 'the administrator cleared the units (HTTP ' + cleared.status + ')');
+    await f.page.reload(); await f.page.waitForTimeout(3000);
+    await f.nav('Syllabi');
+    await f.page.getByText('IT 306', { exact: false }).first().locator('xpath=ancestor::*[.//button[contains(., "Edit")]][1]').getByRole('button', { name: /edit/i }).first().click();
+    await f.page.waitForTimeout(2500);
+    check(!(await field('Lecture units').isEditable()) && !(await field('Laboratory units').isEditable()) && /Not set by the administrator yet/.test(await f.text()), 'units the administrator has not set are locked for faculty, and the page says who sets them');
+    await f.shot(evidence('E18-faculty-units-not-set-1440.png'));
+    const typed = await f.api('PUT', '/syllabi/' + id + '/content', { sections: { meta: { ...meta, lecture: '9', lab: '9' } }, schemaVersion: 3 });
+    const after = (await f.api('GET', '/syllabi/' + id + '/content')).body.content.meta;
+    check(typed.status === 200 && after.lecture === '3' && after.lab === '1', 'a forged save does not change them (' + after.lecture + ' / ' + after.lab + ', HTTP ' + typed.status + ')');
+    await a2.api('PUT', '/courses/' + state.termCourseId, { code: 'IT 306', title: 'Mobile Application Development (synthetic)', lecture: '3', lab: '1' });
+    await a2.close();
     assertClean(f, 'E18-faculty', { allowStatus: [409] });
     await f.close();
   });
@@ -1166,7 +1182,7 @@ module.exports = async function run(ctx, h) {
     const pos = [{ no: 1, short: 'RPO 1', text: 'Apply knowledge in a reviewed outcome (synthetic).', egas: [1] }, { no: 2, short: 'RPO 2', text: OLD, egas: [1] }];
     const made = await a.api('POST', '/programs', { code: 'BSRV', name: 'BS Review Flow (synthetic)', outcomes: { egas, pos } });
     check(made.status === 201, 'the administrator added a program with two POs (HTTP ' + made.status + ')');
-    const subject = await a.api('POST', '/courses', { code: 'RV 101', title: 'Review Flow (synthetic)', program: 'BSRV', semester: '1st Semester', yearLevel: 1, prerequisite: 'None' });
+    const subject = await a.api('POST', '/courses', { code: 'RV 101', title: 'Review Flow (synthetic)', program: 'BSRV', semester: '1st Semester', yearLevel: 1, prerequisite: 'None', lecture: '2', lab: '1' });
     check(subject.status === 200, 'and a subject (HTTP ' + subject.status + ')');
     const users = (await a.api('GET', '/users')).body, fac = (users.users || users).find((u) => u.email === 'e2e.faculty@e2e.invalid');
     check((await a.api('PUT', '/users/' + (fac.id || fac.user_id) + '/assignments', { programs: [made.body.id], courses: [subject.body.id] })).status === 200, 'assigned to the faculty member');

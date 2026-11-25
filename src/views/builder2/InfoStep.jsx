@@ -54,10 +54,10 @@ export default function InfoStep({ d, apply, editable = true, syllabusYear = '',
       </Field>
       <Field label={translateUI("ui.credit_units_v_40ba2a")}>
         <span className="units">
-          <input className="mono" inputMode="numeric" value={m.lecture} readOnly={!!units} onChange={(e) => setM('lecture', e.target.value)} aria-label={translateUI("ui.lecture_units_de9aaf")} maxLength={4} style={{ width: 74, textAlign: 'center' }} /><span>{translateUI("ui.units_lecture_2a1d2c")}</span>
-          <input className="mono" inputMode="numeric" value={m.lab} readOnly={!!units} onChange={(e) => setM('lab', e.target.value)} aria-label={translateUI("ui.laboratory_units_067e02")} maxLength={4} style={{ width: 74, textAlign: 'center' }} /><span>{translateUI("ui.unit_laboratory_60e5a6")}</span>
+          <input className="mono" inputMode="numeric" value={m.lecture} readOnly={lockTerm || !!units} onChange={(e) => setM('lecture', e.target.value)} aria-label={translateUI("ui.lecture_units_de9aaf")} maxLength={4} style={{ width: 74, textAlign: 'center' }} /><span>{translateUI("ui.units_lecture_2a1d2c")}</span>
+          <input className="mono" inputMode="numeric" value={m.lab} readOnly={lockTerm || !!units} onChange={(e) => setM('lab', e.target.value)} aria-label={translateUI("ui.laboratory_units_067e02")} maxLength={4} style={{ width: 74, textAlign: 'center' }} /><span>{translateUI("ui.unit_laboratory_60e5a6")}</span>
         </span>
-        {units && <span className="linkline">{translateUI('term.lockedHint')}</span>}
+        {units ? <span className="linkline">{translateUI('term.lockedHint')}</span> : lockTerm && m.courseId ? <span className="linkline">{translateUI('term.notSetByAdmin')}</span> : null}
       </Field>
       <Field label={translateUI('hybrid.curriculumYear')}><input value={m.curriculumYear || ''} readOnly={!!curriculumYear} onChange={e => setM('curriculumYear', e.target.value)} aria-label={translateUI('hybrid.curriculumYear')} placeholder={translateUI('hybrid.yearExample')} maxLength={40} />{curriculumYear && <span className="linkline">{translateUI('term.lockedHint')}</span>}</Field>
       {/* the academic year is the syllabus's own (the year it was created in), shown read-only; the semester is the subject's */}

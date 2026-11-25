@@ -3,7 +3,7 @@
 // Run: npm test.
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { parseUnits, unitsOf, applyUnits } = require('./subjectUnits');
+const { parseUnits, unitsOf, applyUnits, keepUnits } = require('./subjectUnits');
 const { subjectReference, programSubjectsOf } = require('./subjectReference');
 const { findByCode } = require('./subjectCode');
 const { coded, run } = require('./syllabuscheck/engine');
@@ -28,6 +28,12 @@ test('units are read as numbers and written into Step 1 as the syllabus keeps th
   assert.equal(unitsOf({}), null, 'a database without the columns');
   assert.deepEqual(applyUnits({ lecture: '4 O', lab: '4' }, { lecture: 2, lab: 1 }), { lecture: '2', lab: '1' });
   assert.deepEqual(applyUnits({ lecture: '4', lab: '4' }, null), { lecture: '4', lab: '4' });
+});
+
+test('faculty never change the units: without any on the subject, what the syllabus had stays, and another subject starts with none', () => {
+  assert.deepEqual(keepUnits({ lecture: '9', lab: '9' }, { lecture: '2', lab: '1' }), { lecture: '2', lab: '1' });
+  assert.deepEqual(keepUnits({ lecture: '9', lab: '9' }, null), { lecture: '', lab: '' });
+  assert.deepEqual(keepUnits({ code: 'X' }, {}), { code: 'X', lecture: '', lab: '' });
 });
 
 // ---- the reference of a syllabus ----

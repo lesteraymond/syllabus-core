@@ -186,5 +186,7 @@ test('units: text in the form, the server\'s rule, and the subject\'s units and 
   assert.deepEqual([d.meta.lecture, d.meta.lab, d.meta.curriculumYear], ['2', '1', '2027-2028']);
   const own = emptyDraft(newId); Object.assign(own.meta, { lecture: '4', lab: '4', curriculumYear: '2022-2023' });
   const kept = applyCourse(own, { ...course(TERM), units: null, curriculumYear: null });
-  assert.deepEqual([kept.meta.lecture, kept.meta.lab, kept.meta.curriculumYear], ['4', '4', '2022-2023'], 'a subject without them leaves Step 1 as typed');
+  assert.deepEqual([kept.meta.lecture, kept.meta.lab, kept.meta.curriculumYear], ['', '', '2022-2023'], 'choosing a subject without units starts without any: the administrator sets them');
+  const again = applyCourse({ ...kept, meta: { ...kept.meta, lecture: '2', lab: '1' } }, { ...course(TERM), units: null });
+  assert.deepEqual([again.meta.lecture, again.meta.lab], ['2', '1'], 'the same subject again keeps what the draft has');
 });

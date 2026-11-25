@@ -325,7 +325,7 @@ export default function SyllabusBuilderV2({ editing, restore = null, user, notif
   };
   const applyPdfImport = async (fields, { planRows = null, prerequisiteChoice = null, next = null } = {}) => {
     if (!load.editable || (importBase.current !== null && importBase.current !== JSON.stringify(draft))) throw new Error('pdfImport.draftChanged');
-    const mapped = preparePdfImport(fields, draft, newId, { planRows, prerequisiteChoice, identityContext: importIdentity.current });
+    const mapped = preparePdfImport(fields, draft, newId, { planRows, prerequisiteChoice, identityContext: importIdentity.current, lockUnits: termLocked });
     setBusy(true);
     try {
       setLastRun(null);

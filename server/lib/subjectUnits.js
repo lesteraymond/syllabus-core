@@ -1,7 +1,7 @@
 'use strict';
 // A subject's credit units (lecture and laboratory), set by an administrator (courses.lecture_units, courses.lab_units). Faculty cannot change them: routes/syllabusContent.js
-// copies them into a syllabus's Step 1 on every save (applyUnits). A subject without units (made before the form had them) leaves Step 1 editable and is not checked for
-// them. Added by `npm run migrate-subject-units`; until then the columns are absent and everything here degrades to "not set" (reads) or a 503 that names the migration (writes).
+// copies them into a syllabus's Step 1 on every save (applyUnits). On a subject without units (made before the form had them) faculty cannot type them either: the draft
+// keeps what it had (keepUnits), and the units are not checked. Added by `npm run migrate-subject-units`; until then the columns are absent and everything here degrades to "not set" (reads) or a 503 that names the migration (writes).
 const { httpError } = require('./http');
 
 const COLUMNS = 'c.lecture_units, c.lab_units';
@@ -38,7 +38,7 @@ async function saveUnits(db, courseId, units) {
   catch (error) { if (error && error.code === 'ER_BAD_FIELD_ERROR') throw httpError(503, MIGRATION_MESSAGE); throw error; }
 }
 
-// Step 1 keeps units as text ("2"). A subject without units leaves the author's.
+// Step 1 keeps units as text ("2"). A subject without units leaves the draft's (see keepUnits for faculty).
 function applyUnits(meta, units) {
   if (!meta || !units) return meta;
   meta.lecture = String(units.lecture);
@@ -46,4 +46,11 @@ function applyUnits(meta, units) {
   return meta;
 }
 
-module.exports = { COLUMNS, MIGRATION_MESSAGE, MAX_UNITS, parseUnits, unitsOf, saveUnits, applyUnits };
+// Faculty save on a subject without units: the units the stored draft of this subject had, or none (`stored`: its Step 1, null for another subject).
+function keepUnits(meta, stored) {
+  meta.lecture = String((stored && stored.lecture) ?? '');
+  meta.lab = String((stored && stored.lab) ?? '');
+  return meta;
+}
+
+module.exports = { keepUnits, COLUMNS, MIGRATION_MESSAGE, MAX_UNITS, parseUnits, unitsOf, saveUnits, applyUnits };

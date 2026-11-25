@@ -3164,3 +3164,14 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Migration:** `npm run migrate-subject-units` (adds two empty columns; safe to run again). Existing subjects have no units until an administrator sets them.
 - **Checked:** the three dev drafts have no blocking rule; a new program with nothing on file passes every subject check (written and rolled back); all 25 browser scenarios pass on an isolated database. No real AI run was made.
 - **Tests:** `subjectReference.test.js` (15), `catalogYear.routes.test.js` (+2), `subjectTerm.test.js` (+1), `pdfImport.fixes.test.js` (+1), browser scenarios E18 and E23 extended; tests of the copy removed. `npm test` and `npm run test:vpaa` pass.
+
+---
+
+### v1.98.38 — Faculty Never Type the Units
+**Date:** November 25, 2026
+
+- **Change (owner decision):** the credit units in Step 1 are locked for faculty even while the administrator has not set them on the subject. The page says who sets them, and the Step 1 reminder too. Before, they were locked only once set.
+- **Server:** a faculty save cannot change them. A draft keeps the units it already had for its subject; choosing another subject without units starts with none. A PDF import by faculty does not set them either, and says so when the PDF prints different ones.
+- **Not changed:** an administrator writing their own syllabus can still type units on a subject without any. Scoring and the AI are not touched.
+- **To know:** a new syllabus on a subject without units cannot complete Step 1 or be submitted until the administrator sets them (**Edit subject**). Run `npm run migrate-subject-units` before starting this version: without the columns no units can be set at all.
+- **Tests:** `catalog.routes.test.js` (+1), `subjectReference.test.js` (+1), `pdfImport.fixes.test.js` (+1), `facultyLock.test.js` and `subjectTerm.test.js` extended; all five fail on the previous code. All 25 browser scenarios pass (E02 and E18 extended). `npm test` and `npm run test:vpaa` pass.
