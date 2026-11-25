@@ -5,6 +5,7 @@ const { loadOutcomes } = require('../institution');
 const { loadResolvedProgram, findProgram } = require('../programs');
 const { httpError } = require('../http');
 const { programIdOfSyllabus, currentLabel } = require('../academicYear');
+const { subjectReference, programSubjectsOf } = require('../subjectReference');
 const { assertContentBasis, assertRecordReview, recordReviewOf, sameBasis } = require('../programPoReferences');
 // The references a syllabus is checked against. An open record review refuses this, so nothing new is judged against references the faculty has not reviewed.
 // `historicalRead` is for one caller only: service.loadDetail, which reads a SAVED report and compares its fingerprint. It judges nothing, so it is not refused; it is told about the review instead (recordReview).
@@ -36,18 +37,6 @@ async function notAppliedToSubject(db, content, reference) {
   try { course = await require('../courses').loadCourse(db, courseId); } catch { return false; } // no answer: keep the general refusal
   return !!course && !sameBasis(course.standards?.pos, reference.outcomes);
 }
-// The Step 1 values the administrator set on the syllabus's subject: every save restores them (routes/syllabusContent.js applyCatalog), so the checker does not
-// recommend a change of one of them to the author (engine.js). {} when there is no subject or it cannot be read: then every field counts as the author's.
-async function adminMetaOf(db, content) {
-  const courseId = content?.meta?.courseId;
-  if (!courseId) return {};
-  try {
-    const course = await require('../courses').loadCourse(db, courseId);
-    if (!course) return {};
-    const { setUp } = require('../subjectTerm'), forced = require('../subjectTerm').applyTerm({}, course.term), term = course.term || {};
-    return { title: course.title, ...(term.prerequisite || setUp(term) ? { prereq: forced.prereq ?? '' } : {}), ...(term.yearLevel != null ? { yearLevel: forced.yearLevel } : {}) };
-  } catch { return {}; }
-}
 async function mastersFor(db, content, { syllabusId = null, historicalRead = false } = {}) {
   const recordReview = historicalRead ? await recordReviewOf(db, syllabusId) : null;
   if (!historicalRead) await assertRecordReview(db,syllabusId);
@@ -61,14 +50,14 @@ async function mastersFor(db, content, { syllabusId = null, historicalRead = fal
   catch (error) { if (error.status !== 404) throw error; program = { pos: [] }; }
   try { assertContentBasis(content,program.poReference); }
   catch (error) { if (error.status === 409 && await notAppliedToSubject(db, content, program.poReference)) throw httpError(409, PO_NOT_APPLIED, { code: 'po_reference_not_applied' }); throw error; }
-  // A renamed program keeps resolving through its code aliases; its curriculum rows must too. Both the saved code and the resolved one match.
-  // The curriculum follows the syllabus's OWN program, never the program its outcomes are inherited from: PO inheritance and curriculum selection are
-  // independent, so a specialization is checked against its own approved curriculum (its specialization subjects included) and its source program's POs.
+  // The reference is the administrator's subject, and nothing else (lib/subjectReference.js; the typed copy of the printed curricula is not read, owner 2026-11-25). It
+  // follows the syllabus's OWN program, never the program its outcomes are inherited from: a specialization is checked against its own subject and its source program's
+  // POs. Both the program code saved in the draft and the resolved one match (a program may have been renamed). A syllabus without a subject has no reference.
+  // Only the subject itself is in the fingerprint, so another subject never makes a check out of date.
   const codes = new Set([content.meta?.program, program.code].filter(Boolean));
-  let rows;
-  try { [rows] = await db.query("SELECT reference_id, program_code, curriculum_year, source, courses_json FROM syllabus_check_curricula WHERE status = 'approved' ORDER BY reference_id"); }
-  catch (error) { if (error.code === 'ER_NO_SUCH_TABLE') throw httpError(503, 'Run npm run migrate-syllabuscheck before using the mandatory hybrid checker.'); throw error; }
-  const curricula = rows.filter(row => codes.has(row.program_code) &&(!content.meta?.curriculumYear || row.curriculum_year === content.meta.curriculumYear)).map(row => ({ id: row.reference_id, source: row.source, program: row.program_code, curriculumYear: row.curriculum_year, status: 'approved', courses: JSON.parse(row.courses_json) }));
+  const reference = await subjectReference(db, content);
+  if (reference) codes.add(reference.record.program);
+  const curricula = reference ? [reference.record] : [];
   // Which list of EGAs a syllabus of this program must carry: the program's own EGAs (program_egas: the Admin's per-program assignment, which the syllabus copies from its subject) when the
   // program has any, else the institution-wide default list. Vision and mission stay institutional. The PO-to-EGA crosswalk is not here: it is each PO's own ega_nos (see ruleCoverage P-03).
   const egaSource = Array.isArray(program.egas) && program.egas.length ? 'program' : 'institution';
@@ -76,8 +65,6 @@ async function mastersFor(db, content, { syllabusId = null, historicalRead = fal
   const bundle = { institution: { vision: institution.vision, mission: institution.mission, egas: egaMaster }, pos: program.pos, curricula };
   if(program.poReference){const {id,version,sourceFile,sourceSha256,outcomes,authorization,institutionalApproval}=program.poReference;bundle.poReference={id,version,sourceFile,sourceSha256,outcomes,...(authorization!==undefined?{authorization}:{}),...(institutionalApproval!==undefined?{institutionalApproval}:{})};}
   bundle.referenceContext = {program:{id:program.id||null,code:program.code||content.meta?.program||null},po:{source:program.inheritedFrom?.code||program.code||null,status:program.referenceStatus||(program.poReference?'versioned':'legacy_unversioned'),reference:program.poReference?{id:program.poReference.id,version:program.poReference.version,sourceFile:program.poReference.sourceFile,sourceSha256:program.poReference.sourceSha256,authorization:program.poReference.authorization||null,...(program.poReference.institutionalApproval?{institutionalApproval:program.poReference.institutionalApproval}:{})}:null},curriculum:{source:program.code||null,selectedYear:content.meta?.curriculumYear||null,referenceIds:curricula.map(c=>c.id)}};
-  // Approved curricula of OTHER programs, kept outside the bundle (and so outside the fingerprint): only used to tell an author that a course code exists elsewhere.
-  const otherCurricula = rows.filter(row => !codes.has(row.program_code)).map(row => { try { return { program: row.program_code, curriculumYear: row.curriculum_year, courses: (JSON.parse(row.courses_json) || []).map(c => ({ code: c.code, title: c.title })) }; } catch { return null; } }).filter(Boolean);
   const fingerprint = crypto.createHash('sha256').update(canonical(bundle)).digest('hex'); // computed over the bundle as it always was
   // What a saved report records about the references it used (outside the fingerprint, which already covers their content): the resolved identifiers and versions, never a label borrowed from
   // another program. Academic year = the program row's year; PO source = the program that owns the outcomes; hashes identify the exact reference content.
@@ -90,7 +77,7 @@ async function mastersFor(db, content, { syllabusId = null, historicalRead = fal
     ega: { source: egaSource, programId: program.id || null, version: program.versions ? program.versions.egas : null, count: egaMaster.length, sha256: sha(canonical(egaMaster)) },
     institution: { version: institution.version ?? null },
     curriculum: { ...bundle.referenceContext.curriculum, sha256: curricula.map(c => sha(c.source + '|' + JSON.stringify(c.courses))) } };
-  return { ...bundle, ...(ref ? { poReference: ref } : {}), otherCurricula, adminMeta: historicalRead ? {} : await adminMetaOf(db, content), programCodes: [...codes], outcomeSource: program.inheritedFrom ? program.inheritedFrom.code : null, fingerprint, ...(recordReview ? { recordReview } : {}) };
+  return { ...bundle, ...(ref ? { poReference: ref } : {}), adminMeta: reference ? reference.adminMeta : {}, programSubjects: reference ? programSubjectsOf(reference.subjects, reference.subject) : [], programCodes: [...codes], outcomeSource: program.inheritedFrom ? program.inheritedFrom.code : null, fingerprint, ...(recordReview ? { recordReview } : {}) };
 }
 async function saveReport(db, runId, report, fingerprint) {
   const json = JSON.stringify(report);

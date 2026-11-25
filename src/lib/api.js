@@ -267,8 +267,6 @@ export const curriculum = {
 
 export const syllabusCheck = {
   status: () => request('/syllabus-check/status'),
-  // The approved curriculum references (administrator only): [{ id, program, curriculumYear, status, source, courses }]
-  references: () => request('/syllabus-check/references'),
   decisions: (runId) => request(`/syllabus-check/runs/${runId}/decisions`),
   // Check one AI recommendation against every relationship its text touches, and get the text to use (nothing is saved or applied).
   refine: (runId, suggestionId, editedText) => request(`/syllabus-check/runs/${runId}/suggestions/${encodeURIComponent(suggestionId)}/refine`, {

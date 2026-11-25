@@ -1,7 +1,7 @@
 'use strict';
 // "Copy from last year": the administrator's one-step way to start the current academic year's catalog from an earlier year's, instead of typing every program, EGA,
 // PO, subject and CLO again. It is never automatic (a new academic year starts empty) and it only ever fills an EMPTY current year.
-//   copied    programs (code, name), their EGAs and POs, specializations (their outcome source, re-linked), subjects (code, title, term, curriculum year, CLO version, standards snapshot)
+//   copied    programs (code, name), their EGAs and POs, specializations (their outcome source, re-linked), subjects (code, title, term, curriculum year, units, CLO version, standards snapshot)
 //             and a pointer to the PO reference version the source program uses (the same statements, so the version itself is not duplicated)
 //             and each subject's CLOs. The copies are NEW rows: editing them never changes the earlier year, which stays view only.
 //   not copied faculty assignments, deadlines, syllabi and everything about them, old-code aliases
@@ -11,7 +11,7 @@ const { httpError } = require('./http');
 const { loadYears, currentOf, catalogColumnReady } = require('./academicYear');
 const { linkCopy } = require('./programPoReferences');
 
-const TERM_KEYS = ['semester', 'year_level', 'prerequisite', 'curriculum_year']; // copied only when the column exists (the curriculum year stays: a curriculum spans academic years)
+const TERM_KEYS = ['semester', 'year_level', 'prerequisite', 'curriculum_year', 'lecture_units', 'lab_units']; // copied only when the column exists (the curriculum year stays: a curriculum spans academic years)
 
 async function copyCatalog(conn, { from, actor = null } = {}) {
   const years = await loadYears(conn);

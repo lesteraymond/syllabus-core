@@ -1,7 +1,7 @@
 'use strict';
 const express = require('express');
 const { assertActiveYear } = require('../lib/activeYearGate');
-const { requireAuth, requireAdmin } = require('../middleware/auth');
+const { requireAuth } = require('../middleware/auth');
 const { httpError, sendError } = require('../lib/http');
 const repo = require('../lib/syllabuscheck/repository');
 const { readReport } = repo;
@@ -18,8 +18,8 @@ const activity = require('../lib/activity');
 const { canonical } = require('../lib/compliance/hash');
 const router = express.Router();
 router.use(requireAuth);
-// Step 1 fields the administrator sets on the subject (lib/subjectTerm.js, applyCatalog)
-const ADMIN_FIELD = /^meta\.(title|prereq|yearLevel)$/;
+// Step 1 fields the administrator sets on the subject (lib/subjectTerm.js, lib/subjectUnits.js, applyCatalog)
+const ADMIN_FIELD = /^meta\.(title|prereq|yearLevel|lecture|lab)$/;
 const ADMIN_FIELD_MESSAGE = 'The administrator sets this field on the subject, so it was not changed in the syllabus. Ask the administrator to correct the subject, then save the syllabus and check it again.';
 const OLD_CHECKER_RETIRED = 'This check was made by the old AI Checker, which is no longer used. Run Check with AI again to get the new AI Checker\'s drafts.';
 const wrap = fn => async (req, res) => { try { await fn(req, res); } catch (error) { sendError(res, error); } };
@@ -27,38 +27,6 @@ const id = raw => { const value = Number(raw); if (!Number.isSafeInteger(value) 
 router.get('/status', wrap(async (req, res) => {
   const { provider, model, configured } = providerConfig();
   res.json({ provider: configured ? provider : null, selectedProvider: provider || null, model, configured, aiGate: aiGate(), mandatory: aiGate() === 'required', generator: (() => { const g = generator.generateLimits(process.env); return g.ok ? { available: true } : { available: false, reason: g.reason }; })() });
-}));
-router.get('/references', requireAdmin, wrap(async (req, res) => {
-  const [rows] = await req.app.locals.db.query('SELECT reference_id AS id, program_code AS program, curriculum_year AS curriculumYear, status, source, courses_json FROM syllabus_check_curricula ORDER BY reference_id');
-  res.json(rows.map(({ courses_json, ...row }) => ({ ...row, courses: JSON.parse(courses_json) })));
-}));
-function curriculumInput(body) {
-  if (!body || !/^[A-Za-z0-9 -]{2,40}$/.test(body.program || '') || typeof body.curriculumYear !== 'string' || !body.curriculumYear.trim() || body.curriculumYear.length > 40 || typeof body.source !== 'string' || !body.source.trim() || body.source.length > 500 || !Array.isArray(body.courses) || !body.courses.length || body.courses.length > 500) throw httpError(400, 'Supply program, curriculumYear, official source and 1–500 curriculum courses.');
-  const seen = new Set();
-  for (const course of body.courses) {
-    if (!course || ['code', 'title', 'prereq'].some(key => typeof course[key] !== 'string' || !course[key].trim() || course[key].length > 255) || ['lecture', 'lab', 'yearLevel'].some(key => course[key] === '' || course[key] === null || course[key] === undefined || !Number.isFinite(Number(course[key])) || Number(course[key]) < 0) || !Number.isInteger(Number(course.yearLevel)) || Number(course.yearLevel) < 1 || Number(course.yearLevel) > 8) throw httpError(400, 'Every course requires code, title, explicit prerequisite, lecture/lab credit units and yearLevel.');
-    const code = course.code.trim().replace(/\s+/g, ' ').toUpperCase();
-    if (seen.has(code)) throw httpError(400, 'Duplicate course code: ' + code);
-    seen.add(code);
-  }
-  if (body.synthetic) throw httpError(400, 'Synthetic test fixtures cannot be installed as official references.');
-  return { ...body, program: body.program.toUpperCase() };
-}
-router.post('/references', requireAdmin, wrap(async (req, res) => {
-  const body = curriculumInput(req.body);
-  const [row] = await req.app.locals.db.query('INSERT INTO syllabus_check_curricula (program_code, curriculum_year, source, courses_json, created_by) VALUES (?, ?, ?, ?, ?)', [body.program, body.curriculumYear, body.source, JSON.stringify(body.courses), req.session.user.id]);
-  res.status(201).json({ id: row.insertId, status: 'draft' });
-}));
-router.post('/references/:id/approve', requireAdmin, wrap(async (req, res) => {
-  if (req.body?.confirmedAgainstSource !== true) throw httpError(400, 'Confirm that all entries were verified against the official source.');
-  const [result] = await req.app.locals.db.query("UPDATE syllabus_check_curricula SET status = 'approved' WHERE reference_id = ? AND status = 'draft'", [id(req.params.id)]);
-  if (!result.affectedRows) throw httpError(409, 'Reference is missing or already immutable.');
-  res.json({ status: 'approved' });
-}));
-router.post('/references/:id/retire', requireAdmin, wrap(async (req, res) => {
-  const [result] = await req.app.locals.db.query("UPDATE syllabus_check_curricula SET status = 'retired' WHERE reference_id = ? AND status = 'approved'", [id(req.params.id)]);
-  if (!result.affectedRows) throw httpError(409, 'Only an approved reference can be retired.');
-  res.json({ status: 'retired' });
 }));
 async function visibleRun(req) {
   const runId = id(req.params.id);
@@ -231,4 +199,3 @@ router.delete('/syllabi/:id/generate', wrap(async (req, res) => {
 }));
 
 module.exports = router;
-module.exports.curriculumInput = curriculumInput;

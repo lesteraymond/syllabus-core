@@ -18,7 +18,7 @@ const PENALTIES = POLICY;
 // verification; undated or foundational works are not automatically penalized.
 const codedStandard = { ...standard, rules: standard.rules.filter(rule => !['C-04', 'R-02', 'R-03'].includes(rule.id)) };
 const str = value => String(value ?? '');
-const { normCode } = require('../subjectCode'); // "IT 204" and "IT-204" are one code
+const { normCode, sameCode, findByCode } = require('../subjectCode'); // "IT 204" and "IT-204" are one code
 const equal = (a, b) => canonical(a) === canonical(b);
 const { titleRelation, titleDecision, titlePolicyOf, officialComparison, TITLE_POLICY_VERSION } = require('./titles');
 const { identityOf } = require('./identity');
@@ -47,34 +47,46 @@ function coded(content, masters = {}, opts = {}) {
   let critical = false, identityCourse = null;
   const sets = (masters.curricula || []).filter(r => (masters.programCodes || [meta.program]).includes(r.program) && r.status === 'approved' && (!meta.curriculumYear || r.curriculumYear === meta.curriculumYear));
   let curriculum = null;
-  check('CUR-REF', 'meta.program', sets.length === 1 ? true : null, sets.map(row => ({ id: row.id, curriculumYear: row.curriculumYear })), 'One selected approved curriculum', sets.length ? 'Choose the official curriculum year; multiple approved versions exist.' : `Official approved curriculum unavailable for ${meta.program || 'the selected program'}. Submission is blocked until it is supplied.`);
+  check('CUR-REF', 'meta.program', sets.length === 1 ? true : null, sets.map(row => ({ id: row.id, curriculumYear: row.curriculumYear })), 'One selected approved curriculum', sets.length ? 'Choose the official curriculum year; multiple approved versions exist.' : 'Choose the subject of this syllabus in Step 1 (Course Information). It is checked against the subject the administrator set up, so it cannot be submitted without one.');
   if (sets.length !== 1) checks.push({ id: 'CUR-CODE:meta.code', ruleId: 'CUR-CODE', path: 'meta.code', status: 'NOT_EVALUATED', evidence: { actual: meta.code, expected: null }, source: 'rule', ruleVersion: VERSION });
   if (sets.length === 1) {
     curriculum = sets[0];
-    const course = curriculum.courses.find(row => normCode(row.code) === normCode(meta.code));
+    // The reference is the administrator's subject, found by its id (lib/subjectReference.js; origin 'admin'), or, for a syllabus without a subject, the printed
+    // curriculum on file. A draft saved before the administrator changed its subject is told to save (that brings the subject in): its code is never "unknown", so it
+    // is never a critical score of 0.
+    const admin = curriculum.origin === 'admin';
+    const course = admin ? curriculum.courses[0] : findByCode(curriculum.courses, meta.code);
     identityCourse = course || null;
     if (!course) {
       critical = true;
       check('CUR-CODE', 'meta.code', false, meta.code, curriculum.courses.map(row => row.code), `CRITICAL MISMATCH: Course Code ${meta.code || '[CODE]'} does not exist in the official ${meta.program || '[PROGRAM]'} curriculum.`);
     } else {
-      check('CUR-CODE', 'meta.code', true, meta.code, course.code, 'Course exists in the selected curriculum.');
-      // The title comparison follows the title policy (titles.js): exact unless SYLLABUS_CHECK_TITLE_POLICY=normalized. A caller that names no comparison
-      // (the submission gate in compliance/service.js) gets the one the policy makes official, so the check and the gate always decide alike.
-      // The prerequisite is exact (the spacing and normalisation rules of a title do not cover it), except that the ways of writing "no pre-requisite"
-      // (empty, None, N/A, the import's blank-cell sentence) are one value: prerequisite.js. A real pre-requisite on either side is still compared exactly,
-      // but for a hyphen or a space in a code.
-      // A value the administrator set on the subject is restored by every save (routes/syllabusContent.js applyCatalog), so a recommendation to change it would do
-      // nothing: the author is told who corrects it. Once the subject itself is corrected, the recommendation is offered again (applying or saving brings it in).
+      const SAVE = 'save the syllabus to bring it in, then check it again.';
+      check('CUR-CODE', 'meta.code', sameCode(meta.code, course.code), meta.code, course.code, admin ? `code differs from the subject the administrator set, which has "${course.code}": ${SAVE}` : 'Course exists in the selected curriculum.');
+      // A value the administrator set on the subject is restored by every save (routes/syllabusContent.js applyCatalog), so a recommendation to change it to anything
+      // else would do nothing: the author is told who corrects it. The same value is offered: applying it, or saving, brings it into the draft.
       const adminMeta = masters.adminMeta || {};
-      const fieldDiffers = (key, official) => (key in adminMeta && !equal(str(adminMeta[key]), str(official))
-        ? { message: `${key} differs from the official curriculum, which has "${str(official)}". The administrator sets it on the subject, so it cannot be changed in the syllabus: ask the administrator to correct the subject, then save the syllabus and check it again.`, fix: {} }
-        : { message: `${key} differs from the official curriculum.`, fix: { replacement: ['title', 'prereq'].includes(key) ? official : String(official) } });
+      const fieldDiffers = (key, official) => {
+        const fix = { replacement: ['title', 'prereq'].includes(key) ? official : String(official) };
+        if (admin) return { message: `${key} differs from the subject the administrator set, which has "${str(official)}": ${SAVE}`, fix: str(official) ? fix : {} };
+        return key in adminMeta && !equal(str(adminMeta[key]), str(official))
+          ? { message: `${key} differs from the official curriculum, which has "${str(official)}". The administrator sets it on the subject, so it cannot be changed in the syllabus: ask the administrator to correct the subject, then save the syllabus and check it again.`, fix: {} }
+          : { message: `${key} differs from the official curriculum.`, fix };
+      };
+      // What the administrator has not set is unknown: not checked, and never a block.
+      const known = key => !admin || (course[key] !== null && course[key] !== undefined);
+      const compare = (key, same, message, fix) => (known(key) ? check('CUR-FIELD', `meta.${key}`, same, meta[key], course[key], message, fix)
+        : checks.push({ id: `CUR-FIELD:meta.${key}`, ruleId: 'CUR-FIELD', path: `meta.${key}`, status: 'NOT_APPLICABLE', evidence: { actual: meta[key] ?? null, expected: null }, source: 'rule', ruleVersion: VERSION }));
+      // The title comparison follows the title policy (titles.js): exact, but for spacing and hyphens, unless SYLLABUS_CHECK_TITLE_POLICY=normalized. A caller that names
+      // no comparison (the submission gate in compliance/service.js) gets the one the policy makes official, so the check and the gate always decide alike.
       const title = fieldDiffers('title', course.title);
-      check('CUR-FIELD', 'meta.title', titleDecision(opts.titleComparison || officialComparison(titlePolicyOf(process.env)), meta.title, course.title), meta.title, course.title, title.message, title.fix);
+      compare('title', titleDecision(opts.titleComparison || officialComparison(titlePolicyOf(process.env)), meta.title, course.title), title.message, title.fix);
+      // The prerequisite is exact (the spacing and normalisation rules of a title do not cover it), except that the ways of writing "no pre-requisite" (empty, None, N/A, the
+      // import's blank-cell sentence) are one value: prerequisite.js. A real pre-requisite on either side is still compared exactly, but for a hyphen or a space in a code.
       // Same check, same status and severity; only the wording differs for a blank curriculum cell, which is never offered as replacement text (prerequisite.js).
-      const blankCell = isBlankCell(course.prereq);
-      check('CUR-FIELD', 'meta.prereq', samePrerequisite(meta.prereq, course.prereq), meta.prereq, course.prereq, blankCell ? notListedMessage(meta.prereq) : fieldDiffers('prereq', course.prereq).message, blankCell ? {} : fieldDiffers('prereq', course.prereq).fix);
-      for (const key of ['lecture', 'lab', 'yearLevel']) check('CUR-FIELD', `meta.${key}`, !!str(meta[key]).trim() && Number(meta[key]) === Number(course[key]), meta[key], course[key], fieldDiffers(key, course[key]).message, fieldDiffers(key, course[key]).fix);
+      const blankCell = isBlankCell(course.prereq), prereq = fieldDiffers('prereq', course.prereq);
+      compare('prereq', samePrerequisite(meta.prereq, course.prereq), blankCell ? notListedMessage(meta.prereq) : prereq.message, blankCell ? {} : prereq.fix);
+      for (const key of ['lecture', 'lab', 'yearLevel']) { const d = fieldDiffers(key, course[key]); compare(key, !!str(meta[key]).trim() && Number(meta[key]) === Number(course[key]), d.message, d.fix); }
     }
   }
   const outcomes = c.outcomes || { ...(c.catalog?.institution || {}), egas: c.catalog?.program?.egas || [], pos: c.catalog?.program?.pos || [] };
@@ -203,7 +215,7 @@ async function run(content, masters, options = {}) {
     hybrid: { identity: partA.identity, titlePolicy: { mode: titleMode, comparison: officialComparison(titleMode), version: TITLE_POLICY_VERSION }, valueSuggestion, shadowCurriculum, version: VERSION, reportVersion: 2, policy: { ...POLICY }, codedChecks: partA.checks, ready: false, critical: partA.critical, score, provisionalScore, baseScore: partA.base.overall, deductions,
       quality, summary, corrections: [], unresolved,
       scoring: { official: { policy: POLICY.version, deducted: points, score: provisionalScore } },
-      links, alignment: semantic, suggestions: bindSuggestions(content, suggestions), outcomeSource: masters.outcomeSource || null, synthetic: !!masters.synthetic, checkedMeta: content.meta, checkedAt: new Date().toISOString(), curriculum: partA.curriculum ? { id: partA.curriculum.id, source: partA.curriculum.source, program: partA.curriculum.program, curriculumYear: partA.curriculum.curriculumYear } : null },
+      links, alignment: semantic, suggestions: bindSuggestions(content, suggestions), outcomeSource: masters.outcomeSource || null, synthetic: !!masters.synthetic, checkedMeta: content.meta, checkedAt: new Date().toISOString(), curriculum: partA.curriculum ? { id: partA.curriculum.id, source: partA.curriculum.source, program: partA.curriculum.program, curriculumYear: partA.curriculum.curriculumYear, ...(partA.curriculum.origin ? { origin: partA.curriculum.origin } : {}) } : null },
   };
   if (masters.referenceContext) result.hybrid.referenceContext = masters.referenceContext;
   result.hybrid.ruleCoverage = require('./ruleCoverage').coverageOf(result, content, masters);

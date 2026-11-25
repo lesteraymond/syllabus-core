@@ -63,20 +63,3 @@ test('versioned report records pass, not applicable and observed link evidence w
   assert.doesNotThrow(() => JSON.stringify(result));
 });
 
-test('reference fingerprint changes for selected references but ignores unrelated programs', async () => {
-  const { content, masters } = sample();
-  // Use the actual repository loaders with a minimal database fixture.
-  const db = { query: async sql => {
-    if (sql.includes('syllabus_check_curricula')) return [db.curricula];
-    return [[]];
-  }, curricula: [] };
-  // Missing program/institution rows are allowed by their loaders; curriculum
-  // scope, source and contents must still determine the reference hash.
-  const row = { reference_id: 1, program_code: content.meta.program, curriculum_year: content.meta.curriculumYear, source: 'Registrar', courses_json: JSON.stringify(masters.curricula[0].courses) };
-  db.curricula = [row];
-  const first = await mastersFor(db, content);
-  db.curricula.push({ ...row, reference_id: 2, program_code: 'OTHER' });
-  assert.equal((await mastersFor(db, content)).fingerprint, first.fingerprint);
-  db.curricula[0] = { ...row, source: 'Revised registrar source' };
-  assert.notEqual((await mastersFor(db, content)).fingerprint, first.fingerprint);
-});

@@ -59,6 +59,8 @@ CREATE TABLE IF NOT EXISTS courses (
   clos_version INT NOT NULL DEFAULT 1,
   standards_json LONGTEXT NULL,
   curriculum_year VARCHAR(9) NULL DEFAULT NULL, -- the curriculum the subject belongs to, e.g. 2022-2023 (db/migrate-curriculum-year.js), not its academic year
+  lecture_units DECIMAL(3,1) NULL DEFAULT NULL, -- credit units, set by an administrator (db/migrate-subject-units.js)
+  lab_units DECIMAL(3,1) NULL DEFAULT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY courses_program_code (program_id, code),
   FOREIGN KEY (program_id) REFERENCES programs(program_id) ON DELETE RESTRICT

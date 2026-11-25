@@ -1,10 +1,9 @@
 'use strict';
-// A subject's curriculum year (lib/curriculumYear.js), the curriculum warning that follows it (lib/curriculumNote.js), the column fallback (lib/subjectTerm.js) and the
+// A subject's curriculum year (lib/curriculumYear.js), the column fallback (lib/subjectTerm.js) and the
 // catalog copy carrying it (lib/catalogCopy.js).
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { normalizeCurriculumYear, parseCurriculumYear, curriculumYearOf, saveCurriculumYear } = require('./curriculumYear');
-const { curriculumNote } = require('./curriculumNote');
 const { withColumnFallbacks } = require('./subjectTerm');
 
 test('a curriculum year is two consecutive years, stored with a plain hyphen', () => {
@@ -42,20 +41,6 @@ test('column fallbacks: each query is tried while a column is missing, and only 
   await assert.rejects(withColumnFallbacks(db(['a', 'b', 'c']), ['a', 'b', 'c'], []), (e) => e.code === 'ER_BAD_FIELD_ERROR', 'the last one is not swallowed');
   const other = { query: async () => { throw Object.assign(new Error('y'), { code: 'ER_PARSE_ERROR' }); } };
   await assert.rejects(withColumnFallbacks(other, ['a', 'b'], []), (e) => e.code === 'ER_PARSE_ERROR', 'any other error is not a missing column');
-});
-
-test('the curriculum warning compares only the subject\'s own curriculum when it has one', () => {
-  const rows = [
-    { program_code: 'BSIT', curriculum_year: '2018-2019', courses_json: JSON.stringify([{ code: 'IT 105', prereq: 'IT 101', yearLevel: 1 }]) },
-    { program_code: 'BSIT', curriculum_year: '2022-2023', courses_json: JSON.stringify([{ code: 'IT 105', prereq: 'None', yearLevel: 2 }]) },
-  ];
-  const term = { prerequisite: 'None', yearLevel: 2 };
-  assert.strictEqual(curriculumNote({ programCode: 'BSIT', code: 'IT 105', term, curriculumYear: '2022-2023' }, rows), null, 'matches its own curriculum: no warning');
-  const other = curriculumNote({ programCode: 'BSIT', code: 'IT 105', term, curriculumYear: '2018-2019' }, rows);
-  assert.deepStrictEqual(other.differences.map((d) => [d.field, d.curriculumYear]), [['prerequisite', '2018-2019'], ['yearLevel', '2018-2019']]);
-  const unset = curriculumNote({ programCode: 'BSIT', code: 'IT 105', term }, rows);
-  assert.deepStrictEqual(unset.differences.map((d) => d.curriculumYear), ['2018-2019', '2018-2019'], 'no curriculum year: every approved curriculum is compared, as before');
-  assert.strictEqual(curriculumNote({ programCode: 'BSIT', code: 'IT 105', term, curriculumYear: '2030-2031' }, rows), null, 'no approved curriculum of that year: nothing to compare');
 });
 
 test('copying a catalog carries each subject\'s curriculum year when the column exists, and works without it', async () => {

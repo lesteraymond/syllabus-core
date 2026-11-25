@@ -4367,7 +4367,6 @@ html { scrollbar-gutter: stable; }
 .topbar-heading { align-items: flex-start; }
 .subject-term { display: block; }
 .subject-term small { display: block; color: var(--muted); }
-.term-warning { display: block; margin-top: 4px; color: var(--warn); font-size: 12px; }
 .program-dialog { @apply tw:scrollbar-gutter-stable tw:[width:min(640px,_100%)]; @apply tw:[max-height:calc(100dvh_-_40px)] tw:overflow-y-auto tw:text-left; }
 .program-dialog .confirm-actions { @apply tw:flex-wrap tw:[margin-top:20px]; }
 .program-delete-impact dl { @apply tw:grid tw:grid-cols-5 tw:[gap:10px] tw:[margin:16px_0]; }

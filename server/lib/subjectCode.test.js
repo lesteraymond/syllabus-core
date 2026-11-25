@@ -1,5 +1,5 @@
-// A subject code is the same with a hyphen or a space ("IT 204" and "IT-204"): the curriculum check, the curriculum hint of another program, the pre-requisite,
-// the administrator's curriculum warning and the AI Syllabus Generator all agree. A different code or pre-requisite is still found.
+// A subject code is the same with a hyphen or a space ("IT 204" and "IT-204"): the curriculum check, the curriculum hint of another program, the pre-requisite
+// and the AI Syllabus Generator all agree. A different code or pre-requisite is still found.
 // Run: npm test.
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -7,7 +7,6 @@ const { withoutHyphens, normCode, sameCode } = require('./subjectCode');
 const { coded, normCode: engineNormCode } = require('./syllabuscheck/engine');
 const { identityOf } = require('./syllabuscheck/identity');
 const { samePrerequisite } = require('./syllabuscheck/prerequisite');
-const { curriculumNote } = require('./curriculumNote');
 const G = require('./syllabuscheck/pipeline/generate');
 const { sample } = require('./syllabuscheck/fixtures');
 
@@ -57,15 +56,8 @@ test('CUR-FIELD: a pre-requisite with a hyphen or a space is the same one; a dif
 });
 
 test('a code of another program is found for the hint whatever its hyphen', () => {
-  const r = identityOf({ code: 'CS 101', program: 'A' }, { curricula: [{ program: 'A', courses: [] }], otherCurricula: [{ program: 'B', curriculumYear: 'y', courses: [{ code: 'CS-101', title: 'T' }] }] }, [], null);
+  const r = identityOf({ code: 'CS 101', program: 'A' }, { curricula: [{ program: 'A', courses: [] }, { program: 'B', curriculumYear: 'y', courses: [{ code: 'CS-101', title: 'T' }] }] }, [], null);
   assert.deepEqual(r.elsewhere, [{ program: 'B', curriculumYear: 'y', code: 'CS-101', title: 'T' }]);
-});
-
-test('the administrator is not warned about a hyphen, and is still warned about a different pre-requisite', () => {
-  const rows = [{ program_code: 'BSIT', curriculum_year: '2022-2023', courses_json: JSON.stringify([{ code: 'IT-303', prereq: 'IT-204', yearLevel: 3 }]) }];
-  const note = prerequisite => curriculumNote({ programCode: 'BSIT', code: 'IT 303', term: { prerequisite, yearLevel: 3 } }, rows);
-  assert.equal(note('IT 204'), null);
-  assert.deepEqual(note('IT 205').differences.map(d => [d.field, d.entered, d.curriculum]), [['prerequisite', 'IT 205', 'IT-204']]);
 });
 
 test('the generator finds the subject and its pre-requisite whatever the hyphen', () => {
@@ -114,8 +106,7 @@ test('a subject is looked for in its own program only, and another subject under
   Object.assign(c.meta, { program: 'CYBER', curriculumYear: '', code: 'IT 204', title: 'COMPUTER PROGRAMMING 2', prereq: 'IT 202' });
   const units = { lecture: Number(c.meta.lecture), lab: Number(c.meta.lab), yearLevel: Number(c.meta.yearLevel) };
   const curricula = [{ id: 1, program: 'CYBER', status: 'approved', curriculumYear: 'x', courses: [{ code: 'IT-204-', title: 'QUANTITATIVE METHODS', prereq: 'IT 202', ...units }] }];
-  const otherCurricula = [{ program: 'BSIT', curriculumYear: 'x', courses: [{ code: 'IT-204', title: 'COMPUTER PROGRAMMING 2' }] }];
-  const r = coded(c, { curricula, otherCurricula, programCodes: ['CYBER'] });
+  const r = coded(c, { curricula, programCodes: ['CYBER'] });
   assert.equal(checkOf(r, 'CUR-CODE', 'meta.code').evidence.expected, 'IT-204-');
   assert.equal(checkOf(r, 'CUR-FIELD', 'meta.title').status, 'FAIL');
   assert.ok(r.findings.some(f => f.path === 'meta.title' && f.severity === 'blocking'), 'submitting stays blocked');

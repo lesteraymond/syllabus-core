@@ -40,6 +40,7 @@
     "migrate-po-reference-publication": "node db/migrate-po-reference-publication.js",
     "migrate-account-status": "node db/migrate-account-status.js",
     "migrate-curriculum-year": "node db/migrate-curriculum-year.js",
+    "migrate-subject-units": "node db/migrate-subject-units.js",
     "migrate-review-ai-choice": "node db/migrate-review-ai-choice.js",
     "migrate-account-activity": "node db/migrate-account-activity.js",
     "migrate-generate-jobs": "node db/migrate-generate-jobs.js",

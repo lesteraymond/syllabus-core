@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { mapPdfFields, preparePdfImport } from './pdfImport.js';
-import { titleMatches } from './pdfImportReview.js';
+import { importIdentity, titleMatches } from './pdfImportReview.js';
 const require = createRequire(import.meta.url);
 const { extractPdf } = require('../../server/lib/pdfImport');
 const read = async file => JSON.parse(await fs.readFile(new URL(`../../docs/lcup-approved-offline/${file}`, import.meta.url)));
@@ -109,4 +109,15 @@ test('course titles match across "&"/"and", roman/arabic numerals and an optiona
     assert.equal(titleMatches(a, b), true, `${a} = ${b}`);
   for (const [a, b] of [['Physics (Lecture)', 'Physics (Laboratory)'], ['Physics 2', 'Physics 3'], ['', '']])
     assert.equal(titleMatches(a, b), false, `${a} != ${b}`);
+});
+
+test('a PDF is matched with the administrator\'s subject of any curriculum year, one with nothing on file included', () => {
+  const selected = { id: 25, program: 'BSAI', code: 'AI-201', title: 'Machine Learning 1' };
+  const context = { selected, curricula: [{ id: 'subject:25', origin: 'admin', program: 'BSAI', curriculumYear: '2031-2032', status: 'approved', courses: [{ code: 'AI-201', title: 'Machine Learning 1' }] }] };
+  const meta = { courseId: 25, program: 'BSAI', code: 'AI-201', title: 'Machine Learning 1', curriculumYear: '2022-2023' };
+  const found = importIdentity({ code: 'AI 201', title: 'Machine Learning 1' }, meta, context, true);
+  assert.equal(found.ok, true); assert.equal(found.curriculumYear, '2031-2032');
+  context.curricula[0].curriculumYear = null;
+  assert.equal(importIdentity({ code: 'AI 201', title: 'Machine Learning 1' }, meta, context, true).curriculumYear, '2022-2023', 'a subject without a curriculum year leaves the draft\'s');
+  assert.equal(importIdentity({ code: 'AI 999', title: 'Machine Learning 1' }, meta, context, true).ok, false, 'another code is still refused');
 });

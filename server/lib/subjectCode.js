@@ -10,4 +10,8 @@ const withoutHyphens = (value) => String(value ?? '').replace(HYPHEN, '$1 ').rep
 const normCode = (value) => withoutHyphens(value).trim().replace(/\s+/g, ' ').toUpperCase();
 const sameCode = (a, b) => normCode(a) === normCode(b);
 
-module.exports = { withoutHyphens, normCode, sameCode };
+// The row of a list with this code: the same spelling first, then one that differs only in a hyphen or a space.
+const plain = (value) => String(value ?? '').trim().replace(/\s+/g, ' ').toUpperCase();
+const findByCode = (list, code) => (list || []).find((row) => plain(row.code) === plain(code)) || (list || []).find((row) => sameCode(row.code, code));
+
+module.exports = { withoutHyphens, normCode, sameCode, findByCode };

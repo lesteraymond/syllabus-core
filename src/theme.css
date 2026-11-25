@@ -213,7 +213,7 @@ a.btn { text-decoration: none; display: inline-flex; align-items: center; justif
 .bld2 { --warn: #a50e0e; --warn-bg: #fce8e6; }
 .check-warn, .comp-warn { background: var(--warn-bg); color: var(--warn); border: 1px solid var(--warn-border); }
 .comp-badge.warn, .cmp-badge.warn, .cmp .chip.stale, .cmp-row .chip.stale, .aic-state .chip.stale, .setup-badge, .vh-decision, .feed-item.warn .feed-ico { background: var(--warn-bg); color: var(--warn); }
-.cmp-row b.warn, .aic-open b.warn, .bld2 .clo-ega-hint, .term-warning, .pick-note, .fr-score.tone-warn b { color: var(--warn); }
+.cmp-row b.warn, .aic-open b.warn, .bld2 .clo-ega-hint, .pick-note, .fr-score.tone-warn b { color: var(--warn); }
 .bld2 .blockers { border: 1px solid var(--line); border-radius: 10px; }
 .bld2 .blockers.admin { background: var(--warn-bg); color: var(--warn); border: 1px solid var(--warn-border); border-radius: 10px; }
 .asg-note { background: var(--warn-bg); color: var(--warn); border: 1px solid var(--warn-border); border-radius: 8px; }
@@ -448,7 +448,8 @@ html { scrollbar-gutter: auto; }
 .catalog-page .table-card:not(.program-management) .table-wrap td:nth-child(7) { white-space: nowrap; }
 .catalog-page .table-card:not(.program-management) .table-wrap td:nth-child(1) { font-weight: var(--fw-semibold); color: var(--ink); }
 .catalog-page .table-card:not(.program-management) .table-wrap td:nth-child(2) { min-width: 220px; width: 100%; }
-.catalog-page .table-card:not(.program-management) .table-wrap .term-warning { white-space: normal; }
+/* the units under a subject's title: no column of their own, so the actions stay in view */
+.catalog-page .subject-units { display: block; margin-top: 2px; color: var(--muted); font-size: var(--text-xs); }
 .catalog-page .program-management .setup-badge { padding: 2px 8px; font-size: 11px; border-radius: 6px; font-weight: var(--fw-medium); }
 
 /* Quick Actions: the icon lines up with the title however many lines the description takes, the arrow stays centred on the button, and
@@ -487,7 +488,7 @@ html { scrollbar-gutter: auto; }
 .outcomes-row .icon-btn, .institution-item .icon-btn { color: #9aa3b2; border-width: 1px; border-color: var(--line); }
 .outcomes-row .icon-btn:hover:not(:disabled), .institution-item .icon-btn:hover:not(:disabled), .outcomes-row .icon-btn:focus-visible, .institution-item .icon-btn:focus-visible { background: #f1f4f3; color: #5d6981; }
 .outcomes-row .icon-btn.is-delete:hover:not(:disabled), .institution-item .icon-btn.is-delete:hover:not(:disabled), .outcomes-row .icon-btn.is-delete:focus-visible, .institution-item .icon-btn.is-delete:focus-visible { background: #fff3f3; color: #d92424; border-color: #f2bebe; }
-.program-edit-fields > .field:nth-child(3) { grid-column: 1 / -1; }
+.program-edit-fields > .field:nth-child(3), .program-edit-fields > .field.full { grid-column: 1 / -1; }
 
 /* ---- Subject deadlines ---- */
 /* The deadline chip in a subject's row: set (dashed), upcoming, due today, done (everyone submitted) or failed (someone missed it). */

@@ -161,6 +161,8 @@ export function applyCourse(d, course) {
   if (term.yearLevel != null) n.meta.yearLevel = String(term.yearLevel);
   if (term.academicYear) n.meta.academicYear = term.academicYear;
   if (term.semester) n.meta.semester = term.semester;
+  if (course.units) { n.meta.lecture = String(course.units.lecture); n.meta.lab = String(course.units.lab); } // the administrator's units and curriculum year, the same way
+  if (course.curriculumYear) n.meta.curriculumYear = course.curriculumYear;
   if (d.meta.courseId === course.id && d.outcomes) return n;
   delete n.catalog;
   n.clos = clone(course.clos);

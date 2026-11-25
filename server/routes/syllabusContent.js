@@ -74,7 +74,7 @@ async function applyCatalog(db, content, user = null, stored = null) {
   const course = courseId ? await loadCourse(db, courseId, { lock: true }) : null;
   if (courseId && !course) throw httpError(400, 'That course does not exist');
   if(course?.standards?.poReference && !content.outcomes && require('../lib/programPoReferences').hasPoMappings(content)) throw httpError(409,'This legacy draft must explicitly adopt its authored PO context before saving. Existing mappings were not replaced.',{code:'legacy_po_adoption_required'});
-  if (course) { content.meta.code = course.code; content.meta.title = course.title; content.meta.program = course.program.code; require('../lib/subjectTerm').applyTerm(content.meta, course.term); } // the administrator's year level, pre-requisite, academic year and semester: faculty cannot change them
+  if (course) { content.meta.code = course.code; content.meta.title = course.title; content.meta.program = course.program.code; require('../lib/subjectTerm').applyTerm(content.meta, course.term); require('../lib/subjectUnits').applyUnits(content.meta, course.units); if (course.curriculumYear) content.meta.curriculumYear = course.curriculumYear; } // the administrator's year level, pre-requisite, semester, units and curriculum year: faculty cannot change them
   if (!content.outcomes) content.clos = course ? course.clos : [];
   else {
     if (course && user && user.role !== 'admin' && standardsAreSet(course.standards)) forceStandards(content.outcomes, course.standards, stored?.meta?.courseId === course.id ? stored : null);

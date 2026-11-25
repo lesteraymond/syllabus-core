@@ -629,6 +629,8 @@ module.exports = async function run(ctx, h) {
     await a.page.locator('.ac-form .field.full input').first().fill('Mobile Application Development (synthetic)');
     const pick = async (label, option) => { await a.page.locator('.ac-form').getByRole('combobox', { name: label, exact: true }).click(); await a.page.getByRole('option', { name: option }).first().click(); await a.page.waitForTimeout(300); };
     await pick('Curriculum year', '2022-2023'); // required since the curriculum year column (2026-11-09)
+    await a.page.getByLabel('Lecture units', { exact: true }).fill('2'); // required since the administrator sets the units (2026-11-25)
+    await a.page.getByLabel('Laboratory units', { exact: true }).fill('1');
     await pick('Semester', /2nd Semester/);
     const levels = await (async () => { await a.page.locator('.ac-form').getByRole('combobox', { name: 'Year level', exact: true }).click(); const names = await a.page.getByRole('option').allInnerTexts(); await a.page.keyboard.press('Escape'); return names.map((x) => x.trim()).filter((x) => /^Year [1-9]$/.test(x)); })();
     check(levels.join(',') === 'Year 1,Year 2,Year 3,Year 4', 'the year level dropdown offers Year 1 to Year 4 (' + levels.join(',') + ')');
@@ -641,6 +643,23 @@ module.exports = async function run(ctx, h) {
     const text = await a.text();
     check(/IT 306/.test(text) && /2026–2027 · 2nd Semester · Year 3/.test(text) && /IT 204 - Computer Programming 2/.test(text), 'the subjects table shows the new subject with its term (in the current year) and pre-requisite');
     await a.shot(evidence('E18-admin-subject-term-1440.png'));
+    // the administrator sets the units, and can correct every detail of the subject later (2026-11-25)
+    const subjectRow = () => a.page.locator('table tbody tr[data-catalog-row^="subject-"]', { hasText: 'IT 306' }).first();
+    check(/2 lecture \/ 1 laboratory/.test(await subjectRow().innerText()), 'the subjects table shows the units (lecture / laboratory)');
+    await subjectRow().getByRole('button', { name: /edit/i }).first().click();
+    const dialog = a.page.getByRole('dialog');
+    await dialog.getByLabel('Lecture units', { exact: true }).waitFor({ timeout: 8000 });
+    check(await dialog.getByLabel('Pre-requisite', { exact: true }).inputValue() === 'IT 204 - Computer Programming 2' && await dialog.getByLabel('Laboratory units', { exact: true }).inputValue() === '1', 'the edit dialog shows the subject\'s pre-requisite and units');
+    await dialog.getByLabel('Lecture units', { exact: true }).fill('4 O');
+    check(await dialog.getByRole('button', { name: /^save/i }).isDisabled(), 'units that are not numbers cannot be saved');
+    await dialog.getByLabel('Lecture units', { exact: true }).fill('3');
+    await a.page.waitForTimeout(600);
+    await a.shot(evidence('E18-admin-subject-edit-1440.png'));
+    await dialog.getByRole('button', { name: /^save/i }).click();
+    await a.page.waitForTimeout(2500);
+    check(/3 lecture \/ 1 laboratory/.test(await subjectRow().innerText()), 'the corrected units are in the table');
+    const twin = await a.api('POST', '/courses', { code: 'IT-306', title: 'Twin (synthetic)', program: 'BSIT', semester: '1st Semester', yearLevel: 1, lecture: '2', lab: '1' });
+    check(twin.status === 409 && /IT 306/.test(JSON.stringify(twin.body)), 'a code that differs only in a hyphen is refused in the same program (HTTP ' + twin.status + ')');
     const counted = (await a.api('GET', '/academic-years')).body.find((y) => y.label === '2026–2027');
     check(counted && counted.programs >= 1 && counted.subjects >= 3, 'the administrator\'s academic year list counts the programs and subjects of the year (' + JSON.stringify(counted) + ')');
     // give the faculty member the subject (administrator API, as Users & Roles does)
@@ -652,7 +671,7 @@ module.exports = async function run(ctx, h) {
     const assigned = await a.api('PUT', '/users/' + (fac.id || fac.user_id) + '/assignments', { programs: progs.body.map((p) => p.id), courses: mine });
     check(assigned.status === 200, 'the subject was assigned to the faculty member (HTTP ' + assigned.status + ')');
     state.termCourseId = subjects.body.find((c) => c.code === 'IT 306').id;
-    assertClean(a, 'E18-admin');
+    assertClean(a, 'E18-admin', { allowStatus: [409] }); // the refused twin code
     await a.close();
 
     const f = await L.session(browser, stack);
@@ -668,6 +687,7 @@ module.exports = async function run(ctx, h) {
     check(await field('Pre-requisite').inputValue() === 'IT 204 - Computer Programming 2', 'choosing the subject filled the pre-requisite automatically');
     check(await field('Year level').inputValue() === '3', 'choosing the subject filled the year level automatically');
     check(await field('Academic year').inputValue() === '2026–2027' && /2nd Semester/.test(await field('Semester').inputValue()), "the syllabus's own academic year (the current one, 2026–2027) and the subject's semester are shown");
+    check(await field('Lecture units').inputValue() === '3' && await field('Laboratory units').inputValue() === '1' && await field('Lecture units').isEditable() === false, 'the subject\'s units are filled in and cannot be edited by faculty');
     check(await field('Pre-requisite').isEditable() === false && await field('Year level').isEditable() === false, 'the pre-requisite and year level cannot be edited by faculty');
     check(/cannot change it/.test(await f.text()), 'the page says the administrator set them');
     await f.shot(evidence('E18-faculty-locked-1440.png'));
@@ -676,10 +696,10 @@ module.exports = async function run(ctx, h) {
     const row = list.find((x) => x.courseCode === 'IT 306') || list[0];
     const id = row && row.id;
     await f.page.waitForTimeout(2500);
-    const forged = await f.api('PUT', '/syllabi/' + id + '/content', { sections: { meta: { courseId: state.termCourseId, code: 'IT 306', title: 'x', program: 'BSIT', lecture: '2', lab: '1', prereq: 'Forged by faculty', yearLevel: '1', academicYear: '1999–2000', semester: '1st Semester' } }, schemaVersion: 3 });
+    const forged = await f.api('PUT', '/syllabi/' + id + '/content', { sections: { meta: { courseId: state.termCourseId, code: 'IT 306', title: 'x', program: 'BSIT', lecture: '9', lab: '9', prereq: 'Forged by faculty', yearLevel: '1', academicYear: '1999–2000', semester: '1st Semester' } }, schemaVersion: 3 });
     check(forged.status === 200, 'a forged save is accepted (HTTP ' + forged.status + ')');
     const meta = (await f.api('GET', '/syllabi/' + id + '/content')).body.content.meta;
-    check(meta.prereq === 'IT 204 - Computer Programming 2' && String(meta.yearLevel) === '3' && meta.semester === '2nd Semester', "the server stored the administrator's values, not the forged ones (" + [meta.prereq, meta.yearLevel, meta.academicYear, meta.semester].join(' | ') + ')');
+    check(meta.prereq === 'IT 204 - Computer Programming 2' && String(meta.yearLevel) === '3' && meta.semester === '2nd Semester' && meta.lecture === '3' && meta.lab === '1' && meta.curriculumYear === '2022-2023', "the server stored the administrator's values, not the forged ones (" + [meta.prereq, meta.yearLevel, meta.academicYear, meta.semester].join(' | ') + ')');
     assertClean(f, 'E18-faculty', { allowStatus: [409] });
     await f.close();
   });
@@ -1024,6 +1044,8 @@ module.exports = async function run(ctx, h) {
     const pick = async (label, option) => { await a.page.locator('.ac-form').getByRole('combobox', { name: label, exact: true }).click(); await a.page.getByRole('option', { name: option }).first().click(); await a.page.waitForTimeout(300); };
     await pick('Program', /BSEE/);
     await pick('Curriculum year', '2022-2023'); // required since the curriculum year column (2026-11-09)
+    await a.page.getByLabel('Lecture units', { exact: true }).fill('2'); // required since the administrator sets the units (2026-11-25)
+    await a.page.getByLabel('Laboratory units', { exact: true }).fill('1');
     await pick('Semester', /1st Semester/); await pick('Year level', 'Year 1');
     await a.page.getByLabel('Pre-requisite', { exact: true }).fill('None');
     await a.page.getByRole('button', { name: /^add subject$/i }).last().click();
@@ -1047,8 +1069,9 @@ module.exports = async function run(ctx, h) {
     await f.nav('Syllabi');
     await f.page.getByText('EE 101', { exact: false }).first().locator('xpath=ancestor::*[.//button[contains(., "Edit")]][1]').getByRole('button', { name: /edit/i }).first().click();
     await f.page.waitForTimeout(2500);
-    // Step 2 opens once Step 1 is complete: the curriculum year and a course description (the subject supplies program, code, title and the administrator's term)
-    await f.page.locator('[placeholder="For example, 2022-2023"],[aria-label="For example, 2022-2023"]').first().fill('test-2026');
+    // Step 2 opens once Step 1 is complete: a course description (the subject supplies program, code, title and the administrator's term, units and curriculum year)
+    const ownYear = f.page.getByLabel('Curriculum year', { exact: true });
+    check(await ownYear.inputValue() === '2022-2023' && await ownYear.isEditable() === false, 'the administrator\'s curriculum year is filled in and locked');
     if (!(await f.page.getByPlaceholder('Describe the course in a few sentences').count())) await f.page.getByRole('button', { name: /add paragraph/i }).click();
     await f.page.getByPlaceholder('Describe the course in a few sentences').first().fill('A synthetic description for the end-to-end test of a new program.');
     await f.page.waitForTimeout(1200);

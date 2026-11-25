@@ -99,6 +99,7 @@ npm run migrate-subject-term
 npm run migrate-academic-year-scope
 npm run migrate-catalog-year
 npm run migrate-curriculum-year
+npm run migrate-subject-units
 npm run migrate-course-program-codes
 npm run migrate-po-reference-publication
 npm run migrate-program-outcome-sources

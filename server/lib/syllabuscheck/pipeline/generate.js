@@ -108,7 +108,7 @@ const SYSTEM_FIL = [SYSTEM, '',
 const systemFor = subject => (subject && subject.writeIn === 'Filipino' ? SYSTEM_FIL : SYSTEM);
 
 const jsonOf = value => JSON.stringify(value);
-// What the generator knows about the subject: the syllabus's own course information, the program's approved curriculum when it lists the subject (the subjects of
+// What the generator knows about the subject: the syllabus's own course information, the program's subjects as the administrator set them up (the subjects of
 // its prerequisite and the subjects taken before it, so a topic is built on and not taught again), and the author's own notes. The curriculum lists no course
 // description or topics, so for those the author's notes (up to 1500 characters, sent as data) are the way to steer the content.
 // A Filipino-language subject (taught and written in Filipino): how it is recognized is in rules.js isFilipinoSubject.
@@ -118,7 +118,8 @@ const semesterNo = text => Number((/(\d)/.exec(String(text || '')) || [])[1]) ||
 function subjectOf(content, masters, guidance) {
   const meta = content?.meta || {};
   const code = clean(meta.code), prerequisite = clean(meta.prereq);
-  const courses = (masters?.curricula || []).flatMap(c => (Array.isArray(c.courses) ? c.courses : []));
+  // the administrator's subjects of the program (lib/subjectReference.js programSubjectsOf)
+  const courses = masters?.programSubjects || (masters?.curricula || []).flatMap(c => (Array.isArray(c.courses) ? c.courses : []));
   const here = code ? courses.find(c => sameCode(c.code, code)) : null;
   const prerequisiteSubjects = prerequisite ? courses.filter(c => normCode(c.code).length >= 3 && normCode(prerequisite).includes(normCode(c.code))).map(c => clean(c.title)).slice(0, 6) : [];
   const before = here ? [...new Set(courses.filter(c => !sameCode(c.code, code) && (Number(c.yearLevel) < Number(here.yearLevel) || (Number(c.yearLevel) === Number(here.yearLevel) && semesterNo(c.semester) < semesterNo(here.semester)))).map(c => clean(c.title)))].slice(0, 25) : [];

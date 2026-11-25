@@ -1638,8 +1638,8 @@ extraEn["subjects.editTitle"] = "Edit subject {code}";
 extraTl["subjects.editTitle"] = "I-edit ang asignaturang {code}";
 extraEn["subjects.deleteTitle"] = "Delete subject {code}";
 extraTl["subjects.deleteTitle"] = "Burahin ang asignaturang {code}";
-extraEn["subjects.editNote"] = "Change the subject code, title and curriculum year. Its outcomes and syllabi stay as they are.";
-extraTl["subjects.editNote"] = "Baguhin ang kodigo, pamagat at taon ng kurikulum ng asignatura. Mananatili ang mga kinalabasan at silabus nito.";
+extraEn["subjects.editNote"] = "The AI Checker compares syllabi with these details. A syllabus takes them in the next time it is saved; its outcomes stay as they are.";
+extraTl["subjects.editNote"] = "Sa mga detalyeng ito inihahambing ng AI Checker ang mga silabus. Kukunin ito ng silabus sa susunod na pag-save; mananatili ang mga kinalabasan nito.";
 extraEn["subjects.deleteNote"] = "{code} will be removed. Syllabi that use it keep the outcomes they were saved with, but new drafts can no longer pick it.";
 extraTl["subjects.deleteNote"] = "Aalisin ang {code}. Pananatilihin ng mga silabus na gumagamit nito ang mga kinalabasang naka-save sa kanila, ngunit hindi na ito mapipili ng mga bagong draft.";
 extraEn["subjects.deleteAction"] = "Delete subject";
@@ -1798,9 +1798,12 @@ const termMessages = {
   "term.notSet": ["Not set", "Hindi pa naitakda"],
   "term.lockedHint": ["Set by the administrator for this subject; faculty cannot change it.", "Itinakda ng administrator para sa asignaturang ito; hindi ito mababago ng guro."],
   "term.notSetByAdmin": ["Not set by the administrator yet. Ask the administrator to fill it in; faculty cannot enter it.", "Hindi pa naitatakda ng administrator. Hilingin sa administrator na punan ito; hindi ito maitatala ng guro."],
-  "term.curriculumWarning": ["The approved curriculum ({year}) lists this subject with {details}. Faculty may be stopped at submit until they match.", "Ang aprubadong kurikulum ({year}) ay naglilista ng asignaturang ito na may {details}. Maaaring mahinto ang mga guro sa pagsusumite hanggang magtugma ang mga ito."],
-  "term.diff.prerequisite": ["pre-requisite \"{value}\"", "paunang kinakailangang \"{value}\""],
-  "term.diff.yearLevel": ["year level {value}", "antas ng taon na {value}"],
+  "units.lecture": ["Lecture units", "Yunit sa lektura"],
+  "units.lab": ["Laboratory units", "Yunit sa laboratoryo"],
+  "units.line": ["{lecture} lecture / {lab} laboratory", "{lecture} lektura / {lab} laboratoryo"],
+  "units.notSet": ["Units not set", "Hindi pa naitakda ang yunit"],
+  "units.hint": ["Faculty cannot change it.", "Hindi ito mababago ng guro."],
+  "units.invalid": ["Enter both units as numbers from 0 to 30, for example 2 and 1. They cannot both be 0.", "Ilagay ang dalawang yunit bilang numero mula 0 hanggang 30, halimbawa 2 at 1. Hindi maaaring parehong 0."],
   "subjects.allYears": ["All academic years", "Lahat ng taong panuruan"],
   "subjects.allSemesters": ["All semesters", "Lahat ng semestre"],
   "subjects.allLevels": ["All year levels", "Lahat ng antas ng taon"],
@@ -1810,12 +1813,8 @@ const termMessages = {
   "curriculumYear.column": ["Curriculum", "Kurikulum"],
   "curriculumYear.hint": ["The curriculum this subject is taught under, for example 2022-2023. It is separate from the academic year.", "Ang kurikulum na sinusunod ng asignaturang ito, halimbawa 2022-2023. Hiwalay ito sa taong panuruan."],
   "curriculumYear.invalid": ["Enter two consecutive years as YYYY-YYYY, for example 2022-2023.", "Ilagay ang dalawang magkasunod na taon bilang YYYY-YYYY, halimbawa 2022-2023."],
-  "curriculumYear.hasReference": ["The AI Checker has the approved {program} {year} curriculum to compare this subject with.", "May aprubadong kurikulum ng {program} {year} ang AI Checker na paghahambingan ng asignaturang ito."],
-  "curriculumYear.noReference": ["No approved {program} {year} curriculum is on file (on file: {list}). The AI Checker cannot compare this subject with an official curriculum until one is added.", "Walang aprubadong kurikulum ng {program} {year} na nakatala (nakatala: {list}). Hindi maihahambing ng AI Checker ang asignaturang ito sa opisyal na kurikulum hangga't walang naidaragdag."],
-  "curriculumYear.none": ["none", "wala"],
   "curriculumYear.all": ["All curriculum years", "Lahat ng taon ng kurikulum"],
   "curriculumYear.notSetOption": ["Not set", "Hindi pa naitakda"],
-  "curriculumYear.approvedOption": ["{year} · approved curriculum on file", "{year} · may aprubadong kurikulum"],
   "years.addHint": ["Add the next academic year, for example 2028 for 2028–2029.", "Idagdag ang susunod na taong panuruan, halimbawa 2028 para sa 2028–2029."],
   "years.copyButton": ["Copy from {year}", "Kopyahin mula sa {year}"],
   "years.copyTitle": ["Copy the {from} catalog into {to}?", "Kopyahin ang katalogo ng {from} papunta sa {to}?"],

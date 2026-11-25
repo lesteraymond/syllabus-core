@@ -14,7 +14,8 @@ export default function InfoStep({ d, apply, editable = true, syllabusYear = '',
   const m = d.meta;
   const setM = (k, v) => apply((x) => { x.meta[k] = v; return x; });
   // Year level, pre-requisite, academic year and semester the administrator set for the chosen subject: shown, not editable (the server forces them on every save)
-  const term = (courseList.find((c) => c.id === m.courseId) || {}).term;
+  const subject = courseList.find((c) => c.id === m.courseId) || {};
+  const term = subject.term, units = subject.units || null, curriculumYear = subject.curriculumYear || '';
   const lock = lockedFields(term);
   const yearScope = useYearScope();
   const yearShown = syllabusYear || (yearScope && yearScope.current ? yearScope.current.label : ''); // a new draft takes the current academic year when it is created
@@ -23,6 +24,12 @@ export default function InfoStep({ d, apply, editable = true, syllabusYear = '',
   useEffect(() => {
     if (editable && ((wantPrereq !== null && m.prereq !== wantPrereq) || (wantYear !== null && String(m.yearLevel ?? '') !== wantYear))) apply((x) => { if (wantPrereq !== null) x.meta.prereq = wantPrereq; if (wantYear !== null) x.meta.yearLevel = wantYear; return x; });
   }, [editable, wantPrereq, wantYear, m.prereq, m.yearLevel]); // eslint-disable-line react-hooks/exhaustive-deps
+  // the same for the units and the curriculum year
+  useEffect(() => {
+    if (!editable) return;
+    const want = { ...(units ? { lecture: String(units.lecture), lab: String(units.lab) } : {}), ...(curriculumYear ? { curriculumYear } : {}) };
+    if (Object.keys(want).some((k) => String(m[k] ?? '') !== want[k])) apply((x) => { Object.assign(x.meta, want); return x; });
+  }, [editable, units && units.lecture, units && units.lab, curriculumYear, m.lecture, m.lab, m.curriculumYear]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <div className="form-grid">
       <Field label={translateUI("ui.program_2f03bb")}>
@@ -47,11 +54,12 @@ export default function InfoStep({ d, apply, editable = true, syllabusYear = '',
       </Field>
       <Field label={translateUI("ui.credit_units_v_40ba2a")}>
         <span className="units">
-          <input className="mono" inputMode="numeric" value={m.lecture} onChange={(e) => setM('lecture', e.target.value)} aria-label={translateUI("ui.lecture_units_de9aaf")} maxLength={4} style={{ width: 74, textAlign: 'center' }} /><span>{translateUI("ui.units_lecture_2a1d2c")}</span>
-          <input className="mono" inputMode="numeric" value={m.lab} onChange={(e) => setM('lab', e.target.value)} aria-label={translateUI("ui.laboratory_units_067e02")} maxLength={4} style={{ width: 74, textAlign: 'center' }} /><span>{translateUI("ui.unit_laboratory_60e5a6")}</span>
+          <input className="mono" inputMode="numeric" value={m.lecture} readOnly={!!units} onChange={(e) => setM('lecture', e.target.value)} aria-label={translateUI("ui.lecture_units_de9aaf")} maxLength={4} style={{ width: 74, textAlign: 'center' }} /><span>{translateUI("ui.units_lecture_2a1d2c")}</span>
+          <input className="mono" inputMode="numeric" value={m.lab} readOnly={!!units} onChange={(e) => setM('lab', e.target.value)} aria-label={translateUI("ui.laboratory_units_067e02")} maxLength={4} style={{ width: 74, textAlign: 'center' }} /><span>{translateUI("ui.unit_laboratory_60e5a6")}</span>
         </span>
+        {units && <span className="linkline">{translateUI('term.lockedHint')}</span>}
       </Field>
-      <Field label={translateUI('hybrid.curriculumYear')}><input value={m.curriculumYear || ''} onChange={e => setM('curriculumYear', e.target.value)} aria-label={translateUI('hybrid.curriculumYear')} placeholder={translateUI('hybrid.yearExample')} maxLength={40} /></Field>
+      <Field label={translateUI('hybrid.curriculumYear')}><input value={m.curriculumYear || ''} readOnly={!!curriculumYear} onChange={e => setM('curriculumYear', e.target.value)} aria-label={translateUI('hybrid.curriculumYear')} placeholder={translateUI('hybrid.yearExample')} maxLength={40} />{curriculumYear && <span className="linkline">{translateUI('term.lockedHint')}</span>}</Field>
       {/* the academic year is the syllabus's own (the year it was created in), shown read-only; the semester is the subject's */}
       {yearShown && <Field label={translateUI('term.academicYear')}><input value={yearShown} readOnly aria-label={translateUI('term.academicYear')} /></Field>}
       {/* faculty never type these: they are the administrator's (a subject the administrator has not filled in yet shows a note instead of an editable box) */}

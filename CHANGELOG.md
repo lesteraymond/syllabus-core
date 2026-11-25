@@ -3145,3 +3145,22 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Not changed:** scoring, severity, AI questions, prompts and stored answers. Nothing to migrate.
 - **Checked on the dev data:** IT 204 has no blocking rule left; IT 203 keeps its title blocker (a different word). No two different titles of one curriculum become the same (7,306 pairs).
 - **Tests:** `titles.test.js` (5), `syllabusCheck.routes.test.js` (+1), `hybridCheck.test.js` (+1); all seven fail on the previous code. `npm test` and `npm run test:vpaa` pass.
+
+---
+
+### v1.98.37 — The Administrator's Subject Is the Reference; Units on Subjects
+**Date:** November 25, 2026
+
+- **Problem:** the AI Checker compared a syllabus's code, title, pre-requisite, units and year level with a typed copy of the printed curricula. A new program or a new curriculum could not be checked to a final score until someone photographed and retyped it, and an administrator's entry could be "wrong" against a photo (IT 203). That did not follow the policy of 2026-11-06: what the administrator saves is the reference.
+- **Change (owner decision):** the reference is the subject the administrator set up, for any program (`server/lib/subjectReference.js`). It is found by its id, so a hyphen, a new code or another subject in the program never matters. Adding a program and its subjects is enough. What the administrator has not set is not checked. A draft saved before the subject was corrected is told to save, and never gets a critical 0. Only a change of the subject itself makes a stored check out of date.
+- **Units:** a subject has lecture and laboratory units (required on Add subject). They fill in Step 1, with the curriculum year, and faculty cannot change them; the server enforces it. A subject without units leaves Step 1 as typed.
+- **Edit subject** can now change the units, semester, year level and pre-requisite too. Before, only the code, title and curriculum year could be corrected.
+- **The typed copy of the printed curricula is not used any more** (owner decision the same day): not by the AI Checker, the generator, PDF import or the admin page. The warning and the "curriculum on file" hints on the subject form are gone, and so are the administrator endpoints that managed the copy (`/api/syllabus-check/references`). The stored rows (`syllabus_check_curricula`) and the photographs are kept, unused.
+- **AI Syllabus Generator:** its background (the pre-requisite's title and the subjects taken before) is the administrator's subjects of the same curriculum year. Earlier subjects the administrator has not added are unknown to it; it still generates.
+- **PDF import** matches a file with the administrator's subject too, so it works for a new program or curriculum year.
+- **One code, one subject:** a program cannot have "AI 301" and "AI-301". This closes a gap left by v1.98.34.
+- **Not changed:** AI questions, prompts, stored answers, scoring, the 79 threshold, vision, mission, EGAs and POs, and the review chain. A syllabus without a subject is told to choose one (it blocks submitting; it is never a score of 0).
+- **To know:** existing checks are out of date and need a re-check. If the administrator changes a subject while its syllabus is under review, that version no longer matches it and cannot be approved until the author saves and submits again.
+- **Migration:** `npm run migrate-subject-units` (adds two empty columns; safe to run again). Existing subjects have no units until an administrator sets them.
+- **Checked:** the three dev drafts have no blocking rule; a new program with nothing on file passes every subject check (written and rolled back); all 25 browser scenarios pass on an isolated database. No real AI run was made.
+- **Tests:** `subjectReference.test.js` (15), `catalogYear.routes.test.js` (+2), `subjectTerm.test.js` (+1), `pdfImport.fixes.test.js` (+1), browser scenarios E18 and E23 extended; tests of the copy removed. `npm test` and `npm run test:vpaa` pass.
