@@ -112,3 +112,10 @@ test('a description suggestion replaces the paragraphs, can be undone, and is re
   const edited = { description: [{ id: 'd1', t: 'Someone rewrote it meanwhile.' }] };
   assert.throws(() => applySuggestion(edited, suggestion, { requireOriginal: true }), /suggestionTargetChanged/);
 });
+
+test('a decision refused because the administrator sets the field does not claim that the draft was saved', async () => {
+  const suggestion = { id: 'CUR-FIELD:meta.title', path: 'meta.title', replacement: 'B' };
+  const refusal = Object.assign(new Error('The administrator sets this field.'), { data: { code: 'admin_field' } });
+  await assert.rejects(decideSuggestion({ suggestion, action: 'accept', applyDraft: async () => true, recordDecision: async () => { throw refusal; } }), e => e === refusal && !e.draftSaved);
+  await assert.rejects(decideSuggestion({ suggestion, action: 'accept', applyDraft: async () => true, recordDecision: async () => { throw Error('offline'); } }), e => e.draftSaved === true);
+});

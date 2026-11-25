@@ -6,10 +6,15 @@
 //   2. zero-width characters removed,
 //   3. letter case folded,
 //   4. every run of whitespace becomes one space and the ends are trimmed.
-// Nothing else is folded: punctuation, numbers, words and parentheses are significant, and there is no fuzzy matching. "Computer Programming 1" and
+// Spacing and hyphens never make a different title, under every policy (sameTitle; owner, 2026-11-25): the printed curricula write "2(INTERMEDIATE" and
+// "1 (FUNDAMENTALS" on one page, so spaces beside punctuation are dropped and a hyphen reads as a space, as in a subject code (lib/subjectCode.js).
+// Nothing else is folded: other punctuation, numbers, words and parentheses are significant, and there is no fuzzy matching. "Computer Programming 1" and
 // "Computer Programming 2" differ, and so do "Computer Programming 1" and "Computer Programming 1 (Fundamentals of Programming)".
+const { withoutHyphens } = require('../subjectCode');
 const ZERO_WIDTH = new RegExp('[' + [0x200b, 0x200c, 0x200d, 0x2060, 0xfeff].map(code => String.fromCharCode(code)).join('') + ']', 'g');
-const normalizeTitle = text => String(text ?? '').normalize('NFKC').replace(ZERO_WIDTH, '').toLowerCase().replace(/\s+/g, ' ').trim();
+const spaceForm = text => withoutHyphens(text).replace(/\s*([()[\]{}/.,:;&])\s*/g, '$1').replace(/\s+/g, ' ').trim();
+const sameTitle = (a, b) => spaceForm(a) === spaceForm(b);
+const normalizeTitle = text => spaceForm(String(text ?? '').normalize('NFKC').replace(ZERO_WIDTH, '').toLowerCase());
 
 // How the entered title relates to the approved one:
 //   exact         identical text
@@ -23,26 +28,26 @@ function titleRelation(entered, canonical) {
   if (a === b) return { relation: 'exact', match: true };
   const na = normalizeTitle(a), nb = normalizeTitle(b);
   if (na === nb) return { relation: 'case_or_space', match: true };
-  if (nb.startsWith(na + ' (') && nb.endsWith(')')) return { relation: 'subtitle', match: false };
+  if (nb.startsWith(na + '(') && nb.endsWith(')')) return { relation: 'subtitle', match: false };
   return { relation: 'different', match: false };
 }
 
 // ---- the policy: which comparison is OFFICIAL ----
 // SYLLABUS_CHECK_TITLE_POLICY
-//   shadow      (default) the official comparison stays exact; the normalised decision is computed beside it and reported (hybrid.shadowCurriculum)
-//   exact       the official comparison is exact and nothing else is computed
+//   shadow      (default) the official comparison stays exact (but for spacing and hyphens); the normalised decision is computed beside it and reported (hybrid.shadowCurriculum)
+//   exact       the official comparison is exact (but for spacing and hyphens) and nothing else is computed
 //   normalized  the normalised comparison is official (approved for controlled activation only; see docs/title-policy-activation.md)
 // Every caller (the check itself and the submission gate) resolves the policy here, so the check and the gate can never disagree.
-const TITLE_POLICY_VERSION = 'title-normalization-1';
+const TITLE_POLICY_VERSION = 'title-normalization-2'; // 2: spacing and hyphens (sameTitle)
 function titlePolicyOf(env = process.env) {
   const value = String(env.SYLLABUS_CHECK_TITLE_POLICY || '').trim().toLowerCase();
   return ['exact', 'shadow', 'normalized'].includes(value) ? value : 'shadow';
 }
 // The comparison a policy makes official: only 'normalized' uses the normalisation.
 const officialComparison = policy => (policy === 'normalized' ? 'normalized' : 'exact');
-// The decision one comparison makes. The exact comparison is the original one, unchanged: String(entered) === String(approved).
+// The decision one comparison makes. The exact comparison is letter for letter, but for spacing and hyphens (sameTitle).
 function titleDecision(comparison, entered, approved) {
-  return comparison === 'normalized' ? titleRelation(entered, approved).match : String(entered ?? '') === String(approved ?? '');
+  return comparison === 'normalized' ? titleRelation(entered, approved).match : sameTitle(entered, approved);
 }
 // Would a stored report's title decision be different under the policy in force now? (A report made before the policy changed is then out of
 // date.) Only reports whose own evidence would decide differently are affected; a report without a title check never is.
@@ -51,4 +56,4 @@ function titleDecisionChanged(report, env = process.env) {
   if (!check || !['PASS', 'FAIL'].includes(check.status) || !check.evidence) return false;
   return titleDecision(officialComparison(titlePolicyOf(env)), check.evidence.actual, check.evidence.expected) !== (check.status === 'PASS');
 }
-module.exports = { normalizeTitle, titleRelation, titlePolicyOf, officialComparison, titleDecision, titleDecisionChanged, TITLE_POLICY_VERSION };
+module.exports = { sameTitle, normalizeTitle, titleRelation, titlePolicyOf, officialComparison, titleDecision, titleDecisionChanged, TITLE_POLICY_VERSION };

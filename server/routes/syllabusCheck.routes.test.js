@@ -75,3 +75,38 @@ test('only the author records a decision, and only while the syllabus is editabl
   ]);
   assert.equal(original.plan[0].tasks, 'Old quiz');
 });
+
+test('a recommendation the save did not keep (the administrator sets the field on the subject) is not recorded as applied', async t => {
+  const stored = { meta: { title: 'DATA STRUCTURES AND ALGORITHM', prereq: 'IT 102' }, plan: [{ tasks: 'Old quiz' }] };
+  const title = { id: 'CUR-FIELD:meta.title', path: 'meta.title', replacement: 'DATA STRUCTURE AND ALGORITHM' };
+  const tasks = { id: 'SEM:pair1', path: 'plan[0].tasks', replacement: 'Design a tested program.' };
+  const writes = [];
+  t.mock.method(repo, 'readReport', async () => ({ hybrid: { alignment: { status: 'completed', engine: 're-planned' }, suggestions: [title, tasks] } }));
+  delete require.cache[require.resolve('./syllabusCheck')];
+  const app = express(); app.use(express.json());
+  app.locals.db = { query: async (sql, params) => {
+    if (sql.startsWith('SELECT user_id FROM users')) return [[{ user_id: params[0] }]];
+    if (sql.startsWith('SELECT s.*, r.run_id')) return [[{ syllabus_id: 100, user_id: 26, status: 'draft', content: JSON.stringify(stored), run_id: 1, run_created_by: 26 }]];
+    if (sql.startsWith('INSERT INTO submission_logs')) return [{ insertId: 1 }];
+    if (sql.startsWith('INSERT INTO syllabus_check_decisions')) { writes.push(params); return [{ insertId: writes.length }]; }
+    if (/program_po_reference_remediation/.test(sql)) return [[]];
+    throw Error('Unexpected mutation/query: ' + sql);
+  } };
+  app.use((req, res, next) => { req.session = { user: { id: 26, role: 'faculty' } }; next(); });
+  app.use('/api/syllabus-check', require('./syllabusCheck'));
+  const server = app.listen(0, '127.0.0.1');
+  await new Promise(resolve => server.once('listening', resolve));
+  t.after(() => new Promise(resolve => server.close(resolve)));
+  const call = async body => {
+    const response = await fetch(`http://127.0.0.1:${server.address().port}/api/syllabus-check/runs/1/decisions`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    return { status: response.status, body: await response.json() };
+  };
+  const refused = await call({ suggestionId: title.id, action: 'accept' });
+  assert.equal(refused.status, 409); assert.equal(refused.body.code, 'admin_field'); assert.match(refused.body.error, /administrator/);
+  assert.equal((await call({ suggestionId: title.id, action: 'edit', editedText: 'DATA STRUCTURE AND ALGORITHMS' })).status, 409, 'an edited text the save did not keep either');
+  assert.equal(writes.length, 0, 'nothing is recorded as applied');
+  assert.equal((await call({ suggestionId: title.id, action: 'reject' })).status, 201, 'the author can still set it aside');
+  assert.equal((await call({ suggestionId: tasks.id, action: 'accept' })).status, 201, 'a field the author owns is recorded as before');
+  stored.meta.title = 'DATA STRUCTURE AND ALGORITHM';
+  assert.equal((await call({ suggestionId: title.id, action: 'accept' })).status, 201, 'the subject was corrected: the saved title is the recommended one');
+});

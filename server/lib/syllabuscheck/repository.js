@@ -36,6 +36,18 @@ async function notAppliedToSubject(db, content, reference) {
   try { course = await require('../courses').loadCourse(db, courseId); } catch { return false; } // no answer: keep the general refusal
   return !!course && !sameBasis(course.standards?.pos, reference.outcomes);
 }
+// The Step 1 values the administrator set on the syllabus's subject: every save restores them (routes/syllabusContent.js applyCatalog), so the checker does not
+// recommend a change of one of them to the author (engine.js). {} when there is no subject or it cannot be read: then every field counts as the author's.
+async function adminMetaOf(db, content) {
+  const courseId = content?.meta?.courseId;
+  if (!courseId) return {};
+  try {
+    const course = await require('../courses').loadCourse(db, courseId);
+    if (!course) return {};
+    const { setUp } = require('../subjectTerm'), forced = require('../subjectTerm').applyTerm({}, course.term), term = course.term || {};
+    return { title: course.title, ...(term.prerequisite || setUp(term) ? { prereq: forced.prereq ?? '' } : {}), ...(term.yearLevel != null ? { yearLevel: forced.yearLevel } : {}) };
+  } catch { return {}; }
+}
 async function mastersFor(db, content, { syllabusId = null, historicalRead = false } = {}) {
   const recordReview = historicalRead ? await recordReviewOf(db, syllabusId) : null;
   if (!historicalRead) await assertRecordReview(db,syllabusId);
@@ -78,7 +90,7 @@ async function mastersFor(db, content, { syllabusId = null, historicalRead = fal
     ega: { source: egaSource, programId: program.id || null, version: program.versions ? program.versions.egas : null, count: egaMaster.length, sha256: sha(canonical(egaMaster)) },
     institution: { version: institution.version ?? null },
     curriculum: { ...bundle.referenceContext.curriculum, sha256: curricula.map(c => sha(c.source + '|' + JSON.stringify(c.courses))) } };
-  return { ...bundle, ...(ref ? { poReference: ref } : {}), otherCurricula, programCodes: [...codes], outcomeSource: program.inheritedFrom ? program.inheritedFrom.code : null, fingerprint, ...(recordReview ? { recordReview } : {}) };
+  return { ...bundle, ...(ref ? { poReference: ref } : {}), otherCurricula, adminMeta: historicalRead ? {} : await adminMetaOf(db, content), programCodes: [...codes], outcomeSource: program.inheritedFrom ? program.inheritedFrom.code : null, fingerprint, ...(recordReview ? { recordReview } : {}) };
 }
 async function saveReport(db, runId, report, fingerprint) {
   const json = JSON.stringify(report);

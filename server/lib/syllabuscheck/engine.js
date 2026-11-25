@@ -60,14 +60,21 @@ function coded(content, masters = {}, opts = {}) {
       check('CUR-CODE', 'meta.code', true, meta.code, course.code, 'Course exists in the selected curriculum.');
       // The title comparison follows the title policy (titles.js): exact unless SYLLABUS_CHECK_TITLE_POLICY=normalized. A caller that names no comparison
       // (the submission gate in compliance/service.js) gets the one the policy makes official, so the check and the gate always decide alike.
-      // The prerequisite is exact (only the title is covered by the normalisation policy), except that the ways of writing "no pre-requisite"
+      // The prerequisite is exact (the spacing and normalisation rules of a title do not cover it), except that the ways of writing "no pre-requisite"
       // (empty, None, N/A, the import's blank-cell sentence) are one value: prerequisite.js. A real pre-requisite on either side is still compared exactly,
       // but for a hyphen or a space in a code.
-      check('CUR-FIELD', 'meta.title', titleDecision(opts.titleComparison || officialComparison(titlePolicyOf(process.env)), meta.title, course.title), meta.title, course.title, 'title differs from the official curriculum.', { replacement: course.title });
+      // A value the administrator set on the subject is restored by every save (routes/syllabusContent.js applyCatalog), so a recommendation to change it would do
+      // nothing: the author is told who corrects it. Once the subject itself is corrected, the recommendation is offered again (applying or saving brings it in).
+      const adminMeta = masters.adminMeta || {};
+      const fieldDiffers = (key, official) => (key in adminMeta && !equal(str(adminMeta[key]), str(official))
+        ? { message: `${key} differs from the official curriculum, which has "${str(official)}". The administrator sets it on the subject, so it cannot be changed in the syllabus: ask the administrator to correct the subject, then save the syllabus and check it again.`, fix: {} }
+        : { message: `${key} differs from the official curriculum.`, fix: { replacement: ['title', 'prereq'].includes(key) ? official : String(official) } });
+      const title = fieldDiffers('title', course.title);
+      check('CUR-FIELD', 'meta.title', titleDecision(opts.titleComparison || officialComparison(titlePolicyOf(process.env)), meta.title, course.title), meta.title, course.title, title.message, title.fix);
       // Same check, same status and severity; only the wording differs for a blank curriculum cell, which is never offered as replacement text (prerequisite.js).
       const blankCell = isBlankCell(course.prereq);
-      check('CUR-FIELD', 'meta.prereq', samePrerequisite(meta.prereq, course.prereq), meta.prereq, course.prereq, blankCell ? notListedMessage(meta.prereq) : 'prereq differs from the official curriculum.', blankCell ? {} : { replacement: course.prereq });
-      for (const key of ['lecture', 'lab', 'yearLevel']) check('CUR-FIELD', `meta.${key}`, !!str(meta[key]).trim() && Number(meta[key]) === Number(course[key]), meta[key], course[key], `${key} differs from the official curriculum.`, { replacement: String(course[key]) });
+      check('CUR-FIELD', 'meta.prereq', samePrerequisite(meta.prereq, course.prereq), meta.prereq, course.prereq, blankCell ? notListedMessage(meta.prereq) : fieldDiffers('prereq', course.prereq).message, blankCell ? {} : fieldDiffers('prereq', course.prereq).fix);
+      for (const key of ['lecture', 'lab', 'yearLevel']) check('CUR-FIELD', `meta.${key}`, !!str(meta[key]).trim() && Number(meta[key]) === Number(course[key]), meta[key], course[key], fieldDiffers(key, course[key]).message, fieldDiffers(key, course[key]).fix);
     }
   }
   const outcomes = c.outcomes || { ...(c.catalog?.institution || {}), egas: c.catalog?.program?.egas || [], pos: c.catalog?.program?.pos || [] };

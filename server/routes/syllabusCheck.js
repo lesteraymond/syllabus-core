@@ -15,8 +15,12 @@ const { createVerificationToken, relatedContextHash } = refine;
 const { createLimiter } = require('../lib/rateLimit'); const { aiQuota, MESSAGES: AI_LIMIT } = require('../lib/aiQuota'); // the daily ceilings on AI requests
 const { aiGate } = require('../lib/syllabuscheck/policy');
 const activity = require('../lib/activity');
+const { canonical } = require('../lib/compliance/hash');
 const router = express.Router();
 router.use(requireAuth);
+// Step 1 fields the administrator sets on the subject (lib/subjectTerm.js, applyCatalog)
+const ADMIN_FIELD = /^meta\.(title|prereq|yearLevel)$/;
+const ADMIN_FIELD_MESSAGE = 'The administrator sets this field on the subject, so it was not changed in the syllabus. Ask the administrator to correct the subject, then save the syllabus and check it again.';
 const OLD_CHECKER_RETIRED = 'This check was made by the old AI Checker, which is no longer used. Run Check with AI again to get the new AI Checker\'s drafts.';
 const wrap = fn => async (req, res) => { try { await fn(req, res); } catch (error) { sendError(res, error); } };
 const id = raw => { const value = Number(raw); if (!Number.isSafeInteger(value) || value <= 0) throw httpError(400, 'Invalid id'); return value; };
@@ -95,6 +99,13 @@ router.post('/runs/:id/decisions', wrap(async (req, res) => {
   if (!suggestion) throw httpError(400, 'Unknown draft suggestion');
   if (body.action === 'edit' && (typeof body.editedText !== 'string' || !body.editedText.trim() || body.editedText.length > 10000 || typeof suggestion.replacement !== 'string')) throw httpError(400, 'Provide a draft revision of 1–10000 characters.');
 
+  // The author's save comes first, then this decision. A field the administrator sets on the subject is restored by every save (routes/syllabusContent.js), so it would be
+  // recorded as applied while nothing changed: it is refused, and the author is told who can change it. (A new check does not offer such a change at all: engine.js.)
+  if (['accept', 'edit'].includes(body.action) && ADMIN_FIELD.test(suggestion.path)) {
+    const wanted = body.action === 'edit' ? body.editedText : suggestion.replacement;
+    let stored; try { stored = suggestion.path.split('.').reduce((value, key) => value?.[key], JSON.parse(syllabus.content || '{}')); } catch { stored = undefined; }
+    if (canonical(stored) !== canonical(wanted)) throw httpError(409, ADMIN_FIELD_MESSAGE, { code: 'admin_field' });
+  }
   // Append-only human decision. The author explicitly applies the returned draft using the builder.
   const [saved] = await req.app.locals.db.query('INSERT INTO syllabus_check_decisions (run_id, suggestion_id, action, edited_text, user_id) VALUES (?, ?, ?, ?, ?)', [runId, suggestion.id, body.action, body.action === 'edit' ? body.editedText : null, req.session.user.id]);
   await activity.record(req.app.locals.db, { syllabusId: syllabus.syllabus_id, userId: req.session.user.id, action: 'recommend', notes: activity.decisionNote(body.action, suggestion.path) });

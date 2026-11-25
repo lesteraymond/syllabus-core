@@ -3132,3 +3132,16 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Changed test:** `engine.test.js` said that a hyphen in a code is significant; other punctuation ("IT.204", "IT_204", "IT204") still is.
 - **Checked on the dev data:** all 243 subjects of the four curricula, typed without any hyphen: each is found as the right subject, its pre-requisite passes, and the generator gets the same background as with the official spelling.
 - **Tests:** `server/lib/subjectCode.test.js` (+4; three fail on the previous code, the fourth pins the title check). `npm test` and `npm run test:vpaa` pass.
+
+---
+
+### v1.98.36 — Title Spacing, and No More "Applied" for a Field Only the Administrator Can Change
+**Date:** November 25, 2026
+
+- **Problem 1:** IT 204 scored 100 in a real AI check (151 of 151 aligned) but stayed provisional and could not be submitted: its title has a space before the parenthesis and the printed curriculum has none.
+- **Change 1 (owner decision):** spacing and hyphens do not make a different title (`titles.js` `sameTitle`, policy version `title-normalization-2`), under every title policy. A different word, number, letter case or missing part still blocks ("DATA STRUCTURES" is not "DATA STRUCTURE"). The normalized policy (letter case) is still not active. A stored check whose title now passes is shown as out of date; a re-check refreshes it.
+- **Problem 2:** the author could accept the title recommendation, the screen said "Applied", and nothing changed: every save restores the subject's title (and the pre-requisite and year level, when the administrator set them).
+- **Change 2:** the checker no longer recommends such a change; its message gives the official value and says to ask the administrator (`repository.js` `adminMeta`, `engine.js`). A decision on an older check that the save did not keep is refused (409 `admin_field`) instead of being recorded as applied (`routes/syllabusCheck.js`, `src/lib/hybridCheck.js`). Once the subject is corrected, the recommendation works.
+- **Not changed:** scoring, severity, AI questions, prompts and stored answers. Nothing to migrate.
+- **Checked on the dev data:** IT 204 has no blocking rule left; IT 203 keeps its title blocker (a different word). No two different titles of one curriculum become the same (7,306 pairs).
+- **Tests:** `titles.test.js` (5), `syllabusCheck.routes.test.js` (+1), `hybridCheck.test.js` (+1); all seven fail on the previous code. `npm test` and `npm run test:vpaa` pass.
