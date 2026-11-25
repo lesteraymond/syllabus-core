@@ -5301,6 +5301,125 @@ html { scrollbar-gutter: auto; }
 .notif-mode-btn.is-dnd.on .notif-mode-dot { background: var(--ring-warn); }
 .notif-mode-btn.is-off.on .notif-mode-dot { background: var(--muted); }
 
+/* Geist Recent Accounts dropdown on Login (emails only, never passwords) */
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.login-user-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.login-user-wrap > input {
+  width: 100%;
+}
+.login-recent-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 40;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  box-shadow: var(--mat-menu);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.login-recent-head {
+  padding: 5px 8px 4px;
+  font-size: 11px;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.login-recent-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 36px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  color: var(--ink);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-regular);
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+.login-recent-item:hover,
+.login-recent-item.is-active {
+  background: var(--side-hover);
+}
+.login-recent-ico {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+.login-recent-item.is-active .login-recent-ico {
+  color: var(--blue2);
+  border-color: var(--tint-cobalt);
+  background: var(--tint-cobalt);
+}
+.login-recent-email {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: var(--fw-medium);
+  color: var(--ink);
+}
+.login-recent-remove {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--muted);
+  opacity: 0.65;
+  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease, opacity 0.12s ease;
+}
+.login-recent-remove:hover,
+.login-recent-remove:focus-visible {
+  opacity: 1;
+  background: var(--tint-crimson);
+  color: var(--red);
+}
+
+:root[data-theme="light"] { color-scheme: light; }
+.login-card input:-webkit-autofill,
+.login-card input:-webkit-autofill:hover,
+.login-card input:-webkit-autofill:focus,
+.field input:-webkit-autofill,
+.field input:-webkit-autofill:hover,
+.field input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--ink);
+  caret-color: var(--ink);
+  box-shadow: 0 0 0 1000px var(--card) inset;
+  transition: background-color 9999s ease-out 0s;
+}
+.login-card input:-webkit-autofill:focus,
+.field input:-webkit-autofill:focus {
+  border-color: var(--blue2);
+  box-shadow: 0 0 0 1000px var(--card) inset, 0 0 0 3px var(--tint-cobalt);
+}
+
 /* Forced Colors Mode (Windows High Contrast): keep focus indicators and surface boundaries visible when box-shadows are stripped. */
 @media (forced-colors: active) {
   .login-card input:focus,

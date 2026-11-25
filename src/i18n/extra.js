@@ -648,7 +648,10 @@ export const extraEn = {
   "system.generated_8eefdd": "Generated",
   "system.compliance_rate_0c1dcd": "Compliance Rate",
   "system.faculty_breakdown_c2a0a2": "FACULTY BREAKDOWN",
-  "system.total_total_approved_approved_rate_compliance_209760": "{total} total, {approved} approved, {rate}% compliance"
+  "system.total_total_approved_approved_rate_compliance_209760": "{total} total, {approved} approved, {rate}% compliance",
+  "login.recentAccounts": "Recent accounts",
+  "login.removeRecent": "Remove",
+  "login.removeRecentItem": "Remove {email}"
 };
 export const extraTl = {
   "system.dashboard_d87f47": "Pangkalahatang Tanaw",
@@ -1300,7 +1303,10 @@ export const extraTl = {
   "system.generated_8eefdd": "Ginawa noong",
   "system.compliance_rate_0c1dcd": "Antas ng Pagsunod",
   "system.faculty_breakdown_c2a0a2": "DETALYE NG MGA GURO",
-  "system.total_total_approved_approved_rate_compliance_209760": "{total} kabuuan, {approved} aprubado, {rate}% pagsunod"
+  "system.total_total_approved_approved_rate_compliance_209760": "{total} kabuuan, {approved} aprubado, {rate}% pagsunod",
+  "login.recentAccounts": "Mga kamakailang account",
+  "login.removeRecent": "Alisin",
+  "login.removeRecentItem": "Alisin ang {email}"
 };
 
 // Administrator program maintenance and deletion confirmations.
