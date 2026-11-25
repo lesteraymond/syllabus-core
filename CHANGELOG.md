@@ -3175,3 +3175,15 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Not changed:** an administrator writing their own syllabus can still type units on a subject without any. Scoring and the AI are not touched.
 - **To know:** a new syllabus on a subject without units cannot complete Step 1 or be submitted until the administrator sets them (**Edit subject**). Run `npm run migrate-subject-units` before starting this version: without the columns no units can be set at all.
 - **Tests:** `catalog.routes.test.js` (+1), `subjectReference.test.js` (+1), `pdfImport.fixes.test.js` (+1), `facultyLock.test.js` and `subjectTerm.test.js` extended; all five fail on the previous code. All 25 browser scenarios pass (E02 and E18 extended). `npm test` and `npm run test:vpaa` pass.
+
+---
+
+### v1.98.39 — CHED Credit Units and Laboratory Alignment
+**Date:** November 25, 2026
+
+- **One rule for both tools:** the AI Checker and the AI Syllabus Generator share the CHED credit-unit rule: 1 lecture unit is 1 contact hour a week, 1 laboratory unit is 3. The contact hours are computed from the syllabus's units (`pipeline/extract.js`).
+- **AI Checker:** a subject with laboratory units gets one more question (LAB-ALIGNMENT): do the weekly activities include hands-on or laboratory work, and do the tasks include practical outputs? It is advice: no points, no block, and the repair plan does not rewrite anything for it. A lecture-only subject is not asked. Drafts of activities and tasks follow the units too.
+- **AI Syllabus Generator:** a laboratory subject is paced for its contact hours, with laboratory work in the activities and tasks, the tools it needs in the requirements and a laboratory part in the grading. A lecture-only subject gets none of these.
+- **Not changed:** scoring, the caps, the 79 threshold and every scored question.
+- **To know:** the prompt is version 7 and the rewrite prompt version 5, so stored answers are not reused: the next AI check of each syllabus asks every question again, at full cost. No migration.
+- **Tests:** `pipeline/ched-units.test.js` (3); the counts and versions in the other pipeline tests follow. `npm test` and `npm run test:vpaa` pass. No real AI run was made.
