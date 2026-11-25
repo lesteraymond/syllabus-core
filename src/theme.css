@@ -8,26 +8,47 @@
    Forest green is not in the logos; it is the one added colour, for "approved" and success.
    To switch the redesign off, remove the `import './theme.css'` line in main.jsx. */
 
-/* ---- 1. Foundation: the same token names the app already reads, with brand values ---- */
+/* ---- 1. Foundation: Geist Design System neutrals, materials & semantics paired with the preserved system blues ---- */
 :root {
+	/* Preserved system blues (UNMODIFIED) */
 	--blue: #1d4ed8;
 	--blue2: #1e40af;
-	--navy: #0f172a;
-	--gold: #d9a441;
-	--peach: #e3a687;
-	--bg: #f8fafc;
+	--tint-cobalt: #eff6ff;
+
+	/* Geist 10-step achromatic neutrals (Light) */
+	--ds-bg-100: #ffffff;
+	--ds-bg-200: #fafafa;
+	--ds-gray-100: #f2f2f2;
+	--ds-gray-200: #ebebeb;
+	--ds-gray-300: #e6e6e6;
+	--ds-gray-400: #d4d4d4;
+	--ds-gray-600: #a8a8a8;
+	--ds-gray-700: #8f8f8f;
+	--ds-gray-900: #666666;
+	--ds-gray-1000: #171717;
+	--ds-gray-alpha-100: rgba(0, 0, 0, 0.05);
+	--ds-gray-alpha-200: rgba(0, 0, 0, 0.08);
+	--ds-gray-alpha-400: rgba(0, 0, 0, 0.14);
+
+	/* App surface & text hierarchy mapped to Geist pure neutrals (all 4.5:1+ AA) */
+	--navy: #171717;
+	--bg: #fafafa;
 	--card: #ffffff;
-	/* Text hierarchy: near-black headings, dark slate body text, and crisp medium slate for secondary text (all 4.5:1 or better). */
-	--ink: #0f172a;
-	--text: #1e293b;
-	--muted: #475569;
-	--line: #e2e8f0;
-	--line-strong: #8492a6;
-	--green: #2f7d5b;
-	--teal: #a85a36;
-	--red: #d92424;
-	--purple: #3f4bb8;
-	/* Type scale: a steady progression instead of 14 -> 20 -> 28. 12px stays the floor for readability. */
+	--ink: #171717;
+	--text: #262626;
+	--muted: #666666;
+	--line: #ebebeb;
+	--line-strong: #8f8f8f;
+
+	/* Geist semantic accents harmonized with #2563eb / #1d4ed8 */
+	--gold: #e5a00d;
+	--peach: #e5b89b;
+	--green: #297a3a;
+	--teal: #067a6e;
+	--red: #cb2a2f;
+	--purple: #6b21a8;
+
+	/* Type scale: steady progression; 12px stays the floor for readability. */
 	--text-xs: 12px;
 	--text-sm: 13px;
 	--text-base: 14px;
@@ -35,121 +56,131 @@
 	--text-lg: 18px;
 	--text-xl: 22px;
 
-	/* Density: sizes of the boxes the dashboard and shell are built from. */
-	/* One size for every dashboard title: the stat card label and the card h3 headings read this same value. */
+	/* Density & Geist architectural radii */
 	--title-size: var(--text-sm);
-	--radius-card: 12px;
+	--radius-card: 10px;
 	--card-pad: 16px;
 	--topbar-h: 64px;
-	--nav-item-h: 44px;
-	/* Sidebar gradient: starts at the logo's own cobalt so the seal blends in, and deepens to navy. */
+	--nav-item-h: 40px;
+
+	/* Sidebar gradient tokens (preserved for seal/contrast compatibility) + Geist neutral sidebar states */
 	--side-top: #2830b0;
 	--side-mid: #1a2196;
 	--side-bottom: #0f1658;
-	--side-hover: #f1f5f9; /* the sidebar's hover: a light grey on the clean white sidebar */
-	--side-active: #e2e8f0; /* the selected item: a step deeper than the hover, so the two stay apart; its icon is the brand blue */
-	--side-active-hover: #d8e1ec;
-	--shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.025);
+	--side-hover: #f2f2f2;
+	--side-active: #ebebeb;
+	--side-active-hover: #e6e6e6;
 
-	/* New: darker shades for icons and small marks, so they keep 3:1 or better on white. */
-	--gold-ink: #8f6310;
-	--copper-ink: #a85a36;
-	--tint-cobalt: #eff6ff;
-	--tint-gold: #fbf1da;
-	--tint-copper: #f8e9df;
-	--tint-green: #e6f2ec;
-	--tint-crimson: #fef2f2;
-	--warn: #a50e0e;
-	--warn-bg: #fce8e6;
-	--warn-border: #f5c2c0;
-	--warn-icon: #c5221f;
+	/* Geist Material elevation layers (crisp 1px ring + ambient shadow) */
+	--mat-base: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+	--mat-small: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+	--mat-menu: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+	--mat-modal: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 16px 40px rgba(0, 0, 0, 0.14), 0 4px 12px rgba(0, 0, 0, 0.06);
+	--shadow: var(--mat-base);
+
+	/* Darker semantic inks & subtle tints (all >= 4.5:1 on white or their tint) */
+	--gold-ink: #8a4b00;
+	--copper-ink: #067a6e;
+	--tint-gold: #fff4d6;
+	--tint-copper: #e6f7f5;
+	--tint-green: #ebfbee;
+	--tint-crimson: #fff0f0;
+	--warn: #a81c22;
+	--warn-bg: #fff0f0;
+	--warn-border: #f8c6c8;
+	--warn-icon: #cb2a2f;
 }
 button:focus-visible,
 [role="button"]:focus-visible,
 a:focus-visible { outline-color: var(--blue2); }
 .workspace :is(h1, h2, h3, h4, h5) { color: var(--ink); }
-.workspace h3 { font-weight: var(--fw-heavy); }
+.workspace h3 { font-weight: var(--fw-semibold); letter-spacing: -0.015em; }
 .page-head { gap: 16px; margin-bottom: 22px; }
-.page-head h1 { color: var(--ink); font-weight: var(--fw-heavy); letter-spacing: -0.025em; line-height: 1.2; text-wrap: balance; }
+.page-head h1 { color: var(--ink); font-weight: var(--fw-semibold); letter-spacing: -0.03em; line-height: 1.2; text-wrap: balance; }
 .page-head p { color: var(--muted); font-weight: var(--fw-regular); line-height: 1.55; max-width: 68ch; text-wrap: pretty; }
 .page-wrap { padding: 24px 28px 40px; }
 .card { padding: var(--card-pad); }
 .bar i { background: linear-gradient(90deg, var(--blue), var(--blue2)); }
 
-/* ---- 2. Shell: crisp minimalist white sidebar and topbar with hairline dividers ---- */
+/* ---- 2. Shell: Geist minimalist sidebar and frosted sticky topbar with 1px hairline dividers ---- */
 .app-shell { --sidebar-width-expanded: min(clamp(228px, 18vw, 248px), calc(100vw - 32px)); }
 .sidebar { padding-top: 16px; padding-bottom: 16px; background: var(--card); color: var(--ink); border-right: 1px solid var(--line); }
 .side-brand { height: 44px; padding-bottom: 16px; border-bottom: 0; }
 .side-title, .side-toggle { color: var(--ink); }
-.side-title { letter-spacing: -0.02em; }
+.side-title { letter-spacing: -0.025em; font-weight: var(--fw-semibold); }
 .side-toggle:hover { background: var(--side-hover); color: var(--ink); }
-.sidebar-nav-scroll { margin-top: 12px; scrollbar-color: rgba(17, 24, 39, 0.22) transparent; }
-/* Sidebar items: hover is soft grey with a subtle zoom and grey icon; selected (.active) or pressed (:active) shifts to light blue (~10% opacity), turns the icon primary blue, and zooms slightly more. */
-:root { --side-icon: #64748b; --side-active-blue: rgba(37, 99, 235, 0.10); --side-active-blue-hover: rgba(37, 99, 235, 0.13); }
-.sidebar nav button { flex-basis: auto; min-height: var(--nav-item-h); height: auto; padding-top: 6px; padding-bottom: 6px; color: var(--text); transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s cubic-bezier(0.22, 1, 0.36, 1); transform-origin: center; }
-.sidebar nav button .nav-icon { color: var(--side-icon); transition: color 0.18s ease, transform 0.18s cubic-bezier(0.22, 1, 0.36, 1); }
-.sidebar nav button:hover { background: var(--side-hover); color: var(--ink); transform: scale(1.015); }
-.sidebar nav button:hover .nav-icon { color: var(--side-icon); transform: scale(1.05); }
-.sidebar nav button.active, .sidebar nav button:active { background: var(--side-active-blue); color: var(--ink); box-shadow: none; transform: scale(1.025); }
-.sidebar nav button.active:hover, .sidebar nav button:hover:active { background: var(--side-active-blue-hover); color: var(--ink); transform: scale(1.035); }
-.sidebar nav button.active .nav-icon, .sidebar nav button:active .nav-icon { color: var(--btn-primary); transform: scale(1.1); }
-.sidebar nav button.active:hover .nav-icon, .sidebar nav button:hover:active .nav-icon { color: var(--btn-primary); transform: scale(1.14); }
+.sidebar-nav-scroll { margin-top: 12px; scrollbar-color: rgba(23, 23, 23, 0.22) transparent; }
+/* Sidebar items: Geist clean neutral hover, preserved primary-blue active tint & blue icon (no scale jitter). */
+:root { --side-icon: #666666; --side-active-blue: rgba(37, 99, 235, 0.10); --side-active-blue-hover: rgba(37, 99, 235, 0.13); }
+.sidebar nav { gap: 2px; }
+.sidebar nav button { flex-basis: auto; min-height: var(--nav-item-h); height: auto; padding-top: 6px; padding-bottom: 6px; border-radius: 6px; color: var(--text); font-weight: var(--fw-medium); transition: background-color 0.15s ease, color 0.15s ease; }
+.sidebar nav button .nav-icon { color: var(--side-icon); transition: color 0.15s ease; }
+.sidebar nav button:hover { background: var(--side-hover); color: var(--ink); }
+.sidebar nav button:hover .nav-icon { color: var(--ink); }
+.sidebar nav button.active, .sidebar nav button:active { background: var(--side-active-blue); color: var(--ink); font-weight: var(--fw-semibold); box-shadow: none; }
+.sidebar nav button.active:hover, .sidebar nav button:hover:active { background: var(--side-active-blue-hover); color: var(--ink); }
+.sidebar nav button.active .nav-icon, .sidebar nav button:active .nav-icon { color: var(--btn-primary); }
+.sidebar nav button.active:hover .nav-icon, .sidebar nav button:hover:active .nav-icon { color: var(--btn-primary); }
 @media (prefers-reduced-motion: reduce) {
-  .sidebar nav button, .sidebar nav button .nav-icon { transition: none; transform: none !important; }
+  .sidebar nav button, .sidebar nav button .nav-icon { transition: none; }
 }
-.topbar { height: var(--topbar-h); padding: 10px 28px; background: var(--card); border-bottom-color: var(--line); }
-.topbar-heading .eyebrow { color: var(--muted); font-size: var(--text-xs); font-weight: var(--fw-semibold); letter-spacing: 0.06em; }
+.topbar { height: var(--topbar-h); padding: 10px 28px; background: color-mix(in srgb, var(--card) 86%, transparent); backdrop-filter: saturate(180%) blur(8px); -webkit-backdrop-filter: saturate(180%) blur(8px); border-bottom-color: var(--line); }
+.topbar-heading .eyebrow { color: var(--muted); font-size: var(--text-xs); font-weight: var(--fw-medium); letter-spacing: 0.06em; }
 .search, .icon-btn { border-color: var(--line); }
 
-/* ---- 3. Dashboard: cards with a hierarchy ---- */
-.card, .table-card, .chart-card, .editor-card, .comments-card, .workflow-card, .settings-card { border-radius: var(--radius-card); }
+/* ---- 3. Dashboard: Geist material cards with crisp hierarchy ---- */
+.card, .table-card, .chart-card, .editor-card, .comments-card, .workflow-card, .settings-card { border-radius: var(--radius-card); border-color: var(--line); box-shadow: var(--mat-base); }
 
-/* Summary cards: a large number; the icon is white on the primary blue. */
+/* Summary cards: a large tabular number; the icon stays white on the preserved primary blue. */
 .stat-grid .stat-card {
 	position: relative;
 	overflow: hidden;
 	padding: 15px 16px;
 	border-radius: var(--radius-card);
+	border-color: var(--line);
+	box-shadow: var(--mat-base);
 	grid-template-columns: minmax(0, 1fr) auto;
 	grid-template-rows: minmax(28px, auto) 32px minmax(16px, auto);
 	grid-template-areas: "label icon" "value value" "note note";
 	column-gap: 10px;
 	row-gap: 2px;
 	min-height: 94px;
+	transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
-.stat-grid .stat-card .stat-icon { width: 28px; height: 28px; border-radius: 8px; background: var(--btn-primary); color: #ffffff; justify-self: end; align-self: center; } /* the same blue as the primary buttons (New syllabus) */
-.stat-grid .stat-card span { align-self: center; color: var(--ink); font-weight: var(--fw-heavy); text-transform: none; letter-spacing: 0; font-size: var(--title-size); line-height: 1.3; }
-.stat-grid .stat-card strong { font-size: var(--text-xl); line-height: 1.1; letter-spacing: -0.02em; font-weight: var(--fw-bold); color: var(--ink); font-variant-numeric: tabular-nums; align-self: center; }
+.stat-grid .stat-card:hover { box-shadow: var(--mat-small); }
+.stat-grid .stat-card .stat-icon { width: 28px; height: 28px; border-radius: 7px; background: var(--btn-primary); color: #ffffff; justify-self: end; align-self: center; } /* preserved primary button blue */
+.stat-grid .stat-card span { align-self: center; color: var(--ink); font-weight: var(--fw-semibold); text-transform: none; letter-spacing: -0.01em; font-size: var(--title-size); line-height: 1.3; }
+.stat-grid .stat-card strong { font-size: var(--text-xl); line-height: 1.1; letter-spacing: -0.03em; font-weight: var(--fw-semibold); color: var(--ink); font-variant-numeric: tabular-nums; align-self: center; }
 
 /* The dashboard rows are fixed height and the card bodies scroll, so a shorter row loses no content. */
-.dashboard-grid { grid-auto-rows: 280px; gap: 12px; }
+.dashboard-grid { grid-auto-rows: 280px; gap: 14px; }
 .dashboard-grid.lower { grid-auto-rows: 220px; }
-.stat-grid { gap: 10px; margin-bottom: 12px; }
+.stat-grid { gap: 12px; margin-bottom: 14px; }
 .stat-grid .stat-card small { font-size: var(--text-xs); }
 
-/* Content cards: a hairline under the header. */
+/* Content cards: a crisp 1px hairline under the header. */
 .dashboard-grid .card-head { border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 10px; }
 .dashboard-grid .card-head { min-height: 36px; }
 .dashboard-grid .card-head h3 { color: var(--ink); font-size: var(--title-size); line-height: 1.3; }
 
-/* Quick actions: a white-gray chip with a black icon. */
+/* Quick actions: Geist neutral chip with crisp hairline border and subtle hover. */
 .quick-actions { gap: 6px; }
-.quick-actions button { padding: 8px 10px; background: var(--card); border-color: var(--line); transition: border-color 0.18s, background-color 0.18s; }
+.quick-actions button { padding: 8px 10px; border-radius: 8px; background: var(--card); border-color: var(--line); transition: border-color 0.15s ease, background-color 0.15s ease; }
 .quick-actions button:hover { border-color: var(--blue); background: var(--tint-cobalt); }
-.quick-actions button b { width: 28px; height: 28px; background: #f1f4f3; color: #000000; border-radius: 8px; }
+.quick-actions button b { width: 28px; height: 28px; background: #f5f5f5; color: #171717; border-radius: 7px; }
 .quick-actions button > svg { color: var(--muted); }
 
-/* Quick actions customization modal */
-.modal { border: 1px solid var(--line); box-shadow: 0 12px 32px rgba(15, 23, 42, 0.14), 0 2px 6px rgba(15, 23, 42, 0.06); }
-.qa-modal { width: min(480px, 94vw); max-height: min(85vh, 600px); display: flex; flex-direction: column; padding: 20px 22px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-card); }
-.qa-modal-head h3 { margin: 0; color: var(--ink); font-size: var(--text-md); font-weight: var(--fw-heavy); }
+/* Quick actions customization modal & Geist modal material */
+.modal { border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--mat-modal); }
+.qa-modal { width: min(480px, 94vw); max-height: min(85vh, 600px); display: flex; flex-direction: column; padding: 20px 22px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--mat-modal); }
+.qa-modal-head h3 { margin: 0; color: var(--ink); font-size: var(--text-md); font-weight: var(--fw-semibold); letter-spacing: -0.015em; }
 .qa-modal-hint { margin: 4px 0 14px; font-size: var(--text-xs); color: var(--muted); }
 .qa-options { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; max-height: 340px; padding: 2px 2px 8px; }
-.qa-option { display: flex; align-items: center; gap: 12px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); cursor: pointer; transition: border-color 0.15s, background-color 0.15s; text-align: left; }
+.qa-option { display: flex; align-items: center; gap: 12px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); cursor: pointer; transition: border-color 0.15s, background-color 0.15s; text-align: left; }
 .qa-option:hover { border-color: var(--blue); background: var(--tint-cobalt); }
 .qa-option.selected { border-color: var(--blue); background: var(--tint-cobalt); }
 .qa-option.disabled { opacity: 0.55; cursor: not-allowed; }
-.qa-option-ico { flex: none; width: 30px; height: 30px; border-radius: 8px; background: #f1f4f3; color: #000000; display: grid; place-items: center; }
+.qa-option-ico { flex: none; width: 30px; height: 30px; border-radius: 7px; background: #f5f5f5; color: #171717; display: grid; place-items: center; }
 .qa-option-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .qa-option-text strong { font-size: var(--text-sm); font-weight: var(--fw-semibold); color: var(--ink); }
 .qa-option-text small { font-size: var(--text-xs); color: var(--muted); }
@@ -157,50 +188,50 @@ a:focus-visible { outline-color: var(--blue2); }
 .qa-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); flex-wrap: wrap; }
 .qa-foot-actions { display: flex; gap: 8px; }
 
-/* ---- 4. Controls shared by every screen: buttons, inputs, tables, tabs and status badges ---- */
-:root { --green-ink: #235f45; --copper-text: #8c4726; --tint-warm: #eef1f0; }
-/* Primary buttons: a lighter, brighter blue than the navy brand (white label 4.8:1); hover a step darker. Links, tabs and the sidebar keep --blue. */
+/* ---- 4. Controls shared by every screen: Geist buttons, inputs, tables, tabs and status badges ---- */
+:root { --green-ink: #1e602c; --copper-text: #056359; --tint-warm: #f5f5f5; }
+/* Primary buttons: preserved system blue #2563eb (white label 4.8:1); hover #1d4ed8. */
 :root { --btn-primary: #2563eb; --btn-primary-hover: #1d4ed8; }
-/* Secondary (outline) buttons: a light grey fill with black bold text and no blue edge; hover a step darker. */
-:root { --btn-secondary: #e2e5e9; --btn-secondary-hover: #d4d8de; }
+/* Secondary (outline) buttons: Geist crisp white surface with hairline neutral border; hover steps to #f2f2f2. */
+:root { --btn-secondary: #ffffff; --btn-secondary-hover: #f2f2f2; --btn-secondary-border: #d4d4d4; }
 
-.btn { padding: 8px 14px; min-height: 38px; border: 1px solid transparent; box-sizing: border-box; border-radius: 8px; font-size: var(--text-sm); }
+.btn { padding: 8px 14px; min-height: 36px; border: 1px solid transparent; box-sizing: border-box; border-radius: 6px; font-size: var(--text-sm); font-weight: var(--fw-medium); transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease; }
 a.btn { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
-.btn.primary { background: var(--btn-primary); box-shadow: 0 1px 2px rgba(37, 99, 235, 0.28); }
+.btn.primary { background: var(--btn-primary); box-shadow: 0 1px 2px rgba(37, 99, 235, 0.24); }
 .btn.primary:hover { background: var(--btn-primary-hover); }
 .btn.primary:active:not(:disabled) { background: color-mix(in oklab, var(--btn-primary-hover) 88%, black); transform: translateY(0); }
 .btn.primary:disabled:hover { background: var(--btn-primary); }
 .asg-btn.primary { background: var(--btn-primary); }
 .asg-btn.primary:hover:not(:disabled) { background: var(--btn-primary-hover); box-shadow: none; }
 .asg-btn.primary:active:not(:disabled) { background: color-mix(in oklab, var(--btn-primary-hover) 88%, black); }
-.asg-btn.ghost { background: var(--btn-secondary); color: #000; font-weight: var(--fw-bold); border-color: var(--btn-secondary); }
-.asg-btn.ghost:hover:not(:disabled) { background: var(--btn-secondary-hover); border-color: var(--btn-secondary-hover); }
-.asg-btn.ghost:active:not(:disabled) { background: color-mix(in oklab, var(--btn-secondary-hover) 92%, black); }
-.btn.outline { background: var(--btn-secondary); color: #000; font-weight: var(--fw-bold); border-color: var(--btn-secondary); }
-.btn.outline:hover { background: var(--btn-secondary-hover); border-color: var(--btn-secondary-hover); }
-.btn.outline:active:not(:disabled) { background: color-mix(in oklab, var(--btn-secondary-hover) 92%, black); transform: translateY(0); }
-.btn.outline:disabled:hover { background: var(--btn-secondary); border-color: var(--btn-secondary); }
-.btn.ghost { background: var(--tint-warm); color: var(--text); }
-.btn.ghost:hover:not(:disabled) { background: #e3e7e6; }
-.btn.ghost:active:not(:disabled) { background: color-mix(in oklab, var(--tint-warm) 84%, black); transform: translateY(0); }
-.btn.danger { background: var(--tint-crimson); color: var(--red); border-color: #e7b7ba; }
-.btn.danger:hover:not(:disabled) { background: #f3d6d8; }
+.asg-btn.ghost { background: var(--btn-secondary); color: var(--ink); font-weight: var(--fw-medium); border-color: var(--btn-secondary-border); }
+.asg-btn.ghost:hover:not(:disabled) { background: var(--btn-secondary-hover); border-color: var(--line-strong); }
+.asg-btn.ghost:active:not(:disabled) { background: var(--ds-gray-200); }
+.btn.outline { background: var(--btn-secondary); color: var(--ink); font-weight: var(--fw-medium); border-color: var(--btn-secondary-border); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04); }
+.btn.outline:hover { background: var(--btn-secondary-hover); border-color: var(--line-strong); }
+.btn.outline:active:not(:disabled) { background: var(--ds-gray-200); transform: translateY(0); }
+.btn.outline:disabled:hover { background: var(--btn-secondary); border-color: var(--btn-secondary-border); }
+.btn.ghost { background: transparent; color: var(--text); }
+.btn.ghost:hover:not(:disabled) { background: var(--ds-gray-100); color: var(--ink); }
+.btn.ghost:active:not(:disabled) { background: var(--ds-gray-200); transform: translateY(0); }
+.btn.danger { background: var(--tint-crimson); color: var(--red); border-color: var(--warn-border); }
+.btn.danger:hover:not(:disabled) { background: #ffe4e5; border-color: #f3a8ab; }
 .btn.danger:active:not(:disabled) { background: color-mix(in oklab, var(--tint-crimson) 82%, var(--red)); transform: translateY(0); }
 .btn.success { background: var(--green); }
-.btn.success:hover:not(:disabled) { background: #246649; }
-.btn.success:active:not(:disabled) { background: #1d543c; transform: translateY(0); }
+.btn.success:hover:not(:disabled) { background: #1e602c; }
+.btn.success:active:not(:disabled) { background: #184e23; transform: translateY(0); }
 .icon-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .icon-btn:hover:disabled { background: var(--card); }
-.rp-cancel { background: var(--btn-secondary); color: #000; font-weight: var(--fw-bold); border-color: var(--btn-secondary); transition: background-color 0.15s ease, border-color 0.15s ease; }
-.rp-cancel:hover:not(:disabled) { background: var(--btn-secondary-hover); border-color: var(--btn-secondary-hover); }
+.rp-cancel { background: var(--btn-secondary); color: var(--ink); font-weight: var(--fw-medium); border-color: var(--btn-secondary-border); transition: background-color 0.15s ease, border-color 0.15s ease; }
+.rp-cancel:hover:not(:disabled) { background: var(--btn-secondary-hover); border-color: var(--line-strong); }
 .rp-go:active:not(:disabled) { background: color-mix(in oklab, var(--btn-primary-hover) 88%, black); }
 .bld2 .seg { border-color: var(--line-strong); }
 .bld2 .seg button[aria-pressed="true"] { background: var(--btn-primary); color: #ffffff; }
 .toggle-row > i.on { background: var(--btn-primary); }
 .chat-msg.me .chat-bubble { background: var(--btn-primary); }
 
-.login-card input, .field input, .field select, .field textarea, .topbar input, select { border-color: var(--line-strong); border-radius: 8px; padding: 9px 11px; }
+.login-card input, .field input, .field select, .field textarea, .topbar input, select { border-color: var(--line-strong); border-radius: 6px; padding: 9px 11px; transition: border-color 0.15s ease, box-shadow 0.15s ease; }
 .login-card input:focus, .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--blue2); box-shadow: 0 0 0 3px var(--tint-cobalt); outline: 2px solid transparent; }
 .form-error { background: var(--warn-bg); color: var(--warn); border: 1px solid var(--warn-border); border-radius: 8px; padding: 10px 14px; line-height: 1.5; }
 .info-banner { background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; line-height: 1.5; }
@@ -209,8 +240,8 @@ a.btn { text-decoration: none; display: inline-flex; align-items: center; justif
 .info-banner.warning svg { color: var(--warn-icon); }
 .ai-note { background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; line-height: 1.5; }
 .ai-note svg { color: var(--muted); }
-/* Unify all system warnings to Google light-red warning tokens (light, dark, AMOLED) and remove colored side strips. */
-.bld2 { --warn: #a50e0e; --warn-bg: #fce8e6; }
+/* Unify all system warnings to Geist red warning tokens (light, dark, AMOLED) and remove colored side strips. */
+.bld2 { --warn: #a81c22; --warn-bg: #fff0f0; }
 .check-warn, .comp-warn { background: var(--warn-bg); color: var(--warn); border: 1px solid var(--warn-border); }
 .comp-badge.warn, .cmp-badge.warn, .cmp .chip.stale, .cmp-row .chip.stale, .aic-state .chip.stale, .setup-badge, .vh-decision, .feed-item.warn .feed-ico { background: var(--warn-bg); color: var(--warn); }
 .cmp-row b.warn, .aic-open b.warn, .bld2 .clo-ega-hint, .pick-note, .fr-score.tone-warn b { color: var(--warn); }
@@ -229,16 +260,14 @@ a.btn { text-decoration: none; display: inline-flex; align-items: center; justif
 .hy-pill.warn { background: var(--warn-bg); color: var(--warn); border-color: var(--warn-border); }
 
 .table-wrap th, .table-wrap td, .table-card th, .table-card td { padding: 11px 12px; border-bottom-color: var(--line); }
-.table-wrap th, .table-card th { background: var(--bg); color: var(--muted); font-weight: var(--fw-semibold); }
+.table-wrap th, .table-card th { background: var(--bg); color: var(--muted); font-weight: var(--fw-medium); }
 
-.tabs button { color: var(--muted); }
+.tabs button { color: var(--muted); font-weight: var(--fw-medium); }
 .tabs button.active { color: var(--ink); border-bottom-color: var(--btn-primary); }
 
 
-/* ---- Status tags: a small rounded label with an icon, so the status reads without colour alone. Approved and Rejected are the end
-   states, so they are solid; the working states are light with a matching border. Both spellings (under-review / under_review)
-   are styled, because some screens pass the raw status. ---- */
-.status, .badge { height: 22px; padding: 0 8px 0 6px; gap: 5px; border: 1px solid transparent; border-radius: 6px; text-transform: none; letter-spacing: 0; font-size: var(--text-xs); font-weight: var(--fw-semibold); line-height: 1; }
+/* ---- Status tags: Geist subtle pills with inline SVG mask icons. Approved/Active/Rejected end-states stay high-signal. ---- */
+.status, .badge { height: 22px; padding: 0 8px 0 6px; gap: 5px; border: 1px solid transparent; border-radius: 9999px; text-transform: none; letter-spacing: 0; font-size: var(--text-xs); font-weight: var(--fw-medium); line-height: 1; }
 .badge { padding: 0 8px; }
 .status::before { content: none; width: 12px; height: 12px; flex: none; background: currentColor; -webkit-mask: var(--tag-icon) center / contain no-repeat; mask: var(--tag-icon) center / contain no-repeat; }
 .status.approved, .status.active { --tag-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E"); }
@@ -250,14 +279,14 @@ a.btn { text-decoration: none; display: inline-flex; align-items: center; justif
 .status.approved::before, .status.active::before, .status.submitted::before, .status.under-review::before, .status.under_review::before, .status.for-revision::before, .status.for_revision::before, .status.rejected::before, .status.draft::before { content: ""; }
 
 .badge.green, .status.active { background: var(--green-ink); color: #ffffff; border-color: var(--green-ink); }
-.status.approved { background: #e3f4e7; color: #1f7a35; border-color: #b7e1c1; }
-.badge.blue, .status.submitted { background: var(--tint-cobalt); color: var(--blue2); border-color: #c4c7ec; }
-.badge.purple { background: var(--tint-cobalt); color: var(--purple); border-color: #c4c7ec; }
-.badge.gold, .status.under-review, .status.under_review { background: var(--tint-gold); color: var(--gold-ink); border-color: #ecd49a; }
-.badge.teal { background: var(--tint-copper); color: var(--copper-text); border-color: #efc9b4; }
-.status.for-revision, .status.for_revision { background: var(--tint-crimson); color: var(--red); border-color: #e7b7ba; }
-.status.rejected { background: #d92424; color: #ffffff; border-color: #d92424; }
-.status.draft { background: var(--tint-warm); color: #4b5563; border-color: #c4cac9; border-style: dashed; }
+.status.approved { background: var(--tint-green); color: var(--green-ink); border-color: #bce5c4; }
+.badge.blue, .status.submitted { background: var(--tint-cobalt); color: var(--blue2); border-color: #c4d4fb; }
+.badge.purple { background: var(--tint-cobalt); color: var(--purple); border-color: #d8c8f7; }
+.badge.gold, .status.under-review, .status.under_review { background: var(--tint-gold); color: var(--gold-ink); border-color: #f4d898; }
+.badge.teal { background: var(--tint-copper); color: var(--copper-text); border-color: #b2e5df; }
+.status.for-revision, .status.for_revision { background: var(--tint-crimson); color: var(--red); border-color: var(--warn-border); }
+.status.rejected { background: #cb2a2f; color: #ffffff; border-color: #cb2a2f; }
+.status.draft { background: var(--tint-warm); color: #525252; border-color: #d4d4d4; border-style: dashed; }
 
 /* Log out: light red on hover, solid red while pressed. */
 .logout { font-weight: var(--fw-medium); transition: background-color 0.15s, color 0.15s; }
@@ -314,7 +343,7 @@ html { scrollbar-gutter: auto; }
 *::-webkit-scrollbar { display: none; width: 0; height: 0; }
 
 /* ---- Dashboard: Time Usage card. Today's headline, a bar per day, three small figures. Responds to the card's own width. ---- */
-:root { --usage-today: #b9842a; }
+:root { --usage-today: #a35200; }
 .usage-host { container-type: inline-size; }
 .usage { display: grid; gap: 6px; }
 .usage-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px 12px; flex-wrap: wrap; }
@@ -361,7 +390,7 @@ html { scrollbar-gutter: auto; }
 .repository-filters .field .select-trigger { height: 38px; }
 .language-settings .select-trigger { min-height: 42px; }
 
-.select-trigger { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 36px; padding: 7px 10px 7px 11px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--card); color: var(--text); font: inherit; font-size: var(--text-sm); font-weight: var(--fw-medium); text-align: left; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
+.select-trigger { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 36px; padding: 7px 10px 7px 11px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--card); color: var(--text); font: inherit; font-size: var(--text-sm); font-weight: var(--fw-medium); text-align: left; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
 .page-actions .select-trigger, .year-bar .select-trigger { min-height: 38px; height: 38px; box-sizing: border-box; }
 .dashboard-grid .card-head .select-trigger { justify-content: flex-end; gap: 6px; padding-inline: 8px; }
 .program-management td .btn { min-height: 34px; padding: 6px 12px; }
@@ -376,7 +405,7 @@ html { scrollbar-gutter: auto; }
 .select-trigger:hover:not(:disabled) .select-chevron { color: var(--blue2); }
 .select-trigger[aria-expanded="true"] .select-chevron { transform: rotate(180deg); color: var(--blue2); }
 
-.select-panel { position: fixed; z-index: 10000; display: flex; flex-direction: column; padding: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12), 0 2px 6px rgba(15, 23, 42, 0.06); overflow: hidden; }
+.select-panel { position: fixed; z-index: 10000; display: flex; flex-direction: column; padding: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--mat-menu); overflow: hidden; }
 .select-hint { flex: none; margin-bottom: 4px; padding: 6px 10px 6px; border-bottom: 1px solid var(--line); font-size: var(--text-xs); color: var(--muted); }
 .select-list { min-height: 0; margin: 0; padding: 0; list-style: none; overflow-y: auto; }
 .select-option { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 34px; padding: 6px 10px; border-radius: 7px; font-size: var(--text-sm); font-weight: var(--fw-regular); color: var(--text); cursor: pointer; overflow-wrap: anywhere; }
@@ -423,7 +452,7 @@ html { scrollbar-gutter: auto; }
 
 /* Subjects table toolbar: the label above the program filter reads like a stat card title (same size and weight, sentence case).
    Only that label: the subject count beside it is a different span. */
-.sm-toolbar .field > span { color: var(--ink); font-size: var(--title-size); font-weight: var(--fw-heavy); line-height: 1.3; text-transform: none; letter-spacing: 0; }
+.sm-toolbar .field > span { color: var(--ink); font-size: var(--title-size); font-weight: var(--fw-semibold); line-height: 1.3; text-transform: none; letter-spacing: -0.01em; }
 
 /* The toolbar sits inside a card that already has its own padding, so it adds none at the sides or top: the label then starts where the
    other card titles on the page start (the Programs title above it). The space below it and the divider line stay. */
@@ -476,18 +505,18 @@ html { scrollbar-gutter: auto; }
 .col-actions { width: 112px; min-width: 112px; white-space: nowrap; text-align: left; }
 .program-management-actions, .sm-actions { display: flex; flex-wrap: nowrap; gap: 8px; justify-content: flex-start; }
 /* My Syllabi Edit, History and Delete buttons: soft white-grey at rest; blue (Edit, History) or red (Delete) only on hover and keyboard focus. */
-.btn.outline.syl-quiet { background: #f1f4f3; color: #7b8494; border-color: var(--line); }
-.btn.outline.syl-quiet:hover:not(:disabled), .btn.outline.syl-quiet:focus-visible { background: var(--btn-secondary); color: #000; border-color: var(--btn-secondary); }
-.btn.danger.syl-delete { background: #f1f4f3; color: #7b8494; border-color: var(--line); }
-.btn.danger.syl-delete:hover, .btn.danger.syl-delete:focus-visible { background: var(--tint-crimson); color: var(--red); border-color: #e7b7ba; }
+.btn.outline.syl-quiet { background: var(--tint-warm); color: var(--muted); border-color: var(--line); }
+.btn.outline.syl-quiet:hover:not(:disabled), .btn.outline.syl-quiet:focus-visible { background: var(--btn-secondary-hover); color: var(--ink); border-color: var(--btn-secondary-border); }
+.btn.danger.syl-delete { background: var(--tint-warm); color: var(--muted); border-color: var(--line); }
+.btn.danger.syl-delete:hover, .btn.danger.syl-delete:focus-visible { background: var(--tint-crimson); color: var(--red); border-color: var(--warn-border); }
 
-/* Rename/edit and delete buttons: soft white-grey icons and borders; delete turns red only on hover/focus as the warning. */
-.program-management-actions .icon-btn, .sm-actions .icon-btn { color: #9aa3b2; border-width: 1px; border-color: var(--line); }
-.program-management-actions .icon-btn:hover, .sm-actions .icon-btn:hover, .program-management-actions .icon-btn:focus-visible, .sm-actions .icon-btn:focus-visible { background: #f1f4f3; color: #5d6981; }
-.program-management-actions .icon-btn.is-delete:hover, .sm-actions .icon-btn.is-delete:hover, .program-management-actions .icon-btn.is-delete:focus-visible, .sm-actions .icon-btn.is-delete:focus-visible { background: #fff3f3; color: #d92424; border-color: #f2bebe; }
-.outcomes-row .icon-btn, .institution-item .icon-btn { color: #9aa3b2; border-width: 1px; border-color: var(--line); }
-.outcomes-row .icon-btn:hover:not(:disabled), .institution-item .icon-btn:hover:not(:disabled), .outcomes-row .icon-btn:focus-visible, .institution-item .icon-btn:focus-visible { background: #f1f4f3; color: #5d6981; }
-.outcomes-row .icon-btn.is-delete:hover:not(:disabled), .institution-item .icon-btn.is-delete:hover:not(:disabled), .outcomes-row .icon-btn.is-delete:focus-visible, .institution-item .icon-btn.is-delete:focus-visible { background: #fff3f3; color: #d92424; border-color: #f2bebe; }
+/* Rename/edit and delete buttons: Geist neutral icons and hairlines; delete turns Geist red on hover/focus. */
+.program-management-actions .icon-btn, .sm-actions .icon-btn { color: #737373; border-width: 1px; border-color: var(--line); }
+.program-management-actions .icon-btn:hover, .sm-actions .icon-btn:hover, .program-management-actions .icon-btn:focus-visible, .sm-actions .icon-btn:focus-visible { background: var(--ds-gray-100); color: var(--ink); }
+.program-management-actions .icon-btn.is-delete:hover, .sm-actions .icon-btn.is-delete:hover, .program-management-actions .icon-btn.is-delete:focus-visible, .sm-actions .icon-btn.is-delete:focus-visible { background: var(--tint-crimson); color: var(--red); border-color: var(--warn-border); }
+.outcomes-row .icon-btn, .institution-item .icon-btn { color: #737373; border-width: 1px; border-color: var(--line); }
+.outcomes-row .icon-btn:hover:not(:disabled), .institution-item .icon-btn:hover:not(:disabled), .outcomes-row .icon-btn:focus-visible, .institution-item .icon-btn:focus-visible { background: var(--ds-gray-100); color: var(--ink); }
+.outcomes-row .icon-btn.is-delete:hover:not(:disabled), .institution-item .icon-btn.is-delete:hover:not(:disabled), .outcomes-row .icon-btn.is-delete:focus-visible, .institution-item .icon-btn.is-delete:focus-visible { background: var(--tint-crimson); color: var(--red); border-color: var(--warn-border); }
 .program-edit-fields > .field:nth-child(3), .program-edit-fields > .field.full { grid-column: 1 / -1; }
 
 /* ---- Subject deadlines ---- */
@@ -504,8 +533,8 @@ html { scrollbar-gutter: auto; }
 .dl-chip.tone-due_today .dl-chip-main small { color: var(--gold-ink); }
 .dl-chip.tone-done { background: var(--tint-green); border-color: #b8d8c6; }
 .dl-chip.tone-done .dl-chip-main small { color: var(--green-ink); }
-.dl-chip.tone-failed { background: var(--tint-crimson); border-color: #e7b7ba; }
-.dl-chip.tone-failed .dl-chip-main small { color: #d92424; }
+.dl-chip.tone-failed { background: var(--tint-crimson); border-color: var(--warn-border); }
+.dl-chip.tone-failed .dl-chip-main small { color: var(--red); }
 
 /* The dialog: the form, then each faculty member's status. */
 .dl-dialog { padding: 24px 26px; }
@@ -526,7 +555,7 @@ html { scrollbar-gutter: auto; }
 .dl-stats > div { padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: #ffffff; }
 .dl-stats dt { font-size: var(--text-xs); color: var(--muted); }
 .dl-stats dd { margin: 2px 0 0; font-size: var(--text-lg); font-weight: var(--fw-semibold); color: var(--ink); font-variant-numeric: tabular-nums; }
-.dl-stats .is-failed dd { color: #d92424; }
+.dl-stats .is-failed dd { color: var(--red); }
 .dl-people { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
 .dl-people li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px 12px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: #ffffff; }
 .dl-people .dl-name { font-size: var(--text-sm); font-weight: var(--fw-semibold); color: var(--ink); overflow-wrap: anywhere; }
@@ -544,7 +573,7 @@ html { scrollbar-gutter: auto; }
 .status.dl-upcoming::before, .status.dl-due_today::before, .status.dl-failed::before, .status.dl-submitted::before, .status.dl-submitted_late::before { content: ""; }
 .status.dl-upcoming { background: var(--tint-cobalt); color: var(--blue2); border-color: #c4c7ec; }
 .status.dl-due_today { background: var(--tint-gold); color: var(--gold-ink); border-color: #ecd49a; }
-.status.dl-failed { background: #d92424; color: #ffffff; border-color: #d92424; }
+.status.dl-failed { background: var(--red); color: #ffffff; border-color: var(--red); }
 .status.dl-submitted { background: var(--tint-green); color: var(--green-ink); border-color: #b8d8c6; }
 .status.dl-submitted_late { background: var(--tint-gold); color: var(--gold-ink); border-color: #ecd49a; }
 /* a syllabus submitted late keeps the Submitted tag (and its arrow) but in yellow-orange */
@@ -554,7 +583,7 @@ html { scrollbar-gutter: auto; }
 .deadline.dl-row { width: 100%; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; transition: background-color 0.15s; }
 .deadline.dl-row:hover { background: var(--tint-cobalt); }
 .deadline.dl-row:focus-visible { outline: 2px solid var(--blue2); outline-offset: -2px; }
-.deadline.dl-row.is-failed > div { background: var(--tint-crimson); color: #d92424; }
+.deadline.dl-row.is-failed > div { background: var(--tint-crimson); color: var(--red); }
 .deadline.dl-row small { color: var(--muted); font-size: var(--text-xs); }
 .deadline.dl-row:hover small { color: #4b5563; }
 .deadline.dl-row p { min-width: 0; }
@@ -1235,7 +1264,7 @@ html { scrollbar-gutter: auto; }
 	inherits: true;
 	initial-value: 0deg;
 }
-:root { --ring-good: var(--green); --ring-warn: #a8740f; --ring-busy: var(--btn-primary); --ring-track: #e3e7ea; } /* amber 4.1:1 on white, 3.3:1 on the track */
+:root { --ring-good: var(--green); --ring-warn: #a35200; --ring-busy: var(--btn-primary); --ring-track: #e6e6e6; } /* Geist amber on white & neutral track */
 @keyframes cmpArcPourUp { from { --p: var(--from-p, 0deg); } to { --p: var(--target-p, 0deg); } }
 @keyframes cmpArcDrainDown { from { --p: var(--from-p, 360deg); } to { --p: var(--target-p, 0deg); } }
 @keyframes ringSweep { from { --p: 0deg; } } /* to the ring's own score */
@@ -1274,10 +1303,123 @@ html { scrollbar-gutter: auto; }
 	.big-ring.cmp-ring.is-filling,
 	.big-ring.cmp-ring.is-draining,
 	.big-ring.cmp-ring.checking::before,
+	.big-ring.cmp-ring.has-svg,
+	.big-ring.cmp-ring.has-svg .cmp-ring-arc,
 	.cm-score .big-ring.cm-ring {
 		animation: none !important;
 	}
 }
+
+/* Polished SVG score ring for AI Checker results */
+@keyframes cmpRingReveal {
+	from { opacity: 0; transform: scale(0.94); }
+	to { opacity: 1; transform: scale(1); }
+}
+@keyframes cmpSvgDraw {
+	from { stroke-dashoffset: var(--ring-from, 345.58); }
+	to { stroke-dashoffset: var(--ring-to, 0); }
+}
+.big-ring.cmp-ring.has-svg,
+:root[data-theme="dark"] .big-ring.cmp-ring.has-svg,
+:root[data-theme="amoled"] .big-ring.cmp-ring.has-svg {
+	--ring-accent: var(--ring-good);
+	--ring-accent-hi: color-mix(in srgb, var(--ring-good) 76%, #5eead4);
+	width: 132px;
+	height: 132px;
+	background: transparent;
+	border-radius: 50%;
+	box-shadow: none;
+	animation: cmpRingReveal 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.big-ring.cmp-ring.has-svg.warn,
+:root[data-theme="dark"] .big-ring.cmp-ring.has-svg.warn,
+:root[data-theme="amoled"] .big-ring.cmp-ring.has-svg.warn {
+	--ring-accent: var(--ring-warn);
+	--ring-accent-hi: color-mix(in srgb, var(--ring-warn) 72%, #fbbf24);
+	background: transparent;
+}
+.big-ring.cmp-ring.has-svg.provisional,
+:root[data-theme="dark"] .big-ring.cmp-ring.has-svg.provisional,
+:root[data-theme="amoled"] .big-ring.cmp-ring.has-svg.provisional {
+	--ring-accent: var(--ring-busy);
+	--ring-accent-hi: color-mix(in srgb, var(--ring-busy) 74%, #60a5fa);
+	background: transparent;
+}
+.big-ring.cmp-ring.has-svg .cmp-ring-svg {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+.big-ring.cmp-ring.has-svg .cmp-ring-track {
+	stroke: color-mix(in srgb, var(--ring-accent) 12%, var(--ring-track));
+}
+.big-ring.cmp-ring.has-svg .cmp-ring-arc {
+	filter: drop-shadow(0 2px 6px color-mix(in srgb, var(--ring-accent) 28%, transparent));
+	animation: cmpSvgDraw 850ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.big-ring.cmp-ring.has-svg .cmp-ring-tick {
+	stroke: var(--card);
+	opacity: 0.9;
+}
+.big-ring.cmp-ring.has-svg .cmp-ring-core {
+	position: relative;
+	z-index: 1;
+	width: 96px;
+	height: 96px;
+	border-radius: 50%;
+	background: var(--card);
+	border: 1px solid color-mix(in srgb, var(--ring-accent) 14%, var(--line));
+	box-shadow: 0 3px 12px color-mix(in srgb, var(--ring-accent) 12%, rgba(15, 23, 42, 0.06));
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	text-align: center;
+}
+.big-ring.cmp-ring.has-svg strong {
+	display: inline-flex;
+	align-items: baseline;
+	justify-content: center;
+	font-size: 27px;
+	line-height: 1;
+	font-weight: var(--fw-heavy);
+	letter-spacing: -0.03em;
+	color: var(--ink);
+	font-variant-numeric: tabular-nums;
+}
+.big-ring.cmp-ring.has-svg .cmp-ring-pct {
+	font-size: 13px;
+	font-weight: var(--fw-bold);
+	color: var(--muted);
+	margin-left: 1px;
+}
+.big-ring.cmp-ring.has-svg .cmp-ring-band {
+	display: inline-block;
+	max-width: 84px;
+	padding: 2px 8px;
+	border-radius: 999px;
+	font-size: 10.5px;
+	line-height: 1.25;
+	font-weight: var(--fw-bold);
+	letter-spacing: 0.01em;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	background: color-mix(in srgb, var(--ring-accent) 12%, transparent);
+}
+.big-ring.cmp-ring.has-svg.good .cmp-ring-band { color: var(--green-ink); }
+.big-ring.cmp-ring.has-svg.warn .cmp-ring-band { color: var(--gold-ink); }
+.big-ring.cmp-ring.has-svg.provisional .cmp-ring-band { color: var(--btn-primary-hover); }
+:where(:root[data-theme="dark"], :root[data-theme="amoled"]) .big-ring.cmp-ring.has-svg .cmp-ring-core {
+	background: var(--dk-card, var(--card));
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+:where(:root[data-theme="dark"], :root[data-theme="amoled"]) .big-ring.cmp-ring.has-svg.good .cmp-ring-band { color: #6ee7b7; }
+:where(:root[data-theme="dark"], :root[data-theme="amoled"]) .big-ring.cmp-ring.has-svg.warn .cmp-ring-band { color: hsl(39 75% 74%); }
+:where(:root[data-theme="dark"], :root[data-theme="amoled"]) .big-ring.cmp-ring.has-svg.provisional .cmp-ring-band { color: #8fb4ff; }
 
 /* AI Quality Snapshot (dashboard): the rings centered, and the lowest area's ring in red (where the final score was lost) */
 .dashboard-grid > .card > .card-body:has(> .quality-row) { display: flex; align-items: center; justify-content: center; } /* the rings in the middle of the card, not at its top */
@@ -4180,7 +4322,7 @@ html { scrollbar-gutter: auto; }
   flex: none;
 }
 .login-panel {
-  background: var(--card);
+  background: var(--bg);
   padding: 48px clamp(24px, 4vw, 56px);
 }
 .login-card {
@@ -4189,8 +4331,8 @@ html { scrollbar-gutter: auto; }
 }
 .login-card h2 {
   font-size: 26px;
-  font-weight: var(--fw-heavy);
-  letter-spacing: -0.025em;
+  font-weight: var(--fw-semibold);
+  letter-spacing: -0.03em;
   line-height: 1.2;
   color: var(--ink);
 }
@@ -4204,13 +4346,13 @@ html { scrollbar-gutter: auto; }
 .login-card label:not(.check) {
   gap: 6px;
   font-size: var(--text-sm);
-  font-weight: var(--fw-semibold);
+  font-weight: var(--fw-medium);
   color: var(--ink);
 }
 .login-card input {
   min-height: 44px;
   padding: 10px 14px;
-  border-radius: 10px;
+  border-radius: 8px;
   border: 1px solid var(--line-strong);
   background: var(--card);
   color: var(--ink);
@@ -4220,9 +4362,9 @@ html { scrollbar-gutter: auto; }
 }
 .login-card .btn {
   min-height: 44px;
-  border-radius: 10px;
+  border-radius: 8px;
   font-size: var(--text-base);
-  font-weight: var(--fw-semibold);
+  font-weight: var(--fw-medium);
 }
 .login-card .check {
   font-size: var(--text-sm);
@@ -4760,7 +4902,9 @@ html { scrollbar-gutter: auto; }
   margin-bottom: 8px;
 }
 .gen-notes textarea.in {
+  height: 156px;
   min-height: 156px;
+  max-height: 156px;
   padding: 12px 14px;
   border: 1px solid var(--line);
   border-radius: 10px;
@@ -4768,7 +4912,8 @@ html { scrollbar-gutter: auto; }
   color: var(--ink);
   font-size: var(--text-sm);
   line-height: 1.55;
-  resize: vertical;
+  resize: none;
+  overflow-y: auto;
   transition: border-color 160ms var(--ease-smooth), box-shadow 160ms var(--ease-smooth);
 }
 .gen-notes textarea.in:hover {

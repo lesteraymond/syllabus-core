@@ -39,6 +39,12 @@
   --font-display: var(--font-display);
   --font-mono: var(--font-mono);
 
+  --radius-sm: 6px;
+  --radius-md: 8px;
   --radius-card: var(--radius-card);
   --shadow-card: var(--shadow);
+  --shadow-base: var(--mat-base);
+  --shadow-small: var(--mat-small);
+  --shadow-menu: var(--mat-menu);
+  --shadow-modal: var(--mat-modal);
 }
