@@ -3120,3 +3120,15 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Not changed:** scoring, AI questions and prompts, stored answers, and the other curriculum fields. A different code or pre-requisite is still found ("IT 999", "IT204", "IT 205"). Titles are still compared exactly. A code that ends in a hyphen, as eight Cybersecurity codes do ("IT 102-"), keeps that hyphen. Nothing to migrate.
 - **Checked on the dev data:** each of the 243 codes of the four approved curricula still matches only itself, and the generator finds the same pre-requisite subjects as before for every official spelling. IT 204 (draft) is now found in the curriculum; only its title still differs.
 - **Tests:** `server/lib/subjectCode.test.js` (8; six fail on the previous code). `npm test` and `npm run test:vpaa` pass.
+
+---
+
+### v1.98.35 — A Hyphen at the End of a Subject Code Is Ignored
+**Date:** November 25, 2026
+
+- **Problem:** eleven Cybersecurity codes are printed with a hyphen at the end ("IT 102-", "IT-204-", "IS-"). Typed without it the subject was not found and the score was 0; as a pre-requisite it blocked submitting.
+- **Change (owner decision):** `server/lib/subjectCode.js` also drops a hyphen at the end of a code, in a subject code and inside a pre-requisite ("IT-ELEC1-, 3rd Yr"). `hyphenAsSpace` is now `withoutHyphens`. The generator looks for a pre-requisite code of three characters or more without its hyphens, so "IS-" is not found inside the word "prerequisite".
+- **Side effect to know (also of v1.98.34):** six pairs of different BSIT and Cybersecurity subjects now have codes that read the same (for example BSIT IT-204 Computer Programming 2 and Cybersecurity IT-204- Quantitative Methods). A subject is looked for only in the curriculum of its own program, so they are not mixed up; but a BSIT subject entered under the Cybersecurity program is now found by its code, and it is the title that stops it at submit.
+- **Changed test:** `engine.test.js` said that a hyphen in a code is significant; other punctuation ("IT.204", "IT_204", "IT204") still is.
+- **Checked on the dev data:** all 243 subjects of the four curricula, typed without any hyphen: each is found as the right subject, its pre-requisite passes, and the generator gets the same background as with the official spelling.
+- **Tests:** `server/lib/subjectCode.test.js` (+4; three fail on the previous code, the fourth pins the title check). `npm test` and `npm run test:vpaa` pass.

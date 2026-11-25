@@ -120,7 +120,7 @@ function subjectOf(content, masters, guidance) {
   const code = clean(meta.code), prerequisite = clean(meta.prereq);
   const courses = (masters?.curricula || []).flatMap(c => (Array.isArray(c.courses) ? c.courses : []));
   const here = code ? courses.find(c => sameCode(c.code, code)) : null;
-  const prerequisiteSubjects = prerequisite ? courses.filter(c => clean(c.code).length >= 3 && normCode(prerequisite).includes(normCode(c.code))).map(c => clean(c.title)).slice(0, 6) : [];
+  const prerequisiteSubjects = prerequisite ? courses.filter(c => normCode(c.code).length >= 3 && normCode(prerequisite).includes(normCode(c.code))).map(c => clean(c.title)).slice(0, 6) : [];
   const before = here ? [...new Set(courses.filter(c => !sameCode(c.code, code) && (Number(c.yearLevel) < Number(here.yearLevel) || (Number(c.yearLevel) === Number(here.yearLevel) && semesterNo(c.semester) < semesterNo(here.semester)))).map(c => clean(c.title)))].slice(0, 25) : [];
   const notes = clean(guidance).slice(0, 1500);
   return {

@@ -3,7 +3,7 @@
 // Run: npm test.
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { hyphenAsSpace, normCode, sameCode } = require('./subjectCode');
+const { withoutHyphens, normCode, sameCode } = require('./subjectCode');
 const { coded, normCode: engineNormCode } = require('./syllabuscheck/engine');
 const { identityOf } = require('./syllabuscheck/identity');
 const { samePrerequisite } = require('./syllabuscheck/prerequisite');
@@ -22,7 +22,7 @@ test('a different code stays different', () => {
   for (const [a, b] of [['IT 204', 'IT 205'], ['IT204', 'IT-204'], ['IT 999', 'IT-204'], ['', 'IT-204'], ['-', ''], ['CAPSPRO1', 'CAPSPRO 1'], ['IT-ELEC1', 'IT-ELEC2']]) {
     assert.equal(sameCode(a, b), false, `${a} / ${b}`);
   }
-  assert.equal(hyphenAsSpace('-'), '-', 'only a hyphen between letters or digits');
+  assert.equal(withoutHyphens('-'), '-', 'only a hyphen that follows a letter or a digit');
 });
 
 // The real engine: one approved curriculum with the given code and pre-requisite.
@@ -80,4 +80,43 @@ test('the generator finds the subject and its pre-requisite whatever the hyphen'
   assert.deepEqual(spaced.subjectsTakenBefore, ['PROGRAMMING 1', 'PROGRAMMING 2']);
   assert.deepEqual([spaced.prerequisiteSubjects, spaced.subjectsTakenBefore], [exact.prerequisiteSubjects, exact.subjectsTakenBefore]);
   assert.equal(spaced.code, 'IT 303', 'the code is sent as the author wrote it');
+});
+
+// The Cybersecurity curriculum prints some codes with a hyphen at the end ("IT 102-", "IT-ELEC1-", "IS-").
+test('a hyphen at the end of a code is ignored', () => {
+  for (const [a, b] of [['IT 102', 'IT 102-'], ['IT-204', 'IT-204-'], ['it 204', 'IT-204-'], ['IS', 'IS-'], ['IT ELEC1', 'IT-ELEC1-'], ['IT 102 -', 'IT 102']]) assert.equal(sameCode(a, b), true, `${a} / ${b}`);
+  for (const [a, b] of [['IT 103', 'IT 102-'], ['IT102', 'IT 102-'], ['-', ''], ['IS 1', 'IS-']]) assert.equal(sameCode(a, b), false, `${a} / ${b}`);
+  const r = report({ code: 'IT 204', prereq: 'IT 202' }, { code: 'IT-204-', prereq: 'IT 202' });
+  assert.equal(r.critical, false); assert.deepEqual(checkOf(r, 'CUR-CODE', 'meta.code').evidence, { actual: 'IT 204', expected: 'IT-204-' });
+});
+
+test('a hyphen at the end of a code is ignored inside a pre-requisite too', () => {
+  for (const [a, b] of [['IT ELEC1, 3rd Yr', 'IT-ELEC1-, 3rd Yr'], ['IT 102', 'IT 102-'], ['IT 102; IT 103', 'IT 102-; IT 103-'], ['IT 102 and IT 103', 'IT 102- and IT 103-']]) assert.equal(samePrerequisite(a, b), true, `${a} / ${b}`);
+  for (const [a, b] of [['IT ELEC1', 'IT-ELEC1-, 3rd Yr'], ['IT ELEC2, 3rd Yr', 'IT-ELEC1-, 3rd Yr'], ['', 'IS-']]) assert.equal(samePrerequisite(a, b), false, `${a} / ${b}`);
+});
+
+test('the generator does not take a two-letter code for a piece of another word', () => {
+  const masters = { curricula: [{ courses: [
+    { code: 'IS-', title: 'INTEGRATING SEMINAR', yearLevel: 4, semester: '2nd Semester' },
+    { code: 'IT-ELEC1-', title: 'ELECTIVE 1', yearLevel: 3, semester: '1st Semester' },
+    { code: 'IT-ELEC2', title: 'ELECTIVE 2', yearLevel: 3, semester: '2nd Semester' },
+  ] }] };
+  const pre = prereq => G.subjectOf({ meta: { code: 'IT-ELEC2', prereq, title: 'Elective 2', program: 'X' } }, masters, '').prerequisiteSubjects;
+  assert.deepEqual(pre('IT-ELEC1-, 3rd Yr'), ['ELECTIVE 1']);
+  assert.deepEqual(pre('IT ELEC1, 3rd Yr'), ['ELECTIVE 1']);
+  assert.equal(pre('[Not specified in the source curriculum (blank prerequisite cell).]'), undefined, '"IS" is inside "prerequisite"');
+  assert.equal(pre('Discrete Mathematics'), undefined);
+});
+
+// BSIT prints "IT-204" Computer Programming 2, Cybersecurity "IT-204-" Quantitative Methods: two subjects of two programs whose codes now read the same.
+test('a subject is looked for in its own program only, and another subject under the same code is still stopped by its title', () => {
+  const c = JSON.parse(JSON.stringify(sample().content));
+  Object.assign(c.meta, { program: 'CYBER', curriculumYear: '', code: 'IT 204', title: 'COMPUTER PROGRAMMING 2', prereq: 'IT 202' });
+  const units = { lecture: Number(c.meta.lecture), lab: Number(c.meta.lab), yearLevel: Number(c.meta.yearLevel) };
+  const curricula = [{ id: 1, program: 'CYBER', status: 'approved', curriculumYear: 'x', courses: [{ code: 'IT-204-', title: 'QUANTITATIVE METHODS', prereq: 'IT 202', ...units }] }];
+  const otherCurricula = [{ program: 'BSIT', curriculumYear: 'x', courses: [{ code: 'IT-204', title: 'COMPUTER PROGRAMMING 2' }] }];
+  const r = coded(c, { curricula, otherCurricula, programCodes: ['CYBER'] });
+  assert.equal(checkOf(r, 'CUR-CODE', 'meta.code').evidence.expected, 'IT-204-');
+  assert.equal(checkOf(r, 'CUR-FIELD', 'meta.title').status, 'FAIL');
+  assert.ok(r.findings.some(f => f.path === 'meta.title' && f.severity === 'blocking'), 'submitting stays blocked');
 });
