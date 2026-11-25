@@ -40,7 +40,7 @@ Nothing is auto-deployed. The CI workflow has no deploy job on purpose.
 2. Build the frontend with the target `VITE_API_URL`; upload `dist/` to the static host (keep the previous `dist/` for rollback).
 3. Stop the API. Sessions are kept in the database (`SESSION_STORE=mysql`), so users stay signed in; a PDF import running at that moment, and the in-memory rate-limit counters, are lost.
 4. Deploy the backend files and `server/node_modules` (`npm ci` in `server/`), apply the named migrations.
-5. Start the API with the environment file; the log must show `HOST: CORS allows 1 origin(s) (configured); cookies Secure=true SameSite=<value>; trust proxy <n>` and no `FATAL`. A missing or weak secret, a missing origin, or a missing proxy setting stops the process by design.
+5. Start the API with the environment file (`npm start` in `server/`, under the host's process manager; never `npm run dev`, which restarts on file changes); the log must show `HOST: CORS allows 1 origin(s) (configured); cookies Secure=true SameSite=<value>; trust proxy <n>` and no `FATAL`. A missing or weak secret, a missing origin, or a missing proxy setting stops the process by design.
 6. Smoke test: `node scripts/smoke-test.cjs --api https://<api> --origin https://<frontend>` must exit 0.
 7. Manual checks with a test account (checklist section G of `docs/vpaa-conformance/STAGING-SETUP-CHECKLIST.md`): cookies HttpOnly + Secure, CORS header equals the frontend origin, a foreign origin POST is refused (403), roles see only their menus.
 8. Watch monitoring (`MONITORING.md`) for 30 minutes before announcing.

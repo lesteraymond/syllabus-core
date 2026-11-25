@@ -47,9 +47,9 @@ import { AcademicYearContext, useAcademicYearScope } from './components/Academic
 import { groupOfPage } from './lib/academicYearScope';
 import { pageOfHash, routeOnLoad } from './lib/builderRoute';
 
-// The rebuilt syllabus builder (src/views/builder2) is behind a flag until it is approved: the current builder stays
-// the default. Set VITE_NEW_BUILDER=true in .env to use the rebuilt one.
-const NEW_BUILDER = import.meta.env.VITE_NEW_BUILDER === 'true';
+// The syllabus builder is the rebuilt one (src/views/builder2), also when the setting is missing: a production build has no .env of a developer's machine.
+// VITE_NEW_BUILDER=false at build time goes back to the previous builder.
+const NEW_BUILDER = import.meta.env.VITE_NEW_BUILDER !== 'false';
 
 export default function App() {
   const [user, setUser] = useState(null);

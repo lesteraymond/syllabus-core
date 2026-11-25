@@ -141,7 +141,7 @@ Optional settings go in the root `.env`:
 |----------|-------|
 | `VITE_GOOGLE_CLIENT_ID` | enables the Google sign-in button (same value as the backend `GOOGLE_CLIENT_ID`) |
 | `VITE_API_URL` | API base URL if it is not `http://localhost:3001/api` |
-| `VITE_NEW_BUILDER` | `true` switches to the rebuilt syllabus builder (`src/views/builder2`) |
+| `VITE_NEW_BUILDER` | The rebuilt syllabus builder (`src/views/builder2`) is the default, also when this is not set. `false` goes back to the previous builder |
 
 Restart `npm run dev` after changing `.env`.
 
@@ -258,6 +258,7 @@ syllabus-cms-plus/
 | Command | Description |
 |---------|-------------|
 | `npm run dev` | Start the API server (http://localhost:3001). It restarts when files change |
+| `npm start` | Start the API server for staging or production: no restart on file changes |
 | `npm run init-db` | Create the database, tables and seed data |
 | `npm run seed-outcomes` | Load the institution's vision, mission, EGAs, programs and the BSIT program outcomes. Only inserts what is missing; run it after `migrate-builder`. Supports `--dry-run` |
 | `node scripts/ocr-cor-test.js [image]` | Try the COR reader on the images in `server/sample_cor/` (git-ignored) or on a given image; prints the fields it read |

@@ -5,8 +5,8 @@ How to use it:
 1. Commit the work you want to release first. The agent tests **one commit**, not the working folder.
 2. Start the MariaDB you normally use (XAMPP). The agent is not allowed to start or stop it.
 3. In Antigravity, open this repository, choose **Gemini 4 Carbon**, and keep terminal commands on "ask before running" for the first phase.
-4. Fill in the five lines under **Release inputs**, then paste everything below the line.
-5. Run Phase 1 first. Only continue to Phase 2 and Phase 3 when the previous phase says PASS.
+4. Copy everything from `# ROLE` to the end and paste it. The **Release inputs** are already filled in for Phase 1 of the newest commit on `Updated-Repo`.
+5. Only continue when the previous phase says PASS. For Phase 2 or 3, or a newer commit, change the **Release inputs** first.
 
 ---
 
@@ -14,13 +14,13 @@ How to use it:
 
 You are the QA lead for the **Syllabus Repository** (React 19 + Vite 8 front end in `src/`, Node/Express API in `server/`, MariaDB/MySQL, AI syllabus checker in `server/lib/syllabuscheck/`). You decide, with evidence, whether one exact commit may go to production. You **find and prove** problems. You do **not** fix code, deploy, or approve anything.
 
-# RELEASE INPUTS (the owner fills these in)
+# RELEASE INPUTS
 
-- Candidate commit: `<SHA, or "HEAD of Updated-Repo">`
-- Phase to run now: `<1 | 2 | 3>`
-- Staging URLs (front end / API): `<https://… / https://…, or NONE>`
-- Production URLs (front end / API): `<https://… / https://…, or NONE>`
-- Previous release commit, for the rollback test: `<SHA, or NONE>`
+- Candidate commit: the tip of `Updated-Repo` (read it once with `git rev-parse Updated-Repo`, write it down, and use that SHA to the end)
+- Phase to run now: `1`
+- Staging URLs (front end / API): `NONE`
+- Production URLs (front end / API): `NONE`
+- Previous release commit, for the rollback test: `NONE` (nothing is live yet)
 
 If a value is missing or NONE, every check that needs it is `BLOCKED`, never `PASS`.
 
@@ -86,14 +86,14 @@ Read before testing: `HOW-TO-RUN.md`, `docs/review-chain.md`, `docs/deployment/R
 
 | ID | Check | Pass rule |
 |---|---|---|
-| A01 | `git status --porcelain` in the owner's repository (read-only) and the candidate SHA | Working tree clean, or every uncommitted file listed and shown not to be part of the release. A file imported by released code but not tracked is a **blocker**. Known risk on 2026-11-25: `src/components/GeminiLoader.jsx` is untracked while uncommitted edits to four views import it |
+| A01 | `git status --porcelain` in the owner's repository (read-only) and the candidate SHA | Working tree clean, or every uncommitted file listed and shown not to be part of the release. A file imported by released code but not tracked is a **blocker**. This prompt file and the QA report may be uncommitted; they are not part of the release |
 | A02 | `npm ls --depth=0` in root and `server/` | Nothing missing, extraneous or invalid; both lockfiles tracked |
-| A03 | `npm test` | Exit 0, 0 failed, 0 skipped. Reference run 2026-11-25 on `abf544ae`: 1,758 tests. Fewer than the reference needs an explanation |
+| A03 | `npm test` | Exit 0, 0 failed, 0 skipped. Reference run 2026-11-25 on v1.98.31: 1,760 tests. Fewer than the reference needs an explanation |
 | A04 | `npm run test:vpaa` | Exit 0, 0 failed (reference: 37) |
 | A05 | `npm run test:po-reference-ui` | Exit 0 |
 | A06 | `npm run audit:i18n` | Exit 0, 0 hardcoded display strings |
 | A07 | Tests that `npm test` does not reach: list every `*.test.*` under `src/`, `server/`, `tests/`, `scripts/` not covered by a script. Run the `src/` and `server/` ones with `node --test` | 0 failed (reference: 13 files, 66 pass, 3 skipped for missing PDF fixtures). Not being wired into `npm test` is a Medium finding. In `scripts/`, run only those you read and confirmed open no database |
-| A08 | `npm run build` with `VITE_API_URL=https://api.invalid/api` and `VITE_NEW_BUILDER=true` | Exit 0; record the largest chunks. **Without `VITE_NEW_BUILDER=true` the build ships the old builder**: check that the production template, runbook and CI all set it |
+| A08 | `npm run build` with `VITE_API_URL=https://api.invalid/api` and `VITE_NEW_BUILDER` **unset** | Exit 0; record the largest chunks. Faculty get the rebuilt builder (confirm in the browser), because it is the default since v1.98.31 |
 | A09 | Integration: `npm run test:db-bootstrap` with `E2E_DB_NAME=syllabus_e2e_qa_bootstrap` | Exit 0; every migration applied in order, 0 demo users created in staging mode |
 | A10 | End to end: `npm run test:e2e` with `E2E_DB_NAME=syllabus_e2e_qa_carbon`, run **twice** | Every scenario (E01 to E25) passes both times, 0 known defects. Do not set `E2E_DB_PORT`: the runner does not pass it to the API, so the test would be split across two servers |
 | A11 | CI: GitHub Actions result for the candidate commit (`gh run list -R jpdelrosarioo/Syllabus-Repository`, read-only) | Both jobs green on this SHA. No run = BLOCKED, and a blocker for production |
@@ -113,11 +113,11 @@ Start one long-lived stack with `startStack` from `scripts/e2e/stack.cjs` (real 
 | B05 | **Role gating by URL hash** and by direct API call | No page or data opens for the wrong role, on first load and on later hash changes |
 | B06 | **Syllabus Builder** (the rebuilt one): all steps, autosave, resume draft, step gate, subject/program/year locks, Review and adopt, print/PDF/DOCX output | No data loss on reload or double click; exported files open and are complete |
 | B07 | **PDF import**: good PDF, wrong template, scanned PDF, over-limit file, renamed non-PDF, refresh during import | Clear message each time; no 500; the import resumes or reports after a refresh |
-| B08 | **AI Checker, Check & improve, AI Syllabus Generator** on the offline stand-in: ok, provider down, refused credentials, rate limit, unreadable answer | Submission still works when AI is down; unchanged text keeps its official score; no partial result shown as final |
-| B09 | **Admin**: users, roles, disable account, assignments, programs, POs, EGAs, subjects, academic years, deadlines, Audit Log, Compliance, Reports | Works; past years are view-only; the Audit Log cannot be edited or cleared |
+| B08 | **AI Checker, Check & improve, AI Syllabus Generator** on the offline stand-in: ok, provider down, refused credentials, rate limit, unreadable answer | Submission still works when AI is down; unchanged text keeps its official score; no partial result shown as final. **New:** submitting unchanged text keeps the author's own AI check; changed text, or another person's check, is never reused |
+| B09 | **Admin**: users, roles, disable account, assignments, programs, POs, EGAs, subjects, academic years, deadlines, Audit Log, Compliance, Reports | Works; past years are view-only; the Audit Log cannot be edited or cleared, and IP addresses appear only there. **New in this release:** an administrator can write a syllabus only for an assigned subject, in the UI and by direct API call, and still sees the whole catalog for management |
 | B10 | **Student**: register with COR, verification, approved syllabi and their files | Sees approved syllabi only; an admin can complete verification in the UI |
 | B11 | **Accounts**: login, lockout, forced password change, reset, password expiry, remember me, logout | A used or expired temporary password is refused; logout ends the session on the server |
-| B12 | **Comments, messages, notifications** including unread counts and deletion | Counts right on both sides; a deleted conversation stays deleted after reload |
+| B12 | **Comments, messages, notifications** including unread counts, deletion, and the On / Do Not Disturb / Off setting | Counts right on both sides; a deleted conversation stays deleted after reload; a muted mode makes no sound or popup but the bell still collects; the setting is per user on a shared computer |
 | B13 | **Concurrency**: two reviewers at once, approve while resubmitting, double click on submit/clear/approve, two tabs on one draft | No duplicate rows, versions or log entries; no lost edit without a warning |
 | B14 | **Display**: 375, 768, 1024, 1440 px; light, dark, AMOLED; English, Filipino; keyboard only; contrast | No overflow, no raw translation key, every control reachable by keyboard, text contrast at least 4.5:1 |
 | B15 | **Edge and Chrome** current versions, plus Firefox if installed | Login, builder, review and approve work in each |
@@ -127,7 +127,7 @@ Start one long-lived stack with `startStack` from `scripts/e2e/stack.cjs` (real 
 
 | ID | Check | Pass rule |
 |---|---|---|
-| C01 | `npm audit --omit=dev` in root and `server/` | 0 critical, 0 high. Known on 2026-11-25: root reports 1 critical in `jspdf` 2.5.2 and 1 moderate (its `dompurify`); `server/` is clean |
+| C01 | `npm audit --omit=dev` in root and `server/` | 0 critical, 0 high. Reference 2026-11-25: 0 vulnerabilities in both, after `jspdf` 4.2.1. Download a typed syllabus as a student and open the PDF |
 | C02 | Secret scan of tracked files, untracked files and all history | 0 live secrets; for each hit report file, line and key type only |
 | C03 | Every route in `server/routes/*.js` × signed out and each role, plus another user's ids (IDOR), wrong types, huge values, SQL-like strings, oversized JSON | 401/403/404/400 as designed; no 500; no stack trace or SQL text in a response |
 | C04 | Stored/reflected XSS in every free-text field, and in PDF, DOCX and CSV output (including formula injection in CSV) | Always shown as text |
@@ -148,7 +148,7 @@ Start one long-lived stack with `startStack` from `scripts/e2e/stack.cjs` (real 
 | D04 | Database: InnoDB and utf8mb4 on every table, Filipino characters and en dashes survive a save, `max_allowed_packet` ≥ 16 MB, foreign keys | All true on the scratch database and stated as a requirement for the real one. Check whether the schema sets engine and charset itself or only inherits them |
 | D05 | Migrations: order, safe to run twice, destructive ones named, TLS and port support | Second run changes nothing; `migrate-version-labels` and `migrate-catalog-year` flagged as not reversible |
 | D06 | Permissions: application DB account (SELECT, INSERT, UPDATE, DELETE only), separate migration account, private storage for `UPLOAD_DIR` and `PRIVATE_DIR` | Documented and enforced at startup |
-| D07 | Process: production start command, restart policy, clean shutdown, one instance, proxy timeout ≥ 10 min on AI and import routes | Present and written down; `node --watch` never used |
+| D07 | Process: production start command, restart policy, clean shutdown, one instance, proxy timeout ≥ 10 min on AI and import routes | `npm start` in `server/` (added in v1.98.31) plus a process manager on the host; the rest present and written down; `node --watch` never used |
 
 ## 1E. Team and runbooks
 

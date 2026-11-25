@@ -3077,3 +3077,14 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Problem (pre-deploy report 2026-11-24, B4):** `server/db/init.js` and the `migrate-*.js` / seed scripts connected directly with `DB_HOST`, `DB_USER`, `DB_PASS`, and `DB_NAME`, ignoring `DB_PORT`, `DB_SSL`, and `DB_SSL_CA`. Against a cloud database requiring TLS or a non-default port, setup and migrations would fail to connect.
 - **Change:** extracted shared TLS and port validation into `resolveConnectionConfig` in `server/lib/dbConfig.js` and wired all 45 standalone scripts in `server/db/` (`init.js` with `includeDatabase: false`, `create-admin.js`, all `migrate-*.js`, `seed-*.js`, and `verify-subject-standards.js`) to use it. Standalone scripts still allow a separate migration/admin account while enforcing `DB_SSL=required` on non-loopback hosts in `staging` and `production`.
 - **Tests:** `server/lib/dbConfig.test.js` (+2) covers `resolveConnectionConfig` (`DB_PORT`, `DB_SSL`, `DB_SSL_CA`, `includeDatabase: false`, remote TLS enforcement) and asserts that every standalone script in `server/db/` connects through `resolveConnectionConfig`. Full `npm test` passes.
+
+---
+
+### v1.98.31 — Release Fixes: Rebuilt Builder by Default, jspdf 4, Server Start Script
+**Date:** November 25, 2026
+
+- **Rebuilt Syllabus Builder is the default (pre-deploy report 2026-11-24, B7):** it needed `VITE_NEW_BUILDER=true` at build time, which only a developer's private `.env` set, so a production build gave faculty the previous builder. `src/App.jsx` now uses the rebuilt builder unless `VITE_NEW_BUILDER=false`.
+- **jspdf 2.5.2 to 4.2.1 (B3):** clears 1 critical and 1 moderate advisory (`jspdf`, `dompurify`); `npm audit --omit=dev` reports 0 in the root and in `server/`. Only the student's "Download PDF" uses it.
+- **`npm start` in `server/` (part of B6):** runs `node index.js` without the development file watcher. A process manager, staging host, alerts and a backup restore test are still open.
+- **Docs:** `HOW-TO-RUN.md`, `RUNBOOK.md`, both environment templates and the QA release gate prompt.
+- **Tests:** `builderRoute.test.js` (+1) keeps the default. `npm test` (1,760) and `npm run test:vpaa` (37) pass; `npm run test:e2e` passes 25/25 scenarios on an isolated copy and scratch database. A build without the setting is identical to one with it set to `true`. A student's PDF was downloaded in Edge and opened (7 landscape Letter pages); `npm start` in production mode refuses to start without `SESSION_SECRET`.

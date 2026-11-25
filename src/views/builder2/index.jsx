@@ -37,7 +37,7 @@ const STEP_CONFIG = STEPS.map((s) => ({
 }));
 
 // The new syllabus builder: same shell as the current one (course strip, stepper, "Step N of 7" card, auto-save status),
-// driven by the rules in src/lib/syllabusModel.js. It is used when VITE_NEW_BUILDER=true; until then the previous builder is the default.
+// driven by the rules in src/lib/syllabusModel.js. It is the default; VITE_NEW_BUILDER=false at build time goes back to the previous builder.
 // `restore` ({ mode, job }) comes from the URL after a page refresh (lib/builderRoute.js): reopen the PDF import and pick its scan up again.
 export default function SyllabusBuilderV2({ editing, restore = null, user, notify, setPage, onSubmitted, onOpenChecker }) {
   const { draft, apply, set, setAndSave, save, saveNow, reload, attachExisting, load, syllabusId } = useDraft(editing);
