@@ -1,7 +1,8 @@
 const fs = require('fs/promises');
 const path = require('path');
+const { uploadRoot } = require('./storagePaths');
 let running = null;
-function uploadFile(filePath, root = path.resolve(__dirname, '..', process.env.UPLOAD_DIR || 'uploads')) {
+function uploadFile(filePath, root = uploadRoot()) {
   const match = /^\/uploads\/([A-Za-z0-9][A-Za-z0-9._-]*\.pdf)$/i.exec(String(filePath));
   if (!match || match[1].includes('..')) throw new Error('Invalid syllabus upload path');
   const target = path.resolve(root, match[1]);

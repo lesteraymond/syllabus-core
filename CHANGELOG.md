@@ -3088,3 +3088,13 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **`npm start` in `server/` (part of B6):** runs `node index.js` without the development file watcher. A process manager, staging host, alerts and a backup restore test are still open.
 - **Docs:** `HOW-TO-RUN.md`, `RUNBOOK.md`, both environment templates and the QA release gate prompt.
 - **Tests:** `builderRoute.test.js` (+1) keeps the default. `npm test` (1,760) and `npm run test:vpaa` (37) pass; `npm run test:e2e` passes 25/25 scenarios on an isolated copy and scratch database. A build without the setting is identical to one with it set to `true`. A student's PDF was downloaded in Edge and opened (7 landscape Letter pages); `npm start` in production mode refuses to start without `SESSION_SECRET`.
+
+---
+
+### v1.98.32 — Absolute UPLOAD_DIR and PRIVATE_DIR
+**Date:** November 25, 2026
+
+- **Problem:** six files worked out the storage folders on their own and disagreed. With an absolute `PRIVATE_DIR` (a persistent volume such as `/data/private`), profile photos and COR photos were kept in a folder under `server/` instead, where a redeploy may lose them. With an absolute `UPLOAD_DIR`, files were received in one folder and read from another. Relative folders, the default, were never affected.
+- **Change:** `server/lib/storagePaths.js` is the only place that reads the two settings: relative is under `server/`, absolute is used as it is. The upload route, the file route, the checker, the catalog cleanup, the photos and `migrate-avatars-private` use it. Nothing to move on an installation that uses the defaults.
+- **Docs:** both settings are in the staging and production templates and described in `HOW-TO-RUN.md`; the QA release gate prompt checks them.
+- **Tests:** `storagePaths.test.js` (4; three fail on the previous code). `npm test` (1,764) and `npm run test:vpaa` (37) pass. Checked on a running server with absolute folders and a scratch database: a profile photo was saved in the configured folder and read back.

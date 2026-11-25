@@ -88,7 +88,7 @@ Read before testing: `HOW-TO-RUN.md`, `docs/review-chain.md`, `docs/deployment/R
 |---|---|---|
 | A01 | `git status --porcelain` in the owner's repository (read-only) and the candidate SHA | Working tree clean, or every uncommitted file listed and shown not to be part of the release. A file imported by released code but not tracked is a **blocker**. This prompt file and the QA report may be uncommitted; they are not part of the release |
 | A02 | `npm ls --depth=0` in root and `server/` | Nothing missing, extraneous or invalid; both lockfiles tracked |
-| A03 | `npm test` | Exit 0, 0 failed, 0 skipped. Reference run 2026-11-25 on v1.98.31: 1,760 tests. Fewer than the reference needs an explanation |
+| A03 | `npm test` | Exit 0, 0 failed, 0 skipped. Reference run 2026-11-25 on v1.98.32: 1,764 tests. Fewer than the reference needs an explanation |
 | A04 | `npm run test:vpaa` | Exit 0, 0 failed (reference: 37) |
 | A05 | `npm run test:po-reference-ui` | Exit 0 |
 | A06 | `npm run audit:i18n` | Exit 0, 0 hardcoded display strings |
@@ -147,7 +147,7 @@ Start one long-lived stack with `startStack` from `scripts/e2e/stack.cjs` (real 
 | D03 | Feature flags for launch: AI provider, cost cap, generator and its per-user daily limit, PDF import, decision emails, strict order | Owner-approved value written down for each (HUMAN), and the code defaults to the safe side |
 | D04 | Database: InnoDB and utf8mb4 on every table, Filipino characters and en dashes survive a save, `max_allowed_packet` ≥ 16 MB, foreign keys | All true on the scratch database and stated as a requirement for the real one. Check whether the schema sets engine and charset itself or only inherits them |
 | D05 | Migrations: order, safe to run twice, destructive ones named, TLS and port support | Second run changes nothing; `migrate-version-labels` and `migrate-catalog-year` flagged as not reversible |
-| D06 | Permissions: application DB account (SELECT, INSERT, UPDATE, DELETE only), separate migration account, private storage for `UPLOAD_DIR` and `PRIVATE_DIR` | Documented and enforced at startup |
+| D06 | Permissions: application DB account (SELECT, INSERT, UPDATE, DELETE only), separate migration account, private storage for `UPLOAD_DIR` and `PRIVATE_DIR` | Documented and enforced at startup. With both set to absolute paths, a profile photo and a COR photo are saved there, read back, and nothing new appears under `server/` |
 | D07 | Process: production start command, restart policy, clean shutdown, one instance, proxy timeout ≥ 10 min on AI and import routes | `npm start` in `server/` (added in v1.98.31) plus a process manager on the host; the rest present and written down; `node --watch` never used |
 
 ## 1E. Team and runbooks

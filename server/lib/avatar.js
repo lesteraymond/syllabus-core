@@ -2,7 +2,7 @@ const path = require('path');
 
 // Avatars live OUTSIDE the public /uploads static folder and are only served by
 // GET /api/users/:id/avatar (see routes/users.js), which checks who is asking.
-const PRIVATE_ROOT = path.join(__dirname, '..', process.env.PRIVATE_DIR || 'private');
+const PRIVATE_ROOT = require('./storagePaths').privateRoot();
 const AVATAR_DIR = path.join(PRIVATE_ROOT, 'avatars');
 
 // users.avatar_path is stored relative to PRIVATE_ROOT, e.g. "avatars/u2-1791825591628.webp".
