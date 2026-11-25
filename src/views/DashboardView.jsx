@@ -184,28 +184,7 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
       <section className="stat-grid">{stats.map(([a, b, c, d]) => <div className="stat-card" key={a}><div className={`stat-icon ${d}`}><Icon weight="regular" name={STAT_ICONS[a]} size={20} /></div><span>{tr(a)}</span><strong>{b}</strong><small>{tr(c)}</small></div>)}</section>
       <div className="dashboard-grids-wrap">
         <section className="dashboard-grid">
-        <Card title={translateUI('accountActivity.title')} action={auditLogLink}>
-          <div className="feed">
-            {activityGroups.map((g) => (
-              <section className="feed-day" key={g.label} aria-label={tr(g.label)}>
-                <h4 className="feed-date">{tr(g.label)}</h4>
-                <ol className="feed-list">
-                  {g.items.map((it) => (
-                    <li className={'feed-item ' + it.tone} key={it.key}>
-                      <span className="feed-ico"><Icon name={it.icon} size={18} weight="regular" /></span>
-                      <div className="feed-body">
-                        <p><strong>{tr(it.who)}</strong> {tr(it.verb)}{it.subject && <> <strong>{it.subject}</strong></>}</p>
-                        {(it.detail || it.note) && <small>{[it.detail, it.note && tr(it.note)].filter(Boolean).join(' · ')}</small>}
-                      </div>
-                      <time dateTime={it.iso}>{it.time}</time>
-                    </li>
-                  ))}
-                </ol>
-              </section>
-            ))}
-            {activityGroups.length === 0 && <div className="empty">{isFac ? translateUI("ui.nothing_yet_what_you_upload_submit_and_update_appears_here_f8bbff") : translateUI("ui.nothing_yet_your_reviews_and_decisions_appear_here_6bd686")}</div>}
-          </div>
-        </Card>
+        {(isFac || user.role === 'admin') && <Card title={translateUI("ui.upcoming_deadlines_b56518")} hideScrollbar><UpcomingDeadlines role={user.role} onOpen={isFac ? openOwnDeadline : () => setPage('courses')} onOpenOwn={openOwnDeadline} /></Card>}
         <Card title={translateUI("dashboard.usage.title")}>
           <TimeUsageCard />
         </Card>
@@ -278,7 +257,28 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
           {/* checks made with AI checking off are not AI results: left out of the snapshot, and counted here */}
           {snapshot.notAiChecked > 0 && <div className="snapshot-note">{translateUI(snapshot.notAiChecked === 1 ? 'snapshot.notAiCheckedOne' : 'snapshot.notAiChecked', { count: snapshot.notAiChecked })}</div>}
         </Card>
-        {(isFac || user.role === 'admin') && <Card title={translateUI("ui.upcoming_deadlines_b56518")} hideScrollbar><UpcomingDeadlines role={user.role} onOpen={isFac ? openOwnDeadline : () => setPage('courses')} onOpenOwn={openOwnDeadline} /></Card>}
+        <Card title={translateUI('accountActivity.title')} action={auditLogLink}>
+          <div className="feed">
+            {activityGroups.map((g) => (
+              <section className="feed-day" key={g.label} aria-label={tr(g.label)}>
+                <h4 className="feed-date">{tr(g.label)}</h4>
+                <ol className="feed-list">
+                  {g.items.map((it) => (
+                    <li className={'feed-item ' + it.tone} key={it.key}>
+                      <span className="feed-ico"><Icon name={it.icon} size={18} weight="regular" /></span>
+                      <div className="feed-body">
+                        <p><strong>{tr(it.who)}</strong> {tr(it.verb)}{it.subject && <> <strong>{it.subject}</strong></>}</p>
+                        {(it.detail || it.note) && <small>{[it.detail, it.note && tr(it.note)].filter(Boolean).join(' · ')}</small>}
+                      </div>
+                      <time dateTime={it.iso}>{it.time}</time>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            ))}
+            {activityGroups.length === 0 && <div className="empty">{isFac ? translateUI("ui.nothing_yet_what_you_upload_submit_and_update_appears_here_f8bbff") : translateUI("ui.nothing_yet_your_reviews_and_decisions_appear_here_6bd686")}</div>}
+          </div>
+        </Card>
       </section>
       </div>
       {trendOpen && <ProgramTrendModal programs={catalog.programs || []} subjects={catalog.subjects || []} year={year === 'all' ? undefined : year} onClose={() => setTrendOpen(false)} />}
