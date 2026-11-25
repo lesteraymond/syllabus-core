@@ -108,12 +108,26 @@ function uniqueIds(content) {
   return copy;
 }
 
+// CHED credit units: 1 lecture unit = 1 contact hr/week, 1 laboratory unit = 3 contact hrs/week (standard-v4.json).
+const unitNum = v => { const n = Number.parseFloat(String(v ?? '').trim()); return Number.isFinite(n) && n >= 0 ? n : null; };
+function unitsOf(meta) {
+  const lecture = unitNum(meta?.lecture), lab = unitNum(meta?.lab);
+  const contactHoursPerWeek = lecture !== null && lab !== null && lecture + lab > 0 ? lecture + lab * 3 : null;
+  return { lectureUnits: lecture, labUnits: lab, contactHoursPerWeek };
+}
+
 // The structured map of one syllabus.
 function extract(content, masters) {
   const c = content || {};
   const clos = (c.clos || []).map(cloOf);
+  const { lectureUnits, labUnits, contactHoursPerWeek } = unitsOf(c.meta);
   return {
-    course: { code: clean(c.meta?.code), title: clean(c.meta?.title), program: clean(c.meta?.program) },
+    course: {
+      code: clean(c.meta?.code), title: clean(c.meta?.title), program: clean(c.meta?.program),
+      ...(lectureUnits !== null ? { lectureUnits } : {}),
+      ...(labUnits !== null ? { labUnits } : {}),
+      ...(contactHoursPerWeek !== null ? { contactHoursPerWeek } : {}),
+    },
     masters: mastersOf(c, masters),
     clos,
     weeks: (c.plan || []).map((row, i) => weekOf(row, i, clos)),

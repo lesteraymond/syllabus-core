@@ -167,6 +167,11 @@ const CHECKLISTS = Object.freeze({
   'TASK-ILO': { from: 'tasks', to: 'ilo', area: 'tasks', scored: false, items: [
     { id: 'measures', critical: false, ask: 'Would the tasks show whether students reached each of the week\'s ILOs?' },
   ] },
+  // CHED credit-unit laboratory alignment (only asked when labUnits > 0): advisory (scored: false, 0 points, never blocks).
+  'LAB-ALIGNMENT': { from: 'activities', to: 'courseTitle', area: 'activities', scored: false, repair: 'manual', items: [
+    { id: 'activities', critical: false, ask: 'Do the weekly learning activities include hands-on or laboratory work appropriate for this laboratory course?' },
+    { id: 'tasks', critical: false, ask: 'Do the weekly assessment tasks include practical or laboratory outputs (not only written quizzes or essays)?' },
+  ] },
   'VALUE-ILO': { from: 'values', to: 'ilo', area: 'values', scored: true, items: [
     { id: 'fits', critical: true, ask: 'Can the named value be practised through this week\'s ILO and activities, or, in the orientation week or an examination week, through the orientation or the examination itself (for example Interiority through honest self-assessment)?' },
   ] },

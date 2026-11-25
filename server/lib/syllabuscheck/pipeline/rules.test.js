@@ -31,7 +31,7 @@ test('checklists: every relationship has a known area and field, at least one cr
     // CLO-EVIDENCE has no critical item: a level mismatch is partly aligned (-1), the owner's choice of 2026-11-17
     assert.ok(list.items.some(i => i.critical) || !list.scored || R.isManual(name), name);
   }
-  assert.deepEqual(Object.entries(R.CHECKLISTS).filter(([, l]) => !l.scored).map(([n]) => n), ['CONTENT-SEQUENCE', 'TASK-ILO']);
+  assert.deepEqual(Object.entries(R.CHECKLISTS).filter(([, l]) => !l.scored).map(([n]) => n), ['CONTENT-SEQUENCE', 'TASK-ILO', 'LAB-ALIGNMENT']);
 });
 
 test('code sets the verdict from the checklist answers', () => {

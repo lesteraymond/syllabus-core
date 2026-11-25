@@ -8,7 +8,7 @@ const R = require('./rules');
 const S = require('./eval/synthetic');
 
 test('the prompt version records the change', () => {
-  assert.equal(P.PROMPT_VERSION, 'replan-prompt-6');
+  assert.equal(P.PROMPT_VERSION, 'replan-prompt-7');
 });
 
 test('1. the values question accepts the orientation or the examination itself', () => {
@@ -75,7 +75,7 @@ test('near copies: the DSP twins are caught, genuinely different ILOs of the sam
   assert.equal(P.nearCopy('Write loops', 'Write loops'), false, 'too short to judge');
   assert.equal(P.nearCopy('Explain folk dance outcome two', 'Explain and apply Java programming outcome one'), false, 'the same first verb alone is not a copy');
   assert.match(P.REWRITE_SYSTEM, /keepDistinctFrom/);
-  assert.equal(P.PROMPT_VERSION, 'replan-prompt-6', 'the near-copy rule did not change the judge prompt (6 is constructive alignment)');
+  assert.equal(P.PROMPT_VERSION, 'replan-prompt-7', 'the near-copy rule did not change the judge prompt (7 adds CHED credit units)');
   assert.match(P.REWRITE_VERSION, /^replan-rewrite-\d+$/);
 });
 

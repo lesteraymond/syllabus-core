@@ -185,7 +185,7 @@ test('a rewrite is told the links that fit now and must keep them (DSP re-run, 2
   assert.ok(!job.mustKeep.some(k => k.relationship === 'CLO-LEVEL'), 'what failed is not in mustKeep');
   const P = require('./prompt');
   assert.match(P.REWRITE_SYSTEM, /mustKeep fits NOW/);
-  assert.equal(P.REWRITE_VERSION, 'replan-rewrite-4');
+  assert.equal(P.REWRITE_VERSION, 'replan-rewrite-5');
 });
 
 test('without a rewrite provider the plan only reports', async () => {

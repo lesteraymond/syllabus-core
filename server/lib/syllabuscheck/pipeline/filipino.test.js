@@ -41,8 +41,8 @@ test('generator: the Filipino rule is sent for a Filipino subject only; every ot
 });
 
 test('checker: English prompts and versions are unchanged; a Filipino syllabus gets its own prompt and version', () => {
-  assert.equal(P.PROMPT_VERSION, 'replan-prompt-6');
-  assert.equal(P.REWRITE_VERSION, 'replan-rewrite-4');
+  assert.equal(P.PROMPT_VERSION, 'replan-prompt-7');
+  assert.equal(P.REWRITE_VERSION, 'replan-rewrite-5');
   assert.doesNotMatch(P.JUDGE_SYSTEM, /FILIPINO/);
   assert.doesNotMatch(P.REWRITE_SYSTEM, /FILIPINO|Filipino/);
   assert.match(P.REWRITE_SYSTEM, /ilo: One sentence in English, starting with ONE measurable verb/);
