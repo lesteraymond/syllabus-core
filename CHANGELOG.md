@@ -3101,6 +3101,17 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 
 ---
 
+### v1.98.33 — Filipino-Language Subjects Recognized More Narrowly
+**Date:** November 25, 2026
+
+- **Problem:** any code starting with the letters "FIL" and any title with the word "Filipino" counted as a Filipino-language subject, so FILM 101 or "Readings in Filipino History" would have been generated, judged and rewritten in Filipino.
+- **Change (`isFilipinoSubject`, `server/lib/syllabuscheck/pipeline/rules.js`):** the code must be FIL itself (FIL 101, FIL-101, FIL101), or the title must have a Filipino course word, name Filipino in a Filipino phrase ("... sa Filipino", "... ng Filipino"), or be "Filipino" alone ("Filipino 1"). The AI Checker and the AI Syllabus Generator share this one rule.
+- **SOSLIT added (owner decision):** "Sosyedad at Literaturang/ Panitikang Panlipunan" is now a Filipino-language subject. The course word list had only "panitikan", so "Panitikang" was missed.
+- **Not changed:** the Filipino prompts and verb lists, every English prompt, and the two Filipino subjects already recognized in the approved curriculum (KOMFIL, Dalumat sa Filipino).
+- **Tests:** `pipeline/filipino.test.js` (+1; it fails on the previous code). `npm test` passes.
+
+---
+
 ### v1.98.34 — A Hyphen or a Space in a Subject Code Is the Same
 **Date:** November 25, 2026
 

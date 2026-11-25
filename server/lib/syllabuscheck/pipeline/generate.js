@@ -111,7 +111,7 @@ const jsonOf = value => JSON.stringify(value);
 // What the generator knows about the subject: the syllabus's own course information, the program's approved curriculum when it lists the subject (the subjects of
 // its prerequisite and the subjects taken before it, so a topic is built on and not taught again), and the author's own notes. The curriculum lists no course
 // description or topics, so for those the author's notes (up to 1500 characters, sent as data) are the way to steer the content.
-// A Filipino-language subject (taught and written in Filipino): the code starts with FIL, or the title names Filipino or a Filipino-language course word.
+// A Filipino-language subject (taught and written in Filipino): how it is recognized is in rules.js isFilipinoSubject.
 const isFilipinoSubject = (title, code) => R.isFilipinoSubject(clean(title), clean(code));
 const { normCode, sameCode } = require('../../subjectCode'); // "IT 204" and "IT-204" are one code
 const semesterNo = text => Number((/(\d)/.exec(String(text || '')) || [])[1]) || 0;
