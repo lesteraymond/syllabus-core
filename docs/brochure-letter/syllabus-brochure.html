@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI-Powered Web-Based Syllabus Management System: Tri-Fold Brochure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+@page { size: letter landscape; margin: 0; }
+* { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+html, body { margin: 0; padding: 0; background: #FFFFFF; }
+.toolbar { font-family: 'Plus Jakarta Sans', Inter, Arial, sans-serif; color: #0F172A; }
+.page { position: relative; width: 11in; height: 8.5in; overflow: hidden; background: #FFFFFF; break-after: page; break-inside: avoid; }
+.page:last-of-type { break-after: auto; }
+@media screen {
+  body { background: #F8FAFC; display: flex; flex-direction: column; align-items: center; gap: 32px; padding: 0 24px 48px; min-width: 11in; box-sizing: border-box; }
+  .toolbar { position: sticky; top: 0; z-index: 2; box-sizing: border-box; width: 11in; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0; background: #F8FAFC; border-bottom: 1px solid #E2E8F0; font-size: 13px; }
+  .toolbar button { min-height: 44px; padding: 0 20px; border: 0; border-radius: 6px; background: #2563EB; color: #FFFFFF; font: inherit; font-weight: 700; cursor: pointer; }
+  .toolbar button:hover { background: #0F172A; }
+  .toolbar button:focus-visible { outline: 2px solid #0F172A; outline-offset: 2px; }
+  .page { outline: 1px solid #E2E8F0; }
+  .page::before, .page::after { content: ''; position: absolute; top: 0; bottom: 0; width: 0; border-left: 1px dashed #2563EB; opacity: 0.35; z-index: 1; pointer-events: none; }
+  .page::before { left: 33.3333%; }
+  .page::after { left: 66.6667%; }
+}
+@media print { .toolbar { display: none; } }
+</style>
+</head>
+<body>
+<div class="toolbar"><span>Letter landscape, two pages. Dashed fold lines show on screen only.</span><button type="button" onclick="window.print()">Print or save as PDF</button></div>
+<div class="page" role="group" aria-label="Page 1, outside">
+<div style="width: 1056px; height: 816px; box-sizing: border-box; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: #FFFFFF; color: #0F172A; font-family: 'Plus Jakarta Sans', Inter, Arial, sans-serif; font-size: 12.5px; line-height: 1.45; overflow: hidden">
+
+<section style="box-sizing: border-box; height: 816px; padding: 33.6px; display: flex; flex-direction: column; justify-content: space-between; min-width: 0">
+<div style="display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<span aria-hidden="true" style="display: block; width: 24px; height: 2px; background: #2563EB"></span>
+<h2 style="margin: 0; font-size: 20px; line-height: 1.2; font-weight: 800; letter-spacing: -0.02em">Benefits of the system</h2>
+</div>
+<div style="display: flex; flex-direction: column; gap: 13px">
+<div style="display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 12px">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"></path><path d="M7 16v-5"></path><path d="M12 16V7"></path><path d="M17 16v-3"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 1px"><strong style="font-size: 13px; font-weight: 700">Streamlined curriculum monitoring</strong><span>Dashboards show submissions, deadlines, and compliance for each program.</span></div>
+</div>
+<div style="display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 12px">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path><path d="M9 4v4"></path><path d="M15 10v4"></path><path d="M9 16v4"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 1px"><strong style="font-size: 13px; font-weight: 700">Standardized syllabus review</strong><span>One ten-section LCUP template and one ordered review for every syllabus.</span></div>
+</div>
+<div style="display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 12px">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 1px"><strong style="font-size: 13px; font-weight: 700">Less manual checking</strong><span>Coded rules and AI point out gaps before a reviewer opens the syllabus.</span></div>
+</div>
+<div style="display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 12px">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 1px"><strong style="font-size: 13px; font-weight: 700">Feedback in one place</strong><span>Comments and review progress stay with the syllabus.</span></div>
+</div>
+<div style="display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 12px">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="5" rx="1"></rect><path d="M5 9v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9"></path><path d="M10 13h4"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 1px"><strong style="font-size: 13px; font-weight: 700">Protected records</strong><span>Approved syllabi keep their version history and review trail.</span></div>
+</div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<span aria-hidden="true" style="display: block; width: 24px; height: 2px; background: #2563EB"></span>
+<h2 style="margin: 0; font-size: 20px; line-height: 1.2; font-weight: 800; letter-spacing: -0.02em">Target users</h2>
+</div>
+<div style="display: flex; flex-direction: column; border: 1px solid #E2E8F0; border-radius: 6px; background: #F8FAFC; padding: 4px 14px">
+<div style="display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 10px; padding: 6px 0; border-bottom: 1px solid #E2E8F0"><span style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; line-height: 18px; font-weight: 600; color: #2563EB">Faculty</span><span>Prepare, check, submit, and track syllabi.</span></div>
+<div style="display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 10px; padding: 6px 0; border-bottom: 1px solid #E2E8F0"><span style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; line-height: 18px; font-weight: 600; color: #2563EB">CITE Dean</span><span>Reviews first. Manages users, curriculum, and deadlines.</span></div>
+<div style="display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 10px; padding: 6px 0; border-bottom: 1px solid #E2E8F0"><span style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; line-height: 18px; font-weight: 600; color: #2563EB">Asst. VPAA</span><span>Reviews second.</span></div>
+<div style="display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 10px; padding: 6px 0; border-bottom: 1px solid #E2E8F0"><span style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; line-height: 18px; font-weight: 600; color: #2563EB">LIC Director</span><span>Reviews third.</span></div>
+<div style="display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 10px; padding: 6px 0; border-bottom: 1px solid #E2E8F0"><span style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; line-height: 18px; font-weight: 600; color: #2563EB">VPAA</span><span>Vice President for Academic Affairs. Makes the final decision.</span></div>
+<div style="display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 10px; padding: 6px 0"><span style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; line-height: 18px; font-weight: 600; color: #2563EB">Students</span><span>View approved syllabi.</span></div>
+</div>
+</div>
+</section>
+
+<section style="box-sizing: border-box; height: 816px; padding: 33.6px; display: flex; flex-direction: column; justify-content: space-between; min-width: 0">
+<div style="display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<span aria-hidden="true" style="display: block; width: 24px; height: 2px; background: #2563EB"></span>
+<h2 style="margin: 0; font-size: 20px; line-height: 1.2; font-weight: 800; letter-spacing: -0.02em">Technology used</h2>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; line-height: 16px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h3 style="margin: 0; font-family: 'Plus Jakarta Sans', Inter, Arial, sans-serif; font-size: 12.5px; line-height: 17px; font-weight: 700">Frontend</h3>
+<div style="display: flex; flex-wrap: wrap; gap: 5px"><span style="padding: 3px 6px; border: 1px solid #E2E8F0; border-radius: 4px; background: #F8FAFC">React 19</span><span style="padding: 3px 6px; border: 1px solid #E2E8F0; border-radius: 4px; background: #F8FAFC">Vite 8</span><span style="padding: 3px 6px; border: 1px solid #E2E8F0; border-radius: 4px; background: #F8FAFC">Tailwind CSS 4</span><span style="padding: 3px 6px; border: 1px solid #E2E8F0; border-radius: 4px; background: #F8FAFC">JavaScript</span><span style="padding: 3px 6px; border: 1px solid #E2E8F0; border-radius: 4px; background: #F8FAFC">Phosphor Icons</span></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h3 style="margin: 0; font-family: 'Plus Jakarta Sans', Inter, Arial, sans-serif; font-size: 12.5px; line-height: 17px; font-weight: 700">Backend</h3>
+<div style="display: flex; flex-wrap: wrap; gap: 5px"><span style="padding: 3px 6px; border: 1px solid #E2E8F0; border-radius: 4px; background: #F8FAFC">Node.js</span><span style="padding: 3px 6px; border: 1px solid #E2E8F0; border-radius: 4px; background: #F8FAFC">Express 4</span><span style="padding: 3px 6px; border: 1px solid #E2E8F0; border-radius: 4px; background: #F8FAFC">PDF.js</span><span style="padding: 3px 6px; border: 1px solid #E2E8F0; border-radius: 4px; background: #F8FAFC">Nodemailer</span></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h3 style="margin: 0; font-family: 'Plus Jakarta Sans', Inter, Arial, sans-serif; font-size: 12.5px; line-height: 17px; font-weight: 700">Database</h3>
+<div style="display: flex; flex-wrap: wrap; gap: 5px"><span style="padding: 3px 6px; border: 1px solid #E2E8F0; border-radius: 4px; background: #F8FAFC">MySQL</span><span style="padding: 3px 6px; border: 1px solid #E2E8F0; border-radius: 4px; background: #F8FAFC">mysql2</span></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h3 style="margin: 0; font-family: 'Plus Jakarta Sans', Inter, Arial, sans-serif; font-size: 12.5px; line-height: 17px; font-weight: 700">AI integration (Anthropic)</h3>
+<div style="display: flex; flex-wrap: wrap; gap: 5px"><span style="padding: 3px 6px; border: 1px solid #2563EB; border-radius: 4px; background: #FFFFFF; color: #2563EB">Claude API</span><span style="padding: 3px 6px; border: 1px solid #E2E8F0; border-radius: 4px; background: #F8FAFC">Sonnet 5.5</span><span style="padding: 3px 6px; border: 1px solid #E2E8F0; border-radius: 4px; background: #F8FAFC">Haiku 5.5</span></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h3 style="margin: 0; font-family: 'Plus Jakarta Sans', Inter, Arial, sans-serif; font-size: 12.5px; line-height: 17px; font-weight: 700">Connected services</h3>
+<div style="display: flex; flex-wrap: wrap; gap: 5px"><span style="padding: 3px 6px; border: 1px solid #E2E8F0; border-radius: 4px; background: #F8FAFC">Google Sign-In</span><span style="padding: 3px 6px; border: 1px solid #E2E8F0; border-radius: 4px; background: #F8FAFC">Crossref</span><span style="padding: 3px 6px; border: 1px solid #E2E8F0; border-radius: 4px; background: #F8FAFC">Open Library</span></div>
+</div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<span aria-hidden="true" style="display: block; width: 24px; height: 2px; background: #2563EB"></span>
+<h2 style="margin: 0; font-size: 20px; line-height: 1.2; font-weight: 800; letter-spacing: -0.02em">Contact information</h2>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 10px"><strong style="font-weight: 700">Developers</strong><span>Bjorn Kurk G. Cruz<br>Jp Rizal G. Del Rosario<br>Raymond Lester S. Insular<br>Sean Andrei G. Mahinay</span></div>
+<div style="display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 10px; border-top: 1px solid #E2E8F0; padding-top: 10px"><strong style="font-weight: 700">Department</strong><span>College of Information Technology and Engineering (CITE)</span></div>
+<div style="display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 10px; border-top: 1px solid #E2E8F0; padding-top: 10px"><strong style="font-weight: 700">Institution</strong><span>La Consolacion University Philippines (LCUP)</span></div>
+<div style="display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 4px 10px; border-top: 1px solid #E2E8F0; padding-top: 10px"><strong style="font-weight: 700">Year</strong><span>A.Y. 2026–2027</span><strong style="font-weight: 700">Email</strong><span>[team email address]</span><strong style="font-weight: 700">Phone</strong><span>[contact number]</span></div>
+</div>
+</div>
+</section>
+
+<section style="box-sizing: border-box; height: 816px; padding: 33.6px; display: flex; flex-direction: column; justify-content: space-between; min-width: 0">
+<div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; border-bottom: 1px solid #E2E8F0"><span style="font-size: 12.5px; font-weight: 700">CITE Department — LCUP</span><span style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px">v1.0.0</span></div>
+<div style="display: flex; flex-direction: column; gap: 26px">
+<svg role="img" aria-label="Emblem of four squares for prepare, check, review, and approve" width="60" height="60" viewBox="0 0 60 60" fill="none"><rect x="0.75" y="0.75" width="26.5" height="26.5" stroke="#0F172A" stroke-width="1.5"></rect><path d="M7 9h14M7 14h14M7 19h9" stroke="#0F172A" stroke-width="1.5"></path><rect x="32.75" y="0.75" width="26.5" height="26.5" stroke="#0F172A" stroke-width="1.5"></rect><path d="M32.75 27.25 59.25 0.75V27.25Z" fill="#0F172A"></path><rect x="0" y="32" width="28" height="28" fill="#0F172A"></rect><circle cx="14" cy="46" r="6" stroke="#FFFFFF" stroke-width="1.5"></circle><rect x="32" y="32" width="28" height="28" fill="#2563EB"></rect><path d="m39.500 46.500 4.500 4.500 8.500-9.500" stroke="#FFFFFF" stroke-width="2"></path></svg>
+<h1 style="margin: 0; font-size: 37px; line-height: 1.06; font-weight: 800; letter-spacing: -0.035em">AI-Powered<br>Web-Based<br>Syllabus<br>Management<br>System</h1>
+<p style="margin: 0; font-size: 14px; line-height: 1.45; font-weight: 600; text-wrap: pretty">for Efficient Curriculum Monitoring and Faculty Access in the College Department</p>
+<p style="margin: 0; font-size: 13px; line-height: 1.5; text-wrap: pretty">One place to prepare, check, review, and approve every CITE syllabus.</p>
+</div>
+<div style="border: 1px solid #E2E8F0; border-radius: 6px; overflow: hidden">
+<div style="display: flex; align-items: center; gap: 5px; padding: 8px 12px; border-bottom: 1px solid #E2E8F0; background: #F8FAFC"><span aria-hidden="true" style="width: 6px; height: 6px; border: 1px solid #0F172A; border-radius: 50%; box-sizing: border-box"></span><span aria-hidden="true" style="width: 6px; height: 6px; border: 1px solid #0F172A; border-radius: 50%; box-sizing: border-box"></span><span aria-hidden="true" style="width: 6px; height: 6px; border: 1px solid #0F172A; border-radius: 50%; box-sizing: border-box"></span><span style="margin-left: 6px; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; line-height: 14px">alignment chain</span></div>
+<div style="display: flex; flex-direction: column; align-items: stretch; padding: 14px; font-size: 12px; line-height: 16px; font-weight: 600; text-align: center">
+<div style="padding: 5px; border: 1px solid #0F172A; border-radius: 4px">EGAs and program outcomes</div>
+<span aria-hidden="true" style="align-self: center; width: 1px; height: 9px; background: #0F172A"></span>
+<div style="padding: 5px; border: 1px solid #0F172A; border-radius: 4px">Course learning outcomes</div>
+<span aria-hidden="true" style="align-self: center; width: 1px; height: 9px; background: #0F172A"></span>
+<div style="padding: 5px; border: 1px solid #0F172A; border-radius: 4px">Weekly content and outcomes</div>
+<span aria-hidden="true" style="align-self: center; width: 1px; height: 9px; background: #0F172A"></span>
+<div style="padding: 5px; border: 1px solid #2563EB; border-radius: 4px; background: #2563EB; color: #FFFFFF">Activities and assessment tasks</div>
+</div>
+</div>
+</section>
+
+</div>
+</div>
+<div class="page" role="group" aria-label="Page 2, inside">
+<div style="width: 1056px; height: 816px; box-sizing: border-box; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: #FFFFFF; color: #0F172A; font-family: 'Plus Jakarta Sans', Inter, Arial, sans-serif; font-size: 12.5px; line-height: 1.45; overflow: hidden">
+
+<section style="box-sizing: border-box; height: 816px; padding: 33.6px; display: flex; flex-direction: column; justify-content: space-between; min-width: 0">
+<div style="display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<span aria-hidden="true" style="display: block; width: 24px; height: 2px; background: #2563EB"></span>
+<h2 style="margin: 0; font-size: 20px; line-height: 1.2; font-weight: 800; letter-spacing: -0.02em">System overview</h2>
+</div>
+<p style="margin: 0; text-wrap: pretty">The AI-Powered Web-Based Syllabus Management System is one platform for preparing, checking, reviewing, approving, and storing course syllabi in the CITE Department of La Consolacion University Philippines.</p>
+<div style="display: flex; flex-direction: column; gap: 8px; border: 1px solid #E2E8F0; border-radius: 6px; background: #F8FAFC; padding: 14px">
+<h3 style="margin: 0; font-size: 13px; line-height: 18px; font-weight: 700">Problems it solves</h3>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 8px"><svg aria-hidden="true" width="14" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F172A" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg><span>Inconsistent formats and duplicate files</span></div>
+<div style="display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 8px"><svg aria-hidden="true" width="14" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F172A" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg><span>Alignment checked only by eye</span></div>
+<div style="display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 8px"><svg aria-hidden="true" width="14" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F172A" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg><span>Comments scattered in email and chat</span></div>
+<div style="display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 8px"><svg aria-hidden="true" width="14" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F172A" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg><span>No single record of who reviewed which version</span></div>
+</div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<span aria-hidden="true" style="display: block; width: 24px; height: 2px; background: #2563EB"></span>
+<h2 style="margin: 0; font-size: 20px; line-height: 1.2; font-weight: 800; letter-spacing: -0.02em">Objectives</h2>
+</div>
+<p style="margin: 0; text-wrap: pretty">To standardize how course syllabi are prepared, checked, reviewed, approved, and stored.</p>
+<div style="display: flex; flex-direction: column">
+<div style="display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; padding: 10px 0; border-top: 1px solid #E2E8F0"><span style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 13px; line-height: 18px; font-weight: 600; color: #2563EB">01</span><span>Build syllabi that follow LCUP's <span style="white-space: nowrap">ten-section</span> template through a guided builder, PDF import, and AI drafting.</span></div>
+<div style="display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; padding: 10px 0; border-top: 1px solid #E2E8F0"><span style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 13px; line-height: 18px; font-weight: 600; color: #2563EB">02</span><span>Check each syllabus against coded rules and constructive alignment, and propose revisions for people to decide on.</span></div>
+<div style="display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; padding: 10px 0; border-top: 1px solid #E2E8F0"><span style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 13px; line-height: 18px; font-weight: 600; color: #2563EB">03</span><span>Route each syllabus through the Dean, Asst. VPAA, and LIC Director before the VPAA decides.</span></div>
+<div style="display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; padding: 10px 0 0; border-top: 1px solid #E2E8F0"><span style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 13px; line-height: 18px; font-weight: 600; color: #2563EB">04</span><span>Support monitoring with dashboards, deadlines, reports, a versioned repository, and an audit log.</span></div>
+</div>
+</div>
+</section>
+
+<section style="box-sizing: border-box; height: 816px; padding: 33.6px; display: flex; flex-direction: column; justify-content: space-between; min-width: 0">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<span aria-hidden="true" style="display: block; width: 24px; height: 2px; background: #2563EB"></span>
+<h2 style="margin: 0; font-size: 20px; line-height: 1.2; font-weight: 800; letter-spacing: -0.02em">Key features and functionalities</h2>
+</div>
+<div style="display: flex; flex-direction: column">
+<div style="display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 12px; padding: 7px 0; border-top: 1px solid #E2E8F0">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.500 3.500a2.120 2.120 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 1px"><h3 style="margin: 0; font-size: 13px; line-height: 18px; font-weight: 700">Syllabus Builder</h3><span>Seven guided steps with official course data and autosave.</span></div>
+</div>
+<div style="display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 12px; padding: 7px 0; border-top: 1px solid #E2E8F0">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z"></path><path d="M14 3v6h6"></path><path d="M12 18v-6"></path><path d="m9 15 3-3 3 3"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 1px"><h3 style="margin: 0; font-size: 13px; line-height: 18px; font-weight: 700">PDF Import</h3><span>Scans an existing syllabus and checks it against the template.</span></div>
+</div>
+<div style="display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 12px; padding: 7px 0; border-top: 1px solid #E2E8F0">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z"></path><path d="M14 3v6h6"></path><path d="M12 12v6"></path><path d="M9 15h6"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 1px"><h3 style="margin: 0; font-size: 13px; line-height: 18px; font-weight: 700">AI Syllabus Generator</h3><span>Drafts outcomes, the 18-week plan, and grading for a subject.</span></div>
+</div>
+<div style="display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 12px; padding: 7px 0; border-top: 1px solid #E2E8F0">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 10 9.500 3.500 12 10 14.500 12 21l2-6.500 6.500-2.500L14 9.500Z"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 1px"><h3 style="margin: 0; font-size: 13px; line-height: 18px; font-weight: 700">AI Checker</h3><span>Judges alignment, scores it, and suggests revisions. AI advises; it never approves.</span></div>
+</div>
+<div style="display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 12px; padding: 7px 0; border-top: 1px solid #E2E8F0">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4.500 6v6c0 4.500 3.200 7.700 7.500 9 4.300-1.300 7.500-4.500 7.500-9V6Z"></path><path d="m9 12 2 2 4-4"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 1px"><h3 style="margin: 0; font-size: 13px; line-height: 18px; font-weight: 700">Compliance Check</h3><span>Blocks missing sections and grading totals other than 100%.</span></div>
+</div>
+<div style="display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 12px; padding: 7px 0; border-top: 1px solid #E2E8F0">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.500V12a9 9 0 1 1-5.300-8.200"></path><path d="m9 11 3 3 9-9"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 1px"><h3 style="margin: 0; font-size: 13px; line-height: 18px; font-weight: 700">Review &amp; Approval</h3><span>Four reviewers in order. A returned syllabus goes back to whoever returned it.</span></div>
+</div>
+<div style="display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 12px; padding: 7px 0; border-top: 1px solid #E2E8F0">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="5" rx="1"></rect><path d="M5 9v9a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9"></path><path d="M10 13h4"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 1px"><h3 style="margin: 0; font-size: 13px; line-height: 18px; font-weight: 700">Repository</h3><span>Approved syllabi with version history.</span></div>
+</div>
+<div style="display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 12px; padding: 7px 0; border-top: 1px solid #E2E8F0">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"></path><path d="M7 16v-5"></path><path d="M12 16V7"></path><path d="M17 16v-3"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 1px"><h3 style="margin: 0; font-size: 13px; line-height: 18px; font-weight: 700">Analytics &amp; Reports</h3><span>Trends with CSV and DOCX export.</span></div>
+</div>
+<div style="display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 12px; padding: 7px 0; border-top: 1px solid #E2E8F0; border-bottom: 1px solid #E2E8F0">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.870"></path><path d="M16 3.130a4 4 0 0 1 0 7.750"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 1px"><h3 style="margin: 0; font-size: 13px; line-height: 18px; font-weight: 700">Curriculum and Users &amp; Roles</h3><span>Programs, subjects, and deadlines, with access for six roles.</span></div>
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 5px; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; line-height: 16px"><span style="padding: 3px 6px; border: 1px solid #E2E8F0; border-radius: 4px; background: #F8FAFC">Messaging</span><span style="padding: 3px 6px; border: 1px solid #E2E8F0; border-radius: 4px; background: #F8FAFC">Notifications</span><span style="padding: 3px 6px; border: 1px solid #E2E8F0; border-radius: 4px; background: #F8FAFC">Audit Log</span><span style="padding: 3px 6px; border: 1px solid #E2E8F0; border-radius: 4px; background: #F8FAFC">English/Filipino</span><span style="padding: 3px 6px; border: 1px solid #E2E8F0; border-radius: 4px; background: #F8FAFC">COR sign-up</span></div>
+</section>
+
+<section style="box-sizing: border-box; height: 816px; padding: 33.6px; display: flex; flex-direction: column; justify-content: space-between; min-width: 0">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<span aria-hidden="true" style="display: block; width: 24px; height: 2px; background: #2563EB"></span>
+<h2 style="margin: 0; font-size: 20px; line-height: 1.2; font-weight: 800; letter-spacing: -0.02em">Screenshots of the system</h2>
+</div>
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 8px">
+<div style="border: 1px solid #E2E8F0; border-radius: 6px; overflow: hidden">
+<div style="display: flex; align-items: center; gap: 5px; padding: 5px 10px; border-bottom: 1px solid #E2E8F0; background: #F8FAFC"><span aria-hidden="true" style="width: 6px; height: 6px; border: 1px solid #0F172A; border-radius: 50%; box-sizing: border-box"></span><span aria-hidden="true" style="width: 6px; height: 6px; border: 1px solid #0F172A; border-radius: 50%; box-sizing: border-box"></span><span aria-hidden="true" style="width: 6px; height: 6px; border: 1px solid #0F172A; border-radius: 50%; box-sizing: border-box"></span><span style="margin-left: 6px; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; line-height: 14px">Dashboard</span></div>
+<div style="position: relative; aspect-ratio: 2000 / 1250; display: flex; align-items: center; justify-content: center; background: #F8FAFC"><span aria-hidden="true" style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px">screenshots/dashboard.png</span><img onerror="this.style.display='none'" src="./screenshots/dashboard.png" alt="Faculty dashboard with submission counts, deadlines, and compliance score" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left"></div>
+</div>
+<figcaption style="font-size: 12px; line-height: 16px">Faculty dashboard and compliance score</figcaption>
+</figure>
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 8px">
+<div style="border: 1px solid #E2E8F0; border-radius: 6px; overflow: hidden">
+<div style="display: flex; align-items: center; gap: 5px; padding: 5px 10px; border-bottom: 1px solid #E2E8F0; background: #F8FAFC"><span aria-hidden="true" style="width: 6px; height: 6px; border: 1px solid #0F172A; border-radius: 50%; box-sizing: border-box"></span><span aria-hidden="true" style="width: 6px; height: 6px; border: 1px solid #0F172A; border-radius: 50%; box-sizing: border-box"></span><span aria-hidden="true" style="width: 6px; height: 6px; border: 1px solid #0F172A; border-radius: 50%; box-sizing: border-box"></span><span style="margin-left: 6px; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; line-height: 14px">Checker</span></div>
+<div style="position: relative; aspect-ratio: 1308 / 444; display: flex; align-items: center; justify-content: center; background: #F8FAFC"><span aria-hidden="true" style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px">screenshots/checker.png</span><img onerror="this.style.display='none'" src="./screenshots/checker.png" alt="AI Checker result with a compliance score, the pass line, and findings" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left"></div>
+</div>
+<figcaption style="font-size: 12px; line-height: 16px">AI Checker: score, pass line, and findings</figcaption>
+</figure>
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 8px">
+<div style="border: 1px solid #E2E8F0; border-radius: 6px; overflow: hidden">
+<div style="display: flex; align-items: center; gap: 5px; padding: 5px 10px; border-bottom: 1px solid #E2E8F0; background: #F8FAFC"><span aria-hidden="true" style="width: 6px; height: 6px; border: 1px solid #0F172A; border-radius: 50%; box-sizing: border-box"></span><span aria-hidden="true" style="width: 6px; height: 6px; border: 1px solid #0F172A; border-radius: 50%; box-sizing: border-box"></span><span aria-hidden="true" style="width: 6px; height: 6px; border: 1px solid #0F172A; border-radius: 50%; box-sizing: border-box"></span><span style="margin-left: 6px; font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px; line-height: 14px">Syllabi</span></div>
+<div style="position: relative; aspect-ratio: 983 / 421; display: flex; align-items: center; justify-content: center; background: #F8FAFC"><span aria-hidden="true" style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 11px">screenshots/review.png</span><img onerror="this.style.display='none'" src="./screenshots/review.png" alt="A submitted syllabus showing which reviewer has it now" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left"></div>
+</div>
+<figcaption style="font-size: 12px; line-height: 16px">Review progress on a submitted syllabus</figcaption>
+</figure>
+<p style="margin: 0; font-size: 11px; line-height: 16px">Screenshots show demonstration data.</p>
+</section>
+
+</div>
+</div>
+</body>
+</html>
