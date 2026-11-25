@@ -6,7 +6,7 @@
 //   code_not_found         the curriculum was found but does not list the code (it may exist in another program or curriculum year: reported, not assumed)
 //   curriculum_unavailable no approved curriculum for the program
 //   curriculum_ambiguous   several approved versions and none selected
-const normCode = value => String(value ?? '').trim().replace(/\s+/g, ' ').toUpperCase();
+const { normCode } = require('../subjectCode');
 function identityOf(meta, masters, sets, course) {
   const base = { code: meta.code || '', program: meta.program || '', curriculumYear: meta.curriculumYear || '' };
   if (course) return { ...base, status: 'verified', elsewhere: [] };

@@ -119,7 +119,7 @@ These live in `coded()` in `server/lib/syllabuscheck/engine.js` and `server/lib/
 |---|---|---|
 | CUR-REF | exactly one approved official curriculum exists for the program (and curriculum year) | blocks |
 | CUR-CODE | the course code exists in that curriculum | blocks; **critical → score 0** |
-| CUR-FIELD | title, prerequisite, lecture units, lab units and year level equal the curriculum | blocks; the suggestion is the exact official value |
+| CUR-FIELD | title, prerequisite (a hyphen or a space in a code is the same), lecture units, lab units and year level equal the curriculum | blocks; the suggestion is the exact official value |
 | INST-EXACT / INST-MASTER | vision, mission and EGAs equal the institution master exactly | blocks; the suggestion is the master text |
 | PO-EXACT / PO-MASTER | the program outcomes equal the program master exactly | blocks; the suggestion is the master list |
 | CLO-ID / CLO-MAP | every CLO has a unique id and at least one existing, non-repeated PO and EGA | blocks |

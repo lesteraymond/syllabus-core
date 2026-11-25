@@ -18,7 +18,7 @@ const PENALTIES = POLICY;
 // verification; undated or foundational works are not automatically penalized.
 const codedStandard = { ...standard, rules: standard.rules.filter(rule => !['C-04', 'R-02', 'R-03'].includes(rule.id)) };
 const str = value => String(value ?? '');
-const normCode = value => str(value).trim().replace(/\s+/g, ' ').toUpperCase();
+const { normCode } = require('../subjectCode'); // "IT 204" and "IT-204" are one code
 const equal = (a, b) => canonical(a) === canonical(b);
 const { titleRelation, titleDecision, titlePolicyOf, officialComparison, TITLE_POLICY_VERSION } = require('./titles');
 const { identityOf } = require('./identity');
@@ -61,7 +61,8 @@ function coded(content, masters = {}, opts = {}) {
       // The title comparison follows the title policy (titles.js): exact unless SYLLABUS_CHECK_TITLE_POLICY=normalized. A caller that names no comparison
       // (the submission gate in compliance/service.js) gets the one the policy makes official, so the check and the gate always decide alike.
       // The prerequisite is exact (only the title is covered by the normalisation policy), except that the ways of writing "no pre-requisite"
-      // (empty, None, N/A, the import's blank-cell sentence) are one value: prerequisite.js. A real pre-requisite on either side is still compared exactly.
+      // (empty, None, N/A, the import's blank-cell sentence) are one value: prerequisite.js. A real pre-requisite on either side is still compared exactly,
+      // but for a hyphen or a space in a code.
       check('CUR-FIELD', 'meta.title', titleDecision(opts.titleComparison || officialComparison(titlePolicyOf(process.env)), meta.title, course.title), meta.title, course.title, 'title differs from the official curriculum.', { replacement: course.title });
       // Same check, same status and severity; only the wording differs for a blank curriculum cell, which is never offered as replacement text (prerequisite.js).
       const blankCell = isBlankCell(course.prereq);

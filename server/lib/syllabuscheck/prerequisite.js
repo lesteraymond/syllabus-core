@@ -7,15 +7,17 @@
 // The data is not reinterpreted (a blank cell stays recorded as printed, not as an official "None"): only the COMPARISON accepts that a syllabus stating no
 // pre-requisite does not differ from a curriculum that specifies none. Anything else is compared exactly, so a genuine difference is still found:
 // "None" against "IT 101", or "IT 101" against a blank cell, both differ.
+// One more spelling is accepted: a hyphen or a space inside a code is the same ("IT 204" and "IT-204"), as for a subject's own code (lib/subjectCode.js).
 // Nothing here invents a pre-requisite, and none of these forms is ever turned into one.
 const { BLANK } = require('../../db/local-curriculum-data.cjs');
+const { hyphenAsSpace } = require('../subjectCode');
 
 const NONE_WORDS = /^(none|n\/a)\.?$/i;
 const noPrerequisite = (value) => {
   const text = String(value ?? '').trim();
   return text === '' || NONE_WORDS.test(text) || text === BLANK;
 };
-const samePrerequisite = (entered, official) => String(entered ?? '') === String(official ?? '') || (noPrerequisite(entered) && noPrerequisite(official));
+const samePrerequisite = (entered, official) => hyphenAsSpace(entered) === hyphenAsSpace(official) || (noPrerequisite(entered) && noPrerequisite(official));
 
 // The blank-cell sentence is an internal placeholder, never text for a syllabus. When the syllabus names a pre-requisite against such a cell, the finding
 // says plainly that none is listed and asks for verification (a blank cell does not prove the subject has none), and no replacement is offered.

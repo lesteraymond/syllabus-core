@@ -113,15 +113,15 @@ const jsonOf = value => JSON.stringify(value);
 // description or topics, so for those the author's notes (up to 1500 characters, sent as data) are the way to steer the content.
 // A Filipino-language subject (taught and written in Filipino): the code starts with FIL, or the title names Filipino or a Filipino-language course word.
 const isFilipinoSubject = (title, code) => R.isFilipinoSubject(clean(title), clean(code));
+const { normCode, sameCode } = require('../../subjectCode'); // "IT 204" and "IT-204" are one code
 const semesterNo = text => Number((/(\d)/.exec(String(text || '')) || [])[1]) || 0;
 function subjectOf(content, masters, guidance) {
   const meta = content?.meta || {};
   const code = clean(meta.code), prerequisite = clean(meta.prereq);
   const courses = (masters?.curricula || []).flatMap(c => (Array.isArray(c.courses) ? c.courses : []));
-  const same = (a, b) => clean(a).toUpperCase() === clean(b).toUpperCase();
-  const here = code ? courses.find(c => same(c.code, code)) : null;
-  const prerequisiteSubjects = prerequisite ? courses.filter(c => clean(c.code).length >= 3 && prerequisite.toUpperCase().includes(clean(c.code).toUpperCase())).map(c => clean(c.title)).slice(0, 6) : [];
-  const before = here ? [...new Set(courses.filter(c => !same(c.code, code) && (Number(c.yearLevel) < Number(here.yearLevel) || (Number(c.yearLevel) === Number(here.yearLevel) && semesterNo(c.semester) < semesterNo(here.semester)))).map(c => clean(c.title)))].slice(0, 25) : [];
+  const here = code ? courses.find(c => sameCode(c.code, code)) : null;
+  const prerequisiteSubjects = prerequisite ? courses.filter(c => clean(c.code).length >= 3 && normCode(prerequisite).includes(normCode(c.code))).map(c => clean(c.title)).slice(0, 6) : [];
+  const before = here ? [...new Set(courses.filter(c => !sameCode(c.code, code) && (Number(c.yearLevel) < Number(here.yearLevel) || (Number(c.yearLevel) === Number(here.yearLevel) && semesterNo(c.semester) < semesterNo(here.semester)))).map(c => clean(c.title)))].slice(0, 25) : [];
   const notes = clean(guidance).slice(0, 1500);
   return {
     title: clean(meta.title), code, program: clean(meta.program), yearLevel: clean(meta.yearLevel), semester: clean(meta.semester), prerequisite,

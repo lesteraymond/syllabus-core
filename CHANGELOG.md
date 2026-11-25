@@ -3098,3 +3098,14 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Change:** `server/lib/storagePaths.js` is the only place that reads the two settings: relative is under `server/`, absolute is used as it is. The upload route, the file route, the checker, the catalog cleanup, the photos and `migrate-avatars-private` use it. Nothing to move on an installation that uses the defaults.
 - **Docs:** both settings are in the staging and production templates and described in `HOW-TO-RUN.md`; the QA release gate prompt checks them.
 - **Tests:** `storagePaths.test.js` (4; three fail on the previous code). `npm test` (1,764) and `npm run test:vpaa` (37) pass. Checked on a running server with absolute folders and a scratch database: a profile photo was saved in the configured folder and read back.
+
+---
+
+### v1.98.34 — A Hyphen or a Space in a Subject Code Is the Same
+**Date:** November 25, 2026
+
+- **Problem:** the school's curriculum prints "IT 203" and "IT-204" on one page, and the checker compared codes letter by letter. A subject entered as "IT 204" was "not in the official curriculum": the AI check did not run and the score was 0. A pre-requisite written "IT 204" blocked submitting in the same way, and the AI Syllabus Generator did not find that pre-requisite subject.
+- **Change:** `server/lib/subjectCode.js` is the one comparison of two subject codes: a hyphen between letters or digits reads as a space. The curriculum check (CUR-CODE, and the pre-requisite of CUR-FIELD), the other-program hint, the administrator's curriculum warning and the generator use it. A code is still stored, shown and sent to the AI as it was written.
+- **Not changed:** scoring, AI questions and prompts, stored answers, and the other curriculum fields. A different code or pre-requisite is still found ("IT 999", "IT204", "IT 205"). Titles are still compared exactly. A code that ends in a hyphen, as eight Cybersecurity codes do ("IT 102-"), keeps that hyphen. Nothing to migrate.
+- **Checked on the dev data:** each of the 243 codes of the four approved curricula still matches only itself, and the generator finds the same pre-requisite subjects as before for every official spelling. IT 204 (draft) is now found in the curriculum; only its title still differs.
+- **Tests:** `server/lib/subjectCode.test.js` (8; six fail on the previous code). `npm test` and `npm run test:vpaa` pass.
