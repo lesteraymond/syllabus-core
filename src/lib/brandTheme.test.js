@@ -102,7 +102,7 @@ test('the dashboard card headings and the stat card titles read the same size to
   assert.ok(theme.includes('--title-size: var(--text-sm)'), 'one shared size');
   assert.ok(theme.includes('.stat-grid .stat-card span {') && theme.includes('font-size: var(--title-size)'), 'stat title uses it');
   assert.ok(theme.includes('.dashboard-grid .card-head h3 { color: var(--ink); font-size: var(--title-size)'), 'card h3 uses it');
-  assert.ok(theme.includes('.workspace h3 { font-weight: var(--fw-heavy); }') && theme.includes('font-weight: var(--fw-heavy); text-transform: none'), 'both are weight 800');
+  assert.ok(theme.includes('.workspace h3 { font-weight: var(--fw-semibold);') && theme.includes('font-weight: var(--fw-semibold); text-transform: none'), 'both use Geist semibold weight');
 });
 
 test('the check history score badges keep readable text on their tints (4.5:1)', () => {
@@ -122,12 +122,12 @@ test('status tags are styled for both spellings of a status, and each carries an
 });
 
 test('the time-usage chart keeps its bars and the range buttons readable', () => {
-  assert.ok(contrast('#b9842a', '#ffffff') >= 3, 'today bar on the white card (a graphic: 3:1)');
+  assert.ok(contrast(token('usage-today'), '#ffffff') >= 3, 'today bar on the white card (a graphic: 3:1)');
   assert.ok(contrast(token('btn-primary'), '#ffffff') >= 3, 'ordinary bars on the white card (the primary button blue)');
   assert.ok(theme.includes('.usage-bar { fill: var(--btn-primary); }'), 'the bars use the primary button blue, like New syllabus');
   assert.ok(contrast('#ffffff', token('btn-primary')) >= 4.5, 'selected range label on the primary button blue');
   assert.ok(theme.includes('.usage-range button.on { background: var(--btn-primary); color: #ffffff; }'), 'the selected range button uses the primary button blue, like New syllabus');
-  assert.ok(theme.includes('--usage-today: #b9842a'), 'the today colour is the one tested above');
+  assert.ok(theme.includes('--usage-today: #a35200'), 'the today colour is the Geist amber tested above');
 });
 
 test('the AI Quality Snapshot rings are the primary button blue at 90 and above, amber from 75, red below 75', () => {
@@ -139,10 +139,10 @@ test('the AI Quality Snapshot rings are the primary button blue at 90 and above,
 });
 
 test('the AI Checker score rings are one thin arc per state, readable on white and on their track, with no water or orbit effects', () => {
-  assert.ok(theme.includes(':root { --ring-good: var(--green); --ring-warn: #a8740f; --ring-busy: var(--btn-primary); --ring-track: #e3e7ea; }'), 'the ring colours');
+  assert.ok(theme.includes(':root { --ring-good: var(--green); --ring-warn: #a35200; --ring-busy: var(--btn-primary); --ring-track: #e6e6e6; }'), 'the ring colours');
   [['green', token('green')], ['warn', token('ring-warn')], ['busy', token('btn-primary')]].forEach(([name, hex]) => {
     assert.ok(contrast(hex, '#ffffff') >= 3, name + ' arc on white (a graphic: 3:1)');
-    assert.ok(contrast(hex, '#e3e7ea') >= 3, name + ' arc on the grey track');
+    assert.ok(contrast(hex, token('ring-track')) >= 3, name + ' arc on the grey track');
   });
   assert.ok(!/--water|cmpWave|cmpRingOrbit/.test(theme), 'no water fill or orbiting rings');
   assert.ok(theme.includes('.big-ring.cmp-ring.checking::before {') && theme.includes('animation: ringTurn 1.1s linear infinite'), 'checking: one turning arc');
@@ -171,7 +171,7 @@ test('the subjects toolbar label uses the same size and weight as the stat card 
   const statRule = stat.slice(0, stat.indexOf('}'));
   const toolbar = theme.slice(theme.indexOf('.sm-toolbar .field > span {'));
   const toolbarRule = toolbar.slice(0, toolbar.indexOf('}'));
-  for (const part of ['font-size: var(--title-size)', 'font-weight: var(--fw-heavy)', 'color: var(--ink)']) {
+  for (const part of ['font-size: var(--title-size)', 'font-weight: var(--fw-semibold)', 'color: var(--ink)']) {
     assert.ok(statRule.includes(part), 'the stat title has ' + part);
     assert.ok(toolbarRule.includes(part), 'the toolbar label has ' + part);
   }
@@ -204,7 +204,7 @@ test('subject edit and delete moved from the modal to a last, left-aligned Actio
   assert.ok(table.includes('className="col-actions"') && table.includes('<SubjectRowActions'), 'each row has the actions');
   assert.ok(table.includes('colSpan={deadlineState.enabled ? 8 : 7}'), 'the empty row spans every column (code, title, program, curriculum year, term, pre-requisite, actions), the Deadline one too once it is shown');
   assert.ok(theme.includes('.col-actions { width: 112px; min-width: 112px; white-space: nowrap; text-align: left; }'), 'the header and cells are left-aligned');
-  assert.ok(theme.includes('.sm-actions .icon-btn { color: #9aa3b2;') && theme.includes('.sm-actions .icon-btn.is-delete:hover') && theme.includes('color: #d92424;'), 'the icons are soft grey, and delete turns red on hover, like the Programs card');
+  assert.ok(theme.includes('.sm-actions .icon-btn { color: #737373;') && theme.includes('.sm-actions .icon-btn.is-delete:hover') && theme.includes('color: var(--red);'), 'the icons are Geist neutral grey, and delete turns Geist red on hover');
   const actions = readFileSync(new URL('../components/SubjectActions.jsx', import.meta.url), 'utf8');
   assert.ok(actions.includes('e.stopPropagation()') && actions.includes('onKeyDown: (e) => e.stopPropagation()'), 'clicking a button does not also open the row');
 });
@@ -228,12 +228,12 @@ test('deadline tags and chips keep readable text on their fills (4.5:1)', () => 
     assert.ok(contrast(fg, bg) >= 4.5, status + ': ' + fg + ' on ' + bg + ' = ' + contrast(fg, bg).toFixed(1));
     assert.ok(theme.includes(selector + '::before') || theme.includes(selector + '::before,'), status + ' shows its icon');
   }
-  assert.ok(contrast('#d92424', token('tint-crimson')) >= 4.5, 'failed chip note');
+  assert.ok(contrast(token('red'), token('tint-crimson')) >= 4.5, 'failed chip note');
   assert.ok(contrast(token('green-ink'), token('tint-green')) >= 4.5, 'done chip note');
   assert.ok(contrast(token('gold-ink'), token('tint-gold')) >= 4.5, 'due-today chip note');
   assert.ok(contrast(token('muted'), '#ffffff') >= 4.5, 'upcoming chip note');
   assert.ok(contrast(token('blue2'), '#ffffff') >= 4.5, 'the set-a-deadline chip');
-  assert.ok(contrast('#d92424', '#ffffff') >= 4.5, 'the failed count in the dialog');
+  assert.ok(contrast(token('red'), '#ffffff') >= 4.5, 'the failed count in the dialog');
 });
 
 test('the Deadline column and dialog are wired into the subjects table, shown only once deadlines are set up', () => {
@@ -252,7 +252,7 @@ test('faculty see deadlines on the dashboard card and on each of their syllabi, 
   assert.ok(dash.includes('<UpcomingDeadlines role={user.role}') && !dash.includes('<Deadline day='), 'real deadlines replace the sample ones');
   assert.ok(mine.includes('deadlinesApi.mine()') && mine.includes("user.role !== 'faculty'") && mine.includes('deadlineForCard(deadlines, s)'), 'each faculty syllabus shows its subject\'s deadline');
   assert.ok(contrast('#4b5563', token('tint-cobalt')) >= 4.5 && theme.includes('.deadline.dl-row:hover small { color: #4b5563; }'), 'row notes stay readable on the hover fill');
-  assert.ok(contrast('#d92424', token('tint-crimson')) >= 4.5, 'the date box of a missed deadline');
+  assert.ok(contrast(token('red'), token('tint-crimson')) >= 4.5, 'the date box of a missed deadline');
 });
 
 test('the people list has no Remind button on each row (one Remind all does it), and a reminder refreshes who was last reminded', () => {
@@ -275,32 +275,32 @@ test('primary buttons are the softer blue #2563eb, with a readable white label (
   assert.ok(theme.includes('.user-save-btn {') && theme.includes('background: var(--btn-primary);'), 'admin user-save button uses the primary button blue');
 });
 
-// Sidebar hover is grey with a grey icon and subtle zoom; selected (.active) or pressed (:active) uses light blue (~22–28% opacity) with the primary blue icon and a slightly stronger zoom.
-test('the sidebar hover is grey with grey icon, selected/pressed is light blue with blue icon, and labels stay readable', () => {
+// Sidebar hover is Geist neutral grey; selected (.active) or pressed (:active) uses preserved light blue with the primary blue icon (no scale jitter).
+test('the sidebar hover is Geist neutral, selected/pressed is light blue with blue icon, and labels stay readable', () => {
   assert.notStrictEqual(token('side-active'), token('side-hover'), 'selected and hover can be told apart');
-  assert.ok(theme.includes('.sidebar nav button:hover { background: var(--side-hover); color: var(--ink); transform: scale(1.015); }'));
-  assert.ok(theme.includes('.sidebar nav button:hover .nav-icon { color: var(--side-icon); transform: scale(1.05); }'), 'hover keeps the icon grey');
-  assert.ok(theme.includes('.sidebar nav button.active, .sidebar nav button:active { background: var(--side-active-blue); color: var(--ink); box-shadow: none; transform: scale(1.025); }'), 'selected/pressed uses light blue with no side strip');
-  assert.ok(theme.includes('.sidebar nav button.active:hover, .sidebar nav button:hover:active { background: var(--side-active-blue-hover); color: var(--ink); transform: scale(1.035); }'));
-  assert.ok(theme.includes('.sidebar nav button.active .nav-icon, .sidebar nav button:active .nav-icon { color: var(--btn-primary); transform: scale(1.1); }'), 'icon turns blue on active/pressed');
-  assert.ok(theme.includes('padding-bottom: 6px; color: var(--text);'), 'the label is dark');
+  assert.ok(theme.includes('.sidebar nav button:hover { background: var(--side-hover); color: var(--ink); }'));
+  assert.ok(theme.includes('.sidebar nav button:hover .nav-icon { color: var(--ink); }'), 'hover highlights the icon cleanly');
+  assert.ok(theme.includes('.sidebar nav button.active, .sidebar nav button:active { background: var(--side-active-blue); color: var(--ink); font-weight: var(--fw-semibold); box-shadow: none; }'), 'selected/pressed uses light blue with no side strip');
+  assert.ok(theme.includes('.sidebar nav button.active:hover, .sidebar nav button:hover:active { background: var(--side-active-blue-hover); color: var(--ink); }'));
+  assert.ok(theme.includes('.sidebar nav button.active .nav-icon, .sidebar nav button:active .nav-icon { color: var(--btn-primary); }'), 'icon turns blue on active/pressed');
+  assert.ok(theme.includes('padding-bottom: 6px; border-radius: 6px; color: var(--text);'), 'the label is dark');
   assert.ok(contrast(token('text'), token('bg')) >= 4.5, 'and readable on the sidebar');
-  assert.ok(theme.includes('.sidebar nav button .nav-icon { color: var(--side-icon);'), 'the icon at rest: light grey');
+  assert.ok(theme.includes('.sidebar nav button .nav-icon { color: var(--side-icon);'), 'the icon at rest: Geist neutral grey');
   assert.ok(contrast(token('side-icon'), token('bg')) >= 3, 'still visible on the sidebar (a graphic: 3:1; the collapsed sidebar shows only icons): ' + contrast(token('side-icon'), token('bg')).toFixed(2));
 });
 
-// Secondary (outline) buttons: a light grey fill (#e2e5e9) with black bold text and no blue edge; the hover a step darker. Readable at rest and on hover.
-test('outline buttons are light grey with black bold text and no blue border', () => {
-  assert.strictEqual(token('btn-secondary'), '#e2e5e9');
-  for (const name of ['btn-secondary', 'btn-secondary-hover']) assert.ok(contrast('#000000', token(name)) >= 7, 'black label on ' + name);
-  assert.ok(theme.includes('.btn.outline { background: var(--btn-secondary); color: #000; font-weight: var(--fw-bold); border-color: var(--btn-secondary); }'));
-  assert.ok(theme.includes('.btn.outline:hover { background: var(--btn-secondary-hover); border-color: var(--btn-secondary-hover); }'));
+// Secondary (outline) buttons: Geist crisp white surface with neutral hairline border and dark ink text; hover steps to #f2f2f2.
+test('outline buttons use Geist crisp white surface with dark ink text and neutral hairline border', () => {
+  assert.strictEqual(token('btn-secondary'), '#ffffff');
+  for (const name of ['btn-secondary', 'btn-secondary-hover']) assert.ok(contrast(token('ink'), token(name)) >= 7, 'dark ink label on ' + name);
+  assert.ok(theme.includes('.btn.outline { background: var(--btn-secondary); color: var(--ink); font-weight: var(--fw-medium); border-color: var(--btn-secondary-border);'));
+  assert.ok(theme.includes('.btn.outline:hover { background: var(--btn-secondary-hover); border-color: var(--line-strong); }'));
   assert.ok(!/\.btn\.outline[^{]*\{[^}]*color: var\(--blue\)/.test(theme), 'no outline button keeps the blue text');
 });
 
-// The dashboard's stat card icons use the primary button blue (#0866ff, like New syllabus), with a white icon.
+// The dashboard's stat card icons use the primary button blue (#2563eb, like New syllabus), with a white icon.
 test('the dashboard stat icons are the primary button blue with a white icon', () => {
-  assert.ok(theme.includes('.stat-grid .stat-card .stat-icon { width: 28px; height: 28px; border-radius: 8px; background: var(--btn-primary); color: #ffffff;'));
+  assert.ok(theme.includes('.stat-grid .stat-card .stat-icon { width: 28px; height: 28px; border-radius: 7px; background: var(--btn-primary); color: #ffffff;'));
   assert.ok(contrast('#ffffff', token('btn-primary')) >= 3, 'the white icon on the blue (a graphic: 3:1)');
 });
 

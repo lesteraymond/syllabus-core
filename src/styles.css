@@ -5,6 +5,13 @@
 	font-display: swap;
 	src: url("../node_modules/geist/dist/fonts/geist-sans/Geist-Variable.woff2") format("woff2");
 }
+@font-face {
+	font-family: "Geist Mono";
+	font-style: normal;
+	font-weight: 100 900;
+	font-display: swap;
+	src: url("../node_modules/geist/dist/fonts/geist-mono/GeistMono-Variable.woff2") format("woff2");
+}
 
 :root {
 	--text-xs: 12px;
@@ -2548,7 +2555,7 @@ table,
 	--warn: #8f6310;
 	--warn-bg: #fff1d6;
 	--font-mono:
-		ui-monospace, "Cascadia Mono", "SF Mono", Consolas, Menlo, monospace;
+		"Geist Mono", ui-monospace, "Cascadia Mono", "SF Mono", Consolas, Menlo, monospace;
 }
 /* Dark values apply only under an explicit data-theme="dark": the rest of the app has no dark theme yet. */
 :root[data-theme="dark"] {
@@ -3290,6 +3297,12 @@ table,
 }
 /* VIII Course Requirements, IX References and X Grading System: full-width bordered rows under the Learning Plan. */
 :is(.bld2, .svm-paper) .paper tr.paper-sec > td { padding: 6px 8px 4px; }
+/* IX References: APA 7th edition hanging indent (0.5 in = 36px; first line aligns at 14px, wrapped lines indent 36px). */
+:is(.bld2, .svm-paper) .paper .paper-ref {
+	margin: 2px 0 2px 14px;
+	padding-left: 36px;
+	text-indent: -36px;
+}
 :is(.bld2, .svm-paper) .paper table.paper-sign td { padding: 5px 8px 10px; }
 :is(.bld2, .svm-paper) .paper table.paper-sign .sign {
 	text-align: center;
@@ -4714,7 +4727,7 @@ html { scrollbar-gutter: stable; }
 .gen-writes { list-style: none; margin: 0 0 18px; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .gen-writes li { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 999px; background: #f1f4f8; color: var(--text); font-size: var(--text-xs); font-weight: var(--fw-semibold); }
 .gen-writes li span { color: var(--green); font-weight: var(--fw-heavy); }
-.gen-notes textarea { min-height: 84px; }
+.gen-notes textarea { height: 156px; resize: none; overflow-y: auto; }
 .gen-notes-hint { display: flex; justify-content: space-between; gap: 12px; }
 .gen-count { flex: none; font-variant-numeric: tabular-nums; }
 .gen-actions { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-start; gap: 10px; margin-top: 16px; }
