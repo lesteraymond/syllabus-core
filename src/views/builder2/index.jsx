@@ -46,7 +46,7 @@ export default function SyllabusBuilderV2({ editing, restore = null, user, notif
   const inactiveYear = useInactiveYear(load.academicYear); // another academic year: no new AI check (lib/activeYearGate.js)
   // Locked syllabi retain their submitted catalog. Step 2's syllabus-owned values always take precedence in the model.
   const frozen = !!draft && !load.loading && !load.editable && !!draft.catalog;
-  const { model, programList, loading: catalogLoading, error: catalogError, refresh: refreshCatalog, resolvedProgramCode } = useCatalog(draft ? draft.meta.program : '', { snapshot: frozen ? draft.catalog : null, live: !frozen, courseId: draft?.meta.courseId, year: load.academicYear || undefined });
+  const { model, programList, loading: catalogLoading, error: catalogError, refresh: refreshCatalog, resolvedProgramCode } = useCatalog(draft ? draft.meta.program : '', { snapshot: frozen ? draft.catalog : null, live: !frozen, courseId: draft?.meta.courseId, year: load.academicYear || undefined, assigned: !frozen });
   useEffect(() => {
     if (load.editable && !frozen && resolvedProgramCode && draft?.meta.program !== resolvedProgramCode) {
       apply(current => ({ ...current, meta: { ...current.meta, program: resolvedProgramCode } }));
@@ -100,7 +100,7 @@ export default function SyllabusBuilderV2({ editing, restore = null, user, notif
   useEffect(() => {
     if (!program) { setCourseList([]); return undefined; }
     let live = true;
-    coursesApi.list(program, { except: syllabusId() }, load.academicYear || undefined).then((l) => { if (live) setCourseList(l); }).catch(() => { if (live) setCourseList([]); });
+    coursesApi.list(program, { except: syllabusId(), assigned: true }, load.academicYear || undefined).then((l) => { if (live) setCourseList(l); }).catch(() => { if (live) setCourseList([]); });
     return () => { live = false; };
   }, [program, courseTick, load.academicYear]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -349,10 +349,11 @@ export default function SyllabusBuilderV2({ editing, restore = null, user, notif
     } finally { setBusy(false); }
   };
 
-  // Faculty work only on what an admin assigned to them: the server sends just those programs. With none, the
-  // builder stays closed; a syllabus whose course was un-assigned opens read-only with the reason.
-  const state = !!user && user.role === 'faculty' ? assignmentState(mine) : null; // 'none' | 'noSubject' | 'ok' | null
-  const noAccess = !!user && user.role === 'faculty' && (programList.length === 0 || state === 'none' || (state === 'noSubject' && !draft.meta.courseId));
+  // Authors (faculty and administrators) work only on programs and subjects assigned to them: the server sends just those.
+  // With none, the builder stays closed; a syllabus whose course was un-assigned opens read-only with the reason.
+  const isAuthorRole = !!user && (user.role === 'faculty' || user.role === 'admin');
+  const state = isAuthorRole ? assignmentState(mine) : null; // 'none' | 'noSubject' | 'ok' | null
+  const noAccess = isAuthorRole && (programList.length === 0 || state === 'none' || (state === 'noSubject' && !draft.meta.courseId));
   const accessMessage = state === 'noSubject' ? ASSIGNMENT_MESSAGES.noSubject : ASSIGNMENT_MESSAGES.none;
   const editable = load.editable && !noAccess;
   const existing = load.status !== 'draft';

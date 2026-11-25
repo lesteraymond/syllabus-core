@@ -683,11 +683,11 @@ test('the Recent Activity card has no Clear Logs button, for any role or languag
   setLanguage('en');
 });
 
-// The account's own activity on the dashboard (server/lib/accountActivity.js), in both languages: how the person signed in, a name change, a deleted draft.
+// Recent Activity shows the user's own workflow & profile actions in English and Tagalog, while hiding audit-only security/auth events (which live in Audit Log).
 test('Recent Activity shows the account activity in English and Tagalog', () => {
   const now = new Date().toISOString();
   const logs = [
-    { id: 'a1', userId: 1, action: 'login', notes: 'google', actionDate: now },
+    { id: 'a1', userId: 1, action: 'login', notes: 'google', actionDate: now }, // audit-only: hidden from Recent Activity
     { id: 'a2', userId: 1, action: 'name_change', notes: 'Ann A → Ann Approved', actionDate: now },
     { id: 'a3', userId: 1, action: 'syllabus_delete', notes: 'draft', courseCode: 'FM 202', title: 'Fundamentals of Mathematics', actionDate: now },
     { id: 'a4', userId: 9, action: 'logout', actionDate: now }, // someone else's: never shown
@@ -695,11 +695,12 @@ test('Recent Activity shows the account activity in English and Tagalog', () => 
   const render = () => renderToStaticMarkup(<Dashboard user={user} syllabi={[]} logs={logs} setPage={noop} />);
   setLanguage('en');
   const en = render();
-  for (const text of ['signed in', 'with Google', 'changed the name', 'Ann A → Ann Approved', 'deleted the draft of', 'FM 202']) assert.ok(en.includes(text), 'en: ' + text);
-  assert.ok(!en.includes('signed out'), 'only the signed-in account\'s own activity');
+  for (const text of ['changed the name', 'Ann A → Ann Approved', 'deleted the draft of', 'FM 202']) assert.ok(en.includes(text), 'en: ' + text);
+  assert.ok(!en.includes('signed in') && !en.includes('signed out'), 'auth/security events stay in Audit Log, not Recent Activity');
   setLanguage('tl');
   const tl = render();
-  for (const text of ['nag-sign in', 'gamit ang Google', 'pinalitan ang pangalan', 'Ann A → Ann Approved', 'binura ang draft ng']) assert.ok(tl.includes(text), 'tl: ' + text);
+  for (const text of ['pinalitan ang pangalan', 'Ann A → Ann Approved', 'binura ang draft ng']) assert.ok(tl.includes(text), 'tl: ' + text);
+  assert.ok(!tl.includes('nag-sign in') && !tl.includes('nag-sign out'), 'tl: auth/security events stay in Audit Log');
   setLanguage('en');
 });
 

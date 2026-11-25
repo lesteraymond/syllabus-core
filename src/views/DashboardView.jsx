@@ -7,7 +7,7 @@ import { PageHead, Card, Icon, Progress, QualityMini } from '../components/ui';
 import UpcomingDeadlines from '../components/UpcomingDeadlines';
 import ProgramTrendModal from '../components/ProgramTrendModal';
 import TimeUsageCard from '../components/TimeUsageCard';
-import { describeActivity, groupByDay } from '../lib/activityView';
+import { describeActivity, groupByDay, isRecentActivity } from '../lib/activityView';
 import TypewriterText from '../components/TypewriterText';
 import { compliance as complianceApi, courses as coursesApi, outcomes as outcomesApi } from '../lib/api';
 import { adminStatCards } from '../lib/adminDashboardStats';
@@ -155,10 +155,10 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
     // the dean writes syllabi too: what they submitted (drafts not counted) is a card of its own, as on the faculty dashboard
     : adminStatCards({ programs: catalogCounts.programs, subjects: catalogCounts.subjects, syllabi, mine: canAuthor(user.role) ? mySubmitted : null });
 
-  // Recent Activity (personal): shows only the signed-in user's own activity; system-wide oversight lives in the dedicated Audit Log page for administrators.
+  // Recent Activity (personal, Facebook-style): shows only the signed-in user's own workflow and profile actions; security/auth and admin oversight live in the Admin Audit Log.
   const isAdminUser = user.role === 'admin';
   const activityGroups = useMemo(() => {
-    const source = logs.filter(l => l.userId === user.id);
+    const source = logs.filter(l => l.userId === user.id && isRecentActivity(l));
     return groupByDay(source.map((l, i) => describeActivity(l, i, user.id)));
   }, [logs, user]);
   const auditLogLink = isAdminUser ? (

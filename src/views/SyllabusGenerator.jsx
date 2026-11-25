@@ -4,9 +4,9 @@ import { PageHead } from '../components/ui';
 import { useYearScope } from '../components/AcademicYearScope';
 import Select from '../components/Select';
 import StableButton from '../components/StableButton';
-import { courses as coursesApi, syllabi as syllabiApi, syllabusCheck as checkApi, isRevisionConflict } from '../lib/api';
+import { courses as coursesApi, syllabi as syllabiApi, syllabusCheck as checkApi, users as usersApi, isRevisionConflict } from '../lib/api';
 import { SECTION_KEYS, saveOnce } from '../lib/draftSave';
-import { EDITABLE_STATUSES } from '../lib/syllabusRules';
+import { EDITABLE_STATUSES, courseLockReason } from '../lib/syllabusRules';
 import { SCHEMA_VERSION, applyCourse, emptyDraft } from '../lib/syllabusModel';
 import { newId } from './builder2/useDraft';
 import GeneratePanel from './builder2/GeneratePanel';
@@ -23,7 +23,9 @@ export default function SyllabusGenerator({ user, syllabi = [], editing, setEdit
   // A past academic year's draft is view only (server lib/activeYearGate.js), so it is not offered for generation.
   const yearScope = useYearScope();
   const activeYear = yearScope && yearScope.current ? yearScope.current.label : null;
-  const mine = useMemo(() => syllabi.filter((s) => s.userId === user.id && !s.archived && EDITABLE_STATUSES.includes(s.status) && !(activeYear && s.academicYear && s.academicYear !== activeYear)), [syllabi, user.id, activeYear]);
+  const [myAssignments, setMyAssignments] = useState(null);
+  useEffect(() => { let live = true; usersApi.myAssignments().then((a) => { if (live) setMyAssignments(a); }).catch(() => {}); return () => { live = false; }; }, [user.id, syllabi.length]);
+  const mine = useMemo(() => syllabi.filter((s) => s.userId === user.id && !s.archived && EDITABLE_STATUSES.includes(s.status) && !(activeYear && s.academicYear && s.academicYear !== activeYear) && (!myAssignments || !courseLockReason(user, myAssignments, s))), [syllabi, user, activeYear, myAssignments]);
   const [fresh, setFresh] = useState([]); // drafts created on this page that the app's list does not hold yet: [{ id, courseId, courseCode, title }]
   const [subjects, setSubjects] = useState(null); // the subjects assigned to this person (all subjects for an administrator), each with `taken` when a syllabus exists on it
   const drafts = useMemo(() => [...mine.map((s) => ({ id: s.id, courseCode: s.courseCode, title: s.title })), ...fresh.filter((f) => !mine.some((s) => s.id === f.id))], [mine, fresh]);
@@ -39,7 +41,7 @@ export default function SyllabusGenerator({ user, syllabi = [], editing, setEdit
   // The subjects assigned to this person; read again when the list of syllabi changes (a draft was started somewhere else).
   useEffect(() => {
     let live = true;
-    coursesApi.list('', { except: 0 }).then((list) => { if (live) setSubjects(Array.isArray(list) ? list : []); }).catch(() => { if (live) setSubjects([]); });
+    coursesApi.list('', { except: 0, assigned: true }).then((list) => { if (live) setSubjects(Array.isArray(list) ? list : []); }).catch(() => { if (live) setSubjects([]); });
     return () => { live = false; };
   }, [syllabi.length, fresh.length]);
 

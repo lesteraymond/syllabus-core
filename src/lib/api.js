@@ -216,8 +216,12 @@ export const compliance = {
 
 export const outcomes = {
   institution: () => request('/institution/outcomes'),
-  // `year`: the academic year of the catalog (the catalog is per year); without it the server answers for the current one
-  programs: (year) => request('/programs' + yearQuery(year)),
+  // `year`: the academic year of the catalog (the catalog is per year); without it the server answers for the current one.
+  // `{ assigned: true }` filters to the signed-in author's assigned programs (used by the builder for both faculty and admins).
+  programs: (year, { assigned = false } = {}) => {
+    const q = [year ? `year=${encodeURIComponent(year)}` : '', assigned ? 'assigned=1' : ''].filter(Boolean).join('&');
+    return request('/programs' + (q ? '?' + q : ''));
+  },
   createProgram: (body) => request('/programs', { method: 'POST', body: JSON.stringify(body) }),
   renameProgram: (id, name, expectedName, code, expectedCode) => request(`/programs/${id}`, { method: 'PATCH', body: JSON.stringify({ name, expectedName, code, expectedCode }) }),
   previewProgramDeletion: (id) => request(`/programs/${id}/deletion-preview`),
@@ -236,8 +240,8 @@ export const outcomes = {
 // Course catalog: course code, title, program and the course learning outcomes (CLOs). Only admins write.
 export const courses = {
   saveStandards: (id, section, value, version) => request(`/courses/${id}/standards`, { method: 'PUT', body: JSON.stringify({ section, value, version }) }),
-  // forSyllabus: { except } asks the server to mark the subjects that already have a syllabus (`taken`); except is the one being edited.
-  list: (program, forSyllabus, year) => request(`/courses?${[program ? `program=${encodeURIComponent(program)}` : '', forSyllabus ? `taken=1&except=${Number(forSyllabus.except) || 0}` : '', year ? `year=${encodeURIComponent(year)}` : ''].filter(Boolean).join('&')}`),
+  // forSyllabus: { except, assigned } asks the server to mark the subjects that already have a syllabus (`taken`) and/or filter to the caller's own assigned subjects (`assigned=1`).
+  list: (program, forSyllabus, year) => request(`/courses?${[program ? `program=${encodeURIComponent(program)}` : '', forSyllabus ? `taken=1&except=${Number(forSyllabus.except) || 0}` : '', forSyllabus && forSyllabus.assigned ? 'assigned=1' : '', year ? `year=${encodeURIComponent(year)}` : ''].filter(Boolean).join('&')}`),
   get: (id) => request(`/courses/${id}`),
   create: (data) => request('/courses', { method: 'POST', body: JSON.stringify(data) }),
   update: (id, data) => request(`/courses/${id}`, { method: 'PUT', body: JSON.stringify(data) }),

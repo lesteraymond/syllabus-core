@@ -210,9 +210,12 @@ export default function App() {
     } catch (err) { console.error('Failed to fetch comment counts:', err); }
   }, []);
 
-  // A notification that arrives while the app is open chimes, and pops up on the desktop when the app is in the background (lib/desktopAlert.js).
+  // A notification that arrives while the app is open chimes, and pops up on the desktop when the app is in the background (lib/desktopAlert.js),
+  // respecting each signed-in user's notification mode (On, Do Not Disturb, or Off).
   const seenNotifications = useRef(null);
   const openNotificationRef = useRef(null);
+  const notifUserIdRef = useRef(null);
+  notifUserIdRef.current = user?.id ?? null;
   const fetchNotifications = useCallback(async () => {
     try {
       const data = await notificationsApi.list();
@@ -220,10 +223,12 @@ export default function App() {
       const { seen, fresh } = newArrivals(seenNotifications.current, data.notifications);
       seenNotifications.current = seen;
       if (fresh.length) {
-        playChime();
+        const uid = notifUserIdRef.current;
+        playChime({ userId: uid });
         fresh.slice(0, 3).forEach((n) => showDesktop(n, {
           title: tr(n.title),
           body: n.body ? (['message', 'comment'].includes(n.type) ? n.body : tr(n.body)) : '',
+          userId: uid,
           onOpen: (x) => { if (openNotificationRef.current) openNotificationRef.current(x); },
         }));
       }

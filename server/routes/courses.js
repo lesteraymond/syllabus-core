@@ -48,8 +48,8 @@ router.get('/', requireAuth, async (req, res) => {
     // A new academic year therefore starts with no subjects. The year goes before the user id: the fakes of the tests read the user id last.
     const inYear = programYearClause(await catalogYear(req.app.locals.db, req.session.user, req.query.year));
     if (inYear.sql) { conds.push(inYear.sql.replace(/^ AND /, '')); params.push(...inYear.params); }
-    // Faculty see only the courses an admin assigned to them; admins see every course.
-    if (!isReviewer(req.session.user)) { conds.push('c.course_id IN (SELECT course_id FROM faculty_courses WHERE user_id = ?)'); params.push(req.session.user.id); }
+    // Faculty always see only their assigned courses; reviewers see every course for catalog management, or only their own assigned courses when authoring (?assigned=1).
+    if (!isReviewer(req.session.user) || req.query.assigned === '1') { conds.push('c.course_id IN (SELECT course_id FROM faculty_courses WHERE user_id = ?)'); params.push(req.session.user.id); }
     const where = conds.length ? 'WHERE ' + conds.join(' AND ') : '';
     const select = (term, curriculum) => `SELECT c.course_id, c.code, c.title, c.program_id, p.code AS program_code, COUNT(k.clo_id) AS clo_count, c.standards_json${term ? ', ' + TERM_COLUMNS : ''}${curriculum ? ', ' + CURRICULUM_YEAR_COLUMN : ''}
        FROM courses c JOIN programs p ON p.program_id = c.program_id LEFT JOIN course_clos k ON k.course_id = c.course_id

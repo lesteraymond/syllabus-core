@@ -20,6 +20,8 @@ export function shapeAuditRow(log, index = 0, viewerId = null) {
     category: categoryOfAction(log && log.action),
     date: phDate(item.when),
     rawNotes: String((log && log.notes) || '').trim(),
+    ipAddress: String((log && log.ipAddress) || '').trim(),
+    userAgent: String((log && log.userAgent) || '').trim(),
   };
 }
 
@@ -28,7 +30,7 @@ export function filterAuditRows(rows, { category = 'all', query = '' } = {}) {
   return (rows || []).filter((r) => {
     if (category && category !== 'all' && r.category !== category) return false;
     if (!q) return true;
-    const hay = [r.actor, r.verb, r.subject, r.detail, r.note, r.action, r.date, r.time].filter(Boolean).join(' ').toLowerCase();
+    const hay = [r.actor, r.verb, r.subject, r.detail, r.note, r.action, r.date, r.time, r.ipAddress].filter(Boolean).join(' ').toLowerCase();
     return hay.includes(q);
   });
 }
@@ -40,7 +42,7 @@ function csvCell(value) {
 }
 
 export function buildAuditCsv(rows) {
-  const header = ['Date', 'Time', 'Actor', 'Category', 'Action', 'Target', 'Details'];
+  const header = ['Date', 'Time', 'Actor', 'Category', 'Action', 'Target', 'Details', 'IP Address'];
   const lines = [header.map(csvCell).join(',')];
   for (const r of rows || []) {
     const details = [r.detail, r.note].filter(Boolean).join(' - ');
@@ -52,6 +54,7 @@ export function buildAuditCsv(rows) {
       r.verb || r.action || '',
       r.subject || '',
       details,
+      r.ipAddress || '',
     ].map(csvCell).join(','));
   }
   return '\uFEFF' + lines.join('\r\n');

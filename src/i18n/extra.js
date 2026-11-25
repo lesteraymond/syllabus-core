@@ -1533,8 +1533,8 @@ extraTl["dashboard.admin.programsNote"] = "Nasa katalogo";
 extraEn["dashboard.admin.subjectsNote"] = "Across all programs";
 extraTl["dashboard.admin.subjectsNote"] = "Sa lahat ng programa";
 
-// Dashboard "Time Usage" card.
-extraEn["dashboard.usage.title"] = "Time Usage";
+// Dashboard "Time Management" card.
+extraEn["dashboard.usage.title"] = "Time Management";
 extraEn["dashboard.goodMorning"] = "Good morning, {name}!";
 extraTl["dashboard.goodMorning"] = "Magandang umaga, {name}!";
 extraEn["dashboard.goodMorningNoName"] = "Good morning!";
@@ -1583,7 +1583,7 @@ extraEn['outcomes.mappingsRequired'] = 'Fix the outcome mappings in step 2.';
 extraTl['outcomes.mappingsRequired'] = 'Ayusin ang pagmamapa ng mga kinalabasan sa hakbang 2.';
 extraEn["dashboard.usage.selectDay"] = "Hover over a bar to see total usage in hours and minutes.";
 extraTl["dashboard.usage.selectDay"] = "Itapat ang pointer sa bar upang makita ang kabuuang oras at minuto ng paggamit.";
-extraTl["dashboard.usage.title"] = "Oras ng Paggamit";
+extraTl["dashboard.usage.title"] = "Pamamahala ng Oras";
 extraEn["dashboard.usage.today"] = "Active today";
 extraTl["dashboard.usage.today"] = "Aktibo ngayon";
 extraEn["dashboard.usage.avgDay"] = "Average per active day";
@@ -1891,6 +1891,7 @@ const outcomesSetupMessages = {
   "outcomes.aria.po": ["{field}, PO {n}", "{field}, PO {n}"],
   "outcomes.loading": ["Loading…", "Naglo-load…"],
   "outcomes.close": ["Close", "Isara"],
+  "outcomes.closeDialog": ["Close dialog", "Isara ang dialog"],
   "outcomes.egaHeading": ["Expected graduate attributes (EGAs)", "Inaasahang katangian ng nagtapos (EGA)"],
   "outcomes.poHeading": ["Program outcomes (POs)", "Mga kinalabasan ng programa (PO)"],
   "outcomes.col.no": ["No.", "Blg."],
@@ -2077,5 +2078,20 @@ const generatorMessages = {
   "generate.msg.author": ["Only the author can generate a draft for this syllabus.", "Ang may-akda lamang ang maaaring bumuo ng draft para sa silabus na ito."],
   "generate.msg.unavailable": ["The Syllabus Generator is not available on this server: {reason}", "Hindi available sa server na ito ang Tagalikha ng Silabus: {reason}"],
   "settings.saveChanges": ["Save Changes", "I-save ang mga Pagbabago"],
+  "aiChecker.thinking.0": ["Reading your syllabus…", "Binabasa ang iyong silabus…"],
+  "aiChecker.thinking.1": ["Analyzing institutional template & structure…", "Sinusuri ang template at istruktura…"],
+  "aiChecker.thinking.2": ["Evaluating learning outcomes & alignment…", "Sinusuri ang mga outcome at pagkakahanay…"],
+  "aiChecker.thinking.3": ["Reviewing weekly plan & assessments…", "Sinusuri ang lingguhang plano at pagtatasa…"],
+  "aiChecker.thinking.4": ["Finalizing score & recommendations…", "Inihahanda ang marka at mga rekomendasyon…"],
+  "notifMode.label": ["Notification sound & alerts", "Tunog at alerto ng abiso"],
+  "notifMode.on": ["On", "Naka-on"],
+  "notifMode.dnd": ["Do Not Disturb", "Huwag Istorbohin"],
+  "notifMode.off": ["Off", "Naka-off"],
+  "notifMode.hint.on": ["New notifications play a chime and show a desktop popup when the system is in the background.", "Tumutunog ang mga bagong abiso at nagpapakita ng desktop popup kapag nasa background ang sistema."],
+  "notifMode.hint.dnd": ["Do Not Disturb is active: sounds and desktop popups are muted while notifications still collect quietly in the bell menu.", "Aktibo ang Huwag Istorbohin: naka-mute ang tunog at desktop popup habang tahimik na naiipon ang mga abiso sa bell."],
+  "notifMode.hint.off": ["Notification sounds and desktop popups are turned off for your account on this device.", "Naka-off ang tunog at desktop popup ng abiso para sa iyong account sa device na ito."],
+  "notifMode.saved": ["Notification preference updated.", "Na-update ang kagustuhan sa abiso."],
+  "notifMode.testMutedDnd": ["Do Not Disturb is active, so no sound or popup played. Switch to On to test alerts.", "Aktibo ang Huwag Istorbohin, kaya walang tunog o popup na lumabas. Lumipat sa Naka-on upang subukan."],
+  "notifMode.testMutedOff": ["Notifications are turned off, so no sound or popup played. Switch to On to test alerts.", "Naka-off ang mga abiso, kaya walang tunog o popup na lumabas. Lumipat sa Naka-on upang subukan."],
 };
 for (const [key, [en, tl]] of Object.entries(generatorMessages)) { extraEn[key] = en; extraTl[key] = tl; }

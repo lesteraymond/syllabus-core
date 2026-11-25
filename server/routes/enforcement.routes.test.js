@@ -294,12 +294,24 @@ test('a syllabus approved while an administrator deletes it is kept, and the ref
   });
 });
 
-test('starting a draft needs at least one assigned course (faculty); admins are never blocked', () => withServer({ assigned: ASSIGNED }, async ({ call }) => {
+test('starting a draft needs at least one assigned course for both faculty and admins', () => withServer({ assigned: ASSIGNED }, async ({ call }) => {
   assert.strictEqual((await call(fay, 'POST', '/syllabi/drafts')).status, 200);
   const none = await call(gus, 'POST', '/syllabi/drafts');
   assert.strictEqual(none.status, 403);
   assert.match(none.body.error, /No program or subject is assigned/);
-  assert.strictEqual((await call(admin, 'POST', '/syllabi/drafts')).status, 200);
+  const adminNone = await call(admin, 'POST', '/syllabi/drafts');
+  assert.strictEqual(adminNone.status, 403);
+  assert.match(adminNone.body.error, /No program or subject is assigned/);
+  // Once assigned their own program and subject, an admin can start a draft and sees only their assigned items under ?assigned=1.
+  await withServer({ assigned: { ...ASSIGNED, 1: { programs: [2], courses: [20] } } }, async ({ call: call2 }) => {
+    assert.strictEqual((await call2(admin, 'POST', '/syllabi/drafts')).status, 200);
+    const allCourses = await call2(admin, 'GET', '/courses');
+    assert.ok(allCourses.body.length > 1, 'catalog management still lists every subject');
+    const ownCourses = await call2(admin, 'GET', '/courses?assigned=1');
+    assert.deepStrictEqual(ownCourses.body.map((c) => c.id), [20]);
+    const ownPrograms = await call2(admin, 'GET', '/programs?assigned=1');
+    assert.deepStrictEqual(ownPrograms.body.map((p) => p.id), [2]);
+  });
 }));
 
 test('a program with no subject yet: the draft is refused and the message says a program is assigned', () => withServer({ assigned: { 5: { programs: [1], courses: [] } } }, async ({ call }) => {

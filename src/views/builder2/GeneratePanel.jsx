@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import StableButton from '../../components/StableButton';
+import { GeminiEmblem } from '../../components/GeminiLoader';
 import { t as translateUI, tr } from '../../i18n/index.js';
 import { syllabusCheck } from '../../lib/api';
 
@@ -151,15 +152,25 @@ export default function GeneratePanel({ draft, editable, syllabusId, beforeRun, 
         {busy && (
           <div className="gen-run" role="status">
             <div className="gen-run-top">
-              <span className="gen-orb" aria-hidden="true"><i /></span>
+              <GeminiEmblem size={52} className="gen-orb" />
               <div className="gen-run-text">
                 <strong>{translateUI('generate.workingTitle')}</strong>
-                <span>{progress && progress.stage ? translateUI('generate.stage.' + progress.stage) : translateUI('generate.preparing')}</span>
+                <span key={(progress && progress.stage) || 'prep'} className="gen-stage-line">
+                  {progress && progress.stage ? translateUI('generate.stage.' + progress.stage) : translateUI('generate.preparing')}
+                </span>
               </div>
-              <span className="gen-time">{translateUI('generate.elapsed', { time: mmss(elapsed) })}</span>
+              <div className="gen-run-meta">
+                <span className="gen-pct" aria-hidden="true">{percent}%</span>
+                <span className="gen-time">{translateUI('generate.elapsed', { time: mmss(elapsed) })}</span>
+              </div>
             </div>
             <div className="gen-bar" role="progressbar" aria-label={translateUI('generate.title')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent}><i style={{ width: percent + '%' }} /></div>
-            <p className="hint">{translateUI('generate.leaveNote')}</p>
+            <div className="gen-preview" aria-hidden="true">
+              <span className="gen-skel is-title" />
+              <span className="gen-skel is-line" />
+              <span className="gen-skel is-line is-short" />
+            </div>
+            <p className="hint gen-leave">{translateUI('generate.leaveNote')}</p>
           </div>
         )}
         {phase === 'error' && <div className="info-banner warning" role="alert">{translateUI('generate.failed', { reason: tr(message) })}</div>}

@@ -124,9 +124,12 @@ test('/me/assignments returns only the caller\'s own, and not another faculty me
   assert.deepStrictEqual(his.body.courseIds, [20]);
 }));
 
-test('an admin\'s /me/assignments says unrestricted', () => withServer(async ({ call }) => {
+test('an admin\'s /me/assignments returns their own assigned programs and courses (not unrestricted)', () => withServer(async ({ call }) => {
+  const empty = await call(admin, 'GET', '/me/assignments');
+  assert.deepStrictEqual([empty.body.programIds, empty.body.courseIds, empty.body.unrestricted], [[], [], false]);
+  await call(admin, 'PUT', '/1/assignments', { programs: [1], courses: [10] });
   const r = await call(admin, 'GET', '/me/assignments');
-  assert.strictEqual(r.body.unrestricted, true);
+  assert.deepStrictEqual([r.body.programIds, r.body.courseIds, r.body.unrestricted], [[1], [10], false]);
 }));
 
 test('a faculty member with nothing assigned gets empty lists', () => withServer(async ({ call }) => {

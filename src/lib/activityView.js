@@ -54,6 +54,13 @@ const ON_SYLLABUS = { content_edit: 'edited', syllabus_delete: 'deleted' };
 const RECOMMEND_VERBS = { Accepted: 'accepted a recommendation on', Edited: 'edited and applied a recommendation on', Rejected: 'rejected a recommendation on', Undid: 'undid a recommendation on' };
 const FALLBACK = { icon: 'notePencil', tone: 'quiet', verb: 'made a change to' };
 
+// Security, auth, and administrative oversight actions belong in the Admin Audit Log, not in a user's personal Recent Activity feed.
+export const AUDIT_ONLY_ACTIONS = new Set([
+  'login', 'logout', 'login_failed', 'password_change', 'terms_accept',
+  'user_create', 'user_credentials', 'user_disable', 'user_enable', 'user_delete', 'user_assignments',
+]);
+export const isRecentActivity = (log) => !(log && AUDIT_ONLY_ACTIONS.has(log.action));
+
 // -> { key, icon, tone, who, verb, subject, detail, time, iso, when }. `viewerId` is the signed-in user: their own actions read "You".
 export function describeActivity(log, index = 0, viewerId = null) {
   // Older rows logged the first submission from the builder as an "upload"; its note says what it really was.

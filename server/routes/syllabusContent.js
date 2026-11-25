@@ -413,9 +413,16 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
       // The checker uses institutional/program masters, never the author's own snapshot.
       // Validate raw saved identity before applyCatalog can overwrite it.
       const aiOff = !(await require('../lib/adminSettings').policy(conn)).aiChecking; // AI checking off in Settings: no AI check can be required
+      const preCatalogHash = complianceReady ? compliance.hashOf(content) : null;
       const verifiedResult = await compliance.requireHybrid(conn, id,
         publishing ? compliance.publicationContent(content, await catalogSnapshot(conn, content)) : content,
         { hardOnly: preparing, aiOff });
+      // When aiGate is 'advisory', requireHybrid returns undefined even if the author already ran a hybrid AI check on this exact draft.
+      // Preserve that hybrid run instead of shadowing it with a legacy deterministic-only (lc-v1) run on submit.
+      const existingHybrid = !verifiedResult && !publishing && !preparing && preCatalogHash
+        ? await compliance.cachedRun(conn, id, preCatalogHash)
+        : null;
+      const keepExistingHybrid = !!(existingHybrid && existingHybrid.created_by === me.id && existingHybrid.conformant && /^hybrid-\d+$/.test(existingHybrid.standard_version));
       // Validate authored outcomes and snapshot the exact values being submitted.
       await applyCatalog(conn, content, me, JSON.parse(JSON.stringify(content)));
       if (content.outcomes) validateOutcomes(content.outcomes, content.clos || [], content.plan || [], { complete: true });
@@ -501,8 +508,9 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
         [id, label, content.meta.title, content.meta.code, syl.curriculum_id, syl.file_path, newStatus, versionNote, snapshot, me.id]
       );
       // The compliance run is stored with the version, in the same transaction, once the tables exist: it is the authoritative one.
-      let runId = null;
-      if (complianceReady) runId = await compliance.storeRun(conn, { syllabusId: id, versionId: versionRow && versionRow.insertId ? versionRow.insertId : null, content, result, createdBy: me.id });
+      // If the author already ran a hybrid AI check on this exact saved content, keep that run rather than overwriting it with a legacy deterministic run.
+      let runId = keepExistingHybrid ? existingHybrid.run_id : null;
+      if (complianceReady && !keepExistingHybrid) runId = await compliance.storeRun(conn, { syllabusId: id, versionId: versionRow && versionRow.insertId ? versionRow.insertId : null, content, result, createdBy: me.id });
       // A resubmission after a return goes back to the reviewer who returned it: the stages cleared before them are kept on the new version
       // (lib/reviewStages.js carryForward). Read before the 'submit' below is logged, since the last return in the log names that reviewer.
       const carried = !publishing && returnedFrom && versionRow && versionRow.insertId
@@ -515,7 +523,7 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
         'INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)',
         [id, me.id, publishing ? 'approve' : first || rules.isReturned(syl.status) ? 'submit' : 'update', (publishing ? 'Administrator published syllabus after AI check' : first ? 'Syllabus submitted from the builder' : `Saved as ${label}: ${versionNote}`).slice(0, 500)]
       );
-      return { previous: syl.status, label, status: finalStatus, courseCode: syl.course_code, title: syl.title, runId, content, result, carried };
+      return { previous: syl.status, label, status: finalStatus, courseCode: syl.course_code, title: syl.title, runId, keepExistingHybrid, content, result, carried };
     });
 
     if (outcome.preparing) return res.json({version:outcome.label,status:outcome.status});
@@ -528,7 +536,7 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
     }
 
     // After the commit, outside the transaction: the AI recommendations are a background job. They never delay or fail a submit.
-    if (outcome.runId && !outcome.result.hybrid && outcome.result.status === 'scored' && outcome.result.findings.length) {
+    if (outcome.runId && !outcome.keepExistingHybrid && !outcome.result.hybrid && outcome.result.status === 'scored' && outcome.result.findings.length) {
       compliance.startAiJob(db, { runId: outcome.runId, content: outcome.content, result: outcome.result, names: compliance.namesFor(me, outcome.content) });
     }
 

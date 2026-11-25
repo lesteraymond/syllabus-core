@@ -38,7 +38,7 @@ router.get('/', requireAuth, async (req, res) => {
       LIMIT ${limit}
     `, who === null ? [] : [who]);
     const review = rows.map(r => ({ id: r.log_id, syllabusId: r.syllabus_id, userId: r.user_id, action: r.action, actionDate: r.action_date, notes: r.notes, user: r.first_name || r.last_name ? `${r.first_name} ${r.last_name}` : r.actor || 'Deleted account', title: r.title || r.subject || null, courseCode: r.course_code || null })); // a deleted account or syllabus keeps its history
-    const account = await accountActivity.listFor(db, who, limit);
+    const account = await accountActivity.listFor(db, who, limit, { includeAuditMeta: everyone });
     const time = (x) => { const t = new Date(x.actionDate).getTime(); return Number.isNaN(t) ? 0 : t; };
     res.json([...review, ...account].sort((a, b) => time(b) - time(a)).slice(0, limit));
   } catch (err) {

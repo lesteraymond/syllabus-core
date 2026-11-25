@@ -132,7 +132,7 @@ export default function AuditLog({ user, notify }) {
               <tbody>
                 {visible.map((it) => {
                   const isAlert = ALERT_ACTIONS.has(it.action);
-                  const details = [it.detail, it.note && tr(it.note)].filter(Boolean).join(' · ');
+                  const details = [it.detail, it.note && tr(it.note), it.ipAddress && `IP ${it.ipAddress}`].filter(Boolean).join(' · ');
                   return (
                     <tr key={it.key} className={isAlert ? 'is-alert' : undefined}>
                       <td className="al-col-time">

@@ -1,5 +1,5 @@
 import { YearFilter, useYearScope } from '../components/AcademicYearScope';
-import { canApproveAdminDraft, isReturned, noteMissing, sentForReview, EDITABLE_STATUSES } from '../lib/syllabusRules';
+import { canApproveAdminDraft, courseLockReason, isReturned, noteMissing, sentForReview, EDITABLE_STATUSES } from '../lib/syllabusRules';
 import { isApprover, isReviewer } from '../lib/roles';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
@@ -7,12 +7,13 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { PageHead } from '../components/ui';
 import StableButton from '../components/StableButton';
 import Select from '../components/Select';
-import { compliance as api, syllabi as syllabiApi, isRevisionConflict } from '../lib/api';
+import { compliance as api, syllabi as syllabiApi, users as usersApi, isRevisionConflict } from '../lib/api';
 import { groupByFacultyProgram, historyTally, listBasis, needsCheck, rangeToInstants, warningCount } from '../lib/complianceView';
 import CheckOverview from '../components/CheckOverview';
 import SyllabusPicker from '../components/SyllabusPicker';
 import OwnSyllabusPicker from '../components/OwnSyllabusPicker';
 import ComplianceModal from '../components/ComplianceModal';
+import { GeminiEmblem, GeminiThinkingLine } from '../components/GeminiLoader';
 import CheckHistory from '../components/CheckHistory';
 import ComplianceSection from './builder2/ComplianceSection';
 import ComplianceCard from './ComplianceCard';
@@ -206,7 +207,7 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
                 <div className={'chk-layout' + (doc.editable ? '' : ' solo')}>
                   {ctl.installed && (ctl.run || ctl.busy) && (
                     <div className="chk-main">
-                      <section className="card chk-report"><ComplianceCard run={ctl.run} checking={ctl.busy} onOpenStep={openBuilder} onApplyDraft={ctl.onApplyDraft} /></section>
+                      <section className="card chk-report"><ComplianceCard run={ctl.run} checking={ctl.busy} onOpenStep={openBuilder} onApplyDraft={ctl.onApplyDraft} modalSections /></section>
                     </div>
                   )}
                   {doc.editable && submitRail}
@@ -243,6 +244,13 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
   const [error, setError] = useState('');
   const [busy, setBusy] = useState({});       // syllabus id -> true while its check runs
   const checkLocks = useRef(new Set());
+  const [mine, setMine] = useState(null);     // administrator's own assigned programs & subjects
+  useEffect(() => {
+    if (user?.role !== 'admin') { setMine(null); return undefined; }
+    let live = true;
+    usersApi.myAssignments().then((a) => { if (live) setMine(a); }).catch(() => {});
+    return () => { live = false; };
+  }, [user?.role, user?.id, syllabi]);
 
   const loadList = useCallback(async () => { try { setList(await api.list('all', year)); setError(''); } catch (e) { setError(e.message); } }, [year]);
   const loadDetail = useCallback(async (id) => { try { setDetail(await api.list(id)); setError(''); return true; } catch (e) { setError(e.message); return false; } }, []);
@@ -283,10 +291,11 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
   const sentOwn = useMemo(() => new Set(syllabi.filter((s) => s.userId === user?.id && sentForReview(s)).map((s) => s.id)), [syllabi, user?.id]);
   // Unchecked and not approved: what the picker offers. A stage reviewer is offered a submission once it has reached them in the chain (myTurn from the
   // server: the dean first, then the Asst. VPAA, then the LIC Director); a row without it (an older server) is offered as before.
-  const waiting = useMemo(() => groupByFacultyProgram(rows.filter(row => (needsCheck(row) && row.myTurn !== false) || (row.userId === user?.id && row.status === 'under_review' && !sentOwn.has(row.syllabusId)))), [rows, user?.id, sentOwn]);
+  const canAuthorOwn = useCallback((s) => (user?.role !== 'admin' ? true : !!mine && !courseLockReason(user, mine, s)), [user, mine]);
+  const waiting = useMemo(() => groupByFacultyProgram(rows.filter(row => (needsCheck(row) && row.myTurn !== false) || (row.userId === user?.id && row.status === 'under_review' && !sentOwn.has(row.syllabusId) && canAuthorOwn(row)))), [rows, user?.id, sentOwn, canAuthorOwn]);
   // The administrator writes syllabi too: their own drafts, and their syllabi returned for revision or rejected, can be checked from here as well as from the
-  // builder (OwnSyllabusPicker). Once sent to be checked one is Under Review and is in the list above with everyone else's.
-  const ownToCheck = useMemo(() => (user?.role === 'admin' ? syllabi.filter((s) => s.userId === user.id && !s.archived && ['draft', 'for_revision', 'rejected'].includes(s.status)) : []), [syllabi, user?.id, user?.role]);
+  // builder (OwnSyllabusPicker) — only for subjects currently assigned to them. Once sent to be checked one is Under Review and is in the list above with everyone else's.
+  const ownToCheck = useMemo(() => (user?.role === 'admin' && mine ? syllabi.filter((s) => s.userId === user.id && !s.archived && ['draft', 'for_revision', 'rejected'].includes(s.status) && !courseLockReason(user, mine, s)) : []), [syllabi, user, mine]);
 
   // A check started before this page was left is still running on the server (the row says so): keep the button waiting, look again until it
   // ends, then refresh the history so the new check appears.
@@ -441,10 +450,10 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
 
       {installed && working && (
         <div className="chk-progress" role="status" aria-live="polite">
-          <span className="chk-progress-ring" aria-hidden="true" />
+          <GeminiEmblem size={48} />
           <div className="chk-progress-body">
             <strong>{translateUI("ui.checking_your_syllabus_1278c5")}</strong>
-            <div className="chk-progress-bar" aria-hidden="true"><span /></div>
+            <GeminiThinkingLine active={working} />
           </div>
         </div>
       )}

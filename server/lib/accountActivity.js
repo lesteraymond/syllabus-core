@@ -97,7 +97,7 @@ async function personOf(db, userId) {
 
 // The account activity of one person (userId), or of everyone (userId null: the administrator's view), newest first, at most `limit` rows, in the shape
 // GET /api/logs returns. [] before the migration.
-async function listFor(db, userId, limit) {
+async function listFor(db, userId, limit, { includeAuditMeta = false } = {}) {
   try {
     const [rows] = await db.query(
       `SELECT a.activity_id, a.user_id, a.action, a.syllabus_id, a.subject, a.notes, a.created_at, u.first_name, u.last_name, s.course_code, s.title, a.*
@@ -109,6 +109,7 @@ async function listFor(db, userId, limit) {
       return {
         id: 'a' + r.activity_id, syllabusId: r.syllabus_id, userId: r.user_id, action: r.action, actionDate: r.created_at, notes: r.notes,
         user: r.first_name || r.last_name ? `${r.first_name} ${r.last_name}` : r.actor || (r.user_id === null ? 'Unknown account' : 'user #' + r.user_id), title: r.title || rest.join(' — ') || null, courseCode: r.course_code || code || null,
+        ...(includeAuditMeta ? { ipAddress: r.ip_address || null, userAgent: r.user_agent || null } : {}),
       };
     });
   } catch (error) {

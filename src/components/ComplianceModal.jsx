@@ -63,7 +63,7 @@ export default function ComplianceModal({ syllabus, run, isLatest = true, error 
             )}
           </div>
 
-          <ComplianceCard run={run} showFindings />
+          <ComplianceCard run={run} showFindings modalSections />
       </div>
     </ReportDrawer>
   );
