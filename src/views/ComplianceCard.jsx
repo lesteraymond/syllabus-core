@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
@@ -11,6 +11,68 @@ import { useModalLayer } from '../components/useModalLayer';
 import { GeminiEmblem, GeminiThinkingLine } from '../components/GeminiLoader';
 
 const lastScores = new Map();
+const RING_SIZE = 132;
+const RING_R = 55;
+const RING_C = 2 * Math.PI * RING_R;
+
+function ScoreRing({ score, fromScore = 0, label, toneClass, passThreshold, ariaLabel, flowClass = '' }) {
+  const gradId = useId();
+  const clamped = Math.max(0, Math.min(100, Number(score) || 0));
+  const clampedFrom = Math.max(0, Math.min(100, Number(fromScore) || 0));
+  const toOffset = RING_C * (1 - clamped / 100);
+  const fromOffset = RING_C * (1 - clampedFrom / 100);
+  const showPassTick = Number.isFinite(passThreshold) && passThreshold > 0 && passThreshold < 100 && clamped < 100;
+  const tickRad = showPassTick ? ((passThreshold / 100) * 360 - 90) * (Math.PI / 180) : 0;
+  const cx = RING_SIZE / 2;
+  const cy = RING_SIZE / 2;
+  const style = {
+    '--ring-from': `${fromOffset.toFixed(2)}`,
+    '--ring-to': `${toOffset.toFixed(2)}`,
+  };
+  return (
+    <div className={'big-ring cmp-ring has-svg ' + toneClass + flowClass} style={style} role="img" aria-label={ariaLabel}>
+      <svg className="cmp-ring-svg" viewBox={`0 0 ${RING_SIZE} ${RING_SIZE}`} aria-hidden="true">
+        <defs>
+          <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="var(--ring-accent-hi)" />
+            <stop offset="100%" stopColor="var(--ring-accent)" />
+          </linearGradient>
+        </defs>
+        <circle className="cmp-ring-track" cx={cx} cy={cy} r={RING_R} fill="none" strokeWidth="10" />
+        {clamped > 0 && (
+          <circle
+            className="cmp-ring-arc"
+            cx={cx}
+            cy={cy}
+            r={RING_R}
+            fill="none"
+            stroke={`url(#${gradId})`}
+            strokeWidth="10"
+            strokeLinecap="round"
+            strokeDasharray={RING_C.toFixed(2)}
+            strokeDashoffset={toOffset.toFixed(2)}
+            transform={`rotate(-90 ${cx} ${cy})`}
+          />
+        )}
+        {showPassTick && (
+          <line
+            className="cmp-ring-tick"
+            x1={cx + Math.cos(tickRad) * (RING_R - 6.5)}
+            y1={cy + Math.sin(tickRad) * (RING_R - 6.5)}
+            x2={cx + Math.cos(tickRad) * (RING_R + 6.5)}
+            y2={cy + Math.sin(tickRad) * (RING_R + 6.5)}
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+        )}
+      </svg>
+      <div className="cmp-ring-core">
+        <strong>{clamped}<span className="cmp-ring-pct">%</span></strong>
+        <small className="cmp-ring-band">{label}</small>
+      </div>
+    </div>
+  );
+}
 
 function SectionModal({ title, onClose, children }) {
   const dialog = useRef(null);
@@ -62,11 +124,13 @@ export default function ComplianceCard({ run, checking = false, onOpenStep, show
         : null;
   let ringStyle = { '--p': '0deg', '--target-p': '0deg', '--from-p': '0deg', '--water': '28%', '--from-water': '12%' };
   let flowClass = '';
+  let fromScoreValue = 0;
   if (currentScore !== null) {
     const prev = lastScores.get(memKey);
     const hasChanged = typeof prev === 'number' && prev !== currentScore;
     const isHigher = hasChanged ? currentScore > prev : t === 'good';
     const fromScore = hasChanged ? prev : (isHigher ? 0 : 100);
+    fromScoreValue = fromScore;
     const targetAngle = state === 'scored' ? ringAngle(run.overall) : ringAngle(provisional.score);
     flowClass = isHigher ? ' is-filling' : ' is-draining';
     ringStyle = {
@@ -105,9 +169,9 @@ export default function ComplianceCard({ run, checking = false, onOpenStep, show
               </div>
             </div>
           : state === 'scored'
-          ? <div className={'big-ring cmp-ring ' + t + flowClass} style={ringStyle} role="img" aria-label={translateUI("ui.compliance_score_7a084d") + run.overall + translateUI("ui.percent_c72154") + tr(run.band)}><div><strong>{run.overall}%</strong><small>{tr(run.band)}</small></div></div>
+          ? <ScoreRing score={run.overall} fromScore={fromScoreValue} label={tr(run.band)} toneClass={t} passThreshold={run.passThreshold} flowClass={flowClass} ariaLabel={translateUI("ui.compliance_score_7a084d") + run.overall + translateUI("ui.percent_c72154") + tr(run.band)} />
           : provisional
-          ? <div className={'big-ring cmp-ring provisional' + flowClass} style={ringStyle} role="img" aria-label={translateUI('hybrid.provisionalAria', { score: provisional.score })}><div><strong>{provisional.score}%</strong><small>{translateUI('hybrid.provisional')}</small></div></div>
+          ? <ScoreRing score={provisional.score} fromScore={fromScoreValue} label={translateUI('hybrid.provisional')} toneClass="provisional" passThreshold={run?.passThreshold} flowClass={flowClass} ariaLabel={translateUI('hybrid.provisionalAria', { score: provisional.score })} />
           : <div className="cmp-ring none" role="img" aria-label={translateUI("ui.no_score_yet_3662ab")}><div><strong>—</strong><small>{state === 'incomplete' ? translateUI('hybrid.incomplete') : state === 'insufficient' ? translateUI("ui.not_enough_content_1c0e67") : translateUI("ui.not_checked_22705e")}</small></div></div>}
         <div className="cmp-head">
           <p className="cmp-line">{checking

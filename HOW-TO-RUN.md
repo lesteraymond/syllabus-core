@@ -49,8 +49,8 @@ Fill in `server/.env`:
 | `DB_HOST`, `DB_USER`, `DB_PASS`, `DB_NAME` | MySQL connection (XAMPP defaults: `localhost`, `root`, empty, `syllabus_cms_plus`) |
 | `SESSION_SECRET` | any long random string (the only signing secret; `JWT_SECRET` is no longer used, so delete it from older `.env` files) |
 | `GOOGLE_CLIENT_ID` | must match the frontend `VITE_GOOGLE_CLIENT_ID` (only needed for Google sign-in) |
-| `PORT`, `UPLOAD_DIR` | API port (default 3001) and upload folder (relative: under `server/`; an absolute path is used as it is) |
-| `CURRENT_TERM`, `ALLOWED_EMAIL_DOMAIN` | optional (domain defaults to `email.lcup.edu.ph`) |
+| `PORT`, `UPLOAD_DIR`, `PRIVATE_DIR` | API port (default 3001) and upload/private folders (relative: under `server/`; an absolute path is used as it is) |
+| `ALLOWED_EMAIL_DOMAIN` | optional (domain defaults to `email.lcup.edu.ph`) |
 | `SMTP_*`, `MAIL_FROM`, `APP_URL` | email for credentials, temporary passwords and decisions. Leave `SMTP_HOST` empty to send nothing |
 | `SYLLABUS_CHECK_AI_PROVIDER`, `SYLLABUS_CHECK_REPLAN`, `SYLLABUS_CHECK_REPLAN_MAX_COST_USD`, `SYLLABUS_CHECK_REPLAN_MAX_REQUESTS`, `SYLLABUS_CHECK_AI_GATE` | the AI Checker. Nothing is sent without a cost cap; `SYLLABUS_CHECK_AI_GATE` is `advisory` (default) or `required` |
 | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`, `SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL` | Claude for the AI Checker. Nothing is sent until the approved model names the same model as `ANTHROPIC_MODEL` |

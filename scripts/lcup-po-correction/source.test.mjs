@@ -38,12 +38,13 @@ test('legacy adoption preserves a known snapshot and refuses to assign new meani
  assert.equal(content.outcomes,undefined);
 });
 
-test('direct ILO–PO mappings also require their authored reference and enter remediation',async()=>{
+test('direct ILO–PO mappings stay audited in migration impacts while runtime check basis requires CLO–PO reference match',async()=>{
  const {assertContentBasis}=require('../../server/lib/programPoReferences');
  const {impacts}=require('../../server/db/official-po-migration.cjs');
  const content={meta:{program:'BSIT'},clos:[],plan:[{ilos:[{text:'Historical outcome',tags:['po:1']}]}]};
  const ref={id:'official',outcomes:official.programs.BSIT.outcomes};
- assert.throws(()=>assertContentBasis(content,ref),e=>e.body?.code==='po_reference_review_required');
+ // Only CLOs map to POs at runtime (legacy po: tags on ILOs alone are ignored by assertContentBasis), while migration impacts still audits them:
+ assert.doesNotThrow(()=>assertContentBasis(content,ref));
  const db={query:async(sql,args)=>{
   if(sql.includes('information_schema.tables'))return [[{table_name:args[0]}]];
   if(sql==='SELECT * FROM syllabi')return [[{syllabus_id:7,content:JSON.stringify(content)}]];
@@ -53,6 +54,8 @@ test('direct ILO–PO mappings also require their authored reference and enter r
  assert.equal(items.length,1);
  assert.deepEqual(items[0].directIloPoMappings,[{rowIndex:0,iloIndex:0,tags:['po:1']}]);
  assert.deepEqual(items[0].cloMappings,[]);
+ content.clos=[{id:'c1',pos:[1]}];
+ assert.throws(()=>assertContentBasis(content,ref),e=>e.body?.code==='po_reference_review_required');
  content.outcomes={pos:ref.outcomes};
  assert.doesNotThrow(()=>assertContentBasis(content,ref));
 });

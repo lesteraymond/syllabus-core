@@ -73,3 +73,15 @@ test('extract finds the subject when the PDF writes its title differently (& for
   await withServer(t, { fields: { code: 'IT-204', title: 'Programming II', program: 'bsit' } }, async call => assert.equal((await call()).body.subject.id, 26));
   await withServer(t, { fields: { code: 'MA 7', title: 'Differential & Integral Calculus' } }, async call => assert.equal((await call()).body.error, 'pdfImport.subjectNotFound'));
 });
+test('extract applies subject assignment scoping to administrators too (shared codes and unassigned subjects)', async t => {
+  await withServer(t, { fields: { code: 'IT 204', title: 'Programming 2' }, assigned: [26] }, async call => {
+    const r = await call({ id: 1, role: 'admin' });
+    assert.equal(r.status, 200);
+    assert.equal(r.body.subject.id, 26);
+  });
+  await withServer(t, { fields: { code: 'MA 7', title: 'Differential Calculus' }, assigned: [26] }, async call => {
+    const r = await call({ id: 1, role: 'admin' });
+    assert.equal(r.status, 409);
+    assert.equal(r.body.error, 'pdfImport.subjectNotAssigned');
+  });
+});

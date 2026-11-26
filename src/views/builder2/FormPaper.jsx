@@ -1,4 +1,5 @@
 import { PLAN_HEADINGS, isCloTag, renderMarkup, gradeSubItems, finalRatingFraction, formulaBody, printedRefGroups, REFS_TITLE, MODIFICATIONS } from '../../lib/syllabusModel';
+import { splitApa7Segments } from '../../lib/apaFormat';
 import { CURRENT_SCHOOL_YEAR, COLLEGE_NAME, INSTITUTION_NAME, INSTITUTION_FORMER_NAME, INSTITUTION_ADDRESS } from '../../lib/schoolYear';
 import { phDate } from '../../lib/phTime';
 
@@ -79,7 +80,11 @@ export default function FormPaper({ d, model, preparedBy, signoffs = null }) {
             {printedRefGroups(d.refs).map((g) => (
               <div key={g.key} style={{ margin: '0 0 6px 34px' }}>
                 <b>{g.letter + '. ' + g.title.toUpperCase()}</b>
-                {g.items.map((t, k) => <div key={k} style={{ margin: '2px 0 2px 14px' }}>{t}</div>)}
+                {g.items.map((t, k) => (
+                  <div key={k} className="paper-ref">
+                    {splitApa7Segments(t).map((seg, si) => (seg.italic ? <i key={si}>{seg.text}</i> : <span key={si}>{seg.text}</span>))}
+                  </div>
+                ))}
               </div>
             ))}
           </td></tr>

@@ -12,7 +12,7 @@ Two different things are being separated on purpose:
 - [ ] Revoke the `SMTP_PASS` (Gmail app password) and the Gemini key that were pasted into chats; delete the commented-out Gemini line from `server/.env`.
 - [ ] Create a **new** Anthropic API key for staging, in its **own workspace**.
 - [ ] In that workspace, set a **hard monthly spend limit** (see section E). This is the only authoritative cost control.
-- [ ] Generate a new `SESSION_SECRET` and a new `JWT_SECRET`, each 32 or more random characters, different from each other and from development. (Any password manager or `openssl rand -base64 32` will do.)
+- [ ] Generate a new `SESSION_SECRET` of 32 or more random characters, different from development and production. (`JWT_SECRET` is retired and must not be set; any password manager or `openssl rand -base64 32` will do.)
 - [ ] Create a **dedicated staging database** and a least-privilege user with a **non-empty** password. Do not point staging at the development or production database. No migration is run by this preparation.
 - [ ] Store the values only in the staging host's secret store or its private `.env`. Do not copy the development `.env`.
 
@@ -20,20 +20,23 @@ Two different things are being separated on purpose:
 
 ```
 NODE_ENV=staging
-SYLLABUS_CHECK_ACADEMIC_V2=on
+SESSION_STORE=mysql
 SYLLABUS_CHECK_AI_PROVIDER=anthropic
+SYLLABUS_CHECK_REPLAN=official
+SYLLABUS_CHECK_REPLAN_MAX_COST_USD=2
+SYLLABUS_CHECK_REPLAN_MAX_REQUESTS=120
 ANTHROPIC_API_KEY=<new staging key>
 ANTHROPIC_MODEL=claude-sonnet-5-5
 SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL=claude-sonnet-5-5
 SESSION_SECRET=<new>
-JWT_SECRET=<new>
 SYLLABUS_CHECK_AI_GATE=advisory
-SYLLABUS_CHECK_AI_MAX_REQUESTS=120
-SYLLABUS_CHECK_AI_MAX_COST_USD=10
 CORS_ALLOWED_ORIGINS=<staging frontend origin, for example https://… with no path and no trailing slash>
 TRUST_PROXY=<reverse-proxy hops, usually 1>
 SESSION_COOKIE_SAMESITE=<lax or none, from section C>
-DB_HOST=<…>  DB_NAME=<…>  DB_USER=<…>  DB_PASS=<…>
+DB_HOST=<…>
+DB_NAME=<…>
+DB_USER=<…>
+DB_PASS=<…>
 APP_URL=<staging frontend URL>
 AI_CHECKS_PER_USER_PER_DAY=100
 AI_CHECKS_PER_DAY=1000
@@ -42,6 +45,7 @@ AI_CHECKS_PER_MINUTE_PER_USER=30
 DB_POOL_SIZE=30
 SYLLABUS_CHECK_GENERATE=on
 SYLLABUS_CHECK_GENERATE_MAX_COST_USD=2
+SYLLABUS_CHECK_GENERATE_PER_USER_PER_DAY=5
 ```
 
 - [ ] The last seven lines size the system for 19 faculty who all run the AI Checker and the AI Syllabus Generator at the same time (no waiting, no server-wide lock). The daily ceilings cannot be turned off, so raise them if the faculty grows; the whole-school number must be at least the per-person one. `SYLLABUS_CHECK_GENERATE` is off unless set to `on`.
@@ -76,20 +80,19 @@ The Node server speaks plain HTTP behind the proxy, so it must be told to trust 
 
 ## E. Provider-side spending limit (the real cost control)
 
-The in-app `SYLLABUS_CHECK_AI_MAX_COST_USD` is a **reservation guard**, not a spend meter. It reserves each request's input plus the maximum output and never releases it. It stops a check early, and it cannot stop spend that happens elsewhere. Measured with the scripted model, the 20-request synthetic check reserves about $4.5, so the documented cap of 10 completes it; a cap of 1.50 stops it after 7 requests.
+The in-app `SYLLABUS_CHECK_REPLAN_MAX_COST_USD` is a **per-check spending cap** enforced before requests are sent, and the server refuses to start in `staging` or `production` if an AI provider is enabled without it. Provider-side workspace billing limits remain the authoritative ceiling across all keys and processes.
 
-- [ ] A **hard** spend limit is set in the Anthropic workspace of the staging key, lower than the amount you are willing to lose (the earlier measured cost of one real legacy check was about $0.92; a Policy V2 check is expected at about twice that, an estimate and not a measurement).
+- [ ] A **hard** spend limit is set in the Anthropic workspace of the staging key, lower than the amount you are willing to lose.
 - [ ] Usage alerts are on, if the workspace offers them.
-- [ ] The request budget `SYLLABUS_CHECK_AI_MAX_REQUESTS=120` is set (a check of the synthetic sample sends 20).
+- [ ] The request budget `SYLLABUS_CHECK_REPLAN_MAX_REQUESTS=120` is set.
 - [ ] `ANTHROPIC_MAX_TOKENS` is left at its default (16,000) unless evidence says otherwise: a low value risks truncated answers.
 
 ## F. Read-only verification before anything is authorized
 
 Neither command prints a secret, changes a file or sends a request.
 
-- [ ] `node scripts/credential-readiness.cjs --env-file <staging env file>` exits 0.
-- [ ] `node scripts/vpaa-v2-preflight.cjs --env-file <staging env file>` exits 0 with no warning. It now also validates the origins, proxy and cookie settings with the same code the server runs at startup.
-- [ ] `npm run test:vpaa`, `npm test` and `npm run build` are green at the exact commit being deployed.
+- [ ] `node scripts/credential-readiness.cjs --env-file <staging env file>` exits 0 with no unused/retired secret warnings.
+- [ ] `npm run test:vpaa`, `npm test`, `npm run test:db-bootstrap` (against a scratch DB) and `npm run build` are green at the exact commit being deployed.
 
 ## G. After deploying (still before any live provider request)
 
