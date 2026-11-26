@@ -3,6 +3,7 @@ import { t as translateUI } from "../i18n/index.js";
 import { useState, useEffect, useSyncExternalStore } from 'react';
 import { resolveAvatar, subscribeAvatars } from '../lib/avatarStore';
 import { API_ORIGIN } from '../lib/api';
+import GeistProgress from './GeistProgress';
 import {
   Archive,
   ArrowUpRight,
@@ -59,9 +60,9 @@ export function Legend({ color, text, value }) {
 }
 
 // `value` is a percentage, or null when there is nothing to measure yet (shown as a dash with an empty bar). `note` is a small line under the bar.
-export function Progress({ label, value, note }) {
+export function Progress({ label, value, note, type = 'default' }) {
   const known = Number.isFinite(value);
-  return <div className="progress-row"><div><span>{label}</span><b>{known ? `${value}%` : '—'}</b></div><div className="bar"><i style={{ width: `${known ? value : 0}%` }} /></div>{note && <small className="progress-note">{note}</small>}</div>;
+  return <div className="progress-row"><div><span>{label}</span><b>{known ? `${value}%` : '—'}</b></div><GeistProgress value={known ? value : 0} type={type} ariaLabel={typeof label === 'string' ? label : undefined} />{note && <small className="progress-note">{note}</small>}</div>;
 }
 
 // `value` is 0-100, or null when no syllabus has a score for this area yet.
@@ -116,7 +117,7 @@ export function Assessment({ name, weight, cos }) {
 }
 
 export function Policy({ title, text }) {
-  return <div className="policy"><h3>{title}</h3><textarea defaultValue={text} /></div>;
+  return <div className="policy"><h3>{title}</h3><textarea className="geist-textarea" defaultValue={text} /></div>;
 }
 
 // One icon set (Vercel Geist Iconography) for the whole UI. Only the icons listed here are bundled.

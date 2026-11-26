@@ -4,6 +4,7 @@ import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useRef, useState } from 'react';
 import { Avatar, Icon } from './ui';
+import GeistAvatar from './GeistAvatar';
 import { users as usersApi } from '../lib/api';
 import { AVATAR_ACCEPT, prepareAvatar } from '../lib/avatar';
 import { fmt } from '../lib/utils';
@@ -137,7 +138,7 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
         </div>
         </>}
         <div className="profile-wrap" ref={profRef}>
-          <button className="profile-btn" title={user.name} ref={profBtnRef} aria-haspopup={isStudent ? undefined : 'menu'} aria-expanded={isStudent ? undefined : menuOpen} onClick={() => { if (!isStudent) setMenuOpen(o => !o); }}><Avatar userId={user.id} src={user.avatarUrl} name={user.name} initials={user.initials} /><span><strong>{user.name}</strong><small>{tr(ROLE_LABELS[user.role] || user.role || translateUI("ui.unknown_role_476868"))}</small></span></button>
+          <button className="profile-btn" title={user.name} ref={profBtnRef} aria-haspopup={isStudent ? undefined : 'menu'} aria-expanded={isStudent ? undefined : menuOpen} onClick={() => { if (!isStudent) setMenuOpen(o => !o); }}>{isStudent ? <GeistAvatar size={32} userId={user.id} src={user.avatarUrl} name={user.name} initials={user.initials} icon={<Icon name="graduationCap" size={10} />} ariaHidden /> : <Avatar userId={user.id} src={user.avatarUrl} name={user.name} initials={user.initials} />}<span><strong>{user.name}</strong><small>{tr(ROLE_LABELS[user.role] || user.role || translateUI("ui.unknown_role_476868"))}</small></span></button>
           {menuOpen && <div className="profile-menu" role="menu" aria-label={translateUI("ui.profile_photo_33f385")}>
             <button type="button" role="menuitem" disabled={busy} onClick={() => { setMenuOpen(false); fileRef.current?.click(); }}>{translateUI("ui.change_photo_ed5690")}</button>
             {user.avatarUrl && <button type="button" role="menuitem" disabled={busy} onClick={removePhoto}>{translateUI("ui.remove_photo_c8f5ed")}</button>}

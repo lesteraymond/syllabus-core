@@ -19,13 +19,9 @@ const BANDS = [['high', 'var(--green)', 'ui.high_80_100_234a35'], ['medium', 'va
 
 // How the scored syllabi spread over the bands: the average as the one big number, a thin bar split into the three bands, and a legend with each share.
 // The average is the AI-completed average (aiAverage); the shares are of every scored syllabus (scoreBands). Both are computed as before.
-function ScoreSpread({ average, bands, view }) {
+function ScoreSpread({ average, bands }) {
   const parts = BANDS.map(([key, color, label]) => ({ key, color, label: translateUI(label), value: bands[key] }));
   const of = translateUI(bands.count === 1 ? 'analytics.bandsOfOne' : 'analytics.bandsOf', { count: bands.count });
-  if (view === 'table') return <table className="trend-table chart-table" aria-label={of}>
-    <thead><tr><th>{translateUI('analytics.band')}</th><th className="num">{translateUI('analytics.share')}</th></tr></thead>
-    <tbody>{parts.map((p) => <tr key={p.key}><td><span className="trend-key" style={{ background: p.color }} aria-hidden="true" />{p.label}</td><td className="num">{p.value}%</td></tr>)}</tbody>
-  </table>;
   return <div className="spread">
     <div className="spread-hero"><strong>{Number.isFinite(average) ? `${average}%` : '—'}</strong><span>{translateUI('analytics.averageLabel')}</span></div>
     <div className="spread-bar" role="img" aria-label={parts.map((p) => `${p.label}: ${p.value}%`).join(', ')}>
@@ -80,7 +76,6 @@ export default function Analytics({ syllabi, user, notify }) {
     if (isFaculty) return rows.filter(r => r.run && Number.isFinite(r.run.overall)).map(r => ({ label: r.courseCode, value: r.run.overall }));
     return programScores(rows).filter(p => p.average !== null).map(p => ({ label: p.program, value: p.average, checked: p.checked }));
   }, [rows, isFaculty]);
-  const [spreadView, setSpreadView] = useState('chart');
   const [barsView, setBarsView] = useState('chart');
   const allAreas = checks && checks.summary && Array.isArray(checks.summary.areas) ? checks.summary.areas : [];
   // Quality dimensions by program (administrator): the average of each area over the checked syllabi of the chosen program, the same
@@ -156,8 +151,8 @@ export default function Analytics({ syllabi, user, notify }) {
     <>
       <PageHead title={isFaculty ? translateUI("ui.my_analytics_1ab328") : translateUI("ui.analytics_quality_dashboard_b85172")} subtitle={isFaculty ? translateUI("ui.track_your_personal_compliance_scores_and_submission_performance_b66964") : translateUI("ui.monitor_compliance_curriculum_coverage_submission_performance_and_78b463")} actions={<><YearFilter group="data" /><StableButton type="button" className="btn outline" disabled={!loaded || !hasData} onClick={downloadReport}><Icon name="downloadSimple" size={15} />{translateUI("ui.download_report_9f36e2")}</StableButton></>} />
       <div className="analytics-grid two">
-        <ChartCard title={translateUI('analytics.spreadTitle')} subtitle={translateUI(isFaculty ? 'analytics.spreadSubtitleFaculty' : 'analytics.spreadSubtitleAdmin')} action={bands.count ? <ViewSwitch view={spreadView} setView={setSpreadView} /> : null}>
-          {bands.count ? <ScoreSpread average={average} bands={bands} view={spreadView} /> : none}
+        <ChartCard title={translateUI('analytics.spreadTitle')} subtitle={translateUI(isFaculty ? 'analytics.spreadSubtitleFaculty' : 'analytics.spreadSubtitleAdmin')}>
+          {bands.count ? <ScoreSpread average={average} bands={bands} /> : none}
         </ChartCard>
         <ChartCard title={barsTitle} subtitle={translateUI(isFaculty ? 'analytics.barsSubtitleFaculty' : 'analytics.barsSubtitleAdmin')} action={bars.length ? <ViewSwitch view={barsView} setView={setBarsView} /> : null}>
           {bars.length ? <ScoreBars data={bars} view={barsView} isFaculty={isFaculty} label={barsTitle} /> : none}

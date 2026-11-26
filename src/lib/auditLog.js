@@ -27,8 +27,11 @@ export function shapeAuditRow(log, index = 0, viewerId = null) {
 
 export function filterAuditRows(rows, { category = 'all', query = '' } = {}) {
   const q = String(query || '').trim().toLowerCase();
+  const catSet = Array.isArray(category)
+    ? (category.length > 0 ? new Set(category) : null)
+    : (category && category !== 'all' ? new Set([category]) : null);
   return (rows || []).filter((r) => {
-    if (category && category !== 'all' && r.category !== category) return false;
+    if (catSet && !catSet.has(r.category)) return false;
     if (!q) return true;
     const hay = [r.actor, r.verb, r.subject, r.detail, r.note, r.action, r.date, r.time, r.ipAddress].filter(Boolean).join(' ').toLowerCase();
     return hay.includes(q);
