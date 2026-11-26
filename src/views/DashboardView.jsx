@@ -12,7 +12,7 @@ import TypewriterText from '../components/TypewriterText';
 import { compliance as complianceApi, courses as coursesApi, outcomes as outcomesApi } from '../lib/api';
 import { adminStatCards } from '../lib/adminDashboardStats';
 import { canAuthor, isReviewer, roleAllows } from '../lib/roles';
-import { FACULTY_SUBMITTED, aiAverage, approval, programCoverage, scoreTone, snapshotOf } from '../lib/complianceStats';
+import { FACULTY_SUBMITTED, aiAverage, approval, programCoverage, scoreTone, snapshotOf, submittedStatCount } from '../lib/complianceStats';
 import { sentenceCase } from '../lib/sentenceCase';
 import { dayPeriod } from '../lib/phTime';
 import CustomizeQuickActionsModal from '../components/CustomizeQuickActionsModal';
@@ -66,8 +66,8 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
   const key = 'dashboard.good' + period[0].toUpperCase() + period.slice(1);
   const greeting = name ? translateUI(key, { name }) : translateUI(key + 'NoName');
   const my = useMemo(() => syllabi.filter(s => s.userId === user.id), [syllabi, user]);
-  // My Submissions counts what this person has submitted: a draft is not a submission, for every role that writes syllabi (faculty and the dean).
-  const mySubmitted = useMemo(() => my.filter(s => s.status !== 'draft').length, [my]);
+  // Submitted stat card counts unique subjects this person has submitted (submitted, under_review, for_revision, approved); drafts and VPAA-rejected syllabi are excluded.
+  const mySubmitted = useMemo(() => submittedStatCount(my), [my]);
   // The same queue Review & Approval shows (its count), so the quick action and that page always agree (E2E report 2026-11-23, BUG-019).
   const myReviewQueue = useMemo(() => reviewQueue(syllabi, user.role, user.id).queue.length, [syllabi, user.role, user.id]);
   const isFac = user.role === 'faculty';

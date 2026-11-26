@@ -33,6 +33,11 @@ export const accountActivityEn = {
   'accountActivity.assignments': 'changed the assignments of',
   'accountActivity.agreedTerms': 'agreed to the registration Terms and Conditions',
   'accountActivity.subjectsAssigned': 'Subjects assigned: {count}',
+  'accountActivity.clearedDeanReview': 'cleared the dean review of',
+  'accountActivity.clearedAsstVpaaReview': 'cleared the Asst. VPAA review of',
+  'accountActivity.clearedLicDirectorReview': 'cleared the LIC Director review of',
+  'accountActivity.clearedReview': 'cleared the review of',
+  'accountActivity.choseWithoutAi': 'chose to review without an AI check',
   // the Dashboard card's title (it was "Recent Activity"), and the administrator's view of it
   'accountActivity.title': 'Recent Activity',
   'accountActivity.viewLabel': 'Whose activity',
@@ -62,6 +67,9 @@ export const accountActivityEn = {
   'auditLog.col.category': 'Category',
   'auditLog.col.event': 'Event',
   'auditLog.col.details': 'Details',
+  'multiSelect.only': 'Only',
+  'multiSelect.clear': 'Clear',
+  'multiSelect.selectedCount': '{count} selected',
 };
 
 export const accountActivityTl = {
@@ -97,6 +105,11 @@ export const accountActivityTl = {
   'accountActivity.assignments': 'binago ang mga assignment ni',
   'accountActivity.agreedTerms': 'sumang-ayon sa Mga Tuntunin at Kundisyon sa pagpaparehistro',
   'accountActivity.subjectsAssigned': 'Mga asignaturang naka-assign: {count}',
+  'accountActivity.clearedDeanReview': 'pinasa ang pagsusuri ng dekana para sa',
+  'accountActivity.clearedAsstVpaaReview': 'pinasa ang pagsusuri ng Asst. VPAA para sa',
+  'accountActivity.clearedLicDirectorReview': 'pinasa ang pagsusuri ng LIC Director para sa',
+  'accountActivity.clearedReview': 'pinasa ang pagsusuri para sa',
+  'accountActivity.choseWithoutAi': 'piniling suriin nang walang AI check ang',
   'accountActivity.title': 'Mga Kamakailang Aktibidad',
   'accountActivity.viewLabel': 'Kaninong aktibidad',
   'accountActivity.mine': 'Aking aktibidad',
@@ -125,4 +138,7 @@ export const accountActivityTl = {
   'auditLog.col.category': 'Kategorya',
   'auditLog.col.event': 'Kaganapan',
   'auditLog.col.details': 'Detalye',
+  'multiSelect.only': 'Lamang',
+  'multiSelect.clear': 'I-clear',
+  'multiSelect.selectedCount': '{count} napili',
 };

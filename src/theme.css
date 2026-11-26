@@ -15,13 +15,16 @@
 	--blue2: #1e40af;
 	--tint-cobalt: #eff6ff;
 
-	/* Geist 10-step achromatic neutrals (Light) */
+	/* Geist 10-step achromatic neutrals & Background Scales (Light) */
+	--ds-background-100: #ffffff;
+	--ds-background-200: #fafafa;
 	--ds-bg-100: #ffffff;
 	--ds-bg-200: #fafafa;
 	--ds-gray-100: #f2f2f2;
 	--ds-gray-200: #ebebeb;
 	--ds-gray-300: #e6e6e6;
-	--ds-gray-400: #d4d4d4;
+	--ds-gray-400: #eaeaea;
+	--ds-gray-500: #c9c9c9;
 	--ds-gray-600: #a8a8a8;
 	--ds-gray-700: #8f8f8f;
 	--ds-gray-900: #666666;
@@ -30,7 +33,7 @@
 	--ds-gray-alpha-200: rgba(0, 0, 0, 0.08);
 	--ds-gray-alpha-400: rgba(0, 0, 0, 0.14);
 
-	/* App surface & text hierarchy mapped to Geist pure neutrals (all 4.5:1+ AA) */
+	/* App surface & text hierarchy mapped to Geist Background Scales (all 4.5:1+ AA) */
 	--navy: #171717;
 	--bg: #fafafa;
 	--card: #ffffff;
@@ -40,6 +43,14 @@
 	--line: #ebebeb;
 	--line-strong: #8f8f8f;
 
+	/* Geist 10-step Semantic Color Scales (Light: 100-300 bg, 400-600 border, 700-800 solid, 900-1000 text/icon) */
+	--ds-blue-100: #f0f7ff; --ds-blue-200: #ebf5ff; --ds-blue-300: #e0f0ff; --ds-blue-400: #cce6ff; --ds-blue-500: #99ceff; --ds-blue-600: #52aeff; --ds-blue-700: #0072f5; --ds-blue-800: #0062d1; --ds-blue-900: #0068d6; --ds-blue-1000: #00254d;
+	--ds-red-100: #fff0f0; --ds-red-200: #ffe6e6; --ds-red-300: #fdd8d8; --ds-red-400: #f8b9b9; --ds-red-500: #f38e8e; --ds-red-600: #e85d5d; --ds-red-700: #e5484d; --ds-red-800: #d93036; --ds-red-900: #cb2a2f; --ds-red-1000: #391417;
+	--ds-amber-100: #fff9eb; --ds-amber-200: #fff4d6; --ds-amber-300: #ffeaad; --ds-amber-400: #ffd470; --ds-amber-500: #ffb82e; --ds-amber-600: #f59e0b; --ds-amber-700: #ffb224; --ds-amber-800: #ff990a; --ds-amber-900: #a35200; --ds-amber-1000: #4e2009;
+	--ds-green-100: #effbef; --ds-green-200: #e3f8e4; --ds-green-300: #ceefd0; --ds-green-400: #a8e2ac; --ds-green-500: #72ce79; --ds-green-600: #46a758; --ds-green-700: #45a557; --ds-green-800: #388e49; --ds-green-900: #297a3a; --ds-green-1000: #1b311e;
+	--ds-teal-100: #eefcf9; --ds-teal-200: #ddf9f3; --ds-teal-300: #bdf2e7; --ds-teal-400: #8ae5d3; --ds-teal-500: #47d1b8; --ds-teal-600: #12a594; --ds-teal-700: #12a594; --ds-teal-800: #0d8c7d; --ds-teal-900: #067a6e; --ds-teal-1000: #073c36;
+	--ds-purple-100: #f9f1fe; --ds-purple-200: #f4e6fd; --ds-purple-300: #e9d1fa; --ds-purple-400: #d7aef5; --ds-purple-500: #bd7eeb; --ds-purple-600: #9f52db; --ds-purple-700: #8e4ec6; --ds-purple-800: #7c3aed; --ds-purple-900: #6b21a8; --ds-purple-1000: #2e1065;
+
 	/* Geist semantic accents harmonized with #2563eb / #1d4ed8 */
 	--gold: #e5a00d;
 	--peach: #e5b89b;
@@ -48,13 +59,13 @@
 	--red: #cb2a2f;
 	--purple: #6b21a8;
 
-	/* Type scale: steady progression; 12px stays the floor for readability. */
+	/* Type scale: Vercel Geist Typography steps (12px floor, xl/base = 1.71 <= 1.8). */
 	--text-xs: 12px;
 	--text-sm: 13px;
 	--text-base: 14px;
-	--text-md: 15px;
-	--text-lg: 18px;
-	--text-xl: 22px;
+	--text-md: 16px;
+	--text-lg: 20px;
+	--text-xl: 24px;
 
 	/* Density & Geist architectural radii */
 	--title-size: var(--text-sm);
@@ -71,12 +82,16 @@
 	--side-active: #ebebeb;
 	--side-active-hover: #e6e6e6;
 
-	/* Geist Material elevation layers (crisp 1px ring + ambient shadow) */
-	--mat-base: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-	--mat-small: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
-	--mat-menu: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
-	--mat-modal: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 16px 40px rgba(0, 0, 0, 0.14), 0 4px 12px rgba(0, 0, 0, 0.06);
-	--shadow: var(--mat-base);
+	/* Geist Materials: 8-tier elevation system (Surface: base/small/medium/large; Floating: tooltip/menu/modal/fullscreen) */
+	--mat-base: 0 0 0 1px rgba(0, 0, 0, 0.08);
+	--mat-small: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+	--mat-medium: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04), 0 8px 16px -4px rgba(0, 0, 0, 0.06);
+	--mat-large: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.04), 0 16px 32px -4px rgba(0, 0, 0, 0.08);
+	--mat-tooltip: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 8px rgba(0, 0, 0, 0.06);
+	--mat-menu: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04), 0 12px 24px -4px rgba(0, 0, 0, 0.10);
+	--mat-modal: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.06), 0 20px 40px -8px rgba(0, 0, 0, 0.14);
+	--mat-fullscreen: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 8px 16px rgba(0, 0, 0, 0.08), 0 32px 64px -12px rgba(0, 0, 0, 0.18);
+	--shadow: var(--mat-small);
 
 	/* Darker semantic inks & subtle tints (all >= 4.5:1 on white or their tint) */
 	--gold-ink: #8a4b00;
@@ -1597,6 +1612,68 @@ html { scrollbar-gutter: auto; }
 .student-id-head strong { font-size: var(--text-md, 16px); color: var(--ink); overflow-wrap: anywhere; }
 .student-id-head small { color: var(--muted); font-variant-numeric: tabular-nums; }
 .student-initials { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; border-radius: 50%; background: var(--btn-primary); color: #ffffff; font-weight: var(--fw-bold); font-size: 18px; letter-spacing: 0.02em; }
+/* Vercel Geist Avatar component */
+.geist-avatar-wrap {
+  --geist-avatar-size: 32px;
+  flex: none;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--geist-avatar-size);
+  height: var(--geist-avatar-size);
+  font-style: normal;
+  user-select: none;
+}
+.geist-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  overflow: hidden;
+  box-sizing: border-box;
+  border: 1px solid var(--ds-gray-400);
+  background: var(--ds-background-200);
+  color: var(--ds-gray-1000);
+  font-style: normal;
+}
+.geist-avatar > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.geist-avatar-text {
+  font-size: calc(var(--geist-avatar-size) * 0.36);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.geist-avatar.is-placeholder {
+  background: var(--ds-gray-200);
+}
+.geist-avatar-icon {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: max(16px, calc(var(--geist-avatar-size) * 0.44));
+  height: max(16px, calc(var(--geist-avatar-size) * 0.44));
+  border-radius: 9999px;
+  box-sizing: border-box;
+  background: var(--ds-background-100);
+  color: var(--ds-gray-1000);
+  border: 1px solid var(--ds-gray-500);
+  box-shadow: 0 1px 2px var(--ds-gray-alpha-100);
+  font-style: normal;
+}
+.geist-avatar-icon > svg {
+  display: block;
+}
 .student-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; }
 .student-facts > div { display: grid; gap: 3px; padding: 11px 14px; border: 1px solid var(--line); border-radius: 10px; background: #ffffff; min-width: 0; }
 .student-facts > div.wide { grid-column: 1 / -1; }
@@ -2155,6 +2232,325 @@ html { scrollbar-gutter: auto; }
   .outcomes-ega { grid-template-columns: 64px minmax(0, 1fr) auto; }
   .outcomes-ega label:nth-of-type(2),
   .outcomes-ega label:nth-of-type(3) { grid-column: 1 / -1; }
+}
+
+/* ---- Vercel Geist Progress (themed, system-wide) ---- */
+.geist-progress,
+.bar {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--btn-primary) 15%, #e5e7eb);
+  overflow: hidden;
+}
+.geist-progress.thin,
+.bar.thin {
+  height: 4px;
+}
+.geist-progress-fill,
+.bar i,
+.progress-row .bar i,
+.radar-like .progress-row .bar i {
+  display: block;
+  height: 100%;
+  border-radius: 9999px;
+  background: var(--btn-primary);
+  transition: width 260ms cubic-bezier(0.22, 1, 0.36, 1), background-color 180ms ease;
+}
+.geist-progress.is-secondary { background: var(--ds-gray-200); }
+.geist-progress.is-secondary .geist-progress-fill { background: var(--ds-gray-900); }
+.geist-progress.is-success,
+.cm-area.good .bar { background: var(--ds-green-200); }
+.geist-progress.is-success .geist-progress-fill,
+.cm-area.good .bar i { background: var(--ds-green-700); }
+.geist-progress.is-warning,
+.cm-area.warn .bar { background: var(--ds-amber-200); }
+.geist-progress.is-warning .geist-progress-fill,
+.cm-area.warn .bar i { background: var(--ds-amber-800); }
+.geist-progress.is-error { background: var(--ds-red-200); }
+.geist-progress.is-error .geist-progress-fill { background: var(--ds-red-700); }
+.cm-area.none .bar { background: var(--ds-gray-200); }
+.cm-area.none .bar i { background: var(--ds-gray-400); }
+.geist-progress.gen-bar {
+  height: 6px;
+  background: color-mix(in srgb, var(--btn-primary) 15%, #e5e7eb);
+}
+.geist-progress.gen-bar .geist-progress-fill {
+  background: var(--btn-primary);
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .geist-progress-fill,
+  .bar i {
+    transition: none;
+  }
+}
+
+/* ---- Vercel Geist Spinner (12-bar radial) ---- */
+.geist-spinner {
+  --geist-spinner-size: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--geist-spinner-size);
+  height: var(--geist-spinner-size);
+  flex: none;
+  color: currentColor;
+}
+.geist-spinner-inner {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  left: 50%;
+  top: 50%;
+}
+.geist-spinner-bar {
+  position: absolute;
+  top: -3.9%;
+  left: -10%;
+  width: 24%;
+  height: 8%;
+  border-radius: 5px;
+  background: currentColor;
+  transform: rotate(calc(var(--bar-index) * 30deg)) translate(146%);
+  animation: geist-spinner-fade 1.2s linear infinite;
+  animation-delay: calc(-1.2s + var(--bar-index) * 0.1s);
+}
+.geist-btn-spin {
+  margin-right: 7px;
+}
+.geist-spinner.is-blue,
+.loading-screen .geist-spinner.is-blue {
+  color: var(--ds-blue-700);
+}
+.loading-screen .geist-spinner {
+  color: var(--ds-blue-700);
+}
+@keyframes geist-spinner-fade {
+  0% { opacity: 1; }
+  100% { opacity: 0.15; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .geist-spinner-bar {
+    animation-duration: 2.4s;
+  }
+}
+
+/* ---- Vercel Geist Textarea (system-wide: solid gray tokens; gray-alpha only on focus halo) ---- */
+.geist-textarea-field {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+}
+.geist-textarea-label {
+  font-size: var(--text-xs, 12px);
+  font-weight: 500;
+  color: var(--ds-gray-900);
+  line-height: 1.4;
+}
+.geist-textarea,
+textarea:not(.cell) {
+  font-size: var(--text-sm, 14px);
+  line-height: 1.5;
+  color: var(--ds-gray-1000);
+  background: var(--ds-background-100);
+  border: 1px solid var(--ds-gray-400);
+  border-radius: 6px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  outline: none;
+  box-shadow: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+}
+.geist-textarea::placeholder,
+textarea:not(.cell)::placeholder {
+  color: var(--ds-gray-700);
+}
+.geist-textarea:hover:not(:disabled):not(:focus),
+textarea:not(.cell):hover:not(:disabled):not(:focus) {
+  border-color: var(--ds-gray-500);
+}
+.geist-textarea:focus,
+.field textarea:focus,
+.hy-edit textarea:focus,
+.bld2 textarea.in:focus,
+textarea:not(.cell):focus {
+  border-color: var(--ds-gray-600);
+  box-shadow: 0 0 0 3px var(--ds-gray-alpha-200);
+  outline: none;
+}
+.geist-textarea.is-small {
+  padding: 7px 10px;
+  font-size: var(--text-xs, 12.5px);
+}
+.geist-textarea.is-large {
+  padding: 12px 14px;
+  font-size: var(--text-md, 15px);
+}
+.geist-textarea.is-error,
+textarea:not(.cell)[aria-invalid="true"] {
+  border-color: var(--ds-red-700);
+}
+.geist-textarea.is-error:focus,
+textarea:not(.cell)[aria-invalid="true"]:focus {
+  border-color: var(--ds-red-800);
+  box-shadow: 0 0 0 3px var(--ds-red-200);
+}
+.geist-textarea:disabled,
+textarea:not(.cell):disabled {
+  background: var(--ds-background-200);
+  color: var(--ds-gray-700);
+  border-color: var(--ds-gray-400);
+  cursor: not-allowed;
+  resize: none;
+}
+.geist-textarea-error {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-xs, 12.5px);
+  color: var(--ds-red-900);
+  line-height: 1.4;
+}
+.geist-textarea-error > svg {
+  flex: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .geist-textarea,
+  textarea:not(.cell) {
+    transition: none;
+  }
+}
+
+/* ---- Vercel Geist Toast Stack ---- */
+.geist-toaster {
+  position: fixed;
+  right: 24px;
+  bottom: max(20px, env(safe-area-inset-bottom));
+  z-index: 1200;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  width: min(420px, calc(100dvw - 32px));
+  pointer-events: none;
+}
+.geist-toast {
+  --toast-index: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 13px 14px 13px 16px;
+  border-radius: 12px;
+  background: var(--ds-background-100);
+  color: var(--ds-gray-1000);
+  border: 0;
+  box-shadow: var(--mat-medium);
+  font-size: var(--text-sm, 13.5px);
+  line-height: 1.45;
+  pointer-events: auto;
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+  animation: geist-toast-in 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease, margin 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.geist-toaster:not(.is-expanded) .geist-toast[data-index="1"] {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: -1;
+  transform: translate3d(0, -10px, 0) scale(0.95);
+  opacity: 0.92;
+}
+.geist-toaster:not(.is-expanded) .geist-toast[data-index="2"] {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: -2;
+  transform: translate3d(0, -20px, 0) scale(0.9);
+  opacity: 0.78;
+}
+.geist-toaster.is-expanded {
+  gap: 10px;
+}
+.geist-toaster.is-expanded .geist-toast {
+  position: relative;
+  transform: none;
+  opacity: 1;
+}
+.geist-toast-ico {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.geist-toast.is-success .geist-toast-ico { color: var(--ds-green-900); }
+.geist-toast.is-warning .geist-toast-ico { color: var(--ds-amber-900); }
+.geist-toast.is-error .geist-toast-ico { color: var(--ds-red-900); }
+.geist-toast.is-error { box-shadow: 0 0 0 1px var(--ds-red-400), 0 8px 24px -4px var(--ds-gray-alpha-200); }
+.geist-toast.is-warning { box-shadow: 0 0 0 1px var(--ds-amber-400), 0 8px 24px -4px var(--ds-gray-alpha-200); }
+.geist-toast.is-success { box-shadow: 0 0 0 1px var(--ds-green-400), 0 8px 24px -4px var(--ds-gray-alpha-200); }
+.geist-toast-msg {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-weight: 450;
+}
+.geist-toast-action {
+  flex: none;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--ds-gray-400);
+  background: var(--ds-background-200);
+  color: var(--ds-gray-1000);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+.geist-toast-action:hover {
+  background: var(--ds-gray-100);
+  border-color: var(--ds-gray-500);
+}
+.geist-toast-close {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 0;
+  background: transparent;
+  color: var(--ds-gray-900);
+  cursor: pointer;
+  transition: background 140ms ease, color 140ms ease;
+}
+.geist-toast-close:hover {
+  background: var(--ds-gray-100);
+  color: var(--ds-gray-1000);
+}
+.geist-toast.bld2-toast {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  inline-size: 100%;
+  max-inline-size: none;
+}
+@keyframes geist-toast-in {
+  from { opacity: 0; transform: translate3d(0, 12px, 0) scale(0.98); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+@media (max-width: 640px) {
+  .geist-toaster { right: 16px; left: 16px; width: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .geist-toast { animation: none; transition: none; }
 }
 
 /* ---- Minimalist Toast Sizing & Wrapping (.toast & .bld2-toast) ---- */
@@ -5418,6 +5814,655 @@ html { scrollbar-gutter: auto; }
 .field input:-webkit-autofill:focus {
   border-color: var(--blue2);
   box-shadow: 0 0 0 1000px var(--card) inset, 0 0 0 3px var(--tint-cobalt);
+}
+
+/* ---- Vercel Geist Typography System (Headings, Labels, Copy, Buttons) ---- */
+.text-heading-72 { font-size: 72px; line-height: 72px; letter-spacing: -0.06em; font-weight: 600; }
+.text-heading-64 { font-size: 64px; line-height: 64px; letter-spacing: -0.055em; font-weight: 600; }
+.text-heading-56 { font-size: 56px; line-height: 56px; letter-spacing: -0.05em; font-weight: 600; }
+.text-heading-48 { font-size: 48px; line-height: 56px; letter-spacing: -0.045em; font-weight: 600; }
+.text-heading-40 { font-size: 40px; line-height: 48px; letter-spacing: -0.04em; font-weight: 600; }
+.text-heading-32 { font-size: 32px; line-height: 40px; letter-spacing: -0.035em; font-weight: 600; }
+.text-heading-24 { font-size: 24px; line-height: 32px; letter-spacing: -0.029em; font-weight: 600; }
+.text-heading-20 { font-size: 20px; line-height: 26px; letter-spacing: -0.02em; font-weight: 600; }
+.text-heading-16 { font-size: 16px; line-height: 24px; letter-spacing: -0.015em; font-weight: 600; }
+.text-heading-14 { font-size: 14px; line-height: 20px; letter-spacing: -0.01em; font-weight: 600; }
+
+.text-label-20 { font-size: 20px; line-height: 32px; letter-spacing: -0.01em; font-weight: 400; }
+.text-label-18 { font-size: 18px; line-height: 24px; letter-spacing: -0.005em; font-weight: 400; }
+.text-label-16 { font-size: 16px; line-height: 20px; letter-spacing: 0; font-weight: 400; }
+.text-label-14 { font-size: 14px; line-height: 20px; letter-spacing: 0; font-weight: 400; }
+.text-label-13 { font-size: 13px; line-height: 16px; letter-spacing: 0; font-weight: 400; font-variant-numeric: tabular-nums; }
+.text-label-12 { font-size: 12px; line-height: 16px; letter-spacing: 0; font-weight: 400; font-variant-numeric: tabular-nums; }
+
+.text-copy-24 { font-size: 24px; line-height: 36px; letter-spacing: -0.015em; font-weight: 400; }
+.text-copy-20 { font-size: 20px; line-height: 32px; letter-spacing: -0.01em; font-weight: 400; }
+.text-copy-18 { font-size: 18px; line-height: 28px; letter-spacing: 0; font-weight: 400; }
+.text-copy-16 { font-size: 16px; line-height: 24px; letter-spacing: 0; font-weight: 400; }
+.text-copy-14 { font-size: 14px; line-height: 20px; letter-spacing: 0; font-weight: 400; }
+.text-copy-13 { font-size: 13px; line-height: 18px; letter-spacing: 0; font-weight: 400; }
+
+.text-button-16 { font-size: 16px; line-height: 20px; letter-spacing: -0.005em; font-weight: 500; }
+.text-button-14 { font-size: 14px; line-height: 20px; letter-spacing: -0.005em; font-weight: 500; }
+.text-button-12 { font-size: 12px; line-height: 16px; letter-spacing: 0; font-weight: 500; }
+
+/* Headings mapped to Geist Heading scale (Semibold 600 + tight negative tracking) */
+.page-head h1 {
+  font-size: var(--text-xl);
+  line-height: 32px;
+  letter-spacing: -0.029em;
+  font-weight: 600;
+  color: var(--ink);
+}
+.modal h2,
+.login-card h2 {
+  font-size: var(--text-lg);
+  line-height: 26px;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  color: var(--ink);
+}
+.chart-card-head h3,
+.card-head h3,
+.subcard h4,
+.gen-head h4 {
+  letter-spacing: -0.012em;
+  font-weight: 600;
+  line-height: 20px;
+}
+.stat-grid .stat-card strong {
+  font-size: var(--text-xl);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Labels mapped to Geist Label scale (single-line UI + tabular numerals) */
+.sidebar nav button {
+  font-size: var(--text-base);
+  line-height: 20px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+.topbar .profile-btn strong {
+  font-size: var(--text-base);
+  line-height: 18px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+.topbar .profile-btn small {
+  font-size: var(--text-xs);
+  line-height: 16px;
+  font-weight: 400;
+}
+.table-card thead th {
+  font-size: var(--text-xs);
+  line-height: 16px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.table-card tbody td {
+  font-size: var(--text-base);
+  line-height: 20px;
+  font-variant-numeric: tabular-nums;
+}
+.table-card tbody td small {
+  font-size: var(--text-sm);
+  line-height: 18px;
+}
+.progress-row > div:first-child > b,
+.legend-row strong,
+.student-code,
+.student-id-head small,
+.status,
+.badge {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Copy mapped to Geist Copy scale (multi-line prose, generous line-height, Strong = 600) */
+.page-head p {
+  font-size: var(--text-base);
+  line-height: 20px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.chart-card-head p,
+.insight p,
+.recommend p,
+.empty,
+.info-banner,
+.form-error,
+.ai-note {
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.insight strong,
+.recommend strong,
+.deadline strong,
+.progress-row > div:first-child > span,
+.student-id-head strong {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Buttons mapped to Geist Button scale (Medium 500; :where keeps specialized compact button sizes intact) */
+:where(.btn, .logout) {
+  font-size: var(--text-base);
+  line-height: 20px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+.trend-seg button,
+.btn.sm,
+.student-view-btn {
+  font-size: var(--text-xs);
+  line-height: 16px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+/* ---- Vercel Geist Multi Select ---- */
+.geist-ms {
+  position: relative;
+  width: 100%;
+}
+.geist-ms-trigger {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.geist-ms-value {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+.geist-ms-badge {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 9999px;
+  background: var(--ds-gray-200);
+  color: var(--ink);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.geist-ms-panel {
+  position: fixed;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 6px;
+}
+.geist-ms-list {
+  display: grid;
+  gap: 2px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+.geist-ms-row {
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  transition: background 120ms ease;
+}
+.geist-ms-row:hover,
+.geist-ms-row:focus-within {
+  background: var(--ds-gray-100);
+}
+.geist-ms-item {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 8px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: var(--text-base);
+  line-height: 20px;
+  font-weight: 400;
+  text-align: left;
+  cursor: pointer;
+}
+.geist-ms-item:focus-visible,
+.geist-ms-only:focus-visible,
+.geist-ms-clear:focus-visible {
+  outline: 2px solid var(--ds-blue-700);
+  outline-offset: -2px;
+  border-radius: 6px;
+}
+.geist-ms-box {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid var(--ds-gray-500);
+  background: var(--ds-background-100);
+  color: #ffffff;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.geist-ms-box.is-checked {
+  background: var(--ds-blue-700);
+  border-color: var(--ds-blue-700);
+}
+.geist-ms-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.geist-ms-only {
+  flex: none;
+  padding: 3px 8px;
+  margin-right: 4px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--muted);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity 120ms ease, background 120ms ease, color 120ms ease;
+}
+.geist-ms-row:hover .geist-ms-only,
+.geist-ms-row:focus-within .geist-ms-only {
+  opacity: 1;
+}
+.geist-ms-only:hover {
+  background: var(--ds-gray-200);
+  color: var(--ink);
+}
+.geist-ms-foot {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--ds-gray-400);
+  display: flex;
+  justify-content: flex-end;
+}
+.geist-ms-clear {
+  padding: 5px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  cursor: pointer;
+}
+.geist-ms-clear:hover {
+  background: var(--ds-gray-100);
+  color: var(--ink);
+}
+
+/* ---- Vercel Geist Skeleton ---- */
+.geist-skeleton-box {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.geist-skeleton {
+  display: block;
+  width: 100%;
+  height: 16px;
+  border-radius: 6px;
+  background: var(--ds-gray-200);
+}
+.geist-skeleton.is-rounded { border-radius: 6px; }
+.geist-skeleton.is-pill { border-radius: 9999px; }
+.geist-skeleton.is-squared { border-radius: 0; }
+.geist-skeleton.is-animated,
+.gen-skel {
+  background-image: linear-gradient(
+    270deg,
+    var(--ds-gray-100),
+    var(--ds-gray-200),
+    var(--ds-gray-200),
+    var(--ds-gray-100)
+  );
+  background-size: 400% 100%;
+  animation: geist-skeleton-shimmer 8s ease-in-out infinite;
+}
+.geist-skel-stack {
+  display: grid;
+  gap: 10px;
+}
+.geist-skel-doc {
+  display: grid;
+  gap: 14px;
+  padding: 24px;
+}
+@keyframes geist-skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .geist-skeleton.is-animated,
+  .gen-skel {
+    animation: none;
+    background-image: none;
+    background: var(--ds-gray-200);
+  }
+}
+
+/* ---- Vercel Geist Status Dot ---- */
+.geist-status-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  vertical-align: middle;
+}
+.geist-status-dot-circle {
+  flex: none;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: var(--ds-gray-600);
+}
+.geist-status-dot.is-queued .geist-status-dot-circle { background: var(--ds-gray-600); }
+.geist-status-dot.is-building .geist-status-dot-circle { background: var(--ds-amber-700); }
+.geist-status-dot.is-ready .geist-status-dot-circle { background: var(--ds-teal-700); }
+.geist-status-dot.is-error .geist-status-dot-circle { background: var(--ds-red-700); }
+.geist-status-dot.is-canceled .geist-status-dot-circle { background: var(--ds-gray-500); }
+.geist-status-dot.is-live .geist-status-dot-circle {
+  animation: geist-dot-pulse 1.6s ease-in-out infinite;
+}
+.geist-status-dot-label {
+  font-size: var(--text-base);
+  line-height: 20px;
+  font-weight: 400;
+  color: var(--ink);
+}
+.geist-status-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.thread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--ds-blue-700);
+}
+@keyframes geist-dot-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.88); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .geist-status-dot.is-live .geist-status-dot-circle {
+    animation: none;
+  }
+}
+
+/* ---- Vercel Geist Modal (system-wide dialogs, footers & mobile bottom-sheet drawer) ---- */
+.overlay {
+  background: rgba(0, 0, 0, 0.45);
+  animation: geist-overlay-in 160ms ease both;
+}
+.modal,
+.dl-dialog,
+.outcomes-dialog {
+  background: var(--ds-background-100);
+  color: var(--ink);
+  animation: geist-modal-in 190ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.geist-modal {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  width: min(460px, calc(100vw - 32px));
+  max-height: min(86vh, 680px);
+}
+.geist-modal-header {
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid var(--ds-gray-400);
+  display: grid;
+  gap: 6px;
+}
+.geist-modal-title {
+  margin: 0;
+  font-size: var(--text-lg);
+  line-height: 26px;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  color: var(--ink);
+}
+.geist-modal-subtitle {
+  margin: 0;
+  font-size: var(--text-base);
+  line-height: 1.55;
+  color: var(--muted);
+}
+.geist-modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.geist-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 24px;
+  background: var(--ds-background-200);
+  border-top: 1px solid var(--ds-gray-400);
+  flex: none;
+}
+
+/* ConfirmModal (GeistModal-based only): does not touch legacy .modal.confirm-modal dialogs (Edit Subject, Outcomes, Deadlines, etc.) */
+.modal.geist-modal.confirm-modal {
+  padding: 0;
+  text-align: left;
+  width: min(440px, calc(100vw - 32px));
+}
+.confirm-head-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.modal.geist-modal.confirm-modal .confirm-icon {
+  flex: none;
+  margin: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ds-red-100);
+  color: var(--ds-red-900);
+  border: 1px solid var(--ds-red-400);
+}
+.confirm-copy {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+.modal.geist-modal.confirm-modal .confirm-actions {
+  margin: 0;
+  justify-content: space-between;
+}
+
+/* Unify existing dialog footers & headers to Geist Modal surface tokens */
+.modal-head,
+.qa-modal-head,
+.dl-head {
+  border-bottom: 1px solid var(--ds-gray-400);
+}
+.modal-foot,
+.qa-modal-foot,
+.dl-foot {
+  background: var(--ds-background-200);
+  border-top: 1px solid var(--ds-gray-400);
+}
+
+@keyframes geist-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes geist-modal-in {
+  from { opacity: 0; transform: translate3d(0, 8px, 0) scale(0.98); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .modal,
+  .dl-dialog,
+  .outcomes-dialog {
+    animation: none;
+  }
+}
+
+/* ---- Vercel Geist Materials (8-tier Surface & Floating presets, zero stacked borders) ---- */
+.material-base { background: var(--ds-background-100); border: 0; border-radius: 6px; box-shadow: var(--mat-base); }
+.material-small { background: var(--ds-background-100); border: 0; border-radius: 6px; box-shadow: var(--mat-small); }
+.material-medium { background: var(--ds-background-100); border: 0; border-radius: 12px; box-shadow: var(--mat-medium); }
+.material-large { background: var(--ds-background-100); border: 0; border-radius: 12px; box-shadow: var(--mat-large); }
+.material-tooltip { background: var(--ds-background-100); border: 0; border-radius: 6px; box-shadow: var(--mat-tooltip); }
+.material-menu { background: var(--ds-background-100); border: 0; border-radius: 12px; box-shadow: var(--mat-menu); }
+.material-modal { background: var(--ds-background-100); border: 0; border-radius: 12px; box-shadow: var(--mat-modal); }
+.material-fullscreen { background: var(--ds-background-100); border: 0; border-radius: 16px; box-shadow: var(--mat-fullscreen); }
+
+/* Surface: Base (6px, resting hairline) */
+.filter-card,
+.pick-card,
+.subcard {
+  border: 0;
+  border-radius: 6px;
+  box-shadow: var(--mat-base);
+}
+
+/* Surface: Small (6px, crisp subtle lift) */
+.card,
+.stat-card,
+.chart-card,
+.table-card,
+.comments-card,
+.workflow-card {
+  border: 0;
+  border-radius: 6px;
+  box-shadow: var(--mat-small);
+}
+.stat-grid .stat-card:hover {
+  box-shadow: var(--mat-medium);
+}
+
+/* Surface: Medium (12px, prominent containers & toasts) */
+.editor-card,
+.geist-toast {
+  border: 0;
+  border-radius: 12px;
+  box-shadow: var(--mat-medium);
+}
+
+/* Floating: Tooltip (6px, lightest floating lift) */
+.usage-tooltip {
+  border: 0;
+  border-radius: 6px;
+  box-shadow: var(--mat-tooltip);
+}
+
+/* Floating: Menu (12px, dropdowns & popovers) */
+.select-panel,
+.msg-drop,
+.profile-menu,
+.login-recent-menu {
+  border: 0;
+  border-radius: 12px;
+  box-shadow: var(--mat-menu);
+}
+
+/* Floating: Modal (12px, focused dialogs) */
+.modal,
+.dl-dialog,
+.outcomes-dialog {
+  border: 0;
+  border-radius: 12px;
+  box-shadow: var(--mat-modal);
+}
+
+/* Floating: Fullscreen (16px, highest elevation overlays) */
+.svm-modal,
+.cm-modal,
+.chat-modal {
+  border: 0;
+  border-radius: 16px;
+  box-shadow: var(--mat-fullscreen);
+}
+
+/* Mobile adaptation: Geist Drawer / bottom sheet on small viewports (placed after Materials so border-radius wins) */
+@media (max-width: 640px) {
+  .overlay:has(> .geist-modal),
+  .overlay:has(> .qa-modal) {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .modal.geist-modal,
+  .modal.qa-modal {
+    width: 100%;
+    max-width: 100%;
+    max-height: 88dvh;
+    border-radius: 16px 16px 0 0;
+  }
+  .geist-modal-actions,
+  .qa-modal-foot {
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+}
+
+/* ---- Vercel Geist Background Color Scales (surface hierarchy) ---- */
+body,
+.app-shell,
+.workspace {
+  background: var(--ds-background-200);
+}
+.sidebar,
+.topbar,
+.card,
+.stat-card,
+.chart-card,
+.table-card,
+.filter-card,
+.editor-card,
+.modal,
+.select-panel {
+  background: var(--ds-background-100);
+}
+.table-card thead th,
+.subcard,
+.student-facts > div,
+.student-subjects li,
+.gen-writes li {
+  background: var(--ds-background-200);
+}
+.table-card tbody tr:hover td {
+  background: var(--ds-gray-100);
+}
+.sidebar nav button:hover {
+  background: var(--ds-gray-100);
 }
 
 /* Forced Colors Mode (Windows High Contrast): keep focus indicators and surface boundaries visible when box-shadows are stripped. */

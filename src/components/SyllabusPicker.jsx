@@ -1,4 +1,5 @@
 import StableButton from './StableButton';
+import GeistSpinner from './GeistSpinner';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useId, useMemo, useState } from 'react';
@@ -91,7 +92,7 @@ export default function SyllabusPicker({ groups, loading = false, busy = false, 
         </div>
         <div className="pick-actions">
           {onWithoutAi && <StableButton type="button" className="btn outline" disabled={!row || busy || chosen || confirming || ownRow} title={ownRow ? translateUI('reviewChain.error.ownReview') : undefined} onClick={() => setConfirmingId(row.syllabusId)} data-testid="review-without-ai">{translateUI('aiChoice.withoutAi')}</StableButton>}
-          <StableButton type="button" className="btn primary" disabled={!row || !ready || busy || !!row.recordReview || !!inactiveYear} onClick={() => onCheck(row)}>{busy && <span className="chk-btn-spin" aria-hidden="true" />}{busy ? translateUI("ui.checking_820d60") : translateUI("ui.check_compliance_342b8f")}</StableButton>
+          <StableButton type="button" className="btn primary" disabled={!row || !ready || busy || !!row.recordReview || !!inactiveYear} aria-busy={busy || undefined} onClick={() => onCheck(row)}>{busy && <GeistSpinner size={15} className="geist-btn-spin" />}{busy ? translateUI("ui.checking_820d60") : translateUI("ui.check_compliance_342b8f")}</StableButton>
         </div>
       </div>
       {confirming && onWithoutAi && !ownRow && (

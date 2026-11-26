@@ -4,6 +4,7 @@ import { PageHead } from '../components/ui';
 import { useYearScope } from '../components/AcademicYearScope';
 import Select from '../components/Select';
 import StableButton from '../components/StableButton';
+import GeistSkeleton from '../components/GeistSkeleton';
 import { courses as coursesApi, syllabi as syllabiApi, syllabusCheck as checkApi, users as usersApi, isRevisionConflict } from '../lib/api';
 import { SECTION_KEYS, saveOnce } from '../lib/draftSave';
 import { EDITABLE_STATUSES, courseLockReason } from '../lib/syllabusRules';
@@ -96,7 +97,12 @@ export default function SyllabusGenerator({ user, syllabi = [], editing, setEdit
     <>
       <PageHead title={translateUI('generate.title')} subtitle={translateUI('generate.pageSubtitle')} />
       {subjects === null ? (
-        <div className="empty" role="status" aria-busy="true">{tr('Loading…')}</div>
+        <div className="card geist-skel-stack" role="status" aria-busy="true" style={{ padding: 20 }}>
+          <span className="sr-only">{tr('Loading…')}</span>
+          <GeistSkeleton width="28%" height={14} />
+          <GeistSkeleton width="100%" height={40} />
+          <GeistSkeleton width="100%" height={140} />
+        </div>
       ) : drafts.length === 0 && unstarted.length === 0 ? (
         <div className="empty">
           <div>{translateUI('generate.noSubjects')}</div>

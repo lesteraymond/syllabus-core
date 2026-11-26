@@ -5,6 +5,7 @@ import { buildAuditCsv, filterAuditRows, shapeAuditRow } from '../lib/auditLog';
 import { downloadCsv } from '../lib/reportCsv';
 import { Icon, PageHead } from '../components/ui';
 import Select from '../components/Select';
+import GeistMultiSelect from '../components/GeistMultiSelect';
 import StableButton from '../components/StableButton';
 
 const CATEGORY_KEYS = {
@@ -19,7 +20,7 @@ const ALERT_ACTIONS = new Set(['login_failed', 'user_disable', 'user_delete', 'r
 export default function AuditLog({ user, notify }) {
   const [people, setPeople] = useState([]);
   const [selectedUser, setSelectedUser] = useState('all');
-  const [category, setCategory] = useState('all');
+  const [categories, setCategories] = useState([]);
   const [query, setQuery] = useState('');
   const [state, setState] = useState({ rows: [], loading: true, error: '' });
 
@@ -48,7 +49,7 @@ export default function AuditLog({ user, notify }) {
   }, [selectedUser]);
 
   const shaped = useMemo(() => state.rows.map((l, i) => shapeAuditRow(l, i, user?.id ?? null)), [state.rows, user?.id]);
-  const visible = useMemo(() => filterAuditRows(shaped, { category, query }), [shaped, category, query]);
+  const visible = useMemo(() => filterAuditRows(shaped, { category: categories, query }), [shaped, categories, query]);
 
   const handleExport = () => {
     downloadCsv(buildAuditCsv(visible), 'audit-log.csv');
@@ -91,12 +92,17 @@ export default function AuditLog({ user, notify }) {
               </Select>
             </div>
             <div className="al-select">
-              <Select aria-label={translateUI('auditLog.filterCategory')} value={category} onChange={(e) => setCategory(e.target.value || 'all')}>
-                <option value="all">{translateUI('auditLog.cat.all')}</option>
-                <option value="security">{translateUI('auditLog.cat.security')}</option>
-                <option value="syllabus">{translateUI('auditLog.cat.syllabus')}</option>
-                <option value="account">{translateUI('auditLog.cat.account')}</option>
-              </Select>
+              <GeistMultiSelect
+                ariaLabel={translateUI('auditLog.filterCategory')}
+                placeholder={translateUI('auditLog.cat.all')}
+                value={categories}
+                onChange={setCategories}
+                options={[
+                  { value: 'security', label: translateUI('auditLog.cat.security') },
+                  { value: 'syllabus', label: translateUI('auditLog.cat.syllabus') },
+                  { value: 'account', label: translateUI('auditLog.cat.account') },
+                ]}
+              />
             </div>
             <div className="al-search">
               <Icon name="magnifyingGlass" size={15} />

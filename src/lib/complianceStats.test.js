@@ -145,3 +145,39 @@ test('scoreTone: blue from 90, amber from 75, red below, none without a score', 
   assert.equal(scoreTone(74), 'bad'); assert.equal(scoreTone(0), 'bad');
   assert.equal(scoreTone(null), null); assert.equal(scoreTone(undefined), null);
 });
+
+test('submittedStatCount keeps submitted/under_review/for_revision/approved, excludes draft and VPAA-rejected, and deduplicates by subject', async () => {
+  const { submittedStatCount } = await import('./complianceStats.js');
+  assert.strictEqual(submittedStatCount([
+    { id: 1, courseId: 101, status: 'submitted' },
+    { id: 2, courseId: 102, status: 'under_review' },
+    { id: 3, courseId: 103, status: 'approved' },
+    { id: 4, courseId: 104, status: 'for_revision' },
+    { id: 5, courseId: 105, status: 'draft' },
+    { id: 6, courseId: 106, status: 'rejected' },
+    { id: 7, courseId: 107, status: 'approved', archived: true },
+  ]), 4);
+
+  // Revisions and resubmissions for the same subject never duplicate the count
+  assert.strictEqual(submittedStatCount([
+    { id: 10, courseId: 201, status: 'for_revision' },
+    { id: 11, courseId: 201, status: 'submitted' },
+    { id: 12, courseId: 201, status: 'approved' },
+  ]), 1);
+
+  // Resubmitting after a VPAA rejection counts as 1 again (whether updated in place or as a new row)
+  assert.strictEqual(submittedStatCount([
+    { id: 20, courseId: 301, status: 'rejected' },
+    { id: 21, courseId: 301, status: 'submitted' },
+  ]), 1);
+  assert.strictEqual(submittedStatCount([{ id: 20, courseId: 301, status: 'rejected' }]), 0);
+
+  // Falls back to syllabus id when courseId is missing
+  assert.strictEqual(submittedStatCount([
+    { id: 30, status: 'submitted' },
+    { id: 31, status: 'approved' },
+    { id: 31, status: 'approved' },
+  ]), 2);
+  assert.strictEqual(submittedStatCount([]), 0);
+  assert.strictEqual(submittedStatCount(null), 0);
+});

@@ -1,3 +1,4 @@
+import { GeistToastCard, inferToastType } from '../../components/GeistToast';
 import StableButton from '../../components/StableButton';
 import { useInactiveYear } from '../../components/InactiveYearNotice';
 import { tr } from "../../i18n/index.js";
@@ -471,7 +472,17 @@ export default function SyllabusBuilderV2({ editing, restore = null, user, notif
         </section>
       </div>
       </div>
-      {toast && <div className="bld2-toast" role="status" aria-live="polite"><span>{tr(toast.msg)}</span>{toast.action && <button type="button" onClick={toast.action.fn}>{tr(toast.action.label)}</button>}<button type="button" className="bld2-toast-close" aria-label={translateUI('ui.close_bbfa77')} onClick={() => { clearTimeout(toastTimer.current); setToast(null); }}>×</button></div>}
+      {toast && (
+        <div className="geist-toaster">
+          <GeistToastCard
+            className="bld2-toast"
+            text={toast.msg}
+            type={toast.type || inferToastType(toast.msg)}
+            action={toast.action ? { label: toast.action.label, fn: toast.action.fn, dismiss: false } : null}
+            onDismiss={() => { clearTimeout(toastTimer.current); setToast(null); }}
+          />
+        </div>
+      )}
     </>
   );
 }

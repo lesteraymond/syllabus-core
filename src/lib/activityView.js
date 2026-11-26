@@ -52,6 +52,12 @@ const ON_DRAFT = { draft_create: 'started a new draft of', content_edit: 'edited
 const ON_SYLLABUS = { content_edit: 'edited', syllabus_delete: 'deleted' };
 // What a person did with a recommendation, from the first word of the note the server wrote ("Accepted recommendation: plan[3].tasks").
 const RECOMMEND_VERBS = { Accepted: 'accepted a recommendation on', Edited: 'edited and applied a recommendation on', Rejected: 'rejected a recommendation on', Undid: 'undid a recommendation on' };
+// Stage-clear and review-without-AI rows share action = 'check' in submission_logs (server/routes/reviewChain.js); distinguish them from AI checks by their note.
+const STAGE_CLEAR_VERBS = {
+  dean: 'cleared the dean review of',
+  'asst. vpaa': 'cleared the Asst. VPAA review of',
+  'lic director': 'cleared the LIC Director review of',
+};
 const FALLBACK = { icon: 'notePencil', tone: 'quiet', verb: 'made a change to' };
 
 // Security, auth, and administrative oversight actions belong in the Admin Audit Log, not in a user's personal Recent Activity feed.
@@ -72,9 +78,23 @@ export function describeActivity(log, index = 0, viewerId = null) {
   const action = log && log.action;
   const notes = String((log && log.notes) || '').trim();
   let verb = (action === 'recommend' && RECOMMEND_VERBS[notes.split(' ')[0]]) || kind.verb;
+  let icon = kind.icon;
+  let tone = kind.tone;
   let subject = code || title || 'a syllabus';
   let detail = code && title ? title : ''; // the course title under the code, when there is both
   let note = '';
+  if (action === 'check') {
+    const stageMatch = /^Cleared the (.+?) review(?::|$)/i.exec(notes);
+    if (stageMatch) {
+      verb = STAGE_CLEAR_VERBS[stageMatch[1].trim().toLowerCase()] || 'cleared the review of';
+      icon = 'checkCircle';
+      tone = 'good';
+    } else if (/^Chose to review\b[\s\S]*\bwithout an AI check\b/i.test(notes)) {
+      verb = 'chose to review without an AI check';
+      icon = 'notePencil';
+      tone = 'quiet';
+    }
+  }
   if (kind.account) {
     subject = ''; detail = '';
     note = (NOTES[action] && NOTES[action][notes]) || '';
@@ -92,8 +112,8 @@ export function describeActivity(log, index = 0, viewerId = null) {
   }
   return {
     key: (log && log.id) || 'row-' + index,
-    icon: kind.icon,
-    tone: kind.tone,
+    icon,
+    tone,
     who: viewerId !== null && log && log.userId === viewerId ? 'You' : String((log && log.user) || '').trim() || 'Someone',
     verb,
     subject,
