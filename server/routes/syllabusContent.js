@@ -20,6 +20,8 @@ const { LABEL_SQL, labelsOf } = require('../lib/syllabusLabels');
 const { findAiInstructions } = require('../lib/aiInstructions'); // the reviewer's warning about text addressed to the AI (advisory only)
 const { currentLabel } = require('../lib/academicYear');
 const accountActivity = require('../lib/accountActivity'); // a new draft and each editing session in the author's Recent Activity (best effort)
+const { formatUrlAsApa7 } = require('../lib/apaReference');
+const { createLimiter } = require('../lib/rateLimit');
 const router = express.Router();
 
 const MAX_CONTENT_BYTES = 512 * 1024;
@@ -101,6 +103,23 @@ function snapshotFrom(content, course) {
   };
 }
 
+// A pasted link as an APA 7 citation (Builder, References). It makes this server fetch a page, so each person has a limit; over it the builder writes
+// the citation from the link alone (RefsStep.jsx).
+const referenceLimiter = createLimiter({ max: 30, windowMs: 60 * 1000 });
+router.post('/format-reference', requireAuthor, async (req, res) => {
+  try {
+    const raw = typeof req.body?.url === 'string' ? req.body.url.trim() : '';
+    if (!raw || raw.length > 2048) return res.status(400).json({ error: 'A valid reference link is required' });
+    const slot = referenceLimiter.take(String(req.session.user.id));
+    if (!slot.ok) return res.set('Retry-After', String(slot.retryAfterSec)).status(429).json({ error: 'Too many reference links at once. Wait a moment, then try again.' });
+    const result = await formatUrlAsApa7(raw);
+    if (!result) return res.status(400).json({ error: 'A valid http(s) or DOI link is required' });
+    res.json(result);
+  } catch (err) {
+    sendError(res, err, 'Could not format reference');
+  }
+});
+
 // A new, empty draft. It is the owner's alone: admins never see drafts and no one is notified.
 router.post('/drafts', requireAuthor, async (req, res) => {
   try {
@@ -135,12 +154,12 @@ router.get('/:id/content', requireAuth, async (req, res) => {
     let content = null;
     if (syl.content) { try { content = JSON.parse(syl.content); } catch { content = null; } }
     const revisions = contentRevision.revisionsOf(content); // of the STORED sections, before any in-memory adoption below
-    // The owner may edit only while the course is assigned to them (an admin can assign it again).
+    // The owner (faculty or administrator) may edit only while the course is assigned to them.
     let editable = rules.canEdit(req.session.user, syl);
     let lockedReason = null;
     let lockedCode = null; // 'past_academic_year' when the lock is the academic year (the builder words it differently from an assignment lock)
     let adoptedOutcomes = false;
-    if (editable && !rules.isAdmin(req.session.user)) {
+    if (editable) {
       lockedReason = assignments.writeBlockedReason(req.session.user, await assignments.loadAssignments(req.app.locals.db, req.session.user.id), syl.course_id);
       if (lockedReason) editable = false;
     }

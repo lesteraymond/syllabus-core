@@ -46,18 +46,17 @@ This is a **pre-staging gate**: staging is not ready for the checker until the v
 
 ## Testing against an isolated database server (no change to the shared one)
 
-The E2E scripts can run against a separate MariaDB instance on another port without any application change (the application has no `DB_PORT` setting):
+Both the application (`server/lib/dbConfig.js`) and all `server/db/` migration scripts support `DB_PORT`, `DB_SSL`, and `DB_SSL_CA`. For local E2E runs against a separate MariaDB instance on another port:
 
 ```
 mysql_install_db.exe --datadir=<new empty dir> --service=none
 mysqld.exe --no-defaults --standalone --basedir=<xampp>/mysql --datadir=<that dir> --port=3407 --bind-address=127.0.0.1 ^
            --socket=ISO_MARIADB_TEST --max_allowed_packet=16M --innodb_buffer_pool_size=48M
-E2E_DB_PORT=3407 E2E_DB_NAME=<name containing "e2e"> node scripts/e2e/run-comprehensive-ui.cjs --suite=budget
+DB_PORT=3407 E2E_DB_NAME=<name containing "e2e"> npm run test:db-bootstrap
+DB_PORT=3407 E2E_DB_NAME=<name containing "e2e"> npm run test:e2e
 ```
 
-`scripts/e2e/db-port-redirect.cjs` sends only the E2E processes' loopback connections to port 3306 to `E2E_DB_PORT`. The runner refuses to start unless a plain
-`localhost:3306` connection really reaches that port **and** allows at least 16 MB (`E2E_MIN_PACKET` overrides the minimum, for tests of the refusal itself), and it
-records what it reached in `docs/checker-comprehensive/ui-verification/<suite>/database-isolation.json`. Stop the instance and delete its data directory afterwards.
+Alternatively, `scripts/e2e/db-port-redirect.cjs` can redirect loopback connections to `E2E_DB_PORT` when needed. Stop the temporary instance and delete its data directory afterwards.
 
 ## What is in a report (for sizing; nothing here is removed or changed)
 

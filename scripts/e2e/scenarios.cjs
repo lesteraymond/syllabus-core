@@ -100,6 +100,15 @@ module.exports = async function run(ctx, h) {
   // The report is part of the page (the check card in the main column); there is no drawer. openReport waits for it.
   const openReport = async (s) => { await s.page.locator('.chk-report').waitFor(); };
   const closeReport = async () => {}; // nothing to close: the result is part of the page
+  // Submit is in the Builder's last step only: the author goes there from the AI Checker page (Edit Syllabus). Returns the submit button.
+  const openBuilderSubmit = async (s, name) => {
+    check(await s.page.getByRole('button', { name: /submit( new version)? to admin/i }).count() === 0, 'the AI Checker page has no submit button of its own');
+    await s.page.getByRole('button', { name: /^edit syllabus$/i }).first().click();
+    await s.page.getByRole('button', { name: /7 review syllabus/i }).click();
+    await s.page.waitForTimeout(1200);
+    check(/IT 204/.test(await s.text()) && /7 of 7 complete/.test(await s.text()), 'Edit Syllabus on the AI Checker page opens the same syllabus in the Builder, with every step complete');
+    return s.page.getByRole('button', { name });
+  };
   await scenario('E03', 'Faculty runs the new AI Checker on the draft: official score with the AI points, all seven VPAA relationships evaluated, the scripted gap and its verified draft', async () => {
     const before = stack.providerEvents().filter((e) => e.kind === 'provider').length;
     const s = await L.session(browser, stack);
@@ -113,8 +122,9 @@ module.exports = async function run(ctx, h) {
     const run = (((await s.api('GET', '/compliance?syllabus=' + state.syllabusId)).body || {}).run) || {};
     const hy = run.hybrid || {}, align = hy.alignment || {};
     check(/Meets the standard \(pass line 79%\)/.test(text), 'the official score is shown against the 79% pass line');
+    const shownScore = ((await s.page.locator('.cmp-ring strong').first().textContent()) || '').trim(); // the score ring draws the number and the percent sign apart
     // the new checker's AI part counts: the no-AI base score minus the scripted gap's point (ACTIVITY-FIT partly aligned: -1)
-    check(run.status === 'scored' && run.passed === true && run.overall === hy.baseScore - 1 && text.includes(run.overall + '%'), `the official score is the no-AI base score minus the scripted gap's 1 point, and the page shows it (${run.overall} = ${hy.baseScore} - 1)`);
+    check(run.status === 'scored' && run.passed === true && run.overall === hy.baseScore - 1 && shownScore === run.overall + '%', `the official score is the no-AI base score minus the scripted gap's 1 point, and the score ring shows it (${run.overall} = ${hy.baseScore} - 1, shown ${shownScore})`);
     check(align.engine === 're-planned' && align.status === 'completed' && align.provider === 'anthropic' && align.model === 'claude-sonnet-5-5' && /^replan-prompt-/.test(align.promptVersion || ''), `the AI part was made by the new AI Checker on the approved provider and model (${align.engine} · ${align.provider} · ${align.model} · ${align.promptVersion})`);
     check(!hy.academicV2 && !hy.improvementPlan && !hy.coordinatedPlan, 'the report has no old-checker part (no Policy V2, no whole-syllabus or coordinated plan)');
     const cov = hy.semanticCoverage || { relationships: [] };
@@ -135,11 +145,11 @@ module.exports = async function run(ctx, h) {
   });
 
   // ---------------------------------------------------------------------------------------------------------------------------------------------
-  await scenario('E04', 'Faculty submits through the UI; the syllabus locks; another faculty member and signed-out callers cannot reach it', async () => {
+  await scenario('E04', 'Faculty submits through the UI (from the AI Checker page to the last step of the Builder); the syllabus locks; another faculty member and signed-out callers cannot reach it', async () => {
     const s = await L.session(browser, stack);
     await s.loginOk('faculty');
     await s.nav('Checker');
-    await s.page.getByRole('button', { name: /submit to admin/i }).click();
+    await (await openBuilderSubmit(s, /^submit to admin$/i)).click();
     await s.page.waitForTimeout(2500);
     let text = await s.text();
     // The card's review-chain progress line was removed on purpose (1aa5b317); the Submitted tag and the locked note remain.
@@ -297,7 +307,7 @@ module.exports = async function run(ctx, h) {
   });
 
   // ---------------------------------------------------------------------------------------------------------------------------------------------
-  await scenario('E09', 'Faculty: Reject a recommendation, then Check & improve + Accept the next one, Re-Check, write what changed and submit the new version', async () => {
+  await scenario('E09', 'Faculty: Reject a recommendation, then Check & improve + Accept the next one, Re-Check, then in the Builder write what changed and submit the new version', async () => {
     const s = await L.session(browser, stack);
     await s.loginOk('faculty');
     await s.nav('Checker');
@@ -328,7 +338,7 @@ module.exports = async function run(ctx, h) {
     let text = await s.text();
     check(/Meets the standard/.test(text), 'the Re-Check after the correction still meets the standard (official score is not changed by the advisory result)');
     await closeReport(s);
-    const submit = s.page.getByRole('button', { name: /submit new version to admin/i });
+    const submit = await openBuilderSubmit(s, /^submit new version to admin$/i);
     check(await submit.isDisabled(), 'Submit new version stays disabled until the author says what changed');
     await s.page.getByLabel(/what did you change/i).fill('Synthetic E2E: rewrote the week 2 activities to practise the ILO at its level.');
     await s.page.waitForTimeout(500);

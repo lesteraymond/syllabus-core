@@ -110,7 +110,7 @@ export const en = {
   "ui.collapse_sidebar_9e6876": "Collapse sidebar",
   "ui.cict_logo_dee290": "CITE logo",
   "ui.sms_9e10d4": "SMS",
-  "ui.cite_brand_5b2e91": "CITE",
+  "ui.cite_brand_5b2e91": "SyllBase",
   "ui.is_this_your_cor_1d57c8": "Is this your COR?",
   "ui.this_is_what_we_read_from_your_photo_it_can_t_be_edited_here_c24d4b": "This is what we read from your photo. It can't be edited here.",
   "ui.not_readable_c35717": "Not readable",
@@ -181,7 +181,7 @@ export const en = {
   "ui.could_not_update_your_photo_78f1fc": "Could not update your photo.",
   "ui.profile_photo_removed_1e6a07": "Profile photo removed.",
   "ui.could_not_remove_your_photo_ed1d1f": "Could not remove your photo.",
-  "ui.syllabus_management_system_e49cab": "SYLLABUS MANAGEMENT SYSTEM",
+  "ui.syllabus_management_system_e49cab": "SyllBase - Syllabus Management System",
   "ui.search_syllabus_course_faculty_67a24a": "Search syllabus, course, faculty...",
   "ui.messages_p0_unread_f09423": "Messages, {p0} unread",
   "ui.unread_2630a7": " unread",
@@ -860,7 +860,8 @@ export const en = {
   "ui.permissions_d06d55": "Permissions",
   "ui.resend_credentials_1ba6fd": "Resend credentials",
   "ui.remove_e96390": "Remove",
-  "ui.no_users_found_e611ef": "No users found."
+  "ui.no_users_found_e611ef": "No users found.",
+  "refs.formattingApa": "APA 7…"
 };
 export const tl = {
   "dashboard.welcomeBack": "Maligayang pagbabalik, {name}!",
@@ -973,7 +974,7 @@ export const tl = {
   "ui.collapse_sidebar_9e6876": "Paliitin ang sidebar",
   "ui.cict_logo_dee290": "Logo ng CITE",
   "ui.sms_9e10d4": "SMS",
-  "ui.cite_brand_5b2e91": "CITE",
+  "ui.cite_brand_5b2e91": "SyllBase",
   "ui.is_this_your_cor_1d57c8": "Ito ba ang iyong COR?",
   "ui.this_is_what_we_read_from_your_photo_it_can_t_be_edited_here_c24d4b": "Ito ang nabasa namin mula sa iyong larawan. Hindi ito maaaring baguhin dito.",
   "ui.not_readable_c35717": "Hindi mabasa",
@@ -1044,7 +1045,7 @@ export const tl = {
   "ui.could_not_update_your_photo_78f1fc": "Hindi ma-update ang iyong larawan.",
   "ui.profile_photo_removed_1e6a07": "Naalis ang larawan sa profile.",
   "ui.could_not_remove_your_photo_ed1d1f": "Hindi maalis ang iyong larawan.",
-  "ui.syllabus_management_system_e49cab": "SISTEMA NG PAMAMAHALA NG SILABUS",
+  "ui.syllabus_management_system_e49cab": "SyllBase - Sistema ng Pamamahala ng Silabus",
   "ui.search_syllabus_course_faculty_67a24a": "Maghanap ng silabus, kurso, guro...",
   "ui.messages_p0_unread_f09423": "Mga mensahe, {p0} hindi pa nababasa",
   "ui.unread_2630a7": " hindi pa nababasa",
@@ -1723,5 +1724,6 @@ export const tl = {
   "ui.permissions_d06d55": "Mga pahintulot",
   "ui.resend_credentials_1ba6fd": "Ipadala muli ang kredensiyal",
   "ui.remove_e96390": "Alisin",
-  "ui.no_users_found_e611ef": "Walang nahanap na user."
+  "ui.no_users_found_e611ef": "Walang nahanap na user.",
+  "refs.formattingApa": "APA 7…"
 };

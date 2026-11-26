@@ -106,7 +106,16 @@ test('fixture tag adapter handles repeated labels, periods and inclusive ranges'
   assert.deepEqual(targets('[PO 2, 3. 5, 6,7]', 'PO'), [2,3,5,6,7]);
   assert.deepEqual(targets('[CLO 1-2] [CLO2-3]', 'CLO'), [1,2,3]);
 });
-test('original PDFs match the pre-work hashes, both baseline copies byte-identical', async () => {
+const missingSourcePdf = async () => {
+  for (const [, file] of sources) {
+    try { await fs.access(`${root}/docs/academic-references/${file}`); }
+    catch { return `docs/academic-references/${file}`; }
+  }
+  return null;
+};
+test('original PDFs match the pre-work hashes, both baseline copies byte-identical', async t => {
+  const missing = await missingSourcePdf();
+  if (missing) { t.skip(`source PDF not in this checkout: ${missing}`); return; }
   const before = JSON.parse((await fs.readFile(`${out}/repository-before.json`, 'utf8')).replace(/^\uFEFF/,''));
   for (const [key, file] of sources) {
     const relative = `docs/academic-references/${file}`, bytes = await fs.readFile(`${root}/${relative}`), s = await read(`${key}.source.json`);
@@ -115,14 +124,18 @@ test('original PDFs match the pre-work hashes, both baseline copies byte-identic
     if (['it202','ie402','cpe304'].includes(key)) assert.equal(sha(bytes), sha(await fs.readFile(`${root}/reference-data/${file}`)));
   }
 });
-test('fixture generation is byte-repeatable and does not mutate source snapshots', async () => {
+test('fixture generation is byte-repeatable and does not mutate source snapshots', async t => {
+  const missing = await missingSourcePdf();
+  if (missing) { t.skip(`source PDF not in this checkout: ${missing}`); return; }
   const names = ['it202.fixture.json','ie402.fixture.json','cpe304.fixture.json','engineering-pos.json'];
   const before = await Promise.all(names.map(n=>fs.readFile(`${out}/${n}`,'utf8')));
   await generate();
   const after = await Promise.all(names.map(n=>fs.readFile(`${out}/${n}`,'utf8')));
   assert.deepEqual(after, before);
 });
-test('fresh PDF token extraction is repeatable for all five allowlisted documents', async () => {
+test('fresh PDF token extraction is repeatable for all five allowlisted documents', async t => {
+  const missing = await missingSourcePdf();
+  if (missing) { t.skip(`source PDF not in this checkout: ${missing}`); return; }
   for (const definition of sources) {
     const previous = await read(`${definition[0]}.source.json`), fresh = await extract(definition, false, { persist: false });
     // Historical worker preview stays frozen. Geometry/source evidence must

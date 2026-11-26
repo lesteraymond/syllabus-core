@@ -15,7 +15,7 @@ export function Ic({ n }) {
 export const prefersReducedMotion = () => typeof window !== 'undefined' && !!window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // A textarea that grows with its content.
-export function Auto({ value, onChange, className = 'cell', placeholder = '', label, fid, onKeyDown, disabled = false, describedBy }) {
+export function Auto({ value, onChange, className = 'cell', placeholder = '', label, fid, onKeyDown, onBlur, onPaste, disabled = false, describedBy }) {
   const ref = useRef(null);
   useLayoutEffect(() => {
     const el = ref.current;
@@ -23,7 +23,7 @@ export function Auto({ value, onChange, className = 'cell', placeholder = '', la
     el.style.height = 'auto';
     el.style.height = el.scrollHeight + 'px';
   }, [value]);
-  return <textarea ref={ref} rows="1" className={className} value={value} placeholder={placeholder} aria-label={label || placeholder || translateUI("ui.text_c3328c")} data-fid={fid} disabled={disabled} aria-describedby={describedBy} onChange={(e) => { if(!disabled)onChange(e.target.value); }} onKeyDown={onKeyDown} />;
+  return <textarea ref={ref} rows="1" className={className} value={value} placeholder={placeholder} aria-label={label || placeholder || translateUI("ui.text_c3328c")} data-fid={fid} disabled={disabled} aria-describedby={describedBy} onChange={(e) => { if(!disabled)onChange(e.target.value); }} onKeyDown={onKeyDown} onBlur={onBlur} onPaste={onPaste} />;
 }
 
 // The code block of an outcome reference ("CLO 4", "EGA 2", "PO 3"). A CLO carries its own hue; EGA and PO are neutral.

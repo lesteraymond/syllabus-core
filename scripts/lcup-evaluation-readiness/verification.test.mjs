@@ -34,9 +34,9 @@ test('database workflow evidence includes both languages/choices, all relationsh
 });
 test('workflow review and prerequisite choices use distinct English and Filipino UI wording',()=>{
   try {
-    setLanguage('en');assert.equal(t('pdfImport.reviewTitle'),'Review extracted content');assert.equal(t('pdfImport.apply'),'Apply and AI CHECK');
+    setLanguage('en');assert.equal(t('pdfImport.reviewTitle'),'Review extracted content');assert.equal(t('pdfImport.apply'),'Apply to form');
     assert.equal(t('pdfImport.prereqKeep'),'Keep the current prerequisite');
-    setLanguage('tl');assert.equal(t('pdfImport.reviewTitle'),'Suriin ang nakuhang nilalaman');assert.equal(t('pdfImport.apply'),'Ilapat at AI CHECK');
+    setLanguage('tl');assert.equal(t('pdfImport.reviewTitle'),'Suriin ang nakuhang nilalaman');assert.equal(t('pdfImport.apply'),'Ilapat sa form');
     assert.equal(t('pdfImport.prereqKeep'),'Panatilihin ang kasalukuyang prerequisite');assert.equal(t('pdfImport.prereqReplace'),'Palitan ng prerequisite mula sa PDF');
   }finally{setLanguage('en');}
 });

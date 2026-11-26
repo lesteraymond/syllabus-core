@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Backend API for Syllabus CMS Plus",
   "main": "index.js",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "seed-local-references": "node db/seed-local-references.js",
     "migrate-course-program-codes": "node db/migrate-course-program-codes.js",

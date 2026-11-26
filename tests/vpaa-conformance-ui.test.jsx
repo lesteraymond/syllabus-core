@@ -14,7 +14,7 @@ import { setLanguage, t, tr } from '../src/i18n';
 // (see scripts/test-vpaa-ui.mjs). This checks what a faculty member or administrator is shown; it is not a measure of Claude's accuracy.
 const runs = JSON.parse(fs.readFileSync(process.env.VPAA_UI_FIXTURE, 'utf8'));
 const html = (run, extra = {}) => renderToStaticMarkup(<ComplianceCard run={run} onApplyDraft={async () => true} {...extra} />);
-const text = (markup) => markup.replace(/<[^>]+>/g, ' ').replace(/&amp;/g, '&').replace(/&#x27;|&#39;/g, "'").replace(/\s+/g, ' ');
+const text = (markup) => markup.replace(/<span class="cmp-ring-pct">%<\/span>/g, '%').replace(/<[^>]+>/g, ' ').replace(/&amp;/g, '&').replace(/&#x27;|&#39;/g, "'").replace(/\s+/g, ' ');
 test.afterEach(() => setLanguage('en'));
 
 test('[VPAA-T5-UI-SCORED] a scored run shows its score, its findings and its recommendations, and the score equals base minus the listed deductions', () => {
