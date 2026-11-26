@@ -170,6 +170,7 @@ export const syllabi = {
   poReview: (id) => request(`/syllabi/${id}/po-review`),
   adoptPoReview: (id, reviewedSha256) => request(`/syllabi/${id}/po-review/adopt`, { method: 'POST', body: JSON.stringify({ reviewedSha256, confirm: true }) }),
   // Structured builder content: a draft is created lazily, then saved section by section.
+  formatReference: (url) => request('/syllabi/format-reference', { method: 'POST', body: JSON.stringify({ url }) }),
   createDraft: () => request('/syllabi/drafts', { method: 'POST' }),
   getContent: async (id) => {
     const res = await request(`/syllabi/${id}/content`);
@@ -281,8 +282,8 @@ export const syllabusCheck = {
 };
 
 export const logs = {
-  // no options: the signed-in account's own activity. The administrator may pass { scope: 'all' } for everyone's, with { userId } for one person's.
-  list: ({ scope, userId } = {}) => { const q = new URLSearchParams(); if (scope) q.set('scope', scope); if (userId) q.set('userId', String(userId)); const text = q.toString(); return request('/logs' + (text ? '?' + text : '')); },
+  // no options: the signed-in account's own activity for the active (or requested) academic year. The administrator may pass { scope: 'all' } for everyone's, with { userId } for one person's.
+  list: ({ scope, userId, year } = {}) => { const q = new URLSearchParams(); if (scope) q.set('scope', scope); if (userId) q.set('userId', String(userId)); if (year) q.set('year', year); const text = q.toString(); return request('/logs' + (text ? '?' + text : '')); },
 };
 
 export const messages = {

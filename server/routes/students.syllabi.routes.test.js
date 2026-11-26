@@ -17,6 +17,7 @@ function withServer(role, fn) {
   const queries = [];
   const db = { query: async (sql, params) => {
     if (/FROM users WHERE user_id = \?/.test(sql) && !/FROM syllabi/.test(sql)) return [[{ user_id: 7 }]]; // the sign-in check of requireAuth
+    if (/FROM academic_years/.test(sql)) throw Object.assign(new Error("Table 'academic_years' doesn't exist"), { code: 'ER_NO_SUCH_TABLE' });
     if (/FROM courses c/.test(sql)) return [[]]; // the subject lookup for the outcomes snapshot: not found here, so none is built
     queries.push({ sql, params });
     assert.ok(/s.status = 'approved'/.test(sql) && /s.archived_at IS NULL/.test(sql), 'the read is limited in SQL to approved, not archived');

@@ -1,9 +1,10 @@
 import StableButton from '../components/StableButton';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { students } from '../lib/api';
 import { phShortDate } from '../lib/phTime';
+import { usePeriodicRefresh } from '../lib/usePolling';
 import { Card, Field, Icon, PageHead } from '../components/ui';
 import GeistAvatar from '../components/GeistAvatar';
 import GeistSkeleton from '../components/GeistSkeleton';
@@ -120,12 +121,17 @@ function useStudentData() {
   const [data, setData] = useState(null);
   const [list, setList] = useState(null);
   const [error, setError] = useState('');
-  useEffect(() => {
-    let live = true;
-    students.me().then((d) => { if (live) setData(d); }).catch((e) => { if (live) setError(e.message); });
-    students.syllabi().then((r) => { if (live) setList(r.syllabi || []); }).catch(() => { if (live) setList([]); });
-    return () => { live = false; };
+  const liveRef = useRef(true);
+  const loadSyllabi = useCallback(() => {
+    students.syllabi().then((r) => { if (liveRef.current) setList(r.syllabi || []); }).catch(() => { if (liveRef.current) setList((prev) => prev || []); });
   }, []);
+  useEffect(() => {
+    liveRef.current = true;
+    students.me().then((d) => { if (liveRef.current) setData(d); }).catch((e) => { if (liveRef.current) setError(e.message); });
+    loadSyllabi();
+    return () => { liveRef.current = false; };
+  }, [loadSyllabi]);
+  usePeriodicRefresh(true, loadSyllabi, 60000);
   // Each enrolled subject with its approved syllabus, when there is one.
   const rows = useMemo(() => {
     const byCourse = new Map((list || []).map((s) => [s.courseId, s]));

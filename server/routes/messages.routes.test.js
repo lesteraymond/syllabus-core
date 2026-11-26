@@ -28,6 +28,7 @@ function makeDb() {
   const handle = (text, p = []) => {
     const sql = String(text).replace(/\s+/g, ' ').trim(); // the routes write some queries over several lines
     if (sql.startsWith('SELECT user_id FROM users WHERE user_id')) return [s.users[p[0]] ? [{ user_id: p[0] }] : []];
+    if (sql.startsWith('SELECT label, start_year, is_current FROM academic_years')) throw Object.assign(new Error("Table 'academic_years' doesn't exist"), { code: 'ER_NO_SUCH_TABLE' });
     if (sql.startsWith('SELECT s.syllabus_id, s.user_id, s.course_code, s.title, u.avatar_path,')) {
       const mine = sql.includes('AND s.user_id = ?');
       return [Object.values(s.syllabi).filter((x) => x.status !== 'draft' && (!mine || x.user_id === p[0])).sort((a, b) => b.syllabus_id - a.syllabus_id)
@@ -146,12 +147,12 @@ test('a draft has no conversation: its owner is told to submit first, an adminis
   assert.strictEqual(db.s.notifications, 0, 'and no administrator was notified about a syllabus they cannot see');
 }));
 
-test('a submitted syllabus still has its conversation for both sides, and a message notifies the other', () => withServer(async ({ call, db }) => {
+test('a submitted syllabus still has its conversation for both sides, without duplicating into the notification bell', () => withServer(async ({ call, db }) => {
   const first = await call(fay, '/10', 'POST', { text: 'Please review.' });
   assert.strictEqual(first.status, 200, JSON.stringify(first.body));
   assert.strictEqual(db.s.messages.length, 1);
   assert.strictEqual(db.s.messages[0].receiver_id, 1); // the first administrator
-  assert.strictEqual(db.s.notifications, 1);
+  assert.strictEqual(db.s.notifications, 0, 'messages appear in the Messages mailbox only, not duplicated in the bell');
   assert.strictEqual((await call(admin1, '/10', 'POST', { text: 'Will do.' })).status, 200);
   assert.strictEqual((await call(admin1, '/10')).status, 200);
   assert.strictEqual((await call(fay, '/read/10', 'PUT')).status, 200);
