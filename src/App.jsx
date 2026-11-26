@@ -155,6 +155,8 @@ export default function App() {
   // The academic year each screen shows (lib/academicYearScope.js): the data screens start on the current year, the work queues on every year the person may see.
   const yearScope = useAcademicYearScope(user);
   const yearParam = yearScope.param(groupOfPage(page));
+  const dataYearParam = yearScope.param('data');
+  const currentYearLabel = yearScope.current?.label || '';
   // The compliance check moved into step 7 of the builder: an old 'ai' link sends faculty there, and only admins have the overview.
   useEffect(() => { if (user && !isReviewer(user.role) && user.role !== 'faculty' && page === 'ai') setPage(homeOf(user)); }, [user, page]);
   // Only faculty and the administrator write syllabi: whatever leads a reviewer (Asst. VPAA, LIC Director, VPAA) or student to the builder or My Syllabi, they land on their dashboard.
@@ -214,18 +216,18 @@ export default function App() {
   const fetchSyllabi = useCallback(async () => {
     try {
       const startedAt = Date.now();
-      const data = await syllabiApi.list(yearParam); // the page's academic year: changing it (or the page's group) reads the list again
+      const data = await syllabiApi.list(yearParam); // the page's academic year: changing it (or the active year) reads the list again
       seedAvatars(data.map(s => [s.userId, s.ownerAvatarUrl]), startedAt);
       setSyllabi(data);
     } catch (err) { console.error('Failed to fetch syllabi:', err); }
-  }, [yearParam]);
+  }, [yearParam, currentYearLabel]);
 
   const fetchLogs = useCallback(async () => {
     try {
-      const data = await logsApi.list();
+      const data = await logsApi.list({ year: dataYearParam });
       setLogs(data);
     } catch (err) { console.error('Failed to fetch logs:', err); }
-  }, []);
+  }, [dataYearParam, currentYearLabel]);
 
   const fetchMessages = useCallback(async () => {
     try {
@@ -235,7 +237,7 @@ export default function App() {
       setMessages(list);
       setPartners(who.partners || {});
     } catch (err) { console.error('Failed to fetch messages:', err); }
-  }, []);
+  }, [currentYearLabel]);
 
   const fetchCommentCounts = useCallback(async () => {
     try {
@@ -267,7 +269,7 @@ export default function App() {
         }));
       }
     } catch (err) { console.error('Failed to fetch notifications:', err); }
-  }, []);
+  }, [currentYearLabel]);
 
   useEffect(() => {
     if (user && user.role !== 'student' && !user.mustChangePassword) {
@@ -292,7 +294,22 @@ export default function App() {
   // Time in the system: a heartbeat while the tab is visible and the person is active (students have no dashboard and the server closes this to them).
   useActiveTime(!!user && user.role !== 'student' && !user.mustChangePassword && !loggingOut);
   // Students have no messages, notifications or syllabus list on the staff API (server/index.js refuses them), so nothing is polled for them.
-  useNotificationPolling(!!user && user.role !== 'student' && !user.mustChangePassword && !loggingOut, () => { fetchMessages(); fetchNotifications(); fetchSyllabi(); if (canAuthor(user.role)) fetchCommentCounts(); });
+  // When an administrator activates a different academic year, every signed-in staff tab detects it via summary polling and refreshes its year scope and data live.
+  useNotificationPolling(
+    !!user && user.role !== 'student' && !user.mustChangePassword && !loggingOut,
+    () => { fetchMessages(); fetchNotifications(); fetchSyllabi(); if (canAuthor(user.role)) fetchCommentCounts(); },
+    25000,
+    async (nextYear) => {
+      const alreadyCurrent = nextYear && nextYear === currentYearLabel;
+      await yearScope.reload();
+      fetchSyllabi();
+      fetchLogs();
+      fetchMessages();
+      fetchNotifications();
+      if (canAuthor(user.role)) fetchCommentCounts();
+      if (nextYear && !alreadyCurrent) notify(translateUI('years.changed', { year: nextYear }), { type: 'info' });
+    }
+  );
 
   const handleLogin = async (email, pass, remember) => {
     try {
@@ -505,7 +522,7 @@ export default function App() {
           syllabi={syllabi} nav={nav} onOpenSyllabus={setViewCode} onGoPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); }} />
         {narrow && <MobileNav page={studentPage} setPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); setMobileNavOpen(false); }} nav={nav} open={mobileNavOpen} onToggle={() => setMobileNavOpen(o => !o)} />}
         <div className={`page-wrap ${page === 'dashboard' ? 'page-wrap-dashboard' : ''}`}>
-          <div key={studentPage} className="page-stage">
+          <div key={['builder', 'generator', 'courses', 'settings'].includes(studentPage) ? studentPage : `${studentPage}:${currentYearLabel}`} className="page-stage">
           {isStudent && studentPage === 'student-dashboard' && <StudentDashboard user={user} setPage={setPage} />}
           {isStudent && studentPage === 'student-syllabi' && <StudentSyllabi />}
           {!isStudent && (<>

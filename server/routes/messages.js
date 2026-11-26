@@ -1,9 +1,9 @@
 const express = require('express');
-const { serverError } = require('../lib/http'); // an unexpected failure: logged here, answered generically
+const { sendError, serverError } = require('../lib/http'); // an unexpected failure: logged here, answered generically
 const { requireAuth } = require('../middleware/auth');
 const { avatarUrlFor } = require('../lib/avatar');
-const { createNotification } = require('../lib/notify');
 const { LABEL_SQL, labelsOf } = require('../lib/syllabusLabels');
+const { resolveYear, yearClause } = require('../lib/academicYear');
 const router = express.Router();
 
 const MAX_TEXT = 2000;
@@ -64,9 +64,10 @@ router.get('/partners', requireAuth, async (req, res) => {
     const db = req.app.locals.db;
     const me = req.session.user;
     const isAdmin = me.role === 'admin';
+    const inYear = yearClause(await resolveYear(db, me, req.query.year));
     const [rows] = await db.query(
-      'SELECT s.syllabus_id, s.user_id, s.course_code, s.title, u.avatar_path, ' + LABEL_SQL + " WHERE s.status <> 'draft'" + (isAdmin ? '' : ' AND s.user_id = ?') + ' ORDER BY s.syllabus_id DESC LIMIT 500',
-      isAdmin ? [] : [me.id]
+      'SELECT s.syllabus_id, s.user_id, s.course_code, s.title, u.avatar_path, ' + LABEL_SQL + " WHERE s.status <> 'draft'" + (isAdmin ? '' : ' AND s.user_id = ?') + inYear.sql + ' ORDER BY s.syllabus_id DESC LIMIT 500',
+      [...(isAdmin ? [] : [me.id]), ...inYear.params]
     );
     const adminOf = new Map();
     if (!isAdmin) for (const r of rows) adminOf.set(r.syllabus_id, await adminFor(db, r.syllabus_id, me.id));
@@ -90,6 +91,7 @@ router.get('/partners', requireAuth, async (req, res) => {
     });
     res.json({ partners });
   } catch (err) {
+    if (err && err.status) return sendError(res, err);
     serverError(res, err, 'MESSAGES ERROR:');
   }
 });
@@ -97,20 +99,23 @@ router.get('/partners', requireAuth, async (req, res) => {
 // Same message shape as the per-syllabus endpoint.
 const toMessage = (r) => ({ id: r.message_id, syllabusId: r.syllabus_id, senderId: r.sender_id, receiverId: r.receiver_id, text: r.message_text, isRead: r.is_read, time: r.created_at, sender: `${r.first_name} ${r.last_name}`, senderAvatarUrl: avatarUrlFor(r.sender_id, r.avatar_path) });
 
-// Every message I sent or received, across all syllabi, in one request.
+// Every message I sent or received, across all syllabi of the active/requested academic year, in one request.
 router.get('/', requireAuth, async (req, res) => {
   try {
+    const db = req.app.locals.db;
     const me = req.session.user.id;
-    const [rows] = await req.app.locals.db.query(`
+    const inYear = yearClause(await resolveYear(db, req.session.user, req.query.year));
+    const [rows] = await db.query(`
       SELECT m.*, u.first_name, u.last_name, u.avatar_path, s.user_id AS syllabus_owner_id
       FROM messages m
       JOIN users u ON m.sender_id = u.user_id
       JOIN syllabi s ON s.syllabus_id = m.syllabus_id
-      WHERE (m.sender_id = ? OR m.receiver_id = ?) AND s.status <> 'draft'
+      WHERE (m.sender_id = ? OR m.receiver_id = ?) AND s.status <> 'draft'${inYear.sql}
       ORDER BY m.created_at ASC, m.message_id ASC
-    `, [me, me]);
+    `, [me, me, ...inYear.params]);
     res.json(rows.filter(r => r.sender_id !== r.receiver_id && !(req.session.user.role === 'admin' && r.syllabus_owner_id === me)).map(toMessage));
   } catch (err) {
+    if (err && err.status) return sendError(res, err);
     serverError(res, err, 'MESSAGES ERROR:');
   }
 });
@@ -151,13 +156,7 @@ router.post('/:syllabusId', requireAuth, async (req, res) => {
       'INSERT INTO messages (syllabus_id, sender_id, receiver_id, message_text) VALUES (?, ?, ?, ?)',
       [t.syllabusId, t.me.id, receiverId, text]
     );
-    await createNotification(t.db, {
-      userId: receiverId,
-      type: 'message',
-      syllabusId: t.syllabusId,
-      title: `New message from ${t.me.firstName} ${t.me.lastName}`,
-      body: `${t.courseCode ? t.courseCode + ': ' : ''}${text.slice(0, 140)}`,
-    });
+    // Messages have their own mailbox & unread badge in the topbar, so they do not also create a bell notification.
     res.json({ id: result.insertId, message: 'Message sent' });
   } catch (err) {
     serverError(res, err, 'MESSAGES ERROR:');
