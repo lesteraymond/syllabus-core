@@ -12,7 +12,7 @@ export default function MobileNav({ page, setPage, nav, open, onToggle }) {
     <div className="mnav" data-open={open ? 'true' : 'false'}>
       <button type="button" className="mnav-card" onClick={onToggle} aria-expanded={open} aria-controls={panelId}>
         <span className="mnav-tile" aria-hidden="true"><Icon name={current[1]} size={22} /></span>
-        <span className="mnav-heading"><strong className="mnav-title">{tr(current[2])}</strong><small>{translateUI("ui.syllabus_management_system_e49cab")}</small></span>
+        <span className="mnav-heading"><strong className="mnav-title">{tr(current[2])}</strong></span>
         <svg className="mnav-chevron" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9" /></svg>
       </button>
       <div className="mnav-panel" id={panelId} inert={!open}>

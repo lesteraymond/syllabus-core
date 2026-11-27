@@ -88,7 +88,6 @@ export default function Topbar({ page, onLogout, user, unread, threads, msgDrop,
   return (
     <header className="topbar">
       <div className="topbar-brand"><img src="/cite-logo.png" alt={translateUI("ui.cict_logo_dee290")} /><strong>{translateUI("ui.cite_brand_5b2e91")}</strong></div>
-      <div className="topbar-heading"><span className="eyebrow">{translateUI("ui.syllabus_management_system_e49cab")}</span></div>
       <div className="top-actions">
         {/* Search, messages and notifications are staff tools: a student's account cannot reach them (server/index.js), so they are not offered. */}
         {!isStudent && <>
