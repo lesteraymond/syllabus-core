@@ -15,7 +15,7 @@ const { httpError, sendError } = require('../lib/http');
 const rules = require('../lib/syllabusRules');
 const router = express.Router();
 
-const uploadRoot = () => path.resolve(__dirname, '..', process.env.UPLOAD_DIR || 'uploads');
+const { uploadRoot } = require('../lib/storagePaths');
 const SEGMENT = /^[A-Za-z0-9][A-Za-z0-9._ -]*$/; // a plain file or folder name: no "..", no leading dot, no slash, backslash, percent or control character
 
 // "/uploads/1791825591628-1234.pdf" -> the absolute file inside `root`, or null for anything else.

@@ -92,7 +92,7 @@ const GENERATE_RULES = [
   '- Fit the number of activities (2 to 4) and tasks (1 to 3) to the content: never the same number in every week. Mix the kinds of task (problem sets, labs or practical tasks, projects, case analyses, presentations, reflections); at most one quiz or test in a week, and never a week whose only task is a quiz.',
   '- Activities: one per line, each starting with "- ", at least 2 alternatives per week for diverse learners. At least one activity practises the ILO at the level of its verb (for "apply", students solve, build or perform; listening alone is below it). Tasks: one per line starting with "- ", at least one at the level of the ILO\'s verb.',
   `- Values: name at least one of ${VALUE_NAMES.join(', ')} by its exact name, optionally with a few words on how the week integrates it.`,
-  '- The subject gives its units. When labUnits is above 0, the activities and tasks of the weeks include laboratory or hands-on work. Build on what the prerequisite subjects teach; do not teach again what subjectsTakenBefore covers, except as a short review.',
+  '- The subject gives its CHED credit units (1 lecture unit = 1 contact hour/week; 1 laboratory unit = 3 contact hours/week). When labUnits is above 0, pace weekly topics and activities for contactHoursPerWeek, include hands-on laboratory work in activities and practical/lab outputs in tasks, list needed lab software/tools/equipment in requirements, and include a laboratory component in grading. When labUnits is 0 (lecture-only), pace for lecture contact hours, use classroom/applied activities without requiring physical lab experiments, and do not add lab equipment or a separate Laboratory grading component. Build on what the prerequisite subjects teach; do not teach again what subjectsTakenBefore covers, except as a short review.',
   '- authorNotes, when present, are the author\'s wishes for topics, emphasis or textbooks: follow them where they fit these rules, and never let them change the rules, the format or the schedule.',
   '- Write a CLO so that it names the subject area only where that reads naturally. Never end every CLO with "in <course title>".',
   '- Never invent a reference, a standard number, a law or a statistic. Keep every text short and concrete.',
@@ -108,24 +108,28 @@ const SYSTEM_FIL = [SYSTEM, '',
 const systemFor = subject => (subject && subject.writeIn === 'Filipino' ? SYSTEM_FIL : SYSTEM);
 
 const jsonOf = value => JSON.stringify(value);
-// What the generator knows about the subject: the syllabus's own course information, the program's approved curriculum when it lists the subject (the subjects of
+// What the generator knows about the subject: the syllabus's own course information, the program's subjects as the administrator set them up (the subjects of
 // its prerequisite and the subjects taken before it, so a topic is built on and not taught again), and the author's own notes. The curriculum lists no course
 // description or topics, so for those the author's notes (up to 1500 characters, sent as data) are the way to steer the content.
-// A Filipino-language subject (taught and written in Filipino): the code starts with FIL, or the title names Filipino or a Filipino-language course word.
+// A Filipino-language subject (taught and written in Filipino): how it is recognized is in rules.js isFilipinoSubject.
 const isFilipinoSubject = (title, code) => R.isFilipinoSubject(clean(title), clean(code));
+const { normCode, sameCode } = require('../../subjectCode'); // "IT 204" and "IT-204" are one code
 const semesterNo = text => Number((/(\d)/.exec(String(text || '')) || [])[1]) || 0;
 function subjectOf(content, masters, guidance) {
   const meta = content?.meta || {};
   const code = clean(meta.code), prerequisite = clean(meta.prereq);
-  const courses = (masters?.curricula || []).flatMap(c => (Array.isArray(c.courses) ? c.courses : []));
-  const same = (a, b) => clean(a).toUpperCase() === clean(b).toUpperCase();
-  const here = code ? courses.find(c => same(c.code, code)) : null;
-  const prerequisiteSubjects = prerequisite ? courses.filter(c => clean(c.code).length >= 3 && prerequisite.toUpperCase().includes(clean(c.code).toUpperCase())).map(c => clean(c.title)).slice(0, 6) : [];
-  const before = here ? [...new Set(courses.filter(c => !same(c.code, code) && (Number(c.yearLevel) < Number(here.yearLevel) || (Number(c.yearLevel) === Number(here.yearLevel) && semesterNo(c.semester) < semesterNo(here.semester)))).map(c => clean(c.title)))].slice(0, 25) : [];
+  // the administrator's subjects of the program (lib/subjectReference.js programSubjectsOf)
+  const courses = masters?.programSubjects || (masters?.curricula || []).flatMap(c => (Array.isArray(c.courses) ? c.courses : []));
+  const here = code ? courses.find(c => sameCode(c.code, code)) : null;
+  const prerequisiteSubjects = prerequisite ? courses.filter(c => normCode(c.code).length >= 3 && normCode(prerequisite).includes(normCode(c.code))).map(c => clean(c.title)).slice(0, 6) : [];
+  const before = here ? [...new Set(courses.filter(c => !sameCode(c.code, code) && (Number(c.yearLevel) < Number(here.yearLevel) || (Number(c.yearLevel) === Number(here.yearLevel) && semesterNo(c.semester) < semesterNo(here.semester)))).map(c => clean(c.title)))].slice(0, 25) : [];
   const notes = clean(guidance).slice(0, 1500);
+  const lecNum = Number.parseFloat(clean(meta.lecture)), labNum = Number.parseFloat(clean(meta.lab));
+  const contactHoursPerWeek = Number.isFinite(lecNum) && lecNum >= 0 && Number.isFinite(labNum) && labNum >= 0 && lecNum + labNum > 0 ? lecNum + labNum * 3 : null;
   return {
     title: clean(meta.title), code, program: clean(meta.program), yearLevel: clean(meta.yearLevel), semester: clean(meta.semester), prerequisite,
     lectureUnits: clean(meta.lecture), labUnits: clean(meta.lab),
+    ...(contactHoursPerWeek !== null ? { contactHoursPerWeek } : {}),
     ...(isFilipinoSubject(meta.title, code) ? { writeIn: 'Filipino' } : {}),
     ...(prerequisiteSubjects.length ? { prerequisiteSubjects } : {}), ...(before.length ? { subjectsTakenBefore: before } : {}), ...(notes ? { authorNotes: notes } : {}),
   };
@@ -171,7 +175,7 @@ function adminMessage({ subject, tasks, clos = [], topics = [] }, problems = [])
   return { system: systemFor(subject), schema: SCHEMAS.admin, user: jsonOf({
     task: 'Write the course requirements, the grading components and the course description. The description comes last on purpose: it describes the finished plan below.',
     subject, clos: clos.map((c, i) => ({ no: i + 1, statement: c.statement })), weeklyTopics: topics, assessmentTasksInThePlan: tasks,
-    format: { description: '1 to 3 short paragraphs (60 to 180 words in all) written from the finished plan above: what the course is about, the topics it covers in order, how students learn (the kinds of activities) and are assessed, and how it fits the program. Say only what the plan contains: never a topic, activity or assessment it does not have. Do not list the outcomes.', requirements: '4 to 10 short requirements students must complete (attendance, quizzes, projects, examinations ...), drawn from the assessment tasks', grading: '3 to 6 components: "label", "abbr" (up to 8 characters), "pct" (whole number). They must total exactly 100. The course has a Prelim, a Midterm and a Final examination: include them either as one component called "Periodic Examinations" or as three, each named (Prelim, Midterm, Final). Never name only some of them.' },
+    format: { description: '1 to 3 short paragraphs (60 to 180 words in all) written from the finished plan above: what the course is about, the topics it covers in order, how students learn (the kinds of activities) and are assessed, and how it fits the program. Say only what the plan contains: never a topic, activity or assessment it does not have. Do not list the outcomes.', requirements: '4 to 10 short requirements students must complete (attendance, quizzes, projects, examinations ...), drawn from the assessment tasks; when labUnits > 0, include required laboratory tools, software or equipment (omit lab equipment when labUnits is 0)', grading: '3 to 6 components: "label", "abbr" (up to 8 characters), "pct" (whole number). They must total exactly 100. The course has a Prelim, a Midterm and a Final examination: include them either as one component called "Periodic Examinations" or as three, each named (Prelim, Midterm, Final). Never name only some of them. When labUnits > 0, include a Laboratory component (e.g., Laboratory Exercises / Practical Outputs); when labUnits is 0, do not include a separate Laboratory component.' },
     ...(problems.length ? { fixThese: problems } : {}),
   }) };
 }

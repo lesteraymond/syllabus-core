@@ -165,7 +165,7 @@ router.post('/:id/resend-credentials', requireAdmin, async (req, res) => {
 router.get('/me/assignments', requireAuth, async (req, res) => {
   try {
     const me = req.session.user;
-    if (isReviewer(me)) return res.json({ unrestricted: true, programIds: [], courseIds: [], programs: [], courses: [] });
+    if (isReviewer(me) && me.role !== 'admin') return res.json({ unrestricted: true, programIds: [], courseIds: [], programs: [], courses: [] });
     const db = req.app.locals.db;
     res.json({ unrestricted: false, ...(await assignments.describeAssignments(db, await assignments.loadAssignments(db, me.id))) });
   } catch (err) {

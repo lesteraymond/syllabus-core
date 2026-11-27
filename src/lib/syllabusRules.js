@@ -40,11 +40,11 @@ export function assignmentState(mine) {
 }
 export const ASSIGNMENT_MESSAGES = { none: NOTHING_ASSIGNED, noSubject: NO_SUBJECT_YET };
 
-// Why a faculty member cannot edit this syllabus because of their assignments ('' when they can).
+// Why an author (faculty or administrator) cannot edit this syllabus because of their assignments ('' when they can).
 // `mine` is the result of users.myAssignments(), or null while it is loading (nothing is blocked then; the server
-// has the final say). Admins are never restricted. Mirrors server/lib/assignments.js.
+// has the final say). Non-author reviewers receive `unrestricted: true`. Mirrors server/lib/assignments.js.
 export function courseLockReason(user, mine, syllabus) {
-  if (!mine || mine.unrestricted || (user && user.role === 'admin')) return '';
+  if (!mine || mine.unrestricted) return '';
   const code = String(syllabus.courseCode || '').trim().toLowerCase();
   if (syllabus.courseId) return mine.courseIds.includes(syllabus.courseId) ? '' : NOT_ASSIGNED;
   const none = ASSIGNMENT_MESSAGES[assignmentState(mine)] || '';

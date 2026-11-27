@@ -14,6 +14,8 @@ import Sidebar from './components/Sidebar';
 import SyllabusCommentsModal from './components/SyllabusCommentsModal';
 import SyllabusViewModal from './components/SyllabusViewModal';
 import Topbar from './components/Topbar';
+import GeistToaster, { inferToastType } from './components/GeistToast';
+import GeistSpinner from './components/GeistSpinner';
 import MobileNav from './components/MobileNav';
 import { useMediaQuery, NARROW_QUERY } from './lib/useMediaQuery';
 import VersionHistoryModal from './components/VersionHistoryModal';
@@ -45,11 +47,11 @@ import AuditLog from './views/AuditLog';
 import SyllabusBuilderV2 from './views/builder2';
 import { AcademicYearContext, useAcademicYearScope } from './components/AcademicYearScope';
 import { groupOfPage } from './lib/academicYearScope';
-import { pageOfHash, routeOnLoad } from './lib/builderRoute';
+import { builderState, pageOfHash, routeOnLoad } from './lib/builderRoute';
 
-// The rebuilt syllabus builder (src/views/builder2) is behind a flag until it is approved: the current builder stays
-// the default. Set VITE_NEW_BUILDER=true in .env to use the rebuilt one.
-const NEW_BUILDER = import.meta.env.VITE_NEW_BUILDER === 'true';
+// The syllabus builder is the rebuilt one (src/views/builder2), also when the setting is missing: a production build has no .env of a developer's machine.
+// VITE_NEW_BUILDER=false at build time goes back to the previous builder.
+const NEW_BUILDER = import.meta.env.VITE_NEW_BUILDER !== 'false';
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -114,29 +116,53 @@ export default function App() {
     return navItems.some(([k]) => k === key) ? key : 'dashboard';
   };
   const [page, setPage] = useState(() => pageFromHash({ onLoad: true }));
+  const homeOf = (u) => (u?.role === 'student' ? 'student-dashboard' : 'dashboard');
+  const canOpenPage = (key, u) => {
+    if (!u) return true;
+    if (key === 'builder') return canAuthor(u.role);
+    return navItems.some(([k, , , r]) => k === key && (u.role === 'student' ? r === 'student' : r !== 'student' && roleAllows(r, u.role)));
+  };
+  const userRef = useRef(user);
+  userRef.current = user;
   // Checked on every screen change, not only on load: typing #users into the address bar later must not open a screen the role has no access to.
   useEffect(() => {
     if (!user) return;
-    const allowed = navItems.some(([k, , , r]) => k === page && (user.role === 'student' ? r === 'student' : r !== 'student' && roleAllows(r, user.role)));
-    if (!allowed) setPage('dashboard');
+    if (!canOpenPage(page, user)) setPage(homeOf(user));
   }, [user, page]);
   useEffect(() => {
     if (!user || pageOfHash(window.location.hash) === page) return; // the builder's own "?id=..." stays
     window.location.hash = page;
   }, [user, page]);
   useEffect(() => {
-    const onHash = () => setPage(pageFromHash());
+    const onHash = () => {
+      const next = pageFromHash();
+      const u = userRef.current;
+      if (u && !canOpenPage(next, u)) {
+        const home = homeOf(u);
+        setPage(home);
+        if (pageOfHash(window.location.hash) !== home) window.location.hash = home;
+        return;
+      }
+      if (next === 'builder') {
+        const st = builderState(window.location.hash);
+        if (st && st.id) setEditing((cur) => (cur && cur.syllabusId === st.id ? cur : { syllabusId: st.id }));
+      }
+      setPage(next);
+    };
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
   // The academic year each screen shows (lib/academicYearScope.js): the data screens start on the current year, the work queues on every year the person may see.
   const yearScope = useAcademicYearScope(user);
   const yearParam = yearScope.param(groupOfPage(page));
+  const dataYearParam = yearScope.param('data');
+  const currentYearLabel = yearScope.current?.label || '';
   // The compliance check moved into step 7 of the builder: an old 'ai' link sends faculty there, and only admins have the overview.
-  useEffect(() => { if (user && !isReviewer(user.role) && user.role !== 'faculty' && page === 'ai') setPage('dashboard'); }, [user, page]);
-  // Only faculty and the administrator write syllabi: whatever leads a reviewer (Asst. VPAA, LIC Director, VPAA) to the builder or My Syllabi, they land on the dashboard.
-  useEffect(() => { if (user && !canAuthor(user.role) && (page === 'builder' || page === 'my-syllabi' || page === 'generator')) setPage('dashboard'); }, [user, page]);
-  const [toast, setToast] = useState('');
+  useEffect(() => { if (user && !isReviewer(user.role) && user.role !== 'faculty' && page === 'ai') setPage(homeOf(user)); }, [user, page]);
+  // Only faculty and the administrator write syllabi: whatever leads a reviewer (Asst. VPAA, LIC Director, VPAA) or student to the builder or My Syllabi, they land on their dashboard.
+  useEffect(() => { if (user && !canAuthor(user.role) && (page === 'builder' || page === 'my-syllabi' || page === 'generator')) setPage(homeOf(user)); }, [user, page]);
+  const [toasts, setToasts] = useState([]);
+  const toastSeq = useRef(0);
   const [syllabi, setSyllabi] = useState([]);
   const [logs, setLogs] = useState([]);
   const [messages, setMessages] = useState([]);
@@ -154,7 +180,17 @@ export default function App() {
   const [msgDrop, setMsgDrop] = useState(false);
   const [notifications, setNotifications] = useState({ items: [], unreadCount: 0 });
 
-  const notify = (m) => { setToast(tr(m)); window.clearTimeout(window.__scmsToast); window.__scmsToast = window.setTimeout(() => setToast(''), 2400); };
+  const dismissToast = useCallback((id) => {
+    setToasts((list) => list.filter((t) => t.id !== id));
+  }, []);
+  const notify = useCallback((input, opts) => {
+    const item = typeof input === 'object' && input !== null ? input : { text: input, ...(opts || {}) };
+    const text = tr(item.text);
+    if (!text) return;
+    const type = item.type || inferToastType(text);
+    const id = ++toastSeq.current;
+    setToasts((list) => [...list.slice(-4), { id, text, type, action: item.action || null, duration: item.duration ?? 3600 }]);
+  }, []);
 
   const formatUser = (u) => ({
     ...u,
@@ -180,18 +216,18 @@ export default function App() {
   const fetchSyllabi = useCallback(async () => {
     try {
       const startedAt = Date.now();
-      const data = await syllabiApi.list(yearParam); // the page's academic year: changing it (or the page's group) reads the list again
+      const data = await syllabiApi.list(yearParam); // the page's academic year: changing it (or the active year) reads the list again
       seedAvatars(data.map(s => [s.userId, s.ownerAvatarUrl]), startedAt);
       setSyllabi(data);
     } catch (err) { console.error('Failed to fetch syllabi:', err); }
-  }, [yearParam]);
+  }, [yearParam, currentYearLabel]);
 
   const fetchLogs = useCallback(async () => {
     try {
-      const data = await logsApi.list();
+      const data = await logsApi.list({ year: dataYearParam });
       setLogs(data);
     } catch (err) { console.error('Failed to fetch logs:', err); }
-  }, []);
+  }, [dataYearParam, currentYearLabel]);
 
   const fetchMessages = useCallback(async () => {
     try {
@@ -201,7 +237,7 @@ export default function App() {
       setMessages(list);
       setPartners(who.partners || {});
     } catch (err) { console.error('Failed to fetch messages:', err); }
-  }, []);
+  }, [currentYearLabel]);
 
   const fetchCommentCounts = useCallback(async () => {
     try {
@@ -210,9 +246,12 @@ export default function App() {
     } catch (err) { console.error('Failed to fetch comment counts:', err); }
   }, []);
 
-  // A notification that arrives while the app is open chimes, and pops up on the desktop when the app is in the background (lib/desktopAlert.js).
+  // A notification that arrives while the app is open chimes, and pops up on the desktop when the app is in the background (lib/desktopAlert.js),
+  // respecting each signed-in user's notification mode (On, Do Not Disturb, or Off).
   const seenNotifications = useRef(null);
   const openNotificationRef = useRef(null);
+  const notifUserIdRef = useRef(null);
+  notifUserIdRef.current = user?.id ?? null;
   const fetchNotifications = useCallback(async () => {
     try {
       const data = await notificationsApi.list();
@@ -220,15 +259,17 @@ export default function App() {
       const { seen, fresh } = newArrivals(seenNotifications.current, data.notifications);
       seenNotifications.current = seen;
       if (fresh.length) {
-        playChime();
+        const uid = notifUserIdRef.current;
+        playChime({ userId: uid });
         fresh.slice(0, 3).forEach((n) => showDesktop(n, {
           title: tr(n.title),
           body: n.body ? (['message', 'comment'].includes(n.type) ? n.body : tr(n.body)) : '',
+          userId: uid,
           onOpen: (x) => { if (openNotificationRef.current) openNotificationRef.current(x); },
         }));
       }
     } catch (err) { console.error('Failed to fetch notifications:', err); }
-  }, []);
+  }, [currentYearLabel]);
 
   useEffect(() => {
     if (user && user.role !== 'student' && !user.mustChangePassword) {
@@ -246,14 +287,29 @@ export default function App() {
   useEffect(() => { if (user && page === 'dashboard' && user.role !== 'student' && !user.mustChangePassword) fetchLogs(); }, [user, page, fetchLogs]);
   // The list says which submissions the administrator has checked: read it again when they open Review & Approval, so a check just made shows.
   useEffect(() => { if (user && isReviewer(user.role) && (page === 'review' || page === 'ai')) fetchSyllabi(); }, [user, page, fetchSyllabi]);
-  useEffect(() => { if (user && (page === 'my-syllabi' || page === 'generator')) { fetchSyllabi(); if (canAuthor(user.role)) fetchCommentCounts(); } }, [user, page, fetchSyllabi, fetchCommentCounts]);
+  useEffect(() => { if (user && canAuthor(user.role) && !user.mustChangePassword && (page === 'my-syllabi' || page === 'generator')) { fetchSyllabi(); fetchCommentCounts(); } }, [user, page, fetchSyllabi, fetchCommentCounts]);
 
   // Other people's new profile pictures arrive with the syllabus list and the message partners: read both again now and then, and when the tab comes back.
   usePeriodicRefresh(!!user && user.role !== 'student' && !user.mustChangePassword && !loggingOut, () => { fetchSyllabi(); fetchMessages(); });
   // Time in the system: a heartbeat while the tab is visible and the person is active (students have no dashboard and the server closes this to them).
   useActiveTime(!!user && user.role !== 'student' && !user.mustChangePassword && !loggingOut);
   // Students have no messages, notifications or syllabus list on the staff API (server/index.js refuses them), so nothing is polled for them.
-  useNotificationPolling(!!user && user.role !== 'student' && !user.mustChangePassword && !loggingOut, () => { fetchMessages(); fetchNotifications(); fetchSyllabi(); if (canAuthor(user.role)) fetchCommentCounts(); });
+  // When an administrator activates a different academic year, every signed-in staff tab detects it via summary polling and refreshes its year scope and data live.
+  useNotificationPolling(
+    !!user && user.role !== 'student' && !user.mustChangePassword && !loggingOut,
+    () => { fetchMessages(); fetchNotifications(); fetchSyllabi(); if (canAuthor(user.role)) fetchCommentCounts(); },
+    25000,
+    async (nextYear) => {
+      const alreadyCurrent = nextYear && nextYear === currentYearLabel;
+      await yearScope.reload();
+      fetchSyllabi();
+      fetchLogs();
+      fetchMessages();
+      fetchNotifications();
+      if (canAuthor(user.role)) fetchCommentCounts();
+      if (nextYear && !alreadyCurrent) notify(translateUI('years.changed', { year: nextYear }), { type: 'info' });
+    }
+  );
 
   const handleLogin = async (email, pass, remember) => {
     try {
@@ -302,8 +358,7 @@ export default function App() {
       setCommentCode(null);
       setConfirm(null);
       setMsgDrop(false);
-      window.clearTimeout(window.__scmsToast);
-      setToast('');
+      setToasts([]);
       logoutPending.current = false;
       setLoggingOut(false);
     }
@@ -453,8 +508,8 @@ export default function App() {
   const studentPage = isStudent ? (String(page).startsWith('student-') ? page : 'student-dashboard') : page;
   const nav = navItems.filter(([, , , r]) => (isStudent ? r === 'student' : roleAllows(r, user?.role)));
 
-  if (loggingOut) return <div className="loading-screen" role="status" aria-live="polite" aria-busy="true"><div className="spinner" aria-hidden="true" /><p>{translateUI("ui.logging_out_3df779")}</p></div>;
-  if (loading) return <div className="loading-screen"><div className="spinner" /><p>{translateUI("ui.loading_b04ba4")}</p></div>;
+  if (loggingOut) return <div className="loading-screen" role="status" aria-live="polite" aria-busy="true"><GeistSpinner size={28} color="blue" /><p>{translateUI("ui.logging_out_3df779")}</p></div>;
+  if (loading) return <div className="loading-screen" role="status" aria-live="polite" aria-busy="true"><GeistSpinner size={28} color="blue" /><p>{translateUI("ui.loading_b04ba4")}</p></div>;
   if (!user) return <Login onLogin={handleLogin} onGoogleLogin={handleGoogleLogin} />;
   if (user.mustChangePassword) return <ChangePassword user={user} onDone={() => setUser((u) => ({ ...u, mustChangePassword: false }))} onLogout={handleLogout} />;
 
@@ -467,7 +522,7 @@ export default function App() {
           syllabi={syllabi} nav={nav} onOpenSyllabus={setViewCode} onGoPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); }} />
         {narrow && <MobileNav page={studentPage} setPage={(p) => { if (NEW_BUILDER && p === 'builder') setEditing(null); setPage(p); setMobileNavOpen(false); }} nav={nav} open={mobileNavOpen} onToggle={() => setMobileNavOpen(o => !o)} />}
         <div className={`page-wrap ${page === 'dashboard' ? 'page-wrap-dashboard' : ''}`}>
-          <div key={studentPage} className="page-stage">
+          <div key={['builder', 'generator', 'courses', 'settings'].includes(studentPage) ? studentPage : `${studentPage}:${currentYearLabel}`} className="page-stage">
           {isStudent && studentPage === 'student-dashboard' && <StudentDashboard user={user} setPage={setPage} />}
           {isStudent && studentPage === 'student-syllabi' && <StudentSyllabi />}
           {!isStudent && (<>
@@ -482,8 +537,8 @@ export default function App() {
           {page === 'review' && isReviewer(user.role) && <ReviewApproval syllabi={syllabi} user={user} setViewCode={setViewCode} setPage={setPage} />}
           {page === 'repository' && <Repository syllabi={syllabi} user={user} notify={notify} setHistCode={setHistCode} />}
           {page === 'compliance' && user.role === 'admin' && <Compliance syllabi={syllabi} />}
-          {page === 'analytics' && <Analytics syllabi={syllabi} user={user} notify={notify} />}
-          {page === 'reports' && <Reports syllabi={syllabi} user={user} notify={notify} />}
+          {page === 'analytics' && canAuthor(user.role) && <Analytics syllabi={syllabi} user={user} notify={notify} />}
+          {page === 'reports' && canAuthor(user.role) && <Reports syllabi={syllabi} user={user} notify={notify} />}
           {page === 'users' && user.role === 'admin' && <UsersRoles user={user} notify={notify} onManageSubjects={() => setPage('courses')} />}
           {page === 'audit-log' && user.role === 'admin' && <AuditLog user={user} notify={notify} />}
           {page === 'courses' && user.role === 'admin' && <CourseOutcomes notify={notify} onCatalogChanged={() => { fetchSyllabi(); fetchLogs(); fetchMessages(); fetchNotifications(); }} />}
@@ -492,7 +547,7 @@ export default function App() {
           </div>
         </div>
       </main>
-      {toast && <div className="toast" role="status" aria-live="polite">{tr(toast)}</div>}
+      <GeistToaster toasts={toasts} onDismiss={dismissToast} />
       {chatCode && <ChatModal code={chatCode} syllabi={syllabi} user={user} messages={messages} partner={partners[chatCode]} sendMsg={sendMsg} markRead={markRead} onClose={() => setChatCode(null)} />}
       {histCode && <VersionHistoryModal syllabus={typeof histCode === 'object' ? histCode : syllabi.find(s => s.id === histCode)} onClose={() => setHistCode(null)} />}
       {commentCode && (

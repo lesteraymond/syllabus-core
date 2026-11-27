@@ -161,6 +161,10 @@ export function applyCourse(d, course) {
   if (term.yearLevel != null) n.meta.yearLevel = String(term.yearLevel);
   if (term.academicYear) n.meta.academicYear = term.academicYear;
   if (term.semester) n.meta.semester = term.semester;
+  // the administrator's units and curriculum year, the same way; another subject without units starts with none
+  if (course.units) { n.meta.lecture = String(course.units.lecture); n.meta.lab = String(course.units.lab); }
+  else if (d.meta.courseId !== course.id) { n.meta.lecture = ''; n.meta.lab = ''; }
+  if (course.curriculumYear) n.meta.curriculumYear = course.curriculumYear;
   if (d.meta.courseId === course.id && d.outcomes) return n;
   delete n.catalog;
   n.clos = clone(course.clos);
@@ -380,7 +384,7 @@ export function createModel({ institution, programs, year }) {
       if (!d.meta.program) form('Choose a program.');
       else if (!d.meta.courseId) form('Choose a subject.');
       // Pre-requisite is optional: a subject with none leaves it blank (shown as "None").
-      if (isNaN(parseFloat(d.meta.lecture)) || isNaN(parseFloat(d.meta.lab))) form('Enter lecture and laboratory units.');
+      if (isNaN(parseFloat(d.meta.lecture)) || isNaN(parseFloat(d.meta.lab))) form('The lecture and laboratory units are missing. The administrator sets them on the subject.');
       if (!d.description.some((p) => p.t.trim())) form('Add at least one description paragraph.');
     }
     if (key === 'clos') {

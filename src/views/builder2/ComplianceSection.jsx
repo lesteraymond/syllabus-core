@@ -72,7 +72,7 @@ export default function ComplianceSection({ syllabusId, saveFirst, canCheck, onO
       {error && <div className="info-banner warning" role="alert">{tr(error)}</div>}
       {installed && !run && !error && !busy && <p className="cmp-small">{translateUI("ui.not_checked_yet_8ea64e")}</p>}
       {/* `busy` is the same value that disables and relabels the button above, so the ring and the button start and stop together. */}
-      {installed && (run || busy) && <ComplianceCard run={run} checking={busy} onOpenStep={onOpenStep} onApplyDraft={apply} />}
+      {installed && (run || busy) && <ComplianceCard run={run} checking={busy} onOpenStep={onOpenStep} onApplyDraft={apply} modalSections />}
     </section>
   );
 }

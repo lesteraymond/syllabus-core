@@ -71,7 +71,8 @@ export async function decideSuggestion({ suggestion, action, editedText, verific
     const decision = await recordDecision({ suggestionId: suggestion.id, action, editedText, verificationToken });
     return { decision, applied };
   } catch (error) {
-    if (applied) error.draftSaved = true;
+    // The administrator sets this field on the subject: the save kept the subject's value, so there is no saved change to speak of.
+    if (applied && error?.data?.code !== 'admin_field') error.draftSaved = true;
     throw error;
   }
 }

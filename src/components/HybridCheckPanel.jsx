@@ -9,7 +9,7 @@ import { t, tr } from '../i18n';
 
 const without = (map, key) => { const next = { ...map }; delete next[key]; return next; };
 
-export default function HybridCheckPanel({ run, onApplyDraft }) {
+export default function HybridCheckPanel({ run, onApplyDraft, hideUnresolved = false }) {
   const aiGate = useAiGate();
   const [edits, setEdits] = useState({});
   const [decisions, setDecisions] = useState({});
@@ -147,7 +147,7 @@ export default function HybridCheckPanel({ run, onApplyDraft }) {
       ? (hardGates.length > 0 && outOfCredits && <div className="hy-lock" role="alert"><b>{t('hybrid.hardGateTitle')}</b><span>{t('hybrid.hardGateText')}</span><ul>{hardGates.map(f => <li key={f.id}>{f.message}</li>)}</ul></div>)
       : !hybrid.ready && outOfCredits && <div className="hy-lock" role="alert"><b>{t('hybrid.lockedTitle')}</b><span>{t('hybrid.locked')}</span></div>}
     {error && <div role="alert" className="info-banner warning">{error}</div>}
-    {needsDecision.length > 0 && <details className="hy-recs hy-unresolved" open data-testid="needs-decision">
+    {!hideUnresolved && needsDecision.length > 0 && <details className="hy-recs hy-unresolved" open data-testid="needs-decision">
       <summary><h4>{t('hybrid.unresolvedTitle', { count: needsDecision.length })}</h4></summary>
       <div className="hy-box">
         <p className="hy-note">{t('hybrid.unresolvedNote')}</p>
@@ -178,7 +178,7 @@ export default function HybridCheckPanel({ run, onApplyDraft }) {
             <strong>{s.title}</strong>
             {s.path && <span className="hy-pill">{suggestionSection(s.path, { tr, t })}</span>}
           </div>
-          {forSuggestion[s.id]?.length > 0 && <details className="hy-fixes" open>
+          {forSuggestion[s.id]?.length > 0 && <details className="hy-fixes">
             <summary>{t('hybrid.fixes', { count: forSuggestion[s.id].length })}</summary>
             <ul>{forSuggestion[s.id].map(p => <HybridProblem key={p.id} p={p} />)}</ul>
           </details>}

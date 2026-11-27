@@ -42,9 +42,12 @@ test('with no course chosen yet, one assigned course is enough to start a draft'
   assert.strictEqual(A.writeBlockedReason(faculty, some, 10), null);
 });
 
-test('admins are never restricted by assignments', () => {
-  assert.strictEqual(A.mayWriteSyllabus(admin, none, 10), true);
-  assert.strictEqual(A.mayWriteSyllabus(admin, none, null), true);
+test('admins follow the same assignment rules as faculty when authoring syllabi', () => {
+  assert.strictEqual(A.mayWriteSyllabus(admin, none, 10), false);
+  assert.strictEqual(A.mayWriteSyllabus(admin, none, null), false);
+  assert.strictEqual(A.mayWriteSyllabus(admin, some, 10), true);
+  assert.strictEqual(A.mayWriteSyllabus(admin, some, 11), false);
+  assert.strictEqual(A.mayWriteSyllabus(admin, some, null), true);
 });
 
 test('unknown roles and missing users are refused', () => {
@@ -119,7 +122,7 @@ test('only subjects newly given are archived over, and only the syllabi of other
   await A.saveAssignments(conn, 5, { programIds: [], courseIds: [10, 11] });
   const update = calls.find((c) => c[0].startsWith('UPDATE syllabi'));
   assert.deepStrictEqual(update[1], [[11], 5], 'IT 101 was hers already, so only subject 11 is newly given');
-  assert.match(update[0], /s\.user_id <> \? AND s\.archived_at IS NULL AND o\.role = 'faculty'/);
+  assert.match(update[0], /s\.user_id <> \? AND s\.archived_at IS NULL AND o\.role IN \('faculty', 'admin'\)/);
   assert.strictEqual(await A.archiveReassigned(conn, 5, []), 0, 'no subjects, no query');
   assert.strictEqual(await A.archiveReassigned(conn, 5, [11]), 2);
 });

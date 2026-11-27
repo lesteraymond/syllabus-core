@@ -6,14 +6,14 @@
 //   code_not_found         the curriculum was found but does not list the code (it may exist in another program or curriculum year: reported, not assumed)
 //   curriculum_unavailable no approved curriculum for the program
 //   curriculum_ambiguous   several approved versions and none selected
-const normCode = value => String(value ?? '').trim().replace(/\s+/g, ' ').toUpperCase();
+const { normCode } = require('../subjectCode');
 function identityOf(meta, masters, sets, course) {
   const base = { code: meta.code || '', program: meta.program || '', curriculumYear: meta.curriculumYear || '' };
   if (course) return { ...base, status: 'verified', elsewhere: [] };
   const status = sets.length === 0 ? 'curriculum_unavailable' : sets.length > 1 ? 'curriculum_ambiguous' : !normCode(meta.code) ? 'code_missing' : 'code_not_found';
   // Where else the code appears, among the approved curricula the checker was given: a hint for the author, never a match.
   const elsewhere = [];
-  for (const record of [...(masters.curricula || []), ...(masters.otherCurricula || [])]) {
+  for (const record of masters.curricula || []) {
     if (sets.includes(record)) continue;
     const hit = (record.courses || []).find(row => normCode(row.code) === normCode(meta.code));
     if (hit && normCode(meta.code)) elsewhere.push({ program: record.program, curriculumYear: record.curriculumYear, code: hit.code, title: hit.title });

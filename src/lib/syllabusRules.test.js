@@ -52,9 +52,10 @@ test('a program without a subject yet says so, instead of claiming nothing is as
   assert.strictEqual(courseLockReason(faculty, programOnly, { courseCode: 'IT 101' }), NO_SUBJECT_YET);
 });
 
-test('nothing is blocked while the assignments load, and admins are never blocked', () => {
+test('nothing is blocked while the assignments load; admins follow their own assignments and unrestricted reviewers are never blocked', () => {
   assert.strictEqual(courseLockReason(faculty, null, { courseId: 99 }), '');
-  assert.strictEqual(courseLockReason({ id: 1, role: 'admin' }, none, { courseId: 99 }), '');
+  assert.strictEqual(courseLockReason({ id: 1, role: 'admin' }, none, { courseId: 99 }), NOT_ASSIGNED);
+  assert.strictEqual(courseLockReason({ id: 1, role: 'admin' }, mine, { courseId: 10 }), '');
   assert.strictEqual(courseLockReason(faculty, { unrestricted: true, programIds: [], courseIds: [], courses: [] }, { courseId: 99 }), '');
 });
 

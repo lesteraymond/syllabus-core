@@ -5,11 +5,12 @@ import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { PageHead } from '../components/ui';
-import { academicYears as yearsApi, courses as coursesApi, deadlines as deadlinesApi, outcomes as outcomesApi, syllabusCheck as syllabusCheckApi } from '../lib/api';
+import { academicYears as yearsApi, courses as coursesApi, deadlines as deadlinesApi, outcomes as outcomesApi } from '../lib/api';
 import SubjectTermFields from '../components/SubjectTermFields';
 import CurriculumYearField from '../components/CurriculumYearField';
+import SubjectUnitFields from '../components/SubjectUnitFields';
 import { useYearScope } from '../components/AcademicYearScope';
-import { emptyTerm, filterSubjects, noFilters, filtersActive, SEMESTER_OPTIONS, YEAR_LEVELS, termBody, termComplete, termLine, termSet, CURRICULUM_NONE, curriculumYearOptions, normalizeCurriculumYear, semesterKey } from '../lib/subjectTerm';
+import { emptyUnits, unitsBody, unitsValid, emptyTerm, filterSubjects, noFilters, filtersActive, SEMESTER_OPTIONS, YEAR_LEVELS, termBody, termComplete, termLine, termSet, CURRICULUM_NONE, curriculumYearOptions, normalizeCurriculumYear, semesterKey } from '../lib/subjectTerm';
 import { SubjectDialog, SubjectRowActions } from '../components/SubjectActions';
 import { DeadlineChip, DeadlineDialog } from '../components/DeadlineDialog';
 import { currentDeadline, groupByCourse } from '../lib/deadlineView';
@@ -35,20 +36,19 @@ export default function CourseOutcomes({ notify, onCatalogChanged }) {
   const [target, setTarget] = useState(null);       // { subject, mode: 'edit' | 'delete' }: the dialog opened from a row
   const [adding, setAdding] = useState(false);
   const [addingProgram, setAddingProgram] = useState(false);   // the Add program form (components/AddProgramForm.jsx)
-  const [form, setForm] = useState({ program: '', code: '', title: '', curriculumYear: '', ...emptyTerm() });
+  const [form, setForm] = useState({ program: '', code: '', title: '', curriculumYear: '', ...emptyUnits(), ...emptyTerm() });
   const [years, setYears] = useState([]);
   const [formError, setFormError] = useState('');
   const [busy, setBusy] = useState(false);
   const [filter, setFilter] = useState('');   // the program filter
   const [search, setSearch] = useState('');   // quick filter by subject code or title
   const [curriculumFilter, setCurriculumFilter] = useState('');   // the curriculum year filter ('' all, CURRICULUM_NONE the subjects without one)
-  const [references, setReferences] = useState([]);   // the approved curriculum references, for the curriculum year suggestions and hint (none when they cannot be read)
   const [termFilter, setTermFilter] = useState({ academicYear: '', semester: '', yearLevel: '' });   // academic year, semester and year level filters (all combine with the program)
   const filters = { ...noFilters(), program: filter, curriculumYear: curriculumFilter, ...termFilter };
   const formRef = useRef(null);
   const tableRef = useRef(null);
   const formMotion = useActionExit(formRef);
-  useCatalogMotion(tableRef, JSON.stringify([filter, curriculumFilter, termFilter, list.map(({ id, code, title, program, cloCount, term, curriculumYear }) => [id, code, title, program, cloCount, term, curriculumYear])]));
+  useCatalogMotion(tableRef, JSON.stringify([filter, curriculumFilter, termFilter, list.map(({ id, code, title, program, cloCount, term, curriculumYear, units }) => [id, code, title, program, cloCount, term, curriculumYear, units])]));
 
   const loadDeadlines = () => deadlinesApi.list().then((r) => setDeadlineState({ enabled: r.enabled !== false, list: r.deadlines || [] })).catch(() => {});
   const deadlinesByCourse = useMemo(() => groupByCourse(deadlineState.list), [deadlineState.list]);
@@ -68,22 +68,21 @@ export default function CourseOutcomes({ notify, onCatalogChanged }) {
     onCatalogChanged?.();
   };
   useEffect(() => { refreshCatalog().catch(error => notify(tr(error.message))); loadDeadlines(); }, [year]); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { syllabusCheckApi.references().then((rows) => setReferences(Array.isArray(rows) ? rows : [])).catch(() => {}); }, []);   // suggestions only: the page works without them
   useEffect(() => { if (yearScope) yearScope.reload(); }, []); // eslint-disable-line react-hooks/exhaustive-deps -- years added elsewhere (another administrator, another tab) show up when this screen opens
 
   // The program is chosen from the programs that exist (a new program is made with the Add program button).
   const programCode = form.program;
   const chosen = programs.find((p) => p.code === programCode) || null;
   useSurfaceMotion(formRef, JSON.stringify([adding, formError, programs.length]), true);
-  const canAdd = !busy && !!chosen && form.code.trim() && form.title.trim() && !readOnly && termComplete({ ...form, academicYear: currentLabel }) && !!normalizeCurriculumYear(form.curriculumYear);
-  const blank = { program: '', code: '', title: '', curriculumYear: '', ...emptyTerm() };
-  const curriculumOptions = useMemo(() => curriculumYearOptions(list, references.filter((r) => r.status === 'approved').map((r) => r.curriculumYear)), [list, references]);
+  const canAdd = !busy && !!chosen && form.code.trim() && form.title.trim() && !readOnly && termComplete({ ...form, academicYear: currentLabel }) && !!normalizeCurriculumYear(form.curriculumYear) && unitsValid(form);
+  const blank = { program: '', code: '', title: '', curriculumYear: '', ...emptyUnits(), ...emptyTerm() };
+  const curriculumOptions = useMemo(() => curriculumYearOptions(list), [list]);
 
   const addCourse = async () => {
     if (busy || formMotion.isClosing()) return;
     setBusy(true); setFormError('');
     try {
-      await coursesApi.create({ program: programCode, code: form.code, title: form.title, curriculumYear: normalizeCurriculumYear(form.curriculumYear), ...termBody({ ...form, academicYear: currentLabel }) });
+      await coursesApi.create({ program: programCode, code: form.code, title: form.title, curriculumYear: normalizeCurriculumYear(form.curriculumYear), ...unitsBody(form), ...termBody({ ...form, academicYear: currentLabel }) });
       await refreshCatalog();
       await formMotion.dismiss(() => { setAdding(false); setForm(blank); });
       notify(translateUI('outcomes.subjectCreated'));
@@ -122,7 +121,8 @@ export default function CourseOutcomes({ notify, onCatalogChanged }) {
             </label>
             <label className="field"><span>{translateUI("ui.subject_code_8e42db")} *</span><input value={form.code} maxLength={50} placeholder={translateUI("ui.e_g_it_204_a373a7")} onChange={(e) => setForm({ ...form, code: e.target.value })} /></label>
             <label className="field full"><span>{translateUI("ui.subject_title_dce28f")} *</span><input value={form.title} maxLength={255} onChange={(e) => setForm({ ...form, title: e.target.value })} /></label>
-            <CurriculumYearField value={form.curriculumYear} onChange={(v) => { setForm({ ...form, curriculumYear: v }); setFormError(''); }} options={curriculumOptions} references={references} program={form.program} required disabled={busy} />
+            <CurriculumYearField value={form.curriculumYear} onChange={(v) => { setForm({ ...form, curriculumYear: v }); setFormError(''); }} options={curriculumOptions} required disabled={busy} />
+            <SubjectUnitFields value={form} onChange={(next) => { setForm({ ...form, ...next }); setFormError(''); }} required disabled={busy} />
             <SubjectTermFields value={form} onChange={(next) => { setForm({ ...form, ...next }); setFormError(''); }} fixedYear={currentLabel} disabled={busy} />
           </div>
           {formError && <div className="info-banner warning" role="alert" style={{ marginTop: 10 }}>{formError}</div>}
@@ -157,7 +157,7 @@ export default function CourseOutcomes({ notify, onCatalogChanged }) {
             <tbody>
               {shown.map((c) => (
                 <tr key={c.id} data-catalog-row={'subject-' + c.id}>
-                  <td className="mono">{c.code}</td><td>{c.title}</td><td>{c.program}</td><td className="mono">{c.curriculumYear || <span className="hint">{translateUI('term.notSet')}</span>}</td><td>{termLine(c.term, translateUI, (s) => (semesterKey(s) ? translateUI(semesterKey(s)) : s)) || <span className="hint">{translateUI('term.notSet')}</span>}{c.curriculumNote && <span className="term-warning" role="note">{translateUI('term.curriculumWarning', { year: c.curriculumNote.differences[0].curriculumYear, details: c.curriculumNote.differences.map((d) => translateUI(d.field === 'prerequisite' ? 'term.diff.prerequisite' : 'term.diff.yearLevel', { value: d.curriculum })).join(', ') })}</span>}</td><td>{c.term && c.term.prerequisite ? c.term.prerequisite : termSet(c.term) ? <span className="hint">{translateUI('term.none')}</span> : <span className="hint">{translateUI('term.notSet')}</span>}</td>{deadlineState.enabled && <td>{readOnly ? <span className="hint">—</span> : <DeadlineChip subject={c} deadline={currentDeadline(deadlinesByCourse.get(c.id))} onOpen={() => setDeadlineFor(c)} />}</td>}<td className="col-actions"><SubjectRowActions subject={c} readOnly={readOnly} onEdit={() => setTarget({ subject: c, mode: 'edit' })} onDelete={() => setTarget({ subject: c, mode: 'delete' })} /></td>
+                  <td className="mono">{c.code}</td><td>{c.title}<span className="subject-units">{c.units ? translateUI('units.line', c.units) : translateUI('units.notSet')}</span></td><td>{c.program}</td><td className="mono">{c.curriculumYear || <span className="hint">{translateUI('term.notSet')}</span>}</td><td>{termLine(c.term, translateUI, (s) => (semesterKey(s) ? translateUI(semesterKey(s)) : s)) || <span className="hint">{translateUI('term.notSet')}</span>}</td><td>{c.term && c.term.prerequisite ? c.term.prerequisite : termSet(c.term) ? <span className="hint">{translateUI('term.none')}</span> : <span className="hint">{translateUI('term.notSet')}</span>}</td>{deadlineState.enabled && <td>{readOnly ? <span className="hint">—</span> : <DeadlineChip subject={c} deadline={currentDeadline(deadlinesByCourse.get(c.id))} onOpen={() => setDeadlineFor(c)} />}</td>}<td className="col-actions"><SubjectRowActions subject={c} readOnly={readOnly} onEdit={() => setTarget({ subject: c, mode: 'edit' })} onDelete={() => setTarget({ subject: c, mode: 'delete' })} /></td>
                 </tr>
               ))}
               {!shown.length && <tr><td colSpan={deadlineState.enabled ? 8 : 7} style={{ color: 'var(--muted)', padding: 18 }}>{list.length && (curriculumFilter || termFilter.semester || termFilter.yearLevel) ? translateUI("subjects.noMatch") : filter ? translateUI("ui.no_subjects_in_p0_yet_4d9c7b", { p0: (filter) }) : !programs.length ? translateUI("catalog.emptyYear", { year: shownYear }) : translateUI("ui.no_subjects_yet_add_one_to_start_c6c29e")}</td></tr>}
@@ -168,7 +168,7 @@ export default function CourseOutcomes({ notify, onCatalogChanged }) {
       {deadlineFor && <DeadlineDialog key={deadlineFor.id} subject={deadlineFor} deadlines={deadlinesByCourse.get(deadlineFor.id) || []} onClose={() => setDeadlineFor(null)} onReminded={notify}
         onChanged={(kind, notices) => { setDeadlineFor(null); loadDeadlines(); const told = notices && notices.notified ? notices.notified : 0;
           notify(told ? translateUI(kind === 'saved' ? 'deadline.savedNotified' : 'deadline.cancelledNotified', { count: told }) : translateUI(kind === 'saved' ? 'deadline.saved' : 'deadline.cancelled')); }} />}
-      {target && <SubjectDialog key={target.subject.id + target.mode} {...target} curriculumOptions={curriculumOptions} references={references} onClose={() => setTarget(null)} onComplete={(mode) => { setTarget(null); refresh(); onCatalogChanged?.(); notify(translateUI(mode === 'edit' ? 'ui.subject_saved_9c680c' : 'ui.subject_deleted_688bd2')); }} />}
+      {target && <SubjectDialog key={target.subject.id + target.mode} {...target} curriculumOptions={curriculumOptions} onClose={() => setTarget(null)} onComplete={(mode) => { setTarget(null); refresh(); onCatalogChanged?.(); notify(translateUI(mode === 'edit' ? 'ui.subject_saved_9c680c' : 'ui.subject_deleted_688bd2')); }} />}
     </div>
   );
 }

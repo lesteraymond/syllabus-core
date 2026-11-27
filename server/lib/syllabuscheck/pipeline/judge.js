@@ -95,6 +95,18 @@ function questionsOf(map) {
     // asked with the whole-syllabus questions: it reads several weeks, and the CLO request already carries up to ~24 questions
     add('CLO-EVIDENCE', 'syllabus', from, [mapped], weeks.flatMap(w => [`activities:${w.rowId}`, `tasks:${w.rowId}`]));
   }
+  // CHED laboratory alignment (advisory, scored: false): only asked when the subject has labUnits > 0.
+  if (map.course.labUnits > 0) {
+    const labWeeks = map.weeks.filter(w => w.kind === 'lesson' && (w.activities.text || w.tasks.text));
+    if (labWeeks.length) {
+      const labPlan = labWeeks.map(w => `${weekLabel(w)}. Activities: ${clean(w.activities.text) || '(none)'} | Tasks: ${clean(w.tasks.text) || '(none)'}`).join('\n');
+      const unitsInfo = {
+        field: 'courseTitle', key: 'courseUnits', label: 'Course credit units (CHED)',
+        text: clean(`${map.course.code} ${map.course.title}: ${map.course.lectureUnits ?? 0} lecture unit(s), ${map.course.labUnits} laboratory unit(s)${map.course.contactHoursPerWeek ? ` (${map.course.contactHoursPerWeek} contact hours/week)` : ''}`),
+      };
+      add('LAB-ALIGNMENT', 'syllabus', { field: 'activities', key: 'plan:lab', label: 'Weekly activities and assessment tasks', text: labPlan }, [unitsInfo]);
+    }
+  }
   // references
   const topics = { field: 'plan', key: 'plan', label: 'All weekly topics, in order', text: planText };
   for (const ref of map.references) add('REF-RELEVANCE', 'syllabus', { field: 'references', key: `ref:${ref.group}:${ref.id}`, label: `Reference (${ref.group})`, text: ref.text }, planText ? [course, topics] : [course]);
@@ -146,7 +158,7 @@ async function judge(map, fixed, { ask, store = new Map(), model = '', retries =
   for (const [group, list] of groups) for (const part of chunk(list, MAX_QUESTIONS_PER_REQUEST)) parts.push({ group, part });
   const runPart = async ({ group, part }) => {
     if (typeof ask !== 'function') { for (const q of part) reasons.set(q.id, 'no provider'); return; }
-    let request = { id: group, course: { code: map.course.code, title: map.course.title, program: map.course.program }, questions: part };
+    let request = { id: group, course: { ...map.course }, questions: part };
     for (let attempt = 0; attempt <= retries; attempt++) {
       const { answers: got, rejected } = await askGroup(request, ask, usage, context);
       for (const [id, a] of got) { answers.set(id, a); reasons.delete(id); }

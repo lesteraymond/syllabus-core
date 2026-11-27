@@ -1,5 +1,6 @@
 import StableButton from '../../components/StableButton';
 import { Icon } from '../../components/ui';
+import { GeminiEmblem, GeminiThinkingLine } from '../../components/GeminiLoader';
 import { t, tr } from '../../i18n';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { syllabi } from '../../lib/api';
@@ -12,27 +13,19 @@ const formatFileSize = (bytes) => {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 };
 
-// Minimalist live scan animation shown while the server reads/OCRs the uploaded PDF.
+// Unified Gemini scalloped emblem + live thinking shimmer shown while the server reads/OCRs the uploaded PDF.
 function ScanningStage({ fileName, fileSize }) {
   return (
     <div className="up-scanning" role="status" aria-live="polite">
-      <div className="up-doc-scan" aria-hidden="true">
-        <span className="up-doc-line w70" />
-        <span className="up-doc-line w100" />
-        <span className="up-doc-line w85" />
-        <span className="up-doc-line w100" />
-        <span className="up-doc-line w60" />
-        <span className="up-doc-beam" />
-      </div>
+      <GeminiEmblem size={48} />
       <div className="up-scanning-body">
         <div className="up-scanning-head">
           <span className="up-scanning-title">
-            <span className="up-scan-pulse" aria-hidden="true" />
             <strong>{t('pdfImport.extracting')}</strong>
           </span>
           {fileName && <small className="up-scanning-file">{[fileName, fileSize].filter(Boolean).join(' · ')}</small>}
         </div>
-        <div className="up-scanning-bar" aria-hidden="true"><span /></div>
+        <GeminiThinkingLine active />
       </div>
     </div>
   );

@@ -87,6 +87,8 @@ test('buildSyllabusDocx prints the letterhead, references, headings and revision
   assert.ok(text.includes('(formerly University of Regina Carmeli)') && text.includes('Catmon, City of Malolos'), 'former name and address');
   assert.ok(text.includes('SUGGESTED REFERENCES') && !text.includes('>REFERENCES<'), 'Section IX is "SUGGESTED REFERENCES"');
   assert.ok(text.includes('A. BOOKS') && text.includes('B. INTERNET REFERENCES'), 'only the groups in use, lettered in order');
+  assert.ok(text.includes('<w:ind w:left="1440" w:hanging="720"/>'), 'references use APA 7th edition 0.5 in hanging indent');
+  assert.match(text, /<w:i\/>[^<]*<w:color[^>]*\/><w:sz[^>]*\/><w:szCs[^>]*\/><\/w:rPr><w:t xml:space="preserve">Ethics in information technology</, 'book title is italicized per APA 7th edition');
   assert.ok(!text.includes('INTERNET PROGRAMMING') && !text.includes('ELECTRONICS') && !text.includes('Not applicable'), 'groups marked not applicable are left out');
   assert.ok(text.includes('>INTENDED LEARNING OUTCOMES<'), 'the Learning Plan heading has no "(ILO)"');
   assert.ok(text.includes('>Revision Date:<') && !text.includes('Revision Date: Jan'), 'the revision date is left blank in the download, even once approved');

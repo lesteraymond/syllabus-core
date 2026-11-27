@@ -49,8 +49,8 @@ Fill in `server/.env`:
 | `DB_HOST`, `DB_USER`, `DB_PASS`, `DB_NAME` | MySQL connection (XAMPP defaults: `localhost`, `root`, empty, `syllabus_cms_plus`) |
 | `SESSION_SECRET` | any long random string (the only signing secret; `JWT_SECRET` is no longer used, so delete it from older `.env` files) |
 | `GOOGLE_CLIENT_ID` | must match the frontend `VITE_GOOGLE_CLIENT_ID` (only needed for Google sign-in) |
-| `PORT`, `UPLOAD_DIR` | API port (default 3001) and upload folder |
-| `CURRENT_TERM`, `ALLOWED_EMAIL_DOMAIN` | optional (domain defaults to `email.lcup.edu.ph`) |
+| `PORT`, `UPLOAD_DIR`, `PRIVATE_DIR` | API port (default 3001) and upload/private folders (relative: under `server/`; an absolute path is used as it is) |
+| `ALLOWED_EMAIL_DOMAIN` | optional (domain defaults to `email.lcup.edu.ph`) |
 | `SMTP_*`, `MAIL_FROM`, `APP_URL` | email for credentials, temporary passwords and decisions. Leave `SMTP_HOST` empty to send nothing |
 | `SYLLABUS_CHECK_AI_PROVIDER`, `SYLLABUS_CHECK_REPLAN`, `SYLLABUS_CHECK_REPLAN_MAX_COST_USD`, `SYLLABUS_CHECK_REPLAN_MAX_REQUESTS`, `SYLLABUS_CHECK_AI_GATE` | the AI Checker. Nothing is sent without a cost cap; `SYLLABUS_CHECK_AI_GATE` is `advisory` (default) or `required` |
 | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`, `SYLLABUS_CHECK_ANTHROPIC_APPROVED_MODEL` | Claude for the AI Checker. Nothing is sent until the approved model names the same model as `ANTHROPIC_MODEL` |
@@ -99,6 +99,7 @@ npm run migrate-subject-term
 npm run migrate-academic-year-scope
 npm run migrate-catalog-year
 npm run migrate-curriculum-year
+npm run migrate-subject-units
 npm run migrate-course-program-codes
 npm run migrate-po-reference-publication
 npm run migrate-program-outcome-sources
@@ -141,7 +142,7 @@ Optional settings go in the root `.env`:
 |----------|-------|
 | `VITE_GOOGLE_CLIENT_ID` | enables the Google sign-in button (same value as the backend `GOOGLE_CLIENT_ID`) |
 | `VITE_API_URL` | API base URL if it is not `http://localhost:3001/api` |
-| `VITE_NEW_BUILDER` | `true` switches to the rebuilt syllabus builder (`src/views/builder2`) |
+| `VITE_NEW_BUILDER` | The rebuilt syllabus builder (`src/views/builder2`) is the default, also when this is not set. `false` goes back to the previous builder |
 
 Restart `npm run dev` after changing `.env`.
 
@@ -258,6 +259,7 @@ syllabus-cms-plus/
 | Command | Description |
 |---------|-------------|
 | `npm run dev` | Start the API server (http://localhost:3001). It restarts when files change |
+| `npm start` | Start the API server for staging or production: no restart on file changes |
 | `npm run init-db` | Create the database, tables and seed data |
 | `npm run seed-outcomes` | Load the institution's vision, mission, EGAs, programs and the BSIT program outcomes. Only inserts what is missing; run it after `migrate-builder`. Supports `--dry-run` |
 | `node scripts/ocr-cor-test.js [image]` | Try the COR reader on the images in `server/sample_cor/` (git-ignored) or on a given image; prints the fields it read |
@@ -387,7 +389,7 @@ The server reads `DB_PORT`, `DB_SSL` and `DB_SSL_CA`; most scripts in `server/db
 |---|---|---|
 | `GENERATED_PASSWORD_DAYS` | 7 | how many days a password the system generates (new account, "Resend credentials", `db/create-admin.js`) works if it is not replaced (1–90) |
 | `SESSION_STORE` | `memory` in development | `memory` or `mysql`. Staging and production always use `mysql` (memory is refused); run `npm run migrate-session-store` first |
-| `PRIVATE_DIR` | `private` | folder for profile photos, under `server/` |
+| `PRIVATE_DIR` | `private` | folder for profile photos and COR photos (relative: under `server/`; an absolute path is used as it is) |
 
 ---
 

@@ -58,20 +58,19 @@ const codeKey = value => String(value ?? '').toUpperCase().replace(/[^A-Z0-9]/g,
 let review;
 const titleMatcher = async () => (review ??= import(pathToFileURL(path.resolve(__dirname, '../../src/lib/pdfImportReview.js')).href)).then(module => module.titleMatches);
 // Subjects the PDF's own course code AND title point at (one code can belong to different subjects in different programs), limited to what this person may write:
-// faculty only their assigned subjects, nobody a subject of a past academic year.
+// faculty and administrators only their assigned subjects, nobody a subject of a past academic year.
 async function subjectsForCode(db, me, fields) {
   const key = codeKey(fields.code);
   if (!key || !String(fields.title ?? '').trim()) return [];
   const titleMatches = await titleMatcher();
   const [rows] = await db.query('SELECT c.course_id, c.code, c.title, p.code AS program_code FROM courses c JOIN programs p ON p.program_id = c.program_id');
   const past = await academicYear.pastCourseIds(db);
-  const assigned = me.role === 'admin' ? null : new Set((await assignments.loadAssignments(db, me.id)).courseIds);
+  const assigned = new Set((await assignments.loadAssignments(db, me.id)).courseIds);
   const program = String(fields.program ?? '').trim().toUpperCase();
-  return rows.filter(r => codeKey(r.code) === key && titleMatches(fields.title, r.title) && !past.has(r.course_id) && (!assigned || assigned.has(r.course_id)) && (!program || String(r.program_code).toUpperCase() === program));
+  return rows.filter(r => codeKey(r.code) === key && titleMatches(fields.title, r.title) && !past.has(r.course_id) && assigned.has(r.course_id) && (!program || String(r.program_code).toUpperCase() === program));
 }
 // When nothing matched: is the PDF's subject in this year's catalog but simply not assigned to this person? Then say so.
 async function existsUnassigned(db, me, fields) {
-  if (me.role === 'admin') return false;
   const key = codeKey(fields.code);
   if (!key || !String(fields.title ?? '').trim()) return false;
   const titleMatches = await titleMatcher();

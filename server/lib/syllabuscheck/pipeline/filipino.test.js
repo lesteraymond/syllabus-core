@@ -20,6 +20,15 @@ test('a Filipino subject is detected by its code or title; other subjects are no
   assert.equal(G.subjectOf({ meta: { title: 'Philippine History', code: 'GE 2' } }, {}, '').writeIn, undefined);
 });
 
+test('a subject taught in English is not taken for a Filipino one by three letters of its code or by the word Filipino in its title', () => {
+  const english = [['FILM 101', 'Film Appreciation'], ['GE 101', 'Readings in Filipino History'], ['PSY 3', 'Filipino Psychology'], ['HUM 2', 'Filipino Culture at the Crossroads'], ['GE 2', 'READINGS IN PHILIPPINE HISTORY'], ['GE 9', 'THE LIFE AND WORKS OF RIZAL']];
+  for (const [code, title] of english) assert.equal(R.isFilipinoSubject(title, code), false, `${code} ${title}`);
+  const filipino = [['GE - ELECT KOMFIL', 'KONTEKSTWALISADONG KOMUNIKASYON SA FILIPINO'], ['GE - ELECT DL', 'DALUMAT SA FILIPINO'], ['GE - ELECT SOSLIT', 'SOSYEDAD AT LITERATURANG/ PANITIKANG PANLIPUNAN'], ['GE 5', 'Panimulang Linggwistika ng Filipino'], ['GE 6', 'Ang Filipino sa Agham'], ['GE 7', 'Filipino 1'], ['GE 8', 'Filipino II'], ['GE 8', 'FILIPINO']];
+  for (const [code, title] of filipino) assert.equal(R.isFilipinoSubject(title, code), true, `${code} ${title}`);
+  for (const code of ['FIL 101', 'FIL-101', 'fil101', ' FIL', 'FILIPINO 1']) assert.equal(R.isFilipinoSubject('Any Title', code), true, code);
+  for (const code of ['FILM 101', 'FILTER 1', 'PROFIL 1', '', null, undefined]) assert.equal(R.isFilipinoSubject('Any Title', code), false, String(code));
+});
+
 test('generator: the Filipino rule is sent for a Filipino subject only; every other subject gets the English prompt as before', () => {
   assert.doesNotMatch(G.SYSTEM, /Filipino-language|formal academic Filipino|writeIn/);
   assert.match(G.SYSTEM, /in plain English\.'?/);
@@ -32,8 +41,8 @@ test('generator: the Filipino rule is sent for a Filipino subject only; every ot
 });
 
 test('checker: English prompts and versions are unchanged; a Filipino syllabus gets its own prompt and version', () => {
-  assert.equal(P.PROMPT_VERSION, 'replan-prompt-6');
-  assert.equal(P.REWRITE_VERSION, 'replan-rewrite-4');
+  assert.equal(P.PROMPT_VERSION, 'replan-prompt-7');
+  assert.equal(P.REWRITE_VERSION, 'replan-rewrite-5');
   assert.doesNotMatch(P.JUDGE_SYSTEM, /FILIPINO/);
   assert.doesNotMatch(P.REWRITE_SYSTEM, /FILIPINO|Filipino/);
   assert.match(P.REWRITE_SYSTEM, /ilo: One sentence in English, starting with ONE measurable verb/);

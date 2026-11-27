@@ -1,0 +1,14 @@
+{
+  "v": 3,
+  "createdOnFiles": { "v": 1, "at": "2026-11-24T14:30:00Z" },
+  "title": "CITE Syllabus System Tri-Fold Brochure",
+  "launch": { "view": "canvas" },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": { "x": 0, "y": 0, "w": 1056, "h": 816, "title": "Page 1 outside: inside flap, back cover, front cover", "print": "fixed", "guides": [{ "kind": "columns", "align": "start", "count": 2, "size": 1, "gutter": 351, "offset": 352, "margin": 0, "color": "rgba(37,99,235,0.35)" }] },
+    "Inside.dc.html": { "x": 0, "y": 936, "w": 1056, "h": 816, "title": "Page 2 inside: overview, features, screens", "print": "fixed", "guides": [{ "kind": "columns", "align": "start", "count": 2, "size": 1, "gutter": 351, "offset": 352, "margin": 0, "color": "rgba(37,99,235,0.35)" }] }
+  },
+  "order": ["Main.dc.html", "Inside.dc.html"],
+  "notes": {},
+  "designSystems": []
+}

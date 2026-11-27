@@ -8,7 +8,7 @@ import { useGooglePhotoSync } from '../lib/useGooglePhotoSync';
 import { users as usersApi, adminSettings } from '../lib/api';
 import { AVATAR_ACCEPT, prepareAvatar } from '../lib/avatar';
 import { getAppearance, setAppearance } from '../lib/appearance';
-import { testAlert } from '../lib/desktopAlert';
+import { getNotificationMode, setNotificationMode, testAlert } from '../lib/desktopAlert';
 
 // What the test found, in words the person can act on.
 const TEST_RESULTS = {
@@ -18,14 +18,52 @@ const TEST_RESULTS = {
   unsupported: 'The chime played, but this browser cannot show desktop notifications.',
 };
 
-function NotificationTest({ notify }) {
-  const [result, setResult] = useState('');
+const NOTIF_MODE_OPTIONS = [
+  ['on', 'notifMode.on'],
+  ['dnd', 'notifMode.dnd'],
+  ['off', 'notifMode.off'],
+];
+
+function NotificationTest({ userId, notify }) {
+  const [mode, setMode] = useState(() => getNotificationMode(userId));
+  useEffect(() => { setMode(getNotificationMode(userId)); }, [userId]);
+
+  const choose = (next) => {
+    if (next === mode) return;
+    setMode(setNotificationMode(next, userId));
+    if (notify) notify(translateUI('notifMode.saved'));
+  };
+
+  const runTest = async () => {
+    const r = await testAlert(userId);
+    if (!notify) return;
+    if (r === 'dnd') notify(translateUI('notifMode.testMutedDnd'));
+    else if (r === 'off') notify(translateUI('notifMode.testMutedOff'));
+    else notify(tr(TEST_RESULTS[r]));
+  };
+
   return (
     <section className="settings-card notification-settings">
       <h3>{tr('Notifications')}</h3>
-      <p className="muted">{tr('New notifications play a chime, and show a desktop popup when the system is in the background. Check that both work on this device.')}</p>
-      <StableButton type="button" className="btn outline" onClick={async () => { const r = await testAlert(); setResult(r); if (notify) notify(tr(TEST_RESULTS[r])); }}>{tr('Test notification')}</StableButton>
-      {result && <p className={result === 'shown' ? 'muted' : 'form-error'} role="status">{tr(TEST_RESULTS[result])}</p>}
+      <p className="muted">{translateUI('notifMode.hint.' + mode)}</p>
+      <div className="notif-controls">
+        <div className="notif-mode-seg" role="radiogroup" aria-label={translateUI('notifMode.label')}>
+          {NOTIF_MODE_OPTIONS.map(([code, key]) => (
+            <button
+              key={code}
+              type="button"
+              role="radio"
+              aria-checked={mode === code}
+              className={'notif-mode-btn is-' + code + (mode === code ? ' on' : '')}
+              onClick={() => choose(code)}
+            >
+              <span className="notif-mode-dot" aria-hidden="true" />
+              <span>{translateUI(key)}</span>
+            </button>
+          ))}
+        </div>
+        <StableButton type="button" className="btn outline" onClick={runTest}>{tr('Test notification')}</StableButton>
+      </div>
     </section>
   );
 }
@@ -169,7 +207,7 @@ export default function Settings({ user, notify, onAvatarChange, onProfileChange
         </div>
         {languageError && <div className="form-error" role="alert">{tr(languageError)}</div>}
       </section>
-      <NotificationTest notify={notify} />
+      <NotificationTest userId={user?.id ?? null} notify={notify} />
       <section className="settings-card appearance-settings">
         <h3>{tr('Appearance')}</h3>
         <p className="muted">{tr('Choose how the system looks. System follows your device.')}</p>

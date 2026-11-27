@@ -17,7 +17,7 @@ const token = (name, source = theme) => (source.match(new RegExp('--' + name + '
 test('the dashboard icons take their colour from the brand theme, and it beats the old black rule', () => {
   // the theme loads after styles.css and uses the same specificity (0,3,0), so it wins for the stat tiles
   assert.match(theme, /\.stat-grid \.stat-card \.stat-icon \{[^}]*color: #ffffff/);
-  assert.match(theme, /\.quick-actions button b \{[^}]*color: #000000/);
+  assert.match(theme, /\.quick-actions button b \{[^}]*color: #171717/);
   // main.jsx loads one entry, tailwind.css, which imports styles.css and then theme.css into the same (legacy) layer: the order is what counts
   assert.match(readFileSync(new URL('../main.jsx', import.meta.url), 'utf8'), /import '\.\/tailwind\.css';/, 'the app loads the stylesheet entry');
   assert.match(readFileSync(new URL('../tailwind.css', import.meta.url), 'utf8'), /@import "\.\/styles\.css" layer\(legacy\);\s*@import "\.\/theme\.css" layer\(legacy\);/, 'theme.css is imported after styles.css, in the same layer');
@@ -26,7 +26,7 @@ test('the dashboard icons take their colour from the brand theme, and it beats t
 test('the stat icons are white on the primary button blue (like New syllabus), and readable on it', () => {
   assert.match(theme, /\.stat-icon \{[^}]*background: var\(--btn-primary\)/);
   assert.ok(contrast('#ffffff', token('btn-primary')) >= 4.5, 'white icon on the blue: ' + contrast('#ffffff', token('btn-primary')).toFixed(1));
-  assert.ok(contrast('#000000', '#f1f4f3') >= 4.5, 'black icon on the white-gray quick-action chip: ' + contrast('#000000', '#f1f4f3').toFixed(1));
+  assert.ok(contrast('#171717', '#f5f5f5') >= 4.5, 'Geist ink icon on the neutral quick-action chip: ' + contrast('#171717', '#f5f5f5').toFixed(1));
 });
 
 test('every icon on the dashboard uses the regular weight, so the brand colours read cleanly', () => {

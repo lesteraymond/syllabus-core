@@ -1,3 +1,4 @@
+import { GeistToastCard, inferToastType } from '../../components/GeistToast';
 import StableButton from '../../components/StableButton';
 import { useInactiveYear } from '../../components/InactiveYearNotice';
 import { tr } from "../../i18n/index.js";
@@ -37,7 +38,7 @@ const STEP_CONFIG = STEPS.map((s) => ({
 }));
 
 // The new syllabus builder: same shell as the current one (course strip, stepper, "Step N of 7" card, auto-save status),
-// driven by the rules in src/lib/syllabusModel.js. It is used when VITE_NEW_BUILDER=true; until then the previous builder is the default.
+// driven by the rules in src/lib/syllabusModel.js. It is the default; VITE_NEW_BUILDER=false at build time goes back to the previous builder.
 // `restore` ({ mode, job }) comes from the URL after a page refresh (lib/builderRoute.js): reopen the PDF import and pick its scan up again.
 export default function SyllabusBuilderV2({ editing, restore = null, user, notify, setPage, onSubmitted, onOpenChecker }) {
   const { draft, apply, set, setAndSave, save, saveNow, reload, attachExisting, load, syllabusId } = useDraft(editing);
@@ -46,7 +47,7 @@ export default function SyllabusBuilderV2({ editing, restore = null, user, notif
   const inactiveYear = useInactiveYear(load.academicYear); // another academic year: no new AI check (lib/activeYearGate.js)
   // Locked syllabi retain their submitted catalog. Step 2's syllabus-owned values always take precedence in the model.
   const frozen = !!draft && !load.loading && !load.editable && !!draft.catalog;
-  const { model, programList, loading: catalogLoading, error: catalogError, refresh: refreshCatalog, resolvedProgramCode } = useCatalog(draft ? draft.meta.program : '', { snapshot: frozen ? draft.catalog : null, live: !frozen, courseId: draft?.meta.courseId, year: load.academicYear || undefined });
+  const { model, programList, loading: catalogLoading, error: catalogError, refresh: refreshCatalog, resolvedProgramCode } = useCatalog(draft ? draft.meta.program : '', { snapshot: frozen ? draft.catalog : null, live: !frozen, courseId: draft?.meta.courseId, year: load.academicYear || undefined, assigned: !frozen });
   useEffect(() => {
     if (load.editable && !frozen && resolvedProgramCode && draft?.meta.program !== resolvedProgramCode) {
       apply(current => ({ ...current, meta: { ...current.meta, program: resolvedProgramCode } }));
@@ -100,7 +101,7 @@ export default function SyllabusBuilderV2({ editing, restore = null, user, notif
   useEffect(() => {
     if (!program) { setCourseList([]); return undefined; }
     let live = true;
-    coursesApi.list(program, { except: syllabusId() }, load.academicYear || undefined).then((l) => { if (live) setCourseList(l); }).catch(() => { if (live) setCourseList([]); });
+    coursesApi.list(program, { except: syllabusId(), assigned: true }, load.academicYear || undefined).then((l) => { if (live) setCourseList(l); }).catch(() => { if (live) setCourseList([]); });
     return () => { live = false; };
   }, [program, courseTick, load.academicYear]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -325,7 +326,7 @@ export default function SyllabusBuilderV2({ editing, restore = null, user, notif
   };
   const applyPdfImport = async (fields, { planRows = null, prerequisiteChoice = null, next = null } = {}) => {
     if (!load.editable || (importBase.current !== null && importBase.current !== JSON.stringify(draft))) throw new Error('pdfImport.draftChanged');
-    const mapped = preparePdfImport(fields, draft, newId, { planRows, prerequisiteChoice, identityContext: importIdentity.current });
+    const mapped = preparePdfImport(fields, draft, newId, { planRows, prerequisiteChoice, identityContext: importIdentity.current, lockUnits: termLocked });
     setBusy(true);
     try {
       setLastRun(null);
@@ -349,10 +350,11 @@ export default function SyllabusBuilderV2({ editing, restore = null, user, notif
     } finally { setBusy(false); }
   };
 
-  // Faculty work only on what an admin assigned to them: the server sends just those programs. With none, the
-  // builder stays closed; a syllabus whose course was un-assigned opens read-only with the reason.
-  const state = !!user && user.role === 'faculty' ? assignmentState(mine) : null; // 'none' | 'noSubject' | 'ok' | null
-  const noAccess = !!user && user.role === 'faculty' && (programList.length === 0 || state === 'none' || (state === 'noSubject' && !draft.meta.courseId));
+  // Authors (faculty and administrators) work only on programs and subjects assigned to them: the server sends just those.
+  // With none, the builder stays closed; a syllabus whose course was un-assigned opens read-only with the reason.
+  const isAuthorRole = !!user && (user.role === 'faculty' || user.role === 'admin');
+  const state = isAuthorRole ? assignmentState(mine) : null; // 'none' | 'noSubject' | 'ok' | null
+  const noAccess = isAuthorRole && (programList.length === 0 || state === 'none' || (state === 'noSubject' && !draft.meta.courseId));
   const accessMessage = state === 'noSubject' ? ASSIGNMENT_MESSAGES.noSubject : ASSIGNMENT_MESSAGES.none;
   const editable = load.editable && !noAccess;
   const existing = load.status !== 'draft';
@@ -470,7 +472,17 @@ export default function SyllabusBuilderV2({ editing, restore = null, user, notif
         </section>
       </div>
       </div>
-      {toast && <div className="bld2-toast" role="status" aria-live="polite"><span>{tr(toast.msg)}</span>{toast.action && <button type="button" onClick={toast.action.fn}>{tr(toast.action.label)}</button>}<button type="button" className="bld2-toast-close" aria-label={translateUI('ui.close_bbfa77')} onClick={() => { clearTimeout(toastTimer.current); setToast(null); }}>×</button></div>}
+      {toast && (
+        <div className="geist-toaster">
+          <GeistToastCard
+            className="bld2-toast"
+            text={toast.msg}
+            type={toast.type || inferToastType(toast.msg)}
+            action={toast.action ? { label: toast.action.label, fn: toast.action.fn, dismiss: false } : null}
+            onDismiss={() => { clearTimeout(toastTimer.current); setToast(null); }}
+          />
+        </div>
+      )}
     </>
   );
 }

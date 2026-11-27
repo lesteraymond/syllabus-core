@@ -48,7 +48,7 @@ export default function MySyllabi({ syllabi, user, messages, commentCounts = {},
   const activeYear = yearScope && yearScope.current ? yearScope.current.label : null;
   const pastYearOf = (s) => !!activeYear && !!s.academicYear && s.academicYear !== activeYear;
   const state = assignmentState(mine); // 'none' | 'noSubject' | 'ok' | null
-  const nothingAssigned = user.role === 'faculty' && (state === 'none' || state === 'noSubject');
+  const nothingAssigned = (user.role === 'faculty' || user.role === 'admin') && (state === 'none' || state === 'noSubject');
   const my = useMemo(() => [...syllabi.filter(s => s.userId === user.id), ...(showArchived ? archivedRows : [])].map(s => ({ ...s, unreadCount: messages.filter(m => m.syllabusId === s.id && m.receiverId === user.id && !m.isRead).length })), [syllabi, user, messages, showArchived, archivedRows]);
   return (
     <>

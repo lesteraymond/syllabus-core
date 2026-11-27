@@ -77,7 +77,7 @@ export default function ProgramOutcomesEditor({ program, year, readOnlyYear = fa
           <h3 id="outcomes-dialog-title">{t('outcomes.dialogTitle', { code: program.code })}</h3>
           <p className="outcomes-subtitle">{t('outcomes.dialogNote', { name: program.name, year })}</p>
         </div>
-        <button type="button" className="icon-btn outcomes-close-x" disabled={!!busy} onClick={close} aria-label={t('outcomes.close')} title={t('outcomes.close')}><Icon name="x" size={16} /></button>
+        <button type="button" className="icon-btn outcomes-close-x" disabled={!!busy} onClick={close} aria-label={t('outcomes.closeDialog')} title={t('outcomes.closeDialog')}><Icon name="x" size={16} /></button>
       </header>
       <div className="outcomes-body">
         {readOnlyYear && <p className="info-banner" role="status">{t('outcomes.readonly.year', { year })}</p>}

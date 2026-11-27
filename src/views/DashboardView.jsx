@@ -7,12 +7,12 @@ import { PageHead, Card, Icon, Progress, QualityMini } from '../components/ui';
 import UpcomingDeadlines from '../components/UpcomingDeadlines';
 import ProgramTrendModal from '../components/ProgramTrendModal';
 import TimeUsageCard from '../components/TimeUsageCard';
-import { describeActivity, groupByDay } from '../lib/activityView';
+import { describeActivity, groupByDay, isRecentActivity } from '../lib/activityView';
 import TypewriterText from '../components/TypewriterText';
 import { compliance as complianceApi, courses as coursesApi, outcomes as outcomesApi } from '../lib/api';
 import { adminStatCards } from '../lib/adminDashboardStats';
 import { canAuthor, isReviewer, roleAllows } from '../lib/roles';
-import { FACULTY_SUBMITTED, aiAverage, approval, programCoverage, scoreTone, snapshotOf } from '../lib/complianceStats';
+import { FACULTY_SUBMITTED, aiAverage, approval, programCoverage, scoreTone, snapshotOf, submittedStatCount } from '../lib/complianceStats';
 import { sentenceCase } from '../lib/sentenceCase';
 import { dayPeriod } from '../lib/phTime';
 import CustomizeQuickActionsModal from '../components/CustomizeQuickActionsModal';
@@ -66,8 +66,8 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
   const key = 'dashboard.good' + period[0].toUpperCase() + period.slice(1);
   const greeting = name ? translateUI(key, { name }) : translateUI(key + 'NoName');
   const my = useMemo(() => syllabi.filter(s => s.userId === user.id), [syllabi, user]);
-  // My Submissions counts what this person has submitted: a draft is not a submission, for every role that writes syllabi (faculty and the dean).
-  const mySubmitted = useMemo(() => my.filter(s => s.status !== 'draft').length, [my]);
+  // Submitted stat card counts unique subjects this person has submitted (submitted, under_review, for_revision, approved); drafts and VPAA-rejected syllabi are excluded.
+  const mySubmitted = useMemo(() => submittedStatCount(my), [my]);
   // The same queue Review & Approval shows (its count), so the quick action and that page always agree (E2E report 2026-11-23, BUG-019).
   const myReviewQueue = useMemo(() => reviewQueue(syllabi, user.role, user.id).queue.length, [syllabi, user.role, user.id]);
   const isFac = user.role === 'faculty';
@@ -155,10 +155,10 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
     // the dean writes syllabi too: what they submitted (drafts not counted) is a card of its own, as on the faculty dashboard
     : adminStatCards({ programs: catalogCounts.programs, subjects: catalogCounts.subjects, syllabi, mine: canAuthor(user.role) ? mySubmitted : null });
 
-  // Recent Activity (personal): shows only the signed-in user's own activity; system-wide oversight lives in the dedicated Audit Log page for administrators.
+  // Recent Activity (personal, Facebook-style): shows only the signed-in user's own workflow and profile actions; security/auth and admin oversight live in the Admin Audit Log.
   const isAdminUser = user.role === 'admin';
   const activityGroups = useMemo(() => {
-    const source = logs.filter(l => l.userId === user.id);
+    const source = logs.filter(l => l.userId === user.id && isRecentActivity(l));
     return groupByDay(source.map((l, i) => describeActivity(l, i, user.id)));
   }, [logs, user]);
   const auditLogLink = isAdminUser ? (
@@ -184,28 +184,7 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
       <section className="stat-grid">{stats.map(([a, b, c, d]) => <div className="stat-card" key={a}><div className={`stat-icon ${d}`}><Icon weight="regular" name={STAT_ICONS[a]} size={20} /></div><span>{tr(a)}</span><strong>{b}</strong><small>{tr(c)}</small></div>)}</section>
       <div className="dashboard-grids-wrap">
         <section className="dashboard-grid">
-        <Card title={translateUI('accountActivity.title')} action={auditLogLink}>
-          <div className="feed">
-            {activityGroups.map((g) => (
-              <section className="feed-day" key={g.label} aria-label={tr(g.label)}>
-                <h4 className="feed-date">{tr(g.label)}</h4>
-                <ol className="feed-list">
-                  {g.items.map((it) => (
-                    <li className={'feed-item ' + it.tone} key={it.key}>
-                      <span className="feed-ico"><Icon name={it.icon} size={18} weight="regular" /></span>
-                      <div className="feed-body">
-                        <p><strong>{tr(it.who)}</strong> {tr(it.verb)}{it.subject && <> <strong>{it.subject}</strong></>}</p>
-                        {(it.detail || it.note) && <small>{[it.detail, it.note && tr(it.note)].filter(Boolean).join(' · ')}</small>}
-                      </div>
-                      <time dateTime={it.iso}>{it.time}</time>
-                    </li>
-                  ))}
-                </ol>
-              </section>
-            ))}
-            {activityGroups.length === 0 && <div className="empty">{isFac ? translateUI("ui.nothing_yet_what_you_upload_submit_and_update_appears_here_f8bbff") : translateUI("ui.nothing_yet_your_reviews_and_decisions_appear_here_6bd686")}</div>}
-          </div>
-        </Card>
+        {(isFac || user.role === 'admin') && <Card title={translateUI("ui.upcoming_deadlines_b56518")} hideScrollbar><UpcomingDeadlines key={yearScope?.current?.label || 'cur'} role={user.role} onOpen={isFac ? openOwnDeadline : () => setPage('courses')} onOpenOwn={openOwnDeadline} /></Card>}
         <Card title={translateUI("dashboard.usage.title")}>
           <TimeUsageCard />
         </Card>
@@ -278,7 +257,28 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
           {/* checks made with AI checking off are not AI results: left out of the snapshot, and counted here */}
           {snapshot.notAiChecked > 0 && <div className="snapshot-note">{translateUI(snapshot.notAiChecked === 1 ? 'snapshot.notAiCheckedOne' : 'snapshot.notAiChecked', { count: snapshot.notAiChecked })}</div>}
         </Card>
-        {(isFac || user.role === 'admin') && <Card title={translateUI("ui.upcoming_deadlines_b56518")} hideScrollbar><UpcomingDeadlines role={user.role} onOpen={isFac ? openOwnDeadline : () => setPage('courses')} onOpenOwn={openOwnDeadline} /></Card>}
+        <Card title={translateUI('accountActivity.title')} action={auditLogLink}>
+          <div className="feed">
+            {activityGroups.map((g) => (
+              <section className="feed-day" key={g.label} aria-label={tr(g.label)}>
+                <h4 className="feed-date">{tr(g.label)}</h4>
+                <ol className="feed-list">
+                  {g.items.map((it) => (
+                    <li className={'feed-item ' + it.tone} key={it.key}>
+                      <span className="feed-ico"><Icon name={it.icon} size={18} weight="regular" /></span>
+                      <div className="feed-body">
+                        <p><strong>{tr(it.who)}</strong> {tr(it.verb)}{it.subject && <> <strong>{it.subject}</strong></>}</p>
+                        {(it.detail || it.note) && <small>{[it.detail, it.note && tr(it.note)].filter(Boolean).join(' · ')}</small>}
+                      </div>
+                      <time dateTime={it.iso}>{it.time}</time>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            ))}
+            {activityGroups.length === 0 && <div className="empty">{isFac ? translateUI("ui.nothing_yet_what_you_upload_submit_and_update_appears_here_f8bbff") : translateUI("ui.nothing_yet_your_reviews_and_decisions_appear_here_6bd686")}</div>}
+          </div>
+        </Card>
       </section>
       </div>
       {trendOpen && <ProgramTrendModal programs={catalog.programs || []} subjects={catalog.subjects || []} year={year === 'all' ? undefined : year} onClose={() => setTrendOpen(false)} />}

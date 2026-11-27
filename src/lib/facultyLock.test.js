@@ -11,7 +11,8 @@ test('the builder locks the term and the standards for everyone but an administr
   assert.match(index, /const standardsLocked = termLocked;/);
   assert.ok(index.includes('lockTerm={termLocked}'));
   const info = read('../views/builder2/InfoStep.jsx');
-  for (const field of ['readOnly={lockTerm || lock.yearLevel}', 'readOnly={lockTerm || lock.prereq}']) assert.ok(info.includes(field), field);
+  for (const field of ['readOnly={lockTerm || lock.yearLevel}', 'readOnly={lockTerm || lock.prereq}', 'value={m.lecture} readOnly={lockTerm || !!units}', 'value={m.lab} readOnly={lockTerm || !!units}']) assert.ok(info.includes(field), field);
+  assert.ok(index.includes('lockUnits: termLocked'), 'a PDF import cannot set the units either');
   assert.ok(info.includes('max="4"'), 'year level is 1 to 4, as on the server');
 });
 

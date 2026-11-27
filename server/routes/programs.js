@@ -28,8 +28,8 @@ const managementError = (res, error) => {
 
 router.get('/', requireAuth, async (req, res) => {
   try {
-    // Faculty see only the programs an admin assigned to them; admins see every program.
-    const mine = !isReviewer(req.session.user); // reviewers (dean, Asst. VPAA, LIC Director, VPAA) read every program
+    // Faculty always see only their assigned programs; reviewers see every program for catalog management, or only their own assigned programs when authoring (?assigned=1).
+    const mine = !isReviewer(req.session.user) || req.query.assigned === '1';
     // The catalog belongs to an academic year (the requested one, the current one by default): a new academic year starts with no programs.
     const inYear = programYearClause(await catalogYear(req.app.locals.db, req.session.user, req.query.year));
     const conditions = [], values = [];

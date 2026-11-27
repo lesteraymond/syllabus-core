@@ -14,7 +14,7 @@ const multer = require('multer');
 const sharp = require('sharp');
 const { requireAuth } = require('../middleware/auth');
 const { inTransaction, httpError, sendError } = require('../lib/http');
-const { pastCourseIds } = require('../lib/academicYear');
+const { pastCourseIds, resolveYear, yearClause } = require('../lib/academicYear');
 const { activeYear } = require('../lib/activeYearGate');
 const { PRIVATE_ROOT } = require('../lib/avatar');
 const { validatePassword } = require('../lib/passwords');
@@ -216,9 +216,11 @@ const FOR_STUDENT = `FROM syllabi s JOIN users u ON u.user_id = s.user_id
   LEFT JOIN courses c ON c.course_id = s.course_id LEFT JOIN programs p ON p.program_id = c.program_id
   WHERE s.status = 'approved' AND s.archived_at IS NULL`;
 // The academic year is the syllabus's own (syllabi.academic_year); a database before that migration has no such column, so the read is repeated without it.
-async function readSyllabi(db, sql, params) {
-  try { return await db.query(sql.replace('/*Y*/', ', s.academic_year'), params); }
-  catch (err) { if (err && err.code === 'ER_BAD_FIELD_ERROR') return db.query(sql.replace('/*Y*/', ''), params); throw err; }
+async function readSyllabi(db, sql, params, inYear = null) {
+  const filterSql = inYear && inYear.sql ? inYear.sql : '';
+  const filterParams = inYear && inYear.params ? inYear.params : [];
+  try { return await db.query(sql.replace('/*Y*/', ', s.academic_year').replace('/*YF*/', filterSql), [...params, ...filterParams]); }
+  catch (err) { if (err && err.code === 'ER_BAD_FIELD_ERROR') return db.query(sql.replace('/*Y*/', '').replace('/*YF*/', ''), params); throw err; }
 }
 const studentOnly = (req) => { if (req.session.user.role !== 'student') throw httpError(403, 'Students only'); };
 const summaryOf = (r) => ({ id: r.syllabus_id, courseId: r.course_id, courseCode: r.course_code, title: r.title, version: r.version, program: r.program_code || '', academicYear: r.academic_year || null, enrolled: !!r.enrolled, faculty: [r.first_name, r.last_name].filter(Boolean).join(' '), updatedAt: r.updated_at, hasFile: !!r.file_path });
@@ -226,7 +228,9 @@ const summaryOf = (r) => ({ id: r.syllabus_id, courseId: r.course_id, courseCode
 router.get('/syllabi', requireAuth, async (req, res) => {
   try {
     studentOnly(req);
-    const [rows] = await readSyllabi(req.app.locals.db, 'SELECT s.syllabus_id, s.course_id, s.course_code, s.title, s.version, s.file_path, s.updated_at, u.first_name, u.last_name, p.code AS program_code/*Y*/, ' + ENROLLED + ' AS enrolled ' + FOR_STUDENT + ' ORDER BY s.uploaded_at DESC', [req.session.user.id]);
+    const db = req.app.locals.db;
+    const inYear = yearClause(await resolveYear(db, req.session.user));
+    const [rows] = await readSyllabi(db, 'SELECT s.syllabus_id, s.course_id, s.course_code, s.title, s.version, s.file_path, s.updated_at, u.first_name, u.last_name, p.code AS program_code/*Y*/, ' + ENROLLED + ' AS enrolled ' + FOR_STUDENT + '/*YF*/ ORDER BY s.uploaded_at DESC', [req.session.user.id], inYear);
     const seen = new Set();
     // the newest approved one per subject (a syllabus with no catalog subject stands on its own)
     res.json({ syllabi: rows.filter((r) => (r.course_id == null ? true : seen.has(r.course_id) ? false : seen.add(r.course_id))).map(summaryOf) });

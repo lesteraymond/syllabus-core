@@ -27,17 +27,17 @@ const assignedCourseIds = (a) => (a && a.courseIds) || [];
 
 const isFaculty = (user) => !!user && user.role === 'faculty';
 const isAdmin = (user) => !!user && user.role === 'admin';
+const isAuthor = (user) => isFaculty(user) || isAdmin(user);
 
 const canUseCourse = (a, courseId) => Number.isInteger(courseId) && assignedCourseIds(a).includes(courseId);
 const hasAnyAssignment = (a) => assignedCourseIds(a).length > 0;
 
 // May `user` write (save content, submit, edit) a syllabus for `courseId`?
-//  - admins: always (they never edit content in routes, but they are never restricted by assignments);
-//  - faculty: the course must be assigned. With no course chosen yet (courseId null) a faculty member needs at
-//    least one assigned course, so someone with no assignments cannot start a syllabus at all.
+//  - faculty and admins (both author syllabi): the course must be assigned to them (and its program too, per normalizeAssignments).
+//    With no course chosen yet (courseId null) the author needs at least one assigned course, so someone with no assignments cannot start a syllabus.
+//  - other roles (Asst. VPAA, LIC Director, VPAA, student): never.
 function mayWriteSyllabus(user, a, courseId) {
-  if (isAdmin(user)) return true;
-  if (!isFaculty(user)) return false;
+  if (!isAuthor(user)) return false;
   if (courseId === null || courseId === undefined) return hasAnyAssignment(a);
   return canUseCourse(a, Number(courseId));
 }
@@ -105,17 +105,15 @@ async function loadCatalogIds(db) {
 // Admins pass without a query.
 const forbidden = (message) => Object.assign(new Error(message), { status: 403 });
 
-// Builder syllabi: the course is a catalog id (null while none is chosen yet).
+// Builder syllabi: the course is a catalog id (null while none is chosen yet). Both faculty and admins must hold the assignment.
 async function requireCourseAccess(db, user, courseId) {
-  if (isAdmin(user)) return;
   const reason = writeBlockedReason(user, await loadAssignments(db, user.id), courseId === undefined ? null : courseId);
   if (reason) throw forbidden(reason);
 }
 
 // Legacy syllabi: the course is free text, so it must match the code of an assigned course.
 async function requireCourseCodeAccess(db, user, code) {
-  if (isAdmin(user)) return;
-  if (!isFaculty(user)) throw forbidden(NOT_ASSIGNED);
+  if (!isAuthor(user)) throw forbidden(NOT_ASSIGNED);
   const text = String(code || '').trim();
   if (text) {
     const [rows] = await db.query(
@@ -178,7 +176,7 @@ async function archiveReassigned(conn, userId, courseIds) {
   if (!courseIds.length) return 0;
   const [result] = await conn.query(
     `UPDATE syllabi s JOIN users o ON o.user_id = s.user_id SET s.archived_at = NOW()
-     WHERE s.course_id IN (?) AND s.user_id <> ? AND s.archived_at IS NULL AND o.role = 'faculty'`, [courseIds, userId]);
+     WHERE s.course_id IN (?) AND s.user_id <> ? AND s.archived_at IS NULL AND o.role IN ('faculty', 'admin')`, [courseIds, userId]);
   return result && result.affectedRows ? result.affectedRows : 0;
 }
 

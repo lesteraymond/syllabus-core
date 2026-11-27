@@ -117,9 +117,9 @@ These live in `coded()` in `server/lib/syllabuscheck/engine.js` and `server/lib/
 
 | Id | What it requires | If it fails |
 |---|---|---|
-| CUR-REF | exactly one approved official curriculum exists for the program (and curriculum year) | blocks |
-| CUR-CODE | the course code exists in that curriculum | blocks; **critical → score 0** |
-| CUR-FIELD | title, prerequisite, lecture units, lab units and year level equal the curriculum | blocks; the suggestion is the exact official value |
+| CUR-REF | the syllabus has a subject: the one the administrator set up (v1.98.37, `lib/subjectReference.js`). The printed curricula are not read | blocks |
+| CUR-CODE | the course code is the subject's (a hyphen or a space is the same, and a hyphen at the end is ignored). A draft saved before the administrator changed the code is told to save | blocks |
+| CUR-FIELD | title (spacing and hyphens do not count), prerequisite (hyphens in its codes are read the same way), lecture units, lab units and year level equal the subject's; what the administrator has not set is not checked | blocks; the suggestion is the subject's value (saving the syllabus brings it in too) |
 | INST-EXACT / INST-MASTER | vision, mission and EGAs equal the institution master exactly | blocks; the suggestion is the master text |
 | PO-EXACT / PO-MASTER | the program outcomes equal the program master exactly | blocks; the suggestion is the master list |
 | CLO-ID / CLO-MAP | every CLO has a unique id and at least one existing, non-repeated PO and EGA | blocks |

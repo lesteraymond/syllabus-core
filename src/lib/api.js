@@ -170,6 +170,7 @@ export const syllabi = {
   poReview: (id) => request(`/syllabi/${id}/po-review`),
   adoptPoReview: (id, reviewedSha256) => request(`/syllabi/${id}/po-review/adopt`, { method: 'POST', body: JSON.stringify({ reviewedSha256, confirm: true }) }),
   // Structured builder content: a draft is created lazily, then saved section by section.
+  formatReference: (url) => request('/syllabi/format-reference', { method: 'POST', body: JSON.stringify({ url }) }),
   createDraft: () => request('/syllabi/drafts', { method: 'POST' }),
   getContent: async (id) => {
     const res = await request(`/syllabi/${id}/content`);
@@ -216,8 +217,12 @@ export const compliance = {
 
 export const outcomes = {
   institution: () => request('/institution/outcomes'),
-  // `year`: the academic year of the catalog (the catalog is per year); without it the server answers for the current one
-  programs: (year) => request('/programs' + yearQuery(year)),
+  // `year`: the academic year of the catalog (the catalog is per year); without it the server answers for the current one.
+  // `{ assigned: true }` filters to the signed-in author's assigned programs (used by the builder for both faculty and admins).
+  programs: (year, { assigned = false } = {}) => {
+    const q = [year ? `year=${encodeURIComponent(year)}` : '', assigned ? 'assigned=1' : ''].filter(Boolean).join('&');
+    return request('/programs' + (q ? '?' + q : ''));
+  },
   createProgram: (body) => request('/programs', { method: 'POST', body: JSON.stringify(body) }),
   renameProgram: (id, name, expectedName, code, expectedCode) => request(`/programs/${id}`, { method: 'PATCH', body: JSON.stringify({ name, expectedName, code, expectedCode }) }),
   previewProgramDeletion: (id) => request(`/programs/${id}/deletion-preview`),
@@ -236,8 +241,8 @@ export const outcomes = {
 // Course catalog: course code, title, program and the course learning outcomes (CLOs). Only admins write.
 export const courses = {
   saveStandards: (id, section, value, version) => request(`/courses/${id}/standards`, { method: 'PUT', body: JSON.stringify({ section, value, version }) }),
-  // forSyllabus: { except } asks the server to mark the subjects that already have a syllabus (`taken`); except is the one being edited.
-  list: (program, forSyllabus, year) => request(`/courses?${[program ? `program=${encodeURIComponent(program)}` : '', forSyllabus ? `taken=1&except=${Number(forSyllabus.except) || 0}` : '', year ? `year=${encodeURIComponent(year)}` : ''].filter(Boolean).join('&')}`),
+  // forSyllabus: { except, assigned } asks the server to mark the subjects that already have a syllabus (`taken`) and/or filter to the caller's own assigned subjects (`assigned=1`).
+  list: (program, forSyllabus, year) => request(`/courses?${[program ? `program=${encodeURIComponent(program)}` : '', forSyllabus ? `taken=1&except=${Number(forSyllabus.except) || 0}` : '', forSyllabus && forSyllabus.assigned ? 'assigned=1' : '', year ? `year=${encodeURIComponent(year)}` : ''].filter(Boolean).join('&')}`),
   get: (id) => request(`/courses/${id}`),
   create: (data) => request('/courses', { method: 'POST', body: JSON.stringify(data) }),
   update: (id, data) => request(`/courses/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
@@ -263,8 +268,6 @@ export const curriculum = {
 
 export const syllabusCheck = {
   status: () => request('/syllabus-check/status'),
-  // The approved curriculum references (administrator only): [{ id, program, curriculumYear, status, source, courses }]
-  references: () => request('/syllabus-check/references'),
   decisions: (runId) => request(`/syllabus-check/runs/${runId}/decisions`),
   // Check one AI recommendation against every relationship its text touches, and get the text to use (nothing is saved or applied).
   refine: (runId, suggestionId, editedText) => request(`/syllabus-check/runs/${runId}/suggestions/${encodeURIComponent(suggestionId)}/refine`, {
@@ -279,8 +282,8 @@ export const syllabusCheck = {
 };
 
 export const logs = {
-  // no options: the signed-in account's own activity. The administrator may pass { scope: 'all' } for everyone's, with { userId } for one person's.
-  list: ({ scope, userId } = {}) => { const q = new URLSearchParams(); if (scope) q.set('scope', scope); if (userId) q.set('userId', String(userId)); const text = q.toString(); return request('/logs' + (text ? '?' + text : '')); },
+  // no options: the signed-in account's own activity for the active (or requested) academic year. The administrator may pass { scope: 'all' } for everyone's, with { userId } for one person's.
+  list: ({ scope, userId, year } = {}) => { const q = new URLSearchParams(); if (scope) q.set('scope', scope); if (userId) q.set('userId', String(userId)); if (year) q.set('year', year); const text = q.toString(); return request('/logs' + (text ? '?' + text : '')); },
 };
 
 export const messages = {

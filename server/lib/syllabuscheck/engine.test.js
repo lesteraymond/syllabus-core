@@ -13,14 +13,15 @@ test('missing/ambiguous curriculum is incomplete verification, not invented memb
   delete content.meta.curriculumYear;
   assert.ok(coded(content, masters).findings.some(f => f.ruleId === 'CUR-REF'));
 });
-test('all official identity fields are enforced; code punctuation remains significant', () => {
+test('all official identity fields are enforced; code punctuation other than a hyphen remains significant', () => {
   const { content, masters } = sample();
   for (const key of ['title', 'prereq', 'lecture', 'lab', 'yearLevel']) {
     const copy = structuredClone(content); copy.meta[key] = '999';
     assert.ok(coded(copy, masters).findings.some(f => f.path === `meta.${key}` && f.ruleId === 'CUR-FIELD'), key);
   }
-  content.meta.code = 'IT 204-';
-  assert.equal(coded(content, masters).critical, true);
+  for (const code of ['IT204', 'IT.204', 'IT 204.', 'IT_204']) { content.meta.code = code; assert.equal(coded(content, masters).critical, true, code); }
+  content.meta.code = 'IT 204-'; // a hyphen is not significant (owner, 2026-11-25; lib/subjectCode.js)
+  assert.equal(coded(content, masters).critical, false);
 });
 test('institutional constants use exact text and provide exact master replacements', () => {
   const { content, masters } = sample();

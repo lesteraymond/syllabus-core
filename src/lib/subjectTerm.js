@@ -13,6 +13,14 @@ export const termSet = (term) => !!(term && (term.academicYear || term.semester 
 // What the API wants: the four fields, the year level as a number.
 export const termBody = (value) => ({ academicYear: value.academicYear, semester: value.semester, yearLevel: Number(value.yearLevel), prerequisite: String(value.prerequisite || '').trim() });
 
+// A subject's credit units as the form holds them (text), and the same rule as the server (server/lib/subjectUnits.js): both, from 0 to 30 with at most one decimal, not both 0.
+export const emptyUnits = () => ({ lecture: '', lab: '' });
+export const unitsFrom = (units) => (units ? { lecture: String(units.lecture), lab: String(units.lab) } : emptyUnits());
+const unitOk = (v) => /^\d{1,2}(\.\d)?$/.test(String(v == null ? '' : v).trim()) && Number(v) <= 30;
+export const unitsBlank = (v) => !String((v && v.lecture) || '').trim() && !String((v && v.lab) || '').trim();
+export const unitsValid = (v) => !!v && unitOk(v.lecture) && unitOk(v.lab) && Number(v.lecture) + Number(v.lab) > 0;
+export const unitsBody = (v) => ({ lecture: String((v && v.lecture) || '').trim(), lab: String((v && v.lab) || '').trim() });
+
 // "2026–2027 · 1st Semester · Year 2", or '' when the subject has no term yet. `semesterLabel` translates the stored semester name.
 export function termLine(term, t, semesterLabel = (s) => s) {
   if (!term || !term.academicYear || !term.semester || term.yearLevel == null) return '';
@@ -74,21 +82,18 @@ export function normalizeCurriculumYear(value) {
   if (!m || Number(m[2]) !== Number(m[1]) + 1 || Number(m[1]) < 1950 || Number(m[1]) > 2200) return null;
   return `${m[1]}-${m[2]}`;
 }
-// The curriculum years to offer, newest first, without duplicates: the ones subjects already use and the approved curriculum references' (`extra`).
-export function curriculumYearOptions(list, extra = []) {
+// The curriculum years subjects already use, newest first, without duplicates.
+export function curriculumYearOptions(list) {
   const years = new Set();
   for (const c of list || []) { const y = normalizeCurriculumYear(c && c.curriculumYear); if (y) years.add(y); }
-  for (const value of extra || []) { const y = normalizeCurriculumYear(value); if (y) years.add(y); }
   return [...years].sort((a, b) => b.localeCompare(a));
 }
-// The curriculum year dropdown's choices, newest first: every curriculum from next year back RANGE years, the years already in use (`inUse`), the program's approved
-// curriculum references (`approved`, each marked so the administrator sees which ones the AI Checker can compare with) and the subject's current value, so an older
-// value is never lost from the list. [{ value: '2022-2023', approved: true }]
+// The curriculum year dropdown's choices, newest first: every curriculum from next year back RANGE years, the years already in use (`inUse`) and the subject's current
+// value, so an older value is never lost from the list. ['2022-2023', ...]
 export const CURRICULUM_RANGE = 20;
-export function curriculumYearChoices({ inUse = [], approved = [], value = '', thisYear = new Date().getFullYear() } = {}) {
+export function curriculumYearChoices({ inUse = [], value = '', thisYear = new Date().getFullYear() } = {}) {
   const years = new Set();
   for (let start = thisYear + 1; start >= thisYear - CURRICULUM_RANGE; start -= 1) years.add(`${start}-${start + 1}`);
-  const approvedSet = new Set((approved || []).map(normalizeCurriculumYear).filter(Boolean));
-  for (const y of [...(inUse || []), ...approvedSet, value]) { const n = normalizeCurriculumYear(y); if (n) years.add(n); }
-  return [...years].sort((a, b) => b.localeCompare(a)).map((y) => ({ value: y, approved: approvedSet.has(y) }));
+  for (const y of [...(inUse || []), value]) { const n = normalizeCurriculumYear(y); if (n) years.add(n); }
+  return [...years].sort((a, b) => b.localeCompare(a));
 }

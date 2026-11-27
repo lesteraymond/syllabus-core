@@ -4,6 +4,10 @@
 // Run: npm run seed-student-demo-syllabi -- <student id>      (after seed-student-demo)
 //      npm run seed-student-demo-syllabi -- --faculty <email>  (a DRAFT sample syllabus, authored by that faculty member, for each subject assigned to them)
 require('dotenv').config();
+if (['staging', 'production'].includes(process.env.NODE_ENV)) {
+  console.error('Refusing to seed student demo syllabi when NODE_ENV=' + process.env.NODE_ENV);
+  process.exit(1);
+}
 const path = require('path');
 const { pathToFileURL } = require('url');
 const mysql = require('mysql2/promise');

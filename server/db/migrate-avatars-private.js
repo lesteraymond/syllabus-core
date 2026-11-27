@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const { AVATAR_DIR, avatarRelPath } = require('../lib/avatar');
 
-const LEGACY_DIR = path.join(__dirname, '..', process.env.UPLOAD_DIR || 'uploads', 'avatars');
+const LEGACY_DIR = path.join(require('../lib/storagePaths').uploadRoot(), 'avatars');
 const AVATAR_FILE = /^u\d+-\d+\.(jpg|png|webp)$/;
 
 async function move(from, to) {

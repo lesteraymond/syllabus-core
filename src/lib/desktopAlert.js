@@ -1,6 +1,30 @@
 // A new notification gets a short chime and, when the app is not in front, a desktop notification (Windows shows it at the bottom right,
-// macOS at the top right). The browser asks the person once for permission, on their first click in the app; saying no only drops the
-// desktop popup, the chime still plays. Nothing here talks to the server.
+// macOS at the top right). Each user can choose On, Do Not Disturb (dnd), or Off in Settings. Nothing here talks to the server.
+
+export const NOTIFICATION_MODES = ['on', 'dnd', 'off'];
+const modeKey = (userId) => (userId != null && userId !== '' ? 'notif-mode:' + userId : 'notif-mode');
+
+export function getNotificationMode(userId) {
+  try {
+    if (typeof localStorage === 'undefined') return 'on';
+    const raw = localStorage.getItem(modeKey(userId));
+    return NOTIFICATION_MODES.includes(raw) ? raw : 'on';
+  } catch {
+    return 'on';
+  }
+}
+
+export function setNotificationMode(mode, userId) {
+  const next = NOTIFICATION_MODES.includes(mode) ? mode : 'on';
+  try {
+    if (typeof localStorage !== 'undefined') localStorage.setItem(modeKey(userId), next);
+  } catch { /* storage unavailable */ }
+  return next;
+}
+
+export function shouldPlayAlert(userId) {
+  return getNotificationMode(userId) === 'on';
+}
 
 // The unread notifications that were not there last time. The first list after sign-in only records what exists: old notifications never chime.
 export function newArrivals(seen, items) {
@@ -12,7 +36,8 @@ export function newArrivals(seen, items) {
 
 let audio = null;
 // Two soft tones made in the browser (no sound file). Browsers allow sound only after the person has clicked or typed in the page once.
-export function playChime() {
+export function playChime({ force = false, userId } = {}) {
+  if (!force && !shouldPlayAlert(userId)) return;
   try {
     const Ctx = window.AudioContext || window.webkitAudioContext;
     if (!Ctx) return;
@@ -59,11 +84,12 @@ export function askPermissionOnFirstGesture() {
   return off;
 }
 
-// Settings' "Test notification": the chime now, and a desktop popup even with the app in front. Says what stopped the popup, if anything:
-// 'shown', 'denied' (blocked for this site: allow it in the browser's site settings), 'default' (not answered yet) or 'unsupported'.
-export async function testAlert() {
+// Settings' "Test notification": checks the user's mode first ('dnd' / 'off' stay silent), otherwise plays the chime and shows a desktop popup.
+export async function testAlert(userId) {
+  const mode = getNotificationMode(userId);
+  if (mode !== 'on') return mode;
   unlockSound();
-  playChime();
+  playChime({ force: true, userId });
   if (!canNotify()) return 'unsupported';
   let permission = Notification.permission;
   if (permission === 'default') { try { permission = await Notification.requestPermission(); } catch { /* old browsers */ } }
@@ -74,9 +100,9 @@ export async function testAlert() {
   } catch { return 'unsupported'; }
 }
 
-// The desktop popup, only while the app is in the background (in front, the bell and the chime already show it). Clicking it brings the
-// app forward and opens the notification.
-export function showDesktop(n, { title, body, onOpen } = {}) {
+// The desktop popup, only while the app is in the background and the user's notification mode is On. Clicking it brings the app forward and opens the notification.
+export function showDesktop(n, { title, body, onOpen, userId } = {}) {
+  if (!shouldPlayAlert(userId)) return null;
   if (!canNotify() || Notification.permission !== 'granted') return null;
   if (document.visibilityState === 'visible' && document.hasFocus()) return null;
   try {

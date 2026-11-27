@@ -87,6 +87,15 @@ test('an AI check and an answer to a recommendation read as sentences, with the 
   assert.strictEqual(verb('Undid recommendation: plan[3].tasks'), 'undid a recommendation on');
   assert.strictEqual(verb('something else'), 'answered a recommendation on');
   assert.strictEqual(verb(null), 'answered a recommendation on');
+
+  const deanClear = describeActivity(log({ action: 'check', notes: 'Cleared the dean review' }), 0, 7);
+  assert.deepStrictEqual([deanClear.verb, deanClear.icon, deanClear.tone], ['cleared the dean review of', 'checkCircle', 'good']);
+  const asstClear = describeActivity(log({ action: 'check', notes: 'Cleared the Asst. VPAA review: Looks good' }), 0, 7);
+  assert.deepStrictEqual([asstClear.verb, asstClear.icon, asstClear.tone], ['cleared the Asst. VPAA review of', 'checkCircle', 'good']);
+  const licClear = describeActivity(log({ action: 'check', notes: 'Cleared the LIC Director review' }), 0, 7);
+  assert.deepStrictEqual([licClear.verb, licClear.icon, licClear.tone], ['cleared the LIC Director review of', 'checkCircle', 'good']);
+  const noAi = describeActivity(log({ action: 'check', notes: 'Chose to review v1 without an AI check' }), 0, 7);
+  assert.deepStrictEqual([noAi.verb, noAi.icon, noAi.tone], ['chose to review without an AI check', 'notePencil', 'quiet']);
 });
 
 // The account's own activity (server/lib/accountActivity.js): rows that are about the account read without a syllabus; drafts, edits and deletions

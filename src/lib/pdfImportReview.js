@@ -19,14 +19,14 @@ export function importIdentity(fields, meta, context, required = false) {
   if (context) {
     const selected = context.selected;
     if (!selected || selected.id !== meta.courseId || selected.program !== meta.program || selected.code !== meta.code || selected.title !== meta.title) return fail('selection');
-    const curricula = context.curricula.filter(c => c.program === selected.program && c.status === 'approved' && (!meta.curriculumYear || c.curriculumYear === meta.curriculumYear));
+    const curricula = context.curricula.filter(c => c.program === selected.program && c.status === 'approved' && (c.origin === 'admin' || !meta.curriculumYear || c.curriculumYear === meta.curriculumYear));
     if (curricula.length !== 1) return fail('curriculum');
     const courses = curricula[0].courses;
     const candidates = courses.filter(c => codeKey(c.code) === codeKey(fields.code));
     if (!text(fields.code) || !text(fields.title) || candidates.length !== 1) return fail('course');
     const course = candidates[0];
     if (codeKey(course.code) !== codeKey(selected.code) || !titleMatches(fields.title, course.title) || !titleMatches(selected.title, course.title)) return fail('title');
-    return { ok: true, program: selected.program, curriculumYear: curricula[0].curriculumYear, course };
+    return { ok: true, program: selected.program, curriculumYear: curricula[0].curriculumYear || meta.curriculumYear || '', course }; // the administrator's subject may have no curriculum year yet: the draft keeps its own
   }
   if (required) return fail('context');
   // Standalone mapping remains usable in offline tools. Production Apply requires

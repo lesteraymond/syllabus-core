@@ -1,8 +1,8 @@
 'use strict';
-// A subject's CURRICULUM YEAR: the curriculum (the program's approved course list, for example the BSIT 2022-2023 curriculum) the subject is taught under. It is NOT the
+// A subject's CURRICULUM YEAR: the curriculum (for example the BSIT 2022-2023 curriculum) the subject is taught under. It is NOT the
 // academic year: the 2026–2027 catalog can hold subjects of the 2022-2023 and the 2025-2026 curricula side by side. Set by an administrator; optional, so subjects made
-// before it existed keep working. Stored in courses.curriculum_year as "YYYY-YYYY" with a plain hyphen, the form the approved curricula use
-// (syllabus_check_curricula.curriculum_year) and the syllabus form's Curriculum year field. Added by `npm run migrate-curriculum-year`; until then the column is absent and
+// before it existed keep working. Stored in courses.curriculum_year as "YYYY-YYYY" with a plain hyphen, the form
+// the syllabus form's Curriculum year field uses. Added by `npm run migrate-curriculum-year`; until then the column is absent and
 // everything here degrades to "not set" (reads) or a 503 that names the migration (writes).
 const { httpError } = require('./http');
 

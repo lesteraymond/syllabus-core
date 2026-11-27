@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { builderHash, builderState, newImportJobId, pageOfHash, readHash, routeOnLoad } from './builderRoute.js';
 
 test('the page is the hash before any "?", with or without a leading slash; a malformed hash is no page', () => {
@@ -45,4 +46,9 @@ test('scan ids are valid in the URL and differ each time, with or without crypto
   Object.defineProperty(globalThis, 'crypto', { configurable: true, value: undefined });
   try { assert.match(newImportJobId(), /^[A-Za-z0-9_-]{8,64}$/); }
   finally { Object.defineProperty(globalThis, 'crypto', saved); }
+});
+
+test('the rebuilt builder is the default: only VITE_NEW_BUILDER=false goes back, so a build without any .env ships the rebuilt one', () => {
+  const app = readFileSync(new URL('../App.jsx', import.meta.url), 'utf8');
+  assert.match(app, /const NEW_BUILDER = import.meta.env.VITE_NEW_BUILDER !== 'false';/);
 });

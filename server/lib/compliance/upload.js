@@ -11,7 +11,7 @@ const path = require('path');
 const standard = require('./standard-v4.json');
 
 // Where uploaded files are kept (the same folder index.js serves). Read when used, so a test can point it somewhere else.
-const uploadRoot = () => path.resolve(__dirname, '..', '..', process.env.UPLOAD_DIR || 'uploads');
+const { uploadRoot } = require('../storagePaths');
 const AREA = 'template'; // Format Compliance
 
 // The rules of an upload. weight: how much each counts inside the Format Compliance score. severity 'blocking' fails conformance.

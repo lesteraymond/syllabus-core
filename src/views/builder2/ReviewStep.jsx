@@ -10,13 +10,14 @@ import ComplianceSection from './ComplianceSection';
 // The saved syllabus's sign-off dates (submitted, each review stage cleared, approved) for the form's sign-off block, read once per
 // syllabus. A new draft has none, and a failure (or a server without the review chain) leaves the block's lines saying "Date".
 function useSignoffs(syllabusId) {
+  const id = typeof syllabusId === 'function' ? syllabusId() : syllabusId;
   const [signoffs, setSignoffs] = useState(null);
   useEffect(() => {
-    if (!syllabusId) { setSignoffs(null); return undefined; }
+    if (!id) { setSignoffs(null); return undefined; }
     let live = true;
-    syllabiApi.stages(syllabusId).then((r) => { if (live) setSignoffs(r && r.enabled ? r : null); }).catch(() => { if (live) setSignoffs(null); });
+    syllabiApi.stages(id).then((r) => { if (live) setSignoffs(r && r.enabled ? r : null); }).catch(() => { if (live) setSignoffs(null); });
     return () => { live = false; };
-  }, [syllabusId]);
+  }, [id]);
   return signoffs;
 }
 

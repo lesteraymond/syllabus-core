@@ -3077,3 +3077,113 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **Problem (pre-deploy report 2026-11-24, B4):** `server/db/init.js` and the `migrate-*.js` / seed scripts connected directly with `DB_HOST`, `DB_USER`, `DB_PASS`, and `DB_NAME`, ignoring `DB_PORT`, `DB_SSL`, and `DB_SSL_CA`. Against a cloud database requiring TLS or a non-default port, setup and migrations would fail to connect.
 - **Change:** extracted shared TLS and port validation into `resolveConnectionConfig` in `server/lib/dbConfig.js` and wired all 45 standalone scripts in `server/db/` (`init.js` with `includeDatabase: false`, `create-admin.js`, all `migrate-*.js`, `seed-*.js`, and `verify-subject-standards.js`) to use it. Standalone scripts still allow a separate migration/admin account while enforcing `DB_SSL=required` on non-loopback hosts in `staging` and `production`.
 - **Tests:** `server/lib/dbConfig.test.js` (+2) covers `resolveConnectionConfig` (`DB_PORT`, `DB_SSL`, `DB_SSL_CA`, `includeDatabase: false`, remote TLS enforcement) and asserts that every standalone script in `server/db/` connects through `resolveConnectionConfig`. Full `npm test` passes.
+
+---
+
+### v1.98.31 — Release Fixes: Rebuilt Builder by Default, jspdf 4, Server Start Script
+**Date:** November 25, 2026
+
+- **Rebuilt Syllabus Builder is the default (pre-deploy report 2026-11-24, B7):** it needed `VITE_NEW_BUILDER=true` at build time, which only a developer's private `.env` set, so a production build gave faculty the previous builder. `src/App.jsx` now uses the rebuilt builder unless `VITE_NEW_BUILDER=false`.
+- **jspdf 2.5.2 to 4.2.1 (B3):** clears 1 critical and 1 moderate advisory (`jspdf`, `dompurify`); `npm audit --omit=dev` reports 0 in the root and in `server/`. Only the student's "Download PDF" uses it.
+- **`npm start` in `server/` (part of B6):** runs `node index.js` without the development file watcher. A process manager, staging host, alerts and a backup restore test are still open.
+- **Docs:** `HOW-TO-RUN.md`, `RUNBOOK.md`, both environment templates and the QA release gate prompt.
+- **Tests:** `builderRoute.test.js` (+1) keeps the default. `npm test` (1,760) and `npm run test:vpaa` (37) pass; `npm run test:e2e` passes 25/25 scenarios on an isolated copy and scratch database. A build without the setting is identical to one with it set to `true`. A student's PDF was downloaded in Edge and opened (7 landscape Letter pages); `npm start` in production mode refuses to start without `SESSION_SECRET`.
+
+---
+
+### v1.98.32 — Absolute UPLOAD_DIR and PRIVATE_DIR
+**Date:** November 25, 2026
+
+- **Problem:** six files worked out the storage folders on their own and disagreed. With an absolute `PRIVATE_DIR` (a persistent volume such as `/data/private`), profile photos and COR photos were kept in a folder under `server/` instead, where a redeploy may lose them. With an absolute `UPLOAD_DIR`, files were received in one folder and read from another. Relative folders, the default, were never affected.
+- **Change:** `server/lib/storagePaths.js` is the only place that reads the two settings: relative is under `server/`, absolute is used as it is. The upload route, the file route, the checker, the catalog cleanup, the photos and `migrate-avatars-private` use it. Nothing to move on an installation that uses the defaults.
+- **Docs:** both settings are in the staging and production templates and described in `HOW-TO-RUN.md`; the QA release gate prompt checks them.
+- **Tests:** `storagePaths.test.js` (4; three fail on the previous code). `npm test` (1,764) and `npm run test:vpaa` (37) pass. Checked on a running server with absolute folders and a scratch database: a profile photo was saved in the configured folder and read back.
+
+---
+
+### v1.98.33 — Filipino-Language Subjects Recognized More Narrowly
+**Date:** November 25, 2026
+
+- **Problem:** any code starting with the letters "FIL" and any title with the word "Filipino" counted as a Filipino-language subject, so FILM 101 or "Readings in Filipino History" would have been generated, judged and rewritten in Filipino.
+- **Change (`isFilipinoSubject`, `server/lib/syllabuscheck/pipeline/rules.js`):** the code must be FIL itself (FIL 101, FIL-101, FIL101), or the title must have a Filipino course word, name Filipino in a Filipino phrase ("... sa Filipino", "... ng Filipino"), or be "Filipino" alone ("Filipino 1"). The AI Checker and the AI Syllabus Generator share this one rule.
+- **SOSLIT added (owner decision):** "Sosyedad at Literaturang/ Panitikang Panlipunan" is now a Filipino-language subject. The course word list had only "panitikan", so "Panitikang" was missed.
+- **Not changed:** the Filipino prompts and verb lists, every English prompt, and the two Filipino subjects already recognized in the approved curriculum (KOMFIL, Dalumat sa Filipino).
+- **Tests:** `pipeline/filipino.test.js` (+1; it fails on the previous code). `npm test` passes.
+
+---
+
+### v1.98.34 — A Hyphen or a Space in a Subject Code Is the Same
+**Date:** November 25, 2026
+
+- **Problem:** the school's curriculum prints "IT 203" and "IT-204" on one page, and the checker compared codes letter by letter. A subject entered as "IT 204" was "not in the official curriculum": the AI check did not run and the score was 0. A pre-requisite written "IT 204" blocked submitting in the same way, and the AI Syllabus Generator did not find that pre-requisite subject.
+- **Change:** `server/lib/subjectCode.js` is the one comparison of two subject codes: a hyphen between letters or digits reads as a space. The curriculum check (CUR-CODE, and the pre-requisite of CUR-FIELD), the other-program hint, the administrator's curriculum warning and the generator use it. A code is still stored, shown and sent to the AI as it was written.
+- **Not changed:** scoring, AI questions and prompts, stored answers, and the other curriculum fields. A different code or pre-requisite is still found ("IT 999", "IT204", "IT 205"). Titles are still compared exactly. A code that ends in a hyphen, as eight Cybersecurity codes do ("IT 102-"), keeps that hyphen. Nothing to migrate.
+- **Checked on the dev data:** each of the 243 codes of the four approved curricula still matches only itself, and the generator finds the same pre-requisite subjects as before for every official spelling. IT 204 (draft) is now found in the curriculum; only its title still differs.
+- **Tests:** `server/lib/subjectCode.test.js` (8; six fail on the previous code). `npm test` and `npm run test:vpaa` pass.
+
+---
+
+### v1.98.35 — A Hyphen at the End of a Subject Code Is Ignored
+**Date:** November 25, 2026
+
+- **Problem:** eleven Cybersecurity codes are printed with a hyphen at the end ("IT 102-", "IT-204-", "IS-"). Typed without it the subject was not found and the score was 0; as a pre-requisite it blocked submitting.
+- **Change (owner decision):** `server/lib/subjectCode.js` also drops a hyphen at the end of a code, in a subject code and inside a pre-requisite ("IT-ELEC1-, 3rd Yr"). `hyphenAsSpace` is now `withoutHyphens`. The generator looks for a pre-requisite code of three characters or more without its hyphens, so "IS-" is not found inside the word "prerequisite".
+- **Side effect to know (also of v1.98.34):** six pairs of different BSIT and Cybersecurity subjects now have codes that read the same (for example BSIT IT-204 Computer Programming 2 and Cybersecurity IT-204- Quantitative Methods). A subject is looked for only in the curriculum of its own program, so they are not mixed up; but a BSIT subject entered under the Cybersecurity program is now found by its code, and it is the title that stops it at submit.
+- **Changed test:** `engine.test.js` said that a hyphen in a code is significant; other punctuation ("IT.204", "IT_204", "IT204") still is.
+- **Checked on the dev data:** all 243 subjects of the four curricula, typed without any hyphen: each is found as the right subject, its pre-requisite passes, and the generator gets the same background as with the official spelling.
+- **Tests:** `server/lib/subjectCode.test.js` (+4; three fail on the previous code, the fourth pins the title check). `npm test` and `npm run test:vpaa` pass.
+
+---
+
+### v1.98.36 — Title Spacing, and No More "Applied" for a Field Only the Administrator Can Change
+**Date:** November 25, 2026
+
+- **Problem 1:** IT 204 scored 100 in a real AI check (151 of 151 aligned) but stayed provisional and could not be submitted: its title has a space before the parenthesis and the printed curriculum has none.
+- **Change 1 (owner decision):** spacing and hyphens do not make a different title (`titles.js` `sameTitle`, policy version `title-normalization-2`), under every title policy. A different word, number, letter case or missing part still blocks ("DATA STRUCTURES" is not "DATA STRUCTURE"). The normalized policy (letter case) is still not active. A stored check whose title now passes is shown as out of date; a re-check refreshes it.
+- **Problem 2:** the author could accept the title recommendation, the screen said "Applied", and nothing changed: every save restores the subject's title (and the pre-requisite and year level, when the administrator set them).
+- **Change 2:** the checker no longer recommends such a change; its message gives the official value and says to ask the administrator (`repository.js` `adminMeta`, `engine.js`). A decision on an older check that the save did not keep is refused (409 `admin_field`) instead of being recorded as applied (`routes/syllabusCheck.js`, `src/lib/hybridCheck.js`). Once the subject is corrected, the recommendation works.
+- **Not changed:** scoring, severity, AI questions, prompts and stored answers. Nothing to migrate.
+- **Checked on the dev data:** IT 204 has no blocking rule left; IT 203 keeps its title blocker (a different word). No two different titles of one curriculum become the same (7,306 pairs).
+- **Tests:** `titles.test.js` (5), `syllabusCheck.routes.test.js` (+1), `hybridCheck.test.js` (+1); all seven fail on the previous code. `npm test` and `npm run test:vpaa` pass.
+
+---
+
+### v1.98.37 — The Administrator's Subject Is the Reference; Units on Subjects
+**Date:** November 25, 2026
+
+- **Problem:** the AI Checker compared a syllabus's code, title, pre-requisite, units and year level with a typed copy of the printed curricula. A new program or a new curriculum could not be checked to a final score until someone photographed and retyped it, and an administrator's entry could be "wrong" against a photo (IT 203). That did not follow the policy of 2026-11-06: what the administrator saves is the reference.
+- **Change (owner decision):** the reference is the subject the administrator set up, for any program (`server/lib/subjectReference.js`). It is found by its id, so a hyphen, a new code or another subject in the program never matters. Adding a program and its subjects is enough. What the administrator has not set is not checked. A draft saved before the subject was corrected is told to save, and never gets a critical 0. Only a change of the subject itself makes a stored check out of date.
+- **Units:** a subject has lecture and laboratory units (required on Add subject). They fill in Step 1, with the curriculum year, and faculty cannot change them; the server enforces it. A subject without units leaves Step 1 as typed.
+- **Edit subject** can now change the units, semester, year level and pre-requisite too. Before, only the code, title and curriculum year could be corrected.
+- **The typed copy of the printed curricula is not used any more** (owner decision the same day): not by the AI Checker, the generator, PDF import or the admin page. The warning and the "curriculum on file" hints on the subject form are gone, and so are the administrator endpoints that managed the copy (`/api/syllabus-check/references`). The stored rows (`syllabus_check_curricula`) and the photographs are kept, unused.
+- **AI Syllabus Generator:** its background (the pre-requisite's title and the subjects taken before) is the administrator's subjects of the same curriculum year. Earlier subjects the administrator has not added are unknown to it; it still generates.
+- **PDF import** matches a file with the administrator's subject too, so it works for a new program or curriculum year.
+- **One code, one subject:** a program cannot have "AI 301" and "AI-301". This closes a gap left by v1.98.34.
+- **Not changed:** AI questions, prompts, stored answers, scoring, the 79 threshold, vision, mission, EGAs and POs, and the review chain. A syllabus without a subject is told to choose one (it blocks submitting; it is never a score of 0).
+- **To know:** existing checks are out of date and need a re-check. If the administrator changes a subject while its syllabus is under review, that version no longer matches it and cannot be approved until the author saves and submits again.
+- **Migration:** `npm run migrate-subject-units` (adds two empty columns; safe to run again). Existing subjects have no units until an administrator sets them.
+- **Checked:** the three dev drafts have no blocking rule; a new program with nothing on file passes every subject check (written and rolled back); all 25 browser scenarios pass on an isolated database. No real AI run was made.
+- **Tests:** `subjectReference.test.js` (15), `catalogYear.routes.test.js` (+2), `subjectTerm.test.js` (+1), `pdfImport.fixes.test.js` (+1), browser scenarios E18 and E23 extended; tests of the copy removed. `npm test` and `npm run test:vpaa` pass.
+
+---
+
+### v1.98.38 — Faculty Never Type the Units
+**Date:** November 25, 2026
+
+- **Change (owner decision):** the credit units in Step 1 are locked for faculty even while the administrator has not set them on the subject. The page says who sets them, and the Step 1 reminder too. Before, they were locked only once set.
+- **Server:** a faculty save cannot change them. A draft keeps the units it already had for its subject; choosing another subject without units starts with none. A PDF import by faculty does not set them either, and says so when the PDF prints different ones.
+- **Not changed:** an administrator writing their own syllabus can still type units on a subject without any. Scoring and the AI are not touched.
+- **To know:** a new syllabus on a subject without units cannot complete Step 1 or be submitted until the administrator sets them (**Edit subject**). Run `npm run migrate-subject-units` before starting this version: without the columns no units can be set at all.
+- **Tests:** `catalog.routes.test.js` (+1), `subjectReference.test.js` (+1), `pdfImport.fixes.test.js` (+1), `facultyLock.test.js` and `subjectTerm.test.js` extended; all five fail on the previous code. All 25 browser scenarios pass (E02 and E18 extended). `npm test` and `npm run test:vpaa` pass.
+
+---
+
+### v1.98.39 — CHED Credit Units and Laboratory Alignment
+**Date:** November 25, 2026
+
+- **One rule for both tools:** the AI Checker and the AI Syllabus Generator share the CHED credit-unit rule: 1 lecture unit is 1 contact hour a week, 1 laboratory unit is 3. The contact hours are computed from the syllabus's units (`pipeline/extract.js`).
+- **AI Checker:** a subject with laboratory units gets one more question (LAB-ALIGNMENT): do the weekly activities include hands-on or laboratory work, and do the tasks include practical outputs? It is advice: no points, no block, and the repair plan does not rewrite anything for it. A lecture-only subject is not asked. Drafts of activities and tasks follow the units too.
+- **AI Syllabus Generator:** a laboratory subject is paced for its contact hours, with laboratory work in the activities and tasks, the tools it needs in the requirements and a laboratory part in the grading. A lecture-only subject gets none of these.
+- **Not changed:** scoring, the caps, the 79 threshold and every scored question.
+- **To know:** the prompt is version 7 and the rewrite prompt version 5, so stored answers are not reused: the next AI check of each syllabus asks every question again, at full cost. No migration.
+- **Tests:** `pipeline/ched-units.test.js` (3); the counts and versions in the other pipeline tests follow. `npm test` and `npm run test:vpaa` pass. No real AI run was made.

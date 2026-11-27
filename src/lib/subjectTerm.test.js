@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { yearUsage, yearOptionLabel, ADD_YEAR, noFilters, filtersActive, termFiltersActive, filterSubjects, emptyTerm, termFrom, termComplete, termSet, termBody, termLine, lockedFields, anyLocked, subjectSetUp, prerequisiteOf, YEAR_LEVELS, SEMESTER_OPTIONS, semesterKey, CURRICULUM_NONE, normalizeCurriculumYear, curriculumYearOptions, curriculumYearChoices, CURRICULUM_RANGE } from './subjectTerm.js';
+import { emptyUnits, unitsBlank, unitsBody, unitsFrom, unitsValid, yearUsage, yearOptionLabel, ADD_YEAR, noFilters, filtersActive, termFiltersActive, filterSubjects, emptyTerm, termFrom, termComplete, termSet, termBody, termLine, lockedFields, anyLocked, subjectSetUp, prerequisiteOf, YEAR_LEVELS, SEMESTER_OPTIONS, semesterKey, CURRICULUM_NONE, normalizeCurriculumYear, curriculumYearOptions, curriculumYearChoices, CURRICULUM_RANGE } from './subjectTerm.js';
 import { emptyDraft, applyCourse, clearCourse } from './syllabusModel.js';
 
 let n = 0;
@@ -161,19 +161,32 @@ test('curriculum years are normalized like the server does and offered newest fi
   assert.equal(normalizeCurriculumYear('2022–2023'), '2022-2023');
   assert.equal(normalizeCurriculumYear(' 2022 - 2023 '), '2022-2023');
   for (const bad of ['2022', '2022-2024', '', null, 'abc']) assert.equal(normalizeCurriculumYear(bad), null, String(bad));
-  assert.deepEqual(curriculumYearOptions([{ curriculumYear: '2022-2023' }, { curriculumYear: null }, { curriculumYear: '2022-2023' }], ['2025-2026', '2022–2023', 'junk']), ['2025-2026', '2022-2023']);
+  assert.deepEqual(curriculumYearOptions([{ curriculumYear: '2022-2023' }, { curriculumYear: null }, { curriculumYear: '2025-2026' }]), ['2025-2026', '2022-2023']);
   assert.deepEqual(curriculumYearOptions(undefined), []);
   assert.ok(!normalizeCurriculumYear(CURRICULUM_NONE), 'the "not set" option can never be mistaken for a year');
 });
 
-test('the curriculum year dropdown offers recent curricula, the ones in use, the approved ones (marked) and the current value, newest first', () => {
-  const choices = curriculumYearChoices({ thisYear: 2026, inUse: ['2001-2002'], approved: ['2022–2023', 'junk'], value: '1998-1999' });
-  const values = choices.map((c) => c.value);
+test('the curriculum year dropdown offers recent curricula, the ones in use and the current value, newest first', () => {
+  const values = curriculumYearChoices({ thisYear: 2026, inUse: ['2001-2002', 'junk'], value: '1998-1999' });
   assert.equal(values[0], '2027-2028', 'next year\'s curriculum is offered');
   assert.ok(values.includes(`${2026 - CURRICULUM_RANGE}-${2027 - CURRICULUM_RANGE}`) && !values.includes(`${2025 - CURRICULUM_RANGE}-${2026 - CURRICULUM_RANGE}`), 'the range reaches back CURRICULUM_RANGE years');
   assert.ok(values.includes('2001-2002') && values.includes('1998-1999'), 'older years in use and the current value are kept');
   assert.deepEqual(values, [...values].sort((a, b) => b.localeCompare(a)), 'newest first');
   assert.equal(new Set(values).size, values.length, 'no duplicates');
-  assert.deepEqual(choices.filter((c) => c.approved).map((c) => c.value), ['2022-2023'], 'only the approved reference is marked');
   assert.ok(values.every((v) => normalizeCurriculumYear(v) === v), 'every choice is a valid, normalized curriculum year');
+});
+
+test('units: text in the form, the server\'s rule, and the subject\'s units and curriculum year go into Step 1', () => {
+  assert.deepEqual(unitsFrom({ lecture: 2, lab: 1 }), { lecture: '2', lab: '1' }); assert.deepEqual(unitsFrom(null), emptyUnits());
+  for (const ok of [{ lecture: '2', lab: '1' }, { lecture: '3', lab: '0' }, { lecture: ' 1.5 ', lab: '0.5' }]) assert.equal(unitsValid(ok), true, JSON.stringify(ok));
+  for (const bad of [emptyUnits(), { lecture: '2', lab: '' }, { lecture: '4 O', lab: '4' }, { lecture: '-1', lab: '1' }, { lecture: '0', lab: '0' }, { lecture: '1.25', lab: '0' }, { lecture: '31', lab: '0' }, null]) assert.equal(unitsValid(bad), false, JSON.stringify(bad));
+  assert.equal(unitsBlank({ lecture: ' ', lab: '' }), true); assert.equal(unitsBlank({ lecture: '', lab: '1' }), false);
+  assert.deepEqual(unitsBody({ lecture: ' 2 ', lab: '1' }), { lecture: '2', lab: '1' });
+  const d = applyCourse(emptyDraft(newId), { ...course(TERM), units: { lecture: 2, lab: 1 }, curriculumYear: '2027-2028' });
+  assert.deepEqual([d.meta.lecture, d.meta.lab, d.meta.curriculumYear], ['2', '1', '2027-2028']);
+  const own = emptyDraft(newId); Object.assign(own.meta, { lecture: '4', lab: '4', curriculumYear: '2022-2023' });
+  const kept = applyCourse(own, { ...course(TERM), units: null, curriculumYear: null });
+  assert.deepEqual([kept.meta.lecture, kept.meta.lab, kept.meta.curriculumYear], ['', '', '2022-2023'], 'choosing a subject without units starts without any: the administrator sets them');
+  const again = applyCourse({ ...kept, meta: { ...kept.meta, lecture: '2', lab: '1' } }, { ...course(TERM), units: null });
+  assert.deepEqual([again.meta.lecture, again.meta.lab], ['2', '1'], 'the same subject again keeps what the draft has');
 });

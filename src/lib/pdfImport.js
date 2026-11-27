@@ -119,7 +119,7 @@ export function matchOutcomes(pdfList, programList, textOf) {
   for (const p of pairs.sort((x, y) => y.score - x.score)) if (!map.has(p.a) && !usedB.has(p.b)) { map.set(p.a, p.b); usedB.add(p.b); }
   return map;
 }
-export function mapPdfFields(fields, draft, makeId, { planRows = null, identityContext = null, requireIdentity = false, prerequisiteChoice = null } = {}) {
+export function mapPdfFields(fields, draft, makeId, { planRows = null, identityContext = null, requireIdentity = false, prerequisiteChoice = null, lockUnits = false } = {}) {
   const warnings = [];
   const unresolvedMappings = [];
   const missing = PDF_FIELDS.filter(key => !String(fields[key] || '').trim());
@@ -161,8 +161,10 @@ export function mapPdfFields(fields, draft, makeId, { planRows = null, identityC
   if (next.meta.prereq === 'None' && !String(prerequisite.value ?? '').trim()) warnings.push({ key: 'pdfImport.prereqNone', values: {} });
   if (prerequisite.conflict) warnings.push({ key: 'pdfImport.prereqConflict', values: {} });
   const units = parseCreditUnits(fields.credits);
-  if (units) { next.meta.lecture = units.lecture; next.meta.lab = units.lab; }
-  if (fields.credits?.trim() && !units?.explicit) warnings.push({ key: 'pdfImport.creditsReview', values: {} });
+  // Faculty never set the units (lockUnits): the subject's stay, whatever the PDF prints.
+  if (lockUnits) { if (units && (Number(units.lecture) !== Number(draft.meta?.lecture || NaN) || Number(units.lab) !== Number(draft.meta?.lab || NaN))) warnings.push({ key: 'pdfImport.unitsKept', values: {} }); }
+  else if (units) { next.meta.lecture = units.lecture; next.meta.lab = units.lab; }
+  if (!lockUnits && fields.credits?.trim() && !units?.explicit) warnings.push({ key: 'pdfImport.creditsReview', values: {} });
   // Only labelled source columns replace institutional/program text. Unrecovered
   // columns retain the current form values and are explicitly flagged for review.
   next.description = [item((fields.description || '').replace(/\s*\n\s*/g, ' '))];

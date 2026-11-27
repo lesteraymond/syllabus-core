@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import StableButton from '../../components/StableButton';
+import GeistProgress from '../../components/GeistProgress';
+import GeistStatusDot from '../../components/GeistStatusDot';
+import GeistSkeleton from '../../components/GeistSkeleton';
+import { GeminiEmblem } from '../../components/GeminiLoader';
 import { t as translateUI, tr } from '../../i18n/index.js';
 import { syllabusCheck } from '../../lib/api';
 
@@ -101,6 +105,9 @@ export default function GeneratePanel({ draft, editable, syllabusId, beforeRun, 
     return () => { live = false; clearTimeout(timer); };
   }, [phase, id]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const busy = phase === 'starting' || phase === 'working';
+  const showForm = !busy && phase !== 'done';
+
   if (!available || !editable || !draft || !draft.meta || !draft.meta.courseId) return null;
 
   const run = async () => {
@@ -119,7 +126,6 @@ export default function GeneratePanel({ draft, editable, syllabusId, beforeRun, 
     try { await onSections(previous.current); previous.current = null; setPhase('undone'); } catch (e) { fail(e.message); }
   };
 
-  const busy = phase === 'starting' || phase === 'working';
   const check = out && out.check;
   // The score the AI Checker would give this draft (its no-AI rules and the alignment, server pipeline/generate.js expectedScore). An older run has none.
   const expected = check && check.expected && Number.isFinite(check.expected.provisionalScore) ? check.expected : null;
@@ -131,7 +137,6 @@ export default function GeneratePanel({ draft, editable, syllabusId, beforeRun, 
   const stageIndex = progress && progress.stage ? STAGES.indexOf(progress.stage) : -1;
   const total = (progress && progress.steps) || STAGES.length;
   const percent = phase === 'starting' || !progress ? 3 : Math.min(97, Math.max(6, Math.round(((stageIndex < 0 ? progress.step || 0 : stageIndex) / total) * 100) + 4));
-  const showForm = !busy && phase !== 'done';
   // The step list sits in the right-hand column. Before a run it only lists what the AI writes (numbered); during a run it follows the server's stage; after it, every step is done.
   const stepState = (n) => (phase === 'done' ? 'done' : !busy ? 'idle' : stageIndex < 0 ? 'todo' : n < stageIndex ? 'done' : n === stageIndex ? 'now' : 'todo');
   return (
@@ -151,24 +156,33 @@ export default function GeneratePanel({ draft, editable, syllabusId, beforeRun, 
         {busy && (
           <div className="gen-run" role="status">
             <div className="gen-run-top">
-              <span className="gen-orb" aria-hidden="true"><i /></span>
+              <GeminiEmblem size={52} className="gen-orb" />
               <div className="gen-run-text">
-                <strong>{translateUI('generate.workingTitle')}</strong>
-                <span>{progress && progress.stage ? translateUI('generate.stage.' + progress.stage) : translateUI('generate.preparing')}</span>
+                <strong className="geist-status-inline"><GeistStatusDot state={phase === 'starting' ? 'QUEUED' : 'BUILDING'} />{translateUI('generate.workingTitle')}</strong>
+                <span key={(progress && progress.stage) || 'prep'} className="gen-stage-line">
+                  {progress && progress.stage ? translateUI('generate.stage.' + progress.stage) : translateUI('generate.preparing')}
+                </span>
               </div>
-              <span className="gen-time">{translateUI('generate.elapsed', { time: mmss(elapsed) })}</span>
+              <div className="gen-run-meta">
+                <span className="gen-pct" aria-hidden="true">{percent}%</span>
+                <span className="gen-time">{translateUI('generate.elapsed', { time: mmss(elapsed) })}</span>
+              </div>
             </div>
-            <div className="gen-bar" role="progressbar" aria-label={translateUI('generate.title')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent}><i style={{ width: percent + '%' }} /></div>
-            <p className="hint">{translateUI('generate.leaveNote')}</p>
+            <GeistProgress value={percent} className="gen-bar" ariaLabel={translateUI('generate.title')} />
+            <div className="gen-preview" aria-hidden="true">
+              <GeistSkeleton width="42%" height={14} />
+              <GeistSkeleton width="100%" height={11} />
+              <GeistSkeleton width="72%" height={11} />
+            </div>
+            <p className="hint gen-leave">{translateUI('generate.leaveNote')}</p>
           </div>
         )}
-        {phase === 'error' && <div className="info-banner warning" role="alert">{translateUI('generate.failed', { reason: tr(message) })}</div>}
+        {phase === 'error' && <div className="info-banner warning geist-status-inline" role="alert"><GeistStatusDot state="ERROR" /><span>{translateUI('generate.failed', { reason: tr(message) })}</span></div>}
         {phase === 'undone' && <div className="info-banner" role="status">{translateUI('generate.undone')}</div>}
         {phase === 'done' && out && (
           <div className="gen-done" role="status">
-            <span className="gen-check" aria-hidden="true">✓</span>
             <div className="gen-done-text">
-              <strong>{translateUI('generate.doneTitle')}</strong>
+              <strong className="geist-status-inline"><GeistStatusDot state="READY" />{translateUI('generate.doneTitle')}</strong>
               <span>{translateUI(away ? 'generate.resumed' : 'generate.done')}</span>
               {check && check.status === 'clean' && <span>{translateUI('generate.clean')}</span>}
               {check && check.status === 'needs_review' && <span>{translateUI('generate.review', { count: (check.misalignmentsAfter || 0) + (check.notApplied || []).length })}</span>}

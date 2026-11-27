@@ -40,11 +40,15 @@ desktop.ini
 !.vscode/extensions.json
 *.swp
 
-# Temp files
+# Temp files and local-only scratch exports
 tmp/
 *.tmp
 *.temp
 *.bak
+big.json
+conversation-export.md
+sample_syllabus/
+**/test-backup-*.json
 
 # Private files (profile photos are served only through the authenticated API)
 server/private/

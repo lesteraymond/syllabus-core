@@ -41,10 +41,17 @@ const BLOOM_ORDER_FIL = Object.freeze([
 ]);
 const AFFECTIVE_VERBS_FIL = 'napahahalagahan, napapahalagahan, mapahalagahan, pahalagahan, naisasabuhay, maisabuhay, naitataguyod, maitaguyod, naipamamalas, maipamalas, nakikiisa, makiisa, nakikilahok, makilahok, naipapahayag, naipahahayag, maipahayag, naninindigan, manindigan';
 const FILIPINO_VERBS_SOURCE = 'translations of the owner\'s Bloom levels (BLOOM_ORDER) and affective levels, added 2026-11-21 for syllabi written in Filipino; the word list awaits the owner\'s review';
-// A Filipino-language subject (taught and written in Filipino): the code starts with FIL, or the title names Filipino or a Filipino-language course
-// word. Only these subjects get the Filipino prompts (generator and checker); every other subject is handled exactly as before.
-const FILIPINO_TITLE = /\b(filipino|dalumat|panitikan|komunikasyon|pagbasa|pananaliksik|wika|sinesosyedad|retorika|masining|malikhaing|kontekstwalisadong|sanaysay)\b/i;
-const isFilipinoSubject = (title, code) => /^\s*fil/i.test(String(code || '')) || FILIPINO_TITLE.test(String(title || ''));
+// A Filipino-language subject (taught and written in Filipino): the code is FIL (FIL 101, FIL-101, FIL101; never FILM), or the title has a Filipino
+// course word, or names Filipino in a Filipino phrase ("... sa Filipino", "... ng Filipino") or as the whole title ("Filipino 1"). The word Filipino in
+// an English title ("Readings in Filipino History") is not enough: narrowed 2026-11-25. Only these subjects get the Filipino prompts (generator and
+// checker); every other subject is handled exactly as before.
+const FILIPINO_CODE = /^\s*fil(?:ipino)?(?![a-z])/i;
+const FILIPINO_TITLE = /\b(dalumat|panitikang?|komunikasyon|pagbasa|pananaliksik|wika|sinesosyedad|retorika|masining|malikhaing|kontekstwalisadong|sanaysay)\b/i;
+const FILIPINO_WORD = /\bfilipino\b/i, FILIPINO_GRAMMAR = /\b(sa|ng|ang|mga)\b/i, FILIPINO_ALONE = /^\s*filipino\s*(?:\d+|[ivx]+)?\s*$/i;
+const isFilipinoSubject = (title, code) => {
+  const t = String(title || '');
+  return FILIPINO_CODE.test(String(code || '')) || FILIPINO_TITLE.test(t) || FILIPINO_ALONE.test(t) || (FILIPINO_WORD.test(t) && FILIPINO_GRAMMAR.test(t));
+};
 const BLOOM_SOURCE = 'derived from the CLO classification labels; confirmed by the owner on 2026-11-12; apply added to CLO 1 by the owner on 2026-11-15; analyze and evaluate added to CLO 3 by the owner on 2026-11-17, after the CHED Implementation Handbook for OBE and ISA (2014): I introduces an outcome, E strengthens it, D demonstrates it';
 // The affective domain (Krathwohl, Bloom and Masia, 1964), lowest to highest, with the sample verbs of the CHED Implementation Handbook for OBE and
 // ISA (2014), Annex 4 "Recommended Verbs for Writing Learning Outcomes". Only CLO 4 takes affective levels (CLO_LEVELS[3].affective).
@@ -159,6 +166,11 @@ const CHECKLISTS = Object.freeze({
   ] },
   'TASK-ILO': { from: 'tasks', to: 'ilo', area: 'tasks', scored: false, items: [
     { id: 'measures', critical: false, ask: 'Would the tasks show whether students reached each of the week\'s ILOs?' },
+  ] },
+  // CHED credit-unit laboratory alignment (only asked when labUnits > 0): advisory (scored: false, 0 points, never blocks).
+  'LAB-ALIGNMENT': { from: 'activities', to: 'courseTitle', area: 'activities', scored: false, repair: 'manual', items: [
+    { id: 'activities', critical: false, ask: 'Do the weekly learning activities include hands-on or laboratory work appropriate for this laboratory course?' },
+    { id: 'tasks', critical: false, ask: 'Do the weekly assessment tasks include practical or laboratory outputs (not only written quizzes or essays)?' },
   ] },
   'VALUE-ILO': { from: 'values', to: 'ilo', area: 'values', scored: true, items: [
     { id: 'fits', critical: true, ask: 'Can the named value be practised through this week\'s ILO and activities, or, in the orientation week or an examination week, through the orientation or the examination itself (for example Interiority through honest self-assessment)?' },

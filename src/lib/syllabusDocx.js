@@ -3,6 +3,7 @@
 // Roman-numeral sections I–X, Vision/Mission & EGA/PO/CLO tables, 6-column Learning Plan,
 // Term/Final grading formulas, and 3-column Prepared/Reviewed/Approved sign-off block.
 import { PLAN_HEADINGS, defaultModel, gradeSubItems, finalRatingFraction, formulaBody, printedRefGroups, REFS_TITLE, MODIFICATIONS } from './syllabusModel.js';
+import { splitApa7Segments } from './apaFormat.js';
 import { CURRENT_SCHOOL_YEAR, COLLEGE_NAME, INSTITUTION_NAME, INSTITUTION_FORMER_NAME, INSTITUTION_ADDRESS, FORM_CODE } from './schoolYear.js';
 import { phDate } from './phTime.js';
 
@@ -88,8 +89,8 @@ const run = (text, { bold = false, italic = false, underline = false, caps = fal
   return `<w:r><w:rPr><w:rFonts w:ascii="${font}" w:hAnsi="${font}" w:cs="${font}"/>${bold ? '<w:b/>' : ''}${italic ? '<w:i/>' : ''}${caps ? '<w:caps/>' : ''}<w:color w:val="${color}"/><w:sz w:val="${size}"/><w:szCs w:val="${size}"/>${underline ? '<w:u w:val="single"/>' : ''}</w:rPr>${inner}</w:r>`;
 };
 
-const para = (runs, { spaceBefore = 0, spaceAfter = 60, align = '', indentLeft = 0 } = {}) =>
-  `<w:p><w:pPr>${align ? `<w:jc w:val="${align}"/>` : ''}${indentLeft ? `<w:ind w:left="${indentLeft}"/>` : ''}<w:spacing w:before="${spaceBefore}" w:after="${spaceAfter}"/></w:pPr>${Array.isArray(runs) ? runs.join('') : runs}</w:p>`;
+const para = (runs, { spaceBefore = 0, spaceAfter = 60, align = '', indentLeft = 0, hanging = 0 } = {}) =>
+  `<w:p><w:pPr>${align ? `<w:jc w:val="${align}"/>` : ''}${indentLeft || hanging ? `<w:ind${indentLeft ? ` w:left="${indentLeft}"` : ''}${hanging ? ` w:hanging="${hanging}"` : ''}/>` : ''}<w:spacing w:before="${spaceBefore}" w:after="${spaceAfter}"/></w:pPr>${Array.isArray(runs) ? runs.join('') : runs}</w:p>`;
 
 // Header cells are white like the institutional form (no shading); `header` only marks them for the reader of this code.
 // eslint-disable-next-line no-unused-vars
@@ -310,7 +311,12 @@ export function buildSyllabusDocx(content = {}, fallback = {}) {
   // (indented by the 100 dxa cell margin of the kvRow headings above and below, so "IX." lines up with "VIII." and "X.")
   printedRefGroups(refs).forEach((g) => {
     refXml.push(para(run(`${g.letter}. ${g.title.toUpperCase()}`, { bold: true, size: 19 }), { indentLeft: 520, spaceBefore: 60, spaceAfter: 30 }));
-    g.items.forEach((item) => refXml.push(para(run(item, { size: 19 }), { indentLeft: 720, spaceAfter: 30 })));
+    // APA 7th edition hanging indent (0.5 in = 720 dxa) + APA 7 italics (and bare-URL conversion for legacy entries).
+    g.items.forEach((item) => {
+      const segs = splitApa7Segments(item);
+      const runs = segs.length ? segs.map((s) => run(s.text, { size: 19, italic: s.italic })) : run(item, { size: 19 });
+      refXml.push(para(runs, { indentLeft: 1440, hanging: 720, spaceAfter: 30 }));
+    });
   });
 
   // 7. Section X: Grading System, laid out like the printed form (FormPaper.jsx .paper-grade): a number, the component and

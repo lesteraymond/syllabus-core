@@ -14,7 +14,7 @@ test('one request for the CLOs, one per week, one for the whole syllabus; every 
   const log = [];
   const result = await run(T.conforming(), { ask: T.scriptedJudge({ log }) });
   assert.equal(result.judged.usage.requests, 20); // 1 CLOs + 18 weeks + 1 syllabus
-  assert.equal(result.judged.usage.questions, 146);
+  assert.equal(result.judged.usage.questions, 147);
   assert.equal(result.summary.misalignments, 0);
   assert.equal(result.summary.complete, true);
   const week3 = log.map(l => l.questions).find(qs => qs.some(q => q.id === 'CONTENT-TITLE|content:r3'));
@@ -49,7 +49,7 @@ test('answers whose exact texts are unchanged are reused; an edited ILO re-asks 
   const store = new Map(), c = T.conforming();
   await run(c, { ask: T.scriptedJudge(), store });
   const again = await run(c, { ask: T.failIfCalled, store });
-  assert.equal(again.judged.usage.reused, 146);
+  assert.equal(again.judged.usage.reused, 147);
   assert.equal(again.judged.usage.requests, 0);
   c.plan[2].ilos[0].text = 'Explain topic number 3 with a worked example';
   const log = [];

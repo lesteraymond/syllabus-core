@@ -16,7 +16,7 @@ test('incomplete source extraction fails closed instead of becoming valid fixtur
 test('all six deterministic scenarios use frozen masters, issue no official score, and are repeatable', async () => {
   const a = await runBaselines(), b = await runBaselines();
   assert.deepEqual(a,b); assert.equal(a.results.length,6);
-  assert.equal(a.engineVersion,'hybrid-2'); assert.equal(a.deterministicRulesInStandard,47); assert.equal(a.passThreshold,79);
+  assert.equal(a.engineVersion,'hybrid-2'); assert.equal(a.deterministicRulesInStandard,46); assert.equal(a.passThreshold,79);
   assert.equal(a.aiRequests,0); assert.equal(a.networkRequests,0); assert.equal(a.databaseWrites,0);
   for (const r of a.results) {
     assert.equal(r.officialScore,null); assert.equal(r.passed,null);
@@ -39,12 +39,15 @@ test('checker keeps BSIT and Cyber Security curricula distinct, independently of
   c.meta.program = 'BSIT-CYBERSECURITY'; c.meta.curriculumYear='2025-2026';
   const masters = snapshot.programs[c.meta.program].masters;
   assert.deepEqual(masters.pos,snapshot.programs.BSIT.masters.pos);
+  c.meta.code='IT 999';
   assert.equal(coded(c,masters).critical,true);
-  c.meta.code='IT-202';
-  const r = coded(c,masters);
-  assert.equal(r.critical,false);
-  const title = r.checks.find(x=>x.ruleId==='CUR-FIELD'&&x.path==='meta.title');
-  assert.equal(title.status,'FAIL'); assert.equal(title.evidence.expected,'SYSTEM INTEGRATION AND ARCHITECTURE 1');
+  for (const variant of ['IT 202', 'IT-202']) {
+    c.meta.code = variant;
+    const r = coded(c,masters);
+    assert.equal(r.critical,false);
+    const title = r.checks.find(x=>x.ruleId==='CUR-FIELD'&&x.path==='meta.title');
+    assert.equal(title.status,'FAIL'); assert.equal(title.evidence.expected,'SYSTEM INTEGRATION AND ARCHITECTURE 1');
+  }
   c.meta.curriculumYear='2022-2023';
   assert.equal(coded(c,masters).checks.find(x=>x.ruleId==='CUR-REF').status,'NOT_EVALUATED');
 });
